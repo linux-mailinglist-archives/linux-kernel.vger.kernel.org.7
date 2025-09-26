@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-834153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E076EBA40C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0752BBA40E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E4C164FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 091174C51EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180DE2F83B2;
-	Fri, 26 Sep 2025 14:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989CC2F99AA;
+	Fri, 26 Sep 2025 14:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ul39qMlt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvCxvQPl"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BCA34BA4D;
-	Fri, 26 Sep 2025 14:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5532EF651
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758895744; cv=none; b=VHFQdwelKWPRB4kr1p+oneR4ljkwwZm7m7Q93ySDZohrsDfUXmowZwC/TaAHvizq0sbTn8onZGhvBaxEQudWdLJNLid8lGUdVZ8hqj5moAOqW/F20Ts+5+Mg3rQCU0FL/454O5+ryAo2AxzNkUJS6hWisqHyafJZ5dicaw7cNWU=
+	t=1758895907; cv=none; b=XuQTf9v1Cv4Zo3eXeveqYCBMD/E9pYwqSuvvvyTuXdcNKEkwJNOWeQ1QJNmSpl6yPUXuKhlvHXSWzW9+UHze8jhHXXnEuPXyosMBlg38SkMRUag5zEYBdtKmwrl66vDsX/BNMdIohoK7zJ2oQEQrZ4ZGgbvkQVcbjG7KEqRY8dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758895744; c=relaxed/simple;
-	bh=m9CdcGwGONZQF1Pn9aP5kGiYCoQ07S3I3RFRloI2THw=;
+	s=arc-20240116; t=1758895907; c=relaxed/simple;
+	bh=Cda4WGQXonbSWQhrD5cw1RbmvTmA5UggAyb6jdw1c9E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kkf5oYbyUHHG8pJYMbgVRcvLoQaKKQyLSAvnRdpat4S3VSz3hQGPTZIBTJiGvdTwVS8hYbtQlZ7VVilfsWg1EJKcu7cJleo+GK8qEDTVZbqQXXw0YvQ41eEWLKJdaM9dA9+kYz8DPT0zlQOPkG8GWmmkCwGER2CICJ1LSgVzvFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ul39qMlt; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758895743; x=1790431743;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=m9CdcGwGONZQF1Pn9aP5kGiYCoQ07S3I3RFRloI2THw=;
-  b=Ul39qMltNwuGWHEPPxPV6mOhvEzGEw5TT7MFJPkYjBskooZorvj22mlF
-   ymi3KaiteZ5kAMhO7ChWQ4E4MnFTUWC+9ZsOmz8rrU6JFUMJCYr3DeqjO
-   TZrVof/jv2a9eGE4uaHSCYK0etxC0tGJJnXmsmtQdxEb2dcwemp2GrJms
-   /36L7omXo5utBsx40iBCYFmFbedq4xwb3nZDnyB3N+uPBPoMBR671zYjZ
-   5bqSrMgdVSu8dyCHoy99chlZt7HuUj2AmubShZLU/kYdPtVZZGmvS0n+q
-   EIIJhOr8vuYvwPkpLM8f/62Vq8fSpynZ58cIEtg1WZMHYtk8dBb21H+bw
-   A==;
-X-CSE-ConnectionGUID: ZodQaCqWS3yCrHk1nCcNEA==
-X-CSE-MsgGUID: RKenT2bxT6Kr0YccWUaKUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="72590679"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="72590679"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 07:09:03 -0700
-X-CSE-ConnectionGUID: zGlrDP6VQimQbgyiaBE7zg==
-X-CSE-MsgGUID: ySR6WrCWSzC3MNObouysHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="176746058"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.109.59]) ([10.125.109.59])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 07:09:01 -0700
-Message-ID: <8f772a23-ea7f-40eb-8852-49f5e3e16c15@intel.com>
-Date: Fri, 26 Sep 2025 07:09:00 -0700
+	 In-Reply-To:Content-Type; b=of53p+VL0q1AD8fZAmCeWlx493mZgjwmmw2BnecRL4Q0sbwckpx059hyX/EJ5hb/9YLONdrioC2v/TACa5aCH+Z8BkEkoer92ivO4o/kp87mnnoM7Ae6EhjFB2N+QMix9xqcqxwsmu2eCVCqLA3r5c461yI6Pq1keDJ8W+iPyaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvCxvQPl; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46b303f755aso20051345e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758895904; x=1759500704; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ny7pIQ2SCuYpPr5sAoZMtmx+LX6//dYVYgLJ9SYLcgQ=;
+        b=XvCxvQPlDYqNLlioV8HtmIGG/oa15gRdbBsw13aV1VoxGSuLVyElGE18ESBpqaJW/y
+         Hr5D8NBbmNVUNPDg4pbPVQkJ+Wve9bSaXBT6JEVjlny0003+0LviusNT16buzcIyc4i9
+         EkFYqvFCK9bC/hOmmKMEE+gl4brhFJ6/72w8fT3Pelpl22w7mBJ6gbA07g7UpcBmRCkl
+         f8+tFvJuUu16ihZ/3R/tL+WZG8ujAf9vIqHDjEu6/6al2L0MPoiP/DUVPHdl1iO5fV8D
+         TPAasuut4XXXoguArQvRoAlg8EydSyAo3B44fEQHMdWJfBFxlkeB/zmQX76UM+AUr1Cz
+         S4Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758895904; x=1759500704;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ny7pIQ2SCuYpPr5sAoZMtmx+LX6//dYVYgLJ9SYLcgQ=;
+        b=dsYh7NNjIIymsK32/m38ImE3RKni7aOngAmDodCMkF2pCylFppyUdHvKPzEfbln0Jk
+         V+TPXUujBPTXOugta9Vj1dIsG4VnaMhbYSJEJ8mKopfiTe/liD3qtXBiFrogUkXMsXvZ
+         ZbWSRtVfBo1FOLQ5qdc2+jd+6IW8mOuB51eLB51l4fuxb7Ebizbb/DWfHqlyWLLQ8QIl
+         9gKjqGoxuCTT1/RBmgC3GrdAd+9/rGBn4tC+UiQkOjilUduMcxIWqmfZ31de00RPi1or
+         +a8t46pLAsNEkoHf9ioNIyc/g4i2Q30VmKEZQf7gjkn1SE3osm+2bXtuZnSSohCQdGGS
+         AMXw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/2DWCHrIr8ej1N5Tzv+/hcVBaFdtVkxmFAN7WkMeRzvVFn+R3ajisOSl/2ArLrIppY3n2GcrXnFuIQSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrp3ZrfUuc1n53RtvS+ef86QBp0JhbTy1iQF8VyrNf6eQ8jurz
+	V9XzpaeNSPwhKvys0qis5eAoLxxdRq6xmKcCcJVVR0TVJx6+lH2mxe2V
+X-Gm-Gg: ASbGnctJ1//NskfNmH6fuRxqITtDdcPhqGGH+zrjQdHeUokguEAlMv9BSuDl18vbEYO
+	y/AIUfI6Vx1TarhmQCIQt5eItaZ20m0n8miWO/e/QhMJnHKOseyn4bB9ApnUSEjdVn46Z7H8UK2
+	DKnUVnL8+bdGDbOjasDZMfoc9ntkYEuH9x2REIf92SqAEUYhucMs+pvnTck+2F07GcMOO6JkVJ6
+	m2QKxz/WIj76Ht5VFw1TyzFPZdi1QbaYvjGCsCkJaCUxMKwH/bCNfwMrt3bBnLsrjxLqRYSCW9w
+	7+STW1PApLML8izo2W6HuFSjMPLLMGfFTXnvLfSCCdHiPjBA0NsO9NTBa28SuKz++JKFIeI041I
+	DRSoIFLcaO68bGZECqCv45AXkZ/0neaXyYMXgy2jRQN2a+m0kmvYcEGr5DrKofwksc+Fm1X2h0c
+	/O9ysQi7R78EUNe8eagdFZC09nKfTraF3FpQ==
+X-Google-Smtp-Source: AGHT+IGIsygixbycwSxGEYYSjqdX4hw6Wrb2gEHvzCCx3um4Q8sxCxU/06IukXa1VlsWWUmFmo66KA==
+X-Received: by 2002:a05:600c:4fca:b0:46d:45e:350a with SMTP id 5b1f17b1804b1-46e329fb93bmr92609295e9.17.1758895903786;
+        Fri, 26 Sep 2025 07:11:43 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5? ([2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32bd6360sm39873825e9.1.2025.09.26.07.11.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 07:11:43 -0700 (PDT)
+Message-ID: <34a9440f-b0c4-4f76-a2ac-f88b54c2242e@gmail.com>
+Date: Fri, 26 Sep 2025 15:11:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,72 +82,226 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/16] TDX: Enable Dynamic PAMT
-To: Yan Zhao <yan.y.zhao@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: kas@kernel.org, bp@alien8.de, chao.gao@intel.com,
- dave.hansen@linux.intel.com, isaku.yamahata@intel.com, kai.huang@intel.com,
- kvm@vger.kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
- seanjc@google.com, tglx@linutronix.de, x86@kernel.org, vannapurve@google.com
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <aNX6V6OSIwly1hu4@yzhao56-desk.sh.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aNX6V6OSIwly1hu4@yzhao56-desk.sh.intel.com>
+Subject: Re: [PATCH v8 mm-new 01/12] mm: thp: remove disabled task from
+ khugepaged_mm_slot
+Content-Language: en-GB
+To: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
+ david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, hannes@cmpxchg.org,
+ gutierrez.asier@huawei-partners.com, willy@infradead.org, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, ameryhung@gmail.com,
+ rientjes@google.com, corbet@lwn.net, 21cnbao@gmail.com,
+ shakeel.butt@linux.dev, tj@kernel.org, lance.yang@linux.dev
+Cc: bpf@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250926093343.1000-1-laoar.shao@gmail.com>
+ <20250926093343.1000-2-laoar.shao@gmail.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20250926093343.1000-2-laoar.shao@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 9/25/25 19:28, Yan Zhao wrote:
->> Lastly, Yan raised some last minute doubts internally about TDX
->> module locking contention. I’m not sure there is a problem, but we
->> can come to an agreement as part of the review.
-> Yes, I found a contention issue that prevents us from dropping the
-> global lock. I've also written a sample test that demonstrates this
-> contention.
-But what is the end result when this contention happens? Does everyone
-livelock?
+
+
+On 26/09/2025 10:33, Yafang Shao wrote:
+> Since a task with MMF_DISABLE_THP_COMPLETELY cannot use THP, remove it from
+> the khugepaged_mm_slot to stop khugepaged from processing it.
+> 
+> After this change, the following semantic relationship always holds:
+> 
+>   MMF_VM_HUGEPAGE is set     == task is in khugepaged mm_slot
+>   MMF_VM_HUGEPAGE is not set == task is not in khugepaged mm_slot
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Acked-by: Lance Yang <lance.yang@linux.dev>
+> ---
+>  include/linux/khugepaged.h |  4 ++++
+>  kernel/sys.c               |  7 ++++--
+>  mm/khugepaged.c            | 49 ++++++++++++++++++++------------------
+>  3 files changed, 35 insertions(+), 25 deletions(-)
+> 
+
+
+Hi Yafang,
+
+Thanks for the patch! Sorry wasnt able to review the previous revisions.
+
+I think it would be good to separate this patch out of the series?
+It would make the review of this series shorter and this patch can be merged independently.
+
+In the commit message, we also need to write explicitly that when prctl
+PR_SET_THP_DISABLE is cleared, the mm is added back for khugepaged to consider.
+
+Could you also mention in the commit message why the BUG was turned into WARN?
+
+Thanks!
+
+> diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
+> index eb1946a70cff..f14680cd9854 100644
+> --- a/include/linux/khugepaged.h
+> +++ b/include/linux/khugepaged.h
+> @@ -15,6 +15,7 @@ extern void __khugepaged_enter(struct mm_struct *mm);
+>  extern void __khugepaged_exit(struct mm_struct *mm);
+>  extern void khugepaged_enter_vma(struct vm_area_struct *vma,
+>  				 vm_flags_t vm_flags);
+> +extern void khugepaged_enter_mm(struct mm_struct *mm);
+>  extern void khugepaged_min_free_kbytes_update(void);
+>  extern bool current_is_khugepaged(void);
+>  extern int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+> @@ -42,6 +43,9 @@ static inline void khugepaged_enter_vma(struct vm_area_struct *vma,
+>  					vm_flags_t vm_flags)
+>  {
+>  }
+> +static inline void khugepaged_enter_mm(struct mm_struct *mm)
+> +{
+> +}
+>  static inline int collapse_pte_mapped_thp(struct mm_struct *mm,
+>  					  unsigned long addr, bool install_pmd)
+>  {
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index a46d9b75880b..2c445bf44ce3 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/export.h>
+>  #include <linux/mm.h>
+>  #include <linux/mm_inline.h>
+> +#include <linux/khugepaged.h>
+>  #include <linux/utsname.h>
+>  #include <linux/mman.h>
+>  #include <linux/reboot.h>
+> @@ -2479,7 +2480,7 @@ static int prctl_set_thp_disable(bool thp_disable, unsigned long flags,
+>  	/* Flags are only allowed when disabling. */
+>  	if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+>  		return -EINVAL;
+> -	if (mmap_write_lock_killable(current->mm))
+> +	if (mmap_write_lock_killable(mm))
+>  		return -EINTR;
+>  	if (thp_disable) {
+>  		if (flags & PR_THP_DISABLE_EXCEPT_ADVISED) {
+> @@ -2493,7 +2494,9 @@ static int prctl_set_thp_disable(bool thp_disable, unsigned long flags,
+>  		mm_flags_clear(MMF_DISABLE_THP_COMPLETELY, mm);
+>  		mm_flags_clear(MMF_DISABLE_THP_EXCEPT_ADVISED, mm);
+>  	}
+> -	mmap_write_unlock(current->mm);
+> +
+> +	khugepaged_enter_mm(mm);
+> +	mmap_write_unlock(mm);
+>  	return 0;
+>  }
+>  
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 7ab2d1a42df3..f47ac8c19447 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -396,15 +396,10 @@ void __init khugepaged_destroy(void)
+>  	kmem_cache_destroy(mm_slot_cache);
+>  }
+>  
+> -static inline int hpage_collapse_test_exit(struct mm_struct *mm)
+> -{
+> -	return atomic_read(&mm->mm_users) == 0;
+> -}
+> -
+>  static inline int hpage_collapse_test_exit_or_disable(struct mm_struct *mm)
+>  {
+> -	return hpage_collapse_test_exit(mm) ||
+> -		mm_flags_test(MMF_DISABLE_THP_COMPLETELY, mm);
+> +	return !atomic_read(&mm->mm_users) ||			/* exit */
+> +		mm_flags_test(MMF_DISABLE_THP_COMPLETELY, mm);  /* disable */
+>  }
+>  
+>  static bool hugepage_pmd_enabled(void)
+> @@ -437,7 +432,7 @@ void __khugepaged_enter(struct mm_struct *mm)
+>  	int wakeup;
+>  
+>  	/* __khugepaged_exit() must not run from under us */
+> -	VM_BUG_ON_MM(hpage_collapse_test_exit(mm), mm);
+> +	VM_WARN_ON_ONCE(hpage_collapse_test_exit_or_disable(mm));
+>  	if (unlikely(mm_flags_test_and_set(MMF_VM_HUGEPAGE, mm)))
+>  		return;
+>  
+> @@ -460,14 +455,25 @@ void __khugepaged_enter(struct mm_struct *mm)
+>  		wake_up_interruptible(&khugepaged_wait);
+>  }
+>  
+> +void khugepaged_enter_mm(struct mm_struct *mm)
+> +{
+> +	if (mm_flags_test(MMF_DISABLE_THP_COMPLETELY, mm))
+> +		return;
+> +	if (mm_flags_test(MMF_VM_HUGEPAGE, mm))
+> +		return;
+> +	if (!hugepage_pmd_enabled())
+> +		return;
+> +
+> +	__khugepaged_enter(mm);
+> +}
+> +
+>  void khugepaged_enter_vma(struct vm_area_struct *vma,
+>  			  vm_flags_t vm_flags)
+>  {
+> -	if (!mm_flags_test(MMF_VM_HUGEPAGE, vma->vm_mm) &&
+> -	    hugepage_pmd_enabled()) {
+> -		if (thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
+> -			__khugepaged_enter(vma->vm_mm);
+> -	}
+> +	if (!thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
+> +		return;
+> +
+> +	khugepaged_enter_mm(vma->vm_mm);
+>  }
+>  
+>  void __khugepaged_exit(struct mm_struct *mm)
+> @@ -491,7 +497,7 @@ void __khugepaged_exit(struct mm_struct *mm)
+>  	} else if (slot) {
+>  		/*
+>  		 * This is required to serialize against
+> -		 * hpage_collapse_test_exit() (which is guaranteed to run
+> +		 * hpage_collapse_test_exit_or_disable() (which is guaranteed to run
+>  		 * under mmap sem read mode). Stop here (after we return all
+>  		 * pagetables will be destroyed) until khugepaged has finished
+>  		 * working on the pagetables under the mmap_lock.
+> @@ -1429,16 +1435,13 @@ static void collect_mm_slot(struct mm_slot *slot)
+>  
+>  	lockdep_assert_held(&khugepaged_mm_lock);
+>  
+> -	if (hpage_collapse_test_exit(mm)) {
+> +	if (hpage_collapse_test_exit_or_disable(mm)) {
+>  		/* free mm_slot */
+>  		hash_del(&slot->hash);
+>  		list_del(&slot->mm_node);
+>  
+> -		/*
+> -		 * Not strictly needed because the mm exited already.
+> -		 *
+> -		 * mm_flags_clear(MMF_VM_HUGEPAGE, mm);
+> -		 */
+> +		/* If the mm is disabled, this flag must be cleared. */
+> +		mm_flags_clear(MMF_VM_HUGEPAGE, mm);
+>  
+>  		/* khugepaged_mm_lock actually not necessary for the below */
+>  		mm_slot_free(mm_slot_cache, slot);
+> @@ -1749,7 +1752,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+>  		if (find_pmd_or_thp_or_none(mm, addr, &pmd) != SCAN_SUCCEED)
+>  			continue;
+>  
+> -		if (hpage_collapse_test_exit(mm))
+> +		if (hpage_collapse_test_exit_or_disable(mm))
+>  			continue;
+>  		/*
+>  		 * When a vma is registered with uffd-wp, we cannot recycle
+> @@ -2500,9 +2503,9 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+>  	VM_BUG_ON(khugepaged_scan.mm_slot != slot);
+>  	/*
+>  	 * Release the current mm_slot if this mm is about to die, or
+> -	 * if we scanned all vmas of this mm.
+> +	 * if we scanned all vmas of this mm, or if this mm is disabled.
+>  	 */
+> -	if (hpage_collapse_test_exit(mm) || !vma) {
+> +	if (hpage_collapse_test_exit_or_disable(mm) || !vma) {
+>  		/*
+>  		 * Make sure that if mm_users is reaching zero while
+>  		 * khugepaged runs here, khugepaged_exit will find
+
 
