@@ -1,185 +1,166 @@
-Return-Path: <linux-kernel+bounces-833764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D994BA2FF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCD0BA2FFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71714A1E6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499E01C21996
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BB0296BB6;
-	Fri, 26 Sep 2025 08:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6870298987;
+	Fri, 26 Sep 2025 08:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="hUKOltdz"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZrQsmMkv"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F6ABA4A;
-	Fri, 26 Sep 2025 08:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A40C25DAFF;
+	Fri, 26 Sep 2025 08:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758876331; cv=none; b=Ds3Imkj7qSmTvctLukdJYltzCr6XbJZD7PKAQS3J7+NIzL+9kAtFdaqcE2ZZ5UzCYlisLlipYOHUQvvEF4pN/+OqZcLaIlvdK7w/9XUCMEc3/2eeuYc80fvFMtkuwpOXgQxJEhVzO6sSwMnQ/IBNRG6pmIu3FI0m9kxq5vuy/pU=
+	t=1758876393; cv=none; b=MT0yPoSaR1rkbFX02//IEWSivAJbn3wjvd0+zbjPKk5IvnwIchDjZQjXtZv1VkmGDw0gKZ9YZRaYDyylh3xGViyRMtE/hf+lABXNc2r7G76+malm8xSdlL/RvPdTJN7a25vFNNSX2mEelr/EIrFTb4qXAvumJ0Z1eatNtFu8RDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758876331; c=relaxed/simple;
-	bh=1WMTrV25ftvQGUWLkCsps0ILDMd4wd+U7u71dECBK7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ErZKWUVyQ744NPdMrdreJBSVI6my0dAce5rXeCHJLruJHESPYXxV1mPZ6zDqTHJwcxLuoKSM5NFq1b1DukOrsiMpBMIjKj9/SvqjsSvoOjYmVehMbjcrBXkPEynAN+kPr0QRYG4PaAHBYhYV6cI0jRS0cVU7vzoAUCkGwVjRtyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=hUKOltdz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CpuPALWXV16JEBeqyBvRZypVB/YduO9IBL4wItC6JBY=; b=hUKOltdzuC3BkmP9w6Ne3O+dzC
-	jMDI9Sm7xxD/liKdBY853BX6QrzdFrFu8X5vc8WcyYxLaAynKzAkPwFricK3V1DjPB81t3QbtFYEC
-	MbbkKTaxZE7tW0UoR14TPgwkQPxaTKHWWMa8epJD3xi8xnY+DRhYiu/aoIBg1nsK397m5HNRVQ+mm
-	dRVHy/88KY1sEp2I95IRg2P4Bkppb4ePoDq6v4lZY0pWr8sAr6yZ7brGDXnE2gwL9hniEWsIXIlL9
-	ywFefCHuvtqtBgug9tJV+GLNSpA0RBp9Kbc/AOPXIlBt40bDAYYrp1M0MhXYGjOFm7cdY4rtCD3Hh
-	sC8Ynxhw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41368)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v244x-000000003Ff-2ATD;
-	Fri, 26 Sep 2025 09:45:23 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v244u-000000000Wg-3OHt;
-	Fri, 26 Sep 2025 09:45:20 +0100
-Date: Fri, 26 Sep 2025 09:45:20 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Yangfl <mmyangfl@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce
- PHY_INTERFACE_MODE_REVSGMII
-Message-ID: <aNZSoHGgBCxs5rh3@shell.armlinux.org.uk>
-References: <20250922131148.1917856-1-mmyangfl@gmail.com>
- <20250922131148.1917856-3-mmyangfl@gmail.com>
- <aNQvW54sk3EzmoJp@shell.armlinux.org.uk>
- <fe6a4073-eed0-499d-89ee-04559967b420@lunn.ch>
- <aNREByX9-8VtbH0n@shell.armlinux.org.uk>
- <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
+	s=arc-20240116; t=1758876393; c=relaxed/simple;
+	bh=IUA1ANsoSDf4ynFNcNEX5PCTUFJtU9aJS/An4xPjPW4=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=DDi3AwdQF2kATtzTJqBpftKNFac1QUKAexMh93gJqwnTPHic+2qrGvpRvrmk3ODNGdpXSQR1SCuV0pUro9UlUAuAfu1/AxqM9XMsu7JhgAIN3kAgdAOKxo739pSGV92OkeY6SHzLA6jBLutZhFmDOEEifYj4S11fJLV2MJ/P/8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZrQsmMkv; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from thinkpad.ideasonboard.com (cpc90716-aztw32-2-0-cust408.18-1.cable.virginm.net [86.26.101.153])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 43FF81807;
+	Fri, 26 Sep 2025 10:45:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758876301;
+	bh=IUA1ANsoSDf4ynFNcNEX5PCTUFJtU9aJS/An4xPjPW4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ZrQsmMkvFij0yY31VIvySARzvzdhWNfhnXkQnUrONYi17lCK3I/2qDmzyhBdTSJxL
+	 dN3HbjbpWxRuWVge+mXh5887a+MeWz59bmy6T+ocVoozAj0AHJ1zwKwW1L6iKWBrJi
+	 GQ2d7SrtwAsUz2uQQAegMhsnMOBp5a89Epi8fOsY=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aNW4zDRAREUZ7v8k@lizhi-Precision-Tower-5810>
+References: <20250925-active-data-lanes-v4-0-8b54e3d5af6c@ideasonboard.com> <20250925-active-data-lanes-v4-3-8b54e3d5af6c@ideasonboard.com> <aNW4zDRAREUZ7v8k@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v4 3/4] media: imx-mipi-csis: Store the number of data_lanes configured in dt
+From: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+To: Frank Li <Frank.li@nxp.com>
+Date: Fri, 26 Sep 2025 09:46:22 +0100
+Message-ID: <175887638283.180868.8800087471301856681@isaac-ThinkPad-T16-Gen-2>
+User-Agent: alot/0.10
 
-On Fri, Sep 26, 2025 at 02:30:25PM +0800, Yangfl wrote:
-> On Thu, Sep 25, 2025 at 3:18 AM Russell King (Oracle)
-> <linux@armlinux.org.uk> wrote:
-> >
-> > On Wed, Sep 24, 2025 at 08:41:06PM +0200, Andrew Lunn wrote:
-> > > In theory, {R}GMII does have inband signalling, but it is pretty much
-> > > never used. REV for GMII could thus indicate what role the device is
-> > > playing in this in-band signalling?
-> >
-> > For RGMII, as you say, the in-band signalling is pretty much never used.
-> > The stmmac code as it stands today does have support for using it, but
-> > the code has been broken for longer than six years:
-> >
-> > 1. the longest historical breakage, it's conditional on the hardware
-> >    reporting that it has a PCS integrated into the design, but a PCS
-> >    won't be integrated into the design for RGMII-only cases.
-> >
-> > 2. even if (1) was fixed, that would result in the driver manipulating
-> >    the netif carrier state from interrupt context, always beating
-> >    phylink's resolve worker, meaning that mac_link_(down|up) never get
-> >    called. This results in no traffic flow and a non-functional
-> >    interface.
-> >
-> > So, maybe we should just ignore the RGMII in-band signalling until
-> > someone pops up with a hard and fast requirement for it.
-> >
-> > > For any SERDES based links likes like SGMII, 1000Base-X and above,
-> > > clocking is part of the SERDES, so symmetrical. There clearly is
-> > > inband signalling, mostly, when it is not broken because of
-> > > overclocked SGMII. But we have never needed to specify what role each
-> > > end needs to play.
-> >
-> > 100base-X is intentionally symmetric, and designed for:
-> >
-> >         MAC----PCS---- some kind of link ----PCS----MAC
-> >
-> > where "some kind of link" is fibre or copper. There is no reverse mode
-> > possible there, because "reverse" is just the same as "normal".
-> >
-> > For SGMII though, it's a different matter. The PHY-like end transmits
-> > the link configuration. The MAC-like end receives the link
-> > configuration and configures itself to it - and never sends a link
-> > configuration back.
-> >
-> > So, the formats of the in-band tx_config_reg[15:0] are different
-> > depending on the role each end is in.
-> >
-> > In order for a SGMII link with in-band signalling to work, one end
-> > has to assume the MAC-like role and the other a PHY-like role.
-> >
-> > PHY_INTERFACE_MODE_SGMII generally means that the MAC is acting in a
-> > MAC-like role. However, stmmac had the intention (but broken) idea
-> > that setting the DT snps,ps-speed property would configure it into a
-> > PHY-like role. It almost does... but instead of setting the "transmit
-> > configuration" (TC) bit, someone typo'd and instead set the "transmit
-> > enable" (TE) bit. So no one has actually had their stmmac-based
-> > device operating in a PHY-like role, even if they _thought_ it was!
-> >
-> > > > However, stmmac hardware supports "reverse" mode for more than just
-> > > > SGMII, also RGMII and SMII.
-> > >
-> > > How does the databook describe reverse SGMII? How does it differ from
-> > > SGMII?
-> >
-> > It doesn't describe "reverse SGMII". Instead, it describes:
-> >
-> > 1. The TC bit in the MAC configuration register, which makes the block
-> >    transmit the speed and duplex from the MAC configuration register
-> >    over RGMII, SGMII or SMII links (only, not 1000base-X.)
-> >
-> > 2. The SGMIIRAL bit in the PCS control register, which switches where
-> >    the SGMII rate adapter layer takes its speed configuration from -
-> >    either the incoming in-band tx_config_reg[15:0] word, or from the
-> >    MAC configuration register. It is explicitly stated for this bit
-> >    that it is for back-to-back MAC links, and as it's specific to
-> >    SGMII, that means a back-to-back SGMII MAC link.
-> >
-> > Set both these bits while the MAC is configured for SGMII mode, and
-> > you have a stmmac MAC which immitates a SGMII PHY as far as the
-> > in-band tx_config_reg[15:0] word is concerned.
-> 
-> So any conclusion? Should I go on with REV*MII, or wait for (or write
-> it myself) reverse-mode flag?
+Hi Frank,
 
-Clearly not as there's been no discussion beyond my response to Andrew.
-I don't know what to suggest, as whatever decision we make here, we
-will have to live with the consequences of it for a very long time.
+Thank you for your review!
 
-I suspect no one really knows the answer, so given the lack of
-engagement on the issue, my suggestion would be to just press ahead
-with your current approach.
+Quoting Frank Li (2025-09-25 22:49:00)
+> On Thu, Sep 25, 2025 at 04:54:28PM +0100, Isaac Scott wrote:
+> > The number of active data lanes in use on a MIPI CSI2 bus is not
+> > necessarily always the maximum. To allow us to configure the number of
+> > data lanes actively in use, store the maximum to ensure we can configure
+> > a number of data lanes that is supported.
+> >
+>=20
+> This patch just add num_data_lanes, and use csis->num_data_lanes instead
+> of bus.num_data_lanes.
+>=20
+> So commit message not reflect what you did
+>=20
+> "
+> media: imx-mipi-csis: Add num_data_lanes in mipi_csis_device
+>=20
+> Add num_data_lanes field in mipi_csis_device, set equal to
+> csis->bus.num_data_lanes. Prepare to support cases where the number of
+> active data lanes differs from the maximum supported lanes.
+>=20
+> No functional changes.
+> "
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Yes, that is much better, thank you for your suggestions (on this and
+the next patch), I'll wait to see if there are any other comments and
+improve my commit messages in the next version.
+
+Best wishes,
+Isaac
+
+>=20
+> Frank
+>=20
+> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/nxp/imx-mipi-csis.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media=
+/platform/nxp/imx-mipi-csis.c
+> > index 7c2a679dca2e..838a1ad123b5 100644
+> > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > @@ -351,6 +351,8 @@ struct mipi_csis_device {
+> >       u32 hs_settle;
+> >       u32 clk_settle;
+> >
+> > +     unsigned int num_data_lanes;
+> > +
+> >       spinlock_t slock;       /* Protect events */
+> >       struct mipi_csis_event events[MIPI_CSIS_NUM_EVENTS];
+> >       struct dentry *debugfs_root;
+> > @@ -573,7 +575,7 @@ static void mipi_csis_system_enable(struct mipi_csi=
+s_device *csis, int on)
+> >       val =3D mipi_csis_read(csis, MIPI_CSIS_DPHY_CMN_CTRL);
+> >       val &=3D ~MIPI_CSIS_DPHY_CMN_CTRL_ENABLE;
+> >       if (on) {
+> > -             mask =3D (1 << (csis->bus.num_data_lanes + 1)) - 1;
+> > +             mask =3D (1 << (csis->num_data_lanes + 1)) - 1;
+> >               val |=3D (mask & MIPI_CSIS_DPHY_CMN_CTRL_ENABLE);
+> >       }
+> >       mipi_csis_write(csis, MIPI_CSIS_DPHY_CMN_CTRL, val);
+> > @@ -623,7 +625,7 @@ static int mipi_csis_calculate_params(struct mipi_c=
+sis_device *csis,
+> >
+> >       /* Calculate the line rate from the pixel rate. */
+> >       link_freq =3D v4l2_get_link_freq(csis->source.pad, csis_fmt->widt=
+h,
+> > -                                    csis->bus.num_data_lanes * 2);
+> > +                                    csis->num_data_lanes * 2);
+> >       if (link_freq < 0) {
+> >               dev_err(csis->dev, "Unable to obtain link frequency: %d\n=
+",
+> >                       (int)link_freq);
+> > @@ -668,7 +670,7 @@ static void mipi_csis_set_params(struct mipi_csis_d=
+evice *csis,
+> >                                const struct v4l2_mbus_framefmt *format,
+> >                                const struct csis_pix_format *csis_fmt)
+> >  {
+> > -     int lanes =3D csis->bus.num_data_lanes;
+> > +     int lanes =3D csis->num_data_lanes;
+> >       u32 val;
+> >
+> >       val =3D mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
+> > @@ -1366,8 +1368,9 @@ static int mipi_csis_async_register(struct mipi_c=
+sis_device *csis)
+> >       }
+> >
+> >       csis->bus =3D vep.bus.mipi_csi2;
+> > +     csis->num_data_lanes =3D csis->bus.num_data_lanes;
+> >
+> > -     dev_dbg(csis->dev, "data lanes: %d\n", csis->bus.num_data_lanes);
+> > +     dev_dbg(csis->dev, "max data lanes: %d\n", csis->bus.num_data_lan=
+es);
+> >       dev_dbg(csis->dev, "flags: 0x%08x\n", csis->bus.flags);
+> >
+> >       asd =3D v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
+> >
+> > --
+> > 2.43.0
+> >
 
