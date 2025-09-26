@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-833970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438D9BA371F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:10:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0716FBA3722
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93B0A1C22BD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451525602B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7BC2F5A0F;
-	Fri, 26 Sep 2025 11:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EF22F5A3E;
+	Fri, 26 Sep 2025 11:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="yc/LWSgF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ADHVkpwh"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xj/Qhp/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0FF23D7FD;
-	Fri, 26 Sep 2025 11:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B3E2F5A18;
+	Fri, 26 Sep 2025 11:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758885025; cv=none; b=l5i7EXmXXHcVoRlXH8e4ECGKiNebbQFw0AJ4qIugdO9qingWn3+DlGiMrIpyMfNMPpJH+G3zTN6Ea9/6/y1VL3TNLWwHfql2phHLY0KuSc6qU0YzYEOabWX09+yq3l/nNdqtAnrGYQf38lxHQWIRA4OU0PlhFtoEW5oU5LTPrxA=
+	t=1758885027; cv=none; b=XPwEjtE+G98L/8ZFsyofZ+4E/1pgYCllJxNdvDmCyzda/wHqvlRGfPjicvD7uF3/9uZvtc8r7F0vStWkbnoJoT5c623I0NdNKfhR3rSULSVMrksjTyqU/wFtvWi/NFXLsLaUAZbCPlugr5AQlTggbay8EcdS459PY84LGlpVIJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758885025; c=relaxed/simple;
-	bh=h7WVqumuZ6rtpDNTZvXXkSxCTPj1sdwQ/ezqhU6wNLA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=KGwh63h2JLeNOEscVyGB7qLC9FRK7w3z1THF0xi33frHOoYTJi6Ynk5i9efjq+L7wEbyBUh/Ufe8QNXwRydx+P2FcfyM/9icryjlhhaFj2UJwMDivoEXJPscOOJNgWoUi+k87DGCqL1OV+tncURLsoazKulMzb+gFEUuxCA0PUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=yc/LWSgF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ADHVkpwh; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3FEAFEC0209;
-	Fri, 26 Sep 2025 07:10:23 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 26 Sep 2025 07:10:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758885023;
-	 x=1758971423; bh=qRImFkmPF9+KEGIYvcQCn7PydMZrzs/++uOGJWkLiNs=; b=
-	yc/LWSgFtYGtMEeLfmhIrfr4ItgbBs3CsbThTb3+IgcUmg8jX6rq+qfXKNH9udi/
-	NG+dxggVGhGgf49CsGj4npoweYKoQxZ6rAUmczEYhYneKuIC3yD05GySeN7qAybk
-	C8yG7kNxSHvpTgXEov2OxHXF4+e5JnZtFMLkeUVZ/IvAzFFTHE1TZsv5Zs+mMsr2
-	7AMMQW0N01w2grhi/VojdgzcAtrjALMrsi53dGSo+ZlBG7pNcSEAvxohC4KMEldo
-	UG0jW+QdjwhxQgC22iSNK6dP7jjnhTrSW0qfurP1AUsE7LZfNLSJTz4jEv9F2Nkc
-	dnCj9uYszaZhbaxmGKnmNg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758885023; x=
-	1758971423; bh=qRImFkmPF9+KEGIYvcQCn7PydMZrzs/++uOGJWkLiNs=; b=A
-	DHVkpwhmFgx7ipWNayKfjX9cdMnPjQrF1Le3j8dT9sfgRHaRbU1keRiebrtkPyYT
-	DJUg2vA+kXlL5vJU09XiyR9CWzE01FTTlX522fpwcdqWp/2EtgN/86fjmVXag1M9
-	Xa4/15kxerC1HXEW5Qm1YU4OQMksFCC7/TeJ4yJ7AjcHXg56Fo+aDGzYOxogQKTx
-	DKAjx1jDdz3ewQz0PTRzHigD2VbGc8b2zAe+NaBHmPeDE+m/KiJuCzLW0w18k4++
-	Ea23PSvCzVB3PJSco+8w+P/UBeJrQ+ShE2EUMF7bKsz5zWeYjR77nhvf0lgSCPDj
-	ZFPelHy9lCYf7hJJY6rWw==
-X-ME-Sender: <xms:nnTWaNu1PbmDIPSE8-LO9a9LrbwUyASxcw2jn0t5YMA_Lh_y7lvSeQ>
-    <xme:nnTWaBQEHLxs3B0v6Lf5UqtHXjJ7KSkw3V5npIOHVBbSYtHz4lrX7Wvj7vBKCOfha
-    oyaOfAqg44aMQleh5GZ3624FBpRAvyPGq7F3H7ZQjLfNz_twrJEosk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiledvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhrtg
-    hpthhtohepghhithesrghmugdrtghomhdprhgtphhtthhopehmrghnihhkrghnthgrrdhg
-    uhhnthhuphgrlhhlihesrghmugdrtghomhdprhgtphhtthhopehmihgthhgrlhdrshhimh
-    gvkhesrghmugdrtghomhdprhgtphhtthhopehrrgguhhgvhidrshhhhigrmhdrphgrnhgu
-    vgihsegrmhgurdgtohhmpdhrtghpthhtohepshhhuhgshhhrrghjhihothhirdgurghtth
-    grsegrmhgurdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhgohhuugesrghmugdr
-    tghomhdprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghssegrnhgrlhhoghdrtghomh
-    dprhgtphhtthhopegsihhllhihpghtshgrihesrghsphgvvgguthgvtghhrdgtohhm
-X-ME-Proxy: <xmx:nnTWaINqgrfu7ds06QqsQqcUxBt_YjmHOoEhinvOegFF5lUdNRPpqw>
-    <xmx:nnTWaBlL8qxklIHSjkW0IUkMfI0oGgz_7ThAj22UWK1q0BiPlE_0Lg>
-    <xmx:nnTWaOwdyJUBk7WiJmTHZr4W5vAZzyl1iP_u4dkL7sH42kU1MDhHRw>
-    <xmx:nnTWaCC5LH40aI3Ovwft2K0EFTi-n9pvPxrZonv6iXF3xX9BE_yPyQ>
-    <xmx:n3TWaLpo9s07AFg8N68KeP8JXAiLMPS_hVtNzXWRvosyyZNy0W0PbJnC>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 131A8700065; Fri, 26 Sep 2025 07:10:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758885027; c=relaxed/simple;
+	bh=KrSTaivsd8i5geUp+S3za4RDWwkfaab6BWCnjplvC4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aXXoqdVxm6E/BSzV7YpCSb4dAYawvTgHawxzznfw/lHUnorHDbcSaAiDoOosAEQ/PrAfD16ze+dC3Li3T8VNcAAhZTuSr2TL6cPmirhZbRUR42cN7t2z8rIVgKUUzv1xr4CVKkKejESsLFUEjWdvP2Jzraur88rdn8AVNfxymAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xj/Qhp/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27D8C16AAE;
+	Fri, 26 Sep 2025 11:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758885026;
+	bh=KrSTaivsd8i5geUp+S3za4RDWwkfaab6BWCnjplvC4Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Xj/Qhp/tnzgsUnerwAJ+/vY5DkVhpYa/OS28dD1RQaH8aHNjUjGxLXn85Haqg6CFM
+	 vjqeEmJ73RyQ5HzXWbmlBIjJYAZe7j3YGk5rpvOKBG/y/3nNDPrQm+7ji+DVVsZbDv
+	 EJzPZ7ZKuteO2BmidDv++9dJnE+vxj53LY9arB7REUw5hIxGq3/wRKDlxYj0OxIstj
+	 enRPIGkqw3gbZAwF498XY0GrW1j8wnU5KVll/bQUEKWtlZlHP1TzHJ/eEhzLQqgKj3
+	 bC9HNXd45S1OmNjhxUfUbpl3cv/ngUnRj7GlCZ0ALHvwH/gndsU2xfCLHxyywhQ1wB
+	 tfUw94923oxmg==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Ionut Nechita <ionut_n2001@yahoo.com>,
+ Alex Deucher <alexander.deucher@amd.com>, Kenneth Crudup <kenny@panix.com>,
+ amd-gfx@lists.freedesktop.org
+Subject:
+ [PATCH v1] PM: hibernate: Fix pm_hibernation_mode_is_suspend() build breakage
+Date: Fri, 26 Sep 2025 13:10:22 +0200
+Message-ID: <12746883.O9o76ZdvQC@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ANlaf4aDyzkw
-Date: Fri, 26 Sep 2025 13:09:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Manikanta Guntupalli" <manikanta.guntupalli@amd.com>, git@amd.com,
- "Michal Simek" <michal.simek@amd.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Frank Li" <Frank.Li@nxp.com>, "Rob Herring" <robh@kernel.org>,
- krzk+dt@kernel.org, "Conor Dooley" <conor+dt@kernel.org>,
- =?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- tommaso.merciai.xr@bp.renesas.com, quic_msavaliy@quicinc.com,
- Shyam-sundar.S-k@amd.com, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>,
- "Kees Cook" <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Jarkko Nikula" <jarkko.nikula@linux.intel.com>,
- "Jorge Marques" <jorge.marques@analog.com>,
- "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-hardening@vger.kernel.org
-Cc: radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
- shubhrajyoti.datta@amd.com, manion05gk@gmail.com
-Message-Id: <93704e82-ea7d-45ea-8527-8ce92108eccc@app.fastmail.com>
-In-Reply-To: <20250926105349.2932952-5-manikanta.guntupalli@amd.com>
-References: <20250926105349.2932952-1-manikanta.guntupalli@amd.com>
- <20250926105349.2932952-5-manikanta.guntupalli@amd.com>
-Subject: Re: [PATCH V8 4/5] i3c: master: Add endianness support for i3c_readl_fifo()
- and i3c_writel_fifo()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 26, 2025, at 12:53, Manikanta Guntupalli wrote:
-> Add endianness handling to the FIFO access helpers i3c_readl_fifo() and
-> i3c_writel_fifo(). This ensures correct data transfers on platforms where
-> the FIFO registers are expected to be accessed in either big-endian or
-> little-endian format.
->
-> Update the Synopsys, Cadence, and Renesas I3C master controller drivers to
-> pass the appropriate endianness argument to these helpers.
->
-> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I don't think this is a good interface, based on our discussion
-so far, and I had hoped you'd change it the way I had suggested
-with a separate function for the xi3c driver, so normal drivers
-don't have to worry about the AMD specific quirk.
+Commit 495c8d35035e ("PM: hibernate: Add pm_hibernation_mode_is_suspend()")
+that introduced pm_hibernation_mode_is_suspend() did not define it in
+the case when CONFIG_HIBERNATION is unset, but CONFIG_SUSPEND is set.
 
-I think this should also avoid mentioning "endianess" in the
-changelog and in the code itself, since that would likely
-confuse readers into thinking (as I did in my earlier replies)
-that this is related to using big-endian kernels.
+Subsequent commit 0a6e9e098fcc ("drm/amd: Fix hybrid sleep") made the
+amdgpu driver use that function which led to kernel build breakage in
+the case mentioned above [1].
 
-i3c_readl_fifo()/i3c_writel_fifo() are already portable and
-handle endianess correctly by using the readsl()/writesl()
-functions.
+Address this by using appropriate #ifdeffery aroung the definition of
+pm_hibernation_mode_is_suspend().
 
-    Arnd
+Fixes: 0a6e9e098fcc ("drm/amd: Fix hybrid sleep")
+Reported-by: KernelCI bot <bot@kernelci.org> 
+Closes: https://groups.io/g/kernelci-results/topic/regression_pm_testing/115439919 [1]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ include/linux/suspend.h |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -276,7 +276,6 @@ extern void arch_suspend_enable_irqs(voi
+ 
+ extern int pm_suspend(suspend_state_t state);
+ extern bool sync_on_suspend_enabled;
+-bool pm_hibernation_mode_is_suspend(void);
+ #else /* !CONFIG_SUSPEND */
+ #define suspend_valid_only_mem	NULL
+ 
+@@ -289,7 +288,6 @@ static inline bool pm_suspend_via_firmwa
+ static inline bool pm_resume_via_firmware(void) { return false; }
+ static inline bool pm_suspend_no_platform(void) { return false; }
+ static inline bool pm_suspend_default_s2idle(void) { return false; }
+-static inline bool pm_hibernation_mode_is_suspend(void) { return false; }
+ 
+ static inline void suspend_set_ops(const struct platform_suspend_ops *ops) {}
+ static inline int pm_suspend(suspend_state_t state) { return -ENOSYS; }
+@@ -420,6 +418,12 @@ static inline int hibernate_quiet_exec(i
+ }
+ #endif /* CONFIG_HIBERNATION */
+ 
++#if defined(CONFIG_HIBERNATION) && defined(CONFIG_SUSPEND)
++bool pm_hibernation_mode_is_suspend(void);
++#else
++static inline bool pm_hibernation_mode_is_suspend(void) { return false; }
++#endif
++
+ int arch_resume_nosmt(void);
+ 
+ #ifdef CONFIG_HIBERNATION_SNAPSHOT_DEV
+
+
+
 
