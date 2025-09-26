@@ -1,81 +1,147 @@
-Return-Path: <linux-kernel+bounces-834408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE442BA4A1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:30:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8D5BA4A24
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A61374C67C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:30:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D292A5778
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6972E261573;
-	Fri, 26 Sep 2025 16:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEA92D640E;
+	Fri, 26 Sep 2025 16:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="skDDhUwp"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tr8rd6E9"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2C224DCE9
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FEA214A64
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904196; cv=none; b=O1blKGmfGfvTy1YeTN9RXBSN6LM4qAtV0jRhdnieYLdadkymG4u164CNQUBPIVDCoYmr1jXmlausC/sJ4Diz7OFDAysS5i0I/4P27XgJc9y3IHfxnSofkCVxJDuNMxNlQySlDMEzrkjMVLsdoo+ZZ0yZ1lr6z5m/fQDy2KQj8u4=
+	t=1758904282; cv=none; b=BBMJdpxYd+eEabFpOkAeIkTKamZxEEH5wPNjS4+ySj17L9jUu9YHjG81SYYtKNnEdS0OqK6bjVHv296qe7RyLzpKRlqc+Ho3JGSzUFEpUIfRaluYEEZsU1IPaVVdlzTtyXRIlAGVLG7zhvtvP0N4F0kQbIryYknz1s5h8LFGwNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904196; c=relaxed/simple;
-	bh=pXZMnjw+Sy9OuF5bFWxCBJB/q1PalvTkN3dKPnTWL5s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gMiu5E0Qm24UI0EYt/EhzO7760exVnox8uo1BScFGkAv8nsiFZSf0h2jDkaOTiDKPF5oWp39xaICP4kFM4cYBo3uxPHQW14Li2nFnNPfyPTE5IaoO9YYaUJ5px3EVVzvWe9B36RltEpCh/Y7f0Hovu7pxSVp1kCgO/53xJco1Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=skDDhUwp; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1758904194;
-	bh=pXZMnjw+Sy9OuF5bFWxCBJB/q1PalvTkN3dKPnTWL5s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=skDDhUwpJ28QhFf/DSEnPG5i/j3L4lkVN7HJLxmnX4uQxrTIFaawx6ZJ0RYaqdB8P
-	 TX2qnBt3jCnEEZntTEo9pqbumFSpzucw40GmAk3mt2XUuX0BlDUT7m+kowp6/xsUBs
-	 Vt5Gf6ITs6DFEN4o42ynwJyrLtOXnNVSwUntSpBs=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id C2062402AD; Fri, 26 Sep 2025 09:29:54 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id C0E204028E;
-	Fri, 26 Sep 2025 09:29:54 -0700 (PDT)
-Date: Fri, 26 Sep 2025 09:29:54 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Yang Shi <yang@os.amperecomputing.com>
-cc: muchun.song@linux.dev, osalvador@suse.de, david@redhat.com, 
-    akpm@linux-foundation.org, catalin.marinas@arm.com, will@kernel.org, 
-    carl@os.amperecomputing.com, linux-mm@kvack.org, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: hugetlb: avoid soft lockup when mprotect with
- PROT_MTE
-In-Reply-To: <20250926162034.1785899-1-yang@os.amperecomputing.com>
-Message-ID: <1038c7c7-81d6-f273-6fa1-93eb7206d5ed@gentwo.org>
-References: <20250926162034.1785899-1-yang@os.amperecomputing.com>
+	s=arc-20240116; t=1758904282; c=relaxed/simple;
+	bh=7X7DAE+zbBabsCNjfRvfqvg2INWE+j2cApli2zX/d2E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Hv1d/f54iHcUa3cEUpzlrH+CiPXItScuLZrWSL3BF/LX8eG8hhMs0/7wLOAg/OplGNSyI8PnGx+g2G3EOgdl8CR2+O5MzI24JlUq+z/QOv3kkk9Y/XzX7ozkij3MrgFeTmvcxW4VDRqzCmGN8gzbowGEL+H4gI29sJs14vuAiHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tr8rd6E9; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso3388675a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758904280; x=1759509080; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:reply-to:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AwZ8vbOlyUhKwRHywOdNUWwguAQ2SVVHlBzl21pTQ9U=;
+        b=tr8rd6E9n9WVQz5bvqnbQU2ji4jhMg1Ht5nPI0+/RuXSFCJ/Z0qUar7IpGnWLKHiKJ
+         Tc/BXpZX8SYht6OyrgG60mIMW4E5Yrn0ukzyrYCIKoFoErs/JugLNn0Yo6fQ9XS1tXF7
+         yPhOMRwjgCe66lmBM5s37+AlfmqIzKJgZoMHKJwOmyNqggfoL9eugvuMdrnm05mxx7yw
+         3rjN7qLCa+tE8UrHWemJjBtZSpguQ52BnpfA14B3l2ns0o8iCRGPJZTokGdJ7/gn04Q0
+         7s6WjPfbc3xzigE7HoHjxSxnsbYVfWYxECMqDHJjhFGXSYA5AQ+oUPWLUdGzPC8s4QES
+         41zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758904280; x=1759509080;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:reply-to:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AwZ8vbOlyUhKwRHywOdNUWwguAQ2SVVHlBzl21pTQ9U=;
+        b=KHmMYximQx9yFi7eWuT+94OC6UbGhtCPwwfD8CzPGxhilDeXCOertkyR/UYwoDAESS
+         Sk3/1eewyeR+7K42JMjiXO0o4dqvPlZo7kTIxfZqB8osiknyXNy0C5Ntz4ZasaJmzpRa
+         5vqyjtcMwVz5YMeR5jnt/9L7Qxw6ONqfbbLcpAJvar6/xi2LRvf0aoS74Dh58Ip/g/3/
+         bblqkRSK34NpOkGXbAzoRgqHNzccbe30QcUiHLF8/KWeTOR9V3agGb/5Gs7YgsFzI40N
+         gM1nIM7uwIh/uIQ6uooXOfS+6867JaN+EOYgpJ/irLcv1EpLlWp8U38pezlVNQ78tK/r
+         ECow==
+X-Forwarded-Encrypted: i=1; AJvYcCX8+Z4UEgs3FEOUXunh778vT4CiTT2WXnVIEW626AJeu47MaXZwMb0L/WmeRsMN6v/gZ/7ED5395fZw4AU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQtq5mfVEFXYoaEiGzT7LNupcn6NT+2Oql9f+oIyWel8g/Z+3i
+	y1xXC9bcHkTb7TRFjddQOeeAg8JmUATUOYAcSo0rSUhn6DzYKbCjgt3Jyk28EEYUYdloSDJT/Xh
+	ReGHfng==
+X-Google-Smtp-Source: AGHT+IFySj9OYn2E4SgNIDe+xEiiRQ+ki7OWkDXB6YQkV7vuARDWepbSyLDRR6oOY3K5Xs8YlexYlJX3xDk=
+X-Received: from pjvf7.prod.google.com ([2002:a17:90a:da87:b0:330:49f5:c0a7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4acc:b0:32e:38b0:15f4
+ with SMTP id 98e67ed59e1d1-3342a22bf2emr7709699a91.7.1758904279954; Fri, 26
+ Sep 2025 09:31:19 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 26 Sep 2025 09:31:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
+Message-ID: <20250926163114.2626257-1-seanjc@google.com>
+Subject: [PATCH 0/6] KVM: Avoid a lurking guest_memfd ABI mess
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Ackerley Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 26 Sep 2025, Yang Shi wrote:
+Add a guest_memfd flag, DEFAULT_SHARED, to let userspace explicitly state
+whether the underlying memory should default to private vs. shared.  As-is,
+the default state is implicitly derived from the MMAP flag: guest_memfd
+without MMAP is private, and with MMAP is shared.  That implicit behavior
+is going to create a mess of an ABI once in-place conversion support comes
+along.
 
-> When calling mprotect() with PROT_MTE, kernel will initialize MTE tags
-> for every single page in the affected area. Soft lockup was observed
-> when doing this for large HugeTLB memory area in our customer's workload
-> (~300GB memory):
+If the default state is implicit, then x86 CoCo VMs will end up with defaul=
+t
+state that varies based on whether or not a guest_memfd instance is
+configured for mmap() support.  To avoid breaking guest<=3D>host ABI for Co=
+Co
+VMs when utilizing in-place conversion, i.e. MMAP, userspace would need to
+immediately convert all memory from shared=3D>private.
 
-AFAICT this is a bug fix. The hugetlb path should be doing a
-cond_resched() like the base page code does.
+Ackerley's RFC for in-place conversion fudged around this by adding a flag
+to let userspace set the default to _private_, but that will result in a
+messy and hard to document ABI.  For x86 CoCo VMs, memory would be private
+by default, unless MMAP but not INIT_PRIVATE is specified.  For everything
+else, memory would be shared by default, sort of?  Because without MMAP,
+the memory would be inaccessible, leading to Schr=C3=B6dinger's cat situati=
+on.
 
-It is not MTE specific. If other processing takes a long time in the loop
-(setting up terabyte size mappings for hugetlb for example) then the
-softlockup could also be triggered on non MTE workloads.
+Since odds are very good we'll end up with a flag of some kind, add one now
+(for 6.18) so that the default state is explicit and simple: without
+DEFAULT_SHARED =3D=3D private, with DEFAULT_SHARED =3D=3D shared.
 
-Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
+As a bonus, this allows for adding test coverage that KVM rejects faults to
+private memory.
+
+Ackerley Tng (1):
+  KVM: selftests: Add test coverage for guest_memfd without
+    GUEST_MEMFD_FLAG_MMAP
+
+Sean Christopherson (5):
+  KVM: guest_memfd: Add DEFAULT_SHARED flag, reject user page faults if
+    not set
+  KVM: selftests: Stash the host page size in a global in the
+    guest_memfd test
+  KVM: selftests: Create a new guest_memfd for each testcase
+  KVM: selftests: Add wrappers for mmap() and munmap() to assert success
+  KVM: selftests: Verify that faulting in private guest_memfd memory
+    fails
+
+ Documentation/virt/kvm/api.rst                |  10 +-
+ include/uapi/linux/kvm.h                      |   3 +-
+ .../testing/selftests/kvm/guest_memfd_test.c  | 162 +++++++++++-------
+ .../testing/selftests/kvm/include/kvm_util.h  |  25 +++
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  44 ++---
+ tools/testing/selftests/kvm/mmu_stress_test.c |   5 +-
+ .../selftests/kvm/s390/ucontrol_test.c        |  16 +-
+ .../selftests/kvm/set_memory_region_test.c    |  17 +-
+ virt/kvm/guest_memfd.c                        |   6 +-
+ 9 files changed, 169 insertions(+), 119 deletions(-)
+
+
+base-commit: a6ad54137af92535cfe32e19e5f3bc1bb7dbd383
+--=20
+2.51.0.536.g15c5d4f767-goog
 
 
