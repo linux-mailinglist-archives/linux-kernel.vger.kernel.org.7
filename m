@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-833755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5A7BA2F90
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE47FBA2F99
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13588188AA21
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256E21BC579C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35145299929;
-	Fri, 26 Sep 2025 08:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D472295511;
+	Fri, 26 Sep 2025 08:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HoxS6S1I"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VXb70RI3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01C62749D5
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3517535950
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758875810; cv=none; b=WJByGS0aNReNkCwJxXNhsTqWbDLDlb0KbiL4m6ldfAk0/4GxyXvnJ/oG5D4MZlnmILdC/rRwzLxj0A99aer3u80OP2q3IjgQy+5T0OlDTpVyIGd04HBT1QpOTaHlSsNP6rv2qWFmCI2L9YgglkZCXw9i65XrpU+toykF+6tQpa4=
+	t=1758875878; cv=none; b=uugIX9wStT93JFEjMw/z3a+6jPJ5ExmpIdCe640M3KwRNcx/+sFfC6GPABYBHgk95e93Et8KjUoS32pZnQxXwrVcl8aI19IbuV4UcPVoyyQsqbajgJZ+nbBwlD6WSHUzGgcUKO+pDWH+yiS/q6xJFs3lq37i3ekyTdJqwuVJp9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758875810; c=relaxed/simple;
-	bh=AyoP09dzhKaJvyx2bCcuFsSFwVxCWxPhWMr1szx8ePM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+AycWeUtW2nKo86yGd3SYBKAGbLASoAv76T89LZq74bg830xPk1+IVSZtvKvw9AC98aicgbl3gNDCg1uvW2Jr/X4XCZqqdcMzD25F7tAgdo3sLVUnpxE/dNCdwcOA+hd33RnG+cphNBO42Z1ka9nt73rjRoXTdKyxEo3CAl4/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HoxS6S1I; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=AyoP
-	09dzhKaJvyx2bCcuFsSFwVxCWxPhWMr1szx8ePM=; b=HoxS6S1INt5tx8m8B0H3
-	e03M01Bmsxi6wX/MICeyzunPDX+81v8VyDYFdutvUQe4UXpFAFQSJIz+MzFl0+gu
-	DMRfbR0pfFYjZiU5ImKBKCuGnHX8u/BNPaBZOsg11MLRLEXbrXHwxXLesQFfBeG7
-	06aNby6E2riBARQKZB/M9w8KiTv+TIxep9mpnV7h3QUXqp6XFdKuLegNNIOQQxEX
-	EdIGYqfAgS0xWYFXLvbuVKbs5w4jdIpkrLdhdpaAV93P/v8sMhz/0WFisYxuGeO4
-	2xuzm8oBPx+qwR9yKNFqRQS6wrjlSe49+cQenV+iS6Mmk1bysP3j3TYKj1YoYf4Z
-	sg==
-Received: (qmail 2185253 invoked from network); 26 Sep 2025 10:36:46 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Sep 2025 10:36:46 +0200
-X-UD-Smtp-Session: l3s3148p1@1U2mL7A/hLUgAwDPXwQHAL/S9V79e5yL
-Date: Fri, 26 Sep 2025 10:36:46 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Sven Eckelmann <sven@narfation.org>
-Cc: Jonas Jelonek <jelonek.jonas@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Harshal Gohel <hg@simonwunderlich.de>,
-	Simon Wunderlich <sw@simonwunderlich.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: Re: [PATCH i2c-host v6] i2c: rtl9300: Implement I2C block read and
- write
-Message-ID: <aNZQnlUML0jIhXIM@shikoro>
-References: <20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org>
- <f62668cb-ad01-495e-86c3-82f92fa5ad90@gmail.com>
- <1838669.VLH7GnMWUR@ripper>
+	s=arc-20240116; t=1758875878; c=relaxed/simple;
+	bh=l7ccryhsdYTnF0StFj5adAoUTTZjM7CJm2tdkS/IsoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qu/PwnvcGoseIkLzBJLa6dLL7ZKpAZWCifSBfJbD+4wuxGpUO4VN0Wy7StDBPtH8aUTKTiz6+HbtUL/LWMu8CIsAHaL59zKRqb7wcTZGUOMd1Rpnf1d2URxiQQshy9aJs89d37TCUMrVOvGNxj9rQ1+H0EDU3oW1DpaaD7sP0VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VXb70RI3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758875876;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EWIS+M2+D+NxPOxD8BZpU+DFrxLryhzIK4I38vFOSLM=;
+	b=VXb70RI36PXOLeg1jtM1fOYkOrPVttBOweR+HxRAxQb/DTNmXka2XObvYzuVBmhy6C6T2d
+	ZdWizKVx2GmkTQP7VnDYb71B51m25CjoyK26TeOzNgnesdx6rVNSIFJT5ri7pDjUre4IWr
+	I/bwg2fFsG1WLqJXIk1tDyIRGWYVHkE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-dnU09gQ1OOuZtWSh01RzNA-1; Fri, 26 Sep 2025 04:37:54 -0400
+X-MC-Unique: dnU09gQ1OOuZtWSh01RzNA-1
+X-Mimecast-MFC-AGG-ID: dnU09gQ1OOuZtWSh01RzNA_1758875874
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-332560b7171so2350379a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:37:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758875873; x=1759480673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EWIS+M2+D+NxPOxD8BZpU+DFrxLryhzIK4I38vFOSLM=;
+        b=fFGpzKzgyKegcsO3EEsJk0clQligOEIFeWLjKCTHBwt8gN4pmunxouUXALTLmyhqIo
+         UX0vQ4iEAaEcAbf0+RJcS5hK9KqoCDGZa5+nvJM1UWUJUFGD0gQUEi5e8Xe6Xy3ElqAw
+         aTv4N5GhZ0rl5tYYjEVq9thN62jfO1WK+997UjpwEb3y90rrnGf2gqNaJsRmqBaKlthJ
+         tLn2P9+e0NVsyI6AQ0fs7G/pVI3sHTHSzpD/U/YfwiQO4qpr8m7dE7KtBsE1R6fTqG9f
+         hd5tc03Xcf9iRDh12XI1KQ+c/c72wA8wpOwFOhfPVXtT0W7OahypI4qJDwqWlU6N0pYK
+         He6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJddDvvO2bqvYecFlIyRK2qOpLYMYuCK1vCEYid4mkz9IatOCWxIHggc+RDBrYV01B7LrJ0GiLWVL2QqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6eflQqofQtw0jtnfN/0lVKyP5qExSrdyf5pLiW1pMFFarZk/l
+	IOBs+7W1G6evupQW4zFZ6l4aNcWm+Dc3FVnJFWwh8xrk1QAbn/CxQwrhWznl1goJIg+/VPjO2cK
+	xRlhb0GWp6VsNLr1m9ineoHfI5SNQwF2FiUCYj+Iuf1ZNLFlBHcNsuhtBDnt1JghpDS0f20Hbdo
+	IYi1LF+szPSPWuck13ZsLeP1t1oz5WSuS8ye7Q0400
+X-Gm-Gg: ASbGncsc/nk9U5vTXMsBrOQI0wBJoeVGRdgzuzXZv/gawnk6l/1stm1wFqj+i4PhQP8
+	c6Inz/SmmUFsTWaZ3OeWc4N3gybIUPhupcOwf5T98BTHHiZd+8H3HItNSRwfHj5bL7trjwSkIAi
+	wE/y7+dJNZqrgGJjDFSA==
+X-Received: by 2002:a17:90b:1d12:b0:32d:e309:8d76 with SMTP id 98e67ed59e1d1-33455ee3d23mr5868328a91.10.1758875873468;
+        Fri, 26 Sep 2025 01:37:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNdP3jcqkB/SoDVWTNElXZF3uJPrDyZBO4hpIYz3HUA2RYGm5n9SzDuM3YCq9dzEN8BUadAUt14kF1KaNWMbQ=
+X-Received: by 2002:a17:90b:1d12:b0:32d:e309:8d76 with SMTP id
+ 98e67ed59e1d1-33455ee3d23mr5868294a91.10.1758875873078; Fri, 26 Sep 2025
+ 01:37:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bNfsYQOh5oOXa3OE"
-Content-Disposition: inline
-In-Reply-To: <1838669.VLH7GnMWUR@ripper>
-
-
---bNfsYQOh5oOXa3OE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250925091335.1964283-1-eperezma@redhat.com> <20250925091335.1964283-6-eperezma@redhat.com>
+ <CACGkMEvYw4=TPqQ=R51vYdgE786MWyPP0UcApiDhiCKWMQXR7Q@mail.gmail.com> <CAJaqyWcZGE0SD6Eed2WhiskYaSR0pSm3dMYf2j4TyfbZe3Qmrg@mail.gmail.com>
+In-Reply-To: <CAJaqyWcZGE0SD6Eed2WhiskYaSR0pSm3dMYf2j4TyfbZe3Qmrg@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 26 Sep 2025 16:37:40 +0800
+X-Gm-Features: AS18NWDaBIUtxrPONpil5WxsdzbxQccrHy2wvcmJyDtgutPrSWuat8Z7z0Ymi_4
+Message-ID: <CACGkMEu6BcPfzuPFJ8REO6WGKmH+8n6S7c0Gjjzi+CP-q5kHQQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] vduse: add vq group asid support
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
+	linux-kernel@vger.kernel.org, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>, 
+	virtualization@lists.linux.dev, Stefano Garzarella <sgarzare@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 10:34:40AM +0200, Sven Eckelmann wrote:
-> On Friday, 26 September 2025 10:16:19 CEST Jonas Jelonek wrote:
-> > Thanks for taking care of this quickly.
-> > Maybe we should include another patch here which fixes the committed ve=
-rsion
-> > of my patch, i.e. removing I2C_FUNC_SMBUS_I2C_BLOCK, with CC to stable.=
- Since
-> > the patch was also merged to stable, it is somewhat broken there now.
->=20
-> Yes, sounds good. Will submit it [1] tomorrow after the ~24h dwell time (=
-if no=20
-> one else requests anything different).
+On Fri, Sep 26, 2025 at 4:17=E2=80=AFPM Eugenio Perez Martin
+<eperezma@redhat.com> wrote:
+>
+> On Fri, Sep 26, 2025 at 9:58=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
+wrote:
+> >
+> > On Thu, Sep 25, 2025 at 5:14=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@re=
+dhat.com> wrote:
+> > >
+> > > Add support for assigning Address Space Identifiers (ASIDs) to each V=
+Q
+> > > group.  This enables mapping each group into a distinct memory space.
+> > >
+> > > Now that the driver can change ASID in the middle of operation, the
+> > > domain that each vq address point is also protected by domain_lock.
+> > >
+> > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > > ---
+> > > v4:
 
-I am getting a little confused already, so please make sure I know which
-patches to apply where in what order.
+[...]
 
+> > >   * Structure used by read(2) on /dev/vduse/$NAME.
+> > > @@ -334,6 +376,9 @@ struct vduse_dev_request {
+> > >                 struct vduse_vq_state vq_state;
+> > >                 struct vduse_dev_status s;
+> > >                 struct vduse_iova_range iova;
+> > > +               /* Following members only if vduse api version >=3D 1=
+ */;
+> >
+> > This comment is confusing since padding exists before.
+> >
+>
+> Ok that's totally right. Should it say "following members but padding"?
 
---bNfsYQOh5oOXa3OE
-Content-Type: application/pgp-signature; name="signature.asc"
+That's fine.
 
------BEGIN PGP SIGNATURE-----
+Thanks
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjWUJ4ACgkQFA3kzBSg
-KbYfpg/9FFUP/XnZDYRIzij6nnuEkFAW7LWuuHstXrNzef3o/ZvN+RyRmHw0/9+9
-PsoGud2DG7R7T7cz1rf4Jprue+YV/WXw2peeCjOlASGG/gL5Osoy2L9qGUVHYhJ5
-uGjkCViXShKWBE3IxCQ6JtmMQ81o8ksR4iqK7Xd6cl8eWyIgmiKUMZlWbame0sFX
-a4+BqCkAib/LWd7oeBtw2Zg7/p2D6QQ0DlVxifbypXrRVlC3TgpCbwL/v7GaftY8
-P9F8i0sdIhzGhsQ+7+u1ArilSoxqPl/wKdJN1+9c1Z+5lztAibvG6fe55OtvYh28
-27zJbzxwfC/9wQ0XwJeE9pABHc0tv1c3nW0KkIrX9HFtsbDTNvQFyZRXOj45XUlC
-ner/wQRGVX1hwAoSFcWk0utJbE0Nq3jr3XoFccGQbw7RRrQsXEzPK4fiMe7jiasR
-byZUsv62I2OqcA+1hzd+9ibd+q7UEAngFV5d9i1AcmJU/GntQZPXDlqTaNT8lfBk
-nE3kVgAMuFe4K+HBjTaQBvzPlAvkF5MxQekAHQCVtuJNKQAm5HNR35dUfes8D/Zw
-9ag+vhVNmhhD2ogHsMfP8W8mkq80UiUBwMwj0x54qv+D+RU1LJbsKkymmezj1pjZ
-y1D2AasPc5N1qFgaP8JKzEip3xNeC//IGHqtFrgg3lqc2NUAXGs=
-=c21p
------END PGP SIGNATURE-----
-
---bNfsYQOh5oOXa3OE--
 
