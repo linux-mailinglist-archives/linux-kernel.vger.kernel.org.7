@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-834165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40138BA4169
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:18:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B959BA4176
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AD4917A3EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA9A33A39F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A944D1C3BFC;
-	Fri, 26 Sep 2025 14:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510BE1B87F0;
+	Fri, 26 Sep 2025 14:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1uB84gY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MR9VgGgM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2A6136E37
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E2E34BA4D;
+	Fri, 26 Sep 2025 14:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896294; cv=none; b=Lar/3z/BlxzFhdFx2c6chCa9HT/UdyopmCdIgCxO9NrUSCa6dnwXI1A9gHD4rDUjJbq0xxUmS2ZY4eNO7rjHnlxmE8t7mfiVk2zunIBP7uaiE3IYNAPAVLvLhB9eVvpEmXbyEW2T6ZkG1cm04TprBzwOhI4zG0uZkFwKKqW5ArE=
+	t=1758896344; cv=none; b=AMjjZwSbc7t6JBwL4y6DQzqgPfEliRCmM0lAp6k52Nk8EsdUqsOsb4sx2nYYS8NtEM0/U9AZ9vkWK3gM2ImQqVb5xHAUFSB1dsQ4UWyieiwzXmGK7FuEzwcLmyzLRu94cMALmc1tI6dvAxOJgAgjn2Yz149T3o6XTUVltc48YqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896294; c=relaxed/simple;
-	bh=ovRK5c7wZT8POELugcGy2OQZLq61t1b/lN/zUBC5q+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tRDticZVD4+LqGYqFEHGQ6+1HTsxIcKc1nLltji8J52lO1xhOlITVaLS7XSafnk3bf3lLdQesBawkqbF3IPBmqDrKbYE0+kXd286YWW94o12lSZzothWUjCyrJdsiGyDtjxmF8YQ4iJyTdOjgkaio37eqYcOJkWM3QrRVc/ucLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1uB84gY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE27EC116B1
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:18:13 +0000 (UTC)
+	s=arc-20240116; t=1758896344; c=relaxed/simple;
+	bh=n/Im3YAEhZ0ns6j5YoTZc/FyFFGFx/x0pD4YYo08oX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sJlaVnUORKgFOjJBlnh/zr5MTajz7ZLDmUwdvAEaIWBVz5/Sr4daBwuYFPIbiz1fHbgvRUduoWex7B+0QwKXg3ryrDjjKRw80OSnNPw8+xcKs2LkCX4ndPE0fb46oQuADHYhKUJ+caUTw10IdIjlF4q8mKpYdZPmXK/TfEEdUoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MR9VgGgM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2320FC4CEF4;
+	Fri, 26 Sep 2025 14:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758896293;
-	bh=ovRK5c7wZT8POELugcGy2OQZLq61t1b/lN/zUBC5q+I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=q1uB84gYsGTyrhgMURnnoz/CFNt2sCxD4dWKUs3bJOVFnrYZ3TaIx9Rkn3j/Mg2M1
-	 H50v2Na3Xzu2hEnVjEvrkf/ffT3I11EsoXUIS7MT+GufDf4my3ukfT4pbWN+oLZdwC
-	 8P3YSgRwGDR9cjhLdY49zuVBoNQw4GgEwo5VI7uJ87stnyf2Feyfg/1vV0EEF000AD
-	 efxUpkEIC2xgVKffpnlbAgD+8L8M78MLG7pOScwL3BrewpwZekvWWzp4lTIWo3Nvkd
-	 1Irkaoim6AThnLjYOAgLN9OQ+bhDyTT3936Wudh3I6Fv/YsVXDoM56SqaAwdceJf7n
-	 hfBL4Bdf/esEg==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6228de280a4so4129721a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:18:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWm3hA4va6n+J9Jcng/JzbMwU/cDgwy0oJglwYc/vO1L6/+QpntvtNNEjJ9ZmMO/y5iwwH3Mb+nNaZci1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytOS17SLGFFM6oo6W8rSxz4shtScPm8K2Ums4yVzlosptU9a+H
-	PK3caBoJpT5utsii/VQ8QPN4W6HBgRR/o8nDr7vYL3aPyLLz6lZVoFkhh492r+lTD9VCT9/5wnn
-	r81oP/QBRlmrqCblZ05Izf0y0ePKPaQ==
-X-Google-Smtp-Source: AGHT+IE5CRm41wAWa2CrClw2VSy83ReWu352foMXpDkXsta+N2WvoCGKuTDsi9qX3wkbts1/ms47yyeQSn9EBlyrs5E=
-X-Received: by 2002:aa7:da45:0:b0:62f:97ab:6062 with SMTP id
- 4fb4d7f45d1cf-6349fa942c5mr5046024a12.32.1758896292321; Fri, 26 Sep 2025
- 07:18:12 -0700 (PDT)
+	s=k20201202; t=1758896344;
+	bh=n/Im3YAEhZ0ns6j5YoTZc/FyFFGFx/x0pD4YYo08oX4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MR9VgGgMy0PQYez/PGalaBjbXuYhNjpIWUS16H49KjhRyi/O3fvGPOp1wy2FVmelw
+	 ztmyRSbkmJk5+XcqG8NCkx8g2ikHvt2x0IDiFRWP173tVkY5bUJsok9V0A6lfENaLz
+	 IbyiFrq7ZLCXfMUYxundKBRt6LTjsxhyeTfZj9jjxDHTRoKWH60+w5QCyAzj5WQy36
+	 a5QTKMuiDIGBc1s3dXRLRsStMkVpBw63QZoy5FBMtZfxzNcVvWeN+2BW1DXXpmWOuG
+	 IwDHUZkI/q1at+K8Nl6QL512WeNivNInMbqlX2vWeQQtQaAK8vkbmg/wiCrOJB+iEG
+	 j4P8Y0/jRtTUA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL 00/12 for v6.18] vfs 6.18
+Date: Fri, 26 Sep 2025 16:18:54 +0200
+Message-ID: <20250926-vfs-618-e880cf3b910f@brauner>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAL_JsqJMibSgsEFeUvHswVy6zsHMn7ZXkpbhch06oQxPY9NocQ@mail.gmail.com>
- <20250925191520.GA2175949@bhelgaas>
-In-Reply-To: <20250925191520.GA2175949@bhelgaas>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 26 Sep 2025 09:18:00 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq++S5C+9xFsXBJyaRfS5uO_2c+VtCMKJfRg2_ERHyRAgQ@mail.gmail.com>
-X-Gm-Features: AS18NWAk7P-VFFKYhli2Rr8XOPLqBnC-mvDYbm-Fwop3vyyqN_Q7TWJokqE9yg8
-Message-ID: <CAL_Jsq++S5C+9xFsXBJyaRfS5uO_2c+VtCMKJfRg2_ERHyRAgQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3 v2] PCI: s32g: Add initial PCIe support (RC)
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, chester62515@gmail.com, mbrugger@suse.com, 
-	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, bhelgaas@google.com, 
-	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	mani@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com, 
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	cassel@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3431; i=brauner@kernel.org; h=from:subject:message-id; bh=n/Im3YAEhZ0ns6j5YoTZc/FyFFGFx/x0pD4YYo08oX4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRcW3B+jSdb3IyNU6X/uXF4fF90941RZV9Mw+FvhiY3n oS/M1u1s6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiV+YzMjwNfnK/8FObmsfu p1XJflEm8atO98/ZslLr/EvRmQ8b1vcx/DP6vd/aZd8nv5O8jIxFhWnBPEVaryeuKHbOdDj4m29 yDhsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 2:15=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> On Mon, Sep 22, 2025 at 09:52:21AM -0500, Rob Herring wrote:
-> > On Fri, Sep 19, 2025 at 10:58=E2=80=AFAM Vincent Guittot
-> > > Add initial support of the PCIe controller for S32G Soc family. Only
-> > > host mode is supported.
->
-> > > +++ b/drivers/pci/controller/dwc/Kconfig
-> > > @@ -255,6 +255,17 @@ config PCIE_TEGRA194_EP
-> > >           in order to enable device-specific features PCIE_TEGRA194_E=
-P must be
-> > >           selected. This uses the DesignWare core.
-> > >
-> > > +config PCIE_S32G
-> > > +       bool "NXP S32G PCIe controller (host mode)"
-> > > +       depends on ARCH_S32 || (OF && COMPILE_TEST)
-> >
-> > Why the OF dependency? All the DT API should be available with !CONFIG_=
-OF.
->
-> We have lots of similar OF dependencies.  Do we really want it to be
-> possible to build a non-working driver in the !COMPILE_TEST case?
+Hey Linus,
 
-We do. IMO, they should all be removed. The only real purpose it
-serves is hiding drivers on non-OF architectures. But the whole point
-of COMPILE_TEST is to *not* hide things. (CONFIG_IOMEM dependencies
-are similar and really only hide drivers on UML.)
+This is the batch of pull requests for the v6.18 merge window!
 
->
-> Maybe we should retain the OF dependency but only for !COMPILE_TEST,
-> like this:
->
->   config PCIE_S32G
->          depends on (ARCH_S32 && OF) || COMPILE_TEST
+This was a pretty usual cycle. Not light, not particularly heavy.
 
-That's completely redundant because ARCH_S32 is only enabled on ARM
-which selects OF.
+There are a few minor filesystem specific changes such as afs and pidfs
+but nothing that's really worth mentioning. Same goes for iomap and
+rust. There are some changes around clone3() and copy_process() that
+lead to some cleanups.
 
-Rob
+There's some workqueue chagnes that affect all of fs but it's not all
+that exciting and we don't have to care once all the cleanup is done and
+the semantics for per-cpu and unbounded workqueues are simplified and
+clarified.
+
+There's a pretty interesting writeback series by Jan Kara that fixes a
+nasty issue causing lockups reported by users when a systemd unit
+reading lots of files from a filesystem mounted with the lazytime mount
+option exits.
+
+With the lazytime mount option enabled we can be switching many dirty
+inodes on cgroup exit to the parent cgroup. The numbers observed in
+practice when a systemd slice of a large cron job exits can easily reach
+hundreds of thousands or millions.
+
+The overall time complexity of switching all the inodes to the correct
+wb is quadratic leading to workers being pegged for hours consuming 100%
+of the CPU and switching inodes to the parent wb.
+
+That issue should be gone.
+
+We also have a series that shrinks struct inode by 16 bytes. This is
+really something I care about because struct inode in contrast to struct
+file and struct dentry both of which are meticulously clean by now (I
+mean, it could alwasy be better, but you know...) struct inode is still
+a giant dumping ground where everyone is made to pay for features that
+only 3 filesystems actually end up using. First step, I've moved fscrpt
+and fsverity pointers out of struct inode and into the individual
+filesystems that care about this. Hopefully more to come in that area.
+
+There's also some preliminary cleanup related to the inode lifetime
+rework that is currently under way leading to less open-coded accesses
+to internal inode members and some simplifications for iput_final().
+
+Last but not least there's a bunch of namespace related rework this cycle.
+This specifically also addresses a complaint you had a few weeks back
+about ns_alloc_inum(). That's now completely gone and so is the
+special-casing of the init network namespace initialization.
+
+Initialization, reference counting, and cleanup are now unified and
+statically derived from the namespace type allowing the compiler to
+catch obvious bugs.
+
+The namespace iterator infrastructure I did for the mount namespace some
+time back is now extended and generalized to cover all other namespace
+types. As a first step this allows the implemenation of namespace file
+handles.
+
+As with pidfs file handles, namespace file handles are exhaustive,
+meaning it is not required to actually hold a reference to nsfs to be
+able to decode aka open_by_handle_at() a namespace file handle. It has
+the same advantage as pidfs file handles have. It's possible to reliably
+and for the lifetime of the system refer to a namespace without pinning
+any resources and to compare them trivially.
+
+The namespace file handle layout is exposed as uapi and has a stable and
+extensible format. The stable format means that userspace may construct
+its own namespace file handles without going through name_to_handle_at().
+
+Thanks!
+Christian
 
