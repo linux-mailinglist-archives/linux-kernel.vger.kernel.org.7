@@ -1,199 +1,129 @@
-Return-Path: <linux-kernel+bounces-834451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86F0BA4B88
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:55:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA16BA4B97
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA9B4A55AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AC6316E646
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888DF3093BF;
-	Fri, 26 Sep 2025 16:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAA4308F37;
+	Fri, 26 Sep 2025 16:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNv6s0I1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CoWTEHTR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B917C1D86DC;
-	Fri, 26 Sep 2025 16:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7411C1E51FA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758905739; cv=none; b=hu2SRGCwICcxu7lk9j1P2J8/lx5m2b8koqF/kt8W2NTxkm3pkRJhaLoulxegUtuiy+yCNCeb63pmUhj+iTGxfHFqA1vrKDHT4HddZnArR6i63gj9Vvu0UkxnlMCJ6j4nmjPWX94VVzFGcgqwoIoSXjUKHalDq5uEfLTJn7vCAEo=
+	t=1758905795; cv=none; b=c1asUdmlchnCuMfelcVxoBErGFmLQN9v1Xuk8gs1M04jj4zDO4WNM+PCvnJeTlDmyKvsKHxP2MRbbjzs6AlNuC7cg84L9sr6GiAr9ah/uVKtYhIt+8E2VGK6CCOFfE2176dllhOZ5bxy6WQJ80MdfrNeQFl0y4+j4dzCa2Y3kNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758905739; c=relaxed/simple;
-	bh=pI9degLf/+q59D0fv8fpQNooxIH3uWVgpJc8N6uXbW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Po7lprEah+KxXlbgw9nM1mXcz8PMPfo+4us3M7B2cY9YKS/asZsZBkZa1qz/RbMJ3nemydxOLLmhTlIlh8qfNS9g+KFUlgdaMzn8/mPd2V4nmjMrO3vrTYSb7jAC9rhisO6O1kxa/gMulD5CkglEZvUsT2G25dChWxYGztrWbnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNv6s0I1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC4FC4CEF4;
-	Fri, 26 Sep 2025 16:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758905739;
-	bh=pI9degLf/+q59D0fv8fpQNooxIH3uWVgpJc8N6uXbW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CNv6s0I15gC3nUFJYvTIXlSI1AxJD9q0u/28WFjydG4s3aEbNDQM3K3dEAdRr8Qla
-	 PGTHbo6NItVKL1HdEqHUpcH0AX5RTvpjlQupbL2ZqDH1NiMdE+fh2d+9FSmAl0ZZmb
-	 AHX7OKP3LK0R3zxOZBgNVoeso3oOI93r0/q/4mjd+wZK/74VLJHj4oYA/VOhmzqrqC
-	 cDUbjat38PeRVT0f5K/x+DemPmO3DWfckHjIFMoZvG9LsOYPlXb8pb2ez9so2nc+B0
-	 PYoPqFpKOQddrXrRA8wlElbjRTHoCZ4MS/Pzh7EfSjgZQyG4VkyQTHRp+RRLhdg45t
-	 iB4QM4Gva7RMQ==
-Date: Fri, 26 Sep 2025 17:55:32 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
-Subject: Re: [PATCH v3 07/12] dt-bindings: media: Add usb-camera-module
-Message-ID: <20250926-mute-boil-e75839753526@spud>
-References: <20250926-uvc-orientation-v3-0-6dc2fa5b4220@chromium.org>
- <20250926-uvc-orientation-v3-7-6dc2fa5b4220@chromium.org>
+	s=arc-20240116; t=1758905795; c=relaxed/simple;
+	bh=pXbsgR7Ss1aZW3LlfLUf8FaVnZ9Gf2yLcMLB47EnsOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JFNeaeXn2bwPbTnKAtzyHh6/vo8j5CDpgEv3WB37quNHTIzk8DBggHDxEgr2K9P6ItZKSyuUTRg6dWi75m8gOUvzH3yEHfWr7PJ2jzNRKA70bBPnKT0K6FeOdkJgCreIXFqTOm0Qq4uI6j/wh3wqz1Ce25oomXFkyUMbeR6ty5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CoWTEHTR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758905793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pXbsgR7Ss1aZW3LlfLUf8FaVnZ9Gf2yLcMLB47EnsOc=;
+	b=CoWTEHTRcUr2vMLRYOgll24MCESPKgM8YVcuHG9vO4n8ybwBQdad2WOyTL1s8zgs8CEJB7
+	dDdb8fbUXISwP1V3+6VltuYIkqZQ65Wt0bKsQgfBk0F02MOky+7aGE+o+goREUyQFaGMq/
+	uAugh4RoT+k0yyiIakXVFC+fwU3Os3I=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-92-71Lb2P2KOxKshd8aqdnRdA-1; Fri, 26 Sep 2025 12:56:32 -0400
+X-MC-Unique: 71Lb2P2KOxKshd8aqdnRdA-1
+X-Mimecast-MFC-AGG-ID: 71Lb2P2KOxKshd8aqdnRdA_1758905791
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so2276778a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:56:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758905791; x=1759510591;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pXbsgR7Ss1aZW3LlfLUf8FaVnZ9Gf2yLcMLB47EnsOc=;
+        b=aANHWcsxzo3/22AF9G+JjiRZsc/UsLQZ0bSQRgxLp7WJ5dEk1B7HZfzNnjbxa/oBgu
+         w1IXqw8i9fkwB9hQOJX4Joue7i9mb19kZIfcv4sW15RT+DOIw6hdOMIu1+lua97uFp5f
+         r4gf+nEe/gwbPqAw4vEeqfc9P2VnWV/xqceuoRPnwOliz2iP57fpeeuJEQrp8jaoTa1h
+         kM5lvS36vO29dcv8dYUBUrMogJcW73kmdemjTF3VHZ6ywkjTANvBTaUXmvkpHYmP85Tk
+         dtUlGluVXTWkrFMX6vXiItvniXmN59M8emvCXvJ735wIhwo0YGJMOZPD4jzp6VkIyZam
+         q90g==
+X-Forwarded-Encrypted: i=1; AJvYcCXO2BBI/TmDY7dxNGiO+pLPyTHnefNkL0lQyJpieNFvbMCOsJHNWDneajuhLmnq1cHijbPm5VhprkEyrlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgMj7IiyvHztR4rbfQXrkMzgq50ui+8WK5s/pdhzL3Qaq8nqsj
+	5g6O6CByvHH0LAt38R33pcXaXTZr2hsOdgAUqR9tWdRRx64F1b+wuJPUnTP4MyowfUmJjOfNZvM
+	HXoX2+c5FwWrmxdAVULS2jOIvPom7SXMpqUv8s8xD/IBe7IC2oo6ly4uXM5EUgdYvitEJySLKQb
+	cacxr0532KwQT8+/lcfIcP9fVhY/iJHs7dKMpGFY3a
+X-Gm-Gg: ASbGnct42qzqwpJdEX/7DbKZ05S8p9BNvbdeQA+5tBNWcSs2riWLgHUKYCDf0TG9ZXc
+	m8KLSbaUC4Z9hDpkouqZc6gD/Km4YlR+KJhwP5He0bDNN4hkzxrwLaLFUc+9OR9VrTWSW/E3stn
+	mlfXZQjN65qtaTJqk8
+X-Received: by 2002:a17:90b:1c8e:b0:330:6d2f:1b5d with SMTP id 98e67ed59e1d1-3342a2e3a0amr9010754a91.26.1758905790892;
+        Fri, 26 Sep 2025 09:56:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHe/T2nb02ygPzWQlJc91OzCWfWy7tzKbeCqK0AzZtfTw4rJhgRJgzOCPPd+wuatdh/bS3alm4U9h9urtacQQ4=
+X-Received: by 2002:a17:90b:1c8e:b0:330:6d2f:1b5d with SMTP id
+ 98e67ed59e1d1-3342a2e3a0amr9010727a91.26.1758905790446; Fri, 26 Sep 2025
+ 09:56:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dvlxf+F9Nk0RUTPP"
-Content-Disposition: inline
-In-Reply-To: <20250926-uvc-orientation-v3-7-6dc2fa5b4220@chromium.org>
+References: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com> <wcts7brlugr337mcdfbrz5vkhvjikcaql3pdzgke5ahuuut37v@mgcqyo2umu7w>
+In-Reply-To: <wcts7brlugr337mcdfbrz5vkhvjikcaql3pdzgke5ahuuut37v@mgcqyo2umu7w>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Fri, 26 Sep 2025 18:56:19 +0200
+X-Gm-Features: AS18NWDruDib3lxkmBnMwisbhI6jtN_YtNKGNRjNW1-ckH59RRm0Bu1PSqLse0I
+Message-ID: <CAGxU2F6pZ7Bp53M3fTpSGDQYnrfxrttQc5bDmQLQX0cseW2A_Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 0/9] vsock: add namespace support to vhost-vsock
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Bryan Tan <bryan-bt.tan@broadcom.com>, 
+	Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, berrange@redhat.com, 
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 26 Sept 2025 at 15:53, Stefano Garzarella <sgarzare@redhat.com> wrote:
+>
+> Hi Bobby,
+>
+> On Tue, Sep 16, 2025 at 04:43:44PM -0700, Bobby Eshleman wrote:
+> >This series adds namespace support to vhost-vsock and loopback. It does
+> >not add namespaces to any of the other guest transports (virtio-vsock,
+> >hyperv, or vmci).
+>
+> Thanks for this new series and the patience!
+> I've been a bit messed up after KVM Forum between personal stuff and
+> other things. I'm starting to review and test today, so between this
+> afternoon and Monday I hope to send you all my comments.
 
---dvlxf+F9Nk0RUTPP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Okay, I reviewed most of them (I'll do the selftest patches on Monday)
+and I think we are near :-)
 
-On Fri, Sep 26, 2025 at 01:11:31PM +0000, Ricardo Ribalda wrote:
-> For fixed cameras modules the OS needs to know where they are mounted.
-> This information is used to determine if images need to be rotated or
-> not.
->=20
-> ACPI has a property for this purpose, which is parsed by
-> acpi_get_physical_device_location():
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration/Dev=
-ice_Configuration.html#pld-physical-location-of-device
->=20
-> In DT we have similar properties for video-interface-devices called
-> orientation and rotation:
-> Documentation/devicetree/bindings/media/video-interface-devices.yaml
->=20
-> Add a new schema that combines usb/usb-device.yaml and
-> media/video-interface-devices.yaml
->=20
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  .../bindings/media/usb-camera-module.yaml          | 46 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 47 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/media/usb-camera-module.ya=
-ml b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e4ad6f557b9151751522e49b7=
-2ae6584deb0c7ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/usb-camera-module.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: USB Camera Module
-> +
-> +maintainers:
-> +  - Ricardo Ribalda <ribalda@chromium.org>
-> +
-> +description: |
-> +  This schema allows for annotating auxiliary information for fixed came=
-ra
-> +  modules. This information enables the system to determine if incoming =
-frames
-> +  require rotation, mirroring, or other transformations. It also describ=
-es the
-> +  module's relationship with other hardware elements, such as flash LEDs=
- or
-> +  Voice Coil Motors (VCMs).
-> +
-> +allOf:
-> +  - $ref: /schemas/usb/usb-device.yaml#
-> +  - $ref: /schemas/media/video-interface-devices.yaml#
-> +
-> +properties:
-> +  reg:
-> +    maxItems: 1
-> +
+Just a general suggestion, please spend more time on commit description.
+All of them should explain better the reasoning behind. This it will
+simplify the review, but also future debug.
 
-What actually causes this schema to be applied? Did I miss it getting
-included somewhere?
+Thanks and have a nice weekend!
+Stefano
 
-> +required:
-> +  - reg
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    usb@11270000 {
-> +        reg =3D <0x11270000 0x1000>;
-> +        interrupts =3D <0x0 0x4e 0x0>;
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        device@1 {
-> +            compatible =3D "usb123,4567";
-> +            reg =3D <2>;
-> +            orientation =3D <0>;
-> +            rotation =3D <90>;
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ee8cb2db483f6a5e96b62b6f2edd05b1427b69f5..1503502a3aed2625e8ff48845=
-6ccd7305cc74ba7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -26258,6 +26258,7 @@ L:	linux-media@vger.kernel.org
->  S:	Maintained
->  W:	http://www.ideasonboard.org/uvc/
->  T:	git git://linuxtv.org/media.git
-> +F:	Documentation/devicetree/bindings/media/usb-camera-module.yaml
->  F:	Documentation/userspace-api/media/drivers/uvcvideo.rst
->  F:	Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
->  F:	Documentation/userspace-api/media/v4l/metafmt-uvc.rst
->=20
-> --=20
-> 2.51.0.536.g15c5d4f767-goog
->=20
-
---dvlxf+F9Nk0RUTPP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNbFhAAKCRB4tDGHoIJi
-0qhdAP49nO2mKsosLHwnekS7EGEufeFAyOly/K0/a5m74rcMVwEAvbMFbwdFzaSM
-DgN8a+gmLLJ+4P89rQ8cIJR4oV+IpwI=
-=/Hob
------END PGP SIGNATURE-----
-
---dvlxf+F9Nk0RUTPP--
 
