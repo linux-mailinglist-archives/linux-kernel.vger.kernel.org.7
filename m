@@ -1,130 +1,142 @@
-Return-Path: <linux-kernel+bounces-833846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BEEBA3341
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5CBBA33D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1C74A40D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089043B0F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128DE29B78E;
-	Fri, 26 Sep 2025 09:41:19 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7329C343;
+	Fri, 26 Sep 2025 09:51:12 +0000 (UTC)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA15D26C391;
-	Fri, 26 Sep 2025 09:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F7C265623
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879678; cv=none; b=NQ3yhzK5VvsR8oJIyVxLzpA5Cyl+BLIf5msDvsTKYTDuFG8JT9mcGJdIBfpHseu8Yyga2XP1hBSF/HHZ5KPsmvg/JrRVEaPtod7X2Y9Ik5pBFt2uZZ/WQXb9dZ3ZW2talFZ70voAovK99mA85jQgFhcpHmOt1yfgK5PfVrDbgA4=
+	t=1758880271; cv=none; b=kNPO58tnT2IDDH+C7OB41U3D+liRSuPFBL/vafVQt1yFJB2fN0MNqolhCUrULEj57JDtUpRn4gcR1eqVZaJrSngFQwYEI1WnS/alBfO7CCrGITve63m6Lgyn3ATMEIGwlJMbBsJDk/UwfUoGnQFpFyu2IbwlccVRi+HPFw6DHRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879678; c=relaxed/simple;
-	bh=VACKunmSgWGIegqrjvsKz7Yahv49ulYM3NKnwvZtZrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fY65CNweFDY4BDz0TDjLlr1i8vLkqjKwRxOIG7f3mnO017UaNamdnilzhcyCWAZgFdLwcvJNfIwaxzEcrRmrKEUVUToFpcd7yxibLL2RZN8/m8BRbpa6ggL8dRwKrqwdZSM8V2eS90le4kaZtibK0//py4YLp0+UIQULj7FrPY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cY5Dh3MXGzvX1j;
-	Fri, 26 Sep 2025 17:40:52 +0800 (CST)
-Received: from kwepemr500004.china.huawei.com (unknown [7.202.195.141])
-	by mail.maildlp.com (Postfix) with ESMTPS id E8874180491;
-	Fri, 26 Sep 2025 17:41:12 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemr500004.china.huawei.com
- (7.202.195.141) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 26 Sep
- 2025 17:41:12 +0800
-Message-ID: <08e83a78-d2d8-46b7-9062-15c898ef85c8@hisilicon.com>
-Date: Fri, 26 Sep 2025 17:41:11 +0800
+	s=arc-20240116; t=1758880271; c=relaxed/simple;
+	bh=yNpF3gakBewbf4gWfzySUblL/HPEFTHdWDap5s8c2rw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XD43LYis4LjJ+jWOKo1pBvCr06zGxFkNhJUwOEkAVcd+GUpKGSGmvRvPalfVimMt4bdbIqTLXc50Sg4DfoyP9XFMpr3mRhIMEmwegr4uDnG3r0iCHp1FgGy+Jw4wglxrKQtxbn73sTVCJ1dwN3LqfjRpZrENmNneLxjCBzKu0ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-816ac9f9507so296666585a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:51:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758880268; x=1759485068;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wz1Y2OO7aX1FKDkec9bCJzTd14gDBikA8iaq+l9tIyk=;
+        b=GUFTl+ctNQjwUEuI6RXVKIeHvXf0d23QzhVCYLC+vDJeeOWSO3rnRW5u7a5IBkRWWh
+         NV8JTTlzEDtCLGW7mbrtTlepieQ5cY/FrlwsbX6rruZQWHYjGyQJmCNz1g6vVjht4ai9
+         xdUuC3hwU98dWVrW2FJErQ9xSmWpQNtW6dwvEgpysnObhsbJnEAQcwW6q1D8xfAYBJgb
+         lTDBUIpWPSZzfo2E5EOCHWl1WMwZSXZmaXtkutuGj6vdHun4t9dCRsiou8u16KIG8V7K
+         joNgAuPZTXkSZ8REPFJVYFuvdG/MTeo6t6JHMqXCKo57J9rCjqlQutcCzMfNml8l3ToJ
+         +bpA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6hRSFVUCO8hkGPJr0rP/3PljLRGHXtMQLiGjc8998GDmpguq9TaioM+YilsKApG4BmHsRxzX2uHX/hpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRf/u2lCYTzMTwqYTePDd58o4+rz8mem/q8LgwPwKIR3ZlOqFh
+	ZoS1egmjkkxVhwZ5cZ6fH5tqfzAG1DYM0ZHQcdjOjn3haHdxVWqjGNKv+GO7G3iT
+X-Gm-Gg: ASbGncsF4v0J2PzBvcBWRgbZKFG79Od5eUrQEP8425/Jvf90/oTonK4uEh0IOtGSQ10
+	e5pooMEiSLFLBU2ApaOEGdf4r8og5gJtRK+xm5vhB3WWJkM0/5AJvSvK7cR8HN9IhLgfpOs9clQ
+	VdxzumPiQwuK0LsDx2M3pMad/bAUU+ihb4ZcLCZpVSuKoPVuVn+E+BceMdoKcK116U05dxLTL0w
+	trly8fhh2VU95mK9YChXSB0I4ceTh/ASRXL8JARf3nsjpkif864XN3WWvfqpNm1UDQLo7axEkB8
+	eaQfRRkikSddyvGUsXngt0wfnlv2tB/34O9GT/5Nolq1xYsffN8hNNSpkVIOmZlJtxPsJFJ9VQV
+	5HtYCQInaYPBkK6GPCuCo96+QgEAfSmnv91Mh8sslK6kzms6jBNnNFA9mvUQXEGkuFuORuy/hNg
+	Y=
+X-Google-Smtp-Source: AGHT+IHLkZrYvTlqEDnwIuIeq5NCtHrb6PGWNoFFmLtmN08+2rptwlvQz6dLMoZlEdEtk9NAKCY63g==
+X-Received: by 2002:ad4:5cad:0:b0:787:f736:bc66 with SMTP id 6a1803df08f44-800dd11da10mr71364666d6.1.1758880268400;
+        Fri, 26 Sep 2025 02:51:08 -0700 (PDT)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135b5579fsm24087226d6.1.2025.09.26.02.51.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 02:51:08 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8571a0947d1so204024885a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:51:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnNyJC+9Np1hoFUUESu1XsUQhjwUz9FvlhUBAejs3K2Ioi1Qzkjuyu/Yp2ZnXd48OVeb04K45SO5iPIVY=@vger.kernel.org
+X-Received: by 2002:a05:6102:1452:20b0:58f:1e8b:a1c1 with SMTP id
+ ada2fe7eead31-5ae14991836mr1929645137.2.1758879937242; Fri, 26 Sep 2025
+ 02:45:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] cpufreq: CPPC: Avoid using CPUFREQ_ETERNAL as
- transition delay
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM
-	<linux-pm@vger.kernel.org>
-CC: Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>, LKML
-	<linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Prashanth Prakash <pprakash@codeaurora.org>, Pierre Gondois
-	<pierre.gondois@arm.com>, Mario Limonciello <mario.limonciello@amd.com>,
-	Linux ACPI <linux-acpi@vger.kernel.org>
-References: <8605612.T7Z3S40VBb@rafael.j.wysocki>
- <22867781.EfDdHjke4D@rafael.j.wysocki>
-Content-Language: en-US
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <22867781.EfDdHjke4D@rafael.j.wysocki>
+References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com> <20250912122444.3870284-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250912122444.3870284-4-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Sep 2025 11:45:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWmjj_bKhGqhWcRvWap1U5izT347Ffo5wqs6OP9BvO8PA@mail.gmail.com>
+X-Gm-Features: AS18NWDiRHr7QXCMqaoImEEYFri-rFsQBU5GFbqAD2ZmUrWNkjrXvGfEFMFxCMM
+Message-ID: <CAMuHMdWmjj_bKhGqhWcRvWap1U5izT347Ffo5wqs6OP9BvO8PA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] arm64: dts: renesas: r9a08g045: Add PCIe node
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemr500004.china.huawei.com (7.202.195.141)
 
+Hi Clausiu,
 
-
-On 9/25/2025 11:44 PM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> If cppc_get_transition_latency() returns CPUFREQ_ETERNAL to indicate a
-> failure to retrieve the transition latency value from the platform
-> firmware, the CPPC cpufreq driver will use that value (converted to
-> microseconds) as the policy transition delay, but it is way too large
-> for any practical use.
-> 
-> Address this by making the driver use the cpufreq's default
-> transition latency value (in microseconds) as the transition delay
-> if CPUFREQ_ETERNAL is returned by cppc_get_transition_latency().
-> 
-> Fixes: d4f3388afd48 ("cpufreq / CPPC: Set platform specific transition_delay_us")
-> Cc: 5.19+ <stable@vger.kernel.org> # 5.19
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, 12 Sept 2025 at 14:24, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The RZ/G3S SoC has a variant (R9A08G045S33) which supports PCIe. Add the
+> PCIe node.
+>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  drivers/cpufreq/cppc_cpufreq.c |   14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -308,6 +308,16 @@ static int cppc_verify_policy(struct cpu
->  	return 0;
->  }
->  
-> +static unsigned int get_transition_latency_from_cppc(unsigned int cpu)
-Minor bit:
-Can we name it as __cppc_cpufreq_get_transition_delay_us() because:
-1. 'get_xxx' naming looks a bit different from other funcs in cppc_cpufreq.c
-2. This is actually the main routine of cppc_cpufreq_get_transition_delay_us().
-It's factored out just for the qualcomm workaround.
-> +{
-> +	unsigned int transition_latency_ns = cppc_get_transition_latency(cpu);
-> +
-> +	if (transition_latency_ns == CPUFREQ_ETERNAL)
-> +		return CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS / NSEC_PER_USEC;
-> +
-> +	return transition_latency_ns / NSEC_PER_USEC;
-> +}
-> +
->  /*
->   * The PCC subspace describes the rate at which platform can accept commands
->   * on the shared PCC channel (including READs which do not count towards freq
-> @@ -330,12 +340,12 @@ static unsigned int cppc_cpufreq_get_tra
->  			return 10000;
->  		}
->  	}
-> -	return cppc_get_transition_latency(cpu) / NSEC_PER_USEC;
-> +	return get_transition_latency_from_cppc(cpu);
->  }
->  #else
->  static unsigned int cppc_cpufreq_get_transition_delay_us(unsigned int cpu)
->  {
-> -	return cppc_get_transition_latency(cpu) / NSEC_PER_USEC;
-> +	return get_transition_latency_from_cppc(cpu);
->  }
->  #endif
->  
+>
+> Changes in v4:
+> - moved the node to r9a08g045.dtsi
+> - dropped the "s33" from the compatible string
+> - added port node
+> - re-ordered properties to have them grouped together
+
+Thanks for the update!
+
+> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> @@ -717,6 +717,72 @@ eth1: ethernet@11c40000 {
+>                         status = "disabled";
+>                 };
+>
+> +               pcie: pcie@11e40000 {
+> +                       compatible = "renesas,r9a08g045-pcie";
+> +                       reg = <0 0x11e40000 0 0x10000>;
+> +                       ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x8000000>;
+> +                       /* Map all possible DRAM ranges (4 GB). */
+> +                       dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x1 0x0>;
+
+I would write the last part as "1 0x00000000", for consistency with
+other 36-bit addresses and lengths.
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
