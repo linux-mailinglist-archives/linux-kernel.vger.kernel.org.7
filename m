@@ -1,120 +1,167 @@
-Return-Path: <linux-kernel+bounces-834474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23868BA4C43
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF36BA4C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC901891285
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58314563F37
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2A930C609;
-	Fri, 26 Sep 2025 17:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BF030C63C;
+	Fri, 26 Sep 2025 17:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XBDNDX7k"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mx6kZlxM"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C136B2AD35;
-	Fri, 26 Sep 2025 17:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC18635C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 17:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758907220; cv=none; b=pHEwCV570izFffV9TV2TjKD2P8LESNZpr4/Iu+xgW3OoHrFbut5if88mUqmIRG7skQW2JOYU7qEfAZx/q3stKrNyutyN3CxY8NzXS1YmluSW35KviBAIAyc8Wjh94B14U3YhONg/OFHepLesgvm2jiz279KmuydOBFewLSdu5Eo=
+	t=1758907537; cv=none; b=qXDyMj3MiSUgwQyw6sqqEjDpLk04QMd7UZsDcRdRA8DOzFLGq2JLhQaD9AnQVy6tfmlmJ4nzPNLodYiQApNp5j3vhASPGsodMK8Clt/lcVP9YcIyOm+1a5CTFEgFOkPJ5yvssu1OlH0dV6XJ4Jm4qtbiNY45XEFa+0GJFcqk3KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758907220; c=relaxed/simple;
-	bh=e5cciZIOlUEd14Nlh9r6UpPh7CEgs/6L/FSJjeP9WoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y/ucb4Yp3C6QOQCCDt1gk33a03Tdg3Nb/zV6BvwN6oSPMITOfPA44yHQ87NHYvHkYBvy+dvIybabytIWG5QJVSlphDxtS0dAo9H2NqU0Kh4MUghrE9NlSY4XyFU0DAEexio76z5E8PeRfxUWPsegheMrA03vm+/W1/cR9ZVVv1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XBDNDX7k; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cYHQh1MRvzlgqy3;
-	Fri, 26 Sep 2025 17:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1758907209; x=1761499210; bh=e5cciZIOlUEd14Nlh9r6UpPh
-	7CEgs/6L/FSJjeP9WoA=; b=XBDNDX7klPhV2LR5Gj/vZnR8shvGvAnsUOjlCkes
-	3lenIfMn+DwuRVIZO+Vbr/D1uJ4gOCAPt8k8ZyGBAbr/4xLQHY4DXNHjFRlN/2pG
-	Ih6HAHDSWbsF3/pj74+qi3zH6Lg7//Esh9EOA4uqXzio29j1fLOKoPhgqywc7P0w
-	sHY8VE/+rJ5hirGz2Thkh5kk4BHltVC7lqIKhJHoyl/MsBET/N6Y+95WmcBsfuk3
-	+QdpPt4gMbce9m1iBQ+/x9yHOzExEf+BzmheZVt+M2pFj0DH4n7UFUT41Kqc3RlN
-	foQEesFSXjuWNV6F42JvSc45kXjABX3SLM62dUcH17Sjfw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id GuQ2MpjtDxTQ; Fri, 26 Sep 2025 17:20:09 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cYHQL0WV5zlgqVf;
-	Fri, 26 Sep 2025 17:19:52 +0000 (UTC)
-Message-ID: <66dcdcd1-df71-43b9-a468-2b4aaa8b6dc7@acm.org>
-Date: Fri, 26 Sep 2025 10:19:51 -0700
+	s=arc-20240116; t=1758907537; c=relaxed/simple;
+	bh=n/TwT8/XTJv3+QJo7ooua4XDm7RZIoxOK8tjOIXY3Qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BUqvMOCEJ1NUM0vLxZpnsVQ2bYbUQ3kQuWhrJdiN2F9W0mF45WrC3yZM3aRsP1KUucEgcB1LLlieE8LJmZalOkDwlw0syjYeMzkn54ZUK2U+fXG+FCQYK0ZPV/0vE9dA4ukgSlecSyqXj902ySU7j3+LouhvpFubI4870EbxtuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mx6kZlxM; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d60504bf8so28231737b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758907534; x=1759512334; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tl7XQK783n2BcTfMcJVdy8g77YXkosVIIL/ZsHMQncs=;
+        b=Mx6kZlxM0y+LQ6rKMcZ49hjgaoheEORP78hjdTTq8rzNIvu8JIW7HL6fbZqHRfm+m1
+         /fw0d1sUugU9IJtFzdBuG0QdYRaDXxMZgvjlQKGS5N3tMJYItY2wqlF3a92TK78nXrlx
+         02rfKfcz3Sj14AAoZs+JdhxA1LZFky2cbAzIXiTVXfXaigj+qeWTJnthvp25/3yiz5Zw
+         gMBGdpwcE6fw+IIX+NDYL40pjZqLuHIO6GkRXoC4kaCgc903itfV6RvIo2R4Fo4kAGvz
+         LWg+mQCCjyaJtlNxb/vT6d8vfeBifBjkajqx34JQKPUGlqS+6w4x4uQ1wZMv1WmNy7ws
+         s0ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758907534; x=1759512334;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tl7XQK783n2BcTfMcJVdy8g77YXkosVIIL/ZsHMQncs=;
+        b=F7coJRd3HuO6jlYdM2sKEvMJtI1riqoyK/YKwJwYyrbh7PPLeJ0jQoACq3dDae/snl
+         /oG0IoqH/LgbKZp4aWPdCP3QQSQf1nKtNLELyCrkbh6RW22OCrEkQTMD7CmmlNlti+BJ
+         sU4BhqRO3MyV41+d0JFu1qkLSOQAt/OmH1Hicx4JwAP79DCGLqmYNCxNDXfr/jsn1YjW
+         qUKk8H88ZMDaR86NAj5eZBw5KHN3bi8MfPVQ/i/mc/2d8XUC7z5bxBBU1FmhwBeROiV8
+         fX2GZmoKPs5Mrecy5AGQqQaGoIGjjIJaK1p1l6LjW7W9uQdVB32Q09I3nV2sazm2vl8h
+         WAqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqbICzHO5SjciC4tLQtOKTHJ5yU4MOuHLj9dTBjBsKaYr017A/JcS/mNb/nQJ7JmJcSsWlaN6SqYiTsr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcHAkxivnNT6mYY7yiQJLXr3OAv8LeWKlbZjyQsWd1/OXortFL
+	gbId9ZspwTOgWB8BdZPw00veSTt4o8NKbNj0U3zvPpd5AmRwmTHjhU1M
+X-Gm-Gg: ASbGncsCtrl86Zz3ojIctBnPA1uxGoeYtda6tGCjYmQ7LsZk+gzOGRdQg4vY6AHCheZ
+	7lW8G8FE04vW/hFN4lHZ9X+2YFpv2nIV2O12xmTXuMAKBDqbTLoSeHAsr4Lvvw6ZnDrXlxlKJSe
+	1mdoUMK/EoWDtS1o/ML6Ac+za3gFakB2SJLWrMWnuyJxKUCNOLjhaxPN7RQLjYs1rQ4+uou23pA
+	AvEoTAk6tMG4Q3PbjaIkbyBRYzuY3swjkYcpfckxhPFsogZiDzEWF8cGZohlC9zTVJC9mC3Cm/G
+	voxtnGgevtHjIUmh0Xse2onfsXmdSdnBsTLvo4LM5K8G/qd0FS0vPw/x/PJw4cQlAzwjal2n+Db
+	nyM/Dc8Ic4l1AO+D83cRnaHlS4JYWFuvJA7gtsxlTKRFqImHLNyQ4SPAzBkt1OikurArERMiP/Q
+	U=
+X-Google-Smtp-Source: AGHT+IHjp8E5q+W3TQ5BUUuAX6KWZ1EN9m5INfrKtRDUuKplaLUfJoIX/Wbu6d/Mpiu6liYDBvjLDA==
+X-Received: by 2002:a05:690c:6483:b0:76a:b1ef:25ad with SMTP id 00721157ae682-76ab1ef3bbcmr55310947b3.7.1758907534254;
+        Fri, 26 Sep 2025 10:25:34 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:5b::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-765be47f614sm12246157b3.28.2025.09.26.10.25.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 10:25:33 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Chris Mason <clm@fb.com>,
+	Kiryl Shutsemau <kirill@shutemov.name>,
+	Brendan Jackman <jackmanb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in drain_pages_zone
+Date: Fri, 26 Sep 2025 10:25:16 -0700
+Message-ID: <20250926172532.2814977-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <567be36f-d4ef-e5bc-e11c-3718272d3dfe@gentwo.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] blk-cgroup: use cgroup lock and rcu to protect
- iterating blkcg blkgs
-To: Yu Kuai <yukuai1@huaweicloud.com>, Yu Kuai <hailan@yukuai.org.cn>,
- tj@kernel.org, ming.lei@redhat.com, nilay@linux.ibm.com, hch@lst.de,
- josef@toxicpanda.com, axboe@kernel.dk, akpm@linux-foundation.org,
- vgoyal@redhat.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250925081525.700639-1-yukuai1@huaweicloud.com>
- <20250925081525.700639-2-yukuai1@huaweicloud.com>
- <bc6fe04d-3245-40dd-aa30-c3a3acb670c2@acm.org>
- <01e7eccd-3529-4d12-8ad2-fd9e034a026d@yukuai.org.cn>
- <688275d5-fbb4-08b3-45e1-798ad8cf77fc@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <688275d5-fbb4-08b3-45e1-798ad8cf77fc@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 9/25/25 5:57 PM, Yu Kuai wrote:
-> =E5=9C=A8 2025/09/26 1:07, Yu Kuai =E5=86=99=E9=81=93:
->> =E5=9C=A8 2025/9/25 23:57, Bart Van Assche =E5=86=99=E9=81=93:
->>> On 9/25/25 1:15 AM, Yu Kuai wrote:
->>>> It's safe to iterate blkgs with cgroup lock or rcu lock held, preven=
-t
->>>> nested queue_lock under rcu lock, and prepare to convert protecting
->>>> blkcg with blkcg_mutex instead of queuelock.
->>>
->>> Iterating blkgs without holding q->queue_lock is safe but accessing t=
-he
->>> blkg members without holding that lock is not safe since q->queue_loc=
-k
->>> is acquired by all code that modifies blkg members. Should perhaps a =
-new
->>> spinlock be introduced to serialize blkg modifications?
->=20
-> Actually, only blkcg_print_blkgs() is using rcu in this patch, and take
-> a look at the callers, I don't see anyone have to hold queue_lock. Can
-> you explain in detail which field from blkg is problematic in this
-> patch?
+On Fri, 26 Sep 2025 09:21:29 -0700 (PDT) "Christoph Lameter (Ampere)" <cl@gentwo.org> wrote:
 
-I'm not a cgroup expert so I cannot answer the above question. But I
-think it's clear that the description of this patch is not sufficient as
-motivation for this patch. Removing the blkg->q->queue_lock lock and
-unlock calls requires a detailed review of all blkcg_print_blkgs() and
-blkcg_print_stat() callers. There is no evidence available in the patch
-description that shows that such a review has happened.
+> On Thu, 25 Sep 2025, Joshua Hahn wrote:
+> 
+> > > So we need an explanation as to why there is such high contention on the
+> > > lock first before changing the logic here.
+> > >
+> > > The current logic seems to be designed to prevent the lock contention you
+> > > are seeing.
+> >
+> > This is true, but my concern was mostly with the value that is being used
+> > for the batching (2048 seems too high). But as I explain below, it seems
+> > like the min(2048, count) operation is a no-op anyways, since it is never
+> > called with count > 1000 (at least from the benchmarks that I was running,
+> > on my machine).
+> 
 
-Thanks,
+Hello Christoph, thank you for your feedback!
 
-Bart.
+> The problem is that you likely increase zone lock contention with a
+> reduced batch size.
+
+I see, so is the suggestion here that by reducing batch size, we
+increase zone lock contention because we are bouncing more often and
+having to spend more contending on the zone lock?
+
+> Actually that there is a lock in the pcp structure is weird and causes
+> cacheline bouncing on such hot paths. Access should be only from the cpu
+> that owns this structure. Remote cleaning (if needed) can be triggered via
+> IPIs.
+> 
+> This is the way it used to be and the way it was tested for high core
+> counts years ago.
+> 
+> You seem to run 176 cores here so its similar to what we tested way back
+> when. If all cores are accessing the pcp structure then you have
+> significant cacheline bouncing. Removing the lock and going back to the
+> IPI solution would likely remove the problem.
+> 
+> The cachelines of the allocator per cpu structures are usually very hot
+> and should only be touched in rare circumstances from other cpus.
+> 
+> Having a loop over all processors accessing all the hot percpus structurs
+> is likely causing significant performance issues and therefore the issues
+> that you are seeing here.
+
+So just to be explicit about this -- in my last response, I noted that
+drain_zone_pages really isn't a hot path. In fact, it's never called
+with count > 1000. The real offenders are in the last 2 patches of this
+series (decay_pcp_high and free_frozen_page_commit), and I believe these
+callers don't have the same problem of iterating over the CPUs.
+free_frozen_page_commit only iterates through the zones
+(from free_unref_folios), so I don't think it has the same cacheline
+bouncing issue as drain_pages_zone.
+
+So perhaps drain_pages_zone is a good candidate to leave the batching
+size as is, i.e. pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX. What do you
+think? Again, happy to remove this patch from the series as all of the
+proposed performance gains and lock contention reduction on the cover
+letter come from the last 2 patches of this series.
+
+Thank you again for your thoughtful response, have a great day!
+Joshua
 
