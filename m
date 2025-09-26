@@ -1,202 +1,151 @@
-Return-Path: <linux-kernel+bounces-834069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5184EBA3C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:05:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C45BA3C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE79C3AB368
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:05:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26AF33B0F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875962F5A0F;
-	Fri, 26 Sep 2025 13:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC8F2F5A20;
+	Fri, 26 Sep 2025 13:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GGxYuAsu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BFKUHGgq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3484527AC59
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB40627AC59;
+	Fri, 26 Sep 2025 13:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891905; cv=none; b=ZQVYPquYbD+sL/jcNr+UyXO6MyY/da6HDHtpSj7Q8Ew21vMVISPlJLeGz0VMQqW24/jga9hjSUMB4/Cai6+J+phx99xwwcYUjA/ikTmY24/dGkeaU20cyA8kt4PTPAwUUVw2IlcLrdShMb/NJnXwWmkmzbSiT+K/ShFQjs76KoM=
+	t=1758891949; cv=none; b=JODeuyWh6mtCkcHPWgYqv85uG9RxA2XlDS6W40bvrfEfJbS1aob4zUJwv28JV4vZfXihY/darK1bJoHM0wv1ZFSLO7W0UjIDU7uPIr/w39F48NQCXR9VCwUTL9aJL6SMPBCG55I9phFOLDzS7rSDr0SktuQZckVCdSuXVC+i5js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891905; c=relaxed/simple;
-	bh=VxHs8m4PREdPitoF17pWmYpBT9auMCjgZ8M+ihTHRgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DdGQl1TmMgAEJj4KBwttso3bcJhuMQlmjQyK5KjY9YJXF7IDn+ArjyT2SoXbpEoPouNWVCF6lMm/GTjHyOwkVSPWe1O5PJG9JLUsSrCVRaBaMx3bia7V4s8RxR4YPywkFTwgafh6+8F6CQEGAhAOZCfDoG3MngNJPcVVyThLpRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GGxYuAsu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q8vZlE018159
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:05:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AznJVNy7DDz5C/A3q06szbLnoJ6bboXOtsVavRtwoBI=; b=GGxYuAsulqkY1+qH
-	jbItnFLtNE8uYsIsVZgJZ199/MwtQZIgtJsI6muuLw2GGm+/O5LpK7ZrtZVKpdXw
-	0yTwl/YPUVAE282trvG4yrESyGFLD9vopvbgXmMCtV4P8aH1au9PBR0W0U7lfiJ6
-	2k7zcExyyb6BC351nZ3zaOhOa7PkgObmQrBj7IdTV4vTQKIU3rUWmAsBGeVqDfn3
-	YVPdP5gDw9Cgm17vGiVizRjz9hPKCE4W7GDlhWRZ6gHh7QsHUewjBQeEu+AFaEC7
-	6bOK0faWmrMfx2gYSQiWNIQhnTRnELSNYru0UDMqOoRK8Qr4GpFSvl+KUP/kQyfO
-	fblRfQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0tawuu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:05:01 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-861e9103fffso19752685a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:05:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758891901; x=1759496701;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AznJVNy7DDz5C/A3q06szbLnoJ6bboXOtsVavRtwoBI=;
-        b=QBkd4sFyv2I0Bv5/du1PecS4I8YLYSsfoUCnO56GKSVuKyd5Pw59Ho7bWrGG2URbEi
-         44U+RiTTVvTpmxv3j25U741Y3amX4+NYX0zOrqtRqPpPxnw7cfCInmB9CTc9j2EEqsuT
-         rBo7ohH/0NAwAXnqdVBiP7IK3aSn15NwqzeDrGEWTDCt4A6jT8U8anPKeABqLW7x1fG9
-         hF5u/Sk+4VC2WOW4oISXHQuB0Ug3mCHC840KDCvVS23Iml82QcbTbT6HeGDvJCXZFENT
-         HxTmyawr6vtTbBq1DF4QWKgRhOgyihUC+CjMZHKwfjJTUJTgYClhFTPF4hC0j8TK42Mb
-         jfEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHDEvjsWwVxCeRa/HJ+e+R+mDDJ0fHhzfPRgXWo7gy7e5KuwFQtr6YT/4OAmdZpQ8tWttJeP4BDPQK+xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmJbOBTVOInO/0/vLn0Hc/4BFKd6ieRJP0TX8QL0s/M3fqxo7T
-	7bosT9LBoCB/t8r8/ZahGfY4miKjt8ax91m10dOO7ztuGdurwQeTjqmV5YsvefOsgLMbVGaKfXn
-	jHBpLF5ByAYft0fEQJNAGy/uuRWHaLbvU6gwy/nv1L8jBXj718E7DPEqWBcbir3/r02M=
-X-Gm-Gg: ASbGnctaRpZdVlXKXJz/ADitZZLaybVpI2vjSrrATUqHz3zO9vCJcHmFeYSxGO0j3Xy
-	7P5XyIXBVV0UYFAo9+rD6k2FN9MJ35Jr851OEgDP9J4n8kDVYqL7OUMNkigolcwzbEWF7TxVJjo
-	5kD5oGPTD2mXb20W0cHAsZo4kwcwVKPM0MYDs0y/nBR+KCJcFC7plOyCHY9Ut2gAwRVmyz4azbX
-	9C3h0FUxMtpywQ/Xi4UIK0GAD3olvFxrEteDpQDdBYnQIz+PwHSuy0ZH5nC8fpcDfeeTsU0TSQC
-	hstFO+8bYeTzaTbws1g/7nm6Q9eLvrnTU5XWZX9DYOGnXU5nT+xz4P0eYhjGQBhDFKVkvafGM7A
-	JcUf7JOA08b90AlQ1a1itCw==
-X-Received: by 2002:ac8:7a97:0:b0:4dc:cb40:706e with SMTP id d75a77b69052e-4dccb4072b1mr27350821cf.13.1758891900478;
-        Fri, 26 Sep 2025 06:05:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+TdQEyTb0vZ74pl5udy9ShS/6RYEvgsWyZHIj2DIx77Od7JJwYvFeJeEqxdLHSH3+1mLk9w==
-X-Received: by 2002:ac8:7a97:0:b0:4dc:cb40:706e with SMTP id d75a77b69052e-4dccb4072b1mr27350301cf.13.1758891899741;
-        Fri, 26 Sep 2025 06:04:59 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3545a9c327sm358355066b.104.2025.09.26.06.04.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 06:04:59 -0700 (PDT)
-Message-ID: <fb3720a1-f910-49db-b83b-b23e407b13a0@oss.qualcomm.com>
-Date: Fri, 26 Sep 2025 15:04:56 +0200
+	s=arc-20240116; t=1758891949; c=relaxed/simple;
+	bh=5EckeHvLXOfXBu+wiRZ3U0nu3PJn69N0Omj53rP0XeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KwZbWCdI+7ZgosarIQ7Ld5Qeisk/W65+DPs/g1uLxWYnOr8zM6xd1XurvX/8x4paDNzwxqYtfRZ4CFXvcZrFT8lOBqxuY3Z1m4HbrbRNbQ+cRMtRnwiB2qzgAN6FWYp54OQ+JD9+6XsUINCY/PUWJys0hP+G9fOt6ngL7uVh6tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BFKUHGgq; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758891948; x=1790427948;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5EckeHvLXOfXBu+wiRZ3U0nu3PJn69N0Omj53rP0XeY=;
+  b=BFKUHGgqY28TRaEAC02bnfhx/Wu+efTzlRhFIU3rFiDO6OOzsbpXU5lD
+   zFxplLjiez0RGauc75sxeGYb/GmgP/h/GKtuRBGCdxMV5umNpenhoygX4
+   GxxZ3meefeDUCNmSaw1SJnl56WrPPkDDrYyi0JvI7L/Tv6zkdBFcqvIyk
+   bZuI/32e3DT5r/DWyMXY7ek+oFBVJ9V5PVpre/Ai13ZT6QM58sSTmtJ4q
+   lFnjW8OfYiaBFHDKPjYK9x/GJcgrp7rOIjwHjbZisoY+77FfIVoRgJY0f
+   nLaaDO/tXVyERIg8wGIs6KR1P9GlKGuuGfrLm7AJoYiukbFCJy9yScJBN
+   A==;
+X-CSE-ConnectionGUID: Xtdx+KjGSFmXeitp4r0ynw==
+X-CSE-MsgGUID: gPmjcBWvS0CbVb8DvuKUrw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="78656092"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="78656092"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 06:05:48 -0700
+X-CSE-ConnectionGUID: bpvbqfG6SXy3K8p9KFjrog==
+X-CSE-MsgGUID: rGbEM9WqQCOK7rxoIgHIkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="182777895"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 26 Sep 2025 06:05:43 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v288q-0006F7-0z;
+	Fri, 26 Sep 2025 13:05:40 +0000
+Date: Fri, 26 Sep 2025 21:05:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, etienne.carriere@st.com,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	dan.carpenter@linaro.org, d-gole@ti.com, souvik.chakravarty@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: Re: [PATCH 10/10] firmware: arm_scmi: Use new Telemetry traces
+Message-ID: <202509262034.xwphcmtO-lkp@intel.com>
+References: <20250925203554.482371-11-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/20] arm64: dts: qcom: kaanapali: Add USB support for
- Kaanapali SoC
-To: Trilok Soni <trilok.soni@oss.qualcomm.com>,
-        "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>,
-        =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tingwei.zhang@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-        Ronak Raheja <ronak.raheja@oss.qualcomm.com>
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-6-3fdbc4b9e1b1@oss.qualcomm.com>
- <CAJKOXPcbJY4JEjfZLvOAXEWCTYFpe7En+Riis2t3K5fWJgNU5A@mail.gmail.com>
- <53d63dd6-a022-4e80-a317-3218976a7474@oss.qualcomm.com>
- <cf043ce8-0e83-41cc-b294-93dc1c27fd91@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <cf043ce8-0e83-41cc-b294-93dc1c27fd91@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: WE2dUQMMhknEfFw8ySTUUBETR4fHX8vV
-X-Proofpoint-GUID: WE2dUQMMhknEfFw8ySTUUBETR4fHX8vV
-X-Authority-Analysis: v=2.4 cv=Jvz8bc4C c=1 sm=1 tr=0 ts=68d68f7d cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=Q9aL7w64nW17sFkSeesA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXzncJQx774Rlv
- ubp1n8pi5/mv5LIUt3CctpIAO+8EBiHLb3+vQJWlCFtLXoEtKP0xB+K+h8G2dtVz+NCNupP9dtQ
- IEMjX9WLQ1zI030arkQO/7dT5DxEqpEJs/P7KyQ5etOc5us+tATGfJdfdmzjezXsapYQBmTFjec
- 0Jdp5eagnHc4UwdivCZgZabrMJsVxF1FU5KucK2+DUcsrKref8cwJOYG6ttHD1QoWSy20TJ2YTX
- jS6xL2ZDOcPIx1oTHCAl/Wgr76OEIVqhHhcj/QpqH29Qb7RzPBGpzzBp3FFUi4epx7IHv8b+SBB
- UmvgSVZvY824v1k++KY4YBcIOd8lUyR28OwZ4tqaSQ+PdydgFBh4xtrt3hkYNUBGi/PBDZrYRbc
- RK/9UpJ6qv+Zg03vqlIXSELwSvWtuQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_04,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925203554.482371-11-cristian.marussi@arm.com>
 
-On 9/25/25 8:26 PM, Trilok Soni wrote:
-> On 9/25/2025 12:39 AM, Aiqun(Maria) Yu wrote:
->> On 9/25/2025 9:50 AM, Krzysztof Kozłowski wrote:
->>> On Thu, 25 Sept 2025 at 09:17, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
->>>>
->>>> From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
->>>>
->>>> Add the base USB devicetree definitions for Kaanapali platform. The overall
->>>> chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
->>>> (rev. v8) and M31 eUSB2 PHY.
->>>>
->>>> Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
->>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>> ---
->>>>  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 155 ++++++++++++++++++++++++++++++++
->>>>  1 file changed, 155 insertions(+)
->>>>
->>>
->>>
->>> Second try, without HTML:
->>>
->>> I really don't understand why you created such huge patchset. Year
->>> ago, two years ago, we were discussing it already and explained that's
->>> just inflating the patchset without reason.
->>>
->>> New Soc is one logical change. Maybe two. Not 18!
->>
->> It was previously squashed into the base soc dtsi patch and mark like:
->> Written with help from Jyothi Kumar Seerapu(added bus), Ronak Raheja
->> (added USB), Manish Pandey(added SDHCI), Gaurav Kashyap(added crypto),
->> Manaf Meethalavalappu Pallikunhi(added tsens), Qiang Yu(added PCIE) and
->> Jinlong Mao(added coresight).
->>
->> While it is over 4000+ lines when we squash it together.
->> Also as offline reviewed with Bjorn, he suggested us to split out the
->> USB and other parts.
->>
->>>
->>> Not one patch per node or feature.
->>>
->>> This hides big picture, makes difficult to review everything,
->>> difficult to test. Your patch count for LWN stats doesn't matter to
->>> us.
-> 
-> Maria - the point here is to not design the series / code for stats, but
-> per maintainer expectations. Though it is difficult to know one preferred guideline.
+Hi Cristian,
 
-I believe Krzysztof's explicit mention of LWN might have misguided
-Maria into saying getting good stats there is the goal which of course
-wouldn't be a good thing for us to solely strive for..
+kernel test robot noticed the following build warnings:
 
-To the best of my knowledge the actual secondary reason (beyond of course
-trying to make the series more manageable which I think turned out mostly
-successful and I largely agree with Bjorn's other response to this msg)
-is to let authors of larger chunks be credited for their work individually
-through commit authorship - which I don't think is "gaming" the stats if
-the chunks are reasonably sized and the work is nontrivial (just like any
-other post-introduction patches would be treated).
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on trace/for-next linus/master v6.17-rc7 next-20250925]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If I wrote let's say 35% of the DT and it would be squashed into a single
-"add Kaanapali" patch under someone else's name, I would have had rather
-mixed feelings as well..
+url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Marussi/firmware-arm_scmi-Define-a-common-SCMI_MAX_PROTOCOLS-value/20250926-044350
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250925203554.482371-11-cristian.marussi%40arm.com
+patch subject: [PATCH 10/10] firmware: arm_scmi: Use new Telemetry traces
+config: nios2-randconfig-001-20250926 (https://download.01.org/0day-ci/archive/20250926/202509262034.xwphcmtO-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509262034.xwphcmtO-lkp@intel.com/reproduce)
 
-Konrad
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509262034.xwphcmtO-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/firmware/arm_scmi/telemetry.c: In function 'scmi_telemetry_tdcf_blkts_parse':
+>> drivers/firmware/arm_scmi/telemetry.c:1039:46: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    1039 |         trace_scmi_tlm_collect(bts->last_ts, (u64)payld,
+         |                                              ^
+
+
+vim +1039 drivers/firmware/arm_scmi/telemetry.c
+
+  1017	
+  1018	static void scmi_telemetry_tdcf_blkts_parse(struct telemetry_info *ti,
+  1019						    struct payload __iomem *payld,
+  1020						    struct telemetry_shmti *shmti)
+  1021	{
+  1022		struct telemetry_block_ts *bts;
+  1023	
+  1024		/* Check for spec compliance */
+  1025		if (USE_LINE_TS(payld) || USE_BLK_TS(payld) ||
+  1026		    DATA_INVALID(payld) || (PAYLD_ID(payld) != 0)) {
+  1027			trace_scmi_tlm_access(0, "BLK_TS_INVALID", 0, 0);
+  1028			return;
+  1029		}
+  1030	
+  1031		/* A BLK_TS descriptor MUST be returned: it is found or it is crated */
+  1032		bts = scmi_telemetry_blkts_lookup(ti->dev, &ti->xa_bts, payld);
+  1033		if (WARN_ON(!bts))
+  1034			return;
+  1035	
+  1036		/* Update the descriptor with the lastest TS*/
+  1037		scmi_telemetry_blkts_update(shmti->last_magic, bts);
+  1038	
+> 1039		trace_scmi_tlm_collect(bts->last_ts, (u64)payld,
+  1040				       bts->last_magic, "SHMTI_BLK_TS");
+  1041	}
+  1042	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
