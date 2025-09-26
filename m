@@ -1,101 +1,219 @@
-Return-Path: <linux-kernel+bounces-834589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F89BA5039
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:57:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A5BBA504B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2872C320CF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100911B28173
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA9123BD1F;
-	Fri, 26 Sep 2025 19:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D8A284681;
+	Fri, 26 Sep 2025 19:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7rSGjCi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="aualodt1"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2183283142
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3348280308
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758916629; cv=none; b=UObVTL8z0C/oBLSv+zl9zPldiCXffIjvgAh/LVTHnsrD651Mg8ieQbrlGIIpH7XcfAexfjKiscMcMlKGa7iYtaWPSIju4v8tmS/u30ZUlCNU5o9xCBDoKmI0S+cPtvRbtdc9YkLO3kZoa7QIKz8LC5sSsUkny1KUDqKvVzhbpvc=
+	t=1758916666; cv=none; b=eI8SJBiCkNHR19CwvjSLLKZrxXMkc3qlVhpwj7bRhX5FLu+ZlcjqwwNqtn133SDfe2wGmEnGm1fZEn96utcpe1DtuhD2/o7SbawoT3/7gddrdHWZiN0BPN5gmhSIy35ZYS2Lzhhfp9uaeEHCSsmcMlKlkBFUfFtKG343JrERCWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758916629; c=relaxed/simple;
-	bh=lHACcosUWPuIRG0D9BIsFVZk3ycIlyiMq2ZwwGgzksY=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=JxXJygyBY5NgEEf0nHcqcPNVg0yFt4RLrM+cc9xe0mzX3Q6DkYqH1Hyo911lIaYPctPhzG5xHarS5g4bJlBn4Q+E8vmSGeQqErZaimGGJkz1ri1lzysWpvUQzboRHr+pzwNd6ghWUaH+wi3VoP9nhxnXp01CYf5JtWJcWvVUEn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7rSGjCi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F715C4CEF7;
-	Fri, 26 Sep 2025 19:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758916628;
-	bh=lHACcosUWPuIRG0D9BIsFVZk3ycIlyiMq2ZwwGgzksY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=b7rSGjCiIru44Zmh3UBq0lUgKkygjhk7K4Te/dKimpuyO8p/od+aZaWYVrAV5lGk5
-	 yVjDjwlvBLuy8131WF6q/PO5H5uUWcQLlA31jCTQAWQ6yMGopHMLRKxKRWB7UWjJp5
-	 KgUkd2TMapwJod9kxSG0cwMf1C7BcRlrel7KPpCA+SwM74qWhM7mwplw8VUXVKN6/v
-	 rjhVrc2rGZM6YBZb1klvUv47F6W+prcYbbRKwVMjLefM7R02000gsEBlGYJy6XNjSa
-	 n5uXok2J1oetEwLWyox8uDEYOmB2qLGbVM9cTFbeGZetGoYUPAUrDRfQot2DjOx0wM
-	 zBbSqmlMR1HDg==
-Date: Fri, 26 Sep 2025 09:57:07 -1000
-Message-ID: <50b697d50818b0c9d0abba3f1feaa2d2@kernel.org>
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [GIT PULL] workqueue: Changes for v6.18
+	s=arc-20240116; t=1758916666; c=relaxed/simple;
+	bh=Ul90A3WXVjVOQtEWkwJb9B/4dc313g79jNrBflolSiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ENzSKNFSg4qfcK4j8RsLS/OlUSWPjtSD7cVujepMSFw5GR93uMDWhGtcE0ZJAF/EvPGwl6dpasek74ogPISQ8WUqPyQt8el1LSajmUZSxStp7s8JhmwjsWqz+Jhjc2K4hbAZzhW5j8Qu4/qpkSWxL1f+oMf1P5217Uil4WatuEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=aualodt1; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27edcbbe7bfso25855265ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1758916664; x=1759521464; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zASiJDz4r3vYQO3vYDYkcyVx79ekhPk89WizJj5Iigg=;
+        b=aualodt1PB8GaT0QZpHJ965PFhcpyeJMzNUBRv2XWnNdt8cTWcjm6LVoHEg9lgPvq6
+         Y6EVSKbbIzLn2glHOMhnwdRI+uGTGtXVpahrRcWiz8UH2CigIEs9C9VAy2CVf1+gHd4X
+         me8zwNTVU5hpTV56K2l1RaCqaFLP9yBlWK1W++wrjApNcXqbCyY/GedFNndGQN+Ppawx
+         m/HBBSrQDK5TLjqWuTj+FSBJb8UWZQBUpT9DZRYnPKyyL2ZRhAxio3tpyq+kc8n4kJXc
+         zpqCSBODWdqUUNvxKi3MeHwqODe4NSJ7bMNGFe+DcBX5Xq1c1XUcZRSHDsZu8Q7mIEar
+         DZSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758916664; x=1759521464;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zASiJDz4r3vYQO3vYDYkcyVx79ekhPk89WizJj5Iigg=;
+        b=ISDIgHio01rS0AjrP6BeN8788X3csORcZhr3LjfUi52CX56Wp1vF59+S006D55Fcy+
+         URGGgdSh6IiaLvGNi4QdYRCz5BpZs+Wwa8QsbPWnw/84cZIUb5onwDAw32VJOnZffU2k
+         5dcMbSffI1/l3FINAF+iRKXZa/4NtG28JdqC1ONlC5/8i8i9P92RSnLg06Pf/vAK7zOU
+         qeYEg9p7WWt9JjWKHUjdOLMSvPuWG8uPcatdJpIB88ugRNPsE/N/UPBW/+KO+3BZcRZ0
+         O/YKkRn5Ku8VORq2e16pIhi1VioLu2sTiH7Mik68A8VMDT8i1M8UGvaugKNiXWPEjG0A
+         Z11g==
+X-Forwarded-Encrypted: i=1; AJvYcCXuGgzL2LTeWomvhnb6qsT6Dn2aurE8x1ESRFaJcmAmfltHCuVcjFkLHkFmtmOzfWFmZDwGb2GHjaLlTTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdBHjWNCDzTjc27Qdkh5crqMty1SZCeCGBiapHZIAxMRO1zlPN
+	bGn6auP4TRADayzP2MZSJxh4mjXge/u+puYAc9a2roPPU1w3mIMVbsfkiavlIZC4VUo=
+X-Gm-Gg: ASbGnctIN/8xE8lRXf+pXd8pYj2Dw2PQ8ffts96BRVWXxghPV0/DgcuERPaNMHfAq9H
+	QjydYGeVsbBtNjko5n+Mge2ixST115E/C+6QTSO2/y+6VERIUg+2qX5CZQw+W4+M4kjh3Wd2SSR
+	z46wiSq6MFCKKHt3rm4IR5ueQuAM6nEel/f+HdnNNP5jYxVbbou5uYMSfXrOMwiqsAaaevt/s1o
+	GDrQ1mnWLZL84owdWx9z5whTy0BqD+YqPYFTLhLnYRLmhLyMSxdg7FxMZRXLjL/Nj0HhPaXaitK
+	WPmMoJYvrOasOTVTn8+oZvZ2OAtyrHQ2+pgDvQ8r3Ycb/Hp6Y2PriXz8vNf6IZehgDQxZVbjUeU
+	9b1Shk/uxp7IeE32I9zed/vA8a3cu7unFCcrJsdcb821kA9xTh3r44g==
+X-Google-Smtp-Source: AGHT+IHlUtnIvbNYTp+NBwFL5kAnFfogcOgIaJtDWQxwNZ7YmExERR63uIq8FMCY+Zw0lEPHKpWKJg==
+X-Received: by 2002:a17:903:28c:b0:26f:f489:bba6 with SMTP id d9443c01a7336-27ed4a5ec62mr76915745ad.50.1758916664000;
+        Fri, 26 Sep 2025 12:57:44 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d43ecsm62938985ad.24.2025.09.26.12.57.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 12:57:43 -0700 (PDT)
+Date: Fri, 26 Sep 2025 12:57:40 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: pjw@kernel.org, Liam.Howlett@oracle.com, a.hindborg@kernel.org,
+	akpm@linux-foundation.org, alex.gaynor@gmail.com,
+	alexghiti@rivosinc.com, aliceryhl@google.com,
+	alistair.francis@wdc.com, andybnac@gmail.com, aou@eecs.berkeley.edu,
+	arnd@arndb.de, atishp@rivosinc.com, bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com, bp@alien8.de, brauner@kernel.org,
+	broonie@kernel.org, charlie@rivosinc.com, cleger@rivosinc.com,
+	conor+dt@kernel.org, conor@kernel.org, corbet@lwn.net,
+	dave.hansen@linux.intel.com, david@redhat.com,
+	devicetree@vger.kernel.org, ebiederm@xmission.com,
+	evan@rivosinc.com, gary@garyguo.net, hpa@zytor.com,
+	jannh@google.com, jim.shu@sifive.com, kees@kernel.org,
+	kito.cheng@sifive.com, krzk+dt@kernel.org,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
+	lossin@kernel.org, mingo@redhat.com, ojeda@kernel.org,
+	oleg@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	peterz@infradead.org, richard.henderson@linaro.org,
+	rick.p.edgecombe@intel.com, robh@kernel.org,
+	rust-for-linux@vger.kernel.org, samitolvanen@google.com,
+	shuah@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
+	vbabka@suse.cz, x86@kernel.org, zong.li@sifive.com
+Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
+Message-ID: <aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
+References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
+ <20250926192919.349578-1-cmirabil@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250926192919.349578-1-cmirabil@redhat.com>
 
-The following changes since commit b19a97d57c15643494ac8bfaaa35e3ee472d41da:
+Hi Charles,
 
-  Merge tag 'pull-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs (2025-08-19 10:12:10 -0700)
+Thanks for response. Rest inline
 
-are available in the Git repository at:
+On Fri, Sep 26, 2025 at 03:29:19PM -0400, Charles Mirabile wrote:
+>Hi -
+>
+>Hoping that I got everything right with git-send-email so that this is
+>delivered alright...
+>
+>Wanted to jump in to head off a potential talking past one another /
+>miscommunication situation I see here.
+>
+>On Wed, Sep 24, 2025 at 08:36:11AM -0600, Paul Walmsley wrote:
+>> Hi,
+>>
+>> On Thu, 31 Jul 2025, Deepak Gupta wrote:
+>>
+>> [ ... ]
+>>
+>> > vDSO related Opens (in the flux)
+>> > =================================
+>> >
+>> > I am listing these opens for laying out plan and what to expect in future
+>> > patch sets. And of course for the sake of discussion.
+>> >
+>>
+>> [ ... ]
+>>
+>> > How many vDSOs
+>> > ---------------
+>> > Shadow stack instructions are carved out of zimop (may be operations) and if CPU
+>> > doesn't implement zimop, they're illegal instructions. Kernel could be running on
+>> > a CPU which may or may not implement zimop. And thus kernel will have to carry 2
+>> > different vDSOs and expose the appropriate one depending on whether CPU implements
+>> > zimop or not.
+>>
+>> If we merge this series without this, then when CFI is enabled in the
+>> Kconfig, we'll wind up with a non-portable kernel that won't run on older
+>> hardware.  We go to great lengths to enable kernel binary portability
+>> across the presence or absence of other RISC-V extensions, and I think
+>> these CFI extensions should be no different.
+>
+>That is not true, this series does not contain the VDSO changes so it can
+>be merged as is.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git tags/wq-for-6.18
+Look at patch 23/27. It does have vDSO change. Although shadow stack
+instruction are inserted as compiled flag for vDSO only when cfi config is
+selected by user. Right now default is "No". So it won't impact anyone unles
+user explicitly says "Yes".
 
-for you to fetch changes up to 0950c64ae38661bd97127e9aa0522f1624f82006:
+>
+>>
+>> So before considering this for merging, I'd like to see at least an
+>> attempt to implement the dual-vDSO approach (or something equivalent)
+>> where the same kernel binary with CFI enabled can run on both pre-Zimop
+>> and post-Zimop hardware, with the existing userspaces that are common
+>> today.
+>
+>I agree that when the VDSO patches are submitted for inclusion they should
+>be written in a way that avoids limiting the entire kernel to either
+>pre-Zimop or post-Zimop hardware based on the config, but I think it
+>should be quite possible to perform e.g. runtime patching of the VDSO
+>to replace the Zimop instructions with nops if the config is enabled but
+>the hardware does not support Zimop.
 
-  workqueue: fix texinfodocs warning for WQ_* flags reference (2025-09-22 05:37:20 -1000)
+Why kernel need to do this extra work of carry two binaries and patching it
+runtime?
 
-----------------------------------------------------------------
-workqueue: Changes for v6.18
+If for instance we do this, and then this allow this kernel to be taken to
+pre-Zimop hardware, it is assumed that entire userspace for such hardware
+was compiled without shadow stack (thus no zimop). In that case, kernel
+should have been compiled without CFI option.
 
-- WQ_PERCPU was added to remaining alloc_workqueue() users and system_wq
-  usage was replaced with system_percpu_wq and system_unbound_wq with
-  system_dfl_wq. These are equivalent conversions with no functional changes,
-  preparing for switching default to unbound workqueues from percpu.
+Just for sake of thought exercise, let's say Fedora 43 is first release with
+RVA23 compatiblity (zimop and shadow stack), there is no way this and future
+release will be able to run on pre-zimop hardware. Unless redhat is going to
+start two different binary distribution. One for pre-zimop and one for
+post-zimop. If that would be the case, then compiling two different kernel for
+such two different hardware would be least of the worry.
 
-- A handshake mechanism was added for canceling BH workers to avoid live
-  lock scenarios under PREEMPT_RT.
+Only other usecase is of a seasoned kernel developer or build your own stuff
+in embedded environment, those users can anyways are advanced users. But it
+forces complexity on rest of kernel. There will be more extensions taking zimop
+encodings in future, we will end up patching vDSO and keep this complexity
+while rest of the userspace will not be patched and will be separate binary
+distribution (if OS distros endup distributing multiple binaries per release)
 
-- Unnecessary rcu_read_lock/unlock() calls were dropped in
-  wq_watchdog_timer_fn() and workqueue_congested().
+>
+>However, that concern should not hold up this patch series. Raise it again
+>when the VDSO patches are posted.
 
-- Documentation was fixed to resolve texinfodocs warnings.
+As I said earlier, these changes default cfi config to No. So whenever this
+is selected "Yes" by a distro, they can drive such patches (if there is a real
+need)
 
-----------------------------------------------------------------
-Kriish Sharma (1):
-      workqueue: fix texinfodocs warning for WQ_* flags reference
-
-Marco Crivellari (3):
-      workqueue: replace use of system_unbound_wq with system_dfl_wq
-      workqueue: replace use of system_wq with system_percpu_wq
-      workqueue: WQ_PERCPU added to alloc_workqueue users
-
-Sebastian Andrzej Siewior (1):
-      workqueue: Provide a handshake for canceling BH workers
-
-Zqiang (2):
-      workqueue: Remove redundant rcu_read_lock/unlock() in workqueue_congested()
-      workqueue: Remove rcu_read_lock/unlock() in wq_watchdog_timer_fn()
-
- include/linux/workqueue.h | 32 +++++++++----------
- kernel/workqueue.c        | 80 +++++++++++++++++++++++++++++++----------------
- 2 files changed, 69 insertions(+), 43 deletions(-)
+>
+>>
+>> thanks Deepak,
+>>
+>> - Paul
+>
+>Best - Charlie
+>
 
