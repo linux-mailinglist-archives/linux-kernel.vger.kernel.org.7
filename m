@@ -1,145 +1,328 @@
-Return-Path: <linux-kernel+bounces-834251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B43BA4416
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:39:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86BEBA4449
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67128179254
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A2C17562E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C62188713;
-	Fri, 26 Sep 2025 14:39:17 +0000 (UTC)
-Received: from mail-m15566.qiye.163.com (mail-m15566.qiye.163.com [101.71.155.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0590C199FBA;
+	Fri, 26 Sep 2025 14:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QB2g4DE6"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EAA13C8EA;
-	Fri, 26 Sep 2025 14:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36DBC8FE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897557; cv=none; b=Dg03d3pJ6LIUzEtXe7bS1ocf4UIqWlCDd6jnAeF7CAy6rZgatvXpnbpRqTvNSvPHycHg/T5BQwElETQqoUtd3ahW1jq7501VBFgPbWMGggyz82dMkh08e3jnKo0/WP3nVlUSnc558JiC/QbI0M8fYpx2aW5aDY9qpsbb3+ug10I=
+	t=1758897653; cv=none; b=BMmdSMbrzDuh8gRmjihPYx02qvIqaoQto3QYJdpvSWxTWKdy8O1Bz4KMd25rzvi71QdxUOHKciANo24uGDs2aiHl2XsIE26eEnJg+hHrDusKQ0Dz6y6s5txsl7LtGlnhkXJY0PXEW/GxzAzyuCe+liOw5FJQrX9MAzzFycLoq2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897557; c=relaxed/simple;
-	bh=od9vShACd/JgNkVYzap2DkAP/CrTcrq1VvOTO30I0UI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fa7j15ZnHAPLiuBA9ZpnWsQGFMHR5m7nUJ0c3lDwiNvKVtoXbJADyjEhdS8jO7YwFhb2fs0SxfYsPhmbw3NPZnX4KD1rhS9BOP1uEvDmoRcIMFHrvvYPl46y2EOe2wl6eg+bnDpZNcG6lVmYWjdVi5XL0e7MIFRW+a57pA1qh6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anlogic.com; spf=pass smtp.mailfrom=anlogic.com; arc=none smtp.client-ip=101.71.155.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anlogic.com
-Received: from leo-ubuntu21.localdomain (unknown [114.84.85.30])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 10cd375ea;
-	Fri, 26 Sep 2025 22:39:08 +0800 (GMT+08:00)
-From: "fushan.zeng" <fushan.zeng@anlogic.com>
-To: conor@kernel.org
-Cc: alex@ghiti.fr,
-	anup@brainfault.org,
-	aou@eecs.berkeley.edu,
-	conor+dt@kernel.org,
-	daniel.lezcano@linaro.org,
-	devicetree@vger.kernel.org,
-	fushan.zeng@anlogic.com,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	junhui.liu@pigmoral.tech,
-	krzk+dt@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	palmer@dabbelt.com,
-	palmer@sifive.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	samuel.holland@sifive.com,
-	tglx@linutronix.de,
-	ruigang.wan@anlogic.com
-Subject: Re: [PATCH v2 00/11] riscv: Add initial support for Anlogic DR1V90
-Date: Fri, 26 Sep 2025 22:38:55 +0800
-Message-Id: <20250926143855.4106-1-fushan.zeng@anlogic.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20250925-jaundice-uneasy-ff8b3b595879@spud>
-References: <20250925-jaundice-uneasy-ff8b3b595879@spud>
+	s=arc-20240116; t=1758897653; c=relaxed/simple;
+	bh=90tchflxcF4gE+p6ymbvvXCUFZ3J0tFjBD1ra+hcs/Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NmRpJzR6ZCnc1uX6HhUM0yl/iSRUe2nBrmgQ59Mtx0SMLkmcbNuKQklRBa7J2fsv1EpucC5h2WDzrP/001Ax6mO/tmpxjJ9lqc6fPSYwzNa92Ug1EIHvgK+TumpdlipeTzw9DSXxp3TzslZoWKNmtBB514vxqFAjb8oaxkow1EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QB2g4DE6; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e29d65728so15363155e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:40:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758897648; x=1759502448; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=90tchflxcF4gE+p6ymbvvXCUFZ3J0tFjBD1ra+hcs/Q=;
+        b=QB2g4DE6gY0BvVOrMTkdZ8ajAMb+ZtxwQi9HUQjnsouSPM94tn8zi9mudMH5POeN0g
+         EZFu3Ajgaz7jspiMUCKIVQ+u/Jdw2oLves8iZeZrK8j3PrdVCU9TVi6zeUPzF5VktsZE
+         h0x04M97oQkXa874xdVkYwqAV/cRlRzOx5fvohiR9VImkcCuShXAOwAnIUqZZ5x8mdbF
+         TOR1Gwmhua8hH9OeEE2NJHmyYF6Km0UKKuVfL5sajLIVyJjjRlODG9Lf0LeAZuQFJbvk
+         pW4/X0en16a2jXxHcH9KtIPgr5AvM4l/+TL0EdV4sj/W5KHQNk034re0hBepSlDZKoDg
+         C5wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758897648; x=1759502448;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=90tchflxcF4gE+p6ymbvvXCUFZ3J0tFjBD1ra+hcs/Q=;
+        b=vdPWbHqH1PObb52XBlEAhtxabcYGfHItCybshoJ3tzJAJ8iqEUC5sQN6ivozr57sar
+         eyukWKAmkJFWvPBsp1Thrs8c7reTW6+XxRQytZNFHkyeXwi3hwFeSpH+HzDp6mG2C3yg
+         vBmc3+YsMkglgtiHvbfQOMBkvY7gZSGANmzFzBtZMrZjxrL0NnkRlSfsBVf9kPttimlK
+         8o9h1kObS1uzK4OLy1bqbMpAzK/iTBn7zdB0/rcAPAJvlpy+urr+diOUxXZSo+X3RdL9
+         RHtq3CNvaW+jDRT3GBYM9SdjlGIcHIVTMTfK8pcBj35ltOrqyetcUivzfrqMIvkc1iPb
+         I0Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ4kAPSd5qgA+UtaL/31BTRBjA/fyKowFotGOdbb+PbSWV1sLzf+UdCO0+5CgXmf1KnjVAbu7M9i3C26I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrmGJe/2Fu9cYX92Ba+FkTW/WPTeUTDwSd7BUxgJwUKYqApJB3
+	qnrgZP7ymtosUFbIJ/IG8VL0t+dtt0zSrFRsRB3WFm6T+0/P3DYOWHO+
+X-Gm-Gg: ASbGncvJBIQSt6MLf1hljNzpMUyj/WeJrXVqb94hJVOCbvk/UvMd1XdJ1ZXgdRwAohi
+	2cp30tGRyLrkYKc+qX6erTQ4PR3/UzveoQFBTwqVe0FKLswpEbMpq3CLIGaVLOlLDR6TuSJ8yZD
+	1B+lzvEIzg8kXIgLmAUdWtCSF9c6QrcD9PDa+URFXF/uPJ2Q4FH31Soo+/0ro5meQ86hW9Y2MON
+	EXrAH1JF4fVRgSOy2oRSjY2Y/Ow9OeYZ2HTYh+BIw9DWoOVJjA4f0IrdkRqUCxhwR6sXA2QA6VW
+	exy3aDnGO1BLcKpbujAy4OUa0eHxYV/rGgFTzkpui3Ugs2Fo1b4LS6DyOGhqo6wHx/djf0VCAGZ
+	wvz+loqh3aIQhiQeBK8rlWvcrQ9DEkdc=
+X-Google-Smtp-Source: AGHT+IF+GdI92TLRs9rHsVNgrebtIVMQHD15AS5sbB5Iv4MThr0TRQnHyapfTIMvahMIkANVWZB75Q==
+X-Received: by 2002:a05:6000:2dc8:b0:3ec:42ad:591 with SMTP id ffacd0b85a97d-40e4a05c535mr7276947f8f.36.1758897648024;
+        Fri, 26 Sep 2025 07:40:48 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb9e1b665sm7247453f8f.27.2025.09.26.07.40.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 07:40:47 -0700 (PDT)
+Message-ID: <3f93a0dad6ba5dea8db84973ae1518bbb98d3aed.camel@gmail.com>
+Subject: Re: [PATCH v2 3/7] iio: adc: add RZ/T2H / RZ/N2H ADC driver
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring	 <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+ "magnus.damm" <magnus.damm@gmail.com>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>,  "linux-renesas-soc@vger.kernel.org"	
+ <linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"	
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"	
+ <linux-kernel@vger.kernel.org>
+Date: Fri, 26 Sep 2025 15:41:14 +0100
+In-Reply-To: <OSZPR01MB87987A7D3F418A6E7A24FC41851EA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+References: 
+	<20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com>
+		 <20250925224013.2146983-4-cosmin-gabriel.tanislav.xa@renesas.com>
+	 <3550caed57f460a3d28ed585eda2d955bd846930.camel@gmail.com>
+	 <OSZPR01MB87987A7D3F418A6E7A24FC41851EA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a998676aceb0224kunmdf48913a39ec1b
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHR5LVh0fGhlPGEJKTUJJGVYVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSk9VQ09VQ05VSEtZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSExVSktLVU
-	pCS0tZBg++
 
-On Thu, 25 Sep 2025 18:09:59 +0100, Conor Dooley wrote:
-> On Thu, Sep 25, 2025 at 11:06:50AM +0800, fushan.zeng wrote:
-> > Thanks first.
-> > Anloigc already has the open source SDK at https://gitee.com/anlogic/sdk,
-> > and will submit it to mainline at suitable time.
-> > The code should be a full feature version after lots of tests, not the
-> > modified and simplified version from Anlogic open source.
-> 
-> The nature of the upstreaming process will require what you have to be
-> broken down into multiple parts and be upstreamed at different times,
-> depending on how long components take to review. This is normal and
-> expected. Of course there should be through testing done, but I don't
-> think that what is in this initial patchset really requires much
-> testing - if it boots then it's probably sufficiently tested!
-> 
-> > And we hope that there won't be two different versions code of anlogic SO=
-> Cs,
-> > it may confuse customers.
-> 
-> If there's ever going to be complete upstream support for your device,
-> then there will be two versions, because looking at just the dts files
-> in the gitee sdk you linked I have noticed things that are not acceptable
-> in upstream. As others have said, you are not entitled to control the
-> upstreaming process for your device. The only way to have some control is
-> to submit patches yourself and to engage with the review process for other
-> components. It's in everybody's interest to keep differences with your
-> SDK to a minimum, but you need to accept that there will always be
-> differences because the upstream community simply has higher standards
-> than those in your SDK as well as a requirement for portable code that
-> you do not have.
-> 
-> > It is better that anlogic SOCs are long term maintained and supported
-> > by Anlogic officially in mainline and for customers.
-> 
-> It's only better if Anlogic submits better quality patches (no evidence
-> for that yet) or submits the patches more promptly than others (which
-> clearly has not happened here), and offers review commentary etc at a
-> higher standard and more frequently than a non-employee maintainer would
-> be able to do (there's no evidence for that so far either, given you're
-> trying to stall this patchset). Your claim seems to have no merit as
-> there is no proof that you'd do a better job.
-> 
-> Thanks,
-> Conor.
+On Fri, 2025-09-26 at 12:41 +0000, Cosmin-Gabriel Tanislav wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Nuno S=C3=A1 <noname.nuno@gmail.com>
+> > Sent: Friday, September 26, 2025 3:11 PM
+> > To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> > Cc: Jonathan Cameron <jic23@kernel.org>; David Lechner
+> > <dlechner@baylibre.com>; Nuno S=C3=A1
+> > <nuno.sa@analog.com>; Andy Shevchenko <andy@kernel.org>; Rob Herring
+> > <robh@kernel.org>; Krzysztof
+> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Gee=
+rt
+> > Uytterhoeven
+> > <geert+renesas@glider.be>; magnus.damm <magnus.damm@gmail.com>;
+> > linux-iio@vger.kernel.org; linux-
+> > renesas-soc@vger.kernel.org; devicetree@vger.kernel.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v2 3/7] iio: adc: add RZ/T2H / RZ/N2H ADC driver
+> >=20
+> > On Fri, 2025-09-26 at 01:40 +0300, Cosmin Tanislav wrote:
+> > > Add support for the A/D 12-Bit successive approximation converters fo=
+und
+> > > in the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
+> > >=20
+> > > RZ/T2H has two ADCs with 4 channels and one with 6.
+> > > RZ/N2H has two ADCs with 4 channels and one with 15.
+> > >=20
+> > > Conversions can be performed in single or continuous mode. Result of =
+the
+> > > conversion is stored in a 16-bit data register corresponding to each
+> > > channel.
+> > >=20
+> > > The conversions can be started by a software trigger, a synchronous
+> > > trigger (from MTU or from ELC) or an asynchronous external trigger (f=
+rom
+> > > ADTRGn# pin).
+> > >=20
+> > > Only single mode with software trigger is supported for now.
+> > >=20
+> > > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.co=
+m>
+> > > ---
+> >=20
+> > Just one small nit from me. With it:
+> >=20
+> > Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> >=20
+> > > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > > =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 ++
+> > > =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > > =C2=A0drivers/iio/adc/rzt2h_adc.c | 306 +++++++++++++++++++++++++++++=
++++++++
+> > > =C2=A04 files changed, 318 insertions(+)
+> > > =C2=A0create mode 100644 drivers/iio/adc/rzt2h_adc.c
+> > >=20
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index eed08d25cb7a..220d17039084 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -21837,6 +21837,7 @@ L:=C2=A0 linux-iio@vger.kernel.org
+> > > =C2=A0L: linux-renesas-soc@vger.kernel.org
+> > > =C2=A0S: Supported
+> > > =C2=A0F: Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-=
+adc.yaml
+> > > +F: drivers/iio/adc/rzt2h_adc.c
+> > >=20
+> > > =C2=A0RENESAS RTCA-3 RTC DRIVER
+> > > =C2=A0M: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> > > index 58a14e6833f6..cab5eeba48fe 100644
+> > > --- a/drivers/iio/adc/Kconfig
+> > > +++ b/drivers/iio/adc/Kconfig
+> > > @@ -1403,6 +1403,16 @@ config RZG2L_ADC
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 To compile this driver as a module, ch=
+oose M here: the
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 module will be called rzg2l_adc.
+> > >=20
+> > > +config RZT2H_ADC
+> > > +=C2=A0=C2=A0 tristate "Renesas RZ/T2H / RZ/N2H ADC driver"
+> > > +=C2=A0=C2=A0 select IIO_ADC_HELPER
+> > > +=C2=A0=C2=A0 help
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 Say yes here to build support for the ADC f=
+ound in Renesas
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 RZ/T2H / RZ/N2H SoCs.
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 To compile this driver as a module, choose =
+M here: the
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 module will be called rzt2h_adc.
+> > > +
+> > > =C2=A0config SC27XX_ADC
+> > > =C2=A0=C2=A0=C2=A0 tristate "Spreadtrum SC27xx series PMICs ADC"
+> > > =C2=A0=C2=A0=C2=A0 depends on MFD_SC27XX_PMIC || COMPILE_TEST
+> > > diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> > > index d008f78dc010..ed647a734c51 100644
+> > > --- a/drivers/iio/adc/Makefile
+> > > +++ b/drivers/iio/adc/Makefile
+> > > @@ -123,6 +123,7 @@ obj-$(CONFIG_ROHM_BD79112) +=3D rohm-bd79112.o
+> > > =C2=A0obj-$(CONFIG_ROHM_BD79124) +=3D rohm-bd79124.o
+> > > =C2=A0obj-$(CONFIG_ROCKCHIP_SARADC) +=3D rockchip_saradc.o
+> > > =C2=A0obj-$(CONFIG_RZG2L_ADC) +=3D rzg2l_adc.o
+> > > +obj-$(CONFIG_RZT2H_ADC) +=3D rzt2h_adc.o
+> > > =C2=A0obj-$(CONFIG_SC27XX_ADC) +=3D sc27xx_adc.o
+> > > =C2=A0obj-$(CONFIG_SD_ADC_MODULATOR) +=3D sd_adc_modulator.o
+> > > =C2=A0obj-$(CONFIG_SOPHGO_CV1800B_ADC) +=3D sophgo-cv1800b-adc.o
+> > > diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.=
+c
+> > > new file mode 100644
+> > > index 000000000000..6a49788a5c67
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/rzt2h_adc.c
+> > > @@ -0,0 +1,306 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/cleanup.h>
+> > > +#include <linux/completion.h>
+> > > +#include <linux/delay.h>
+> > > +#include <linux/iio/adc-helpers.h>
+> > > +#include <linux/iio/iio.h>
+> > > +#include <linux/interrupt.h>
+> > > +#include <linux/io.h>
+> > > +#include <linux/iopoll.h>
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/pm_runtime.h>
+> > > +#include <linux/property.h>
+> > > +
+> >=20
+> > ...
+> >=20
+> > >=20
+> > > +
+> > > +static int rzt2h_adc_pm_runtime_resume(struct device *dev)
+> > > +{
+> > > +=C2=A0=C2=A0 struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
+> > > +=C2=A0=C2=A0 struct rzt2h_adc *adc =3D iio_priv(indio_dev);
+> >=20
+> > Not seeing the point of the pointer arithmetic. You can pass your devic=
+e
+> > pointer
+> > (adc) directly in platform_set_drvdata()
+> >=20
+>=20
+> Thanks Nuno, I'll do that. I also have another change to make to the driv=
+er so
+> I will have to send a new version and you'll have to give your Reviewed-b=
+y
+> again.
+>=20
+> Here's the change I'm planning to make, maybe I could keep the Reviewed-b=
+y
+> if you agree.
+>=20
+> Without this change, pm_runtime_resume_and_get() is inside the mutex,
+> while pm_runtime_put_autosuspend() is outside of it. This is mostly for
 
-Hi all,
-I realize that my previous message was inappropriate and may have
-given the wrong impression - my apologies.
+I guess you meant the other way around.
 
-To clarify, I am not trying to control the community
-or block upstream work. I misunderstood the right
-way to express myself before, and I take my
-previous mail back.
+> symmetry, although it's not excluded for some subtle bugs to be able to
+> occur without it.
+>=20
 
-Thank you for your guidance and patience. As a
-newcomer to the Linux community, I am still
-learning how to properly contribute.
+Fell free to keep my tag.
 
-If Junhui has further technical questions, please
-feel free to contact me in this thread. I am happy to
-help and to welcome contributions from the
-community.
+- Nuno S=C3=A1
 
-Best regards,
-fushan
-
-
+> diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.c
+> index 708029dc8949..79053bbc71c9 100644
+> --- a/drivers/iio/adc/rzt2h_adc.c
+> +++ b/drivers/iio/adc/rzt2h_adc.c
+> @@ -81,9 +81,9 @@ static int rzt2h_adc_read_single(struct rzt2h_adc *adc,
+> unsigned int ch, int *va
+> =C2=A0=C2=A0=C2=A0=C2=A0 ret =3D pm_runtime_resume_and_get(adc->dev);
+> =C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+>=20
+> -=C2=A0=C2=A0=C2=A0 guard(mutex)(&adc->lock);
+> +=C2=A0=C2=A0=C2=A0 mutex_lock(&adc->lock);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0 reinit_completion(&adc->completion);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0 /* Enable a single channel */
+> @@ -106,8 +106,10 @@ static int rzt2h_adc_read_single(struct rzt2h_adc *a=
+dc,
+> unsigned int ch, int *va
+>=20
+> =C2=A0disable:
+> =C2=A0=C2=A0=C2=A0=C2=A0 rzt2h_adc_start_stop(adc, false, 0);
+>=20
+> +=C2=A0=C2=A0=C2=A0 mutex_unlock(&adc->lock);
+> +
+> =C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_put_autosuspend(adc->dev);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+> =C2=A0}
+>=20
+> > - Nuno S=C3=A1
+>=20
+> ________________________________
+>=20
+> Renesas Electronics Europe GmbH
+> Registered Office: Arcadiastrasse 10
+> DE-40472 Duesseldorf
+> Commercial Registry: Duesseldorf, HRB 3708
+> Managing Director: Carsten Jauch
+> VAT-No.: DE 14978647
+> Tax-ID-No: 105/5839/1793
+>=20
+> Legal Disclaimer: This e-mail communication (and any attachment/s) is
+> confidential and contains proprietary information, some or all of which m=
+ay be
+> legally privileged. It is intended solely for the use of the individual o=
+r
+> entity to which it is addressed. Access to this email by anyone else is
+> unauthorized. If you are not the intended recipient, any disclosure, copy=
+ing,
+> distribution or any action taken or omitted to be taken in reliance on it=
+, is
+> prohibited and may be unlawful.
 
