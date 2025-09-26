@@ -1,208 +1,113 @@
-Return-Path: <linux-kernel+bounces-833859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A60FBA33C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:50:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A669CBA33BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82E2217F78C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D318F1C03532
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C2D29D289;
-	Fri, 26 Sep 2025 09:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fy/iNemC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347DB29D287;
+	Fri, 26 Sep 2025 09:50:12 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B492BDC19;
-	Fri, 26 Sep 2025 09:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34B265623
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758880219; cv=none; b=d2NJVOM6Buyf/ZkZYjE9zjSL//fzEkNFV3TqriCYGKbuflxcaas+o+rQ4NM91Uk7I4Grv7hTQjgQQjOdYN84V5WSUWoKbMKviBhAHdPBQSzmehrU3N1b1YTmyl3dn4tIKd48k+Ib5vP0OEBDZ3jZ8WWBKPvxYsNg5NSCrWKP2DU=
+	t=1758880211; cv=none; b=rvcNoMieaZuESAw32bkC0sCVL1hYyGAS4xox3HJRue+aTMA3rhQNbgdRPiaY/UtYyz+UOEMhKq+ZFdvX1vyghn9pm8kRoYITW1xp0d2qZq1yBHayAGsis/83dWCNDu5UaJuxHLRfXKZbQCpkPYDdiKcacZr1xBJmIk9qaXl1BpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758880219; c=relaxed/simple;
-	bh=RVunrFGg2fqla5CN9iPHL7VuTOw5Mx96SG1J7Z4a1xA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IxfzoCRTatQ3mCp1bEwuGFjLqhHUt/nEV/i8bl2Li2GUbM8sWf0IkpqiEtuBvFi9H2IYRN9kyUeMILoaXii7CRk6S8GL7j+eG00mSMlPKj6TKc+n0sLsOu8xysMqeXiRTMOlixwZrplZbuT6WpPerNPMH+QifgZ+s9IQ3Byh3q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fy/iNemC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9318B40E016D;
-	Fri, 26 Sep 2025 09:50:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tIUoaUkxrX-h; Fri, 26 Sep 2025 09:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758880201; bh=9spBoCuluCq7wXBdqA1NjSL0lEKzvM3IdvWoFbv1x+w=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fy/iNemCRq0b6q/6ILKK00CTgpP2eiYperebJKLrgLAkI6OJG2F3wZw2vj4gg4Pmj
-	 Hizt+HQB1/YEc9FaJQPkvwEEAqc1Ce4zr2/hErfxV1ggvxWEX7KDAXCnHlVzrED9gl
-	 V7Cs+rH/xrXRv3SSu9lGXPO2elnZbh2DvFxOitPVMO7fBhBHTK8TNhnVvqo3E2Awxc
-	 QgC7qjmnOZ9Q+yRGpbehNw5bis/sp7T30ja/wUi3jVFKykKtDvm0nlu9paMKOKYWKr
-	 Pp/Ar51Wyz4fqG1H2huV2zoOjwF/w++HHiPVCZeglnif46iKzZyL4pHLlO3sgrbRDy
-	 4W4c5ZzyXmP5dCyDqyeWutFoGV/sPqFwglhChWlwpwtnbX0g//5C3mhmj7eFGTy7Ff
-	 XWnxqtLhjhGCDEqWy9bmzo2DNT68TOTOjhkNhWwCScDZSVAwRyqY6ek3X8Jv2ThnDl
-	 JagNXe3HyD89+YXtkjpLFXPdAbAINm2Iz8BdlkML66jkQCyGhftHtMR6nLsa11GOnx
-	 Zu/A5sCr6xSBBJBl/hGUmtDLf50PNLkEtSkBZDogsrhYynXoqsepQJWGXyduWG6zrV
-	 miRztf8q4q36C9XCm2RHo2oGeDJSXv3omefBgatNSRtRUcTszOcMBAgTmyHUaO5i9D
-	 WIQgpaZRhn+PYs9Vryc8zJ8w=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6BD2B40E00DD;
-	Fri, 26 Sep 2025 09:49:58 +0000 (UTC)
-Date: Fri, 26 Sep 2025 11:49:48 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC updates for v6.18
-Message-ID: <20250926094948.GAaNZhvEm0mULL_iSp@fat_crate.local>
+	s=arc-20240116; t=1758880211; c=relaxed/simple;
+	bh=9MP05zHbL6Vtrf5lONjgCVq9CWhR1Q+9cXrMd2Yezk0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bG3t37Kx3Ss/zqPZPWnrWmTRsiY98Avw/M2VBlmeT6SnCMmDr2icj2+/t1VnnWq61WGzsn0kQx4JmwhELtT4WGlqRDH/gAw/im4Ne+fQbaSkZG6cEwxAgpT/FyNEMZVd+4eYE+pO6CgZk9ft7Xh4gzcjryXmgZynRTIZuMQIEmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-54bc6356624so2102386e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:50:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758880209; x=1759485009;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WcBsC1askobQesMf5dT3EOt6tZwDclh2s0/BCRcco7k=;
+        b=GpnsRdTJAbNL2oACqoDzKjQBGnO0M80i7jtLOUh5rbuxzPKbrUBxcV6GRBPZQvEKuT
+         BKezZVSIindLAxyHnOg/P91w0/+sbF43FPmooy2ZAuFN61iHf/w6jiiH9bFK66S/ugP0
+         4m0XccLGegpZxYfUhlG7vgCD+xBp5Y5tzer7JZcR3r5C916lqlUJV6X4vlH+Ljoqo7C/
+         m3JpAGSNekrCdtmNypcHXJCZSrYEGpBOTNyEhGGV+DiT/viAdQasSY8MOabL6As2OOc3
+         hW0XHK+sDGsenah1RkB8gw4t9zENDkXIKNl02+xZdieFNVWW5ljUtgulbt/XlKK0OOaC
+         0fow==
+X-Forwarded-Encrypted: i=1; AJvYcCWfDFqBnVs87qYNK0ZS5ketC5v12mQDe3RXpqFA7PgBFUKSlBquH/wrdOUf0bfm4LI5I18nei0P+/EjOiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP4M6gz+9rM8Ijb1Ur3kJPqmfgWL6fyZnbIyZnoE2HzED89V0O
+	tW5bRWHT5Ggblo1UldafqsyaUrL3xMPqMEFB1yKzCKdY78snTodQP1gfeI4jdrMa
+X-Gm-Gg: ASbGnctca1aMxQdb/St0J4LFNA1QiaPwbKDhi+I2FRowgmP8LWdTcBf+yu+ywU4H6+f
+	UDyAPaEqZCs+ymjrJ/392gxngg6NhC1oAKGI3oFNMLmYVCiBEKzLE2ahpBeoXS0JY2umbSmMuUn
+	z807LVO0fLlxYCsMHfQeHpBMSqrb+Fl+eCxqcLTYlfGxbQ6pDxHCK+CyemC4V1Y+T4F4aOO8nTf
+	40vind0tUlcVPn+ZKQTvYSoCeW+8KdFTYcpWEmkJj/xMQiqnAuvCvwLBIHSEen8yQQSwSJsZ+KN
+	34ByqSQQMwlCfjfslOSHl1oKOkJWUMlG/yO4xUbmRJqomNQTRAsQlxQtuMqoDFDYI5gd9yjb+PW
+	9bAR2IPTH41GOswoNJGabcuRT2vMP7VGha2cBxdrO1AQGPuMYBi1Grr1syYSz
+X-Google-Smtp-Source: AGHT+IGEttgMwfgD3+5dbFj/hP8mSC6ytQB5W+lL6sFn/6bZbSWG6cEhGabJcOM41tA8R9U815Zc5A==
+X-Received: by 2002:a05:6122:5004:b0:54a:89a2:21ad with SMTP id 71dfb90a1353d-54bed253c0fmr2074436e0c.0.1758880209092;
+        Fri, 26 Sep 2025 02:50:09 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bed8a94a3sm837338e0c.9.2025.09.26.02.50.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 02:50:08 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8e3d93c0626so1409826241.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:50:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXgfZDe4DMiIv/Nc+O0ASindPc5AtHmD9YwShvUfKWG0XjukWVKG8Az/G3p+CPbDgxK632+oCQPvCUWrW0=@vger.kernel.org
+X-Received: by 2002:a67:e098:0:b0:59f:54cb:205a with SMTP id
+ ada2fe7eead31-5ae1f222b9dmr1619909137.13.1758880208278; Fri, 26 Sep 2025
+ 02:50:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com> <20250912122444.3870284-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250912122444.3870284-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Sep 2025 11:49:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXn-sd7CXgxRzwfHQFUUxzboyYP-2eqSTaVgmh5hjT_xA@mail.gmail.com>
+X-Gm-Features: AS18NWBXsS1FJ_qFsvTSOsChWy-NgmX0zNmCcExyFfSBImph2esks2SOJO6KK2A
+Message-ID: <CAMuHMdXn-sd7CXgxRzwfHQFUUxzboyYP-2eqSTaVgmh5hjT_xA@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] arm64: dts: renesas: rzg3s-smarc: Enable PCIe
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+On Fri, 12 Sept 2025 at 14:24, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The RZ Smarc Carrier-II board has PCIe headers mounted on it. Enable PCIe
+> support.
+>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-please pull the EDAC lineup for v6.18.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thx.
+Gr{oetje,eeting}s,
 
----
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.18
-
-for you to fetch changes up to 69ed025aeb4c8faa3019e5997b850a554b47498c:
-
-  Merge branches 'edac-drivers' and 'edac-misc' into edac-updates (2025-09-26 11:44:35 +0200)
-
-----------------------------------------------------------------
-- Add support for new AMD family 0x1a models to amd64_edac
-
-- Add an EDAC driver for the AMD VersalNET memory controller which
-  reports hw errors from different IP blocks in the fabric using an
-  IPC-type transport
-
-- Drop the silly static number of memory controllers in the Intel EDAC
-  drivers (skx, i10nm) in favor of a flexible array so that former
-  doesn't need to be increased with every new generation which adds more
-  memory controllers; along with a proper refactoring
-
-- Add support for two Alder Lake-S SOCs to ie31200_edac
-
-- Add an EDAC driver for ADM Cortex A72 cores, and specifically for
-  reporting L1 and L2 cache errors
-
-- Last but not least, the usual fixes, cleanups and improvements all
-  over the subsystem
-
-----------------------------------------------------------------
-Avadhut Naik (2):
-      EDAC/amd64: Add support for AMD family 1Ah-based newer models
-      EDAC/mc_sysfs: Increase legacy channel support to 16
-
-Borislav Petkov (AMD) (2):
-      MAINTAINERS: EDAC: Drop inactive reviewers
-      Merge branches 'edac-drivers' and 'edac-misc' into edac-updates
-
-Dan Carpenter (1):
-      EDAC/versalnet: Return the correct error in mc_probe()
-
-Jiri Slaby (SUSE) (1):
-      EDAC/altera: Use dev_fwnode()
-
-Kuan-Wei Chiu (1):
-      EDAC: Fix wrong executable file modes for C source files
-
-Kyle Manna (1):
-      EDAC/ie31200: Add two more Intel Alder Lake-S SoCs for EDAC support
-
-Qiuxu Zhuo (9):
-      EDAC/i10nm: Skip DIMM enumeration on a disabled memory controller
-      EDAC/{skx_common,skx}: Use configuration data, not global macros
-      EDAC/skx_common: Move mc_mapping to be a field inside struct skx_imc
-      EDAC/skx_common: Swap memory controller index mapping
-      EDAC/skx_common: Make skx_dev->imc[] a flexible array
-      EDAC/skx_common: Remove redundant upper bound check for res->imc
-      EDAC/i10nm: Reallocate skx_dev list if preconfigured cnt != runtime cnt
-      EDAC/skx_common: Remove unused *NUM*_IMC macros
-      EDAC/skx_common: Use topology_physical_package_id() instead of open coding
-
-Sascha Hauer (2):
-      EDAC: Add EDAC driver for ARM Cortex A72 cores
-      dt-bindings: arm: cpus: Add edac-enabled property
-
-Shubhrajyoti Datta (5):
-      cdx: Split mcdi.h and reorganize headers
-      cdx: Export Symbols for MCDI RPC and Initialization
-      RAS: Export log_non_standard_event() to drivers
-      dt-bindings: memory-controllers: Add support for Versal NET EDAC
-      EDAC: Add a driver for the AMD Versal NET DDR controller
-
- Documentation/devicetree/bindings/arm/cpus.yaml    |  17 +
- .../memory-controllers/xlnx,versal-net-ddrmc5.yaml |  41 +
- MAINTAINERS                                        |  17 +-
- drivers/cdx/controller/cdx_controller.c            |   2 +-
- drivers/cdx/controller/cdx_rpmsg.c                 |   2 +-
- drivers/cdx/controller/mcdi.c                      |  43 +-
- drivers/cdx/controller/mcdi_functions.c            |   1 -
- drivers/cdx/controller/mcdi_functions.h            |   3 +-
- drivers/cdx/controller/mcdid.h                     |  63 ++
- drivers/edac/Kconfig                               |  16 +
- drivers/edac/Makefile                              |   2 +
- drivers/edac/a72_edac.c                            | 225 +++++
- drivers/edac/altera_edac.c                         |   4 +-
- drivers/edac/amd64_edac.c                          |  20 +
- drivers/edac/amd64_edac.h                          |   2 +-
- drivers/edac/ecs.c                                 |   0
- drivers/edac/edac_mc_sysfs.c                       |  24 +
- drivers/edac/i10nm_base.c                          |  27 +-
- drivers/edac/ie31200_edac.c                        |   4 +
- drivers/edac/mem_repair.c                          |   0
- drivers/edac/scrub.c                               |   0
- drivers/edac/skx_base.c                            |  33 +-
- drivers/edac/skx_common.c                          |  54 +-
- drivers/edac/skx_common.h                          |  28 +-
- drivers/edac/versalnet_edac.c                      | 960 +++++++++++++++++++++
- drivers/ras/ras.c                                  |   1 +
- .../controller => include/linux/cdx}/bitfield.h    |   0
- include/linux/cdx/edac_cdx_pcol.h                  |  28 +
- .../cdx/controller => include/linux/cdx}/mcdi.h    |  47 +-
- 29 files changed, 1553 insertions(+), 111 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/xlnx,versal-net-ddrmc5.yaml
- create mode 100644 drivers/cdx/controller/mcdid.h
- create mode 100644 drivers/edac/a72_edac.c
- mode change 100755 => 100644 drivers/edac/ecs.c
- mode change 100755 => 100644 drivers/edac/mem_repair.c
- mode change 100755 => 100644 drivers/edac/scrub.c
- create mode 100644 drivers/edac/versalnet_edac.c
- rename {drivers/cdx/controller => include/linux/cdx}/bitfield.h (100%)
- create mode 100644 include/linux/cdx/edac_cdx_pcol.h
- rename {drivers/cdx/controller => include/linux/cdx}/mcdi.h (79%)
-
+                        Geert
 
 -- 
-Regards/Gruss,
-    Boris.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-https://people.kernel.org/tglx/notes-about-netiquette
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
