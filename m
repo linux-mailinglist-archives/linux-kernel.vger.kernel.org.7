@@ -1,231 +1,159 @@
-Return-Path: <linux-kernel+bounces-833968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3CABA36FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A92EBA3704
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322511C22117
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F3361C223BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BB32F90D6;
-	Fri, 26 Sep 2025 11:03:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A532F8BF1;
-	Fri, 26 Sep 2025 11:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD5A2F5A10;
+	Fri, 26 Sep 2025 11:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Evynv28w";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U+WmblRB"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3D02F39AD;
+	Fri, 26 Sep 2025 11:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758884610; cv=none; b=ZGDFq/QRcAwuMAJXsNxx9wzeHmTfRybLTatFwfxfrK7eFBrK/pkS54T2X+3BX/xJ9AATULuU7qIi6L3/3HvueMCbfmWPrNtZX00MtZx4Sv8PyV4QYyaUu0N6AYj+kRem/Tu3fJpujSWQBn+Y6RiwXLlyUJF7IfDUOKXQte1gyTw=
+	t=1758884627; cv=none; b=WAtNZgVQmXCAuQEHogYNUJ6tQar+e4aVW314209Pe0T8zFcZzTnsNHlLdbxZkQpu/atg2W8YJIWAF/oSzu/dNBc5jX/MKa38Lepvbgmy9BF9IHSBzG0/HbaFYis+o5UME5nGBK+f3kCtsm3bxjPLSEdFzdbE4+YYPiOY2UT5MrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758884610; c=relaxed/simple;
-	bh=NiM5bywEe+hqZEp48MCP0PMFIY9nEmXjNWVKXBI6nW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B2t83yIikSXvEBS3ERyayL1+35zs0Xe+WwcUuucdnxnPLZm1S1nkLTJoQjryFM7T1vCkCFn/gJJ5bcQOGtVgMERtrLnZkyYJ2EM0EDK0Jnc83JsgSXMU2E9VO2Hk5WPRJG0JQwfB0OiPinrdcbZ9v3jbCKHrjHJ6Q0IIGh30Uw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35699168F;
-	Fri, 26 Sep 2025 04:03:20 -0700 (PDT)
-Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.38.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D63AF3F66E;
-	Fri, 26 Sep 2025 04:03:24 -0700 (PDT)
-From: Steven Price <steven.price@arm.com>
-To: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Emi Kisanuki <fj0570is@fujitsu.com>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Steven Price <steven.price@arm.com>
-Subject: [RFC PATCH 5/5] arm64: RME: Support num_aux_places & rtt_tree_pp realm parameters
-Date: Fri, 26 Sep 2025 12:02:54 +0100
-Message-ID: <20250926110254.55449-6-steven.price@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250926110254.55449-1-steven.price@arm.com>
-References: <20250926110254.55449-1-steven.price@arm.com>
+	s=arc-20240116; t=1758884627; c=relaxed/simple;
+	bh=eDXDjI0Bhxth+86YvJY9YxJtSVBHcM4sSIY6iAe8CZQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Rv51iv5rkNwQnQ8yHa66wprFHjhIbiQ9rPghMxHfXtA96wEJpg8pDy7mz+SIRzSnY0caG6sRw2NrjzRTN+eY9ST3TpyiJ55qdmhsjGTKBP98YrtTUZ6f3Uo9PTWKYtVMzfpjQ6wND5AHvcq+pB3JuMe9Qcous+xHsZwJqkGaFCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Evynv28w; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U+WmblRB; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 86EEFEC017B;
+	Fri, 26 Sep 2025 07:03:44 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 26 Sep 2025 07:03:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758884624;
+	 x=1758971024; bh=PvL16n+18TtzXaiQmMMz6FRycmVwxpPMWvjB6k/vDwE=; b=
+	Evynv28wm/NV0ZWs+3WnrnCLKV+nK6T+enyqV/L5ChTMzfhbriQlPBiEK7IM8pvj
+	Qr7Iy+r1IE+St4VnWi/JRjwGHeTH/9MM/sCmlXHhQQl+PWTZTMsRGhxHgBCCV7b7
+	lIwlOR0gsQNx3z7nNnmHSYuEvRl/7/hZsrte2ZlluM3WbxsiFRKRtx4TbFYo2ba1
+	vKxAIgODr3f/D1/aYs/44qX7BMcGGabal2o6XTQiNyfLH7T+WUCkMQhq2zqbjyJv
+	q03zAiIJhyChf3A/JJ/K75YAWAWbHXgzpl1bWFim5W6feqW605YdnLnT/eQLc9cC
+	X6ZVnFTjmgw51KP1F/XCFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758884624; x=
+	1758971024; bh=PvL16n+18TtzXaiQmMMz6FRycmVwxpPMWvjB6k/vDwE=; b=U
+	+WmblRB3IbCdMR0nNE9zCvty3cOabwQjBKNEzC9UJUjUP14ykxdlrBoarosDE956
+	Qm3I28Rb6z8ujwHKRWheBLx9TuMLtoGJY1OcSUCilIZsjlaRU+wzSZaYA7iUorXm
+	MC4Mocymq/AA4uM8o4hoXL/yAUfx6NlJklgKALoBpAmHaBXLKZYTYeWXnUSB54a4
+	6kppcrUi159LhvLTXImaOz6YzzxDw6cXJf+0px8sT/3bZcB6+JJIbdpbXrrrgDkA
+	h/muCcJmqzKN1naFKD7W07KhFeINytI1v4D9kWWVVBmaJ4KBgeej34GjY7FGPR5K
+	4z9sfWpDM2++AINJTlN6Q==
+X-ME-Sender: <xms:DXPWaIukjtSSBFYRvOB7OcP6T_VsELwvH6pgfhQQgCPOfiz3ICa8wg>
+    <xme:DXPWaATFQ76ZtR4W2BSZ5Tq12JKNjSfvYtkFF0AbwokSXokGH8Ex3Sxw2SIW98_vV
+    hLMR4vbY9fctkY3Y7ckxyeUbKelibT-pkHU7NAl2F_tk8wviQ5ZRtgx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiledvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhrtg
+    hpthhtohepghhithesrghmugdrtghomhdprhgtphhtthhopehmrghnihhkrghnthgrrdhg
+    uhhnthhuphgrlhhlihesrghmugdrtghomhdprhgtphhtthhopehmihgthhgrlhdrshhimh
+    gvkhesrghmugdrtghomhdprhgtphhtthhopehrrgguhhgvhidrshhhhigrmhdrphgrnhgu
+    vgihsegrmhgurdgtohhmpdhrtghpthhtohepshhhuhgshhhrrghjhihothhirdgurghtth
+    grsegrmhgurdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhgohhuugesrghmugdr
+    tghomhdprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghssegrnhgrlhhoghdrtghomh
+    dprhgtphhtthhopegsihhllhihpghtshgrihesrghsphgvvgguthgvtghhrdgtohhm
+X-ME-Proxy: <xmx:DXPWaLNqxtk-4W_Q1j1WTcWidKRWZrdILFCI16kpIL39djm3wQkQ0Q>
+    <xmx:DXPWaIl_USgfUt6KPymHtALbiZmpj53D6jw1J-fqc6Ccn6NGGJ6JYg>
+    <xmx:DXPWaJwRrh2b7GdwJNo4RiX6cWiV1WTB3rWdVH9JG0TWg_Snrp3N3g>
+    <xmx:DXPWaBCbRTo44TawIyG3AHo7s6ykTxs7lyrK7aLyLz8oE2Gci9MzmA>
+    <xmx:EHPWaKovkDHBfCP_NUcoE87udMgRd9rjX6kmpE3uxhVlzvvLH-xjngws>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7574F700069; Fri, 26 Sep 2025 07:03:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: A1PyFc3e_3vw
+Date: Fri, 26 Sep 2025 13:03:21 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Manikanta Guntupalli" <manikanta.guntupalli@amd.com>, git@amd.com,
+ "Michal Simek" <michal.simek@amd.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Frank Li" <Frank.Li@nxp.com>, "Rob Herring" <robh@kernel.org>,
+ krzk+dt@kernel.org, "Conor Dooley" <conor+dt@kernel.org>,
+ =?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ tommaso.merciai.xr@bp.renesas.com, quic_msavaliy@quicinc.com,
+ Shyam-sundar.S-k@amd.com, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+ "'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>,
+ "Kees Cook" <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "Jarkko Nikula" <jarkko.nikula@linux.intel.com>,
+ "Jorge Marques" <jorge.marques@analog.com>,
+ "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-hardening@vger.kernel.org
+Cc: radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
+ shubhrajyoti.datta@amd.com, manion05gk@gmail.com
+Message-Id: <42afd2b3-ea3d-4413-b32b-b3f1ef651fba@app.fastmail.com>
+In-Reply-To: <20250926105349.2932952-3-manikanta.guntupalli@amd.com>
+References: <20250926105349.2932952-1-manikanta.guntupalli@amd.com>
+ <20250926105349.2932952-3-manikanta.guntupalli@amd.com>
+Subject: Re: [PATCH V8 2/5] asm-generic/io.h: Add big-endian MMIO accessors
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-CCA planes provides new parameters to the VMM:
- - num_aux_planes defines the number of extra planes
- - rtt_tree_pp controls whether each plane has it's own page table tree,
-   of if they share one tree.
+On Fri, Sep 26, 2025, at 12:53, Manikanta Guntupalli wrote:
+> Add MMIO accessors to support big-endian memory operations. These help=
+ers
+> include {read, write}{w, l, q}_be() and {read, write}s{w, l, q}_be(),
+> which allows to access big-endian memory regions while returning
+> the results in the CPU=E2=80=99s native endianness.
+>
+> This provides a consistent interface to interact with hardware using
+> big-endian register layouts.
+>
+> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/include/uapi/asm/kvm.h | 12 +++++
- arch/arm64/kvm/rme.c              | 77 +++++++++++++++++++++++++++++--
- 2 files changed, 86 insertions(+), 3 deletions(-)
+My general feeling to this patch has not changed: I don't think
+these should be added in asm-generic/io.h at all, for multiple
+reasons
 
-diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-index 9b5d67ecbc5e..1d83da0f3aaa 100644
---- a/arch/arm64/include/uapi/asm/kvm.h
-+++ b/arch/arm64/include/uapi/asm/kvm.h
-@@ -440,6 +440,8 @@ enum {
- /* List of configuration items accepted for KVM_CAP_ARM_RME_CONFIG_REALM */
- #define ARM_RME_CONFIG_RPV			0
- #define ARM_RME_CONFIG_HASH_ALGO		1
-+#define ARM_RME_CONFIG_NUM_AUX_PLANES		2
-+#define ARM_RME_CONFIG_RTT_TREE_PP		3
- 
- #define ARM_RME_CONFIG_HASH_ALGO_SHA256		0
- #define ARM_RME_CONFIG_HASH_ALGO_SHA512		1
-@@ -459,6 +461,16 @@ struct arm_rme_config {
- 			__u32	hash_algo;
- 		};
- 
-+		/* cfg == ARM_RME_CONFIG_NUM_AUX_PLANES */
-+		struct {
-+			__u32	num_aux_planes;
-+		};
-+
-+		/* cfg == ARM_RME_CONFIG_RTT_TREE_PP */
-+		struct {
-+			__u32	rtt_tree_pp;
-+		};
-+
- 		/* Fix the size of the union */
- 		__u8	reserved[256];
- 	};
-diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-index 6cb938957510..fca305da1843 100644
---- a/arch/arm64/kvm/rme.c
-+++ b/arch/arm64/kvm/rme.c
-@@ -43,6 +43,28 @@ bool kvm_rme_supports_sve(void)
- 	return rme_has_feature(RMI_FEATURE_REGISTER_0_SVE_EN);
- }
- 
-+static bool kvm_rme_supports_rtt_tree_single(void)
-+{
-+	int i = u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_RTT_PLANE);
-+
-+	switch (i) {
-+	case RMI_RTT_PLANE_AUX:
-+		return false;
-+	case RMI_RTT_PLANE_AUX_SINGLE:
-+	case RMI_RTT_PLANE_SINGLE:
-+		return true;
-+	default:
-+		WARN(1, "Unknown encoding for RMI_FEATURE_REGISTER_0_RTT_PLANE: %#x", i);
-+	}
-+	return false;
-+}
-+
-+static unsigned int rme_get_max_num_aux_planes(void)
-+{
-+	return u64_get_bits(rmm_feat_reg0,
-+			    RMI_FEATURE_REGISTER_0_MAX_NUM_AUX_PLANES);
-+}
-+
- static int rmi_check_version(void)
- {
- 	struct arm_smccc_res res;
-@@ -1077,6 +1099,14 @@ int realm_map_protected(struct realm *realm,
- 	return -ENXIO;
- }
- 
-+static unsigned long pi_index_to_s2tte(unsigned long idx)
-+{
-+	return FIELD_PREP(BIT(PTE_PI_IDX_0), (idx >> 0) & 1) |
-+	       FIELD_PREP(BIT(PTE_PI_IDX_1), (idx >> 1) & 1) |
-+	       FIELD_PREP(BIT(PTE_PI_IDX_2), (idx >> 2) & 1) |
-+	       FIELD_PREP(BIT(PTE_PI_IDX_3), (idx >> 3) & 1);
-+}
-+
- int realm_map_non_secure(struct realm *realm,
- 			 unsigned long ipa,
- 			 kvm_pfn_t pfn,
-@@ -1101,9 +1131,17 @@ int realm_map_non_secure(struct realm *realm,
- 		 * so for now we permit both read and write.
- 		 */
- 		unsigned long desc = phys |
--				     PTE_S2_MEMATTR(MT_S2_FWB_NORMAL) |
--				     KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R |
--				     KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W;
-+				     PTE_S2_MEMATTR(MT_S2_FWB_NORMAL);
-+		/*
-+		 * FIXME: Read+Write permissions for now, and no support yet
-+		 * for setting RMI_REALM_PARAM_FLAG1_RTT_S2AP_ENCODING
-+		 */
-+		if (1)
-+			desc |= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R |
-+				KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W;
-+		else
-+			desc |= pi_index_to_s2tte(RMI_BASE_PERM_RW_INDEX);
-+
- 		ret = rmi_rtt_map_unprotected(rd, ipa, map_level, desc);
- 
- 		if (RMI_RETURN_STATUS(ret) == RMI_ERROR_RTT) {
-@@ -1653,6 +1691,33 @@ static int config_realm_hash_algo(struct realm *realm,
- 	return 0;
- }
- 
-+static int config_num_aux_planes(struct realm *realm,
-+				 struct arm_rme_config *cfg)
-+{
-+	if (cfg->num_aux_planes > rme_get_max_num_aux_planes())
-+		return -EINVAL;
-+
-+	realm->num_aux_planes = cfg->num_aux_planes;
-+	realm->params->num_aux_planes = cfg->num_aux_planes;
-+
-+	return 0;
-+}
-+
-+static int config_rtt_tree_pp(struct realm *realm,
-+			      struct arm_rme_config *cfg)
-+{
-+	if (!kvm_rme_supports_rtt_tree_single() && !cfg->rtt_tree_pp)
-+		return -EINVAL;
-+
-+	realm->rtt_tree_pp = !!cfg->rtt_tree_pp;
-+	if (realm->rtt_tree_pp)
-+		realm->params->flags1 |= RMI_REALM_PARAM_FLAG1_RTT_TREE_PP;
-+	else
-+		realm->params->flags1 &= ~RMI_REALM_PARAM_FLAG1_RTT_TREE_PP;
-+
-+	return 0;
-+}
-+
- static int kvm_rme_config_realm(struct kvm *kvm, struct kvm_enable_cap *cap)
- {
- 	struct arm_rme_config cfg;
-@@ -1672,6 +1737,12 @@ static int kvm_rme_config_realm(struct kvm *kvm, struct kvm_enable_cap *cap)
- 	case ARM_RME_CONFIG_HASH_ALGO:
- 		r = config_realm_hash_algo(realm, &cfg);
- 		break;
-+	case ARM_RME_CONFIG_NUM_AUX_PLANES:
-+		r = config_num_aux_planes(realm, &cfg);
-+		break;
-+	case ARM_RME_CONFIG_RTT_TREE_PP:
-+		r = config_rtt_tree_pp(realm, &cfg);
-+		break;
- 	default:
- 		r = -EINVAL;
- 	}
--- 
-2.43.0
+- the {read,write}{w,l,q}be() helpers are redundant
+  as they do the same as io{read,write}{16,32,64}be() for
+  all practical purposes
+- Adding them caused build failures on some of the
+  architectures that already have the same interfaces
+- You are not actually using any of them in your patch
+- The two functions that you do use, {read,write}sl()
+  do not do what they claim to do and are impossible
+  to use in portable code because they only work on
+  byte-swapped FIFO registers when using a little-endian
+  kernel.
 
+Please just fold whatever code you end up needing into
+your own driver as you had it in earlier versions.
+
+     Arnd
 
