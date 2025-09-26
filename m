@@ -1,143 +1,124 @@
-Return-Path: <linux-kernel+bounces-834455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E81BA4BA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:58:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B331FBA4BB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D26A1C2285A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:58:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A89740145
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8AA308F16;
-	Fri, 26 Sep 2025 16:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1281B30B508;
+	Fri, 26 Sep 2025 16:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPZBN41d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T8pZ6dXs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51D8308F14;
-	Fri, 26 Sep 2025 16:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46A2FD7A3
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758905891; cv=none; b=TJonlDGPH7JdAkMrMjA/pcYeqpJTpj1NlJe+uVptNad9R1Gbir3x+DsWJu45/JPeKV4MLCocJUNle0d+11BcLXQWWqqjPXxp0A0PXkL0zzrnXy8DJL9mtQMUOA7qPoepI16fL5w92jCSGaIVG00idp9ay8rWAZFih5ydh/ZgB3U=
+	t=1758905954; cv=none; b=SOZ2bxLnoa7CGiVh/5B1gfVuR10HF0yhg4C/4PC3on60/gPu8Rf+UfW3ipVlJu+2ANVsxftPLs3Hi0X4tBEplZ2sq/lqDX6qVEnX8X5uAVh7AhXmVEMR1cLxOF8ivI+JuWHSwmf3mW8IjSyI4gJqD6XONsWvUg062PUg8GmkvQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758905891; c=relaxed/simple;
-	bh=jVJK8LGegwhqO+0VtnrfQPb/RxRKwtl+yfaKeB1SOzw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=fiji/sLEvI3PD3/TrULn+9qLJ8r0SASLcmtO38TI9KrX70aluGavtjzHKdQj4xWd7VOF+COFKMaxDqpdRvVWZI2X/rf7e43/kXf6ceo9pKlpUyR9h9Qi6arz+0BYL+Ftj94WDfABlF1vBk/eKnGEw3mtReH5yUlPorF3nDDpotA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPZBN41d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 702C0C4CEF4;
-	Fri, 26 Sep 2025 16:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758905891;
-	bh=jVJK8LGegwhqO+0VtnrfQPb/RxRKwtl+yfaKeB1SOzw=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=jPZBN41d8N96n+QGhajTpesnYkcN2IRpa1XMCib2BywYLEKk1Spw3TAKs3LwC1b2M
-	 qY0Z+dgyIpC8LGOS6ZL/Cn/+lAulX1IZ09FjtYhdqQuqusr+SGmUM+3Ddpc9L9e51r
-	 UZ1o2GEs1kuCWhKKkDqsYfsa0aJjDdWyQJLYPcIsPCnfxtBgw3oZM8SjC5ropmpM8o
-	 7Eof93GrxvT2tMPOAffuYTLrEIofYzBFq0WwvQRJ7bgsn1UM3BEekBngPtpCau5goe
-	 sZr+Ex9RQ+W6LsAJibJ0AtFLre7el6+KhvUr5S/3+ljfXBv4uoLJV2bkNaR+WXCbws
-	 QO4mGuPklEuGg==
+	s=arc-20240116; t=1758905954; c=relaxed/simple;
+	bh=gvfiDOh1LjbTrlOH1JqIh3fRoY4w018PfqgGr00DGu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D2AYbHSu3SUNx5Wx6EUnD0lBAe4WpKcBoVqGf/LnNqL1UqadwVS0jA8+fTMEugCVYQZ/YM3yx/Iht8KsTAT3pXod8Khjnf/nSfZCiji/nICHEBq41Ry34B6Ni/0oVaEIxU1z84dciMTSMhjiZyJ+X1Bx6L+cIjOdBvCoC+MMy9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T8pZ6dXs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758905950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tUALypN6U3UhG+VP6DaGg1EdZQDaePHtd2jNPQDM/d8=;
+	b=T8pZ6dXsnrI1UlAi1Jl37w5rIckSxL2RfpZBmWKsHjGBJyA6BxTyzqJowe/gc9ac0DiM3t
+	rQAMX+XLGKsSKLh6OYUYfcH8RoCzT9KL3ZBhoX5unLGggBFpDvPUVK416ic4G9wsnp17cF
+	ZOQQbNcuJzbIsqpbREjvB6xM+HBBP0w=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-375-R5YRkSNJM0ewuFy2bOZIxA-1; Fri,
+ 26 Sep 2025 12:59:09 -0400
+X-MC-Unique: R5YRkSNJM0ewuFy2bOZIxA-1
+X-Mimecast-MFC-AGG-ID: R5YRkSNJM0ewuFy2bOZIxA_1758905948
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4964A19560B2;
+	Fri, 26 Sep 2025 16:59:08 +0000 (UTC)
+Received: from thinkpad-p1.localdomain.com (unknown [10.22.64.55])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0223F1800446;
+	Fri, 26 Sep 2025 16:59:06 +0000 (UTC)
+From: Radu Rendec <rrendec@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Brian Masney <bmasney@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>
+Subject: [PATCH v2 0/1] irqchip test driver/sandbox
+Date: Fri, 26 Sep 2025 12:58:09 -0400
+Message-ID: <20250926165810.2423996-1-rrendec@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 26 Sep 2025 18:58:06 +0200
-Message-Id: <DD2W3LCC7FWA.2X90YAPLI1FGC@kernel.org>
-To: "Vlastimil Babka" <vbabka@suse.cz>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH] rust: slab: add basic slab module
-Cc: "Elijah Wright" <git@elijahs.space>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Uladzislau Rezki" <urezki@gmail.com>, <linux-mm@kvack.org>
-References: <20250924193643.4001-1-git@elijahs.space>
- <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
- <5f09b7f5-e7de-4333-8de5-322eb6d93aa9@suse.cz>
- <DD2UB5P01XW7.1GW33112S22Y@kernel.org>
- <DD2URCNO2P88.168J48GHSJRRL@kernel.org>
- <1f5ae3bd-db21-4042-b177-55464644ce2e@suse.cz>
-In-Reply-To: <1f5ae3bd-db21-4042-b177-55464644ce2e@suse.cz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri Sep 26, 2025 at 6:32 PM CEST, Vlastimil Babka wrote:
-> On 9/26/25 17:55, Danilo Krummrich wrote:
->> On Fri Sep 26, 2025 at 5:33 PM CEST, Danilo Krummrich wrote:
->>> The only thing we need on the Rust side is that existing allocations re=
-main
->>> valid even if the cache is destroyed. Or the other way around the cache=
- is
->>> silently kept alive internally.
->>=20
->> Or to express it in C code:
->>=20
->> 	struct kmem_cache *cache =3D kmem_cache_create();
->> 	struct Foo *foo =3D kmem_cache_alloc();
->>=20
->> 	// After this call cache will never be accessed; leaves a zombie cache,
->> 	// since foo is still alive.
->> 	kmem_cache_destroy(cache);
->
-> This will cause a WARN.
->
->> 	// This must still be valid.
->> 	foo->bar =3D 42;
->
-> Yes this will be safe.
+This is a dummy irqchip driver that implements three different types of
+IRQ chips, requests interrupts like a real device driver would do, and
+provides the ability to manually trigger any of these interrupts. The
+main reason why I wrote it was to be able to hack on the kernel IRQ core
+without depending on any hardware (even virtual, inside a VM). But it
+can also be used as an example for implementing irqchip drivers.
 
-That's great!
+The irqchip setup/layout is described in detail in a comment block at
+the top of the driver's source file, so I'm not repeating it here. Two
+"leaf" IRQ domains are implemented: hierarchical and multiplexing. These
+are attached to an additional "root" domain, which is similar to APIC
+(x86_64) or GIC (arm64). Interrupts are simulated by calling the generic
+interrupt handling function on the "root" domain, in a workqueue context
+and with local interrupts disabled.
 
->> 	// Frees foo and causes the "zombie" cache to actually be destroyed.
->> 	kmem_cache_free(foo);
->
-> The free will be fine. But not cause the cache destruction, as that would
-> require checks on each free. But should be fine wrt safety if we only lea=
-k
-> some memory due to a wrong usage, no?
+A few notes on the implementation:
+- The driver cannot be compiled as a loadable module, and the only
+  reason is because it uses irq_move_irq(), which is not exported. I
+  could not find a better way to make IRQ affinity control for the
+  "root" domain work on x86. This is also documented in the source code.
+- The driver uses a write-only module parameter with a custom handler as
+  the interface to trigger simulated interrupts. While this slightly
+  abuses the module parameter API, it's very simple to implement and
+  also keeps the sysfs file confined in the module's own "namespace" at
+  /sys/module/irqc_test. Of course, setting the parameter on the kernel
+  command line makes no sense but doesn't have any side effect either.
 
-Yes, technically that's safe, but we wouldn't prevent the leak, which still
-is not desirable (and not our ambition for a Rust API).
+Signed-off-by: Radu Rendec <rrendec@redhat.com>
+---
+Changes in v2:
+- Fix sysfs file mode on module parameter
+- Add "depends" to Kconfig to prevent build failures on unsupported
+  architectures (no IRQ domain hierarchy support e.g. x86_32)
+- Link to v1: https://lore.kernel.org/all/20250923232905.1510547-1-rrendec@redhat.com/
 
-From a C standpoint, both the warning and the cache leak could be solved by
-making kmem_cache_destroy() fallible as you mentioned previously.
+---
+Radu Rendec (1):
+  samples: Add irqchip test driver
 
-On the Rust side the cache would be represented with a struct KmemCache<T>
-(where T is the type that should be allocated by the cache).
+ samples/Kconfig             |  11 +
+ samples/Makefile            |   1 +
+ samples/irqchip/Makefile    |   1 +
+ samples/irqchip/irqc_test.c | 576 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 589 insertions(+)
+ create mode 100644 samples/irqchip/Makefile
+ create mode 100644 samples/irqchip/irqc_test.c
 
-kmem_cache_destroy() would be called from KmemCache<T>::drop(), which is no=
-t
-fallible. But even if it were, we can't enforce that users keep the KmemCac=
-he
-instance alive as long as there are allocations.
+-- 
+2.51.0
 
-So, either we always keep the KmemCache<T> alive for the whole module lifet=
-ime
-(which depending on whether its built-in or not could be considered a memor=
-y
-leak as well). Or we ensure that the last kmem_cache_free() also frees the =
-cache
-if kmem_cache_destroy() was called previously.
-
-OOC, does the cache pointer remain valid if kmem_cache_destroy() is called =
-while
-allocations still exist? I.e. is this, except for the WARN(), valid code?
-
-	kmem_cache_destroy(cache);
-	kmem_cache_free(foo);
-	kmem_cache_destroy(cache);
-
-At a quick glance it appears to me that things would go south in
-kmem_cache_release(). Anyways, I don't think it would help, if it would be =
-the
-case.
 
