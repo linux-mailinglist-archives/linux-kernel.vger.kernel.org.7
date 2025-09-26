@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-834245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BABBA4413
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:39:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10ADCBA443D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CF21888A5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:38:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A33B6022C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA94136E37;
-	Fri, 26 Sep 2025 14:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7C128695;
+	Fri, 26 Sep 2025 14:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dmu1C13C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bJBXES1L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A0B13B5A9
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7EB72605
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897424; cv=none; b=YRbh3Ipy903XIGiCHH0zIKhzCRuPQgZCbtlBzPRKtnRN1xZtelie2IczE3Ilfknh0RuJFix4QLgv1VoOqHRAPQdtcLfgvPnqd/VtxqsPsClg785ad7wxnfCS6LR30Y9+0H1V/x7FMiPBh7HsUCR0y7rzZSezkVVQS9dLfP9Ow48=
+	t=1758897451; cv=none; b=epngoCK9jeduTQ+O6hn0L1h4Cdkb7GU9999W/LAHMBrIcIoN6lREQKc0iKW90YR30hcthgwF55BjjfsTpajalGz+B3r355bMtGwWqD1Y4s5r9tbW42ahfROh6WhSVZZ8kGKOBw5MosrV4HCncGUMygNktJMWE6HY6Br5BOrjcgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897424; c=relaxed/simple;
-	bh=McOvrX4wj78cGQOx3sLC5HL9qLBnHjTdzFimT+Exbnk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CvjuK2D2m1ADBebs0hd78WPVFFC2olvuDiZAbOyBdt6zynYQayfQjsJh5gD9UlLkW9WG5/zwdPh20QFjfZGvkrs2ofEyTbBm+rrbA4JLHQ0nSmw354GF4NlTv7a/w7bSW/Zb93nMPm3B+AcgIJlrF+aHVf9aI5SI/aGNjS0VPFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dmu1C13C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2741C113D0
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758897423;
-	bh=McOvrX4wj78cGQOx3sLC5HL9qLBnHjTdzFimT+Exbnk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Dmu1C13CBUv2QsHVZhhSAnCUe2MrZAiaklExiBdYlYRPOZ7pGkDBGwhwmIovM3yiZ
-	 LRSL/hqukAHLEntLR+ze1in3w0K8ZG6QQTNiv+YOwi3gRdbpLUM4+DaXapZX5bK74n
-	 4OqsmXiycEHWYuIFSf6RqhwcZb7Ul2iBPALWn/T7jPACGGpz22nC2bqEJ4qNuFqbT4
-	 8hMmajP4YEHf+isVrTD/JVY8opAQc3flGupLouvYOBGfOzSv3FYkqGOW+BFAT4/x64
-	 XXLOa4ss+8Lzje3nNGWPkwD/BCj/ySlQz/ZPeFj8L0QuS3isCGH/CK8GfcbBw6Kfet
-	 I2gkxTp07Uggw==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30cce5be7d0so1066597fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:37:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVltP3K2Rv/uz6kBguGHDszOtjiXwNfGFQYw4LcfsPCnDs40AGhu4JWMilFySLysr+4zxoR8qvHXSBuQmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB1DvUlOirM9jmQgmOl0s89GyZTwKM3UGPAo+UyEcQ1b5rXLbn
-	ejDXQdHChqNLfKVKoRgRAar6RC+F/3tmSQSsu95vCin9eZPkUsOQvBMUXjPZ5lf/qxZ4IQkb1qR
-	rTrGMLam/R+EdL/dfufu9MpfIOWbYz3Y=
-X-Google-Smtp-Source: AGHT+IHzJ5VHAQN5ur5bEw/qgsV5RKx13TNkFmz4sgYMBFaXxyVEx7NkpTPBLstxWDr8QPcBcnH6NBLLtANIovzyGXY=
-X-Received: by 2002:a05:6870:78e:b0:348:7139:66b8 with SMTP id
- 586e51a60fabf-35ee8f14033mr4203895fac.38.1758897423016; Fri, 26 Sep 2025
- 07:37:03 -0700 (PDT)
+	s=arc-20240116; t=1758897451; c=relaxed/simple;
+	bh=ZLYIvEVdYFtaxQbaBOf6ThGMjn/MwBnMXEGHzdAzS1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KTmWxV7Xpld1U0CDftWndVU7YixTqsgnyt2NX8+HkAVJB6M1cRP2n1DNdp+XKCSsvUdaPDUtlMchUYEPdrAezUG5U3zucNe7B03twH3yAL1QAOEw9dtvOBbIoiltFGgysZROssjrl/2Mt1rVzfLCxlrWuPhfGV5MOa6xCj+KdXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bJBXES1L; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758897448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nNHZdA2ynNJGHBH8wutoba5JHt6T91gjLDofejClBRE=;
+	b=bJBXES1LIw1pCAGp8bBrtls/UXkazCEVcLoM3PK4wVVC1swlcZY4RyaYCps2CoMQF1Yr2P
+	XqHZYJGB3S2X0wCAaBMbZ0knfxFNDQVq57rFVtwASR0A4K4dTQVFSbjbisI4DvoOCCSZvH
+	TxWffQs0IbLKy6FsTgLNZf7Im8Jb9V4=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-591-_Tg7wVYeMqeQ06eV_zDTeg-1; Fri, 26 Sep 2025 10:37:25 -0400
+X-MC-Unique: _Tg7wVYeMqeQ06eV_zDTeg-1
+X-Mimecast-MFC-AGG-ID: _Tg7wVYeMqeQ06eV_zDTeg_1758897444
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3f924ae2a89so1912197f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:37:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758897444; x=1759502244;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNHZdA2ynNJGHBH8wutoba5JHt6T91gjLDofejClBRE=;
+        b=jMZ7tc9Trgz+BilROwsDD3hmsgT6zg9QAwhx23LfecVljceqyuMZL97PfU7MQazVTh
+         fVn3avpu0e+VZKXebTHfF+Bl9wZD9xsbxwmm8Ibz9+nglriNBTtQFmimEQ281pMMrMY2
+         BKQh8E+v6ASoWRoYfbR4MDwhTvXZZq1Da0e34LoBM8Tt5WvuF5BO85p6y59sdr3mEYKu
+         +1MQH8tIhWY1B95P5QhJGs97iQcQ20pA7man34PhyEmlALKniDQBP4N4WEupi2cVHLRM
+         R4Hbq0tVL2nWZSTXpYLknFYJs1NXRFTjz6ZxypwU0HiHTDuBxUSQvKxSXN5PyXgsq/8m
+         Qdlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYMVccistWiE8EAN1UG0KZUVmWbCOZSIakJ4Sy+efxJxGINXpxmlkooyG7xlPmlSSVPm2Vu1J/dvsEjig=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz65xq9i3uNMB7Doq0H4gtoSw5HhQI9PBrCu8v+LSMYxnQvkfy3
+	AA9MLssCK4qVkLnkU+zeMjBnXROOSwUhO1ppUBOyZj4nmg7eOEAJoKgWQtcpfuZ6F+gncpb3IX5
+	4uR7tME8upmxCaK3X0V4XYCfnlSeGMmxzeimYFb1vOyaqqK7Kq9DJ9/V2MCuKubrqFA==
+X-Gm-Gg: ASbGncvA9L+aY/Vtnl/i/Q+CIM0Mfe40Sh4AnwqxF7SO217gd33E3Y8zH4mhLiz5m89
+	4nHdrnsCQnCd0asO7B3AnPUaa6q6OYIymiqcOt4MBo4DPB9prZv44pqM10tLOIbfpNzbJbEDSVV
+	oORQk7idGwBW3BR9qUDukyPvIQl5A09e6/jaQxyoP4A06hGZHl6Nw/WzRSlhBVvZ9WjCp7u8y2A
+	AqIrcOSLu2eeICb1O5ze7MYUO2Pfc5pYihTnl3b7D9bhhE0RslFV2Cn5pH16rj6KPjg5+Fh0DbE
+	O9fKTRMvjHAtftNJaIqoIPAyvYdNGGKryGI=
+X-Received: by 2002:a05:6000:1869:b0:3e8:94d3:766b with SMTP id ffacd0b85a97d-40e468e73c8mr6983290f8f.1.1758897444338;
+        Fri, 26 Sep 2025 07:37:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXwmeHtQqcwnjJIme2wTxfCuczMPQ8tCMq+UMmG5Eh2oYtKsbn0VPkmA3WWKpKwuGGfPj1GA==
+X-Received: by 2002:a05:6000:1869:b0:3e8:94d3:766b with SMTP id ffacd0b85a97d-40e468e73c8mr6983257f8f.1.1758897443747;
+        Fri, 26 Sep 2025 07:37:23 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf6ecbsm82911155e9.22.2025.09.26.07.37.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 07:37:23 -0700 (PDT)
+Date: Fri, 26 Sep 2025 10:37:20 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, linux-kernel@vger.kernel.org,
+	Maxime Coquelin <mcoqueli@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Cindy Lu <lulu@redhat.com>,
+	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>,
+	jasowang@redhat.com
+Subject: Re: [PATCH v5 0/6] Add multiple address spaces support to VDUSE
+Message-ID: <20250926103421-mutt-send-email-mst@kernel.org>
+References: <20250926101432.2251301-1-eperezma@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5049058.31r3eYUQgx@rafael.j.wysocki> <2245131.irdbgypaU6@rafael.j.wysocki>
- <20250926144947.00002f75@huawei.com>
-In-Reply-To: <20250926144947.00002f75@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 26 Sep 2025 16:36:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gnqoJ8bALZT61ZvTA=chp8y5QBiA7ZpNQ6fFJuQzZUnA@mail.gmail.com>
-X-Gm-Features: AS18NWC_urfmTBRO_qa1bgc839FuKdltpjzqgiWLObAMHP3YF4IDfysgJErpYOg
-Message-ID: <CAJZ5v0gnqoJ8bALZT61ZvTA=chp8y5QBiA7ZpNQ6fFJuQzZUnA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] PCI/sysfs: Use PM runtime class macro for auto
- cleanup in reset_method_store()
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
-	Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Takashi Iwai <tiwai@suse.de>, Zhang Qilong <zhangqilong3@huawei.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250926101432.2251301-1-eperezma@redhat.com>
 
-On Fri, Sep 26, 2025 at 3:49=E2=80=AFPM Jonathan Cameron
-<jonathan.cameron@huawei.com> wrote:
->
-> On Fri, 19 Sep 2025 18:38:42 +0200
-> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
->
-> > From: Takashi Iwai <tiwai@suse.de>
-> >
-> > The newly introduced class macro can simplify the code.
-> >
-> > Also, add the proper error handling for the PM runtime get.
-> >
-> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > [ rjw: Adjust subject and error handling ]
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/pci/pci-sysfs.c |    5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > --- a/drivers/pci/pci-sysfs.c
-> > +++ b/drivers/pci/pci-sysfs.c
-> > @@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct
-> >               return count;
-> >       }
-> >
-> > -     pm_runtime_get_sync(dev);
-> > -     struct device *pmdev __free(pm_runtime_put) =3D dev;
-> > +     CLASS(pm_runtime_resume_and_get, pmdev)(dev);
-> > +     if (IS_ERR(pmdev))
-> > +             return -ENXIO;
-> Hi Rafael,
->
-> Why this approach rather than treating runtime pm state like a conditiona=
-l
-> lock (we use it much like one) and using ACQUIRE() / ACQUIRE_ERR()?
+On Fri, Sep 26, 2025 at 12:14:26PM +0200, Eugenio Pérez wrote:
+> PATCH v5:
+> * Properly return errno if copy_to_user returns >0 in VDUSE_IOTLB_GET_FD
+>   ioctl (Jason).
 
-Mostly because devices are not locks.
+???
 
-> Ultimately that's a wrapper around the same infrastructure but
-> perhaps neater as it removes need to have that explicit magic pmdev.
+I think copy_to_user returns an unsigned value: the number of bytes copied.
 
-You'll need to have a magic pmdev or similar regardless IIUC.
 
-Say there is
+static __always_inline unsigned long __must_check
+copy_from_user(void *to, const void __user *from, unsigned long n)
+{
+        if (!check_copy_size(to, n, false))
+                return n;
+#ifdef INLINE_COPY_FROM_USER
+        return _inline_copy_from_user(to, from, n);
+#else
+        return _copy_from_user(to, from, n);
+#endif
+}
 
-DEFINE_GUARD(pm_runtime_active, struct device *,
-pm_runtime_get_sync(_T), pm_runtime_put(_T))
-DEFINE_GUARD_COND(pm_runtime_active, _try, pm_runtime_resume_and_get(_T))
 
-so the user of this will do
+so, how does the patch work then?
 
-ACQUIRE(pm_runtime_active_try, pm)(dev);
-if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
-        return -ENXIO;
+-- 
+MST
 
-and there's a "magic" pm though pm is not a struct device pointer.
-
-Maybe it's nicer.  I guess people may be more used to dealing with int
-error variables.
-
-Let me try this and see how far I can get with this.
-
-> +CC Dan as he can probably remember the discussions around ACQUIRE()
-> vs the way you have here better than I can.
->
-> In general great that you've done this.  Was on my list too, but I didn't
-> get around to actually spinning the patches!   This is going to be
-> very useful indeed.
-
-Thanks!
 
