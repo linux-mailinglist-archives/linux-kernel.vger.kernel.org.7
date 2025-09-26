@@ -1,243 +1,107 @@
-Return-Path: <linux-kernel+bounces-833596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64283BA2619
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:22:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA3BBA2622
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E83B4E1488
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D38627577
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B882080C8;
-	Fri, 26 Sep 2025 04:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADA226A087;
+	Fri, 26 Sep 2025 04:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQMs5L8L"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ij4YEFUu"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E297E56A
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 04:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9C61F4C89
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 04:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758860549; cv=none; b=QpJzOzw+vz8OeD9/+PCPcjTfTec8acoSltc/yk8k2fV+vF4d6dhRxSfvQyBu9uDDiWdfNXClXwTRTlkp/eUixDX3pS5GzQKLOuRqydFdnwLkmY2SFOLNB/I3bNiwSbsbQRkF7g0rPIO6VReTJjpOKkHf8H335wphpZAl1nlMkFg=
+	t=1758860615; cv=none; b=l6cAoULOvLdn5hnVfZcpQ6aTJsAQ6oZMlTOINYW2eTqygTWjZISwAGtlVc9QY/s+jQ4Y1xQbfbwnlN8bzTfWsAV9RSDsXgFX7ZgDz9mMHSsrCDCiuC7y4cIi/2znGCmppc0kkzEg5OtQwtiIfAGilFcJcUZHryDS/tA7a1WvD2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758860549; c=relaxed/simple;
-	bh=/VafJdqV7BC0/nt55SNh1umRtMHM9im+WFknv4KdTsE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jJQUJbb0V3VyoBAZU7DsM42SrNN+hPWypSeb3CWl3siBJxg9WRacDXI2EJOW3Z/6b4ggVvA8QO7BCSw5/WcALb6I4tq53p2N/b8lIIZHDciycEq1v7eQeuwlnEoVgTUACxKhf0yffeC8t4vNl4AWtEDLGeN5Yktlg+4iVLixJb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQMs5L8L; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so3367644a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758860546; x=1759465346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6saHKE8v7y3gcL2pFVLakX6jbgxVNkxceljx6TZ2T70=;
-        b=iQMs5L8L6eHVvbVKPaHa3M+WocETq+d6XDhYzHCvJyW6E/yhCub34uIiKD6OfU0sY/
-         Q9jqWo4p5OYA+EJog0Y8sel/XY9YzD6KMT548lwMidOQJdquTB5dFp3fCNFj/P6Wkc2f
-         OhypA0hJHHkFMROrga8cRUHT/TYWZyRtEF8SNiJxWf2/MbfPfr0pbCie1l1wETpSXVrX
-         Pimeb+fTDt7okOe3vgJphHVV3nqpIeBo/JVynO8mubB2onYt0zJRTzlffstIEXDOYXTE
-         u7DkEWzzYlhKSyNZxh8maMaXj3odB4ZtBO5Q17//5AQs5dTDhnyS67hDW/60SHMjONaT
-         g42g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758860546; x=1759465346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6saHKE8v7y3gcL2pFVLakX6jbgxVNkxceljx6TZ2T70=;
-        b=kzlpz8udv+lfJlM7JnlFq7vn9Ju5xZ70ZQ2F817QZzagwpEbW66TJ9TG7Z75CQ27ob
-         O3sTdVIA5k/EORpB8F4j9ULUuc7IDNXtVcTz+C9p6cGTYvXAS5DnQdOeMPswVu7S5zzv
-         P93p3fkBxztNUGgPsX5EopvtJ1LymxSaRFNONOF8JhuQS4C5V4klM5fbC8ONest33YsC
-         bNC7VOH7+i0azmDrTT/jkTnmpM8PMTKWJqoKfixtcXcTSM09vU7mxtti5ovNHoREdSjS
-         +njNP9VeJhJZpUKF/cJygVLZ+lH9C9ia9JgXQZ8h2wkK+u1pvxp+gHF5p4VbPVg5/MCz
-         SmZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVl3+zENZqBcL3LGu7PkrKbcb6EWUMZ2ZmD1LN/c3LPO9Mclp2uVFOY706jXYtWHnGofGwVAFLVUU7pnBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdjN4cvAZ1TwwkIgsaUe9G2dlRTPzfJdELfd4LVA51SvlIn4dC
-	pb8vRB9Lo2jcXFxU13GwivGWStZSw+OGOp4azCuUgxGHAYP1UECf32g63xkn2POr09sLt56pkEZ
-	5vHQ/Wbaa+YnsmjJdFuloWtsbB5AL6PnKlKQp6NY=
-X-Gm-Gg: ASbGncuwooRK6DfxTFevnP/0AZ6hMQgpBpq1lzrsGIZ32kpnIKMidYVKYxR0j0VGxeN
-	D4VC+8MDikoSOWxp/qvCTpkWA38fH/DCSMj0c1gW4wUUH5Y6r2DK2l4vTZ2trZKRuE0KuyT08Ff
-	Yr24pPOPvMQjjETlUm6OJi6rIa/UVzwnZGIO4de49/By3P4kdpRF80TxM5pkIpJ0HpWzUnFO9Hm
-	q0olA==
-X-Google-Smtp-Source: AGHT+IGZTAi6DT1z6+587DJEbV3xm9kNdP6C1CTZDGuxoUy/1fygNYaDU74eh8/YF1hzWhdbSc5971CCOlTNEukKm3k=
-X-Received: by 2002:a17:906:6a07:b0:b2c:15aa:ff51 with SMTP id
- a640c23a62f3a-b34b7cd20dbmr648168666b.14.1758860546252; Thu, 25 Sep 2025
- 21:22:26 -0700 (PDT)
+	s=arc-20240116; t=1758860615; c=relaxed/simple;
+	bh=myD6mmp+C3rd+asDcbpplnUIO08Kl56ZQPwtwVLJYfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sxe+wW4/LEKWOKRQarReoSCu0GskqZesbkIyRIHis+ch6c2GpnUHIT+zMoxmc+FFxIuXKZlT4mwv+Imsnf5gAihFxWxlq4PA85/apNpu1CQyTxpITCZ48pt4bzIq6WJmZTCPBtnH80EB2W9AbpMScJGLNqehPYcMsqdapeRATCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ij4YEFUu; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b41b9b8e-6623-4e07-a132-515a6e88f1cc@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758860598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=myD6mmp+C3rd+asDcbpplnUIO08Kl56ZQPwtwVLJYfc=;
+	b=ij4YEFUu+oa614VbsJBwzzScs/1bDFmvnvUHbmy0pk8R0A23hnMhAG7QV96Qk3cb/9+3EQ
+	/XMyxedTOpoGjZ5WWD1h1biG158XUNkuMfXezQ7vVwwQIbXihrv1J5mAMHkZpuAHK1rJXh
+	CauSKZwV7Vs/bxbTKWAu/o8X0DbHzPM=
+Date: Fri, 26 Sep 2025 12:22:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 26 Sep 2025 14:22:14 +1000
-X-Gm-Features: AS18NWDkoDaygCPdummng72PiouEdLbrYJDxgW0DrRhuYo-0kGYuJgXPk7JeUOw
-Message-ID: <CAPM=9tyfHf9jLv36vvc9=sRt0OWk-jTVq8n8uRJvu2O5a9X5bg@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.17-rc8/final
-To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/3] bcachefs: Move the link counting check to the VFS
+ layer
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Youling Tang <tangyouling@kylinos.cn>
+References: <20250926022150.493115-1-youling.tang@linux.dev>
+ <20250926022150.493115-4-youling.tang@linux.dev>
+ <frs3oa3te2yznm2yttqfm2pjqdwlecwkad6y6o5dymyvk2jh4p@7zncp5imxdjp>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <frs3oa3te2yznm2yttqfm2pjqdwlecwkad6y6o5dymyvk2jh4p@7zncp5imxdjp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hey Linus,
+Hi, Kent
+On 9/26/25 11:42, Kent Overstreet wrote:
+> On Fri, Sep 26, 2025 at 10:21:50AM +0800, Youling Tang wrote:
+>> From: Youling Tang <tangyouling@kylinos.cn>
+>>
+>> Currently bcachefs only performs link count checks during link operations,
+>> during rename and mkdir operations, the link count should also be checked.
+>>
+>> This patch moves the checks to the vfs_{link,rename,mkdir} functions when
+>> sb->s_max_links is set, eliminating the need for filesystem-specific checks.
+>>
+>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+> I applied the other two patches, but not this one. We can't rely on the
+> VFS for checks like this, there's lots of routes to modifying the
+> filesystem that don't go through the VFS.
+```
+vfs_link
+     bch2_link
+         __bch2_link
+             bch2_link_trans
+                 bch2_inode_nlink_inc
 
-Weekly fixes, some fbcon font handling fixes, then amdgpu/xe/i915 with
-a few, and a few misc fixes for other drivers. Seems about right for
-this stage, and I don't know of anything outstanding.
+bch2_symlink
+     __bch2_link
+```
+I have traversed the bcachefs code and found that bch2_inode_nlink_inc is
+called only once by bch2_link_trans, which in turn is called only once
+by __bch2_link.
 
-Regards,
-Dave.
+Although __bch2_link is also called by bch2_symlink, symlink operations
+don't involve i_nlink values. Therefore, all effective calls to
+bch2_inode_nlink_incoriginate from vfs_link. Please let me know if
+there are any calls from other sources.
 
-drm-fixes-2025-09-26:
-drm fixes for 6.17-rc8 (or final)
+Even without moving to the VFS layer, do we still need to add link count
+validation in bch2_{mkdir, rename}?
 
-fbcon:
-- fix OOB access in font allocation
-- fix integer overflow in font handling
+Thanks,
+Youling.
 
-amdgpu:
-- Backlight fix
-- DC preblend fix
-- DCN 3.5 fix
-- Cleanup output_tf_change
 
-xe:
-- Don't expose sysfs attributes not applicable for VFs
-- Fix build with CONFIG_MODULES=3Dn
-- Don't copy pinned kernel bos twice on suspend
-
-i915:
-- Set O_LARGEFILE in __create_shmem()
-- Guard reg_val against a INVALID_TRANSCODER [ddi]
-
-ast:
-- sleeps causing cpu stall fix
-
-panthor:
-- scheduler race condition fix
-
-gma500:
-- NULL ptr deref in hdmi teardown fix
-The following changes since commit 07e27ad16399afcd693be20211b0dfae63e0615f=
-:
-
-  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-09-26
-
-for you to fetch changes up to ec73e5984e01bfdf92234eaf5a2c3e54aa67f2aa:
-
-  Merge tag 'drm-xe-fixes-2025-09-25' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-(2025-09-26 14:12:33 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.17-rc8 (or final)
-
-fbcon:
-- fix OOB access in font allocation
-- fix integer overflow in font handling
-
-amdgpu:
-- Backlight fix
-- DC preblend fix
-- DCN 3.5 fix
-- Cleanup output_tf_change
-
-xe:
-- Don't expose sysfs attributes not applicable for VFs
-- Fix build with CONFIG_MODULES=3Dn
-- Don't copy pinned kernel bos twice on suspend
-
-i915:
-- Set O_LARGEFILE in __create_shmem()
-- Guard reg_val against a INVALID_TRANSCODER [ddi]
-
-ast:
-- sleeps causing cpu stall fix
-
-panthor:
-- scheduler race condition fix
-
-gma500:
-- NULL ptr deref in hdmi teardown fix
-
-----------------------------------------------------------------
-Adri=C3=A1n Larumbe (1):
-      drm/panthor: Defer scheduler entitiy destruction to queue release
-
-Alvin Lee (1):
-      drm/amd/display: Use mpc.preblend flag to indicate preblend
-
-Dave Airlie (4):
-      Merge tag 'amd-drm-fixes-6.17-2025-09-24' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'drm-intel-fixes-2025-09-25' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-      Merge tag 'drm-misc-fixes-2025-09-25' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'drm-xe-fixes-2025-09-25' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-
-Leo Li (1):
-      drm/amd/display: Init DCN35 clocks from pre-os HW values
-
-Lucas De Marchi (1):
-      drm/xe: Fix build with CONFIG_MODULES=3Dn
-
-Matthew Schwartz (1):
-      drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_re=
-sume
-
-Melissa Wen (1):
-      drm/amd/display: remove output_tf_change flag
-
-Michal Wajdeczko (1):
-      drm/xe/vf: Don't expose sysfs attributes not applicable for VFs
-
-Nirmoy Das (1):
-      drm/ast: Use msleep instead of mdelay for edid read
-
-Samasth Norway Ananda (1):
-      fbcon: fix integer overflow in fbcon_do_set_font
-
-Suraj Kandpal (1):
-      drm/i915/ddi: Guard reg_val against a INVALID_TRANSCODER
-
-Taotao Chen (1):
-      drm/i915: set O_LARGEFILE in __create_shmem()
-
-Thomas Hellstr=C3=B6m (1):
-      drm/xe: Don't copy pinned kernel bos twice on suspend
-
-Thomas Zimmermann (1):
-      fbcon: Fix OOB access in font allocation
-
-Zabelin Nikita (1):
-      drm/gma500: Fix null dereference in hdmi teardown
-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  12 +-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |   7 ++
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_color.c    |   2 +-
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    |   2 +-
- .../amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c   | 121 +++++++++++++++++=
-+++-
- drivers/gpu/drm/amd/display/dc/dc.h                |   1 -
- .../drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c    |   6 +-
- .../drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c  |   6 +-
- drivers/gpu/drm/ast/ast_dp.c                       |   2 +-
- drivers/gpu/drm/gma500/oaktrail_hdmi.c             |   2 +-
- drivers/gpu/drm/i915/display/intel_ddi.c           |   5 +-
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c          |   7 ++
- drivers/gpu/drm/panthor/panthor_sched.c            |   8 +-
- drivers/gpu/drm/xe/xe_bo_evict.c                   |   4 +-
- drivers/gpu/drm/xe/xe_configfs.c                   |   2 +-
- drivers/gpu/drm/xe/xe_device_sysfs.c               |   2 +-
- drivers/video/fbdev/core/fbcon.c                   |  13 ++-
- 17 files changed, 167 insertions(+), 35 deletions(-)
 
