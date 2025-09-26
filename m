@@ -1,348 +1,169 @@
-Return-Path: <linux-kernel+bounces-833770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC41BA303E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:51:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B8EBA3026
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1714D16C725
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF781C00219
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C64F29A9F9;
-	Fri, 26 Sep 2025 08:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4B629A30D;
+	Fri, 26 Sep 2025 08:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Ud6u5AIG"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11021139.outbound.protection.outlook.com [52.101.52.139])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KQeg2Vsp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671EF29A30D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758876684; cv=fail; b=YNKFWD7awHkDYI2aucUo2ud2iSAtffP0EUzl8aghbDiSbSvOGPkmhpBH8/qg2mtLbqXYdbJQO8FkjPBctEMuBcFi+gSavbHI+akNP5Kq8Co4T2kfUABGdaivtQGs0L0GtedPs8WjaZzgwsLuZntACKZQmMDTsjRYZpEWJ6gYeC4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758876684; c=relaxed/simple;
-	bh=m0LNCqOP1pY3BjR/bD2Grh+aUz6c3Oabk+UYdZnN+LE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=A4KQaTHCUApdrYYXQO5Izys0qa3X3p9rGkcefMh410/Um71zoLVY94mjfL2b6Zmq0ruYyJb6S38oSl3Wtn6dFql1d2uzsuOgF2OmxXyHFye1PBy09ceDYf18wOABHuKTk0RnQ2B6k/2VlCPWB3dJSxEb3ixQa7ZsSiZOFawmMM4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Ud6u5AIG; arc=fail smtp.client-ip=52.101.52.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AD4M8KP80zal7tykvjs9P71bHPbqLIHaHZJqymGSiAAbsVmCh1JDzRRuRkrcWkOQv5rLVcDWm1gJP/OYB7/jglODi2DusBlWVxCbC/rpLN1Sne5k2h/irFAtvvF7ubcayd9SDaqByE+6BtOM3UUXG65E1YGGmHM7cmnWpUju4fxAX91AhG3je4VrHyCKRS397v4f7TgC6tPB1OI+3L5xayvMJXdrpm29IYH/D/fCXbz7g+zFKVHW4+40yQc9OsvOmmNnqB8MHye2V0ag+oER0/NYCEXRGCrOSATIOZX/jHHjENn21ac/oqcjbJxztn1tj2FRJOcdgSHoyYg66PhBAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x1Cu4vU0x8xSL0z6vTdPeeRccmPPfjxISn8WwPxccYo=;
- b=tmtBAjWUErcZWNGMClhuUvPuODeyqfkih43IjRu0ttQmfWTB/Kqpt0PbNE6EuiOGYPQm1GykWjZkor236FKyIZ0Easu/zkcaFj7ObDdxPkL39drZBYYDdlmPAHEmO//Z6QRzDTZNBfip0bSTj2sXa1WQ9Sr3L8R7FGhS7YR4NLpK2HtKEUGtpSaflwyy4hNKxwS+IGUNu9s/yGoRaqbSVLIFE5Eb+As9aa3Um44AE8ATuzo8RIJ9UA4X/wUbKMJoV84LY7YuGdDCqcGVl2lnkUKxfUhPJmDnwUf1mY9UTbt4rg+Uq4WGqMn2xP3hdznbRWZj4nqja8zZLR4iOMavAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x1Cu4vU0x8xSL0z6vTdPeeRccmPPfjxISn8WwPxccYo=;
- b=Ud6u5AIG5Nlft5U85FAudlHtYV+A09dQGvIWkg/eThGGtLXfaJBreTqJjLd+AgQlg9oTaNGU0CMixidOcJVcmsUWMfF/Y4uBFJW9gzAtIPrMd9p8r1aaqfJW9yhJtLS+NKTvzk4Y58AACIJLx+uPNA3FjZHgJZUT4IBdV7muZnY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from PH0PR01MB6761.prod.exchangelabs.com (2603:10b6:510:76::23) by
- PH7PR01MB7727.prod.exchangelabs.com (2603:10b6:510:1d7::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.10; Fri, 26 Sep 2025 08:48:36 +0000
-Received: from PH0PR01MB6761.prod.exchangelabs.com
- ([fe80::bf98:19e8:71ee:cf2]) by PH0PR01MB6761.prod.exchangelabs.com
- ([fe80::bf98:19e8:71ee:cf2%5]) with mapi id 15.20.9137.012; Fri, 26 Sep 2025
- 08:48:36 +0000
-Message-ID: <3cb6ebc7-a2fd-42b3-8739-b00e28a09cb6@os.amperecomputing.com>
-Date: Fri, 26 Sep 2025 16:48:14 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 26/28] sched: Do not enable cache aware scheduling
- for process with large RSS
-To: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Libo Chen <libo.chen@oracle.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Hillf Danton <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>,
- Jianyong Wu <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>,
- Tingyin Duan <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>,
- Len Brown <len.brown@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
- Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
- Chen Yu <yu.chen.surf@gmail.com>, linux-kernel@vger.kernel.org
-References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
- <881a665a94858d4fb6f13491f4dffe58c8fc3870.1754712565.git.tim.c.chen@linux.intel.com>
-Content-Language: en-US
-From: Adam Li <adamli@os.amperecomputing.com>
-In-Reply-To: <881a665a94858d4fb6f13491f4dffe58c8fc3870.1754712565.git.tim.c.chen@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: JH0PR04CA0010.apcprd04.prod.outlook.com
- (2603:1096:990:4::17) To PH0PR01MB6761.prod.exchangelabs.com
- (2603:10b6:510:76::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E1C26FA4E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758876614; cv=none; b=PJAC50de84jTY+cN9uBo5SHZHU3F6KGMvRdzRle6Z3PTQWZwF8yHfTyx7op7Bs154WAQXAZFDC9+d1CLAALKxj7I9je/u8eeN6A5jUBf4sTTQMzGEbFSTrY6VOXfGrkZmqUemuE1/rh+ZONj9QNUFNNaYskba11MnhAr58nzu9I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758876614; c=relaxed/simple;
+	bh=DW5PR20rrpRjozhjmQF7SX9wg6GFQc9bhuXeEh/lm7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CopivS6M7n2+idOeVfF4BMAQ2JJjJEELQ/n8Q40/fuDko+ILwaO/NjTLE5SXHm31S6DkAmwIfuq5dVJV0W77Kaz5ru+0zN4ijwBFxv9mdHKrtf+yc86DzyOx2WG7uQ9bksO4GqcmoTFD/obzXTOuZTE7wxFJWJicCg37Hiizdnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KQeg2Vsp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q6q9Vx027585
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:50:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hAvJmzrwoSb3evK5QrOHasbm0i6ySDURtAIAeME4WEE=; b=KQeg2Vsp8pY7kAkX
+	m6rMUbmJSMEIKwgoIERa7LulLjSLELt8hiu1+IYMv00GPc5ieNf3NAF40MP3wS7w
+	dTFRo4CgdmzXsaN/3r68cQKzeMyrViYEqU69TrIrqEfIVUDA2OAk9PvPSV75/YRC
+	js4NLs2Wi36DbK7EtFjIBXupnVnxtU8IQYHl38HwRIw7hdltPcaksqAF7ahiRnCi
+	EPee4tLw52eu2eNitIONh6+DOvniIs5W/h75KjX5gpG5M48EDuJhD6DgXuOwz9qI
+	7emCJKiJNJ7AllZQPh2QgkIEm+OEcpYWj/Mw8OXl9VgTZ2Nf8iDDHcAYpx9M3uXD
+	KVLVdg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0q24te-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:50:11 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4dd729008d7so186901cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:50:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758876606; x=1759481406;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAvJmzrwoSb3evK5QrOHasbm0i6ySDURtAIAeME4WEE=;
+        b=lBzzor+GIlePr5vqqwkuWlsSlFZdBFzvvg9O4KvW4mWqfodVnz0TdovzkDKijmcUjP
+         s9eJSeUG8q7t7lKpcvrROOZu6Pz0BNTFc2oFnc37aLjOGt816gOg4h9xIfkMh+uidgUr
+         TsJF1Twysc3Q6c/lCjJu0qCwZuYsy8MmN61LsQB/mIyfn55HK+XfDrXVyVTierBSe+ST
+         pKlH56Abd+PwLXA4Dohkd9Jpkb7MFeLlRHKK9X0ydHhE2yFPBdZaXCczv0fp2EpjQT5o
+         1l1YTbXHpr0vx7tsC7ezn+9goBSM1WPMecLtudZhafvGcyLhv9QjyHeLlSmIhxvVvbh5
+         07zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPklEgTsAFUifiEBqrxyJeFOZvyfHo8C7woUYKg0TeEi3d0AKuAb4pHyh/jf/KOKBFOuFzGTDghSTq1jY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU7moWnNi90jcwKWtlo1YLGGbFG3eDg7Iwu05FxpOoqfjAQFuW
+	lugHJ1c1dnuxO6vn/UUE8sTUpoMtEKLTqD6zUElOwodu+8CmYskdbySNO2rKC6h4PJbqQPmfQhE
+	VVcGTs9h69hkYIlBKfok8JOhAtIAvzOOa4p12vQVDSeituWFWz4Bkkh2nhDn8kbA/f/8=
+X-Gm-Gg: ASbGnctgurLkP6NtJ0yZzyDezURk0t9qYD40ML4H+Od+TFTjXarfHa8vsHKoaGjuiel
+	/VFHMz4HxaFCYNUajGZgetp3YNeUHEYXoiGSSEiNCoLD0GAMVbwM7Uor+O7gonfimsN9aYfQ6HY
+	RWuj0reGTdGTOqS/t/wT/jQePQF53hNEclI7t2Y+hUCxDB+9aAdhImOj+892DfKQoAHbZaXCW+4
+	g6i+W+veiX2gmNvKZkuVWMAkeJcAxpTanKSgn012W9C9ozsxzcOkW3zlfYMKbX/BAUA5MPXqQnR
+	wRTiw37QRT3rf5QWD2axriRi8DWtWOB2as3533jjeXuYAfvrMQDy3G4/gLQkVYEgdgfTbE7TMrV
+	osuvvvzbdet6v73UhEXJ/Mw==
+X-Received: by 2002:a05:622a:1101:b0:4dc:fc58:c50c with SMTP id d75a77b69052e-4dcfc58c83bmr20483241cf.5.1758876606296;
+        Fri, 26 Sep 2025 01:50:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEEiWvsH3XhfOSeK3PolvaeTD1lJD0k/Gm0XDb40I/xEqlYRxnruYGzyeye0H22WTBm31aZrg==
+X-Received: by 2002:a05:622a:1101:b0:4dc:fc58:c50c with SMTP id d75a77b69052e-4dcfc58c83bmr20483151cf.5.1758876605736;
+        Fri, 26 Sep 2025 01:50:05 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f79besm326034066b.69.2025.09.26.01.50.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 01:50:05 -0700 (PDT)
+Message-ID: <e7843f88-71d5-4f7e-9f99-df06630e02fa@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 10:50:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR01MB6761:EE_|PH7PR01MB7727:EE_
-X-MS-Office365-Filtering-Correlation-Id: eccd7b1a-941a-4817-4b50-08ddfcd97b07
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WFZjUnpKMi9BclNlVDVEN3BSNVYyZGtxeG5OSms0U2NGQ3FjOGVYekF6V0hH?=
- =?utf-8?B?K2srbVRnVUFWZVRUSlpWYmZCcEs1T3lscHpMSzRSVnlFRUpPZlMySW9sWkxI?=
- =?utf-8?B?aGtoeEpJcCtuREpOOHRpaE53TkhjNG5DMHFnUEI3Y0h6cFNGNlJDVEVubUt5?=
- =?utf-8?B?TnRHZ1FWa1ZqSG12N0FSdUVTWmxlL3B1ZkdwTnk0MjZGVTYvbzk1RjJKM053?=
- =?utf-8?B?azVuSmN5NzZtc1pLenpxZmpoSkx5T2V6SVpsaTZ4VVgxeGN4c0dTTWtMVGtV?=
- =?utf-8?B?RE5DS1FodU9nK3N4RTRuMVdObHlGRUl5c2lWNkFsVFVYb0dsMmt6a0t2VEZ6?=
- =?utf-8?B?L01RTmt6T0g4RittdU9QRjFhSm41ZEhranNuTklKN3Q2VW1icWl6OS8veG5r?=
- =?utf-8?B?b1NaaXp1QUNqOGcxMXJsMlgxNmlHZjdQOEpVa3hKRmt5MG1pOGs4YzFxSTYz?=
- =?utf-8?B?VWJwQkpGQkN0WGl4MnpFbXhHTzZIUkJ6VFhJNVVGaXB2NCtGcnJkdFYxdDlN?=
- =?utf-8?B?VEx6RktESlcyWW5lUHVxUkplSCtTT3lWd3RlZTJ1ME83U2NYR2o4SmcxQmlQ?=
- =?utf-8?B?RjBicjlBeVJWSWg5Y0ZPOHpReW1UR2tJZU05MXI1a2R0Y0ZYVGxBRGhFd3lt?=
- =?utf-8?B?cnpxUkhnSTZ0NVVvTjJVbks0dzI1MkNMK0hxLytOd3VMVy9tQm14YWFEbTd4?=
- =?utf-8?B?T0NicFBSenkrK3pmNTlTSDZLak5ycXhoMDJsVUdvYmFsZVJyNWMyUmxWNS9m?=
- =?utf-8?B?aXhsZFhRd0FEZC9mWWtETUV0cGk3dmhLalBTb0thRkdTRUdXYWJKL0pDT29X?=
- =?utf-8?B?L3gzdjgxVDJJSzc5aXpLZFdPTjVvQkJ3cGYrSzBQNnp3ei8zY1dwTVJMQ3M0?=
- =?utf-8?B?SnJ3ejVsdkhGczRod0xSNFZWeGtJYXlac3YyaFRJcG1naE9EOFIzaUJkclZ3?=
- =?utf-8?B?SEwyOGlBU3JHUVFWWnhDb2JCNTFQdGlhN2dGUFVQVmptQlRZSTJNd3ZBUUlj?=
- =?utf-8?B?Kzl3cHVqKzdkcnBhalBMV0pxNDVBLzRrTzVtWm9jbjEvZDc0SjJXZk1WNnhS?=
- =?utf-8?B?VE1EeENPQmlYck9nQU1QTGRRVGE3bkNBVTQ5dUNFQXRwS0t5MTBWdHVrb25R?=
- =?utf-8?B?RDZMYUxlRHpETFhveXZoWStGMDEwSWhMMHFSRGgxSFRHdldvWlNEMEo0aXAr?=
- =?utf-8?B?ZWtIbFFDaGNocDR1WGxJd1NtYTh4Nk02Z2YxMlljUGNEeGFRMlg1ZEdidkhB?=
- =?utf-8?B?TzJsQU95ajlZWFVIQTNkNkdQaUpoQnFoTnpQQ3ZnTCtFWi9KTitXSGNsb1BV?=
- =?utf-8?B?TGpYVmxkYkx6VmQ0UG5oTHErS1MwNlBldjZwNWw0Yjc4RUlnUTZvTWo3NHVq?=
- =?utf-8?B?NytLTytBTGx2L2F0Sm8wc1IyNjFoYVdwbVA2WjRvNEp2cXcwUXdSbjl6R2V5?=
- =?utf-8?B?N3U0WE9JN3ZHVTFwSlgvVlN2Z2ZoUmJKbXFNMU56OTFOOVFwb1JDYUdvQ3Ju?=
- =?utf-8?B?UzM3elVNWEk1aHhDY2pMZkpmVmdLSlplZm9iTEt1eEl0TnkzcFdKMDZzWjRs?=
- =?utf-8?B?UDMyTzc2R3NiY1lFcTUwVDdTTUU2SHFicG1NcENmNlh1ZUlBck5kUERGNUxD?=
- =?utf-8?B?KzR5eXpMNDBRQjExOENqS2tLL3lyTEVndjZDWUpoSlNNL2dNcjl2dHNBZUh2?=
- =?utf-8?B?a21sWGNxaTNYd2UvY091SnhxMU51V1FBcDBrNk9mU2pwVllidVphbEdSTEJI?=
- =?utf-8?B?Mk9ycDRlY1ZOcmhXR1k5aXRhWnRLMnQyODg3Tnc4UVJhT0VycGxtUnRTaDg5?=
- =?utf-8?Q?rXKwTsv8BWyM0w0hCbGUUuOn/vqfEQjrIYSC0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB6761.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dmVJQzZ0dml2cjZGWEZDUFhJRjdRcklSY0dVZTA1dEdEbENFM0d6dHFXaFBx?=
- =?utf-8?B?d2RaTXQvcTQ2K1V0c1RwZlk0RGRsYmd4bE84K2pOanF1OWlTVVBnR1UwNHRG?=
- =?utf-8?B?SGw4Qkp5QmFTTUhiWVBZUW1OSUN2alJ6NWFaMCtabVBISndPa3oyQWVvckdU?=
- =?utf-8?B?VmVvenIrQVhwOFE2ZFNFNnhzQksxUTBpck1ib0ludmJFNndhV25ya09ROTNH?=
- =?utf-8?B?YTZQVHJOV1NsVnJobk80Qm9ZakhYRGc0OU1KZTRLSVBaQVFmWWVLSDFhbVFZ?=
- =?utf-8?B?UjZsVm1jdFpzWHB5T0NhMXlHZ0JWdjhTMityam1TTTRqOE5jeU1CMXZQRXpG?=
- =?utf-8?B?Q0hQMFVGMlRjS25NKzJCYmFhbkFjeG1saVdDRlh3dlVzUXJOZkFyR2FDbytM?=
- =?utf-8?B?SjU3SGNTY1B6dy9vSEtmZVEvMjFtY21ya25yNGFpZDFjODFZV0RzK2RlYjA5?=
- =?utf-8?B?cnp6ZUxRSUtQenp0ZE1XNlVjN3huUHVSdVpTcTBNWU1ZQmZuS2VJaGVBVGYr?=
- =?utf-8?B?WGpobnhpdDhWY1dsaVBmL2NmUE5nV1lIMzA4VU5WOGhBMUE3ZmduazRDSHht?=
- =?utf-8?B?Rk05dHpNRTh3c0RoRXpEVmVzWjAydCt4SWwvTlF2dnRRNEw4d3lNOFU0NFUx?=
- =?utf-8?B?cEVlazJiazRTSWdzMXI1SjZzZXlTdEVybmVPd2pydVpWeXZFNlNJL1dmcG93?=
- =?utf-8?B?dHZ0M2Q4L3FBYldTblJmVUIzajRqeUhvYTlacFNDQjVva1pDUE9IREZDSTht?=
- =?utf-8?B?UVRzeXBpSWloUmFmNVFQMDViWnQ3OWNsRStwOWJvc1U1UjZYSngrWEFOclJo?=
- =?utf-8?B?WjI0bWxQdnNtVE1CQ3V4dFZISlR3L0xTbTh2dUNscHhTM2ZiWHlDbGZESHg2?=
- =?utf-8?B?L1YwNStQczNBNlhRbXNZOGlNdGlaQVg1UnNPNEJRTitENHdZYmprZkE1QjIr?=
- =?utf-8?B?L2NlNGl4eVp3d0tXVXBQbWtUSlpRNWcvMWRtRUJqVGxOUStjU0xCc1V3MWND?=
- =?utf-8?B?eVlGSDJwNFRIUXNVYk9ZZXJOV2M1anVDd3ZtSFBzN3ZPRHE2Z3Q3OG9nM1Vy?=
- =?utf-8?B?OHJTbXBLWi9xeFZ2OUlrREswTG5QSnJUUzNldjFIR3FKeGxES2hXQkhWbnN1?=
- =?utf-8?B?SFl2M2tNNWZpdjRtYXJPb0tVRWJrMTJMMVZ6Y0dvUEd5UHU5MkVCek5MSUZB?=
- =?utf-8?B?bEI1dXBUdmNTYzNCdEJodGhvN2tFdUN0T2hMMUhSMUZsVitjL0hwWEJsWlNK?=
- =?utf-8?B?ZS8wSTRuZ1pua0ovaTlDZFlZNWlNMSs0NWVXTUJkQVFEcTBTTDlOOEh5ZldL?=
- =?utf-8?B?cm5sNVh2YWZhc0JVdlZYamR0SS9jdU9oSVlZVXhXTUVMRXBoWTBIdmZEUXNW?=
- =?utf-8?B?R3FRelpST1Zzd1ZuUmdnK1N0VzBwRW90c3FVaSttVjlKNEZjYUNPM1psVGtr?=
- =?utf-8?B?NWlFYlY2N0xXamI0SGV0UW8xdzZ1OC9DVUxET2ZBMjZkNXpTWXI3dTVJU29N?=
- =?utf-8?B?MTNmNmd2UlpCdHd3cUdESmE0c1d4Y0I5L3Q3WFNHQTZTTFMxU25FODhtVFpj?=
- =?utf-8?B?azZiRThFRTl1anpyOXdJcFlTMUQwRmpFbXFyOTIxeFRWRVIvelRYcCtxNVNo?=
- =?utf-8?B?aTFhQmhkMldTYnRnL1hTMTR0T3FWajFPdGJuV3JLOGJlbGpYSDRkTitkRTN6?=
- =?utf-8?B?VFU1QkRma0tva2JQN1dzUVI0VzdpeXNMNGcxRkNKVzQzZVI3M1BsSXYxSG9n?=
- =?utf-8?B?OURJa2VoY0hHdCtIOHVTM2ZPRnowL2ZVMmwwcUJRNWtBWUo4UXhZVjBkRVp3?=
- =?utf-8?B?bnBLUEY0YXdqb3dhMlJrRWFPbXpNT3VkbitReDQ0S2hEd2FpL0xBNGRDNjVN?=
- =?utf-8?B?S2p6bHd2bXlYcmE5Z2Nsb01OL2hQQ2xGYXNMeXd4ekM5OXNvaHNYdVBJZFVs?=
- =?utf-8?B?ZU9HYXZFK3FxeGQwOWs1eUdZVVJMaUE1VVZERWVVK2FKbmZubGZIRkkzQmE2?=
- =?utf-8?B?RjVrVGtvVFpoWExlbGZpVEJLdWZvSFhQYXNZLzZXZGlOWE5DZzh4MUJWVCtr?=
- =?utf-8?B?KzRVYmU0aFFRalBnN0c5dkF3N0g3Wm5pV0tQNitTbVdvclM4RFRmUldCUXJw?=
- =?utf-8?B?Nk5kNUFVdFMzeGRBcnJ5Ry9iNVpvK2M5YTJUbUc4b3ZVblZBbWI1M2orRk9y?=
- =?utf-8?Q?PnZkXi3L/FyZSTisfyuv3XA=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eccd7b1a-941a-4817-4b50-08ddfcd97b07
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB6761.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 08:48:36.0429
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Lly7oJQAKQOm+lCtLOX8gMLickZ4QS0gaN/UKXVLN/fbULWFhsdbOKUiNHs6zcZN+OHKMC74WDFCHalaKa47TOrbDg9Jm7r+J55pNlU4aRdA+QMKthhUrVoXfTACZetf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB7727
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] ASoC: codecs: va-macro: Rework version checking
+To: kernel test robot <lkp@intel.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+References: <20250924-knp-audio-v1-1-5afa926b567c@oss.qualcomm.com>
+ <202509261315.O9CiiXjb-lkp@intel.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <202509261315.O9CiiXjb-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXyMYi4PiYUcWy
+ cB9SV6t8SrkXBnls4qtVbJF6RlZLemPYn+ZMIJ9HCM9QmycytbaxHf5zZh6WVx6+AgnPtng16FM
+ YXGziKRm3EEd3XGnqOHcvirlgy1hxpnP6xFug2DYwCYDy8uozHYM+Dx3ir/3VbFKFOeFQVi8d7n
+ r43PZ3Q+WbZzJcX0EuslcCgoc00/jssE/WWdHhLPdl/m+9lP1mC2OQ40qhPg0onV7kIlL29A4Wl
+ gajLh5xNEjbIdhZV6Oi/7bZ9dwdxhKaEj0bbDF1/gOsZZibya4muxdctQZjM0ZxQ3h4jQcMh2hV
+ JYqp/z4d80+4zIEGX1WDeMJ4fHu8iy/p78a4od8/xDEhWOUhddGzGsuVdg5E6MDfwveMwCs641E
+ R6ViGBvlWwEL28yYDRte8Dxh4NO0Dg==
+X-Proofpoint-GUID: 1dXz9DDt3RD-ZKRzn6pbES4DEsSZvFqX
+X-Proofpoint-ORIG-GUID: 1dXz9DDt3RD-ZKRzn6pbES4DEsSZvFqX
+X-Authority-Analysis: v=2.4 cv=JsX8bc4C c=1 sm=1 tr=0 ts=68d653c3 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=zXO_E9iLSFoZqPovHQIA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=mmqRlSCDY2ywfjPLJ4af:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-Hi Chen Yu,
-
-Thanks for your work.
-I tested the patch set on AmpereOne CPU with 192 cores.
-
-With CONFIG_SCHED_CLUSTER enabled, and with certain firmware setting,
-every eight cores will be grouped into a 'cluster' schedule domain
-with 'SD_SHARE_LLC' flag.
-However, these eight cores do *no* share L3 cache in this setup.
-
-In exceed_llc_capacity() of this patch, we have 'llc = l3_leaf->size',
-'llc' will be zero if there is *no* L3 cache.
-So exceed_llc_capacity() will be true and 'Cache Aware Scheduling' will
-not work. Please see details bellow.
-
-I read in patch 01/28 "sched: Cache aware load-balancing" [1],
-Peter mentioned:
-"It is an attempt at modelling cache affinity -- and while the patch
-really only targets LLC, it could very well be extended to also apply to
-clusters (L2). Specifically any case of multiple cache domains inside a
-node".
-
-Do you have any idea how we can apply the cache aware load-balancing
-to clusters? The cores in the cluster may share L2 or LLC tags.
-
-[1]: https://lore.kernel.org/all/9157186cf9e3fd541f62c637579ff736b3704c51.1754712565.git.tim.c.chen@linux.intel.com/
-
-On 8/9/2025 1:08 PM, Chen Yu wrote:
-> It has been reported that when running memory-intensive workloads
-> such as stream, sched_cache may saturate the memory bandwidth on
-> the preferred LLC.
+On 9/26/25 7:36 AM, kernel test robot wrote:
+> Hi Jingyi,
 > 
-> To prevent this from happening, evaluate the process's memory
-> footprint by checking the size of RSS (anonymous pages and shared
-> pages) and comparing it to the size of the LLC. If the former is
-> larger, skip cache-aware scheduling. This is because if tasks
-> do not actually share data, aggregating tasks with large RSS will
-> likely result in cache contention and performance depredation.
+> kernel test robot noticed the following build errors:
 > 
-> However, in theory, RSS is not the same as memory footprint.
-> This is just an estimated approach to prevent over-aggregation.
-> The default behavior is to strictly compare the size of RSS with
-> the size of the LLC. The next patch will introduce a user-provided
-> hint to customize this comparison.
+> [auto build test ERROR on ae2d20002576d2893ecaff25db3d7ef9190ac0b6]
 > 
-> Reported-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> Co-developed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> ---
->  kernel/sched/fair.c | 47 ++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 44 insertions(+), 3 deletions(-)
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jingyi-Wang/ASoC-codecs-va-macro-Rework-version-checking/20250925-080338
+> base:   ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+> patch link:    https://lore.kernel.org/r/20250924-knp-audio-v1-1-5afa926b567c%40oss.qualcomm.com
+> patch subject: [PATCH 1/5] ASoC: codecs: va-macro: Rework version checking
+> config: i386-buildonly-randconfig-001-20250926 (https://download.01.org/0day-ci/archive/20250926/202509261315.O9CiiXjb-lkp@intel.com/config)
+> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509261315.O9CiiXjb-lkp@intel.com/reproduce)
 > 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 4bf794f170cf..cbda7dad1305 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1205,6 +1205,34 @@ static inline int pref_llc_idx(struct task_struct *p)
->  	return llc_idx(p->preferred_llc);
->  }
->  
-> +static bool exceed_llc_capacity(struct mm_struct *mm, int cpu)
-> +{
-> +	struct cpu_cacheinfo *this_cpu_ci;
-> +	struct cacheinfo *l3_leaf;
-> +	unsigned long rss;
-> +	unsigned int llc;
-> +
-> +	/*
-> +	 * get_cpu_cacheinfo_level() can not be used
-> +	 * because it requires the cpu_hotplug_lock
-> +	 * to be held. Use get_cpu_cacheinfo()
-> +	 * directly because the 'cpu' can not be
-> +	 * offlined at the moment.
-> +	 */
-> +	this_cpu_ci = get_cpu_cacheinfo(cpu);
-> +	if (!this_cpu_ci->info_list ||
-> +	    this_cpu_ci->num_leaves < 3)
-> +		return true;
-> +
-> +	l3_leaf = this_cpu_ci->info_list + 3;
-> +	llc = l3_leaf->size;
-> +
-For some arm64 CPU topology, cores can be grouped into 'cluster'.
-Cores in a cluster may not share L3 cache. 'l3_leaf->size'
-will be 0.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509261315.O9CiiXjb-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> sound/soc/codecs/lpass-va-macro.c:1479:8: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>     1479 |         maj = FIELD_GET(CORE_ID_0_REV_MAJ, val);
 
-It looks we assume LLC is L3 cache?
+Jingyi, could you please add:
 
-Can we skip exceed_llc_capacity() check if no L3?
-Like this draft patch:
+#include <linux/bitfield.h>
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1227,6 +1227,8 @@ static bool exceed_llc_capacity(struct mm_struct *mm, int cpu)
+when resending?
 
-        l3_leaf = this_cpu_ci->info_list + 3;
-        llc = l3_leaf->size;
-+       if (!llc)
-+               return false;
-
-        rss = get_mm_counter(mm, MM_ANONPAGES) +
-                get_mm_counter(mm, MM_SHMEMPAGES);
-
-
-> +	rss = get_mm_counter(mm, MM_ANONPAGES) +
-> +		get_mm_counter(mm, MM_SHMEMPAGES);
-> +
-> +	return (llc <= (rss * PAGE_SIZE));
-
-If 'llc' is 0, exceed_llc_capacity() will always return true.
-
-> +}
-> +
->  static bool exceed_llc_nr(struct mm_struct *mm, int cpu)
->  {
->  	int smt_nr = 1;
-> @@ -1363,7 +1391,8 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
->  	 */
->  	if (epoch - READ_ONCE(mm->mm_sched_epoch) > sysctl_llc_old ||
->  	    get_nr_threads(p) <= 1 ||
-> -	    exceed_llc_nr(mm, cpu_of(rq))) {
-> +	    exceed_llc_nr(mm, cpu_of(rq)) ||
-> +	    exceed_llc_capacity(mm, cpu_of(rq))) {
->  		mm->mm_sched_cpu = -1;
->  		pcpu_sched->occ = 0;
->  	}
-> @@ -1448,6 +1477,14 @@ static void __no_profile task_cache_work(struct callback_head *work)
->  		return;
->  	}
->  
-> +	/*
-> +	 * Do not check exceed_llc_nr() because
-> +	 * the active number of threads needs to
-> +	 * been updated anyway.
-> +	 */
-> +	if (exceed_llc_capacity(mm, curr_cpu))
-> +		return;
-> +
->  	if (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
->  		return;
->  
-> @@ -9113,8 +9150,12 @@ static __maybe_unused enum llc_mig_hint get_migrate_hint(int src_cpu, int dst_cp
->  	if (cpu < 0)
->  		return mig_allow;
->  
-> -	 /* skip cache aware load balance for single/too many threads */
-> -	if (get_nr_threads(p) <= 1 || exceed_llc_nr(mm, dst_cpu))
-> +	/*
-> +	 * skip cache aware load balance for single/too many threads
-> +	 * and large footprint.
-> +	 */
-> +	if (get_nr_threads(p) <= 1 || exceed_llc_nr(mm, dst_cpu) ||
-> +	    exceed_llc_capacity(mm, dst_cpu))
->  		return mig_allow;
->  
->  	if (cpus_share_cache(dst_cpu, cpu))
-
-Thanks,-adam
+Konrad
 
