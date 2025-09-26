@@ -1,76 +1,106 @@
-Return-Path: <linux-kernel+bounces-833595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88254BA25F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCE2BA2626
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431E84C1C92
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8D116241B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6812B271441;
-	Fri, 26 Sep 2025 04:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1440526A087;
+	Fri, 26 Sep 2025 04:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bdXI1+zA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLaB8C/o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCC21534EC;
-	Fri, 26 Sep 2025 04:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B41F149E17
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 04:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758859978; cv=none; b=TLVShdo+d2zALVv0IZa4f4hKHDyyqOKQzALA6enytIZn69uo2slhoxqbKp9gfs8bYXKzpXYEAl5QbRTokJ2YBsG7nt4R9aAxkbGp4hzKIt2LAzi53luCo5F6cXkPHVpgdQTia31wVRI+su6EKGYjH2fOhKfghbRN3oTmHi++FOU=
+	t=1758860722; cv=none; b=a1KJcP9h3tBIVjWAYYTBtWMTkmJf2oiV+bwMafP5i9Od4zS63n3k2HoncaohXcj2ZjlxHZM4YPfoHwxpMVKIvi6hkF5Ah1HFswc3SGBlGqB6UMRohL7YRgM5Id7tY18owHDcvq1BDiIpBIKgbOHMhzSLQkON/A96JbjbMmz+rCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758859978; c=relaxed/simple;
-	bh=r71dyMuWzIVRSntQa+6alrEDnNFtmiGyTEBddtv8Hrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxjahtCWzDGmbK25VmpM9tgHCN5MkUAobijZfzi4bAwccugj2l9qumWq0w3KNIoOF3HuXz7UtR9eyO100mjAwdGiqzy20nlvdoAPuuCl4oGbcHU2+0FwzjW36TSdTgdNREvAbyNj8aLHo0OeVireidSjfYFb8bktSyYhJDr4W9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bdXI1+zA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mKbSbSK3BStb89HCck4H2KoXqyWcXPFnuu+PYFF0RzM=; b=bdXI1+zAP8NCRd1wlQCH7LjtpW
-	hWefG5vqCCZYmiH4MJMe8zf3hKP1bESPx8vZ2trsF4QHT9yEX2XMYL8kr5LdxMxohJbSVWoPH27ko
-	JFk5QfyNZ4ZrWHzyfxE8WmwahEh/Wre6XxlZ/jxTkkQRF7yjYc1kGgRaYqLv8wK2DQzHiY7vN3Uiq
-	4ATMkRBBJ66y5G9S7UQeZwjkIqxyDRc78MsCKDVXg4Cr6P00sFlf1bUYdR66FegABFpbIARsoTd6i
-	eYQwj4zh2kSsJtpx823ReoJFzqheX+y3jbeyj1EHAC9B3Vu4QQbk1cNvFTqe9hpaj0fae0WsCf1yf
-	4To6eClg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1zpF-0000000FdPf-1JZb;
-	Fri, 26 Sep 2025 04:12:53 +0000
-Date: Thu, 25 Sep 2025 21:12:53 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] rdma_rxe: call comp_handler without holding
- cq->cq_lock
-Message-ID: <aNYSxX7m58_lXfOp@infradead.org>
-References: <20250925195640.32594-1-philipp.reisner@linbit.com>
+	s=arc-20240116; t=1758860722; c=relaxed/simple;
+	bh=uldjigRkWG2Q+BGXcfhiSs1Fxgay83W5sxr5mCrJEDM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kovN+9aJRm+98XgqzFxyU5xL+A1hX5H89UFiPvB2SFxoD1uH+0JpFa2fbtMaXkEpWiL93TjXRpw/Bh5FPqZ+ywPsA9NnfzZ/PThFeB5bRvGejywILBacWEptxHfOPz+m9Px6OjcCKA1EcMUaDECVddOG6XEjIBe7LuFx8d5r8hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLaB8C/o; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758860720; x=1790396720;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uldjigRkWG2Q+BGXcfhiSs1Fxgay83W5sxr5mCrJEDM=;
+  b=iLaB8C/oxKMqfMiN9ZKezdxqE2sdzoG7fwtCwVO1rcxt6hInVM28ORLF
+   7EVNEFSy9oPGTTwvuiq0AMr6FXEJnPt1Es6jiBrmo/Gg/TKu7yq8L6wCf
+   5G+GZz85Rm34w+Ne5nH8TfYfoWe5dsQOpjorsRw9brXzeWjb1Sj00L3Jf
+   7/u7OSlg9PxKpjwTqRJWxChcOP5uJj8clQbMpHMmz9NE+ARWbVpRYt2OZ
+   +PwrRyChQ1y1Exn1Dd54uyysNy+rke648Cn1KcZNFf6Lg+SMpDaeXrXXR
+   w95FGifUzwwhkE22VsyfBj+gfHezL8eqvmNgfn0SH9hn6eGtNiaImIaIY
+   w==;
+X-CSE-ConnectionGUID: 6i5z0XMYTPG/YQpcmj3JzA==
+X-CSE-MsgGUID: qxLwrPX6S2az4HKqyy9kqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="86633403"
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
+   d="scan'208";a="86633403"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 21:25:19 -0700
+X-CSE-ConnectionGUID: Cg34d+6kQXe90r+NNcvY0A==
+X-CSE-MsgGUID: B1yX1PnfReORPBCY0EWF4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
+   d="scan'208";a="201185120"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by fmviesa002.fm.intel.com with ESMTP; 25 Sep 2025 21:25:17 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghuay@nvidia.com>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	"Peter Newman" <peternewman@google.com>,
+	"James Morse" <james.morse@arm.com>,
+	"Babu Moger" <babu.moger@amd.com>,
+	"Drew Fustini" <dfustini@baylibre.com>,
+	"Dave Martin" <Dave.Martin@arm.com>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH] x86/resctrl: Support Sub-NUMA Cluster (SNC) mode on Clearwater Forest
+Date: Fri, 26 Sep 2025 12:17:22 +0800
+Message-Id: <20250926041722.510371-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925195640.32594-1-philipp.reisner@linbit.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 09:56:40PM +0200, Philipp Reisner wrote:
-> Allow the comp_handler callback implementation to call ib_poll_cq().
+Clearwater Forest supports SNC mode. Add it to the snc_cpu_ids[] table.
 
-What completion handler is doing this?  And even if someone is doing
-folks really should stop calling ib_poll_cq and use the proper CQ
-callbacks API anywau.  Please help converting RDS and SMC so that
-we can kill the ib_poll_cq export entirely instead of spreading this
-brain damage.
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ arch/x86/kernel/cpu/resctrl/monitor.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index c261558276cd..6691b6937240 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -285,6 +285,7 @@ static const struct x86_cpu_id snc_cpu_ids[] __initconst = {
+ 	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X, 0),
+ 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X, 0),
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X, 0),
++	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X, 0),
+ 	{}
+ };
+ 
+-- 
+2.25.1
 
 
