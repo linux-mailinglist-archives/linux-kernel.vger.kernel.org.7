@@ -1,231 +1,197 @@
-Return-Path: <linux-kernel+bounces-833843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C90BA3317
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:38:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF6BBA332C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454EE16EFF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42AC41C01F3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A5826C391;
-	Fri, 26 Sep 2025 09:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144A228D8F1;
+	Fri, 26 Sep 2025 09:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Ar88Xfdv"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="XcfYHaNt"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5829B8CF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED20F1A9FA4
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879492; cv=none; b=bLZyxx+X8WG54HBtjAahuP0kECq72P8CHfPQf3pSpM/AQzIIn2ZEWr2+KORxu5e5iNJJcQHUpMt0wi461xPg7JWVN3DO6EBsHT2/qzC8dmyCUzv21rTl4ZvqGaosSpLLKuJZNpPg+lKfYwuxN7wM3RjmRyGSloLmhqtlo+QdXYA=
+	t=1758879622; cv=none; b=IqQfO/ImYp+r3pA9BFawPJfEUtZaOXmR7Wqi+48p+81D0oZOiq0/76VcHXklainYIgsI48BVntdV/APWxVufybUWm9p5+4kUAbYM2eBrhtLefdXp5o9KY0iOS1aEsZrkGK3+0szba7hHumjxGz/GOW7UU6z6Hxwj32VVNwVaflU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879492; c=relaxed/simple;
-	bh=p0+qKG09QTuUs+lJdSX0sz2V9tpuU9a8sW4ZzbE42ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jddRgoJ+7Jlng6cY6i9aBo3N47DaL/JY0LWPNsj9kGSnF35EjZawqt3Uac3LW3vx/9tKwPO1PVul8R1+elz7lhwHdjxJ6fApoR+MgYG2vNW8j6INXPMwxYiY0k2saYppGWgzH6+rrYUq3wzNCA3/+EGlajr4fS41Gucb9wOkRjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Ar88Xfdv; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b556b3501easo1718447a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758879490; x=1759484290; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=319Aaa2ClsYBmOGjJYnvX/xavv/h+b/5/KtENbr9Jp8=;
-        b=Ar88XfdvDVhAnHSnXOpqUgn83wyYFRuba5V5KyssaF1cGPP1HkusYEtxif8lzu0KhP
-         crnvU7ykPnWkBb1luKq+N1ydo6iuyco3gK4cnGSumrEKgHJhog025Ymli9SjWNkYI2iy
-         h4ld+z6aTJJEuV94/lDni3vFZXNyeeVaKJ0//yB76+hewr1IdvOTjS1rbjGt419yTkrw
-         cPBOKWRddpnUnXf/E3u8yH5Fdw65rx1yWDdiWqNOhw2L6w0Mbcs/lhGT33OhHWfhUcdU
-         BnjVNRBt06ZeMM7qhoDoEDBpR8LRkbYdVU3+nK0Fvv7qME4e6/0qHZtDBknsulgRwnAB
-         S6Cg==
+	s=arc-20240116; t=1758879622; c=relaxed/simple;
+	bh=dQzpoB++ebHK4mATn7wtPFef9km/ae5ml0+k4vbRy3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IYpR/0tDcScVMo7B0++M7x9dCGBHDqCb91X8RgxcPRRyyDI1renshyOedfruNqWTWZ/0Se0XI0rlKC5pgevMdyLtoY4WEmU1pKjTj8Lm3zwGKG2K14wGSRlyKWSvv+RNL899vvMYL3EkvXvcsFZb/AimtuUY3JECfmIZmnFQbmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=XcfYHaNt; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 739D33FD00
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1758879616;
+	bh=Z5kDmnvnhlDRdp/yu6a3wA2T9wPYLylMulJWmEaCrD0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=XcfYHaNtgQsJqVg0nhOioS5sDCNFWbq0m/kymCYVAIdCzIUoZ+8efwTDQgO7Ud3Nk
+	 1Aj1LxdelyVH/jW2LwZwGR5kHQ0XDhsljewgnKr5Tb61HonJR/3jtv1kMM0DaUORDU
+	 lBhtmpz3UztDFmOQMws6L/Pnm3+LAk1sm5Q8K7RjVvRZMomj/+3baFIhJ7LHjfQir7
+	 PpXQL0xZSGW72p3RxclwYQXM0cLXd5ccOwCvCPp3EhhrMW7RPpQznLPC/kcpVqZLur
+	 RHExJMhZ8SYRESE8/LVgnbhV4CHjtKcq072syu0QmxvOiS6YSOTxLVJsln9IWnVzc7
+	 1klgQE9P47hww==
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d6fc3d74a2so56169181cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:40:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758879490; x=1759484290;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=319Aaa2ClsYBmOGjJYnvX/xavv/h+b/5/KtENbr9Jp8=;
-        b=qHqOe/vzUHe4BBopThSV9qlGw9jqgGOjpezGV/OWsRZjhOi1ppQjypFB5clvd7TXzE
-         w0c9VaOqJfAMCp1rIRv9PYWZEwcQaSsCzIVt79dBwHe3ySpXwfA6Kbz7M6V11Gxjlyqg
-         vqyqEOSq63GGocttWJY5rSwN2nvc9MNGKIQGR89zv4XdSumouB6rlvwb5o7pnKhnhZTC
-         SWAwWnA97Z06V04PGvSCru6NJnY6YZnq6SLjAIb6jCTV8aZau5uvvt4V8oGIVMCcMo9z
-         DeyJCDIPjVEZYHlu8mJmmoPL64EJMnkbJPEVvh1I10VXp8+3GjnP2Eks/dTtfQ+7RuWO
-         m8Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8ebnIQyipZdyWZSmH89AEzsqyUakcmo4HuK8akxSILV9S/GnmduCVORFlcADAhd2hCHgWw8Al5Qiwkr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9HsY4IDkeAdMCaDVKLY+k3CWcTdTXnDHSWUpIdauGRZ6aeSs4
-	Hm52U/wmRuB5SLM+L4Rhy3PpXe4vGjxhDyT5yhrQlGaF2HEL2ehyg11IZN4LoUgXxA==
-X-Gm-Gg: ASbGnct+KSemZkHVQmIbh7OX+JFwJPI3ZXF2nDemA/FvKiZ2zyWltm5QVpC9LDaV8pu
-	RdBqT8dUPOBCS0rVt91kk2xVgrwjUA5lKy8Dh+15IibyvGHn7J962Gt3PVi5KBveUiJG5c6mEKY
-	ApqLDGdrZqWelyn/MPxi+E9ouLwBjl+PHH2+mzkg0rMroN1YG1LVPCoCkNBNYKk6Ln18Jc2uCdr
-	YnV86992SUpxlHgpcsMksmG3dr+Aiy0T3eriyvM7A71cdBgPklDhpXauepEyDxPKrhG9++5rhdO
-	4IVng8zsTL1vn5Tg1MKKdiSNe6DDlc7GGAXuwSMPEIYnUupIe0ad6iOcVRmYqk1kniAS3sKrt3j
-	9449QmsHLFFhctMlkU/+45qB/MhlfJK6sjExfrt3NGHOaDcJUQQ==
-X-Google-Smtp-Source: AGHT+IHRbM4vO8CuqreACP8VtswVBHBHyqdG9EYejry2yf3znTIK8yfzElgJ69f60r+wZ+IbIG5CXw==
-X-Received: by 2002:a05:6a21:329b:b0:2b1:c9dc:6da0 with SMTP id adf61e73a8af0-2e7d85a3e50mr8191693637.46.1758879490053;
-        Fri, 26 Sep 2025 02:38:10 -0700 (PDT)
-Received: from bytedance ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810210c076sm3942671b3a.0.2025.09.26.02.38.04
+        d=1e100.net; s=20230601; t=1758879615; x=1759484415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z5kDmnvnhlDRdp/yu6a3wA2T9wPYLylMulJWmEaCrD0=;
+        b=jqrnDE/N+JZbDYdTMasxL/JDxo6NmgL5SqgtTI+tCZVWsvThkZ/JsisIkIG0mBbya7
+         Q+YlVj26fWHUO7VDuCT4+SpmRvzufSbs/5SJQIsje9dIFcP1mSLfmaubsSPzmxWDSHNg
+         LCLPmBTniLxGjdf/4OYNdspPXCe+c633X/2mOARY5Bnwox6QzbjE/d6e06+iiHU4nXNy
+         nxsyyMpy2XqM0x0FabnxvJXCLTM0C3yaU3++/VcwhzXsWedFBmqXsOp2S9en72iLc4Oc
+         QqcGSHYSdmaWd4A+AOf6G29AZUGMO0PNdfRC2mQnJz9EmJCrHktMmGv0VRD8WxUv60iX
+         0+nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAhImg570TLeDT9uCMsi1QmlW54kDJRIVtMbQLui9S6Dsx2ZzBzHA+IaKYA0eaWI2EetYa3DjNvWiWJrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhTUV6ppM+KwrmPtB642Ud3BIeWPKpuYwUtNis44hgy6E6VVLk
+	kSZr35hwPpKrUQ+XpV7lyLPDfcWJ8slaqS9QGk7K3BS52UDasfrIS9cNce8+gUbcT3npuD09Ljk
+	EWGS5pBTfEVa1aDqmhkwGjBy6vOXm/SQN2cos9FFX2OkzgVrgnNkkbcA2LD4xu3ChE0t8s+9Olu
+	T832yAFA==
+X-Gm-Gg: ASbGncs7rNHqz458mPeTjEa7cSOJC24Eae+tvnbWUJnPTlu0tVzIgroFgcotbusAeDg
+	5E0sIa2ogWwCceNHGh3YlwbrTzciJeQajc+2Ggzy2KlEDMCz+B5kHH5vIMfPobZjLxFneTE1gQh
+	aAJnQCpBk3Xe1yJhf1rVzP0utu1hDhRGUhOuUjmc42pkSBILa9/fp8V2DZ4s5D3EW5JK+iJxDNS
+	jAbUNYuEjthGNQnGLm0JXxrxiAuio6cKolKOYY+vTbzrgZUl55XD2ZfzfYUkcsSkUylaSNa+isg
+	K/4uyvF/ibF4K5cbyl/Yfd6oXe+8EqMwbYghH8NKhdlwTbzEjGCfu5Zs
+X-Received: by 2002:a05:622a:3d2:b0:4b5:e8b9:30f7 with SMTP id d75a77b69052e-4da4b807e9bmr98240431cf.46.1758879615475;
+        Fri, 26 Sep 2025 02:40:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDKtjAu7rS5XGAm/zzFv4YkYyqjAXqHUIUP7F2BwPon3qUmzfWY0fG/FuWugk1l3HM5ToH/Q==
+X-Received: by 2002:a05:622a:3d2:b0:4b5:e8b9:30f7 with SMTP id d75a77b69052e-4da4b807e9bmr98240231cf.46.1758879615163;
+        Fri, 26 Sep 2025 02:40:15 -0700 (PDT)
+Received: from localhost.localdomain ([103.155.100.14])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135b563b2sm23419766d6.14.2025.09.26.02.40.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 02:38:09 -0700 (PDT)
-Date: Fri, 26 Sep 2025 17:38:01 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH] sched/fair: Start a cfs_rq on throttled hierarchy with
- PELT clock throttled
-Message-ID: <20250926093801.GE120@bytedance>
-References: <e2e558b863c929c5019264b2ddefd4c0@codethink.co.uk>
- <20250926081918.30488-1-kprateek.nayak@amd.com>
+        Fri, 26 Sep 2025 02:40:14 -0700 (PDT)
+From: Aaron Ma <aaron.ma@canonical.com>
+To: dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jani.nikula@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	suraj.kandpal@intel.com,
+	imre.deak@intel.com,
+	joonas.lahtinen@linux.intel.com,
+	aaron.ma@canonical.com
+Subject: [PATCH v2 1/2] drm/dp: Add drm_edp_backlight_get_level
+Date: Fri, 26 Sep 2025 17:38:31 +0800
+Message-ID: <20250926093832.2811200-1-aaron.ma@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926081918.30488-1-kprateek.nayak@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 26, 2025 at 08:19:17AM +0000, K Prateek Nayak wrote:
-> Matteo reported hitting the assert_list_leaf_cfs_rq() warning from
-> enqueue_task_fair() post commit fe8d238e646e ("sched/fair: Propagate
-> load for throttled cfs_rq") which transitioned to using
-> cfs_rq_pelt_clock_throttled() check for leaf cfs_rq insertions in
-> propagate_entity_cfs_rq().
-> 
-> The "cfs_rq->pelt_clock_throttled" flag is used to indicate if the
-> hierarchy has its PELT frozen. If a cfs_rq's PELT is marked frozen, all
-> its descendants should have their PELT frozen too or weird things can
-> happen as a result of children accumulating PELT signals when the
-> parents have their PELT clock stopped.
-> 
-> Another side effect of this is the loss of integrity of the leaf cfs_rq
-> list. As debugged by Aaron, consider the following hierarchy:
-> 
->     root(#)
->    /    \
->   A(#)   B(*)
->          |
->          C <--- new cgroup
->          |
->          D <--- new cgroup
-> 
->   # - Already on leaf cfs_rq list
->   * - Throttled with PELT frozen
-> 
-> The newly created cgroups don't have their "pelt_clock_throttled" signal
-> synced with cgroup B. Next, the following series of events occur:
-> 
-> 1. online_fair_sched_group() for cgroup D will call
->    propagate_entity_cfs_rq(). (Same can happen if a throttled task is
->    moved to cgroup C and enqueue_task_fair() returns early.)
-> 
->    propagate_entity_cfs_rq() adds the cfs_rq of cgroup C to
->    "rq->tmp_alone_branch" since its PELT clock is not marked throttled
->    and cfs_rq of cgroup B is not on the list.
-> 
->    cfs_rq of cgroup B is skipped since its PELT is throttled.
-> 
->    root cfs_rq already exists on cfs_rq leading to
->    list_add_leaf_cfs_rq() returning early.
-> 
->    The cfs_rq of cgroup C is left dangling on the
->    "rq->tmp_alone_branch".
-> 
-> 2. A new task wakes up on cgroup A. Since the whole hierarchy is already
->    on the leaf cfs_rq list, list_add_leaf_cfs_rq() keeps returning early
->    without any modifications to "rq->tmp_alone_branch".
-> 
->    The final assert_list_leaf_cfs_rq() in enqueue_task_fair() sees the
->    dangling reference to cgroup C's cfs_rq in "rq->tmp_alone_branch".
-> 
->    !!! Splat !!!
-> 
-> Syncing the "pelt_clock_throttled" indicator with parent cfs_rq is not
-> enough since the new cfs_rq is not yet enqueued on the hierarchy. A
-> dequeue on other subtree on the throttled hierarchy can freeze the PELT
-> clock for the parent hierarchy without setting the indicators for this
-> newly added cfs_rq which was never enqueued.
->
+Implement drm_edp_backlight_get_level() to read the current
+backlight brightness level from eDP DPCD registers via AUX channel.
 
-Sigh...
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+---
+v1 -> v2: Use drm_err.
 
-> Since there are no tasks on the new hierarchy, start a cfs_rq on a
-> throttled hierarchy with its PELT clock throttled. The first enqueue, or
-> the distribution (whichever happens first) will unfreeze the PELT clock
-> and queue the cfs_rq on the leaf cfs_rq list.
-> 
+ drivers/gpu/drm/display/drm_dp_helper.c | 52 +++++++++++++++++++++++++
+ include/drm/display/drm_dp_helper.h     |  1 +
+ 2 files changed, 53 insertions(+)
 
-Makes sense.
-
-> While at it, add an assert_list_leaf_cfs_rq() in
-> propagate_entity_cfs_rq() to catch such cases in the future.
-> 
-> Suggested-by: Aaron Lu <ziqianlu@bytedance.com>
-> Reported-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
-> Closes: https://lore.kernel.org/lkml/58a587d694f33c2ea487c700b0d046fa@codethink.co.uk/
-> Fixes: eb962f251fbb ("sched/fair: Task based throttle time accounting")
-
-Should be Fixes: e1fad12dcb66("sched/fair: Switch to task based throttle
-model")? "Task based throttle time accounting" doesn't touch pelt bits.
-
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-
-Reviewed-by: Aaron Lu <ziqianlu@bytedance.com>
-Tested-by: Aaron Lu <ziqianlu@bytedance.com>
-
-Thanks for the fix.
-
-BTW, I'm thinking in propagate_entity_cfs_rq(), we shouldn't check the
-ancestor cfs_rq's pelt clock throttled status but only the first level
-cfs_rq's, because the purpose is to have the first level cfs_rq to stay
-on the leaf list and all those list_add_leaf_cfs_rq() for its ancestors
-are just to make sure the list is fully connected. I mean something like
-this:
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 75c615f5ed640..6a6d9200ab93c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -13170,6 +13170,7 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
- static void propagate_entity_cfs_rq(struct sched_entity *se)
- {
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-+	bool add = !cfs_rq_pelt_clock_throttled(cfs_rq);
+diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
+index 1ecc3df7e3167..16da5df805aa5 100644
+--- a/drivers/gpu/drm/display/drm_dp_helper.c
++++ b/drivers/gpu/drm/display/drm_dp_helper.c
+@@ -3945,6 +3945,58 @@ int drm_dp_pcon_convert_rgb_to_ycbcr(struct drm_dp_aux *aux, u8 color_spc)
+ }
+ EXPORT_SYMBOL(drm_dp_pcon_convert_rgb_to_ycbcr);
  
- 	/*
- 	 * If a task gets attached to this cfs_rq and before being queued,
-@@ -13177,7 +13178,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- 	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
- 	 * that removed load decayed or it can cause faireness problem.
- 	 */
--	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
-+	if (add)
- 		list_add_leaf_cfs_rq(cfs_rq);
- 
- 	/* Start to propagate at parent */
-@@ -13188,7 +13189,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- 
- 		update_load_avg(cfs_rq, se, UPDATE_TG);
- 
--		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
-+		if (add)
- 			list_add_leaf_cfs_rq(cfs_rq);
- 	}
++/**
++ * drm_edp_backlight_get_level - Get the backlight level of eDP DPCD via AUX
++ * @aux: The DP aux device
++ * @bl: Backlight capability info from the panel
++ *
++ * Reads the current backlight brightness level from luminance mode
++ * (24-bit value in nits) or DPCD AUX mode(16-bit and 8-bit modes).
++ *
++ * Returns: Current backlight level.
++ */
++u32 drm_edp_backlight_get_level(struct drm_dp_aux *aux, const struct drm_edp_backlight_info *bl)
++{
++	int ret;
++	u8 buf[3] = { 0 };
++	u32 level = 0;
++
++	if (!(bl->aux_set || bl->luminance_set))
++		return 0;
++
++	if (bl->luminance_set) {
++		ret = drm_dp_dpcd_read(aux, DP_EDP_PANEL_TARGET_LUMINANCE_VALUE, buf, sizeof(buf));
++		if (ret < 0) {
++			drm_err(aux->drm_dev,
++				      "%s: Failed to read luminance value: %d\n",
++				      aux->name, ret);
++			return 0;
++		}
++		level = (buf[2] << 16 | buf[1] << 8 | buf[0]) / 1000;
++	} else if (bl->lsb_reg_used) {
++		ret = drm_dp_dpcd_read(aux, DP_EDP_BACKLIGHT_BRIGHTNESS_MSB, buf, 2);
++		if (ret < 0) {
++			drm_err(aux->drm_dev,
++				      "%s: Failed to read backlight level: %d\n",
++				      aux->name, ret);
++			return 0;
++		}
++		level = buf[0] << 8 | buf[1];
++	} else {
++		ret = drm_dp_dpcd_read(aux, DP_EDP_BACKLIGHT_BRIGHTNESS_MSB, buf, 1);
++		if (ret < 0) {
++			drm_err(aux->drm_dev,
++				      "%s: Failed to read backlight level: %d\n",
++				      aux->name, ret);
++			return 0;
++		}
++		level = buf[0];
++	}
++
++	return level;
++}
++EXPORT_SYMBOL(drm_edp_backlight_get_level);
++
+ /**
+  * drm_edp_backlight_set_level() - Set the backlight level of an eDP panel via AUX
+  * @aux: The DP AUX channel to use
+diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
+index 87caa4f1fdb86..0b045a47ae573 100644
+--- a/include/drm/display/drm_dp_helper.h
++++ b/include/drm/display/drm_dp_helper.h
+@@ -864,6 +864,7 @@ drm_edp_backlight_init(struct drm_dp_aux *aux, struct drm_edp_backlight_info *bl
+ 		       u32 max_luminance,
+ 		       u16 driver_pwm_freq_hz, const u8 edp_dpcd[EDP_DISPLAY_CTL_CAP_SIZE],
+ 		       u32 *current_level, u8 *current_mode, bool need_luminance);
++u32 drm_edp_backlight_get_level(struct drm_dp_aux *aux, const struct drm_edp_backlight_info *bl);
+ int drm_edp_backlight_set_level(struct drm_dp_aux *aux, const struct drm_edp_backlight_info *bl,
+ 				u32 level);
+ int drm_edp_backlight_enable(struct drm_dp_aux *aux, const struct drm_edp_backlight_info *bl,
+-- 
+2.43.0
 
-But this is a different thing and can be taken care of if necessary
-later. Current logic doesn't have a problem, it's just not as clear as
-the above diff to me.
 
