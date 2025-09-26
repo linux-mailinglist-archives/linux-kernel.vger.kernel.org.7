@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-833929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CFABA35B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:32:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5443ABA35DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284F63BAA64
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:32:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D46A67B274E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7627E2F3C15;
-	Fri, 26 Sep 2025 10:32:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7E92F39AD;
-	Fri, 26 Sep 2025 10:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408682F3C04;
+	Fri, 26 Sep 2025 10:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPMh5BuC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9982D21D3CA;
+	Fri, 26 Sep 2025 10:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758882734; cv=none; b=FtPXrbFRQMP1Tjp8it0csTLRxrHUDJWlVXABPHN4PhZXlsOVRD3b00DmS49NSfVNiuEqifXHPa7MZiF0Ken/yFXGo2aJBEoKNkyN6d+c3x0T3y/U5hmt6l+jXCBV7yWng8MvLmodibE1SkT+RhOTz5ocHw+RHVh1259k67yXv3E=
+	t=1758882796; cv=none; b=PSpTFxtSwbutvRx4Zo6R7DBTCWEp7/HespVVMrcrS0E889uGdekT74uhH6om6nrOY6kuShqQIMFOboSyh9UttQO9G8GxqUFMLqaA5GbW3WfkGukrMq+pezAbCQmK3OnXNbKm4psi7ttLC9IT3h1DLl6hjkRpQo5VEVxwnw7CGPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758882734; c=relaxed/simple;
-	bh=6UocOWJg0vLw9Liyx+rrcKunzXWNG71nhMscMNqWaqg=;
+	s=arc-20240116; t=1758882796; c=relaxed/simple;
+	bh=zsYZA4vHyrrFHdp0O66sAi9jcVuF0EDcLiQhVy6v75Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nsK9A/IbRKZRD+WzUSLmYrwpjhwLGis0nQBY3TuE2Plb6rrp14f/xt7MUvU14XlMYElwbiWeKPJZ+AsvBcRIEzenZe5oXyT1BCCR9i4XVt4lWV+slk4fREKg1l7Oxnrv4dclu1kvNT4hzeN2lPQ3tA9dmENRxz/lSpgLH8GHYDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3FF8168F;
-	Fri, 26 Sep 2025 03:32:03 -0700 (PDT)
-Received: from [10.57.32.231] (unknown [10.57.32.231])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BE2D3F5A1;
-	Fri, 26 Sep 2025 03:32:09 -0700 (PDT)
-Message-ID: <1ff12bce-1369-48e9-8807-3a7ecd8e1559@arm.com>
-Date: Fri, 26 Sep 2025 11:32:02 +0100
+	 In-Reply-To:Content-Type; b=li4OE9gC4LD9JOLi+HIEzHHNkihnlrAE6Aiq8vZRfT6KOzB5sPMbjDspW+tHiVivDTLnqvrfF7n50ecYv9AwxN4rxGRn9zDgy1HW16DV7+FIWVshORLk6jPivhlSH62o9i9DibdGmhGRc9K9v1fFfHRsf/3xkbP7ELTva9I8WNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPMh5BuC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EDCBC4CEF4;
+	Fri, 26 Sep 2025 10:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758882796;
+	bh=zsYZA4vHyrrFHdp0O66sAi9jcVuF0EDcLiQhVy6v75Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DPMh5BuCcsIHjB++3DnD73wHodEeA+UD3MrSymk+qPYxnrjn8ZM67N2W8hPLwC3SB
+	 GWSddpgmBaNlFJxxCyDvN131kIpvO/zoO0ND0CsFJZzc813sU4dp5GTaPeeIw8PTBv
+	 uckbI7guqoAnkqwbAnB0+HVru95ZUNwhGgI22VH31YCsDTWtYjYTlKnAN6DS0n5+U8
+	 1gEBIMIgR6KqnZUqgMNasyhQhcCbEULqSfbe/WWkOSGaPxU6Jy8qNFpnwZqnqrhkro
+	 BKwbhtyISTpcRLSJTFb268KbJiICdaFLY0J7ZFdZpK8PRMQFZlHMsu2K+IJABi7+Gi
+	 C0cZUmOAD8NOg==
+Message-ID: <b9c892c1-fb33-42fe-86bd-415d4cfa37f2@kernel.org>
+Date: Fri, 26 Sep 2025 11:33:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,310 +49,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] perf/arm_cspmu: nvidia: Add pmevfiltr2 support
-To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
- ilkka@os.amperecomputing.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, suzuki.poulose@arm.com, mark.rutland@arm.com,
- treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
- rwiley@nvidia.com, sdonthineni@nvidia.com
-References: <20250923001840.1586078-1-bwicaksono@nvidia.com>
- <20250923001840.1586078-6-bwicaksono@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH -next v2 2/2] bpftool: Remove duplicate string.h header
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+References: <20250926095240.3397539-1-jiapeng.chong@linux.alibaba.com>
+ <20250926095240.3397539-2-jiapeng.chong@linux.alibaba.com>
+From: Quentin Monnet <qmo@kernel.org>
 Content-Language: en-GB
-In-Reply-To: <20250923001840.1586078-6-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250926095240.3397539-2-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2025-09-23 1:18 am, Besar Wicaksono wrote:
-> Support NVIDIA PMU that utilizes the optional event filter2 register.
+2025-09-26 17:52 UTC+0800 ~ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ./tools/bpf/bpftool/sign.c: string.h is included more than once.
 > 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> ---
->   drivers/perf/arm_cspmu/nvidia_cspmu.c | 176 +++++++++++++++++++-------
->   1 file changed, 133 insertions(+), 43 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index ac91dc46501d..e06a06d3407b 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -40,10 +40,21 @@
->   
->   struct nv_cspmu_ctx {
->   	const char *name;
-> -	u32 filter_mask;
-> -	u32 filter_default_val;
-> +
->   	struct attribute **event_attr;
->   	struct attribute **format_attr;
-> +
-> +	u32 filter_mask;
-> +	u32 filter_default_val;
-> +	u32 filter2_mask;
-> +	u32 filter2_default_val;
-> +
-> +	u32 (*get_filter)(const struct perf_event *event);
-> +	u32 (*get_filter2)(const struct perf_event *event);
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=25502
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-Callbacks for this seem like complete overkill - you already know 
-whether a given implementation cares about each filter via 
-.filter{,2}_mask being nonzero, so unless you intend to have wildly 
-different event encodings across implementations, a simple conditional 
-extension of the existing nv_cspmu_event_filter() logic should be all 
-you need.
 
-Thanks,
-Robin.
-
-> +
-> +	void *data;
-> +
-> +	int (*init_data)(struct arm_cspmu *cspmu);
->   };
->   
->   static struct attribute *scf_pmu_event_attrs[] = {
-> @@ -144,6 +155,7 @@ static struct attribute *cnvlink_pmu_format_attrs[] = {
->   static struct attribute *generic_pmu_format_attrs[] = {
->   	ARM_CSPMU_FORMAT_EVENT_ATTR,
->   	ARM_CSPMU_FORMAT_FILTER_ATTR,
-> +	ARM_CSPMU_FORMAT_FILTER2_ATTR,
->   	NULL,
->   };
->   
-> @@ -184,13 +196,36 @@ static u32 nv_cspmu_event_filter(const struct perf_event *event)
->   	return filter_val;
->   }
->   
-> +static u32 nv_cspmu_event_filter2(const struct perf_event *event)
-> +{
-> +	const struct nv_cspmu_ctx *ctx =
-> +		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
-> +
-> +	const u32 filter_val = event->attr.config2 & ctx->filter2_mask;
-> +
-> +	if (filter_val == 0)
-> +		return ctx->filter2_default_val;
-> +
-> +	return filter_val;
-> +}
-> +
->   static void nv_cspmu_set_ev_filter(struct arm_cspmu *cspmu,
->   				   const struct perf_event *event)
->   {
-> -	u32 filter = nv_cspmu_event_filter(event);
-> -	u32 offset = PMEVFILTR + (4 * event->hw.idx);
-> +	u32 filter, offset;
-> +	const struct nv_cspmu_ctx *ctx =
-> +		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
-> +	offset = 4 * event->hw.idx;
->   
-> -	writel(filter, cspmu->base0 + offset);
-> +	if (ctx->get_filter) {
-> +		filter = ctx->get_filter(event);
-> +		writel(filter, cspmu->base0 + PMEVFILTR + offset);
-> +	}
-> +
-> +	if (ctx->get_filter2) {
-> +		filter = ctx->get_filter2(event);
-> +		writel(filter, cspmu->base0 + PMEVFILT2R + offset);
-> +	}
->   }
->   
->   static void nv_cspmu_set_cc_filter(struct arm_cspmu *cspmu,
-> @@ -210,74 +245,120 @@ enum nv_cspmu_name_fmt {
->   struct nv_cspmu_match {
->   	u32 prodid;
->   	u32 prodid_mask;
-> -	u64 filter_mask;
-> -	u32 filter_default_val;
->   	const char *name_pattern;
->   	enum nv_cspmu_name_fmt name_fmt;
-> -	struct attribute **event_attr;
-> -	struct attribute **format_attr;
-> +	struct nv_cspmu_ctx template_ctx;
-> +	struct arm_cspmu_impl_ops ops;
->   };
->   
->   static const struct nv_cspmu_match nv_cspmu_match[] = {
->   	{
->   	  .prodid = 0x10300000,
->   	  .prodid_mask = NV_PRODID_MASK,
-> -	  .filter_mask = NV_PCIE_FILTER_ID_MASK,
-> -	  .filter_default_val = NV_PCIE_FILTER_ID_MASK,
->   	  .name_pattern = "nvidia_pcie_pmu_%u",
->   	  .name_fmt = NAME_FMT_SOCKET,
-> -	  .event_attr = mcf_pmu_event_attrs,
-> -	  .format_attr = pcie_pmu_format_attrs
-> +	  .template_ctx = {
-> +		.event_attr = mcf_pmu_event_attrs,
-> +		.format_attr = pcie_pmu_format_attrs,
-> +		.filter_mask = NV_PCIE_FILTER_ID_MASK,
-> +		.filter_default_val = NV_PCIE_FILTER_ID_MASK,
-> +		.filter2_mask = 0x0,
-> +		.filter2_default_val = 0x0,
-> +		.get_filter = nv_cspmu_event_filter,
-> +		.get_filter2 = NULL,
-> +		.data = NULL,
-> +		.init_data = NULL
-> +	  },
->   	},
->   	{
->   	  .prodid = 0x10400000,
->   	  .prodid_mask = NV_PRODID_MASK,
-> -	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
-> -	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
->   	  .name_pattern = "nvidia_nvlink_c2c1_pmu_%u",
->   	  .name_fmt = NAME_FMT_SOCKET,
-> -	  .event_attr = mcf_pmu_event_attrs,
-> -	  .format_attr = nvlink_c2c_pmu_format_attrs
-> +	  .template_ctx = {
-> +		.event_attr = mcf_pmu_event_attrs,
-> +		.format_attr = nvlink_c2c_pmu_format_attrs,
-> +		.filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
-> +		.filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
-> +		.filter2_mask = 0x0,
-> +		.filter2_default_val = 0x0,
-> +		.get_filter = nv_cspmu_event_filter,
-> +		.get_filter2 = NULL,
-> +		.data = NULL,
-> +		.init_data = NULL
-> +	  },
->   	},
->   	{
->   	  .prodid = 0x10500000,
->   	  .prodid_mask = NV_PRODID_MASK,
-> -	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
-> -	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
->   	  .name_pattern = "nvidia_nvlink_c2c0_pmu_%u",
->   	  .name_fmt = NAME_FMT_SOCKET,
-> -	  .event_attr = mcf_pmu_event_attrs,
-> -	  .format_attr = nvlink_c2c_pmu_format_attrs
-> +	  .template_ctx = {
-> +		.event_attr = mcf_pmu_event_attrs,
-> +		.format_attr = nvlink_c2c_pmu_format_attrs,
-> +		.filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
-> +		.filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
-> +		.filter2_mask = 0x0,
-> +		.filter2_default_val = 0x0,
-> +		.get_filter = nv_cspmu_event_filter,
-> +		.get_filter2 = NULL,
-> +		.data = NULL,
-> +		.init_data = NULL
-> +	  },
->   	},
->   	{
->   	  .prodid = 0x10600000,
->   	  .prodid_mask = NV_PRODID_MASK,
-> -	  .filter_mask = NV_CNVL_FILTER_ID_MASK,
-> -	  .filter_default_val = NV_CNVL_FILTER_ID_MASK,
->   	  .name_pattern = "nvidia_cnvlink_pmu_%u",
->   	  .name_fmt = NAME_FMT_SOCKET,
-> -	  .event_attr = mcf_pmu_event_attrs,
-> -	  .format_attr = cnvlink_pmu_format_attrs
-> +	  .template_ctx = {
-> +		.event_attr = mcf_pmu_event_attrs,
-> +		.format_attr = cnvlink_pmu_format_attrs,
-> +		.filter_mask = NV_CNVL_FILTER_ID_MASK,
-> +		.filter_default_val = NV_CNVL_FILTER_ID_MASK,
-> +		.filter2_mask = 0x0,
-> +		.filter2_default_val = 0x0,
-> +		.get_filter = nv_cspmu_event_filter,
-> +		.get_filter2 = NULL,
-> +		.data = NULL,
-> +		.init_data = NULL
-> +	  },
->   	},
->   	{
->   	  .prodid = 0x2CF00000,
->   	  .prodid_mask = NV_PRODID_MASK,
-> -	  .filter_mask = 0x0,
-> -	  .filter_default_val = 0x0,
->   	  .name_pattern = "nvidia_scf_pmu_%u",
->   	  .name_fmt = NAME_FMT_SOCKET,
-> -	  .event_attr = scf_pmu_event_attrs,
-> -	  .format_attr = scf_pmu_format_attrs
-> +	  .template_ctx = {
-> +		.event_attr = scf_pmu_event_attrs,
-> +		.format_attr = scf_pmu_format_attrs,
-> +		.filter_mask = 0x0,
-> +		.filter_default_val = 0x0,
-> +		.filter2_mask = 0x0,
-> +		.filter2_default_val = 0x0,
-> +		.get_filter = nv_cspmu_event_filter,
-> +		.get_filter2 = NULL,
-> +		.data = NULL,
-> +		.init_data = NULL
-> +	  },
->   	},
->   	{
->   	  .prodid = 0,
->   	  .prodid_mask = 0,
-> -	  .filter_mask = NV_GENERIC_FILTER_ID_MASK,
-> -	  .filter_default_val = NV_GENERIC_FILTER_ID_MASK,
->   	  .name_pattern = "nvidia_uncore_pmu_%u",
->   	  .name_fmt = NAME_FMT_GENERIC,
-> -	  .event_attr = generic_pmu_event_attrs,
-> -	  .format_attr = generic_pmu_format_attrs
-> +	  .template_ctx = {
-> +		.event_attr = generic_pmu_event_attrs,
-> +		.format_attr = generic_pmu_format_attrs,
-> +		.filter_mask = NV_GENERIC_FILTER_ID_MASK,
-> +		.filter_default_val = NV_GENERIC_FILTER_ID_MASK,
-> +		.filter2_mask = NV_GENERIC_FILTER_ID_MASK,
-> +		.filter2_default_val = NV_GENERIC_FILTER_ID_MASK,
-> +		.get_filter = nv_cspmu_event_filter,
-> +		.get_filter2 = nv_cspmu_event_filter2,
-> +		.data = NULL,
-> +		.init_data = NULL
-> +	  },
->   	},
->   };
->   
-> @@ -310,6 +391,14 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
->   	return name;
->   }
->   
-> +#define SET_OP(name, impl, match, default_op) \
-> +	do { \
-> +		if (match->ops.name) \
-> +			impl->name = match->ops.name; \
-> +		else if (default_op != NULL) \
-> +			impl->name = default_op; \
-> +	} while (false)
-> +
->   static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->   {
->   	struct nv_cspmu_ctx *ctx;
-> @@ -330,20 +419,21 @@ static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->   			break;
->   	}
->   
-> -	ctx->name		= nv_cspmu_format_name(cspmu, match);
-> -	ctx->filter_mask	= match->filter_mask;
-> -	ctx->filter_default_val = match->filter_default_val;
-> -	ctx->event_attr		= match->event_attr;
-> -	ctx->format_attr	= match->format_attr;
-> +	/* Initialize the context with the matched template. */
-> +	memcpy(ctx, &match->template_ctx, sizeof(struct nv_cspmu_ctx));
-> +	ctx->name = nv_cspmu_format_name(cspmu, match);
->   
->   	cspmu->impl.ctx = ctx;
->   
->   	/* NVIDIA specific callbacks. */
-> -	impl_ops->set_cc_filter			= nv_cspmu_set_cc_filter;
-> -	impl_ops->set_ev_filter			= nv_cspmu_set_ev_filter;
-> -	impl_ops->get_event_attrs		= nv_cspmu_get_event_attrs;
-> -	impl_ops->get_format_attrs		= nv_cspmu_get_format_attrs;
-> -	impl_ops->get_name			= nv_cspmu_get_name;
-> +	SET_OP(set_cc_filter, impl_ops, match, nv_cspmu_set_cc_filter);
-> +	SET_OP(set_ev_filter, impl_ops, match, nv_cspmu_set_ev_filter);
-> +	SET_OP(get_event_attrs, impl_ops, match, nv_cspmu_get_event_attrs);
-> +	SET_OP(get_format_attrs, impl_ops, match, nv_cspmu_get_format_attrs);
-> +	SET_OP(get_name, impl_ops, match, nv_cspmu_get_name);
-> +
-> +	if (ctx->init_data)
-> +		return ctx->init_data(cspmu);
->   
->   	return 0;
->   }
+Acked-by: Quentin Monnet <qmo@kernel.org>
 
