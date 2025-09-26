@@ -1,118 +1,171 @@
-Return-Path: <linux-kernel+bounces-834493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F34BA4CE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:02:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB7DBA4CDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C155387B03
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46198626486
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66D1277807;
-	Fri, 26 Sep 2025 18:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B853278156;
+	Fri, 26 Sep 2025 18:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="h6GDha0N"
-Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjroutgB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EE0230270
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758909732; cv=pass; b=WCVsQeV7YAEZMNRuX3ZMGgZsuL+EsDhbO82PU2yopuGZlZq2xU/zij0wAn9Nczz9/9tD8bCvRfQr5GH9p5RsgLnrK8Fcp9PdknwDxMxB3ofWxZtwZWYgO7W0kBDiSC0kSLxHjzf5lXfvitBL95Zwjd7j1alqvXHKSFWdifIcFqk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758909732; c=relaxed/simple;
-	bh=OOR9QS7FsrEUbkiSOhBHvw8z61s35p8iS3NC0740ZFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pn5pglyyAQbhJJ2Vnp3HfBOIr/B66rAHIaXAgz3cxpw3+79JCSZ1e7SHxB5umhdnfHH9dV4O3b+5Sj4bIKAP5L4kBOCKdUBK2xlH3aKdSXJ2MjsMhirEV9uC4m1k/1rZoJG4x9PMIULrvcxxyfpZOcUpko2tJYWQVBS/6VdlklU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=h6GDha0N; arc=pass smtp.client-ip=49.212.207.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
-	(authenticated bits=0)
-	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58QI1f5F058535
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 27 Sep 2025 03:01:41 +0900 (JST)
-	(envelope-from weibu@redadmin.org)
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id 09877109D57DE;
-	Sat, 27 Sep 2025 03:01:41 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 5l6c7Gp273kZ; Sat, 27 Sep 2025 03:01:37 +0900 (JST)
-Received: by www.redadmin.org (Postfix, from userid 1000)
-	id 7ED9410A24946; Sat, 27 Sep 2025 03:01:37 +0900 (JST)
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1758909697;
-	cv=none; b=E16RVslQq3BU6s4dWIJ+UZyx20eyfaKhZsr7w2AJgbs/SYcLZ+RaAFdE6hWHxTDh72yMLyvqE3WuHQao57T0Rs0w2Hh39pMPl19FcqaIuHCGht0CcLmKwFu9WRQxiGYVt29YjTwfVtogVmN+IlOBwKO/P5w3FxYrY9g3xMq3Tzc=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1758909697; c=relaxed/relaxed;
-	bh=Cw5jpscVFe2IN4A5FMJB47nSlRNFhSLdLchY2fSh6ys=;
-	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=KLEt/0pHJej1xhOSZWE6zk3sJKuDw34gHkJXBNxkHFis/KWNiGiltB1NypuFeYg8KQYqLBPdhHSRHEF8N/+CcEpXDGm9TWW6Gm4VPs9F+gruMEd6yXJ7xqV11TUVqhzWDrbwiu1ct+8XDKNF8HmTNIxYvUQe/Ttu50boOcJBKaY=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 7ED9410A24946
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1758909697;
-	bh=Cw5jpscVFe2IN4A5FMJB47nSlRNFhSLdLchY2fSh6ys=;
-	h=From:To:Cc:Subject:Date:From;
-	b=h6GDha0NtEQmdoJJDNMx9rh5SVHWBprfRVO+1BLa6o0P67xxW7w8VH5qDHnuDbsot
-	 XOoHpeKS/04tCLCqOE1pMtlCg9F9bm+AHft1ESYzi8T1FPz2rQo7uwJWc4TqhTsyiN
-	 4HVVitfNqZ9/my6AntEyGYsmkybCw4xDT+fNP6XI=
-From: Akiyoshi Kurita <weibu@redadmin.org>
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Akiyoshi Kurita <weibu@redadmin.org>
-Subject: [PATCH] Documentation: f2fs: Fix typos in sysfs-fs-f2fs
-Date: Sat, 27 Sep 2025 03:01:34 +0900
-Message-ID: <20250926180134.35329-1-weibu@redadmin.org>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB4D230270;
+	Fri, 26 Sep 2025 18:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758909726; cv=none; b=D3xd+g27nr6yTauUjpswZm3dDLyfBE3DIsj8ztBJoZMx1XDGmLjtc80jxufH/xv215Vttvs7hXN6BdwSAXVs8ySMh4A2Zve9rK1FFG8rPeB6z/nzz2i3OWVWb5H1p5jWDCRBGjWL8ZcLaGIe42/QsxI9/lEUfaVpFMmq8PRyank=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758909726; c=relaxed/simple;
+	bh=Owx5RhQKmwytc4KFlTa7J1L5/ly/QxMLOTPwzCneccE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvHxxPNsR3S4KRAMk0qkNeYKpUtRPFXkg8cPhcgCVgRwM8GzJdL+9R3Z3NWCb9v4uYOmS5k0Fzwbh2Et/vh+mouIpaQovQV5T3QKnQA3616h+qCuih31RcBrYo0cSUBd0xwc2QpXekWhJRdg+EuYArRQqfz25zBcrAIhP2wCNBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjroutgB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB75C4CEF4;
+	Fri, 26 Sep 2025 18:02:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758909725;
+	bh=Owx5RhQKmwytc4KFlTa7J1L5/ly/QxMLOTPwzCneccE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=hjroutgBh2yBKKPkXr6bDMpp4wX0pjxtZvMwF87B1mpY5D7oDFdb5znzWTISyn6Md
+	 /HbhJrgJ25j3nPmkHqbFFRoAaZ6PKdpHW/FpYO878TPRNEBb25/sSgx5xZu/pIGetF
+	 1PLuec0zmI5AN/IGEfcqw7EBnn6/rdX9h0gCzwmoxSgaGKnrF3aEHs5xMeFlJWE+8r
+	 RckWKZZ2KTaucoVg9YOeBVDWbauqfSdYinxH4RkiSI4PZVBHzxpC83+q8XuBK5osua
+	 wnj0KmQHCDnCHFWEYRbcucaMhwziK/h0YGa6fpulcJUB+PZJyAxmmLL2Gg1tyOkMUM
+	 xrrNPV6n6wyow==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 1A547CE16D2; Fri, 26 Sep 2025 11:02:03 -0700 (PDT)
+Date: Fri, 26 Sep 2025 11:02:03 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: lirongqing <lirongqing@baidu.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, arnd@arndb.de,
+	feng.tang@linux.alibaba.com, joel.granados@kernel.org,
+	kees@kernel.org, rostedt@goodmis.org, pauld@redhat.com,
+	pawan.kumar.gupta@linux.intel.com, mhiramat@kernel.org,
+	dave.hansen@linux.intel.com, corbet@lwn.net,
+	akpm@linux-foundation.org, mingo@kernel.org
+Subject: Re: [PATCH] hung_task: Panic after fixed number of hung tasks
+Message-ID: <81514e1d-4a10-4466-8a87-2d4b0927195b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250925060605.2659-1-lirongqing@baidu.com>
+ <8c4cd66c-9c3f-411a-82df-0130b78e889c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c4cd66c-9c3f-411a-82df-0130b78e889c@linux.dev>
 
-Fix two spelling mistakes in the f2fs sysfs ABI documentation:
-- deivces -> devices
-- substracting -> subtracting
+On Thu, Sep 25, 2025 at 06:26:00PM +0800, Lance Yang wrote:
+> 
+> Thanks for the patch!
+> 
+> On 2025/9/25 14:06, lirongqing wrote:
+> > From: Li RongQing <lirongqing@baidu.com>
+> > 
+> > Currently, when hung_task_panic is enabled, kernel will panic immediately
+> > upon detecting the first hung task. However, some hung tasks are transient
+> > and the system can recover fully, while others are unrecoverable and
+> > trigger consecutive hung task reports, and a panic is expected.
+> 
+> The new hung_task_count_to_panic relies on an absolute count, but I
+> assume the real indicator you're trying to capture is the trend or
+> rate of increase over a time window (e.g., "panic if count increases
+> by 5 in 10 minutes").
+> 
+> IMHO, this kind of time-windowed, trend-based logic seems much more
+> flexible and better suited for a userspace monitoring agent :)
+> 
+> In other words, why is this the right place for this feature?
 
-Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+A possibly related question is "why are RCU CPU stall warnings implemented
+in the kernel instead of in userspace?"  One reason is that by the
+time that things get bad enough to trigger an RCU CPU stall warning,
+userspace might not be capable of doing much of anything.  Thus, there
+is an uncomfortably high probability that orchestrating RCU CPU stall
+warnings from userspace would cause these warnings to be lost entirely.
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/te=
-sting/sysfs-fs-f2fs
-index bc0e7fefc39d..6e8043ea33e7 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -822,7 +822,7 @@ What:		/sys/fs/f2fs/<disk>/gc_valid_thresh_ratio
- Date:		September 2024
- Contact:	"Daeho Jeong" <daehojeong@google.com>
- Description:	It controls the valid block ratio threshold not to trigger ex=
-cessive GC
--		for zoned deivces. The initial value of it is 95(%). F2FS will stop the
-+		for zoned devices. The initial value of it is 95(%). F2FS will stop the
- 		background GC thread from intiating GC for sections having valid blocks
- 		exceeding the ratio.
-=20
-@@ -847,7 +847,7 @@ Description:	For several zoned storage devices, vendors=
- will provide extra space
- 		filesystem level GC. To do that, we can reserve the space using
- 		reserved_blocks. However, it is not enough, since this extra space should
- 		not be shown to users. So, with this new sysfs node, we can hide the spa=
-ce
--		by substracting reserved_blocks from total bytes.
-+		by subtracting reserved_blocks from total bytes.
-=20
- What:		/sys/fs/f2fs/<disk>/encoding_flags
- Date:		April 2025
---=20
-2.47.3
+Similar reasoning might (or might not) apply to the hung-task mechanism.
 
+							Thanx, Paul
+
+> Please sell it to us ;)
+> Lance
+> 
+> > 
+> > This commit adds a new sysctl parameter hung_task_count_to_panic to allows
+> > specifying the number of consecutive hung tasks that must be detected
+> > before triggering a kernel panic. This provides finer control for
+> > environments where transient hangs maybe happen but persistent hangs should
+> > still be fatal.
+> > 
+> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> > ---
+> >   Documentation/admin-guide/sysctl/kernel.rst |  6 ++++++
+> >   kernel/hung_task.c                          | 14 +++++++++++++-
+> >   2 files changed, 19 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> > index 8b49eab..4240e7b 100644
+> > --- a/Documentation/admin-guide/sysctl/kernel.rst
+> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> > @@ -405,6 +405,12 @@ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
+> >   1 Panic immediately.
+> >   = =================================================
+> > +hung_task_count_to_panic
+> > +=====================
+> > +
+> > +When set to a non-zero value, after the number of consecutive hung task
+> > +occur, the kernel will triggers a panic
+> > +
+> >   hung_task_check_count
+> >   =====================
+> > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> > index 8708a12..87a6421 100644
+> > --- a/kernel/hung_task.c
+> > +++ b/kernel/hung_task.c
+> > @@ -83,6 +83,8 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
+> >   static unsigned int __read_mostly sysctl_hung_task_panic =
+> >   	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
+> > +static unsigned int __read_mostly sysctl_hung_task_count_to_panic;
+> > +
+> >   static int
+> >   hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
+> >   {
+> > @@ -219,7 +221,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> >   	trace_sched_process_hang(t);
+> > -	if (sysctl_hung_task_panic) {
+> > +	if (sysctl_hung_task_panic ||
+> > +	    (sysctl_hung_task_count_to_panic &&
+> > +	     (sysctl_hung_task_detect_count >= sysctl_hung_task_count_to_panic))) {
+> >   		console_verbose();
+> >   		hung_task_show_lock = true;
+> >   		hung_task_call_panic = true;
+> > @@ -388,6 +392,14 @@ static const struct ctl_table hung_task_sysctls[] = {
+> >   		.extra2		= SYSCTL_ONE,
+> >   	},
+> >   	{
+> > +		.procname	= "hung_task_count_to_panic",
+> > +		.data		= &sysctl_hung_task_count_to_panic,
+> > +		.maxlen		= sizeof(int),
+> > +		.mode		= 0644,
+> > +		.proc_handler	= proc_dointvec_minmax,
+> > +		.extra1		= SYSCTL_ZERO,
+> > +	},
+> > +	{
+> >   		.procname	= "hung_task_check_count",
+> >   		.data		= &sysctl_hung_task_check_count,
+> >   		.maxlen		= sizeof(int),
+> 
 
