@@ -1,115 +1,147 @@
-Return-Path: <linux-kernel+bounces-833646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BDFBA28B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:41:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2396DBA28D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538A2626AE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:41:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3D41C2402C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15D327C150;
-	Fri, 26 Sep 2025 06:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32B127F4F5;
+	Fri, 26 Sep 2025 06:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YPuJnlhX"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMepNN9U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308BE1DC1AB
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D48C18DF8D;
+	Fri, 26 Sep 2025 06:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758868885; cv=none; b=Ue7mzcNXaNV05ELu8qUk0kZvSKGvaeWaHc7Wzw+odGQPMoTb4eYfCgqr9LNTLVbM0KDvzSmTaEP9sMnq3gIl/Kqz7TNU+767iHmgHRJqJs/vS/K02xizAmqF6hBZXCT9QhvvhozBJcvyzCEUNqKqXf9eE4157fFjorI4sn7lDlU=
+	t=1758868939; cv=none; b=tzTii1n++Jw+Lw0i0DwlDvd0kBtGrc/K3F+z5pbaOsEAWcFukzx2xyD8g4EuktNrRXnzqgNr/XrmKfdKJqu9YMhakTlruXsoNY0ksHsMoYQMzdVi5IuaW/XuXOyOkEdZSoOaMinXc6pvEd2fFbMCgykp42DVT5mP2Mi+fPN8fRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758868885; c=relaxed/simple;
-	bh=uUAMECIXNIvOv86QPecXlecTiTn1dP75K3fLk2BLhWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDy7hiU0YMLWlikksY62mD0Bs/SXk8I+qFY3ksZDAMFBHPtthUq3fZr5WnMVl/EShj8YYv4F6uUY9fqwv4NyaF/jfycFdWKWCqx2lByApOZ9j5sO4FHVPMLgNEb6nXfoW61B9aERRN5mOpHGHYyTskBAEnVCTr06vnIgxjoRY2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YPuJnlhX; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45df7dc1b98so12001155e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:41:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758868881; x=1759473681; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eAXEhH9mCSkyuGynwGFcg/vSjwNz5p5yU5r7l9pKHs0=;
-        b=YPuJnlhX7yIjxgjiogwF+jukcbvUHirAZzvNF6i6AHLGNu1+H2M/fFq8U54W1CQyKO
-         77wFmffT1/brnGjxDbI+IpQgErvQ5X1m0a3z5Kb+5iSqKcl4NU0Dly4njLvyQ/GdITF/
-         56iipAyNa3Z5Sowlbcv3M20ybusGGqzmnvfd165H43OIVjbN2KUuWfrCkvuhO+BnnsDm
-         iFXmRFyfD6n59sEd8HpRJGCw/fzvlgW5G9qDVSWscyJ8PwjXXpwAK6IkI8xHanLcNtGr
-         v0YhXL6pUJi9+Wa2ukgEX7kxLJ1Bu54p6AEPu3PXbrYntMlTJpjO9Xy2WKNSoWb83dFX
-         rvGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758868881; x=1759473681;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eAXEhH9mCSkyuGynwGFcg/vSjwNz5p5yU5r7l9pKHs0=;
-        b=OkN+ll0tMtwj5KVGxjoOFW/1UIGIiOs1On/heM0hDpv6xJPZJ9vSFgFV7L5nzGJV1A
-         DRakxm0FacarmxdvmTYbaVB4U+ZiuXRS1iEurehZNb58fn1j8e0d1iVF6oRIaq13VGgw
-         fcFTOWLiUSUOL1/v4J5TeRKjJRYoHvCNgqdUkumzkkl08dBa7MKOVhaqfmKuRWGdsyrh
-         VWEWOpG0Rlnc7y9jN7ZjE0t8EtjZdXR+fmL9bbWEpaA/o1mApOY1BYYQCsUfpyqMxKIa
-         Bx/3enr8cZlVUcGuWy7GUns8qGSvZGUd2Luv81jc36jD9cJK02vMszEkKpko+NFlS8kL
-         qYNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQQ7sRkivcUUjvauBo7NvOhRP6Z9P6KAHLN7yeZYwEOtn0HC8S58xNJvvk0KthX1WqJWCoNmPQs2lSk94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdEGJwfxreZ1V5YDKhoL0JqYmfGBe8zpntwMXwC1+waQDN/cDi
-	qa7oefaqL6Qz3cy0H7xRtJHjTHNezuqMpFZCsO+psFvxmeM83DN0ML/4RbaI+T8+xiA=
-X-Gm-Gg: ASbGnctptwglNuZkAoVMP2upkzv0I8oASMfP8d49X6tT8HdT9qBRDWeBx18W72IVbxd
-	Fd/l5nR3DWGPM8OU3q1jTf5k6zVKqqHvHVu0H6FrGuzAgG25iOhSjvJALHsBI/pj+/PrgelDCJQ
-	sl1niqEucaesm/bkTPV0Iyqy991bAAXr9jmnkDloQJJJmp1oCuT55/+mtOeXPaBGTWq6h6q6Q2K
-	iCUKpKrzRXO/xE2CrDjJ2a1ljTnl86eOjKliEzeYoZnC3vc51ziUOTXyYR58S2B/2El4HpDCvoW
-	DeJjNKXKFTeTq1W5JlVUPTNZnKpDkLdboBZxd7DZ7RMip+lHlO5HPVwh3bwDjtDgcTjEN9lB2EP
-	KAurscyhAVY1ytkH3ukkXh2I/MGmBYx76
-X-Google-Smtp-Source: AGHT+IEC51Z3oUc6PBQE26U0pANRwet5KzFeYNOAHSrBB1u4TiB+919unwkMAvmSkArm1PJoNLlhdA==
-X-Received: by 2002:a05:600c:8418:b0:46e:39e1:fc27 with SMTP id 5b1f17b1804b1-46e39e1fd05mr21856915e9.5.1758868881334;
-        Thu, 25 Sep 2025 23:41:21 -0700 (PDT)
-Received: from linaro.org ([86.121.170.238])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33be359dsm59755235e9.13.2025.09.25.23.41.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 23:41:20 -0700 (PDT)
-Date: Fri, 26 Sep 2025 09:41:19 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, 
-	dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org, vkoul@kernel.org, gregkh@linuxfoundation.org, 
-	robh@kernel.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/10] phy: qualcomm: qmp-combo: Update QMP PHY with
- Glymur settings
-Message-ID: <27lkxf65evdhfdqzs3w6sfura6r3sewqsm6dr6qapvsjuwrirk@lwqs46vppei3>
-References: <20250925022850.4133013-1-wesley.cheng@oss.qualcomm.com>
- <20250925022850.4133013-8-wesley.cheng@oss.qualcomm.com>
+	s=arc-20240116; t=1758868939; c=relaxed/simple;
+	bh=w50rQbsUwHAX7rQjt1NnSquIVsSXVF6HpsxQbh+X4Zo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EUNU9PrD4o7K9WjykP3FSt3ua+mY79VUmMBJqQKIQfSvg56nqEIMCcShHZ0cHldNa7EZUW8/EdEmNrlHqKjemxFVC2u7YhOXC2Fed0YaLnKuSgrQ+l3BNzDGP6g/5bR0R7luBdqUPdW06oKoH+vTUMi/aQrm7jMJS3+iT2AhKQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMepNN9U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A1395C4CEF4;
+	Fri, 26 Sep 2025 06:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758868938;
+	bh=w50rQbsUwHAX7rQjt1NnSquIVsSXVF6HpsxQbh+X4Zo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=kMepNN9UC2aPLOVPTZ5MKfKSZf79LxorNe66eTKPvAXTcQZ3g0NaD9ncRzgjibsiy
+	 YD4AR7sPd+Q0M+QUC7L0nJ9nbkTBm0zBrMH8qRpmU2/Z5MPuTBNhvpCMvtLbEJBqe4
+	 MWWQipCTbxTTVXopTIH7MpzRbL7sbxmoPZXtpN60/iJpINLIksz4gLcHM4MC4FADzT
+	 hm/gCwyUhUEerEMoHGlWLewwsoKMuUH5EPghNIFVYXVsneaFWEZp6SWLPAWUmDpNbB
+	 nCZcOXss6O5CUAQ4MR3XDHxe676/rzD5eIKQFJFoGRSNdA21dlzyx5XEahMVmh1dc7
+	 BOp7Q8UXKQs6w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC74CAC5B8;
+	Fri, 26 Sep 2025 06:42:18 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v2 0/2] interconnect: qcom: sdx75: Drop QP0 interconnect
+ and BCM nodes
+Date: Fri, 26 Sep 2025 12:12:08 +0530
+Message-Id: <20250926-sdx75-icc-v2-0-20d6820e455c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925022850.4133013-8-wesley.cheng@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAME11mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyMz3eKUCnNT3czkZF0z82QjgyTjlFQLk0QloPqCotS0zAqwWdGxtbU
+ A34DkpVsAAAA=
+X-Change-ID: 20250926-sdx75-icc-67c20b3de84a
+To: Georgi Djakov <djakov@kernel.org>, 
+ Rohit Agarwal <quic_rohiagar@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ devicetree@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>, 
+ Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
+ Lakshmi Sowjanya D <quic_laksd@quicinc.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2092;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=w50rQbsUwHAX7rQjt1NnSquIVsSXVF6HpsxQbh+X4Zo=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBo1jXImIUMosVMEtE4ghqPdD1MJv1QPBohfPPr7
+ jcaWqgcHH+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaNY1yAAKCRBVnxHm/pHO
+ 9frcB/9Zc7MG+v8da1LYI1ZK1cOzGIBzmucX9iVFdcve/fQzbHEVk+Xq1Xuwi0WQZCcMB5HIfRv
+ G0vwDGCkPB46Krt3X35JtJ6b7aiC4i+CGwWSQkFpuuzq9TZNyBT7Tw4EKIAEoLKjXeYQxaS+oLT
+ Rw0Hu4Us1HOHpiiXrDAZguzfrQLgcta8Ck2Jnl1vI6ggK1mO6ffU3rUPsxthIvP+Dv0AX4Fpzc4
+ nc7xJaLYWRTEOAMqaJHuP0NEf6934HaF5SG0481sz8cLPEUFzpgXA7R/PM0DjScLm7vrUmkm4HR
+ uofBSBwY/gYOOAqxCwz7l43Iy4TaKB3YLAFy3ldMViMv0shN
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@oss.qualcomm.com/default with auth_id=461
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Reply-To: manivannan.sadhasivam@oss.qualcomm.com
 
-On 25-09-24 19:28:47, Wesley Cheng wrote:
-> For SuperSpeed USB to work properly, there is a set of HW settings that
-> need to be programmed into the USB blocks within the QMP PHY.  Ensure that
-> these settings follow the latest settings mentioned in the HW programming
-> guide.  The QMP USB PHY on Glymur is a USB43 based PHY that will have some
-> new ways to define certain registers, such as the replacement of TXA/RXA
-> and TXB/RXB register sets.  This was replaced with the LALB register set.
-> 
-> There are also some PHY init updates to modify the PCS MISC register space.
-> Without these, the QMP PHY PLL locking fails.
-> 
-> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 311 +++++++++++++++++++++-
->  drivers/phy/qualcomm/phy-qcom-qmp.h       |   4 +
+Hi,
 
-I think you dropped the v8 headers since v2.
+This series drops the QPIC interconnect and BCM nodes for the SDX75 SoC. The
+reason is that this QPIC BCM resource is already defined as a RPMh clock in
+clk-rpmh driver as like other SDX SoCs. So it is wrong to describe the same
+resource in two different providers.
 
-Please make sure you add them back (maybe separate patches) in v4.
+Also, without this series, the NAND driver fails to probe on SDX75 as the
+interconnect sync state disables the QPIC nodes as there were no clients voting
+for this ICC resource. However, the NAND driver had already voted for this BCM
+resource through the clk-rpmh driver. Since both votes come from Linux, RPMh was
+unable to distinguish between these two and ends up disabling the resource
+during sync state.
+
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: devicetree@vger.kernel.org
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Cc: Lakshmi Sowjanya D <quic_laksd@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+
+Changes in v2:
+
+- Taken over the series from Raviteja
+- Reordered the patches to avoid breaking build
+- Improved the patch descriptions and kept the values for other defines
+  unchanged
+
+---
+Raviteja Laggyshetty (2):
+      interconnect: qcom: sdx75: Drop QPIC interconnect and BCM nodes
+      dt-bindings: interconnect: qcom: Drop QPIC_CORE IDs
+
+ drivers/interconnect/qcom/sdx75.c             | 26 --------------------------
+ drivers/interconnect/qcom/sdx75.h             |  2 --
+ include/dt-bindings/interconnect/qcom,sdx75.h |  2 --
+ 3 files changed, 30 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250926-sdx75-icc-67c20b3de84a
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+
+
 
