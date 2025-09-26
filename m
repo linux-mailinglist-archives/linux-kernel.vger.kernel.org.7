@@ -1,138 +1,142 @@
-Return-Path: <linux-kernel+bounces-833684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D892FBA2AE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67F0BA2B05
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A97384504
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:19:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FED84C2F54
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3E6286426;
-	Fri, 26 Sep 2025 07:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xgy1FRMX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453702868BA;
+	Fri, 26 Sep 2025 07:22:48 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43EC276028
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E81110E0;
+	Fri, 26 Sep 2025 07:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758871149; cv=none; b=MNe/deRnbgcGoWP+6cwXIE1da+AgbqbWzQRwqNePtXtVhSdlZoKSy1jgNYYYnZMSh2+qtwK0sYnOB0tniJxD4mHI7x3RWVxWD/Csm64ofb4UBB2ztG+SoXZe1gj8SGre7h15XkIOk6AY+oRWUi7daq1mVo4T7fr+HQ+IviDAE4o=
+	t=1758871367; cv=none; b=QrWmBjTet2qEjGlrszZXN7k9rD+kfXfW1Fd+7SXp0Oe3W8GGqWxXi/e51MF7aaQnbDUf3MsAhDsg7CKybZvzLmFEw6ltvPh8oPXb5wAMKq3CNXn+lNOKpC7XIXL/UGm1QH94L55NVrAHjIHTdSafwvFgQs3VF8O0NMGugZEAV+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758871149; c=relaxed/simple;
-	bh=FDV3uBNAbwFXT+M7fyNWH+HJ349lnbWYLaE+n4S8cdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AR4fNg4es95SnUOhoPAEnMcM3DZWPR9z/SxjUor+upQsPCLztpDEdjtefi/MUTYhefj64nBXwbRL3STQSle8GYryivGQuuGJ+Mxmzv9lNx4WHX1I5TAjDWRQ7nbs4HlRXwzYeHOOih3xRQsx5330KqALy+WjU3Mnki2b9qbCMTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xgy1FRMX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758871146;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tOPngMxA7p4GyjZLW1Z2fZxDxzYAemuo6fVS/hsRC0Y=;
-	b=Xgy1FRMXmgtRel2xJLVU1BWeTsYDDjt97BNyRgiyWw1t32CpKNkna5CmDXjeWzM+kj87fi
-	5q57v6WrxMh8Cj/CSuSv7ZL9nEELj7pJIZMGnFjkmUCNuxdUm5YvrirOv0b5jNOwhxphG4
-	ILXlgXikl1H0Vx+MidpT4hOQAoUAK7s=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-690-A609aPgdM46Qzjgj5KnFrw-1; Fri, 26 Sep 2025 03:19:05 -0400
-X-MC-Unique: A609aPgdM46Qzjgj5KnFrw-1
-X-Mimecast-MFC-AGG-ID: A609aPgdM46Qzjgj5KnFrw_1758871144
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ece14b9231so1141988f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:19:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758871144; x=1759475944;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tOPngMxA7p4GyjZLW1Z2fZxDxzYAemuo6fVS/hsRC0Y=;
-        b=b82pRJUP87XyYdK3GP6Le6+2bje1+6+LPhnEsX3QqG7HRVsrR/NPLm6AwyxuaTupyi
-         LFLLvy7x0ZmjF4FmuFPFn2C+L2wEbznhONu/KrANodv+Cgcs8m7gLfLmBGBBJlU3iuq2
-         GkesEzs1A6I9kaDerbrwuWPh3AQCf4uE6lfgrTR4Os9Q7l3hlbMceHZOA2t1XqUF0gVt
-         y8IGlCm5yJ5xUzOawS9ZHfNgTTg094PWiTRNqJHnrTtI9bZGyBwOS7wZsZtqVdGExRQN
-         2VQs8PCZL2U0Ly66oLsCyJwp2ogUbkwMFGC7sd7Zb0ZEIMyT5Kh+Mo8hae9Kd0P27g28
-         Jocw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGJLLR5EUmoFys5tWp5/f0y+kLZbluEVpx2ukk25kbqm6Exd14kbXFFpxIFTr7e8hk2+UBmj7dWcm445o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsXhEhyD4Wnp1/s2X5oGoD6WRMjDHrSRIx790b3WZn3Pw2A06P
-	UHkQMF4YXX7QrDnDwcn+ZqvESe/tz3190CsvpoMpIujLOm241oXxdA6KTXYokiG/AbgYM3XK1AA
-	Zr4tM+xulNkkNIPxV3OmX2/4TCT8GrYVETlg8JVkGecGQRE1tgAfoFtfNd/mbSNBgNw==
-X-Gm-Gg: ASbGncuy9Cmd1Koccd6HIEep8xQJuKXV/iIHeytveqktT15aydtIFZtHuau3AgpJO/D
-	+3epy4IsgfemBMCDrtCK++KPnMPUOjwv92z77jzPe+6uhO/OGEZMRA3dxh2XZ8VvHBKSWoAj9rW
-	ktiawGPh9cNuE72lM7Fs+nm0rdW0nMmQhkdCA4j8jOOg81epoIG8Afwldo3Ca3KP+jAS6kugCmW
-	sa/EFJFEfuC6yOrCA9RhtTyVAfy1Fxd4Va/z2Qfb5oMlj5PToCuywyz4DDCcfCMzq321a044XPu
-	nJNNwz6n1ZLTRp1AiDW1I4u+Bqw47wkuUBWYp3T3iEBhwk450VJXHY/yPN4O+dAuf56K6BlcSux
-	NYHXV/FjoYI+Bqg==
-X-Received: by 2002:a05:6000:310b:b0:3e7:1f63:6e81 with SMTP id ffacd0b85a97d-40e4a711565mr5936592f8f.16.1758871143695;
-        Fri, 26 Sep 2025 00:19:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlb1Wb38trve2rzHq8pOF44+10uFK3uhKPrtJDVZXfjYr23BydS246rnVqWWs+QAxza2wP6g==
-X-Received: by 2002:a05:6000:310b:b0:3e7:1f63:6e81 with SMTP id ffacd0b85a97d-40e4a711565mr5936558f8f.16.1758871143271;
-        Fri, 26 Sep 2025 00:19:03 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc92491efsm5994003f8f.62.2025.09.26.00.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 00:19:02 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in THINKPAD T14S EMBEDDED CONTROLLER DRIVER
-Date: Fri, 26 Sep 2025 09:18:59 +0200
-Message-ID: <20250926071859.138396-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758871367; c=relaxed/simple;
+	bh=wBcIScioeZKWPEcwR7sa6j0NWha6SykklKRPHiuXfmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ctllrxrzfLJEf27yeMEUBntlCn7iJnMdospI4XDEXo7ymk9RPHDOtMvmtz0V7tvlY87uXAOjIMR9VN1uLQgd4YhXYZgqwkLCZELbUOPaA3XdmkIW9YQdgNORUTvNTx2K3XQr96s0tLiTo50Fkj9O32AqJ/AyLFUd2NfyC48bwnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cY2950PsDzKHM0X;
+	Fri, 26 Sep 2025 15:22:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4FB951A0D4C;
+	Fri, 26 Sep 2025 15:22:42 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgAn6mFAP9Zou7RzAw--.30216S3;
+	Fri, 26 Sep 2025 15:22:42 +0800 (CST)
+Message-ID: <4ae18bbf-3301-ac40-b422-629cefdd7b12@huaweicloud.com>
+Date: Fri, 26 Sep 2025 15:22:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v5 2/2] md: allow configuring logical block size
+To: Li Nan <linan666@huaweicloud.com>, Xiao Ni <xni@redhat.com>
+Cc: corbet@lwn.net, song@kernel.org, yukuai3@huawei.com, hare@suse.de,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250918115759.334067-1-linan666@huaweicloud.com>
+ <20250918115759.334067-3-linan666@huaweicloud.com>
+ <CALTww2_4rEb9SojpVbwFy=ZEjUc0-4ECYZKYKgsay9XzDTs-cg@mail.gmail.com>
+ <b7fc02d2-7643-4bf1-1b15-c1ecdf883c87@huaweicloud.com>
+ <CALTww2_knuDVWLtVzrqcuLH5dmiyMqkAaZr2DB_ZpCYPQsYH0A@mail.gmail.com>
+ <6b6acb6c-7ad8-ae71-b56a-9129d4bb4bd6@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <6b6acb6c-7ad8-ae71-b56a-9129d4bb4bd6@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAn6mFAP9Zou7RzAw--.30216S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF4rZrWrCw4fXFWfXw1rtFb_yoW8Xw1DpF
+	48tF45KryUJr10yws2gr1UCa45tr47tw1DXr9xJFy7Jryqvr12qF1UWFWqgFyUJrZ5XF1U
+	Zr4YqwnxZryS9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+	v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8Zw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQV
+	y7UUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-In the activity of revising the patch series "platform: arm64:
-thinkpad-t14s-ec: new driver" from v1 to v2, the location of the dt-binding
-for lenovo,thinkpad-t14s-ec.yaml was changed, but the change of that
-location was not reflected in the corresponding MAINTAINERS section.
 
-So, commit bee278e18e64 ("dt-bindings: embedded-controller: Add Lenovo
-Thinkpad T14s EC") adds the file lenovo,thinkpad-t14s-ec.yaml in the
-embedded-controller subdirectory, whereas commit 27221f91b83f ("platform:
-arm64: thinkpad-t14s-ec: new driver") refers for this file to the
-non-existing platform subdirectory.
+在 2025/9/25 16:34, Li Nan 写道:
+> 
+> 
+> 在 2025/9/23 22:06, Xiao Ni 写道:
+>> On Tue, Sep 23, 2025 at 9:37 PM Li Nan <linan666@huaweicloud.com> wrote:
+>>>
+>>>
+>>>
+>>> 在 2025/9/23 19:36, Xiao Ni 写道:
+>>>> Hi Li Nan
+>>>>
+>>>> On Thu, Sep 18, 2025 at 8:08 PM <linan666@huaweicloud.com> wrote:
+>>>>>
+>>>>> From: Li Nan <linan122@huawei.com>
+>>>>>
+>>>>> Previously, raid array used the maximum logical block size (LBS)
+>>>>> of all member disks. Adding a larger LBS disk at runtime could
+>>>>> unexpectedly increase RAID's LBS, risking corruption of existing
+>>>>> partitions. This can be reproduced by:
 
-Adjust the file entry to refer to the right location.
+[...]
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>> +static ssize_t
+>>>>> +lbs_store(struct mddev *mddev, const char *buf, size_t len)
+>>>>> +{
+>>>>> +       unsigned int lbs;
+>>>>> +       int err = -EBUSY;
+>>>>> +
+>>>>> +       /* Only 1.x meta supports configurable LBS */
+>>>>> +       if (mddev->major_version == 0)
+>>>>> +               return -EINVAL;
+>>>>
+>>>> It looks like it should check raid level here as doc mentioned above, 
+>>>> right?
+>>>
+>>> Yeah, kuai suggests supporting this feature only in 1.x meta.
+>>
+>> I mean it should check if raid is raid0 here, right? As doc mentioned,
+>> it should return error if raid is level 0.
+>>
+>> Regards
+>> Xiao
+> 
+> Apologies — I misunderstood. I will add check in v6.
+> 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8fcf4e34eaa5..b641b5e60bf5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25466,7 +25466,7 @@ F:	drivers/platform/x86/lenovo/thinkpad_acpi.c
- THINKPAD T14S EMBEDDED CONTROLLER DRIVER
- M:	Sebastian Reichel <sre@kernel.org>
- S:	Maintained
--F:	Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
-+F:	Documentation/devicetree/bindings/embedded-controller/lenovo,thinkpad-t14s-ec.yaml
- F:	drivers/platform/arm64/lenovo-thinkpad-t14s.c
- 
- THINKPAD LMI DRIVER
+I found that md_logical_block_size.attr is added to md_redundancy_attrs and
+is is only created when pers->sync_request is present. Raid0 will not
+create it. So the check is unnecessary.
+
 -- 
-2.51.0
+Thanks,
+Nan
 
 
