@@ -1,88 +1,63 @@
-Return-Path: <linux-kernel+bounces-834160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5EBBA4135
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:15:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D9AFBA4148
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218E8172BD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 254C27A19F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1DE189B84;
-	Fri, 26 Sep 2025 14:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9CC1B4138;
+	Fri, 26 Sep 2025 14:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ameoJ0Qy"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oC+5PZ06"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2679634BA4D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A4D34BA4D;
+	Fri, 26 Sep 2025 14:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896119; cv=none; b=B1PAbdl0UvEQlJ9XmDjdEl6AWHwszQDiDbuHLRk5tbhaTSSg+y89Knak3Lh3nDUsxpSzfuMknOGzhjseezKqtVpkOVEU8dRb/qXYPTOdCdNtrTGgOODo+62lMaeyMeTP3wDNfiH5CiaGfxXuTOBW38DeYLSSQPbfZlYPeLOQ8h4=
+	t=1758896215; cv=none; b=PRnZfcgcDe3sDn7ppP6tqb5W+EPb/nE161IgZPLMciG39K08UvORHkZwWhjbPgZ4gN3GQ0XIZKstVZCSczljR9Ftw+VLtXmWpd8Q6J9gyS3+SpPY135I6J/Cw96507Q4aBEIgKu7hBoP3gPJqbQGuenrZQSk2mdHGV8/W+Ej3E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896119; c=relaxed/simple;
-	bh=3EuETjGS94VA9aX1L+3DRTzif/UOsqRmcV3HKUoNVKU=;
+	s=arc-20240116; t=1758896215; c=relaxed/simple;
+	bh=F4CqQMNBgfWe4UbwdKx5Y63fVKA5uKqONA1gN72GIX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lG3gflB/ghK5JLxQbi8AusvDakQO1S2w6e4mKaDv5VFS6oY8+6cO6EPo/kmQ13bZW+MgYXsi1hFN4JaUH6FmXHIsAI4Al5u7a2KXoBB+JCaDSOuHn86o0/gTOAFLDphHfVuzEgC+iA9msKe2fxYcCaC574N59VXXSl3xfuuIlCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ameoJ0Qy; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b2ef8e00becso454750066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758896115; x=1759500915; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9jZmPeMSTNInBGycjXauMbuTyxBMkKpsato8i1eTnM=;
-        b=ameoJ0Qycx/0+QjPvGr+LDwGVVraE/V1UVIic/seWKrq6LOceRbI8BSiND9lIm48XR
-         cX3MYEZcw85O8yiLdJYt2Pu8jo+Wzkps+sTq44hR+Ya4OIEWDVaeJdfTNNEm/e1/2Cyz
-         uofFHOjsO5etdGv+dmxRniHc/gGWmy0vcLn4M35Wx0Gea5beSqgL+qP0PGMWy0zMyZ+/
-         vOiTZElbPpk1xd4pEFaGHGSco0FG/+kgJOEN7YsHaGy6aR0+tT8og9bxHs/V9J8wx33i
-         lTBxLx2hfpCWUMFF/YOslA3e51dZg+/sGGICfXH7wYWyr2czcE6HnhVAozAoR7WxL2b7
-         6g1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758896115; x=1759500915;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C9jZmPeMSTNInBGycjXauMbuTyxBMkKpsato8i1eTnM=;
-        b=Ho6+dO3qK7j6mvaQSw5lbWV4vaT3vAyg4GmP4hYogq/dKWWzvMC/SOScEixcauhY+o
-         s/kKvudq6kg24DNAwmFrZ8lfKdHYUV38IJNx6U5aIbhMm4/8yUoWnoWdVyO1DnNhRhjL
-         uP2dQbQGLWhMKxlbQtBaJjTEGPT1vtVCFe0xeOOsUd+UGN0KtjoQ88wKv6OEHNxXyo7X
-         noTJyMr0qeeYZ4QJIxsKw7vOHco/s/SFWQqqOgrPbNnK/orx1YJnke7RBy+E5fo38QzB
-         FSP6wMPkp3yH+LT2gPZfOF7aI7eM5sVdDlsMgzUNGEfo2d3rQQyeMPTfsuzFr8qZehxt
-         MxYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9j0HVN0Krx9dl/hlemrd6TMJtiNhpVgD1sGGmoJhuZRZjyjhX5Lgsd/AVAOT11+FqkH7/EbYIc4F5+CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ82quQGgVd2WkWDGeZ4NLItD6mnAf+hIOp6+XkzF03byE344Z
-	KuT1w/qsMwh8fPm85WLStjg5LXi6hw7y4hlgmuoOfDo/G9imuZnkVCCSGhYMQYtkxqYFnvdNXbT
-	ywB4ZJJeZWw==
-X-Gm-Gg: ASbGnctrCtSGTzmNuKqrgFbQYmBH6ieoYa02Pfb4j36kHjN3e5o5DbsLqZQCiRBbbfK
-	E6Q4/1cicwY2WArrk/B+My+5R5THmL4DEmUbFbl3YP8ZsMqLZxY8iWcAhEsQicyBaFuOflqaN3U
-	UxqH5wXcANOVJylpEO2u5MCLOOrr+x/HP6yOc3wF0n6Tz8lCTHIGB/+OParO8Yapm4REbyZpuvf
-	mQHL8j5B1CyAaKPrE2VvFDLlAnkESAw5+EFErWBs6jwaCfBzH4IO24kgrZxEUt+bc9huIEIQ09Z
-	mJ0ZgUEcxWgLQeMdDVsFLoqZ+3Jrz3+0DBklkYOZKJ1ZOVWlSr6vsrQKMHQP6fpn2XpY1ZZ+gkl
-	noxcH7/uoJXgcBZCx8yld2lqOd0Wxe/gd2M9gMOAUu2JjJoAeI30=
-X-Google-Smtp-Source: AGHT+IGK/genwtI1bS4PRqRq2vjmMCZw3FLLLJgbkQJTVuUZJctxfJL4S1XrBwD0AtlzfdZMtXRaOw==
-X-Received: by 2002:a17:906:c14b:b0:b19:4e64:4f1a with SMTP id a640c23a62f3a-b34bf370078mr830417166b.58.1758896115333;
-        Fri, 26 Sep 2025 07:15:15 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3544fcddf1sm380305466b.77.2025.09.26.07.15.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 07:15:14 -0700 (PDT)
-Date: Fri, 26 Sep 2025 16:15:11 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Daniil Tatianin <d-tatianin@yandex-team.ru>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v1] printk: ringbuffer: Fix data block max size
- check
-Message-ID: <aNaf756eQ6qZCmCV@pathway.suse.cz>
-References: <20250925224959.757266-1-john.ogness@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+pLt9LiFJRYCbfBshVEdcx7zgawp5Hp7uC6sLf3dDs7+feMGPlc4Q1SqmV40B2eyzYj4FV7tg6HiO+dXH49HJ2hxOZeObFN2E7fuCgk1QzDnEhJKTej7L8E7vJ39HAI1A74KZExnWJeDPYxG/wT601ISmDW8eXllY3IAKO8cyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oC+5PZ06; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 262F3C4CEF4;
+	Fri, 26 Sep 2025 14:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758896214;
+	bh=F4CqQMNBgfWe4UbwdKx5Y63fVKA5uKqONA1gN72GIX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oC+5PZ06H3soR/JIkFyonjknXzN/9X0ZfeAKMVrj01hHfCeUpV2HMmnF14nZ3WUC2
+	 MlGqGXl0g/JBM154y7q2oKzQquSdi7J2fjR6dzZW5l1fJFw5o7CGiIQinUx3PkgwyK
+	 +4GaKpFdSnIqqwaVoxHQQzakOXCd8gAjgLqaPbh6Dz1H2AGUbn+vHOGwlSsfxuZ8/I
+	 ekNKq/yjcwKr4i1idojRPjv/2CzAi7sCML1ospUoYF5q5vWM12Uz+NMAwSQ2o9relz
+	 iczc0hWKQgdlNtj4ArK/woRxO7amuYXpua2SY2SdyZ668pSiqYllDsFWalx2LI42jT
+	 E55X73GFM8iYw==
+Date: Fri, 26 Sep 2025 15:16:50 +0100
+From: Simon Horman <horms@kernel.org>
+To: Adam Young <admiyo@os.amperecomputing.com>
+Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v29 3/3] mctp pcc: Implement MCTP over PCC
+ Transport
+Message-ID: <aNagUmU8GOMbpfGq@horms.kernel.org>
+References: <20250925190027.147405-1-admiyo@os.amperecomputing.com>
+ <20250925190027.147405-4-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,60 +66,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925224959.757266-1-john.ogness@linutronix.de>
+In-Reply-To: <20250925190027.147405-4-admiyo@os.amperecomputing.com>
 
-On Fri 2025-09-26 00:55:59, John Ogness wrote:
-> Currently data_check_size() limits data blocks to a maximum size of
-> the full buffer minus an ID (long integer):
-> 
->     max_size <= DATA_SIZE(data_ring) - sizeof(long)
-> 
-> However, this is not an appropriate limit due to the nature of
-> wrapping data blocks. For example, if a data block is larger than
-> half the buffer:
-> 
->     size = (DATA_SIZE(data_ring) / 2) + 8
-> 
-> and begins exactly in the middle of the buffer, then:
-> 
->     - the data block will wrap
->     - the ID will be stored at exactly half of the buffer
->     - the record data begins at the beginning of the buffer
->     - the record data ends 8 bytes _past_ exactly half of the buffer
-> 
-> The record overwrites itself, i.e. needs more space than the full
-> buffer!
-> 
-> Luckily printk() is not vulnerable to this problem because
-> truncate_msg() limits printk-messages to 1/4 of the ringbuffer.
-> Indeed, by adjusting the printk_ringbuffer KUnit test, which does not
-> use printk() and its truncate_msg() check, it is easy to see that the
-> ringbuffer becomes corrupted for records larger than half the buffer
-> size.
-> 
-> The corruption occurs because data_push_tail() expects it will never
-> be requested to push the tail beyond the head.
-> 
-> Avoid this problem by adjusting data_check_size() to limit record
-> sizes to half the buffer size. Also add WARN_ON_ONCE() before
-> relevant data_push_tail() calls to validate that there are no such
-> illegal requests. WARN_ON_ONCE() is used, rather than just adding
-> extra checks to data_push_tail() because it is considered a bug to
-> attempt such illegal actions.
-> 
-> Link: https://lore.kernel.org/lkml/aMLrGCQSyC8odlFZ@pathway.suse.cz
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+On Thu, Sep 25, 2025 at 03:00:26PM -0400, Adam Young wrote:
 
-Looks good to me:
+...
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+> +static int initialize_MTU(struct net_device *ndev)
+> +{
+> +	struct mctp_pcc_ndev *mctp_pcc_ndev = netdev_priv(ndev);
+> +	struct mctp_pcc_mailbox *outbox;
+> +	int mctp_pcc_mtu;
+> +
+> +	outbox = &mctp_pcc_ndev->outbox;
+> +	outbox->chan = pcc_mbox_request_channel(&outbox->client, outbox->index);
+> +	mctp_pcc_mtu = outbox->chan->shmem_size - sizeof(struct pcc_header);
 
-The merge window for 6.18 is likely going to start the following week.
-I thought about it and I am going to push it there even when
-it is this close. The fix is pretty conservative. It gets a lot
-of testing using the new kunit test. I am pretty confident
-about it.
+Hi Adam,
 
-Best Regards,
-Petr
+On the line below it is expected that outbox->chan may be an error value
+rather than a valid pointer. But on the line above outbox->chan is
+dereferenced.
+
+This does not seem consistent.
+
+Flagged by Smatch.
+
+> +	if (IS_ERR(outbox->chan))
+> +		return PTR_ERR(outbox->chan);
+> +
+> +	pcc_mbox_free_channel(mctp_pcc_ndev->outbox.chan);
+> +
+> +	mctp_pcc_ndev = netdev_priv(ndev);
+> +	ndev->mtu = MCTP_MIN_MTU;
+> +	ndev->max_mtu = mctp_pcc_mtu;
+> +	ndev->min_mtu = MCTP_MIN_MTU;
+> +
+> +	return 0;
+> +}
+
+...
+
+-- 
+pw-bot: changes-requested
 
