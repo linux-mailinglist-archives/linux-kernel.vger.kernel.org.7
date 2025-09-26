@@ -1,178 +1,193 @@
-Return-Path: <linux-kernel+bounces-833464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84110BA206E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A9FBA2086
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7BF31BC458D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B43160523
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4853AC8FE;
-	Fri, 26 Sep 2025 00:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2B3DDD2;
+	Fri, 26 Sep 2025 00:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="mFiALfgb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nCf3TWm4"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bP3Jo4Vf"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3589634;
-	Fri, 26 Sep 2025 00:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC0334BA4D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758845384; cv=none; b=iUPI6dAlWjULjptp0gKp+UJMsPUXROw13meYy2EytC1Z8p6Mr4FHDFqepiyfj1qq0NXW9XRTX1ZsX4JEnj8phB33g3ifzIUZsV9vdVwbdwhlbO5StL6aKK6EPZ19CRI2mieiSUa1xs93tI+XwSAFA879ZjZrSWLPHvmQnJEXSCI=
+	t=1758845487; cv=none; b=WQ1QvI2TSBF6/RK4PRy5c/mFtR/80rYv/lWfEXQijK0MmkGYGrY959FYuQsnfX2eFWY7aWDsF3tqNKMGuZbUr2GOuY0pYdFBQXUVIpGZu4mkvXChZH51cHP7IrMBZDS2Whc9mVopoLuedxcBrPdr4cyVQWPlhaIoYy9/fz7aqHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758845384; c=relaxed/simple;
-	bh=9/8sCI2153nJeyn4IUo6fUwEgJeZDHuCqm1VoJgIXDA=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=uIStoHU1Ic8/6PAe5cke/kLyda4J2aE0j1Eq5XKlOm8CLmzzmhFYgmihJ1M8bB73D71mKmAJCf54hiWWwARPRn3/5UNq+2f5PRZrX07AxuViIqlihMfA4JTFdrNlzfi9FM1tWVMZCgbuJbp1d5er/jjbtbGLb7Os/EdO1uh4le4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=mFiALfgb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nCf3TWm4; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CE3971400160;
-	Thu, 25 Sep 2025 20:09:40 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 20:09:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1758845380; x=1758931780; bh=o+VU/S3EXIHtWNj19MpfZBUY/JHX3mo9zyC
-	te/hn2e8=; b=mFiALfgby59gEpjWQRTPDu7tJlZ535BooJYDadCWrW4+kYSz4+W
-	Acokz36lwMgmA/LstmBvMBcL089l+l6iC8svDEoG+BGqwG7jUu1uL8gkqANOyyUC
-	pR0Ck6/r0bO0TXuQq4NAhxe6Tu8HFusYYohcigsct+P6Lj1tDnfyz2VsEfndgMzE
-	i4P3yd7UXrQFbvr5dVxatlCOj6RUq5bDo0KuaG1zilAfgGswqBKL3i7MCdZsBC6I
-	1tZD4fD3hmJreXfTQI7Hof1Q6f7ik72Dg095NDGxIqqefbte2FE+U98mJ7ZEWx1w
-	SaIKTeiAz7x0yNGADIxMBH2kKxulExCCamA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758845380; x=
-	1758931780; bh=o+VU/S3EXIHtWNj19MpfZBUY/JHX3mo9zyCte/hn2e8=; b=n
-	Cf3TWm4tcOxsYO+IngE8y1YbxO8eXJHV8qNeJYS1M55799wFVC8MnkZc8gCnjDUH
-	Z6OlfrSm0jnrmMkhKbLJcvV4lVJrCsz7BOAHH7+jqbBZ9wc34tQ0NfWfYN6jrV8m
-	BkDomg4mX1ui9yE2BMitb/ZiPjZ6EI32uioC94uWhJ9/ynT3bwQovpWHzZFiYL91
-	CONzXF2tRtGTtwTNCg7j56oXyP7SyVSweu+DvHtDbBXbeLflpaXqe8cxu/A9MGDi
-	F/TKBy/2qlk7F4V1B+IVAOcS4M8GfGW/E0P/9eAj8SRmlLRBBn2V/IxYiRxMisOl
-	P3LcBKBR4H/zypqKNG7Rw==
-X-ME-Sender: <xms:w9nVaGBwEsyGDizkE_Uozuz5zenLdmCuF_42alUKjxesYo_v0dFwOw>
-    <xme:w9nVaFfO3FrIH-qjOhmcfRQJFT8n-k-NJ5SKYRq1EBd931D1EFSuJ2rfKRcNiSRWg
-    ymZyl6_vq74Ru7ZZw78j2xNY6-PL9ktuQOoe8qBV7nCEfJkle0>
-X-ME-Received: <xmr:w9nVaN00Gj0Tr8nSlA5SJlsGtkH9P6feeskU7xhZZzEbk-F3sUmbM7ErLsAbaBBHsGePqRobosV5fLt_0XnfwAtr_Llz2Lk_XCF5TMRN6HBT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeeklecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtoheptghhuhgtkh
-    drlhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepuggrihdrnhhgohesohhr
-    rggtlhgvrdgtohhmpdhrtghpthhtohepkhholhhgrgesnhgvthgrphhprdgtohhmpdhrtg
-    hpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgpdhr
-    tghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlsh
-    hpjedtheesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:w9nVaEjGBAMrZ0dTb-ciDb_bXdtda5JHNawWP9rr-8d56zaKDz9_9Q>
-    <xmx:w9nVaOkYlJZHZn6dzRejwm5rbLU83WlGsESNTdMPLufMyJS3iRgrWg>
-    <xmx:w9nVaCbYB6hVkjH1k9DyF1QR-QWaJ8fNBmbQrnaWyM58cVdzRPn8bw>
-    <xmx:w9nVaBFlN0J5hyuO6qIoOj6vfJcn35IOU5vac2wKRoLuPzvIbtmflA>
-    <xmx:xNnVaC9KI83PBctZbzqPsCJAlipFSVztF-C9F3cX1o7ez4njtshCP4Kt>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 20:09:37 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758845487; c=relaxed/simple;
+	bh=Hzl/6sm0ijMbECDHUBEDiRfaMfrSYxO0jGDcnP2SoAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KWavoA0VI0A3pcY+30nOR7nvmykK9UM7uEYWeJFtctVOe919a5hQ0y5xhbnd9zKZrj7II29+OjgzqmgKOJ1jqXKkBD0lWflZiI6pzVBJdRj9t4NCndYoVjp5ocFOGvOnzf+HqWq1fbadN7E6ufNBXGuoJY2iRc9KqPC2Pa2Xo4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bP3Jo4Vf; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-635fde9cd06so1083966d50.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758845484; x=1759450284; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AlSE1rUBrC9T1DFQ/5OfHtt+g6SfJ20nkl63DkWshCc=;
+        b=bP3Jo4Vf/EC1Gi82y7K8BAS7Va2DYYHZGFVkgCoJ2iG5B/ygeo6pTYAMxLVpi8dbie
+         9fqtxyt+z6qWchDwENOpsh10htzQbtlxnEQ50k+1PaHaTHI/uPxFgDky6hzv5CVkXdeb
+         CjdZB4Z7nWqTPJ3pGgNghbZwSo1HS2h92rBAbZis5hGzZSy/D3OY6tqF7/TZr6i02MTI
+         nUrO2vGRSwqr9iiI31dBqcsn3wiyCmRVGfs5CgaGTwoBj+7tPJAKEvDzoWXzHGKRuH+4
+         UriW0DguxNsi3Kahab4Gr/A7+IM0HywtQeHEBOrAZv7R70njk2pQHc8wqe7ltT8mqqd/
+         srGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758845484; x=1759450284;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AlSE1rUBrC9T1DFQ/5OfHtt+g6SfJ20nkl63DkWshCc=;
+        b=h/V3E+s3SKkh+ezzjo7kJOk0SRcfbAiRYsvioK1uP4Lmf6n0RtlECmEts6JpJTBaHD
+         XP67M4Yzr04Yz8caMW7BI33ocTC6THRjX+0B8ul14PghXJi5N1cD7f77h903M4gkidGm
+         RK5cyRF+ghxC/pGv0kGWq8mz3sv7XXpSrFqUIQSl0JxEMsVH7Cg6xfW9shhYOTn1LsRk
+         As2Yn+Ov/s1s7qnSymV/8hMaI3qezA2tD/j5NmlWcXsmrcHeNXu/R5ekqOPW+8NFSNYV
+         LwG81eQXhgMyRoLNQL21Jlpmjexn7qFqJ2G/Xf9lyHlesjxYMBTN4C7GEvcyyPXv/G5O
+         NkTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnaa6MxP7qpOfDcaTvixXXtDBOVz2Zx/YWa7Nz6fabzveL4AcetPi7hUtAUApOpfp6fK++uVEJPCoV4VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkzcOQzadnOB8bxEIjNMWuSgH0Wv94hpn/3xOG2NiRsmc/XXpi
+	qHlz2gv2zM+b4uLjEPmN3MHyhPFjqfoSgYbFiB2Jwuh6k3O0N8e/D8f7RgoqqAP0Hc/BGgqxjUr
+	yByrtsgrgzqs0pIDt4oO35Rapbg/pZcx9MpJ0bHEW
+X-Gm-Gg: ASbGncs9FMSITXdlU3V7y4lqgwCvRCDMYxRi7VhnPhL5Ifn4q5sDrhATqJvCdktERyE
+	CHjREmr9v27Cpg81U6YvD5KtEzDUUaAJHb5PiVB/FILULMZRFkZPijqhr815j5j0fk2sOo8jYs5
+	AL7nbGZdwYwppCi88GYJT0Ab95nE1Wxc5MHof9DmFIp6og1j8z/DT0dhuF4Gi7iG/JnYv9msRi8
+	wabHUSKH8HSLp+pyWC5MGzWwKU=
+X-Google-Smtp-Source: AGHT+IFjkjg1CJK2kqFcJZmVZhckeV1dW5wAwLpyJnWVbu+PQmvkA/uVH/e/0tYM6tLXM/d7UXxi8O7HF6KX7EuWjD0=
+X-Received: by 2002:a05:690e:159a:10b0:636:d570:c4ed with SMTP id
+ 956f58d0204a3-636d570cab0mr1348537d50.10.1758845483874; Thu, 25 Sep 2025
+ 17:11:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Alexandr Sapozhnkiov" <alsp705@gmail.com>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Olga Kornievskaia" <kolga@netapp.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Alexandr Sapozhnikov" <alsp705@gmail.com>,
- lvc-project@linuxtesting.org
-Subject:
- Re: [PATCH] nfsd: fix arithmetic expression overflow in decode_saddr()
-In-reply-to: <20250925162848.11-1-alsp705@gmail.com>
-References: <20250925162848.11-1-alsp705@gmail.com>
-Date: Fri, 26 Sep 2025 10:09:30 +1000
-Message-id: <175884537000.1696783.18278273149263057351@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+References: <20250829105418.3053274-1-sidnayyar@google.com>
+ <4e215854-59df-489b-b92d-8d2fb2edf522@suse.com> <CA+OvW8ZY1D3ECy2vw_Nojm1Kc8NzJHCpqNJUF0n8z3MhLAQd8A@mail.gmail.com>
+ <409ddefc-24f8-465c-8872-17dc585626a6@suse.com> <CA+OvW8bhWK7prmyQMMJ_VYBeGMbn_mNiamHhUgYuCsnht+LFtA@mail.gmail.com>
+ <2bf54830-ea9c-4962-a7ef-653fbed8f8c0@suse.com>
+In-Reply-To: <2bf54830-ea9c-4962-a7ef-653fbed8f8c0@suse.com>
+From: Sid Nayyar <sidnayyar@google.com>
+Date: Fri, 26 Sep 2025 01:11:12 +0100
+X-Gm-Features: AS18NWAL2BOfXlIfw0PmfY9rpNA0-1bzCD1zhOmyRpqI4MrEa3fGtNm7DZbnVa0
+Message-ID: <CA+OvW8ZrbdqDGDkt8jXUX3Vg2aLSzVrP-a39Lqvxd1DYOOUg5g@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/10] scalable symbol flags with __kflagstab
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Giuliano Procida <gprocida@google.com>, =?UTF-8?Q?Matthias_M=C3=A4nnich?= <maennich@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 26 Sep 2025, Alexandr Sapozhnkiov wrote:
-> From: Alexandr Sapozhnikov <alsp705@gmail.com>
->=20
-> The value of an arithmetic expression tmp2 * NSEC_PER_USEC=20
-> is a subject to overflow because its operands are not cast=20
-> to a larger data type before performing arithmetic.
-> If tmp2 =3D=3D 17,000,000 then the expression tmp2 * NSEC_PER_USEC
-> will overflow because expression is of type u32.
-> If tmp2 > 1,000,000 then tv_nsec will give be greater=20
-> than 1 second.
+On Mon, Sep 22, 2025 at 12:41=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> w=
+rote:
+> This is useful information. However, I was specifically interested in
+> the impact of having the new flags field present as part of __ksymtab
+> (kernel_symbol), compared to keeping it in a separate section. Sorry for
+> not being clear.
+>
+> I ran a small test to get a better understanding of the different sizes.
+> I used v6.17-rc6 together with the openSUSE x86_64 config [1], which is
+> fairly large. The resulting vmlinux.bin (no debuginfo) had an on-disk
+> size of 58 MiB, and included 5937 + 6589 (GPL-only) exported symbols.
+>
+> The following table summarizes my measurements and calculations
+> regarding the sizes of all sections related to exported symbols:
+>
+>                       |  HAVE_ARCH_PREL32_RELOCATIONS  | !HAVE_ARCH_PREL3=
+2_RELOCATIONS
+>  Section              | Base [B] | Ext. [B] | Sep. [B] | Base [B] | Ext. =
+[B] | Sep. [B]
+> -------------------------------------------------------------------------=
+---------------
+>  __ksymtab            |    71244 |   200416 |   150312 |   142488 |   400=
+832 |   300624
+>  __ksymtab_gpl        |    79068 |       NA |       NA |   158136 |      =
+ NA |       NA
+>  __kcrctab            |    23748 |    50104 |    50104 |    23748 |    50=
+104 |    50104
+>  __kcrctab_gpl        |    26356 |       NA |       NA |    26356 |      =
+ NA |       NA
+>  __ksymtab_strings    |   253628 |   253628 |   253628 |   253628 |   253=
+628 |   253628
+>  __kflagstab          |       NA |       NA |    12526 |       NA |      =
+ NA |    12526
+> -------------------------------------------------------------------------=
+---------------
+>  Total                |   454044 |   504148 |   466570 |   604356 |   704=
+564 |   616882
+>  Increase to base [%] |       NA |     11.0 |      2.8 |       NA |     1=
+6.6 |      2.1
+>
+> The column "HAVE_ARCH_PREL32_RELOCATIONS -> Base" contains the numbers
+> that I measured. The rest of the values are calculated. The "Ext."
+> column represents the variant of extending __ksymtab, and the "Sep."
+> column represents the variant of having a separate __kflagstab. With
+> HAVE_ARCH_PREL32_RELOCATIONS, each kernel_symbol is 12 B in size and is
+> extended to 16 B. With !HAVE_ARCH_PREL32_RELOCATIONS, it is 24 B,
+> extended to 32 B. Note that this does not include the metadata needed to
+> relocate __ksymtab*, which is freed after the initial processing.
+>
+> The base export data in this case totals 0.43 MiB. About 50% is used for
+> storing the names of exported symbols.
+>
+> Adding __kflagstab as a separate section has a negligible impact, as
+> expected. When extending __ksymtab (kernel_symbol) instead, the worst
+> case with !HAVE_ARCH_PREL32_RELOCATIONS increases the export data size
+> by 16.6%.
+>
+> Based on the above, I think introducing __kflagstab makes senses, as the
+> added complexity is minimal, although I feel we could probably also get
+> away with extending kernel_symbol.
 
-You didn't answer my question: why should we be bothered by an over
-flow? What harm does it cause?
+This investigation is very informative, thank you for sharing your
+findings. I am in agreement with your conclusions.
 
-If we are going to bother detecting an incorrect value, we should
-respond to it by returning false.  That would tell the client that the
-numbers it provided weren't a valid time.
+> This seems to answer why the in-tree flag is not sufficient for you.
+> However, I also suggested an alternative that the symbol protection
+> could be determined by whether the module is signed by a key from the
+> .builtin_trusted_keys keyring, as opposed to being signed by another key
+> reachable from the .secondary_trusted_keys keyring or being completely
+> unsigned.
+>
+> Distributions can require that external modules be signed and allow
+> additional keys to be added as Machine Owner Keys, which can be made
+> reachable from .secondary_trusted_keys. Nonetheless, such distributions
+> might be still interested in limiting the number of symbols that such
+> external modules can use.
+>
+> I think this option is worth considering, as it could potentially make
+> this symbol protection useful for other distributions as well.
 
+This sounds like a great solution to enhance trust and security,
+apologies for missing this in the previous email. I will explore this
+approach, but I would like to do it in a separate series.
 
+> I'm personally ok with adding the kflagstab support. I think it
+> introduces minimal complexity and, as you point out, simplifies certain
+> aspects. Additionally, if we add it, I believe that adding the proposed
+> symbol protection is simple enough to be included as well, at least from
+> my perspective.
 
->=20
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->=20
-> Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
-> ---
->  fs/nfsd/nfsxdr.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/fs/nfsd/nfsxdr.c b/fs/nfsd/nfsxdr.c
-> index 5777f40c7353..df62ed5099de 100644
-> --- a/fs/nfsd/nfsxdr.c
-> +++ b/fs/nfsd/nfsxdr.c
-> @@ -172,6 +172,8 @@ svcxdr_decode_sattr(struct svc_rqst *rqstp, struct xdr_=
-stream *xdr,
->  	tmp1 =3D be32_to_cpup(p++);
->  	tmp2 =3D be32_to_cpup(p++);
->  	if (tmp1 !=3D (u32)-1 && tmp2 !=3D (u32)-1) {
-> +		if (tmp2 > 999999)
-> +			tmp2 =3D 999999;
->  		iap->ia_valid |=3D ATTR_ATIME | ATTR_ATIME_SET;
->  		iap->ia_atime.tv_sec =3D tmp1;
->  		iap->ia_atime.tv_nsec =3D tmp2 * NSEC_PER_USEC;
-> @@ -180,6 +182,8 @@ svcxdr_decode_sattr(struct svc_rqst *rqstp, struct xdr_=
-stream *xdr,
->  	tmp1 =3D be32_to_cpup(p++);
->  	tmp2 =3D be32_to_cpup(p++);
->  	if (tmp1 !=3D (u32)-1 && tmp2 !=3D (u32)-1) {
-> +		if (tmp2 > 1000000)
-> +			tmp2 =3D 999999;
+Since we are in agreement, I would like to seek code review for this
+series. The code is ready for review from my side, but if you prefer I
+can send out a non-RFC patch series for code review.
 
-Why are the two code fragments different?  This isn't an AI writing the
-patch is it?
-
-NeilBrown
-
->  		iap->ia_valid |=3D ATTR_MTIME | ATTR_MTIME_SET;
->  		iap->ia_mtime.tv_sec =3D tmp1;
->  		iap->ia_mtime.tv_nsec =3D tmp2 * NSEC_PER_USEC;
-> --=20
-> 2.43.0
->=20
->=20
->=20
-
+--
+Thanks,
+Siddharth Nayyar
 
