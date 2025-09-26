@@ -1,503 +1,396 @@
-Return-Path: <linux-kernel+bounces-833681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A236CBA2A7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:13:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA1DBA2C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C142383D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC71326D72
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6609B286D72;
-	Fri, 26 Sep 2025 07:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AIS8tK5E"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012022.outbound.protection.outlook.com [52.101.43.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1755F288C89;
+	Fri, 26 Sep 2025 07:29:09 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA6227F4CE;
-	Fri, 26 Sep 2025 07:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758870793; cv=fail; b=L/YlxWMHeZgY0fqupYO/CfXUjsXy3Q3gt3PKaNuG2kTbBB1JgnA7n9hJDFED7bVD8Ll07ZHOjGd5xRM2eBmNlo2SGyztRudYTeHv86j5KBAaEvZYC6E9i+Pq8DKaQ/YaxYtsxjh5ZmLiwj9yhdt1BBso4C+trD4OQ/sJkdyhsAU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758870793; c=relaxed/simple;
-	bh=KoLXqJMKnPNS0wWvOb1w1E4jMz19Cy+J1BHiemsjprQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=L0nXJxrzOe6Yr5qX001CbZvtFrTDQzIbT/GocWYXj6SxNwI9lrNz4AlWjXt2FoMtrUKow1ITaHVRuEriio5ys+iNN/zOUskTt2aW7NhjaQ80YQPTGfuMVrXUr65i2ZHoamc/uCH+FXZy1b6kHHL/FoYuSjejYy03uIM5mvEi4vk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AIS8tK5E; arc=fail smtp.client-ip=52.101.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nzua3Sox0lAXBVSaPMqEk8USCdF32UzaJhFu78/PtVrItVuIh+0/zLUZ+YTrOSMlnGcjBrkpd+FjdJCz8PZ/XRAk6ldKOKx3L8Pydahzj3RZcc9kMUyLGx/avXtCrWo6ZHstjJQ79RWLmJeiNWUjQfENJKFjC/dOUqxkWSGiXOesFM5YySs7RUJNKo93W6ySkmzgTRNjxgeDSIL2qdl+VluH9qlWSrplvx/lTMzuQdGeAPQuHg93VwW4AZ1PHvT0DhKKHTmg6R3Tq4/1YN3oK75ct10mqDyu69LPJOwF6/S9ZJPVOSwdbrS3y8fIPuo1wmhTyObJdaUwBHdC/AR50Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2vpVfG7RLRw8H16WuZjgOBjnzonFtRr6h55U0N8epS8=;
- b=eeoYeRW248aF1M5KTe1owC9KaEIg2lVfvdIsYrcy80VDgl/JGJU/t53Kbb1VkJjZYyyu2mIz2mwbkNrGKnUHjiuU8Jmx5oH70KbXpvHVAHy9+eoQ7j5FQaU77YhcRaauOx611uOpL3jMUHpgWyksvh/OXUMhIrGhu3ThsOLmfxTS52xfb1ADNBmDnVeuemQvHMnrkpSTX9Nf2WA3vCofyZEIGnm/6c/8vshMVapVOZll9GcW00YxS90cfyxlWxKdAviboBy2THCUHZkinnMc2z6laydgb2lkYCByc/YNwFq5nXU1hBs7e3/OzcVC5dstF0qYD1lpeZEmgkewcahjYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2vpVfG7RLRw8H16WuZjgOBjnzonFtRr6h55U0N8epS8=;
- b=AIS8tK5EUfT6YP9QFpeCeFtNCNYN9zcHWPhDgbDJzlPtTMg5FBP6f6O47OxgYteNgHcGwT8R/aVI9RSlJWpkt4xs/WCkdaauPf8H8sOmKbLlgsgGQXuNd3lF/m4dreb7wNC/oGf/NwPQwnGkc/iK1+jPs0YojrV9QcsgiHIlBVk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5712.namprd12.prod.outlook.com (2603:10b6:510:1e3::13)
- by PH7PR12MB8121.namprd12.prod.outlook.com (2603:10b6:510:2b5::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
- 2025 07:13:08 +0000
-Received: from PH7PR12MB5712.namprd12.prod.outlook.com
- ([fe80::2efc:dc9f:3ba8:3291]) by PH7PR12MB5712.namprd12.prod.outlook.com
- ([fe80::2efc:dc9f:3ba8:3291%6]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
- 07:13:08 +0000
-Message-ID: <f896966e-8925-4b4f-8f0d-f1ae8aa197f7@amd.com>
-Date: Fri, 26 Sep 2025 12:42:50 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
- MSRs for mediated vPMUs
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Kan Liang <kan.liang@linux.intel.com>, Yongwei Ma <yongwei.ma@intel.com>,
- Mingwei Zhang <mizhang@google.com>,
- Xiong Zhang <xiong.y.zhang@linux.intel.com>,
- Sandipan Das <sandipan.das@amd.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
-References: <20250806195706.1650976-1-seanjc@google.com>
- <20250806195706.1650976-33-seanjc@google.com>
-Content-Language: en-US
-From: Sandipan Das <sandidas@amd.com>
-In-Reply-To: <20250806195706.1650976-33-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0184.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e8::8) To PH7PR12MB5712.namprd12.prod.outlook.com
- (2603:10b6:510:1e3::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55059286D6D;
+	Fri, 26 Sep 2025 07:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758871748; cv=none; b=gfolAmg2nB3jVlr3LvWYKDhjYSyJwTAxKXRTBehx6hmg488tGyGTf/Uq99DVCM6RtpBp4x/Bz1nS1VnUtz72c/TOk7t39+JSd0SnFhN4jGXadpDyVEvN1IFbdUNPls0hS+wPHFF+jXeAx7jtGtBmG0zkccJNHFY2hO0xSmKwPww=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758871748; c=relaxed/simple;
+	bh=sJ5pLbToQZxoB2XWMOtsGQJQaDtxFxyMWOY4B6SrwdU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VmMD9j4j1VzG41bxwiW195QVW/4VTl4h0or5l2phMiNL3lWWgYHyzPOpceNbzM0YDWUZ/pAhzNcNQzq8evL9WbpZXo1gohzzEatsEwMG7VjC3AK59FZA3Wp1/uIX/5J3zfgENxWjpCUTUzKu5+gYY7V7MQvP/C7fZpnpKOhwQF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cY2JM6ZMhzKHNFn;
+	Fri, 26 Sep 2025 15:28:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 33A9A1A1434;
+	Fri, 26 Sep 2025 15:29:01 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgA3+mG6QNZoxjF0Aw--.29022S4;
+	Fri, 26 Sep 2025 15:29:00 +0800 (CST)
+From: linan666@huaweicloud.com
+To: corbet@lwn.net,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	linan122@huawei.com,
+	hare@suse.de,
+	xni@redhat.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	martin.petersen@oracle.com,
+	linan666@huaweicloud.com,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com
+Subject: [PATCH v6] md: allow configuring logical block size
+Date: Fri, 26 Sep 2025 15:18:37 +0800
+Message-Id: <20250926071837.766910-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5712:EE_|PH7PR12MB8121:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc94f5c9-f0ee-468d-94f6-08ddfccc24b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dFhROFNlSkYxbWs3SFJnQXVmMVpDZkJ0eStKTFBxQXBPczFoNlhrcEVnclM3?=
- =?utf-8?B?UFR2NmR0bjdEM0xKNUJZMVZHNDBKWUczcXM5MTB0QzNOZzdDVXdOK1dhTGRN?=
- =?utf-8?B?Y0tQM1RBVGl2M3ZaMU9IMXpyVFBsS3hVQkpGaVpPOW83SURvdjVGa3lySjZJ?=
- =?utf-8?B?QmxtRlRiUHhxRHlETjR5UjEyNnkwVjl1d01xRE9ZRXMvNEpSQVgxS0NEeGZE?=
- =?utf-8?B?cThNa1BUbXZUSGJYazVzZXBDMlMvUUR4TWhEVjRuWXo2eStMWU9yV3ErYTR5?=
- =?utf-8?B?eVBOYzMyd2dmMjd1OXZua1h0N0dId2Y5WGlibVZ4Rlg1ZUttanowZzNFeU5j?=
- =?utf-8?B?M0czaUQzUUdraDNDMjJ4NTRmc1FJdEVLbHdIckFGZmJ2YUkyMXlrQzNSSTAw?=
- =?utf-8?B?U0hJYWF5TUxxRFFjWTMwT2pqK0JjUmRMYnY0NmhiVlR4VVhURm5QdHYvT1BR?=
- =?utf-8?B?NTBTZDRFeEk5SDl3R1dKekFFNlpueHhqK3NMSEt0NXRPVkVuZ2JWVHpRVy9R?=
- =?utf-8?B?SlA3M3VRbCtjWTJMdVJkSU1lU0l1VzdJNDFvRUdvTWkrRFJWemFTZVhvMTA1?=
- =?utf-8?B?dml0dlM2QXVXa3BqdDZQU1pxNUh2U2dvRUpxS3FFQUFlamRuR1VWRFU3bXhN?=
- =?utf-8?B?U3VSL3FOUnhtU212bG1zMlhMUjcvQmhzWjArQWh3VEp6NVFqRHRzSERUSTd6?=
- =?utf-8?B?bVRkei9vYkxId0ZuWE5nOVZtMjNTaUxBRlJKcVdOUlQ3b0lraVZwMlRWWEdH?=
- =?utf-8?B?WEJTT2F6NEJuSkhOWWxsMThiNVd1VFVVNzlBbG5zMkpieVNtdGNGcGd6dG5T?=
- =?utf-8?B?cUlUSytWOS8zbk84cFRXNmJQVzlidkZnM2Rwak1xaDk3QnljWjVENUx1NmRN?=
- =?utf-8?B?SEt5UkRxZ3pYSkNybXRkLzZJVkpqS3duZ3h2WllUU1AyZE5KcDVUKzd0Kytn?=
- =?utf-8?B?ZWhMaWdBSmsrZzVJcjMyKzd3QURra1Y2bS9rMThCMlI3MXJGUUhWNGJFWnox?=
- =?utf-8?B?SXpaNXhkYnc5QnBHVmordnFkWis1ZG4yU0lvdXNUZEZ5UUtKYTBlOW5xS2VK?=
- =?utf-8?B?ek1OeTVXUHlkRFg5MGhGTlBzdVpTWm4yZS9DQzZKcDRVbjlwZEpseTUzUWx1?=
- =?utf-8?B?RXhabXJuQ2JHTHNianpBUnQyQ0tSQzFiVXp3UkN4ajEyanVlbnBac1BDSnlJ?=
- =?utf-8?B?OWQrRGFYSFN0aUQ2a2F5L0tZaGdOVEFaengrbnhBU2d1M3hpUGhGTXZUS0pQ?=
- =?utf-8?B?U2NYcEwxRmZ2Y0pjNER0Z1RiN2k4azlDbHowMDhlbm9xTGZoblhCL1J5QjV3?=
- =?utf-8?B?U3EwaTVnZWVib21JUGFwUGxPUjVESU56SzNCaHc4QjNCT082RWJTV29CYjNZ?=
- =?utf-8?B?OHF0SFIrbFdEb1Z6TDVyYi84SElGTjRNTzI5ZzJiclpPRlI0ZExKeWVOZDhv?=
- =?utf-8?B?SzN3YUVQejlKT2ZxQVY3bjJmemp5c0RJaXk1RVJSOHFCdHpVNjlKR3ZHb3Yy?=
- =?utf-8?B?aWZBL0ZMelRhZnpuOHBNbmMxWTRjSGtRQ0xZQlVybE01WGdiNmJub2trOUhI?=
- =?utf-8?B?NjJLTzlXcm9hdEpYNXlXdyttMEFUN0dTMW93S3BLWVM3WGJxd2plRXk0QWJI?=
- =?utf-8?B?Y3dGYUdMcGE0bGNLWGFXTEtCMUU0UG4xQml0d3VqZ1BVS0xkbEp0ZDcyN0hL?=
- =?utf-8?B?UGdnblA4Z3FoaWZyRnhlME9KVS9BMTkvU3ZvTTNhNDYveUNyeDNlOEJHT1VU?=
- =?utf-8?B?WUVFOFdYNXZ2Q1ZjQVg5MlI0TlJFL2dzdVR1cC9XdWhjc0R5TGxRQ2tFNTFO?=
- =?utf-8?B?TkxYaWlYNlhhZHhOdjd5bDNJYUxLdXp2MnlyRDArYTZRZ1FXSXVVak0rRk5l?=
- =?utf-8?B?cGl1OEFoaW5NcnFhY0NXMUZqcWRxa1Y4MUQ5YVdTREVRcnIvNjA4RU41UmRD?=
- =?utf-8?B?OVd5ZmxlSEpMMEF0TEpyL1hqWThVUE1mVUVNK0xXR25JS1duZURJWG1ySFJN?=
- =?utf-8?B?NDcxSFhVOXZRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5712.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?REZJSXdZTStoMG5pdDZTejQ5ODZ5Qlh3ZnM0ZytUSnlMZG9zQzBCTW9SVEo2?=
- =?utf-8?B?WUZVckpEOWV5TmVpWkZZYjBHbzM5ZDNSNjd2ZzFnQ2I4a1dndUNIK1BIVEN5?=
- =?utf-8?B?MlF3R2NlVTVMM3htR1d4VTNkTVpBUkc3RVR3SmxnV0lsL0N0ems4bWdPVlhl?=
- =?utf-8?B?UlRiZ2M2emF0WXVtak5mSWxaRittRnZndkgyWWw0Vk1PcXZmNkVJWWJNcEJz?=
- =?utf-8?B?S20zbGRLNnI5Wi9xZGh2U1ZIMHQxRTV0VUpQbVQ0YUVCc0k3WDR5Z2x0bE5P?=
- =?utf-8?B?Um9pQmUwZk1BdFFOSXFHeEZvYjl0L0hrajZEdGVHV1dicTBzUnhCdkJTWWdz?=
- =?utf-8?B?aUwrUllzSktSeVY5dFRZYng1bEFlNGMwMW52U3R2NmFud0NVeEVKbUhkRmJk?=
- =?utf-8?B?Q2kvZHFoNW11UWlLTWVJRGdpMnpIM3FEUlBQOWhQOEM0VGNhakJqeHhxOTVF?=
- =?utf-8?B?VFNiUUFycnBXR0NILzJiU1JqSjdIMjc0RmpuSDZkSjNYenVwemtpOFRuVjJn?=
- =?utf-8?B?MHZWZFo0TUV0ek8xYlZDa2dwTzZnZEVpQkYrNm4vZmY2UG1YdjMvd0VST0NV?=
- =?utf-8?B?cmtXalJxbTJoR1MvSm9nUGVodzFoUkViMWZrRFk4SnhGQXJXeTNzWGV2c2lK?=
- =?utf-8?B?bzN1eExqd29IRHFPZk91bTRTUjJ6NFkrQjhkd0ZzZEZGOFFTd0M4RmNpSjhU?=
- =?utf-8?B?UnFweXZoWGxDa1AwNEJKcXZpREhGSnZKS2dWZVVIRHNDNDRpWWY2Nk9Qa0Y4?=
- =?utf-8?B?NFdzbDhXZUpZTWVIcGFrNyswblBhWDJPK0NHNm1pNXlrS1Z1WUlqZ0Zhayt1?=
- =?utf-8?B?d2xhYkhoQ1NWODJrUHhLV3BNdVBiMzM4RWZwMGo2Y3BYVElwMllJNkhiWlp6?=
- =?utf-8?B?a2J5WHk5M3lhbFZib2I2SzV3TDEyc21QKzFNdnlBcEQzbkdiNGN0U2ZlaGNR?=
- =?utf-8?B?b09kU1puQkwvM1VQbDVhcXg5NWZkaWZDcy9JUithK0RNNGRqWVZ0bUhjcCtX?=
- =?utf-8?B?VmNlS25mV1ZJTm1Wb2ZFR2orTWRkZklKcVJoVzhlSGlpOER6Y0psZEtOTjhH?=
- =?utf-8?B?MzhPK0VHdWJZRTEvcHBsNWpKNGRZWWErdGIrWm90NU9MY3UxQ1JjZFdpRXBY?=
- =?utf-8?B?VXJ1QXNUY3hqeC9wcUxPRDBEYzdMVmZOZHd3RXNRUmttUTlIRk4rUHpYNlNK?=
- =?utf-8?B?TkEwMmtzSlQ3SWdqU2Qyd0lPRlpVWUxHQW9nUmdyeU5YcGpsWWI3bGZKL3JD?=
- =?utf-8?B?QVBtRjFzVmF0WkRsVkVhM3R0VGxjMG1vcGVVTEl6ajFZSHZXbzhKTzVGWm0z?=
- =?utf-8?B?b2ZmQkE5Q2ZDOEdVMTRvR0FNaWFSV1ZjejNpOGoveWdNT1FFWTA4eUVmL3hl?=
- =?utf-8?B?THQwdkM3UTl6S1RnTnQ3YTNnR0E4QlFWS1U5dnBUUjFKako3WjhXeXRJdnlS?=
- =?utf-8?B?ajdrcnZTVmJYY3k4RnpIOVNNc21pTHdZdjVTbDEvNFN3dGJHQldPeGE5MlJ3?=
- =?utf-8?B?NUNWL1ZtR3lTMzhMYXpLTmtMYm1lbW1aektVOGxqd285OUtzQ1g5U0Roa3Vo?=
- =?utf-8?B?VUJDVy9kK0h3cUY1TDR1c2kwbjNLMTlxV1RUMlBNa2RrSCtoKzQ5cThIWTJ2?=
- =?utf-8?B?V003VUlKVXJmY2lXYWxJcnpvaFlCakxnSVNpUFo1ZUM1N1JSSUlCODYxSHFV?=
- =?utf-8?B?eEFnZEpiOHQ4dm5rYVpxN24zUEdRZ1oxdGVhdTlMckJIZ2tvaU8zSnlFVGE1?=
- =?utf-8?B?NVJGL2VMVHpUcXNzODJTcFpMb2wyOG9KQWo3SDJqUnZhTk1xdytiZVZScXpX?=
- =?utf-8?B?U0UrTnJxckQ3bGpOUGxrRm5rNTd6OUt0bmVSU3E0QzN0NnYyR0J2ZTVHcno2?=
- =?utf-8?B?RFBIQ2x1cUFzUm8rdGQzWkd0UTgvYWlSRWlvelVMSzZRdVduWDlVZTdlb1l0?=
- =?utf-8?B?S1dhSkJGUXhGQnNGRWhNaDByUE9lVlhCdnJ3VElMUThZL2RLUnovaEc4YS8y?=
- =?utf-8?B?c2pVc0QrRmdaTXdFUUlVMzNva2ROYTllanhSMlZNRWV1aVZ0Y21HSVNqc1FR?=
- =?utf-8?B?OUZ0VFhadmN2U3ZocmkrNzhQOW5qc0ZtbDRrdnFMTk5IekN0L3V5SWJTVmhi?=
- =?utf-8?Q?dGMU2WIj7J3DZKmgi6VrmV7y2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc94f5c9-f0ee-468d-94f6-08ddfccc24b8
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5712.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 07:13:08.0442
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3DOCVJ15s68FUHCLwewWv+n/BYJGdzjXwaWofriXgT00d0pCfmxE4y0lT7CTE/Q9MOuy/vImG91TiQBXnuCI+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8121
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3+mG6QNZoxjF0Aw--.29022S4
+X-Coremail-Antispam: 1UD129KBjvJXoWfGF4Dtw1Dtr13WF4DJFWfAFb_yoWkXF4Dpa
+	97ZFyfZ34UXayaya97AFykuF15X3yUGFWqkry7W3y0vr9xAr17WF4fGFy5Xryqqwn8A3sF
+	q3WDKrWDu3WIgF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r
+	1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbfWrJUU
+	UUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On 8/7/2025 1:26 AM, Sean Christopherson wrote:
-> From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> 
-> For vCPUs with a mediated vPMU, disable interception of counter MSRs for
-> PMCs that are exposed to the guest, and for GLOBAL_CTRL and related MSRs
-> if they are fully supported according to the vCPU model, i.e. if the MSRs
-> and all bits supported by hardware exist from the guest's point of view.
-> 
-> Do NOT passthrough event selector or fixed counter control MSRs, so that
-> KVM can enforce userspace-defined event filters, e.g. to prevent use of
-> AnyThread events (which is unfortunately a setting in the fixed counter
-> control MSR).
-> 
-> Defer support for nested passthrough of mediated PMU MSRs to the future,
-> as the logic for nested MSR interception is unfortunately vendor specific.
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Mingwei Zhang <mizhang@google.com>
-> Signed-off-by: Mingwei Zhang <mizhang@google.com>
-> Co-developed-by: Sandipan Das <sandipan.das@amd.com>
-> Signed-off-by: Sandipan Das <sandipan.das@amd.com>
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> [sean: squash patches, massage changelog, refresh VMX MSRs on filter change]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/msr-index.h |  1 +
->  arch/x86/kvm/pmu.c               | 34 ++++++++++++------
->  arch/x86/kvm/pmu.h               |  1 +
->  arch/x86/kvm/svm/svm.c           | 36 +++++++++++++++++++
->  arch/x86/kvm/vmx/pmu_intel.c     | 13 -------
->  arch/x86/kvm/vmx/pmu_intel.h     | 15 ++++++++
->  arch/x86/kvm/vmx/vmx.c           | 59 ++++++++++++++++++++++++++------
->  7 files changed, 124 insertions(+), 35 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> index f19d1ee9a396..06bd7aaae931 100644
-> --- a/arch/x86/include/asm/msr-index.h
-> +++ b/arch/x86/include/asm/msr-index.h
-> @@ -736,6 +736,7 @@
->  #define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS	0xc0000300
->  #define MSR_AMD64_PERF_CNTR_GLOBAL_CTL		0xc0000301
->  #define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR	0xc0000302
-> +#define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET	0xc0000303
->  
->  /* AMD Last Branch Record MSRs */
->  #define MSR_AMD64_LBR_SELECT			0xc000010e
-> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-> index 4246e1d2cfcc..817ef852bdf9 100644
-> --- a/arch/x86/kvm/pmu.c
-> +++ b/arch/x86/kvm/pmu.c
-> @@ -715,18 +715,14 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
->  	return 0;
->  }
->  
-> -bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
-> +bool kvm_need_perf_global_ctrl_intercept(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
->  
->  	if (!kvm_vcpu_has_mediated_pmu(vcpu))
->  		return true;
->  
-> -	/*
-> -	 * VMware allows access to these Pseduo-PMCs even when read via RDPMC
-> -	 * in Ring3 when CR4.PCE=0.
-> -	 */
-> -	if (enable_vmware_backdoor)
-> +	if (!kvm_pmu_has_perf_global_ctrl(pmu))
->  		return true;
->  
->  	/*
-> @@ -735,7 +731,22 @@ bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
->  	 * capabilities themselves may be a subset of hardware capabilities.
->  	 */
->  	return pmu->nr_arch_gp_counters != kvm_host_pmu.num_counters_gp ||
-> -	       pmu->nr_arch_fixed_counters != kvm_host_pmu.num_counters_fixed ||
-> +	       pmu->nr_arch_fixed_counters != kvm_host_pmu.num_counters_fixed;
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_need_perf_global_ctrl_intercept);
-> +
-> +bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> +
-> +	/*
-> +	 * VMware allows access to these Pseduo-PMCs even when read via RDPMC
-> +	 * in Ring3 when CR4.PCE=0.
-> +	 */
-> +	if (enable_vmware_backdoor)
-> +		return true;
-> +
-> +	return kvm_need_perf_global_ctrl_intercept(vcpu) ||
->  	       pmu->counter_bitmask[KVM_PMC_GP] != (BIT_ULL(kvm_host_pmu.bit_width_gp) - 1) ||
->  	       pmu->counter_bitmask[KVM_PMC_FIXED] != (BIT_ULL(kvm_host_pmu.bit_width_fixed) - 1);
->  }
+From: Li Nan <linan122@huawei.com>
 
-There is a case for AMD processors where the global MSRs are absent in the guest
-but the guest still uses the same number of counters as what is advertised by the
-host capabilities. So RDPMC interception is not necessary for all cases where
-global control is unavailable.
+Previously, raid array used the maximum logical block size (LBS)
+of all member disks. Adding a larger LBS disk at runtime could
+unexpectedly increase RAID's LBS, risking corruption of existing
+partitions. This can be reproduced by:
 
-> @@ -927,11 +938,12 @@ void kvm_pmu_refresh(struct kvm_vcpu *vcpu)
->  	 * in the global controls).  Emulate that behavior when refreshing the
->  	 * PMU so that userspace doesn't need to manually set PERF_GLOBAL_CTRL.
->  	 */
-> -	if (kvm_pmu_has_perf_global_ctrl(pmu) && pmu->nr_arch_gp_counters) {
-> +	if (pmu->nr_arch_gp_counters &&
-> +	    (kvm_pmu_has_perf_global_ctrl(pmu) || kvm_vcpu_has_mediated_pmu(vcpu)))
->  		pmu->global_ctrl = GENMASK_ULL(pmu->nr_arch_gp_counters - 1, 0);
-> -		if (kvm_vcpu_has_mediated_pmu(vcpu))
-> -			kvm_pmu_call(write_global_ctrl)(pmu->global_ctrl);
-> -	}
-> +
-> +	if (kvm_vcpu_has_mediated_pmu(vcpu))
-> +		kvm_pmu_call(write_global_ctrl)(pmu->global_ctrl);
->  
->  	bitmap_set(pmu->all_valid_pmc_idx, 0, pmu->nr_arch_gp_counters);
->  	bitmap_set(pmu->all_valid_pmc_idx, KVM_FIXED_PMC_BASE_IDX,
-> diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-> index dcf4e2253875..51963a3a167a 100644
-> --- a/arch/x86/kvm/pmu.h
-> +++ b/arch/x86/kvm/pmu.h
-> @@ -239,6 +239,7 @@ void kvm_pmu_instruction_retired(struct kvm_vcpu *vcpu);
->  void kvm_pmu_branch_retired(struct kvm_vcpu *vcpu);
->  
->  bool is_vmware_backdoor_pmc(u32 pmc_idx);
-> +bool kvm_need_perf_global_ctrl_intercept(struct kvm_vcpu *vcpu);
->  bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu);
->  
->  extern struct kvm_pmu_ops intel_pmu_ops;
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 2d42962b47aa..add50b64256c 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -790,6 +790,40 @@ void svm_vcpu_free_msrpm(void *msrpm)
->  	__free_pages(virt_to_page(msrpm), get_order(MSRPM_SIZE));
->  }
->  
-> +static void svm_recalc_pmu_msr_intercepts(struct kvm_vcpu *vcpu)
-> +{
-> +	bool intercept = !kvm_vcpu_has_mediated_pmu(vcpu);
-> +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> +	int i;
-> +
-> +	if (!enable_mediated_pmu)
-> +		return;
-> +
-> +	/* Legacy counters are always available for AMD CPUs with a PMU. */
-> +	for (i = 0; i < min(pmu->nr_arch_gp_counters, AMD64_NUM_COUNTERS); i++)
-> +		svm_set_intercept_for_msr(vcpu, MSR_K7_PERFCTR0 + i,
-> +					  MSR_TYPE_RW, intercept);
-> +
-> +	intercept |= !guest_cpu_cap_has(vcpu, X86_FEATURE_PERFCTR_CORE);
-> +	for (i = 0; i < pmu->nr_arch_gp_counters; i++)
-> +		svm_set_intercept_for_msr(vcpu, MSR_F15H_PERF_CTR + 2 * i,
-> +					  MSR_TYPE_RW, intercept);
-> +
-> +	for ( ; i < kvm_pmu_cap.num_counters_gp; i++)
-> +		svm_enable_intercept_for_msr(vcpu, MSR_F15H_PERF_CTR + 2 * i,
-> +					     MSR_TYPE_RW);
-> +
-> +	intercept = kvm_need_perf_global_ctrl_intercept(vcpu);
-> +	svm_set_intercept_for_msr(vcpu, MSR_AMD64_PERF_CNTR_GLOBAL_CTL,
-> +				  MSR_TYPE_RW, intercept);
-> +	svm_set_intercept_for_msr(vcpu, MSR_AMD64_PERF_CNTR_GLOBAL_STATUS,
-> +				  MSR_TYPE_RW, intercept);
-> +	svm_set_intercept_for_msr(vcpu, MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR,
-> +				  MSR_TYPE_RW, intercept);
-> +	svm_set_intercept_for_msr(vcpu, MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET,
-> +				  MSR_TYPE_RW, intercept);
-> +}
-> +
->  static void svm_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->  {
->  	struct vcpu_svm *svm = to_svm(vcpu);
-> @@ -847,6 +881,8 @@ static void svm_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->  	if (sev_es_guest(vcpu->kvm))
->  		sev_es_recalc_msr_intercepts(vcpu);
->  
-> +	svm_recalc_pmu_msr_intercepts(vcpu);
-> +
->  	/*
->  	 * x2APIC intercepts are modified on-demand and cannot be filtered by
->  	 * userspace.
-> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-> index 779b4e64acac..2bdddb95816e 100644
-> --- a/arch/x86/kvm/vmx/pmu_intel.c
-> +++ b/arch/x86/kvm/vmx/pmu_intel.c
-> @@ -128,19 +128,6 @@ static struct kvm_pmc *intel_rdpmc_ecx_to_pmc(struct kvm_vcpu *vcpu,
->  	return &counters[array_index_nospec(idx, num_counters)];
->  }
->  
-> -static inline u64 vcpu_get_perf_capabilities(struct kvm_vcpu *vcpu)
-> -{
-> -	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_PDCM))
-> -		return 0;
-> -
-> -	return vcpu->arch.perf_capabilities;
-> -}
-> -
-> -static inline bool fw_writes_is_enabled(struct kvm_vcpu *vcpu)
-> -{
-> -	return (vcpu_get_perf_capabilities(vcpu) & PERF_CAP_FW_WRITES) != 0;
-> -}
-> -
->  static inline struct kvm_pmc *get_fw_gp_pmc(struct kvm_pmu *pmu, u32 msr)
->  {
->  	if (!fw_writes_is_enabled(pmu_to_vcpu(pmu)))
-> diff --git a/arch/x86/kvm/vmx/pmu_intel.h b/arch/x86/kvm/vmx/pmu_intel.h
-> index 5620d0882cdc..5d9357640aa1 100644
-> --- a/arch/x86/kvm/vmx/pmu_intel.h
-> +++ b/arch/x86/kvm/vmx/pmu_intel.h
-> @@ -4,6 +4,21 @@
->  
->  #include <linux/kvm_host.h>
->  
-> +#include "cpuid.h"
-> +
-> +static inline u64 vcpu_get_perf_capabilities(struct kvm_vcpu *vcpu)
-> +{
-> +	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_PDCM))
-> +		return 0;
-> +
-> +	return vcpu->arch.perf_capabilities;
-> +}
-> +
-> +static inline bool fw_writes_is_enabled(struct kvm_vcpu *vcpu)
-> +{
-> +	return (vcpu_get_perf_capabilities(vcpu) & PERF_CAP_FW_WRITES) != 0;
-> +}
-> +
->  bool intel_pmu_lbr_is_enabled(struct kvm_vcpu *vcpu);
->  int intel_pmu_create_guest_lbr_event(struct kvm_vcpu *vcpu);
->  
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 1233a0afb31e..85bd82d41f94 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -4068,6 +4068,53 @@ void pt_update_intercept_for_msr(struct kvm_vcpu *vcpu)
->  	}
->  }
->  
-> +static void vmx_recalc_pmu_msr_intercepts(struct kvm_vcpu *vcpu)
-> +{
-> +	bool has_mediated_pmu = kvm_vcpu_has_mediated_pmu(vcpu);
-> +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +	bool intercept = !has_mediated_pmu;
-> +	int i;
-> +
-> +	if (!enable_mediated_pmu)
-> +		return;
-> +
-> +	vm_entry_controls_changebit(vmx, VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL,
-> +				    has_mediated_pmu);
-> +
-> +	vm_exit_controls_changebit(vmx, VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL |
-> +					VM_EXIT_SAVE_IA32_PERF_GLOBAL_CTRL,
-> +				   has_mediated_pmu);
-> +
-> +	for (i = 0; i < pmu->nr_arch_gp_counters; i++) {
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PERFCTR0 + i,
-> +					  MSR_TYPE_RW, intercept);
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PMC0 + i, MSR_TYPE_RW,
-> +					  intercept || !fw_writes_is_enabled(vcpu));
-> +	}
-> +	for ( ; i < kvm_pmu_cap.num_counters_gp; i++) {
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PERFCTR0 + i,
-> +					  MSR_TYPE_RW, true);
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PMC0 + i,
-> +					  MSR_TYPE_RW, true);
-> +	}
-> +
-> +	for (i = 0; i < pmu->nr_arch_fixed_counters; i++)
-> +		vmx_set_intercept_for_msr(vcpu, MSR_CORE_PERF_FIXED_CTR0 + i,
-> +					  MSR_TYPE_RW, intercept);
-> +	for ( ; i < kvm_pmu_cap.num_counters_fixed; i++)
-> +		vmx_set_intercept_for_msr(vcpu, MSR_CORE_PERF_FIXED_CTR0 + i,
-> +					  MSR_TYPE_RW, true);
-> +
-> +	intercept = kvm_need_perf_global_ctrl_intercept(vcpu);
-> +	vmx_set_intercept_for_msr(vcpu, MSR_CORE_PERF_GLOBAL_STATUS,
-> +				  MSR_TYPE_RW, intercept);
-> +	vmx_set_intercept_for_msr(vcpu, MSR_CORE_PERF_GLOBAL_CTRL,
-> +				  MSR_TYPE_RW, intercept);
-> +	vmx_set_intercept_for_msr(vcpu, MSR_CORE_PERF_GLOBAL_OVF_CTRL,
-> +				  MSR_TYPE_RW, intercept);
-> +}
-> +
->  static void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->  {
->  	if (!cpu_has_vmx_msr_bitmap())
-> @@ -4115,17 +4162,7 @@ static void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->  		vmx_set_intercept_for_msr(vcpu, MSR_IA32_FLUSH_CMD, MSR_TYPE_W,
->  					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
->  
-> -	if (enable_mediated_pmu) {
-> -		bool is_mediated_pmu = kvm_vcpu_has_mediated_pmu(vcpu);
-> -		struct vcpu_vmx *vmx = to_vmx(vcpu);
-> -
-> -		vm_entry_controls_changebit(vmx,
-> -					    VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL, is_mediated_pmu);
-> -
-> -		vm_exit_controls_changebit(vmx,
-> -					   VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL |
-> -					   VM_EXIT_SAVE_IA32_PERF_GLOBAL_CTRL, is_mediated_pmu);
-> -	}
-> +	vmx_recalc_pmu_msr_intercepts(vcpu);
->  
->  	/*
->  	 * x2APIC and LBR MSR intercepts are modified on-demand and cannot be
+```
+  # LBS of sd[de] is 512 bytes, sdf is 4096 bytes.
+  mdadm -CRq /dev/md0 -l1 -n3 /dev/sd[de] missing --assume-clean
+
+  # LBS is 512
+  cat /sys/block/md0/queue/logical_block_size
+
+  # create partition md0p1
+  parted -s /dev/md0 mklabel gpt mkpart primary 1MiB 100%
+  lsblk | grep md0p1
+
+  # LBS becomes 4096 after adding sdf
+  mdadm --add -q /dev/md0 /dev/sdf
+  cat /sys/block/md0/queue/logical_block_size
+
+  # partition lost
+  partprobe /dev/md0
+  lsblk | grep md0p1
+```
+
+Simply restricting larger-LBS disks is inflexible. In some scenarios,
+only disks with 512 bytes LBS are available currently, but later, disks
+with 4KB LBS may be added to the array.
+
+Making LBS configurable is the best way to solve this scenario.
+After this patch, the raid will:
+  - store LBS in disk metadata
+  - add a read-write sysfs 'mdX/logical_block_size'
+
+Future mdadm should support setting LBS via metadata field during RAID
+creation and the new sysfs. Though the kernel allows runtime LBS changes,
+users should avoid modifying it after creating partitions or filesystems
+to prevent compatibility issues.
+
+Only 1.x metadata supports configurable LBS. 0.90 metadata inits all
+fields to default values at auto-detect. Supporting 0.90 would require
+more extensive changes and no such use case has been observed.
+
+Note that many RAID paths rely on PAGE_SIZE alignment, including for
+metadata I/O. A larger LBS than PAGE_SIZE will result in metadata
+read/write failures. So this config should be prevented.
+
+Signed-off-by: Li Nan <linan122@huawei.com>
+---
+v6:
+ - Improve print message
+ - s/RAID5/RAID456/g
+
+v5: in patch2:
+    Fix typo. Add reproducer in log.
+
+v4:
+ patch 1: add fix tag.
+ patch 2:
+ - add documentation for sysfs.
+ - only support metadata format 1.x.
+ - do not call md_update_sb when writing sysfs. mddev->pers is NULL here.
+ - return directly before hold lock in lbs_store.
+
+v3:
+ - logical_block_size must not exceed PAGE_SIZE for bio device.
+ - Assign lim to mddev rather than to gendisk in mddev_stack_rdev_limits().
+ - Remove the patch that modifies the return value.
+
+v2: No new exported interfaces are introduced.
+
+ Documentation/admin-guide/md.rst |  7 +++
+ drivers/md/md.h                  |  1 +
+ include/uapi/linux/raid/md_p.h   |  3 +-
+ drivers/md/md-linear.c           |  1 +
+ drivers/md/md.c                  | 75 ++++++++++++++++++++++++++++++++
+ drivers/md/raid0.c               |  1 +
+ drivers/md/raid1.c               |  1 +
+ drivers/md/raid10.c              |  1 +
+ drivers/md/raid5.c               |  1 +
+ 9 files changed, 90 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide/md.rst
+index 1c2eacc94758..493071158d8e 100644
+--- a/Documentation/admin-guide/md.rst
++++ b/Documentation/admin-guide/md.rst
+@@ -238,6 +238,13 @@ All md devices contain:
+      the number of devices in a raid4/5/6, or to support external
+      metadata formats which mandate such clipping.
+ 
++  logical_block_size
++     Configures the array's logical block size in bytes. This attribute
++     is only supported for RAID1, RAID456, RAID10 with 1.x meta. The value
++     should be written before starting the array. The final array LBS
++     will use the max value between this configuration and all rdev's LBS.
++     Note that LBS cannot exceed PAGE_SIZE.
++
+   reshape_position
+      This is either ``none`` or a sector number within the devices of
+      the array where ``reshape`` is up to.  If this is set, the three
+diff --git a/drivers/md/md.h b/drivers/md/md.h
+index afb25f727409..b0147b98c8d3 100644
+--- a/drivers/md/md.h
++++ b/drivers/md/md.h
+@@ -432,6 +432,7 @@ struct mddev {
+ 	sector_t			array_sectors; /* exported array size */
+ 	int				external_size; /* size managed
+ 							* externally */
++	unsigned int			logical_block_size;
+ 	__u64				events;
+ 	/* If the last 'event' was simply a clean->dirty transition, and
+ 	 * we didn't write it to the spares, then it is safe and simple
+diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_p.h
+index ac74133a4768..310068bb2a1d 100644
+--- a/include/uapi/linux/raid/md_p.h
++++ b/include/uapi/linux/raid/md_p.h
+@@ -291,7 +291,8 @@ struct mdp_superblock_1 {
+ 	__le64	resync_offset;	/* data before this offset (from data_offset) known to be in sync */
+ 	__le32	sb_csum;	/* checksum up to devs[max_dev] */
+ 	__le32	max_dev;	/* size of devs[] array to consider */
+-	__u8	pad3[64-32];	/* set to 0 when writing */
++	__le32  logical_block_size;	/* same as q->limits->logical_block_size */
++	__u8	pad3[64-36];	/* set to 0 when writing */
+ 
+ 	/* device state information. Indexed by dev_number.
+ 	 * 2 bytes per device
+diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+index 5d9b08115375..da8babb8da59 100644
+--- a/drivers/md/md-linear.c
++++ b/drivers/md/md-linear.c
+@@ -72,6 +72,7 @@ static int linear_set_limits(struct mddev *mddev)
+ 
+ 	md_init_stacking_limits(&lim);
+ 	lim.max_hw_sectors = mddev->chunk_sectors;
++	lim.logical_block_size = mddev->logical_block_size;
+ 	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+ 	lim.io_min = mddev->chunk_sectors << 9;
+ 	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 40f56183c744..91fe955cbd08 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -1963,6 +1963,7 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *freshest, struc
+ 		mddev->layout = le32_to_cpu(sb->layout);
+ 		mddev->raid_disks = le32_to_cpu(sb->raid_disks);
+ 		mddev->dev_sectors = le64_to_cpu(sb->size);
++		mddev->logical_block_size = le32_to_cpu(sb->logical_block_size);
+ 		mddev->events = ev1;
+ 		mddev->bitmap_info.offset = 0;
+ 		mddev->bitmap_info.space = 0;
+@@ -2172,6 +2173,7 @@ static void super_1_sync(struct mddev *mddev, struct md_rdev *rdev)
+ 	sb->chunksize = cpu_to_le32(mddev->chunk_sectors);
+ 	sb->level = cpu_to_le32(mddev->level);
+ 	sb->layout = cpu_to_le32(mddev->layout);
++	sb->logical_block_size = cpu_to_le32(mddev->logical_block_size);
+ 	if (test_bit(FailFast, &rdev->flags))
+ 		sb->devflags |= FailFast1;
+ 	else
+@@ -5900,6 +5902,66 @@ static struct md_sysfs_entry md_serialize_policy =
+ __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
+        serialize_policy_store);
+ 
++static int mddev_set_logical_block_size(struct mddev *mddev,
++				unsigned int lbs)
++{
++	int err = 0;
++	struct queue_limits lim;
++
++	if (queue_logical_block_size(mddev->gendisk->queue) >= lbs) {
++		pr_err("%s: Cannot set LBS smaller than mddev LBS %u\n",
++		       mdname(mddev), lbs);
++		return -EINVAL;
++	}
++
++	lim = queue_limits_start_update(mddev->gendisk->queue);
++	lim.logical_block_size = lbs;
++	pr_info("%s: logical_block_size is changed, data may be lost\n",
++		mdname(mddev));
++	err = queue_limits_commit_update(mddev->gendisk->queue, &lim);
++	if (err)
++		return err;
++
++	mddev->logical_block_size = lbs;
++	return 0;
++}
++
++static ssize_t
++lbs_show(struct mddev *mddev, char *page)
++{
++	return sprintf(page, "%u\n", mddev->logical_block_size);
++}
++
++static ssize_t
++lbs_store(struct mddev *mddev, const char *buf, size_t len)
++{
++	unsigned int lbs;
++	int err = -EBUSY;
++
++	/* Only 1.x meta supports configurable LBS */
++	if (mddev->major_version == 0)
++		return -EINVAL;
++
++	if (mddev->pers)
++		return -EBUSY;
++
++	err = kstrtouint(buf, 10, &lbs);
++	if (err < 0)
++		return -EINVAL;
++
++	err = mddev_lock(mddev);
++	if (err)
++		goto unlock;
++
++	err = mddev_set_logical_block_size(mddev, lbs);
++
++unlock:
++	mddev_unlock(mddev);
++	return err ?: len;
++}
++
++static struct md_sysfs_entry md_logical_block_size =
++__ATTR(logical_block_size, S_IRUGO|S_IWUSR, lbs_show, lbs_store);
+ 
+ static struct attribute *md_default_attrs[] = {
+ 	&md_level.attr,
+@@ -5933,6 +5995,7 @@ static struct attribute *md_redundancy_attrs[] = {
+ 	&md_scan_mode.attr,
+ 	&md_last_scan_mode.attr,
+ 	&md_mismatches.attr,
++	&md_logical_block_size.attr,
+ 	&md_sync_min.attr,
+ 	&md_sync_max.attr,
+ 	&md_sync_io_depth.attr,
+@@ -6052,6 +6115,17 @@ int mddev_stack_rdev_limits(struct mddev *mddev, struct queue_limits *lim,
+ 			return -EINVAL;
+ 	}
+ 
++	/*
++	 * Before RAID adding folio support, the logical_block_size
++	 * should be smaller than the page size.
++	 */
++	if (lim->logical_block_size > PAGE_SIZE) {
++		pr_err("%s: logical_block_size must not larger than PAGE_SIZE\n",
++			mdname(mddev));
++		return -EINVAL;
++	}
++	mddev->logical_block_size = lim->logical_block_size;
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(mddev_stack_rdev_limits);
+@@ -6690,6 +6764,7 @@ static void md_clean(struct mddev *mddev)
+ 	mddev->chunk_sectors = 0;
+ 	mddev->ctime = mddev->utime = 0;
+ 	mddev->layout = 0;
++	mddev->logical_block_size = 0;
+ 	mddev->max_disks = 0;
+ 	mddev->events = 0;
+ 	mddev->can_decrease_events = 0;
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index f1d8811a542a..705889a09fc1 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -382,6 +382,7 @@ static int raid0_set_limits(struct mddev *mddev)
+ 	md_init_stacking_limits(&lim);
+ 	lim.max_hw_sectors = mddev->chunk_sectors;
+ 	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
++	lim.logical_block_size = mddev->logical_block_size;
+ 	lim.io_min = mddev->chunk_sectors << 9;
+ 	lim.io_opt = lim.io_min * mddev->raid_disks;
+ 	lim.chunk_sectors = mddev->chunk_sectors;
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index d0f6afd2f988..de0c843067dc 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -3223,6 +3223,7 @@ static int raid1_set_limits(struct mddev *mddev)
+ 
+ 	md_init_stacking_limits(&lim);
+ 	lim.max_write_zeroes_sectors = 0;
++	lim.logical_block_size = mddev->logical_block_size;
+ 	lim.features |= BLK_FEAT_ATOMIC_WRITES;
+ 	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+ 	if (err)
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index c3cfbb0347e7..68c8148386b0 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4005,6 +4005,7 @@ static int raid10_set_queue_limits(struct mddev *mddev)
+ 
+ 	md_init_stacking_limits(&lim);
+ 	lim.max_write_zeroes_sectors = 0;
++	lim.logical_block_size = mddev->logical_block_size;
+ 	lim.io_min = mddev->chunk_sectors << 9;
+ 	lim.chunk_sectors = mddev->chunk_sectors;
+ 	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index c32ffd9cffce..ff0daa22df65 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -7747,6 +7747,7 @@ static int raid5_set_limits(struct mddev *mddev)
+ 	stripe = roundup_pow_of_two(data_disks * (mddev->chunk_sectors << 9));
+ 
+ 	md_init_stacking_limits(&lim);
++	lim.logical_block_size = mddev->logical_block_size;
+ 	lim.io_min = mddev->chunk_sectors << 9;
+ 	lim.io_opt = lim.io_min * (conf->raid_disks - conf->max_degraded);
+ 	lim.features |= BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
+-- 
+2.39.2
 
 
