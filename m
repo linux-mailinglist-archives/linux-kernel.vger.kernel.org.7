@@ -1,352 +1,199 @@
-Return-Path: <linux-kernel+bounces-834008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9033BA396F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:20:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74966BA3975
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C31407AEBCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8D3386BE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ADB2EB866;
-	Fri, 26 Sep 2025 12:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB562EBBA6;
+	Fri, 26 Sep 2025 12:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0WekZMX"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fB/L69Sg"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013039.outbound.protection.outlook.com [40.107.159.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8AA2DD60F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758889211; cv=none; b=u//FauBSGJEIykPDNiIipm/mtxiQcymH65tqMZherbLBekvXclF2vtWOSCMzCFsxX9lu9hhrcVeCpoLLJdgCmoh08q6TE1fHijwSn5TR7TocOdc2BgZHNt9V/1XFIll0g5QogORmOGWuVHFbghz1QpqTFLH+4HbMJV5/72zPaG0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758889211; c=relaxed/simple;
-	bh=gz7PYCx8C7VbuVpe1N5ETR7y/DgnTEF5RUfAmzZzGyA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XlmTmESbL6YVWNCFu8gBFWEnl4+a7Le4cQnYDyIqCpq57mTkxoJIUXD8WrJKXEUckkdzzq7KcINspxtg6Nim0UX1hGvcBGvu2U2hjuMWI9aq71Z2ZEGe0GoPPRqxeuVGmYIl8JURTHNM8NJyjMx+RtneoKCfbnfEQ6wB7x2Stsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0WekZMX; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-330b4739538so2253045a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758889209; x=1759494009; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63XaMfzK8yhyDQm37+O5+ql9FVzf01Td2YS2+vRTpGE=;
-        b=A0WekZMXskQ8asHR+NvPPTCvkV/MGqiolViKUbqETa6Q3DaTqDNbZ+NJDJ2v1m9WGW
-         KXvRG3tvjvV3MPU2F1eKlgsw2N//+SHli3TS6/iL7braXWinR1dBZVD8wKeIVkS+2afF
-         ZXrk2VQobOjahe/t/Kkp4EdxdEKlEora0kjfpQCE0wlYMucsqTIAtGICRTBrLfm8eJns
-         KYX6EK8K0+5ZsU7FAyRM38Da12G1F1lrg4vE1YfZ9WGC6tFZ2HxpeehMYAwjDfsrgEvd
-         A4exwHevFURnOgSxOZ8qhdPUbbdWo3vFPVrTWRrRA1aftxkm0xuPKlnOCCC0GGWtgEiI
-         8wzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758889209; x=1759494009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=63XaMfzK8yhyDQm37+O5+ql9FVzf01Td2YS2+vRTpGE=;
-        b=hrDLTsZWxCkZA4uklhvNcDOaeo0eav1XbvmgskqgAOhfz+BhcIWApflm5GzONYyNyL
-         DAX+lCIFn1BBCnuXuGN2qpfIECZ9cDb3AexEBOiBBQPt9ApzZSYdoozldKamoMYh4QI9
-         n/oQcbrxeiJ3GXOsvsfPkO9/gPmLGWzHaDWSkQ9cdcL2D03dvnzDuJOFZrd4pG0bAGT4
-         xVyv+Z5ongLd+lTPzqpMyzwh2dsV2OAqyZ6Msr5C0+aaEfxvHVpV/AyN9HE/qfvfl/0M
-         vpJLt8sddMl/qmZYnyVySMwJY+R0ShrdhyiyXQYA8XNWDJBiDul+cYL0TQUNP6wBWUUw
-         PruQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW50NIuOSYX62HadVSJVAXyLIxLqT2qnm35/lCFXYjPz4LXiupuyjU3pFZUplIe35ivd+6LFL81LOqSHLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5uAV8Lf67Cn6Ud/bESArb1yvGGtcNYS+vHjtmfgq9jhybCko4
-	943YcNu+dI1opkFLo9pbwiV5GgUPRp6XgBqju3UnwJavtj2n+VdoukRQL3YgWFbSgAfSWfzrhbV
-	uFxf8EaXigm4doSes/FTAfyiui5iB9TjaLw==
-X-Gm-Gg: ASbGncsClSsXkI6M1ZF5fPlNUmTxKSkew68eillC69EVLq7I2ZYW/HZ16fmGhKec0Hf
-	nFv8HuTYOapGBnAPNFzZ9KMBG7il99ukmT48N+jScDsaTav1X3WY8HtdwmJlopeUshyTTgJGjAj
-	+MCuhRAnAvwfi3ctMWbQXd3vfN263YOS17+AInkJeRy7IXdhJHme/gcxY2iqbXMeSIzxaY28+3o
-	nTh3EdvSpTRzGeoTA==
-X-Google-Smtp-Source: AGHT+IHn4YvUUyQ9XHaEV3KsqG3nnEUzQaGT6MR+TmYhn7OE0sZfzN9PxJemdpIt5vsKrD9BY0LIiVWU6RtLhkFtlmw=
-X-Received: by 2002:a17:90b:4c06:b0:335:28e3:81cd with SMTP id
- 98e67ed59e1d1-33528e38f06mr3327973a91.18.1758889208664; Fri, 26 Sep 2025
- 05:20:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8832410E3;
+	Fri, 26 Sep 2025 12:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758889250; cv=fail; b=ki6QvTYMNtLgXoCS4TAaeaEKEfRW8Wl1Q/+vd06E/AeuJZyx29jtzpW2r/dkg/1RL0SGP/y3wXVPbTD3d+v0Q9SZUkJh2ygq+GUt2ikSYxphv4BEVIjh87d8AmErE6Lk6XIji6XzoP2WAr7jaSs7OAphHqNsl7tFa31EUsUNSLA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758889250; c=relaxed/simple;
+	bh=JInkF35+cCDUBneADjylIB3PpZQlGeI5EEziX25i14A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eAm0JDz46Ayz4myWB4Or+7hExgGHoZ767MuuUQvpJDCML5fRXLRyZ3rroFF9loK29EDXsqfd+IyYDNmc3V0a+SHWPmva1y/9iX2BAqXG1NBuNthplwhLk/rVa1lXo1hcDoqwf44CLKyj3IX09G47iuVfJ0Lexe3q/12KLHnhUy8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fB/L69Sg; arc=fail smtp.client-ip=40.107.159.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XyuqCwO5E6bVXBl+o29wdhMWYIp38u4fQMUwnSpa26lshNfNTTkTutuMcz0UArouYoya9/gVO5YCauZeta/gehP529mPcrL5ThBWe+Z2J/lk9Ny0NSA7UKRDVSehM73AOTCxr1x3AiIwCClW6ukJm4DpuqmpDZVQMc8wveiXD9OFTJyT3hpXoWZfy7YkcOLitKKq7ZTpn581Xy96FzffbU/k8frJDkO0hD9R53PR5oklzTurVo24qXoYX4YD3EZp9B4pSSrPQjEcw8bCM1NDjXpjMmcByRmr6afllr27OQqbhzdKm/nz4T64EnprYXpryi27QqXXSVeiI+A8Dpx1WA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FJ/yvok1+7xHXCqDazardp6WMoijbjzv15917tOrjZA=;
+ b=ABhDm101ov3tFtJH5HT4f4vz9Ah/7B4iQVkkxVJk7QugBUk8beG4gozW7ClSq5HQ50vGAgr47nqBHIGtSmS/S4GPGSDvK/eVKsijS/ij5+ChEsSVe1Oraqrgg/Riq/87H2DbWzyM600bafc6qNVCl2EVodEMwyxy64AZ6wC7DYatmvP6B4r8bip+BbMB1rP9ORPw8y2F2PkVQT3mR7qy6X4xTwvKaLzG7deLmwYYw2MPUYtqmFWlUrVeeIevU+W0PLg0CrfxJJqkTiffQ4KolZrB1OBH2sSEZI5ST1yYeorPRsi0GrK4zsaG3n0irRQlDd7rKq+tf0O9cu0ilOUm2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FJ/yvok1+7xHXCqDazardp6WMoijbjzv15917tOrjZA=;
+ b=fB/L69SgSNUEx7QbRqXDsNd0gKzaMH+QMU7WLFBs2BwCRkDgHHEHzr2Ly1qVqsW7wfL401QKVReX2Fpd5FiosRIMdod/WzEj8/cMKhD6yTQ+wAfiPgIcPXKvcXFZabTO5iuPIJn/YKfwDHIqluDwD2NU0GufoXStCzPUlVWi3whOSbCA0Q9ksUnThK9Kh6vCLuKhHfGklXsGaWHvf/m5odOBt2I8HrDO+S6MUeHJUawoYJ0weZz51iRMHkX61WmOifNVjVpiiw7IIUdmxE+eDB5NadNzQIiotWzO68X708A8TeBpTng0isxLf4KUNYOJUongOJUwn+fg6AprleLyIw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by GV1PR04MB11038.eurprd04.prod.outlook.com (2603:10a6:150:211::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
+ 2025 12:20:41 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::b067:7ceb:e3d7:6f93]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::b067:7ceb:e3d7:6f93%5]) with mapi id 15.20.9160.010; Fri, 26 Sep 2025
+ 12:20:41 +0000
+Date: Fri, 26 Sep 2025 15:20:38 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, andrew@lunn.ch, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, richardcochran@gmail.com,
+	vadim.fedorenko@linux.dev, rmk+kernel@armlinux.org.uk,
+	christophe.jaillet@wanadoo.fr, rosenp@gmail.com,
+	steen.hegelund@microchip.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] phy: mscc: Fix PTP for vsc8574 and VSC8572
+Message-ID: <20250926122038.3mv2plj3bvnfbple@skbuf>
+References: <20250917113316.3973777-1-horatiu.vultur@microchip.com>
+ <20250918160942.3dc54e9a@kernel.org>
+ <20250922121524.3baplkjgw2xnwizr@skbuf>
+ <20250922123301.y7qjguatajhci67o@DEN-DL-M31836.microchip.com>
+ <20250922132846.jkch266gd2p6k4w5@skbuf>
+ <20250923071924.mv6ytwtifuu5limg@DEN-DL-M31836.microchip.com>
+ <20250926071111.bdxffjghguawcobp@DEN-DL-M31836.microchip.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926071111.bdxffjghguawcobp@DEN-DL-M31836.microchip.com>
+X-ClientProxiedBy: VI1PR09CA0177.eurprd09.prod.outlook.com
+ (2603:10a6:800:120::31) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1758859391.git.zhanghongru@xiaomi.com> <d849e8a98bf88bd12fd13a8f6b6e84290dcaaf6e.1758859391.git.zhanghongru@xiaomi.com>
-In-Reply-To: <d849e8a98bf88bd12fd13a8f6b6e84290dcaaf6e.1758859391.git.zhanghongru@xiaomi.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 26 Sep 2025 08:19:57 -0400
-X-Gm-Features: AS18NWBN3eoEVqsdRCWCmL4ealbBjbXKw5Z6Vj5YkoXeOcJtpUoVAunuQWhxb3A
-Message-ID: <CAEjxPJ6K3QfXz+kw9hxLtkyC-4kuNsXq_7wz+g8SB9ObAJQhBg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] selinux: Make avc cache slot size configurable
- during boot
-To: Hongru Zhang <zhanghongru06@gmail.com>
-Cc: paul@paul-moore.com, omosnace@redhat.com, linux-kernel@vger.kernel.org, 
-	selinux@vger.kernel.org, zhanghongru@xiaomi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|GV1PR04MB11038:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0df3bcbd-b087-461c-7907-08ddfcf71beb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|10070799003|19092799006|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ecS1PcEP4clq1/8l7WNTrUEW/hMfiQ6Bi5cQ/PFR+KvSMjQCOSwTwKSDfMVE?=
+ =?us-ascii?Q?mfK1WymQnsLDmZmIqkxol9MGVF1oFmGNqsUYfyr1FLOo1DpdAOMnKfMvsy5Q?=
+ =?us-ascii?Q?f1lxY6MVgOcW1n9B5FBGshMJVJFcUTtYUmCjyB+lsDQdLZSU9OptYAlpr+kf?=
+ =?us-ascii?Q?ieTZn0RJbm+DLWFy0/xHCErh/S2N4gAeAAdBxEZioeOS4rSiI1/Ot1ukgVoa?=
+ =?us-ascii?Q?8QZYGb6kW9p3BAPMBgENx6g2G6M/xpgPpYIlunRkVtgOpgPb42cdzCDpMkBp?=
+ =?us-ascii?Q?WwkIdK1HQMfFwKzrX4Z+KIu+SGju4GSuGxKReqyNkFKkGZtORLeQyuW18uL+?=
+ =?us-ascii?Q?2LT+HWANbVxXKVGu4WLMbweDI2ztohfYmUMzfy5SNuo6uakClRbeCBD+lFzz?=
+ =?us-ascii?Q?zjmIV1qstTNfrPaNHZ9XYexHo97HVRNqpizjoj28kO0LeoJzo9L//X5QyStd?=
+ =?us-ascii?Q?0oPl+gu4xOb8lqvh7PnXfYvGfl0rUpFPwTdvdtqeS1/lzBqZJF4LPih6mWiD?=
+ =?us-ascii?Q?cWI7rYXw0Y0wOyjx414t4hrTJY1nbKylkiNs9tsN9qPVkrY0HnOfN+xg5ZSX?=
+ =?us-ascii?Q?kF2Rc8YN39jTg74Bl45qh7TNt4wTywwuhhGiNXijHMAHjCSrnlEEVXh/VbDL?=
+ =?us-ascii?Q?9NHNbEV5L/DnRmX0Bx4B3N9AxoUlvoyz8p+o4RPp2AjWryof2AVvkQiKh7LV?=
+ =?us-ascii?Q?QNn5nu4DFIDmacfykgM6KAmSql1l+nI5VGzuOiEuA2MsduvKohLCN15JF8aj?=
+ =?us-ascii?Q?spV6a29j79FBb5UO244+nnfNM42tcMU3ak8LuI8PQL11ycarXitN4v3bHeqx?=
+ =?us-ascii?Q?0aR349zwxpq68EZdWYJ3e7Od7zDdY/js2xfhuWqdTSkmiHL4VyVYxuuXi93i?=
+ =?us-ascii?Q?Rh1uQ1oHM3J4nL8s4U+9FnLdhm3GXnWaLYPKT/eiCYD9EDDaTjIqNOyNHTIB?=
+ =?us-ascii?Q?aBrd/V2FWNZo2pojYAficuveuor48iebv61HYOiBmRYzToMkG4KE7ndQULKh?=
+ =?us-ascii?Q?eTJ7kZamoAsj3yUB40oq/m4NLh0t+SUBTTUAHT18kyhhU0AhqN7ZYwmQrWOA?=
+ =?us-ascii?Q?XJK8iD2ctkPcY6WiamXQqlbpwVJDLiczV929opatxaLTiojDN0yO41NeN7nf?=
+ =?us-ascii?Q?ilx5ylJr/yNRjAnwVTy5jCIYr8hFlbYGGAqkEE750OOXzUyNA3zv8g9A2AZD?=
+ =?us-ascii?Q?zHyr0UaoDJ9YHAAyIor/uhvp2HkWLbgYaDJilM9lOdPPVzC816TJRHgG5FKt?=
+ =?us-ascii?Q?2pWPqsrx4FQdn4O34XsiJOBcyG3LmMTGAt236gNPB0+7mEuThckgCBtm7Cd0?=
+ =?us-ascii?Q?tyKekM+y0ddCAmunkIJiO/5WCj4sgSDgULwghpAmHaDDtWlqr5ETAsJbLVYy?=
+ =?us-ascii?Q?S5qNGksC4Bni5daIaeOVzhmoJlWmBEDLeeBEIvY6cfLMkVZ/JnzmMNL8dVQl?=
+ =?us-ascii?Q?H5UA1EpoTQSMEu6kP1hCiX0UwjpSBk9P?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(10070799003)(19092799006)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?V3Ai+iAIeLeWsF3fxUdXngzxy2nI/gkTytx5CqoFXGGngWKgX3tgYggavvjJ?=
+ =?us-ascii?Q?AdgNwJqbDovzMScXkRmonsPkW6/hMhXHAJUGlCQmxwcgUvuu7kHySjPe6tMa?=
+ =?us-ascii?Q?AcrbkAEKZPFPAyXoqaf9Kp51QoCs6r1RDPeqsP3ClDW1nbbW0iVlcne0eUvy?=
+ =?us-ascii?Q?TeaYmf08DGFea6yqoTOfDCHXc0gn1zHfTq6RE5aB33C4g1jiNC7/S2PGhx9u?=
+ =?us-ascii?Q?l7KcKk9zA4fG9izu7urGuFHr1jTucDPXluANYPLMeGWIxbtFA3Y3rsMolS1q?=
+ =?us-ascii?Q?YPBf4FWLsJ9EaDI+yS9JtZI9zKThy/V7Wr8K1dI7NKEqjLYXFBSDen3wVUMa?=
+ =?us-ascii?Q?Gii8DLqOsRN70bFVWECbWCg773/YhcPT/r825NkhTLYvS/pMBDzCLS5vEcYN?=
+ =?us-ascii?Q?y1/MhDro3v7N9z2aqWI6f8G3haQwPUe0eo6u07dWuTcbQFN2mXk0YJNNDEBf?=
+ =?us-ascii?Q?n2KLDR04FmwwTWReyEabYIgOYk8FWEGmxP0po+d22/zUBMpxBEuw/1oaXJTW?=
+ =?us-ascii?Q?ZZbaWf+t7AkMa/dY0puq8d9sfCyKsQQpLAooYqT5iFRvW6uhBwF6XDQElLxG?=
+ =?us-ascii?Q?JY6CRoMcmAb2649x6Q94Z4i3vZ/Kv92tJfn2EnSyPrzcA62qEIqkp+Pbc5Lg?=
+ =?us-ascii?Q?aj2K+LembHCbgiLpRe1/3+eTih2ZW9OfdX0T3ht9CUmA4wK7QKzjAZW50fzv?=
+ =?us-ascii?Q?Cbv6aGCIEDFvQVDgwHdVpapwXgqWVDLcX6zuyxaUfiIjLX1mmkdT7VfogY0B?=
+ =?us-ascii?Q?G0UG1CK9YAySGrYCyezLXwJ+obqLQLlCBhPWSYsqUP3Q70qRo5xV8xJJ617y?=
+ =?us-ascii?Q?wA4k5OTWCXw0J4itcM11VUO8peFqKRYcYJnitnmbGU51dUVaSUPAA/cSpgzD?=
+ =?us-ascii?Q?EnWZUb5gNLgLJFC0irkP9lhya823qQyDzpBScxveKOnmOZt0xyD3IxIgekCR?=
+ =?us-ascii?Q?S4HhO9JOVaHdzey/IJuUkfiMeRtNrtnI9VFpBpeUufFOBXZAukt7Pyz1zgQw?=
+ =?us-ascii?Q?a3QOZvS6nBUBsETUjz8LJL52kVb6UoVBNMgK6eTwY7510MmrXEdzFGz87mrU?=
+ =?us-ascii?Q?V7Mdl/INzY+KyswB+LO+v+ibWWN2Zweyzw0KWNkS9fgnAmT1na3U9RRwwS/g?=
+ =?us-ascii?Q?v1lp3MEbhU7lJaF2jBOiY5xhkDuSqqS+mJbiEvJORctmnqsnC5Hxd8TRgfK/?=
+ =?us-ascii?Q?MzQBuVa/7IVtGYd68xxL0MtWVUyt+ifQa1FEfV3bwR2dquazoYPekuasDSXA?=
+ =?us-ascii?Q?GFc9lVDNx5W7FHlBUIA8+ioSMNZw26va4+gDgK8wpc+WCU2pzzWCiTYJm4Xj?=
+ =?us-ascii?Q?w8sUED1buMcVvT90bBaWeuzxQ7HREI1XPOYvejbkNWxPwqZN2H2W0G5lfSWG?=
+ =?us-ascii?Q?qQrl0LxVlrzeZQlTahqv0wt0qa6hRsCCmOZdsik5AKNek+sO/3vkhG2fXXUY?=
+ =?us-ascii?Q?FBjksO/Z3s4tEO4wAccvKf/95GvkEx4E/LAu3AQNbDhcsoQxI2Mb8h5pnR1P?=
+ =?us-ascii?Q?V5PAedfkpnH8SgUgCyhzRXiKTE8RjiAXtB9OfTPCWoCy7jbRGO4eCHkixt9s?=
+ =?us-ascii?Q?XfIUdq2p3lTMbBOOD/6oDeEUQ6u03NvEuGUbYr9KV5IWo6aaLUvEmfwEetL5?=
+ =?us-ascii?Q?JvaYJQ8aDr6fT1/f8AUybwnrmVBPYcsKeULld6QX84r2vaSgSEZdZCei4PlR?=
+ =?us-ascii?Q?NqfHvA=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0df3bcbd-b087-461c-7907-08ddfcf71beb
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 12:20:41.4098
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OQqTKHX/Hpqb80y3Xct8+1t2d5y97Mk/aSqpIdhBsPJLeE9fQsQAvObVHyorJM+Ug/UrFIscksgMLcZelXWOOw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB11038
 
-On Fri, Sep 26, 2025 at 2:23=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
-om> wrote:
->
-> From: Hongru Zhang <zhanghongru@xiaomi.com>
->
-> On mobile device high-load situations, permission check can happen
-> more than 90,000/s (8 core system). With default 512 cache nodes
-> configuration, avc cache miss happens more often and occasionally
-> leads to long time (>2ms) irqs off on both big and little cores,
-> which decreases system real-time capability.
->
-> An actual call stack is as follows:
->  =3D> avc_compute_av
->  =3D> avc_perm_nonode
->  =3D> avc_has_perm_noaudit
->  =3D> selinux_capable
->  =3D> security_capable
->  =3D> capable
->  =3D> __sched_setscheduler
->  =3D> do_sched_setscheduler
->  =3D> __arm64_sys_sched_setscheduler
->  =3D> invoke_syscall
->  =3D> el0_svc_common
->  =3D> do_el0_svc
->  =3D> el0_svc
->  =3D> el0t_64_sync_handler
->  =3D> el0t_64_sync
->
-> Although we can expand avc nodes through /sys/fs/selinux/cache_threshold
-> to mitigate long time irqs off, hash conflicts make the bucket average
-> length longer because of the fixed size of cache slots, leading to
-> avc_search_node latency increase.
->
-> Make avc cache slot size also configurable, and with fine tuning, we can
-> mitigate long time irqs off with slightly avc_search_node performance
-> regression.
->
-> Theoretically, the main overhead is memory consumption.
->
-> avc_search_node avg latency test results (about 100,000,000 times) on
-> Qcom SM8750, 6.6.30-android15-8:
->
-> Case 1:
-> +---------+---------------------+------------------------+
-> |         | no-patch (512/512)  | with-patch (512/512)   |
-> +---------+---------------------+------------------------+
-> | latency |        85 ns        |         87 ns          |
-> +---------+---------------------+------------------------+
->
-> Case 2:
-> +---------+---------------------+------------------------+
-> |         | no-patch (8192/512) | with-patch (8192/8192) |
-> +---------+---------------------+------------------------+
-> | latency |        277 ns       |         106 ns         |
-> +---------+---------------------+------------------------+
->
-> Case 1 shows 512 nodes configuration has ~2% performance regression
-> with patch.
-> Case 2 shows 8192 nodes configuration has ~61% latency benifit with
-> patch.
->
-> Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
+On Fri, Sep 26, 2025 at 09:11:11AM +0200, Horatiu Vultur wrote:
+> I have been asking around about these revisions of the PHYs and what is
+> available:
+> vsc856x - only rev B exists
+> vsc8575 - only rev B exists
+> vsc8582 - only rev B exists
+> vsc8584 - only rev B exists
+> vsc8574 - rev A,B,C,D,E exists
+> vsc8572 - rev A,B,C,D,E exists
+> 
+> For vsc856x, vsc8575, vsc8582, vsc8584 the lower 4 bits in register 3
+> will have a value of 1.
+> For vsc8574 and vsc8572 the lower 4 bits in register 3 will have a value
+> of 0 for rev A, 1 for rev B and C, 2 for D and E.
+> 
+> Based on this information, I think both commits a5afc1678044 and
+> 75a1ccfe6c72 are correct regarding the revision check.
+> 
+> So, now to be able to fix the PTP for vsc8574 and vsc8572, I can do the
+> following:
+> - start to use PHY_ID_MATCH_MODEL for vsc856x, vsc8575, vsc8582, vsc8584
+> - because of this change I will need to remove also the WARN_ON() in the
+>   function vsc8584_config_init()
+> - then I can drop the check for revision in vsc8584_probe()
+> - then I can make vsc8574 and vsc8572 to use vsc8584_probe()
+> 
+> What do you think about this?
 
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-
-> ---
->  .../admin-guide/kernel-parameters.txt         |  4 ++
->  security/selinux/avc.c                        | 68 +++++++++++++------
->  2 files changed, 50 insertions(+), 22 deletions(-)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index 747a55abf494..70dc6d659117 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6620,6 +6620,10 @@
->                         1 -- enable.
->                         Default value is 1.
->
-> +       selinux_avc_cache_slots=3D [SELINUX] Set the avc cache slot size.
-> +                       Format: <int> (must be >0, power of 2)
-> +                       Default: 512
-> +
->         serialnumber    [BUGS=3DX86-32]
->
->         sev=3Doption[,option...] [X86-64]
-> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> index 430b0e23ee00..7a7f88012865 100644
-> --- a/security/selinux/avc.c
-> +++ b/security/selinux/avc.c
-> @@ -34,7 +34,7 @@
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/avc.h>
->
-> -#define AVC_CACHE_SLOTS                        512
-> +static int avc_cache_slots __ro_after_init =3D 512;
->  #define AVC_DEF_CACHE_THRESHOLD                512
->  #define AVC_CACHE_RECLAIM              16
->
-> @@ -68,9 +68,13 @@ struct avc_xperms_node {
->         struct list_head xpd_head; /* list head of extended_perms_decisio=
-n */
->  };
->
-> +struct avc_slot {
-> +       struct hlist_head       slot;           /* head for avc_node->lis=
-t */
-> +       spinlock_t              slot_lock;      /* lock for writes */
-> +};
-> +
->  struct avc_cache {
-> -       struct hlist_head       slots[AVC_CACHE_SLOTS]; /* head for avc_n=
-ode->list */
-> -       spinlock_t              slots_lock[AVC_CACHE_SLOTS]; /* lock for =
-writes */
-> +       struct avc_slot         *slots;
->         atomic_t                lru_hint;       /* LRU hint for reclaim s=
-can */
->         atomic_t                active_nodes;
->         u32                     latest_notif;   /* latest revocation noti=
-fication */
-> @@ -93,14 +97,34 @@ struct selinux_avc {
->
->  static struct selinux_avc selinux_avc;
->
-> +static int __init set_selinux_avc_cache_slots(char *str)
-> +{
-> +       int val;
-> +
-> +       if ((kstrtoint(str, 0, &val)) || !is_power_of_2(val)) {
-> +               pr_warn("Unable to set selinux_avc_cache_slots, use defau=
-lt value\n");
-> +               return 1;
-> +       }
-> +
-> +       avc_cache_slots =3D val;
-> +
-> +       return 1;
-> +}
-> +__setup("selinux_avc_cache_slots=3D", set_selinux_avc_cache_slots);
-> +
->  void selinux_avc_init(void)
->  {
->         int i;
->
-> +       selinux_avc.avc_cache.slots =3D
-> +               kmalloc_array(avc_cache_slots, sizeof(struct avc_slot), G=
-FP_KERNEL);
-> +       if (!selinux_avc.avc_cache.slots)
-> +               panic("SELinux: No memory to alloc avc cache slots\n");
-> +
->         selinux_avc.avc_cache_threshold =3D AVC_DEF_CACHE_THRESHOLD;
-> -       for (i =3D 0; i < AVC_CACHE_SLOTS; i++) {
-> -               INIT_HLIST_HEAD(&selinux_avc.avc_cache.slots[i]);
-> -               spin_lock_init(&selinux_avc.avc_cache.slots_lock[i]);
-> +       for (i =3D 0; i < avc_cache_slots; i++) {
-> +               INIT_HLIST_HEAD(&selinux_avc.avc_cache.slots[i].slot);
-> +               spin_lock_init(&selinux_avc.avc_cache.slots[i].slot_lock)=
-;
->         }
->         atomic_set(&selinux_avc.avc_cache.active_nodes, 0);
->         atomic_set(&selinux_avc.avc_cache.lru_hint, 0);
-> @@ -124,7 +148,7 @@ static struct kmem_cache *avc_xperms_cachep __ro_afte=
-r_init;
->
->  static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
->  {
-> -       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (AVC_CACHE_SLOTS - 1);
-> +       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots - 1);
->  }
->
->  /**
-> @@ -150,8 +174,8 @@ int avc_get_hash_stats(char *page)
->
->         slots_used =3D 0;
->         max_chain_len =3D 0;
-> -       for (i =3D 0; i < AVC_CACHE_SLOTS; i++) {
-> -               head =3D &selinux_avc.avc_cache.slots[i];
-> +       for (i =3D 0; i < avc_cache_slots; i++) {
-> +               head =3D &selinux_avc.avc_cache.slots[i].slot;
->                 if (!hlist_empty(head)) {
->                         slots_used++;
->                         chain_len =3D 0;
-> @@ -167,7 +191,7 @@ int avc_get_hash_stats(char *page)
->         return scnprintf(page, PAGE_SIZE, "entries: %d\nbuckets used: %d/=
-%d\n"
->                          "longest chain: %d\n",
->                          atomic_read(&selinux_avc.avc_cache.active_nodes)=
-,
-> -                        slots_used, AVC_CACHE_SLOTS, max_chain_len);
-> +                        slots_used, avc_cache_slots, max_chain_len);
->  }
->
->  /*
-> @@ -463,11 +487,11 @@ static inline int avc_reclaim_node(void)
->         struct hlist_head *head;
->         spinlock_t *lock;
->
-> -       for (try =3D 0, ecx =3D 0; try < AVC_CACHE_SLOTS; try++) {
-> +       for (try =3D 0, ecx =3D 0; try < avc_cache_slots; try++) {
->                 hvalue =3D atomic_inc_return(&selinux_avc.avc_cache.lru_h=
-int) &
-> -                       (AVC_CACHE_SLOTS - 1);
-> -               head =3D &selinux_avc.avc_cache.slots[hvalue];
-> -               lock =3D &selinux_avc.avc_cache.slots_lock[hvalue];
-> +                       (avc_cache_slots - 1);
-> +               head =3D &selinux_avc.avc_cache.slots[hvalue].slot;
-> +               lock =3D &selinux_avc.avc_cache.slots[hvalue].slot_lock;
->
->                 if (!spin_trylock_irqsave(lock, flags))
->                         continue;
-> @@ -524,7 +548,7 @@ static inline struct avc_node *avc_search_node(u32 ss=
-id, u32 tsid, u16 tclass)
->         struct hlist_head *head;
->
->         hvalue =3D avc_hash(ssid, tsid, tclass);
-> -       head =3D &selinux_avc.avc_cache.slots[hvalue];
-> +       head =3D &selinux_avc.avc_cache.slots[hvalue].slot;
->         hlist_for_each_entry_rcu(node, head, list) {
->                 if (ssid =3D=3D node->ae.ssid &&
->                     tclass =3D=3D node->ae.tclass &&
-> @@ -625,8 +649,8 @@ static void avc_insert(u32 ssid, u32 tsid, u16 tclass=
-,
->         }
->
->         hvalue =3D avc_hash(ssid, tsid, tclass);
-> -       head =3D &selinux_avc.avc_cache.slots[hvalue];
-> -       lock =3D &selinux_avc.avc_cache.slots_lock[hvalue];
-> +       head =3D &selinux_avc.avc_cache.slots[hvalue].slot;
-> +       lock =3D &selinux_avc.avc_cache.slots[hvalue].slot_lock;
->         spin_lock_irqsave(lock, flag);
->         hlist_for_each_entry(pos, head, list) {
->                 if (pos->ae.ssid =3D=3D ssid &&
-> @@ -846,8 +870,8 @@ static int avc_update_node(u32 event, u32 perms, u8 d=
-river, u8 base_perm,
->         /* Lock the target slot */
->         hvalue =3D avc_hash(ssid, tsid, tclass);
->
-> -       head =3D &selinux_avc.avc_cache.slots[hvalue];
-> -       lock =3D &selinux_avc.avc_cache.slots_lock[hvalue];
-> +       head =3D &selinux_avc.avc_cache.slots[hvalue].slot;
-> +       lock =3D &selinux_avc.avc_cache.slots[hvalue].slot_lock;
->
->         spin_lock_irqsave(lock, flag);
->
-> @@ -929,9 +953,9 @@ static void avc_flush(void)
->         unsigned long flag;
->         int i;
->
-> -       for (i =3D 0; i < AVC_CACHE_SLOTS; i++) {
-> -               head =3D &selinux_avc.avc_cache.slots[i];
-> -               lock =3D &selinux_avc.avc_cache.slots_lock[i];
-> +       for (i =3D 0; i < avc_cache_slots; i++) {
-> +               head =3D &selinux_avc.avc_cache.slots[i].slot;
-> +               lock =3D &selinux_avc.avc_cache.slots[i].slot_lock;
->
->                 spin_lock_irqsave(lock, flag);
->                 /*
-> --
-> 2.43.0
->
+This sounds good, however I don't exactly understand how it fits in with
+your response to Russell to replace phydev->phy_id with phydev->drv->phy_id
+in the next revision. If the revision check in vsc8584_probe() goes away,
+where will you use phydev->drv->phy_id?
 
