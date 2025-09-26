@@ -1,294 +1,294 @@
-Return-Path: <linux-kernel+bounces-834319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C860BA46FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:34:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B720FBA4703
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38517B44B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:32:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D69D7B4CB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF55122128B;
-	Fri, 26 Sep 2025 15:33:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166882046BA;
-	Fri, 26 Sep 2025 15:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF0C2253A0;
+	Fri, 26 Sep 2025 15:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hPN1Q/Z2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qvsmI3WJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hPN1Q/Z2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qvsmI3WJ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0FF22422E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758900798; cv=none; b=Df48VgmAnCE3a21AvfvXqkkuPExpwirnzuXJWw3Ril4cliSXn+FxcOhmGRyUWrIGGszNOPhKbLXJcDXDYoYsvGadAHBHEzpVm7l4q24hxVLfwT7aGyM/rs6C389+wf5V0pzVfnLvKpeDEzpzrR5Hog+nt73RiMFOn8a9qZaTeqs=
+	t=1758900805; cv=none; b=bh1jefQ20inJbfc1HrgInA1Z1eYsca67j9yAVjcSxGbUFg+bGX9iP6Fpc9+xfcWzyaFNyIlM5IflJu7/h00t12CfD8ul2HOq/k0akvmrpSXjhpXEvwd48PY6shTtGscH5QZmf2w7lCCfJlb4rR9mmxh1cVxn30KrBNkDaozpDB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758900798; c=relaxed/simple;
-	bh=ni3wiqzdcrWJ5hA14fX69yFGyXTIV7lbBZKPSRcswf0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dsnMgefqfb3N3QSW+JMCHwtIVq8kUrs00D5X3pRqtUT1seI+FGDIqIY71LaYwYDImIPtQTl5ZSb0O7lB2qXi2eG8+AYq+GesThwjaJalp8AUiipl05l7QPPytk3wWeJDPnm7MpFgkFan6hUzWIBxacJXWKDdRUsjKEMqD9fIsjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 177F7168F;
-	Fri, 26 Sep 2025 08:33:07 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2C11B3F66E;
-	Fri, 26 Sep 2025 08:33:14 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>,
-	Adam Young <admiyo@os.amperecomputing.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Revert "mailbox/pcc: support mailbox management of the shared buffer"
-Date: Fri, 26 Sep 2025 16:33:11 +0100
-Message-Id: <20250926153311.2202648-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758900805; c=relaxed/simple;
+	bh=kd7bEABZ+uROS4oY4S3a/bjeGAoTAcj6vtm7z/gmab4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3Ov3xHPhFAWgYo8i6yeiBvQCrtEtY4On6GPjESnifko9IVAB0e4IevDdO8mKPi2o1O3iXel88g84edtkAFwOkTgr1qrAKa/tlbYtFMDvY6ZhvD/CKxiW3t8aZpLtCCcwX0mkP9vGvZb3qSlKdCqBgpVqmfFjWghw9NKtUusW+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hPN1Q/Z2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qvsmI3WJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hPN1Q/Z2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qvsmI3WJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1F8DD1F84F;
+	Fri, 26 Sep 2025 15:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758900800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
+	b=hPN1Q/Z2I0LleaVvFRVk+yXLW6mKv8nxGbCL4ruk19wSvq+3uPTxnoPMPL2ZdNeXu68zEE
+	ZHfIFjmXeybYmlsuTT/gGyP5+++DS0qkKLPB1nUbM6a2ZIIau/UlRX0DENJipCwjcahyG7
+	kcnHCmHP8mfbc/flUmB1bDEzR5g62Ls=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758900800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
+	b=qvsmI3WJwdxotgPOWL64XgiQ7XQul3VTfRbYUxHg3hVGT+gxhleujtTOPyvGFODFYUjNhk
+	Ub5wEs52eNFsq7BQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="hPN1Q/Z2";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qvsmI3WJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758900800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
+	b=hPN1Q/Z2I0LleaVvFRVk+yXLW6mKv8nxGbCL4ruk19wSvq+3uPTxnoPMPL2ZdNeXu68zEE
+	ZHfIFjmXeybYmlsuTT/gGyP5+++DS0qkKLPB1nUbM6a2ZIIau/UlRX0DENJipCwjcahyG7
+	kcnHCmHP8mfbc/flUmB1bDEzR5g62Ls=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758900800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
+	b=qvsmI3WJwdxotgPOWL64XgiQ7XQul3VTfRbYUxHg3hVGT+gxhleujtTOPyvGFODFYUjNhk
+	Ub5wEs52eNFsq7BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CA6E1386E;
+	Fri, 26 Sep 2025 15:33:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Wk0VA0Cy1mj4AgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 26 Sep 2025 15:33:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B7903A0AA0; Fri, 26 Sep 2025 17:33:19 +0200 (CEST)
+Date: Fri, 26 Sep 2025 17:33:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
+	Dai Ngo <Dai.Ngo@oracle.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Paulo Alcantara <pc@manguebit.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Rick Macklem <rick.macklem@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
+	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/38] vfs: make vfs_create break delegations on
+ parent directory
+Message-ID: <jshbhldhrbr2vbzfvuary3qowbfavcgkjznbgnjwhnxvmudvhw@c2uam4vtghcw>
+References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
+ <20250924-dir-deleg-v3-7-9f3af8bc5c40@kernel.org>
+ <otguskcvjqwcojy6tsw7yimvshsgtj4vl7ciwksxazx7z5s2ko@vjyf5plolvvf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <otguskcvjqwcojy6tsw7yimvshsgtj4vl7ciwksxazx7z5s2ko@vjyf5plolvvf>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1F8DD1F84F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[44];
+	RCVD_TLS_LAST(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,microsoft.com,talpey.com,brown.name,redhat.com,lwn.net,szeredi.hu,manguebit.org,linuxfoundation.org,tyhicks.com,chromium.org,goodmis.org,efficios.com,vger.kernel.org,lists.samba.org,lists.linux.dev];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLpnapcpkwxdkc5mopt1ezhhna)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
+X-Spam-Score: -2.51
 
-This reverts commit 5378bdf6a611a32500fccf13d14156f219bb0c85.
+On Fri 26-09-25 17:23:41, Jan Kara wrote:
+> On Wed 24-09-25 14:05:53, Jeff Layton wrote:
+> > In order to add directory delegation support, we need to break
+> > delegations on the parent whenever there is going to be a change in the
+> > directory.
+> > 
+> > Rename vfs_create as __vfs_create, make it static, and add a new
+> > delegated_inode parameter. Fix do_mknodat to call __vfs_create and wait
+> > for a delegation break if there is one. Add a new exported vfs_create
+> > wrapper that passes in NULL for delegated_inode.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> 
+> Looks good. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Commit 5378bdf6a611 ("mailbox/pcc: support mailbox management of the shared buffer")
-attempted to introduce generic helpers for managing the PCC shared memory,
-but it largely duplicates functionality already provided by the mailbox
-core and leaves gaps:
+Sorry, I've sent this twise by mistake.
 
-1. TX preparation: The mailbox framework already supports this via
-  ->tx_prepare callback for mailbox clients. The patch adds
-  pcc_write_to_buffer() and expects clients to toggle pchan->chan.manage_writes,
-  but no drivers set manage_writes, so pcc_write_to_buffer() has no users.
+								Honza
 
-2. RX handling: Data reception is already delivered through
-   mbox_chan_received_data() and client ->rx_callback. The patch adds an
-   optional pchan->chan.rx_alloc, which again has no users and duplicates
-   the existing path.
-
-3. Completion handling: While adding last_tx_done is directionally useful,
-   the implementation only covers Type 3/4 and fails to handle the absence
-   of a command_complete register, so it is incomplete for other types.
-
-Given the duplication and incomplete coverage, revert this change. Any new
-requirements should be addressed in focused follow-ups rather than bundling
-multiple behavioral changes together.
-
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/mailbox/pcc.c | 102 ++----------------------------------------
- include/acpi/pcc.h    |  29 ------------
- 2 files changed, 4 insertions(+), 127 deletions(-)
-
-diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-index 0a00719b2482..f6714c233f5a 100644
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -306,22 +306,6 @@ static void pcc_chan_acknowledge(struct pcc_chan_info *pchan)
- 		pcc_chan_reg_read_modify_write(&pchan->db);
- }
- 
--static void *write_response(struct pcc_chan_info *pchan)
--{
--	struct pcc_header pcc_header;
--	void *buffer;
--	int data_len;
--
--	memcpy_fromio(&pcc_header, pchan->chan.shmem,
--		      sizeof(pcc_header));
--	data_len = pcc_header.length - sizeof(u32) + sizeof(struct pcc_header);
--
--	buffer = pchan->chan.rx_alloc(pchan->chan.mchan->cl, data_len);
--	if (buffer != NULL)
--		memcpy_fromio(buffer, pchan->chan.shmem, data_len);
--	return buffer;
--}
--
- /**
-  * pcc_mbox_irq - PCC mailbox interrupt handler
-  * @irq:	interrupt number
-@@ -333,8 +317,6 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
- {
- 	struct pcc_chan_info *pchan;
- 	struct mbox_chan *chan = p;
--	struct pcc_header *pcc_header = chan->active_req;
--	void *handle = NULL;
- 
- 	pchan = chan->con_priv;
- 
-@@ -358,17 +340,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
- 	 * required to avoid any possible race in updatation of this flag.
- 	 */
- 	pchan->chan_in_use = false;
--
--	if (pchan->chan.rx_alloc)
--		handle = write_response(pchan);
--
--	if (chan->active_req) {
--		pcc_header = chan->active_req;
--		if (pcc_header->flags & PCC_CMD_COMPLETION_NOTIFY)
--			mbox_chan_txdone(chan, 0);
--	}
--
--	mbox_chan_received_data(chan, handle);
-+	mbox_chan_received_data(chan, NULL);
- 
- 	pcc_chan_acknowledge(pchan);
- 
-@@ -412,24 +384,9 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
- 	pcc_mchan = &pchan->chan;
- 	pcc_mchan->shmem = acpi_os_ioremap(pcc_mchan->shmem_base_addr,
- 					   pcc_mchan->shmem_size);
--	if (!pcc_mchan->shmem)
--		goto err;
--
--	pcc_mchan->manage_writes = false;
--
--	/* This indicates that the channel is ready to accept messages.
--	 * This needs to happen after the channel has registered
--	 * its callback. There is no access point to do that in
--	 * the mailbox API. That implies that the mailbox client must
--	 * have set the allocate callback function prior to
--	 * sending any messages.
--	 */
--	if (pchan->type == ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
--		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
--
--	return pcc_mchan;
-+	if (pcc_mchan->shmem)
-+		return pcc_mchan;
- 
--err:
- 	mbox_free_channel(chan);
- 	return ERR_PTR(-ENXIO);
- }
-@@ -460,38 +417,8 @@ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
- }
- EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
- 
--static int pcc_write_to_buffer(struct mbox_chan *chan, void *data)
--{
--	struct pcc_chan_info *pchan = chan->con_priv;
--	struct pcc_mbox_chan *pcc_mbox_chan = &pchan->chan;
--	struct pcc_header *pcc_header = data;
--
--	if (!pchan->chan.manage_writes)
--		return 0;
--
--	/* The PCC header length includes the command field
--	 * but not the other values from the header.
--	 */
--	int len = pcc_header->length - sizeof(u32) + sizeof(struct pcc_header);
--	u64 val;
--
--	pcc_chan_reg_read(&pchan->cmd_complete, &val);
--	if (!val) {
--		pr_info("%s pchan->cmd_complete not set", __func__);
--		return -1;
--	}
--	memcpy_toio(pcc_mbox_chan->shmem,  data, len);
--	return 0;
--}
--
--
- /**
-- * pcc_send_data - Called from Mailbox Controller code. If
-- *		pchan->chan.rx_alloc is set, then the command complete
-- *		flag is checked and the data is written to the shared
-- *		buffer io memory.
-- *
-- *		If pchan->chan.rx_alloc is not set, then it is used
-+ * pcc_send_data - Called from Mailbox Controller code. Used
-  *		here only to ring the channel doorbell. The PCC client
-  *		specific read/write is done in the client driver in
-  *		order to maintain atomicity over PCC channel once
-@@ -507,37 +434,17 @@ static int pcc_send_data(struct mbox_chan *chan, void *data)
- 	int ret;
- 	struct pcc_chan_info *pchan = chan->con_priv;
- 
--	ret = pcc_write_to_buffer(chan, data);
--	if (ret)
--		return ret;
--
- 	ret = pcc_chan_reg_read_modify_write(&pchan->cmd_update);
- 	if (ret)
- 		return ret;
- 
- 	ret = pcc_chan_reg_read_modify_write(&pchan->db);
--
- 	if (!ret && pchan->plat_irq > 0)
- 		pchan->chan_in_use = true;
- 
- 	return ret;
- }
- 
--
--static bool pcc_last_tx_done(struct mbox_chan *chan)
--{
--	struct pcc_chan_info *pchan = chan->con_priv;
--	u64 val;
--
--	pcc_chan_reg_read(&pchan->cmd_complete, &val);
--	if (!val)
--		return false;
--	else
--		return true;
--}
--
--
--
- /**
-  * pcc_startup - Called from Mailbox Controller code. Used here
-  *		to request the interrupt.
-@@ -583,7 +490,6 @@ static const struct mbox_chan_ops pcc_chan_ops = {
- 	.send_data = pcc_send_data,
- 	.startup = pcc_startup,
- 	.shutdown = pcc_shutdown,
--	.last_tx_done = pcc_last_tx_done,
- };
- 
- /**
-diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
-index 9af3b502f839..840bfc95bae3 100644
---- a/include/acpi/pcc.h
-+++ b/include/acpi/pcc.h
-@@ -17,35 +17,6 @@ struct pcc_mbox_chan {
- 	u32 latency;
- 	u32 max_access_rate;
- 	u16 min_turnaround_time;
--
--	/* Set to true to indicate that the mailbox should manage
--	 * writing the dat to the shared buffer. This differs from
--	 * the case where the drivesr are writing to the buffer and
--	 * using send_data only to  ring the doorbell.  If this flag
--	 * is set, then the void * data parameter of send_data must
--	 * point to a kernel-memory buffer formatted in accordance with
--	 * the PCC specification.
--	 *
--	 * The active buffer management will include reading the
--	 * notify_on_completion flag, and will then
--	 * call mbox_chan_txdone when the acknowledgment interrupt is
--	 * received.
--	 */
--	bool manage_writes;
--
--	/* Optional callback that allows the driver
--	 * to allocate the memory used for receiving
--	 * messages.  The return value is the location
--	 * inside the buffer where the mailbox should write the data.
--	 */
--	void *(*rx_alloc)(struct mbox_client *cl,  int size);
--};
--
--struct pcc_header {
--	u32 signature;
--	u32 flags;
--	u32 length;
--	u32 command;
- };
- 
- /* Generic Communications Channel Shared Memory Region */
+> > ---
+> >  fs/namei.c | 55 ++++++++++++++++++++++++++++++++++++-------------------
+> >  1 file changed, 36 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 903b70a82530938a0fdf10508529a1b7cc38136d..d4b8330a3eb97e205dc2e71766fed1e45503323b 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -3370,6 +3370,32 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+> >  	return mode;
+> >  }
+> >  
+> > +static int __vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> > +			struct dentry *dentry, umode_t mode, bool want_excl,
+> > +			struct inode **delegated_inode)
+> > +{
+> > +	int error;
+> > +
+> > +	error = may_create(idmap, dir, dentry);
+> > +	if (error)
+> > +		return error;
+> > +
+> > +	if (!dir->i_op->create)
+> > +		return -EACCES;	/* shouldn't it be ENOSYS? */
+> > +
+> > +	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+> > +	error = security_inode_create(dir, dentry, mode);
+> > +	if (error)
+> > +		return error;
+> > +	error = try_break_deleg(dir, delegated_inode);
+> > +	if (error)
+> > +		return error;
+> > +	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
+> > +	if (!error)
+> > +		fsnotify_create(dir, dentry);
+> > +	return error;
+> > +}
+> > +
+> >  /**
+> >   * vfs_create - create new file
+> >   * @idmap:	idmap of the mount the inode was found from
+> > @@ -3389,23 +3415,7 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+> >  int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> >  	       struct dentry *dentry, umode_t mode, bool want_excl)
+> >  {
+> > -	int error;
+> > -
+> > -	error = may_create(idmap, dir, dentry);
+> > -	if (error)
+> > -		return error;
+> > -
+> > -	if (!dir->i_op->create)
+> > -		return -EACCES;	/* shouldn't it be ENOSYS? */
+> > -
+> > -	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+> > -	error = security_inode_create(dir, dentry, mode);
+> > -	if (error)
+> > -		return error;
+> > -	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
+> > -	if (!error)
+> > -		fsnotify_create(dir, dentry);
+> > -	return error;
+> > +	return __vfs_create(idmap, dir, dentry, mode, want_excl, NULL);
+> >  }
+> >  EXPORT_SYMBOL(vfs_create);
+> >  
+> > @@ -4278,6 +4288,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+> >  	struct path path;
+> >  	int error;
+> >  	unsigned int lookup_flags = 0;
+> > +	struct inode *delegated_inode = NULL;
+> >  
+> >  	error = may_mknod(mode);
+> >  	if (error)
+> > @@ -4296,8 +4307,9 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+> >  	idmap = mnt_idmap(path.mnt);
+> >  	switch (mode & S_IFMT) {
+> >  		case 0: case S_IFREG:
+> > -			error = vfs_create(idmap, path.dentry->d_inode,
+> > -					   dentry, mode, true);
+> > +			error = __vfs_create(idmap, path.dentry->d_inode,
+> > +					     dentry, mode, true,
+> > +					     &delegated_inode);
+> >  			if (!error)
+> >  				security_path_post_mknod(idmap, dentry);
+> >  			break;
+> > @@ -4312,6 +4324,11 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+> >  	}
+> >  out2:
+> >  	done_path_create(&path, dentry);
+> > +	if (delegated_inode) {
+> > +		error = break_deleg_wait(&delegated_inode);
+> > +		if (!error)
+> > +			goto retry;
+> > +	}
+> >  	if (retry_estale(error, lookup_flags)) {
+> >  		lookup_flags |= LOOKUP_REVAL;
+> >  		goto retry;
+> > 
+> > -- 
+> > 2.51.0
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
