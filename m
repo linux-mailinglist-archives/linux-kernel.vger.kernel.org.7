@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-833488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B00DBA224A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:26:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E799CBA2256
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AB317837F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C171B25907
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A826D1632DD;
-	Fri, 26 Sep 2025 01:26:20 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EAF18C011;
+	Fri, 26 Sep 2025 01:26:25 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9AB34BA4D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786AC189
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758849980; cv=none; b=twl7WlFLbmD6W3JYlMiJG9vBPpzKLG4/xQFTx41IW5t1Xq3oXHUYzgc/W7PL5/2PJY38zAEafxE/meq9RVB7eAGYdatNDJbwAlMtxvrKnPdpgg6Jsk9Gd+uHMx6Th5t8F4GDfNzhSBeJ+U2dBOFF/wVlHmRu65euwEwwq15OfSY=
+	t=1758849984; cv=none; b=GGYW09YgCu+1obxymFsKtIn4I7ogQgJJnoWpSGhHlMxWWgxFrRZLU/aBBNFiIAJlCPlYygguqzLNEinNpwUVJ4u0OAxxhczcLI6uMcvKMicbYPY4dtf560FDVEWXz4B2HenVY6/NlowHcXLDsbYnlfHY6PWN0ija9ULKe1W6QLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758849980; c=relaxed/simple;
-	bh=9xtlaHqSJpnawlTh/8lp8pB89eiG8//+OrDD9UykXq4=;
+	s=arc-20240116; t=1758849984; c=relaxed/simple;
+	bh=hUy9cPtn+0FbMG70hQxrb1OaBE0M7sholQty5UpEPJ8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DwCR4Y1ghHK0TEYmeedjYR6xQjoa3OWj5HkrWJI8Amsh7vbxn63t4pQ83Lj/mczTvgKltB6ybkHbs4enAY/b6KVS8UoSZIDxTTeWUfkq6W4PIt2vlcli7WvRA4YfQYlmaXrnJaCLnrnFnxIcJSoVIPclXvKraN40T+594rh3Vo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	 MIME-Version:Content-Type; b=ACYGmI+vOJbO5zmUO3X1Opti4VoBaWjm0Tr+AdzmT1qJ46ScvrQfmIkpHOE4eY5ICvvKYwr/y8VAGapILY9u9QsFfbzxs/yaV9AAysef7yLB0qupWH7sPEFpHYbsSycIBDYEB5JEaTyZ3CgnUWJsZ/jbwm2XvlRQ2XSRFV9f9F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cXt8d19WrzQl7q;
-	Fri, 26 Sep 2025 09:21:37 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id E639D180B5C;
-	Fri, 26 Sep 2025 09:26:15 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cXt8z20ymz13NW2;
+	Fri, 26 Sep 2025 09:21:55 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 675DB1402CB;
+	Fri, 26 Sep 2025 09:26:16 +0800 (CST)
 Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 26 Sep 2025 09:26:15 +0800
+ 15.2.1544.11; Fri, 26 Sep 2025 09:26:16 +0800
 Received: from localhost.huawei.com (10.169.71.169) by
  kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -51,9 +51,9 @@ CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
 	<fengsheng5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
 	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
 	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 drm-dp 3/4] drm/hisilicon/hibmc: fix no showing problem with loading hibmc manually
-Date: Fri, 26 Sep 2025 09:14:59 +0800
-Message-ID: <20250926011500.2545817-4-shiyongbang@huawei.com>
+Subject: [PATCH v8 drm-dp 4/4] drm/hisilicon/hibmc: Adding reset colorbar cfg in dp init.
+Date: Fri, 26 Sep 2025 09:15:00 +0800
+Message-ID: <20250926011500.2545817-5-shiyongbang@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250926011500.2545817-1-shiyongbang@huawei.com>
 References: <20250926011500.2545817-1-shiyongbang@huawei.com>
@@ -70,49 +70,32 @@ X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
 
 From: Baihan Li <libaihan@huawei.com>
 
-When using command rmmod and insmod, there is no showing in second time
-insmoding. Because DP controller won't send HPD signals, if connection
-doesn't change or controller isn't reset. So add reset before unreset
-in hibmc_dp_hw_init().
-
-And also need to move the HDCP cfg after DP controller de-resets, so
-that HDCP configuration takes effect.
+Add colorbar disable operation before reset chontroller, to make sure
+colorbar status is clear in the DP init, so if rmmod the driver and the
+previous colorbar configuration will not affect the next time insmod the
+driver.
 
 Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
 Signed-off-by: Baihan Li <libaihan@huawei.com>
 Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
-ChangeLog:
-v4 -> v5:
-  - combined 9 and 11 patch together, suggested by Dmitry Baryshkov.
----
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-index 23df0d5228ca..2954e3066923 100644
+index 2954e3066923..b458cb7628d5 100644
 --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
 +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -177,13 +177,16 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
- 	dp_dev->link.cap.lanes = 0x2;
- 	dp_dev->link.cap.link_rate = DP_LINK_BW_8_1;
- 
--	/* hdcp data */
--	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
+@@ -180,6 +180,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
  	/* int init */
  	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
  	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
++	/* clr colorbar */
++	writel(0, dp_dev->base + HIBMC_DP_COLOR_BAR_CTRL);
  	/* rst */
-+	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
-+	usleep_range(30, 50);
-+	/* de-rst */
- 	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
-+	/* hdcp data */
-+	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
- 	/* clock enable */
- 	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
- 
+ 	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
+ 	usleep_range(30, 50);
 -- 
 2.33.0
 
