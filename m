@@ -1,122 +1,77 @@
-Return-Path: <linux-kernel+bounces-834219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98166BA4356
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:32:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDF4BA4350
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2AE176942
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:32:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDA1C2A3325
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B842D21858D;
-	Fri, 26 Sep 2025 14:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821311C84B2;
+	Fri, 26 Sep 2025 14:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="FuugvlCa"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XSqU27En"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535D52116E7;
-	Fri, 26 Sep 2025 14:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896950; cv=pass; b=mg/Hdyr0bOQnno6d8rs+LZwyhEhijKb4F1rwaywNRv3uY5Y1DfDebbk7CSWas9oTDuvHtUWXtSMLad3ymE34UGctoNEcvGmSeq7CYww9s+9M53A4M54a5mu5gOqjF9jRH3quUxUPwGDI8UUWn27K/dpmtLYfJ8u2ON3yIVV/Jck=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896950; c=relaxed/simple;
-	bh=Tmlfs7vmbvrGil0urNAjBMrst5tp49VMQUUOgrwI7kA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oamiahVcgagyrYon+9UztVIBjoWtoqusxGQ/l2i2yWQSqo4y99tFhen1geQjR/6REv9qJvK0bzAF9SownNqg5wRDkYDW3v4sggpX6w0CvaHLHZUSa8iMGcNpiOaTOam43tjc0gaqWdOt38cL2hQew912uLHiGOwNVfwga9C8NWQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=FuugvlCa; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758896933; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LiL02BSGQZ5ytPMrAU7fzsgyGu004PQCrF+o3pkV49Gn0Naaaagx2MrWv8h17/ieZ++pzWEfHBvf/QnC+C2tT3Lqwdy8XJEmdpTIgk/xQZMvzFmAmuTDyr0ujrlEnijRtUQTEuHzXmHxHlbtwTYEewNRPkXAGCziAJ77cqhCoMg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758896933; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=26YfjhR80XqVvp3T4GXiOY1ZVSaa9CIx9x33j2hmPnU=; 
-	b=Arha/5GW8rJzpUz+TOpn+9ORBNoQxtxhJFG8vE5Gqzi3c40hk6jfC6gyiNNq922ZO7waYSY3++nyDIH4eFUp1ICjzqU4xjhQeXgx/VvyonGqoY5DWiWfot+uZ0UtAettFA1wFwjCC2KXKfIJMuqRQm2U6USOWeFUfomqE5kZPCc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
-	dmarc=pass header.from=<sjoerd@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758896933;
-	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=26YfjhR80XqVvp3T4GXiOY1ZVSaa9CIx9x33j2hmPnU=;
-	b=FuugvlCaYubKjIun3Ml+KCPMgmQsDCkyyh/gcIASO2PnatTX1la4+bNybAn2e/MG
-	Ol4fJBOMpEHcovpSXMfBvJvsmeTLv927ykfl4RNovCHrf/OZrR/I9UlFcgzWpdu651M
-	KNKe2Utdu20BgSVudn6qATfOCn47yxZYm3wY6A9A=
-Received: by mx.zohomail.com with SMTPS id 1758896931799989.2968902254092;
-	Fri, 26 Sep 2025 07:28:51 -0700 (PDT)
-Message-ID: <638b9565b90714f56caa9535b7b9b96cd86100d6.camel@collabora.com>
-Subject: Re: Support for Rock PI-4b
-From: Sjoerd Simons <sjoerd@collabora.com>
-To: Mostafa Saleh <smostafa@google.com>, devicetree@vger.kernel.org, 
- "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
- linux-rockchip@lists.infradead.org, open list <linux-kernel@vger.kernel.org>
-Cc: Rob Herring <robh@kernel.org>, krzk+dt@kernel.org, conor+dt@kernel.org, 
- Heiko Stuebner
-	 <heiko@sntech.de>
-Date: Fri, 26 Sep 2025 16:28:48 +0200
-In-Reply-To: <CAFgf54oYjUEg9KkQUzneYTZH1Z8cX56va5M0853eWPFaYT+Z2A@mail.gmail.com>
-References: 
-	<CAFgf54oYjUEg9KkQUzneYTZH1Z8cX56va5M0853eWPFaYT+Z2A@mail.gmail.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898991C84D0
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758896942; cv=none; b=E4+COscCCn7fZs0nApe6pCJII6bqGelbWfp7OIBK646NxGhAuzR47FBWVn8h1s3sAUfXKBgvImuabvkNGizkgZ8k2PQQkIXonVYzZYdSRkFO+6YCTTjcxAMUzQ+wStFkYetEPqZsokdRAxlfstJyniYkx0njxEVVt6b8Pa8BFu8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758896942; c=relaxed/simple;
+	bh=00v6MirzP4QEvBylEctFh7muMmPA8J8nPJMfbun/HSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7HkuJWF2bABeiWo4slgZlE4AC1RA6Dfhxy/1MnsOhf4JcfK0lxcymiueKovZR3TbNCuRFrvO08Lumltjm40E0xqjQ4azDId5/q0iSrliteZT7cPl8tNDUJersRnNMjib7cfhEWcmS8jD87pqK58HEBS4BfDwEoMoblcWDxLYTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XSqU27En; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:content-transfer-encoding
+	:in-reply-to; s=k1; bh=00v6MirzP4QEvBylEctFh7muMmPA8J8nPJMfbun/H
+	SM=; b=XSqU27EnmXYl3Tz0pztgPK16Fl4QqKaVl6BSonzIg4xyoSnBLqf1Mq4mH
+	v3gRIeqIxEegnAYqEUwrf8GfkkEvlen6JZiS3w4OMB8Ci3xfKFSCThJw4pvlJNC2
+	5u/svt1LFakI8Mpv/wk9YD0gQ6DrO2AcnD2/agQWofElI/hlbFqhOPFp/Z4mpQl1
+	Mati5ivvH3rr3hI5fiTJ6L1gxKVzjcP84d6Dw2Yn2E0ERxMu58m3WvwufZwdwCCL
+	THYQ7mv36T5wyFtY0sYYIVuQklkCfOs59TPgMpyK3y47uFY3BSrQdQfBDy9Rf9jc
+	h9zGPoX5Lf3iRQH8+t1MR2UDG3eJg==
+Received: (qmail 2289488 invoked from network); 26 Sep 2025 16:28:56 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Sep 2025 16:28:56 +0200
+X-UD-Smtp-Session: l3s3148p1@wt0NG7U/RsogAwDPXwQHAL/S9V79e5yL
+Date: Fri, 26 Sep 2025 16:28:55 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Yixun Lan <dlan@gentoo.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v2 6/6] i2c: spacemit: introduce pio for k1
+Message-ID: <aNajJ0RZ4Ku0eDXr@shikoro>
+References: <20250925-k1-i2c-atomic-v2-0-46dc13311cda@linux.spacemit.com>
+ <20250925-k1-i2c-atomic-v2-6-46dc13311cda@linux.spacemit.com>
+ <20250926111055-GYB1324993@gentoo.org>
+ <E4EE696368DDDB1E+aNaRl8upyNeld9zX@troy-wujie14pro-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
-
-On Fri, 2025-09-26 at 15:07 +0100, Mostafa Saleh wrote:
-> Hi,
->=20
-> I am trying to run Linux[1] on my Rock PI-4b, which I see is supported in
-> the kernel in =E2=80=9Crk3399-rock-pi-4b.dts=E2=80=9D.
->=20
-> However, compiling =E2=80=9Cdefconfig=E2=80=9D (ARM64) and flashing my Im=
-age doesn=E2=80=99t
-> work,
-> It just hangs before any console (even with earlycon), I tried to also us=
-e
-> some of the vendor configs with no luck.
-> I did some research and found that [2], which indicates that the upstream
-> support has been broken for some years?
-
-We've got the Rock 4b in our automated testing lab as part of kernelci and =
-other
-efforts. Upstream works just fine on those boards, so it's likely an issue =
-in
-your setup.
-
-See e.g https://lava.collabora.dev/scheduler/job/19978558#L525 for a recent
-upstream kernel boot.
-
-Regards,
-  Sjoerd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <E4EE696368DDDB1E+aNaRl8upyNeld9zX@troy-wujie14pro-arch>
 
 
->=20
-> Has anyone tried to flash a recent kernel successfully on it? or any
-> tips are greatly appreciated.
-> Otherwise, maybe it can be removed to avoid misleading other developers
-> (I got this board to do some upstream kernel development on)
->=20
-> [1] base: 4ff71af020ae59ae2d83b174646fc2ad9fcd4dc4
-> [2] https://wiki.radxa.com/Rockpi4/dev/kernel-mainline
->=20
-> Thanks,
-> Mostafa
->=20
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> Since patches 1–5 have already been merged,
+> should I keep the current version number and just send this single patch ?
+
+Yes, please.
+
 
