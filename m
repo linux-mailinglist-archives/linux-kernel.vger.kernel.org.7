@@ -1,87 +1,121 @@
-Return-Path: <linux-kernel+bounces-833874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A79BA3449
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:00:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB608BA344D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E07E4E2BAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0CB624F02
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A38E2BDC03;
-	Fri, 26 Sep 2025 09:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F1225EFBF;
+	Fri, 26 Sep 2025 10:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p2wfhmnm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jKNarGAY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52E529C323;
-	Fri, 26 Sep 2025 09:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC83E2BD031
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758880795; cv=none; b=hSa/zLD/NO2mu8kIp+n5z48IuEBKA44lBErsczjnJHANJWzSiDDzOuB5BITj+vYZZ0tQUwJneC9JBg13oEqTajwlv+eOiLzCICYWw+k3AM6yI4yG5DPFLo4TKoLXx8H+/irB4rMtegS3WewFVNvSzhCpB2MzQBpgg4IwJquWKWw=
+	t=1758880804; cv=none; b=MPusI4zZIwdJnLraQ0DBIZoqc9jkRqDgwo6Me1JNz35tzqYy6DpG72WDc/PNOae6TRzBaJhuSB2FfplQk1rVyDVKG0dj0PHL0kuSuYGEQVowafyA6/sU4zDw45n0lS7OC+WKbTxiUGdbTNlrcjDJK6DJsuAT3X5fFd+7x3Dcx8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758880795; c=relaxed/simple;
-	bh=Vz2mRzmLO/vc87vmSaWw7k2AvWjaU3Y0LKHO/ukbElg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B31rMds51jY69bH7/GZGo5zZHEwjMENWH73We+KmbmvHjRQTjsEN1uC68KpYGT0HhSrzKiHtnnk3rafMsigy2/YUSa1eMxmdBaNGkcnlV8/DhlgRDaILT4W2SXt7bxoCd1JfP8LTTIVjdegXIlaSr089mLXyIOFDvuOYy30Q+P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p2wfhmnm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Vz2mRzmLO/vc87vmSaWw7k2AvWjaU3Y0LKHO/ukbElg=; b=p2wfhmnmUwJH3a//KTSKX6ed7U
-	XUXJ6SoweUNbk8Xszb/f9eb98lU7jGGTEtmvAaJ2O/+1eukfXJ6YXKAhBpnTFgniOYSO25AQf3Ip2
-	qs6PEbb2K7pKeXJar4K+MybCrKpin2+6wV4tYVXiWi0UH4rQtR8pY4e19NqaM58iTLPhnIeQY3sEr
-	KdIzeM0Vhqe0SSItkOGcuGGT0nkblsOCHtgYyF2Y7ci0q6L2Hg+7M26WwrXUCCDfUt14f0CrIpxsA
-	BMHxav0fS7cV9PXkLWd8A3n7uBUKxy0n0sK9rVGSZSeZTbit9gnJh+FM7EsGrVyw7A7xXeDPufc3J
-	GJE4WxTA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v25Ej-00000009d3f-3Smy;
-	Fri, 26 Sep 2025 09:59:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0C54B3002BF; Fri, 26 Sep 2025 11:59:34 +0200 (CEST)
-Date: Fri, 26 Sep 2025 11:59:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
- __task_rq_lock()
-Message-ID: <20250926095934.GD4067720@noisy.programming.kicks-ass.net>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.684653538@infradead.org>
- <aMNnLenCytO_KEKg@slm.duckdns.org>
- <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
- <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
- <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
- <aMnk5Wcdr2q6BWqR@slm.duckdns.org>
- <aMnnslT_mUfAtytN@slm.duckdns.org>
- <20250925083533.GW4067720@noisy.programming.kicks-ass.net>
- <aNW3du48v3PvwPbq@slm.duckdns.org>
+	s=arc-20240116; t=1758880804; c=relaxed/simple;
+	bh=uWbM69PKcAA71KiLD9EkbzIltv1ivqDtmCQS5aznZ+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HdGRnycIO6b9FD1iOf72sjP1TkDmLRiCoD6xO/BnNVmnSbJ/ABw5Tfz87GelrNsxdMtJuwIxY1qwdvc2Mmf/HfXJvSIuXiZlxdMSXMA8wIAp1Pa5j/dcgfvjWJDQdfMuXvSUScg6r9rxHdGcjPuOr1x13n05w3ifyEo8xTdye5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jKNarGAY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B1CB740E016D;
+	Fri, 26 Sep 2025 10:00:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dSWDeF-ekk8w; Fri, 26 Sep 2025 09:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758880797; bh=n1VlRLe0YUyVX3vNDxLc+ZhKSnj+6+FQq7BIebNHjTc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jKNarGAY5o164jyiSfRB1YTyVKLCv/xlP62DT/mLVef2V0VJHLAVBueXqKVa7VglA
+	 z1bEaenafgkEqNL+/738uwFkCQ2NSijOqTcqb8yYhhl3K61jSlYouyptVdU9mOo9a1
+	 pQ0jzllYmKRCrh9n//abu9Vwpo1uUACHXa6pTcQ2WPE7CDLGejxs+5ZvWywkV3bTYb
+	 9X70UjSBVzhfZDnYu91rxz01GXzWvr67bVg6cYHvub4T48j65/pU/G5HSGeu03faGF
+	 2N5WU+6JJ9Jym5spczA3ngmvCHNFQ3EYKoypXTRpX/3uDeGbLo8mFx/x+ExadZBEeq
+	 j18EcgGYKlsB3L9ATp1K9Q++24xvKJCjvHTMc6OwptLG18W+8NXdq9uK98m3Tjs6YK
+	 zEosAVgb3GpKVrGfJaT3y/8CZKpBSfrPF/eXtAEH0XMFumcf8A8UtIkD5YG3DI/EpC
+	 njAy3FgWzeZlAw1DPJRaYtynsJDmioW/FtohRXbB3pVuTH3XUez3LPw7sikbsFDJEM
+	 YZsS6QVH8qcygxvlxwkH9PROFbd7S8kSWh8bXG4GRk1LHZENZsKhwVVdU8oUHl08LP
+	 W1tjHzFrJuvqWGFYPwmldGT6sCcMnvtMsK8gBELFdXpPPhJHvIL13NgyPSUI/Wv6ZW
+	 O1zbhgNObUW1ZDr9p4GaN+1o=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2FFB440E0176;
+	Fri, 26 Sep 2025 09:59:54 +0000 (UTC)
+Date: Fri, 26 Sep 2025 11:59:52 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/build for v6.18-rc1
+Message-ID: <20250926095952.GAaNZkGKIuQKymGBtv@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aNW3du48v3PvwPbq@slm.duckdns.org>
 
-On Thu, Sep 25, 2025 at 11:43:18AM -1000, Tejun Heo wrote:
+Hi Linus,
 
-> Can you point me to the RT interaction issue?
+please pull the x86/build lineup for v6.18-rc1.
 
-https://lkml.kernel.org/r/fca528bb34394de3a7e87a873fadd9df@honor.com
+Thx.
+
+---
+
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_build_for_v6.18_rc1
+
+for you to fetch changes up to 2c6a28f3ef729ed2d5b174b4e0f33172fb286bab:
+
+  x86/Kconfig: Clean up LLVM version checks in IBT configurations (2025-08-17 13:10:39 +0200)
+
+----------------------------------------------------------------
+- Remove and simplify a bunch of cc-option and compiler version checks
+  in the build machinery now that the minimal version of both compilers
+  supports them
+
+----------------------------------------------------------------
+Nathan Chancellor (6):
+      x86/build: Remove cc-option for GCC retpoline flags
+      x86/build: Remove cc-option from stack alignment flags
+      x86/build: Clean up stack alignment flags in CC_FLAGS_FPU
+      x86/build: Remove cc-option from -mno-fp-ret-in-387
+      x86/build: Remove cc-option from -mskip-rax-setup
+      x86/Kconfig: Clean up LLVM version checks in IBT configurations
+
+ arch/x86/Kconfig  |  8 +-------
+ arch/x86/Makefile | 25 +++++++------------------
+ 2 files changed, 8 insertions(+), 25 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
