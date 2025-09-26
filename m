@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-834530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBB3BA4E0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:20:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8930BA4E13
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB17328067
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3225C3AC7BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE59F30DEB5;
-	Fri, 26 Sep 2025 18:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B42930E830;
+	Fri, 26 Sep 2025 18:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8RvxJGN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7qk1OZa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4B52F60CC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3EC27A931;
 	Fri, 26 Sep 2025 18:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758910789; cv=none; b=FtQzqfO9L7gDbkEyjKsrjEsaoIaeHBnPFP8N1uWhbpXaw4IqCY+OuIJScgFgcCoX4IGylSwHmK0324AI6BF1CeVM6ApYRKnrjKfs8uYbNfL20huKNKlTq/pj26OLcGxYsRv6obn2hq+p1+lr75dZWZgHzyO35xVGIdx0WpuTpbE=
+	t=1758910789; cv=none; b=A8OMI/MtTJSbqTmB6XqucE6Z2tjAnoSjAw5+Oh4qQpts5IEFx/2lHEuqBxbe9fcuWGOfWZbE/KbY1erDxd021QXsBfVJutwAbmH38dsIP8lPSzePzdQGfM5oMiiuSwGIPZ+M4VIlRH3IT3Sw+XxKgbrJuEtNExTqpaPPpWV3Cts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758910789; c=relaxed/simple;
-	bh=lYVqTM5HGwA9Xf9f5r70Ei4he25vltCACwgM1SXxA1Y=;
+	bh=sm6pk3CdQrw44U2GOQJ7ecMtffanxNcl0ayW6p8ibWQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CGmPmvcwjqmd98ZtCnjlfacNgjqGdEMMfMZvNcaoudl9BwklAJV5QwcM6A8+e8wh4lCogJ1X2GI57WgZCm17RTNOLl3Y3bRCkrNe3XxWOSG2RhmQDHgMbu+XZrA4J8CoGPVomxxow2eh929QO7bOGTutRisW0xxioCP9jFcAyh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8RvxJGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8F05DC4CEF7;
+	 In-Reply-To:To:Cc; b=ENQp6TuQKr6UIwXw36uFL4po+dMzw5y+rpzCKB5/hbouCbuMfke2HJzInLjOcvU3W+HMx3h5cxQjxTGwrR+uAsvcNItxSLwhWPMKmT263sDo3LRk2L3tWH0+YOQGdTNe7bGhBANdP6oE0eUss4W+lYFh7fVEaw7Tl6hnxm5FtKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7qk1OZa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9C5F2C113CF;
 	Fri, 26 Sep 2025 18:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758910788;
-	bh=lYVqTM5HGwA9Xf9f5r70Ei4he25vltCACwgM1SXxA1Y=;
+	bh=sm6pk3CdQrw44U2GOQJ7ecMtffanxNcl0ayW6p8ibWQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=D8RvxJGN2EJb8fp2WswI1IxOP/pZOwR9SpLXITBjUXoKPP0zF7zYV7w/EFCmj09P7
-	 SQo6pIc6LRr7CVALcT2z9Wzp6XC17QPLKSQoTdfPeHnPXhx7wtu81Lck0p2H1AwoKF
-	 bDeE/ho2zKA4IyvMvLwgIuKeBG5CnpgCpQGOcHPPQuiFZ1PyOWWgUyfd2BPi5Q6iJe
-	 aHJe7bon7UjqbdCNcM8vH0V6jTZGWjbbqtHGz0sBOzmJq/7vk4hlZcpowEPTQEl93O
-	 ukg9iyFr0pEUQs1m/hKVC1iWpjZFLj3RXpKsIG0d5hJcSJQhsZMGDjVxiNFMjMhCXZ
-	 8ujOt5mgX6rxA==
+	b=W7qk1OZaaWme7MPrEnSHLc57hBBoK5kRFT2R0Z6Zgh2YDNWADeocsEDUju0YKl+Lb
+	 pD08+W3Bst7G45EsJCcZXelR8bb7fRJC0/ggI3gmf/Lh6+5IkPHUxKlL3YuZyJEa8L
+	 KJVR/GNIQX/TFm5obTc3RBxoPm58StM8sj23XT3mxsjjgeKo7KVROs/HHWX7WkF9OW
+	 kRtj6DF+BiiDrxYZTVaGTL6Lqg1osCXscw1c81kWKfpKz6RtwblXetDFPv1Hfe+g6q
+	 Rs7dsFotjhn5k5EXaVhUxO25tOx6SuNB1rBLvj2vP9qL6E7SEckqIHwRWLYIzXpeSY
+	 FMmO05Pno4O8w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C188CAC5BE;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF8CCAC5BB;
 	Fri, 26 Sep 2025 18:19:48 +0000 (UTC)
 From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
-Date: Fri, 26 Sep 2025 14:19:42 -0400
-Subject: [PATCH v4 3/4] usb: dwc3: dwc3-generic-plat: Add layerscape dwc3
- support
+Date: Fri, 26 Sep 2025 14:19:43 -0400
+Subject: [PATCH v4 4/4] arm64: dts: layerscape: add dma-coherent for usb
+ node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250926-ls_dma_coherence-v4-3-21e9c6bdb5cb@nxp.com>
+Message-Id: <20250926-ls_dma_coherence-v4-4-21e9c6bdb5cb@nxp.com>
 References: <20250926-ls_dma_coherence-v4-0-21e9c6bdb5cb@nxp.com>
 In-Reply-To: <20250926-ls_dma_coherence-v4-0-21e9c6bdb5cb@nxp.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -67,11 +67,11 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
  bjorn.andersson@oss.qualcomm.com, imx@lists.linux.dev, 
  Frank Li <Frank.Li@nxp.com>, Ze Huang <huang.ze@linux.dev>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758910787; l=2222;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758910787; l=8726;
  i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=x/YV7GviRuKrxoFTMOltiDCmXq8scFHKV8v3SyDackg=;
- b=zZv6x5+g8lfoX1KRaaggYbBkew2o/+XvY0hrd96Jjw8UPPJxQY0NRQWt4cPlSUCLsW32ifK71
- nSDr3kZJ75IA3vYcn4qGZcMwlwp0IBo4XbvweePGgD892OhcCvN/iaI
+ bh=3lvyIi6EPuFI5jSKT6nJyBbhpNULKOOS4uIt6qtJysI=;
+ b=leGYfUfAQDlehredD7ypAlfeodCvH+h1hzmW0R6jOyeA4ftCQip3BgvkhsWNIW0p6DCmMpb0u
+ RzTx4OEwQqLBnUVKwzKc7g3Cwnz9IGxXL0CpM8q8RLyQduJD34Nh/Ox
 X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
  pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
 X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
@@ -81,69 +81,227 @@ Reply-To: Frank.Li@nxp.com
 
 From: Frank Li <Frank.Li@nxp.com>
 
-Add layerscape dwc3 support by using flatten dwc3 core library. Layerscape
-dwc3 need set gsbuscfg0-reqinfo as 0x2222 when dma-coherence set.
+Add SOC special compatible string, remove fallback snps,dwc3 to let flatten
+dwc3-layerscape driver to be probed and enable dma-coherence for usb node
+since commit add layerscape dwc3 support, which set correct gsbustcfg0
+value.
+
+Add iommus property to run at old uboot, which use fixup add iommus by
+check compatible string snsp,dwc3 compatible string.
 
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-chagne in v4
-- rename gsbuscfg0 to gsbuscfg0_reqinfo
-- use flatten core's properties.
-
-change in v3 (skipped)
+change in v3 - v4
+- none
 ---
- drivers/usb/dwc3/dwc3-generic-plat.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 3 ++-
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 8 ++++++--
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 9 ++++++---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 9 ++++++---
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 8 ++++++--
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 8 ++++++--
+ 6 files changed, 32 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index af95a527dcc27a7a14d38dcc887f74a888ed91e6..cfcefeffd7ad6c0a21ccc9aaa4483b9acb9dc4e0 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -8,6 +8,7 @@
-  */
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+index fc3e138077b86cd5e3cf95c3d336cb3c6e1c45ef..ef80bf6a604f475c670e2d626a727e94fcb2a17a 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+@@ -493,10 +493,11 @@ QORIQ_CLK_PLL_DIV(4)>,
+ 		};
  
- #include <linux/clk.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
- #include "glue.h"
-@@ -29,6 +30,7 @@ static void dwc3_generic_reset_control_assert(void *data)
+ 		usb0: usb@2f00000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,ls1012a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x2f00000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
++			dma-coherent;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 7d172d7e5737c4b6e42ee88676c5763fa7415260..e7f9c9319319a69d8c70d1e26446b899c3599f95 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -613,9 +613,11 @@ gpio3: gpio@2320000 {
+ 		};
  
- static int dwc3_generic_probe(struct platform_device *pdev)
- {
-+	const struct dwc3_properties *properties;
- 	struct dwc3_probe_data probe_data = {};
- 	struct device *dev = &pdev->dev;
- 	struct dwc3_generic *dwc3g;
-@@ -75,7 +77,13 @@ static int dwc3_generic_probe(struct platform_device *pdev)
- 	probe_data.dwc = &dwc3g->dwc;
- 	probe_data.res = res;
- 	probe_data.ignore_clocks_and_resets = true;
--	probe_data.properties = DWC3_DEFAULT_PROPERTIES;
-+
-+	properties = of_device_get_match_data(dev);
-+	if (of_dma_is_coherent(pdev->dev.of_node) && properties)
-+		probe_data.properties = *properties;
-+	else
-+		probe_data.properties = DWC3_DEFAULT_PROPERTIES;
-+
- 	ret = dwc3_core_probe(&probe_data);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to register DWC3 Core\n");
-@@ -146,8 +154,13 @@ static const struct dev_pm_ops dwc3_generic_dev_pm_ops = {
- 		       dwc3_generic_runtime_idle)
- };
+ 		usb0: usb@3100000 {
+-			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
++			compatible = "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3100000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++			iommus = <&smmu 1>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -623,9 +625,11 @@ usb0: usb@3100000 {
+ 		};
  
-+static const struct dwc3_properties fsl_ls1028_dwc3 = {
-+	.gsbuscfg0_reqinfo = 0x2222,
-+};
-+
- static const struct of_device_id dwc3_generic_of_match[] = {
- 	{ .compatible = "spacemit,k1-dwc3", },
-+	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dwc3_generic_of_match);
+ 		usb1: usb@3110000 {
+-			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
++			compatible = "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3110000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
++			iommus = <&smmu 2>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 73315c51703943d9ee5e1aa300c388ff6482423f..50d9b03a284a2aa4e13aa3323c25bbc5fe08f3d0 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -833,10 +833,11 @@ aux_bus: bus {
+ 			dma-ranges = <0x0 0x0 0x0 0x0 0x100 0x00000000>;
+ 
+ 			usb0: usb@2f00000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1043a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x2f00000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				usb3-lpm-capable;
+@@ -845,10 +846,11 @@ usb0: usb@2f00000 {
+ 			};
+ 
+ 			usb1: usb@3000000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1043a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3000000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				usb3-lpm-capable;
+@@ -857,10 +859,11 @@ usb1: usb@3000000 {
+ 			};
+ 
+ 			usb2: usb@3100000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1043a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3100000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				usb3-lpm-capable;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 770d91ef0310d971d044a1f55cc5e2cb738acc47..22173d69713d1bd2abca986e76668ad437dd34e4 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -749,10 +749,11 @@ aux_bus: bus {
+ 			dma-ranges = <0x0 0x0 0x0 0x0 0x100 0x00000000>;
+ 
+ 			usb0: usb@2f00000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1046a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x2f00000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -760,10 +761,11 @@ usb0: usb@2f00000 {
+ 			};
+ 
+ 			usb1: usb@3000000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1046a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3000000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -771,10 +773,11 @@ usb1: usb@3000000 {
+ 			};
+ 
+ 			usb2: usb@3100000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1046a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3100000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index 9d5726378aa015eff10578bf095908a58b9d9eee..b2f6cd237be046123de9342e2167aa32248a8a16 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -489,10 +489,12 @@ esdhc: mmc@2140000 {
+ 		};
+ 
+ 		usb0: usb@3100000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,ls1088a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3100000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
++			iommus = <&smmu 1>;
++			dma-coherent;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -500,10 +502,12 @@ usb0: usb@3100000 {
+ 		};
+ 
+ 		usb1: usb@3110000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,ls1088a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3110000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
++			iommus = <&smmu 2>;
++			dma-coherent;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index c9541403bcd8239a48d4ef79c7c4f9e3b607b556..d899c0355e51dd457a4e7259709cea98a488f557 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -1094,24 +1094,28 @@ ftm_alarm0: rtc@2800000 {
+ 		};
+ 
+ 		usb0: usb@3100000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,lx2160a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3100000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			usb3-lpm-capable;
++			iommus = <&smmu 1>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+ 			status = "disabled";
+ 		};
+ 
+ 		usb1: usb@3110000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,lx2160a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3110000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			usb3-lpm-capable;
++			iommus = <&smmu 2>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+ 			status = "disabled";
 
 -- 
 2.34.1
