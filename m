@@ -1,157 +1,131 @@
-Return-Path: <linux-kernel+bounces-834574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B29BA4F91
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:35:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA5DBA4F9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4F61B27C69
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB20D4C424E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009927FB1E;
-	Fri, 26 Sep 2025 19:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B3727FD46;
+	Fri, 26 Sep 2025 19:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tUtyt6xt"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iCyokDs4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0365F231842;
-	Fri, 26 Sep 2025 19:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2149E27FB2B
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758915329; cv=none; b=rtCaTtaoznKjExTL5w1FinrifeifqmrVoOW/w2rIkOMA6I47X9ktFc30HJtwAGlhbBTxR/AWes7U3lofITPK0y2be/H9v4ZhIoxAwaZYTQXA7LsvHI8a9tS9C6T7+e2jSUUlcbWDEp0m0+Iyhhni8z12X9JeILyDD7vvb2CX+Qk=
+	t=1758915378; cv=none; b=Ox2Jd0RuMO3Up7V6mD2SDtXDpKHrYL+aXo3U2EqiKbHjEeGQ0/Nq2qFVwiJdNEoiwGmETm6TKpshC6XSPxWnlaiRNGDUGcvOVhP38A6D784Y0vksLtu8HqkkmJMP6OxsMtdtsijOQ0d0WwpiiA9V/8u9kpSwj6f0KSsDMsEazB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758915329; c=relaxed/simple;
-	bh=Ez8O04TVMHIRGCKH1RLZv4FTMc5LUlJ4PfwBFQ+HxN4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=VpF0lnbYB3OZjvTjzyRCshWAjBuMZ9tSt6vdbHfDe4VIittHDC5SaaUp6DOWy3V+83oQLHZJWsiD0nGVAlC8O/AFG5cNJT7Cw3FZBLn+wtWEIhowOTZ1MEhAn6I4Y3GAPRLxCmWhye1fWbxqNZ3+UyTb4vDHjkHF4cYreeR/nLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tUtyt6xt; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758915314; x=1759520114; i=markus.elfring@web.de;
-	bh=Ez8O04TVMHIRGCKH1RLZv4FTMc5LUlJ4PfwBFQ+HxN4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tUtyt6xtS+9lO4W3XNq3vQOO+7YLaq2EHga6Gl1VjnpTUQmtdylPaJEnluzq8YvW
-	 gjyev7utoICF/tQTp3+/zDn/sit3OuFYga0mwKzjLeMVFvHD/ew2/5Biem9v6NKCh
-	 AFdppfqfCp3vUUGgTJAc6FTKFMJeilmTBBAm0GCs0pqdlLanbc6GLuY6PcDPLXtDk
-	 o+EHCV5mAQ9FxQWzzWsZvoR8v0zZfdvmInUxe9k1VYuHhijRlvxH7lbNJ+dgHCkPo
-	 cMjV4N8vxkQz1Q6NC0bYxTnyKnQmVr3ht6zhJMC+4drt5yjDLT41Lm4A2hoG0v7B3
-	 GbW9eb3fnHTu/M4pHw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTfol-1uuhHr0sZR-00QLGK; Fri, 26
- Sep 2025 21:35:14 +0200
-Message-ID: <83091f63-9462-44b9-8089-59af596cc712@web.de>
-Date: Fri, 26 Sep 2025 21:35:12 +0200
+	s=arc-20240116; t=1758915378; c=relaxed/simple;
+	bh=uuIq1t4c7qGDy0Lsti4d3Xt/7BKE5D5umR9UNUEgDjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uZi8h1DxfbowSK7G24Y6OvZrKpaBAZm82lZi/HpFT4OU+xERRQbZu647pSdRi9NgwY8NHuZd5aTB7U7oFL9WhSMqujAXjk5q79MfsxtM+NEOsS0u+2tILwNBkOmD3K5gclNDizjcfANRcRAVv1+ebFNzFOCoLl3wZ9ivTclGljo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iCyokDs4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758915374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sjnw97MU9jbLsmf1Uqxw2Nci38Y0dPqhhgHU46NMhgM=;
+	b=iCyokDs4VyUGQceifZAlObyTJn1p+3XZvw4vxy9DWyp8NdICnf9LePnuPRT8+/HgRSrAj9
+	2uh1vpFZBqSLnHf8g9qqAQ46PQG3/JusMo/ph3/NOZGrafblNVkOYVq7/f5etIecX9TQwe
+	867PP5vrC0XLL7RFHt8xQpKzN/XxdNw=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-344-UrqKQavuP5iDAjtOrDEYHA-1; Fri, 26 Sep 2025 15:36:11 -0400
+X-MC-Unique: UrqKQavuP5iDAjtOrDEYHA-1
+X-Mimecast-MFC-AGG-ID: UrqKQavuP5iDAjtOrDEYHA_1758915371
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4257e2f44e9so5750885ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:36:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758915371; x=1759520171;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Sjnw97MU9jbLsmf1Uqxw2Nci38Y0dPqhhgHU46NMhgM=;
+        b=qP49Hrc+8J8zHFxvg5o/5pf5zztbzr1WG/HNfHCY5Y/cPtKciAWKpDmg8GBqZzdid7
+         NrTge3kAlJza2NzAZ6vdO8sQeQBQtthUSCBHwObbeqhj4M/GmUIzzoSGbE82GEPl2FI5
+         OXySLSsWcLb9TIS2DTLANAyeMPJZXa8GrcPuImCIupL8M8lGzVAqDav70QLVhxnI+DH2
+         KwLBZ16/Z/qdgoRlcgrl8HlPAzxIL6disscT/u8pf0PdKReRDH2kKaxP6Sl8Yp+gHf0C
+         s3yw2PzzSvv8yBVBmV4Ab3HcT8sBp8KrqlQZJk6cUgzrIIsjKGSw9bHBo812qsB7Wdwu
+         vTOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzxHh6ROFwcpt4wWZqHS8We8x9aFaZG3GPg0eGCHXJ0jfhnR0TRGieyz1cKFu/CbCgUhJmmjOeALOXGq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCglSW5gPZlI4zw3qCtEuPxdy/gaXxsKXJ7KlG61NCtwI4IwXa
+	Cwg4CbfFEFj+g5CUtWN9RVcHAdICVs4Jp9m/Tb8hMfBRTqQueFXtjNt6jG3vcPbFq5PBWAT/eUx
+	9TM+ZecuOKQ5FsO8HS9mZbsT44x4fRIXIvLcA5hTnyqW/fRLtRmnQ58LV3WGDAHmORw==
+X-Gm-Gg: ASbGncvwp5K/uqM0Oc2mZ9jsfsqH6Q+qM539T1UuaAlEKvdTis6z0dR3oPxYphO/M6E
+	7ESrtZANg/hi7HJrT2VpDUqNBnSLiKnoAv/qCnl2lE8nsf6SjghGp7LyT5NDmRqJs209HvZAs67
+	3ucMJRYL8TQMRuCRZukE5vjZe+jJHXKPIg1QSSyXoqs7UNqzR8gYQeJYRZbI/rYQWv5Jz40nGDA
+	a0QxJZMFijSp9PPIwc9QfTkyJpy2ZY9VbeTmhCwkrYNDV1axxa2RggIkDRBDRTJvdOKxc/xpyTs
+	rrHYbChvLse6YUOkln+o1H6LHOeRaF09b+sViMapG5M=
+X-Received: by 2002:a05:6e02:1523:b0:425:9068:4ff with SMTP id e9e14a558f8ab-425955c8eb5mr44103245ab.1.1758915370844;
+        Fri, 26 Sep 2025 12:36:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5kwS0VyoWACtgc/kvwMhl9hpO10Z/0kNKn1tSjerc+aPGklJvKL8PA+MiMW+9wzh2XQYqfw==
+X-Received: by 2002:a05:6e02:1523:b0:425:9068:4ff with SMTP id e9e14a558f8ab-425955c8eb5mr44103155ab.1.1758915370427;
+        Fri, 26 Sep 2025 12:36:10 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-425b9133085sm25262705ab.0.2025.09.26.12.36.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 12:36:09 -0700 (PDT)
+Date: Fri, 26 Sep 2025 13:36:08 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Tushar Dave <tdave@nvidia.com>
+Cc: ankita@nvidia.com, jgg@ziepe.ca, yishaih@nvidia.com,
+ skolothumtho@nvidia.com, kevin.tian@intel.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio/nvgrace-gpu: Add GB300 SKU to the devid table
+Message-ID: <20250926133608.4963f2bb.alex.williamson@redhat.com>
+In-Reply-To: <20250925170935.121587-1-tdave@nvidia.com>
+References: <20250925170935.121587-1-tdave@nvidia.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Johan Hovold <johan@kernel.org>, linux-tegra@vger.kernel.org,
- Jonathan Hunter <jonathanh@nvidia.com>, Russell King
- <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20250925150007.24173-1-johan@kernel.org>
-Subject: Re: [PATCH] amba: tegra-ahb: fix device leak on smmu enable
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250925150007.24173-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:19Rf9yaobtODFqmWWuVxvvKspow1H+UTU7ocfaS8qymEz4oMBaf
- HL4MDvs40stb3P3oUJTpncDEHt/DPynzh+kYwGHjaLaGlfzzNPhb38nWsT+/7DK9PlmKM/C
- zkgNPaPW3OfBNnuTQi9Yswp36r3C4wXlOYo2GJBrg1bSKV4Ds0v4R2DQSSsly7rJVjL1sj9
- TdZwg04STyNoy5wSTPCXA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wtfFQD5klkg=;e9KiydikxPm+B4upoXP3n8X+wZi
- 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
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Make sure to drop the reference taken to the ahb platform device when
-> looking up its driver data while enabling the smmu.
-=E2=80=A6
+On Thu, 25 Sep 2025 12:09:35 -0500
+Tushar Dave <tdave@nvidia.com> wrote:
 
-How do you think about to increase the application of scope-based resource=
- management?
-https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
-1180
+> GB300 is NVIDIA's Grace Blackwell Ultra Superchip.
+> 
+> Add the GB300 SKU device-id to nvgrace_gpu_vfio_pci_table.
+> 
+> Signed-off-by: Tushar Dave <tdave@nvidia.com>
+> ---
+>  drivers/vfio/pci/nvgrace-gpu/main.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
+> index d95761dcdd58..36b79713fd5a 100644
+> --- a/drivers/vfio/pci/nvgrace-gpu/main.c
+> +++ b/drivers/vfio/pci/nvgrace-gpu/main.c
+> @@ -995,6 +995,8 @@ static const struct pci_device_id nvgrace_gpu_vfio_pci_table[] = {
+>  	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2348) },
+>  	/* GB200 SKU */
+>  	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2941) },
+> +	/* GB300 SKU */
+> +	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x31C2) },
+>  	{}
+>  };
+>  
 
-Regards,
-Markus
+Applied to vfio next branch for v6.18.  Thanks,
+
+Alex
+
 
