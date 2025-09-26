@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-833501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7654EBA22A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF4CBA229D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE1316BBD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5CF8560D54
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35DA1B87F0;
-	Fri, 26 Sep 2025 01:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB241BD9CE;
+	Fri, 26 Sep 2025 01:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="xfEP0tWP"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="dw80sa2c"
+Received: from mail-m15566.qiye.163.com (mail-m15566.qiye.163.com [101.71.155.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD859C8FE;
-	Fri, 26 Sep 2025 01:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB1DC8FE;
+	Fri, 26 Sep 2025 01:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758851407; cv=none; b=e93M2+3RMlhTn2T35PVlrtB5xwUnWgmMctTTHcvJ0qlTvB5pnXnpNf0I0wu69tTXQwJwtQB4QMuIIk6iaoDfXxzPv0g3VAROwFpacxLmcLh/HZXKoOdhqHenqQKQ77iiHxxTFR4PyZ2yw4sLm6fUBx32qIYB4+W9Y1NK/CcHhf4=
+	t=1758851302; cv=none; b=OVvvUSFqIFv8JHtim73XSHfuLLVoVcM6yDeKuR08wWPvRIX/N4PLiEskxMBx7z/2iEcOsWHSw0oeyVZv+1VIfEJAEmX1xnROJG/FrTiVCPkNJQ5vVQt2aSu9Bf6geKj8AAbCixNyOrMW8AI5s9JdIkr51GquOlY31PCDLini3FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758851407; c=relaxed/simple;
-	bh=6EIDKLJ0T64U8JaYB87sh/AYgFFzAStLXb+PhWgo6XU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/jjpc6wCBLBhewD+YiDZsdIJKYlOsztMwxVKwd+KYvybTtnl1Ymil3PmGsUnM+5oxDg2kbvBWHwnb5h+jh2keb9aFZlmdextPfuo8Wuz1u8I3DnpajAwNaIML2XT0ry1tpxgUJTqwpRRopBX80J5YswxdGOwVNGrXFJrTVoYbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=xfEP0tWP; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1758851246;
-	bh=f9pOdE67HES7VaiKOaqJeSWoyMdjon32UaYW5I7wfMk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=xfEP0tWPqxSsv+wZERQL+pimB1qwKBdtDvv+TcDGaASGMPZMluqmTSHM8A1WIhzWe
-	 heRtll9kIgtKbi4STFKylQtAaEEyg7VzPKa7eAYXfx7XYsWEmifnN2/aSnlKplVWDF
-	 oC4H1VwRbUjgvxcE3upD28bdWjRes68BMZ80BJBQ=
-X-QQ-mid: esmtpsz19t1758851244t6712949d
-X-QQ-Originating-IP: WYNt+5eiH0pKnAuyyFLmJQkwXQ0+Zpro86iKA3t0UVc=
-Received: from = ( [14.123.253.220])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 26 Sep 2025 09:47:23 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 817829598830566685
-EX-QQ-RecipientCnt: 11
-Date: Fri, 26 Sep 2025 09:47:22 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Aurelien Jarno <aurelien@aurel32.net>
-Subject: Re: [PATCH v2 0/6] i2c: spacemit: fix and introduce pio
-Message-ID: <48B175EBF0F1A347+aNXwqlO1mD-7BGtE@kernel.org>
-References: <20250925-k1-i2c-atomic-v2-0-46dc13311cda@linux.spacemit.com>
- <aNW5KfIg-_4-Et1S@shikoro>
+	s=arc-20240116; t=1758851302; c=relaxed/simple;
+	bh=P8696kRKlLXhdw5Ol12Ycd8Gx0qPHMwpsnEK69OxTsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E/SzcdWX+BZS+to2Z0OQXfr/Vrnd2W2i5vaBIzXPTa6SHZu2RBOiCbhh2W21CawmXELuFb12/PcgkmLb1ZvXGUq5EDuv+IveO9zoaWG7MbttjEXJ2YlMSJM86nc9sKzEt5MCaj+frqY1if2StWZZI86dg9iEe+2rq2Ws3SMG+lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=dw80sa2c; arc=none smtp.client-ip=101.71.155.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
+Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 241b800cb;
+	Fri, 26 Sep 2025 09:48:08 +0800 (GMT+08:00)
+From: Albert Yang <yangzh0906@thundersoft.com>
+To: arnd@arndb.de
+Cc: adrian.hunter@intel.com,
+	bst-upstream@bstai.top,
+	catalin.marinas@arm.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gordon.ge@bst.ai,
+	krzk+dt@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	robh@kernel.org,
+	ulf.hansson@linaro.org,
+	will@kernel.org,
+	yangzh0906@thundersoft.com
+Subject: Re: [PATCH 0/9] arm64: introduce Black Sesame Technologies C1200 SoC and CDCU1.0 board
+Date: Fri, 26 Sep 2025 09:48:07 +0800
+Message-ID: <20250926014807.2919409-1-yangzh0906@thundersoft.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <f64b0e00-1c30-47a1-b6b0-1bc28cc7f8ac@app.fastmail.com>
+References: <f64b0e00-1c30-47a1-b6b0-1bc28cc7f8ac@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNW5KfIg-_4-Et1S@shikoro>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: OUC5DGN0mB58BnpMipajIoeGxqThYQSyy4jSZq+zXnU7ySETUPRJ7rRr
-	RN6Izm2Nt7Cnp14wllbMbZ4PVdToTVoPysUyzWK2QpWNcXlmYLB6xSO1sEJG2fkeECptSAK
-	fJqsexHwABot6bJU657ddIMblpp3aJa07r6T8OzttncbXsR1dvILGLe+7s+44wuCXVo5Wu8
-	tn2GHViK/1Rl4kIDely8TG6VZUDnWrD++I3q5vusRs1gMbxtet544Z/y/rfeUV9zyLsuVsF
-	+mQkIjOhhLmjl9IWs3NqBOP55AFoHmbURMUgNniT9beaJrN3xNaC6AXyOZisgqbnp0XTEiy
-	9dugW1iUpbwynfgBztxXTsgejay0MRLSgagg6JGsmJA9M4sFFVnDWX9mP7C2Uftv2NW29u7
-	gL0cenrQ3NK9ksSdinn3zH7PtOt0Hrrhr1xX/w699cEcuXFd29Bqppa8gTGwKvU0GNUIiaZ
-	Sy73UmrUJu5kDyzF9QBo2XksNeBGRvDZWfnC4qnxBIKUt9h9+6vc/8kwqwXX/BhQZnuc9RN
-	h7VAJc8zuBVtdd3I2yhKi8iYwItLTCurG1bCT98rgJIp4ktqc/0+zeYfdtT090B+fmVJYBg
-	FIzM6B/17dB0DSE1x2npGCQyKy3FxI/IDUveZMJmu5V8McVQrgRep6Gy0wnSB9wTeccIsls
-	E4tw4meDRnZweh476O+5r85M0Ug6kd5JFr1HmcAk5x4Ai+ztz7M5Q1SAukQIHcGrIOYEzRC
-	xTsQnAIcb7QVQByUgY3llkss6chRI+QXcGPJG845LZ/oEHarScC/91AxMwhmY7h/aMB0lMV
-	n4pFK4hHn+7jEm1Cq0y36QTAkER+is/b07U/yuOSTDX+9rZDzsywzOMIRT9oc72V3RLQ9PC
-	9iPxDmDNBaD0szR48nAcrb/qpMPgKbYyIWLde9pMV1WRwbXPa9qur0ckFGj2DG3w2zlQi0l
-	r+Pq4HcAVzXaNffBdsKFX2cqyIpWwH/OtpHzluPyEGMvuDcZ3dvhLs117LBVjvmD8Fd29JJ
-	SxwJIk4/q8to42Uh9f
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9983b4cc3a09cckunm02b014f18bacab
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHRpCVk4ZSx5PTBkfGk5LTlYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
+	tLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=dw80sa2cDL14SK4ldMNnUd3MPXuHA84uZtjN7fE0A7GNysxx1MCj/4tXyZeh8fFHSkI2wIYFXO8PFveocuCppX18lLF50mod2zj8AZn4RZDP4tRcH7BUrrkyRUszhdYd3iyKGdlpsEOGdI1Gw28c789g7ED83x2vuJyULwUzEqo=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=uL75prvgW+wJB6okTWkfXgiVRAHI/46T0CBY4F1eUuY=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi Wolfram,
+On Thu, Sep 25, 2025 at 03:38:44PM +0200, Arnd Bergmann wrote:
+> On Thu, Sep 25, 2025, at 15:34, Ulf Hansson wrote:
+> > On Thu, 25 Sept 2025 at 14:12, Albert Yang <yangzh0906@thundersoft.com> wrote:
+> >> On Thu, Sep 25, 2025 at 05:03:57PM +0800, Albert Yang wrote:
+> >>
+> >> Hi Arnd,
+> >>
+> >> I may have missed an important detail in my previous note. If I split
+> >> out the MMC-related patches and submit only the SoC parts first, I
+> >> cannot validate the SoC on real hardware: both the kernel and the root
+> >> filesystem live on the MMC device. Without the MMC stack (DT bindings
+> >> and the controller driver), the board does not boot to userspace, so I
+> >> cannot properly verify the SoC/DT changes in isolation.
+> >
+> > At least to me, I would not consider that a problem. As long as you
+> > can test the pieces together "manually" that's fine, I think.
+> >
+> > I mean, the platform was not supported in the first place, so it's not
+> > like we would be introducing a regression - or break something, right?
+>
+> Agreed, it's rare for newly added platforms to immediately have
+> everything working, and we can still fix things if they don't.
+>
+> It's also possible to test userspace by using a standalone
+> initramfs with a login shell or an automated test suite, but
+> I don't require that.
 
-On Thu, Sep 25, 2025 at 11:50:33PM +0200, Wolfram Sang wrote:
-> On Thu, Sep 25, 2025 at 10:02:24AM +0800, Troy Mitchell wrote:
-> > Previously, there were a few latent issues in the I2C driver.
-> > 
-> > These did not manifest under interrupt mode, but they were
-> > still present and could be triggered when running in PIO mode.
-> > 
-> > This series addresses those issues and adds support for PIO
-> > mode transfers.
-> > 
-> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> 
-> Applied patches 1-5 to for-mergewindow, thanks!
-Thanks.
-> 
-> Waiting for a possible review for patch 6.
-> 
-> Troy, maybe you want to add yourself as a maintainer for this driver?
-Yeah, I'd be happy to.
-I'll add myself to the MAINTAINERS file ASAP.
+Hi Arnd, Ulf,
 
-                - Troy
-> 
-> 
+Thank you both for the clarifications.
+
+Understood regarding validation expectations. I'll proceed with the split:
+  * v5 SoC series (no MMC binding/driver, no mmc nodes in dtsi)
+  * Separate MMC series (binding + driver) to linux-mmc
+  * Follow-up enable patch once the driver lands
+
+
+If any critical fix is found while iterating on the MMC series, I'll send
+a follow-up patch depending on timing.
+
+I'll move ahead with preparing v5 accordingly.
+
+Thanks again for the guidance.
+
+Best regards,
+Albert Yang
 
