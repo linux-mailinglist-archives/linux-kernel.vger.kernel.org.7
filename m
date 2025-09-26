@@ -1,168 +1,147 @@
-Return-Path: <linux-kernel+bounces-834739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75556BA5654
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:42:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC40EBA5657
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921EC1C07CB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:43:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182D71C069E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741882BEC30;
-	Fri, 26 Sep 2025 23:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2271E279DA3;
+	Fri, 26 Sep 2025 23:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxQcw760"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YSvdm7Gh"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACAA202976
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF03D86359
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758930156; cv=none; b=QV9WIxc7JPdGg0G4rYy7MD7Ux1Bsz4tVOsxnFE6zSmNhdVDuF/KoHfXyZ759G6U8cWSvzV5KidpDW0nKriYRxyQPD6HDsoUlWPP5oDGyCELkEJQE7ZyXwaplQqOWAELVqCLdCLGEHblByNUi4R/OJVe6FOtMrHBNez8TXPpwHL0=
+	t=1758930344; cv=none; b=j2Gfcce1mo+otP+etqCwuNXYLNliyCUv8srSJxjaBkv8v/cnl9UvUy7NO5lZa/LQ51t1fb5FYCUlFvGGTd64Hz2cvl72aOt/zO5p0AwVnXm2BdvpMvbvY6j/cKMwg2Nj7jGmZ4pWO2/wx/FN93shgEMnaY2rsr9vBhxXpXfcLo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758930156; c=relaxed/simple;
-	bh=BykyNRlwezjVxdOJlZPGY312EyywRN4J0taxqycGbnU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jAVPAUDEMjvpmVaXHRKBqituiw/oXO01Aqv8a1RDyvmu2Lg7iuvl/SSi6pojqz+GQpgvxuxrRHlB2hHwCfNfhnnHesacovgI7ovBExEagYlJCJNYqkrIGO/a09LwVlx2QDDCs5vjEmIwesVXj9poDqC43yZcLj4RaTQ8/9tqvzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxQcw760; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-78defc1a2afso27471036d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:42:35 -0700 (PDT)
+	s=arc-20240116; t=1758930344; c=relaxed/simple;
+	bh=L/vIybsN3LeKF+j6ObWJ3KQFN6JCwMXCVroUvbrCQ9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uQmQbNrNlc1I59rS0R+Qj2GMUBFceME/JllXbM89bc8xr4gh/OMZBT9+7IfpWJo6GyAznmByhKSJFZpPrTuPTnjKFGudIDHy93QWMtH6h3pWSihBkNXfgTsw2WlRCUMV+1+gEFwQX6M5gBvJZDTMC4BUiO2TwZN3y9yI5dg1aPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YSvdm7Gh; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4dcc9cebfdfso68811cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:45:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758930154; x=1759534954; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RMZm+B7PKSQwIxwZ3A7P+2FemBiS1prD7bnlayIdVRc=;
-        b=ZxQcw760hWznUB9raWuf7Ce5Dk1vjB6hVurcRv8EFyWm8y12dyRDMCthEgo2ji1m9X
-         k6U5N9SATkGw0Z6kx4jfC7ABYWKmr5RtFV3tE7Di66U7iJabmQt+qUU5gDQSbU6l29Zv
-         xYQFnBLCsqyYSyqa9jlwhFVsVAAuZnve/KGph+ox29kqWfxg2KbKzeeb63/zvJkkisOU
-         9ZSZhfXDGc3fvVsEY3d2Csyjr3l9WVc/2xrL6Ol7SHH32R8tqGpiwPrLbZMHRYUeJVOf
-         1hU7cFuYzNo8hAwjQxcGxS6JhQtocOA+qpApkcPLkFu5rGHLyws+RWSTNtI3XMGhRHC5
-         UueQ==
+        d=google.com; s=20230601; t=1758930342; x=1759535142; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2v6l/fjiZwwbxRv7L9dB6Gm8kHK4dyhIGUYaK+C169s=;
+        b=YSvdm7Ghwz1ZbHcyT8ubhE6WSgtfx3yaUBsRhKmCuG5Rxh2JPnBlias8siDA4aArtk
+         iRFmGi+/INGAgKw8w/xap/M45Admda4AueUoiwHhRtbdSjxFVVZ3T8ejuvvteurjbMse
+         9mKf5Hps1MnvcSua6bFmfMAg0ktYN/39UU8VNwHVBh6dFobylE40a3NtD0TrOvj+USLV
+         HaPxwSajVK+VWCdzZXxRM016y22a5/5DSqGP/Z5njRCf/SuDtIotSIqnJeIJz8HcNJMq
+         MK2DEbWoehYQKH+pLHiaGggCmHNiGQxH9NftZQRkgSqlUv1XJ509rD+LEgueiJ4pHcTF
+         0xog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758930154; x=1759534954;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RMZm+B7PKSQwIxwZ3A7P+2FemBiS1prD7bnlayIdVRc=;
-        b=HLRaDmtI9dhHQ+f0X5/VXW3DisI1XK2E5Ti5zQc/s61LLMeX+FevxCngjmtngGqcOU
-         l1OBXnuX7FbXN1uloyc8bTM8DXStj+NkgQFhjiKr7VYanQnz92csx6QH4L9xB//K0yF3
-         MJ64SPyhUlgibLpiSurruG7qSIngUaXErUOsPdcchu3Q0iAhzksVTSPuh5zx+0jwBvmH
-         zdYc83tOIuzZ5HFJBN+vQUXfH7eobXJSgUk3h2YvnWwWtPHX5GXkOnEoW9XQxdm3ASff
-         BzsegAQCzSwUFIrHRjA01Qhmk4tyQ/mDGxAlrop75LVNIeQn/O9OUU3WKu20pcpoPMsX
-         oeuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWb6Mag+nEL2ftnWNIr2iv2TdCayb9AxEXRUbrz+lZgWujSEi4OEg3WqS+vXyKgzAECtdawdeZwnRhnvrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPWI52jmYFi/+YUHEMEU7Pnm+gfUlmM8LRf/0hVt2TiRxnTDHX
-	Z5/Zkva50C36PuFI3xIu4PKiXj40mrYEK5PP9oeZt12HCsUd4MgacV30v0pBjtT4xe7oaeO3pUy
-	Ar/0aeZQSPWQLMfF8crbwKEvEgw2Zq0XTW30W7sk1Qg==
-X-Gm-Gg: ASbGnct12M8D2PI8h2et7vlGzr8HO30mXEflgxfoQb5DyQ4TIT6MBiCbcj6uOyfDsTL
-	hjcRj4NtWF5InkL/o39uErQOaVNaLyI3BMaZF7mv5pn3bt9QReyn5o60jFOz9PR6LVmL8bhItsS
-	VlTEm2FnObEwOqDVQBNxa5SpZIFSMOPyYjFYc6PEKHoo8suW06yIGcGgxq7Jv6uV4x3tQURixWz
-	ZBy9sdcTrP9qERKovM4
-X-Google-Smtp-Source: AGHT+IFmnlqH5i6txaTd/Xq7KDmnmI0+uSqqNNkTOpnKNm5ON/AEruuNXl7CjXl7G+YVJKZEmES/OAg2dnCcyup6hOI=
-X-Received: by 2002:a05:6214:766:b0:802:d44e:3531 with SMTP id
- 6a1803df08f44-802d44e3850mr94196186d6.46.1758930154199; Fri, 26 Sep 2025
- 16:42:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758930342; x=1759535142;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2v6l/fjiZwwbxRv7L9dB6Gm8kHK4dyhIGUYaK+C169s=;
+        b=P9aCf/TqVPlBYfBObT2nbIYfd31cmMSwIzyP8+yd9hUcA2M8Ji5wmssBVmZnUP7sx2
+         QnQUSzhmmju/Y4iFiY8R0ANjoMNQmHp7QUlEpX2oWQZtfMYFDqLuI2jNhluusPY0BdW7
+         91aIk8HOnqN9K2PySq34WQNm0m3pif3s273aE2rFIG3k7scpWarRb/gzbeZXkdadv6t+
+         QIBhJjYqklfB7pcthaE2K5Q/hHWUPZvRnRtUwzXwfr/GA6tiAETIbMDRCjYEtSnODRxn
+         +AUlm7A1MQlZa3P7lQBTz6ZIkQY4tpBTVpi2mKn2oiUV4Vy1l6SbiImJeyP3mQrdQF7g
+         Ggng==
+X-Forwarded-Encrypted: i=1; AJvYcCXG26rIHvwkPk7hdpUXDmOtY1iPsPXSD30QrKYXS5KCZFe5mnFvE9Fcx9TkjqKLOsZE53Mp/whf7N/bmPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysOqr+TNGLyLag1aZkjxkG2oeBis7WsG9gmp3973hpb4/UvjjQ
+	WYgNnmmtR+E01FzdRa2gFkzDKU9rrHJS0QUmP+LxC4vCBTbZwOqdWwL5mtNpKR2i78lmzwqMyYE
+	8Tk7v/837fsGxe5JpX1Ao27QqpokdH1DweAtZ4Bh/
+X-Gm-Gg: ASbGnctG3rXj8SddBT4QWBLz/Tb4xiGZ6r7B3FIlxRYy/jiUNudRWOv/Wrj7qIw4H80
+	bBYlw9sTXTn7Xqs8Nd6ey3oY+KDSh4AAQsVbWQJAhFuPeBGwjKlsvLileU9iUxu4q0+reE5K1Ad
+	6jf6yr91iNVSa2entJfNuibYMHqSPRe1IlT+lMMinooVmL8e84lus5GO2L6BWjvo2Zc7TMxoysh
+	Xt0rdBRmBIF
+X-Google-Smtp-Source: AGHT+IFXlGPNT84MM6UDMyxHqowIC+dEanCYd/TyBPjybtAKnhlvS2IM+5MVQP+4ScKwabi2zbY1N6OMYsUijzd9Dt4=
+X-Received: by 2002:a05:622a:5286:b0:4b7:a72f:55d9 with SMTP id
+ d75a77b69052e-4dec710b632mr2671331cf.13.1758930341409; Fri, 26 Sep 2025
+ 16:45:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?B?6ZmI5Y2O5pit?= <lyican53@gmail.com>
-Date: Sat, 27 Sep 2025 07:42:24 +0800
-X-Gm-Features: AS18NWB25GMZ8whgBS-hTHKXzzb5mSyFa2N7y33dGyvryYrAZZzvE-FEBzGQjuU
-Message-ID: <CAN53R8F7oTO-NF_yzpz2=eW+iRis-TFys4JvDUEOkY+dh8-69Q@mail.gmail.com>
-Subject: Re: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with
- GCC 11.1.0
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz> <20250910-slub-percpu-caches-v8-16-ca3099d8352c@suse.cz>
+In-Reply-To: <20250910-slub-percpu-caches-v8-16-ca3099d8352c@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 26 Sep 2025 16:45:30 -0700
+X-Gm-Features: AS18NWDlkUCiWuVTsoik1lE1b7RxpxL96KRj-TH3et2oYHZB4-tROqStc3p33LE
+Message-ID: <CAJuCfpF8TDS0bjksssRJyvxnr1Rbb2SpgRfRAxJmPS5oQz88dg@mail.gmail.com>
+Subject: Re: [PATCH v8 16/23] tools/testing: include maple-shim.c in maple.c
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Slava,
+On Wed, Sep 10, 2025 at 1:01=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> There's some duplicated code and we are about to add more functionality
+> in maple-shared.h that we will need in the userspace maple test to be
+> available, so include it via maple-shim.c
+>
+> Co-developed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-I apologize for the confusion with multiple patch versions. Here is
-one single formal patch that I have thoroughly tested and verified on
-multiple platforms:
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-**Testing verification**:
-- Successfully tested on macOS with `git am`
-- Successfully tested on Windows with `git am`
-- Verified using `git apply --check` and `patch --dry-run`
-- Confirmed to apply cleanly to Linux v6.17-rc6 (commit
-f83ec76bf285bea5727f478a68b894f5543ca76e)
-
----
-
-From f83ec76bf285bea5727f478a68b894f5543ca76e Mon Sep 23 09:05:00 2025
-From: Huazhao Chen <lyican53@gmail.com>
-Date: Mon, 23 Sep 2025 09:00:00 +0800
-
-Subject: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with GCC
-11.1.0
-
-When x & 0x1FFFF equals zero, __builtin_clz() is called with a zero
-argument, which results in undefined behavior. This can happen during
-ceph's consistent hashing calculations and may lead to incorrect
-placement group mappings.
-
-Fix by checking if the masked value is non-zero before calling
-__builtin_clz(). If the masked value is zero, use the expected
-result of 16 directly.
-
-Signed-off-by: Huazhao Chen <lyican53@gmail.com>
----
-net/ceph/crush/mapper.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-index 3a5bd1cd1..000f7a633 100644
---- a/net/ceph/crush/mapper.c
-+++ b/net/ceph/crush/mapper.c
-@@ -262,7 +262,7 @@ static __u64 crush_ln(unsigned int xin)
-       * do it in one step instead of iteratively
-       */
-      if (!(x & 0x18000)) {
--               int bits = __builtin_clz(x & 0x1FFFF) - 16;
-+               int bits = (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) - 16 : 16;
-              x <<= bits;
-              iexpon = 15 - bits;
-      }
---
-2.39.5 (Apple Git-154)
-
----
-
-**Important clarification about git diff format**:
-I understand your confusion about the line numbers. The "@@ -262,7
-+262,7 @@" header is **git's automatic context display format**, not
-an indication of which line I'm trying to modify. Here's what it
-means:
-
-- `-262,7`: Git shows 7 lines of context starting from line 262 in the
-original file
-- `+262,7`: Git shows 7 lines of context starting from line 262 in the
-modified file
-- **The actual code change is on line 265**: `int bits =
-__builtin_clz(x & 0x1FFFF) - 16;`
-
-This is exactly the line you referenced in your message [1]. Git
-automatically chooses context lines to make patches unambiguous - I
-did not manually specify line 262.
-
-**Cross-platform testing results**:
-- macOS: `git am` successful
-- Windows: `git am` successful
-- Validation: `git apply --check` and `patch --dry-run` both pass
-
-The patch is ready for your review and should apply without any issues.
-
-I would be grateful if you could review this patch again. If you
-encounter any issues during application, please let me know and I'll
-be happy to provide additional assistance.
-
-Thank you for your patience and thorough review process.
+> ---
+>  tools/testing/radix-tree/maple.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/=
+maple.c
+> index c0543060dae2510477963331fb0ccdffd78ea965..4a35e1e7c64b7ce347cbd1693=
+beeaacb0c4c330e 100644
+> --- a/tools/testing/radix-tree/maple.c
+> +++ b/tools/testing/radix-tree/maple.c
+> @@ -8,14 +8,6 @@
+>   * difficult to handle in kernel tests.
+>   */
+>
+> -#define CONFIG_DEBUG_MAPLE_TREE
+> -#define CONFIG_MAPLE_SEARCH
+> -#define MAPLE_32BIT (MAPLE_NODE_SLOTS > 31)
+> -#include "test.h"
+> -#include <stdlib.h>
+> -#include <time.h>
+> -#include <linux/init.h>
+> -
+>  #define module_init(x)
+>  #define module_exit(x)
+>  #define MODULE_AUTHOR(x)
+> @@ -23,7 +15,9 @@
+>  #define MODULE_LICENSE(x)
+>  #define dump_stack()   assert(0)
+>
+> -#include "../../../lib/maple_tree.c"
+> +#include "test.h"
+> +
+> +#include "../shared/maple-shim.c"
+>  #include "../../../lib/test_maple_tree.c"
+>
+>  #define RCU_RANGE_COUNT 1000
+>
+> --
+> 2.51.0
+>
 
