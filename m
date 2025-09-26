@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-834529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F05BA4E07
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548F4BA4E10
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C423280BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8A03A5FAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F07130DEA4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE97D30DEB6;
 	Fri, 26 Sep 2025 18:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFqQZElB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eA9dIvt3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED131494A8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDF027A12C;
 	Fri, 26 Sep 2025 18:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758910788; cv=none; b=j2gxcJsKu0JV8/yq5u2w7BDE5qKEhlUUQPMyrGQ8U4P0RlSMprP62uNF7XQDEKcf13a3dGW9TT57Fuzlww9BdbD6g0yXXYETxN46VhGKD76JsRmAXND3Em3+zFpvOrOoDvFyq5/MsSjMA0xIZ6L1aEh23X++AznZviaO+8S72iA=
+	t=1758910788; cv=none; b=UESGor2U/JYsPDPoTz1uipqzkyfOmE6tss6I3KPh5sW31YLOnlB8/99KZomeU/iMWdWvP8rwhmaDB4DJzrb/j4+0DOyFxEVdivrECLHWYv9a/NcOh81VXvTP0dvfuoy45p7lEA6UNHDXyBy6iGQwxFjsvEjnXy22Bcb48WH0Jc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758910788; c=relaxed/simple;
-	bh=0CgND4WO16EtwUc3Nse3AAY8I+x8THVa8IhQIsivJLs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uaHO0CKkqSM96YNODruum8ngTTR3NKPDC8kh14V5AQ/S5Wt5QpWJmn/J0I6tYxBIuMrsDN2mZAcFAXXOdS1KumpMPXTdtNU6ALoZlgqepFtq2Zet9tfljBjWeUFpp1crkl0ekBDgpapMZzV70QSjIijESDSKszhK3HBKBMRwbMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFqQZElB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 61B71C4CEF4;
+	bh=eSfv/94BXfVINtY1Gd87gaCX40bgQegXNivKn8K8/wA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QRnAHk28d7e0jN44hfbEMPNyDA8zHXmm02sHdW2+4CeeKQDuyCUUZaY9KKR3gMehXT4Dni1NOnmNFzGs/lPXI8GX04PHbH7wHc/gfqMDwOOadXWxxQWJ8dvaFDPQStfRXePNi7IfZMyXi2bEauoxWbDpWAx9VF5peVP9UBb3w4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eA9dIvt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 811F7C116B1;
 	Fri, 26 Sep 2025 18:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758910788;
-	bh=0CgND4WO16EtwUc3Nse3AAY8I+x8THVa8IhQIsivJLs=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=EFqQZElBdFonxbZXptHxBGcF7HN72o2kHiE88vBtKb9UJLOLs7JAhSIjcjTBoYI+X
-	 7+psEOnYSFC6rlh9JSWxyYAmyOUnp4O4NgEkT3/RWBDZVQ6yvKE+IHBrPCYoA/UfT9
-	 vf6DCunRU1iF14XAzo5Ctg5IqSTcmI5B7yrC/kxDXWx3KiqquRl0UAwZfAIFw1qM81
-	 tt7KVbLYQdz8i1zZloLF+NE9e2VQQiOmLOl6z5YOr5QsZReG7pigdz0yhr6BsbLDtX
-	 EpjIs+bghQqJNPfjiL0Z5U1RTQj7bHMqx62lR8MOXEcLtoHQWLy3cSgBPagEat/w/J
-	 +LI1Tv+bDexKQ==
+	bh=eSfv/94BXfVINtY1Gd87gaCX40bgQegXNivKn8K8/wA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=eA9dIvt3vE+KnL8TN/1khNLMa1tjc/IJFcYvdbzJcAEudbwke+l2TOCkLzpOdcUnY
+	 bLvdCC5wl4xQ7rWtACHPYPhY6OIrnGPui6ilnqSP2uZXAFS5Kk4vG8ZcRFLl9mkVZs
+	 DfuHN5TrZCAVMkwkclYsUELCYubvoIDF4EjT7Zrtshy5Q4nZW1+C57iBfHHhq0L+Bv
+	 0VBV63qGZX+OLIoudcfS4xV8Mpr9p63m3wIdPkcDD2vGjtqAgydwis3IQOWFkWibhX
+	 69YNUuQmygoR45+a152ZlZrDEd0yfZGcTyNYRV5iBmliBHMfmUGxABH5v3qXV8THFc
+	 9oMD4TvFlt/5Q==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450B9CAC5B9;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 580D9CAC5B8;
 	Fri, 26 Sep 2025 18:19:48 +0000 (UTC)
 From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
-Subject: [PATCH v4 0/4] usb: dwc3: add layerscape platform driver use
- flatten dwc3 core
-Date: Fri, 26 Sep 2025 14:19:39 -0400
-Message-Id: <20250926-ls_dma_coherence-v4-0-21e9c6bdb5cb@nxp.com>
+Date: Fri, 26 Sep 2025 14:19:40 -0400
+Subject: [PATCH v4 1/4] dt-bindings: usb: add missed compatible string for
+ arm64 layerscape
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,11 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADzZ1mgC/33OQQqDMBAF0KtI1k2JiR1rV71HKWImYw3UKEkRi
- 3j3Rje1IF3+gff/TCyQtxTYJZmYp8EG27kYskPCsKncg7g1MTMp5EmAkPwZStNWJXYNeXJIHBV
- KDXVeGC1ZZL2n2o5r5e0ec2PDq/PvdWFIl+ufsiHlgiPk2TkzUGnIrm7sj9i1bKka5JcXUu1wu
- XBSaQ6qAG30L1dbDjtcRR7/0ikKJNCb9XmeP6x5Tm0sAQAA
-X-Change-ID: 20250602-ls_dma_coherence-c3c2b6f79db2
+Message-Id: <20250926-ls_dma_coherence-v4-1-21e9c6bdb5cb@nxp.com>
+References: <20250926-ls_dma_coherence-v4-0-21e9c6bdb5cb@nxp.com>
+In-Reply-To: <20250926-ls_dma_coherence-v4-0-21e9c6bdb5cb@nxp.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -69,11 +67,11 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
  bjorn.andersson@oss.qualcomm.com, imx@lists.linux.dev, 
  Frank Li <Frank.Li@nxp.com>, Ze Huang <huang.ze@linux.dev>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758910787; l=3727;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758910787; l=2369;
  i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=0CgND4WO16EtwUc3Nse3AAY8I+x8THVa8IhQIsivJLs=;
- b=f4VguHT7W5iuk/7l2407RYWfAHOiiw0M3T09v5A7GJ5UaA1ZSGrZAWbO1/F5s3AyWLcNfz3mO
- 8HMzO79XgAlCYvA/HomfsHs5YAzTSKipm2h0N88JNE1Bx7i121o/vlJ
+ bh=xECP3rJgzFVmUgwO2Q0SoMn/hJcv7uPuVA3P1+7dxKA=;
+ b=ihVrKU/QKLhhdbQULjuiZ91XkMApIntlRtjBuERXvfxnVIj5c3BFkIqber7bGljsF1GxkQ6KR
+ Bfgt7U3yFMCAj6hKQNU9RXgqfXcXe4SEEVE92LcG8Lk7VFexIRsEZA+
 X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
  pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
 X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
@@ -81,96 +79,97 @@ X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
 X-Original-From: Frank Li <Frank.Li@nxp.com>
 Reply-To: Frank.Li@nxp.com
 
-Add layerscape platform driver use flatten dwc3 core to enable dma-coherence.
-It needs set gsburstcfg0 to 0x2222.
+From: Frank Li <Frank.Li@nxp.com>
 
-There are some several try before:
-[1] https://lore.kernel.org/imx/20240710-ls-dwc-v1-0-62f8cbed31d7@nxp.com/
-[2] https://lore.kernel.org/imx/20240123170206.3702413-1-Frank.Li@nxp.com/
+Add missed compatible string for arm64 layerscape platform. Allow these
+fallback to fsl,ls1028a-dwc3.
 
-[2]: add new property, which was reject because there are no varience in
-the soc. Fortunately the below commit resolve this problem by use software
-managed property.
+Remove fallback snps,dwc3 because layerscape dwc3 is not full compatible
+with common snps,dwc3 device, a special value gsburstcfg0 need be set when
+dma coherence enabled.
 
-d504bfa6cfd1a usb: dwc3: enable CCI support for AMD-xilinx DWC3 controller
+Allow iommus property.
 
-[1] was reject because there are not actually dwc wrap at layerscape
-platform. Fortunately Bjorn Andersson's below patch to make it possible
-by use correct dts dwc3 node layer out.
+Change ref to snps,dwc3-common.yaml to use dwc3 flatten library.
 
-613a2e655d4dc usb: dwc3: core: Expose core driver as library
-
-This resolve problem [1] and [2] by use flatten dwc3 core library.
-
-1. add soc specific compatible string at dt-binding.
-2. create platform driver for layerscape chips and pass down gsbuscfg0 if
-dma-coherence enabled.
-3. update layerscape dts files.
-
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: bjorn.andersson@oss.qualcomm.com
-Cc: imx@lists.linux.dev
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-Changes in v4:
-- Use flatten properties, instead of use dt pass down information to core.
-- Link to v3: https://lore.kernel.org/r/20250926-ls_dma_coherence-v3-0-602b1c0ce6b4@nxp.com
-
-Changes in v3:
-- skipped, accident sendout
-- Link to v2: https://lore.kernel.org/r/20250923-ls_dma_coherence-v2-0-ce3176396bdb@nxp.com
-
-Changes in v2:
-- base on drivers/usb/dwc3/dwc3-generic-plat.c
-
-commit e0b6dc00c701e600e655417aab1e100b73de821a
-Author: Ze Huang <huang.ze@linux.dev>
-Date:   Sat Sep 13 00:53:48 2025 +0800
-
-    usb: dwc3: add generic driver to support flattened
-
-    To support flattened dwc3 dt model and drop the glue layer, introduce the
-    `dwc3-generic` driver. This enables direct binding of the DWC3 core driver
-    and offers an alternative to the existing glue driver `dwc3-of-simple`.
-
-- Link to v1: https://lore.kernel.org/r/20250602-ls_dma_coherence-v1-0-c67484d6ab64@nxp.com
-
+change in v2-v4
+- none
 ---
-Frank Li (4):
-      dt-bindings: usb: add missed compatible string for arm64 layerscape
-      usb: dwc3: Add software-managed properties for flattened model
-      usb: dwc3: dwc3-generic-plat: Add layerscape dwc3 support
-      arm64: dts: layerscape: add dma-coherent for usb node
-
  .../devicetree/bindings/usb/fsl,ls1028a.yaml       | 33 ++++++++++++----------
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi     |  3 +-
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi     |  8 ++++--
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi     |  9 ++++--
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi     |  9 ++++--
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi     |  8 ++++--
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     |  8 ++++--
- drivers/usb/dwc3/core.c                            | 12 ++++++--
- drivers/usb/dwc3/dwc3-generic-plat.c               | 14 +++++++++
- drivers/usb/dwc3/dwc3-qcom.c                       |  1 +
- drivers/usb/dwc3/glue.h                            | 14 +++++++++
- 11 files changed, 89 insertions(+), 30 deletions(-)
----
-base-commit: c45d2c21b3889c520bf141d576eaecb25666895c
-change-id: 20250602-ls_dma_coherence-c3c2b6f79db2
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
-Best regards,
---
-Frank Li <Frank.Li@nxp.com>
+diff --git a/Documentation/devicetree/bindings/usb/fsl,ls1028a.yaml b/Documentation/devicetree/bindings/usb/fsl,ls1028a.yaml
+index a44bdf391887f9c7d565c01d2c3aede99c4a9fc3..4784f057264ac7b18cbc8b41a405f9c9268605bb 100644
+--- a/Documentation/devicetree/bindings/usb/fsl,ls1028a.yaml
++++ b/Documentation/devicetree/bindings/usb/fsl,ls1028a.yaml
+@@ -9,21 +9,19 @@ title: Freescale layerscape SuperSpeed DWC3 USB SoC controller
+ maintainers:
+   - Frank Li <Frank.Li@nxp.com>
+ 
+-select:
+-  properties:
+-    compatible:
+-      contains:
+-        enum:
+-          - fsl,ls1028a-dwc3
+-  required:
+-    - compatible
+-
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - fsl,ls1028a-dwc3
+-      - const: snps,dwc3
++    oneOf:
++      - items:
++          - enum:
++              - fsl,ls1012a-dwc3
++              - fsl,ls1043a-dwc3
++              - fsl,ls1046a-dwc3
++              - fsl,ls1088a-dwc3
++              - fsl,ls208xa-dwc3
++              - fsl,lx2160a-dwc3
++          - const: fsl,ls1028a-dwc3
++      - const: fsl,ls1028a-dwc3
+ 
+   reg:
+     maxItems: 1
+@@ -31,6 +29,11 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
++  iommus:
++    maxItems: 1
++
++  dma-coherent: true
++
+ unevaluatedProperties: false
+ 
+ required:
+@@ -39,14 +42,14 @@ required:
+   - interrupts
+ 
+ allOf:
+-  - $ref: snps,dwc3.yaml#
++  - $ref: snps,dwc3-common.yaml#
+ 
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+     usb@fe800000 {
+-        compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
++        compatible = "fsl,ls1028a-dwc3";
+         reg = <0xfe800000 0x100000>;
+         interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+     };
+
+-- 
+2.34.1
 
 
 
