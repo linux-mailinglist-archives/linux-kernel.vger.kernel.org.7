@@ -1,132 +1,188 @@
-Return-Path: <linux-kernel+bounces-834696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA75BA54DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 00:10:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2ADBA54E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 00:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F231C02FED
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D301C0302F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8259E29BD83;
-	Fri, 26 Sep 2025 22:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B46E299924;
+	Fri, 26 Sep 2025 22:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3WbqDKP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C283D1D6187;
-	Fri, 26 Sep 2025 22:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N1GdRCW4"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F58026C3B6;
+	Fri, 26 Sep 2025 22:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758924622; cv=none; b=qpxzLyShQiL+rOMu0g9VXKkTG5xgESDh6moPGCZImcWc5jJwzdMu5T7o28X7dWV0fRVw9UtnnWLOR2bzF0HL/s1JucAKcehLlan5RpReR8ZM8a/ONH9xKbmVAFvYnZj/UHTgKj7DhyMGCv7Fi9IWkNaSRep8XamDhksKPqM1EcU=
+	t=1758924645; cv=none; b=r4RF09sBbVBWp8K1zC8cO4VNO3gBleJDGTi3HofY5NYxJoKjABA3WzO+ooMS7Y3ZGkIYF7cAonBp6AwcrrXhQWO/GV6TQPEQL4bgJZPdEYtR/CqfFVCNEMDE9lrHZmpB5mlOzjiY4zpU+iseFt8v6QSyYQ7ERfvvgNn6nn7Ha74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758924622; c=relaxed/simple;
-	bh=5k5GZfdKV636YzsUk/ZKQso2EF0o1VhSCWjjXGLdNd8=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=om6K9Iil56EbMU13q5pOl55b05syf5UtpnFZO64fDSy+w7bq7tlKBJrqERmb+p6jlhPOD9C+veHgosaUHIFch8dlA4T/qulQhjJ1bXeQMAkFUO/SvI/a3/lVfIogM5+ZmBencVIx5GXlIcwajTX+uwsO3k/GEg+Zvfmb+kUVzek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3WbqDKP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA93C4CEF4;
-	Fri, 26 Sep 2025 22:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758924622;
-	bh=5k5GZfdKV636YzsUk/ZKQso2EF0o1VhSCWjjXGLdNd8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=a3WbqDKPdhJf1QoUkTz+56eW3S1Bba9SDnT7JxlSE+Gn6GaaB/T/BubJbSug+kCc9
-	 IZow7S6JkAguxSSxdO6qjwFTKzPcYZ/JzVw09iGGMYpAKriDuTHwT+RW772vbZKUp5
-	 J6ab+VpkbXKFj2+6qffQEq0Cg1i/L/D3Rvq5ap8+rwkHNSZqc5hmcavk6qGhuQ6kUB
-	 uDBj5h1wUG0aCEYi0qMV8sGATFDA/yhs0EhIE+nAAj8hWOSHExprMuMGt9F6XLuey5
-	 ZjlObPt13DDN3hPVT4IGJlQuhQ4TKjOONyK27mhbZIvwfnI456H09vWZP1ik/9w4eP
-	 66AgRriMNkNvw==
-Date: Fri, 26 Sep 2025 17:10:21 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1758924645; c=relaxed/simple;
+	bh=3UVQ5H/bgILzhC94Y9eHH4EpZ9MZ2hY2Jtvlz5kPdjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ow2JeQ+t767fGtxDU6xO7EQTwgkYgFPBpZyCi5tacUoMBRzJK2MGYURnGbz3hNjg8g3GkHPY7LLiu0DOAXxCeJoSYkj1QrbZaYQjlXRH2xKqKLH6zow7hRq2VOy/3yMHjToahSTvqI+yipXCr/3Vp1lDnlP10xmrEuOjUDOO+e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N1GdRCW4; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii.localdomain (unknown [20.236.11.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1FB6A2012C14;
+	Fri, 26 Sep 2025 15:10:42 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1FB6A2012C14
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758924642;
+	bh=p6xwXuS5jxknhCEzUXgLwDn3UogvPABGxyn+YRcWwrw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N1GdRCW4hSSn5yXTXeSPPBXmBWaNUyLx+Ka1sH99ybWBJv8sTQNRmfIECmFLe0Cof
+	 0wFH5X69D9LNuIbrc+EtU5eeFZ09SHl2V6OGBcDJbQlabbG7LMpMEvnCbcsUvQ3TxC
+	 OuLTr8FhOARD+rcAaUtekbRO4BPsyWXD0HAciHS0=
+Date: Fri, 26 Sep 2025 15:10:40 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] Drivers: hv: Centralize guest memory region
+ destruction in helper
+Message-ID: <aNcPYJzETLZHCNpW@skinsburskii.localdomain>
+References: <175874669044.157998.15064894246017794777.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <175874947750.157998.7004962396456082421.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <66893d19-654e-4ef7-9a9c-c33a5549dbea@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, jic23@kernel.org, conor+dt@kernel.org, 
- corbet@lwn.net, eblanc@baylibre.com, devicetree@vger.kernel.org, 
- nuno.sa@analog.com, andy@kernel.org, linux-kernel@vger.kernel.org, 
- michael.hennerich@analog.com, linux-iio@vger.kernel.org, 
- marcelo.schmitt1@gmail.com, linux-doc@vger.kernel.org, 
- linux-spi@vger.kernel.org, dlechner@baylibre.com
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-In-Reply-To: <5dc08b622dac1db561f26034c93910ccff75e965.1758916484.git.marcelo.schmitt@analog.com>
-References: <cover.1758916484.git.marcelo.schmitt@analog.com>
- <5dc08b622dac1db561f26034c93910ccff75e965.1758916484.git.marcelo.schmitt@analog.com>
-Message-Id: <175892462162.1836299.14644550889187111452.robh@kernel.org>
-Subject: Re: [PATCH v3 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
- and ADAQ4224
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66893d19-654e-4ef7-9a9c-c33a5549dbea@linux.microsoft.com>
 
+On Fri, Sep 26, 2025 at 11:15:54AM -0700, Nuno Das Neves wrote:
+> On 9/24/2025 2:31 PM, Stanislav Kinsburskii wrote:
 
-On Fri, 26 Sep 2025 17:40:47 -0300, Marcelo Schmitt wrote:
-> ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
-> PGA (programmable gain amplifier) that scales the input signal prior to it
-> reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
-> and A1) that set one of four possible signal gain configurations.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> Change log v2 -> v3
-> - PGA gain now described in decibels.
-> 
-> The PGA gain is not going to fit well as a channel property because it may
-> affect more than one channel as in AD7191.
-> https://www.analog.com/media/en/technical-documentation/data-sheets/AD7191.pdf
-> 
-> I consulted a very trustworthy source [1, 2] and learned that describing signal
-> gains in decibels is a common practice. I now think it would be ideal to describe
-> these PGA and PGA-like gains with properties in decibel units and this patch
-> is an attempt of doing so. The only problem with this approach is that we end up
-> with negative values when the gain is lower than 1 (the signal is attenuated)
-> and device tree specification doesn't support signed integer types. As the
-> docs being proposed fail dt_binding_check, I guess I have to nack the patch myself.
-> Any chance of dt specification eventually support signed integers?
-> Any suggestions appreciated.
-> 
-> [1] https://en.wikipedia.org/wiki/Decibel
-> [2] https://en.wikipedia.org/wiki/Gain_(electronics)
-> 
-> Thanks,
-> Marcelo
-> 
->  .../bindings/iio/adc/adi,ad4030.yaml          | 84 +++++++++++++++++--
->  1 file changed, 79 insertions(+), 5 deletions(-)
+<snip>
+
+> > +	/*
+> > +	 * Unmap only the mapped pages to optimize performance,
+> > +	 * especially for large memory regions.
+> > +	 */
+> > +	for (page_offset = 0; page_offset < region->nr_pages; page_offset += page_count) {
+> > +		page_count = 1;
+> > +		if (!region->pages[page_offset])
+> > +			continue;
+> I mentioned it above, but can this even happen in the current code (i.e. without
+> moveable pages)?
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+No.
 
-yamllint warnings/errors:
+> Also, has the impact of this change been measured? I understand the logic behind
+> the change - there could be large unmapped sequences within the region so we might
+> be able to skip a lot of reps of the unmap hypercall, but the region could also be
+> very fragmented and this method might cause *more* reps in that case, right?
+> 
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/iio/adc/adi,ad4030.example.dts:68.36-37 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/iio/adc/adi,ad4030.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1527: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+I see your point. Indeed, we should optimize the number of pages to
+unmap by the maximum number allowed for the hypercall.
+I'll make this change, thanks.
 
-doc reference errors (make refcheckdocs):
+> Either way, this change belongs in a separate patch.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/5dc08b622dac1db561f26034c93910ccff75e965.1758916484.git.marcelo.schmitt@analog.com
+Fair enough.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+Thanks,
+Stanislav
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> > +
+> > +		for (; page_count < region->nr_pages - page_offset; page_count++) {
+> > +			if (!region->pages[page_offset + page_count])
+> > +				break;
+> > +		}
+> > +
+> > +		/* ignore unmap failures and continue as process may be exiting */
+> > +		hv_call_unmap_gpa_pages(partition->pt_id,
+> > +					region->start_gfn + page_offset,
+> > +					page_count, unmap_flags);
+> > +	}
+> > +
+> > +	mshv_region_evict(region);
+> > +
+> > +	vfree(region);
+> > +}
+> > +
+> >  /* Called for unmapping both the guest ram and the mmio space */
+> >  static long
+> >  mshv_unmap_user_memory(struct mshv_partition *partition,
+> >  		       struct mshv_user_mem_region mem)
+> >  {
+> >  	struct mshv_mem_region *region;
+> > -	u32 unmap_flags = 0;
+> >  
+> >  	if (!(mem.flags & BIT(MSHV_SET_MEM_BIT_UNMAP)))
+> >  		return -EINVAL;
+> > @@ -1407,18 +1453,7 @@ mshv_unmap_user_memory(struct mshv_partition *partition,
+> >  	    region->nr_pages != HVPFN_DOWN(mem.size))
+> >  		return -EINVAL;
+> >  
+> > -	hlist_del(&region->hnode);
+> > -
+> > -	if (region->flags.large_pages)
+> > -		unmap_flags |= HV_UNMAP_GPA_LARGE_PAGE;
+> > -
+> > -	/* ignore unmap failures and continue as process may be exiting */
+> > -	hv_call_unmap_gpa_pages(partition->pt_id, region->start_gfn,
+> > -				region->nr_pages, unmap_flags);
+> > -
+> > -	mshv_region_evict(region);
+> > -
+> > -	vfree(region);
+> > +	mshv_partition_destroy_region(region);
+> >  	return 0;
+> >  }
+> >  
+> > @@ -1754,8 +1789,8 @@ static void destroy_partition(struct mshv_partition *partition)
+> >  {
+> >  	struct mshv_vp *vp;
+> >  	struct mshv_mem_region *region;
+> > -	int i, ret;
+> >  	struct hlist_node *n;
+> > +	int i;
+> >  
+> >  	if (refcount_read(&partition->pt_ref_count)) {
+> >  		pt_err(partition,
+> > @@ -1815,25 +1850,9 @@ static void destroy_partition(struct mshv_partition *partition)
+> >  
+> >  	remove_partition(partition);
+> >  
+> > -	/* Remove regions, regain access to the memory and unpin the pages */
+> >  	hlist_for_each_entry_safe(region, n, &partition->pt_mem_regions,
+> > -				  hnode) {
+> > -		hlist_del(&region->hnode);
+> > -
+> > -		if (mshv_partition_encrypted(partition)) {
+> > -			ret = mshv_partition_region_share(region);
+> > -			if (ret) {
+> > -				pt_err(partition,
+> > -				       "Failed to regain access to memory, unpinning user pages will fail and crash the host error: %d\n",
+> > -				      ret);
+> > -				return;
+> > -			}
+> > -		}
+> > -
+> > -		mshv_region_evict(region);
+> > -
+> > -		vfree(region);
+> > -	}
+> > +				  hnode)
+> > +		mshv_partition_destroy_region(region);
+> >  
+> >  	/* Withdraw and free all pages we deposited */
+> >  	hv_call_withdraw_memory(U64_MAX, NUMA_NO_NODE, partition->pt_id);
+> > 
+> > 
+> 
 
