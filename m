@@ -1,155 +1,156 @@
-Return-Path: <linux-kernel+bounces-833473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E659BA219E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D506BA21AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4C51C22DF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF179188A580
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6312B2DA;
-	Fri, 26 Sep 2025 00:32:50 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6157260A;
+	Fri, 26 Sep 2025 00:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+6FDhzF"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BE3CA4B
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B981BC58
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758846770; cv=none; b=jGaphUKAOrM/K8xRqeu4R75WoLb9Sb+iuUk4A5xNi2Uny1Z9NIm5WDMLnYeBjGzSp33YXKE4nr0uakmdUeS2lCyrE3HEgGcA2I60r2nvLvrhZ4aC8SRb/JoL+hyZesOr8SlLYGJ74adgPo94eND8YhgcQEGVB3pRqtN84J1WAfk=
+	t=1758847190; cv=none; b=N89TTaLvEcnRInNDR1FIcnzucQD6zVI8tMab15gaFBaGMwjYusiVJONz4wEZctzYLpzj8t0VEWwYRKSFOreDefRoAoyVMerR3JncXH6hVsSaA2uEa1FpHlsjuSMtKj1pkIfrLFUMSDneVPVQHvjIcIy3y8jefRBpanmWOnrjJvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758846770; c=relaxed/simple;
-	bh=FDyQHdxRkxbQ3ynMKxsQ1qMEJ8LqS3hJ+6RuY0eykxk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oxOSg433cGgeMvov+EltMMM6iI2O5oLraCDjdqkO4Brf7pMfXHSPNawrHf/O0mPZyrP4a67lmVrSJhEeZNa2MGb41rbfi5RPrAwHmyV4qQ/8wpnVMMQ5ITAAKseVD+/VS/dBy97XEc+v6+NYqOJ/1jTxruwUIZgoT23oiDYIwmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42595318a28so28752575ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:32:48 -0700 (PDT)
+	s=arc-20240116; t=1758847190; c=relaxed/simple;
+	bh=nZu0dQTnI7c0vHRG4WuLt6WI+WkHJQUfIyCJZQwhANk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eZ48tmNOgqIwgZXHu3WpDZqVjZ2fqgVB+hODElgAQpAaFZZC7AifdMgs57XgpkWvDPV7+ZEwAZkBmjtCTSf/3iTpyrUl1JuvbO3mwGL+wNdJKOYF8BwKNTO9s0N0etNJhYvawtk7MAnQ7NPaW8AOv14XYzPzKyU88KOr6HJdgeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+6FDhzF; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b57f08e88bcso222897a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758847187; x=1759451987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKnaVIq0LZ3mDKDeIlNyOzrXDoMYEsJjeAh4xs7zfWQ=;
+        b=X+6FDhzFkotNuQ0jj7zAu1wPlS1t4W/J1JL9Ird7/U7TP1PDl9+mvV8LTO1rqqSpbW
+         ScxxCQpHESvjTYRRaf3/BaEcpZ17500shU+Kr917WnLaqO5VNII3h1Yk4FU6RPUylnEI
+         4YihbRy02qE9Xz3sS1bcB5ZaH4DUa4IIzXQ2QbD4DyzelSAk/I1EsmplTRZUvlf8Oc1N
+         xYnDQMf7Pgwe9C7b+DWKbI6K/wW/fCaHz5+ONdxdj9T3Ir9eG/ZNnNtYk64Bt6pSQpH8
+         owm9yOuo8kfsCzUHzM93klnMPCjjt5rnHPcTssS19h9WkonUJYST3Z+B2WFeYMOiuf/Q
+         dziw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758846767; x=1759451567;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SclqR6rpj2GzhVy+TdZ22Yh8EoBXtYdfPs1H5YMobeg=;
-        b=h1l0akx4SQiZERi97ZW9umHd84HWZzBvqMZM+P3FAfyG9dA27ZGBkqxCq38h5GtNds
-         Ugf7bIYq0/sL9ZOEzkb/ZRppPIEcLRLzk+8+uY5ZSGaxpmuI7TSvF9lJ82mRkHKHWdjv
-         wh+T4AJKC0tB2LDMC3vmf7KhAH7iwnHy+j0uAixH556hbspQivZ/owoQCLyColvmq4fy
-         fzDhvP33NdiroLrfe+VIyWbWL/S25SqEA+Xe0qQlz0OTtzxWFPKvPF9eNQe9u32/jBXe
-         28VOeXDCaUB9jD5peH5t+/YV1oMg5YdtRQPCQHU9SC3i6lbtCdsVVXfKjvN6CbEv4HBc
-         w5Ow==
-X-Gm-Message-State: AOJu0YzzyviYoJGHDv+6iunRFE+cTjuXb+EDb2ftlj+qMtD8AY/vC8/y
-	n6TkgM8VzKcsS06p2s3yFYy26Anc7GMmdslFofKLr5vgh/Vwrx2hZ1CKDODXJm2ktSf8JI06mx8
-	zRnEMGETFcks5q1eyGNhxfsy9fr+LSvW7d3sYJtyCs+G2L/Ya24Ir6yKDVyc=
-X-Google-Smtp-Source: AGHT+IFT5P71jWFCSRkZKAGhek3lQftA4tjm28rzNI7icwKTnQKJNd255Mnfzfdf45kCgK9rLmbOgXMwE3onLYLxT1Ud7Zls8TTr
+        d=1e100.net; s=20230601; t=1758847187; x=1759451987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iKnaVIq0LZ3mDKDeIlNyOzrXDoMYEsJjeAh4xs7zfWQ=;
+        b=p9e0E245SXIsioWTk8BJXMKhZeAu83aiqQbmz6B/8BmodP+NPP8SuU6Dq9RbakkEo4
+         BS3XInVDxzShTsPcB/KNNfhlyRL8WmvxlyTRvYCHiRla5KwxBTDN7QygJAOVFpz6zYMn
+         7erOWtvahp3pUVFJC+od3KT5YhLmJNhYveTT+V9oVyfeVOB863z1xOX8vvTsjccPRdCp
+         ljqMsk64+IdeOMlqb7UEyqQw8bQdIoOUA+Yw6yOPP/NG0ej0IFhGkPP3VIwQfLz/qUcn
+         jkIAjzlcEznOXtnX3R732MLjNXFyhUITtcxuDOEO3sOnMlDAbjWgkK1skflGJHZkEFDb
+         UElg==
+X-Forwarded-Encrypted: i=1; AJvYcCWns1DzI7x8w8HRGtOCM0P5iRDToWahoaT515lJ6nFJBI4zHasF0uRMlAA6V6qEzKbJlRV10Ggxj6iAk2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8EHNzfkkOOWDGqgABDwxf0ygcm3gC0US/ozPm9itRaPS4whgJ
+	ajiXRcjgA14B/ONX3crxoTaHo/dGybqcpvpLWzmkqQeBxQjtIKsfhk5V
+X-Gm-Gg: ASbGncvPdkza/+rlM6yXu2JLmBMPF6ovpSYLtrWTLI+S1gyhzQMDgjuepIPleFf8+T3
+	bmVlS5Lh17VDwcS3GsnGUykEUwJmU4M568E0idbgMaUfLaKUDarumTOeOE5os9Cp3S/mvVTSPpx
+	OfeVwh5coKjTQ8swaUETezZP+cgXv4qEzJ2h/7fo3LAtnGIkw0tI4woYTSn1MzaCVNvQm+D24Qw
+	KCK2UxJ5UNp365/OOaRpaph34KsV6ZB7cMjYeBDcxVl4M41nm5yyxXl2GZPy5RBu+DZJ1krh/Vb
+	zudDPJYkp/4nHg5mT/6+4jPI1oq3RkHSUeQDCTIfKpcDZHfC7vdSUm7NxYzfogFfefvQ3McvKwj
+	CJYOljdId5lTp+4gJqLi0laaQodYTAfIizm8c65PXHg==
+X-Google-Smtp-Source: AGHT+IG326amNIrt95WaEQYYFFDyTfpagBUKaviDy8uBRk8XgT2ltykYjLmd/Lb9/RrzkGixWEyeVA==
+X-Received: by 2002:a17:903:845:b0:269:b2e5:ee48 with SMTP id d9443c01a7336-27ed4a5a7bcmr38027585ad.52.1758847186710;
+        Thu, 25 Sep 2025 17:39:46 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6882290sm35871545ad.76.2025.09.25.17.39.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 17:39:46 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: corbet@lwn.net,
+	will@kernel.org,
+	yangyicong@hisilicon.com,
+	fj2767dz@fujitsu.com
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH v2] docs: perf: Fujitsu: Fix htmldocs build warnings and errors
+Date: Fri, 26 Sep 2025 06:09:36 +0530
+Message-ID: <20250926003938.5017-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1785:b0:424:7e21:3d8 with SMTP id
- e9e14a558f8ab-425c12dd0eamr61947565ab.1.1758846767641; Thu, 25 Sep 2025
- 17:32:47 -0700 (PDT)
-Date: Thu, 25 Sep 2025 17:32:47 -0700
-In-Reply-To: <68d26261.a70a0220.4f78.0003.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d5df2f.a00a0220.303701.001f.GAE@google.com>
-Subject: Forwarded: [PATCH v2] hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list
-From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Running "make htmldocs" generates the following build errors and
+warnings for fujitsu_uncore_pmu.rst:
 
-***
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:20: ERROR: Unexpected indentation.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:23: WARNING: Block quote ends without a blank line; unexpected unindent.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:28: ERROR: Unexpected indentation.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:29: WARNING: Block quote ends without a blank line; unexpected unindent.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:81: ERROR: Unexpected indentation.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:82: WARNING: Block quote ends without a blank line; unexpected unindent.
 
-Subject: [PATCH v2] hugetlbfs: skip VMAs without shareable locks in hugetlb=
-_vmdelete_list
-Author: kartikey406@gmail.com
+Add blank line before bullet lists and block quotes to fix build
+errors and resolve warnings.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.gi=
-t master
-
-hugetlb_vmdelete_list() uses trylock to acquire VMA locks during truncate
-operations. As per the original design in commit 40549ba8f8e0 ("hugetlb:
-use new vma_lock for pmd sharing synchronization"), if the trylock fails
-or the VMA has no lock, it should skip that VMA. Any remaining mapped
-pages are handled by remove_inode_hugepages() which is called after
-hugetlb_vmdelete_list() and uses proper lock ordering to guarantee
-unmapping success.
-
-Currently, when hugetlb_vma_trylock_write() returns success (1) for VMAs
-without shareable locks, the code proceeds to call unmap_hugepage_range().
-This causes assertion failures in huge_pmd_unshare() =E2=86=92 hugetlb_vma_=
-assert_locked()
-because no lock is actually held:
-
-  WARNING: CPU: 1 PID: 6594 Comm: syz.0.28 Not tainted
-  Call Trace:
-   hugetlb_vma_assert_locked+0x1dd/0x250
-   huge_pmd_unshare+0x2c8/0x540
-   __unmap_hugepage_range+0x6e3/0x1aa0
-   unmap_hugepage_range+0x32e/0x410
-   hugetlb_vmdelete_list+0x189/0x1f0
-
-Fix by using goto to ensure locks acquired by trylock are always released, =
-even
-when skipping VMAs without shareable locks.
-
-Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=3Df26d7c75c26ec19790e7
-Fixes: 40549ba8f8e0 ("hugetlb: use new vma_lock for pmd sharing synchroniza=
-tion")
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
 ---
-Changes in v2:
-- Use goto to unlock after trylock, avoiding lock leaks (Andrew Morton)
-- Add comment explaining why non-shareable VMAs are skipped (Andrew Morton)
----
- fs/hugetlbfs/inode.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Changelog:
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 9e0625167517..9fa7c72ac1a6 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -488,6 +488,14 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgo=
-ff_t start, pgoff_t end,
- 		if (!hugetlb_vma_trylock_write(vma))
- 			continue;
-=20
-+		/*
-+		 * Skip VMAs without shareable locks. Per the design in commit
-+		 * 40549ba8f8e0, these will be handled by remove_inode_hugepages()
-+		 * called after this function with proper locking.
-+		 */
-+		if (!__vma_shareable_lock(vma))
-+			goto skip;
+Changes since v1:
+  - Remove formatting changes unrelated to the fix.
+  
+Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+ Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+index 46595b788d3a..4edf26f8cfe6 100644
+--- a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
++++ b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+@@ -15,15 +15,19 @@ The driver provides a description of its available events and configuration
+ options in sysfs, see /sys/bus/event_sources/devices/mac_iod<iod>_mac<mac>_ch<ch>/
+ and /sys/bus/event_sources/devices/pci_iod<iod>_pci<pci>/.
+ This driver exports:
 +
- 		v_start =3D vma_offset_start(vma, start);
- 		v_end =3D vma_offset_end(vma, end);
-=20
-@@ -498,7 +506,8 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgof=
-f_t start, pgoff_t end,
- 		 * vmas.  Therefore, lock is not held when calling
- 		 * unmap_hugepage_range for private vmas.
- 		 */
--		hugetlb_vma_unlock_write(vma);
-+skip:
-+		hugetlb_vma_unlock_write(vma);
- 	}
- }
-=20
---=20
+ - formats, used by perf user space and other tools to configure events
+ - events, used by perf user space and other tools to create events
+   symbolically, e.g.:
++
+     perf stat -a -e mac_iod0_mac0_ch0/event=0x21/ ls
+     perf stat -a -e pci_iod0_pci0/event=0x24/ ls
++
+ - cpumask, used by perf user space and other tools to know on which CPUs
+   to open the events
+ 
+ This driver supports the following events for MAC:
++
+ - cycles
+   This event counts MAC cycles at MAC frequency.
+ - read-count
+@@ -77,6 +81,7 @@ Examples for use with perf::
+   perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
+ 
+ And, this driver supports the following events for PCI:
++
+ - pci-port0-cycles
+   This event counts PCI cycles at PCI frequency in port0.
+ - pci-port0-read-count
+-- 
 2.43.0
+
 
