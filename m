@@ -1,79 +1,126 @@
-Return-Path: <linux-kernel+bounces-833960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5588BA36BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B25EBA36CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FCBE6247A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:01:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB671C21DA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9355C2EC565;
-	Fri, 26 Sep 2025 11:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QhOkHTMw"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAD71A5B8F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068AD2F5462;
+	Fri, 26 Sep 2025 11:03:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824BD2F4A00;
+	Fri, 26 Sep 2025 11:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758884458; cv=none; b=Ssi5kdx4V3smp4OD30iZb5InRicdXcWxW8MvvL5bfJF2ZGbrq9iajJbCmaV8bsQ2urNf4HCA/lEu311ZgQAcpD+oRdP0XJk1w3KII+JBOwIE4gw3vvG+DVToUZxUr1V/xqPhiCJVaTHFWgrh2xQtPyRGEssvjvCH9bedMOPTe9s=
+	t=1758884590; cv=none; b=Ds2GRo1FZTxGL6cBFQLMzGfr2AqEo/NhACfz9YivcGxprE94laJdnWzz1Isl7ffN7O4KDjiTwD4HBhu7/UTdjhtDtLgXCjeY7euMQfrp61cfd5J2xWO7Osp0Sa5/85+LF9k0CIBO1b1/tVIisJ2li3TBUWHy5SqlsWB9xLL3yT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758884458; c=relaxed/simple;
-	bh=k0aioiAOBAjoZzShaHhAoOQJ9xXzEkHUpBiHnBuZkx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fmj2P758/QjsHZ7XtKnO2ZxF8IN5J5PibBe7IhD3+VU9fadZDljbpm32RuLTw6ls/nSQpkHKe8O7XPwSxrtYLUiqkwmimPvbH1T1yx+iaecOPkRFF/gsrW9TUCKIjwRyPYeyaWU0WV4PnNG1g7DCUoi6Ri7LuiH9V0W4s3hpLd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QhOkHTMw; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5jLtimohSkXYYR/kiiLeEyE05nLWXqacLQ9rdnOcqXE=; b=QhOkHTMwTVeczsgJhw0Hd03Ttt
-	HfXBEgiQuy6RaRbnYvJG9ngjtdI4NJLZTNNNNVjgJzTiDGsW6D5WbNs/PJu+0J8OLJVJb97TnWFqo
-	KaFZCCVEu0larDbRX3Z1cVnFpk7eJB6cCr96Wyz+oifAyO5VT3QxHpkJs9zvSVxEhDe17MPsiTEoT
-	etHH3oLfrrwDLK8DhcXWXa3tdRq1ecbTmHYXxpY2zaggSHG+QSJ/B+pZ/lbB81vD8RKwPZAq0/yUQ
-	Q1gUqbf2r/VknPr2oRoBg4fQC0wDihfSOdx9jC5V7R+QYvHK9E3Gl+zcBt5nVdsX+kbRsCDHRKeUm
-	u+iRmUwQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v26Bz-0000000AgB0-2VOV;
-	Fri, 26 Sep 2025 11:00:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2D4DD3002BF; Fri, 26 Sep 2025 13:00:47 +0200 (CEST)
-Date: Fri, 26 Sep 2025 13:00:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "jianyun.gao" <jianyungao89@gmail.com>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com
-Subject: Re: [PATCH] sched: Fix some spelling mistakes in the scheduler module
-Message-ID: <20250926110047.GB3245006@noisy.programming.kicks-ass.net>
-References: <20250926092832.1457477-1-jianyungao89@gmail.com>
+	s=arc-20240116; t=1758884590; c=relaxed/simple;
+	bh=I3zdDiLpb1/S8WfIi/oX2seJwOqM7GqHkmoX3rtHv30=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=joVCDkzvqO4C9za0/g6l77ExUUsNTlyig+Bmh9grEYPCagxVr/UIlK2Pfc5Ij3zNAkKw3NKUwZkhvFYvNnD38b5hfak8ObvQf4v1COgCXqtAyDeeZ4MRXpYvejEB32CzRKCeZOAwBUGLKLnX8N3UCsme1W/m2/5RLtMZE0UQ0gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A90E01655;
+	Fri, 26 Sep 2025 04:02:59 -0700 (PDT)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.38.22])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 878073F66E;
+	Fri, 26 Sep 2025 04:03:03 -0700 (PDT)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>,
+	Vishal Annapurve <vannapurve@google.com>,
+	Steven Price <steven.price@arm.com>
+Subject: [RFC PATCH 0/5] Arm CCA planes support
+Date: Fri, 26 Sep 2025 12:02:49 +0100
+Message-ID: <20250926110254.55449-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926092832.1457477-1-jianyungao89@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 26, 2025 at 05:28:32PM +0800, jianyun.gao wrote:
-> The following are some spelling mistakes existing in the scheduler
-> module. Just fix it!
-> 
+The Arm CCA (Confidential Compute Architecture) RMM version 1.1
+specification[1] adds support for a concept of "planes". This allows a
+realm to be divided into multiple execution environments with memory
+separation between them (while still sharing the same IPA to PA
+translations). There's an overview on the Arm website[2].
 
->   borken -> broken
+The TF-RMM project[3] recently merged support for planes to their "main"
+branch and this an early preview of the corresponding Linux changes to
+support the feature. Note you need to enable the (experimental) RMM_V1_1
+configuration option to enable this feature.
 
-That is not a typo. Also, in general I;m not really a fan of spelling
-patches.
+This series is based on the v10 posting of the CCA host support
+series[4] and is also available as a git tree:
+
+  https://gitlab.arm.com/linux-arm/linux-cca.git/ cca/planes/rfc-v1
+
+A hacked up version of kvmtool to launch a realm guest with an extra
+plan is available here:
+
+  https://gitlab.arm.com/linux-arm/kvmtool-cca.git/ cca/planes/rfc-v1
+
+Note:
+   The kvmtool support is a hack - it simply (unconditionally) enables a
+   single extra plane (for a total of two planes: P0 and P1). This
+   should obviously be a configuration option and should support other
+   numbers of planes. But it gives an easy way of testing the support
+   for auxiliary RTTs while running a single guest image (i.e. leaving
+   P1 empty).
+
+This series was written against the RMM v1.1 alp14 specification. Those
+who are following things closely will know we're up to alp16, however
+there are no major changes affecting planes between these two versions.
+The spec is still alpha, so there may well be changes in the future.
+
+[1] https://developer.arm.com/-/cdn-downloads/permalink/Architectures/Armv9/DEN0137_1.1-alp14.zip
+[2] https://developer.arm.com/documentation/den0125/400/Arm-CCA-Extensions#md239-arm-cca-extensions__realm-planes
+[3] https://www.trustedfirmware.org/projects/tf-rmm/
+[4] https://lore.kernel.org/r/20250820145606.180644-1-steven.price%40arm.com
+
+Steven Price (5):
+  arm64: RME: Add SMC definitions introduced in RMM v1.1
+  arm64: RME: Handle auxiliary RTT trees
+  arm64: RME: Support RMI_EXIT_S2AP_CHANGE
+  arm64: rme: Allocate AUX RTT PGDs and VMIDs
+  arm64: RME: Support num_aux_places & rtt_tree_pp realm parameters
+
+ arch/arm64/include/asm/kvm_rme.h  |   13 +-
+ arch/arm64/include/asm/rmi_cmds.h | 1104 +++++++++++++++++++++++++++--
+ arch/arm64/include/asm/rmi_smc.h  |  121 +++-
+ arch/arm64/include/uapi/asm/kvm.h |   12 +
+ arch/arm64/kvm/mmu.c              |   15 +-
+ arch/arm64/kvm/rme-exit.c         |   33 +-
+ arch/arm64/kvm/rme.c              |  441 +++++++++++-
+ 7 files changed, 1618 insertions(+), 121 deletions(-)
+
+-- 
+2.43.0
 
 
