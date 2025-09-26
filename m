@@ -1,111 +1,171 @@
-Return-Path: <linux-kernel+bounces-834152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF63DBA40A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E000BA40CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DF4A1C00A8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834F11C00AA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80212F83B5;
-	Fri, 26 Sep 2025 14:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE2E2F83A1;
+	Fri, 26 Sep 2025 14:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZAJ0dtTt"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqSNXsCb"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C132F199E94
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E7234BA4D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758895635; cv=none; b=e2g9cEYrzEZssZBqlwJGH2CdTiXXzK31XiUmmRzbyU5xzQTTygOLHCc5g8U4n7Bi2wyOGZUpjf58c04euhfOGL4RQ7cmk3Mo+h+7TxzihP8+zQhICRRNEuHP8pVIURS+HzUvcEVWCFUqoHyu2IRUch0B3MNYwbOOPM7Meaue/n8=
+	t=1758895787; cv=none; b=IlsWt+gAKAGAw1b4AvlJic1JeAM+oMsnWn0pIwKjFuzw1rPZdOikLIuCmxAMbWEDHYEJbZP2htBYke7ffQrzCKN3M0z28tVEyDJBOkedFDWLgh6rmdwAATMUchbSHcNGVn8UHQ5X+wlr6NhTGcUuoE+x/qrTp1PGkhq5CZae9K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758895635; c=relaxed/simple;
-	bh=StcU61O7Bduu+n3ctrkb4ORbTcaBshXBtfrgjHAaeAE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VMXmXO/4vpn8OcoMQgKgtmhJLY7AJ7YKXOd198HsZbXv1P70dG6ThSvTC31+0vD6ESsEF+nNyBE5udNmWhH3OcR/qRozhH20PriRMlWlyXk+s3YnM1jukImrYlQVapAV5caCWAFC3I0yYbquBR1aksON0RW+fbvF2wc9RiOsR5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZAJ0dtTt; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4dcc9cebfdfso374261cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:07:13 -0700 (PDT)
+	s=arc-20240116; t=1758895787; c=relaxed/simple;
+	bh=I6/9jdTp8/1MngmdCZph5ifXgKWMK/EdqCPinxqQuNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OGzGz7GkJoiOs4D02SsVaVW3nzFQ4gjkahxiE2L21NJ5w8I9aytOLair0oM3pCNP7XDbI+P/6XQrH+aWrczNblfr9kx+1NR7A6p0vY7qpGGG4YrdHpImA+QagiulwVtuxi61vvKtmyFtspXFo/ALf9RVwz+Y+HDLnZ1P/jeOMJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqSNXsCb; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27edcbcd158so19164175ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:09:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758895632; x=1759500432; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=StcU61O7Bduu+n3ctrkb4ORbTcaBshXBtfrgjHAaeAE=;
-        b=ZAJ0dtTt/DoEjhB/gnNs2GMHkfGinLNE0JCs/CvlqYEMmh/T4Q4Y4p2V1H3fc8DabW
-         r/RHeBeEXvoHm7MxTWyP3br3vygAqnCmtZlzCroFZ0R8Cp3xxawP3GzDs6djhs+Z+Ywm
-         JcgtTfq5FfbYm1ENEiXG9LAAuRbwEEwgLhn2/qhv1Ix0As3c6esyoPkJE48ryzXj1G0M
-         kK90UMaRDcZEU4fVv2G1wEdxZfhqYjb9PG22arVmckTqMEdVn1kH3evAdc8gr74imY7B
-         ZBPi1tZ4BahR+dR2VC8QL6kxgiiuYXwng0cco2mA4nVZjvyBuhpYIKKGNbQO+mQpryYV
-         eKmw==
+        d=gmail.com; s=20230601; t=1758895784; x=1759500584; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKdZW0ftr/OUszuEc5uNz8JRSH+vp4e+yPjDngAenyY=;
+        b=AqSNXsCbxdbLkfIyg3MOP0DlOw3VUic+0NBNnTWjvQbMICHqWbpdiwRwlmOE/cRLCw
+         VTDL8Q+ies44se3+wr20Rk++TEgZeht9sP4Yl0Y9x3R2Uwjn4MN47HRHbQO56vu3Xfz6
+         a6uZaGm7DiBC5w3CXxSpH0pa2EeVJFAeP6i1pqrTY/v9vAtY1tUyXHlL3LOLTE7zLYZJ
+         QZzfbDR8C00c73Wh/kFroNhSdG+mlVhtLUwQ5JyAai6NVEpJBnLCQP1k1BFBxydyeOLX
+         a8tJN5mNJkC63qB4lU0P7lAhJlPzRqSx4sglSzaAdKCyFY+WC8s4jp3HH0Ls2UQn3RU6
+         g88w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758895632; x=1759500432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758895784; x=1759500584;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=StcU61O7Bduu+n3ctrkb4ORbTcaBshXBtfrgjHAaeAE=;
-        b=AbcjGoAI17Dr2fu5cC9ZNXfCHhzjpn/SrOe+5LdDgP8qIjscenJ8PJjYsMIkRTxjhh
-         jV77tEDpqmegI6aUANvR0PhezjXcazJwW1BIgEsNvTJROJmKLrkCznUXsAe6RXtRIqeG
-         0yIQyyIW38/2LHiIM2xQUA4jXGJqLAdZHZNI2L0mkIE9sJMrAu0kykmkHM+UcQfC5Aqz
-         urfq03b/iU93fQrYM70nL17gC0oxTiXKJ3T+BKPV9YV4ONZ5JIfxBZXg6zqyXFo75lbp
-         hstgeWiU3u5hDnmQLqDuC4WAiCSBgHTPM/jx6nBcR962ekjCr6Kx/l+J+xpKwtBZ2aEj
-         hIqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbmcaO0JzDOMBdcOg6losmi4yf9H4oA9/+peMo53TBcOXkIJBuzFvCcsQuQSBhWdILCsigv9yVrRPzWPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrfTtr84dZID+liy6cW1NDkSD26VsSPBWcARSI9x8UR/h5WMFx
-	qECpT0moZU2Ub8aBTM5+7aGECvo/TRrhPP/DPc53cmvl1SpWu/Amoqg/2/QnKkPfc05ifZ0lPUv
-	7JxJTxRUawIl4hA5+sdRgQbXntKv5jD4xzzCrhWFm
-X-Gm-Gg: ASbGnctafK369F3o29fen4RQP11AJwaaUai4UZ7IFX4t/0FeiM9AFSUcSmb/sfdHuAi
-	q0qPU+08/GZpTCrZp4gvIRqt0J5qixsTbYib4f0oRUJji4xIBwflUNmuLoeq9YiKf430B/cDq83
-	XssaCnRE+ymoW2xyjjvPMUNU+WDJyaipgXPYqOsXgC2fd2IVrO82WhQiJWLPnCJrnEk2+rliDzD
-	oesBsTmt2V9gupv5jsOFA0H4CY0zOU3EGbduXuO
-X-Google-Smtp-Source: AGHT+IG58XmVVP4JYJU1AfrUfvapvQBotoDRlseFBHxJw51RyRcpKv6Ocibos4E3WKcK0v3GK2U8+crTo++BhUDtQrU=
-X-Received: by 2002:ac8:5754:0:b0:4b6:2d44:13c4 with SMTP id
- d75a77b69052e-4dd1814d82dmr5668941cf.10.1758895631929; Fri, 26 Sep 2025
- 07:07:11 -0700 (PDT)
+        bh=wKdZW0ftr/OUszuEc5uNz8JRSH+vp4e+yPjDngAenyY=;
+        b=dIIpAqJTpcd/wulDQhb6T3Xd+crTWQVEmhjhC+THA75vhDUUc7jkkNrBaqpki1W+xj
+         VQbHpfQcLdB75MioGqA45Q4R5tcVhYCSeKPzOavKbagI+pHwWGi2uBrcSXkgMByrTdn9
+         szr1QcVlxRQXgg0C3gsg7SMrdXmlx+eQRJO2D7mmaZUO/qV8nEaAz34dYPsafTiQ1Ek6
+         WZYnWiVdtE4UJn47K4nlFVfEYE2gNAVvg2HUjUqozMm9hXPd7moSNkjKyXENWKZWBfnb
+         PMBXWfoKXbsD7iuIYsJOOrR7PsZ9as5r3ltkS6nnL8IHOCXPuKFnn6U8qwodpZJT/1yC
+         MgWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBHibnwkCwYcFcvDPAb1xdK0LVieEvF1HNN+sBdoiAgpoLoq/tzyxKtvG4S2zF4arAdnO7Ppr4yEsk36M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRfyldmVHXuolWgnPOUJDBk1linfK8wQM62Rjo4PL3w4+jjxsz
+	DnuuNLI3EIyW830H1HfD7tWs5ByxegbnvrTkHXqfItUYQIRuK8jU1+XD
+X-Gm-Gg: ASbGncuG4LkBMo1FoTSXldfFk/0O2nX80JrDrzKqqxgXg0ocoBzc/UOfY5gK2a6PDlV
+	1I/K5ZBGmntZeYZWmKbHIsd1rSU8zOzmu/gY10ZNJ17bkV07ScecxTF4kz9m4oaa8RKLdOH53sA
+	Tv7dL6BaWy92hQlWqpFB163gzCET7QGAcPc5xX5/GhkoqS961fuDvH0rgu29+99JX43DbfS9a9P
+	wgiJ9L6hTpSJ29jbwP8uIJQnaUsR6ooFMdgqZ5FN36CezvKTwlMnJpUFdThMwhh1XGldF6pvBwE
+	iNgevdvBIHfyBkXCu2EYNbl6i+CW5un+Z0TY/r+tKVXYMQ0jNEESYJmJZRDDVd7rX7m+zOeG/ZS
+	mEfQRfnmkV1OMeFRPyq40UwKEHSTdOj+3MGQn5LiZYGqa9nz16bH8/8P8Ddby
+X-Google-Smtp-Source: AGHT+IFkJc22u8I/AG9PpYdgB1qjcf+eKead7izUDftEMVWslMjY/E8jHFiu8jtsc2e7QyFDi6xRHg==
+X-Received: by 2002:a17:903:1a2d:b0:24b:11c8:2d05 with SMTP id d9443c01a7336-27ed4a4bbaamr80629225ad.45.1758895783883;
+        Fri, 26 Sep 2025 07:09:43 -0700 (PDT)
+Received: from cortexauth ([2401:4900:889b:7045:558:5033:2b7a:fd84])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ac94ffsm54797165ad.136.2025.09.26.07.09.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 07:09:43 -0700 (PDT)
+From: Deepak Sharma <deepak.sharma.472935@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	Deepak Sharma <deepak.sharma.472935@gmail.com>,
+	syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Subject: [PATCH RESEND v2] HID: cp2112: Add parameter validation to data length
+Date: Fri, 26 Sep 2025 19:37:29 +0530
+Message-ID: <20250926140729.267766-1-deepak.sharma.472935@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mostafa Saleh <smostafa@google.com>
-Date: Fri, 26 Sep 2025 15:07:00 +0100
-X-Gm-Features: AS18NWDXUhX2c5Ql_neW8IBl1rstnr2mdAIs4XtgEZx5rukS5nC-KjFNy7VgTYk
-Message-ID: <CAFgf54oYjUEg9KkQUzneYTZH1Z8cX56va5M0853eWPFaYT+Z2A@mail.gmail.com>
-Subject: Support for Rock PI-4b
-To: devicetree@vger.kernel.org, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, linux-rockchip@lists.infradead.org, 
-	open list <linux-kernel@vger.kernel.org>
-Cc: Rob Herring <robh@kernel.org>, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	Heiko Stuebner <heiko@sntech.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This is v2 for the earlier patch, where a few bounds check were
+unnecessarily strict. This patch also removes the use of magic numbers
 
-I am trying to run Linux[1] on my Rock PI-4b, which I see is supported in
-the kernel in =E2=80=9Crk3399-rock-pi-4b.dts=E2=80=9D.
+Syzkaller reported a stack OOB access in cp2112_write_req caused by lack
+of parameter validation for the user input in I2C SMBUS ioctl codeflow
+in the report
 
-However, compiling =E2=80=9Cdefconfig=E2=80=9D (ARM64) and flashing my Imag=
-e doesn=E2=80=99t
-work,
-It just hangs before any console (even with earlycon), I tried to also use
-some of the vendor configs with no luck.
-I did some research and found that [2], which indicates that the upstream
-support has been broken for some years?
+I2C device drivers are "responsible for checking all the parameters that
+come from user-space for validity" as specified at Documentation/i2c/dev-interface
 
-Has anyone tried to flash a recent kernel successfully on it? or any
-tips are greatly appreciated.
-Otherwise, maybe it can be removed to avoid misleading other developers
-(I got this board to do some upstream kernel development on)
+Add the parameter validation for the data->block[0] to be bounded by
+I2C_SMBUS_BLOCK_MAX + the additional compatibility padding
 
-[1] base: 4ff71af020ae59ae2d83b174646fc2ad9fcd4dc4
-[2] https://wiki.radxa.com/Rockpi4/dev/kernel-mainline
+Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7617e19c8a59edfbd879
+Tested-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
+---
+ drivers/hid/hid-cp2112.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-Thanks,
-Mostafa
+diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
+index 482f62a78c41..13dcd2470d92 100644
+--- a/drivers/hid/hid-cp2112.c
++++ b/drivers/hid/hid-cp2112.c
+@@ -689,7 +689,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 			count = cp2112_write_read_req(buf, addr, read_length,
+ 						      command, NULL, 0);
+ 		} else {
+-			count = cp2112_write_req(buf, addr, command,
++			/* Copy starts from data->block[1] so the length can
++			 * be at max I2C_SMBUS_CLOCK_MAX + 1
++			 */
++			
++			if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
++				count = -EINVAL;
++			else
++				count = cp2112_write_req(buf, addr, command,
+ 						 data->block + 1,
+ 						 data->block[0]);
+ 		}
+@@ -700,7 +707,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 						      I2C_SMBUS_BLOCK_MAX,
+ 						      command, NULL, 0);
+ 		} else {
+-			count = cp2112_write_req(buf, addr, command,
++			/* data_length here is data->block[0] + 1
++			 * so make sure that the data->block[0] is
++			 * less than or equals I2C_SMBUS_BLOCK_MAX + 1
++			*/
++			if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
++				count = -EINVAL;
++			else
++				count = cp2112_write_req(buf, addr, command,
+ 						 data->block,
+ 						 data->block[0] + 1);
+ 		}
+@@ -709,7 +723,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 		size = I2C_SMBUS_BLOCK_DATA;
+ 		read_write = I2C_SMBUS_READ;
+ 
+-		count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
++		/* data_length is data->block[0] + 1, so 
++		 * so data->block[0] should be less than or
++		 * equal to the I2C_SMBUS_BLOCK_MAX + 1
++		*/
++		if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
++			count = -EINVAL;
++		else
++			count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
+ 					      command, data->block,
+ 					      data->block[0] + 1);
+ 		break;
+-- 
+2.51.0
+
 
