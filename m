@@ -1,294 +1,218 @@
-Return-Path: <linux-kernel+bounces-834320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B720FBA4703
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A2BBA4702
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D69D7B4CB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:32:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6BE1C02D1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF0C2253A0;
-	Fri, 26 Sep 2025 15:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B8721B9F1;
+	Fri, 26 Sep 2025 15:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hPN1Q/Z2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qvsmI3WJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hPN1Q/Z2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qvsmI3WJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOIxIqaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0FF22422E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FF919FA93;
+	Fri, 26 Sep 2025 15:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758900805; cv=none; b=bh1jefQ20inJbfc1HrgInA1Z1eYsca67j9yAVjcSxGbUFg+bGX9iP6Fpc9+xfcWzyaFNyIlM5IflJu7/h00t12CfD8ul2HOq/k0akvmrpSXjhpXEvwd48PY6shTtGscH5QZmf2w7lCCfJlb4rR9mmxh1cVxn30KrBNkDaozpDB4=
+	t=1758900842; cv=none; b=rNOCpo8DwBFCZs+mNi8DY2gTqh9J5jwAuxZro/PvM1EUXQ3gREUZ98FY8VkvjcpcSXifVPjSa8/KosvNmTlMzxrfuHE+qRQupK3i8cihIYEIzNEYqj5PFZXVsC1eL3ktIinFFzPgvXtxafoiOFR9ywlGl2AJE9fqZTQHUMO933k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758900805; c=relaxed/simple;
-	bh=kd7bEABZ+uROS4oY4S3a/bjeGAoTAcj6vtm7z/gmab4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3Ov3xHPhFAWgYo8i6yeiBvQCrtEtY4On6GPjESnifko9IVAB0e4IevDdO8mKPi2o1O3iXel88g84edtkAFwOkTgr1qrAKa/tlbYtFMDvY6ZhvD/CKxiW3t8aZpLtCCcwX0mkP9vGvZb3qSlKdCqBgpVqmfFjWghw9NKtUusW+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hPN1Q/Z2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qvsmI3WJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hPN1Q/Z2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qvsmI3WJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1F8DD1F84F;
-	Fri, 26 Sep 2025 15:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758900800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=hPN1Q/Z2I0LleaVvFRVk+yXLW6mKv8nxGbCL4ruk19wSvq+3uPTxnoPMPL2ZdNeXu68zEE
-	ZHfIFjmXeybYmlsuTT/gGyP5+++DS0qkKLPB1nUbM6a2ZIIau/UlRX0DENJipCwjcahyG7
-	kcnHCmHP8mfbc/flUmB1bDEzR5g62Ls=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758900800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=qvsmI3WJwdxotgPOWL64XgiQ7XQul3VTfRbYUxHg3hVGT+gxhleujtTOPyvGFODFYUjNhk
-	Ub5wEs52eNFsq7BQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="hPN1Q/Z2";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qvsmI3WJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758900800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=hPN1Q/Z2I0LleaVvFRVk+yXLW6mKv8nxGbCL4ruk19wSvq+3uPTxnoPMPL2ZdNeXu68zEE
-	ZHfIFjmXeybYmlsuTT/gGyP5+++DS0qkKLPB1nUbM6a2ZIIau/UlRX0DENJipCwjcahyG7
-	kcnHCmHP8mfbc/flUmB1bDEzR5g62Ls=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758900800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=qvsmI3WJwdxotgPOWL64XgiQ7XQul3VTfRbYUxHg3hVGT+gxhleujtTOPyvGFODFYUjNhk
-	Ub5wEs52eNFsq7BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CA6E1386E;
-	Fri, 26 Sep 2025 15:33:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Wk0VA0Cy1mj4AgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 26 Sep 2025 15:33:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B7903A0AA0; Fri, 26 Sep 2025 17:33:19 +0200 (CEST)
-Date: Fri, 26 Sep 2025 17:33:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Paulo Alcantara <pc@manguebit.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Rick Macklem <rick.macklem@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/38] vfs: make vfs_create break delegations on
- parent directory
-Message-ID: <jshbhldhrbr2vbzfvuary3qowbfavcgkjznbgnjwhnxvmudvhw@c2uam4vtghcw>
-References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
- <20250924-dir-deleg-v3-7-9f3af8bc5c40@kernel.org>
- <otguskcvjqwcojy6tsw7yimvshsgtj4vl7ciwksxazx7z5s2ko@vjyf5plolvvf>
+	s=arc-20240116; t=1758900842; c=relaxed/simple;
+	bh=AyEuhcc/KBdFsnEyAfH3GoL7xIxURJXhcw3SPv7GPgQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=tyl8gN97ZA/iD6FTXJiJ867lgakhobH22CEyVM7qeuYvtn1ahXbqZOlUSP7Zl/1j3rHfrpHUx8hi/NX75Dd6TPyneovmsl0C+6TEf2JgeKhfHTou2RicCFtZJ3HKzWeFPmewmkMw1mtOpsfWNQ36bCo1tULHt7P5uVSZMBIcMSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOIxIqaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22B1C4CEF4;
+	Fri, 26 Sep 2025 15:33:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758900842;
+	bh=AyEuhcc/KBdFsnEyAfH3GoL7xIxURJXhcw3SPv7GPgQ=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=JOIxIqaX/xLyzXWjbGYfeZLPHoJF0M3M3FYuJUkkkYntrH4fkEfMceJJ1aAs0+DhD
+	 S6ayU35ln1PxQnbxa1LIg7HpXJnpPvkhktw1oWHcGJYH8fd/+Y0Oak0CXai9ZNqgKw
+	 WK3F9vvwgotDBpvpziEcrNbF+16oEbmkMsh8Q2s0kWwc12zePQregiF55Ll2Ku0o/O
+	 YwAMv0aAGZdbhi5tPz6h8TqxdinlGMyOb8oTpr2OapoTcVjtoCRdWt1QKRjvpZEfJ4
+	 sV5uuQQ8XYRrMgzeHQ2ZVEzeyIehrttjNEYro/EozUWVUIsOGa+NYUCSioqa8H+/4e
+	 bYASHKTy3TLvQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <otguskcvjqwcojy6tsw7yimvshsgtj4vl7ciwksxazx7z5s2ko@vjyf5plolvvf>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1F8DD1F84F
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,microsoft.com,talpey.com,brown.name,redhat.com,lwn.net,szeredi.hu,manguebit.org,linuxfoundation.org,tyhicks.com,chromium.org,goodmis.org,efficios.com,vger.kernel.org,lists.samba.org,lists.linux.dev];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLpnapcpkwxdkc5mopt1ezhhna)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
-X-Spam-Score: -2.51
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 26 Sep 2025 17:33:57 +0200
+Message-Id: <DD2UB5P01XW7.1GW33112S22Y@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH] rust: slab: add basic slab module
+Cc: "Elijah Wright" <git@elijahs.space>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Uladzislau Rezki" <urezki@gmail.com>, <linux-mm@kvack.org>
+To: "Vlastimil Babka" <vbabka@suse.cz>
+References: <20250924193643.4001-1-git@elijahs.space>
+ <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+ <5f09b7f5-e7de-4333-8de5-322eb6d93aa9@suse.cz>
+In-Reply-To: <5f09b7f5-e7de-4333-8de5-322eb6d93aa9@suse.cz>
 
-On Fri 26-09-25 17:23:41, Jan Kara wrote:
-> On Wed 24-09-25 14:05:53, Jeff Layton wrote:
-> > In order to add directory delegation support, we need to break
-> > delegations on the parent whenever there is going to be a change in the
-> > directory.
-> > 
-> > Rename vfs_create as __vfs_create, make it static, and add a new
-> > delegated_inode parameter. Fix do_mknodat to call __vfs_create and wait
-> > for a delegation break if there is one. Add a new exported vfs_create
-> > wrapper that passes in NULL for delegated_inode.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+On Fri Sep 26, 2025 at 5:00 PM CEST, Vlastimil Babka wrote:
+> On 9/25/25 11:54, Danilo Krummrich wrote:
+>> (+Cc: Lorenzo, Vlastimil, Liam, Uladzislau, MM)
+>>=20
+>> On Wed Sep 24, 2025 at 9:36 PM CEST, Elijah Wright wrote:
+>>> this patch adds a basic slab module for kmem_cache, primarily wrapping
+>>> kmem_cache_create, kmem_cache_alloc, kmem_cache_free, and kmem_cache_de=
+stroy.
+>>=20
+>> What's the motivation?
+>>=20
+>> I mean, we will need kmem_cache soon. But the users will all be drivers,=
+ e.g.
+>> the GPU drivers that people work on currently.
+>>=20
+>> Drivers shouldn't use "raw" allocators (such as Kmalloc [1] or Vmalloc [=
+2]), but
+>> the corresponding "managed" allocation primitives, such as KBox [3], VBo=
+x [4],
+>> KVec, etc.
+>>=20
+>> Therefore, the code below shouldn't be used by drivers directly, hence t=
+he
+>> question for motivation.
+>>=20
+>> In any case, kmem_cache is a special allocator (special as in it can hav=
+e a
+>> non-static lifetime in contrast to other kernel allocators) and should b=
+e
+>> integrated with the existing infrastructure in rust/kernel/alloc/.
+>>=20
+>> I think there are multiple options for that; (1) isn't really an option,=
+ but I
+>> think it's good to mention anyways:
+>>=20
+>>   (1) Allow for non-zero sized implementations of the Allocator trait [3=
+], such
+>>       that we can store a reference count to the KmemCache. This is nece=
+ssary to
+>>       ensure that a Box<T, KmemCache> can't out-live the KmemCache itsel=
+f.
+>>=20
+>>       The reason why I said it's not really an option is because it disc=
+ards the
+>>       option for dynamic dispatch of the generic Box type.
+>>=20
+>>   (2) Same as (1), but with a custom Box type. This keeps dynamic dispat=
+ch for
+>>       the generic Box type (i.e. KBox, VBox, KVBox), but duplicates quit=
+e some
+>>       code and still doesn't allow for dynamic dispatch for the KmemCach=
+eBox.
+>>=20
+>>   (3) Implement a macro to generate a custom KmemCache Allocator trait
+>>       implementation for every KmemCache instance with a static lifetime=
+.
+>>=20
+>>       This makes KmemCache technically equivalent to the other allocator=
+s, such
+>>       as Kmalloc, etc. but obviously has the downside that the KmemCache=
+ might
+>>       live much longer than required.
+>
+> I don't know enough of Rust to follow why is that. What does mean "much l=
+onger"?
 
-Sorry, I've sent this twise by mistake.
+Nothing Rust specific, I just point out that if the kmemcache does not need=
+ to
+be tied to the module lifetime (but a more narrow scope for whatever reason=
+), it
+would still need to live as long as the module lives with (3). Which for
+built-in means forever, which would likely be "much longer". :)
 
-								Honza
+>>       Technically, most KmemCache instances live for the whole module li=
+fetime,
+>>       so it might be fine though.
+>
+> I think so, yeah.
+>
+>>       (This is what I think Alice proposed.)
+>>=20
+>>   (4) Solve the problem on the C side and let kmem_cache_alloc() take ca=
+re of
+>>       acquiring a reference count to the backing kmem_cache. The main qu=
+estion
+>>       here would be where to store the pointer for decreasing the refere=
+nce
+>>       count on kmem_cache_free().
+>
+> Pointer to what, the ref counter? If it's part of struct kmem_cache, then=
+ we
+> have pointer to that in kmem_cache_free(). Even when kfree() is used, it =
+can
+> be (or rather already is) obtained. So that's not the issue (unless I
+> misunderstand).
 
-> > ---
-> >  fs/namei.c | 55 ++++++++++++++++++++++++++++++++++++-------------------
-> >  1 file changed, 36 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 903b70a82530938a0fdf10508529a1b7cc38136d..d4b8330a3eb97e205dc2e71766fed1e45503323b 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -3370,6 +3370,32 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
-> >  	return mode;
-> >  }
-> >  
-> > +static int __vfs_create(struct mnt_idmap *idmap, struct inode *dir,
-> > +			struct dentry *dentry, umode_t mode, bool want_excl,
-> > +			struct inode **delegated_inode)
-> > +{
-> > +	int error;
-> > +
-> > +	error = may_create(idmap, dir, dentry);
-> > +	if (error)
-> > +		return error;
-> > +
-> > +	if (!dir->i_op->create)
-> > +		return -EACCES;	/* shouldn't it be ENOSYS? */
-> > +
-> > +	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
-> > +	error = security_inode_create(dir, dentry, mode);
-> > +	if (error)
-> > +		return error;
-> > +	error = try_break_deleg(dir, delegated_inode);
-> > +	if (error)
-> > +		return error;
-> > +	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
-> > +	if (!error)
-> > +		fsnotify_create(dir, dentry);
-> > +	return error;
-> > +}
-> > +
-> >  /**
-> >   * vfs_create - create new file
-> >   * @idmap:	idmap of the mount the inode was found from
-> > @@ -3389,23 +3415,7 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
-> >  int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
-> >  	       struct dentry *dentry, umode_t mode, bool want_excl)
-> >  {
-> > -	int error;
-> > -
-> > -	error = may_create(idmap, dir, dentry);
-> > -	if (error)
-> > -		return error;
-> > -
-> > -	if (!dir->i_op->create)
-> > -		return -EACCES;	/* shouldn't it be ENOSYS? */
-> > -
-> > -	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
-> > -	error = security_inode_create(dir, dentry, mode);
-> > -	if (error)
-> > -		return error;
-> > -	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
-> > -	if (!error)
-> > -		fsnotify_create(dir, dentry);
-> > -	return error;
-> > +	return __vfs_create(idmap, dir, dentry, mode, want_excl, NULL);
-> >  }
-> >  EXPORT_SYMBOL(vfs_create);
-> >  
-> > @@ -4278,6 +4288,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> >  	struct path path;
-> >  	int error;
-> >  	unsigned int lookup_flags = 0;
-> > +	struct inode *delegated_inode = NULL;
-> >  
-> >  	error = may_mknod(mode);
-> >  	if (error)
-> > @@ -4296,8 +4307,9 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> >  	idmap = mnt_idmap(path.mnt);
-> >  	switch (mode & S_IFMT) {
-> >  		case 0: case S_IFREG:
-> > -			error = vfs_create(idmap, path.dentry->d_inode,
-> > -					   dentry, mode, true);
-> > +			error = __vfs_create(idmap, path.dentry->d_inode,
-> > +					     dentry, mode, true,
-> > +					     &delegated_inode);
-> >  			if (!error)
-> >  				security_path_post_mknod(idmap, dentry);
-> >  			break;
-> > @@ -4312,6 +4324,11 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> >  	}
-> >  out2:
-> >  	done_path_create(&path, dentry);
-> > +	if (delegated_inode) {
-> > +		error = break_deleg_wait(&delegated_inode);
-> > +		if (!error)
-> > +			goto retry;
-> > +	}
-> >  	if (retry_estale(error, lookup_flags)) {
-> >  		lookup_flags |= LOOKUP_REVAL;
-> >  		goto retry;
-> > 
-> > -- 
-> > 2.51.0
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yes, the reference count.
+
+> But we wouldn't want to pay the cost of the atomic updates of the refcoun=
+t
+> for all caches. If done only for Rust-created caches, the implementation
+> also would better not to add branches to all allocation/free fastpaths.
+
+Indeed, that's why I was wondering if you see other options to deal with th=
+is in
+the MM layer, and reading the below, it seems like you even already do.
+
+> But also why is this refcounting needed? What would happen on the Rust si=
+de
+> if someone destroyed the cache too early?
+
+Well, that's the question. I thought that if the cache is destroyed potenti=
+al
+remaining allocations become invalid.
+
+If that's the case we have to ensure that all allocations are freed before =
+the
+cache is destroyed.
+
+> In the underlying C implementation
+> we notice it (reliably AFAICT), warn and abort the destroy (leaving it as=
+ a
+> kind of zombie) so I'd say it's safe. So if Rust needs to know if the
+> destroy was successful or premature, we could probably just return the
+> result instead of the current void.
+
+The only thing we need on the Rust side is that existing allocations remain
+valid even if the cache is destroyed. Or the other way around the cache is
+silently kept alive internally.
+
+>>       Theoretically, it could be stored within the allocation itself, bu=
+t it's a
+>>       bit of a yikes.
+>>=20
+>>       However, it would resolve all the mentioned problems above.
+>>=20
+>> I'd like to see (3) or (4), also depending on what the MM folks think.
+>>=20
+>> - Danilo
+>>=20
+>> [1] https://rust.docs.kernel.org/kernel/alloc/allocator/struct.Kmalloc.h=
+tml
+>> [2] https://rust.docs.kernel.org/kernel/alloc/allocator/struct.Vmalloc.h=
+tml
+>> [3] https://rust.docs.kernel.org/kernel/alloc/kbox/type.KBox.html
+>> [4] https://rust.docs.kernel.org/kernel/alloc/kbox/type.VBox.html
+>> [5] https://rust.docs.kernel.org/kernel/alloc/trait.Allocator.html
+
 
