@@ -1,58 +1,81 @@
-Return-Path: <linux-kernel+bounces-834379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C879CBA4932
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:13:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01756BA493B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C481896AC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:14:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B616E1666B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A6823C50C;
-	Fri, 26 Sep 2025 16:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C0A1D31B9;
+	Fri, 26 Sep 2025 16:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgYG+uue"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UVAV3roX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B25521D3CA;
-	Fri, 26 Sep 2025 16:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8861E86E;
+	Fri, 26 Sep 2025 16:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903217; cv=none; b=kO1g/XGFJMIl8W7oxUXSj1JGqCxQl96p6ikf99kjkMvq40Cf/KN7xfCMnNggCXnqcSyRdzJ+gPZjf2VQ2UldCK9fO/oCcUqMcyaA0AGc/kzLzOIFRGnSqNvIcbEqBgxY1Jc7Atvcl8W8XkU1iAMfFmg5socZSoSdlC8h2Rhcw7A=
+	t=1758903308; cv=none; b=EX1bLeh0n8DfBfj9CTp/oAaJ9n/KnpGq4yywVRznXoC6LFteIqn5DRogCsfvjeWOa8fNP0VGTmVdGrdjTyUpJw6BLQgrr8SqljzLQwsycQnGKVcWpc+7v4mU0NS++t+nQ9mU+556JR3GJ/yS9i868pEwu1RY8UxnLf+xmcv/+bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903217; c=relaxed/simple;
-	bh=wh9M9QTkVwk+Ja56zSTTBOIJV0Iqe7hniIh4R1RLg1c=;
+	s=arc-20240116; t=1758903308; c=relaxed/simple;
+	bh=t8AR7WOEUiw4ZcKxM0KTMnm2QVHmdvH9/aVeNZGSDKM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1DBDEYIQi1FMz2WP2zSLQW4WTMVqgaW0VK40Rfxgh9YpvREilQ54NksYW4HdvCokqbS0tEJ+NtwJwM+CU3Sv8euz6BxoQdXEOknmr3EG0ZUUrsMqX2TZZUW4G52c41UTQq/+OnKZLW/ywa/3U8GZZYk+xHqFg5HRvh66U2EXmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgYG+uue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0064AC4CEF4;
-	Fri, 26 Sep 2025 16:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758903217;
-	bh=wh9M9QTkVwk+Ja56zSTTBOIJV0Iqe7hniIh4R1RLg1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JgYG+uue4dcR73rbUpd7FW2IP/THmhCbkZJN5ATwVASV/92yg7I4LHPQQfprckKJ3
-	 rLYlaJ4dIdmQSKWiO/U79+6stXY2JruZf+GW92X2DmcXKniCAm8/zbNXj4dGWT8M5s
-	 FqazBYazLSvH9QiXrQ4Nqlg9Jharodw9aTmahfAwjX4JcGayP+IHycGE2sBSoV69UH
-	 XSbQ7j+TK6YZQ56qUu4timJFyebojxJJfqZHQOe5wKAI1r/ieKfgjNns6d97D1JNzX
-	 cHQZ1snplHDs4fbPPObXPSAe1pXoAUmgPDhAnrV+QJhV+q1di/mC8zYdYV7VHwa00l
-	 r2YmUditon04g==
-Date: Fri, 26 Sep 2025 17:13:32 +0100
-From: Simon Horman <horms@kernel.org>
-To: Nishanth Menon <nm@ti.com>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, "Vadapalli, Siddharth" <s-vadapalli@ti.com>
-Subject: Re: [PATCH] net: netcp: Fix crash in error path when DMA channel
- open fails
-Message-ID: <aNa7rEQLJreJF58p@horms.kernel.org>
-References: <20250926150853.2907028-1-nm@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U089W/7JixIAXHh7BnPkZOE+qBBlSBkKxGnnS8jQ/02bdxjnsXt/MfQpsQ32D//KyuGYcuq6ZI9P+TSyZGHJ4zQsBl7jYv50dkg/bpGJ1a0OJ9nbTQnGuP6C57Im1avIhN7J7pcnYPJhDif+3Bs9lDMQKAxY8W6IW57Cn7AtrMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UVAV3roX; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758903306; x=1790439306;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t8AR7WOEUiw4ZcKxM0KTMnm2QVHmdvH9/aVeNZGSDKM=;
+  b=UVAV3roXsv6/aRXLhs+VdigiyBkMJjN4oPagr7scTaZ706z0oOcXR4+V
+   yvvqO/Zsti5UPOsRHAaMTLSyThk7pEjMIVj7mnumSLGQyFdSzHYWCxD3Y
+   9NpPfeQlZKfb8rW70w7C0mHRe7uZVMjwCSW44d8sIOvAL9fU7mpGCwbW0
+   Gf8YQJu1xNd8rrwLnUNpeGWJrVVl4Ej1c8U5Lx3kJMlNfyWpQ0EI/cqDE
+   +oU1v6Mpg1MRNUbXl0E2HcLKbVvbEIBzzVzhMIwm28e3US4kmeZLj21AN
+   miLSB5mAB8W5QVz1Rf4zQspBb69fY2Ilcd3V8gxXTlbzKIMIFxRiERuA5
+   g==;
+X-CSE-ConnectionGUID: RDKGXL9gS0eU+uIrpOkw7g==
+X-CSE-MsgGUID: oE+XToLtTxKdBmBRFycjPQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="63874064"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="63874064"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 09:15:05 -0700
+X-CSE-ConnectionGUID: Ccy6wmMuTkmsb6CfkjBy6w==
+X-CSE-MsgGUID: 991VO/fiRdCxwDb1dEahCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="182917743"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO desk) ([10.124.221.28])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 09:15:05 -0700
+Date: Fri, 26 Sep 2025 09:14:59 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Tao Zhang <tao1.zhang@intel.com>
+Subject: Re: [PATCH 2/2] x86/vmscape: Replace IBPB with branch history clear
+ on exit to userspace
+Message-ID: <20250926161459.gdcdag4gr6imeyfk@desk>
+References: <20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com>
+ <20250924-vmscape-bhb-v1-2-da51f0e1934d@linux.intel.com>
+ <LV3PR12MB9265478E85AA940EF6EA4D7D941FA@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250925220251.qfn3w6rukhqr4lcs@desk>
+ <LV3PR12MB9265B1C6D9D36408539B68B9941EA@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,50 +84,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926150853.2907028-1-nm@ti.com>
+In-Reply-To: <LV3PR12MB9265B1C6D9D36408539B68B9941EA@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On Fri, Sep 26, 2025 at 10:08:53AM -0500, Nishanth Menon wrote:
-> When knav_dma_open_channel() fails in netcp_setup_navigator_resources(),
-> the rx_channel field is set to an ERR_PTR value. Later, when
-> netcp_free_navigator_resources() is called in the error path, it attempts
-> to close this invalid channel pointer, causing a crash.
+On Fri, Sep 26, 2025 at 01:39:37PM +0000, Kaplan, David wrote:
+> > > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > > @@ -8048,9 +8048,11 @@
+> > > >
+> > > >                         off             - disable the mitigation
+> > > >                         ibpb            - use Indirect Branch Prediction Barrier
+> > > > -                                         (IBPB) mitigation (default)
+> > > > +                                         (IBPB) mitigation
+> > > >                         force           - force vulnerability detection even on
+> > > >                                           unaffected processors
+> > > > +                       auto            - (default) automatically select IBPB
+> > > > +                                         or BHB clear mitigation based on CPU
+> > >
+> > > Many of the other bugs (like srso, l1tf, bhi, etc.) do not have explicit
+> > > 'auto' options as 'auto' is implied by the lack of an explicit option.
+> > > Is there really value in creating an explicit 'auto' option here?
+> >
+> > Hmm, so to get the BHB clear mitigation do we advise the users to remove
+> > the vmscape= parameter? That feels a bit weird to me. Also, with
+> > CONFIG_MITIGATION_VMSCAPE=n a user can get IBPB mitigation with
+> > vmscape=ibpb, but there is no way to get the BHB clear mitigation.
+> >
 > 
-> Add a check for ERR values to handle the failure scenario.
+> Maybe a better solution instead is to add a new option 'vmscape=on'.
 > 
-> Fixes: 84640e27f230 ("net: netcp: Add Keystone NetCP core driver")
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
+> If we look at the other most recently added bugs like TSA and ITS,
+> neither have an explicit 'auto' cmdline option.  But they do have 'on'
+> cmdline options.
 > 
-> Seen on kci log for k2hk: https://dashboard.kernelci.org/log-viewer?itemId=ti%3A2eb55ed935eb42c292e02f59&org=ti&type=test&url=http%3A%2F%2Ffiles.kernelci.org%2F%2Fti%2Fmainline%2Fmaster%2Fv6.17-rc7-59-gbf40f4b87761%2Farm%2Fmulti_v7_defconfig%2BCONFIG_EFI%3Dy%2BCONFIG_ARM_LPAE%3Dy%2Bdebug%2Bkselftest%2Btinyconfig%2Fgcc-12%2Fbaseline-nfs-boot.nfs-k2hk-evm.txt.gz
+> The difference between 'auto' and 'on' is that 'auto' defers to the
+> attack vector controls while 'on' means 'enable this mitigation if the
+> CPU is vulnerable' (as opposed to 'force' which will enable it even if
+> not vulnerable).
 > 
->  drivers/net/ethernet/ti/netcp_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> An explicit 'vmscape=on' could give users an option to ensure the
+> mitigation is used (regardless of attack vectors) and could choose the
+> best mitigation (BHB clear if available, otherwise IBPB).
 > 
-> diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-> index 857820657bac..4ff17fd6caae 100644
-> --- a/drivers/net/ethernet/ti/netcp_core.c
-> +++ b/drivers/net/ethernet/ti/netcp_core.c
-> @@ -1549,7 +1549,7 @@ static void netcp_free_navigator_resources(struct netcp_intf *netcp)
->  {
->  	int i;
->  
-> -	if (netcp->rx_channel) {
-> +	if (!IS_ERR(netcp->rx_channel)) {
->  		knav_dma_close_channel(netcp->rx_channel);
->  		netcp->rx_channel = NULL;
->  	}
+> I'd still advise users to not specify any option here unless they know
+> what they're doing.  But an 'on' option would arguably be more consistent
+> with the other recent bugs and maybe meets the needs you're after?
 
-Hi Nishanth,
-
-Thanks for your patch.
-
-I expect that netcp_txpipe_close() has a similar problem too.
-
-But I also think that using IS_ERR is not correct, because it seems to me
-that there are also cases where rx_channel can be NULL.
-
-I see that on error knav_dma_open_channel() always returns ERR_PTR(-EINVAL)
-(open coded as (void *)-EINVAL) on error. So I think a better approach
-would be to change knav_dma_open_channel() to return NULL, and update callers
-accordingly.
+Sounds good to me. I'll update the patch.
 
