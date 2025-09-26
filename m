@@ -1,111 +1,160 @@
-Return-Path: <linux-kernel+bounces-834005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2160DBA3959
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:13:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1713BA3966
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF313862F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2867D1C01E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7752EB878;
-	Fri, 26 Sep 2025 12:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64452EB85A;
+	Fri, 26 Sep 2025 12:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="iVeD+uyQ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="owG0Wymn"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34186353
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758888820; cv=pass; b=garY5SBUW5tL4sYROhlrOA4k1wYmWpBOpc0JuGvWkCLJDYjqxbLfqP/sIGqHhDJfNB2ZkYIFFF8zB46gX6oGzgLF+SAmz2TKtz/ZmSZCD7Z/abmgz/0l+MEr09b1OPRkVfOCKC6FcfNgS5Z6WkTfAKTYTKtivkb9NaZFMfqKaeI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758888820; c=relaxed/simple;
-	bh=KTOUv4wzRKGnt2yLIWk+zjb309fTMWiq2CqZR0w9sBE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=kNVRo1/Vw9laq1P+nV+ul2PjiYqNNZLW1/x8du7tFYWZVsmcF4PGYSbsZDDpuhZk6LOZKo0nKSaemglOjZ1ZO8wEHH9t/njBXPMZaY5KNlQTU/4L4w2R7vXiKfK4sL1d2flzp0bk9n/Ct+K71rr5URN7Hf26813iyj1z/fKqhTg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=iVeD+uyQ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1758888765; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nUFPxioapl75WWsWXdApVCD8Rmn6Afrve8p5iQw1fLp0UmJXVlNQgVx8eXItR4gpJ/O5iKK0Vk0uW7wa59Skdx8SYbpqpdTHLUpZaCjWE7F8jg22J+H9teLFx0X+Jf63mH2kXcXMGq2qcniY/qpWJgxEtnmS2MnPNG5gcfECNC8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758888765; h=Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=QunEw5UgYlGKRQWuLT5FGNzRhT4CrJ0TS6USfMAiOw8=; 
-	b=h01cZLX6SidlQP8IcRfJZpX/cg/7cp+So1PJjrs1qeAoHcwxz434v3p4DY7mbQLPPFQzEbSzYrKAKp2CMUie1B/zb5c5VmYN6B9qh7YHpAdhnH20h1iEDyFNp2CO0cWTkZsqcrIkCOlHyjqavmu3l4B6GyDb8DJYl/C6G3O6iCQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758888765;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=QunEw5UgYlGKRQWuLT5FGNzRhT4CrJ0TS6USfMAiOw8=;
-	b=iVeD+uyQvk6yGN73ig8AziqQkWCDf1f3HAtpVpENN5KSpMDG1v4a1zudM4EWjKyJ
-	FNzHQ2UaZBCA11Xh+lITl7+FEEia0sE7P7Ei9rGzLgkig5VLBb/lVjzNG5e5uUr1+zu
-	OU3Htevv957SnC3vlgO4W9FMAfn5eqGY/6xI3P8g=
-Received: by mx.zohomail.com with SMTPS id 1758888763331940.6432278180416;
-	Fri, 26 Sep 2025 05:12:43 -0700 (PDT)
-From: Li Chen <me@linux.beauty>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] loop: fix backing file reference leak on validation error
-Date: Fri, 26 Sep 2025 20:12:31 +0800
-Message-ID: <20250926121231.32549-1-me@linux.beauty>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9855A1F5435;
+	Fri, 26 Sep 2025 12:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758889047; cv=none; b=bGTsHmBDgPHWpjQZ9ilWL5/SL3CVWvaf1jLJO0C5+m8/2/Hp+0C0pJ3kg4C4ordGEKgUkGwwakbMktaVOMWhBf/0qA4R1XTbag+55IA+40qTk84jtiBrsB7gL5wy2ZfKtJrVuBCsDk6onda7WlqjeZ0O/Fe3i91D+TWQKJGEwiM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758889047; c=relaxed/simple;
+	bh=+E/+ytuqiTkVd0tbjOzSD8vXyT/FBxpJSn2yZ26yW5s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgmoseYyjSD6UHIRaHlHfsW095htaCdLvm0XWE7ILotMI5+RSKlOjB48Yb4CQI1NzXpDYj2/xyXEgaPmFYJrxHl09fLOWpztZBjdPCYCTuxM7QdNJN4a4G2gUFm/UNq6J6ylA+eZEIgeYNVNaLBXGuJWYjt/MZ/VLY+3GUtHA88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=owG0Wymn; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758889046; x=1790425046;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+E/+ytuqiTkVd0tbjOzSD8vXyT/FBxpJSn2yZ26yW5s=;
+  b=owG0Wymn8Oi81ja9C86nMTesH9LyGKU5cFMkIhye6PvEfgQb+wvTYuZW
+   2P/NCVHcsYYjiFlr9Pg+1OTs5JsNlZbdeJmignuxQY36kLwGdd9W21RJF
+   oGKOP3a2r+phJo9Zacgmh2l0vc1w6JD9fkSnBFdLk2vnxHs6H8Ev4EwyO
+   wns+zz2QW0YYymyR449ugFWb5O+Rsx5QxJ35ItreRrEv1aAjypj2t6koI
+   0TlOBoYlsxpO5McL/alykr/HSHv5IIchfLzT7IIgUOks4wYbaVi6bR94F
+   q93g8u2ist4j5nIOsDhNhkpzUd3QnJs6XYAtW/kAsR0qu7NTw6ZSiPwRK
+   g==;
+X-CSE-ConnectionGUID: Gz3HhZdvQV+zY8Pmob1QIg==
+X-CSE-MsgGUID: KBZh8JZCQEaNs4xhRQer6Q==
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="47028817"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Sep 2025 05:17:20 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Fri, 26 Sep 2025 05:16:53 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 26 Sep 2025 05:16:53 -0700
+Date: Fri, 26 Sep 2025 14:12:45 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: Vladimir Oltean <vladimir.oltean@nxp.com>, Jakub Kicinski
+	<kuba@kernel.org>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<richardcochran@gmail.com>, <vadim.fedorenko@linux.dev>,
+	<christophe.jaillet@wanadoo.fr>, <rosenp@gmail.com>,
+	<steen.hegelund@microchip.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v2] phy: mscc: Fix PTP for vsc8574 and VSC8572
+Message-ID: <20250926121245.eqynm74h22d7fhrn@DEN-DL-M31836.microchip.com>
+References: <20250917113316.3973777-1-horatiu.vultur@microchip.com>
+ <20250918160942.3dc54e9a@kernel.org>
+ <20250922121524.3baplkjgw2xnwizr@skbuf>
+ <20250922123301.y7qjguatajhci67o@DEN-DL-M31836.microchip.com>
+ <aNZhB5LnqH5voBBR@shell.armlinux.org.uk>
+ <20250926095203.dqg2vkjr5tdwri7w@skbuf>
+ <aNZoyOPu3hUDadWv@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <aNZoyOPu3hUDadWv@shell.armlinux.org.uk>
 
-loop_change_fd() and loop_configure() call loop_check_backing_file()
-to validate the new backing file. If validation fails, the reference
-acquired by fget() was not dropped, leaking a file reference.
+The 09/26/2025 11:19, Russell King (Oracle) wrote:
 
-Fix this by calling fput(file) before returning the error.
+Hi,
 
-Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
----
- drivers/block/loop.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> On Fri, Sep 26, 2025 at 12:52:03PM +0300, Vladimir Oltean wrote:
+> > On Fri, Sep 26, 2025 at 10:46:47AM +0100, Russell King (Oracle) wrote:
+> > > On Mon, Sep 22, 2025 at 02:33:01PM +0200, Horatiu Vultur wrote:
+> > > > Thanks for the advice.
+> > > > What about to make the PHY_ID_VSC8572 and PHY_ID_VSC8574 to use
+> > > > vsc8584_probe() and then in this function just have this check:
+> > > >
+> > > > ---
+> > > > if ((phydev->phy_id & 0xfffffff0) != PHY_ID_VSC8572 &&
+> > > >     (phydev->phy_id & 0xfffffff0) != PHY_ID_VSC8574) {
+> > > >   if ((phydev->phy_id & MSCC_DEV_REV_MASK) != VSC8584_REVB) {
+> > > >           dev_err(&phydev->mdio.dev, "Only VSC8584 revB is supported.\n");
+> > > >           return -ENOTSUPP;
+> > > >   }
+> > > > }
+> > >
+> > > Please, no, not like this. Have a look how the driver already compares
+> > > PHY IDs in the rest of the code.
+> > >
+> > > When a PHY driver is matched, the PHY ID is compared using the
+> > > .phy_id and .phy_id_mask members of the phy_driver structure.
+> > >
+> > > The .phy_id is normally stuff like PHY_ID_VSC8572 and PHY_ID_VSC8574.
+> > >
+> > > When the driver is probed, phydev->drv is set to point at the
+> > > appropriate phy_driver structure. Thus, the tests can be simplified
+> > > to merely looking at phydev->drv->phy_id:
+> > >
+> > >     if (phydev->drv->phy_id != PHY_ID_VSC8572 &&
+> > >         phydev->drv->phy_id != PHY_ID_VSC8574 &&
+> > >         (phydev->phy_id & MSCC_DEV_REV_MASK) != VSC8584_REVB) {
+> > > ...
+> > >
+> > > Alternatively, please look at the phy_id*() and phydev_id_compare()
+> > > families of functions.
+> > >
+> > > --
+> > > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> > > FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> >
+> > The phydev->phy_id comparisons are problematic with clause 45 PHYs where
+> > this field is zero, but with clause 22 they should technically work.
+> > It's good to know coming from a phylib maintainer that it's preferable
+> > to use phydev->drv->phy_id everywhere (I also wanted to comment on this
+> > aspect, but because technically nothing is broken, I didn't).
+> 
+> Yes indeed, which is another reason to use phydev->drv->* as these
+> get matched against the C22 and C45 IDs during PHY probe.
+> 
+> If we wish to get more clever (in terms of wanthing to know the
+> revision without knowing how the driver was matched) we could store
+> the matched ID in phydev, as read from hardware. This would also get
+> around the problem that where the ID is provided in the DT compatible,
+> we would have the real hardware-read ID to check things like the
+> revision against, rather than a fixed value in DT.
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 053a086d547e..94ec7f747f36 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -551,8 +551,10 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 		return -EBADF;
- 
- 	error = loop_check_backing_file(file);
--	if (error)
-+	if (error) {
-+		fput(file);
- 		return error;
-+	}
- 
- 	/* suppress uevents while reconfiguring the device */
- 	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 1);
-@@ -993,8 +995,10 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
- 		return -EBADF;
- 
- 	error = loop_check_backing_file(file);
--	if (error)
-+	if (error) {
-+		fput(file);
- 		return error;
-+	}
- 
- 	is_loop = is_loop_device(file);
- 
+Thanks for the explanation and for suggestion.
+I will use your suggestion in the next version.
+
+> 
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
 -- 
-2.51.0
-
+/Horatiu
 
