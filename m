@@ -1,128 +1,184 @@
-Return-Path: <linux-kernel+bounces-833669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E61BA299B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:00:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2661EBA29A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8290C3A9888
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33ADD1894539
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAA32848A4;
-	Fri, 26 Sep 2025 07:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206392853E9;
+	Fri, 26 Sep 2025 07:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BLg6SYgb"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k01Eqm0A"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D81D27AC37;
-	Fri, 26 Sep 2025 07:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758870016; cv=pass; b=LWPOjqmqqGcfWdnXDiR935G3kwO+sR7V9rxRVOJAOenqN+mfRxqATjXqmmsv1Mdt+UbeYTX1Gz1m5DdLKCmY7w9InkjHO1BQ/zHtdlCf6Vzgkn4MNyIUYQoe253ENfxIw0Z/haC10H3oNr+isuurJPkyf5va0nWGjrUkJA4EIp4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758870016; c=relaxed/simple;
-	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bEN1revlz98PbQYdWqqMHUzLgcXYweeVkgka82L+L07fn+arFMxTph8u7kFNVkftjZ+CM5dpBpBCJtm+ohlaotz3EJE3quolQLm3i6HgTyN7oL03DocOO4SjlB/hFTvJRMTpVP6CTOJAZOir8zcZerVfzKjZ95P5jemHNRm5YOk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BLg6SYgb; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1758869995; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QkTOcOfFY4baMchg3LR2JuebeFgUlm+dPMtjYbMgxme/rr0cyHoIpKLTedhQ3bZJ41v65Fzlo1Y1lPvVfNJAMPDWE8rHyj5AoRwoqEnSijU/2duMHGODkLNsHAr4EqpTwjpFJOozY0Pcetc7DHw5ZWRITAS1WJxZ9MUo6Fn1oH0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758869995; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=; 
-	b=Skie3Y2qByPr0+fZ3z+bHHr3qmnDzvCmLMaTyVV4Mlbuk0IYBU8fRslxmqjAgXB3u7EnPV0thbnkePfJqQuf2L+WejXXX2k8x0Co10Hhiyg03UOjZwunMTibAfV2ICnNYmIMx0iZ0a2qEnK0be8Sbd7Nx6/nJ1HPAjUZ79Zkqs0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758869995;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=0d9+QhwLUeUPH+Ao+04JvPakxKcbgowNGfFk3Ill9Lc=;
-	b=BLg6SYgbtAdkYngvl718gBszCAox2SMv7/VsoRaT0FLf0L6hiITao+dr/T2W+7A4
-	67Tr3cRdlBcBsMbPha6ZACAGjEh4+0RCXKguBazNW1LBWtaRsXtA0X2QiRGdJhVqz3G
-	PMrZvp2q2PDNLHU9nBYJenPEE0Jmu1u3Ulus3kPpoiPKnRl58CLbUw0FnKotDW8jQYX
-	gHkE9+FSzClOi77oPNpwrDsHifFWhkdBGiPZhJJvROO3bh3Vc7fw5K1C2Ncuthchyxf
-	E0R24scAB2b5AFp54iSCKWXZ0H6K9va4RW1cFvkEPJNkut08cYRfJxR6wNXgrNz50cX
-	ylYzzgIETA==
-Received: by mx.zohomail.com with SMTPS id 17588699937861009.4088550034123;
-	Thu, 25 Sep 2025 23:59:53 -0700 (PDT)
-Message-ID: <6ded068f5c004f8735dca378502b91ccdf56bc21.camel@icenowy.me>
-Subject: Re: [PATCH next] pmdomain: thead: Fix error pointer vs NULL bug in
- th1520_pd_reboot_init()
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
-	 <wefu@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Fri, 26 Sep 2025 14:59:48 +0800
-In-Reply-To: <aNYQkVuVpP3Daq7x@stanley.mountain>
-References: <aNYQkVuVpP3Daq7x@stanley.mountain>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D75270EAB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758870065; cv=none; b=IL4eWJit2rJGIPOK6ecAHpnj4LSgvlOLi24PvqglV7K4gbhA3nhxJZ1nmub/tleAFtO5XgX1PWJkwn+9d6g3Pfxyty9QKg0LKugKhYMbWIMY1KmGozhNRE4l2fUgbAao6ZmYi2KyXW6nn8oaq0Qwz3DudqdTLBSu+aeUpQcC+KI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758870065; c=relaxed/simple;
+	bh=zsJxTlGg0VsEk089WKJG1Xw2vubU3qkBIxZbfdEBIzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4b7nT1LyInvpWoXk7IYWqXYDZCXchdDrPcnGs2mh/6cx2IfOlgcetf9zsRp8reG9MaFlCPbKcos7g98Dtc7UiwawC64nfxNdjAwOTeONpBe2t5/m68Pm/gTJxa2/KChe3oNrs9IaB04AbHUOw+7OXRhLYyhN8YlwxoPY8S7fQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k01Eqm0A; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q6u26s014845
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:01:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	twtmZmjdwxx4BdHpzYanIR/C135T5cqJSpQWsUGZmOM=; b=k01Eqm0AiGl13L1i
+	wR2ZJoA2DrOM270U76AKYPoGYgS133g83QovHr7PO3cw2OVz0lePaALQZD3fwOuw
+	yOFIaQ6RGmDnWjNm7Bup38ZqQr7sd1TQmTUSoOjydAzCrpktsMF40WiuDcUf+MZQ
+	Ipnipgvtj9uU16lOQFJJEmqSalOGEM9RaiDC+zWxpywKhOG3186xdmDF+S5N6jd8
+	fFvCr8SXwMNbqAyrSPZ0na+Fbam3T39AdnUMj2lgIWLEdFvVnzd2ioHX4cTXc+Vz
+	CVTRtQhzvN/8IaEWjwL4ATANBhuXtrvguZ/dygqO7GKuEvtnL0WjZwC2V1d1QtlZ
+	qe8Ghw==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0t9sfb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:01:02 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b55118e2d01so1331196a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:01:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758870061; x=1759474861;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=twtmZmjdwxx4BdHpzYanIR/C135T5cqJSpQWsUGZmOM=;
+        b=PQ83NZFpf10e2Sj3/rT1+XfRd4MzlcpDUGkbkDqri678wqOH+1iFp2iyWbcsO9wKb4
+         7MdbltKqUbYR0IyvaVeDUYIjofWw0Zfur2tqlH9dFWRhTjkMtu/iWV7yRm9l/qP0wPFD
+         HTwukX2agRjioYEBZJrT6MP2Jurazucqdxl7GRDVvTjeCuO+mrC/AljvvXaz7H5VpIOV
+         ryBvUaAuRCzmm5wdfj146sOded1dKRdlOn8jbg1GNZtC5WxObNsU/HpKLTld5VneSKxJ
+         dttfnZJPNJcW1Vgk03kujCvwfNbYQC7KVxdUlduBXodvd2u+OlOETvuzFf9IsvLIRNvi
+         Lcpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwQNKH1wUz3yzMIU+6XOGRPzd/atGIavxO52BuI4ff6SV1O4C5FqxX9xfX8Ihn6kyTFVrIwUMv52mBvx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoUsxvcub0FryDwPq6+I4iLnspBOytlE6w47BUu/CtUdP2SPNy
+	aXX0HlCsdcKNl63ko/SGCt0N4/pmghJbGHXLv6S1Jn7SNODv0iLG/QNq0VkqAWn1yYkF6EOWpjl
+	/1oR423YNKlWv6uIVVB/QPWHLYs5P+9+K0NGDisNJtRGpELx/p2odWXCjz9v0yaZoYCc=
+X-Gm-Gg: ASbGncuU0Q7O9M+hXOwfvQB+5BYCP9c2xAViL6e4UJaIVdiNQY+Fhc36VDRaO016WxL
+	qVfy4GUAyTFDgxyIGn1NhkNdn0LJj8Kj0B0uSChOS8z/m91uf2zgJ+bPdcdQFVwlrNs6vhGRugX
+	xnCgnj/OkMTgINuQIGaqmv/Vj7AqbO1Jqpp72pIfiCyHpHs6AmHZ1yuAYwyS6lrKpnoIsNXhzU8
+	zPzVwzsNuhie17ngwB9ytC4g5lnzREcO6tu9dC6Hnx6TnRDvcFvaRcwP49ukUvqlaC/7LCxitwR
+	+b4azgwNpzv1xOPKAagimhFZXmXmkrn3ko7rezEHqz+v1DQRmqwZBBXSgPCr+gRRavtH
+X-Received: by 2002:a05:6a21:32a0:b0:24a:c995:e145 with SMTP id adf61e73a8af0-2e7c1bc5581mr7549223637.19.1758870061259;
+        Fri, 26 Sep 2025 00:01:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyGIYWGRSEBYWR6xeL2JzwaVPSoeKg7XU8yQih9Mk5p8UafMojYVIFSGDBg9nHJ2JRg49gZg==
+X-Received: by 2002:a05:6a21:32a0:b0:24a:c995:e145 with SMTP id adf61e73a8af0-2e7c1bc5581mr7549175637.19.1758870060728;
+        Fri, 26 Sep 2025 00:01:00 -0700 (PDT)
+Received: from [10.92.172.127] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53db8e3sm3891514a12.23.2025.09.26.00.00.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 00:01:00 -0700 (PDT)
+Message-ID: <44c224d3-d5d3-4a88-bf88-34b9ab5239b3@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 12:30:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: qcom: gcc-glymur: Update the halt check flags for
+ pipe clocks
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250925-glymur_gcc_usb_fixes-v2-1-ee4619571efe@oss.qualcomm.com>
+ <9066c8b1-bf25-4ce1-a0ee-16e9ab44dcad@oss.qualcomm.com>
+ <gprk7uhwqnj37cyl5iae64qrevkts3z266y2e5k6z72bcujhml@n5yaik3jtm2a>
+Content-Language: en-US
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+In-Reply-To: <gprk7uhwqnj37cyl5iae64qrevkts3z266y2e5k6z72bcujhml@n5yaik3jtm2a>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: hFnxq89LbPMAyuZ7khdBNqkvI5hxLtGl
+X-Proofpoint-GUID: hFnxq89LbPMAyuZ7khdBNqkvI5hxLtGl
+X-Authority-Analysis: v=2.4 cv=Jvz8bc4C c=1 sm=1 tr=0 ts=68d63a2e cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=eUHWfAKrTrtQ6IGICcAA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX+8uSCUq+2wev
+ jKuXNDvZ5TVGlgTbG2Bp2aINWSuUrawADTGYdt6emMxPjKYAGJ2AUVIDSZ/jTz0bxXYmX2BKGzu
+ 9oQva2xxUEKNWh92h4LsDWmxVvnYPbgCx5CQwoCCICYTE9nOCqxqjg9TAwPyilu3rR1D8ThGuGe
+ 980eX+KV0jkywNnOnevPCOT2FHAXvcAIyPCnkfSpevDOs5XqAgtdz+xPkCqK58Nb/hWozxe9TbM
+ 7dOmEauBWLGqhYWArK5D3WUJ9K7NfT+L253fNTEHB1GwX3uKX413+qiuE4neqkOZgihltGuOaYX
+ 1/iSVL4sajdBqCSJUy8yHFC07x7TxTR4PJRCRW4vOAXfhqnDmJDasGM0kEwAGhELHkI4JumuDDH
+ HhRDcvKsgUh/49VOmprUYlgMGegWDg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-=E5=9C=A8 2025-09-26=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 07:03 +0300=EF=BC=
-=8CDan Carpenter=E5=86=99=E9=81=93=EF=BC=9A
-> The devm_auxiliary_device_create() returns NULL on error.=C2=A0 It never
-> returns error pointers.=C2=A0 Using PTR_ERR_OR_ZERO() here means the
 
-Checked the implementation of auxiliary devices, and this is true.
 
-So
+On 9/26/2025 2:48 AM, Dmitry Baryshkov wrote:
+> On Thu, Sep 25, 2025 at 07:10:47PM +0530, Imran Shaik wrote:
+>>
+>>
+>> On 9/25/2025 3:49 PM, Taniya Das wrote:
+>>> The pipe clocks for PCIE and USB are externally sourced and they should
+>>> not be polled by the clock driver. Update the halt_check flags to 'SKIP'
+>>> to disable polling for these clocks.
+>>>
+>>> This helps avoid the clock status stuck at 'off' warnings, which are
+>>> benign, since all consumers of the PHYs must initialize a given instance
+>>> before performing any operations.
+>>>
+>>> Fixes: efe504300a17 ("clk: qcom: gcc: Add support for Global Clock Controller")
+>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>> ---
+>>> Changes in v2:
+>>> - Update the commit text to add the SoC name "glymur" [Konrad]
+>>> - Update the commit subject to add more details [Konrad]
+>>> - Add RB [Konrad]
+>>> - Fix a typo [Markus Elfring]
+>>> - Link to v1: https://lore.kernel.org/r/20250924-glymur_gcc_usb_fixes-v1-1-a90568723e64@oss.qualcomm.com
+>>> ---
+>>>  drivers/clk/qcom/gcc-glymur.c | 24 ++++++++++++------------
+>>>  1 file changed, 12 insertions(+), 12 deletions(-)
+>>> Reviewed-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+> 
+> Note how you've responded. It will be ignored by all the tools. Please
+> send it correctly.
+> 
 
-```
-Acked-by: Icenowy Zheng <uwu@icenowy.me>
-```
+My bad. Thanks for pointing it.
 
-> function
-> always returns success.=C2=A0 Replace the PTR_ERR_OR_ZERO() call check
-> with
-> a NULL check.
->=20
-> Fixes: 64581f41f4c4 ("pmdomain: thead: create auxiliary device for
-> rebooting")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> =C2=A0drivers/pmdomain/thead/th1520-pm-domains.c | 4 +++-
-> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c
-> b/drivers/pmdomain/thead/th1520-pm-domains.c
-> index 5213994101a5..d7cb9633c7c8 100644
-> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
-> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
-> @@ -179,8 +179,10 @@ static int th1520_pd_reboot_init(struct device
-> *dev,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct auxiliary_device *=
-adev;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0adev =3D devm_auxiliary_d=
-evice_create(dev, "reboot", aon_chan);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!adev)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0return -ENODEV;
+Reviewed-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
 
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return PTR_ERR_OR_ZERO(adev);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int th1520_pd_probe(struct platform_device *pdev)
+> Anyway:
+> 
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> 
+> 
+> 
+>>
+>> Thanks,
+>> Imran
+> 
 
 
