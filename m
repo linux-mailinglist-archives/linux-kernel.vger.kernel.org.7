@@ -1,455 +1,164 @@
-Return-Path: <linux-kernel+bounces-834183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E310ABA4217
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:23:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1768CBA41F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE5B168C18
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:23:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5742A7B1D8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0F4274B46;
-	Fri, 26 Sep 2025 14:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DA722D4FF;
+	Fri, 26 Sep 2025 14:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HNGlKgw6"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqoCtWTE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1C6233140
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55B2248AE;
+	Fri, 26 Sep 2025 14:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896367; cv=none; b=iuyYgIuV6+98s2cVgTcCetEvSPt80c+TK4fwB1EOJC3kZfhwPhzLlIkPnshIO/1EvHvleCHYvFz0EwMtlmaafOkqAXLiy/DiS6gAt28I3Vqltd9eaLlKmAF8+V6+vqHkBXrRsQDtp4u9SpT0tO1B3Pwmj8XOvuv3H0BaflTkZqM=
+	t=1758896362; cv=none; b=UaDAePn0Dh+dlWp7wksPIaKkaMvPQGbIFGYT9I2/VWLdg8xqfz+A6eYo6oejRhnrqQ/qyUz8gEVXyht9MvOQcugt/+pbh5zkRG5PuB3VMPQH43u/vSCmXibr141DZrE6nwlN6KOmjBze8T6S0wmoSt7IT2/Dq4FeDIy2xxMOR1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896367; c=relaxed/simple;
-	bh=9Ui2JWuuTQlHA15UIIklNn4NgeHePSypmggyfQPN8kg=;
+	s=arc-20240116; t=1758896362; c=relaxed/simple;
+	bh=+mF3f5ZuZvF0EbugEE0LrQfm8njKZn68VeofxNQK/80=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kWhHki8ZTCXCDoup/n8fdUHwSuseRUZuufoBR78VqcRVgJe+co7hjjDDHWsif0nnqeJUUhu9I6bKBgXIUy2Qx88/nWLkJuP9Kzg27aItSqHvBrQoGZjk/2A/LXCd613eZbNAkGUQMd94IQFys1iu4J2jUjQ1BrmPnIxJhQ7gyYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HNGlKgw6; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-85c66a8a462so235803685a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:19:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758896363; x=1759501163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+5Z53YhKXh1/2eQ3YwIKhOHKLvwo4LoMLJEfYVEMvUI=;
-        b=HNGlKgw658Ucv5HHtvRGqsNqARdQQrJReUPphh+XBfJzL/iXF7tZvjVSolDTjpnQdA
-         pHDWHKHUzRACD70/E2B7rUqcnUCR0IXWeeHI/au0PPEZoEHrS/dORGzT9Vi5ZiUN7PT7
-         pdubRPwc80D4WKudbGVevgZo+Oxmwpwl+/9MvkTOrb/03BdNGsWR2aE2hkU47lV3g1nu
-         22ez9RXLG2Ck/rP9jOP/MNUbUXbp0NnXGOZK3aTvFuwNamTWGQj4wo1IAnBDd1eFAqH1
-         ajPraanAkeJY9+ZFOcarVOpst9a3jVbD4O0IECq01kuYmRoddyNl4s97vzG3b4p77pT3
-         xxiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758896363; x=1759501163;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+5Z53YhKXh1/2eQ3YwIKhOHKLvwo4LoMLJEfYVEMvUI=;
-        b=Gjwi1WexWBAIgwcGQHs3CnG9LCVN0VnNeOH3AZN+xruWtwNeqRmM7mZawNHNcrwOUy
-         d4XtAPtlhJxFCcCCfODiMRqYNiRCwVEo40RHW82yzzA4p/eLyXinFPnPzvjdYEacFy5y
-         8PsfHUdHE5LVPll3pXzo39Fw7QbZJPBA4YkPnEScBAiv+T2K9JqfuTsXzkdhSqDWRjSq
-         W9OJkn2behMYPOTNtfoAD7vP4eKBXo3O0zxOZz8SUBOMhBfvKiFj4yWtZId5exXTKpts
-         9YMPm/iJzb1aSvx8MZWbwfiBsuh1Jf6Xh+zhp46x8jh6ZSSpBNEdEAOuTftBoBZU6MVK
-         xrGw==
-X-Gm-Message-State: AOJu0Yy/8YZ6r7JL8LuSalb9WxH65k0HIPsAhxax5psUgq7c79qGDEmC
-	cUqxy/I6Whqs+6wtyP8HofSXBxbCOF5ADvbXZ4mChJYEfIURJVJ6lfbe
-X-Gm-Gg: ASbGncu9LUUYQfCcpqEOWC2fU6iZJviQYXXWKApz81QrlAAlIaDTU93B/2Fv0wy7Ue1
-	VWQTlDgFyGPRgU1NOeWu3Ecs6uBf+RyPSRIc+ALTOh3zZYdgFDgB0Kd4B3fSFCj6wXNL7qYHrs7
-	mfhVGyTGqx/9IKGxSklo2hpqWMwCoHd3cXFfxmyQ0CsztCVtVBwDortAvXJkpvpNfFsOQo2Klz7
-	6qNp2XHLO3vQPtrhDdDVUXWlePmRz5HYKqc/bZOvbvnZHkWwftujT7hIzj9yBPlhdST93xvswW4
-	CbDqMqMq0NRf7Y387x6fCDc9ZNXoVqgz5ESQzDNLf4pboUetuS5wb3mIaxj1jY+qOd9svJnGnpK
-	+GcjYXszaba00Q1/UBAlcxRgNYqhVuf9GBl/yAwpFVP0JM1X/ryxZtuhoN54smada9aUNhlQJif
-	xYxoE=
-X-Google-Smtp-Source: AGHT+IFwBDa6Bv27oC2ANkT+MkZSchV0/EWcocBzIVG3sPxwhPkAS2pGZM+hWYxQ2fmqa9tvX80cQA==
-X-Received: by 2002:a05:6214:529d:b0:7ea:136e:92ab with SMTP id 6a1803df08f44-7fc414d0cb8mr118869026d6.57.1758896363152;
-        Fri, 26 Sep 2025 07:19:23 -0700 (PDT)
-Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80173f45ee9sm26791986d6.64.2025.09.26.07.19.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 07:19:22 -0700 (PDT)
-From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v5 5/7] auxdisplay: TM16xx: Add keypad support for scanning matrix keys
-Date: Fri, 26 Sep 2025 10:19:06 -0400
-Message-ID: <20250926141913.25919-6-jefflessard3@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250926141913.25919-1-jefflessard3@gmail.com>
-References: <20250926141913.25919-1-jefflessard3@gmail.com>
+	 MIME-Version; b=AlwXFPjewTc1e46WHSlFf4CSi14Rs54hBZFgGiJzAVjZij1WSmSOXgPHxnGbVUfzlW0GzkgWmRRVMWfzz2XcExpxx48ll7YLxpbI9FqPjPC8E70XdtvlKlaeAx80sG7FqbbrtKgSG2tui5btYteK0wp5oSs8HUytm2tvwN7gGBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqoCtWTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78978C4CEF7;
+	Fri, 26 Sep 2025 14:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758896362;
+	bh=+mF3f5ZuZvF0EbugEE0LrQfm8njKZn68VeofxNQK/80=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZqoCtWTEXTK5whUjOQHMhVcHSV5/a2XqH+HuetiDLn8afsS5OaHisrdBQwoEyIuQJ
+	 KN/b2mz3hGa/HcrlN07or5Uff/0K0G+Q/dH7lxBH1jRHNgPqzp7rgEXtIyrWbw1CAE
+	 xQoQeb87YjmNMQzcpN9xBlmXlm0jA3QI4Z4wdstC+xOpd9nlZ7BNMx3PD+Th4kzyz/
+	 8Y9bdfnWzUxqTm2oSWZmdH/89ZblURkhTE5d4gn64nMeud18d/Z5lXZ6xKQxG5vSNi
+	 dHk0kyD0AY5yKdhgg1HdLT2sMT0FwFXq/5xNJOJx8k/ykhpx6l8KeFf7DDL4aqDXsZ
+	 LGKqKsInDCGAA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL 12/12 for v6.18] async directory preliminaries
+Date: Fri, 26 Sep 2025 16:19:06 +0200
+Message-ID: <20250926-vfs-async-920f57c61768@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250926-vfs-618-e880cf3b910f@brauner>
+References: <20250926-vfs-618-e880cf3b910f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3822; i=brauner@kernel.org; h=from:subject:message-id; bh=+mF3f5ZuZvF0EbugEE0LrQfm8njKZn68VeofxNQK/80=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRcW3CxVMtw37zW3rsuHUWW7q0x65XfdCQqXJMvMvtxb dsJF71vHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNJ4GZkeHz8ZrlpkOWT4LsB QqZf3Jx0r62+aOS31Nxv5dvEgFmTtjIybHj7qODzAqsFN5gYyl7+WCbj90D5OXuhte3EPZeT35r P4wYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Add support for keypad scanning on TM16xx-compatible auxiliary display
-controllers. It handles keypad initialization, scanning, and input
-reporting for matrix keys managed by the TM16xx devices.
+Hey Linus,
 
-Key features include:
-- Input device registration configured by device properties
-  (poll-interval, linux,keymap, autorepeat)
-- Key state tracking using managed bitmaps
-- Matrix scanning and event reporting integrated with Linux input
-  subsystem
+/* Summary */
+This contains further preparatory changes for the asynchronous directory
+locking scheme:
 
-This code is separated from main core driver to improve maintainability
-and reviewability.
+* Add lookup_one_positive_killable() which allows overlayfs to perform
+  lookup that won't block on a fatal signal.
 
-Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
----
+* Unify the mount idmap handling in struct renamedata as a rename can
+  only happen within a single mount.
 
-Notes:
-    checkpatch reports false positives that are intentionally ignored:
-    COMPLEX_MACRO/MACRO_ARG_REUSE for tm16xx_for_each_key(): This is a
-    standard iterator pattern following kernel conventions (similar to
-    for_each_* macros throughout the kernel). The nested for loops are
-    the correct implementation for matrix iteration.
+* Introduce kern_path_parent() for audit which sets the path to the
+  parent and returns a dentry for the target without holding any locks
+  on return.
 
- MAINTAINERS                        |   1 +
- drivers/auxdisplay/Kconfig         |   9 ++
- drivers/auxdisplay/Makefile        |   1 +
- drivers/auxdisplay/tm16xx.h        |  25 ++++
- drivers/auxdisplay/tm16xx_core.c   |   4 +
- drivers/auxdisplay/tm16xx_keypad.c | 196 +++++++++++++++++++++++++++++
- 6 files changed, 236 insertions(+)
- create mode 100644 drivers/auxdisplay/tm16xx_keypad.c
+* Rename kern_path_locked() as it is only used to prepare for the
+  removal of an object from the filesystem:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7d5912f2d954..84f2135903cd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25448,6 +25448,7 @@ F:	Documentation/ABI/testing/sysfs-class-leds-tm16xx
- F:	Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx.yaml
- F:	drivers/auxdisplay/tm16xx.h
- F:	drivers/auxdisplay/tm16xx_core.c
-+F:	drivers/auxdisplay/tm16xx_keypad.c
- 
- TMIO/SDHI MMC DRIVER
- M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
-diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-index 7bacf11112b5..f9a2c0641c3c 100644
---- a/drivers/auxdisplay/Kconfig
-+++ b/drivers/auxdisplay/Kconfig
-@@ -528,13 +528,22 @@ config SEG_LED_GPIO
- 
- config TM16XX
- 	tristate
-+	depends on INPUT
-+	select INPUT_MATRIXKMAP
- 	select LEDS_CLASS
- 	select LEDS_TRIGGERS
- 	select LINEDISP
- 	select NEW_LEDS
-+	select TM16XX_KEYPAD if (INPUT)
- 	help
- 	  Core TM16XX-compatible 7-segment LED controllers module
- 
-+config TM16XX_KEYPAD
-+	bool
-+	depends on TM16XX
-+	help
-+	  Enable keyscan support for TM16XX driver.
-+
- #
- # Character LCD with non-conforming interface section
- #
-diff --git a/drivers/auxdisplay/Makefile b/drivers/auxdisplay/Makefile
-index 7ecf3cd4a0d3..a9b9c8ff05e8 100644
---- a/drivers/auxdisplay/Makefile
-+++ b/drivers/auxdisplay/Makefile
-@@ -18,3 +18,4 @@ obj-$(CONFIG_PARPORT_PANEL)	+= panel.o
- obj-$(CONFIG_SEG_LED_GPIO)	+= seg-led-gpio.o
- obj-$(CONFIG_TM16XX)		+= tm16xx.o
- tm16xx-y			+= tm16xx_core.o
-+tm16xx-$(CONFIG_TM16XX_KEYPAD)	+= tm16xx_keypad.o
-diff --git a/drivers/auxdisplay/tm16xx.h b/drivers/auxdisplay/tm16xx.h
-index 973b6ac19515..c503c6136807 100644
---- a/drivers/auxdisplay/tm16xx.h
-+++ b/drivers/auxdisplay/tm16xx.h
-@@ -103,6 +103,7 @@
- struct tm16xx_display;
- struct tm16xx_digit;
- struct tm16xx_led;
-+struct tm16xx_keypad;
- 
- /**
-  * DOC: struct tm16xx_controller - Controller-specific operations and limits
-@@ -133,6 +134,7 @@ struct tm16xx_controller {
-  * @dev: Pointer to device struct.
-  * @controller: Controller-specific function table and limits.
-  * @linedisp: character line display structure
-+ * @keypad: Opaque pointer to tm16xx_keypad struct.
-  * @spi_buffer: DMA-safe buffer for SPI transactions, or NULL for I2C.
-  * @num_hwgrid: Number of controller grids in use.
-  * @num_hwseg: Number of controller segments in use.
-@@ -150,6 +152,7 @@ struct tm16xx_controller {
- struct tm16xx_display {
- 	struct device *dev;
- 	const struct tm16xx_controller *controller;
-+	struct tm16xx_keypad *keypad;
- 	struct linedisp linedisp;
- 	u8 *spi_buffer;
- 	u8 num_hwgrid;
-@@ -169,4 +172,26 @@ struct tm16xx_display {
- int tm16xx_probe(struct tm16xx_display *display);
- void tm16xx_remove(struct tm16xx_display *display);
- 
-+/* keypad support */
-+#if IS_ENABLED(CONFIG_TM16XX_KEYPAD)
-+int tm16xx_keypad_probe(struct tm16xx_display *display);
-+void tm16xx_set_key(const struct tm16xx_display *display, const int row,
-+		    const int col, const bool pressed);
-+#else
-+static inline int tm16xx_keypad_probe(struct tm16xx_display *display)
-+{
-+	return 0;
-+}
-+
-+static inline void tm16xx_set_key(const struct tm16xx_display *display,
-+				  const int row, const int col,
-+				  const bool pressed)
-+{
-+}
-+#endif
-+
-+#define tm16xx_for_each_key(display, _r, _c) \
-+	for (int _r = 0; _r < (display)->controller->max_key_rows; _r++) \
-+		for (int _c = 0; _c < (display)->controller->max_key_cols; _c++)
-+
- #endif /* _TM16XX_H */
-diff --git a/drivers/auxdisplay/tm16xx_core.c b/drivers/auxdisplay/tm16xx_core.c
-index e090c578f8a0..1d474d980254 100644
---- a/drivers/auxdisplay/tm16xx_core.c
-+++ b/drivers/auxdisplay/tm16xx_core.c
-@@ -408,6 +408,10 @@ int tm16xx_probe(struct tm16xx_display *display)
- 		goto unregister_leds;
- 	}
- 
-+	ret = tm16xx_keypad_probe(display);
-+	if (ret)
-+		dev_warn(dev, "Failed to initialize keypad: %d\n", ret);
-+
- 	return 0;
- 
- unregister_leds:
-diff --git a/drivers/auxdisplay/tm16xx_keypad.c b/drivers/auxdisplay/tm16xx_keypad.c
-new file mode 100644
-index 000000000000..daa6afaf749a
---- /dev/null
-+++ b/drivers/auxdisplay/tm16xx_keypad.c
-@@ -0,0 +1,196 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * TM16xx and compatible LED display/keypad controller driver
-+ * Supports TM16xx, FD6xx, PT6964, HBS658, AIP16xx and related chips.
-+ *
-+ * Copyright (C) 2025 Jean-François Lessard
-+ */
-+
-+#include <linux/bitmap.h>
-+#include <linux/cleanup.h>
-+#include <linux/device.h>
-+#include <linux/input.h>
-+#include <linux/input/matrix_keypad.h>
-+#include <linux/property.h>
-+
-+#include "tm16xx.h"
-+
-+/**
-+ * struct tm16xx_keypad - Keypad matrix state and input device
-+ * @input: Input device for reporting key events.
-+ * @state: Current bitmap of key states.
-+ * @last_state: Previous bitmap of key states for change detection.
-+ * @changes: Bitmap of key state changes since last poll.
-+ * @row_shift: Row shift for keymap encoding.
-+ */
-+struct tm16xx_keypad {
-+	struct input_dev *input;
-+	unsigned long *state;
-+	unsigned long *last_state;
-+	unsigned long *changes;
-+	int row_shift;
-+};
-+
-+/**
-+ * tm16xx_key_nbits() - Number of bits for the keypad state bitmap
-+ * @display: pointer to tm16xx_display
-+ *
-+ * Return: total bits in keypad state bitmap (max_key_rows * max_key_cols)
-+ */
-+static inline unsigned int tm16xx_key_nbits(const struct tm16xx_display *display)
-+{
-+	return display->controller->max_key_rows *
-+	       display->controller->max_key_cols;
-+}
-+
-+/**
-+ * tm16xx_get_key_row() - Get row index from keypad bit index
-+ * @display: pointer to tm16xx_display
-+ * @bit: bit index in state bitmap
-+ *
-+ * Return: row index
-+ */
-+static inline int tm16xx_get_key_row(const struct tm16xx_display *display,
-+				     const unsigned int bit)
-+{
-+	return bit / display->controller->max_key_cols;
-+}
-+
-+/**
-+ * tm16xx_get_key_col() - Get column index from keypad bit index
-+ * @display: pointer to tm16xx_display
-+ * @bit: bit index in state bitmap
-+ *
-+ * Return: column index
-+ */
-+static inline int tm16xx_get_key_col(const struct tm16xx_display *display,
-+				     const unsigned int bit)
-+{
-+	return bit % display->controller->max_key_cols;
-+}
-+
-+/**
-+ * tm16xx_set_key() - Set the keypad state for a key
-+ * @display: pointer to tm16xx_display
-+ * @row: row index
-+ * @col: column index
-+ * @pressed: true if pressed, false otherwise
-+ */
-+void tm16xx_set_key(const struct tm16xx_display *display, const int row,
-+		    const int col, const bool pressed)
-+{
-+	__assign_bit(row * display->controller->max_key_cols + col,
-+		     display->keypad->state, pressed);
-+}
-+EXPORT_SYMBOL_NS(tm16xx_set_key, "TM16XX");
-+
-+/**
-+ * tm16xx_keypad_poll() - Polls the keypad, reports events
-+ * @input: pointer to input_dev
-+ *
-+ * Reads the matrix keypad state, compares with previous state, and
-+ * reports key events to the input subsystem.
-+ */
-+static void tm16xx_keypad_poll(struct input_dev *input)
-+{
-+	struct tm16xx_display *display = input_get_drvdata(input);
-+	struct tm16xx_keypad *keypad = display->keypad;
-+	const unsigned short *keycodes = keypad->input->keycode;
-+	unsigned int nbits = tm16xx_key_nbits(display);
-+	unsigned int bit;
-+	int row, col, scancode;
-+	bool pressed;
-+	int ret;
-+
-+	bitmap_zero(keypad->state, nbits);
-+	bitmap_zero(keypad->changes, nbits);
-+
-+	scoped_guard(mutex, &display->lock) {
-+		ret = display->controller->keys(display);
-+	}
-+
-+	if (ret) {
-+		dev_err(display->dev, "Reading failed: %d\n", ret);
-+		return;
-+	}
-+
-+	bitmap_xor(keypad->changes, keypad->state, keypad->last_state, nbits);
-+
-+	for_each_set_bit(bit, keypad->changes, nbits) {
-+		row = tm16xx_get_key_row(display, bit);
-+		col = tm16xx_get_key_col(display, bit);
-+		pressed = _test_bit(bit, keypad->state);
-+		scancode = MATRIX_SCAN_CODE(row, col, keypad->row_shift);
-+
-+		input_event(keypad->input, EV_MSC, MSC_SCAN, scancode);
-+		input_report_key(keypad->input, keycodes[scancode], pressed);
-+	}
-+	input_sync(keypad->input);
-+
-+	bitmap_copy(keypad->last_state, keypad->state, nbits);
-+}
-+
-+/**
-+ * tm16xx_keypad_probe() - Initialize keypad/input device
-+ * @display: pointer to tm16xx_display
-+ *
-+ * Return: 0 on success, negative error code on failure
-+ */
-+int tm16xx_keypad_probe(struct tm16xx_display *display)
-+{
-+	const unsigned int rows = display->controller->max_key_rows;
-+	const unsigned int cols = display->controller->max_key_cols;
-+	struct tm16xx_keypad *keypad;
-+	struct input_dev *input;
-+	unsigned int poll_interval, nbits;
-+	int ret;
-+
-+	if (!display->controller->keys || !rows || !cols)
-+		return 0; /* keypad not supported */
-+
-+	if (!device_property_present(display->dev, "poll-interval") ||
-+	    !device_property_present(display->dev, "linux,keymap"))
-+		return 0; /* keypad disabled */
-+
-+	ret = device_property_read_u32(display->dev, "poll-interval", &poll_interval);
-+	if (ret)
-+		return dev_err_probe(display->dev, ret,
-+				     "Failed to read poll-interval\n");
-+
-+	keypad = devm_kzalloc(display->dev, sizeof(*keypad), GFP_KERNEL);
-+	if (!keypad)
-+		return -ENOMEM;
-+	display->keypad = keypad;
-+
-+	nbits = tm16xx_key_nbits(display);
-+	keypad->state = devm_bitmap_zalloc(display->dev, nbits, GFP_KERNEL);
-+	keypad->last_state = devm_bitmap_zalloc(display->dev, nbits, GFP_KERNEL);
-+	keypad->changes = devm_bitmap_zalloc(display->dev, nbits, GFP_KERNEL);
-+	if (!keypad->state || !keypad->last_state || !keypad->changes)
-+		return -ENOMEM;
-+
-+	input = devm_input_allocate_device(display->dev);
-+	if (!input)
-+		return -ENOMEM;
-+	input->name = "tm16xx-keypad";
-+	keypad->input = input;
-+	input_set_drvdata(input, display);
-+
-+	keypad->row_shift = get_count_order(cols); /* !cols already checked */
-+	ret = matrix_keypad_build_keymap(NULL, "linux,keymap", rows, cols, NULL, input);
-+	if (ret)
-+		return dev_err_probe(display->dev, ret,
-+				     "Failed to build keymap\n");
-+
-+	if (device_property_read_bool(display->dev, "autorepeat"))
-+		__set_bit(EV_REP, input->evbit);
-+
-+	input_setup_polling(input, tm16xx_keypad_poll);
-+	input_set_poll_interval(input, poll_interval);
-+	ret = input_register_device(input);
-+	if (ret)
-+		return dev_err_probe(display->dev, ret,
-+				     "Failed to register input device\n");
-+
-+	return 0;
-+}
--- 
-2.43.0
+   kern_path_locked()    => start_removing_path()
+   kern_path_create()    => start_creating_path()
+   user_path_create()    => start_creating_user_path()
+   user_path_locked_at() => start_removing_user_path_at()
+   done_path_create()    => end_creating_path()
+   NA                    => end_removing_path()
 
+/* Testing */
+
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3+b1)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+[1] https://lore.kernel.org/linux-next/aNOyrz1bd1WTrZgc@finisterre.sirena.org.uk
+
+[2] https://lore.kernel.org/linux-next/aNU3FtEZ3w_NcYwI@sirena.org.uk
+
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.18-rc1.async
+
+for you to fetch changes up to 4f5ea5aa0dcdd3c7487fbabad5b86b3cd7d2b8c4:
+
+  Merge patch series "vfs: preparatory changes to centralize locking of create/remove/rename" (2025-09-23 12:37:42 +0200)
+
+Please consider pulling these changes from the signed vfs-6.18-rc1.async tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.18-rc1.async
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge patch series "vfs: preparatory changes to centralize locking of create/remove/rename"
+
+NeilBrown (6):
+      VFS/ovl: add lookup_one_positive_killable()
+      VFS: discard err2 in filename_create()
+      VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
+      VFS/audit: introduce kern_path_parent() for audit
+      VFS: rename kern_path_locked() and related functions.
+      debugfs: rename start_creating() to debugfs_start_creating()
+
+ Documentation/filesystems/porting.rst        |  12 ++
+ arch/powerpc/platforms/cell/spufs/syscalls.c |   4 +-
+ drivers/base/devtmpfs.c                      |  22 ++--
+ fs/bcachefs/fs-ioctl.c                       |  10 +-
+ fs/cachefiles/namei.c                        |   3 +-
+ fs/debugfs/inode.c                           |  11 +-
+ fs/ecryptfs/inode.c                          |   3 +-
+ fs/init.c                                    |  17 +--
+ fs/namei.c                                   | 164 ++++++++++++++++++++-------
+ fs/nfsd/vfs.c                                |   3 +-
+ fs/ocfs2/refcounttree.c                      |   4 +-
+ fs/overlayfs/overlayfs.h                     |   3 +-
+ fs/overlayfs/readdir.c                       |  28 ++---
+ fs/smb/server/vfs.c                          |  11 +-
+ include/linux/fs.h                           |   6 +-
+ include/linux/namei.h                        |  21 ++--
+ kernel/audit_fsnotify.c                      |  11 +-
+ kernel/audit_watch.c                         |   3 +-
+ kernel/bpf/inode.c                           |   4 +-
+ net/unix/af_unix.c                           |   6 +-
+ 20 files changed, 216 insertions(+), 130 deletions(-)
 
