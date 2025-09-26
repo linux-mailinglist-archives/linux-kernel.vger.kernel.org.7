@@ -1,211 +1,148 @@
-Return-Path: <linux-kernel+bounces-834243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15FE1BA43E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:37:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BABBA4413
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B432F56367F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CF21888A5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00321F4701;
-	Fri, 26 Sep 2025 14:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA94136E37;
+	Fri, 26 Sep 2025 14:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RG/WVriW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dmu1C13C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B551F1505;
-	Fri, 26 Sep 2025 14:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A0B13B5A9
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897369; cv=none; b=Y2QecSG4cvbZcocMp3/C0FaxEjJ7suqMuYLA1jILNHey5GjE5d8kGauXYRndwmZqJMAk8MLI1vdwub/HHHB2miQSpy2xhP2PkazCf/Go6RIR0VVXMx7QvyP3j0bWUg/N7tjjqUbhXqbsbFgXcDG5aTFSiqzYeKRWd7rK4uMxyVg=
+	t=1758897424; cv=none; b=YRbh3Ipy903XIGiCHH0zIKhzCRuPQgZCbtlBzPRKtnRN1xZtelie2IczE3Ilfknh0RuJFix4QLgv1VoOqHRAPQdtcLfgvPnqd/VtxqsPsClg785ad7wxnfCS6LR30Y9+0H1V/x7FMiPBh7HsUCR0y7rzZSezkVVQS9dLfP9Ow48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897369; c=relaxed/simple;
-	bh=cZ1XFmRawCazDXi8Ki6dJTBWPaqO33zYZFaUz0RtjW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EZAuRF8r/PyPoz0wlgruXzK44uBFhKWuMQuS7wAVq3R0jTOOfCqHML6csW44uvyK+IzWJJH4/Wm048udTemNaRHETMH/zpePUJT2Os3BDzsxyE9iKjdJs+wCXsDImShzEFa1+kejOZqUP/q1H6ij7rxaNS2UqS81e0FsELbqPrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RG/WVriW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C51C113CF;
-	Fri, 26 Sep 2025 14:36:05 +0000 (UTC)
+	s=arc-20240116; t=1758897424; c=relaxed/simple;
+	bh=McOvrX4wj78cGQOx3sLC5HL9qLBnHjTdzFimT+Exbnk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CvjuK2D2m1ADBebs0hd78WPVFFC2olvuDiZAbOyBdt6zynYQayfQjsJh5gD9UlLkW9WG5/zwdPh20QFjfZGvkrs2ofEyTbBm+rrbA4JLHQ0nSmw354GF4NlTv7a/w7bSW/Zb93nMPm3B+AcgIJlrF+aHVf9aI5SI/aGNjS0VPFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dmu1C13C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2741C113D0
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758897367;
-	bh=cZ1XFmRawCazDXi8Ki6dJTBWPaqO33zYZFaUz0RtjW0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RG/WVriWYqdp8egYDAkLACaTSB3TFAcZ+HJGD7P8MXQPQh/kQ36KCD3JSob4ZTXCC
-	 iVCV78d1ryUwe2zgHup6DcWXr4+zyDRsXfm0LZqGM+ffS8Kr14RdxNhh492s6Wvr2i
-	 p6wrxw8MXR+MUdmFAwPn+BTlB3rzRUpKNEQ5Ldz5WHcBfaKBsXJrlU5dVSrR0TkJSu
-	 dRRi4Nb2EzVMy3Fmk2cDZtoOfnX6QCRWipfsCT4jode9WWcROeIki+WryzAT8wnJwO
-	 A6e5zO/bKZurINyA3r0gYT74OxduWsz64rIwGMtt15k2W12coLg+lufWhebcWboxqu
-	 RwwQGDrXcJsVQ==
-Date: Fri, 26 Sep 2025 16:36:02 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [GIT PULL] Performance events updates for v6.18
-Message-ID: <aNak0jUWA0JvVEMX@gmail.com>
+	s=k20201202; t=1758897423;
+	bh=McOvrX4wj78cGQOx3sLC5HL9qLBnHjTdzFimT+Exbnk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Dmu1C13CBUv2QsHVZhhSAnCUe2MrZAiaklExiBdYlYRPOZ7pGkDBGwhwmIovM3yiZ
+	 LRSL/hqukAHLEntLR+ze1in3w0K8ZG6QQTNiv+YOwi3gRdbpLUM4+DaXapZX5bK74n
+	 4OqsmXiycEHWYuIFSf6RqhwcZb7Ul2iBPALWn/T7jPACGGpz22nC2bqEJ4qNuFqbT4
+	 8hMmajP4YEHf+isVrTD/JVY8opAQc3flGupLouvYOBGfOzSv3FYkqGOW+BFAT4/x64
+	 XXLOa4ss+8Lzje3nNGWPkwD/BCj/ySlQz/ZPeFj8L0QuS3isCGH/CK8GfcbBw6Kfet
+	 I2gkxTp07Uggw==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30cce5be7d0so1066597fac.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:37:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVltP3K2Rv/uz6kBguGHDszOtjiXwNfGFQYw4LcfsPCnDs40AGhu4JWMilFySLysr+4zxoR8qvHXSBuQmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB1DvUlOirM9jmQgmOl0s89GyZTwKM3UGPAo+UyEcQ1b5rXLbn
+	ejDXQdHChqNLfKVKoRgRAar6RC+F/3tmSQSsu95vCin9eZPkUsOQvBMUXjPZ5lf/qxZ4IQkb1qR
+	rTrGMLam/R+EdL/dfufu9MpfIOWbYz3Y=
+X-Google-Smtp-Source: AGHT+IHzJ5VHAQN5ur5bEw/qgsV5RKx13TNkFmz4sgYMBFaXxyVEx7NkpTPBLstxWDr8QPcBcnH6NBLLtANIovzyGXY=
+X-Received: by 2002:a05:6870:78e:b0:348:7139:66b8 with SMTP id
+ 586e51a60fabf-35ee8f14033mr4203895fac.38.1758897423016; Fri, 26 Sep 2025
+ 07:37:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <5049058.31r3eYUQgx@rafael.j.wysocki> <2245131.irdbgypaU6@rafael.j.wysocki>
+ <20250926144947.00002f75@huawei.com>
+In-Reply-To: <20250926144947.00002f75@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 26 Sep 2025 16:36:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gnqoJ8bALZT61ZvTA=chp8y5QBiA7ZpNQ6fFJuQzZUnA@mail.gmail.com>
+X-Gm-Features: AS18NWC_urfmTBRO_qa1bgc839FuKdltpjzqgiWLObAMHP3YF4IDfysgJErpYOg
+Message-ID: <CAJZ5v0gnqoJ8bALZT61ZvTA=chp8y5QBiA7ZpNQ6fFJuQzZUnA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] PCI/sysfs: Use PM runtime class macro for auto
+ cleanup in reset_method_store()
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
+	Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Takashi Iwai <tiwai@suse.de>, Zhang Qilong <zhangqilong3@huawei.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Fri, Sep 26, 2025 at 3:49=E2=80=AFPM Jonathan Cameron
+<jonathan.cameron@huawei.com> wrote:
+>
+> On Fri, 19 Sep 2025 18:38:42 +0200
+> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+>
+> > From: Takashi Iwai <tiwai@suse.de>
+> >
+> > The newly introduced class macro can simplify the code.
+> >
+> > Also, add the proper error handling for the PM runtime get.
+> >
+> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > [ rjw: Adjust subject and error handling ]
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/pci/pci-sysfs.c |    5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > --- a/drivers/pci/pci-sysfs.c
+> > +++ b/drivers/pci/pci-sysfs.c
+> > @@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct
+> >               return count;
+> >       }
+> >
+> > -     pm_runtime_get_sync(dev);
+> > -     struct device *pmdev __free(pm_runtime_put) =3D dev;
+> > +     CLASS(pm_runtime_resume_and_get, pmdev)(dev);
+> > +     if (IS_ERR(pmdev))
+> > +             return -ENXIO;
+> Hi Rafael,
+>
+> Why this approach rather than treating runtime pm state like a conditiona=
+l
+> lock (we use it much like one) and using ACQUIRE() / ACQUIRE_ERR()?
 
-Please pull the latest perf/core Git tree from:
+Mostly because devices are not locks.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-2025-09-26
+> Ultimately that's a wrapper around the same infrastructure but
+> perhaps neater as it removes need to have that explicit magic pmdev.
 
-   # HEAD: 6d48436560e91be858158e227f21aab71698814e selftests/bpf: Fix uprobe_sigill test for uprobe syscall error value
+You'll need to have a magic pmdev or similar regardless IIUC.
 
-Performance events updates for v6.18:
+Say there is
 
-Core perf code updates:
+DEFINE_GUARD(pm_runtime_active, struct device *,
+pm_runtime_get_sync(_T), pm_runtime_put(_T))
+DEFINE_GUARD_COND(pm_runtime_active, _try, pm_runtime_resume_and_get(_T))
 
- - Convert mmap() related reference counts to refcount_t. This
-   is in reaction to the recently fixed refcount bugs, which
-   could have been detected earlier and could have mitigated
-   the bug somewhat. (Thomas Gleixner, Peter Zijlstra)
+so the user of this will do
 
- - Clean up and simplify the callchain code, in preparation
-   for sframes. (Steven Rostedt, Josh Poimboeuf)
+ACQUIRE(pm_runtime_active_try, pm)(dev);
+if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
+        return -ENXIO;
 
-Uprobes updates:
+and there's a "magic" pm though pm is not a struct device pointer.
 
- - Add support to optimize usdt probes on x86-64, which
-   gives a substantial speedup. (Jiri Olsa)
+Maybe it's nicer.  I guess people may be more used to dealing with int
+error variables.
 
- - Cleanups and fixes on x86 (Peter Zijlstra)
+Let me try this and see how far I can get with this.
 
-PMU driver updates:
+> +CC Dan as he can probably remember the discussions around ACQUIRE()
+> vs the way you have here better than I can.
+>
+> In general great that you've done this.  Was on my list too, but I didn't
+> get around to actually spinning the patches!   This is going to be
+> very useful indeed.
 
- - Various optimizations and fixes to the Intel PMU driver
-   (Dapeng Mi)
-
-Misc cleanups and fixes:
-
- - Remove redundant __GFP_NOWARN (Qianfeng Rong)
-
- Thanks,
-
-	Ingo
-
------------------->
-Dapeng Mi (6):
-      perf/x86/intel: Use early_initcall() to hook bts_init()
-      perf/x86/intel: Fix IA32_PMC_x_CFG_B MSRs access error
-      perf/x86: Add PERF_CAP_PEBS_TIMING_INFO flag
-      perf/x86/intel: Change macro GLOBAL_CTRL_EN_PERF_METRICS to BIT_ULL(48)
-      perf/x86/intel: Add ICL_FIXED_0_ADAPTIVE bit into INTEL_FIXED_BITS_MASK
-      perf/x86: Print PMU counters bitmap in x86_pmu_show_pmu_cap()
-
-Jiri Olsa (24):
-      uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
-      uprobes: Rename arch_uretprobe_trampoline function
-      uprobes: Make copy_from_page global
-      uprobes: Add uprobe_write function
-      uprobes: Add nbytes argument to uprobe_write
-      uprobes: Add is_register argument to uprobe_write and uprobe_write_opcode
-      uprobes: Add do_ref_ctr argument to uprobe_write function
-      uprobes/x86: Add mapping for optimized uprobe trampolines
-      uprobes/x86: Add uprobe syscall to speed up uprobe
-      uprobes/x86: Add support to optimize uprobes
-      selftests/bpf: Import usdt.h from libbpf/usdt project
-      selftests/bpf: Reorg the uprobe_syscall test function
-      selftests/bpf: Rename uprobe_syscall_executed prog to test_uretprobe_multi
-      selftests/bpf: Add uprobe/usdt syscall tests
-      selftests/bpf: Add hit/attach/detach race optimized uprobe test
-      selftests/bpf: Add uprobe syscall sigill signal test
-      selftests/bpf: Add optimized usdt variant for basic usdt test
-      selftests/bpf: Add uprobe_regs_equal test
-      selftests/bpf: Change test_uretprobe_regs_change for uprobe and uretprobe
-      selftests/bpf: Fix uprobe syscall shadow stack test
-      seccomp: passthrough uprobe systemcall without filtering
-      selftests/seccomp: validate uprobe syscall passes through seccomp
-      uprobes/x86: Return error from uprobe syscall when not called from trampoline
-      selftests/bpf: Fix uprobe_sigill test for uprobe syscall error value
-
-Josh Poimboeuf (4):
-      perf: Remove get_perf_callchain() init_nr argument
-      perf: Have get_perf_callchain() return NULL if crosstask and user are set
-      perf: Simplify get_perf_callchain() user logic
-      perf: Skip user unwind if the task is a kernel thread
-
-Peter Zijlstra (17):
-      perf: Move perf_mmap_calc_limits() into both rb and aux branches
-      perf: Merge consecutive conditionals in perf_mmap()
-      perf: Move common code into both rb and aux branches
-      perf: Remove redundant aux_unlock label
-      perf: Use guard() for aux_mutex in perf_mmap()
-      perf: Reflow to get rid of aux_success label
-      perf: Split out the AUX buffer allocation
-      perf: Make RB allocation branch self sufficient
-      perf: Split out the RB allocation
-      perf: Use scoped_guard() for mmap_mutex in perf_mmap()
-      perf: Identify the 0->1 transition for event::mmap_count
-      uprobes/x86: Add struct uretprobe_syscall_args
-      uprobes/x86: Optimize is_optimize()
-      uprobes/x86: Accept more NOP forms
-      uprobes/x86: Fix uprobe syscall vs shadow stack
-      uprobes/x86: Make asm style consistent
-      uprobes/x86: Add SLS mitigation to the trampolines
-
-Qianfeng Rong (1):
-      uprobes: Remove redundant __GFP_NOWARN
-
-Steven Rostedt (1):
-      perf: Use current->flags & PF_KTHREAD|PF_USER_WORKER instead of current->mm == NULL
-
-Thomas Gleixner (4):
-      perf: Remove redundant condition for AUX buffer size
-      perf: Split out mlock limit handling
-      perf: Split out VM accounting
-      perf: Convert mmap() refcounts to refcount_t
-
-
- arch/arm/probes/uprobes/core.c                     |   2 +-
- arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
- arch/x86/events/core.c                             |  16 +-
- arch/x86/events/intel/bts.c                        |   2 +-
- arch/x86/events/intel/core.c                       |  21 +-
- arch/x86/include/asm/msr-index.h                   |  14 +-
- arch/x86/include/asm/perf_event.h                  |   8 +-
- arch/x86/include/asm/shstk.h                       |   4 +
- arch/x86/include/asm/uprobes.h                     |   7 +
- arch/x86/kernel/shstk.c                            |  40 ++
- arch/x86/kernel/uprobes.c                          | 635 ++++++++++++++++++++-
- arch/x86/kvm/pmu.h                                 |   2 +-
- include/linux/perf_event.h                         |   4 +-
- include/linux/syscalls.h                           |   2 +
- include/linux/uprobes.h                            |  20 +-
- kernel/bpf/stackmap.c                              |   4 +-
- kernel/events/callchain.c                          |  40 +-
- kernel/events/core.c                               | 369 ++++++------
- kernel/events/internal.h                           |   4 +-
- kernel/events/ring_buffer.c                        |   2 +-
- kernel/events/uprobes.c                            | 102 +++-
- kernel/fork.c                                      |   1 +
- kernel/seccomp.c                                   |  32 +-
- kernel/sys_ni.c                                    |   1 +
- tools/arch/x86/include/asm/msr-index.h             |  14 +-
- .../selftests/bpf/prog_tests/uprobe_syscall.c      | 484 ++++++++++++++--
- tools/testing/selftests/bpf/prog_tests/usdt.c      |  38 +-
- tools/testing/selftests/bpf/progs/uprobe_syscall.c |   4 +-
- .../selftests/bpf/progs/uprobe_syscall_executed.c  |  60 +-
- .../testing/selftests/bpf/test_kmods/bpf_testmod.c |  11 +-
- tools/testing/selftests/bpf/usdt.h                 | 545 ++++++++++++++++++
- tools/testing/selftests/seccomp/seccomp_bpf.c      | 107 +++-
- 32 files changed, 2221 insertions(+), 375 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/usdt.h
+Thanks!
 
