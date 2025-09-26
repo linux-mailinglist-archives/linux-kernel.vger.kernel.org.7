@@ -1,211 +1,465 @@
-Return-Path: <linux-kernel+bounces-833823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A6CBA327E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:34:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F247BA3287
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51362A4C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FB93B59E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D398429B778;
-	Fri, 26 Sep 2025 09:33:56 +0000 (UTC)
-Received: from mail.simonwunderlich.de (mail.simonwunderlich.de [23.88.38.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10F129D29D;
+	Fri, 26 Sep 2025 09:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9lz6dGT"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54F519FA8D;
-	Fri, 26 Sep 2025 09:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.38.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6C029BD9C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879236; cv=none; b=KSEHNQoIhPegKTiY3AWLcE5ZETS5dSep8WpVZq8enmQ48S6X9MHpROFEHLmiYc5x9ts8IGWv6mjoxuseeJFchzP4WbDrhj5/89BlbkDRRLmtroQldHHNexYtrPeSBz7up0r8liz+Q3Xgte18FVmmgXVxwbja8++KKpvzw6n63EY=
+	t=1758879239; cv=none; b=ZQ9P4zw/50IXuGBkIroDDvQ8zYgs0xFs+XgGnk3Sq/YTIBJzJtOcHUZwNt2fJl+uGCtIGvCS3FDJaYRiA+MrrZJbcaYVpbah1ccnpq4y3Cp84zFyvuZtx7XZGWaYoekNUt+2Etf0DzNOCmQaPbWRFiHHGMNCE1p2vldTtTdS0Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879236; c=relaxed/simple;
-	bh=L6Pca3P0pknz3JY6jYwTU3eI8BhWMQZtzDoR7Jozi6U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iVlDe1LeLw9ah6zzzOyJd/gtErmubleToJLweHrvfR7pz9aMQ9JyBIGAdjkut5K+Ed3tSsio0y2EwI1ynyND2O5Oe8mxJC5x5TvdnP/82YUl++u71SLAeef4+o+fDbeHtTlSjJp6xHhtjhwnWYhnCvypybpAYEyuHi6YEAiXJX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de; spf=pass smtp.mailfrom=simonwunderlich.de; arc=none smtp.client-ip=23.88.38.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simonwunderlich.de
-Received: from sven-desktop.home.narfation.org (p200300C597166bE00000000000000C00.dip0.t-ipconnect.de [IPv6:2003:c5:9716:6be0::c00])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.simonwunderlich.de (Postfix) with ESMTPSA id 55A2DFA12C;
-	Fri, 26 Sep 2025 11:33:45 +0200 (CEST)
-From: "Sven Eckelmann (Plasma Cloud)" <se@simonwunderlich.de>
-Date: Fri, 26 Sep 2025 11:32:54 +0200
-Subject: [PATCH v2] wifi: mt76: Fix DTS power-limits on little endian
- systems
+	s=arc-20240116; t=1758879239; c=relaxed/simple;
+	bh=jv5bYfnBcUxQHcyaZsWiSs8RZm9pACyHst6S9viu/ZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WGomXJzK+QwLPNqz6vA8d7Ng+7Uy0TKuseuHy63yymtTlXo2wUezcz391fuxnzesVZ9Gy2Buys7dNAGYEejAn3jT8N2dLhRdQIDNsGtn6L7htiBuSmzLifAuFb8sOYeB0AwZaEZ8XjDSGIhpDYpe+Qwvwh3gVMTlZVQzp50vWGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9lz6dGT; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b555ab7fabaso1849668a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758879237; x=1759484037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OK9v3uuIIJ3uiffBiQKb1x/mkncrjAvi7aiw8pI8xco=;
+        b=E9lz6dGTyBO1bFoPDfXJMFi+g8WT2dhhR3QkfH/U5YXdSJg7+Rrob1MmUpfjvzES28
+         IMiWAHRfHcdTgeR0ZMA+OmuSIzzRfDsWLR6ei5cibmmYHWIfFeYeRT84Hf8CEVZorpq1
+         /Lm/Rmqs8I3Bb/9d1EnruG+PKI6iuyEzR7A63dDF6uC44CZioyEcFopx5QaA5OMnL+Dm
+         45VXKzq+C5puT74jNHqnml+DKPA93kcfUs4jaG279oU4k0TwFzZkquqCOoFqy/XtAVO5
+         Psr2we8Y020hD5EmOu6s3WWKp3ZPvehZA4O9whlsSQ27h2xNL4PQk06F3V9CApLfVLAR
+         7ePQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758879237; x=1759484037;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OK9v3uuIIJ3uiffBiQKb1x/mkncrjAvi7aiw8pI8xco=;
+        b=uhYn0xPR3TVMt4L/FbxE2wq8KmT/ZJL2SKcUNBfjH1sGubYpAZHUz0Jse02QNeuM97
+         FQTU+K0TfktdvU5nOcvEbr/qpBqHzgUp3y0r/Obq0SH588q28mLWlw4fbXgvsB0th90p
+         hXZZlXayo6Bi8PK3sfvHt66A+3p/+F5S68bIzPWKvoforbD4DG6Nf48ukhqbOEKTD0BX
+         slmu5jGxh+75i3HSNbCo0RZdk3af25O5UqKSxnjQnYqYCZPv5GIT2Cm76xn6KdGDODzf
+         qvIsf2HvZ/I06f537c7wOwFc0XtHjxaRI7nwtpOdNynfjRc8W5j32vNgj8pNEa6ZUlH8
+         VUiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRZOGvKu4LOx7o4Vt5A+KMhHXiIrSboFewJkFTgyXD6u/Nc2rfJXcwrahTN07Zde/KxPCySbq+yoEXMU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6KUA3ANpry6UaMQqJ5iNEvjbJPDKZhCIbzqnyaHU6cy1EhdQv
+	IfvWJW8HPr8uI3Y6Nhpi+4dD6TcDiBU8suFEvrsk8EwJf/hx4L656Dyp
+X-Gm-Gg: ASbGncsfB50JlSBJBUgl3zjOyAR2JO3KQQR+iSYFsJThl0vYYKvbpwo22U1eq3cggjd
+	Ji5M2awFAa/IFXuvhFxQA2NuEJGVakv3N33KyP3vSbFDZ7kWcFI6H1HfyVAjy0JtAIKiF7w9tOG
+	C4NOwoRYb0kjVWqa9gA6jq/5/ME7f6JfW4H64ScaLsvxYfyy3Pk4B1U/9UlPkkKph0txbg6f7cU
+	F7Prz1oLEBfAOrqvg9K54qDnk4FRx0Ti5yDAte6cRXkLxgtHGtiSbOwKW2i/wFPX9SMU3oXL93I
+	wq8Mtu9IGNY67pUUHjv7jbUAYXBIiQnVPOtwU3GQTG3+HVXob5NglF4HRoC39Nro4WMqUsr26+y
+	WMgLyOIME1r9OmscDMPJKVoxIadGQN35fjxKqDqwsw1Gv/+nwTGl/jMzOQxfr76V4iBPpWSiMwO
+	RBYsX2RT56W2Xy
+X-Google-Smtp-Source: AGHT+IGH+qGMJqKC5ApYpUNbCLP9GsNWqMlAh0AwrcIMTddhDg+v0RJ9sK1UGTjAznokTOB5+2I6DQ==
+X-Received: by 2002:a17:902:e5c6:b0:27b:472e:3a22 with SMTP id d9443c01a7336-27ed4a5eb18mr72968975ad.56.1758879236424;
+        Fri, 26 Sep 2025 02:33:56 -0700 (PDT)
+Received: from localhost.localdomain ([2409:891f:1c21:566:e1d1:c082:790c:7be6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cda43sm49247475ad.25.2025.09.26.02.33.49
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 26 Sep 2025 02:33:55 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	hannes@cmpxchg.org,
+	usamaarif642@gmail.com,
+	gutierrez.asier@huawei-partners.com,
+	willy@infradead.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	ameryhung@gmail.com,
+	rientjes@google.com,
+	corbet@lwn.net,
+	21cnbao@gmail.com,
+	shakeel.butt@linux.dev,
+	tj@kernel.org,
+	lance.yang@linux.dev
+Cc: bpf@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v8 mm-new 00/12] mm, bpf: BPF based THP order selection
+Date: Fri, 26 Sep 2025 17:33:31 +0800
+Message-Id: <20250926093343.1000-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250926-fix-power-limits-v2-1-c2bc7881eb6d@simonwunderlich.de>
-X-B4-Tracking: v=1; b=H4sIAMVd1mgC/32NQQ6CMBBFr0Jm7RimBmhdcQ/DAukok0BLWgQN4
- e5WDuDy/fz//gaRg3CEa7ZB4EWieJdAnTLo+tY9GcUmBpWrIjdU4UPeOPmVAw4yyhyx6Div7sZ
- cSk2QZlPg1DmUtyZxL3H24XM8LPRL/8gWQsKSStaFaY3WVEcZvVtfznIYpOvPlqHZ9/0LdN4Qb
- rkAAAA=
-X-Change-ID: 20250917-fix-power-limits-5ce07b993681
-To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>, 
- Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>, 
- Sean Wang <sean.wang@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- stable@vger.kernel.org, 
- "Sven Eckelmann (Plasma Cloud)" <se@simonwunderlich.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5112; i=se@simonwunderlich.de;
- h=from:subject:message-id; bh=L6Pca3P0pknz3JY6jYwTU3eI8BhWMQZtzDoR7Jozi6U=;
- b=owGbwMvMwCXmy1+ufVnk62nG02pJDBnXYs8v0WH4HM6U2KKWalXE1JSRoN+al+KhKBr1zzSVP
- 6+s/npHKQuDGBeDrJgiy54r+ec3s7+V/zzt41GYOaxMIEMYuDgFYCLb/BgZ5r1htPhyfXn4zQ3T
- UlmvB97L2bfgwLRnnsc2FmhIhMyW42D4K3jrmdfck+x90llr4/tmbCuavCdtFuvphbNf/PjwdFG
- YDSMA
-X-Developer-Key: i=se@simonwunderlich.de; a=openpgp;
- fpr=522D7163831C73A635D12FE5EC371482956781AF
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The power-limits for ru and mcs and stored in the devicetree as bytewise
-array (often with sizes which are not a multiple of 4). These arrays have a
-prefix which defines for how many modes a line is applied. This prefix is
-also only a byte - but the code still tried to fix the endianness of this
-byte with a be32 operation. As result, loading was mostly failing or was
-sending completely unexpected values to the firmware.
+Background
+==========
 
-Since the other rates are also stored in the devicetree as bytewise arrays,
-just drop the u32 access + be32_to_cpu conversion and directly access them
-as bytes arrays.
+Our production servers consistently configure THP to "never" due to
+historical incidents caused by its behavior. Key issues include:
+- Increased Memory Consumption
+  THP significantly raises overall memory usage, reducing available memory
+  for workloads.
 
-Cc: stable@vger.kernel.org
-Fixes: 22b980badc0f ("mt76: add functions for parsing rate power limits from DT")
-Fixes: a9627d992b5e ("mt76: extend DT rate power limits to support 11ax devices")
-Signed-off-by: Sven Eckelmann (Plasma Cloud) <se@simonwunderlich.de>
----
-Changes in v2:
-- Fix second Fixes line, thanks Zhi-Jun You
-- Link to v1: https://lore.kernel.org/r/20250917-fix-power-limits-v1-1-616e859a9881@simonwunderlich.de
----
- drivers/net/wireless/mediatek/mt76/eeprom.c | 37 +++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+- Latency Spikes
+  Random latency spikes occur due to frequent memory compaction triggered
+  by THP.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/eeprom.c b/drivers/net/wireless/mediatek/mt76/eeprom.c
-index a987c5e4eff6c6b0a014b4b069dc1259ffa82d31..6ce8e4af18fe53c10a0cb7290bf65962ce9cdde4 100644
---- a/drivers/net/wireless/mediatek/mt76/eeprom.c
-+++ b/drivers/net/wireless/mediatek/mt76/eeprom.c
-@@ -253,6 +253,19 @@ mt76_get_of_array(struct device_node *np, char *name, size_t *len, int min)
- 	return prop->value;
- }
- 
-+static const s8 *
-+mt76_get_of_array_s8(struct device_node *np, char *name, size_t *len, int min)
-+{
-+	struct property *prop = of_find_property(np, name, NULL);
-+
-+	if (!prop || !prop->value || prop->length < min)
-+		return NULL;
-+
-+	*len = prop->length;
-+
-+	return prop->value;
-+}
-+
- struct device_node *
- mt76_find_channel_node(struct device_node *np, struct ieee80211_channel *chan)
- {
-@@ -294,7 +307,7 @@ mt76_get_txs_delta(struct device_node *np, u8 nss)
- }
- 
- static void
--mt76_apply_array_limit(s8 *pwr, size_t pwr_len, const __be32 *data,
-+mt76_apply_array_limit(s8 *pwr, size_t pwr_len, const s8 *data,
- 		       s8 target_power, s8 nss_delta, s8 *max_power)
- {
- 	int i;
-@@ -303,15 +316,14 @@ mt76_apply_array_limit(s8 *pwr, size_t pwr_len, const __be32 *data,
- 		return;
- 
- 	for (i = 0; i < pwr_len; i++) {
--		pwr[i] = min_t(s8, target_power,
--			       be32_to_cpu(data[i]) + nss_delta);
-+		pwr[i] = min_t(s8, target_power, data[i] + nss_delta);
- 		*max_power = max(*max_power, pwr[i]);
- 	}
- }
- 
- static void
- mt76_apply_multi_array_limit(s8 *pwr, size_t pwr_len, s8 pwr_num,
--			     const __be32 *data, size_t len, s8 target_power,
-+			     const s8 *data, size_t len, s8 target_power,
- 			     s8 nss_delta, s8 *max_power)
- {
- 	int i, cur;
-@@ -319,8 +331,7 @@ mt76_apply_multi_array_limit(s8 *pwr, size_t pwr_len, s8 pwr_num,
- 	if (!data)
- 		return;
- 
--	len /= 4;
--	cur = be32_to_cpu(data[0]);
-+	cur = data[0];
- 	for (i = 0; i < pwr_num; i++) {
- 		if (len < pwr_len + 1)
- 			break;
-@@ -335,7 +346,7 @@ mt76_apply_multi_array_limit(s8 *pwr, size_t pwr_len, s8 pwr_num,
- 		if (!len)
- 			break;
- 
--		cur = be32_to_cpu(data[0]);
-+		cur = data[0];
- 	}
- }
- 
-@@ -346,7 +357,7 @@ s8 mt76_get_rate_power_limits(struct mt76_phy *phy,
- {
- 	struct mt76_dev *dev = phy->dev;
- 	struct device_node *np;
--	const __be32 *val;
-+	const s8 *val;
- 	char name[16];
- 	u32 mcs_rates = dev->drv->mcs_rates;
- 	u32 ru_rates = ARRAY_SIZE(dest->ru[0]);
-@@ -392,21 +403,21 @@ s8 mt76_get_rate_power_limits(struct mt76_phy *phy,
- 
- 	txs_delta = mt76_get_txs_delta(np, hweight16(phy->chainmask));
- 
--	val = mt76_get_of_array(np, "rates-cck", &len, ARRAY_SIZE(dest->cck));
-+	val = mt76_get_of_array_s8(np, "rates-cck", &len, ARRAY_SIZE(dest->cck));
- 	mt76_apply_array_limit(dest->cck, ARRAY_SIZE(dest->cck), val,
- 			       target_power, txs_delta, &max_power);
- 
--	val = mt76_get_of_array(np, "rates-ofdm",
--				&len, ARRAY_SIZE(dest->ofdm));
-+	val = mt76_get_of_array_s8(np, "rates-ofdm",
-+				   &len, ARRAY_SIZE(dest->ofdm));
- 	mt76_apply_array_limit(dest->ofdm, ARRAY_SIZE(dest->ofdm), val,
- 			       target_power, txs_delta, &max_power);
- 
--	val = mt76_get_of_array(np, "rates-mcs", &len, mcs_rates + 1);
-+	val = mt76_get_of_array_s8(np, "rates-mcs", &len, mcs_rates + 1);
- 	mt76_apply_multi_array_limit(dest->mcs[0], ARRAY_SIZE(dest->mcs[0]),
- 				     ARRAY_SIZE(dest->mcs), val, len,
- 				     target_power, txs_delta, &max_power);
- 
--	val = mt76_get_of_array(np, "rates-ru", &len, ru_rates + 1);
-+	val = mt76_get_of_array_s8(np, "rates-ru", &len, ru_rates + 1);
- 	mt76_apply_multi_array_limit(dest->ru[0], ARRAY_SIZE(dest->ru[0]),
- 				     ARRAY_SIZE(dest->ru), val, len,
- 				     target_power, txs_delta, &max_power);
+- Lack of Fine-Grained Control
+  THP tuning is globally configured, making it unsuitable for containerized
+  environments. When multiple workloads share a host, enabling THP without
+  per-workload control leads to unpredictable behavior.
 
----
-base-commit: b36d55610215a976267197ddc914902c494705d7
-change-id: 20250917-fix-power-limits-5ce07b993681
+Due to these issues, administrators avoid switching to madvise or always
+modes—unless per-workload THP control is implemented.
 
-Best regards,
+To address this, we propose BPF-based THP policy for flexible adjustment.
+Additionally, as David mentioned, this mechanism can also serve as a
+policy prototyping tool (test policies via BPF before upstreaming them).
+
+Proposed Solution
+=================
+
+This patch introduces a new BPF struct_ops called bpf_thp_ops for dynamic
+THP tuning. It includes a hook thp_get_order(), allowing BPF programs to
+influence THP order selection based on factors such as:
+
+- Workload identity
+  For example, workloads running in specific containers or cgroups.
+- Allocation context
+  Whether the allocation occurs during a page fault, khugepaged, swap or
+  other paths.
+- VMA's memory advice settings
+  MADV_HUGEPAGE or MADV_NOHUGEPAGE
+- Memory pressure
+  PSI system data or associated cgroup PSI metrics
+
+The new interface for the BPF program is as follows:
+
+/**
+ * thp_order_fn_t: Get the suggested THP order from a BPF program for allocation
+ * @vma: vm_area_struct associated with the THP allocation
+ * @type: TVA type for current @vma
+ * @orders: Bitmask of available THP orders for this allocation
+ *
+ * Return: The suggested THP order for allocation from the BPF program. Must be
+ *         a valid, available order.
+ */
+typedef int thp_order_fn_t(struct vm_area_struct *vma,
+			   enum tva_type type,
+			   unsigned long orders);
+
+Only a single BPF program can be attached at any given time, though it can
+be dynamically updated to adjust the policy. The implementation supports
+anonymous THP, shmem THP, and mTHP, with future extensions planned for
+file-backed THP.
+
+This functionality is only active when system-wide THP is configured to
+madvise or always mode. It remains disabled in never mode. Additionally,
+if THP is explicitly disabled for a specific task via prctl(), this BPF
+functionality will also be unavailable for that task
+
+Rationale Behind the Non-Cgroup Design
+--------------------------------------
+
+cgroups are designed as nested hierarchies for partitioning resources. They
+are a poor fit for enforcing arbitrary, non-hierarchical policies.
+
+The THP policy is a quintessential example of such an arbitrary
+setting. Even within a single cgroup, it is often necessary to enable
+THP for performance-critical tasks while disabling it for others to
+avoid latency spikes. Implementing this policy through a cgroup
+interface that propagates hierarchically would eliminate the crucial
+ability to configure it on a per-task basis.
+
+While the bpf-thp mechanism has a global scope, this does not limit
+its application to a single system-wide policy. In contrast to a
+hierarchical cgroup-based setting, bpf-thp offers the flexibility to
+set policies per-task, per-cgroup, or globally.
+
+Fundamentally, it is a more powerful variant of prctl(), not a variant of
+cgroup interface file.
+
+WARNING
+-------
+
+- This feature requires CONFIG_BPF_GET_THP_ORDER (marked EXPERIMENTAL) to
+  be enabled.
+- The interface may change
+- Behavior may differ in future kernel versions
+- We might remove it in the future
+
+Selftests
+=========
+
+BPF CI 
+------
+
+Patch #9:  Implements a basic BPF THP policy
+Patch #10: Provides tests for dynamic BPF program updates and replacement.
+Patch #11: Includes negative tests for invalid BPF helper usage, verifying
+           proper verification by the BPF verifier.
+
+Currently, several dependency patches reside in mm-new but haven't been
+merged into bpf-next. To enable BPF CI testing, these dependencies were
+manually applied to bpf-next. All selftests in this series pass 
+successfully [0].
+
+Performance Evaluation
+----------------------
+
+Performance impact was measured given the page fault handler modifications.
+The standard `perf bench mem memset` benchmark was employed to assess page
+fault performance.
+
+Testing was conducted on an AMD EPYC 7W83 64-Core Processor (single NUMA
+node). Due to variance between individual test runs, a script executed
+10000 iterations to calculate meaningful averages.
+
+- Baseline (without this patch series)
+- With patch series but no BPF program attached
+- With patch series and BPF program attached
+
+The results across three configurations show negligible performance impact:
+
+  Number of runs: 10,000
+  Average throughput: 40-41 GB/sec
+
+Production verification
+-----------------------
+
+We have successfully deployed a variant of this approach across numerous
+Kubernetes production servers. The implementation enables THP for specific
+workloads (such as applications utilizing ZGC [1]) while disabling it for
+others. This selective deployment has operated flawlessly, with no
+regression reports to date.
+
+For ZGC-based applications, our verification demonstrates that shmem THP
+delivers significant improvements:
+- Reduced CPU utilization
+- Lower average latencies
+
+We are continuously extending its support to more workloads, such as
+TCMalloc-based services. [2]
+
+Deployment Steps in our production servers are as follows,
+
+1. Initial Setup:
+- Set THP mode to "never" (disabling THP by default).
+- Attach the BPF program and pin the BPF maps and links.
+- Pinning ensures persistence (like a kernel module), preventing
+disruption under system pressure.
+- A THP whitelist map tracks allowed cgroups (initially empty -> no THP
+allocations).
+
+2. Enable THP Control:
+- Switch THP mode to "always" or "madvise" (BPF now governs actual allocations).
+
+3. Dynamic Management:
+- To permit THP for a cgroup, add its ID to the whitelist map.
+- To revoke permission, remove the cgroup ID from the map.
+- The BPF program can be updated live (policy adjustments require no
+task interruption).
+
+4. To roll back, disable THP and remove this BPF program. 
+
+**WARNING**
+Be aware that the maintainers do not suggest this use case, as the BPF hook
+interface is unstable and might be removed from the upstream kernel—unless
+you have your own kernel team to maintain it ;-)
+
+Tested By
+---------
+
+This v7 patch series has been tested by Lance. Thanks a lot!
+
+  Tested-by: Lance Yang <lance.yang@linux.dev> (for v7)
+
+Since the changes from v7 are minimal, I've retained the Tested-by tag
+in the current version.
+
+Future work
+===========
+
+Per-Task Defrag Policy
+----------------------
+
+In our production environment, applications handle memory allocation in two
+ways: some pre-touch all memory at startup, while others allocate
+dynamically.
+
+For pre-touching applications, we prefer to allocate THP via direct reclaim
+during their initial phase. For dynamic allocators, however, we prefer to
+defer THP allocation to khugepaged to prevent latency spikes.
+
+To support both strategies effectively, the defrag setting must be
+configurable on a per-task basis.
+
+File-backed THP Policy
+----------------------
+
+Based on our validation with production workloads, we observed mixed
+results with XFS large folios (also known as file-backed THP):
+
+- Performance Benefits
+  Some workloads demonstrated significant improvements with XFS large
+  folios enabled
+- Performance Regression
+  Some workloads experienced degradation when using XFS large folios
+
+These results demonstrate that File THP, similar to anonymous THP, requires
+a more granular approach instead of a uniform implementation.
+
+We will extend the BPF-based order selection mechanism to support
+file-backed THP allocation policies.
+
+Hooking fork() with BPF for Task Configuration
+----------------------------------------------
+
+The current method for controlling a newly fork()-ed task involves calling
+prctl() (e.g., with PR_SET_THP_DISABLE) to set flags in its mm->flags. This
+requires explicit userspace modification.
+
+A more efficient alternative is to implement a new BPF hook within the
+fork() path. This hook would allow a BPF program to set the task's
+mm->flags directly after mm initialization, leveraging BPF helpers for a
+solution that is transparent to userspace. This is particularly valuable in
+data center environments for fleet-wide management. 
+
+Link: https://github.com/kernel-patches/bpf/pull/9869 [0] 
+Link: https://wiki.openjdk.org/display/zgc/Main#Main-EnablingTransparentHugePagesOnLinux [1] 
+Link: https://google.github.io/tcmalloc/tuning.html#system-level-optimizations [2]
+
+Changes:
+=======:
+
+v7->v8:
+Key Changes:
+From Lorenzo:
+  - Remove the @vma_type parameter and get it from @vma instead
+  - Rename the config to BPF_THP_GET_ORDER_EXPERIMENTAL for highlighting
+  - Code improvement around the returned order
+- Fix the buiding error reported by kernel test robot in patch #1
+  (Lance, Zi, Lorenzo)
+
+v6->v7: https://lwn.net/Articles/1037490/
+Key Changes Implemented Based on Feedback:
+From Lorenzo:
+  - Rename the hook from get_suggested_order() to bpf_hook_get_thp_order(). 
+  - Rename bpf_thp.c to huge_memory_bpf.c
+  - Focuse the current patchset on THP order selection
+  - Add the BPF hook into thp_vma_allowable_orders()
+  - Make the hook VMA-based and remove the mm parameter
+  - Modify the BPF program to return a single order
+  - Stop passing vma_flags directly to BPF programs
+  - Mark vma->vm_mm as trusted_or_null
+  - Change the MAINTAINER file
+From Andrii:
+  - Mark mm->owner as rcu_or_null to avoid introducing new helpers
+From Barry:
+  - decouple swap from the normal page fault path
+kernel test robot:
+  - Fix a sparse warning
+Shakeel helped clarify the implementation.
+
+RFC v5-> v6: https://lwn.net/Articles/1035116/
+- Code improvement around the RCU usage (Usama)
+- Add selftests for khugepaged fork (Usama)
+- Add performance data for page fault (Usama)
+- Remove the RFC tag
+
+RFC v4->v5: https://lwn.net/Articles/1034265/
+- Add support for vma (David)
+- Add mTHP support in khugepaged (Zi)
+- Use bitmask of all allowed orders instead (Zi)
+- Retrieve the page size and PMD order rather than hardcoding them (Zi)
+
+RFC v3->v4: https://lwn.net/Articles/1031829/
+- Use a new interface get_suggested_order() (David)
+- Mark it as experimental (David, Lorenzo)
+- Code improvement in THP (Usama)
+- Code improvement in BPF struct ops (Amery)
+
+RFC v2->v3: https://lwn.net/Articles/1024545/
+- Finer-graind tuning based on madvise or always mode (David, Lorenzo)
+- Use BPF to write more advanced policies logic (David, Lorenzo)
+
+RFC v1->v2: https://lwn.net/Articles/1021783/
+The main changes are as follows,
+- Use struct_ops instead of fmod_ret (Alexei)
+- Introduce a new THP mode (Johannes)
+- Introduce new helpers for BPF hook (Zi)
+- Refine the commit log
+
+RFC v1: https://lwn.net/Articles/1019290/
+
+Yafang Shao (12):
+  mm: thp: remove disabled task from khugepaged_mm_slot
+  mm: thp: remove vm_flags parameter from khugepaged_enter_vma()
+  mm: thp: remove vm_flags parameter from thp_vma_allowable_order()
+  mm: thp: add support for BPF based THP order selection
+  mm: thp: decouple THP allocation between swap and page fault paths
+  mm: thp: enable THP allocation exclusively through khugepaged
+  bpf: mark mm->owner as __safe_rcu_or_null
+  bpf: mark vma->vm_mm as __safe_trusted_or_null
+  selftests/bpf: add a simple BPF based THP policy
+  selftests/bpf: add test case to update THP policy
+  selftests/bpf: add test cases for invalid thp_adjust usage
+  Documentation: add BPF-based THP policy management
+
+ Documentation/admin-guide/mm/transhuge.rst    |  39 +++
+ MAINTAINERS                                   |   3 +
+ fs/proc/task_mmu.c                            |   3 +-
+ include/linux/huge_mm.h                       |  42 ++-
+ include/linux/khugepaged.h                    |  10 +-
+ kernel/bpf/verifier.c                         |   8 +
+ kernel/sys.c                                  |   7 +-
+ mm/Kconfig                                    |  12 +
+ mm/Makefile                                   |   1 +
+ mm/huge_memory.c                              |   7 +-
+ mm/huge_memory_bpf.c                          | 204 +++++++++++++
+ mm/khugepaged.c                               |  66 ++--
+ mm/madvise.c                                  |   7 +
+ mm/memory.c                                   |  22 +-
+ mm/shmem.c                                    |   2 +-
+ mm/vma.c                                      |   6 +-
+ tools/testing/selftests/bpf/config            |   3 +
+ .../selftests/bpf/prog_tests/thp_adjust.c     | 288 ++++++++++++++++++
+ tools/testing/selftests/bpf/progs/lsm.c       |   8 +-
+ .../selftests/bpf/progs/test_thp_adjust.c     |  55 ++++
+ .../bpf/progs/test_thp_adjust_sleepable.c     |  22 ++
+ .../bpf/progs/test_thp_adjust_trusted_owner.c |  30 ++
+ .../bpf/progs/test_thp_adjust_trusted_vma.c   |  27 ++
+ 23 files changed, 799 insertions(+), 73 deletions(-)
+ create mode 100644 mm/huge_memory_bpf.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/thp_adjust.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_thp_adjust.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_thp_adjust_sleepable.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_thp_adjust_trusted_owner.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_thp_adjust_trusted_vma.c
+
 -- 
-Sven Eckelmann (Plasma Cloud) <se@simonwunderlich.de>
+2.47.3
 
 
