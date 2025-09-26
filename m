@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-833882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D567BA347F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6804BA34B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D498623E4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0CDA625530
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6B8433AD;
-	Fri, 26 Sep 2025 10:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F9D2DC32C;
+	Fri, 26 Sep 2025 10:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="coLTQA68"
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EZ65DsGu"
 Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DE526AA94
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2FE2D9EEF
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758881145; cv=none; b=psFe2omvWURuGxZPsDb8iBKMSzKD5uscbS4VyJsX3GH4j+rSFMOjZ3Kd7NV4LEfnQYnz+dP8KrB1J3xTwdPdPYJ6AudCtDAo0OVGRd98CMIbR6YLq0OBMQnPST1PyFX7V+GjGpemR3xWrqyy4oHGuWpva0HNGWV+CBkl11f88Ao=
+	t=1758881242; cv=none; b=mUoXZ3qt7zCPVP49T39YvIJgBdzVaOoVU/JHtWBL93s3MXQTAHbtcNAnI6Vgnh7EniHo/zjGtH7AGoBAdqYa7CzBln8Lv5CB5SZgumrBPO4nIO4sDR6wn0NHknQ/73TgHNW/fLHTXJ4RcHVB34C9Sicj5EUIYAD4vG5GAHdXe3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758881145; c=relaxed/simple;
-	bh=OQbCnIhShPZKBxp/CTgnpLLrKP7PYQnn7jxSSy2VseM=;
+	s=arc-20240116; t=1758881242; c=relaxed/simple;
+	bh=Em0zRI0uOGCRmpgRXrzPh+SE4eK4amdzf5fhoYbMqnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hDYJHfhSPXu68g9TvrzAiigoX9ZANGGWz83W3lRcamId5RSv/XgMEkeJabKzGTyDAiomf0EusKYULqnha2IQgMhwVr2aCzQyZlRUwayeExgbTiJiXcVNhjhWrlrpn3kBWg81eNiHs19vnq2BYTVlzJGVDHxHoWBMedI5X8xkZ7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=coLTQA68; arc=none smtp.client-ip=65.109.113.108
+	 Content-Disposition; b=DZiXo/8oKFOMlOLCj/9l0Q3PSvqoJssu9S7YGO8n93ojmw8OnuItW+zR9DF0n2wsG0UPEReKJhnbgXDklcewpPbgKivebV9FzQSYcvcw+UInkTrSoB09clW+sBcjPbXviDt37sBnmdY/aigsAb4D0E0dh8ty5Drqxl8wKfpTgHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EZ65DsGu; arc=none smtp.client-ip=65.109.113.108
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E010040E016E;
-	Fri, 26 Sep 2025 10:05:41 +0000 (UTC)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3734E40E0140;
+	Fri, 26 Sep 2025 10:07:17 +0000 (UTC)
 X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
 Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
 	header.d=alien8.de
 Received: from mail.alien8.de ([127.0.0.1])
 	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id kxN8VKRpsW3e; Fri, 26 Sep 2025 10:05:39 +0000 (UTC)
+	with ESMTP id CaBGj3J8uVZ6; Fri, 26 Sep 2025 10:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758881138; bh=xHmi+K11WcMhrsbQa6Wjx0SpjFxjx8zIrajlY+Yn7/A=;
+	t=1758881233; bh=XHZCw/OaWPLcgGbiWcCaaJU/LcshuyY8ILHoPMW/mGg=;
 	h=Date:From:To:Cc:Subject:From;
-	b=coLTQA687H5E5OaSczVv6rjE20lQvybxfaSICV6rFtiFB8MtQVUa+gZkRSrmYvc0m
-	 IIFzDZ9MOEmrYlP3NvkZZZpQYNlrjF/RE1eKyvVobvuJqy7Y4umDK0MVMe9adHuko2
-	 tOa6mbdezw1r1B+UokE2JZmod9Hv+ZYTlbHroje+xaOicgMcwnGGhW5uCBjXViDXGW
-	 SYBjNTetJE5svlJXzbaJGkavMujXO68NyOAWN+1seTmnwpz3ce/YYL+QXOsDp/buN0
-	 PQxIg5ciAeftFHQNbTHhVM2viZPR5ISIbY8CqfZFkDi/YWi9poRdg1mkzgpqubt76T
-	 vxIJcwPITN/FZcVzCLT1CXjMO9Ppr38fWM3HYx5HlZVHIvuGWlc2tHjEkhgTqiOSV8
-	 ourdFtRWEAbZi8eoxMYH0oDQRjFoX5yoGL3ckpTmMysE/p05SlUTkDk2k+1mJUtQO2
-	 hwqMO24cXPHdJsmte7Ojxw5PYFYYaH2E3dsAMQrej9FxrX5JjUPoCShVeMN6rUTxKY
-	 FDrslgVShZsz9/hkWL7cjKcBAXoLwObYeHGXItfRiS5gn6Z7dfFW6HackqS4/chany
-	 lLsp1JtsN4sdlDIcUHZGh8ASv8DFsQTg2nyhFoxevl+gNrER0eOJWk5CWpaeRJ/MMX
-	 tPb7zflMO8j7fd12+To+0J28=
+	b=EZ65DsGujoczlHcY8JRr6UIb9vKeGKdvljWriKdeFDKHewKmJmqGC/rnvdcUqpKXy
+	 WUk0Z8mrReaN6p3rLXSQkTLtEBX0LuyrG75cVz+cvZ/CvI3eYtuqvDGuvps+14aXyR
+	 4GIm3VVqYpr+v08iCuoRoeLxWXurauhy6K7KlqZa/itxRPKogcGv5in5sTpIgKB/rH
+	 Cf1+Z3P+RGYq3YpgigqPe97w3NyMcapECgtAiivBJ8Oiy1P1Lrrw7funz5RI9ZqMEs
+	 IjPvKCYxy7j3NazcDhV8qRGv0lAcUMxlLopiBW/KVQh0Zu9FacvY18uDQDtnG0OAvP
+	 n74bFEhhCKr1CkSxjlHR/BMto5UeLUYzNe8vv3w9UouQMd5qX6XnOFaT7fjHLGXxxF
+	 ggY91gxyLWVGzBoLjYQoYo+3y+Tca5HaYBQwXNJso4XcPoWn9cUWL5jb/Zx/JIgAcz
+	 oVD4+Dah9g+BkfTpPgANdSbny7infzHjVXhTZmt30ouYVue+gHlYfkryMOA1OYm6sx
+	 7M0LQ2NjQgSg0fFYaToMKBazQaBSSBlPsMvaqjnsDJaDJzqigXtjgol9wIAZEAUH0r
+	 Bt2x6kpRMO98xo08z+xT5e481i2820H/FRO2g7UcQg49O5Nsd0gzMrXjCbgFxoPrK+
+	 ga5R6/xERPuLn2IjJAcUDnA4=
 Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 78DB040E016D;
-	Fri, 26 Sep 2025 10:05:35 +0000 (UTC)
-Date: Fri, 26 Sep 2025 12:05:34 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D4E2740E0176;
+	Fri, 26 Sep 2025 10:07:09 +0000 (UTC)
+Date: Fri, 26 Sep 2025 12:07:08 +0200
 From: Borislav Petkov <bp@alien8.de>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/asm for v6.18-rc1
-Message-ID: <20250926100534.GAaNZlbuntdGwY0wN4@fat_crate.local>
+Subject: [GIT PULL] x86/microcode for v6.18-rc1
+Message-ID: <20250926100708.GAaNZlzKcAZilZHRZb@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,34 +76,44 @@ Content-Disposition: inline
 
 Hi Linus,
 
-please pull a x86/asm fix for v6.18-rc1.
+please pull the x86/microcode lineup for v6.18-rc1.
 
 Thx.
 
 ---
 
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
 
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
 
 are available in the Git repository at:
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_asm_for_v6.18_rc1
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_microcode_for_v6.18_rc1
 
-for you to fetch changes up to ac9c408ed19d535289ca59200dd6a44a6a2d6036:
+for you to fetch changes up to 43181a47263dd9f2bee0afd688a841b09f9b7d12:
 
-  x86/vdso: Fix output operand size of RDPID (2025-08-26 19:33:19 +0200)
-
-----------------------------------------------------------------
- - Fix RDPID's output operand size in inline asm and use the insn
-   mnemonic because the minimum binutils version supports it
+  x86/microcode: Add microcode loader debugging functionality (2025-09-04 16:15:19 +0200)
 
 ----------------------------------------------------------------
-Uros Bizjak (1):
-      x86/vdso: Fix output operand size of RDPID
+- Add infrastructure to be able to debug the microcode loader in a guest
 
- arch/x86/include/asm/segment.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+- Refresh Intel old microcode revisions
+
+----------------------------------------------------------------
+Borislav Petkov (AMD) (2):
+      x86/microcode: Add microcode= cmdline parsing
+      x86/microcode: Add microcode loader debugging functionality
+
+Sohil Mehta (1):
+      x86/microcode/intel: Refresh the revisions that determine old_microcode
+
+ Documentation/admin-guide/kernel-parameters.txt  | 12 +++-
+ arch/x86/Kconfig                                 | 16 ++++-
+ arch/x86/kernel/cpu/microcode/amd.c              | 73 ++++++++++++++------
+ arch/x86/kernel/cpu/microcode/core.c             | 47 +++++++++++--
+ arch/x86/kernel/cpu/microcode/intel-ucode-defs.h | 86 +++++++++++++-----------
+ arch/x86/kernel/cpu/microcode/internal.h         |  9 +++
+ 6 files changed, 174 insertions(+), 69 deletions(-)
 
 
 -- 
