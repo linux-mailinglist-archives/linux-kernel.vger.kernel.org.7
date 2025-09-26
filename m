@@ -1,163 +1,157 @@
-Return-Path: <linux-kernel+bounces-833656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3796ABA291A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8F2BA2926
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E446356128E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB84F3B6A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ED627D77D;
-	Fri, 26 Sep 2025 06:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E6027E1B1;
+	Fri, 26 Sep 2025 06:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FdTxdaxg"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rW+ruKNK"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB8A8F6F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9957E27B35D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758869304; cv=none; b=I1UBJQ9QhqJGAPs1BCWsVdu3XCjHlpHPxaYAkIIBgi2FGguraw7xYVMS8qJiRvVum4Oz4yrKH0pwvgobWaktAIxOT2ms+SJCRA2fp7xtf4Ws3zurtgTRxxozYMrSLt0ONY/NnKVefUVArTcC71qMLaHpDqHb6/+Ivylf28T/IuM=
+	t=1758869429; cv=none; b=pvTB+/FxrmQOzLfF1CFgfhNdanWFDOdI7TRD6mQ8zjkPX9qmFgFLqRHo3QvrqszOWYj/MFlL+W3ix0OgKe79UAuYymA5UC0WFhZ/1rbrmwl31UqSxKg42j7DN2zTCmm8h8pwhSwzquYpx5is1iMdOkxqYOquNlYnvcbTIlsYXpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758869304; c=relaxed/simple;
-	bh=t1mgwziuQgYdtYzvQ1tc7owsSFqhrDeGItfKOMdbfhU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jHGpX+AUhN1cd+HipCPE13wGuh9OXVYWfv4AaKRvSqaZ3jGeXlFpKv0209wfyBbJ109RDUkl80ZfOFHZyjHp4I7ZutalkT2U6oJe+mAw96TIBB8IEGIrgHoeSxUiGJ6nAWQ68YyWmFwLroBWSavq2WPJK0BIkCTZl258Emb8moY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FdTxdaxg; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-26c209802c0so19889675ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:48:22 -0700 (PDT)
+	s=arc-20240116; t=1758869429; c=relaxed/simple;
+	bh=JeiZMAdBfoDaJdELXLbBBT1DLTAze95bhqjWibF8b5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0YZftwogJXK3C53zqWIEJAxA2b+yBTxRBycyXEfNdn8DrNZEPgcwi7K4iWRHPiR28ohZnXZJmtLE+gSU97mqmJOSBxj9B8SIGDeQnEaiumw7/49kl43fLj32/h3PC1xpCwKGArCopDzRNcygZWMK7DqXAT5o3+VAzvzcb0xYjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rW+ruKNK; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so16777635e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758869302; x=1759474102; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aJgWHabvDduY7CKx07HtPWunby2WlRQjkpPq1jpmCK4=;
-        b=FdTxdaxg00J2o5eqqWim+WdMLZbN9xM4PxvksNg39lkx0VNg+vJUEGG8cgKtJv7mvb
-         jFF5rpaoSa66YJpcC064/8AgB/uIDIh8beF9RqpExVcOjSBByr1VTPv21CwnFpXAkiYN
-         zPBEqIbiIsVC2HceSXvBzTZHeJbCKfpt0WEkw05NwXIC5jBY1DI5qxSYcEq3OFBOdES2
-         ErocIdd2jvlxiIWxtyBiE48eYBxD7n+SPphdfjRFq83ROPrX2yNJ9O0Nfk3TQ3E0neSq
-         +jRaEDQo57tKh8KXog/qX267NGtC/9D4Z04jv0FU7e5i5UjymKOqloDcuCQeANxaxQoi
-         0GZw==
+        d=linaro.org; s=google; t=1758869425; x=1759474225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NFTsrA5/XpN/aDPrsWUi64EUIAXE1gernUECI4xL01o=;
+        b=rW+ruKNKll5EhnG2oOhKIvMEad+3krImExig4LkwcQG7DBj0kcn2NryFioX3fSmJH7
+         HklP74ToNbfZITW6vXgRm1RjZwHVfvJkh3EJHE9ci2GDxTi9Z/DzvF74cw0n234YhrPI
+         RhpMH2SkrY6ls6ZvbfBzGbbOU0I43O1vWXC7pFV358LP+O6T3mLHCnxeMjYhZ4PaWFBv
+         /CPPYIlByCPyXJ3hhK4yJL4tOvNkuBl1JI2fJbl6li7FfnUNZp+7IM3zje/wxKrewIxA
+         agwutEIni/EBxf4BZZW4Xtrkpjy1YT+61bjSSxSm54ECR2IbpyhyflEHX0rrcyis8fNh
+         doRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758869302; x=1759474102;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aJgWHabvDduY7CKx07HtPWunby2WlRQjkpPq1jpmCK4=;
-        b=FUNsjahyZvSYbKHbgjbwX2iFOjyDwCDWuR9cvlrl/u0+5Sh2xwg1XCKrnoL3h+Ye7n
-         K3o62zDZ8fg/BD9+twB7aST4ApIq9GFV54L3a12n5meO2gvJw/jLrfQJZ4M0SZuzDZHB
-         7rwcpnRlMHT8GQ8g7Zf6b1gt+HI8+0xATb3zeZDLwH63UEME+cZMVrljbRSdoAeD2bfV
-         mh+0bQXVpDDrXMWzo8zwFT/pUI1oaqg2m9fFe6QgSxSEDNDUquEo+ohUYwuwCBG7CK+O
-         PUp6pxZVJMWZAjG3ptAIHH6wT0MgynTSv/bf2Ddt4b5u8t1yrRl+BdnAeQVKUK1PS0R3
-         ge+A==
-X-Forwarded-Encrypted: i=1; AJvYcCW2qnIdUWmvXjP6fAP9JuhOG8EIvxPK7u58Rz8/eGqMDsP2bSqZsADbOYUTjH+Aun5JGGsb3FOY/7ENxck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTfjCseImBjO0klr+e9a3u5fwEhbwgtR8Iu98LJzxhdm3cRbc2
-	qOA5pKz2DGV67MXSgqLHf9Kw4uc7+O5c6OX2TsnsluNMwqQY46wn1ZsedPo+LaFbRrsB2sCE+pZ
-	tXPDF2T1Afc6U30P9xoQ8an7I9AZOEMVXSxTyHXGB
-X-Gm-Gg: ASbGnctgWl+4AuDoWO+KTRg3YLpMxSn3y//wa+7hd+aCATu3Do/r9267zQXtRrfRNFW
-	LsCq/0LP0LhBXIPXkKdZuHJt3iQr7r8BQ+LDZQeq7CcYv5BLdaliS2NIibDN6T5+dwR5+8Hb+v7
-	s/LMi26ZRKrxH8KRVXNK8wkMDO9AhweNLhGeGOa3PCFgS1JlluecPEWtyCjOc24M5sQonOCbKz6
-	K++d+ucoo15KXJw0J7M99mLS/Hqme9hJ1cJqmxLe0lvUQ==
-X-Google-Smtp-Source: AGHT+IFQ5dcE8jI9jLYWO3ZIojoAEp7kw7htpHJSMwq3UBPFdCKdp/gCcYtzso7T+qMu7jMyGkvqB3ynpVlhrrLt0JA=
-X-Received: by 2002:a17:902:f78a:b0:27f:1c1a:ee57 with SMTP id
- d9443c01a7336-27f1c1af218mr11140145ad.16.1758869302047; Thu, 25 Sep 2025
- 23:48:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758869425; x=1759474225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NFTsrA5/XpN/aDPrsWUi64EUIAXE1gernUECI4xL01o=;
+        b=hlH87WcmljmJGR0G12HCULjYN85WBU2ug1/yYor5jxXMDzYlBP8fFFs5O9+Y+9XFCn
+         yDmCrHOjKjRj0ud5Z2JoV10r2hisxstU9dCY6pf0Go6cga9XSjiIGjp16wyQG4P+zd52
+         gPg6jQZSWoTXf2XmscPQ65/Bi5E4uYjDrnbgpwYhKMBXril12fp9/X1o+pDSsy4A/c6R
+         Aj9QTummuwPo73QDjeMQFCTIY5Si9xAH3BbT/DqoWzMkxOwn0awLz8xlXpYcaY2ZOc2a
+         WRdOHPMB7xZ989LeLseTnuusaNuZLS+lbaL3KBzTU8SHMEfVBip3bvhp9D2bURDfr8Js
+         gXJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/n0wDu9aghX3LiI3VV+YYzmZZucoyW/2ewEfESU27h7Z8wHHMLtegbi67Idm/w9QEy4QLvjkfTCcJnTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpEi0dHSYVtzgk1lCLHm9n4SdOULyeYTLZh23MWBD/gExT8fnR
+	4/HopemFQUTTf92pXtsipv0DleXyLCUwZiyeDzJ4hhBGVk4aCYGqOjE29n9bIr3vIgs=
+X-Gm-Gg: ASbGncvqqh/vOOdtXpDlheOLyAAemzccJKcZpbHVvy216YZBOByN0u/FpwlcYQ7d/j+
+	PKL2lfMJkvdvUlfj32UCFSv7Z35IKVScSj5+rJ12HTPjVh6uG/3NYWm7Qgyc7bik1W6rlAHs6Gk
+	eI2YcJly4DZSn0yddFfEwv27jpm+qieFyFzrobCCDlSts+1TGs/yGNDRwgEIigS528oHa/VPOvY
+	vQTCCzWVUoC9EPAw8hdDzlURud50pljO/wDRqZ3pRlzg0NfEKo11WuhlzvfqRSabV2kO7d/Jge2
+	roCPkBwTEHSqbF3myWMzi/FYraU2tDX2LaMs0Kkq3C61CCsorzuTvylYvuDQuiNj98ylFVYKCar
+	ekheZX7eBeA44AoytuU7GyA==
+X-Google-Smtp-Source: AGHT+IFyx6DPnlr6W6V0+TXiAp7mU5XDK4wWvIBL9OAv7zYNMXQhdyyL5XhqSCjFW7RXKqfYCBtV6w==
+X-Received: by 2002:a05:600c:8484:b0:46e:1abc:1811 with SMTP id 5b1f17b1804b1-46e329f653emr46236185e9.27.1758869424835;
+        Thu, 25 Sep 2025 23:50:24 -0700 (PDT)
+Received: from linaro.org ([86.121.170.238])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab31ea3sm103257195e9.12.2025.09.25.23.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 23:50:24 -0700 (PDT)
+Date: Fri, 26 Sep 2025 09:50:22 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Pankaj Patil <pankaj.patil@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: glymur: Describe display related
+ nodes
+Message-ID: <r7f4zzugs3io4ho7qdjudh2ebyphtsjdnchnj7hnt7msoiylfz@dhfgzjg3sh46>
+References: <20250925-dts-qcom-glymur-crd-add-edp-v1-0-20233de3c1e2@linaro.org>
+ <20250925-dts-qcom-glymur-crd-add-edp-v1-1-20233de3c1e2@linaro.org>
+ <43jgqfcw2nnasdnskfdri5swddr6kunvvp6oxzqibnlvyc4jd2@4y6x7fy5shq2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68d6364e.050a0220.3390a8.000d.GAE@google.com>
-In-Reply-To: <68d6364e.050a0220.3390a8.000d.GAE@google.com>
-From: Marco Elver <elver@google.com>
-Date: Fri, 26 Sep 2025 08:47:45 +0200
-X-Gm-Features: AS18NWDuKHZOuTTHwXeZU7Mpq5jZFUp5-2GMJyGgVogYWdeZQykYphkIZQwvd7M
-Message-ID: <CANpmjNMA4sOXAUdCpDDYz-4D9F_BaTFF8DL3Vkhx=q7vPfYG+A@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] KCSAN: data-race in try_to_migrate_one / zap_page_range_single_batched
-To: syzbot <syzbot+60192c8877d0bc92a92b@syzkaller.appspotmail.com>
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com, 
-	harry.yoo@oracle.com, jannh@google.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, riel@surriel.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43jgqfcw2nnasdnskfdri5swddr6kunvvp6oxzqibnlvyc4jd2@4y6x7fy5shq2>
 
-On Fri, 26 Sept 2025 at 08:44, syzbot
-<syzbot+60192c8877d0bc92a92b@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    cec1e6e5d1ab Merge tag 'sched_ext-for-6.17-rc7-fixes' of g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=145d4f12580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6e0c213d0735f5dd
-> dashboard link: https://syzkaller.appspot.com/bug?extid=60192c8877d0bc92a92b
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/10b7c8fdfdec/disk-cec1e6e5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/cbecc36962db/vmlinux-cec1e6e5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/214f107d0a3e/bzImage-cec1e6e5.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+60192c8877d0bc92a92b@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KCSAN: data-race in try_to_migrate_one / zap_page_range_single_batched
->
-> write to 0xffff88810adfd798 of 8 bytes by task 13594 on cpu 1:
->  update_hiwater_rss include/linux/mm.h:2657 [inline]
->  try_to_migrate_one+0x918/0x16e0 mm/rmap.c:2455
->  __rmap_walk_file+0x1ec/0x2b0 mm/rmap.c:2905
->  try_to_migrate+0x1db/0x210 mm/rmap.c:-1
->  migrate_folio_unmap mm/migrate.c:1324 [inline]
->  migrate_pages_batch+0x6e1/0x1ae0 mm/migrate.c:1873
->  migrate_pages_sync mm/migrate.c:1996 [inline]
->  migrate_pages+0xf5f/0x1770 mm/migrate.c:2105
->  do_mbind mm/mempolicy.c:1539 [inline]
->  kernel_mbind mm/mempolicy.c:1682 [inline]
->  __do_sys_mbind mm/mempolicy.c:1756 [inline]
->  __se_sys_mbind+0x975/0xac0 mm/mempolicy.c:1752
->  __x64_sys_mbind+0x78/0x90 mm/mempolicy.c:1752
->  x64_sys_call+0x2932/0x2ff0 arch/x86/include/generated/asm/syscalls_64.h:238
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> write to 0xffff88810adfd798 of 8 bytes by task 13595 on cpu 0:
->  update_hiwater_rss include/linux/mm.h:2657 [inline]
->  zap_page_range_single_batched+0x182/0x450 mm/memory.c:2007
->  zap_page_range_single mm/memory.c:2041 [inline]
->  unmap_mapping_range_vma mm/memory.c:4020 [inline]
->  unmap_mapping_range_tree+0xfd/0x160 mm/memory.c:4037
->  unmap_mapping_pages mm/memory.c:4103 [inline]
->  unmap_mapping_range+0xe4/0xf0 mm/memory.c:4140
->  shmem_fallocate+0x262/0x840 mm/shmem.c:3746
->  vfs_fallocate+0x3b6/0x400 fs/open.c:342
->  madvise_remove mm/madvise.c:1049 [inline]
->  madvise_vma_behavior+0x192d/0x1cf0 mm/madvise.c:1346
->  madvise_walk_vmas mm/madvise.c:1669 [inline]
->  madvise_do_behavior+0x5b7/0x970 mm/madvise.c:1885
->  do_madvise+0x10e/0x190 mm/madvise.c:1978
->  __do_sys_madvise mm/madvise.c:1987 [inline]
->  __se_sys_madvise mm/madvise.c:1985 [inline]
->  __x64_sys_madvise+0x64/0x80 mm/madvise.c:1985
->  x64_sys_call+0x1f1a/0x2ff0 arch/x86/include/generated/asm/syscalls_64.h:29
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> value changed: 0x0000000000001645 -> 0x0000000000002165
+On 25-09-25 20:11:11, Dmitry Baryshkov wrote:
+> On Thu, Sep 25, 2025 at 06:02:48PM +0300, Abel Vesa wrote:
+> > The MDSS (Mobile Display SubSystem) on Glymur comes with 4 DisplayPort
+> > controllers. Describe them along with display controller and the eDP
+> > PHY. Then, attach the combo PHYs link and vco_div clocks to the Display
+> > clock controller and link up the PHYs and DP endpoints in the graph.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/glymur.dtsi | 492 ++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 484 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > index a131cd6c3d9e7f14ed1c4aef4b68e1860cc3bca5..41d89998b1fe14a24cd528e73afc37cf2a840bab 100644
+> > --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
 
-One of these writes is getting lost. Which means highwater_rss is
-lossy/approximate - does it matter?
+[...]
+
+> > +			mdss_dp0: displayport-controller@af54000 {
+> > +				compatible = "qcom,glymur-dp";
+> > +				reg = <0x0 0xaf54000 0x0 0x104>,
+> > +				      <0x0 0xaf54200 0x0 0xc0>,
+> > +				      <0x0 0xaf55000 0x0 0x770>,
+> > +				      <0x0 0xaf56000 0x0 0x9c>,
+> > +				      <0x0 0xaf57000 0x0 0x9c>;
+> > +
+> > +				interrupts-extended = <&mdss 12>;
+> > +
+> > +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> > +					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
+> > +					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
+> > +					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
+> > +					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
+> 
+> No pixel1 clock?
+
+Will add it in next version. Everywhere.
+
+> > +
+> > +			mdss_dp1: displayport-controller@af5c000 {
+> > +				compatible = "qcom,glymur-dp", "qcom,sm8650-dp";
+> 
+> This doesn't match your own bindings. WT?
+
+Urgh. Yep, this is wrong. sm8650 compatible needs to be dropped. Will do
+in the next version.
+
+> > +
+> > +				mdss_dp1_opp_table: opp-table {
+> > +					compatible = "operating-points-v2";
+> 
+> Is it differnt from dp0 table?
+
+Nope, they are the same. Will use the dp0 table for all controllers.
+
+Thanks for reviewing.
+
+Abel
 
