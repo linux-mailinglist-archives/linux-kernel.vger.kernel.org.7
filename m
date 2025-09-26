@@ -1,345 +1,272 @@
-Return-Path: <linux-kernel+bounces-834277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1DCBA4529
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:00:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F6EBA4535
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C3043A1C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FB6189100C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5FD1F419A;
-	Fri, 26 Sep 2025 14:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A1820CCE4;
+	Fri, 26 Sep 2025 15:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgWC0AMz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Amc9kWCv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9QkMHzaM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1fdNvOQv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VcUsi8RY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BEA1E7C2E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C5B2045B7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758898797; cv=none; b=WjVnQjEgBPy0cvfkKxTfaWQPhMNdK9NvV1NTUVwTinAlpbdChykAoePNHzNbp9kLc2j4wtcBCEac/+MWrAsEs0hw/NnimFadQ+Xgy0Ur8kerel9mBNLg3SP7/GB2Y0g1E+5FBhnYjSLmPqPOiuVpVZpHw6sZEzgZc7UazCsm4OA=
+	t=1758898809; cv=none; b=MdRkgIkUyN6LR2s6ihEN6RsVbLpUGjZEcgi8arPp4xkIhvjZpeOf0q1RqhuRYKhg5aF9MWW3dLmC/dZZot3xKXDF/9eIppHprpgpvY4+9lfQ1gfmuU0QEzVq9CaFuW3NMFR76lx/XIlhKWdyGnzGeYBPDmd7OSH6I9Wb5Ahbl/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758898797; c=relaxed/simple;
-	bh=KI7kp6WM2WzZ9+hspxmsiOeR2W34s6buSt0JdUpZ46g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVekW6MrZuNuX+VxSYQmSD4rO6wjZacpz+njCwokEM5/vATqsBYzV+e1in+kVvJMHmbyFJBnXyrC+U9TjLYUnflKTffNslqhaxuxu1CXweE1DjDSYYYpi6qtVJb5/5f61EZjXsrvXpPA7mUym1A/ISUBwcDRBr1p6JCbFzpgbEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgWC0AMz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758898794;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1758898809; c=relaxed/simple;
+	bh=CmbSomVZRveW/2dDOBiZe3eFLvryq4NMIHwN5P32t6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FC7cu8nTAZQNXx/eAD5dAcv5p2cmcq3j3bMYP9DkDhW875esV/BgGqGqbtXLMCqCebqusun9/azDHkOKY/5wy0K0Pa/AsxOzxmgXWYK0edLWwjOzQrHv5TNQME6awdrOnNqybqyqn+Ghq01QaBGnNsFRpf88A9ggkneGaSeDNXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Amc9kWCv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9QkMHzaM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1fdNvOQv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VcUsi8RY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B7C13425F;
+	Fri, 26 Sep 2025 15:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758898804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6I7dZDs73n8U+ResplTjCjySoUe7cbKd7TavFeUOHrU=;
-	b=CgWC0AMzb/DNa/YvP2r6Mr36SsAyujoMYukq81E+NbIPswiUGH80h1072h76bSJPGutQdG
-	V4ccge+tGqITrxggInasC96B38sppnBFkDbd7B6pi/YCk7w2NVlAejAL/l7+fUwS2HT/Gb
-	jZONHwt53j7suNDnPkncSSRzxFhKISs=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-508-NT4HDMYFPLaMUJM_97zK1g-1; Fri, 26 Sep 2025 10:59:53 -0400
-X-MC-Unique: NT4HDMYFPLaMUJM_97zK1g-1
-X-Mimecast-MFC-AGG-ID: NT4HDMYFPLaMUJM_97zK1g_1758898792
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f030846a41so1516518f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:59:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758898792; x=1759503592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6I7dZDs73n8U+ResplTjCjySoUe7cbKd7TavFeUOHrU=;
-        b=s9Tubzl00qr3yu6Jd2GSxT+ANDMJCHU35KJgHVa8YwUkRheeIbq3Yg7q6xXcrrxC4D
-         +2CoRE3mSMfR4LenxvKZdKJqjZy1tn/Fx9Sh3fc0/yJzB623GUx01ZVPPPDNG7/fjU5P
-         NcLPow7XzijcCMK4vsRj0MbAZcCBlus6aTOif20wVGVph/fjRD3SCFkumR6vmswl623X
-         LTWv8MXLC5f0CG1TkGI/sf+zqbOS1BlntkZck+a2J/ROqVx/PKMuCVmVW7Ypcf6J0mGv
-         HTWYC4VyffbYL1f2/9SQSvKsZii50A1tidhJ+70eTAB7R2vjWv8CoT+zWrdWQ5mjZIE2
-         CI+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUcerUiQW4WHRMD1iVGtfhiZZVLFpsw4bGWVLwd5FHnPgO3NbJFEvUazyPyFFZf0lGmUgeaOZRtExFFSVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrWm3fiSKX5eTs4jwVKBKadxRUFWtLBg9qE63tthFI4Su90hIH
-	IohRvv7LXsEmxjKRaVmn6yKSEFH5FgfQGNc+UF3rHy6LlD04R7ysTLEHuLc7naChieGdPSZHMX9
-	Ob5NCFKKZKxpeSaXjJ286kL9lRJBxv934SrbsyUbbGkvznNOG9MSXI6P5A5eZKUWPcg==
-X-Gm-Gg: ASbGncuMr/xahpzIrIceFUA2ooKNFE4lw5T+lVywoG2JC1OnKz2JekO4HYzTUa/MCxR
-	NCU2nsP9iri/DC1y+3M5IyG4TT3MVzrNounUGj8WK2wZyoaDk/HB4K6td1Aoi+aOTFlxSkJGfdF
-	3xCgyLQXYQTqoLzs3tMQr/zL1C8KRqOydw+gmcVbQsfsJH7qFEZp2dCS1XVjCoPisJ848TA0/pm
-	TBhY7b/1m3VZFfTbMhB1Ld/KRXCPLiUn6vps/oUDLvX/2p3dpt/OUuVXQDf24BWsh3VrjJ8vkPT
-	g6moUCIYPbjwyIL6h+P708donRfu2YjYoqo=
-X-Received: by 2002:a05:6000:25c3:b0:3ec:6259:5096 with SMTP id ffacd0b85a97d-40e45b8770fmr6452396f8f.21.1758898791565;
-        Fri, 26 Sep 2025 07:59:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKbeikSLSfJK1LRxBBJjYur1fJkipbe+xVUW/caJ5fRdhGYcv5hRM+HYX2542boZmkN/QnQA==
-X-Received: by 2002:a05:6000:25c3:b0:3ec:6259:5096 with SMTP id ffacd0b85a97d-40e45b8770fmr6452358f8f.21.1758898790914;
-        Fri, 26 Sep 2025 07:59:50 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-410f2007372sm6491991f8f.16.2025.09.26.07.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 07:59:50 -0700 (PDT)
-Date: Fri, 26 Sep 2025 10:59:47 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>, linux-kernel@vger.kernel.org,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Cindy Lu <lulu@redhat.com>,
-	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>,
-	jasowang@redhat.com
-Subject: Re: [PATCH v5 3/6] vduse: add vq group support
-Message-ID: <20250926105938-mutt-send-email-mst@kernel.org>
-References: <20250926101432.2251301-1-eperezma@redhat.com>
- <20250926101432.2251301-4-eperezma@redhat.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O/y2VxxdsRCyCO8bBQV6lvU0+2k2Q684722/aBmOhEU=;
+	b=Amc9kWCv0nJPkBvPUi11/UPACVXbOoycDet/IA/iUAOo/lt6UjMJrlfnFMz2Zo9hdGTTQy
+	+rq5hBeQ3fMj97lJNasNlaXkU6q8fliuP7CZBhCNffO55WOd6bx6VCIo6ww3/bEHX7+Cyq
+	ToMLlbZC/4nqptajuTmw6I821m3lc48=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758898804;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O/y2VxxdsRCyCO8bBQV6lvU0+2k2Q684722/aBmOhEU=;
+	b=9QkMHzaMkD+iw+twa9HwIj1NaNWJQn5HL3g+eIUdok3UvP4pNYMbIMy/6s4UAc32vnd+MK
+	YrOykDVzpomAreBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758898803; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O/y2VxxdsRCyCO8bBQV6lvU0+2k2Q684722/aBmOhEU=;
+	b=1fdNvOQvhWePkW2jQ5Fmyi2AL/H6ZHQhyzkw1mpvj2lUbGkJ/SNmJgNM7SJC2BNTvgUz76
+	x8mbeQPFQJY6Ufw/C3GyAmzMt/4O3d2m4Gg2vJQHndSPqGon4D2QaPCaGQtq7GWaYbnrg4
+	FxHId0v5IJADCIGXxGUSblKnGS8n9FY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758898803;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O/y2VxxdsRCyCO8bBQV6lvU0+2k2Q684722/aBmOhEU=;
+	b=VcUsi8RYNl5DhqAjTUeSQFM4cIQ2E7McY7V3hEs5e6nrif2Av15E+a0+NYJ6Zh02UOf5G/
+	F3bDnYffv9FBn7Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E5F11386E;
+	Fri, 26 Sep 2025 15:00:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NWiHGnOq1mhhdgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 26 Sep 2025 15:00:03 +0000
+Message-ID: <5f09b7f5-e7de-4333-8de5-322eb6d93aa9@suse.cz>
+Date: Fri, 26 Sep 2025 17:00:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926101432.2251301-4-eperezma@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: slab: add basic slab module
+Content-Language: en-US
+To: Danilo Krummrich <dakr@kernel.org>, Elijah Wright <git@elijahs.space>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org
+References: <20250924193643.4001-1-git@elijahs.space>
+ <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,protonmail.com,google.com,umich.edu,vger.kernel.org,oracle.com,kvack.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Fri, Sep 26, 2025 at 12:14:29PM +0200, Eugenio Pérez wrote:
-> This allows sepparate the different virtqueues in groups that shares the
+On 9/25/25 11:54, Danilo Krummrich wrote:
+> (+Cc: Lorenzo, Vlastimil, Liam, Uladzislau, MM)
+> 
+> On Wed Sep 24, 2025 at 9:36 PM CEST, Elijah Wright wrote:
+>> this patch adds a basic slab module for kmem_cache, primarily wrapping
+>> kmem_cache_create, kmem_cache_alloc, kmem_cache_free, and kmem_cache_destroy.
+> 
+> What's the motivation?
+> 
+> I mean, we will need kmem_cache soon. But the users will all be drivers, e.g.
+> the GPU drivers that people work on currently.
+> 
+> Drivers shouldn't use "raw" allocators (such as Kmalloc [1] or Vmalloc [2]), but
+> the corresponding "managed" allocation primitives, such as KBox [3], VBox [4],
+> KVec, etc.
+> 
+> Therefore, the code below shouldn't be used by drivers directly, hence the
+> question for motivation.
+> 
+> In any case, kmem_cache is a special allocator (special as in it can have a
+> non-static lifetime in contrast to other kernel allocators) and should be
+> integrated with the existing infrastructure in rust/kernel/alloc/.
+> 
+> I think there are multiple options for that; (1) isn't really an option, but I
+> think it's good to mention anyways:
+> 
+>   (1) Allow for non-zero sized implementations of the Allocator trait [3], such
+>       that we can store a reference count to the KmemCache. This is necessary to
+>       ensure that a Box<T, KmemCache> can't out-live the KmemCache itself.
+> 
+>       The reason why I said it's not really an option is because it discards the
+>       option for dynamic dispatch of the generic Box type.
+> 
+>   (2) Same as (1), but with a custom Box type. This keeps dynamic dispatch for
+>       the generic Box type (i.e. KBox, VBox, KVBox), but duplicates quite some
+>       code and still doesn't allow for dynamic dispatch for the KmemCacheBox.
+> 
+>   (3) Implement a macro to generate a custom KmemCache Allocator trait
+>       implementation for every KmemCache instance with a static lifetime.
+> 
+>       This makes KmemCache technically equivalent to the other allocators, such
+>       as Kmalloc, etc. but obviously has the downside that the KmemCache might
+>       live much longer than required.
 
-separate
+I don't know enough of Rust to follow why is that. What does mean "much longer"?
 
-> same address space.  Asking the VDUSE device for the groups of the vq at
-> the beginning as they're needed for the DMA API.
+>       Technically, most KmemCache instances live for the whole module lifetime,
+>       so it might be fine though.
+
+I think so, yeah.
+
+>       (This is what I think Alice proposed.)
 > 
-> Allocating 3 vq groups as net is the device that need the most groups:
-> * Dataplane (guest passthrough)
-> * CVQ
-> * Shadowed vrings.
+>   (4) Solve the problem on the C side and let kmem_cache_alloc() take care of
+>       acquiring a reference count to the backing kmem_cache. The main question
+>       here would be where to store the pointer for decreasing the reference
+>       count on kmem_cache_free().
+
+Pointer to what, the ref counter? If it's part of struct kmem_cache, then we
+have pointer to that in kmem_cache_free(). Even when kfree() is used, it can
+be (or rather already is) obtained. So that's not the issue (unless I
+misunderstand).
+
+But we wouldn't want to pay the cost of the atomic updates of the refcount
+for all caches. If done only for Rust-created caches, the implementation
+also would better not to add branches to all allocation/free fastpaths.
+
+But also why is this refcounting needed? What would happen on the Rust side
+if someone destroyed the cache too early? In the underlying C implementation
+we notice it (reliably AFAICT), warn and abort the destroy (leaving it as a
+kind of zombie) so I'd say it's safe. So if Rust needs to know if the
+destroy was successful or premature, we could probably just return the
+result instead of the current void.
+
+>       Theoretically, it could be stored within the allocation itself, but it's a
+>       bit of a yikes.
 > 
-> Future versions of the series can include dynamic allocation of the
-> groups array so VDUSE can declare more groups.
+>       However, it would resolve all the mentioned problems above.
 > 
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> ---
-> v5:
-> * Revert core vdpa changes (Jason).
-> * Fix group == ngroup case in checking VQ_SETUP argument (Jason).
+> I'd like to see (3) or (4), also depending on what the MM folks think.
 > 
-> v4:
-> * Revert the "invalid vq group" concept and assume 0 if not set (Jason).
-> * Make config->ngroups == 0 invalid (Jason).
+> - Danilo
 > 
-> v3:
-> * Make the default group an invalid group as long as VDUSE device does
->   not set it to some valid u32 value.  Modify the vdpa core to take that
->   into account (Jason).
-> * Create the VDUSE_DEV_MAX_GROUPS instead of using a magic number
-> 
-> v2:
-> * Now the vq group is in vduse_vq_config struct instead of issuing one
->   VDUSE message per vq.
-> 
-> v1:
-> * Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
-> 
-> RFC v3:
-> * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason).  It was set to a lower
->   value to reduce memory consumption, but vqs are already limited to
->   that value and userspace VDUSE is able to allocate that many vqs.
-> * Remove the descs vq group capability as it will not be used and we can
->   add it on top.
-> * Do not ask for vq groups in number of vq groups < 2.
-> * Move the valid vq groups range check to vduse_validate_config.
-> 
-> RFC v2:
-> * Cache group information in kernel, as we need to provide the vq map
->   tokens properly.
-> * Add descs vq group to optimize SVQ forwarding and support indirect
->   descriptors out of the box.
-> ---
->  drivers/vdpa/vdpa_user/vduse_dev.c | 46 ++++++++++++++++++++++++++----
->  include/uapi/linux/vduse.h         | 12 ++++++--
->  2 files changed, 50 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-> index 2b6a8958ffe0..99e37def7a83 100644
-> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> @@ -40,6 +40,7 @@
->  #define DRV_LICENSE  "GPL v2"
->  
->  #define VDUSE_DEV_MAX (1U << MINORBITS)
-> +#define VDUSE_DEV_MAX_GROUPS 0xffff
->  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
->  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
->  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
-> @@ -59,6 +60,7 @@ struct vduse_virtqueue {
->  	struct vdpa_vq_state state;
->  	bool ready;
->  	bool kicked;
-> +	u32 vq_group;
->  	spinlock_t kick_lock;
->  	spinlock_t irq_lock;
->  	struct eventfd_ctx *kickfd;
-> @@ -115,6 +117,7 @@ struct vduse_dev {
->  	u8 status;
->  	u32 vq_num;
->  	u32 vq_align;
-> +	u32 ngroups;
->  	struct vduse_umem *umem;
->  	struct mutex mem_lock;
->  	unsigned int bounce_size;
-> @@ -456,6 +459,7 @@ static void vduse_dev_reset(struct vduse_dev *dev)
->  		vq->driver_addr = 0;
->  		vq->device_addr = 0;
->  		vq->num = 0;
-> +		vq->vq_group = 0;
->  		memset(&vq->state, 0, sizeof(vq->state));
->  
->  		spin_lock(&vq->kick_lock);
-> @@ -593,6 +597,16 @@ static int vduse_vdpa_set_vq_state(struct vdpa_device *vdpa, u16 idx,
->  	return 0;
->  }
->  
-> +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
-> +{
-> +	struct vduse_dev *dev = vdpa_to_vduse(vdpa);
-> +
-> +	if (dev->api_version < VDUSE_API_VERSION_1)
-> +		return 0;
-> +
-> +	return dev->vqs[idx]->vq_group;
-> +}
-> +
->  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
->  				struct vdpa_vq_state *state)
->  {
-> @@ -790,6 +804,7 @@ static const struct vdpa_config_ops vduse_vdpa_config_ops = {
->  	.set_vq_cb		= vduse_vdpa_set_vq_cb,
->  	.set_vq_num             = vduse_vdpa_set_vq_num,
->  	.get_vq_size		= vduse_vdpa_get_vq_size,
-> +	.get_vq_group		= vduse_get_vq_group,
->  	.set_vq_ready		= vduse_vdpa_set_vq_ready,
->  	.get_vq_ready		= vduse_vdpa_get_vq_ready,
->  	.set_vq_state		= vduse_vdpa_set_vq_state,
-> @@ -1253,12 +1268,24 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
->  		if (config.index >= dev->vq_num)
->  			break;
->  
-> -		if (!is_mem_zero((const char *)config.reserved,
-> -				 sizeof(config.reserved)))
-> +		if (dev->api_version < VDUSE_API_VERSION_1 && config.group)
-> +			break;
-> +
-> +		if (dev->api_version >= VDUSE_API_VERSION_1) {
-> +			if (config.group >= dev->ngroups)
-> +				break;
-> +			if (dev->status & VIRTIO_CONFIG_S_DRIVER_OK)
-> +				break;
-> +		}
-> +
-> +		if (config.reserved1 ||
-> +		    !is_mem_zero((const char *)config.reserved2,
-> +				 sizeof(config.reserved2)))
->  			break;
->  
->  		index = array_index_nospec(config.index, dev->vq_num);
->  		dev->vqs[index]->num_max = config.max_size;
-> +		dev->vqs[index]->vq_group = config.group;
->  		ret = 0;
->  		break;
->  	}
-> @@ -1738,12 +1765,20 @@ static bool features_is_valid(struct vduse_dev_config *config)
->  	return true;
->  }
->  
-> -static bool vduse_validate_config(struct vduse_dev_config *config)
-> +static bool vduse_validate_config(struct vduse_dev_config *config,
-> +				  u64 api_version)
->  {
->  	if (!is_mem_zero((const char *)config->reserved,
->  			 sizeof(config->reserved)))
->  		return false;
->  
-> +	if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
-> +		return false;
-> +
-> +	if (api_version >= VDUSE_API_VERSION_1 &&
-> +	    (!config->ngroups || config->ngroups > VDUSE_DEV_MAX_GROUPS))
-> +		return false;
-> +
->  	if (config->vq_align > PAGE_SIZE)
->  		return false;
->  
-> @@ -1859,6 +1894,7 @@ static int vduse_create_dev(struct vduse_dev_config *config,
->  	dev->device_features = config->features;
->  	dev->device_id = config->device_id;
->  	dev->vendor_id = config->vendor_id;
-> +	dev->ngroups = (dev->api_version < 1) ? 1 : config->ngroups;
->  	dev->name = kstrdup(config->name, GFP_KERNEL);
->  	if (!dev->name)
->  		goto err_str;
-> @@ -1937,7 +1973,7 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
->  			break;
->  
->  		ret = -EINVAL;
-> -		if (vduse_validate_config(&config) == false)
-> +		if (!vduse_validate_config(&config, control->api_version))
->  			break;
->  
->  		buf = vmemdup_user(argp + size, config.config_size);
-> @@ -2018,7 +2054,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name)
->  
->  	vdev = vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
->  				 &vduse_vdpa_config_ops, &vduse_map_ops,
-> -				 1, 1, name, true);
-> +				 dev->ngroups, 1, name, true);
->  	if (IS_ERR(vdev))
->  		return PTR_ERR(vdev);
->  
-> diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
-> index ccb92a1efce0..a3d51cf6df3a 100644
-> --- a/include/uapi/linux/vduse.h
-> +++ b/include/uapi/linux/vduse.h
-> @@ -31,6 +31,7 @@
->   * @features: virtio features
->   * @vq_num: the number of virtqueues
->   * @vq_align: the allocation alignment of virtqueue's metadata
-> + * @ngroups: number of vq groups that VDUSE device declares
->   * @reserved: for future use, needs to be initialized to zero
->   * @config_size: the size of the configuration space
->   * @config: the buffer of the configuration space
-> @@ -45,7 +46,8 @@ struct vduse_dev_config {
->  	__u64 features;
->  	__u32 vq_num;
->  	__u32 vq_align;
-> -	__u32 reserved[13];
-> +	__u32 ngroups; /* if VDUSE_API_VERSION >= 1 */
-> +	__u32 reserved[12];
->  	__u32 config_size;
->  	__u8 config[];
->  };
-> @@ -122,14 +124,18 @@ struct vduse_config_data {
->   * struct vduse_vq_config - basic configuration of a virtqueue
->   * @index: virtqueue index
->   * @max_size: the max size of virtqueue
-> - * @reserved: for future use, needs to be initialized to zero
-> + * @reserved1: for future use, needs to be initialized to zero
-> + * @group: virtqueue group
-> + * @reserved2: for future use, needs to be initialized to zero
->   *
->   * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
->   */
->  struct vduse_vq_config {
->  	__u32 index;
->  	__u16 max_size;
-> -	__u16 reserved[13];
-> +	__u16 reserved1;
-> +	__u32 group;
-> +	__u16 reserved2[10];
->  };
->  
->  /*
-> -- 
-> 2.51.0
+> [1] https://rust.docs.kernel.org/kernel/alloc/allocator/struct.Kmalloc.html
+> [2] https://rust.docs.kernel.org/kernel/alloc/allocator/struct.Vmalloc.html
+> [3] https://rust.docs.kernel.org/kernel/alloc/kbox/type.KBox.html
+> [4] https://rust.docs.kernel.org/kernel/alloc/kbox/type.VBox.html
+> [5] https://rust.docs.kernel.org/kernel/alloc/trait.Allocator.html
 
 
