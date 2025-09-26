@@ -1,371 +1,84 @@
-Return-Path: <linux-kernel+bounces-834629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7E3BA520E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:46:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB9FBA5226
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23E371C00D3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:46:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6F784E25C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812783002CA;
-	Fri, 26 Sep 2025 20:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64208285C9E;
+	Fri, 26 Sep 2025 20:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MTneAObT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tI2pqM1r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F54B2848A2;
-	Fri, 26 Sep 2025 20:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40FE15667D;
+	Fri, 26 Sep 2025 20:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758919490; cv=none; b=NUtplwuIQvGdtsjxyVuYatvXl9JSjN8tjvA/5nuF6c6hw6VMwVkk1xjiWcIioxSqzYInJli9qHZJlCxOjti6MM9PcEk6GlK3zXIBMSKrMW2jnAydFfkg6w+BVGZWA0LxZciwyoZw4OAflvvhksaqcay+53LdYwP2bRvEt6qtKEY=
+	t=1758919999; cv=none; b=riJq/MV+mHKzUrmKop22u8NKHIOj29da2Y4sk3UqH4texGsrT2qRFFCwZkah/G4ONk2Td3P4Az71BOUafOKoCe+UwsD1/r/9mDjCRxFTbHVDKXdh6lv10cg183YzZC+ZTf2x5FZ5zQm/k9d/qhkkBGW3LHxpW0A8EW7u35OSWRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758919490; c=relaxed/simple;
-	bh=P97z80np4fcFxZYmgFRrZzy7mGGDoWxlnkfca4HEkvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d17mmCyAbkDTnWV3VVLYi69beyFXrpgFRxXOF5ClaYx4q5kfZGlHIi5OhbzZ/wDzgm35KSiDER77Q6OeSSv/CeRPc+kCYyj8NkvqWgyJC3cnV0DKTCsMPbYfWEtjdGa18Yi1rc4nCpfkT6UiBOQwc8aoUXwVkPN6q2ZPoKNTV5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MTneAObT; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758919489; x=1790455489;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=P97z80np4fcFxZYmgFRrZzy7mGGDoWxlnkfca4HEkvo=;
-  b=MTneAObTFBKDClAQp43gCPms4H8ZJFXgzdF2VlSiqkeSH3O70QMXwhUf
-   Vox5O15irSUY/43cbRGzwMql3yxtdr0jCiYpb13bst3ExHn1SNLJhTgGU
-   lW6Sw+hZ11GDZnhlSAb6VMKEvw6nTe6XkonEBuCx2J6/3UEz0/rnaS1AF
-   RKrif/WAFcl9JNdeOS22tCaAJPEuXWbCBOJF1kEY1Jd7sV85Dhf/ZA6zg
-   d4OHdzQ802jX4lU/o4RiL55z3A5iCyuskg3WgPjIpjgvTHNRb8JApSE92
-   1w3LWiqfHXFTvq5RJ5tunBFUHMhhi8iHskZ4hm0fPGKjfEueXR+MOVJ9C
-   g==;
-X-CSE-ConnectionGUID: c2ec7T3xQrCU1mbTR29YrQ==
-X-CSE-MsgGUID: B02JLmVUQoKUhUI9luJoVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="61426207"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="61426207"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 13:44:48 -0700
-X-CSE-ConnectionGUID: AlwjjeU3QZqAfVsq7FGCHw==
-X-CSE-MsgGUID: UX4AtovyRk6qhDD0Ft4ICw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="208640314"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.69]) ([10.125.109.69])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 13:44:45 -0700
-Message-ID: <44212e87-1c70-4bc7-b3ec-7435729a5157@intel.com>
-Date: Fri, 26 Sep 2025 13:44:43 -0700
+	s=arc-20240116; t=1758919999; c=relaxed/simple;
+	bh=VX9muv7LJ2bgSE7kEQcSdlQrPIKoHywwIEEO4EYQl9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfuvQsmNczLyHTah20/6PNijZI7ces/LjzGRcm+Wnjv+VaZt8QDxPF1xPuu5NDxu8N35J5tulrirrNGV9OtXV/O8Gfbti366kyEyStUfkpfN0mYCoavWip3fqNG7B4cgO3KBEpxbye8jToaqzZfLt4Mt8s8zGFkhIuy8LHdeYLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tI2pqM1r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBADC4CEF4;
+	Fri, 26 Sep 2025 20:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758919999;
+	bh=VX9muv7LJ2bgSE7kEQcSdlQrPIKoHywwIEEO4EYQl9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tI2pqM1r6pDeKJC51PpWH0TUYTQjM/V++cU2xMqx9sNFSIu66prh2NZdG+AQ7WRsU
+	 uO9CFippUQdmLOBa3JGwGjXki3SEFMNV+smX64SPWW7wtqzlyMrNIOMMNyA4ZNsE2h
+	 eDKqdfhmklnnWgLMrDPDwVa2imdWzGavmiqar7uHvJINr850OX2wUMRvk45ib+LlDq
+	 3h7EKflsQFpJaEFoE0f8dADg3GTC+UQhVpsd7E4lTldvqXmUlvkG3TDCrFrGudmqQb
+	 vD1uS1lh3Z0Pv/ZpLL3v/aE9sdW56K40d5OrgfItSls4evfgHoYObG/inKyQ+rdQJl
+	 R/iOipE3gmlSw==
+Date: Fri, 26 Sep 2025 15:53:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Kael D'Alcamo <dev@kael-k.io>
+Cc: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] dt-bindings: rng: sparc_sun_oracle_rng: convert
+ to DT
+Message-ID: <20250926205301.GA1448549-robh@kernel.org>
+References: <uprke6fujhmckymlpy6oskecol4awhqyroqlg25tprmhnkeyy6@ztozdrlmeotp>
+ <20250924141247.69323-2-dev@kael-k.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 13/25] cxl/pci: Unify CXL trace logging for CXL
- Endpoints and CXL Ports
-To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250925223440.3539069-1-terry.bowman@amd.com>
- <20250925223440.3539069-14-terry.bowman@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250925223440.3539069-14-terry.bowman@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924141247.69323-2-dev@kael-k.io>
 
+On Wed, Sep 24, 2025 at 04:09:18PM +0200, Kael D'Alcamo wrote:
+> Changelog v1 -> v2:
+> * updated vendor-list by loosening the regex for names without prefixs
+> * removed extra example in DT binding
+> * updated DT binding filename
+> * updated DT binding title
+> 
+> Kael D'Alcamo (2):
+>   dt-bindings: rng: sparc_sun_oracle_rng: convert to DT schema
+>   dt-bindings: vendor-prefixes: updated regex for properties without a
+>     prefix
 
+The reported failure is because you need to reverse the order of the 
+patches. Normally Herbert would take it, but I went ahead and applied it 
+reversing the order.
 
-On 9/25/25 3:34 PM, Terry Bowman wrote:
-> CXL currently has separate trace routines for CXL Port errors and CXL
-> Endpoint errors. This is inconvenient for the user because they must enable
-> 2 sets of trace routines. Make updates to the trace logging such that a
-> single trace routine logs both CXL Endpoint and CXL Port protocol errors.
-> 
-> Keep the trace log fields 'memdev' and 'host'. While these are not accurate
-> for non-Endpoints the fields will remain as-is to prevent breaking
-> userspace RAS trace consumers.
-> 
-> Add serial number parameter to the trace logging. This is used for EPs
-> and 0 is provided for CXL port devices without a serial number.
-> 
-> Leave the correctable and uncorrectable trace routines' TP_STRUCT__entry()
-> unchanged with respect to member data types and order.
-> 
-> Below is output of correctable and uncorrectable protocol error logging.
-> CXL Root Port and CXL Endpoint examples are included below.
-> 
-> Root Port:
-> cxl_aer_correctable_error: memdev=0000:0c:00.0 host=pci0000:0c serial: 0 status='CRC Threshold Hit'
-> cxl_aer_uncorrectable_error: memdev=0000:0c:00.0 host=pci0000:0c serial: 0 status: 'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable Parity Error'
-> 
-> Endpoint:
-> cxl_aer_correctable_error: memdev=mem3 host=0000:0f:00.0 serial=0 status='CRC Threshold Hit'
-> cxl_aer_uncorrectable_error: memdev=mem3 host=0000:0f:00.0 serial: 0 status: 'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable Parity Error'
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> 
-> ---
-> 
-> Changes in v11 -> v12:
-> - Correct parameters to call trace_cxl_aer_correctable_error()
-> - Add reviewed-by for Jonathan and Shiju
-> 
-> Changes in v10->v11:
-> - Updated CE and UCE trace routines to maintain consistent TP_Struct ABI
-> and unchanged TP_printk() logging.
-> ---
->  drivers/cxl/core/ras.c   | 34 ++++++++++----------
->  drivers/cxl/core/trace.h | 68 +++++++---------------------------------
->  2 files changed, 29 insertions(+), 73 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-> index c66d37d65241..8a3fbc41b51f 100644
-> --- a/drivers/cxl/core/ras.c
-> +++ b/drivers/cxl/core/ras.c
-> @@ -13,7 +13,7 @@ static void cxl_cper_trace_corr_port_prot_err(struct pci_dev *pdev,
->  {
->  	u32 status = ras_cap.cor_status & ~ras_cap.cor_mask;
->  
-> -	trace_cxl_port_aer_correctable_error(&pdev->dev, status);
-> +	trace_cxl_aer_correctable_error(&pdev->dev, status, 0);
->  }
->  
->  static void cxl_cper_trace_uncorr_port_prot_err(struct pci_dev *pdev,
-> @@ -28,8 +28,8 @@ static void cxl_cper_trace_uncorr_port_prot_err(struct pci_dev *pdev,
->  	else
->  		fe = status;
->  
-> -	trace_cxl_port_aer_uncorrectable_error(&pdev->dev, status, fe,
-> -					       ras_cap.header_log);
-> +	trace_cxl_aer_uncorrectable_error(&pdev->dev, status, fe,
-> +					  ras_cap.header_log, 0);
->  }
->  
->  static void cxl_cper_trace_corr_prot_err(struct cxl_memdev *cxlmd,
-> @@ -37,7 +37,7 @@ static void cxl_cper_trace_corr_prot_err(struct cxl_memdev *cxlmd,
->  {
->  	u32 status = ras_cap.cor_status & ~ras_cap.cor_mask;
->  
-> -	trace_cxl_aer_correctable_error(cxlmd, status);
-> +	trace_cxl_aer_correctable_error(&cxlmd->dev, status, cxlmd->cxlds->serial);
->  }
->  
->  static void
-> @@ -45,6 +45,7 @@ cxl_cper_trace_uncorr_prot_err(struct cxl_memdev *cxlmd,
->  			       struct cxl_ras_capability_regs ras_cap)
->  {
->  	u32 status = ras_cap.uncor_status & ~ras_cap.uncor_mask;
-> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
->  	u32 fe;
->  
->  	if (hweight32(status) > 1)
-> @@ -53,8 +54,9 @@ cxl_cper_trace_uncorr_prot_err(struct cxl_memdev *cxlmd,
->  	else
->  		fe = status;
->  
-> -	trace_cxl_aer_uncorrectable_error(cxlmd, status, fe,
-> -					  ras_cap.header_log);
-> +	trace_cxl_aer_uncorrectable_error(&cxlmd->dev, status, fe,
-> +					  ras_cap.header_log,
-> +					  cxlds->serial);
->  }
->  
->  static int match_memdev_by_parent(struct device *dev, const void *uport)
-> @@ -126,8 +128,8 @@ void cxl_ras_exit(void)
->  	cancel_work_sync(&cxl_cper_prot_err_work);
->  }
->  
-> -static void cxl_handle_cor_ras(struct device *dev, void __iomem *ras_base);
-> -static bool cxl_handle_ras(struct device *dev, void __iomem *ras_base);
-> +static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base);
-> +static bool cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base);
->  
->  #ifdef CONFIG_CXL_RCH_RAS
->  static void cxl_dport_map_rch_aer(struct cxl_dport *dport)
-> @@ -237,9 +239,9 @@ static void cxl_handle_rdport_errors(struct cxl_dev_state *cxlds)
->  
->  	pci_print_aer(pdev, severity, &aer_regs);
->  	if (severity == AER_CORRECTABLE)
-> -		cxl_handle_cor_ras(&cxlds->cxlmd->dev, dport->regs.ras);
-> +		cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->serial, dport->regs.ras);
->  	else
-> -		cxl_handle_ras(&cxlds->cxlmd->dev, dport->regs.ras);
-> +		cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->serial, dport->regs.ras);
->  }
->  #else
->  static inline void cxl_dport_map_rch_aer(struct cxl_dport *dport) { }
-> @@ -281,7 +283,7 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
->  
-> -static void cxl_handle_cor_ras(struct device *dev, void __iomem *ras_base)
-> +static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
->  {
->  	void __iomem *addr;
->  	u32 status;
-> @@ -295,7 +297,7 @@ static void cxl_handle_cor_ras(struct device *dev, void __iomem *ras_base)
->  	status = readl(addr);
->  	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
->  		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
-> -		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status);
-> +		trace_cxl_aer_correctable_error(dev, status, serial);
->  	}
->  }
->  
-> @@ -320,7 +322,7 @@ static void header_log_copy(void __iomem *ras_base, u32 *log)
->   * Log the state of the RAS status registers and prepare them to log the
->   * next error status. Return 1 if reset needed.
->   */
-> -static bool cxl_handle_ras(struct device *dev, void __iomem *ras_base)
-> +static bool cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base)
->  {
->  	u32 hl[CXL_HEADERLOG_SIZE_U32];
->  	void __iomem *addr;
-> @@ -349,7 +351,7 @@ static bool cxl_handle_ras(struct device *dev, void __iomem *ras_base)
->  	}
->  
->  	header_log_copy(ras_base, hl);
-> -	trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
-> +	trace_cxl_aer_uncorrectable_error(dev, status, fe, hl, serial);
->  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
->  
->  	return true;
-> @@ -371,7 +373,7 @@ void cxl_cor_error_detected(struct pci_dev *pdev)
->  		if (cxlds->rcd)
->  			cxl_handle_rdport_errors(cxlds);
->  
-> -		cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
-> +		cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
->  	}
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_cor_error_detected, "CXL");
-> @@ -400,7 +402,7 @@ pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
->  		 * chance the situation is recoverable dump the status of the RAS
->  		 * capability registers and bounce the active state of the memdev.
->  		 */
-> -		ue = cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
-> +		ue = cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
->  	}
->  
->  
-> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> index a53ec4798b12..60b49beb5e3f 100644
-> --- a/drivers/cxl/core/trace.h
-> +++ b/drivers/cxl/core/trace.h
-> @@ -48,40 +48,13 @@
->  	{ CXL_RAS_UC_IDE_RX_ERR, "IDE Rx Error" }			  \
->  )
->  
-> -TRACE_EVENT(cxl_port_aer_uncorrectable_error,
-> -	TP_PROTO(struct device *dev, u32 status, u32 fe, u32 *hl),
-> -	TP_ARGS(dev, status, fe, hl),
-> -	TP_STRUCT__entry(
-> -		__string(device, dev_name(dev))
-> -		__string(host, dev_name(dev->parent))
-> -		__field(u32, status)
-> -		__field(u32, first_error)
-> -		__array(u32, header_log, CXL_HEADERLOG_SIZE_U32)
-> -	),
-> -	TP_fast_assign(
-> -		__assign_str(device);
-> -		__assign_str(host);
-> -		__entry->status = status;
-> -		__entry->first_error = fe;
-> -		/*
-> -		 * Embed the 512B headerlog data for user app retrieval and
-> -		 * parsing, but no need to print this in the trace buffer.
-> -		 */
-> -		memcpy(__entry->header_log, hl, CXL_HEADERLOG_SIZE);
-> -	),
-> -	TP_printk("device=%s host=%s status: '%s' first_error: '%s'",
-> -		  __get_str(device), __get_str(host),
-> -		  show_uc_errs(__entry->status),
-> -		  show_uc_errs(__entry->first_error)
-> -	)
-> -);
-> -
->  TRACE_EVENT(cxl_aer_uncorrectable_error,
-> -	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status, u32 fe, u32 *hl),
-> -	TP_ARGS(cxlmd, status, fe, hl),
-> +	TP_PROTO(const struct device *cxlmd, u32 status, u32 fe, u32 *hl,
-> +		 u64 serial),
-> +	TP_ARGS(cxlmd, status, fe, hl, serial),
->  	TP_STRUCT__entry(
-> -		__string(memdev, dev_name(&cxlmd->dev))
-> -		__string(host, dev_name(cxlmd->dev.parent))
-> +		__string(memdev, dev_name(cxlmd))
-> +		__string(host, dev_name(cxlmd->parent))
->  		__field(u64, serial)
->  		__field(u32, status)
->  		__field(u32, first_error)
-> @@ -90,7 +63,7 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
->  	TP_fast_assign(
->  		__assign_str(memdev);
->  		__assign_str(host);
-> -		__entry->serial = cxlmd->cxlds->serial;
-> +		__entry->serial = serial;
->  		__entry->status = status;
->  		__entry->first_error = fe;
->  		/*
-> @@ -124,38 +97,19 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
->  	{ CXL_RAS_CE_PHYS_LAYER_ERR, "Received Error From Physical Layer" }	\
->  )
->  
-> -TRACE_EVENT(cxl_port_aer_correctable_error,
-> -	TP_PROTO(struct device *dev, u32 status),
-> -	TP_ARGS(dev, status),
-> -	TP_STRUCT__entry(
-> -		__string(device, dev_name(dev))
-> -		__string(host, dev_name(dev->parent))
-> -		__field(u32, status)
-> -	),
-> -	TP_fast_assign(
-> -		__assign_str(device);
-> -		__assign_str(host);
-> -		__entry->status = status;
-> -	),
-> -	TP_printk("device=%s host=%s status='%s'",
-> -		  __get_str(device), __get_str(host),
-> -		  show_ce_errs(__entry->status)
-> -	)
-> -);
-> -
->  TRACE_EVENT(cxl_aer_correctable_error,
-> -	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
-> -	TP_ARGS(cxlmd, status),
-> +	TP_PROTO(const struct device *cxlmd, u32 status, u64 serial),
-> +	TP_ARGS(cxlmd, status, serial),
->  	TP_STRUCT__entry(
-> -		__string(memdev, dev_name(&cxlmd->dev))
-> -		__string(host, dev_name(cxlmd->dev.parent))
-> +		__string(memdev, dev_name(cxlmd))
-> +		__string(host, dev_name(cxlmd->parent))
->  		__field(u64, serial)
->  		__field(u32, status)
->  	),
->  	TP_fast_assign(
->  		__assign_str(memdev);
->  		__assign_str(host);
-> -		__entry->serial = cxlmd->cxlds->serial;
-> +		__entry->serial = serial;
->  		__entry->status = status;
->  	),
->  	TP_printk("memdev=%s host=%s serial=%lld: status: '%s'",
-
+Thanks,
+Rob
 
