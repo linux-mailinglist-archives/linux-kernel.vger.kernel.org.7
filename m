@@ -1,190 +1,194 @@
-Return-Path: <linux-kernel+bounces-833787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1C0BA3126
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:07:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9193BA3132
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B489625B7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:07:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D788D1C026D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2362773F4;
-	Fri, 26 Sep 2025 09:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293A12773FA;
+	Fri, 26 Sep 2025 09:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mMqryNHm"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="bxD9jAWS"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013000.outbound.protection.outlook.com [40.107.162.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B06C13FEE;
-	Fri, 26 Sep 2025 09:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758877613; cv=none; b=Gb0k7CpkeQZGkNuSqf6kmxute0ksA2EsX07j7M61ydNLCNlbKNfyx1Kq5NrXRNLz+g/D/jFfEiVv91DjeDoIeZyLmQa6orXFI0o8k3ZiuFRtYJkRBGkpecKfIxZrpRtmbhbqTnu3QiSW6tE3bMldDK58tj9ck3PWUI4o00UISg4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758877613; c=relaxed/simple;
-	bh=vb9/KMQMK9vPRNYSOUWnAzv5NYl3+m6W/pwDMMnurDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QxkA9uGiH5nNEfhCmPGaXDFt8rIePDChq6+OYmgL926f1eQj8dxFHuUs4vppdN/D0MXwBM5PpzUaI84Qqdu8mhEJnLskeaZnRZYo4Gc2r1TzDxRcYAsek59fWDvC3kU6SoPah/nuUHyD/lQ8IekW4oFIpr7R/kXhl6a6h18PW3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mMqryNHm; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58Q96fuv2084388;
-	Fri, 26 Sep 2025 04:06:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758877601;
-	bh=6cxJXuy5YAwCi5okbverUIXNVXJCYm87JyZOCueDzZ8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=mMqryNHmKZSJR0q8EZjoCzMfc5R8znB83BnE7XY0CiRn++N8yErNPcISeQrQu4EII
-	 nT7AiyoDB1WS0mVrl3aO1DOfrH1RANJ3NOS7yQaasPOs1zAviEea9OZOuvb9XHivSu
-	 2YaVLDq9FHl940g7ylIP7GSsWbUzlHekp7SLFkDs=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58Q96fAq3873698
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 26 Sep 2025 04:06:41 -0500
-Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 26
- Sep 2025 04:06:41 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 26 Sep 2025 04:06:41 -0500
-Received: from [172.24.233.150] (a0507176-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.233.150])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58Q96bOT777945;
-	Fri, 26 Sep 2025 04:06:38 -0500
-Message-ID: <9653740a-44fe-46bb-92c8-f7fc26cbe5ee@ti.com>
-Date: Fri, 26 Sep 2025 14:36:36 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226B213FEE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758877656; cv=fail; b=jdfWrjF3Nwxvx0RcFdjlfh9YduArcYZGtDpHky4L6XnY5pLKnkxHgA7geLwyQjyKpG+Cc/n0B36sSn0lR+fBDUDTHhMYS5TYjrw6Vasqs9W7sYfZ0VoXQhOwpUtWE0ICqQW2TokpCQ9CXr9+wpfJ0O2T/R72m22frLOcgpHrUbQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758877656; c=relaxed/simple;
+	bh=/vtKL19T55dPkRlAelQG+/9Sc2HLnpAXUDKzHHYYJMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=cFrlJ3EjqNmyzjtZ59Af1jcUHDcTi0DiqTTobxxmA5YJHExJ/UluiH6q0xZJkLB6AjsE0/PcvDheqeW51GAqtrZls4Hd2nHQ0hhpxYN4KynHKN6L9SKODlN2cYXmYr8veJRXs7xvUO197OjmgZVUxhF19hEHGWa8YHnuwMq+ywM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=bxD9jAWS; arc=fail smtp.client-ip=40.107.162.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b129HtFDL3vKRtNAGKPBvphSoXdFIBjvcBjsKJfaKpH6gc3WD+wv3HD+HlnRJDDtrCfxOeciTTDEaKmgOSL+7hktk67xpx0JBTRtxBkYdMsmW18Pr4d6w5hKgy5WuXPikFGSUWnHMomwzFrJrvP8hJNaKT5w38C4nYEEj4XxHVFeb/5VT/5UUC5K5s19BJ1sADEgV/eVeJSBkUMMfVAr84fBNqPLoC6dwqRoS8V7Ww7v8BT70TEugJ/umnPGQgQud34W1wioaBiPzGJKpCPlokVHrjoBWKSFdxXexij0Xxt2rd22LNlkW9S38iLb36QgbB6A9qkQDNlPL/25woGIPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VEaZZ72mspNTASiE4HYy/1H8weAC7yYw3VK4Xl5LZJI=;
+ b=i71pfPpXVoNs/6+hGvpkK+UPa6hxLWId6Ew3Kc4mhXTTYvXgWAePcIIWLM5TCZnfDH90ajae3O61fH9KqHaLd6iY0gs8D/bYNqArpoKwsZYa0wAqDpNF5S6qJMBKJcg7O6JWgAG5jQgxhTudDihsFCe5JpFLmnu/YAWsyB6zY8G0q1lnC8hpHA+FBLnDO7vLKNIQ5JdjxkaXv3f8W9HyrDoemJ4DsoD0tIPYpRXOofcUAyVDHaC6pEBZoe82CGcz52pJAcMAkowuw2R6hMzPctVso7ms6cTty8onkkLhkHrzfphT9mfhpOKpb3hARi+ZZqkdYbiwDPOzr/qcGUf8ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VEaZZ72mspNTASiE4HYy/1H8weAC7yYw3VK4Xl5LZJI=;
+ b=bxD9jAWShHFBGDKnlkI1IBQfEF1zhifew9/gxRAZfL/3cDXei37uO4IY62IE9eJsYIZlwBcZ9xrITSrGfUEEhJBQcxtKYhe1MyrK7MmwOEU2/adyROkhfPVT/c5l3BD6Fl+w8HYO5pIIiRtCHvyacrPcaebvMIJGnJd/P18S21fqpsatNLk/2Mgn/pml0ZaBPYcWpkkKR43p3nNJuOX7ve3wrlbX2cB7gMZ/oj37Q3kXhXBvEYhnC1mpSCY8ATsVK5iOHpcLRFVsrCjLeKKPBL9BIRo0oYzROJxVvW4rhfO4zbPeMJFN1jhSK8Zom4TC5oO18VAyr+DKA29WF7q4zQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AM8PR04MB7731.eurprd04.prod.outlook.com (2603:10a6:20b:249::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
+ 2025 09:07:31 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
+ 09:07:31 +0000
+From: Rain Yang <jiyu.yang@oss.nxp.com>
+To: boris.brezillon@collabora.com,
+	steven.price@arm.com,
+	liviu.dudau@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.co,
+	simona@ffwll.ch,
+	marek.vasut@mailbox.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Cc: Rain Yang <jiyu.yang@nxp.com>
+Subject: [PATCH v1] drm/panthor: skip regulator setup if no such prop
+Date: Fri, 26 Sep 2025 17:07:22 +0800
+Message-Id: <20250926090722.23097-1-jiyu.yang@oss.nxp.com>
+X-Mailer: git-send-email 2.39.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGXP274CA0024.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::36)
+ To PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: counter: Add new ti,omap-dmtimer-cap
- compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>, <j-keerthy@ti.com>,
-        <vigneshr@ti.com>, <wbg@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <u-kumar1@ti.com>, <n-francis@ti.com>, Gokul Praveen <g-praveen@ti.com>
-References: <20250909080042.36127-1-g-praveen@ti.com>
- <20250909080042.36127-2-g-praveen@ti.com>
- <6faff5b1-65b1-41ee-aba8-8c06a2bc6f58@kernel.org>
-Content-Language: en-US
-From: Gokul Praveen <g-praveen@ti.com>
-In-Reply-To: <6faff5b1-65b1-41ee-aba8-8c06a2bc6f58@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM8PR04MB7731:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16d5278a-b388-4483-b6d4-08ddfcdc1f90
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|52116014|7416014|1800799024|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1nSc1rdRMuMPOg9YYSTW5KKAOFC7atej2II9ZK3E9Fbzn2lkVyQy20mwjxQc?=
+ =?us-ascii?Q?kRDv3McNLXrg+jpSChXMW8EoTWVlIR0+wBBdugkmoneiYgU/BT4GA3W0Z6gH?=
+ =?us-ascii?Q?Tl/1mQTtKlpY5Tw9f8vYSmpX76ccqTIJhPV3KblAyNaewAvnd1p4uTivi3Qo?=
+ =?us-ascii?Q?H7r8AyrY86my62xRzd4CYEPIjDJXvS9Z/7hPJHPaMAJXcEiSQ6dXQoAyDMUz?=
+ =?us-ascii?Q?ZQArX9AKIp9tzDLgNqJXV6qQw1k40lVc/+UiLXmEInuwuQaooGJ9xpXcLLJB?=
+ =?us-ascii?Q?9/3C9n4UkIyLlRuTQ2QWbY5HFhF6nBApqbt6G6LcccLEiU4gfGY4eGyVO6t6?=
+ =?us-ascii?Q?V2jkBHWsYNoVjykU7B54LaNMTvlDyoQWSTVt2iMbT8KuAm9pYeLiABDn7lEd?=
+ =?us-ascii?Q?mZTbRY9zvlnKR1iOq5ylIKtpdsyrBkwoZ9OQtM2oqD/OYBdGRGNLNVHDFXgq?=
+ =?us-ascii?Q?4ZrfD2hvxkOxinsxf/PjEYk/iNcJI7UrK3fV3Zrrnv2bq88BpT1iWqsVtFfv?=
+ =?us-ascii?Q?mA0vDYctMvPmhFzsEHnoSKrS2MZqJx0MNjqwBHLxe7lt6UXtx1oI+O4C2izZ?=
+ =?us-ascii?Q?4SyLsV3lBv1wccSLGCHLrxwA/8iNXEFFn+ZSPDlMy0jYNcBmBzsKNWKDEMWO?=
+ =?us-ascii?Q?B88xxX5x6b/A0F2eUKIXjz/Zj50jvupst0UEKcyDxboF3veUs3LmuUuvUYGR?=
+ =?us-ascii?Q?GSnaH9p/0auZI8EZmQYqGos8vU/U8N9/EK5p0jSgxq7KqNLbO1uw2IJlKd7A?=
+ =?us-ascii?Q?lKyz6+w9oUUfYL3kOnOYlAyMdF1C2ULc5ZECuzZOojFtoIi8qIgcaOofo/Iu?=
+ =?us-ascii?Q?kUU2gtAu1suzbKONl2O+GXi3NFVfe6E+NFg5T7wxJYABieixKNBWg+gNGF93?=
+ =?us-ascii?Q?PrmieGeQ/vMDYJaf53nvP5qlD1b7RtcdrtbK58/cZZmnAjectEH0TDyRg8gS?=
+ =?us-ascii?Q?A+OD4cTrQmik648YGLbqNMNj1CRU+zRqHM129US6Cv7xaO9Gwt84FbiiFK+M?=
+ =?us-ascii?Q?Cn1bM81yJmbs20mvdCzsomqbAzXyvn56nQxRQsrSP8pCuwjQd+ZcTHprvgNg?=
+ =?us-ascii?Q?G//B3KqQmp2lO9ajL1aTTn6PS2+MVYoxGr90rK5RBVw13C006W6EKf3Thv3s?=
+ =?us-ascii?Q?TKTElDrOr/su+8xC1z17F8jv7FKtlL6XzgKJWKNLgnoK+ZiG0DIQkv3aL+7U?=
+ =?us-ascii?Q?Mn96ZKPtPOCxkQYZnEP3rUBA9m5i7pB3JpJFeD813acnS9AKQ8DrGWyoH70h?=
+ =?us-ascii?Q?G+k38rii8N0sH1FTGLQ5EhNyurMHnanANaSv8a839nKOUqIG/PMXsdQ8KABY?=
+ =?us-ascii?Q?aoZHZPt+1X8SkpZxdRGO7QAeUpxtLrT5HWGNpoHmma66p40eq38R2BKT3JKq?=
+ =?us-ascii?Q?HBnJ2TILu3HpJHOu8rQNjafYtfbSJVfTyAaSrQcQ6PpQTAIvYPvljoOSZDVR?=
+ =?us-ascii?Q?ll9eUOTVOt/T1ZuHJgGlG29uKwyB5D6020id+3YcqDsoLbGFegWbBWSKFEqJ?=
+ =?us-ascii?Q?30p+njQkKO1kOaM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gTV9g4poGDqzI57Mw/uHX3eZvebgkFuyWCj5niBp9aYWlGWQrnSKzt2/mCdF?=
+ =?us-ascii?Q?fnbnUtrK3cnXQVxaW2fPNSwA4y661A4+XQk82DCC+5EwnvfE/DAI1a0wHj6V?=
+ =?us-ascii?Q?n4jNL4xCSbhzZ2IaK+ZcB0O0spRRZqetvuCcuyxGx926cmUU5FPury6DzB9R?=
+ =?us-ascii?Q?miqS11qou27+n1XZUdiYjG5LlWJ7k8qIH2y7+BEzXQMdcLVqSGJ9jPDtM6sX?=
+ =?us-ascii?Q?Iz94Id3f/T5h31NrCsYXpk5OJGyoQRDQAEDn2xwBXc+3TPIaQ8gheChSmOkf?=
+ =?us-ascii?Q?pCn8j5U3DxBq0AVNWOuSmZASv9Cmw0kFpHwzcOPLthPDEnaux43c356gErw/?=
+ =?us-ascii?Q?CNpRnBNn951rUWpUxs3bzbRg64tjptaJ1jn364tW+ABYpgEwolKsiV7+NA1k?=
+ =?us-ascii?Q?U1v/P0i2ZmMDXtcnkmii7avhhIyrHAyT8ZOq0TYHiKasM/JpB58KLK6eXESU?=
+ =?us-ascii?Q?IeQHyLuJ2d3R8dp+/kYb//9uP2vISpGhM+YF2crcdFvtvKpP72Jn0P32aMs4?=
+ =?us-ascii?Q?KUAYVxY8kNA+ZcXWhZ3iSA7FQC26lQCCsUPJq+W8+igG8VGDm88mewKjsXp5?=
+ =?us-ascii?Q?RiRYJWuVzZJN/tiFGiTqDWYBfsGg+9dBuEZV2K6Ou0SStRZRwLZe3YWBbQQm?=
+ =?us-ascii?Q?rWR0HGbv4wXJGPW0d8UNAiaQeYdgwmVmvhj4lMOrezLpaIbCqeAg06CsO5KM?=
+ =?us-ascii?Q?cGLFDpR7UyrKhiR4prkmetuTU40MyilW6QZpPjH9nfpq8QI/GR8wrySBvKPa?=
+ =?us-ascii?Q?Zpyd+4xgzsqRc2slji07HwQn54bmkxywgcBWSeErWHvwqVV1feqOAYZdQXXe?=
+ =?us-ascii?Q?ZiLF1VNM0HoPGvvBIz8sWJBRU/3rT7rs0IoR/2KyPK6yqvzK4GKoh08628Pt?=
+ =?us-ascii?Q?ezDaIOeg2LABvYxHwPwBHdC1mb38KwKkqRZA3obv1MsRU/WL1rM9guOt2/Ro?=
+ =?us-ascii?Q?YmLjehIy46s6hz8healIFtBW5h2FD+Sw7mZVuI/h6VeJ2ALGvcRgC73hqywC?=
+ =?us-ascii?Q?yY8p8e79UKyHYfa77L/LMf2tLG85plPaSv7YFbGzte6Uwwz1YbwtlK/7R7v2?=
+ =?us-ascii?Q?NOeVr6G+cGwTUWhLj38+4/qS7n+U7DdCcmc1U3eIlARnHJv+G3+dx6JACTtP?=
+ =?us-ascii?Q?O4zxcGxs36FL8p+R90T4ZgjmGMtccnz8mtx5qbPWQjhsTp3qJ2CNN6OJQlCH?=
+ =?us-ascii?Q?aWAcjGD90hsD+3gkBnupizJgP1Ur293t8g1kiI4DWoHgtZ5io/X/5IV3LRqZ?=
+ =?us-ascii?Q?3Z12AimnhCePApv/xVrmzCUcm6gtMZ+UuRDVPAp/+1PbBmE685ledRta8VX7?=
+ =?us-ascii?Q?maAqE1SteW0OTCXmCnQ5NKyYLJZNAfj3O7Co8pBbabL03uBlsTl1KXtAdb2r?=
+ =?us-ascii?Q?jAahX+ObEjyT66XaTQ5lt29p2KByf4JwJid39wCzAnQXpqjlinPfVIwLjcCp?=
+ =?us-ascii?Q?NKekAp1bak9EqAa+4B+qNpeePqfSRqjfkadVRBKRjdvaS9VzBJh2StfyStG5?=
+ =?us-ascii?Q?Nq/x4MQtF1BIN1DYUB3WdZ6j3ugX6STMYnWl9AhJApdchZyZ71OKkG8F4OFn?=
+ =?us-ascii?Q?ORVewGi/6G6ZqlDkV3Ane0h3z7ICOyG7I23i+1JY?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16d5278a-b388-4483-b6d4-08ddfcdc1f90
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 09:07:31.2716
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MKletPAoaQRlfgBr/5ZNCZAhG8U21QxpCKNSpQmdmRvNe3H/uoK6/xCcVSrQkbZkC8T9pRCaWNlRDPpxKBpdNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7731
 
-Hi Krzysztof,
+From: Rain Yang <jiyu.yang@nxp.com>
 
-Really sorry and apologies for the delay.
+The regulator is optional, skip the setup instead of returning an
+error if it is not present
 
-On 10/09/25 12:38, Krzysztof Kozlowski wrote:
-> On 09/09/2025 10:00, Gokul Praveen wrote:
->> This commit adds a YAML binding for OMAP DM timer used in
-> 
-> Please do not use "This commit/patch/change", but imperative mood. See
-> longer explanation here:
-> https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
-> 
-> Don't use "YAML binding" - there is no such thing.
-> 
-> Instead just describe the hardware.
-> 
+Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
+---
+ drivers/gpu/drm/panthor/panthor_devfreq.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Sure Krzysztof.
-
->> capture operating mode.
->>
->> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
->> ---
->>   .../bindings/counter/ti,omap-dmtimer-cap.yaml | 34 +++++++++++++++++++
->>   1 file changed, 34 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml b/Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml
->> new file mode 100644
->> index 000000000000..8de9cf58aee5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml
->> @@ -0,0 +1,34 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/counter/ti,omap-dmtimer-cap.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: TI dual mode timer Capture Module
->> +
->> +maintainers:
->> +  - Gokul Praveen <g-praveen@ti.com>
->> +
->> +description:
->> +  TI dual mode timer instances have an IO pin for Capture capability.
->> +
->> +properties:
->> +  compatible:
->> +    const: ti,omap-dmtimer-cap
-> 
-> Missing SoC specific part. OMAP is family, no?
-> 
->> +
->> +  ti,timers:
->> +    description: Timer instance phandle for the Capture
-> 
-> So the only resource is phandle? That's completely fake device then. NAK.
-> 
-
-
-The OMAP Timer IP can operate in 3 modes: Timer, PWM mode or capture
-(mutually exclusive).
-The timer/ti,timer-dm.yaml file describes the timer mode of operation.
-It encapsulates base IP block and reg property is also part the same
-binding.
-
-This node represents the capture mode with phandle reference to the
-timer DT node. This is modeled all the same lines as how PWM
-functionality is implemented in pwm/ti,omap-dmtimer-pwm.yaml
-
-Now, if this needs to change, please suggest alternate.
-
-One solution is perhaps to add a new property to ti,timer-dm.yaml itself
-to indicate the mode of IP?
-
-
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +
->> +required:
->> +  - compatible
->> +  - ti,timers
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    main_cap10: dmtimer-main-cap-10 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> If you cannot find a name matching your device, please check in kernel
-> sources for similar cases or you can grow the spec (via pull request to
-> DT spec repo).
-> 
-> 
-
-Sure, I will update that Krzysztof.
-
-Regards
-Gokul
-
-> Best regards,
-> Krzysztof
+diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
+index 3686515d368d..2df1d76d84a0 100644
+--- a/drivers/gpu/drm/panthor/panthor_devfreq.c
++++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
+@@ -146,10 +146,9 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+ 	ptdev->devfreq = pdevfreq;
+ 
+ 	ret = devm_pm_opp_set_regulators(dev, reg_names);
+-	if (ret) {
++	if (ret && ret != -ENODEV) {
+ 		if (ret != -EPROBE_DEFER)
+ 			DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
+-
+ 		return ret;
+ 	}
+ 
+-- 
+2.39.5
 
 
