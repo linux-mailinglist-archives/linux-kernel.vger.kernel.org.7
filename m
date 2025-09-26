@@ -1,297 +1,197 @@
-Return-Path: <linux-kernel+bounces-833504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9E7BA22B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:53:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268A6BA22C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629F91C2421E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368C2164C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB8C1B87C9;
-	Fri, 26 Sep 2025 01:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16621DF273;
+	Fri, 26 Sep 2025 01:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RH7jKwlP"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012007.outbound.protection.outlook.com [40.107.200.7])
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="oET5dYmh"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E201A08CA
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758851619; cv=fail; b=aNpT1I1Ch34hdx0ATkYLRGJGOCE7nG0LZi5pID4zUkriJbUkdnwZ9KoIbt6qV5bTmVMCPrUaHqnb3mjwNdiPcb+SWdcVMziNaD588SEUIBhZhCN14Zy2G5CES9htssezhbzk8BycFBR6hP5jw6c17xZuFlbZsD5F2PtufFng6CQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758851619; c=relaxed/simple;
-	bh=XwrV93EXpTkflmTxwZBQsiF+ZPFUJ3sy3HL+BxOrKJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bCZnhuCmveHUxrzf22pznZG8k0mHsX/QJANSX5XzM7FdLsIDh5i9Qd36Dy5/L5+ILPa1VyrvmNON76fKCZHjGNy97wL1vJQtGphvwuRzzzXOnpH8cWblwEZcWBtHAMI3Mlv4u3tsXrhM4fVmHt29+0ALgmJp8Pj+X57qR7SQJvM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RH7jKwlP reason="signature verification failed"; arc=fail smtp.client-ip=40.107.200.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PFlr9PU3utRvMncoGBOBYZPdKb4q0Gxlp4BVULq6gG9yaPKUDvrwY41WOsR5+lG50uWWEaFf6D3puXrCjHYIutVDkmxiQAlb5CX1tEPjFUzAPaWBHO1geji6SN1c3tlQRKujVgFYl2bIXQLswATRMPR5weA3ZufOhBO37t+S6BVyVKHyK4mWX+shKTSMNHzh7IJ1W+mCtSuDpHYaLqD7tuHbnzRrYrfn/ijwNHvcvBqEjE11RhwCPc46qaGq2YGJztQBoP5utmKAlVs0pqw8IyQ0IuBkMgvhmRxHoE3HnXZ4eNVeKDwtDbEjxwv/UEJ4gWuzjyiNfYScIDvR/vbyxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JZBI9rZleJnzOVk+zLOU31NIYOJmrtQ/resMy/Zl9yM=;
- b=BCcqu54Fl/zdU1HY+IHa/U40JsPR3+XrYOkhc10Q14RPLgw7Bkiie4snFMhqR/kJSBNztcwmGjxsO6kNzC3AXj21f/bZ/kuXhYMatS/j7H1LPgJprH77PH2jLz7TTWGTE8Q3FUD2neTIm1OPQ5Inejl2i1tqGSqwfXNFSHurwJbn1x8TcRw6t/DJwWQe/y5+tGAyklZqkrJDmX1KYWvFV0Kgfu6aRor8qXidM0/KliWo5HeNSyNTTq39z4Ud63zkvYIYbncgmmmr7GA8hsyefgCIoSJNr7ZarBytUZa/9mIht2Z8Yd0/Q0d1uDCF0hQD5wUhI6a1C6eeeHZZ5YeNBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JZBI9rZleJnzOVk+zLOU31NIYOJmrtQ/resMy/Zl9yM=;
- b=RH7jKwlP8JoNGjm0orhiTcp+OfOeZUfVPsQ0myKfC/OLVi7lKrxxTF/k5FJKcicyngb9LOiZLNpjX2Bw6unEC1tFiJDv6bdPeQwDkPZAJ2k9WRh2w/vOcqdMwDIQJN1S8DgTi1S+XFgKwugAiL2c+Wabe5CJ+T16RzyUbcgXW6qW3dXhYwj5EuYLkOfohBN8qzgC5dzEYcjgpgO5Fg/xM1Ik9cO5tSNaiav3g+Zyd4YvN7u/NAoYN9u0CBfAK88fiqgq10H74WcMLc+fJFaVzKaWtCjLW5op7KugVEn7TZWOCKkmDmwNgEsWBMNnGjNFZHqNGotjjmdDUrLxUicv1A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CH1PPFDA9B3771F.namprd12.prod.outlook.com (2603:10b6:61f:fc00::626) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Fri, 26 Sep
- 2025 01:53:34 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
- 01:53:34 +0000
-Date: Fri, 26 Sep 2025 11:53:29 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, damon@lists.linux.dev, dri-devel@lists.freedesktop.org, 
-	Matthew Brost <matthew.brost@intel.com>, Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
-	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
-	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>, 
-	Mika =?utf-8?B?UGVudHRpbMOk?= <mpenttil@redhat.com>, Francois Dugast <francois.dugast@intel.com>
-Subject: Re: [v6 02/15] mm/huge_memory: add device-private THP support to PMD
- operations
-Message-ID: <3uxfirnfvki4kztyf3vac5vph6kzhnf623li46gmaqux5ivf5e@3uvtpfeymgug>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-3-balbirs@nvidia.com>
- <azcaqmqwdslvoei7ma4obtpxcdv7jdqfdc3ny4sylgwelwhfvo@okwd6y2oq5q4>
- <df1e62e6-57ac-4a5f-bf62-71fea47481af@redhat.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <df1e62e6-57ac-4a5f-bf62-71fea47481af@redhat.com>
-X-ClientProxiedBy: SY5PR01CA0051.ausprd01.prod.outlook.com
- (2603:10c6:10:1fc::11) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F3034BA35;
+	Fri, 26 Sep 2025 01:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758851788; cv=none; b=U4Hm7zkLRnMeptWFIbpYs1e/ops1KTq7zugZeOpkVlZJGF0/7WQlSQIgP51hq2RTEpVKctWoIQ/Ke8SiT7/CpFdKzrO2DNNacqxEcF8I2nq7AxBGCi2Y2mlPICS8lzpVIpdj6UNABKIkfwHTdCj1eseYufDgzONQWyrXm/uyxKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758851788; c=relaxed/simple;
+	bh=7oZJFXsTWT5oYeOGxzQNWCiMQvQXOZw6Arh9U6lC1jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiZ6TY8/9+UD/S3+HSTGPSlDYUalSGIDej1Ffnouz0TKa2ZFOtfpdjcheH1+pBEs7hDv8i+ONXVPV3E99sQ6Aafrvjwd9NDbpmCGyw8JXAkvZ168a/0icF+igj/hhURCzaQKWMaxG3cExzQr8uDDr29L58VM01JYqsl+l3YzZ4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=oET5dYmh; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cXtwk6pTYz9tYL;
+	Fri, 26 Sep 2025 03:56:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1758851783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WXkul67qbIi/sjuQ3RZkWGCkK8QBcl1GR0mT28ksjCc=;
+	b=oET5dYmh6G5asRa56xLRozZtIt30IpsAn0GpIzFy7kOsmBE9fmhVxtKMR/Woh6L8wWPRH+
+	/tp68L+gT0Gs1WP+zKseeeLEl6tP8X7knjZsN6hh4TjZvKZrqKFbbJNWlnga39HZRmqBAI
+	bvoiH0vSt5j72nccXPDSQExzjMb7urdXfpWjw9UA2ELoVErmLPaM9+H4XqYiJ75r65W4pt
+	3heQcBOxpDEe957bUo1dcMHXa9/4IiynRa/JoRvRLNUeLSZHVxkAWekKKfh5WWpTR0zok7
+	5eh6qVk8CM+meFSqFbet4qGxZR3jQ4aVl2FOcNqxQtS4ZXalhnDQc4Sdmko9CQ==
+Date: Fri, 26 Sep 2025 07:26:14 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: KaFai Wan <kafai.wan@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, Andrii Nakryiko <andrii@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH v2] bpf: fix NULL pointer dereference in print_reg_state()
+Message-ID: <cdv7vgob4ulsmmgmyklgoi5ttzyhby6zmlr2s2kjq6m2dxrnpi@7c2umi7pfhyg>
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+ <20250923174738.1713751-1-listout@listout.xyz>
+ <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
+ <qj5y7pjdx2f5alp7sfx2gepfylkk2bytiyeoiapyp3dpzwloyk@aljz7o77tt3m>
+ <9051652cf548271da9c349758cbd70aaa3cee444.camel@linux.dev>
+ <wz6god46aom7lfyuvhju67w47czdznzflec3ilqs6f7fpyf3di@k5wliusgqlut>
+ <933a66f3e0e1f642ef53726abe617c4d138a91fa.camel@linux.dev>
+ <5fjhzkvgvbpcm2vvqlxhgcobbkiwvo36aalj5lbqrfbznbpynf@jzokg4ba2mwp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH1PPFDA9B3771F:EE_
-X-MS-Office365-Filtering-Correlation-Id: 458c1150-e028-47d3-6fa7-08ddfc9f803a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?I5kOgucwaxQK+ly+VWIg7LrKOMpBkgRHR8GBa2bpFjznOXlBkMssMSqtmr?=
- =?iso-8859-1?Q?HCuIOFSa60qQIEYYdnoHmDZEVnQbxp8sxmeFY57umCKkVttdHhSvjv0jko?=
- =?iso-8859-1?Q?RrEfW86tx433Pe63HdtZSbPTRPKk3c+1X8rBfsqsvy73GzmfrCaXbEg3Tn?=
- =?iso-8859-1?Q?GY649lZ7qjEazjbs/c8CSxQb+HxnyyccR2YokEizsm3loH2tcKdGq1ULgF?=
- =?iso-8859-1?Q?v7lAShxR/mJQxFlbhmD62qdLmoENzcv2yR42z4SC3Rzl3Ttrciu0E2pK+w?=
- =?iso-8859-1?Q?Rb+IX8baSBt9FiCpEWZD2o2j+q0NyEclS3I2w96ORzULMBxYt2XP1vRLue?=
- =?iso-8859-1?Q?hFE8Ch+uhAmPec1uWjD1al+fXQzn1AVfAoGpkS0iAZgXT5laZs0Fq2fuRH?=
- =?iso-8859-1?Q?0+KTQt5QnbLlM3GgnfUINJK5nxTkpU3+KmW9ABAqALoyKdyGcq5KhdIdBU?=
- =?iso-8859-1?Q?oL0NoZnIf5oL/GvHQX7koUgGEVOsusG2L7DJIPyZ5WXCIeOrKR+TqCspLR?=
- =?iso-8859-1?Q?QnwcN6NH1ce88W8SVn6fRpFiFtTgQ9+gX3WPiJxrYBEsUXtviY9i24qFbV?=
- =?iso-8859-1?Q?DaiQGhLt5mqmcnGAa6+rxq0rThR+V3DTK6ogZyeBIsy+W/B0tgLCh46s/q?=
- =?iso-8859-1?Q?3G5QO2IG4DqnWhPMjeUsqwL8iq5etMWVcyruzHSZxpiEKaFGqSLlkW+etj?=
- =?iso-8859-1?Q?7IWXa3wUa0TBB7pw+Kn69Bk7DgWpTzFxNXKdyRWKJ50JI87zGEbfF/6J0m?=
- =?iso-8859-1?Q?BACvjZLodgTLlFv6VjxeEvuF6qNeekj40Bf1uzkTWzLeF8seJgU+QMTDOz?=
- =?iso-8859-1?Q?tNmzSmpHG0UJqbG8AlXk5k+qh4n7xD+qgOCmAeedSSPzuHtLYsSo07sNmH?=
- =?iso-8859-1?Q?xFNWno/IYPz54EP/xgDMa/ypEz/dgiAicCVRqHD4m0hboeDhhaJUQvCWJL?=
- =?iso-8859-1?Q?6ELZ3uRECAjD6nt0lyxrl7AKPv07sVDFTzd0xgqO1ctEkgdrmffebYKt8x?=
- =?iso-8859-1?Q?X8W6YqtGCphd6uVFE0QBcngstXhvknWfA+a/xDu2HQVq80oNd7mWmFtWom?=
- =?iso-8859-1?Q?bUXrikdw15kKeNO1/8NRP2NCgSvF7Ag2kamplRo8AFgrN5pWy7+mP6drfr?=
- =?iso-8859-1?Q?brP/HwbTCDmd9n0nmjMPNxZgF/hrKvhuKXqvlj2ttRajMpaiXTxoZUXpIP?=
- =?iso-8859-1?Q?3oem9akr1hKgeO0IfSCFy5W9JeToJCf2qMN1P2m+fMhBe+X7F3orIWWWn0?=
- =?iso-8859-1?Q?IBvUo9UAeVd+ht+Xrw+pTl37y4K7RDLYSZ/zlM/oh7BYR6vBh8x7KXaAxb?=
- =?iso-8859-1?Q?fmuGzYhz5GkOHt2sGsEixGJsOjRpjeGZRQrXF/bJav+t6qFsNPm4EMkKRv?=
- =?iso-8859-1?Q?WXhDj5umOIjERQr0dlhvOiJtViTW1o3uprDqQvv7t3WVMNkU0zSJMeVone?=
- =?iso-8859-1?Q?lslN/SVu+Cl0m8Ivc8PdKhF/YnbsyzquOLYLfTsy5aC7MfgAiKIT+AWFJM?=
- =?iso-8859-1?Q?wJz8f/WAgAPUkM63GIbbxy?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?uDlflAWu0uuH3c8H5QWujlIJH3BuhdYQRrNDAelHLGK/psv6p9zkRV3L1G?=
- =?iso-8859-1?Q?asF28mwoPaLdNetyowj/rumR2jr2AjFeOs2QZ/8LJd+5nZTacVR8ILxvq8?=
- =?iso-8859-1?Q?zNagkOnoT6LyJAY1ud2AsJufkElZCkMv379JwTEkgMwxSlkkET0OLeKlia?=
- =?iso-8859-1?Q?maE2z6C02R5nEsayUHyazeQXDeJMF5MDkFnd1CkT24rao/h4Rv17/NbKuu?=
- =?iso-8859-1?Q?UR10bbuIZbGD+T2UZVQN3ceRF75wkxFGwPPrNSpfpYxp2OSEAYE64Fnf6Y?=
- =?iso-8859-1?Q?LdkL7XcQQJlzmGjWOtMY0Dq2jFy4WpumMzmMOmQM4t3L8jbZvq+ye0435t?=
- =?iso-8859-1?Q?uilb9M2b6ffTRS5Plg0KV+9L5BvGUad3bvYceaRTdlgU+WNrw9Vo4DXys8?=
- =?iso-8859-1?Q?Swa8HKTMGhiDBvlVw5yBVBKOZ4k5l2YPN+QlaexSk8nJ9PgIO+thp0A3QL?=
- =?iso-8859-1?Q?oUlghQEkXszIW7yGKqpJpBJj4YqF7DAK2S+ltN3vFxu6JfU9NagArpXnpa?=
- =?iso-8859-1?Q?CHe4PpIgx3L63Huq3A3sIQq2eeKTE7IaoM3rK+T3mcOcXgzK+vzMtJrPM9?=
- =?iso-8859-1?Q?g/racwmBeuAyL5KwcIugoHRlqYCJh8pLEURQcBk53kN/grNGd5RtoknncU?=
- =?iso-8859-1?Q?pni4zZy0zHPW/sxpLZtytHYAynJLk9ZJdPhQ3m1TW+/zZCTb3t6ZovRUeN?=
- =?iso-8859-1?Q?bkOss0J6+3wpafqD8lktla77fQlcSiXl5P42gMH9CU6UUgzIZxGYoDBkOr?=
- =?iso-8859-1?Q?jTgcGuaX4kIHYc0/cM8ipHtXuwpcwf394BZuoEzFDC2yIkmmwzimzxTvBj?=
- =?iso-8859-1?Q?RWHcmCTxKGi48io50YjFhZ3VJElRvv5XBEoBNv9xS8hMl2+RMkO9B/Cbsn?=
- =?iso-8859-1?Q?bTBIFO1GV/klvVAjc4mzH0fUG/9/jSpT/DIc43HMQcsSiUgYiUXqtTbBa6?=
- =?iso-8859-1?Q?95WCbHr4QG65jxHHV74SlbnZMlPjwKWpMTKdRZopTZ2iimszgUoIcT/QhY?=
- =?iso-8859-1?Q?zO5GQZiYdB21DK++Ky76RJ6ijBWYllqQDKSwntllmzHACjuh9gfNN4uxA7?=
- =?iso-8859-1?Q?LU4rVTkY9qCV1xeLd6PGDGJAqVnOsgReccD4ZBBthG1CKwj5JyWsN6LyvZ?=
- =?iso-8859-1?Q?Pa1SYyrQPj5r3RuaiPMCKg8+pb4PYpZKkVyy5X/M1yz4M0Z7kejvYi//G/?=
- =?iso-8859-1?Q?wEEVV2T35SU947WkTuNqssvM8uqYlgyrF97QnPUOGgrgxMfygEIT79011M?=
- =?iso-8859-1?Q?pINt4+eGcR6dzYWrYteCPdh2qyTOuetYjx3jFus1Op1/E3mY1wn2WCWRHl?=
- =?iso-8859-1?Q?5bLtQyPzmmUyQXJJGMzL+Dq+jZIMbIhA/s3UPHorPJewO3Ad+1RpzEtWhR?=
- =?iso-8859-1?Q?UNTS9H7xuTJZ2OwgaLJkyMywYrrbBNRLUiY4WNbSGvX8MVTuoZmTj2ftjU?=
- =?iso-8859-1?Q?eY6Pcyxk4aNrCV2lVgWvGZ+FatGdJtxQ984zrTq+zLTEZ+yzGbsb5aBGdW?=
- =?iso-8859-1?Q?q8s7p6gCfGQILQVEeAhUZAKsQGWcVVoT8tB5IwtqNHSSTEeUjXYq00mlbD?=
- =?iso-8859-1?Q?KruzbF1wUaNQXqmOvxjNuQS4m7hOcT2PrHnlrw8z7ufO8tQ4HgQhUolYyx?=
- =?iso-8859-1?Q?8Rzbsy9WOmgZYde/zl2TJBeDL6UiHOXEwz?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 458c1150-e028-47d3-6fa7-08ddfc9f803a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 01:53:34.1298
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ohyy0UMyeshq1/+LjIQf3wAAu242bmGXha1Y9ukBo1Y4i/gNzORI7bHtmCGINsGEtUGeYoxIXILsvXv1QjBlZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFDA9B3771F
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5fjhzkvgvbpcm2vvqlxhgcobbkiwvo36aalj5lbqrfbznbpynf@jzokg4ba2mwp>
 
-On 2025-09-25 at 19:53 +1000, David Hildenbrand <david@redhat.com> wrote...
-> On 25.09.25 02:25, Alistair Popple wrote:
-> > On 2025-09-16 at 22:21 +1000, Balbir Singh <balbirs@nvidia.com> wrote...
-> > > Extend core huge page management functions to handle device-private THP
-> > > entries.  This enables proper handling of large device-private folios in
-> > > fundamental MM operations.
+On 26.09.2025 06:34, Brahmajit Das wrote:
+> On 25.09.2025 23:31, KaFai Wan wrote:
+> > On Wed, 2025-09-24 at 23:58 +0530, Brahmajit Das wrote:
+> > > On 25.09.2025 01:38, KaFai Wan wrote:
+> > > > On Wed, 2025-09-24 at 21:10 +0530, Brahmajit Das wrote:
+> > > > > On 24.09.2025 09:32, Alexei Starovoitov wrote:
+> > > > > > On Wed, Sep 24, 2025 at 1:43 AM Brahmajit Das
+> > > > > > <listout@listout.xyz>
+> > > > > > wrote:
+> > > > > > > 
+> > > > > > > Syzkaller reported a general protection fault due to a NULL
+> > > > > > > pointer
+> > > > > > > dereference in print_reg_state() when accessing reg->map_ptr
+> > > > > > > without
+> > > > > > > checking if it is NULL.
+> > > > > > > 
+> ...snip...
+> > > > 
+> > > > Looks like we're getting somewhere.
+> > > > It seems the verifier is not clearing reg->type.
+> > > > adjust_scalar_min_max_vals() should be called on scalar types only.
 > > > 
-> > > The following functions have been updated:
+> > > Right, there is a check in check_alu_op
 > > > 
-> > > - copy_huge_pmd(): Handle device-private entries during fork/clone
-> > > - zap_huge_pmd(): Properly free device-private THP during munmap
-> > > - change_huge_pmd(): Support protection changes on device-private THP
-> > > - __pte_offset_map(): Add device-private entry awareness
+> > > 		if (is_pointer_value(env, insn->dst_reg)) {
+> > > 			verbose(env, "R%d pointer arithmetic
+> > > prohibited\n",
+> > > 				insn->dst_reg);
+> > > 			return -EACCES;
+> > > 		}
 > > > 
-> > > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> > > Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> > > Cc: David Hildenbrand <david@redhat.com>
-> > > Cc: Zi Yan <ziy@nvidia.com>
-> > > Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> > > Cc: Rakie Kim <rakie.kim@sk.com>
-> > > Cc: Byungchul Park <byungchul@sk.com>
-> > > Cc: Gregory Price <gourry@gourry.net>
-> > > Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> > > Cc: Alistair Popple <apopple@nvidia.com>
-> > > Cc: Oscar Salvador <osalvador@suse.de>
-> > > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > > Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> > > Cc: Nico Pache <npache@redhat.com>
-> > > Cc: Ryan Roberts <ryan.roberts@arm.com>
-> > > Cc: Dev Jain <dev.jain@arm.com>
-> > > Cc: Barry Song <baohua@kernel.org>
-> > > Cc: Lyude Paul <lyude@redhat.com>
-> > > Cc: Danilo Krummrich <dakr@kernel.org>
-> > > Cc: David Airlie <airlied@gmail.com>
-> > > Cc: Simona Vetter <simona@ffwll.ch>
-> > > Cc: Ralph Campbell <rcampbell@nvidia.com>
-> > > Cc: Mika Penttil� <mpenttil@redhat.com>
-> > > Cc: Matthew Brost <matthew.brost@intel.com>
-> > > Cc: Francois Dugast <francois.dugast@intel.com>
-> > > ---
-> > >   include/linux/swapops.h | 32 +++++++++++++++++++++++
-> > >   mm/huge_memory.c        | 56 ++++++++++++++++++++++++++++++++++-------
-> > >   mm/pgtable-generic.c    |  2 +-
-> > >   3 files changed, 80 insertions(+), 10 deletions(-)
+> > > is_pointer_value calls __is_pointer_value which takes bool
+> > > allow_ptr_leaks as the first argument. Now for some reason in this
+> > > case
+> > > allow_ptr_leaks is being passed as true, as a result
+> > > __is_pointer_value
+> > > (and in turn is_pointer_value) returns false when even when register
+> > > type is CONST_PTR_TO_MAP.
 > > > 
-> > > diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-> > > index 64ea151a7ae3..2687928a8146 100644
-> > > --- a/include/linux/swapops.h
-> > > +++ b/include/linux/swapops.h
-> > > @@ -594,10 +594,42 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
-> > >   }
-> > >   #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
-> > > +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
-> > > +
-> > > +/**
-> > > + * is_pmd_device_private_entry() - Check if PMD contains a device private swap entry
-> > > + * @pmd: The PMD to check
-> > > + *
-> > > + * Returns true if the PMD contains a swap entry that represents a device private
-> > > + * page mapping. This is used for zone device private pages that have been
-> > > + * swapped out but still need special handling during various memory management
-> > > + * operations.
-> > > + *
-> > > + * Return: 1 if PMD contains device private entry, 0 otherwise
-> > > + */
-> > > +static inline int is_pmd_device_private_entry(pmd_t pmd)
-> > > +{
-> > > +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
-> > > +}
-> > > +
-> > > +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
-> > > +
-> > > +static inline int is_pmd_device_private_entry(pmd_t pmd)
-> > > +{
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
-> > > +
-> > >   static inline int non_swap_entry(swp_entry_t entry)
-> > >   {
-> > >   	return swp_type(entry) >= MAX_SWAPFILES;
-> > >   }
-> > > +static inline int is_pmd_non_present_folio_entry(pmd_t pmd)
 > > 
-> > I can't think of a better name either although I am curious why open-coding it
-> > was so nasty given we don't have the equivalent for pte entries. Will go read
-> > the previous discussion.
-> 
-> I think for PTEs we just handle all cases (markers, hwpoison etc) properly,
-> manye not being supported yet on the PMD level. See copy_nonpresent_pte() as
-> an example.
-> 
-> We don't even have helpers like is_pte_migration_entry().
-> 
-> > > diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-> > > index 567e2d084071..0c847cdf4fd3 100644
-> > > --- a/mm/pgtable-generic.c
-> > > +++ b/mm/pgtable-generic.c
-> > > @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
-> > >   	if (pmdvalp)
-> > >   		*pmdvalp = pmdval;
-> > > -	if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
-> > > +	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
+> > IIUC, `env->allow_ptr_leaks` set true means privileged mode (
+> > CAP_PERFMON or CAP_SYS_ADMIN ), false for unprivileged mode. 
 > > 
-> > Why isn't is_pmd_non_present_folio_entry() used here?
+> > 
+> > We can use __is_pointer_value to check if the register type is a
+> > pointer. For pointers, we check as before (before checking BPF_NEG
+> > separately), and for scalars, it remains unchanged. Perhaps this way we
+> > can fix the error.
+> > 
+> > if (opcode == BPF_NEG) {
+> > 	if (__is_pointer_value(false, &regs[insn->dst_reg])) {
+> > 		err = check_reg_arg(env, insn->dst_reg, DST_OP);
+> > 	} else {
+> > 		err = check_reg_arg(env, insn->dst_reg,
+> > DST_OP_NO_MARK);
+> > 		err = err ?: adjust_scalar_min_max_vals(env, insn,
+> > 						&regs[insn->dst_reg],
+> > 						regs[insn->dst_reg]);
+> > 	}
+> > } else {
+> > 
+> > 
+> > -- 
+> > Thanks,
+> > KaFai
 > 
+> Yep, that works.
 > 
-> I thought I argued that
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -15505,10 +15505,17 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
 > 
-> 	if (!pmd_present(pmdval)))
+>                 /* check dest operand */
+>                 if (opcode == BPF_NEG) {
+> -                       err = check_reg_arg(env, insn->dst_reg, DST_OP_NO_MARK);
+> -                       err = err ?: adjust_scalar_min_max_vals(env, insn,
+> -                                                        &regs[insn->dst_reg],
+> -                                                        regs[insn->dst_reg]);
+> +                       if (__is_pointer_value(false, &regs[insn->dst_reg])) {
+> +                               err = check_reg_arg(env, insn->dst_reg, DST_OP);
+> +                       } else {
+> +                               err = check_reg_arg(env, insn->dst_reg,
+> +                                                   DST_OP_NO_MARK);
+> +                               err = err   ?:
+> +                                             adjust_scalar_min_max_vals(
+> +                                                     env, insn,
+> +                                                     &regs[insn->dst_reg],
+> +                                                     regs[insn->dst_reg]);
+> +                       }
+>                 } else {
+>                         err = check_reg_arg(env, insn->dst_reg, DST_OP);
+>                 }
 > 
-> Should be sufficient here in my last review?
+> I'll just wait for other developer or Alexei, in case they have any
+> feedback before sending a v3.
 
-My bad, I'm a bit behind catching up on the last review comments. But agree it's
-sufficient, was just curious why it wasn't used so will go read your previous
-comments! Thanks.
+Just my 2 cents, thought this looked cleaner
 
-> We want to detect page tables we can map after all.
-> -- 
-> Cheers
-> 
-> David / dhildenb
-> 
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -15497,7 +15497,8 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+                if (err)
+                        return err;
+
+-               if (is_pointer_value(env, insn->dst_reg)) {
++               if (is_pointer_value(env, insn->dst_reg) ||
++                   __is_pointer_value(false, &regs[insn->dst_reg])) {
+                        verbose(env, "R%d pointer arithmetic prohibited\n",
+                                insn->dst_reg);
+                        return -EACCES;
+
+-- 
+Regards,
+listout
 
