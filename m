@@ -1,189 +1,675 @@
-Return-Path: <linux-kernel+bounces-834016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D902FBA39AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D089BA39B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B241C0290B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6111C02AA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87182ECD01;
-	Fri, 26 Sep 2025 12:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEED2EC0AD;
+	Fri, 26 Sep 2025 12:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aX5oblO/"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HD4CupfZ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F52243370
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4103E2EB85A
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758889573; cv=none; b=GGyHq0XW5EHcMMRBuyhejokQalZaZFaNFJigTt1IYTcc3VzkwCALGHYsnKNpUfadbmhKsluXC5LKGd3MOjANo8QvCIlW8lb+Zca7FfEf98ZmtQfRlF6APY4vSKb2aJLf+TWjWlJVjX2R85gzuugKiNuSgGMiWmX0Ile5VokCb6o=
+	t=1758889597; cv=none; b=lnTjrcdQPCegoVEH+rBeKkaI4K2DuMMAOGiOYGOA8upixat+JAWYgTs1aY9lCSJ3M4txh5rnxZVeIyD3fakcIz3r+F4o1SL19Zj4vjMObdPPsByICCnS/eX+YinsJe4YbCfDH7Ay0Mwec4meq1V+jM06KfmREzoLRAPPu6HZWbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758889573; c=relaxed/simple;
-	bh=t2+UAvCr4XcZ0OnnZKKa2yux1QRJHla1KR4kjND7Qv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PURJ702GBaU0XeTvn+YZhHxugM9yJRY3p8NW3ZRur6TUVkCRwNqbNOkzJmoWtsX67BGokE1t21g1yE7pCk3nRwKdvPQBW4ijboeeu/tfgJEqfOJibJSOCroB94z+wLurJjJlYlTeujQunnTDyFiN/VUUQrbuvsANh1wvHkf6VWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aX5oblO/; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1758889597; c=relaxed/simple;
+	bh=1ImUhP7adM1d66cJzTZZl0vUu/TLRkdyaiWBTgIFhWk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=R76cD5ZZbjpC4rBFmeh7fUIeyHGUzpZqLiPlqzkHwSCziGb5wLXC2dnKgSuEcnYPrAmonSkgGny7ZKlS7dggUUZ9XQ9z6Ikah7UWwGpH7IiK7ya/QYzmsMaZKcI2Suj4XfPtyVqWyPBrFJSnve+6XY85e+IPQpsoBwMe9NTYiVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HD4CupfZ; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so2459448a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:26:12 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-41174604d88so899955f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:26:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758889571; x=1759494371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZLHkKF18lMe3OS222CIEqifXITXK3HwcUajzIjkMKH8=;
-        b=aX5oblO/6DOE1cKyM0anqBA/rHkeTPzlqffWeZDTaC5+iBwl2IkfZHvjK871kW/ZgU
-         xMGCctTOjpLHK7CWkkFIWVHn1xwt7/XTWqr+n2Rcn7q8pBQu3lE2DjirMFsvWBHyrN1D
-         os7bEFhREGt4U2RkmqMSM6wc85OzKE/SNA27cPKTAZUBi/UKtm2h8DVo7fb9dBFPNcvC
-         lf7MONqirov1ozZjidlvDYIW+KVIYSvAn8OcswePshwNFKVWX2Wq5c2HsW1P7Wl3Zq0h
-         ti5E8BnIEynK+oP5YG8GRtIMG65skNKDaaqchd3N4UJgKrO4wJ3o7hk3B2DtqOfYFONt
-         Aimg==
+        d=gmail.com; s=20230601; t=1758889594; x=1759494394; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qcj0DMSloRWeUj2m0bhbZUWIklI7grwfskgWb0CPuwY=;
+        b=HD4CupfZaOXWPG0HCJtigk/e938VXu7rCAllLaIe74YB8b0AOox3KfffKHiOsIV8QE
+         lLG0tf62kul8FQI4tbHz7lomWt3esqtykzQVHg4dcAuIp8TTMZ3BwPPLnYMuI7s76fB6
+         0W/Nvv0ioeP7btqk0BoMBnYw7UEcaaysOza3zpjQdpoozrCvW5lF+jvlf5MzaDGrba4k
+         RJ8b/x8Aq30GQ229CUnHqCEJGnoiBKS/3pPVhtuX33v+ldfPyUyt003BArQGtxDVS75Z
+         r75MPsbzrbYyjt9go6/s2NaV6fiVEz4l+KP+DAdG4K24fIaQYttylMG2p28wF5SwQL2t
+         1ghA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758889571; x=1759494371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZLHkKF18lMe3OS222CIEqifXITXK3HwcUajzIjkMKH8=;
-        b=Gd95nflb8YRMZCcA++rck8kt07KHy1CLS7w65mNGBzm3qz15waP3vrM6ebHOsMkoeJ
-         uC9JgTaChpd3jtC5X0Z4XgBetZTig7J7wVx+q8CceJSMiiIuEgRMlRAvaS6oizNBCDjw
-         /SgfWmcqL8dUEUV/e+JDkjZkXTigMpd+xSmPO4b1tEsq7PbiGVLu39BI9EVE+o8ahchU
-         4qbUAd/jDqFhwLbqiWAoSq+iZO0lEUVy4x0CDe9XmD3FgrwZdmFRXD24dqiTX3tTB30b
-         ib6fqnJqRP7eqPgT0qEGuEHKhKlMs+GcBSeTxJ6T3zN5KPOyXqhsy0ZGq56KUJATkYmm
-         OGLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdQo2dw2iA+sxgMsY8+fvuAIAxrlepdmH37t2zViIP3p0C8Pj6NHJo6hUdaeDjMGsK67YdlYVQs+grPyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyauvI4qAd8lNtmJzYfjzC2meOvO1+bkNDK+P8FsqMrctHEff0w
-	D8+RgIOX6YJ8/ZnH8Trtjb9qoqK7FUW9wD9LtjS1Gp88wY9GPi8f3z/Msg0f2GBEeh+uvCd8bLy
-	n1PrmNwotHgUgsxtRQBOOJH4a6kOyz90=
-X-Gm-Gg: ASbGncsDYpjVC+y0oimrVDeINjiJ9A7/k2c4JP7kFGUq8WeCTq0b9XBY0ANzPWK8SlH
-	sCBv/3cHBXfLQjwAq3zg+NTUr8CfccfeLRbIKN68dvLONLDgUPRK4wQpE/hz4b8gbcwPSHZmBOr
-	PeFFfABGcoiZskmalWSkYKCbE8feLjvwszDrka2Rr4T6omNPqwR99+wZ2m67Hy3TIkczOB3Qebq
-	wKkYiE=
-X-Google-Smtp-Source: AGHT+IEWys8J0C72NETqC55vyqmXxW6+QIWxx+Seey07j/4IIo8icZ+/rlQ6ghZ1ziJpIUdGrAfANpZbVc4TQKrQDlw=
-X-Received: by 2002:a17:90b:1c04:b0:32e:d600:4fe9 with SMTP id
- 98e67ed59e1d1-3342a20be0emr8158451a91.4.1758889571403; Fri, 26 Sep 2025
- 05:26:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758889594; x=1759494394;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qcj0DMSloRWeUj2m0bhbZUWIklI7grwfskgWb0CPuwY=;
+        b=U5V+lpU/qKIpiH7vvc9eMydWYZ6RWzZfOIeuFTxqPRKvg4ejH7tqXM6PquMhSP/E28
+         0mF8wtMHuPY+Q3n9FwNazdvY4X+9W21xoVhcyFFOd3L72BLxtrUUSWY1JsJe3lj9stjJ
+         HlcfFKP63HF1bKnhicdYNNE6+TKkeXn2ql/kZR1/g2rtDwctv5CTeBqwl2fUzQTK7MGx
+         JDaVJKitem3CG8wShIMPxC6kQwWMuTEl7t4r3SwkGErOfXkjqbNSXUM9srRII/GJjEcW
+         YudlfFeyeup0cbVx/clka3kzy1uAGwAQhB9f+Vy6pfKItIV3gZGWCjLWpEBkZEQ3J4VU
+         3Csw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmrE2qlcQLE3H6ohqr9Jg0u/NNdiwbrA1A5x/oFnTFj6R4wXzZ2WZ/QDX8C8JmuFz1Q3d7fupIs0Ey76I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu3zMAPSnadnzJS/0J7VrPWFU3d+FCFes44KXwQPs6cS61AADV
+	AkW7B1BrRslk/a8/oyUrDXuk5tP6Ez+iMboXILt3z3WC6wQg0qz6rOfM
+X-Gm-Gg: ASbGncv2WSF+QI/z+MGNtVsIcvCrM44jytAUwZGQwWTdyncm9294nLCN4N86eo6Tu9+
+	HthjOmwoJY5y/MRxypbrYGNIuMSP3phFD4B+KByS9c5Mw2Fi4gX/6Lz2HPWxJpFQZFw5ItLp+6O
+	EUqx4hg7VYX/vJedj3cxM34cNW2ojEpn6M34h2Dpx+0XcodNZXGKezMnmLesJtQcPDSmjZv65XZ
+	7eWZoe8j8sZmGNLwD+bTGCLh14ijVAHLEXElR5y5e1EELdmHZjnCvMb+tOvXS+qypKCyQyaQiFP
+	52mWcUfOWfLjaLVumOXqo/hYckMNvb8JoveQKx+mpFy0KIdaaEh/VESnpO3A+ubiwCiM1v+dUE7
+	kVkvRCCDdE5VAkaPSBaqPho8FvEqYrUw=
+X-Google-Smtp-Source: AGHT+IGpWaYD+VuzNn756LLOrQLHBM0RXfBWVhIbLA8LeUV9ljgwcjPnVUVCVMOcYjEYBmg3vlobDw==
+X-Received: by 2002:a05:6000:2012:b0:3ec:ea73:a94d with SMTP id ffacd0b85a97d-40e4a05c185mr5234049f8f.37.1758889593350;
+        Fri, 26 Sep 2025 05:26:33 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33b9eabbsm78734115e9.3.2025.09.26.05.26.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 05:26:33 -0700 (PDT)
+Message-ID: <3bbd51983f5bf67b6fd061f28b8b260370beac70.camel@gmail.com>
+Subject: Re: [PATCH v2] iio: adc: ad7124: change setup reg allocation
+ strategy
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
+	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 26 Sep 2025 13:27:00 +0100
+In-Reply-To: <20250923-iio-adc-ad7124-change-setup-reg-allocation-strategy-v2-1-d9bf01bb3ad8@baylibre.com>
+References: 
+	<20250923-iio-adc-ad7124-change-setup-reg-allocation-strategy-v2-1-d9bf01bb3ad8@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1758859391.git.zhanghongru@xiaomi.com> <000bce8f11d06684f70a29705dfd417747475b1a.1758859391.git.zhanghongru@xiaomi.com>
-In-Reply-To: <000bce8f11d06684f70a29705dfd417747475b1a.1758859391.git.zhanghongru@xiaomi.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 26 Sep 2025 08:26:00 -0400
-X-Gm-Features: AS18NWDVkDtCF6-U2g1H_ZHnjJmLvgakys0oOfyAF7DD3QET6slT2Rpk4YbTFw8
-Message-ID: <CAEjxPJ7CgZT2r9bMYnyhHD=WfG5T-vT21x0ZYKp0Gz9TJo_nEQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] selinux: improve bucket distribution uniformity of avc_hash()
-To: Hongru Zhang <zhanghongru06@gmail.com>
-Cc: paul@paul-moore.com, omosnace@redhat.com, linux-kernel@vger.kernel.org, 
-	selinux@vger.kernel.org, zhanghongru@xiaomi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 2:23=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
-om> wrote:
->
-> From: Hongru Zhang <zhanghongru@xiaomi.com>
->
-> Under heavy stress testing (on an 8-core system sustaining over 50,000
-> authentication events per second), sample once per second and take the
-> mean of 1800 samples:
->
-> 1. Bucket utilization rate and length of longest chain
-> +--------------------------+-----------------------------------------+
-> |                          | bucket utilization rate / longest chain |
-> |                          +--------------------+--------------------+
-> |                          |      no-patch      |     with-patch     |
-> +--------------------------+--------------------+--------------------+
-> |  512 nodes,  512 buckets |      52.5%/7.5     |     58.2%/6.2      |
-> +--------------------------+--------------------+--------------------+
-> | 1024 nodes,  512 buckets |      68.9%/12.1    |     82.4%/8.9      |
-> +--------------------------+--------------------+--------------------+
-> | 2048 nodes,  512 buckets |      83.7%/19.4    |     94.8%/15.2     |
-> +--------------------------+--------------------+--------------------+
-> | 8192 nodes, 8192 buckets |      49.5%/11.4    |     61.9%/6.6      |
-> +--------------------------+--------------------+--------------------+
->
-> 2. avc_search_node latency (total latency of hash operation and table
-> lookup)
-> +--------------------------+-----------------------------------------+
-> |                          |   latency of function avc_search_node   |
-> |                          +--------------------+--------------------+
-> |                          |      no-patch      |     with-patch     |
-> +--------------------------+--------------------+--------------------+
-> |  512 nodes,  512 buckets |        87ns        |        79ns        |
-> +--------------------------+--------------------+--------------------+
-> | 1024 nodes,  512 buckets |        97ns        |        91ns        |
-> +--------------------------+--------------------+--------------------+
-> | 2048 nodes,  512 buckets |       118ns        |       110ns        |
-> +--------------------------+--------------------+--------------------+
-> | 8192 nodes, 8192 buckets |       106ns        |        94ns        |
-> +--------------------------+--------------------+--------------------+
->
-> Although the multiplication in the new hash algorithm has higher overhead
-> than the bitwise operations in the original algorithm, the data shows
-> that the new algorithm achieves better distribution, reducing average
-> lookup time. Consequently, the total latency of hashing and table lookup
-> is lower than before.
->
-> Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
-
-One minor nit below but you can wait and see what Paul says.
-Otherwise,
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-
+On Tue, 2025-09-23 at 16:48 -0500, David Lechner wrote:
+> Change the allocation strategy of the 8 SETUP registers from a least-
+> recently-used (LRU) to a first-come-first-served basis.
+>=20
+> The AD7124 chips can have up to 16 channels enabled at a time in the
+> sequencer for buffered reads, but only have 8 SETUP configurations
+> (namely the OFFSET, GAIN, CONFIG and FILTER registers) that must be
+> shared among the 16 channels.=C2=A0 This means some of the channels must =
+use
+> the exact same configuration parameters so that they can share a single
+> SETUP group of registers.=C2=A0 The previous LRU strategy did not keep tr=
+ack
+> of how many different configurations were requested at the same time,
+> so if there were more than 8 different configurations requested, some
+> channels would end up using the incorrect configuration because the slot
+> assigned to them would also be assigned to a different configuration
+> that wrote over it later.
+>=20
+> Adding such tracking to solve this would make an already complex
+> algorithm even more complex.=C2=A0 Instead we can replace it with a simpl=
+er
+> first-come-first-serve strategy.=C2=A0 This makes it easy to track how ma=
+ny
+> different configurations are being requested at the same time.=C2=A0 This
+> comes at the expense of slightly longer setup times for buffered reads
+> since all setup registers must be written each time when a buffered read
+> is enabled.=C2=A0 But this is generally not considered a hot path where
+> performance is critical, so should be acceptable.
+>=20
+> This new strategy also makes hardware debugging easier since SETUPs are
+> now assigned in a deterministic manner and in a logical order.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 > ---
->  security/selinux/avc.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> index 7a7f88012865..fc631d1097bc 100644
-> --- a/security/selinux/avc.c
-> +++ b/security/selinux/avc.c
-> @@ -146,9 +146,24 @@ static struct kmem_cache *avc_xperms_data_cachep __r=
-o_after_init;
->  static struct kmem_cache *avc_xperms_decision_cachep __ro_after_init;
->  static struct kmem_cache *avc_xperms_cachep __ro_after_init;
->
-> +/*
-> + * Advantages of this hash design:
-> + *     - Minimized collisions: Different inputs won't produce similar
-> + *       contributions
-> + *     - Bit diffusion: Each constant effectively scrambles input bits
-> + *     - Mathematical guarantee: These constants are theoretically analy=
-zed
-> + *       and empirically validated
-> + *     - Complementarity: Three constants complement each other at the
-> + *       binary level
+
+Hi David,
+
+LGTM
+
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+
+> This is something I wish I would have noticed earlier. This is
+> addressing the same issue we saw recently in the ad7173 driver [1].
+>=20
+> However, since we have added a bunch of new features to the ad7124
+> driver recently, it seems too late to make a change like the one in the
+> link that can be easily backported. So I didn't bother with a Fixes: tag
+> here. Given how many other broken things we found in ad7124 recently,
+> I'm not too worried about rushing out a fix for backporting anyway.
+>=20
+> Instead, I implemented the idea I first proposed in [2]. I find it much
+> easier to follow and reason about than the LRU implementation. And while
+> working on other features, I found the LRU implementation to be annoying
+> because I never knew which setup registers would be assigned to which
+> channels after tweaking the channel configuration. This made debugging
+> more tedious than it could have been. So this seems like an overall
+> improvement to me.
+>=20
+> B4 is picking up all of the recent patches to the ad7124 driver as
+> dependencies, but really the only one that is actually needed for this
+> to apply cleanly is the "iio: adc: ad7124: drop nr field" series.
+>=20
+> [1]:
+> https://lore.kernel.org/linux-iio/20250722-iio-adc-ad7173-fix-setup-use-l=
+imits-v2-1-8e96bdb72a9c@baylibre.com/
+> [2]:
+> https://lore.kernel.org/linux-iio/bcf599e1-7816-4580-a2f9-039b0d3c0c99@ba=
+ylibre.com/
+> ---
+> Changes in v2:
+> - Simplified search algorithm to a single for loop.
+> - Renamed loop variable for channels to "other".
+> - Removed dev_dbg() statements.
+> - Reworded confusing comment.
+> - Link to v1:
+> https://lore.kernel.org/r/20250917-iio-adc-ad7124-change-setup-reg-alloca=
+tion-strategy-v1-1-4e17b3de046b@baylibre.com
+> ---
+> =C2=A0drivers/iio/adc/ad7124.c | 233 ++++++++++++++++++++----------------=
+----------
+> -
+> =C2=A01 file changed, 100 insertions(+), 133 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index
+> 374e39736584f55c1290db3e257dff2c60f884d2..f7bf13ef1c956958569712ed758b707=
+3494e
+> 8c24 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -111,6 +111,8 @@
+> =C2=A0#define AD7124_FILTER_SINGLE_CYCLE	BIT(16)
+> =C2=A0#define AD7124_FILTER_FS		GENMASK(10, 0)
+> =C2=A0
+> +#define AD7124_CFG_SLOT_UNASSIGNED	~0U
+> +
+> =C2=A0#define AD7124_MAX_CONFIGS	8
+> =C2=A0#define AD7124_MAX_CHANNELS	16
+> =C2=A0
+> @@ -176,14 +178,13 @@ enum ad7124_filter_type {
+> =C2=A0};
+> =C2=A0
+> =C2=A0struct ad7124_channel_config {
+> -	bool live;
+> =C2=A0	unsigned int cfg_slot;
+> =C2=A0	unsigned int requested_odr;
+> =C2=A0	unsigned int requested_odr_micro;
+> =C2=A0	/*
+> =C2=A0	 * Following fields are used to compare for equality. If you
+> =C2=A0	 * make adaptations in it, you most likely also have to adapt
+> -	 * ad7124_find_similar_live_cfg(), too.
+> +	 * ad7124_config_equal(), too.
+> =C2=A0	 */
+> =C2=A0	struct_group(config_props,
+> =C2=A0		enum ad7124_ref_sel refsel;
+> @@ -215,14 +216,13 @@ struct ad7124_state {
+> =C2=A0	unsigned int adc_control;
+> =C2=A0	unsigned int num_channels;
+> =C2=A0	struct mutex cfgs_lock; /* lock for configs access */
+> -	unsigned long cfg_slots_status; /* bitmap with slot status (1 means
+> it is used) */
+> +	u8 cfg_slot_use_count[AD7124_MAX_CONFIGS];
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * Stores the power-on reset value for the GAIN(x) registers which
+> are
+> =C2=A0	 * needed for measurements at gain 1 (i.e. CONFIG(x).PGA =3D=3D 0)
+> =C2=A0	 */
+> =C2=A0	unsigned int gain_default;
+> -	DECLARE_KFIFO(live_cfgs_fifo, struct ad7124_channel_config *,
+> AD7124_MAX_CONFIGS);
+> =C2=A0	bool enable_single_cycle;
+> =C2=A0};
+> =C2=A0
+> @@ -367,9 +367,6 @@ static void ad7124_set_channel_odr(struct ad7124_stat=
+e
+> *st, unsigned int channel
+> =C2=A0		=C2=A0 cfg->requested_odr_micro * factor / MICRO;
+> =C2=A0	odr_sel_bits =3D clamp(DIV_ROUND_CLOSEST(fclk, divisor), 1, 2047);
+> =C2=A0
+> -	if (odr_sel_bits !=3D st->channels[channel].cfg.odr_sel_bits)
+> -		st->channels[channel].cfg.live =3D false;
+> -
+> =C2=A0	st->channels[channel].cfg.odr_sel_bits =3D odr_sel_bits;
+> =C2=A0}
+> =C2=A0
+> @@ -404,61 +401,6 @@ static int ad7124_get_3db_filter_factor(struct
+> ad7124_state *st,
+> =C2=A0	}
+> =C2=A0}
+> =C2=A0
+> -static struct ad7124_channel_config *ad7124_find_similar_live_cfg(struct
+> ad7124_state *st,
+> -								=C2=A0 struct
+> ad7124_channel_config *cfg)
+> -{
+> -	struct ad7124_channel_config *cfg_aux;
+> -	int i;
+> -
+> -	/*
+> -	 * This is just to make sure that the comparison is adapted after
+> -	 * struct ad7124_channel_config was changed.
+> -	 */
+> -	static_assert(sizeof_field(struct ad7124_channel_config,
+> config_props) =3D=3D
+> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sizeof(struct {
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 enum ad7124_ref_sel refsel;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 bool bipolar;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 bool buf_positive;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 bool buf_negative;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int vref_mv;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int pga_bits;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int odr_sel_bits;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 enum ad7124_filter_type filter_type;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int calibration_offset;
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int calibration_gain;
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 }));
+> -
+> -	for (i =3D 0; i < st->num_channels; i++) {
+> -		cfg_aux =3D &st->channels[i].cfg;
+> -
+> -		if (cfg_aux->live &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->refsel =3D=3D cfg_aux->refsel &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->bipolar =3D=3D cfg_aux->bipolar &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->buf_positive =3D=3D cfg_aux->buf_positive &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->buf_negative =3D=3D cfg_aux->buf_negative &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->vref_mv =3D=3D cfg_aux->vref_mv &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->pga_bits =3D=3D cfg_aux->pga_bits &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->odr_sel_bits =3D=3D cfg_aux->odr_sel_bits &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->filter_type =3D=3D cfg_aux->filter_type &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->calibration_offset =3D=3D cfg_aux->calibration=
+_offset &&
+> -		=C2=A0=C2=A0=C2=A0 cfg->calibration_gain =3D=3D cfg_aux->calibration_g=
+ain)
+> -			return cfg_aux;
+> -	}
+> -
+> -	return NULL;
+> -}
+> -
+> -static int ad7124_find_free_config_slot(struct ad7124_state *st)
+> -{
+> -	unsigned int free_cfg_slot;
+> -
+> -	free_cfg_slot =3D find_first_zero_bit(&st->cfg_slots_status,
+> AD7124_MAX_CONFIGS);
+> -	if (free_cfg_slot =3D=3D AD7124_MAX_CONFIGS)
+> -		return -1;
+> -
+> -	return free_cfg_slot;
+> -}
+> -
+> =C2=A0/* Only called during probe, so dev_err_probe() can be used */
+> =C2=A0static int ad7124_init_config_vref(struct ad7124_state *st, struct
+> ad7124_channel_config *cfg)
+> =C2=A0{
+> @@ -487,6 +429,21 @@ static int ad7124_init_config_vref(struct ad7124_sta=
+te
+> *st, struct ad7124_channe
+> =C2=A0	}
+> =C2=A0}
+> =C2=A0
+> +static bool ad7124_config_equal(struct ad7124_channel_config *a,
+> +				struct ad7124_channel_config *b)
+> +{
+> +	return a->refsel =3D=3D b->refsel &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->bipolar =3D=3D b->bipolar &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->buf_positive =3D=3D b->buf_posi=
+tive &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->buf_negative =3D=3D b->buf_nega=
+tive &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->vref_mv =3D=3D b->vref_mv &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->pga_bits =3D=3D b->pga_bits &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->odr_sel_bits =3D=3D b->odr_sel_=
+bits &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->filter_type =3D=3D b->filter_ty=
+pe &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->calibration_offset =3D=3D b->ca=
+libration_offset &&
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 a->calibration_gain =3D=3D b->cali=
+bration_gain;
+> +}
+> +
+> =C2=A0static int ad7124_write_config(struct ad7124_state *st, struct
+> ad7124_channel_config *cfg,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int cfg_slot)
+> =C2=A0{
+> @@ -495,13 +452,13 @@ static int ad7124_write_config(struct ad7124_state =
+*st,
+> struct ad7124_channel_co
+> =C2=A0	unsigned int post =3D 0;
+> =C2=A0	int ret;
+> =C2=A0
+> -	cfg->cfg_slot =3D cfg_slot;
+> -
+> -	ret =3D ad_sd_write_reg(&st->sd, AD7124_OFFSET(cfg->cfg_slot), 3, cfg-
+> >calibration_offset);
+> +	ret =3D ad_sd_write_reg(&st->sd, AD7124_OFFSET(cfg_slot), 3,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cfg->calibration_offset);
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> -	ret =3D ad_sd_write_reg(&st->sd, AD7124_GAIN(cfg->cfg_slot), 3, cfg-
+> >calibration_gain);
+> +	ret =3D ad_sd_write_reg(&st->sd, AD7124_GAIN(cfg_slot), 3,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cfg->calibration_gain);
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> @@ -511,7 +468,7 @@ static int ad7124_write_config(struct ad7124_state *s=
+t,
+> struct ad7124_channel_co
+> =C2=A0		(cfg->buf_negative ? AD7124_CONFIG_AIN_BUFM : 0) |
+> =C2=A0		FIELD_PREP(AD7124_CONFIG_PGA, cfg->pga_bits);
+> =C2=A0
+> -	ret =3D ad_sd_write_reg(&st->sd, AD7124_CONFIG(cfg->cfg_slot), 2, val);
+> +	ret =3D ad_sd_write_reg(&st->sd, AD7124_CONFIG(cfg_slot), 2, val);
+> =C2=A0	if (ret < 0)
+> =C2=A0		return ret;
+> =C2=A0
+> @@ -564,7 +521,7 @@ static int ad7124_write_config(struct ad7124_state *s=
+t,
+> struct ad7124_channel_co
+> =C2=A0	 * was requested. It may only be disabled through debugfs for test=
+ing
+> =C2=A0	 * purposes.
+> =C2=A0	 */
+> -	return ad_sd_write_reg(&st->sd, AD7124_FILTER(cfg->cfg_slot), 3,
+> +	return ad_sd_write_reg(&st->sd, AD7124_FILTER(cfg_slot), 3,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FIELD_PREP(AD7124_FILTER_FI=
+LTER, filter) |
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FIELD_PREP(AD7124_FILTER_RE=
+J60, rej60) |
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FIELD_PREP(AD7124_FILTER_PO=
+ST_FILTER, post) |
+> @@ -573,83 +530,86 @@ static int ad7124_write_config(struct ad7124_state =
+*st,
+> struct ad7124_channel_co
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FIELD_PREP(AD7124_FILTER_FS=
+, cfg-
+> >odr_sel_bits));
+> =C2=A0}
+> =C2=A0
+> -static struct ad7124_channel_config *ad7124_pop_config(struct ad7124_sta=
+te
+> *st)
+> +/**
+> + * ad7124_request_config_slot() - Request a config slot for a given conf=
+ig
+> + * @st:		Driver instance
+> + * @channel:	Channel to request a slot for
+> + *
+> + * Tries to find a matching config already in use, otherwise finds a fre=
+e
+> + * slot. If this function returns successfully, the use count for the sl=
+ot is
+> + * increased and the slot number is stored in cfg->cfg_slot.
+> + *
+> + * The slot must be released again with ad7124_release_config_slot() whe=
+n no
+> + * longer needed.
+> + *
+> + * Returns: 0 if a slot was successfully assigned, -EUSERS if no slot is
+> + * available or other error if SPI communication fails.
 > + */
-> +#define C1 0x9E3779B9  /* 2^32 multiplied by Golden Ratio, classic const=
-ant
-> +                        * for Knuth's multiplicative hashing
-> +                        */
-
-Personally, I would put this comment on lines above the #define rather
-than alongside it since it is a multi-line comment. But you can wait
-and see what Paul prefers.
-
-> +#define C2 0x85EBCA77  /* Large prime-like properties */
-> +#define C3 0xC2B2AE35  /* Large prime-like properties, MurmurHash3 const=
-ant */
->  static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
->  {
-> -       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots - 1);
-> +       return (ssid * C1 + tsid * C2 + tclass * C3) & (avc_cache_slots -=
- 1);
->  }
->
->  /**
-> --
-> 2.43.0
->
+> +static int ad7124_request_config_slot(struct ad7124_state *st, u8 channe=
+l)
+> =C2=A0{
+> -	struct ad7124_channel_config *lru_cfg;
+> -	struct ad7124_channel_config *cfg;
+> -	int ret;
+> -	int i;
+> +	unsigned int other, slot;
+> +	int last_used_slot =3D -1;
+> =C2=A0
+> -	/*
+> -	 * Pop least recently used config from the fifo
+> -	 * in order to make room for the new one
+> -	 */
+> -	ret =3D kfifo_get(&st->live_cfgs_fifo, &lru_cfg);
+> -	if (ret <=3D 0)
+> -		return NULL;
+> +	/* Find another channel with a matching config, if any. */
+> +	for (other =3D 0; other < st->num_channels; other++) {
+> +		if (other =3D=3D channel)
+> +			continue;
+> =C2=A0
+> -	lru_cfg->live =3D false;
+> +		if (st->channels[other].cfg.cfg_slot =3D=3D
+> AD7124_CFG_SLOT_UNASSIGNED)
+> +			continue;
+> =C2=A0
+> -	/* mark slot as free */
+> -	assign_bit(lru_cfg->cfg_slot, &st->cfg_slots_status, 0);
+> +		last_used_slot =3D max_t(int, last_used_slot,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->channels[other].cfg.cfg_slo=
+t);
+> =C2=A0
+> -	/* invalidate all other configs that pointed to this one */
+> -	for (i =3D 0; i < st->num_channels; i++) {
+> -		cfg =3D &st->channels[i].cfg;
+> +		if (!ad7124_config_equal(&st->channels[other].cfg,
+> +					 &st->channels[channel].cfg))
+> +			continue;
+> =C2=A0
+> -		if (cfg->cfg_slot =3D=3D lru_cfg->cfg_slot)
+> -			cfg->live =3D false;
+> +		/* Found a match, re-use that slot. */
+> +		slot =3D st->channels[other].cfg.cfg_slot;
+> +		st->cfg_slot_use_count[slot]++;
+> +		st->channels[channel].cfg.cfg_slot =3D slot;
+> +
+> +		return 0;
+> =C2=A0	}
+> =C2=A0
+> -	return lru_cfg;
+> -}
+> +	/* No match, use next free slot. */
+> +	slot =3D last_used_slot + 1;
+> +	if (slot >=3D AD7124_MAX_CONFIGS)
+> +		return -EUSERS;
+> =C2=A0
+> -static int ad7124_push_config(struct ad7124_state *st, struct
+> ad7124_channel_config *cfg)
+> -{
+> -	struct ad7124_channel_config *lru_cfg;
+> -	int free_cfg_slot;
+> +	st->cfg_slot_use_count[slot]++;
+> +	st->channels[channel].cfg.cfg_slot =3D slot;
+> =C2=A0
+> -	free_cfg_slot =3D ad7124_find_free_config_slot(st);
+> -	if (free_cfg_slot >=3D 0) {
+> -		/* push the new config in configs queue */
+> -		kfifo_put(&st->live_cfgs_fifo, cfg);
+> -	} else {
+> -		/* pop one config to make room for the new one */
+> -		lru_cfg =3D ad7124_pop_config(st);
+> -		if (!lru_cfg)
+> -			return -EINVAL;
+> +	return ad7124_write_config(st, &st->channels[channel].cfg, slot);
+> +}
+> =C2=A0
+> -		/* push the new config in configs queue */
+> -		free_cfg_slot =3D lru_cfg->cfg_slot;
+> -		kfifo_put(&st->live_cfgs_fifo, cfg);
+> -	}
+> +static void ad7124_release_config_slot(struct ad7124_state *st, u8 chann=
+el)
+> +{
+> +	unsigned int slot =3D st->channels[channel].cfg.cfg_slot;
+> =C2=A0
+> -	/* mark slot as used */
+> -	assign_bit(free_cfg_slot, &st->cfg_slots_status, 1);
+> +	/*
+> +	 * All of these conditions can happen at probe when all channels are
+> +	 * disabled. Otherwise, they should not happen normally.
+> +	 */
+> +	if (channel >=3D st->num_channels || slot =3D=3D AD7124_CFG_SLOT_UNASSI=
+GNED
+> ||
+> +	=C2=A0=C2=A0=C2=A0 st->cfg_slot_use_count[slot] =3D=3D 0)
+> +		return;
+> =C2=A0
+> -	return ad7124_write_config(st, cfg, free_cfg_slot);
+> +	st->cfg_slot_use_count[slot]--;
+> +	st->channels[channel].cfg.cfg_slot =3D AD7124_CFG_SLOT_UNASSIGNED;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int ad7124_prepare_read(struct ad7124_state *st, int address=
+)
+> =C2=A0{
+> =C2=A0	struct ad7124_channel_config *cfg =3D &st->channels[address].cfg;
+> -	struct ad7124_channel_config *live_cfg;
+> +	int ret;
+> =C2=A0
+> -	/*
+> -	 * Before doing any reads assign the channel a configuration.
+> -	 * Check if channel's config is on the device
+> -	 */
+> -	if (!cfg->live) {
+> -		/* check if config matches another one */
+> -		live_cfg =3D ad7124_find_similar_live_cfg(st, cfg);
+> -		if (!live_cfg)
+> -			ad7124_push_config(st, cfg);
+> -		else
+> -			cfg->cfg_slot =3D live_cfg->cfg_slot;
+> -	}
+> +	ret =3D ad7124_request_config_slot(st, address);
+> +	if (ret)
+> +		return ret;
+> =C2=A0
+> =C2=A0	/* point channel to the config slot and enable */
+> -	cfg->live =3D true;
+> =C2=A0	return ad_sd_write_reg(&st->sd, AD7124_CHANNEL(address), 2,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->channels[address].ain |
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FIELD_PREP(AD7124_CHANNEL_S=
+ETUP, cfg-
+> >cfg_slot) |
+> @@ -692,6 +652,8 @@ static int ad7124_disable_one(struct ad_sigma_delta *=
+sd,
+> unsigned int chan)
+> =C2=A0{
+> =C2=A0	struct ad7124_state *st =3D container_of(sd, struct ad7124_state, =
+sd);
+> =C2=A0
+> +	ad7124_release_config_slot(st, chan);
+> +
+> =C2=A0	/* The relevant thing here is that AD7124_CHANNEL_ENABLE is cleare=
+d.
+> */
+> =C2=A0	return ad_sd_write_reg(&st->sd, AD7124_CHANNEL(chan), 2, 0);
+> =C2=A0}
+> @@ -913,9 +875,6 @@ static int ad7124_write_raw(struct iio_dev *indio_dev=
+,
+> =C2=A0		gain =3D DIV_ROUND_CLOSEST(res, val2);
+> =C2=A0		res =3D ad7124_find_closest_match(ad7124_gain,
+> ARRAY_SIZE(ad7124_gain), gain);
+> =C2=A0
+> -		if (st->channels[chan->address].cfg.pga_bits !=3D res)
+> -			st->channels[chan->address].cfg.live =3D false;
+> -
+> =C2=A0		st->channels[chan->address].cfg.pga_bits =3D res;
+> =C2=A0		return 0;
+> =C2=A0	default:
+> @@ -1058,7 +1017,11 @@ static int ad7124_syscalib_locked(struct ad7124_st=
+ate
+> *st, const struct iio_chan
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+> =C2=A0
+> -		ret =3D ad_sd_read_reg(&st->sd, AD7124_OFFSET(ch-
+> >cfg.cfg_slot), 3,
+> +		/*
+> +		 * Making the assumption that a single conversion will always
+> +		 * use configuration slot 0 for the OFFSET/GAIN registers.
+> +		 */
+> +		ret =3D ad_sd_read_reg(&st->sd, AD7124_OFFSET(0), 3,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 &ch->cfg.calibration_offset);
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+> @@ -1073,7 +1036,7 @@ static int ad7124_syscalib_locked(struct ad7124_sta=
+te
+> *st, const struct iio_chan
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+> =C2=A0
+> -		ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(ch->cfg.cfg_slot),
+> 3,
+> +		ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(0), 3,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 &ch->cfg.calibration_gain);
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+> @@ -1164,7 +1127,6 @@ static int ad7124_set_filter_type_attr(struct iio_d=
+ev
+> *dev,
+> =C2=A0
+> =C2=A0	guard(mutex)(&st->cfgs_lock);
+> =C2=A0
+> -	cfg->live =3D false;
+> =C2=A0	cfg->filter_type =3D value;
+> =C2=A0	ad7124_set_channel_odr(st, chan->address);
+> =C2=A0
+> @@ -1483,7 +1445,6 @@ static int ad7124_setup(struct ad7124_state *st)
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> -	INIT_KFIFO(st->live_cfgs_fifo);
+> =C2=A0	for (i =3D 0; i < st->num_channels; i++) {
+> =C2=A0		struct ad7124_channel_config *cfg =3D &st->channels[i].cfg;
+> =C2=A0
+> @@ -1491,6 +1452,8 @@ static int ad7124_setup(struct ad7124_state *st)
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+> =C2=A0
+> +		cfg->cfg_slot =3D AD7124_CFG_SLOT_UNASSIGNED;
+> +
+> =C2=A0		/* Default filter type on the ADC after reset. */
+> =C2=A0		cfg->filter_type =3D AD7124_FILTER_TYPE_SINC4;
+> =C2=A0
+> @@ -1550,7 +1513,7 @@ static int __ad7124_calibrate_all(struct ad7124_sta=
+te
+> *st, struct iio_dev *indio
+> =C2=A0			 * ad_sigma_delta_set_channel() ->
+> ad7124_set_channel()
+> =C2=A0			 * -> ad7124_prepare_read().
+> =C2=A0			 */
+> -			ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(st-
+> >channels[i].cfg.cfg_slot), 3,
+> +			ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(0), 3,
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0 &st-
+> >channels[i].cfg.calibration_gain);
+> =C2=A0			if (ret < 0)
+> =C2=A0				return ret;
+> @@ -1560,7 +1523,11 @@ static int __ad7124_calibrate_all(struct ad7124_st=
+ate
+> *st, struct iio_dev *indio
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+> =C2=A0
+> -		ret =3D ad_sd_read_reg(&st->sd, AD7124_OFFSET(st-
+> >channels[i].cfg.cfg_slot), 3,
+> +		/*
+> +		 * Making the assumption that a single conversion will always
+> +		 * use configuration slot 0 for the OFFSET/GAIN registers.
+> +		 */
+> +		ret =3D ad_sd_read_reg(&st->sd, AD7124_OFFSET(0), 3,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 &st-
+> >channels[i].cfg.calibration_offset);
+> =C2=A0		if (ret < 0)
+> =C2=A0			return ret;
+>=20
+> ---
+> base-commit: 411e8b72c181e4f49352c12ced0fd8426eb683aa
+> change-id: 20250917-iio-adc-ad7124-change-setup-reg-allocation-strategy-
+> cd1f6bcd8415
+>=20
+> Best regards,
 
