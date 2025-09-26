@@ -1,60 +1,92 @@
-Return-Path: <linux-kernel+bounces-833469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E82BA20CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C158ABA20D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA2C18802AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:20:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78886560A77
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D8613957E;
-	Fri, 26 Sep 2025 00:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ACD72626;
+	Fri, 26 Sep 2025 00:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/wf+Qak"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KH9s3eJ8"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2283272602;
-	Fri, 26 Sep 2025 00:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7046C2B2DA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758845989; cv=none; b=U2voLkL5DCTOOOYSzBcYAXpLN6CoUQO2/U5vXueeDfemJLzygDN7VWGgT3j7+UaeisoxUMyf9itReXN7FUEzJ0bIWZTXqjOnplZCF+ngsRUZKKcG0tFvnV+YUhcd76wDOzz9ewfNit8/hnbGgKI4QST1HBfBP6v1jTT2eQl+5e8=
+	t=1758846348; cv=none; b=qwaA9tcbyWucCCBSnAk/aj1NwEiHahAHtWgi6XKnv9Kqjdb3zS9VXqSgiRfwm7T3TBODUgt3+P8j9P9OlDjZz3GpkuAW3a+LoGXztfM6Nr/YCGB1MO+1VM0MEG/jEGr3+bBblOPjfWU/WeaiDzcQQdbzAD/gPxxfHUbMmAUK1pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758845989; c=relaxed/simple;
-	bh=G5ktSeNiaC8LGS9vWNbPzm2FhwfBnuDcaIAHsflN7RY=;
+	s=arc-20240116; t=1758846348; c=relaxed/simple;
+	bh=1uA3yEOBufbrVgvLobLg87q0BEPdhVFbgKjqu7vMoiE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0b5dCC/2lLAYUAQquDGFhFXvPg0TSZffQ3z4n4hVeqj3Ychrc8OK0XaX47ggoy0wa6b8L6RugkeL6Qs6HrUbioxuq3VZwTlpt44GyAuPjhzUvhYUOwnVH8yZDgvvFHiLfZ0EgAMkPy7GcoRgCL3SipVHCS7TX8wzwf3L2YDln8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/wf+Qak; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00487C4CEF0;
-	Fri, 26 Sep 2025 00:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758845988;
-	bh=G5ktSeNiaC8LGS9vWNbPzm2FhwfBnuDcaIAHsflN7RY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A/wf+Qak/QgiK1GFX0aOrEH6Ki+SIjG4EgpvCCrSNJXqE3vH6KsmEL4oIOkZjV84n
-	 rCnoWH89QMY/FHKD/PH7mezWeKERKxA+DXviKqqLbbBDlQf2HXY6hnr5saLCFVosCB
-	 YtDu79hiAISvF63cOhaXG+PfzhNqbq/o6k+83K8OGyZLThQAHKdWROUQbGPC0MH398
-	 XCbSay0T0IRiodAEEMtZjIt70/h+9Aklg1AKDrg+5RLazksiKKzWT+OxcVpuDjzEdF
-	 Nw2lBHBoj6zHX4YG/liJ5+dWwNjvFyFGKNZO6YMCfovbd3DmZxfWfIhmmcmIIC2DDd
-	 CvSKaeDUaE6/Q==
-Date: Thu, 25 Sep 2025 20:19:43 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Qi Xi <xiqi2@huawei.com>, bobo.shaobowang@huawei.com,
-	xiexiuqi@huawei.com, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-kbuild@vger.kernel.org, Nicolas Schier <nicolas@fjasle.eu>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3] once: fix race by moving DO_ONCE to separate section
-Message-ID: <20250926001943.GA1080352@ax162>
-References: <20250909112911.66023-1-xiqi2@huawei.com>
- <3de848cc-0f01-4999-a4fc-1ff3cc11daa4@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P62RI0vy7DdXDnpSwjHns62vR9yGWmzwOX8imi0nb9tw36t3iBNow7NMupqeLdx8BaCivzVM7RlMprrTtY7ggFjf59CPrNWy1opqDg0aWsrbLvedX6802NDJfH0K+ROksJkb5QQRY5eYOeXxuJjTMB7PHnOdCVo+4nlbgPGCQ6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KH9s3eJ8; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3727611c1bso151673966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758846345; x=1759451145; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NMC81w+JaNK7q2bunYAj8hHN6HLRojIWD4Z/O2pUXCA=;
+        b=KH9s3eJ8ngSnFZyMtS/+GtDeLGLwwF8msuuXbtfZkTvcN1u6BjCsh4mR/JlgG+Ygxb
+         o2lTeffPgrH/w35PoBTEsPOH/Fssb3jZ9AIOPR51pEY8+6cJVBWgAYrMpXC+HUmdE6YD
+         0DBjOQkiXgp1jAzL0TvmKJswFxhaAknFQb3y4U7baoR7u/bj6erhDaUoPLZsQBX/jJjE
+         7gKXEyEzyu2RZkK3wiY6eLSKkjr+d4o99wFOGcPaSzNdqqDAN7CtZwqPN4LjUtKJkZJ8
+         2sJT6F+jX/vOlSwGwLFdAIBMnKZvx8aBH5X0OdDOwrtEYDQAsk1B62Jbja/GQMq1x1Fr
+         ovcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758846345; x=1759451145;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=NMC81w+JaNK7q2bunYAj8hHN6HLRojIWD4Z/O2pUXCA=;
+        b=BfdwjexniYPl3jSi+emiVdFEuwXQpYvVbOoW0Qv5l/kR3syfV/FrK0pkDIi4BWKIZe
+         AyVNgz5DpiTJFrFxYlYNg8VvZZMY0zAXm4+CszbyvRoITEcnAtB3WmqdJ+vhGPMN3LO3
+         KV2vRp7GbNQQaVHf1+Fs5lUpw3bNU3gaRv92hYC6PDI5GKCt5eNpz8fvRQEN4KEDY4Dm
+         5as3wd7rSB0uHpurD7cPjL88rk8LvFNQuUxjFVGnHgFwNvq/H7wPV34RCF3+MzLoQ/zQ
+         wz7wF8Fgc/4Gw/4EvKrpxRipRR/RQ/AsYgw21cJ/smLJIAV1CpKMPGvcu6qNlpcXXqyK
+         w0dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWUtwL4o6AsFcxfFN+O+QFtutItnnWAyC5k2FlYW7LspMxKkS62XI2kbB8d5VPdIL2Emyu8CfrxKFzfZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6vuC8b2bB3eJga4hY98CY3XFVq+Fyzi4LJ6WYED8bWjbOkvEG
+	3VyjWZfUlXW/Lu84zH+dDPTkFFGivEJfH5ZxcFDfclBXRhvQGFJMegHo
+X-Gm-Gg: ASbGncsm5BgTGI5SsXtT6iyooKAvZepPk9ztAE65MkAwem5bm0sYNGopHCFKnXYui36
+	fQ3mJeb7/+k/ZdYcx8cwSiOIebztuemNeX48ntyH+H6mieSi0yU7PcPDFDVvCB0gzSL2XpuJUxc
+	RHx216syZAQw1CMCTVEUd475/TdSBGzUcJjBOi0iyP8K14EeiOqeZYLNXfGgtwy3WafVrptm0L3
+	1pYk5AZ0zp0JlWL0a8TAILJNVsz/Cyy+j5/50SiiLY3GkTZ/U5ZSt6qrFvTKbiENitRZynuJldA
+	dx7+Rlf/5fm/fGEtJOSXqJKG4l/1lTpNsFgICiPCn9DhOzkeIMQ/2KWhPNxJNbLNte7vFmKQh6J
+	AJSlXIznJ3q8oz5fsEM9l89y1TQqPaKifFAKP
+X-Google-Smtp-Source: AGHT+IFrncgRgp1cO6kD9iqXJ1acMD+hFDb5TMf4B2VASiURfzNNm3MkxN444XZaQPI6JQA/i5XruA==
+X-Received: by 2002:a17:907:7e88:b0:b0f:a22a:4c3c with SMTP id a640c23a62f3a-b34bb41ad93mr619135966b.48.1758846344556;
+        Thu, 25 Sep 2025 17:25:44 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353e5d2ddfsm260259566b.14.2025.09.25.17.25.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Sep 2025 17:25:44 -0700 (PDT)
+Date: Fri, 26 Sep 2025 00:25:43 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: SeongJae Park <sj@kernel.org>, Alexander Potapenko <glider@google.com>,
+	akpm@linux-foundation.org, david@redhat.com, vbabka@suse.cz,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, elver@google.com,
+	dvyukov@google.com, kasan-dev@googlegroups.com,
+	Aleksandr Nogikh <nogikh@google.com>
+Subject: Re: [PATCH v2] mm/memblock: Correct totalram_pages accounting with
+ KMSAN
+Message-ID: <20250926002543.fwkf5qldhkapcmqr@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250924100301.1558645-1-glider@google.com>
+ <20250925123759.59479-1-sj@kernel.org>
+ <aNVWzaxq82UI3wWO@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,40 +95,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3de848cc-0f01-4999-a4fc-1ff3cc11daa4@app.fastmail.com>
+In-Reply-To: <aNVWzaxq82UI3wWO@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Thu, Sep 25, 2025 at 08:14:35AM +0200, Arnd Bergmann wrote:
-> I hadn't seen this until your ping and had a look since it
-> touches asm-generic. The patch looks correct to me, thanks for
-> addressing this and for the detailed patch description.
+On Thu, Sep 25, 2025 at 05:50:53PM +0300, Mike Rapoport wrote:
+>On Thu, Sep 25, 2025 at 05:37:59AM -0700, SeongJae Park wrote:
+>> Hello,
+>> 
+>> On Wed, 24 Sep 2025 12:03:01 +0200 Alexander Potapenko <glider@google.com> wrote:
+>> 
+>> > When KMSAN is enabled, `kmsan_memblock_free_pages()` can hold back pages
+>> > for metadata instead of returning them to the early allocator. The callers,
+>> > however, would unconditionally increment `totalram_pages`, assuming the
+>> > pages were always freed. This resulted in an incorrect calculation of the
+>> > total available RAM, causing the kernel to believe it had more memory than
+>> > it actually did.
+>> > 
+>> > This patch refactors `memblock_free_pages()` to return the number of pages
+>> > it successfully frees. If KMSAN stashes the pages, the function now
+>> > returns 0; otherwise, it returns the number of pages in the block.
+>> > 
+>> > The callers in `memblock.c` have been updated to use this return value,
+>> > ensuring that `totalram_pages` is incremented only by the number of pages
+>> > actually returned to the allocator. This corrects the total RAM accounting
+>> > when KMSAN is active.
+>> > 
+>> > Cc: Aleksandr Nogikh <nogikh@google.com>
+>> > Fixes: 3c2065098260 ("init: kmsan: call KMSAN initialization routines")
+>> > Signed-off-by: Alexander Potapenko <glider@google.com>
+>> > Reviewed-by: David Hildenbrand <david@redhat.com>
+>> [...]
+>> > --- a/mm/mm_init.c
+>> > +++ b/mm/mm_init.c
+>> > @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char *tablename,
+>> >  	return table;
+>> >  }
+>> >  
+>> > -void __init memblock_free_pages(struct page *page, unsigned long pfn,
+>> > -							unsigned int order)
+>> > +unsigned long __init memblock_free_pages(struct page *page, unsigned long pfn,
+>> > +					 unsigned int order)
+>> >  {
+>> >  	if (IS_ENABLED(CONFIG_DEFERRED_STRUCT_PAGE_INIT)) {
+>> >  		int nid = early_pfn_to_nid(pfn);
+>> >  
+>> >  		if (!early_page_initialised(pfn, nid))
+>> > -			return;
+>> > +			return 0;
+>> >  	}
+>> 
+>> I found this patch on mm-new tree is making my test machine (QEMU) reports much
+>> less MemTotal even though KMSAN is disabled.  And modifying the above part to
+>> be considered as free success (returning '1UL << order') fixed my issue.
+>> Because the commit message says the purpose of this change is only for
+>> KMSAN-stashed memory, maybe the above behavior change is not really intended?
+>> 
+>> I'm not familiar with this code so I'm unsure if the workaround is the right
+>> fix.  But since I have no time to look this in deep for now, reporting first
+>
+>With DEFERRED_STRUCT_PAGE_INIT we count totalram_pages in
+>memblock_free_all() but actually free them in deferred_init_memmap() and
+>deferred_grow_zone().
+>
+>So returning '1UL << order' is a correct workaround, but the proper fix
+>should update totalram_pages in the deferred path IMHO.
+>
 
-Agreed, I am not super familiar with this infrastructure but this seems
-correct from my basic understanding.
+Maybe I did something similar at [1].
 
-> I think what happened is that nobody felt responsible for
-> applying it, between the networking (which originally
-> added the infrastructure) and kbuild maintainers (Masahiro
-> did the last changes to this bit, but recently handed
-> over maintenance to Nathan).
+But this hit a problem for shmem, since shmem_fill_super() use
+totalram_pages(). And before DEFERRED_STRUCT_PAGE_INIT finish, the size is too
+small, so it can't boot up.
 
-Yeah, that seems likely. For the record, I would not have felt
-responsible for this code even if it was Cc'd to me since this does not
-read as Kbuild material to me.
+Per my understanding, shmem_fill_super() could be invoked after
+memblock_discard(), so it is not proper to refactor to get ram size from
+memblock.
 
-> I've applied the fix to the asm-generic tree for 6.18 now
-> to be sure that it makes it in and gets linux-next testing,
-> but it's not my area either really.
-> 
-> It would be best to have another review though. If Nathan
-> or Andrew want to instead pick it up through one of their
-> trees, please add
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+Could we adjust shmem_default_max_blocks/shmem_default_max_inodes use memblock
+at boot stage and use totalram_pages() after system is fully up? Or any other
+suggestions?
 
-I do not have a strong opinion on whether you or Andrew take it (I think
-it makes sense either way) but I do not think it makes sense for me to
-take it via Kbuild.
+[1]: http://lkml.kernel.org/r/20240726003612.5578-1-richard.weiyang@gmail.com
 
-Cheers,
-Nathan
+>-- 
+>Sincerely yours,
+>Mike.
+
+-- 
+Wei Yang
+Help you, Help me
 
