@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-834049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D40BA3AE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EDDBA3B0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8F6188FD31
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D667D4A3685
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDAB2F5A21;
-	Fri, 26 Sep 2025 12:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04782F7AD8;
+	Fri, 26 Sep 2025 12:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjPiMFiM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLoQJGl1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC1F2F5492;
-	Fri, 26 Sep 2025 12:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360962F6593;
+	Fri, 26 Sep 2025 12:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891000; cv=none; b=WxTkbxfSLId8qY1N1zScL6OiA9ebtcrH4NTJPz0TO/aXv6exrn/I8poAWxvBJIHccnHJriqMW7WbZ+PlOWp17shCMjaXbGoPCtMXnYKmiDWIyHXlTg/SXENNDY/d2fMjB2kV6vKxv8OKgXVe3Nqlk8SdqCcjpS9kDCbO55lWi28=
+	t=1758891006; cv=none; b=HZCUWW129ZF/ExghEMd9Vpd4jUtj4bkSpc85f8ag4WCONsLjj5ktqRnCT3xFaGi5rmwTH3DZUtCo+DcQ+WVXnFhSbJMVvI2H2cYMWNUT494qlOAWUuxY7uCFxFz3djkMXrSIVWSZlwN1JgkBtPoNBclUyNl0RzW4FdLM3EAfzUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891000; c=relaxed/simple;
-	bh=FWnr/zfaATY7ZTr5F73cJEy+iIid5ziQ7oMyK/6QzXw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hiVnVLJvZnTdwx8nt39SX2/Ev3ik7Z+lWKwuCB4Td7Q5YXGwfE7izaPu7RXk4Hiw6b2oPYT+zYDIexgg0cRwGVajqZCPfuwGTafVD6p+WoFHUiRLxHhiI4S2qH7vqZh5vvI/KvZqW+HVAbcqYtraPhbCNXK97r0qvXpUe3l5LsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjPiMFiM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F86C4CEF7;
-	Fri, 26 Sep 2025 12:49:58 +0000 (UTC)
+	s=arc-20240116; t=1758891006; c=relaxed/simple;
+	bh=023QJFGZmApyCBXIrm0J5kNm+LMuusbuLoFq4ytIvfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FaduaESsoA3GEVwKtUqleDQuEUKBbBNBXaHozZMuxHvUdEqG6u1P1J44MUYKAPVJstz1I8ogw6YN/rE3OPWWHZW9n4pKggDeCsUdrLTO190Y1FprRharu1As6Qb423WJaaid3ec82XLbKL66bjtxAw7c3xSTiEwkxrDjZXdFgC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLoQJGl1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FBFC113CF;
+	Fri, 26 Sep 2025 12:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758891000;
-	bh=FWnr/zfaATY7ZTr5F73cJEy+iIid5ziQ7oMyK/6QzXw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BjPiMFiMhFP3Wrsc+s3Z28zPX3YChImz26aJZsLWMQLPTJbZaSTuij9O8w6SelJQ8
-	 PGqVJpucapeplF4e1ZNgu0FFnBUZssRdANMtFDz22ipQqSGWfBTvcEckctUiIcuBHW
-	 JOg1gxShJB5wg9jj3LWLfpZUyxYU1fRyjbz6C/saoDl5I2M1FS6q3Pdg9W20NIq8he
-	 aXqATGOk3rIlsQ/Mhv9LlZynwBg5r5P9J1wqV/3Pfu8R5aWzCKdZB9uM805Apyznqm
-	 qqlEG4OU3xQnwDMqEXBjGvhaLSJddokfkQJYNXkN47KCv6M/cW/26Lfni+i1sVKrFe
-	 J23L5Q5GEarpA==
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250924-lemans-evk-topo-v2-1-7d44909a5758@oss.qualcomm.com>
-References: <20250924-lemans-evk-topo-v2-1-7d44909a5758@oss.qualcomm.com>
-Subject: Re: [PATCH v2] ASoC: qcom: sc8280xp: use sa8775p/ subdir for
- QCS9100 / QCS9075
-Message-Id: <175889099809.84679.3269862439261126656.b4-ty@kernel.org>
-Date: Fri, 26 Sep 2025 13:49:58 +0100
+	s=k20201202; t=1758891005;
+	bh=023QJFGZmApyCBXIrm0J5kNm+LMuusbuLoFq4ytIvfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GLoQJGl1cRrhWUs8qJO1wGZZwpBwYPcAKoQ/PmgIERSKgIk5UvotPcmUCwS7mhyg+
+	 rMtCLpNbueAqWVqerO2EkgfLtIQBo9KJkMQbRIy/b/181hVNECb5Dmvy/SR/FYwlcn
+	 wTWkpEVZOvfzCmU4fhBaezd3laOI50/muQGii50+4icMQdypZkMOXtKn+Ng3XxLQfq
+	 VvgdUWg37vomdeVgNXp81zcmMmBcNiHUk4958xXxDYtCuNa93DisazI+lySdFQBjnd
+	 BaU3WjarkDJ4nCvN9RpmiWmeuE+IROwUQ/rrtxNmBTIe394CiXOmwtV524HdbNPWq6
+	 uG05D4QYsHlsg==
+Date: Fri, 26 Sep 2025 13:49:59 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Maor Gottlieb <maorg@nvidia.com>,
+	Moshe Shemesh <moshe@nvidia.com>,
+	Akiva Goldberger <agoldberger@nvidia.com>
+Subject: Re: [PATCH net-next] net/mlx5: Expose uar access and odp page fault
+ counters
+Message-ID: <aNaL90oj8vyq9-A9@horms.kernel.org>
+References: <1758797130-829564-1-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-56183
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758797130-829564-1-git-send-email-tariqt@nvidia.com>
 
-On Wed, 24 Sep 2025 22:34:02 +0300, Dmitry Baryshkov wrote:
-> All firmware for the Lemans platform aka QCS9100 aka QCS9075 is for
-> historical reasons located in the qcom/sa8775p/ subdir inside
-> linux-firmware. The only exceptions to this rule are audio topology
-> files. While it's not too late, change the subdir to point to the
-> sa8775p/ subdir, so that all firmware for that platform is present at
-> the same location.
+On Thu, Sep 25, 2025 at 01:45:30PM +0300, Tariq Toukan wrote:
+> From: Akiva Goldberger <agoldberger@nvidia.com>
 > 
-> [...]
+> Add three counters to vnic health reporter:
+> bar_uar_access, odp_local_triggered_page_fault, and
+> odp_remote_triggered_page_fault.
+> 
+> - bar_uar_access
+>     number of WRITE or READ access operations to the UAR on the PCIe
+>     BAR.
+> - odp_local_triggered_page_fault
+>     number of locally-triggered page-faults due to ODP.
+> - odp_remote_triggered_page_fault
+>     number of remotly-triggered page-faults due to ODP.
+> 
+> Example access:
+>     $ devlink health diagnose pci/0000:08:00.0 reporter vnic
+> 	vNIC env counters:
+> 	total_error_queues: 0 send_queue_priority_update_flow: 0
+> 	comp_eq_overrun: 0 async_eq_overrun: 0 cq_overrun: 0
+> 	invalid_command: 0 quota_exceeded_command: 0
+> 	nic_receive_steering_discard: 0 icm_consumption: 1032
+> 	bar_uar_access: 1279 odp_local_triggered_page_fault: 20
+> 	odp_remote_triggered_page_fault: 34
+> 
+> Signed-off-by: Akiva Goldberger <agoldberger@nvidia.com>
+> Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-Applied to
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: qcom: sc8280xp: use sa8775p/ subdir for QCS9100 / QCS9075
-      commit: ba0c67d3c4b0ce5ec5e6de35e6433b22eecb1f6a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+...
 
