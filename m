@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-834385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6164BBA4972
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8223ABA4978
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FCD3B2C7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E20F3AD80B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06443248F4E;
-	Fri, 26 Sep 2025 16:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4682472B6;
+	Fri, 26 Sep 2025 16:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbrtBm1b"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay+BidnN"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEE52472B6
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52139242D65
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903499; cv=none; b=m8vqGcKzD5T483XylYv2yTrsxKr5eG7PDUkcTnWuU1kf52IRE7z5jj+ITYL2nhbIyiJ4/k9RQBt1SSk1lL4rOVWs+FAkA/VB8IIIwGTWZMs11NYGb+eXQaQQ0dphDdSwOq09AZtkwCZrirU7YuOe+WBV13AnPL5DLvF1bAYYTJM=
+	t=1758903549; cv=none; b=dwuK6crNR+flDHoBap3oNGV7XerWVSnIIfuVOpLqj7tb1qgemfCmCmmLsEDyBKdhrAxRfjKvhtFtTK3l0V6j85S+cbdVCZQH9Iv+S4iCc6/EFgomABQ5q1epe+6zelchhO9CZRBjqqmFoVwGMrUvrf03t7hJVoXa8bDb41eVf88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903499; c=relaxed/simple;
-	bh=S1GTduvaoLk6gEzu62VYZTVkf6MEF6lfNFpCGY60rSk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VLnnunENqokiZC15vpeJpXVoW3Qx9VaY4AGPgXzj0xUYJCfRESyzZYOsVPLvjL6mdwaqTWi4GTsm/nApbEkiw4DwWEqvqcpKxePIwNRp8Hs5ZyXwB2tPAZ/k0pI0KfOdyI34eH37LowWWvzf44PUpIrNkUhqnjyt1fh/vDRbZZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbrtBm1b; arc=none smtp.client-ip=209.85.219.52
+	s=arc-20240116; t=1758903549; c=relaxed/simple;
+	bh=kyP0o37MX2lUHBzC997IW8hkhObR2L3+qn3wFYoszlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sjINBMgip2sYWS1lEp+LD5sbCZFqlWARELmXT353m/DsF3wZsZHToIZvOwRSTWiVQHtOurxX/6iVVIforE9nsd5A+vVm6zCv63+MIacZ+QptWRK/JkOzTHzcOP1sIUgAzFhGKaPgk6aQegGs3wudyRrxrwdf6QR7sRZWWLl22yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay+BidnN; arc=none smtp.client-ip=209.85.215.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-71b9d805f2fso19075876d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:18:16 -0700 (PDT)
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-b5241e51764so2079330a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:19:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758903496; x=1759508296; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7lEG3WGSz305Arms624ajjoShLogPxrkuH6t9XOTDc4=;
-        b=QbrtBm1brKS+9OArHU+Wsh8VepzcFtQ/ilwrkVUP60dljLgbTFFRT5RRKFoknWMong
-         TczeHXdXoiXoleoBemC4hIyjQENSxEPxeR2+BVu6P9MY0Vh7NXg6Ef3mCCPQ3DGfHHaK
-         Clens2WdBHkuOXWdit6YySbUPbQ2oMAnBHpk83Xh6rjyKf+8ZJpJW0NFrfcf/sL0gCtQ
-         nKv4XCAmjRA4LS0aEyHSj4cty1txOFJuRHBVzb//cfKzT8heX/y769yLE29am5kCccpv
-         501SoN9+I9nZpbh9jLbG5EfkajR62pNXUIxsctjcdM4ecM2RWdy/Qbu3UjAonXWTFvhO
-         /8Gw==
+        d=gmail.com; s=20230601; t=1758903548; x=1759508348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h1W4qixDMwh1UINVBHbI1zU46f9ziZLnkZGt4es5DdI=;
+        b=Ay+BidnNS7OWw1Axn1gS7ZyW25wkfPc4CPyqiPuJqqGs5UZjSpRfXUcI82W0fNd78R
+         OZiqkLUSe1dDO4/Nl3elKZhiPzvVwk3lywXMEPaTZz0qk5Q2/ylB8fq7CkmdheL/YBE+
+         Rq1mwY8u5Af7wcrwM5AS4ilZyIqI8wP2W/0hHSGCGgOi9iXkF7ueIBtT/eMRDncSLEkJ
+         RpUAgPRJl3J8r4cbbVC9k8wlHGmpxkQVgWYD28XgXGeUwbR8SPbDerSdb/6YFXzQok/k
+         F8ZA0VWxMR8MgBURsMnzrb2a+lb485f0TLbyNRJZtG1mBDZ3Q0KDJDUt0A8Zs6T87Q0H
+         bbFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758903496; x=1759508296;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7lEG3WGSz305Arms624ajjoShLogPxrkuH6t9XOTDc4=;
-        b=OX396QgSyy1iEixLkWnANJPu+MZzftvuwVnC157x6XX5IzNjvq1OQDWR/KtLOrSp98
-         yFk45QzOo8HHcljVkmcXX3as4pnB3l7xVhdS4JiMYrf9NweBG3VBDyX/pW1NbyKBfyRq
-         k0w2Rwfev3Vwg2ucJTvqa1L2XFJjOksVqNhxCG7D+HE6MR26/M5E14Y/OjbwUoOuLa2w
-         pnKd4I138ArjdK1Q0ytZ7nytOJtePgzCaYPY6GaZeCMeApeHgGczJAr7Vdzd4I0zDIQH
-         JieSD3dMVq6eu+8XP/NsAPKwY/0SyiYuZy5UxzcywfuYm+qyNPwrnQA4j/jEKi+VqfZG
-         OtXA==
-X-Gm-Message-State: AOJu0YzBtgflmeXIH/3ARL1hw/Q3SjTQuA89BK/MVZPMuB+6F9UVee+K
-	JELO+rIRUY9MFt/MqSq+bD/7Rv1a45e6WKBFzfd2dXcWA/ooaBPakwqRfUnt/CXo3P3zfwBwa8z
-	82o7zodPKrcSrH7WbFwd3sgD9Qw4rAsQ=
-X-Gm-Gg: ASbGncsTU4QSwoFMjEk6PTewrwEkFFHbPSiGXezh7rnJJtx9HwoijUZMz/yK0j84vdv
-	Hh/kuo+04Vwr7wKuNGvuvyNhLehzgednG6cYUZx0e3j6X4sXAx33n55RxtqshfHb6c8NgGC2csq
-	E/fualcmGmh2WHtzsrW2IAhrzsbkgD20nL6LdZaq47X8geSLFUb7K7Lj5wH5gvWzQKsPrAqtAcL
-	mX1jHB+K/PsD252zAyG30kCw2/3JKAzxLUtaWSLCNYR4+HU9cqiXyiPKUDdN4ntHWY3cnzxJQw0
-	0t9hYPp5AIhELReYl7Rbu1M+cuOxvCIqD3RADgdZoG3Wz1vVummBp6JBvEHlET/HSSQp1ea0OhY
-	bALn3uoeK6z7KZrxU1caaDj+RDKJW3cmWOjvHpjuoCp0=
-X-Google-Smtp-Source: AGHT+IGC3tiqbCfTYRmntqx+NLKt+dWS84jJKMNkbhRWzPUBrzwjyNVDO2kCof/FXRFfnnm77JUQ8sQHe5MQkjONu3Q=
-X-Received: by 2002:ad4:5dec:0:b0:7cd:91ff:6215 with SMTP id
- 6a1803df08f44-7fc42fb6770mr92298746d6.61.1758903495323; Fri, 26 Sep 2025
- 09:18:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758903548; x=1759508348;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h1W4qixDMwh1UINVBHbI1zU46f9ziZLnkZGt4es5DdI=;
+        b=VGHsvWmEqDjl0JKCTnViByC9nN6qrgOEJ3GFL7ykaXKfW0GewdsI10Py7QYPuHCIwQ
+         3cTNWYzkDfCDZny/UCibpOCaQLNlFMiPisaMtsRk/0m/Gzy3XWJP7Rvpps3FR0U83OKR
+         kV5/i/HGcblxYWMO9GdpOW05xUBTSs/2KSnYMdYO35iGz4bq9LLVfrOR7G88ji+RlshR
+         LP1MlJ39UviG2+1thT5IQg5qYfx+Jza3nR9aE0h85y9Qov+VUG9sfuT9SpuXJtg5xiRy
+         cU5agu3RUXiKRkK4WwsMhX5W+DpDKoRCB8QbWRL8X22sjN08vmguT+TrVPZhWM7PS59K
+         HgMg==
+X-Gm-Message-State: AOJu0YzuVFQ0R2D9nP6EArsSNQtR3cFAsRitNfHpu6+jI0v3qRuyMral
+	uAzRMbqstB4JRgIW8/7KwP/z2tqA0WXlSH7cqqkeih+sx4vmYj7d3C3q5fS7gNV0aJv0Bgp90xu
+	P/APRx9QmfmubXlhthiZ50gwua0T9098=
+X-Gm-Gg: ASbGncuy3lFggo2CyncFeMv/uK6XScWlyqAAPpHTOzmdV6QsFTLYP7C963tWvhoi3FC
+	/LY2hhaRQK0XW8ttcSEmxtDemxmK6m5cAZ+jVyx4f5qasbCf2DAdeJq6ZF+1MoHBjQXQzS0Sj7J
+	pQvhzRy3RRUOsdVBLOyHsk5f4sNnKcA6bCR27116qBmcgELv1clVuUm1rQLG4fxPJPHWK8BzKjq
+	hE0IIY=
+X-Google-Smtp-Source: AGHT+IE3VCpZaamNq/ddeBCSpBzW+N+Aa9xRpmDejic3U82kHi9pSkULBEsKk6fGVE1RWfoTM1NkRg/9xsbSXxbmD9w=
+X-Received: by 2002:a17:903:ac5:b0:269:b2ff:5c0e with SMTP id
+ d9443c01a7336-27ed4a4959bmr82499145ad.46.1758903547539; Fri, 26 Sep 2025
+ 09:19:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 26 Sep 2025 11:18:04 -0500
-X-Gm-Features: AS18NWAQHcShMAHSei_C5dFYvflhD2ibYmlqEQVJhJMuBjTPuMnePdqGeUk7MNI
-Message-ID: <CAH2r5muDMKFMMtG1_rUK6-h6T34qM4miRUL+hCQh72r-TrNoow@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+References: <20250926092832.1457477-1-jianyungao89@gmail.com> <20250926110047.GB3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250926110047.GB3245006@noisy.programming.kicks-ass.net>
+From: =?UTF-8?B?6auY5bu65LqR?= <jianyungao89@gmail.com>
+Date: Sat, 27 Sep 2025 00:18:55 +0800
+X-Gm-Features: AS18NWDnDlmT00QTwGQ02_21yOFw9kNRMNpkdrYWYLQRXzqTYgMlFfc8EP9ik74
+Message-ID: <CAHP3+4Cr4pODFG_p9FywvgTQPT6v4jhbsdxzuV=q_YTWF9m4fw@mail.gmail.com>
+Subject: Re: [PATCH] sched: Fix some spelling mistakes in the scheduler module
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please pull the following changes since commit
-07e27ad16399afcd693be20211b0dfae63e0615f:
+On Fri, Sep 26, 2025 at 7:00=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Fri, Sep 26, 2025 at 05:28:32PM +0800, jianyun.gao wrote:
+> > The following are some spelling mistakes existing in the scheduler
+> > module. Just fix it!
+> >
+>
+> >   borken -> broken
+>
+> That is not a typo.
 
-  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
+OK. I will drop it in the PATCH v2.
 
-are available in the Git repository at:
+>  Also, in general I;m not really a fan of spelling
+> patches.
+>
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.17rc7-smb3-client-fixes
+Me too. But this was my first Linux kernel patch. It was also the
+beginning of my contributions to the kernel. :)
 
-for you to fetch changes up to fbe2dc6a9c7318f7263f5e4d50f6272b931c5756:
-
-  smb: client: fix wrong index reference in smb2_compound_op()
-(2025-09-26 09:45:16 -0500)
-
-----------------------------------------------------------------
-Two smb3 client fixes
-- Fix unlink bug
-- Fix potential out of bounds access in processing compound requests
-----------------------------------------------------------------
-Paulo Alcantara (1):
-      smb: client: handle unlink(2) of files open by different clients
-
-Sang-Heon Jeon (1):
-      smb: client: fix wrong index reference in smb2_compound_op()
-
- fs/smb/client/smb2inode.c | 101
-+++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 89 insertions(+), 12 deletions(-)
-
-
--- 
-Thanks,
-
-Steve
+Best regards !
 
