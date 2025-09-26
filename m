@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-834426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FC6BA4AA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:36:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CD6BA4AB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B32431697C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B673B9A97
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC3B242D9A;
-	Fri, 26 Sep 2025 16:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D8F2EAD16;
+	Fri, 26 Sep 2025 16:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ee90gbZT"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UQc9EmEw"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B5726CE37
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E8523506F
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904510; cv=none; b=XNua1ANJFh0lA4+gyUSwWyzX+0snk6pCqfsgXQy43xBeKkZZdxcmJ6lUO0N72ZGBeW2ffIxzKf4eU60YiY95XcsTNOMlUug1CHg3Vvxw2i5MZrVMjk0lEr1Sxv2XSv5n3DMmZGWyDhzznNcg2WSZPocVqDcQb0n3kdmaiBhqFN4=
+	t=1758904511; cv=none; b=A37gICfKwubiqqUU12zrk4Zdx279GDk5pQbzPY8L9MMUi20pz/eI6s3bUx27g7ApQgV3nJdVr1vKvQQ+H5PiMnNNteM1i8Zky16gKg62FpGE+TD3jpsYWybPXQPurX0ZezJ4VXFrqc6HewxXXkp1bMxZ07EqyEbT85K+iPOMRW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904510; c=relaxed/simple;
-	bh=2wF+7JJF3EO22vRtbVo5pY7DnwC4RoTBohnnYGq7J2o=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p89MCmBevEHWYQRyeCJIHArY4t9bgPV0EyLXP3ZYAwiUADm/gEMfKPZgeLBnT7KV9K3M2EE++YHml1hQlEbK43TELwxOvYEMZC1ERpd4lx8uJqSM6g3eZoRYaY4a+FJ6NTu0PSd9E7XO6imsGl+rMaaau8/ad75unbNDwdfoIC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ee90gbZT; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1758904511; c=relaxed/simple;
+	bh=Tjtf+qkmGfwEJxwpsS39gFlyPr9z1XY1oZupy2jZouE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=g6DXrOdKBH+iRqxPNT5vyupT6S8arJGqCl2osTbL5gf7btOQrBmPZquNXUcfwVwMFEAiXD6+eL89HNx5Ow6JQGNzggMp0feRv1UtnOWMWZJ46n7++5OaYjWaAYDSZqtgTctjLDb9Fl9KPFYfZBzoDLY7aAL3dhqVtWwDM7T0pYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UQc9EmEw; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 2878A1A0FF4;
-	Fri, 26 Sep 2025 16:35:05 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 686704E40E11;
+	Fri, 26 Sep 2025 16:35:07 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DC49D606B5;
-	Fri, 26 Sep 2025 16:35:04 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 505CB102F1829;
-	Fri, 26 Sep 2025 18:34:51 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3EBD9606B5;
+	Fri, 26 Sep 2025 16:35:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 40313102F18CE;
+	Fri, 26 Sep 2025 18:35:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758904503; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=dP7cb8o2uFEBoyofslfnxXahVZmwUp4Kz0PnzXuPHDk=;
-	b=Ee90gbZTPY8VrFruFBP8JzReQjP4yCTGgwmdTSnbPEtwnphM1TMkESZnek4Vm+iqd+UceN
-	Q6MtWKkCC8gRBkETAKXArcBZ8OFo/wTJTvq4bIRPnTDrSbcjKkBJEyawljxr9a27PYJPli
-	XJwK3upveKCpexllbgsQ6qWo4bDtaLZRE9yvnOm6Nb/JLHtdQYcdqwwAPI2dwKB6/tMweo
-	6JErhkMbI0kKeb/YslsU/tRx8uHa2TBLGCSO6kXby0pR9nGZcJUijToO6pKK1HQfPagMiT
-	9XUrMO0AzgSoSqPOtCVYmq31VcA4kCGb05ex6506qNc0CHr59J1fPkJ4E8NqQw==
+	t=1758904506; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=6xVw/khtwiX9YEqRoJlZJqW1RWke6AJC8b2cUTe6EF4=;
+	b=UQc9EmEwq8CeuvRpDVvNT+LRASjb0Nqr+P7f9zDqVMuUWvFi4hWxc1WDDzwGItwtZWJNdt
+	TpFuTAAIbE+A5eO4BXnILDMzL5YC2H1dJUM6BEVk39vQ+gegdqm5HWRmCkr1o5X8J7q5+f
+	kdq5fdMjbc/mQzZxLASB8sPjdXb9OhhSAsZ1+xOu54z3urts6qVMnfznsTEko9x9isPI8q
+	6TKsKDQLmdm77Tzdq4S41ryzJ4KCXKn2SPmR88UXMGCntvX7kateFedm4jNV6ihl1JLh+P
+	tZB2VUFFqKMv2F5VqNWygXcCtwP/ReY+ZqmE37GBiXbmVvaheCAa3ncm+mR1Yg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH v2 0/2] drm/bridge: handle gracefully atomic updates during
- bridge removal
-Date: Fri, 26 Sep 2025 18:33:26 +0200
-Message-Id: <20250926-drm-bridge-atomic-vs-remove-v2-0-69f7d5ca1a92@bootlin.com>
+Date: Fri, 26 Sep 2025 18:33:27 +0200
+Subject: [PATCH v2 1/2] drm/bridge: add drm_bridge_unplug() and
+ drm_bridge_enter/exit()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,12 +58,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAFbA1mgC/42NTQ6CMBCFr0Jm7ZhSQqyuvAdh0Z9BJrGMaUmjI
- dzdyglcfu+9fG+DTIkpw63ZIFHhzLJU0KcG/GyXByGHyqCV7pVRBkOK6BKH2thVInssGRNFKYR
- tuDhXl97QBNXwSjTx+7APY+WZ8yrpc5yV9pf+5y0tKrS9pmvXOWWsuTuR9cnL2UuEcd/3L8AHF
- JHIAAAA
-X-Change-ID: 20250808-drm-bridge-atomic-vs-remove-1d7bb202c8ef
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250926-drm-bridge-atomic-vs-remove-v2-1-69f7d5ca1a92@bootlin.com>
+References: <20250926-drm-bridge-atomic-vs-remove-v2-0-69f7d5ca1a92@bootlin.com>
+In-Reply-To: <20250926-drm-bridge-atomic-vs-remove-v2-0-69f7d5ca1a92@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
  Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
  Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
@@ -78,73 +77,129 @@ Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-This is a first attempt at gracefully handling the case of atomic updates
-happening concurrently to physical removal of DRM bridges.
+To allow DRM bridges to be removable, add synchronization functions
+allowing to tell when a bridge hardware has been physically unplugged and
+to mark a critical section that should not be entered after that.
 
-This is part of the work towards removal of bridges from a still existing
-DRM pipeline without use-after-free. The grand plan was discussed in [0].
-Here's the work breakdown (➜ marks the current series):
+This is inspired by the drm_dev_unplugged/enter/exit() functions for struct
+drm_device.
 
- 1. … add refcounting to DRM bridges (struct drm_bridge)
-    (based on devm_drm_bridge_alloc() [0])
-    A. ✔ add new alloc API and refcounting (v6.16)
-    B. ✔ convert all bridge drivers to new API (v6.17)
-    C. ✔ kunit tests (v6.17)
-    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
-         and warn on old allocation pattern (v6.17)
-    E. … add get/put on drm_bridge accessors
-       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
-            (drm-misc-next)
-       2. ✔ drm_bridge_get_prev_bridge() (drm-misc-next)
-       3. ✔ drm_bridge_get_next_bridge() (drm-misc-next)
-       4. ✔ drm_for_each_bridge_in_chain() (drm-misc-next)
-       5. … drm_bridge_connector_init
-       6. …  protect encoder bridge chain with a mutex
-       7. of_drm_find_bridge
-       8. drm_of_find_panel_or_bridge, *_of_get_bridge
-    F. ✔ debugfs improvements
-       1. ✔ add top-level 'bridges' file (v6.16)
-       2. ✔ show refcount and list removed bridges (drm-misc-next)
- 2. ➜ handle gracefully atomic updates during bridge removal
- 3. … DSI host-device driver interaction
- 4. removing the need for the "always-disconnected" connector
- 5. finish the hotplug bridge work, moving code to the core and potentially
-    removing the hotplug-bridge itself (this needs to be clarified as
-    points 1-3 are developed)
-
-The idea was proposed by Maxime [1] and is based on the existing
-drm_dev_enter/exit() already existing for the DRM device.
-
-This small series implements the core mechanism in drm_bridge.c and uses it
-in the ti-sn65dsi83 driver. This prevents usage of device resources by
-various code paths that can happen concurrently to unplug of the SN65DSI8x
-bridge.
-
-[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
-[1] https://lore.kernel.org/all/20250106-vigorous-talented-viper-fa49d9@houat/
-
+Suggested-by: Maxime Ripard <mripard@kernel.org>
+Link: https://lore.kernel.org/all/20250106-vigorous-talented-viper-fa49d9@houat/
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
-Changes in v2:
-- No changes to patch 1, discussion pending
-- Use devres instead of a flag in patch 2
-- Link to v1: https://lore.kernel.org/r/20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com
+ drivers/gpu/drm/drm_bridge.c | 58 ++++++++++++++++++++++++++++++++++++++++++++
+ include/drm/drm_bridge.h     | 12 +++++++++
+ 2 files changed, 70 insertions(+)
 
----
-Luca Ceresoli (2):
-      drm/bridge: add drm_bridge_unplug() and drm_bridge_enter/exit()
-      drm/bridge: ti-sn65dsi83: protect device resources on unplug
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index d031447eebc955efcf1e018d39c015b62b969eae..3ebf6cc820e058a67f712763c341a75c671c82d1 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -27,6 +27,7 @@
+ #include <linux/media-bus-format.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/srcu.h>
+ 
+ #include <drm/drm_atomic_state_helper.h>
+ #include <drm/drm_bridge.h>
+@@ -200,6 +201,63 @@
+ static DEFINE_MUTEX(bridge_lock);
+ static LIST_HEAD(bridge_list);
+ 
++DEFINE_STATIC_SRCU(drm_bridge_unplug_srcu);
++
++/**
++ * drm_bridge_enter - Enter DRM bridge critical section
++ * @dev: DRM bridge
++ * @idx: Pointer to index that will be passed to the matching drm_bridge_exit()
++ *
++ * This function marks and protects the beginning of a section that should not
++ * be entered after the bridge has been unplugged. The section end is marked
++ * with drm_bridge_exit(). Calls to this function can be nested.
++ *
++ * Returns:
++ * True if it is OK to enter the section, false otherwise.
++ */
++bool drm_bridge_enter(struct drm_bridge *bridge, int *idx)
++{
++	*idx = srcu_read_lock(&drm_bridge_unplug_srcu);
++
++	if (bridge->unplugged) {
++		srcu_read_unlock(&drm_bridge_unplug_srcu, *idx);
++		return false;
++	}
++
++	return true;
++}
++EXPORT_SYMBOL(drm_bridge_enter);
++
++/**
++ * drm_bridge_exit - Exit DRM bridge critical section
++ * @idx: index returned by drm_bridge_enter()
++ *
++ * This function marks the end of a section that should not be entered after
++ * the bridge has been unplugged.
++ */
++void drm_bridge_exit(int idx)
++{
++	srcu_read_unlock(&drm_bridge_unplug_srcu, idx);
++}
++EXPORT_SYMBOL(drm_bridge_exit);
++
++/**
++ * drm_bridge_unplug - unplug a DRM bridge
++ * @dev: DRM bridge
++ *
++ * This tells the bridge has been physically unplugged and no operations on
++ * device resources must be done anymore. Entry-points can use
++ * drm_bridge_enter() and drm_bridge_exit() to protect device resources in
++ * a race free manner.
++ */
++void drm_bridge_unplug(struct drm_bridge *bridge)
++{
++	bridge->unplugged = true;
++
++	synchronize_srcu(&drm_bridge_unplug_srcu);
++}
++EXPORT_SYMBOL(drm_bridge_unplug);
++
+ static void __drm_bridge_free(struct kref *kref)
+ {
+ 	struct drm_bridge *bridge = container_of(kref, struct drm_bridge, refcount);
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 76e05930f50e00f6ef5999b3f5a476215951028d..6b325de9e41ba7ee3649eaa60dfe105d6155f824 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -1143,6 +1143,14 @@ struct drm_bridge {
+ 	 */
+ 	struct kref refcount;
+ 
++	/**
++	 * @unplugged:
++	 *
++	 * Flag to tell if the bridge has been unplugged.
++	 * See drm_bridge_enter() and drm_bridge_unplug().
++	 */
++	bool unplugged;
++
+ 	/** @driver_private: pointer to the bridge driver's internal context */
+ 	void *driver_private;
+ 	/** @ops: bitmask of operations supported by the bridge */
+@@ -1278,6 +1286,10 @@ drm_priv_to_bridge(struct drm_private_obj *priv)
+ 	return container_of(priv, struct drm_bridge, base);
+ }
+ 
++bool drm_bridge_enter(struct drm_bridge *bridge, int *idx);
++void drm_bridge_exit(int idx);
++void drm_bridge_unplug(struct drm_bridge *bridge);
++
+ struct drm_bridge *drm_bridge_get(struct drm_bridge *bridge);
+ void drm_bridge_put(struct drm_bridge *bridge);
+ 
 
- drivers/gpu/drm/bridge/ti-sn65dsi83.c | 85 ++++++++++++++++++++++++++++-------
- drivers/gpu/drm/drm_bridge.c          | 58 ++++++++++++++++++++++++
- include/drm/drm_bridge.h              | 12 +++++
- 3 files changed, 138 insertions(+), 17 deletions(-)
----
-base-commit: 7acbe30813f04cccf7b2e8b571eb7936cfec0a87
-change-id: 20250808-drm-bridge-atomic-vs-remove-1d7bb202c8ef
-
-Best regards,
 -- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+2.51.0
 
 
