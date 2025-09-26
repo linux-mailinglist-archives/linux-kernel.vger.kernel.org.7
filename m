@@ -1,106 +1,148 @@
-Return-Path: <linux-kernel+bounces-834560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD56BA4F15
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:05:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7FABA4F27
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C6916A8B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:05:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F53189C255
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EABC1FDA8E;
-	Fri, 26 Sep 2025 19:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D74A23E347;
+	Fri, 26 Sep 2025 19:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EvkUy7jw"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Bxz/9gbw"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208017260A
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32238221F2D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758913510; cv=none; b=T1HbDBL43Ku6fPOp+xzZfJlsmn26eNklNvid/4ulT9dQb7qkX3z9bk1wrNk2blRPq7ArJalVbwF1kduu3JPYC0QhFsiKpQl1SKVpV57KJKqEsGyPseazo0QL/jKMXcVokU0CEihnbmSPtVydiOp/1SMeBJDgjgEFxYjTSXDvpWA=
+	t=1758913799; cv=none; b=WnIDKlnyXVPOQbPVFRicPZkvlNndjOOmkzzKr0M2vqxeXrfLbJUVwApX88w46q2BccTlYaOT+jJ4D5tiGIGZyfcDp8Js/deg91v5/sqX2sDEZcOYgjby/D/pllxn7j1FwX7C4Td2WRy18LQavfnn+6LOcYR8k9XaO0ZIrj22c5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758913510; c=relaxed/simple;
-	bh=EhdMpJ1U+FHIoR7XZ/yj6clo2zTQ1p3YFH2wb3Eeqwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iYmAmSu6FHAVYqg43p6kPhEYiYM7McJYz6yg0xDTve/iyYTqRSMEjy6d43P1mNtjSVOqm/K7hXYj18hxUBSStXWAjYORoIrsk5GyyWAH7vALn0+7jWRtkvwtn/bF8bKCtvLmheMwzsVEV2kE+AGn7uG4kD90p0L0XfCeIRtNwFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EvkUy7jw; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-743ba48eb71so43471027b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:05:08 -0700 (PDT)
+	s=arc-20240116; t=1758913799; c=relaxed/simple;
+	bh=Q62ZDzIToQkxvjjbMJvNCic+DFZ6WhJVsANbaVcm4oA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=npBXRai1dVakXWoioqqPT+Oc0xOFPunwya7uwdjpWTv3V5jg3GRE1K5QPTXO7Shew0m9fw4UkjAXSphPa3YXcnsTPbqcT6lgVUqyt2FKV8eRVWAUJxuq/ZxQ8UL3bFVGj8sYUe+xSeF4DQwrb6QQar1T7W6kAE0S85U2+p82+tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Bxz/9gbw; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-917be46c59bso14198639f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758913508; x=1759518308; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TbJGmaLk3OZjl0R3kvAisn3ETboX9rQ1mi9qiGLk548=;
-        b=EvkUy7jwEW5tK4FzbAXRdSvu5qm8M4nR/2vX/TKSEpo0UtfLu4OTewafGLRqCTfl+0
-         EP3aEK4riTv7fITBbdpJ2ptCYjXVqnnFWKTYs94Gr9xd8G7rTRG5RhfB9qFNufuv4D26
-         rP2niXgWw/DhraDIS1EcjyI81aA7uA1uIVQfYCO4E3cXYGI6ZPCCiHJgAMKE0mMUl5DV
-         ar2eDSrdi25riL/rcL1n6B2TXd8cEG8RRnilBOMnPGBMyYI7ok8p42u/iLzfdPDJKIyh
-         teF0KRfbL0zT4EUgCMCOAQH2uCVpYHMzKLGQfUqimVvvFnIdomEN5B6ry/SNrpKMkvhq
-         deIg==
+        d=purestorage.com; s=google2022; t=1758913797; x=1759518597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wvtv/qcICkYTsHwiHykESM7tgNOYNZooGCxrW6WCvqE=;
+        b=Bxz/9gbwao0yCR3KUDsxKggFjsI4aXPvJ7Ytohc77hNUFyOoBebjLMdVcNjpq/Cley
+         +WhDI2LWEURpbJ+0JRtmpdTRLECitwhsEfcRG2QVOWa84rgTCOwiI2K/1qL5/wVTdGx1
+         ciacthNOWr/cXNIPNKTuNYxjTb0gPEoJK/U4UEJTghY/RsDLyNzzkWrQoUvlRkuhnWml
+         QiB05h7d/nMqDzDy458LdWV/p7Kg0a8Cjwq0oL8/cz8g4AUoW5LxWeB4tqQF+gWTGkGf
+         4GCWTq/3ft2mW1HOYPojGggy5G9T+QvyCEUjUetotB2NxGkXcE1j1sm+hP2455Wi4WY1
+         l8yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758913508; x=1759518308;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758913797; x=1759518597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TbJGmaLk3OZjl0R3kvAisn3ETboX9rQ1mi9qiGLk548=;
-        b=qz45wVMrBm/+n2mCU953Z2L93nExqntM6oP3qlke06yJ444e4BQsvC3nVVyjo8XIXx
-         nFgfymoRLDGbX45j6jnTPD/g8LrkfXDarpYFKrzlJmq3Km+Tc+3yeyuMFsew+2tRRJAW
-         XQ77EuB+I8uezW1+e37d2pZeSh0YmPD4YPFpQxGQNePJLML1eMNbVXsYmWRG71rxpcf5
-         tijXyNrk7b9Y2CaXcP104bcVI4A98BFM8nbwj4eN+CPffr+4Yv6sa3ElUr5fbfTkh+QZ
-         7oGm0TiXYxj2yJMinXuxlelXdiVn8Befxblj5d8m2mZ+b/JVwJHgy64HZp9qoUsdrbZd
-         5n7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdo2xn2kpqLxmvlyqcx4zfqH39MB9spYYrPbrDtJHmj7eiAO+pX1K0xJp5A5Reb5d8Rf/iT7y6E8lBMZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzAvgzrRS1iDAUid22f9hLT8XTPTt4SSAkt6ixn4918F8bOcDv
-	HAsF60/r+00Iql5ZfzA87Ox0SPCY2t6DgnAhDlTS6PoW9VwqtmNQD14mEjJZBY1JsNLuDCDvYkf
-	ZF0mbRDxQGxlQcru65EJ9NWE3Wa4+d5k=
-X-Gm-Gg: ASbGnctvK/xrf/K8LednmOYtcsPujuxv9hVr/FQwdFVENOWOgzZJC61bvDcMgIDFDZw
-	HOQs7DyzDDcfOa8sqS3WDdj1xAGf4Q5a8QF+RF0YHF78FfECp3bWgk/+01Ufcfn/lLzFHEnIm7X
-	Z09BJGsbMYIzmxKCoWsqOKvFPl2AkviLMJvUlN6ilp/Mi1gNGwYjg/PysAZD9xBOk5+PqDW3TWD
-	oVFREseRIn8qjq45ll8edCT+CPmdg==
-X-Google-Smtp-Source: AGHT+IEdkuUOLU/bW97u/TwPmWzVbg8Kn81lbFFHV1rxBnyGRe3t1U/lXJSGfVpY6D261qaGlOsT/kGC7v701jIuE+w=
-X-Received: by 2002:a53:a80d:0:b0:628:9b73:4b16 with SMTP id
- 956f58d0204a3-636dddb4630mr629935d50.12.1758913508118; Fri, 26 Sep 2025
- 12:05:08 -0700 (PDT)
+        bh=Wvtv/qcICkYTsHwiHykESM7tgNOYNZooGCxrW6WCvqE=;
+        b=HpuiUxKvTCIi7lw3kDk8OcXnVrYUOGDVEfXi74Os/Ppg9BFFOkwjvlyoR/nur6fxBp
+         cfpTqivA6JHcHB6cOIXmgQ1JySHbjC+5GXLHOGdr3vKX/g84c2gtN1i4gc6iIrLmsDg1
+         zFRc7phPb3XJjAaCXqGMYYWYeVMtC61d6GuD4CAeECZGmmDjtZzx3WVqJTBtkEyqqH7Z
+         G9S/ErXhVCgPeV3fz9ziHRWBOYpgUBIQr5JGhxgnY44W+UTXvP6Y9o8TXtx/ynYsXeSA
+         jPVyf1c/QHbaxGd1rMnUdCzbNAgbFgofn4Kpzi3zd7dhOgs60eiNUvXPBriX+BFvPi2Q
+         1IwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyivkQaO2inN+4oSlSguMq26cP1h7u4dSJlfg1KTZo9RwUT/PjwxY9xVm3RLF2MTVxgsbPMzZ3DcKLQl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUrZgu/W2+C3cHx2Z01de0g7Wad2zjNAa+QUOGyy32aE9J/bnM
+	ZyDVh28olWpVllW/HSNSbwRBOYuXIuPRYImJWOPA8IJuW12ZBiD8Bnj/1oCvrb9CCpw=
+X-Gm-Gg: ASbGncs4QmQNtJcq1v5l2RKtNFm/RG0mEviFeBUqvEYPYbzll8CtE2wF000I4MMeKDq
+	PI8E0SXlpRx9pXQQTXV6EoACXGckDZjQbhQUnIbm8HnTX1rG50w2Q90x4RNG3+s0VCn0GKhSsMD
+	+45GgeP8yyT005kwc7xBN3ZhA0LWOiQNeJ3JkrgkAH8lS0uswaFXX9dIRBDEiUHJy3GWGYbN6iv
+	tGBsraSkMAyi9Au/wx+3IC9mE7Gb1kqsHqnmm/6+OhIaH5J4WEta9Jp/Vo5JQiXag3H9CCHM+md
+	J1z6a+K1lN7eC7Hg6cUuaR1A+PN9imNgcimBwfRnD/Y9rxe6k7DE3zxQSfdZsxBDtgImJOGV0f0
+	W2ePJNQVwPeJ1aYfH5EqlRCkBxvMbCvt7zWtB3S/QXkh9rMc12HWR+GJfuVNK2ZX6Yac5cA==
+X-Google-Smtp-Source: AGHT+IFjghvNCqO6TOfbA98+sZd3KQTpt5kAvS4oQsge2mxcUu3UVERk7C8TvE1C6z9/EDMI2LD95A==
+X-Received: by 2002:a6b:6a0c:0:b0:8fd:baa7:bce2 with SMTP id ca18e2360f4ac-9016c57c02amr1232916839f.16.1758913797264;
+        Fri, 26 Sep 2025 12:09:57 -0700 (PDT)
+Received: from 8745f5817b94.dev.purestorage.com ([208.88.159.128])
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-90e48099408sm105070639f.10.2025.09.26.12.09.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 12:09:55 -0700 (PDT)
+From: Amit Chaudhary <achaudhary@purestorage.com>
+To: achaudhary@purestorage.com,
+	Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: mkhalfella@purestorage.com,
+	randyj@purestorage.com,
+	jmeneghi@redhat.com,
+	emilne@redhat.com,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] nvme-multipath: Skip nr_active increments in RETRY disposition
+Date: Fri, 26 Sep 2025 12:08:22 -0700
+Message-ID: <20250926190823.5031-1-achaudhary@purestorage.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aNUa-9HcQzyjZkvE@shikoro> <20250926154520.40583-1-chiru.cezar.89@gmail.com>
- <20250926154520.40583-2-chiru.cezar.89@gmail.com> <aNbWejNZLYGuNvCI@ninjato>
-In-Reply-To: <aNbWejNZLYGuNvCI@ninjato>
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-Date: Fri, 26 Sep 2025 22:05:19 +0300
-X-Gm-Features: AS18NWB7zbZy6bRGc81-m4r9ucklfKIphtIWuq3OYuTt2vqQbhgiLEr2b2OjL3I
-Message-ID: <CANvS2vXT5HMKmyHMnJ6sAc9s5b5PJcFGcW_qrcNLtJtLOvsmNQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] i2c: pcf8584: Remove debug macros from i2c-algo-pcf.c
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: andi.shyti@kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+For queue-depth I/O policy, this patch fixes unbalanced I/Os across
+nvme multipaths.
 
-I'm a newbie to kernel hacking. this is my first set of changes i'm
-working on that I wish to go into
-the kernel.
+Issue Description:
 
-> > -     DEBPROTO(printk(KERN_DEBUG "S "));
-> > +     printk(KERN_DEBUG "S ");
->
-> Now you print the former debug printouts unconditionally? Why is that?
->
+The RETRY disposition incorrectly increments ns->ctrl->nr_active
+counter and reinitializes iostat start-time. In such cases nr_active
+counter never goes back to zero until that path disconnects and
+reconnects.
 
-I thought I should get rid of DEB2 DEB3 and DEBPROTO macros. That was my
-original understanding.
-Should everything with printk be deleted also?
+Such a path is not chosen for new I/Os if multiple RETRY cases on a given
+a path cause its queue-depth counter to be artificially higher compared
+to other paths. This leads to unbalanced I/Os across paths.
 
-/Cezar Chiru
+The patch skips incrementing nr_active if NVME_MPATH_CNT_ACTIVE is already
+set. And it skips restarting io stats if NVME_MPATH_IO_STATS is already set.
+
+base-commit: e989a3da2d371a4b6597ee8dee5c72e407b4db7a
+Fixes: d4d957b53d91eeb ("nvme-multipath: support io stats on the mpath device")
+Signed-off-by: Amit Chaudhary <achaudhary@purestorage.com>
+Reviewed-by: Randy Jennings <randyj@purestorage.com>
+---
+V1 -> V2: Moved check to mpath start and check relevant path bits
+
+ drivers/nvme/host/multipath.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 3da980dc60d9..543e17aead12 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -182,12 +182,14 @@ void nvme_mpath_start_request(struct request *rq)
+ 	struct nvme_ns *ns = rq->q->queuedata;
+ 	struct gendisk *disk = ns->head->disk;
+ 
+-	if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) {
++	if ((READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) &&
++	    !(nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE)) {
+ 		atomic_inc(&ns->ctrl->nr_active);
+ 		nvme_req(rq)->flags |= NVME_MPATH_CNT_ACTIVE;
+ 	}
+ 
+-	if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq))
++	if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq) ||
++	    (nvme_req(rq)->flags & NVME_MPATH_IO_STATS))
+ 		return;
+ 
+ 	nvme_req(rq)->flags |= NVME_MPATH_IO_STATS;
+-- 
+2.43.0
+
 
