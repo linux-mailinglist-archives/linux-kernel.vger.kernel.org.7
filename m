@@ -1,222 +1,164 @@
-Return-Path: <linux-kernel+bounces-834415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DCFBA4A53
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:33:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DF8BA4A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C80FF7BDF26
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:31:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7C38327656
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E7C2FC02C;
-	Fri, 26 Sep 2025 16:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2470D2EC57F;
+	Fri, 26 Sep 2025 16:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oj/3rMa7"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSvoFIns"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD51C2FB97D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64E72EAD16
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904293; cv=none; b=PWomg7ZMWTyUaNvvK5puCU6J+kzugnfP/ljOPVGqYmsJSyVdUaDrGLx2p/Boan7ISoBgK/ssfk6FOnvMmsMPINYrU1keKuRBqJ+M0KoL6rnguhe18Mhs1eovEslmlBtsB26EGOpHwL0fw6z2xvK7Af+2SiTmwWW6qu1CorStX4M=
+	t=1758904299; cv=none; b=BktVbxSNs1qWgFV5ggBSlAjv4uKkUmL1TFq/Y2nl6DgkXjSglId925Zyh2Foc8mLEuRkFdyulmHTwRXlKWJMIcf0TTDuyI+brB8EL+VrA8nfZvHJ0s43xkrB+pXOuX/rwMnALBsYspKdbFR+mfYiNFsiMVwjxYSdMvgUr9XOubs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904293; c=relaxed/simple;
-	bh=DenFYgCl3E/nB8eGrwdfhtBbP3Ex8K/c68ZGtk2IY8w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bpN5PBsa8M6JDicT6RDELrdSjJeQdGyDoWAly5qig8u2wgXCm0EUkOah3HwV+5AfTExX+w1xdZjTZPBe1snNBX032aHKnmhVAfEvclmB324THPfejj8ZpRM+sFOrVss8IwTzKzV9k18PPlm6V5UItLVS6KSFr+QgIHHyXa9knf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oj/3rMa7; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32df881dce2so2746370a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:31:31 -0700 (PDT)
+	s=arc-20240116; t=1758904299; c=relaxed/simple;
+	bh=KyIgAIxM0qzJNyrH1RWLJvoc6grH8XPidN8Kgedl2v8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BFXhnHljrwc0JQwd8i+y/EyJXqKxrafFuLXm2Q/TfUOU1f90kreUmcrTmCc9YQ++s7GBTl+VGBCHGp/5uF6XO/RCgUrTuOkpQP7FnvhypmeSPrxp0MBJ8Lmd5ApUkpa3GkuTLYoWqYcl/PPXhYNAd8WRQaOGo4aaQN7oeXHyEqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSvoFIns; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-723ad237d1eso26601937b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:31:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758904291; x=1759509091; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=NCJm+oneDJ5rwsc/098MYrhburwn9yZWwqWNnrNvoPY=;
-        b=oj/3rMa7BQsnZekp8ZYyQ4IjlQppnoRs6VjL7MEkqoMxXD1XnUsi74PjbgZFjC3W+2
-         kkZu5c3gTxXU8fZXlmYdQSOS9HSdpNG+YA0MeqVsi3KcVPe5mct8zuXkHMb3piybjUIf
-         f/wSAs2yoYFadqO1h6KM57rhdgoXDKyASIslQlHaQPNZrMo1r6YRlAXSrxGB/xhfzP8y
-         RJFBpivc/eZ+6Uj7No3pzMg306PzUjm4gSXjNyssGzcftAmW6MHzCsHjREKFNItT96K6
-         yHdXjcqfRrVAAZ3xdgvOti+cTvxodvgfwJP/N/OCEAk1i+UekrsOWYd79iaN+4+MCt84
-         c8Eg==
+        d=gmail.com; s=20230601; t=1758904297; x=1759509097; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JlXCqcp4O5lDJ89rheJ6jBvAKlTWM57IAWl7u/6lrJM=;
+        b=nSvoFInsgros12W2dpIeNOPbL1XIT+RBSmR9p2GADv1J4W+QH2XrwzWPeo2qrKl9oN
+         n34ybXcO4erBHhRcJ6cxkRiH5n85kLcLJsuLzp5Y+Q1AEnJm/Fy+TNSD0g5QpAT932gH
+         Ggjf4PhQlnQjXu0xvhUzcT61MAStNQ0J82iO1u0YkRkpyrQDsFIUFLHOwi9oSKQ/zeDe
+         4EwtKVa4OVjp96Q7Nie3KqJ4LK2wOuexaxIms1Of/sawKB7i8BUul/pqfF5+dRuKawe9
+         L2uia2FXdznPaTgZT6t9Xzz5SQ9lEK6YyiQ6+XPTZJps2xl/QzDoZf70QlNPm1XhDALL
+         TMNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758904291; x=1759509091;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758904297; x=1759509097;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NCJm+oneDJ5rwsc/098MYrhburwn9yZWwqWNnrNvoPY=;
-        b=uWYoKt/fWHnoPy3FPRIdyojAloJnEIAI06/EmAO9FdGQL1OvbYG/oXHQL0KQpUkLpJ
-         YN6BNzCGhFvIFMRv2LIkZL5oDA+70MhEcU/NqripH6sDiR1I46QVGpylcTiiK9ZUb2er
-         qhdS41aoRpBIRzs1k1S5kJt+lKH3YFR02oTSJzgLD+LFs0+FHijk8tGvAgI0UCHsEBib
-         5iDkxr1q4IH4QG9g28KBe+6fTnbbY2ucA1869vGz+/ruU5n2SUX6d7eNIgIJM3SbURIT
-         izVYfe6+VqdVRq+oUSo+ByANlID5Sbkg2jKFKmEKnPvE9yz/TBwwEiRN0DMQlbtjAXJV
-         sKgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgJzLcjyUdSj9t+NosLCMz5IMmD/UtWwy/kNfi5BT7Vo3SXliNTpnuKHjvbYTCIUis0oWvoRi5wmyLUGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6vjqb7DXoyWzmiztfXdFL517gC3lOHbpZFYM/76hEe17VfQKH
-	opDZPqyVtT/R+BZ0KKgU/tuWhnxf5BmwIQej45jXTRfQnTr/wKP+d4Y0asN90kmmpRsOPDQJNu+
-	wF9WEsg==
-X-Google-Smtp-Source: AGHT+IEcjS8XYUaIxvLwGVIG6V9ayVItEqtASIL24S1Lw4LUyDHuVM8ZHEEBRAHizK6NEBTV8/u3Tvd2yLk=
-X-Received: from pjhk88.prod.google.com ([2002:a17:90a:4ce1:b0:323:25d2:22db])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38ca:b0:335:2a00:6836
- with SMTP id 98e67ed59e1d1-3352a00692bmr4201028a91.18.1758904291403; Fri, 26
- Sep 2025 09:31:31 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 26 Sep 2025 09:31:07 -0700
-In-Reply-To: <20250926163114.2626257-1-seanjc@google.com>
+        bh=JlXCqcp4O5lDJ89rheJ6jBvAKlTWM57IAWl7u/6lrJM=;
+        b=nsRIgosYIGoQFNx2QCNvywXl3gFFJiImJ/dkbrVwVsi98Te1QzxmvpT6vYuXi3p9Km
+         niOyP9yo0UAPpmvrxlXo8sU36OexJ0W2TapO72IpwVSNS7JBl3qRRQtMR3UaInR+ks76
+         xmi4oYz/GZuHZZG8xoWDzTZ3gzP7IgbqcQAvzs0rsNGB9JeZ42jfnOInEzuCtB2Bpy/G
+         zXAs+ZzfNfOO78pqrDCpRoXtX6ViiNQc2jeeVaCY+nlDYehD3KqGuLAt0KJfxUm3j6Fp
+         qVdD0F1rLVUIibkrSY3VU5u3GY68ckDvs/MHb9mkf3RGLaDPocgwvVhZGbwbttJrMqkl
+         uxQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5d4Gjq0gRDvmORSufs/LuG0VTQ3r4H5LflHpS4Xc6TM7kPmxipSzxIhzx0GNnxc1eGUn0dzM/0way6Bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTZw+LjGQyWoV9VxDtkCw9Ci7QJXQIYsc9xVk7nYn+RjylA35g
+	gjippmkunjPQtOwlBJcQ5PLWfHa9enmWqWAfxVtZX9a1qHqUzZCDiPBL
+X-Gm-Gg: ASbGncvdM0g5OjIG4+c/tyrLz9PMQBhAKDE9TDg7mTHUg2PGXN/jiWIlynUIkKZpMGV
+	GeiOz9EGlIPtwLDcXVhlDo1ayog4lR7p2UGww9jDPhjSY+QEEfB8/9BWT2n4+gxmF6kupHZwMvV
+	lQ0RBsnJmbpxHCHB8Re2L4GvLWZsWzfEgqaNQb7+n0/fCCL8tkzvtFFFF3WnLkLt2bGgcE0OBUk
+	3e1i/tIP2A3JBzUAlkL/Deis0jtIIYr0SS5fUTPl1Mn7wkKVYidAGNZXKLZWcTG5ea+4dwVlZ1Y
+	sJq8C3yUsMOFUD4HGpxvniiyQvTa0PT9e1TJYYjYMHVgj5OH196XXdL5Hfm645CX2C4hMuLHvym
+	BTsXdYlv82X8pcU7+foGBtg==
+X-Google-Smtp-Source: AGHT+IHLAOwZtKUjfY6PvnBzBbjrOGiLNSxJKSjdJ+qMor7UEuBJ1lHtFVCmE2wktnsfIJhA6x/ESQ==
+X-Received: by 2002:a53:bb88:0:b0:615:14:8320 with SMTP id 956f58d0204a3-6361a873d23mr7191618d50.34.1758904296400;
+        Fri, 26 Sep 2025 09:31:36 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:46::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-765c7ac669fsm11661537b3.58.2025.09.26.09.31.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 09:31:35 -0700 (PDT)
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+Subject: [PATCH net-next v4 0/2] net: devmem: improve cpu cost of RX token
+ management
+Date: Fri, 26 Sep 2025 09:31:32 -0700
+Message-Id: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-0-39156563c3ea@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <20250926163114.2626257-7-seanjc@google.com>
-Subject: [PATCH 6/6] KVM: selftests: Verify that faulting in private
- guest_memfd memory fails
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOS/1mgC/5XOTW7DIBCG4atErDsVYHCgq96j6oKfSY1asAUUJ
+ Yp89yJWVndefhrpeedJCuaAhbxdniRjCyWsqQ/xciFuMekLIfi+CadcUsU1FJdNdQvY1doHluU
+ Ho0ngsUWMUN0Gdf3GBL9bqRlNBK65RXYVXtKJdHXLeAv3UfwgCSskvFfy2S9LKHXNj/FKY+M+q
+ pry09XGgILXYmaztlJK+h6xmle3xpFq/MAzdp7nnXeK+uskrRdy+sdPB57P5/mp81QJK2brjVK
+ 3A7/v+x//QnhrtQEAAA==
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Kuniyuki Iwashima <kuniyu@google.com>, 
+ Willem de Bruijn <willemb@google.com>, Neal Cardwell <ncardwell@google.com>, 
+ David Ahern <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Stanislav Fomichev <sdf@fomichev.me>, Mina Almasry <almasrymina@google.com>, 
+ Bobby Eshleman <bobbyeshleman@meta.com>
+X-Mailer: b4 0.13.0
 
-Add a guest_memfd testcase to verify that faulting in private memory gets
-a SIGBUS.  For now, test only the case where memory is private by default
-since KVM doesn't yet support in-place conversion.
+This series improves the CPU cost of RX token management by replacing
+the xarray allocator with an niov array and a uref field in niov.
 
-Cc: Ackerley Tng <ackerleytng@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Improvement is ~5% per RX user thread.
+
+Two other approaches were tested, but with no improvement. Namely, 1)
+using a hashmap for tokens and 2) keeping an xarray of atomic counters
+but using RCU so that the hotpath could be mostly lockless. Neither of
+these approaches proved better than the simple array in terms of CPU.
+
+Running with a NCCL workload is still TODO, but I will follow up on this
+thread with those results when done.
+
+Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 ---
- .../testing/selftests/kvm/guest_memfd_test.c  | 62 ++++++++++++++-----
- 1 file changed, 46 insertions(+), 16 deletions(-)
+Changes in v4:
+- rebase to net-next
+- Link to v3: https://lore.kernel.org/r/20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v3-0-084b46bda88f@meta.com
 
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index 5dd40b77dc07..b5a631aca933 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -40,17 +40,26 @@ static void test_file_read_write(int fd, size_t total_size)
- 		    "pwrite on a guest_mem fd should fail");
- }
- 
--static void test_mmap_supported(int fd, size_t total_size)
-+static void *test_mmap_common(int fd, size_t size)
- {
--	const char val = 0xaa;
--	char *mem;
--	size_t i;
--	int ret;
-+	void *mem;
- 
--	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
-+	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
- 	TEST_ASSERT(mem == MAP_FAILED, "Copy-on-write not allowed by guest_memfd.");
- 
--	mem = kvm_mmap(total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
-+	mem = kvm_mmap(size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
-+
-+	return mem;
-+}
-+
-+static void test_mmap_supported(int fd, size_t total_size)
-+{
-+	const char val = 0xaa;
-+	char *mem;
-+	size_t i;
-+	int ret;
-+
-+	mem = test_mmap_common(fd, total_size);
- 
- 	memset(mem, val, total_size);
- 	for (i = 0; i < total_size; i++)
-@@ -78,31 +87,47 @@ void fault_sigbus_handler(int signum)
- 	siglongjmp(jmpbuf, 1);
- }
- 
--static void test_fault_overflow(int fd, size_t total_size)
-+static void *test_fault_sigbus(int fd, size_t size)
- {
- 	struct sigaction sa_old, sa_new = {
- 		.sa_handler = fault_sigbus_handler,
- 	};
--	size_t map_size = total_size * 4;
--	const char val = 0xaa;
--	char *mem;
--	size_t i;
-+	void *mem;
- 
--	mem = kvm_mmap(map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
-+	mem = test_mmap_common(fd, size);
- 
- 	sigaction(SIGBUS, &sa_new, &sa_old);
- 	if (sigsetjmp(jmpbuf, 1) == 0) {
--		memset(mem, 0xaa, map_size);
-+		memset(mem, 0xaa, size);
- 		TEST_ASSERT(false, "memset() should have triggered SIGBUS.");
- 	}
- 	sigaction(SIGBUS, &sa_old, NULL);
- 
-+	return mem;
-+}
-+
-+static void test_fault_overflow(int fd, size_t total_size)
-+{
-+	size_t map_size = total_size * 4;
-+	const char val = 0xaa;
-+	char *mem;
-+	size_t i;
-+
-+	mem = test_fault_sigbus(fd, map_size);
-+
- 	for (i = 0; i < total_size; i++)
- 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
- 
- 	kvm_munmap(mem, map_size);
- }
- 
-+static void test_fault_private(int fd, size_t total_size)
-+{
-+	void *mem = test_fault_sigbus(fd, total_size);
-+
-+	kvm_munmap(mem, total_size);
-+}
-+
- static void test_mmap_not_supported(int fd, size_t total_size)
- {
- 	char *mem;
-@@ -274,9 +299,12 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
- 
- 	gmem_test(file_read_write, vm, flags);
- 
--	if (flags & GUEST_MEMFD_FLAG_MMAP) {
-+	if (flags & GUEST_MEMFD_FLAG_MMAP &&
-+	    flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
- 		gmem_test(mmap_supported, vm, flags);
- 		gmem_test(fault_overflow, vm, flags);
-+	} else if (flags & GUEST_MEMFD_FLAG_MMAP) {
-+		gmem_test(fault_private, vm, flags);
- 	} else {
- 		gmem_test(mmap_not_supported, vm, flags);
- 	}
-@@ -294,9 +322,11 @@ static void test_guest_memfd(unsigned long vm_type)
- 
- 	__test_guest_memfd(vm, 0);
- 
--	if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
-+	if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP)) {
-+		__test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP);
- 		__test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP |
- 				       GUEST_MEMFD_FLAG_DEFAULT_SHARED);
-+	}
- 
- 	kvm_vm_free(vm);
- }
+Changes in v3:
+- make urefs per-binding instead of per-socket, reducing memory
+  footprint
+- fallback to cleaning up references in dmabuf unbind if socket
+  leaked tokens
+- drop ethtool patch
+- Link to v2: https://lore.kernel.org/r/20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com
+
+Changes in v2:
+- net: ethtool: prevent user from breaking devmem single-binding rule
+  (Mina)
+- pre-assign niovs in binding->vec for RX case (Mina)
+- remove WARNs on invalid user input (Mina)
+- remove extraneous binding ref get (Mina)
+- remove WARN for changed binding (Mina)
+- always use GFP_ZERO for binding->vec (Mina)
+- fix length of alloc for urefs
+- use atomic_set(, 0) to initialize sk_user_frags.urefs
+- Link to v1:
+https://lore.kernel.org/r/20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-0-d946169b5550@meta.com
+
+---
+Bobby Eshleman (2):
+      net: devmem: rename tx_vec to vec in dmabuf binding
+      net: devmem: use niov array for token management
+
+ include/net/netmem.h     |  1 +
+ include/net/sock.h       |  4 +--
+ net/core/devmem.c        | 46 +++++++++++++++---------
+ net/core/devmem.h        |  4 +--
+ net/core/sock.c          | 34 ++++++++++++------
+ net/ipv4/tcp.c           | 94 +++++++++++-------------------------------------
+ net/ipv4/tcp_ipv4.c      | 18 ++--------
+ net/ipv4/tcp_minisocks.c |  2 +-
+ 8 files changed, 82 insertions(+), 121 deletions(-)
+---
+base-commit: 203e3beb73e53584ca90bc2a6d8240b9b12b9bcf
+change-id: 20250829-scratch-bobbyeshleman-devmem-tcp-token-upstream-292be174d503
+
+Best regards,
 -- 
-2.51.0.536.g15c5d4f767-goog
+Bobby Eshleman <bobbyeshleman@meta.com>
 
 
