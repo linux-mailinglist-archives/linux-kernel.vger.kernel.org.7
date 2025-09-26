@@ -1,232 +1,181 @@
-Return-Path: <linux-kernel+bounces-834075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9411BA3C4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA75BBA3C7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6217188AA5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:11:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF36621E41
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D119F2F5A3D;
-	Fri, 26 Sep 2025 13:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495182F99AD;
+	Fri, 26 Sep 2025 13:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dDBnNVCv"
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E+MAVfef"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5136E2512D7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919F92F5A03
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758892238; cv=none; b=aAtxSXpA4iay2ZuGpx6pLzy+KYNCEj3AWSYJN/TQOjmhK0UtEe8AXydayPlwwp8V2hwStTnp7LQSjeoGTr60VDybVlUGrzlC8ix45SzkqREcKbowdb/RiWoTs7bE7zbfTuvwVt/l//SThW2XyJJ7D+Lstp9DXAUvYNu6ZSUIamI=
+	t=1758892293; cv=none; b=fTX3i4yREAkhZCCmtb0VsBirWN/RxxY5abW54XlqbNtahOrjHSPhLezWzC51imvWYUiRx+0X09U/TH0llgLp6nCMi/EvkRL/a9C4cuw6cj+2VnQFFg6J0ntf6apU5zwMlQNOpCtpXsmNO5JOmMLuqhzmCWCtZAZB2dyb5FXa/Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758892238; c=relaxed/simple;
-	bh=jgH4dTS+vRh3FfWibIxLSPRJHe6hE8/f0y1+VSoVbvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lMD8C/fvIbDUkMaql481MeEvMYw+eOFwU6VvIVryiX12kwHgdrDR2b/1KJ/xbm8We7DepRP2xOelB66/zUL6iNqU6OIMVqXNCVW7tEe9wCgwk20wBlsk/dNkEtykQf2bAUmuVa1sNI+AFx2gY08whuU2NZXDuFkDJtbSNDOz/RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dDBnNVCv; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6089a139396so1466698d50.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:10:36 -0700 (PDT)
+	s=arc-20240116; t=1758892293; c=relaxed/simple;
+	bh=kTIx/gbW5FMHGZwkamAX2U1Vd88ShDnf2ZfAQ8RTCAM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=d5dSPKHlccoN/Bx5T37lmqCHGkHVE+thlBVASOQlyzMr+MUkD00ogaOprPsnEswC0+6BiYIbqBg6aS5lJ1PFZe6tXjmOVPK9GGj0eK5ogHpgw5GBYW+1JQD9S/g/P7AIbO8rmYo0UVAZLrn3+TA20jkS64jAzGqHMO/YKJ+mewc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E+MAVfef; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57e36125e8aso1939369e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:11:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758892235; x=1759497035; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XGNz+4Fqnv88lNTVrhwM/5oRrCCXevKa00uId3Ku9w=;
-        b=dDBnNVCvmLu+xQjX0T5/vW408AErLhg3maQMC8XyQV7ZnCA54GpcAgq4KBr2H9wT5B
-         jLbepO4pbQyYLwpiwWkcr3q+vjUr5PtIl0pqCMwmn6Vgljg5wYLea7cOCrmIeLnWhC/d
-         t5xjDvbNILh8twlRAcBpyQnYqw0BJkCRBX/QgrIyS0wuubw2fGlshWApGi59GzAY5+VJ
-         fmx7Fu90sM8zGfU9UjBcRcVvhJ/lCLZCtk7jdtB0Y6FPfD1qS0aaOBrPoH08yX3tEkKG
-         XpYGJ91XeIycWvIvTn2LnIP/yoGv694dLEtLG+aG7a9XOrEBx4qPGw//QBdSeYCeN1i2
-         zc7g==
+        d=chromium.org; s=google; t=1758892290; x=1759497090; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZDmNVhJHkWPdowxg4squkpPV1N/rsJjSEr9LXYJ99w0=;
+        b=E+MAVfefudY7/qxHnbxhDO+KX3qvhh1WTGF6ko5dEZjljYzb2UEGn4YGO1SKeYgwmS
+         voXZONIQftp+duXOgrhEID9XNOiiKM9mDq4Ymso1T4oj6MajO6i29sBs0XRH72aeW+SK
+         AHYcs1q6J+wj7vntFU86T+ZHyr7BjvGRVmi0M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758892235; x=1759497035;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758892290; x=1759497090;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0XGNz+4Fqnv88lNTVrhwM/5oRrCCXevKa00uId3Ku9w=;
-        b=tBHZBLO63fVpmLGFskY4sGTtxZ0vtiyyOwnE26jYQjPNN4div7TCNgrUwexTAQfE/I
-         89QNrOWNoTC+iies91wxbjYUZDwGgw1nUXREaGYBim9v+z2Igdq3vcBVvA+H7loE3EkL
-         VSwNFVAofs+Inl8jbCg+SBebTwV2iowEIlXQozKIcqju7jclPZhktm14KZ+tJWIAVbjJ
-         95cqwP0omYgA7Uv6bVuWAlXtyx3KibCpDhsaCuGNYsvWbUc2sqMXBqFbEdrMJhBnWu8E
-         Nd7FaFZ0l2m+4Bvt9PMNlIMN/icXBM6e059UOsy2a3HfeuKrw1jUnP92WFIXBx0mPBNl
-         9Arg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjs3bDnUMi+TOxEImfc7kor8ih++FzcV2bQVJojHTNODcWDfW3PZzbDN/xd/1cw6TCTypDDzD5kvqjEDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4OUVNfdiTKNGgJ83FOPwyi+aZjBSWnuyDOqsgAZb7j6h71V0L
-	ZeR3ARsfZa6VTy+xaYD6UGNmJRXhCrqccYWnB9/B7yPrNreCA8nJ5WORzfPOeIKLfuPEZ5Iiexx
-	9FqqAgV2kH3ewzCkNsFJAbzo3DTdZug9KOK8VcqKB0w==
-X-Gm-Gg: ASbGncsCn33AMmh1a8bFl66W9EtxM3i24UZ5y8gLnIt9FsroU21PVSMB9G2TtlniNnW
-	lVRSq5b/YslrdOyOC4xKYz3B/a8qVhRLYkXETfbhD7OizWPSQe78ptqhiR4rU4obiMersrZ/kEg
-	YeGRkI11/2ovfA16kBau9g5slAISfxq/SLCW/dRDI3qJVmr/EQFCbrGt9/xw9nOEpyVk14PvV68
-	JFEBMME
-X-Google-Smtp-Source: AGHT+IGkqYXp9xR/yu8qAOW0Ibc73J9HH3IrW9JdTv/K6ifqOoFYIjqgN5XEKcNLk7Um94uIi+Xl8oWs/TUkJrI/aIw=
-X-Received: by 2002:a05:690e:2501:10b0:636:20c2:8eaf with SMTP id
- 956f58d0204a3-63620c2900bmr4822233d50.20.1758892235087; Fri, 26 Sep 2025
- 06:10:35 -0700 (PDT)
+        bh=ZDmNVhJHkWPdowxg4squkpPV1N/rsJjSEr9LXYJ99w0=;
+        b=Q9gnGeq7wMUGuWkkQF3fjP22Bz0XIc1rJpFMxQQbmuJiMhKAL6RYhTajruAvGojfKG
+         BxCj2p2CKNkkaLoWARFrdHzUuB4nDBMMbjD9ysLWGKrf3x20CcI0Oh2TDZtXkEaUGQAX
+         47vHvTiPBYja08MHlZKXwwYQL0/L3IQgZ5N5/aVk//GrJeJu3d0sQV6STO7x3rasXFcG
+         3K4zADYmP1K2sV+wf1stkE6Ujoj7ElEH3HrMnkEM1w/4zY4AITdg6Gd6LTuCG0X3vh94
+         K0WWgFeg83AxPiJdNB9/yHzaYD0JCno9x4u92N4Sf/Yu+flJfv20y+bIPBrP1DfznxQ+
+         7vPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsUbXLXulIQ+gKDAGD8ZthPu2iz/ePcJ+3Ia72Pa9C+TZNCIVb0b09cgmjRvaDeHVefXZ2Dd9nbzy59BE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzunMf2h9LRkvKTzd1buq5Ks+ecC9wBVieo9iohY1x+bZA0AYS
+	CKWeQm9Rb1EXaLDGlkUhCGr1WARC7XZ6T/QdsdqvFgPNEaIt3yz5sF/Bcyweh6RPnw==
+X-Gm-Gg: ASbGnctS+PBxA0AKTe5RpRvT1x6+7e966REmMg+sCS1DKdltZI6ILLxeXcsvE/U4Sht
+	SKOpnbhsdpzWb9rBZDP08YPIsffY1n/AV9ixXIW7bg8qW1rER1tuFIYcMtrx5Ldg6pnqKUUs87H
+	b0/jj/r7S/dXIkpSd6Us/pt5vTl9aWYwUePbnL1fOc2Ce19t8Wac6GCGQPkDBqIdn+Alc9RZlJd
+	1alGzjF95sNCvG96jlKpz/CGmNWsHMsr4C1fxWwnHdMQ/gZVIG4EpKW+5vFBqRbVPFNLkw9t3AK
+	2Ohi/9xHGzW3dl4d9komj4fCAMXCyXbg23Z0KIu4U6DFOWg3r9Wv5kmzxFtolRWuzEOn53v4quj
+	e5rCxjf8EPsIl4vc5kmVlFoibMYXEMDx7RYR8qVL2IZx2JGCtpMPHhlGwTM4Ut9BldfEasK5j1M
+	GNzw==
+X-Google-Smtp-Source: AGHT+IFre7rGlPJYVo4GSUWdzdcqW6jFgSmqfsnv6P/WyQ1IpYAO/8aDPCOXsn/mCcLjhUPmvTsyZQ==
+X-Received: by 2002:a05:6512:159b:b0:579:f4b3:bc3c with SMTP id 2adb3069b0e04-582d37cacaamr2234865e87.55.1758892289663;
+        Fri, 26 Sep 2025 06:11:29 -0700 (PDT)
+Received: from ribalda.c.googlers.com (64.153.228.35.bc.googleusercontent.com. [35.228.153.64])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58527c6b014sm123872e87.43.2025.09.26.06.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 06:11:29 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v3 00/12] media: uvcvideo: Add support for orientation and
+ rotation.
+Date: Fri, 26 Sep 2025 13:11:24 +0000
+Message-Id: <20250926-uvc-orientation-v3-0-6dc2fa5b4220@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926024847.45814-1-michael@allwinnertech.com>
-In-Reply-To: <20250926024847.45814-1-michael@allwinnertech.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 26 Sep 2025 15:09:59 +0200
-X-Gm-Features: AS18NWBkn1WQu-sLTFC661ef84KqnjlKinVpbCKO_kBrhPqD4rS5YFEx5E8rC9g
-Message-ID: <CAPDyKFpdYhp5Go7_gSh=A0q3kxHs_gcBsUi6wc8sMs5bZW2JFA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: Fix system shutdown hang in mmc_bus_shutdown
-To: Michael Wu <michael@allwinnertech.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, adrian.hunter@intel.com, 
-	avri.altman@wdc.com, wsa+renesas@sang-engineering.com, 
-	andy-ld.lu@mediatek.com, victor.shih@genesyslogic.com.tw, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPyQ1mgC/3XNTQ6CMBAF4KuQrq2ZFgvBlfcwLsb+wCygpi2Nh
+ nB3CxsTjcv3Mu+bhUUbyEZ2rhYWbKZIfiqhPlRMDzj1lpMpmUmQCk5Q8zlr7stkSpjKLVeudaI
+ zqNDcWVk9gnX03MXrreSBYvLhtT/IYmv/W1lw4AJBa9UpbKS56CH4kebx6EPPNi7LD9GA+iVkI
+ VQrwHUGakD8ItZ1fQP1BMLt9AAAAA==
+X-Change-ID: 20250403-uvc-orientation-5f7f19da5adb
+To: Hans de Goede <hansg@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ Robert Moore <robert.moore@intel.com>, Hans Verkuil <hverkuil@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
+ acpica-devel@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Fri, 26 Sept 2025 at 04:49, Michael Wu <michael@allwinnertech.com> wrote:
->
-> During system shutdown, mmc_bus_shutdown() calls __mmc_stop_host() which
-> uses cancel_delayed_work_sync(). This can block indefinitely if the work
-> queue is stuck, causing the system to hang during shutdown.
+The ACPI has ways to annotate the location of a USB device. Wire that
+annotation to a v4l2 control.
 
-Why, more exactly, is it stuck?
+To support all possible devices, add a way to annotate USB devices on DT
+as well. The original binding discussion happened here:
+https://lore.kernel.org/linux-devicetree/20241212-usb-orientation-v1-1-0b69adf05f37@chromium.org/
 
-I looked at the trace below, it looks like we are failing to remove an
-SDIO card, why?
+The following patches are needed regardless if we finally add support
+for orientation and rotation or not:
 
->
-> This patch introduces a new function __mmc_stop_host_no_sync() that skips
-> the synchronous work cancellation, preventing potential shutdown hangs.
-> The function is used in mmc_bus_shutdown() where blocking is not
-> acceptable during system shutdown.
+- media: uvcvideo: Always set default_value
+- media: uvcvideo: Set a function for UVC_EXT_GPIO_UNIT
 
-This isn't the only thing that can block in mmc_bus_shutdown().
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v3:
+- refactor dt bindings
+- add media: uvcvideo: Use current_value for read-only controls
+- get_(max|cur|def) = swentity_get_cur
+- virtual_entity add codestyle
+- Codestyle
+- Fix xu get_info and get_len
+- Drop ACPI_DEVICE_SWNODE_DEV_ROTATION
+- Add missing select V4L2_FWNODE
+- Link to v2: https://lore.kernel.org/r/20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org
 
-With this change, I am worried that we may execute the
-power-off-notifications to an eMMC/SD card, when it's not safe to do
-so. But perhaps there is no other way?
+Changes in v2:
+- Add support for rotation
+- Rename fwnode to swentity
+- Remove the patch to move the gpio file
+- Remove patches already in media-committers
+- Change priority of data origins
+- Patch mipi-disco
+- Link to v1: https://lore.kernel.org/r/20250403-uvc-orientation-v1-0-1a0cc595a62d@chromium.org
 
-Kind regards
-Uffe
+---
+Ricardo Ribalda (12):
+      media: uvcvideo: Always set default_value
+      media: uvcvideo: Set a function for UVC_EXT_GPIO_UNIT
+      media: v4l: fwnode: Support ACPI's _PLD for v4l2_fwnode_device_parse
+      ACPI: mipi-disco-img: Do not duplicate rotation info into swnodes
+      media: ipu-bridge: Use v4l2_fwnode_device_parse helper
+      media: ipu-bridge: Use v4l2_fwnode for unknown rotations
+      dt-bindings: media: Add usb-camera-module
+      media: uvcvideo: Add support for V4L2_CID_CAMERA_ORIENTATION
+      media: uvcvideo: Fill ctrl->info.selector earlier
+      media: uvcvideo: Add uvc_ctrl_query_entity helper
+      media: uvcvideo: Use current_value for read-only controls
+      media: uvcvideo: Add support for V4L2_CID_CAMERA_ROTATION
 
->
-> Changes:
-> - Add __mmc_stop_host_no_sync() function that avoids cancel_delayed_work_sync()
-> - Update mmc_bus_shutdown() to use the new non-blocking function
-> - Keep the original __mmc_stop_host() unchanged for normal operation
->
-> This ensures graceful system shutdown while maintaining existing
-> functionality for regular MMC host operations.
->
-> stack information when an error occurs:
-> INFO: task init:1 blocked for more than 720 seconds.
->       Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:init            state:D stack:    0 pid:    1 ppid:     0 flags:0x04000008
-> Call trace:
->  __switch_to+0x234/0x470
->  __schedule+0x694/0xb8c
->  schedule+0x150/0x254
->  schedule_timeout+0x48/0x138
->  wait_for_common+0x144/0x308
->  __flush_work+0x3d8/0x508
->  __cancel_work_timer+0x120/0x2e8
->  mmc_bus_shutdown+0x90/0x158
->  device_shutdown+0x204/0x434
->  kernel_restart+0x54/0x220
->  kernel_restart+0x0/0x220
->  invoke_syscall+0x60/0x150
->  el0_svc_common+0xb8/0xf8
->  do_el0_svc+0x28/0x98
->  el0_svc+0x24/0x84
->  el0t_64_sync_handler+0x88/0xec
->  el0t_64_sync+0x1b8/0x1bc
-> INFO: task kworker/1:1:73 blocked for more than 721 seconds.
->       Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/1:1     state:D stack:    0 pid:   73 ppid:     2 flags:0x00000008
-> Workqueue: events_freezable mmc_rescan.cfi_jt
-> Call trace:
->  __switch_to+0x234/0x470
->  __schedule+0x694/0xb8c
->  schedule+0x150/0x254
->  schedule_preempt_disabled+0x2c/0x4c
->  __mutex_lock+0x360/0xb00
->  __mutex_lock_slowpath+0x18/0x28
->  mutex_lock+0x48/0x12c
->  device_del+0x48/0x8d0
->  mmc_remove_card+0x128/0x158
->  mmc_sdio_remove+0x190/0x1ac
->  mmc_sdio_detect+0x7c/0x118
->  mmc_rescan+0xe8/0x42c
->  process_one_work+0x248/0x55c
->  worker_thread+0x3b0/0x740
->  kthread+0x168/0x1dc
->  ret_from_fork+0x10/0x20
->
-> Signed-off-by: Michael Wu <michael@allwinnertech.com>
-> ---
->  drivers/mmc/core/bus.c  |  2 +-
->  drivers/mmc/core/core.c | 14 ++++++++++++++
->  drivers/mmc/core/core.h |  1 +
->  3 files changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-> index 1cf64e0952fbe..6ff6fcb4c6f27 100644
-> --- a/drivers/mmc/core/bus.c
-> +++ b/drivers/mmc/core/bus.c
-> @@ -149,7 +149,7 @@ static void mmc_bus_shutdown(struct device *dev)
->         if (dev->driver && drv->shutdown)
->                 drv->shutdown(card);
->
-> -       __mmc_stop_host(host);
-> +       __mmc_stop_host_no_sync(host);
->
->         if (host->bus_ops->shutdown) {
->                 ret = host->bus_ops->shutdown(host);
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index a0e2dce704343..2d75ad26f84a9 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -2336,6 +2336,20 @@ void __mmc_stop_host(struct mmc_host *host)
->         cancel_delayed_work_sync(&host->detect);
->  }
->
-> +void __mmc_stop_host_no_sync(struct mmc_host *host)
-> +{
-> +       if (host->rescan_disable)
-> +               return;
-> +
-> +       if (host->slot.cd_irq >= 0) {
-> +               mmc_gpio_set_cd_wake(host, false);
-> +               disable_irq(host->slot.cd_irq);
-> +       }
-> +
-> +       host->rescan_disable = 1;
-> +       /* Skip cancel_delayed_work_sync to avoid potential blocking */
-> +}
-> +
->  void mmc_stop_host(struct mmc_host *host)
->  {
->         __mmc_stop_host(host);
-> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
-> index 622085cd766f9..eb59a61717357 100644
-> --- a/drivers/mmc/core/core.h
-> +++ b/drivers/mmc/core/core.h
-> @@ -71,6 +71,7 @@ static inline void mmc_delay(unsigned int ms)
->  void mmc_rescan(struct work_struct *work);
->  void mmc_start_host(struct mmc_host *host);
->  void __mmc_stop_host(struct mmc_host *host);
-> +void __mmc_stop_host_no_sync(struct mmc_host *host);
->  void mmc_stop_host(struct mmc_host *host);
->
->  void _mmc_detect_change(struct mmc_host *host, unsigned long delay,
-> --
-> 2.29.0
->
+ .../bindings/media/usb-camera-module.yaml          |  46 +++++
+ MAINTAINERS                                        |   1 +
+ drivers/acpi/mipi-disco-img.c                      |  15 --
+ drivers/media/pci/intel/Kconfig                    |   1 +
+ drivers/media/pci/intel/ipu-bridge.c               |  58 +++---
+ drivers/media/usb/uvc/Kconfig                      |   1 +
+ drivers/media/usb/uvc/Makefile                     |   3 +-
+ drivers/media/usb/uvc/uvc_ctrl.c                   | 201 +++++++++++++++------
+ drivers/media/usb/uvc/uvc_driver.c                 |  22 ++-
+ drivers/media/usb/uvc/uvc_entity.c                 |   3 +-
+ drivers/media/usb/uvc/uvc_swentity.c               | 107 +++++++++++
+ drivers/media/usb/uvc/uvcvideo.h                   |  22 +++
+ drivers/media/v4l2-core/v4l2-fwnode.c              |  84 ++++++++-
+ include/acpi/acpi_bus.h                            |   1 -
+ include/linux/usb/uvc.h                            |   3 +
+ 15 files changed, 441 insertions(+), 127 deletions(-)
+---
+base-commit: afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328
+change-id: 20250403-uvc-orientation-5f7f19da5adb
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
