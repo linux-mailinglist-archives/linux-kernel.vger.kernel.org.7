@@ -1,129 +1,149 @@
-Return-Path: <linux-kernel+bounces-834355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C36BA484F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:58:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFFABA485D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5219D3BAFA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC64256172F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4508D2253A0;
-	Fri, 26 Sep 2025 15:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1923507B;
+	Fri, 26 Sep 2025 16:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A/PCaOZ2"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0utCTG48"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50F31D6195
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D426A8287E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758902323; cv=none; b=ZKW2/tXXFx+RqDlE9xlT5T88aTFM6FPTh8F1LUeCKtvKit5PX3mZM7qh200TbmNC7nviW8w61T6oiZ7B9j0Eidb0mcMfWtUmFiGlY6pWERxnp2w9gZ5AyJ0GrAeOYlMaQVM8XbaVP92nKVtso33H8OZmN9D2ZgBXVHgLe9Iyftc=
+	t=1758902448; cv=none; b=GozSZkboXf5x35tmWDe0HXy8fcpn+Ht1J38Q/7DHeBiZ3Cfoic9SvvPaBAXmxntsLYw3SDahn06r6oaEPT5uyWrGlwyqT4wdOLL3YnUa9sn0sY8Qo/xb+/eceny/Sp8tG6ES73ch1cC1gnntBB6pf6LGCtYaEtFxUCkARywQzds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758902323; c=relaxed/simple;
-	bh=ioYNFXSk4x7Lrdjvrdmcd3nR6XgAOSJkZ5hhpjugXk8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=R29JzPcprFg6B8yPYByrtV8i1Zy4Rtgaz/U7AmJlYdfEq4mfEstTvKDwt2zGPRGp5HGKEuf/vDBPv8pJyktDAUEunJvw24d57ny25Jh5c/hdVxvrmr43dUZcxs7Y65cc1ciDK7k2Nuw6b0PuJa9RJGJoTdOjylVP6VbmWvcw+4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A/PCaOZ2; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32e09eaf85dso2978338a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758902321; x=1759507121; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L5K8UK2MsZZPVLL6gVUiO47uURDGeEw8rDgtDDz0bOs=;
-        b=A/PCaOZ2WX9Wp33dgLh/pdznBfpdfN621R4FSg1FykmjShALeAZdN99wtGanoKMNcL
-         d6sQDQUXeWgv+z+WGGZXn3pAjGRBDQeJG+2qy7fuzaCvRQtbCHUPEHhUimO2oSp03Mfb
-         JwBp4OXlTtBOizXd+Fkbr947jjBaeHZn5oHEuaNHgkBBb/Cd1+69mWnD53Pzbsdsbwiz
-         6cpwwrFRjbjyx5bPRUkzSAAxbtnHRRyZZGvPDbHgrmf6nI54lw7KdfuguBG0xmTARapx
-         DaGol8kzJnE8W9/+umXQg3VFa45VXn2IHZLrV1THXB3TkC8BWRDeWrbgMXdW+K0eCfha
-         emLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758902321; x=1759507121;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5K8UK2MsZZPVLL6gVUiO47uURDGeEw8rDgtDDz0bOs=;
-        b=ute+eOmZUVYUJvA/Y7LrwPBIhNHgH1r+za/an5oWYpJcp7bRUv2Eyd9PkFjMNLLbFB
-         O084F2JC97WDC2I/dTTl8ZHvyVCDTMCF6Q3hH1A2OPRfQT040uIfGgegWQByMe9VpKSb
-         NjWDSiduNoxBVRTpyO1j7Kk/sJwEc+xbioncqFFgxyol4GVmiQy09vAh2229mzdF6OlC
-         M/4+yXmWR+RX2nEb1Pcxf0UgP+R/jeH7U0WmbZXaVVv/B5Oi2ud9vUF8VC+/jz8ywf9h
-         oWsLcmisYq4fcDGNzD1Re3Hcv3RaWHr6RxGhOrY/Tt3ZAHXTquoXhf9sErLVn/Be4OiC
-         +lqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9YtJI26ta2D/RdoqYzUfN9qncLAH6kVfxlXEH04DQgebGInncbBgmYCHgLpwIKu5a3lSXaA1DzpHDfQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8ISTfehgTLeJTAI7dvwbSQQJfznnAWvpi4Dolp848vF+hvgIj
-	OOPbCzdiAbvENmsXXdac3Bcral2qF7Wrd9W+KQILQ5NgUJcJFo5nhl4OkRBEgwktKtKGlfRluIT
-	aEqFXfQ==
-X-Google-Smtp-Source: AGHT+IFjpgSzA5Rlw7JbImpaC56pYTXgSa295k3g3PBWsimpHinIifwdOO6eH2ZwQpZ8/ysgQKAAB2w8fRA=
-X-Received: from pjber8.prod.google.com ([2002:a17:90a:f6c8:b0:32b:6136:95b9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f8f:b0:32b:8582:34be
- with SMTP id 98e67ed59e1d1-3342a261050mr7471559a91.13.1758902321029; Fri, 26
- Sep 2025 08:58:41 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 26 Sep 2025 08:58:38 -0700
+	s=arc-20240116; t=1758902448; c=relaxed/simple;
+	bh=dUaAor8TmMkYeiZvCo/c8KxahB00xi2GRDJQbRjjmeg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AoDcMTvJP2A04waxNjWY2d5QKpjEINn/q23RX5k8ZGYdGgA5MRMp7fktUD33Cyfr+pZb37v2nRas+hLOC+EmIy9feXtfb3qrCUKYAfUaKYEGoA3cNO0/o3wQ6ko4nTw5gKvB+V/qbDnpKUxs5zPE8CAxGbRXtXxDELEs1swPDgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0utCTG48; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 7235CC00D96;
+	Fri, 26 Sep 2025 16:00:25 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id AB430606B5;
+	Fri, 26 Sep 2025 16:00:42 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 31CFA102F1829;
+	Fri, 26 Sep 2025 18:00:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758902441; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=7lVvWz+xLuGFIdL0VxzHhfYYoNfzXxKTU8wq7zWUGmY=;
+	b=0utCTG48sbi6K1hDn808DEudRFN9K6qZsiiMBLcZndFfq0i/emL8E0+1zISt8qpwTGXyGj
+	tvH3tfEfmNKV06hKIgVfcIbji9s7W0w92KnZODVYKv3PYRZnkMy5s3kdqjkTSiDvpoC0CF
+	iHhq9e9s16LQqdsAH05rXIa/qDPZtFWB3gq3Il6Ow8ck/SSBXJ6sZe71ipCHFhcU2dEsT0
+	Ze+6Xs2kP03XHUVIlWfVplP48vpDQYA/06jpvZQLLrpSCZvDzv0SbuxQ/cP/8KutB/tDvU
+	OTezU/arlsrfcXDMu+vcA/DMSCVRc9xL2Km6Sn74CqIdhX6AvZ3j9vVpKI3s4g==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 0/7] drm/bridge: protect encoder bridge chain with a mutex
+Date: Fri, 26 Sep 2025 17:59:41 +0200
+Message-Id: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <20250926155838.2612205-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Track width of arm64's timer counter as
- "int", not "uint64_t"
-From: Sean Christopherson <seanjc@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Sebastian Ott <sebott@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAG241mgC/x2N0QrCMBAEf6XcswcxEK3+ivjQ5lY9aBO5VCmU/
+ ruHj8MOOxs1mKLRtdvI8NWmtTgcDx3l11CeYBVniiGmcImJxWYeTcWXYZpqZpRcBcaua+H5s2D
+ l8dzLKYY+AYn86m146PrP3O77/gOo8h9GdgAAAA==
+X-Change-ID: 20250925-drm-bridge-alloc-encoder-chain-mutex-b78d62085ee5
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Store the width of arm64's timer counter as an "int", not a "uint64_t".
-ilog2() returns an "int", and more importantly using what is an "unsigned
-long" under the hood makes clang unhappy due to a type mismatch when
-clamping the width to a sane value.
+This series ensures that the bridge chain of the encoder will not be
+modified while some other code flows are iterating over it.
 
-  arm64/arch_timer_edge_cases.c:1032:10: error: comparison of distinct pointer types
-     ('typeof (width) *' (aka 'unsigned long *') and 'typeof (56) *' (aka 'int *'))
-     [-Werror,-Wcompare-distinct-pointer-types]
-   1032 |         width = clamp(width, 56, 64);
-        |                 ^~~~~~~~~~~~~~~~~~~~
-  tools/include/linux/kernel.h:47:45: note: expanded from macro 'clamp'
-     47 | #define clamp(val, lo, hi)      min((typeof(val))max(val, lo), hi)
-        |                                                  ^~~~~~~~~~~~
-  tools/include/linux/kernel.h:33:17: note: expanded from macro 'max'
-     33 |         (void) (&_max1 == &_max2);              \
-        |                 ~~~~~~ ^  ~~~~~~
-  tools/include/linux/kernel.h:39:9: note: expanded from macro 'min'
-     39 |         typeof(x) _min1 = (x);                  \
-        |                ^
+This is part of the work towards removal of bridges from a still existing
+DRM pipeline without use-after-free. The grand plan was discussed in [1].
+Here's the work breakdown (➜ marks the current series):
 
-Fixes: fad4cf944839 ("KVM: arm64: selftests: Determine effective counter width in arch_timer_edge_cases")
-Cc: Sebastian Ott <sebott@redhat.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+ 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
+    (based on devm_drm_bridge_alloc() [0])
+    A. ✔ add new alloc API and refcounting (v6.16)
+    B. ✔ convert all bridge drivers to new API (v6.17)
+    C. ✔ kunit tests (v6.17)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (v6.17)
+    E. … add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
+            (drm-misc-next)
+       2. ✔ drm_bridge_get_prev_bridge() (drm-misc-next)
+       3. ✔ drm_bridge_get_next_bridge() (drm-misc-next)
+       4. ✔ drm_for_each_bridge_in_chain() (drm-misc-next)
+       5. … drm_bridge_connector_init
+       6. ➜  protect encoder bridge chain with a mutex
+       7. of_drm_find_bridge
+       8. drm_of_find_panel_or_bridge, *_of_get_bridge
+    F. ➜ debugfs improvements
+       1. ✔ add top-level 'bridges' file (v6.16)
+       2. ✔ show refcount and list removed bridges (drm-misc-next)
+ 2. … handle gracefully atomic updates during bridge removal
+ 3. … DSI host-device driver interaction
+ 4. removing the need for the "always-disconnected" connector
+ 5. finish the hotplug bridge work, moving code to the core and potentially
+    removing the hotplug-bridge itself (this needs to be clarified as
+    points 1-3 are developed)
+
+The per-encoder bridge chain is currently assumed to be static once it is
+fully initialized. Work is in progress to add hot-pluggable bridges,
+breaking that assumption.
+
+With hotplug and especially hot-unplug, bridges will be added and removed
+without notice, and thus be added/removed to/from the encoder chain in
+drm_bridge_attach/detach(), concurrently to the code iterating on the
+chain. This can result in disruption of the code iterating over the
+chain. Avoid it by introducing a mutex to make list insertion, removal and
+iterations mutually exclusive.
+
+[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Luca Ceresoli (7):
+      drm/encoder: add mutex to protect the bridge chain
+      drm/encoder: drm_encoder_cleanup: take chain mutex while tearing down
+      drm/bridge: lock the encoder bridge chain mutex during insertion
+      drm/bridge: lock the encoder chain in scoped for_each loops
+      drm/bridge: prevent encoder chain changes while iterating with list_for_each_entry_from()
+      drm/bridge: prevent encoder chain changes while iterating with list_for_each_entry_reverse()
+      drm/bridge: prevent encoder chain changes while iterating in drm_atomic_bridge_chain_post_disable/pre_enable()
 
-diff --git a/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c b/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c
-index ce74d069cb7b..38493c9cde83 100644
---- a/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c
-+++ b/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c
-@@ -1027,7 +1027,7 @@ static void set_counter_defaults(void)
- {
- 	const uint64_t MIN_ROLLOVER_SECS = 40ULL * 365 * 24 * 3600;
- 	uint64_t freq = read_sysreg(CNTFRQ_EL0);
--	uint64_t width = ilog2(MIN_ROLLOVER_SECS * freq);
-+	int width = ilog2(MIN_ROLLOVER_SECS * freq);
- 
- 	width = clamp(width, 56, 64);
- 	CVAL_MAX = GENMASK_ULL(width - 1, 0);
+ drivers/gpu/drm/drm_bridge.c  | 56 +++++++++++++++++++++-----------------
+ drivers/gpu/drm/drm_encoder.c |  4 +++
+ include/drm/drm_bridge.h      | 62 +++++++++++++++++++++++--------------------
+ include/drm/drm_encoder.h     | 18 +++++++++++++
+ 4 files changed, 87 insertions(+), 53 deletions(-)
+---
+base-commit: a7493ff9ad96868f4c1c16813b205ba812a7573c
+change-id: 20250925-drm-bridge-alloc-encoder-chain-mutex-b78d62085ee5
 
-base-commit: a6ad54137af92535cfe32e19e5f3bc1bb7dbd383
+Best regards,
 -- 
-2.51.0.536.g15c5d4f767-goog
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
