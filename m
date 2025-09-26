@@ -1,307 +1,269 @@
-Return-Path: <linux-kernel+bounces-833806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A59BA31EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:23:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D9CBA31F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECCAF3B95ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E4463BC121
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9663271475;
-	Fri, 26 Sep 2025 09:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C3C274FD3;
+	Fri, 26 Sep 2025 09:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EllY0bTu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ECljYK5n"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C87A13FEE
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758878625; cv=fail; b=qM51fDuSR6o0bdASq3hE7AkGZ4gA5ApuClRnp0gl7KOHAe7PAuX3wLeXdPxnl1MFkEONn4ZO0pnolIpgEM1mVEZF2+6aztlbT23NX8+nRGadH32+LGIrhRwES/qAW4JUl2AH97xR0mnn68a23EhU3M3JwI4+OREgbQAzsI29hFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758878625; c=relaxed/simple;
-	bh=XUvScUtEWa1903EYbBTbknG9j8cnm/3wx55G8sjhlMQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NU/pCGb5XQ68XZ2S07tlZ0ZjkTmKVY79VcIflWkoplrM2cPxczlI915hB89W7OrfPeTrXxCuE+2kJ4v5WQj4gLFrCbEnfm5H9y/8LynEpRC8vuP85bgzZ5r7owg6MT2RAFpKmTN9E4QjfdguSBgMOScY+kFNcMKYkx+nbHPDpW0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EllY0bTu; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758878624; x=1790414624;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=XUvScUtEWa1903EYbBTbknG9j8cnm/3wx55G8sjhlMQ=;
-  b=EllY0bTu3fihX701V956cDld5ReHyC/WgvIy/WigbZwYdPuCoPBGm/4L
-   Dhn+PcbtyBVopj9dtzbhvxYNpIjYIT/MrWlNJuahn2E48Te8su4mqYpOg
-   yEZ3yINZi5xUzv164Zedx3wL6tGG4guCwixzfOVZdp3VefoRJdAf48Kck
-   0jeEl4pt/S2y2y3T44c5MQjqUrGNYVcnxCTVFu07+CHBLvTLEKwAw/7o3
-   +YsyvNdPCmQxNiTZi5VipSHBvs5s+Tn6xInQ+3UfVAf+L0qcpBSebhAhI
-   v5ivORlxyoXBPTjlln/6VnSALiCZn1Y2sJsrQ8QFFnQTRaftn4sHYBwb5
-   Q==;
-X-CSE-ConnectionGUID: mszEWlNVTJ+IKJR1Rlprfg==
-X-CSE-MsgGUID: eU4bzM03SGyTKGT4L5yEbA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="72641911"
-X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
-   d="scan'208";a="72641911"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 02:23:44 -0700
-X-CSE-ConnectionGUID: nGirqzH3QFCrnkL0dBTxgQ==
-X-CSE-MsgGUID: EGGGAeeQTUeLx5QPww+i4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
-   d="scan'208";a="182736476"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 02:23:43 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 26 Sep 2025 02:23:43 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Fri, 26 Sep 2025 02:23:43 -0700
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.38) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 26 Sep 2025 02:23:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HSyJpYlYqjEpXav63eIPXy5K7N7+HzowS1F+XLDSfe9/Uy+UD1dVe9PoHdjFOnR6QxZkIHfRXWSdWYfC4V9zeEsVBic1SNqrdAsQN3QMM4Cb3qgY7QQqDZYKmVPEJA2YKhiBpddy9cXa/pyVFBGedYzMDIDxQdjTZqOR07D5kGZpDrHBAU/q+X5UjmphBGxsilXwX8l6oKX+lqGGUdBXYOp6z6xTatT4PlVLN7VywxacdezPEp486UuODxOGCeLC71XJQPMf8f7fYl7/GZFHE3BLPRJyjEr5L9GKDLiqPyvPRvaNJiAUnh8wGIdrT8/o2LzdKjWQqS2QlmzxodYGVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IvviklSbE9C+VF9RNjVv70QQom4Sr2e62ranP+o2sME=;
- b=eLdlVXDnKEY2iMdEORfLtLhzspFHhvDGpEppOLZMFtjr0GPXxUKppKEDwGxzBl/8YZjg2YQNHfoVQUOlucj0FcqR0W+u+lPYeWtizRMzdKkfbyhaPAu6yUnof7k9a3z3beIkg7CQCBLS8Vism5s5xfGSoYpA+CBUXbEpBi2RlhKmuiggoUKysHfWbiXST1HJ/eX1MUEplAsC2zJ2CXr7GRaJXjWxZWmqX/U/NqTs3WvNlSMmzCFmo0JKO/fPsTa8WD78cr8EwwB4i1H2rTaSW/jbmmeRAdoLk3tKl3JNgsj3oMi28W7ASisBLWFMg3X+Uo2xch7rd4++bOb9SI5upw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
- (2603:10b6:f:fc00::f13) by MW5PR11MB5786.namprd11.prod.outlook.com
- (2603:10b6:303:191::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Fri, 26 Sep
- 2025 09:23:39 +0000
-Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
- ([fe80::7aab:2a1f:f728:eb01]) by DM3PPF208195D8D.namprd11.prod.outlook.com
- ([fe80::7aab:2a1f:f728:eb01%5]) with mapi id 15.20.9137.012; Fri, 26 Sep 2025
- 09:23:39 +0000
-From: "Kandpal, Suraj" <suraj.kandpal@intel.com>
-To: "Aaron, Ma" <aaron.ma@canonical.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "jani.nikula@linux.intel.com"
-	<jani.nikula@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-	"Deak, Imre" <imre.deak@intel.com>, "joonas.lahtinen@linux.intel.com"
-	<joonas.lahtinen@linux.intel.com>, "Aaron, Ma" <aaron.ma@canonical.com>
-Subject: RE: [PATCH 1/2] drm/dp: Add drm_edp_backlight_get_level
-Thread-Topic: [PATCH 1/2] drm/dp: Add drm_edp_backlight_get_level
-Thread-Index: AQHcLsNcq/LsEblX9kWMgQpQhOaLmbSlMEpg
-Date: Fri, 26 Sep 2025 09:23:39 +0000
-Message-ID: <DM3PPF208195D8D72521EAAFDA64C84654FE31EA@DM3PPF208195D8D.namprd11.prod.outlook.com>
-References: <20250926085401.2808634-1-aaron.ma@canonical.com>
-In-Reply-To: <20250926085401.2808634-1-aaron.ma@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM3PPF208195D8D:EE_|MW5PR11MB5786:EE_
-x-ms-office365-filtering-correlation-id: 7301b14f-1f7c-47e4-1a62-08ddfcde60c7
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?H5PUx/KIkN9n14SGN7thF1pvdNQqhJWnIhdyknvn0BpB9dNuQpE79uYTmKy7?=
- =?us-ascii?Q?LZiN8Kav0HLmWPTOm2AQIrcJUBYlC/bJw89zftKjMilXWSPipYM94whSRQTJ?=
- =?us-ascii?Q?bzbXSI+y7Jw7bbwNj742mZ0Q3bqcEIPjZLDIvziYvA3Im3s9UVxVpHGZEgwN?=
- =?us-ascii?Q?RThxSCcfbgqnXqsCzMmZwpxwkrnlAwUSOGUL0lGjgvO51ob2Mq5IJo/Y+Umx?=
- =?us-ascii?Q?g3/aS/utBTh3sJL28g+KQXNlCOXXP1km3Sonow9GQceTDuL5zz0h+/p3O6Qa?=
- =?us-ascii?Q?yp7szj+bYBVOa7360vuJtkjQJz56hELd+80Tj/yZ0sEZbc+x5NYSj2IHu4B5?=
- =?us-ascii?Q?XOZ1mHQhJQmy4RM2P2/VirOABNyIjy7Dk3B71Cr6xt9W2OBXmv/NlG07BB/d?=
- =?us-ascii?Q?qhoiFWsOuxDEMoqCxDO7rGbG3eFIR4DwfJ2JCPHhIKUM09+OtAVTIiVpU7QI?=
- =?us-ascii?Q?vZg67OMfvnjASKx837XiPLqDsDZP4Q40DvvJBakKPiSMQvgh+IHtUxV6yRT9?=
- =?us-ascii?Q?2Dza4b2inyL0g0JUU09Ip3rXBfIuTWcFP7kAaYirfem7GewarLDra+BA/Djy?=
- =?us-ascii?Q?U6TELnL4GCjkzFm+7109Jfdp/z4kfINaaXOJVvab1Ifk2BBqU2Dzklk/cNg9?=
- =?us-ascii?Q?MQTPdl8v6aBEBRG8r1NTqFXLQGzfoXAr6J87l6/MPmzx08OLjC4zHJ/O2qMh?=
- =?us-ascii?Q?O9uYvAWhgOb1pV8OkmNlz+fmU2Pa4YCb0bAk5VaytRoBQLX+1WTz/+a0FD5O?=
- =?us-ascii?Q?lczEcAg2df7jY7U4+2Y/SLgabduhFEgAJpn2zDavOHYnMXpag0GFqrGV/Kj5?=
- =?us-ascii?Q?NBtaQc2vfPYvBccYgY52GKgWMakI1aThoG6HO1DUNxgQza4BgG2ZXFlgbkE7?=
- =?us-ascii?Q?9gfK0yTj8L4Td02/2UpvrCugkHDOaebnsYdf+RuoHX36L9tTadhZmnyaucab?=
- =?us-ascii?Q?Q/TSiIrPDC/8U69SWO8B5nc1/2x8w3KgGJ/BCcEXgqs3wwX/0Z3JL7Q5iEcC?=
- =?us-ascii?Q?xK4iUAS0v2czD3qytSLfFLc3I8lhhByibJNEDfnB8VYexqtlVicsB9Ba2Wot?=
- =?us-ascii?Q?NgbaSmbXu/OFBn0re+hK/SNLfxe9yFymZTeNqhILpDtCoamqPYobhJ54KWkL?=
- =?us-ascii?Q?Ba7wCbEp/2i1LaJUMLDZ6hMv/LheEYiMReRu821oENGnOVNMIQeWwzS4i31j?=
- =?us-ascii?Q?zM1vtPPyOWkI9l9Gk7Axb6FCYOm7YHnYlDVOlYLO9d8IxLBA98qEM/QbY/GF?=
- =?us-ascii?Q?9gLxfcL6Ou53PKDOQIWOlrq4JnAN5fk8IypE2BNKBPrSOHkGS5YZNl0DjnbZ?=
- =?us-ascii?Q?ZowPZi8mdriH3Q5fKhIsBV0BWwzbUTdgk/vwt6veURCV7upvDryAKAuSg1fT?=
- =?us-ascii?Q?JNoXDixiY9kJUZi0v19uNqPd1cnmxTM6qaazZqQbMvwbi7EGfdloR8d1S1qc?=
- =?us-ascii?Q?isB4O0YxnmEcnUZFJT+4EHf99bx+2QbbXilc3Wsnlz882C9RmCpX+djmMdbK?=
- =?us-ascii?Q?FrOk9rWQlQXUDaCJ+mfiqiacKzyna0pXQASq?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PPF208195D8D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?3Cg3po8zgeclmzgwgX2Wqmr4v+vi5UDdZvp35t5Hg1swnmNX4FTTYeewCQDI?=
- =?us-ascii?Q?APBJLLdAa6y4HdJa+OCNbBZrff0WtSdhtvdJin0wpTnvcqDSMHkcAnwhtJKp?=
- =?us-ascii?Q?Rst1apVtNiBh2nNWM70vX/6c4V2xOxhX+ldtT0+ys+vx+TDmTJMcySw69Dba?=
- =?us-ascii?Q?F+X9M6uyygrVK8ylj0Ig1n40V8di7latBCyhqQHl0Zvm77BsSzIKhI5Srtth?=
- =?us-ascii?Q?e6W881YW7Z0E7k2vh08UI+VVRebLWJ+yoAcntkkRTLhQU/2KBjyrhwkTlMPT?=
- =?us-ascii?Q?fSpGSA0MbAPWg/VHHf6KWT3y+9SVVJkMO2Om8c73bFVHtvVdgIy3Ix66OuS1?=
- =?us-ascii?Q?FcFn2CaeekWav/QJjdxp69hRJ23m1cc6uqMJdB/6QN37DCi+68gDZwfzrv35?=
- =?us-ascii?Q?j45KiPevbW6NMtm76a7CZFOifwqDQBnywgqTlaKs+vHHS9v5as/ht2e5/TTK?=
- =?us-ascii?Q?jeVWe/1m3dljGCz7b8eMxQKD/QUqE/Q6I/j2UKM7VSu0KdCHjF/UYepB7ByM?=
- =?us-ascii?Q?8FFpX7NwYSXmWa2QgIBq2iO47f+nJ/WucQ4L9u75rOSxfmmP4lHNGSYXrFbf?=
- =?us-ascii?Q?Nf6J9C8pOadRu87u9OJblU/q/pI4h4T2YdcwDPjRQlZjNA77AkaA8uj8Xbsu?=
- =?us-ascii?Q?L0XuaRCmg2flUj1VdYYbKYimdw34tcN0U7NgdRnv2xkkzFl40a1Rjhl68p8t?=
- =?us-ascii?Q?/HPQMUZ65W10iM/Mjbx2TLDFQ6JA/oLUhSAthbSfXhIdBbQoJ/ZfLBaL5Df5?=
- =?us-ascii?Q?VaUXo+ykaVD+diOQwpMqlDDjHXhoZuuZg6n561zT/QMoKhYUWAOqwjhmc4N1?=
- =?us-ascii?Q?HD51UbxcYumg47p2quIUIJPoSOsMAnaOF1eD+k+zpeeAHHO5o24Uw6g1Sm06?=
- =?us-ascii?Q?QTdv12Z5DXmNZOXSRdzHTWdCtb6fYmLbThkpCaiysOqcUEGyYkStaCJOXUCJ?=
- =?us-ascii?Q?DoPJ4KXteTRbruqRSbzNnIQ9I9v8UoDXqwLLpOWri+Cb3jDy8+TR6DBFdNU1?=
- =?us-ascii?Q?3BJrXy8J4mgP7MFWhTCsXU/K8q9V3IZLwzboRQTYE7zDOdyFEVtlIPcWYVWs?=
- =?us-ascii?Q?D/ASL41gWS+XN8YSYFaSqN7MAysQyGFwngD85vo3FE7UBeOYptq9R5RrmSJ5?=
- =?us-ascii?Q?5ufZvVIy3zsSdrdWYOdm5L+fFuSQaaPctNTbgNXku1eZR6YzppY42bt0X8u4?=
- =?us-ascii?Q?vMD+SQ60mQhQKfv09p1vi3eZn3NRNhp9LzbX5njsALc788rEFr/E9v3PFNv6?=
- =?us-ascii?Q?ieU9bu+fSqn2UvyXMcORSCKOAsohlHwFdtB46mT06eTlk+x5wdGTLo2FRf0M?=
- =?us-ascii?Q?kRmE1AzOkzLQnROV4AmwBz5+clI9KspO7YBGrn/dtqql30gDJp3D0iGraRg0?=
- =?us-ascii?Q?sA3PXz3YVNW9p9Cm7Erw+uHT/KtLC/0ZmK4qxArwbIUm8qJLznM661cM1iQh?=
- =?us-ascii?Q?dhY8PubCmrkpJAHYWA589Qhv7Fo+zut8s7zlpCDsPlQepMqzody41DfLroIa?=
- =?us-ascii?Q?NNDyGnsMxaO6zVHd8jz2qfOx0dHmi4XfJCXHIzFdcyDUiLBmOz+wPWRZPBtx?=
- =?us-ascii?Q?PmL4McwGn+w1UwWgp7pHcuOtZayF954WxUW2Imoo?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA416266B41
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758878666; cv=none; b=Mkkf8sQmtM5+EHcwNu4FrNRaJTl6wQp9AsfCARMgRXhn6NnHVoDAV7PTLybHVunTElJCcAIRT/uZFH8sT6CeiP1Q8aivcNr+MTNzg1LMbc1z5XpbRdeEX+fI1ZB3CCGujjWEgFJqp+at5OZ6bPaorbpim/LVFMyVOTqtShfNW2A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758878666; c=relaxed/simple;
+	bh=KAd1J0S9oQCh720nBw3CT2g5k54ln9BvTNOHBbN5Ziw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rwtux9KqbY3Tyan0GJnnbZz7yRRXwGqJk/Ig6fupSYuG4IF3fzyRjEnX9nUn9yCMKMiT0YfwYFCMZ6gKMwd7RSfBbt1n1oE5YrEyldKGjsCOrUXj8UhYuvA6HYhYpSRgtBZj/N+YhMwJxK678fhEz55rYdjAYP78PU9qJIHjpzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ECljYK5n; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q8vwUh030943
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:24:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qVnOy2qXL2j3wLZjEIZJ3GwgAoKs3KAugAQxc5Zdx1c=; b=ECljYK5nnkoeqbzs
+	ww7nSkWQp68jqCnSeeKOhoVrPuzC+Id/nBkl1jMVAAvI9swPb9sU6QdX9mRynXkJ
+	6OE0azoNGuvlQ+C/lyEZnfRwH201keXcXNaqtlSovVwACNtFNlaroBiOm6p7KDb9
+	8Q/acLR//OmzwSz/27pLH84DWdIyvHRkjFB09CDevB8JU/TbVocperUCIM7yQHHM
+	ltBQbs7CBrKMqNeIuEyugTZ9FeNAeP3RJ3pGnn3CLDmXvkSr9foXU1avpwxzpJHS
+	3lEQFmtNOQHxYApHIj1lU/08CFncRvJC3vW9Q1BiwGMdiMkVus48rrAbbYCOyNP9
+	pRDE5A==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0u29a9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:24:23 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76e2e60221fso2803293b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:24:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758878662; x=1759483462;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qVnOy2qXL2j3wLZjEIZJ3GwgAoKs3KAugAQxc5Zdx1c=;
+        b=LRf/7psp0KEl10bpFsRMed471JQWCn9E/waShCMYni/5C6TDNcdALNjCCAnHDPofaW
+         mVOLIx3I76N7ie6a8PJgvrH8fKHUc5wspgoG5ZL3XTBYJ6PQhDdu549w8827s9i8kANH
+         pX3z8O7bwsPalaSzdEkTMU47MEK+giV869+STNZ4dK4XBTdKjzN9q2T00vZZERPXQczl
+         oEvgyC4dD+aK2zvzH39KYCCn6uOL+/PFE4jdAeDkeRoJbOqzWStz7tAXYG15xGaN7dKf
+         IOxjO6SHiFVlsOBtrSil0/21V88BxH5jAV/7bMOi3Z36MQvfu9vJyWVcPR4EFbx7tlO4
+         C8oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRjC8i9mXbYHMjllYPS2cWaqMzC1FoMcesSpdU+cOnFGNTxGfUEa1nme2EtqzvIEwucYHCkVL31RvsCTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0IH9G8SQH/nT2KgBctJtH+ctR0dLUpThBpx7uajbl6yE41TJ5
+	OZ6NCHVpXGIU2fMZdC84d6JvQI/gPNNP6EHEfl15TROXmDJ7gVXtxsFN+wZBccillxbBUi7/PDH
+	ZKTchF/IvD8PCgrozfJLmGfSv/xdFLW1Dxmg8pWGg/7kuRWIn6iLV9AtAFRfsAfpO6OE=
+X-Gm-Gg: ASbGncu/9sA7ltoAITZzA81ZhpLGPThlHCoTOubtPyfcZFoHh+huvqONOtRZVWoNT9M
+	PHfLOqx92TAw06cBL6EI/WlQSNUp3l4JK5xqM9K/CjBQV3lSbltY4qEDSYuXgs6BnJo9apZTZqK
+	KynrVwVKq7xccseyi4VepJOp+S7AqxsLQXr+spi3NQz7Uh3svT/2+10zDqU7+LbyR0+mdwyoPZB
+	eN4ckGdkDzsOn0iEyqj09K85cjFG7DX3DdIby72rxxS3xsMC6dAJVgxSXE93Lwy3bF46EuaLiC1
+	3MW8uWBy2zJDSUDG08fm+IhKx/DMzUj2IUcj+gUJt5hQOGbzn/fXoC/Lz7pgctzO6S6t
+X-Received: by 2002:a05:6a20:7f9d:b0:2c8:416:6470 with SMTP id adf61e73a8af0-2e7ca214561mr8039391637.24.1758878661940;
+        Fri, 26 Sep 2025 02:24:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEf3xeG/lORUyevxAy1/n4CTalckBAz9JKsfJobNuVQZ9c5XJom6g/A9a5nv12tT/rxgxXhxw==
+X-Received: by 2002:a05:6a20:7f9d:b0:2c8:416:6470 with SMTP id adf61e73a8af0-2e7ca214561mr8039357637.24.1758878661419;
+        Fri, 26 Sep 2025 02:24:21 -0700 (PDT)
+Received: from [10.204.79.108] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b27ae1sm4081410b3a.65.2025.09.26.02.24.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 02:24:21 -0700 (PDT)
+Message-ID: <d451f8f0-d2ab-44eb-bfcc-ec1e9dbba060@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 14:54:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM3PPF208195D8D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7301b14f-1f7c-47e4-1a62-08ddfcde60c7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2025 09:23:39.2460
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KW4RvP0TbKZ6KjPAPk6km+j5d8Zg+vQCDYxf9x0h7QHdMlRGgDe/O5cvqmVgvraMJaBB/6EyfLoNNAW0GfK10g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5786
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: lemans: add DT changes to enable MDSS1
+ and DPU
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250925-lemans_dual-v1-1-9c371803198d@oss.qualcomm.com>
+ <nnvjazbxpywrmjnt67isba6m3ld6rqdaiid4qeczunmuablntz@vlbrjnxj5r2k>
+Content-Language: en-US
+From: Mahadevan P <mahadevan.p@oss.qualcomm.com>
+In-Reply-To: <nnvjazbxpywrmjnt67isba6m3ld6rqdaiid4qeczunmuablntz@vlbrjnxj5r2k>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 3bUUk4KzqJqLxClkdmliuJk1tvBwiwTO
+X-Proofpoint-GUID: 3bUUk4KzqJqLxClkdmliuJk1tvBwiwTO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX0RQYibbovHTG
+ Pwdt9rA1Nb/ac7qjrH9LcVmW8c+bpReE2NhzEJ1STm8b9VG9iYvL0tT4jZShx0+MCv+uapydpwy
+ 6B4Nxr0tgllCI0KIXw4VKzkhEDmppu7vj22I/L+tsyS9G5OZ6F+DDisNiemZhcAQmx2nOs4AtUS
+ 7E40CxgXiZThugCcopMR0hBjKGhI7GofnzsN7kVxEIT7ZU81js5MbEoqdPCt7AwJVBNfCfdOtmy
+ jMTD5G96/Gq5Occ+jzE4hPiUcXo1RGgQbuibokjsvctkTFxbW5lF3FWCfmo7g69cpJ8sBVDWPEZ
+ c4CCOX6jCdzU/VArNzJQANuASljIwtuoN4+zZ5tDiZ8D15ixtrOCPQSl+mZha0JTow7CpuKdv7b
+ CWDffvCFvftO/XPaeuijH7vKlME9IA==
+X-Authority-Analysis: v=2.4 cv=ZsHg6t7G c=1 sm=1 tr=0 ts=68d65bc7 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=qwUjrA7DuB2iKsSbT94A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-> Subject: [PATCH 1/2] drm/dp: Add drm_edp_backlight_get_level
->=20
-> Implement drm_edp_backlight_get_level() to read the current backlight
-> brightness level from eDP DPCD registers via AUX channel.
->=20
-> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-> ---
->  drivers/gpu/drm/display/drm_dp_helper.c | 52 +++++++++++++++++++++++++
->  include/drm/display/drm_dp_helper.h     |  1 +
->  2 files changed, 53 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c
-> b/drivers/gpu/drm/display/drm_dp_helper.c
-> index 1ecc3df7e3167..0cfb357ebd9e2 100644
-> --- a/drivers/gpu/drm/display/drm_dp_helper.c
-> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
-> @@ -3945,6 +3945,58 @@ int drm_dp_pcon_convert_rgb_to_ycbcr(struct
-> drm_dp_aux *aux, u8 color_spc)  }
-> EXPORT_SYMBOL(drm_dp_pcon_convert_rgb_to_ycbcr);
->=20
-> +/**
-> + * drm_edp_backlight_get_level - Get the backlight level of eDP DPCD
-> +via AUX
-> + * @aux: The DP aux device
-> + * @bl: Backlight capability info from the panel
-> + *
-> + * Reads the current backlight brightness level from luminance mode
-> + * (24-bit value in nits) or DPCD AUX mode(16-bit and 8-bit modes).
-> + *
-> + * Returns: Current backlight level.
-> + */
-> +u32 drm_edp_backlight_get_level(struct drm_dp_aux *aux, const struct
-> +drm_edp_backlight_info *bl) {
-> +	int ret;
-> +	u8 buf[3] =3D { 0 };
-> +	u32 level =3D 0;
-> +
-> +	if (!(bl->aux_set || bl->luminance_set))
-> +		return 0;
-> +
-> +	if (bl->luminance_set) {
-> +		ret =3D drm_dp_dpcd_read(aux,
-> DP_EDP_PANEL_TARGET_LUMINANCE_VALUE, buf, sizeof(buf));
-> +		if (ret < 0) {
-> +			DRM_DEV_ERROR(aux->drm_dev->dev,
-> +				      "%s: Failed to read luminance value: %d\n",
-> +				      aux->name, ret);
-> +			return 0;
-> +		}
-> +		level =3D (buf[2] << 16 | buf[1] << 8 | buf[0]) / 1000;
-> +	} else if (bl->lsb_reg_used) {
-> +		ret =3D drm_dp_dpcd_read(aux,
-> DP_EDP_BACKLIGHT_BRIGHTNESS_MSB, buf, 2);
-> +		if (ret < 0) {
-> +			DRM_DEV_ERROR(aux->drm_dev->dev,
 
-Use drm_err here ditto for same where ever this has been used
+On 9/26/2025 3:11 AM, Dmitry Baryshkov wrote:
+> On Thu, Sep 25, 2025 at 02:28:07PM +0530, Mahadevan wrote:
+>> Add devicetree changes to enable second Mobile Display
+>> Subsystem (MDSS1) and its Display Processing Unit(DPU) for
+>> Qualcomm LEMANS platform.
+> No outputs? Should it be enabled on any of the devices?
 
-Regards,
-Suraj Kandpal
+Outputs  and enablement are include as part of this series:
+https://lore.kernel.org/all/20250926085956.2346179-1-quic_mkuntuma@quicinc.com/
+I will update the commit message to use the phrase "to support" for 
+better clarity.
 
-> +				      "%s: Failed to read backlight level: %d\n",
-> +				      aux->name, ret);
-> +			return 0;
-> +		}
-> +		level =3D buf[0] << 8 | buf[1];
-> +	} else {
-> +		ret =3D drm_dp_dpcd_read(aux,
-> DP_EDP_BACKLIGHT_BRIGHTNESS_MSB, buf, 1);
-> +		if (ret < 0) {
-> +			DRM_DEV_ERROR(aux->drm_dev->dev,
-> +				      "%s: Failed to read backlight level: %d\n",
-> +				      aux->name, ret);
-> +			return 0;
-> +		}
-> +		level =3D buf[0];
-> +	}
-> +
-> +	return level;
-> +}
-> +EXPORT_SYMBOL(drm_edp_backlight_get_level);
-> +
->  /**
->   * drm_edp_backlight_set_level() - Set the backlight level of an eDP pan=
-el via
-> AUX
->   * @aux: The DP AUX channel to use
-> diff --git a/include/drm/display/drm_dp_helper.h
-> b/include/drm/display/drm_dp_helper.h
-> index 87caa4f1fdb86..0b045a47ae573 100644
-> --- a/include/drm/display/drm_dp_helper.h
-> +++ b/include/drm/display/drm_dp_helper.h
-> @@ -864,6 +864,7 @@ drm_edp_backlight_init(struct drm_dp_aux *aux,
-> struct drm_edp_backlight_info *bl
->  		       u32 max_luminance,
->  		       u16 driver_pwm_freq_hz, const u8
-> edp_dpcd[EDP_DISPLAY_CTL_CAP_SIZE],
->  		       u32 *current_level, u8 *current_mode, bool
-> need_luminance);
-> +u32 drm_edp_backlight_get_level(struct drm_dp_aux *aux, const struct
-> +drm_edp_backlight_info *bl);
->  int drm_edp_backlight_set_level(struct drm_dp_aux *aux, const struct
-> drm_edp_backlight_info *bl,
->  				u32 level);
->  int drm_edp_backlight_enable(struct drm_dp_aux *aux, const struct
-> drm_edp_backlight_info *bl,
-> --
-> 2.43.0
+>
+>> Signed-off-by: Mahadevan <mahadevan.p@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/lemans.dtsi | 88 ++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 88 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+>> index 48f753002fc459a3e9fac0c0e98cbec6013fea0f..45c11c050d3f8853701fd20cf647aef5c6a9a8c9 100644
+>> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+>> @@ -6751,6 +6751,94 @@ compute-cb@3 {
+>>   			};
+>>   		};
+>>   
+>> +		mdss1: display-subsystem@22000000 {
+> Why do you need this label?
 
+display-controller@22001000 is using mdss1 as interrupt parent.
+
+>
+>> +			compatible = "qcom,sa8775p-mdss";
+>> +			reg = <0x0 0x22000000 0x0 0x1000>;
+>> +			reg-names = "mdss";
+>> +
+>> +			/* same path used twice */
+>> +			interconnects = <&mmss_noc MASTER_MDP_CORE1_0 QCOM_ICC_TAG_ALWAYS
+>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>> +					<&mmss_noc MASTER_MDP_CORE1_1 QCOM_ICC_TAG_ALWAYS
+>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+>> +					 &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+>> +			interconnect-names = "mdp0-mem",
+>> +					     "mdp1-mem",
+>> +					     "cpu-cfg";
+>> +
+>> +			resets = <&dispcc1 MDSS_DISP_CC_MDSS_CORE_BCR>;
+>> +
+>> +			power-domains = <&dispcc1 MDSS_DISP_CC_MDSS_CORE_GDSC>;
+>> +
+>> +			clocks = <&dispcc1 MDSS_DISP_CC_MDSS_AHB_CLK>,
+>> +				 <&gcc GCC_DISP1_HF_AXI_CLK>,
+>> +				 <&dispcc1 MDSS_DISP_CC_MDSS_MDP_CLK>;
+>> +
+>> +			interrupts = <GIC_SPI 865 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <1>;
+>> +
+>> +			iommus = <&apps_smmu 0x1800 0x402>;
+>> +
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges;
+>> +
+>> +			status = "disabled";
+>> +
+>> +			mdss1_mdp: display-controller@22001000 {
+> Why do you need this label?
+
+will remove.
+
+>
+>> +				compatible = "qcom,sa8775p-dpu";
+>> +				reg = <0x0 0x22001000 0x0 0x8f000>,
+>> +				      <0x0 0x220b0000 0x0 0x3000>;
+>> +				reg-names = "mdp", "vbif";
+>> +
+>> +				clocks = <&gcc GCC_DISP1_HF_AXI_CLK>,
+>> +					 <&dispcc1 MDSS_DISP_CC_MDSS_AHB_CLK>,
+>> +					 <&dispcc1 MDSS_DISP_CC_MDSS_MDP_LUT_CLK>,
+>> +					 <&dispcc1 MDSS_DISP_CC_MDSS_MDP_CLK>,
+>> +					 <&dispcc1 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+>> +				clock-names = "nrt_bus",
+>> +					      "iface",
+>> +					      "lut",
+>> +					      "core",
+>> +					      "vsync";
+>> +
+>> +				assigned-clocks = <&dispcc1 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+>> +				assigned-clock-rates = <19200000>;
+>> +
+>> +				operating-points-v2 = <&mdss1_mdp_opp_table>;
+>> +				power-domains = <&rpmhpd SA8775P_MMCX>;
+>> +
+>> +				interrupt-parent = <&mdss1>;
+>> +				interrupts = <0>;
+>> +
+>> +				mdss1_mdp_opp_table: opp-table {
+>> +					compatible = "operating-points-v2";
+>> +
+>> +					opp-375000000 {
+>> +						opp-hz = /bits/ 64 <375000000>;
+>> +						required-opps = <&rpmhpd_opp_svs_l1>;
+>> +					};
+>> +
+>> +					opp-500000000 {
+>> +						opp-hz = /bits/ 64 <500000000>;
+>> +						required-opps = <&rpmhpd_opp_nom>;
+>> +					};
+>> +
+>> +					opp-575000000 {
+>> +						opp-hz = /bits/ 64 <575000000>;
+>> +						required-opps = <&rpmhpd_opp_turbo>;
+>> +					};
+>> +
+>> +					opp-650000000 {
+>> +						opp-hz = /bits/ 64 <650000000>;
+>> +						required-opps = <&rpmhpd_opp_turbo_l1>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +
+>>   		dispcc1: clock-controller@22100000 {
+>>   			compatible = "qcom,sa8775p-dispcc1";
+>>   			reg = <0x0 0x22100000 0x0 0x20000>;
+>>
+>> ---
+>> base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+>> change-id: 20250923-lemans_dual-c03ad5c84a84
+>>
+>> Best regards,
+>> -- 
+>> Mahadevan <mahadevan.p@oss.qualcomm.com>
+>>
+Thanks,
+Mahadevan
 
