@@ -1,328 +1,166 @@
-Return-Path: <linux-kernel+bounces-834252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86BEBA4449
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:41:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856F2BA4456
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A2C17562E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407E4620281
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0590C199FBA;
-	Fri, 26 Sep 2025 14:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F34199FBA;
+	Fri, 26 Sep 2025 14:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QB2g4DE6"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOBkDd+m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36DBC8FE
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4602417C91;
+	Fri, 26 Sep 2025 14:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897653; cv=none; b=BMmdSMbrzDuh8gRmjihPYx02qvIqaoQto3QYJdpvSWxTWKdy8O1Bz4KMd25rzvi71QdxUOHKciANo24uGDs2aiHl2XsIE26eEnJg+hHrDusKQ0Dz6y6s5txsl7LtGlnhkXJY0PXEW/GxzAzyuCe+liOw5FJQrX9MAzzFycLoq2g=
+	t=1758897765; cv=none; b=siBa6ONDeRs3L8lgpBbeKFK7VRPEqxIhgXw6ExECNuQpxsvmAgLJWy3oiqQTMMLgJ10IgH96pgAF2sk4LsSKk9vPDn/MmXWfP1iI6bpxzMFM81DLQj29oZ2YHvcyq4MnQ1O1+UK0O5Gk+IjX5Jhsru5pL/n+LZYOQigRBPNgio0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897653; c=relaxed/simple;
-	bh=90tchflxcF4gE+p6ymbvvXCUFZ3J0tFjBD1ra+hcs/Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NmRpJzR6ZCnc1uX6HhUM0yl/iSRUe2nBrmgQ59Mtx0SMLkmcbNuKQklRBa7J2fsv1EpucC5h2WDzrP/001Ax6mO/tmpxjJ9lqc6fPSYwzNa92Ug1EIHvgK+TumpdlipeTzw9DSXxp3TzslZoWKNmtBB514vxqFAjb8oaxkow1EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QB2g4DE6; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e29d65728so15363155e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758897648; x=1759502448; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=90tchflxcF4gE+p6ymbvvXCUFZ3J0tFjBD1ra+hcs/Q=;
-        b=QB2g4DE6gY0BvVOrMTkdZ8ajAMb+ZtxwQi9HUQjnsouSPM94tn8zi9mudMH5POeN0g
-         EZFu3Ajgaz7jspiMUCKIVQ+u/Jdw2oLves8iZeZrK8j3PrdVCU9TVi6zeUPzF5VktsZE
-         h0x04M97oQkXa874xdVkYwqAV/cRlRzOx5fvohiR9VImkcCuShXAOwAnIUqZZ5x8mdbF
-         TOR1Gwmhua8hH9OeEE2NJHmyYF6Km0UKKuVfL5sajLIVyJjjRlODG9Lf0LeAZuQFJbvk
-         pW4/X0en16a2jXxHcH9KtIPgr5AvM4l/+TL0EdV4sj/W5KHQNk034re0hBepSlDZKoDg
-         C5wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758897648; x=1759502448;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=90tchflxcF4gE+p6ymbvvXCUFZ3J0tFjBD1ra+hcs/Q=;
-        b=vdPWbHqH1PObb52XBlEAhtxabcYGfHItCybshoJ3tzJAJ8iqEUC5sQN6ivozr57sar
-         eyukWKAmkJFWvPBsp1Thrs8c7reTW6+XxRQytZNFHkyeXwi3hwFeSpH+HzDp6mG2C3yg
-         vBmc3+YsMkglgtiHvbfQOMBkvY7gZSGANmzFzBtZMrZjxrL0NnkRlSfsBVf9kPttimlK
-         8o9h1kObS1uzK4OLy1bqbMpAzK/iTBn7zdB0/rcAPAJvlpy+urr+diOUxXZSo+X3RdL9
-         RHtq3CNvaW+jDRT3GBYM9SdjlGIcHIVTMTfK8pcBj35ltOrqyetcUivzfrqMIvkc1iPb
-         I0Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ4kAPSd5qgA+UtaL/31BTRBjA/fyKowFotGOdbb+PbSWV1sLzf+UdCO0+5CgXmf1KnjVAbu7M9i3C26I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrmGJe/2Fu9cYX92Ba+FkTW/WPTeUTDwSd7BUxgJwUKYqApJB3
-	qnrgZP7ymtosUFbIJ/IG8VL0t+dtt0zSrFRsRB3WFm6T+0/P3DYOWHO+
-X-Gm-Gg: ASbGncvJBIQSt6MLf1hljNzpMUyj/WeJrXVqb94hJVOCbvk/UvMd1XdJ1ZXgdRwAohi
-	2cp30tGRyLrkYKc+qX6erTQ4PR3/UzveoQFBTwqVe0FKLswpEbMpq3CLIGaVLOlLDR6TuSJ8yZD
-	1B+lzvEIzg8kXIgLmAUdWtCSF9c6QrcD9PDa+URFXF/uPJ2Q4FH31Soo+/0ro5meQ86hW9Y2MON
-	EXrAH1JF4fVRgSOy2oRSjY2Y/Ow9OeYZ2HTYh+BIw9DWoOVJjA4f0IrdkRqUCxhwR6sXA2QA6VW
-	exy3aDnGO1BLcKpbujAy4OUa0eHxYV/rGgFTzkpui3Ugs2Fo1b4LS6DyOGhqo6wHx/djf0VCAGZ
-	wvz+loqh3aIQhiQeBK8rlWvcrQ9DEkdc=
-X-Google-Smtp-Source: AGHT+IF+GdI92TLRs9rHsVNgrebtIVMQHD15AS5sbB5Iv4MThr0TRQnHyapfTIMvahMIkANVWZB75Q==
-X-Received: by 2002:a05:6000:2dc8:b0:3ec:42ad:591 with SMTP id ffacd0b85a97d-40e4a05c535mr7276947f8f.36.1758897648024;
-        Fri, 26 Sep 2025 07:40:48 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb9e1b665sm7247453f8f.27.2025.09.26.07.40.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 07:40:47 -0700 (PDT)
-Message-ID: <3f93a0dad6ba5dea8db84973ae1518bbb98d3aed.camel@gmail.com>
-Subject: Re: [PATCH v2 3/7] iio: adc: add RZ/T2H / RZ/N2H ADC driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring	 <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
- "magnus.damm" <magnus.damm@gmail.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>,  "linux-renesas-soc@vger.kernel.org"	
- <linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"	
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"	
- <linux-kernel@vger.kernel.org>
-Date: Fri, 26 Sep 2025 15:41:14 +0100
-In-Reply-To: <OSZPR01MB87987A7D3F418A6E7A24FC41851EA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-References: 
-	<20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com>
-		 <20250925224013.2146983-4-cosmin-gabriel.tanislav.xa@renesas.com>
-	 <3550caed57f460a3d28ed585eda2d955bd846930.camel@gmail.com>
-	 <OSZPR01MB87987A7D3F418A6E7A24FC41851EA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1758897765; c=relaxed/simple;
+	bh=D26fU8PCfxAV2/rnQjd/+ukqL80rtYmpOmBeDcURakU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GIHgbEGG5+md3sziqtGB5CCQeyKWFrwb0unGEen6U4RPUYy6X4GlcQBA9gGMMqW83Kx2vFyOUHG/XJA/wO0dVcrMQ+LLPgo6wtNc9Efoz7stHzkdZNZwCF1Ay24dICKpR7UkWTvUtD8dwoAj6wIkQk9TZRqoMjT5JsGR0jnxZ30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOBkDd+m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A95C4CEF4;
+	Fri, 26 Sep 2025 14:42:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758897765;
+	bh=D26fU8PCfxAV2/rnQjd/+ukqL80rtYmpOmBeDcURakU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SOBkDd+m3dNQt1II5PGGLkUa7XfDE4ac7m3+mnYzvGRcMKbDpj1Y7JR+uCrSaXcAs
+	 5uhobDRfp0TxbVkMdULO5Y2CroiqzNQLPUpfQwCuIo78i8+f5gVz1kJj/6gMt10ulU
+	 cSE3nzWUpsLu1MV2xE/SVZfSxNmLpl0AeF9uSGWJoQYaWjhl6iTjIc/mfllfS3Ul2T
+	 md9MT5kiqH8D8SmS4A7jm3EXcwhokB83yutLXIWqdALZnjIhgZ9RGHsajz6iBD/6l/
+	 YtOeoHBzpKld5CKahk+tXaQ5RtPeF7siu19N8v3C6mNy++qqduAC7JNpMov4ElJNNo
+	 G8HcM0SQZsjgQ==
+Date: Fri, 26 Sep 2025 15:42:38 +0100
+From: Will Deacon <will@kernel.org>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 10/28] KVM: arm64: iommu: Shadow host stage-2 page
+ table
+Message-ID: <aNamXlTErXDs1K8Z@willie-the-truck>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-11-smostafa@google.com>
+ <aMA8vz0v0Vn-02QP@willie-the-truck>
+ <aMlzLsj5slPQhWEr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMlzLsj5slPQhWEr@google.com>
 
-On Fri, 2025-09-26 at 12:41 +0000, Cosmin-Gabriel Tanislav wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Nuno S=C3=A1 <noname.nuno@gmail.com>
-> > Sent: Friday, September 26, 2025 3:11 PM
-> > To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> > Cc: Jonathan Cameron <jic23@kernel.org>; David Lechner
-> > <dlechner@baylibre.com>; Nuno S=C3=A1
-> > <nuno.sa@analog.com>; Andy Shevchenko <andy@kernel.org>; Rob Herring
-> > <robh@kernel.org>; Krzysztof
-> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Gee=
-rt
-> > Uytterhoeven
-> > <geert+renesas@glider.be>; magnus.damm <magnus.damm@gmail.com>;
-> > linux-iio@vger.kernel.org; linux-
-> > renesas-soc@vger.kernel.org; devicetree@vger.kernel.org;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v2 3/7] iio: adc: add RZ/T2H / RZ/N2H ADC driver
-> >=20
-> > On Fri, 2025-09-26 at 01:40 +0300, Cosmin Tanislav wrote:
-> > > Add support for the A/D 12-Bit successive approximation converters fo=
-und
-> > > in the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
-> > >=20
-> > > RZ/T2H has two ADCs with 4 channels and one with 6.
-> > > RZ/N2H has two ADCs with 4 channels and one with 15.
-> > >=20
-> > > Conversions can be performed in single or continuous mode. Result of =
-the
-> > > conversion is stored in a 16-bit data register corresponding to each
-> > > channel.
-> > >=20
-> > > The conversions can be started by a software trigger, a synchronous
-> > > trigger (from MTU or from ELC) or an asynchronous external trigger (f=
-rom
-> > > ADTRGn# pin).
-> > >=20
-> > > Only single mode with software trigger is supported for now.
-> > >=20
-> > > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.co=
-m>
-> > > ---
-> >=20
-> > Just one small nit from me. With it:
-> >=20
-> > Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-> >=20
-> > > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > > =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 ++
-> > > =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > > =C2=A0drivers/iio/adc/rzt2h_adc.c | 306 +++++++++++++++++++++++++++++=
-+++++++
-> > > =C2=A04 files changed, 318 insertions(+)
-> > > =C2=A0create mode 100644 drivers/iio/adc/rzt2h_adc.c
-> > >=20
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index eed08d25cb7a..220d17039084 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -21837,6 +21837,7 @@ L:=C2=A0 linux-iio@vger.kernel.org
-> > > =C2=A0L: linux-renesas-soc@vger.kernel.org
-> > > =C2=A0S: Supported
-> > > =C2=A0F: Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-=
-adc.yaml
-> > > +F: drivers/iio/adc/rzt2h_adc.c
-> > >=20
-> > > =C2=A0RENESAS RTCA-3 RTC DRIVER
-> > > =C2=A0M: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> > > index 58a14e6833f6..cab5eeba48fe 100644
-> > > --- a/drivers/iio/adc/Kconfig
-> > > +++ b/drivers/iio/adc/Kconfig
-> > > @@ -1403,6 +1403,16 @@ config RZG2L_ADC
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 To compile this driver as a module, ch=
-oose M here: the
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 module will be called rzg2l_adc.
-> > >=20
-> > > +config RZT2H_ADC
-> > > +=C2=A0=C2=A0 tristate "Renesas RZ/T2H / RZ/N2H ADC driver"
-> > > +=C2=A0=C2=A0 select IIO_ADC_HELPER
-> > > +=C2=A0=C2=A0 help
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 Say yes here to build support for the ADC f=
-ound in Renesas
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 RZ/T2H / RZ/N2H SoCs.
+On Tue, Sep 16, 2025 at 02:24:46PM +0000, Mostafa Saleh wrote:
+> On Tue, Sep 09, 2025 at 03:42:07PM +0100, Will Deacon wrote:
+> > On Tue, Aug 19, 2025 at 09:51:38PM +0000, Mostafa Saleh wrote:
+> > > diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
+> > > index a01c036c55be..f7d1c8feb358 100644
+> > > --- a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
+> > > +++ b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
+> > > @@ -4,15 +4,94 @@
+> > >   *
+> > >   * Copyright (C) 2022 Linaro Ltd.
+> > >   */
+> > > +#include <linux/iommu.h>
 > > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 To compile this driver as a module, choose =
-M here: the
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 module will be called rzt2h_adc.
+> > >  #include <nvhe/iommu.h>
+> > > +#include <nvhe/mem_protect.h>
+> > > +#include <nvhe/spinlock.h>
+> > >  
+> > >  /* Only one set of ops supported */
+> > >  struct kvm_iommu_ops *kvm_iommu_ops;
+> > >  
+> > > +/* Protected by host_mmu.lock */
+> > > +static bool kvm_idmap_initialized;
 > > > +
-> > > =C2=A0config SC27XX_ADC
-> > > =C2=A0=C2=A0=C2=A0 tristate "Spreadtrum SC27xx series PMICs ADC"
-> > > =C2=A0=C2=A0=C2=A0 depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> > > diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> > > index d008f78dc010..ed647a734c51 100644
-> > > --- a/drivers/iio/adc/Makefile
-> > > +++ b/drivers/iio/adc/Makefile
-> > > @@ -123,6 +123,7 @@ obj-$(CONFIG_ROHM_BD79112) +=3D rohm-bd79112.o
-> > > =C2=A0obj-$(CONFIG_ROHM_BD79124) +=3D rohm-bd79124.o
-> > > =C2=A0obj-$(CONFIG_ROCKCHIP_SARADC) +=3D rockchip_saradc.o
-> > > =C2=A0obj-$(CONFIG_RZG2L_ADC) +=3D rzg2l_adc.o
-> > > +obj-$(CONFIG_RZT2H_ADC) +=3D rzt2h_adc.o
-> > > =C2=A0obj-$(CONFIG_SC27XX_ADC) +=3D sc27xx_adc.o
-> > > =C2=A0obj-$(CONFIG_SD_ADC_MODULATOR) +=3D sd_adc_modulator.o
-> > > =C2=A0obj-$(CONFIG_SOPHGO_CV1800B_ADC) +=3D sophgo-cv1800b-adc.o
-> > > diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.=
-c
-> > > new file mode 100644
-> > > index 000000000000..6a49788a5c67
-> > > --- /dev/null
-> > > +++ b/drivers/iio/adc/rzt2h_adc.c
-> > > @@ -0,0 +1,306 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +#include <linux/bitfield.h>
-> > > +#include <linux/cleanup.h>
-> > > +#include <linux/completion.h>
-> > > +#include <linux/delay.h>
-> > > +#include <linux/iio/adc-helpers.h>
-> > > +#include <linux/iio/iio.h>
-> > > +#include <linux/interrupt.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/iopoll.h>
-> > > +#include <linux/mod_devicetable.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +#include <linux/property.h>
-> > > +
-> >=20
-> > ...
-> >=20
-> > >=20
-> > > +
-> > > +static int rzt2h_adc_pm_runtime_resume(struct device *dev)
+> > > +static inline int pkvm_to_iommu_prot(enum kvm_pgtable_prot prot)
 > > > +{
-> > > +=C2=A0=C2=A0 struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> > > +=C2=A0=C2=A0 struct rzt2h_adc *adc =3D iio_priv(indio_dev);
-> >=20
-> > Not seeing the point of the pointer arithmetic. You can pass your devic=
-e
-> > pointer
-> > (adc) directly in platform_set_drvdata()
-> >=20
->=20
-> Thanks Nuno, I'll do that. I also have another change to make to the driv=
-er so
-> I will have to send a new version and you'll have to give your Reviewed-b=
-y
-> again.
->=20
-> Here's the change I'm planning to make, maybe I could keep the Reviewed-b=
-y
-> if you agree.
->=20
-> Without this change, pm_runtime_resume_and_get() is inside the mutex,
-> while pm_runtime_put_autosuspend() is outside of it. This is mostly for
+> > > +	int iommu_prot = 0;
+> > > +
+> > > +	if (prot & KVM_PGTABLE_PROT_R)
+> > > +		iommu_prot |= IOMMU_READ;
+> > > +	if (prot & KVM_PGTABLE_PROT_W)
+> > > +		iommu_prot |= IOMMU_WRITE;
+> > > +	if (prot == PKVM_HOST_MMIO_PROT)
+> > > +		iommu_prot |= IOMMU_MMIO;
+> > 
+> > This looks a little odd to me.
+> > 
+> > On the CPU side, the only different between PKVM_HOST_MEM_PROT and
+> > PKVM_HOST_MMIO_PROT is that the former has execute permission. Both are
+> > mapped as cacheable at stage-2 because it's the job of the host to set
+> > the more restrictive memory type at stage-1.
+> > 
+> > Carrying that over to the SMMU would suggest that we don't care about
+> > IOMMU_MMIO at stage-2 at all, so why do we need to set it here?
+> 
+> Unlike the CPU, the host can set the SMMU to bypass, in that case the
+> hypervisor will attach its stage-2 with no stage-1 configured. So,
+> stage-2 must have the correct attrs for MMIO.
 
-I guess you meant the other way around.
+I'm not sure about that.
 
-> symmetry, although it's not excluded for some subtle bugs to be able to
-> occur without it.
->=20
+If the SMMU is in stage-1 bypass, we still have the incoming memory
+attributes from the transaction (modulo MTCFG which we shouldn't be
+setting) and they should combine with the stage-2 attributes in roughly
+the same way as the CPU, no?
 
-Fell free to keep my tag.
+> > > +static int __snapshot_host_stage2(const struct kvm_pgtable_visit_ctx *ctx,
+> > > +				  enum kvm_pgtable_walk_flags visit)
+> > > +{
+> > > +	u64 start = ctx->addr;
+> > > +	kvm_pte_t pte = *ctx->ptep;
+> > > +	u32 level = ctx->level;
+> > > +	u64 end = start + kvm_granule_size(level);
+> > > +	int prot =  IOMMU_READ | IOMMU_WRITE;
+> > > +
+> > > +	/* Keep unmapped. */
+> > > +	if (pte && !kvm_pte_valid(pte))
+> > > +		return 0;
+> > > +
+> > > +	if (kvm_pte_valid(pte))
+> > > +		prot = pkvm_to_iommu_prot(kvm_pgtable_stage2_pte_prot(pte));
+> > > +	else if (!addr_is_memory(start))
+> > > +		prot |= IOMMU_MMIO;
+> > 
+> > Why do we need to map MMIO regions pro-actively here? I'd have thought
+> > we could just do:
+> > 
+> > 	if (!kvm_pte_valid(pte))
+> > 		return 0;
+> > 
+> > 	prot = pkvm_to_iommu_prot(kvm_pgtable_stage2_pte_prot(pte);
+> > 	kvm_iommu_ops->host_stage2_idmap(start, end, prot);
+> > 	return 0;
+> > 
+> > but I think that IOMMU_MMIO is throwing me again...
+> 
+> We have to map everything pro-actively as we don’t handle page faults
+> in the SMMUv3 driver.
+> This would be a future work where the CPU stage-2 page table is shared with
+> the SMMUv3.
 
-- Nuno S=C3=A1
+Ah yes, I'd forgotten about that.
 
-> diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.c
-> index 708029dc8949..79053bbc71c9 100644
-> --- a/drivers/iio/adc/rzt2h_adc.c
-> +++ b/drivers/iio/adc/rzt2h_adc.c
-> @@ -81,9 +81,9 @@ static int rzt2h_adc_read_single(struct rzt2h_adc *adc,
-> unsigned int ch, int *va
-> =C2=A0=C2=A0=C2=A0=C2=A0 ret =3D pm_runtime_resume_and_get(adc->dev);
-> =C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->=20
-> -=C2=A0=C2=A0=C2=A0 guard(mutex)(&adc->lock);
-> +=C2=A0=C2=A0=C2=A0 mutex_lock(&adc->lock);
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 reinit_completion(&adc->completion);
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 /* Enable a single channel */
-> @@ -106,8 +106,10 @@ static int rzt2h_adc_read_single(struct rzt2h_adc *a=
-dc,
-> unsigned int ch, int *va
->=20
-> =C2=A0disable:
-> =C2=A0=C2=A0=C2=A0=C2=A0 rzt2h_adc_start_stop(adc, false, 0);
->=20
-> +=C2=A0=C2=A0=C2=A0 mutex_unlock(&adc->lock);
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_put_autosuspend(adc->dev);
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 return ret;
-> =C2=A0}
->=20
-> > - Nuno S=C3=A1
->=20
-> ________________________________
->=20
-> Renesas Electronics Europe GmbH
-> Registered Office: Arcadiastrasse 10
-> DE-40472 Duesseldorf
-> Commercial Registry: Duesseldorf, HRB 3708
-> Managing Director: Carsten Jauch
-> VAT-No.: DE 14978647
-> Tax-ID-No: 105/5839/1793
->=20
-> Legal Disclaimer: This e-mail communication (and any attachment/s) is
-> confidential and contains proprietary information, some or all of which m=
-ay be
-> legally privileged. It is intended solely for the use of the individual o=
-r
-> entity to which it is addressed. Access to this email by anyone else is
-> unauthorized. If you are not the intended recipient, any disclosure, copy=
-ing,
-> distribution or any action taken or omitted to be taken in reliance on it=
-, is
-> prohibited and may be unlawful.
+Thanks,
+
+Will
 
