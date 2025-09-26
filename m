@@ -1,359 +1,530 @@
-Return-Path: <linux-kernel+bounces-834731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2D0BA561E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:27:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE4CBA562A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 129524C2239
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:27:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49AE61B23CAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CB32BE62C;
-	Fri, 26 Sep 2025 23:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D5F2BE048;
+	Fri, 26 Sep 2025 23:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZR6x4T8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4h1RjR+i"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DBE8834;
-	Fri, 26 Sep 2025 23:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3B01EDA02
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758929216; cv=none; b=kb2ynRZdDSEMtSt2B6p2Y6Xn+s4w0Y8hSduMQX1QOhfAEd4pn8gYWRtUYclnkuTsibIiWORqhgzKsTvuoJK0QsWVo81SCzsSi6qRSkspL5qgBWq+FQ131BBuhLz1rr/CAoROS+Swxffizp2tc43eaqjXuwMeLdV2GqhmxIArfGI=
+	t=1758929339; cv=none; b=OWUO3egD46h9MasPDehHP64gsrg/Ua0qf6CvjA+OPNL1qZwGlRD54ESI7Rz3zk97IGfFhtp3KltMkIZtAK6MEAXw4Iz8YkOpR9qczXXGF0Gq1PR8ox6hU5cHEBZsKwt0TD2vI+Xj2BfCmR0Oze+r5KCEQxiGzgxCt50NoDsjCJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758929216; c=relaxed/simple;
-	bh=pJeIjqGBwe+U7kx0K3qcjUZt2mpDEceDRMGQq8WSAAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ni23oCCI/Ayh3+2zzwZb5oJLbumOs+De5WtyzTvD933Tp20EXkwu6aD/T1BkBP9sL12yoJOB/Se4B6YNzNqq/T+vWGEpx8FZ/Q9Oj4aUo9W6MrV5//yB8X8nxXFRjv0a4MsD+TbO86nKdazypgb5oFkU+VGxcjiAvJQs15Uf3cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZR6x4T8; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758929214; x=1790465214;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pJeIjqGBwe+U7kx0K3qcjUZt2mpDEceDRMGQq8WSAAI=;
-  b=QZR6x4T8hchMhWQZauUXQu3YJADzJMSpzBIFGKFhe4pwxLB/ws97D8AU
-   hLUNMjNAvY7G+zLrBk70GoJt8jYBwXtxmTuyPFEJuwK0by7ru3ZQzzGCY
-   o7DmhloNk3Zk6NMmlHR58T5Ir7NZpiWbtRchjbTyAHqbEdJuLeEkVYo6r
-   Cf1DBnV82tOdxXxsjt74/q5UezcQfkaUYLsgaO5yCJICP7SzwVpoDe4TG
-   d8dTVJXwlOORfR2Q33OY3MOcgFSCHvIZ4MEj36/3ygHXpvfg1QnRXLoyh
-   xEp0OHSFbW9uFYqD94LKvHjOI8YZiqx6n3heQLalpLhXKS3LqI4fg0rP5
-   Q==;
-X-CSE-ConnectionGUID: jzqc9fX4SrmT948YfpU0ag==
-X-CSE-MsgGUID: NWoxRKKfTMmy+6DIpCzvgg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="60303571"
-X-IronPort-AV: E=Sophos;i="6.18,296,1751266800"; 
-   d="scan'208";a="60303571"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 16:26:53 -0700
-X-CSE-ConnectionGUID: 5ic3nTkeSFe3NlSdTZpRbQ==
-X-CSE-MsgGUID: CCDPoB8nSI+r90I5QBd41w==
-X-ExtLoop1: 1
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.69]) ([10.125.109.69])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 16:26:50 -0700
-Message-ID: <f028d71d-0f0c-49e4-a90d-57176fcb7d45@intel.com>
-Date: Fri, 26 Sep 2025 16:26:49 -0700
+	s=arc-20240116; t=1758929339; c=relaxed/simple;
+	bh=3PS/HJ0o/rgA4uwsSFvaSulCjPklTA4fqgSVnAufEpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RTGQX40WJB7Gp5CGebGZbw45n5eKA794twPw4g9qBk6b3yRDBGrftH/q6NwWMU2tax6wW657iIJd/GB+ezGiE6Cn5w3ZjUzlZYRkr7JUVMxjA7u9puLO0yVoRhfnupeUDqNuW8jVJPh2ec/6AQySYh1oJR2YP3kZ8CqUGf4LxfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4h1RjR+i; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4de60f19a57so212321cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:28:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758929335; x=1759534135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HyHmJ1OLWtshcn0vntnSFMqZ7njQsSsL7v8kUFCynNA=;
+        b=4h1RjR+i+RGmYEHrvolW4hvJYAVvmZ7PBrDByxkLssciSiVaxVOyPdal6oabgMY2TL
+         5zDNJ5bKsCvE1UHASlECNaHcvQDPbsTpnVjVA1+OnybUUfod3pje5w5blM14+JTcning
+         cwYBP2wziDq6tT1QJt9JbwWabN1F8ox8JNSQK/CAl2BIA1zimpCV0CEF1EcJ45OjHITA
+         EvoHIInYcv2xpz0Q+sYvpYPAqcgn7NIJXwfnTu0EC5hJE3m34bMnsDKMFrtRKhqQleTV
+         bsl7k778a6Wa6hntlim23MsylmNuZgGaUoDyPknbKOrsSGKI49WiQbRgrTIAj1PIxeOm
+         iLzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758929335; x=1759534135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HyHmJ1OLWtshcn0vntnSFMqZ7njQsSsL7v8kUFCynNA=;
+        b=xL60M2aztjgTu0MH46IuADnO3e6EPZX+bcP+acf1UIx9i4Vx8KNaACDu5ypDNTHf6/
+         uv42KavdJ9IJBh9jjq3NCQgxULIa9cLABQkuMk+JhrUZSomqXPfzb5lVeKtMnARwZZjA
+         y+MrpEjbFa/tmWXYmvGo04TSzttKPQY2S3jkJ1jhzznAjYAq9QlM3+/9oakx2R8uNHV+
+         XkC9FKYs8CsWoIx6N607zeeQXqisi1ZEMI0lpHG8dBSvHVL0x11dcQn3YlNNLKNGvvnt
+         IMeXL0sxJRmsgFoTT4FVZ2zd8ru9eVVu7GiaNo1CL0DbqenkzK9IckzhEN7FffEQDnaV
+         5PWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJKHif/VdDA5Z35xY4zujX+sdZ/0sKdahbIP6ex0rtvd3qqX4T7nNqtlXH+Bt6KR7Ceg8HaL9A7u+D4JY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbt0GhuGYmWuwUTLvQCkXPo8+iSdZkoyDtISUDSsFVDXid7zK0
+	hXNr2DpedueZ01C5LClwAgaR0v2kvePf0kGPqL6InxevHrK0VAPYE3VDqX0Ok4fgPSt6DBpGcEp
+	gzVIrc44zAEG47TquoRRXjOA4ebXhL57RfVJWpQJbZtQ/rlekz0hurGajzb4=
+X-Gm-Gg: ASbGncuteor0KXLQgBXY9hgUEY9+Z1QPzM5JApVJbbOQ3O6hKA+j5AkvA4kZpwbgjfD
+	wW5eD7aqahxvNLCFQESw8CUifO2OBmEsbKkG2hu6T+MEHGLc1uPtvi/o4jsJA344X+NCFzcnEmQ
+	JHbOAx0aIuI/ZRX9pAhkoo6tctmPUKiJ9iwDkus3h7myhXdeyOjcRdhMHklhd+swELrGiLPHA5F
+	/WtEPboXW0xadvdjsLUHug=
+X-Google-Smtp-Source: AGHT+IEXgiREHqQHkfYfJbW0FjcZi0xJazfXduFxPLBHIQZs17nA8li3k5fv3C7MSckGpkzyuliLv2q6dzvLuCA44Cg=
+X-Received: by 2002:a05:622a:94:b0:4b3:19b2:d22 with SMTP id
+ d75a77b69052e-4dec82b1f37mr2996671cf.13.1758929334818; Fri, 26 Sep 2025
+ 16:28:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 20/25] PCI/AER: Dequeue forwarded CXL error
-To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250925223440.3539069-1-terry.bowman@amd.com>
- <20250925223440.3539069-21-terry.bowman@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250925223440.3539069-21-terry.bowman@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz> <20250910-slub-percpu-caches-v8-13-ca3099d8352c@suse.cz>
+In-Reply-To: <20250910-slub-percpu-caches-v8-13-ca3099d8352c@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 26 Sep 2025 16:28:43 -0700
+X-Gm-Features: AS18NWAKMh82GOavYFTT6IjqXbKZ5pfBFaMk3uAlrOuFS1_KHUbuvk1adjY968Q
+Message-ID: <CAJuCfpGYgOVG7hpZJ7MED_ALXZfKgUuRcPN3YYjx6k_t-dGXhg@mail.gmail.com>
+Subject: Re: [PATCH v8 13/23] tools/testing: Add support for changes to slab
+ for sheaves
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 10, 2025 at 1:01=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+>
+> The slab changes for sheaves requires more effort in the testing code.
+> Unite all the kmem_cache work into the tools/include slab header for
+> both the vma and maple tree testing.
+>
+> The vma test code also requires importing more #defines to allow for
+> seamless use of the shared kmem_cache code.
+>
+> This adds the pthread header to the slab header in the tools directory
+> to allow for the pthread_mutex in linux.c.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-On 9/25/25 3:34 PM, Terry Bowman wrote:
-> The AER driver is now designed to forward CXL protocol errors to the CXL
-> driver. Update the CXL driver with functionality to dequeue the forwarded
-> CXL error from the kfifo. Also, update the CXL driver to begin the protocol
-> error handling processing using the work received from the FIFO.
-> 
-> Update function cxl_proto_err_work_fn() to dequeue work forwarded by the
-> AER service driver. This will begin the CXL protocol error processing with
-> a call to cxl_handle_proto_error().
-> 
-> Introduce logic to take the SBDF values from 'struct cxl_proto_error_info'
-> and use in discovering the erring PCI device. The call to pci_get_domain_bus_and_slot()
-> will return a reference counted 'struct pci_dev *'. This will serve as
-> reference count to prevent releasing the CXL Endpoint's mapped RAS while
-> handling the error. Use scope base __free() to put the reference count.
-> This will change when adding support for CXL port devices in the future.
-> 
-> Implement cxl_handle_proto_error() to differentiate between Restricted CXL
-> Host (RCH) protocol errors and CXL virtual host (VH) protocol errors.
-> Maintain the existing RCH handling. Export the AER driver's pcie_walk_rcec()
-> allowing the CXL driver to walk the RCEC's secondary bus.
-> 
-> VH correctable error (CE) processing will call the CXL CE handler. VH
-> uncorrectable errors (UCE) will call cxl_do_recovery(), implemented as a
-> stub for now and to be updated in future patch. Export pci_aer_clean_fatal_status()
-> and pci_clean_device_status() used to clean up AER status after handling.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> 
+The patch does several things and could be split in 3 (code
+refactoring, kmem_cache_create change, new definitions like
+_slab_flag_bits) but I don't think it's worth a respin.
+
 > ---
-> Changes in v11->v12:
-> - Add guard for CE case in cxl_handle_proto_error() (Dave)
-> 
-> Changes in v10->v11:
-> - Reword patch commit message to remove RCiEP details (Jonathan)
-> - Add #include <linux/bitfield.h> (Terry)
-> - is_cxl_rcd() - Fix short comment message wrap  (Jonathan)
-> - is_cxl_rcd() - Combine return calls into 1  (Jonathan)
-> - cxl_handle_proto_error() - Move comment earlier  (Jonathan)
-> - Usse FIELD_GET() in discovering class code (Jonathan)
-> - Remove BDF from cxl_proto_err_work_data. Use 'struct
-> pci_dev *' (Dan)
-> ---
->  drivers/cxl/core/ras.c  | 72 ++++++++++++++++++++++++++++++++++-------
->  drivers/pci/pci.c       |  1 +
->  drivers/pci/pci.h       |  7 ----
->  drivers/pci/pcie/aer.c  |  1 +
->  drivers/pci/pcie/rcec.c |  1 +
->  include/linux/aer.h     |  2 ++
->  include/linux/pci.h     |  9 ++++++
->  7 files changed, 75 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-> index 39472d82d586..9acfe24ba3bb 100644
-> --- a/drivers/cxl/core/ras.c
-> +++ b/drivers/cxl/core/ras.c
-> @@ -117,17 +117,6 @@ static void cxl_cper_prot_err_work_fn(struct work_struct *work)
+>  tools/include/linux/slab.h        | 137 ++++++++++++++++++++++++++++++++=
+++++--
+>  tools/testing/shared/linux.c      |  26 ++------
+>  tools/testing/shared/maple-shim.c |   1 +
+>  tools/testing/vma/vma_internal.h  |  92 +------------------------
+>  4 files changed, 142 insertions(+), 114 deletions(-)
+>
+> diff --git a/tools/include/linux/slab.h b/tools/include/linux/slab.h
+> index c87051e2b26f5a7fee0362697fae067076b8e84d..c5c5cc6db5668be2cc94c2906=
+5ccfa7ca7b4bb08 100644
+> --- a/tools/include/linux/slab.h
+> +++ b/tools/include/linux/slab.h
+> @@ -4,11 +4,31 @@
+>
+>  #include <linux/types.h>
+>  #include <linux/gfp.h>
+> +#include <pthread.h>
+>
+> -#define SLAB_PANIC 2
+>  #define SLAB_RECLAIM_ACCOUNT    0x00020000UL            /* Objects are r=
+eclaimable */
+>
+>  #define kzalloc_node(size, flags, node) kmalloc(size, flags)
+> +enum _slab_flag_bits {
+> +       _SLAB_KMALLOC,
+> +       _SLAB_HWCACHE_ALIGN,
+> +       _SLAB_PANIC,
+> +       _SLAB_TYPESAFE_BY_RCU,
+> +       _SLAB_ACCOUNT,
+> +       _SLAB_FLAGS_LAST_BIT
+> +};
+> +
+> +#define __SLAB_FLAG_BIT(nr)    ((unsigned int __force)(1U << (nr)))
+> +#define __SLAB_FLAG_UNUSED     ((unsigned int __force)(0U))
+> +
+> +#define SLAB_HWCACHE_ALIGN     __SLAB_FLAG_BIT(_SLAB_HWCACHE_ALIGN)
+> +#define SLAB_PANIC             __SLAB_FLAG_BIT(_SLAB_PANIC)
+> +#define SLAB_TYPESAFE_BY_RCU   __SLAB_FLAG_BIT(_SLAB_TYPESAFE_BY_RCU)
+> +#ifdef CONFIG_MEMCG
+> +# define SLAB_ACCOUNT          __SLAB_FLAG_BIT(_SLAB_ACCOUNT)
+> +#else
+> +# define SLAB_ACCOUNT          __SLAB_FLAG_UNUSED
+> +#endif
+>
+>  void *kmalloc(size_t size, gfp_t gfp);
+>  void kfree(void *p);
+> @@ -23,6 +43,86 @@ enum slab_state {
+>         FULL
+>  };
+>
+> +struct kmem_cache {
+> +       pthread_mutex_t lock;
+> +       unsigned int size;
+> +       unsigned int align;
+> +       unsigned int sheaf_capacity;
+> +       int nr_objs;
+> +       void *objs;
+> +       void (*ctor)(void *);
+> +       bool non_kernel_enabled;
+> +       unsigned int non_kernel;
+> +       unsigned long nr_allocated;
+> +       unsigned long nr_tallocated;
+> +       bool exec_callback;
+> +       void (*callback)(void *);
+> +       void *private;
+> +};
+> +
+> +struct kmem_cache_args {
+> +       /**
+> +        * @align: The required alignment for the objects.
+> +        *
+> +        * %0 means no specific alignment is requested.
+> +        */
+> +       unsigned int align;
+> +       /**
+> +        * @sheaf_capacity: The maximum size of the sheaf.
+> +        */
+> +       unsigned int sheaf_capacity;
+> +       /**
+> +        * @useroffset: Usercopy region offset.
+> +        *
+> +        * %0 is a valid offset, when @usersize is non-%0
+> +        */
+> +       unsigned int useroffset;
+> +       /**
+> +        * @usersize: Usercopy region size.
+> +        *
+> +        * %0 means no usercopy region is specified.
+> +        */
+> +       unsigned int usersize;
+> +       /**
+> +        * @freeptr_offset: Custom offset for the free pointer
+> +        * in &SLAB_TYPESAFE_BY_RCU caches
+> +        *
+> +        * By default &SLAB_TYPESAFE_BY_RCU caches place the free pointer
+> +        * outside of the object. This might cause the object to grow in =
+size.
+> +        * Cache creators that have a reason to avoid this can specify a =
+custom
+> +        * free pointer offset in their struct where the free pointer wil=
+l be
+> +        * placed.
+> +        *
+> +        * Note that placing the free pointer inside the object requires =
+the
+> +        * caller to ensure that no fields are invalidated that are requi=
+red to
+> +        * guard against object recycling (See &SLAB_TYPESAFE_BY_RCU for
+> +        * details).
+> +        *
+> +        * Using %0 as a value for @freeptr_offset is valid. If @freeptr_=
+offset
+> +        * is specified, %use_freeptr_offset must be set %true.
+> +        *
+> +        * Note that @ctor currently isn't supported with custom free poi=
+nters
+> +        * as a @ctor requires an external free pointer.
+> +        */
+> +       unsigned int freeptr_offset;
+> +       /**
+> +        * @use_freeptr_offset: Whether a @freeptr_offset is used.
+> +        */
+> +       bool use_freeptr_offset;
+> +       /**
+> +        * @ctor: A constructor for the objects.
+> +        *
+> +        * The constructor is invoked for each object in a newly allocate=
+d slab
+> +        * page. It is the cache user's responsibility to free object in =
+the
+> +        * same state as after calling the constructor, or deal appropria=
+tely
+> +        * with any differences between a freshly constructed and a reall=
+ocated
+> +        * object.
+> +        *
+> +        * %NULL means no constructor.
+> +        */
+> +       void (*ctor)(void *);
+> +};
+> +
+>  static inline void *kzalloc(size_t size, gfp_t gfp)
+>  {
+>         return kmalloc(size, gfp | __GFP_ZERO);
+> @@ -37,9 +137,38 @@ static inline void *kmem_cache_alloc(struct kmem_cach=
+e *cachep, int flags)
 >  }
->  static DECLARE_WORK(cxl_cper_prot_err_work, cxl_cper_prot_err_work_fn);
->  
-> -int cxl_ras_init(void)
+>  void kmem_cache_free(struct kmem_cache *cachep, void *objp);
+>
+> -struct kmem_cache *kmem_cache_create(const char *name, unsigned int size=
+,
+> -                       unsigned int align, unsigned int flags,
+> -                       void (*ctor)(void *));
+> +
+> +struct kmem_cache *
+> +__kmem_cache_create_args(const char *name, unsigned int size,
+> +               struct kmem_cache_args *args, unsigned int flags);
+> +
+> +/* If NULL is passed for @args, use this variant with default arguments.=
+ */
+> +static inline struct kmem_cache *
+> +__kmem_cache_default_args(const char *name, unsigned int size,
+> +               struct kmem_cache_args *args, unsigned int flags)
+> +{
+> +       struct kmem_cache_args kmem_default_args =3D {};
+> +
+> +       return __kmem_cache_create_args(name, size, &kmem_default_args, f=
+lags);
+> +}
+> +
+> +static inline struct kmem_cache *
+> +__kmem_cache_create(const char *name, unsigned int size, unsigned int al=
+ign,
+> +               unsigned int flags, void (*ctor)(void *))
+> +{
+> +       struct kmem_cache_args kmem_args =3D {
+> +               .align  =3D align,
+> +               .ctor   =3D ctor,
+> +       };
+> +
+> +       return __kmem_cache_create_args(name, size, &kmem_args, flags);
+> +}
+> +
+> +#define kmem_cache_create(__name, __object_size, __args, ...)           =
+\
+> +       _Generic((__args),                                              \
+> +               struct kmem_cache_args *: __kmem_cache_create_args,     \
+> +               void *: __kmem_cache_default_args,                      \
+> +               default: __kmem_cache_create)(__name, __object_size, __ar=
+gs, __VA_ARGS__)
+>
+>  void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void *=
+*list);
+>  int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t s=
+ize,
+> diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
+> index 0f97fb0d19e19c327aa4843a35b45cc086f4f366..97b8412ccbb6d222604c7b397=
+c53c65618d8d51b 100644
+> --- a/tools/testing/shared/linux.c
+> +++ b/tools/testing/shared/linux.c
+> @@ -16,21 +16,6 @@ int nr_allocated;
+>  int preempt_count;
+>  int test_verbose;
+>
+> -struct kmem_cache {
+> -       pthread_mutex_t lock;
+> -       unsigned int size;
+> -       unsigned int align;
+> -       int nr_objs;
+> -       void *objs;
+> -       void (*ctor)(void *);
+> -       unsigned int non_kernel;
+> -       unsigned long nr_allocated;
+> -       unsigned long nr_tallocated;
+> -       bool exec_callback;
+> -       void (*callback)(void *);
+> -       void *private;
+> -};
+> -
+>  void kmem_cache_set_callback(struct kmem_cache *cachep, void (*callback)=
+(void *))
+>  {
+>         cachep->callback =3D callback;
+> @@ -234,23 +219,26 @@ int kmem_cache_alloc_bulk(struct kmem_cache *cachep=
+, gfp_t gfp, size_t size,
+>  }
+>
+>  struct kmem_cache *
+> -kmem_cache_create(const char *name, unsigned int size, unsigned int alig=
+n,
+> -               unsigned int flags, void (*ctor)(void *))
+> +__kmem_cache_create_args(const char *name, unsigned int size,
+> +                         struct kmem_cache_args *args,
+> +                         unsigned int flags)
+>  {
+>         struct kmem_cache *ret =3D malloc(sizeof(*ret));
+>
+>         pthread_mutex_init(&ret->lock, NULL);
+>         ret->size =3D size;
+> -       ret->align =3D align;
+> +       ret->align =3D args->align;
+> +       ret->sheaf_capacity =3D args->sheaf_capacity;
+>         ret->nr_objs =3D 0;
+>         ret->nr_allocated =3D 0;
+>         ret->nr_tallocated =3D 0;
+>         ret->objs =3D NULL;
+> -       ret->ctor =3D ctor;
+> +       ret->ctor =3D args->ctor;
+>         ret->non_kernel =3D 0;
+>         ret->exec_callback =3D false;
+>         ret->callback =3D NULL;
+>         ret->private =3D NULL;
+> +
+>         return ret;
+>  }
+>
+> diff --git a/tools/testing/shared/maple-shim.c b/tools/testing/shared/map=
+le-shim.c
+> index 640df76f483e09f3b6f85612786060dd273e2362..9d7b743415660305416e972fa=
+75b56824211b0eb 100644
+> --- a/tools/testing/shared/maple-shim.c
+> +++ b/tools/testing/shared/maple-shim.c
+> @@ -3,5 +3,6 @@
+>  /* Very simple shim around the maple tree. */
+>
+>  #include "maple-shared.h"
+> +#include <linux/slab.h>
+>
+>  #include "../../../lib/maple_tree.c"
+> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_int=
+ernal.h
+> index 6b6e2b05918c9f95b537f26e20a943b34082825a..d5b87fa6a133f6d676488de25=
+38c509e0f0e1d54 100644
+> --- a/tools/testing/vma/vma_internal.h
+> +++ b/tools/testing/vma/vma_internal.h
+> @@ -26,6 +26,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/rbtree.h>
+>  #include <linux/refcount.h>
+> +#include <linux/slab.h>
+>
+>  extern unsigned long stack_guard_gap;
+>  #ifdef CONFIG_MMU
+> @@ -509,65 +510,6 @@ struct pagetable_move_control {
+>                 .len_in =3D len_,                                        =
+ \
+>         }
+>
+> -struct kmem_cache_args {
+> -       /**
+> -        * @align: The required alignment for the objects.
+> -        *
+> -        * %0 means no specific alignment is requested.
+> -        */
+> -       unsigned int align;
+> -       /**
+> -        * @useroffset: Usercopy region offset.
+> -        *
+> -        * %0 is a valid offset, when @usersize is non-%0
+> -        */
+> -       unsigned int useroffset;
+> -       /**
+> -        * @usersize: Usercopy region size.
+> -        *
+> -        * %0 means no usercopy region is specified.
+> -        */
+> -       unsigned int usersize;
+> -       /**
+> -        * @freeptr_offset: Custom offset for the free pointer
+> -        * in &SLAB_TYPESAFE_BY_RCU caches
+> -        *
+> -        * By default &SLAB_TYPESAFE_BY_RCU caches place the free pointer
+> -        * outside of the object. This might cause the object to grow in =
+size.
+> -        * Cache creators that have a reason to avoid this can specify a =
+custom
+> -        * free pointer offset in their struct where the free pointer wil=
+l be
+> -        * placed.
+> -        *
+> -        * Note that placing the free pointer inside the object requires =
+the
+> -        * caller to ensure that no fields are invalidated that are requi=
+red to
+> -        * guard against object recycling (See &SLAB_TYPESAFE_BY_RCU for
+> -        * details).
+> -        *
+> -        * Using %0 as a value for @freeptr_offset is valid. If @freeptr_=
+offset
+> -        * is specified, %use_freeptr_offset must be set %true.
+> -        *
+> -        * Note that @ctor currently isn't supported with custom free poi=
+nters
+> -        * as a @ctor requires an external free pointer.
+> -        */
+> -       unsigned int freeptr_offset;
+> -       /**
+> -        * @use_freeptr_offset: Whether a @freeptr_offset is used.
+> -        */
+> -       bool use_freeptr_offset;
+> -       /**
+> -        * @ctor: A constructor for the objects.
+> -        *
+> -        * The constructor is invoked for each object in a newly allocate=
+d slab
+> -        * page. It is the cache user's responsibility to free object in =
+the
+> -        * same state as after calling the constructor, or deal appropria=
+tely
+> -        * with any differences between a freshly constructed and a reall=
+ocated
+> -        * object.
+> -        *
+> -        * %NULL means no constructor.
+> -        */
+> -       void (*ctor)(void *);
+> -};
+> -
+>  static inline void vma_iter_invalidate(struct vma_iterator *vmi)
+>  {
+>         mas_pause(&vmi->mas);
+> @@ -652,38 +594,6 @@ static inline void vma_init(struct vm_area_struct *v=
+ma, struct mm_struct *mm)
+>         vma->vm_lock_seq =3D UINT_MAX;
+>  }
+>
+> -struct kmem_cache {
+> -       const char *name;
+> -       size_t object_size;
+> -       struct kmem_cache_args *args;
+> -};
+> -
+> -static inline struct kmem_cache *__kmem_cache_create(const char *name,
+> -                                                    size_t object_size,
+> -                                                    struct kmem_cache_ar=
+gs *args)
 > -{
-> -	return cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work);
+> -       struct kmem_cache *ret =3D malloc(sizeof(struct kmem_cache));
+> -
+> -       ret->name =3D name;
+> -       ret->object_size =3D object_size;
+> -       ret->args =3D args;
+> -
+> -       return ret;
 > -}
 > -
-> -void cxl_ras_exit(void)
+> -#define kmem_cache_create(__name, __object_size, __args, ...)           =
+\
+> -       __kmem_cache_create((__name), (__object_size), (__args))
+> -
+> -static inline void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflag=
+s)
 > -{
-> -	cxl_cper_unregister_prot_err_work(&cxl_cper_prot_err_work);
-> -	cancel_work_sync(&cxl_cper_prot_err_work);
+> -       return calloc(1, s->object_size);
 > -}
 > -
->  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base);
->  static pci_ers_result_t cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base);
->  
-> @@ -331,6 +320,10 @@ void cxl_endpoint_port_init_ras(struct cxl_port *ep)
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
->  
-> +static void cxl_do_recovery(struct device *dev)
-> +{
-> +}
-> +
->  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
->  {
->  	void __iomem *addr;
-> @@ -472,3 +465,60 @@ pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
->  	return rc;
->  }
->  EXPORT_SYMBOL_NS_GPL(pci_error_detected, "CXL");
-> +
-> +static void cxl_handle_proto_error(struct cxl_proto_err_work_data *err_info)
-> +{
-> +	struct pci_dev *pdev = err_info->pdev;
-> +	struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
-
-The pci_dev device lock needs to be held and cxl_pci_drv_bound() needs to be checked before this is called.
-
-> +	struct cxl_memdev *cxlmd = cxlds->cxlmd;
-> +	struct device *host_dev __free(put_device) = get_device(&cxlmd->dev);
-> +
-> +	if (err_info->severity == AER_CORRECTABLE) {
-> +		int aer = pdev->aer_cap;
-> +
-> +		guard(device)(&pdev->dev);
-> +
-> +		if (aer)
-> +			pci_clear_and_set_config_dword(pdev,
-> +						       aer + PCI_ERR_COR_STATUS,
-> +						       0, PCI_ERR_COR_INTERNAL);
-> +
-> +		if (!cxl_pci_drv_bound(pdev))
-> +			return;
-> +
-> +		cxl_cor_error_detected(&cxlmd->dev);
-> +		pcie_clear_device_status(pdev);
-> +	} else {
-> +		cxl_do_recovery(&cxlmd->dev);
-> +	}
-> +}
-> +
-> +static void cxl_proto_err_work_fn(struct work_struct *work)
-> +{
-> +	struct cxl_proto_err_work_data wd;
-> +
-> +	while (cxl_proto_err_kfifo_get(&wd))
-> +		cxl_handle_proto_error(&wd);
-> +}
-> +
-> +static struct work_struct cxl_proto_err_work;
-> +static DECLARE_WORK(cxl_proto_err_work, cxl_proto_err_work_fn);
-> +
-> +int cxl_ras_init(void)
-> +{
-> +	if (cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work))
-> +		pr_err("Failed to initialize CXL RAS CPER\n");
-> +
-> +	cxl_register_proto_err_work(&cxl_proto_err_work);
-> +
-> +	return 0;
-> +}
-> +
-> +void cxl_ras_exit(void)
-> +{
-> +	cxl_cper_unregister_prot_err_work(&cxl_cper_prot_err_work);
-> +	cancel_work_sync(&cxl_cper_prot_err_work);
-> +
-> +	cxl_unregister_proto_err_work();
-> +	cancel_work_sync(&cxl_proto_err_work);
-> +}
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 1a4f61caa0db..c8f17233a18e 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -2328,6 +2328,7 @@ void pcie_clear_device_status(struct pci_dev *dev)
->  	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &sta);
->  	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta);
->  }
-> +EXPORT_SYMBOL_NS_GPL(pcie_clear_device_status, "CXL");
->  #endif>  
->  /**
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 22e8f9a18a09..189b22ab2b1b 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -692,16 +692,10 @@ static inline bool pci_dpc_recovered(struct pci_dev *pdev) { return false; }
->  void pci_rcec_init(struct pci_dev *dev);
->  void pci_rcec_exit(struct pci_dev *dev);
->  void pcie_link_rcec(struct pci_dev *rcec);
-> -void pcie_walk_rcec(struct pci_dev *rcec,
-> -		    int (*cb)(struct pci_dev *, void *),
-> -		    void *userdata);
->  #else
->  static inline void pci_rcec_init(struct pci_dev *dev) { }
->  static inline void pci_rcec_exit(struct pci_dev *dev) { }
->  static inline void pcie_link_rcec(struct pci_dev *rcec) { }
-> -static inline void pcie_walk_rcec(struct pci_dev *rcec,
-> -				  int (*cb)(struct pci_dev *, void *),
-> -				  void *userdata) { }
->  #endif
->  
->  #ifdef CONFIG_PCI_ATS
-> @@ -1081,7 +1075,6 @@ void pci_restore_aer_state(struct pci_dev *dev);
->  static inline void pci_no_aer(void) { }
->  static inline void pci_aer_init(struct pci_dev *d) { }
->  static inline void pci_aer_exit(struct pci_dev *d) { }
-> -static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
->  static inline int pci_aer_clear_status(struct pci_dev *dev) { return -EINVAL; }
->  static inline int pci_aer_raw_clear_status(struct pci_dev *dev) { return -EINVAL; }
->  static inline void pci_save_aer_state(struct pci_dev *dev) { }
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index ccefbcfe5145..e018531f5982 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -288,6 +288,7 @@ void pci_aer_clear_fatal_status(struct pci_dev *dev)
->  	if (status)
->  		pci_write_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS, status);
->  }
-> +EXPORT_SYMBOL_GPL(pci_aer_clear_fatal_status);
-
-Not seeing this being used anywhee. Should this go to a different patch?
-
->  
->  /**
->   * pci_aer_raw_clear_status - Clear AER error registers.
-> diff --git a/drivers/pci/pcie/rcec.c b/drivers/pci/pcie/rcec.c
-> index d0bcd141ac9c..fb6cf6449a1d 100644
-> --- a/drivers/pci/pcie/rcec.c
-> +++ b/drivers/pci/pcie/rcec.c
-> @@ -145,6 +145,7 @@ void pcie_walk_rcec(struct pci_dev *rcec, int (*cb)(struct pci_dev *, void *),
->  
->  	walk_rcec(walk_rcec_helper, &rcec_data);
->  }
-> +EXPORT_SYMBOL_NS_GPL(pcie_walk_rcec, "CXL");
-
-Not seeing this being used in this patch either.
-
-DJ
-
->  
->  void pci_rcec_init(struct pci_dev *dev)
->  {
-> diff --git a/include/linux/aer.h b/include/linux/aer.h
-> index 6b2c87d1b5b6..64aef69fb546 100644
-> --- a/include/linux/aer.h
-> +++ b/include/linux/aer.h
-> @@ -66,6 +66,7 @@ struct cxl_proto_err_work_data {
->  
->  #if defined(CONFIG_PCIEAER)
->  int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
-> +void pci_aer_clear_fatal_status(struct pci_dev *dev);
->  int pcie_aer_is_native(struct pci_dev *dev);
->  void pci_aer_unmask_internal_errors(struct pci_dev *dev);
->  #else
-> @@ -73,6 +74,7 @@ static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
->  {
->  	return -EINVAL;
->  }
-> +static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
->  static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
->  static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
->  #endif
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index bc3a7b6d0f94..b8e36bde346c 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1825,6 +1825,9 @@ extern bool pcie_ports_native;
->  
->  int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
->  			  bool use_lt);
-> +void pcie_walk_rcec(struct pci_dev *rcec,
-> +		    int (*cb)(struct pci_dev *, void *),
-> +		    void *userdata);
->  #else
->  #define pcie_ports_disabled	true
->  #define pcie_ports_native	false
-> @@ -1835,8 +1838,14 @@ static inline int pcie_set_target_speed(struct pci_dev *port,
->  {
->  	return -EOPNOTSUPP;
->  }
-> +
-> +static inline void pcie_walk_rcec(struct pci_dev *rcec,
-> +				  int (*cb)(struct pci_dev *, void *),
-> +				  void *userdata) { }
->  #endif
->  
-> +void pcie_clear_device_status(struct pci_dev *dev);
-> +
->  #define PCIE_LINK_STATE_L0S		(BIT(0) | BIT(1)) /* Upstr/dwnstr L0s */
->  #define PCIE_LINK_STATE_L1		BIT(2)	/* L1 state */
->  #define PCIE_LINK_STATE_L1_1		BIT(3)	/* ASPM L1.1 state */
-
+> -static inline void kmem_cache_free(struct kmem_cache *s, void *x)
+> -{
+> -       free(x);
+> -}
+> -
+>  /*
+>   * These are defined in vma.h, but sadly vm_stat_account() is referenced=
+ by
+>   * kernel/fork.c, so we have to these broadly available there, and tempo=
+rarily
+>
+> --
+> 2.51.0
+>
 
