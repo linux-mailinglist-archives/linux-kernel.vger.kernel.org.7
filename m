@@ -1,172 +1,110 @@
-Return-Path: <linux-kernel+bounces-834378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405C8BA492F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:13:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C879CBA4932
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C80387799
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C481896AC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6127223BCFD;
-	Fri, 26 Sep 2025 16:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A6823C50C;
+	Fri, 26 Sep 2025 16:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSOMSViZ"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgYG+uue"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD1C2367A0
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B25521D3CA;
+	Fri, 26 Sep 2025 16:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903176; cv=none; b=ggzf7ALJq1fwdUTvAI1C66tRtuiq0MxXkfGiGUGEn87bwL+QWQa35IAGEPfNWlYwzRp0ThTMNS72RimBH/+unhSuEi7Qkfgk6YToe+9gP9CmwrPSCbRGyfm6g6I9seFTEkX/vhmn9CYIWvJPHrr52nJQvbjlVOQeBotqll8D7+I=
+	t=1758903217; cv=none; b=kO1g/XGFJMIl8W7oxUXSj1JGqCxQl96p6ikf99kjkMvq40Cf/KN7xfCMnNggCXnqcSyRdzJ+gPZjf2VQ2UldCK9fO/oCcUqMcyaA0AGc/kzLzOIFRGnSqNvIcbEqBgxY1Jc7Atvcl8W8XkU1iAMfFmg5socZSoSdlC8h2Rhcw7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903176; c=relaxed/simple;
-	bh=fBEeVtjlMh0eakC+fIWfdSjEDTq0k01IZmIVBndPs5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ocVyAH0iPJ4AUrYEZL6Q3FaiB2p8jWXaspwra4/I80EgvocF1OtqGIeeoWz1ocLSxDAVZ/jS4szOfQdHhN1GIako6oycQqbKDf8f89T6QouSZHP5fr5sN+BSbNlkxzHaYj222xszFdBFsUO0Eg5bYY+CFmOkhrLGEQfl1SWidZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSOMSViZ; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27eceb38eb1so28288175ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:12:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758903174; x=1759507974; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=P6vogX1yh7DM43cfcKuR1gYad8OSAL2NFfRRQVCWimw=;
-        b=KSOMSViZSkslVSqI2x3iPVHvkwMONLg5YW6fo3wv08cU9Ai6/U5w2hM+t8IFKnqtpx
-         PDFV4eRcsXNl9KrWd9pMYFmZW+P5B65pqx0QAAw7u50TgUgNf7iiTKkfFIECszyLmLuU
-         2BeprnrekofJiUnsThKxWz5Db9PhN5/5G57U5A26g0fRUDpipGLzPHYNi90y03VhSu8F
-         LtYhBNFpvTmYekOQa/m7rl3kAutVl+oKmGhXE0Y8IMD+x4LDy27vwgiBSLpJYbvETvby
-         l4cAnvOqa5kRjthda31HDs/r9rHTEiW8GGrRrUUqBsh48GQ/onhctznWYpMPSL3xS53/
-         zFfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758903174; x=1759507974;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P6vogX1yh7DM43cfcKuR1gYad8OSAL2NFfRRQVCWimw=;
-        b=Ort4/knG+fcRKTEU1hTvHqOADPYj3xexELSotlOYPYzFpy8e/e+u8mnZ7AH0EV/xTF
-         je9dVAqXerh4qSRAS8QXP4IY8Z57bXXMywS7DpRsyBaBaNNVRwL/U5CuX6srnedGdSRB
-         jKxiKv7vrwESuQKrfS3jSm2xb5PnLR9VS8DVUXcqFGbcgovH+OjQibM9HhglWgNR0pp3
-         OCA1z/1LAmKSGsPNWNalkfAR2hzqxC2MOozwWTerBg2Qq4Vr0KvWguIuIg+/CpmoPtoU
-         nhGQzhmDl4dI8ss5IJgSkg6NOJON4qcuTqJoDyKr8gMg2wOEotZLwA0F+9aYpx1zHgHF
-         tJeg==
-X-Gm-Message-State: AOJu0YxfELTlHNfrv8SA9IbybTRAPnmzVaOvNAxsUztH/esTwBzN+trb
-	CBw1TpfTsGB2qmqCDVeo6frXnIa/lQkCH9UwmGX1OtlF5iwpVgt8KzwN
-X-Gm-Gg: ASbGncuEp18kF2re7ZAISYSygLg8KoZSrgOsSJFK1KbF+iriKeny3CJ/LHHoMw68fVB
-	2QAQB0sHk3Fph1YfJ2eBxRmx4JBpPD1SjPVXWRczQavvThTFqZVFsPLnLGLohyLcYjJUFd0gpCj
-	syzhs+t931136FxUG1uYidcBlV2VC7jXP/i0uK4J6RsgpEVWhy1F+Rv7BCpOy57MsZVhQhYxdjS
-	UKmYFLH5aYGpPpjOWTSoWtpOwrg28IH9gNS/BdOhaj1dfu0OaAKz9OjvYXKoxgZLCZkN/lLs4HT
-	2jSo0fVmNwM/UKiiNbj1pGwvOS/qVnMt0jnfZu4WFEU3WPQKkZcVZgtwKrxI7M9XvXPph9XoQ8t
-	g6wJr5N81tI9DGKhuubjDa0wGvzesZJK00AK1k2zUdhIqKIRl4HBcIpNfLzhbtYOnzqade3s=
-X-Google-Smtp-Source: AGHT+IEqhWT9kRq3x7sRjETmq47GmR2SqR1YNEZkhyvoDtGSGrchTQwPFPrqHH522oVmz7oMdfz+yQ==
-X-Received: by 2002:a17:903:292:b0:25e:5d83:2ddd with SMTP id d9443c01a7336-27ed4ac32dcmr87235415ad.45.1758903174334;
-        Fri, 26 Sep 2025 09:12:54 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6725bbesm58952515ad.60.2025.09.26.09.12.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 09:12:53 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <1ac6f9ac-ff6e-4276-a6d6-c3f115db9b8a@roeck-us.net>
-Date: Fri, 26 Sep 2025 09:12:51 -0700
+	s=arc-20240116; t=1758903217; c=relaxed/simple;
+	bh=wh9M9QTkVwk+Ja56zSTTBOIJV0Iqe7hniIh4R1RLg1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1DBDEYIQi1FMz2WP2zSLQW4WTMVqgaW0VK40Rfxgh9YpvREilQ54NksYW4HdvCokqbS0tEJ+NtwJwM+CU3Sv8euz6BxoQdXEOknmr3EG0ZUUrsMqX2TZZUW4G52c41UTQq/+OnKZLW/ywa/3U8GZZYk+xHqFg5HRvh66U2EXmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgYG+uue; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0064AC4CEF4;
+	Fri, 26 Sep 2025 16:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758903217;
+	bh=wh9M9QTkVwk+Ja56zSTTBOIJV0Iqe7hniIh4R1RLg1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JgYG+uue4dcR73rbUpd7FW2IP/THmhCbkZJN5ATwVASV/92yg7I4LHPQQfprckKJ3
+	 rLYlaJ4dIdmQSKWiO/U79+6stXY2JruZf+GW92X2DmcXKniCAm8/zbNXj4dGWT8M5s
+	 FqazBYazLSvH9QiXrQ4Nqlg9Jharodw9aTmahfAwjX4JcGayP+IHycGE2sBSoV69UH
+	 XSbQ7j+TK6YZQ56qUu4timJFyebojxJJfqZHQOe5wKAI1r/ieKfgjNns6d97D1JNzX
+	 cHQZ1snplHDs4fbPPObXPSAe1pXoAUmgPDhAnrV+QJhV+q1di/mC8zYdYV7VHwa00l
+	 r2YmUditon04g==
+Date: Fri, 26 Sep 2025 17:13:32 +0100
+From: Simon Horman <horms@kernel.org>
+To: Nishanth Menon <nm@ti.com>
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, "Vadapalli, Siddharth" <s-vadapalli@ti.com>
+Subject: Re: [PATCH] net: netcp: Fix crash in error path when DMA channel
+ open fails
+Message-ID: <aNa7rEQLJreJF58p@horms.kernel.org>
+References: <20250926150853.2907028-1-nm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: hwmon: add MP2925 and MP2929 driver
-To: "Colin King (gmail)" <colin.i.king@gmail.com>,
- Wensheng Wang <wenswang@yeah.net>, linux-hwmon@vger.kernel.org
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <391ee227-54e2-475c-9811-710fa22687ef@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <391ee227-54e2-475c-9811-710fa22687ef@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926150853.2907028-1-nm@ti.com>
 
-On 9/26/25 07:17, Colin King (gmail) wrote:
-> Hi,
+On Fri, Sep 26, 2025 at 10:08:53AM -0500, Nishanth Menon wrote:
+> When knav_dma_open_channel() fails in netcp_setup_navigator_resources(),
+> the rx_channel field is set to an ERR_PTR value. Later, when
+> netcp_free_navigator_resources() is called in the error path, it attempts
+> to close this invalid channel pointer, causing a crash.
 > 
-> Static analysis on linux-next has found an issue in function mp2925_write_word_data with the following commit:
+> Add a check for ERR values to handle the failure scenario.
 > 
-> commit b3a4efc88601cb5fc97b4ae23c478700a60302da
-> Author: Wensheng Wang <wenswang@yeah.net>
-> Date:   Thu Sep 18 16:06:03 2025 +0800
+> Fixes: 84640e27f230 ("net: netcp: Add Keystone NetCP core driver")
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
 > 
->      hwmon: add MP2925 and MP2929 driver
+> Seen on kci log for k2hk: https://dashboard.kernelci.org/log-viewer?itemId=ti%3A2eb55ed935eb42c292e02f59&org=ti&type=test&url=http%3A%2F%2Ffiles.kernelci.org%2F%2Fti%2Fmainline%2Fmaster%2Fv6.17-rc7-59-gbf40f4b87761%2Farm%2Fmulti_v7_defconfig%2BCONFIG_EFI%3Dy%2BCONFIG_ARM_LPAE%3Dy%2Bdebug%2Bkselftest%2Btinyconfig%2Fgcc-12%2Fbaseline-nfs-boot.nfs-k2hk-evm.txt.gz
 > 
+>  drivers/net/ethernet/ti/netcp_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The issue is as follows:
-> 
->          case PMBUS_VOUT_OV_FAULT_LIMIT:
->          case PMBUS_VOUT_UV_FAULT_LIMIT:
->                  ret = pmbus_write_word_data(client, page, reg,
->                                              (ret & ~GENMASK(11, 0)) |
->                                  FIELD_PREP(GENMASK(11, 0),
->                                             DIV_ROUND_CLOSEST(word * MP2925_VOUT_OVUV_DIV,
-> 
-> MP2925_VOUT_OVUV_UINT)));
->                  break;
-> 
-> The call to pmbus_write_word_data() is accessing variable ret via the mask ~GENMASK(11, 0) however at this point ret has not been initialized so it contains a garbage value.
-> 
+> diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+> index 857820657bac..4ff17fd6caae 100644
+> --- a/drivers/net/ethernet/ti/netcp_core.c
+> +++ b/drivers/net/ethernet/ti/netcp_core.c
+> @@ -1549,7 +1549,7 @@ static void netcp_free_navigator_resources(struct netcp_intf *netcp)
+>  {
+>  	int i;
+>  
+> -	if (netcp->rx_channel) {
+> +	if (!IS_ERR(netcp->rx_channel)) {
+>  		knav_dma_close_channel(netcp->rx_channel);
+>  		netcp->rx_channel = NULL;
+>  	}
 
-Yes, that was also reported by 0-day. Patches now dropped from linux-next since I can not
-figure out the intended use (datasheets are not public, or, rather, the chips don't even
-officially exist).
+Hi Nishanth,
 
-Guenter
+Thanks for your patch.
 
+I expect that netcp_txpipe_close() has a similar problem too.
+
+But I also think that using IS_ERR is not correct, because it seems to me
+that there are also cases where rx_channel can be NULL.
+
+I see that on error knav_dma_open_channel() always returns ERR_PTR(-EINVAL)
+(open coded as (void *)-EINVAL) on error. So I think a better approach
+would be to change knav_dma_open_channel() to return NULL, and update callers
+accordingly.
 
