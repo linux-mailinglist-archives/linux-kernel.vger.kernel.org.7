@@ -1,182 +1,188 @@
-Return-Path: <linux-kernel+bounces-834470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79405BA4C24
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7412BBA4C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351234C827B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9AE1B2494A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB3330C639;
-	Fri, 26 Sep 2025 17:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECC430CD92;
+	Fri, 26 Sep 2025 17:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nyFs2Qp1"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B4A15278E;
-	Fri, 26 Sep 2025 17:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNGR1qfG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5026030CB50;
+	Fri, 26 Sep 2025 17:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758906869; cv=none; b=bc7jTYjSKppbZGbArsuhmG8HAo9geDTeSRBNrSsLd7+8LI1gTcktWi8QcuGKQuEfYqeYOs7/PHj3/UPNJirHNsCD0BYwGzcD/VkWns7aoB0ZjavMuKzsPjjvDTdCBw4i4aNhtP6jDtR79/qk7erEOE8H7IGwZSU6eUmi+Z1SkC4=
+	t=1758906879; cv=none; b=Bi/O+gEx/2C+HpxYXtwWYF5qXWiSBog+LkLcUJS5BTnJzIR21eqUUrqDxCBLByA5O2Pkm7MsL5UHEI2yLKYhGTcX5CwdaMCUPOxfiDbWPMMw0JeAHcovECh5lzS7YvTJxwusdZ3lcqHjM6YmyJARg0m/lUY9fepHvXfGovWaN8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758906869; c=relaxed/simple;
-	bh=F56XhL2WB5+Raoz6SFJqw1y6IuAiLOaE8CMfxRCc91Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BsU4YFoygNMZyCwWKvhOZeoZVXdvcWJss4zdiziyifozGak9GPWxLi5NzRR9NPI+K8SbA08QJN2dkDtzG6YgjJegzRmFikWWI+fW/GvsZV1YS4bVUmvgmbgVoctQO3HhmDEUkg10tFlVyDp/GFMiCbrJATAvjDk4G3ZulOBWbLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nyFs2Qp1; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.64.208.103] (unknown [20.191.74.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id D2B9B2012C01;
-	Fri, 26 Sep 2025 10:14:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D2B9B2012C01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758906867;
-	bh=lhA5ubL5wAIX7qegcOZTUKfUmVT9AAUyNQ2Jl0en+x4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nyFs2Qp1fpLPb6vjj9fsP9omY3zs7IC/bzLKMeIvuIdU6VCkw2NiOTkhh3W0cvBqM
-	 83zUG2d2U6JhiBVqVI8+U9bJjzI3EY4XYvtKM5UYfWhpfdsp/r5mVQJHC/XiWrVx5q
-	 Ua4ALvV+MKRHWc/jLe3vGWtSQyEPT7j2ZKcs5N5M=
-Message-ID: <6165c48c-a71e-4aa0-99d3-2ff8158ddd4a@linux.microsoft.com>
-Date: Fri, 26 Sep 2025 10:14:25 -0700
+	s=arc-20240116; t=1758906879; c=relaxed/simple;
+	bh=ACLLyTH6WzBUIy6EmJzPFE4VsZS26yNgY1PV+Hi3dKY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=D3LW1Nxs9rz/0s9qkpznoNFUO1ZMGquH4oKev+gyZLavwfAeQoXQvswrGy5sLtHRSTo4tlWfW13wxJjQnCQF0NDexCILhoBROMNrcrZ/bp/XjlwEwv9sujq7hmZzA8aHryWEEby/aCw4b/OTe8NgSPsQeBWCi/vl7wDtcr4w9YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNGR1qfG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E54C4CEF4;
+	Fri, 26 Sep 2025 17:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758906878;
+	bh=ACLLyTH6WzBUIy6EmJzPFE4VsZS26yNgY1PV+Hi3dKY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=sNGR1qfG42JFYCO5k/n7dorfGNrwgbW3MmFZpb9Bh9LRS0VuauOd+I8wsQI055OJ5
+	 0+USKbkaWUCDwGKK/ytGyq6CdleSufXYI47qWpWuVptTTjWVJFVLMgoAHtcPQomU1K
+	 j/zEtcH2r6x8k1F0VfjzYHyMkj6Db8CJ+5awYzyRRP+HW/3wkHqAUxF0mmwvUtJtyG
+	 ZY1yEIy1hsMp+lOMFX48jaWUGvKKyshAPbU9S1PUwUp1l8Idqo02JVsEZhXwB0wswL
+	 ttDs7oQx2yu6TLYdAh/5u1eA1n+DSo6OK0qKBA3TjC71rlacqDcwscaYFjUWu8f8va
+	 fPjiQa5UVfOAw==
+Date: Fri, 26 Sep 2025 19:14:38 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+CC: Manivannan Sadhasivam <mani@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, ntb@lists.linux.dev,
+ imx@lists.linux.dev
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_1/3=5D_PCI=3A_endpoint=3A_Add_help?=
+ =?US-ASCII?Q?er_function_pci=5Fepf=5Fget=5Fbar=5Frequired=5Fsize=28=29?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <aNbI+KrPJW4kgy4e@lizhi-Precision-Tower-5810>
+References: <20250925-vntb_msi_doorbell-v3-0-ae0b0c93caae@nxp.com> <20250925-vntb_msi_doorbell-v3-1-ae0b0c93caae@nxp.com> <aNaHrj0rwLTtSRS3@ryzen> <aNaprpfaeXIcqeGD@lizhi-Precision-Tower-5810> <aNauaSVs5ytzsVFt@ryzen> <aNbI+KrPJW4kgy4e@lizhi-Precision-Tower-5810>
+Message-ID: <924D03A9-0206-4FCA-AE83-4724643561C2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] Drivers: hv: Rename a few memory region related
- functions for clarity
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <175874669044.157998.15064894246017794777.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <175874946244.157998.2185691597101633735.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <175874946244.157998.2185691597101633735.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/24/2025 2:31 PM, Stanislav Kinsburskii wrote:
-> A cleanup and precursor patch.
-> 
-This line doesn't add much, I think you can remove it.
+On 26 September 2025 19:10:16 CEST, Frank Li <Frank=2Eli@nxp=2Ecom> wrote:
+>On Fri, Sep 26, 2025 at 05:16:57PM +0200, Niklas Cassel wrote:
+>> On Fri, Sep 26, 2025 at 10:56:46AM -0400, Frank Li wrote:
+>> > On Fri, Sep 26, 2025 at 02:31:42PM +0200, Niklas Cassel wrote:
+>> > > On Thu, Sep 25, 2025 at 01:01:47PM -0400, Frank Li wrote:
+>> > > > Introduce pci_epf_get_bar_required_size() to retrieve the require=
+d BAR
+>> > > > size and memory size=2E Prepare for adding support to set an MMIO=
+ address to
+>> > > > a specific BAR=2E
+>> > > >
+>> > > > Use two variables 'aligned_bar_size' and 'aligned_mem_size' to av=
+oid
+>> > > > confuse=2E
+>> > >
+>> > > s/confuse/confusion/
+>> > >
+>> > >
+>> > > >
+>> > > > No functional changes=2E
+>> > > >
+>> > > > Signed-off-by: Frank Li <Frank=2ELi@nxp=2Ecom>
+>> > > > ---
+>> > > > change in v3
+>> > > > - change return value to int=2E
+>> > > > - use two pointers return bar size aligned and memory start addre=
+ss aligned
+>> > > > - update comments about why need memory align size=2E Actually iA=
+TU require
+>> > > > start address match aligned requirement=2E Since kernel return al=
+ign to
+>> > > > size's address=2E
+>> > > > - use two varible aligned_bar_size and aligned_mem_size to avoid =
+confuse
+>> > > > use 'size'=2E
+>> > > >
+>> > > > change in v2
+>> > > > - new patch
+>> > > > ---
+>> > > >  drivers/pci/endpoint/pci-epf-core=2Ec | 84 +++++++++++++++++++++=
+++--------------
+>> > > >  1 file changed, 53 insertions(+), 31 deletions(-)
+>> > > >
+>> > > > diff --git a/drivers/pci/endpoint/pci-epf-core=2Ec b/drivers/pci/=
+endpoint/pci-epf-core=2Ec
+>> > > > index d54e18872aefc07c655c94c104a347328ff7a432=2E=2E2cd0257831f98=
+85a4381c087ed8f3326f5960966 100644
+>> > > > --- a/drivers/pci/endpoint/pci-epf-core=2Ec
+>> > > > +++ b/drivers/pci/endpoint/pci-epf-core=2Ec
+>> > > > @@ -208,6 +208,49 @@ void pci_epf_remove_vepf(struct pci_epf *epf=
+_pf, struct pci_epf *epf_vf)
+>> > > >  }
+>> > > >  EXPORT_SYMBOL_GPL(pci_epf_remove_vepf);
+>> > > >
+>> > > > +static int
+>> > > > +pci_epf_get_bar_required_size(struct pci_epf *epf, size_t size,
+>> > > > +			      size_t *aligned_bar_size,
+>> > > > +			      size_t *aligned_mem_size,
+>> > > > +			      enum pci_barno bar,
+>> > > > +			      const struct pci_epc_features *epc_features,
+>> > > > +			      enum pci_epc_interface_type type)
+>> > > > +{
+>> > > > +	u64 bar_fixed_size =3D epc_features->bar[bar]=2Efixed_size;
+>> > > > +	size_t align =3D epc_features->align;
+>> > > > +
+>> > > > +	if (size < 128)
+>> > > > +		size =3D 128;
+>> > > > +
+>> > > > +	/* According to PCIe base spec, min size for a resizable BAR is=
+ 1 MB=2E */
+>> > > > +	if (epc_features->bar[bar]=2Etype =3D=3D BAR_RESIZABLE && size =
+< SZ_1M)
+>> > > > +		size =3D SZ_1M;
+>> > > > +
+>> > > > +	if (epc_features->bar[bar]=2Etype =3D=3D BAR_FIXED && bar_fixed=
+_size) {
+>> > > > +		if (size > bar_fixed_size) {
+>> > > > +			dev_err(&epf->dev,
+>> > > > +				"requested BAR size is larger than fixed size\n");
+>> > > > +			return -ENOMEM;
+>> > > > +		}
+>> > > > +		size =3D bar_fixed_size;
+>> > > > +	} else {
+>> > > > +		/* BAR size must be power of two */
+>> > > > +		size =3D roundup_pow_of_two(size);
+>> > > > +	}
+>> > > > +
+>> > > > +	*aligned_bar_size =3D size;
+>> > >
+>> > > I think this name is wrong=2E
+>> > > The BAR size has not been aligned to anything=2E
+>> > > The BAR size has to be a power of two, but that is a requirement of=
+ the PCI
+>> > > specification, so that in an inherent property of a BAR=2E
+>> > >
+>> > > Perhaps just name it size or bar_size?
+>> >
+>> > there already have 'size' for input=2E  It should match epc required'=
+s size=2E
+>>
+>> Why do you need both "size_t size" and "size_t *bar_size"?
+>>
+>> Isn't it enough with "size_t *bar_size" ?
+>>
+>> The user can supply a value, and the function could update that value=
+=2E
+>
+>If not 'aligned_mem_size' in list, it looks fine=2E But after add
+>'aligned_mem_size', I think use difference varible for two outputs will b=
+e
+>clear and consistent and easy to understand=2E
 
-> Rename "mshv_partition_mem_region_map" to "mshv_handle_pinned_region",
-> "mshv_region_populate" to "mshv_pin_region" and
-> "mshv_region_populate_pages" to "mshv_region_pin_pages"
-> to better reflect its purpose of handling pinned memory regions.
-> 
-> Update the "mshv_handle_pinned_region" function's documentation to provide
-> detailed information about its behavior and return values.
-> 
-> Also drop the check for range as pinned, as this function is static and
-> all the memory regions are pinned anyway.
-> 
-> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-> ---
->  drivers/hv/mshv_root_main.c |   41 ++++++++++++++++++++++-------------------
->  1 file changed, 22 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index a1c8c3bc79bf1..5ed6bce334417 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -1137,8 +1137,8 @@ mshv_region_evict(struct mshv_mem_region *region)
->  }
->  
->  static int
-> -mshv_region_populate_pages(struct mshv_mem_region *region,
-> -			   u64 page_offset, u64 page_count)
-> +mshv_region_pin_pages(struct mshv_mem_region *region,
-> +		      u64 page_offset, u64 page_count)
->  {
->  	u64 done_count, nr_pages;
->  	struct page **pages;
-> @@ -1164,14 +1164,9 @@ mshv_region_populate_pages(struct mshv_mem_region *region,
->  		 * with the FOLL_LONGTERM flag does a large temporary
->  		 * allocation of contiguous memory.
->  		 */
-> -		if (region->flags.range_pinned)
-> -			ret = pin_user_pages_fast(userspace_addr,
-> -						  nr_pages,
-> -						  FOLL_WRITE | FOLL_LONGTERM,
-> -						  pages);
-> -		else
-> -			ret = -EOPNOTSUPP;
-> -
-> +		ret = pin_user_pages_fast(userspace_addr, nr_pages,
-> +					  FOLL_WRITE | FOLL_LONGTERM,
-> +					  pages);
->  		if (ret < 0)
->  			goto release_pages;
->  	}
-> @@ -1187,9 +1182,9 @@ mshv_region_populate_pages(struct mshv_mem_region *region,
->  }
->  
->  static int
-> -mshv_region_populate(struct mshv_mem_region *region)
-> +mshv_region_pin(struct mshv_mem_region *region)
->  {
-> -	return mshv_region_populate_pages(region, 0, region->nr_pages);
-> +	return mshv_region_pin_pages(region, 0, region->nr_pages);
->  }
-Do we ever partially pin a region? Maybe we don't need a function called
-mshv_region_pin_pages() and we just have mshv_region_pin() instead.
 
->  
->  static struct mshv_mem_region *
-> @@ -1264,17 +1259,25 @@ static int mshv_partition_create_region(struct mshv_partition *partition,
->  	return 0;
->  }
->  
-> -/*
-> - * Map guest ram. if snp, make sure to release that from the host first
-> - * Side Effects: In case of failure, pages are unpinned when feasible.
-> +/**
-> + * mshv_handle_pinned_region - Handle pinned memory regions
-> + * @region: Pointer to the memory region structure
-> + *
-> + * This function processes memory regions that are explicitly marked as pinned.
-> + * Pinned regions are preallocated, mapped upfront, and do not rely on fault-based
-> + * population. The function ensures the region is properly populated, handles
-> + * encryption requirements for SNP partitions if applicable, maps the region,
-> + * and performs necessary sharing or eviction operations based on the mapping
-> + * result.
-> + *
-> + * Return: 0 on success, negative error code on failure.
->   */
-> -static int
-> -mshv_partition_mem_region_map(struct mshv_mem_region *region)
-> +static int mshv_handle_pinned_region(struct mshv_mem_region *region)
+What am trying to say is:
+Why not make "size_t *bar_size" both an input and an output?
 
-Why the verb "handle"? It doesn't provide any information on what the function does,
-when it might be called etc. Maybe mshv_init_pinned_region() ?
 
->  {
->  	struct mshv_partition *partition = region->partition;
->  	int ret;
->  
-> -	ret = mshv_region_populate(region);
-> +	ret = mshv_region_pin(region);
->  	if (ret) {
->  		pt_err(partition, "Failed to populate memory region: %d\n",
->  		       ret);
-> @@ -1368,7 +1371,7 @@ mshv_map_user_memory(struct mshv_partition *partition,
->  		ret = hv_call_map_mmio_pages(partition->pt_id, mem.guest_pfn,
->  					     mmio_pfn, HVPFN_DOWN(mem.size));
->  	else
-> -		ret = mshv_partition_mem_region_map(region);
-> +		ret = mshv_handle_pinned_region(region);
->  
->  	if (ret)
->  		goto errout;
-> 
-> 
-
+Kind regards,
+Niklas
 
