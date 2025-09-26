@@ -1,180 +1,157 @@
-Return-Path: <linux-kernel+bounces-834573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54EDBA4F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B29BA4F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EFC7B8539
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4F61B27C69
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156C627FB10;
-	Fri, 26 Sep 2025 19:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009927FB1E;
+	Fri, 26 Sep 2025 19:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cldY7FfF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tUtyt6xt"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD79F244671
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0365F231842;
+	Fri, 26 Sep 2025 19:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758915053; cv=none; b=nyLsGrz5r0/CEPblb84MGfHNycZnQFy8gzFWUXpEtskWG9EnT1gCRAQcPOk8CemOkzTCpWLv7KYKg9CO6zJ3xexBCi45Ebn3FiD02iX0VZFzyCaZCP4LNno+FjXZ1PqmV676J8AC96xa8qbasxfE2F1UpMklZPl9uYOfmhJ84Ko=
+	t=1758915329; cv=none; b=rtCaTtaoznKjExTL5w1FinrifeifqmrVoOW/w2rIkOMA6I47X9ktFc30HJtwAGlhbBTxR/AWes7U3lofITPK0y2be/H9v4ZhIoxAwaZYTQXA7LsvHI8a9tS9C6T7+e2jSUUlcbWDEp0m0+Iyhhni8z12X9JeILyDD7vvb2CX+Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758915053; c=relaxed/simple;
-	bh=uYge2qoJeTVTxB09I1cGTmN1ssAnBlp6sQZnc7Jhs5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MPE/qh0rbSIsfkpf0KKRnTaJ+NfaXb2R/EynGn7T5GqjSUnzCp8dDg4H8pWGrVrRgyxLZY80Dr4geVtyIeKy42AvgA3KQerHd/17y/th7kya+ah1+bpHxaImY3K1I6O65mgVfPk9GfrzJADsSknoTnuf5g86cIIhuxSsAaaEnfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cldY7FfF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758915050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uIPspSLX9lThfAZ+Y5dkohRcaszaIDWglOFteDGsE5E=;
-	b=cldY7FfFnrIHglh/V1Six1uh6uEErMzoUjbyjNtf3AMMRZRMMOFIS8e8cNstAqozWJ38Mp
-	LWsBt+Di6/mT1r+Bg8tVgAKGz0NQvZASBfS2klNh/plQja6ZuP0efVCIRPeY2E9zaoUYow
-	VA2Y22tlofbaG0gxELX8O05ZFr03LIg=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-266-hn6MuAqPP_m_w_IXuCNlpQ-1; Fri,
- 26 Sep 2025 15:30:45 -0400
-X-MC-Unique: hn6MuAqPP_m_w_IXuCNlpQ-1
-X-Mimecast-MFC-AGG-ID: hn6MuAqPP_m_w_IXuCNlpQ_1758915044
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B08A319560AE;
-	Fri, 26 Sep 2025 19:30:42 +0000 (UTC)
-Received: from wsxc.redhat.com (unknown [10.96.134.97])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EFED319560A2;
-	Fri, 26 Sep 2025 19:30:37 +0000 (UTC)
-From: Ricardo Robaina <rrobaina@redhat.com>
-To: audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org
-Cc: paul@paul-moore.com,
-	eparis@redhat.com,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	fw@strlen.de,
-	ej@inai.de,
-	Ricardo Robaina <rrobaina@redhat.com>
-Subject: [PATCH v3] audit: include source and destination ports to NETFILTER_PKT
-Date: Fri, 26 Sep 2025 16:30:35 -0300
-Message-ID: <20250926193035.2158860-1-rrobaina@redhat.com>
+	s=arc-20240116; t=1758915329; c=relaxed/simple;
+	bh=Ez8O04TVMHIRGCKH1RLZv4FTMc5LUlJ4PfwBFQ+HxN4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=VpF0lnbYB3OZjvTjzyRCshWAjBuMZ9tSt6vdbHfDe4VIittHDC5SaaUp6DOWy3V+83oQLHZJWsiD0nGVAlC8O/AFG5cNJT7Cw3FZBLn+wtWEIhowOTZ1MEhAn6I4Y3GAPRLxCmWhye1fWbxqNZ3+UyTb4vDHjkHF4cYreeR/nLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tUtyt6xt; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758915314; x=1759520114; i=markus.elfring@web.de;
+	bh=Ez8O04TVMHIRGCKH1RLZv4FTMc5LUlJ4PfwBFQ+HxN4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=tUtyt6xtS+9lO4W3XNq3vQOO+7YLaq2EHga6Gl1VjnpTUQmtdylPaJEnluzq8YvW
+	 gjyev7utoICF/tQTp3+/zDn/sit3OuFYga0mwKzjLeMVFvHD/ew2/5Biem9v6NKCh
+	 AFdppfqfCp3vUUGgTJAc6FTKFMJeilmTBBAm0GCs0pqdlLanbc6GLuY6PcDPLXtDk
+	 o+EHCV5mAQ9FxQWzzWsZvoR8v0zZfdvmInUxe9k1VYuHhijRlvxH7lbNJ+dgHCkPo
+	 cMjV4N8vxkQz1Q6NC0bYxTnyKnQmVr3ht6zhJMC+4drt5yjDLT41Lm4A2hoG0v7B3
+	 GbW9eb3fnHTu/M4pHw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTfol-1uuhHr0sZR-00QLGK; Fri, 26
+ Sep 2025 21:35:14 +0200
+Message-ID: <83091f63-9462-44b9-8089-59af596cc712@web.de>
+Date: Fri, 26 Sep 2025 21:35:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+To: Johan Hovold <johan@kernel.org>, linux-tegra@vger.kernel.org,
+ Jonathan Hunter <jonathanh@nvidia.com>, Russell King
+ <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250925150007.24173-1-johan@kernel.org>
+Subject: Re: [PATCH] amba: tegra-ahb: fix device leak on smmu enable
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250925150007.24173-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:19Rf9yaobtODFqmWWuVxvvKspow1H+UTU7ocfaS8qymEz4oMBaf
+ HL4MDvs40stb3P3oUJTpncDEHt/DPynzh+kYwGHjaLaGlfzzNPhb38nWsT+/7DK9PlmKM/C
+ zkgNPaPW3OfBNnuTQi9Yswp36r3C4wXlOYo2GJBrg1bSKV4Ds0v4R2DQSSsly7rJVjL1sj9
+ TdZwg04STyNoy5wSTPCXA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wtfFQD5klkg=;e9KiydikxPm+B4upoXP3n8X+wZi
+ 6oVwJEaLu/Ja0OA8BST0Am0oAzZIcWR3SwT7puXPtpcFnP4cymtRTxZZzE+Lw60Gx/aLw1EF9
+ XzAeImdEtII6+ObZu9w+vJptnUjcTeTaOyFuWCyyk6pxSn0bPjOnDqcDPlRyopJLENnC//fc6
+ 1J0b3dy16kCDN97uiOH0zWzR4rpDDCmcjq4xVXUF5ccLLT8QdqYBp3glD9bsBJk/wbKJleCeh
+ PRVVYERLQh83XQk3BjA07vup70V/AaN7J63u8TqvpcaJY3t5IQZhN+cS02ejmRqq8BPCiSpqN
+ N2tZloXEzmSaTGsu9TldUHfSBI5mYL/aRE1zZTdOs0DpCgbLHf2EHP/wfBirEZPmMRHzcL6t/
+ ZBI45frWzY7ZPzfPhfKLQlQeQsrZNGeld1KJB00TGboOEWIbfNlA0ioFgPk1+2ttS/xWHa8DO
+ b4C0MkrgZEdUDyqVvHYk0tPMX8qsqlka1/vEUl0FydI0YfTNLtIOYI5aKQV8RYqBhdaS1bNlb
+ ZHlwBlfuEXqlxOSJvwgjYy/y702U1xPB5glBa93FFEDF6VG6X78a0n5ZoBZmu6Yw42yQDCvRe
+ 9c16qJtZ0ANxzdQQwrLi/xQFt21BURfChVY8KdJ90Rhd4/6Yt+Y+IbDZhpkibZ+a+21oNKfTp
+ eKKkkuL5/HblNiYSJte1LWWR7DfrT1Dp3dbOwNzDV2fMClHbTNr0cSYRRfb+EBEUxuTX8n5yd
+ f7saS/b7CV7EaNGdfF60p1BYauspd2htEe5yqs0ZPJ5PrCdXnj9kx6ZJ8iDe7fu24C8d7/kA/
+ mo6zVMYf1WfviUaRlmdAbWq7fgnt78X5oc3iBrxztDN6CLnCTcefLYVQwHJRrH9BR7swr2RTm
+ oxoGGCts9F0YgyLHKqMVw4RpChe67p8qBao6Z+zJwCxivYxnnJvWbvxzLEpYRMhg4Y9sJeotH
+ jxrPg9KcDKAaafy5bAPCi5xJenLnB4zY6mIgwuZpRem3aM9HDe2B0xW7A3HK0fXz3R9gUBU4l
+ gj8V6D8wHk9GGHjw0BJbvuxSIeutXQP+WfTrUNRcPDo/De0msMULdAwz7wHVH9xIb/GlQaCSG
+ 1p4wqS7IbqlSKAP8jzKnZn17PLNW7fiHPz2iQ4zXhNdCxjiByrsrJm3QB8dV+bw61CFUUg6kZ
+ xRV/GQ+weSgwPs5nUpZIHqmkZOkyhfjhyusYHJEg8sgi+5/kAk0e9xUloZLfK6gf4LNFynfZj
+ ZP7c2oxRg+cp3zhSHclSSCo3vC6Nl9OAjmUsVui+z1FT5i3jdXdt6oYEeVSHYhcPUUImbfJPK
+ ex1flj1cHaoZXOG2CbjqPHjcEzYH7j/pzEt0z1A+FzBSiO/u5xVLqMpUiimSCArEbhfRijHW1
+ PBy4ioHMZyp7bRWm2yJJ9eN6l0mC8DAKW+RR/oAII5pw9C0oClQmKx2fGJRSQ14Gud6eUUmf5
+ 0psHLvcZnM+Y90ISJG80p3iC5+zqrwbVN/u9W9f/hXA+/KYv/Pd6pNO7DTOkHxfYNox1lSWBc
+ xHLGBZO3QzM/P23VrvWsDFp/h3S5XVIDxNhwAwx3cYkZaz4mV9dXm37JfQm6+T4n8EBroUYTw
+ 7HmmK8A2ODa8uLYs+5ANWpULm/nL3TFivIu2DwCi93UNPL5C0/XsGWDw5uWzru7JpOSxMvYFA
+ 0WzIq4ZPkLtMwl3VI89lr1I1kr99SVfNprRDn//FD1YeOJuGDn9vey5vbr7iuiRFCKteFeYwb
+ luoAQ+Gzy0p0TzXQ0rZDOqOIjczM5GtIBbNQ1qfgPpJUuAV/rXEP2lTesvs/vT65t7q/LufLy
+ Vv/lEhoe7h4NjGvLhbjPZBIv8K1tXykLJEWBr3f9drZjhInliqvWMEnKPXY4GDOhjNjMDB6YD
+ g61c9mAFL+RuX0zEf2QAX4qQilRmc01NMcvSlo1Zs2b4tYpMZcDN/+Dgk7dmPE6cKIu3gRTWS
+ s4kZJ6YXM0nJG9v3bRyTBWsBrkd5qvGLOOLXHGqqmSljs11xwfNFDz+5CwP/Zyw6E5Sph/g1f
+ nBdWyPTI4JTRQw2GndnpVSd1QMwSqBtnkF3bCdCJzg0mLI2srl7A6xkpQEXMbORk4GckxV78B
+ AI3en6qQyosyPv5Zc8gnbUQYzxnEtFuUwhOHePKuumwaoth0wq/Lh9Loy/y9m5NV6VjiOtI5s
+ lY6WV1hliMWBa5HT+eOffBihHbNC13soi6rHFbZRBJXe4bKpvMIMQSvtUxq16oaRslA3FrrSp
+ CoBsC1IAsrJj5MaeKUV2PW8E+g1n9aY05rqN2MwgOJvM6qftJCDzqT0CDPq3EQjWl92CEUzf2
+ SFbaN2bzoatEhpgLQFwIARxgiMj20QY0KpKqQOHuNz/PGTuhIy+s+RFdNzqxDba+CBoMx1Kbs
+ Bdh1ciakQcb7izqjoiwYQw2+ZXhuTIXQjdwTGwBO1CImHpAkKgKvFghjxCwjoWKzU8Y1u0PXK
+ C1fmh6jk1IqdOz6g/wmkZ8ywlkk5XXRblz1+NFTNx72isXSH+wJYvpQTlG7iyXB3coZKr+cHo
+ mds7VrLDDW6EboyAEQrdpjCxCB9PFsVQmEQPPRaQqEDTWCD67R4nBpFzOZoMJYfeqFZgwtsVx
+ dYnB1N7+qga7qmdTjL6U2j+BQ+buX1dFHd6/CmNh9OucPtAVtFoF6WiUBp7vXooeiIWEiJDAx
+ vHGUHhUyq6B/UpYkhvNSVcPlN4BcYhpCtPh/HadmOhztoXiy3yTH3vUY610xaqV9TuUoR4hC9
+ vqrVJiOJcwrkdqGOZQPr3ao0Sa2tCQLgMP65utK4TKuPUKGVraVxhOwSsiaz8Kg5bRAysjy2L
+ VLjoEYUXlGJFLi7ZIso0b6krmJglrfzXdW2iK63miMmZhTKf0MUruVlCuhmu50Rp9Yq31O65u
+ VVQ7JXq5vF1leIO05TauYOtVnT1xSLAzWhhU2Lz88xfF5mHiHzwPTggIZI+1DNohmo3yRKN7o
+ 1q1uPikrJtu8JS2NTICxhHM1UmjxnffTq0eqWVlDXEdVEFr9YPfQcUQ2EFxXLiO1qGiT2THkS
+ P4se8PikWZB33lJkBuHL6XboNf/fAix5ABRXM8WIM5PN1JvHId9Ania3xCj1VFSXMA9N3dw03
+ ink6168qyJ9v5DLzVbRadzixZNZNm8bhIwF0CK/zfcXqz3683bGZJjbMbWRwaMn3ZlloWL8I2
+ VCsxH6/6gBS150MAmeECa3MgpRuX8XMwtfz8ioPQMG3m9qaxHKrm63YMmla/2R1VNrqURbEXS
+ qnHtUEozTlSsXf9CU+cDEPKbTMU1O9eWjJxwEKIMqXystZLhIaDKTWC8C3sXvD+1OPse40U5X
+ dbjFGQsI0fg2HMlusiGcfz5FPozJ2APn3GRlf/lMa+/GV3C1rM88gDqv1NyhtM67k6qAVVyVY
+ zLZY5DiGB7FNEM74Z8Mmnh2CDrRDmS3IswOpsXrHxGiTyPXMLDiXCNvAzBiTB3mKdNnFKo17j
+ zqTGNfV+Citm/5Gmu5IUEZJF1SGM4QUsIR1d19ziDjQvwl9xeWwcjQgNSOAvt+b4AIysUb6Ht
+ CAr3Ms4YCK0lUyOYN8Iwkmq8ZuIgnwz6+thdqYpKKWBzwoo5jmC4pGIVZHnnGjiEGv1sDrC5Y
+ ngWFcBoPSjZnDywsfahP95MHc8GznMUx5L/gwBnPo32so2JSJ8pHIIKVTUhMaNcunc3VHmAUK
+ 0cskPmKo9vnpjgqe0zYqybuMZp+UqZlgBCDlXNw+jr2D+A7/4Ud3patrPZMkVUoCg4MxMPR+z
+ UK0nU7kv6TnRhhTyafwYc0fuKT61Yrba0NXTLZF+MI+XPva014a2ZNYK03Ywpb3UCjfUm+aDk
+ tFndH79JacXSOnWnaT3iXqjheab45al9+X1wsd1E5+WH4QkgVsx5gu8UF8jlXfrQAWYKNIB0Y
+ QuVl+QitaUHTJomaZPaw0BmEOtpl9kIf84eRMD+y6te0776ckzTyFUIcV0udaMhRSHe/hWfoe
+ xcIxbnV+X02cjTB+Ii2ZourQrGVWI2d6MUHN14cpwOgs1n8xdvI55mLGa7ASvUqB9lz1o4n6N
+ 6E07cIwuvLFD83VkkdajAJjOiCo5H7OTYPr6GGtah5mobS/aUkfNsFT/Ky/KzCqhbtZKuv80K
+ fYpUMDxPsTB+hXu/RUSdX0RY2Kxdxxi4oofigoY3OMt7gEyre4xUML0EuGIho/xCcKV7nSObz
+ IPZdlL3TQSbml/eIPYOjGMUYRw1j/HIKhN2lh2nioGAvPIwXB1h/mqT+HbbIPCmlyzYj0RRhu
+ 7oP3IKuNAD+XP346+QB9x6hSYGohHpgYigUJSrRWgDCvtu/oDhbHomq1YdzdVXWB2Bj5Xjiub
+ /W9pI8PGRC1FI0Jqb/36EmaXLFpfgE6klM6wlwr1n+ihSeTP+eg7+Mt/vNPw1SkcZQAChzy12
+ 6LRZg0g0+ROlQdrz56G+lr5QI2QRkbVTnAG86tdEtm3750tpULYRJ5iG+iHmH7ffmEhZTqcr7
+ jt0Ul5JX6b5PXl4XReT2G5QLDzU5vU/46BR5lczswVegm9JcfHc7yBDxi4aac3YcvrsYZn9+o
+ OrrWHBWx4P6thBkeIe3/aBGOWKuGO57D4RQcatfR712ZS0RiUtCcublcDvt+ATtvyMJtvQtyE
+ rwKKCgLPo3VDOX0ZbBebV5FtMdjW7HcnH5sn2YQ3Z/5EySrr7Kqmh3lICFEGGuelmX82rWjp3
+ o3n5xr17m+rnM3mG5eaBgkseDwTtJKCfNM9S2NPkasCP0hdDKiV1aNCmTE3cTyEoguTI4H0og
+ ZjTNvu0B/ykd+ggIWN6WYWD/2sGPFmaPJwQPKlpOMY469Jcq7fyWLJOOaCO1FG5uC1g0V0zmA
+ YRvqOjPfdUM2DUm2iimdh5PRAhzEOZTI4vuSj7vHpPwsGmDaBjVMAUmyDdvFuf00MS8FIn8JT
+ KsdG5z7rlo0eFQ9FNKx8S8ZaffHcWnQZOhODTRmDKDhUENqTfkNEVmWKPDEKFfwml
 
-NETFILTER_PKT records show both source and destination
-addresses, in addition to the associated networking protocol.
-However, it lacks the ports information, which is often
-valuable for troubleshooting.
+> Make sure to drop the reference taken to the ahb platform device when
+> looking up its driver data while enabling the smmu.
+=E2=80=A6
 
-This patch adds both source and destination port numbers,
-'sport' and 'dport' respectively, to TCP, UDP, UDP-Lite and
-SCTP-related NETFILTER_PKT records.
+How do you think about to increase the application of scope-based resource=
+ management?
+https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
+1180
 
- type=NETFILTER_PKT ... saddr=127.0.0.1 daddr=127.0.0.1 proto=icmp
- type=NETFILTER_PKT ... saddr=::1 daddr=::1 proto=ipv6-icmp
- type=NETFILTER_PKT ... daddr=127.0.0.1 proto=udp sport=38173 dport=42424
- type=NETFILTER_PKT ... daddr=::1 proto=udp sport=56852 dport=42424
- type=NETFILTER_PKT ... daddr=127.0.0.1 proto=tcp sport=57022 dport=42424
- type=NETFILTER_PKT ... daddr=::1 proto=tcp sport=50810 dport=42424
- type=NETFILTER_PKT ... daddr=127.0.0.1 proto=sctp sport=54944 dport=42424
- type=NETFILTER_PKT ... daddr=::1 proto=sctp sport=57963 dport=42424
-
-Link: https://github.com/linux-audit/audit-kernel/issues/162
-Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
----
- net/netfilter/xt_AUDIT.c | 47 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 43 insertions(+), 4 deletions(-)
-
-diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-index b6a015aee0ce..fb16f20cfb1b 100644
---- a/net/netfilter/xt_AUDIT.c
-+++ b/net/netfilter/xt_AUDIT.c
-@@ -19,6 +19,7 @@
- #include <linux/netfilter_bridge/ebtables.h>
- #include <net/ipv6.h>
- #include <net/ip.h>
-+#include <linux/sctp.h>
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Thomas Graf <tgraf@redhat.com>");
-@@ -37,8 +38,27 @@ static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
- 	if (!ih)
- 		return false;
- 
--	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
--			 &ih->saddr, &ih->daddr, ih->protocol);
-+	switch (ih->protocol) {
-+	case IPPROTO_TCP:
-+		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu sport=%hu dport=%hu",
-+				 &ih->saddr, &ih->daddr, ih->protocol,
-+				 ntohs(tcp_hdr(skb)->source), ntohs(tcp_hdr(skb)->dest));
-+		break;
-+	case IPPROTO_UDP:
-+	case IPPROTO_UDPLITE:
-+		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu sport=%hu dport=%hu",
-+				 &ih->saddr, &ih->daddr, ih->protocol,
-+				 ntohs(udp_hdr(skb)->source), ntohs(udp_hdr(skb)->dest));
-+		break;
-+	case IPPROTO_SCTP:
-+		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu sport=%hu dport=%hu",
-+				 &ih->saddr, &ih->daddr, ih->protocol,
-+				 ntohs(sctp_hdr(skb)->source), ntohs(sctp_hdr(skb)->dest));
-+		break;
-+	default:
-+		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
-+				 &ih->saddr, &ih->daddr, ih->protocol);
-+	}
- 
- 	return true;
- }
-@@ -57,8 +77,27 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
- 	nexthdr = ih->nexthdr;
- 	ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h), &nexthdr, &frag_off);
- 
--	audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
--			 &ih->saddr, &ih->daddr, nexthdr);
-+	switch (nexthdr) {
-+	case IPPROTO_TCP:
-+		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu sport=%hu dport=%hu",
-+				 &ih->saddr, &ih->daddr, nexthdr,
-+				 ntohs(tcp_hdr(skb)->source), ntohs(tcp_hdr(skb)->dest));
-+		break;
-+	case IPPROTO_UDP:
-+	case IPPROTO_UDPLITE:
-+		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu sport=%hu dport=%hu",
-+				 &ih->saddr, &ih->daddr, nexthdr,
-+				 ntohs(udp_hdr(skb)->source), ntohs(udp_hdr(skb)->dest));
-+		break;
-+	case IPPROTO_SCTP:
-+		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu sport=%hu dport=%hu",
-+				 &ih->saddr, &ih->daddr, nexthdr,
-+				 ntohs(sctp_hdr(skb)->source), ntohs(sctp_hdr(skb)->dest));
-+		break;
-+	default:
-+		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
-+				 &ih->saddr, &ih->daddr, nexthdr);
-+	}
- 
- 	return true;
- }
--- 
-2.51.0
-
+Regards,
+Markus
 
