@@ -1,165 +1,232 @@
-Return-Path: <linux-kernel+bounces-834141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358B3BA401F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB0CBA3FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86DD7B9690
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE8F1893319
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FF62F7ADF;
-	Fri, 26 Sep 2025 13:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E712FB976;
+	Fri, 26 Sep 2025 13:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q6lo/YR9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="exUyD7xU"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E16155C97
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDAD2FAC12;
+	Fri, 26 Sep 2025 13:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758894838; cv=none; b=cCfdofWJcdEUcSASrj1l5VOUrJNpAB34SGHF5cUQBYn9UJU767lszUtfr4rAo2LOoKqLbxInSZuAvMCx1CW3bCLhPcn6N6jk6mC/WJi7yxJqEfITm4x2riHWVofSF19hNuFpRSd3B8eqNoHZbA+Ih64ihAteByCH8Xrw20PM/0Q=
+	t=1758894845; cv=none; b=qdSvvUPOeGQ/X+OmTkxoxUVrTZ01Pk3jxDFXci3nv4cYbtMi8yfwj5AyZ5b5wmgpjtUh0YFwJ07xpVisMhqnz90zo7sZlPMDSvpewfikTc9lCsG5GUwndaOnR4o2DLWLiU49fKsRsi6y7C2WZoSA3l3A1U88LE/H3ocdbjM2hZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758894838; c=relaxed/simple;
-	bh=Yxg7XGt5rPC+H81WWueLAVNGB2r99E4KrZvcInmqOII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVv0YpPpR0gycdlFdcMSk/eBT87cptaDYaHb2eyPVCcZ1BqbZ1AJTUxxHTIWsh08PjzBkyR07san0CXOMlcvwfAHClZ8f0eD4sQs64qB0nTtnFFFfjx59sLXPxvSNUjtk3/G9YQOoP3aXpHUtGYNAzOZuh4hj/Ht4l27cKzYxaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q6lo/YR9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q8vYpH028368
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:53:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Yi4YzfqCRhtpYtMSpi4c2pxv
-	l7JbhY/mvPEjH/nHU/A=; b=Q6lo/YR9Xww7cyAqG2tiisx9896ylw2lmlhsi1kw
-	ohTR9fLm5V8++Jwg6DlKftwyxU8ebwyPmtw3soLo+vY4/F9ttxvcrhDtHQNxZ2zY
-	nbsGvln+/gULtI4PVzp+1z1xvWszL4ArwaJhGIUSWfkhjZAvyEloNWQ0bXyvoF1F
-	p1+byedn7jC34PreGn9bOlTEB7B6jNgKG1/D7nuBuhNbwUxKtz00Qp/5gplFufs5
-	z8aApQK0vHd7+PtPeKCTAKwjEX4rXbLvb4Yl3sIlnJuMdLNJQPnTowtr5VoJxVEa
-	bKXXNrTASPK+FmJZNFw9VXEY7nQ5LNP0umsD/SUtD6VNcw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0q31ay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:53:56 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d905ce4749so44058401cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:53:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758894835; x=1759499635;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yi4YzfqCRhtpYtMSpi4c2pxvl7JbhY/mvPEjH/nHU/A=;
-        b=RZ128ZgYqVUxQZZJkjJNhZz+HbKwwbpECRaxl0GRr32G+TLelWb84BRwS47ayvw61K
-         udmU4jIUgyOIgPQQSmrlEurF4QD5e1zesO747iU2XTCkYkyJqdJV9QY/nOu1E7gd8vjU
-         oGgrkTwYFIPutnBjLr9n5XPgNeM0D5BfxgQ+5XqlVdGiV+YUt2HhPn6YTRYILlMFto3P
-         rVcic0FmD7oJt0wpkFB/iGL1eOYf41JajOgNjHatn/xfdAEY2t1nvXZ3X4ykEVFXpzbS
-         pyjDuk4JakZE7JgkpbZCMuKl4h/MzMpuBLVQxL6mmmsIe6n1qUASQRMujmS3EpFpDAZ3
-         VsRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVl/3T61h87W66mZt52TPrz6p7rGunex5C1d/H/0w3yn5E5UpxVQVGvLoKI4X6X9Bi2WPU884fuOXhO5Kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGH8Lm29gStMREddIojiXs/Qg+NWX1ALHwaIKsasd+4lzBDb2D
-	xCf/cupWESn7yrI1khUEKK2B7AIgdP33XM3XDeBsuYmk6X/zxvf67PpbklkNsaZG3ym3/rpr4Ce
-	On4M5H7P60FeSFR/G9qAHGZJ0Qe4tFwKh0f2cyonMSsY5WGZv23NS8mL4dN4AUWX2xUU=
-X-Gm-Gg: ASbGnctWswC5y7F0S4WykdRhu4ZS+tmj9szDymz5LO7lIUbrt8B5UJjDQRePJKC7Zfw
-	Mj2h9n4+kMy0EzMr/mSIs8J1x8thICKrJwHAwm2KmCcN+5RD+4ysX/os9g1NdkwA1udWrgg8VB0
-	JLOcZtQ4fxkHQ0q8qGfThzo1m5s2IQtJ1jXLhzsmraX67e2SdC6e89TEfGOiGepM3kVdqIfZAK3
-	qlYjzg1tXFqYrw1F6LZa45TbuOHPozMDmi8036VTHEjtJC5/3Xojdk54yvE6g0YNLf5uJlK1Gor
-	dzlxwjvPsraVFG5kjrbqN4dTeeaox7w7EkEW00eEf1JicOA/S3oT9D1lLlGZgbghm/EPTkS2LPa
-	ttujedy+AacR+rHoW7FsLl2yvE8GmilFPyBVXcm3I5zwfd7E5j5Ke
-X-Received: by 2002:a05:622a:4a8e:b0:4c8:79b4:93a0 with SMTP id d75a77b69052e-4da4b1406e7mr95494431cf.47.1758894834809;
-        Fri, 26 Sep 2025 06:53:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOQIkyN74txiM9v6NI3108EID0DXdgO7j0P2wRzxlXTBsHtrmHH2UgL3y0BBRZ8yy0boNzTA==
-X-Received: by 2002:a05:622a:4a8e:b0:4c8:79b4:93a0 with SMTP id d75a77b69052e-4da4b1406e7mr95493941cf.47.1758894834250;
-        Fri, 26 Sep 2025 06:53:54 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-583173d1c08sm1814560e87.147.2025.09.26.06.53.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 06:53:53 -0700 (PDT)
-Date: Fri, 26 Sep 2025 16:53:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Mani Chandana Ballary Kuntumalla <quic_mkuntuma@quicinc.com>
-Cc: marijn.suijten@somainline.org, swboyd@chromium.org, mripard@kernel.org,
-        abel.vesa@linaro.org, andersson@kernel.org, konradybcio@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        robin.clark@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com,
-        abhinav.kumar@linux.dev, sean@poorly.run, airlied@gmail.com,
-        simona@ffwll.ch, alex.vinarskis@gmail.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_riteshk@quicnic.com, quic_amitsi@quicnic.com
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: lemans-ride: Enable dispcc1
-Message-ID: <v4b35cmwbkoosdgs3d6ftml4yvdkyh27q65ssqojplb7uyniwp@wuxbeof7cikr>
-References: <20250926085956.2346179-1-quic_mkuntuma@quicinc.com>
- <20250926085956.2346179-4-quic_mkuntuma@quicinc.com>
+	s=arc-20240116; t=1758894845; c=relaxed/simple;
+	bh=EAqKV/2RF7bW8arWG9fwnOlAqRNSwPmfuGtdSoCMrbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iXnkN3q9YiVcVgu3gkINWJo0z1GgVodR44ISm+hEyOUI9Bda+cXkncwdi1gjUWPcclPrM2kaQC+TleROQktICz9nUlfRGkig0Z1/I7dsN1x6tMTW3lTpps4JMeYpNRpc1l3YshzTmFxp7spxhF3V6vr6S7q8y3ETYnmkCwkh7qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=exUyD7xU reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4cYBrd72t9z1DDr7;
+	Fri, 26 Sep 2025 15:53:53 +0200 (CEST)
+Received: from [10.10.15.8] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4cYBrc5B6bz1Fb38;
+	Fri, 26 Sep 2025 15:53:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1758894833;
+	bh=0oKPt5B2BYzle8pqRjAR1Qbv4tzNfaR8uywq90JI968=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=exUyD7xU1FFoAo0zIaGO8L1T0an8JyysSniNaBEN284brN/McStsyIZqRxq8PWEKU
+	 4xjl2QjrfL3v6vRMcSOZA6TsputTD4TBzNeEmQkcG3KIUuhpPXP+zEXF3Yz/NS7pmB
+	 PcxjXfIwjxcneymF0BZH9kKiWkU57AHDRlm5Of+kNpRF0jGMlR6JwP/sN6nrYrb0Z0
+	 guRP8WAhweSnyJbReXLTERryS4IR1w0uYknNh+L2dgFLhbTwnQE2kx++CD7JJaeLrS
+	 PJLHZmJ4jqQSjfHyyxYla7ZzLAyJTcxvyTl+OUIQNZsx642Tr8lLuLkTgoW04lH9tr
+	 uEVtlAUR67olA==
+Message-ID: <76d9171c-4a74-499e-a598-ec51fdfa4e94@gaisler.com>
+Date: Fri, 26 Sep 2025 15:53:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926085956.2346179-4-quic_mkuntuma@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXzDl7peRUkyJi
- 6KMVE8FFBQvTGtYCIDC6gGj4D91B85irQeF1cp/4Y3R+vFxJ3KQq8e4tvfTTNmAAL0vGENSsadr
- 3OZIpls2iiVQthWFVkrVqDDEi4Nr0F0DVdG4tHgJUuzPOXlYa/2TQfqHS1QZ5wLOWB53BQhweez
- gjc/QaiVX9pKw2yaWTPlTNqIBgW4S3jffhlKLBdAz6Wg0aaOQYY64dIMUP+KFuxoQC/gsxCX0QK
- 9/MXUqdsnNYvlN0PeCHr+odn2H2hd3tUX0fyYo3Qo5Aep0VL21YJeRBLolqLm+NwNnYIYseLRQ1
- l1jhmmEulJCGE58eY9ovBhJgkbrcfhKuB5eQSapDZrrAX3PNmr5LkAdxUaCTuTVasI+rlD9DXNq
- O+WbR6RgKPgugNobFAhkpFvVxgLUaw==
-X-Proofpoint-GUID: Wshb2vX-9SegN0lgU6BstXqb9WtWYraQ
-X-Proofpoint-ORIG-GUID: Wshb2vX-9SegN0lgU6BstXqb9WtWYraQ
-X-Authority-Analysis: v=2.4 cv=JsX8bc4C c=1 sm=1 tr=0 ts=68d69af4 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=bQGRJ9mVl6_deHTFyO4A:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_04,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO
+ library
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
+ <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
+ Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, Russell King
+ <linux@armlinux.org.uk>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+ Shannon Nelson <sln@onemain.com>
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+ Arnd Bergmann <arnd@kernel.org>
+References: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 26, 2025 at 02:29:55PM +0530, Mani Chandana Ballary Kuntumalla wrote:
-> This change enables display1 clock controller.
+On 2025-09-17 16:00, Thomas Weißschuh wrote:
+> The generic vDSO provides a lot common functionality shared between
+> different architectures. SPARC is the last architecture not using it,
+> preventing some necessary code cleanup.
 > 
-> Signed-off-by: Mani Chandana Ballary Kuntumalla <quic_mkuntuma@quicinc.com>
+> Make use of the generic infrastructure.
+> 
+> Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
+> https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org/
+> 
+> Tested on a Niagara T4 and QEMU.
+> 
+> This has a semantic conflict with my series "vdso: Reject absolute
+> relocations during build". The last patch of this series expects all users
+> of the generic vDSO library to use the vdsocheck tool.
+> This is not the case (yet) for SPARC64. I do have the patches for the
+> integration, the specifics will depend on which series is applied first.
+> 
+> Based on tip/timers/vdso.
+> 
+> [0] https://lore.kernel.org/lkml/20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de/
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 > ---
->  arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
+> Changes in v3:
+> - Allocate vDSO data pages dynamically (and lots of preparations for that)
+> - Drop clock_getres()
+> - Fix 32bit clock_gettime() syscall fallback
+> - Link to v2: https://lore.kernel.org/r/20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi b/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-> index c69aa2f41ce2..d4436bc473ba 100644
-> --- a/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-> @@ -436,6 +436,10 @@ vreg_l8e: ldo8 {
->  	};
->  };
->  
-> +&dispcc1 {
-> +	status = "okay";
-
-I think this one should be enabled by default. Unless Konrad or Bjorn
-disagrees, please fix lemans.dtsi.
-
-> +};
-> +
->  &i2c11 {
->  	clock-frequency = <400000>;
->  	status = "okay";
-> -- 
-> 2.34.1
+> Changes in v2:
+> - Rebase on v6.17-rc1
+> - Drop RFC state
+> - Fix typo in commit message
+> - Drop duplicate 'select GENERIC_TIME_VSYSCALL'
+> - Merge "sparc64: time: Remove architecture-specific clocksource data" into the
+>   main conversion patch. It violated the check in __clocksource_register_scale()
+> - Link to v1: https://lore.kernel.org/r/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de
 > 
+> ---
+> Arnd Bergmann (1):
+>       clocksource: remove ARCH_CLOCKSOURCE_DATA
+> 
+> Thomas Weißschuh (35):
+>       selftests: vDSO: vdso_test_correctness: Handle different tv_usec types
+>       arm64: vDSO: getrandom: Explicitly include asm/alternative.h
+>       arm64: vDSO: gettimeofday: Explicitly include vdso/clocksource.h
+>       arm64: vDSO: compat_gettimeofday: Add explicit includes
+>       ARM: vdso: gettimeofday: Add explicit includes
+>       powerpc/vdso/gettimeofday: Explicitly include vdso/time32.h
+>       powerpc/vdso: Explicitly include asm/cputable.h and asm/feature-fixups.h
+>       LoongArch: vDSO: Explicitly include asm/vdso/vdso.h
+>       MIPS: vdso: Add include guard to asm/vdso/vdso.h
+>       MIPS: vdso: Explicitly include asm/vdso/vdso.h
+>       random: vDSO: Add explicit includes
+>       vdso/gettimeofday: Add explicit includes
+>       vdso/helpers: Explicitly include vdso/processor.h
+>       vdso/datapage: Remove inclusion of gettimeofday.h
+>       vdso/datapage: Trim down unnecessary includes
+>       random: vDSO: trim vDSO includes
+>       random: vDSO: remove ifdeffery
+>       random: vDSO: split out datapage update into helper functions
+>       random: vDSO: only access vDSO datapage after random_init()
+>       s390/time: Set up vDSO datapage later
+>       vdso/datastore: Reduce scope of some variables in vvar_fault()
+>       vdso/datastore: Drop inclusion of linux/mmap_lock.h
+>       vdso/datastore: Map pages through struct page
+>       vdso/datastore: Allocate data pages dynamically
+>       sparc64: vdso: Link with -z noexecstack
+>       sparc64: vdso: Remove obsolete "fake section table" reservation
+>       sparc64: vdso: Replace code patching with runtime conditional
+>       sparc64: vdso: Move hardware counter read into header
+>       sparc64: vdso: Move syscall fallbacks into header
+>       sparc64: vdso: Introduce vdso/processor.h
+>       sparc64: vdso: Switch to the generic vDSO library
+>       sparc64: vdso2c: Drop sym_vvar_start handling
+>       sparc64: vdso2c: Remove symbol handling
+>       sparc64: vdso: Implement clock_gettime64()
+>       clocksource: drop include of asm/clocksource.h from linux/clocksource.h
+> 
+>  arch/arm/include/asm/vdso/gettimeofday.h           |   2 +
+>  arch/arm64/include/asm/vdso/compat_gettimeofday.h  |   3 +
+>  arch/arm64/include/asm/vdso/gettimeofday.h         |   2 +
+>  arch/arm64/kernel/vdso/vgetrandom.c                |   2 +
+>  arch/loongarch/kernel/process.c                    |   1 +
+>  arch/loongarch/kernel/vdso.c                       |   1 +
+>  arch/mips/include/asm/vdso/vdso.h                  |   5 +
+>  arch/mips/kernel/vdso.c                            |   1 +
+>  arch/powerpc/include/asm/vdso/gettimeofday.h       |   1 +
+>  arch/powerpc/include/asm/vdso/processor.h          |   3 +
+>  arch/s390/kernel/time.c                            |   4 +-
+>  arch/sparc/Kconfig                                 |   3 +-
+>  arch/sparc/include/asm/clocksource.h               |   9 -
+>  arch/sparc/include/asm/processor.h                 |   3 +
+>  arch/sparc/include/asm/processor_32.h              |   2 -
+>  arch/sparc/include/asm/processor_64.h              |  25 --
+>  arch/sparc/include/asm/vdso.h                      |   2 -
+>  arch/sparc/include/asm/vdso/clocksource.h          |  10 +
+>  arch/sparc/include/asm/vdso/gettimeofday.h         | 184 ++++++++++
+>  arch/sparc/include/asm/vdso/processor.h            |  41 +++
+>  arch/sparc/include/asm/vdso/vsyscall.h             |  10 +
+>  arch/sparc/include/asm/vvar.h                      |  75 ----
+>  arch/sparc/kernel/Makefile                         |   1 -
+>  arch/sparc/kernel/time_64.c                        |   6 +-
+>  arch/sparc/kernel/vdso.c                           |  69 ----
+>  arch/sparc/vdso/Makefile                           |   8 +-
+>  arch/sparc/vdso/vclock_gettime.c                   | 380 ++-------------------
+>  arch/sparc/vdso/vdso-layout.lds.S                  |  26 +-
+>  arch/sparc/vdso/vdso.lds.S                         |   2 -
+>  arch/sparc/vdso/vdso2c.c                           |  24 --
+>  arch/sparc/vdso/vdso2c.h                           |  45 +--
+>  arch/sparc/vdso/vdso32/vdso32.lds.S                |   4 +-
+>  arch/sparc/vdso/vma.c                              | 274 +--------------
+>  drivers/char/random.c                              |  75 ++--
+>  include/linux/clocksource.h                        |   8 -
+>  include/linux/vdso_datastore.h                     |   6 +
+>  include/vdso/datapage.h                            |  23 +-
+>  include/vdso/helpers.h                             |   1 +
+>  init/main.c                                        |   2 +
+>  kernel/time/Kconfig                                |   4 -
+>  lib/vdso/datastore.c                               |  73 ++--
+>  lib/vdso/getrandom.c                               |   3 +
+>  lib/vdso/gettimeofday.c                            |  17 +
+>  .../testing/selftests/vDSO/vdso_test_correctness.c |   8 +-
+>  44 files changed, 451 insertions(+), 997 deletions(-)
+> ---
+> base-commit: 5f84f6004e298bd41c9e4ed45c18447954b1dce6
+> change-id: 20250722-vdso-sparc64-generic-2-25f2e058e92c
 
--- 
-With best wishes
-Dmitry
+Tested-by: Andreas Larsson <andreas@gaisler.com>
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+Acked-by: Andreas Larsson <andreas@gaisler.com> # arch/sparc
+
+Thanks,
+Andreas
+
 
