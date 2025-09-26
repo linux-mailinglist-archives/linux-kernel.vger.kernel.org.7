@@ -1,223 +1,177 @@
-Return-Path: <linux-kernel+bounces-833759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE8BBA2FB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:39:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A7DBA2FC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF99324083
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:39:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 974E24E203A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB51929B20A;
-	Fri, 26 Sep 2025 08:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB7A298987;
+	Fri, 26 Sep 2025 08:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GJCz4KeU"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TW6ltXRz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34D4291C1E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F2A2749D5
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758875940; cv=none; b=sBP8jzRIv+sI+cE35aoPrtGXF3RaLpwJhWAK3Y+24kFn8VIj/pd4CEYFtnQeirNcMLUruHD1S+8HPnrhnc77m6oXEtcW9lhBhag7ZltI3u2cwwSmwr3oFCowYOhlxtVSn8LTj6oBhLc5jGq0dtr2VQ3oWzxQBkNVb8hYtNRPHqU=
+	t=1758876044; cv=none; b=qWSbaUcG+PBQXS/1jWseAJCrzOZfrjqnHgxxpifIJoYUVSB21ZgVX7zHO1GSQR1lFazZH1dfSTQDDih1qUEeMKZcOpNajaQEqW8BAnzM3zB4mb0Pl9Llbg6ekz0TCJVo/xIzaZ+Li/7A1aIBA02nOqAD65wxkK4qjL2L70QWO/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758875940; c=relaxed/simple;
-	bh=IdNWL+RP6ByGlwqdHlGMFRFztdS35MmPQShZMG2Wg1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CT61H9F6KAuwTe5F9T/jZEZlnX4ebUEY324VE1TVq4Fcy/Of132pJ+gb9P4Dlqw5neX0Vr/2eifi1ovgaMbTVGew9bm6qhV3hTTH6xmG0WqpmvRy+plwpBEgrFEj1V4i+eQ0+C5JFe2HQHJq2J6s4Kp3j93xXaqkJmXpAYmW3U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GJCz4KeU; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e2e363118so18409255e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:38:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758875936; x=1759480736; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gIRZeCeIQNZ4hVWOGSa/wA4zfAS3lXvYWEK+xa/XxTI=;
-        b=GJCz4KeUNsHq0yAqDTMrJAln7DMlEf+rPKUU+pMHi9+rmSexqgGQhoDdpIQ4lNA4OJ
-         9gPIlMmu4lCODWfHPMlWTQBN/Qmxa9DEJ1O7h/5A6puQE8TiN7AtJAFfjt5UxyPXx+fB
-         YDHJOPvEk/j0hye4qKhLvKaKgnPModBH8A+sofl8Bz5IemSZIzQohye2IXElsTyaX4yc
-         b8e+3cZIgBH4FLsKcBoHhccsSUICq+MTrJNVMgwGOFO2d1SAfpZKZjygF7jUU6oiPtgV
-         NMGTsJ2MysRDEPydPu1YOXZkCDrmOTz/AL/HBYFpVPNbSBF+NGOnr9bzupXrpfgrLNda
-         va1g==
+	s=arc-20240116; t=1758876044; c=relaxed/simple;
+	bh=BF6fj45ETbF2JTxivH96fy19F1Zq2v8s40/BNLfEbsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrvvmrKBfacJvpuY5uZqAQQAdR44ByahZndGwIlD0cW2WJeFt39Ed6nbqO8dBpc6T7HYFM/mdBo0UJgM260HVKOlkGKvf0gJTmIlEjaZ/UsATMnby69AECNWD3Rvwv4lRq7Gg8HPy8aFj+iroBqRuRSHPJpLQ7pKYhtAwOpr5ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TW6ltXRz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q71AGR000853
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:40:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QJH3H/0kmdW6w7MgCtEBO34/S0w4O3IKZVUmNKMzmxs=; b=TW6ltXRzQyf5A7om
+	E18NnxeB03KQyW2HIqMhNtSSpsj8daU4M3DoSJiF+CN8Ob3AOMMvzlM4mN2ls++K
+	lrOthPpxhzyxOQbPvBVEBVA0rzWNe2lUaLCuItVXgdQ0/nGr/H9nWkPMR7rmrckJ
+	rU+AvuwfmzVhlD/iI39A6TtD2ZIepde1jdDt74ujELry+hgSe/qOnh00kayYDXTb
+	prbcPCRSvg8qYjZiAZdnt/stB8QpyxDTHB45bEICq106dailIXO/si7EGsO0SwQa
+	r2r70ePAFVD08PQVJW7G6ZCaDH5QvaSakNtEFVKtydxUDFyql70//cVqyXW0NM13
+	8PL0pw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0tt4x6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:40:41 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-244581953b8so21052075ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:40:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758875936; x=1759480736;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gIRZeCeIQNZ4hVWOGSa/wA4zfAS3lXvYWEK+xa/XxTI=;
-        b=QFERovc0BazlAWTLRcDNGo9RHrvSOpck4OalrJy3/hEZtefwCJU8hEcuwH59Uum6ok
-         mCFczHr7vFxLpRT7fohCcsyhHrQyxXc+r+2ERvmH67L8LmlfmjKZ3vU275TVkojpigZN
-         LYGTreGjX4Gq/ep1TXTtJgXZ5k3F3PV3afxTJRjqDAetadQtoNbXQ/diatyJdAzoDoSK
-         1i/uOvBFYMxotPDSJhc/MG8TrUyYaMGY0cNAsb1enllyHCTqiYFwekV5T2/VYy1/XhxP
-         y/pGp0DTOiOvHTAGW1kwerVE4rc0wMacCnnWKRnpNxLsfYwdyo12WxSy1vabGiEGdDs/
-         TksA==
-X-Gm-Message-State: AOJu0Yyi21WT3rAfibJvXEk4YEsAt+IylPppLLDI1c4Sss+1jCG2BgZp
-	fTVsa+Rx4FDUvohSaKn1ZdXqX9TWb4fQQqE7RPwb1znr2I+8r13g0/lXWzvXMd8nfcNw462bd5z
-	0pY+2loo=
-X-Gm-Gg: ASbGncshCjav0Kv7gQYsuGqosfE8qS13ZtiboWVVgTr+Vy1s8qyO5ipMFAbueE7qf28
-	mGeDb8DVF6RqFgES+sQ9r+UHiWpGX+aPnis489PYhp6q9PdBEz5I0BAw4UitzTOxZBzGc/EVAX0
-	jGkaJrR2YOjYvCDGrzAmThqxOP+RJy5v2FI9XtfQpaGrKNpUGKpPdqmh8+vrHyKJ9tPXbJbeEes
-	/1G9MjHIZi7Yguos9VNl/MIbzgUmaoQPMoFmCQ72kXQyIS3ELzx9ZN0V+U+7qS+9FeZ8NberSfn
-	F+ZgJbsjUoZvnwMwh7yNn7NR6/miBPJM9Ir53QvaMter20QvF2+4s/9Y3rqiksYRYnos35GfZzB
-	uEioMJ3xlW1PSh2G2fwIy8h0tbhaQUdfj8FqKPbEqbbYiTHw=
-X-Google-Smtp-Source: AGHT+IFJYDzppopz+YRLoC0ohfBa7Oer8f+hnuVJsYiGFH5CkS2ow2uJG6Dd8nSfYbQ92pu2RlsmGw==
-X-Received: by 2002:a05:600c:6989:b0:46e:37b7:a7ad with SMTP id 5b1f17b1804b1-46e37b7a881mr55359245e9.31.1758875936047;
-        Fri, 26 Sep 2025 01:38:56 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33be363esm65702575e9.15.2025.09.26.01.38.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 01:38:55 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH 2/2] wifi: WQ_PERCPU added to alloc_workqueue users
-Date: Fri, 26 Sep 2025 10:38:41 +0200
-Message-ID: <20250926083841.74621-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250926083841.74621-1-marco.crivellari@suse.com>
-References: <20250926083841.74621-1-marco.crivellari@suse.com>
+        d=1e100.net; s=20230601; t=1758876040; x=1759480840;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJH3H/0kmdW6w7MgCtEBO34/S0w4O3IKZVUmNKMzmxs=;
+        b=wN6kgQBJ+1w3jaP3YGbXH0M2HRRjlzSUBRSXXxwziM6JwxlWu88tlqxpvqQbZCUMDd
+         57mNxbqUfTqt/WsPnz1qYIl+/sw0CZar7+j+0Hrw9zBo2e0+unPoYnHhMfMst1EwV1cO
+         korgnnJhCCuw9rOuHHJaE5rG63jrhZQ4MarVUwIm7mVWeiSlxHd8o84RHSfiPyxVLPQe
+         GzgfJRI4lN+8P1DN4GBsFtSay5+QuZuwVokCHmIVhu4dhEz1x5c0DWusvlnFLTB92dpg
+         dcxbSB5/yFC0G1YFIcBpLGCr5VsGJ7BNErpgjJKvFxcIkPVL3oswJAAkb2m/OpRwtbCl
+         PJgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ3suuwZg+hmXRhDrsG68oDFB1LC3VT7YdKtT4Nu5B0DJ4/rf+52xlTdi5eWKz6sKRgwKVipze21vmh4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys6ItpuzerFUR6Q3o8MjQzNfOdNTs11dIR/jVUVmUEXApB8wvR
+	IrHVFb0PwZ8nWC6g9odK751CdyjpLwIC8YvdAPvkGLiqnUoVVE2kKf3M910tvFnefxIJ+Qqvfvv
+	NQ8C9rr8TrSRlNrUpKqIHA+ETdqWJ4V9pSe7rvfD6N2UeVmvTr9HwJbB/vKaCTCbuaGk=
+X-Gm-Gg: ASbGncvrWbnika/hhxP/MCWfw2YNcp/vvzvcOTBXZSRFb9tpwnMchAYh6doX4GRVqXL
+	tNJ7+Y5OqbHw0Ay3ypvBePP4KXyDVCbyKbWFTz1ECbj5gteIA4XZAZHa5mXAZavvCmH2m1uTITT
+	46cuehoF89KVBeMGWYdxNgjZD1mT5yx2WcoRXOs3yTB6yLuhXCzlq8ce3dNEOYdsvOWwt93Bx2Y
+	ZOwNJ0+zPJyQNgwEFMzM7WZFg7Z72BxXgOkBfgcS+lF62OZjYKuhZ2WAYZgTBbrilkfmn/M426g
+	aB8i8cmlGIQt/tdT0iQbf/mj1MvF68sVytLwAPzaS2mk7pCbadGvQtceVS2e1aND1J/P
+X-Received: by 2002:a17:902:e787:b0:266:e8c3:4731 with SMTP id d9443c01a7336-27ed4a4e69fmr57199625ad.23.1758876040435;
+        Fri, 26 Sep 2025 01:40:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSYjbgxz3ZpRa0D00ZVNPgHg9O0ctAAj1epWv0U96tMdUGtuWmJ8IJY2bgSO3VYP/MfK11Rw==
+X-Received: by 2002:a17:902:e787:b0:266:e8c3:4731 with SMTP id d9443c01a7336-27ed4a4e69fmr57199205ad.23.1758876039860;
+        Fri, 26 Sep 2025 01:40:39 -0700 (PDT)
+Received: from [10.217.216.188] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6733a63sm47601845ad.64.2025.09.26.01.40.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 01:40:39 -0700 (PDT)
+Message-ID: <d55b42b6-1b2b-4a52-8eaf-78c4ed78958c@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 14:10:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] clk: qcom: camcc: Add support for camera clock
+ controller for Kaanapali
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
+ <20250924-knp-mmclk-v1-7-d7ea96b4784a@oss.qualcomm.com>
+ <d18c5196-dd8e-47d6-87bd-de0ac94fbf3b@linaro.org>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <d18c5196-dd8e-47d6-87bd-de0ac94fbf3b@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=I9Vohdgg c=1 sm=1 tr=0 ts=68d65189 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=txcd_wJ1IAhHlW4x_IwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-GUID: xcIjhIZa8pwpU2z0_uxYzQv4bfH3FNpa
+X-Proofpoint-ORIG-GUID: xcIjhIZa8pwpU2z0_uxYzQv4bfH3FNpa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX1apR83mIFHpA
+ 6ZdbgbjxIl5y0tZigv0bCdgcKjaT6W0FdQc3rGf3JHF1+ZI2znt9V28PmCOgFfALUjIYkOQEu7y
+ IdmeUb0o5e7rKx5A5fIlz5ZMqf7mpxl381xkhsn/kDZ8a3/Gv0zfYEBnB4K5bXhfgGl1OruLupm
+ oJKfm7Lb7T45DQWDW/KZhyCSiAZYBPeo+WQmEONPlwyr8CzsgnN6as6KF3OAaDex1w4dsZTeU9W
+ oOz0PjVyDLtRaarhKCQMwftmq0i3r/Gobdl04q5AYeRkUWZTEQNb8WNzHmzpP1x4s116+o5tjRR
+ 4nkaF+mgOHKUCx/h4wtyTvk81kCFUICCkr0Klj47Fj4X3CydL3i903zoYSDge2bp6G94phn0iXW
+ bp+V5rAJ6fevNA3IQalFilTvqn+SYQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistentcy cannot be addressed without refactoring the API.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+On 9/25/2025 2:40 PM, Bryan O'Donoghue wrote:
+> On 25/09/2025 00:56, Jingyi Wang wrote:
+>> +static u32 cam_cc_kaanapali_critical_cbcrs[] = {
+>> +    0x21398, /* CAM_CC_DRV_AHB_CLK */
+>> +    0x21390, /* CAM_CC_DRV_XO_CLK */
+>> +    0x21364, /* CAM_CC_GDSC_CLK */
+>> +    0x21368, /* CAM_CC_SLEEP_CLK */
+>> +};
+> 
+> How is this critical list decided ?
+> 
 
-This patch adds a new WQ_PERCPU flag, to explicitly request the use of
-the per-CPU behavior. Both flags coexist for one release cycle to allow
-callers to transition their calls.
+Bryan, these are list based on design recommendations.
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
+> For example why is the AHB clock critical but the CAMNOC and AXI clocks
+> not critical ?
+> 
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
+AHB clock is required for access and NOC & AXI needs to be managed by
+the client SW driver.
 
-All existing users have been updated accordingly.
+> ---
+> bod
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/net/wireless/ath/ath6kl/usb.c         | 2 +-
- drivers/net/wireless/quantenna/qtnfmac/core.c | 3 ++-
- drivers/net/wireless/realtek/rtlwifi/base.c   | 2 +-
- drivers/net/wireless/realtek/rtw88/usb.c      | 3 ++-
- drivers/net/wireless/silabs/wfx/main.c        | 2 +-
- drivers/net/wireless/st/cw1200/bh.c           | 4 ++--
- 6 files changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 38bb501fc553..bfb21725d779 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -637,7 +637,7 @@ static struct ath6kl_usb *ath6kl_usb_create(struct usb_interface *interface)
- 	ar_usb = kzalloc(sizeof(struct ath6kl_usb), GFP_KERNEL);
- 	if (ar_usb == NULL)
- 		return NULL;
--	ar_usb->wq = alloc_workqueue("ath6kl_wq", 0, 0);
-+	ar_usb->wq = alloc_workqueue("ath6kl_wq", WQ_PERCPU, 0);
- 	if (!ar_usb->wq) {
- 		kfree(ar_usb);
- 		return NULL;
-diff --git a/drivers/net/wireless/quantenna/qtnfmac/core.c b/drivers/net/wireless/quantenna/qtnfmac/core.c
-index 825b05dd3271..38af6cdc2843 100644
---- a/drivers/net/wireless/quantenna/qtnfmac/core.c
-+++ b/drivers/net/wireless/quantenna/qtnfmac/core.c
-@@ -714,7 +714,8 @@ int qtnf_core_attach(struct qtnf_bus *bus)
- 		goto error;
- 	}
- 
--	bus->hprio_workqueue = alloc_workqueue("QTNF_HPRI", WQ_HIGHPRI, 0);
-+	bus->hprio_workqueue = alloc_workqueue("QTNF_HPRI",
-+					       WQ_HIGHPRI | WQ_PERCPU, 0);
- 	if (!bus->hprio_workqueue) {
- 		pr_err("failed to alloc high prio workqueue\n");
- 		ret = -ENOMEM;
-diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
-index e26feb8de658..2786e4ee67eb 100644
---- a/drivers/net/wireless/realtek/rtlwifi/base.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.c
-@@ -445,7 +445,7 @@ static int _rtl_init_deferred_work(struct ieee80211_hw *hw)
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 	struct workqueue_struct *wq;
- 
--	wq = alloc_workqueue("%s", 0, 0, rtlpriv->cfg->name);
-+	wq = alloc_workqueue("%s", WQ_PERCPU, 0, rtlpriv->cfg->name);
- 	if (!wq)
- 		return -ENOMEM;
- 
-diff --git a/drivers/net/wireless/realtek/rtw88/usb.c b/drivers/net/wireless/realtek/rtw88/usb.c
-index 3b5126ffc81a..db60e142268d 100644
---- a/drivers/net/wireless/realtek/rtw88/usb.c
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c
-@@ -965,7 +965,8 @@ static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
- 	struct sk_buff *rx_skb;
- 	int i;
- 
--	rtwusb->rxwq = alloc_workqueue("rtw88_usb: rx wq", WQ_BH, 0);
-+	rtwusb->rxwq = alloc_workqueue("rtw88_usb: rx wq", WQ_BH | WQ_PERCPU,
-+				       0);
- 	if (!rtwusb->rxwq) {
- 		rtw_err(rtwdev, "failed to create RX work queue\n");
- 		return -ENOMEM;
-diff --git a/drivers/net/wireless/silabs/wfx/main.c b/drivers/net/wireless/silabs/wfx/main.c
-index a61128debbad..dda36e41eed1 100644
---- a/drivers/net/wireless/silabs/wfx/main.c
-+++ b/drivers/net/wireless/silabs/wfx/main.c
-@@ -364,7 +364,7 @@ int wfx_probe(struct wfx_dev *wdev)
- 	wdev->pdata.gpio_wakeup = NULL;
- 	wdev->poll_irq = true;
- 
--	wdev->bh_wq = alloc_workqueue("wfx_bh_wq", WQ_HIGHPRI, 0);
-+	wdev->bh_wq = alloc_workqueue("wfx_bh_wq", WQ_HIGHPRI | WQ_PERCPU, 0);
- 	if (!wdev->bh_wq)
- 		return -ENOMEM;
- 
-diff --git a/drivers/net/wireless/st/cw1200/bh.c b/drivers/net/wireless/st/cw1200/bh.c
-index 3b4ded2ac801..3f07f4e1deee 100644
---- a/drivers/net/wireless/st/cw1200/bh.c
-+++ b/drivers/net/wireless/st/cw1200/bh.c
-@@ -54,8 +54,8 @@ int cw1200_register_bh(struct cw1200_common *priv)
- 	int err = 0;
- 	/* Realtime workqueue */
- 	priv->bh_workqueue = alloc_workqueue("cw1200_bh",
--				WQ_MEM_RECLAIM | WQ_HIGHPRI
--				| WQ_CPU_INTENSIVE, 1);
-+				WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_PERCPU,
-+				1);
- 
- 	if (!priv->bh_workqueue)
- 		return -ENOMEM;
 -- 
-2.51.0
+Thanks,
+Taniya Das
 
 
