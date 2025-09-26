@@ -1,127 +1,382 @@
-Return-Path: <linux-kernel+bounces-834057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E3CBA3B2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:52:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D0FBA3B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2861C0076F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:52:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB8267B9576
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CDB1397;
-	Fri, 26 Sep 2025 12:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881B22F0669;
+	Fri, 26 Sep 2025 12:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgVB4PFY"
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOBFf2vL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4081E2E0B60
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3961397;
+	Fri, 26 Sep 2025 12:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891142; cv=none; b=gdVSfDgblUIaQaw5LoHf4ZxJjTGJGgbYD6Bk/92EYY8C5grgrEjKEni1umc01Drzq6sY6z15EFolc3uJEkWAzZCZPoMff1CUUilFPh3EyH7+WGzLAjbo6lWdUl7MGGPd64+XZCOptmHZW7aaLU+P3Xd21derMkGNxlpXPYK/Hww=
+	t=1758891117; cv=none; b=IlW+h6TWHKbSW38bEG218IlTdQXgi+5oyjNAheLVzSeSgpCf7VJ7/hnh5UGfGeb6kASr6FZ1jXbM5MtemRcYJRqgW3vV98BZUEHXDbB569JgvRYZuZQ64h3isYDyVitY692MO3RA2mf38HA9zJEF1fF+8mMLSr0fm9fzdkLLYRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891142; c=relaxed/simple;
-	bh=NrPTGUoLWdQsj2LPuD42yQfi3Grjh00Qivq8Q3RDB2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IjTtuCBThJhLijx4iRzeJWIG7HJOToTFzo8kIGet5moXyyrSfSKaPTxwHKsoimED/JESphPPvXZGLafzVRWY/Y9Qf1jyOzCVyqlEabhddtAXOXlJkF3IP4O6YFOOZAdlVWPPFRhuYqdLZf9wxOkSzBiOnO1MQ6xSwUBfHTWh+mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KgVB4PFY; arc=none smtp.client-ip=74.125.224.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-63605f6f64eso1443162d50.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758891140; x=1759495940; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oeq95/+JFRlc8XyWn/nswZYQ27eu4+ApswNk/R1twrM=;
-        b=KgVB4PFYIFe9nPm9V+YdYHN77n91R8WQ7jFBY0Zmudw/Qn2pTMpGQG6K5jnUIkqojU
-         TrxtExscXuyZHkf/VG1S+4iSiUQWCOTeGm5ZED9w65rliY5q7qZTHMohSMmzRSEAYma1
-         CQXiRcvYfckoKdPOUrFZwAy0AJv9lnbGf2klaExScc338ByqnH+/7LRAfuFBLTlERhl9
-         O9J4M+fdnd0rMKJ2Lsr/+IqsJ/YqJkKsVvxrjG1no5eScUWnMwiT5EQ062f8ri+6akcw
-         0lA+A0U/9ucSCU2/1eGbp+1zuu2KghX9n8H09dZsSQnngGBwZ9ttETBC9QrKEeKN6qE0
-         Xlaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758891140; x=1759495940;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oeq95/+JFRlc8XyWn/nswZYQ27eu4+ApswNk/R1twrM=;
-        b=xBGkYEIHJY4uhTBxhUHP5s8wAYrL8LH3yvCY0035+jDciJQ85pnUJgF2rM9wTuB0R0
-         Po2TNo5SPTghb4xDHyXels4WBJf9SJJ2RoBfZKeBQ28kGK16kXFjE4eGgeVboq5ZqahP
-         eQshAdJq1FwvD4eWXyD6BpPjLIjw0mSEZb0xvX5uQvyCkRffLR2js7eWab0eiUM0t1G+
-         nGhiD3slCs9TncxP+eltiUhrxRSS90YsvoYOrrWm96cfcvn5fuoPaV4WDtmsLvpsgpB+
-         PnakbxyDisDBSlssL/rboyznaIMNpRxJx/n3tWSTGQzydMy646DhVgTBz4gy3SxwmnjB
-         b2QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuiUygBTo66oMBW2kvQ2fy0BNq8wTUfeVShngAAJbne4fYeacR3cY3TL9Si1Q9bWyt3o1LTFGYDyF+yBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTbvyGMlpD8bjOKd8R3nz6YXPHHU0iB9HA/FPBLQNmTkNL3MHs
-	krLWKAO3tZMY/voff6hN83w+XzaUeM4ZyeztVHf6rQhxX3VcAiqnEtw6PPd8irNKbbRe6cHA+i3
-	8eheFFMIQ4G3/kGcWy2f5ZQLrDpqu1X4BKKR0A2Yswg==
-X-Gm-Gg: ASbGncsVxs6hiU+sFNgsHqBwTU0ntG3nILAmt1WcH28noRMmagpF6P+Mrk+FpMZHSO7
-	I3MSTSt8jXgBU3KcJ0VhQvb0GiYno11gdF0jc06Y1rITsstm6FbYHKXaamOgb3MV4DFl0q+a/fr
-	SU12Z7XLOSL5wHoMeizV5DQLQQZxs1swMBEfR96R7OWaXUcAsiDBJzRVXsUAvMM6c/zgVOElnDO
-	qzZqyR6
-X-Google-Smtp-Source: AGHT+IFbegjMBskXETWZWAHtZmLSq0HPSiddGUE92rJmk6oAyCGRgWRczPzi/diLvmOjt/dbfSTu3Ew31MNwwvilOAo=
-X-Received: by 2002:a05:690e:144c:b0:635:4ecd:75a0 with SMTP id
- 956f58d0204a3-6361a89a815mr5888996d50.46.1758891139937; Fri, 26 Sep 2025
- 05:52:19 -0700 (PDT)
+	s=arc-20240116; t=1758891117; c=relaxed/simple;
+	bh=3Y4O5LMLCQJieRcZdfxcHnfSnXNNprYMqoTOTujBqTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/t+46SQOkBZiHL4uhfPgTaI4ZT8hZzSSQut6Uwydq2XyTAJYTPh4rUacWBBoxQ6Gg3Hc5Xaoe2/sGce7YWffNUBQnCjvr5l9CF7rC4f8wNZ4PR8zr5few/fbbVSEWAXFshXlGKKpvFK5VjRH3HEPUibOhWK7+Kgo2CSvKf1uIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOBFf2vL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86470C116C6;
+	Fri, 26 Sep 2025 12:51:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758891117;
+	bh=3Y4O5LMLCQJieRcZdfxcHnfSnXNNprYMqoTOTujBqTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SOBFf2vLVWeAV6RnQebajdSIv6gnlUZTSt9UT86Ykm8nBrQr4UXJVFZkTDjFMk/9l
+	 pHNXRwXspHMfi6El0t1+bVQV0Jvw9qyChRcMhdlGadYDgAbriVqLOS7WChdRm51lJj
+	 UXdXZuQa9jzDKI/FT/qOcqxfokZi7v3ZtrTJpwTrH55pTQm9YbCWDRVV3Pglt5K1+p
+	 F1qcPTxX/i5txhntoaiZAAh2XvJYqLPRGk5k7R0hrJv9MtV5Y+fo+MyIdsIEyxXzmU
+	 21oP8OEzLYPzt3hFIZXXE9enPqxG+62f5PmuTW3MsFi4sakt8XJRqulnP03eRQVNVA
+	 6Nfh2uUwn0XkA==
+Date: Fri, 26 Sep 2025 14:51:48 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 4/8] man/man2/fsmount.2: document "new" mount API
+Message-ID: <3kewugw6bh6y6ghw44ksqqir6r37wnyckwx7st66ydtdaxbtgk@ibg57jop5mn7>
+References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
+ <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aNYQkVuVpP3Daq7x@stanley.mountain>
-In-Reply-To: <aNYQkVuVpP3Daq7x@stanley.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 26 Sep 2025 14:51:43 +0200
-X-Gm-Features: AS18NWAJ6VxhUJBeyo9x7sMCxxohCMAJ5raPfUmiVSZRv8RZbBNqJRlbPHJDbI0
-Message-ID: <CAPDyKFq7mwW7ys6_1wnhf+BYBeDcsxgcL5HxGhnpxv1vMO2qaA@mail.gmail.com>
-Subject: Re: [PATCH next] pmdomain: thead: Fix error pointer vs NULL bug in th1520_pd_reboot_init()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zkcon2xpijdemyux"
+Content-Disposition: inline
+In-Reply-To: <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
 
-On Fri, 26 Sept 2025 at 06:03, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The devm_auxiliary_device_create() returns NULL on error.  It never
-> returns error pointers.  Using PTR_ERR_OR_ZERO() here means the function
-> always returns success.  Replace the PTR_ERR_OR_ZERO() call check with
-> a NULL check.
->
-> Fixes: 64581f41f4c4 ("pmdomain: thead: create auxiliary device for rebooting")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Applied for next, thanks!
+--zkcon2xpijdemyux
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 4/8] man/man2/fsmount.2: document "new" mount API
+Message-ID: <3kewugw6bh6y6ghw44ksqqir6r37wnyckwx7st66ydtdaxbtgk@ibg57jop5mn7>
+References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
+ <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
 
-Kind regards
-Uffe
+Hi Aleksa,
+
+On Thu, Sep 25, 2025 at 01:31:26AM +1000, Aleksa Sarai wrote:
+> This is loosely based on the original documentation written by David
+> Howells and later maintained by Christian Brauner, but has been
+> rewritten to be more from a user perspective (as well as fixing a few
+> critical mistakes).
+>=20
+> Co-authored-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Co-authored-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+
+Thanks!  I've applied this patch.
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3D24243cc66e191fd917c9c13a01b7ac037ce0972e>
+
+
+Cheers,
+Alex
 
 > ---
->  drivers/pmdomain/thead/th1520-pm-domains.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
-> index 5213994101a5..d7cb9633c7c8 100644
-> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
-> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
-> @@ -179,8 +179,10 @@ static int th1520_pd_reboot_init(struct device *dev,
->         struct auxiliary_device *adev;
->
->         adev = devm_auxiliary_device_create(dev, "reboot", aon_chan);
-> +       if (!adev)
-> +               return -ENODEV;
->
-> -       return PTR_ERR_OR_ZERO(adev);
-> +       return 0;
->  }
->
->  static int th1520_pd_probe(struct platform_device *pdev)
-> --
+>  man/man2/fsmount.2 | 231 +++++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 231 insertions(+)
+>=20
+> diff --git a/man/man2/fsmount.2 b/man/man2/fsmount.2
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b62850a68443bb8f6178389eb=
+6cb1a5f9029ab30
+> --- /dev/null
+> +++ b/man/man2/fsmount.2
+> @@ -0,0 +1,231 @@
+> +.\" Copyright, the authors of the Linux man-pages project
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH fsmount 2 (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +fsmount \- instantiate mount object from filesystem context
+> +.SH LIBRARY
+> +Standard C library
+> +.RI ( libc ,\~ \-lc )
+> +.SH SYNOPSIS
+> +.nf
+> +.B #include <sys/mount.h>
+> +.P
+> +.BI "int fsmount(int " fsfd ", unsigned int " flags \
+> +", unsigned int " attr_flags );
+> +.fi
+> +.SH DESCRIPTION
+> +The
+> +.BR fsmount ()
+> +system call is part of
+> +the suite of file-descriptor-based mount facilities in Linux.
+> +.P
+> +.BR fsmount ()
+> +creates a new detached mount object
+> +for the root of the new filesystem instance
+> +referenced by the filesystem context file descriptor
+> +.IR fsfd .
+> +A new file descriptor
+> +associated with the detached mount object
+> +is then returned.
+> +In order to create a mount object with
+> +.BR fsmount (),
+> +the calling process must have the
+> +.B \%CAP_SYS_ADMIN
+> +capability.
+> +.P
+> +The filesystem context must have been created with a call to
+> +.BR fsopen (2)
+> +and then had a filesystem instance instantiated with a call to
+> +.BR fsconfig (2)
+> +with
+> +.B \%FSCONFIG_CMD_CREATE
+> +or
+> +.B \%FSCONFIG_CMD_CREATE_EXCL
+> +in order to be in the correct state
+> +for this operation
+> +(the "awaiting-mount" mode in kernel-developer parlance).
+> +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
+> +Unlike
+> +.BR open_tree (2)
+> +with
+> +.BR \%OPEN_TREE_CLONE ,
+> +.BR fsmount ()
+> +can only be called once
+> +in the lifetime of a filesystem context
+> +to produce a mount object.
+> +.P
+> +As with file descriptors returned from
+> +.BR open_tree (2)
+> +called with
+> +.BR OPEN_TREE_CLONE ,
+> +the returned file descriptor
+> +can then be used with
+> +.BR move_mount (2),
+> +.BR mount_setattr (2),
+> +or other such system calls to do further mount operations.
+> +This mount object will be unmounted and destroyed
+> +when the file descriptor is closed
+> +if it was not otherwise attached to a mount point
+> +by calling
+> +.BR move_mount (2).
+> +(Note that the unmount operation on
+> +.BR close (2)
+> +is lazy\[em]akin to calling
+> +.BR umount2 (2)
+> +with
+> +.BR MNT_DETACH ;
+> +any existing open references to files
+> +from the mount object
+> +will continue to work,
+> +and the mount object will only be completely destroyed
+> +once it ceases to be busy.)
+> +The returned file descriptor
+> +also acts the same as one produced by
+> +.BR open (2)
+> +with
+> +.BR O_PATH ,
+> +meaning it can also be used as a
+> +.I dirfd
+> +argument
+> +to "*at()" system calls.
+> +.P
+> +.I flags
+> +controls the creation of the returned file descriptor.
+> +A value for
+> +.I flags
+> +is constructed by bitwise ORing
+> +zero or more of the following constants:
+> +.RS
+> +.TP
+> +.B FSMOUNT_CLOEXEC
+> +Set the close-on-exec
+> +.RB ( FD_CLOEXEC )
+> +flag on the new file descriptor.
+> +See the description of the
+> +.B O_CLOEXEC
+> +flag in
+> +.BR open (2)
+> +for reasons why this may be useful.
+> +.RE
+> +.P
+> +.I attr_flags
+> +specifies mount attributes
+> +which will be applied to the created mount object,
+> +in the form of
+> +.BI \%MOUNT_ATTR_ *
+> +flags.
+> +The flags are interpreted as though
+> +.BR mount_setattr (2)
+> +was called with
+> +.I attr.attr_set
+> +set to the same value as
+> +.IR attr_flags .
+> +.BI \%MOUNT_ATTR_ *
+> +flags which would require
+> +specifying additional fields in
+> +.BR mount_attr (2type)
+> +(such as
+> +.BR \%MOUNT_ATTR_IDMAP )
+> +are not valid flag values for
+> +.IR attr_flags .
+> +.P
+> +If the
+> +.BR fsmount ()
+> +operation is successful,
+> +the filesystem context
+> +associated with the file descriptor
+> +.I fsfd
+> +is reset
+> +and placed into reconfiguration mode,
+> +as if it were just returned by
+> +.BR fspick (2).
+> +You may continue to use
+> +.BR fsconfig (2)
+> +with the now-reset filesystem context,
+> +including issuing the
+> +.B \%FSCONFIG_CMD_RECONFIGURE
+> +command
+> +to reconfigure the filesystem instance.
+> +.SH RETURN VALUE
+> +On success, a new file descriptor is returned.
+> +On error, \-1 is returned, and
+> +.I errno
+> +is set to indicate the error.
+> +.SH ERRORS
+> +.TP
+> +.B EBUSY
+> +The filesystem context associated with
+> +.I fsfd
+> +is not in the right state
+> +to be used by
+> +.BR fsmount ().
+> +.TP
+> +.B EINVAL
+> +.I flags
+> +had an invalid flag set.
+> +.TP
+> +.B EINVAL
+> +.I attr_flags
+> +had an invalid
+> +.BI MOUNT_ATTR_ *
+> +flag set.
+> +.TP
+> +.B EMFILE
+> +The calling process has too many open files to create more.
+> +.TP
+> +.B ENFILE
+> +The system has too many open files to create more.
+> +.TP
+> +.B ENOSPC
+> +The "anonymous" mount namespace
+> +necessary to contain the new mount object
+> +could not be allocated,
+> +as doing so would exceed
+> +the configured per-user limit on
+> +the number of mount namespaces in the current user namespace.
+> +(See also
+> +.BR namespaces (7).)
+> +.TP
+> +.B ENOMEM
+> +The kernel could not allocate sufficient memory to complete the operatio=
+n.
+> +.TP
+> +.B EPERM
+> +The calling process does not have the required
+> +.B CAP_SYS_ADMIN
+> +capability.
+> +.SH STANDARDS
+> +Linux.
+> +.SH HISTORY
+> +Linux 5.2.
+> +.\" commit 93766fbd2696c2c4453dd8e1070977e9cd4e6b6d
+> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
+> +glibc 2.36.
+> +.SH EXAMPLES
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd, tmpfd;
+> +\&
+> +fsfd =3D fsopen("tmpfs", FSOPEN_CLOEXEC);
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC,
+> +                MOUNT_ATTR_NODEV | MOUNT_ATTR_NOEXEC);
+> +\&
+> +/* Create a new file without attaching the mount object */
+> +tmpfd =3D openat(mntfd, "tmpfile", O_CREAT | O_EXCL | O_RDWR, 0600);
+> +unlinkat(mntfd, "tmpfile", 0);
+> +\&
+> +/* Attach the mount object to "/tmp" */
+> +move_mount(mntfd, "", AT_FDCWD, "/tmp", MOVE_MOUNT_F_EMPTY_PATH);
+> +.EE
+> +.in
+> +.SH SEE ALSO
+> +.BR fsconfig (2),
+> +.BR fsopen (2),
+> +.BR fspick (2),
+> +.BR mount (2),
+> +.BR mount_setattr (2),
+> +.BR move_mount (2),
+> +.BR open_tree (2),
+> +.BR mount_namespaces (7)
+>=20
+> --=20
 > 2.51.0
->
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--zkcon2xpijdemyux
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWjGQACgkQ64mZXMKQ
+wqnZkw//VEWJmFzHgJLA7ZaeZ2efeIHt15CEAGOBq2NkxX5Kg/wBZfLlcftc2Gzh
+lksoFZuskAUCcFSo5MNbGCTqN90bPjWZD4XMzDckbZf9s2WU/9d6Ev5BGYIogW2T
+HgKIeLxQtMBPUdBFwXIDX3JW9/qLInpiXovIpikLdjJTLFrhnp3Wzh4OxjL4CaqP
+Sp9kHRYKcC2kABw8LoH0rX+0Ghe3kRQB3GPw04AXyb19P1k+x8UjFXviXlXZpR7S
+dFhbRakjWiMc0gYJlyqjBjyFVT0Sx3bxuD+NrWaeI1QFwHwNx1EdltkcIXpyY/Ck
+oUL7+zm+qQAf3k2ttFsJ4vMNGVqPmlZYIQfrnR13UwPnNDTfoUh8ibW+bHNgWMnu
+kh5379BaODEr6b/2YkpUSxfPhBrqgOFZiF7q0f5mjGVM24E91zvcEaolFKyy5Yr4
+325oQ1mpbikM+lE4xjNM2o2vNCKGsoKKR/EebYydeeIwi4Ok+fWu8uQ88rGb/zrw
+tYpWCGfy7BWPojqJNvWvIHz+7v/EOmvbWdXsYxvidujWnfcHwALaUtwznjXX/f4m
++DrM8FNGYn8xT1SuOZtY7q8S9tl63v/Fml4HyhgwpBtP2Ca1WhTHx0wq9uI9XVaz
+EIFeSAptwjNh+uCYTjJphz0vKSaphdW4FCODaHskOO6pTU88jls=
+=fRyU
+-----END PGP SIGNATURE-----
+
+--zkcon2xpijdemyux--
 
