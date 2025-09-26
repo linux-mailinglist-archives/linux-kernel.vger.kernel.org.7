@@ -1,407 +1,276 @@
-Return-Path: <linux-kernel+bounces-833533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0ABBA23D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD59BA23D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA151C27FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027A51C27E9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CC526A0DB;
-	Fri, 26 Sep 2025 02:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB45E14E2E2;
+	Fri, 26 Sep 2025 02:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Kg88IMRj"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY6FtYva"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36186261B80;
-	Fri, 26 Sep 2025 02:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBAF262FC7;
+	Fri, 26 Sep 2025 02:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758854655; cv=none; b=aYERrE5pvJL9kKRbWSNSm1+Cu8X3zEmy6CIe7teVWcJjssB9T650FENfJfZK5+KVrqrqfucE6y/GNJybNq6iI2OqyUrOiue/MFR/5+vm8IW5ftsBGrhDJys4sZtb/gQcHmJHxMHyuu44Lyxe7Y6h/2acoFp5kdTknmvBELe0GTE=
+	t=1758854674; cv=none; b=dq71W9SFeMvu2cnDEZVaSFpgHZGxJ8FUcb/DK1NU086quxO2r1zAuxKXSZTpzErMwzNp0F42C5eKsNlY/oCPP7+m1HPqklUb8Cg/rDfxuAhBYyECZfyD5ceqLbBevkMA91QGPk9/d2RRNIJ01CGe7lttwcBFAz5PdC/P/pfgdsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758854655; c=relaxed/simple;
-	bh=/udMnapIHTCpHoAnc7xqh5vUpmIkXgo9vnmB1oioYJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=m7v4Yy6kWTyKL8vhDSM/ujL92IGQetN+C8BI0guevpz7YOE7YOYYayXpQoobF0HtLs6CQSPHa7dlN+NAZ3AJOqKdBR3nnkVBOuxuIWOBAs8NGZCNlUlGMDos910rSthg7HGhetjtDqqftO4sAvmoJEkqo5WNQ6r9ZFdQydoPkWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Kg88IMRj; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758854642; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=2CQ+xRfB/5MjspUDiPRIa1Fl8PKQZuSj45XqTftZtcc=;
-	b=Kg88IMRj0QRbCn72RqRFT8Ap4HFchKT14MKcL5oIssJk0uxqGoQ7SPfe5tSQxZmztRm09+krjpvK7eD7uC8BMZiNjf48c9VmsX0FzVydgkGYUaL9JnL7glYdd47jdKA66p67qHD+xbtwWpjwXxXl7z36cGKaBwlHjYFbm/75Y60=
-Received: from 30.221.116.140(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0Woq-QMi_1758854641 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 26 Sep 2025 10:44:01 +0800
-Message-ID: <1aa764d0-0613-499e-bc44-52e70602b661@linux.alibaba.com>
-Date: Fri, 26 Sep 2025 10:44:00 +0800
+	s=arc-20240116; t=1758854674; c=relaxed/simple;
+	bh=WGgd9HbXf3muDxpRoOGtKDqq/H+jWq+KkhqeNuZt26k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oNwAWP4IvV6Dl2ZZ7yVl1xKtRYBLrZ7Ia3qX2+7Md2nl+piDsKvlTGtD8aQbbkqxO6ZikKasLjhwb1ppFu9x6Nbdc7AUkf1g9WA9QuHPm5I1mPRBqKGATEp29+RDNTqSrgH6tsUXwrTgT1HGZAYdtm0p0l3G8+zySHxAqviOknQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eY6FtYva; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CEC2C4CEF0;
+	Fri, 26 Sep 2025 02:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758854672;
+	bh=WGgd9HbXf3muDxpRoOGtKDqq/H+jWq+KkhqeNuZt26k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eY6FtYvabCSorn6RAdJj1vjmjePcCz7dFiqVxMmcfJH4sgooxBzvUdNi1Q+eKdZ+b
+	 OODafboTEd+3Lwtn6jvOGIUfjca2owH71ZvCcGLnEVSmd8BGHzPHBCoaEdrxyX3uku
+	 wSP7OIKfNbXHMh+87f1Ml6x9vh4tuf8f5pJzoS/OKbT9tK0VozyKp+RwgEVt+F6N88
+	 tHGSSGzfngiMMOnL5/OIQsIWQ82v4MkIhO6zRzvEYyQ7vqDfXo5MXzbl0SqAfMQJKw
+	 BEvv3mKXe4qjZIbGBV94KMFy/TWBHkc9ARHEv5938VWDcwP1EnW0uKL6TC8E3ToEuO
+	 heZBsyIpAt8ZA==
+Date: Thu, 25 Sep 2025 21:44:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>,
+	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+	"l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] PCI: imx6: Add a method to handle CLKREQ#
+ override active low
+Message-ID: <20250926024430.GA2217977@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/2] net/smc: make wr buffer count
- configurable
-To: Halil Pasic <pasic@linux.ibm.com>
-References: <20250921214440.325325-1-pasic@linux.ibm.com>
- <20250921214440.325325-2-pasic@linux.ibm.com>
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, "D. Wythe" <alibuda@linux.alibaba.com>,
- Dust Li <dust.li@linux.alibaba.com>, Sidraya Jayagond
- <sidraya@linux.ibm.com>, Wenjia Zhang <wenjia@linux.ibm.com>,
- Mahanta Jambigi <mjambigi@linux.ibm.com>, Tony Lu
- <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-s390@vger.kernel.org
-In-Reply-To: <20250921214440.325325-2-pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU2PR04MB884007655AC6BAF8AFD9AD198C1EA@DU2PR04MB8840.eurprd04.prod.outlook.com>
 
+On Fri, Sep 26, 2025 at 02:19:37AM +0000, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Bjorn Helgaas <helgaas@kernel.org>
+> > On Tue, Sep 23, 2025 at 03:39:13PM +0800, Richard Zhu wrote:
+> > > The CLKREQ# is an open drain, active low signal that is driven low by
+> > > the card to request reference clock. It's an optional signal added in
+> > > PCIe CEM r4.0, sec 2. Thus, this signal wouldn't be driven low if it's
+> > > reserved.
+> > >
+> > > Since the reference clock controlled by CLKREQ# may be required by
+> > > i.MX PCIe host too. To make sure this clock is ready even when the
+> > > CLKREQ# isn't driven low by the card(e.x the scenario described
+> > > above), force CLKREQ# override active low for i.MX PCIe host during
+> > initialization.
+> > >
+> > > The CLKREQ# override can be cleared safely when supports-clkreq is
+> > > present and PCIe link is up later. Because the CLKREQ# would be driven
+> > > low by the card at this time.
+> > 
+> > What happens if we clear the CLKREQ# override (so the host doesn't assert
+> > it), and the link is up but the card never asserts CLKREQ# (since it's an
+> > optional signal)?
+> > 
+> > Does the i.MX host still work?
+>
+> The CLKREQ# override active low only be cleared when link is up and
+>  supports-clkreq is present. In the other words, there is a remote endpoint
+>  device, and the CLKREQ# would be driven active low by this endpoint device.
 
+Assume an endpoint designed to CEM r2.0.  CLKREQ# doesn't exist in CEM
+r2.0, so even if the endpoint is present and the link is up, the
+endpoint will not assert CLKREQ#.
 
-在 2025/9/22 05:44, Halil Pasic 写道:
-> Think SMC_WR_BUF_CNT_SEND := SMC_WR_BUF_CNT used in send context and
-> SMC_WR_BUF_CNT_RECV := 3 * SMC_WR_BUF_CNT used in recv context. Those
-> get replaced with lgr->max_send_wr and lgr->max_recv_wr respective.
-> 
-> While at it let us also remove a confusing comment that is either not
-> about the context in which it resides (describing
-> qp_attr.cap.max_send_wr and qp_attr.cap.max_recv_wr) or not applicable
-> any more when these values become configurable.
-> 
-> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> ---
->  Documentation/networking/smc-sysctl.rst | 36 +++++++++++++++++++++++++
->  include/net/netns/smc.h                 |  2 ++
->  net/smc/smc_core.h                      |  6 +++++
->  net/smc/smc_ib.c                        |  7 ++---
->  net/smc/smc_llc.c                       |  2 ++
->  net/smc/smc_sysctl.c                    | 22 +++++++++++++++
->  net/smc/smc_sysctl.h                    |  2 ++
->  net/smc/smc_wr.c                        | 32 +++++++++++-----------
->  net/smc/smc_wr.h                        |  2 --
->  9 files changed, 89 insertions(+), 22 deletions(-)
-> 
-> diff --git a/Documentation/networking/smc-sysctl.rst b/Documentation/networking/smc-sysctl.rst
-> index a874d007f2db..c94d750c7c84 100644
-> --- a/Documentation/networking/smc-sysctl.rst
-> +++ b/Documentation/networking/smc-sysctl.rst
-> @@ -71,3 +71,39 @@ smcr_max_conns_per_lgr - INTEGER
->  	acceptable value ranges from 16 to 255. Only for SMC-R v2.1 and later.
->  
->  	Default: 255
-> +
-> +smcr_max_send_wr - INTEGER
-> +	So called work request buffers are SMCR link (and RDMA queue pair) level
-> +	resources necessary for performing RDMA operations. Since up to 255
-> +	connections can share a link group and thus also a link and the number
-> +	of the work request buffers is decided when the link is allocated,
-> +	depending on the workload it can a bottleneck in a sense that threads
-> +	have to wait for work request buffers to become available. Before the
-> +	introduction of this control the maximal number of work request buffers
-> +	available on the send path used to be hard coded to 16. With this control
-> +	it becomes configurable. The acceptable range is between 2 and 2048.
-> +
-> +	Please be aware that all the buffers need to be allocated as a physically
-> +	continuous array in which each element is a single buffer and has the size
-> +	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
-> +	like before having this control.
-> +
-> +	Default: 16
-> +
-> +smcr_max_recv_wr - INTEGER
-> +	So called work request buffers are SMCR link (and RDMA queue pair) level
-> +	resources necessary for performing RDMA operations. Since up to 255
-> +	connections can share a link group and thus also a link and the number
-> +	of the work request buffers is decided when the link is allocated,
-> +	depending on the workload it can a bottleneck in a sense that threads
-> +	have to wait for work request buffers to become available. Before the
-> +	introduction of this control the maximal number of work request buffers
-> +	available on the receive path used to be hard coded to 16. With this control
-> +	it becomes configurable. The acceptable range is between 2 and 2048.
-> +
-> +	Please be aware that all the buffers need to be allocated as a physically
-> +	continuous array in which each element is a single buffer and has the size
-> +	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
-> +	like before having this control.
-> +
-> +	Default: 48
+Will the i.MX host still work?
 
-Notice that the ratio of smcr_max_recv_wr to smcr_max_send_wr is set to 3:1, with the
-intention of ensuring that the peer QP's smcr_max_recv_wr is three times the local QP's
-smcr_max_send_wr and the local QP's smcr_max_recv_wr is three times the peer QP's
-smcr_max_send_wr, rather than making the local QP's smcr_max_recv_wr three times its own
-smcr_max_send_wr. The purpose of this design is to guarantee sufficient receive WRs on
-the side to receive incoming data when peer QP doing RDMA sends. Otherwise, RNR (Receiver
-Not Ready) may occur, leading to poor performance(RNR will drop the packet and retransmit
-happens in the transport layer of the RDMA).
+IIUC, CLKREQ# is required for ASPM L1 PM Substates.  Maybe the CLKREQ#
+override should only be cleared if the endpoint advertises L1 PM
+Substates support?
 
-Let us guess a scenario that have multiple hosts, and the multiple hosts have different
-smcr_max_send_wr and smcr_max_recv_wr configurations, mesh connections between these hosts.
-It is difficult to ensure that the smcr_max_recv_wr/smcr_max_send_wr is 3:1 on the connected
-QPs between these hosts, and it may even be hard to guarantee the smcr_max_recv_wr > smcr_max_send_wr
-on the connected QPs between these hosts.
+Sorry, I'm just really confused about this.  Here's another question:
+Even if the endpoint is designed to CEM r4.0, it supports L1 PM
+Substates, and it asserts CLKREQ#, my understanding is that the
+endpoint won't assert CLKREQ# *all* the time.  For example, when the
+link enters L1, the device deasserts CLKREQ# (CEM r5.0, sec 2.8.2).
 
-Therefore, I believe that if these values are made configurable, additional mechanisms must be
-in place to prevent RNR from occurring. Otherwise we need to carefully configure smcr_max_recv_wr
-and smcr_max_send_wr, or ensure that all hosts capable of establishing SMC-R connections are configured
-smcr_max_recv_wr and smcr_max_send_wr with the same values.
+What happens to the i.MX host when the endpoint isn't asserting
+CLKREQ#?  I guess i.MX doesn't need refclk in that situation?
 
-Regards,
-Guangguan Wang
-
-> diff --git a/include/net/netns/smc.h b/include/net/netns/smc.h
-> index fc752a50f91b..6ceb12baec24 100644
-> --- a/include/net/netns/smc.h
-> +++ b/include/net/netns/smc.h
-> @@ -24,5 +24,7 @@ struct netns_smc {
->  	int				sysctl_rmem;
->  	int				sysctl_max_links_per_lgr;
->  	int				sysctl_max_conns_per_lgr;
-> +	unsigned int			sysctl_smcr_max_send_wr;
-> +	unsigned int			sysctl_smcr_max_recv_wr;
->  };
->  #endif
-> diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
-> index 48a1b1dcb576..ab2d15929cb2 100644
-> --- a/net/smc/smc_core.h
-> +++ b/net/smc/smc_core.h
-> @@ -33,6 +33,8 @@
->  					 * distributions may modify it to a value between
->  					 * 16-255 as needed.
->  					 */
-> +#define SMCR_MAX_SEND_WR_DEF	16	/* Default number of work requests per send queue */
-> +#define SMCR_MAX_RECV_WR_DEF	48	/* Default number of work requests per recv queue */
->  
->  struct smc_lgr_list {			/* list of link group definition */
->  	struct list_head	list;
-> @@ -361,6 +363,10 @@ struct smc_link_group {
->  						/* max conn can be assigned to lgr */
->  			u8			max_links;
->  						/* max links can be added in lgr */
-> +			u16			max_send_wr;
-> +						/* number of WR buffers on send */
-> +			u16			max_recv_wr;
-> +						/* number of WR buffers on recv */
->  		};
->  		struct { /* SMC-D */
->  			struct smcd_gid		peer_gid;
-> diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
-> index 0052f02756eb..e8d35c22c525 100644
-> --- a/net/smc/smc_ib.c
-> +++ b/net/smc/smc_ib.c
-> @@ -669,11 +669,6 @@ int smc_ib_create_queue_pair(struct smc_link *lnk)
->  		.recv_cq = lnk->smcibdev->roce_cq_recv,
->  		.srq = NULL,
->  		.cap = {
-> -				/* include unsolicited rdma_writes as well,
-> -				 * there are max. 2 RDMA_WRITE per 1 WR_SEND
-> -				 */
-> -			.max_send_wr = SMC_WR_BUF_CNT * 3,
-> -			.max_recv_wr = SMC_WR_BUF_CNT * 3,
->  			.max_send_sge = SMC_IB_MAX_SEND_SGE,
->  			.max_recv_sge = lnk->wr_rx_sge_cnt,
->  			.max_inline_data = 0,
-> @@ -683,6 +678,8 @@ int smc_ib_create_queue_pair(struct smc_link *lnk)
->  	};
->  	int rc;
->  
-> +	qp_attr.cap.max_send_wr = 3 * lnk->lgr->max_send_wr;
-> +	qp_attr.cap.max_recv_wr = lnk->lgr->max_recv_wr;
->  	lnk->roce_qp = ib_create_qp(lnk->roce_pd, &qp_attr);
->  	rc = PTR_ERR_OR_ZERO(lnk->roce_qp);
->  	if (IS_ERR(lnk->roce_qp))
-> diff --git a/net/smc/smc_llc.c b/net/smc/smc_llc.c
-> index f865c58c3aa7..f5d5eb617526 100644
-> --- a/net/smc/smc_llc.c
-> +++ b/net/smc/smc_llc.c
-> @@ -2157,6 +2157,8 @@ void smc_llc_lgr_init(struct smc_link_group *lgr, struct smc_sock *smc)
->  	init_waitqueue_head(&lgr->llc_msg_waiter);
->  	init_rwsem(&lgr->llc_conf_mutex);
->  	lgr->llc_testlink_time = READ_ONCE(net->smc.sysctl_smcr_testlink_time);
-> +	lgr->max_send_wr = (u16)(READ_ONCE(net->smc.sysctl_smcr_max_send_wr));
-> +	lgr->max_recv_wr = (u16)(READ_ONCE(net->smc.sysctl_smcr_max_recv_wr));
->  }
->  
->  /* called after lgr was removed from lgr_list */
-> diff --git a/net/smc/smc_sysctl.c b/net/smc/smc_sysctl.c
-> index 2fab6456f765..7b2471904d04 100644
-> --- a/net/smc/smc_sysctl.c
-> +++ b/net/smc/smc_sysctl.c
-> @@ -29,6 +29,8 @@ static int links_per_lgr_min = SMC_LINKS_ADD_LNK_MIN;
->  static int links_per_lgr_max = SMC_LINKS_ADD_LNK_MAX;
->  static int conns_per_lgr_min = SMC_CONN_PER_LGR_MIN;
->  static int conns_per_lgr_max = SMC_CONN_PER_LGR_MAX;
-> +static unsigned int smcr_max_wr_min = 2;
-> +static unsigned int smcr_max_wr_max = 2048;
->  
->  static struct ctl_table smc_table[] = {
->  	{
-> @@ -99,6 +101,24 @@ static struct ctl_table smc_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> +	{
-> +		.procname	= "smcr_max_send_wr",
-> +		.data		= &init_net.smc.sysctl_smcr_max_send_wr,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec_minmax,
-> +		.extra1		= &smcr_max_wr_min,
-> +		.extra2		= &smcr_max_wr_max,
-> +	},
-> +	{
-> +		.procname	= "smcr_max_recv_wr",
-> +		.data		= &init_net.smc.sysctl_smcr_max_recv_wr,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec_minmax,
-> +		.extra1		= &smcr_max_wr_min,
-> +		.extra2		= &smcr_max_wr_max,
-> +	},
->  };
->  
->  int __net_init smc_sysctl_net_init(struct net *net)
-> @@ -130,6 +150,8 @@ int __net_init smc_sysctl_net_init(struct net *net)
->  	WRITE_ONCE(net->smc.sysctl_rmem, net_smc_rmem_init);
->  	net->smc.sysctl_max_links_per_lgr = SMC_LINKS_PER_LGR_MAX_PREFER;
->  	net->smc.sysctl_max_conns_per_lgr = SMC_CONN_PER_LGR_PREFER;
-> +	net->smc.sysctl_smcr_max_send_wr = SMCR_MAX_SEND_WR_DEF;
-> +	net->smc.sysctl_smcr_max_recv_wr = SMCR_MAX_RECV_WR_DEF;
->  	/* disable handshake limitation by default */
->  	net->smc.limit_smc_hs = 0;
->  
-> diff --git a/net/smc/smc_sysctl.h b/net/smc/smc_sysctl.h
-> index eb2465ae1e15..8538915af7af 100644
-> --- a/net/smc/smc_sysctl.h
-> +++ b/net/smc/smc_sysctl.h
-> @@ -25,6 +25,8 @@ static inline int smc_sysctl_net_init(struct net *net)
->  	net->smc.sysctl_autocorking_size = SMC_AUTOCORKING_DEFAULT_SIZE;
->  	net->smc.sysctl_max_links_per_lgr = SMC_LINKS_PER_LGR_MAX_PREFER;
->  	net->smc.sysctl_max_conns_per_lgr = SMC_CONN_PER_LGR_PREFER;
-> +	net->smc.sysctl_smcr_max_send_wr = SMCR_MAX_SEND_WR_DEF;
-> +	net->smc.sysctl_smcr_max_recv_wr = SMCR_MAX_RECV_WR_DEF;
->  	return 0;
->  }
->  
-> diff --git a/net/smc/smc_wr.c b/net/smc/smc_wr.c
-> index b04a21b8c511..f5b2772414fd 100644
-> --- a/net/smc/smc_wr.c
-> +++ b/net/smc/smc_wr.c
-> @@ -34,6 +34,7 @@
->  #define SMC_WR_MAX_POLL_CQE 10	/* max. # of compl. queue elements in 1 poll */
->  
->  #define SMC_WR_RX_HASH_BITS 4
-> +
->  static DEFINE_HASHTABLE(smc_wr_rx_hash, SMC_WR_RX_HASH_BITS);
->  static DEFINE_SPINLOCK(smc_wr_rx_hash_lock);
->  
-> @@ -547,9 +548,9 @@ void smc_wr_remember_qp_attr(struct smc_link *lnk)
->  		    IB_QP_DEST_QPN,
->  		    &init_attr);
->  
-> -	lnk->wr_tx_cnt = min_t(size_t, SMC_WR_BUF_CNT,
-> +	lnk->wr_tx_cnt = min_t(size_t, lnk->lgr->max_send_wr,
->  			       lnk->qp_attr.cap.max_send_wr);
-> -	lnk->wr_rx_cnt = min_t(size_t, SMC_WR_BUF_CNT * 3,
-> +	lnk->wr_rx_cnt = min_t(size_t, lnk->lgr->max_recv_wr,
->  			       lnk->qp_attr.cap.max_recv_wr);
->  }
->  
-> @@ -741,50 +742,51 @@ int smc_wr_alloc_lgr_mem(struct smc_link_group *lgr)
->  int smc_wr_alloc_link_mem(struct smc_link *link)
->  {
->  	/* allocate link related memory */
-> -	link->wr_tx_bufs = kcalloc(SMC_WR_BUF_CNT, SMC_WR_BUF_SIZE, GFP_KERNEL);
-> +	link->wr_tx_bufs = kcalloc(link->lgr->max_send_wr,
-> +				   SMC_WR_BUF_SIZE, GFP_KERNEL);
->  	if (!link->wr_tx_bufs)
->  		goto no_mem;
-> -	link->wr_rx_bufs = kcalloc(SMC_WR_BUF_CNT * 3, link->wr_rx_buflen,
-> +	link->wr_rx_bufs = kcalloc(link->lgr->max_recv_wr, link->wr_rx_buflen,
->  				   GFP_KERNEL);
->  	if (!link->wr_rx_bufs)
->  		goto no_mem_wr_tx_bufs;
-> -	link->wr_tx_ibs = kcalloc(SMC_WR_BUF_CNT, sizeof(link->wr_tx_ibs[0]),
-> -				  GFP_KERNEL);
-> +	link->wr_tx_ibs = kcalloc(link->lgr->max_send_wr,
-> +				  sizeof(link->wr_tx_ibs[0]), GFP_KERNEL);
->  	if (!link->wr_tx_ibs)
->  		goto no_mem_wr_rx_bufs;
-> -	link->wr_rx_ibs = kcalloc(SMC_WR_BUF_CNT * 3,
-> +	link->wr_rx_ibs = kcalloc(link->lgr->max_recv_wr,
->  				  sizeof(link->wr_rx_ibs[0]),
->  				  GFP_KERNEL);
->  	if (!link->wr_rx_ibs)
->  		goto no_mem_wr_tx_ibs;
-> -	link->wr_tx_rdmas = kcalloc(SMC_WR_BUF_CNT,
-> +	link->wr_tx_rdmas = kcalloc(link->lgr->max_send_wr,
->  				    sizeof(link->wr_tx_rdmas[0]),
->  				    GFP_KERNEL);
->  	if (!link->wr_tx_rdmas)
->  		goto no_mem_wr_rx_ibs;
-> -	link->wr_tx_rdma_sges = kcalloc(SMC_WR_BUF_CNT,
-> +	link->wr_tx_rdma_sges = kcalloc(link->lgr->max_send_wr,
->  					sizeof(link->wr_tx_rdma_sges[0]),
->  					GFP_KERNEL);
->  	if (!link->wr_tx_rdma_sges)
->  		goto no_mem_wr_tx_rdmas;
-> -	link->wr_tx_sges = kcalloc(SMC_WR_BUF_CNT, sizeof(link->wr_tx_sges[0]),
-> +	link->wr_tx_sges = kcalloc(link->lgr->max_send_wr, sizeof(link->wr_tx_sges[0]),
->  				   GFP_KERNEL);
->  	if (!link->wr_tx_sges)
->  		goto no_mem_wr_tx_rdma_sges;
-> -	link->wr_rx_sges = kcalloc(SMC_WR_BUF_CNT * 3,
-> +	link->wr_rx_sges = kcalloc(link->lgr->max_recv_wr,
->  				   sizeof(link->wr_rx_sges[0]) * link->wr_rx_sge_cnt,
->  				   GFP_KERNEL);
->  	if (!link->wr_rx_sges)
->  		goto no_mem_wr_tx_sges;
-> -	link->wr_tx_mask = bitmap_zalloc(SMC_WR_BUF_CNT, GFP_KERNEL);
-> +	link->wr_tx_mask = bitmap_zalloc(link->lgr->max_send_wr, GFP_KERNEL);
->  	if (!link->wr_tx_mask)
->  		goto no_mem_wr_rx_sges;
-> -	link->wr_tx_pends = kcalloc(SMC_WR_BUF_CNT,
-> +	link->wr_tx_pends = kcalloc(link->lgr->max_send_wr,
->  				    sizeof(link->wr_tx_pends[0]),
->  				    GFP_KERNEL);
->  	if (!link->wr_tx_pends)
->  		goto no_mem_wr_tx_mask;
-> -	link->wr_tx_compl = kcalloc(SMC_WR_BUF_CNT,
-> +	link->wr_tx_compl = kcalloc(link->lgr->max_send_wr,
->  				    sizeof(link->wr_tx_compl[0]),
->  				    GFP_KERNEL);
->  	if (!link->wr_tx_compl)
-> @@ -905,7 +907,7 @@ int smc_wr_create_link(struct smc_link *lnk)
->  		goto dma_unmap;
->  	}
->  	smc_wr_init_sge(lnk);
-> -	bitmap_zero(lnk->wr_tx_mask, SMC_WR_BUF_CNT);
-> +	bitmap_zero(lnk->wr_tx_mask, lnk->lgr->max_send_wr);
->  	init_waitqueue_head(&lnk->wr_tx_wait);
->  	rc = percpu_ref_init(&lnk->wr_tx_refs, smcr_wr_tx_refs_free, 0, GFP_KERNEL);
->  	if (rc)
-> diff --git a/net/smc/smc_wr.h b/net/smc/smc_wr.h
-> index f3008dda222a..aa4533af9122 100644
-> --- a/net/smc/smc_wr.h
-> +++ b/net/smc/smc_wr.h
-> @@ -19,8 +19,6 @@
->  #include "smc.h"
->  #include "smc_core.h"
->  
-> -#define SMC_WR_BUF_CNT 16	/* # of ctrl buffers per link */
-> -
->  #define SMC_WR_TX_WAIT_FREE_SLOT_TIME	(10 * HZ)
->  
->  #define SMC_WR_TX_SIZE 44 /* actual size of wr_send data (<=SMC_WR_BUF_SIZE) */
-
+> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  drivers/pci/controller/dwc/pci-imx6.c | 43
+> > > ++++++++++++++++++++++++++-
+> > >  1 file changed, 42 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
+> > > b/drivers/pci/controller/dwc/pci-imx6.c
+> > > index 80e48746bbaf..6b03b1111d06 100644
+> > > --- a/drivers/pci/controller/dwc/pci-imx6.c
+> > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> > > @@ -52,6 +52,8 @@
+> > >  #define IMX95_PCIE_REF_CLKEN			BIT(23)
+> > >  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
+> > >  #define IMX95_PCIE_SS_RW_REG_1			0xf4
+> > > +#define IMX95_PCIE_CLKREQ_OVERRIDE_EN		BIT(8)
+> > > +#define IMX95_PCIE_CLKREQ_OVERRIDE_VAL		BIT(9)
+> > >  #define IMX95_PCIE_SYS_AUX_PWR_DET		BIT(31)
+> > >
+> > >  #define IMX95_PE0_GEN_CTRL_1			0x1050
+> > > @@ -136,6 +138,7 @@ struct imx_pcie_drvdata {
+> > >  	int (*enable_ref_clk)(struct imx_pcie *pcie, bool enable);
+> > >  	int (*core_reset)(struct imx_pcie *pcie, bool assert);
+> > >  	int (*wait_pll_lock)(struct imx_pcie *pcie);
+> > > +	void (*clr_clkreq_override)(struct imx_pcie *pcie);
+> > >  	const struct dw_pcie_host_ops *ops;
+> > >  };
+> > >
+> > > @@ -149,6 +152,7 @@ struct imx_pcie {
+> > >  	struct gpio_desc	*reset_gpiod;
+> > >  	struct clk_bulk_data	*clks;
+> > >  	int			num_clks;
+> > > +	bool			supports_clkreq;
+> > >  	struct regmap		*iomuxc_gpr;
+> > >  	u16			msi_ctrl;
+> > >  	u32			controller_id;
+> > > @@ -239,6 +243,16 @@ static unsigned int imx_pcie_grp_offset(const
+> > struct imx_pcie *imx_pcie)
+> > >  	return imx_pcie->controller_id == 1 ? IOMUXC_GPR16 : IOMUXC_GPR14;
+> > > }
+> > >
+> > > +static void  imx95_pcie_clkreq_override(struct imx_pcie *imx_pcie,
+> > > +bool enable) {
+> > > +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
+> > > +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN,
+> > > +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_EN : 0);
+> > > +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
+> > > +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL,
+> > > +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_VAL : 0); }
+> > > +
+> > >  static int imx95_pcie_init_phy(struct imx_pcie *imx_pcie)  {
+> > >  	/*
+> > > @@ -685,7 +699,7 @@ static int imx6q_pcie_enable_ref_clk(struct
+> > imx_pcie *imx_pcie, bool enable)
+> > >  	return 0;
+> > >  }
+> > >
+> > > -static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool
+> > > enable)
+> > > +static void imx8mm_pcie_clkreq_override(struct imx_pcie *imx_pcie,
+> > > +bool enable)
+> > >  {
+> > >  	int offset = imx_pcie_grp_offset(imx_pcie);
+> > >
+> > > @@ -695,6 +709,11 @@ static int imx8mm_pcie_enable_ref_clk(struct
+> > imx_pcie *imx_pcie, bool enable)
+> > >  	regmap_update_bits(imx_pcie->iomuxc_gpr, offset,
+> > >  			   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
+> > >  			   enable ? IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN : 0);
+> > > +}
+> > > +
+> > > +static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool
+> > > +enable) {
+> > > +	imx8mm_pcie_clkreq_override(imx_pcie, enable);
+> > >  	return 0;
+> > >  }
+> > >
+> > > @@ -1298,6 +1317,16 @@ static void imx_pcie_host_exit(struct
+> > dw_pcie_rp *pp)
+> > >  		regulator_disable(imx_pcie->vpcie);
+> > >  }
+> > >
+> > > +static void imx8mm_pcie_clr_clkreq_override(struct imx_pcie
+> > > +*imx_pcie) {
+> > > +	imx8mm_pcie_clkreq_override(imx_pcie, false); }
+> > > +
+> > > +static void imx95_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
+> > > +{
+> > > +	imx95_pcie_clkreq_override(imx_pcie, false); }
+> > > +
+> > >  static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)  {
+> > >  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp); @@ -1322,6 +1351,12
+> > @@
+> > > static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+> > >  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+> > >  		dw_pcie_dbi_ro_wr_dis(pci);
+> > >  	}
+> > > +
+> > > +	/* Clear CLKREQ# override if supports_clkreq is true and link is up */
+> > > +	if (dw_pcie_link_up(pci) && imx_pcie->supports_clkreq) {
+> > > +		if (imx_pcie->drvdata->clr_clkreq_override)
+> > > +			imx_pcie->drvdata->clr_clkreq_override(imx_pcie);
+> > > +	}
+> > >  }
+> > >
+> > >  /*
+> > > @@ -1745,6 +1780,8 @@ static int imx_pcie_probe(struct platform_device
+> > *pdev)
+> > >  	pci->max_link_speed = 1;
+> > >  	of_property_read_u32(node, "fsl,max-link-speed",
+> > > &pci->max_link_speed);
+> > >
+> > > +	imx_pcie->supports_clkreq =
+> > > +		of_property_read_bool(node, "supports-clkreq");
+> > >  	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
+> > >  	if (IS_ERR(imx_pcie->vpcie)) {
+> > >  		if (PTR_ERR(imx_pcie->vpcie) != -ENODEV) @@ -1873,6 +1910,7 @@
+> > > static const struct imx_pcie_drvdata drvdata[] = {
+> > >  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
+> > >  		.init_phy = imx8mq_pcie_init_phy,
+> > >  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+> > > +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
+> > >  	},
+> > >  	[IMX8MM] = {
+> > >  		.variant = IMX8MM,
+> > > @@ -1883,6 +1921,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+> > >  		.mode_off[0] = IOMUXC_GPR12,
+> > >  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+> > >  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+> > > +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
+> > >  	},
+> > >  	[IMX8MP] = {
+> > >  		.variant = IMX8MP,
+> > > @@ -1893,6 +1932,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+> > >  		.mode_off[0] = IOMUXC_GPR12,
+> > >  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+> > >  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+> > > +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
+> > >  	},
+> > >  	[IMX8Q] = {
+> > >  		.variant = IMX8Q,
+> > > @@ -1913,6 +1953,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+> > >  		.core_reset = imx95_pcie_core_reset,
+> > >  		.init_phy = imx95_pcie_init_phy,
+> > >  		.wait_pll_lock = imx95_pcie_wait_for_phy_pll_lock,
+> > > +		.clr_clkreq_override = imx95_pcie_clr_clkreq_override,
+> > >  	},
+> > >  	[IMX8MQ_EP] = {
+> > >  		.variant = IMX8MQ_EP,
+> > > --
+> > > 2.37.1
+> > >
 
