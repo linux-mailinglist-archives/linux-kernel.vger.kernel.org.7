@@ -1,228 +1,137 @@
-Return-Path: <linux-kernel+bounces-833868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4F1BA3416
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF801BA341C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8DF8624B41
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:53:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE0D624980
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED629DB6A;
-	Fri, 26 Sep 2025 09:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C170E29E11D;
+	Fri, 26 Sep 2025 09:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b="q+LphQTY"
-Received: from mx08-007fc201.pphosted.com (mx08-007fc201.pphosted.com [91.207.212.40])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gUeF1nSV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FAE29BD9C;
-	Fri, 26 Sep 2025 09:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067F672608;
+	Fri, 26 Sep 2025 09:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758880415; cv=none; b=ao0EI96YWmrmA2s8ttFim8MYAFGVW7tAIHLoH4HS2fJkSU4U8/YGBzuSA5VDvNZtEox3rMcS2/DtoIJeXL6Y8ltmeU1KtiqkTs7CZ3Dal69hRLJwa6U+sVzsaqMz9dXZ8EI4kKSlCc6WiiXII9z4WhOBNj67bNxSohtxHdcOjoA=
+	t=1758880480; cv=none; b=ataQVlf8hWXK11MVpQoMICaZQnuF7YqH9SgZKs1wR69e9mxuZnuQa3c7F2QsvHw1oGRpXDiL6p1InpUrK18RjofQBXmZZlbHVoKhPxDuMpJn7DCPp47Deuma+NARyhU20BJ4sXUrGv7SQGBWhfE4s2sbXkE4r3xT1e4NjkQmU04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758880415; c=relaxed/simple;
-	bh=en6d0hHij2irk5zdjFbgBYlwcpYdNB6CNO0zPbcRDTo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XO2UtVHrJ2tU2qxJelzxOX4qZWxPmQaf2IPvHQO64pVXUkM/mbFa9l4jr7WLbxw+gepO/G/tr2KqJo25Ztofkb3CSh/7Qw6HHcARBdLQDTxPSB+jvJRqbJfx4nUMFgiOAZJ8C3ktLkAUZeYG+iVE2gDfkBbYNvYKpj2q3CMJrqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b=q+LphQTY; arc=none smtp.client-ip=91.207.212.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cab.de
-Received: from pps.filterd (m0456229.ppops.net [127.0.0.1])
-	by mx08-007fc201.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58Q9rRG61799306;
-	Fri, 26 Sep 2025 11:53:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cab.de; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp-2025; bh=6f5Dn/r0RoMlQHj4h9qsA9M1
-	+iFwmJ27lr1yK8Qj0xQ=; b=q+LphQTYERwfpUpZJbovDZLrtPmjOqctnFSiEAN7
-	SXrWB8XM/TTQJno2D+hyuSaBOIprKf6fqWMEm7S91aBtLGslx/5UZ05F/AcvWzfv
-	spbGtWufd9TQRfdaG0bu97JpTI6O+keF9qMfQFCQYg7oQYO4bpeA6eu8A7UWRSCT
-	n+R6mHatJX9ktYLEryyeWbGQ2t9j3Oe+RTCnVxJEFmBFsrOQFZmkPAe1XRC2gvpZ
-	oWyUho9DMv6m8CMIULjK3JmHrw9SyJj7xc+gvT5WpnooI5O9kRLjxTTPVc05ZJFl
-	2oLUc+BNE8XbtZs+WrkOrJ6T1nFBIBk7skDaMaLgbZ7ckw==
-Received: from adranos.cab.de (adranos.cab.de [46.232.229.107])
-	by mx08-007fc201.pphosted.com (PPS) with ESMTPS id 49dbt4g7ef-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 11:53:27 +0200 (MEST)
-Received: from KAN23-025.cab.de (10.10.3.180) by Adranos.cab.de (10.10.1.54)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Fri, 26 Sep
- 2025 11:53:43 +0200
-From: Markus Heidelberg <m.heidelberg@cab.de>
-To: Jonathan Corbet <corbet@lwn.net>
-CC: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Markus
- Heidelberg <m.heidelberg@cab.de>
-Subject: [PATCH] Documentation: fix spelling, typos, grammar, duplicated words
-Date: Fri, 26 Sep 2025 11:53:12 +0200
-Message-ID: <20250926095312.206231-1-m.heidelberg@cab.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758880480; c=relaxed/simple;
+	bh=eELDXjeQZxS6NsOIyW6XzwZXiL7iOPa489E3zQRrRNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjjdNx0yMN9o5DEGuEiMgUllElMV+RE5W4lTxZtGIW1uWRSHY4guz6B1gOXoLYPlIAoLS9gYHo464kYk937I16bmVMuEsVAfNFphAUYHWzfRF/3LPSHvD2PnvjpgF/DTAF0f3Sq7FQnTUfL+isV4/U5yA0TmzmFD23fIqbG/tdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gUeF1nSV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4443240E016E;
+	Fri, 26 Sep 2025 09:54:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gFC9n_7gOEvU; Fri, 26 Sep 2025 09:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758880470; bh=a39b8Q3inNwJfR0YLv5Qz2n5BWsJMVO8UdZh+vhbf0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gUeF1nSVsg96+HRQWlvpWHPFcAkXhrwsqUB6x75nCNkSwA0KvfkX2N4Mj3dXwvt4a
+	 W5YzW/BDkhfYhnQQMOjf32oQcMG+t57I6EtPFDYYnonNv/T/tpLnMBIPVG2SU20jfJ
+	 mYV3AR11emjNtLojVcyL0faVbBKISWSzvhImtwekaEuURRFZuH6Ur5hxjwoLOXD0iC
+	 Gx1ER+OHlFZC+JQ7SmVCCcBv678T4pfzBk/UUlTi+fYRA0EsWb3X1w62CcLHOonOQt
+	 t2TtM7G9icLthQTk1P5Bf5dzUBOHoNmn5765Z8K821wSsfQiaHQPTJMBMgzNzBIj5t
+	 at3ko5OCSujSDuHkNIAGbo+8ee3buAm4RUMl5lDZTLpdjiJF+ddyfImOeiOcrGCXpY
+	 802EW22KZyVURC/IITt8CuOyuT6/iuyV/3rHaAPgp3tByixNynazzMwJicjI9rx+pB
+	 YKoAujgay4MgJ43/YMe2pvc0++h9l9XSNse1v3bqoKscPxfhRlaY2inaby/sMreHIK
+	 vuSqtqa0nd39KRq+3rxbH4wGlEj5EnHuDsLeHOxSyW4DS5BCWH2hWNlfc81cBbjNbw
+	 wLQvfe9FxEE346B8dH5W6cVb8pISCVulX6V2x7u2TfktSBHT99xsCJ3PGc9gB73+95
+	 lbMxiIYDBEf9OXv0nnWImwto=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id B956540E0140;
+	Fri, 26 Sep 2025 09:54:21 +0000 (UTC)
+Date: Fri, 26 Sep 2025 11:54:19 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: wangchuanguo <wangchuanguo@inspur.com>
+Cc: tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mce: deal with UCE when copy clean pagecache to user
+ space
+Message-ID: <20250926095419.GAaNZiy75HDdKV4LI2@fat_crate.local>
+References: <20250926054402.1571-1-wangchuanguo@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Adranos.cab.de (10.10.1.54) To Adranos.cab.de (10.10.1.54)
-X-Proofpoint-GUID: 9L-v39hh5XHxr7_WQEpejG_nIjRSrav7
-X-Authority-Analysis: v=2.4 cv=XdWEDY55 c=1 sm=1 tr=0 ts=68d66297 cx=c_pps
- a=LmW7qmVeM6tFdl5svFU9Cg==:117 a=LmW7qmVeM6tFdl5svFU9Cg==:17
- a=kldc_9v1VKEA:10 a=yJojWOMRYYMA:10 a=AASUXlr5cEY_NRS87wIA:9
-X-Proofpoint-ORIG-GUID: 9L-v39hh5XHxr7_WQEpejG_nIjRSrav7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI2MDA5MCBTYWx0ZWRfX5Xy9XAxMP+Ir
- ZCx7nBIuZeybl3Fora3vRG0yvbH8kf4BtNli6ySkApkcOXflnQcyHuxh9VNCADLAlxLftDGENDV
- QF75TrX9RTCtNqm/C+MaHRRMCN1XR4BSKhNZs6tJ5VNT54Yr4viaCyo/P2kan9cBHGSrmp6/tnK
- iy8R+1rqUZvSFrt/RjNbgBH8bQfrCcsT/rp8dgWt88WPHBtniHDgxogWWmX1g4Yj5LelinEsNqI
- PxXsHjBXuEpprpTh6upnrRP8wlm/GHs26BtCxJvHc/ZAsh30HlcO8r25EFUGz9GPGoiwyap/BbK
- D90xtOAMvdlxmoqOqfoU9xwj9mPLUOcxaD8ISBuPn8BG7KMHQE9Tetj02Esp945xJZdNP3z1LhZ
- MIbfjSY3pn9LhBPwfe3oLPX4B6S/1A==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250926054402.1571-1-wangchuanguo@inspur.com>
 
-Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
----
- Documentation/bpf/prog_flow_dissector.rst  | 4 ++--
- Documentation/fb/fbcon.rst                 | 2 +-
- Documentation/filesystems/path-lookup.rst  | 2 +-
- Documentation/hwmon/lm75.rst               | 2 +-
- Documentation/kernel-hacking/hacking.rst   | 2 +-
- Documentation/networking/phy.rst           | 8 ++++----
- Documentation/process/management-style.rst | 2 +-
- 7 files changed, 11 insertions(+), 11 deletions(-)
+On Fri, Sep 26, 2025 at 01:44:02PM +0800, wangchuanguo wrote:
+> Based on copy_from_user, extending the goal to unmap,discard,
+> and remap when errors occur in clean pagecache.
 
-diff --git a/Documentation/bpf/prog_flow_dissector.rst b/Documentation/bpf/prog_flow_dissector.rst
-index f24270b8b034..8de1446b278b 100644
---- a/Documentation/bpf/prog_flow_dissector.rst
-+++ b/Documentation/bpf/prog_flow_dissector.rst
-@@ -68,7 +68,7 @@ Pre-VLAN parsing::
+This does not even begin to explain why this patch exists:
  
- .. code:: c
+A possible way to structure the commit message is:
  
--  skb->data + flow_keys->nhoff point the to first byte of TCI
-+  skb->data + flow_keys->nhoff point to the first byte of TCI
-   flow_keys->thoff = nhoff
-   flow_keys->n_proto = TPID
+1. Prepare the context for the explanation briefly.
  
-@@ -87,7 +87,7 @@ Post-VLAN parsing::
+2. Explain the problem at hand.
  
- .. code:: c
+3. "It happens because of <...>"
  
--  skb->data + flow_keys->nhoff point the to first byte of L3_HEADER
-+  skb->data + flow_keys->nhoff point to the first byte of L3_HEADER
-   flow_keys->thoff = nhoff
-   flow_keys->n_proto = ETHER_TYPE
+4. "Fix it by doing X"
  
-diff --git a/Documentation/fb/fbcon.rst b/Documentation/fb/fbcon.rst
-index a98a5cb0b0d8..b278a8fe7e2b 100644
---- a/Documentation/fb/fbcon.rst
-+++ b/Documentation/fb/fbcon.rst
-@@ -109,7 +109,7 @@ C. Boot options
- 	available, fb0, adding fbcon=map:1 tells fbcon not to take over the
- 	console.
+5. "(Potentially do Y)."
  
--	Later on, when you want to map the console the to the framebuffer
-+	Later on, when you want to map the console to the framebuffer
- 	device, you can use the con2fbmap utility.
+And some of those above are optional depending on the issue being
+explained.
  
- 3. fbcon=vc:<n1>-<n2>
-diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/filesystems/path-lookup.rst
-index 9ced1135608e..4e374f9073f6 100644
---- a/Documentation/filesystems/path-lookup.rst
-+++ b/Documentation/filesystems/path-lookup.rst
-@@ -1077,7 +1077,7 @@ whether in RCU-walk or REF-walk, the symlink stack needs to contain,
- along with the path remnants:
+For more detailed info, see
+Documentation/process/submitting-patches.rst,
+Section "2) Describe your changes".
  
- - the ``struct path`` to provide a reference to the previous path
--- the ``const char *`` to provide a reference to the to previous name
-+- the ``const char *`` to provide a reference to the previous name
- - the ``seq`` to allow the path to be safely switched from RCU-walk to REF-walk
- - the ``struct delayed_call`` for later invocation.
+Also, to the tone, from Documentation/process/submitting-patches.rst:
  
-diff --git a/Documentation/hwmon/lm75.rst b/Documentation/hwmon/lm75.rst
-index c6a54bbca3c5..f05799c53474 100644
---- a/Documentation/hwmon/lm75.rst
-+++ b/Documentation/hwmon/lm75.rst
-@@ -154,7 +154,7 @@ The LM75 implements one temperature sensor. Limits can be set through the
- Overtemperature Shutdown register and Hysteresis register. Each value can be
- set and read to half-degree accuracy.
- An alarm is issued (usually to a connected LM78) when the temperature
--gets higher then the Overtemperature Shutdown value; it stays on until
-+gets higher than the Overtemperature Shutdown value; it stays on until
- the temperature falls below the Hysteresis value.
- All temperatures are in degrees Celsius, and are guaranteed within a
- range of -55 to +125 degrees.
-diff --git a/Documentation/kernel-hacking/hacking.rst b/Documentation/kernel-hacking/hacking.rst
-index 0042776a9e17..b3d352d2ffcc 100644
---- a/Documentation/kernel-hacking/hacking.rst
-+++ b/Documentation/kernel-hacking/hacking.rst
-@@ -259,7 +259,7 @@ overruns. Make sure that will be enough.
- .. note::
+ "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+  to do frotz", as if you are giving orders to the codebase to change
+  its behaviour."
  
-     You will know when you are a real kernel hacker when you start
--    typoing printf as printk in your user programs :)
-+    typing printf as printk in your user programs :)
- 
- .. note::
- 
-diff --git a/Documentation/networking/phy.rst b/Documentation/networking/phy.rst
-index 7f159043ad5a..8d457979a1f1 100644
---- a/Documentation/networking/phy.rst
-+++ b/Documentation/networking/phy.rst
-@@ -5,7 +5,7 @@ PHY Abstraction Layer
- Purpose
- =======
- 
--Most network devices consist of set of registers which provide an interface
-+Most network devices consist of a set of registers which provide an interface
- to a MAC layer, which communicates with the physical connection through a
- PHY.  The PHY concerns itself with negotiating link parameters with the link
- partner on the other side of the network connection (typically, an ethernet
-@@ -262,7 +262,7 @@ Some of the interface modes are described below:
-     encoding.  The underlying data rate is 1Gbps, with the slower speeds of
-     100Mbps and 10Mbps being achieved through replication of each data symbol.
-     The 802.3 control word is re-purposed to send the negotiated speed and
--    duplex information from to the MAC, and for the MAC to acknowledge
-+    duplex information to the MAC, and for the MAC to acknowledge
-     receipt.  This does not include "up-clocked" variants such as 2.5Gbps
-     speeds.
- 
-@@ -285,7 +285,7 @@ Some of the interface modes are described below:
- 
-     Note: 10GBASE-R is just one protocol that can be used with XFI and SFI.
-     XFI and SFI permit multiple protocols over a single SERDES lane, and
--    also defines the electrical characteristics of the signals with a host
-+    also define the electrical characteristics of the signals with a host
-     compliance board plugged into the host XFP/SFP connector. Therefore,
-     XFI and SFI are not PHY interface types in their own right.
- 
-@@ -545,7 +545,7 @@ When phy_register_fixup() or \*_for_uid()/\*_for_id() is called at module load
- time, the module needs to unregister the fixup and free allocated memory when
- it's unloaded.
- 
--Call one of following function before unloading module::
-+Call one of the following functions before unloading the module::
- 
-  int phy_unregister_fixup(const char *phy_id, u32 phy_uid, u32 phy_uid_mask);
-  int phy_unregister_fixup_for_uid(u32 phy_uid, u32 phy_uid_mask);
-diff --git a/Documentation/process/management-style.rst b/Documentation/process/management-style.rst
-index dfbc69bf49d4..0b9e074277d0 100644
---- a/Documentation/process/management-style.rst
-+++ b/Documentation/process/management-style.rst
-@@ -42,7 +42,7 @@ actually true.
- The name of the game is to **avoid** having to make a decision.  In
- particular, if somebody tells you "choose (a) or (b), we really need you
- to decide on this", you're in trouble as a manager.  The people you
--manage had better know the details better than you, so if they come to
-+manage know the details better than you, so if they come to
- you for a technical decision, you're screwed.  You're clearly not
- competent to make that decision for them.
- 
+Also, do not talk about what your patch does - that should (hopefully) be
+visible from the diff itself. Rather, talk about *why* you're doing what
+you're doing.
 
-base-commit: e30917da6074205bb1071a52e325c9d6ffe68ad5
-prerequisite-patch-id: 81e067eae729d71e41b653c4f550dd3449003592
-prerequisite-patch-id: 21078cbf43929b4a0d56ab4bb4acea907af70d7a
+> @@ -264,8 +278,14 @@ static bool is_copy_from_user(struct pt_regs *regs)
+>  		return false;
+>  	}
+>  
+> -	if (fault_in_kernel_space(addr))
+> -		return false;
+> +	if (fault_in_kernel_space(addr)) {
+> +		if (is_clean_pagecache(addr) && !fault_in_kernel_space(regs->di)) {
+> +			//is copying clean pagecache to user space
+
+Look at the comment style in the rest of the file before you add this //
+
+Thx.
+
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
