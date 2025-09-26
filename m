@@ -1,189 +1,190 @@
-Return-Path: <linux-kernel+bounces-834188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1B1BA4241
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:23:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B42BA414E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479213BA347
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:23:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49B9622DA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A8F2FB094;
-	Fri, 26 Sep 2025 14:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02DB19E992;
+	Fri, 26 Sep 2025 14:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ci+mrXur"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSJsv4go"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986A62FB974
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513E634BA4D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896372; cv=none; b=H1dd9VgYeM3A/f3py1fbAxcJFtw+SxAo9USoWKr3jQLGgmN3RWgS44oJ3NaiHed/mP1gDmYcIMAwb+RzhRDrur1kjuROt34TlmnAuAEmj2uhv0uB9gOdhGbR+93PcSemDbC2oErOHtDQ9JLqV7Fd5S1N16SyvZTvZIYdAFKMCCk=
+	t=1758896259; cv=none; b=IFFPoW0IepbJ5RgLbW1HHLd7jUXulaoPespMW35U4v7qryLe3kv5948ynWO3Uew3VX9aDDAlH7FMih7y7WH4+ob5Q1a1KaQHdGsiaEVhcJExaTCrCW268NFewjXyU6vb4AXPhmwXGOeAD74lc2qiJF2F4UyUvxM6Gdx8CZoV8qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896372; c=relaxed/simple;
-	bh=7J0+HkTXYWDcEOw7KvlwDqgDhLnyM0IzRRcaqPCzpkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i0gSGk7e0lHaroCcb4WrtZLsZAfhHaeBPITkKHzQigD7CHWOwwVo5n2mgaWvPm7lnSYZJ3Wr8R+whJBkZLw8G3iFtY1zZnIfw3stC2Oc1sfzEzf2hkx4I3kSi78Z/+ayMWK/w3v6hdyJAYKwEGcCJYCrMkqoJ3rBPgniLB05DRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ci+mrXur; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3612c38b902so19058631fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758896367; x=1759501167; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/fpb7zplNlEXOl8DahnPV19OFE+HVfaJi7nHJwxF/NI=;
-        b=Ci+mrXurbmHDVn1DYV53syRmTofJksTN8U/kU0DbuxU01SS58g4hVa6fWI7yzD39UW
-         RUHcD31S9HtZk+3eo/POq0nqLPdA1FoQ85zbSpXgdJ6JszGnu6fsNK0B0yq0l66BfZpc
-         Cgsf2NjHK9vRSWWaE8KlKLxD1mKjOK9OSV6mIaraAbM5F6AnQRfXWj8uRDngRXqWhxH6
-         Kquz/4AuksZff8z8L6yPUsUyXN3MO9aYbQNFdfLoRvdWiqm/KG85XHPGbyCKC+QnLnGK
-         tFCUYXc/Dal5GMTeIeBcJE1kitCPpAjlWtQHx0UzZi5bCZPvyvHBpVJgTLc//C0DDSVn
-         BzaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758896367; x=1759501167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/fpb7zplNlEXOl8DahnPV19OFE+HVfaJi7nHJwxF/NI=;
-        b=X3e7NbHT5XLTEweaC6YynxHO+3RIvGlgwpFAryA4YJ6H/ZdGNu/ZuIdenos1fbdgOS
-         zU9ETrv7p90O8tYJEq5Xjg+/DWkFNFN3uj+QPkXXWSH3hPeJdqrlDvdASCaHfgSyEtMP
-         PJ8hV+7SsoFZjfeKmWTy+EYhu8dtmtLy0oWwkhlhYy6mhkWW+hD68MupszDp+OIT8P1t
-         bqfwOR2iruZkTlasgU07MYg5nh8Y7Qry5SvtzcQMLYnTseodAF3Eb+grciT5CHUuUpEm
-         6rlfw3VJFOZZ32hsruRyJ8iHjNZuA0qGx1giuZbbZewFCBGHnojtbz5cx9q8crYa+xfW
-         oL/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXHC7BeNBfVlcAyao/NX8+CgB5A3vUHQovJr9CWIEslRQG9jZRA/DnKbc3MyprRQONpMbVzx+FBbPhDMNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVktMnDU7iak/z7Nv9/KK/yoIdGwemXWpNVIOMCsvRaM0HvwKV
-	HjAFACFgOcQDUewRh9L2L6C7PbAVGgihJHdJry7me1tKVoyW8xMs3F7+T0IGuLNRtlq5hWmr0MI
-	SLrbguCnUn9m+Ua66ji1arG/vuEjxZjdCQ/3cFxgJHA==
-X-Gm-Gg: ASbGncu6CvahhTnHTBaR7MHAzJZyn23eWQu8LDqpieXRoA9zfM5yoIaDAnKiRrGFBQc
-	wEnQpIDgJ9bgQXj+EHIZj+dBz50yP0+GnZxFgVXSyhSMcB573Talf3mYkr4nohG2S7k/skVVri1
-	m/qmA05egxXAic3eoR+jDrCdd2IxE3CzFYU33Gelt72r6nqNzOCWI2YJ5YXgPfQ7IW/d551HnfF
-	J2PAloaO9/bBrc/3PHbwyNMyDImSh3XTG927SFzu7/W/rDiLLs=
-X-Google-Smtp-Source: AGHT+IEg0+1QXoqdETbA8SDUMeNvDmPKly4QwcMuj46HgcIsQ+bdLFCRP4n9mvzwGVi+rGsRhftydsEC9n815inQwuc=
-X-Received: by 2002:a05:651c:549:b0:337:e0e1:d11e with SMTP id
- 38308e7fff4ca-36f7d9b746cmr22623801fa.18.1758896366780; Fri, 26 Sep 2025
- 07:19:26 -0700 (PDT)
+	s=arc-20240116; t=1758896259; c=relaxed/simple;
+	bh=OTubWr8aGIM8X5wNilenHrSAF+Iaw2t6j52eFnya6/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cRN3AvFSXEubsKGnYRVOtmgKSNQ12EMgZMJ6cEdGzjVbqmJ1ZJtqJB8ky327grScEBYg5T0idBEiYFexavas6ZnzdOnXpWtNfTSel/oyDLHm8CQFVTSCJ8pdK+05BmwuCHSg27cFMO6vC/HNsuVGkXsbPcIX+A2rF7iY4Ye/Lfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSJsv4go; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E949C4CEF4;
+	Fri, 26 Sep 2025 14:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758896258;
+	bh=OTubWr8aGIM8X5wNilenHrSAF+Iaw2t6j52eFnya6/0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mSJsv4gotqv7s0b7LicrMIWuV+EeYkJU/dit1x+80sQ6yQU9frl+BQ/oXSUkmIusx
+	 CK/8Wu2wJkEE2R10xvOkZLE/0TFVrteVrjTUyVJmSDsGORrPdSNxdErHzgWp3M3SKq
+	 XUJjVisQxBs2KjT2M5t1NaI7B+1uo8/Waxr8a/wPm5ucVOE/V86QcQ4xjk6jasJlZI
+	 C8Bni1Y3WaTETuULyI1hNugLBcZpslfPQ81wEHBm1rmSQC1B85x6nKYDoGuxbE4avg
+	 SUzmzHTq8U+vGKVcpoU1WTtlHfbORzfMUuLIKiL1yk+lnXMsAqfB7yemN+TFaY71oE
+	 XFudY4tlerhzA==
+Date: Fri, 26 Sep 2025 16:17:33 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Tejun Heo <tj@kernel.org>, Valentin Schneider <vschneid@redhat.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: [GIT PULL] Scheduler updates for v6.18
+Message-ID: <aNagfRAEhfbLelo9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926140729.267766-1-deepak.sharma.472935@gmail.com>
-In-Reply-To: <20250926140729.267766-1-deepak.sharma.472935@gmail.com>
-From: Deepak Sharma <deepak.sharma.472935@gmail.com>
-Date: Fri, 26 Sep 2025 19:47:17 +0530
-X-Gm-Features: AS18NWD-8e8l1x8r5L3ZN8abjE-3HFmgFfenVF2L-34K18DJt4SNcxgE42HfByQ
-Message-ID: <CABbzaOUQ04seRWn3ik2fnoMddc5uNfzNVfOuNcC+i+dT43isYg@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2] HID: cp2112: Add parameter validation to data length
-To: jikos@kernel.org, bentiss@kernel.org
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com, 
-	syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please ignore this patch. I did this patch quite a while ago and put
-the change log mistakenly into the commit message. Will send a v3
-fixing it. Sorry for being clumsy with that
+Linus,
 
-Thanks,
-Deepak Sharma
+Please pull the latest sched/core Git tree from:
 
-On Fri, Sep 26, 2025 at 7:39=E2=80=AFPM Deepak Sharma
-<deepak.sharma.472935@gmail.com> wrote:
->
-> This is v2 for the earlier patch, where a few bounds check were
-> unnecessarily strict. This patch also removes the use of magic numbers
->
-> Syzkaller reported a stack OOB access in cp2112_write_req caused by lack
-> of parameter validation for the user input in I2C SMBUS ioctl codeflow
-> in the report
->
-> I2C device drivers are "responsible for checking all the parameters that
-> come from user-space for validity" as specified at Documentation/i2c/dev-=
-interface
->
-> Add the parameter validation for the data->block[0] to be bounded by
-> I2C_SMBUS_BLOCK_MAX + the additional compatibility padding
->
-> Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D7617e19c8a59edfbd879
-> Tested-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
-> Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
-> ---
->  drivers/hid/hid-cp2112.c | 27 ++++++++++++++++++++++++---
->  1 file changed, 24 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
-> index 482f62a78c41..13dcd2470d92 100644
-> --- a/drivers/hid/hid-cp2112.c
-> +++ b/drivers/hid/hid-cp2112.c
-> @@ -689,7 +689,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16=
- addr,
->                         count =3D cp2112_write_read_req(buf, addr, read_l=
-ength,
->                                                       command, NULL, 0);
->                 } else {
-> -                       count =3D cp2112_write_req(buf, addr, command,
-> +                       /* Copy starts from data->block[1] so the length =
-can
-> +                        * be at max I2C_SMBUS_CLOCK_MAX + 1
-> +                        */
-> +
-> +                       if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
-> +                               count =3D -EINVAL;
-> +                       else
-> +                               count =3D cp2112_write_req(buf, addr, com=
-mand,
->                                                  data->block + 1,
->                                                  data->block[0]);
->                 }
-> @@ -700,7 +707,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16=
- addr,
->                                                       I2C_SMBUS_BLOCK_MAX=
-,
->                                                       command, NULL, 0);
->                 } else {
-> -                       count =3D cp2112_write_req(buf, addr, command,
-> +                       /* data_length here is data->block[0] + 1
-> +                        * so make sure that the data->block[0] is
-> +                        * less than or equals I2C_SMBUS_BLOCK_MAX + 1
-> +                       */
-> +                       if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
-> +                               count =3D -EINVAL;
-> +                       else
-> +                               count =3D cp2112_write_req(buf, addr, com=
-mand,
->                                                  data->block,
->                                                  data->block[0] + 1);
->                 }
-> @@ -709,7 +723,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16=
- addr,
->                 size =3D I2C_SMBUS_BLOCK_DATA;
->                 read_write =3D I2C_SMBUS_READ;
->
-> -               count =3D cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOC=
-K_MAX,
-> +               /* data_length is data->block[0] + 1, so
-> +                * so data->block[0] should be less than or
-> +                * equal to the I2C_SMBUS_BLOCK_MAX + 1
-> +               */
-> +               if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
-> +                       count =3D -EINVAL;
-> +               else
-> +                       count =3D cp2112_write_read_req(buf, addr, I2C_SM=
-BUS_BLOCK_MAX,
->                                               command, data->block,
->                                               data->block[0] + 1);
->                 break;
-> --
-> 2.51.0
->
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-2025-09-26
+
+   # HEAD: 45b7f780739a3145aeef24d2dfa02517a6c82ed6 sched: Fix some typos in include/linux/preempt.h
+
+( Merge note: we've stopped using Link tags for the purpose of tip-bot 
+  lkml email notifications during the v6.18 development window, and 
+  thus commits applied after September 15-ish only have Links if they 
+  are particularly informative. Commits before that still have the 
+  old-style Link tags. )
+
+Scheduler updates for v6.18:
+
+Core scheduler changes:
+
+ - Make migrate_{en,dis}able() inline, to improve performance
+   (Menglong Dong)
+
+ - Move STDL_INIT() functions out-of-line (Peter Zijlstra)
+
+ - Unify the SCHED_{SMT,CLUSTER,MC} Kconfig (Peter Zijlstra)
+
+Fair scheduling:
+
+ - Defer throttling when tasks exit to user-space, to reduce the
+   chance & impact of throttle-preemption with held locks and
+   other resources. (Aaron Lu, Valentin Schneider)
+
+ - Get rid of sched_domains_curr_level hack for tl->cpumask(),
+   as the warning was getting triggered on certain topologies.
+   (Peter Zijlstra)
+
+Misc cleanups & fixes:
+
+ - Header cleanups (Menglong Dong)
+
+ - Fix race in push_dl_task() (Harshit Agarwal)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Aaron Lu (6):
+      sched/fair: Task based throttle time accounting
+      sched/fair: Get rid of throttled_lb_pair()
+      sched/fair: Propagate load for throttled cfs_rq
+      sched/fair: update_cfs_group() for throttled cfs_rqs
+      sched/fair: Do not special case tasks in throttled hierarchy
+      sched/fair: Do not balance task to a throttled cfs_rq
+
+Harshit Agarwal (1):
+      sched/deadline: Fix race in push_dl_task()
+
+Menglong Dong (4):
+      arch: Add the macro COMPILE_OFFSETS to all the asm-offsets.c
+      rcu: Replace preempt.h with sched.h in include/linux/rcupdate.h
+      sched: Make migrate_{en,dis}able() inline
+      sched: Fix some typos in include/linux/preempt.h
+
+Peter Zijlstra (3):
+      sched/fair: Get rid of sched_domains_curr_level hack for tl->cpumask()
+      sched: Move STDL_INIT() functions out-of-line
+      sched: Unify the SCHED_{SMT,CLUSTER,MC} Kconfig
+
+Valentin Schneider (3):
+      sched/fair: Add related data structure for task based throttle
+      sched/fair: Implement throttle task work and related helpers
+      sched/fair: Switch to task based throttle model
+
+
+ Kbuild                               |  13 +-
+ arch/Kconfig                         |  38 +++
+ arch/alpha/kernel/asm-offsets.c      |   1 +
+ arch/arc/kernel/asm-offsets.c        |   1 +
+ arch/arm/Kconfig                     |  18 +-
+ arch/arm/kernel/asm-offsets.c        |   2 +
+ arch/arm64/Kconfig                   |  26 +-
+ arch/arm64/kernel/asm-offsets.c      |   1 +
+ arch/csky/kernel/asm-offsets.c       |   1 +
+ arch/hexagon/kernel/asm-offsets.c    |   1 +
+ arch/loongarch/Kconfig               |  19 +-
+ arch/loongarch/kernel/asm-offsets.c  |   2 +
+ arch/m68k/kernel/asm-offsets.c       |   1 +
+ arch/microblaze/kernel/asm-offsets.c |   1 +
+ arch/mips/Kconfig                    |  16 +-
+ arch/mips/kernel/asm-offsets.c       |   2 +
+ arch/nios2/kernel/asm-offsets.c      |   1 +
+ arch/openrisc/kernel/asm-offsets.c   |   1 +
+ arch/parisc/Kconfig                  |   9 +-
+ arch/parisc/kernel/asm-offsets.c     |   1 +
+ arch/powerpc/Kconfig                 |  11 +-
+ arch/powerpc/include/asm/topology.h  |   2 +
+ arch/powerpc/kernel/asm-offsets.c    |   1 +
+ arch/powerpc/kernel/smp.c            |  27 +-
+ arch/riscv/Kconfig                   |   9 +-
+ arch/riscv/kernel/asm-offsets.c      |   1 +
+ arch/s390/Kconfig                    |   8 +-
+ arch/s390/kernel/asm-offsets.c       |   1 +
+ arch/s390/kernel/topology.c          |  20 +-
+ arch/sh/kernel/asm-offsets.c         |   1 +
+ arch/sparc/Kconfig                   |  20 +-
+ arch/sparc/kernel/asm-offsets.c      |   1 +
+ arch/um/kernel/asm-offsets.c         |   2 +
+ arch/x86/Kconfig                     |  27 +-
+ arch/x86/kernel/smpboot.c            |   8 +-
+ arch/xtensa/kernel/asm-offsets.c     |   1 +
+ include/linux/preempt.h              |  11 +-
+ include/linux/rcupdate.h             |   2 +-
+ include/linux/sched.h                | 118 +++++++++
+ include/linux/sched/topology.h       |  29 +--
+ include/linux/topology.h             |   2 +-
+ kernel/bpf/verifier.c                |   1 +
+ kernel/sched/core.c                  |  66 ++---
+ kernel/sched/deadline.c              |  73 ++++--
+ kernel/sched/fair.c                  | 489 +++++++++++++++++++++--------------
+ kernel/sched/pelt.h                  |   4 +-
+ kernel/sched/rq-offsets.c            |  12 +
+ kernel/sched/sched.h                 |   7 +-
+ kernel/sched/topology.c              |  73 ++++--
+ 49 files changed, 686 insertions(+), 496 deletions(-)
+ create mode 100644 kernel/sched/rq-offsets.c
 
