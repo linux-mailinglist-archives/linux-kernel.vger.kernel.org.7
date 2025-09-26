@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-833830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D49ABA32CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA8DBA32C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F5C7B6564
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58D7E1C02C4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C782BF002;
-	Fri, 26 Sep 2025 09:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5081729B8D0;
+	Fri, 26 Sep 2025 09:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrYUXZJs"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DP8ZBPeR"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DAE2BD58C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B841B2C0323
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879282; cv=none; b=lX0UvyTJimgqB3iSn3l044+bAxvxS/KXMJDMPDsh2EqbFi5xOoQQ2VNTUChqwNtilzp8jvX1umkIF+VPecMj9ITg4R3IIKjcjm5bptfrYcZHuh0Khh3LIk1g9RK2IM2czQH60y3nMarw4482slD7UNhvdvfggt3ImpVFaOJ8xiA=
+	t=1758879290; cv=none; b=SoMuWr5OQ2O/dymfsxWEFsmiBNQYj24b4+KdvMdKQuDSo5ox5eUYYs1C+YOxv8TBLA4rjPNLSnArHgTtszjuuJ+Z+hQcvpL4SIhEEnaIa3h+axUxoLLaRe3d2tRtu8j7pCRo2rJs8MegmZNtqZmjkEOpyL7Duf6vRTS/Cbhz5gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879282; c=relaxed/simple;
-	bh=Hma/ACUcxIvuWRcfKm0+Fz7g3KjXZp3i+HAKPNpNOmc=;
+	s=arc-20240116; t=1758879290; c=relaxed/simple;
+	bh=CXI0qMvWqpeePDr4xBG9e2uqemr9IpjeVUqDleKN93I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sCgniHaGMwIgxsHuCUQGY4b86SRlQ/H746fgzJlpptx8otCczambltkXRZ12uRMZ2kVgHc6XJRMJ2H30SxlUW0gIKDHiJBingL6i7QBRSTxC74ssbTCdLTOu0ZumBTu1oaMCFeVytnTOTy/YmKkTJFK1ySECVsyOCmG4QdZpH1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrYUXZJs; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=YfGxcw2ZIfcSxD66VCNm+OPV2tJgKzQT/+0a7LhvjL7gVBkP52n67SKRmVjSEZodpR9UJNGdY9PTYU6+LaoD4J+1Up5wtHc0xc/eh9vZsP3cbbvjZBrHIFsTkbOcOHTgaOdiOSUOBcbIeHfOQogTv/fH+B5n40JAJUAqFZBDl9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DP8ZBPeR; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so29856565ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:34:41 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-244580523a0so21147175ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:34:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758879281; x=1759484081; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758879288; x=1759484088; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QcUAVjuBCwqD/o526Djm1QGIR4OCMDMMqLBu73ohlCo=;
-        b=mrYUXZJs8rHPD7HirvQTBTLLXrSkbLGEe3s34QhuXZrUR5So0DuAvy3gLIl1Euq0g0
-         CB+q9/AMLR+b6WtwAZN47ChdrepFj644hnSXZt5blK3BStiTovf9zQzih80++uRu/KU3
-         5qgDsvUZumMVjT3g2use4odlE64/c3rFvWh0ymdNs0M4gk9lgu5/8wcgYYy39Snp6P1y
-         FdOAsUocNCRhHvYiSKJsUJIAKKGnCaX7NVcw09rYZ0Sx2FBcTkMUv/ks3bYn74bfll6y
-         vdQIsFVdrWIPjsxcY5xS9bU8P9dUFIIOnbadP1AkHCTbd77IXjengbXwMBl/kyuauXkv
-         YIYA==
+        bh=oOprrquoKlbkEreJojZ4KykFg8G0TswcVk79ghRz+Tk=;
+        b=DP8ZBPeR5oR1hon/YL568Z773lSOyxCG4Z+gZ1kHN0RH4xkQ6MEp6q4BSo9DC2Q/R4
+         IXhE2EY/ogG6D1MV1CeWxmoVWyZMv5j0X1xq708K0wC80ly1w+mBMn24k6ARY5v1CrKr
+         XR8NYrFaelqnSyv8jIE46QvZ4FVfYm2V1CgT1xvAGjKaNSc501uTFbiNCVmMeoZsWK9u
+         M5hC2gJxnIWMk5vpq6q7D9fuC4rZsWZX8ecHwe0gWFnu9e+nOINMyVQ68oBFYFQn0QBr
+         BhFjMLETOR60eoiZFOI+r4JQdbbBoaOY4PoxuEUJeFP/FabMkPoxihECfc0wGwg6kKMY
+         u6yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758879281; x=1759484081;
+        d=1e100.net; s=20230601; t=1758879288; x=1759484088;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QcUAVjuBCwqD/o526Djm1QGIR4OCMDMMqLBu73ohlCo=;
-        b=eEVxn3RGE9hDsGfzas5o1iA43w8YV3768hgi4d+OWYQDaHroK3gNpjcVerhpBJeOCh
-         zJ23CsrqiRfJXVqpomnl2zZTELVjtBcG+p3JEX6lpsdhyJJa/Qx63Yl529gaZUHVowiz
-         EENKcitZvoaYMy/lLFehaSo2qkIwOeyG084fW/FP3iS4/W0nxbcjF0J0zdjIFynhtZkc
-         KsVfT7cG18OeaaIjBdCHiO+ia5Aw5eIc4AuJeo0VsotQKzl2jYUWRsNnQrkzZXPT7aGH
-         cBILGAtSdEiSQgLIs6qbsa3Igfh2f3MX+ln3emuwdSsRvY384Cu5+3ud1vxL3J9H1WGP
-         Po4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXO5AKJaYXhvRg6wh2vOcRs35nC//82qbxcmqnnQcqgVByOU/sIAD3nQG7MhP/7oElfBmQ2Y6KWu4msZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzihee9bIhZGqqyTu90bOc8FD4ebov3DKcaADLcxNWMOTnxmXeN
-	l0DxqYon+1FsPrGyZPH8Kv0VdjpOTwPU4/qFt1gUV8H163JMl+m1LpUf
-X-Gm-Gg: ASbGncvlji9kTR/CtopgZnRKKja8mVKSpGX9r1W9230HmFv4S0NutfoT5zOUKArpUrV
-	81n7FG8n8zjj5uOPeRRtDtGGGEDLstNMTrCb/9f8xd7RBhtxnIlbMM0dmVbBuK25pOvvJnFsnzP
-	N4b3PdWzphHW2JldriVq/vDw7V6Eh7ZZrFuXF3DTNuAMQEVApPzSwniIB3CTzEtxKQOVsrPUhyX
-	wkFdUJhwqM8r7NRUBn5ScCj3rkepFRdmwVTyADO2lvCJqGxTxrgH3dWnpYzUyA7v7vg3Yb0zgAE
-	kwn5X26nwD6K2q3E2XLvrli2br4TfvrKd6bEQtrOyRnZ+C7DhhlkT0teEDDFqWaDTnnsLtblgk3
-	39DMRKgVkm5qFAOsW6ULpjo2z4+TAiftnTSsVyqCXEajshn4RwfUdb2DzxYbqOPg+Qz6qNpCI9w
-	7pHoiotw/pq3Dh
-X-Google-Smtp-Source: AGHT+IHpTOJHleE7ACdFvjLA52er0X3g6rm9mXYHGB20zbDxAkuQgTkRYnpRqU5bnQ67XgLmD1Xa5Q==
-X-Received: by 2002:a17:903:19e6:b0:266:f01a:98c4 with SMTP id d9443c01a7336-27ed49dece8mr69854105ad.13.1758879280625;
-        Fri, 26 Sep 2025 02:34:40 -0700 (PDT)
+        bh=oOprrquoKlbkEreJojZ4KykFg8G0TswcVk79ghRz+Tk=;
+        b=XmdiySPUNvTesop2KoPxzetUMDWFH8g8HG2aXYqR3SRBlVQFxZQgYjD245IRylnDII
+         Jv8+Zt+xTXnAnV9JiFMER7VcZ27M0UZ3fQ5XInWRQNAL74dpnSZQtoYGxAre1pKrvc1b
+         t/9QJnLzKfem/fc57SI1c8WQ2M/IJJjG0hNVq+BNaeJ87OqzJPkw1TWM1a83ER5yh0Fl
+         /WPvlBIYvO2upbvQoYjyCKpr/oaX2OqpzkmHCOy8HY71OCuOn9KpzOX/LeO/wVlB2JV7
+         K56JR52dms1zPQa3WNIh7WWNkeY4+1UQUAi2Css3fYLE/PVkgEo9/O5P1uq+xsvD6Vol
+         vZdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTjXBOQDfu+hWblenbDniMDD24e4OxzqWLBuQimDIrpGpUrgc+jOQ9EMb+jBhco0LqftAx8mkCn+RaM+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2vhJon4GQUc+Y4py3tCb5CBczcWlHntIfxOB4FtsoPl+ydevr
+	U0mj+nsqopgZztgsoW/5ivfEsFT+XdtCaQFUUrAai3ku4TimxUv8qx8U
+X-Gm-Gg: ASbGnctjQTYp06WNEGKu9cwnMoHLqd5hcQ6ikjQtO7jbR4AOwiaWdWYF0pRFXsA2nvP
+	lJ4CA16gx3PlG5Nt5WFC2WfnWiSJ+UsTF9gpO2N9bt4/6fT+oPBf5wvPU9vpH3oLtvl8hxsMTkU
+	gBQx6yO++adnU7pd5kayROQEjeAQHIPaJWZucGWlmIoWx5BrqzShj6LZJcV1uIrlcAOlhT6X8Nw
+	tkPcN1PeUxeu6jl4wrFtE+Mgj2t9KWyNh9UxyCeJGPYKn/S3LvS7eTgckPWmVzUvnFMg/MHleMd
+	anx1p+L/ZdjW7icEhmtLCbvLYybovYMkPKrRJYbOudQG+XmpJdgewf74XJ2eaQqcjiL0cSW8cA7
+	Kv4Olj/fbihRQhyUA5+o73KkYAAzXFz0f2T/ydt1Q8HHCyCxO1R8lGhyE6RcX7ZJCbScu0pZfhr
+	VyFLxECxCV1k0w
+X-Google-Smtp-Source: AGHT+IHyNvkqZ/H58qTgrC7RxZoAtdYJitsFBBvDlhUuvEFdmMnVmU2Ltz5BgywZtZV48lyMJHsZWw==
+X-Received: by 2002:a17:902:fb4b:b0:26a:b9b4:8342 with SMTP id d9443c01a7336-27ed49e9308mr63284705ad.25.1758879287971;
+        Fri, 26 Sep 2025 02:34:47 -0700 (PDT)
 Received: from localhost.localdomain ([2409:891f:1c21:566:e1d1:c082:790c:7be6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cda43sm49247475ad.25.2025.09.26.02.34.33
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cda43sm49247475ad.25.2025.09.26.02.34.41
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 26 Sep 2025 02:34:40 -0700 (PDT)
+        Fri, 26 Sep 2025 02:34:47 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -102,9 +102,9 @@ Cc: bpf@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v8 mm-new 06/12] mm: thp: enable THP allocation exclusively through khugepaged
-Date: Fri, 26 Sep 2025 17:33:37 +0800
-Message-Id: <20250926093343.1000-7-laoar.shao@gmail.com>
+Subject: [PATCH v8 mm-new 07/12] bpf: mark mm->owner as __safe_rcu_or_null
+Date: Fri, 26 Sep 2025 17:33:38 +0800
+Message-Id: <20250926093343.1000-8-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 In-Reply-To: <20250926093343.1000-1-laoar.shao@gmail.com>
 References: <20250926093343.1000-1-laoar.shao@gmail.com>
@@ -116,72 +116,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-khugepaged_enter_vma() ultimately invokes any attached BPF function with
-the TVA_KHUGEPAGED flag set when determining whether or not to enable
-khugepaged THP for a freshly faulted in VMA.
+When CONFIG_MEMCG is enabled, we can access mm->owner under RCU. The
+owner can be NULL. With this change, BPF helpers can safely access
+mm->owner to retrieve the associated task from the mm. We can then make
+policy decision based on the task attribute.
 
-Currently, on fault, we invoke this in do_huge_pmd_anonymous_page(), as
-invoked by create_huge_pmd() and only when we have already checked to
-see if an allowable TVA_PAGEFAULT order is specified.
+The typical use case is as follows,
 
-Since we might want to disallow THP on fault-in but allow it via
-khugepaged, we move things around so we always attempt to enter
-khugepaged upon fault.
+  bpf_rcu_read_lock(); // rcu lock must be held for rcu trusted field
+  @owner = @mm->owner; // mm_struct::owner is rcu trusted or null
+  if (!@owner)
+      goto out;
 
-This change is safe because:
-- the checks for thp_vma_allowable_order(TVA_KHUGEPAGED) and
-  thp_vma_allowable_order(TVA_PAGEFAULT) are functionally equivalent
-- khugepaged operates at the MM level rather than per-VMA. The THP
-  allocation might fail during page faults due to transient conditions
-  (e.g., memory pressure), it is safe to add this MM to khugepaged for
-  subsequent defragmentation.
+  /* Do something based on the task attribute */
 
-While we could also extend prctl() to utilize this new policy, such a
-change would require a uAPI modification to PR_SET_THP_DISABLE.
+out:
+  bpf_rcu_read_unlock();
 
+Suggested-by: Andrii Nakryiko <andrii@kernel.org>
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Acked-by: Lance Yang <lance.yang@linux.dev>
+Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 ---
- mm/huge_memory.c |  1 -
- mm/memory.c      | 13 ++++++++-----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ kernel/bpf/verifier.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 08372dfcb41a..2b155a734c78 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1346,7 +1346,6 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
- 	ret = vmf_anon_prepare(vmf);
- 	if (ret)
- 		return ret;
--	khugepaged_enter_vma(vma);
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index c4f69a9e9af6..d400e18ee31e 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7123,6 +7123,9 @@ BTF_TYPE_SAFE_RCU(struct cgroup_subsys_state) {
+ /* RCU trusted: these fields are trusted in RCU CS and can be NULL */
+ BTF_TYPE_SAFE_RCU_OR_NULL(struct mm_struct) {
+ 	struct file __rcu *exe_file;
++#ifdef CONFIG_MEMCG
++	struct task_struct __rcu *owner;
++#endif
+ };
  
- 	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
- 			!mm_forbids_zeropage(vma->vm_mm) &&
-diff --git a/mm/memory.c b/mm/memory.c
-index 58ea0f93f79e..64f91191ffff 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6327,11 +6327,14 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	if (pud_trans_unstable(vmf.pud))
- 		goto retry_pud;
- 
--	if (pmd_none(*vmf.pmd) &&
--	    thp_vma_allowable_order(vma, TVA_PAGEFAULT, PMD_ORDER)) {
--		ret = create_huge_pmd(&vmf);
--		if (!(ret & VM_FAULT_FALLBACK))
--			return ret;
-+	if (pmd_none(*vmf.pmd)) {
-+		if (vma_is_anonymous(vma))
-+			khugepaged_enter_vma(vma);
-+		if (thp_vma_allowable_order(vma, TVA_PAGEFAULT, PMD_ORDER)) {
-+			ret = create_huge_pmd(&vmf);
-+			if (!(ret & VM_FAULT_FALLBACK))
-+				return ret;
-+		}
- 	} else {
- 		vmf.orig_pmd = pmdp_get_lockless(vmf.pmd);
- 
+ /* skb->sk, req->sk are not RCU protected, but we mark them as such
 -- 
 2.47.3
 
