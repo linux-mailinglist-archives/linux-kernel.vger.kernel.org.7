@@ -1,187 +1,215 @@
-Return-Path: <linux-kernel+bounces-833470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C158ABA20D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:25:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B6CBA218F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78886560A77
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:25:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 510C17BABD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ACD72626;
-	Fri, 26 Sep 2025 00:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B81E17DFE7;
+	Fri, 26 Sep 2025 00:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KH9s3eJ8"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="jF4cl3BW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ReaOi6cO"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7046C2B2DA
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EE716EB42;
+	Fri, 26 Sep 2025 00:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758846348; cv=none; b=qwaA9tcbyWucCCBSnAk/aj1NwEiHahAHtWgi6XKnv9Kqjdb3zS9VXqSgiRfwm7T3TBODUgt3+P8j9P9OlDjZz3GpkuAW3a+LoGXztfM6Nr/YCGB1MO+1VM0MEG/jEGr3+bBblOPjfWU/WeaiDzcQQdbzAD/gPxxfHUbMmAUK1pc=
+	t=1758846594; cv=none; b=kwPKDhzckFmkTilMVm3T0QFdCQpCL1piU0JGVKeuRB3sU/PHSfroW8iQo418dpA3H6IAKq0nP4rL6EFtJJkR1Pz+qAmeOa4sCfzi/UwLw0IOr+s8lIATa80kTo/QFkd4O5QnYFWcSca/LqBCm5qbgL+QF4XXuRrSanIgz44istQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758846348; c=relaxed/simple;
-	bh=1uA3yEOBufbrVgvLobLg87q0BEPdhVFbgKjqu7vMoiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P62RI0vy7DdXDnpSwjHns62vR9yGWmzwOX8imi0nb9tw36t3iBNow7NMupqeLdx8BaCivzVM7RlMprrTtY7ggFjf59CPrNWy1opqDg0aWsrbLvedX6802NDJfH0K+ROksJkb5QQRY5eYOeXxuJjTMB7PHnOdCVo+4nlbgPGCQ6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KH9s3eJ8; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3727611c1bso151673966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758846345; x=1759451145; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NMC81w+JaNK7q2bunYAj8hHN6HLRojIWD4Z/O2pUXCA=;
-        b=KH9s3eJ8ngSnFZyMtS/+GtDeLGLwwF8msuuXbtfZkTvcN1u6BjCsh4mR/JlgG+Ygxb
-         o2lTeffPgrH/w35PoBTEsPOH/Fssb3jZ9AIOPR51pEY8+6cJVBWgAYrMpXC+HUmdE6YD
-         0DBjOQkiXgp1jAzL0TvmKJswFxhaAknFQb3y4U7baoR7u/bj6erhDaUoPLZsQBX/jJjE
-         7gKXEyEzyu2RZkK3wiY6eLSKkjr+d4o99wFOGcPaSzNdqqDAN7CtZwqPN4LjUtKJkZJ8
-         2sJT6F+jX/vOlSwGwLFdAIBMnKZvx8aBH5X0OdDOwrtEYDQAsk1B62Jbja/GQMq1x1Fr
-         ovcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758846345; x=1759451145;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=NMC81w+JaNK7q2bunYAj8hHN6HLRojIWD4Z/O2pUXCA=;
-        b=BfdwjexniYPl3jSi+emiVdFEuwXQpYvVbOoW0Qv5l/kR3syfV/FrK0pkDIi4BWKIZe
-         AyVNgz5DpiTJFrFxYlYNg8VvZZMY0zAXm4+CszbyvRoITEcnAtB3WmqdJ+vhGPMN3LO3
-         KV2vRp7GbNQQaVHf1+Fs5lUpw3bNU3gaRv92hYC6PDI5GKCt5eNpz8fvRQEN4KEDY4Dm
-         5as3wd7rSB0uHpurD7cPjL88rk8LvFNQuUxjFVGnHgFwNvq/H7wPV34RCF3+MzLoQ/zQ
-         wz7wF8Fgc/4Gw/4EvKrpxRipRR/RQ/AsYgw21cJ/smLJIAV1CpKMPGvcu6qNlpcXXqyK
-         w0dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWUtwL4o6AsFcxfFN+O+QFtutItnnWAyC5k2FlYW7LspMxKkS62XI2kbB8d5VPdIL2Emyu8CfrxKFzfZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6vuC8b2bB3eJga4hY98CY3XFVq+Fyzi4LJ6WYED8bWjbOkvEG
-	3VyjWZfUlXW/Lu84zH+dDPTkFFGivEJfH5ZxcFDfclBXRhvQGFJMegHo
-X-Gm-Gg: ASbGncsm5BgTGI5SsXtT6iyooKAvZepPk9ztAE65MkAwem5bm0sYNGopHCFKnXYui36
-	fQ3mJeb7/+k/ZdYcx8cwSiOIebztuemNeX48ntyH+H6mieSi0yU7PcPDFDVvCB0gzSL2XpuJUxc
-	RHx216syZAQw1CMCTVEUd475/TdSBGzUcJjBOi0iyP8K14EeiOqeZYLNXfGgtwy3WafVrptm0L3
-	1pYk5AZ0zp0JlWL0a8TAILJNVsz/Cyy+j5/50SiiLY3GkTZ/U5ZSt6qrFvTKbiENitRZynuJldA
-	dx7+Rlf/5fm/fGEtJOSXqJKG4l/1lTpNsFgICiPCn9DhOzkeIMQ/2KWhPNxJNbLNte7vFmKQh6J
-	AJSlXIznJ3q8oz5fsEM9l89y1TQqPaKifFAKP
-X-Google-Smtp-Source: AGHT+IFrncgRgp1cO6kD9iqXJ1acMD+hFDb5TMf4B2VASiURfzNNm3MkxN444XZaQPI6JQA/i5XruA==
-X-Received: by 2002:a17:907:7e88:b0:b0f:a22a:4c3c with SMTP id a640c23a62f3a-b34bb41ad93mr619135966b.48.1758846344556;
-        Thu, 25 Sep 2025 17:25:44 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353e5d2ddfsm260259566b.14.2025.09.25.17.25.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Sep 2025 17:25:44 -0700 (PDT)
-Date: Fri, 26 Sep 2025 00:25:43 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: SeongJae Park <sj@kernel.org>, Alexander Potapenko <glider@google.com>,
-	akpm@linux-foundation.org, david@redhat.com, vbabka@suse.cz,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, elver@google.com,
-	dvyukov@google.com, kasan-dev@googlegroups.com,
-	Aleksandr Nogikh <nogikh@google.com>
-Subject: Re: [PATCH v2] mm/memblock: Correct totalram_pages accounting with
- KMSAN
-Message-ID: <20250926002543.fwkf5qldhkapcmqr@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250924100301.1558645-1-glider@google.com>
- <20250925123759.59479-1-sj@kernel.org>
- <aNVWzaxq82UI3wWO@kernel.org>
+	s=arc-20240116; t=1758846594; c=relaxed/simple;
+	bh=/XC/zVahOCmX58ZQZyzDamIZmL+2Kqqkp1WbuCPrboM=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=TIpqCyG/ogN0sT+WYPzoP31X43F1RTJjboPrXAMUnUFlcEL3alYJgzvtpzRQq7vxI2yKO1HtEikD4UaACO7ME02coasit5/QY1Y/VR2ntg7T4H3qjzrSepsAcyAyta7vMQVd9QDflo9MZ0/LB90Fh3wh0DJ2UJLqwkA4b/0SNjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=jF4cl3BW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ReaOi6cO; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 35E0A140003A;
+	Thu, 25 Sep 2025 20:29:51 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 20:29:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
+	1758846591; x=1758932991; bh=+ExJ1KwuEBUexf1wy3yJQZtCOsWWucCcThP
+	Bo+hTlZo=; b=jF4cl3BWFu4NEY5YLWKb+ygOHD9dskIagifgVedEMQSaiLYeIfL
+	LIQQYRxblmlYTHA42792JRrFQ2hyTI0VnU28iSPyCp7gTRzXWwP+11ihpvfIc73v
+	DPeuT/eKTWXbH4s+jycSxggH+hd8HT8KtPiLHAZ2XgyumZXlsHfTzbDQDfJ31gcv
+	MBa572uECk8KMQhbjvYIkdQQo1Cw7LJ4LKCUTlmxYafSKhxdrDbTtEr8bsRuF4dF
+	ujCSVtxUchpahkFbHPJF5z0qre4LlFIwYgnDEBWbQzazStMAQ8YcuCvtlj+8QBAI
+	jeCC9IWUsqsDCUtVGg+Z5JUgHaOF9ksXZGQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758846591; x=
+	1758932991; bh=+ExJ1KwuEBUexf1wy3yJQZtCOsWWucCcThPBo+hTlZo=; b=R
+	eaOi6cOlVc9n3gpqZypLCcMK2RnONTjCryKg6uOHrnR2cI3oltqpbhe3fl2UJCBk
+	USNpctAf5OcCsPecSkmGlPnXOJHbMmdRSzd27y5LVH0P5GoCXHeKkEV69FnCu+Bl
+	pzPtyVdBb23mPboZnGOcXIySYwa4rmK6AUdbToh4Xab5FqdjTDIFdxGaQRFwQF3v
+	TKUQuUdE55Va+yNqqxuA4sKY7M+LKFTAKz0WML2jWSnrJ63QLugpbHckOYHQ/tAh
+	sDQTpQck6x8R1D3xvee7LU1WxoCFxUl3d7Sq/eqxNDMh48XhE/2wDH1oGcTZfCZ4
+	a47xAd19ZHuSvA9nOHypw==
+X-ME-Sender: <xms:fd7VaMwxiwKpmSY1i9sUTerfzhJsZBEV02KooEpPcvIlpmFRM7cUrA>
+    <xme:fd7VaD-9guvUJXUV1jlzWJye8kUJ9fAXV9AzwiGA93BdMxr1Moy91mGBy1jYEinyf
+    A2e1hEeyVb9tipo0luDaH3bG4H0MWhbyESWGDdFp-5SxT_kFw>
+X-ME-Received: <xmr:fd7VaIKIiB2rpvdRxb7op0XKjnPxNH71zT3PXv2dT8bNuoN50gq2p_IAeXVOF9LBFrnBxmUvxNv5x2df7Nb-okgv58KnWPaZrYBSqUfFXLHD>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeelfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
+    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
+    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehtghhrrghfsehsuhhughdrtghhpdhrtghpthhtohephhgvrh
+    gsvghrthesghhonhguohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtphhtthhopehmvghn
+    ghhlohhnghekrdguohhnghesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:fd7VaBdbjLUotxXObVheAFspZfnDP6IBhveZBps5Cbyb7qmJsdV33w>
+    <xmx:fd7VaP9BQ7iGFbSyMxTjgfnzqyFnM6hpLWn4-vAZ1PquyfCPObgAoQ>
+    <xmx:fd7VaGpSMmolkP-7IotOT5x3SxLzVAHYzxugf0y7mDMDwZrYK7bVZA>
+    <xmx:fd7VaMDJOGFnnf59gRS4k2siPXdqDlcs7J7mmnrNEpGTqop3sPlB5w>
+    <xmx:f97VaHZoJzeWmAUAErRB557D_7SgaXMLDM3XON-k2MkgL1k5WvmFPcQg>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 25 Sep 2025 20:29:47 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNVWzaxq82UI3wWO@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+From: NeilBrown <neilb@ownmail.net>
+To: "Menglong Dong" <menglong8.dong@gmail.com>
+Cc: "Herbert Xu" <herbert@gondor.apana.org.au>, tgraf@suug.ch,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rhashtable: add likely() to __rht_ptr()
+In-reply-to:
+ <CADxym3ZA7FsdeA3zz34V7mHHjBC358UoJjrpV6wieZ1LF2aFxA@mail.gmail.com>
+References: <20250923060614.539789-1-dongml2@chinatelecom.cn>,
+ <aNI_-QHAzwrED-iX@gondor.apana.org.au>,
+ <CADxym3YMX063-9S7ZgdMH9PPjmRXj9WG0sesn_och5G+js-P9A@mail.gmail.com>,
+ <175862707333.1696783.11988392990379659217@noble.neil.brown.name>,
+ <CADxym3ZA7FsdeA3zz34V7mHHjBC358UoJjrpV6wieZ1LF2aFxA@mail.gmail.com>
+Date: Fri, 26 Sep 2025 10:29:46 +1000
+Message-id: <175884658630.1696783.7712739490823387474@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On Thu, Sep 25, 2025 at 05:50:53PM +0300, Mike Rapoport wrote:
->On Thu, Sep 25, 2025 at 05:37:59AM -0700, SeongJae Park wrote:
->> Hello,
->> 
->> On Wed, 24 Sep 2025 12:03:01 +0200 Alexander Potapenko <glider@google.com> wrote:
->> 
->> > When KMSAN is enabled, `kmsan_memblock_free_pages()` can hold back pages
->> > for metadata instead of returning them to the early allocator. The callers,
->> > however, would unconditionally increment `totalram_pages`, assuming the
->> > pages were always freed. This resulted in an incorrect calculation of the
->> > total available RAM, causing the kernel to believe it had more memory than
->> > it actually did.
->> > 
->> > This patch refactors `memblock_free_pages()` to return the number of pages
->> > it successfully frees. If KMSAN stashes the pages, the function now
->> > returns 0; otherwise, it returns the number of pages in the block.
->> > 
->> > The callers in `memblock.c` have been updated to use this return value,
->> > ensuring that `totalram_pages` is incremented only by the number of pages
->> > actually returned to the allocator. This corrects the total RAM accounting
->> > when KMSAN is active.
->> > 
->> > Cc: Aleksandr Nogikh <nogikh@google.com>
->> > Fixes: 3c2065098260 ("init: kmsan: call KMSAN initialization routines")
->> > Signed-off-by: Alexander Potapenko <glider@google.com>
->> > Reviewed-by: David Hildenbrand <david@redhat.com>
->> [...]
->> > --- a/mm/mm_init.c
->> > +++ b/mm/mm_init.c
->> > @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char *tablename,
->> >  	return table;
->> >  }
->> >  
->> > -void __init memblock_free_pages(struct page *page, unsigned long pfn,
->> > -							unsigned int order)
->> > +unsigned long __init memblock_free_pages(struct page *page, unsigned long pfn,
->> > +					 unsigned int order)
->> >  {
->> >  	if (IS_ENABLED(CONFIG_DEFERRED_STRUCT_PAGE_INIT)) {
->> >  		int nid = early_pfn_to_nid(pfn);
->> >  
->> >  		if (!early_page_initialised(pfn, nid))
->> > -			return;
->> > +			return 0;
->> >  	}
->> 
->> I found this patch on mm-new tree is making my test machine (QEMU) reports much
->> less MemTotal even though KMSAN is disabled.  And modifying the above part to
->> be considered as free success (returning '1UL << order') fixed my issue.
->> Because the commit message says the purpose of this change is only for
->> KMSAN-stashed memory, maybe the above behavior change is not really intended?
->> 
->> I'm not familiar with this code so I'm unsure if the workaround is the right
->> fix.  But since I have no time to look this in deep for now, reporting first
->
->With DEFERRED_STRUCT_PAGE_INIT we count totalram_pages in
->memblock_free_all() but actually free them in deferred_init_memmap() and
->deferred_grow_zone().
->
->So returning '1UL << order' is a correct workaround, but the proper fix
->should update totalram_pages in the deferred path IMHO.
->
+On Wed, 24 Sep 2025, Menglong Dong wrote:
+> On Tue, Sep 23, 2025 at 7:31=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrote:
+> >
+> > On Tue, 23 Sep 2025, Menglong Dong wrote:
+> > > On Tue, Sep 23, 2025 at 2:36=E2=80=AFPM Herbert Xu <herbert@gondor.apan=
+a.org.au> wrote:
+> > > >
+> > > > Menglong Dong <menglong8.dong@gmail.com> wrote:
+> > > > > In the fast path, the value of "p" in __rht_ptr() should be valid.
+> > > > > Therefore, wrap it with a "likely". The performance increasing is t=
+iny,
+> > > > > but it's still worth to do it.
+> > > > >
+> > > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > > > > ---
+> > > > > include/linux/rhashtable.h | 5 +++--
+> > > > > 1 file changed, 3 insertions(+), 2 deletions(-)
+> > > >
+> > > > It's not obvious that rht_ptr would be non-NULL.  It depends on the
+> > > > work load.  For example, if you're doing a lookup where most keys
+> > > > are non-existent then it would most likely be NULL.
+> > >
+> > > Yeah, I see. In my case, the usage of the rhashtable will be:
+> > > add -> lookup, and rht_ptr is alway non-NULL. You are right,
+> > > it can be NULL in other situations, and it's not a good idea to
+> > > use likely() here ;)
+> >
+> > Have you measured a performance increase?  How tiny is it?
+> >
+> > It might conceivably make sense to have a rhashtable_lookup_likely() and
+> > rhashtable_lookup_unlikely(), but concrete evidence of the benefit would
+> > be needed.
+>=20
+> I made a more accurate bench testing:  call the rhashtable_lookup()
+> 100000000 times.
+>=20
+> Without the likely(), it cost  123697645ns. And with the likely(), only
+> 84507668ns.
 
-Maybe I did something similar at [1].
+a 30% speedup is impressive, even though it is a micro-benchmark.
 
-But this hit a problem for shmem, since shmem_fill_super() use
-totalram_pages(). And before DEFERRED_STRUCT_PAGE_INIT finish, the size is too
-small, so it can't boot up.
+>=20
+> I add the likely() not only to the __rht_ptr(), but also rht_for_each_rcu_f=
+rom()
+> and rhashtable_lookup().
 
-Per my understanding, shmem_fill_super() could be invoked after
-memblock_discard(), so it is not proper to refactor to get ram size from
-memblock.
+I suggest you create a patch which adds rhashtable_lookup_likely(),
+__rhashtable_lookup_likely(), rht_for_each_rcu_from_likely(),=20
+rht_ptr_rcu_likely() etc.
+So that no existing code changes, but the new function uses likely
+everywhere that you think is important.
 
-Could we adjust shmem_default_max_blocks/shmem_default_max_inodes use memblock
-at boot stage and use totalram_pages() after system is fully up? Or any other
-suggestions?
+I had a bit of a look at callers of rhashtable_lookup().  Some return
+-EEXIST if they find something. Other return -ENOENT if they don't.
+Using rhasthable_lookup_likely() for those that return -ENOENT probably
+makes sense.
 
-[1]: http://lkml.kernel.org/r/20240726003612.5578-1-richard.weiyang@gmail.com
+Thanks,
+NeilBrown
 
->-- 
->Sincerely yours,
->Mike.
 
--- 
-Wei Yang
-Help you, Help me
+>=20
+> Below is the part code of the testing:
+>=20
+>     for (i =3D 0; i < num_elems; i++) {
+>         objs[i] =3D kmalloc(sizeof(**objs), GFP_KERNEL);
+>         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, objs[i]);
+>         objs[i]->key =3D i;
+>         INIT_RHT_NULLS_HEAD(objs[i]->node.next);
+>         ret =3D rhashtable_insert_fast(&ht, &objs[i]->node, bench_params);
+>         KUNIT_ASSERT_EQ(test, ret, 0);
+>     }
+>=20
+>     /* for CPU warm up */
+>     for (i =3D 0; i < 1000000000; i++) {
+>         u32 key =3D 0;
+>         struct bench_obj *found;
+>=20
+>         found =3D rhashtable_lookup(&ht, &key, bench_params);
+>         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, found);
+>         KUNIT_ASSERT_EQ(test, found->key, key);
+>     }
+>=20
+>     rcu_read_lock();
+>     t0 =3D ktime_get();
+>     for (i =3D 0; i < 100000000; i++) {
+>         u32 key =3D 0;
+>         struct bench_obj *found;
+>=20
+>         found =3D rhashtable_lookup(&ht, &key, bench_params);
+>         if (unlikely(!found)) {
+>             pr_info("error!\n");
+>             break;
+>         }
+>     }
+>     t1 =3D ktime_get();
+>     rcu_read_unlock();
+>=20
+> >
+> > Thanks,
+> > NeilBrown
+>=20
+
 
