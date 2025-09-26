@@ -1,242 +1,162 @@
-Return-Path: <linux-kernel+bounces-833792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8125EBA3166
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:15:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B780BA316E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 384A14C6D5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:15:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7608F1889B1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B27A29B78E;
-	Fri, 26 Sep 2025 09:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD652236E8;
+	Fri, 26 Sep 2025 09:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bocV8BtD"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="odRhdtWc"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527D927AC3A
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9E1155C88
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758878091; cv=none; b=hhgESJq90OjRnkF1NdEhc2IZdfGbeBkAP/Mqe+jfQL9CXv8u1iCyj4IAFT7obrges4syOIgCs5OSSebnTqAvgjemnvz9PFLIM+SAhytTB4sfU7Y+PsD76bgTWAdc35QvwG0kFybsMAWc+3CqiF7DdfTEnBu+LkUBqaTmSmYIaR8=
+	t=1758878111; cv=none; b=TOL1cMmZzFhEeumcAOhOfssEeeRmDPj8fQo4d41Xz7dH/c3IvIMyzIManLKzZpGp4i8trEgbcM9/1fNbjOf52mmNbmmnx0J5xSGW6idK9REKDaB4lL/Uc5cNpYLXjhfvXE+vrh9bBvYCPHg8e6xAfShdFMkrcqcrYx11S9CtVqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758878091; c=relaxed/simple;
-	bh=JN5UOjmwCjSWTIKExKcOZm8/p1QSiZU0RREtd47LKHE=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=i5l44dsAdplSlWsVweUJ/ljSpMAaitIntYhkUsxzYmU1jJLpEtkWE+5mfzC0z9Nqbxt1GakwKdDvuK61fN/7+lnhuhoupcB2j20T7lgxhwWAzcpPBdsBO278sstUQcNkJA+DmulcX/kZV5CT0eC/XjtCaWzcZLJsyXS1uzx4dN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bocV8BtD; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2681623f927so19451385ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:14:48 -0700 (PDT)
+	s=arc-20240116; t=1758878111; c=relaxed/simple;
+	bh=TUFDRPK9OZWQmZ4Io6Lu4cMxFKXBj/5zzJ9fa5uYkLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D4BdDJQMyWBvuCpFQHZdb0YmHXTrTWhXw0fjfTy69yAPjlFVwrBLuVwqI/+NOU/tlLQv3EvY6Jc6BFuRbCyZTtDClo44MHRJBu0xwPeIO1xzb9tqexTjv0adt60wNqjbgxamIbo9tj4glAYOJ9brkxhPDHw0WUIQgfE23J417bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=odRhdtWc; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-414f48bd5a7so423469f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758878088; x=1759482888; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xzlecSBlGNy5Hb7DuTGlXytPmBFktseBO6e58xwE2NU=;
-        b=bocV8BtDjVbArEnht0kkGNFV30VS1S8O9gk6DTTmJu8KNksSxE1Mu2Jm2nlwvOX7pf
-         z7oxApv8G+UqkrU45im+74MRECGMx3ayI2zagbK+vE2HlmkkHhB82kLvIt66Vk+OZsw1
-         Iu2jKi0++jd0De6C2Cyc4Tt2tviqYFF5BhONuZG1dFRjGpMq4S3k9mp3AwcLzPPiyfGR
-         KrRPiESOGRbDrQ6TBJzdENN7Czrop5Q3g9ZcOlSsNfP7BxiwBB4BiPEl/FVV9cM9aENo
-         WMtLM5ieZybLxgrHX9TxX10WDYAIbc16HbvsY1RtBRnbWqgUI/fDwPiWW1523mYL6Acm
-         ZCiw==
+        d=linaro.org; s=google; t=1758878108; x=1759482908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KFTjY5/OntfnPss18xMJfKbpZ6ztPp46Q2iJkWHJLes=;
+        b=odRhdtWcmyjJzDq+4robwRjA7HdxMSBLQGQNJhWqgJ4cKlZos6MhVBpsSni9P4Rk0O
+         1oejhDZZAJBy1Ca8fVUthLGzuFh/BYnzYNyNLnBb1bCvJj9IXUd72mGSD0CCaLN42nI4
+         oHsze61RC+7DHvBN3lMWmtIJv3jGxcNEP6GEWxcOTNZAL9ynjSZl6JZo0cKHg81paI1k
+         ygusMKdV9fB/4LCJU4E0cDou9fE9gvldJUyqLET11EIEyDBOIdD2I+cGIczrRxJ0CTJ0
+         TFGKHNqT0ZjBjMTvT2xddrvfzp6Tje4v20Je6lQWWrWOPMf+uUDs3bDpj5ROu4N8d8jo
+         mSmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758878088; x=1759482888;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+        d=1e100.net; s=20230601; t=1758878108; x=1759482908;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xzlecSBlGNy5Hb7DuTGlXytPmBFktseBO6e58xwE2NU=;
-        b=f/N/HyknEzyJONIvL5lryP1vEnLEFT/JOwbVahhzTkNZuS/t1p5xj93SF7FUKWNKrP
-         nPoofOQNmBfqDosS1kMHVzVda66s4iD9dEO3o0XR320p1ilau/XhabxKRGlF5zktHnMN
-         eYNq4mvEYvpcwEeSuplLZgdutl3iXJla3152XaQrIZSU7C8c8hv14NhSUjzj3DfxaeUp
-         LpXbMeF0CvVpEiovNg58ZkpCX2Ig0JoE6m493mxwYRjlMnVNPJ0l3kj+HQOs8yKKON13
-         LMZq4tWaOt4fRn/8O0HKQmnkdyftpfw9yvcSQUUWF87d4Bh1/0WHmK1wFwXTFdm5D2ai
-         +xKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzTf7rx0n+8jMIavCja2GDhgTIiy/JZObvZrhnGc6vvTZIgWeum/oZPR2kJwRBtv9olFwAw0RrWdRPdZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXdoS+L1zM/xvIloolxnpiyW6kt55/9kWkZRB1Xk8RIufA+WHf
-	HEYkRGKsJ68pNV9Q9jL7ErYlLukmQYxXjo0fBrtthLES1heaiXpkHFnBlO/L7dcoNllBMexicGQ
-	C42QZrav/TSEZGp1/FeugtUBLbw==
-X-Google-Smtp-Source: AGHT+IEx8E9cWhlfu1Vxq2AQuNomZgiEGJpm7W9AMx7sfDI2/uhsc96oawFywv4yb5EYZvdHJHPDXZqYAh60qO9vkw==
-X-Received: from plxq5.prod.google.com ([2002:a17:902:dac5:b0:268:eb:3b3b])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ef09:b0:276:76e1:2e84 with SMTP id d9443c01a7336-27ed4a06b49mr70346315ad.3.1758878087498;
- Fri, 26 Sep 2025 02:14:47 -0700 (PDT)
-Date: Fri, 26 Sep 2025 09:14:45 +0000
-In-Reply-To: <aDfT35EsYP/Byf7Z@yzhao56-desk.sh.intel.com> (message from Yan
- Zhao on Thu, 29 May 2025 11:26:23 +0800)
+        bh=KFTjY5/OntfnPss18xMJfKbpZ6ztPp46Q2iJkWHJLes=;
+        b=czPGijHeomg8SslbMYQJFifwg5grwnjO6yAvSHcDfzPBRMppbizhcVhge/mCUr7hVT
+         +Y9UKNrhRrdNr8T+gtkJdtNpgCv/mefWfkjBaiYhoMNcW2S0WII3UmVqGxzt1MZO2L8f
+         y8I8dTMdwLAKkHwhJb6mkxX2fHyD3aiXw4IIDM8XWvDBTLp+KIaOJ774rcQC+TkCt31p
+         uDCMSzz5jLnAE7ZC51eoqTYD9mIhCGrIo4SF7Pr7kw/sCcl0VdVnox/8ti7BOF5f/Bb9
+         5DiAe78K16tKD7F5WhvRkSs+cYdbBM0Mi9EdJAZjR1GOugpI8pSDS+DodV9ebiNA9dUS
+         +BBQ==
+X-Gm-Message-State: AOJu0Yw/JKm5+EGtZeMw6YeqIDldzurFubBnnE8RLtP4hFo0rhlobufy
+	9FthBKklWZ35UZ/VJSFXvkR0teaGJcc2Bo/CGjk1br/cy/yCkGcr6YyA1x4npn4kekc=
+X-Gm-Gg: ASbGnct/3sZY7vJ75jv7hAPHLUOLNCRy9POWhuWdglvoKiATIEkIEROxEgVineEE4be
+	D25K3jESBzS1bya38jFmSfuSy9mIppf3C8FUHyS1A4XQ+qdN8yYFBdTzgr4uWbclcAtvjQjZO8J
+	FpIZ5AVF17ZJsYvricWdLJEqdVNY7ffKuBrKdty2BYF0Rzo0yKQRbRts7SyotxTD4i+wWkbFjQI
+	9EB5sEm27qprLwZDN82pPQCXeu1SDHTUT5lBUCQcNJVsVq7txmJKFaZKA6j1FDuwEOYkh5K2FS3
+	o8XEXEZw4NE5167lorfZliBNdC+0zEeT4XFvTProZ7Do8nVL5GSGm2wVutRzjaJJs/Sx+tyBJsT
+	32hjIpiWMUvrr9hxBMkNX1xsau9X7NUWLTk/wbwMKBkI=
+X-Google-Smtp-Source: AGHT+IEVX7V7+nffT3CJ9dpetDYPOn1G7WuDY6pTt+HXts5dckr78/uI1tL88mQFYL4fesUlu07JBw==
+X-Received: by 2002:a05:6000:2585:b0:404:ac77:6598 with SMTP id ffacd0b85a97d-40e429c9c4dmr6196945f8f.11.1758878108352;
+        Fri, 26 Sep 2025 02:15:08 -0700 (PDT)
+Received: from [10.11.12.107] ([79.118.185.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fe4237f32sm6185169f8f.63.2025.09.26.02.15.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 02:15:07 -0700 (PDT)
+Message-ID: <586c85d8-7638-4e52-8f96-1aa4640afe64@linaro.org>
+Date: Fri, 26 Sep 2025 10:15:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqzcy7d60e2.fsf@google.com>
-Subject: Re: [RFC PATCH v2 39/51] KVM: guest_memfd: Merge and truncate on fallocate(PUNCH_HOLE)
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/5] firmware: exynos-acpm: add DVFS protocol
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250924-acpm-clk-v5-0-4cca1fadd00d@linaro.org>
+ <20250924-acpm-clk-v5-2-4cca1fadd00d@linaro.org>
+ <03cbad1f4f311727b4dce9c969404e2bc138c556.camel@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <03cbad1f4f311727b4dce9c969404e2bc138c556.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+Hi, André!
 
-> On Wed, May 28, 2025 at 09:39:35AM -0700, Ackerley Tng wrote:
->> Yan Zhao <yan.y.zhao@intel.com> writes:
->> 
->> > On Wed, May 14, 2025 at 04:42:18PM -0700, Ackerley Tng wrote:
->> >> Merge and truncate on fallocate(PUNCH_HOLE), but if the file is being
->> >> closed, defer merging to folio_put() callback.
->> >> 
->> >> Change-Id: Iae26987756e70c83f3b121edbc0ed0bc105eec0d
->> >> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> >> ---
->> >>  virt/kvm/guest_memfd.c | 76 +++++++++++++++++++++++++++++++++++++-----
->> >>  1 file changed, 68 insertions(+), 8 deletions(-)
->> >> 
->> >> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
->> >> index cb426c1dfef8..04b1513c2998 100644
->> >> --- a/virt/kvm/guest_memfd.c
->> >> +++ b/virt/kvm/guest_memfd.c
->> >> @@ -859,6 +859,35 @@ static int kvm_gmem_restructure_folios_in_range(struct inode *inode,
->> >>  	return ret;
->> >>  }
->> >>  
->> >> +static long kvm_gmem_merge_truncate_indices(struct inode *inode, pgoff_t index,
->> >> +					   size_t nr_pages)
->> >> +{
->> >> +	struct folio *f;
->> >> +	pgoff_t unused;
->> >> +	long num_freed;
->> >> +
->> >> +	unmap_mapping_pages(inode->i_mapping, index, nr_pages, false);
->> >> +
->> >> +	if (!kvm_gmem_has_safe_refcount(inode->i_mapping, index, nr_pages, &unused))
->> 
->> Yan, thank you for your reviews!
->> 
+On 9/24/25 4:24 PM, André Draszik wrote:
+>> +	unsigned long (*get_rate)(const struct acpm_handle *handle,
+>> +				  unsigned int acpm_chan_id,
+>> +				  unsigned int clk_id, u32 dbg_val);
+> Everything seems self-explanatory except this dbg_val. What are API users meant
+> to put there? Maybe some kerneldoc could explain it?
 
-Thanks again for your reviews. I would like to respond to this since I'm
-finally getting back to this part.
+I don't really know, there's no documentation. I can guess by reading the
+downstream code.
 
->> > Why is kvm_gmem_has_safe_refcount() checked here, but not in
->> > kvm_gmem_zero_range() within kvm_gmem_truncate_inode_range() in patch 33?
->> >
->> 
->> The contract for guest_memfd with HugeTLB pages is that if holes are
->> punched in any ranges less than a full huge page, no pages are removed
->> from the filemap. Those ranges are only zeroed.
->> 
->> In kvm_gmem_zero_range(), we never remove any folios, and so there is no
->> need to merge. If there's no need to merge, then we don't need to check
->> for a safe refcount, and can just proceed to zero.
-> However, if there are still extra ref count to a shared page, its content will
-> be zeroed out.
->
+Grepping the downstream sources reveals that this field has a value
+other than zero just for the edgetpu driver.
 
-I believe this topic is kind of overtaken by events. IIUC the current
-upstream stance is that for guest_memfd we're not allowing hole-punching
-of pages for huge pages, so once a HugeTLB guest_memfd is requested,
-hole punching of less than the requested HugeTLB size will result in
--EINVAL being returned to userspace.
+Looking there I see:
+#define TPU_DEBUG_REQ (1 << 31)
+#define TPU_VDD_TPU_DEBUG (0 << 27)
+#define TPU_VDD_TPU_M_DEBUG (1 << 27)
+#define TPU_VDD_INT_M_DEBUG (2 << 27)
+#define TPU_CLK_CORE_DEBUG (3 << 27)
+#define TPU_CLK_CTL_DEBUG (4 << 27)
+#define TPU_CLK_AXI_DEBUG (5 << 27)
+#define TPU_CLK_APB_DEBUG (6 << 27)
+#define TPU_CLK_UART_DEBUG (7 << 27)
+#define TPU_CORE_PWR_DEBUG (8 << 27)
+#define TPU_DEBUG_VALUE_MASK ((1 << 27) - 1)
 
->> 
->> kvm_gmem_merge_truncate_indices() is only used during hole punching and
->> not when the file is closed. Hole punch vs file closure is checked using
->> mapping_exiting(inode->i_mapping).
->> 
->> During a hole punch, we will only allow truncation if there are no
->> unexpected refcounts on any subpages, hence this
->> kvm_gmem_has_safe_refcount() check.
-> Hmm, I couldn't find a similar refcount check in hugetlbfs_punch_hole().
-> Did I overlook it?
->
-> So, why does guest_memfd require this check when punching a hole?
->
+And then I see methods like:
+static int edgetpu_ctl_rate_get(void *data, u64 *val)
+{
+        *val = exynos_acpm_get_rate(TPU_ACPM_DOMAIN,
+                                    TPU_DEBUG_REQ | TPU_CLK_CTL_DEBUG);
+        return 0;
+}
 
-There's no equivalent check in HugeTLBfs.
+or:
+static int edgetpu_vdd_tpu_m_get(void *data, u64 *val)
+{                                                                                                                                                                                              
+        *val = exynos_acpm_get_rate(TPU_ACPM_DOMAIN,
+                                    TPU_DEBUG_REQ | TPU_VDD_TPU_M_DEBUG);
+        return 0;   
+}
 
-For guest_memfd, we want to defer merging to the kernel worker as little
-as possible, hence we want to merge before truncating. Checking for
-elevated refcounts is a prerequisite for merging, not directly for hole
-punching.
+These methods are used only to be exposed for debugfs.
 
->> >> +		return -EAGAIN;
->> >> +
->> >
->> > Rather than merging the folios, could we simply call kvm_gmem_truncate_indices()
->> > instead?
->> >
->> > num_freed = kvm_gmem_truncate_indices(inode->i_mapping, index, nr_pages);
->> > return num_freed;
->> >
->> 
->> We could do this too, but then that would be deferring the huge page
->> merging to the folio_put() callback and eventually the kernel worker
->> thread.
-> With deferring the huge page merging to folio_put(), a benefit is that
-> __kvm_gmem_filemap_add_folio() can be saved for the merged folio. This function
-> is possible to fail and is unnecessary for punch hole as the folio will be
-> removed immediately from the filemap in truncate_inode_folio().
->
->
+So it seems it's used to __get__ clock rates or voltages, and that the dbg_val
+acts as a debug command that also specifies a secondary ID, TPU_ACPM_DOMAIN
+being the first.
 
-That is a good point! Definitely sounds good to defer this to folio_put().
+I find this a little ambiguous, so I refrained myself from adding a description.
+Since I can't tell what it is, and whether TPU is really the only user or not,
+I propose drop the argument or not describe it, as I already did. What's your
+preference?
 
->> My goal here is to try to not to defer merging and freeing as much as
->> possible so that most of the page/memory operations are
->> synchronous, because synchronous operations are more predictable.
->> 
->> As an example of improving predictability, in one of the selftests, I do
->> a hole punch and then try to allocate again. Because the merging and
->> freeing of the HugeTLB page sometimes takes too long, the allocation
->> sometimes fails: the guest_memfd's subpool hadn't yet received the freed
->> page back. With a synchronous truncation, the truncation may take
->> longer, but the selftest predictably passes.
-> Maybe check if guestmem_hugetlb_handle_folio_put() is invoked in the
-> interrupt context, and, if not, invoke the guestmem_hugetlb_cleanup_folio()
-> synchronously?
->
->
-
-I think this is a good idea. I would like to pursue this in a future
-revision of a patch series.
-
-It seems like the use of in_atomic() is strongly discouraged, do you
-have any tips on how to determine if folio_put() is being called from
-atomic context?
-
->> 
->> [...snip...]
->> 
+Thanks!
+ta
 
