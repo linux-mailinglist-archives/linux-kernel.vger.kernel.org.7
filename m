@@ -1,166 +1,155 @@
-Return-Path: <linux-kernel+bounces-834253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856F2BA4456
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:42:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A887BA445C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407E4620281
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:42:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600331B2273B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F34199FBA;
-	Fri, 26 Sep 2025 14:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EE51B4138;
+	Fri, 26 Sep 2025 14:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOBkDd+m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UoBTlk8n";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8ph6xF2C"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4602417C91;
-	Fri, 26 Sep 2025 14:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EC1189B84;
+	Fri, 26 Sep 2025 14:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897765; cv=none; b=siBa6ONDeRs3L8lgpBbeKFK7VRPEqxIhgXw6ExECNuQpxsvmAgLJWy3oiqQTMMLgJ10IgH96pgAF2sk4LsSKk9vPDn/MmXWfP1iI6bpxzMFM81DLQj29oZ2YHvcyq4MnQ1O1+UK0O5Gk+IjX5Jhsru5pL/n+LZYOQigRBPNgio0=
+	t=1758897798; cv=none; b=a8BNq/Vlzu7+oPTcF+pngV9LgEYMvM1693ghdZK4/BG7ap6UrpPpNU/VR/s/eVIG9pQnRxmGwtqV2IoeBIpE1/FPSbif3EiNWsRWkKW/LSycVhXhMqI5k2/Oy8OfrVxusoOck9KAKIKbTrT7xJ2i+7t3GvVz9FOW4lCrThhK6Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897765; c=relaxed/simple;
-	bh=D26fU8PCfxAV2/rnQjd/+ukqL80rtYmpOmBeDcURakU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GIHgbEGG5+md3sziqtGB5CCQeyKWFrwb0unGEen6U4RPUYy6X4GlcQBA9gGMMqW83Kx2vFyOUHG/XJA/wO0dVcrMQ+LLPgo6wtNc9Efoz7stHzkdZNZwCF1Ay24dICKpR7UkWTvUtD8dwoAj6wIkQk9TZRqoMjT5JsGR0jnxZ30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOBkDd+m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A95C4CEF4;
-	Fri, 26 Sep 2025 14:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758897765;
-	bh=D26fU8PCfxAV2/rnQjd/+ukqL80rtYmpOmBeDcURakU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SOBkDd+m3dNQt1II5PGGLkUa7XfDE4ac7m3+mnYzvGRcMKbDpj1Y7JR+uCrSaXcAs
-	 5uhobDRfp0TxbVkMdULO5Y2CroiqzNQLPUpfQwCuIo78i8+f5gVz1kJj/6gMt10ulU
-	 cSE3nzWUpsLu1MV2xE/SVZfSxNmLpl0AeF9uSGWJoQYaWjhl6iTjIc/mfllfS3Ul2T
-	 md9MT5kiqH8D8SmS4A7jm3EXcwhokB83yutLXIWqdALZnjIhgZ9RGHsajz6iBD/6l/
-	 YtOeoHBzpKld5CKahk+tXaQ5RtPeF7siu19N8v3C6mNy++qqduAC7JNpMov4ElJNNo
-	 G8HcM0SQZsjgQ==
-Date: Fri, 26 Sep 2025 15:42:38 +0100
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 10/28] KVM: arm64: iommu: Shadow host stage-2 page
- table
-Message-ID: <aNamXlTErXDs1K8Z@willie-the-truck>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-11-smostafa@google.com>
- <aMA8vz0v0Vn-02QP@willie-the-truck>
- <aMlzLsj5slPQhWEr@google.com>
+	s=arc-20240116; t=1758897798; c=relaxed/simple;
+	bh=/1wSTGnAQRVt41V2hI0ZzT9+Zwhxg/Rq2OuY8HFG470=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=brrSMPF1jcsQ+ACKYDhecXQpbLfQDQVijzX2sIdVNxcAnkNyNZX5yuJTea0lp1FdRB17fFG8gDUZGS9VO6hQ0Mo1pSiD2afGL8s5QKAkY3qKUb/dYxQNnWcCB6DU1ug28j6y2a/nQIsNkYYBqB9lJKi3wETU49hPhg0h5quFNB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UoBTlk8n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8ph6xF2C; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758897792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1IBczeEJpVQcM5jLgYJ9cWY9abCJj+XfKLD28bakKl0=;
+	b=UoBTlk8nUa/+SGgQEz/qXMj17X+JLNb1IGtNr4L4r6wzn4uIgbL4eDA0jvDBe7L8+HP930
+	PKu2UsJ134FzmIfYYX6S8g0Db5YdDGxVFaxgPo5VLRv4wMi5FaYyvhfSMV391cXSDhELYp
+	lgR/LS2Na+qFAN30rcvz+HlBGtVKLmEv/3AStcCWei8DJdojfpQRU1uqm+OgrxSX7NxF93
+	0QIdg/b5crgw+HicmNRyK+UCNARu5ZW4H5SSzeLVug0VWqYz0qXjntflRj7ripNqtr6JOp
+	LB91wEHF3XuNk5rMU5rQVnSR08H4imoktMLaDYT3/Vus0YGkRWREPh81J8+8bw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758897792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1IBczeEJpVQcM5jLgYJ9cWY9abCJj+XfKLD28bakKl0=;
+	b=8ph6xF2C80BCtGlQfW3tmE8Hq0BUjuTTd0e18wYdBrenUqMzIqwBecYbYgYAuaWRStV5Y3
+	w2FmgYIzRX99NvBg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann
+ <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, Niklas Schnelle
+ <schnelle@linux.ibm.com>, Serge Semin <fancer.lancer@gmail.com>, Andrew
+ Murray <amurray@thegoodpenguin.co.uk>, Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH 3/3] printk/nbcon: Release nbcon consoles ownership in
+ atomic flush after each emitted record
+In-Reply-To: <20250926124912.243464-4-pmladek@suse.com>
+References: <20250926124912.243464-1-pmladek@suse.com>
+ <20250926124912.243464-4-pmladek@suse.com>
+Date: Fri, 26 Sep 2025 16:49:12 +0206
+Message-ID: <84v7l5gtq7.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMlzLsj5slPQhWEr@google.com>
+Content-Type: text/plain
 
-On Tue, Sep 16, 2025 at 02:24:46PM +0000, Mostafa Saleh wrote:
-> On Tue, Sep 09, 2025 at 03:42:07PM +0100, Will Deacon wrote:
-> > On Tue, Aug 19, 2025 at 09:51:38PM +0000, Mostafa Saleh wrote:
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-> > > index a01c036c55be..f7d1c8feb358 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-> > > @@ -4,15 +4,94 @@
-> > >   *
-> > >   * Copyright (C) 2022 Linaro Ltd.
-> > >   */
-> > > +#include <linux/iommu.h>
-> > > +
-> > >  #include <nvhe/iommu.h>
-> > > +#include <nvhe/mem_protect.h>
-> > > +#include <nvhe/spinlock.h>
-> > >  
-> > >  /* Only one set of ops supported */
-> > >  struct kvm_iommu_ops *kvm_iommu_ops;
-> > >  
-> > > +/* Protected by host_mmu.lock */
-> > > +static bool kvm_idmap_initialized;
-> > > +
-> > > +static inline int pkvm_to_iommu_prot(enum kvm_pgtable_prot prot)
-> > > +{
-> > > +	int iommu_prot = 0;
-> > > +
-> > > +	if (prot & KVM_PGTABLE_PROT_R)
-> > > +		iommu_prot |= IOMMU_READ;
-> > > +	if (prot & KVM_PGTABLE_PROT_W)
-> > > +		iommu_prot |= IOMMU_WRITE;
-> > > +	if (prot == PKVM_HOST_MMIO_PROT)
-> > > +		iommu_prot |= IOMMU_MMIO;
-> > 
-> > This looks a little odd to me.
-> > 
-> > On the CPU side, the only different between PKVM_HOST_MEM_PROT and
-> > PKVM_HOST_MMIO_PROT is that the former has execute permission. Both are
-> > mapped as cacheable at stage-2 because it's the job of the host to set
-> > the more restrictive memory type at stage-1.
-> > 
-> > Carrying that over to the SMMU would suggest that we don't care about
-> > IOMMU_MMIO at stage-2 at all, so why do we need to set it here?
-> 
-> Unlike the CPU, the host can set the SMMU to bypass, in that case the
-> hypervisor will attach its stage-2 with no stage-1 configured. So,
-> stage-2 must have the correct attrs for MMIO.
+On 2025-09-26, Petr Mladek <pmladek@suse.com> wrote:
+> printk() tries to flush messages with NBCON_PRIO_EMERGENCY on
+> nbcon consoles immediately. It might take seconds to flush all
+> pending lines on slow serial consoles. Note that there might be
+> hundreds of messages, for example:
+>
+> [    3.771531][    T1] pci 0000:3e:08.1: [8086:324
+> ** replaying previous printk message **
+> [    3.771531][    T1] pci 0000:3e:08.1: [8086:3246] type 00 class 0x088000 PCIe Root Complex Integrated Endpoint
+> [ ... more than 2000 lines, about 200kB messages ... ]
+> [    3.837752][    T1] pci 0000:20:01.0: Adding to iommu group 18
+> [    3.837851][    T
+> ** replaying previous printk message **
+> [    3.837851][    T1] pci 0000:20:03.0: Adding to iommu group 19
+> [    3.837946][    T1] pci 0000:20:05.0: Adding to iommu group 20
+> [ ... more than 500 messages for iommu groups 21-590 ...]
+> [    3.912932][    T1] pci 0000:f6:00.1: Adding to iommu group 591
+> [    3.913070][    T1] pci 0000:f6:00.2: Adding to iommu group 592
+> [    3.913243][    T1] DMAR: Intel(R) Virtualization Technology for Directed I/O
+> [    3.913245][    T1] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+> [    3.913245][    T1] software IO TLB: mapped [mem 0x000000004f000000-0x0000000053000000] (64MB)
+> [    3.913324][    T1] RAPL PMU: API unit is 2^-32 Joules, 3 fixed counters, 655360 ms ovfl timer
+> [    3.913325][    T1] RAPL PMU: hw unit of domain package 2^-14 Joules
+> [    3.913326][    T1] RAPL PMU: hw unit of domain dram 2^-14 Joules
+> [    3.913327][    T1] RAPL PMU: hw unit of domain psys 2^-0 Joules
+> [    3.933486][    T1] ------------[ cut here ]------------
+> [    3.933488][    T1] WARNING: CPU: 2 PID: 1 at arch/x86/events/intel/uncore.c:1156 uncore_pci_pmu_register+0x15e/0x180
+> [    3.930291][    C0] watchdog: Watchdog detected hard LOCKUP on cpu 0
+> [    3.930291][    C0] Kernel panic - not syncing: Hard LOCKUP
+> [...]
+> [    3.930291][    C0] CPU: 0 UID: 0 PID: 18 Comm: pr/ttyS0 Not tainted...
+> [...]
+> [    3.930291][    C0] RIP: 0010:nbcon_reacquire_nobuf+0x11/0x50
+> [    3.930291][    C0] Call Trace:
+> [...]
+> [    3.930291][    C0]  <TASK>
+> [    3.930291][    C0]  serial8250_console_write+0x16d/0x5c0
+> [    3.930291][    C0]  nbcon_emit_next_record+0x22c/0x250
+> [    3.930291][    C0]  nbcon_emit_one+0x93/0xe0
+> [    3.930291][    C0]  nbcon_kthread_func+0x13c/0x1c0
+>
+> The are visible two takeovers of the console ownership:
+>
+>   - The 1st one is triggered by the "WARNING: CPU: 2 PID: 1 at
+>     arch/x86/..." line printed with NBCON_PRIO_EMERGENCY.
+>
+>   - The 2nd one is triggered by the "Kernel panic - not syncing:
+>     Hard LOCKUP" line printed with NBCON_PRIO_PANIC.
+>
+> There are more than 2500 lines, at about 240kB, emitted between
+> the takeover and the 1st "WARNING" line in the emergency context.
+> This amount of pending messages had to be flushed by
+> nbcon_atomic_flush_pending() when WARN() printed its first line.
+>
+> The atomic flush was holding the nbcon console context for too long so
+> that it triggered hard lockup on the CPU running the printk kthread
+> "pr/ttyS0". The kthread needed to reacquire the console ownership
+> for restoring the original serial port state in serial8250_console_write().
+>
+> Prevent the hardlockup by releasing the nbcon console ownership after
+> each emitted record.
+>
+> Note that __nbcon_atomic_flush_pending_con() used to hold the console
+> ownership all the time because it blocked the printk kthread. Otherwise
+> the kthread tried to flush the messages in parallel which caused repeated
+> takeovers and more replayed messages.
+>
+> It is not longer a problem because the repeated takeovers are blocked
+> by the counter of emergency contexts, see nbcon_cpu_emergency_cnt.
+>
+> Link: https://lore.kernel.org/all/aNQO-zl3k1l4ENfy@pathway.suse.cz
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-I'm not sure about that.
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
-If the SMMU is in stage-1 bypass, we still have the incoming memory
-attributes from the transaction (modulo MTCFG which we shouldn't be
-setting) and they should combine with the stage-2 attributes in roughly
-the same way as the CPU, no?
-
-> > > +static int __snapshot_host_stage2(const struct kvm_pgtable_visit_ctx *ctx,
-> > > +				  enum kvm_pgtable_walk_flags visit)
-> > > +{
-> > > +	u64 start = ctx->addr;
-> > > +	kvm_pte_t pte = *ctx->ptep;
-> > > +	u32 level = ctx->level;
-> > > +	u64 end = start + kvm_granule_size(level);
-> > > +	int prot =  IOMMU_READ | IOMMU_WRITE;
-> > > +
-> > > +	/* Keep unmapped. */
-> > > +	if (pte && !kvm_pte_valid(pte))
-> > > +		return 0;
-> > > +
-> > > +	if (kvm_pte_valid(pte))
-> > > +		prot = pkvm_to_iommu_prot(kvm_pgtable_stage2_pte_prot(pte));
-> > > +	else if (!addr_is_memory(start))
-> > > +		prot |= IOMMU_MMIO;
-> > 
-> > Why do we need to map MMIO regions pro-actively here? I'd have thought
-> > we could just do:
-> > 
-> > 	if (!kvm_pte_valid(pte))
-> > 		return 0;
-> > 
-> > 	prot = pkvm_to_iommu_prot(kvm_pgtable_stage2_pte_prot(pte);
-> > 	kvm_iommu_ops->host_stage2_idmap(start, end, prot);
-> > 	return 0;
-> > 
-> > but I think that IOMMU_MMIO is throwing me again...
-> 
-> We have to map everything pro-actively as we don’t handle page faults
-> in the SMMUv3 driver.
-> This would be a future work where the CPU stage-2 page table is shared with
-> the SMMUv3.
-
-Ah yes, I'd forgotten about that.
-
-Thanks,
-
-Will
+Looks good and performs as advertised.
 
