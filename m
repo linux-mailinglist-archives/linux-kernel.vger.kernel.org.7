@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-833996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09738BA38F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:00:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DA8BA38FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A2E3A2315
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10A93A5278
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AE02EB5CB;
-	Fri, 26 Sep 2025 12:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tnw2Ux0F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22538296BDF;
-	Fri, 26 Sep 2025 12:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0447F2EAB6E;
+	Fri, 26 Sep 2025 12:03:31 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D5C10E3;
+	Fri, 26 Sep 2025 12:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758888009; cv=none; b=ZgwBmuVAXCpvTmAuz63IAMBd5SqeV56BFufw5sLM6VvaI+gg0fOIyXzAEb9jvBURTJ+eDE8iBcjDUeLOoTk8OU0ifdadRz1hzB4bGFeznbIpPMpBHiESk2H86Xem59cBohl2+R4ZFmmnO9Dmt8IxPtOKdjWDQMv/Pged4AxJLgw=
+	t=1758888210; cv=none; b=ulEIzF0O4mKEm0daQPjaXhb1WGL8zA/EV1xPYbI+FnIm6iRMZd1x1Qmn9nDD+4Y5Gk9cukRQmC8ngDAZmxTDvFnva5Br50LUDHon2kkXaOFeeownI2ygpeJCSWpsnNi50tgX5bDG30J6I5olpup4Imyr7NHL0SnKx756iRzvM1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758888009; c=relaxed/simple;
-	bh=SxKEpvT1xfQHA95My4WDzhWTJSuoe5gKWO8GLmU6P/4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=YYuAvaaiH7BVKcjjQevMgLDUziCAyea+V8Mhd5gBOZZWxtmb6MdeISDot7o2mY3dly3scZPTF4AypeekdPSBG+v9CjEWfNyJ4lGXRslJ/rHlK3I8b4K/UkecGj3QRuPQPtJOvuDSYulWc4mHR3Xt1rTuiSMir8Co3QakC0H4FX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tnw2Ux0F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DEAC4CEF4;
-	Fri, 26 Sep 2025 12:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758888007;
-	bh=SxKEpvT1xfQHA95My4WDzhWTJSuoe5gKWO8GLmU6P/4=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=Tnw2Ux0FXaCZhG83mBnRs5GzQ2vXUEIMniK7JrrcK5fARqbzP5qZ5mW02eke7Jzcm
-	 ZKthAQLJPdnvYpSUIEIcvMeS7KPuoq3XbIvqXO43QWeNU+4Ui4WD+BjSi37u+JhkQb
-	 F8dKR4fyEyI9yb0ZmrlODwNyZxHP9fBOIo2hkmQrDeEf/COMrfD5oncP/gk0Do+OOp
-	 I1pTwnfu5Ily1OmwrnNHcJe24td5/dAXD2TDke5WxoPj3WBnyXYFpIDy+z4Hd6BbdD
-	 bj2H2XVCsKRYHpS9wr/N4o18onL+ecm6fnxWY+oxaCtUiTkwVdArjlo0Gq8mN+siYr
-	 DhXhyFiOOkK7g==
+	s=arc-20240116; t=1758888210; c=relaxed/simple;
+	bh=WjCqIiFfZ75RdZ0O8KNeP5eb/Iq3S4nT4LUk9qeScVM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qZKECkF18cFo/QxHjur64h0yttYdMNY2gobo8OFroApATdjb8NH3pV8lhZXW73KMDFEAfxVKiUcbtosG/51vkytn+o/lA6oP6uwWXj40yYO2CND3WKuQ3AbVcdxJ9nzZLl6gL6hPi+dDC0DJsBxDcim18f4uAc8MLT4lklGczQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: JNgtOul1R5G7qDX6S5sh5w==
+X-CSE-MsgGUID: jL0ClaEQQ6+hcwRp3hxS1g==
+X-IronPort-AV: E=Sophos;i="6.18,295,1751212800"; 
+   d="scan'208";a="127915875"
+From: =?gb2312?B?wqy5+rrq?= <luguohong@xiaomi.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: =?gb2312?B?Sm9zqKYgRXhwqK5zaXRv?= <jose.exposito89@gmail.com>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jikos@kernel.org" <jikos@kernel.org>, "bentiss@kernel.org"
+	<bentiss@kernel.org>, =?gb2312?B?wO7F9A==?= <lipeng43@xiaomi.com>,
+	=?gb2312?B?RmVpMSBKaWFuZyC9r7fJ?= <jiangfei1@xiaomi.com>,
+	=?gb2312?B?y87D3MPc?= <songmimi@xiaomi.com>, =?gb2312?B?wqy5+rrq?=
+	<luguohong@xiaomi.com>
+Subject: =?gb2312?B?tPC4tDogtPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFRoZSB6ZXJvIHBvd2Vy?=
+ =?gb2312?B?IGxldmVsIG9mIHRoZSBISUQgZGV2aWNlIGluIGtlcm5lbCA2LjEyIGlzIG5v?=
+ =?gb2312?Q?t_reported_from_the_kernel_to_the_upper_layer.?=
+Thread-Topic: =?gb2312?B?tPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFRoZSB6ZXJvIHBvd2VyIGxldmVs?=
+ =?gb2312?B?IG9mIHRoZSBISUQgZGV2aWNlIGluIGtlcm5lbCA2LjEyIGlzIG5vdCByZXBv?=
+ =?gb2312?Q?rted_from_the_kernel_to_the_upper_layer.?=
+Thread-Index: AQHcJwWA1Pv1UPoVhEyxSk6qnb4viLSZrf4AgABrXICABNg0/oAD42UAgAKWVzk=
+Date: Fri, 26 Sep 2025 12:03:19 +0000
+Message-ID: <aada0917f31641c19ba7c48e3c6d3c53@xiaomi.com>
+References: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
+ <aM0XBudxlXuzALbg@fedora>
+ <px5t2iedrrqhcrpdvmu5pznp53d3e5jp55dm72phlsti2rmt4j@rj2pajkavuir>
+ <91e0d952fd774e769e2d24ce2165df18@xiaomi.com>,<vkm32giijggtzv7hudsvqg34utpqvw4nnccfi7d4txj5tlzstp@4bu2ox2lmtm5>
+In-Reply-To: <vkm32giijggtzv7hudsvqg34utpqvw4nnccfi7d4txj5tlzstp@4bu2ox2lmtm5>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 26 Sep 2025 14:00:01 +0200
-Message-Id: <DD2PRD2XEZRE.1YACAPZWRYLZO@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 01/10] gpu: nova-core: Set correct DMA mask
-Cc: "John Hubbard" <jhubbard@nvidia.com>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <acourbot@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Joel
- Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>
-To: "Alistair Popple" <apopple@nvidia.com>
-References: <20250922113026.3083103-1-apopple@nvidia.com>
- <20250922113026.3083103-2-apopple@nvidia.com>
- <7fb081e9-e607-401b-937f-f4e3a78a2874@kernel.org>
- <0dbc8f78-5cee-4741-8d33-df3358dd5383@nvidia.com>
- <eblaubjmsesi6gh64ekm74qyzvfk23vjcmotc33upkc5w6edin@rbsezy6f7bai>
-In-Reply-To: <eblaubjmsesi6gh64ekm74qyzvfk23vjcmotc33upkc5w6edin@rbsezy6f7bai>
+MIME-Version: 1.0
 
-On Tue Sep 23, 2025 at 6:29 AM CEST, Alistair Popple wrote:
-> On 2025-09-23 at 12:16 +1000, John Hubbard <jhubbard@nvidia.com> wrote...
->> On 9/22/25 9:08 AM, Danilo Krummrich wrote:
->> > On 9/22/25 1:30 PM, Alistair Popple wrote:
->> >> +        // SAFETY: No DMA allocations have been made yet
->> >=20
->> > It's not really about DMA allocations that have been made previously, =
-there is
->> > no unsafe behavior in that.
->> >=20
->> > It's about the method must not be called concurrently with any DMA all=
-ocation or
->> > mapping primitives.
->> >=20
->> > Can you please adjust the comment correspondingly?
->
-> Sure.
->
->> >> +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<47>()=
-)? };
->> >=20
->> > As Boqun mentioned, we shouldn't have a magic number for this. I don't=
- know if
->> > it will change for future chips, but maybe we should move this to gpu:=
-:Spec to
->>=20
->> It changes to 52 bits for GH100+ (Hopper/Blackwell+). When I post those
->> patches, I'll use a HAL to select the value.
->>=20
->> > be safe.
->> >=20
->> > At least, create a constant for it (also in gpu::Spec?); in Nouveau I =
-named this
->> > NOUVEAU_VA_SPACE_BITS back then. Not a great name, if you have a bette=
-r idea,
->> > please go for it. :)
->
-> Well it's certainly not the VA_SPACE width ... that's a different address=
- space :-)
-
-I mean, sure. But isn't the limitation of 47 bits coming from the MMU and h=
-ence
-defines the VA space width and the DMA bit width we can support?
-
-> I thought from the context that the magic number was pretty obviously the
-> supported DMA address width in bits, especially given the extra decoratio=
-n
-> of the DmaMask type. Certainly that's been the accepted practice for the =
-rest
-> of the kernel where pretty much all drivers just use something of the for=
-m
-> dma_set_mask(drm_dev->dev, DMA_BIT_MASK(44)) or whatever DMA address widt=
-hs
-> they support.
->
->> GPU_DMA_BIT_WIDTH, for now?
->
-> Works for me.
->
->> thanks,
->> --=20
->> John Hubbard
->>=20
-
+DQpIaSBEbWl0cnksDQpBZnRlciB0ZXN0aW5nLCB3ZSBmb3VuZCB0aGF0IHlvdXIgcHJvcG9zZWQg
+bWV0aG9kIGNhbiBzb2x2ZSBvdXIgcHJvYmxlbS4gUGxlYXNlIGhlbHAgbWVyZ2UgdGhpcyBtZXRo
+b2QgaW50byB0aGUgTGludXgga2VybmVsIGFzIHNvb24gYXMgcG9zc2libGUhIFBsZWFzZSByZW1l
+bWJlciB0byBzZW5kIHVzIHRoZSByZWxldmFudCBpbmZvcm1hdGlvbiBvZiB0aGUgbWVyZ2VkIGdp
+dCBzbyB0aGF0IHdlIGNhbiBjb250YWN0IEdvb2dsZSBhbmQgbWVyZ2UgdGhlaXIgQW5kcm9pZCBH
+S0kgYXMgd2VsbC4gT3VyIHByb2plY3QgaXMgbG9va2luZyBmb3J3YXJkIHRvIHVzaW5nIHRoaXMg
+ZmVhdHVyZS4gVGhhbmsgeW91IHZlcnkgbXVjaCENCg0KX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXw0Kt6K8/sjLOiBEbWl0cnkgVG9yb2tob3YgPGRtaXRyeS50b3Jva2hv
+dkBnbWFpbC5jb20+DQq3osvNyrG85DogMjAyNcTqOdTCMjXI1SAxMjoyNg0KytW8/sjLOiDCrLn6
+uuoNCrOty806IEpvc6imIEV4cKiuc2l0bzsgbGludXgtaW5wdXRAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBqaWtvc0BrZXJuZWwub3JnOyBiZW50aXNzQGtl
+cm5lbC5vcmc7IMDuxfQ7IEZlaTEgSmlhbmcgva+3yTsgy87D3MPcDQrW98ziOiBSZTogtPC4tDog
+W0V4dGVybmFsIE1haWxdUmU6IFRoZSB6ZXJvIHBvd2VyIGxldmVsIG9mIHRoZSBISUQgZGV2aWNl
+IGluIGtlcm5lbCA2LjEyIGlzIG5vdCByZXBvcnRlZCBmcm9tIHRoZSBrZXJuZWwgdG8gdGhlIHVw
+cGVyIGxheWVyLg0KDQpbzeKyv9PKvP5dILTL08q8/sC01LTT2tChw9e5q8u+zeKyv6Osx+u998n3
+tKbA7aGjyPS21NPKvP6wssir0NS05tLJo6zH672r08q8/teqt6K4+G1pc2VjQHhpYW9taS5jb229
++NDQt7TAoQ0KDQpPbiBNb24sIFNlcCAyMiwgMjAyNSBhdCAwOToyOToyMEFNICswMDAwLCDCrLn6
+uuogd3JvdGU6DQo+DQo+IFdoYXQga2luZCBvZiBhY3Rpb24gYXJlIHdlIHRhbGtpbmcgYWJvdXQ/
+IFNlY3Rpb24gMzEgb2YgdGhlIEhJRA0KPiBzcGVjaWZpY2F0aW9uIGRlZmluZXMgZXZlbnRzIGZv
+ciAiU21hcnQgQmF0dGVyeSIgKCJUbyBjb21wbHkgd2l0aCB0aGUNCj4gU21hcnQgQmF0dGVyeSBT
+cGVjaWZpY2F0aW9uLCB0aGUgQmF0dGVyeSBTeXN0ZW0gbXVzdCBzdXBwb3J0IHRoZQ0KPiBmdW5j
+dGlvbnMgZGVmaW5lZCBpbiB0aGUgQmF0dGVyeSBhbmQgQ2hhcmdlciB1c2FnZSB0YWJsZXMuIEZv
+ciBkZXRhaWxzLA0KPiBzZWUgU2VjdGlvbiA0LjIsIKGwQmF0dGVyeSBTeXN0ZW0gUGFnZSAoeDg1
+KS6hsSkgYW5kIGlzIHR5cGljYWxseSB1c2VkIGZvcg0KPiAiYmF0dGVyeSBwYWNrIGZvciBjZWxs
+dWxhciBwaG9uZXMgKHByaW5jaXBhbCBzb3VyY2UpLCB0aGUgYmF0dGVyeQ0KPiBwYWNrKHMpIGZv
+ciBub3RlYm9vayBjb21wdXRlcnMgKGF1eGlsaWFyeSBzb3VyY2UpLCBhbmQgdGhlIHNlYWxlZA0K
+PiBiYXR0ZXJpZXMgaW4gdW5pbnRlcnJ1cHRpYmxlIHBvd2VyIHN1cHBsaWVzIChhdXhpbGlhcnkg
+c291cmNlKS4iDQo+DQo+IElzIHlvdXIgdXNlIGNhc2UgbWFpbiBiYXR0ZXJ5IG9yIGJhdHRlcnkg
+aW4gYSBzdHlsdXMgb3Igc29tZSBvdGhlcg0KPiBwZXJpcGhlcmFsPw0KPg0KPg0KPiAtLS0+Pj4N
+Cj4gV2hhdCB3ZSBhcmUgZGlzY3Vzc2luZyBpcyB0aGUgY29kZSBpbXBsZW1lbnRhdGlvbiBvZiBT
+ZWN0aW9uIDMxIG9mIHRoZQ0KPiBISUQgcHJvdG9jb2w6IDMxIEJhdHRlcnkgU3lzdGVtIFBhZ2Ug
+KDB4ODUpLiBPdXIgc2NlbmFyaW8gaXM6IGFuDQo+IEFuZHJvaWQgcGhvbmUgaXMgY29ubmVjdGVk
+IHRvIGEgaGFuZGxlIHZpYSBVU0IuIFRoZSBoYW5kbGUgaXMgYSBISUQNCj4gZGV2aWNlIHdpdGgg
+YSBiYXR0ZXJ5LiBUaGUgcG93ZXIgb2YgdGhlIGJhdHRlcnkgaW4gdGhlIGhhbmRsZSBpcyBzZW50
+DQo+IHRvIHRoZSBib3R0b20gbGF5ZXIgKGtlcm5lbCkgb2YgdGhlIHBob25lIHZpYSBVU0IuIFRo
+ZSBib3R0b20gbGF5ZXIgb2YNCj4gdGhlIHBob25lIHRoZW4gcmVwb3J0cyB0aGlzIHBvd2VyIHRv
+IHRoZSB1cHBlciBsYXllciBvZiBBbmRyb2lkDQo+IHRocm91Z2ggdGhlIEhJRCBkcml2ZXIuDQoN
+Ckkgc2VlLiBJIGd1ZXNzIHdlIGNhbiB0cnkgb25seSBmaWx0ZXJpbmcgb3V0IDAgcmVwb3J0cyBm
+b3IgdGhlDQpkaWdpdGl6ZXJzLCBsZWF2aW5nIG90aGVyIGRldmljZXMgd2l0aCBiYXR0ZXJpZXMg
+YWxvbmUuIFNvbWV0aGluZyBsaWtlDQp0aGlzOg0KDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2hp
+ZC9oaWQtaW5wdXQuYyBiL2RyaXZlcnMvaGlkL2hpZC1pbnB1dC5jDQppbmRleCBmZjE3ODRiNWMy
+YTQuLmJhM2Y2NjU1YWY5ZSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvaGlkL2hpZC1pbnB1dC5jDQor
+KysgYi9kcml2ZXJzL2hpZC9oaWQtaW5wdXQuYw0KQEAgLTU5NSwxNCArNTk1LDE4IEBAIHN0YXRp
+YyB2b2lkIGhpZGlucHV0X2NsZWFudXBfYmF0dGVyeShzdHJ1Y3QgaGlkX2RldmljZSAqZGV2KQ0K
+ICAgICAgICBkZXYtPmJhdHRlcnkgPSBOVUxMOw0KIH0NCg0KLXN0YXRpYyB2b2lkIGhpZGlucHV0
+X3VwZGF0ZV9iYXR0ZXJ5KHN0cnVjdCBoaWRfZGV2aWNlICpkZXYsIGludCB2YWx1ZSkNCitzdGF0
+aWMgdm9pZCBoaWRpbnB1dF91cGRhdGVfYmF0dGVyeShzdHJ1Y3QgaGlkX2RldmljZSAqZGV2LA0K
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IHVzYWdlLCBp
+bnQgdmFsdWUpDQogew0KICAgICAgICBpbnQgY2FwYWNpdHk7DQoNCiAgICAgICAgaWYgKCFkZXYt
+PmJhdHRlcnkpDQogICAgICAgICAgICAgICAgcmV0dXJuOw0KDQotICAgICAgIGlmICh2YWx1ZSA9
+PSAwIHx8IHZhbHVlIDwgZGV2LT5iYXR0ZXJ5X21pbiB8fCB2YWx1ZSA+IGRldi0+YmF0dGVyeV9t
+YXgpDQorICAgICAgIGlmICgodXNhZ2UgJiBISURfVVNBR0VfUEFHRSkgPT0gSElEX1VQX0RJR0lU
+SVpFUiAmJiB2YWx1ZSA9PSAwKQ0KKyAgICAgICAgICAgICAgIHJldHVybjsNCisNCisgICAgICAg
+aWYgKHZhbHVlIDwgZGV2LT5iYXR0ZXJ5X21pbiB8fCB2YWx1ZSA+IGRldi0+YmF0dGVyeV9tYXgp
+DQogICAgICAgICAgICAgICAgcmV0dXJuOw0KDQogICAgICAgIGNhcGFjaXR5ID0gaGlkaW5wdXRf
+c2NhbGVfYmF0dGVyeV9jYXBhY2l0eShkZXYsIHZhbHVlKTsNCkBAIC0xNTE4LDcgKzE1MjIsNyBA
+QCB2b2lkIGhpZGlucHV0X2hpZF9ldmVudChzdHJ1Y3QgaGlkX2RldmljZSAqaGlkLCBzdHJ1Y3Qg
+aGlkX2ZpZWxkICpmaWVsZCwgc3RydWN0DQogICAgICAgICAgICAgICAgYm9vbCBoYW5kbGVkID0g
+aGlkaW5wdXRfc2V0X2JhdHRlcnlfY2hhcmdlX3N0YXR1cyhoaWQsIHVzYWdlLT5oaWQsIHZhbHVl
+KTsNCg0KICAgICAgICAgICAgICAgIGlmICghaGFuZGxlZCkNCi0gICAgICAgICAgICAgICAgICAg
+ICAgIGhpZGlucHV0X3VwZGF0ZV9iYXR0ZXJ5KGhpZCwgdmFsdWUpOw0KKyAgICAgICAgICAgICAg
+ICAgICAgICAgaGlkaW5wdXRfdXBkYXRlX2JhdHRlcnkoaGlkLCB1c2FnZS0+aGlkLCB2YWx1ZSk7
+DQoNCiAgICAgICAgICAgICAgICByZXR1cm47DQogICAgICAgIH0NCg0KDQpUaGFua3MuDQoNCi0t
+DQpEbWl0cnkNCiMvKioqKioqsb7Tyrz+vLDG5Li9vP66rNPQ0KHD17mry761xLGjw9zQxc+io6y9
+9s/e09q3osvNuPjJz8PmtdjWt9bQwdCz9rXEuPbIy7vyyLrX6aGjvfvWucjOus7G5Mv7yMvS1MjO
+us7Qzsq9yrnTw6OosPzAqLWrsrvP3tPayKuyv7vysr+31rXY0LnCtqGiuLTWxqGiu/LJoreio6mx
+vtPKvP7W0LXE0MXPoqGjyOe5+8T6tO3K1cHLsb7Tyrz+o6zH68T6waK8tLXnu7C78tPKvP7NqNaq
+t6K8/sjLsqLJvrP9sb7Tyrz+o6EgVGhpcyBlLW1haWwgYW5kIGl0cyBhdHRhY2htZW50cyBjb250
+YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBmcm9tIFhJQU9NSSwgd2hpY2ggaXMgaW50ZW5k
+ZWQgb25seSBmb3IgdGhlIHBlcnNvbiBvciBlbnRpdHkgd2hvc2UgYWRkcmVzcyBpcyBsaXN0ZWQg
+YWJvdmUuIEFueSB1c2Ugb2YgdGhlIGluZm9ybWF0aW9uIGNvbnRhaW5lZCBoZXJlaW4gaW4gYW55
+IHdheSAoaW5jbHVkaW5nLCBidXQgbm90IGxpbWl0ZWQgdG8sIHRvdGFsIG9yIHBhcnRpYWwgZGlz
+Y2xvc3VyZSwgcmVwcm9kdWN0aW9uLCBvciBkaXNzZW1pbmF0aW9uKSBieSBwZXJzb25zIG90aGVy
+IHRoYW4gdGhlIGludGVuZGVkIHJlY2lwaWVudChzKSBpcyBwcm9oaWJpdGVkLiBJZiB5b3UgcmVj
+ZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGJ5IHBo
+b25lIG9yIGVtYWlsIGltbWVkaWF0ZWx5IGFuZCBkZWxldGUgaXQhKioqKioqLyMNCg==
 
