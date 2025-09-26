@@ -1,142 +1,86 @@
-Return-Path: <linux-kernel+bounces-833861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5CBBA33D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F396CBA3362
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089043B0F2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE671B28281
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7329C343;
-	Fri, 26 Sep 2025 09:51:12 +0000 (UTC)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A7C29BD94;
+	Fri, 26 Sep 2025 09:45:53 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F7C265623
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD5B26C3AE;
+	Fri, 26 Sep 2025 09:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758880271; cv=none; b=kNPO58tnT2IDDH+C7OB41U3D+liRSuPFBL/vafVQt1yFJB2fN0MNqolhCUrULEj57JDtUpRn4gcR1eqVZaJrSngFQwYEI1WnS/alBfO7CCrGITve63m6Lgyn3ATMEIGwlJMbBsJDk/UwfUoGnQFpFyu2IbwlccVRi+HPFw6DHRM=
+	t=1758879953; cv=none; b=ol251s4bFqcn0Jegmf1JjF/fXG0MYFexpcFHk3EX6NXfxAHMaO1HEwWLE8WaYp1bgVywfOMs7teHM8irILTqdm7R1uvRLwl0EV3IJlaos9Y/nd6+JBtem3NA5wM1/LjrneQArfhw22vUHi0DCjpkrNq2X3Nc73JXv4FSg70tvgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758880271; c=relaxed/simple;
-	bh=yNpF3gakBewbf4gWfzySUblL/HPEFTHdWDap5s8c2rw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XD43LYis4LjJ+jWOKo1pBvCr06zGxFkNhJUwOEkAVcd+GUpKGSGmvRvPalfVimMt4bdbIqTLXc50Sg4DfoyP9XFMpr3mRhIMEmwegr4uDnG3r0iCHp1FgGy+Jw4wglxrKQtxbn73sTVCJ1dwN3LqfjRpZrENmNneLxjCBzKu0ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-816ac9f9507so296666585a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:51:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758880268; x=1759485068;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wz1Y2OO7aX1FKDkec9bCJzTd14gDBikA8iaq+l9tIyk=;
-        b=GUFTl+ctNQjwUEuI6RXVKIeHvXf0d23QzhVCYLC+vDJeeOWSO3rnRW5u7a5IBkRWWh
-         NV8JTTlzEDtCLGW7mbrtTlepieQ5cY/FrlwsbX6rruZQWHYjGyQJmCNz1g6vVjht4ai9
-         xdUuC3hwU98dWVrW2FJErQ9xSmWpQNtW6dwvEgpysnObhsbJnEAQcwW6q1D8xfAYBJgb
-         lTDBUIpWPSZzfo2E5EOCHWl1WMwZSXZmaXtkutuGj6vdHun4t9dCRsiou8u16KIG8V7K
-         joNgAuPZTXkSZ8REPFJVYFuvdG/MTeo6t6JHMqXCKo57J9rCjqlQutcCzMfNml8l3ToJ
-         +bpA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6hRSFVUCO8hkGPJr0rP/3PljLRGHXtMQLiGjc8998GDmpguq9TaioM+YilsKApG4BmHsRxzX2uHX/hpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRf/u2lCYTzMTwqYTePDd58o4+rz8mem/q8LgwPwKIR3ZlOqFh
-	ZoS1egmjkkxVhwZ5cZ6fH5tqfzAG1DYM0ZHQcdjOjn3haHdxVWqjGNKv+GO7G3iT
-X-Gm-Gg: ASbGncsF4v0J2PzBvcBWRgbZKFG79Od5eUrQEP8425/Jvf90/oTonK4uEh0IOtGSQ10
-	e5pooMEiSLFLBU2ApaOEGdf4r8og5gJtRK+xm5vhB3WWJkM0/5AJvSvK7cR8HN9IhLgfpOs9clQ
-	VdxzumPiQwuK0LsDx2M3pMad/bAUU+ihb4ZcLCZpVSuKoPVuVn+E+BceMdoKcK116U05dxLTL0w
-	trly8fhh2VU95mK9YChXSB0I4ceTh/ASRXL8JARf3nsjpkif864XN3WWvfqpNm1UDQLo7axEkB8
-	eaQfRRkikSddyvGUsXngt0wfnlv2tB/34O9GT/5Nolq1xYsffN8hNNSpkVIOmZlJtxPsJFJ9VQV
-	5HtYCQInaYPBkK6GPCuCo96+QgEAfSmnv91Mh8sslK6kzms6jBNnNFA9mvUQXEGkuFuORuy/hNg
-	Y=
-X-Google-Smtp-Source: AGHT+IHLkZrYvTlqEDnwIuIeq5NCtHrb6PGWNoFFmLtmN08+2rptwlvQz6dLMoZlEdEtk9NAKCY63g==
-X-Received: by 2002:ad4:5cad:0:b0:787:f736:bc66 with SMTP id 6a1803df08f44-800dd11da10mr71364666d6.1.1758880268400;
-        Fri, 26 Sep 2025 02:51:08 -0700 (PDT)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135b5579fsm24087226d6.1.2025.09.26.02.51.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 02:51:08 -0700 (PDT)
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8571a0947d1so204024885a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:51:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUnNyJC+9Np1hoFUUESu1XsUQhjwUz9FvlhUBAejs3K2Ioi1Qzkjuyu/Yp2ZnXd48OVeb04K45SO5iPIVY=@vger.kernel.org
-X-Received: by 2002:a05:6102:1452:20b0:58f:1e8b:a1c1 with SMTP id
- ada2fe7eead31-5ae14991836mr1929645137.2.1758879937242; Fri, 26 Sep 2025
- 02:45:37 -0700 (PDT)
+	s=arc-20240116; t=1758879953; c=relaxed/simple;
+	bh=W6dmbj3nQuaOh1PvpWfrOaUzQV1DSYuduBdMkyJok1U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bUkIXxDboqKL0nZq7kP0EkKVwZ9zkUCVVTjzrvAyMjmqy4/uM6s5jLYsD2Je7NjhNsj4qDdyabcMXP989WAI0d83uddWGsfS4/qSqtxvd+LDaeWZvcWr9J2B1/SS3pFmDSbgwp6SrMGQy/nrTfh8QtmH4CfOMAyZ4k2R65jmhC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8dac07389abd11f08b9f7d2eb6caa7cf-20250926
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:8877f317-ac53-4448-93d3-6e10cc58c33d,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:186bffe941cd4aec285e7a474c697022,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817|850,TC:nil,Content:-
+	10|-8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
+	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8dac07389abd11f08b9f7d2eb6caa7cf-20250926
+X-User: zhangzihuan@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1705799856; Fri, 26 Sep 2025 17:45:36 +0800
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: rafael@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	viresh.kumar@linaro.org,
+	zhangzihuan@kylinos.cn,
+	zhenglifeng1@huawei.com
+Subject: Re: [Question] About unnecessary policy_has_boost_freq() calls in freq_table.c
+Date: Fri, 26 Sep 2025 17:45:33 +0800
+Message-Id: <20250926094533.542873-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAJZ5v0hshbbbTncpkZoS98jq+ChiARSZCNn5P8kaEduADbmHSw@mail.gmail.com>
+References: <CAJZ5v0hshbbbTncpkZoS98jq+ChiARSZCNn5P8kaEduADbmHSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com> <20250912122444.3870284-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250912122444.3870284-4-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Sep 2025 11:45:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWmjj_bKhGqhWcRvWap1U5izT347Ffo5wqs6OP9BvO8PA@mail.gmail.com>
-X-Gm-Features: AS18NWDiRHr7QXCMqaoImEEYFri-rFsQBU5GFbqAD2ZmUrWNkjrXvGfEFMFxCMM
-Message-ID: <CAMuHMdWmjj_bKhGqhWcRvWap1U5izT347Ffo5wqs6OP9BvO8PA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] arm64: dts: renesas: r9a08g045: Add PCIe node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, p.zabel@pengutronix.de, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Clausiu,
+> First off, setting policy->boost_supported doesn't really belong to
+> cpufreq_table_validate_and_sort(), so the idea of splitting it off
+> that function sounds reasonable to me.
+> 
 
-On Fri, 12 Sept 2025 at 14:24, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The RZ/G3S SoC has a variant (R9A08G045S33) which supports PCIe. Add the
-> PCIe node.
->
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v4:
-> - moved the node to r9a08g045.dtsi
-> - dropped the "s33" from the compatible string
-> - added port node
-> - re-ordered properties to have them grouped together
+Agreed.
 
-Thanks for the update!
+> However, cpufreq_boost_set_sw() is used as a .set_boost() callback, so
+> it gets called every time the "boost enabled" setting is changed.  It
+> doesn't look like a good place for updating policy->boost_supported to
+> me.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> @@ -717,6 +717,72 @@ eth1: ethernet@11c40000 {
->                         status = "disabled";
->                 };
->
-> +               pcie: pcie@11e40000 {
-> +                       compatible = "renesas,r9a08g045-pcie";
-> +                       reg = <0 0x11e40000 0 0x10000>;
-> +                       ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x8000000>;
-> +                       /* Map all possible DRAM ranges (4 GB). */
-> +                       dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x1 0x0>;
+Got it, where would you suggest updating policy->boost_supported instead?
 
-I would write the last part as "1 0x00000000", for consistency with
-other 36-bit addresses and lengths.
+Thanks!
 
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
