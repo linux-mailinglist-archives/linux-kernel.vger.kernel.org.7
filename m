@@ -1,146 +1,188 @@
-Return-Path: <linux-kernel+bounces-834231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5302BA43B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:36:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014E8BA438F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5701888D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D45562E54
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4323241AAC;
-	Fri, 26 Sep 2025 14:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABE683CC7;
+	Fri, 26 Sep 2025 14:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UDvCQmow"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYUWlJbG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDE283CC7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F1D7E110;
+	Fri, 26 Sep 2025 14:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897190; cv=none; b=bOyAJGyQIxw9u+1fzKT0l8Hw7qKTDvhwXccevfBaLVv65DfM6gKnhGitVTUKWG268E0Tec6gYlZ7/EPECDc8Ky/HLZxiw+8TVsvsUsL0+Ks3mom2GucMDKEBGp/zmdVhrBTCS+loA5+urMFSfhlxKd3baiZwQJ3kNIeVwRK+8PI=
+	t=1758897193; cv=none; b=EhTnPN5bHarOr5bSb3I4CG9SZVJT3KDlAPZZbQpZS7/mUU95eN2xXcNOMgmo6Sfk3G8FG5Kl0KLf8aiG0WEmvoE4zxX/BV7HQdeoN/w4p/9z9WOamaAeDJw+Muy12Mb9R/Mt9lIT1c9FsD36oVFqn2ZpBlDGNMIcxfihvNPMSYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897190; c=relaxed/simple;
-	bh=zyzn3ZcezAK9aa7VZIAtRCcKzdP/B8eYrPAfL36Gs6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tl+FwQMxOcAWNem2pEt5JujTBDiBBcWn4tcNep72asVmlJrbweSwjuUchhvmECfNA01nqT3J38PYaJ8IgE3sKZ/SmM/wxG8sjr0HYeFuiu0oWsb4FqqfCRdnJUYgVcL3LhWC9ndSjvFxfBg/LXntbhRSBzI4iEn/LzbMToFngYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UDvCQmow; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758897187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qOJaLah4ePiQxdQez6Be1i94MUmLOsj+O0iioPNAuew=;
-	b=UDvCQmowGIy04KgX+NLZrLe5aIbTMxbzl9bykPp3ktMbFfaDJgt+sVfZ9CGKyLbl3CFLif
-	+JG9cl84kP8wPZADPGCTlXyXHrQSmcmRb6c3DKdKwKDDAH+WiQt0Jfqg/Vg0eeTRT9Hdu6
-	doqsOkmsnvlo4fTOzjUtl+8FPbSWG2E=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-a2Ube48ZMpipeaQ0RNWPxg-1; Fri, 26 Sep 2025 10:33:06 -0400
-X-MC-Unique: a2Ube48ZMpipeaQ0RNWPxg-1
-X-Mimecast-MFC-AGG-ID: a2Ube48ZMpipeaQ0RNWPxg_1758897184
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-b25f63db20bso393237766b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:33:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758897184; x=1759501984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qOJaLah4ePiQxdQez6Be1i94MUmLOsj+O0iioPNAuew=;
-        b=p6p7V99AZoaltzksZp+ZkVw0oefrmPE+z1gCo5wjL5ahjs/IXYznHDg7bEww774YdL
-         a3hynWJTvQd3SdPGMQIFkOsUFvLmPVujLqPK7zz6urAF550C/CM2RqXYo/SeV/KVHw7V
-         t1rxSjZ4u/LABnrk3ntnc4QpKGOhBJ4Qbeije3PyeLqZxKKjA+rG3uAIo0rDVNJeLMoA
-         zXqcNT9Mh7lFzmlx6CB62HP+7xieviSKvRwvEKsCIH1nzPuVcZVrMgNM4ZLoWsjUoufz
-         MS05tqdS3yo24KW+ejKiO8IRoEwXBTJdgt32CO3YpC6bAJoTHGOwtPoG7LF8Ls4NLuZA
-         8BlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHmIaiYIijOiVT2rSdUNILuxvd8CwOfHW0np+a+mygF1AyVCwmddJTN9YBcoPqPtzpcAugBMxhPQH+qqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh/EUTloBU0N63NEjXDhkvxaZ5WcnVC2te5w+9ztislhS0ePcu
-	qJ5GR7FHlwhTMpB+xEmXRsgVeZclWD14Xg864ts97xHTJ6FJs/gsvi6VZEnJencwb1im0l8ZF90
-	slioWlma5HCu7/DRwV7S2vp58Dky7mWEJiCGPKpAbAKJxnPBAWSHV73a8HK16hvvPnP4NOGtWNn
-	a2qyQyceiokTE5/DtZZjrAPvvABPECgbadGdHRveRA
-X-Gm-Gg: ASbGncsVE0E1MJ2Bu+ijG11YfVpborhdijFpGDY8K0Inlf2LvK7eq7woJjy3L7Ik818
-	HmKGScgJNnqAqoATaJLWhA1VtLoN+FkjJ/XT6d6Sym/p6o9dXzip8dklWrPHYkBwQEB8omfHKCi
-	zHYZ2PzoNBY/rCW9MYdunZ
-X-Received: by 2002:a17:907:93c7:b0:b07:e348:8278 with SMTP id a640c23a62f3a-b354d73f016mr505472666b.25.1758897183976;
-        Fri, 26 Sep 2025 07:33:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESo+itkF3w4Rk3YxWgiaRXreqg0X/y6Z1uD9ARYPdkidf9i+Pmr8YhdRDy8sGsq6sp96MKGBRKUhp9lPqQJf8=
-X-Received: by 2002:a17:907:93c7:b0:b07:e348:8278 with SMTP id
- a640c23a62f3a-b354d73f016mr505471066b.25.1758897183586; Fri, 26 Sep 2025
- 07:33:03 -0700 (PDT)
+	s=arc-20240116; t=1758897193; c=relaxed/simple;
+	bh=RFIOttVJp0eh/XAlE3x53bbYZOC5tbTcft+rUVFuLtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBVJpz3RcMLHX5QlDn7e13xT1rRX5nDY5D38apu/NlWOa0yAsKOfOfmfddh2I+eZ6pNWtE1WoVVwp/A3L3qWkGMEVSijCDVR4D5D/n32i2mDSSfDSmMO3kkJTrLEJykUNv1MO0aOcmPkfh4gqbDlNbLZWpgTCLKOObVJljMgY5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYUWlJbG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84764C4CEF4;
+	Fri, 26 Sep 2025 14:33:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758897192;
+	bh=RFIOttVJp0eh/XAlE3x53bbYZOC5tbTcft+rUVFuLtw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dYUWlJbG6nnFq6TmgkPCUvJrKhSOr//l2/p9YO9Ob/mS79D4oFiTdapaQWgNvE0Tp
+	 d/vCDqpw50xMSBlk3aVLOoeuaOU4Flxrd56aMguc7oRiVNj0q6AU2XUmY7xmZGdRxu
+	 yzvEHEz66UsLqIhGLS5TxmJVhzOSIieMbM2IQUCN7s18qZz+JDhAXKNMJgcPOg7GLu
+	 G8DS28biYdg1311fE2giZqug6ZU0/T98pwCuu7T7rl2DSOAxkvDj3/RAEi8bpsnrPW
+	 j/b2ihU2NVzZ9jZRiUCwLRy/gCm3LcdbKtiwae+0N+ASIwwY/Gq0RWtAa9tDE9acYS
+	 l5Kc8mI9MFUYw==
+Date: Fri, 26 Sep 2025 15:33:06 +0100
+From: Will Deacon <will@kernel.org>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 02/28] KVM: arm64: Donate MMIO to the hypervisor
+Message-ID: <aNakIop0jdz9gH-t@willie-the-truck>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-3-smostafa@google.com>
+ <aMA13Sowq91XEqP9@willie-the-truck>
+ <aMlly_9kDE04Inn2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1757034919.git.ipravdin.official@gmail.com> <164ffc2ec8edacaf1295789dad82a07817b6263d.1757034919.git.ipravdin.official@gmail.com>
-In-Reply-To: <164ffc2ec8edacaf1295789dad82a07817b6263d.1757034919.git.ipravdin.official@gmail.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Fri, 26 Sep 2025 16:32:52 +0200
-X-Gm-Features: AS18NWCTGFAnet0Nl0vdl1CmepDisUb588HKCFc7aZTYKNqaEC4lLhouSKrNNuM
-Message-ID: <CAP4=nvRPXq=_WterXhaxk1ZwDSPwkJbVJP0L+ze-Cjw1foqK+Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] rtla: fix buffer overflow in actions_parse
-To: rostedt@goodmis.org
-Cc: Ivan Pravdin <ipravdin.official@gmail.com>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMlly_9kDE04Inn2@google.com>
 
-Steven,
+On Tue, Sep 16, 2025 at 01:27:39PM +0000, Mostafa Saleh wrote:
+> On Tue, Sep 09, 2025 at 03:12:45PM +0100, Will Deacon wrote:
+> > On Tue, Aug 19, 2025 at 09:51:30PM +0000, Mostafa Saleh wrote:
+> > > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > index 861e448183fd..c9a15ef6b18d 100644
+> > > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > @@ -799,6 +799,70 @@ int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +int __pkvm_host_donate_hyp_mmio(u64 pfn)
+> > > +{
+> > > +	u64 phys = hyp_pfn_to_phys(pfn);
+> > > +	void *virt = __hyp_va(phys);
+> > > +	int ret;
+> > > +	kvm_pte_t pte;
+> > > +
+> > > +	host_lock_component();
+> > > +	hyp_lock_component();
+> > > +
+> > > +	ret = kvm_pgtable_get_leaf(&host_mmu.pgt, phys, &pte, NULL);
+> > > +	if (ret)
+> > > +		goto unlock;
+> > > +
+> > > +	if (pte && !kvm_pte_valid(pte)) {
+> > > +		ret = -EPERM;
+> > > +		goto unlock;
+> > > +	}
+> > 
+> > Shouldn't we first check that the pfn is indeed MMIO? Otherwise, testing
+> > the pte for the ownership information isn't right.
+> 
+> I will add it, although the input should be trusted as it comes from the
+> hypervisor SMMUv3 driver.
 
-po 8. 9. 2025 v 4:06 odes=C3=ADlatel Ivan Pravdin
-<ipravdin.official@gmail.com> napsal:
->
-> Currently, tests 3 and 13-22 in tests/timerlat.t fail with error:
->
->     *** buffer overflow detected ***: terminated
->     timeout: the monitored command dumped core
->
-> The result of running `sudo make check` is
->
->     tests/timerlat.t (Wstat: 0 Tests: 22 Failed: 11)
->       Failed tests:  3, 13-22
->     Files=3D3, Tests=3D34, 140 wallclock secs ( 0.07 usr  0.01 sys + 27.6=
-3 cusr
->     27.96 csys =3D 55.67 CPU)
->     Result: FAIL
->
-> Fix buffer overflow in actions_parse to avoid this error. After this
-> change, the tests results are
->
->     tests/hwnoise.t ... ok
->     tests/osnoise.t ... ok
->     tests/timerlat.t .. ok
->     All tests successful.
->     Files=3D3, Tests=3D34, 186 wallclock secs ( 0.06 usr  0.01 sys + 41.1=
-0 cusr
->     44.38 csys =3D 85.55 CPU)
->     Result: PASS
->
-> Fixes: 6ea082b171e0 ("rtla/timerlat: Add action on threshold feature")
-> Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
-> Reviewed-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->  tools/tracing/rtla/src/actions.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+(more on this below)
 
-Could you take this simple fix? (Might require tweaking the starting
-letter "fix" -> "Fix", I don't care that much about it, but as you
-said, tracing requires capital letters there :) )
+> > > +int __pkvm_hyp_donate_host_mmio(u64 pfn)
+> > > +{
+> > > +	u64 phys = hyp_pfn_to_phys(pfn);
+> > > +	u64 virt = (u64)__hyp_va(phys);
+> > > +	size_t size = PAGE_SIZE;
+> > > +
+> > > +	host_lock_component();
+> > > +	hyp_lock_component();
+> > 
+> > Shouldn't we check that:
+> > 
+> >   1. pfn is mmio
+> >   2. pfn is owned by hyp
+> >   3. The host doesn't have something mapped at pfn already
+> > 
+> > ?
+> > 
+> 
+> I thought about this initially, but as
+> - This code is only called from the hypervisor with trusted
+>   inputs (only at boot)
+> - Only called on error path
+> 
+> So WARN_ON in case of failure to unmap MMIO pages seemed is good enough,
+> to avoid extra code.
+> 
+> But I can add the checks if you think they are necessary, we will need
+> to add new helpers for MMIO state though.
 
-The rest of the patchset conflicts with [1] but this one doesn't and
-is also more important.
+I'd personally prefer to put the checks here so that callers don't have
+to worry (or forget!) about them. That also means that the donation
+function can be readily reused in the same way as the existing functions
+which operate on memory pages.
 
-[1] https://patchwork.kernel.org/project/linux-trace-kernel/list/?series=3D=
-999703
+How much work is it to add the MMIO helpers?
 
-Tomas
+> > > +	WARN_ON(kvm_pgtable_hyp_unmap(&pkvm_pgtable, virt, size) != size);
+> > > +	WARN_ON(host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt, phys,
+> > > +				PAGE_SIZE, &host_s2_pool, PKVM_ID_HOST));
+> > > +	hyp_unlock_component();
+> > > +	host_unlock_component();
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
+> > >  {
+> > >  	return ___pkvm_host_donate_hyp(pfn, nr_pages, PAGE_HYP);
+> > > diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+> > > index c351b4abd5db..ba06b0c21d5a 100644
+> > > --- a/arch/arm64/kvm/hyp/pgtable.c
+> > > +++ b/arch/arm64/kvm/hyp/pgtable.c
+> > > @@ -1095,13 +1095,8 @@ static int stage2_unmap_walker(const struct kvm_pgtable_visit_ctx *ctx,
+> > >  	kvm_pte_t *childp = NULL;
+> > >  	bool need_flush = false;
+> > >  
+> > > -	if (!kvm_pte_valid(ctx->old)) {
+> > > -		if (stage2_pte_is_counted(ctx->old)) {
+> > > -			kvm_clear_pte(ctx->ptep);
+> > > -			mm_ops->put_page(ctx->ptep);
+> > > -		}
+> > > -		return 0;
+> > > -	}
+> > > +	if (!kvm_pte_valid(ctx->old))
+> > > +		return stage2_pte_is_counted(ctx->old) ? -EPERM : 0;
+> > 
+> > Can this code be reached for the guest? For example, if
+> > pkvm_pgtable_stage2_destroy() runs into an MMIO-guarded pte on teardown?
+> 
+> AFAICT, VMs page table is destroyed from reclaim_pgtable_pages() =>
+> kvm_pgtable_stage2_destroy() => kvm_pgtable_stage2_destroy_range() ... =>
+> stage2_free_walker()
+> 
+> Which doesn't interact with “stage2_unmap_walker”, so that should be
+> fine.
 
+Fair enough. I feel like this might bite us later on but, with what you
+have, we'll see the -EPERM and then we can figure out what to do then.
+
+Will
 
