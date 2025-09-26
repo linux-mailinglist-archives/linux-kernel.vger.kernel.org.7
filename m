@@ -1,300 +1,266 @@
-Return-Path: <linux-kernel+bounces-834428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E92BA4AAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1D1BA4A6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5CF51C0753E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:36:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C95F1C0381E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DED2F5A10;
-	Fri, 26 Sep 2025 16:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD0C2116E7;
+	Fri, 26 Sep 2025 16:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L1atmfeB"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cZJ/MAxH"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7FF2D542F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C744425FA13;
+	Fri, 26 Sep 2025 16:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904513; cv=none; b=TAAvLayb+4L77jDC0f+lXPxop/ZODP1FCtudp0JGtCWgjJIMjoV47HgqBhS2dgXN1uP5It7Su07TlUb48II/mZD+zQXKt9SRBLn9p1EWZa40RoQYUqFN77bkJmoTJvVeL4zFoYF0er3YAqyBM07c4fnhZboDKUf+xIktW4lUs48=
+	t=1758904467; cv=none; b=Jph/sI9QiX6S6IMkQTuIdKCF5gtFqLx6kdEiuorR0+YzjpxB+n5jOoMe+15//9W7TH5VYPxBKr6m+AGGnMU5YqtU1UTOxDYnOiHech+LwIHaeyOxGFoU2i0MDQc0WZpsNlR0YmMvyHjAzfbQIQ18MPGsPQUW7ph4RwctecI0faE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904513; c=relaxed/simple;
-	bh=NQkO9sERJ5k+kSkZyB8VfhDtTdRQ4XwjrisUwBVDo+U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tl/K8WV3J1ew0KG5G9coTA0Jk9rkXYEuMXwtE0bEJQ9DRKrlW7HvEfAnGIdxzofoCmSxN5XEvk0fBlUGbLElTL7OAbB0Zq9Uzq6tnExCo6gxL5T4gOudje1r6eQBopeo7dT8ExCci+AhVTYm/rd8aQDMbWAnWohHhJOmhztpjz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L1atmfeB; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 27D28C00D98;
-	Fri, 26 Sep 2025 16:34:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 85F1D606B5;
-	Fri, 26 Sep 2025 16:35:09 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B0B56102F1829;
-	Fri, 26 Sep 2025 18:35:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758904508; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ICzSvLvJb7esyCKXOeOL5sJVQ8upayrrtyMxyExJw7M=;
-	b=L1atmfeBiDc6ktznLNxQbLAPCdAs2qwzkmXmYL+F1kKNRUOxRYYki4LKTc32XRi+Y2/zMn
-	eAljRYkPA9LVeWDK3HG7JvDAaLy5jsZ1xnWwRChVy3RRUq88NpFKhysLHXkKMjXtv2yY1h
-	WoPjpNrnuM7Izs7DDepPGLm6Hpcn4T2MsClHITKghBWIRmMMToqCV82k8MFTM8/q+m3Sms
-	0EmEBpeA+DRggKp/c2WD43BNwigbcXlA0CkYHpjUlh77U2zq2YMo+tHzenq2fXUt/AsqRZ
-	rSpgEkJN9zE4tgtijaUN2WrvbH6gpIyFNPwIl09uF0S+QGEbB/e1qv4hFYYFXA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 26 Sep 2025 18:33:28 +0200
-Subject: [PATCH v2 2/2] drm/bridge: ti-sn65dsi83: protect device resources
- on unplug
+	s=arc-20240116; t=1758904467; c=relaxed/simple;
+	bh=G9EcpBzA81a9lePO6IcawUwdySqpPpvBtz6Dxsy3oM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mLkWCuraj36EgThLPuzVEMR241mjR2kohFzf3ePoVARSN6gFCWuOtJZCZNIpF/Ld8i75bllp8u8rn5VoDzSk4j+Z4T1e7FtQchHVWV6MOEb1xOmfAX27589vYWaMRUmGR8zTMAFiA5UVCob3baZCXJ0bXnqe8y4rWRGe/FX5qI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cZJ/MAxH; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QDDOpk010421;
+	Fri, 26 Sep 2025 16:34:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=E8gv+2ZUCB2wSLEHOTp9c9xdIMRne/FcCsi/xwFCXEA=; b=cZJ/MAxH62Qg
+	Xmns67ZH2Ya8QaEhJA3b9qHfh2oYHP5BDejEjZg3KBtUPCPah6WfjkUeHEvC7Bbq
+	1V41By1Fh0/ABuzNq/ZNoZef9W2+9tRdBhb+5RL6BLY5v0BsmvlbjVhq1K9PaF2L
+	74wZQ/HO7WxPt9I0Tij3KVyfejr4OVRQnUUckatwsGpWiE2sqHApjr8UMfekZE+7
+	8mkaR2ObjRYKfPdQqUS/sIQsiWEYocN6fbq6V1RA3vveNK+Y7fnPKq1fOBj9TQvw
+	cGTeDvIq1DbdA+WkRMPJH30RPiZL68B0OqEaE1W/JUjW30/ndawIQHv/A3r0sYDl
+	NPejWFDQFA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbb4e18j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 16:34:24 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58QGLS8J019449;
+	Fri, 26 Sep 2025 16:34:24 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbb4e18a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 16:34:24 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58QE8wj0014330;
+	Fri, 26 Sep 2025 16:34:23 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49dawm528k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 16:34:23 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58QGYMYK20185732
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Sep 2025 16:34:22 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0E04D5805D;
+	Fri, 26 Sep 2025 16:34:22 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6A7455805F;
+	Fri, 26 Sep 2025 16:34:20 +0000 (GMT)
+Received: from [9.61.248.170] (unknown [9.61.248.170])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 26 Sep 2025 16:34:20 +0000 (GMT)
+Message-ID: <4dd8a92a-0843-4009-a9c6-3a1336dbf217@linux.ibm.com>
+Date: Fri, 26 Sep 2025 11:34:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Reply-To: ramesh@linux.ibm.com
+Subject: Re: [PATCH] PCI: s390: Expose the UID as an arch specific PCI slot
+ attribute
+To: Niklas Schnelle <schnelle@linux.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+References: <20250924-uid_slot-v1-1-09ae04f48c57@linux.ibm.com>
+Content-Language: en-US
+From: Ramesh Errabolu <ramesh@linux.ibm.com>
+In-Reply-To: <20250924-uid_slot-v1-1-09ae04f48c57@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250926-drm-bridge-atomic-vs-remove-v2-2-69f7d5ca1a92@bootlin.com>
-References: <20250926-drm-bridge-atomic-vs-remove-v2-0-69f7d5ca1a92@bootlin.com>
-In-Reply-To: <20250926-drm-bridge-atomic-vs-remove-v2-0-69f7d5ca1a92@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=BbvVE7t2 c=1 sm=1 tr=0 ts=68d6c090 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=hyw2YeqkD9vi0ihe8cAA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: o5NCMSiOckL9N3sVLNeh2ImSfzbdogr6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfXy0rz2qjjAsMm
+ T6hyxvaHm8Sen6cda01M95JQbjk6ute/jOflFarFNeU/jfHGWEiKAcQXgTBFnTIYXrqxD/hX4Re
+ 6r78Fsyx/PE+GP0xLXYCZ5z1Pw/BGS96hTiZLJjhz91Qt0wdOMRMHp5leOqcWXSO4hZ/YsUcHor
+ Yw5sNvAu1pYI59Kh1Otad1ws1lHFmFFNjE+eEkLQF6r1GDF/2EU/zGKDKaAcl2Q2sxmeU09SGUO
+ NTt0tDRTvUuNWJ32Mnghz0h55YVm0FNVfUhKc9/DDrxyoj8mMIj7JOLYBfT9e4TzlvlwWnoEA6e
+ tCiE6Tf+cNBlgAQOv0Yicd3UPDDTC5kgjFtoIAjAeyQimyxHALSzxprc4eX+5s0xBFAcunGDrab
+ vN6AQswfquyKcu8GBnHOmRg/yCiIsQ==
+X-Proofpoint-GUID: 1gBwm89w4hoMhQbuDEVLqCzFDKNAfyzS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_05,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 spamscore=0 clxscore=1011 bulkscore=0
+ adultscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509250174
 
-To support hot-unplug of this bridge we need to protect access to device
-resources in case sn65dsi83_remove() happens concurrently to other code.
 
-Some care is needed for the case when the unplug happens before
-sn65dsi83_atomic_disable() has a chance to enter the critical section
-(i.e. a successful drm_bridge_enter() call), which occurs whenever the
-hardware is removed while the display is active. When that happens,
-sn65dsi83_atomic_disable() in unable to release the resources taken by
-sn65dsi83_atomic_pre_enable().
+On 9/24/2025 8:14 AM, Niklas Schnelle wrote:
 
-To ensure those resources are released exactly once on device removal:
+> On s390, an individual PCI function can generally be identified by two
+> IDs, depending on the scope and the platform configuration.
+It would help to name the two IDs - FID and ???
+> The first ID is the so-called FID, which is always available and
+> identifies a PCI device uniquely within a machine. The FID may be
+> virtualized by hypervisors, but on the LPAR level, the machine scope
+> makes it impossible to reuse the same configuration based on FIDs on two
+> different LPARs.
+>
+> Such matching LPAR configurations are useful, though, allowing
+> standardized setups and booting a Linux installation on different
+> machines. To allow this, a second user-defined identifier called UID was
+> introduced. It is only guaranteed to be unique within an LPAR and only
+> if the platform indicates so via the UID Checking flag.
+The paragraph as I read is not clear. Your intention is to highlight the 
+need for UID to allow standardized setups.
+>
+> On s390, which uses a machine hypervisor, a per PCI function hotplug
+> model is used. The shortcoming with the UID then is, that it is not
+> visible to the user without first attaching the PCI function and
+> accessing the "uid" device attribute. The FID, on the other hand, is
+> used as slot number and is thus known even with the PCI function in
+> standby.
+>
+> Remedy this shortcoming by providing the UID as an attribute on the slot
+> allowing the user to identify a PCI function based on the UID without
+> having to first attach it. Do this via a macro mechanism analogous to
+> what was introduced by commit 265baca69a07 ("s390/pci: Stop usurping
+> pdev->dev.groups") for the PCI device attributes.
+>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+> Note: I considered adding the UID as a generic "index" via the hotplug
+> slot driver but opted for a minimal solution to open the discussion. In
+> particular my concern with a generic attribute is that it would be hard
+> to find a format that fits everyone. For example on PCI devices we also
+> use the "index" attribute for UIDs analogous to SMBIOS but having it in
+> decimal is odd on s390 where these are usual in hexadecimal.
+> ---
+>   arch/s390/include/asm/pci.h |  4 ++++
+>   arch/s390/pci/pci_sysfs.c   | 20 ++++++++++++++++++++
+>   drivers/pci/slot.c          | 13 ++++++++++++-
+>   3 files changed, 36 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+> index 41f900f693d92522ff729829e446b581977ef3ff..23eed78d9dce72ef466679f31c78aca52ba00f99 100644
+> --- a/arch/s390/include/asm/pci.h
+> +++ b/arch/s390/include/asm/pci.h
+> @@ -207,6 +207,10 @@ extern const struct attribute_group zpci_ident_attr_group;
+>   			    &pfip_attr_group,		 \
+>   			    &zpci_ident_attr_group,
+>   
+> +extern const struct attribute_group zpci_slot_attr_group;
+> +
+> +#define ARCH_PCI_SLOT_GROUPS (&zpci_slot_attr_group)
+> +
+>   extern unsigned int s390_pci_force_floating __initdata;
+>   extern unsigned int s390_pci_no_rid;
+>   
 
- * move the code to release them to a dedicated function
- * register that function when the resources are taken in
-   sn65dsi83_atomic_pre_enable()
- * if sn65dsi83_atomic_disable() happens before sn65dsi83_remove()
-   (typical non-hot-unplug case):
-   * sn65dsi83_atomic_disable() can enter the critical section
-     (drm_bridge_enter() returns 0) -> it releases and executes the
-     devres action
- * if sn65dsi83_atomic_disable() happens after sn65dsi83_remove()
-   (typical hot-unplug case):
-   * sn65dsi83_remove() -> drm_bridge_unplug() prevents
-     sn65dsi83_atomic_disable() from entering the critical section
-     (drm_bridge_enter() returns nonzero), so sn65dsi83_atomic_disable()
-     cannot release and execute the devres action
-   * the devres action is executed at the end of sn65dsi83_remove()
+Will this not lead to linking error when the patch is built on non-s390 
+architecture. You could refer to zpci_slot_attr_group using a 
+CONFIG_..... and discard the #define ARCH_PCI_SLOT_GROUPS. I didn't find 
+a relevant CONFIG_... that could be used.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
----
-
-Changed in v2:
-- Use a devres action instead of a flag
----
- drivers/gpu/drm/bridge/ti-sn65dsi83.c | 85 ++++++++++++++++++++++++++++-------
- 1 file changed, 68 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-index 033c44326552ab167d4e8d9b74957c585e4c6fb7..92014366449237668b50cc884a67f52fcd5777c3 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-@@ -406,6 +406,10 @@ static void sn65dsi83_reset_work(struct work_struct *ws)
- {
- 	struct sn65dsi83 *ctx = container_of(ws, struct sn65dsi83, reset_work);
- 	int ret;
-+	int idx;
-+
-+	if (!drm_bridge_enter(&ctx->bridge, &idx))
-+		return;
- 
- 	/* Reset the pipe */
- 	ret = sn65dsi83_reset_pipe(ctx);
-@@ -415,12 +419,18 @@ static void sn65dsi83_reset_work(struct work_struct *ws)
- 	}
- 	if (ctx->irq)
- 		enable_irq(ctx->irq);
-+
-+	drm_bridge_exit(idx);
- }
- 
- static void sn65dsi83_handle_errors(struct sn65dsi83 *ctx)
- {
- 	unsigned int irq_stat;
- 	int ret;
-+	int idx;
-+
-+	if (!drm_bridge_enter(&ctx->bridge, &idx))
-+		return;
- 
- 	/*
- 	 * Schedule a reset in case of:
-@@ -441,6 +451,8 @@ static void sn65dsi83_handle_errors(struct sn65dsi83 *ctx)
- 
- 		schedule_work(&ctx->reset_work);
- 	}
-+
-+	drm_bridge_exit(idx);
- }
- 
- static void sn65dsi83_monitor_work(struct work_struct *work)
-@@ -463,6 +475,40 @@ static void sn65dsi83_monitor_stop(struct sn65dsi83 *ctx)
- 	cancel_delayed_work_sync(&ctx->monitor_work);
- }
- 
-+/*
-+ * Release resources taken by sn65dsi83_atomic_pre_enable().
-+ *
-+ * Normally invoked by sn65dsi83_atomic_disable(). But if
-+ * sn65dsi83_remove() is invoked while enabled, then drm_bridge_unplug()
-+ * would defuse sn65dsi83_atomic_disable(). Thus a devres action is used to
-+ * ensure exactly one code path (removal or atomic disable) invokes this
-+ * code.
-+ */
-+static void sn65dsi83_release_resources(void *data)
-+{
-+	struct sn65dsi83 *ctx = (struct sn65dsi83 *)data;
-+	int ret;
-+
-+	if (ctx->irq) {
-+		/* Disable irq */
-+		regmap_write(ctx->regmap, REG_IRQ_EN, 0x0);
-+		regmap_write(ctx->regmap, REG_IRQ_GLOBAL, 0x0);
-+	} else {
-+		/* Stop the polling task */
-+		sn65dsi83_monitor_stop(ctx);
-+	}
-+
-+	/* Put the chip in reset, pull EN line low, and assure 10ms reset low timing. */
-+	gpiod_set_value_cansleep(ctx->enable_gpio, 0);
-+	usleep_range(10000, 11000);
-+
-+	ret = regulator_disable(ctx->vcc);
-+	if (ret)
-+		dev_err(ctx->dev, "Failed to disable vcc: %d\n", ret);
-+
-+	regcache_mark_dirty(ctx->regmap);
-+}
-+
- static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
- 					struct drm_atomic_state *state)
- {
-@@ -478,10 +524,15 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
- 	__le16 le16val;
- 	u16 val;
- 	int ret;
-+	int idx;
-+
-+	if (!drm_bridge_enter(bridge, &idx))
-+		return;
- 
- 	ret = regulator_enable(ctx->vcc);
- 	if (ret) {
- 		dev_err(ctx->dev, "Failed to enable vcc: %d\n", ret);
-+		drm_bridge_exit(idx);
- 		return;
- 	}
- 
-@@ -625,6 +676,8 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
- 		dev_err(ctx->dev, "failed to lock PLL, ret=%i\n", ret);
- 		/* On failure, disable PLL again and exit. */
- 		regmap_write(ctx->regmap, REG_RC_PLL_EN, 0x00);
-+		devm_add_action(ctx->dev, sn65dsi83_release_resources, ctx);
-+		drm_bridge_exit(idx);
- 		return;
- 	}
- 
-@@ -633,6 +686,9 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
- 
- 	/* Wait for 10ms after soft reset as specified in datasheet */
- 	usleep_range(10000, 12000);
-+
-+	devm_add_action(ctx->dev, sn65dsi83_release_resources, ctx);
-+	drm_bridge_exit(idx);
- }
- 
- static void sn65dsi83_atomic_enable(struct drm_bridge *bridge,
-@@ -640,6 +696,10 @@ static void sn65dsi83_atomic_enable(struct drm_bridge *bridge,
- {
- 	struct sn65dsi83 *ctx = bridge_to_sn65dsi83(bridge);
- 	unsigned int pval;
-+	int idx;
-+
-+	if (!drm_bridge_enter(bridge, &idx))
-+		return;
- 
- 	/* Clear all errors that got asserted during initialization. */
- 	regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
-@@ -659,32 +719,22 @@ static void sn65dsi83_atomic_enable(struct drm_bridge *bridge,
- 		/* Use the polling task */
- 		sn65dsi83_monitor_start(ctx);
- 	}
-+
-+	drm_bridge_exit(idx);
- }
- 
- static void sn65dsi83_atomic_disable(struct drm_bridge *bridge,
- 				     struct drm_atomic_state *state)
- {
- 	struct sn65dsi83 *ctx = bridge_to_sn65dsi83(bridge);
--	int ret;
--
--	if (ctx->irq) {
--		/* Disable irq */
--		regmap_write(ctx->regmap, REG_IRQ_EN, 0x0);
--		regmap_write(ctx->regmap, REG_IRQ_GLOBAL, 0x0);
--	} else {
--		/* Stop the polling task */
--		sn65dsi83_monitor_stop(ctx);
--	}
-+	int idx;
- 
--	/* Put the chip in reset, pull EN line low, and assure 10ms reset low timing. */
--	gpiod_set_value_cansleep(ctx->enable_gpio, 0);
--	usleep_range(10000, 11000);
-+	if (!drm_bridge_enter(bridge, &idx))
-+		return;
- 
--	ret = regulator_disable(ctx->vcc);
--	if (ret)
--		dev_err(ctx->dev, "Failed to disable vcc: %d\n", ret);
-+	devm_release_action(ctx->dev, sn65dsi83_release_resources, ctx);
- 
--	regcache_mark_dirty(ctx->regmap);
-+	drm_bridge_exit(idx);
- }
- 
- static enum drm_mode_status
-@@ -1005,6 +1055,7 @@ static void sn65dsi83_remove(struct i2c_client *client)
- {
- 	struct sn65dsi83 *ctx = i2c_get_clientdata(client);
- 
-+	drm_bridge_unplug(&ctx->bridge);
- 	drm_bridge_remove(&ctx->bridge);
- }
- 
-
--- 
-2.51.0
-
+> diff --git a/arch/s390/pci/pci_sysfs.c b/arch/s390/pci/pci_sysfs.c
+> index 0ee0924cfab7e5d22468fb197ee78cac679d8c13..997dff3796094680d9a3f0b6eb27a89fa1ed30b2 100644
+> --- a/arch/s390/pci/pci_sysfs.c
+> +++ b/arch/s390/pci/pci_sysfs.c
+> @@ -178,6 +178,17 @@ static ssize_t index_show(struct device *dev,
+>   }
+>   static DEVICE_ATTR_RO(index);
+>   
+> +static ssize_t zpci_uid_slot_show(struct pci_slot *slot, char *buf)
+> +{
+> +	struct zpci_dev *zdev = container_of(slot->hotplug, struct zpci_dev,
+> +					     hotplug_slot);
+> +
+> +	return sysfs_emit(buf, "0x%x\n", zdev->uid);
+> +}
+> +
+> +static struct pci_slot_attribute zpci_slot_attr_uid =
+> +	__ATTR(uid, 0444, zpci_uid_slot_show, NULL);
+> +
+>   static umode_t zpci_index_is_visible(struct kobject *kobj,
+>   				     struct attribute *attr, int n)
+>   {
+> @@ -233,3 +244,12 @@ const struct attribute_group pfip_attr_group = {
+>   	.name = "pfip",
+>   	.attrs = pfip_attrs,
+>   };
+> +
+> +static struct attribute *zpci_slot_attrs[] = {
+> +	&zpci_slot_attr_uid.attr,
+> +	NULL,
+> +};
+> +
+> +const struct attribute_group zpci_slot_attr_group = {
+> +	.attrs = zpci_slot_attrs,
+> +};
+> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+> index 50fb3eb595fe65e271b6b339d43c9677c61b1e45..7430c7df44e1beef7bcf0531491612734e0dd60c 100644
+> --- a/drivers/pci/slot.c
+> +++ b/drivers/pci/slot.c
+> @@ -96,7 +96,18 @@ static struct attribute *pci_slot_default_attrs[] = {
+>   	&pci_slot_attr_cur_speed.attr,
+>   	NULL,
+>   };
+> -ATTRIBUTE_GROUPS(pci_slot_default);
+> +
+> +static const struct attribute_group pci_slot_default_group = {
+> +	.attrs = pci_slot_default_attrs,
+> +};
+> +
+> +const struct attribute_group *pci_slot_default_groups[] = {
+> +	&pci_slot_default_group,
+> +#ifdef ARCH_PCI_SLOT_GROUPS
+> +	ARCH_PCI_SLOT_GROUPS,
+> +#endif
+> +	NULL,
+> +};
+>   
+>   static const struct kobj_type pci_slot_ktype = {
+>   	.sysfs_ops = &pci_slot_sysfs_ops,
+>
+> ---
+> base-commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
+> change-id: 20250923-uid_slot-e3559cf5ca30
+>
+> Best regards,
 
