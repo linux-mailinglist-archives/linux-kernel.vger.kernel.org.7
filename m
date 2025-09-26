@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-833982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153A1BA37D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:29:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9FDBA37DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB736280C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0829D561F79
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107312DC77A;
-	Fri, 26 Sep 2025 11:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEF725742C;
+	Fri, 26 Sep 2025 11:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J9f7GT05"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kvmGIKnQ";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kvmGIKnQ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7496288C8B;
-	Fri, 26 Sep 2025 11:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B89611713
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758886147; cv=none; b=SSYeE7aCasp/gTRTNexRn8GVGXhfUwnyjBitWCXnHIbs4IuIMEFEi5HHuLQegzaJyI8N+3sUDqR0IWV6hQWji+PoP4OAcBua2koUp/UyJTyTtp2oe3rUth8LnAh5HxSQNM4J+ayP4KS8exxigmwc0uEA80AJQPLSLncVhJzoSsE=
+	t=1758886272; cv=none; b=jY7h6guT/IEhqMqW7rGRb8Cy5W9szuCqsbsrT8qGm5g2nfnZZyduTpbYgnSYqi7E0TLcLePE1X/j6WFGpMv/U9qr9mY+4v4TguwS0aSgzZsBy/LU3Qh/p/m+TMdgXCZQQAfySoJ5SegE26Ma0HSY7gKCSexsRlUH6n0tz8Vm/38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758886147; c=relaxed/simple;
-	bh=stTEul6UHVCiJ8ZlGVsirQ38l3hkR1WGDcoE710mSGU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mt76iEi6Tb7mAaeVpVlu8DDMsde9PUAtBBkDt8pY0jjzKoAURcdlbdx+n+7wzkAzrKDvKYyXtQdcspYa6y/D8BvhJIqLBjWjA0idJT4zOghwK3P0+AkgKLc+rQx5hvEoQPsQ4UJ1IYoSWA+rauNB0okxFOHHgCQUOE0KkadfVQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J9f7GT05; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758886146; x=1790422146;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=stTEul6UHVCiJ8ZlGVsirQ38l3hkR1WGDcoE710mSGU=;
-  b=J9f7GT05qr3BMvkzxEkfTk8aUE6EGHCxmHfcvqQFb1K4LFHo0rvS4tSC
-   0UFF7enm8u2+ariwEmeO3Z7MhPKU3sVTYIvXBybtvGMR4WWvWy+KfM7Qz
-   mHjKcsyPOAgmqyOUHSKqlPqsOm4pLQ6KKBBjVxDpZoML0ND2ycQM1LLE/
-   hzoWMLkBfdluFKwayicX2bxoIAYWsshGFtT6LViZM6LJAkU6xFmfgCn/V
-   vyJXMlM6drWj5EgZsjCRK/YTywCVUSfg8lAUmV0zcZ099cC8UO01Bgg3q
-   6XwrQrtWyzntnGW2YRGIP/5HddxlsZ2MiDZeDNfNrzZP3kd4N6FoX/HIP
-   w==;
-X-CSE-ConnectionGUID: CYmNw12ySyGYwhNWgeZ8nA==
-X-CSE-MsgGUID: wZ1hjEEgT3eVlcgcdMSH8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="71465969"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="71465969"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:29:05 -0700
-X-CSE-ConnectionGUID: H/yFh2ptQqesnMgl/rwidw==
-X-CSE-MsgGUID: 6L0YMAZKRImr5x+RMHSWbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="177522372"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.23])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:29:02 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 26 Sep 2025 14:28:59 +0300 (EEST)
-To: Chen Ni <nichen@iscas.ac.cn>
-cc: sre@kernel.org, Hans de Goede <hansg@kernel.org>, 
-    bryan.odonoghue@linaro.org, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] platform: arm64: thinkpad-t14s-ec: Convert comma to
- semicolon
-In-Reply-To: <20250926091302.817919-1-nichen@iscas.ac.cn>
-Message-ID: <e690729d-bc5b-3f9a-bfff-100545d8db89@linux.intel.com>
-References: <20250926091302.817919-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1758886272; c=relaxed/simple;
+	bh=JDq1jb5CsnPFmid0bz16t3QdZzou3rRjug4BHu5Gh00=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZMlA04ax8fAe7o+Zn5k7P6qrcRRAbj10uyWMElHwFhVYbAgZ9bdITWEo7gojpMWkjvKV4AEhfxl7KFR0RcF3ChCAevzPiAhGQz3OiCimpZYwTEYlZh23LiVIt3J3f1j9SEivDiPYTMHfOxlxiDA8MBe2bzz88dJKOwGfdTjNtgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kvmGIKnQ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kvmGIKnQ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0873721B3F;
+	Fri, 26 Sep 2025 11:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1758886268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CgfZTkOg3UTNmDXa9dluiKewI2hBakJjDBZ7pJ3NgXk=;
+	b=kvmGIKnQKcGRJuFxwa4kkAh1Osv+y4oFv+ED1kEO6fP/m6ic+rfzroR1znLMEa6fis9tve
+	x5b7pR12w67QybUUCbShzr6ICMoVJY1PH6nqZ90ew0YOmm+2j9XmqTkiGHWVjlml5FPcS+
+	HW9T79njMNeUP/sRFnqMF2UzRJWK7O4=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1758886268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CgfZTkOg3UTNmDXa9dluiKewI2hBakJjDBZ7pJ3NgXk=;
+	b=kvmGIKnQKcGRJuFxwa4kkAh1Osv+y4oFv+ED1kEO6fP/m6ic+rfzroR1znLMEa6fis9tve
+	x5b7pR12w67QybUUCbShzr6ICMoVJY1PH6nqZ90ew0YOmm+2j9XmqTkiGHWVjlml5FPcS+
+	HW9T79njMNeUP/sRFnqMF2UzRJWK7O4=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEF1F1386E;
+	Fri, 26 Sep 2025 11:31:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oHKFMHt51mgVMgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 26 Sep 2025 11:31:07 +0000
+From: Juergen Gross <jgross@suse.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	sstabellini@kernel.org
+Subject: [GIT PULL] xen: branch for v6.18-rc1
+Date: Fri, 26 Sep 2025 13:31:05 +0200
+Message-ID: <20250926113107.22638-1-jgross@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-On Fri, 26 Sep 2025, Chen Ni wrote:
+Linus,
 
-> Replace comma between expressions with semicolons.
-> 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
-> 
-> Fixes: 27221f91b83f ("platform: arm64: thinkpad-t14s-ec: new driver")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
-> Changelog:
-> 
-> v1 -> v2:
-> 
-> 1. Add Fixes tag.
-> ---
->  drivers/platform/arm64/lenovo-thinkpad-t14s.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/platform/arm64/lenovo-thinkpad-t14s.c b/drivers/platform/arm64/lenovo-thinkpad-t14s.c
-> index f721763e13cc..1d5d11adaf32 100644
-> --- a/drivers/platform/arm64/lenovo-thinkpad-t14s.c
-> +++ b/drivers/platform/arm64/lenovo-thinkpad-t14s.c
-> @@ -401,14 +401,14 @@ static int t14s_kbd_audio_led_probe(struct t14s_ec *ec)
->  	int ret;
->  
->  	ec->led_mic_mute.name = "platform::micmute";
-> -	ec->led_mic_mute.max_brightness = 1,
-> -	ec->led_mic_mute.default_trigger = "audio-micmute",
-> +	ec->led_mic_mute.max_brightness = 1;
-> +	ec->led_mic_mute.default_trigger = "audio-micmute";
->  	ec->led_mic_mute.brightness_set_blocking = t14s_mic_mute_led_set;
->  	ec->led_mic_mute.brightness_get = t14s_mic_mute_led_get;
->  
->  	ec->led_spk_mute.name = "platform::mute";
-> -	ec->led_spk_mute.max_brightness = 1,
-> -	ec->led_spk_mute.default_trigger = "audio-mute",
-> +	ec->led_spk_mute.max_brightness = 1;
-> +	ec->led_spk_mute.default_trigger = "audio-mute";
->  	ec->led_spk_mute.brightness_set_blocking = t14s_spk_mute_led_set;
->  	ec->led_spk_mute.brightness_get = t14s_spk_mute_led_get;
+Please git pull the following tag:
 
-Thanks a lot, I've folded this into the original commit. 
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.18-rc1-tag
+
+xen: branch for v6.18-rc1
+
+It contains the following patches:
+
+- a 3 patch series fixing the migration of a Xen virq to another cpu
+  plus some related cleanup work
+
+- a 3 patch series cleaning up Xen-PV mode specific code, resulting in
+  removing some of that code in the resulting binary in case
+  CONFIG_XEN_PV is not set
+
+- 2 fixes and 1 cleanup patch for suspend handling under Xen
 
 
--- 
- i.
+Thanks.
 
+Juergen
+
+ arch/x86/configs/xen.config        |  1 -
+ arch/x86/include/asm/xen/page.h    | 14 +++++++-------
+ arch/x86/xen/Kconfig               |  7 +------
+ arch/x86/xen/enlighten_pv.c        |  2 +-
+ arch/x86/xen/mmu.c                 |  2 +-
+ arch/x86/xen/p2m.c                 |  4 ++--
+ drivers/xen/balloon.c              |  4 ++--
+ drivers/xen/events/events_base.c   | 37 +++++++++++++++++++++++++++++--------
+ drivers/xen/gntdev-dmabuf.c        |  7 +++----
+ drivers/xen/gntdev-dmabuf.h        |  2 +-
+ drivers/xen/gntdev.c               | 33 ++++++++++++++-------------------
+ drivers/xen/grant-table.c          |  6 +++---
+ drivers/xen/manage.c               | 14 ++++++++++++--
+ drivers/xen/privcmd.c              | 14 ++++++--------
+ drivers/xen/unpopulated-alloc.c    |  4 ++--
+ drivers/xen/xenbus/xenbus_client.c |  2 +-
+ include/xen/grant_table.h          |  4 ++--
+ include/xen/mem-reservation.h      |  4 ++--
+ include/xen/xen-ops.h              |  7 ++++---
+ include/xen/xen.h                  |  9 ++++++++-
+ 20 files changed, 101 insertions(+), 76 deletions(-)
+
+Jason Andryuk (3):
+      xen/events: Cleanup find_virq() return codes
+      xen/events: Return -EEXIST for bound VIRQs
+      xen/events: Update virq_to_irq on migration
+
+Juergen Gross (3):
+      xen: rework xen_pv_domain()
+      xen: replace XENFEAT_auto_translated_physmap with xen_pv_domain()
+      drivers/xen/gntdev: use xen_pv_domain() instead of cached value
+
+Lukas Bulwahn (1):
+      x86/xen: select HIBERNATE_CALLBACKS more directly
+
+Lukas Wunner (1):
+      xen/manage: Fix suspend error path
+
+Marek Marczykowski-Górecki (1):
+      xen: take system_transition_mutex on suspend
 
