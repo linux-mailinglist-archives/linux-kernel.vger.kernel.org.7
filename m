@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-833987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F47ABA386A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3877BA387A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF6A327F43
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38584C4D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854C22DCF57;
-	Fri, 26 Sep 2025 11:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96F52E8DFD;
+	Fri, 26 Sep 2025 11:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="oak0N9IQ"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePS03jgo"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248341C8629;
-	Fri, 26 Sep 2025 11:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4172DC76A
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758887151; cv=none; b=W6OPNqJCfp5vfMPMBFijNKjQjip1zVzDaLqEFMhFhPcLgECxSonqEEgtvVFPCVEyFk6HV9TUwctqEtL5r5vLrJLsZPNopXnhasiZW8gvVzx03t/Hhp/E8bUxiivw2iySR3nObVsqN75d3VtenNOlSnllmQLk60W2lXNT2xTW+p4=
+	t=1758887162; cv=none; b=Jij5YIpeDNt9zkMcZju0tje545jIZXM/oma5jxQRRYY0WEnTNMwfcKKq26YakgwiwZ73SRKRy6kkZzMbXDfqSuSLiIkzfIdoYWGbGvLyh7n97yVboRZrfZ+EtEB0Y7wJcVSyuqFrGoPcwP85MmkBLm6AYmMS+pcpnpw/33fklRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758887151; c=relaxed/simple;
-	bh=qaaPocrM5brCsxW/SLoRxadDHG+48wJddHhlLbcYn/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EGy1t43APfkarZQNRFMGYlHNadb/SbS7f0dNjPOu63FW9e1cvy75nZws9xNVRf/hvnYA+rs68HRV+/bcliSWcGcuf4W+lmsFra0iBD35tHiHsGuKagZwHw210CppVaKTPV1R1Ho7FY+2aLM+7pNLnpf9bHgCdnAPIMQ6v+v0g5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=oak0N9IQ; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 109115340A9A;
-	Fri, 26 Sep 2025 13:45:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1758887145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hmc0nO62D+pcYqSViTefHG7TcYqYnck8bqXIMVd1kKA=;
-	b=oak0N9IQ/UvJ12dhJ7KgMNhriNmWE4XFw+ThYT4HUVO4r/KiXPtUiUfaoNzPXCS3Wbi3Wb
-	2WBnD6YTv6JUl2qeN+rz0DHES4lNMR5qxfHNxSTitsrYWXcLnyfzMFEV+8VfZzH1nFkbQe
-	gwAiMbkmmDQWCYSK4nMpTtXs1l43cIo=
-Message-ID: <541bc30a-f5b6-47e3-8185-163b8ee4d5a1@ixit.cz>
-Date: Fri, 26 Sep 2025 13:45:44 +0200
+	s=arc-20240116; t=1758887162; c=relaxed/simple;
+	bh=1id3B6Wi8UowOcZ+9wbUIN5SOAeHkmeYMI59q8iHO5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hSD0fxEGlu3gA1xc3UJbahX4TvOjo9XWW3NNpFnQ2E8yuWLN9BPo3owvFpKqYJmxgNosssu2/0MbhiaSXne2xdkjCPuWRkXfOAec9rZUTKVp7gqDVKRJ05mWquxIR66707wxfuevE/iuM427qqoZR1y1pZD/LokADTi4geguLHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePS03jgo; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so17750335e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 04:46:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758887159; x=1759491959; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WkRDFqbG55HD/5PHsPObmdh+Ov28CTpaGeY2bB6QWYU=;
+        b=ePS03jgodCHcncw6WdQZN97PFUkWxHq37GAd30XqRk4VEJoIJRQ2uMoCR64F50xUKF
+         k89OFyAVcAimFUApqNSsDTTXVMnH+BeuVBjSUiQl8/8QXNM0EYavxKwM50ugiiDd+NLb
+         lM+420BVEJSxyYqNYibfWXSsE995hYieW86zH4/De0VUm8ByI9441jcAlT43shGqq9T4
+         aX+P/6PN59HRmHIgCc8yQ9PN7VBQnW0nQvz9zFX74mBGa5ey9NKIXYyOZGYGpVkjGE09
+         0uCLv3rWZB7LlgRZkxmCDtZjg01SWg8Kj1rHpDFEjv2xBE4Mbc4S6Op3vSsWQeZo/W04
+         kdAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758887159; x=1759491959;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WkRDFqbG55HD/5PHsPObmdh+Ov28CTpaGeY2bB6QWYU=;
+        b=aOkU/AAg1s7CMwwalhozYFy1wAvHUhk9FNUSo/jOZ6HyVyXUHozclqqITOyqny2M+y
+         zFt00r+IvvU3kKXo6JJNm7qHADm2SNSPP+A6NP1U6V+fjaXClqKwKHrjQPUmURnETbrg
+         Q0DSHfHZaIvA0kTUPp8qzGmqHZ4vrg/wCWQe+QvHsTCZhbm1TiZOrLzFe8XGgM1YZtBm
+         7IVBjfOxjNjwo7KU2TBh5DjQoTDnQoIhNLyNLr7lmhxa9+P4dTaUm5+QRHi0yap1hpuB
+         BEjCfqX40REgc+zp5MqOM9eUmK7fO6ZEHRKeV0Kti3zaQjt/7w8J3ZIOdUIpkzeJ6V1A
+         khaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFTlyxSjiiAqSHVdDWp/f87ROqO2NmkLi9CHSSAI10oZ9bJ9dzLRj8CBhJwiSAhXGWyZp0fsc9+VLhN/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS+rBO8z+S+soFa26EgZjmzfDMdcVQozlXbdYI/5tU11LwgTDH
+	mR03Ggp4xDUsh7TKmPG/qingtX2xrJ3Id6W3fHhqlblVVss8qAdOFDQT
+X-Gm-Gg: ASbGncvxR8Oh0dnAPr1vwjzcGLCKB4FpdcLchrk4xmOKXDHyUHzMbNvF3kGP50QUzUE
+	16qVdVMdAspmNRcIdQpoMF20GrQwfkeiG17xynI18pebnJrDJ7OqfNlj7pjlzQekmNYZTw+BFDD
+	N42xY4LBVn2XXpJRlH6j/PvQWTkNc3OKDg5htn91dCm/lWz0KtFGaTPBP4EJYxoKDB2YhLW7T8r
+	o8VQJ2WzowdUG1aGh9iv23q36wbg1ijCQxVrr7MiqHwCjz5jropnCZ13gA7tYb5DakQHZjFvi3z
+	2pcJdkP1duDpIVgedszQRogxoRJYnlPr8opVqe8RKkAF87i6si/lOhPDt5C4MKwZok1p0zPcyNJ
+	l47RS5EUxQQ3V+aovCHsWMQrBxWajefZP+g9YpAS7k0wA940ladEf5QDm24F7dSG4
+X-Google-Smtp-Source: AGHT+IEPTFDb685fmiqtI/zbxG32d7v3MRP+VRk71KQ8OOHsQCWx3c0SFbrsAeMCnBPznWcIWNgGnA==
+X-Received: by 2002:a05:600d:15a:20b0:46e:1e31:8d06 with SMTP id 5b1f17b1804b1-46e329f62b4mr74383735e9.16.1758887158355;
+        Fri, 26 Sep 2025 04:45:58 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33105e0bsm37380245e9.5.2025.09.26.04.45.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 04:45:58 -0700 (PDT)
+Date: Fri, 26 Sep 2025 12:45:55 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ linux@jordanrome.com, ameryhung@gmail.com, toke@redhat.com,
+ houtao1@huawei.com, emil@etsalapatis.com, yatsenko@meta.com,
+ isolodrai@meta.com, a.s.protopopov@gmail.com, dxu@dxuuu.xyz,
+ memxor@gmail.com, vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org,
+ gregkh@linuxfoundation.org, paul@paul-moore.com,
+ bboscaccy@linux.microsoft.com, James.Bottomley@HansenPartnership.com,
+ mrpre@163.com, jakub@cloudflare.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ netdev@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com
+Subject: Re: [PATCH] selftests/bpf: Add -Wsign-compare C compilation flag
+Message-ID: <20250926124555.009bfcd6@pumpkin>
+In-Reply-To: <20250924162408.815137-1-mehdi.benhadjkhelifa@gmail.com>
+References: <20250924162408.815137-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] drm/panel: samsung-sofef00: Invert reset gpio
- polarity
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Casey Connolly <casey.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20250925-s6e3fc2x01-v1-0-9293016768f7@ixit.cz>
- <20250925-s6e3fc2x01-v1-7-9293016768f7@ixit.cz>
- <anrdocs56hbunj7ga573kopcol34pw5cklrwneqevpfhhlm2bc@qvih2y7vm7q7>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <anrdocs56hbunj7ga573kopcol34pw5cklrwneqevpfhhlm2bc@qvih2y7vm7q7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Thank you, in v2 I'll drop the invert and revert polarity in the 
-S6E3FC2X01. Jens confirmed that GPIO should stay as is.
+On Wed, 24 Sep 2025 17:23:49 +0100
+Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com> wrote:
 
-David
+> -Change all the source files and the corresponding headers 
+> to having matching sign comparisons.
 
-On 25/09/2025 23:00, Dmitry Baryshkov wrote:
-> On Thu, Sep 25, 2025 at 11:12:53AM +0200, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> Follow the device-tree change for OnePlus 6/6T and invert the reset
->> polarity in the driver.
+'Fixing' -Wsign-compare by adding loads of casts doesn't seem right.
+The only real way is to change all the types to unsigned ones.
+But it is of questionable benefit and make the code harder to read.
+
+Consider the following:
+	int x = read(fd, buf, len);
+	if (x < 0)
+		return -1;
+	if (x > sizeof (struct fubar))
+		return -1;
+That will generate a 'sign-compare' error, but min(x, sizeof (struct fubar))
+doesn't generate an error because the compiler knows 'x' isn't negative.
+
+A well known compiler also rejects:
+	unsigned char a;
+	unsigned int b;
+	if (b > a)
+		return;
+because 'a' is promoted to 'signed int' before it does the check.
+
+So until the compilers start looking at the known domain of the value
+(not just the type) I enabling -Wsign-compare' is pretty pointless.
+
+As a matter of interest did you actually find any bugs?
+
+	David
+
+
 > 
-> Reset is usually active-low. On most of the boards it is described as
-> RESET#.
+> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+> ---
+> As suggested by the TODO, -Wsign-compare was added to the C compilation
+> flags for the selftests/bpf/Makefile and all corresponding files in
+> selftests and a single file under tools/lib/bpf/usdt.bpf.h have been
+> carefully changed to account for correct sign comparisons either by
+> explicit casting or changing the variable type.Only local variables
+> and variables which are in limited scope have been changed in cases
+> where it doesn't break the code.Other struct variables or global ones 
+> have left untouched to avoid other conflicts and opted to explicit 
+> casting in this case.This change will help avoid implicit type 
+> conversions and have predictable behavior.
 > 
->>
->> Fixes: 5933baa36e26 ("drm/panel/samsung-sofef00: Add panel for OnePlus 6/T devices")
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   drivers/gpu/drm/panel/panel-samsung-sofef00.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
+> I have already compiled all bpf tests with no errors as well as the
+> kernel and have ran all the selftests with no obvious side effects.
+> I would like to know if it's more convinient to have all changes as
+> a single patch like here or if it needs to be divided in some way 
+> and sent as a patch series.
 > 
-
--- 
-David Heidelberg
-
+> Best Regards,
+> Mehdi Ben Hadj Khelifa
+...
 
