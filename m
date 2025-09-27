@@ -1,128 +1,362 @@
-Return-Path: <linux-kernel+bounces-835072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52F5BA630B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1C8BA6311
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072F1189F4DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B5A189F55D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E84230BCB;
-	Sat, 27 Sep 2025 20:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FC1231A30;
+	Sat, 27 Sep 2025 20:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XoeCAfxj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaXHqLd3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC68718DB01
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 20:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27502DF68;
+	Sat, 27 Sep 2025 20:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759003246; cv=none; b=UlCQ6R1fqpGZQdfovW3JEhEocxBHmxdtNSBw3DPiKjhd8yEuI480YVW+4KTr/X6GhjyGZ5HPZTKcedW1dUNZBay3gYhlCdstcf7zp91Oi3f4eu3nMJnRyzXuP92ypzXLeM0Z372kny699B2y2+HSX/rV7Nnyxo4EDnpVy4ff2+c=
+	t=1759003294; cv=none; b=aBszTNWRLORF648QSWwa7x2WcGSITJ0iSRA/0/J0+erP4E4ln8KMy8eg3wvH8qeb/KROvx6YwlFp1SZtIIHwQNAhrD6KwM0+04x61iftBLd7UN90SZHStl8AEt/EG7RjeCIHTmIXnMRyG3CiUI0T+42aWwbQhMKVFJpKb07d8mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759003246; c=relaxed/simple;
-	bh=8pW32zcvR4dLYgwXXc+2tBLRJFT0Ej7KOCIhLsjxm6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pcPPTSOE4fMmrC3xnKdNgFa4Ryz9YZQYVg/atqiQA3ZY4BTWbpMTGPyaHeHUZocTe6l4HV7cbFnp0ErY0U1+YX0oEIY28mNwI2PO/gSQR57GnQQYCMgBEr7B2GFJOw+I/o30djIlqVLbV7TCGW1x+Bs/JqLv+piomw40EWucgTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XoeCAfxj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759003242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LY7lMslLMdk6bP1H78HvFkKnVR2pPDQHspzHxpFwXrs=;
-	b=XoeCAfxjSnw5qQHJrdTAHUVOPhIFinbPeIkxZaiVpkO3/lJBka6MVp7KxqOjd/RnpOH4Xk
-	E/hA0/gywuEKB5fyo1D2BznscLOaND6AGxS0zSAigoEMGhpmkt3Y2DXxWiDqH/Y3FNpTtN
-	zN14Qr2rjpIkNmuD+p32n0vPl+M+BSY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-128-oPbq-5R5NGGgHiDn8RpKEA-1; Sat, 27 Sep 2025 16:00:41 -0400
-X-MC-Unique: oPbq-5R5NGGgHiDn8RpKEA-1
-X-Mimecast-MFC-AGG-ID: oPbq-5R5NGGgHiDn8RpKEA_1759003240
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3efe4fcc9ccso2026418f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:00:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759003240; x=1759608040;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LY7lMslLMdk6bP1H78HvFkKnVR2pPDQHspzHxpFwXrs=;
-        b=n10n71IJzNS15nuDYqmBWXtkkt6+72BHmJveiKbKo1rHzcWhI9kiMlpd+aSABG/YXO
-         6S18USvxHlVBWj4iBIHJIRDq/bfWUBy2q+fOWyTQ7FYMwSavtnjKnCURwznR0PYL5QwE
-         kZV/0oG76YFaMqY0X6wZaGTaEJvFKIT60V6VmDSA8oEnkABUrZ846+opvVNrKCuaeEqh
-         I3Ta3wDdtBfbU5dcvLvUnJW26axlzPWBFU1pOHYgHuMcJEOnQoU2MbLIDOW4Ddmz+Pek
-         e23aTqzg/Maxwq63tV16v/JtsRLqP8176HwDsHiYPIrJRvw2Bb9VU1LiY4bnzB9g8oYZ
-         eRXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ1qU0ZHItHzVOWQmCMVcYuU4TI4/tyEvchtkB0RUSxj8DuzYVeg71Cv2eAELaufMkezvkAf5pcDtwleY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweCE5swBm9g1Cf13oD1r3ghSCmfcqb0fA8lD6zpY0/xoovRJsp
-	GrQUk7FZxO1uD5VgcxcbPKtbTQNPdSWeRnHvOv8wdCYrA5fQ3JcfCTNPK8Wonmx6iwTRSxkuteu
-	B21OoeFPaMvxq+AR+vWC2X3su9B8N7F7rkr5ULIDQMuRHX9BDMDFfFBT+qOy3eJLwwQ==
-X-Gm-Gg: ASbGncsJVnI8Fq4DTMYeG2G24pH+4PPusWRWHmgukSxA1u7GKbJgT6DShtF9PKMkSLF
-	uZiVgvWSeBjqKV5gP4RLl6ovn/6cbb63jwlxqpivHF1WzC5eCyLyul4ubgwHjAGi0EgYMS2/uhF
-	Cwh+Ebxy7+dVRQNweTLfD19XXANsdh3yXkKfxlwYE+mcA6DgHUsG9BwSe7dC10Qi8tiq/Mg/kDS
-	iSe4UfSfj0JDoc6yQovLkb7cMX1ZRifkc7sCwMNVsxdz0dtz0oeQPb5hrhd6j2jfJIxiY84EocF
-	9ty9thg72IT9CRIAaRFxxJhv+f2033jxCA==
-X-Received: by 2002:a05:6000:1886:b0:3ee:13ba:e140 with SMTP id ffacd0b85a97d-40e4a8f9a93mr9411610f8f.21.1759003239922;
-        Sat, 27 Sep 2025 13:00:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGnV16ZFd5HsrMWSnRhO0C2T0WOBDUOMZTvFfNi7AOVQpV95TyLimypxd7uEYgkUB8lVwvnvw==
-X-Received: by 2002:a05:6000:1886:b0:3ee:13ba:e140 with SMTP id ffacd0b85a97d-40e4a8f9a93mr9411592f8f.21.1759003239406;
-        Sat, 27 Sep 2025 13:00:39 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1538:2200:56d4:5975:4ce3:246f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb89fb19fsm12049208f8f.21.2025.09.27.13.00.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 13:00:38 -0700 (PDT)
-Date: Sat, 27 Sep 2025 16:00:34 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>, linux-kernel@vger.kernel.org,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Cindy Lu <lulu@redhat.com>,
-	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>,
-	jasowang@redhat.com
-Subject: Re: [PATCH v5 5/6] vduse: add vq group asid support
-Message-ID: <20250927155955-mutt-send-email-mst@kernel.org>
-References: <20250926101432.2251301-1-eperezma@redhat.com>
- <20250926101432.2251301-6-eperezma@redhat.com>
+	s=arc-20240116; t=1759003294; c=relaxed/simple;
+	bh=gVL60xKsCZ6RMqJqU1DCXvgWBojCWFpIg8dNJFgRNvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bTUWK/nDgEQ1YHuaUFccEiMNE+UWU62G2j7RGcgE8hPxzVJ8pslMHSxeouQRn+D7liiLopEmoMr6mhcn0GmXjSzmYM7na71gxtF3cvar3KASNBzMpZktnIgjfNuypbVKVt3R9y4MsON0trm5UxFCABjdQfW3NREujZBASOQCL44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NaXHqLd3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B25C4CEE7;
+	Sat, 27 Sep 2025 20:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759003294;
+	bh=gVL60xKsCZ6RMqJqU1DCXvgWBojCWFpIg8dNJFgRNvM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NaXHqLd3sc7yMFY2RvZ6rGQJPC07TIj8tiYLzIxHc2TglDiF+ERJGHy2oMKOPrcaM
+	 vxqUJ/vcpw7eXT+AVwJZFSDpN24P/c2wEjSLEXrE7h/DtJnS9E9sEDdT7iUz1/gncz
+	 UUBPfX5HsXpo+IKsHcPFI8S5eVBrbkDn1cuOQkvejEgK2drnJ3CvXnPQJlmWRVyMvg
+	 b59tn47nZO6kUQtIFA1URDzAayEDp3fxpv7ZTaem1iYc/mgsjukQKk8w5T8wk2wS6m
+	 ps3hdUAVX6xcShF1grBeASbbLRbSiX++AdNpxcoFdrUQscQ2A9/xtYRh1GcMYCyWrk
+	 sowSqAEUa3Lug==
+Date: Sat, 27 Sep 2025 13:01:31 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Longfang Liu <liulongfang@huawei.com>,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Zhiqi Song <songzhiqi1@huawei.com>
+Subject: [GIT PULL] Crypto library updates for 6.18
+Message-ID: <20250927200131.GB9798@quark>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926101432.2251301-6-eperezma@redhat.com>
 
-On Fri, Sep 26, 2025 at 12:14:31PM +0200, Eugenio Pérez wrote:
-> @@ -166,6 +179,16 @@ struct vduse_vq_state_packed {
->  	__u16 last_used_idx;
->  };
->  
-> +/**
-> + * struct vduse_vq_group - virtqueue group
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
 
-comment does not match struct name.
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
 
+are available in the Git repository at:
 
-> + * @group: Index of the virtqueue group
-> + * @asid: Address space ID of the group
-> + */
-> +struct vduse_vq_group_asid {
-> +	__u32 group;
-> +	__u32 asid;
-> +};
-> +
->  /**
->   * struct vduse_vq_info - information of a virtqueue
->   * @index: virtqueue index
+  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-for-linus
 
+for you to fetch changes up to b94bc4398beccd329a51052c5e7e84e4670dbcd9:
+
+  crypto: md5 - Implement export_core() and import_core() (2025-09-08 09:47:38 -0700)
+
+----------------------------------------------------------------
+
+- Add a RISC-V optimized implementation of Poly1305. This code was
+  written by Andy Polyakov and contributed by Zhihang Shao.
+
+- Migrate the MD5 code into lib/crypto/, and add KUnit tests for MD5.
+  Yes, it's still the 90s, and several kernel subsystems are still
+  using MD5 for legacy use cases. As long as that remains the case,
+  it's helpful to clean it up in the same way as I've been doing for
+  other algorithms. Later, I plan to convert most users of MD5 to use
+  the new MD5 library API instead of the generic crypto API.
+
+- Simplify the organization of the ChaCha, Poly1305, BLAKE2s, and
+  Curve25519 code. Consolidate these into one module per algorithm,
+  and centralize the configuration and build process. This is the same
+  reorganization that has already been successful for SHA-1 and SHA-2.
+
+- Remove the unused crypto_kpp API for Curve25519.
+
+- Migrate the BLAKE2s and Curve25519 self-tests to KUnit.
+
+- Always enable the architecture-optimized BLAKE2s code.
+
+Due to interdependencies between test and non-test code, both are
+included in this pull request. The broken-down diffstat is as follows:
+
+    Tests:            735 insertions(+), 1917 deletions(-)
+    RISC-V Poly1305:  877 insertions(+), 1 deletion(-)
+    Other:           1777 insertions(+), 3117 deletions(-)
+
+Besides the new RISC-V code which is an addition, there are quite a
+few simplifications due to the improved code organization for multiple
+algorithms, the removal of the unused crypto_kpp API for Curve25519
+and redundant tests, and the redesign of the BLAKE2s test.
+
+----------------------------------------------------------------
+Eric Biggers (37):
+      lib/crypto: sha256: Use underlying functions instead of crypto_simd_usable()
+      lib/crypto: sha512: Use underlying functions instead of crypto_simd_usable()
+      lib/crypto: md5: Add MD5 and HMAC-MD5 library functions
+      lib/crypto: mips/md5: Migrate optimized code into library
+      mips: cavium-octeon: Move octeon-crypto.c into parent dir
+      lib/crypto: powerpc/md5: Migrate optimized code into library
+      lib/crypto: sparc/md5: Migrate optimized code into library
+      crypto: md5 - Wrap library and add HMAC support
+      lib/crypto: tests: Add KUnit tests for MD5 and HMAC-MD5
+      lib/crypto: Drop inline from all *_mod_init_arch() functions
+      lib/crypto: poly1305: Remove unused function poly1305_is_arch_optimized()
+      lib/crypto: poly1305: Consolidate into single module
+      arm: configs: Remove obsolete assignments to CRYPTO_CHACHA20_NEON
+      crypto: chacha - register only "-lib" drivers
+      lib/crypto: chacha: Remove unused function chacha_is_arch_optimized()
+      lib/crypto: chacha: Rename chacha.c to chacha-block-generic.c
+      lib/crypto: chacha: Rename libchacha.c to chacha.c
+      lib/crypto: chacha: Consolidate into single module
+      lib/crypto: x86/blake2s: Reduce size of BLAKE2S_SIGMA2
+      lib/crypto: blake2s: Remove obsolete self-test
+      lib/crypto: blake2s: Always enable arch-optimized BLAKE2s code
+      lib/crypto: blake2s: Move generic code into blake2s.c
+      lib/crypto: blake2s: Consolidate into single C translation unit
+      lib/crypto: tests: Add KUnit tests for BLAKE2s
+      crypto: hisilicon/hpre - Remove unused curve25519 kpp support
+      crypto: arm/curve25519 - Remove unused kpp support
+      crypto: powerpc/curve25519 - Remove unused kpp support
+      crypto: x86/curve25519 - Remove unused kpp support
+      crypto: testmgr - Remove curve25519 kpp tests
+      crypto: curve25519 - Remove unused kpp support
+      lib/crypto: tests: Migrate Curve25519 self-test to KUnit
+      lib/crypto: tests: Add Curve25519 benchmark
+      lib/crypto: curve25519: Move a couple functions out-of-line
+      lib/crypto: curve25519: Consolidate into single module
+      lib/crypto: tests: Enable Curve25519 test when CRYPTO_SELFTESTS
+      wireguard: kconfig: simplify crypto kconfig selections
+      crypto: md5 - Implement export_core() and import_core()
+
+Zhihang Shao (1):
+      lib/crypto: riscv/poly1305: Import OpenSSL/CRYPTOGAMS implementation
+
+ arch/arm/configs/exynos_defconfig                  |    1 -
+ arch/arm/configs/milbeaut_m10v_defconfig           |    1 -
+ arch/arm/configs/multi_v7_defconfig                |    1 -
+ arch/arm/configs/omap2plus_defconfig               |    1 -
+ arch/arm/crypto/Kconfig                            |   13 -
+ arch/arm/crypto/Makefile                           |    2 -
+ arch/arm/crypto/curve25519-glue.c                  |  137 ---
+ arch/m68k/configs/amiga_defconfig                  |    1 -
+ arch/m68k/configs/apollo_defconfig                 |    1 -
+ arch/m68k/configs/atari_defconfig                  |    1 -
+ arch/m68k/configs/bvme6000_defconfig               |    1 -
+ arch/m68k/configs/hp300_defconfig                  |    1 -
+ arch/m68k/configs/mac_defconfig                    |    1 -
+ arch/m68k/configs/multi_defconfig                  |    1 -
+ arch/m68k/configs/mvme147_defconfig                |    1 -
+ arch/m68k/configs/mvme16x_defconfig                |    1 -
+ arch/m68k/configs/q40_defconfig                    |    1 -
+ arch/m68k/configs/sun3_defconfig                   |    1 -
+ arch/m68k/configs/sun3x_defconfig                  |    1 -
+ arch/mips/cavium-octeon/Makefile                   |    2 +-
+ arch/mips/cavium-octeon/crypto/Makefile            |    8 -
+ arch/mips/cavium-octeon/crypto/octeon-md5.c        |  214 ----
+ .../cavium-octeon/{crypto => }/octeon-crypto.c     |    0
+ arch/mips/configs/cavium_octeon_defconfig          |    1 -
+ arch/mips/crypto/Kconfig                           |   10 -
+ arch/powerpc/configs/powernv_defconfig             |    1 -
+ arch/powerpc/configs/ppc64_defconfig               |    1 -
+ arch/powerpc/crypto/Kconfig                        |   21 -
+ arch/powerpc/crypto/Makefile                       |    4 -
+ arch/powerpc/crypto/md5-glue.c                     |   99 --
+ arch/s390/configs/debug_defconfig                  |    1 -
+ arch/s390/configs/defconfig                        |    1 -
+ arch/sparc/crypto/Kconfig                          |   10 -
+ arch/sparc/crypto/Makefile                         |    4 -
+ arch/sparc/crypto/md5_glue.c                       |  174 ---
+ arch/x86/crypto/Kconfig                            |   13 -
+ arch/x86/crypto/Makefile                           |    5 -
+ crypto/Kconfig                                     |   14 +-
+ crypto/Makefile                                    |    1 -
+ crypto/chacha.c                                    |  129 +--
+ crypto/curve25519-generic.c                        |   91 --
+ crypto/md5.c                                       |  398 ++++---
+ crypto/testmgr.c                                   |   18 +-
+ crypto/testmgr.h                                   | 1225 --------------------
+ drivers/crypto/hisilicon/Kconfig                   |    1 -
+ drivers/crypto/hisilicon/hpre/hpre_crypto.c        |  403 +------
+ drivers/crypto/img-hash.c                          |    2 +-
+ drivers/net/Kconfig                                |   15 +-
+ include/crypto/chacha.h                            |   37 +-
+ include/crypto/curve25519.h                        |   40 +-
+ include/crypto/internal/blake2s.h                  |   21 -
+ include/crypto/internal/poly1305.h                 |   16 +-
+ include/crypto/md5.h                               |  181 ++-
+ include/crypto/poly1305.h                          |    9 -
+ lib/crypto/Kconfig                                 |  169 ++-
+ lib/crypto/Makefile                                |  169 ++-
+ lib/crypto/arm/Kconfig                             |   24 -
+ lib/crypto/arm/Makefile                            |   26 -
+ lib/crypto/arm/blake2s-core.S                      |    5 +-
+ lib/crypto/arm/blake2s-glue.c                      |    7 -
+ lib/crypto/arm/blake2s.h                           |    5 +
+ lib/crypto/arm/{chacha-glue.c => chacha.h}         |   35 +-
+ .../crypto => lib/crypto/arm}/curve25519-core.S    |    0
+ lib/crypto/arm/curve25519.h                        |   47 +
+ lib/crypto/arm/poly1305-armv4.pl                   |    3 +-
+ lib/crypto/arm/poly1305-glue.c                     |   76 --
+ lib/crypto/arm/poly1305.h                          |   53 +
+ lib/crypto/arm/sha1.h                              |    2 +-
+ lib/crypto/arm/sha256.h                            |   12 +-
+ lib/crypto/arm/sha512.h                            |    7 +-
+ lib/crypto/arm64/Kconfig                           |   14 -
+ lib/crypto/arm64/Makefile                          |   17 -
+ lib/crypto/arm64/{chacha-neon-glue.c => chacha.h}  |   32 +-
+ lib/crypto/arm64/poly1305-armv8.pl                 |    3 +
+ lib/crypto/arm64/poly1305-glue.c                   |   74 --
+ lib/crypto/arm64/poly1305.h                        |   50 +
+ lib/crypto/arm64/sha1.h                            |    2 +-
+ lib/crypto/arm64/sha256.h                          |   12 +-
+ lib/crypto/arm64/sha512.h                          |    7 +-
+ lib/crypto/blake2s-generic.c                       |  111 --
+ lib/crypto/blake2s-selftest.c                      |  651 -----------
+ lib/crypto/blake2s.c                               |  105 +-
+ lib/crypto/chacha-block-generic.c                  |  114 ++
+ lib/crypto/chacha.c                                |  142 +--
+ lib/crypto/curve25519-generic.c                    |   25 -
+ lib/crypto/curve25519.c                            |   69 +-
+ lib/crypto/libchacha.c                             |   35 -
+ lib/crypto/md5.c                                   |  322 +++++
+ lib/crypto/mips/Kconfig                            |   12 -
+ lib/crypto/mips/Makefile                           |   19 -
+ lib/crypto/mips/chacha-glue.c                      |   29 -
+ lib/crypto/mips/chacha.h                           |   14 +
+ lib/crypto/mips/md5.h                              |   65 ++
+ lib/crypto/mips/poly1305-glue.c                    |   33 -
+ lib/crypto/mips/poly1305-mips.pl                   |    8 +-
+ lib/crypto/mips/poly1305.h                         |   14 +
+ lib/crypto/poly1305-generic.c                      |   25 -
+ lib/crypto/poly1305.c                              |   81 +-
+ lib/crypto/powerpc/Kconfig                         |   16 -
+ lib/crypto/powerpc/Makefile                        |    7 -
+ lib/crypto/powerpc/{chacha-p10-glue.c => chacha.h} |   36 +-
+ .../crypto/powerpc}/curve25519-ppc64le_asm.S       |    0
+ .../crypto/powerpc/curve25519.h                    |  124 +-
+ .../crypto => lib/crypto/powerpc}/md5-asm.S        |    0
+ lib/crypto/powerpc/md5.h                           |   12 +
+ .../powerpc/{poly1305-p10-glue.c => poly1305.h}    |   40 +-
+ lib/crypto/riscv/Kconfig                           |    8 -
+ lib/crypto/riscv/Makefile                          |    4 -
+ .../riscv/{chacha-riscv64-glue.c => chacha.h}      |   36 +-
+ lib/crypto/riscv/poly1305-riscv.pl                 |  847 ++++++++++++++
+ lib/crypto/riscv/poly1305.h                        |   14 +
+ lib/crypto/riscv/sha256.h                          |   10 +-
+ lib/crypto/riscv/sha512.h                          |    6 +-
+ lib/crypto/s390/Kconfig                            |    7 -
+ lib/crypto/s390/Makefile                           |    4 -
+ lib/crypto/s390/{chacha-glue.c => chacha.h}        |   29 +-
+ lib/crypto/s390/sha1.h                             |    2 +-
+ lib/crypto/s390/sha256.h                           |    2 +-
+ lib/crypto/s390/sha512.h                           |    2 +-
+ lib/crypto/sparc/md5.h                             |   48 +
+ {arch/sparc/crypto => lib/crypto/sparc}/md5_asm.S  |    0
+ lib/crypto/sparc/sha1.h                            |    2 +-
+ lib/crypto/sparc/sha256.h                          |    2 +-
+ lib/crypto/sparc/sha512.h                          |    2 +-
+ lib/crypto/tests/Kconfig                           |   29 +
+ lib/crypto/tests/Makefile                          |    3 +
+ lib/crypto/tests/blake2s-testvecs.h                |  238 ++++
+ lib/crypto/tests/blake2s_kunit.c                   |  134 +++
+ .../curve25519_kunit.c}                            |  102 +-
+ lib/crypto/tests/md5-testvecs.h                    |  186 +++
+ lib/crypto/tests/md5_kunit.c                       |   39 +
+ lib/crypto/x86/Kconfig                             |   26 -
+ lib/crypto/x86/Makefile                            |   17 -
+ lib/crypto/x86/blake2s-core.S                      |   28 +-
+ lib/crypto/x86/{blake2s-glue.c => blake2s.h}       |   16 +-
+ lib/crypto/x86/{chacha_glue.c => chacha.h}         |   36 +-
+ .../crypto/x86/curve25519.h                        |  127 +-
+ lib/crypto/x86/poly1305-x86_64-cryptogams.pl       |   33 +-
+ lib/crypto/x86/{poly1305_glue.c => poly1305.h}     |   47 +-
+ lib/crypto/x86/sha1.h                              |    2 +-
+ lib/crypto/x86/sha256.h                            |    5 +-
+ lib/crypto/x86/sha512.h                            |    6 +-
+ scripts/crypto/gen-hash-testvecs.py                |   27 +-
+ 143 files changed, 3389 insertions(+), 5035 deletions(-)
+ delete mode 100644 arch/arm/crypto/curve25519-glue.c
+ delete mode 100644 arch/mips/cavium-octeon/crypto/Makefile
+ delete mode 100644 arch/mips/cavium-octeon/crypto/octeon-md5.c
+ rename arch/mips/cavium-octeon/{crypto => }/octeon-crypto.c (100%)
+ delete mode 100644 arch/powerpc/crypto/md5-glue.c
+ delete mode 100644 arch/sparc/crypto/md5_glue.c
+ delete mode 100644 crypto/curve25519-generic.c
+ delete mode 100644 include/crypto/internal/blake2s.h
+ delete mode 100644 lib/crypto/arm/Kconfig
+ delete mode 100644 lib/crypto/arm/Makefile
+ delete mode 100644 lib/crypto/arm/blake2s-glue.c
+ create mode 100644 lib/crypto/arm/blake2s.h
+ rename lib/crypto/arm/{chacha-glue.c => chacha.h} (76%)
+ rename {arch/arm/crypto => lib/crypto/arm}/curve25519-core.S (100%)
+ create mode 100644 lib/crypto/arm/curve25519.h
+ delete mode 100644 lib/crypto/arm/poly1305-glue.c
+ create mode 100644 lib/crypto/arm/poly1305.h
+ delete mode 100644 lib/crypto/arm64/Kconfig
+ delete mode 100644 lib/crypto/arm64/Makefile
+ rename lib/crypto/arm64/{chacha-neon-glue.c => chacha.h} (75%)
+ delete mode 100644 lib/crypto/arm64/poly1305-glue.c
+ create mode 100644 lib/crypto/arm64/poly1305.h
+ delete mode 100644 lib/crypto/blake2s-generic.c
+ delete mode 100644 lib/crypto/blake2s-selftest.c
+ create mode 100644 lib/crypto/chacha-block-generic.c
+ delete mode 100644 lib/crypto/curve25519-generic.c
+ delete mode 100644 lib/crypto/libchacha.c
+ create mode 100644 lib/crypto/md5.c
+ delete mode 100644 lib/crypto/mips/Kconfig
+ delete mode 100644 lib/crypto/mips/Makefile
+ delete mode 100644 lib/crypto/mips/chacha-glue.c
+ create mode 100644 lib/crypto/mips/chacha.h
+ create mode 100644 lib/crypto/mips/md5.h
+ delete mode 100644 lib/crypto/mips/poly1305-glue.c
+ create mode 100644 lib/crypto/mips/poly1305.h
+ delete mode 100644 lib/crypto/poly1305-generic.c
+ delete mode 100644 lib/crypto/powerpc/Kconfig
+ delete mode 100644 lib/crypto/powerpc/Makefile
+ rename lib/crypto/powerpc/{chacha-p10-glue.c => chacha.h} (62%)
+ rename {arch/powerpc/crypto => lib/crypto/powerpc}/curve25519-ppc64le_asm.S (100%)
+ rename arch/powerpc/crypto/curve25519-ppc64le-core.c => lib/crypto/powerpc/curve25519.h (56%)
+ rename {arch/powerpc/crypto => lib/crypto/powerpc}/md5-asm.S (100%)
+ create mode 100644 lib/crypto/powerpc/md5.h
+ rename lib/crypto/powerpc/{poly1305-p10-glue.c => poly1305.h} (63%)
+ delete mode 100644 lib/crypto/riscv/Kconfig
+ delete mode 100644 lib/crypto/riscv/Makefile
+ rename lib/crypto/riscv/{chacha-riscv64-glue.c => chacha.h} (57%)
+ create mode 100644 lib/crypto/riscv/poly1305-riscv.pl
+ create mode 100644 lib/crypto/riscv/poly1305.h
+ delete mode 100644 lib/crypto/s390/Kconfig
+ delete mode 100644 lib/crypto/s390/Makefile
+ rename lib/crypto/s390/{chacha-glue.c => chacha.h} (51%)
+ create mode 100644 lib/crypto/sparc/md5.h
+ rename {arch/sparc/crypto => lib/crypto/sparc}/md5_asm.S (100%)
+ create mode 100644 lib/crypto/tests/blake2s-testvecs.h
+ create mode 100644 lib/crypto/tests/blake2s_kunit.c
+ rename lib/crypto/{curve25519-selftest.c => tests/curve25519_kunit.c} (96%)
+ create mode 100644 lib/crypto/tests/md5-testvecs.h
+ create mode 100644 lib/crypto/tests/md5_kunit.c
+ delete mode 100644 lib/crypto/x86/Kconfig
+ delete mode 100644 lib/crypto/x86/Makefile
+ rename lib/crypto/x86/{blake2s-glue.c => blake2s.h} (83%)
+ rename lib/crypto/x86/{chacha_glue.c => chacha.h} (85%)
+ rename arch/x86/crypto/curve25519-x86_64.c => lib/crypto/x86/curve25519.h (94%)
+ rename lib/crypto/x86/{poly1305_glue.c => poly1305.h} (83%)
 
