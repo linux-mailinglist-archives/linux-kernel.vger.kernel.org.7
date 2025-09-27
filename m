@@ -1,156 +1,179 @@
-Return-Path: <linux-kernel+bounces-834818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92175BA596B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 07:52:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6554BA5972
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D215E7AB01E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9524A187C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C52241C8C;
-	Sat, 27 Sep 2025 05:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="A7op7zv4"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022DC244684;
+	Sat, 27 Sep 2025 06:00:24 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4328371
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 05:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE7F19E83C
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758952314; cv=none; b=WJ7koQf5ThILeSpbQw0sm06H62vhr8FzB31tUVnmzLsJTZP6rnaWcTfvfmUbG4fWBicZ2aw0hJZYWc3q9f8pOzCAkckoECXBTycFE6ksd9dHwG9o2nvvhC19I7L7q6ptYjKfXLbhokhRrBgZdSNyMzUa2pT2apKFldElhQt7FI8=
+	t=1758952823; cv=none; b=Zeb1ub4uucqzGLMIXc1/9ZS/qoRBgXV14dVcFCZ6Aywj5laUouHj+EBGxONX96LiLc8ckrVL3RERme5pWPRSb5BwMo/UkXhRgTqE1ETqWji/ekvDsV84q3s1bnzKqDUbbUjPs+6bEkvTBEUj31Oqqv090M3/ajBGh6ekAcAXIQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758952314; c=relaxed/simple;
-	bh=XQYEYZzl1K7PED5HCo6LIaCwRK6lOlbA9ZQtQ+r6tLo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=FgiK0YVLRky9zdPsfsyZF1Q3BKnSYWoF7YMbXtLtWDCl364E7kCa18FJRWE7yRRy5F+ZCxrGsSw0xQTcTnaYt5QklmjlghQmh0Cr6TDMFq48le8YKYGveQpOVLW+AAEttqqjlz4yT0PZSCOY8b8Ilkex0bprzJATk9RQpRNi2gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=A7op7zv4; arc=none smtp.client-ip=1.95.21.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=GjcJqWSKjlti6k3
-	EMHddKW4dVDmtwr+NEk+GeGVCsxo=; b=A7op7zv4F1F5ZwgnoqpRydBCXQsbKXr
-	A3+ahurSWjg1mm4HVfRP9+hW4zeKsRTpXnPnxMau3ApIG+GysI8wkjo4YKhV44n4
-	SgtCzRg7pX51JlbUxueExH5XYYf7L7iHnwU4P1yGWvKza0ZRxcdld2apKI4QrRfh
-	994l1S9z+r8g=
-Received: from ubuntu.localdomain (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgAHlGRNe9do6d1SBQ--.3197S2;
-	Sat, 27 Sep 2025 13:51:10 +0800 (CST)
-From: buckzhang1212@yeah.net
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: buckzhang1212@yeah.net
-Subject: [PATCH] locking/rwsema:add DEBUG_RWSEMS_WARN_ON to warn invalid rwsem
-Date: Fri, 26 Sep 2025 22:50:58 -0700
-Message-Id: <20250927055058.3772-1-buckzhang1212@yeah.net>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:M88vCgAHlGRNe9do6d1SBQ--.3197S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXr15GFyrWrWfAryftw1UKFg_yoW5AryxpF
-	4Yv3sIgrWvqFWIqr47J3ZakFn0qr4jya47GFZxG348JrZ8GF4DJFnxJFy7ArWYkr97CFZx
-	XF4furWY9rWDA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UPPE-UUUUU=
-X-CM-SenderInfo: pexfy65kdqwiqsrsq5hhdkh0dhw/1tbiNA8CsWjXe09ESgAA3N
+	s=arc-20240116; t=1758952823; c=relaxed/simple;
+	bh=FVQqXZ6vvoXNmyMYata7NERxIppVX1MU+bw6AFoO/xc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=AbfDwteUzPAZNnl3P1nBvSvhkeXqJbk9ZapZC9vcMYO4UKQQIr5MNsJ+M29vOnzeIqbYg4xouHRkUb3Tk0me6sXQywKh9vHan5uIfBUT1fxyVAgucOx96Iqda562AoN7YId8AxorSgIkqIfWKm3JhwCRKk48VdlJgNREejpklQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4257ae42790so43088785ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:00:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758952821; x=1759557621;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QWqloIokgAjTlc/Iwy59kZ1QnAzpWW7VXmqR0dpPQns=;
+        b=traBs8EBxMB+yddHJHgPeEGFikKGoiDK4gZjVoQRhIY70/gmM4BBwiywtCrN0IBwds
+         6kCZBUcwO7l0SMRUGfWPpkuXdVROasUajrVeIUN3wfriR3dK5f5EtnhUJnEniPiut9qR
+         u5hDW3DrUzWXsYFB736+yWuUxnR1+HtRl62IQWWd11xc8s772LzMFRNAhIWeg4MSNgC1
+         RNW0IHizmyi1x0lGjCIyHeswhDXeo95pangWc4DwT6St7CWFbU3awkUqXI8UgIX/2BSL
+         LS4XoM7HTld26tEvRJ7cPWTKSSZASSeYRWGNfDwI5JWQA6om7WsGG7sw3ovgbSRSRbbF
+         lKJw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8NRevNUamUHGaqv5pC5/voaqHWHqnF4HblkeDfacREw1Amdt1ThqPIBe2vUfgW1uoAtqwyCLY8P5vBk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKH5yF1yjPAIiPZ+Ent09jbHQkPgN5VNzVE6XordkiQZHVFQ27
+	rmvi0Mj/Gg/N0UVdP4UmMzctjzTj+sXV5UmupQPJ1u0vIa5HDS8J1+Q2t1dmcWpBjk5DyVqkH4S
+	bG5v9sdO6ajA4PaA6YGpP50RfHQx5oqhYhF0LB5S/gXCw9XbZwh8q8DE9T9M=
+X-Google-Smtp-Source: AGHT+IHe74HBd6XEftIHGctkYHXJNu2pVLYANpsk/N72/KgZxq1RUrUa6XMWAdCTD7RhQCvIKhavXgVuoTBzps71NWqb/YQd/ADv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:218f:b0:405:5e08:a3e4 with SMTP id
+ e9e14a558f8ab-425955c5585mr136861695ab.1.1758952820978; Fri, 26 Sep 2025
+ 23:00:20 -0700 (PDT)
+Date: Fri, 26 Sep 2025 23:00:20 -0700
+In-Reply-To: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-0-39156563c3ea@meta.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d77d74.a00a0220.102ee.000e.GAE@google.com>
+Subject: [syzbot ci] Re: net: devmem: improve cpu cost of RX token management
+From: syzbot ci <syzbot+ci88b77c4aee0f7057@syzkaller.appspotmail.com>
+To: almasrymina@google.com, bobbyeshleman@gmail.com, bobbyeshleman@meta.com, 
+	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, kuniyu@google.com, 
+	linux-kernel@vger.kernel.org, ncardwell@google.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sdf@fomichev.me, willemb@google.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: "buck.zhang" <buckzhang1212@yeah.net>
+syzbot ci has tested the following series
 
-Here is a kernel exception about rwsem and I can recreate it stably.
-First We define a struct contains a rwsem.
-Then allocate this struct by kmalloc without calling init_rwsem.
-Finally when multiple tasks call use rwsem together,kernel will panic.
-This lock is used normally when only one task is using  at a time.
-the exception reason is that sem->wait_list is an invalid kernel list.
-I want to add more warnings when enable CONFIG_DEBUG_RWSEMS
-kernel crash log:
-Unable to handle kernel NULL pointer dereference at virtual address 0000000
-pc: rwsem_down_write_slowpath+0x428/0xccc
-lr: rwsem_down_write_slowpath+0x844/0xccc
-sp: ffffffc0870abb00
-x29: ffffffc0870abb60 x28: 0000000000000000 x27: ffffffffffffff05
-........
-x2: ffffff809d57d830 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
-rwsem_down_write_slowpath+0x428/0xccc
-down_write+0xa8/0x108
-Test case:
-struct chip_rwsema {
-	struct rwsema sem;
-};
-static void work_handler1(struct chip_rwsema *csem)
-{
-	down_write(&(csem->sem));
-}
-static void work_handler2(struct chip_rwsema *csem)
-{
-	down_write(&(csem->sem));
-}
-static void chip_tsem(void)
-{
-	struct chip_rwsema *csem;
-	csem = kzalloc(sizeof(struct chip_rwsema),GFP_KERNEL);
-	work_handler1(csem);
-	......
-	work_handler2(csem);
-}
+[v4] net: devmem: improve cpu cost of RX token management
+https://lore.kernel.org/all/20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-0-39156563c3ea@meta.com
+* [PATCH net-next v4 1/2] net: devmem: rename tx_vec to vec in dmabuf binding
+* [PATCH net-next v4 2/2] net: devmem: use niov array for token management
 
-Signed-off-by: buck.zhang <buckzhang1212@yeah.net>
+and found the following issue:
+general protection fault in sock_devmem_dontneed
+
+Full report is available here:
+https://ci.syzbot.org/series/b8209bd4-e9f0-4c54-bad3-613e8431151b
+
+***
+
+general protection fault in sock_devmem_dontneed
+
+tree:      net-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
+base:      dc1dea796b197aba2c3cae25bfef45f4b3ad46fe
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/b4d90fd9-9fbe-4e17-8fc0-3d6603df09da/config
+C repro:   https://ci.syzbot.org/findings/ce81b3c3-3db8-4643-9731-cbe331c65fdb/c_repro
+syz repro: https://ci.syzbot.org/findings/ce81b3c3-3db8-4643-9731-cbe331c65fdb/syz_repro
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 5996 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:sock_devmem_dontneed+0x372/0x920 net/core/sock.c:1113
+Code: 48 44 8b 20 44 89 74 24 54 45 01 f4 48 8b 44 24 60 42 80 3c 28 00 74 08 48 89 df e8 e8 5a c9 f8 4c 8b 33 4c 89 f0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 f7 e8 cf 5a c9 f8 4d 8b 3e 4c 89 f8 48
+RSP: 0018:ffffc90002a1fac0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88810a8ab710 RCX: 1ffff11023002f45
+RDX: ffff88801b339cc0 RSI: 0000000000002000 RDI: 0000000000000000
+RBP: ffffc90002a1fc50 R08: ffffc90002a1fbdf R09: 0000000000000000
+R10: ffffc90002a1fb60 R11: fffff52000543f7c R12: 0000000000f07000
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88810a8ab710
+FS:  000055556f85a500(0000) GS:ffff8881a3c3d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002000000a2000 CR3: 0000000024516000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ sk_setsockopt+0x682/0x2dc0 net/core/sock.c:1304
+ do_sock_setsockopt+0x11b/0x1b0 net/socket.c:2340
+ __sys_setsockopt net/socket.c:2369 [inline]
+ __do_sys_setsockopt net/socket.c:2375 [inline]
+ __se_sys_setsockopt net/socket.c:2372 [inline]
+ __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2372
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fea0438ec29
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd04a8f368 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007fea045d5fa0 RCX: 00007fea0438ec29
+RDX: 0000000000000050 RSI: 0000000000000001 RDI: 0000000000000003
+RBP: 00007fea04411e41 R08: 0000000000000010 R09: 0000000000000000
+R10: 00002000000a2000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fea045d5fa0 R14: 00007fea045d5fa0 R15: 0000000000000005
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:sock_devmem_dontneed+0x372/0x920 net/core/sock.c:1113
+Code: 48 44 8b 20 44 89 74 24 54 45 01 f4 48 8b 44 24 60 42 80 3c 28 00 74 08 48 89 df e8 e8 5a c9 f8 4c 8b 33 4c 89 f0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 f7 e8 cf 5a c9 f8 4d 8b 3e 4c 89 f8 48
+RSP: 0018:ffffc90002a1fac0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88810a8ab710 RCX: 1ffff11023002f45
+RDX: ffff88801b339cc0 RSI: 0000000000002000 RDI: 0000000000000000
+RBP: ffffc90002a1fc50 R08: ffffc90002a1fbdf R09: 0000000000000000
+R10: ffffc90002a1fb60 R11: fffff52000543f7c R12: 0000000000f07000
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88810a8ab710
+FS:  000055556f85a500(0000) GS:ffff8881a3c3d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002000000a2000 CR3: 0000000024516000 CR4: 00000000000006f0
+----------------
+Code disassembly (best guess):
+   0:	48                   	rex.W
+   1:	44 8b 20             	mov    (%rax),%r12d
+   4:	44 89 74 24 54       	mov    %r14d,0x54(%rsp)
+   9:	45 01 f4             	add    %r14d,%r12d
+   c:	48 8b 44 24 60       	mov    0x60(%rsp),%rax
+  11:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  16:	74 08                	je     0x20
+  18:	48 89 df             	mov    %rbx,%rdi
+  1b:	e8 e8 5a c9 f8       	call   0xf8c95b08
+  20:	4c 8b 33             	mov    (%rbx),%r14
+  23:	4c 89 f0             	mov    %r14,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 f7             	mov    %r14,%rdi
+  34:	e8 cf 5a c9 f8       	call   0xf8c95b08
+  39:	4d 8b 3e             	mov    (%r14),%r15
+  3c:	4c 89 f8             	mov    %r15,%rax
+  3f:	48                   	rex.W
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
 ---
- kernel/locking/rwsem.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 24df4d98f..bfc038573 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -75,7 +75,17 @@
- 		list_empty(&(sem)->wait_list) ? "" : "not "))	\
- 			debug_locks_off();			\
- 	} while (0)
-+
-+/*
-+ * list_invalid - check whether sem->waitlist is invalid
-+ * @head: the list to test.
-+ */
-+static inline int rwsem_waitlist_invalid(const struct list_head *head)
-+{
-+	return (unsigned long) READ_ONCE(head->next) < PAGE_OFFSET;
-+}
- #else
-+# define rwsem_waitlist_invalid(sem)
- # define DEBUG_RWSEMS_WARN_ON(c, sem)
- #endif
- 
-@@ -1034,6 +1044,9 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, long count, unsigned int stat
- 	waiter.timeout = jiffies + RWSEM_WAIT_TIMEOUT;
- 	waiter.handoff_set = false;
- 
-+	/* In case the rwsem is uninitiated, add more warning */
-+	DEBUG_RWSEMS_WARN_ON(rwsem_waitlist_invalid(&sem->wait_list), sem);
-+
- 	raw_spin_lock_irq(&sem->wait_lock);
- 	if (list_empty(&sem->wait_list)) {
- 		/*
-@@ -1128,6 +1141,9 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
- 	waiter.timeout = jiffies + RWSEM_WAIT_TIMEOUT;
- 	waiter.handoff_set = false;
- 
-+	/* In case the rwsem is uninitiated, add more warning */
-+	DEBUG_RWSEMS_WARN_ON(rwsem_waitlist_invalid(&sem->wait_list), sem);
-+
- 	raw_spin_lock_irq(&sem->wait_lock);
- 	rwsem_add_waiter(sem, &waiter);
- 
--- 
-2.17.1
-
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
