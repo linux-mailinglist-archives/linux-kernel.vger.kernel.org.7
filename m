@@ -1,94 +1,76 @@
-Return-Path: <linux-kernel+bounces-834754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D82BA56EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 02:50:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB12BA56FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369B71C00F6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 00:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E30D96C4E1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B7A1E1E1B;
-	Sat, 27 Sep 2025 00:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLYKMFIe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62461E5714;
+	Sat, 27 Sep 2025 01:01:05 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650961547F2;
-	Sat, 27 Sep 2025 00:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94BB1B6CE9;
+	Sat, 27 Sep 2025 01:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758934212; cv=none; b=HkZmC3oE2/Kjlqz8g1YwJ4Eeia90SX5iOzkURe3h8OX+szhT+QkJcxa7uCOApKm2WLwsPcMmMXS0Me98tT2GcgHrIOJHA6s67k+r1kSbIhbALDGOe7EpPCfV+rGRE7pvmUvkOTZTFzL+VIwcUSS5unIx+qeRLPr2TiZ6ZB68tTQ=
+	t=1758934865; cv=none; b=oE3VyJENNxMYuWJ5CKx/4JTlZUZw5/FPa1CD1Xt4w3EMf6UaprO5TMPCjZDxa5h/3QQ5vRIuMmK/cZO4Oz5fFza6SS+QjqZVEHIXFWOUx8d+84/2aqfrRGGTm0noChHucTO+DOi6dhvww3mOsA8VvJFlcsM/jwr4vIYbz2A4Ldg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758934212; c=relaxed/simple;
-	bh=Xbe9ASBuOGk7KLtVQvp/E0YWO8f6x1bVH2QJvW2rd/s=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=taS5iY5eIh0Kh37iIhZDj2o3jT1qRm/o99te13yzSjMEbNZixlN5AYVt7EkbQOvDG8brjpf/HfQC27T5z3IeBFgksC15lst/bH5AJtjEhX9jelxxaoTFH0u7j12HqILNLP8vDzDbaFjkg6+5PnElDW6lQo02efa+jV6OM+nXUPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLYKMFIe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CCBC4CEF4;
-	Sat, 27 Sep 2025 00:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758934211;
-	bh=Xbe9ASBuOGk7KLtVQvp/E0YWO8f6x1bVH2QJvW2rd/s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fLYKMFIef30W+ZRXSUVot6T9Ck3pYdXZvyDkKVIEg8EocQ79NduS4PX33nN6jAfxJ
-	 m17tTfLsfAfKzSgEGiV7snt0SfiJj1XFH0MIEjIq2uny2kQvSKoce7UDAzZxfZtreS
-	 QEUdiIZtQY43GBPVyAmHvcndr75QsaGPO7nJ5lp5G1JjQ/Tjd89Xr18pZ/6ZOuxwOe
-	 AwHkA0BlnsE73D+hSzZv3xheYX2BnrXIEnT2PxvZrjEy4jaGQwP7yKERxCrl8Roc4n
-	 rnCsoTscGseMWfiIlrSZzsIWl59k9DOkbT+PSit19j0KbfwqCGD6jGXJoQ+2AcY4ht
-	 qp99KoApgPeFw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 342F939D0C3F;
-	Sat, 27 Sep 2025 00:50:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758934865; c=relaxed/simple;
+	bh=gO0JK18GeDaHKYiq8dk890mcYRBTIaqtoMUc0OLd9zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWW8yt81cAaMeMPTtP9tx3d3TslZE6jiT9yF5KFFH/afYVO3FoTWyEPLFNqkFddbJliZMm0N5REBrdKxA4DX+BKiJli7rdEe37iAWeffqCNLrwJaujwQwEIBl8O3azYzlXScS2XiLqXOP8ES4Y8SeD+FTOxe6vtvYZCKpKLBnYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 9EE62340D40;
+	Sat, 27 Sep 2025 01:01:02 +0000 (UTC)
+Date: Sat, 27 Sep 2025 09:00:58 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Aurelien Jarno <aurelien@aurel32.net>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: Re: [PATCH v3 0/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+Message-ID: <20250927010058-GYA1333274@gentoo.org>
+References: <20250926175833.3048516-1-aurelien@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] vhost: vringh: Fix copy_to_iter return value check
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175893420700.108864.10199269230355246073.git-patchwork-notify@kernel.org>
-Date: Sat, 27 Sep 2025 00:50:07 +0000
-References: 
- <cd637504a6e3967954a9e80fc1b75e8c0978087b.1758723310.git.mst@redhat.com>
-In-Reply-To: 
- <cd637504a6e3967954a9e80fc1b75e8c0978087b.1758723310.git.mst@redhat.com>
-To: Michael S. Tsirkin <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, zhangjiao2@cmss.chinamobile.com,
- jasowang@redhat.com, eperezma@redhat.com, kvm@vger.kernel.org,
- virtualization@lists.linux.dev, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926175833.3048516-1-aurelien@aurel32.net>
 
-Hello:
+Hi Aurelien,
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 25 Sep 2025 02:04:08 -0400 you wrote:
-> The return value of copy_to_iter can't be negative, check whether the
-> copied length is equal to the requested length instead of checking for
-> negative values.
+On 19:54 Fri 26 Sep     , Aurelien Jarno wrote:
+> The BPI-F3 board has a 24c02 eeprom connected to the i2c bus #2. It
+> holds board data. This patchset adds support for it.
 > 
-> Cc: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> Link: https://lore.kernel.org/all/20250910091739.2999-1-zhangjiao2@cmss.chinamobile.com
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> 
-> [...]
+looks good to me, but will wait for others to give reviews,
+btw, generally, I will proceed after v6.18-rc1 is tagged..
 
-Here is the summary with links:
-  - [net] vhost: vringh: Fix copy_to_iter return value check
-    https://git.kernel.org/netdev/net/c/439263376c2c
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Yixun Lan (dlan)
 
