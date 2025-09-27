@@ -1,192 +1,166 @@
-Return-Path: <linux-kernel+bounces-834885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3ECBA5C25
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:12:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA2DBA5CF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5766C16E4F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB574C70E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0552D5C92;
-	Sat, 27 Sep 2025 09:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2752D6E7E;
+	Sat, 27 Sep 2025 09:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgACOK+1"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="OJIGcH/P"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC2123BF9B
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D392D6E77
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758964345; cv=none; b=f6mmS7rAtwsERiX1wR+oO5h0JNMk5XNygXdYmzW9H9MRUJ/0yR7SkzMlZvNRb3pR6pFKYvYNtSnSt2ArMk+UOD2yqtzB+kWhpU/c+RAhbYTuS0yX3BhvW/yJa17Mz8ZvdjIglPiD8Vasde9B7dgo51WTVSyf4QKCtg0rZ5CdBZw=
+	t=1758966128; cv=none; b=gZ2U/e+Cyveqeju68OuYO4cwnrqSWGCTRY7IXEhPBK9rL+zrKUH5EXCgcALThjQl6QX3q/Rs4OBqMqdiC6S2qirouRKhqK6Jx9hppgDjRTz0mEgJW/ALxT+d5hGo13GRt3HvjPA++FuKmgwbh67iSr2XFPl9gkblgFxXxl2ur3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758964345; c=relaxed/simple;
-	bh=+pGe3F9Wyt6J36sXviOvj0VrqTw4kZNLOZ6ewjfpf/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YuRpQ4aSxjQgSaSIrtUQXc91iktSzlO3ghYorCt89oSly0IFrfxTACKko7ZYLVuFWuPUllGVRIP0x0tHeTQGDi+5j4EzoRYJKU3+ekSf/5WQMWZqs4EDnlG7WemQyRTnaIwfzfsNbIyACtKvFcC6GC0L/GOtlFd9EyeInJWRyD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EgACOK+1; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so3527168a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 02:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758964342; x=1759569142; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mIZgaRKGhoxWkvHAy+1tENSc1M17jx2ezAwOCvUOvKM=;
-        b=EgACOK+1PJB6vDJ0SAFrQp5mPgnSve2UKIM77WgcKmuXGkDmIYmOLd0palRUvTUE/0
-         X/VQkOndGuXfgZVpbxQFlJHXf0rYAW8tA4mm8YBrb8fumMTEzypMt53G3vcDiCA7RmWc
-         3fvwHBTUzGYCwj9iMEAFvJGWdmQ0gzdkBuokHicDphClNhxJeARsDD/jMqD/8Sm+VNyJ
-         sn4HlVuDVcXeAi5pFcjnwcXS4lMM1Hje67tJU9jK69v+B70GPh5dnixghjZ2avVjPcZv
-         1wol8BiSkJzNhfszOA5cgiaIAL+y1Q+O1fYuIMos3bKgjD2GuiAZbobURPUzTKFVIQU/
-         tbEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758964342; x=1759569142;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mIZgaRKGhoxWkvHAy+1tENSc1M17jx2ezAwOCvUOvKM=;
-        b=WvX90Xs8DXxbhWedJnx9jAJ3d3ayynRFscnCvCuIaejC+9HJyFB9H8Y9FLpK+KKIzo
-         LNSS8Vv5F4GoPaJdXnP94m4ki9cwocuYFn8rIcFmt6Iqtll9n0exKb40I8CQw6xzP5ly
-         YemEAPg/KxIeWB25VvTUbUzVjbwaLxHDgBy7aghzr6eE664PERy4WK4iZzQ+Jb/OfU8A
-         KLBb1gFAjc6+3zPDy8BM7MdQPLmssA6rt6RV05+4hxEd6EdqlZQxs144mhHY8LjlWhXb
-         2uI2BIbTBMUrq5/S06D37nRRL5sazj+rCOxtt9VYlFssP/Zxogtom/stPF8CSC4Bt21K
-         inKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhH1PofwUMpxI+uTi/qMx9ZDL2sSeWMHdbPNEqCNK6WNkwf/tCAi+HCz5YznSLo60FelIlpuRsSVnJ71I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ8Cc1NjOEGiCbO1C33je3PV4RD2Lun5aXBCz0uUworSiu4J2g
-	sVtWSKaOSoZIAF32xwaOuU+3fNOaapGxJn9ca0q/rhILlkB7g37dMQI3
-X-Gm-Gg: ASbGnctGrKb4ytHNapJKwpH1uFlFX/8SbvfIqj0CBC5S+veSch39SL+Ytsk8TSedmnT
-	+PvaV0RG6/NAHuta5FVE3WX8+5uHgOqBkX87WHNQp0yUe0n0u85I4Gcx2OPdxAQO89Btn6dtbNe
-	J8WPFxNfgd9KhgQs5yPbjikNWfjK+LWBlwLkLvsH3o6hjU9kG7Rm7nMKty2KAWRHorWRSO1x/3+
-	BDj/N1jBcAj8STsZvh3Dr8kDVU96c8UeMRJ5uC3okrt6I02CMpRj2QAn1WIyJZO2iGDpDRoai2f
-	2dI+5BJf2HJ+EZlc4p2eVYwjRPNdVVLlz1xldH9j+SvddVpDf7gD+cDN69iwsuZ+PCTKcC+O4YJ
-	8uRbvpzuzTOZ6K9uF9il5m1QlOrqr/GcIOw72FBL1kEwIezF1owqLwtigI3iP1EBbkeq/
-X-Google-Smtp-Source: AGHT+IHaJg4dHImv6wsjXivv+eH0xv3qmlqiUA3ELNxaY4YHxl0i1sgYrjR3kpZPWHUErts99XbHaA==
-X-Received: by 2002:a17:90b:1d8a:b0:335:2eef:4ca8 with SMTP id 98e67ed59e1d1-3352eef4edcmr5690404a91.33.1758964342131;
-        Sat, 27 Sep 2025 02:12:22 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be3a010sm11164207a91.28.2025.09.27.02.12.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Sep 2025 02:12:21 -0700 (PDT)
-Message-ID: <1d993906-bae3-41eb-963f-de960cc56dd0@gmail.com>
-Date: Sat, 27 Sep 2025 18:12:19 +0900
+	s=arc-20240116; t=1758966128; c=relaxed/simple;
+	bh=hj9SQaZQ+NV1jo8qCsoqhEp+uAha3FzKkF1vJ4yct8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RVx5kn4QURLVdOdgz6EU/7Jpy9WqQvw1etlHqVskSOq1XuNvENwJGnh5n1nNX91p2PZebJxV5Oj8lUbHL9drIBUWyNBXklwbEFU43VdKRX9vZZS6yiYCnSx4muaqplDRKv6fBXp58b65eouVBksPAUtinv/mUeAsgj250zn7Mig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=OJIGcH/P; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1758966123;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jJjBFBfPE6u5zLZVPpTcas9pDk+d/zRNn1H+l1sjsiA=;
+	b=OJIGcH/PqeyTMTwxhWqadvm8TobreeF1C3abUHlNXW2fRXMwuXFdXLZvfkdgCWiICjQ0gl
+	VG7wkJwnLvxPU5cHeINO7ZpCK84wcy1B+pj3yYt7Buj3KM6evQOVGgHmWkjK88lWNp39Sr
+	ngpDLGVwIGOE76oiylVnXynxMGvclwtCTz6BdZqQGT7eeOLYFam8shN2+7FAdKxes8NCG6
+	l/Ut/f2ofL03QjYzuV2YTaIj45llSrotjcocaFxgVVgo8OEhoGObLv2LWj5Q9Mqh9L2zUF
+	K6xX0l0nhUEI0P4+AuJOJNdluUu25ODIlLSwHUhsQjRKjCERIcRzhc0eO/6JCg==
+From: Val Packett <val@packett.cool>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Val Packett <val@packett.cool>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: qcom: qmp-combo: Move pipe_clk on/off to common
+Date: Sat, 27 Sep 2025 06:17:32 -0300
+Message-ID: <20250927093915.45124-2-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] docs: Makefile: avoid a warning when using without
- texlive
-To: mchehab+huawei@kernel.org
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rdunlap@infradead.org, Akira Yokosawa <akiyks@gmail.com>
-References: <e23e03dd41e044d55e4ae24ffd9e1b49e3f2515a.1758881658.git.mchehab+huawei@kernel.org>
- <f9ceb569-363c-4806-9451-4a4ef83b38ca@gmail.com>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <f9ceb569-363c-4806-9451-4a4ef83b38ca@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Sorry, a quick follow-up.
+Keep the USB pipe clock working when the phy is in DP-only mode, because
+the dwc controller still needs it for USB 2.0 over the same Type-C port.
 
-On Sat, 27 Sep 2025 16:35:08 +0900, Akira Yokosawa wrote:
-> On Fri, 26 Sep 2025 12:16:19 +0200, Mauro Carvalho Chehab wrote:
->> As reported by Randy, running make htmldocs on a machine
->> without textlive now produce warnings:
->>
->>     $ make O=DOCS htmldocs
->>     ../Documentation/Makefile:70: warning: overriding recipe for target 'pdfdocs'
->>     ../Documentation/Makefile:61: warning: ignoring old recipe for target 'pdfdocs'
->>
->> That's because the code has now two definitions for pdfdocs in
->> case $PDFLATEX command is not found. With the new script, such
->> special case is not needed anymore, as the script checks it.
->>
->> Drop the special case. Even after dropping it, on a machine
->> without LaTeX, it will still produce an error as expected,
->> as running:
->>
->>     $ ./tools/docs/sphinx-build-wrapper pdfdocs
->>     Error: pdflatex or latexmk required for PDF generation
->>
->> does the check. After applying the patch we have:
->>
->>     $ make SPHINXDIRS=peci htmldocs
->>     Using alabaster theme
->>     Using Python kernel-doc
->>
->>     $ make SPHINXDIRS=peci pdfdocs
->>     Error: pdflatex or latexmk required for PDF generation
->>     make[2]: *** [Documentation/Makefile:64: pdfdocs] Error 1
->>     make[1]: *** [/root/Makefile:1808: pdfdocs] Error 2
->>     make: *** [Makefile:248: __sub-make] Error 2
->>
->> Which is the expected behavior.
->>
-> 
-> There seems to be a related issue.
-> 
-> At current "docs-mw", under build environments who don't have xelatex nor latexmk,
-> 
->     $ make SPHINXDIRS=peci latexdocs
-> 
-> completes without any issue.
-> 
-> In the resulting .../latex/peci directory, one can run
+Tested with the BenQ RD280UA monitor which has a downstream-facing port
+for data passthrough that's manually switchable between USB 2 and 3,
+corresponding to 4-lane and 2-lane DP respectively.
 
-     I meant:      .../peci/latex
+Note: the suspend/resume callbacks were already gating the enable/disable
+of this clock only on init_count and not usb_init_count!
 
-> 
->     $ make PDFLATEX="latexmk -xelatex" LATEXOPTS="-interaction=batchmode -no-shell-escape"
-> 
-> and build peci.pdf.
+Signed-off-by: Val Packett <val@packett.cool>
+---
+o/
 
-I failed to mention, but of course you need to transfer/share said
-.../peci/latex/ to another build environment who has all the required
-packages for "pdfdocs".
+Just got my hands on a perfect test device for DP alt mode: a monitor with an
+on-demand toggle between 2 and 4 lanes. (Started digging because I thought
+I needed 4 lanes to use its full resolution and refresh rate, even though
+it turned out to be the dpu adjusted mode clock check rejecting the modes,
+patches for which are already posted.)
 
-I often use such heterogeneous combination of running "make latexdocs"
-+ running make under each of .../$SPHINXDIRS/latex/ using another
-environment.
+In [1] Konrad mentioned that "the hardware disagrees" with keeping the USB
+PLL always on. I'm not sure what exactly was meant by disagreement there,
+and I didn't find any specific code that touches that PLL in the driver,
+so I decided to just try it anyway.
 
-This way, you need only one set of working texlive packages for testing
-against various Sphinx's latex builder releases.
+Before the changes, 4-lane mode would actually kill the USB 2.0 functionality
+on the port, no recovery until reboot.
 
-> 
-> At current "build-scripts", I get this:
-> 
->     $ make SPHINXDIRS=peci latexdocs
->     Error: pdflatex or latexmk required for PDF generation
->     make[2]: *** [Documentation/Makefile:68: latexdocs] Error 1
->     make[1]: *** [<srcdir>/Makefile:1806: latexdocs] Error 2
->     make: *** [Makefile:248: __sub-make] Error 2
-> 
-> Patch 2/2 doesn't change the behavior.
-> 
-> This is yet another regression.  Please teach sphinx-build-wrapper of the
-> fact that "latexdocs" does not run those texlive commands.  It is only the
-> "pdfdocs" phase that will run them.
-> 
+With this patch, I can switch the monitor between 4-lane and 2-lane modes
+(with an unplug-replug cycle..) and the USB 2.0 devices attached through
+the monitor keep working! (I verified the number of lanes used via dp_debug).
 
-You see, "make latexdocs" is supposed to generate all the necessary files
-for building PDFs to be consumed by make + latexmk/xelatex.
-There is a clear boundary between "latexdocs" and "pdfdocs".
+I'm sure it might not be that simple but from my limited and uninformed
+understanding without any internal knowledge, the "sneaky workaround"
+might actually be the intended way to do things?
 
 Thanks,
-Akira
+~val
 
-> Regards,
-> Akira
-> 
->> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->> Link: https://lore.kernel.org/linux-doc/e7c29532-71de-496b-a89f-743cef28736e@infradead.org/
->> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+P.S. if I'm actually wrong and this is not acceptable for $reasons, the suspend
+and resume callbacks would need to be changed to match the logic of having the
+clk on depending on usb_init_count, not just the overall init_count.
+
+[1]: https://lore.kernel.org/all/f21b7d52-4c3f-4e5b-bee7-f8b2945b5b02@oss.qualcomm.com/
+
+---
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+index 7b5af30f1d02..c4bbd738eba1 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+@@ -3035,6 +3035,13 @@ static int qmp_combo_com_init(struct qmp_combo *qmp, bool force)
+ 	if (ret)
+ 		goto err_assert_reset;
+ 
++	/* In DP-only mode, the pipe clk is still required for USB2 */
++	ret = clk_prepare_enable(qmp->pipe_clk);
++	if (ret) {
++		dev_err(qmp->dev, "pipe_clk enable failed err=%d\n", ret);
++		return ret;
++	}
++
+ 	qphy_setbits(com, QPHY_V3_DP_COM_POWER_DOWN_CTRL, SW_PWRDN);
+ 
+ 	/* override hardware control for reset of qmp phy */
+@@ -3103,6 +3110,7 @@ static int qmp_combo_com_exit(struct qmp_combo *qmp, bool force)
+ 	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+ 
+ 	clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
++	clk_disable_unprepare(qmp->pipe_clk);
+ 
+ 	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+ 
+@@ -3205,12 +3213,6 @@ static int qmp_combo_usb_power_on(struct phy *phy)
+ 
+ 	qmp_configure(qmp->dev, serdes, cfg->serdes_tbl, cfg->serdes_tbl_num);
+ 
+-	ret = clk_prepare_enable(qmp->pipe_clk);
+-	if (ret) {
+-		dev_err(qmp->dev, "pipe_clk enable failed err=%d\n", ret);
+-		return ret;
+-	}
+-
+ 	/* Tx, Rx, and PCS configurations */
+ 	qmp_configure_lane(qmp->dev, tx, cfg->tx_tbl, cfg->tx_tbl_num, 1);
+ 	qmp_configure_lane(qmp->dev, tx2, cfg->tx_tbl, cfg->tx_tbl_num, 2);
+@@ -3254,8 +3256,6 @@ static int qmp_combo_usb_power_off(struct phy *phy)
+ 	struct qmp_combo *qmp = phy_get_drvdata(phy);
+ 	const struct qmp_phy_cfg *cfg = qmp->cfg;
+ 
+-	clk_disable_unprepare(qmp->pipe_clk);
+-
+ 	/* PHY reset */
+ 	qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+ 
+-- 
+2.51.0
 
 
