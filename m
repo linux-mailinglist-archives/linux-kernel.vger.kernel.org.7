@@ -1,166 +1,140 @@
-Return-Path: <linux-kernel+bounces-834868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB85ABA5AC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD828BA5ACE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB5097A4048
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:27:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E496C189EE38
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3552C327C;
-	Sat, 27 Sep 2025 08:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038CA2D4B66;
+	Sat, 27 Sep 2025 08:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kSAaaHjN"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXfEcsDx"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D64C2222AC;
-	Sat, 27 Sep 2025 08:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08B52D47F3
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758961737; cv=none; b=R5sNT0jIjeo8BbfgC3WHp5EiNTqYABjnddTHzvoDKVyMgVFFYl+I+coAStOL+WfOn3ZwbQeHXGlufHdBKPzEfGE7EUHV3+1as+FsbxMS+Y4A/k9sFPglfx0KcodrFYXc5QpqT9N8HL/KjfLgIZKU1vrycp2mkhtDtRo8woSuls8=
+	t=1758962454; cv=none; b=EqlLYMv08l8iPb7rQt+oHRh43etP7uLNO4ArRDaYxa/qRVqFeyZRq6rvMaDdDBPXWrBtohCj5e56HpTjEUzR5ot8l5iGqImsnybO/UGjxHLUOq93YRA0m5G64D58HoZk+Utvuu6w4ivTMKDQm7ghfZPMNiv50GjuEDtA74VzsO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758961737; c=relaxed/simple;
-	bh=HaBJA/9QY7OaFtysKj9cM6C9pNz3VwiYcn3b170byGM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hJJd8S4VNmn7tVxMP951tTOaWlMSpoRXbCxIP6w2fwaL1eEk2lHTIfB06qu5zFweESYSpNR6N8ckVNsdNI22W7yXmvI1ZqS/STPE5Ov7keoaJoo5dw/N48+ky6ZO+ulTpJRI6uKC5mjerJUk58rYzNjVKgCe4k89b8JBE7ebyQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kSAaaHjN; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758961715; x=1759566515; i=markus.elfring@web.de;
-	bh=HaBJA/9QY7OaFtysKj9cM6C9pNz3VwiYcn3b170byGM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kSAaaHjNmbVnX9nexMY5eKob6BK7gEHyYaoRedKVCLf0sjpc7qFL6w/5ZgMcMS+W
-	 WjQ6ANH2SN9Y7OqbPjA5BCKOr7P1Q5a+Ili7DPckO8+oylKDerBjk1WSPtzHTfvdz
-	 eGiI9DLy4EzUvRaNdGK6ZwRj6UAkiMZO4N/Q+2g+u/yVU92LAt3ow6zlWPV5LMImX
-	 9H4NqEoQDBp15KJOAT35KZmTl85YOZA3Res+9grog8deV9GmwIfrtqNFMLptZlETf
-	 2ROeHH/Su6ateAiPSNmDlz1eLQJy8oxBdLpUsPRj2WMSN70dMmcxzvDIcXGt0grc4
-	 x1GVX3O3YmmNL/yEhg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.221]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MadzU-1uUkVF19cw-00odiM; Sat, 27
- Sep 2025 10:28:35 +0200
-Message-ID: <541009d1-b0ab-4dc8-81bb-2dd903cd3cf9@web.de>
-Date: Sat, 27 Sep 2025 10:28:33 +0200
+	s=arc-20240116; t=1758962454; c=relaxed/simple;
+	bh=KzguTlN0DVDwQyWaiKD+T6TVR9NBd+VANkU7welrq5M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W3CpJu9E97qjg7jpR91gvJozLfK5VvIC1lcRt6YOUVleyosfFN8e+8wvP/rYeyB/U+WCUtLC0XbqrO8hLIHWF8d4keR9gvly1MOnkxrYSjFWAON5AyGZDvVN5jzTnXlUO+I+d1TzRtikKpo/vKoUUgDEeVMld8hIFOnfP24WnqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXfEcsDx; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7a16441so478354866b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758962451; x=1759567251; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KzguTlN0DVDwQyWaiKD+T6TVR9NBd+VANkU7welrq5M=;
+        b=nXfEcsDxKMSfmnnr5m6/EZOY//0Y0OstJv57LvsG9WnPFJtzLF7EOzW9tSI6NRYZt+
+         7Qz8d/6ZJWZpofZkZKF1cPm6OdtZT6MfcxiRyo+/NB+ZtW0agzckQLOa4AGeR0QufYqn
+         u3dxGQtFq8LX/ucTL7fgHn5HcVAGdUQxIinjTq4sabWEZCpYweakpVMXzWRqm+SKiIzz
+         jh3LdkTxN+15k/hY7vMLJ+ELwYMbRTsNUOnHkou5LbV4mpWbc+YekxEhd+BR0ozxmM1q
+         s3ibfxnd6qoOdmzSl4fhdPO2rIUHeV4hC/NeUpY6aysEqVjaoakszkGBW2L4w8r1WKRD
+         S+Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758962451; x=1759567251;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KzguTlN0DVDwQyWaiKD+T6TVR9NBd+VANkU7welrq5M=;
+        b=NhF/Rx+zQBOSxZ0XN+Eqj9i0I+Q/+vSWqrLXkUjeS2S7ye5vlgeE5I+KFKSHcL98fs
+         NUtP1pMWKjDGFjTzLJU9O/+Wngqmy2UyHEf8YSbwK5UuTedxeu3bZ4zrZWUg6ZBTWUzV
+         zt5OIyUZEfYnQqtB0V8tQMOjZwrMaW5y9A7LFQT46K2DecXGQsvZbw+FNeQ5SLxtzGiM
+         32/DbxB2oIE/sjyne0ypyzfO6iTdLVVZEn2gKAehUENQSj/EEncnTdm1AYbD1MCX7oeU
+         QChwlI/HpZAYQEDDJa7IVm4wdY6cOxjG3D9SqDXZqCv9q514Xq68IRSuE6QKBHcfGgvb
+         xipg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/oWid7TRZIlMwlR0yt5ySYNZybmRTlNU8Df88Emur388TW1756VADaB5u1Do8lxTuYOKL59SQtSN+UHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5TYFbgbQugyNdE/5KkdGRwTGJ9+vGqUlsyjmzpW7oGkA4gp3R
+	sqzeIIZjPbpw5/p4hhh7DLq1xtRGFmQ9DXYtx7DJU+rEgfplkfRsq3I2
+X-Gm-Gg: ASbGnct/1KQg3XuVuAbWtsChf9neM97lcaX3YePYb/UMnUBkxAaTbJD5HHXnjXhj3Wa
+	4sO3Vxt9XwAiERnJvpJS6shjaTAiWtQu0TeHT/Vpzz0zNo0QrlXbSKNRLFbz9fiAQ2+8e4BDyFU
+	GKAt6HPWE39Ah4BqxH6oWnoW1UOvINc4qJ9KibU++Tc/+q+Z3/Ha64WwzlKIIKKAiRwAoFfe+pY
+	h1dQ6HeOZx8Z0gXloxS2fUO/Xja6BKsrmAGMbIiCaN94AZlZZWzlJoSVHnICTr/UTSWQsX8DqmD
+	UcJB705PxsHTuTJ96I0RRIETOv1fgDRgkPOnEoeAAiyElImdVtAv4246XpJryOODL0AY3Yrng/r
+	/0EuHtF36sjRhuml9DO4MDHzYbEwrYBudk9IfzwG3paTulAdRqKoRaQw9OZAfyLp53eVPvk1pVh
+	/Mzgv2NGBEFJ8Ptfa99XxxKc2SJgr8iX29zdZqYQax3ObTkGkIr5drvjYgleADZoslc+ncsazU
+X-Google-Smtp-Source: AGHT+IHPPlIqi4T0deWOBfsYReBj/m14ttoNCIMpmMi0REJRA/BBHe2RNMNkarSZssV1kYS013S9NA==
+X-Received: by 2002:a17:907:7244:b0:b07:6538:4dc5 with SMTP id a640c23a62f3a-b34bd93d0edmr1007630466b.64.1758962450674;
+        Sat, 27 Sep 2025 01:40:50 -0700 (PDT)
+Received: from p200300c5874155a05266ae5ed58ad6cc.dip0.t-ipconnect.de (p200300c5874155a05266ae5ed58ad6cc.dip0.t-ipconnect.de. [2003:c5:8741:55a0:5266:ae5e:d58a:d6cc])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35448dfee7sm513147166b.63.2025.09.27.01.40.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 01:40:50 -0700 (PDT)
+Message-ID: <713065cd1b7c9fb08393fab8cb44e3a345a55be1.camel@gmail.com>
+Subject: Re: [PATCH v1 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
+ for UFS devices
+From: Bean Huo <huobean@gmail.com>
+To: Bart Van Assche <bvanassche@acm.org>, avri.altman@wdc.com, 
+	alim.akhtar@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com, 
+	can.guo@oss.qualcomm.com, ulf.hansson@linaro.org, beanhuo@micron.com, 
+	jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 27 Sep 2025 10:40:49 +0200
+In-Reply-To: <b2ed97b4-bfef-4e4b-83ed-a172214e46e8@acm.org>
+References: <20250923153906.1751813-1-beanhuo@iokpp.de>
+	 <20250923153906.1751813-4-beanhuo@iokpp.de>
+	 <b2ed97b4-bfef-4e4b-83ed-a172214e46e8@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Besar Wicaksono <bwicaksono@nvidia.com>,
- Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- James Clark <james.clark@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
- Robin Murphy <robin.murphy@arm.com>, Suzuki Poulouse
- <suzuki.poulose@arm.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>, Will Deacon <will@kernel.org>
-References: <20250927073013.29898-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] perf: arm_cspmu: fix error handling in
- arm_cspmu_impl_unregister()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250927073013.29898-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4Gs/DylM+FZ1/v30UM1kG2H8UNFCU5ynxAN+OpDeWId5zlaV17E
- JAgC2hKIYGjCLE9UmfaqejiDetTTfQiCeI/ErCZhuF91PjrtZ5ranZYPtbC4n6EAmINY/++
- GtK8Osv/wBR+fDYcYGU8j/xw8qEDeq3jb3UprkPRNsGmEf5qXjRBwwL24/8PfFomm01LZuy
- WZe5PsFApHPbEiPl3KBvA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pzAYSlBlhVU=;ZXuEhtDQ8pnivTK4X58KMl87a1t
- 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
 
-> driver_find_device() calls get_device() to increment the reference
-> count once a matching device is found. device_release_driver()
-> releases the driver, but it does not decrease the reference count that
-> was incremented by driver_find_device(). At the end of the loop, there
-> is no put_device() to balance the reference count. To avoid reference
-> count leakage, add put_device() to decrease the reference count.
+On Tue, 2025-09-23 at 13:27 -0700, Bart Van Assche wrote:
+> On 9/23/25 8:39 AM, Bean Huo wrote:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D scsi_execute_cmd(sde=
+v, cdb, send ? REQ_OP_DRV_OUT :
+> > REQ_OP_DRV_IN,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buffer, len,=C2=A0 /*timeout=3D*/30 * HZ, 0,=
+ NULL);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return ret <=3D 0 ? ret : -E=
+IO;
+>=20
+> scsi_execute_cmd() can return a negative value, zero, or a positive
+> value. Both negative and positive values should be considered as an
+> error.
+>=20
+> > +MODULE_DESCRIPTION("UFS RPMB integration into the RPMB framework using=
+ SCSI
+> > Secure In/Out");
+>=20
+> That's a very long module description ... Can this description be made
+> shorter without reducing clarity?
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region0_size;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region1_size;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region2_size;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region3_size;
+>=20
+> Why four separate members instead of an array?
+>=20
+> Thanks,
+>=20
+> Bart.
 
-Can a summary phrase like =E2=80=9CPrevent reference count leaks in arm_cs=
-pmu_impl_unregister()=E2=80=9D
-be more appropriate?
+Bart,=20
 
-Regards,
-Markus
+thanks, we will fix them in next version.
+
+Kind regards,
+Bean
 
