@@ -1,88 +1,194 @@
-Return-Path: <linux-kernel+bounces-835033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CF5BA6179
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:17:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5078CBA6186
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF8838513E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A6141B20733
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F541DF246;
-	Sat, 27 Sep 2025 16:17:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F6421D599;
+	Sat, 27 Sep 2025 16:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiNlFnbj"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC1C1A9FBD
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 16:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5858C21B918
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758989827; cv=none; b=ICYnoO8SSwEQ+1Hk0BHD47TGn2mXJsyhzzLCQA392rqoyI7yojWYXwxILJ3GEVpk9dolrx97kTRo0vLogWANvHH3sJXfmtWBe35nWJg2q3QuCZ+XGyZMKmPAptYF2Je19goRk6vogIDJOekOpdt6DpE8Y+4Q6NDRsYTMoGQCl/w=
+	t=1758990434; cv=none; b=pxBbVr4Ed6s6i+y7u/8OqM1DedooQKl7Dlh8ssno0+YnUUgrp5ZDjNie/y8SbYr10CvxxRFMo2kghG+X3tfVLZtRlpfh6hDhNfip5bQzUxnYcaRXplMR8w/DqiRqcSFmZhAyjra+rlOHm95mIBEbuZI4j1Y8rBQpwP3ksBnlTu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758989827; c=relaxed/simple;
-	bh=ZhYGnuimVDp77CEJ8QFQB6JlVaem8JOVFAVKlDZBrlY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=G4iC+4CCHTmwgQuXY7Tf/iQXQk+wkdUodjRNIsjAK9ksDWlLiPgIdsF5NaoD6kAlgxAME4/NPwqZfdcMJoO0ht1rWkdI5TwhI0Kyc6WDDMdjYdwxDloCmkbGmESS4BOV1QPyUmdFKzudzTsne8bDjoSuSro+agw7Sf9dnKMjZ3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-429aa22e058so1877685ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:17:05 -0700 (PDT)
+	s=arc-20240116; t=1758990434; c=relaxed/simple;
+	bh=vVeNZDUzmqCR5tohyCu/vudodRWX7MEMP9eIF2ApJVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZAZcsPSYOkO1mpD1J64wp6CSVzkpC8VUFgMaHdMaH093kdcETgxj3Hp++0z7d9PPQt30/kPP+jD+u3t6LhRLwpuJhZcUDCHRkMfDtVt5TrkPLKgW59GJQNRAO0GcBhrz+CAg7oInVbK0bNdh33zjiuJqR0rKvJjusuHzV5bvmzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiNlFnbj; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b28e1b87aa7so420905166b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758990431; x=1759595231; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qfZFYlW0wdwTxAgpS/9PkxRW2aXQXo/CZ/Epth10HX8=;
+        b=MiNlFnbj9TNmxF+V6M9WSl4BkdNVFQM9nt+Jmxqo9KKB4L8eBv1X4r+uBRsfb+y8qw
+         h284TZxx1fZYIOKjP6Q9NFHOprUUtZgMd652R4f7i/qxoUeXAxoQQuDrbBOA0fphQS2Y
+         WFr4zBy7s0GnRWnXJYt6fWjhjQPwEhm051wmS4xngW/zkSQjf4zFhtfoM0GbReIWF6Dz
+         hWYrWZbqhtgnHIu1tlo5idaE2lAbPo2C7xIu9+12cguoc5KYXKlBnQS6bVl9bY8Mi6cs
+         hUU3D/9y/gSKY5lSCbK0ldESqY6sKzgW7ZWuugSD2Rcbjg3OCmMCvC3ssEj5Qr9pdzOD
+         FCMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758989825; x=1759594625;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kVQbaBUvQVjCtCUhJOoM57In+JvEnbQIGbVccfuSBas=;
-        b=RyyRPgx0N/16LusA09pMJ+w+jf2DmfDyZL6e5IAAfk4gRcQ0Z+bn9pdyR7o4+q1v8Z
-         wzFyhz29INE8Qe7P5VG3xb11mgtWciStzjn8oS26B8PQAblDu1m32KLNv4w76pQKlJX1
-         JgyocFvhkemox5TKQUNKra8/XXAEwSusd2oBbf2A578xeeZNoSRgwjU6RqnHuRAV+p+H
-         fH//mc/PCvk/35iyrT7OKe1QYrYf2u8BoFIyDivFolKxgHLoTuHAWgd5F50RpAP+7oOw
-         GjF9J3p46Gz7sxYuKildIUaqQvWsF2tD85pAg3MLMs0JkbBn800qgyXl8q/B7DUCM8NF
-         SpNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgIS/+l6AAgKSPWtCOGwxFyQEkWiUwnti90tADGaAc1wZzH/icvd4ejzOhTDe18KOKVdRN7L1IAaHrPOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvqg9iOBsNygAZsKosWdUrV/9B26EEIpcfrvDdRdsIGboDstF4
-	UqIIFfKYPt1eGLU/V6bcDMgttc+6SLXH6p03nmGhIq/nBEWwt0SrUmeXW2ewILxkWYqMKo4dELP
-	pKEfeP0ZnB+2sYXXdsvnXHbCrHrIh1KoYF1YZrSuZ33qwOgwpvNrDcwsh3kE=
-X-Google-Smtp-Source: AGHT+IHMe77fsGECZSWn321pp7bP25Iz28ilihBiPhmg9TpKpPpuJCFKrJtFq01EcuSZm0IbZEA8PKOCB68sKUeAN7hqXsbpVle3
+        d=1e100.net; s=20230601; t=1758990431; x=1759595231;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qfZFYlW0wdwTxAgpS/9PkxRW2aXQXo/CZ/Epth10HX8=;
+        b=VBmjg/Iy2g68u715J4WxtX8gcc33ddhEx195tJhAQ9v1wzH8mkYvd4wDjZyWOb2CWg
+         21GGcdroZhogaSeXWmWWPYazDmAK37yo9SFwEOxon1qwSKj+G4bsbBuq7lG2ZF47/P3p
+         s0OacNC0Q5YQ2N+0K98to0NWq/NNlVbg5tWWogODZ105ZhOTWMntaX8nDj8FMt8fA+zM
+         09kBzxQS/2dmRfjMonKmJHNBQ/2hfEVp+fYNuwguLqht2H8bY62w6VHuBJv3H10T1X8K
+         v8uU2wcCRMVCeID82kpAkTlA1ysFRkgB7ENuOyK4PtFX9XocaRzbxvsd5JMGnp+iKEq2
+         W56A==
+X-Forwarded-Encrypted: i=1; AJvYcCWi/oBD548VX2pnnfraLzQWk+zuQKOwRX0zPLFpLOgiMxoqHNbtZvlefP4fM1n72z5F8z7yztvF1y6+Jg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIrAeG63g1V8eNFF7LMdJJnyIxV+Nm0iG0qNhW/lD+3qn15dd+
+	1nkRRLdL1oe3k/YojfLL0cZkQhnzfaCjk4UM/O1mmoCOmZIOgESqVwuf8g1pjXtAq2LJ5f6Fe0y
+	V6aqgaKt/CPg5CyySiA5IpP56k4uOuT4=
+X-Gm-Gg: ASbGncueV5fLjqzwfNn5XpWKwnHFx9zjCj9RuZ3SUyD6wVGrqcV8bzc7xQS12r3v/vA
+	fhKP2i2vNLbpfO3Zq8eaNmaVJ+LkrdMc6Hc/XaFToIwqDKSDq2dfNUDF7IJKo+i2mCJAamJEdlM
+	VBL3kj1QHFpLz0RWhhCLbSzB9YlEwL61L98PBF0aZGJg2UVEPsD6pfRhMZsd2J/Z1zOwlumD2Eh
+	twePZDW7yINP1m9vw==
+X-Google-Smtp-Source: AGHT+IEm2jV42rGG7p5fnAgEp0mQdebl30tWmt7AxVYjslTP4Tk1rmf5shjSIlNO7exv/8/POfXlKAR/ZeXXXvU+VXo=
+X-Received: by 2002:a17:906:46ce:b0:b35:3469:49ff with SMTP id
+ a640c23a62f3a-b353478953emr979609066b.25.1758990430457; Sat, 27 Sep 2025
+ 09:27:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e93:b0:425:2e8d:12c4 with SMTP id
- e9e14a558f8ab-425955fcf5amr164780725ab.3.1758989825195; Sat, 27 Sep 2025
- 09:17:05 -0700 (PDT)
-Date: Sat, 27 Sep 2025 09:17:05 -0700
-In-Reply-To: <20250927155052.880528-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d80e01.a70a0220.10c4b.0015.GAE@google.com>
-Subject: Re: [syzbot] [sound?] [usb?] general protection fault in snd_usbmidi_do_output
-From: syzbot <syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, clemens@ladisch.de, hdanton@sina.com, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
-	syzkaller-bugs@googlegroups.com, tiwai@suse.de
+References: <CAOprWosSvBmORh9NKk-uxoWZpD6zdnF=dODS-uxVnTDjmofL6g@mail.gmail.com>
+ <20250919-lurking-agama-of-genius-96b832-mkl@pengutronix.de>
+ <CAOprWott046xznChj7JBNmVw3Z65uOC1_bqTbVB=LA+YBw7TTQ@mail.gmail.com> <20250922-eccentric-rustling-gorilla-d2606f-mkl@pengutronix.de>
+In-Reply-To: <20250922-eccentric-rustling-gorilla-d2606f-mkl@pengutronix.de>
+From: Andrea Daoud <andreadaoud6@gmail.com>
+Date: Sun, 28 Sep 2025 00:26:59 +0800
+X-Gm-Features: AS18NWDvuOQaoti1D_COhZmrCy5dQ4py-Ah3qreB3B80U5UMlAMWauKJrbU8dAs
+Message-ID: <CAOprWoucfBm_BZOwU+qzo3YrpDE+f-x4YKNDS6phtOD2hvjsGg@mail.gmail.com>
+Subject: Re: Possible race condition of the rockchip_canfd driver
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Heiko Stuebner <heiko@sntech.de>, Elaine Zhang <zhangqing@rock-chips.com>, kernel@pengutronix.de, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Alexander Shiyan <eagle.alexander923@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Marc,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Mon, Sep 22, 2025 at 4:50=E2=80=AFPM Marc Kleine-Budde <mkl@pengutronix.=
+de> wrote:
+>
+> On 20.09.2025 18:08:03, Andrea Daoud wrote:
+> > > On 18.09.2025 20:58:33, Andrea Daoud wrote:
+> > > > I'm using the rockchip_canfd driver on an RK3568. When under high b=
+us
+> > > > load, I get
+> > > > the following logs [1] in rkcanfd_tx_tail_is_eff, and the CAN bus i=
+s unable to
+> > > > communicate properly under this condition. The exact cause is curre=
+ntly not
+> > > > entirely clear, and it's not reliably reproducible.
+> > >
+> > > Our customer is using a v3 silicon revision of the chip, which doesn'=
+t
+> > > this workaround.
+> >
+> > Could you please let me know how to check whether my RK3568 is v2 or v3=
+?
+>
+> Alexander Shiyan (Cc'ed) reads the information from an nvmem cell:
+>
+> | https://github.com/MacroGroup/barebox/blob/macro/arch/arm/boards/diasom=
+-rk3568/board.c#L239-L257
+>
+> The idea is to fixup the device tree in the bootloader depending on the
+> SoC revision, so that the CAN driver uses only the needed workarounds.
+>
 
-Reported-by: syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com
-Tested-by: syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com
+Thanks, it is not easy to correlate this because I am currently not using
+barebox. I'll try this later.
 
-Tested on:
+> > > > In the logs we can spot some strange points:
+> > > >
+> > > > 1. Line 24, tx_head =3D=3D tx_tail. This should have been rejected =
+by the if
+> > > > (!rkcanfd_get_tx_pending) clause.
+> > > >
+> > > > 2. Line 26, the last bit of priv->tx_tail (0x0185dbb3) is 1. This m=
+eans that the
+> > > > tx_tail should be 1, because rkcanfd_get_tx_tail is essentially mod=
+ the
+> > > > priv->tx_tail by two. But the printed tx_tail is 0.
+> > > >
+> > > > I believe these problems could mean that the code is suffering from=
+ some race
+> > > > condition. It seems that, in the whole IRQ processing chain of the =
+driver,
+> > > > there's no lock protection. Maybe some IRQ happens within the execu=
+tion of
+> > > > rkcanfd_tx_tail_is_eff, and touches the state of the tx_head and tx=
+_tail?
+> > > >
+> > > > Could you please have a look at the code, and check if some locking=
+ is needed?
+> > >
+> > > My time for community support is currently a bit limited. I think thi=
+s
+> > > has to wait a bit, apologies :/
+> >
+> > No worries, I will debug myself, and hopefully send a PR if I found
+> > something out.
+>
+> Great, I have a both a v2 and a v3 SoC here to test.
 
-commit:         fec734e8 Merge tag 'riscv-for-linus-v6.17-rc8' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16295f12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=927198eca77e75d9
-dashboard link: https://syzkaller.appspot.com/bug?extid=f02665daa2abeef4a947
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=169eb142580000
+It turns out there are two issues:
 
-Note: testing is done by a robot and is best-effort only.
+1. The race condition (between TX interrupt and TX queue netif xmit) is ind=
+eed
+an issue. Fixed by adding a spinlock around TX logic, and no warning
+occurs after
+adding the lock.
+
+2. The CLK_CAN0 was clocked by GPLL, which makes it 148.5MHz. This frequenc=
+y
+will lead to various errors quickly when dealing with EFF IDs. Fixed
+by constraining it
+to use CPLL and 250MHz freq.
+
+Regarding problem 1, I will send a patch.
+
+Regarding problem 2, I suggest adding some extra sanity checks to
+guard against this.
+
+>
+> regards,
+> Marc
+>
+> --
+> Pengutronix e.K.                 | Marc Kleine-Budde          |
+> Embedded Linux                   | https://www.pengutronix.de |
+> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+
+Regards,
+Andrea
 
