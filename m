@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-834935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE469BA5DED
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:45:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E16BA5E05
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9FD3A3A41
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:45:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C46527AEE77
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEC82D94AA;
-	Sat, 27 Sep 2025 10:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E74B1E1A3B;
+	Sat, 27 Sep 2025 10:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szHCtQMr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJtfeXqf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987EB28C5DE;
-	Sat, 27 Sep 2025 10:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA32015B971;
+	Sat, 27 Sep 2025 10:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758969907; cv=none; b=acnPYjfHdTLd0+FF+tmmxpRZCt1trsCzBnkk/yepFSCrEKYmxKY6z9v+CVzI4cpTefOty9bRnyU428yHEE9bQy0mBfGkDHlXtDizjMjqyV89OcOAndznipC50dpdOHvt5r6kVdNUY+gWVgdFdS95aHGj9Nz8kPeHS7l2SbmSjYk=
+	t=1758970373; cv=none; b=bHLq6X5l2q1MwXuwQblqIc3WXJ8PA8kSglGuJ7QbCBHuS5rZniPUNKRIirPwWaHUh9yPnSI2adcvy49d+JZOSs9mL+c9X1xaI3IaA4qrKWx+Mt+Zrh7IUetvQ+IGCH7M9uV23RYy+4VxMib34TRpPnqdygohAu22hQqvhcrv8ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758969907; c=relaxed/simple;
-	bh=hw5PQZnbjz8yyE23U8GGenwbSKEoJO239bLpat2s2MI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iEUFLlZk7Hf5tucPVzdTm4BMYK4jxY6BSDHKlJQPf6ENPGfJVxWG4mR57hJqw3nljSyV+brtl/UKtdiKcMQVG5BRmGfgF/gxe01uiorHlC8j248tcdiUlAO+DTQ32WHrtmXJ3g8MqRKFds6sV7EyamUMQNWdbDqj1MQZTyynf0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szHCtQMr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B8AC4CEE7;
-	Sat, 27 Sep 2025 10:45:06 +0000 (UTC)
+	s=arc-20240116; t=1758970373; c=relaxed/simple;
+	bh=5vJ79PqLSk1W3ySPx3aEhtMSl07Usjxr4YYanamg+qI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JapdIcYjDdcHdkQ7mevauGmmpRltEeXg+ChufqX8xli7poJcoYiLzZcD2BfjG9BtjsjciMuA/9/z6M4qXZnG5r90xkViifvj9wwVh3bJBOwbu3MP6IEtInNhgXqsEHd1dupzYuKmsKI1cFPqFIrrdvqdD31tMmh9WqD5aZxB8pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJtfeXqf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB713C4CEE7;
+	Sat, 27 Sep 2025 10:52:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758969907;
-	bh=hw5PQZnbjz8yyE23U8GGenwbSKEoJO239bLpat2s2MI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=szHCtQMrWvLYM7aAOrzFJpPL6tCPy4TancUw3z4fZgDnu9CqHd+DlfLTEdTdQNMOR
-	 iPNZm7uz80EDfcN0BmBCsnrMKW6rMrNxjIUnjuPAkPCgeuT8qqKS+KU82V9byATWqT
-	 LIMwuUMIFhy0T3O6OZIucgHhHtBV3RTkZ2it4cj0lbmdh0WLq/pYNTdCX0llCv23Hf
-	 h+3TchbD0KJPhUPA1bQa8HP6hvYDV0JutZDPtWvpfQ/rqcoEqWzuo93a9LfroJ7UnY
-	 Xb5UPWaV70f9qz9YYklwTRtL2hnGGWO9Opm/+BM6TdTLwt3zkV8SZCv9B0WY5gwxtu
-	 5dabmeMlgE41Q==
-Date: Sat, 27 Sep 2025 12:45:02 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, 
-	linux-i2c <linux-i2c@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host for v6.18
-Message-ID: <4osuv4vajewmcpgl5sqnea47addwsrm7nfl3s57ymwv7vaxade@unuwhsw4ccnx>
+	s=k20201202; t=1758970373;
+	bh=5vJ79PqLSk1W3ySPx3aEhtMSl07Usjxr4YYanamg+qI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KJtfeXqfLaEcUKsaryDmNzD7+ylJeOzAp9i7oCbXn83M1o2ir4TqQmmmGZSeXRync
+	 edNho+p6GK7QNWXEDkkWn0ElVK+6FUMGhlBK8XQfUq2ol13Cx3NhlNNnyMKKVa3BrR
+	 9PwF7JmU9QFUbdWA06l2bhe79mipvlFUiXYvk4KzRtgVrq1ncQgIF2A5eRZH2m4eUm
+	 0UgM47PYtfwqHEryiyxkSa1DYMIBozCfM8P5Vmfk2liWHUar4Hn41APmgDTniVOsY1
+	 PPm13BZVMjOdt1z/UwAMsFzyQ0cdqvg82Z8nxx6hQ2wrZa9YYKvFPfl5V/WI3oEpJF
+	 uwI+BA6yJsH5w==
+Message-ID: <0f1b82e2-208d-44d1-8e3a-08b2821a297d@kernel.org>
+Date: Sat, 27 Sep 2025 11:52:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100: Extend the gcc input
+ clock list
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250926-topic-hamoa_gcc_usb4-v1-0-25cad1700829@oss.qualcomm.com>
+ <20250926-topic-hamoa_gcc_usb4-v1-3-25cad1700829@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250926-topic-hamoa_gcc_usb4-v1-3-25cad1700829@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
+On 26/09/2025 13:03, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> With the recent dt-bindings update, the missing USB4 clocks have been
+> added.
+> 
+> Extend the existing list to make sure the DT contains the expected
+> amount of 'clocks' entries.
 
-this merge window pull request is rather small, and the blame is
-all on me. It has been a very messy period, leaving me with
-little time to look after the patches for 6.18.
+Small nit, "expected number" would be better.
 
-That said, I now have quite a bit of work ahead, but I am
-confident that with the next pull request I will manage to slim
-the queue down.
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 29 ++++++++++++++++++++++++++++-
+>   1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 51576d9c935decbc61a8e4200de83e739f7da814..cc76b9933a9bbff396ec4739f4a1dd3d2cc81f0f 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -807,7 +807,34 @@ gcc: clock-controller@100000 {
+>   				 <0>,
+>   				 <&usb_1_ss0_qmpphy QMP_USB43DP_USB3_PIPE_CLK>,
+>   				 <&usb_1_ss1_qmpphy QMP_USB43DP_USB3_PIPE_CLK>,
+> -				 <&usb_1_ss2_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
+> +				 <&usb_1_ss2_qmpphy QMP_USB43DP_USB3_PIPE_CLK>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>;
+>   
+>   			power-domains = <&rpmhpd RPMHPD_CX>;
+>   			#clock-cells = <1>;
+> 
 
-For now, I hope you will not mind a second part of this pull
-request, where I plan to include the most obvious patches from
-those still in the queue.
-
-Thank you and wishing you a great weekend,
-Andi
-
-The following changes since commit 07e27ad16399afcd693be20211b0dfae63e0615f:
-
-  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.18
-
-for you to fetch changes up to 217f92d91c9faeb6b78bd6205b3585944cbcb433:
-
-  dt-bindings: i2c: i2c-mt65xx: Document MediaTek MT6878 I2C (2025-09-25 02:06:09 +0200)
-
-----------------------------------------------------------------
-i2c-host for v6.18
-
-dt-bindings:
- - add support for MediaTek MT6878 I2C
- - Drp[ support fpr S3C2410
-
-----------------------------------------------------------------
-Igor Belwon (1):
-      dt-bindings: i2c: i2c-mt65xx: Document MediaTek MT6878 I2C
-
-Krzysztof Kozlowski (2):
-      i2c: s3c2410: Drop S3C2410 OF support
-      dt-bindings: i2c: samsung,s3c2410-i2c: Drop S3C2410
-
- Documentation/devicetree/bindings/i2c/i2c-mt65xx.yaml          | 4 ++++
- Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml | 2 --
- drivers/i2c/busses/i2c-s3c2410.c                               | 1 -
- 3 files changed, 4 insertions(+), 3 deletions(-)
+Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
 
