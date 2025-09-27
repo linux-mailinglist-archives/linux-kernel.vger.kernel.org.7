@@ -1,292 +1,207 @@
-Return-Path: <linux-kernel+bounces-835061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978A4BA6292
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:27:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D38BA62A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5187D3B4394
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A254A0E72
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B85235BE8;
-	Sat, 27 Sep 2025 18:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E4822B5AD;
+	Sat, 27 Sep 2025 18:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9BsqRKt"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W91OrnwI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E83231836
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 18:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81027125B2;
+	Sat, 27 Sep 2025 18:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758997648; cv=none; b=ixv3tvdA9XcxpAe9FomBIfQRtvIsCaV3QzFHYb6lyy4NPSvEsgOgYz2bJJJssW/4LrQwVvBSWBSrUxIl/z48qIQLVmZcUXWu6HN0FqzSZr6AqropcUqPCH7coHpgNAhHl5AkbJ3f94hGhZFUga6FLQciQlOUm9Bjuxp1rn+6vso=
+	t=1758998394; cv=none; b=tt5iZ9s0Ko2vzsYLFEG61w3idBOCR0enEr5v3HEeP943pTumRwfB0zan/sY4h9lof8OZB4jBfbWB+juY0ZdqYjErQ5xKAn+bzsj73NZsjDQZz6txPIdwI/KffMkIiOHhBj1aqfs2t4sPX9rvJHDilw3QPEUn2wbsKUTvEJ9oLQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758997648; c=relaxed/simple;
-	bh=I22T7JxiFABAm/e5gFk5aHy470m2ilmu3HjJetim2g0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rw9SaRQqruIxgRYVCsoKk6nYJsrpa193+ILjS78uFi2f+WuGjO6aG2bqmLbtfBR9D1kI56Ku0KCk2xKcQuQjwBJVLmpITXXMByz/+idUQFUcYFiy4E3BrRtlKCtF97ivImN6CELZJPPIHC1jAqt/E0QDD8jT8pKuqoT8WkCb/O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9BsqRKt; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62ec5f750f7so4819343a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 11:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758997644; x=1759602444; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yQWdFOHyXRj2qTgoQajJtgXcEgv1h3O33kn6+NXzhhk=;
-        b=X9BsqRKtZ2PTJ1gkjMtZgwiaaKIYGyytDEY1JTb7CVxtA8KR7MrBFXuAXAhm2RJPRd
-         BsQA+/JkGEREzNGs16HM5VWyyRvq1Yt1NcfwMB1H4rtS9EjmkOrnRBoHfrMukF5ETP8e
-         cyFAonM/PrPc053zbJtYVekHEgD3LyG6vAhPkJKP+Ycmltaf85wlkmlkJYCVAu+ZSX9p
-         QReni86n/VAyKaseXUrXPa5bUy7WnxNHptsppIkynWTz8Ys+u8ZuqOQBBP+oE1vSpxlp
-         O5iHQpuN1vRKJ4DFkTFCySWPD99LqV9ULgyP9fW8v+Is8fp62/BSFf3G43/6S3vfQeyd
-         CV5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758997644; x=1759602444;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yQWdFOHyXRj2qTgoQajJtgXcEgv1h3O33kn6+NXzhhk=;
-        b=HhkhLSSu0IeP6rVJgq6++/kToHds2pZNmJkjRbde+MJK9RczsPME/lS/85KmLeI8zC
-         R7L3AbmUFxnG9VOkBO8llw1fB1G6ypNBzh0dJgQMwePVIEKfmbwwS0hVvv/xc8l0g0aw
-         zpF4i3SEx4VamfAsUFwovFJ6gptUZe1P/odpePq9RElsxjRCqHJ1ntw5Z7vU7SlXNjd/
-         q2EwQ05aezbdVLU6JsdN4DqYnUgjtj7mp6j5p2T6Ixgy/KcUoIT82aC8ZZH/OEXJSGzY
-         kp9R9IMv/UXKL0/q/zLr8/L+KiDj3qzZ+22DwWx8vd6g0MAP8OzCeSqAypCA5W30UL6i
-         Yd1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3nxlB5/FDmER5hY7elMpH3i6XFAEmiLhgN0wL2oHN55IRre9vK7qOS/BaqxaeE1qi4B6EsMakXzGtoyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjmfVkm/91D1BScVj3BdKXf/GBMVWqF+X4VqsZMlvZdrI30zXS
-	FnhxABq02f4wnHC+k/yhm+rZcDWiEqrt83jiFh3sBItHSbB6F133h9KD
-X-Gm-Gg: ASbGncsgFLGNHDaytNffZwlwUXLXn9pBFP5dJMW/FlVZX6K5dDX/QVgCqrsJYsRQ5Ng
-	0oGPb//TeCRoW5UfJheF782f9J8vXyy1CiNkHl6tSALHGGHr66/cLn/7orQwxkHbDMa3IlamwFX
-	r8LM6zJEKmWabVGhUarJU1M6irhhL3Lk/Pv+h3JXtFvbtTTZ6kAYrH2lxhzk/kSTCmM7qAekKxO
-	EjQESnRyzqwkwCcVkkR/dGjsJGSUzPsyVGvfQXYX+eF1oVddMCmEc2cR5toGzQi4I/YxMMHBIZ9
-	uiERPtmcISa/2HrX8QDeC/ez1fSAkYOY7bk64YDEXR0PgkddFdP64nn9KIbYEhngTDflsWE38Pq
-	P6LylAj6EjU9SN0RCCP8KxwbvSScikzcu9T0AP0cb7cBiUZ6SO6ElbsGAsZVe0oxfaLqV7nTXRQ
-	Ho
-X-Google-Smtp-Source: AGHT+IHzU+aiH3IO9AF5z3S6/qnurfmF3lWjYZ8bVEdWvmfo2izIybdRVaH4K3G/J1amzl+E705jog==
-X-Received: by 2002:a05:6402:13d2:b0:634:ab36:3c74 with SMTP id 4fb4d7f45d1cf-634ab363ee7mr8188743a12.9.1758997643660;
-        Sat, 27 Sep 2025 11:27:23 -0700 (PDT)
-Received: from tumbleweed (ip-77-25-33-35.web.vodafone.de. [77.25.33.35])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634bf4a5351sm2691010a12.43.2025.09.27.11.27.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 11:27:23 -0700 (PDT)
-From: Michael Straube <straube.linux@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: hdegoede@redhat.com,
-	Larry.Finger@lwfinger.net,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: rtw_hal_set_def_var is not used
-Date: Sat, 27 Sep 2025 20:27:00 +0200
-Message-ID: <20250927182700.184174-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758998394; c=relaxed/simple;
+	bh=OFYiSOw/Gfgr0DCpc3CpqcVoziWlnm2ezT1witONfFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EF2K/T3DPbEYsXAORq02FbThlb2D2khFXP5BBtjQKJYiVNvD8yKG0ubGDWF1zBfX7tb1XyD/BokqBaHKIewaCyN+VCEhAvypGpwLcTGoQmQN4GFJ8RyW5TWSjaLAde5WT6SNi1hAxk9pzhtlqnjG6cnYWyXq1UBwODfSNASltbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W91OrnwI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A98C3C4CEE7;
+	Sat, 27 Sep 2025 18:39:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758998394;
+	bh=OFYiSOw/Gfgr0DCpc3CpqcVoziWlnm2ezT1witONfFA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=W91OrnwIIQ/6SdcGFCI1/vfL5oABFijapNz4i+zpBW7OPI8KGSbGROpuLDmfPKrB9
+	 2LmfuEJLkMRlsOhrc9smv5rCR/6qmpcGnW0fN52sIAqge+r5+7NhDYGn5dIg/uhdFB
+	 SdrMCUL+clzJUKyJ4K895RXpkSYhelv+AJGKu0Rg3W7oACKGl/YGhJQD4LBVDg1cVV
+	 Okn3bED/O8k1E3ujeAc5furOM1DIhaF8G6uxB0A2es7nSXQsUkf8n1dQ3RFdyJHGZd
+	 FlBBp1qqfLGOLz3VcE2OBB1LLwm4XnYrVmo0SQnbrnHxoTQ9p7SENfF2H88rT7VKdh
+	 0cC5nt/3ihSRA==
+Date: Sat, 27 Sep 2025 19:39:45 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Andreas Kemnade <andreas@kemnade.info>, Mark Brown <broonie@kernel.org>,
+ jdelvare@suse.com, lgirdwood@gmail.com, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alistair Francis <alistair@alistair23.me>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
+ subdevices
+Message-ID: <20250927193945.787eb1a5@jic23-huawei>
+In-Reply-To: <e6c8f022-ebfc-459c-806b-f75618f65916@roeck-us.net>
+References: <20250920114311.291450-1-andreas@kemnade.info>
+	<20250920114311.291450-2-andreas@kemnade.info>
+	<79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
+	<20250920233307.0c425863@kemnade.info>
+	<473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
+	<20250924090023.282ae450@kemnade.info>
+	<b68d40d9-6ea9-49a9-8a2e-8b899f33340d@roeck-us.net>
+	<20250924195358.16bbd90c@kemnade.info>
+	<e6c8f022-ebfc-459c-806b-f75618f65916@roeck-us.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The function rtw_hal_set_def_var is not used. Remove the function and
-resulting dead code.
+On Wed, 24 Sep 2025 12:16:14 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8723bs/hal/hal_com.c       | 65 -------------------
- drivers/staging/rtl8723bs/hal/hal_intf.c      |  5 --
- .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 16 -----
- drivers/staging/rtl8723bs/hal/sdio_halinit.c  |  9 ---
- drivers/staging/rtl8723bs/include/hal_com.h   |  2 -
- drivers/staging/rtl8723bs/include/hal_intf.h  |  2 -
- .../staging/rtl8723bs/include/rtl8723b_hal.h  |  2 -
- 7 files changed, 101 deletions(-)
+> On 9/24/25 10:53, Andreas Kemnade wrote:
+> > On Wed, 24 Sep 2025 00:17:48 -0700
+> > Guenter Roeck <linux@roeck-us.net> wrote:
+> >   
+> >> On 9/24/25 00:00, Andreas Kemnade wrote:  
+> >>> On Sat, 20 Sep 2025 23:18:59 +0100
+> >>> Mark Brown <broonie@kernel.org> wrote:
+> >>>      
+> >>>> On Sat, Sep 20, 2025 at 11:33:07PM +0200, Andreas Kemnade wrote:
+> >>>>     
+> >>>>> Just for learning, yes, it is an abuse of the _optional for non-optional
+> >>>>> things, so a dirty hack which should not go in, therefore RFC. But what
+> >>>>> happens more than having the hwmon device endlessly deferred at worst?  
+> >>>>
+> >>>> There's also the fact that this API is so frequently abused for bad and
+> >>>> broken reasons that I regularly audit users and try to fix them, I'd
+> >>>> rather not see any new users that don't have a really strong reason to
+> >>>> use it.
+> >>>>     
+> >>>>> The wanted regulator is the one defined in sy7636a-regulator.c. So it
+> >>>>> is all an issue internal to the sy7636a.  
+> >>>>     
+> >>>>> Both subdevices are instantiated via drivers/simple-mfd-i2c.c.
+> >>>>> I see several other solutions:
+> >>>>> a) call device_is_bound() on every other children of dev->parent, if not
+> >>>>> bound defer.
+> >>>>> b) do not care about the regulator api at all, just check whether
+> >>>>>      the corresponding bit is set before reading temperature, return
+> >>>>>      -ENODATA if not, some mutex is probably needed.
+> >>>>> c) do not care about the regulator api at all, just set the
+> >>>>>      corresponding bit (together with some mutex locking and counting).  
+> >>>>
+> >>>> I assume this is using the regulator API because someone might use an
+> >>>> external regulator in a system design for some reason (better quality,
+> >>>> power efficiency or a shared reference between multiple devices I
+> >>>> guess?), or because the supply might also be used by external devices?
+> >>>>     
+> >>>>> d) copy the of_node pointer from the parent, add a regulator phandle property
+> >>>>>      to the node pointing to the regulator in the node itself.
+> >>>>>      That sounds like your idea but is against the current dt binding for
+> >>>>>      this device and afaik it is uncommon to have mfd-internal things wired
+> >>>>>      up this way
+> >>>>>
+> >>>>> e) something clean, simple I miss  
+> >>>>
+> >>>> The idea is that the relationship between the devices should be
+> >>>> registered before the devices, that's how the regulator knows to defer.
+> >>>> We used to have an API for doing this for board files which might fit
+> >>>> here, but it got removed since nobody wants board files any more.  If
+> >>>> you're allocating the devices dynamically that's annoying to implement
+> >>>> though...  
+> >>>
+> >>> looking a bit around:
+> >>> max5970-regulator.c has hwmon integrated and no extra device. That would
+> >>> simplify things. Although it does not report temperature. Some
+> >>> touchscreens have temperature via hwmon, some others have temperature
+> >>> via iio, directly in one device without mfd. Maybe that is also
+> >>> the better way here?
+> >>>      
+> >>
+> >> Touchscreens reporting temperature via iio is in general the wrong thing to do.
+> >> Touchscreens report the temperature for monitoring reasons, after all.
+> >> But then, sure, if you insist. I am getting tired of arguing.
+> >>  
+> > I apparently did not make clear what my question refers to. It was more about separate
+> > hwmon device + mfd vs. integrating everything into the regulator driver.
+> >   
+> 
+> What I keep failing to understand is why people keep avoiding the potential of
+> implementing auxiliary device drivers, since that would be the perfect solution
+> and match the intended use case for auxiliary devices.
+> 
+> > But since you brought up the topic hwmon vs. iio for temperature. I do not have
+> > a strong opinion here as long as I can somehow live with it. Nothing I want to
+> > fight for. One sensor I use for measuring room temperature is hwmon, another
+> > one is iio. So it is all not that consistent.
+> >   
+> 
+> That doesn't mean what exists is consistent or even makes sense. Some driver support
+> for chips intended for reporting the environment or chip temperature are pushed into iio.
 
-diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
-index 07e9d3423651..70b5b289f9cb 100644
---- a/drivers/staging/rtl8723bs/hal/hal_com.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_com.c
-@@ -663,71 +663,6 @@ void GetHwReg(struct adapter *adapter, u8 variable, u8 *val)
- 	}
- }
- 
--
--
--
--u8 SetHalDefVar(
--	struct adapter *adapter, enum hal_def_variable variable, void *value
--)
--{
--	struct hal_com_data *hal_data = GET_HAL_DATA(adapter);
--	struct dm_odm_t *odm = &(hal_data->odmpriv);
--	u8 bResult = _SUCCESS;
--
--	switch (variable) {
--	case HW_DEF_ODM_DBG_FLAG:
--		ODM_CmnInfoUpdate(odm, ODM_CMNINFO_DBG_COMP, *((u64 *)value));
--		break;
--	case HW_DEF_ODM_DBG_LEVEL:
--		ODM_CmnInfoUpdate(odm, ODM_CMNINFO_DBG_LEVEL, *((u32 *)value));
--		break;
--	case HAL_DEF_DBG_DM_FUNC:
--	{
--		u8 dm_func = *((u8 *)value);
--		struct dm_priv *dm = &hal_data->dmpriv;
--
--		if (dm_func == 0) { /* disable all dynamic func */
--			odm->SupportAbility = DYNAMIC_FUNC_DISABLE;
--		} else if (dm_func == 1) {/* disable DIG */
--			odm->SupportAbility  &= (~DYNAMIC_BB_DIG);
--		} else if (dm_func == 2) {/* disable High power */
--			odm->SupportAbility  &= (~DYNAMIC_BB_DYNAMIC_TXPWR);
--		} else if (dm_func == 3) {/* disable tx power tracking */
--			odm->SupportAbility  &= (~DYNAMIC_RF_CALIBRATION);
--		} else if (dm_func == 4) {/* disable BT coexistence */
--			dm->DMFlag &= (~DYNAMIC_FUNC_BT);
--		} else if (dm_func == 5) {/* disable antenna diversity */
--			odm->SupportAbility  &= (~DYNAMIC_BB_ANT_DIV);
--		} else if (dm_func == 6) {/* turn on all dynamic func */
--			if (!(odm->SupportAbility  & DYNAMIC_BB_DIG)) {
--				struct dig_t	*pDigTable = &odm->DM_DigTable;
--				pDigTable->CurIGValue = rtw_read8(adapter, 0xc50);
--			}
--			dm->DMFlag |= DYNAMIC_FUNC_BT;
--			odm->SupportAbility = DYNAMIC_ALL_FUNC_ENABLE;
--		}
--	}
--		break;
--	case HAL_DEF_DBG_DUMP_RXPKT:
--		hal_data->bDumpRxPkt = *((u8 *)value);
--		break;
--	case HAL_DEF_DBG_DUMP_TXPKT:
--		hal_data->bDumpTxPkt = *((u8 *)value);
--		break;
--	case HAL_DEF_ANT_DETECT:
--		hal_data->AntDetection = *((u8 *)value);
--		break;
--	default:
--		netdev_dbg(adapter->pnetdev,
--			   "%s: [WARNING] HAL_DEF_VARIABLE(%d) not defined!\n",
--			   __func__, variable);
--		bResult = _FAIL;
--		break;
--	}
--
--	return bResult;
--}
--
- u8 GetHalDefVar(
- 	struct adapter *adapter, enum hal_def_variable variable, void *value
- )
-diff --git a/drivers/staging/rtl8723bs/hal/hal_intf.c b/drivers/staging/rtl8723bs/hal/hal_intf.c
-index 961b0563951d..462553d296ff 100644
---- a/drivers/staging/rtl8723bs/hal/hal_intf.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_intf.c
-@@ -115,11 +115,6 @@ void rtw_hal_set_hwreg_with_buf(struct adapter *padapter, u8 variable, u8 *pbuf,
- 	SetHwRegWithBuf8723B(padapter, variable, pbuf, len);
- }
- 
--u8 rtw_hal_set_def_var(struct adapter *padapter, enum hal_def_variable eVariable, void *pValue)
--{
--	return SetHalDefVar8723BSDIO(padapter, eVariable, pValue);
--}
--
- u8 rtw_hal_get_def_var(struct adapter *padapter, enum hal_def_variable eVariable, void *pValue)
- {
- 	return GetHalDefVar8723BSDIO(padapter, eVariable, pValue);
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 18244adad9e0..57c83f332e74 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -2839,22 +2839,6 @@ void GetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val)
- 	}
- }
- 
--/* Description:
-- *	Change default setting of specified variable.
-- */
--u8 SetHalDefVar8723B(struct adapter *padapter, enum hal_def_variable variable, void *pval)
--{
--	u8 bResult = _SUCCESS;
--
--	switch (variable) {
--	default:
--		bResult = SetHalDefVar(padapter, variable, pval);
--		break;
--	}
--
--	return bResult;
--}
--
- /* Description:
-  *	Query setting of specified variable.
-  */
-diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-index 7fcb874d0eb3..6f1f726d1630 100644
---- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-+++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-@@ -1236,12 +1236,3 @@ u8 GetHalDefVar8723BSDIO(
- 
- 	return bResult;
- }
--
--/*  */
--/* 	Description: */
--/* 		Change default setting of specified variable. */
--/*  */
--u8 SetHalDefVar8723BSDIO(struct adapter *Adapter, enum hal_def_variable eVariable, void *pValue)
--{
--	return SetHalDefVar8723B(Adapter, eVariable, pValue);
--}
-diff --git a/drivers/staging/rtl8723bs/include/hal_com.h b/drivers/staging/rtl8723bs/include/hal_com.h
-index 7ea9ee2b3975..74d6c892c401 100644
---- a/drivers/staging/rtl8723bs/include/hal_com.h
-+++ b/drivers/staging/rtl8723bs/include/hal_com.h
-@@ -138,8 +138,6 @@ void SetHwReg(struct adapter *padapter, u8 variable, u8 *val);
- void GetHwReg(struct adapter *padapter, u8 variable, u8 *val);
- void rtw_hal_check_rxfifo_full(struct adapter *adapter);
- 
--u8 SetHalDefVar(struct adapter *adapter, enum hal_def_variable variable,
--		void *value);
- u8 GetHalDefVar(struct adapter *adapter, enum hal_def_variable variable,
- 		void *value);
- 
-diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
-index 2fa2382ad5f3..82b60899129d 100644
---- a/drivers/staging/rtl8723bs/include/hal_intf.h
-+++ b/drivers/staging/rtl8723bs/include/hal_intf.h
-@@ -199,7 +199,6 @@ void rtw_hal_chip_configure(struct adapter *padapter);
- void rtw_hal_read_chip_info(struct adapter *padapter);
- void rtw_hal_read_chip_version(struct adapter *padapter);
- 
--u8 rtw_hal_set_def_var(struct adapter *padapter, enum hal_def_variable eVariable, void *pValue);
- u8 rtw_hal_get_def_var(struct adapter *padapter, enum hal_def_variable eVariable, void *pValue);
- 
- void rtw_hal_set_odm_var(struct adapter *padapter, enum hal_odm_variable eVariable, void *pValue1, bool bSet);
-@@ -262,7 +261,6 @@ void SetHwReg8723BS(struct adapter *padapter, u8 variable, u8 *val);
- void GetHwReg8723BS(struct adapter *padapter, u8 variable, u8 *val);
- void SetHwRegWithBuf8723B(struct adapter *padapter, u8 variable, u8 *pbuf, int len);
- u8 GetHalDefVar8723BSDIO(struct adapter *Adapter, enum hal_def_variable eVariable, void *pValue);
--u8 SetHalDefVar8723BSDIO(struct adapter *Adapter, enum hal_def_variable eVariable, void *pValue);
- void UpdateHalRAMask8723B(struct adapter *padapter, u32 mac_id, u8 rssi_level);
- void rtl8723b_SetBeaconRelatedRegisters(struct adapter *padapter);
- void Hal_EfusePowerSwitch(struct adapter *padapter, u8 PwrState);
-diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-index 2ed1fc8549ec..06e0a549fa9d 100644
---- a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-+++ b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-@@ -223,8 +223,6 @@ void C2HPacketHandler_8723B(struct adapter *padapter, u8 *pbuffer, u16 length);
- 
- void SetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val);
- void GetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val);
--u8 SetHalDefVar8723B(struct adapter *padapter, enum hal_def_variable variable,
--		     void *pval);
- u8 GetHalDefVar8723B(struct adapter *padapter, enum hal_def_variable variable,
- 		     void *pval);
- 
--- 
-2.51.0
+There might be some that have slipped through but when it's monitoring specific chip
+as opposed to part of of a SoC ADC where some channels are for monitoring and others
+very much not (e.g. the touchscreen ADC channels), I do direct people to provide
+reasons and +CC hwmon. There are a few odd corner cases where we had a driver for
+a mems device or similar that doesn't fit in hwmon come along and there is a
+variant of that silicon that only has the temp part enabled.
+
+Without specific part numbers I don't know why it happened here.
+
+We get a few drivers every year where I think it's just familiarity with IIO that
+drove the initial submission and for those we push them to submit a hwmon driver instead
+and I +CC the hwmon list on that suggestion.  Guenter frequently eyeballs the driver
+and points that another driver can be trivially modified to support it.
+
+Mind you I may well miss some :(
+
+
+> I have no idea why that is the case. Yes, that results in odd situations like yours,
+> but there is nothing I can do about it. I can only guess that _someone_ is pushing for
+> submitting drivers into IIO instead of hwmon, but that is just a wild guess. You would
+> have to ask the driver authors and/or IIO maintainers for reasons. I am copying the IIO
+> mailing list for feedback.
+> 
+> Also, again, I am tired of arguing, so I typically don't even comment anymore (if I even
+> notice) unless explicitly asked.
+> 
+> > But what is the hwmon equivalent for
+> > devm_fwnode_iio_channel_get_by_name() + iio_read_channel_processed()?
+> >   
+> 
+> Assuming you refer to the exported functions for in-kernel use, so far no one has
+> expressed a need for it. The best solution would probably be a hwmon->iio bridge,
+> or equivalent functions could be implemented and exported.
+> 
+> > I wonder whether I really need a thermal zone. It adds stuff not needed here,
+> > trip points and polling.
+> >   
+> 
+> The driver _registers_ a thermal zone, but that doesn't mean it has to be configured.
+> If one is configured (typically via devicetree), it is obviously needed.
+> 
+> > Documentation/hwmon/sy7636a-hwmon.rst seems to be wrong. It is not
+> > SoC-on-die temperature, but temperature from an external NTC. And
+> > that is typically used to tune the EPD refresh to the temperature.  
+> 
+> Please feel free to submit a patch correcting the documentation.
+> 
+> Guenter
+> 
 
 
