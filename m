@@ -1,78 +1,112 @@
-Return-Path: <linux-kernel+bounces-835059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1ABDBA6289
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:25:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9811BA628F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F2417E938
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36BAA189DB36
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1348235354;
-	Sat, 27 Sep 2025 18:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5501B235BE8;
+	Sat, 27 Sep 2025 18:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmxFj8bA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FkixrEXc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48896231858
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 18:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57838287E;
+	Sat, 27 Sep 2025 18:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758997536; cv=none; b=Hk/StTsV9OxLkagaxiVqRpKLJqvpjZzpbYcABZzcvP/IZH8ipJPtyagbJd6s0f4+7dD3mpPyZV0drCga7Xxg+Cd+fVhX8DTKv6oRnvTCwaehNGfSpvjZLPRy2XUQEOTomnbHjIszi55S96vSD4k4UhTaxFNVjrda6WR7wHdQwvw=
+	t=1758997560; cv=none; b=sTYUrA5Fc1a2YyLajP6/kBUdZKb4MtQSOHTqENABigQyX+hzzsEjeP4ij5yeDaRu8veoF9H0y/z7vpL8LDBWZVU0lQH/8BmI0UpEUlURdMook1MSWGG8PVpPKAPzGCm68myb5HDqmW0Gw8PlE5hqMBdfoAlpGM83QEdsRmK8I7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758997536; c=relaxed/simple;
-	bh=rJBq/bYBek5ume+c6ShI3RjT5GWCZ8Jdhvsj4G6tNc0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=k3rqpfaF2CoGQlYBNHNG4nnjQ71Dc7eVR+bAtIaJtKcBlZwhD/hVUuHNYCAU+3aPF9/Idagb9YqGlpywNJb6xCs5qk2VZQef/ABFmDpGNf7uPkNbQ71jIYi1v+uUBUEhYUUukxn30EL4CSDY6Z4K2IOusMxbI+nFgTc/IDp5vLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmxFj8bA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6AB7C4CEE7;
-	Sat, 27 Sep 2025 18:25:35 +0000 (UTC)
+	s=arc-20240116; t=1758997560; c=relaxed/simple;
+	bh=5AohPTr2+c8jQEYpZTTD+q2W5++EaumlSV3+7UljG9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CR9CNC+JLKdKkqsaYR47zsX9ZTIO//gv0RlreVWVDLLj4XzsvT0yiIHJJq+hFi2a6LbUWvzWXLGgBC/dLjWFTF8D/FWJW8HYKUtEHwbBtvGiL9jyJP1CutWRQB9G3WyZV+ix2Bz3j5/BPO+B8RfYQbhB9Wvty5c1xDP0IdUmuzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FkixrEXc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22905C4CEE7;
+	Sat, 27 Sep 2025 18:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758997535;
-	bh=rJBq/bYBek5ume+c6ShI3RjT5GWCZ8Jdhvsj4G6tNc0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=TmxFj8bAGkQdXX9rRCwSq1b66UgUz6kBQxRDgCVrZHzjELfN2w2ojj0HQU2cYxIMx
-	 qSfhc7LbpbXUtjjKTvHwsGtJ549U2kYScFFpmsxUsfOT1CxlAJb3246CMymgDhNshM
-	 YJiQvbyICatLyb7OIDMrTT/xXqFdDekLv4EaL5DwF9/BA1QhDTYjb7IxP0A68U26ri
-	 65lB+sGihLM3iB0rfiRt/tZntXXFCov7C8pqwlbKj9JFFFAp0JJ2oZFdoABDGwX/KB
-	 Em2Zp8UCN5Y/3sF+xzPmnhqvk4YkdAm0fxEOhW3BPXILGW+SBsWnPBqkUMW3GE5Eo2
-	 43tMxu/zVykFA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE19C39D0C3F;
-	Sat, 27 Sep 2025 18:25:31 +0000 (UTC)
-Subject: Re: [GIT PULL] rtla: Couple of fixes for 6.17
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250927085234.6a46c0a2@batman.local.home>
-References: <20250927085234.6a46c0a2@batman.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250927085234.6a46c0a2@batman.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-tools-v6.17-rc5
-X-PR-Tracked-Commit-Id: 2227f273b7dc25a791ae6b152550098aa6934b2f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 51a24b7deaae5c3561965f5b4b27bb9d686add1c
-Message-Id: <175899753020.307650.15305016214755686884.pr-tracker-bot@kernel.org>
-Date: Sat, 27 Sep 2025 18:25:30 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Ivan Pravdin <ipravdin.official@gmail.com>, Wander Lairson Costa <wander@redhat.com>, Tomas Glozar <tglozar@redhat.com>
+	s=k20201202; t=1758997560;
+	bh=5AohPTr2+c8jQEYpZTTD+q2W5++EaumlSV3+7UljG9E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FkixrEXcQu+SsQBatEpVz5iYXfeO/EBIbPMP+izHUsoDRnRb8if/Zs1oPm/2+l1iN
+	 gPfzX0nmRGJ0L6MFCifQiLOnQ7IUxxMSQuep/TTielHnDxzP9DjUDHPtko0XekVNa6
+	 j3sggWx7Jc+y71Oq3eS+u4bcjSfpzqi81a3RTZqQo4gHxwDPAGBtIF2TsGn5Csc/2N
+	 PiTGFRLQFZMvj9UZt8gH5dD3UXPBYN/xSttRbhnc68fK9vLtXA615PFB0wKbBpS1E7
+	 wk/YnRU2hbnsB0qrK3aVgtDLTMXcuRxN8mSQJc2Afi3N8bPkqyM6mwBXF0vi4QuY1X
+	 7qFRhgbDz5oOQ==
+Date: Sat, 27 Sep 2025 19:25:51 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich 
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= 
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: ad7124: change setup reg allocation
+ strategy
+Message-ID: <20250927192551.2b81d838@jic23-huawei>
+In-Reply-To: <3bbd51983f5bf67b6fd061f28b8b260370beac70.camel@gmail.com>
+References: <20250923-iio-adc-ad7124-change-setup-reg-allocation-strategy-v2-1-d9bf01bb3ad8@baylibre.com>
+	<3bbd51983f5bf67b6fd061f28b8b260370beac70.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sat, 27 Sep 2025 08:52:34 -0400:
+On Fri, 26 Sep 2025 13:27:00 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-tools-v6.17-rc5
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/51a24b7deaae5c3561965f5b4b27bb9d686add1c
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> On Tue, 2025-09-23 at 16:48 -0500, David Lechner wrote:
+> > Change the allocation strategy of the 8 SETUP registers from a least-
+> > recently-used (LRU) to a first-come-first-served basis.
+> >=20
+> > The AD7124 chips can have up to 16 channels enabled at a time in the
+> > sequencer for buffered reads, but only have 8 SETUP configurations
+> > (namely the OFFSET, GAIN, CONFIG and FILTER registers) that must be
+> > shared among the 16 channels.=C2=A0 This means some of the channels mus=
+t use
+> > the exact same configuration parameters so that they can share a single
+> > SETUP group of registers.=C2=A0 The previous LRU strategy did not keep =
+track
+> > of how many different configurations were requested at the same time,
+> > so if there were more than 8 different configurations requested, some
+> > channels would end up using the incorrect configuration because the slot
+> > assigned to them would also be assigned to a different configuration
+> > that wrote over it later.
+> >=20
+> > Adding such tracking to solve this would make an already complex
+> > algorithm even more complex.=C2=A0 Instead we can replace it with a sim=
+pler
+> > first-come-first-serve strategy.=C2=A0 This makes it easy to track how =
+many
+> > different configurations are being requested at the same time.=C2=A0 Th=
+is
+> > comes at the expense of slightly longer setup times for buffered reads
+> > since all setup registers must be written each time when a buffered read
+> > is enabled.=C2=A0 But this is generally not considered a hot path where
+> > performance is critical, so should be acceptable.
+> >=20
+> > This new strategy also makes hardware debugging easier since SETUPs are
+> > now assigned in a deterministic manner and in a logical order.
+> >=20
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > --- =20
+>=20
+> Hi David,
+>=20
+> LGTM
+>=20
+Agreed.
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Applied to the testing branch of iio.git.
 
