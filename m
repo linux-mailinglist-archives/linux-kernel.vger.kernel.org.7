@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-834869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD828BA5ACE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:41:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CAEBA5AD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E496C189EE38
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E520189EEB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038CA2D4B66;
-	Sat, 27 Sep 2025 08:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD092D481F;
+	Sat, 27 Sep 2025 08:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXfEcsDx"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E7wyEQI4"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08B52D47F3
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4292D4813
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758962454; cv=none; b=EqlLYMv08l8iPb7rQt+oHRh43etP7uLNO4ArRDaYxa/qRVqFeyZRq6rvMaDdDBPXWrBtohCj5e56HpTjEUzR5ot8l5iGqImsnybO/UGjxHLUOq93YRA0m5G64D58HoZk+Utvuu6w4ivTMKDQm7ghfZPMNiv50GjuEDtA74VzsO8=
+	t=1758962468; cv=none; b=MR3U3KnBuQ4FlUhJBgQGELcLNZoKq/4liIvd5jKHr5p+Cjmea7NxfKyB1pvBpDkmNxISpCdg7kNhxhRCrQee2LXVPb4St7TSHR/qSBgCDol+AHAJw3odUSFxTk8QZYE8c2Fvs1WJxgbtIzkCGRRtdIpq/5wzANaV1DWGFUpdM7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758962454; c=relaxed/simple;
-	bh=KzguTlN0DVDwQyWaiKD+T6TVR9NBd+VANkU7welrq5M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W3CpJu9E97qjg7jpR91gvJozLfK5VvIC1lcRt6YOUVleyosfFN8e+8wvP/rYeyB/U+WCUtLC0XbqrO8hLIHWF8d4keR9gvly1MOnkxrYSjFWAON5AyGZDvVN5jzTnXlUO+I+d1TzRtikKpo/vKoUUgDEeVMld8hIFOnfP24WnqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXfEcsDx; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7a16441so478354866b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758962451; x=1759567251; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KzguTlN0DVDwQyWaiKD+T6TVR9NBd+VANkU7welrq5M=;
-        b=nXfEcsDxKMSfmnnr5m6/EZOY//0Y0OstJv57LvsG9WnPFJtzLF7EOzW9tSI6NRYZt+
-         7Qz8d/6ZJWZpofZkZKF1cPm6OdtZT6MfcxiRyo+/NB+ZtW0agzckQLOa4AGeR0QufYqn
-         u3dxGQtFq8LX/ucTL7fgHn5HcVAGdUQxIinjTq4sabWEZCpYweakpVMXzWRqm+SKiIzz
-         jh3LdkTxN+15k/hY7vMLJ+ELwYMbRTsNUOnHkou5LbV4mpWbc+YekxEhd+BR0ozxmM1q
-         s3ibfxnd6qoOdmzSl4fhdPO2rIUHeV4hC/NeUpY6aysEqVjaoakszkGBW2L4w8r1WKRD
-         S+Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758962451; x=1759567251;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KzguTlN0DVDwQyWaiKD+T6TVR9NBd+VANkU7welrq5M=;
-        b=NhF/Rx+zQBOSxZ0XN+Eqj9i0I+Q/+vSWqrLXkUjeS2S7ye5vlgeE5I+KFKSHcL98fs
-         NUtP1pMWKjDGFjTzLJU9O/+Wngqmy2UyHEf8YSbwK5UuTedxeu3bZ4zrZWUg6ZBTWUzV
-         zt5OIyUZEfYnQqtB0V8tQMOjZwrMaW5y9A7LFQT46K2DecXGQsvZbw+FNeQ5SLxtzGiM
-         32/DbxB2oIE/sjyne0ypyzfO6iTdLVVZEn2gKAehUENQSj/EEncnTdm1AYbD1MCX7oeU
-         QChwlI/HpZAYQEDDJa7IVm4wdY6cOxjG3D9SqDXZqCv9q514Xq68IRSuE6QKBHcfGgvb
-         xipg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/oWid7TRZIlMwlR0yt5ySYNZybmRTlNU8Df88Emur388TW1756VADaB5u1Do8lxTuYOKL59SQtSN+UHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5TYFbgbQugyNdE/5KkdGRwTGJ9+vGqUlsyjmzpW7oGkA4gp3R
-	sqzeIIZjPbpw5/p4hhh7DLq1xtRGFmQ9DXYtx7DJU+rEgfplkfRsq3I2
-X-Gm-Gg: ASbGnct/1KQg3XuVuAbWtsChf9neM97lcaX3YePYb/UMnUBkxAaTbJD5HHXnjXhj3Wa
-	4sO3Vxt9XwAiERnJvpJS6shjaTAiWtQu0TeHT/Vpzz0zNo0QrlXbSKNRLFbz9fiAQ2+8e4BDyFU
-	GKAt6HPWE39Ah4BqxH6oWnoW1UOvINc4qJ9KibU++Tc/+q+Z3/Ha64WwzlKIIKKAiRwAoFfe+pY
-	h1dQ6HeOZx8Z0gXloxS2fUO/Xja6BKsrmAGMbIiCaN94AZlZZWzlJoSVHnICTr/UTSWQsX8DqmD
-	UcJB705PxsHTuTJ96I0RRIETOv1fgDRgkPOnEoeAAiyElImdVtAv4246XpJryOODL0AY3Yrng/r
-	/0EuHtF36sjRhuml9DO4MDHzYbEwrYBudk9IfzwG3paTulAdRqKoRaQw9OZAfyLp53eVPvk1pVh
-	/Mzgv2NGBEFJ8Ptfa99XxxKc2SJgr8iX29zdZqYQax3ObTkGkIr5drvjYgleADZoslc+ncsazU
-X-Google-Smtp-Source: AGHT+IHPPlIqi4T0deWOBfsYReBj/m14ttoNCIMpmMi0REJRA/BBHe2RNMNkarSZssV1kYS013S9NA==
-X-Received: by 2002:a17:907:7244:b0:b07:6538:4dc5 with SMTP id a640c23a62f3a-b34bd93d0edmr1007630466b.64.1758962450674;
-        Sat, 27 Sep 2025 01:40:50 -0700 (PDT)
-Received: from p200300c5874155a05266ae5ed58ad6cc.dip0.t-ipconnect.de (p200300c5874155a05266ae5ed58ad6cc.dip0.t-ipconnect.de. [2003:c5:8741:55a0:5266:ae5e:d58a:d6cc])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35448dfee7sm513147166b.63.2025.09.27.01.40.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 01:40:50 -0700 (PDT)
-Message-ID: <713065cd1b7c9fb08393fab8cb44e3a345a55be1.camel@gmail.com>
-Subject: Re: [PATCH v1 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
- for UFS devices
-From: Bean Huo <huobean@gmail.com>
-To: Bart Van Assche <bvanassche@acm.org>, avri.altman@wdc.com, 
-	alim.akhtar@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com, 
-	can.guo@oss.qualcomm.com, ulf.hansson@linaro.org, beanhuo@micron.com, 
-	jens.wiklander@linaro.org
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 27 Sep 2025 10:40:49 +0200
-In-Reply-To: <b2ed97b4-bfef-4e4b-83ed-a172214e46e8@acm.org>
-References: <20250923153906.1751813-1-beanhuo@iokpp.de>
-	 <20250923153906.1751813-4-beanhuo@iokpp.de>
-	 <b2ed97b4-bfef-4e4b-83ed-a172214e46e8@acm.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1758962468; c=relaxed/simple;
+	bh=usd+50FZMY/NEDLIoiEP095ScnxXHEZoCJsJeHwVWcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U16zf8n5ej+giHAIf5rn0tY7gq4zrjLXGx+tB0cRps0/xlFgggnFpwMhEMx4PtCyJ8XtCnJ2c9C6yHjRY5qkMaYPLgJ7k798E26wSG9j6L/R5+oe8KQDVlKv4CWqdE1JafOlJIBdJBEFSRFKsAKXC7iP/ruwSnCCKCEzPQa6MVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E7wyEQI4; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 27 Sep 2025 04:40:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758962454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4fZs9aMRZt5EZgO0jnmqvdxf79UnZuJIg6eVqK0GyvY=;
+	b=E7wyEQI4WOaMhR61lfhARmdPBNWx56dXEz4kn1Ca3pdCMCJZe4zTFyNYjWxshieXtlkPbU
+	QSHExiq0GKYls/x5A0UEazSVpqXCS8tH+xZmVmJtgB2OJRAfQ3U+b6cgLUqJlU35JftAsB
+	QcM9UfD412lBcUgITWxY3HVsfi6+nfo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
+Subject: Re: [PATCH] bcachefs: Fix deadlocks between fallocate and readahead
+Message-ID: <a46zo4zjabiqe4n7q4rmzerndaswafeg5c72lxw5at2vep4y73@ra5fojy7q7ja>
+References: <20250927082503.40951-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250927082503.40951-1-kartikey406@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 2025-09-23 at 13:27 -0700, Bart Van Assche wrote:
-> On 9/23/25 8:39 AM, Bean Huo wrote:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D scsi_execute_cmd(sde=
-v, cdb, send ? REQ_OP_DRV_OUT :
-> > REQ_OP_DRV_IN,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buffer, len,=C2=A0 /*timeout=3D*/30 * HZ, 0,=
- NULL);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return ret <=3D 0 ? ret : -E=
-IO;
->=20
-> scsi_execute_cmd() can return a negative value, zero, or a positive
-> value. Both negative and positive values should be considered as an
-> error.
->=20
-> > +MODULE_DESCRIPTION("UFS RPMB integration into the RPMB framework using=
- SCSI
-> > Secure In/Out");
->=20
-> That's a very long module description ... Can this description be made
-> shorter without reducing clarity?
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region0_size;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region1_size;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region2_size;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 rpmb_region3_size;
->=20
-> Why four separate members instead of an array?
->=20
-> Thanks,
->=20
-> Bart.
+On Sat, Sep 27, 2025 at 01:55:03PM +0530, Deepanshu Kartikey wrote:
+> 
+> There are ABBA deadlocks between fallocate and readahead operations
+> at two locations in __bchfs_fallocate():
+> 
+> Thread 1 (fallocate):
+>   bch2_fallocate_dispatch
+>     inode_lock(&inode->v)
+>     bch2_pagecache_block_get(inode)  // Acquires two_state_lock
+>       __bchfs_fallocate
+>         bch2_clamp_data_hole (or bch2_mark_pagecache_reserved)
+>           bch2_seek_pagecache_hole
+>             __filemap_get_folio
+>               folio_lock()  // BLOCKS - Thread 2 holds it
+> 
+> Thread 2 (readahead via copy_file_range):
+>   bch2_readahead
+>     folio_lock()  // Holds page lock
+>     __bch2_two_state_lock(&pagecache_lock)  // BLOCKS - Thread 1 holds it
+> 
+> The issue is that drop_locks_do() only releases btree transaction locks,
+> but Thread 2 is blocked waiting for the two_state_lock (pagecache_block)
+> held by bch2_pagecache_block_get().
+> 
+> Fix by explicitly releasing and re-acquiring the pagecache_block lock
+> around both blocking operations (bch2_clamp_data_hole and
+> bch2_mark_pagecache_reserved), following the same pattern used in
+> bch2_page_fault(). Force a transaction restart after lock release to
+> ensure consistency.
+> 
+> Reported-by: syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
+> Tested-by: syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=cb91f22d8a581fc19edf
+> Signed-off-by: Deepanshu Kartikey <Kartikey406@gmail.com>
 
-Bart,=20
+Nice find... we still don't have lockdep support for pagecache add lock,
+there was one last bit preventing me from applying the patch last I was
+working on that.
 
-thanks, we will fix them in next version.
+If you want to join the IRC channel, this is one a couple of us might
+want to chew on. Your commit message is good, I'll probably apply it
+after it's not 3 am, but this'll be a good one to talk about.
 
-Kind regards,
-Bean
+(irc.oftc.net #bcache, and for this one the secret #bcachefs-dev)
+
+> ---
+>  fs/bcachefs/fs-io.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/fs/bcachefs/fs-io.c b/fs/bcachefs/fs-io.c
+> index a233f45875e9..66a60e5f03fc 100644
+> --- a/fs/bcachefs/fs-io.c
+> +++ b/fs/bcachefs/fs-io.c
+> @@ -694,13 +694,19 @@ static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
+>  						 &hole_start,
+>  						 &hole_end,
+>  						 opts.data_replicas, true)) {
+> +				/* Release pagecache_block to prevent deadlock with readahead */
+> +				bch2_pagecache_block_put(inode);
+>  				ret = drop_locks_do(trans,
+>  					(bch2_clamp_data_hole(&inode->v,
+>  							      &hole_start,
+>  							      &hole_end,
+>  							      opts.data_replicas, false), 0));
+> +				bch2_pagecache_block_get(inode);
+>  				if (ret)
+>  					goto bkey_err;
+> +				/* Force transaction restart to revalidate state */
+> +				ret = -BCH_ERR_transaction_restart;
+> +				goto bkey_err;
+>  			}
+>  			bch2_btree_iter_set_pos(trans, &iter, POS(iter.pos.inode, hole_start));
+>  
+> @@ -730,11 +736,17 @@ static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
+>  
+>  		if (bch2_mark_pagecache_reserved(inode, &hole_start,
+>  						 iter.pos.offset, true)) {
+> +			/* Release pagecache_block to prevent deadlock */
+> +			bch2_pagecache_block_put(inode);
+> +
+>  			ret = drop_locks_do(trans,
+>  				bch2_mark_pagecache_reserved(inode, &hole_start,
+>  							     iter.pos.offset, false));
+> +			bch2_pagecache_block_get(inode);
+>  			if (ret)
+>  				goto bkey_err;
+> +			ret = -BCH_ERR_transaction_restart;
+> +			goto bkey_err;
+>  		}
+>  bkey_err:
+>  		bch2_quota_reservation_put(c, inode, &quota_res);
+> -- 
+> 2.43.0
+> 
 
