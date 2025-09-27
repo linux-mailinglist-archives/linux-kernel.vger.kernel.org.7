@@ -1,112 +1,191 @@
-Return-Path: <linux-kernel+bounces-834786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E838BA5853
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:56:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CC9BA585C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B812E3B7220
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 02:55:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382CC1C078EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0152E212552;
-	Sat, 27 Sep 2025 02:55:54 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB2D21E0BE;
+	Sat, 27 Sep 2025 03:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Q3gfDCKq"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3372017996;
-	Sat, 27 Sep 2025 02:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4C221B9C9
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758941753; cv=none; b=iq0flI3yDRpku1etTufp6/JmCn+N6w2BQTsLYo/P3kQBb4TGl1hjeGHgGxmAZbV/6/nHmDx0EWLO4E0RvG1PcdT3KOridudESwPMi2WbADvKxdBRELisDeo9vWNGya86B5FW2miKuLkJ5FXfRp08qXi6doV9Th/idCSt6TCokes=
+	t=1758942091; cv=none; b=kfhzGF8tWT6Bk3DwaAMA8Mz0CtcbChwbE+FfLS05eGYngGTe/u0vn6KybBOx0zErQGR/SOOWwu/w9MIwJ4jRldALQNYN2Y+1/5pq5H/ypQbVSIGeU9jDDuqGgcFeU9HQgM/Q00aeSX4CpcHdj1xKYZ+WEgB9+uHdm8fhOvhFx5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758941753; c=relaxed/simple;
-	bh=Rv0N7J37HFHOwbWTV8VxmztIRCujr9xCLL4FoSP2rts=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ngClFgTBpouXwzuem02eWsuG3xcLzscfmdYGic1CnV48qYmfKHsDRzE3E9ylmdNd2n+uoSGC1Nuj25BZ1LLDtPxWzWxlmHiWMrEBwAu5eGKOhewizZk+N6pe8VCGsatHjqaisrpBrFafD7weiFWsPvJoWf7XVbpr77g3sYh3Tgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cYX7C19WHz1R8ds;
-	Sat, 27 Sep 2025 10:52:39 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 48E7114011F;
-	Sat, 27 Sep 2025 10:55:49 +0800 (CST)
-Received: from [10.174.178.247] (10.174.178.247) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 27 Sep 2025 10:55:48 +0800
-Subject: Re: [PATCH v3] ACPI: AGDI: Add interrupt signaling mode support
-To: "Kazuhiro Abe (Fujitsu)" <fj1078ii@fujitsu.com>, 'Ilkka Koskinen'
-	<ilkka@os.amperecomputing.com>, 'Sudeep Holla' <sudeep.holla@arm.com>
-CC: 'Lorenzo Pieralisi' <lpieralisi@kernel.org>, "'Rafael J. Wysocki'"
-	<rafael@kernel.org>, 'Len Brown' <lenb@kernel.org>,
-	"'linux-acpi@vger.kernel.org'" <linux-acpi@vger.kernel.org>,
-	"'linux-arm-kernel@lists.infradead.org'"
-	<linux-arm-kernel@lists.infradead.org>, "'linux-kernel@vger.kernel.org'"
-	<linux-kernel@vger.kernel.org>
-References: <20250905042751.945616-1-fj1078ii@aa.jp.fujitsu.com>
- <bd45c06a-77cc-2ab3-122e-41dee1aee0ac@os.amperecomputing.com>
- <TY3PR01MB99836C3D57503E70C8B8C9E9D509A@TY3PR01MB9983.jpnprd01.prod.outlook.com>
- <TY3PR01MB9983025D434CAA2CDF83656BD511A@TY3PR01MB9983.jpnprd01.prod.outlook.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <3bbdc50e-a55c-96ed-a8db-6bbce1760ee4@huawei.com>
-Date: Sat, 27 Sep 2025 10:55:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+	s=arc-20240116; t=1758942091; c=relaxed/simple;
+	bh=iqEzu6MSOCS+4xe5CLs8SDXx79JrEPYtjCeDbWq9KhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FdT1EIhBzzSn2dCC6+Iq8FELrzO3RV0XDH6owFygxeeJonxIl9feP9abQlSdtX7EYUXLq4pVIlEY72Ppd2WVmbX6oK9ELZieboX0m3QzIarxvYpHS/FtxGYzy9y9TgR21C+Y15aB0SlYJH2MyfEeTyXUlXyFChnjumQcJ3q6lJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Q3gfDCKq; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-115-162.bstnma.fios.verizon.net [173.48.115.162])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 58R31D43016618
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 23:01:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1758942075; bh=7f/gHNEv1YusOJ53J0jDbxjcFQ7pwqP5o4dTkzgBhDk=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Q3gfDCKqpmAlNw0hO1Q7K84mYKfb8+F7BQoGq8cwfoxwwnFc8b10ktK0jRhSHhja9
+	 9EvFF0RDkmwc/EkAyxQT/swoZlQTrGb5ELM9i2mKF4IZFfdIJ5ZmJBF6daK4zS8DD+
+	 qA0VC6L92w6dVHKFFPfP58atVBaw2Nqns/G3tk4Gwm6EAOMfEThoT94xStMUtd38TR
+	 47i8mDPzecucrsw3+Iiuyd6o9qJWthBSAGAh66Fxx+cNsb7R9VwjQebkIGZVcYCTXS
+	 DfN/x/OuXU0a6iP1ZlAFB6kJtH3Okw/eGzKd9Dp8SNIEwi2zR5XaaGtzflfJ3YtOFB
+	 I4lTltXnMJCDQ==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 781462E00D9; Fri, 26 Sep 2025 23:01:13 -0400 (EDT)
+Date: Fri, 26 Sep 2025 23:01:13 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: fix allocation failure in ext4_mb_load_buddy_gfp
+Message-ID: <20250927030113.GD118657@mit.edu>
+References: <20250927001815.16635-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <TY3PR01MB9983025D434CAA2CDF83656BD511A@TY3PR01MB9983.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250927001815.16635-1-kartikey406@gmail.com>
 
-On 2025/9/19 13:05, Kazuhiro Abe (Fujitsu) wrote:
-> Hi Hanjun & Sudeep
+On Sat, Sep 27, 2025 at 05:48:15AM +0530, Deepanshu Kartikey wrote:
 > 
->> Hi Ilkka
->>
->>> Hi Kazuhiro,
->>>
->>> On Fri, 5 Sep 2025, Kazuhiro Abe wrote:
->>>> AGDI has two types of signaling modes: SDEI and interrupt.
->>>> Currently, the AGDI driver only supports SDEI.
->>>> Therefore, add support for interrupt signaling mode The interrupt
->>>> vector is retrieved from the AGDI table, and call panic function
->>>> when an interrupt occurs.
->>>>
->>>> Signed-off-by: Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
->>>
->>>
->>> Looks good to me.
->>>
->>> Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
->>>
->>
->> Thanks for your review.
->>
->> Best Regards,
->> Kazuhiro Abe
->>
->>>
->>> Hanjun & Sudeep, what's your thought on enabling the use of regular
->>> interrupts here? I do agree the spec talks about non-maskable ones and
->>> to my understanding that's what the idea was indeed.
+> Your -EAGAIN suggestion makes sense. The approach would be:
+> 1. During memory reclaim, use GFP_NOFS without __GFP_NOFAIL
+> 2. If allocation fails, return -EAGAIN to let reclaim skip this inode
+> 3. Preallocation cleanup happens later when memory is available
 > 
-> Do you have any thoughts on this matter?
+> I understand this requires modifying the function signature and updating all call 
+> sites. I'm willing to do this work and properly test each caller's error handling. 
+> 
+> Questions on implementation:
+> - Should callers like ext4_clear_inode() ignore -EAGAIN (leave cleanup for later)?
 
-For the real use case, if the system is in failure state, for example,
-the system is panic, the CPU will not handle regular interrupts, so
-what's the use case do you have to use regular interrupt?
+It's not so simple.  The call path that involes ext4_clear_inode() is
+part of evict() which is called when the inode is evicted, and this is
+called from prune_icache_sb():
 
-Thanks
-Hanjun
+   https://syzkaller.appspot.com/bug?extid=fd3f70a4509fca8c265d
+
+The problem is that none of the code paths allow for the inode
+eviction to be delayed.  And once the inode is evicted, it's *gone*
+from memory, so there's no place to store the information needed so we
+can "clean up the inode later".
+
+The inode eviction might *take* a while, since there might be pages
+that need to be written back first.  And in order to do the writeback,
+the flusher thread might need to do some block allocations, and that
+might require some memory allocations.  But since that's happening on
+another thread, it doesn't cause any warnings.
+
+This is why in some sense the warning in __alloc_pages_slowpaths() is
+a little silly, and it's not really all that bad in practice:
+
+		/*
+		 * PF_MEMALLOC request from this context is rather bizarre
+		 * because we cannot reclaim anything and only can loop waiting
+		 * for somebody to do a work for us.
+		 */
+
+Sure, we might need to loop waiting for someone to work to release
+pages.  But in the inode eviction path, we are doing that *anyway*:
+
+	/*
+	 * Wait for flusher thread to be done with the inode so that filesystem
+	 * does not start destroying it while writeback is still running. Since
+	 * the inode has I_FREEING set, flusher thread won't start new work on
+	 * the inode.  We just have to wait for running writeback to finish.
+	 */
+	inode_wait_for_writeback(inode);
+
+(And writeback can require memory allocations. Oh, noos!)
+
+In actual practice, it's not that bad, since looping until te memory
+can be released is just *fine*.  The OOM killer might news to whack
+some processes to free memory, but if you're running so close to the
+memory exhaustion, it's generally acceptable to have lower priority
+jobs get nuked in order to keep the system.  And if that's not
+acceptable, then don't run the system that close to the edge!  :-)
+
+So the only reason why this is a problem is if someone is silly enough
+to run with panic on warn enabled.  (Don't do that.)  Or if you've
+gotten sucked int the gamification of syzbot.  Personally, if the mm
+folks want to insist on putting that WARN_ON_ONCE() there, I'm not
+going to worry about the syzbot complaint.  :-)
+
+
+If you *really* want to solve the problem, we probably need to have
+some way to that file system set a flag indicating that if you are
+trying to prunce the inode cache, and you're in a memory reclaim
+context, skip trying to evict this inode.  For that matter, if we're
+in a memory reclaim context, and the inode has dirty pages which are
+being written back --- maybe we should just skip that inode since
+there are probably easier and faster inodes to eject if we are so
+desperate that we're in memory reclaim mode.
+
+Another potential solution might be to pin the buddy bitmap and bitmap
+blocks in meory and don't let them to get evicted if we know that
+there might be preallocations pending for that partcular block group.
+This will prevent the need to do the memory allocation, and also
+avoids needing to do I/O to bring in the bitmap metadata.  The
+downside is this increases memory usage, all in the name of trying to
+avoid that silly mm warning.
+
+Yet another possibility is to have a pool of spare pages *just* for
+ext4, and in the case where we are in memory reclaim --- drop the
+__GFP_NOFAIL, and use the pool of spare pagese --- and if the pool of
+spare pages is exhausted, just wait and do a retry loop on the allocation.
+
+Or we could just drop the __GFP_NOFAIL and just add hard-coded retry
+loop.  It's what we used to do when the mm people tried to deprecate
+__GFP_NOFAIL, and issued a warning whenever someone trid to use
+__GFP_NOFAIL --- and so we said, "OK, if you really hate the
+GFP_NOFAIL, we'll just open code the retry in the file system, since
+data loss is unacceptable, and if that means the system might become
+unresponsive for a bit when the system is under heavy memory pressure,
+that's an acceptable tradeoff."  But then the mm folks said, no wait,
+if you do the retry loop in the caller we won't know that the memory
+allocation Really Really Needs to Suceed.  And so they dropped the
+__GFP_NOFAIL warning, and we dropped the hard-coded retry loop.
+
+> I'd like to implement this fix properly rather than leaving the WARNING unaddressed. 
+> Could you provide guidance on the preferred error handling for the different caller 
+> contexts?
+
+Quite frankly, I'mm not sure any of these choices are worth it
+compared to just leaving the WARNING unaddressed.
+
+If it were up to me, I'd have a WARN_DONT_PANIC() message which
+doesn't actually print the word "WARNING" so it doesn't trigger
+syzbot, and which does't force a panic on warn.  That it satisfies the
+mm folks who have never liked __GFP_NOFAIL, since they can let the
+kernel whine; it satifies the people who think this is a "securty
+problem" because there are people who are silly enough to do panic on
+warn; it satisfies the people who buy into the syzbot gamification;
+and it avoids file system corruption, which keeps the file system
+people happy.
+
+Or we could just drop this particular warning altogether.  Silly
+warning.  :-)
+
+Cheers,
+
+						- Ted
 
