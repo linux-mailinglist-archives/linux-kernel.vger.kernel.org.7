@@ -1,388 +1,201 @@
-Return-Path: <linux-kernel+bounces-835002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5C2BA602D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:02:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1EABA6033
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10E91B240DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7262323F27
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46252E1C56;
-	Sat, 27 Sep 2025 14:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H2IsAtIZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7E1279351;
+	Sat, 27 Sep 2025 14:03:28 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7581625;
-	Sat, 27 Sep 2025 14:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850031DF73C
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 14:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758981739; cv=none; b=XNcyO6ip6e5ypxFmPV+DdPcnXR392SpL9CsnWxXk1vj0XjrGv+dLSVpqmlUcAQbRROo8VvadxADss2o4P+BatHGyNJEOLFpr7zDTdUGG9UmeA/KzCYgUVu/CbOnfLb0Z5/V0a9k1pTEml+bSdFxRm/MlGawNTPvQEBZDRA27DYw=
+	t=1758981808; cv=none; b=GXxAf7mn8izmSO1QiWShxK9Nyq1mzuwdCMS89tTNhCOB0QuWHivQ+PWKT0X8umJrCAl6gy0L+J+TagmqIrwD7vYr5FmgjkKikqVPMuIJUO0GLMXMm36MK6gp0up/CMlxtC23gxd/Ht3bQiklmi6+bbDoYNDDivwa+hmeOkNtPu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758981739; c=relaxed/simple;
-	bh=e5U1xGvNbO0HvWgSJ7VB6F+ifO4uCe/kW5E1C56z3gQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKseVdQHJ6Pf/OKzO0iGjv4tOE6CgUHifH8ADwcaBBfd7VlpWjqHUSsx9yQZ2Z+sWUOhUdD1n1VqlfckxafilmoKl6wAoqPKMTcxCCkviJgGLrh+b37f6ygmxHjOOnbpasxF0hu9/UjKvtYEqn1+4Ol7eEwx3AP6nCimQ327QFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H2IsAtIZ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758981737; x=1790517737;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e5U1xGvNbO0HvWgSJ7VB6F+ifO4uCe/kW5E1C56z3gQ=;
-  b=H2IsAtIZcMXBy8zFjONi1PrH8Q0ICvdkT6OBBawTpeE7Nd9bJwS7Eh5t
-   v+R0L+Ft3ZWQD0zr+q8s2jef5w7mh/N12vEY6yyrF4ewiyX9qeRdXf1SQ
-   vF7Q8fG+Ly/ebsYBM8zjeWas75Ln5rKVqVKPiojypYt0ZblsICYHljnSv
-   BiuSEvASodLe+g51LkSIoafrJQM2XbPyRX1Yf1vfA5V+PVBHb9RcAW2Y8
-   hLpZtPux0lUlIZ9Gl3GZNQUQDt8TMf9p0A1TXcCqFentWYNK2wzkm8+Go
-   jOGkOX7kZa3pOVz9+E3tGDVSJeXDyT5y11P8adBtsW08C0H8q0XWnSWxI
-   Q==;
-X-CSE-ConnectionGUID: /QaYB+s2R2q0CjJSXCdbBA==
-X-CSE-MsgGUID: EaZO7u3kTZu+IydnDWEuqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61248285"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61248285"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 07:02:16 -0700
-X-CSE-ConnectionGUID: O0GBdTMRRS+5glIrGQfm1w==
-X-CSE-MsgGUID: bttIIo7YSsCxJMgxWtaEdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="177774235"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Sep 2025 07:02:12 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2VV3-00076B-2b;
-	Sat, 27 Sep 2025 14:02:09 +0000
-Date: Sat, 27 Sep 2025 22:01:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-x1e80100: Add missing USB4
- clocks/resets
-Message-ID: <202509272140.wYFpHZfD-lkp@intel.com>
-References: <20250926-topic-hamoa_gcc_usb4-v1-2-25cad1700829@oss.qualcomm.com>
+	s=arc-20240116; t=1758981808; c=relaxed/simple;
+	bh=dgs6cQRWJTD4WcoHP0V6zKMtxjBEMlWQE2mPpSLQhxw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dYmBldvA2+P+thiTVOmNk3fjGfZ9ueYtAWuNOk4gucYZH/jT6817Nb5RgvciN25JDyjoMYIFFVXSErMSZKOt/EvQl1xNcOL7UswFoyYA+MJ5MuLPbGzUjkjQSQWx8fTmxhAoec2TWJmQMKiGyH4Aa9XkazQR1crN/MTdsem2ubM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8877131dec5so335095339f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 07:03:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758981805; x=1759586605;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Tb7WUnUnmowsD5Xi9s+qXAGpwDsGmAyfKBwl/tCWYKQ=;
+        b=ZWhAlaKYnj1cIzlktq3Vq43Fkt5ut4GDIWmFaPqj1nmJRNLU9y23r5LcCzKSTsqIti
+         wJyI0R3qf7e4FjfEAXVbRtgWENcbVlLx5GYBL723q+D6/ZaVExzGOh1aGlcK+xTZGMJ4
+         ZbBVygASQ201HYpTC0vGiwVnlaBOo45tjiAp7YvLUZyfxCf6xXxxMRPS4finnCqQMklF
+         GUlNrZUgQykSKTsM4yGJ3gb3mYGKG8P7rPamMMzHZM+W78CIJWLQlNItz9ukTfDEPVJl
+         M+yhBwJjsSO0UUcH+lWIHYQn7IfHtS7KixMxa5NCy57s52oBDnQpb8HeKv9J1sw/BTXq
+         2cnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXR9zhjnrNIfxyOi6S4qNH9gjsi8I8ytO6AaxmUiXIOBUhDPLjrFuCEbsQKF5aL5AqlZ2x4MGW1j9+AVUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw9GHJVtBAlO1a0WEt4bwSiTLrkSVwj8MUEUbyHCEMnqK8eoLO
+	HUJZFTYQjDHBgvCJPVbUyoWKd5uJV2/DkLR8YhtnJ/ilr6x16+XUB4Mf0Bx4vv7VKv2rZDr6cFo
+	6XVNFspzqc6SqCJKrku9Bf3zBviAySIvJKtXVENtSc6oZHfiM+sw9HrBPPc8=
+X-Google-Smtp-Source: AGHT+IE4Trg4Vjvy/AHY1DV5AiKg45oaL3eCTMCg1kYqhhZK/sZ14O/98ZePqene8Jqej8bzVmAugQ38PJ5m2iEjlGRI87/y2flv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-topic-hamoa_gcc_usb4-v1-2-25cad1700829@oss.qualcomm.com>
+X-Received: by 2002:a05:6e02:1fc8:b0:428:76ec:b2ab with SMTP id
+ e9e14a558f8ab-42876ecb3d5mr51249645ab.6.1758981805406; Sat, 27 Sep 2025
+ 07:03:25 -0700 (PDT)
+Date: Sat, 27 Sep 2025 07:03:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d7eead.a00a0220.102ee.0015.GAE@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_mark_pagecache_unallocated
+ (3)
+From: syzbot <syzbot+94b822fda1fb3f24f1da@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Konrad,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb]
+HEAD commit:    b5db4add5e77 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1369627c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2ae34a0711ff2f1
+dashboard link: https://syzkaller.appspot.com/bug?extid=94b822fda1fb3f24f1da
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14cc0d34580000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Konrad-Dybcio/dt-bindings-clock-qcom-x1e80100-gcc-Add-missing-USB4-clocks-resets/20250926-200520
-base:   8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-patch link:    https://lore.kernel.org/r/20250926-topic-hamoa_gcc_usb4-v1-2-25cad1700829%40oss.qualcomm.com
-patch subject: [PATCH 2/3] clk: qcom: gcc-x1e80100: Add missing USB4 clocks/resets
-config: riscv-randconfig-002-20250927 (https://download.01.org/0day-ci/archive/20250927/202509272140.wYFpHZfD-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509272140.wYFpHZfD-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6eee2232d5c1/disk-b5db4add.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a8b00f2f1234/vmlinux-b5db4add.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fc0d466f156c/Image-b5db4add.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/efd7fb7b4339/mount_0.gz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509272140.wYFpHZfD-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+94b822fda1fb3f24f1da@syzkaller.appspotmail.com
 
-All warnings (new ones prefixed by >>):
+INFO: task syz.1.152:8462 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.152       state:D stack:0     pid:8462  tgid:8423  ppid:6684   task_flags:0x400140 flags:0x00000011
+Call trace:
+ __switch_to+0x418/0x87c arch/arm64/kernel/process.c:741 (T)
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x13b0/0x2864 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xb4/0x230 kernel/sched/core.c:7058
+ io_schedule+0x84/0xf0 kernel/sched/core.c:7903
+ folio_wait_bit_common+0x56c/0x9e0 mm/filemap.c:1317
+ __folio_lock+0x2c/0x3c mm/filemap.c:1675
+ folio_lock include/linux/pagemap.h:1133 [inline]
+ bch2_mark_pagecache_unallocated+0x310/0x6c8 fs/bcachefs/fs-io-pagecache.c:275
+ bch2_remap_file_range+0x598/0xb70 fs/bcachefs/fs-io.c:933
+ vfs_clone_file_range+0x62c/0xb68 fs/remap_range.c:403
+ ioctl_file_clone fs/ioctl.c:240 [inline]
+ ioctl_file_clone_range fs/ioctl.c:258 [inline]
+ do_vfs_ioctl+0xb84/0x1834 fs/ioctl.c:545
+ __do_sys_ioctl fs/ioctl.c:596 [inline]
+ __se_sys_ioctl fs/ioctl.c:584 [inline]
+ __arm64_sys_ioctl+0xe4/0x1c4 fs/ioctl.c:584
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+INFO: task syz.1.152:8464 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.152       state:D stack:0     pid:8464  tgid:8423  ppid:6684   task_flags:0x440040 flags:0x00000001
+Call trace:
+ __switch_to+0x418/0x87c arch/arm64/kernel/process.c:741 (T)
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x13b0/0x2864 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xb4/0x230 kernel/sched/core.c:7058
+ __bch2_two_state_lock+0x1b4/0x2f0 fs/bcachefs/two_state_shared_lock.c:7
+ bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:55 [inline]
+ bch2_readahead+0xbc8/0xd88 fs/bcachefs/fs-io-buffered.c:296
+ read_pages+0x13c/0x4c4 mm/readahead.c:160
+ page_cache_ra_order+0x7a0/0xb7c mm/readahead.c:512
+ page_cache_sync_ra+0x580/0x73c mm/readahead.c:619
+ filemap_get_pages+0x2f4/0x19c8 mm/filemap.c:2603
+ filemap_splice_read+0x454/0xad8 mm/filemap.c:2991
+ do_splice_read fs/splice.c:982 [inline]
+ splice_file_to_pipe+0x374/0x5a8 fs/splice.c:1292
+ do_sendfile+0x37c/0x658 fs/read_write.c:1376
+ __do_sys_sendfile64 fs/read_write.c:1431 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1417 [inline]
+ __arm64_sys_sendfile64+0x1b4/0x274 fs/read_write.c:1417
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
 
->> drivers/clk/qcom/gcc-x1e80100.c:580:32: warning: 'gcc_parent_map_33' defined but not used [-Wunused-const-variable=]
-     580 | static const struct parent_map gcc_parent_map_33[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:570:32: warning: 'gcc_parent_map_32' defined but not used [-Wunused-const-variable=]
-     570 | static const struct parent_map gcc_parent_map_32[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:560:32: warning: 'gcc_parent_map_31' defined but not used [-Wunused-const-variable=]
-     560 | static const struct parent_map gcc_parent_map_31[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:550:32: warning: 'gcc_parent_map_30' defined but not used [-Wunused-const-variable=]
-     550 | static const struct parent_map gcc_parent_map_30[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:540:32: warning: 'gcc_parent_map_29' defined but not used [-Wunused-const-variable=]
-     540 | static const struct parent_map gcc_parent_map_29[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:530:32: warning: 'gcc_parent_map_28' defined but not used [-Wunused-const-variable=]
-     530 | static const struct parent_map gcc_parent_map_28[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:520:32: warning: 'gcc_parent_map_27' defined but not used [-Wunused-const-variable=]
-     520 | static const struct parent_map gcc_parent_map_27[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:510:32: warning: 'gcc_parent_map_26' defined but not used [-Wunused-const-variable=]
-     510 | static const struct parent_map gcc_parent_map_26[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:500:32: warning: 'gcc_parent_map_25' defined but not used [-Wunused-const-variable=]
-     500 | static const struct parent_map gcc_parent_map_25[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:490:32: warning: 'gcc_parent_map_24' defined but not used [-Wunused-const-variable=]
-     490 | static const struct parent_map gcc_parent_map_24[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:480:32: warning: 'gcc_parent_map_23' defined but not used [-Wunused-const-variable=]
-     480 | static const struct parent_map gcc_parent_map_23[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:470:32: warning: 'gcc_parent_map_22' defined but not used [-Wunused-const-variable=]
-     470 | static const struct parent_map gcc_parent_map_22[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:460:32: warning: 'gcc_parent_map_21' defined but not used [-Wunused-const-variable=]
-     460 | static const struct parent_map gcc_parent_map_21[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:450:32: warning: 'gcc_parent_map_20' defined but not used [-Wunused-const-variable=]
-     450 | static const struct parent_map gcc_parent_map_20[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:440:32: warning: 'gcc_parent_map_19' defined but not used [-Wunused-const-variable=]
-     440 | static const struct parent_map gcc_parent_map_19[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:430:32: warning: 'gcc_parent_map_18' defined but not used [-Wunused-const-variable=]
-     430 | static const struct parent_map gcc_parent_map_18[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:420:32: warning: 'gcc_parent_map_17' defined but not used [-Wunused-const-variable=]
-     420 | static const struct parent_map gcc_parent_map_17[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:410:32: warning: 'gcc_parent_map_16' defined but not used [-Wunused-const-variable=]
-     410 | static const struct parent_map gcc_parent_map_16[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:400:32: warning: 'gcc_parent_map_15' defined but not used [-Wunused-const-variable=]
-     400 | static const struct parent_map gcc_parent_map_15[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:390:32: warning: 'gcc_parent_map_14' defined but not used [-Wunused-const-variable=]
-     390 | static const struct parent_map gcc_parent_map_14[] = {
-         |                                ^~~~~~~~~~~~~~~~~
-   drivers/clk/qcom/gcc-x1e80100.c:380:32: warning: 'gcc_parent_map_13' defined but not used [-Wunused-const-variable=]
-     380 | static const struct parent_map gcc_parent_map_13[] = {
-         |                                ^~~~~~~~~~~~~~~~~
+Showing all locks held in the system:
+2 locks held by kworker/u8:0/12:
+1 lock held by khungtaskd/32:
+ #0: ffff80008f9d9620 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48 include/linux/rcupdate.h:330
+1 lock held by klogd/6160:
+2 locks held by getty/6313:
+ #0: ffff0000d35390a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+ #1: ffff800099e8e2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x34c/0xfa4 drivers/tty/n_tty.c:2222
+1 lock held by syz-executor/6571:
+ #0: ffff0000c696fc68 (&pipe->mutex){+.+.}-{4:4}, at: pipe_release+0x54/0x2fc fs/pipe.c:727
+2 locks held by syz.1.152/8462:
+ #0: ffff0000cf3a0428 (sb_writers#11){.+.+}-{0:0}, at: ioctl_file_clone fs/ioctl.c:240 [inline]
+ #0: ffff0000cf3a0428 (sb_writers#11){.+.+}-{0:0}, at: ioctl_file_clone_range fs/ioctl.c:258 [inline]
+ #0: ffff0000cf3a0428 (sb_writers#11){.+.+}-{0:0}, at: do_vfs_ioctl+0xb84/0x1834 fs/ioctl.c:545
+ #1: ffff0000f9f89078 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff0000f9f89078 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: lock_two_nondirectories+0xc4/0x150 fs/inode.c:1232
+2 locks held by syz.1.152/8464:
+ #0: ffff0000c696fc68 (&pipe->mutex){+.+.}-{4:4}, at: pipe_lock+0x68/0x98 fs/pipe.c:91
+ #1: ffff0000f9f89218 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #1: ffff0000f9f89218 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_order+0x268/0xb7c mm/readahead.c:488
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
-   Depends on [n]: BINFMT_ELF [=n] && ELF_CORE [=y]
-   Selected by [y]:
-   - RISCV [=y]
+=============================================
 
 
-vim +/gcc_parent_map_33 +580 drivers/clk/qcom/gcc-x1e80100.c
 
-   389	
- > 390	static const struct parent_map gcc_parent_map_14[] = {
-   391		{ P_GCC_USB4_0_PHY_DP1_GMUX_CLK_SRC, 0 },
-   392		{ P_USB4_0_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   393	};
-   394	
-   395	static const struct clk_parent_data gcc_parent_data_14[] = {
-   396		{ .index = DT_GCC_USB4_0_PHY_DP1_GMUX_CLK_SRC },
-   397		{ .index = DT_USB4_0_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   398	};
-   399	
- > 400	static const struct parent_map gcc_parent_map_15[] = {
-   401		{ P_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK, 0 },
-   402		{ P_BI_TCXO, 2 },
-   403	};
-   404	
-   405	static const struct clk_parent_data gcc_parent_data_15[] = {
-   406		{ .index = DT_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   407		{ .index = DT_BI_TCXO },
-   408	};
-   409	
- > 410	static const struct parent_map gcc_parent_map_16[] = {
-   411		{ P_GCC_USB4_0_PHY_PCIE_PIPEGMUX_CLK_SRC, 0 },
-   412		{ P_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK, 1 },
-   413	};
-   414	
-   415	static const struct clk_parent_data gcc_parent_data_16[] = {
-   416		{ .index = DT_GCC_USB4_0_PHY_PCIE_PIPEGMUX_CLK_SRC },
-   417		{ .index = DT_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   418	};
-   419	
- > 420	static const struct parent_map gcc_parent_map_17[] = {
-   421		{ P_QUSB4PHY_0_GCC_USB4_RX0_CLK, 0 },
-   422		{ P_BI_TCXO, 2 },
-   423	};
-   424	
-   425	static const struct clk_parent_data gcc_parent_data_17[] = {
-   426		{ .index = DT_QUSB4PHY_0_GCC_USB4_RX0_CLK },
-   427		{ .index = DT_BI_TCXO },
-   428	};
-   429	
- > 430	static const struct parent_map gcc_parent_map_18[] = {
-   431		{ P_QUSB4PHY_0_GCC_USB4_RX1_CLK, 0 },
-   432		{ P_BI_TCXO, 2 },
-   433	};
-   434	
-   435	static const struct clk_parent_data gcc_parent_data_18[] = {
-   436		{ .index = DT_QUSB4PHY_0_GCC_USB4_RX1_CLK },
-   437		{ .index = DT_BI_TCXO },
-   438	};
-   439	
- > 440	static const struct parent_map gcc_parent_map_19[] = {
-   441		{ P_GCC_USB4_0_PHY_SYS_PIPEGMUX_CLK_SRC, 0 },
-   442		{ P_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK, 2 },
-   443	};
-   444	
-   445	static const struct clk_parent_data gcc_parent_data_19[] = {
-   446		{ .index = DT_GCC_USB4_0_PHY_SYS_PIPEGMUX_CLK_SRC },
-   447		{ .index = DT_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   448	};
-   449	
- > 450	static const struct parent_map gcc_parent_map_20[] = {
-   451		{ P_GCC_USB4_1_PHY_DP0_GMUX_CLK_SRC, 0 },
-   452		{ P_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   453	};
-   454	
-   455	static const struct clk_parent_data gcc_parent_data_20[] = {
-   456		{ .index = DT_GCC_USB4_1_PHY_DP0_GMUX_CLK_SRC },
-   457		{ .index = DT_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   458	};
-   459	
- > 460	static const struct parent_map gcc_parent_map_21[] = {
-   461		{ P_GCC_USB4_1_PHY_DP1_GMUX_CLK_SRC, 0 },
-   462		{ P_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   463	};
-   464	
-   465	static const struct clk_parent_data gcc_parent_data_21[] = {
-   466		{ .index = DT_GCC_USB4_1_PHY_DP1_GMUX_CLK_SRC },
-   467		{ .index = DT_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   468	};
-   469	
- > 470	static const struct parent_map gcc_parent_map_22[] = {
-   471		{ P_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK, 0 },
-   472		{ P_BI_TCXO, 2 },
-   473	};
-   474	
-   475	static const struct clk_parent_data gcc_parent_data_22[] = {
-   476		{ .index = DT_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   477		{ .index = DT_BI_TCXO },
-   478	};
-   479	
- > 480	static const struct parent_map gcc_parent_map_23[] = {
-   481		{ P_GCC_USB4_1_PHY_PCIE_PIPEGMUX_CLK_SRC, 0 },
-   482		{ P_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK, 1 },
-   483	};
-   484	
-   485	static const struct clk_parent_data gcc_parent_data_23[] = {
-   486		{ .index = DT_GCC_USB4_1_PHY_PCIE_PIPEGMUX_CLK_SRC },
-   487		{ .index = DT_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   488	};
-   489	
- > 490	static const struct parent_map gcc_parent_map_24[] = {
-   491		{ P_QUSB4PHY_1_GCC_USB4_RX0_CLK, 0 },
-   492		{ P_BI_TCXO, 2 },
-   493	};
-   494	
-   495	static const struct clk_parent_data gcc_parent_data_24[] = {
-   496		{ .index = DT_QUSB4PHY_1_GCC_USB4_RX0_CLK },
-   497		{ .index = DT_BI_TCXO },
-   498	};
-   499	
- > 500	static const struct parent_map gcc_parent_map_25[] = {
-   501		{ P_QUSB4PHY_1_GCC_USB4_RX1_CLK, 0 },
-   502		{ P_BI_TCXO, 2 },
-   503	};
-   504	
-   505	static const struct clk_parent_data gcc_parent_data_25[] = {
-   506		{ .index = DT_QUSB4PHY_1_GCC_USB4_RX1_CLK },
-   507		{ .index = DT_BI_TCXO },
-   508	};
-   509	
- > 510	static const struct parent_map gcc_parent_map_26[] = {
-   511		{ P_GCC_USB4_1_PHY_SYS_PIPEGMUX_CLK_SRC, 0 },
-   512		{ P_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK, 2 },
-   513	};
-   514	
-   515	static const struct clk_parent_data gcc_parent_data_26[] = {
-   516		{ .index = DT_GCC_USB4_1_PHY_SYS_PIPEGMUX_CLK_SRC },
-   517		{ .index = DT_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   518	};
-   519	
- > 520	static const struct parent_map gcc_parent_map_27[] = {
-   521		{ P_GCC_USB4_2_PHY_DP0_GMUX_CLK_SRC, 0 },
-   522		{ P_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   523	};
-   524	
-   525	static const struct clk_parent_data gcc_parent_data_27[] = {
-   526		{ .index = DT_GCC_USB4_2_PHY_DP0_GMUX_CLK_SRC },
-   527		{ .index = DT_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   528	};
-   529	
- > 530	static const struct parent_map gcc_parent_map_28[] = {
-   531		{ P_GCC_USB4_2_PHY_DP1_GMUX_CLK_SRC, 0 },
-   532		{ P_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   533	};
-   534	
-   535	static const struct clk_parent_data gcc_parent_data_28[] = {
-   536		{ .index = DT_GCC_USB4_2_PHY_DP1_GMUX_CLK_SRC },
-   537		{ .index = DT_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   538	};
-   539	
- > 540	static const struct parent_map gcc_parent_map_29[] = {
-   541		{ P_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK, 0 },
-   542		{ P_BI_TCXO, 2 },
-   543	};
-   544	
-   545	static const struct clk_parent_data gcc_parent_data_29[] = {
-   546		{ .index = DT_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   547		{ .index = DT_BI_TCXO },
-   548	};
-   549	
- > 550	static const struct parent_map gcc_parent_map_30[] = {
-   551		{ P_GCC_USB4_2_PHY_PCIE_PIPEGMUX_CLK_SRC, 0 },
-   552		{ P_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK, 1 },
-   553	};
-   554	
-   555	static const struct clk_parent_data gcc_parent_data_30[] = {
-   556		{ .index = DT_GCC_USB4_2_PHY_PCIE_PIPEGMUX_CLK_SRC },
-   557		{ .index = DT_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   558	};
-   559	
- > 560	static const struct parent_map gcc_parent_map_31[] = {
-   561		{ P_QUSB4PHY_2_GCC_USB4_RX0_CLK, 0 },
-   562		{ P_BI_TCXO, 2 },
-   563	};
-   564	
-   565	static const struct clk_parent_data gcc_parent_data_31[] = {
-   566		{ .index = DT_QUSB4PHY_2_GCC_USB4_RX0_CLK },
-   567		{ .index = DT_BI_TCXO },
-   568	};
-   569	
- > 570	static const struct parent_map gcc_parent_map_32[] = {
-   571		{ P_QUSB4PHY_2_GCC_USB4_RX1_CLK, 0 },
-   572		{ P_BI_TCXO, 2 },
-   573	};
-   574	
-   575	static const struct clk_parent_data gcc_parent_data_32[] = {
-   576		{ .index = DT_QUSB4PHY_2_GCC_USB4_RX1_CLK },
-   577		{ .index = DT_BI_TCXO },
-   578	};
-   579	
- > 580	static const struct parent_map gcc_parent_map_33[] = {
-   581		{ P_GCC_USB4_2_PHY_SYS_PIPEGMUX_CLK_SRC, 0 },
-   582		{ P_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK, 2 },
-   583	};
-   584	
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
