@@ -1,356 +1,315 @@
-Return-Path: <linux-kernel+bounces-834916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED11BA5D3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:03:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51583BA5D44
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2FA4A7CE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2A472A28AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524F52D739D;
-	Sat, 27 Sep 2025 10:03:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06F62D8DA6;
+	Sat, 27 Sep 2025 10:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="CrWO8Eor"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838A42D73A6
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 10:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758967386; cv=none; b=f2hGBolg/A8ANCjQYP2gJ2yAiMfC5oh5rmSf8GOjdDbnVjfa9ZrPHSsZaw1MM8LP8AkdzbqpJMta1VIF6mLpFlh2H+mqm1IVC15+8cQL69KwpRYSM254oaW4m2LmbBG/kvVqrvXdLHN1yATzRT38RXzOpsg/CS3hRYTwIU+SfN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758967386; c=relaxed/simple;
-	bh=LlHWunSevbjFEb8HvBRb0+2vxvv2VgKwhsOog1aTgp8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fUECxJOw11rvXSevDess6epF/PKlnh0Iy/oQtotbZ47tpQvvD4+/swpO61kkHbCrkdXuQVCN9bnHy2GAJioXPddSqgaWxlbny2/PduU87fBQgHmhtkS/jy8v1m13keO6x1WshfqjyG9yoeL3ZFtGiueFXGrV99QNq8M7Wg5xFhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-919d48f1869so104933039f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:03:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758967383; x=1759572183;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3hG+x2Y2Of2SIwFCekVHrSaqxknCe8WARxyOVJdIFIk=;
-        b=dipO0yWobGWtKedDRf4bAgZaw7r+8c+7FqptMZCAKKb0e9A7ZcP35Eb1TQ4R7ElKz/
-         3TrhJp88ulfwNeCCzvcyrY2Pv3Ep4XgtEsjKsyVvvkMTIXZIQB1TWLQv8E5gENI9Wmuy
-         tC5iRsW6tOdsJ6eyy07d64gPeAQVzI+Af+wzX5RFCdTdNXzW0kAvDN+7ITaqQAxoow7l
-         Dvtaqcwb3X8koms5cxHyGtcTecfUzJ7vtJNQQj4BqqKYecfPaEbzhRyTWWJDSj0NY1FB
-         aCqkL3A8tiSC0/2VF6htjBUalMAFd43DPp3B2DjrQNHrO+EFV63Iy6ZroU7bsyxR+km7
-         dBzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9XyWgwJFI8QuHO4lXwY9cbsd4Re7mLF3zxD55qQ00Gloe20mSctlLrtq4w56BsWomA0jWuAgxPHEbKls=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7hpPYwQrO7cP+lU2mh0q6dJuhuyAKMxbmJtglYDeSg/IaYqD/
-	Zd02m7L8MDRbGJoEyjl/4e4wjdY9r7sKbqq6q84Rx6Yvx0jC4J31sVeBgepzgBwq04jY9o4znjC
-	ce3tbWWrp2K8ogb+fUloAUG+8kiXv1F2FYRFQfqRd8OJaUnO9teBIfzDI29Q=
-X-Google-Smtp-Source: AGHT+IHhy5JrnnECwZu1VB2UBmFHSPoofqCIHZ1/NxCx4a28bjs3r5r58it1gonZDH73bkQeOFn2jN4LFSPXFnv60R9ra/3vycso
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E725B2417E6;
+	Sat, 27 Sep 2025 10:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758967708; cv=pass; b=dp0yg8ZK/DFc2bXQCUYUmcEsIPmRkm5RieEPgN9/fLp+59mGxEnLNMsjEoIYm7KP7DIt1syJE3zxFMFuyS9+HKmR9Gxpr/uzivst18swbpKp8BYtbnSHSvIRLUWKhlCsSrtila8RxsMRD4njo+Q5oK1NLjdAnLgfYodU+1tKrAQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758967708; c=relaxed/simple;
+	bh=kzPyvFQVOR/sEG8zq3P/u1hIdN2weJ3fwoYutthekLo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UGe/2mo8d25l6UWZe5U3Nu5z6tmhMh9/cCCq3EBtDUPiOBBeAWv+dfxvxV03Mip9LizEbiqjLwBU2KCu1V8r61N80MtL5irxHBK2brIJ5uMzT5M698a7x122Tp927NeglZ32uNIB2XcVW0Zdf/ShdqnHVnpeymKdxBlBSKFcQmU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=CrWO8Eor; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758967688; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EvGUmOQOnn66XNu4iQHDegIrnfPZOGwR8jHMfBKYArSG5BzFwhpFveTQ0Oya1QBCLUoDamt+NLTT0Gfant+Z25u+oKdMbMIkEmDjd9fpiJt8FSw/9+UOhnPnVv1DcWNe0lX0PxV3NqS4y6VwbTD0lT19h3aqrpzAFQZb5QlOWRg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758967688; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=N7MPDYnwLs60xdJwy83QkaCYwGvfqrTmZM1T4hOllyk=; 
+	b=iqvNDH/EU+wioxRvjAEUg/IRoe0+hpRAEPbLN3LHzWz+BEVWpwaXPoVJjwasho88t7cQt3/q98WdCRflET0sxcymNm4KQsRkBJtco8kwsrG3YmV+VMkRfoooOWciFvEqxH6+CrGWQC/AWM9ldDDioXnK7DIuKd7GAlGCBXY3ums=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758967688;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=N7MPDYnwLs60xdJwy83QkaCYwGvfqrTmZM1T4hOllyk=;
+	b=CrWO8EorGL1cCYZGntjh+W1DZSdttUXmVrS65YFdD2YY2rtlNjsWvOwHeCLA/lIc
+	GJTBXpx6Gw9nLk04Jg2cF2pnzc2ThVUGQkDPvCRmRZsigFHv/Ni1ca4obH4Nab3Iuak
+	qw94czCokFxOsbm2ZBpVELI+SFfOtDYIYrTgbXmE=
+Received: by mx.zohomail.com with SMTPS id 1758967686557981.6240117112845;
+	Sat, 27 Sep 2025 03:08:06 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH 1/1] cxl/port: Remove devm_cxl_port_enumerate_dports()
+Date: Sat, 27 Sep 2025 18:07:09 +0800
+Message-Id: <20250927100709.146507-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:490d:b0:418:84eb:ea20 with SMTP id
- e9e14a558f8ab-4259562f43bmr152366645ab.15.1758967383457; Sat, 27 Sep 2025
- 03:03:03 -0700 (PDT)
-Date: Sat, 27 Sep 2025 03:03:03 -0700
-In-Reply-To: <20250927091931.7691-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d7b657.a70a0220.10c4b.000e.GAE@google.com>
-Subject: Re: [syzbot] [sound?] [usb?] general protection fault in snd_usbmidi_do_output
-From: syzbot <syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, clemens@ladisch.de, hdanton@sina.com, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
-	syzkaller-bugs@googlegroups.com, tiwai@suse.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227a89b6348775ddca7e9d219170000b918d8ae3fe4a9f66be5bd2811329ec43e45c2fe9e681bbac1:zu08011227697cb977fa82f30c10e424250000bfd0fcc0df7a1eb2ccd13f6a0b9cc5900d004d722d83861ec5:rf0801122d259923f53310740e8b7ffbca000036567df504dccb85927602ead79f85170000ebae3934819914ff43bdbaf05b:ZohoMail
+X-ZohoMailClient: External
 
-Hello,
+devm_cxl_port_enumerate_dports() is not longer used after below commit
+commit 4f06d81e7c6a ("cxl: Defer dport allocation for switch ports")
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Write in snd_usbmidi_in_urb_complete
+Delete it and the relevant interface implemented in cxl_test.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in snd_usbmidi_in_urb_complete+0x389/0x3c0 sound/usb/midi.c:251
-Write of size 1 at addr ffff888074717943 by task kworker/1:3/5866
+Signed-off-by: Li Ming <ming.li@zohomail.com>
+---
+base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
+---
+ drivers/cxl/core/pci.c        | 87 ++++-------------------------------
+ drivers/cxl/cxlpci.h          |  1 -
+ tools/testing/cxl/Kbuild      |  1 -
+ tools/testing/cxl/test/cxl.c  | 32 -------------
+ tools/testing/cxl/test/mock.c | 15 ------
+ tools/testing/cxl/test/mock.h |  1 -
+ 6 files changed, 8 insertions(+), 129 deletions(-)
 
-CPU: 1 UID: 0 PID: 5866 Comm: kworker/1:3 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- snd_usbmidi_in_urb_complete+0x389/0x3c0 sound/usb/midi.c:251
- __usb_hcd_giveback_urb+0x38b/0x610 drivers/usb/core/hcd.c:1661
- usb_hcd_giveback_urb+0x39b/0x450 drivers/usb/core/hcd.c:1745
- dummy_timer+0x1814/0x3a30 drivers/usb/gadget/udc/dummy_hcd.c:1995
- __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
- __hrtimer_run_queues+0x202/0xad0 kernel/time/hrtimer.c:1825
- hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1842
- handle_softirqs+0x219/0x8e0 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0x109/0x170 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1050
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x62/0x350 kernel/locking/lockdep.c:5872
-Code: f9 3e 12 83 f8 07 0f 87 bc 02 00 00 89 c0 48 0f a3 05 c2 d8 13 0f 0f 82 74 02 00 00 8b 35 5a 0a 14 0f 85 f6 0f 85 8d 00 00 00 <48> 8b 44 24 30 65 48 2b 05 19 f9 3e 12 0f 85 c7 02 00 00 48 83 c4
-RSP: 0018:ffffc9000213f6a8 EFLAGS: 00000206
-RAX: 0000000000000046 RBX: ffffffff8e5c16a0 RCX: 000000004089a3e6
-RDX: 0000000000000000 RSI: ffffffff8de2c268 RDI: ffffffff8c163a00
-RBP: 0000000000000002 R08: b04c8ca6f5f73b8b R09: 0000000000000000
-R10: 0000000000000004 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- rcu_read_lock include/linux/rcupdate.h:841 [inline]
- class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
- kernfs_root+0x34/0x2a0 fs/kernfs/kernfs-internal.h:75
- __kernfs_remove+0x302/0x8a0 fs/kernfs/dir.c:1519
- kernfs_remove_by_name_ns+0x68/0x110 fs/kernfs/dir.c:1717
- kernfs_remove_by_name include/linux/kernfs.h:633 [inline]
- remove_files+0x96/0x1c0 fs/sysfs/group.c:28
- sysfs_remove_group+0x8b/0x180 fs/sysfs/group.c:322
- sysfs_remove_groups fs/sysfs/group.c:346 [inline]
- sysfs_remove_groups+0x60/0xa0 fs/sysfs/group.c:338
- device_remove_groups drivers/base/core.c:2843 [inline]
- device_remove_attrs+0x192/0x290 drivers/base/core.c:2973
- device_del+0x38e/0x9f0 drivers/base/core.c:3877
- usb_disconnect+0x5bf/0x9c0 drivers/usb/core/hub.c:2375
- hub_port_connect drivers/usb/core/hub.c:5406 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x1c81/0x4fe0 drivers/usb/core/hub.c:5952
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x56d/0x730 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 9:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- snd_usbmidi_in_endpoint_create+0x8c/0xa70 sound/usb/midi.c:1342
- snd_usbmidi_create_endpoints_midiman+0x4c4/0xaf0 sound/usb/midi.c:2364
- __snd_usbmidi_create+0x14a4/0x1e90 sound/usb/midi.c:2647
- snd_usb_midi_v2_create+0x1ad/0x42d0 sound/usb/midi2.c:1178
- snd_usb_create_quirk+0xad/0x140 sound/usb/quirks.c:541
- usb_audio_probe+0x7f7/0x3cf0 sound/usb/card.c:976
- usb_probe_interface+0x303/0xa40 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x241/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
- bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1aa0 drivers/base/core.c:3689
- usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x241/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
- bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1aa0 drivers/base/core.c:3689
- usb_new_device+0xd07/0x1a60 drivers/usb/core/hub.c:2694
- hub_port_connect drivers/usb/core/hub.c:5566 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x2f34/0x4fe0 drivers/usb/core/hub.c:5952
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x56d/0x730 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Freed by task 9:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x60/0x70 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2422 [inline]
- slab_free mm/slub.c:4695 [inline]
- kfree+0x2b4/0x4d0 mm/slub.c:4894
- snd_usbmidi_free sound/usb/midi.c:1532 [inline]
- snd_usbmidi_rawmidi_free+0xbd/0x130 sound/usb/midi.c:1592
- snd_rawmidi_free.part.0+0x398/0x560 sound/core/rawmidi.c:1934
- snd_rawmidi_free sound/core/rawmidi.c:1923 [inline]
- snd_rawmidi_dev_free+0x3e/0x60 sound/core/rawmidi.c:1945
- __snd_device_free+0x1a7/0x410 sound/core/device.c:76
- snd_device_free_all+0xf3/0x220 sound/core/device.c:233
- snd_card_do_free sound/core/init.c:587 [inline]
- release_card_device+0x77/0x1d0 sound/core/init.c:153
- device_release+0xa4/0x240 drivers/base/core.c:2565
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e7/0x5a0 lib/kobject.c:737
- put_device+0x1f/0x30 drivers/base/core.c:3797
- snd_card_free_when_closed sound/core/init.c:618 [inline]
- snd_card_free_when_closed sound/core/init.c:612 [inline]
- snd_card_free+0x11a/0x190 sound/core/init.c:650
- usb_audio_probe+0x1507/0x3cf0 sound/usb/card.c:1034
- usb_probe_interface+0x303/0xa40 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x241/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
- bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1aa0 drivers/base/core.c:3689
- usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x241/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
- bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1aa0 drivers/base/core.c:3689
- usb_new_device+0xd07/0x1a60 drivers/usb/core/hub.c:2694
- hub_port_connect drivers/usb/core/hub.c:5566 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x2f34/0x4fe0 drivers/usb/core/hub.c:5952
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x56d/0x730 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff888074717800
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 323 bytes inside of
- freed 512-byte region [ffff888074717800, ffff888074717a00)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x74714
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b841c80 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b841c80 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000002 ffffea0001d1c501 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000004
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 10, tgid 10 (kworker/0:1), ts 289964868636, free_ts 191685793183
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2492 [inline]
- allocate_slab mm/slub.c:2660 [inline]
- new_slab+0x247/0x330 mm/slub.c:2714
- ___slab_alloc+0xcf2/0x1750 mm/slub.c:3901
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3992
- __slab_alloc_node mm/slub.c:4067 [inline]
- slab_alloc_node mm/slub.c:4228 [inline]
- __kmalloc_cache_noprof+0xfb/0x3e0 mm/slub.c:4402
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- device_private_init drivers/base/core.c:3534 [inline]
- device_add+0xccc/0x1aa0 drivers/base/core.c:3585
- usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x241/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
-page last free pid 6777 tgid 6777 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_noprof+0x1cb/0x3b0 mm/slub.c:4247
- getname_flags.part.0+0x4c/0x550 fs/namei.c:146
- getname_flags+0x93/0xf0 include/linux/audit.h:322
- do_readlinkat+0xb4/0x3a0 fs/stat.c:575
- __do_sys_readlink fs/stat.c:613 [inline]
- __se_sys_readlink fs/stat.c:610 [inline]
- __x64_sys_readlink+0x78/0xc0 fs/stat.c:610
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888074717800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888074717880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888074717900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                           ^
- ffff888074717980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888074717a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	f9                   	stc
-   1:	3e 12 83 f8 07 0f 87 	ds adc -0x78f0f808(%rbx),%al
-   8:	bc 02 00 00 89       	mov    $0x89000002,%esp
-   d:	c0 48 0f a3          	rorb   $0xa3,0xf(%rax)
-  11:	05 c2 d8 13 0f       	add    $0xf13d8c2,%eax
-  16:	0f 82 74 02 00 00    	jb     0x290
-  1c:	8b 35 5a 0a 14 0f    	mov    0xf140a5a(%rip),%esi        # 0xf140a7c
-  22:	85 f6                	test   %esi,%esi
-  24:	0f 85 8d 00 00 00    	jne    0xb7
-* 2a:	48 8b 44 24 30       	mov    0x30(%rsp),%rax <-- trapping instruction
-  2f:	65 48 2b 05 19 f9 3e 	sub    %gs:0x123ef919(%rip),%rax        # 0x123ef950
-  36:	12
-  37:	0f 85 c7 02 00 00    	jne    0x304
-  3d:	48                   	rex.W
-  3e:	83                   	.byte 0x83
-  3f:	c4                   	.byte 0xc4
-
-
-Tested on:
-
-commit:         fec734e8 Merge tag 'riscv-for-linus-v6.17-rc8' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13bb3d34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=927198eca77e75d9
-dashboard link: https://syzkaller.appspot.com/bug?extid=f02665daa2abeef4a947
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17773142580000
+diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+index 18825e1505d6..5b023a0178a4 100644
+--- a/drivers/cxl/core/pci.c
++++ b/drivers/cxl/core/pci.c
+@@ -71,85 +71,6 @@ struct cxl_dport *__devm_cxl_add_dport_by_dev(struct cxl_port *port,
+ }
+ EXPORT_SYMBOL_NS_GPL(__devm_cxl_add_dport_by_dev, "CXL");
+ 
+-struct cxl_walk_context {
+-	struct pci_bus *bus;
+-	struct cxl_port *port;
+-	int type;
+-	int error;
+-	int count;
+-};
+-
+-static int match_add_dports(struct pci_dev *pdev, void *data)
+-{
+-	struct cxl_walk_context *ctx = data;
+-	struct cxl_port *port = ctx->port;
+-	int type = pci_pcie_type(pdev);
+-	struct cxl_register_map map;
+-	struct cxl_dport *dport;
+-	u32 lnkcap, port_num;
+-	int rc;
+-
+-	if (pdev->bus != ctx->bus)
+-		return 0;
+-	if (!pci_is_pcie(pdev))
+-		return 0;
+-	if (type != ctx->type)
+-		return 0;
+-	if (pci_read_config_dword(pdev, pci_pcie_cap(pdev) + PCI_EXP_LNKCAP,
+-				  &lnkcap))
+-		return 0;
+-
+-	rc = cxl_find_regblock(pdev, CXL_REGLOC_RBI_COMPONENT, &map);
+-	if (rc)
+-		dev_dbg(&port->dev, "failed to find component registers\n");
+-
+-	port_num = FIELD_GET(PCI_EXP_LNKCAP_PN, lnkcap);
+-	dport = devm_cxl_add_dport(port, &pdev->dev, port_num, map.resource);
+-	if (IS_ERR(dport)) {
+-		ctx->error = PTR_ERR(dport);
+-		return PTR_ERR(dport);
+-	}
+-	ctx->count++;
+-
+-	return 0;
+-}
+-
+-/**
+- * devm_cxl_port_enumerate_dports - enumerate downstream ports of the upstream port
+- * @port: cxl_port whose ->uport_dev is the upstream of dports to be enumerated
+- *
+- * Returns a positive number of dports enumerated or a negative error
+- * code.
+- */
+-int devm_cxl_port_enumerate_dports(struct cxl_port *port)
+-{
+-	struct pci_bus *bus = cxl_port_to_pci_bus(port);
+-	struct cxl_walk_context ctx;
+-	int type;
+-
+-	if (!bus)
+-		return -ENXIO;
+-
+-	if (pci_is_root_bus(bus))
+-		type = PCI_EXP_TYPE_ROOT_PORT;
+-	else
+-		type = PCI_EXP_TYPE_DOWNSTREAM;
+-
+-	ctx = (struct cxl_walk_context) {
+-		.port = port,
+-		.bus = bus,
+-		.type = type,
+-	};
+-	pci_walk_bus(bus, match_add_dports, &ctx);
+-
+-	if (ctx.count == 0)
+-		return -ENODEV;
+-	if (ctx.error)
+-		return ctx.error;
+-	return ctx.count;
+-}
+-EXPORT_SYMBOL_NS_GPL(devm_cxl_port_enumerate_dports, "CXL");
+-
+ static int cxl_dvsec_mem_range_valid(struct cxl_dev_state *cxlds, int id)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(cxlds->dev);
+@@ -1217,6 +1138,14 @@ int cxl_gpf_port_setup(struct cxl_dport *dport)
+ 	return 0;
+ }
+ 
++struct cxl_walk_context {
++	struct pci_bus *bus;
++	struct cxl_port *port;
++	int type;
++	int error;
++	int count;
++};
++
+ static int count_dports(struct pci_dev *pdev, void *data)
+ {
+ 	struct cxl_walk_context *ctx = data;
+diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
+index 7ae621e618e7..1d526bea8431 100644
+--- a/drivers/cxl/cxlpci.h
++++ b/drivers/cxl/cxlpci.h
+@@ -127,7 +127,6 @@ static inline bool cxl_pci_flit_256(struct pci_dev *pdev)
+ 	return lnksta2 & PCI_EXP_LNKSTA2_FLIT;
+ }
+ 
+-int devm_cxl_port_enumerate_dports(struct cxl_port *port);
+ struct cxl_dev_state;
+ void read_cdat_data(struct cxl_port *port);
+ void cxl_cor_error_detected(struct pci_dev *pdev);
+diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
+index 0d5ce4b74b9f..3dae06ac7fba 100644
+--- a/tools/testing/cxl/Kbuild
++++ b/tools/testing/cxl/Kbuild
+@@ -4,7 +4,6 @@ ldflags-y += --wrap=is_acpi_device_node
+ ldflags-y += --wrap=acpi_evaluate_integer
+ ldflags-y += --wrap=acpi_pci_find_root
+ ldflags-y += --wrap=nvdimm_bus_register
+-ldflags-y += --wrap=devm_cxl_port_enumerate_dports
+ ldflags-y += --wrap=cxl_await_media_ready
+ ldflags-y += --wrap=devm_cxl_add_rch_dport
+ ldflags-y += --wrap=cxl_rcd_component_reg_phys
+diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+index 2d135ca533d0..10f9b83a9443 100644
+--- a/tools/testing/cxl/test/cxl.c
++++ b/tools/testing/cxl/test/cxl.c
+@@ -995,37 +995,6 @@ static int get_port_array(struct cxl_port *port,
+ 	return 0;
+ }
+ 
+-static int mock_cxl_port_enumerate_dports(struct cxl_port *port)
+-{
+-	struct platform_device **array;
+-	int i, array_size;
+-	int rc;
+-
+-	rc = get_port_array(port, &array, &array_size);
+-	if (rc)
+-		return rc;
+-
+-	for (i = 0; i < array_size; i++) {
+-		struct platform_device *pdev = array[i];
+-		struct cxl_dport *dport;
+-
+-		if (pdev->dev.parent != port->uport_dev) {
+-			dev_dbg(&port->dev, "%s: mismatch parent %s\n",
+-				dev_name(port->uport_dev),
+-				dev_name(pdev->dev.parent));
+-			continue;
+-		}
+-
+-		dport = devm_cxl_add_dport(port, &pdev->dev, pdev->id,
+-					   CXL_RESOURCE_NONE);
+-
+-		if (IS_ERR(dport))
+-			return PTR_ERR(dport);
+-	}
+-
+-	return 0;
+-}
+-
+ static struct cxl_dport *mock_cxl_add_dport_by_dev(struct cxl_port *port,
+ 						   struct device *dport_dev)
+ {
+@@ -1114,7 +1083,6 @@ static struct cxl_mock_ops cxl_mock_ops = {
+ 	.acpi_pci_find_root = mock_acpi_pci_find_root,
+ 	.devm_cxl_switch_port_decoders_setup = mock_cxl_switch_port_decoders_setup,
+ 	.devm_cxl_endpoint_decoders_setup = mock_cxl_endpoint_decoders_setup,
+-	.devm_cxl_port_enumerate_dports = mock_cxl_port_enumerate_dports,
+ 	.cxl_endpoint_parse_cdat = mock_cxl_endpoint_parse_cdat,
+ 	.devm_cxl_add_dport_by_dev = mock_cxl_add_dport_by_dev,
+ 	.list = LIST_HEAD_INIT(cxl_mock_ops.list),
+diff --git a/tools/testing/cxl/test/mock.c b/tools/testing/cxl/test/mock.c
+index 995269a75cbd..6fd4edb9215c 100644
+--- a/tools/testing/cxl/test/mock.c
++++ b/tools/testing/cxl/test/mock.c
+@@ -172,21 +172,6 @@ int __wrap_devm_cxl_endpoint_decoders_setup(struct cxl_port *port)
+ }
+ EXPORT_SYMBOL_NS_GPL(__wrap_devm_cxl_endpoint_decoders_setup, "CXL");
+ 
+-int __wrap_devm_cxl_port_enumerate_dports(struct cxl_port *port)
+-{
+-	int rc, index;
+-	struct cxl_mock_ops *ops = get_cxl_mock_ops(&index);
+-
+-	if (ops && ops->is_mock_port(port->uport_dev))
+-		rc = ops->devm_cxl_port_enumerate_dports(port);
+-	else
+-		rc = devm_cxl_port_enumerate_dports(port);
+-	put_cxl_mock_ops(index);
+-
+-	return rc;
+-}
+-EXPORT_SYMBOL_NS_GPL(__wrap_devm_cxl_port_enumerate_dports, "CXL");
+-
+ int __wrap_cxl_await_media_ready(struct cxl_dev_state *cxlds)
+ {
+ 	int rc, index;
+diff --git a/tools/testing/cxl/test/mock.h b/tools/testing/cxl/test/mock.h
+index 4ed932e76aae..580f38386224 100644
+--- a/tools/testing/cxl/test/mock.h
++++ b/tools/testing/cxl/test/mock.h
+@@ -19,7 +19,6 @@ struct cxl_mock_ops {
+ 	bool (*is_mock_bus)(struct pci_bus *bus);
+ 	bool (*is_mock_port)(struct device *dev);
+ 	bool (*is_mock_dev)(struct device *dev);
+-	int (*devm_cxl_port_enumerate_dports)(struct cxl_port *port);
+ 	int (*devm_cxl_switch_port_decoders_setup)(struct cxl_port *port);
+ 	int (*devm_cxl_endpoint_decoders_setup)(struct cxl_port *port);
+ 	void (*cxl_endpoint_parse_cdat)(struct cxl_port *port);
+-- 
+2.34.1
 
 
