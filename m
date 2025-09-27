@@ -1,98 +1,76 @@
-Return-Path: <linux-kernel+bounces-834794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234A4BA58A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:24:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5866BBA58A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D370F327039
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:23:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E56D2A64D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA481EF363;
-	Sat, 27 Sep 2025 03:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="mmhgJzqy"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884BA1C84DE;
+	Sat, 27 Sep 2025 03:39:54 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7731C5D44
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECDF72608
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758943432; cv=none; b=cz6P3pom8dJTMaD34kRdz4aEuSpckxfFyhREIdhtoPXRlq0O20GDmTH1Pjlu38psGE22kJw+l/GeZhK8qov3qONsPz05ooPc0kTaaoPl/DuCsPzFovtqTO+V1PHFxKi1BECDlmFvls9p+rCJHWtyIaP+0ZUryqwapJMlncjcHV4=
+	t=1758944394; cv=none; b=OMoMy1b/0yeml1pZxo6Vx9O4sEnyMVaox9dCJMAmGJUbT07paGX2E2iOJcfIFqz96yLYCUEzJ2k4dRKe84cpPg/nGCVD2ZYfYN5x1BZErcNzadN9S53ffJmsFDW6DBbek/g5nFX86WDC3pmoMk2daZcc++zgz6m9yX72URoASyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758943432; c=relaxed/simple;
-	bh=v5Of1WnnlV7oFnYN2QV8iTQcbKA+d52aP+wpVbpWsY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qEkzBlFu7L9KFdm3IHAzDLfM3XD1MBx2m88wTVoRBiT6K+9o/MV4WZrfrCBoYJUbTqeyOerLVugnU9lDq1ZEKyUQ5czE1q1kEYE0fk5UqSBkuhQST7uSkbawQ88OIgejVRznWlnKpUEPrf8mqMj9QWEVjZh508SRqBJ60K8lmKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=mmhgJzqy; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1758943428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=f+8LlnH0TKHHjBCrQtgQIF074phimjZRaWIoKgEy4zk=;
-	b=mmhgJzqy1w/x9ty6O2QcRX3a92odsrS4BFe3tmmj4k8epPsMLOHQkHQP9+vd7qKUFg1LYf
-	moPyd+AlSrt1rt585f9NHEK5l+ebxhsd+iujnWbzQw9RZmaSb/Ih5VaEX1tuZ0gZkRgQcl
-	4gNLHzf0DtF4+dKqz18sTDnwSPG90HLvTelHsQYNMfftgaXPBWJnBIOgfoqITbaOXBkew4
-	CJQ+z9kvx+tWGsqQLvce4V/2cz7YA7loIm9qN/4ZgpHtZiO7N9zOjBci27/hbEtDmb/ZMd
-	sLePnuPm9m8vRFvr9eds7ljW9Prt2ZtZKjJISf6gh2uyLleAGezDQWWgsnwakw==
-From: Val Packett <val@packett.cool>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Val Packett <val@packett.cool>,
-	Laurentiu Tudor <laurentiu.tudor1@dell.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: x1-dell-thena: Add missing pinctrl for eDP HPD
-Date: Sat, 27 Sep 2025 00:23:19 -0300
-Message-ID: <20250927032330.21091-1-val@packett.cool>
+	s=arc-20240116; t=1758944394; c=relaxed/simple;
+	bh=dUXPBb8UoePfMeduek6i4pY3kcJw5egFRNTRJmZTbyk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ba7nQTdLVyqd4SvVqDOFa+Y9lvJgns68Tx/TOtlYNzyjvn5LKZT+oMPkorbB7zoUy6kFMWCY8Sc93MKUbgwLMjqwQgJm43rYj8QJ/xokW5f1srgttosyKLzsBjhU3KlfeNx8sMV49c4xSLRl2APw0NXkLM6vfMfQbdIuWUS0pOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42594b7f324so52472295ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 20:39:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758944392; x=1759549192;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dUXPBb8UoePfMeduek6i4pY3kcJw5egFRNTRJmZTbyk=;
+        b=cexTDW8i9ph19U3wMgS0dRixMtd7d+hai0Yq5VImjHU33kmrvgVD6IzDwYDYPMdhfw
+         Fig2/rk+GrSVVJJers8kUP0Wof61OYOgi35iU7KBV801mHCOxbbBfoEUmIGO99clc2Vd
+         k54x12rzPuo+MrB2s5+htUbVfsObkunJwpwedxExSqHVsfD2dwd1WdpOd5rDN++JCOdZ
+         SeSFkUpYynJuFizarBa2YXKUIu0LSk3ZZpijhiTgDJ4C7q7h+PLTvpKugSMX7St6/Ewl
+         0E0CGf8KKZCVi3fzxYpriSu267yKlq4A8jqCdW6VmO6CnDg34NbJuCFRTKPXXWf01Wyb
+         Iuwg==
+X-Gm-Message-State: AOJu0YyWFaayUXZFOtZNNvtDDQDQejxkk/+Gwab69ScMB4GaLGrmmtt4
+	v+Fzikp/HxIKDjhC9eS6vDMHa7xcEkzvdUGPj79m0nvDlHfPmlXmltl1s1eQ1k7J0zisva1Kc6A
+	K0n9gsvDuYr0oQEa4auY9wi1R+zw2yGrvDXaNGw5JV3WcassFZXRMj3h2ans=
+X-Google-Smtp-Source: AGHT+IESHH2nkLi/fOtiNgMzz6i+OpZAXf7zno8a+5ezNJa3Mrx32XlVgZakJTydrWdYdU2aJaGUBxa/54MgXHaXYJleAiuiqmUb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:2782:b0:425:86d9:91ea with SMTP id
+ e9e14a558f8ab-428752af975mr27235835ab.11.1758944391850; Fri, 26 Sep 2025
+ 20:39:51 -0700 (PDT)
+Date: Fri, 26 Sep 2025 20:39:51 -0700
+In-Reply-To: <68bf2c3f.050a0220.192772.0884.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d75c87.050a0220.25d7ab.0222.GAE@google.com>
+Subject: Forwarded: KASAN: vmalloc-out-of-bounds Write in imageblit (5)
+From: syzbot <syzbot+48b0652a95834717f190@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Match the change for the XPS 13 (a41d2314) as the board is identical
-between the XPS and the Latitude/Inspiron.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-This allows us not to rely on the boot firmware to set up the pinctrl
-for the eDP HPD line of the internal display.
+***
 
-Fixes: e7733b42111c ("arm64: dts: qcom: Add support for Dell Inspiron 7441 / Latitude 7455")
-Signed-off-by: Val Packett <val@packett.cool>
----
- arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Subject: KASAN: vmalloc-out-of-bounds Write in imageblit (5)
+Author: albinbabuvarghese20@gmail.com
 
-diff --git a/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi b/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-index ef83e87e1b7a..0aad80a1159c 100644
---- a/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-@@ -1104,6 +1104,9 @@ &mdss_dp1_out {
- &mdss_dp3 {
- 	/delete-property/ #sound-dai-cells;
- 
-+	pinctrl-0 = <&edp0_hpd_default>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- 
- 	aux-bus {
--- 
-2.51.0
-
+#syz test
 
