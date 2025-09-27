@@ -1,238 +1,124 @@
-Return-Path: <linux-kernel+bounces-834928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639ABBA5DA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:21:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA40EBA5DAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA01F2A73EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:21:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54683175ECB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B45A2DEA95;
-	Sat, 27 Sep 2025 10:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179032DA776;
+	Sat, 27 Sep 2025 10:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8Lg86cr"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKAEamp3"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C532DEA96
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 10:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEB923A9BE
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 10:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758968403; cv=none; b=I2TsHn5jaUembuINvttWCXJQL4cS3SWzQtcu3Mh9UL+h+/mo8gYVocVK+UGflvTt1p2+bvQDr5PN28HmKOnmDKiVAwiLZNALCQAd6KB4+sPcqNjgm0OqKgDsBnvv4CfccwmbN1eXVOYQMzbNQoZVkITxtdreKOgIreQiJ4TRK0w=
+	t=1758968605; cv=none; b=fMUBjRZdH4rjQDB3mFS9KhH/kon51hoef/Q/hy71S+VMo2O8GbkVBnIJO/CKa4EbwIlaqikIFutINAFTeG5CvQn63v5jCpcj0dEd6zuReTc3BUiDk/QnXFjFOfHohJOLpPxTxINw+Nr6/E5xYRse9hpkZAbjlrhMlwWcYNIkcSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758968403; c=relaxed/simple;
-	bh=Zluq7HloLfLQBFo3Tg6KXCaz/jydY9sbOSlGs2FWraQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E0hlh9OY0qp03q2py++noW9F8XTcmps0A1kAbnRdnKJJ107dMKeIDh5H1GIaCUMyZ3w//BF5svlR3VAJIrXVhpoXQ4O5aXIwFVb1wd7XWxKk6UfRS0aRt1+8FTyb/FiLVSNW5iOATtmyB0RfVHhg7YJNMMWwRlRwGfp/sc5Svtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8Lg86cr; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1758968605; c=relaxed/simple;
+	bh=hSP0UkVo3smxyzxl5cC2FsaVSah/lhvXDVxNIWdha6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BlBthk0F8Oy/M2up4VsAU3hcP2bXu2ye/2tCPSaWOnQ2Qc23vDtwMFdEzh4Fh/WBpLsU7BS1FBgxj+joWm/juhW5CwZkjKrScQFfddHlH6TgJ8ik5Nllue5J/SWPsh/9l0EG8fP50U6SA+aS5woySPMMn7V8mBTVyO22FN+nCoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XKAEamp3; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e414f90ceso12896015e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:20:00 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso2155769f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:23:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758968399; x=1759573199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OiRuXA5cFSB3WTl30jlWEwLCI0MV2cwTejEF+1ySiq0=;
-        b=C8Lg86crPokWvYPuuLCKDm/p7b8kjRkEO5IF4R96SzVVSEmKTv/24c5BMUDPVkq7NK
-         Ar6BkQnQueY+v8+jjVKNsocTYlk5JpWwMQ2Pjxs/dR6SH7FkydJ09HEwyBleEKlkfTrI
-         bTwajcHNHOXxm2BeefPUUxeEm68Y3MTe+KM2/8/egMVxxZ+hz8niZmqHFDQcinQCTzwl
-         PuaYUKUBRu3P+yNift5Rh6SvRoiwPfQt8Hn4IMyIzOz8R1uLtZOZvDoyck1soGcQCr2E
-         9SY7egx10hDQ1zQ59s9xP1YM2EvH0FU+22xCa+tHcBNpnypzFXNAgJm0ltvWERsuQbe/
-         9+1A==
+        d=gmail.com; s=20230601; t=1758968602; x=1759573402; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=in7+4Iwa+nIWx1yXee5icFLUsBp15xu7p/S27zHgbMc=;
+        b=XKAEamp3XY3BMOZ7S0TVDFIrfcKWrfbWIfX26jXckQLGX4qnubucXJAegWgR5mZQhA
+         RnFL4e3+2YxJfbxg88UMhp3CzRR3/l+wLRR1W6W9CkoG7HXUfsi0mY9IRDs58xGiafic
+         6ZHj4ABdeDib1Y0Scj02vk6VcLpHRqpLEsrpji+7OfiUDWGeHb9N70JoVfj7oEmbOaEb
+         pfpguJGVR4n/MC99oHXC4PGtf1Gt6P/b2vdF97l9F3Sv1KQpl2Bb05Z+ReUSyC+v7Bhz
+         RXB94aGpExGjNY0JtQz8tL1XUB5Kc4V5ZpfA/cuVQB7eTdYD176xG28WsVFLJH7vnrrY
+         r+vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758968399; x=1759573199;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OiRuXA5cFSB3WTl30jlWEwLCI0MV2cwTejEF+1ySiq0=;
-        b=sInqMejNkovmVqXmwpTTuY50aH+uNv8A4fkqmgDzlF/ZwERpL13qMocsLBN59WlDXq
-         OAlW1S/E6/ykxBSBrMCiJo66sPXwE9rVUKwH5zOAy+bsPjCnKmaD7l1Dd4PVor978KDu
-         Jr5MPj1VTAjYuR5S6STH9GIqcgtldAtaa+fauUYZqbfHOr87ztVd215j2x7BI2xw1Cp+
-         0g7VueBvwR236hAeqO8xq/kbqBMlSIxUVSFtjcnl8KrVumzXu8QXNPW1R+A7HjV3HEp8
-         wZCSs80NqDAfJxWfVpuLb4oh/euUAYbwAmOof1kze2mWPMC/w8o9Ny3s8qJs6mls2Mxq
-         fTgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlS9JhS9m3NYS9m3vxqb5fU747xJV4zzTYC6ZRB7EqV3Hnyc6BeyXeiZYWntaDYdnm/RKrPoW6C5Z8Wy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6dvd7m/Zygk12jc6FtMM0KrZhmG4jzgUGdQ8EKn8U/VuO4OLv
-	Z25lRqHPkP7C0KCA0lQPCfLrzJf1laXSL74kbxHNbzISYBYEu7wbATu0
-X-Gm-Gg: ASbGncsRNRiQ4Bjo7hUbXyDucHIYGXyVLEtaxyyz+AAr7Um+mrW7EP5Vf9SKX1gGte2
-	/RoaH8eI6/aqLU/kq5xFYs16V8y9o3Jp2IQvXBVy0iRi0o3GATCqrMYEioevB7vOTXhchW11j9j
-	wb0po3LcTg3r8etSkHzZyokmU/SiUCkTwWYYd6tQQnVdM+MMDKzcB/vhvF5e2/vlgcathOUCXsi
-	uqp2zATXta/xp/zAZ0CQ6nLuyMy7ZJXAZQ3OaSKxmrU9+NcEi13qug9wpigQ/87w1diE8zSbw6D
-	kKJTceZeWqq7gHsgRj8tr+ev6LWB22zHSqhlcunKapNy4jf6iHWdHvv1Pb+xnB/arMkrWe+A7Qh
-	DCwqOmAMhiG90h+T2pkYVHhHiWl9F3iqa0waI
-X-Google-Smtp-Source: AGHT+IGgMN3T1X3hnUqeVwF68LTx312CsE8ahdhgtBGmMZG2KR2xgSdUgBVfMeKbjYPSYaobiWJQsw==
-X-Received: by 2002:a05:6000:615:b0:3f1:2d30:cb5c with SMTP id ffacd0b85a97d-40e451f8c69mr9666361f8f.23.1758968399161;
-        Sat, 27 Sep 2025 03:19:59 -0700 (PDT)
-Received: from builder.. ([2001:9e8:f11a:4416:be24:11ff:fe30:5d85])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32c31df7sm53416435e9.4.2025.09.27.03.19.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 03:19:58 -0700 (PDT)
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Markus Stockhausen <markus.stockhausen@gmx.de>,
-	Sven Eckelmann <sven@narfation.org>,
-	Harshal Gohel <hg@simonwunderlich.de>,
-	Jonas Jelonek <jelonek.jonas@gmail.com>
-Subject: [PATCH v8 9/9] i2c: rtl9300: add support for RTL9310 I2C controller
-Date: Sat, 27 Sep 2025 10:19:31 +0000
-Message-ID: <20250927101931.71575-10-jelonek.jonas@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250927101931.71575-1-jelonek.jonas@gmail.com>
-References: <20250927101931.71575-1-jelonek.jonas@gmail.com>
+        d=1e100.net; s=20230601; t=1758968602; x=1759573402;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=in7+4Iwa+nIWx1yXee5icFLUsBp15xu7p/S27zHgbMc=;
+        b=N8wfqWPhzEoHzWIUp3wDtxpB99OHAf20YlUpfXyUkr5EZEtw6a9k8mHfOwT+CnfxaB
+         halpj7+pMTbmBAm7lu3Z4gCF6YBFNW3jqfHgwyu3Xvw2puEej5tcOuqvyjspiuKeuzzv
+         3LhceR7Wfp4ia1yIDEfoPAyYHhrzeRLAlqPg0AkbGww8pFuhl+BuuqgkPvdpGVRv0qXv
+         MG7Ewf8CbK9rGd7uoHIYE2e2Ds8nBVS6OnBVTjh5D9XUvOF+50/6uh8MOJ3Mtb7gt0wr
+         fJnZNUQN87n9GhzsIHTHmugwWZUXuKzfvJVoXSdtPNzoepCrvfDXFYbkg+oTkGONlWZH
+         XsuA==
+X-Forwarded-Encrypted: i=1; AJvYcCU13M1DP3QejNlG9bUdAodbTPZp4NFmGfwZwhy+KYwWBGzVScyV4d8zQQDDOL+ev3CDJelB6NWsSUREUnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpWBvC2Xd/lh5ae9PKWCJYUJGHdqE/EtEW50ZFo1p7tvzS59oQ
+	YY5g+5C3SICZfajoXD+m8M9uvTCqZx90FRYSlONIdT2/nVqx+w6MOwyH
+X-Gm-Gg: ASbGncvipcaZrHB/skw+uo8liFOY6vRyBwTUOKv5HkCmDS+6sl9AqXm5664mdrYAozd
+	IyKWvyvLobYe7ai+OMEXsRnIqGxkFvD6QKo7nqG488M0Ia+TzkPjSE66ifAtzLYjWym93PIUmmJ
+	zphhSI6Sb6ubdP7QEdN3YPJja5LPG4OsnRDAhYbJruat4l5DXo/76Ma9kIeMwQtaHfTRJry4dzG
+	PuOyKxXX68pil9Zqolw8HHfuVo07fNw0rle0HQlFmxuZWb170Is3QFdPPc9F/qDGn10ZfHV5kOu
+	K8A/SPMmEExaW6na1YR+z2Ew9lsoLn9Szuc9Aosd2bwB48PIq+yaGVRA7uzXBZ50r5aAMkTya7V
+	qtKgoXFxMuycVydqkMDRywraAwfhCTM6T9tcq+DC7rWNFH6cJJFWx0rJVFbk3sDO4xJizfe610e
+	IKRD2uns2ghU9LIF+1wqq8Wd/+mfGkzJLD
+X-Google-Smtp-Source: AGHT+IGrFnvKHtAi4Y3nWafYrrOqgHxO338Bp1mW+r8fwkoAEnIvgFWt8NrSHcpvK5R1+smnt6PNXA==
+X-Received: by 2002:a05:6000:2210:b0:3fd:271d:e2a5 with SMTP id ffacd0b85a97d-418005f506bmr2379315f8f.11.1758968601943;
+        Sat, 27 Sep 2025 03:23:21 -0700 (PDT)
+Received: from ?IPV6:2001:9e8:f11a:4401:dd3b:2a2c:62a3:2127? ([2001:9e8:f11a:4401:dd3b:2a2c:62a3:2127])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc56f7badsm10291549f8f.29.2025.09.27.03.23.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Sep 2025 03:23:21 -0700 (PDT)
+Message-ID: <3203ee4c-b320-45cf-b63c-49f589909dfb@gmail.com>
+Date: Sat, 27 Sep 2025 12:23:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH i2c-host v6] i2c: rtl9300: Implement I2C block read and
+ write
+Content-Language: en-US
+To: Sven Eckelmann <sven@narfation.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Harshal Gohel <hg@simonwunderlich.de>,
+ Simon Wunderlich <sw@simonwunderlich.de>, Andi Shyti
+ <andi.shyti@kernel.org>, Chris Packham <chris.packham@alliedtelesis.co.nz>
+References: <20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org>
+ <1838669.VLH7GnMWUR@ripper> <aNZQnlUML0jIhXIM@shikoro>
+ <13214546.O9o76ZdvQC@sven-desktop>
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+In-Reply-To: <13214546.O9o76ZdvQC@sven-desktop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add support for the internal I2C controllers of RTL9310 series based
-SoCs to the driver for RTL9300. Add register definitions, chip-specific
-functions and compatible strings for known RTL9310-based SoCs RTL9311,
-RTL9312 and RTL9313.
 
-Make use of a new device tree property 'realtek,scl' which needs to be
-specified in case both or only the second master is used. This is
-required due how the register layout changed in contrast to RTL9300,
-which has SCL selection in a global register instead of a
-master-specific one.
 
-Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-Tested-by: Sven Eckelmann <sven@narfation.org>
-Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Tested-by: Markus Stockhausen <markus.stockhausen@gmx.de>
----
- drivers/i2c/busses/i2c-rtl9300.c | 47 ++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 3 deletions(-)
+On 27.09.25 11:55, Sven Eckelmann wrote:
+> Understandable, there was a lot going on at the same time for this niche i2c 
+> host driver. Please check the "Order" in 
+> https://lore.kernel.org/r/20250927-i2c-rtl9300-multi-byte-v7-0-c0fd0e78b818@narfation.org
 
-diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-index c67463228604..4723e48cfe18 100644
---- a/drivers/i2c/busses/i2c-rtl9300.c
-+++ b/drivers/i2c/busses/i2c-rtl9300.c
-@@ -60,14 +60,16 @@ struct rtl9300_i2c_drv_data {
- };
- 
- #define RTL9300_I2C_MUX_NCHAN	8
-+#define RTL9310_I2C_MUX_NCHAN	12
- 
- struct rtl9300_i2c {
- 	struct regmap *regmap;
- 	struct device *dev;
--	struct rtl9300_i2c_chan chans[RTL9300_I2C_MUX_NCHAN];
-+	struct rtl9300_i2c_chan chans[RTL9310_I2C_MUX_NCHAN];
- 	struct regmap_field *fields[F_NUM_FIELDS];
- 	u32 reg_base;
- 	u32 data_reg;
-+	u8 scl_num;
- 	u8 sda_num;
- 	struct mutex lock;
- };
-@@ -98,6 +100,12 @@ struct rtl9300_i2c_xfer {
- #define RTL9300_I2C_MST_DATA_WORD3			0x14
- #define RTL9300_I2C_MST_GLB_CTRL			0x384
- 
-+#define RTL9310_I2C_MST_IF_CTRL				0x1004
-+#define RTL9310_I2C_MST_IF_SEL				0x1008
-+#define RTL9310_I2C_MST_CTRL				0x0
-+#define RTL9310_I2C_MST_MEMADDR_CTRL			0x4
-+#define RTL9310_I2C_MST_DATA_CTRL			0x8
-+
- static int rtl9300_i2c_reg_addr_set(struct rtl9300_i2c *i2c, u32 reg, u16 len)
- {
- 	int ret;
-@@ -114,6 +122,11 @@ static int rtl9300_i2c_select_scl(struct rtl9300_i2c *i2c, u8 scl)
- 	return regmap_field_write(i2c->fields[F_SCL_SEL], 1);
- }
- 
-+static int rtl9310_i2c_select_scl(struct rtl9300_i2c *i2c, u8 scl)
-+{
-+	return regmap_field_update_bits(i2c->fields[F_SCL_SEL], BIT(scl), BIT(scl));
-+}
-+
- static int rtl9300_i2c_config_chan(struct rtl9300_i2c *i2c, struct rtl9300_i2c_chan *chan)
- {
- 	struct rtl9300_i2c_drv_data *drv_data;
-@@ -127,7 +140,7 @@ static int rtl9300_i2c_config_chan(struct rtl9300_i2c *i2c, struct rtl9300_i2c_c
- 		return ret;
- 
- 	drv_data = (struct rtl9300_i2c_drv_data *)device_get_match_data(i2c->dev);
--	ret = drv_data->select_scl(i2c, 0);
-+	ret = drv_data->select_scl(i2c, i2c->scl_num);
- 	if (ret)
- 		return ret;
- 
-@@ -361,7 +374,7 @@ static int rtl9300_i2c_probe(struct platform_device *pdev)
- 	struct fwnode_handle *child;
- 	struct rtl9300_i2c_drv_data *drv_data;
- 	struct reg_field fields[F_NUM_FIELDS];
--	u32 clock_freq, sda_num;
-+	u32 clock_freq, scl_num, sda_num;
- 	int ret, i = 0;
- 
- 	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
-@@ -379,6 +392,11 @@ static int rtl9300_i2c_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = device_property_read_u32(dev, "realtek,scl", &scl_num);
-+	if (ret || scl_num != 1)
-+		scl_num = 0;
-+	i2c->scl_num = (u8)scl_num;
-+
- 	platform_set_drvdata(pdev, i2c);
- 
- 	drv_data = (struct rtl9300_i2c_drv_data *)device_get_match_data(i2c->dev);
-@@ -474,12 +492,35 @@ static const struct rtl9300_i2c_drv_data rtl9300_i2c_drv_data = {
- 	.max_nchan = RTL9300_I2C_MUX_NCHAN,
- };
- 
-+static const struct rtl9300_i2c_drv_data rtl9310_i2c_drv_data = {
-+	.field_desc = {
-+		[F_SCL_SEL]		= GLB_REG_FIELD(RTL9310_I2C_MST_IF_SEL, 12, 13),
-+		[F_SDA_SEL]		= GLB_REG_FIELD(RTL9310_I2C_MST_IF_SEL, 0, 11),
-+		[F_SCL_FREQ]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 30, 31),
-+		[F_DEV_ADDR]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 11, 17),
-+		[F_SDA_OUT_SEL]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 18, 21),
-+		[F_MEM_ADDR_WIDTH]	= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 9, 10),
-+		[F_DATA_WIDTH]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 5, 8),
-+		[F_RD_MODE]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 4, 4),
-+		[F_RWOP]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 2, 2),
-+		[F_I2C_FAIL]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 1, 1),
-+		[F_I2C_TRIG]		= MST_REG_FIELD(RTL9310_I2C_MST_CTRL, 0, 0),
-+		[F_MEM_ADDR]		= MST_REG_FIELD(RTL9310_I2C_MST_MEMADDR_CTRL, 0, 23),
-+	},
-+	.select_scl = rtl9310_i2c_select_scl,
-+	.data_reg = RTL9310_I2C_MST_DATA_CTRL,
-+	.max_nchan = RTL9310_I2C_MUX_NCHAN,
-+};
- 
- static const struct of_device_id i2c_rtl9300_dt_ids[] = {
- 	{ .compatible = "realtek,rtl9301-i2c", .data = (void *) &rtl9300_i2c_drv_data },
- 	{ .compatible = "realtek,rtl9302b-i2c", .data = (void *) &rtl9300_i2c_drv_data },
- 	{ .compatible = "realtek,rtl9302c-i2c", .data = (void *) &rtl9300_i2c_drv_data },
- 	{ .compatible = "realtek,rtl9303-i2c", .data = (void *) &rtl9300_i2c_drv_data },
-+	{ .compatible = "realtek,rtl9310-i2c", .data = (void *) &rtl9310_i2c_drv_data },
-+	{ .compatible = "realtek,rtl9311-i2c", .data = (void *) &rtl9310_i2c_drv_data },
-+	{ .compatible = "realtek,rtl9312-i2c", .data = (void *) &rtl9310_i2c_drv_data },
-+	{ .compatible = "realtek,rtl9313-i2c", .data = (void *) &rtl9310_i2c_drv_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, i2c_rtl9300_dt_ids);
--- 
-2.48.1
+Sorry for bringing back some confusion but I had to fix one final thing in my patch series.
+The order Sven mentioned is fine but please use v8 of my series [2].
 
+To wrap it up:
+[1] needs to come first
+[2] then this can be merged
+
+> Kind regards,
+> 	Sven
+
+Best regards,
+Jonas Jelonek
+
+[1] https://lore.kernel.org/linux-i2c/20250927-i2c-rtl9300-multi-byte-v7-0-c0fd0e78b818@narfation.org/
+[2] https://lore.kernel.org/linux-i2c/20250927101931.71575-1-jelonek.jonas@gmail.com/
 
