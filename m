@@ -1,80 +1,199 @@
-Return-Path: <linux-kernel+bounces-835007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8602ABA606C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F626BA6075
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A0D4C2D3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:10:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01224C001C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F242E229F;
-	Sat, 27 Sep 2025 14:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7872E1F13;
+	Sat, 27 Sep 2025 14:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mzN4G+s3"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmCLdZMQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2259327990E
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 14:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCF51AA7BF;
+	Sat, 27 Sep 2025 14:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758982197; cv=none; b=mFd3J4+xiybqmbeeQ/vRltxjSFDOHDCqrrZZEOQY8SldM9CQzFHnEQjid4wpiMaGLvFUKQ3yHzLpeJ9o9WhrnVZ3bZcucjTMBPLN3yEuTxFYrrdeJoKUMVNCCx2nUSrtskYK4DyTkqL91u1Xo8JEgo+2D20nJw5sGdTsMzPyZmA=
+	t=1758982379; cv=none; b=jg9xG8S6wNeUxyBePBRxcmh39wsaV5jtH7GlYWZoGaMlwdkakV2OLqZ09FUAmcqCxRA7nvlwCJrPrJ0SPlCDLU/2G6NEVaRwPwLk9jOWykXjuFeAt2v7b5pCbCowh2ynvv1ayPtcdzmcBLFMi5zi97SCKPbitlFPorw+dWM10aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758982197; c=relaxed/simple;
-	bh=xf/ty7PCwAsM3/FNaDYRNY6KF+bmNphYkWht/YKgbjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ib5yQxnIEz6jNMiiQmVGdbgx6UHeleuuvz5CkXebCl0wWrsG9POBzr9GgzUHIDMsGMdVTkmZgklepFtn3v0NqYrX/iOjzbhxr6KEwNYt7LNfE7jgrIxPr4G4z/+834ljpmnYavsSsMG+2vCwAqlkvYmKh3Yi8pYsuWn22ILjTeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mzN4G+s3; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <5cb17e65-bda4-4ec8-90bb-4d8203a51557@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758982182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xf/ty7PCwAsM3/FNaDYRNY6KF+bmNphYkWht/YKgbjc=;
-	b=mzN4G+s3deuHSZ0wgAQnmD4P4sDr0ZFNCCE/wMlcNuNXY1V5h94kUb32q8ewz9EyNMgiis
-	MGokSc/XuFBPXFOTRjszF0pwg+4LdBv2NbEqJ/0mqembjeTBK7e3OW7ZgzryOUV0QqE1bT
-	oALRp23B4kfRN8ePecjgSv3LyAipe9g=
-Date: Sat, 27 Sep 2025 15:09:27 +0100
+	s=arc-20240116; t=1758982379; c=relaxed/simple;
+	bh=pXCLWy+hA0SgtfmjceZdOECgqhlcKU5dHFkqwThzxw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rP08q1AjljoTMLnBDBrEH2mzirAQNKvOLa96e8L2AAzJ5TN7cR7g1MUgA5ZWK36NhYwyjGwtiDpT4NoolqGqAlr+jJRw6wQo9EMmkK3WOrksIx1peXAwUrULY8Faw6gf6wfL65aYDQFfBdYMZHTs4U0wqHxnWyzxqg1Mg3t1Ru4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmCLdZMQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8530DC4CEE7;
+	Sat, 27 Sep 2025 14:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758982378;
+	bh=pXCLWy+hA0SgtfmjceZdOECgqhlcKU5dHFkqwThzxw8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hmCLdZMQV78i4kpnsRPwJi1AGvJUuxtdankDxFRSn3f1ESKqvlP5IgHKjPg2YSyAj
+	 os9NhczGPWaPTW68/jAG2FJwxRZqnm1z3fGBDyc51wqPD2vM+p3SBi9XiCE9cFvT9T
+	 GdGn5iqvO4nTnJ8pgqR8hg1PvxI7yLiKLq+Mbh5XH5Ez+Tzhwsp+K5vyeakyljGbQD
+	 dGWuT09YdnPE1y8u+T3CXlhfnZartAN6ra2v+D4ybEIoJbVPBcVmQNJ4fBoUeNie8W
+	 ZkyEUbix5/La2EKrHNoYyz94lHr6Xrrbu4ALg8+VNEVYQwFnb33e08QVtlC0qi5R8/
+	 lapDjEQS0JJOg==
+Date: Sat, 27 Sep 2025 15:12:48 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 15/18] iio: accel: bma220: add interrupt trigger
+Message-ID: <20250927151248.6c784f7c@jic23-huawei>
+In-Reply-To: <20250913-b4-bma220_improvements-v3-15-0b97279b4e45@subdimension.ro>
+References: <20250913-b4-bma220_improvements-v3-0-0b97279b4e45@subdimension.ro>
+	<20250913-b4-bma220_improvements-v3-15-0b97279b4e45@subdimension.ro>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 1/3] dpll: add phase-offset-avg-factor device
- attribute to netlink spec
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>,
- Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- Chuck Lever <chuck.lever@oracle.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>
-References: <20250927084912.2343597-1-ivecera@redhat.com>
- <20250927084912.2343597-2-ivecera@redhat.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250927084912.2343597-2-ivecera@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 27/09/2025 09:49, Ivan Vecera wrote:
-> Add dpll device level attribute DPLL_A_PHASE_OFFSET_AVG_FACTOR to allow
-> control over a calculation of reported phase offset value. Attribute is
-> present, if the driver provides such capability, otherwise attribute
-> shall not be present.
+On Sat, 13 Sep 2025 18:39:36 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Add interrupt trigger.
+> 
+> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
+Hi Petre
+
+A few lock questions from a fresh look.
+Sorry for delay - busy few weeks and a few days lain up in bed with
+a cold.
+
+> ---
+> v1->v2 no change, just patch split
+> v2->v3 replace regmap_bulk_read with regmap_read (Jonathan)
+>  (I just realized BMA220_REG_IF0 is never used, even by future event
+> patches)
+> ---
+>  drivers/iio/accel/bma220_core.c | 61 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+> 
+> diff --git a/drivers/iio/accel/bma220_core.c b/drivers/iio/accel/bma220_core.c
+> index 425a8b981e141aa496351f29df0597c989aa4a0a..6297882bcf1b955291a2d8747984648bc6ee8512 100644
+> --- a/drivers/iio/accel/bma220_core.c
+> +++ b/drivers/iio/accel/bma220_core.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/iio/buffer.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> +#include <linux/iio/trigger.h>
+>  #include <linux/iio/trigger_consumer.h>
+>  #include <linux/iio/triggered_buffer.h>
+>  
+> @@ -125,6 +126,7 @@ struct bma220_data {
+>  	struct regmap *regmap;
+>  	struct mutex lock;
+>  	u8 range_idx;
+> +	struct iio_trigger *trig;
+>  	struct {
+>  		s8 chans[3];
+>  		/* Ensure timestamp is naturally aligned. */
+> @@ -193,6 +195,23 @@ const struct regmap_config bma220_i2c_regmap_config = {
+>  };
+>  EXPORT_SYMBOL_NS_GPL(bma220_i2c_regmap_config, "IIO_BOSCH_BMA220");
+>  
+> +static int bma220_data_rdy_trigger_set_state(struct iio_trigger *trig,
+> +					     bool state)
+> +{
+> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+> +	struct bma220_data *data = iio_priv(indio_dev);
+> +
+> +	guard(mutex)(&data->lock);
+
+What is this lock protecting? 
+
+> +	return regmap_update_bits(data->regmap, BMA220_REG_IE0,
+> +				  BMA220_INT_EN_DRDY_MSK,
+> +				  FIELD_PREP(BMA220_INT_EN_DRDY_MSK, state));
+> +}
+
+> @@ -417,6 +436,24 @@ static void bma220_deinit(void *data_ptr)
+>  			 ERR_PTR(ret));
+>  }
+>  
+> +static irqreturn_t bma220_irq_handler(int irq, void *private)
+> +{
+> +	struct iio_dev *indio_dev = private;
+> +	struct bma220_data *data = iio_priv(indio_dev);
+> +	int rv;
+> +	unsigned int bma220_reg_if1;
+> +
+> +	guard(mutex)(&data->lock);
+
+What is the lock protecting here?  The internal locks in regmap
+superficially look like they'd be enough given we only have a single
+read.  I'd expect any necessary locking to be on the otherside
+of that use of the iio trigger framework (so the poll function thread).
+
+> +	rv = regmap_read(data->regmap, BMA220_REG_IF1, &bma220_reg_if1);
+> +	if (rv)
+> +		return IRQ_NONE;
+> +
+> +	if (FIELD_GET(BMA220_IF_DRDY, bma220_reg_if1)) {
+> +		iio_trigger_poll_nested(data->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  int bma220_common_probe(struct device *dev, struct regmap *regmap, int irq)
+>  {
+>  	int ret;
+> @@ -446,6 +483,30 @@ int bma220_common_probe(struct device *dev, struct regmap *regmap, int irq)
+>  	indio_dev->num_channels = ARRAY_SIZE(bma220_channels);
+>  	indio_dev->available_scan_masks = bma220_accel_scan_masks;
+>  
+> +	if (irq > 0) {
+> +		data->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
+> +						    indio_dev->name,
+> +						    iio_device_id(indio_dev));
+> +		if (!data->trig)
+> +			return -ENOMEM;
+> +
+> +		data->trig->ops = &bma220_trigger_ops;
+> +		iio_trigger_set_drvdata(data->trig, indio_dev);
+> +
+> +		ret = devm_iio_trigger_register(dev, data->trig);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "iio trigger register fail\n");
+> +		indio_dev->trig = iio_trigger_get(data->trig);
+> +		ret = devm_request_threaded_irq(dev, irq, NULL,
+> +						&bma220_irq_handler,
+> +						IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+Interrupt polarity should be coming from firmware.
+
+It's a historically common mistake to encode it in the driver as it breaks
+fairly standard things like using an inverter as a cheap level converter
+in front of the interrupt pin.
+
+So IRQF_ONEHSOT only should be all that is needed here.
+
+> +						indio_dev->name, indio_dev);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "request irq %d failed\n", irq);
+> +	}
+> +
+>  	ret = devm_add_action_or_reset(dev, bma220_deinit, data);
+>  	if (ret)
+>  		return ret;
+> 
+
 
