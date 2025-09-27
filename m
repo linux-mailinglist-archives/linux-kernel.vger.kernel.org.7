@@ -1,147 +1,126 @@
-Return-Path: <linux-kernel+bounces-834997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF6C8BA5FF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:53:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED0C8BA6002
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4067B1B230C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B654C23F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECED52E11D5;
-	Sat, 27 Sep 2025 13:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043651DE4FB;
+	Sat, 27 Sep 2025 13:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVPoSmdD"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wl8taeLZ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1042E090A
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC871A3166
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758981178; cv=none; b=L6MUiTuN5sz9FZYwgx0uFk0jyPBVTfgY4fUT7QpF4dZPc8Dn2F8A4MOPfY9nQS7aK2Zitala5iNCYyNaNESRnZUC9Rvb4pnbUHhDN4D/aOQIP7PaFkv5508obYQAq+rx1uwK3ZikJbQfqusqSS8CfBqIRRivOP1ZtHvjK7B+2fE=
+	t=1758981373; cv=none; b=H6uI3aNmkLbIFAhZ+MNqu3iouncFIP/KakhxZDSV0Fbjge6wAcZGwV7K36MnM0MWQmYggkgzv6SLHmMcrWY9sckv+CZEqrWKgLIv3M0T6oXSKQez+2yGv0HraYqW6Mjgr5S6EHq05/NYXPDLUMFL19plRF5Q7mcdaddM/D9VL2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758981178; c=relaxed/simple;
-	bh=s7xAGJVX+7/SpfJzM9KpN+ZiBOCbGQQ2hWAFAPmv8Zo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A3+r/8xNUEXEjmeeMq+XBe/3xDy5I0FhKZHgFzjVzUQt4hhhKzWjhfQ7xcFcz2P7QLUVG4WCJtaZ5k1aqBafNs4jsAzrnmue5F5hBROSwfwivAH3nncsY9EaXm+wCJLWxXJh+tU2u4ETyMpR91jGPJlTQ9ePSfLvMdcLrxd5nAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVPoSmdD; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1758981373; c=relaxed/simple;
+	bh=ureChU45nREqUmvZTTVk+SwNTIJzvHOY5zs5cEzl+t0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N6rrMsSKzRe+aW7hsm1gsiDCZmaj+rslcgMpXUIzU5WhWkrHXfUvnTr5IUxdvRvm2bWQq4zi+SiRge1/Mf/O57XYuoxunrRC/cOM3fbPF/W7tRjkttO6I7bqspNPox80WPmw9oZzjXkbeZ112gtoBNNOIh2LX0OAK0/H5nMfw0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wl8taeLZ; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b553412a19bso2375843a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:52:56 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e3ea0445fso8028585e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758981176; x=1759585976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758981370; x=1759586170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U3sQOBC6lgm5wwqQEZglJIx1GXGiTvsN3EI8B1cA2h8=;
-        b=eVPoSmdDbg2w8PLl0R/Nznkb81WBlpoW8XmYLTxqhhVBJnaIsrKmqwLUJAK/KUSAYb
-         PPrCGHPlQ2p5AC10i/FlS15xW0PJlk6PwemJToXf4p0Dsr2hY/LzmFL2V+NU21I8cPW8
-         GFZQhq8+YK+6yOZvFdxKTBi8JX424UTJ3Sgafm03ayPqe3QVWQ8mCduPsDbKkNUZsm+u
-         ckFvBdFPjtgaKy3AmKGGNIpAyfRTLjaC3sdltJKH2tBcJaunksKPsxrbz6IM4ZNlThnO
-         4W5UFm+TaXdX29lVEegYHqK0OTXfVT6xa4QOcfRht86yJj4BxC4oE8Kk2oCokkrtLbtK
-         LBQA==
+        bh=ureChU45nREqUmvZTTVk+SwNTIJzvHOY5zs5cEzl+t0=;
+        b=Wl8taeLZnSuAkaYOcGiWwHKKI0GkeDjdflDaWh6frmYQL0Z+k0Xx3jt3oZUPBO2PqF
+         98avA75obFkBGIjilt9vyuxg1DdCi5eiI0RN29bC1O3+2BOewamOw/Ff1Y8evzLlX5Ln
+         eOI6Axl76EKmWtoitIKbIDFVB70ixzJ4AJrqQNLXYjq9degIA7/ybCmsXwt1qb6QS8tZ
+         kcsqJBgXoL5Nph4MZ7ld9jxvW/lmD2u6bOU6wOGhdctGysb1alze/Ijnxyr/jcD0Phjs
+         mvdJG0EDXfS9RaQYlmg7AvXfTSQFB5lDfQjcn8weyOwqNvjftEPUMqvxbcYg3uB5k4vc
+         fU9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758981176; x=1759585976;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=U3sQOBC6lgm5wwqQEZglJIx1GXGiTvsN3EI8B1cA2h8=;
-        b=HvONZv+C0M3oaNFzTVirJ9c/z/Wp4Bl1emtSgbsRY2h5fLpv4z7mBk9ZAzp2ZEOiSF
-         JifQTykck/7U+DyDgYQk7eDDaJJC659WUhlQdWlyMoRuUUD0JTZMpMR0Mt4hPs/LutFR
-         mp+r60czKwb/5Vi5r4UKO7FxTyd/WURTgltSUBdPjiU+s7dm8dkCQU256f1KqLlFRohu
-         343Wr2VQawhMqYriJo9s52vHtlyH0bh7HWD+8425AqbLFzhDyHY5XRCL0pKr6uqquxrY
-         rmY+sI0IqHS4R+pmorwk1723SfbbzAhB2Cp/lvL3EN2ObBToSAFtoB/Tg6B7lvinLLEg
-         aGWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4I201eME4mVTimze5DMUcRCczuRtVCBG5/9g+YePPMUGikr5l4XFjokV8L4sRKT3Lvji/nzQZHnAYp/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3XuZdHYiOR4LU+S9T6vEgz9EVtvBGN5vGA3ZaaahRcbVra0pU
-	nEWXKVb97j5y6GdQPNlIZQ05F5lcBI75MYDGKWcl14jxJWFI6ZofSSz1
-X-Gm-Gg: ASbGncs1MVf8/MhTa/+ujWQDGz7FNKi21pI+Vc9dkQH0zGD3OyGTQ9vlILv6KW+nxkB
-	w8DJmtZTKezmdD55lX/7iW0neLUTPcra6okTaW848QOAzZZ+jAr/M0kmTNzJsySHOiNy2aTy5EP
-	JTsVRyDU8BOsBqLDYbC1MErWX/7sUk0AJf9AFvGkqPnMlhag+43E1u6dr/X/EjXUe4sWMai3ZDs
-	zGfB9yneqCLSSntf1x9hdNAylKkBU/bxLqRH9kSTF86VONJ9yN3qQnBYUjyhe5CY2aiCyIwpx2a
-	4IjbVWfNhmJXGWSDVt9piEXSqk/sTwDOYDK5G8Lxyzf4qH0+A2PMNCHvD7T93sg7Q1DETSiuz+p
-	H9dNUlLim
-X-Google-Smtp-Source: AGHT+IGK3h2/r66srXllsDk0MF+E1eFXN/e+nA4aTq6KJiKioeHUCHrtJSdf7ekPUt2zU2bJKgRb5g==
-X-Received: by 2002:a17:903:3845:b0:246:2e9:daaa with SMTP id d9443c01a7336-27ed4a09580mr134300995ad.2.1758981175683;
-        Sat, 27 Sep 2025 06:52:55 -0700 (PDT)
-Received: from CNSZTL-PC.lan ([2401:b60:5:2::a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6adca51sm82134025ad.147.2025.09.27.06.52.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Sep 2025 06:52:55 -0700 (PDT)
-Message-ID: <ad4a7dda-8f6f-4d2a-84d9-838611f2285f@gmail.com>
-Date: Sat, 27 Sep 2025 21:52:51 +0800
+        d=1e100.net; s=20230601; t=1758981370; x=1759586170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ureChU45nREqUmvZTTVk+SwNTIJzvHOY5zs5cEzl+t0=;
+        b=Mom+IuYRf+CUSPzsZJUL3ptQjZ7VPmQwpKzSWVo3efs4sKLrAbUJZLA7W9eRbSTszH
+         u+t3mqi7d9+iFpqQbaWcb/yRESJLaQxqXcrZm/KCohpzQHYgm6LcNG6VUQnR24fjJe/5
+         iygDuN0S6JyDatznMsmI0ZhSo4/kdoYVV/M1MQpvThn5uT5BkvOqKfaqX3Tue3m4nvrx
+         G6jAyqu7i0LuBKLiaOM8zeY2c9cw1QQMh9mBNGHUoteZXhUoeLX49SeL/8xQUjcVhsye
+         IarxBmT8mwtlJRUcdOdOku5XybN+842tIwzaZcvFn292cnkic8yi6qQ+Ps8LwJb1Se6P
+         DO7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVsDEEhAtUUvmBANX8mf0RVziWYVMqRur5veGFPI/q8BCG58Ma2PEHxYntu1ilpGA7Kj/kk+ycf9peLIKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt702DKEsZku5wI8eMIZjXno3e3Ja6v1tMEooTFLi6ecuYrHwh
+	P/0RgqpN3inBVBzytua2y4s6OYX16bZcwjvEMKJmR+EDIxhZuqU6ZVjhozV+rsFH7VBHOx/O+n5
+	HofrlGojCYcKANUlyY9zAAMVGCEVM12M=
+X-Gm-Gg: ASbGncvKzROqPUJdTRJ6lNO1vjUzGjS9CiKj0srfo0SDQGQEp1a9kwN79wxinGTmhDI
+	C7uG2qjAbPEL/8lVXeVzYHsHsGbLdc0827WhM7pqmZoeMM43N7mhA9GcrSZNxaZ3sFicS50C/QY
+	EfUf8NRduBbsNx3/JplZE0U3ohll6GdK9v2NxdeUIRV/Ln4P8XOTS5hsp0AvTjmjpp+phNq06Bt
+	y+OEBHXxiqMBwu0LRxslOKrVx0ugBCILrgrXtcCaPNKlmTl7eGsd+MIj8CVTTLJFa0fg0agn4BY
+	2V6P/hYj
+X-Google-Smtp-Source: AGHT+IGr8zOK+RC+hHIYloBf/M6OFm9CLonT2X9KL0+nRhOcgIc58bzH/HUeqmIKXIC0EyAYm8IIg0+2JgEjPzNIGIA=
+X-Received: by 2002:a05:600c:3594:b0:46d:7fa2:757c with SMTP id
+ 5b1f17b1804b1-46e329eb02fmr105794995e9.19.1758981370031; Sat, 27 Sep 2025
+ 06:56:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add devicetree for the
- FriendlyElec NanoPi R76S
-To: Dragan Simic <dsimic@manjaro.org>,
- Diederik de Haas <didi.debian@cknow.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250922091509.2695565-1-cnsztl@gmail.com>
- <20250922091509.2695565-2-cnsztl@gmail.com>
- <DD2V17FJ29MV.3YDX1VUWGKEH@cknow.org>
- <1bb00ad6-ffe1-4783-909b-032dfb984180@gmail.com>
- <DD3EST9Y5UHF.12FJMDJUSZNYL@cknow.org>
- <d0a3d5d4480eac12ba5e2b15bcbc578f@manjaro.org>
-From: Tianling Shen <cnsztl@gmail.com>
-In-Reply-To: <d0a3d5d4480eac12ba5e2b15bcbc578f@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250912163043.329233-1-eladwf@gmail.com> <CA+SN3sp6ZidPXhZnP0E4KQyt95pp_-M9h2MMwLozObp9JH-8LQ@mail.gmail.com>
+ <aMnnKsqCGw5JFVrD@calendula> <CA+SN3srpbVBK10-PtOcikSphYDRf1WwWjS0d+R76-qCouAV2rQ@mail.gmail.com>
+ <aMpuwRiqBtG7ps30@calendula> <CA+SN3spZ7Q4zqpgiDbdE5T7pb8PWceUf5bGH+oHLEz6XhT9H+g@mail.gmail.com>
+ <aNR12z5OQzsC0yKl@calendula>
+In-Reply-To: <aNR12z5OQzsC0yKl@calendula>
+From: Elad Yifee <eladwf@gmail.com>
+Date: Sat, 27 Sep 2025 16:55:59 +0300
+X-Gm-Features: AS18NWBlYzv4rg7URg9J1v208P3mV2tQeMkzKbuflldE-TNBrvutb99r7dTcmXk
+Message-ID: <CA+SN3squaSg08e=GKLZeStS3bSaKQZz_n0SWOB=Cv8cuLhO1Vw@mail.gmail.com>
+Subject: Re: [PATCH net-next RFC] netfilter: flowtable: add CT metadata action
+ for nft flowtables
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dragan,
+On Thu, Sep 25, 2025 at 1:51=E2=80=AFAM Pablo Neira Ayuso <pablo@netfilter.=
+org> wrote:
+> You have to show me there is no mismatch.
+>
+> This is exposing the current ct mark/label to your hardware, the
+> flowtable infrastructure (the software representation) makes no use of
+> this information from the flowtable datapath, can you explain how you
+> plan to use this?
+>
+> Thanks.
 
-On 2025/9/27 21:47, Dragan Simic wrote:
-> Hello Diederik and Tianling,
-> 
-> On 2025-09-27 09:37, Diederik de Haas wrote:
->> On Sat Sep 27, 2025 at 3:19 AM CEST, Tianling Shen wrote:
->>> On 2025/9/27 0:07, Diederik de Haas wrote:
->>>> It is recommended to use the labels in the schematics to define the
->>>> pinctl nodes (and thus their references). In quite a lot of cases 
->>>> that's
->>>> indeed the case, but not for gpio-keys (USER_BUT) or these gpio-leds
->>>> pinctls.
->>>
->>> I cannot find any specific naming rules from the gpio-keys[1] and
->>> gpio-leds[2] bindings, did I miss any update?
->>>
->>> I think this naming matches the current practice at least in rockchip's
->>> dt tree.
->>
->> There is an unofficial rule/aim:
->> https://lore.kernel.org/linux-rockchip/5360173.ktpJ11cQ8Q@diego/
->> But granted, there is 'some' inconsistency.
->>
->> And used in f.e.
->> https://lore.kernel.org/linux-rockchip/20250727144409.327740-4- 
->> jonas@kwiboo.se/
->>
->> Where you can just copy the pinctrl labels from the dts[i] and paste
->> that in the schematic document and you're instantly at the right place.
->> Which is the exact purpose of that rule/aim.
-> 
-> Is the schematic actually publicly available?  I tried searching for
-> it, but found nothing, unfortunately.
+Thanks for getting back to this.
 
-The schematic for NanoPi R76S is available at 
-https://wiki.friendlyelec.com/wiki/images/6/60/NanoPi_R76S_LP4X_2411_SCH.pdf
+My goal is per-flow HW QoS on offloaded connections. Once a flow is
+promoted to the nft flowtable fast path, nft rules that set packet
+marks are bypassed, so a driver no longer has a stable tag to map to
+HW queues. The conntrack mark/labels are flow-scoped and persist
+across offload, which is why I=E2=80=99d like to expose them to the driver =
+as
+metadata at the hardware offload boundary.
 
-For more information please move to 
-https://wiki.friendlyelec.com/wiki/index.php/NanoPi_R76S.
-
-Thanks,
-Tianling.
+To address your =E2=80=9Cno mismatch=E2=80=9D concern: this wouldn=E2=80=99=
+t change the
+software datapath at all, it would only surface existing CT state to
+hardware. Could you advise on the best way to proceed here? Would an
+offload-only exposure (drivers may use it or ignore it) be acceptable,
+or would you prefer a specific software-side representation before we
+add the hardware export?
 
