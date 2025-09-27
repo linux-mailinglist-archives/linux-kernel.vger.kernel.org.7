@@ -1,203 +1,180 @@
-Return-Path: <linux-kernel+bounces-834893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21E1BA5C7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92CDEBA5C86
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B7CD1B21927
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:34:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB2B32355D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D69A2D6409;
-	Sat, 27 Sep 2025 09:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8E72D6409;
+	Sat, 27 Sep 2025 09:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pPFXo2O7"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezmJ2YR3"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCB013C914
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF2B283FF0
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758965648; cv=none; b=pk9/HHg5tUI7h1ugrn/mRZ+SWT29RL6a/10EiNVkTIJsq/J4MONl/T3msgdwgc3wt6wR4nrv9iaVGh2ND0dn3ThE61GvwBF+rydGQ4JTigyfZAfPLSS7+YArn90q82dGhAg+I9XrkZHEFEIxS0f8VVWhHucx25wMmd0eVUsravk=
+	t=1758965677; cv=none; b=RrgX9JcFP2zpz73QVSOuYmqidvTh7Zd6qCBWrr9rcLRhst3LHQsAlDJ438IJnBaJslY3519uhSK2CvbXa/oHbggkdQgy6ILH1b7THSNpFaQ2wJtFa1g32ZLlP8Tj9BrrMyZfXf1MJ4JIQWSMscj/tXqESwxAwqPbeZN1LUHFl6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758965648; c=relaxed/simple;
-	bh=/1u+8sTR3V72H77qUnr2FeN0KokPITGVnFfledBDv7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=GnfRQDpc1o7JB4lUNmP4BqCTI9JNtkzUivPs8HYBG4bblBlT6EAHnrPdJkigOFm2AzG3KPgYVyUvK24f57QKzjrP7kY8FIK8X2QUgHBaBU0VZCW0efHKhDR4hj7ubHjXGRd5rJDhPzUJYh2CmYMmCoe2ymxaNK3245iHh5RA2/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pPFXo2O7; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758965631; x=1759570431; i=markus.elfring@web.de;
-	bh=/1u+8sTR3V72H77qUnr2FeN0KokPITGVnFfledBDv7Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pPFXo2O7x70whVCIhPyMRpzKQ4vWcydAyCBtuZL08YIfGVlGgTDhXWzBa04/RK4N
-	 F91dvQVHPLjOJeAulSpgQ+chdoL35csCGOZ7XRtfq1IKGH4OhPT4uCYW1eZbHqUGe
-	 7puWQTvYCGBXCSra9D2+mtnUQtQkbuQGVhOvbtQ1LmqCqEylgO+y9tT/xZ6T0D7ls
-	 lLpRExGnIrtNVlrF3YYQA6k4hCBPPmDe17wD96vzsZmXN33lKsHJBcsqJX8qLkQPw
-	 pZa6CduSqSzAWPqhz1nRfXd8xVBEHXybPZZh2HeE4xRkk4kdOtqqsEs0pDeLz3CXs
-	 Y/pGIqF+YWrpR81yYQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.221]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MHVal-1v6Xtv42DZ-001l4o; Sat, 27
- Sep 2025 11:33:51 +0200
-Message-ID: <b994f006-552b-41a8-9714-5efef68f2f12@web.de>
-Date: Sat, 27 Sep 2025 11:33:47 +0200
+	s=arc-20240116; t=1758965677; c=relaxed/simple;
+	bh=jeb7rl8zg8+aLisYBGAEs6PF7PVnxQDpgkZhyf+GheQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ACsSaiOhnLJN7PedZ4/F8FC+nMR/hSo96y5dpAF9/8gx0iBEVQ3pbr2RsmIcZpHHOqS+RpysRoZJ73aqYIAcuy0RxUJZjS92aO9jk6vgPBMez6Yqi1wlPaHKjNdPwQiIaCWwrULomuLH+zY/VIWgM6WUsKmqpmfqHljyuNQFmC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezmJ2YR3; arc=none smtp.client-ip=209.85.210.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-7761b83fd01so2998824b3a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 02:34:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758965675; x=1759570475; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vZJQF2ToM0j3zM/VBm9sOhu/IhOrSi3JVR1qNSXG+Bg=;
+        b=ezmJ2YR3FNeFCg1Ly2uFPDgWsDlIG2WagiO2e9RTBKc2VVUrExds8ZPRhCp1a3za3T
+         065LABfEYfePowwreoxW+Xl1aVe42sqzqWUQ+T8dqFqi7KEyLF3toFbgv0SqrjHFyMFp
+         VcJgHbYC8ZHI7eUtz5x7+0L+7BKjAOVGEhJ6jbx8pNYwvACOZQNn3GR7+XscSNDnC5rG
+         Hc/9yDXmvUhjQ41nw7Asgsw+K54aT9B71PDEUMa41Pn4GRoZxiUa42ZWjdi4I+WEMGWi
+         s0X1KWe6YbYbZiceus798SNrOlsmKwAetnP94igdKnzk3Nthb2aXNzkMzjiyAW8TRXAx
+         vGCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758965675; x=1759570475;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vZJQF2ToM0j3zM/VBm9sOhu/IhOrSi3JVR1qNSXG+Bg=;
+        b=gbbgL0rTXKwVNqJUOe5NSdgSpwGj7GwguD60IW0XuoVRn0RzjX/tCbK27WngG8G0g8
+         eIOshOVepjtXLCjdmuZ6qZdCZKGYwwLlSnRdyjGo9Rq+cnZLeOE/boYhR8WJTKQO/CsA
+         yrx/SH+19efv9i3UHiKleBD2dywdMxaqQxxwsj8IgM0pt0W0arzDkt6l5bkoHBWBGZkI
+         07+2pnQ3CbzjdMfG5+FwvB5kyRUjXifGgTooJsuqGQYxuL/RXnfLKTftkngsLUoZHUeN
+         yL3TN+lOBTahLGoVMn80HiOEbM81ugRLbU10TTDehrZfvedz0axiSTTcUyBDqaiDE7XE
+         2VXg==
+X-Gm-Message-State: AOJu0YzIs4SCNzSVJQDQTivv3yzkN6pDoosL2GmOUfHPwLAgwVqlinJf
+	VZTQO4lxWctB3cy0vid/VLMOMGdJQcUv40R6Jb6EuWLAVfB6p7QihqjzSNeCsQoT
+X-Gm-Gg: ASbGncsBrnNF4X2UWHvzpfm3adtiuW/CuKJ0IOvweaBMvQ5SQxLsKnuOtdbj3PTHizj
+	HGtva7Vi6j1PseH/ssORDIvO9QZc35yBOoND9u5l822TUl6DMdHLL4PhJzzmkbvX2Ndv0olAPPA
+	4OC4gV7FP+STi96qssAPOKiqFo1yA82/8h5YCCq6mMT1TKtjibibaJDlTmybLa/cG30hb6UHKKM
+	HsPAzTM7lMqUp+9hOmippGAJn5zuAzdDzTCkAHB2zwclJx9h0BRmrRE1g1bIX7wMRJrBimlLw0s
+	R0/8JcMITCgI2wkfRy07pGsB1Dzl4ji2wWEluuGGSltEBOtTnNhReLV6+KU2hyji5bTCQOyfgzV
+	7oi8fIBidsPbDIt7Hjs9dtRmy89B+RJ55H2gpiVqcWKcDVk2hurE=
+X-Google-Smtp-Source: AGHT+IGduf7RatFexr+1b6X7DcBE+qP3/53rkiM5C9YHS72zBqIBvMbbzdx9UD3QSc1k/PHhj29lDQ==
+X-Received: by 2002:a05:6a00:1152:b0:77f:d23:a1f3 with SMTP id d2e1a72fcca58-780fcdc70afmr10904702b3a.6.1758965675079;
+        Sat, 27 Sep 2025 02:34:35 -0700 (PDT)
+Received: from E07P150077.ecarx.com.cn ([103.52.189.22])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023c1867sm6420816b3a.35.2025.09.27.02.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 02:34:34 -0700 (PDT)
+From: Jianyun Gao <jianyungao89@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jianyun Gao <jianyungao89@gmail.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] timer: Fix some typos in timer module
+Date: Sat, 27 Sep 2025 17:34:10 +0800
+Message-Id: <20250927093411.1509275-1-jianyungao89@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH] cocci: drm: report devm-allocated arguments and
- fields
-To: Oleg Petrov <o.petrov@ispras.ru>, cocci@inria.fr,
- dri-devel@lists.freedesktop.org, lvc-project@linuxtesting.org,
- Julia Lawall <Julia.Lawall@inria.fr>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-References: <20250924140126.23027-1-o.petrov@ispras.ru>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@gmail.com>,
- Maxime Ripard <mripard@kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- Vadim Mutilin <mutilin@ispras.ru>
-In-Reply-To: <20250924140126.23027-1-o.petrov@ispras.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:71UA9sLb3/4N2kgrxV5wtqmcFepCKuA18AEhzGF0nUvfaZdmNGU
- 16e3IOhQJjiY7J9OXdOH6RvcOTWHGdggqnGssIJK51l1WqMisQZOH70im6sO9qTCGhH0Ra0
- CGTejKhaqhPE86JtBFqHSfZMo3LpiZjjKJk01mtDXN2zTOkbnu3wU07j8vqACKyjeS1rBw+
- jifTNX3OfmMLbuHUNX0jA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9AjejW254dk=;3rK4r3f2e9XASgGM8HIuN/IKzc6
- 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
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6> +// find devm-allocated (devres-managed) second arg for drm*ini=
-t functions
-> +@badarg exists@
-> +position p;
-> +expression devm,e;
-> +@@
-> +// only devm_kzalloc is really used
-> +devm =3D \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmalloc_array=
-\)(...);
-> +...
-=E2=80=A6> +// same as above, but with an intermediate local variable
-> +@badarg2 exists@
-> +position p;
-> +expression devm,e;
-> +identifier vitm;
-> +@@
-> +// only devm_kzalloc is really used
-> +devm =3D \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmalloc_array=
-\)(...);
-> +...
-> +vitm =3D <+...devm...+>;
-=E2=80=A6
+There are some typos in timer module, as below:
 
-Your source code search approach affects recurring development concerns.
+  presicion ==> precision
+  gobal ==> global
+  exectued ==> executed
+  refere ==> refer
+  avarage ==> average
 
-The shown rules start with the same SmPL code.
-Thus I would find it nicer if such duplicate code can be avoided.
-I imagine that software run time characteristics would be more desirable
-if selected data processing does not need to be repeated.
+Just fix it.
 
-The search should obviously be continued after a relevant source code plac=
-e was found.
+Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
+---
+ include/linux/delay.h         | 8 ++++----
+ kernel/time/posix-timers.c    | 2 +-
+ kernel/time/timer_migration.c | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
+diff --git a/include/linux/delay.h b/include/linux/delay.h
+index 89866bab100d..46412c00033a 100644
+--- a/include/linux/delay.h
++++ b/include/linux/delay.h
+@@ -68,7 +68,7 @@ void usleep_range_state(unsigned long min, unsigned long max,
+  * @min:	Minimum time in microseconds to sleep
+  * @max:	Maximum time in microseconds to sleep
+  *
+- * For basic information please refere to usleep_range_state().
++ * For basic information please refer to usleep_range_state().
+  *
+  * The task will be in the state TASK_UNINTERRUPTIBLE during the sleep.
+  */
+@@ -82,10 +82,10 @@ static inline void usleep_range(unsigned long min, unsigned long max)
+  * @min:	Minimum time in microseconds to sleep
+  * @max:	Maximum time in microseconds to sleep
+  *
+- * For basic information please refere to usleep_range_state().
++ * For basic information please refer to usleep_range_state().
+  *
+  * The sleeping task has the state TASK_IDLE during the sleep to prevent
+- * contribution to the load avarage.
++ * contribution to the load average.
+  */
+ static inline void usleep_range_idle(unsigned long min, unsigned long max)
+ {
+@@ -96,7 +96,7 @@ static inline void usleep_range_idle(unsigned long min, unsigned long max)
+  * ssleep - wrapper for seconds around msleep
+  * @seconds:	Requested sleep duration in seconds
+  *
+- * Please refere to msleep() for detailed information.
++ * Please refer to msleep() for detailed information.
+  */
+ static inline void ssleep(unsigned int seconds)
+ {
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index aa3120104a51..36dbb8146517 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -1242,7 +1242,7 @@ SYSCALL_DEFINE2(clock_adjtime, const clockid_t, which_clock,
+  *    sys_clock_settime(). The kernel internal timekeeping is always using
+  *    nanoseconds precision independent of the clocksource device which is
+  *    used to read the time from. The resolution of that device only
+- *    affects the presicion of the time returned by sys_clock_gettime().
++ *    affects the precision of the time returned by sys_clock_gettime().
+  *
+  * Returns:
+  *	0		Success. @tp contains the resolution
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index c0c54dc5314c..d4f4398dec50 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -708,7 +708,7 @@ void tmigr_cpu_activate(void)
+ /*
+  * Returns true, if there is nothing to be propagated to the next level
+  *
+- * @data->firstexp is set to expiry of first gobal event of the (top level of
++ * @data->firstexp is set to expiry of first global event of the (top level of
+  * the) hierarchy, but only when hierarchy is completely idle.
+  *
+  * The child and group states need to be read under the lock, to prevent a race
+@@ -1621,7 +1621,7 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
+ 	 *   created group (parent).
+ 	 *
+ 	 * * It is ensured that the child is active, as this setup path is
+-	 *   executed in hotplug prepare callback. This is exectued by an
++	 *   executed in hotplug prepare callback. This is executed by an
+ 	 *   already connected and !idle CPU. Even if all other CPUs go idle,
+ 	 *   the CPU executing the setup will be responsible up to current top
+ 	 *   level group. And the next time it goes inactive, it will release
+-- 
+2.34.1
 
-=E2=80=A6> +@script:python depends on report@
-> +p << badarg.p;
-=E2=80=A6> +@script:python depends on report@
-> +p << badarg2.p;
-=E2=80=A6> +@script:python depends on report@
-> +p << badfield.p;
-=E2=80=A6
-
-Will development interests grow for another clarification approach?
-
-Support for SmPL rule groups
-2019-04-07
-https://github.com/coccinelle/coccinelle/issues/164
-
-Regards,
-Markus
 
