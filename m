@@ -1,156 +1,161 @@
-Return-Path: <linux-kernel+bounces-834870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CAEBA5AD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:41:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD4ABA5ADA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E520189EEB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:41:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DAD189FC01
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD092D481F;
-	Sat, 27 Sep 2025 08:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B57277C81;
+	Sat, 27 Sep 2025 08:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E7wyEQI4"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFbPhmcE"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4292D4813
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDA02D47F3
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758962468; cv=none; b=MR3U3KnBuQ4FlUhJBgQGELcLNZoKq/4liIvd5jKHr5p+Cjmea7NxfKyB1pvBpDkmNxISpCdg7kNhxhRCrQee2LXVPb4St7TSHR/qSBgCDol+AHAJw3odUSFxTk8QZYE8c2Fvs1WJxgbtIzkCGRRtdIpq/5wzANaV1DWGFUpdM7U=
+	t=1758962888; cv=none; b=J4213DJeZbPO+3Sd0jeadddoJ4w929Z66DbwXx8DZQyeSsnO+YkkEb7GgtPtFvcDYOEEpk6jab/zzR9kssviySD+Ee1ODjiTcrcnaTW/bMGfZb74hzw90LQLteG30wM2JVNS7BaK05zboq2iTtk51b5OjViLWfT3TNxEwwB9Be8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758962468; c=relaxed/simple;
-	bh=usd+50FZMY/NEDLIoiEP095ScnxXHEZoCJsJeHwVWcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U16zf8n5ej+giHAIf5rn0tY7gq4zrjLXGx+tB0cRps0/xlFgggnFpwMhEMx4PtCyJ8XtCnJ2c9C6yHjRY5qkMaYPLgJ7k798E26wSG9j6L/R5+oe8KQDVlKv4CWqdE1JafOlJIBdJBEFSRFKsAKXC7iP/ruwSnCCKCEzPQa6MVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E7wyEQI4; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 27 Sep 2025 04:40:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758962454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4fZs9aMRZt5EZgO0jnmqvdxf79UnZuJIg6eVqK0GyvY=;
-	b=E7wyEQI4WOaMhR61lfhARmdPBNWx56dXEz4kn1Ca3pdCMCJZe4zTFyNYjWxshieXtlkPbU
-	QSHExiq0GKYls/x5A0UEazSVpqXCS8tH+xZmVmJtgB2OJRAfQ3U+b6cgLUqJlU35JftAsB
-	QcM9UfD412lBcUgITWxY3HVsfi6+nfo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: Fix deadlocks between fallocate and readahead
-Message-ID: <a46zo4zjabiqe4n7q4rmzerndaswafeg5c72lxw5at2vep4y73@ra5fojy7q7ja>
-References: <20250927082503.40951-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1758962888; c=relaxed/simple;
+	bh=W3jFT2xCuMdLstdxWfEbBiE9g9ULW4SMf/2PYW8sF0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KruAe9M85PaREmbWH5vW6EbomyquKR8HfKHXfQvGzOOS8xKTwuEx0dE2wgROApQwltZwsgm9EwpguXQn6SFAlbZYXOImm18s1SQz7Gobul8B+QhrZNV7iYT2JIDOXRgwEuihoDUPQ0vBscmbbeB9YmCSomcK8O3Lj9HRBdf4vgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFbPhmcE; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3322e6360bbso2929167a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758962885; x=1759567685; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/GTUQPP8+/5EC2O1mZ2t0mC7oS0NY7urV0HxwSW70UI=;
+        b=EFbPhmcErXPM8UQyW275k9D26+VWXbmSxKKVEaVdO+dHiJNibzbB4VrBZuctCTnwk4
+         3wGoVXcYXndrozrGZ3NnqsKRUKV5plnNn1uR1vxJFTfde++dWX23+QPp0d3u12I9WHXI
+         4FxkGdFkJK5u1d2tHJ7doEveJ0V2b9yVgbl86zrLwR06tqc2JSynRjk3RCFGVJTx/ZOA
+         em+ItWhG0QHec+jAmUpPLTuAMNGzTSHfKtjjZWzCYJOnPG86k1I8TKBkeYUYMdQ+G3RU
+         hj5x1nEbttLOFgcSxWWvJXKIqXeUpCjCOf74pPNrLJ9VdXZEpcuByEf0w0fxy+gjGxGC
+         In2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758962885; x=1759567685;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/GTUQPP8+/5EC2O1mZ2t0mC7oS0NY7urV0HxwSW70UI=;
+        b=VRLgNnJkJ37936+8nvgCISMUCqMxYevOJdvTrORNE5ISGkixTsTEQsJ4sSxVrhsQwn
+         K1JL52pd/81jJkifczvgjNJjdSInfEb1DQeHQRlRbhNgC3NTXi4w7CuSbFk9ZMCWocEA
+         qTlT6auNcZIWrQm3AuZ8ZbcSBV28zr59rLGjKA0WlUFK9N+KzgRuCemzpGTl//37sYzB
+         Ae17KHPKp84kRdUWBqm1xKjfiVo4MP5IGwsl4Dp8hQmrRMCoj7mPz4ER6o3oCVBHRseq
+         9lQV8Tg+XfzmV3TWYaETpdL/zyoMzsCxanKqDC0iMRpr93a+/bWKizVuNanfi5KlojQA
+         SsqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVv7GbIAxJm+ELXQY/Ck1BdY1Zj8n5ScD8Zz5tmron50SCuzWKkWfDHqPbpcUVP9ZGQY+1ukhMbOGPiv64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy622XkWNCvC1EOjsaNjWbIuyMUL9kV0sbkr+aCfo4j3pNTLv6h
+	b2GEH55hGvgJFHtaFKdqLOdWsOoASLFGzQPu/N3uWyv1sxjVFcSTmcR/wjX3QaXBVSgcxHT/DVO
+	57ISSVZ2ymQ6QSVJlNfHzDASOLIt9r+U=
+X-Gm-Gg: ASbGncuCBAms0guIYrq0ICl9kc84YPMwUxqRMfe/JuFH7Rcczdzy2eAZMOvjN/U6Chn
+	GRb9GRhbPIvnpAJVNC7gA3WVjjmfdPPpEzldfeWWRrZic/KepsBzddvImv0sTEqKP33oeOG68b8
+	YYKkScpSkqaEPKb6vHa/RX/DpMiPpLsm/zRvm7x7vD1T0rpVw84ak34li0o6dn3+rmBkBQKoOAe
+	fr8fzLDIuXCryJUCjre
+X-Google-Smtp-Source: AGHT+IE8/Ky1EmR+0LJIy4YhT01cjWKhOibqsHQ53cBmr/JkwwCwaBr7tP12GcnmDWyv0cmrxLHDEEw+q8nuhwMAZu0=
+X-Received: by 2002:a17:90b:4d04:b0:32e:a60d:93e2 with SMTP id
+ 98e67ed59e1d1-3342a260e49mr10570366a91.11.1758962885154; Sat, 27 Sep 2025
+ 01:48:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250927082503.40951-1-kartikey406@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250927044106.849247-1-aha310510@gmail.com> <87bjmwb9y6.wl-tiwai@suse.de>
+In-Reply-To: <87bjmwb9y6.wl-tiwai@suse.de>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Sat, 27 Sep 2025 17:48:02 +0900
+X-Gm-Features: AS18NWAH5mQvcVsDREbrMd7yAaCa4-5UOBVCoSMH3cnV9nAbMNh2Maxiike7hRQ
+Message-ID: <CAO9qdTHSu6QmUVMo0pZj_=foz9CDtwKEYwjBx5vjj8gHzzVFNQ@mail.gmail.com>
+Subject: Re: [PATCH] ALSA: usb-audio: fix race condition to UAF in snd_usbmidi_free
+To: Takashi Iwai <tiwai@suse.de>
+Cc: clemens@ladisch.de, perex@perex.cz, tiwai@suse.com, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Sep 27, 2025 at 01:55:03PM +0530, Deepanshu Kartikey wrote:
-> 
-> There are ABBA deadlocks between fallocate and readahead operations
-> at two locations in __bchfs_fallocate():
-> 
-> Thread 1 (fallocate):
->   bch2_fallocate_dispatch
->     inode_lock(&inode->v)
->     bch2_pagecache_block_get(inode)  // Acquires two_state_lock
->       __bchfs_fallocate
->         bch2_clamp_data_hole (or bch2_mark_pagecache_reserved)
->           bch2_seek_pagecache_hole
->             __filemap_get_folio
->               folio_lock()  // BLOCKS - Thread 2 holds it
-> 
-> Thread 2 (readahead via copy_file_range):
->   bch2_readahead
->     folio_lock()  // Holds page lock
->     __bch2_two_state_lock(&pagecache_lock)  // BLOCKS - Thread 1 holds it
-> 
-> The issue is that drop_locks_do() only releases btree transaction locks,
-> but Thread 2 is blocked waiting for the two_state_lock (pagecache_block)
-> held by bch2_pagecache_block_get().
-> 
-> Fix by explicitly releasing and re-acquiring the pagecache_block lock
-> around both blocking operations (bch2_clamp_data_hole and
-> bch2_mark_pagecache_reserved), following the same pattern used in
-> bch2_page_fault(). Force a transaction restart after lock release to
-> ensure consistency.
-> 
-> Reported-by: syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
-> Tested-by: syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
-> Link: https://syzkaller.appspot.com/bug?extid=cb91f22d8a581fc19edf
-> Signed-off-by: Deepanshu Kartikey <Kartikey406@gmail.com>
+Hi,
 
-Nice find... we still don't have lockdep support for pagecache add lock,
-there was one last bit preventing me from applying the patch last I was
-working on that.
+Takashi Iwai <tiwai@suse.de> wrote:
+>
+> On Sat, 27 Sep 2025 06:41:06 +0200,
+> Jeongjun Park wrote:
+> >
+> > The previous commit 0718a78f6a9f ("ALSA: usb-audio: Kill timer properly at
+> > removal") patched a UAF issue caused by the error timer.
+> >
+> > However, because the error timer kill added in this patch occurs after the
+> > endpoint delete, a race condition to UAF still occurs, albeit rarely.
+> >
+> > Therefore, to prevent this, the error timer must be killed before freeing
+> > the heap memory.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Fixes: 0718a78f6a9f ("ALSA: usb-audio: Kill timer properly at removal")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>
+> I suppose it's a fix for the recent syzbot reports?
+>   https://lore.kernel.org/68d17f44.050a0220.13cd81.05b7.GAE@google.com
+>   https://lore.kernel.org/68d38327.a70a0220.1b52b.02be.GAE@google.com
+>
 
-If you want to join the IRC channel, this is one a couple of us might
-want to chew on. Your commit message is good, I'll probably apply it
-after it's not 3 am, but this'll be a good one to talk about.
+Oh, I didn't know it was already reported on syzbot.
 
-(irc.oftc.net #bcache, and for this one the secret #bcachefs-dev)
+> I had the very same fix in mind, as posted in
+>   https://lore.kernel.org/87plbhn16a.wl-tiwai@suse.de
+> so I'll happily apply if that's the case (and it was verified to
+> work).  I'm just back from vacation and trying to catch up things.
+>
 
-> ---
->  fs/bcachefs/fs-io.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/fs/bcachefs/fs-io.c b/fs/bcachefs/fs-io.c
-> index a233f45875e9..66a60e5f03fc 100644
-> --- a/fs/bcachefs/fs-io.c
-> +++ b/fs/bcachefs/fs-io.c
-> @@ -694,13 +694,19 @@ static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
->  						 &hole_start,
->  						 &hole_end,
->  						 opts.data_replicas, true)) {
-> +				/* Release pagecache_block to prevent deadlock with readahead */
-> +				bch2_pagecache_block_put(inode);
->  				ret = drop_locks_do(trans,
->  					(bch2_clamp_data_hole(&inode->v,
->  							      &hole_start,
->  							      &hole_end,
->  							      opts.data_replicas, false), 0));
-> +				bch2_pagecache_block_get(inode);
->  				if (ret)
->  					goto bkey_err;
-> +				/* Force transaction restart to revalidate state */
-> +				ret = -BCH_ERR_transaction_restart;
-> +				goto bkey_err;
->  			}
->  			bch2_btree_iter_set_pos(trans, &iter, POS(iter.pos.inode, hole_start));
->  
-> @@ -730,11 +736,17 @@ static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
->  
->  		if (bch2_mark_pagecache_reserved(inode, &hole_start,
->  						 iter.pos.offset, true)) {
-> +			/* Release pagecache_block to prevent deadlock */
-> +			bch2_pagecache_block_put(inode);
-> +
->  			ret = drop_locks_do(trans,
->  				bch2_mark_pagecache_reserved(inode, &hole_start,
->  							     iter.pos.offset, false));
-> +			bch2_pagecache_block_get(inode);
->  			if (ret)
->  				goto bkey_err;
-> +			ret = -BCH_ERR_transaction_restart;
-> +			goto bkey_err;
->  		}
->  bkey_err:
->  		bch2_quota_reservation_put(c, inode, &quota_res);
-> -- 
-> 2.43.0
-> 
+Although it's difficult to disclose right now, I have already completed
+writing a PoC that triggers a UAF due to the error timer in a slightly
+different way than the backtrace reported to syzbot, and I have confirmed
+that no bugs occur when testing this patch through this PoC.
+
+>
+> thanks,
+>
+> Takashi
+>
+> > ---
+> >  sound/usb/midi.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/sound/usb/midi.c b/sound/usb/midi.c
+> > index acb3bf92857c..8d15f1caa92b 100644
+> > --- a/sound/usb/midi.c
+> > +++ b/sound/usb/midi.c
+> > @@ -1522,6 +1522,8 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+> >  {
+> >       int i;
+> >
+> > +     timer_shutdown_sync(&umidi->error_timer);
+> > +
+> >       for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
+> >               struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
+> >               if (ep->out)
+> > @@ -1530,7 +1532,6 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+> >                       snd_usbmidi_in_endpoint_delete(ep->in);
+> >       }
+> >       mutex_destroy(&umidi->mutex);
+> > -     timer_shutdown_sync(&umidi->error_timer);
+> >       kfree(umidi);
+> >  }
+> >
+> > --
+
+Regards,
+Jeongjun Park
 
