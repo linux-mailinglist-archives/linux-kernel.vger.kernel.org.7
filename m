@@ -1,187 +1,195 @@
-Return-Path: <linux-kernel+bounces-835022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAA0BA60FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:33:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55F0BA6109
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3B14A3FBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5712317C8A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C2B2E3B10;
-	Sat, 27 Sep 2025 15:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D662E2DDD;
+	Sat, 27 Sep 2025 15:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKvGRzND"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZamBSF3M"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D984C9D;
-	Sat, 27 Sep 2025 15:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369E02DF6E9
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 15:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758987225; cv=none; b=XsgaAnIz6rhVnfme9Fge9Sr7VxJiaUmYPuNF/ouG0iIWybcW+4hWSppyAcqELwCG50GGGtI9onJuz5DpISa8Hv1ysrDa6fcqp9kdBHr1DMgqYCKlkeUVgXdJS2D28AiRrJCyZUx5JPreIuIh8S/wHEKkgxDZhZ91zO13rO9Kv2c=
+	t=1758987676; cv=none; b=XL4Qm756q+laSnlINQBQun4FCa4q6u/gNUOsFqcwkDDYMKdsp7OZrDYmf64BolK2QhvK2DIDBYDcPDaQqZRb1zK9TKw4g9pKsoBYlWb+8OUJ2wQsewnh1xbiBxhyAwILDiXnUhIhcRnYIbHD38vCv16z+MfPmqWw1DHYkrRWG8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758987225; c=relaxed/simple;
-	bh=YP9XMHyMUiFPIIDHrpJNhaTLyQxop7Ve8HoR8OOr+xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gqzNtZflNEw9uMKZsZtIBlmcnFqWD9NYnPPTxquLvnPkJ2TKnEXBTUjOkyCqmbOQvFK1gLz2Dau8kI6FBj3FRcbcR2scCvT0MsykpblhIzNaHLPWU0DRkpFXbmU/PyId0wHzM5IKjefTt9JTybwYV51HnpelG5MHKQqko47YHqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKvGRzND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D89A2C4CEE7;
-	Sat, 27 Sep 2025 15:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758987225;
-	bh=YP9XMHyMUiFPIIDHrpJNhaTLyQxop7Ve8HoR8OOr+xM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uKvGRzNDS9jYjMcVd+pc5wMr3QM22v44//bBx7gOLY6rWWAKjqlbZM8jnaKyloz1I
-	 IQpmtkWHO+mBtjCXCp6Ra/uph6kCwtx4rFrIsBH3OYOygl6WALBYHXLW4uAZLcf+V/
-	 t6+kjfJtUqEr3S/DuG7ZEQhI0Nd+WBoxC6X2KtY+oFyTbSY15MUfyMEW8xVJUqpMwm
-	 teoeMigCDa7TGKw0OpGZzX4xKoIVUu41Xr8omfZDoBo6Pj6LzXObcnHMhxPQBWtFW3
-	 uGUuPSTZBiI9Sgm8ej45bYy6aEjAUa9R9GEhN3/rbBcbQD/85oS95fQdeMgtn1ckoZ
-	 mwIf+VC/k8wCA==
-Date: Sat, 27 Sep 2025 16:33:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- michael.hennerich@analog.com, nuno.sa@analog.com, eblanc@baylibre.com,
- dlechner@baylibre.com, andy@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net
-Subject: Re: [PATCH v2 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
- and ADAQ4224
-Message-ID: <20250927163333.55d94113@jic23-huawei>
-In-Reply-To: <20250921-unadvised-uninjured-cdd7a6e6f326@spud>
-References: <cover.1758214628.git.marcelo.schmitt@analog.com>
-	<2d6bca62056e1254f91b45f70f4ba4614e659c1c.1758214628.git.marcelo.schmitt@analog.com>
-	<20250919-unsure-mounted-0fc49ce72216@spud>
-	<aM3HJY0GWJmP8-do@debian-BULLSEYE-live-builder-AMD64>
-	<20250921-unadvised-uninjured-cdd7a6e6f326@spud>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758987676; c=relaxed/simple;
+	bh=FPmwv6sV7hm4RdMnP+owJF/j0SUOZOnBAU0EQjBJ4QM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QS3dty8zCDbOdklBJjT1GquOJVrEYII4cj9KTp09FDxxjHYYQkQ9uz/5aKDKNiTwikgB7Y4wZ/rLrN38qPFfT0BWr0FlkH+OpjUUGvgQSbVKz+4QzRxOOsuIjLb2fXBKdUaVRadurrKUkYPaPsBe2irUzJxuxzMRQpgq9whuiMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZamBSF3M; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-781206cce18so1339278b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:41:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758987674; x=1759592474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p+guc24UFix+87mZw75ftkg3HVWAUb97VQeNgK+6EGk=;
+        b=ZamBSF3M0YvdqbjPmmtb10pmoRkFeK15WxiSNjklDZs9Y9IZ7LqCvyAOHLRIwaUUNi
+         Il5N83bPAw6cCIG/bcpoRery2U0dR/lnUPj84xEFvtRsv3fuWFza2VDiTeYkLbEk71ka
+         KEHh7POM5Rl8ySC4XN9LeEil3USDNYage/b1vhBTqCZjQauJA70liT6PjO+uISdZ8J7M
+         QXHMlXHSD5tFXsspJ6frZB/62sJET2tk56XPaI+pj7gGiszVlzyt2ru4VGXNE5izHQ7H
+         tV+sgPm3I1ZviIFIc42/HMhzeQcEkifmYol2c5NPvD8iri9KHJaeBMhaAPp3annPhPQG
+         jFPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758987674; x=1759592474;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p+guc24UFix+87mZw75ftkg3HVWAUb97VQeNgK+6EGk=;
+        b=ryoPUTvmiW0tvA/3MR2DJ/D05fjcU92zUNTshLpnYZOrLC/Bae0/ukUZGI6bIk8qQE
+         ZUo8TctytfLXTrQsvFGZ5sAamzWsX1AhK1E1XKuhIVlY0U5Y5L3uW2KDHa+FYwtRbEgs
+         Bkd1wu8czbiPWsstOu+xhQ93dKwZ5IJYZWiWMOpmaIN1xy0TRtPDOjkoNRlZFJ9eZOyO
+         FV3lmCCLxFLJ5oBcoPb0hsRudJGn1/v/ZJH3LcRYjWdVdwrzqCbSBoKENU1B6FU2o3ml
+         gkEgt0AMDLcz/qc9aPOa84feuvZaG0dVkQ8qlKOnSduaRjaV8sYe8cpdO37hBzDaJxQQ
+         LhSw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1yOtl9XT2sEh3Kl7NmzUwiFcxagYWWGVUdxCrFdtz9gN0xehccoD0oIjdUOOlw8EC9YTdV54J/cD32q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0qfrPMkxUw9KwTAsCyzd3k+3RuEh2Rgwj9fx+CWfn/DGicjw/
+	R1H6xYt6Yt2ydvzRA2gRN28+p6V+BlShLJEV+20YhKPm4dd3oDTRaxrl
+X-Gm-Gg: ASbGncuuCuk6vBYOWPYiNpXgArQW/rZiRMEL0Ds6eLvuoNG2QlwNGalXNPcn6+5qCCo
+	BYd7cCI/O/JnOexrM5hYp0o7BMmYCKTDt9wTPjqFAk5abNaE45wpUYmTyDOy6q67oAYrZoWqEVD
+	M3jzz3BFOsH+8PcqvQeSDJyuxDkc6gxjzBGjxnc+vzcv5xwTlagkbdSGa/OvGkn5EM4Z+0C8Dyh
+	X/0MSHPkAUJE9yseBWzgsisYLDe1Ha1MtrdyJ2YwwhCmuo8gbeMvEm2y6myAky2R10aSjMgUlVD
+	5uBFE3PYh0djheZbtxVxreFqyLbSG7SwTX+gMxbv1/ioK3Ebldg18k7ZhCXI291RFmRhflIc2DC
+	bA8yTvqaj15Yyb/L3IDrzrz5R4a6G+TwBGE9reWNOHvsUlxsl2w==
+X-Google-Smtp-Source: AGHT+IH1j8iZ+VWe12C+/tThYXtmTrtzLYXhJdXhg11A+ZuNwyCqmcZMV00qeYbftkoEsVvjpMu9fQ==
+X-Received: by 2002:a05:6a00:1f05:b0:77f:43e6:ce65 with SMTP id d2e1a72fcca58-78125450167mr3043482b3a.0.1758987674330;
+        Sat, 27 Sep 2025 08:41:14 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c0709csm6923531b3a.81.2025.09.27.08.41.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 08:41:14 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: tiwai@suse.de
+Cc: aha310510@gmail.com,
+	clemens@ladisch.de,
+	hdanton@sina.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [sound?] [usb?] general protection fault in snd_usbmidi_do_output
+Date: Sun, 28 Sep 2025 00:41:09 +0900
+Message-Id: <20250927154109.879926-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <87o6qw9koa.wl-tiwai@suse.de>
+References: <87o6qw9koa.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 21 Sep 2025 23:20:01 +0100
-Conor Dooley <conor@kernel.org> wrote:
+Hi,
 
-> On Fri, Sep 19, 2025 at 06:12:05PM -0300, Marcelo Schmitt wrote:
-> > On 09/19, Conor Dooley wrote:  
-> > > On Thu, Sep 18, 2025 at 02:39:29PM -0300, Marcelo Schmitt wrote:  
-> > > > ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
-> > > > PGA (programmable gain amplifier) that scales the input signal prior to it
-> > > > reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
-> > > > and A1) that set one of four possible signal gain configurations.
-> > > > 
-> > > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > > > ---
-> > > > Change log v1 -> v2
-> > > > - Use pattern to specify devices that require gain related properties.
-> > > > - Disallow gain related properties for devices that don't come with embedded PGA.
-> > > > - Documented VDDH and VDD_FDA supplies for ADAQ4216 and ADAQ4224.
-> > > > - Updated PGA gain constants.
-> > > > 
-> > > >  .../bindings/iio/adc/adi,ad4030.yaml          | 65 +++++++++++++++++--
-> > > >  1 file changed, 60 insertions(+), 5 deletions(-)
-> > > >   
-> > ...  
-> > > >  
-> > > > +  pga-gpios:
-> > > > +    description:
-> > > > +      A0 and A1 pins for gain selection. For devices that have PGA configuration
-> > > > +      input pins, pga-gpios should be defined if adi,gain-milli is absent.
-> > > > +    minItems: 2
-> > > > +    maxItems: 2
-> > > > +
-> > > > +  adi,pga-value:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32  
-> > > 
-> > > How come this is "value" rather than "gain"?  
-> > 
-> > Because, for this one, I drew inspiration from ad7191 bindings [1] in the hopes
-> > of avoiding creating new properties or using discontinued/deprecated
-> > nomenclature [2].
-> > 
-> > The thing is, we now have ADC chips coming with PGA circuitry in front of ADC
-> > inputs. Those PGAs are usually set/configured through hardware connections
-> > (e.g. dedicated GPIOs or pin-strapped) and have been described in dt-bindings.
-> > Though, since these added PGAs don't follow a pattern with respect to the
-> > provided gain, different properties began to appear. ad7380 and ad4000 use
-> > adi,gain-milli to describe PGA gain [3, 4], ad7191 uses adi,pga-value and,
-> > more recently, adaq7768-1 has been proposed with adi,aaf-gain-bp [5].
-> > adaq7768-1 is arguably a slightly different case since the signal gain stems
-> > from an anti-aliasing filter, but it nevertheless results in signal attenuation
-> > much like some PGAs.
-> > 
-> > I personally like the -milli (or even -permille) nomenclature because 4 digits
-> > have been more than enough to describe the gains (at least so far). Though, I
-> > acknowledge the base points suffix (-bp) which is documented in
-> > property-units.yaml [6]. The only thing I don't like much about -bp for
-> > describing PGA gain is that PGA gains are often described in terms of unitless
-> > scale factors, while bp implies the value to be described as a percent.
-> > 
-> > Anyways, whatever property name is chosen, it will probably be better settle to
-> > something rather than arguing about property names each time a new ADC comes
-> > with an integrated PGA.  
-> 
-> If PGA gains are common, then ye it would make sense to have a standard
-> property. I guess one of the problems with doing so is that there isn't
-> a standard/common binding for adcs themselves, so without making one
-> it'd involve reviewers pushing people to the standard one. I suppose the
-> current adc.yaml could be made into adc-channel.yaml and adc.yaml
-> repurposed. I bet there are more properties than just PGA gain that
-> could go there.
-> 
-> My personal objection to "pga-value" is that it doesn't communicate by
-> itself what aspect of the pga it actually controls. I don't really care
-> what "unit" qualifier is used that much or if one is used at all. That's
-> more of a thing for yourself and other IIO developers to handle.
-> 
-> Part of me is bothered though that all these gains are not in dB! But
-> I'd imagine there are not really any ADCs where the registers don't
-> deal in unitless gain and using dB would be nothing more than an
-> additional headache for software developers.
+Takashi Iwai <tiwai@suse.de> wrote:
+>
+> On Sat, 27 Sep 2025 12:36:07 +0200,
+> Jeongjun Park wrote:
+> >
+> > syzbot <syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> > > KASAN: slab-use-after-free Write in snd_usbmidi_in_urb_complete
+> > >
+> > > ==================================================================
+> > > BUG: KASAN: slab-use-after-free in snd_usbmidi_in_urb_complete+0x389/0x3c0 sound/usb/midi.c:251
+> > > Write of size 1 at addr ffff888074717943 by task kworker/1:3/5866
+> > >
+> >
+> > Wow, the UAF bug still occurs?
+> >
+> > But... this UAF seems to be a problem with how midi handles urb rather
+> > than a problem with my patch.
+> >
+> > Is there something wrong with the way snd_usbmidi_in_urb_complete() is
+> > implemented?
+>
+> This can be rather a missing kill-and-cleanup in the code path.
+> So the patch like below.
+>
+> Could you check whether this works for you instead of your fix, too?
+> timer_shutdown_sync() is already called in snd_usbmidi_disconnect(),
+> and the call in snd_usbmidi_free() should be superfluous after this
+> change.
+>
 
-To me this problem isn't really about PGAs at all.  What it is really
-about is cases where a pin on a chip is either tied to a gpio or pin strapped.
-Can we provide a solution at that layer?
+Since both my tests and syzbot tests did not cause any bugs when applying
+this patch, I think the root cause of this vulnerability is the missing
+kill error_timer + urb.
 
-i.e. A way to say this GPIO input is tied high so you can't control it
-but you can still read what it's current value is. Maybe there is already
-a clean way to do this.
+So, I think it would be okay to patch it this way, but in addition, since
+most of the endpoint delete-related code that existed in
+snd_usbmidi_free() is now done in snd_usbmidi_disconnect(),
+I think it would be appropriate to modify it to only perform
+kfree(ep->out) as in this patch below.
 
-Jonathan
+---
+ sound/usb/midi.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-> 
-> > [1] Documentation/devicetree/bindings/iio/adc/adi,ad7191.yaml
-> > [2] https://lore.kernel.org/linux-iio/510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org/
-> > [3] Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-> > [4] Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> > [5] https://lore.kernel.org/linux-iio/46842d4cf2c1149bd64188f94c60ce5e4f3b2beb.1757001160.git.Jonathan.Santos@analog.com/
-> > [6] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-> >   
-> > >   
-> > > > +    description: |
-> > > > +      Should be present if PGA control inputs are pin-strapped. The values
-> > > > +      specify the gain per mille. For example, 333 means the input signal is
-> > > > +      scaled by a 0.333 factor (i.e. attenuated to one third of it's original
-> > > > +      magnitude). Possible values:
-> > > > +      Gain 333 (A1=0, A0=0)
-> > > > +      Gain 555 (A1=0, A0=1)
-> > > > +      Gain 2222 (A1=1, A0=0)
-> > > > +      Gain 6666 (A1=1, A0=1)
-> > > > +      If defined, pga-gpios must be absent.
-> > > > +    enum: [333, 555, 2222, 6666]
-> > > > +  
-> > 
-> > Thanks,
-> > Marcelo  
+diff --git a/sound/usb/midi.c b/sound/usb/midi.c
+index acb3bf92857c..97e7e7662b12 100644
+--- a/sound/usb/midi.c
++++ b/sound/usb/midi.c
+@@ -1522,15 +1522,14 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+ {
+ 	int i;
+ 
++	if (!umidi->disconnected)
++		snd_usbmidi_disconnect(&umidi->list);
++
+ 	for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
+ 		struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
+-		if (ep->out)
+-			snd_usbmidi_out_endpoint_delete(ep->out);
+-		if (ep->in)
+-			snd_usbmidi_in_endpoint_delete(ep->in);
++		kfree(ep->out);
+ 	}
+ 	mutex_destroy(&umidi->mutex);
+-	timer_shutdown_sync(&umidi->error_timer);
+ 	kfree(umidi);
+ }
+ 
+--
 
+>
+> thanks,
+>
+> Takashi
+>
+> --- a/sound/usb/midi.c
+> +++ b/sound/usb/midi.c
+> @@ -1522,6 +1522,9 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+>  {
+>         int i;
+>
+> +       if (!umidi->disconnected)
+> +               snd_usbmidi_disconnect(&umidi->list);
+> +
+>         for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
+>                 struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
+>                 if (ep->out)
+
+Regards,
+Jeongjun Park
 
