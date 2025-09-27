@@ -1,83 +1,126 @@
-Return-Path: <linux-kernel+bounces-835100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D575BA6429
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 00:28:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A36BA642F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 00:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B09380833
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14704A26A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636DC19E83C;
-	Sat, 27 Sep 2025 22:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68881236457;
+	Sat, 27 Sep 2025 22:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jIpGYNmE"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjZrdZmo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12F719D087
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 22:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B476715855E;
+	Sat, 27 Sep 2025 22:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759012103; cv=none; b=f9YxRpBRIrfRGpmVtADYc1eQBuw6Kb6a4b7J7hOW4c56JojSjzeU83k9GCkQrgUreLYNPgluzkqWHjPFnWAZQ8loeY7QZNl1EvfUqxyK6RZimMU1S3jP0HIN5L5PyxhLAvYpm2mNk+MnbHQM/MeVQVWl39dxh28nHd5jw7x9qr8=
+	t=1759012271; cv=none; b=k73shRqsajmfuV53aO3BXXev7106E5lBJnaLBSz6m2de7jsFh1Qz3iG5L6SPH3/Jm1EIeUjMcNU+evuJYwHvfx6TqVcIbk0AIQp7oHPb1QTN+gIQJuSDtQYiLxWPxANbd388+jsrVf/1lxFs83eD/ZJ9wTpNM4gAZQD+30w6rsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759012103; c=relaxed/simple;
-	bh=5OLTzPxIdYsUVeiOoZUF189rauKtei7+nmPm7dDIojY=;
+	s=arc-20240116; t=1759012271; c=relaxed/simple;
+	bh=dBMCnwC/+O9FTfXLyAEIuZ0DdSHoOWe/DqAJ60jmJB8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bx7aAd36bZcPPhcE2Eatm6WSjToE5gWjzNDQLAmwxGF09w5uL/LcHyZtNsUHI4xGSw5R+PdXy2/5bVZsJqBZxyKyp9ccQskwKhnXmtD+TpZgkqCGRdSsKIksiyn//QsKa29JMnWU7I8+K0eSybPAO0Oi5a+qCth6BeMDbU1wNmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jIpGYNmE; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=briJ
-	+qeic7cY6iPJ4hQ23iKjWHUKZaedrPOQzDcbuvM=; b=jIpGYNmEmhKy6dAwDw2x
-	lZhl4atgdndfmdjjy8/8VtkJ3TrSnWiZmGFxnb9dN4yfV7tn0puEq8KJYld+NrAD
-	5vlL8ymHOmS69l7lVXtKNNC//K9onlqgdBMsq0O4oP6kkySY2w5PzfzU94JzqVtf
-	P8VDxiCVD27mbtaJ7MdaxkXacrVDHThoxLfsNiYlYJhQBIksTJ2FN/8lF1zPHb4Q
-	MQz2iSS6Ym7nckR2jeJUd4dohOG7XR5+//uiSa/q44Uejev9v+HEs7Mciocsav41
-	Ptqv1MoHv6I4dc/FP1ZpRxkCvJH1Z+l4g7db3UTFut6Vuj2RxwfXUpX2xfAZqoip
-	/Q==
-Received: (qmail 2702438 invoked from network); 28 Sep 2025 00:28:19 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Sep 2025 00:28:19 +0200
-X-UD-Smtp-Session: l3s3148p1@9ZdY688/Bowujnsw
-Date: Sun, 28 Sep 2025 00:28:19 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Sven Eckelmann <sven@narfation.org>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Jelonek <jelonek.jonas@gmail.com>,
-	Harshal Gohel <hg@simonwunderlich.de>,
-	Simon Wunderlich <sw@simonwunderlich.de>, stable@vger.kernel.org
-Subject: Re: [PATCH i2c-host-fixes i2c-host v7 1/2] i2c: rtl9300: Drop
- unsupported I2C_FUNC_SMBUS_BLOCK_DATA
-Message-ID: <aNhlAyxlUR27eERC@shikoro>
-References: <20250927-i2c-rtl9300-multi-byte-v7-0-c0fd0e78b818@narfation.org>
- <20250927-i2c-rtl9300-multi-byte-v7-1-c0fd0e78b818@narfation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lXNBPMCLBuk3iE0lhCDMvJZ2YctpL8l/hBfytPS1ZdeGaEcWAbpgJJlQvNAeQnkymjQFtoMHDqTzcgkg++2FeV9heY/tAE+rUg8s6hjDkXWDS7f/73n+y+hhIShvS1kZiKZ6IUEZGtNa/GPvRYStruLvpJ00JIpdyyF5ZaMIBJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjZrdZmo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67297C4CEE7;
+	Sat, 27 Sep 2025 22:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759012271;
+	bh=dBMCnwC/+O9FTfXLyAEIuZ0DdSHoOWe/DqAJ60jmJB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VjZrdZmoYtbyhNPG7F3XzGd74PCHvufvfo+0H4pTRUJOgLW05CU5xQyJU0hAvZTH0
+	 MQzNCNFOrQ4I+JCd7yNy8sBQkyqb+D7P724ui6/6F4Hpl3vSStdYfv+7eS0QuIRSCS
+	 ibjablqCjJSDSoaJE88jILyZ0wCwbn8kEJq9V+XNDp7LTbnvSkdi1FohOUtqNeerTy
+	 akPCP+27p2SVL4GM4o/GpsFzYWxwwZaTa5PW4XdhbCyxFCkOuimLmztv+pp6PY69wY
+	 jAU4sfYrinKIGI+A6CMi00v30UemeczhLqkgdUs+pb+fMHJ4F1kt1iS8f7ShwqNUyL
+	 jrmxALXQ83jnQ==
+Date: Sat, 27 Sep 2025 23:31:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] regulator: dt-bindings: Add Linear Technology
+ LTM8054 regulator
+Message-ID: <20250927-spoon-yearning-c1a8df796173@spud>
+References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
+ <20250925-ltm8054-driver-v2-1-bb61a401a0dc@bootlin.com>
+ <20250925-pushchair-charity-9ccee20d8a6e@spud>
+ <5331035.LvFx2qVVIh@fw-rgant>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dO2l03q4ujQbw8Xs"
+Content-Disposition: inline
+In-Reply-To: <5331035.LvFx2qVVIh@fw-rgant>
+
+
+--dO2l03q4ujQbw8Xs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250927-i2c-rtl9300-multi-byte-v7-1-c0fd0e78b818@narfation.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 27, 2025 at 11:52:16AM +0200, Sven Eckelmann wrote:
-> While applying the patch for commit ede965fd555a ("i2c: rtl9300: remove
-> broken SMBus Quick operation support"), a conflict was incorrectly solved
-> by adding the I2C_FUNC_SMBUS_I2C_BLOCK feature flag. But the code to handle
-> I2C_SMBUS_I2C_BLOCK_DATA requests will be added by a separate commit.
-> 
-> Fixes: ede965fd555a ("i2c: rtl9300: remove broken SMBus Quick operation support")
-> Cc: stable@vger.kernel.org # v6.13+
-> Signed-off-by: Sven Eckelmann <sven@narfation.org>
+On Fri, Sep 26, 2025 at 05:59:48PM +0200, Romain Gantois wrote:
+> Hello Conor,
+>=20
+> On Thursday, 25 September 2025 21:27:06 CEST Conor Dooley wrote:
+> > On Thu, Sep 25, 2025 at 02:37:33PM +0200, Romain Gantois wrote:
+> ...
+> > > +properties:
+> > > +  compatible:
+> > > +    const: adi,ltm8054
+> > > +
+> > > +  enable-gpios:
+> > > +    description: GPIO connected to the RUN pin.
+> > > +    maxItems: 1
+> > > +
+> >=20
+> > > +  lltc,fb-voltage-divider:
+> > Why does this property have a ?linear? vendor prefix?
+> > Shouldn't it be adi to match the other property and compatible?
+>=20
+> This component was originally from Linear Technology, before it was acqui=
+red=20
+> by Analog Devices. The new properties and compatibles have the Analog Dev=
+ices=20
+> prefix, but the "fb-voltage-divider" property is already used by the LTC3=
+676=20
+> and LTC3589 regulators, so I left the Linear Technology prefix for this o=
+ne to=20
+> avoid introducing a new property just to specify a vendor prefix change.
+>=20
+> I don't have a strong opinion about this though.
 
-Applied to for-current with $subject fixed to match the correct FUNC
-flag, thanks!
+Do they share the same driver?
 
+--dO2l03q4ujQbw8Xs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNhlqQAKCRB4tDGHoIJi
+0t74AQCabvjJlJT7JwqpnsYqKxgYWhQ/m7pHQbMZB2cZ2tUcDgD/bwEavC33iHAB
+OMsQgRoetYt6nmPa+Fm0cxjAGDT24wc=
+=ACPw
+-----END PGP SIGNATURE-----
+
+--dO2l03q4ujQbw8Xs--
 
