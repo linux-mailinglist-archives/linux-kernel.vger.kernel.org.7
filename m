@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-834940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D964BBA5E17
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:58:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DEBBA5E23
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8A617F763
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DD93AAF3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C882DD5F3;
-	Sat, 27 Sep 2025 10:58:07 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8627D2DF134;
+	Sat, 27 Sep 2025 11:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8DBl0JA"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E12DCF46;
-	Sat, 27 Sep 2025 10:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356832DEA72
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 11:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758970687; cv=none; b=V/g0xZJ6LcktOzhpIEwFEI2oobjdrTnVIKrm8PbhWCOzVu9nd/GHgIaAPmk6pvUMcp10iMnViBX8Bda4trewucB4PzldgfFX3P4zSMUUb76nc8Xs+N+l1ACfZQmm3veitkG0OYDeX2B7sRfHeoMODeZGxwSkHvT5M9qCKU1CR6A=
+	t=1758970998; cv=none; b=Z3uUNEcHx42igaRS30XSp7C1IgXAUkZ5dobcthbM0TXEw+ZsouREcOyy6ZfqkjbMEwDHTpPIq1Si/HDWQcw71xa47Govos2ocHwW7SO6xH0WpnZNLnGSWkaivbL6am6jIN40OizQlEZeFBqS2apVtrOimKVP3zPMYICHxNj0vlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758970687; c=relaxed/simple;
-	bh=vOeDSRLaO7LLl0fRREVJ+ouvCma7Y6wBZaZyNSSCm4A=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=h2p0m8oQVKPzmFlVsH2YxkT5cWnaIsLhJEu91vevL+O5JaaxpywuysPNReUqgDjetPRQ7wWOmEhrw4nlAvFBsxyl0B9jTA4ZOhf0D5dvBJnJ5Hl/qy3pYK0I+t0zDJ4PIfctq49hDMKUyU9hBokbrbRTU4jMsUUBtWiEH/WSRXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowACX8KIdw9doaohdBw--.26444S2;
-	Sat, 27 Sep 2025 18:57:51 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: syniurge@gmail.com,
-	shyam-sundar.s-k@amd.com,
-	andi.shyti@kernel.org,
-	wsa@kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] i2c: fix reference leak in MP2 PCI device
-Date: Sat, 27 Sep 2025 18:57:29 +0800
-Message-Id: <20250927105729.19164-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowACX8KIdw9doaohdBw--.26444S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw17JF1rXr47XrWDGw4UJwb_yoW8GFWDpF
-	WUtFWxAr98GF1vg3WDX3WUZFy3Cw4vvws5WrW7Aw4F9F1rZasYkryktF909w15ArWjyF4a
-	qFW3tayruF1jqFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4DMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbmsjUUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1758970998; c=relaxed/simple;
+	bh=MEPk8mF0XWJhaPBW8X4rO7lqawwu25cscAs0P6vTG3s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sjrNFBNeXWpkvmNA97tWgnfhQQxpdCSzFz9qI2d+QWTWAjaDA1T16R5WVQtlkgDSu8Ux3fuAoFJL2MRqnqxxm6/W99bQppL+1tTK7GyYFsT9CqCsa4oBwrWpXij+4/Hq+G0v+PppVCxbshXbtxhXGbNd14Mus9cxo69tg2sEPHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8DBl0JA; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso23319715e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 04:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758970994; x=1759575794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tkNWDYlAClljJacvPFHJT9/32vyeFE8E70qgHvwmkb8=;
+        b=B8DBl0JAKft7KS0mBXk4ZY/ok6mJDWMh2p+a5mIpvq0gcIDr/nrOcKqyZZpb4sEwsn
+         0JvCxISZgsr2Y6Com5U6VjlE8zGBC0ir58SwzAVi+kaOBqi0LcziH3q8uwCxP2kfY2jf
+         oZ7zw1MKqyWSqsxH3xCjcxxgYRAiEEsYTDw9E1YXLmvMm3u+NRE7s3Xw4mrNsX3oBMD9
+         YEVlT/0fJil/YiUuHHGONX2ymzrPDhHDbfn5rPwaPpLZxwx+TuBR2hFju6qEKe2uTsgY
+         aCeRYI6sqWOcBkoVzVMeQh3k/9rZGfxTxFOETegROEUGv6k6i0PKaJEC58q2hRISmilt
+         mzxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758970994; x=1759575794;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tkNWDYlAClljJacvPFHJT9/32vyeFE8E70qgHvwmkb8=;
+        b=vuiFROMuONi3xYnp+/pmc3s4KBfDp1DZOQsZnpT85asfBfWlKqUot2hgxhXDj1lbkm
+         A6N3GUxd7kQdApqiw7RM4zmLmIcvc5D580LVjLEVJGE5gUHUwagwOWR8Uo9pCQd23MOZ
+         5M0U1idlE0xUKhc79sy0Pdloq9Q4S5J+K0w9fAkRknSqrdW4WcqPgigiOPgUizPQaei9
+         5y0nnjCss74Afb486pFBlc6a2WWgwY5J9JE1hK/CgaBDYoZ6v5jIuTtQBhyz8L/8bW3M
+         /aBB16OQdliO87NeU9ugzx4rwPS6fRIgZzwjCCzxTtzUEgY6hHWSSvtftOCBQlsTW+K+
+         M94g==
+X-Forwarded-Encrypted: i=1; AJvYcCXhsSyGo57FbDXQulBAbbHyNu77PU7C66eUfOFb4DYp3NDkJVUTSe+d7L0RseMIhY5xzYzxjEvEvu6I+8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqPQuzRYxbNfN7N8RHckbLgPMGnHDAHKS2hAyTAsAtT1ohEJyO
+	PbyhtOfroFcIiwr1kJSgV8OK93iZeAGNJvxObRNc5facOg5yCNM1CQWI
+X-Gm-Gg: ASbGnctPz9EN4QUK0cBN6TaFQLLxVSRC2srS9T7c2Wv/nnx7hhbFocQgPjJDo5azLPn
+	B4QXfhzSDsgemrCBoyVg3eNsZkmwMqGayQdEsO/KYu9ayaAGG3HNA3MuqXzb6jaKWrlciyOz2o1
+	FkbZWjAttYmCBIgd2tZTUv3KmITz4GCLo/RmH7bkr+2Qjg9itgikxZovqlooOQcyd5+rOi2GD6G
+	hC4uew758q46Ly0oqTvoD5BcUoGlMd3PaLR2mvZGggFRl+l9yp6/Q9/4NapEHHdEl7ajgU2G9R8
+	fvHXqWpjOAlynSPJhZZtOFIu25yh3MRyOH/WfVLMr+BxiXbU7Vbpzq5Bl2moGN1+ZDbrc+KlVwc
+	7lBveTqSNYlD0TMiD7APATLcm8s8J0kR7KnqctAIooNPgEO6rOMqft8WKaUW17FCqW8mQMwS5OJ
+	nrdKmr9IGB6PwCyA==
+X-Google-Smtp-Source: AGHT+IF79XdU3MiveCiJWHuSLef1NIT2fZqNrN2anDonGJumcYidxmAS11xssMvpXUUEBE8RsYnPGQ==
+X-Received: by 2002:a05:600c:3e86:b0:46e:4784:cdf5 with SMTP id 5b1f17b1804b1-46e4784d03cmr11911565e9.15.1758970994270;
+        Sat, 27 Sep 2025 04:03:14 -0700 (PDT)
+Received: from Radijator.localdomain (93-140-175-232.adsl.net.t-com.hr. [93.140.175.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf70b5sm106190035e9.21.2025.09.27.04.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 04:03:13 -0700 (PDT)
+From: "=?utf-8?q?Duje_Mihanovi=C4=87?=" <dujemihanovic32@gmail.com>
+X-Google-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
+Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org
+In-Reply-To: <20250913-pxa1908-genpd-v4-0-55e4cf32f619@dujemihanovic.xyz>
+References: <20250913-pxa1908-genpd-v4-0-55e4cf32f619@dujemihanovic.xyz>
+Subject: Re: (subset) [PATCH v4 0/4] Marvell PXA1908 power domains
+Message-Id: <175897099249.11004.17270115916151643401.b4-ty@dujemihanovic.xyz>
+Date: Sat, 27 Sep 2025 13:03:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
-In i2c_amd_probe(), amd_mp2_find_device() utilizes
-driver_find_next_device() which internally calls driver_find_device()
-to locate the matching device. driver_find_device() increments the
-reference count of the found device by calling get_device(), but
-amd_mp2_find_device() fails to call put_device() to decrement the
-reference count before returning. This results in a reference count
-leak of the PCI device each time i2c_amd_probe() is executed, which
-may prevent the device from being properly released and cause a memory
-leak.
 
-Found by code review.
+On Sat, 13 Sep 2025 23:12:47 +0200, Duje Mihanović wrote:
+> This series implements support for the power domains found in Marvell's
+> PXA1908 SoC. The domains control power for the graphics, video and image
+> processors along with the DSI PHY.
+> 
+> 
 
-Cc: stable@vger.kernel.org
-Fixes: 529766e0a011 ("i2c: Add drivers for the AMD PCIe MP2 I2C controller")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/i2c/busses/i2c-amd-mp2-pci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-index ef7370d3dbea..1f01d3f121ba 100644
---- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
-+++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-@@ -464,7 +464,9 @@ struct amd_mp2_dev *amd_mp2_find_device(void)
- 		return NULL;
- 
- 	pci_dev = to_pci_dev(dev);
--	return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-+	mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-+	put_device(dev);
-+	return mp2_dev;
- }
- EXPORT_SYMBOL_GPL(amd_mp2_find_device);
- 
+[4/4] arm64: dts: marvell: pxa1908: Add power domains
+      commit: 1ee5305033c227610c072f32c4ac8ba0adbd42bd
+
+Best regards,
 -- 
-2.17.1
+Duje Mihanović <duje@dujemihanovic.xyz>
 
 
