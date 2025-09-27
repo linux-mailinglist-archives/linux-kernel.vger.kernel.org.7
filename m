@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-834778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D74BA5812
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E110DBA581C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FEA7171DD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4815D1BC3216
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 02:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AC0207A09;
-	Sat, 27 Sep 2025 01:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09918217736;
+	Sat, 27 Sep 2025 02:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvgQAkMe"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8429134BA59
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WyuSzmT7"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F641A9F8D;
+	Sat, 27 Sep 2025 02:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758937978; cv=none; b=d9M/WEesEjgC+sdKPjmu77v5ODe6q8FyjxWAYh1qGoiiE7nXrrcjQc5Ihq0n4aH/NkE7OYbNi/3dvaCpcYEODS7+rxpcxkApALyuhH2n5Yu6JuPNuyVwbeKootpbxzD9ctMQIK0UbIqNHtBNs6MjzRTsPesb9fBBavpr6ILNUq4=
+	t=1758938535; cv=none; b=NlEORDJ9dTEzOVCVqQkZ36kViFbx2Oz7dXxsilYFtsZ3tLRUOAtNT5Ij3xJaI7onkfjTqxhsjotZcDhUzP/wbKJnofxLyjBOtVXPN2OjfeM1JrtUjubAMyZd9gSFkR/QQOk7xkaXnkIOrl/fZ2muNHBOK12E8yd5FJVJOtZllVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758937978; c=relaxed/simple;
-	bh=ZYXy+qZoq15hPEdWMOX95bXvFqMYr53/l5pbz9JGvLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JZVCbXiCwcpKF49f+g0qehvkqqIwONC3gDKJgRKtFQEnL5iJ8yBYwQ7GZlRJdJf3DX1/IZDFtXLBucx8cNVfXYymQYGIZspY6PYoA6YZvwgO/FEsB0EI90Wzw9cqvp98ZvGAKKboAXMcsHPEdRE9WdYDjdPfJWMolYiqTVOO9Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvgQAkMe; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77f5d497692so3938241b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758937977; x=1759542777; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dNZKuIkpO9xzN0SiRMeuDaqHWkcO0grUi3IMiky7S6U=;
-        b=ZvgQAkMeVbAjiqMST/80Z5ZKzU8B3VH8nb7yeHky9iqYNZgd7+4ElqHDr6crbdy3Mb
-         +7mQVd4myeKMhq1gtLe8kJblWengKS3RukNYfUyL/AweMYYm/s3zu+eQevSOwsdFV8EI
-         k8c1T3fB4QYje79nQ7SNKmoVvpGL9GCNdj1hTsGwhrOoSFhbeyFJZf4eTXLeShumat1U
-         887K7V9eqy+zl2nwI3QWSDuz5JZe7BAtWhQ4VjK/dh6v8XiDh82g90cTA530whyxp8RS
-         5y2UAGpY/CyHyxX9fzI/TJ4L+4V8cG+ayHmOmDEOPDZytZ9E2gmFl/1VcizZ1NydRF60
-         2KcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758937977; x=1759542777;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dNZKuIkpO9xzN0SiRMeuDaqHWkcO0grUi3IMiky7S6U=;
-        b=JHCEyXOPR76B6TzvVoGtnh/0SpJ51oC4oYFgyl38v+D7d6zC/M4HCzV5XrkSJJNUuY
-         W7RjjuifhbqnAVAiOhwpKtVIZpXxdj1+Ksg0pBF003+t2zFnnJnDPcDMOvVAcwojJFyU
-         hqYWXDu73pO/17UMgeVnUxptEimVOWHOjozt1Zq1Kksm0BM0kR3WNwCp8N558qa9Lxvw
-         /rMwiUGSE47m+RgpjcIXCxLBo834WSblPru1DzUd4PJI9n2vgutHn9uDwx/369jrdb1f
-         J0xludhpt3R0jHHFQflZCLw8BJaFGLUSUOjMXofWEGsRylRuKLezVYv630PMBW/g8m1I
-         F7ww==
-X-Gm-Message-State: AOJu0YzdjYMD6+z5Kf5D8NE9+QnxLKcw3qWztn3I5IUd9dHQpvzEbGHK
-	E8/w9RyX3WZ438+IS3maxN4W2QdpO/9nAPQ6gy+cyWurKmwZgW9tHH1W
-X-Gm-Gg: ASbGncvjXj0E4XgAXHB4Fn2UNhTSZAolN247/YrPiBWgpGO/5lAFiwi/EpHmz+06wfa
-	xW3Z8iy03MhdOJOI359hWHA2jKIjdNj5JhJxb9BDsbz2Sz6ows7ysQQIUU7DDTFDWhI0+QKKDyl
-	CSXTEFzUB4BIO3SRvai/xFCVxWoiw41pPp50duPSaQ16QvvWZw32Soh9jKx7XD3xM+7rFsw8pHn
-	j4JL9mLvLWUyU5rl2u2YMLgTZ635EL9E/yHoLUzluXaT2PX5s9zxur0PMdjg9+13HwRnz0PJ6l+
-	2ARqZsXZoT4d+NDVri72kTwuRwnVNxB2yW7azIy2+e70lGp761wJD8x0dJPg+7gpCoWHzH0vg0n
-	dtiYfeHleJD1E3nAc
-X-Google-Smtp-Source: AGHT+IHi08UcJp+4yu1Szh8nOEE8/dJqhKWmQapEqXNHok7hka+Vj48+0jZH2f+VFz+uiV1OCaQU3A==
-X-Received: by 2002:a17:90b:380f:b0:32e:32e4:9789 with SMTP id 98e67ed59e1d1-3342a257486mr10689082a91.3.1758937976479;
-        Fri, 26 Sep 2025 18:52:56 -0700 (PDT)
-Received: from ubuntu.. ([110.9.142.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be2073dsm10251836a91.19.2025.09.26.18.52.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 18:52:56 -0700 (PDT)
-From: Sang-Heon Jeon <ekffu200098@gmail.com>
-To: phillip@squashfs.org.uk
-Cc: linux-kernel@vger.kernel.org,
-	Sang-Heon Jeon <ekffu200098@gmail.com>,
-	syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH] squashfs: add sanity check for invalid inode size
-Date: Sat, 27 Sep 2025 10:52:47 +0900
-Message-ID: <20250927015247.957452-1-ekffu200098@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758938535; c=relaxed/simple;
+	bh=pMK3MWyD+jdFmAhXAcOBUDqBKIoI0nuhzxNxK6sXQZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XL7YzXHdw6Ha6fn06LX/eWaNHds5NXIFVyEApmCjLACSWrCfTvWNPdNi/WH66mfhHqK1IicoaaFE08PQV4NqVHiqhNG2WGWZtEccB9fB5iVBFv05x9a+KwPpe9HingWsz1I6InG2A5mCG+fxQs0knN7elYL0XppaWs8K5fTOiEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WyuSzmT7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C41172012C16;
+	Fri, 26 Sep 2025 19:02:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C41172012C16
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758938523;
+	bh=+ST5D05V/wSFnk67xNrK9zeouWofug5S+jjy0tUV9dc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WyuSzmT7qPxs/EHffPHMt7LyAYGKVyQJR6wWSH3LHlpW9uRwvfkOcNRIdCxwXzQVq
+	 y4XpyQxwLm7gt9YtqUWnyf1+TI/MLiCB6tYMz56UNoNwiMgNaUcFmILfR7jfUGzgpl
+	 r4xhknXCAcf5EyQyiIpsvw0Lkuovi8ltDRhmMEes=
+Message-ID: <0ef4d844-a0af-9fa6-2163-b83f80bc74b1@linux.microsoft.com>
+Date: Fri, 26 Sep 2025 19:02:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH 0/3] Introduce movable pages for Hyper-V guests
+Content-Language: en-US
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <175874669044.157998.15064894246017794777.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <175874669044.157998.15064894246017794777.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Corrupted squashfs images can have negative inode sizes. Add sanity
-check to prevent negative inode size.
+On 9/24/25 14:30, Stanislav Kinsburskii wrote:
+>>From the start, the root-partition driver allocates, pins, and maps all
+> guest memory into the hypervisor at guest creation. This is simple: Linux
+> cannot move the pages, so the guest?s view in Linux and in Microsoft
+> Hypervisor never diverges.
+> 
+> However, this approach has major drawbacks:
+> - NUMA: affinity can?t be changed at runtime, so you can?t migrate guest memory closer to the CPUs running it ? performance hit.
+> - Memory management: unused guest memory can?t be swapped out, compacted, or merged.
+> - Provisioning time: upfront allocation/pinning slows guest create/destroy.
+> - Overcommit: no memory overcommit on hosts with pinned-guest memory.
+> 
+> This series adds movable memory pages for Hyper-V child partitions. Guest
+> pages are no longer allocated upfront; they?re allocated and mapped into
+> the hypervisor on demand (i.e., when the guest touches a GFN that isn?t yet
+> backed by a host PFN).
+> When a page is moved, Linux no longer holds it and it is unmapped from the hypervisor.
+> As a result, Hyper-V guests behave like regular Linux processes, enabling standard Linux memory features to apply to guests.
+> 
+> Exceptions (still pinned):
+>   1. Encrypted guests (explicit).
+>   2 Guests with passthrough devices (implicitly pinned by the VFIO framework).
 
-Reported-by: syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f754e01116421e9754b9
-Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
-Tested-by: syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com
-Cc: Amir Goldstein <amir73il@gmail.com>
----
-Special thanks to Amir's kindness analysis [1]. I couldn't find proper
-tag for credit, so i just cc-ing. But feel free to add proper credit.
 
-Also, I referred method of erofs. but i might be wrong, please let me
-know about that. Thanks for consideration.
+As I had commented internally, I am not fully comfortable about the
+approach here, specially around use of HMM, and the correctness of
+locking for shared memory regions, but my knowledge is from 4.15 and
+maybe outdated, and don't have time right now. So I won't object to it
+if other hard core mmu developers think there are no issues.
 
-[1] https://lore.kernel.org/all/CAOQ4uxgkpi4v3NTSTq5GGJEceHHi97iY4rtsAJuo5c-yxu-Bzg@mail.gmail.com/
----
- fs/squashfs/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+However, we won't be using this for minkernel, so would like a driver
+boot option to disable it upon boot that we can just set in minkernel
+init path. This option can also be used to disable it if problems are
+observed on the field. Minkernel design is still being worked on, so I
+cannot provide much details on it yet.
 
-diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-index ddc65d006063..148cd75f5bd7 100644
---- a/fs/squashfs/inode.c
-+++ b/fs/squashfs/inode.c
-@@ -426,6 +426,12 @@ int squashfs_read_inode(struct inode *inode, long long ino)
- 		return -EINVAL;
- 	}
- 
-+	if (unlikely(inode->i_size < 0)) {
-+		ERROR("Negative i_size %lld inode 0x%llx\n",
-+			inode->i_size, ino);
-+		return -EINVAL;
-+	}
-+
- 	if (xattr_id != SQUASHFS_INVALID_XATTR && msblk->xattr_id_table) {
- 		err = squashfs_xattr_lookup(sb, xattr_id,
- 					&squashfs_i(inode)->xattr_count,
--- 
-2.43.0
+Thanks,
+-Mukesh
+
+
+> ---
+> 
+> Stanislav Kinsburskii (3):
+>       Drivers: hv: Rename a few memory region related functions for clarity
+>       Drivers: hv: Centralize guest memory region destruction in helper
+>       Drivers: hv: Add support for movable memory regions
+> 
+> 
+>  drivers/hv/Kconfig          |    1 
+>  drivers/hv/mshv_root.h      |    8 +
+>  drivers/hv/mshv_root_main.c |  448 +++++++++++++++++++++++++++++++++++++------
+>  3 files changed, 397 insertions(+), 60 deletions(-)
+> 
 
 
