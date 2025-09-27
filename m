@@ -1,46 +1,52 @@
-Return-Path: <linux-kernel+bounces-834936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06ACBA5DF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE469BA5DED
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F67C1B226E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9FD3A3A41
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE412DAFAB;
-	Sat, 27 Sep 2025 10:45:25 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEC82D94AA;
+	Sat, 27 Sep 2025 10:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szHCtQMr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19905266B52;
-	Sat, 27 Sep 2025 10:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987EB28C5DE;
+	Sat, 27 Sep 2025 10:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758969924; cv=none; b=cVSMGTaK51XGJSPqOfoUKcatBhcUXYAb1O8kbiBFjIRopuqHdR6Fu/VGf34fv7WyMtKVBNldP3zrk+gXOS/8D+NlqocdupK8eh/B7JVyRLSkaXIDD32CjNrbY7nJkjA7jMRVUXSzUrPxqSAPSfoir23fHtUBUWjComVj1ik69Nk=
+	t=1758969907; cv=none; b=acnPYjfHdTLd0+FF+tmmxpRZCt1trsCzBnkk/yepFSCrEKYmxKY6z9v+CVzI4cpTefOty9bRnyU428yHEE9bQy0mBfGkDHlXtDizjMjqyV89OcOAndznipC50dpdOHvt5r6kVdNUY+gWVgdFdS95aHGj9Nz8kPeHS7l2SbmSjYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758969924; c=relaxed/simple;
-	bh=j5zSuE6JBN2jGXJdjugcu2LNZJXWEySrpBlGCGG0JnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a3CVMK6WOaN3zye1RbZ6uRZ/3L8B40e4L1oXctfl2w8izYRNH18XAmdC/LGNMhpg/xr3SJCNdtOyNZgHYrtPsXijBoDK/i/4zNIw1DozGLOOW6s/PIbTO+JucSZFqPO4YgHnuiVMYKjeXnKbH5EvlwRcnQyrlWGtgOyGo4TKegw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
-	id F2FF86015E; Sat, 27 Sep 2025 12:45:13 +0200 (CEST)
-Date: Sat, 27 Sep 2025 12:44:58 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Ricardo Robaina <rrobaina@redhat.com>
-Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	paul@paul-moore.com, eparis@redhat.com, pablo@netfilter.org,
-	kadlec@netfilter.org, ej@inai.de
-Subject: Re: [PATCH v3] audit: include source and destination ports to
- NETFILTER_PKT
-Message-ID: <aNfAKjRGXNUoSxQV@strlen.de>
-References: <20250926193035.2158860-1-rrobaina@redhat.com>
+	s=arc-20240116; t=1758969907; c=relaxed/simple;
+	bh=hw5PQZnbjz8yyE23U8GGenwbSKEoJO239bLpat2s2MI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iEUFLlZk7Hf5tucPVzdTm4BMYK4jxY6BSDHKlJQPf6ENPGfJVxWG4mR57hJqw3nljSyV+brtl/UKtdiKcMQVG5BRmGfgF/gxe01uiorHlC8j248tcdiUlAO+DTQ32WHrtmXJ3g8MqRKFds6sV7EyamUMQNWdbDqj1MQZTyynf0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szHCtQMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B8AC4CEE7;
+	Sat, 27 Sep 2025 10:45:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758969907;
+	bh=hw5PQZnbjz8yyE23U8GGenwbSKEoJO239bLpat2s2MI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=szHCtQMrWvLYM7aAOrzFJpPL6tCPy4TancUw3z4fZgDnu9CqHd+DlfLTEdTdQNMOR
+	 iPNZm7uz80EDfcN0BmBCsnrMKW6rMrNxjIUnjuPAkPCgeuT8qqKS+KU82V9byATWqT
+	 LIMwuUMIFhy0T3O6OZIucgHhHtBV3RTkZ2it4cj0lbmdh0WLq/pYNTdCX0llCv23Hf
+	 h+3TchbD0KJPhUPA1bQa8HP6hvYDV0JutZDPtWvpfQ/rqcoEqWzuo93a9LfroJ7UnY
+	 Xb5UPWaV70f9qz9YYklwTRtL2hnGGWO9Opm/+BM6TdTLwt3zkV8SZCv9B0WY5gwxtu
+	 5dabmeMlgE41Q==
+Date: Sat, 27 Sep 2025 12:45:02 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, 
+	linux-i2c <linux-i2c@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host for v6.18
+Message-ID: <4osuv4vajewmcpgl5sqnea47addwsrm7nfl3s57ymwv7vaxade@unuwhsw4ccnx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,25 +55,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926193035.2158860-1-rrobaina@redhat.com>
 
-Ricardo Robaina <rrobaina@redhat.com> wrote:
-> +	case IPPROTO_TCP:
-> +		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu sport=%hu dport=%hu",
-> +				 &ih->saddr, &ih->daddr, ih->protocol,
-> +				 ntohs(tcp_hdr(skb)->source), ntohs(tcp_hdr(skb)->dest));
+Hi Wolfram,
 
-You need to use skb_header_pointer() like elsewhere in netfilter to
-access the transport protocol header.
+this merge window pull request is rather small, and the blame is
+all on me. It has been a very messy period, leaving me with
+little time to look after the patches for 6.18.
 
-You can have a look at nf_log_dump_tcp_header() in nf_log_syslog.c for
-a template.
+That said, I now have quite a bit of work ahead, but I am
+confident that with the next pull request I will manage to slim
+the queue down.
 
-Also please have a look at net/netfilter/nft_log.c, in particular
-nft_log_eval_audit(): xt_AUDIT and nft audit should be kept in sync wrt.
-their formatting.
+For now, I hope you will not mind a second part of this pull
+request, where I plan to include the most obvious patches from
+those still in the queue.
 
-Maybe Paul would be open to adding something like audit_log_packet() to
-kernel/audit.c and then have xt_AUDIT.c and nft_log.c just call the
-common helper.
+Thank you and wishing you a great weekend,
+Andi
+
+The following changes since commit 07e27ad16399afcd693be20211b0dfae63e0615f:
+
+  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.18
+
+for you to fetch changes up to 217f92d91c9faeb6b78bd6205b3585944cbcb433:
+
+  dt-bindings: i2c: i2c-mt65xx: Document MediaTek MT6878 I2C (2025-09-25 02:06:09 +0200)
+
+----------------------------------------------------------------
+i2c-host for v6.18
+
+dt-bindings:
+ - add support for MediaTek MT6878 I2C
+ - Drp[ support fpr S3C2410
+
+----------------------------------------------------------------
+Igor Belwon (1):
+      dt-bindings: i2c: i2c-mt65xx: Document MediaTek MT6878 I2C
+
+Krzysztof Kozlowski (2):
+      i2c: s3c2410: Drop S3C2410 OF support
+      dt-bindings: i2c: samsung,s3c2410-i2c: Drop S3C2410
+
+ Documentation/devicetree/bindings/i2c/i2c-mt65xx.yaml          | 4 ++++
+ Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml | 2 --
+ drivers/i2c/busses/i2c-s3c2410.c                               | 1 -
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
