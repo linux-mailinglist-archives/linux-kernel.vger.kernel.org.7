@@ -1,195 +1,213 @@
-Return-Path: <linux-kernel+bounces-835023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55F0BA6109
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:41:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888A4BA6121
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5712317C8A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122B017C7AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D662E2DDD;
-	Sat, 27 Sep 2025 15:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF902E1757;
+	Sat, 27 Sep 2025 15:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZamBSF3M"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EeIDa1nO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jNGC4QJW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369E02DF6E9
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 15:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AFB1DDC08;
+	Sat, 27 Sep 2025 15:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758987676; cv=none; b=XL4Qm756q+laSnlINQBQun4FCa4q6u/gNUOsFqcwkDDYMKdsp7OZrDYmf64BolK2QhvK2DIDBYDcPDaQqZRb1zK9TKw4g9pKsoBYlWb+8OUJ2wQsewnh1xbiBxhyAwILDiXnUhIhcRnYIbHD38vCv16z+MfPmqWw1DHYkrRWG8g=
+	t=1758987915; cv=none; b=DNbOTXqubKtTarmUI5z1czEUm2gvRVERbJ+XXrws5tR2kaiTK89QC7gazKE4Y8diw0+69d7cv6hyigw2C8YOGWV5RsIjN9yDhBnV9UblydEKxfF+sSHpcUC8xcpko+qDck44Fi256Vic1bSzTUel4/ZA6wjc6Wk1nCTMLUIUjwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758987676; c=relaxed/simple;
-	bh=FPmwv6sV7hm4RdMnP+owJF/j0SUOZOnBAU0EQjBJ4QM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QS3dty8zCDbOdklBJjT1GquOJVrEYII4cj9KTp09FDxxjHYYQkQ9uz/5aKDKNiTwikgB7Y4wZ/rLrN38qPFfT0BWr0FlkH+OpjUUGvgQSbVKz+4QzRxOOsuIjLb2fXBKdUaVRadurrKUkYPaPsBe2irUzJxuxzMRQpgq9whuiMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZamBSF3M; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-781206cce18so1339278b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:41:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758987674; x=1759592474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p+guc24UFix+87mZw75ftkg3HVWAUb97VQeNgK+6EGk=;
-        b=ZamBSF3M0YvdqbjPmmtb10pmoRkFeK15WxiSNjklDZs9Y9IZ7LqCvyAOHLRIwaUUNi
-         Il5N83bPAw6cCIG/bcpoRery2U0dR/lnUPj84xEFvtRsv3fuWFza2VDiTeYkLbEk71ka
-         KEHh7POM5Rl8ySC4XN9LeEil3USDNYage/b1vhBTqCZjQauJA70liT6PjO+uISdZ8J7M
-         QXHMlXHSD5tFXsspJ6frZB/62sJET2tk56XPaI+pj7gGiszVlzyt2ru4VGXNE5izHQ7H
-         tV+sgPm3I1ZviIFIc42/HMhzeQcEkifmYol2c5NPvD8iri9KHJaeBMhaAPp3annPhPQG
-         jFPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758987674; x=1759592474;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p+guc24UFix+87mZw75ftkg3HVWAUb97VQeNgK+6EGk=;
-        b=ryoPUTvmiW0tvA/3MR2DJ/D05fjcU92zUNTshLpnYZOrLC/Bae0/ukUZGI6bIk8qQE
-         ZUo8TctytfLXTrQsvFGZ5sAamzWsX1AhK1E1XKuhIVlY0U5Y5L3uW2KDHa+FYwtRbEgs
-         Bkd1wu8czbiPWsstOu+xhQ93dKwZ5IJYZWiWMOpmaIN1xy0TRtPDOjkoNRlZFJ9eZOyO
-         FV3lmCCLxFLJ5oBcoPb0hsRudJGn1/v/ZJH3LcRYjWdVdwrzqCbSBoKENU1B6FU2o3ml
-         gkEgt0AMDLcz/qc9aPOa84feuvZaG0dVkQ8qlKOnSduaRjaV8sYe8cpdO37hBzDaJxQQ
-         LhSw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1yOtl9XT2sEh3Kl7NmzUwiFcxagYWWGVUdxCrFdtz9gN0xehccoD0oIjdUOOlw8EC9YTdV54J/cD32q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0qfrPMkxUw9KwTAsCyzd3k+3RuEh2Rgwj9fx+CWfn/DGicjw/
-	R1H6xYt6Yt2ydvzRA2gRN28+p6V+BlShLJEV+20YhKPm4dd3oDTRaxrl
-X-Gm-Gg: ASbGncuuCuk6vBYOWPYiNpXgArQW/rZiRMEL0Ds6eLvuoNG2QlwNGalXNPcn6+5qCCo
-	BYd7cCI/O/JnOexrM5hYp0o7BMmYCKTDt9wTPjqFAk5abNaE45wpUYmTyDOy6q67oAYrZoWqEVD
-	M3jzz3BFOsH+8PcqvQeSDJyuxDkc6gxjzBGjxnc+vzcv5xwTlagkbdSGa/OvGkn5EM4Z+0C8Dyh
-	X/0MSHPkAUJE9yseBWzgsisYLDe1Ha1MtrdyJ2YwwhCmuo8gbeMvEm2y6myAky2R10aSjMgUlVD
-	5uBFE3PYh0djheZbtxVxreFqyLbSG7SwTX+gMxbv1/ioK3Ebldg18k7ZhCXI291RFmRhflIc2DC
-	bA8yTvqaj15Yyb/L3IDrzrz5R4a6G+TwBGE9reWNOHvsUlxsl2w==
-X-Google-Smtp-Source: AGHT+IH1j8iZ+VWe12C+/tThYXtmTrtzLYXhJdXhg11A+ZuNwyCqmcZMV00qeYbftkoEsVvjpMu9fQ==
-X-Received: by 2002:a05:6a00:1f05:b0:77f:43e6:ce65 with SMTP id d2e1a72fcca58-78125450167mr3043482b3a.0.1758987674330;
-        Sat, 27 Sep 2025 08:41:14 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c0709csm6923531b3a.81.2025.09.27.08.41.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 08:41:14 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: tiwai@suse.de
-Cc: aha310510@gmail.com,
-	clemens@ladisch.de,
-	hdanton@sina.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [sound?] [usb?] general protection fault in snd_usbmidi_do_output
-Date: Sun, 28 Sep 2025 00:41:09 +0900
-Message-Id: <20250927154109.879926-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <87o6qw9koa.wl-tiwai@suse.de>
-References: <87o6qw9koa.wl-tiwai@suse.de>
+	s=arc-20240116; t=1758987915; c=relaxed/simple;
+	bh=06i685LcDNM6BzO58wldlV5tA/KtXEtqEukaMe+xteM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cxSEPaFKGqzgoyVcOeGUVKdzum8mMQFXBeRewp4Wd+3wH8+9tmclcghSRM7Hi7j/WjM+UCfrFPSIkTFoNmB4E0Rf+GLAprrsaAW4T9ce16nEXKXdALitxYXQhZuvb+WXb/mp/Fn3DvM86dT+FPE6VLDKPMLsk730knPMedz4zpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EeIDa1nO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jNGC4QJW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758987904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFyUFesXh9jwAhNOq4uvsEBGZOdhiu9YWCnDE/iJlAY=;
+	b=EeIDa1nOc6WSGzFtd1cyirs/Lweqy5WnPC0PgJRnWgVxw6FIqXyBUK1Wupx69Dr6hZSyy/
+	2ElwuogEeTa0x89TB+qpXPYuF8OUjt/HtdH7rWdISnB6r7UEhTvY8/sCmJqxDsRaJsk7wj
+	nRTpBSd3XO8WrBu9rV3ZKz6WJiGoFvQLJ/wfynFJOWMusmduSZU1dE3gLxv/cynYLpHEE7
+	FD0T3xqBuUZ+KfgyVwZ/NyZIIqrM6koE/KVoARAvzFLxeHM07D3PkhAGkJiH6lK2nqoiMm
+	wtyrY/xQcfMd52FIZFc5+7eAhoRd6Q9LMxB/+QuwuBvQLrUEmM5ORsc9jTcHGw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758987904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFyUFesXh9jwAhNOq4uvsEBGZOdhiu9YWCnDE/iJlAY=;
+	b=jNGC4QJWK1BzfHMkHlKKOzqENxqv9AUDhlFoRjwNjl1X4PSSeHWvjGv3prtvrccl5W6c/P
+	O3pAuo1fhHpuYyBw==
+To: Ilpo =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Ciju
+ Rajan K
+ <crajank@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, LKML
+ <linux-kernel@vger.kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Cc: christophe.jaillet@wanadoo.fr, platform-driver-x86@vger.kernel.org,
+ vadimp@nvidia.com
+Subject: Re: [PATCH platform-next 2/2] platform/mellanox: mlxreg-hotplug:
+ Add support for handling interrupt storm
+In-Reply-To: <34d028ac-f907-1505-a2fc-f455a10cfa5e@linux.intel.com>
+References: <20250916054731.1412031-1-crajank@nvidia.com>
+ <20250916054731.1412031-3-crajank@nvidia.com>
+ <34d028ac-f907-1505-a2fc-f455a10cfa5e@linux.intel.com>
+Date: Sat, 27 Sep 2025 17:45:02 +0200
+Message-ID: <87zfaf3nnl.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-Takashi Iwai <tiwai@suse.de> wrote:
+On Tue, Sep 16 2025 at 13:00, Ilpo J=C3=A4rvinen wrote:
+> On Tue, 16 Sep 2025, Ciju Rajan K wrote:
+>> This patch provides a mechanism to detect device causing interrupt
+>> flooding and mask interrupt for this specific device, to isolate
+>> from interrupt handling flow. Use the following criteria: if the
+>> specific interrupt was generated 'N' times during 'T' seconds,
+>> such device is to be considered as broken and will be closed for
+>> getting interrupts. User will be notified through the log error
+>> and will be instructed to replace broken device.
+>>=20
+>> Reviewed-by: Vadim Pasternak <vadimp@nvidia.com>
+>> Signed-off-by: Ciju Rajan K <crajank@nvidia.com>
 >
-> On Sat, 27 Sep 2025 12:36:07 +0200,
-> Jeongjun Park wrote:
-> >
-> > syzbot <syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> > > KASAN: slab-use-after-free Write in snd_usbmidi_in_urb_complete
-> > >
-> > > ==================================================================
-> > > BUG: KASAN: slab-use-after-free in snd_usbmidi_in_urb_complete+0x389/0x3c0 sound/usb/midi.c:251
-> > > Write of size 1 at addr ffff888074717943 by task kworker/1:3/5866
-> > >
-> >
-> > Wow, the UAF bug still occurs?
-> >
-> > But... this UAF seems to be a problem with how midi handles urb rather
-> > than a problem with my patch.
-> >
-> > Is there something wrong with the way snd_usbmidi_in_urb_complete() is
-> > implemented?
+> I've a general question on this approach, probably more directed towards=
+=20
+> Hans, Thomas, or others who might have some insight.
 >
-> This can be rather a missing kill-and-cleanup in the code path.
-> So the patch like below.
+> Are drivers expected to build their own workarounds for interrupt storms=
+=20
+> due to broken HW such as this? It sounds something that should be at leas=
+t=20
+> in part handled by something generic, while the lower-most level masking=
+=20
+> and detection might still need to be done by the driver to handle the HW=
+=20
+> specific aspects, there seems to be a generic aspect in all this.
 >
-> Could you check whether this works for you instead of your fix, too?
-> timer_shutdown_sync() is already called in snd_usbmidi_disconnect(),
-> and the call in snd_usbmidi_free() should be superfluous after this
-> change.
->
+> Is there something generic for this already? If not, should there be=20
+> instead of adding this in full into an end-of-the-food-chain driver?
 
-Since both my tests and syzbot tests did not cause any bugs when applying
-this patch, I think the root cause of this vulnerability is the missing
-kill error_timer + urb.
+We don't have a generic mechanism for that. The core handles only the
+case of unhandled runaway interrupts.
 
-So, I think it would be okay to patch it this way, but in addition, since
-most of the endpoint delete-related code that existed in
-snd_usbmidi_free() is now done in snd_usbmidi_disconnect(),
-I think it would be appropriate to modify it to only perform
-kfree(ep->out) as in this patch below.
+I agree, that there should be some generic infrastructure for that.
 
+Something like the incomplete below, which obviously needs some thoughts
+vs. shared interrupts and other details, but you get the idea.
+
+Thanks,
+
+        tglx
 ---
- sound/usb/midi.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/sound/usb/midi.c b/sound/usb/midi.c
-index acb3bf92857c..97e7e7662b12 100644
---- a/sound/usb/midi.c
-+++ b/sound/usb/midi.c
-@@ -1522,15 +1522,14 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
- {
- 	int i;
- 
-+	if (!umidi->disconnected)
-+		snd_usbmidi_disconnect(&umidi->list);
-+
- 	for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
- 		struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
--		if (ep->out)
--			snd_usbmidi_out_endpoint_delete(ep->out);
--		if (ep->in)
--			snd_usbmidi_in_endpoint_delete(ep->in);
-+		kfree(ep->out);
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1927,6 +1927,10 @@ static struct irqaction *__free_irq(stru
+ 		irq_release_resources(desc);
+ 		chip_bus_sync_unlock(desc);
+ 		irq_remove_timings(desc);
++		if (desc->irq_storm) {
++			kfree(desc->irq_storm);
++			desc->irq_storm =3D NULL;
++		}
  	}
- 	mutex_destroy(&umidi->mutex);
--	timer_shutdown_sync(&umidi->error_timer);
- 	kfree(umidi);
+=20
+ 	mutex_unlock(&desc->request_mutex);
+--- a/kernel/irq/spurious.c
++++ b/kernel/irq/spurious.c
+@@ -22,6 +22,44 @@ static DEFINE_TIMER(poll_spurious_irq_ti
+ int irq_poll_cpu;
+ static atomic_t irq_poll_active;
+=20
++/* Runaway interrupt detection */
++struct irq_storm {
++	unsigned long		max_cnt;
++	unsigned long		last_cnt;
++	irq_storm_cb_t		cb;
++	void			*cb_arg;
++};
++
++bool irq_register_storm_detection(unsigned int irq, unsigned int max_freq,
++				  irq_storm_cb_t cb, void *cb_arg)
++{
++	struct irq_storm *is;
++	unsigned long cnt;
++	bool first;
++
++	if (max_freq < 500)
++		return false;
++
++	is =3D kzalloc(sizeof(*is), GFP_KERNEL);
++	if (!is)
++		return false;
++
++	/* Adjust to cnt/10ms */
++	is->max_cnt =3D max_freq / 100;
++	is->cb_arg =3D cb->arg;
++	is->cb =3D cb;
++
++	scoped_irqdesc_get_and_buslock(irq, 0) {
++		if (scoped_desc->action) {
++			is->last_cnt =3D scoped_desc->tot_cnt;
++			scoped_desc->irq_storm =3D is;
++			return true;
++		}
++	}
++	kfree(is);
++	return false;
++}
++
+ /*
+  * Recovery handler for misrouted interrupts.
+  */
+@@ -217,6 +255,19 @@ static inline bool try_misrouted_irq(uns
+ 	return action && (action->flags & IRQF_IRQPOLL);
  }
- 
---
-
->
-> thanks,
->
-> Takashi
->
-> --- a/sound/usb/midi.c
-> +++ b/sound/usb/midi.c
-> @@ -1522,6 +1522,9 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
->  {
->         int i;
->
-> +       if (!umidi->disconnected)
-> +               snd_usbmidi_disconnect(&umidi->list);
-> +
->         for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
->                 struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
->                 if (ep->out)
-
-Regards,
-Jeongjun Park
+=20
++static void irq_storm_check(struct irq_desc *desc)
++{
++	unsigned long delta, now =3D jiffies;
++
++	if (!time_after_irq(now, desc->irq_storm.next_period))
++		return;
++	desc->irq_storm.next_period =3D now + msec_to_jiffies(10);
++	delta =3D desc->tot_cnt - desc->irq_storm.last_cnt;
++	desc->irq_storm.last_cnt =3D desc->tot_cnt;
++	if (delta > desc->irq_storm.max_cnt)
++		desc->irq_storm.cb(irq_desc_get_irq(desc), delta * 100, desc->irq_storm.=
+dev_id);
++}
++
+ #define SPURIOUS_DEFERRED	0x80000000
+=20
+ void note_interrupt(struct irq_desc *desc, irqreturn_t action_ret)
+@@ -231,6 +282,9 @@ void note_interrupt(struct irq_desc *des
+ 		return;
+ 	}
+=20
++	if (desc->irq_storm && action_ret =3D=3D IRQ_HANDLED)
++		irq_storm_check(desc);
++
+ 	/*
+ 	 * We cannot call note_interrupt from the threaded handler
+ 	 * because we need to look at the compound of all handlers
 
