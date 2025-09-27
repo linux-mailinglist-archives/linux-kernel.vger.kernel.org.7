@@ -1,330 +1,143 @@
-Return-Path: <linux-kernel+bounces-835086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B028BA6384
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 23:04:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBE3BA63BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 00:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B8F17FE38
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 21:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8EC189CBFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F832367A0;
-	Sat, 27 Sep 2025 21:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAA8235BE8;
+	Sat, 27 Sep 2025 22:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Sv/eboVV"
-Received: from mail-yw1-f226.google.com (mail-yw1-f226.google.com [209.85.128.226])
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="R4FjYdkO"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101BA4C9D
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 21:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386D119AD70
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 22:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759007067; cv=none; b=STk5Io/VUR4DK7MjbXRO0XrJUEq6jnaGIku1lds4jE9omAkZ6mjqTU/LgVAerMJzwlosWSdNpLB/42bgv56j1bv3sbTquRxKKZ8lLXejedry0XyLb88pYYo2G7+NvhhPkyTOmWgNwEUMQRQa+cHvDtchFGcTxanog++Q86wZWY0=
+	t=1759010755; cv=none; b=eYNi7/yF2Vx/NjzKwLKE4zJVtEmbFS6T4I+eJ5xtNgVIQAobGIn4adNnE37LB7Ew4agLgYOnbrKqPBriM/04QHrN23caTtQfFfmpLI8ViVHc66mekWsGiQxVEFWLZNwco7H59HEzi7DdUsaEhUS8rI6PSB3wHbwCM2yCipD1h9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759007067; c=relaxed/simple;
-	bh=6DUrXw5DoWEcEIwvp4TMjoeI4MQBulV9VLtVwtSyCG8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Z1RLB0Y3LZKwfiJ1OLia5Kh2bCZNr1jSZ2tDodtgoCl50SCR3fgIml/7tBNN80mNXsf4kCKPkPMZ7japNFWMOHFQ5PaoEfLivHfQYC7EmG/fu/M8oxvdWZnCg0oZAcYTgYlNCyWFi62ceMi7e89geRcg+kSegNbkxWdFDGD7cs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Sv/eboVV; arc=none smtp.client-ip=209.85.128.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yw1-f226.google.com with SMTP id 00721157ae682-71d603acc23so31946307b3.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 14:04:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759007065; x=1759611865;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oc5vo+Rb9ClONgmTiHxfZM7CLOGpUGWCRjHz3GTHRlQ=;
-        b=EulE6gBgrwj39izqMdbxHuDLzIGEuPs/BK7EqzIrh/saFN25Zgi0UMM3Ek11nMWh0I
-         0mXFnTCTGwOmBlnuJCNRskWzq4g6+JoINKUA2197G+80V7y1s+Og57FWXenjbVwvSqdk
-         BvT4sh9XXB6HuesOnjS/qHUuKLzI3GqzOwtf14uW/XtfKsz+OTWzlmjXGPplL6BLQHXU
-         eoCrlIwiFw2YattJXR9IGjA2fYNqfw8E3vTB2eUGXvfN8C5Hi3Tt9LiROXha979LLWDb
-         AkfrVQGqDBGv7w9xwl1iRHmAfoAigLxRWDTcaB1JxF+0+Xlx6E5OG/d5FkhQ/uIIkIz1
-         LntA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJiP4L564g7yBRNeRLgx3G6xofnwnTxtIV+W6EFDwfRV8f+xOZKj9PfU0kFd9Z3UFfau3RMCbfHyogx1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNpK/y4ZtItjQG+qTSgjLnpfj4UQnK4NYvE4nTDGZSzTMpLElM
-	ufQdxEw35HGFMblvKoQynxA1TTzH0r6oiyIty9U7dHRj984rHzk84j50kTS5VQV8yLbMUwm9nAc
-	i8N0o36jyyyOcCfDExrWe3yhpo3UijUhSa3AMy0Tm2P45gi0eND8DifwJK0hxGl+BXIlIGaQfl1
-	nCsnltg/dNPwt2ANLjPUpPu3ROnRdx43h+u9L123zQWwSEYgchNhugsLA4f34WyrDTrfEdIpgKR
-	e/o+Xzp0F7l3EkfNZyjoR7S
-X-Gm-Gg: ASbGnct3vbt2CPM+0owme8bWfbNT+qrsmz80fs4cubSQc70bLC44fwRb4WLDRIPpJiG
-	mLwPy5vRw9swOrmxwn2Ox5vhGabwulS4J0Nw/UziWjN5AVnrUhbbqtT49puOSmHyjmMOb2Lgan8
-	049hKTfkA9plSFkuB0YacDev3wEQ8bHP20QkNZCGZbQKHUxcu2tkLxFERw3yH4kwoc/ppl9X0FO
-	1ohnvLwj7E/ETBysx1zilbZfXgV8/e9r1x/T/o3E+4LhgSEBwzAO7AwmYIlxubZH/up0g78Nrbx
-	nFd/V/2VBsdIqvNRt4Xm+31BwsNWosq3yXMUFUxlTWvo7/kJ1HETbZ7EuqSGvv5p2whBBEBtmK2
-	0ls7dusM7KB9qaDlZnDX9hE7NyuYDi/Kml1hjXDaVPA/k6oIuKXKUlASn9Aeox+VWpgQ4nu+kA8
-	VHcSuHc78=
-X-Google-Smtp-Source: AGHT+IFpp/2pWQnSf82uVQsJoKp7MMJf3Nj3+IKU3G+nm57/5BP2xJ5a+Zo9R9juhm8D3hGqRhoio+E7YVfY
-X-Received: by 2002:a05:690c:586:b0:749:17fe:9644 with SMTP id 00721157ae682-763f8b4da15mr124060367b3.4.1759007064978;
-        Sat, 27 Sep 2025 14:04:24 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-765cf0f6599sm4042457b3.15.2025.09.27.14.04.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 27 Sep 2025 14:04:24 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3305c08d975so3702770a91.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 14:04:24 -0700 (PDT)
+	s=arc-20240116; t=1759010755; c=relaxed/simple;
+	bh=8vNeaE3ZDjTNRHIXZ9X9shIb2rIV9+8Kjtkb0oL7k2A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KAtrY+1T7afla2w3pzMMO0ModtBUgiC81PTQMmY3g4ImrotIX+5SJZOA87f+qhg3beEb3zJGkS5IkwIKD5Eu7BDyombsmoiH/OuSUy72g5c7S6QOZSTeT22rf1tzP7cogNjvkP9ScllVgTh/+8+epr43O5gis6bvlssj4nu5ZVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=R4FjYdkO; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso20130625e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 15:05:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1759007063; x=1759611863; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=oc5vo+Rb9ClONgmTiHxfZM7CLOGpUGWCRjHz3GTHRlQ=;
-        b=Sv/eboVV0D2rmXYxcpqA1A2vNwHfECB15bL6hMAp43XckKRWHDpI6/G2aVQPyCDG9X
-         fgce3MiELIIcu8cJwOfC1ww8MfIl5OU8GbDcErGEQZBOJIDgpO0XfS8Bwl8rRDYnLxlB
-         9ojTIXZuFtcLJkV2xvDvr35Q9t1AhI7QJajpA=
-X-Forwarded-Encrypted: i=1; AJvYcCXEFKeIUXyK4che1XreE+y0Z9qKoX+7DWZ5GExARLtH02wGLnnMr4cavLkaVatMei+KJo+ntcyqMiz2M7A=@vger.kernel.org
-X-Received: by 2002:a17:90b:55c6:b0:330:84dc:d11b with SMTP id 98e67ed59e1d1-3342a2bed9dmr11453766a91.18.1759007063471;
-        Sat, 27 Sep 2025 14:04:23 -0700 (PDT)
-X-Received: by 2002:a17:90b:55c6:b0:330:84dc:d11b with SMTP id 98e67ed59e1d1-3342a2bed9dmr11453750a91.18.1759007062992;
-        Sat, 27 Sep 2025 14:04:22 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3342a3afe09sm4481311a91.1.2025.09.27.14.04.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Sep 2025 14:04:21 -0700 (PDT)
-Message-ID: <34478e1c-b3ba-4da3-839a-4cec9ac5f51e@broadcom.com>
-Date: Sat, 27 Sep 2025 14:04:15 -0700
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1759010751; x=1759615551; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+YScZVdusg8ohPcDjQXr0BSaq7vQkm0+q1sVUm0c5Oo=;
+        b=R4FjYdkO52kZQDqDg+0v6qR6AE3YUF3aZTH6VdRoUJ0GsgrK5WWexGGwM+pTAZ27WD
+         pxl27wGG1yFcCCa+d9m/HwCbWnBznsHMSULxq9JfVNUFvKc8MhLt2nv3LzCLQYWg37mc
+         7CvsiiFA78aO23LeWCec9PdjTQOJ8WbwswIqWoNakhaD+0rgqU+gfJ0v6dDHAQC1HTtK
+         1ArtCGycGNmaRlOMqXEVIq+oyLbTAik+vLlomMuO72LYzmcJpvfCEcmTHcXYb0jRY4Yp
+         yi+4meB6M5ukRAM2VNdp/j71OUB+/EMiCCHWQSihn6Cs+BPzgGaV4GL0WhpT1Xuk8HKD
+         gokg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759010751; x=1759615551;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+YScZVdusg8ohPcDjQXr0BSaq7vQkm0+q1sVUm0c5Oo=;
+        b=NRHtOUMOhrMhxsT9bYDVY4zYwEyiaeELGqFUIITFCXBAVG8EwlBPiyFTyAERZnKohB
+         TShCeiy2Nsl+PaMfBEP1ZuqPOV9ZcfPfHjJI8JLXOI3EvvvSISyPWruKCGBamx61Qof1
+         WqKEkeDWBhoNqqoocu9mh1Oe7oxA6u9eo500BkeOaJvAZ+6hMgnA+0IqY9vcz2/l17+C
+         Sorepnby8bgRQbdeQMiVDt+SJe/3Fh8XxgAMuTonL9H7jNfCUokrbAKVl0T0o1U/7vZw
+         rRNW1X0nR8yCVOa+fmYJxVD9anYehEUFQIto/P6cwB5c3cz8OdFHUsZhmkYq/tkz7ZOT
+         jEYA==
+X-Gm-Message-State: AOJu0YzCsTOIqLy12GpHcMALJDs5J0FlT4INsQmXznoBHOxVg2nCJ0S6
+	jVOYNvW+htCRvYvZrQ8AVW9gZR/w2X5t6/2RAdUylXuuDBCuHRfXPW36ViPz4b4VnXo=
+X-Gm-Gg: ASbGncs0Obd4qvd4iuDcv3mdqPGWc7iXm6njMIUv39BiHu4CsBXt2vtGvgwlql9kNlq
+	hG2tNgUF4p4HmoAGaMDbxG1Yuz39b8t8UrpVkcr70Ee0UVs6HeeV0wU9rpA1AzBwlwbOhc8661V
+	bwow+ZwVW+MA+vQxPi6KK9dNQuesSVwSFa8m3xafofuJEjff1OY/jYWmt0ekY0mjHnCbUR6Pm+p
+	mg7Nd3G/yTF+Oamd+QMXgQ+qt8fa96U7tZ36Ho9+BOIUt9VLCB5wC+kxcol1DcBUF45yhpMxwoO
+	8uOzUhjba32rMePmGqO2okpokNv4ExFMVNMBFhDGSoauepvw5eqdO4x24jKzL7VdwdhN2OaMZmf
+	x+hOayvXf3AMe1pnCXXTsqn8BBfBz5yo1E7qefU4YJaldsok=
+X-Google-Smtp-Source: AGHT+IF39ZwOjmMJN4GzerlPpUvjgcREoASLtygcazg6ALTc8PUs0f9d9WxfUIrIpDoqRcsiY2+G1A==
+X-Received: by 2002:a05:6000:240c:b0:3dc:1473:18bd with SMTP id ffacd0b85a97d-40e497c348dmr10387585f8f.3.1759010751427;
+        Sat, 27 Sep 2025 15:05:51 -0700 (PDT)
+Received: from [127.0.1.1] ([2a00:23c5:7815:1301:f27:e3a8:2334:314d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb89fb264sm12463730f8f.20.2025.09.27.15.05.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 15:05:51 -0700 (PDT)
+From: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Subject: [PATCH v2 0/3] printk: Release console_lock between printing
+ records in legacy thread
+Date: Sat, 27 Sep 2025 23:05:34 +0100
+Message-Id: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/4] net: stmmac: stm32: add WoL from PHY
- support
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Christophe Roullier <christophe.roullier@foss.st.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Simon Horman <horms@kernel.org>, Tristram Ha <Tristram.Ha@microchip.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250917-wol-smsc-phy-v2-0-105f5eb89b7f@foss.st.com>
- <20250917-wol-smsc-phy-v2-2-105f5eb89b7f@foss.st.com>
- <aMriVDAgZkL8DAdH@shell.armlinux.org.uk>
- <aNbUdweqsCKAKJKl@shell.armlinux.org.uk>
- <a318f055-059b-44a4-af28-2ffd80a779e6@broadcom.com>
-Content-Language: en-US
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <a318f055-059b-44a4-af28-2ffd80a779e6@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK5f2GgC/42N3QqDIBhAXyW8nqFWDHe19xghpp8/FBpasYjef
+ S7Y/S7PuTjnQBmSh4we1YESbD77GAqwW4WUk8EC9rowYoR1hNMWz8mHZRQTWKl2sbgEUgsVQ44
+ TiCmqEVPF7qbjg+GcoNKZExj/vh6vvrDzeYlpv5Yb/dpfvfujvlFMsGla3TLJBzU0z8WBjVHPE
+ OzqQ61ivY6oP8/zA4dYQ1HdAAAA
+X-Change-ID: 20250914-printk_legacy_thread_console_lock-1c27f59bf990
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ John Ogness <john.ogness@linutronix.de>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: linux-kernel@vger.kernel.org, 
+ Andrew Murray <amurray@thegoodpenguin.co.uk>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759010750; l=1587;
+ i=amurray@thegoodpenguin.co.uk; s=20250914; h=from:subject:message-id;
+ bh=8vNeaE3ZDjTNRHIXZ9X9shIb2rIV9+8Kjtkb0oL7k2A=;
+ b=6LA/ug9Pprws1cSY98o5NS6RAD9sWhJnOaOw9/0LPsXATLZ1hntL7RyYdB9N4uGn9dUvztoaz
+ ytjWhpYSoE6DJa7g0fXUfGxpg3ZxC9ARA3Uu/E0z0kLAC/tDRsJ+vxw
+X-Developer-Key: i=amurray@thegoodpenguin.co.uk; a=ed25519;
+ pk=0SU0Q8S/uEiCdbXbXS+PvJGUCaBG1nDszD+HPU3Js0Q=
 
+The legacy printer kthread uses console_lock and
+__console_flush_and_unlock to flush records to the console which
+holds the console_lock being held for the entire flush. This
+results in large waiting times for console_lock waiters
+especially where there is a large volume of records or where the
+console is slow (e.g. serial). During boot, this contention causes
+delays in the filp_open call in console_on_rootfs.
+   
+Let's instead release and reacquire console_lock in between
+printing individual records.
 
+Signed-off-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
+---
+Changes in v2:
+- Move any_usable=false to console_flush_all in the 'introduce
+  console_flush_one_record' patch to match original implementation.
+- Add Petr's console_flush_one_record() code cleanup patch
+- Open code flushing implementation in legacy_kthread_func instead
+  of introducing new console_flush functions.
+- Link to v1: https://lore.kernel.org/r/20250915-printk_legacy_thread_console_lock-v1-0-f34d42a9bcb3@thegoodpenguin.co.uk
 
-On 9/26/2025 12:05 PM, Florian Fainelli wrote:
-> 
-> 
-> On 9/26/2025 10:59 AM, Russell King (Oracle) wrote:
->> On Wed, Sep 17, 2025 at 05:31:16PM +0100, Russell King (Oracle) wrote:
->>> On Wed, Sep 17, 2025 at 05:36:37PM +0200, Gatien Chevallier wrote:
->>>> If the "st,phy-wol" property is present in the device tree node,
->>>> set the STMMAC_FLAG_USE_PHY_WOL flag to use the WoL capability of
->>>> the PHY.
->>>>
->>>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
->>>> ---
->>>>   drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c | 5 +++++
->>>>   1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/ 
->>>> drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
->>>> index 
->>>> 77a04c4579c9dbae886a0b387f69610a932b7b9e..6f197789cc2e8018d6959158b795e4bca46869c5 100644
->>>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
->>>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
->>>> @@ -106,6 +106,7 @@ struct stm32_dwmac {
->>>>       u32 speed;
->>>>       const struct stm32_ops *ops;
->>>>       struct device *dev;
->>>> +    bool phy_wol;
->>>>   };
->>>>   struct stm32_ops {
->>>> @@ -433,6 +434,8 @@ static int stm32_dwmac_parse_data(struct 
->>>> stm32_dwmac *dwmac,
->>>>           }
->>>>       }
->>>> +    dwmac->phy_wol = of_property_read_bool(np, "st,phy-wol");
->>>> +
->>>>       return err;
->>>>   }
->>>> @@ -557,6 +560,8 @@ static int stm32_dwmac_probe(struct 
->>>> platform_device *pdev)
->>>>       plat_dat->bsp_priv = dwmac;
->>>>       plat_dat->suspend = stm32_dwmac_suspend;
->>>>       plat_dat->resume = stm32_dwmac_resume;
->>>> +    if (dwmac->phy_wol)
->>>> +        plat_dat->flags |= STMMAC_FLAG_USE_PHY_WOL;
->>>
->>> I would much rather we found a different approach, rather than adding
->>> custom per-driver DT properties to figure this out.
->>>
->>> Andrew has previously suggested that MAC drivers should ask the PHY
->>> whether WoL is supported, but this pre-supposes that PHY drivers are
->>> coded correctly to only report WoL capabilities if they are really
->>> capable of waking the system. As shown in your smsc PHY driver patch,
->>> this may not be the case.
->>>
->>> Given that we have historically had PHY drivers reporting WoL
->>> capabilities without being able to wake the system, we can't
->>> implement Andrew's suggestion easily.
->>>
->>> The only approach I can think that would allow us to transition is
->>> to add:
->>>
->>> static inline bool phy_can_wakeup(struct phy_device *phy_dev)
->>> {
->>>     return device_can_wakeup(&phy_dev->mdio.dev);
->>> }
->>>
->>> to include/linux/phy.h, and a corresponding wrapper for phylink.
->>> This can then be used to determine whether to attempt to use PHY-based
->>> Wol in stmmac_get_wol() and rtl8211f_set_wol(), falling back to
->>> PMT-based WoL if supported at the MAC.
->>>
->>> So, maybe something like:
->>>
->>> static u32 stmmac_wol_support(struct stmmac_priv *priv)
->>> {
->>>     u32 support = 0;
->>>
->>>     if (priv->plat->pmt && device_can_wakeup(priv->device)) {
->>>         support = WAKE_UCAST;
->>>         if (priv->hw_cap_support && priv->dma_cap.pmt_magic_frame)
->>>             support |= WAKE_MAGIC;
->>>     }
->>>
->>>     return support;
->>> }
->>>
->>> static void stmmac_get_wol(struct net_device *dev, struct 
->>> ethtool_wolinfo *wol)
->>> {
->>>     struct stmmac_priv *priv = netdev_priv(dev);
->>>     int err;
->>>
->>>     /* Check STMMAC_FLAG_USE_PHY_WOL for legacy */
->>>     if (phylink_can_wakeup(priv->phylink) ||
->>>         priv->plat->flags & STMMAC_FLAG_USE_PHY_WOL) {
->>>         err = phylink_ethtool_get_wol(priv->phylink, wol);
->>>         if (err != 0 && err != -EOPNOTSUPP)
->>>             return;
->>>     }
->>>
->>>     wol->supported |= stmmac_wol_support(priv);
->>>
->>>     /* A read of priv->wolopts is single-copy atomic. Locking
->>>      * doesn't add any benefit.
->>>      */
->>>     wol->wolopts |= priv->wolopts;
->>> }
->>>
->>> static int stmmac_set_wol(struct net_device *dev, struct 
->>> ethtool_wolinfo *wol)
->>> {
->>>     struct stmmac_priv *priv = netdev_priv(dev);
->>>     u32 support, wolopts;
->>>     int err;
->>>
->>>     wolopts = wol->wolopts;
->>>
->>>     /* Check STMMAC_FLAG_USE_PHY_WOL for legacy */
->>>     if (phylink_can_wakeup(priv->phylink) ||
->>>         priv->plat->flags & STMMAC_FLAG_USE_PHY_WOL) {
->>>         struct ethtool_wolinfo w;
->>>
->>>         err = phylink_ethtool_set_wol(priv->phylink, wol);
->>>         if (err != -EOPNOTSUPP)
->>>             return err;
->>>
->>>         /* Remove the WoL modes that the PHY is handling */
->>>         if (!phylink_ethtool_get_wol(priv->phylink, &w))
->>>             wolopts &= ~w.wolopts;
->>>     }
->>>
->>>     support = stmmac_wol_support(priv);
->>>
->>>     mutex_lock(&priv->lock);
->>>     priv->wolopts = wolopts & support;
->>>     device_set_wakeup_enable(priv->device, !!priv->wolopts);
->>>     mutex_unlock(&priv->lock);
->>>
->>>     return 0;
->>> }
->>>
->>> ... and now I'm wondering whether this complexity is something that
->>> phylink should handle internally, presenting a mac_set_wol() method
->>> to configure the MAC-side WoL settings. What makes it difficult to
->>> just move into phylink is the STMMAC_FLAG_USE_PHY_WOL flag, but
->>> that could be a "force_phy_wol" flag in struct phylink_config as
->>> a transitionary measure... so long as PHY drivers get fixed.
->>
->> I came up with this as an experiment - I haven't tested it beyond
->> running it through the compiler (didn't let it get to the link stage
->> yet.) Haven't even done anything with it for stmmac yet.
->>
-> 
-> I like the direction this is going, we could probably take one step 
-> further and extract the logic present in bcmgenet_wol.c and make those 
-> helper functions for other drivers to get the overlay of PHY+MAC WoL 
-> options/password consistent across all drivers. What do you think?
+---
+Andrew Murray (2):
+      printk: Introduce console_flush_one_record
+      printk: Use console_flush_one_record for legacy printer kthread
 
-+		if (wolopts & WAKE_MAGIC)
-+			changed |= !!memcmp(wol->sopass, pl->wol_sopass,
-+					    sizeof(wol->sopass));
+Petr Mladek (1):
+      printk: console_flush_one_record() code cleanup
 
+ kernel/printk/printk.c | 186 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 119 insertions(+), 67 deletions(-)
+---
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+change-id: 20250914-printk_legacy_thread_console_lock-1c27f59bf990
 
-Should not the hunk above be wolopts & WAKE_MAGICSECURE?
-
+Best regards,
 -- 
-Florian
+Andrew Murray <amurray@thegoodpenguin.co.uk>
 
 
