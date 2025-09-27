@@ -1,192 +1,123 @@
-Return-Path: <linux-kernel+bounces-834962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB1EBA5EAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:13:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20B2BA5EB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056DA7B6FEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:11:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06AF17DD06
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620D2DF6E6;
-	Sat, 27 Sep 2025 12:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA402E0408;
+	Sat, 27 Sep 2025 12:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LzWCTtg6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFQZxeZ4"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933B62882D0
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 12:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BE02DF6E6
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 12:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758975185; cv=none; b=j+xSi1rjEufyEeeiZUalkgyljZbuBpKDqRiztVV28IyqbR1+mvNkqdMdfIxzprrrKs1JzSoDyTuPxbi61TqRInOdH0mDZMHPAm5UyIUfkMK6lUID+Oi98cq7rLopHe7aJbONk5dr4vmSLfH/1Z3GUe2c9erDJMpHag2w3JNgBJk=
+	t=1758975276; cv=none; b=eOVD1sT4rqve+7Th/llwJ4N0FdCHx6IH78V2X/QPiaNZcn3RxctK1AqYxOsvamYYjIi1luGsrKElsBp+Uk37NKuCtXbOqdtZowsJ3BoTtRCdSswxt5S916NwLdciK14+hOGg0Uay5D15QQLzaK3TM/2tV/rDaEhpt44ZVSyj7ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758975185; c=relaxed/simple;
-	bh=TwUpSH1ghbN4SooWUY3F97DHQwyPglI2P8bUTlUvZ8c=;
+	s=arc-20240116; t=1758975276; c=relaxed/simple;
+	bh=cQ/vViuV5kkPC8N6xSHm2TBoNeswpTWYDcjW2WZz3iw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJsbLn/8GazABao/ZuBZN9QT2TdrKIJCzyC++org0UzHrn2J0XHArZnD/k+EN6C3gzK+oaSsNkvo+dRKFL+Pov3/2StIpGA9VV36vpa6xfWejXDMMYSZ2Tl3/ENar8uA0aeywg+fogm1HluB7VatuuLpnWoq2ds9RsUdGaIyvIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LzWCTtg6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A2BC113CF
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 12:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758975185;
-	bh=TwUpSH1ghbN4SooWUY3F97DHQwyPglI2P8bUTlUvZ8c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LzWCTtg6SrncrQJJ/dO2n8mWZnIp2ge5bWfU6wm3Kjvaa5gu/ZOHdu2/hRqqsWPtm
-	 w2YpixIF6bh9vrfTH8BZ3oLWvdNt5kJ3yAJB1L+bNDQXzBuW3GWZDszwAuPyYX4JXc
-	 xL4oM7xU7wwPkvwdr10F0GEGl3HdSeCMb5I9xAIG79rjQHUETdWTWjE749xcpI4DYU
-	 Ho5KbjC5GZzNN0LTAVG9HEWpdXI/DgzNWEdNGGGSjPrEZhTs7Gurmq++1jIM/93gdP
-	 HcTGRrhGDzxOgnlE1dTQaxfXbBAcK6nCUHfT1bep4l2WWLQbIFXkmnXz/EZ6nWN0Lt
-	 9Wbj//Lse+MPA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-35bdcaf79e7so2578269fac.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 05:13:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVx9+qWNT1jzg2aY2DMnyqDQeTWKDhx7EnAmcZZhv6EMFjI2C95Sjl7k8g/q4/nXzqX9osJ9Sf10ZRrOYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVrhurNmBOW2zh8GsYM9JQ5iokyDd7XKDfVHtVbxTYaXZylc6v
-	weEUddXPJ7lujKWFjjglHqibWzLWnGmW7cO3NPpA8SpGP+JOIQYXU1JkaN/u/nevQYPhB9kjTrw
-	chajLHze8bqXBmZL/lSB6QCcP8RKrkq0=
-X-Google-Smtp-Source: AGHT+IHoRKUqke8mSmvJOXv9uDQLt0pk9IzOzuSpzXFsfE/+P4NaWq3F/DDodzLSz0UCqlVPTleKEaiS4Ix70Ff81/o=
-X-Received: by 2002:a05:6871:ea8b:b0:372:b8a4:791a with SMTP id
- 586e51a60fabf-372b8a47a83mr2670184fac.21.1758975184446; Sat, 27 Sep 2025
- 05:13:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=YzpZdGNFZItJa/UcUkdwmyCmPPgu5d3VMwiJJUuE5HF5KotmGSeV+JNgt/2wcfeeBXg/OptLnGPri4w/apqMnAv1cRLV04/DfgdVIBHsJ7jb09lvngsUzIMBbXdLvlvtIFTLHx+Zpw8TpzMMXBM5qqWm0Q05fEvzCpI6g0o6b/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFQZxeZ4; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27eda3a38ceso6346145ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 05:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758975274; x=1759580074; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cQ/vViuV5kkPC8N6xSHm2TBoNeswpTWYDcjW2WZz3iw=;
+        b=TFQZxeZ4uOCEM8UibUQWNPACJ9P5ukHSppEoujhdZnKDqlcFVNSN4vFPVMYEAzgJXg
+         izt8EAG2uKETaBkQtv6jxxJFxiv+JO+2X/ZKTTvxD+opvXQUFXkVAx7SKedDc0WgMmrK
+         bOsFrt2NLTdLQ262lIMJ7XL5E9ozW4p1vn4nxjl4jX9nmBU8oX63DESNtU8WSBpp5dxc
+         dZf4g1tCozA5EoZV2KSHthhVQMLRJaWK5yLTxlOO5LKwoSZNQrVZlmR0IGTOLTY/D4ad
+         BQviRptzQU08vrYVb99x84QLaEZJagvhdC3EeCjbPoaNU9B+EJfnGYy1IVPkilO5nOPl
+         Wh/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758975274; x=1759580074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cQ/vViuV5kkPC8N6xSHm2TBoNeswpTWYDcjW2WZz3iw=;
+        b=rfA+ILdeLvmKrMNxxrpItm76kote4L3QsviYK7IDRTnE2WUk56AZxPxVWS21lT5q9S
+         8n9YsoavRBl2j7ihELL59z51/m6xnUt4qjuIt4BLQoCE5kWYuHCpceS1sprbmDSex0T8
+         CcHUo5NFFgMzDCyOKzdlupmq6N5AWfKI5R7USDdJqS8Vcp2opi2V3oaMeC78c2ep9NOH
+         73DzE3fY6q1sYir2UnCcXBtWDh9ngqRM9OWAMQRHyCE/QT+NhdOwNIrkwJ/HUYI31sSJ
+         hDerztXZ4qX0aalfio5jAKtAv55+Ua5+snIVoz2KM947ax0TU4lF2QokN+e6eySDyUuh
+         c5PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV13BkQejzvun80w/pBa1syX/+R16bynTfs29o/hotjKPsj2/ytT5hkukSR0ASFN/CK2p44nI474WViw9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykvP1y7IyHTescEnsZhi+y7U4Ey01jipcSFiseotuVnVpbHAaj
+	BTDaArpH6WASbFhaO2+iDlDC88hwhRwOhFB2Njj8CDd6k+edjUvMfmVeshB9ql6dqt3iZ9TcA8N
+	YG4gS0p5CHAt0xT9Tca2yNutaqoi5G2Q=
+X-Gm-Gg: ASbGncv1+WCDKYZCTxDyGkfasiteJ1D5GTscs3b27J0csAkMcIbpPQrTir0YRmqELwk
+	Z6HYXacml/1blyiTzc/UTdIf5RrsLcEXkDZVl3xpfUPW+yYadVeqlmixVcn+D3spAvNi/DC86Ig
+	f5NinF/FgYOXqHm6awTGjtbU5ZBVSasjNV2uQ860oTOVYA4UAt8gPocA1tkrEP4qnffENk2M/nC
+	fZ3DL7oQhs284Ew6s0lAE8bdKzxTIKzdSs6WgQLAEXHBsUdX1BGDFNDhJ2enGGk7LYKY8ExMhPC
+	yNybsxnSJMiXapaDW7Wik2E3RotLWMIETjuW
+X-Google-Smtp-Source: AGHT+IHZjp/EfiazAV4KIr6CKQXQ4M+vN6ByhlopidH8GmTXvgth0071YPgESmpcClrC9cwMbzePH8Og+U45ZvhzRpU=
+X-Received: by 2002:a17:902:db11:b0:25c:9c28:b425 with SMTP id
+ d9443c01a7336-27ed4aca4a5mr73015705ad.11.1758975274365; Sat, 27 Sep 2025
+ 05:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926102320.4053167-1-treapking@chromium.org>
-In-Reply-To: <20250926102320.4053167-1-treapking@chromium.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 27 Sep 2025 14:12:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i-iT-3nEjX7Nm2s91GSm0OTXQ3yZSf2Q3VRNTOseREHw@mail.gmail.com>
-X-Gm-Features: AS18NWB34zB3BLqh9BZedb-rR5nsbi_3-vkJmooiDwdwhYQb4UqYJVwDBhe2Ypo
-Message-ID: <CAJZ5v0i-iT-3nEjX7Nm2s91GSm0OTXQ3yZSf2Q3VRNTOseREHw@mail.gmail.com>
-Subject: Re: [PATCH v4] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, linux-pm@vger.kernel.org
+References: <20250918123100.124738-2-phasta@kernel.org> <aNa7BDpKS2KA__4M@tardis.local>
+In-Reply-To: <aNa7BDpKS2KA__4M@tardis.local>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 27 Sep 2025 14:14:22 +0200
+X-Gm-Features: AS18NWCd0oDH3VKEokXgs76roViozK_Ajh78YilTwKiHy-TyrYWiBu0MM9gxng4
+Message-ID: <CANiq72=6pGtKKr3XeZXLVrJTNMv7YbGzbezSUrZ7A43MJQLwJg@mail.gmail.com>
+Subject: Re: [RFC PATCH] rust: sync: Add dma_fence abstractions
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Philipp Stanner <phasta@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Asahi Lina <lina+kernel@asahilina.net>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Tamir Duberstein <tamird@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Krishna Ketan Rai <prafulrai522@gmail.com>, 
+	Lyude Paul <lyude@redhat.com>, Mitchell Levy <levymitchell0@gmail.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 12:23=E2=80=AFPM Pin-yen Lin <treapking@chromium.or=
-g> wrote:
+On Fri, Sep 26, 2025 at 6:10=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
 >
-> Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
-> and resume, and functions like device_reorder_to_tail() and
-> device_link_add() doesn't try to reorder the consumers with such flag.
->
-> However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
-> check this flag before triggering dpm_wait, leading to potential hang
-> during suspend/resume.
->
-> This can be reproduced on MT8186 Corsola Chromebook with devicetree like:
->
-> usb-a-connector {
->         compatible =3D "usb-a-connector";
->         port {
->                 usb_a_con: endpoint {
->                         remote-endpoint =3D <&usb_hs>;
->                 };
->         };
-> };
->
-> usb_host {
->         compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
->         port {
->                 usb_hs: endpoint {
->                         remote-endpoint =3D <&usb_a_con>;
->                 };
->         };
-> };
->
-> In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlink
-> between usb_host (supplier) and usb-a-connector (consumer) is created.
->
-> Export device_link_flag_is_sync_state_only() and use it to check this in
-> dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
->
-> Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_STAT=
-E_ONLY flag")
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> ---
->
-> Changes in v4:
-> - Remove inline for device_link_flag_is_sync_state_only()
->
-> Changes in v3:
-> - Squash to one patch and fix the export approach
->
-> Changes in v2:
-> - Update commit message
-> - Use device_link_flag_is_sync_state_only()
->
->  drivers/base/base.h       | 1 +
->  drivers/base/core.c       | 2 +-
->  drivers/base/power/main.c | 6 ++++--
->  3 files changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/base.h b/drivers/base/base.h
-> index 123031a757d9..80415b140ce7 100644
-> --- a/drivers/base/base.h
-> +++ b/drivers/base/base.h
-> @@ -248,6 +248,7 @@ void device_links_driver_cleanup(struct device *dev);
->  void device_links_no_driver(struct device *dev);
->  bool device_links_busy(struct device *dev);
->  void device_links_unbind_consumers(struct device *dev);
-> +bool device_link_flag_is_sync_state_only(u32 flags);
->  void fw_devlink_drivers_done(void);
->  void fw_devlink_probing_done(void);
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index d22d6b23e758..a54ec6df1058 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -287,7 +287,7 @@ static bool device_is_ancestor(struct device *dev, st=
-ruct device *target)
->  #define DL_MARKER_FLAGS                (DL_FLAG_INFERRED | \
->                                  DL_FLAG_CYCLE | \
->                                  DL_FLAG_MANAGED)
-> -static inline bool device_link_flag_is_sync_state_only(u32 flags)
-> +bool device_link_flag_is_sync_state_only(u32 flags)
->  {
->         return (flags & ~DL_MARKER_FLAGS) =3D=3D DL_FLAG_SYNC_STATE_ONLY;
->  }
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 2ea6e05e6ec9..73a1916170ae 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *dev=
-, bool async)
->          * walking.
->          */
->         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_nod=
-e)
-> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> +                   !device_link_flag_is_sync_state_only(link->flags))
->                         dpm_wait(link->supplier, async);
->
->         device_links_read_unlock(idx);
-> @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *dev=
-, bool async)
->          * unregistration).
->          */
->         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_nod=
-e)
-> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> +                   !device_link_flag_is_sync_state_only(link->flags))
->                         dpm_wait(link->consumer, async);
->
->         device_links_read_unlock(idx);
-> --
+> Thoughts? Miguel, Greg, Danilo and Lyude, any idea or suggestion?
 
-Rebased on top of linux-pm.git/linux-next and applied as 6.18 material
-with some minor edits in the subject and changelog.
+Either way sounds OK.
+
+More generally, one thing to consider nowadays is whether we will want
+something to eventually live in its own crate etc., but for this I
+don't think it applies and being in the `kernel` crate is fine.
+
+By the way, should Gustavo and -media be Cc'd?
 
 Thanks!
+
+Cheers,
+Miguel
 
