@@ -1,288 +1,192 @@
-Return-Path: <linux-kernel+bounces-834884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18592BA5C0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:09:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3ECBA5C25
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25FB4C53ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5766C16E4F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D802D63F6;
-	Sat, 27 Sep 2025 09:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0552D5C92;
+	Sat, 27 Sep 2025 09:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Exow2PEa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgACOK+1"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBC01C84A1;
-	Sat, 27 Sep 2025 09:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC2123BF9B
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758964177; cv=none; b=iT5NCxqK4wTaxy/PgWVGfjoaZVDcjsqfTqKZf3M32IkXFRlqY5CHG7UfQaJkUe6IrYbB1Ci5GWjSt7ew2ZuLFpWWvvVYB4SLRYa/4KisjFpq+UgdU2d0vd0Ef6YJnhvaFZ1mXAWRb1AXiIPY71L08cSucxEuDOLJ7qr4QWmWGuM=
+	t=1758964345; cv=none; b=f6mmS7rAtwsERiX1wR+oO5h0JNMk5XNygXdYmzW9H9MRUJ/0yR7SkzMlZvNRb3pR6pFKYvYNtSnSt2ArMk+UOD2yqtzB+kWhpU/c+RAhbYTuS0yX3BhvW/yJa17Mz8ZvdjIglPiD8Vasde9B7dgo51WTVSyf4QKCtg0rZ5CdBZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758964177; c=relaxed/simple;
-	bh=bgLz2Q8IGkVURM2vwwZtTD+xMEuboxjsSTJPJ8/YM4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SOc1fogRgHHFvE3tikyjLfRJAdCx8VNpLm4dxLd97T/qQXlH2dGhzI/VDD8fk2KkDq43J+mpFWz5mchVe4qHc6JTthfVAoM0IlPBU12OYbA6fuTFcRy8HL6kA+LuMtwLy4ReMlXbcP7yI6cYSa6gXu4AtPpFUH2I2+2B20+jNy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Exow2PEa; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758964176; x=1790500176;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bgLz2Q8IGkVURM2vwwZtTD+xMEuboxjsSTJPJ8/YM4g=;
-  b=Exow2PEaH940A2X3q5FoW1pg4WceuRK1O5mMIO7gaNV/e5TQ84HM2FlD
-   qhGEdU7HfnZau7+AsvEJKWAFY6maqi3jmaFi8O3Bekna1Fd1iaeEdZhCN
-   N2dohdOtxkjWKSbi0C2sH//lX/qtsSNJKGC2WAbLdBu/n2Vn1NKUbC9lZ
-   JfC6FhJbbwNxmIrUgNcmE15+iE6rZ1duo/nLuufC33lDHGTSav23Uigqf
-   MdduEp2zmhoCCvWOfe0khRf4n8kTSbzeMz9THSQ2eJBYl0kw3MVkYcOOS
-   wpaLul5nO2TtSX0CRNMVgBz1QZ4C2InNs5ZTm3e/iyIUMdyrZJ2/59T/M
-   g==;
-X-CSE-ConnectionGUID: jBckMAU2T+qIrI8N0NNuHg==
-X-CSE-MsgGUID: w7kZdrf5T2epVwAwnDKJrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="71899159"
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="71899159"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 02:09:35 -0700
-X-CSE-ConnectionGUID: hI3lECv0SUqeS40yeKe0wA==
-X-CSE-MsgGUID: Dtir0f5uQOyOo9i6GgzZSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="182100562"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 27 Sep 2025 02:09:31 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2Qvp-0006wB-0G;
-	Sat, 27 Sep 2025 09:09:29 +0000
-Date: Sat, 27 Sep 2025 17:08:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
-	Mina Almasry <almasrymina@google.com>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v4 2/2] net: devmem: use niov array for token
- management
-Message-ID: <202509271623.I36w4Uqo-lkp@intel.com>
-References: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-2-39156563c3ea@meta.com>
+	s=arc-20240116; t=1758964345; c=relaxed/simple;
+	bh=+pGe3F9Wyt6J36sXviOvj0VrqTw4kZNLOZ6ewjfpf/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YuRpQ4aSxjQgSaSIrtUQXc91iktSzlO3ghYorCt89oSly0IFrfxTACKko7ZYLVuFWuPUllGVRIP0x0tHeTQGDi+5j4EzoRYJKU3+ekSf/5WQMWZqs4EDnlG7WemQyRTnaIwfzfsNbIyACtKvFcC6GC0L/GOtlFd9EyeInJWRyD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EgACOK+1; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so3527168a91.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 02:12:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758964342; x=1759569142; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mIZgaRKGhoxWkvHAy+1tENSc1M17jx2ezAwOCvUOvKM=;
+        b=EgACOK+1PJB6vDJ0SAFrQp5mPgnSve2UKIM77WgcKmuXGkDmIYmOLd0palRUvTUE/0
+         X/VQkOndGuXfgZVpbxQFlJHXf0rYAW8tA4mm8YBrb8fumMTEzypMt53G3vcDiCA7RmWc
+         3fvwHBTUzGYCwj9iMEAFvJGWdmQ0gzdkBuokHicDphClNhxJeARsDD/jMqD/8Sm+VNyJ
+         sn4HlVuDVcXeAi5pFcjnwcXS4lMM1Hje67tJU9jK69v+B70GPh5dnixghjZ2avVjPcZv
+         1wol8BiSkJzNhfszOA5cgiaIAL+y1Q+O1fYuIMos3bKgjD2GuiAZbobURPUzTKFVIQU/
+         tbEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758964342; x=1759569142;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mIZgaRKGhoxWkvHAy+1tENSc1M17jx2ezAwOCvUOvKM=;
+        b=WvX90Xs8DXxbhWedJnx9jAJ3d3ayynRFscnCvCuIaejC+9HJyFB9H8Y9FLpK+KKIzo
+         LNSS8Vv5F4GoPaJdXnP94m4ki9cwocuYFn8rIcFmt6Iqtll9n0exKb40I8CQw6xzP5ly
+         YemEAPg/KxIeWB25VvTUbUzVjbwaLxHDgBy7aghzr6eE664PERy4WK4iZzQ+Jb/OfU8A
+         KLBb1gFAjc6+3zPDy8BM7MdQPLmssA6rt6RV05+4hxEd6EdqlZQxs144mhHY8LjlWhXb
+         2uI2BIbTBMUrq5/S06D37nRRL5sazj+rCOxtt9VYlFssP/Zxogtom/stPF8CSC4Bt21K
+         inKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhH1PofwUMpxI+uTi/qMx9ZDL2sSeWMHdbPNEqCNK6WNkwf/tCAi+HCz5YznSLo60FelIlpuRsSVnJ71I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ8Cc1NjOEGiCbO1C33je3PV4RD2Lun5aXBCz0uUworSiu4J2g
+	sVtWSKaOSoZIAF32xwaOuU+3fNOaapGxJn9ca0q/rhILlkB7g37dMQI3
+X-Gm-Gg: ASbGnctGrKb4ytHNapJKwpH1uFlFX/8SbvfIqj0CBC5S+veSch39SL+Ytsk8TSedmnT
+	+PvaV0RG6/NAHuta5FVE3WX8+5uHgOqBkX87WHNQp0yUe0n0u85I4Gcx2OPdxAQO89Btn6dtbNe
+	J8WPFxNfgd9KhgQs5yPbjikNWfjK+LWBlwLkLvsH3o6hjU9kG7Rm7nMKty2KAWRHorWRSO1x/3+
+	BDj/N1jBcAj8STsZvh3Dr8kDVU96c8UeMRJ5uC3okrt6I02CMpRj2QAn1WIyJZO2iGDpDRoai2f
+	2dI+5BJf2HJ+EZlc4p2eVYwjRPNdVVLlz1xldH9j+SvddVpDf7gD+cDN69iwsuZ+PCTKcC+O4YJ
+	8uRbvpzuzTOZ6K9uF9il5m1QlOrqr/GcIOw72FBL1kEwIezF1owqLwtigI3iP1EBbkeq/
+X-Google-Smtp-Source: AGHT+IHaJg4dHImv6wsjXivv+eH0xv3qmlqiUA3ELNxaY4YHxl0i1sgYrjR3kpZPWHUErts99XbHaA==
+X-Received: by 2002:a17:90b:1d8a:b0:335:2eef:4ca8 with SMTP id 98e67ed59e1d1-3352eef4edcmr5690404a91.33.1758964342131;
+        Sat, 27 Sep 2025 02:12:22 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be3a010sm11164207a91.28.2025.09.27.02.12.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Sep 2025 02:12:21 -0700 (PDT)
+Message-ID: <1d993906-bae3-41eb-963f-de960cc56dd0@gmail.com>
+Date: Sat, 27 Sep 2025 18:12:19 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-2-39156563c3ea@meta.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] docs: Makefile: avoid a warning when using without
+ texlive
+To: mchehab+huawei@kernel.org
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rdunlap@infradead.org, Akira Yokosawa <akiyks@gmail.com>
+References: <e23e03dd41e044d55e4ae24ffd9e1b49e3f2515a.1758881658.git.mchehab+huawei@kernel.org>
+ <f9ceb569-363c-4806-9451-4a4ef83b38ca@gmail.com>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <f9ceb569-363c-4806-9451-4a4ef83b38ca@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Bobby,
+Sorry, a quick follow-up.
 
-kernel test robot noticed the following build warnings:
+On Sat, 27 Sep 2025 16:35:08 +0900, Akira Yokosawa wrote:
+> On Fri, 26 Sep 2025 12:16:19 +0200, Mauro Carvalho Chehab wrote:
+>> As reported by Randy, running make htmldocs on a machine
+>> without textlive now produce warnings:
+>>
+>>     $ make O=DOCS htmldocs
+>>     ../Documentation/Makefile:70: warning: overriding recipe for target 'pdfdocs'
+>>     ../Documentation/Makefile:61: warning: ignoring old recipe for target 'pdfdocs'
+>>
+>> That's because the code has now two definitions for pdfdocs in
+>> case $PDFLATEX command is not found. With the new script, such
+>> special case is not needed anymore, as the script checks it.
+>>
+>> Drop the special case. Even after dropping it, on a machine
+>> without LaTeX, it will still produce an error as expected,
+>> as running:
+>>
+>>     $ ./tools/docs/sphinx-build-wrapper pdfdocs
+>>     Error: pdflatex or latexmk required for PDF generation
+>>
+>> does the check. After applying the patch we have:
+>>
+>>     $ make SPHINXDIRS=peci htmldocs
+>>     Using alabaster theme
+>>     Using Python kernel-doc
+>>
+>>     $ make SPHINXDIRS=peci pdfdocs
+>>     Error: pdflatex or latexmk required for PDF generation
+>>     make[2]: *** [Documentation/Makefile:64: pdfdocs] Error 1
+>>     make[1]: *** [/root/Makefile:1808: pdfdocs] Error 2
+>>     make: *** [Makefile:248: __sub-make] Error 2
+>>
+>> Which is the expected behavior.
+>>
+> 
+> There seems to be a related issue.
+> 
+> At current "docs-mw", under build environments who don't have xelatex nor latexmk,
+> 
+>     $ make SPHINXDIRS=peci latexdocs
+> 
+> completes without any issue.
+> 
+> In the resulting .../latex/peci directory, one can run
 
-[auto build test WARNING on 203e3beb73e53584ca90bc2a6d8240b9b12b9bcf]
+     I meant:      .../peci/latex
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bobby-Eshleman/net-devmem-rename-tx_vec-to-vec-in-dmabuf-binding/20250927-003521
-base:   203e3beb73e53584ca90bc2a6d8240b9b12b9bcf
-patch link:    https://lore.kernel.org/r/20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-2-39156563c3ea%40meta.com
-patch subject: [PATCH net-next v4 2/2] net: devmem: use niov array for token management
-config: x86_64-buildonly-randconfig-005-20250927 (https://download.01.org/0day-ci/archive/20250927/202509271623.I36w4Uqo-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509271623.I36w4Uqo-lkp@intel.com/reproduce)
+> 
+>     $ make PDFLATEX="latexmk -xelatex" LATEXOPTS="-interaction=batchmode -no-shell-escape"
+> 
+> and build peci.pdf.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509271623.I36w4Uqo-lkp@intel.com/
+I failed to mention, but of course you need to transfer/share said
+.../peci/latex/ to another build environment who has all the required
+packages for "pdfdocs".
 
-All warnings (new ones prefixed by >>):
+I often use such heterogeneous combination of running "make latexdocs"
++ running make under each of .../$SPHINXDIRS/latex/ using another
+environment.
 
-   net/ipv4/tcp.c: In function 'tcp_recvmsg_dmabuf':
->> net/ipv4/tcp.c:2473:32: warning: unused variable 'len' [-Wunused-variable]
-    2473 |                         size_t len;
-         |                                ^~~
->> net/ipv4/tcp.c:2472:32: warning: unused variable 'size' [-Wunused-variable]
-    2472 |                         size_t size;
-         |                                ^~~~
+This way, you need only one set of working texlive packages for testing
+against various Sphinx's latex builder releases.
 
+> 
+> At current "build-scripts", I get this:
+> 
+>     $ make SPHINXDIRS=peci latexdocs
+>     Error: pdflatex or latexmk required for PDF generation
+>     make[2]: *** [Documentation/Makefile:68: latexdocs] Error 1
+>     make[1]: *** [<srcdir>/Makefile:1806: latexdocs] Error 2
+>     make: *** [Makefile:248: __sub-make] Error 2
+> 
+> Patch 2/2 doesn't change the behavior.
+> 
+> This is yet another regression.  Please teach sphinx-build-wrapper of the
+> fact that "latexdocs" does not run those texlive commands.  It is only the
+> "pdfdocs" phase that will run them.
+> 
 
-vim +/len +2473 net/ipv4/tcp.c
+You see, "make latexdocs" is supposed to generate all the necessary files
+for building PDFs to be consumed by make + latexmk/xelatex.
+There is a clear boundary between "latexdocs" and "pdfdocs".
 
-  2409	
-  2410	/* On error, returns the -errno. On success, returns number of bytes sent to the
-  2411	 * user. May not consume all of @remaining_len.
-  2412	 */
-  2413	static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
-  2414				      unsigned int offset, struct msghdr *msg,
-  2415				      int remaining_len)
-  2416	{
-  2417		struct dmabuf_cmsg dmabuf_cmsg = { 0 };
-  2418		unsigned int start;
-  2419		int i, copy, n;
-  2420		int sent = 0;
-  2421		int err = 0;
-  2422	
-  2423		do {
-  2424			start = skb_headlen(skb);
-  2425	
-  2426			if (skb_frags_readable(skb)) {
-  2427				err = -ENODEV;
-  2428				goto out;
-  2429			}
-  2430	
-  2431			/* Copy header. */
-  2432			copy = start - offset;
-  2433			if (copy > 0) {
-  2434				copy = min(copy, remaining_len);
-  2435	
-  2436				n = copy_to_iter(skb->data + offset, copy,
-  2437						 &msg->msg_iter);
-  2438				if (n != copy) {
-  2439					err = -EFAULT;
-  2440					goto out;
-  2441				}
-  2442	
-  2443				offset += copy;
-  2444				remaining_len -= copy;
-  2445	
-  2446				/* First a dmabuf_cmsg for # bytes copied to user
-  2447				 * buffer.
-  2448				 */
-  2449				memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
-  2450				dmabuf_cmsg.frag_size = copy;
-  2451				err = put_cmsg_notrunc(msg, SOL_SOCKET,
-  2452						       SO_DEVMEM_LINEAR,
-  2453						       sizeof(dmabuf_cmsg),
-  2454						       &dmabuf_cmsg);
-  2455				if (err)
-  2456					goto out;
-  2457	
-  2458				sent += copy;
-  2459	
-  2460				if (remaining_len == 0)
-  2461					goto out;
-  2462			}
-  2463	
-  2464			/* after that, send information of dmabuf pages through a
-  2465			 * sequence of cmsg
-  2466			 */
-  2467			for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
-  2468				skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-  2469				struct net_devmem_dmabuf_binding *binding;
-  2470				struct net_iov *niov;
-  2471				u64 frag_offset;
-> 2472				size_t size;
-> 2473				size_t len;
-  2474				u32 token;
-  2475				int end;
-  2476	
-  2477				/* !skb_frags_readable() should indicate that ALL the
-  2478				 * frags in this skb are dmabuf net_iovs. We're checking
-  2479				 * for that flag above, but also check individual frags
-  2480				 * here. If the tcp stack is not setting
-  2481				 * skb_frags_readable() correctly, we still don't want
-  2482				 * to crash here.
-  2483				 */
-  2484				if (!skb_frag_net_iov(frag)) {
-  2485					net_err_ratelimited("Found non-dmabuf skb with net_iov");
-  2486					err = -ENODEV;
-  2487					goto out;
-  2488				}
-  2489	
-  2490				niov = skb_frag_net_iov(frag);
-  2491				if (!net_is_devmem_iov(niov)) {
-  2492					err = -ENODEV;
-  2493					goto out;
-  2494				}
-  2495	
-  2496				end = start + skb_frag_size(frag);
-  2497				copy = end - offset;
-  2498	
-  2499				if (copy > 0) {
-  2500					copy = min(copy, remaining_len);
-  2501	
-  2502					frag_offset = net_iov_virtual_addr(niov) +
-  2503						      skb_frag_off(frag) + offset -
-  2504						      start;
-  2505					dmabuf_cmsg.frag_offset = frag_offset;
-  2506					dmabuf_cmsg.frag_size = copy;
-  2507	
-  2508					binding = net_devmem_iov_binding(niov);
-  2509	
-  2510					if (!sk->sk_devmem_binding)
-  2511						sk->sk_devmem_binding = binding;
-  2512	
-  2513					if (sk->sk_devmem_binding != binding) {
-  2514						err = -EFAULT;
-  2515						goto out;
-  2516					}
-  2517	
-  2518					token = net_iov_virtual_addr(niov) >> PAGE_SHIFT;
-  2519					dmabuf_cmsg.frag_token = token;
-  2520	
-  2521					/* Will perform the exchange later */
-  2522					dmabuf_cmsg.dmabuf_id = net_devmem_iov_binding_id(niov);
-  2523	
-  2524					offset += copy;
-  2525					remaining_len -= copy;
-  2526	
-  2527					err = put_cmsg_notrunc(msg, SOL_SOCKET,
-  2528							       SO_DEVMEM_DMABUF,
-  2529							       sizeof(dmabuf_cmsg),
-  2530							       &dmabuf_cmsg);
-  2531					if (err)
-  2532						goto out;
-  2533	
-  2534					if (atomic_inc_return(&niov->uref) == 1)
-  2535						atomic_long_inc(&niov->pp_ref_count);
-  2536	
-  2537					sent += copy;
-  2538	
-  2539					if (remaining_len == 0)
-  2540						goto out;
-  2541				}
-  2542				start = end;
-  2543			}
-  2544	
-  2545			if (!remaining_len)
-  2546				goto out;
-  2547	
-  2548			/* if remaining_len is not satisfied yet, we need to go to the
-  2549			 * next frag in the frag_list to satisfy remaining_len.
-  2550			 */
-  2551			skb = skb_shinfo(skb)->frag_list ?: skb->next;
-  2552	
-  2553			offset = offset - start;
-  2554		} while (skb);
-  2555	
-  2556		if (remaining_len) {
-  2557			err = -EFAULT;
-  2558			goto out;
-  2559		}
-  2560	
-  2561	out:
-  2562		if (!sent)
-  2563			sent = err;
-  2564	
-  2565		return sent;
-  2566	}
-  2567	
+Thanks,
+Akira
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Regards,
+> Akira
+> 
+>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>> Link: https://lore.kernel.org/linux-doc/e7c29532-71de-496b-a89f-743cef28736e@infradead.org/
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
 
