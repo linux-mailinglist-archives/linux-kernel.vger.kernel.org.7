@@ -1,201 +1,131 @@
-Return-Path: <linux-kernel+bounces-834805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC310BA58FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:38:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA6ABA5902
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E57E1BC73C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:39:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411FE1BC7D40
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACF62288D5;
-	Sat, 27 Sep 2025 04:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAE9225A5B;
+	Sat, 27 Sep 2025 04:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vq486mDy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdVWnDfT"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E54717A310;
-	Sat, 27 Sep 2025 04:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434DE1925BC
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 04:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758947904; cv=none; b=B9PJun8yW+DdW4TANyR/7ZAHgeEXGM+pDcEIN8XiGD1JKFEj2esauc2axw7NrOkOeCzq4ZCLdqT7IKHQqVcW3RVNrz0vfm89H8OXsLEpmZF19ddxdK+PAxJJKkBtc7D2c7apR9Us12zHp7S5ZxV7jO9YiNi5q+hwxdTKO8CG38Q=
+	t=1758948213; cv=none; b=pC0TsfMLujnKAyXN/m2hxAww/VX1dGV3e1OdRqlAfTER7DAWrV6jmM6GX1J9pZ5zqMjSBfBJOIGyyrvjiI/HVZ1InHmd90uM/nx20mGnqY1VWcd9Y7VzIqkNOipePcYD74dDX2qtG4woDIBN6SDaDsLrf/vL5AaRho3ndGwVt3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758947904; c=relaxed/simple;
-	bh=Ml6qdQ+jE48I66+8v4t80wL43dmskcbpk6RZ6I2w/es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L0AjTUJVPf0cMPVUUpzoaXPKfciD5R2yHW4VkrPGF+dArGUugyXbjr/LEIXXnvKJcQTZCOxjItxWnYkjiSntS9cC38Xk00O9NItNy/D44m4bgolEmCNRJtO2kOItr+ISGN9UOk7eAdmMiR1Um9+sst5vE8EOZ0JQpMdMgbcq1ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vq486mDy; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758947903; x=1790483903;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Ml6qdQ+jE48I66+8v4t80wL43dmskcbpk6RZ6I2w/es=;
-  b=Vq486mDyhEM1jxdEp4zHzu6SoKw4xEXh6NN78qgkDAtzqTafbKLrEh3l
-   E6UDNwHe6zraOoOgISiSykJR3fuRRJQ0snSaqF50wKsXlYiMwniSJoD9v
-   VRwX4N8sgZTmZ1D4/5ixeSnuEQ/KQHmCjPyev/3UB4NLYRbkAN5pNl0uC
-   XnCNbzVebhXk5JgT6Ex10B+XvyiQVLXywVBIPJmE4iem961Phzmh67eGZ
-   IPgCp8DpQIGRnYPoTh1FtnYjpvJ+8uYLFQSkNsFOdAH0TPM7yb1nstePG
-   hWXmlL4NBUYytGSPgZwzwyKfEGF/YcLIBJxeRgqCVv5wex0j/WnyZs2mj
-   w==;
-X-CSE-ConnectionGUID: WjRf+AJKS1m1wuauuf+QyA==
-X-CSE-MsgGUID: f3NOcJD8Qaueir3wn+VaEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65089979"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65089979"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 21:38:22 -0700
-X-CSE-ConnectionGUID: jaVL+GgSSR2fZ9qRa2mWhg==
-X-CSE-MsgGUID: 3F0XLbOETBqHwXik2VrKDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,296,1751266800"; 
-   d="scan'208";a="181784248"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 26 Sep 2025 21:38:14 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2MhI-0006nD-0v;
-	Sat, 27 Sep 2025 04:38:12 +0000
-Date: Sat, 27 Sep 2025 12:37:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ricardo Ribalda <ribalda@chromium.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
-	Ricardo Ribalda <ribalda@chromium.org>
-Subject: Re: [PATCH v3 03/12] media: v4l: fwnode: Support ACPI's _PLD for
- v4l2_fwnode_device_parse
-Message-ID: <202509271249.8fIMriJh-lkp@intel.com>
-References: <20250926-uvc-orientation-v3-3-6dc2fa5b4220@chromium.org>
+	s=arc-20240116; t=1758948213; c=relaxed/simple;
+	bh=e/qEH9tlcTF6ZGczycty+bDdjQIpv409fmI2gPtm0Aw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZiQ0I+4CSqVQZif6q4R+etDF4gZgtvQIKKM28qGO9GaDJheWDDcloHXlQIVU1JaFvTtkDBO3RjV+743Gf64IafAaFkziJF4eWsHQ138oPnkX1eYW2Z0nsVqfPhWVhSTw5KGS/f4p3OygaiL79QqidJYoTrCzgNel1EdEgS7DpHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdVWnDfT; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b593def09e3so349023a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758948211; x=1759553011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dKJeS2CDtsADQhZCOXcT1ATZiZ5XIcTlE4PH32ZdpZQ=;
+        b=bdVWnDfTKkwfA3PIY4XJcMdK6xIWH50sbaDzbSlMWc8i2WUfj3GpYC+/KTAV2oKWOE
+         32Jmlkxhf2araQqdwzYsIZJHmEPsHucKp88rT04Nfathu9AtyiPSOWmWpIat6U1FTegO
+         YWpXuvGbry5Nmf9zJ8KaB13e/eflb5EdVZdbOY2HMP+VpzawwLkB/K5nNy7/56gGd4m0
+         M+Nkj7fDHyWhxOTZ5ThqS8Sf9TnZNDBkVu/qOme/s3qao/h/eBHmHRpI0JxiMeik8a13
+         OFJRGxAwn5Qm1nIJqiFC3/8sy90iHbpvMpufu+7Oy+2MnbGG+FTJWCeQUzbZYwF/tdsU
+         HbFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758948211; x=1759553011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dKJeS2CDtsADQhZCOXcT1ATZiZ5XIcTlE4PH32ZdpZQ=;
+        b=a1cpBU/VOgdod6U69Q283jF7NihcKwqpYj7uJy9yJOSNQBHDQntH8YrCODKZlmFm0V
+         aRJFXPqivAzAl5sVW6JYl0RVS36rqqGOfJg/brj5Nc+Sehzi8mlByDoyACfM5lKBRZeN
+         9aEgvz/0Y2HyaGU8WOK39IbJeiq7hflO4OHsRRTwchYkUc/7uqeRUG0PdhWtrjxTOjSB
+         2gxuY/yBDCgdgL15E8srVjRLMWRPWP0ReJSBMCW6WEzdZhqLyvL3Z9STRmlX5Z9r/Uxm
+         /2/e1Z+iZJ4AfNIsjlzyoZBZQyKl6pracca7hqtKPgjPX6NCNE8RZ7EjnQfvULW7gjtc
+         WtTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzX5nqxSMz6gV+9CgqHb3fSybCH69+M4HB1OOOrG2Q+1ZQ/AnhnSGV0xQz7GXJDwQomTIlj8p86XoqcOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7dpov/p0ExxDiRINbwjMxbTKZmcqzcPtqaG6ECyFPHHXOXMDu
+	WLB+k/1vq4bTCbqGFaD1NoghQmDUM2TtI+QKpI4NqgPfpfffYUymXG+K
+X-Gm-Gg: ASbGncts1K8b5tZpafVcNWWDnbpHfSLHlEsGzRQsVjGdHuwOeWOK323Ctljt8uB5yGl
+	14IDoB2kOmu/jLtZRoSvgUw5lSeXTaF7G2Qn8Hqzg7IJQhtD9abz6Ls5ljnjy32UH6xu1mB+c8H
+	fL6X28jDgJuo7svtY5Ta2MVmyErap8zmlfTDD+Y0Q4AzCAwonHT3wznz5vgI9ujm2T+8joT+Vau
+	A9m4SoyzZEVLhnoZ6LZJFcbYojv+2DUmS2wkDLRU7MqNt5tJ18Gtz+FhmX4fCnj3xo8q7vxrKng
+	RyH9YY3nQe/CWyOa2XHZbjq6OHg6eTGrKFdfdT16ghegTcXO1lQmKmwZ3pqO0zNjIXKMgtvwfDK
+	pAW+XgrHNmzU6pCkI4mUl7713upxr+Vi72z2IjuLPbTvv/N6npCiZJT2sSCI5nlovpQRu9uc=
+X-Google-Smtp-Source: AGHT+IEY3eTrZUiwTbercFWJQUAUjNTQOGASGgG4KnUUAungvsFhTUVY/HHdH4iilZbaAJZYw6rUQQ==
+X-Received: by 2002:a17:903:41cf:b0:266:3098:666 with SMTP id d9443c01a7336-27ed4a2d5bamr96103885ad.32.1758948211465;
+        Fri, 26 Sep 2025 21:43:31 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66f9257sm68318205ad.35.2025.09.26.21.43.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 21:43:31 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: clemens@ladisch.de,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] ALSA: usb-audio: fix race condition to UAF in snd_usbmidi_free
+Date: Sat, 27 Sep 2025 13:41:06 +0900
+Message-Id: <20250927044106.849247-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926-uvc-orientation-v3-3-6dc2fa5b4220@chromium.org>
 
-Hi Ricardo,
+The previous commit 0718a78f6a9f ("ALSA: usb-audio: Kill timer properly at
+removal") patched a UAF issue caused by the error timer.
 
-kernel test robot noticed the following build errors:
+However, because the error timer kill added in this patch occurs after the
+endpoint delete, a race condition to UAF still occurs, albeit rarely.
 
-[auto build test ERROR on afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328]
+Therefore, to prevent this, the error timer must be killed before freeing
+the heap memory.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-Ribalda/media-uvcvideo-Always-set-default_value/20250926-211524
-base:   afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328
-patch link:    https://lore.kernel.org/r/20250926-uvc-orientation-v3-3-6dc2fa5b4220%40chromium.org
-patch subject: [PATCH v3 03/12] media: v4l: fwnode: Support ACPI's _PLD for v4l2_fwnode_device_parse
-config: arm-randconfig-004-20250927 (https://download.01.org/0day-ci/archive/20250927/202509271249.8fIMriJh-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509271249.8fIMriJh-lkp@intel.com/reproduce)
+Cc: <stable@vger.kernel.org>
+Fixes: 0718a78f6a9f ("ALSA: usb-audio: Kill timer properly at removal")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ sound/usb/midi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509271249.8fIMriJh-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/printk.h:623,
-                    from include/asm-generic/bug.h:22,
-                    from arch/arm/include/asm/bug.h:60,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/arm/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:79,
-                    from include/linux/spinlock.h:56,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/slab.h:16,
-                    from include/linux/resource_ext.h:11,
-                    from include/linux/acpi.h:13,
-                    from drivers/media/v4l2-core/v4l2-fwnode.c:17:
-   drivers/media/v4l2-core/v4l2-fwnode.c: In function 'v4l2_fwnode_device_parse_acpi':
->> include/linux/acpi.h:1268:26: error: implicit declaration of function '__acpi_handle_debug'; did you mean 'acpi_handle_debug'? [-Werror=implicit-function-declaration]
-    1268 |  _dynamic_func_call(fmt, __acpi_handle_debug,   \
-         |                          ^~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:3: note: in definition of macro '__dynamic_func_call_cls'
-     224 |   func(&id, ##__VA_ARGS__);   \
-         |   ^~~~
-   include/linux/dynamic_debug.h:250:2: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |  _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |  ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/acpi.h:1268:2: note: in expansion of macro '_dynamic_func_call'
-    1268 |  _dynamic_func_call(fmt, __acpi_handle_debug,   \
-         |  ^~~~~~~~~~~~~~~~~~
-   drivers/media/v4l2-core/v4l2-fwnode.c:821:3: note: in expansion of macro 'acpi_handle_debug'
-     821 |   acpi_handle_debug(ACPI_HANDLE(dev), "cannot obtain _PLD\n");
-         |   ^~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +1268 include/linux/acpi.h
-
-45fef5b88d1f2f Bjørn Mork       2014-05-22  1240  
-fbfddae696572e Toshi Kani       2012-11-21  1241  /*
-fbfddae696572e Toshi Kani       2012-11-21  1242   * acpi_handle_<level>: Print message with ACPI prefix and object path
-fbfddae696572e Toshi Kani       2012-11-21  1243   *
-fbfddae696572e Toshi Kani       2012-11-21  1244   * These interfaces acquire the global namespace mutex to obtain an object
-fbfddae696572e Toshi Kani       2012-11-21  1245   * path.  In interrupt context, it shows the object path as <n/a>.
-fbfddae696572e Toshi Kani       2012-11-21  1246   */
-fbfddae696572e Toshi Kani       2012-11-21  1247  #define acpi_handle_emerg(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1248  	acpi_handle_printk(KERN_EMERG, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1249  #define acpi_handle_alert(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1250  	acpi_handle_printk(KERN_ALERT, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1251  #define acpi_handle_crit(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1252  	acpi_handle_printk(KERN_CRIT, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1253  #define acpi_handle_err(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1254  	acpi_handle_printk(KERN_ERR, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1255  #define acpi_handle_warn(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1256  	acpi_handle_printk(KERN_WARNING, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1257  #define acpi_handle_notice(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1258  	acpi_handle_printk(KERN_NOTICE, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1259  #define acpi_handle_info(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1260  	acpi_handle_printk(KERN_INFO, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1261  
-45fef5b88d1f2f Bjørn Mork       2014-05-22  1262  #if defined(DEBUG)
-fbfddae696572e Toshi Kani       2012-11-21  1263  #define acpi_handle_debug(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1264  	acpi_handle_printk(KERN_DEBUG, handle, fmt, ##__VA_ARGS__)
-fbfddae696572e Toshi Kani       2012-11-21  1265  #else
-45fef5b88d1f2f Bjørn Mork       2014-05-22  1266  #if defined(CONFIG_DYNAMIC_DEBUG)
-45fef5b88d1f2f Bjørn Mork       2014-05-22  1267  #define acpi_handle_debug(handle, fmt, ...)				\
-f1ebe04f5ba2f4 Rasmus Villemoes 2019-03-07 @1268  	_dynamic_func_call(fmt, __acpi_handle_debug,			\
-f1ebe04f5ba2f4 Rasmus Villemoes 2019-03-07  1269  			   handle, pr_fmt(fmt), ##__VA_ARGS__)
-45fef5b88d1f2f Bjørn Mork       2014-05-22  1270  #else
-fbfddae696572e Toshi Kani       2012-11-21  1271  #define acpi_handle_debug(handle, fmt, ...)				\
-fbfddae696572e Toshi Kani       2012-11-21  1272  ({									\
-fbfddae696572e Toshi Kani       2012-11-21  1273  	if (0)								\
-fbfddae696572e Toshi Kani       2012-11-21  1274  		acpi_handle_printk(KERN_DEBUG, handle, fmt, ##__VA_ARGS__); \
-fbfddae696572e Toshi Kani       2012-11-21  1275  	0;								\
-fbfddae696572e Toshi Kani       2012-11-21  1276  })
-fbfddae696572e Toshi Kani       2012-11-21  1277  #endif
-45fef5b88d1f2f Bjørn Mork       2014-05-22  1278  #endif
-fbfddae696572e Toshi Kani       2012-11-21  1279  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/sound/usb/midi.c b/sound/usb/midi.c
+index acb3bf92857c..8d15f1caa92b 100644
+--- a/sound/usb/midi.c
++++ b/sound/usb/midi.c
+@@ -1522,6 +1522,8 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+ {
+ 	int i;
+ 
++	timer_shutdown_sync(&umidi->error_timer);
++
+ 	for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
+ 		struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
+ 		if (ep->out)
+@@ -1530,7 +1532,6 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+ 			snd_usbmidi_in_endpoint_delete(ep->in);
+ 	}
+ 	mutex_destroy(&umidi->mutex);
+-	timer_shutdown_sync(&umidi->error_timer);
+ 	kfree(umidi);
+ }
+ 
+--
 
