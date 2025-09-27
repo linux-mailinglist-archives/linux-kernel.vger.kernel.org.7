@@ -1,200 +1,167 @@
-Return-Path: <linux-kernel+bounces-835044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E2DBA61E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:09:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86265BA61F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D404E17C574
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:09:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D438D189D86E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3396225403;
-	Sat, 27 Sep 2025 17:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A902BDC00;
+	Sat, 27 Sep 2025 17:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OEd/6CG3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DfyIgGMm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E8618E1F
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 17:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AAE28682;
+	Sat, 27 Sep 2025 17:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758992953; cv=none; b=tbE79sPoerli7L0kC1QSOYpO6zwF0LFbCOgZUxq2STG+l8jxdlnIZCTT/3BAhNdKlDfu5JZAU5jk1i+Oo4pxei2k6wIjQyAlPC77Ef+x/7vbNyRB/Dn3T3el5GheLZuOCLVhAAlnxv6WM6vJSLleIt8WN/svaWJnI27OQI7wVgM=
+	t=1758993231; cv=none; b=GkfPaMJodvGCXhTLTQdO1XM3NWxNuMpT9TU0QpzDjhuZz6vQ9x/2bnFSi7W89ajnRVOrpvjdNF65cuKVsGYniq6GG/LkHkpXV7Zl9MhDwc5uOxDh9PNlrRD/5+8CZh+vaxdPwfyxdEkFvM6ph/gQroETtwYxnE/yWs5EHDGlL4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758992953; c=relaxed/simple;
-	bh=Y6uUu3Kyxj0D22dej7eXrkROQSgEw4jnZ8hsKVJ7Iy0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=VU3UVrUFZNL/ZGaDFJNgEQwMaN535vgXQxJGfnPf86CUIGT52Z5w7E+xyu3W9NwnP1oI0CNR4ii535P08RaDgEXlr7u6DbyixYVkxBK1HZSj/QGWXYtMI3F4SeA+FPDzwmNSOhEu/tb5T5kMoGN4L9kRj4Dh89IBrGmIvIHrmu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OEd/6CG3; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758992952; x=1790528952;
-  h=date:from:to:cc:subject:message-id;
-  bh=Y6uUu3Kyxj0D22dej7eXrkROQSgEw4jnZ8hsKVJ7Iy0=;
-  b=OEd/6CG3/bicFpNS1XXAQyo9bMfzlo61vYCdWdqs9+3R+0b3zVwCNMNI
-   4EqJN3iBTe5ZzxrJZTXy/4RaRPyIAW0tGhpcf1Gnn2fiXsugWIzJQQU55
-   3i4tSKl2L5oycrVkoXfXcQ7r2GD/mjdsfTyGhZnusEcKRIncj1vEp9AO+
-   6fmNOUaskb4IZSesdtDVTkdC1/+byRHcN7PDuSyCKlh7FRJVSoE9onpj4
-   EGL5To9RuFHJUeSO+RzBEqyf11dsqBqjTTJ8ShFGvr0V2GUpMNLFRWtkn
-   RFIH833uJX7oVrMyh4mnViP5vYM0DNzAwFPlze2a5l1mSXsNq+B9KIMVG
-   A==;
-X-CSE-ConnectionGUID: bFm0W3zxQmOFOESAfVAYTg==
-X-CSE-MsgGUID: XnD87wlIRgitHJytLKgDSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="61002919"
-X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="61002919"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 10:09:11 -0700
-X-CSE-ConnectionGUID: GZ8WWN1pQxafb/uB0/9bCA==
-X-CSE-MsgGUID: buGMqXHaSreXVg/2ByaKaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="201539967"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Sep 2025 10:09:09 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2YPz-0007EB-2J;
-	Sat, 27 Sep 2025 17:09:07 +0000
-Date: Sun, 28 Sep 2025 01:08:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250926] BUILD SUCCESS
- 883782ad7050c1e5a38940a93a84c9b94a893e6d
-Message-ID: <202509280101.H6UieGw3-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1758993231; c=relaxed/simple;
+	bh=qKk32KgPPAiHwNA1Q/NiC9Fb0B/e+2xep6x+hhwksRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pIE+zu3Rjf4W3vhBFPNXEP+3Nk9CsKB2HsWTn6b4SboAlwSnELNYrDsIwa0CPO6L33yjDW1pYSvUxSOZHtn7G2HVaDeckkVweU+FYwWp8VbvUAMIPhwet56lHbTJ73VqHdMDe+ODXb1R8cwI/xnjelBxcbXB61Qjkt5RFvZQbSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DfyIgGMm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F593C4CEE7;
+	Sat, 27 Sep 2025 17:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758993230;
+	bh=qKk32KgPPAiHwNA1Q/NiC9Fb0B/e+2xep6x+hhwksRI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DfyIgGMmg711E/beQ3BfTcThDwriXiPRFTI5TGaKokwY4LCrdxiLm8dJolysx+0s8
+	 CpZOiyD7HsPeOZPFqEGEYlJBvvOpJMa1RrgeLtZV+9yL6Y5aZpVKuqskSUY79jCfvY
+	 CbhgTEVWvnHHkH2nWoSUlGchvOdAu0788RzQRyRdTMgVBNlFcFNkXjujo30HP/cIby
+	 uJmabZ5omGI62pEjaXPzFJro+UurBQof9shAgvcs4LPNHjrLZFEN2AtjSRWurGMsA5
+	 3prwAVVtKrnIawaa3DPIJoIvzdcheYJM2+IZ73GfmyIwD9Z6vUQh7bjRLpBeYtV/UD
+	 5rBV2fVRmd3ag==
+Date: Sat, 27 Sep 2025 18:13:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Ariana Lazar 
+ <ariana.lazar@microchip.com>, Nuno =?UTF-8?B?U8Oh?=  <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring  <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley 
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: dac: adding support for Microchip MCP47FEB02
+Message-ID: <20250927181341.58c106d3@jic23-huawei>
+In-Reply-To: <02c26151da7af1e05aecadf0e2ce20552c2908e0.camel@gmail.com>
+References: <20250922-mcp47feb02-v1-0-06cb4acaa347@microchip.com>
+	<20250922-mcp47feb02-v1-2-06cb4acaa347@microchip.com>
+	<859d8472a8f9e8d28b890ad565f9d3ce11e162d5.camel@gmail.com>
+	<3457c119-2f49-43a3-b96b-736b8f5de99b@baylibre.com>
+	<02c26151da7af1e05aecadf0e2ce20552c2908e0.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250926
-branch HEAD: 883782ad7050c1e5a38940a93a84c9b94a893e6d  net: inet_sock.h: Avoid thousands of -Wflex-array-member-not-at-end warnings
+On Tue, 23 Sep 2025 09:21:30 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-elapsed time: 1449m
+> On Mon, 2025-09-22 at 17:15 -0500, David Lechner wrote:
+> > On 9/22/25 3:10 PM, Nuno S=C3=A1 wrote: =20
+> > > Hi Ariana,
+> > >=20
+> > > Thanks for your patches. Some initial comments from me...
+> > >=20
+> > > On Mon, 2025-09-22 at 14:30 +0300, Ariana Lazar wrote: =20
+> >=20
+> > ...
+> >  =20
+> > > > +static IIO_DEVICE_ATTR(store_eeprom, 0200, NULL, mcp47feb02_store_=
+eeprom,
+> > > > 0);
+> > > > +static struct attribute *mcp47feb02_attributes[] =3D {
+> > > > +	&iio_dev_attr_store_eeprom.dev_attr.attr,
+> > > > +	NULL,
+> > > > +};
+> > > > + =20
+> > >=20
+> > > Not going to argue about the ABI for now but I don't think this is a
+> > > standard one? So
+> > > if acceptable you need an ABI doc.
 
-configs tested: 108
-configs skipped: 4
+store_eeprom is existing ABI and documented in sysfs-bus-iio (2 drivers imp=
+lement it from
+a quick grep)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                         haps_hs_defconfig    gcc-15.1.0
-arc                   randconfig-001-20250927    gcc-10.5.0
-arc                   randconfig-002-20250927    gcc-13.4.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250927    clang-18
-arm                   randconfig-002-20250927    clang-16
-arm                   randconfig-003-20250927    gcc-8.5.0
-arm                   randconfig-004-20250927    gcc-10.5.0
-arm                       spear13xx_defconfig    gcc-15.1.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250927    gcc-8.5.0
-arm64                 randconfig-002-20250927    gcc-11.5.0
-arm64                 randconfig-003-20250927    clang-22
-arm64                 randconfig-004-20250927    gcc-9.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250927    gcc-15.1.0
-csky                  randconfig-002-20250927    gcc-13.4.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250927    clang-22
-hexagon               randconfig-002-20250927    clang-22
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20250927    clang-20
-i386        buildonly-randconfig-002-20250927    gcc-14
-i386        buildonly-randconfig-003-20250927    clang-20
-i386        buildonly-randconfig-004-20250927    clang-20
-i386        buildonly-randconfig-005-20250927    gcc-12
-i386        buildonly-randconfig-006-20250927    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250927    gcc-15.1.0
-loongarch             randconfig-002-20250927    clang-18
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                         apollo_defconfig    gcc-15.1.0
-m68k                       bvme6000_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                          rb532_defconfig    clang-18
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250927    gcc-9.5.0
-nios2                 randconfig-002-20250927    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250927    gcc-9.5.0
-parisc                randconfig-002-20250927    gcc-11.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                 mpc832x_rdb_defconfig    gcc-15.1.0
-powerpc               randconfig-001-20250927    gcc-13.4.0
-powerpc               randconfig-002-20250927    clang-22
-powerpc               randconfig-003-20250927    gcc-8.5.0
-powerpc64             randconfig-001-20250927    clang-22
-powerpc64             randconfig-002-20250927    gcc-15.1.0
-powerpc64             randconfig-003-20250927    gcc-12.5.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20250927    clang-22
-riscv                 randconfig-002-20250927    gcc-15.1.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250927    clang-22
-s390                  randconfig-002-20250927    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                         apsh4a3a_defconfig    gcc-15.1.0
-sh                    randconfig-001-20250927    gcc-15.1.0
-sh                    randconfig-002-20250927    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250927    gcc-11.5.0
-sparc                 randconfig-002-20250927    gcc-11.5.0
-sparc64               randconfig-001-20250927    gcc-15.1.0
-sparc64               randconfig-002-20250927    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                    randconfig-001-20250927    gcc-14
-um                    randconfig-002-20250927    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20250927    gcc-14
-x86_64      buildonly-randconfig-002-20250927    clang-20
-x86_64      buildonly-randconfig-003-20250927    clang-20
-x86_64      buildonly-randconfig-004-20250927    gcc-14
-x86_64      buildonly-randconfig-005-20250927    gcc-14
-x86_64      buildonly-randconfig-006-20250927    clang-20
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250927    gcc-8.5.0
-xtensa                randconfig-002-20250927    gcc-10.5.0
+> > >  =20
+> > Here's a random idea. (I would wait for Jonathan to weigh in first befo=
+re
+> > assuming it is an acceptable idea though :-p)
+> >=20
+> > The config registers are pretty much going to be a one-time deal. So th=
+ose
+> > could be written to only if they need it during probe.
+> >=20
+> > For the voltage output registers, we could add extra out_voltageY chann=
+els
+> > that are the power-on output state channels. So writing to out_voltageY=
+_raw
+> > wouldn't change any real output but would just be written to EEPROM. Th=
+is
+> > way these voltages could be controlled independently from the real outp=
+uts
+> > and it uses existing ABI.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In some devices I've come across, the eeprom write is a 'store all current =
+settings'
+rather than individual register writes. For that a set of extra channels do=
+esn't work.
+
+Also eeproms have very limited write cycles so you really don't want to mak=
+e this
+too easy to do and we want to shout it's an eeprom.=20
+
+
+> >=20
+> > In any case, it would be interesting to hear more about how this chips =
+are
+> > actually used to better understand this EEPROM feature. =20
+>=20
+> I didn't really looked at the datasheet so this can be totally wrong. But=
+ we
+> have some LTC parts (mainly hwmon stuff) that are also packed with an EEP=
+RON.
+> AFAIU, the usecase in there is to have some defaults you can program in t=
+he
+> chips (and there's a feature we can enable so the chip can save things in=
+to the
+> eeprom automatically). Now, in those drivers we don't really support doing
+> anything with the eeprom at runtime so I'm curious to see how this unfold=
+s :)
+
+Usecase for DACs is that on power on (usually at board power up not driver =
+load)
+they will start outputting the saved values.  That might well be part of so=
+mething
+fairly critical such as fan control or trip points so you don't want to wai=
+t for
+the driver to load. The driver on an eeprom equiped part should not configu=
+re
+anything on probe but rather just report back what was already there.
+
+Userspace can then modify those values and 'commit' them via store_eeprom
+to apply on next power cycle as well as now (in some cases only on next pow=
+er cycle).
+
+Jonathan
+
+
+>=20
+> - Nuno S=C3=A1
+
 
