@@ -1,97 +1,152 @@
-Return-Path: <linux-kernel+bounces-835041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550CCBA61CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:56:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C597BBA61D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11B0F16CF64
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:56:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 723904E0681
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371742C1594;
-	Sat, 27 Sep 2025 16:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5428D225403;
+	Sat, 27 Sep 2025 16:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQbd/Z9r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kuaOFQVK"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C0B14BFA2;
-	Sat, 27 Sep 2025 16:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447E21B142D
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 16:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758992187; cv=none; b=nQZFIuFbSDTDz4tRH0/WQv3JiCJsuGi924cD0m3zy9ZpcEtkl6V2sHXBXN6MnfPsIwO2ZdjnatZv9danSWF8k/AfeZhXzDoM74L37Vm68+9d/oL61pg4TJnOwa2C1CVmErgMbEaD8NIxlEp6rjkwek6UcV0AcDb0RI+89HTuzVA=
+	t=1758992249; cv=none; b=NYI0bIjRdYfhn2swElFlMHcsq5W5xRSEXTHqtnXrwWQU3AwhrRzuZeiDxWY9OVSjvlb7m8yFwJLHb1fjI5h6NdBkpQ0UX8mQBQOMEMKmo8ks0R8SY/fTYYT+nFnRE90LExSNOx8z1aG5H4judWR3yklNZLPUOjyC8SCFK59INn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758992187; c=relaxed/simple;
-	bh=+xMErzx3xlH0CNRhIykgywnLJ0axfxZcS05DruUxe8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C+irBB3caGdUHiOXkrR/WY7G37lba5lVLiGbk8bvdqyDTlr+jCEHfmT3orWgI0XkmG5qOsdUfCF5zQ0kHHFkVaN8YFc2qUHIejWS4pxYADprcXAaP7nOr2GEL+K8DrUopGvkMrbQ0icl11yHSfGZ9YEEQyeEVA6LinSHALZUo1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQbd/Z9r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B94C4CEE7;
-	Sat, 27 Sep 2025 16:56:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758992187;
-	bh=+xMErzx3xlH0CNRhIykgywnLJ0axfxZcS05DruUxe8s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hQbd/Z9rZCqjz6yqI+Tjf9uSSK6+L48ofapGUWlyFcRddILfP+mvCAgD1Ug3d9lJD
-	 ll7QsHMQ7alkd0pWTE2cS/yq/rQO74tHijeKH7SRUH+6k8EFtZJWgkoEo9OXhlEv3j
-	 USYpR/hdQtoHeyM7N1vUk3nSWlArDUiJJtwgEr3sK5iGn/nUvpGqS3H6iLVvwPEylk
-	 MIjcBQBvEw0kKztjxC0G6Y3RrpLFaiE1qQ00fKct2mtMefaHO6BzYuqQsUFg5l8Lwp
-	 GPzyDRr2lryyfVDHLyUmMzGzInPhN1zoIrT8XPVtJAU44tlbVEIBtEFH6uJGC7RLuY
-	 pOwXwOUqH3I1A==
-Date: Sat, 27 Sep 2025 17:56:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux IIO <linux-iio@vger.kernel.org>, David
- Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>
-Subject: Re: [PATCH] Documentation: iio: ade9000, adis*, adx*: Convert IIO
- subsystem cross-references
-Message-ID: <20250927175618.5624655f@jic23-huawei>
-In-Reply-To: <e233370f-f23b-47b4-a31e-25c2df99a0f5@infradead.org>
-References: <20250922063754.21190-1-bagasdotme@gmail.com>
-	<e233370f-f23b-47b4-a31e-25c2df99a0f5@infradead.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758992249; c=relaxed/simple;
+	bh=qK03ozbV9lhDLbr5aHWOVCtLD/2M9FEQ61poTc1IUM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PYqu97+eIO7Lc9VxNNy/e0N7tbsvJQ7NH06rO0a95/LeE6PRweCU0nEgmwU092/avW3yde5aYiY3594UQih1FBVfkceG5/YbejDGupBupaUc9iZklzMfYGUcsDQmUIsilsBdz7WOo9IozbNBIyXL7WRsVIjOKEdmJ5QlnZYC/tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kuaOFQVK; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758992244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Svoo5h6NIWQ3/QAq5HARQlGvaiK3sTn0nA0/qd5d+fs=;
+	b=kuaOFQVK71XF2iaFFy61QEkmMvoWtFz93o0UAVbRbuSHQ66o6CWu0VdflOVDFHVUmQOg5d
+	fBwTUm/X2GV30BzDfSwoNrIxjj/9a5RytVDJyqH+959jIbKdithPLgG37/41+aKIUl59Ox
+	n0uQjGUp4h+BkumUmFok0OyWReVlTM0=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Koby Elbaz <koby.elbaz@intel.com>,
+	Konstantin Sinyuk <konstantin.sinyuk@intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Karol Wachowski <karol.wachowski@linux.intel.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] accel/habanalabs: Replace kmalloc_array + copy_from_user with memdup_array_user
+Date: Sat, 27 Sep 2025 18:56:30 +0200
+Message-ID: <20250927165633.1312-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 23 Sep 2025 21:46:40 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
+Replace kmalloc_array() followed by copy_from_user() with
+memdup_array_user() to improve and simplify cs_ioctl_engine_cores(),
+cs_ioctl_engines(), and hl_multi_cs_wait_ioctl().
 
-> On 9/21/25 11:37 PM, Bagas Sanjaya wrote:
-> > Cross-references to iio_tools.rst (IIO Interfacing Tools) and
-> > iio_devbuf.rst (Industrial IIO device buffers) are shown in inline
-> > code instead. Convert them to proper cross-references.
-> > 
-> > Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> > ---
-> >   Documentation/iio/ade9000.rst   | 2 +-
-> >   Documentation/iio/adis16475.rst | 4 ++--
-> >   Documentation/iio/adis16480.rst | 4 ++--
-> >   Documentation/iio/adis16550.rst | 4 ++--
-> >   Documentation/iio/adxl345.rst   | 4 ++--
-> >   Documentation/iio/adxl380.rst   | 4 ++--
-> >   6 files changed, 11 insertions(+), 11 deletions(-)  
-> 
-> Much better. Thanks.
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-Ah. the wonders of cut and pasting wrong stuff.
+Remove the unused variable 'size_to_copy' from hl_multi_cs_wait_ioctl().
 
-Applied, thanks!
+No functional changes intended.
 
-Jonathan
+Reviewed-by: Karol Wachowski <karol.wachowski@linux.intel.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ .../habanalabs/common/command_submission.c    | 34 +++++--------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/accel/habanalabs/common/command_submission.c b/drivers/accel/habanalabs/common/command_submission.c
+index dee487724918..a5e339eb7a4f 100644
+--- a/drivers/accel/habanalabs/common/command_submission.c
++++ b/drivers/accel/habanalabs/common/command_submission.c
+@@ -2481,14 +2481,10 @@ static int cs_ioctl_engine_cores(struct hl_fpriv *hpriv, u64 engine_cores,
+ 	}
+ 
+ 	engine_cores_arr = (void __user *) (uintptr_t) engine_cores;
+-	cores = kmalloc_array(num_engine_cores, sizeof(u32), GFP_KERNEL);
+-	if (!cores)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(cores, engine_cores_arr, num_engine_cores * sizeof(u32))) {
++	cores = memdup_array_user(engine_cores_arr, num_engine_cores, sizeof(u32));
++	if (IS_ERR(cores)) {
+ 		dev_err(hdev->dev, "Failed to copy core-ids array from user\n");
+-		kfree(cores);
+-		return -EFAULT;
++		return PTR_ERR(cores);
+ 	}
+ 
+ 	rc = hdev->asic_funcs->set_engine_cores(hdev, cores, num_engine_cores, core_command);
+@@ -2523,14 +2519,10 @@ static int cs_ioctl_engines(struct hl_fpriv *hpriv, u64 engines_arr_user_addr,
+ 	}
+ 
+ 	engines_arr = (void __user *) (uintptr_t) engines_arr_user_addr;
+-	engines = kmalloc_array(num_engines, sizeof(u32), GFP_KERNEL);
+-	if (!engines)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(engines, engines_arr, num_engines * sizeof(u32))) {
++	engines = memdup_array_user(engines_arr, num_engines, sizeof(u32));
++	if (IS_ERR(engines)) {
+ 		dev_err(hdev->dev, "Failed to copy engine-ids array from user\n");
+-		kfree(engines);
+-		return -EFAULT;
++		return PTR_ERR(engines);
+ 	}
+ 
+ 	rc = hdev->asic_funcs->set_engines(hdev, engines, num_engines, command);
+@@ -3013,7 +3005,6 @@ static int hl_multi_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data)
+ 	struct hl_ctx *ctx = hpriv->ctx;
+ 	struct hl_fence **fence_arr;
+ 	void __user *seq_arr;
+-	u32 size_to_copy;
+ 	u64 *cs_seq_arr;
+ 	u8 seq_arr_len;
+ 	int rc, i;
+@@ -3037,19 +3028,12 @@ static int hl_multi_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data)
+ 		return -EINVAL;
+ 	}
+ 
+-	/* allocate memory for sequence array */
+-	cs_seq_arr =
+-		kmalloc_array(seq_arr_len, sizeof(*cs_seq_arr), GFP_KERNEL);
+-	if (!cs_seq_arr)
+-		return -ENOMEM;
+-
+ 	/* copy CS sequence array from user */
+ 	seq_arr = (void __user *) (uintptr_t) args->in.seq;
+-	size_to_copy = seq_arr_len * sizeof(*cs_seq_arr);
+-	if (copy_from_user(cs_seq_arr, seq_arr, size_to_copy)) {
++	cs_seq_arr = memdup_array_user(seq_arr, seq_arr_len, sizeof(*cs_seq_arr));
++	if (IS_ERR(cs_seq_arr)) {
+ 		dev_err(hdev->dev, "Failed to copy multi-cs sequence array from user\n");
+-		rc = -EFAULT;
+-		goto free_seq_arr;
++		return PTR_ERR(cs_seq_arr);
+ 	}
+ 
+ 	/* allocate array for the fences */
+-- 
+2.51.0
 
 
