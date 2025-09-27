@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-834947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93F1BA5E5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A6DBA5E60
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615892A45ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316A03A956D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB302DC359;
-	Sat, 27 Sep 2025 11:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFD42BE631;
+	Sat, 27 Sep 2025 11:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVgcX3cw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ui3EqAoD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4892AE8D;
-	Sat, 27 Sep 2025 11:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044802848AD;
+	Sat, 27 Sep 2025 11:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758972590; cv=none; b=SHXSGht07bxRatEDj0AOsy/1vUPks7pt+lKTlP+0NZlXryP0/sHyq7tCVJLLj9VKzsgrx1yqGqKyXpadBdHpxNRtBnaNXckZKx5UkI0VhB/XXd5fcLbi8jXq56W330Vly1JQbEoMIfppsPd8nT4I0DJz50sA6j7s/hL+VwynNb8=
+	t=1758972613; cv=none; b=jrN952ak9iM33v54vjGyRS0YkJqGU4jMsrFiILbvRoR5aXQ2NqHNTls/v75B1YjKtYIWStYpo+TYZREi3nXzEDRF+V+XjLSWowev4+U4hxNnytKl+75oMyGNctumt1KyjkDskkj1LYblU3PCCltGVFjlRh9pnOf+dqsGPcPgMq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758972590; c=relaxed/simple;
-	bh=woOJMQVx2gK/ZTrYKUvp8Kze1O8Xv6dnLbcVNoWtA9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AP0yOU7FP24+pD99HVBo+UL71Y6Aeo+AZ35YWPkPfq1Kzv9PUiYLjR5zcPgMBGNti/DkdfJWbBjWI+VS9/fUcTfUQIdGMyVACefLxYN0DtQoVYuJ/aPi9TYFhPeOhdBkkayigDouvJsWpy9/6v6F4P518coL18zPN6maPH9EekY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVgcX3cw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21754C4CEE7;
-	Sat, 27 Sep 2025 11:29:50 +0000 (UTC)
+	s=arc-20240116; t=1758972613; c=relaxed/simple;
+	bh=OCHOz5W/2MukeeJ9QBgt3V3YC3mMSGhXm4jlQHCNFSs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YvMgkRaqFEGlRPA1qinoRox9UTQ3RGfQ0WrYXT8croewBxicCTfYvSJidNlHFXgrRFxwAt24d/3oBCdbycVVTESNQnAKEILur1i9LD0BcsyM47uZ88LXYC8a5xuCs9JLIEhDAd0vh5fpfQk5Eb2GA6k+pPW+YILihNCmv9kakeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ui3EqAoD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92651C4CEE7;
+	Sat, 27 Sep 2025 11:30:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758972590;
-	bh=woOJMQVx2gK/ZTrYKUvp8Kze1O8Xv6dnLbcVNoWtA9U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SVgcX3cww3I4jhHCG7p2ABBDtOytr0l9MxhhncYqy5LR8JN5xjlQyUF3pl5FRss0U
-	 kyeZAAZrF01Cms/Qa0DPHwW8Jjzr0pNLck4xq5y7BTLcUW/oKuLos+2GxbPcsGa/8i
-	 BYMt7JRiLicMmrc26p6bmo82Wyf4/jl+8OJngpMBtWqT8k6SRHtKyvDeHNtuafos98
-	 8PREpN34kn2BwkHuHiFubyMPM3l/tYJmn+subZv71IHRQVn4bk39d8IiA/VnN5bHJ8
-	 4Jr5gAjstzMheamBOOVLdgUUxsnsA0ix7Y8S+hJ7CniqBhq4gX+zxMoOhLSkWQ4l3b
-	 FD21L0Hje1EPQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v2T7b-00000009rcA-2IVo;
-	Sat, 27 Sep 2025 11:29:47 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Sean Christopherson <seanjc@google.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Sebastian Ott <sebott@redhat.com>
-Subject: Re: [PATCH] KVM: selftests: Track width of arm64's timer counter as "int", not "uint64_t"
-Date: Sat, 27 Sep 2025 12:29:01 +0100
-Message-ID: <175897248729.2798309.11771785872259733527.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250926155838.2612205-1-seanjc@google.com>
-References: <20250926155838.2612205-1-seanjc@google.com>
+	s=k20201202; t=1758972612;
+	bh=OCHOz5W/2MukeeJ9QBgt3V3YC3mMSGhXm4jlQHCNFSs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ui3EqAoDeUraX49Xb1ue7J1Rmcm6trgz0Nsuw2Fy0/MWf3PzM/cpg8EvH8XkvOxYV
+	 ucZBcNhCn/n6SikzPxDtVaFCuE3dDGlh9c0P5YgZti0GZaJ8njUUMsua0jFEwChcEe
+	 WUTavhscAVQcY1ZxYZry0aYPncdPWHwjgrsfhHdn7/YjeyJHaGyQsnwxWVUWYOPKSO
+	 FvBXn0c2+oTjLxbWwwx6XjI2J7TrCqoTuAuE1qLgIXXU7vTz46RJtpAjwVtYS+4z7Z
+	 MXn8hsimNxh0eEMCP7xZVrNe45Yfuusfti+tMGU+BP77Q1gNThwSq1Fp0/oEcMIPpe
+	 Jyo5q6wqlg1fQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF9839D0C3F;
+	Sat, 27 Sep 2025 11:30:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, seanjc@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, sebott@redhat.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Subject: Re: [PATCH -next v2 1/2] bpf: Remove duplicate crypto/sha2.h header
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175897260752.228897.11178776166648300229.git-patchwork-notify@kernel.org>
+Date: Sat, 27 Sep 2025 11:30:07 +0000
+References: <20250926095240.3397539-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20250926095240.3397539-1-jiapeng.chong@linux.alibaba.com>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, abaci@linux.alibaba.com
 
-On Fri, 26 Sep 2025 08:58:38 -0700, Sean Christopherson wrote:
-> Store the width of arm64's timer counter as an "int", not a "uint64_t".
-> ilog2() returns an "int", and more importantly using what is an "unsigned
-> long" under the hood makes clang unhappy due to a type mismatch when
-> clamping the width to a sane value.
+Hello:
+
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Fri, 26 Sep 2025 17:52:39 +0800 you wrote:
+> ./include/linux/bpf.h: crypto/sha2.h is included more than once.
 > 
->   arm64/arch_timer_edge_cases.c:1032:10: error: comparison of distinct pointer types
->      ('typeof (width) *' (aka 'unsigned long *') and 'typeof (56) *' (aka 'int *'))
->      [-Werror,-Wcompare-distinct-pointer-types]
->    1032 |         width = clamp(width, 56, 64);
->         |                 ^~~~~~~~~~~~~~~~~~~~
->   tools/include/linux/kernel.h:47:45: note: expanded from macro 'clamp'
->      47 | #define clamp(val, lo, hi)      min((typeof(val))max(val, lo), hi)
->         |                                                  ^~~~~~~~~~~~
->   tools/include/linux/kernel.h:33:17: note: expanded from macro 'max'
->      33 |         (void) (&_max1 == &_max2);              \
->         |                 ~~~~~~ ^  ~~~~~~
->   tools/include/linux/kernel.h:39:9: note: expanded from macro 'min'
->      39 |         typeof(x) _min1 = (x);                  \
->         |                ^
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=25501
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+> Changes in v2:
+>   -Combine two patches into a single patch series.
 > 
 > [...]
 
-Applied to fixes, thanks!
+Here is the summary with links:
+  - [-next,v2,1/2] bpf: Remove duplicate crypto/sha2.h header
+    https://git.kernel.org/bpf/bpf-next/c/87608c2a7718
+  - [-next,v2,2/2] bpftool: Remove duplicate string.h header
+    https://git.kernel.org/bpf/bpf-next/c/4b2113413e76
 
-[1/1] KVM: selftests: Track width of arm64's timer counter as "int", not "uint64_t"
-      commit 34f46fecfe96b404ef14e97b8e59cde693276f28.
-
-Cheers,
-
-	M.
+You are awesome, thank you!
 -- 
-Without deviation from the norm, progress is not possible.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
