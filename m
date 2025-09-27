@@ -1,64 +1,68 @@
-Return-Path: <linux-kernel+bounces-834796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9EABA58B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D17BA58BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201974A4B6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FEF1C013ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3F221B918;
-	Sat, 27 Sep 2025 03:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1732D224AEF;
+	Sat, 27 Sep 2025 03:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afLb2RSq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="UOFpMPy3"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1307F18DF8D;
-	Sat, 27 Sep 2025 03:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D3B21FF36;
+	Sat, 27 Sep 2025 03:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758945174; cv=none; b=eA9KZpbAxExoMPwATXNUq6tvHreuhHQwSjf5xWIKIpHb2mK7uU88YLwegJsy/OCLaOX8waj7MKWy7xbHySeZrB3i/pp2wrZwQgpwo/W3p6I7O7KZN4ilTObfUm7dmv89LBfk6RfNRa3SrFV31KxIzl+jzHIjoT4RHRUrcxw9iVM=
+	t=1758945584; cv=none; b=DDjqYA9Y3O4ju+MA2D7pyCqlDlk7wZOTiruoxS8yhvIFKmZvenxo66nxKjvKzMvJknmLLNmTJ9Wjm+q7wgtxqBBnDcDUCzPhloPO/DcOaHccAjuve0yVq7JmT1mOPyRugs7RJ79OkqITC9LFdPIySNqxJ+ylLjbPhC4ayXg4HHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758945174; c=relaxed/simple;
-	bh=W/z5cqAffsitkvS3CbuGOrlcjmQu/FBVIDqgLsCp8p8=;
+	s=arc-20240116; t=1758945584; c=relaxed/simple;
+	bh=5cmCJV8IXUrzQfabGxOZEojhspqJzFyaldj3VNbfoGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3QSen6//xwP3tm9wYg8DKckyd22OHNEWBImx6yznPS7/um6PjrtJIHczgyZf1RoREi0vh5d7IVI31B1xmw2lCwTGg+S1mzsve1eZ3C2LCkqGuOqPeaptIlcH8hScC9P2tBVNICOtApLbsWBsQhQ8l05WQ5W/qpnvrDbYjqJato=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afLb2RSq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACF4C4CEE7;
-	Sat, 27 Sep 2025 03:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758945173;
-	bh=W/z5cqAffsitkvS3CbuGOrlcjmQu/FBVIDqgLsCp8p8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=afLb2RSqGIIpgahmXAMZRfTysN7c1Dd/ZiZIsaQk5XOLHULfcAdf4deyC2gcAOHfx
-	 BWgtesSCx/m/1oPyP18AO7ij+rcOpqM7jaDuyOGijs3UY9j6G3NswqLY5WsPcqk2PA
-	 SIZ2JesLIyC30hmZP5h90FESCR1VIwjaS/0xy+9gXZDqhbr0qMAOjjgIoG57x0pw92
-	 /qucid6M0/DYR3toxdvqvMh9HWbvrFtRJtCIwNa/oXPTiwfNkwLej/iKwBfOsLR1Gg
-	 mViNAN8nqAlZSheI95C2THZMAGXjxGnLvzHnIPsPu4lzwdZnasycb4bORvZFdiYRsb
-	 JjKXwMSmipjEQ==
-Date: Sat, 27 Sep 2025 09:22:41 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, chaitanya chundru <quic_krichai@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, quic_vbadigan@quicnic.com, 
-	amitk@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com, 
-	linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH v6 5/9] PCI: dwc: Implement .start_link(), .stop_link()
- hooks
-Message-ID: <3tuxxskusi5ck7cu2nqfkilqdqvzqjy77qgpvuo4nhcugdebug@geqxeslmxmdr>
-References: <4a3f9494-27a2-47d6-bdef-0b1bcbd99903@oss.qualcomm.com>
- <20250926203916.GA2266029@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUpJR2cx/pcbPrvMIvln97rxbg/WmH649VPyajL0Z2K0en7jlEBD7YwQLLVMATtGPg+KfVjYGcwJliIXaqIyIuVtHKxm31u0iuB1ZCF1E2bZ/FHYLxQ9uKKXqqIjglLzLVGlOyyKCD3Cjm1DYImdwgqjWCczBc04LEaGfnQHBls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=UOFpMPy3; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1758945483;
+	bh=tZd0GByrmUmEmv/KTM2Z/9NM+LpY4Nwqa49uosFrd3c=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=UOFpMPy3wgMi6DtJR3u7O0In++mZqwplfaHoHtHz0B0qn6Mj0Rb5Vy0HIZwIgZI6E
+	 H+zxZ9ma/gtXNXlVRO1fCSO8pkttMC1GGOHyNL79sCkHtFCUcJLIkLD4tfsKD29eB8
+	 wLJ/YkOCGZY0AXc0HUlXEdOZZTwIFFlX0RVIf/ek=
+X-QQ-mid: zesmtpip4t1758945481t77f69a0a
+X-QQ-Originating-IP: 4hAQJEdGIUHUtFK8Zm7CAj82QXu40PWPNzuez6mX62s=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 27 Sep 2025 11:57:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6486326469717875745
+EX-QQ-RecipientCnt: 10
+Date: Sat, 27 Sep 2025 11:57:59 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Yixun Lan <dlan@gentoo.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v2 6/6] i2c: spacemit: introduce pio for k1
+Message-ID: <578DFDF368D5EDF5+aNdgx8bKJy0dGekS@troy-wujie14pro-arch>
+References: <20250925-k1-i2c-atomic-v2-0-46dc13311cda@linux.spacemit.com>
+ <20250925-k1-i2c-atomic-v2-6-46dc13311cda@linux.spacemit.com>
+ <20250926111055-GYB1324993@gentoo.org>
+ <E4EE696368DDDB1E+aNaRl8upyNeld9zX@troy-wujie14pro-arch>
+ <aNajJ0RZ4Ku0eDXr@shikoro>
+ <20250927012429-GYA1330052@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,86 +72,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926203916.GA2266029@bhelgaas>
+In-Reply-To: <20250927012429-GYA1330052@gentoo.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NV33GuG3VJ0Z1N1s6G/QbDuKdURcurS4b7zhGxcTBGaPWW6CbvXUG02E
+	W8M3rX+hKgQEAOIrvqc++usFmyTg752MhsTcMCZKJn3oQMXkcaYckmyLeIZ8PHxX3EI6vpn
+	VVg7zxVol159KLE7Qkb9T9W+SqW2HGnprUOl+on9q04armE/fPXG/xfd0iwtpm43m4ZNV94
+	Gz4MMS8Z95L0okZD3eBHgWdeSp5p7uShFWzC2mzhB0EdLWMJV7hzR5m9YH0xyVYR0l3kw7V
+	jX5Osdd2wfgGZbH9sX81N49TNLoxCEcJiqjbO4QqQRiWp1kiw96aolzOsu4ASk8iCeKp8kq
+	0sD76vr0V36z8p6ws1DUKhrEYrtxLj9bHKXpYntz4nb7lKsUHPvB76LIlkxP3xLW3Qboj2K
+	kzmMPtEARxb8+boX6apVeSigjqrbxFvf9AXHHzL7A5dcknZ21xrXw79y8QbPNg4AerLz7zz
+	vrLm0cG7Ms7w4YZAmwpsV14xqEhuVfboDv+kJb/pmVh9pEObm/O9gFAc4OVOgKS91AYME2a
+	uwrehyvBMhs5YJ6tOQNU5/T/+Qvp47u7Pyiz2OjcBdoTcah3/uDn7+JPmyUdh591n7oQfz+
+	QTf7/dB/Z1Arug0PSon5z/r9qFmz0KzLytsEZVOEz+nZXFQ8+WdISRItvnZVD6AHOSjV9Hk
+	eIPZSjHf3gdiy2QU68IPObp0/AXj69WW8z805jVnxpTOEQDXm3b4sylr93gc6oa8HgqiHIE
+	1Chb/VLGBJwdSAq27xnUP3MSQO88F86S1v/YRTS0qhh9FZQEarx68g5LPARinzdLHecLYAk
+	bc/OXdoUeVhhj1xZjHrVng7HA8c9LnPKmeOhsmchPRdhWBTIDYia1F4fcmjWiLCPb9MtKyk
+	vqj45tI0lrjIgNG9VR03t1JBXkfa5g29et9553t73y8FpUxBsQpk99LSpwLak7Tf6Lis2je
+	SqsyZR34+j7pponnNAav3NbCEJcwswMwfAmcQ3bNI4Qv95s4jsKY/4EPfEZkD+MnFq4Ju0U
+	exzSVlSbjv7eIZbqmoEHrUjpwKifXDCOH9N+wJsps9Ol9NDGax3lD8MbyNJlz73xjqo2fxo
+	kmbJUVVBYLRk000UZyTxZ7/ShIdahJCNA==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Sep 26, 2025 at 03:39:16PM -0500, Bjorn Helgaas wrote:
-> On Fri, Sep 26, 2025 at 07:09:17PM +0530, Krishna Chaitanya Chundru wrote:
-> > On 9/25/2025 10:55 PM, Bjorn Helgaas wrote:
-> > > On Thu, Sep 25, 2025 at 09:49:16PM +0530, Manivannan Sadhasivam wrote:
-> > > > On Thu, Sep 25, 2025 at 09:54:16AM -0500, Bjorn Helgaas wrote:
-> > > > > On Thu, Aug 28, 2025 at 05:39:02PM +0530, Krishna Chaitanya Chundru wrote:
-> > > > > > Implement stop_link() and  start_link() function op for dwc drivers.
-> > > > > > 
-> > > > > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > > > > > ---
-> > > > > >   drivers/pci/controller/dwc/pcie-designware-host.c | 18 ++++++++++++++++++
-> > > > > >   1 file changed, 18 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > > index 952f8594b501254d2b2de5d5e056e16d2aa8d4b7..bcdc4a0e4b4747f2d62e1b67bc1aeda16e35acdd 100644
-> > > > > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > > @@ -722,10 +722,28 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
-> > > > > >   }
-> > > > > >   EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
-> > > > > > +static int dw_pcie_op_start_link(struct pci_bus *bus)
-> > > > > > +{
-> > > > > > +	struct dw_pcie_rp *pp = bus->sysdata;
-> > > > > > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > > > > +
-> > > > > > +	return dw_pcie_host_start_link(pci);
-> > > > > 
-> > > > > This takes a pci_bus *, which could be any PCI bus, but this only
-> > > > > works for root buses because it affects the link from a Root Port.
-> > > > > 
-> > > > > I know the TC9563 is directly below the Root Port in the current
-> > > > > topology, but it seems like the ability to configure a Switch with
-> > > > > I2C or similar is potentially of general interest, even if the
-> > > > > switch is deeper in the hierarchy.
-> > > > > 
-> > > > > Is there a generic way to inhibit link training, e.g., with the
-> > > > > Link Disable bit in the Link Control register?  If so, this could
-> > > > > potentially be done in a way that would work for any vendor and
-> > > > > for any Downstream Port, including Root Ports and Switch
-> > > > > Downstream Ports.
-> > > > 
-> > > > FWIW, the link should not be stopped for a single device, since it
-> > > > could affect other devices in the bus. Imagine if this switch is
-> > > > connected to one of the downstream port of another switch. Then
-> > > > stopping and starting the link will affect other devices connected
-> > > > to the upstream switch as well.
-> > > 
-> > > Link Disable would affect all devices downstream of the bridge where
-> > > it is set, same as dw_pcie_op_stop_link().
-> > > 
-> > > > This driver is doing it right now just because, there is no other
-> > > > way to control the switch state machine. Ideally, we would want the
-> > > > PERST# to be in asserted stage to keep the device from starting the
-> > > > state machine, then program the registers over I2C and deassert
-> > > > PERST#. This will work across all of the host controller drivers (if
-> > > > they support pwrctrl framework).
-> > > 
-> > > I don't think there's a way to implement .start_link() and
-> > > .stop_link() for ACPI unless it's by using Link Disable, which is why
-> > > I asked about this.  If Link Disable *does* work, it would be a very
-> > > generic way to do this because it's part of the PCIe base spec.
+On Sat, Sep 27, 2025 at 09:24:29AM +0800, Yixun Lan wrote:
+> Hi Troy,
+> 
+> On 16:28 Fri 26 Sep     , Wolfram Sang wrote:
 > > 
-> > We did test as you suggested but unfortunately the setting are not
-> > getting reflected we need to explicitly assert perst to make sure
-> > pcie is in reset state while applying these settings.
+> > > Since patches 1–5 have already been merged,
+> > > should I keep the current version number and just send this single patch ?
+> > 
+> > Yes, please.
+> > 
+> I agree, please do increase the patch version, have a formal cover letter,
+> document the changes, and add old patch URL link..
+Thanks. I will.
+                - Troy
 > 
-> Maybe ".stop_link()" is the wrong name if what's actually required is
-> PERST#?
+> -- 
+> Yixun Lan (dlan)
 > 
-
-If we rename this callback to foo_perst(), then it will be similar to my Pwrctrl
-PERST# integration series [1]. I'm wondering why shouldn't we merge it instead
-and get rid of this callback from this series for good?
-
-- Mani
-
-[1] https://lore.kernel.org/linux-pci/20250912-pci-pwrctrl-perst-v3-0-3c0ac62b032c@oss.qualcomm.com/
-
--- 
-மணிவண்ணன் சதாசிவம்
 
