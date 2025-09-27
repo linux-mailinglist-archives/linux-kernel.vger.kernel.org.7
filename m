@@ -1,157 +1,137 @@
-Return-Path: <linux-kernel+bounces-834986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FECBA5F80
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:02:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A6BBA5F83
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8FF41B24A39
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:03:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B291B24A1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D9B2E11AB;
-	Sat, 27 Sep 2025 13:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B592E1C54;
+	Sat, 27 Sep 2025 13:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kn1+8nb9"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPVfMT0w"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BFD2E06ED
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236472E06ED
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758978168; cv=none; b=Fan4E4OT2H3KEv/6qqjYXB3ubzmLE6kRj7CTv9BLCWtxgiuDhLH15nhuwLjEhJBvBaPvBmXtuh7avJ8384OUrkYzJD2q42Y5T4EgVtff/3/Lx3YlxT4avo411G/nUc+sM9qncFl9QOu77sSPlmawACrxOkPOvBSxA0mGQ3nEvh8=
+	t=1758978228; cv=none; b=Zs+h9knDZlggRu+ons49EzaOb8pd+00vzpU1zmt8L5VtJ6+nunoEp+oomqcBWdEwP8L4hhb0/oOeOsA/LISeE6hMJLKOl4JkejC4IP2DKJ3uxu5gbzr+llPyGN4g6rXnoFbTDYIeh3ecS7ED+sawRILYB7MTFoU3d0SNHIG0O/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758978168; c=relaxed/simple;
-	bh=BWcvkLYxCQRJV3QWC2hTgs9JKl/lNdwgo/gaMteuaFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=feVe+bSM/9Aub/6I8vWpwVDpx0dd3nDlWcKpQo5SGPvFyQ0IjLDuToWviH7vcorJ7ub0Q8kqTN1wX7Pd5JnKbw/Lcz8aqsfp5MULRZmqCYdHY1NOylZQukhsrZsRkEBj5Crf2K9mUOLKzh0teA12wKlprvpmXPaww28+fpb+1/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kn1+8nb9; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1758978228; c=relaxed/simple;
+	bh=/fWjDy6V8avarvNTCc+QfosD1L4dICg/f5aj4SVzYzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UAcSSrRUux+likQSdIR40sh/QdQPmqQonjQImthT/mZk8hpQkrpxIlLJf4Q3+ePrwtOh9tky06j2ckklUMm6LKOlafAA0F3Sn5xGcvyJdL4Q9rHhVMA+YdNMJvuuYimY5xJiZr4ba0eiF9lOTVLC5Cr23nLloZpgwqfGHvetHFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPVfMT0w; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e34bd8eb2so31427555e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:02:45 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b55197907d1so2345417a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:03:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758978164; x=1759582964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5S/zRBKTkSInAQ7R7zklKxxLF5akYgcZwi1P/3w8im8=;
-        b=kn1+8nb9OA2gUVRhtgI+6F/iNMiuaiaSPghtVSV4bBzuUodwfLmMu1otmeGh5Ecm9t
-         WlxZ20L940vGtQznFm7/FTe6J2momvjsYOj7xWXCmdqW3fW59jKK4EDfLeCZcLyIFXVd
-         Ill/kRliF9hUll9VHNhsCrxO8NnFd0xAnMAuyMnfw/ZFvb86uj7O4EoK3ofLyLqZ7FoF
-         VyrUBZloam0WzM03sTmPh8qGChrskAd2UZeeuOevM/RP7HAU54LnAF92ImeZawd1d39M
-         j0bZVavsuMPhswGaZ5lgzkSldsxaKSNR1hIHdwsWW2UHgabsRsAfLZAaDHblauqsRaGi
-         RAog==
+        d=gmail.com; s=20230601; t=1758978226; x=1759583026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yj5tk1g12uwJWHZQdttUwkD9hZl6wqd9nBrGl6G3EH4=;
+        b=aPVfMT0wQUDt+FvdtdudZWosKF/I0wA4eo7Shg7D4A0K4FgXH3UZnSvkR0SuvvygRq
+         6BnH+m0gDfI1qTl/jrofAvBA3buKb8VJsTKq2AULR1626pLc9DwdqvqbAN6VH+0Ve2Xy
+         MCtuX6jHtSmQjuEz/fzXrLfbhrJWfsxWmMGgfdkyoNpTrbqT/xtMgacPXNgat8BE34QE
+         roDHQQtWmxhjMyTheLo54IqmxaiU7CiykqX7DfY7xopneaPf5PzYLg800jSXjuL7wu8a
+         ksqN8sfxkI83UIb/KNC4X17bjaY2SAWPdOQfI3h/24sv2YQvlt/vNkxBOOWpz9sTdY96
+         ufbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758978164; x=1759582964;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5S/zRBKTkSInAQ7R7zklKxxLF5akYgcZwi1P/3w8im8=;
-        b=e4qPGjwXYZxT25ItSgwRyk2mLGpJZNFzu89BvFdI3DwbrcSGgc8UGCn0f/1YeKRhky
-         9djSNgzu+rSaX7pdLBbySn6F5QfRRkF/M0cBro0qgRqVskIywe4VSraYrDY37zs7/PDy
-         5m1vD7RmLhzcY7IgmjDF6XsxiSA6rC61RH2UbZbIU4AWYBTxjUuQBwdVJXDQQjjhpq29
-         iHSwZSPrtVfTN3dHp6DUiXdKlG2QJTFS8pK+St8TuZm4nqDDPEOBv18myQkq41ApMm1v
-         GIdoj/TgMvsVwiflc30jLms0aq9P0uWqc18EqsRbtn2slxTb3Emyz4SSIpiVS1BrAGyr
-         ixQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXIGD5t6MwdfcizQkcBVkLN1owXkhsYxAUQ5B+aa1hS4nEpKyF/jANabrySbukt16MMEPRRKxTEdkbTD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl4b5ZJdFCTN+k/uJASOcuGS0gJjYoRBJ3d4gYZUaSn94fjL6b
-	C71AQxgK0ocAqkv1DYrDvQ8nowBNC27tEQTluQ7t+zJbsUyG1PIbN0TD
-X-Gm-Gg: ASbGncuGY9ytGC/flNZGSlgnMP+qirWlHNRdfDsYnec/0Pp22Pl38exI30CEuCKPLF8
-	lMGfT4DSk3URXbio7UVuOhZzW+HOeK3tfCa0lPkpinVtBuQo4aaZtBPdqjWHHEKAm40SE2lsUnq
-	Mtv5SqSVxkoj0Q2xbsCAchLf2sWFN0iVnooSwaH9e0Grp5kTlP9gtdh7xEm+loX3im4eqVAUWfr
-	st7qQsfdI/H1Ip4XO5nDOSp6zGtfqNITf6/8DEDRn5eNlNL3PqNcieKLQixhIhFRNmaOWgUozfe
-	2mkgn0lBUTpJkQAF3o60+FBf3ILQzUKHRZZbji+RKvCh3yj7vP9Crx/BVejFezkR6mb8XR20kDU
-	QlsMstwV6uRkfiqiVyHNmweiUjTwFs8LkTXC+8A==
-X-Google-Smtp-Source: AGHT+IEylPzuTSyMe4S/LKg6ZM9MgQ/hgdwD1nLSuiRnhYfLcu58MW722RoLbdkug9nm8AiwOWmzHg==
-X-Received: by 2002:a05:600c:3105:b0:46e:1fb9:5497 with SMTP id 5b1f17b1804b1-46e329e4d87mr104992895e9.18.1758978163470;
-        Sat, 27 Sep 2025 06:02:43 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm177274005e9.7.2025.09.27.06.02.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 06:02:43 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Dongjin Kim <tobetter@gmail.com>
-Subject: [PATCH] drm/meson: add support for 2560x1440 resolution output
-Date: Sat, 27 Sep 2025 13:02:39 +0000
-Message-Id: <20250927130239.825060-1-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1758978226; x=1759583026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yj5tk1g12uwJWHZQdttUwkD9hZl6wqd9nBrGl6G3EH4=;
+        b=VgqWYd35tE+dFwIFv0rpedq5njHw4s0GxONbCKkAep3FWvHIPIYOFIxDeA4MBF2uAD
+         hBIyDCxKN+cA/C0mGDm/krvMUrDZPEbqkg8vaZotUtUF9tO6vOBkQkkwqApUA/wHeakU
+         FJdfFme8VT/vpVCtBaxDmvrZjI0MNayuDSrOVV3Eds7R/SvotusTeorrCLjkNL6PSKGO
+         guTdwPy60Pdks7Shn7pdgSTeuR5WGmAs470BDrRJUPXjpP5IZU9OhGT7CoGYBzK7aQ5n
+         Tj0+fyDmUwJzCevM8Cqp/MafMEWpO0zVto4W7j1EvTODaY3kGHtOTMgS55vtBbE4Nxbk
+         Rpyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJIn1AMXcGP9V1WbJ3y5yz9PCTi7wIFko+DfMm/vmY4yL2rrlAYmzqbAqRugX1mtCXmFG37TDdmShWkkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVk0ard0t7o3Ljm+nrw9TxvuxNl0u+sJak1l0NgouXiz8Na4fJ
+	ZZnmK58b8wJypwZ4Mioer4Ay1QnMF1qhYc3CAPUAoanSQB2jGbT2wQ7l5VtAcp3rHp1Itity8Tu
+	cYMgcQrVydVwF7g8TkMf89Q1ObSKCLcg=
+X-Gm-Gg: ASbGncsO3RV7WmRRxMskAV6EiaH4p2sJ1+focY64kOdeVLd0/lIGIBgEae9loKq2rnC
+	Ue9uXGEyziHmNTDJ1PyX1ZcINfPx8HjHZnV2ALh2M1JSRBcOkte5BrknhOzgdSr5jIRX0VrRz11
+	FC0fglU+kK8oDJ1SV5RNRt9AHZFxf7LGNtBY4vtJoL/3OVlwaWKE72AJJw9eKYcJSKjDdYS4Hw2
+	fy+vQG2fVJF91Dy9Jzjpn7NXStTLPZdomchsV15c5CPsj9B+qfMuN4EArkiJgoiaIF4Gg==
+X-Google-Smtp-Source: AGHT+IFQydMe94D6FwmBD6D2qXtQeTSXE3uir5zVOh5IAVVaCaSW+eB33R3ldR/4t5FzOh37nVJmnRCAO0XKqK8E6YU=
+X-Received: by 2002:a17:902:c94c:b0:269:8d1b:40c3 with SMTP id
+ d9443c01a7336-27ed4a29ceamr124277135ad.12.1758978226334; Sat, 27 Sep 2025
+ 06:03:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250926162658.989479-1-kriish.sharma2006@gmail.com>
+ <878qi0b97l.wl-tiwai@suse.de> <aNfRhzjqs6Z2fi-n@archie.me> <CAL4kbRMp912C+xqO4RYnGBO_VSqXJDSkNMgktd04zcUMOn_4-w@mail.gmail.com>
+In-Reply-To: <CAL4kbRMp912C+xqO4RYnGBO_VSqXJDSkNMgktd04zcUMOn_4-w@mail.gmail.com>
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+Date: Sat, 27 Sep 2025 18:33:35 +0530
+X-Gm-Features: AS18NWALVElsH8JKQCuuo6ictSDUaIsPrD2BhEg-AqZ4pZxaHqYhteAWJCms6-A
+Message-ID: <CAL4kbRMLnkJJcC9zoS+vSbwPxsU=82960vc1pOcrDZKsjLbz_A@mail.gmail.com>
+Subject: Re: [PATCH] docs: sound: describe 'chan_map' member in snd_dec_opus
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Vinod Koul <vkoul@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexey Klimov <alexey.klimov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Dongjin Kim <tobetter@gmail.com>
+Apologies my previous message to the list was sent in HTML format
 
-Add support for Quad HD (QHD) 2560x1440 resolution output. Timings
-have been adapted from the vendor kernel.
+> Thanks for the feedback. Do you prefer me to send a v2 with the Fixes tag=
+ and nested struct documentation?
 
-Signed-off-by: Dongjin Kim <tobetter@gmail.com>
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- drivers/gpu/drm/meson/meson_vclk.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
-index dfe0c28a0f05..f5385b3e3796 100644
---- a/drivers/gpu/drm/meson/meson_vclk.c
-+++ b/drivers/gpu/drm/meson/meson_vclk.c
-@@ -357,6 +357,8 @@ enum {
- 	MESON_VCLK_HDMI_594000,
- /* 2970 /1 /1 /1 /5 /1  => /1 /2 */
- 	MESON_VCLK_HDMI_594000_YUV420,
-+/* 4830 /2 /1 /2 /5 /1  => /1 /1 */
-+	MESON_VCLK_HDMI_241500,
- };
- 
- struct meson_vclk_params {
-@@ -467,6 +469,18 @@ struct meson_vclk_params {
- 		.vid_pll_div = VID_PLL_DIV_5,
- 		.vclk_div = 1,
- 	},
-+	[MESON_VCLK_HDMI_241500] = {
-+		.pll_freq = 4830000000,
-+		.phy_freq = 2415000000,
-+		.venc_freq = 241500000,
-+		.vclk_freq = 241500000,
-+		.pixel_freq = 241500000,
-+		.pll_od1 = 2,
-+		.pll_od2 = 1,
-+		.pll_od3 = 2,
-+		.vid_pll_div = VID_PLL_DIV_5,
-+		.vclk_div = 1,
-+	},
- 	{ /* sentinel */ },
- };
- 
-@@ -894,6 +908,10 @@ static void meson_vclk_set(struct meson_drm *priv,
- 			m = 0xf7;
- 			frac = vic_alternate_clock ? 0x8148 : 0x10000;
- 			break;
-+		case 4830000:
-+			m = 0xc9;
-+			frac = 0xd560;
-+			break;
- 		}
- 
- 		meson_hdmi_pll_set_params(priv, m, frac, od1, od2, od3);
--- 
-2.34.1
-
+On Sat, Sep 27, 2025 at 6:28=E2=80=AFPM Kriish Sharma
+<kriish.sharma2006@gmail.com> wrote:
+>
+> Thanks for the feedback. Do you prefer me to send a v2 with the Fixes tag=
+ and nested struct documentation?
+>
+> On Sat, Sep 27, 2025 at 5:29=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.c=
+om> wrote:
+>>
+>> On Sat, Sep 27, 2025 at 10:17:34AM +0200, Takashi Iwai wrote:
+>> > On Fri, 26 Sep 2025 18:26:58 +0200,
+>> > Kriish Sharma wrote:
+>> > >
+>> > > When building kernel docs, the following warning appeared:
+>> > >
+>> > >   WARNING: ./include/uapi/sound/compress_params.h:364 struct member =
+'chan_map' not described in 'snd_dec_opus'
+>> > >
+>> > > The inline struct 'snd_dec_opus_ch_map' inside 'snd_dec_opus' was no=
+t properly documented.
+>> > > This patch documents the 'chan_map' member and its fields (stream_co=
+unt, coupled_count, channel_map), resolving the warning.
+>> > >
+>> > > Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+>> >
+>> > Adding Alexey to Cc, as it was added by his patch.
+>> >
+>> > If any, please resubmit with a proper subject line (e.g. "ALSA:
+>> > compress: ....") as well as the Fixes tag pointing to the affecting
+>> > commit.
+>>
+>> In this case, the Fixes: tag should be:
+>>
+>> Fixes: 5d36370f3431 ("ALSA: compress: add raw opus codec define and opus=
+ decoder structs")
+>>
+>> Thanks.
+>>
+>> --
+>> An old man doll... just what I always wanted! - Clara
 
