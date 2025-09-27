@@ -1,141 +1,256 @@
-Return-Path: <linux-kernel+bounces-835057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9DABA6280
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA095BA6283
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EECE83B990F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:21:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284543A7622
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29310235BE8;
-	Sat, 27 Sep 2025 18:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7844E235057;
+	Sat, 27 Sep 2025 18:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jh8CVj6V"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="IH0cT6yu"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C22223DD0
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 18:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43D222FDE8;
+	Sat, 27 Sep 2025 18:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758997260; cv=none; b=TKEA68HwVQrg2AerWIqO5DaeOtjAaYXCytKv8UzZNmO5gJSkf37xCTpDJQMrycD41CQm9f4IgPH7+RZOBI2j0uNuQL8tMvAz7JoxQ3y5DDiCvzmffrbs3eK8l++z7ehpd3rDyxI6jkw0d0qJI89/jJ+f+IN/s6B3Ib+RflTOZNU=
+	t=1758997272; cv=none; b=KoD01r146jKYHIn03Mbhq+28HOsLzHh6fQ4bG2UnNpd+GWNJL29mAZ77gUhrGjyVT6YMUs3alvFcF+aofPqgI2pDnoIIndPb8J9Gl0xoXLw9d+MExYxJM5J4Wsa6G667K4H4GI8zlPQ14qcj64o7RXVonQD2KblZkChyJWwIOFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758997260; c=relaxed/simple;
-	bh=ZZsUqsXlT+NxuLRa0wHvGFSehTMZVHpC3xtckn2HDG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QVuFzwj6igmakAa1QPpk5Ep4GHiGngMbUR2p9wJ9wZzErUoYlIjZT/U1BktmsrxnJKHiyWmvLVV8DoX121LG3OVQ1aZP0ZlrxDOCzlBjMP0hJGORKe6b+RwSlEaZIA/2kqSUtHWcf1CTMHGuOmtYwtfNtw1GdW+hn2iOkOcmfWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jh8CVj6V; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e2c3b6d4cso23070955e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 11:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758997257; x=1759602057; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UiTGFZwhz927PRv0PGaGJg7Lawc0Y6HmusWqcFMWBM4=;
-        b=jh8CVj6VciDNgdMg7TjOEkX77wode/Z6L/VUCMS9qMBqLQqEqR1MR67B/yEwzE0m4y
-         UEmErRoyQH6Eir6z3AW69/0d6/BflBpErrmO5OeF3He5UdKYBc5KJF2rEGcbwudYgjGO
-         e07npljPffC59CUgc48OdnPdW0gInNF7XFQ2vgbyV1xvv7TcOOURT0x6aSNHtf9hinXV
-         e++HYZqc9S8sMBCUcwU5JpFb2oVwaWIWt77lrUV7V37Dwktnoa61Unlsz0yjNpdYSXd7
-         5O6MEBBZaS4MduWYQbuvKs2icRwJ+xwcKCYKHrLKiCqapEnqQAr5c75SPqhFl146xHRM
-         2lMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758997257; x=1759602057;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UiTGFZwhz927PRv0PGaGJg7Lawc0Y6HmusWqcFMWBM4=;
-        b=N7RvDCUoytxtuUIcCJOKDSK2NUYKZKByXT2xkazGDXvLTkSXmnkZHn1im12PEq5sxa
-         UiJHeSQ1iAg07bxII6Nl8+vfDsWawbC0gaLxtxgoEKpf61+hs0wDQzomiuSlLUWEAc2y
-         MJFej6lzweYpk4WV/Cx7/Zf8WHc4z/WJWQ4kpWbEompPsBzKBNQSykmKLazj1ZgkVOKf
-         idCgaD6S+EYrAbfgT6ThQlKmLiNP9FXWbsfDX+eGlKKcn5jOTbF5s1L7OxdAD6APcv5n
-         DEipEah9HO+4FwlI3wotNATrzreheR+wVvaUVlU+tg8UGGB1pBHCdUCLzDfbTAI7S5IR
-         cvZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXjlVGL0JXyU2MW4eYvjJCgKIfTfqLiFFpZQMzY41TSr7S1z20o50AGwRTKbNTb14335G13yci0kCgaV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ70dxDLVXCzj+kBbsVGVGmh5F90kWjk5pttG2nIjgfILJQcLL
-	RNu/4MC5DmPjyShC0gnydf5BGtjJ7jyLyBuQIH1KMrlnv+LS9wiZofcI
-X-Gm-Gg: ASbGncviJP3muTHfRQ83MTyl5TuX4k1C87aP78nbnc1aqzdLqOdj8F2gzbyn68jL5wF
-	u8KuQBIax2BWT6FE8P+Ll3PIMPR/xO9KZXaAZYWnJrCjwDYovvdxJj6Wfe04cYHafVvAl+bnWag
-	q1u0qnjRAYUCYUhXNMDBRg0QDY+d8wgzgLq4CyL9YBLzQdPRETAH8g3ew7qqY09rb2vc1K4gLoh
-	lOCKgFWsuZgKkzbxJvZF7rV4WR015Izz54Xo4AjYOPOtpLKf3AS6k7os3kyfKKP/BAnLn7V1XtK
-	kVxaiTqLhNqG8UneglsqeSpfOqkvxnFRna9Rlk8LEOkzqnz/YwPhCDA/NHMjoxtN5hQx4LvP6TA
-	MzvftFFdWS41gt2X4NTtx6FEhJaYjpaX7zKhQsykq1qn4mnjN9Se5K6SKNmnpuNNAd4h4aZLnV7
-	ou4jzWwH7b4TznyBPg0pk=
-X-Google-Smtp-Source: AGHT+IEtiFdCtMagiN2PlJIlHgX907vHybIZWjwyy/+2hiQWsMBj67930e8VQK2WHaA903g/oabW4w==
-X-Received: by 2002:a05:6000:40df:b0:3ea:c893:95a7 with SMTP id ffacd0b85a97d-40e4adce88amr9868281f8f.31.1758997256826;
-        Sat, 27 Sep 2025 11:20:56 -0700 (PDT)
-Received: from ?IPV6:2a02:c7c:8b21:7400:a8dc:c580:efa:e675? ([2a02:c7c:8b21:7400:a8dc:c580:efa:e675])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603356sm11601993f8f.30.2025.09.27.11.20.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Sep 2025 11:20:56 -0700 (PDT)
-Message-ID: <10637103-7e15-406a-8e9c-0eee3c5c4922@gmail.com>
-Date: Sat, 27 Sep 2025 19:20:52 +0100
+	s=arc-20240116; t=1758997272; c=relaxed/simple;
+	bh=iRvUWO14IYrtPSXU7ffsu0elDCkPUwlfmGpY4JndV70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eTA4BdMW7ik6ca9+uMPaEXO5LqZSwnTDfkzrTdArAOuBfQVAqmKGtC7S5sTp6u65AD/Wf6jQkYVY/B+uza/b93DEkZu8DY5iQ0zgD21Rk88bTQVKvqZVDOeK05fxECaXQskmttS63NKruGJW0vSO4u5o4L3ztRv/H2rZUBr1ivM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=IH0cT6yu; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1758997259; bh=iRvUWO14IYrtPSXU7ffsu0elDCkPUwlfmGpY4JndV70=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=IH0cT6yu6L/lBzS+ceoZgxgILcm/jFJXSYibwG7Gsy4IErnLbYByvodAVXhLBNhdx
+	 ef5hpF1xyB0wbPgHSMGm5/q+ahWF/fQcndbkphzzxczYrtBqWa7leMJtssWnSpPHEI
+	 r9aqy6/0iTH/2RRrAGwMePlgb5ZRlgO1TDc/yiXg=
+Date: Sat, 27 Sep 2025 20:20:59 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Mark Brown <broonie@kernel.org>
+Cc: =?utf-8?B?QmFsdGF6w6Fy?= Radics <baltazar.radics@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, linux-sound@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>, 
+	Andre Przywara <andre.przywara@arm.com>, Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: Re: ASoC: sun4i-codec: Missing snd_soc_component_driver names
+ causing NULL pointer dereference
+Message-ID: <w5dviim2u2kc4enifywag2skacq72qz5enpjk6orica7kyith6@2ukao7sjagj5>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	Mark Brown <broonie@kernel.org>, =?utf-8?B?QmFsdGF6w6Fy?= Radics <baltazar.radics@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, linux-sound@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>, 
+	Andre Przywara <andre.przywara@arm.com>, Jernej Skrabec <jernej.skrabec@gmail.com>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <ffef657cce57b7bce005b99f9b14dc81c9ae4535.camel@gmail.com>
+ <391d0e76-93bb-48a4-a6d5-2938766710a0@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] samples: rust: add Rust I2C sample driver
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
- Tamir Duberstein <tamird@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20250911154717.96637-1-igor.korotin.linux@gmail.com>
- <20250911155048.97364-1-igor.korotin.linux@gmail.com>
- <DCQ9K980YX1W.HZIQI6S5MST9@kernel.org>
-Content-Language: en-US
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-In-Reply-To: <DCQ9K980YX1W.HZIQI6S5MST9@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <391d0e76-93bb-48a4-a6d5-2938766710a0@sirena.org.uk>
 
-Hello Danilo
+Hi Baltazár,
 
-On 9/11/2025 9:46 PM, Danilo Krummrich wrote:
-> On Thu Sep 11, 2025 at 5:50 PM CEST, Igor Korotin wrote:
->> +// NOTE: The code below is expanded macro module_i2c_driver. It is not used here
->> +//       because we need to manually create an I2C client in `init()`. The macro
->> +//       hides `init()`, so to demo client creation on adapter SAMPLE_I2C_ADAPTER_INDEX
->> +//       we expand it by hand.
->> +type Ops<T> = kernel::i2c::Adapter<T>;
+On Fri, Sep 26, 2025 at 04:31:25PM +0100, Mark Brown wrote:
+> On Fri, Sep 26, 2025 at 05:10:30PM +0200, Baltazár Radics wrote:
+> > I ran into an issue where the kernel would panic depending on sun4i-
+> > codec vs sun8i-codec-analog driver load order. (If both are compiled-
+> > in, the default order does reproduce the crash.)If sun4i-codec was
+> > loaded before its analog component, snd_soc_register_card would return
+> > -EPROBE_DEFER. During cleanup snd_soc_unregister_component_by_driver
+> > tries to find components by driver name leading to the following oops:
+
+Your kernel version (6.16.5) does not contain fix for this:
+
+  https://lore.kernel.org/linux-sound/87ect8ysv8.wl-kuninori.morimoto.gx@renesas.com/
+
+Kind regards,
+	o.
+
+> Copying in some of the people who work on sunxi.  It seems clear that we
+> should handle missing names more gracefully here.
 > 
-> Not a huge fan of this type alias, but up to you. :)
+> > 
+> > [    0.841199] 8<--- cut here ---
+> > [    0.844315] Unable to handle kernel NULL pointer dereference at virtual address 00000000 when read
+> > [    0.853268] [00000000] *pgd=00000000
+> > [    0.856885] Internal error: Oops: 5 [#1] SMP ARM
+> > [    0.861507] Modules linked in:
+> > [    0.864569] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.5 #1 NONE 
+> > [    0.871617] Hardware name: Allwinner sun8i Family
+> > [    0.876316] PC is at strcmp+0x0/0x34
+> > [    0.879911] LR is at snd_soc_lookup_component_nolocked+0x64/0xa4
+> > [    0.885923] pc : [<c08e8824>]    lr : [<c075679c>]    psr: 00000013
+> > [    0.892184] sp : e0821de0  ip : 00000000  fp : c0c615e8
+> > [    0.897404] r10: 00000006  r9 : c0c49854  r8 : 0000001b
+> > [    0.902624] r7 : c0b04de8  r6 : c125b010  r5 : c0dde7e8  r4 : c1a95a40
+> > [    0.909146] r3 : c09b1d50  r2 : 0000006e  r1 : c0b04de8  r0 : 00000000
+> > [    0.915669] Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> > [    0.922802] Control: 10c5387d  Table: 4000406a  DAC: 00000051
+> > [    0.928541] Register r0 information: NULL pointer
+> > [    0.933250] Register r1 information: non-slab/vmalloc memory
+> > [    0.938908] Register r2 information: non-paged memory
+> > [    0.943958] Register r3 information: non-slab/vmalloc memory
+> > [    0.949615] Register r4 information: slab kmalloc-256 start c1a95a00 pointer offset 64 size 256
+> > [    0.958327] Register r5 information: non-slab/vmalloc memory
+> > [    0.963984] Register r6 information: slab kmalloc-1k start c125b000 pointer offset 16 size 1024
+> > [    0.972693] Register r7 information: non-slab/vmalloc memory
+> > [    0.978350] Register r8 information: non-paged memory
+> > [    0.983400] Register r9 information: non-slab/vmalloc memory
+> > [    0.989057] Register r10 information: non-paged memory
+> > [    0.994193] Register r11 information: non-slab/vmalloc memory
+> > [    0.999937] Register r12 information: NULL pointer
+> > [    1.004726] Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+> > [    1.010730] Stack: (0xe0821de0 to 0xe0822000)
+> > [    1.015091] 1de0: c0b04de8 c125b010 c125b010 e0821e18 0000001b c0758f20 c1a95c0c c125b010
+> > [    1.023264] 1e00: c125b010 c076c86c c1a9bc00 c1a9bc80 c125b010 c058804c c112b780 c1a95d00
+> > [    1.031436] 1e20: 00000007 75b58edd c125b010 00000205 c0ddec6c 00000000 c1a9b3b8 c05821b0
+> > [    1.039608] 1e40: c125b010 c0582960 c125b010 c0ddec6c c125b010 00000000 c1a9b3b8 c0582a90
+> > [    1.047781] 1e60: 60000013 c0c49854 c0e25818 c0ddec6c c125b010 00000000 c1a9b3b8 c0582c74
+> > [    1.055953] 1e80: c125b010 c0ddec6c c125b054 c1016000 c1a9b3b8 c0582eec 00000000 c0ddec6c
+> > [    1.064126] 1ea0: c0582e5c c0580950 c1016000 c1016058 c10f7234 75b58edd c1016000 c0ddec6c
+> > [    1.072298] 1ec0: c1a9b380 00000000 c1016000 c0581b74 c0b0534c 00000000 c0ddec6c c1050000
+> > [    1.080471] 1ee0: 00000000 c0deb000 c0deb000 c0583bf8 c0c2ddd8 c1050000 00000000 c010e26c
+> > [    1.088643] 1f00: 000004bf 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> > [    1.096814] 1f20: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> > [    1.104986] 1f40: 00000000 00000000 00000000 75b58edd c11a6200 000000f3 c11a6200 c0c49834
+> > [    1.113158] 1f60: c0deb000 c0b14140 c0c49854 c0c01264 00000006 00000006 00000000 c0c004d0
+> > [    1.121331] 1f80: c08f37a8 c0d04e80 c08f37a8 00000000 00000000 00000000 00000000 00000000
+> > [    1.129503] 1fa0: 00000000 c08f37c4 00000000 c010014c 00000000 00000000 00000000 00000000
+> > [    1.137674] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> > [    1.145846] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+> > [    1.154014] Call trace: 
+> > [    1.154030]  strcmp from snd_soc_lookup_component_nolocked+0x64/0xa4
+> > [    1.162926]  snd_soc_lookup_component_nolocked from snd_soc_unregister_component_by_driver+0x2c/0x44
+> > [    1.172065]  snd_soc_unregister_component_by_driver from snd_dmaengine_pcm_unregister+0x28/0x64
+> > [    1.180773]  snd_dmaengine_pcm_unregister from devres_release_all+0x98/0xfc
+> > [    1.187749]  devres_release_all from device_unbind_cleanup+0xc/0x60
+> > [    1.194028]  device_unbind_cleanup from really_probe+0x220/0x2c8
+> > [    1.200046]  really_probe from __driver_probe_device+0x88/0x1a0
+> > [    1.205977]  __driver_probe_device from driver_probe_device+0x30/0x110
+> > [    1.212515]  driver_probe_device from __driver_attach+0x90/0x178
+> > [    1.218533]  __driver_attach from bus_for_each_dev+0x7c/0xcc
+> > [    1.224203]  bus_for_each_dev from bus_add_driver+0xcc/0x1ec
+> > [    1.229871]  bus_add_driver from driver_register+0x80/0x11c
+> > [    1.235457]  driver_register from do_one_initcall+0x58/0x23c
+> > [    1.241134]  do_one_initcall from kernel_init_freeable+0x1dc/0x238
+> > [    1.247324]  kernel_init_freeable from kernel_init+0x1c/0x12c
+> > [    1.253079]  kernel_init from ret_from_fork+0x14/0x28
+> > [    1.258137] Exception stack(0xe0821fb0 to 0xe0821ff8)
+> > [    1.263187] 1fa0:                                     00000000 00000000 00000000 00000000
+> > [    1.271359] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> > [    1.279530] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> > [    1.286145] Code: e5e32001 e3520000 1afffffb e12fff1e (e4d03001) 
+> > [    1.292290] ---[ end trace 0000000000000000 ]---
+> > 
+> > The specific hardware in my case is a FriendlyARM NanoPi Duo2. Note
+> > that the current device tree has the relevant node disabled, so I'm
+> > running with the following patch applied:
+> > 
+> > ---
+> > arch/arm/boot/dts/allwinner/sun8i-h3-nanopi-duo2.dts | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/allwinner/sun8i-h3-nanopi-duo2.dts b/arch/arm/boot/dts/allwinner/sun8i-h3-nanopi-duo2.dts
+> > index 2b0566d4b386..6301b1a78301 100644
+> > --- a/arch/arm/boot/dts/allwinner/sun8i-h3-nanopi-duo2.dts
+> > +++ b/arch/arm/boot/dts/allwinner/sun8i-h3-nanopi-duo2.dts
+> > @@ -137,6 +137,14 @@ &reg_usb0_vbus {
+> >  	status = "okay";
+> >  };
+> >  
+> > +&codec {
+> > +	status = "okay";
+> > +	allwinner,audio-routing =
+> > +	       "Line Out", "LINEOUT",
+> > +	       "MIC1", "Mic",
+> > +	       "Mic", "MBIAS";
+> > +};
+> > +
+> >  &uart0 {
+> >  	pinctrl-names = "default";
+> >  	pinctrl-0 = <&uart0_pa_pins>;
+> > --
+> > 
+> > 
+> > I'm not sure if it's the correct solution, but setting the names of
+> > these snd_soc_component_driver instances does seem to fix my issue:
+> > 
+> > ---
+> >  sound/soc/sunxi/sun4i-codec.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+> > index 93733ff2e32a..f00537f7f97d 100644
+> > --- a/sound/soc/sunxi/sun4i-codec.c
+> > +++ b/sound/soc/sunxi/sun4i-codec.c
+> > @@ -959,6 +959,7 @@ static const struct snd_soc_dapm_route sun4i_codec_codec_dapm_routes[] = {
+> >  };
+> >  
+> >  static const struct snd_soc_component_driver sun4i_codec_codec = {
+> > +	.name			= "sun4i-codec-codec",
+> >  	.controls		= sun4i_codec_controls,
+> >  	.num_controls		= ARRAY_SIZE(sun4i_codec_controls),
+> >  	.dapm_widgets		= sun4i_codec_codec_dapm_widgets,
+> > @@ -971,6 +972,7 @@ static const struct snd_soc_component_driver sun4i_codec_codec = {
+> >  };
+> >  
+> >  static const struct snd_soc_component_driver sun7i_codec_codec = {
+> > +	.name			= "sun7i-codec-codec",
+> >  	.controls		= sun7i_codec_controls,
+> >  	.num_controls		= ARRAY_SIZE(sun7i_codec_controls),
+> >  	.dapm_widgets		= sun4i_codec_codec_dapm_widgets,
+> > @@ -1278,6 +1280,7 @@ static const struct snd_soc_dapm_route sun6i_codec_codec_dapm_routes[] = {
+> >  };
+> >  
+> >  static const struct snd_soc_component_driver sun6i_codec_codec = {
+> > +	.name			= "sun6i-codec-codec",
+> >  	.controls		= sun6i_codec_codec_widgets,
+> >  	.num_controls		= ARRAY_SIZE(sun6i_codec_codec_widgets),
+> >  	.dapm_widgets		= sun6i_codec_codec_dapm_widgets,
+> > @@ -1307,6 +1310,7 @@ static const struct snd_soc_dapm_widget sun8i_a23_codec_codec_widgets[] = {
+> >  };
+> >  
+> >  static const struct snd_soc_component_driver sun8i_a23_codec_codec = {
+> > +	.name			= "sun8i-a23-codec-codec",
+> >  	.controls		= sun8i_a23_codec_codec_controls,
+> >  	.num_controls		= ARRAY_SIZE(sun8i_a23_codec_codec_controls),
+> >  	.dapm_widgets		= sun8i_a23_codec_codec_widgets,
+> > @@ -1527,6 +1531,7 @@ static const struct snd_soc_dapm_route suniv_codec_codec_dapm_routes[] = {
+> >  };
+> >  
+> >  static const struct snd_soc_component_driver suniv_codec_codec = {
+> > +	.name			= "suniv-codec-codec",
+> >  	.controls		= suniv_codec_codec_widgets,
+> >  	.num_controls		= ARRAY_SIZE(suniv_codec_codec_widgets),
+> >  	.dapm_widgets		= suniv_codec_codec_dapm_widgets,
+> > @@ -1952,6 +1957,7 @@ static const struct snd_soc_dapm_widget sun50i_h616_codec_codec_widgets[] = {
+> >  };
+> >  
+> >  static const struct snd_soc_component_driver sun50i_h616_codec_codec = {
+> > +	.name       = "sun50i-h616-codec-codec",
+> >  	.controls   = sun50i_h616_codec_codec_controls,
+> >  	.num_controls   = ARRAY_SIZE(sun50i_h616_codec_codec_controls),
+> >  	.dapm_widgets   = sun50i_h616_codec_codec_widgets,
+> > -- 
+> > 2.51.0
 
-I literally just unwrapped module_driver! macro to get to the init 
-function.
-This type was part of that macro. I do not see it necessary, so I'll 
-remove it
-in the next drop.
-  >> +
->> +                i2c::Registration::new(adapter.as_ref(), &BOARD_INFO)
-> 
-> Does i2c_new_client_device() grab a reference count of the adapter? If not, you
-> have to store an ARef<I2cAdapter> within your i2c::Registration as well.
 
-Well, as far as I traced the C code, `adapter->dev` is a 
-`client->dev->parent`. Inside of the i2c_new_client_device the new 
-created client device is being registered and as part of this 
-registration device's parent reference count is being incremented.
-
-A big thanks for the review and comments.
-
-Regards
-Igor
 
