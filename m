@@ -1,87 +1,130 @@
-Return-Path: <linux-kernel+bounces-834797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F6CBA58B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:59:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DD0BA58C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F0C2A3D9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111623BAF32
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2419B20F079;
-	Sat, 27 Sep 2025 03:59:08 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25812264D9;
+	Sat, 27 Sep 2025 04:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="UX+GXElL"
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4538F1F63D9
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B03022538F;
+	Sat, 27 Sep 2025 04:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758945547; cv=none; b=t5u9sdmpmAEkLSI9EQ+4xpeDu9VMA+Fmy6OgPh+XqmEehZLaSXPCikXfcKnMMvwxQuuA3DHUjm2w8Q25M/ts7cxQ64/+sJ3ZzuIjsSdstqGEXV7O2RURa2zAmLIv+ROxPcjwgPx1ETYbMDIkwwy0HUP/appdt/wDU6847k90rE0=
+	t=1758945960; cv=none; b=gXN80diwwcu0Glh1c6ke/Fdt6FTgLDilMVbCOqR5ji/SWBELMeq7rChAr/+CxZBlicvQ0erVP61DjMRJ2oUH2LtRnkqR8xucBK19lTRbx7roM4PJmGi9luVGyPoz4JWFEtFdcCn+ZW55hUEjR8W3GGu332HC3GCpmzaJZxzy8RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758945547; c=relaxed/simple;
-	bh=69ZLIFmXsqT820JoP+a/1IWYhRP/ZR/3AovsFPtcDvs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rklu4UcQ1CrrDrIofiUq+6s3v+ksOCEvuduWxu8TouKfKTkwJPTM03ReZvTzA1CGA7iOdGct3DMfFSGTis46w2peET8+6XV9GwZyDstjRuuwH6Rq6cQ7WNoG891CmKkHcrGFrSayWYH0U2rQ8Au1UyoXr44pkPefbgnpParXqSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-427621906beso38143965ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 20:59:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758945545; x=1759550345;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUuZCekw9pDGinJ7iP+1nN+3hTiI/HmaWRqDdrjp+YA=;
-        b=xLKnq6555W/D3RetxcFDCdApLPbWuqHkYyqfMq1goaVef+DeT2o7ZT/IjJEg/xQ41L
-         6WSWAvSi1Yjrj+2IjJz3xE/dWOhnXPxJ1bAAJ52zbHDKxWjpQquMHwhwKCsLg2G954AQ
-         BF8TbrB84CbvZtkgaVOF9/RQtpMwt/TzZoWNhcjWiCss+WJ6dzkTk4lbp+8IWpKo9eG6
-         zQP1+YxHUmm+77hrS/5DTaSi0S73Y49oF7ZRngnYJRnpG3nIz1olkK3K1it36BSis+Uq
-         dDjgV/HnzvSlWA2QN2qOAXt1m0m+7ishlphhUmyXLjifXF+ToKlaxqNcZqxRYFr/yVwr
-         nuAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWi/VtI/QSaIBJxjsEAF+aBjkxeXwJD+m5KSgI+KYzrqpgGJlNdAIBDYQrx/qHYN1qL2MNou8+zByXzxxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznms/s3PJlvSViMFl67CuusNkA8kzaIsPK5KQQ8RHLg05DOMHr
-	vJjbldPgGY7gOYo29NNDxW/29f//Cey7UpMgic+MD67imKEewYuN6PEpO+2H0O70fwB/4SBNWzz
-	weunZMMqwFoLQh9jhil/xpEqmUVTVv6LkyyvLY53xqBwC9chAsnbhVM6vLzA=
-X-Google-Smtp-Source: AGHT+IGCRWYE7XfplQkUXYIdOdL42DYojH4z55PmebJU2wCp0G7ESywNHxP2PdF7CeshmjT6GfEv1yCAXh2O/DFFeLToSwRbu16u
+	s=arc-20240116; t=1758945960; c=relaxed/simple;
+	bh=Fo49InlkBL2egIeunJzNpOgfqJMqVW/GprT3gm5KchE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JG43PPcu8N7t8bzbhQsiaXTFKlC67/M5jDIMg77RscKM3i+l4D/ClvMukMGNFn4w7gvaOXtEpI6ML3uns8nvnEmh2qejn40hw//w117iJQqqzrnwLud/6coYBnYzeA0m41wuab5HSWPLPqYb09FTcOGzgk8L+Z/gA4WYxmlUZc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=UX+GXElL; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1758945877;
+	bh=dOmDpWGWjAIcXaD2K4pnaMnVFW35Nhm0axjf6jjkM94=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=UX+GXElLT6vMpIUCtKCP8d4WgsQAPMzOoEJ0LXIk8ZbPsTqw6Wj/9QAQe5IV0VzQF
+	 Ujg3J2L3GceEI0o8OxoUWmVSx3FeMXIIwHvYCfQAQ7d0vLw4e5Kw0PPBFAXKQdBLbI
+	 9ueoLXq8A5Pz1mbdlnJxd6Ky3XKmHZJ1T65084yo=
+X-QQ-mid: zesmtpip3t1758945870tf42e45f4
+X-QQ-Originating-IP: Loc1WRX0yOLpBxWTT4vSk7P4W5l8b/UGyhQf8IANPZ8=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 27 Sep 2025 12:04:28 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8734647494709726555
+EX-QQ-RecipientCnt: 9
+Date: Sat, 27 Sep 2025 12:04:28 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Yixun Lan <dlan@gentoo.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v2 6/6] i2c: spacemit: introduce pio for k1
+Message-ID: <7F98284B9618900A+aNdiTKvvbg4G-LwM@troy-wujie14pro-arch>
+References: <20250925-k1-i2c-atomic-v2-0-46dc13311cda@linux.spacemit.com>
+ <20250925-k1-i2c-atomic-v2-6-46dc13311cda@linux.spacemit.com>
+ <20250927014547-GYA1336612@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190f:b0:426:c783:a400 with SMTP id
- e9e14a558f8ab-426c783a65cmr86875145ab.10.1758945545400; Fri, 26 Sep 2025
- 20:59:05 -0700 (PDT)
-Date: Fri, 26 Sep 2025 20:59:05 -0700
-In-Reply-To: <CADfthj35b15UzKe5wz4QDPUfEobf1ddU3T6XDyDHGSJySBg5jw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d76109.a70a0220.10c4b.0008.GAE@google.com>
-Subject: Re: [syzbot] [fbdev?] KASAN: vmalloc-out-of-bounds Write in imageblit (5)
-From: syzbot <syzbot+48b0652a95834717f190@syzkaller.appspotmail.com>
-To: albinbabuvarghese20@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250927014547-GYA1336612@gentoo.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: No4GWyI4cWt6yq7nsa2Z3T+dRhiHdHb2o95Jy8Vez7Eu1mpPog4IaybQ
+	F94BrRltarg9U94Z4iG74LtXAgn6U/J+ZjAxaZsIRzCtZFFz0xtUydnG6wyUswFduybVGsr
+	+gzNFgMvEs7NAi0j/TKgDVB2hYNTAtlwwhjRP5ntS8pWx69lLJ7dJwLeEUQxsfPDigq7bVZ
+	yN+uvXtu7XEFnf4xdhEElPQmPNtNkk1TNZ40cQHo8k30R44w2rrOQNJk7XFz59L0umJmfy2
+	mCgLLnF5Kcpe8tCu9ozfCLIxYKUzzIaytM2w5M5iYQQTxO4lOjfHSJN3RyNaOrks2m8U/5N
+	0aWL8xsFlkG8SHSViPqEpsCubdpDkzT5wH1XN7uTjKPDn8bhvho8wJqWHzjfcSeMODcZVrl
+	4yMylXCmjkoCCJNOH+anITlvfQQM1HSCR5AAhVmxZ6JhoO4C8idQ116YzMo/P94XgF+YIpF
+	vDVg7ij0d4B4zGz8XxncRiPO469fOmVPRKmFfHpE4zJVmOfVOT2lXEM1OMOf0UqY3m2/ssB
+	5geM9aG5q6vUVeXxJnGLdbuXz44Sw0Uql9mL7CnJSdJ7Ql+JGsmH2lLkbh2GMx8WVkDd4/T
+	R+GZ++JMjRdjdysiY7kTlu1HPwES7tkoWWGtaifFukwNthSfBVzBHUl8fmRw9bzehi6BESi
+	u1DA4Hy3xk4q1bQ6hQGWJC3m0JrQTjuDLLqHDKBHNEdSeTmcTDQkLldB/iFuEdROwjBGF64
+	VyrofMpsw+L2KjgLmaWXXnUcOeynAOsloofmHiDzMoE2NUz1UpfaEVlTdEstYc/lizRh5U1
+	rOnXjtRk0dFfILVMykKy45Y11TLOX4DYAojL8Gvi7+Yy+8oLZ7yif3I+QTx6boErf++zhFa
+	VHmEGQ71jH45eOT0UeFeJVJ89odeHmc92YSnaqz/wPaItnI5PwrnCvZXgFPJidYdXIpr5mw
+	lgWGHMv2PDh/aIGk5K62ewXQkqwldMGwWNMbVosfwph96JWbdPam3q567yc8XvIo5B5dvVF
+	9nnZ5JWA6oSYVdDQs3HgCHGhHuPmuDR3ozgr+T+L3+cllSgTCcUExxOOf6lVY=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-Hello,
+On Sat, Sep 27, 2025 at 09:45:47AM +0800, Yixun Lan wrote:
+> Hi Troy,
+> 
+> On 10:02 Thu 25 Sep     , Troy Mitchell wrote:
+> > This patch introduces I2C PIO functionality for the Spacemit K1 SoC,
+> > enabling the use of I2C with interrupts disabled.
+> I feel it's more proper to say
+> s/with interrupts disabled/in atomic context/
+Good point.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> 
+> I've noticed that K1 I2C controller support three different transmission mode:
+>  non-fifo, fifo mode, dma mode
+> 
+> while you are trying to implement pio support, I'd suggest to think one
+> further step in the long run - support more fifo/dma + normal/atomic features,
+I understand your concern, but I have reviewed the code structure,
+and adding FIFO support would not significantly affect the current PIO implementation.
 
-Reported-by: syzbot+48b0652a95834717f190@syzkaller.appspotmail.com
-Tested-by: syzbot+48b0652a95834717f190@syzkaller.appspotmail.com
+> 
+> Personally, I'd like to see fifo mode implemented before adding pio
+> support, as it will bring quite significant code changes, require heavy
+> code review effort. And yes, this will put more demanding work on your side
+> and may slow things a bit..
+That said, we don’t have any plans to support FIFO at this point,
+and PIO functionality is something we need urgently.
+So I will continue to push this patch (tomorrow).
+Thanks for your understanding. For details on the code changes, please see above.
 
-Tested on:
+In addition, if anyone is interested in adding FIFO support, I’d be happy to help.
 
-commit:         fec734e8 Merge tag 'riscv-for-linus-v6.17-rc8' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15aee2e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-dashboard link: https://syzkaller.appspot.com/bug?extid=48b0652a95834717f190
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=134802e2580000
-
-Note: testing is done by a robot and is best-effort only.
+                                            - Troy
+>
+> 
+> -- 
+> Yixun Lan (dlan)
+> 
 
