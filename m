@@ -1,126 +1,86 @@
-Return-Path: <linux-kernel+bounces-835101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A36BA642F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 00:31:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9728DBA643E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 00:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14704A26A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92661894D0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68881236457;
-	Sat, 27 Sep 2025 22:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B2B23BD05;
+	Sat, 27 Sep 2025 22:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjZrdZmo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="k/fr7T2o"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B476715855E;
-	Sat, 27 Sep 2025 22:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1763A18DB1E
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 22:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759012271; cv=none; b=k73shRqsajmfuV53aO3BXXev7106E5lBJnaLBSz6m2de7jsFh1Qz3iG5L6SPH3/Jm1EIeUjMcNU+evuJYwHvfx6TqVcIbk0AIQp7oHPb1QTN+gIQJuSDtQYiLxWPxANbd388+jsrVf/1lxFs83eD/ZJ9wTpNM4gAZQD+30w6rsw=
+	t=1759012412; cv=none; b=QD4LFnvs3mWg/dp5fCXvAqO/2Jw3dAauZ23MnoNU2ndNFZ6a6i1zkQ/mErJbuEzXDn/RhaYEsjvx4LU640N97/xuSqMASNHn2ILEaYr5vb6mHyi8dLeD645Fzmggl4fXkTYu47tCWelU+UTbgvpBuNmOFd7OoMK8vrTPAKzr68s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759012271; c=relaxed/simple;
-	bh=dBMCnwC/+O9FTfXLyAEIuZ0DdSHoOWe/DqAJ60jmJB8=;
+	s=arc-20240116; t=1759012412; c=relaxed/simple;
+	bh=Sbt2L6rv75CoCrag0imLWLH7CXHlip8DY0LiuHqNm40=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lXNBPMCLBuk3iE0lhCDMvJZ2YctpL8l/hBfytPS1ZdeGaEcWAbpgJJlQvNAeQnkymjQFtoMHDqTzcgkg++2FeV9heY/tAE+rUg8s6hjDkXWDS7f/73n+y+hhIShvS1kZiKZ6IUEZGtNa/GPvRYStruLvpJ00JIpdyyF5ZaMIBJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjZrdZmo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67297C4CEE7;
-	Sat, 27 Sep 2025 22:31:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759012271;
-	bh=dBMCnwC/+O9FTfXLyAEIuZ0DdSHoOWe/DqAJ60jmJB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VjZrdZmoYtbyhNPG7F3XzGd74PCHvufvfo+0H4pTRUJOgLW05CU5xQyJU0hAvZTH0
-	 MQzNCNFOrQ4I+JCd7yNy8sBQkyqb+D7P724ui6/6F4Hpl3vSStdYfv+7eS0QuIRSCS
-	 ibjablqCjJSDSoaJE88jILyZ0wCwbn8kEJq9V+XNDp7LTbnvSkdi1FohOUtqNeerTy
-	 akPCP+27p2SVL4GM4o/GpsFzYWxwwZaTa5PW4XdhbCyxFCkOuimLmztv+pp6PY69wY
-	 jAU4sfYrinKIGI+A6CMi00v30UemeczhLqkgdUs+pb+fMHJ4F1kt1iS8f7ShwqNUyL
-	 jrmxALXQ83jnQ==
-Date: Sat, 27 Sep 2025 23:31:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] regulator: dt-bindings: Add Linear Technology
- LTM8054 regulator
-Message-ID: <20250927-spoon-yearning-c1a8df796173@spud>
-References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
- <20250925-ltm8054-driver-v2-1-bb61a401a0dc@bootlin.com>
- <20250925-pushchair-charity-9ccee20d8a6e@spud>
- <5331035.LvFx2qVVIh@fw-rgant>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdMnJT3i1amv6Kwv4BljXDALfAIKSLwZDWuk+mtJUZfGweBfHf1g+uqMZ4dvESldWNNctmrCJba7wIEqNdT9+KJnSIEtLfI6jZMlzR3yt/IQUMTZo0rRRzE99GJjBr5AhFJnZwSV6BPCmjlpBhQPRN2VcCCO1CdyDJFl+KZ2oW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=k/fr7T2o; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=OQ3t
+	PU3/XvowigblqUtuwUAnQKAyH8Zve8zvWTCKrdw=; b=k/fr7T2oXqXSkF6mWCqy
+	808SLXnfQIQiEBYAwmwKDLUyaK0hQhK+q28WQuLyDyxdvPSnvpqH/Ymqmhe0ZF3B
+	fP62s3PPBliCrTy4JyorZCq3366wHUnw1meZIaj+LOo3Ey2RhuXDze6JInc9Jwm0
+	ZYmiFD+/a2KvOdlF6QW1TFWcHDmcShf4ReSLtdAGGj749LH10Xa9eJOHwH1jLof+
+	+8tEB72X7ZBqCnKGdfO8+tQtCZko27K5TBFh8QHQIk2z39ekhFEV4ULBGka1Ti8z
+	xGhhegum8Hp0J9uSvA1irmUv/cZrY25PdzdC5p9Y9HZjf8jSxM62Ye9oxQLHcKFp
+	Ew==
+Received: (qmail 2703265 invoked from network); 28 Sep 2025 00:33:28 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Sep 2025 00:33:28 +0200
+X-UD-Smtp-Session: l3s3148p1@Rem8/c8/nOwujnsw
+Date: Sun, 28 Sep 2025 00:33:27 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Jonas Jelonek <jelonek.jonas@gmail.com>
+Cc: Sven Eckelmann <sven@narfation.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Harshal Gohel <hg@simonwunderlich.de>,
+	Simon Wunderlich <sw@simonwunderlich.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH i2c-host v6] i2c: rtl9300: Implement I2C block read and
+ write
+Message-ID: <aNhmNxhqfWlhlXw9@shikoro>
+References: <20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org>
+ <1838669.VLH7GnMWUR@ripper>
+ <aNZQnlUML0jIhXIM@shikoro>
+ <13214546.O9o76ZdvQC@sven-desktop>
+ <3203ee4c-b320-45cf-b63c-49f589909dfb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dO2l03q4ujQbw8Xs"
-Content-Disposition: inline
-In-Reply-To: <5331035.LvFx2qVVIh@fw-rgant>
-
-
---dO2l03q4ujQbw8Xs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3203ee4c-b320-45cf-b63c-49f589909dfb@gmail.com>
 
-On Fri, Sep 26, 2025 at 05:59:48PM +0200, Romain Gantois wrote:
-> Hello Conor,
->=20
-> On Thursday, 25 September 2025 21:27:06 CEST Conor Dooley wrote:
-> > On Thu, Sep 25, 2025 at 02:37:33PM +0200, Romain Gantois wrote:
-> ...
-> > > +properties:
-> > > +  compatible:
-> > > +    const: adi,ltm8054
-> > > +
-> > > +  enable-gpios:
-> > > +    description: GPIO connected to the RUN pin.
-> > > +    maxItems: 1
-> > > +
-> >=20
-> > > +  lltc,fb-voltage-divider:
-> > Why does this property have a ?linear? vendor prefix?
-> > Shouldn't it be adi to match the other property and compatible?
->=20
-> This component was originally from Linear Technology, before it was acqui=
-red=20
-> by Analog Devices. The new properties and compatibles have the Analog Dev=
-ices=20
-> prefix, but the "fb-voltage-divider" property is already used by the LTC3=
-676=20
-> and LTC3589 regulators, so I left the Linear Technology prefix for this o=
-ne to=20
-> avoid introducing a new property just to specify a vendor prefix change.
->=20
-> I don't have a strong opinion about this though.
 
-Do they share the same driver?
+> To wrap it up:
+> [1] needs to come first
+> [2] then this can be merged
 
---dO2l03q4ujQbw8Xs
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks for the heads up here! I will do the following:
 
------BEGIN PGP SIGNATURE-----
+1) apply the patch for host-fixes now and send it to Linus tomorrow for
+   6.17
+2) during the 6.18 mergewindow, send my first PR without your patches
+3) when both of the above are in Linus tree, I will prepare a second PR
+   with (not only) your patches
+4) send this some days later in the same merge window
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNhlqQAKCRB4tDGHoIJi
-0t74AQCabvjJlJT7JwqpnsYqKxgYWhQ/m7pHQbMZB2cZ2tUcDgD/bwEavC33iHAB
-OMsQgRoetYt6nmPa+Fm0cxjAGDT24wc=
-=ACPw
------END PGP SIGNATURE-----
-
---dO2l03q4ujQbw8Xs--
 
