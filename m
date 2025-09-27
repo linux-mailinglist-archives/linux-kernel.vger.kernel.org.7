@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-834777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBF6BA580F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:51:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D74BA5812
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EBEC622EE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:51:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FEA7171DD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 01:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A825720A5E5;
-	Sat, 27 Sep 2025 01:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AC0207A09;
+	Sat, 27 Sep 2025 01:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYhOYqhx"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvgQAkMe"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A631A9F8D
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8429134BA59
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758937902; cv=none; b=X5zAvYA8v0XAeQ9nq15zVxopTqKFnnpjKkeBuMMUo2koTDhWKg3sRo5ouLLyoqgHZSxpO3LuQ8BCdSFiHZjpHtSgmqZNNg+EdMjA40oO9qK9D/DXU++sy5dZeClS+OE6nXC4B9ewo3TavH6OEi5cT2i5ZQ/osJNeHw1iAmWydb4=
+	t=1758937978; cv=none; b=d9M/WEesEjgC+sdKPjmu77v5ODe6q8FyjxWAYh1qGoiiE7nXrrcjQc5Ihq0n4aH/NkE7OYbNi/3dvaCpcYEODS7+rxpcxkApALyuhH2n5Yu6JuPNuyVwbeKootpbxzD9ctMQIK0UbIqNHtBNs6MjzRTsPesb9fBBavpr6ILNUq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758937902; c=relaxed/simple;
-	bh=qkIQ3n+rzM3+RhfCK0XXihWsQ3Ri2LnrlHgV8TJTCeY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hUTPqTpBQHSKYPOUaggAlnvtAdVoJUAMqTSo2haJ9/+tcRATOxvCbPE6u6vbQV+eHeC9nuxVVVCI3afL5DyUnTgXhX7vNsNDYfJAxDTy59ksTxSQ6ZdtcAOW00xVLtMzVjhtFVnPpZLBFRDM6IcfPQ3/HlG5h0iSTJaZxuD05QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYhOYqhx; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1758937978; c=relaxed/simple;
+	bh=ZYXy+qZoq15hPEdWMOX95bXvFqMYr53/l5pbz9JGvLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JZVCbXiCwcpKF49f+g0qehvkqqIwONC3gDKJgRKtFQEnL5iJ8yBYwQ7GZlRJdJf3DX1/IZDFtXLBucx8cNVfXYymQYGIZspY6PYoA6YZvwgO/FEsB0EI90Wzw9cqvp98ZvGAKKboAXMcsHPEdRE9WdYDjdPfJWMolYiqTVOO9Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvgQAkMe; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so430056366b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:51:40 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77f5d497692so3938241b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758937899; x=1759542699; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zs1xWPcCbZGD0sIYaMwWpCbxlxVk6Wa8F50KXuKcgSQ=;
-        b=SYhOYqhx306KX3uWtk1Dox8S9YJFO9XZlcz9SV+xHBg38KkdwGJTLvkXmdTrRS+PuJ
-         CibEpTFXuRvrvfcjMoXWoBIrH84LUQOD8ig9xxqJjBVTH8MXexORF1OwYPjHle3DRRzC
-         PjghQ9KAadFfM1JZEn3LApypI2MZ+E2SJUOmOjvRHpSOk492flo2aV+a5HLIaM36k1Jg
-         pO6LdE6lPx5RSddadB5dhkB7MOFaaE1ZRWGfdeFw9BmjLmCL5/laihDfM86+NFHbYyXa
-         xro+8rbluvbr2v3FCJb4kMwFq2bM7yM5Q8qUDN6YSK11nxlttMibn80xf45b1FqHzuq6
-         TvxQ==
+        d=gmail.com; s=20230601; t=1758937977; x=1759542777; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNZKuIkpO9xzN0SiRMeuDaqHWkcO0grUi3IMiky7S6U=;
+        b=ZvgQAkMeVbAjiqMST/80Z5ZKzU8B3VH8nb7yeHky9iqYNZgd7+4ElqHDr6crbdy3Mb
+         +7mQVd4myeKMhq1gtLe8kJblWengKS3RukNYfUyL/AweMYYm/s3zu+eQevSOwsdFV8EI
+         k8c1T3fB4QYje79nQ7SNKmoVvpGL9GCNdj1hTsGwhrOoSFhbeyFJZf4eTXLeShumat1U
+         887K7V9eqy+zl2nwI3QWSDuz5JZe7BAtWhQ4VjK/dh6v8XiDh82g90cTA530whyxp8RS
+         5y2UAGpY/CyHyxX9fzI/TJ4L+4V8cG+ayHmOmDEOPDZytZ9E2gmFl/1VcizZ1NydRF60
+         2KcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758937899; x=1759542699;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zs1xWPcCbZGD0sIYaMwWpCbxlxVk6Wa8F50KXuKcgSQ=;
-        b=BnhGmyTCElKXG2m3mu20MGB09RBpzmQVLTYMekLVEykA3LAc2Brwvi5hjON6mC+9x3
-         ODX8X7D6zWvaL6iIs4lc04YPq4sHbrLbqMZh/ZcQuqdNDcE/sbhE9PdGudFEtTmLTr4v
-         jq9ow7MjSpokKISPxtfhHxrdLk8b8outOxb4ZJvkODM6fqX5dxtYCuMRwDl1s0pEIipW
-         MuB3z+hf4zRu4WCbP2fgzS7cDRnHiFvtK0I1lypmMQDsDsS/+xEu7UJN7cLL3JSLfhnn
-         NqsPioGLpl/yPu3s1ufanZ7iUx3naQs6V856mPaOpn4+vGIuJdjzF2qPRVnz4M3UD8VE
-         GK0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVbEhN6KIW7tX7L0Hiiqx8OOzS0ooZIeqbqR0AfJMzOO3NL5X//4KLrjELuYt5wX1F4y0pi0sPLSWypH1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlwQdAROGeGgz+IYcsvYFrYpnihJbv2xY/jJnmKE4DNzLCpZz5
-	ttSB8DQi8j8G7aN7EwfmCqEN/yV4Pb/+tJFCYuH23cEleht2tLnVl3e9b5S7e7jUUM3gdoBNwpW
-	bw4k5d8kmxFyIP7+BeOXH1GIZUmx4ZuFjrw==
-X-Gm-Gg: ASbGncs5pWWYqQL+jGaW+bOmBlHPCdi/yvS5neyF/NLnaeTOKHMXgfYT9ojUXWHp1A2
-	YZpX8a74XvHUPZDo2dHGfRniX3BcxmoNngLotpFKWiGx0x3iGo3mtJGY7G1YglsUGWRBR21NUsQ
-	WtF8kXew4bE43pmUy+zVVM6I8UwX/IwhXa3t9WiFz6FpaWzAfdb36kE9H4tKSNDLr2vwHHIoNZo
-	Inq2ZLqcOLynAn8q545mQJLCZ5gWd7ywc35lzJPe927srGyaa823snWsOlOaG0=
-X-Google-Smtp-Source: AGHT+IGhcqqrtlZvmhw9atNcQRBpQp8K4rlgl9psbV65FPi2trVxKxFvUr52BtENvfA2/K/LOLrXff0m7xxljb1ivIA=
-X-Received: by 2002:a17:906:478f:b0:b2c:bf1e:2788 with SMTP id
- a640c23a62f3a-b34bbbd9e1dmr974789866b.39.1758937898582; Fri, 26 Sep 2025
- 18:51:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758937977; x=1759542777;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dNZKuIkpO9xzN0SiRMeuDaqHWkcO0grUi3IMiky7S6U=;
+        b=JHCEyXOPR76B6TzvVoGtnh/0SpJ51oC4oYFgyl38v+D7d6zC/M4HCzV5XrkSJJNUuY
+         W7RjjuifhbqnAVAiOhwpKtVIZpXxdj1+Ksg0pBF003+t2zFnnJnDPcDMOvVAcwojJFyU
+         hqYWXDu73pO/17UMgeVnUxptEimVOWHOjozt1Zq1Kksm0BM0kR3WNwCp8N558qa9Lxvw
+         /rMwiUGSE47m+RgpjcIXCxLBo834WSblPru1DzUd4PJI9n2vgutHn9uDwx/369jrdb1f
+         J0xludhpt3R0jHHFQflZCLw8BJaFGLUSUOjMXofWEGsRylRuKLezVYv630PMBW/g8m1I
+         F7ww==
+X-Gm-Message-State: AOJu0YzdjYMD6+z5Kf5D8NE9+QnxLKcw3qWztn3I5IUd9dHQpvzEbGHK
+	E8/w9RyX3WZ438+IS3maxN4W2QdpO/9nAPQ6gy+cyWurKmwZgW9tHH1W
+X-Gm-Gg: ASbGncvjXj0E4XgAXHB4Fn2UNhTSZAolN247/YrPiBWgpGO/5lAFiwi/EpHmz+06wfa
+	xW3Z8iy03MhdOJOI359hWHA2jKIjdNj5JhJxb9BDsbz2Sz6ows7ysQQIUU7DDTFDWhI0+QKKDyl
+	CSXTEFzUB4BIO3SRvai/xFCVxWoiw41pPp50duPSaQ16QvvWZw32Soh9jKx7XD3xM+7rFsw8pHn
+	j4JL9mLvLWUyU5rl2u2YMLgTZ635EL9E/yHoLUzluXaT2PX5s9zxur0PMdjg9+13HwRnz0PJ6l+
+	2ARqZsXZoT4d+NDVri72kTwuRwnVNxB2yW7azIy2+e70lGp761wJD8x0dJPg+7gpCoWHzH0vg0n
+	dtiYfeHleJD1E3nAc
+X-Google-Smtp-Source: AGHT+IHi08UcJp+4yu1Szh8nOEE8/dJqhKWmQapEqXNHok7hka+Vj48+0jZH2f+VFz+uiV1OCaQU3A==
+X-Received: by 2002:a17:90b:380f:b0:32e:32e4:9789 with SMTP id 98e67ed59e1d1-3342a257486mr10689082a91.3.1758937976479;
+        Fri, 26 Sep 2025 18:52:56 -0700 (PDT)
+Received: from ubuntu.. ([110.9.142.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be2073dsm10251836a91.19.2025.09.26.18.52.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 18:52:56 -0700 (PDT)
+From: Sang-Heon Jeon <ekffu200098@gmail.com>
+To: phillip@squashfs.org.uk
+Cc: linux-kernel@vger.kernel.org,
+	Sang-Heon Jeon <ekffu200098@gmail.com>,
+	syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH] squashfs: add sanity check for invalid inode size
+Date: Sat, 27 Sep 2025 10:52:47 +0900
+Message-ID: <20250927015247.957452-1-ekffu200098@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913-fix-prctl-pdeathsig-race-v1-1-44e2eb426fe9@gmail.com>
- <ef4878fe-3edf-4bd0-bb33-116ced1a4eb8@gmail.com> <20250922154819.c3049158ca006e1561ff5dcb@linux-foundation.org>
- <20250923120344.GA12377@redhat.com> <CAGudoHED4nx8QT-yw-zdcUApUyvt2HCOR9c3SQ3tAm9J7Q1jEQ@mail.gmail.com>
- <20250925162759.GA25838@redhat.com> <CAGudoHGiO8vfyzuRmVHePR_TCeMSXjOv1TFpQ3i8Jk9+RMmTtQ@mail.gmail.com>
- <2a3b72a8-6604-4c7e-a9b1-0c770efb29c6@gmail.com>
-In-Reply-To: <2a3b72a8-6604-4c7e-a9b1-0c770efb29c6@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 27 Sep 2025 03:51:26 +0200
-X-Gm-Features: AS18NWBkJO3XnlGx2QTf1dvNJ2jSGVKP1jes-wB5FdJWhQVn4O7zWEUYMYBwZvY
-Message-ID: <CAGudoHF4P-NVSCJGvy6BSeU10tNbbB_oKq=FhtrOzUAaJychig@mail.gmail.com>
-Subject: Re: [PATCH] kernel: Prevent prctl(PR_SET_PDEATHSIG) from racing with
- parent process exit
-To: Demi Marie Obenour <demiobenour@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christian Brauner <brauner@kernel.org>, 
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 27, 2025 at 1:58=E2=80=AFAM Demi Marie Obenour
-<demiobenour@gmail.com> wrote:
-> My personal thought is that prctl(PR_SET_DEATHSIG) is rather rare,
-> and also the lock is not held very long.  In particular, exit
-> already takes tasklist_lock for writing, and that is much more
-> common.  Therefore, I would be shocked if this added any significant
-> contention outside of contrived benchmarks.
->
+Corrupted squashfs images can have negative inode sizes. Add sanity
+check to prevent negative inode size.
 
-This is my suspicion as well, yes.
+Reported-by: syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f754e01116421e9754b9
+Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+Tested-by: syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com
+Cc: Amir Goldstein <amir73il@gmail.com>
+---
+Special thanks to Amir's kindness analysis [1]. I couldn't find proper
+tag for credit, so i just cc-ing. But feel free to add proper credit.
 
-> What I _am_ concerned about is potential starvation,
-> especially on PREEMPT_RT.  Per the documentation:
->
-> > - Because an rwlock_t writer cannot grant its priority to multiple
-> >   readers, a preempted low-priority reader will continue holding its lo=
-ck,
-> >   thus starving even high-priority writers.
->
-> This allows any user to hammer tasklist_lock
-> at will.  Is that going to be a problem?
->
+Also, I referred method of erofs. but i might be wrong, please let me
+know about that. Thanks for consideration.
 
-I can't speak for Oleg, but he also expressed concern over free access
-to readlock tasklist, presumably including in this context.
+[1] https://lore.kernel.org/all/CAOQ4uxgkpi4v3NTSTq5GGJEceHHi97iY4rtsAJuo5c-yxu-Bzg@mail.gmail.com/
+---
+ fs/squashfs/inode.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-My take is that any thread can already freely abuse the lock in this
-manner by spamming waitid or kill (and probably in some other ways).
+diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+index ddc65d006063..148cd75f5bd7 100644
+--- a/fs/squashfs/inode.c
++++ b/fs/squashfs/inode.c
+@@ -426,6 +426,12 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+ 		return -EINVAL;
+ 	}
+ 
++	if (unlikely(inode->i_size < 0)) {
++		ERROR("Negative i_size %lld inode 0x%llx\n",
++			inode->i_size, ino);
++		return -EINVAL;
++	}
++
+ 	if (xattr_id != SQUASHFS_INVALID_XATTR && msblk->xattr_id_table) {
+ 		err = squashfs_xattr_lookup(sb, xattr_id,
+ 					&squashfs_i(inode)->xattr_count,
+-- 
+2.43.0
 
-The existing spots are not trivial to fix. Should someone do it, your
-patch is comparatively a minor addition effort-wise.
 
