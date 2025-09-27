@@ -1,181 +1,331 @@
-Return-Path: <linux-kernel+bounces-834861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BAEBA5A98
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:11:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F90BA5AB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B7A7AE68F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2981BC6818
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DF72D47FF;
-	Sat, 27 Sep 2025 08:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1482D4816;
+	Sat, 27 Sep 2025 08:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBWZEy5n"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MNFu/ScS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uCy7wWPJ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u7L9Asjw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Myo200mw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0366B242D88
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5502D46DA
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758960654; cv=none; b=nLZ4HMUJEK0dq4sp9jQ9gpnSUZnj87KjSFPU14zNhHia6WcbEhcrehU7StiWXsdOHGEovRhL80Ty42Y5z9qncECOUCxuhwoRD4+4EboY5pWLyD6J4wwpqFNDJLXm3qNgkjQb3X29iZ1wjyY5BGG5634WkHWWeO3rWez8g0BqZD0=
+	t=1758960876; cv=none; b=UAQ4xdyYZvTe/jISe3PWCTHRgeZpRcJOpJS3SACPHAUXLWRlKa/9u9xFUOV8coPeQDVpz8HDChoxfhlFIpJjSj/75lftDNbQOtOFiUZmYFUOQh7GhSNapSzJAbtpujwBfRnlcNhokr60SZe88HuSLwnh3hbOgkiZhH5tSV40YZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758960654; c=relaxed/simple;
-	bh=ASAoL0wewSEbqehJdlhPMOC6Yab6jICgC6v+92dmYUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gFcHzDouvdRRMsAr1DNplj6M/XSfWPE00Me4dZVjaISdmJ6N5k3jdHoYGaABZPZHUbh2BpNcuembRrIOSxkE707uVmZ8BALnd96UC9L5XUhZkpKQ/MPJ0DjTO1LgQOtAWyqpaqM0wLvgZiMRTC+LqonY+DIBmOZmSabeT/L4I2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBWZEy5n; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8ed2c10d61eso107568839f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758960652; x=1759565452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lQUetzEQMP4LAhqW9E/G21GQbOBqRaYhD1bJwLd7FZQ=;
-        b=KBWZEy5nzzZ2sC3Gzd8pDpzBD1RWGPXxynpzUUTF1HbtCZDexGifo7xUMidYpIKPT/
-         5cauUbBkMsVtQI0Z4irm8Hb6oGmoUJvEN9hv+hozcmUH3ypnO6jWkcuFkp26qO6i+HN9
-         j2gWsc3wovepv8w1ySK6XAgbZCj66lS9LDXapyNsN5S/VponoqcT10SwSoSYmBEteO8x
-         hhad31Ed+fvHKOZIHOVR8DJJfDaxOSeVdV5GA0Pcig6d/flExbJ9kTv8J6v/FflgXJbf
-         W5ITKxBsdGY4W8TNmP8AJxylu4BiFWtGn4TO0eG+FzKgjzOu2TktfcKmq3jBvy/ZWs9W
-         mr9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758960652; x=1759565452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lQUetzEQMP4LAhqW9E/G21GQbOBqRaYhD1bJwLd7FZQ=;
-        b=b6g6XtqX8EB5P8mMCj/9WM/sGXTP5pSTX1yxf6dM3Qg7R3pV+vApomqqH7gEPfJSKi
-         NK2oxTADDkONVAj0qtOomWe0oafhdxihtx8pyk/0TXoI/PGJ0bfJK8AhXFDR151Gvdd0
-         HWEuhutJpZIFYOAO/Po00wL134zEEyWJuiUwa0kS4TESJK+yggCNKohwtM8IgKhQ6CXQ
-         VgiAhhQbYsPozW+3KLO0Y+1yPiHKn7orJJ4bMwBVXQS6suM9iglvC+f4Q5PdWvlhlXBg
-         ln31xLf9HT7QSdi6fZMk4+1ee9h2+jiZQkVi63OQLY5QVdzNv315+7LDR2YdvBTu/wjP
-         Z2Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzWO6GIIO7OshBFclkpF88fyrCNtSHELVdZAIDAHLJuW30sEUVID1D9pwJiHHnpJnZvIwyXm9HlRRNDic=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2VL+UqYV6Iq54n/S+T2U5QFA6j33mFe0uusGB1yvB72kYrBrS
-	CtIImE5qUX/SkYwShAumDHB9O07pzGa5H3vP58tMYGHAhX0smcQX6LEC
-X-Gm-Gg: ASbGncssAaBI47JvwylA4ZcAdcYNbpOczMk6d1eW1oGxY+PxjUxgcu7NVaIHh5eInWP
-	FO1gocUQ4whTKL7mMD+JT6jQnunUIcpfn++itstGodMJ6n1FZxglQ67XKMgZJlgYatMxcYTA6KU
-	0ZKJuZ6RO4Hvung8fj7Ccx8rKqwxnUgb+rlIaMpyFAJVpHICLixK2Ql32ddOjglv3kkdWgajpS4
-	SvWONihyz7CQRo7RQ9Xp9meTRMybJ4EORIQHbRwZUhulaNzmpvKXOZWEtMLUpl4EBO8oxw6p/ql
-	jVJjFnM0XJCvHiyNjTsQ4C8qWuzHnwszocCwjEemD+ZkdtzjoB2RdNNqTgQp1+1p6djAL/M+dzh
-	d6DyABKTX3VSN7/OZevGn5XfV94sOAQdITfXmAg==
-X-Google-Smtp-Source: AGHT+IH0IVO5vzLeRO4V6lWOrPlzDHkhJS4CVNTknktDnTu3FcBbSqcFVPYeFHLy8GA/XY52U+1p6w==
-X-Received: by 2002:a05:6e02:1a27:b0:426:5a34:77ec with SMTP id e9e14a558f8ab-4265a347968mr138432705ab.11.1758960651856;
-        Sat, 27 Sep 2025 01:10:51 -0700 (PDT)
-Received: from orangepi5-plus.lan ([144.24.43.60])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4282de12fc8sm10852155ab.3.2025.09.27.01.10.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 01:10:51 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next v2] net: stmmac: Convert open-coded register polling to helper macro
-Date: Sat, 27 Sep 2025 16:10:36 +0800
-Message-ID: <20250927081036.10611-1-0x1207@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758960876; c=relaxed/simple;
+	bh=u4i9cHF5YhFe8csy42Z21wHtNipJrezGkAGwJui6Gnw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ULfJkaGWedURQAyjxLRtM8DzZJqG4JjTo7TXzRD+zEgHo3FEvu5MiEMKGdbkaeIR4ohNCec73ec1o/opF087SUECd8jCc/r1qNwzrZ/RwRGtItk0XQrt7on7j56K8eEC4DOJKuc5Jr881WkaxXE86YcnbDWcMqBruZU+nXJsFjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MNFu/ScS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uCy7wWPJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u7L9Asjw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Myo200mw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C0893247DD;
+	Sat, 27 Sep 2025 08:14:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758960871; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y75e+5ePiVoUzqzr0M0vKrK0VUx24V9nUCpi7hcUUgI=;
+	b=MNFu/ScSdxeCk0seQ7eSbCzyuDWyadXYTUbJjv1uH8uHwlXD9/CTyRIb4uxv8TLipwPj+Y
+	RTB3U60xKmqDxgnCm7GVEAGa0jAin1Ysi2KUpVhBs+xKjTWl0gW5gRi9qducHktXSu2DWU
+	zqWe4gXfO7Ade1VmDhy03DUJ9Fpahgo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758960871;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y75e+5ePiVoUzqzr0M0vKrK0VUx24V9nUCpi7hcUUgI=;
+	b=uCy7wWPJaoQRFCUc7XZ3cSwjruxsYMFslVOjiZKEAlJW1H8uei0BUF+UdZaJyA41eyPht/
+	nLC7LnBFyI8uJ5Bw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=u7L9Asjw;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Myo200mw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758960869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y75e+5ePiVoUzqzr0M0vKrK0VUx24V9nUCpi7hcUUgI=;
+	b=u7L9AsjwY6ZozkIHCdYXCSlpyq7Q4E+dXqoBemYlKnKnJ1RNu3POF6vY2kW71uAsUaLchN
+	MQ517PbO4l1cIke+H4fpU0VKOhXu1EzFltSDpH2WfXeCTXlKbS6pjvo1JZe5SM6lB8KUjb
+	YgQQx/i/bHHQvIK6bJrMIuEmbe7JQGo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758960869;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y75e+5ePiVoUzqzr0M0vKrK0VUx24V9nUCpi7hcUUgI=;
+	b=Myo200mw17dHz8+naivnl+U9AI0i3fgGxq5L+nJq1TfpciSh2duBkt3Ro85saltho0oq8g
+	lK08wZC3UhSfJdBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7589813782;
+	Sat, 27 Sep 2025 08:14:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id isvbGuWc12h8NgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 27 Sep 2025 08:14:29 +0000
+Date: Sat, 27 Sep 2025 10:14:28 +0200
+Message-ID: <87a52gb9cr.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Victor Krawiec <victor.krawiec@arturia.com>
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tiwai@suse.de,
+	kees@kernel.org,
+	abdul.rahim@myyahoo.com,
+	jilliandonahue58@gmail.com,
+	jkeeping@inmusicbrands.com
+Subject: Re: [PATCH] usb: gadget: f_midi: allow customizing the USB MIDI interface string through configfs
+In-Reply-To: <20250924154822.205703-1-victor.krawiec@arturia.com>
+References: <20250924154822.205703-1-victor.krawiec@arturia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: C0893247DD
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linuxfoundation.org,vger.kernel.org,suse.de,kernel.org,myyahoo.com,gmail.com,inmusicbrands.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
 
-Drop the open-coded register polling routines.
-Use readl_poll_timeout_atomic() in atomic state.
+On Wed, 24 Sep 2025 17:48:21 +0200,
+Victor Krawiec wrote:
+> 
+> When using f_midi from configfs the USB MIDI interface string is hardcoded
+> to 'MIDI function'.
+> 
+> This USB string descriptor is used by some third-party OS or software to
+> display the name of the MIDI device
+> 
+> Since we add an additional string option a new macro block was created to
+> factorize declarations
+> 
+> Signed-off-by: Victor Krawiec <victor.krawiec@arturia.com>
+> ---
+>  drivers/usb/gadget/function/f_midi.c | 108 +++++++++++++++------------
+>  drivers/usb/gadget/function/u_midi.h |   8 +-
+>  2 files changed, 66 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
+> index da82598fcef8..0a8af7d507d9 100644
+> --- a/drivers/usb/gadget/function/f_midi.c
+> +++ b/drivers/usb/gadget/function/f_midi.c
+> @@ -875,6 +875,7 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
+>  	struct usb_composite_dev *cdev = c->cdev;
+>  	struct f_midi *midi = func_to_midi(f);
+>  	struct usb_string *us;
+> +	struct f_midi_opts *opts;
+>  	int status, n, jack = 1, i = 0, endpoint_descriptor_index = 0;
+>  
+>  	midi->gadget = cdev->gadget;
+> @@ -883,6 +884,10 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
+>  	if (status < 0)
+>  		goto fail_register;
+>  
+> +	opts = container_of(f->fi, struct f_midi_opts, func_inst);
+> +	if (opts->interface_string_allocated && opts->interface_string)
+> +		midi_string_defs[STRING_FUNC_IDX].s = opts->interface_string;
+> +
+>  	/* maybe allocate device-global string ID */
+>  	us = usb_gstrings_attach(c->cdev, midi_strings,
+>  				 ARRAY_SIZE(midi_string_defs));
+> @@ -1178,59 +1183,62 @@ end:									\
+>  									\
+>  CONFIGFS_ATTR(f_midi_opts_, name);
+>  
+> +#define F_MIDI_OPT_STRING(name)						\
+> +static ssize_t f_midi_opts_##name##_show(struct config_item *item, char *page) \
+> +{									\
+> +	struct f_midi_opts *opts = to_f_midi_opts(item);		\
+> +	ssize_t result;							\
+> +									\
+> +	mutex_lock(&opts->lock);					\
+> +	if (opts->name) {						\
+> +		result = strscpy(page, opts->name, PAGE_SIZE);		\
+> +	} else {							\
+> +		page[0] = 0;						\
+> +		result = 0;						\
+> +	}								\
+> +									\
+> +	mutex_unlock(&opts->lock);					\
+> +									\
+> +	return result;							\
+> +}									\
+> +									\
+> +static ssize_t f_midi_opts_##name##_store(struct config_item *item,	\
+> +					 const char *page, size_t len)	\
+> +{									\
+> +	struct f_midi_opts *opts = to_f_midi_opts(item);		\
+> +	int ret;							\
+> +	char *c;							\
+> +									\
+> +	mutex_lock(&opts->lock);					\
+> +	if (opts->refcnt > 1) {						\
+> +		ret = -EBUSY;						\
+> +		goto end;						\
+> +	}								\
+> +									\
+> +	c = kstrndup(page, len, GFP_KERNEL);				\
+> +	if (!c) {							\
+> +		ret = -ENOMEM;						\
+> +		goto end;						\
+> +	}								\
+> +	if (opts->name##_allocated)					\
+> +		kfree(opts->name);					\
+> +	opts->name = c;							\
+> +	opts->name##_allocated = true;					\
+> +	ret = len;							\
+> +end:									\
+> +	mutex_unlock(&opts->lock);					\
+> +	return ret;							\
+> +}									\
+> +									\
+> +CONFIGFS_ATTR(f_midi_opts_, name);
+> +
+>  F_MIDI_OPT_SIGNED(index, true, SNDRV_CARDS);
+>  F_MIDI_OPT(buflen, false, 0);
+>  F_MIDI_OPT(qlen, false, 0);
+>  F_MIDI_OPT(in_ports, true, MAX_PORTS);
+>  F_MIDI_OPT(out_ports, true, MAX_PORTS);
+> -
+> -static ssize_t f_midi_opts_id_show(struct config_item *item, char *page)
+> -{
+> -	struct f_midi_opts *opts = to_f_midi_opts(item);
+> -	ssize_t result;
+> -
+> -	mutex_lock(&opts->lock);
+> -	if (opts->id) {
+> -		result = strscpy(page, opts->id, PAGE_SIZE);
+> -	} else {
+> -		page[0] = 0;
+> -		result = 0;
+> -	}
+> -
+> -	mutex_unlock(&opts->lock);
+> -
+> -	return result;
+> -}
+> -
+> -static ssize_t f_midi_opts_id_store(struct config_item *item,
+> -				    const char *page, size_t len)
+> -{
+> -	struct f_midi_opts *opts = to_f_midi_opts(item);
+> -	int ret;
+> -	char *c;
+> -
+> -	mutex_lock(&opts->lock);
+> -	if (opts->refcnt > 1) {
+> -		ret = -EBUSY;
+> -		goto end;
+> -	}
+> -
+> -	c = kstrndup(page, len, GFP_KERNEL);
+> -	if (!c) {
+> -		ret = -ENOMEM;
+> -		goto end;
+> -	}
+> -	if (opts->id_allocated)
+> -		kfree(opts->id);
+> -	opts->id = c;
+> -	opts->id_allocated = true;
+> -	ret = len;
+> -end:
+> -	mutex_unlock(&opts->lock);
+> -	return ret;
+> -}
+> -
+> -CONFIGFS_ATTR(f_midi_opts_, id);
+> +F_MIDI_OPT_STRING(id);
+> +F_MIDI_OPT_STRING(interface_string);
+>  
+>  static struct configfs_attribute *midi_attrs[] = {
+>  	&f_midi_opts_attr_index,
+> @@ -1239,6 +1247,7 @@ static struct configfs_attribute *midi_attrs[] = {
+>  	&f_midi_opts_attr_in_ports,
+>  	&f_midi_opts_attr_out_ports,
+>  	&f_midi_opts_attr_id,
+> +	&f_midi_opts_attr_interface_string,
+>  	NULL,
+>  };
+>  
+> @@ -1264,6 +1273,8 @@ static void f_midi_free_inst(struct usb_function_instance *f)
+>  	if (free) {
+>  		if (opts->id_allocated)
+>  			kfree(opts->id);
+> +		if (opts->interface_string_allocated)
+> +			kfree(opts->interface_string);
+>  		kfree(opts);
+>  	}
+>  }
+> @@ -1280,6 +1291,7 @@ static struct usb_function_instance *f_midi_alloc_inst(void)
+>  	opts->func_inst.free_func_inst = f_midi_free_inst;
+>  	opts->index = SNDRV_DEFAULT_IDX1;
+>  	opts->id = SNDRV_DEFAULT_STR1;
+> +	opts->interface_string = SNDRV_DEFAULT_STR1;
 
-Also adjust the delay time to 10us which seems more reasonable.
+SNDRV_DEFAULT_STR1 is NULL, and this fact can simplify things a lot.
 
-Tested on NXP i.MX8MP and ROCKCHIP RK3588 boards,
-the break condition was met right after the first polling,
-no delay involved at all.
-So the 10us delay should be long enough for most cases.
+So, it's better to initialize explicitly with NULL instead of
+SNDRV_DEFAULT_STR1, then you can just do NULL-check of the pointer
+without the use of *_allocated field (that can be dropped).
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
-V1 -> V2: fix code alignment, update commit message
-V1: https://lore.kernel.org/all/20250924152217.10749-1-0x1207@gmail.com/
----
- .../ethernet/stmicro/stmmac/stmmac_hwtstamp.c | 28 ++++---------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+Other than that, the code change looks good.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-index e2840fa241f2..bb110124f21e 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-@@ -135,7 +135,6 @@ static int init_systime(void __iomem *ioaddr, u32 sec, u32 nsec)
- static int config_addend(void __iomem *ioaddr, u32 addend)
- {
- 	u32 value;
--	int limit;
- 
- 	writel(addend, ioaddr + PTP_TAR);
- 	/* issue command to update the addend value */
-@@ -144,23 +143,15 @@ static int config_addend(void __iomem *ioaddr, u32 addend)
- 	writel(value, ioaddr + PTP_TCR);
- 
- 	/* wait for present addend update to complete */
--	limit = 10;
--	while (limit--) {
--		if (!(readl(ioaddr + PTP_TCR) & PTP_TCR_TSADDREG))
--			break;
--		mdelay(10);
--	}
--	if (limit < 0)
--		return -EBUSY;
--
--	return 0;
-+	return readl_poll_timeout_atomic(ioaddr + PTP_TCR, value,
-+					 !(value & PTP_TCR_TSADDREG),
-+					 10, 100000);
- }
- 
- static int adjust_systime(void __iomem *ioaddr, u32 sec, u32 nsec,
- 		int add_sub, int gmac4)
- {
- 	u32 value;
--	int limit;
- 
- 	if (add_sub) {
- 		/* If the new sec value needs to be subtracted with
-@@ -187,16 +178,9 @@ static int adjust_systime(void __iomem *ioaddr, u32 sec, u32 nsec,
- 	writel(value, ioaddr + PTP_TCR);
- 
- 	/* wait for present system time adjust/update to complete */
--	limit = 10;
--	while (limit--) {
--		if (!(readl(ioaddr + PTP_TCR) & PTP_TCR_TSUPDT))
--			break;
--		mdelay(10);
--	}
--	if (limit < 0)
--		return -EBUSY;
--
--	return 0;
-+	return readl_poll_timeout_atomic(ioaddr + PTP_TCR, value,
-+					 !(value & PTP_TCR_TSUPDT),
-+					 10, 100000);
- }
- 
- static void get_systime(void __iomem *ioaddr, u64 *systime)
--- 
-2.43.0
 
+thanks,
+
+Takashi
 
