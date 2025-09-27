@@ -1,156 +1,171 @@
-Return-Path: <linux-kernel+bounces-834788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC88BA585F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C53BA5862
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1C04C516E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23EF42A57BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3305921D00E;
-	Sat, 27 Sep 2025 03:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A232021FF23;
+	Sat, 27 Sep 2025 03:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuLVQQGg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XB7lOwWV"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0EB1EF38C
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF0717A2E8
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758942264; cv=none; b=sSTwsGn5YAim35HGwIz+ds7XLaAZPxFfcHqM++KqbCW/C6rDadUKiupdz0r0PSLl/SnwFNBKO/LFC8OjIaeBT0yPvLjRJNwJm9wtwls+P25nFuicQ35dbAK0jrYcgRhcdK3fFj/7t/SjWsDRjfEPT+vqhPqGJ8dMEiHnQVH6MT4=
+	t=1758942452; cv=none; b=Ew7LFbeckh5wzUtUtEy0oS5+LZ5hzEWhcJJStZmQ5yPx3+gHfp6NoGHyUUbvfc2WioLzBRDTf2JhAkF7dwq/4hRs0RThqsdZPc1KAHc1+ZUfwta39DtsX68Gdj/i+LSyCpEoTHWpipb8Td7vqVuwumdqyZ3HX4ZJeckMaV5EHLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758942264; c=relaxed/simple;
-	bh=IAI70w+VPXR4oN4HHYLh/LOzSF12wlhF/e5Vidwt6C0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fcSBYrprnrqRMLZ544LauRSizbpqgh3dGOhOcB+kmHwtPQSGiVdUhZ+LCEVBq8QILQQdG7hnwV10epk+a7HoUuZbA2i58e+Dh/kQRPHDLOCxGni3olWP3LsCX4Z7WB6eWUzBXQS/fAbT0DEmpG2vvGYu9ybmTdEClFXBOJpx+dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuLVQQGg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C026C4CEF4;
-	Sat, 27 Sep 2025 03:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758942264;
-	bh=IAI70w+VPXR4oN4HHYLh/LOzSF12wlhF/e5Vidwt6C0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TuLVQQGgb7OFEAPNN4KM/hvUPeqm8xoRuD+ZJfiFtnK9l3qzRv8pT7Q+0v7Ecg5hC
-	 /emtruESZPkHYESWydKs2BUiDurcvl8ptD/MRcssGrGICKBjZgv0TRRqunn3dULJfM
-	 W3y1G+nFpx7ReCI/9FdUPzFHIpBimk80UfNAtTHpuF6JWTOoCNBSjbnahWfZVqr+5T
-	 QAOeKjoxEnHzVxcewIRlEG2r15Z0p/aoOmsC4ayJn+gE5CxInZz8ixTbUmA63sjCfR
-	 P3U2mtAvbe0ngbOXkdWieacdTasF2bTrTBWjUBjT7BCzpqnteHwqVZ2vk/33ukxOfS
-	 jWCdqB/ti5RYw==
-Message-ID: <5f7821d5-0b48-4600-ab99-d76a52361fc1@kernel.org>
-Date: Sat, 27 Sep 2025 12:04:19 +0900
+	s=arc-20240116; t=1758942452; c=relaxed/simple;
+	bh=KIWllFg56if3TbC6uvy6hmJ9HqcpA05vzmey5qzXPvc=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=BqfgTp2anFSy08KOZKrODAaOKKmGhPYze0O0UbxuqK496pl+HV2n9qE9Xt0rTUZI+aLvGTYpDgb52YCjdxQOtnFW5aOHI7fnSDzjoqzaoGmcWPqV7IqBMxvmpSoCGd3MG/8tycphd5+jI6KCVrxnQhNqUXBBwWqekdYh6oU7ZQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XB7lOwWV; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-795773ac2a2so23679996d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 20:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1758942449; x=1759547249; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qSAgZfMkE5F9jENlrny3LvdLwkaNKorgXutltGU+x+0=;
+        b=XB7lOwWVBawLFA2yKand2UwL2+v/I3rFVXMysduEPrlZ3MBX09NPq8tQApRKmAUusi
+         SyY0yE/GghdcwTrVvibaUzBH4Nq9a1dIYEuR4yQYwDraUMiqLvSdo84nXJoVEUDmCzER
+         Z68ZwVEoDR7md99XHvtvJWvksja/0VB00PeYCHpK9qgncBq+lupRcTLuuad2PPJCTSEF
+         l+M72j+3gsn+KXQ8f/jrtselF7AZadLdsueTKIF2R7xTjYjRVYYvos3nuTrZ7SmvlXhh
+         dAFMCra7qYkqCxvpJZ93tlE2qJc0W9j189yJL0hB+LUK5WQPO0ZC75uVuteKXbm7hcBd
+         ZRJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758942449; x=1759547249;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qSAgZfMkE5F9jENlrny3LvdLwkaNKorgXutltGU+x+0=;
+        b=cHhwDXH2FppxVnkqYPrrOjL0+RKcDDPbJSRCw1my99nSTMbphAPnLBd6PyCGLLWTTX
+         s0een+kxIPr8bttXW+dPIJSpp9+9SoHkNOXUjEcZiF03HFl1zjRGvHzQRDqaTGeKtSWL
+         J7F3+YgTNaY1tEBuuSBpX+SBLc4kvcVhsakOej2wtetCbqeJ51BAb2Xu9dRzi7HbgCfe
+         LhG3HzSrxQJ/gdy4gsDc1KFM6cztdhWcX1WUq/FbAZW7SwZZOR5ZEG/EATXV7E+oM5St
+         4qPSsautMyJHhAQBcZ+9Qc2K/P04vuoZqorRvDCPR20lmU14wiRUk4IYYpMIxou8XQin
+         XQgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUroij5E0VBrBZDgaP+LHmeBAvCwqCtEp9h5pmOMbRC8CkwHcuJNvqy4RaCGuRIUO7X6M2RmlSBZjZB0KM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/B+XsnYJZ+RXlSi9y62ARQ99DaltOErhNvOFh6wjiL8CRK1Ao
+	/MZBucNRaoEVKx1/XEL0bs6txKZ0Acy0D2W54NP1KG7jvG60IxpDIzuVGA4K3sIqr6GbRt1lkYW
+	HpV8=
+X-Gm-Gg: ASbGncvqUU+QqUsaY/igt8ge+/9mbfakF7ylp/6sFiwfs5McBmKEyJhzuPmWgRxWUUd
+	cgV+zPbRzJm7wtYXuEL0mb5dcAPI11BkhZ+34brz/fAUwPdHCQOPiO5MLbN2JajcuCxH2PtHrDH
+	5Ua+lvsyPMdoJFwaIpAeOzsGh+7voAYCU/zZELogbYSCj8M5NzByDQu7MTHj+Xg4MEjjX5mBO1/
+	IB1/jSzDtpNzvVpXs4HDLf8IarIAlZisxLiR49FURyWutEDspXVlJMLcQN2U6oOzef8Jok7FJft
+	VrYC0wYW/vUMV2yF8op4v3uOZ2X7ytT/5ncUfOCkaPPZEvedFuBkWXxtWfG5MDgYEqQxSDLQxuc
+	U91tNFwOnGLdolS1eeFuqbceTPHSzL7hU88zHQYHcHD+z/dXe8D8dMMCxF/aP4a0vzuIe
+X-Google-Smtp-Source: AGHT+IFoAiAET4/RXIIfogT0oBdVsHUQY8o6xwNhVDRzeLKHFonA8GbaIF5LImVO4PtEuu8oqTAuUA==
+X-Received: by 2002:a05:6214:43c3:b0:801:7267:3cd8 with SMTP id 6a1803df08f44-80172673d7fmr139528036d6.39.1758942448929;
+        Fri, 26 Sep 2025 20:07:28 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-8016ce9a34bsm35543566d6.57.2025.09.26.20.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 20:07:28 -0700 (PDT)
+Date: Fri, 26 Sep 2025 23:07:27 -0400
+Message-ID: <3161e6addb7d3e6c8297ff058ad8236d@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] audit/audit-pr-20250926
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] locking/local_lock: s/l/__l/ and s/tl/__tl/ to reduce
- risk of shadowing
-To: Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20250925-local_lock_internal_fix_shadow-v2-1-d3b85ee775a4@kernel.org>
- <6c49739d-6f2a-4c49-a04b-9774f10a6925@suse.cz>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <6c49739d-6f2a-4c49-a04b-9774f10a6925@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 9/26/25 11:16 PM, Vlastimil Babka wrote:
-> +CC LOCKING PRIMITIVES maintainers. Looks like local_lock files were never
-> added to the section, should we?
-> 
-> On 9/24/25 20:03, Vincent Mailhol wrote:
->> The Linux kernel coding style [1] advises to avoid common variable
->> names in function-like macros to reduce the risk of collisions.
-> 
-> I think it would be better if the tools like sparse could recognize if the
-> shadowing happens inside a macro only and thus really unlikely to cause a
-> misuse due to confusion (code thinks it's manipulating an outer instance but
-> instead it's the inner one), because macros in their definition would never
-> intend to manipulate a possible outer instance, right? Or are there any
-> other problems due to shadowing besides this risk?
+Linus,
 
-Thank would mean:
+Here are the audit patches for the upcoming Linux v6.18 merge window:
 
-  - rewriting the shadowing check in sparse
-  - removing the -Wshadow from the W=2 list
-  - modifying the kernel coding style
+- Proper audit support for multiple LSMs
 
-I am not against this. But I am not unhappy with the current status quo either.
+  As the audit subsystem predated the work to enable multiple LSMs,
+  some additional work was needed to support logging the different LSM
+  labels for the subjects/tasks and objects on the system.  Casey's
+  patches add new auxillary records for subjects and objects that convey
+  the additional labels.
 
-So far, I kept sending patches whenever I saw such shadow warning in header
-files. And over the last five years, this resulted in only three occurrences:
+- Ensure fanotify audit events are always generated  
 
-  - commit 146034fed6ee ("x86/asm/bitops: Use __builtin_ffs() to evaluate
-    constant expressions")
-    Link: https://git.kernel.org/torvalds/c/146034fed6ee
+  Generally speaking security relevant subsystems always generate audit
+  events, unless explicitly ignored.  However, up to this point fanotify
+  events had been ignored by default, but starting with this pull request
+  fanotify follows convention and generates audit events by default.
 
+- Replace an instance of strcpy() with strscpy()  
 
-  - commit 9ce02f0fc683 ("x86/bug: Prevent shadowing in __WARN_FLAGS")
-    Link: https://git.kernel.org/torvalds/c/9ce02f0fc683
+- Minor indentation, style, and comment fixes
 
-  - this patch
+Paul
 
-Between sending one patch every couple year or enrolling to a quest to modify
-the tooling, my choice is already made. If someone else want to do this change,
-I would be supportive, but that person will not be me.
+--
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-On a side note, I want to highlight that it is not that I am reluctant to modify
-the tooling. For example, I sent contributed this commit to sparse last week:
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-commit 366ad4b2fa3e ("Warn about "unsigned value that used to be signed against
-zero"")
+are available in the Git repository at:
 
-Link:
-https://git.kernel.org/pub/scm/devel/sparse/sparse-dev.git/commit/?id=366ad4b2fa3e
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+    tags/audit-pr-20250926
 
-As anyone here, I choose my battles, and rewriting the shadow checks is not in
-my list.
+for you to fetch changes up to d2c773159327f4d2f6438acf1ae2ae9ac0ca46a9:
 
->> Throughout local_lock_internal.h, several macros use the rather common
->> variable names 'l' and 'tl'. This already resulted in an actual
->> collision: the __local_lock_acquire() function like macro is currently
->> shadowing the parameter 'l' of the:
->>
->>   class_##_name##_t class_##_name##_constructor(_type *l)
->>
->> function factory from linux/cleanup.h.
->>
->> Rename the variable 'l' to '__l' and the variable 'tl' to '__tl'
->> throughout the file to fix the current name collision and to prevent
->> future ones.
->>
->> [1] https://www.kernel.org/doc/html/latest/process/coding-style.html#macros-enums-and-rtl
->>
->> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-> 
-> That said I don't oppose the change, but not my call.
+  audit: fix skb leak when audit rate limit is exceeded
+    (2025-09-10 19:55:00 -0400)
 
-Thanks!
+----------------------------------------------------------------
+audit/stable-6.18 PR 20250926
+----------------------------------------------------------------
 
+Casey Schaufler (5):
+      audit: fix indentation in audit_log_exit()
+      audit: create audit_stamp structure
+      lsm: security_lsmblob_to_secctx module selection
+      audit: add record for multiple task security contexts
+      audit: add record for multiple object contexts
 
-Yours sincerely,
-Vincent Mailhol
+Dan Carpenter (1):
+      audit: add a missing tab
 
+Eric Dumazet (1):
+      audit: init ab->skb_list earlier in audit_buffer_alloc()
+
+Gerald Yang (1):
+      audit: fix skb leak when audit rate limit is exceeded
+
+Kieran Moy (1):
+      audit: fix typo in auditfilter.c comment
+
+Richard Guy Briggs (1):
+      audit: record fanotify event regardless of presence of rules
+
+Thorsten Blum (1):
+      audit: Replace deprecated strcpy() with strscpy()
+
+ include/linux/audit.h        |   25 +++
+ include/linux/security.h     |    6 
+ include/uapi/linux/audit.h   |    2 
+ kernel/audit.c               |  280 ++++++++++++++++++++++++++++++-----
+ kernel/audit.h               |   13 +
+ kernel/audit_tree.c          |    6 
+ kernel/auditfilter.c         |    2 
+ kernel/auditsc.c             |   63 ++-----
+ net/netlabel/netlabel_user.c |    8 -
+ security/apparmor/lsm.c      |    3 
+ security/security.c          |   18 ++
+ security/selinux/hooks.c     |    5 
+ security/smack/smack_lsm.c   |    5 
+ 13 files changed, 334 insertions(+), 102 deletions(-)
+
+--
+paul-moore.com
 
