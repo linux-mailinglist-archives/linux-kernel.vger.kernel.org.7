@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-835070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15859BA62F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 21:48:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95EABA6301
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 21:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615CA189E39D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B57189E9C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7861FC0FC;
-	Sat, 27 Sep 2025 19:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF44B2253EF;
+	Sat, 27 Sep 2025 19:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+c75Nqd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcEIghCl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1F428371;
-	Sat, 27 Sep 2025 19:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494C11FA859;
+	Sat, 27 Sep 2025 19:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759002499; cv=none; b=usEnp0GF6q12r9KTw4G2od6FeSlshADV8c+9UKMNf+wXA/AOMQG6Ljo9uyHrH82NX9IIyWONCnmPa4YkNxD2BD15J3OnCAYSfELombUxYKKl8b0QVuIuo02YJtHrxioeOouM1l31yVIorNMFiQ194qTgyom2WhOnQAXU7LOe54M=
+	t=1759002781; cv=none; b=gvulO8o8sNXPBdNDRYflPYxJQzQE7P4+TtKzEcr3Eo9ByPWMHVidI+IUTjetIyTSdJVcmsls0KkQMQOtt8g4z0NxQb/Ey2pCmNydCDZB+DHZlrcOfMlFR9229xNzqg0IfX+SDJ09q65Zxi86Kv0c6hLhS19EuT+ykPvihvWs8DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759002499; c=relaxed/simple;
-	bh=QBA3zI/gBN7kvMlUos4rsKwGEVoup2MTT6dIRmJogTU=;
+	s=arc-20240116; t=1759002781; c=relaxed/simple;
+	bh=eCos0g0v+ia8yCfPb3Au3oRgY4b9F0p0qfg//K2yklA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uTBmag/oxLSfPVQP7gwo9Lnm/uFPJjtrpzLyNXvwOYHICzJoLmwvUrquTUDcjKySuU7OjNI8OdCuacjQE5UIA6dVu6yIhvHZJKJtUwb34V+UPM7R6Myd6O1wghhkKNNfleIlNBBBW8DbO1rcMx5ev0vZPKyMUluBhhG282DFa+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+c75Nqd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70FBAC4CEE7;
-	Sat, 27 Sep 2025 19:48:18 +0000 (UTC)
+	 Content-Disposition; b=cQ62FP4uErXZa5GWr53EpYzMnr0roxH/c1d6dKztYiq6URYXAN43h+fmbUEfpazMPH4xtslray/R4+a0aaqAuzyPWbOKMFBSe5Xj6g18Rqd5xGlh10GW4PDmVRhukZ86PUoE41N2zc/q0pNdWbSQnkeAq2qJAjeSaOXKJdTP+BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcEIghCl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4874DC4CEE7;
+	Sat, 27 Sep 2025 19:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759002499;
-	bh=QBA3zI/gBN7kvMlUos4rsKwGEVoup2MTT6dIRmJogTU=;
+	s=k20201202; t=1759002780;
+	bh=eCos0g0v+ia8yCfPb3Au3oRgY4b9F0p0qfg//K2yklA=;
 	h=Date:From:To:Cc:Subject:From;
-	b=U+c75NqdMSVuNnLZeADwRQlC5+UwoybGxFf59qBy0bLWflW0gSQ9L11MB7PdqD/sQ
-	 mnZkFiAtuIYtIrm4eN8RRQsVkhKadSD13019JFGpEXDNWIlcKFiiM7Ii8v2i8xBrLd
-	 tOZtPJ0MFEJECug+n5HXvGZZF8JxQekKP8ZDxkhTk+2XUiTj06v519a/c/lbUm5wK3
-	 xDOB4Hxg4yuFvnMu7Jr7lwouZth/EFm2QhMKwvkonrsLXK1wxKZ3D4KfUUsAwNTel+
-	 /e740d+iFOoBOq0E52j3GUHjjJhu3P9GSNKsPD9SX5/WzUwm3QtfNiQh9lhhWCn2kL
-	 PH6DATyDlHSdQ==
-Date: Sat, 27 Sep 2025 12:48:16 -0700
+	b=XcEIghCl0BVy4Bhd08GRn6zbexY3AudujSwd5EjO1NNgrdtTFcITHpsd4PsKPkmvI
+	 CKJ9s9RUN6UUiKk/zImnOt6HjifOfbC1bHF5vrf8aZH/Szu2nflseINbGoLGwK8DlS
+	 xclniy3nRskdHqYpcnHZekmSxGNlyRzkaoSOS9WL6Czeq46sigPPASY3zRNIbgGJRS
+	 n1FdXj3qXb0vV2OcH9T9hjpEMY8rsD6Eyf6zNvyGA1rIrwW8irgpiy5YxSbVZVOB5t
+	 gi3ZngKmfuazZqbl8fpcleO8szgrDVQ9Wjc3HscYXPyHGj5gsYDPvDrB/pLdpRQpvs
+	 MwEB9Ip6kpRZw==
+Date: Sat, 27 Sep 2025 12:52:57 -0700
 From: Eric Biggers <ebiggers@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [GIT PULL] fscrypt updates for 6.18
-Message-ID: <20250927194816.GA8682@quark>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kunit-dev@googlegroups.com, Ard Biesheuvel <ardb@kernel.org>,
+	Rakuram Eswaran <rakuram.e96@gmail.com>
+Subject: [GIT PULL] CRC updates for 6.18
+Message-ID: <20250927195257.GA9798@quark>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,32 +63,48 @@ The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/crc-for-linus
 
-for you to fetch changes up to 19591f7e781fd1e68228f5b3bee60be6425af886:
+for you to fetch changes up to 136d029662cdde77d3e4db5c07de655f35f0239f:
 
-  fscrypt: use HMAC-SHA512 library for HKDF (2025-09-05 21:01:51 -0700)
-
-----------------------------------------------------------------
-
-Make fs/crypto/ use the HMAC-SHA512 library functions instead of
-crypto_shash. This is simpler, faster, and more reliable.
+  Documentation/staging: Fix typo and incorrect citation in crc32.rst (2025-08-20 23:53:32 -0400)
 
 ----------------------------------------------------------------
-Eric Biggers (1):
-      fscrypt: use HMAC-SHA512 library for HKDF
 
-Qianfeng Rong (1):
-      fscrypt: Remove redundant __GFP_NOWARN
+Update crc_kunit to test the CRC functions in softirq and hardirq
+contexts, similar to what the lib/crypto/ KUnit tests do. Move the
+helper function needed to do this into a common header.
 
- fs/crypto/Kconfig           |   5 +-
- fs/crypto/bio.c             |   2 +-
- fs/crypto/fname.c           |   1 -
- fs/crypto/fscrypt_private.h |  26 ++++-------
- fs/crypto/hkdf.c            | 109 ++++++++++++++++----------------------------
- fs/crypto/hooks.c           |   2 +-
- fs/crypto/keyring.c         |  30 ++++--------
- fs/crypto/keysetup.c        |  65 ++++++++------------------
- fs/crypto/policy.c          |   4 +-
- 9 files changed, 83 insertions(+), 161 deletions(-)
+This is useful mainly to test fallback code paths for when
+FPU/SIMD/vector registers are unusable.
+
+----------------------------------------------------------------
+Eric Biggers (4):
+      kunit, lib/crypto: Move run_irq_test() to common header
+      lib/crc: crc_kunit: Test CRC computation in interrupt contexts
+      lib/crc: Use underlying functions instead of crypto_simd_usable()
+      lib/crc: Drop inline from all *_mod_init_arch() functions
+
+Rakuram Eswaran (1):
+      Documentation/staging: Fix typo and incorrect citation in crc32.rst
+
+ Documentation/staging/crc32.rst       |   4 +-
+ include/kunit/run-in-irq-context.h    | 129 ++++++++++++++++++++++++++++++++++
+ lib/crc/arm/crc-t10dif.h              |   8 +--
+ lib/crc/arm/crc32.h                   |   8 +--
+ lib/crc/arm64/crc-t10dif.h            |   8 +--
+ lib/crc/arm64/crc32.h                 |  11 +--
+ lib/crc/loongarch/crc32.h             |   2 +-
+ lib/crc/mips/crc32.h                  |   2 +-
+ lib/crc/powerpc/crc-t10dif.h          |   7 +-
+ lib/crc/powerpc/crc32.h               |   7 +-
+ lib/crc/sparc/crc32.h                 |   2 +-
+ lib/crc/tests/crc_kunit.c             |  62 +++++++++++++---
+ lib/crc/x86/crc-pclmul-template.h     |   3 +-
+ lib/crc/x86/crc-t10dif.h              |   2 +-
+ lib/crc/x86/crc32.h                   |   4 +-
+ lib/crc/x86/crc64.h                   |   2 +-
+ lib/crypto/tests/hash-test-template.h | 123 ++------------------------------
+ 17 files changed, 219 insertions(+), 165 deletions(-)
+ create mode 100644 include/kunit/run-in-irq-context.h
 
