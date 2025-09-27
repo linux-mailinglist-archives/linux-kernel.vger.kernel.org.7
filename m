@@ -1,191 +1,156 @@
-Return-Path: <linux-kernel+bounces-834787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CC9BA585C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:01:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC88BA585F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 05:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382CC1C078EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:02:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1C04C516E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 03:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB2D21E0BE;
-	Sat, 27 Sep 2025 03:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3305921D00E;
+	Sat, 27 Sep 2025 03:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Q3gfDCKq"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuLVQQGg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4C221B9C9
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0EB1EF38C
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 03:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758942091; cv=none; b=kfhzGF8tWT6Bk3DwaAMA8Mz0CtcbChwbE+FfLS05eGYngGTe/u0vn6KybBOx0zErQGR/SOOWwu/w9MIwJ4jRldALQNYN2Y+1/5pq5H/ypQbVSIGeU9jDDuqGgcFeU9HQgM/Q00aeSX4CpcHdj1xKYZ+WEgB9+uHdm8fhOvhFx5M=
+	t=1758942264; cv=none; b=sSTwsGn5YAim35HGwIz+ds7XLaAZPxFfcHqM++KqbCW/C6rDadUKiupdz0r0PSLl/SnwFNBKO/LFC8OjIaeBT0yPvLjRJNwJm9wtwls+P25nFuicQ35dbAK0jrYcgRhcdK3fFj/7t/SjWsDRjfEPT+vqhPqGJ8dMEiHnQVH6MT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758942091; c=relaxed/simple;
-	bh=iqEzu6MSOCS+4xe5CLs8SDXx79JrEPYtjCeDbWq9KhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FdT1EIhBzzSn2dCC6+Iq8FELrzO3RV0XDH6owFygxeeJonxIl9feP9abQlSdtX7EYUXLq4pVIlEY72Ppd2WVmbX6oK9ELZieboX0m3QzIarxvYpHS/FtxGYzy9y9TgR21C+Y15aB0SlYJH2MyfEeTyXUlXyFChnjumQcJ3q6lJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Q3gfDCKq; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-115-162.bstnma.fios.verizon.net [173.48.115.162])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 58R31D43016618
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 23:01:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1758942075; bh=7f/gHNEv1YusOJ53J0jDbxjcFQ7pwqP5o4dTkzgBhDk=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=Q3gfDCKqpmAlNw0hO1Q7K84mYKfb8+F7BQoGq8cwfoxwwnFc8b10ktK0jRhSHhja9
-	 9EvFF0RDkmwc/EkAyxQT/swoZlQTrGb5ELM9i2mKF4IZFfdIJ5ZmJBF6daK4zS8DD+
-	 qA0VC6L92w6dVHKFFPfP58atVBaw2Nqns/G3tk4Gwm6EAOMfEThoT94xStMUtd38TR
-	 47i8mDPzecucrsw3+Iiuyd6o9qJWthBSAGAh66Fxx+cNsb7R9VwjQebkIGZVcYCTXS
-	 DfN/x/OuXU0a6iP1ZlAFB6kJtH3Okw/eGzKd9Dp8SNIEwi2zR5XaaGtzflfJ3YtOFB
-	 I4lTltXnMJCDQ==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 781462E00D9; Fri, 26 Sep 2025 23:01:13 -0400 (EDT)
-Date: Fri, 26 Sep 2025 23:01:13 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: fix allocation failure in ext4_mb_load_buddy_gfp
-Message-ID: <20250927030113.GD118657@mit.edu>
-References: <20250927001815.16635-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1758942264; c=relaxed/simple;
+	bh=IAI70w+VPXR4oN4HHYLh/LOzSF12wlhF/e5Vidwt6C0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fcSBYrprnrqRMLZ544LauRSizbpqgh3dGOhOcB+kmHwtPQSGiVdUhZ+LCEVBq8QILQQdG7hnwV10epk+a7HoUuZbA2i58e+Dh/kQRPHDLOCxGni3olWP3LsCX4Z7WB6eWUzBXQS/fAbT0DEmpG2vvGYu9ybmTdEClFXBOJpx+dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuLVQQGg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C026C4CEF4;
+	Sat, 27 Sep 2025 03:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758942264;
+	bh=IAI70w+VPXR4oN4HHYLh/LOzSF12wlhF/e5Vidwt6C0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TuLVQQGgb7OFEAPNN4KM/hvUPeqm8xoRuD+ZJfiFtnK9l3qzRv8pT7Q+0v7Ecg5hC
+	 /emtruESZPkHYESWydKs2BUiDurcvl8ptD/MRcssGrGICKBjZgv0TRRqunn3dULJfM
+	 W3y1G+nFpx7ReCI/9FdUPzFHIpBimk80UfNAtTHpuF6JWTOoCNBSjbnahWfZVqr+5T
+	 QAOeKjoxEnHzVxcewIRlEG2r15Z0p/aoOmsC4ayJn+gE5CxInZz8ixTbUmA63sjCfR
+	 P3U2mtAvbe0ngbOXkdWieacdTasF2bTrTBWjUBjT7BCzpqnteHwqVZ2vk/33ukxOfS
+	 jWCdqB/ti5RYw==
+Message-ID: <5f7821d5-0b48-4600-ab99-d76a52361fc1@kernel.org>
+Date: Sat, 27 Sep 2025 12:04:19 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250927001815.16635-1-kartikey406@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] locking/local_lock: s/l/__l/ and s/tl/__tl/ to reduce
+ risk of shadowing
+To: Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20250925-local_lock_internal_fix_shadow-v2-1-d3b85ee775a4@kernel.org>
+ <6c49739d-6f2a-4c49-a04b-9774f10a6925@suse.cz>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <6c49739d-6f2a-4c49-a04b-9774f10a6925@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 27, 2025 at 05:48:15AM +0530, Deepanshu Kartikey wrote:
+On 9/26/25 11:16 PM, Vlastimil Babka wrote:
+> +CC LOCKING PRIMITIVES maintainers. Looks like local_lock files were never
+> added to the section, should we?
 > 
-> Your -EAGAIN suggestion makes sense. The approach would be:
-> 1. During memory reclaim, use GFP_NOFS without __GFP_NOFAIL
-> 2. If allocation fails, return -EAGAIN to let reclaim skip this inode
-> 3. Preallocation cleanup happens later when memory is available
+> On 9/24/25 20:03, Vincent Mailhol wrote:
+>> The Linux kernel coding style [1] advises to avoid common variable
+>> names in function-like macros to reduce the risk of collisions.
 > 
-> I understand this requires modifying the function signature and updating all call 
-> sites. I'm willing to do this work and properly test each caller's error handling. 
+> I think it would be better if the tools like sparse could recognize if the
+> shadowing happens inside a macro only and thus really unlikely to cause a
+> misuse due to confusion (code thinks it's manipulating an outer instance but
+> instead it's the inner one), because macros in their definition would never
+> intend to manipulate a possible outer instance, right? Or are there any
+> other problems due to shadowing besides this risk?
+
+Thank would mean:
+
+  - rewriting the shadowing check in sparse
+  - removing the -Wshadow from the W=2 list
+  - modifying the kernel coding style
+
+I am not against this. But I am not unhappy with the current status quo either.
+
+So far, I kept sending patches whenever I saw such shadow warning in header
+files. And over the last five years, this resulted in only three occurrences:
+
+  - commit 146034fed6ee ("x86/asm/bitops: Use __builtin_ffs() to evaluate
+    constant expressions")
+    Link: https://git.kernel.org/torvalds/c/146034fed6ee
+
+
+  - commit 9ce02f0fc683 ("x86/bug: Prevent shadowing in __WARN_FLAGS")
+    Link: https://git.kernel.org/torvalds/c/9ce02f0fc683
+
+  - this patch
+
+Between sending one patch every couple year or enrolling to a quest to modify
+the tooling, my choice is already made. If someone else want to do this change,
+I would be supportive, but that person will not be me.
+
+On a side note, I want to highlight that it is not that I am reluctant to modify
+the tooling. For example, I sent contributed this commit to sparse last week:
+
+commit 366ad4b2fa3e ("Warn about "unsigned value that used to be signed against
+zero"")
+
+Link:
+https://git.kernel.org/pub/scm/devel/sparse/sparse-dev.git/commit/?id=366ad4b2fa3e
+
+As anyone here, I choose my battles, and rewriting the shadow checks is not in
+my list.
+
+>> Throughout local_lock_internal.h, several macros use the rather common
+>> variable names 'l' and 'tl'. This already resulted in an actual
+>> collision: the __local_lock_acquire() function like macro is currently
+>> shadowing the parameter 'l' of the:
+>>
+>>   class_##_name##_t class_##_name##_constructor(_type *l)
+>>
+>> function factory from linux/cleanup.h.
+>>
+>> Rename the variable 'l' to '__l' and the variable 'tl' to '__tl'
+>> throughout the file to fix the current name collision and to prevent
+>> future ones.
+>>
+>> [1] https://www.kernel.org/doc/html/latest/process/coding-style.html#macros-enums-and-rtl
+>>
+>> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
 > 
-> Questions on implementation:
-> - Should callers like ext4_clear_inode() ignore -EAGAIN (leave cleanup for later)?
+> That said I don't oppose the change, but not my call.
 
-It's not so simple.  The call path that involes ext4_clear_inode() is
-part of evict() which is called when the inode is evicted, and this is
-called from prune_icache_sb():
-
-   https://syzkaller.appspot.com/bug?extid=fd3f70a4509fca8c265d
-
-The problem is that none of the code paths allow for the inode
-eviction to be delayed.  And once the inode is evicted, it's *gone*
-from memory, so there's no place to store the information needed so we
-can "clean up the inode later".
-
-The inode eviction might *take* a while, since there might be pages
-that need to be written back first.  And in order to do the writeback,
-the flusher thread might need to do some block allocations, and that
-might require some memory allocations.  But since that's happening on
-another thread, it doesn't cause any warnings.
-
-This is why in some sense the warning in __alloc_pages_slowpaths() is
-a little silly, and it's not really all that bad in practice:
-
-		/*
-		 * PF_MEMALLOC request from this context is rather bizarre
-		 * because we cannot reclaim anything and only can loop waiting
-		 * for somebody to do a work for us.
-		 */
-
-Sure, we might need to loop waiting for someone to work to release
-pages.  But in the inode eviction path, we are doing that *anyway*:
-
-	/*
-	 * Wait for flusher thread to be done with the inode so that filesystem
-	 * does not start destroying it while writeback is still running. Since
-	 * the inode has I_FREEING set, flusher thread won't start new work on
-	 * the inode.  We just have to wait for running writeback to finish.
-	 */
-	inode_wait_for_writeback(inode);
-
-(And writeback can require memory allocations. Oh, noos!)
-
-In actual practice, it's not that bad, since looping until te memory
-can be released is just *fine*.  The OOM killer might news to whack
-some processes to free memory, but if you're running so close to the
-memory exhaustion, it's generally acceptable to have lower priority
-jobs get nuked in order to keep the system.  And if that's not
-acceptable, then don't run the system that close to the edge!  :-)
-
-So the only reason why this is a problem is if someone is silly enough
-to run with panic on warn enabled.  (Don't do that.)  Or if you've
-gotten sucked int the gamification of syzbot.  Personally, if the mm
-folks want to insist on putting that WARN_ON_ONCE() there, I'm not
-going to worry about the syzbot complaint.  :-)
+Thanks!
 
 
-If you *really* want to solve the problem, we probably need to have
-some way to that file system set a flag indicating that if you are
-trying to prunce the inode cache, and you're in a memory reclaim
-context, skip trying to evict this inode.  For that matter, if we're
-in a memory reclaim context, and the inode has dirty pages which are
-being written back --- maybe we should just skip that inode since
-there are probably easier and faster inodes to eject if we are so
-desperate that we're in memory reclaim mode.
+Yours sincerely,
+Vincent Mailhol
 
-Another potential solution might be to pin the buddy bitmap and bitmap
-blocks in meory and don't let them to get evicted if we know that
-there might be preallocations pending for that partcular block group.
-This will prevent the need to do the memory allocation, and also
-avoids needing to do I/O to bring in the bitmap metadata.  The
-downside is this increases memory usage, all in the name of trying to
-avoid that silly mm warning.
-
-Yet another possibility is to have a pool of spare pages *just* for
-ext4, and in the case where we are in memory reclaim --- drop the
-__GFP_NOFAIL, and use the pool of spare pagese --- and if the pool of
-spare pages is exhausted, just wait and do a retry loop on the allocation.
-
-Or we could just drop the __GFP_NOFAIL and just add hard-coded retry
-loop.  It's what we used to do when the mm people tried to deprecate
-__GFP_NOFAIL, and issued a warning whenever someone trid to use
-__GFP_NOFAIL --- and so we said, "OK, if you really hate the
-GFP_NOFAIL, we'll just open code the retry in the file system, since
-data loss is unacceptable, and if that means the system might become
-unresponsive for a bit when the system is under heavy memory pressure,
-that's an acceptable tradeoff."  But then the mm folks said, no wait,
-if you do the retry loop in the caller we won't know that the memory
-allocation Really Really Needs to Suceed.  And so they dropped the
-__GFP_NOFAIL warning, and we dropped the hard-coded retry loop.
-
-> I'd like to implement this fix properly rather than leaving the WARNING unaddressed. 
-> Could you provide guidance on the preferred error handling for the different caller 
-> contexts?
-
-Quite frankly, I'mm not sure any of these choices are worth it
-compared to just leaving the WARNING unaddressed.
-
-If it were up to me, I'd have a WARN_DONT_PANIC() message which
-doesn't actually print the word "WARNING" so it doesn't trigger
-syzbot, and which does't force a panic on warn.  That it satisfies the
-mm folks who have never liked __GFP_NOFAIL, since they can let the
-kernel whine; it satifies the people who think this is a "securty
-problem" because there are people who are silly enough to do panic on
-warn; it satisfies the people who buy into the syzbot gamification;
-and it avoids file system corruption, which keeps the file system
-people happy.
-
-Or we could just drop this particular warning altogether.  Silly
-warning.  :-)
-
-Cheers,
-
-						- Ted
 
