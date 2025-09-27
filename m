@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-834960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CB0BA5EA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:59:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCD0BA5EA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14BE2A69A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1AE63BC792
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0C52E0415;
-	Sat, 27 Sep 2025 11:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85EF2DF706;
+	Sat, 27 Sep 2025 12:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="R+KLWN6C"
-Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="fvlB+O20"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777F42DAFA1
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 11:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10962DF6E6
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 12:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758974378; cv=none; b=vFt32JR+yo77KJp9+uJdHRicv+eaOK1sSIgELmR4N/NypeTSrc8o8XhpkSiT/sOXin/MCjG2UkM2tkU8JIxLvf7a/8lsIwWc4R7Jgvh3C4JgzGxyiQ3hBTzqaAuas7ivURyLtHP5Yv1JaPVSg24Knxrd3BHI8d1myGskFbI30Og=
+	t=1758975067; cv=none; b=rVKNNA+URLEx09VA9xev35OHyZf5T6teOYAOZWbDrOLpaZPFoOleM1a3dU45mjpl8VaLc4F3dkls1va76mp9JDf/qQSrT3lBEG9D8uwy9Y34ETyOy4eeHUVlyM6FFx4jMv9g86T6TVquvR8DR8U8VJIGusP9XfbWrGVpQmY7wR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758974378; c=relaxed/simple;
-	bh=j3KBdBzIOzFAeywBjLt3G+eodchurrcQPb+koMKRbjw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jT7z5EIecbxli7r956nQqRCjE0btM5vTr8mqkNpCizsdVGzyMDw+7zY9T1CP45FdzKJrXJTVfQcWRk1SBlaCPVEJILqMqnXjHQ9lRenrgLTmPEYJitUuQT/hf08ILJho0lchwxwZE2B72U6+UCM7B6Avy8j/PkjcPbr7f19DqoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=R+KLWN6C; arc=none smtp.client-ip=79.135.106.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1758974367; x=1759233567;
-	bh=j3KBdBzIOzFAeywBjLt3G+eodchurrcQPb+koMKRbjw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=R+KLWN6CichFI60BzxuEo/zPcZnoJjm1pjATIxEi7KckAw0E6BGXdspWd0tXMNdak
-	 wekiffBTSR1pajeXvyxGs+g16iMFOSOr5O6+X7gDsXFR+FNHKvR8ukTNBxQMxDTsBg
-	 Lo2quKeYUcOC6QfPU54MUVrA2hCnLLHr/DDMSf7PFNr7ZCBqRf9COiURyReZi/qi/h
-	 PKTFY74eDwvctVLT2/q+xQLBAx+MYR0VYA/lLUUP4Ee+qhpmBdXM2L7y+unS5znGph
-	 rU0K5oqAPIn/cuNfyMP0vZz9sFr55sYlNDZjPCx6JxH5gU5h2K143KqSRrwjDNYUPj
-	 Xehck5MUAKRSg==
-Date: Sat, 27 Sep 2025 11:59:23 +0000
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: Rework X1-based Asus Zenbook A14's displays
-Message-ID: <oVKFPC4z3p0Jkm9UXaUCszvghc54lbXJhAq5VHGVhw1vVmEvDPhVE3VKKaYnWWeycdYZRzzcffAv8mamuh8lvWOVmVtP3uVVoyI2XUyRTms=@vinarskis.com>
-In-Reply-To: <nemvj6vyk2mj255l5fi372677znsptawkkhx4zlcsty5enpy6a@fhtpf2c6v4v4>
-References: <20250926-zenbook-improvements-v2-0-c0b512ab6b57@vinarskis.com> <20250926-zenbook-improvements-v2-2-c0b512ab6b57@vinarskis.com> <nemvj6vyk2mj255l5fi372677znsptawkkhx4zlcsty5enpy6a@fhtpf2c6v4v4>
-Feedback-ID: 158356072:user:proton
-X-Pm-Message-ID: a0ef6100d16c93032cf822017a4179baac111598
+	s=arc-20240116; t=1758975067; c=relaxed/simple;
+	bh=AmBkc3UhQ306d2EmHzcMKpQ/W7QMFuShZ/GKBPvKxN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OpPnJf2S8bNsz+muoBg6moBFvSVGTU9kVNi5s7yyRKpISMbmUsGgDGI/2ql+JTKapopYlFuLvGJeVIbgQNP1gMNBs3yY2pjOQrbldaenZ1VLRNI6JHEwBB0bvN23QMEPmDATzbPDiDswzyX7Iem1LZq6CyH5rDsb6VKEg77ZQ6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=fvlB+O20; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-42861442ec5so7586515ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 05:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1758975064; x=1759579864; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+LMcHh9fHWWYPwR3yo6MrWo6NftTMixymngCFDEN2Yo=;
+        b=fvlB+O20g017MBY5TtKDYTWhro9d5PVFU1Nncq2vKxdhVzIHQDYUyHSxGjGAOy2G/Z
+         IAo8UB0fCCSLVPC7h+VzZBYEAIDBKX2qVpkxqn2WoZ9RItDhukuccSxgGdMBU3OlY8BF
+         c94bjo9ojSnRgfw+IxkkI3DxKe+EzNEqTldNtsTHhO3WmAoTjdpJcXoUm71HA7XCOJBi
+         IUct5uTWJgPkRjm6T18/oWTpewhY9Kouahp42AtyV7R2aQXX6mbOKunW3A0uiF8fIleE
+         Qz8j+RIoZAqRrO+CnVkWYwb/4Pr/rgPRgbpy2hc2TpySmjLnuaBdiQ4jbLIERWBzjBdG
+         IRsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758975064; x=1759579864;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+LMcHh9fHWWYPwR3yo6MrWo6NftTMixymngCFDEN2Yo=;
+        b=JJvOQWfG/s3yruAVA68qwtipgiIIIhZPJVM/wdeqqa10zRNSjTYM2haNbj7E4SQg1R
+         ihn9yghAFG0lR5EsXhbGw0B/lnD5U941h8GK6NaLtPriutjO4lav+MF6kj82MgDJFJq6
+         /6r3IMunVw5iZSnqw4KG+2YiVwBgfp+nKTCR3ysqo3WT5lMWYp0y7ReOX+mKkN/2oFKc
+         p3r+w+145rmoP9foU30hh9mnNQqv5pyoHVv49aJxtlgoNG7MK7gmqWLz/qFMSPQjFMBr
+         BY4q1jp6BA7YbcLhW3YD0sfcV7v4y6fnBFEr9MGM8OPFRilEZuKDq6uO5AiwzN/DNXFA
+         M2lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1KcfCTPKWK3kvh7PLAD0vt+/iyLJMKUo9/gSWZEBc5Pqcf28vUyfIBesT/E5uAJ/ZpfnWG/w31DHSax8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqlRD6XQEfOMpus2bZS5Dfqgsc3ag5egvN2Nw0C1KMST/XWXyv
+	eIKLtIngQwdup2mAONqJsJ9snxDw/66qW7afK8MHjrQTjcNdNClUXi3R03GI/4Cc0qEqogWXNOv
+	4ce87VQYFCYuOhJIyZ7P8uxpHyfFdNzkl8tsTVW+hIQ==
+X-Gm-Gg: ASbGnctmWCp29l28OkaWt8TV5zlDAnXm3QiAtS4/T958pyhtrU3Ycmj0NCMUeKza2Vp
+	rHgrp8OkNdTBF9QIHotfE803qrWh7pYrf6MUeKY4JCl5NyKPPXXtrtFd7rtyy5+SN2OQOgyK3JL
+	oDUu2x0MM4Ta/3w5kXpVuzJfApHIkEU0RLm1Z+oeyVIuI9s14uNiN6yE3Qvt/7lUqC4WE9tUO82
+	wjsRSguJdj6XP6RSPw/fRq9N1jO6jr8I/mEl3uXcfxCpq68Gcg=
+X-Google-Smtp-Source: AGHT+IEB9Bcl9EXTyiVt+OXSI2WyMrjtJ5h1N08aPYMLGZaKrFFQ3zu9sTIGCjqdgWLVFwnbg63fUKWZJ2Tgqbwi5rU=
+X-Received: by 2002:a92:c532:0:b0:424:771:418e with SMTP id
+ e9e14a558f8ab-4259566e677mr142541105ab.30.1758975063920; Sat, 27 Sep 2025
+ 05:11:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250915-printk_legacy_thread_console_lock-v1-0-f34d42a9bcb3@thegoodpenguin.co.uk>
+ <20250915-printk_legacy_thread_console_lock-v1-2-f34d42a9bcb3@thegoodpenguin.co.uk>
+ <aMwy7pFM7EExLxaX@pathway.suse.cz> <CALqELGz4ug+YyBvdmPp5aHR3x4qUEp4u4cCpWLL5143VCrf3-w@mail.gmail.com>
+ <845xdak47j.fsf@jogness.linutronix.de> <aNKtNP-B3a0UAjHl@pathway.suse.cz>
+In-Reply-To: <aNKtNP-B3a0UAjHl@pathway.suse.cz>
+From: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Date: Sat, 27 Sep 2025 13:10:53 +0100
+X-Gm-Features: AS18NWDYf3F3LvwtjoNimZTTbh-t06rOsvxSqMf5GpErHPM5sZ0dL_WJcEhUrKQ
+Message-ID: <CALqELGyr-wPSnWGGmHnkM3SM2h-OPYu_zfT8KZV7Jd4Cj-i-vQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/2] printk: Use console_flush_one_record for legacy
+ printer kthread
+To: Petr Mladek <pmladek@suse.com>
+Cc: John Ogness <john.ogness@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 23 Sept 2025 at 15:22, Petr Mladek <pmladek@suse.com> wrote:
+>
+> On Mon 2025-09-22 15:33:12, John Ogness wrote:
+> > On 2025-09-19, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+> > >> I played with the code and came up with:
+> > >>
+> > >> static int legacy_kthread_func(void *unused)
+> > >> {
+> > >>         bool any_progress;
+> > >>
+> > >> wait_for_event:
+> > >>         wait_event_interruptible(legacy_wait, legacy_kthread_should_wakeup());
+> > >>
+> > >>         do {
+> > >>                 bool any_usable;
+> > >>                 bool handover;
+> > >>                 u64 next_seq;
+> > >>
+> > >>                 if (kthread_should_stop())
+> > >>                         return 0;
+> > >
+> > > This changes the behaviour from the existing legacy_kthread_func. Thus
+> > > allowing the thread to exit mid way through printing remaining
+> > > records, whereas previously the whole set of unprinted records would
+> > > first be printed. But that's probably a good thing.
+>
+> Good catch! I admit that I just copied this from nbcon_kthread_func()
+> and it looked reasonable.
+>
+> > It does not matter. kthread_should_stop() will only return true from
+> > printk_kthreads_check_locked() when @have_legacy_console and
+> > @have_boot_console are both false. That means that whatever legacy or
+> > boot consoles there were, they are now unregistered, and were already
+> > flushed from within their unregister_console_locked().
+>
+> Yup. I would keep it in the do/while loop to keep it consistent with
+> the nbcon kthread.
 
-
-
-
-
-On Saturday, September 27th, 2025 at 00:32, Dmitry Baryshkov <dmitry.barysh=
-kov@oss.qualcomm.com> wrote:
-
->=20
->=20
-> On Fri, Sep 26, 2025 at 09:08:53AM +0200, Aleksandrs Vinarskis wrote:
->=20
-> > The laptop comes in two variants:
-> >=20
-> > * UX3407RA, higher end, FHD+ OLED or WOXGA+ OLED panels
-> > * UX3407QA, lower end, FHD+ OLED or FHD+ LCD panels
-> >=20
-> > Even though all three panels work with "edp-panel", unfortunately the
-> > brightness adjustmenet of LCD panel is PWM based, requiring a dedicated
-> > device-tree. Convert "x1p42100-asus-zenbook-a14.dts" into ".dtsi" to
-> > allow for this split, introduce new LCD variant. Leave current variant
-> > without postfix and with the unchanged model name, as some distros
-> > (eg. Ubuntu) rely on this for automatic device-tree detection during
-> > kernel installation/upgrade.
-> >=20
-> > As dedicated device-tree is required, update compatibles of OLED
-> > variants to correct ones. Keep "edp-panel" as fallback, since it is
-> > enough to make the panels work.
-> >=20
-> > While at it moving .dts, .dtsi around, drop 'model' from the top level
-> > x1-asus-zenbook-a14.dtsi as well.
-> >=20
-> > Signed-off-by: Aleksandrs Vinarskis alex@vinarskis.com
-> > Co-developed-by: Jens Glathe jens.glathe@oldschoolsolutions.biz
-> > Signed-off-by: Jens Glathe jens.glathe@oldschoolsolutions.biz
->=20
->=20
-> I'm sorry, but I think the order of tags is incorrect. You are sending
-> this patch, so your SoB should be the last one.
-
-Checked the docs, you are right, will re-spin.
+Thanks for the feedback, the only change I've made in my v2 from
+Petr's code is to set handover to false in the loop. Otherwise if
+there are no usable consoles, the then uninitialised variable may lead
+to incorrectly calling or not calling __console_unlock.
 
 Thanks,
-Alex
 
->=20
-> The patch LGTM.
->=20
-> > ---
-> > arch/arm64/boot/dts/qcom/Makefile | 2 +
-> > arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi | 7 +-
-> > .../boot/dts/qcom/x1e80100-asus-zenbook-a14.dts | 8 ++
-> > .../dts/qcom/x1p42100-asus-zenbook-a14-lcd.dts | 62 +++++++++
-> > .../boot/dts/qcom/x1p42100-asus-zenbook-a14.dts | 133 ++---------------=
----
-> > .../boot/dts/qcom/x1p42100-asus-zenbook-a14.dtsi | 138 ++++++++++++++++=
-+++++
-> > 6 files changed, 218 insertions(+), 132 deletions(-)
->=20
->=20
-> --
-> With best wishes
-> Dmitry
+Andrew Murray
 
