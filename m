@@ -1,152 +1,85 @@
-Return-Path: <linux-kernel+bounces-835042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C597BBA61D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 18:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BD0BA61DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 723904E0681
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4AA417D0C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5428D225403;
-	Sat, 27 Sep 2025 16:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932AC221FA4;
+	Sat, 27 Sep 2025 17:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kuaOFQVK"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzbUTwtP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447E21B142D
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 16:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E469146B5;
+	Sat, 27 Sep 2025 17:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758992249; cv=none; b=NYI0bIjRdYfhn2swElFlMHcsq5W5xRSEXTHqtnXrwWQU3AwhrRzuZeiDxWY9OVSjvlb7m8yFwJLHb1fjI5h6NdBkpQ0UX8mQBQOMEMKmo8ks0R8SY/fTYYT+nFnRE90LExSNOx8z1aG5H4judWR3yklNZLPUOjyC8SCFK59INn0=
+	t=1758992466; cv=none; b=cHGIoD2MRZA5Z40yoGrU461oK5qt9RFzGBCUWLwtUIv/0ZtlpQEfwa55iSFH7TaG+io6C/9s1Xb+1UBYDnh4v004An6fFa77JoVWOX+Z0OTszLwmR6RtthEBA+6O/RQAUwm0ASxNr1a9uf6HiTDpf3KX2OEACNj0C+p8sk9sReM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758992249; c=relaxed/simple;
-	bh=qK03ozbV9lhDLbr5aHWOVCtLD/2M9FEQ61poTc1IUM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PYqu97+eIO7Lc9VxNNy/e0N7tbsvJQ7NH06rO0a95/LeE6PRweCU0nEgmwU092/avW3yde5aYiY3594UQih1FBVfkceG5/YbejDGupBupaUc9iZklzMfYGUcsDQmUIsilsBdz7WOo9IozbNBIyXL7WRsVIjOKEdmJ5QlnZYC/tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kuaOFQVK; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758992244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Svoo5h6NIWQ3/QAq5HARQlGvaiK3sTn0nA0/qd5d+fs=;
-	b=kuaOFQVK71XF2iaFFy61QEkmMvoWtFz93o0UAVbRbuSHQ66o6CWu0VdflOVDFHVUmQOg5d
-	fBwTUm/X2GV30BzDfSwoNrIxjj/9a5RytVDJyqH+959jIbKdithPLgG37/41+aKIUl59Ox
-	n0uQjGUp4h+BkumUmFok0OyWReVlTM0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Koby Elbaz <koby.elbaz@intel.com>,
-	Konstantin Sinyuk <konstantin.sinyuk@intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Karol Wachowski <karol.wachowski@linux.intel.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] accel/habanalabs: Replace kmalloc_array + copy_from_user with memdup_array_user
-Date: Sat, 27 Sep 2025 18:56:30 +0200
-Message-ID: <20250927165633.1312-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758992466; c=relaxed/simple;
+	bh=n2nTeLhnB1YwsJtcxhRWqzFPO9O7HrX45d/S+eWqvMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xs725kGbTZHfR5kfIjW/vU2ggasWwxxyOh4CWfLV5OKF+4W2rSZ6Jbf0DbiIZjh2+0xG3Yb70OyuBmI13CvhvC0pcImOi8L1cwyrL/KE2ckptdLH75XGpZ5xdVAFHa/0tNGeKMczdMwrohWMRdBU5vTPFVv2tS0hE+WgeTKePqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzbUTwtP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 892C7C4CEE7;
+	Sat, 27 Sep 2025 17:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758992465;
+	bh=n2nTeLhnB1YwsJtcxhRWqzFPO9O7HrX45d/S+eWqvMc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZzbUTwtPaepm7BU3gzNW3C/3tcL51N1rHjfYclMdMQLlRhpSe/8rXbvAmla/6MD37
+	 qVacOxe8an+wDefu+XyevgV5L+1b7tFaIQbifdK/jljH7efDKkT0zm0JaQ2sKqZSiA
+	 i0wpJcbER7ST6t5nZeUxKP59eKxBL4jFgXHzzVPAoDnBefLWjIfMDOcOHhBH/xYvXr
+	 mk3RK81zIpnWEEC6dxhm5NF/4wshSNE52I4IK1QadeFd/X6ptr5ukfT9vT/c0rNZrf
+	 2LQyIWtEuOgMLF4mD4fralo3bvRxbpUGCGsSOerWcD6AAFS2/yKpR6Zpi/h567N11A
+	 51EbdsW2hgxFg==
+Date: Sat, 27 Sep 2025 18:00:56 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Ariana Lazar <ariana.lazar@microchip.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: dac: adding support for Microchip
+ MCP47FEB02
+Message-ID: <20250927180056.38b1822f@jic23-huawei>
+In-Reply-To: <7836f862-5320-4a81-b15b-4ada08e78077@baylibre.com>
+References: <20250922-mcp47feb02-v1-0-06cb4acaa347@microchip.com>
+	<20250922-mcp47feb02-v1-1-06cb4acaa347@microchip.com>
+	<7836f862-5320-4a81-b15b-4ada08e78077@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Replace kmalloc_array() followed by copy_from_user() with
-memdup_array_user() to improve and simplify cs_ioctl_engine_cores(),
-cs_ioctl_engines(), and hl_multi_cs_wait_ioctl().
+> > +  vref-supply:
+> > +    description: |
+> > +      Vref pin is used as a voltage reference when this supply is specified.
+> > +      Into the datasheet it could be found as a Vref0.
+> > +      If it does not exists the internal reference will be used.  
+> 
+> It looks like there is also the possibility to use V_DD as the reference
+> voltage. Not sure the best way to handle that though.
 
-Remove the unused variable 'size_to_copy' from hl_multi_cs_wait_ioctl().
+Indeed that's awkward.  I suppose a custom property as choice of VDD or internal
+reference is unusual and it might be critical to how what is downstream of the DAC
+so we can't even do it via userspace _scale control.
 
-No functional changes intended.
-
-Reviewed-by: Karol Wachowski <karol.wachowski@linux.intel.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- .../habanalabs/common/command_submission.c    | 34 +++++--------------
- 1 file changed, 9 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/accel/habanalabs/common/command_submission.c b/drivers/accel/habanalabs/common/command_submission.c
-index dee487724918..a5e339eb7a4f 100644
---- a/drivers/accel/habanalabs/common/command_submission.c
-+++ b/drivers/accel/habanalabs/common/command_submission.c
-@@ -2481,14 +2481,10 @@ static int cs_ioctl_engine_cores(struct hl_fpriv *hpriv, u64 engine_cores,
- 	}
- 
- 	engine_cores_arr = (void __user *) (uintptr_t) engine_cores;
--	cores = kmalloc_array(num_engine_cores, sizeof(u32), GFP_KERNEL);
--	if (!cores)
--		return -ENOMEM;
--
--	if (copy_from_user(cores, engine_cores_arr, num_engine_cores * sizeof(u32))) {
-+	cores = memdup_array_user(engine_cores_arr, num_engine_cores, sizeof(u32));
-+	if (IS_ERR(cores)) {
- 		dev_err(hdev->dev, "Failed to copy core-ids array from user\n");
--		kfree(cores);
--		return -EFAULT;
-+		return PTR_ERR(cores);
- 	}
- 
- 	rc = hdev->asic_funcs->set_engine_cores(hdev, cores, num_engine_cores, core_command);
-@@ -2523,14 +2519,10 @@ static int cs_ioctl_engines(struct hl_fpriv *hpriv, u64 engines_arr_user_addr,
- 	}
- 
- 	engines_arr = (void __user *) (uintptr_t) engines_arr_user_addr;
--	engines = kmalloc_array(num_engines, sizeof(u32), GFP_KERNEL);
--	if (!engines)
--		return -ENOMEM;
--
--	if (copy_from_user(engines, engines_arr, num_engines * sizeof(u32))) {
-+	engines = memdup_array_user(engines_arr, num_engines, sizeof(u32));
-+	if (IS_ERR(engines)) {
- 		dev_err(hdev->dev, "Failed to copy engine-ids array from user\n");
--		kfree(engines);
--		return -EFAULT;
-+		return PTR_ERR(engines);
- 	}
- 
- 	rc = hdev->asic_funcs->set_engines(hdev, engines, num_engines, command);
-@@ -3013,7 +3005,6 @@ static int hl_multi_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data)
- 	struct hl_ctx *ctx = hpriv->ctx;
- 	struct hl_fence **fence_arr;
- 	void __user *seq_arr;
--	u32 size_to_copy;
- 	u64 *cs_seq_arr;
- 	u8 seq_arr_len;
- 	int rc, i;
-@@ -3037,19 +3028,12 @@ static int hl_multi_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data)
- 		return -EINVAL;
- 	}
- 
--	/* allocate memory for sequence array */
--	cs_seq_arr =
--		kmalloc_array(seq_arr_len, sizeof(*cs_seq_arr), GFP_KERNEL);
--	if (!cs_seq_arr)
--		return -ENOMEM;
--
- 	/* copy CS sequence array from user */
- 	seq_arr = (void __user *) (uintptr_t) args->in.seq;
--	size_to_copy = seq_arr_len * sizeof(*cs_seq_arr);
--	if (copy_from_user(cs_seq_arr, seq_arr, size_to_copy)) {
-+	cs_seq_arr = memdup_array_user(seq_arr, seq_arr_len, sizeof(*cs_seq_arr));
-+	if (IS_ERR(cs_seq_arr)) {
- 		dev_err(hdev->dev, "Failed to copy multi-cs sequence array from user\n");
--		rc = -EFAULT;
--		goto free_seq_arr;
-+		return PTR_ERR(cs_seq_arr);
- 	}
- 
- 	/* allocate array for the fences */
--- 
-2.51.0
+I'm lazy so haven't checked the values. If the internal reference is near VDD
+it is probably safe enough to just make this a userspace problem if anyone
+ever needs it.
 
 
