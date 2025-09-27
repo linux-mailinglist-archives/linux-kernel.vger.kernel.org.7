@@ -1,301 +1,238 @@
-Return-Path: <linux-kernel+bounces-834836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D1BBA59E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:13:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE82ABA59EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644183B3D3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9984A65BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DC925A328;
-	Sat, 27 Sep 2025 06:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885DE2701DA;
+	Sat, 27 Sep 2025 06:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/90IypL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="or1t/Kyi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IiitGhCf"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE92B25A2CF;
-	Sat, 27 Sep 2025 06:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A282258CDC;
+	Sat, 27 Sep 2025 06:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758953559; cv=none; b=HKsbdrH292IBxvxYO+bcyEhVAyWNtWSeWO9A1C8wJSec283+QfwC0VE7PO3PaQUZ/9/79SFau89TrouX1kgXydUk5SJNY7+f/XlKmvdB5govN0x1nnSSC8R5PcgE8ioO7Lg1f0EbhZRCpyRqFZoTG6Ec1WEyyT4fSbbI+VHjLjo=
+	t=1758953831; cv=none; b=SL00nzl7i2Xk4SYpeWrl3eg6qks9OoWpdPLGGIJYdb6YEtbjY1Md3nhiUuL6I1yrOixIJtzA1irVxuAl31JumTtDIy6v27F6vPuux42BNdj7ehb/6tHIT7P733O8RZuyEirjfBDLOnNICBuSuVu5U/5C56IB3mdKip5F5R8M5qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758953559; c=relaxed/simple;
-	bh=jDGdeYRSR6G+nLEbsl+K8rRUHVY0iapVzO1DkGOIYOU=;
+	s=arc-20240116; t=1758953831; c=relaxed/simple;
+	bh=Mw5TBqc8ObImy/VzvyAW0LqNtXyvXGWCIJZuMNb2j5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InMUdW2qVteW2mBRIfxIFLUX0G6NdlqUlhSCQVRBuC6tFUTbaJU0mABxY+wTcbu0XtyOigDSkDGTynWk14p79eGR/mwjzMtJgK89uBe3MBMXlkh3LxQNeoPtxIhWOpV6qRC2aH4rAPH31z/OxYmNoMAJKNt6xnz7maDm8BrHzn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/90IypL; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758953556; x=1790489556;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jDGdeYRSR6G+nLEbsl+K8rRUHVY0iapVzO1DkGOIYOU=;
-  b=W/90IypL5to9YAnxas1xoDHb3g3uSblt1aue+cxwKJVFgunlLoiICLOr
-   sA/bMtRWJ7vKHLrr7HSAjZdQsLkqkKfkd6CBA6cyIOX+A4MnRv6vBSr/5
-   7O7qBSY7uIaR4pXu3j7cwFbhx5CrYqqDi2T1OgCqxyI4CvyqUDbnXlN98
-   myJzd5XRH4omMinaGCjVRRCF5NXvrWtKxlhFAdyLR1C8szpKC+E0oIDHO
-   lmNyJ5bugNmZ82vtxd1lXxFjedZOgL6xNqnEtgEZlnS1CSFqzKKTe63Yv
-   nTxIL4/DkAbRlOjdSg9zlKQmyqV4jEGUd8PxOWEHhR5Md4FTKiK7Vfo1/
-   w==;
-X-CSE-ConnectionGUID: gsQbxnZwQLe6v9meEZCWyQ==
-X-CSE-MsgGUID: 51x/Ihy9TJaGEW+sCDwaUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="61326424"
-X-IronPort-AV: E=Sophos;i="6.18,296,1751266800"; 
-   d="scan'208";a="61326424"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 23:12:35 -0700
-X-CSE-ConnectionGUID: rc5yUXXeTD+tNAqKdvR8/w==
-X-CSE-MsgGUID: dOX0QDuTTaiySpgWbb5dPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,296,1751266800"; 
-   d="scan'208";a="177715622"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 26 Sep 2025 23:12:28 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2OAU-0006pX-0c;
-	Sat, 27 Sep 2025 06:12:26 +0000
-Date: Sat, 27 Sep 2025 14:12:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>, git@amd.com,
-	michal.simek@amd.com, alexandre.belloni@bootlin.com,
-	Frank.Li@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, pgaj@cadence.com,
-	wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
-	arnd@arndb.de, quic_msavaliy@quicinc.com, Shyam-sundar.S-k@amd.com,
-	sakari.ailus@linux.intel.com, billy_tsai@aspeedtech.com,
-	kees@kernel.org, gustavoars@kernel.org,
-	jarkko.nikula@linux.intel.com, jorge.marques@analog.com,
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
-	shubhrajyoti.datta@amd.com, manion05gk@gmail.com,
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Subject: Re: [PATCH V8 2/5] asm-generic/io.h: Add big-endian MMIO accessors
-Message-ID: <202509271308.NHfa8qUq-lkp@intel.com>
-References: <20250926105349.2932952-3-manikanta.guntupalli@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GE5/EKmZ+JlcahaBvHCaqT03SiKui9lmq/httElY4LHK6b/Xo7+jHeMX8jOET8O5fU9z3+jnswbRYbJyeUUIX49ET3W0AB92Pt3pNW5xTKzMPejM+ihO0oAgkO8Fb6iOQcnruzhZ6IcTTe6FqmOD8O9BedBFQy1ocBy6CDM4g4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=or1t/Kyi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IiitGhCf; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 79D0C7A00C3;
+	Sat, 27 Sep 2025 02:17:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Sat, 27 Sep 2025 02:17:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758953827;
+	 x=1759040227; bh=RS6yuaADnvZ6pC8boGHVpGYnBRl6x45obIoXXRd6D24=; b=
+	or1t/KyiXr+z0AuSqJobYcuPuIg6ITQs+1sOfsE+nbxrgNmFHq5wYJBod/tQ0iiR
+	fws9G/3JXkz0PSx01aUdXpwHM1yBZi6a6I7F5ECZ4FGxkLjSb9OQUjIj4aMLIDQt
+	hhJOMsSeRT7/SbVA0vkt07X5I3hMTxD3o2yc9YpXHVHHZ4l0yXFB3Vqc7sIqkQZ6
+	ez4yAlLWMF1AfI4mm0CZxYW3LnvNuN1TorhhBx/rg+TdB/V7kaOCwt09Aa4xx7ty
+	Cwnt5bNjMZFVWny1RBSgmCHLzuegKWW4bZs2xSQQhlbFeprYp9tklazdfk+PNiZa
+	iVYgOmaRHRWf/yHTboOzvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758953827; x=
+	1759040227; bh=RS6yuaADnvZ6pC8boGHVpGYnBRl6x45obIoXXRd6D24=; b=I
+	iitGhCfajDw1VYhaa71H9y3bd+r79eIdUj7sCShJSH5fdmy37EKPTBWwP1RhnM2t
+	E8scA6fyy7UfctEynb14ZRq4AoNBJzk6GIhSj/AYzxuulZYfdBRuigbzUfETZwxm
+	d3WC8rOyE9Rpf7mJra6l7oP/Pt53OskhTdUkfQdVtMrPyK5onU6ZEgn4CJJ9D6+D
+	8fwfFxrwR1ljzT1jm1Oc/ATqfYdFYuw2Du4MWyYyzVsjoKQzRWRwGwu5PG2jFu71
+	yv3tOYoDFfKeEVYik2d8Q2x1BWnq54zUErbIrj6vjlgc2Un93k5oDrPfh3sZH6W6
+	hGH3+hPW1HZTb8h8A33uw==
+X-ME-Sender: <xms:YoHXaP9yQ0TZMSb6BBACWUMMrM6Wm333wk6b5WmkOK2YWf9TosIypg>
+    <xme:YoHXaIT36EaOXkPl7OkyIYpymqYqxAHAph4M-fdJzKxR6MxzVQqQSFE60GftzXcZ7
+    _dIaoE4vsDe10692jgo3DGvnDt4SH5mevHk_E50CUFfVrajdDz0D2w>
+X-ME-Received: <xmr:YoHXaBc06Jgq7Q40RR0rGAoSGAWVB_zmADB3Mxqvyfmhxp18vkUh_WPzewx_Wbivk2MiMVIvGP0YhU_cYUq6S5DqzYCF_Hc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejudehudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
+    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrth
+    gvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedtvddvhfdtkeeghfeffeehteeh
+    keekgeefjeduieduueelgedtheekkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgr
+    thgvtghhrdhsvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepthhomhhirdhvrghlkhgvihhnvghnodhrvghnvghsrghssehiuggvrghsohhn
+    sghorghrugdrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrthesih
+    guvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinh
+    htvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgthhgvhhgrsgdohhhurgifvg
+    hisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihgu
+    vggrshhonhgsohgrrhgurdgtohhm
+X-ME-Proxy: <xmx:YoHXaCTZU-HnRpuDQ8dXl4v4rSTDkAj7vNjj--b6TfJeAHiogPRpAg>
+    <xmx:YoHXaFKkFweoNiOqlJUG711XDrFTfSR3Xaqv0l-KotbmHzvWMwqZWg>
+    <xmx:YoHXaHIaTbM__G2SdgdeRE_30E-6KIp1SRjXrnOS7Zv3SI6_8QaBqw>
+    <xmx:YoHXaIgXb27GFPg8wSOmRM1rDzq09HyHgzzh08yiYlLExrHezciB3Q>
+    <xmx:Y4HXaCpe0iMvy-B9QlU2LZfLDxs1mzWXn2HPF1e49yBxwzB9dn9GR44T>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 27 Sep 2025 02:17:06 -0400 (EDT)
+Date: Sat, 27 Sep 2025 08:17:04 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH v3 03/15] media: rcar-isp: Move
+ {enable|disable}_streams() calls
+Message-ID: <20250927061704.GA2027750@ragnatech.se>
+References: <20250530-rcar-streams-v3-0-026655df7138@ideasonboard.com>
+ <20250530-rcar-streams-v3-3-026655df7138@ideasonboard.com>
+ <20250602055742.GC11750@pendragon.ideasonboard.com>
+ <62890f7a-8ce9-47af-be36-e7384d2a99fd@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250926105349.2932952-3-manikanta.guntupalli@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <62890f7a-8ce9-47af-be36-e7384d2a99fd@ideasonboard.com>
 
-Hi Manikanta,
+Hi Tomi,
 
-kernel test robot noticed the following build warnings:
+On 2025-09-26 14:22:10 +0300, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 02/06/2025 12:43, Laurent Pinchart wrote:
+> > Hi Tomi,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Fri, May 30, 2025 at 04:50:32PM +0300, Tomi Valkeinen wrote:
+> >> With multiple streams the operation to enable the ISP hardware and to
+> >> call {enable|disable}_streams() on upstream subdev will need to be
+> >> handled separately.
+> >>
+> >> Prepare for that by moving {enable|disable}_streams() calls out from
+> >> risp_start() and risp_stop().
+> >>
+> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >> ---
+> >>  drivers/media/platform/renesas/rcar-isp/csisp.c | 18 ++++++++++--------
+> >>  1 file changed, 10 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/media/platform/renesas/rcar-isp/csisp.c b/drivers/media/platform/renesas/rcar-isp/csisp.c
+> >> index 8fb2cc3b5650..2337c5d44c40 100644
+> >> --- a/drivers/media/platform/renesas/rcar-isp/csisp.c
+> >> +++ b/drivers/media/platform/renesas/rcar-isp/csisp.c
+> >> @@ -268,18 +268,11 @@ static int risp_start(struct rcar_isp *isp, struct v4l2_subdev_state *state)
+> >>  	/* Start ISP. */
+> >>  	risp_write_cs(isp, ISPSTART_REG, ISPSTART_START);
+> >>  
+> >> -	ret = v4l2_subdev_enable_streams(isp->remote, isp->remote_pad,
+> >> -					 BIT_ULL(0));
+> >> -	if (ret)
+> >> -		risp_power_off(isp);
+> >> -
+> >> -	return ret;
+> >> +	return 0;
+> >>  }
+> >>  
+> >>  static void risp_stop(struct rcar_isp *isp)
+> >>  {
+> >> -	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, BIT_ULL(0));
+> >> -
+> >>  	/* Stop ISP. */
+> >>  	risp_write_cs(isp, ISPSTART_REG, ISPSTART_STOP);
+> >>  
+> >> @@ -305,6 +298,13 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
+> >>  			return ret;
+> >>  	}
+> >>  
+> >> +	ret = v4l2_subdev_enable_streams(isp->remote, isp->remote_pad,
+> >> +					 BIT_ULL(0));
+> > 
+> > You're now potentially calling v4l2_subdev_disable_streams() multiple
+> > times on the same pad and stream, as this call isn't covered by the
+> > stream_count check anymore. Is that correct ? Maybe because
+> > risp_enable_streams() is guaranteed to never be called multiple times,
+> > with stream_count never becoming larger than 1 ? If so that should be
+> > explained in the commit message, and stream_count should probably be
+> > dropped.
+> 
+> At this point in the series risp_enable_streams() is called just once,
+> from a single VIN. That is, assuming only a single stream is supported.
+> In the cover letter I mention that there seems to be some kind of
+> attempts for multistreaming in upstream, which breaks during this
+> series. My understanding from Niklas was that the custom multistreaming
+> doesn't work or at least can be dropped. Niklas, correct me if I'm wrong
+> (and if I am wrong, someone else needs to take care of the custom
+> multistreaming =).
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on arnd-asm-generic/master linus/master v6.17-rc7 next-20250926]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+And as discussed on IRC the main issue for the VIN pipeline will be on 
+Gen3 where media graph links are made to model VC-to-VIN as we had no 
+streams concept at the time. And that would need to be changed _before_ 
+adding streams to instead model the physical busses between the R-Car 
+CSI-2 Rx and VIN instances, with all their fun limitations.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Guntupalli/dt-bindings-i3c-Add-AMD-I3C-master-controller-support/20250926-190033
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250926105349.2932952-3-manikanta.guntupalli%40amd.com
-patch subject: [PATCH V8 2/5] asm-generic/io.h: Add big-endian MMIO accessors
-config: sparc64-defconfig (https://download.01.org/0day-ci/archive/20250927/202509271308.NHfa8qUq-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509271308.NHfa8qUq-lkp@intel.com/reproduce)
+If that is not done and streams added to the R-Car CSI-2 driver it would 
+do the correct thing, but the VIN driver would still create a lot of 
+media links that after streams are not possible to setup in hardware.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509271308.NHfa8qUq-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   include/uapi/linux/swab.h:19:12: note: expanded from macro '___constant_swab32'
-      19 |         (((__u32)(x) & (__u32)0x000000ffUL) << 24) |            \
-         |                   ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
-   In file included from arch/sparc/include/asm/io.h:7:
-   In file included from arch/sparc/include/asm/io_32.h:21:
-   include/asm-generic/io.h:787:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     787 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:119:21: note: expanded from macro '__swab32'
-     119 |         ___constant_swab32(x) :                 \
-         |                            ^
-   include/uapi/linux/swab.h:20:12: note: expanded from macro '___constant_swab32'
-      20 |         (((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |            \
-         |                   ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
-   In file included from arch/sparc/include/asm/io.h:7:
-   In file included from arch/sparc/include/asm/io_32.h:21:
-   include/asm-generic/io.h:787:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     787 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:119:21: note: expanded from macro '__swab32'
-     119 |         ___constant_swab32(x) :                 \
-         |                            ^
-   include/uapi/linux/swab.h:21:12: note: expanded from macro '___constant_swab32'
-      21 |         (((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |            \
-         |                   ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
-   In file included from arch/sparc/include/asm/io.h:7:
-   In file included from arch/sparc/include/asm/io_32.h:21:
-   include/asm-generic/io.h:787:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     787 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:119:21: note: expanded from macro '__swab32'
-     119 |         ___constant_swab32(x) :                 \
-         |                            ^
-   include/uapi/linux/swab.h:22:12: note: expanded from macro '___constant_swab32'
-      22 |         (((__u32)(x) & (__u32)0xff000000UL) >> 24)))
-         |                   ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
-   In file included from arch/sparc/include/asm/io.h:7:
-   In file included from arch/sparc/include/asm/io_32.h:21:
-   include/asm-generic/io.h:787:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     787 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:120:12: note: expanded from macro '__swab32'
-     120 |         __fswab32(x))
-         |                   ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
-   In file included from arch/sparc/include/asm/io.h:7:
-   In file included from arch/sparc/include/asm/io_32.h:21:
-   include/asm-generic/io.h:803:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     803 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:818:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     818 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:833:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     833 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:926:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     926 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:939:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     939 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:952:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     952 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:966:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     966 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:980:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     980 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:994:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     994 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:1377:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1377 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
->> arch/sparc/include/asm/io.h:16:9: warning: 'readw_be' macro redefined [-Wmacro-redefined]
-      16 | #define readw_be(__addr)        __raw_readw(__addr)
-         |         ^
-   include/asm-generic/io.h:304:9: note: previous definition is here
-     304 | #define readw_be readw_be
-         |         ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
->> arch/sparc/include/asm/io.h:17:9: warning: 'readl_be' macro redefined [-Wmacro-redefined]
-      17 | #define readl_be(__addr)        __raw_readl(__addr)
-         |         ^
-   include/asm-generic/io.h:319:9: note: previous definition is here
-     319 | #define readl_be readl_be
-         |         ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
->> arch/sparc/include/asm/io.h:19:9: warning: 'writel_be' macro redefined [-Wmacro-redefined]
-      19 | #define writel_be(__w, __addr)  __raw_writel(__w, __addr)
-         |         ^
-   include/asm-generic/io.h:363:9: note: previous definition is here
-     363 | #define writel_be writel_be
-         |         ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   In file included from arch/sparc/vdso/vdso32/../vclock_gettime.c:18:
->> arch/sparc/include/asm/io.h:20:9: warning: 'writew_be' macro redefined [-Wmacro-redefined]
-      20 | #define writew_be(__l, __addr)  __raw_writew(__l, __addr)
-         |         ^
-   include/asm-generic/io.h:351:9: note: previous definition is here
-     351 | #define writew_be writew_be
-         |         ^
-   In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:274:1: warning: no previous prototype for function '__vdso_clock_gettime' [-Wmissing-prototypes]
-     274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
-         | ^
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:273:9: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     273 | notrace int
-         |         ^
-         |         static 
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:302:1: warning: no previous prototype for function '__vdso_clock_gettime_stick' [-Wmissing-prototypes]
-     302 | __vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_timespec *ts)
-         | ^
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:301:9: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     301 | notrace int
-         |         ^
-         |         static 
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:327:1: warning: no previous prototype for function '__vdso_gettimeofday' [-Wmissing-prototypes]
-     327 | __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
-         | ^
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:326:9: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     326 | notrace int
-         |         ^
-         |         static 
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:363:1: warning: no previous prototype for function '__vdso_gettimeofday_stick' [-Wmissing-prototypes]
-     363 | __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct timezone *tz)
-         | ^
-   arch/sparc/vdso/vdso32/../vclock_gettime.c:362:9: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     362 | notrace int
-         |         ^
-         |         static 
-   29 warnings generated.
-
-
-vim +/readw_be +16 arch/sparc/include/asm/io.h
-
-21dccddf45aae2 Jan Andersson 2011-05-10   9  
-21dccddf45aae2 Jan Andersson 2011-05-10  10  /*
-21dccddf45aae2 Jan Andersson 2011-05-10  11   * Defines used for both SPARC32 and SPARC64
-21dccddf45aae2 Jan Andersson 2011-05-10  12   */
-21dccddf45aae2 Jan Andersson 2011-05-10  13  
-21dccddf45aae2 Jan Andersson 2011-05-10  14  /* Big endian versions of memory read/write routines */
-21dccddf45aae2 Jan Andersson 2011-05-10  15  #define readb_be(__addr)	__raw_readb(__addr)
-21dccddf45aae2 Jan Andersson 2011-05-10 @16  #define readw_be(__addr)	__raw_readw(__addr)
-21dccddf45aae2 Jan Andersson 2011-05-10 @17  #define readl_be(__addr)	__raw_readl(__addr)
-21dccddf45aae2 Jan Andersson 2011-05-10  18  #define writeb_be(__b, __addr)	__raw_writeb(__b, __addr)
-21dccddf45aae2 Jan Andersson 2011-05-10 @19  #define writel_be(__w, __addr)	__raw_writel(__w, __addr)
-21dccddf45aae2 Jan Andersson 2011-05-10 @20  #define writew_be(__l, __addr)	__raw_writew(__l, __addr)
-21dccddf45aae2 Jan Andersson 2011-05-10  21  
+> 
+> Later in the series risp_enable_streams will be called multiple times.
+> Each VIN video node will call it once when enabling.
+> 
+>  Tomi
+> 
+> > 
+> > Same when stopping.
+> > 
+> >> +	if (ret) {
+> >> +		risp_stop(isp);
+> > 
+> > This is also not covered by the stream_count, while risp_start() is.
+> > 
+> >> +		return ret;
+> >> +	}
+> >> +
+> >>  	isp->stream_count += 1;
+> >>  
+> >>  	return ret;
+> >> @@ -322,6 +322,8 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
+> >>  	if (!isp->remote)
+> >>  		return -ENODEV;
+> >>  
+> >> +	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, BIT_ULL(0));
+> >> +
+> >>  	if (isp->stream_count == 1)
+> >>  		risp_stop(isp);
+> >>  
+> > 
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kind Regards,
+Niklas Söderlund
 
