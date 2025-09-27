@@ -1,126 +1,155 @@
-Return-Path: <linux-kernel+bounces-834998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0C8BA6002
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE25BA6005
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B654C23F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C349E4C24EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043651DE4FB;
-	Sat, 27 Sep 2025 13:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682A82E0B74;
+	Sat, 27 Sep 2025 13:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wl8taeLZ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oH+Ba3zt"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC871A3166
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5BE22083
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758981373; cv=none; b=H6uI3aNmkLbIFAhZ+MNqu3iouncFIP/KakhxZDSV0Fbjge6wAcZGwV7K36MnM0MWQmYggkgzv6SLHmMcrWY9sckv+CZEqrWKgLIv3M0T6oXSKQez+2yGv0HraYqW6Mjgr5S6EHq05/NYXPDLUMFL19plRF5Q7mcdaddM/D9VL2g=
+	t=1758981462; cv=none; b=qpBORED2EgS7qDJOhayH3Ra7TU8WDnEp76Uykp3lGVicdHAvSxQOjrmwXdU4FvHo09y2qLZ8/F1O1a76Zad0sSoj/1f2rOdo14fs5FH7H1bdTUWiHbf9fGWchE/zERJkYxU/OlsUPDAIscFaSFEznE4wSGf3l0jVYGN20JCz/go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758981373; c=relaxed/simple;
-	bh=ureChU45nREqUmvZTTVk+SwNTIJzvHOY5zs5cEzl+t0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N6rrMsSKzRe+aW7hsm1gsiDCZmaj+rslcgMpXUIzU5WhWkrHXfUvnTr5IUxdvRvm2bWQq4zi+SiRge1/Mf/O57XYuoxunrRC/cOM3fbPF/W7tRjkttO6I7bqspNPox80WPmw9oZzjXkbeZ112gtoBNNOIh2LX0OAK0/H5nMfw0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wl8taeLZ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e3ea0445fso8028585e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:56:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758981370; x=1759586170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ureChU45nREqUmvZTTVk+SwNTIJzvHOY5zs5cEzl+t0=;
-        b=Wl8taeLZnSuAkaYOcGiWwHKKI0GkeDjdflDaWh6frmYQL0Z+k0Xx3jt3oZUPBO2PqF
-         98avA75obFkBGIjilt9vyuxg1DdCi5eiI0RN29bC1O3+2BOewamOw/Ff1Y8evzLlX5Ln
-         eOI6Axl76EKmWtoitIKbIDFVB70ixzJ4AJrqQNLXYjq9degIA7/ybCmsXwt1qb6QS8tZ
-         kcsqJBgXoL5Nph4MZ7ld9jxvW/lmD2u6bOU6wOGhdctGysb1alze/Ijnxyr/jcD0Phjs
-         mvdJG0EDXfS9RaQYlmg7AvXfTSQFB5lDfQjcn8weyOwqNvjftEPUMqvxbcYg3uB5k4vc
-         fU9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758981370; x=1759586170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ureChU45nREqUmvZTTVk+SwNTIJzvHOY5zs5cEzl+t0=;
-        b=Mom+IuYRf+CUSPzsZJUL3ptQjZ7VPmQwpKzSWVo3efs4sKLrAbUJZLA7W9eRbSTszH
-         u+t3mqi7d9+iFpqQbaWcb/yRESJLaQxqXcrZm/KCohpzQHYgm6LcNG6VUQnR24fjJe/5
-         iygDuN0S6JyDatznMsmI0ZhSo4/kdoYVV/M1MQpvThn5uT5BkvOqKfaqX3Tue3m4nvrx
-         G6jAyqu7i0LuBKLiaOM8zeY2c9cw1QQMh9mBNGHUoteZXhUoeLX49SeL/8xQUjcVhsye
-         IarxBmT8mwtlJRUcdOdOku5XybN+842tIwzaZcvFn292cnkic8yi6qQ+Ps8LwJb1Se6P
-         DO7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVsDEEhAtUUvmBANX8mf0RVziWYVMqRur5veGFPI/q8BCG58Ma2PEHxYntu1ilpGA7Kj/kk+ycf9peLIKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt702DKEsZku5wI8eMIZjXno3e3Ja6v1tMEooTFLi6ecuYrHwh
-	P/0RgqpN3inBVBzytua2y4s6OYX16bZcwjvEMKJmR+EDIxhZuqU6ZVjhozV+rsFH7VBHOx/O+n5
-	HofrlGojCYcKANUlyY9zAAMVGCEVM12M=
-X-Gm-Gg: ASbGncvKzROqPUJdTRJ6lNO1vjUzGjS9CiKj0srfo0SDQGQEp1a9kwN79wxinGTmhDI
-	C7uG2qjAbPEL/8lVXeVzYHsHsGbLdc0827WhM7pqmZoeMM43N7mhA9GcrSZNxaZ3sFicS50C/QY
-	EfUf8NRduBbsNx3/JplZE0U3ohll6GdK9v2NxdeUIRV/Ln4P8XOTS5hsp0AvTjmjpp+phNq06Bt
-	y+OEBHXxiqMBwu0LRxslOKrVx0ugBCILrgrXtcCaPNKlmTl7eGsd+MIj8CVTTLJFa0fg0agn4BY
-	2V6P/hYj
-X-Google-Smtp-Source: AGHT+IGr8zOK+RC+hHIYloBf/M6OFm9CLonT2X9KL0+nRhOcgIc58bzH/HUeqmIKXIC0EyAYm8IIg0+2JgEjPzNIGIA=
-X-Received: by 2002:a05:600c:3594:b0:46d:7fa2:757c with SMTP id
- 5b1f17b1804b1-46e329eb02fmr105794995e9.19.1758981370031; Sat, 27 Sep 2025
- 06:56:10 -0700 (PDT)
+	s=arc-20240116; t=1758981462; c=relaxed/simple;
+	bh=odZJScnngEm+S3AtxQrvpSQkKV7osaJFzsa1SO+IUKA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=GsFtMF1OzvZDLXr52u4B0ushf0PG4vtpmlVJK68UUdWntjlY7RGIWHKbxf6tyPXuK3e1cM03vTH4FfY6HBIyVBLQVbId3iSJeE0nszjkn6faQyv95S5fkAK05Ke2qWzVak+I1E/8X1yAvqxIwSdLScut0c59aU2yUcADmB7u4UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oH+Ba3zt; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758981457; x=1759586257; i=markus.elfring@web.de;
+	bh=odZJScnngEm+S3AtxQrvpSQkKV7osaJFzsa1SO+IUKA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=oH+Ba3zt0+dGiYrIR2WM0YBhFoc70T1i3hRznjrp8QyqGPS4QLddjKiUNnjoItGl
+	 yNYrypUNBoa/6l9Yy9deXPIxq+iRrmQjr1Flbc5348AQaK5dHQLvsN3V3qWrzPiLk
+	 ZH3j6IO7JKbIIW3bmoBFRBoyfL/IstSemIWsYU5NsjAey0vn/RNf6DDi3bOmH4hir
+	 0n2oxG6poLIs0HIRS07/+0FFYm6+uqTYpv7SY/kBiJ3r7cr6zud912+CBYyR4Fytz
+	 KDVrGM2k6Ibnr2ZIlXMjBZY3StnS/2UiUEV6Ak85H0EikrI02kgMk9LNR4uVYioc9
+	 Sf+zZiTlbI8QmyCjvg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.221]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M5QqN-1v17qu2Caj-00FIhH; Sat, 27
+ Sep 2025 15:57:37 +0200
+Message-ID: <1bc9a4b3-7a8d-4bcf-9481-36fdc76e066c@web.de>
+Date: Sat, 27 Sep 2025 15:57:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912163043.329233-1-eladwf@gmail.com> <CA+SN3sp6ZidPXhZnP0E4KQyt95pp_-M9h2MMwLozObp9JH-8LQ@mail.gmail.com>
- <aMnnKsqCGw5JFVrD@calendula> <CA+SN3srpbVBK10-PtOcikSphYDRf1WwWjS0d+R76-qCouAV2rQ@mail.gmail.com>
- <aMpuwRiqBtG7ps30@calendula> <CA+SN3spZ7Q4zqpgiDbdE5T7pb8PWceUf5bGH+oHLEz6XhT9H+g@mail.gmail.com>
- <aNR12z5OQzsC0yKl@calendula>
-In-Reply-To: <aNR12z5OQzsC0yKl@calendula>
-From: Elad Yifee <eladwf@gmail.com>
-Date: Sat, 27 Sep 2025 16:55:59 +0300
-X-Gm-Features: AS18NWBlYzv4rg7URg9J1v208P3mV2tQeMkzKbuflldE-TNBrvutb99r7dTcmXk
-Message-ID: <CA+SN3squaSg08e=GKLZeStS3bSaKQZz_n0SWOB=Cv8cuLhO1Vw@mail.gmail.com>
-Subject: Re: [PATCH net-next RFC] netfilter: flowtable: add CT metadata action
- for nft flowtables
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Janne Grunau <j@jannau.net>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Lee Jones <lee@kernel.org>,
+ Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>
+References: <20250925-macsmc-mutex_init-v1-1-416e9e644735@jannau.net>
+Subject: Re: [PATCH] mfd: macsmc: Initialize mutex
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250925-macsmc-mutex_init-v1-1-416e9e644735@jannau.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:NP8BtfQimdEvXv9Rq7e//xfDrOyxRsxFbOjcZln17pFcUU25ON4
+ 01QEjVcgNfaTJiqNG74TimTsw2+MZj+3bWvyq1HELeHmdcSOrRGA/RNyiqjhuFFg2nwuvwB
+ pg6rNtB+MYSqxA3JHX80TfCeicnMrDFyuFYwbcb4ELV1SPOaihhAPBNPS879GjrHhYYT4Ai
+ t22PzWDqTBLP7Il49U0bA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:syKLplIkyV8=;m9npGcuZVIwJ/6WdKlV27+G+lGw
+ bydHrCE4rtOnX/TOzcDQg9wTbyY/s+nub/QwADTdtHR8VuweNrGO0pssXWO6SWrWwuGTiXo85
+ 1XwpOM8qRy5Ze+bSbnyKf1y+1wxL+H+qVHTgoa7xgWspNOov9VeDkuWCnn0VkEpgJZLZncp7m
+ ktASdNDVZT4+60wvIf32rgYr/lBjkncmsn62/pf1QeNLnyAcl0pdvroGMP/Q0lM7ZF3Z3Vkkp
+ Ee8Z0IG7WcVi6ctwjMnJHTX93+1qw19j4lG4O8ACV/j2V4zVOuaX/Ks6CLFz7CKfaphI7oiGt
+ ubd7qXHBC/qHk3rkrWXp8/po3aVg7otu1yqMpZGfWhpCIWMafzus8ZhUh+1+TN101RIYoTom+
+ QBEQfYH7gOgVSTLSZUkqbQbc45duSOCS8Yc1CzjxuKsYdNosTWRyhePD5S8+HAUxt2P1hhLJX
+ zj1+kFaMJLGPuSxG3WM+biWEuDB35/xgkdkTBPUijLSMyr5+KV32VSJ+VOw+wvHKlwE70iW7I
+ oMH3V/DqQ5zIABFkPAcYDulVGzMb42E7QRrCOBTKWxy5IVguH064jXrRBWo02KBvRczKbbLwr
+ jxdJa3Y0hqNPk/sgU9nUmiTnXHt4gS947kbuXgrR2YFd1v5iIIK55lwiVFVgL+HcG7jOAeLox
+ Y5I0ywWqrymSAKa3r/JbGLPvdZ80ApFAoZNJIXsq3sulYfayKMH01Nq8VeSz7kFrOX0PWUHAy
+ ZUL68CZ/hWfl1gxYAs/XGsgHIHocFgjKkx58o+LehhNr6IRLFSdZWPxpO03OmRto5x2mNK6FI
+ 0ymTs5XLVlkWtJQOhppdYK5186StbnxFelJ2T57LVakK2i/GGRJuwZ7cTKG0JPkIxA3sO4FxR
+ AS4zCoyXsTc5zwjap1B5wXbE5JIusmT6l4GeVoYRF7zC7dzL6c8WPoQ50s8qVT4AlTNMUy1Qm
+ +2ndRjb4Kc2ZHobEZVGSpS7GAITiTzZYnweEHadkX73MERn4GZ62SzEYe1/THA4+aLoYnOEsZ
+ bPGA7CS0nRF03C5RKLhfbHlTkSHtfvOnSC6I0HE7zNwHrsruc3c0EVV4Zn7aFNrEHPO0RpeYy
+ D2n4FWdY+GovRXZIWjpj9cbUoVFWh5tDXCsVQJEQNA4BLAJ6mGGZzl9JAe/S7PUs9lFVi6PRV
+ YbRLq+NkCKN5VU76r5OmrwBCwCoXXmqEf7umgLD10UI6W3q/l1NzfgF6sR9E90mVjBMap4a2m
+ JWJClcGMU13I7AvN5kZsG9ogv+7PmgQ3X8GYsHLoHOeiN30Lr664HbDA/S6riRapNsTd8zqhd
+ vi7k7I1NJeUe3TdNL4yVcq2rG4StVkWP/DqcNxDkRDKDNmyIAl32h6TA2ko/Ng1C0SEjjAwiJ
+ w8DybZIovEeQC+DlevnR/OoHwIZIR06cJ3gMEt7T8EugPtRzNCo923qx6d4HjzlbZsQQgk445
+ evcZxV6bQeyzwiVQDU0ZtuBHISGfFUHX/eIVCXuGMP06nAYw2G/JPk9f3f+XQDSN6jyg1uqny
+ bm/ARi+v9xctjh3lmB16Q/S9IGohV+bpY9Ck2TdfVHxldlRj6EXhFw6nmzDbJ3qZ+LIKIA57X
+ 7igw8bLeq+bYIaCWqN9Wg7VyOKx61jxTQKDYz3fcbVYwRTC1rP2lQwoA9OddIDRWBsRGRie3K
+ Gx9Z39ndn+R+VNLHoP7lVRzSwioPziY57QwJ/w7uIPyeh8cNER0RPDCyIWKQ7ZS+UlLwz2sZy
+ k1WWYsQRCNvMYM3eTnZ7Lb/jtjdBq0Wn9Xq4EUf7FFZBj6xHB+y0/VTiNSI1COJEEEE5ZHpoD
+ QmrLls3jwZ94ry5+kUe4sc5R/LW37VYfiZH6xcrABFDkcRH4qffWlCOg7mfV1G/uoJT3lMtxm
+ YG+29ULpTmvUrMMzUR92Yq+RHfiRHYbsyA2SVrIpBWbSFOE7ed6S9UBU4ME/kR/nnD8PsKC+7
+ wqk/mCCVptb1vn6xhTOSF7ZOH3Zp2cvrAxf0I49bi+l1I+GfLsvvr72oOieqUthB4Duq/JzMY
+ LCBQvVTganiM2BLqSP5dEkDj6BZYrOWr9dnqMWi9h1pyf9f8qgkNbEbBcEylLifOsMbGj7g8T
+ mLXtG37xv72gI88OHhLbR0kbSl8tgwqXV3IJj+KDMqaVx9FmvmpLlumpYoG1AGjcAHExF36S/
+ wcYhl0kbn6jhM0FYGV/npamceEGag2o5wmigFRtvHh1mq4ip59tiq0G2JrD8lszjJVlx+zIft
+ R2a2U32npzpF/ISPa/ZX4qHW+TBoXlMSyZDRNB7ScM9Tjae4mlGaMG90A117sS7rcwZ6XYFB5
+ c5yQu36uiaQs1hKGAQH3uMz6A3+8u4wajBNSad3nEX9no+VRF5JpCYThF7+0jfjYLyELI7m+e
+ AZwyTwi3BMqcUEW7xPfIO07/9hEsjUHouETpXA+0BHoCNy5DlCUDJMnQUvSmxpwRXBF6hFDlT
+ k5TE+9TYY7JY254nEJ7kMefuy+6jPXhH2ad8FWMtdfmdjIMDjVKoXYs70AbQIkmP/9sicG70h
+ YbBarZ1tuzHLQ9gf2L0oVEIrL/TXq4wpN7ocpRUuerX0eOINMpvVa5Fv4JkkkuwT7lXL5yBGz
+ suX1z8QSzgWvg3YIebHzAwE3JyUs/bEila/eBQartcFOdmryxo4EqHqIeHKWA9/+ZEmEO5xHR
+ n2J1Trf4az374JiPNM9X08xuCYlXWVRk+eWbSOW3vx3/MhTA5TTHkOdqkCcH/vaX7ZXZnFcmA
+ ojRF615EuuX5/M8iUeAutwcqN6WHaKEeJsrOw+eJ1wawwkoJAgpMo9ef1YN5ATR4i8utAiyHT
+ SXOZyFnc+Y6KThdXTz34t58Fufw8pAzuKkbYvmelwFW5gz1KGJ9suDdBm0CqMQ2NPZDUvsuJ5
+ E8+PFrtp5KMIHl7W2jrWZ5vsFbtAswkuptL8vCUcfO6xm3abMxEi6JGtv8gjkkQ0PvIIJFCpD
+ 4w28311hVRvnHM4m88U7Q6AKIpUUigzP+X7o91+0gCr1bzW4QVFdDdqvklSqnYemu1CQ4LTSO
+ 1GpKDU3DeWRdavX/zrczpYfL5DuLdAz2K8FXrPAdyM+k+R+i4WkAfwptAUj4yj2dwKlMT1hef
+ 9GZees/AoH25lMViAGOHHe1/0PWnnCBxpsjh3MbNLm6D2jGfkxA4FszN46zWrj/60lsIYR+QW
+ NTMgvWEWF6B6BH3cZQtUW7PT+I0mb5nMI3dW0CoPBHVvILsWs8fmALZpyYNQ9S07Yn+d7Gtfs
+ 9YoxEPa75s+GGeRHFa2mM2I0Wg7AxlHH6sgYQshGwXagizPEo6eD8no88PFSJjRO/EX9PLLKZ
+ Zc8qpfPfFO8pXepdL85Gcb2mZFclOrlKmUnHwvqzjlnuNbQTg56FzWSC/XUSohaU3/1tU8bBL
+ XQL79qdA2kl1NXooGGcYW1isYBQbhyVotlkWhZVSIuEQvjsGChDE2oeFJzkz+UZcVWginI5X3
+ mKtKMCg3c6jXFwzXQEivDDYAfLyDX/X/QdsxTBZmFPCmfkGshR/6azrRwdeyyq3yQ84Gg1QbS
+ gKJXkrGtGzmE4PMD45vUqrWTrM2MB6LKvxYrIH0pmlJXl37TqveaBcJoDs8W3gvGatxeCKEAA
+ cTeaosntAcygpwJUwRsyIe/UQVhi4FjLuZp4t8vf+btabWBSzdBJN4i4RNp42eHUZruk8UwlY
+ 9twdgE1O3GvA9TXcPOrZZ5nT7LfqTp4NV/XevzUuo/Nb6awBSuqlsKvRPWgz8Q221Oi9+XxhY
+ mgtvfhOHmTuMrIORyNsb7QMi0pci4GaXThIITPpZyHlSrhsvAm54pb7M0fOKmbbEuIhHUcCsh
+ pY6H1v+kr58V9d/V1e8ChOSS1kWaaXnSK48dngw5TA8VTHEB+I8fok2MvkiTzU0ARwDaP9vKP
+ Ke/ie6dT60aTqwiaJNbL1QxEnF41++vo00q3EYMwzIkKKq62xoXjTrbMS3goNfycp0UFvOqR2
+ PkCsg7TnaHP5TSM6P7IeR6Y45pDBd7cgZB10oIeLGCjny7GakyBX3tuJoKMN0cmNUUJDNT6iM
+ PtOX5vU8JoKrBH2ZHnXUlGE9rxs/nTf7hRESE538e0vkTCRGF+EraNtCdGTF9/LDHdGAPd9vt
+ TxthUKDlQ28rQeiPKJwo5D56thSpCgCAZOZkK4ISfthYcEDuj5wPuKoqUqCPXc70SxGR/Ms8I
+ elIZhQgbgWgVXqJQIRAmv49JH8rCbs6kqn/cB6VWLw6N36+4kiEJ+xeSk84ehV6zp756OJuuk
+ IpaZb451ExCePSjXTJ67xtxjL4qs6pQ2yfe2zbffsPDkJz8b4Nxb1MMMh/FUmYFhp5mmh+q+a
+ 1kkOmeRJwh6lQJhQmfi17byamfzOKw9+XdROR70IyGzYRR2sYRBYwyJyJ/vXwAWOni+nWlNm0
+ TkFs+vi4xhVfgVQBAxwR48tWtHgyc4EwXbB8f3EbjPPnbohOxzrW8BUQrSWZUNNY+Ik/64/y/
+ p/fD68ewqqVVbr3xbYGHv6MIJ3M87DcazaXDCzowoB6QAdTJPQR9sPAxw4ZFTKvdT4c7EGXXn
+ H+Mpwb4XMk78O1TD9Jth3BXTeO6OSdSHnzdw/6EmNIzC7cZo3D5vPRAeqShxfterxGGGICGDc
+ bjjHxEaGI/79IoeAI7PZbb7yQ4yQBl3Qryn5uWbPR4oKk96Hj6vr/aTtemyXH2Eza/MXd1cR6
+ fEVq5nym6SBE8sc6CacdWYrdFBHO8Q4ymQwyDVIdkfLZgTYIF17lWlx/EQ2w6QFF+U4uBTTWr
+ EE0yojgInvStuAAe3UIXuEAOzmtfSnwSUTVsdtcfGK/aaYcwo2MHx9VVFgmghRKQyr3c0J9J0
+ W4ZB4ucGEiVcYa2ZAjriGEnN/Zdf7ockmFg5StecUsrJLPYSs7Fz02TIJSgudOZzWwJxMsRDI
+ S
 
-On Thu, Sep 25, 2025 at 1:51=E2=80=AFAM Pablo Neira Ayuso <pablo@netfilter.=
-org> wrote:
-> You have to show me there is no mismatch.
->
-> This is exposing the current ct mark/label to your hardware, the
-> flowtable infrastructure (the software representation) makes no use of
-> this information from the flowtable datapath, can you explain how you
-> plan to use this?
->
-> Thanks.
+> Struct apple_smc's mutex was not initialized before use. Surprisingly
+> this only resulted in occasional NULL pointer dereferences in
+> apple_smc_read() calls from the probe() functions of sub devices.
 
-Thanks for getting back to this.
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc7#n94
 
-My goal is per-flow HW QoS on offloaded connections. Once a flow is
-promoted to the nft flowtable fast path, nft rules that set packet
-marks are bypassed, so a driver no longer has a stable tag to map to
-HW queues. The conntrack mark/labels are flow-scoped and persist
-across offload, which is why I=E2=80=99d like to expose them to the driver =
-as
-metadata at the hardware offload boundary.
-
-To address your =E2=80=9Cno mismatch=E2=80=9D concern: this wouldn=E2=80=99=
-t change the
-software datapath at all, it would only surface existing CT state to
-hardware. Could you advise on the best way to proceed here? Would an
-offload-only exposure (drivers may use it or ignore it) be acceptable,
-or would you prefer a specific software-side representation before we
-add the hardware export?
+Regards,
+Markus
 
