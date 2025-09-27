@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-834963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20B2BA5EB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:14:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64294BA5EB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06AF17DD06
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DCD189DBC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 12:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA402E0408;
-	Sat, 27 Sep 2025 12:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE6E29B8D9;
+	Sat, 27 Sep 2025 12:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFQZxeZ4"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGtvTWJ/"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BE02DF6E6
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 12:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1382D1F541E
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 12:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758975276; cv=none; b=eOVD1sT4rqve+7Th/llwJ4N0FdCHx6IH78V2X/QPiaNZcn3RxctK1AqYxOsvamYYjIi1luGsrKElsBp+Uk37NKuCtXbOqdtZowsJ3BoTtRCdSswxt5S916NwLdciK14+hOGg0Uay5D15QQLzaK3TM/2tV/rDaEhpt44ZVSyj7ys=
+	t=1758975371; cv=none; b=R7jLoQ0Wfr10cFSK1jhConhduubxw2aWdfLWOy/2B/NBprNmW9CIQXJ96OZ//K8gw0dSijj/8xbU3xeleXTehcZIajpCisXopICymLv8jYjFWXBeeEgA7GUgk0qmSB92GNVRChSps33h/Lfs77aYJhjjYW9HVw3X+ETLrlNqV/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758975276; c=relaxed/simple;
-	bh=cQ/vViuV5kkPC8N6xSHm2TBoNeswpTWYDcjW2WZz3iw=;
+	s=arc-20240116; t=1758975371; c=relaxed/simple;
+	bh=osqMo4xYnsPBNWFZJF66fDdoXny0UKAShUKrp2Qwdh8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YzpZdGNFZItJa/UcUkdwmyCmPPgu5d3VMwiJJUuE5HF5KotmGSeV+JNgt/2wcfeeBXg/OptLnGPri4w/apqMnAv1cRLV04/DfgdVIBHsJ7jb09lvngsUzIMBbXdLvlvtIFTLHx+Zpw8TpzMMXBM5qqWm0Q05fEvzCpI6g0o6b/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFQZxeZ4; arc=none smtp.client-ip=209.85.214.181
+	 To:Cc:Content-Type; b=i/0HUlaHyHHnJeZ/zKIRJi3oEyYrs+aEqTrBBOJZT9T+wP+0LK4mBnZjJ4dHr94CY/9ZA28GCCMUnjOGJyJGsGLQuF7GqQbMdg8iJjAaL+LPcBBWD8XCNnoar9BR3ybNvmlBxyfWvz3bVtJ5nTPGuJVJBqzQjnPzhpuT6XcoXzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGtvTWJ/; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27eda3a38ceso6346145ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 05:14:34 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-330469eb750so3493069a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 05:16:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758975274; x=1759580074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cQ/vViuV5kkPC8N6xSHm2TBoNeswpTWYDcjW2WZz3iw=;
-        b=TFQZxeZ4uOCEM8UibUQWNPACJ9P5ukHSppEoujhdZnKDqlcFVNSN4vFPVMYEAzgJXg
-         izt8EAG2uKETaBkQtv6jxxJFxiv+JO+2X/ZKTTvxD+opvXQUFXkVAx7SKedDc0WgMmrK
-         bOsFrt2NLTdLQ262lIMJ7XL5E9ozW4p1vn4nxjl4jX9nmBU8oX63DESNtU8WSBpp5dxc
-         dZf4g1tCozA5EoZV2KSHthhVQMLRJaWK5yLTxlOO5LKwoSZNQrVZlmR0IGTOLTY/D4ad
-         BQviRptzQU08vrYVb99x84QLaEZJagvhdC3EeCjbPoaNU9B+EJfnGYy1IVPkilO5nOPl
-         Wh/Q==
+        d=gmail.com; s=20230601; t=1758975369; x=1759580169; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qv4Ga5QoIsrNSn68xSGIzks6N+Mwy6yKb05/24myBc=;
+        b=FGtvTWJ/SQLCRQwVgs/0rifqaSPVGLpuqEdM+Mt6A8XMjVzykGQV05dzFp3nTfVSnU
+         s7QDszQ3xny3WB6Rc8071ZwT5Sn/uGRtwo3bwF4lCHj59epAZK04AwSi/jvNZXYDg86C
+         vf4sanBaWPCWiZYD2WN3GZLFwaN1CYOx0ydF1ioHQE43GOfKO+ShAwjgLlgC+zJfe9L+
+         gxQ1kWtFFSt2vNM1iYljvWFdI5bGiY8FUfMl0fjXQLWNigmih5Cfbz2im61yu4e+b4Xf
+         aDRmbvHqaoBft9mvzpQav+HjgJMYbojSXdzjrhBepIm95EqvNVD1hE+EaZSuZXSurAJM
+         omAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758975274; x=1759580074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cQ/vViuV5kkPC8N6xSHm2TBoNeswpTWYDcjW2WZz3iw=;
-        b=rfA+ILdeLvmKrMNxxrpItm76kote4L3QsviYK7IDRTnE2WUk56AZxPxVWS21lT5q9S
-         8n9YsoavRBl2j7ihELL59z51/m6xnUt4qjuIt4BLQoCE5kWYuHCpceS1sprbmDSex0T8
-         CcHUo5NFFgMzDCyOKzdlupmq6N5AWfKI5R7USDdJqS8Vcp2opi2V3oaMeC78c2ep9NOH
-         73DzE3fY6q1sYir2UnCcXBtWDh9ngqRM9OWAMQRHyCE/QT+NhdOwNIrkwJ/HUYI31sSJ
-         hDerztXZ4qX0aalfio5jAKtAv55+Ua5+snIVoz2KM947ax0TU4lF2QokN+e6eySDyUuh
-         c5PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV13BkQejzvun80w/pBa1syX/+R16bynTfs29o/hotjKPsj2/ytT5hkukSR0ASFN/CK2p44nI474WViw9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykvP1y7IyHTescEnsZhi+y7U4Ey01jipcSFiseotuVnVpbHAaj
-	BTDaArpH6WASbFhaO2+iDlDC88hwhRwOhFB2Njj8CDd6k+edjUvMfmVeshB9ql6dqt3iZ9TcA8N
-	YG4gS0p5CHAt0xT9Tca2yNutaqoi5G2Q=
-X-Gm-Gg: ASbGncv1+WCDKYZCTxDyGkfasiteJ1D5GTscs3b27J0csAkMcIbpPQrTir0YRmqELwk
-	Z6HYXacml/1blyiTzc/UTdIf5RrsLcEXkDZVl3xpfUPW+yYadVeqlmixVcn+D3spAvNi/DC86Ig
-	f5NinF/FgYOXqHm6awTGjtbU5ZBVSasjNV2uQ860oTOVYA4UAt8gPocA1tkrEP4qnffENk2M/nC
-	fZ3DL7oQhs284Ew6s0lAE8bdKzxTIKzdSs6WgQLAEXHBsUdX1BGDFNDhJ2enGGk7LYKY8ExMhPC
-	yNybsxnSJMiXapaDW7Wik2E3RotLWMIETjuW
-X-Google-Smtp-Source: AGHT+IHZjp/EfiazAV4KIr6CKQXQ4M+vN6ByhlopidH8GmTXvgth0071YPgESmpcClrC9cwMbzePH8Og+U45ZvhzRpU=
-X-Received: by 2002:a17:902:db11:b0:25c:9c28:b425 with SMTP id
- d9443c01a7336-27ed4aca4a5mr73015705ad.11.1758975274365; Sat, 27 Sep 2025
- 05:14:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758975369; x=1759580169;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8qv4Ga5QoIsrNSn68xSGIzks6N+Mwy6yKb05/24myBc=;
+        b=pifuLmI7t3wLmKOJF735rPrFGK3kye5p0a0wahuh+Ks6z8ZVTKA6o747yFCkytx05D
+         EMCNngpj8mIEj9yLlSdSzv8H493snZjNOX9OC/SgMoJ0946z9WzmfHT/lzp3yqYS+LpY
+         xHlKnnvWyXcfxHM3N1LdG5T3bc0xF0nkB7STKViGampYIHHnmgYJhv5iXSQhNSGIcD2d
+         kh3aOGhKQ9v9/9o9Qkq9889Y0ka9BOGxwDwVsqW6WHdZL4z/TqaPntANnZGz1ZjYWMM8
+         ih5/rGg6BsYiYdi2oZaAkdctpBSHGyQO5iKLgwZm4liA+aIz9bwSrO+t86HfyySH4KiU
+         b5UA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWbebIql17bZ1dWu8iMtuLY5eveNDQC08IoiUxef/HmPQub4zR9a/UJ/fG1jrYuYQAzhUFaMtUkdG1c4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ9xz1UYba3y4hyCvfnKXBVtBT0cfdXqjJpfP+V3lEusH+fmd7
+	MBbAQodFxnT8s8P6qCsShtXg1EJyQLxEBNEYxF0JMAx8pXnJetgdARxt8LlcrPDU6sbBu2UuHM6
+	cVJs1BWHQOL92tDqI10TfDFYbI2yKpUw=
+X-Gm-Gg: ASbGncvOYC8M0t3NO3hf6c70LCwP4O/zaqgVtQ2v0NQw9JomgK5ahfzX+MWR4g95nHI
+	2EawukPgbkbqmCZb7oxwTf5uNoPYLrdBvODI+O10f5z+rGdleyaTYW6HJfDmSCVY4M7STgJQnG0
+	yXTQdHnIg3T/uo1KtFTGn9hNwkD9W0uP7MKPXbatrSIDhNSALHqzfWxa2TYIe0DAc1tOp3FLVSc
+	CAAf/TgnY1Ec1LuBIx8gOGznvGM
+X-Google-Smtp-Source: AGHT+IHsiI17VYHrQ3GH2ZPIOFDNXOLIe/yeeAd5WF1Qrebu5OoIx1VUVdYu6RrTjU7uSt9UNTZrJ8m09OWgillHOi8=
+X-Received: by 2002:a17:90b:1b4f:b0:335:5e84:6d37 with SMTP id
+ 98e67ed59e1d1-3355e846e68mr4821211a91.6.1758975369333; Sat, 27 Sep 2025
+ 05:16:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918123100.124738-2-phasta@kernel.org> <aNa7BDpKS2KA__4M@tardis.local>
-In-Reply-To: <aNa7BDpKS2KA__4M@tardis.local>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 27 Sep 2025 14:14:22 +0200
-X-Gm-Features: AS18NWCd0oDH3VKEokXgs76roViozK_Ajh78YilTwKiHy-TyrYWiBu0MM9gxng4
-Message-ID: <CANiq72=6pGtKKr3XeZXLVrJTNMv7YbGzbezSUrZ7A43MJQLwJg@mail.gmail.com>
-Subject: Re: [RFC PATCH] rust: sync: Add dma_fence abstractions
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Philipp Stanner <phasta@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Asahi Lina <lina+kernel@asahilina.net>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Tamir Duberstein <tamird@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Krishna Ketan Rai <prafulrai522@gmail.com>, 
-	Lyude Paul <lyude@redhat.com>, Mitchell Levy <levymitchell0@gmail.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	dri-devel@lists.freedesktop.org
+References: <20250927091931.7691-1-hdanton@sina.com> <68d7b657.a70a0220.10c4b.000e.GAE@google.com>
+ <CAO9qdTGH5eMQTesCKVjLU7-kMg4uGC_6DGxP+YOP63yp=07HdQ@mail.gmail.com> <87o6qw9koa.wl-tiwai@suse.de>
+In-Reply-To: <87o6qw9koa.wl-tiwai@suse.de>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Sat, 27 Sep 2025 21:15:58 +0900
+X-Gm-Features: AS18NWAqKqXB45gFfRyKYznZA3-cmvgfUfXNm8gAy3YATj5FzCcOkOtwAhMN0I0
+Message-ID: <CAO9qdTEbFHyxKToEF=7NRdxTNGi7dmgbQ6g4OcLNg_10yamdeg@mail.gmail.com>
+Subject: Re: [syzbot] [sound?] [usb?] general protection fault in snd_usbmidi_do_output
+To: Takashi Iwai <tiwai@suse.de>
+Cc: syzbot <syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com>, 
+	clemens@ladisch.de, hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, perex@perex.cz, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 6:10=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
+Hi,
+
+Takashi Iwai <tiwai@suse.de> wrote:
 >
-> Thoughts? Miguel, Greg, Danilo and Lyude, any idea or suggestion?
+> On Sat, 27 Sep 2025 12:36:07 +0200,
+> Jeongjun Park wrote:
+> >
+> > syzbot <syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> > > KASAN: slab-use-after-free Write in snd_usbmidi_in_urb_complete
+> > >
+> > > ==================================================================
+> > > BUG: KASAN: slab-use-after-free in snd_usbmidi_in_urb_complete+0x389/0x3c0 sound/usb/midi.c:251
+> > > Write of size 1 at addr ffff888074717943 by task kworker/1:3/5866
+> > >
+> >
+> > Wow, the UAF bug still occurs?
+> >
+> > But... this UAF seems to be a problem with how midi handles urb rather
+> > than a problem with my patch.
+> >
+> > Is there something wrong with the way snd_usbmidi_in_urb_complete() is
+> > implemented?
+>
+> This can be rather a missing kill-and-cleanup in the code path.
+> So the patch like below.
+>
+> Could you check whether this works for you instead of your fix, too?
+> timer_shutdown_sync() is already called in snd_usbmidi_disconnect(),
+> and the call in snd_usbmidi_free() should be superfluous after this
+> change.
+>
 
-Either way sounds OK.
+I'm not an expert on the usbmidi driver, but based on my analysis so far,
+I think this patch is the most appropriate.
 
-More generally, one thing to consider nowadays is whether we will want
-something to eventually live in its own crate etc., but for this I
-don't think it applies and being in the `kernel` crate is fine.
+And I tested it with the PoC I have, and no UAF occurred. If the syzbot
+test doesn't produce any bugs, I think it would be a good idea to apply
+this patch.
 
-By the way, should Gustavo and -media be Cc'd?
+>
+> thanks,
+>
+> Takashi
+>
+> --- a/sound/usb/midi.c
+> +++ b/sound/usb/midi.c
+> @@ -1522,6 +1522,9 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+>  {
+>         int i;
+>
+> +       if (!umidi->disconnected)
+> +               snd_usbmidi_disconnect(&umidi->list);
+> +
+>         for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
+>                 struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
+>                 if (ep->out)
 
-Thanks!
-
-Cheers,
-Miguel
+Regards,
+Jeongjun Park
 
