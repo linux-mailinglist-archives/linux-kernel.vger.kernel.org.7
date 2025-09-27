@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-834850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705F2BA5A37
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:29:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A23BA5A43
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CB42A28AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 07:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA1BD3B66D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 07:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA222BEC52;
-	Sat, 27 Sep 2025 07:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEtbOpIa"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DEA2C3257;
+	Sat, 27 Sep 2025 07:30:51 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B01165F16
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 07:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1F326D4EF;
+	Sat, 27 Sep 2025 07:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758958134; cv=none; b=jVCbxLAjl9zXsMEwaDKgHUYY4nfNfEAJFdLpBbHStNH3+/j3uogASnB2HRbHikmjkNn+FyTadErA7tmqciLDlUnQdghEEClnOhDCi27KxDGb7j/rtK+/pS4eAB1vEREg5pDEsmmkvFxNwforiKIJLVT81+BryqxxfbbncxnHRm4=
+	t=1758958250; cv=none; b=BAzaZUDmf8Mv4YmmG+TQyHCaEVY/ndk8c1zbbI5iMnhKEHZ/jjCysjgoQlrIcfa3NGKWEcIBLDfaedGLkjRpkIRMCVCyQASoJ4y8Rh08cpWEgC+oSaip1KmWKRm3Naux1RiW6nGe5l/yLNcv3bUGf2F7sbtdxxQtTYszoz7wQ3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758958134; c=relaxed/simple;
-	bh=ws6xOthopswVWueNlcODedeBAn7z4k/3lJ3AIjx7Pvc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pKmN/gIJdRhGE0Fka53X0nPnBKaxHlcKeoWkFIEctqvnr34oWcPXwfLM/oUGoS9LZKnRcwE9J/z6QwPUhA2rSgKiOfWQ474z/gHP2K9AraIs/OgcfLHzbevR8JKR9kEBs4Qi3xDfpe6UHV90FeYuT/Lobl5XjhCTEixYs3EQXbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEtbOpIa; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e47cca387so2605925e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 00:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758958131; x=1759562931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUF4AT79yZ/1kgypLqGgmkelfJrwmvBHPVvrxZ6wlWo=;
-        b=WEtbOpIasBDeUX1KxBla7JPT+sKpR2RT8DYQooaKVsS9YHbTOgsJD8XRhPQcKYP7QY
-         Z9YvWTBWql0AXZkfPf2A6a3s6zUfu0Kow1yxUnrFeckB6MoTeWY9h+wFcYT4wWiStp2b
-         ADRFXDly4bLhkyP6x8+KUHiImMJuE7Kwf+UP+IJBhZBHq5NqTUdX1RyXpVDZWR1DHHsf
-         YCimSn95LhE7VxrMOMpVmw0Hn3X+57LO+ANgyz0UrkCXwZGvefSQsHfYOV+vgdNqwsWT
-         qFKmwhr2ZQuoC6McHa+juIbxgx7IXXgdSVtzBMUhsrPoDboea3RY8RlxCJjwULVSEI0A
-         5Jpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758958131; x=1759562931;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LUF4AT79yZ/1kgypLqGgmkelfJrwmvBHPVvrxZ6wlWo=;
-        b=CsZMyaPJg6gzMvKBbhLx5BbKGCWrpzT6ynEcra1H1k4/9ZWiqTzo5JlMAtQt+dweqL
-         seBODX8QlvarsVTfTCoCtC7DrC4zISrAaWV2grYff7MlnfhAAZTAyGQ5EuFHyLpV/g6I
-         yJP1GV+x4YhLlL4KeAR9gar6oIGgG/WmesU13QGcCFH38qLExv/LnR2t0dxtB2KK/7YB
-         sACgkaggKzxszxxEjHfOEYtxdvl+p1IIR2rayYxaoS2WEPxCY6mromg+MxhKdyVhq24S
-         gIw1mm7hB2LrTAL4ZopUWU37VVO+fSOvLRqiyqmJyqvZV41p32SFGmooczrCne9wBfNE
-         UexQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU92Zz9Pg1K+WeUBpg8irA7pAPocznAn9UysXG6etw5YONMj/W1InDXA8GJH9muTgjIoAsJcVx3IzZk3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAQDMBDiMpAjYl2s+wFUDqR9JLC8h7Rx7DPsuWbRCCBfV7Fe15
-	19GBzXvXeUi78SwPPjc4ARdXtgOhLHQUbbgkTAlcRzoTbvdBn3qAk4m4
-X-Gm-Gg: ASbGncuJgt5O/PcmPrfBNvgKORH0i2V376kNXK32EAtUMN9HB1475xM0sHNsdpHuvbH
-	HpgoxBq1Q5QXxBltc93vB7t+uQpNxVeVhPcy5LP1Y4E3dDOECVJ3ay7/D5UenlqdabSpLNslcgV
-	UayMHdLogQnl+Uv7mJiygZNy/6uenZ7ysZFr/Q6/KNg+cMwtYfPlZcIGQr5YbbNWcUMRBM2fMhw
-	TBBwefwIz+n132cs7AwycELLD3AepmhyJe+wmYs+AdCkEmMShWWX+NzDMrAZaWALAmVR8jslzXP
-	LYd7czsfGdgWTvPVKr6IZ0ZIpfIapaqMsn8Y7o0mqgHcT1xXc0P0NJW31x9UWUQityYfSZZqCmi
-	hhNa5NLuNEWI4TDxgdaBwsWtBoDwg10uO/ne1bZGc3S4SQSYRTkxlMI0LY+fQaRFMnHnLTjm37a
-	A5
-X-Google-Smtp-Source: AGHT+IHs7ZcfbMRLMn987bC07Y3CP3fXnKcHfcSNzdjHsjvCZVyVGzddO2NeFAa+7uLn15UHmZSsmA==
-X-Received: by 2002:a05:6000:26c9:b0:3ec:dd26:6405 with SMTP id ffacd0b85a97d-40e481be731mr8950415f8f.26.1758958131217;
-        Sat, 27 Sep 2025 00:28:51 -0700 (PDT)
-Received: from dell (117.red-81-33-123.dynamicip.rima-tde.net. [81.33.123.117])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc6921bcfsm10353127f8f.43.2025.09.27.00.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 00:28:50 -0700 (PDT)
-From: Javier Garcia <rampxxxx@gmail.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	frank.li@vivo.com
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1758958250; c=relaxed/simple;
+	bh=pwQk5zAt/ju7QPDJfmEeV5nnlUGY2G1Vk6+0+y39tYM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Enl9LfK+ImzxEF1FyshPYMJm3ZYJsXVlpAL5C8n+ljzGIw19n8hIVYzHJErc2CV260VUq9bhSr6DziX3HHRzIzzDHQXctm49UAb6s4ZziFAV+EeRDIFzshmEVt9POyzX6wv6NkyKIo555y4R+i8Ixs8UJZRYSdlDXvQsCei8xHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowADXeBKHktdov8RKBw--.32523S2;
+	Sat, 27 Sep 2025 15:30:23 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: will@kernel.org,
+	mark.rutland@arm.com,
+	ilkka@os.amperecomputing.com,
+	james.clark@linaro.org,
+	robin.murphy@arm.com,
+	u.kleine-koenig@baylibre.com,
+	make24@iscas.ac.cn,
+	bwicaksono@nvidia.com,
+	suzuki.poulose@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	Javier Garcia <rampxxxx@gmail.com>,
-	syzbot+e126b819d8187b282d44@syzkaller.appspotmail.com
-Subject: [PATCH] hpfs: Initialize memory in `hfs_find_init`
-Date: Sat, 27 Sep 2025 09:28:04 +0200
-Message-ID: <20250927072804.583940-1-rampxxxx@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH] perf: arm_cspmu: fix error handling in arm_cspmu_impl_unregister()
+Date: Sat, 27 Sep 2025 15:30:13 +0800
+Message-Id: <20250927073013.29898-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowADXeBKHktdov8RKBw--.32523S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF1DtrWrtF1DCry5Xr43KFg_yoW8GryUpF
+	47CFW5ZFyvgr4UK39rA3yUZFWUCa1YkwnYkry8G34F9Fn3Zry3t348Kr9ag3W8JFZ8Jayj
+	q34aqrn5G3W5t3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Avoid the use of uninit-value in `hfsplys_strcasecmp` and `case_fold`.
+driver_find_device() calls get_device() to increment the reference
+count once a matching device is found. device_release_driver()
+releases the driver, but it does not decrease the reference count that
+was incremented by driver_find_device(). At the end of the loop, there
+is no put_device() to balance the reference count. To avoid reference
+count leakage, add put_device() to decrease the reference count.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-and-tested-by: syzbot+e126b819d8187b282d44@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e126b819d8187b282d44
-Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: bfc653aa89cb ("perf: arm_cspmu: Separate Arm and vendor module")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- fs/hfsplus/bfind.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/perf/arm_cspmu/arm_cspmu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
-index 901e83d65d20..75f1c029c2ed 100644
---- a/fs/hfsplus/bfind.c
-+++ b/fs/hfsplus/bfind.c
-@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+index efa9b229e701..e0d4293f06f9 100644
+--- a/drivers/perf/arm_cspmu/arm_cspmu.c
++++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+@@ -1365,8 +1365,10 @@ void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match *impl_match)
  
- 	fd->tree = tree;
- 	fd->bnode = NULL;
--	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-+	ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
- 	if (!ptr)
- 		return -ENOMEM;
- 	fd->search_key = ptr;
+ 	/* Unbind the driver from all matching backend devices. */
+ 	while ((dev = driver_find_device(&arm_cspmu_driver.driver, NULL,
+-			match, arm_cspmu_match_device)))
++			match, arm_cspmu_match_device))) {
+ 		device_release_driver(dev);
++		put_device(dev);
++	}
+ 
+ 	mutex_lock(&arm_cspmu_lock);
+ 
 -- 
-2.50.1
+2.17.1
 
 
