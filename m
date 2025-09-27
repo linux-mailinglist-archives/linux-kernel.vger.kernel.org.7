@@ -1,111 +1,156 @@
-Return-Path: <linux-kernel+bounces-834781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA6CBA5826
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFFFBA582C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D57C1C0555F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 02:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2648322A1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 02:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6F519922D;
-	Sat, 27 Sep 2025 02:29:11 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18E219D074;
+	Sat, 27 Sep 2025 02:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4pnLC4w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574F71A267
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 02:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181901A267;
+	Sat, 27 Sep 2025 02:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758940151; cv=none; b=OM/uil18Ej2PpBl07v3U0vAIpG4EPC3xg/r3n6q4lC9oszOeKICaJlmm+3++FwW6dlQRZHVs7qTEmintZh/ntaqNwdH217zt+eBC2prclVa4fVdm2D0YQwt1Lu9hZB1cT6MdTkhShYxwJSfbS+QExcK2Alma+7OD6pWKQrzNKNw=
+	t=1758940185; cv=none; b=s3SJXCbU+QFdNdtGwt2FeaEpKf/k2bRERoGgVePgwJ2aI8mTdZg8Dd3zIwO1a/hlu/SVZH53gdb0mr3UPWIZZPIP29UKTutcuu6gztnkE/qNy/J5tLiIxNgOHftI5RtX7VU3UIzPB8LHB5tQpoQSEOVTfnCfq9UMIFR2Od/8C4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758940151; c=relaxed/simple;
-	bh=GIPnusP700J5lEYYX7UIiuxp43JikbB/9frzCsSPEbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kP14wawASB3pS0GVzRmfa3+G0AfJk5Wf5YsoAQ9Jg6bYH8U6ha2xGdSd3+ucPfQwMT0Z0drzDdm7sbs2MOPMJP2hA4EsIukWowRjgX7BSxDr2ylx0zwIuAxbkM0965OzjeogwV2kBHmVlUwD+/JDaMeFdkBmDuJwF+L4y/FeSP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62f4a8dfadcso4859795a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:29:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758940147; x=1759544947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+DevKPTwMgnfMY33tLxNP7YJQ+kh/p8Il+2rzMT1+A4=;
-        b=QOHG3w/JuKqpbtpKULjYjitdHXnuRhhdzACKfKrdVhcs/g1sWQZkFH5YdIzG4BLv2W
-         FMJHLlDxAqGfOav0NlrFT9nc4BQ/Vs0xUr/3UCCLmomDnoy0Syny77u+Mw3iEP16mCcf
-         8u9imT1Suiinpxxt5KiOLmnlbogEjsPO9vK0YFsFRpS+LviLtDSQA7y3wvn4FfCJMKb/
-         xkx/+5+2WpOqgKcja1aQpfJt/KbNrVcoxc/372cbWnfd+qkzdoNfj4L9JB5dVmzwyfvh
-         g55JF3iGsIh7yLeS2eJ5T2DPsjWOGdc6ugDMzdo8MUDV/fUb/OnkeTyg90AgBXFnRWi7
-         qXMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUT0xEO0IUmAU5MXcHjAI2ilaxGclI+/GPOE/Sd4wm5D0QhSML7i7fHmLf5e7p92zMVpHhr9iiFOOQObyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ZDcN2KOm7fadAlcNWvR7G+Bs5yftZPPSO1jKR6Pv4h2HBpzO
-	yltpw2vWydp8ftFsunO3PMlPMl2fPEl88K+LDnsmMIlz3Q+4OzNZRe+raGgXrmPd
-X-Gm-Gg: ASbGncvqciGMFau44LckhZI1/F6LXvLTChgV2gQW5DT2O/Pf1r9fQTVvD3MVy+IBP8a
-	v2JVDpeujiMiCjawuV/9m9q8//VcHKakUY3VE3vu8pWoZ9A9z5qxJQm/LxHBxJsWORVlBLAzRWo
-	ZqRigyyqOKmAg2Xu4OL7QwUuV73pJOms6yh8bZF4qz8CA5MCfXGwIst0zXEbcEN7aOh0EZftYtP
-	iXNFnTgQ0RVU+kr0Q0nK8iwjR3DuNI9k5gbRZjm4nEGohU3hWw+LM5bduR+RTs1WTf8YbcRi2EX
-	8ZaNs5eKisLzN02xha5Gbot96oloQyomqtLfUIoIdUlApjz/Bd0F/+51l04ab19DdDCsT3jlrlI
-	z4Fe05z2gA+ZYhJ1rSG309GISXy24tkDRLfUJwQi/BvASpjVDGtJdrHpzgGDM6rj8N6aNcwzeoF
-	oymfmGqaovSuiMYLJ/TuA=
-X-Google-Smtp-Source: AGHT+IGBkrmIk6yja1HYDQBh9yMk/lnE3k1RzP18jMFychgaw6kXpxTxyrGcz99xso8Yjd+FEPju9g==
-X-Received: by 2002:a17:906:46ce:b0:b35:3469:49ff with SMTP id a640c23a62f3a-b353478953emr818248166b.25.1758940147266;
-        Fri, 26 Sep 2025 19:29:07 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3544fd0a7dsm479305166b.83.2025.09.26.19.29.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 19:29:06 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b2e173b8364so452384466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:29:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcqn/yXfs5jjO8U2HXeoBGaRWatw3qi8i3MvmGSzraeLavfxJvTK4Ze9jOMmYPJftseHpD2KYhCE2lD5s=@vger.kernel.org
-X-Received: by 2002:a17:907:2d1e:b0:b2f:963:1d2f with SMTP id
- a640c23a62f3a-b34bef98b74mr1061773766b.51.1758940146614; Fri, 26 Sep 2025
- 19:29:06 -0700 (PDT)
+	s=arc-20240116; t=1758940185; c=relaxed/simple;
+	bh=bxZHY0G3LSE1TLel39JL0bINmxacUD7SmlVol7Qqix4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LmBXE64Ofi4gYIffcqkGxSvbgnTJD1LVBRQdAnyit8f6CXuS6bL3bObHY4Fi0YUAmz+WgJVm+Uuh5AMTcApAS8+kXGl1y8MzlJIPKpQ6CHWmzoPIdPPySaKsi26Vx5CU5v+eYiL/p/UBctj7AIqVvGua5VqvgTB3APlKilFlvho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4pnLC4w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 901DBC4CEF4;
+	Sat, 27 Sep 2025 02:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758940184;
+	bh=bxZHY0G3LSE1TLel39JL0bINmxacUD7SmlVol7Qqix4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=J4pnLC4wMKlkSYzle6guutb7pFk8niyLbF4ggVN3MPHaecyfYeLMowF/ppbwXGNbH
+	 9qHkOtjvMcXF8Qo70nLWG1gtUawdt5U/m8jux8RvWVnTk/vO/iaMPGax0F4ed4myLk
+	 Iihb8oABrhq3wrNbP9t0uSeynh8yHaO3vp3C3SvVHVDrvpbH3/NfwBIXGRrw65rVlW
+	 esBawn5gqrGv9ZJ62SLeO4rsLDRtIPIedekGPMUe8tMKlRRhXVP5e/KXP6lON8WLHr
+	 VQfRcg8x6tsqp9aZgMzY8RRCCgTEfklNW0Cziu+Ey0f7nY8S3+UkxpE6GV3eOgAnVH
+	 /DjSUVOpQsIsg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832D5CAC5B9;
+	Sat, 27 Sep 2025 02:29:44 +0000 (UTC)
+From: Levi Zim via B4 Relay <devnull+rsworktech.outlook.com@kernel.org>
+Date: Sat, 27 Sep 2025 10:29:42 +0800
+Subject: [PATCH] Bluetooth: btusb: Add one more ID 0x13d3:0x3612 for
+ Realtek 8852CE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925-macsmc-mutex_init-v1-1-416e9e644735@jannau.net>
-In-Reply-To: <20250925-macsmc-mutex_init-v1-1-416e9e644735@jannau.net>
-From: Neal Gompa <neal@gompa.dev>
-Date: Fri, 26 Sep 2025 22:28:30 -0400
-X-Gmail-Original-Message-ID: <CAEg-Je-+dK+Weixf1iP7hn6dt_CXWTYraA=TSr=rMPkyoJVHbg@mail.gmail.com>
-X-Gm-Features: AS18NWD9i2Ce3lSv7X8ID-5SK3bN9ENqRcod81yTbnB7Qdrfx1pZRHR_ctdLGks
-Message-ID: <CAEg-Je-+dK+Weixf1iP7hn6dt_CXWTYraA=TSr=rMPkyoJVHbg@mail.gmail.com>
-Subject: Re: [PATCH] mfd: macsmc: Initialize mutex
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Lee Jones <lee@kernel.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250927-ble-13d3-3612-v1-1-c62bbb0bc77c@outlook.com>
+X-B4-Tracking: v=1; b=H4sIABVM12gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyNz3aScVF1D4xRjXWMzQyNdU+NEIyMTs1QTCzMjJaCegqLUtMwKsHn
+ RsbW1AMMgODpfAAAA
+X-Change-ID: 20250927-ble-13d3-3612-53a2246e4862
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Levi Zim <rsworktech@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2697;
+ i=rsworktech@outlook.com; s=ryzen; h=from:subject:message-id;
+ bh=0PHaemvygidLVIPnBlULH0clIkTjQK06pLw2gSJsUyg=;
+ b=owEBbQKS/ZANAwAKAW87mNQvxsnYAcsmYgBo10wWJwpMWJDI6Gv60GqMSHPYr0X1WYBzIct1+
+ lw0sH6qYJiJAjMEAAEKAB0WIQQolnD5HDY18KF0JEVvO5jUL8bJ2AUCaNdMFgAKCRBvO5jUL8bJ
+ 2OsoD/0WSK8QvBcFB1Z4C7W03UKv7j22OBBm+Vhel+zEYq+fGvYoBZFNLr8M88HMMfSDHkVFD3l
+ qFoIoQZ4UDS2kUdj/n0E+DcdOgjhGpxsoMKrMskpL5m71FoZTFGwRxRX8QQmhZr1jgMIMF74rJP
+ lN2bV07z+Y/11la2SaPt1iSfmr6w6+CmWJeMbOCYDKkgo4HLVJyJvhUCsWwZyrntY+JvBp6VPFX
+ cnLItdUixcYQgD+fn3M5sbrZVOCQmn/QbCz6keOuAQcLHzHw5Z33VM/QVjot7d5g2auSEvJRpQA
+ Ug32gZBfp4wIWD0Ja/4OdDt13kZfh+qoZT4RcpbDTMSMDbH1v+V7QFwTiG2w0usB7KZ87cJQOu8
+ Zv5ItzoshBPsndHZNiMt+YlA0nHZhQszuL5MqJagt7CK78sVmadlLQ7M7ZLrmd36kfDXqkQHgnP
+ r5mEgLgeQH9PN/35Rq/WjoJHgVlMbGTOfNHkUkXBqnRhlLjv4/i+wXpeJrt4WviNZWC/yX71rP2
+ 9fhSYWHqayVGxHWc8GNBhwPmTr/biFiL0uqsILNCdCMd3UQPXL9HJyIzF5bhabplB8Jt6XuC4s7
+ S96EVjihqO59jkkpSyWuTYf6oB0MtVzyaVECtcXZXyzPbedCOxOHmqSENr3UyHuvXxOOKXywAYK
+ pOrKoyEUswevf2g==
+X-Developer-Key: i=rsworktech@outlook.com; a=openpgp;
+ fpr=17AADD6726DDC58B8EE5881757670CCFA42CCF0A
+X-Endpoint-Received: by B4 Relay for rsworktech@outlook.com/ryzen with
+ auth_id=536
+X-Original-From: Levi Zim <rsworktech@outlook.com>
+Reply-To: rsworktech@outlook.com
 
-On Thu, Sep 25, 2025 at 4:33=E2=80=AFPM Janne Grunau <j@jannau.net> wrote:
->
-> Struct apple_smc's mutex was not initialized before use. Surprisingly
-> this only resulted in occasional NULL pointer dereferences in
-> apple_smc_read() calls from the probe() functions of sub devices.
->
-> Fixes: e038d985c9823 ("mfd: Add Apple Silicon System Management Controlle=
-r")
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
->  drivers/mfd/macsmc.c | 1 +
->  1 file changed, 1 insertion(+)
->
+From: Levi Zim <rsworktech@outlook.com>
 
-LGTM.
+Devices with ID 13d3:3612 are found in ASUS TUF Gaming A16 (2025)
+and ASUS TX Gaming FA608FM.
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+The corresponding device info from /sys/kernel/debug/usb/devices is
+
+T:  Bus=03 Lev=02 Prnt=03 Port=02 Cnt=02 Dev#=  6 Spd=12   MxCh= 0
+D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3612 Rev= 0.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Radio
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+
+Signed-off-by: Levi Zim <rsworktech@outlook.com>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 8085fabadde8ff01171783b59226589757bbbbbc..d1e62b3158166a33153a6dfaade03fd3fb7d8231 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -552,6 +552,8 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3592), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x13d3, 0x3612), .driver_info = BTUSB_REALTEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x0489, 0xe122), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 
+
+---
+base-commit: 302a1f674c00dd5581ab8e493ef44767c5101aab
+change-id: 20250927-ble-13d3-3612-53a2246e4862
+
+Best regards,
+-- 
+Levi Zim <rsworktech@outlook.com>
 
 
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
 
