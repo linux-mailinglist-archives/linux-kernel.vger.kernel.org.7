@@ -1,203 +1,175 @@
-Return-Path: <linux-kernel+bounces-834865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16222BA5AB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 953F1BA5ABA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA60B4A81AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:17:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015A23B3242
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13318239594;
-	Sat, 27 Sep 2025 08:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815602641CA;
+	Sat, 27 Sep 2025 08:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jfj1U+7K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9AD6723D";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L6GJEH3J";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aXCu1yJf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQbsl/LN"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F4B19C546
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627F21C84A1
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758961058; cv=none; b=X+bzq0+RmEw+lCIsLbZY1rnt3mbcrSePu55IhVOSZ8UnuL+LIX7RjuEq2r2RrSPvezKBy31OpqVlmo35jhv7lsrWMLKee5Nnhh1IHE8dR6zZZBBcKFy5NkhbG5Vmy497RF+eivmtLDfIBBT6NKEyrT9w/oH+bTIWAHJJdL42vE4=
+	t=1758961515; cv=none; b=hdkG9cZ9e5sRl3R87NbAvjXAJK1+wPB9B1cnaLQTyHlAERaIpepNTCckIOuXqraK9L1VEG4xy8fHicTOprVRJTIQMMGqzEthk2AcIR4o5fZu0jMulH0AVkWpt9kktZ/+qgN+LBbN2xOMA9FvxUVHkGxuzE1M9fOdDFQJdSD6utM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758961058; c=relaxed/simple;
-	bh=lhC06RHBJJAP+FWXcGWw6ChxvJFxng8JUPPE2KMKaeM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xm8yMdVnprM6bkJaKMNNLFHh620JmKZFMcTTjWwZKpJYsrJNeDiuSHSlR0zyLSX5HFrwvRBrjffLe7O/1eBV14H75777jeUPO7ygJAj+D0TcjSIqmugz393ahkM6w1yejW2ZR6AuqXmkmCED0SyWSxkSVFU6hUjSIi/WbYT3Thw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jfj1U+7K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9AD6723D; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L6GJEH3J; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aXCu1yJf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E8F622652F;
-	Sat, 27 Sep 2025 08:17:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758961055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
-	b=jfj1U+7KZR6oTFljxOLBR/K+FPO9ecnlEp+T7E6fZOi7NiNKFLeKp/YyeIPYMRsikDRZcn
-	bcRp5W2SV194LT1CG2sKVimanpGljSdBfaIb/sFfCtdS68Ob6U0kMuO0Slw9VBx0v6sfpV
-	qiLsNFny1elNghtcYYG2NdQw8KxtdLs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758961055;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
-	b=9AD6723DT0ZAXiXxfG0CsQJfxzYri0VzLf3dDnqHLBkO9Fs0da4zf62GJbIAXr4cK4vsrR
-	ePrvj0yiU5YVLtAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=L6GJEH3J;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=aXCu1yJf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758961054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
-	b=L6GJEH3Jslpv1ofTuIhzCmvNPcLk4NYlxNKVKNWMNuZX9T20K8sWziH34WXLc933zkHsHa
-	jXEoJEioO3q3yBWtDlR48q8oUApKgpO0mJLNU4uGbuPL+TDbAtNRQlXlvqfcBIYlC784Ld
-	I3oy0+xoK/F7kW5ui/7xX2XbNUnZaAo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758961054;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
-	b=aXCu1yJfdQQqa+JtsegK+EJDzjKto9G1926ZPHdyLWx6fcMiMsPapZZkwn7ly1SP3XrTJT
-	ANoWpihnTZxF+vBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA24013782;
-	Sat, 27 Sep 2025 08:17:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OfneJ56d12hhNwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 27 Sep 2025 08:17:34 +0000
-Date: Sat, 27 Sep 2025 10:17:34 +0200
-Message-ID: <878qi0b97l.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1758961515; c=relaxed/simple;
+	bh=p5vz5xhbT7dt6WixoUghQiRDJb+PLQ3a3K+iSodMKOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YPLCMaPm4C/m3Xm42Gsz2BEz8guqO3D8CLiP6H6bQEqtlcI1+9+V5+kRTmIqyhlwKzEm6FRzsO90znUAdqvwm2ETKcSKtOl+pNREZIxDsV1dwiGU04lv91Hty7Gw0Ew7eL12paUm7Xhz+z8A7e1kHcxV55unyCGYKb2zqsMd1XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQbsl/LN; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-25669596921so30641845ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 01:25:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758961514; x=1759566314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DcS53qL3vygg89yIrHdWsxucuF37fzAauEVoENx9lyI=;
+        b=RQbsl/LNxsReAM+SpVeiN28krhPr8B5qRyd4bRKJAUuXkzb4E2mWUeL5yLk1VqtBGe
+         nxuO82bFjkLHlR1pZUIKx2qGg3wqC7Pgi+UM9WAfzmtqTdr4aOfXEy0neELO0WQhyE3X
+         RrVK/ft8wsYZDzSGoXqaiZOimHM9JWa3P3iRobOJ2yyLNa24i+y9Lhk8VYyTDYsUupIG
+         Sh3jsEMTBcMzQAkxfWKi6yWcyMHbsLsBS8anK+b66H/LPQgrzJlSMRHaOFMSoEazMyyV
+         xqDVik7V3wB2/wq4xXyg1FpZHYq4aGPL5Xxbs7RLBaPb7jXsrkwU7gv0/KY72EM8vBFs
+         epCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758961514; x=1759566314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DcS53qL3vygg89yIrHdWsxucuF37fzAauEVoENx9lyI=;
+        b=PbMQPA14ikagyP8MxzUEW5c/yY0nrWr+6kQkPNfmHMmpd4TI1cyq88zwjXyz+xrllK
+         KKgktM52DKo3aSjmEAPk4+94CffA5b1uekTMAnxAtx0pgkmBrgWdPAT8tQl5tIp4eh6W
+         2sHedX5QVhxsX6uIIYmnRoOK7Ij4Mhp+9dDY+djWYSobIHWCLORfIAUIEq1rWKZf4X6/
+         yvtnm9eF90s+IAgnAhlGgP3aASpGpEp1mAXvp+R+Of9OogB92s2f6v/Xbjio7LR5uyiI
+         g2Gb+gNEdrtrRmuUVGkHREKcjuuUejFyvtnnSBY1P0+stMiLFUUxSVkay4IzPBN/Lvwh
+         Ru+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWx6XxvaBUaTzTTXe8getFFpMl1ydhVExlxLn6vuEfnaaNfCzckLKHxLaAkfbPoti+7ofRTnF7JJ0XzPQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ZWqbcCglNKFY7TB8r7fz/UUzb66s1dU4qP3ZvAu7fhK0ps5Y
+	EdrTZnUtMTuhRC3JQallm+dKojZUBSIPU4k5zXpvyp1U/qxG54d1Wzej
+X-Gm-Gg: ASbGncuU9RmGUMmC4sx4u4nlC2+q1WDMh2ucaKJZNkvqcBZRzyxSZ91Mad8qzIDGJXc
+	kfjlum0R3fHLNiMtLk4t67aGJssSQD40X2RN3kYSZLzDdE+pbeiZe/7RinAfNbfCIroQhimeLxi
+	2N024WBYi/FmrgKXWRnnOt3xEBYtYmKqq12oYVGls5H9+FUduGjrDhcUAFhfpAHfXiaPnRWW3VF
+	kCi5zOsHJ6vizTNZwm3QfcryVqCpN/zufMsHwnZ+6jcRJUty5PPs5+qxzlBBx05yUaAC5oGCPyk
+	ysI4Ciwdi2yyMmnJyOmz1rMLpNUgk0M5xqIAmuBaFq4xI9pwNylzNbJ/cmGUzWkbycpAW7XoxJh
+	JyXIp/8r/8Av4RJnY5zFbfaVl+H5uwPZMARlyzjeOjCsw7z3HkY6JceFe7WlMo6dCfW4g9wkth0
+	KwdDrqaS9opW87AaNCAKwAG+kG
+X-Google-Smtp-Source: AGHT+IECY6O9JpWVGyRWOnkVuWa9I4Cr7WOizR6qimQpbLIm+0WrHLfoZYMvAzc26KJNd3aVTvVaOg==
+X-Received: by 2002:a17:903:19cb:b0:267:cdb8:c683 with SMTP id d9443c01a7336-27ed4a0e96bmr114981805ad.27.1758961513691;
+        Sat, 27 Sep 2025 01:25:13 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:6bb3:b65d:f7d0:cab4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6700cb6sm73743805ad.34.2025.09.27.01.25.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 01:25:13 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Alexey Klimov <alexey.klimov@linaro.org>
-Subject: Re: [PATCH] docs: sound: describe 'chan_map' member in snd_dec_opus
-In-Reply-To: <20250926162658.989479-1-kriish.sharma2006@gmail.com>
-References: <20250926162658.989479-1-kriish.sharma2006@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com,
+	Deepanshu Kartikey <Kartikey406@gmail.com>
+Subject: [PATCH] bcachefs: Fix deadlocks between fallocate and readahead
+Date: Sat, 27 Sep 2025 13:55:03 +0530
+Message-ID: <20250927082503.40951-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E8F622652F
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.01
-
-On Fri, 26 Sep 2025 18:26:58 +0200,
-Kriish Sharma wrote:
-> 
-> When building kernel docs, the following warning appeared:
-> 
->   WARNING: ./include/uapi/sound/compress_params.h:364 struct member 'chan_map' not described in 'snd_dec_opus'
-> 
-> The inline struct 'snd_dec_opus_ch_map' inside 'snd_dec_opus' was not properly documented.
-> This patch documents the 'chan_map' member and its fields (stream_count, coupled_count, channel_map), resolving the warning.
-> 
-> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
-
-Adding Alexey to Cc, as it was added by his patch.
-
-If any, please resubmit with a proper subject line (e.g. "ALSA:
-compress: ....") as well as the Fixes tag pointing to the affecting
-commit.
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
 
-thanks,
+There are ABBA deadlocks between fallocate and readahead operations
+at two locations in __bchfs_fallocate():
 
-Takashi
+Thread 1 (fallocate):
+  bch2_fallocate_dispatch
+    inode_lock(&inode->v)
+    bch2_pagecache_block_get(inode)  // Acquires two_state_lock
+      __bchfs_fallocate
+        bch2_clamp_data_hole (or bch2_mark_pagecache_reserved)
+          bch2_seek_pagecache_hole
+            __filemap_get_folio
+              folio_lock()  // BLOCKS - Thread 2 holds it
 
-> ---
->  include/uapi/sound/compress_params.h | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/compress_params.h
-> index faf4fa911f7f..e90e2f40732a 100644
-> --- a/include/uapi/sound/compress_params.h
-> +++ b/include/uapi/sound/compress_params.h
-> @@ -336,16 +336,14 @@ struct snd_dec_ape {
->   * @mapping_family: Order and meaning of output channels. Only values 0 and 1
->   * are expected; values 2..255 are not recommended for playback.
->   *
-> - * Optional channel mapping table. Describes mapping of opus streams to decoded
-> - * channels.
-> - * @struct snd_dec_opus_ch_map
-> - *	@stream_count: Number of streams encoded in each Ogg packet.
-> - *	@coupled_count: Number of streams whose decoders are used for two
-> - *		channels.
-> - *	@channel_map: describes which decoded channel to be used for each one.
-> - *		See RFC doc for details.
-> - *		This supports only mapping families 0 and 1, therefore max
-> - *		number of channels is 8.
-> + * @chan_map: Optional channel mapping table. Describes mapping of opus streams
-> + *            to decoded channels. Fields:
-> + *              - @stream_count: Number of streams encoded in each Ogg packet.
-> + *              - @coupled_count: Number of streams whose decoders are used
-> + *                                for two channels.
-> + *              - @channel_map: Which decoded channel to be used for each one.
-> + *                              Supports only mapping families 0 and 1,
-> + *                              max number of channels is 8.
->   *
->   * These options were extracted from RFC7845 Section 5.
->   */
-> -- 
-> 2.34.1
-> 
+Thread 2 (readahead via copy_file_range):
+  bch2_readahead
+    folio_lock()  // Holds page lock
+    __bch2_two_state_lock(&pagecache_lock)  // BLOCKS - Thread 1 holds it
+
+The issue is that drop_locks_do() only releases btree transaction locks,
+but Thread 2 is blocked waiting for the two_state_lock (pagecache_block)
+held by bch2_pagecache_block_get().
+
+Fix by explicitly releasing and re-acquiring the pagecache_block lock
+around both blocking operations (bch2_clamp_data_hole and
+bch2_mark_pagecache_reserved), following the same pattern used in
+bch2_page_fault(). Force a transaction restart after lock release to
+ensure consistency.
+
+Reported-by: syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
+Tested-by: syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=cb91f22d8a581fc19edf
+Signed-off-by: Deepanshu Kartikey <Kartikey406@gmail.com>
+---
+ fs/bcachefs/fs-io.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/fs/bcachefs/fs-io.c b/fs/bcachefs/fs-io.c
+index a233f45875e9..66a60e5f03fc 100644
+--- a/fs/bcachefs/fs-io.c
++++ b/fs/bcachefs/fs-io.c
+@@ -694,13 +694,19 @@ static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
+ 						 &hole_start,
+ 						 &hole_end,
+ 						 opts.data_replicas, true)) {
++				/* Release pagecache_block to prevent deadlock with readahead */
++				bch2_pagecache_block_put(inode);
+ 				ret = drop_locks_do(trans,
+ 					(bch2_clamp_data_hole(&inode->v,
+ 							      &hole_start,
+ 							      &hole_end,
+ 							      opts.data_replicas, false), 0));
++				bch2_pagecache_block_get(inode);
+ 				if (ret)
+ 					goto bkey_err;
++				/* Force transaction restart to revalidate state */
++				ret = -BCH_ERR_transaction_restart;
++				goto bkey_err;
+ 			}
+ 			bch2_btree_iter_set_pos(trans, &iter, POS(iter.pos.inode, hole_start));
+ 
+@@ -730,11 +736,17 @@ static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
+ 
+ 		if (bch2_mark_pagecache_reserved(inode, &hole_start,
+ 						 iter.pos.offset, true)) {
++			/* Release pagecache_block to prevent deadlock */
++			bch2_pagecache_block_put(inode);
++
+ 			ret = drop_locks_do(trans,
+ 				bch2_mark_pagecache_reserved(inode, &hole_start,
+ 							     iter.pos.offset, false));
++			bch2_pagecache_block_get(inode);
+ 			if (ret)
+ 				goto bkey_err;
++			ret = -BCH_ERR_transaction_restart;
++			goto bkey_err;
+ 		}
+ bkey_err:
+ 		bch2_quota_reservation_put(c, inode, &quota_res);
+-- 
+2.43.0
+
 
