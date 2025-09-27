@@ -1,202 +1,145 @@
-Return-Path: <linux-kernel+bounces-835068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03D4BA62E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 21:38:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD1BBA62EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 21:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776763BD8C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:38:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D4C17F026
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192F723506F;
-	Sat, 27 Sep 2025 19:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD7822D4DE;
+	Sat, 27 Sep 2025 19:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UB4OS5rq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzCAcnBs"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C5816A956;
-	Sat, 27 Sep 2025 19:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B14C16A956
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 19:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759001881; cv=none; b=Za7YaRSPULjbKv/Bq5DCk/Y1eC3LQOqtzT65AkDk7pxg176yBzkRSwtrl2PGmJhL3hLXlOb1YpezEeDRNuOXpBIrY0I7RQbGMFMYEV3Q2JvB9/RqUrrVt/X6klgkBfcQ5o6rnH5Gify+cU0P7hG/wJ1mZ9SwlV+RVIbIYGbskU8=
+	t=1759002158; cv=none; b=sUiCCFQ1ZAqmd/AnC/7HwxrrP+a59hktf7MwcvBb6qPNy34wfE0BVecK87EZlb98Q+UmoLS+8+9NJyryA3iTsL6qpjU1tcBtela469i2uBQrzePFDF4RquDl79sXkzc0I4ZkKQFGzX2718e6LWQIJk7I2EWkViCLEqaueiuMf98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759001881; c=relaxed/simple;
-	bh=v4tYuKq23IFkP5pTX5xVWeK6wNj4TsUt3W+E4QEibj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwSVBYAjYbExZ7pxno192NVt+yiXkseAat94BWCG8Kkv3tTV+z5QgGBxYwTi6NZPILC97NBGOR763UZxOycf/nZrqnVm6aHY5ykA61kiAue2RNjjbntOe4oIbD29iCy6ThWd6IzpG90TprD4Q1mHBWOzMnPHvztkPc67c8oefS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UB4OS5rq; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759001880; x=1790537880;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=v4tYuKq23IFkP5pTX5xVWeK6wNj4TsUt3W+E4QEibj8=;
-  b=UB4OS5rqC9UKfOfsmDTbDCxhsexNF+DlbV9RyulG0ApDkt3HgOymBl5w
-   ZLu++sat8F7QFS1Yc9Uj+CrpU9lQrgHhuPD9CT3Y+/R7oRzEGnUwb0ytK
-   it/K8fHRHDhiEERXPEH+u7yLVHl6FOz/dx1dhk5k1ujHRDZ6p3NJYK2Kw
-   xKfWEXM1fZRMXkJe2Zo776BezLJffN3x1DEyOorvgnQGNuCUJnENri3Mh
-   GRNb9hiJfI1d6a0sCEo5g+9WoCYYYEhGgedGS4GWElEKS88N9AiliCMdT
-   k4IEEwwHrOVlVTwijLkw0jlWFvs6yyz2F2Z7tyz78MaSw6he0HrqHzy4a
-   g==;
-X-CSE-ConnectionGUID: LXGPSR7mR8qBnohnPmh9WA==
-X-CSE-MsgGUID: levRUB3ZTmWsJw4UJg9tMQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="83908958"
-X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="83908958"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 12:37:59 -0700
-X-CSE-ConnectionGUID: FJxBiAB5RyqbSrOb7oISQg==
-X-CSE-MsgGUID: T0kuUb2QSoG4qQMy8NQM9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="208615280"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 27 Sep 2025 12:37:54 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2ajv-0007IB-1o;
-	Sat, 27 Sep 2025 19:37:51 +0000
-Date: Sun, 28 Sep 2025 03:37:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Casey Connolly <casey.connolly@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH 8/8] drm/panel: Add Samsung S6E3FC2X01 DDIC with AMS641RW
- panel
-Message-ID: <202509280303.sWeQi4ks-lkp@intel.com>
-References: <20250925-s6e3fc2x01-v1-8-9293016768f7@ixit.cz>
+	s=arc-20240116; t=1759002158; c=relaxed/simple;
+	bh=6xQ9bzFk69iukmKUY25ufCAqjrKMzVtKfHbiTqiaUsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mop3VaZSn0Pj4DQ7AdTCFwwcF90ANV12D5/rZwcb57Dblt/9JlPpakLsH/8vnKGKN5OOo0rBSSxjVXWonklJ93ry8qdnb8ynv1SiN+v1UhYU+isN1RwIo2353X5n3mN1DOtIQWIt3Xy1p6zmNXGesrCcPlZspv1BM3jz/fvygqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzCAcnBs; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-59dff155dc6so2036924137.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 12:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759002155; x=1759606955; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6xQ9bzFk69iukmKUY25ufCAqjrKMzVtKfHbiTqiaUsA=;
+        b=JzCAcnBsgRzq297kFaoqSfI42HnzpWsgrqfN8m7wGU6mF2MDzPSNIRHpZBig6I4v9n
+         hh4VjsNH6btMGl/QFhxL+SJQ4mRO7rGdN72yifQhLd1dr/x6LM3SEmexPQyuxKWloMRn
+         R45fDgKKR0Ld1ndURMUFwXRDoXbNzwpWqx17Lak26CfwnopQeAADpN7wYKenRSWL72p5
+         E+4W8z93AmNuDd8dWotqRS8R4vje2XE/sa708iTT7BQYRGJ0omzgoRpe0ge9IT+nSEQ1
+         ulNmgke6aI1CrGAWzfOUjb05W7RBslPhxuuETjiuPXLSMF32ftbbZ5oS4d+nOOsbH80G
+         6WbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759002155; x=1759606955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6xQ9bzFk69iukmKUY25ufCAqjrKMzVtKfHbiTqiaUsA=;
+        b=w3PQblHNH0yKonloy0iZ7qBNsBqiXnZoJ12YvqNpZqcW6gObwSmGrIOVI/s9q1Yg2U
+         DJrhFhCI2xi6/13lc3eYup70JhbPH4PggspfdZWlq6q9XQFrBgeXoi3uqXtOFQ9j/V+W
+         9t7uk30qvZB6EzEVaTl+R+A5lICek61ws0jriFd06JqABly2a0qiOuaI0kH+DfmadB5q
+         3p8j/1a5iUJm4PeHAVDZVDs1++DrHnVzI/DlVPaMWilpYKwOGW0eH53pKNWsGYVpFAxc
+         nhLUNN+zY75fK9kLk7W1HRAew4C6DUiSsUoL+AgFvmSKHNJ55e/iZMgfOYPIReug5IOu
+         92xA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhkAS7AtN4Q/M1J2Ctg15eIgH6qIgw2XJPd2G/48quIvB4ToaE1z3zNZ9orCknEEczqlg/5w1kmsNyxjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8PdmEEfWEyJ1LUzdwHkcqJKR2Mnts5SQ1LgiD3ZTw0K6aM6+Z
+	HZ23s7F+cDX4UNMt0m7l0MqPRBcHMxTXpV5DHwabGbxFhYcq4KogDnpK0bzyN2rA6A16MYoroL5
+	aB/txWG6gnIFt7L19znhiVMu20v6v1hMnOw==
+X-Gm-Gg: ASbGncvVTY51mUXjXncXqUER+lJAT6p0g2gPOUDAZ2WgC05cpTwkQ83SsZJ63dnxtIT
+	WZqXK3FEHdg5stiU+cTSsNLWdr+9CKwwbf80t3BKKyuwsRi4TvLqFKusz4ZDS+65fJK+ifmPDLp
+	D0EXq0wwTUm6cJMAB+3hSCpqg5pm47Q4SJUqAWmwZr1foxMZ4rpL6O/5Ls7pkP32TcwESo+Yocy
+	VjgSbbBQvBLYFapUGNO1/PIITmIAxq7bSowWbvbZ74Wkjaw0DQ=
+X-Google-Smtp-Source: AGHT+IGglDo1/gdOcNhsuSzZl7FEO053NNm+ZSGFGErw4ULSPn8POBz7Kmhwj8faLx+8S9aP6qgFUy5HNQzHFDYGmS0=
+X-Received: by 2002:a05:6102:6499:10b0:5b9:c38a:c4f9 with SMTP id
+ ada2fe7eead31-5b9c3a94dcbmr1525519137.31.1759002155340; Sat, 27 Sep 2025
+ 12:42:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925-s6e3fc2x01-v1-8-9293016768f7@ixit.cz>
+References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+ <20250919212650.GA275426@fedora> <CAM_iQpXnHr7WC6VN3WB-+=CZGF5pyfo9y9D4MCc_Wwgp29hBrw@mail.gmail.com>
+ <20250922142831.GA351870@fedora> <CAM_iQpWO71vSV_0qXiUYeKYZMYF0xWNz8MrUVRkqKwDEtQvKqA@mail.gmail.com>
+ <20250923170545.GA509965@fedora> <3b1a1b17-9a93-47c6-99a1-43639cd05cbf@redhat.com>
+ <20250924125101.GA562097@fedora> <CAM_iQpWRZ-vihMEa=k-j9EYN9itUeZLhZ14AoCvZ9mturFxAyw@mail.gmail.com>
+ <20250924190316.GA8709@fedora>
+In-Reply-To: <20250924190316.GA8709@fedora>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Sat, 27 Sep 2025 12:42:23 -0700
+X-Gm-Features: AS18NWCeP2cGzDoATwSVHNUS5qX7kDmrKwGEMa7Qt3ofJhYYTiaA4U-AxyJEbYo
+Message-ID: <CAM_iQpXnvyZWrv4W45SBTDV-tCXU4Fz1=S8z_0s5en+U29vSZQ@mail.gmail.com>
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org, 
+	pasha.tatashin@soleen.com, Cong Wang <cwang@multikernel.io>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, Changyuan Lyu <changyuanl@google.com>, 
+	kexec@lists.infradead.org, linux-mm@kvack.org, multikernel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+On Wed, Sep 24, 2025 at 12:03=E2=80=AFPM Stefan Hajnoczi <stefanha@redhat.c=
+om> wrote:
+>
+> Thanks, that gives a nice overview!
+>
+> I/O Resource Allocation part will be interesting. Restructuring existing
+> device drivers to allow spawned kernels to use specific hardware queues
+> could be a lot of work and very device-specific. I guess a small set of
+> devices can be supported initially and then it can grow over time.
 
-kernel test robot noticed the following build warnings:
+My idea is to leverage existing technologies like XDP, which
+offers huge benefits here:
 
-[auto build test WARNING on ce7f1a983b074f6cf8609068088ca3182c569ee4]
+1) It is based on shared memory (although it is virtual)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Heidelberg-via-B4-Relay/dt-bindings-panel-Add-Samsung-S6E3FC2X01-DDIC-with-panel/20250925-171444
-base:   ce7f1a983b074f6cf8609068088ca3182c569ee4
-patch link:    https://lore.kernel.org/r/20250925-s6e3fc2x01-v1-8-9293016768f7%40ixit.cz
-patch subject: [PATCH 8/8] drm/panel: Add Samsung S6E3FC2X01 DDIC with AMS641RW panel
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250928/202509280303.sWeQi4ks-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250928/202509280303.sWeQi4ks-lkp@intel.com/reproduce)
+2) Its API's are user-space API's, which is even stronger for
+kernel-to-kernel sharing, this possibly avoids re-inventing
+another protocol.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509280303.sWeQi4ks-lkp@intel.com/
+3) It provides eBPF.
 
-All warnings (new ones prefixed by >>):
+4) The spawned kernel does not require any hardware knowledge,
+just pure XDP-ringbuffer-based software logic.
 
->> drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c:210:17: warning: unused variable 'dev' [-Wunused-variable]
-     210 |         struct device *dev = &ctx->dsi->dev;
-         |                        ^~~
->> drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c:256:29: warning: unused variable 'ctx' [-Wunused-variable]
-     256 |         struct samsung_s6e3fc2x01 *ctx = to_samsung_s6e3fc2x01(panel);
-         |                                    ^~~
-   2 warnings generated.
+But it also has limitations:
 
+1) xdp_md is too specific for networking, extending it to storage
+could be very challenging. But we could introduce a SDP for
+storage to just mimic XDP.
 
-vim +/dev +210 drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c
+2) Regardless, we need a doorbell anyway. IPI is handy, but
+I hope we could have an even lighter one. Or more ideally,
+redirecting the hardware queue IRQ into each target CPU.
 
-   206	
-   207	static int s6e3fc2x01_prepare(struct drm_panel *panel)
-   208	{
-   209		struct samsung_s6e3fc2x01 *ctx = to_samsung_s6e3fc2x01(panel);
- > 210		struct device *dev = &ctx->dsi->dev;
-   211		int ret;
-   212	
-   213		ret = regulator_bulk_enable(ARRAY_SIZE(s6e3fc2x01_supplies), ctx->supplies);
-   214		if (ret < 0)
-   215			return ret;
-   216	
-   217		s6e3fc2x01_reset(ctx);
-   218	
-   219		ret = s6e3fc2x01_on(ctx);
-   220		if (ret < 0) {
-   221			gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-   222			regulator_bulk_disable(ARRAY_SIZE(s6e3fc2x01_supplies), ctx->supplies);
-   223			return ret;
-   224		}
-   225	
-   226		return 0;
-   227	}
-   228	
-   229	static int s6e3fc2x01_unprepare(struct drm_panel *panel)
-   230	{
-   231		struct samsung_s6e3fc2x01 *ctx = to_samsung_s6e3fc2x01(panel);
-   232	
-   233		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-   234		regulator_bulk_disable(ARRAY_SIZE(s6e3fc2x01_supplies), ctx->supplies);
-   235	
-   236		return 0;
-   237	}
-   238	
-   239	static const struct drm_display_mode ams641rw_mode = {
-   240		.clock = (1080 + 72 + 16 + 36) * (2340 + 32 + 4 + 18) * 60 / 1000,
-   241		.hdisplay = 1080,
-   242		.hsync_start = 1080 + 72,
-   243		.hsync_end = 1080 + 72 + 16,
-   244		.htotal = 1080 + 72 + 16 + 36,
-   245		.vdisplay = 2340,
-   246		.vsync_start = 2340 + 32,
-   247		.vsync_end = 2340 + 32 + 4,
-   248		.vtotal = 2340 + 32 + 4 + 18,
-   249		.width_mm = 68,
-   250		.height_mm = 145,
-   251	};
-   252	
-   253	static int s6e3fc2x01_get_modes(struct drm_panel *panel,
-   254						struct drm_connector *connector)
-   255	{
- > 256		struct samsung_s6e3fc2x01 *ctx = to_samsung_s6e3fc2x01(panel);
-   257		struct drm_display_mode *mode;
-   258	
-   259		mode = drm_mode_duplicate(connector->dev, &ams641rw_mode);
-   260		if (!mode)
-   261			return -ENOMEM;
-   262	
-   263		drm_mode_set_name(mode);
-   264	
-   265		mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-   266		connector->display_info.width_mm = mode->width_mm;
-   267		connector->display_info.height_mm = mode->height_mm;
-   268		drm_mode_probed_add(connector, mode);
-   269	
-   270		return 1;
-   271	}
-   272	
+>
+> This also reminds me of VFIO/mdev devices, which would be another
+> solution to the same problem, but equally device-specific and also a lot
+> of work to implement the devices that spawned kernels see.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Right.
+
+I prototyped VFIO on my side with AI, but failed with its complex PCI
+interface. And the spawn kernel still requires hardware knowledge
+to interpret PCI BAR etc..
+
+Regards,
+Cong Wang
 
