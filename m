@@ -1,215 +1,155 @@
-Return-Path: <linux-kernel+bounces-834800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A62BA58CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B254BA58D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786AB1C04D00
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DA5F2A7E4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65039226CF9;
-	Sat, 27 Sep 2025 04:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D51222756A;
+	Sat, 27 Sep 2025 04:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="N3xrlTI7"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfwaXPxH"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1759A18FDBD;
-	Sat, 27 Sep 2025 04:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DE21C6FE8
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 04:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758946044; cv=none; b=u1Zf5dGhluWg3vnxS8XewuyfGLBGqqUutMyTMQG4m/A/iUD5NRz8n4psOrpja8Aknweo+Ly+q5vysoKuYn13rNWl7MXJcfWflGVJ8GP1nFA5rZRbEyOwqi7CsWE9y5lbz7ZnhxWrAChdxZcChxfXcYEV7cqiuMLJ7HOdDhRMUHk=
+	t=1758946502; cv=none; b=QjZgylk2lRPgbLf2EKBi6YNbAiYLaQ8xXiP8LDtg8DgegGJZot2Zk89/yfMSaBkK9IPSm2Bm3XnpJmGtmR3RXORnGSnSwh8BxwAMFWhD4SQUf5U5u3Vg+8yxVQ32N5HaC060Jph4kqhtbDWD139/1bwZod8/WqF0zf1jJuQx1yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758946044; c=relaxed/simple;
-	bh=aLkHx4k3P4OgRYh0loe9tQqAbYEDPQInhm/r203f2Qc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffH5SsHPStleoWxZFc4uq2qECavdJQbY9E/uwhOXO1V18MKQdTsbLRuGpw1uMe+WTAGOpAOdz+LKL/osBsF6BxD7c2kfkvyLIrykOjkd8D67tJSID460lTlU+QNsZHRhzvyaPRVzALqgEER6YTZ/MzXKfAn0ELIxMX8TUEPgzcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=N3xrlTI7; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1758945958;
-	bh=1cA0Twd5aoWkSdpWmk4AkKgqoVl4RWYZ2+yNa24hIj8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=N3xrlTI7XgVnT30oUE78V5S/PTBe3kUFFDQr9c5atMxl0zoGpEZCD9k55bHfIeiN8
-	 SdlVU/hmQLd/rxwhESt8ux6STsdTfyczzUgLbikL67AbKj5qa3kA/6WYHOsmT8LVjW
-	 vleifV8/Ig6V3568VPKVMOg/xTd1lptsPDsAajhg=
-X-QQ-mid: zesmtpip4t1758945951t5ad2eb81
-X-QQ-Originating-IP: zqIHBn+nBguhXZ9TRxudpZn6Jb2l/o938Fjr57xEmcY=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 27 Sep 2025 12:05:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11693667648508525757
-EX-QQ-RecipientCnt: 9
-Date: Sat, 27 Sep 2025 12:05:50 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH v2 6/6] i2c: spacemit: introduce pio for k1
-Message-ID: <F3CBA41FF1849DD5+aNdint66DRw4AcZK@troy-wujie14pro-arch>
-References: <20250925-k1-i2c-atomic-v2-0-46dc13311cda@linux.spacemit.com>
- <20250925-k1-i2c-atomic-v2-6-46dc13311cda@linux.spacemit.com>
- <aNbDkn9AC4FFx-Zc@aurel32.net>
+	s=arc-20240116; t=1758946502; c=relaxed/simple;
+	bh=QkK1F0a+kzX8my9YSnIKVxkRpFz6GcOBLwOB3cM8EUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fnuSIu5eTSyfaQxfQ5Y+Qn8wKQRfnUsSKUnvbPVvh7jHRGGddDKhDHINdh5tZ9WVie+ykcrTCJSwJ+OzuaXu4Ht4SGHsJXFyIQCyhDeT7N0ChFb/cjgd0SoHr+a1tMHPXI+wG+tuJCOac7fIX9ZRG6Um4RR0hZOPb78IkIVIR+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfwaXPxH; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so1829626f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758946498; x=1759551298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QebA45S2Kmxb5ZKr9Gn50ibmhNW02p2JmvNbHpjCTfM=;
+        b=SfwaXPxH4ykHpuQvQrlkROXMqJPL5OFOUiiVk7e8U0BgiUyFcrN2XaegF5AwEdyqDE
+         +cAR5Mi9m8EAEZjZ85SGDDPtGkXTo2FD1hItq7Op2esR+obZqcavCAL6W46hTDekyahb
+         7Qq2vqHvJVfNFZ1+W1gGkGHORf9BawUmjBri6S0LxbnikEiqQVsswhKNMGbRnbVd7E8z
+         WWLbQRwak7A5VR3fgcUU2V3dY6PdremrMyfZI7KFTCkWq+N/g9EJu60VkuieaZEVuXa0
+         XTY4rH5lqoLiQsrVAWW4t2X+QhWvkXK8l4h34Ne1CCHxW6wozRxYU62wzKBcM9t+szXC
+         Qu3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758946498; x=1759551298;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QebA45S2Kmxb5ZKr9Gn50ibmhNW02p2JmvNbHpjCTfM=;
+        b=dg9Zf+0E5UYUIuMgWItYFSH1DSJwDyZr8zM04t9vLt7VNiTQjf+CVP5nWfONZUlg/G
+         RVrE+VnOejFpOkPJuL5YSFXA/HvV3tcbbPyXx6ZqhSgzEPPxXby4BuYFp45g6zfmmD1L
+         EoYBwemXjdkhT71Ok3qWvdH6UItDUrX/JHxXKGqL+kvLCVa3eulcOMT09N0xPk8fRWd/
+         4MwzYcIPve+QE3vsKBp2qv5BYHS/zRhrCBgU/DKYY9Wy/RQ1+zY9k8FvtwLw7fF9ITFc
+         rOYNvWIT+r2NBe1I2H6jvp7gbh5xra73OVfnQz//qMJKz9CUSmgtKbKZCxx4fVuIYZt2
+         TzAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqM95+Gd9y9sbR0nwxohcZZ0i4N3S+n3PSUKGqh0EfKcFeneRhLR5IACaHIGxuiByz7u9rN8QX8Xy+vl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw16w4skcYoz6Z2WwGOd6Ux06I7wn9tddsnrz2t/gLnBIEUstDL
+	8RcdQu9/vxRu1WUPl7yUOfs1IOTMc0FSiHkRSTLWfK6wcf044LUfSXss
+X-Gm-Gg: ASbGnctJwODduppBsLWpqbz6/4R0P/lIP7qoryEDia42LF4/mw1u5lD9sRR1gPAvjwD
+	F4ZwX00T8d8xzN7bAXPVJgsWIOCbRRIy/ZHqcKgX4sX3JuTwlHkjjygLypopppzYhuq2kqz5hN9
+	q3Md6AKYna6V+UCT4nYChfzKfQTFq3BVDYHt3tOln13J7ocBu1uGKzy1F27UZa46iwBXbxu1cEf
+	W8YnQO389LA2L1wpl/Ck4zQVDr8OT9wifNMJNCWf/zatYxPLorpNlBAF6RnDn7nrnydsfS3YSa+
+	nvWhl3G/wdyFKU9ip8QgGM38Tt7VBll2s2WFUOGEsIYh65i+HYdQ5h77kThm1EAbvAre82to7oI
+	lBo0ryPkGBFHZVMjHdQTx04rIZq0aEVes3d2Xpgi2
+X-Google-Smtp-Source: AGHT+IG2ALooHlYHwOr8MJjdyq/V5jhItcUSlgKuJmsEuxddU94wf1KuErdmeXjr3KPewFZcuGMZYQ==
+X-Received: by 2002:a05:6000:178d:b0:3ee:11d1:29dd with SMTP id ffacd0b85a97d-40e4ba3a8b8mr8495940f8f.35.1758946497885;
+        Fri, 26 Sep 2025 21:14:57 -0700 (PDT)
+Received: from hangmanPC.. ([86.124.200.102])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33105e0bsm50386665e9.5.2025.09.26.21.14.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 21:14:57 -0700 (PDT)
+From: Cezar Chiru <chiru.cezar.89@gmail.com>
+To: wsa+renesas@sang-engineering.com,
+	andi.shyti@kernel.org
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cezar Chiru <chiru.cezar.89@gmail.com>
+Subject: [PATCH v6 0/3] i2c: pcf8584: Fix errors and warnings reported by checkpatch
+Date: Sat, 27 Sep 2025 07:13:57 +0300
+Message-ID: <20250927041400.172949-1-chiru.cezar.89@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aNbWejNZLYGuNvCI@ninjato>
+References: <aNbWejNZLYGuNvCI@ninjato>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNbDkn9AC4FFx-Zc@aurel32.net>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MgQY1K25Ph0m8TgChpmhmRlSJRINu7fuTLeiY5CDXSnrgub8dw4qBJyp
-	qWI48vVAqj3/VmStXURHWd+6saUMG/NCYrxXlRxJ/aXDyW62IDGb/la9O3fpBOmifSxqc2f
-	U1UoW5mGKaS8rb660eQKNVlM/W1hYT2q4VL2GWVUsvcmeI2wGtCLuHwPuJHjXecI+3GlDlS
-	iC+iGu3Q4uh6GT/UaMoUEyy0osAVUQn9sXFBIuSnZKrO33QTsOsrRlt+4WT8cMTxZSRvmWS
-	7gXZ7UlrdgxCwgQISwFBAfhJhVPeTaI4dUfD775rdZFGzpC5tFZOzuqRAAryekRtJeVMrk8
-	C/ZtSYaScncvWefTG8hdGQtxJD7oM5yElnKbjQnNAIbXkKuW3XVGN9gWZUd1cKOk3Yvl6f7
-	I9YDVImGmk4PjjxsA20vlAnGWqJXl2UbAztr1OHFeBMA4+pl8/ekdF1H8vyibFF7PUSt+2A
-	KaeH5FZmH0dc2qapcQrQvSMFykj48HfYw4vrOfqMNgPPhlD7wl93uQfDkn2EEK+a8VQC678
-	OIPhKJVk5nJmJ7qnfwp2zLBSux9tmzdeIe9O//KqgFjSYJUIBEAUNe7wR9UyBhOA4EJ1/Pp
-	PXltJN1Sj270ArO3WQZ3rVzr9VpF5Bwn1zoBQopdGoEKHXPrHQehU3ql+JMMLO7ZIct1eb0
-	JarCBY0qc3IKYvxoVSjaaFRMnjQgydoKp2qC+KI62edHknYnCaIE9XezIFGwKVqBdEaag68
-	BxRCMOWyteQ/hvPOQkJTB/eCiXN7RWJBrd60AFiovu1Mbq00AyIYgh3bn3W0FaQ5tbswueg
-	2A7rLWyfoyM4NcScTnGPNdFSwwIM+4vSPee/Ewc44vVIECHgib/khQTYV+spIU4GngclwO/
-	GGvE1NxqZePm1HT1tGwbZSzdgx8Jul/8osrm4UeRRDgEiEGCYmrUxzHNNc8IamxV64X/u6x
-	V2z9cwA54s3i6YhisTmkioeHYaem4Dqfw5Xu/FP5MgvsRp74euPjcLSsiG8o2rFMJ8p/Msv
-	7gE/UYJ0vZgqnRCP+W0878JBC+bPzRdtUCiyQeKBQBQKNuDuHnGzww9abgSMhk024k/2rvN
-	g==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 26, 2025 at 06:47:14PM +0200, Aurelien Jarno wrote:
-> Hi Troy,
-> 
-> On 2025-09-25 10:02, Troy Mitchell wrote:
-> > This patch introduces I2C PIO functionality for the Spacemit K1 SoC,
-> > enabling the use of I2C with interrupts disabled.
-> > 
-> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > ---
-> >  drivers/i2c/busses/i2c-k1.c | 164 +++++++++++++++++++++++++++++++++++++-------
-> >  1 file changed, 140 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-> > index 6b918770e612e098b8ad17418f420d87c94df166..e403eb7d6f329f4fe5c5242f94cc21094dff105c 100644
-> > --- a/drivers/i2c/busses/i2c-k1.c
-> > +++ b/drivers/i2c/busses/i2c-k1.c
-> 
-> [snip]
-> 
-> > @@ -293,10 +307,54 @@ static void spacemit_i2c_start(struct spacemit_i2c_dev *i2c)
-> >  	/* send start pulse */
-> >  	val = readl(i2c->base + SPACEMIT_ICR);
-> >  	val &= ~SPACEMIT_CR_STOP;
-> > -	val |= SPACEMIT_CR_START | SPACEMIT_CR_TB | SPACEMIT_CR_DTEIE;
-> > +	val |= SPACEMIT_CR_START | SPACEMIT_CR_TB;
-> > +
-> > +	if (!i2c->is_pio)
-> > +		val |= SPACEMIT_CR_DTEIE;
-> > +
-> >  	writel(val, i2c->base + SPACEMIT_ICR);
-> >  }
-> >  
-> > +static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid);
-> > +static int spacemit_i2c_wait_pio_xfer(struct spacemit_i2c_dev *i2c)
-> > +{
-> > +	u32 msec = jiffies_to_msecs(i2c->adapt.timeout);
-> > +	ktime_t timeout = ktime_add_ms(ktime_get(), msec);
-> > +	int ret;
-> > +
-> > +	while (i2c->unprocessed && ktime_compare(ktime_get(), timeout) < 0) {
-> > +		udelay(10);
-> > +		i2c->status = readl(i2c->base + SPACEMIT_ISR);
-> > +
-> > +		spacemit_i2c_clear_int_status(i2c, i2c->status);
-> > +
-> > +		if (!(i2c->status & SPACEMIT_SR_IRF) && !(i2c->status & SPACEMIT_SR_ITE))
-> > +			continue;
-> > +
-> > +		spacemit_i2c_irq_handler(0, i2c);
-> > +
-> > +		i2c->status = readl(i2c->base + SPACEMIT_ISR);
-> > +
-> > +		/*
-> > +		 * This is the last byte to write of the current message.
-> > +		 * If we do not wait here, control will proceed directly to start(),
-> > +		 * which would overwrite the current data.
-> > +		 */
-> > +		if (!i2c->read && !i2c->unprocessed) {
-> > +			ret = readl_poll_timeout(i2c->base + SPACEMIT_ISR,
-> > +						i2c->status, i2c->status & SPACEMIT_SR_ITE,
-> > +						30, 1000);
-> 
-> This needs to be readl_poll_timeout_atomic(), like you changed in 
-> spacemit_i2c_wait_bus_idle().
-Yes, nice catch!
-That's my mistake... I forgot this.
-> 
-> > +			if (ret)
-> > +				return 0;
-> > +		}
-> > +	}
-> > +
-> > +	if (i2c->unprocessed)
-> > +		return 0;
-> > +
-> > +	return 1;
-> > +}
-> > +
-> >  static int spacemit_i2c_xfer_msg(struct spacemit_i2c_dev *i2c)
-> >  {
-> >  	unsigned long time_left;
-> 
-> [snip]
-> 
-> > @@ -479,15 +578,21 @@ static void spacemit_i2c_calc_timeout(struct spacemit_i2c_dev *i2c)
-> >  	i2c->adapt.timeout = usecs_to_jiffies(timeout + USEC_PER_SEC / 10) / i2c->msg_num;
-> >  }
-> >  
-> > -static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num)
-> > +static inline int
-> > +spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num, bool is_pio)
-> >  {
-> >  	struct spacemit_i2c_dev *i2c = i2c_get_adapdata(adapt);
-> >  	int ret;
-> >  
-> > +	i2c->is_pio = is_pio;
-> > +
-> >  	i2c->msgs = msgs;
-> >  	i2c->msg_num = num;
-> >  
-> > -	spacemit_i2c_calc_timeout(i2c);
-> > +	if (!i2c->is_pio)
-> > +		spacemit_i2c_calc_timeout(i2c);
-> > +	else
-> > +		i2c->adapt.timeout = SPACEMIT_WAIT_TIMEOUT;
-> 
-> Thanks for fixing that, however i2c->adapt.timeout needs to be in 
-> jiffies, so you want to use msecs_to_jiffies(SPACEMIT_WAIT_TIMEOUT).
-Thanks for pointing this out!
+Hello maintainers,
 
-                - Troy
-> 
-> >  	spacemit_i2c_init(i2c);
-> >  
-> 
-> Regards
-> Aurelien
-> 
-> -- 
-> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-> aurelien@aurel32.net                     http://aurel32.net
-> 
+This patch series fixes 18 errors and multiple warnings reported by 
+checkpatch.pl on drivers/i2c/algos/i2c-algo-pcf.c file.
+
+The series PATCH v1 to PATCH v4 is a response to the discussion on the
+mailing list with Markus Elfring who had comments on my earlier 
+submissions. 
+He suggested:
+ -to split my initial submission in a patch series
+ -had some valid points on imperative mood usage in commit messages
+ -wrapping commit message to 75 columns per line
+ -change some of the commit message to point usage of checkpatch.pl
+The series PATCH v4 to PATCH v6 is a response to the discussion on the
+mailing list with I2C SUBSYSTEM maintainer Wolfram Sang who requested
+some changes:
+He requested:
+ - to remove debug macros from i2c-algo-pcf.c as no code change was done
+ for almost 16 years.
+ - remove wrapping paranthesis from value assigned of '(0)''.
+ - resolve conficts caused by debug macros removal.
+ - remove also printk and dev_dbg function calls related to DEB macros.
+
+Here is a brief summary and order of patches to be applied:
+Patch 1/3: i2c: pcf8584: Remove debug macros from i2c-algo-pcf.c
+This patch remove the define of debug macros and also their usage from
+code along with printk and dev_dbg function calls.
+
+Patch 2/3: i2c: pcf8584: Fix do not use assignment inside if conditional
+This patch takes the assignement from if conditional and moves it by 1 line
+up.
+
+Patch 3/3: i2c: pcf8584: Fix space(s) required before or after different
+           operators
+This patch adds space(s) around some binary operators.
+
+Testing:
+   *built kernel and modules with I2C_ALGOPCF=m and my 3 patches applied on
+   top of 6.17.0-rc7.
+   *installed kernel and external modules generated by build on my laptop
+   *rebooted and loaded i2c-algo-pcf.ko without i2c_debug parameter.
+   *when loading the .ko with i2c_debug parameter an error is seen in dmesg
+   and this is expected as the parameter was removed.
+   *No success message related to i2c_algo_pcf was seen in dmesg but also 
+   no failures.
+   *Module loading and unloading successful.
+   *No PCF8584 Hardware was available.
+
+Cezar Chiru (3):
+  i2c: pcf8584: Remove debug macros from i2c-algo-pcf.c
+  i2c: pcf8584: Fix do not use assignment inside if conditional
+  i2c: pcf8584: Fix space(s) required before or after different
+    operators
+
+ drivers/i2c/algos/i2c-algo-pcf.c | 93 +++++++-------------------------
+ 1 file changed, 18 insertions(+), 75 deletions(-)
+
+-- 
+2.43.0
+
 
