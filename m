@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-834834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1B6BA59D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:12:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C392BA59DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBCF3BA65F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4629189251E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7050258CD7;
-	Sat, 27 Sep 2025 06:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38B026F2BD;
+	Sat, 27 Sep 2025 06:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPCzd3pL"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gD+/9bIz"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A750D25F995
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06AE266B65
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758953544; cv=none; b=QZ8vAC6K6bQsXvBjO6ynBgoKYL3IfkYvT4RN6xyKymnEwdaVG0ayALqxS07zdjSNlaxY5EkuptS4HZiZSGA5ZMvm0kJcMkKAxaf2quxU8Et4V9wadYby+IYMLi1gtzsTpzB2+UTg2P0kvWtMwZKR0xGM50joUeEs7cHa7iRaIcY=
+	t=1758953546; cv=none; b=SVlnKv5eVjO3gQJXCZZc1n90u/V0roqPBKoj4v8FqKhZjfVChvk5KF0HE6+Cdr/zoyexhmPUY7G/WwDuXeDVsUcKORzTAIz6JWWcGebt6EkINCDEb3cbt1HEzpg2rqygJ+k3vcbrzJLrYywX8ZZv3BWhAf4ZTVm3b1yoHhTYChc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758953544; c=relaxed/simple;
-	bh=1mzduihlymOwOuUzpa230b/9HplV9BYgnGrs5Bj/ugc=;
+	s=arc-20240116; t=1758953546; c=relaxed/simple;
+	bh=fBlHosf2/zvejIv57ZYqYOF60ZxxB1BajuHB1xTY+ms=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dM+9L+ybss0xKKYh4LahXTr6OELD/ZolS0u4EAwk7/pWpaAMhMRxtdgQh79MJ09zAn7htTumpV//UPr3yd09meUJ6hIyKO45FSzil41UXxQ31qaUTunly1ol2UZSbzpj4kZXzi0GlsrM5owqJbjojnl1AJFTp17uQ8xemZLr2pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPCzd3pL; arc=none smtp.client-ip=209.85.210.195
+	 MIME-Version; b=eu+TJOsQgBjEt6w/NIYhJuuNDN2Pi019Cdq+2r4qfA29Q4B2P42YvrLtyMw9/2Sj44cv+OIGTOV7Zo1MsiFxe3tcm8qC8Zg8PdZwWHdETEDvhCmZwzhmd+fKy5yvzk6Z67sUNZ3PdyOqjgNrFn8EHY89u6T6izzO3uUu38YXWgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gD+/9bIz; arc=none smtp.client-ip=209.85.210.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-780f6632e64so1546934b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:12:22 -0700 (PDT)
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3134465b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758953542; x=1759558342; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758953544; x=1759558344; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S8sAn5hC327aMiooFzuB7A3KTTq87gTWKySZ/wTATxc=;
-        b=ZPCzd3pLkhaqWECEhiuJ/tHnvpXSN7WfsfCYyrZbRDiOndC8xU06LPbAV83YWmW9Q/
-         /66kbK1WhfawpSW4coriAfWq39rj0zgrSRSlxY7YKZk0V/tf5Pp0MBMBZpc1iq6jsMB0
-         t8ofOtirSd3RgvvPjoXFmZoY9fJKxEseSzffEdyqOPO1emwl8RKGRveSJpFrU5jVGCCM
-         f2vYuzdrM2J95x/2hNSLcJyKSxwGddxnkhDkNgARTkBEp/pkAU2WgbWX3yl+tzIcwb3G
-         aCU5qqzKOkN/F00EXfQCCjBoWmoS8WE2swQqXyambMjztI60vc0/XNJlI5woJAOTC9ga
-         QtKQ==
+        bh=q4Jp+qjVdWMcusFzgtd96nBGosQ9jiWGo0qwLoOLfmA=;
+        b=gD+/9bIz5KVyKcbw4Pkk6BwoMcI4Cd0XrbfXxHhllMoOr2QRoB+LvVL39qsa50yjsc
+         REFgLyYkqJA8gYOBEelml5tLVZlOH6zajMnKyh4hPdamrDlb+tLHqtUDLpeG6DKWaEo5
+         SSMILFd7BP9f7+a8j2ke0R+S3eqOWaIH8wpZoXbgDmkKsDwVEk0cfYe2SFoY74MGQE+3
+         luJ0OUNtZP7S8+sKrNzuE4zNAh9Oc6jKBdsgIsDnqGqFo8Mtu6Th8JiuMz1l/XcSRk56
+         T5Vc2X3xJonGo858L8rcedz6OMT1j9gKijl/NXR0ro4pfyZDu8QcTs7LYESqEyaOxwBs
+         zZgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758953542; x=1759558342;
+        d=1e100.net; s=20230601; t=1758953544; x=1759558344;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S8sAn5hC327aMiooFzuB7A3KTTq87gTWKySZ/wTATxc=;
-        b=sI5RYhntdGnartlzTWo3HuMNe0/68YX2hjGm/CVRl1wJLi8MDtnVaWEcTKIy8DSIOg
-         y8TUOWP9nTVEaJAg8g7AxGWpXlcOr6yB/6h5THkV9Fqgx4rZNwWSfyIRqhdSMfQmVnuM
-         vMzecRfVqUmqUE9W8XYlpBA+ysidnLGd2fUTerPAA8oiRvjEXArEfClFGVPgnC/HVmrz
-         dYcvTK8XvIohZtJjhs6DK6Tf1aZyyo45NZMxz89Rl5+IOxFdg4T1LIqO8kut1NnB9PKK
-         vt7G2JP8WrpPc/lRzPZ0MWYjshKbzBe+S+5f1QqfTxDkaijdROOsZ7vOowoQu1iymE05
-         Q0og==
-X-Forwarded-Encrypted: i=1; AJvYcCWNtabisPFOrTM36Hvh/EKO9vA1BBa+E0+zLdtz75ZVjN+FbHSb8126fvi0HOjeKjlIUl48WANFBikMh7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznbPDwB9s/AOFip57OOopoo+M3TjujNCpN3A5MClCOIjhpWBae
-	uNwmh+Ueg7gopgCW3STHJ9Kp26LD1IkUwS+pK8a78zqMFqjJ6FaHfp2Y
-X-Gm-Gg: ASbGncuOTNuAm/vlY3qSNLCNGwYDTM1aqvGBGh3/gjvPpfBqmcHcX2qqfyWYdwmBGDR
-	AnTnEAKf3oULUTIBXqs5Ta3B0aqGj+ayVD3y7bvboTvmEhWL1X7L/3jVtaSdQmsEr5cBsotaXe2
-	NDzlSqIdiABK3Z3EGnHSeGZUOFBP/SFgs8aiYDqWW8NayOPsYTP4+tNkNE+SwBnqJfIGa1kM8L6
-	vE9oeKkxR4ws+u4BPAF2fEbXkbapUIWfpywyFekOl+UiWinNnD7BQCdZ5kyVZy1VC+CzfcmlSiW
-	TXz1L6pmMgAjbhiTnSytkg+pNJfMwOsCMzOEIaO8sKAowgHmmGpcTtoNL9jUznYCifCDFWsZGmA
-	9JHVOzCyB819qgzuRpaBQt0D55578rg==
-X-Google-Smtp-Source: AGHT+IE6mkLCpiGbrwrJeQJpeI8hUbeD8pN++q6vBROWRxM+SfOiGWJswZDLpzroKY3f/4THyxpj9Q==
-X-Received: by 2002:a05:6a21:32a0:b0:24a:c995:e145 with SMTP id adf61e73a8af0-2e7c1bc5581mr11500386637.19.1758953541864;
-        Fri, 26 Sep 2025 23:12:21 -0700 (PDT)
+        bh=q4Jp+qjVdWMcusFzgtd96nBGosQ9jiWGo0qwLoOLfmA=;
+        b=tTQ8fanMzNzkDoSh1XnYHLNPe3HXWcc0Wtks7llxXU712iqGfPX7fnK4PS8DTDBqId
+         //UgOSyvmSZMtbj/LJ4iajLSaEzvrdOhXUUPI6GpaPYAwdaL9Fi2XOHcz3igv5N3lIzh
+         SLReZwlIrSarR1XpOaQNQT0iayGE0WfUtngRgI1WZB/8O4muwZJ4nGfkXVx3oxj+vE5r
+         YCSTBfAZ4u+WmJ53n+o2/bWhIwRywjTN0tNLqNSWREsIaz7BV4s0Qr3qGdxQewDVqYWJ
+         FMEolETbWGfTvRee37xpSZBI1km5n+eS8sb0dTaMlyc0EWsDuMM0MDepq4qcBr7KPque
+         RnXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUepRbCW9RfyI2YJauCR39AUH57nQAWg3bEwWJrAfHMAxvdoQED1EqZP4ilGwAru8dQwPVUS0X5Cl7GrAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9sMmE5857j6baE8wAAseN3YfD48CZKKEGlCSw61oiOBoluSoZ
+	hS4/L9G3SgbEN/CdkyLagR75cVWid2mKtnEzsO+D4MnC/UijRSh6zzUu
+X-Gm-Gg: ASbGncsFOqNtcogvgdG/K9I4vrqFjdSHtwqbCBbgKdn9q6T/B4WPm3vRI8I0o30mCcP
+	ALVxq8kVw9dqfvMWKMP0rJlI7BsuP1SRB79ONorXYkwvyZklA+mKDBbv+VYZKveK7ZjorfXOAJw
+	RrZMnCaeVorjjctz3KqBqP9HYHdAMU+Ff2iFOHe3gbZY0iFlpjt5DGIZA1BCNJjp5amOwhhCHid
+	ZGzXkpyIVdulWmxWOaDydXuS31JOR9mJgJ2rX/nyoPXHySfg8Mm4DqlHeT3pv+Hi0jxfyXJfdAQ
+	LmzV5KSJI+/AF4gBU4SEJVLVXlirGTIyzup5g66YeqMEYixG5rZh3IHcxE5/8eXX/jSQiCj5a+Z
+	ZHi4+1ma9Pv2saNseMIBLUcxpb/GtBQ==
+X-Google-Smtp-Source: AGHT+IEJe1SmIZ4vtGUSEc51qPCpwyaDRPdqeCJcR2WgVyuD1Dm9GF9xuSOGKmCoRI818lwEOUPn3w==
+X-Received: by 2002:a05:6a00:3c91:b0:781:1562:1f92 with SMTP id d2e1a72fcca58-781156220e4mr5744775b3a.26.1758953544077;
+        Fri, 26 Sep 2025 23:12:24 -0700 (PDT)
 Received: from 7950hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023edda8sm5891178b3a.43.2025.09.26.23.12.19
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023edda8sm5891178b3a.43.2025.09.26.23.12.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 23:12:21 -0700 (PDT)
+        Fri, 26 Sep 2025 23:12:23 -0700 (PDT)
 From: Menglong Dong <menglong8.dong@gmail.com>
 X-Google-Original-From: Menglong Dong <menglong.dong@linux.dev>
 To: ast@kernel.org
@@ -79,9 +79,9 @@ Cc: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org,
 	jiang.biao@linux.dev
-Subject: [PATCH RFC bpf-next 2/3] x86,bpf: use bpf_prog_report_probe_violation for x86
-Date: Sat, 27 Sep 2025 14:12:09 +0800
-Message-ID: <20250927061210.194502-3-menglong.dong@linux.dev>
+Subject: [PATCH RFC bpf-next 3/3] selftests/bpf: add testcase for probe read fault
+Date: Sat, 27 Sep 2025 14:12:10 +0800
+Message-ID: <20250927061210.194502-4-menglong.dong@linux.dev>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250927061210.194502-1-menglong.dong@linux.dev>
 References: <20250927061210.194502-1-menglong.dong@linux.dev>
@@ -93,27 +93,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use bpf_prog_report_probe_violation() to report the memory probe fault
-in ex_handler_bpf().
+Add testcase for probe read fault to stream.c.
 
 Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
 ---
- arch/x86/net/bpf_jit_comp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../testing/selftests/bpf/prog_tests/stream.c | 22 ++++++++++++++++++-
+ tools/testing/selftests/bpf/progs/stream.c    | 21 ++++++++++++++++++
+ 2 files changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
-index fc13306af15f..03d4d8385f4c 100644
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -1470,6 +1470,8 @@ bool ex_handler_bpf(const struct exception_table_entry *x, struct pt_regs *regs)
- 		off = FIELD_GET(DATA_ARENA_OFFSET_MASK, x->data);
- 		addr = *(unsigned long *)((void *)regs + arena_reg) + off;
- 		bpf_prog_report_arena_violation(is_write, addr, regs->ip);
-+	} else {
-+		bpf_prog_report_probe_violation(is_write, regs->ip);
- 	}
+diff --git a/tools/testing/selftests/bpf/prog_tests/stream.c b/tools/testing/selftests/bpf/prog_tests/stream.c
+index c3cce5c292bd..81fd258b97e0 100644
+--- a/tools/testing/selftests/bpf/prog_tests/stream.c
++++ b/tools/testing/selftests/bpf/prog_tests/stream.c
+@@ -72,7 +72,8 @@ static void test_address(struct bpf_program *prog, unsigned long *fault_addr_p)
+ 	ASSERT_OK(ret, "ret");
+ 	ASSERT_OK(opts.retval, "retval");
  
- 	/* jump over faulting load and clear dest register */
+-	sprintf(fault_addr, "0x%lx", *fault_addr_p);
++	if (fault_addr_p)
++		sprintf(fault_addr, "0x%lx", *fault_addr_p);
+ 
+ 	ret = bpf_prog_stream_read(prog_fd, BPF_STREAM_STDERR, buf, sizeof(buf), &ropts);
+ 	ASSERT_GT(ret, 0, "stream read");
+@@ -106,3 +107,22 @@ void test_stream_arena_fault_address(void)
+ 
+ 	stream__destroy(skel);
+ }
++
++void test_stream_probe_read_fault(void)
++{
++	struct stream *skel;
++
++#if !defined(__x86_64__)
++	printf("%s:SKIP: probe fault reporting not supported\n", __func__);
++	test__skip();
++	return;
++#endif
++
++	skel = stream__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "stream__open_and_load"))
++		return;
++
++	test_address(skel->progs.stream_probe_read_fault, NULL);
++
++	stream__destroy(skel);
++}
+diff --git a/tools/testing/selftests/bpf/progs/stream.c b/tools/testing/selftests/bpf/progs/stream.c
+index 4a5bd852f10c..290c40463522 100644
+--- a/tools/testing/selftests/bpf/progs/stream.c
++++ b/tools/testing/selftests/bpf/progs/stream.c
+@@ -7,6 +7,8 @@
+ #include "bpf_experimental.h"
+ #include "bpf_arena_common.h"
+ 
++#define READ_ONCE(x) (*(volatile typeof(x) *)&(x))
++
+ struct arr_elem {
+ 	struct bpf_res_spin_lock lock;
+ };
+@@ -234,4 +236,23 @@ int stream_arena_callback_fault(void *ctx)
+ 	return 0;
+ }
+ 
++SEC("syscall")
++__arch_x86_64
++__success __retval(0)
++__stderr("ERROR: Probe READ access faule, insn=0x[0-9a-fA-F]+")
++__stderr("CPU: {{[0-9]+}} UID: 0 PID: {{[0-9]+}} Comm: {{.*}}")
++__stderr("Call trace:\n"
++"{{([a-zA-Z_][a-zA-Z0-9_]*\\+0x[0-9a-fA-F]+/0x[0-9a-fA-F]+\n"
++"|[ \t]+[^\n]+\n)*}}")
++int stream_probe_read_fault(void *ctx)
++{
++	struct sk_buff *skb = bpf_core_cast((void *)0xFFFFFFFF00000000,
++					    struct sk_buff);
++
++	/* do the memory read */
++	READ_ONCE(skb->network_header);
++
++	return 0;
++}
++
+ char _license[] SEC("license") = "GPL";
 -- 
 2.51.0
 
