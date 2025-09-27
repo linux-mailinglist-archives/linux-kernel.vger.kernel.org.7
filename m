@@ -1,198 +1,170 @@
-Return-Path: <linux-kernel+bounces-835079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0BEABA634E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:41:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7801BA636F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 22:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F78189B6A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:41:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE2617DC7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 20:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887F8234966;
-	Sat, 27 Sep 2025 20:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015EC245020;
+	Sat, 27 Sep 2025 20:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hG80zyK5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K22fpTLa"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B8216132F
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 20:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBEC2367CC
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 20:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759005664; cv=none; b=oj7awHZopOQlGxpNhGB3PZLq+SIKmvRQDP3lHsXZfz/C9LBZ6zQOoUfWTolFEKFEBdDm/CATlJ//a6Rdn2Mt9qZJKtxuTCin3zM5Uv9QHnAXGCbA1KuJ57q0PeqTg8gj17OJrd+vUOxkNC5Vvo//LIvC2L/aJ0rODVgrMJHbRCQ=
+	t=1759005818; cv=none; b=r5y+pcT/LKjMaUbU1gipgdeBOH8zKelHwASeUbODEyh9t0DUovX+BfhJMImu6i+wLyJIlNS2to+7sanwVIVE6sc3bWA7uKoOAcglVQo3nN1bir1UZ+ZhWRth9XF/dIjvy1wfvrheikvtUqHnB6Sj4wtN1BOfyWhShdv40KgbXZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759005664; c=relaxed/simple;
-	bh=GEbJJ3qqxHy27CrTr5HO3O5vlb8HsgBH2fOVaytuVMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eoy3e84FHCEZWHcrr1RjcSBUTwF586xrJPUyJipnaxaLE63SKB+x9lPunFHV91MsAs1fU6zBJpuaCQMkwycZLvJV793vwLge/vVpyGkW79bZyoSLVpxgk8S9pMWz5AXZH2fRE3o77jqph4lw5khl0ZAFGCzZUB4Dh2L88gP8QX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hG80zyK5; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759005663; x=1790541663;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GEbJJ3qqxHy27CrTr5HO3O5vlb8HsgBH2fOVaytuVMg=;
-  b=hG80zyK5XLORtcb7Oz9YVp22BstXY53I2prSFbIoBmnYOxL87A3TXbrN
-   xGgxGIUHi98TauVdQkCgK5YLv7+r8rkWdiqCTadFDSU8fQkoUtlO78Paq
-   ljtru+FRNy84vI6uQIBOzjLrl8hbOty5DQcPqbBxjk4Xlp/qS2JO1mUrq
-   Ecc8oOUgiUs+niHgnGu0NZLPv+w81BfM6L0XXDwy+zJvGx2Pw47d0RG8h
-   Gp+kty00szGFtatmnUWF5abzKXmYgj68M2QgtNIrNULDotFzNXqTXSkMt
-   T7QGKfl7SMzoOCanrsKIxgNYh9/dCtpu4oMf7ce9sRKogL9zsKhS92nb2
-   Q==;
-X-CSE-ConnectionGUID: Ulk8+f6ARvqat0VM/NLr3g==
-X-CSE-MsgGUID: y77sEggNT4abkouPpeMIEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="71914144"
-X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="71914144"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 13:41:02 -0700
-X-CSE-ConnectionGUID: oll6RGoJQj2oDNRJPiwUAg==
-X-CSE-MsgGUID: E0HZ1Z3pTE64KrtVmh9U5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="201560329"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Sep 2025 13:41:00 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2biz-0007Kh-2d;
-	Sat, 27 Sep 2025 20:40:57 +0000
-Date: Sun, 28 Sep 2025 04:40:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chu Guangqing <chuguangqing@inspur.com>, tzimmermann@suse.de,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	airlied@gmail.com, simona@ffwll.cc,
-	dmitry.baryshkov@oss.qualcomm.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Chu Guangqing <chuguangqing@inspur.com>
-Subject: Re: [PATCH v5 1/1] [DRIVER] gpu: drm: add support for Yhgc ZX1000
- soc chipset
-Message-ID: <202509280424.vdB0od7m-lkp@intel.com>
-References: <20250925091715.12739-2-chuguangqing@inspur.com>
+	s=arc-20240116; t=1759005818; c=relaxed/simple;
+	bh=UvNClLKNNn9rK6Vik019kICWDMo2uNNhdQgjV8A+LJY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oiidY5q4nZ0cQnrltDy5eNNAHP8HggvIHcnyeCaKdx2raj3Q54EH09ETisrmoJGfhacq1eRfSI6Wuu/yggifQ6+O46M622LB0y2DhYPaO35AxKdioN5BZNpINy0THjjjgtV17NhiFlT/C8fOHzsqAIMaak2I2re1mhHCRMcNEkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K22fpTLa; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5a0d17db499so2610993137.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759005815; x=1759610615; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UvNClLKNNn9rK6Vik019kICWDMo2uNNhdQgjV8A+LJY=;
+        b=K22fpTLatFi/dMxj6c5ySccFKPGDsAEOSFkFOz56xgmFc8VZ0fZOrMQDIsxIvhHRyt
+         IN8flJWiaIWvrNNY76FPIAb0V0Ps5SA1mZzDmIOm+l9yR2pYrxY/Dy0jMp0oaIlx1Zzm
+         h3UUsdpQTvXKKabaGBe4Z7z5txzK3j9AmN4Q7pHAuBuFq3jiH1DseXAtOyKDy1ynamxh
+         23RrlJwIgP8pzouL3uXZVFxtuKUh8DLudMsTezjQTKTHlR09TltfvCzmlUA6OKASjPxI
+         x+6l1jU3UhpL9L+Bzfz97RYHPRHZ5hcqLy2GwBvfjU1nzhxisE1YTL2scYBZeJe3SVK9
+         +aFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759005815; x=1759610615;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UvNClLKNNn9rK6Vik019kICWDMo2uNNhdQgjV8A+LJY=;
+        b=FCZO3YE0e6cmOPQaalZodqkjt5gyPMytU+kga4vnx/t9t54aMO1/nIoSJgWh8NHHyn
+         zL+ljTrUU2oZW7Bh1qc0RigUxSB4yVhKdWmbIsz9mgxn4MGzoIS5YGdzdySq3xJTQTRK
+         jDPR5gSBSEMnZtLoJ8Gb4XYijN4l/n3HlGGOohTaY8IR6lHVlUKEDfLoBmRJ3B96DCYX
+         L4c2boJ03e/a0u92dhh/2ALICeO9WeQZstWr/TrkQif5osB9cn5USuaUV0U3b5UVg/Pc
+         /AkqLV+wFBxMhSn6VroZrB9Xp+gU9YwGBqP5RaM/jNDXaj5LrJuYPud/vwhdsgVYYx6D
+         bnrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAq7SBDGzO/OqGJ5mA/0Q1Vtd/mJll+9C2fN8jL7BeYhOmlYAUPuhzFbZr3jyyEgQ+b5oRVBDPInw6BaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8Hz2aWD3MiCfz3Gj2g6RGlzs4vIsY5R8CLQAgbVxVcs9eFfx0
+	QdwN2osZV3JmBTS49VN6c9yFGtUIqwO6NAolexXBWc5pEUkFMSjc1lJoNe/7tllGs4N357sWJGq
+	DiMX9VsUUhOES0yLyfzykfSI0Tm8jw+k=
+X-Gm-Gg: ASbGnctF2XWmuWJWDRuALk8AtqC2zGkbFzmcf/zsvoANX1y4Q2xBbREDxBsz8p6Vnmt
+	/mVFymUOMundtFZrCiMm3g8/F4vCE5S4r4Ptvjy/P0e3T+5BxYdqjIL+oz1jhWqanb8WWT+F5cX
+	7NT3bxuwuiEs81Ntr26ad6TTt96CKagYhiFwUvrhR3wRXMX7ETe9lRUEs2Pg8g0zJjSEkR2BV9p
+	mWtnvoMHzvzz9xZxk8BRS4dVV5ImSU0Qissw4/c
+X-Google-Smtp-Source: AGHT+IGYQ8cZXq6p06Ik0TDBdufn7B3v54OBWxKvQ9AFYTgNeyye8BPJ3qw2CKkk7AUAcaDd0Kb3KEG7ImktB5zLhBw=
+X-Received: by 2002:a05:6102:2924:b0:52d:1b06:5e34 with SMTP id
+ ada2fe7eead31-5b2826795b7mr3196814137.10.1759005815440; Sat, 27 Sep 2025
+ 13:43:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925091715.12739-2-chuguangqing@inspur.com>
+References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+ <78127855-104f-46e2-e5d2-52c622243b08@gentwo.org> <CAM_iQpU2QucTR7+6TwE9yKb+QZg5u_=r9O_tMfsn7Ss7kJbd9A@mail.gmail.com>
+ <aNZh3uDdORZ5mfSD@kernel.org>
+In-Reply-To: <aNZh3uDdORZ5mfSD@kernel.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Sat, 27 Sep 2025 13:43:23 -0700
+X-Gm-Features: AS18NWBZ4NYpS8oIgxtkL6K4jFZHcC-C1DNvJN4aikZTVbjqp7kQjMuXYe8nY8M
+Message-ID: <CAM_iQpWXFQwtayT7Zv7iJd7zQZ=rX_P1ZK2P11-6ohRhLpg7Xw@mail.gmail.com>
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com, 
+	Cong Wang <cwang@multikernel.io>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, 
+	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org, linux-mm@kvack.org, 
+	multikernel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chu,
+On Fri, Sep 26, 2025 at 2:50=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
+>
+> On Wed, Sep 24, 2025 at 11:39:44AM -0700, Cong Wang wrote:
+> > On Wed, Sep 24, 2025 at 10:51=E2=80=AFAM Christoph Lameter (Ampere)
+> > <cl@gentwo.org> wrote:
+> > > AFAICT various contemporary Android deployments do the multiple kerne=
+l
+> > > approach in one way or another already for security purposes and for
+> > > specialized controllers. However, the multi kernel approaches are oft=
+en
+> > > depending on specialized and dedicated hardware. It may be difficult =
+to
+> > > support with a generic approach developed here.
+> >
+> > You are right, the multikernel concept is indeed pretty old, the Barrel=
+Fish
+> > OS was invented in around 2009. Jailhouse was released 12 years ago.
+> > There are tons of papers in this area too.
+>
+> Jailhouse is quite nice actually. Perhaps you should pick that up
+> instead, and start refining and improving it? I'd be interested to test
+> refined jailhouse patches. It's also easy build test images having the
+> feature both with BuildRoot and Yocto.
 
-kernel test robot noticed the following build warnings:
+Static partitioning is not a bad choice, except it is less flexible. We can=
+'t
+get dynamic resource allocation with just static partitioning, but we can
+easily get static partitioning with dynamic allocation, in fact, it should =
+be
+the default case.
 
-[auto build test WARNING on drm-misc/drm-misc-next]
-[also build test WARNING on linus/master v6.17-rc7]
-[cannot apply to next-20250926]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+In my own opinion, the reason why containers today are more popular
+than VM's is not just performance, it is elasticity too. Static partitionin=
+g
+is essentially against elasticity.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chu-Guangqing/gpu-drm-add-support-for-Yhgc-ZX1000-soc-chipset/20250925-172156
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20250925091715.12739-2-chuguangqing%40inspur.com
-patch subject: [PATCH v5 1/1] [DRIVER] gpu: drm: add support for Yhgc ZX1000 soc chipset
-config: loongarch-randconfig-r123-20250927 (https://download.01.org/0day-ci/archive/20250928/202509280424.vdB0od7m-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250928/202509280424.vdB0od7m-lkp@intel.com/reproduce)
+More fundamentally, it is based on VMCS, which essentially requires
+a hypervisor:
+https://github.com/siemens/jailhouse/blob/master/hypervisor/control.c
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509280424.vdB0od7m-lkp@intel.com/
+>
+> It would take me like half'ish day to create build target for it.
+>
+> > Dual-kernel systems, whether using virtualization or firmware, are inde=
+ed
+> > common at least for automotives today. This is a solid justification of=
+ its
+> > usefulness and real-world practice.
+>
+> OK so neither virtualization nor firmware are well defined here.
+> Firmware e.g. can mean anything fro pre-bootloader to full operating
+> system depending on context or who you ask.
+>
+> It's also pretty hard to project why VMs are bad for cars, and
+> despite lacking experience with building operating systems for
+> cars, I'd like to believe that the hardware enforcement that VT-x
+> and VT-d type of technologies bring is actually great for cars.
+>
+> It's like every other infosec con where someone is hacking a car,
+> and I seen even people who've participated to hackatons by car
+> manufacturers. That industry is improving gradually and the
+> challenge would be to create hard evidence that this brings
+> better isolation than VM based solutions..
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/yhgch/yhgch_drm_de.c:65:41: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem *vaddr_iomem @@     got void *addr_base @@
-   drivers/gpu/drm/yhgch/yhgch_drm_de.c:65:41: sparse:     expected void [noderef] __iomem *vaddr_iomem
-   drivers/gpu/drm/yhgch/yhgch_drm_de.c:65:41: sparse:     got void *addr_base
->> drivers/gpu/drm/yhgch/yhgch_drm_de.c:92:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *addr_base @@     got void [noderef] __iomem *vram_base @@
-   drivers/gpu/drm/yhgch/yhgch_drm_de.c:92:41: sparse:     expected void *addr_base
-   drivers/gpu/drm/yhgch/yhgch_drm_de.c:92:41: sparse:     got void [noderef] __iomem *vram_base
->> drivers/gpu/drm/yhgch/yhgch_drm_de.c:123:10: sparse: sparse: Initializer entry defined twice
-   drivers/gpu/drm/yhgch/yhgch_drm_de.c:126:9: sparse:   also defined here
+In case it is still not clear: No one wants to stop you from using a
+VM. In fact, at least in theory, you could use a VM inside a multikernel.
+Just like today we can still run a container in a VM (Kata Container).
 
-vim +65 drivers/gpu/drm/yhgch/yhgch_drm_de.c
+Your choice is always on the table.
 
-    58	
-    59	static void yhgch_handle_damage(void *addr_base, struct iosys_map *src,
-    60					struct drm_framebuffer *fb,
-    61					struct drm_rect *clip)
-    62	{
-    63		struct iosys_map dst;
-    64	
-  > 65		iosys_map_set_vaddr_iomem(&dst, addr_base);
-    66		iosys_map_incr(&dst, drm_fb_clip_offset(fb->pitches[0], fb->format, clip));
-    67		drm_fb_memcpy(&dst, fb->pitches, src, fb, clip);
-    68	}
-    69	
-    70	static void yhgch_plane_atomic_update(struct drm_plane *plane,
-    71					      struct drm_atomic_state *state)
-    72	{
-    73		struct drm_plane_state *plane_state = drm_atomic_get_new_plane_state(state, plane);
-    74		struct drm_framebuffer *fb = plane_state->fb;
-    75		struct drm_plane_state *old_plane_state = drm_atomic_get_old_plane_state(state, plane);
-    76		struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
-    77		struct yhgch_drm_private *priv = to_yhgch_drm_private(plane->dev);
-    78		struct drm_atomic_helper_damage_iter iter;
-    79		struct drm_rect damage;
-    80		u32 reg;
-    81		s64 gpu_addr = 0;
-    82		u32 line_l;
-    83	
-    84		if (!plane_state->crtc || !plane_state->fb)
-    85			return;
-    86	
-    87		if (!plane_state->visible)
-    88			return;
-    89	
-    90		drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plane_state);
-    91		drm_atomic_for_each_plane_damage(&iter, &damage) {
-  > 92			yhgch_handle_damage(priv->vram_base, shadow_plane_state->data, fb, &damage);
-    93		}
-    94	
-    95		fb->pitches[0] = (fb->pitches[0] + 15) & ~15;
-    96	
-    97		writel(gpu_addr, priv->mmio + YHGCH_CRT_FB_ADDRESS);
-    98	
-    99		reg = fb->width * fb->format->cpp[0];
-   100	
-   101		line_l = fb->pitches[0];
-   102		writel(FIELD_PREP(YHGCH_CRT_FB_WIDTH_WIDTH_MASK, reg) |
-   103		       FIELD_PREP(YHGCH_CRT_FB_WIDTH_OFFS_MASK, line_l),
-   104		       priv->mmio + YHGCH_CRT_FB_WIDTH);
-   105	
-   106		/* SET PIXEL FORMAT */
-   107		reg = readl(priv->mmio + YHGCH_CRT_DISP_CTL);
-   108		reg &= ~YHGCH_CRT_DISP_CTL_FORMAT_MASK;
-   109		reg |= FIELD_PREP(YHGCH_CRT_DISP_CTL_FORMAT_MASK,
-   110				   fb->format->cpp[0] * 8 / 16);
-   111		writel(reg, priv->mmio + YHGCH_CRT_DISP_CTL);
-   112	}
-   113	
-   114	static const u32 channel_formats1[] = {
-   115		DRM_FORMAT_RGB565, DRM_FORMAT_RGB888,
-   116		DRM_FORMAT_XRGB8888,
-   117	};
-   118	
-   119	static struct drm_plane_funcs yhgch_plane_funcs = {
-   120		.update_plane = drm_atomic_helper_update_plane,
-   121		.disable_plane = drm_atomic_helper_disable_plane,
-   122		.destroy = drm_plane_cleanup,
- > 123		.reset = drm_atomic_helper_plane_reset,
-   124		.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
-   125		.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
-   126		DRM_GEM_SHADOW_PLANE_FUNCS,
-   127	};
-   128	
+I hope this helps.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Cong Wang
 
