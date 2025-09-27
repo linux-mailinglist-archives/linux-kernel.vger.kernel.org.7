@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-834946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BC1BA5E4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:20:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93F1BA5E5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C888F188FB55
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615892A45ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD452E0407;
-	Sat, 27 Sep 2025 11:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB302DC359;
+	Sat, 27 Sep 2025 11:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqaGjjH6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVgcX3cw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E5D2D6E6E;
-	Sat, 27 Sep 2025 11:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4892AE8D;
+	Sat, 27 Sep 2025 11:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758972031; cv=none; b=EXLj5tpzrg0NB21fThYAfxFT34Khz/LWtE0UCx1UHxWFzdPNAUpjZgswjbD14Iv3Rm7IoB6g9FP8GjN5gPLnmE0cw8HAHtj0XWRW7OKuJvpcYo939up+LEqWQlAuKBL9uoOGQMPlkTA6I9GXWs993xgac373UX40zz/1wJJui08=
+	t=1758972590; cv=none; b=SHXSGht07bxRatEDj0AOsy/1vUPks7pt+lKTlP+0NZlXryP0/sHyq7tCVJLLj9VKzsgrx1yqGqKyXpadBdHpxNRtBnaNXckZKx5UkI0VhB/XXd5fcLbi8jXq56W330Vly1JQbEoMIfppsPd8nT4I0DJz50sA6j7s/hL+VwynNb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758972031; c=relaxed/simple;
-	bh=PRorwxyPKIOq1HpgXs6bBnAwowA5ZYf8Untk48TuCTc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I/l5MuSejZThScYu6zJdy227kCAh+lPyQx7/o18pY45XEzxxFHm+vZa9DDuSvU9wBtAlMQSX5Bopupib8t+dxqiMEQkKzsGr4fd5CXKiypfKuyAcJZLYx+7vcUlShbXpylrXhcJcPFJOqU+UQ9qs+diNseqNOqS1yzOm3t1Oil4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqaGjjH6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 56F2EC4CEE7;
-	Sat, 27 Sep 2025 11:20:31 +0000 (UTC)
+	s=arc-20240116; t=1758972590; c=relaxed/simple;
+	bh=woOJMQVx2gK/ZTrYKUvp8Kze1O8Xv6dnLbcVNoWtA9U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AP0yOU7FP24+pD99HVBo+UL71Y6Aeo+AZ35YWPkPfq1Kzv9PUiYLjR5zcPgMBGNti/DkdfJWbBjWI+VS9/fUcTfUQIdGMyVACefLxYN0DtQoVYuJ/aPi9TYFhPeOhdBkkayigDouvJsWpy9/6v6F4P518coL18zPN6maPH9EekY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVgcX3cw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21754C4CEE7;
+	Sat, 27 Sep 2025 11:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758972031;
-	bh=PRorwxyPKIOq1HpgXs6bBnAwowA5ZYf8Untk48TuCTc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=dqaGjjH6FIEqyEABSgMctM76QpH9QiRGFnosxDUeGz3XqjpkbG6V8Im/D8E0CG4c9
-	 TuUN+OOkjnqEinFRvGB9NYiQYzPbmLCsKGyDcAVg5J8mBWACffEB9Ykl3hwaVh7QL3
-	 c2R5ToKCiTjvNmoWjRJ6n1sw/NGT1WlZGzleTci84BlB7o/jwfXt/CboD1U6PgvsCO
-	 9tE72dOClmuHwKWMk1g3vlEIcbKToMPWunR+5yomnY7EtyxbwAVMSVax32lhSXzuHZ
-	 JRlIUPLYJ1VVqao+ZQ6OBwp2Tmm729mplm5/SEpuETc80WzQy8DFRdV/DlvYcYMsLX
-	 xkGH/ztlyEKiw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B04ECAC5B8;
-	Sat, 27 Sep 2025 11:20:31 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Sat, 27 Sep 2025 13:20:28 +0200
-Subject: [PATCH] arm64: dts: qcom: sdm845-oneplus: Correct gpio used for
- slider
+	s=k20201202; t=1758972590;
+	bh=woOJMQVx2gK/ZTrYKUvp8Kze1O8Xv6dnLbcVNoWtA9U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SVgcX3cww3I4jhHCG7p2ABBDtOytr0l9MxhhncYqy5LR8JN5xjlQyUF3pl5FRss0U
+	 kyeZAAZrF01Cms/Qa0DPHwW8Jjzr0pNLck4xq5y7BTLcUW/oKuLos+2GxbPcsGa/8i
+	 BYMt7JRiLicMmrc26p6bmo82Wyf4/jl+8OJngpMBtWqT8k6SRHtKyvDeHNtuafos98
+	 8PREpN34kn2BwkHuHiFubyMPM3l/tYJmn+subZv71IHRQVn4bk39d8IiA/VnN5bHJ8
+	 4Jr5gAjstzMheamBOOVLdgUUxsnsA0ix7Y8S+hJ7CniqBhq4gX+zxMoOhLSkWQ4l3b
+	 FD21L0Hje1EPQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v2T7b-00000009rcA-2IVo;
+	Sat, 27 Sep 2025 11:29:47 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>,
+	Sean Christopherson <seanjc@google.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Sebastian Ott <sebott@redhat.com>
+Subject: Re: [PATCH] KVM: selftests: Track width of arm64's timer counter as "int", not "uint64_t"
+Date: Sat, 27 Sep 2025 12:29:01 +0100
+Message-ID: <175897248729.2798309.11771785872259733527.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250926155838.2612205-1-seanjc@google.com>
+References: <20250926155838.2612205-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,77 +66,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250927-slider-correct-v1-1-fb8cc7fdcedf@ixit.cz>
-X-B4-Tracking: v=1; b=H4sIAHvI12gC/x3MQQqAIBBA0avIrBPMFLOrRIvQqQaiYowIxLsnL
- d/i/wwJmTDBIDIwPpToPCraRkDY5mNFSbEatNJWee1k2ikiy3AyY7hl7Izxqjcuegs1uhgXev/
- hOJXyAXsVlF5gAAAA
-X-Change-ID: 20250927-slider-correct-d34490847d95
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Casey Connolly <casey.connolly@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1235; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=khpBYuHNK3gqhl7+t9U8Ea2FmJkEV2t39lvpmJj2DM0=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBo18h+p2HI2zxKPnvC/Vj6ayFsg9PhzbcgnfCyI
- TFmmuL+5veJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaNfIfgAKCRBgAj/E00kg
- cleBD/4t8nv6PNKKJ1R1a3L3W7GPVE7NqprA07qLI982TV1KecZ5oxkT+HXQm+Z9EJrqipWeoPZ
- 3SFjlZdclKIN+R3PQSu24LQ7+KLy+MfC6CZ1bvECPod50WGMqprigBp9j0YnUv3dwZdEUUI+5JR
- 5KwaDwJ/nZCqMKYP2HekCaJpRbLc4KrH97O12BR8Ggkuhochlfv4ONxNtlGIV8sd5u55NZCbo6a
- R3CyacztpUNWS6ySoz31a7jrqSjv37kXespgkYTEuwqKXQIKHFf72crp62dTnKLlt9qZsYIdEFT
- Sk5pl6Hp78BpbkOimGE8KBDRjEBuvgzg1rV19Rmno1Jl+peO0st59ApSHnV2xlgbU1w7Qqpxoqz
- /6czPfGmSi9Fy3BrknzPbBpPsIWTdQNZ2aDLWx1DZJqDCfprgK07TY+H3UCGykdF+CxZzi895jG
- eBVbw3j8UiE2vgXflxsjvsnhLcatsh/y8weh5V7f0xHBJ6s/G7JCkLvKMEvL9e08WHCC5jmJ8cO
- JC5BazebyAhfbmkg6veg0Buwtie1o43m28TOlNIK4XUwTK5mJGbP8/tvJ7Ac6lC5717WORe37mZ
- W72KrWl4q8LCCYrROE/kRgrU4aQgdzAKydNP+GmZGmnKLDVsITP8nKhAZTNmgN5opyEVgkWY4rk
- L3+2ys3vbS2rQbg==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, seanjc@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, sebott@redhat.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Gergo Koteles <soyer@irl.hu>
+On Fri, 26 Sep 2025 08:58:38 -0700, Sean Christopherson wrote:
+> Store the width of arm64's timer counter as an "int", not a "uint64_t".
+> ilog2() returns an "int", and more importantly using what is an "unsigned
+> long" under the hood makes clang unhappy due to a type mismatch when
+> clamping the width to a sane value.
+> 
+>   arm64/arch_timer_edge_cases.c:1032:10: error: comparison of distinct pointer types
+>      ('typeof (width) *' (aka 'unsigned long *') and 'typeof (56) *' (aka 'int *'))
+>      [-Werror,-Wcompare-distinct-pointer-types]
+>    1032 |         width = clamp(width, 56, 64);
+>         |                 ^~~~~~~~~~~~~~~~~~~~
+>   tools/include/linux/kernel.h:47:45: note: expanded from macro 'clamp'
+>      47 | #define clamp(val, lo, hi)      min((typeof(val))max(val, lo), hi)
+>         |                                                  ^~~~~~~~~~~~
+>   tools/include/linux/kernel.h:33:17: note: expanded from macro 'max'
+>      33 |         (void) (&_max1 == &_max2);              \
+>         |                 ~~~~~~ ^  ~~~~~~
+>   tools/include/linux/kernel.h:39:9: note: expanded from macro 'min'
+>      39 |         typeof(x) _min1 = (x);                  \
+>         |                ^
+> 
+> [...]
 
-The previous GPIO numbers were wrong. Update them to the correct
-ones and fix the label.
+Applied to fixes, thanks!
 
-Fixes: 288ef8a42612 ("arm64: dts: sdm845: add oneplus6/6t devices")
-Signed-off-by: Gergo Koteles <soyer@irl.hu>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[1/1] KVM: selftests: Track width of arm64's timer counter as "int", not "uint64_t"
+      commit 34f46fecfe96b404ef14e97b8e59cde693276f28.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-index dcfffb271fcf3146aeabda8fc19e61b456b76887..51a9a276399ac7de42f4269ace257120236fa81a 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-@@ -803,8 +803,8 @@ hall_sensor_default: hall-sensor-default-state {
- 		bias-disable;
- 	};
- 
--	tri_state_key_default: tri-state-key-default-state {
--		pins = "gpio40", "gpio42", "gpio26";
-+	alert_slider_default: alert-slider-default-state {
-+		pins = "gpio126", "gpio52", "gpio24";
- 		function = "gpio";
- 		drive-strength = <2>;
- 		bias-disable;
+Cheers,
 
----
-base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
-change-id: 20250927-slider-correct-d34490847d95
-
-Best regards,
+	M.
 -- 
-David Heidelberg <david@ixit.cz>
+Without deviation from the norm, progress is not possible.
 
 
 
