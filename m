@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-834994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425CBBA5FE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:48:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01F2BA5FE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 15:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02ACE3BF7A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:48:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9438A7A0129
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 13:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569682E1C7A;
-	Sat, 27 Sep 2025 13:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7792DF13B;
+	Sat, 27 Sep 2025 13:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJV/NKbi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFr8+22y"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B616F2F2;
-	Sat, 27 Sep 2025 13:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C3C279789
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 13:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758980895; cv=none; b=oik/Xk9m2+CdokN/UuurTKJ+5oeE5eKal9dfSp2M3syaZZu+E9lbJkTSCGcTwPqeKSZX71jPNIy7HvK7es6bH2h+aReDsqaym6iVheJZZ4a1cflBsdH5TJUC76WfPBIJXHnsgJxFProR3230SS0lmM/v420qaV6A+yiTWDE+q5E=
+	t=1758980915; cv=none; b=p5BISSrYnhble99ZIEms18M+h8WFRVgAKygW6cmYCmAFUmVFvMMwfuZab082UJ6O0PsGuNIaqx7dka8Qov/KF1WTZT+1FTPZvoda9dm9sJwNQ/QkGDlw0uRJXGJdfSRe/X1XcUCcEjXfP+i59CByO82JFIBk9/WC/JP/08fq1YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758980895; c=relaxed/simple;
-	bh=xPv55APnDxR98J78zg7XwhLgcPoi+E8ffL/ShjKi7gY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fPxeBz+3LM/m0MjNZMFK08Gn6T/m5JEumXgHZ+rCguDx3FpcXwEbis0n2Uf86Sw48OMxpGwl06sr4JVO20PK+YTFJe7qtndZNBklrHw6dU8zbVXomEKkprHgA9/f4y5HIrhxtkVkzBZ5xkux05udIRBJ5CKcdZ26BVkdKwZ+ETE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJV/NKbi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87FBEC4CEF7;
-	Sat, 27 Sep 2025 13:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758980894;
-	bh=xPv55APnDxR98J78zg7XwhLgcPoi+E8ffL/ShjKi7gY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cJV/NKbi6AUjWrpVLUkMU55EbQhfBVy6ESr1HcAdWeObVluWSv7SYpq7W9yPZ4ni+
-	 qYUznKvX3PZETbN86auvXo9CUTL+/rlx70lZXp6D5WVD5O3mllIwDXJkQtmpQE22WI
-	 +Enfn6+ZI4mipHjznJHQoaS8AFRCPA5tsYN09D4ULoFqUuB0t/01Cg9kKmXhVFZiSK
-	 pr3B+t3tQlHPF7yilWih2Lx+G37+sZvedY2HFxvCVfDR2NH5qupAhUu7/D99mkHyXD
-	 MWFZeCx/eZFZ3IkpVzBu/T2ljNzLXcynVg4ZWAisKlEw5DPI2d4p44944wPv/elg4V
-	 stS+dY+WY4nHg==
-Date: Sat, 27 Sep 2025 14:47:57 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org,
- lumag@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
- konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
- amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
- rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
- david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
- kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, cros-qcom-dts-watchers@chromium.org,
- quic_kotarake@quicinc.com, neil.armstrong@linaro.org,
- stephan.gerhold@linaro.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM
- PMIC5 Gen3 ADC
-Message-ID: <20250927144757.4d36d5c8@jic23-huawei>
-In-Reply-To: <5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
-References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
-	<20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
-	<20250829-classic-dynamic-clam-addbd8@kuoka>
-	<5d662148-408f-49e1-a769-2a5d61371cae@oss.qualcomm.com>
-	<4e974e77-adfc-49e5-90c8-cf8996ded513@kernel.org>
-	<a0e885be-e87d-411a-884e-3e38a0d761e5@oss.qualcomm.com>
-	<8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
-	<5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758980915; c=relaxed/simple;
+	bh=ycjD+GaoJf+K++XmPN4L07Vpl5Or9LJ+0MA9nUzsKWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXSHjc8cktfNxMZgYcv+K2H1/ofhEydRkHj88MVfa5yQ7tI8dfJHnwvqKYcPF4x42XaFqpRUMyfqyQXg2GKHnp4UWLIpt8/BBbELJQgxaHbHm1Lwi5mc//nuGwAj+IU/KWgQJCRjZJEAoFo20I1s+jweflF64jLQve/dNhi5lxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFr8+22y; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3324523dfb2so2951235a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 06:48:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758980913; x=1759585713; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ycjD+GaoJf+K++XmPN4L07Vpl5Or9LJ+0MA9nUzsKWg=;
+        b=iFr8+22yebv0tRqT/lfxWOw75zo3Ig5zj5E0W4Vg1x7zt+1yW3trrWBWCr+ZJDNvOa
+         X5dWZk7aT2kjqOy0c8T2Xan/ZLNrFiLOawZHK5zXyKobolGS0PnYjFIR+ge2tErhov9l
+         jl6yQjqMbYtmKZYgZFKjJv1ER11tD0blo45w1Or+KiMg14DbkkGhZJeseSMVxUl78QB+
+         TOSYvUyqwy0dQ28y5qV3D/rTZDIzx24MCgM12Qu2dlQTMAbpoYMqVrVAbdtZU0giQJKd
+         KTQ2wQUhuoVqNoQPLvK+LuM+p0+5sg1Y2uFPVSbSoBxMwuywG4amwiCFFream60nwgVn
+         d3rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758980913; x=1759585713;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ycjD+GaoJf+K++XmPN4L07Vpl5Or9LJ+0MA9nUzsKWg=;
+        b=Ida2MpdUGsudPgpRf1aXEeHbC4JTwBW+oJsi+G9xb4nL/ei6e6qzZGS3L16KX6r4lF
+         QicIzgyhWTpHmdWzalbnBeiLnoREy065lJ5DKSPArT6sDw4YJnwU/BJZXTqJV/fnGCMr
+         8Mwi4PUf6b7BguEpUGIhqu3NhjmXSEAXIt2Ut3jJTqND8lT5QH2Gsx1/DQP1QAQ1UZ0t
+         tUz+6y/3qknLm/xJKUpm9ayPcmfp/4A7723IA72s1H1WAIOrC8FQi23SkHJK/jkf6b0u
+         ORCrHjkT/hHLDVe95TmkUJt4qnOxu7i+ZiDpKLNtwrUlMX1SPmbezrZjVBpBnMVhlN+n
+         Ti2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjU+4reCfivQ/JqeKGDfKrO65MVV6A2t0Pjyh7SdiHAlFMBpqE6NtdCgJVMBlAFHwRaoDw2h/Snt7QvnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHXGzfhrFfJoIyDSR47RjhJXQTciDjY5X0VZn1zJUzAJYbAFgR
+	njELdM9/clw4SDL76Gn7vKX7M973o0tvxTKs9PYxSB6a+k0TFJJ6olvg
+X-Gm-Gg: ASbGnctoMrMAz3SZwRg1l1u6ib+LfijcpKLfmRKfG7a/33237NmlWHo3wlgtAg9CYYH
+	J65S8zXdNJWYuK4IEMKlSRFRXrhzSZGkE5FobjUmwrOxj+csoi1p085PhhLtKqBwrfM6rmWwJkF
+	1S4pT8L6NcohgC9DLbX3hn7QSGa+X0Rq0ZMu2h4tOPbXHXNauFKKqyUmfLxhR614Y4qHH/PaUs4
+	jMwopTDFHeIcuY0OlNDUI1zBq7rG6NZVPKhExMhNPrnlWALa4R9KfUPf2DlX6pDttrDOcJMefYn
+	G415WGoPBJ5q1OUgLhRBkN2n262E64GZYQBkUnJscRWaLvkgn1/A3UQPfFk1iv+W4Osxbx1uRa4
+	L4amC2OVpoakWyHDnazDrcDzgxsiJIU+W21Up
+X-Google-Smtp-Source: AGHT+IHlq36bPDtRaXhQxlBatzHjr2m7hsqlTZFnSIYGIqATigx/sqLVQ5bVIxhmt+m4FmtviBZzpg==
+X-Received: by 2002:a17:90b:1d92:b0:32e:d282:3672 with SMTP id 98e67ed59e1d1-3342a2c0fcemr11203678a91.23.1758980913343;
+        Sat, 27 Sep 2025 06:48:33 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be2073dsm11911785a91.19.2025.09.27.06.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 06:48:32 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id A179C4220596; Sat, 27 Sep 2025 20:48:24 +0700 (WIB)
+Date: Sat, 27 Sep 2025 20:48:24 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexey Klimov <alexey.klimov@linaro.org>
+Subject: Re: [PATCH] docs: sound: describe 'chan_map' member in snd_dec_opus
+Message-ID: <aNfrKBeu17kdl_8D@archie.me>
+References: <20250926162658.989479-1-kriish.sharma2006@gmail.com>
+ <878qi0b97l.wl-tiwai@suse.de>
+ <aNfRhzjqs6Z2fi-n@archie.me>
+ <CAL4kbRMp912C+xqO4RYnGBO_VSqXJDSkNMgktd04zcUMOn_4-w@mail.gmail.com>
+ <CAL4kbRMLnkJJcC9zoS+vSbwPxsU=82960vc1pOcrDZKsjLbz_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HfmnOL6c3qw3oUjM"
+Content-Disposition: inline
+In-Reply-To: <CAL4kbRMLnkJJcC9zoS+vSbwPxsU=82960vc1pOcrDZKsjLbz_A@mail.gmail.com>
 
-On Fri, 19 Sep 2025 20:17:43 +0530
-Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
 
-> Hi Krzysztof,
-> 
-> On 9/18/2025 5:45 AM, Krzysztof Kozlowski wrote:
-> > On 18/09/2025 04:47, Jishnu Prakash wrote:  
-> >> Hi Krzysztof,
-> >>
-> >> On 9/17/2025 5:59 AM, Krzysztof Kozlowski wrote:  
-> >>> On 16/09/2025 16:28, Jishnu Prakash wrote:  
-> >>>>> You cannot have empty spaces in ID constants. These are abstract
-> >>>>> numbers.
-> >>>>>
-> >>>>> Otherwise please point me to driver using this constant.  
-> >>>>
-> >>>> These constants are for ADC channel numbers, which are fixed in HW.
-> >>>>
-> >>>> They are used in this driver: drivers/iio/adc/qcom-spmi-adc5-gen3.c,
-> >>>> which is added in patch 4 of this series.
-> >>>>
-> >>>> They can be found in the array named adc5_gen3_chans_pmic[].  
-> >>>
-> >>> Really? So point me to the line there using ADC5_GEN3_VREF_BAT_THERM.
-> >>>  
-> >>
-> >> We may not be using all of these channels right now - we can add them
-> >> later based on requirements coming up. For now, I'll remove the channels
-> >> not used in adc5_gen3_chans_pmic[].  
-> > 
-> > You are not implementing the feedback then. Please read it carefully.
-> >   
-> 
-> Sorry, I misunderstood - so you actually meant I should remove the
-> empty spaces in the definitions, like this?
-> 
-> -#define ADC5_GEN3_VREF_BAT_THERM               0x15
-> +#define ADC5_GEN3_VREF_BAT_THERM 0x15
-> 
-> I thought this at first, but I somehow doubted this later, as I saw some
-> other recently added files with empty spaces in #define lines, like:
-> 
-> include/dt-bindings/iio/adc/mediatek,mt6373-auxadc.h
-> include/dt-bindings/regulator/st,stm32mp15-regulator.h
-> 
-> I can make this change, if you prefer this. Please let me know
-> if I'm still missing something.
-> 
-> Also please let me know if you want me to remove the unused
-> channels - I would prefer to keep them if there's no issue,
-> as we might need them later.
-> 
-He is referring to 0x14 and below not being defined values.  So what
-do they mean if they turn up in the DT?
+--HfmnOL6c3qw3oUjM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hence the request for context on how this define is being used so that
-you can get some feedback on how it should be done.
+On Sat, Sep 27, 2025 at 06:33:35PM +0530, Kriish Sharma wrote:
+> Apologies my previous message to the list was sent in HTML format
+>=20
+> > Thanks for the feedback. Do you prefer me to send a v2 with the Fixes t=
+ag and nested struct documentation?
 
-J
-> Thanks,
-> Jishnu
-> 
-> > Best regards,
-> > Krzysztof  
-> 
+Sure!
 
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--HfmnOL6c3qw3oUjM
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaNfrJAAKCRD2uYlJVVFO
+o39AAPsH6L0/F8hE5Ds7jMn7R2yRWpO37w7+7svlGjv+CnaXegEAwW/qs8CqfGg/
+M3srlivPMdJcmao/5aIqEmp0TVCvtA8=
+=6hn0
+-----END PGP SIGNATURE-----
+
+--HfmnOL6c3qw3oUjM--
 
