@@ -1,103 +1,196 @@
-Return-Path: <linux-kernel+bounces-834908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC88BA5D00
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:48:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36441BA5D0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C39DC7B4273
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6F2189E091
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D32D6E5E;
-	Sat, 27 Sep 2025 09:48:15 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F4B2D7393;
+	Sat, 27 Sep 2025 09:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nHWDrUGh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wqsgagUJ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nHWDrUGh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wqsgagUJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434E9276057;
-	Sat, 27 Sep 2025 09:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4479C2C3250
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758966495; cv=none; b=bWVbzxNEi9rXNgo9DeIH7oxL92OTKy7k1z66xGembpZVJWVMKU9YQr3H+Qcw8OAOOvBOdaDJPDGJrQiKhcQLlQbwhm/2EquhaOrdF3R591oHT1H980LT1vUCSKUIYU4zDKSGTzg0uZFDYRh0ExP+kHzD4OJs9rerb4e5pPqDGYA=
+	t=1758966646; cv=none; b=dJSoqsG/ufK+nOudkHNAkKfFQm8hQxMsKRjY5FZsmCpkUaipEfdOnh9fyHvPy0dNfy23EUDKbSLDz/HAv3jIRXsaOb9BVbKtHalBjpTsiZBR8tb0Nq4OOwFen50ekb7H9+WdDooZk92YQOEed2U1H2lw6cyGcWAbSqbY6SqZYAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758966495; c=relaxed/simple;
-	bh=zSpjC6m3pglcmLbIGjS2FcUdLFf8FTEZflp0fi6fCj0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=FjQs2GL4rEZXxzD3JdR0sf6CbzO0NSRV7QB4syVSvQmwCkdud92Ka27AzpSjOhi1t0U1MXn6tmXMFFasds0Ouh/AS8uuzc4CpLSm6sj0ZFJixvoG31P73ApzleY71JB19iuUqSL9FNZ2m/H/8J/REye5Hp0uknZOk/+SLvdgr78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowADXeBLAstdoa+RcBw--.33407S2;
-	Sat, 27 Sep 2025 17:47:57 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
+	s=arc-20240116; t=1758966646; c=relaxed/simple;
+	bh=BotcDeRJ5Xchr3Qo6LfezDRpDesds0piADefeH4E2oE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F29p3waHcS77hB7BuinfyMB+UQ/3wfGcql17k/jK2HJcHgFudIg4GpnxdwJKdJTN5hs0heEjgbD8pN+wRl+kXLdcoFgptPzN9LjoD6+JtvMWnl2K65YuqQu3c6JYjMgTixk9UP5K7RYeZrBTCuuTf9JNqXk2Ar+v6GHnxHxgAJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nHWDrUGh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wqsgagUJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nHWDrUGh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wqsgagUJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CA119267D8;
+	Sat, 27 Sep 2025 09:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758966633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
+	b=nHWDrUGhPhsS4p6nX3rWYGg+1HBuJNgbyLnB8Zx67wt351CSM6U2jtPpS22tqTFVve1dGL
+	QrPV8stgpN18MtwtXeHqBUVKGzqnlsVT8c+7Sn8zumsasPYPeASUDqZEEMf8W/j2ToHV2E
+	1khQEQk16pM68hT4R1/Dm3Eor4vYVF8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758966633;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
+	b=wqsgagUJ5zJ5eFRWpqC0GJSO5pLrcPx9OEehVtsKIdyrFz0sVh8NE5e6qpDE1/QjoSOAJN
+	BPM9/DIzPQHwr9CA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758966633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
+	b=nHWDrUGhPhsS4p6nX3rWYGg+1HBuJNgbyLnB8Zx67wt351CSM6U2jtPpS22tqTFVve1dGL
+	QrPV8stgpN18MtwtXeHqBUVKGzqnlsVT8c+7Sn8zumsasPYPeASUDqZEEMf8W/j2ToHV2E
+	1khQEQk16pM68hT4R1/Dm3Eor4vYVF8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758966633;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
+	b=wqsgagUJ5zJ5eFRWpqC0GJSO5pLrcPx9OEehVtsKIdyrFz0sVh8NE5e6qpDE1/QjoSOAJN
+	BPM9/DIzPQHwr9CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4B3A13782;
+	Sat, 27 Sep 2025 09:50:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0xVUMmiz12i8UAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 27 Sep 2025 09:50:32 +0000
+Date: Sat, 27 Sep 2025 11:50:32 +0200
+Message-ID: <87y0q09qc7.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
+	lumag@kernel.org,
+	dianders@chromium.org,
+	cristian.ciocaltea@collabora.com,
+	luca.ceresoli@bootlin.com,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/tegra: dc: fix reference leak in tegra_dc_couple()
-Date: Sat, 27 Sep 2025 17:47:41 +0800
-Message-Id: <20250927094741.9257-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowADXeBLAstdoa+RcBw--.33407S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw15uFW5Zr1rAFy5KFW3Jrb_yoWfuFg_GF
-	yUZryxW3yaqFsY9FnFvr13Zry2yFyq9FW0gr42k393Gry3XFyqg34jgFZ09ryUWa1UWFn8
-	AayrXr40vF12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbDxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
-	W0owAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14
-	v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
-	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
-	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeF4EDUUU
-	U
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	l.stach@pengutronix.de,
+	shengjiu.wang@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] drm/bridge: imx: Add HDMI PAI driver on i.MX8MP
+In-Reply-To: <d39bc215-5b67-4cf5-b9d5-6e1e9ab20159@nxp.com>
+References: <20250923053001.2678596-1-shengjiu.wang@nxp.com>
+	<b411c188-b564-4ae8-9186-d0877880fa99@nxp.com>
+	<d39bc215-5b67-4cf5-b9d5-6e1e9ab20159@nxp.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[35];
+	TAGGED_RCPT(0.00)[dt];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[nxp.com,intel.com,linaro.org,kernel.org,ideasonboard.com,kwiboo.se,gmail.com,linux.intel.com,suse.de,ffwll.ch,chromium.org,collabora.com,bootlin.com,lists.freedesktop.org,vger.kernel.org,pengutronix.de,lists.linux.dev,lists.infradead.org,perex.cz,suse.com];
+	R_RATELIMIT(0.00)[to_ip_from(RL8m7tqgwaqu97o1bbfnn6ewdz)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -1.80
 
-driver_find_device() calls get_device() to increment the reference
-count once a matching device is found, but there is no put_device() to
-balance the reference count. To avoid reference count leakage, add
-put_device() to decrease the reference count.
+On Fri, 26 Sep 2025 08:03:15 +0200,
+Liu Ying wrote:
+> 
+> Hi Jaroslav, Takashi,
+> 
+> On 09/23/2025, Liu Ying wrote:
+> > On 09/23/2025, Shengjiu Wang wrote:
+> >> Shengjiu Wang (7):
+> >>   dt-bindings: display: imx: add HDMI PAI for i.MX8MP
+> >>   ALSA: Add definitions for the bits in IEC958 subframe
+> >>   drm/bridge: dw-hdmi: Add API dw_hdmi_to_plat_data() to get plat_data
+> >>   drm/bridge: dw-hdmi: Add API dw_hdmi_set_sample_iec958() for iec958
+> >>     format
+> >>   drm/bridge: imx: add driver for HDMI TX Parallel Audio Interface
+> >>   arm64: dts: imx8mp: Add hdmi parallel audio interface node
+> >>   arm64: dts: imx8mp-evk: enable hdmi_pai device
+> > 
+> > Jaroslav, Takashi, do you think it's ok to land patch 2 through drm-misc,
+> > as that patch touches include/sound/asoundef.h?
+> 
+> Can you please comment?
 
-Found by code review.
+Sorry, I've been off in this week (and am catching backlogs).
 
-Cc: stable@vger.kernel.org
-Fixes: a31500fe7055 ("drm/tegra: dc: Restore coupling of display controllers")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/tegra/dc.c | 1 +
- 1 file changed, 1 insertion(+)
+And, yes, feel free to take the change via drm tree.  I already gave
+my Reviewed-by tag for that.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 59d5c1ba145a..6c84bd69b11f 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -3148,6 +3148,7 @@ static int tegra_dc_couple(struct tegra_dc *dc)
- 		dc->client.parent = &parent->client;
- 
- 		dev_dbg(dc->dev, "coupled to %s\n", dev_name(companion));
-+		put_device(companion);
- 	}
- 
- 	return 0;
--- 
-2.17.1
 
+thanks,
+
+Takashi
 
