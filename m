@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-834876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35EABA5BA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:57:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD79BA5BAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3439D1BC0692
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:57:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 680837A149A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCA72D5941;
-	Sat, 27 Sep 2025 08:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C332D5940;
+	Sat, 27 Sep 2025 08:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="K69Kg00E"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ac2tqydS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8F92D0C98;
-	Sat, 27 Sep 2025 08:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758963443; cv=pass; b=s+iA3RCTlFZSJz9wECHRoPW5uIi2Vme3QtHn0IiszMkzEEDOYc9jkFDBg4vzIZ7aNWH4ljuCxRZqzRHzkr6Nd3hWgFbWOtM2zFR0k3awpA66a7mewjryoI7FshsPd7Zld4ET4ymrVkf+Dp6hlhcYiLoi4+ls4h3UVgIJSd98JbI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758963443; c=relaxed/simple;
-	bh=31PDAq1j2yHrsOyxJvpl+PYWs/DRbGFfKUtWCCzqmNs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=lG53t267j3FVURcMKTWUQ7Qo4jdVPsdW547aAA3XSQS+SNPjoX1RFJHL3bgSl6TzZp+XOFTAa1g9lDFxYAxtKvBT5/xn7b1GEqfLbgoI+gPNROFXxXNbTtsvQBrM2pPmxkhwcaRxy2WgFYdfRA95GR9lXsPjzhhGVlei+z3REJI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=K69Kg00E; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758963423; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=U9GTHb3BL1ACQuXAQdGaD6YV4mK/iou6rjkGzEhy7I4BICFDhy0DPRWZiUx7bCx6/Bd9YtooQ216pwXK+qk9pekFZLuxE4K1tafIrpJhVaSb2Gap6zK5lVcJCSAZOwJDULdATU30PlxNwfcjrM8IgGKGI4EBS1l1tb8Iur/hFy0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758963423; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WVKscjX/htp6TRcxxnzTBI72o6jOuvBFMEOm5t2DYw4=; 
-	b=cUP66b/LEb3sjEyNsoqF31e9gBtcH1W95+ufOcp6vyDcbUrGd1EhIHXS+WBKprtEeoihYmKZOgTXhdyaNGDuNxKblPt0GgqkC2+4b7gAHSbElNrUNjVw5qg7A9fXZ9shDbjJ0bdpougyAI11Y+2sBYnI+jm3FdmPf5Nim3/bioA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758963423;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=WVKscjX/htp6TRcxxnzTBI72o6jOuvBFMEOm5t2DYw4=;
-	b=K69Kg00Ene1HRcHbbzlE0SN2t3DuwOjcD/UOp8sYmAZKkigiSzI69SE0GUSYNCSZ
-	cc9gQVJWpR65MynQGDR8T/uR/HGWLucKTBxAeqpC6JhJGbe5siNKXkVON0+9CTWxBIg
-	YyJ1LPwWZ/KsxzMQ89lGTyHVTphXU75EHjEG7mGQ=
-Received: by mx.zohomail.com with SMTPS id 1758963421740265.9635416776508;
-	Sat, 27 Sep 2025 01:57:01 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB51C2D0C98
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758963518; cv=none; b=pOSceVH58kM+CaKNkjo2DHBQ/iWYb3mcDhP8amEYHB7P9G5hWxHbMv0gEKDd6K0DeS0kLOR/PUJmVE3kStnz0zek8aAAGewopaIqrHc8+uzl+oxra7k37GBf8AGZrY4+UokKiccddVZmAL3PxTST6SLjVPBJk4vyrcitRuQaOIY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758963518; c=relaxed/simple;
+	bh=WMH3ygkCBAtii44YH3MNF9ofM2L+4E5AFh5PlGQA3vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvSAEAlfTVPgRXbU4TJYL9l1Xwt9EN3Aqu7GhWo11xzmUruk5ZujOB4PStloVDGLyR2zqC7l/HJpOgj69hixraiqx14Uh2yF0r0K/vPMQypl7VLXMhxI5zvdX8bxF72I7W/NvddP8/RHRMyY2+qSGWne4tngWBKxAa0jCQtf8FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ac2tqydS; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758963516; x=1790499516;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WMH3ygkCBAtii44YH3MNF9ofM2L+4E5AFh5PlGQA3vw=;
+  b=ac2tqydSjtdKbrMLX0Dy3L7U6veMNdXzEUTFxV1M3ePxeM5w4ZPmiKsc
+   5RUDVgjmSYIcY4N/P1ZO0HbhkZaapGXcycPDqHvF78/vex+TZQe+lkz1m
+   CQ6Z0nOHc59RtFZpZngVc/lNf05GM6Q4jsj2o3i/JpVZJ9J3M1HjqGVcQ
+   C1M6736Styseeja8DKORd5/xGxlBbZhK1uPV6YrQuxfJWkTVky+nOylu+
+   hoXUat254Ty36PozGyTztg+4+g0qXH28VHrzjpGvVwcPEtWyFyKETF71g
+   ZVshkSUAyyPr3b7jL6xkZ80cdiHR0KvHaAYu2oKpRZQYrTTFTYob1P0vU
+   g==;
+X-CSE-ConnectionGUID: XMuJcGn3To64EKiNu1/FJg==
+X-CSE-MsgGUID: TKRHU7XvRkuuRdn59J+Nkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="61201728"
+X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
+   d="scan'208";a="61201728"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 01:58:35 -0700
+X-CSE-ConnectionGUID: wH7uek+oTtW/y7uWKmqwzw==
+X-CSE-MsgGUID: 3OVluKQxQPeA5vADnYvXMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
+   d="scan'208";a="177850187"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 27 Sep 2025 01:58:31 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v2QlA-0006vj-0Y;
+	Sat, 27 Sep 2025 08:58:28 +0000
+Date: Sat, 27 Sep 2025 16:58:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Hui Pu <Hui.Pu@gehealthcare.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v2 1/2] drm/bridge: add drm_bridge_unplug() and
+ drm_bridge_enter/exit()
+Message-ID: <202509271654.j3IsjsAJ-lkp@intel.com>
+References: <20250926-drm-bridge-atomic-vs-remove-v2-1-69f7d5ca1a92@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in
- validate_av1_sequence()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAKPKb882DgYB2fZXRDU_y1Xqz6GtFEErvzzET9eOAm=db0ns1g@mail.gmail.com>
-Date: Sat, 27 Sep 2025 10:56:46 +0200
-Cc: mchehab@kernel.org,
- hverkuil@kernel.org,
- ribalda@chromium.org,
- laurent.pinchart@ideasonboard.com,
- yunkec@google.com,
- sakari.ailus@linux.intel.com,
- james.cowgill@blaize.com,
- hansg@kernel.org,
- linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <873C85C5-2BCB-4631-BA18-919CE448A7CE@collabora.com>
-References: <20250913105252.26886-1-opensource206@gmail.com>
- <CAKPKb882DgYB2fZXRDU_y1Xqz6GtFEErvzzET9eOAm=db0ns1g@mail.gmail.com>
-To: opensource india <opensource206@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926-drm-bridge-atomic-vs-remove-v2-1-69f7d5ca1a92@bootlin.com>
 
-Hi, I=E2=80=99ll review this in the coming weeks.
+Hi Luca,
 
-> On 27 Sep 2025, at 06:51, opensource india <opensource206@gmail.com> =
-wrote:
->=20
-> On Sat, Sep 13, 2025 at 4:23=E2=80=AFPM Pavan Bobba =
-<opensource206@gmail.com> wrote:
->>=20
->> Complete the "TODO: PROFILES" by enforcing profile-specific and
->> monochrome constraints as defined by the AV1 specification
->> (Section 5.5.2, "Color config syntax").
->>=20
->> The validator now checks:
->>=20
->> - Flags: reject any unknown bits set in sequence->flags
->> - Profile range: only profiles 0..2 are valid
->> - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=3D1, sy=3D1),=
+kernel test robot noticed the following build warnings:
 
->>   monochrome allowed
->> - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=3D0, sy=3D0),=
+[auto build test WARNING on 7acbe30813f04cccf7b2e8b571eb7936cfec0a87]
 
->>   monochrome forbidden
->> - Profile 2:
->>    * 8/10-bit: only 4:2:2 allowed (sx=3D1, sy=3D0)
->>    * 12-bit: 4:4:4 (sx=3D0, sy=3D0), 4:2:2 (sx=3D1, sy=3D0), or 4:2:0 =
-(sx=3D1, sy=3D1)
->>      allowed
->> - Monochrome path (all profiles except 1): forces subsampling_x=3D1,
->>   subsampling_y=3D1, separate_uv_delta_q=3D0
->>=20
->> These checks prevent userspace from providing invalid AV1 sequence
->> headers that would otherwise be accepted, leading to undefined driver
->> or hardware behavior.
+url:    https://github.com/intel-lab-lkp/linux/commits/Luca-Ceresoli/drm-bridge-add-drm_bridge_unplug-and-drm_bridge_enter-exit/20250927-003721
+base:   7acbe30813f04cccf7b2e8b571eb7936cfec0a87
+patch link:    https://lore.kernel.org/r/20250926-drm-bridge-atomic-vs-remove-v2-1-69f7d5ca1a92%40bootlin.com
+patch subject: [PATCH v2 1/2] drm/bridge: add drm_bridge_unplug() and drm_bridge_enter/exit()
+config: x86_64-buildonly-randconfig-002-20250927 (https://download.01.org/0day-ci/archive/20250927/202509271654.j3IsjsAJ-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509271654.j3IsjsAJ-lkp@intel.com/reproduce)
 
-Mauro,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509271654.j3IsjsAJ-lkp@intel.com/
 
-A reminder that I have been warning about this for quite a while [0], =
-which
-includes mentioning that patches like this, although welcome, do not =
-solve the
-root issue completely.
+All warnings (new ones prefixed by >>):
 
-I keep working on what I believe to be the solution [1][2]. I would =
-appreciate if
-we could restart this discussion.
+>> Warning: drivers/gpu/drm/drm_bridge.c:218 function parameter 'bridge' not described in 'drm_bridge_enter'
+>> Warning: drivers/gpu/drm/drm_bridge.c:253 function parameter 'bridge' not described in 'drm_bridge_unplug'
 
-[0]: https://lwn.net/Articles/970565/
-[1]: =
-https://lore.kernel.org/linux-media/20250818-v4l2-v1-0-6887e772aac2@collab=
-ora.com/
-[2]: https://lwn.net/Articles/963966/
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
