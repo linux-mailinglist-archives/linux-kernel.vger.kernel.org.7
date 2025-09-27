@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-835048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2A8BA620C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:21:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48503BA6224
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 19:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B67A4A620B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:21:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8F954E0364
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 17:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919A12BEFEF;
-	Sat, 27 Sep 2025 17:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97299226D14;
+	Sat, 27 Sep 2025 17:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNWK/UBb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0JjEyKB"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DB11632C8;
-	Sat, 27 Sep 2025 17:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4DE1DE89A
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 17:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758993658; cv=none; b=Pdi7oNoQNjI9xB0v1o7DDw82f2hVpJOTtNu8UMLvsCwIn5oWRlfACGk8ew9ehXb8SNAKdXfUxGS4+cZRcUZS6fPLkE1YGT/nIcqQQ+1gMHucR2dKO+EWiHCieYoE41CJGVeWtjbJ3RCAR3vvBsFbDqjI7ECBcspgfziTGhGXTHU=
+	t=1758994790; cv=none; b=csvEHeRKnjQWnfjJcTYBTE1PBjeMmsdAfrLurEfbaHbhv4rfWO9Qus2PM12Mv/QjWhe43kY1lCdY1GCDdSbxVGHkT2bkAiTUZeb/WLjv5yNOY0OdDDzsSNkoa7obuoP7TtnWhaFZXEgz35yr08UtRVivkKOHEqtDqwJYbw4IevQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758993658; c=relaxed/simple;
-	bh=wS3DRm04+H3K/wyL5VDDsA9Fi2Z1LU9EV49a582r2IU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fokHuGU9msKIVWLEs5Wve3fGh3MFmWKGsWhXsnmXrfMeqKYYcOsVM7xL3kec2j6BkYfAJTuWRcXphqy1HOJvsuuz8vUNm/e6OTQJNf7YQSAhuA2+13j6qkNZLOwKyTcmQ/a2lrlHonMzE50rMAJSb1sphOqbkyChUUmrE4GtBm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNWK/UBb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D47C4CEE7;
-	Sat, 27 Sep 2025 17:20:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758993657;
-	bh=wS3DRm04+H3K/wyL5VDDsA9Fi2Z1LU9EV49a582r2IU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WNWK/UBbP6w9c8vIsjQlBmz8eWNW21TxeqJvX4kN5rrCtmMJaksWy3ght2ItZ8tEX
-	 eLLrZrPQap4md+TiIU6cJ2iW76MlOzOVAXQ1iybr1DDvjYwmVyJlDNUifDNclmZdbQ
-	 Zh96sIVhNCwh9W2wvZmvfnqmrFaTKI0fryK8ErnU2C/AvYQmdPhO1Ds2pnYFznb1g/
-	 5OUHXz59ZS4kAKaosPqZpWWiJmaPqh0vs4ae9/xra34D0HyCVDiI/o6JxyieHgI11+
-	 32XFj5LvPmcQRcc8GH4Ns+TE1COhMc6IOuiW7d5lmk2aVRLxQ/O1LzrRWdHRwFEvvv
-	 KsxzyxZdqOuTw==
-From: SeongJae Park <sj@kernel.org>
-To: "jianyun.gao" <jianyungao89@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Chris Li <chrisl@kernel.org>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	damon@lists.linux.dev (open list:DATA ACCESS MONITOR),
-	linux-kernel@vger.kernel.org (open list),
-	kasan-dev@googlegroups.com (open list:KMSAN)
-Subject: Re: [PATCH] mm: Fix some typos in mm module
-Date: Sat, 27 Sep 2025 10:20:55 -0700
-Message-Id: <20250927172055.54527-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250927080635.1502997-1-jianyungao89@gmail.com>
-References: 
+	s=arc-20240116; t=1758994790; c=relaxed/simple;
+	bh=CB9nqcr/wZx3sYbWSmMvdTfrkigS3UhAGNiP+5quUM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DzhSFK3tlpSEjja7VZ6U5Vel5UYxp11FWCF1rX40B3pVKSwzzozOb6lndJ/ADEHLSkTBfkSid/rqyHc+pYggSEtEOBsH4iwN4IS09M37AtABViTNnPPUcnUVx3K0beR8w4Jb6o0YhHgA88XZ89hFI77Mj57bbzDeFYZIia6J3P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0JjEyKB; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3304dd2f119so2544558a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 10:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758994788; x=1759599588; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZUqnN1F3bgHuD+82ry4kJwIftFdoS866ISrdw4jG2EM=;
+        b=H0JjEyKBm4pbcFMcnKnklmj6wI4i7PHga5Kn7qd1VjKDFgEkRNo9nTI0/kA4HXMx6Z
+         JgkBL8r2rssA165J+qPHsCpJaNbhBRYG3YmjrqL04stTG4J5F7oWwdf8qCQ6gnlV1Ul4
+         WvNNiTRRg2D+aOi0crCD26owGoPzxpPAgBlA1alz5Fr9CJgdGnIpWGPlTFSp0TZr6T3H
+         HCn6HxtepaFg+1BsaoIu9vR73KfTzqF2h3DjoIdABfPMt5kE96XWmUe0ueEFHUHZbyVr
+         X1B4OigiEGxKK74deUmFqEJ061i30xyd1YCla+Vz3OnUVJPq51mDDSVDjW/ffhFWZunL
+         Invw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758994788; x=1759599588;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZUqnN1F3bgHuD+82ry4kJwIftFdoS866ISrdw4jG2EM=;
+        b=O/l4ceUtueZtsF8i9OR3FW5KwNihOKrVipvcAmDxw3iHltTthyZmzaE43NSFYvKxZh
+         gJQspGmjyBXOLx/VyAp7OQ/cqGZHMpUaJEaJFlDSb9iLFq0jap2QNU1hqbNDMw0bySDx
+         STapRioxmbA9p0DqdSX/JbHX6uEl/9mApBCDeGN96SHi928w0z+L8Q/m6IFrg22xHANZ
+         mKNixoLcd9/xgKZNoXQ5/k1oIhV9lOPCedWXqG0BIg6pQE8nQYZt4HTViJng8wCUH+HD
+         WFnfWSyWREsTWtfDk0789nZULDgZMTk++95zXAJPpsA/8NswmXudLVbh4kp/ttctYxdH
+         F9lA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgXNP3gfaSgrsjb5XbHjLNs7iQDGPEKVnaXLEI9r8JX676L/WNu4VjUEQAhfMkTbSvSCfe+jHoMUIjKgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEZ4SVYLyaQTJy3cyRs6VuY70uOoTMWvNwdUMWpuhpF8LRnqlV
+	1XMe5qaZO/4GcsFBKrouVJseWXj8qQTlHlk2Ypp0CpGXl9oyqJNtR5eY
+X-Gm-Gg: ASbGnctmhMZsSnkvjcs1IxY2Wz898wEVWXsAosm28BGB1nWIFURKY3CkQEig8TBDWUV
+	US7NYYUFecSKh8LfhI5sRAXWTFMs9pIW/HsuC0PeQAa1RpFfk6GX5jqZKVVrhJsgpCVgwVRMUBM
+	3MVTHPCP2u586yLGA4/cGInOlI47fgZjOGUHFzL+tBTP6QvpxRxQw1eoW/O2FMroalj1I8HXD+P
+	qDTjegullc+flHDnsQY8pX7EGhxNcFJ+9g5xkqvGSXjKeeLia+O+Jh0Fp5ZJekuwWMpX6If/x7Q
+	YkHLBX/xAAKHKEqvJyLwIWdx9xEPGevLM9qOVfko1KeD79cXb+gWKqIsLNBCgIHK5fTNL+fAAiG
+	XXn0GgeDxa8f+MqkWR4sjRt+kH+44h5z0OHru1od+YvQ8d7NU730rgPwZvyFT
+X-Google-Smtp-Source: AGHT+IGtvJzCfxKqyh3P6VUpzcJjl7MCBE1zezF/b+a1T0k+e3+Zv5Rfcds1WIgUWSp6qGUOi5ossA==
+X-Received: by 2002:a17:90b:1d92:b0:32e:d282:3672 with SMTP id 98e67ed59e1d1-3342a2c0fcemr11749970a91.23.1758994787774;
+        Sat, 27 Sep 2025 10:39:47 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3342a3cea96sm4377008a91.2.2025.09.27.10.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 10:39:47 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: clemens@ladisch.de,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: hdanton@sina.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH v2] ALSA: usb-audio: fix race condition to UAF in snd_usbmidi_free
+Date: Sun, 28 Sep 2025 02:39:24 +0900
+Message-Id: <20250927173924.889234-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,37 +92,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, 27 Sep 2025 16:06:34 +0800 "jianyun.gao" <jianyungao89@gmail.com> wrote:
+The previous commit 0718a78f6a9f ("ALSA: usb-audio: Kill timer properly at
+removal") patched a UAF issue caused by the error timer.
 
-> Below are some typos in the code comments:
-> 
->   intevals ==> intervals
->   addesses ==> addresses
->   unavaliable ==> unavailable
->   facor ==> factor
->   droping ==> dropping
->   exlusive ==> exclusive
->   decription ==> description
->   confict ==> conflict
->   desriptions ==> descriptions
->   otherwize ==> otherwise
->   vlaue ==> value
->   cheching ==> checking
->   exisitng ==> existing
->   modifed ==> modified
-> 
-> Just fix it.
+However, because the error timer kill added in this patch occurs after the
+endpoint delete, a race condition to UAF still occurs, albeit rarely.
 
-Thank you for fixing those!
+Additionally, since kill-cleanup for urb is also missing, freed memory can
+be accessed in interrupt context related to urb, which can cause UAF.
 
-> 
-> Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
+Therefore, to prevent this, error timer and urb must be killed before
+freeing the heap memory.
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f02665daa2abeef4a947
+Fixes: 0718a78f6a9f ("ALSA: usb-audio: Kill timer properly at removal")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ sound/usb/midi.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-
-Thanks,
-SJ
-
-[...]
+diff --git a/sound/usb/midi.c b/sound/usb/midi.c
+index acb3bf92857c..97e7e7662b12 100644
+--- a/sound/usb/midi.c
++++ b/sound/usb/midi.c
+@@ -1522,15 +1522,14 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
+ {
+ 	int i;
+ 
++	if (!umidi->disconnected)
++		snd_usbmidi_disconnect(&umidi->list);
++
+ 	for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
+ 		struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
+-		if (ep->out)
+-			snd_usbmidi_out_endpoint_delete(ep->out);
+-		if (ep->in)
+-			snd_usbmidi_in_endpoint_delete(ep->in);
++		kfree(ep->out);
+ 	}
+ 	mutex_destroy(&umidi->mutex);
+-	timer_shutdown_sync(&umidi->error_timer);
+ 	kfree(umidi);
+ }
+ 
+--
 
