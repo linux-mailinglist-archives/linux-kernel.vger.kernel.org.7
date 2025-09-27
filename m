@@ -1,238 +1,174 @@
-Return-Path: <linux-kernel+bounces-834837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE82ABA59EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:17:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EABBA5A09
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9984A65BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:17:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B571BC6E46
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 07:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885DE2701DA;
-	Sat, 27 Sep 2025 06:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9163527AC5C;
+	Sat, 27 Sep 2025 07:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="or1t/Kyi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IiitGhCf"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="JA0UmAn2"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A282258CDC;
-	Sat, 27 Sep 2025 06:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F502C8CE;
+	Sat, 27 Sep 2025 07:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758953831; cv=none; b=SL00nzl7i2Xk4SYpeWrl3eg6qks9OoWpdPLGGIJYdb6YEtbjY1Md3nhiUuL6I1yrOixIJtzA1irVxuAl31JumTtDIy6v27F6vPuux42BNdj7ehb/6tHIT7P733O8RZuyEirjfBDLOnNICBuSuVu5U/5C56IB3mdKip5F5R8M5qI=
+	t=1758956490; cv=none; b=GlHcgSp05DhGekWQj8EmEW8FC1blTTsHJamuP2gdhnpDlUazF0/tkqLx1LItxBTOWJcwOg8CD/HQegPWkLlGKxtfio71LlA23LvlER7gaod6vuwgc890I+obEXTXONEW6RQIDKdSOWpcrDGhvmeWstQlfgHWuhO+2NWIDFIMVtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758953831; c=relaxed/simple;
-	bh=Mw5TBqc8ObImy/VzvyAW0LqNtXyvXGWCIJZuMNb2j5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GE5/EKmZ+JlcahaBvHCaqT03SiKui9lmq/httElY4LHK6b/Xo7+jHeMX8jOET8O5fU9z3+jnswbRYbJyeUUIX49ET3W0AB92Pt3pNW5xTKzMPejM+ihO0oAgkO8Fb6iOQcnruzhZ6IcTTe6FqmOD8O9BedBFQy1ocBy6CDM4g4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=or1t/Kyi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IiitGhCf; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 79D0C7A00C3;
-	Sat, 27 Sep 2025 02:17:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Sat, 27 Sep 2025 02:17:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758953827;
-	 x=1759040227; bh=RS6yuaADnvZ6pC8boGHVpGYnBRl6x45obIoXXRd6D24=; b=
-	or1t/KyiXr+z0AuSqJobYcuPuIg6ITQs+1sOfsE+nbxrgNmFHq5wYJBod/tQ0iiR
-	fws9G/3JXkz0PSx01aUdXpwHM1yBZi6a6I7F5ECZ4FGxkLjSb9OQUjIj4aMLIDQt
-	hhJOMsSeRT7/SbVA0vkt07X5I3hMTxD3o2yc9YpXHVHHZ4l0yXFB3Vqc7sIqkQZ6
-	ez4yAlLWMF1AfI4mm0CZxYW3LnvNuN1TorhhBx/rg+TdB/V7kaOCwt09Aa4xx7ty
-	Cwnt5bNjMZFVWny1RBSgmCHLzuegKWW4bZs2xSQQhlbFeprYp9tklazdfk+PNiZa
-	iVYgOmaRHRWf/yHTboOzvw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758953827; x=
-	1759040227; bh=RS6yuaADnvZ6pC8boGHVpGYnBRl6x45obIoXXRd6D24=; b=I
-	iitGhCfajDw1VYhaa71H9y3bd+r79eIdUj7sCShJSH5fdmy37EKPTBWwP1RhnM2t
-	E8scA6fyy7UfctEynb14ZRq4AoNBJzk6GIhSj/AYzxuulZYfdBRuigbzUfETZwxm
-	d3WC8rOyE9Rpf7mJra6l7oP/Pt53OskhTdUkfQdVtMrPyK5onU6ZEgn4CJJ9D6+D
-	8fwfFxrwR1ljzT1jm1Oc/ATqfYdFYuw2Du4MWyYyzVsjoKQzRWRwGwu5PG2jFu71
-	yv3tOYoDFfKeEVYik2d8Q2x1BWnq54zUErbIrj6vjlgc2Un93k5oDrPfh3sZH6W6
-	hGH3+hPW1HZTb8h8A33uw==
-X-ME-Sender: <xms:YoHXaP9yQ0TZMSb6BBACWUMMrM6Wm333wk6b5WmkOK2YWf9TosIypg>
-    <xme:YoHXaIT36EaOXkPl7OkyIYpymqYqxAHAph4M-fdJzKxR6MxzVQqQSFE60GftzXcZ7
-    _dIaoE4vsDe10692jgo3DGvnDt4SH5mevHk_E50CUFfVrajdDz0D2w>
-X-ME-Received: <xmr:YoHXaBc06Jgq7Q40RR0rGAoSGAWVB_zmADB3Mxqvyfmhxp18vkUh_WPzewx_Wbivk2MiMVIvGP0YhU_cYUq6S5DqzYCF_Hc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejudehudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
-    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrth
-    gvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedtvddvhfdtkeeghfeffeehteeh
-    keekgeefjeduieduueelgedtheekkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgr
-    thgvtghhrdhsvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepthhomhhirdhvrghlkhgvihhnvghnodhrvghnvghsrghssehiuggvrghsohhn
-    sghorghrugdrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrthesih
-    guvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinh
-    htvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgthhgvhhgrsgdohhhurgifvg
-    hisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihgu
-    vggrshhonhgsohgrrhgurdgtohhm
-X-ME-Proxy: <xmx:YoHXaCTZU-HnRpuDQ8dXl4v4rSTDkAj7vNjj--b6TfJeAHiogPRpAg>
-    <xmx:YoHXaFKkFweoNiOqlJUG711XDrFTfSR3Xaqv0l-KotbmHzvWMwqZWg>
-    <xmx:YoHXaHIaTbM__G2SdgdeRE_30E-6KIp1SRjXrnOS7Zv3SI6_8QaBqw>
-    <xmx:YoHXaIgXb27GFPg8wSOmRM1rDzq09HyHgzzh08yiYlLExrHezciB3Q>
-    <xmx:Y4HXaCpe0iMvy-B9QlU2LZfLDxs1mzWXn2HPF1e49yBxwzB9dn9GR44T>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 27 Sep 2025 02:17:06 -0400 (EDT)
-Date: Sat, 27 Sep 2025 08:17:04 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v3 03/15] media: rcar-isp: Move
- {enable|disable}_streams() calls
-Message-ID: <20250927061704.GA2027750@ragnatech.se>
-References: <20250530-rcar-streams-v3-0-026655df7138@ideasonboard.com>
- <20250530-rcar-streams-v3-3-026655df7138@ideasonboard.com>
- <20250602055742.GC11750@pendragon.ideasonboard.com>
- <62890f7a-8ce9-47af-be36-e7384d2a99fd@ideasonboard.com>
+	s=arc-20240116; t=1758956490; c=relaxed/simple;
+	bh=7SHaprNodxj8zBds5Y9LV1amr5gBsiPxGO5lKnTDsqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eAJsyyziuUTXMyaPvPdG7hjB2exHRd5b/orJYthQv2OEh+7/ZbpvoyMAih/ovrAIb2D2haOn2Yvh+okUSZyFVqbAU08GbXmSTXHZq6v7kC/jXRghvAUWDUgzitiG9RjAwkJ9g7mA2/b5FuNloWvzbsJe5AnTd9psOD/LRAbSYRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=JA0UmAn2; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=aS1bMUN422aSyFnyffqqsGN9POA+Q9RpYAHQ+N9wwe0=; t=1758956488;
+	x=1759388488; b=JA0UmAn2666zIZAIRK3wwzFrHl2iPQUKKS2ngOJYHutFPv9861/NSCVuU6KyR
+	u9Mu72MfeEUdvzW/89ygNs4+O+x0iG0UEdlGqtLE9/JnDC+AYm5OgGfSYPtdHAjmlCta3s8x8Mctk
+	1ig3GMQ0FafJYxlYeORK7XrsmVZwy2okHX5nL+txRAI7dxuPUZ0hBwWUdeKQ0Nv8+n1TCGggVxmTh
+	gXxhFjjBhvPiMbHmz0Kvsynil93vm7sG61N932OvDBAA3o4TNpOnge1nCl1zLr7PUQ4ZN9Mt6NcHD
+	3HyMvzdaFXZqkMdel1QT/uybE/9BGZ6Pg1LZEQ1wP2G2t3MW7Q==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1v2OOx-00AUVj-0y;
+	Sat, 27 Sep 2025 08:27:23 +0200
+Message-ID: <3e5abb75-2192-46dc-a44e-d66fed87fc63@leemhuis.info>
+Date: Sat, 27 Sep 2025 08:27:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] vduse: make domain_lock an rwlock
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ "Michael S . Tsirkin" <mst@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>,
+ jasowang@redhat.com, linux-kernel@vger.kernel.org,
+ Maxime Coquelin <mcoqueli@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>,
+ virtualization@lists.linux.dev, Stefano Garzarella <sgarzare@redhat.com>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250925091335.1964283-1-eperezma@redhat.com>
+ <20250925091335.1964283-2-eperezma@redhat.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
+ JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
+ apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
+ QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
+ OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
+ Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
+ Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
+ sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
+ /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
+ rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
+ ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCX31PIwUJFmtPkwAKCRBytubv
+ TFg9LWsyD/4t3g4i2YVp8RoKAcOut0AZ7/uLSqlm8Jcbb+LeeuzjY9T3mQ4ZX8cybc1jRlsL
+ JMYL8GD3a53/+bXCDdk2HhQKUwBJ9PUDbfWa2E/pnqeJeX6naLn1LtMJ78G9gPeG81dX5Yq+
+ g/2bLXyWefpejlaefaM0GviCt00kG4R/mJJpHPKIPxPbOPY2REzWPoHXJpi7vTOA2R8HrFg/
+ QJbnA25W55DzoxlRb/nGZYG4iQ+2Eplkweq3s3tN88MxzNpsxZp475RmzgcmQpUtKND7Pw+8
+ zTDPmEzkHcUChMEmrhgWc2OCuAu3/ezsw7RnWV0k9Pl5AGROaDqvARUtopQ3yEDAdV6eil2z
+ TvbrokZQca2808v2rYO3TtvtRMtmW/M/yyR233G/JSNos4lODkCwd16GKjERYj+sJsW4/hoZ
+ RQiJQBxjnYr+p26JEvghLE1BMnTK24i88Oo8v+AngR6JBxwH7wFuEIIuLCB9Aagb+TKsf+0c
+ HbQaHZj+wSY5FwgKi6psJxvMxpRpLqPsgl+awFPHARktdPtMzSa+kWMhXC4rJahBC5eEjNmP
+ i23DaFWm8BE9LNjdG8Yl5hl7Zx0mwtnQas7+z6XymGuhNXCOevXVEqm1E42fptYMNiANmrpA
+ OKRF+BHOreakveezlpOz8OtUhsew9b/BsAHXBCEEOuuUg87BTQRSeAENARAAzu/3satWzly6
+ +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
+ s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
+ ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
+ ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
+ z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
+ M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
+ zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
+ 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
+ 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
+ FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
+ WD0tBQJffU8wBQkWa0+jAAoJEHK25u9MWD0tv+0P/A47x8r+hekpuF2KvPpGi3M6rFpdPfeO
+ RpIGkjQWk5M+oF0YH3vtb0+92J7LKfJwv7GIy2PZO2svVnIeCOvXzEM/7G1n5zmNMYGZkSyf
+ x9dnNCjNl10CmuTYud7zsd3cXDku0T+Ow5Dhnk6l4bbJSYzFEbz3B8zMZGrs9EhqNzTLTZ8S
+ Mznmtkxcbb3f/o5SW9NhH60mQ23bB3bBbX1wUQAmMjaDQ/Nt5oHWHN0/6wLyF4lStBGCKN9a
+ TLp6E3100BuTCUCrQf9F3kB7BC92VHvobqYmvLTCTcbxFS4JNuT+ZyV+xR5JiV+2g2HwhxWW
+ uC88BtriqL4atyvtuybQT+56IiiU2gszQ+oxR/1Aq+VZHdUeC6lijFiQblqV6EjenJu+pR9A
+ 7EElGPPmYdO1WQbBrmuOrFuO6wQrbo0TbUiaxYWyoM9cA7v7eFyaxgwXBSWKbo/bcAAViqLW
+ ysaCIZqWxrlhHWWmJMvowVMkB92uPVkxs5IMhSxHS4c2PfZ6D5kvrs3URvIc6zyOrgIaHNzR
+ 8AF4PXWPAuZu1oaG/XKwzMqN/Y/AoxWrCFZNHE27E1RrMhDgmyzIzWQTffJsVPDMQqDfLBhV
+ ic3b8Yec+Kn+ExIF5IuLfHkUgIUs83kDGGbV+wM8NtlGmCXmatyavUwNCXMsuI24HPl7gV2h n7RI
+In-Reply-To: <20250925091335.1964283-2-eperezma@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <62890f7a-8ce9-47af-be36-e7384d2a99fd@ideasonboard.com>
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1758956488;410e1dfe;
+X-HE-SMSGID: 1v2OOx-00AUVj-0y
 
-Hi Tomi,
+On 25.09.25 11:13, Eugenio Pérez wrote:
+> It will be used in a few more scenarios read-only so make it more
+> scalable.
+> [...]
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+> index e7bced0b5542..2b6a8958ffe0 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/cdev.h>
+>  #include <linux/device.h>
+>  #include <linux/eventfd.h>
+> +#include <linux/rwlock.h>
 
-On 2025-09-26 14:22:10 +0300, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 02/06/2025 12:43, Laurent Pinchart wrote:
-> > Hi Tomi,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Fri, May 30, 2025 at 04:50:32PM +0300, Tomi Valkeinen wrote:
-> >> With multiple streams the operation to enable the ISP hardware and to
-> >> call {enable|disable}_streams() on upstream subdev will need to be
-> >> handled separately.
-> >>
-> >> Prepare for that by moving {enable|disable}_streams() calls out from
-> >> risp_start() and risp_stop().
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >> ---
-> >>  drivers/media/platform/renesas/rcar-isp/csisp.c | 18 ++++++++++--------
-> >>  1 file changed, 10 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/drivers/media/platform/renesas/rcar-isp/csisp.c b/drivers/media/platform/renesas/rcar-isp/csisp.c
-> >> index 8fb2cc3b5650..2337c5d44c40 100644
-> >> --- a/drivers/media/platform/renesas/rcar-isp/csisp.c
-> >> +++ b/drivers/media/platform/renesas/rcar-isp/csisp.c
-> >> @@ -268,18 +268,11 @@ static int risp_start(struct rcar_isp *isp, struct v4l2_subdev_state *state)
-> >>  	/* Start ISP. */
-> >>  	risp_write_cs(isp, ISPSTART_REG, ISPSTART_START);
-> >>  
-> >> -	ret = v4l2_subdev_enable_streams(isp->remote, isp->remote_pad,
-> >> -					 BIT_ULL(0));
-> >> -	if (ret)
-> >> -		risp_power_off(isp);
-> >> -
-> >> -	return ret;
-> >> +	return 0;
-> >>  }
-> >>  
-> >>  static void risp_stop(struct rcar_isp *isp)
-> >>  {
-> >> -	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, BIT_ULL(0));
-> >> -
-> >>  	/* Stop ISP. */
-> >>  	risp_write_cs(isp, ISPSTART_REG, ISPSTART_STOP);
-> >>  
-> >> @@ -305,6 +298,13 @@ static int risp_enable_streams(struct v4l2_subdev *sd,
-> >>  			return ret;
-> >>  	}
-> >>  
-> >> +	ret = v4l2_subdev_enable_streams(isp->remote, isp->remote_pad,
-> >> +					 BIT_ULL(0));
-> > 
-> > You're now potentially calling v4l2_subdev_disable_streams() multiple
-> > times on the same pad and stream, as this call isn't covered by the
-> > stream_count check anymore. Is that correct ? Maybe because
-> > risp_enable_streams() is guaranteed to never be called multiple times,
-> > with stream_count never becoming larger than 1 ? If so that should be
-> > explained in the commit message, and stream_count should probably be
-> > dropped.
-> 
-> At this point in the series risp_enable_streams() is called just once,
-> from a single VIN. That is, assuming only a single stream is supported.
-> In the cover letter I mention that there seems to be some kind of
-> attempts for multistreaming in upstream, which breaks during this
-> series. My understanding from Niklas was that the custom multistreaming
-> doesn't work or at least can be dropped. Niklas, correct me if I'm wrong
-> (and if I am wrong, someone else needs to take care of the custom
-> multistreaming =).
+Lo! My daily -next builds based for Fedora using the Fedora rawhide
+failed yesterday on various archs. I suspect it's due to above change,
+as this was the error I got:
 
-And as discussed on IRC the main issue for the VIN pipeline will be on 
-Gen3 where media graph links are made to model VC-to-VIN as we had no 
-streams concept at the time. And that would need to be changed _before_ 
-adding streams to instead model the physical busses between the R-Car 
-CSI-2 Rx and VIN instances, with all their fun limitations.
+"""
+In file included from drivers/vdpa/vdpa_user/vduse_dev.c:17:
+./include/linux/rwlock.h:5:3: error: #error "Please do not include this
+file directly."
+    5 | # error "Please do not include this file directly."
+      |   ^~~~~
+./include/linux/rwlock.h:27:10: warning: ‘rwlock_init’ redefined
+   27 | # define rwlock_init(lock)                                      \
+      |          ^~~~~~~~~~~
+In file included from ./include/linux/spinlock_rt.h:153,
+                 from ./include/linux/spinlock.h:455,
+                 from ./include/linux/sched.h:37,
+                 from ./include/linux/percpu.h:12,
+                 from ./arch/x86/include/asm/msr.h:16,
+                 from ./arch/x86/include/asm/tsc.h:11,
+                 from ./arch/x86/include/asm/timex.h:6,
+                 from ./include/linux/timex.h:67,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/jiffies.h:10,
+                 from ./include/linux/ktime.h:25,
+                 from ./include/linux/timer.h:6,
+                 from ./include/linux/netdevice.h:24,
+                 from ./include/linux/if_vlan.h:10,
+                 from ./include/linux/virtio_net.h:5,
+                 from drivers/vdpa/vdpa_user/vduse_dev.c:11:
+"""
 
-If that is not done and streams added to the R-Car CSI-2 driver it would 
-do the correct thing, but the VIN driver would still create a lot of 
-media links that after streams are not possible to setup in hardware.
+For a complete log, see
+https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-x86_64/09603789-next-next-all/builder-live.log.gz
 
-> 
-> Later in the series risp_enable_streams will be called multiple times.
-> Each VIN video node will call it once when enabling.
-> 
->  Tomi
-> 
-> > 
-> > Same when stopping.
-> > 
-> >> +	if (ret) {
-> >> +		risp_stop(isp);
-> > 
-> > This is also not covered by the stream_count, while risp_start() is.
-> > 
-> >> +		return ret;
-> >> +	}
-> >> +
-> >>  	isp->stream_count += 1;
-> >>  
-> >>  	return ret;
-> >> @@ -322,6 +322,8 @@ static int risp_disable_streams(struct v4l2_subdev *sd,
-> >>  	if (!isp->remote)
-> >>  		return -ENODEV;
-> >>  
-> >> +	v4l2_subdev_disable_streams(isp->remote, isp->remote_pad, BIT_ULL(0));
-> >> +
-> >>  	if (isp->stream_count == 1)
-> >>  		risp_stop(isp);
-> >>  
-> > 
-> 
+Reverting the series made things work for me.
 
--- 
-Kind Regards,
-Niklas Söderlund
+> [...]
+
+Ciao, Thorsten
 
