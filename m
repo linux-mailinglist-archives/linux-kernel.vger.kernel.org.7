@@ -1,196 +1,175 @@
-Return-Path: <linux-kernel+bounces-834909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36441BA5D0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:50:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205E5BA5D16
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6F2189E091
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:51:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92E337AE383
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F4B2D7393;
-	Sat, 27 Sep 2025 09:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4B82D7393;
+	Sat, 27 Sep 2025 09:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nHWDrUGh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wqsgagUJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nHWDrUGh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wqsgagUJ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="bCGqsZlW"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4479C2C3250
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 09:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD334317D;
+	Sat, 27 Sep 2025 09:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758966646; cv=none; b=dJSoqsG/ufK+nOudkHNAkKfFQm8hQxMsKRjY5FZsmCpkUaipEfdOnh9fyHvPy0dNfy23EUDKbSLDz/HAv3jIRXsaOb9BVbKtHalBjpTsiZBR8tb0Nq4OOwFen50ekb7H9+WdDooZk92YQOEed2U1H2lw6cyGcWAbSqbY6SqZYAw=
+	t=1758966753; cv=none; b=S3fsNBzXpfO0e62H+2VvYsahBrW9HiRlecfz8RSPr5G03ZMpiJZ2/GGkxThtD7PEuTvbVRyKSV4vgS1m7dKdEsMUbI/2+Q+ncQRn2/FWltmNqN79DmsxzRYpqsIRLWxQfzihUqf6BSD/MseYw+TzXJgbFEfu4MYUg3wG3Qc12NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758966646; c=relaxed/simple;
-	bh=BotcDeRJ5Xchr3Qo6LfezDRpDesds0piADefeH4E2oE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F29p3waHcS77hB7BuinfyMB+UQ/3wfGcql17k/jK2HJcHgFudIg4GpnxdwJKdJTN5hs0heEjgbD8pN+wRl+kXLdcoFgptPzN9LjoD6+JtvMWnl2K65YuqQu3c6JYjMgTixk9UP5K7RYeZrBTCuuTf9JNqXk2Ar+v6GHnxHxgAJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nHWDrUGh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wqsgagUJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nHWDrUGh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wqsgagUJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CA119267D8;
-	Sat, 27 Sep 2025 09:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758966633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
-	b=nHWDrUGhPhsS4p6nX3rWYGg+1HBuJNgbyLnB8Zx67wt351CSM6U2jtPpS22tqTFVve1dGL
-	QrPV8stgpN18MtwtXeHqBUVKGzqnlsVT8c+7Sn8zumsasPYPeASUDqZEEMf8W/j2ToHV2E
-	1khQEQk16pM68hT4R1/Dm3Eor4vYVF8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758966633;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
-	b=wqsgagUJ5zJ5eFRWpqC0GJSO5pLrcPx9OEehVtsKIdyrFz0sVh8NE5e6qpDE1/QjoSOAJN
-	BPM9/DIzPQHwr9CA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758966633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
-	b=nHWDrUGhPhsS4p6nX3rWYGg+1HBuJNgbyLnB8Zx67wt351CSM6U2jtPpS22tqTFVve1dGL
-	QrPV8stgpN18MtwtXeHqBUVKGzqnlsVT8c+7Sn8zumsasPYPeASUDqZEEMf8W/j2ToHV2E
-	1khQEQk16pM68hT4R1/Dm3Eor4vYVF8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758966633;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hWSLsp5Q+OBEvCxaJhtiJufQYs9Iqj0DaWEu/Y3fjh0=;
-	b=wqsgagUJ5zJ5eFRWpqC0GJSO5pLrcPx9OEehVtsKIdyrFz0sVh8NE5e6qpDE1/QjoSOAJN
-	BPM9/DIzPQHwr9CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4B3A13782;
-	Sat, 27 Sep 2025 09:50:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0xVUMmiz12i8UAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 27 Sep 2025 09:50:32 +0000
-Date: Sat, 27 Sep 2025 11:50:32 +0200
-Message-ID: <87y0q09qc7.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	lumag@kernel.org,
-	dianders@chromium.org,
-	cristian.ciocaltea@collabora.com,
-	luca.ceresoli@bootlin.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	l.stach@pengutronix.de,
-	shengjiu.wang@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] drm/bridge: imx: Add HDMI PAI driver on i.MX8MP
-In-Reply-To: <d39bc215-5b67-4cf5-b9d5-6e1e9ab20159@nxp.com>
-References: <20250923053001.2678596-1-shengjiu.wang@nxp.com>
-	<b411c188-b564-4ae8-9186-d0877880fa99@nxp.com>
-	<d39bc215-5b67-4cf5-b9d5-6e1e9ab20159@nxp.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758966753; c=relaxed/simple;
+	bh=P3RlToR2Jg/rNd/jIsGgASFvQPotFqFvtSO067CGp7A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bT6m7vUGy90ivbKw6pL+LKfdbFLxCZVpPLfCLdqItQVg2PU2YGwmc+VlwvO3mTrJ6jwSHLRGfCK+hCG/Z7qIUU+4XL+J0Y4v/QNpvdtlM/JLk7+2WQA3ER8CgrQOubEWJ0f4eCDdy8heeDCJ0WiHIfKyfuhlL9QCi4wndAljabM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=bCGqsZlW; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+Received: by dvalin.narfation.org (Postfix) id 07B0B2009B;
+	Sat, 27 Sep 2025 09:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1758966741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jgmRc6RcwdBrE4RigkI44U/isMfTaiUIe6zdqae8QXE=;
+	b=bCGqsZlWBiTQI6s34F8iGs+I8i23CZI00fBujQPRUvTihKyiFuUR6DDbxg/2vlu17AmDC/
+	qXPlnxEBkCeHM9NyF2hpteYgnvkgsoaccXWST5Hy5UIxoIEwmJgGU9BJMOBqzsEsKxXLnA
+	pvNhD00Ja9VW/FdzjbHbvSUUsw9nVts=
+From: Sven Eckelmann <sven@narfation.org>
+Subject: [i2c-host PATCH i2c-host-fixes v7 0/2] i2c: rtl9300: Implement I2C
+ block read and write
+Date: Sat, 27 Sep 2025 11:52:15 +0200
+Message-Id: <20250927-i2c-rtl9300-multi-byte-v7-0-c0fd0e78b818@narfation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	TAGGED_RCPT(0.00)[dt];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[nxp.com,intel.com,linaro.org,kernel.org,ideasonboard.com,kwiboo.se,gmail.com,linux.intel.com,suse.de,ffwll.ch,chromium.org,collabora.com,bootlin.com,lists.freedesktop.org,vger.kernel.org,pengutronix.de,lists.linux.dev,lists.infradead.org,perex.cz,suse.com];
-	R_RATELIMIT(0.00)[to_ip_from(RL8m7tqgwaqu97o1bbfnn6ewdz)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -1.80
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM+z12gC/4XQzWrDMAwH8FcpPs9DVuKvnfYeZQd/yK2hS4bjh
+ ZaSd5/by8JI2PEvpJ+E7myikmlib4c7KzTnKY9DC/rlwMLZDSfiObbMEFCCAeQZAy/1YjsA/vl
+ 9qZn7WyVO0TmRPBiNgbXhr0IpX5/w8aPlc57qWG7PPbN4VP8lZ8GBy6SMJgBrCN8HV5Kr7cLXs
+ ZzYg51xTXW7FDbKeu21tInQqy2qW1P9LtU1ihAUaBIeTdii+jVld6m+UVGLGCV5JVBsUXJFCdi
+ lZKNCtDE4iF7j5q/UL2VR7VKKC+4w6mhalwD5l1qW5QdbvJryNwIAAA==
+X-Change-ID: 20250802-i2c-rtl9300-multi-byte-edaa1fb0872c
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, 
+ Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jonas Jelonek <jelonek.jonas@gmail.com>, 
+ Harshal Gohel <hg@simonwunderlich.de>, 
+ Simon Wunderlich <sw@simonwunderlich.de>, 
+ Sven Eckelmann <sven@narfation.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4504; i=sven@narfation.org;
+ h=from:subject:message-id; bh=P3RlToR2Jg/rNd/jIsGgASFvQPotFqFvtSO067CGp7A=;
+ b=owGbwMvMwCXmy1+ufVnk62nG02pJDBnXN19kcllven/LjuXPpv9QtGDdFOhc/u7b/ZYJ62zV4
+ uQ5rVav6ihlYRDjYpAVU2TZcyX//Gb2t/Kfp308CjOHlQlkCAMXpwBMJPAFw/+AlG8fq25tNS6r
+ O8XXLZ5Tos+b8cZhjypHWHvlisdf3kkyMnRkfdqeznPz06XlW6ZFKkrb/hTfZf3gbMIvNpXjcwT
+ nKjEBAA==
+X-Developer-Key: i=sven@narfation.org; a=openpgp;
+ fpr=522D7163831C73A635D12FE5EC371482956781AF
 
-On Fri, 26 Sep 2025 08:03:15 +0200,
-Liu Ying wrote:
-> 
-> Hi Jaroslav, Takashi,
-> 
-> On 09/23/2025, Liu Ying wrote:
-> > On 09/23/2025, Shengjiu Wang wrote:
-> >> Shengjiu Wang (7):
-> >>   dt-bindings: display: imx: add HDMI PAI for i.MX8MP
-> >>   ALSA: Add definitions for the bits in IEC958 subframe
-> >>   drm/bridge: dw-hdmi: Add API dw_hdmi_to_plat_data() to get plat_data
-> >>   drm/bridge: dw-hdmi: Add API dw_hdmi_set_sample_iec958() for iec958
-> >>     format
-> >>   drm/bridge: imx: add driver for HDMI TX Parallel Audio Interface
-> >>   arm64: dts: imx8mp: Add hdmi parallel audio interface node
-> >>   arm64: dts: imx8mp-evk: enable hdmi_pai device
-> > 
-> > Jaroslav, Takashi, do you think it's ok to land patch 2 through drm-misc,
-> > as that patch touches include/sound/asoundef.h?
-> 
-> Can you please comment?
+This patch was already applied [1] but then removed. Instead, only the
+chunk
 
-Sorry, I've been off in this week (and am catching backlogs).
+  @@ -314,7 +343,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
+   {
+          return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
+                 I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
+  -              I2C_FUNC_SMBUS_BLOCK_DATA;
+  +              I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_I2C_BLOCK;
+   }
 
-And, yes, feel free to take the change via drm tree.  I already gave
-my Reviewed-by tag for that.
+was added as part of a patch which has nothing to do with
+I2C_FUNC_SMBUS_I2C_BLOCK [2] and was never submitted like this [3].
 
+I am therefore resubmitting this patch again with a patch that is removing
+the errornous I2C_FUNC_SMBUS_I2C_BLOCK from i2c-host-fixes.
 
-thanks,
+Order:
 
-Takashi
+* The first patch needs to be applied on top of i2c-host-fixes
+* after i2c-host-fixes (with this patch) is included in the i2c-host branch:
+  - the second patch from this series
+  - The patches 4-12 from Jonas [4] need to be applied on top of it in the
+    i2c-host branch:
+    + https://lore.kernel.org/r/20250831100457.3114-5-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-6-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-7-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-8-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-9-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-10-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-11-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-12-jelonek.jonas@gmail.com
+    + https://lore.kernel.org/r/20250831100457.3114-13-jelonek.jonas@gmail.com
+
+[1] https://lore.kernel.org/r/a422shurtl3xrvnh2ieynqq2kw5awqnmall2wjdpozx336m26i@54ekftmkwvrv
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git/commit/?h=i2c/i2c-host&id=ede965fd555ac2536cf651893a998dbfd8e57b86
+[3] https://lore.kernel.org/r/20250831100457.3114-4-jelonek.jonas@gmail.com
+[4] https://lore.kernel.org/r/20250831100457.3114-1-jelonek.jonas@gmail.com
+
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+---
+Changes in v7:
+- Split into two patches. One for i2c-host-fixes to remove the actually
+  unsupported I2C_FUNC_SMBUS_I2C_BLOCK. The next one is for i2c-host and
+  readds it with the correct code.
+- Link to v6: https://lore.kernel.org/r/20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org
+
+Changes in v6:
+- drop all fixes patches (which were already applied)
+- drop rtl9300_i2c_func chunk which was incorrectly added by another commit
+  [2] (but was not intended to be in there by the original patch [3]
+- Link to v5: https://lore.kernel.org/r/20250810-i2c-rtl9300-multi-byte-v5-0-cd9dca0db722@narfation.org
+
+Changes in v5:
+- Simplify function/capability registration by using
+  I2C_FUNC_SMBUS_I2C_BLOCK, thanks Jonas Jelonek
+- Link to v4: https://lore.kernel.org/r/20250809-i2c-rtl9300-multi-byte-v4-0-d71dd5eb6121@narfation.org
+
+Changes in v4:
+- Provide only "write" examples for "i2c: rtl9300: Fix multi-byte I2C write"
+- drop the second initialization of vals in rtl9300_i2c_write() directly in
+  the "Fix multi-byte I2C write" fix
+- indicate in target branch for each patch in PATCH prefix
+- minor commit message cleanups
+- Link to v3: https://lore.kernel.org/r/20250804-i2c-rtl9300-multi-byte-v3-0-e20607e1b28c@narfation.org
+
+Changes in v3:
+- integrated patch
+  https://lore.kernel.org/r/20250615235248.529019-1-alexguo1023@gmail.com
+  to avoid conflicts in the I2C_SMBUS_BLOCK_DATA code
+- added Fixes and stable@vger.kernel.org to Alex Guo's patch
+- added Chris Packham's Reviewed-by/Acked-by
+- Link to v2: https://lore.kernel.org/r/20250803-i2c-rtl9300-multi-byte-v2-0-9b7b759fe2b6@narfation.org
+
+Changes in v2:
+- add the missing transfer width and read length increase for the SMBus
+  Write/Read
+- Link to v1: https://lore.kernel.org/r/20250802-i2c-rtl9300-multi-byte-v1-0-5f687e0098e2@narfation.org
+
+---
+Harshal Gohel (1):
+      [i2c-host] i2c: rtl9300: Implement I2C block read and write
+
+Sven Eckelmann (1):
+      [i2c-host-fixes] i2c: rtl9300: Drop unsupported I2C_FUNC_SMBUS_BLOCK_DATA
+
+ drivers/i2c/busses/i2c-rtl9300.c | 35 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
+---
+base-commit: 217f92d91c9faeb6b78bd6205b3585944cbcb433
+change-id: 20250802-i2c-rtl9300-multi-byte-edaa1fb0872c
+
+Best regards,
+-- 
+Sven Eckelmann <sven@narfation.org>
+
 
