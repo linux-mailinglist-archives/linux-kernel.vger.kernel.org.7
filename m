@@ -1,77 +1,42 @@
-Return-Path: <linux-kernel+bounces-835010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790D5BA6086
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488C1BA6094
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 16:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4930D18997E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCC33B7182
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 14:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7841C2E2657;
-	Sat, 27 Sep 2025 14:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ph3kTDa3"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B7B2E22AB;
+	Sat, 27 Sep 2025 14:26:07 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56BE29BDA6
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 14:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2C872626;
+	Sat, 27 Sep 2025 14:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758982951; cv=none; b=tm3J4pJzzANBZVC/tIt2Iu1zlRTvqyfpBt+C5bOQSmeflWcUfRmZjPFxGjXc7DU6rd9bY2TRFBXmdXo+Bsiesa6qvSvm3OZvxwQ7FkpxI35G61X410m41ioXmHvYJaPBDJ8E8WIh8qKSrJR+CZ2bKkKFcBgQRxwu6DIPJcFtIWI=
+	t=1758983167; cv=none; b=JGfvS5XDgfrgiDpieW3dFGQbilqFuTZiPFxnM5FSsFYS76oieddhSfU+cl3zFrDytbfVbui3ETz7uzU9X6DXsIOr2Yx4lRBAZbrPsGhHpqDPvC7MNus3XTZrn2Y5hix+UintlOsqWbvjW3Mikl74pzCiss7A8VoQhUtEyG7h+FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758982951; c=relaxed/simple;
-	bh=2fIBwTIAdKpwRItFyJzhDhGr+KGeVYoEgNwbRczrq5Q=;
-	h=Message-ID:Date:MIME-Version:From:To:Subject:Cc:Content-Type; b=Hnf2jxFYLm5+0t8XJHHHm2hSszhjckfiCghTRAowGtwn65gtM3Nw/2KfYD6k1uMFXejWS9C6DLygYkLFP5XhY0LxY16WYkSPBoZO1QfWyaqWAYuSHqAd0QjLp0fn4UKKeJMFT4VLofaG50L/xu2qkT/I4JyBovw2STTpR6PR+5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ph3kTDa3; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee12807d97so3103645f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 07:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758982948; x=1759587748; darn=vger.kernel.org;
-        h=cc:autocrypt:subject:to:content-language:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2fIBwTIAdKpwRItFyJzhDhGr+KGeVYoEgNwbRczrq5Q=;
-        b=Ph3kTDa3ejAQ9tkdFRPyyaH/VI43uCllqNZBiWzEqH5/MGsdtmI4I8zQsFD8opzVsF
-         WtEyYnixZBXryD/Kns7d/Zi+Bb57JZcr+t5Saib74BZYylGz9hW12ZwzFEUObr2Tc1x8
-         vHf56weCDXBygAoAnb11ENMWJpIDa7BORS4zAAOs3ZaIjSenv2ALp8+1SkK2JyH1WfFS
-         xfge6om6PKJMmyA6p+ZFC99l8XwQreQTEjAJzxi13ba5MzyQR+8FdDFUZDOi/i7BaE7+
-         hQQMacFY5KtbipI2khLykKosD320KomJO8Jb2nGFKkFEji+TlmTb59rh6SwrfXqbfJcr
-         oK2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758982948; x=1759587748;
-        h=cc:autocrypt:subject:to:content-language:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2fIBwTIAdKpwRItFyJzhDhGr+KGeVYoEgNwbRczrq5Q=;
-        b=JEeW7zjhiLpOk2ajATGfpc2Fi60r9AzLl0sXRoLbdJUUnM2nA48u5pqAwLUSNOqIw5
-         qByeszKHQGbnTpCXHVTZei5cEhB9Bf/nT2MdTeB7Z4rE6FXJICmHBeveLttBDA/80KR8
-         sC7CdzMG/xdz566TU64BbrvJBzShmL4Dn1nqTY680Ch2IWrmm1BCoLVGCN63ItwsQzLZ
-         9mLrRrjb8XsS3t7sZcPLKWulC4Hn8Id3eRjjwI247ifEG+EFM+QPYcWcOpEPUXog4FS2
-         VoD+1y8i/UsRdMy8NhiZbSNvro6v8DS1i6UpoMsyFear8XeLQsoANm55/sj3WRMXhRYg
-         K3fQ==
-X-Gm-Message-State: AOJu0Yx9kBrlC3LFMGY5ukcSngqRWLZjZfLHjkLB/CfLVZPqBrlMiZb7
-	HXC64pluvABqR00Lr8NoBBGlDOGO3gw9iS11ilf3JkyBakX7OClPht0e
-X-Gm-Gg: ASbGncufupgB1LM2/GlxJDY4e6v1h9lzPuo6ktY4Kae8HjT4n3j/pVzUAcdqOv5QOwc
-	olzjDGIgq72oI/7r6+h1RtniojrSv+rF8AJ/xsO0QgOooZ3SZFJVo7DSLed4RA7nidmvHal+d4x
-	trnuhKT7iAkLA3tYzCGGdebBhi2d2HwsIjlOXvz8ZORskGIx5NIQo62BYkc4WtJQ9WAJxTSYqa9
-	ebAP8+1478w0T2zTTy7PiSP1SwQ16GX+JHVjd51RkdHIQ3rTyX5YBpXIotoPhEhZlyLBRA3uCSh
-	gERUpZJuh+ybyo9Klwv+rSyDcd4yTeSX6YHmcGca6ilkbT4qXWl734fyI+AyUjJBqPZsTPpeFTE
-	V6DQWe7lcEh2H+lgdxX8P/EwF88Fp3FgausZNJBgVd8qCgnnjlug=
-X-Google-Smtp-Source: AGHT+IEpOOtUsXy1a2J8cAC10855T8BcYAtnqNdNrhFnYjaT6Sw0kAWyfa3Zxp9LbAWmQT2R4aOT0A==
-X-Received: by 2002:a05:6000:2304:b0:3ec:d926:329c with SMTP id ffacd0b85a97d-40e4dabefffmr10800578f8f.56.1758982947778;
-        Sat, 27 Sep 2025 07:22:27 -0700 (PDT)
-Received: from [192.168.1.201] ([87.254.0.133])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-40fb9d26ef7sm11287422f8f.26.2025.09.27.07.22.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Sep 2025 07:22:26 -0700 (PDT)
-Message-ID: <52c76446-117d-4953-9b33-32199f782b90@gmail.com>
-Date: Sat, 27 Sep 2025 15:21:37 +0100
+	s=arc-20240116; t=1758983167; c=relaxed/simple;
+	bh=n/PVGorZLSQLGMwrHBtk4qWsWt34WPfYXLx6kPx2/ys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IryiPWCC41bbC9F+2i2g3CkL1bT/ixp7j3z2PJ8apIstjIqb45Xgmg8JtBi2uTlJEoNu5D0/cL/auox++CNBmwT62p27LocCxKOXVqMmCY6jU26V4yKTJF4ZpfHLjbteIi0++t+wN8GPNpXQqHRHsubSRVel2sj+0amc5oqMcu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [10.179.198.146] (unknown [24.40.139.188])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C9AB661CCD7D6;
+	Sat, 27 Sep 2025 16:25:40 +0200 (CEST)
+Message-ID: <7926abe4-f824-4ff3-808e-e31b7869a7d6@molgen.mpg.de>
+Date: Sat, 27 Sep 2025 16:25:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,212 +44,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
+Subject: Re: [PATCH] Bluetooth: btusb: Add one more ID 0x13d3:0x3612 for
+ Realtek 8852CE
+To: Levi Zim <rsworktech@outlook.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250927-ble-13d3-3612-v1-1-c62bbb0bc77c@outlook.com>
 Content-Language: en-US
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: re: vduse: add vq group support
-Autocrypt: addr=colin.i.king@gmail.com; keydata=
- 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
- FVPMkxl2UyaayDvhrO9kNXvl1SKCpdzCMQ==
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------UP5kxYwVcrdQMC9dvc243P9G"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------UP5kxYwVcrdQMC9dvc243P9G
-Content-Type: multipart/mixed; boundary="------------niaEsC8j9PJOksJIc3X3icG2";
- protected-headers="v1"
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <52c76446-117d-4953-9b33-32199f782b90@gmail.com>
-Subject: re: vduse: add vq group support
-
---------------niaEsC8j9PJOksJIc3X3icG2
-Content-Type: multipart/mixed; boundary="------------UeCn0MP0PaDM7niHeJ6H0PT2"
-
---------------UeCn0MP0PaDM7niHeJ6H0PT2
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250927-ble-13d3-3612-v1-1-c62bbb0bc77c@outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-SGksDQoNClN0YXRpYyBhbmFseXNpcyBvbiBsaW51eC1uZXh0IGhhcyBmb3VuZCBhbiBpc3N1
-ZSB3aXRoIHRoZSBmb2xsb3dpbmcgY29tbWl0Og0KDQpjb21taXQgZmZjMzYzNGI2Njk2NzQ0
-NWYzMzY4YzNiNTNhNDJiY2NjNTJiMmM3Zg0KQXV0aG9yOiBFdWdlbmlvIFDDqXJleiA8ZXBl
-cmV6bWFAcmVkaGF0LmNvbT4NCkRhdGU6ICAgVGh1IFNlcCAyNSAxMToxMzozMiAyMDI1ICsw
-MjAwDQoNCiAgICAgdmR1c2U6IGFkZCB2cSBncm91cCBzdXBwb3J0DQoNCg0KVGhpcyBpc3N1
-ZSBpcyBhcyBmb2xsb3dzIGluIGZ1bmN0aW9uIHZob3N0X3ZkcGFfdnJpbmdfaW9jdDoNCg0K
-ICAgICAgICAgY2FzZSBWSE9TVF9WRFBBX0dFVF9WUklOR19HUk9VUDogew0KICAgICAgICAg
-ICAgICAgICB1NjQgZ3JvdXA7DQoNCiAgICAgICAgICAgICAgICAgaWYgKCFvcHMtPmdldF92
-cV9ncm91cCkNCiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVPUE5PVFNVUFA7
-DQogICAgICAgICAgICAgICAgIHMuaW5kZXggPSBpZHg7DQogICAgICAgICAgICAgICAgIGdy
-b3VwID0gb3BzLT5nZXRfdnFfZ3JvdXAodmRwYSwgaWR4KTsNCiAgICAgICAgICAgICAgICAg
-aWYgKGdyb3VwID49IHZkcGEtPm5ncm91cHMgfHwgZ3JvdXAgPiBVMzJfTUFYIHx8IGdyb3Vw
-IDwgMCkNCiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTzsNCiAgICAgICAg
-ICAgICAgICAgZWxzZSBpZiAoY29weV90b191c2VyKGFyZ3AsICZzLCBzaXplb2YocykpKQ0K
-ICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUZBVUxUOw0KICAgICAgICAgICAg
-ICAgICBzLm51bSA9IGdyb3VwOw0KICAgICAgICAgICAgICAgICByZXR1cm4gMDsNCiAgICAg
-ICAgIH0NCg0KDQpUaGUgY29weV90b191c2VyIG9mIHN0cnVjdCBzIGlzIGNvcHlpbmcgYSBw
-YXJ0aWFsbHkgaW5pdGlhbGl6ZWQgc3RydWN0IA0KcywgZmllbGQgcy5udW0gY29udGFpbnMg
-Z2FyYmFnZSBkYXRhIGZyb20gdGhlIHN0YWNrIGFuZCB0aGlzIGlzIGJlaW5nIA0KY29waWVk
-IGJhY2sgdG8gdXNlciBzcGFjZS4gRmllbGQgcy5udW0gc2hvdWxkIGJlIGFzc2lnbmVkIHNv
-bWUgdmFsdWUgDQpiZWZvcmUgdGhlIGNvcHlfdG9fdXNlciBjYWxsIHRvIGF2b2lkIHVuaW5p
-dGlhbGl6ZWQgZGF0YSBmcm9tIHRoZSBzdGFjayANCmJlaW5nIGxlYWtlZCB0byB1c2VyIHNw
-YWNlLg0KDQpDb2xpbg0KDQo=
---------------UeCn0MP0PaDM7niHeJ6H0PT2
-Content-Type: application/pgp-keys; name="OpenPGP_0x68C287DFC6A80226.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x68C287DFC6A80226.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Dear Levi,
 
------BEGIN PGP PUBLIC KEY BLOCK-----
 
-xsFNBE6TJCgBEACo6nMNvy06zNKj5tiwDsXXS+LhT+LwtEsy9EnraKYXAf2xwazc
-ICSjX06efanlyhB0figzQO0n/tP7BcfMVNG7n1+DC71mSyRK1ZERcG1523ajvdZO
-xbBCTvTitYOy3bjs+LXKqeVMhK3mRvdTjjmVpWnWqJ1LL+Hn12ysDVVfkbtuIm2N
-oaSEC8Ae8LSSyCMecd22d9PnLR4UeFgrWEkQsqROq6ZDJT9pBLGe1ZS0pVGhkRyB
-P9GP65oPev39SmfAx9R92SYJygCy0pPvBMWKvEZS/7bpetPNx6l2xu9UvwoeEbpz
-UvH26PHO3DDAv0ynJugPCoxlGPVf3zcfGQxy3otydNTWkP6Wh3Q85m+AlifgKZud
-jZLrO6c+fAw/jFu1UMjNuyhgShtFU7NvEzL3RqzFf9O1qM2muj83IeFQ1FZ65QAi
-CdTa3npz1vHc7N4uEQBUxyXgXfCI+A5yDnjHwzU0Y3RYS52TA3nfa08yLGPLTf5w
-yAREkFYou20vh5vRvPASoXx6auVf1MuxokDShVhxLpryBnlKCobs4voxN54BUO7m
-zuERXN8kadsxGFzItAyfKYzEiJrpUB1yhm78AecDyiPlMjl99xXk0zs9lcKriaBy
-VUv/NsyJFQj/kmdxox3XHi9K29kopFszm1tFiDwCFr/xumbZcMY17Yi2bQARAQAB
-zSdDb2xpbiBJYW4gS2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT7CwZEEEwEI
-ADsCGwMFCwkIBwMFFQoJCAsFFgIDAQACHgECF4AWIQRwYtqk8AG5xmFnAM9owoff
-xqgCJgUCY8GcawIZAQAKCRBowoffxqgCJtd/EACIWcaxfVt/MH4qqo5ELsjCFPVp
-+RhVpQDWy8v9Np2YbTcZ4AY2Zj4Pq/HrZ3F/Bh02v85C6mNv8BDTKev6Qcq3BYw0
-iqw6/xLNvRcSFHM81mQI9xtnAWIWfI9k5hpX19QooPIIP3GOMdMc1uRUGTxTgTFA
-AsAswRY3kMzo6k7arQnUs9zbiZ9SmS43qWOIxzGnvneekHHDAcomc/oho7kgj6rK
-p/f9qRrhForkgVQwdj6iBlW934yRXzeFVF3wr7Lk5GQNIEkJiNQPZs54ojBS/Kx6
-3UTLT1HgOp6UY9RPEi9wubmUR+J6YjLRZMr5PCcA86EYmRoysnnJ8Q/SlBVD8npp
-GVEcuvrbH3MBfhmwOPDc3RyLkEtKfSTB92k1hsmRkx9zkyuUzhcSnqQnpWGJD+xt
-KHvcHRT7Uxaa+SDwUDM36BjkyVcZQy8c+Is2jA55uwNgPpiA7n82pTeT+FRGd+7i
-CLQHaryu6FO6DNDv09RbPBjIiC/q814aeKJaSILP1ld9/PEBrLPdm+6lG6OKOt9D
-DV6jPmfR96FydjxcmI1cgZVgPomSxv2JB1erOggB8rmX4hhWYsVQl1AXZs3LdEpJ
-6clmCPspn/ufZxHslgR9/WR1EvPMQc8XtssF55p8ehRIcVSXDRcMFr3ZuqMTXcL6
-8YbDmv5OGS95O1Gs4c0iQ29saW4gS2luZyA8Y29saW4ua2luZ0B1YnVudHUuY29t
-PsLBdwQTAQgAIQUCTwq47wIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBo
-woffxqgCJo1bD/4gPIQ0Muy5TGHqTQ/bSiQ9oWjS5rAQvsrsVwcm2Ka7Uo8LzG8e
-grZrYieJxn3Qc22b98TiT6/5+sMa3XxhxBZ9FvALve175NPOz+2pQsAV88tR5NWk
-5YSzhrpzi7+klkWEVAB71hKFZcT0qNlDSeg9NXfbXOyCVNPDJQJfrtOPEuutuRuU
-hrXziaRchqmlhmszKZGHWybmPWnDQEAJdRs2Twwsi68WgScqapqd1vq2+5vWqzUT
-JcoHrxVOnlBq0e0IlbrpkxnmxhfQ+tx/Sw9BP9RITgOEFh6tf7uwly6/aqNWMgFL
-WACArNMMkWyOsFj8ouSMjk4lglT96ksVeCUfKqvCYRhMMUuXxAe+q/lxsXC+6qok
-Jlcd25I5U+hZ52pz3A+0bDDgIDXKXn7VbKooJxTwN1x2g3nsOLffXn/sCsIoslO4
-6nbr0rfGpi1YqeXcTdU2Cqlj2riBy9xNgCiCrqrGfX7VCdzVwpQHyNxBzzGG6JOm
-9OJ2UlpgbbSh6/GJFReW+I62mzC5VaAoPgxmH38g0mA8MvRT7yVpLep331F3Inmq
-4nkpRxLd39dgj6ejjkfMhWVpSEmCnQ/Tw81z/ZCWExFp6+3Q933hGSvifTecKQlO
-x736wORwjjCYH/A3H7HK4/R9kKfL2xKzD+42ejmGqQjleTGUulue8JRtpM1AQ29s
-aW4gSWFuIEtpbmcgKEludGVsIENvbGluIElhbiBLaW5nIGtleSkgPGNvbGluLmtp
-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
-=3DQKm6
------END PGP PUBLIC KEY BLOCK-----
+Thank you for your patch. For the summary/title “one more” is not necessary.
 
---------------UeCn0MP0PaDM7niHeJ6H0PT2--
 
---------------niaEsC8j9PJOksJIc3X3icG2--
+Am 27.09.25 um 04:29 schrieb Levi Zim via B4 Relay:
+> From: Levi Zim <rsworktech@outlook.com>
+> 
+> Devices with ID 13d3:3612 are found in ASUS TUF Gaming A16 (2025)
+> and ASUS TX Gaming FA608FM.
+> 
+> The corresponding device info from /sys/kernel/debug/usb/devices is
+> 
+> T:  Bus=03 Lev=02 Prnt=03 Port=02 Cnt=02 Dev#=  6 Spd=12   MxCh= 0
+> D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=13d3 ProdID=3612 Rev= 0.00
+> S:  Manufacturer=Realtek
+> S:  Product=Bluetooth Radio
+> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> 
+> Signed-off-by: Levi Zim <rsworktech@outlook.com>
+> ---
+>   drivers/bluetooth/btusb.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 8085fabadde8ff01171783b59226589757bbbbbc..d1e62b3158166a33153a6dfaade03fd3fb7d8231 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -552,6 +552,8 @@ static const struct usb_device_id quirks_table[] = {
+>   						     BTUSB_WIDEBAND_SPEECH },
+>   	{ USB_DEVICE(0x13d3, 0x3592), .driver_info = BTUSB_REALTEK |
+>   						     BTUSB_WIDEBAND_SPEECH },
+> +	{ USB_DEVICE(0x13d3, 0x3612), .driver_info = BTUSB_REALTEK |
+> +						     BTUSB_WIDEBAND_SPEECH },
+>   	{ USB_DEVICE(0x0489, 0xe122), .driver_info = BTUSB_REALTEK |
+>   						     BTUSB_WIDEBAND_SPEECH },
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
---------------UP5kxYwVcrdQMC9dvc243P9G
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Kind regards,
 
-wsF5BAABCAAjFiEEcGLapPABucZhZwDPaMKH38aoAiYFAmjX8vEFAwAAAAAACgkQaMKH38aoAibl
-tQ/+JR6EYEZVjrMaKvRhqX+ESldrtOXt4cAlOJFgfk6pBzueaLd3Bricu72HiP42MD7/ibOoRVRY
-J/1nmxWue6Maumxle5f7kYqKySF4jLg5GduRuG4Fif8h1vtiu+UBGxJhACOYhgrVgvSJo95cdpPi
-t0LBE949VgxR4ctRlPNB6wRH5ZAzqGMjsob5NQFoSAI6y3aWnU57/J2a6WfO1BlkuCHcVmJ9r6GS
-KRhN+J4GgyrZ3tX5G9EwucrDR5rwn11t6Cvyr3rpSwyYzvkBeY68qtVTH4HRID2PE8Z+yPFzDj7F
-sLNAPqX+99yKnhERwnLWoLwW7rl9R9gxyisYXYT18JUCb53npsH5ZmFtZrAh4DwfsMbXFFZrveJ8
-vb+oB2+578hWI4N8LpES7C2f5f8T5/QLZeWNNP4i3khgOi3npSkh+wpFTxl2eZRhoEYCx/wO8E1W
-+yii1zO47b6AefoYhQuhwqhyj2x1y3s4TBKO8rz0LOawWSddpqgGASRpu3y34F8nKccD82iNIGsh
-yLcmaCqbFtzl50QE52IZmRjmRcZIk9Tx9gSEJIzXqaMfb0k2pPjSPAQJ80BKTgrL6e9gUcN2RAyr
-urg2SlRvWDM9qxXe4uMT4pAmamz7Z0cTVdr5cp+yLEd7fJ1M1jDYnLYelNN4OmtAABP+NBW9NRsi
-gB0=
-=PJW8
------END PGP SIGNATURE-----
-
---------------UP5kxYwVcrdQMC9dvc243P9G--
+Paul
 
