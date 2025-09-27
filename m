@@ -1,242 +1,291 @@
-Return-Path: <linux-kernel+bounces-834807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946D2BA5910
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96382BA5916
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 06:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38FE91748B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45DBC16904E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278821F94A;
-	Sat, 27 Sep 2025 04:51:34 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EE222756A;
+	Sat, 27 Sep 2025 04:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dci7/x9+"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE601A2389
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 04:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B62221DB6
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 04:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758948693; cv=none; b=dW+I0ZmaLNEmJ5OqijTscRl0uNRExF9DgXhqRJLx0Am0I5hgiDUzYxMUCSpDRLtx8nTdq+RKjvUV/agMY34CrKz5le8dWb+g8MCT7G1mRRkt9KV+65e2A2zvXgMbdyishy50JOxzgmQxPMXjobYYo6jeVGqEXeVniOHQQLKTWvQ=
+	t=1758948719; cv=none; b=ds6wipuqFuL7KWB+gIdybAy34ZPowxteDi/CbQMt1tJZbqbvtNrHNI8ilnGT//OvFL18XHXxz95/5EbmIIGEvzoIcpV2M269Ppw9V2CEWnZ5LOImolMIGtShgaUbCe5HQ0th4y5dU8z4kN8UpbP8rBo7OXzaU3KZ4Gh2fJCUQrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758948693; c=relaxed/simple;
-	bh=+8VJcWVcTBWDMMi9CXwX5RaEFBPA3ahSGJ6psvA3ClM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YnRSNSpm9bf3zDDjEDjf61bSqQfNB+xJgGgdzsLQpvMsfRty0epb7EQ1hv7NTS8DzmdslN4GpgN4hZEQQaU4Bh46FxhkhH7JwHfr3bAhaX+OxFI1/m4t/yDCd14W4BGfULq+AQzDWcqZsWjnOHXsFHsIMwsjjVhtp/lEw2x/7k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42595318a28so46497235ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:51:31 -0700 (PDT)
+	s=arc-20240116; t=1758948719; c=relaxed/simple;
+	bh=sQwY1/iU0H3EfJPkFCUsl078zcR+FJBogZeggTTXVks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IO09hP8t0bfC6NSWpD5U3CbG+qr/ggTi7oAPlw4xbEgCyF9G90JgYZKOQMKp+4v+wwz8AOcN5knfB623h3FO0JQIss6FhAQG0gdM5GqV6e6+9pPtDVlRSDz23BhIiRzvaPFh3nc483WT6+vYHY6gi1aGJICJFqE7PGQEcEFTWGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dci7/x9+; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-33067909400so2142003a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:51:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758948717; x=1759553517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6wp26SQHvlyX5H1LECfdHm0FDILD7imbH4lOVBynqG4=;
+        b=dci7/x9+7Jkt9HbojpWEuRGfr6nGdPSNpydvsjVbozxiKAsFtwtg4hUL6qAHKQ+GtW
+         D3KBQhdCLmxfFZsRMJZmYpGWuqeipz3Sk1qb0JtuuK8+gAWlw798pbYfoUg+unZk4u4c
+         zj9Bu4JelE+kSZLDq4wOyoi6bejGHC+WtC0JWfktWa5lIecFN6upg8Dczcq3+22W+jfM
+         WiC+QXe4ZZ53KaGvGyfM81jtgJ2/RoLXq1yEVB+9L8451iV9on40m713pspn46VVjKKk
+         QD1AXKoj8qSnQCxZ8tdabu0VnU2iynXzJWTz+5/zC8BPZLNNAxgT5q+nwih7yqhc5LW1
+         XIJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758948691; x=1759553491;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1UFnJucvISRNqIEwLGqwT+rp6ExL31k9RQGQNKs4YQQ=;
-        b=mDkbQgqPkhJwFVvOUV5c85A+icyPsbH4mRO0WLY8/m4osxLySI3H92WkEdPpnY/Dbb
-         6OmPAdMJK1JKOIlGQuisDsaeM3IHL/OC+1fln8rTnuE5udNqX/mSBPGxL7xnrEQd8pxW
-         j99+Js2vrsTknx+YisxVH1JtpyBc4qyUrf5My42GQSvS1LTUR88pKuadb7gUWTOBvroO
-         QQpM5bUaZrSbxzzKRYQC4xUyyhE9wKtO9vsGerXQxfpwiUNZq5gHkKV3Igc+Gkw3sSfq
-         6i77YAuyahKs5qXKxtQ0vrRuazX6IdsxBdg5bxP9eeeUdvUCq8+cLS4dpYOVRO9Cl/KH
-         fiCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNn3imiN4EfOKqF3zzLYkVyHj0020vs89hiJR+12VYONzNEHSdJlCz9AqsvAzVw3LzBZ1KaJ5Mrzq0FS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCZRC8Oj7wtZXI28RudtRvo1iANjOeUZrzVJkLvK/FiBqtg6vi
-	EE0Ku7lwdnGM5TiJTtsQPyHTR9LYaS/O09yzEiV09LOwpmIjsIgA6sHN5Cl8AoaiuQSYZ6ESefx
-	HnytTHiBbmOttkW6cdkHaUnC4rQS27MW7HK1wQKzbP2WCQy+/+8/oPk/RAGM=
-X-Google-Smtp-Source: AGHT+IGn+v1lXcT0slsnE/ZOrO0j0gbTEkebQ8Zq3jFB3wHgoQMDab1xyet9S3+2FBy1/mwuUx/vzrKYmYx0fuM97F/Ah/AQBktC
+        d=1e100.net; s=20230601; t=1758948717; x=1759553517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6wp26SQHvlyX5H1LECfdHm0FDILD7imbH4lOVBynqG4=;
+        b=Jr0YK1aNk0i59Wr4mcDWYFc7m5PuZu2ynr/ICWCbptlAvo6S0iB4tSyl5WJNGSCKb5
+         DcNSCBF9Q+TxhQ3HmLb/ivKjC8dc4K8uEBhZLosqXnSHIl0ICgwzbl55xiMFk79tPX4r
+         DWqj6IompL3MsyMcPD+Cp+b0+0khkSEp5PB6uRo1EZlZqPcDpKQ0c/2Y7CYNacu/0tN7
+         rS4Bhjto5moc1afY5Bf0tVunm/wDT0+cHMqfGh4gkIsjmX+5Ur63GLeLWCVO01oCBkWS
+         pDunhrjlZtXWu3pOegQRzHPILQrRiizQj0EmYtgr4Jr1vND7QMRUhHK/R/t8KRMaKCf3
+         zMvg==
+X-Gm-Message-State: AOJu0Yzwbpd+8XzZbsycGSYF+xQjoKpU/CH2PVO1QdZQUekqhAGJHppd
+	hPCypc0m2M+cFmx2l2p9KbWd1mIGnM9Tmw2qWqLsNzx+ajoOoAZPYU7mE8jUsLM/FS7ojBsnWLM
+	q7rwFNnkKx/TS/osvD2aisfoJPnWnUpg=
+X-Gm-Gg: ASbGncv3NjFdDJUPd+w1kyMY3N+7t0que8yY1eeP3vtFhPinoLYwrLHL4T86cyGTD7J
+	vLarz8wmDh5kFMf8fyFp5CrN4YlabHEBoepa5Gd3yTG6LkWcCjZJEOND3ZVPqwcOX6Zc0oJ+vll
+	Uy/JT/J1RCQeSdkodxg1/3ckjb4Ilqh0h3s0BGm2xGBhfzBxCGz6nsV5hi3sdDCKBLCOZFe9myh
+	YiU9/fR8il/u2jhmXvZxrMfiEcwvg6czom/iyEz6IiaOZVpbAWcBF7CR7+rryxV+RZxK5KvZJor
+	gD+9iW32tOaNSBHqoYuQufqTPPh9409OXdSerQ==
+X-Google-Smtp-Source: AGHT+IH00TkFkR37LoXUYTjn3I7nEp9xJlAxL8DUs+Ac6CUFD8n7YAVOhClsCt0N13Pj2V7rm4NF9N5MUVfYAHgeQ54=
+X-Received: by 2002:a17:90b:4d08:b0:32b:6cf2:a2cf with SMTP id
+ 98e67ed59e1d1-3342a3e634dmr10652245a91.14.1758948717161; Fri, 26 Sep 2025
+ 21:51:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:230a:b0:425:7788:871 with SMTP id
- e9e14a558f8ab-42875791953mr31005765ab.12.1758948690874; Fri, 26 Sep 2025
- 21:51:30 -0700 (PDT)
-Date: Fri, 26 Sep 2025 21:51:30 -0700
-In-Reply-To: <6862c942.a70a0220.2f4de1.002c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d76d52.a00a0220.102ee.000c.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in __ext4_check_dir_entry
-From: syzbot <syzbot+5322c5c260eb44d209ed@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, djwong@kernel.org, dmantipov@yandex.ru, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+References: <20250913105252.26886-1-opensource206@gmail.com>
+In-Reply-To: <20250913105252.26886-1-opensource206@gmail.com>
+From: opensource india <opensource206@gmail.com>
+Date: Sat, 27 Sep 2025 10:21:45 +0530
+X-Gm-Features: AS18NWAPIz4Qm4NSsV8CiHzqke_kDp_O__t3_2Y2vrCLGILRVMW5O14YMaRdA54
+Message-ID: <CAKPKb882DgYB2fZXRDU_y1Xqz6GtFEErvzzET9eOAm=db0ns1g@mail.gmail.com>
+Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
+To: mchehab@kernel.org, hverkuil@kernel.org, ribalda@chromium.org, 
+	laurent.pinchart@ideasonboard.com, yunkec@google.com, 
+	sakari.ailus@linux.intel.com, james.cowgill@blaize.com, hansg@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    083fc6d7fa0d Merge tag 'sched-urgent-2025-09-26' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=106a3d34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
-dashboard link: https://syzkaller.appspot.com/bug?extid=5322c5c260eb44d209ed
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e032e2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146a3d34580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/198ae77e2418/disk-083fc6d7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3d3f065fd75c/vmlinux-083fc6d7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e65812e9d7b0/bzImage-083fc6d7.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/275ff9023118/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=1749327c580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5322c5c260eb44d209ed@syzkaller.appspotmail.com
-
-EXT4-fs warning (device loop2): dx_probe:801: inode #2: comm syz.2.1679: Unrecognised inode hash code 4
-EXT4-fs warning (device loop2): dx_probe:934: inode #2: comm syz.2.1679: Corrupt directory, running e2fsck is recommended
-==================================================================
-BUG: KASAN: slab-use-after-free in __ext4_check_dir_entry+0x708/0x8a0 fs/ext4/dir.c:85
-Read of size 2 at addr ffff888032f79003 by task syz.2.1679/10706
-
-CPU: 0 UID: 0 PID: 10706 Comm: syz.2.1679 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- __ext4_check_dir_entry+0x708/0x8a0 fs/ext4/dir.c:85
- ext4_readdir+0x12a2/0x3b70 fs/ext4/dir.c:262
- iterate_dir+0x3a5/0x580 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:410 [inline]
- __se_sys_getdents64+0xe4/0x260 fs/readdir.c:396
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f33499feec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f334906e038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 00007f3349c55fa0 RCX: 00007f33499feec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
-RBP: 00007f3349a81f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f3349c56038 R14: 00007f3349c55fa0 R15: 00007ffebc0b5dc8
- </TASK>
-
-Allocated by task 43:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:330 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_node_noprof+0x14e/0x330 mm/slub.c:4292
- __alloc_skb+0x112/0x2d0 net/core/skbuff.c:659
- alloc_skb include/linux/skbuff.h:1336 [inline]
- nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:763 [inline]
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
- nsim_dev_trap_report_work+0x29f/0xbc0 drivers/net/netdevsim/dev.c:866
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Freed by task 43:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2422 [inline]
- slab_free mm/slub.c:4695 [inline]
- kmem_cache_free+0x195/0x510 mm/slub.c:4797
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:836 [inline]
- nsim_dev_trap_report_work+0x7fa/0xbc0 drivers/net/netdevsim/dev.c:866
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff888032f79000
- which belongs to the cache skbuff_head_cache of size 240
-The buggy address is located 3 bytes inside of
- freed 240-byte region [ffff888032f79000, ffff888032f790f0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x32f79
-flags: 0x80000000000000(node=0|zone=1)
-page_type: f5(slab)
-raw: 0080000000000000 ffff88801de968c0 ffffea000085e780 dead000000000004
-raw: 0000000000000000 00000000000c000c 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5208, tgid 5208 (udevd), ts 27594846702, free_ts 27586335299
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x2119/0x21b0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2492 [inline]
- allocate_slab+0x8a/0x370 mm/slub.c:2660
- new_slab mm/slub.c:2714 [inline]
- ___slab_alloc+0x8d1/0xdc0 mm/slub.c:3901
- __slab_alloc mm/slub.c:3992 [inline]
- __slab_alloc_node mm/slub.c:4067 [inline]
- slab_alloc_node mm/slub.c:4228 [inline]
- kmem_cache_alloc_node_noprof+0xf2/0x330 mm/slub.c:4292
- __alloc_skb+0x112/0x2d0 net/core/skbuff.c:659
- netlink_sendmsg+0x5c6/0xb30 net/netlink/af_netlink.c:1871
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- ____sys_sendmsg+0x508/0x820 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg net/socket.c:2700 [inline]
- __do_sys_sendmsg net/socket.c:2705 [inline]
- __se_sys_sendmsg net/socket.c:2703 [inline]
- __x64_sys_sendmsg+0x1a1/0x260 net/socket.c:2703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5216 tgid 5216 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xb59/0xce0 mm/page_alloc.c:2895
- __slab_free+0x2db/0x390 mm/slub.c:4606
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x97/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_noprof+0x143/0x310 mm/slub.c:4247
- getname_flags+0xb8/0x540 fs/namei.c:146
- getname include/linux/fs.h:2919 [inline]
- do_sys_openat2+0xbc/0x1c0 fs/open.c:1429
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_openat fs/open.c:1466 [inline]
- __se_sys_openat fs/open.c:1461 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1461
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888032f78f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888032f78f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888032f79000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff888032f79080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
- ffff888032f79100: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+On Sat, Sep 13, 2025 at 4:23=E2=80=AFPM Pavan Bobba <opensource206@gmail.co=
+m> wrote:
+>
+> Complete the "TODO: PROFILES" by enforcing profile-specific and
+> monochrome constraints as defined by the AV1 specification
+> (Section 5.5.2, "Color config syntax").
+>
+> The validator now checks:
+>
+>  - Flags: reject any unknown bits set in sequence->flags
+>  - Profile range: only profiles 0..2 are valid
+>  - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=3D1, sy=3D1),
+>    monochrome allowed
+>  - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=3D0, sy=3D0),
+>    monochrome forbidden
+>  - Profile 2:
+>     * 8/10-bit: only 4:2:2 allowed (sx=3D1, sy=3D0)
+>     * 12-bit: 4:4:4 (sx=3D0, sy=3D0), 4:2:2 (sx=3D1, sy=3D0), or 4:2:0 (s=
+x=3D1, sy=3D1)
+>       allowed
+>  - Monochrome path (all profiles except 1): forces subsampling_x=3D1,
+>    subsampling_y=3D1, separate_uv_delta_q=3D0
+>
+> These checks prevent userspace from providing invalid AV1 sequence
+> headers that would otherwise be accepted, leading to undefined driver
+> or hardware behavior.
+>
+> Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+> ---
+> v1 -> v2 : Added more checks for subsampling combinations per profile.
+>          : Added a TODO note in the function header for checks to be impl=
+emented later.
+>
+> v2 -> v3 : Patch generated properly with all the changes
+>
+>  drivers/media/v4l2-core/v4l2-ctrls-core.c | 125 +++++++++++++++++-----
+>  1 file changed, 100 insertions(+), 25 deletions(-)
+>
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-core.c b/drivers/media/v4=
+l2-core/v4l2-ctrls-core.c
+> index 98b960775e87..fa03341588e4 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls-core.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls-core.c
+> @@ -827,39 +827,114 @@ static int validate_av1_frame(struct v4l2_ctrl_av1=
+_frame *f)
+>         return 0;
+>  }
+>
+> +/**
+> + * validate_av1_sequence - validate AV1 sequence header fields
+> + * @s: control struct from userspace
+> + *
+> + * Implements AV1 spec =C2=A75.5.2 color_config() checks that are
+> + * possible with the current v4l2_ctrl_av1_sequence definition.
+> + *
+> + * TODO: extend validation once additional fields such as
+> + *       color_primaries, transfer_characteristics,
+> + *       matrix_coefficients, and chroma_sample_position
+> + *       are added to the uAPI.
+> + *
+> + * Returns 0 if valid, -EINVAL otherwise.
+> + */
+>  static int validate_av1_sequence(struct v4l2_ctrl_av1_sequence *s)
+>  {
+> -       if (s->flags &
+> -       ~(V4L2_AV1_SEQUENCE_FLAG_STILL_PICTURE |
+> -        V4L2_AV1_SEQUENCE_FLAG_USE_128X128_SUPERBLOCK |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_FILTER_INTRA |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTRA_EDGE_FILTER |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTERINTRA_COMPOUND |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_MASKED_COMPOUND |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_WARPED_MOTION |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_DUAL_FILTER |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_ORDER_HINT |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_JNT_COMP |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_REF_FRAME_MVS |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_SUPERRES |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_CDEF |
+> -        V4L2_AV1_SEQUENCE_FLAG_ENABLE_RESTORATION |
+> -        V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME |
+> -        V4L2_AV1_SEQUENCE_FLAG_COLOR_RANGE |
+> -        V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X |
+> -        V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y |
+> -        V4L2_AV1_SEQUENCE_FLAG_FILM_GRAIN_PARAMS_PRESENT |
+> -        V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q))
+> -               return -EINVAL;
+> +       const bool mono  =3D s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROM=
+E;
+> +       const bool sx    =3D s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLIN=
+G_X;
+> +       const bool sy    =3D s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLIN=
+G_Y;
+> +       const bool uv_dq =3D s->flags & V4L2_AV1_SEQUENCE_FLAG_SEPARATE_U=
+V_DELTA_Q;
+>
+> -       if (s->seq_profile =3D=3D 1 && s->flags & V4L2_AV1_SEQUENCE_FLAG_=
+MONO_CHROME)
+> +       /* 1. Reject unknown flags */
+> +       if (s->flags &
+> +           ~(V4L2_AV1_SEQUENCE_FLAG_STILL_PICTURE |
+> +             V4L2_AV1_SEQUENCE_FLAG_USE_128X128_SUPERBLOCK |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_FILTER_INTRA |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTRA_EDGE_FILTER |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTERINTRA_COMPOUND |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_MASKED_COMPOUND |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_WARPED_MOTION |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_DUAL_FILTER |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_ORDER_HINT |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_JNT_COMP |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_REF_FRAME_MVS |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_SUPERRES |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_CDEF |
+> +             V4L2_AV1_SEQUENCE_FLAG_ENABLE_RESTORATION |
+> +             V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME |
+> +             V4L2_AV1_SEQUENCE_FLAG_COLOR_RANGE |
+> +             V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X |
+> +             V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y |
+> +             V4L2_AV1_SEQUENCE_FLAG_FILM_GRAIN_PARAMS_PRESENT |
+> +             V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q))
+>                 return -EINVAL;
+>
+> -       /* reserved */
+> +       /* 2. Profile range */
+>         if (s->seq_profile > 2)
+>                 return -EINVAL;
+>
+> -       /* TODO: PROFILES */
+> +       /* 3. Monochrome shortcut */
+> +       if (mono) {
+> +               /* Profile 1 forbids monochrome */
+> +               if (s->seq_profile =3D=3D 1)
+> +                       return -EINVAL;
+> +
+> +               /* Mono =E2=86=92 subsampling must look like 4:0:0: sx=3D=
+1, sy=3D1 */
+> +               if (!sx || !sy)
+> +                       return -EINVAL;
+> +
+> +               /* separate_uv_delta_q must be 0 */
+> +               if (uv_dq)
+> +                       return -EINVAL;
+> +
+> +               return 0;
+> +       }
+> +
+> +       /* 4. Profile-specific rules */
+> +       switch (s->seq_profile) {
+> +       case 0:
+> +               /* Profile 0: only 8/10-bit, subsampling=3D4:2:0 (sx=3D1,=
+ sy=3D1) */
+> +               if (s->bit_depth !=3D 8 && s->bit_depth !=3D 10)
+> +                       return -EINVAL;
+> +               if (!(sx && sy))
+> +                       return -EINVAL;
+> +               break;
+> +
+> +       case 1:
+> +               /* Profile 1: only 8/10-bit, subsampling=3D4:4:4 (sx=3D0,=
+ sy=3D0) */
+> +               if (s->bit_depth !=3D 8 && s->bit_depth !=3D 10)
+> +                       return -EINVAL;
+> +               if (sx || sy)
+> +                       return -EINVAL;
+> +               break;
+> +
+> +       case 2:
+> +               /* Profile 2: 8/10/12-bit allowed */
+> +               if (s->bit_depth !=3D 8 && s->bit_depth !=3D 10 &&
+> +                   s->bit_depth !=3D 12)
+> +                       return -EINVAL;
+> +
+> +               if (s->bit_depth =3D=3D 12) {
+> +                       if (!sx) {
+> +                               /* 4:4:4 =E2=86=92 sy must be 0 */
+> +                               if (sy)
+> +                                       return -EINVAL;
+> +                       } else {
+> +                               /* sx=3D1 =E2=86=92 sy=3D0 (4:2:2) or sy=
+=3D1 (4:2:0) */
+> +                               if (sy !=3D 0 && sy !=3D 1)
+> +                                       return -EINVAL;
+> +                       }
+> +               } else {
+> +                       /* 8/10-bit =E2=86=92 only 4:2:2 allowed (sx=3D1,=
+ sy=3D0) */
+> +                       if (!(sx && !sy))
+> +                               return -EINVAL;
+> +               }
+> +               break;
+> +       }
+> +
+>         return 0;
+>  }
+>
+> --
+> 2.43.0
+>
+Hi all,
+  It has been a couple of weeks since I sent this patch. Could anyone
+please review it?
 
