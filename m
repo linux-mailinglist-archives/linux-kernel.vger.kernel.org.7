@@ -1,156 +1,174 @@
-Return-Path: <linux-kernel+bounces-834782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CFFFBA582C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9D2BA583B
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 04:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2648322A1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 02:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B1A4A3280
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 02:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18E219D074;
-	Sat, 27 Sep 2025 02:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241491A9FB8;
+	Sat, 27 Sep 2025 02:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4pnLC4w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UQjsXL9h"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181901A267;
-	Sat, 27 Sep 2025 02:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E1045C0B
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 02:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758940185; cv=none; b=s3SJXCbU+QFdNdtGwt2FeaEpKf/k2bRERoGgVePgwJ2aI8mTdZg8Dd3zIwO1a/hlu/SVZH53gdb0mr3UPWIZZPIP29UKTutcuu6gztnkE/qNy/J5tLiIxNgOHftI5RtX7VU3UIzPB8LHB5tQpoQSEOVTfnCfq9UMIFR2Od/8C4E=
+	t=1758940760; cv=none; b=NJvZAbPeokvN/0LgUrz2a9z4xPQCPsw+7LOESuGjI9GwannPvGrzzQbMEY0Zy8JTFkaUnc/Py+1LgpBNCN09FMOUHfjYAUksc/Hv1PjwvLMpMfg0ZXuM98yuy0ISzh0/qnfmpNvsEuCT2NkEveX83oj1WsOzeww7obB22vrPqvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758940185; c=relaxed/simple;
-	bh=bxZHY0G3LSE1TLel39JL0bINmxacUD7SmlVol7Qqix4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LmBXE64Ofi4gYIffcqkGxSvbgnTJD1LVBRQdAnyit8f6CXuS6bL3bObHY4Fi0YUAmz+WgJVm+Uuh5AMTcApAS8+kXGl1y8MzlJIPKpQ6CHWmzoPIdPPySaKsi26Vx5CU5v+eYiL/p/UBctj7AIqVvGua5VqvgTB3APlKilFlvho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4pnLC4w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 901DBC4CEF4;
-	Sat, 27 Sep 2025 02:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758940184;
-	bh=bxZHY0G3LSE1TLel39JL0bINmxacUD7SmlVol7Qqix4=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=J4pnLC4wMKlkSYzle6guutb7pFk8niyLbF4ggVN3MPHaecyfYeLMowF/ppbwXGNbH
-	 9qHkOtjvMcXF8Qo70nLWG1gtUawdt5U/m8jux8RvWVnTk/vO/iaMPGax0F4ed4myLk
-	 Iihb8oABrhq3wrNbP9t0uSeynh8yHaO3vp3C3SvVHVDrvpbH3/NfwBIXGRrw65rVlW
-	 esBawn5gqrGv9ZJ62SLeO4rsLDRtIPIedekGPMUe8tMKlRRhXVP5e/KXP6lON8WLHr
-	 VQfRcg8x6tsqp9aZgMzY8RRCCgTEfklNW0Cziu+Ey0f7nY8S3+UkxpE6GV3eOgAnVH
-	 /DjSUVOpQsIsg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 832D5CAC5B9;
-	Sat, 27 Sep 2025 02:29:44 +0000 (UTC)
-From: Levi Zim via B4 Relay <devnull+rsworktech.outlook.com@kernel.org>
-Date: Sat, 27 Sep 2025 10:29:42 +0800
-Subject: [PATCH] Bluetooth: btusb: Add one more ID 0x13d3:0x3612 for
- Realtek 8852CE
+	s=arc-20240116; t=1758940760; c=relaxed/simple;
+	bh=scG9pplp01I6YSKouxM/l3n/5lfAncL1ZSBHouiOZ/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=Cj2Sx62JrLe0dIUk+Rsm4pbOw7vm2b868++wCeJG5P7jeUK1z2cH8G0kf18w7GC5F4YzKUVSR0CvmqylPMj2CMur9g2KWYeQEO8/Wkefcxi6p+ki/iZ91h2s7PyVCZdAwZaA5YT0xcJPQfjSJyEtagY3YsGMUUn3a/WeafIyOIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UQjsXL9h; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3ae5cbea-d320-4d28-a894-5e11e048158f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758940755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B8AE0EMzqHb/3HJuPI7UiqokGi0gSWVZfZYrdqV2qYM=;
+	b=UQjsXL9hvdE/v3XugRpcyr+I5P81hxwTX/Ae0v4/7YD/uZ3KB+9fsxoOl1VWIW7c4k72Lk
+	5v764EvLSxkF6QC81LuAdfr1A2MkP5T67w71ukZhdP2IGFbEg6EeKlQrU1X/jO4PqTu4Dw
+	5YHVFCDSQul5K7Q6o9dYSqSufnPDVmg=
+Date: Sat, 27 Sep 2025 10:39:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH] hung_task: Panic after fixed number of hung tasks
+Content-Language: en-US
+To: lirongqing <lirongqing@baidu.com>
+References: <20250925060605.2659-1-lirongqing@baidu.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+ joel.granados@kernel.org, feng.tang@linux.alibaba.com, pauld@redhat.com,
+ kees@kernel.org, rostedt@goodmis.org, pawan.kumar.gupta@linux.intel.com,
+ akpm@linux-foundation.org, dave.hansen@linux.intel.com, mingo@kernel.org,
+ paulmck@kernel.org, corbet@lwn.net, mhiramat@kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20250925060605.2659-1-lirongqing@baidu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250927-ble-13d3-3612-v1-1-c62bbb0bc77c@outlook.com>
-X-B4-Tracking: v=1; b=H4sIABVM12gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSyNz3aScVF1D4xRjXWMzQyNdU+NEIyMTs1QTCzMjJaCegqLUtMwKsHn
- RsbW1AMMgODpfAAAA
-X-Change-ID: 20250927-ble-13d3-3612-53a2246e4862
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Levi Zim <rsworktech@outlook.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2697;
- i=rsworktech@outlook.com; s=ryzen; h=from:subject:message-id;
- bh=0PHaemvygidLVIPnBlULH0clIkTjQK06pLw2gSJsUyg=;
- b=owEBbQKS/ZANAwAKAW87mNQvxsnYAcsmYgBo10wWJwpMWJDI6Gv60GqMSHPYr0X1WYBzIct1+
- lw0sH6qYJiJAjMEAAEKAB0WIQQolnD5HDY18KF0JEVvO5jUL8bJ2AUCaNdMFgAKCRBvO5jUL8bJ
- 2OsoD/0WSK8QvBcFB1Z4C7W03UKv7j22OBBm+Vhel+zEYq+fGvYoBZFNLr8M88HMMfSDHkVFD3l
- qFoIoQZ4UDS2kUdj/n0E+DcdOgjhGpxsoMKrMskpL5m71FoZTFGwRxRX8QQmhZr1jgMIMF74rJP
- lN2bV07z+Y/11la2SaPt1iSfmr6w6+CmWJeMbOCYDKkgo4HLVJyJvhUCsWwZyrntY+JvBp6VPFX
- cnLItdUixcYQgD+fn3M5sbrZVOCQmn/QbCz6keOuAQcLHzHw5Z33VM/QVjot7d5g2auSEvJRpQA
- Ug32gZBfp4wIWD0Ja/4OdDt13kZfh+qoZT4RcpbDTMSMDbH1v+V7QFwTiG2w0usB7KZ87cJQOu8
- Zv5ItzoshBPsndHZNiMt+YlA0nHZhQszuL5MqJagt7CK78sVmadlLQ7M7ZLrmd36kfDXqkQHgnP
- r5mEgLgeQH9PN/35Rq/WjoJHgVlMbGTOfNHkUkXBqnRhlLjv4/i+wXpeJrt4WviNZWC/yX71rP2
- 9fhSYWHqayVGxHWc8GNBhwPmTr/biFiL0uqsILNCdCMd3UQPXL9HJyIzF5bhabplB8Jt6XuC4s7
- S96EVjihqO59jkkpSyWuTYf6oB0MtVzyaVECtcXZXyzPbedCOxOHmqSENr3UyHuvXxOOKXywAYK
- pOrKoyEUswevf2g==
-X-Developer-Key: i=rsworktech@outlook.com; a=openpgp;
- fpr=17AADD6726DDC58B8EE5881757670CCFA42CCF0A
-X-Endpoint-Received: by B4 Relay for rsworktech@outlook.com/ryzen with
- auth_id=536
-X-Original-From: Levi Zim <rsworktech@outlook.com>
-Reply-To: rsworktech@outlook.com
+X-Migadu-Flow: FLOW_OUT
 
-From: Levi Zim <rsworktech@outlook.com>
 
-Devices with ID 13d3:3612 are found in ASUS TUF Gaming A16 (2025)
-and ASUS TX Gaming FA608FM.
 
-The corresponding device info from /sys/kernel/debug/usb/devices is
+On 2025/9/25 14:06, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> Currently, when hung_task_panic is enabled, kernel will panic immediately
+> upon detecting the first hung task. However, some hung tasks are transient
+> and the system can recover fully, while others are unrecoverable and
+> trigger consecutive hung task reports, and a panic is expected.
+> 
+> This commit adds a new sysctl parameter hung_task_count_to_panic to allows
+> specifying the number of consecutive hung tasks that must be detected
+> before triggering a kernel panic. This provides finer control for
+> environments where transient hangs maybe happen but persistent hangs should
+> still be fatal.
+> 
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>   Documentation/admin-guide/sysctl/kernel.rst |  6 ++++++
+>   kernel/hung_task.c                          | 14 +++++++++++++-
+>   2 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index 8b49eab..4240e7b 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -405,6 +405,12 @@ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
+>   1 Panic immediately.
+>   = =================================================
+>   
+> +hung_task_count_to_panic
+> +=====================
+> +
+> +When set to a non-zero value, after the number of consecutive hung task
+> +occur, the kernel will triggers a panic
 
-T:  Bus=03 Lev=02 Prnt=03 Port=02 Cnt=02 Dev#=  6 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3612 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+Hmm... the documentation here seems a bit misleading.
 
-Signed-off-by: Levi Zim <rsworktech@outlook.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+hung_task_panic=1 will always cause an immediate panic, regardless of
+the hung_task_count_to_panic setting, right?
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 8085fabadde8ff01171783b59226589757bbbbbc..d1e62b3158166a33153a6dfaade03fd3fb7d8231 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -552,6 +552,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x13d3, 0x3592), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x13d3, 0x3612), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe122), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 
+Perhaps something like this would be more accurate?
 
----
-base-commit: 302a1f674c00dd5581ab8e493ef44767c5101aab
-change-id: 20250927-ble-13d3-3612-53a2246e4862
+```
+hung_task_count_to_panic
+========================
 
-Best regards,
--- 
-Levi Zim <rsworktech@outlook.com>
+When set to a non-zero value, a kernel panic will be triggered if
+the number of detected hung tasks reaches this value.
 
+Note that setting hung_task_panic=1 will still cause an immediate
+panic on the first hung task, overriding this setting.
+```
+
+>   
+>   hung_task_check_count
+>   =====================
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 8708a12..87a6421 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -83,6 +83,8 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
+>   static unsigned int __read_mostly sysctl_hung_task_panic =
+>   	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
+>   
+> +static unsigned int __read_mostly sysctl_hung_task_count_to_panic;
+
+Nit: while static variables are guaranteed to be zero-initialized, it's
+a good practice and clearer for readers to initialize them explicitly.
+
+static unsigned int __read_mostly sysctl_hung_task_count_to_panic = 0;
+
+
+Otherwise, this patch looks good to me!
+Acked-by: Lance Yang <lance.yang@linux.dev>
+
+> +
+>   static int
+>   hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
+>   {
+> @@ -219,7 +221,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>   
+>   	trace_sched_process_hang(t);
+>   
+> -	if (sysctl_hung_task_panic) {
+> +	if (sysctl_hung_task_panic ||
+> +	    (sysctl_hung_task_count_to_panic &&
+> +	     (sysctl_hung_task_detect_count >= sysctl_hung_task_count_to_panic))) {
+>   		console_verbose();
+>   		hung_task_show_lock = true;
+>   		hung_task_call_panic = true;
+> @@ -388,6 +392,14 @@ static const struct ctl_table hung_task_sysctls[] = {
+>   		.extra2		= SYSCTL_ONE,
+>   	},
+>   	{
+> +		.procname	= "hung_task_count_to_panic",
+> +		.data		= &sysctl_hung_task_count_to_panic,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ZERO,
+> +	},
+> +	{
+>   		.procname	= "hung_task_check_count",
+>   		.data		= &sysctl_hung_task_check_count,
+>   		.maxlen		= sizeof(int),
 
 
