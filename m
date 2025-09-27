@@ -1,206 +1,203 @@
-Return-Path: <linux-kernel+bounces-834866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDCFBA5AB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16222BA5AB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 10:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16B07B2062
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA60B4A81AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 08:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B261FBEA2;
-	Sat, 27 Sep 2025 08:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13318239594;
+	Sat, 27 Sep 2025 08:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I9uhZFvU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jfj1U+7K";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9AD6723D";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L6GJEH3J";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aXCu1yJf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACFD1F584C
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F4B19C546
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 08:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758961081; cv=none; b=agwZfDSfJQvy3podbbwGkvYsNR0BxDD2Wen1qtvkaZj2xSZ2IA7hFNMieyH/B57DEZOAYUs9elonujw47KJhZB3DFiB2+XHLSueyfLo9J8cDI2CNdyyr8owKpIyduQn8HbYT0BgiRxiU2OFHIRZv/iHaH1xZOvtJWhesOs2SJLw=
+	t=1758961058; cv=none; b=X+bzq0+RmEw+lCIsLbZY1rnt3mbcrSePu55IhVOSZ8UnuL+LIX7RjuEq2r2RrSPvezKBy31OpqVlmo35jhv7lsrWMLKee5Nnhh1IHE8dR6zZZBBcKFy5NkhbG5Vmy497RF+eivmtLDfIBBT6NKEyrT9w/oH+bTIWAHJJdL42vE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758961081; c=relaxed/simple;
-	bh=gZGKB3tSDxMotC3tMYpwFIxM1B7m0Xmjzwu5TTovoug=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=kU2P9ETeRiF7aGCENCVwyn3ycWIvSHZqPzrajZiwUgob/txZeTwpZB0WKTwZ+p0+GrTafTYG70kYQZSU1OrR3aqRHhMp/7bA1XZRkZOKuQsFk+k0V0yf1UauwZy4/798GRYhykHwBkkrPfnIXziYxQh77wDtbMashdPeq0Eut/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I9uhZFvU; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758961080; x=1790497080;
-  h=date:from:to:cc:subject:message-id;
-  bh=gZGKB3tSDxMotC3tMYpwFIxM1B7m0Xmjzwu5TTovoug=;
-  b=I9uhZFvUAY8xH13jt2xiKKmJ/ORMZIJWdCfGGxsnDuhB9n0iednvvUjm
-   /thHl0LKZMHkV6Hfi4neCShil0BILiEID7w6MOvGcDzYhCWCLynAoetyk
-   FgazpVpQD8A6wR548MTPf0bBVPgdZzynCaLxU+UPzKbI2v0WlVvzbmYIc
-   rvUnKLBdfWCiursfXLCQVqnWJD3zTvanb+Jd7EC7aRjWrDvDV3dZbN0Lk
-   bK0MrDchJO8C3H8vzEEyjxW1+J06KfKq2M8DxjQJRy8XvfuZcgq2nyUd1
-   JzUHgtC/JPk8MrmheMccI4d27V7CK4KE9hFOEUitS4f92j7f2o1ml1ejJ
-   Q==;
-X-CSE-ConnectionGUID: rdQfuvKkTHKrxN8kqj4bog==
-X-CSE-MsgGUID: q56fmml9QSKm/7hnzqJSBw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="60987888"
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="60987888"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 01:18:00 -0700
-X-CSE-ConnectionGUID: daUl9EfLTcm7LNqsoDigzQ==
-X-CSE-MsgGUID: nGcITp9WTN2YjnpdWc1KeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="208539585"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 27 Sep 2025 01:17:59 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2Q7w-0006ub-0u;
-	Sat, 27 Sep 2025 08:17:56 +0000
-Date: Sat, 27 Sep 2025 16:17:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 9969273723b010e0c858f2c1f169e83f992af8f9
-Message-ID: <202509271623.jQ18E5wi-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1758961058; c=relaxed/simple;
+	bh=lhC06RHBJJAP+FWXcGWw6ChxvJFxng8JUPPE2KMKaeM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xm8yMdVnprM6bkJaKMNNLFHh620JmKZFMcTTjWwZKpJYsrJNeDiuSHSlR0zyLSX5HFrwvRBrjffLe7O/1eBV14H75777jeUPO7ygJAj+D0TcjSIqmugz393ahkM6w1yejW2ZR6AuqXmkmCED0SyWSxkSVFU6hUjSIi/WbYT3Thw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jfj1U+7K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9AD6723D; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L6GJEH3J; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aXCu1yJf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E8F622652F;
+	Sat, 27 Sep 2025 08:17:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758961055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
+	b=jfj1U+7KZR6oTFljxOLBR/K+FPO9ecnlEp+T7E6fZOi7NiNKFLeKp/YyeIPYMRsikDRZcn
+	bcRp5W2SV194LT1CG2sKVimanpGljSdBfaIb/sFfCtdS68Ob6U0kMuO0Slw9VBx0v6sfpV
+	qiLsNFny1elNghtcYYG2NdQw8KxtdLs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758961055;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
+	b=9AD6723DT0ZAXiXxfG0CsQJfxzYri0VzLf3dDnqHLBkO9Fs0da4zf62GJbIAXr4cK4vsrR
+	ePrvj0yiU5YVLtAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=L6GJEH3J;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=aXCu1yJf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758961054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
+	b=L6GJEH3Jslpv1ofTuIhzCmvNPcLk4NYlxNKVKNWMNuZX9T20K8sWziH34WXLc933zkHsHa
+	jXEoJEioO3q3yBWtDlR48q8oUApKgpO0mJLNU4uGbuPL+TDbAtNRQlXlvqfcBIYlC784Ld
+	I3oy0+xoK/F7kW5ui/7xX2XbNUnZaAo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758961054;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DeLQ6kvFK2IWzBmjXBx+ddWDD3biix2eT1sBgsW/3ZQ=;
+	b=aXCu1yJfdQQqa+JtsegK+EJDzjKto9G1926ZPHdyLWx6fcMiMsPapZZkwn7ly1SP3XrTJT
+	ANoWpihnTZxF+vBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA24013782;
+	Sat, 27 Sep 2025 08:17:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OfneJ56d12hhNwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 27 Sep 2025 08:17:34 +0000
+Date: Sat, 27 Sep 2025 10:17:34 +0200
+Message-ID: <878qi0b97l.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexey Klimov <alexey.klimov@linaro.org>
+Subject: Re: [PATCH] docs: sound: describe 'chan_map' member in snd_dec_opus
+In-Reply-To: <20250926162658.989479-1-kriish.sharma2006@gmail.com>
+References: <20250926162658.989479-1-kriish.sharma2006@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E8F622652F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.01
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 9969273723b010e0c858f2c1f169e83f992af8f9  Merge branch into tip/master: 'x86/tdx'
+On Fri, 26 Sep 2025 18:26:58 +0200,
+Kriish Sharma wrote:
+> 
+> When building kernel docs, the following warning appeared:
+> 
+>   WARNING: ./include/uapi/sound/compress_params.h:364 struct member 'chan_map' not described in 'snd_dec_opus'
+> 
+> The inline struct 'snd_dec_opus_ch_map' inside 'snd_dec_opus' was not properly documented.
+> This patch documents the 'chan_map' member and its fields (stream_count, coupled_count, channel_map), resolving the warning.
+> 
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
 
-elapsed time: 1460m
+Adding Alexey to Cc, as it was added by his patch.
 
-configs tested: 114
-configs skipped: 4
+If any, please resubmit with a proper subject line (e.g. "ALSA:
+compress: ....") as well as the Fixes tag pointing to the affecting
+commit.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                            hsdk_defconfig    gcc-15.1.0
-arc                   randconfig-001-20250926    gcc-8.5.0
-arc                   randconfig-002-20250926    gcc-9.5.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                       multi_v4t_defconfig    clang-16
-arm                       netwinder_defconfig    gcc-15.1.0
-arm                   randconfig-001-20250926    clang-22
-arm                   randconfig-002-20250926    clang-17
-arm                   randconfig-003-20250926    clang-22
-arm                   randconfig-004-20250926    clang-22
-arm                        realview_defconfig    clang-16
-arm                         socfpga_defconfig    gcc-15.1.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250926    gcc-8.5.0
-arm64                 randconfig-002-20250926    gcc-12.5.0
-arm64                 randconfig-003-20250926    gcc-9.5.0
-arm64                 randconfig-004-20250926    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250926    gcc-15.1.0
-csky                  randconfig-002-20250926    gcc-14.3.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250926    clang-22
-hexagon               randconfig-002-20250926    clang-22
-i386                             allmodconfig    gcc-14
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20250926    clang-20
-i386        buildonly-randconfig-002-20250926    clang-20
-i386        buildonly-randconfig-003-20250926    clang-20
-i386        buildonly-randconfig-004-20250926    clang-20
-i386        buildonly-randconfig-005-20250926    clang-20
-i386        buildonly-randconfig-006-20250926    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250926    gcc-15.1.0
-loongarch             randconfig-002-20250926    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250926    gcc-11.5.0
-nios2                 randconfig-002-20250926    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250926    gcc-10.5.0
-parisc                randconfig-002-20250926    gcc-10.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc               randconfig-001-20250926    clang-22
-powerpc               randconfig-002-20250926    clang-18
-powerpc               randconfig-003-20250926    clang-22
-powerpc64             randconfig-001-20250926    clang-22
-powerpc64             randconfig-002-20250926    clang-16
-powerpc64             randconfig-003-20250926    gcc-15.1.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20250926    clang-22
-riscv                 randconfig-002-20250926    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250926    clang-22
-s390                  randconfig-002-20250926    gcc-8.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                        edosk7760_defconfig    gcc-15.1.0
-sh                          kfr2r09_defconfig    gcc-15.1.0
-sh                    randconfig-001-20250926    gcc-12.5.0
-sh                    randconfig-002-20250926    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250926    gcc-14.3.0
-sparc                 randconfig-002-20250926    gcc-15.1.0
-sparc64               randconfig-001-20250926    gcc-12.5.0
-sparc64               randconfig-002-20250926    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                    randconfig-001-20250926    clang-22
-um                    randconfig-002-20250926    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250926    clang-20
-x86_64      buildonly-randconfig-002-20250926    clang-20
-x86_64      buildonly-randconfig-003-20250926    gcc-14
-x86_64      buildonly-randconfig-004-20250926    gcc-14
-x86_64      buildonly-randconfig-005-20250926    gcc-14
-x86_64      buildonly-randconfig-006-20250926    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250926    gcc-14.3.0
-xtensa                randconfig-002-20250926    gcc-8.5.0
+thanks,
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Takashi
+
+> ---
+>  include/uapi/sound/compress_params.h | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/compress_params.h
+> index faf4fa911f7f..e90e2f40732a 100644
+> --- a/include/uapi/sound/compress_params.h
+> +++ b/include/uapi/sound/compress_params.h
+> @@ -336,16 +336,14 @@ struct snd_dec_ape {
+>   * @mapping_family: Order and meaning of output channels. Only values 0 and 1
+>   * are expected; values 2..255 are not recommended for playback.
+>   *
+> - * Optional channel mapping table. Describes mapping of opus streams to decoded
+> - * channels.
+> - * @struct snd_dec_opus_ch_map
+> - *	@stream_count: Number of streams encoded in each Ogg packet.
+> - *	@coupled_count: Number of streams whose decoders are used for two
+> - *		channels.
+> - *	@channel_map: describes which decoded channel to be used for each one.
+> - *		See RFC doc for details.
+> - *		This supports only mapping families 0 and 1, therefore max
+> - *		number of channels is 8.
+> + * @chan_map: Optional channel mapping table. Describes mapping of opus streams
+> + *            to decoded channels. Fields:
+> + *              - @stream_count: Number of streams encoded in each Ogg packet.
+> + *              - @coupled_count: Number of streams whose decoders are used
+> + *                                for two channels.
+> + *              - @channel_map: Which decoded channel to be used for each one.
+> + *                              Supports only mapping families 0 and 1,
+> + *                              max number of channels is 8.
+>   *
+>   * These options were extracted from RFC7845 Section 5.
+>   */
+> -- 
+> 2.34.1
+> 
 
