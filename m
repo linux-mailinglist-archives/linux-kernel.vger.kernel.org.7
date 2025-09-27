@@ -1,127 +1,135 @@
-Return-Path: <linux-kernel+bounces-834896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A5DBA5CA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:41:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64DF9BA5CAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 11:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741C44A4065
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C354632389A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 09:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9552F2D6E67;
-	Sat, 27 Sep 2025 09:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC302D7803;
+	Sat, 27 Sep 2025 09:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vs8XHR6y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ip6ypAWS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B95224B09;
-	Sat, 27 Sep 2025 09:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA9E224B09;
+	Sat, 27 Sep 2025 09:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758966055; cv=none; b=s4IATU7hAKhmI2/nddOqRX0lk9XaqLUg2zzYNyVw2Gljwre+n1TWftpgogAKaQi4q5Btc7TcjRBKODA99UBNMTGhX1VzKV+x8lFnvrSf4G8cx+BjJPj5aG0lK8p63ZUGHe9fBJJnq84BFxit3YxUDEXZnuGivT8zOc7C+rLZsig=
+	t=1758966058; cv=none; b=AX3oo7yB9SIvGu5GdLtvUXEgxSUSfqTHHHrwPBtWkTAvh3ohN4kbLh84QD07nk0CVBFCvJX83ENL93ou12SStId7TdCFKFGWff8o7o87yNkzu0OalsCEaOztswDJxCJGyCgErZzH9Lh+FyUa95/s9/5y6aFVzWY+NKMIVOLf2LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758966055; c=relaxed/simple;
-	bh=1ZT7hcbLJ7/3FcSvxmAcSuqVf7EJe6EAn7aQ9zZBPVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtTRBaOWFD9Zt7IaDZQzaPLFStnRJaYVwW0LJl0b4k1c/mVCYXfCoW/WVGaktdG4VpEjLc4NneP88UEnM4Y2FKsaO/ht6uBC7KUgSX/eMKEEgiIfKuNxUisJLr2bVDFuwo5rjqtQm0/vTfADlM/LRS+VZHXM0z+yGn6IcDAldSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vs8XHR6y; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758966053; x=1790502053;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1ZT7hcbLJ7/3FcSvxmAcSuqVf7EJe6EAn7aQ9zZBPVY=;
-  b=Vs8XHR6y0qvKYz0kyAiG54mjaGSsqrY7NL4bX/VsPJe7Q6vGJvvFfl0K
-   BwdfOTpxgw3QY03dygu/leExvdp8YjiZcVi5T7piE2qd0QZCVzg9qJ3vW
-   ktHgVG0YLcVqJCc0uds2YgY13QgjhM+nReS1x2NAGc8BsyQVgfgn/HTLV
-   NVdPUa0ayMBlqS4mcKIgncOZnLT8mgvFFJFkzX39A/xN6RtpJTd3Q3Mua
-   BHWA+1bKnysIpDOVrCke2E/q/FmogMuwqrL6LVIFNJ8Ln5CS9z7w2KygG
-   wRhlUFR7odAqzyYGt4UTSaGlg3PwPgqj6HH4VNoxurZMV4o6DzM2P9c3l
-   A==;
-X-CSE-ConnectionGUID: GlbnH3wXRUqPQKLfL/5X6g==
-X-CSE-MsgGUID: +uGtC+iaT++/BCh/j791vg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="60496466"
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="60496466"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 02:40:52 -0700
-X-CSE-ConnectionGUID: gRWa5G5lTyGTI0dAlvnRxQ==
-X-CSE-MsgGUID: yus7upZQTSOGSwJvWOAMUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="177363610"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 27 Sep 2025 02:40:47 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2RQ4-0006x1-2g;
-	Sat, 27 Sep 2025 09:40:44 +0000
-Date: Sat, 27 Sep 2025 17:40:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: wangweidong.a@awinic.com, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, cy_huang@richtek.com,
-	ivprusov@salutedevices.com, zhoubinbin@loongson.cn,
-	zhangyi@everest-semi.com, jack.yu@realtek.com, shenghao-ding@ti.com,
-	rf@opensource.cirrus.com, git@apitzsch.eu, nuno.sa@analog.com,
-	colin.i.king@gmail.com, thorsten.blum@linux.dev,
-	yesanishhere@gmail.com, ebiggers@google.com, ardb@kernel.org,
-	zhujun2@cmss.chinamobile.com, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH V1 2/7] ASoC: codecs: Rework the aw88395 driver
-Message-ID: <202509271749.upX9Qa9f-lkp@intel.com>
-References: <20250926102037.27697-3-wangweidong.a@awinic.com>
+	s=arc-20240116; t=1758966058; c=relaxed/simple;
+	bh=dt+DecOx3QZJzbvvA3hprtLoaSDazDHK/AaHDq9Jc1I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OSXitCA1eEPGxwtDIWPVoLN8LVeP87EjqRv/dE0zvDkG4GYizUW4h2QWGmVkk2uaJQQzuKcTNUc7KkH9hyhxRLhoMAbQTSLRY6DXmObHzYwL/fStIyKFRe05lGllGM0bsTsyEgMr1+qY+A5iNj7lsQw1EzCEtewQlPVpKmd1LyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ip6ypAWS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C283EC4CEF8;
+	Sat, 27 Sep 2025 09:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758966057;
+	bh=dt+DecOx3QZJzbvvA3hprtLoaSDazDHK/AaHDq9Jc1I=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Ip6ypAWS9p3RmzQnOrceVx+weMajQ4YgomFbO4LYYP27tFldc78k6i7K9WXmRpVkw
+	 lMvf/NzF2oSzNY9cvbZGFihwbb6uTbFogWERBWaX9fzUv/xoR/oKG6IFydEQMasZy+
+	 vqEOPUgNISkgHg27zxQiIxJ85lm4tHZECkda41/fX2NpP/GnFC9Jotl0O87rEIm63W
+	 HfAHpFB6PUSUbuv0Q3pw4NbDTp6BO8Y86woYu/0FdBQS/t4elxXgQHjgJ9ZyGV+jJ9
+	 4AaO9kAX3aHayM80Yv29Lxy+HL74V7KTuKslHD3tvnGW5cLsY1pzKY3INJIfRPGw8g
+	 0Mblg9CzU4oSw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/8] mptcp: receive path improvement
+Date: Sat, 27 Sep 2025 11:40:36 +0200
+Message-Id: <20250927-net-next-mptcp-rcv-path-imp-v1-0-5da266aa9c1a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926102037.27697-3-wangweidong.a@awinic.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABSx12gC/zWMQQqEMAwAvyI5G9CguPUr4qHE7JqD3dAWEcS/W
+ wQPc5jDzAlJokqCsTohyq5J/6FIW1fAqw8/QV2KAzXUN44GDJILR8bNMhtG3tF8XlE3w9bR8mH
+ q2PEA5WBRvno89wneEObrugH8HVOydwAAAA==
+X-Change-ID: 20250927-net-next-mptcp-rcv-path-imp-192d8c24c9c7
+To: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
+ Kuniyuki Iwashima <kuniyu@google.com>, David Ahern <dsahern@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2508; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=dt+DecOx3QZJzbvvA3hprtLoaSDazDHK/AaHDq9Jc1I=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDKub5QO3nWhVaNtww71nepfbpa7z+VZzCDUlCKldn9aS
+ Oc8W6UJHaUsDGJcDLJiiizSbZH5M59X8ZZ4+VnAzGFlAhnCwMUpABNxX8HI8H5r2/o8nn2Tb3hd
+ 9P4969wab8/QkoPbBbq8VT86/5v9cxojw/2O2zNaXBw1OTUPsK3V4mUoiHA26269ddVvzz5r6d8
+ zuQA=
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Hi,
+This series includes several changes to the MPTCP RX path. The main
+goals are improving the RX performances, and increase the long term
+maintainability.
 
-kernel test robot noticed the following build warnings:
+Some changes reflects recent(ish) improvements introduced in the TCP
+stack: patch 1, 2 and 3 are the MPTCP counter part of SKB deferral free
+and auto-tuning improvements. Note that patch 3 could possibly fix
+additional issues, and overall such patch should protect from similar
+issues to arise in the future.
 
-[auto build test WARNING on 4ff71af020ae59ae2d83b174646fc2ad9fcd4dc4]
+Patches 4-7 are aimed at introducing the socket backlog usage which will
+be done in a later series to process the packets received by the
+different subflows while the msk socket is owned.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/wangweidong-a-awinic-com/ASoC-codecs-Rework-the-awinic-driver-lib/20250926-183836
-base:   4ff71af020ae59ae2d83b174646fc2ad9fcd4dc4
-patch link:    https://lore.kernel.org/r/20250926102037.27697-3-wangweidong.a%40awinic.com
-patch subject: [PATCH V1 2/7] ASoC: codecs: Rework the aw88395 driver
-config: csky-randconfig-001-20250927 (https://download.01.org/0day-ci/archive/20250927/202509271749.upX9Qa9f-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509271749.upX9Qa9f-lkp@intel.com/reproduce)
+Patch 8 is not related to the RX path, but it contains additional tests
+for new features recently introduced in net-next.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509271749.upX9Qa9f-lkp@intel.com/
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Notes:
+ - Sorry for sending this series that late, we had quite a few patches
+   to upstream during this cycle. This is the last batch, and it has
+   been heavily tested the last 2 weeks.
+ - If there are some issues with some patches, but not with 1-3, it
+   would be nice, if possible, if these 3 first patches can be accepted,
+   to reduce the recently introduced gap with TCP.
+ - Patches can be grouped like this if needed: 1-3, 4-5, 6-7, 8. 6-7 are
+   preparing the ground for future on-going work, they can be dropped if
+   there are issues with them.
 
-All warnings (new ones prefixed by >>):
+---
+Matthieu Baerts (NGI0) (1):
+      selftests: mptcp: join: validate new laminar endp
 
-   In file included from sound/soc/codecs/aw88395.c:16:
->> sound/soc/codecs/aw88395.h:10: warning: header guard '__AW88395_H__' followed by '#define' of a different macro [-Wheader-guard]
-      10 | #ifndef __AW88395_H__
-   sound/soc/codecs/aw88395.h:11: note: '__AW88395_H___' is defined here; did you mean '__AW88395_H__'?
-      11 | #define __AW88395_H___
+Paolo Abeni (7):
+      mptcp: leverage skb deferral free
+      tcp: make tcp_rcvbuf_grow() accessible to mptcp code
+      mptcp: rcvbuf auto-tuning improvement
+      mptcp: introduce the mptcp_init_skb helper
+      mptcp: remove unneeded mptcp_move_skb()
+      mptcp: factor out a basic skb coalesce helper
+      mptcp: minor move_skbs_to_msk() cleanup
 
+ include/net/tcp.h                               |   1 +
+ net/ipv4/tcp_input.c                            |   2 +-
+ net/mptcp/protocol.c                            | 187 ++++++++++++------------
+ net/mptcp/protocol.h                            |   4 +-
+ tools/testing/selftests/net/mptcp/mptcp_join.sh |  69 +++++++++
+ tools/testing/selftests/net/mptcp/pm_nl_ctl.c   |   9 ++
+ 6 files changed, 177 insertions(+), 95 deletions(-)
+---
+base-commit: 1493c18fe8696bfc758a97130a485fc4e08387f5
+change-id: 20250927-net-next-mptcp-rcv-path-imp-192d8c24c9c7
 
-vim +10 sound/soc/codecs/aw88395.h
-
-     9	
-  > 10	#ifndef __AW88395_H__
-    11	#define __AW88395_H___
-    12	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
