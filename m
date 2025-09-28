@@ -1,163 +1,151 @@
-Return-Path: <linux-kernel+bounces-835371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6425BA6EB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:09:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F766BA6EC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92EFC7A1884
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E8D1882F1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5CE2DC35C;
-	Sun, 28 Sep 2025 10:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BD82DC762;
+	Sun, 28 Sep 2025 10:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ca/lIEPd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JudKWoKZ"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE1C2561B9;
-	Sun, 28 Sep 2025 10:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA59C2DC337
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759054140; cv=none; b=BpG905/JM1BXOE7lDruilT/ODgnGV6ThxJDeSWHScr0dQH/UnrCYELjOL5d+jxxzIyC+AnYtNDZ235OWILLoVbcXgdIvJeOzXd6fkfZGse4fdUmQ7K+GGtG6w9jp6cUWBPrXRt6beHj2LfRTkDA3aeh9rkPJipsIqpNaGQaofmY=
+	t=1759054196; cv=none; b=D96tYLdp8jEi5psrOrEWxVLHFZ56ltZ0CsMHdfA/nOc1zwN/hnzH1WL/P+Cc08D3R+cnSLZjjg8RIlZ3XyALwlX+rnt1Qxi58qvdF0GkvxtaUoq2kazDtepomsxhOOgdhftksfeJ8KO8lQ6l4PaSBhkZFscNFiomW1U812ZJGd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759054140; c=relaxed/simple;
-	bh=H+cGetWpoYz5fxQOkiLy26iMWF7ZKEieo15FkWkuCLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uViCAXQqQHceZFCpgC/OVTD7dyqcqk0E24PLWSwwucblInwk5iQQhHEHgAN2pmfBQ9D1EJh8Fa9uLZ52UlWstc74wSBwWbBxg8Vxmv6ysFOrUDvYoJ6Iwg+9NuNRZCL72TS3fYtjJPyUJ4Y7jG7HKTj2sF/ezIHUfBwCneg8HgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ca/lIEPd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BECCFC4CEF0;
-	Sun, 28 Sep 2025 10:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759054139;
-	bh=H+cGetWpoYz5fxQOkiLy26iMWF7ZKEieo15FkWkuCLY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ca/lIEPdyaJwnbZ3oJujOOCpOI5rpkvkQ/U351tOwaEVZCoCBESDOpmcHPr5D3mZE
-	 YDlWBKuHPEkHzu1v+y1P3gS2z/fga0zLePssp98PUVWauNq/vf66QZIrg8eLZCXemA
-	 HUMmT/iCyTp60HbMrxdHjzx8wujWuXur8exQf/EIHBOEmjXMtAUt/Xe7sjdA/NilYk
-	 DgvqooenheybIhwe4u4An+QlftyAhZ2sFgfDlTOL+wyxqiTVIr6/Ajp23BtkbYVr6i
-	 8UP9/27yCyn+AhWo+ezKFeexmypAU7AC+Fu01BWH/aDsX2GZA4fLNx6hr78OJt6qlA
-	 wd/+3umHjIvzg==
-Date: Sun, 28 Sep 2025 11:08:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <michael.hennerich@analog.com>,
- <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
- <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, Axel Haslam <ahaslam@baylibre.com>
-Subject: Re: [PATCH v3 6/8] iio: adc: ad4030: Add SPI offload support
-Message-ID: <20250928110836.79ab434e@jic23-huawei>
-In-Reply-To: <0028720d2cb21898ef044458065ac8a0bc829588.1758916484.git.marcelo.schmitt@analog.com>
-References: <cover.1758916484.git.marcelo.schmitt@analog.com>
-	<0028720d2cb21898ef044458065ac8a0bc829588.1758916484.git.marcelo.schmitt@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759054196; c=relaxed/simple;
+	bh=rTIEfIHyol16evnoilqvUSKNW7krl5FuRjb+UuNeQQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYzKVMj2KyMysGZg0S8rH96w9oww1G/LcIlThAdFw+CHu/pQO6YsW4IF/BKnb7UHFEOLWTBgvDhrUZNabapcv8xSFTMHxE49cZd/TDEbVPfA+e5CK7yIKpn8ubdcTEVevD+Uc5obEjYe2HxxTVIlKGhgyYvbL9jmAB+M9bwcSrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JudKWoKZ; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b556b3501easo3111900a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:09:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759054194; x=1759658994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HEaRyqcNalrKfX0bmpo1LGgUVgua5hE0vbu7vpC1J+A=;
+        b=JudKWoKZxkB40WVKiwYh2uHef98wcxQmxo7PIAbclDenWCwQ4PVMzM00fboYIwz/qh
+         jqMzbAB8YRBLwcTsnba4dbVKu46uiGYwArtDHkLvuUB6Rd386iDf6wTijcxL2KMYkLXu
+         5MueIzvNEBM1I/vHGKgUFtpUZ6x35CBgtBi6Zlk8SQacH8fGQCiTT5k8IZUPxRyDmlFM
+         SqrXq8InEzXKWxzf8uYD/3GcLtknslRKvYX+OIns6r9VJx7Kpi3R9R4iqDDBNYaAzSIq
+         zCs5bdjHw0gSrI/e+lSGzSGldYRpL+OcslHzoYWSa+SLC1ZM0rp15JRxg0CAplpmSwM/
+         J0PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759054194; x=1759658994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HEaRyqcNalrKfX0bmpo1LGgUVgua5hE0vbu7vpC1J+A=;
+        b=QPEGXQoepc2z+JFmcpNeY1zmkNHA2kUDjc3Uu89P5ob+MAT1Pb9iVICpLoAYHe45el
+         GauzjwCWrbwzz7K+nBIfWs9q0Yv3vu3J9ewyWaWPc2krsDm34GcM8agMJKLHo1TSDEu0
+         eYUsIJ8G/dGI8npBsw11xRnF7Y/XoGaeseXlbjW7nNg4zx7mXel1AIQH1f+TIcxFsBbB
+         HtQopcSLQCCWjRHx38xxpbb2vad/26sP1SxWRkCc3NKXwk+wmvGfqZHNmprDsw47ICuo
+         s0o2K1k2I6kDuTvMeK0kspiLv0Zi2bqL41Y5jSCAouJSFQirWp9RMgJjaJEueUVOvrK/
+         nPQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXM1B/WotX43Hw0jo0/rmYRs8sUgXUV+1wXmkNmN2Nw6JN4zK8uKgmLtMH85hRQB0iwfVrDjPm2i1yEivI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbwv24be3FfSpLXWfn+Yd21r39e2Qxysmq1V+B6p+hczApLCL9
+	Eydq9bk6QExuqmf+p7if8c3PT/tUdkNXHOnqrYHV7lIcoeTqN02lCCij
+X-Gm-Gg: ASbGncvazzzVIcxchUjeJzaqtl9KKhs8RW1LBFvJlISXjXYhL7fkKeoy+w7hASGiGan
+	72fsNxkzlslhqGVJ+4OPLHHNUIQRv4f+cwVuiFhyorDWkGlYq6Lx4YmITgb4Al4VRsxOfAHzTDI
+	6uUbEoHGAl1QctxstyFQTPqnBFdcTzySl4SYdvt39W7FwxApWK8GHJtMo4Q7t9MniYdd3+hAGTm
+	k3At40XC+b/spRFLLMoZjnJwJ9bJSFn8wz2ZIY+v1O59QeA94R6XOsuD2oU+Kp4aGr1JxYbJWPU
+	q0j2z9nTQvL5Tx+y8TYKJa0dVstdN6PWUPyZQvIG84xvVw3vppG00lm3SFpEsIYEtJRKZpXAAAo
+	bSIDhIFYX6cXYmXj7gjYzQQTmqo7+I0ukCFtc0oGOHh/tzqFNMXys8sgRVhhD2snNpzbsZSawks
+	3X8gvuQVinSVoSQg==
+X-Google-Smtp-Source: AGHT+IGQn6LWV6iO53lyCYBVGI/gp6UKhS19n/WsBwNq3wacSvChYo5sSsOyWQJP3LB28kS3hR4IVQ==
+X-Received: by 2002:a17:903:244a:b0:25c:d4b6:f117 with SMTP id d9443c01a7336-27ed4a3de3cmr143931065ad.35.1759054194123;
+        Sun, 28 Sep 2025 03:09:54 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:aa9a:16e7:7fcc:f4d0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3347224b0f7sm10473322a91.7.2025.09.28.03.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Sep 2025 03:09:53 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+Subject: [PATCH] ext4: validate extent entries before caching in ext4_find_extent()
+Date: Sun, 28 Sep 2025 15:39:46 +0530
+Message-ID: <20250928100946.12445-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 26 Sep 2025 17:40:29 -0300
-Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
+opening a verity file on a corrupted ext4 filesystem mounted without
+a journal.
 
-> AD4030 and similar ADCs can capture data at sample rates up to 2 mega
-> samples per second (MSPS). Not all SPI controllers are able to achieve such
-> high throughputs and even when the controller is fast enough to run
-> transfers at the required speed, it may be costly to the CPU to handle
-> transfer data at such high sample rates. Add SPI offload support for AD4030
-> and similar ADCs to enable data capture at maximum sample rates.
-> 
-> Co-developed-by: Trevor Gamblin <tgamblin@baylibre.com>
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> Co-developed-by: Axel Haslam <ahaslam@baylibre.com>
-> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-This isn't my area of speciality so I'll be looking for some review tags from others.
-Comments inline are completely trivial things that'd I'd just fix up but
-you'll be doing another spin for the bot error anyway so over to you!
+The issue occurs when the extent tree contains out-of-order extents,
+which can happen in a corrupted filesystem. ext4_find_extent() calls
+ext4_cache_extents() without validating the extent entries when the
+tree depth is 0 (leaf level). This allows corrupted extent trees with
+out-of-order extents to be cached, triggering a BUG_ON in
+ext4_es_cache_extent() due to integer underflow when calculating hole
+sizes:
 
-Jonathan
+  If prev = 4352 and lblk = 1280:
+  lblk - prev = 1280 - 4352 = -3072 (as signed)
+  = 4294964224 (as unsigned)
+  end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279 (after overflow)
+  BUG_ON(end < lblk) triggers because 1279 < 4352
 
-> diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-> index cdf5933e9725..8fca98738e3e 100644
-> --- a/drivers/iio/adc/ad4030.c
-> +++ b/drivers/iio/adc/ad4030.c
+Fix this by adding extent entry validation using the existing
+ext4_valid_extent_entries() function before caching. This ensures
+corrupted extent trees are detected and handled properly through the
+error path, preventing both the BUG_ON and potential use-after-free
+issues.
 
-> +
-> +static int ad4030_update_conversion_rate(struct ad4030_state *st,
-> +					 unsigned int freq, unsigned int avg_log2)
-> +{
-> +	struct spi_offload_trigger_config *config = &st->offload_trigger_config;
-> +	struct pwm_waveform cnv_wf = { };
-> +	u64 target = AD4030_TCNVH_NS;
-> +	u64 offload_period_ns;
-> +	u64 offload_offset_ns;
-> +	int ret;
-> +
-> +	/*
-> +	 * When averaging/oversampling over N samples, we fire the offload
-> +	 * trigger once at every N pulses of the CNV signal. Conversely, the CNV
-> +	 * signal needs to be N times faster than the offload trigger. Take that
-> +	 * into account to correctly re-evaluate both the PWM waveform connected
-> +	 * to CNV and the SPI offload trigger.
-> +	 */
-> +	freq <<= avg_log2;
-> +
-> +	cnv_wf.period_length_ns = DIV_ROUND_CLOSEST(NSEC_PER_SEC, freq);
-> +	/*
-> +	 * The datasheet lists a minimum time of 9.8 ns, but no maximum. If the
-> +	 * rounded PWM's value is less than 10, increase the target value by 10
-> +	 * and attempt to round the waveform again, until the value is at least
-> +	 * 10 ns. Use a separate variable to represent the target in case the
-> +	 * rounding is severe enough to keep putting the first few results under
-> +	 * the minimum 10ns condition checked by the while loop.
-> +	 */
-> +	do {
-> +		cnv_wf.duty_length_ns = target;
-> +		ret = pwm_round_waveform_might_sleep(st->cnv_trigger, &cnv_wf);
-> +		if (ret)
-> +			return ret;
-> +		target += AD4030_TCNVH_NS;
-> +	} while (cnv_wf.duty_length_ns < AD4030_TCNVH_NS);
-> +
-> +	if (!in_range(cnv_wf.period_length_ns, AD4030_TCYC_NS, INT_MAX))
-> +		return -EINVAL;
-> +
-> +	offload_period_ns = cnv_wf.period_length_ns;
-> +	/*
-> +	 * Make the offload trigger period be N times longer than the CNV PWM
-> +	 * period when averaging over N samples.
-> +	 */
-> +	offload_period_ns <<= avg_log2;
-> +
-> +	config->periodic.frequency_hz =  DIV_ROUND_UP_ULL(NSEC_PER_SEC,
+Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ext4/extents.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Bonus space after =
-
-> +							  offload_period_ns);
-
-
-> @@ -869,7 +1035,9 @@ static int ad4030_get_current_scan_type(const struct iio_dev *indio_dev,
->  static int ad4030_update_scan_mode(struct iio_dev *indio_dev,
->  				   const unsigned long *scan_mask)
->  {
-> -	return ad4030_set_mode(indio_dev, *scan_mask);
-> +	struct ad4030_state *st = iio_priv(indio_dev);
-> +
-> +	return ad4030_set_mode(st, *scan_mask, st->avg_log2);
-Trivial and entirely up to you but you can do the following without significant lost of
-readability.
-
-	return ad4030_set_mode(iio_priv(indio_dev), &scan_mask, st->avg_log2);
-
->  }
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index ca5499e9412b..f8e45623f7ea 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -924,8 +924,18 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
+ 	path[0].p_bh = NULL;
+ 
+ 	i = depth;
+-	if (!(flags & EXT4_EX_NOCACHE) && depth == 0)
++	if (!(flags & EXT4_EX_NOCACHE) && depth == 0) {
++		ext4_fsblk_t pblk = 0;
++
++		if (!ext4_valid_extent_entries(inode, eh, 0, &pblk, 0)) {
++			EXT4_ERROR_INODE(inode,
++				"invalid extent entries, pblk %llu",
++				pblk);
++			ret = -EFSCORRUPTED;
++			goto err;
++		}
+ 		ext4_cache_extents(inode, eh);
++	}
+ 	/* walk through the tree */
+ 	while (i) {
+ 		ext_debug(inode, "depth %d: num %d, max %d\n",
+-- 
+2.43.0
 
 
