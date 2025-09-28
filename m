@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-835587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37ECBA7847
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:22:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E0BBA7859
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE8141897A8C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B851897B79
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB8029B764;
-	Sun, 28 Sep 2025 21:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6353284886;
+	Sun, 28 Sep 2025 21:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FlkpWXh3"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="mumLQ4Ly"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB08225D6
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 21:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EBD225D6
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 21:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759094535; cv=none; b=AilowWL4Rzeq1Bu4/Thf1EYd8G+MgtkJLTIKIRCl21DscWleWozh5bcp97gTQKRNyPFUAFACATF1kTQoKv1d1+W3ruW9L4r4M+AghpSzFM+q517gJ4ydAloeV/yetQT9ecGnY924eKgJKBGjPX0WdNGvx/RH3fDTXPY7fEP69CM=
+	t=1759094654; cv=none; b=nLeqgIyPmqnxRdrmfW/bTltTH9H8dfgQd9vdjwA7z8WAjjp37ODmet/ThS/oV2K9Y1xoWV54QIcPEJKP7XX7k+0p+Gf2jRUvG07sAsF9ENM2AmiONDAlLUppPaAxHkASi2gLffDYyFNunQcNlHjF43S4SuBaUIQOiwlm7ZJBFM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759094535; c=relaxed/simple;
-	bh=+Q5MesR7HdAhD0+v/uWSgN1Y3iib8z+4eaDVW2M7wZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l1Mrr83SzqHJMzxQdMWeoMo/kasrg2raLWhZTFeMhLjsvo/tAgBE90CrXkSk/sliC1AKOp8cgsHirfH7Km1DJgBnCmI6KJikL/ZbP4vmm1j4BZqw8Pvd7reJQuzYKvcP5Kxi5nmmvEeh13gnsg8WDMcvU4qw+DQFz5B0Mdo6b+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FlkpWXh3; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-426f9f275b2so12279945ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:22:13 -0700 (PDT)
+	s=arc-20240116; t=1759094654; c=relaxed/simple;
+	bh=cOs1jGf4tObphA/MyATHCw5E7vZEFM2EiP4B42o16HQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tOyt4Nbtfa3SfJkLZDDZvP+zfW2WgVqG0TQTS7fx7kSsb6GMO79HQqLyZsm4H6Rt8njNzb4mPrd3A6ZXJQ1jTDpPgzbeEqG1dBJ1G9k6F9k75glXX9Kd2g+qMuxyJhIpsz03t6LxSwr3NIr1FJbollUDnflGVF48EfwiyD4/JTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=mumLQ4Ly; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b54dd647edcso3472074a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1759094533; x=1759699333; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g09tOhd8i3LGVO3Ma+R2GpKg7N6ID+Lej0H4iQzvBbw=;
-        b=FlkpWXh3+DOnoDSNGQzuid9R4h67kS99Oy566cm/sBMnimb/0s9iJjFK+mA347UBjz
-         GT5HUwRgex1M8clGI91GJlrLldYImV9D12aNb9Qdai5uaKLYdmi5XHPIQbSY+UNx83ZU
-         eFoepmveUTSyIXvs3UyN2bXxbWpf+X/rV/p9c=
+        d=googlemail.com; s=20230601; t=1759094652; x=1759699452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f/EfDBi2iuXg+iTflyjOQYQZOOuaeW3hYJUN8DQ5IUg=;
+        b=mumLQ4Ly8DoUsfhydUAg7j33NFZNvBxPbHjDI8/zH5WbkV0Xq9P0sItAl67GPvXRxL
+         jSZgv0Y9mZN55IBWnSmzr5DsJkkFkq0qiR1hnb+66hDxvGn9hf/faydXjZi+6PH/pkSp
+         +GRr8nvtIgsEoG9934ZAyM5R49p+9CcM3RpQC/of7ipFAu4uT2we83HZjeDFnN3YTkVw
+         I1qFJtIY3pyQ1cbAGT+U3OZMcHFrGqXpZOG+9gXiWwiAfjq3ldLQjY3JaUeJeGBLzL8z
+         yHh6t5bnvhM+inPu7N/PC5FdaKrplucmG+7u9T4SEUkSW/WooK2haFX20l/+X16Hc1Mm
+         560g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759094533; x=1759699333;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g09tOhd8i3LGVO3Ma+R2GpKg7N6ID+Lej0H4iQzvBbw=;
-        b=I6YyLBZsUFi10y0r/YUQrdyb6YtVLNytqiKaw/S3H6b2DBh+33/HQYbAO0LHezjuH0
-         BwEDz68T5qDQcfcYV9CZPKZLotzQ7ip8UP3+OoXkMAmtN9VSHFTkzgQBfWBOB6s1nYS7
-         kAweRTijslLrNXVOSv6PiLhzxgrTzwHP1xKQK9ya5KKbpVKkK/3kqdM6qVMPdPP6of+h
-         NBnEwne2rN67S7rfRMMzB2pYe+aH08tGltcM5qvT03ROA1vm7qyYWO9j9/EFGUzM9csX
-         HofSuoWIPzU4qOFwNy+fYUmPQowNyOmyYgASxV0EUOncOtW0pZJky4f0C23V8ZdOSaDc
-         SW2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVhxh/Fupsq8FIRBaSIIY5XXEAuwIm2stM9sV0OZfedLYf2LR94ev7Gcq/2kxKR7hArMVnkvp/PS0OJaQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytmETz1kTlEb3uMn4OUgHofmU84XfTsvC08T/nNWItiuwvL8Ru
-	yymz+yXrINxCW56g2NUsFK8ukaOjZwH1phzjI3bSC/Ro2z3Ycr1SGfQYxUfuaWxBaJg=
-X-Gm-Gg: ASbGncvVSn25zCSGQgkfb/zpMWBUxfRmS0C8G1wYCXaDOsuRtg4bDtnTqZiKgRQ5+Rp
-	QjdMb1m6LIP6XUxkooJatjWrXd1HQgTxROntUcnTZntG5ANtbAYZuEghvojJ0tjlJAp5Q8SrBTH
-	EbIBwNDUy0F5uLXGTAh2G2q21PBdKqKRNQAulcFnnSzylBq3YUn7dJBVRmOgQoqsIynQ1emlcK+
-	WdKBHdIOXdBHmNxps7CayMhm4A9hRqIoTx/GFIhFDTh0WzocJQH4GanFztBO/i39T69/Kwd2s22
-	ib6M04wpPaXn8NjPUV9W4yjk80+C9p/4BnyZSYTz1u6hNG4E9RukGQxxNC6+5pfTslizA9Z4hJd
-	xwN9RJ8NLapXry0cgu8pjWvq2SipJ/9I4jpw=
-X-Google-Smtp-Source: AGHT+IGEE6j1ea7mA3zg2sHrANU4yNXVvLqMdz000SknmhP5748vqXwCYZrU1usN/WK2x4r+PZX3cg==
-X-Received: by 2002:a05:6e02:12cf:b0:424:9926:a97b with SMTP id e9e14a558f8ab-42595654326mr227342465ab.25.1759094533081;
-        Sun, 28 Sep 2025 14:22:13 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-425bc68e6fbsm50246345ab.17.2025.09.28.14.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Sep 2025 14:22:12 -0700 (PDT)
-Message-ID: <6e0d5120-868c-45fd-9ec5-67764a257ab5@linuxfoundation.org>
-Date: Sun, 28 Sep 2025 15:22:11 -0600
+        d=1e100.net; s=20230601; t=1759094652; x=1759699452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f/EfDBi2iuXg+iTflyjOQYQZOOuaeW3hYJUN8DQ5IUg=;
+        b=i9X6TyF0nb0PFse2BeQoln35JoBjmswar+Sjzw3MLFvmSQy284wjbehpsmNAmqzePB
+         cTFpiBnhNU3kM7BwvvcS6FK0nTVfLKiq6yqAjGpJicemFMStCwyOjUo8T3yj8yq6O3gc
+         +nBFGEU6ZoztjsUFvruaVMwZDwrKpd/XQ0VbS0CG/LemWidERyKE7dAnI5zczJriUgqg
+         HimY6gRd0yINC9Lr0AVczOxJxD5YfBULyfXe7/qrA28F7Me2HSE0dU4pj9qZZOjNuq2v
+         lszhXe/fG44s+ePUQwdhDkiOUMuNlGvtWnxiBhmNU6A9w2taguzc0LQJX8s1RlOM0KPn
+         lYDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFvpZHLiahYCyFveoiXdbQmyFtJ8roipD++zSrSfBI6i8Jv5gUHZWv+sWlK2ed07sNUm6jPBRTzH2kF6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7FVOklkHNgNTwsBBn/SdCTlm1/KsV2epr181yd3Hy8B4uqzyc
+	4dWmTDO93yUv+/tJL47/3d/DfBC96X+Tddpi+ddF9J9FsrMRscessOrqyu1rGLBl97ZKSUwFv4D
+	dkpPiJeqzZ3x+ZT406XStnncWvkqSbsk=
+X-Gm-Gg: ASbGnctIwKo/qgGXuR4kTOunCbalYdllWQvZW9OYSummVzEA7DvBj2wd2sDOI7hUk7v
+	kaFy4Yl63AiKEFeJ2xZu9Iy4S+JOVZgXEV1q1Z5mzeLSAtAWbVIqp1ssz/3/uUHbd3MuZF2tc8M
+	VaAUKiwx3qxSonnuU9S4n3BqcxsgL1QMnKBX1bRVB/E7hPlbtZEwgSMHldyDvBPYzLiGFJSf7Gp
+	8jwTEL9EBFogjlAKiA6zElZxl15OzAhoC3x5Ejn
+X-Google-Smtp-Source: AGHT+IGYeAH/2koMMwWRpMeTjHt3nx4vF27nPj6cQxfPYTjKMshJ5FnJQAOC0KdwVHl9l4KPM6h4tqlgjIdg+H3Sves=
+X-Received: by 2002:a17:903:19ee:b0:269:b6c8:4a4b with SMTP id
+ d9443c01a7336-27ed49c7798mr160858095ad.6.1759094652033; Sun, 28 Sep 2025
+ 14:24:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Error during building on next-20250926 - kunit.py run --alltests
- run
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- David Gow <davidgow@google.com>, johannes.berg@intel.com
-Cc: shuah <shuah@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- KUnit Development <kunit-dev@googlegroups.com>,
- Networking <netdev@vger.kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-References: <47b370c2-9ab2-419f-9d43-8da310fedb4a@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <47b370c2-9ab2-419f-9d43-8da310fedb4a@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250927130239.825060-1-christianshewitt@gmail.com>
+In-Reply-To: <20250927130239.825060-1-christianshewitt@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 28 Sep 2025 23:24:01 +0200
+X-Gm-Features: AS18NWDzM6EO1Jvv--jbu1zBUk9kHyWLoS06NGipbYnYIhNafpGwzdVcGq2jayY
+Message-ID: <CAFBinCCsTqsn06A5oVXGTW6PgmSQH0bHE+8PSftyWNRAbYUTcA@mail.gmail.com>
+Subject: Re: [PATCH] drm/meson: add support for 2560x1440 resolution output
+To: Christian Hewitt <christianshewitt@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Dongjin Kim <tobetter@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/28/25 15:11, Shuah Khan wrote:
-> Hi Thomas and David,
-> 
-> I am seeing the following error during "kunit.py run --alltests run"
-> next-20250926.
-> 
-> $ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=16
-> ERROR:root:/usr/bin/ld: drivers/net/wireless/intel/iwlwifi/tests/devinfo.o: in function `devinfo_pci_ids_config':
-> devinfo.c:(.text+0x2d): undefined reference to `iwl_bz_mac_cfg'
-> collect2: error: ld returned 1 exit status
-> make[3]: *** [../scripts/Makefile.vmlinux:72: vmlinux.unstripped] Error 1
-> make[2]: *** [/linux/linux_next/Makefile:1242: vmlinux] Error 2
-> make[1]: *** [/linux/linux_next/Makefile:248: __sub-make] Error 2
-> make: *** [Makefile:248: __sub-make] Error 2
+Hi Christian,
 
-Same problem when running - kunit.py run --alltests --arch x86_64
-> 
-> Possile intearction between these two commits: Note: linux-kselftext
-> kunit branch is fine I am going send kunit pr to Linus later today.
-> Heads up that "kunit.py run --alltests run" is failing on next-20250926
-> 
-> 
-> commit 031cdd3bc3f369553933c1b0f4cb18000162c8ff
-> Author: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> Date:   Mon Sep 8 09:03:38 2025 +0200
-> 
->      kunit: Enable PCI on UML without triggering WARN()
-> 
-> 
-> commit 137b0bb916f1addb2ffbefd09a6e3e9d15fe6100
-> Author: Johannes Berg <johannes.berg@intel.com>
-> Date:   Mon Sep 15 11:34:28 2025 +0300
-> 
->      wifi: iwlwifi: tests: check listed PCI IDs have configs
-> 
-> Note: linux-kselftext build just fine.
+On Sat, Sep 27, 2025 at 3:02=E2=80=AFPM Christian Hewitt
+<christianshewitt@gmail.com> wrote:
+[...]
+> @@ -894,6 +908,10 @@ static void meson_vclk_set(struct meson_drm *priv,
+>                         m =3D 0xf7;
+>                         frac =3D vic_alternate_clock ? 0x8148 : 0x10000;
+>                         break;
+> +               case 4830000:
+> +                       m =3D 0xc9;
+> +                       frac =3D 0xd560;
+> +                       break;
+Initially I thought this was wrong because it's only added for the
+G12A (which is also used on G12B and SM1) code-path, leaving out the
+GX SoCs.
 
-linux-kselftect kunit branch is fine.
+Was the 2560x1440 mode tested on a computer monitor or a TV?
+I suspect it's the former, so I think it expected the code to take the
+MESON_VCLK_TARGET_DMT path, which automatically calculates m and frac.
 
-thanks,
--- Shuah
+I'll give it a try on Friday as I do have a computer monitor with that
+resolution - so any hints for testing are welcome!
+
+
+Best regards,
+Martin
 
