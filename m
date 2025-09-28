@@ -1,107 +1,60 @@
-Return-Path: <linux-kernel+bounces-835322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082B6BA6B97
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:40:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6D9BA6BC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9A3189BAC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A663B4BD1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D762BEC4A;
-	Sun, 28 Sep 2025 08:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05142BEC41;
+	Sun, 28 Sep 2025 08:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dGNReM+r"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1aC0e7S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F6A225791;
-	Sun, 28 Sep 2025 08:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E882248AF;
+	Sun, 28 Sep 2025 08:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759048807; cv=none; b=aScr0aFCSyvB8o9ml5nVeiHR+ZsMRDpbB1jO3wT4zt9NdC4hUiAuf+Z9RmwBvBiDoiDP7jbljmmKB9qg6+rg6N7P23/74HQCUZmdC0vMMx/j4nU6BGXH5ZaWLmdVFRiSjXXsUI2UXMWjcf7S1VcD55GS809ob5/M4SXi1ZKllsU=
+	t=1759049134; cv=none; b=cQIOr/Lr1A1pEyXWpnQzAA3LJy1a9jLPBYCQUv07FRK2ol10iAiC+mN/QCXu8t5XFazCc33d5BirzVndG3tDO/pDfmz1QCRNVvERhMpIGP/oO2qGr1kCAip1Pfvp2mXOr5GtOkrSFtess61966guvIIe1TpfuEDkg/o0GyudfMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759048807; c=relaxed/simple;
-	bh=UAiDtMls/7PB7c4FD/jtapLq39n9wPN/G9K9tg8xa6U=;
+	s=arc-20240116; t=1759049134; c=relaxed/simple;
+	bh=6+lWkXIDs83yxVt9205UmMQwnhaToNASPxoh0v8cq1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ba/kW5ttVU1s5u88h8iaYpw+WqG8w646pSCOYwQmINxb2XNwVh4tkKBa/0muf1MdZFY4YvS3kzte75TKSYvZQCemG6CUaefvxQHchKn+VhxOVoDlwxfe3UX8RLVi3NGxJnVoRc2lRUN1sCGLAfxyJaDGar8hBn0eWn1wvJeAJrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dGNReM+r; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58RLKCJv018156;
-	Sun, 28 Sep 2025 08:40:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=26dBy+
-	6fvtP4nix+qumgkSsprwt5d+Cgeccq0M1JqCc=; b=dGNReM+r2Kz/zB7fb25my+
-	Ab8p3MFptjmNW0KYL7RwH3PpQnWX3+i2ClnyQdWfs5W9EeFbsIj7TTuenp5sZa7A
-	XLvQBvF6qvDxI9TGUQalbFCgbcRtrPiU1zmzeZykcEy4WbV3WhE2shyz7qom7+zm
-	9Xk1IeFtkuA0w0RfdxhKU3wxbz0Ravmd6hqqbJ1XkNXnvn2TRgAMWamWfWlqtDgL
-	9oKNjyiODvwdXOrce6prr4K5jVo0JHeJ+L9AClKifKMCfxga2to+/Y/VTJ5MnNhk
-	u0022j52AmDusD/DGjKa3zLIXmd2IEO8/05HPnXUHujw/ThbK9L1XGNtZwcpDjVw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7n7cxtg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 28 Sep 2025 08:40:00 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58S8dxZE024613;
-	Sun, 28 Sep 2025 08:39:59 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7n7cxtd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 28 Sep 2025 08:39:59 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58S3FPmR024198;
-	Sun, 28 Sep 2025 08:39:58 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evy0rsdh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 28 Sep 2025 08:39:58 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58S8ds7O18022900
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 28 Sep 2025 08:39:54 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 79E4D20043;
-	Sun, 28 Sep 2025 08:39:54 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9B6B520040;
-	Sun, 28 Sep 2025 08:39:53 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.87.130.219])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Sun, 28 Sep 2025 08:39:53 +0000 (GMT)
-Date: Sun, 28 Sep 2025 10:39:51 +0200
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Dust Li <dust.li@linux.alibaba.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-        Simon
- Horman <horms@kernel.org>,
-        "D. Wythe" <alibuda@linux.alibaba.com>,
-        Sidraya
- Jayagond <sidraya@linux.ibm.com>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Mahanta Jambigi <mjambigi@linux.ibm.com>,
-        Tony Lu
- <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH net-next v3 1/2] net/smc: make wr buffer count
- configurable
-Message-ID: <20250928103951.6464dfd3.pasic@linux.ibm.com>
-In-Reply-To: <aNiXQ_UfG9k-f9-n@linux.alibaba.com>
-References: <20250921214440.325325-1-pasic@linux.ibm.com>
-	<20250921214440.325325-2-pasic@linux.ibm.com>
-	<7cc2df09-0230-40cb-ad4f-656b0d1d785b@redhat.com>
-	<20250925132540.74091295.pasic@linux.ibm.com>
-	<20250928005515.61a57542.pasic@linux.ibm.com>
-	<aNiXQ_UfG9k-f9-n@linux.alibaba.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=IZIke//UhFF1sTDB5L8uNU0XatgOngfhR8KWB593zvDQk82AqauLvKpeXuybXPpRwuWDV9imjYGAPS29MWz2pfLdxF9zbT6D4Y8kRP1d1mVxd7WJ7GV863c+uNf8+SIS3x3RcRK1Ge/YUYYo7B1uEOXsvfyV73uJ0oG5YqvVfIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1aC0e7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17156C4CEF0;
+	Sun, 28 Sep 2025 08:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759049134;
+	bh=6+lWkXIDs83yxVt9205UmMQwnhaToNASPxoh0v8cq1o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=U1aC0e7Si4iOf2qZrbsLw1sSiN2EOikX9267mqstsPDAgDHsvmn66hSCrJMc4eCuF
+	 DgyGrcjDD6LUe5Pg4MhV+kIVHcyppYRYFYoo2Vtr83xwc6xMPvZzWH9K+LMRjwhNDz
+	 pQJhCozQNKna5MveUKSzxhmwK1lGIbPKZXaz/xqoVmRVA+9o8wzj6VkIKgO0KSb+hA
+	 Hi9OLN9gqZ/65Y3lTDAAeB45jOYoVhpILUZXfjRDXuFsUYjvYpQHHx/uYBw63Hp+lw
+	 mQ8rRKJ/ESHW4prPnYd75rDvx4ZjVS8hbv5pK8McfsIIVxuzkWHekUK1CjmDPb3D37
+	 +L5J2OtuJynyw==
+Date: Sun, 28 Sep 2025 09:45:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 3/9] iio: imu: inv_icm45600: add buffer support in
+ iio devices
+Message-ID: <20250928094524.52d492a9@jic23-huawei>
+In-Reply-To: <20250924-add_newport_driver-v6-3-76687b9d8a6e@tdk.com>
+References: <20250924-add_newport_driver-v6-0-76687b9d8a6e@tdk.com>
+	<20250924-add_newport_driver-v6-3-76687b9d8a6e@tdk.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,88 +62,223 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: c6gA6HzoJG_m__DF3vzOC0Er79P5vPYZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX0Iym0TzM4LUD
- 7wRlax0L/QwIwSUsS5j6N6/ArlJa1Q9kFKUbdGOcc/g/g3mtH+hEB59Uiky3WvZgMLj1x9osgvc
- Afl9mG5VU4gb8Ps9Fc1F0EG8PsImEV+IvYSqhW9mUym1JK+XMDsZ0g5x4LQTS9r84bs2g6GIXzS
- axOeoVboDQ86kwcjFHPj+YvOpWGY6lTIjcgT33RgLImJ5jBdSjos8P555sXKP79zR8vCf+OYNHG
- gnYQ1ocWRp0wkdPnXHWXDB56pnOauS1xZtW8ecLMpkdklvDUV/ROYargbWz36ChRgf9clG9LBU2
- DtkHSaijjTCd8PcRNLIKI3vojNpNNAEw9T37W2QzyF8QmNzAyIQ4ffg+WFtevUOJQj7Nk/Up/XK
- sS8M3FGfllCwgWOZzOKyJZbxHvFTrw==
-X-Proofpoint-GUID: P1hxPPalkpptVuof-Jso_qIsXcbYFFNG
-X-Authority-Analysis: v=2.4 cv=T7qBjvKQ c=1 sm=1 tr=0 ts=68d8f460 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=SRrdq9N9AAAA:8 a=LpznLg-6pxwcTV0XsXIA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-28_04,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+Content-Transfer-Encoding: 7bit
 
-On Sun, 28 Sep 2025 10:02:43 +0800
-Dust Li <dust.li@linux.alibaba.com> wrote:
+On Wed, 24 Sep 2025 09:23:56 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
 
-> >Unfortunately I don't quite understand why qp_attr.cap.max_send_wr is 3
-> >times the number of send WR buffers we allocate. My understanding
-> >is that qp_attr.cap.max_send_wr is about the number of send WQEs.  
+> From: Remi Buisson <remi.buisson@tdk.com>
 > 
-> We have at most 2 RDMA Write for 1 RDMA send. So 3 times is necessary.
-> That is explained in the original comments. Maybe it's better to keep it.
+> Add FIFO control functions.
+> Support hwfifo watermark by multiplexing gyro and accel settings.
+> Support hwfifo flush.
 > 
-> ```
-> .cap = {
->                 /* include unsolicited rdma_writes as well,
->                  * there are max. 2 RDMA_WRITE per 1 WR_SEND
->                  */
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+Hi Remi,
 
-But what are "the unsolicited" rdma_writes? I have heard of
-unsolicited receive, where the data is received without
-consuming a WR previously put on the RQ on the receiving end, but
-the concept of unsolicited rdma_writes eludes me completely.
+A few trivial things in here as well.
 
-I guess what you are trying to say, and what I understand is
-that we first put the payload into the RMB of the remote, which
-may require up 2 RDMA_WRITE operations, probably because we may
-cross the end (and start) of the array that hosts the circular
-buffer, and then we send a CDC message to update the cursor.
+Jonathan
 
-For the latter a  ib_post_send() is used in smc_wr_tx_send()
-and AFAICT it consumes a WR from wr_tx_bufs. For the former
-we consume a single wr_tx_rdmas which and each wr_tx_rdmas
-has 2 WR allocated.
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600.h b/drivers/iio/imu/inv_icm45600/inv_icm45600.h
+> index 5f637e2f2ec8f1537459459dbb7e8a796d0ef7a6..aac8cd852c12cfba5331f2b7c1ffbbb2ed23d1c7 100644
+> --- a/drivers/iio/imu/inv_icm45600/inv_icm45600.h
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600.h
+> @@ -5,6 +5,7 @@
+>  #define INV_ICM45600_H_
+>  
+>  #include <linux/bits.h>
+> +#include <linux/limits.h>
 
-And all those WRs need a WQE. So I guess now I do understand
-SMC_WR_BUF_CNT, but I find the comment still confusing like
-hell because of these unsolicited rdma_writes.
+Why this in the header?  Should be only needed in some of the c files I think
+so push the include down there.
 
-Thank you for the explanation! It was indeed helpful! Let
-me try to come up with a better comment -- unless somebody
-manages to explain "unsolicited rdma_writes" to me.
+>  #include <linux/mutex.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+> @@ -14,6 +15,8 @@
+>  #include <linux/iio/common/inv_sensors_timestamp.h>
+>  #include <linux/iio/iio.h>
+>  
+> +#include "inv_icm45600_buffer.h"
+> +
+>  #define INV_ICM45600_REG_BANK_MASK	GENMASK(15, 8)
+>  #define INV_ICM45600_REG_ADDR_MASK	GENMASK(7, 0)
+>  
+> @@ -94,6 +97,8 @@ struct inv_icm45600_sensor_conf {
+>  	u8 filter;
+>  };
+>  
+> +#define INV_ICM45600_SENSOR_CONF_KEEP_VALUES { U8_MAX, U8_MAX, U8_MAX, U8_MAX }
+> +
+>  struct inv_icm45600_conf {
+>  	struct inv_icm45600_sensor_conf gyro;
+>  	struct inv_icm45600_sensor_conf accel;
+> @@ -122,6 +127,7 @@ struct inv_icm45600_chip_info {
+>   *  @indio_accel:	accelerometer IIO device.
+>   *  @chip_info:		chip driver data.
+>   *  @timestamp:		interrupt timestamps.
+> + *  @fifo:		FIFO management structure.
+>   *  @buffer:		data transfer buffer aligned for DMA.
+>   */
+>  struct inv_icm45600_state {
+> @@ -138,6 +144,7 @@ struct inv_icm45600_state {
+>  		s64 gyro;
+>  		s64 accel;
+>  	} timestamp;
+> +	struct inv_icm45600_fifo fifo;
+>  	union {
+>  		u8 buff[2];
+>  		__le16 u16;
+> @@ -190,6 +197,7 @@ struct inv_icm45600_sensor_state {
+>  #define INV_ICM45600_FIFO_CONFIG0_MODE_BYPASS		0
+>  #define INV_ICM45600_FIFO_CONFIG0_MODE_STREAM		1
+>  #define INV_ICM45600_FIFO_CONFIG0_MODE_STOP_ON_FULL	2
+> +#define INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MASK	GENMASK(5, 0)
+>  #define INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MAX	0x1F
+>  
+>  #define INV_ICM45600_REG_FIFO_CONFIG2			0x0020
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f81a85c5c77a0b0bc729734a1256af0c896c8fbd
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+> @@ -0,0 +1,486 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/* Copyright (C) 2025 Invensense, Inc. */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/minmax.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+> +#include <linux/time.h>
+> +#include <linux/types.h>
+> +
+> +#include <asm/byteorder.h>
+> +
+> +#include <linux/iio/buffer.h>
+> +#include <linux/iio/common/inv_sensors_timestamp.h>
+> +#include <linux/iio/iio.h>
+> +
+> +#include "inv_icm45600_buffer.h"
+> +#include "inv_icm45600.h"
+> +
+> +/* FIFO header: 1 byte */
+> +#define INV_ICM45600_FIFO_EXT_HEADER		BIT(7)
+> +#define INV_ICM45600_FIFO_HEADER_ACCEL		BIT(6)
+> +#define INV_ICM45600_FIFO_HEADER_GYRO		BIT(5)
+> +#define INV_ICM45600_FIFO_HEADER_HIGH_RES	BIT(4)
+> +#define INV_ICM45600_FIFO_HEADER_TMST_FSYNC	GENMASK(3, 2)
+> +#define INV_ICM45600_FIFO_HEADER_ODR_ACCEL	BIT(1)
+> +#define INV_ICM45600_FIFO_HEADER_ODR_GYRO	BIT(0)
+> +
+> +struct inv_icm45600_fifo_1sensor_packet {
+> +	u8 header;
+> +	struct inv_icm45600_fifo_sensor_data data;
+> +	s8 temp;
+> +} __packed;
+> +
+> +struct inv_icm45600_fifo_2sensors_packet {
+> +	u8 header;
+> +	struct inv_icm45600_fifo_sensor_data accel;
+> +	struct inv_icm45600_fifo_sensor_data gyro;
+> +	s8 temp;
+> +	__le16 timestamp;
+> +} __packed;
 
->         .max_send_wr = SMC_WR_BUF_CNT * 3,
->         .max_recv_wr = SMC_WR_BUF_CNT * 3,
->         .max_send_sge = SMC_IB_MAX_SEND_SGE,
->         .max_recv_sge = lnk->wr_rx_sge_cnt,
->         .max_inline_data = 0,
-> },
-> ```
-> 
-> >I assume that qp_attr.cap.max_send_wr == qp_attr.cap.max_recv_wr
-> >is not something we would want to preserve.  
-> 
-> IIUC, RDMA Write won't consume any RX wqe on the receive side, so I think
-> the .max_recv_wr can be SMC_WR_BUF_CNT if we don't use RDMA_WRITE_IMM.
 
-Maybe we don't want to assume somebody else (another implementation)
-would not use immediate data. I'm not sure. But I don't quite understand
-the why the relationship between the send and the receive side either.
+> +
+> +int inv_icm45600_buffer_set_fifo_en(struct inv_icm45600_state *st,
+> +				    unsigned int fifo_en)
+> +{
+> +	unsigned int mask, val;
+> +	int ret;
+> +
+> +	mask = INV_ICM45600_FIFO_CONFIG3_GYRO_EN |
+> +	       INV_ICM45600_FIFO_CONFIG3_ACCEL_EN;
+> +
+> +	if ((fifo_en & INV_ICM45600_SENSOR_GYRO) || (fifo_en & INV_ICM45600_SENSOR_ACCEL))
+> +		val = (INV_ICM45600_FIFO_CONFIG3_GYRO_EN | INV_ICM45600_FIFO_CONFIG3_ACCEL_EN);
+maybe val = mask;?
+> +	else
+> +		val = 0;
+> +
+> +	ret = regmap_update_bits(st->map, INV_ICM45600_REG_FIFO_CONFIG3, mask, val);
+Could use
+	ret = regmap_assign_bits(st->map, INV_ICM45600_REG_FIFO_CONFIG3, mask,
+				 (fifo_en & INV_ICM45600_SENSOR_GYRO) ||
+				 (fifo_en & INV_ICM45600_SENSOR_ACCEL));
 
-Regards,
-Halil
+or something like.
+	if ((fifo_en & INV_ICM45600_SENSOR_GYRO) || (fifo_en & INV_ICM45600_SENSOR_ACCEL))
+		ret = regmap_set_bits(st->map, INV_IC..., mask);
+	else
+		ret = regmap_clear_bits();
+
+Anyhow, up to you onthis one as none of the options look perfect to me.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->fifo.en = fifo_en;
+> +	inv_icm45600_buffer_update_fifo_period(st);
+> +
+> +	return 0;
+> +}
+
+
+
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.h b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0c8caa8287dd4373cf11bb6c7b913a6c49e9eee5
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.h
+
+> +
+> +/**
+> + * struct inv_icm45600_fifo - FIFO state variables
+> + * @on:		reference counter for FIFO on.
+> + * @en:		bits field of INV_ICM45600_SENSOR_* for FIFO EN bits.
+> + * @period:	FIFO internal period.
+> + * @watermark:	watermark configuration values for accel and gyro.
+Given the contents of this to me look like things to also document.e
+ * @watermark.gyro:	....
+etc as well would be good to add
+
+> + * @count:	number of bytes in the FIFO data buffer.
+> + * @nb:		gyro, accel and total samples in the FIFO data buffer.
+
+This is more obvious.  Check if the kernel-doc script minds these subfields not
+being defined.  If it does, add a the trivial documentation just to squash warnings
+and make it easier to spot real issues.
+
+> + * @data:	FIFO data buffer aligned for DMA (8kB)
+> + */
+> +struct inv_icm45600_fifo {
+> +	unsigned int on;
+> +	unsigned int en;
+> +	u32 period;
+> +	struct {
+> +		unsigned int gyro;
+> +		unsigned int accel;
+> +		unsigned int eff_gyro;
+> +		unsigned int eff_accel;
+> +	} watermark;
+> +	size_t count;
+> +	struct {
+> +		size_t gyro;
+> +		size_t accel;
+> +		size_t total;
+> +	} nb;
+> +	u8 *data;
+
+> +				     unsigned int count);
+> +
+> +#endif
+
+
 
