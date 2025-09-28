@@ -1,366 +1,208 @@
-Return-Path: <linux-kernel+bounces-835427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DADBA70D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:19:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F11BA70D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 371FD17987A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:19:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EB5E7AA951
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D749628C864;
-	Sun, 28 Sep 2025 13:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C2B2D878C;
+	Sun, 28 Sep 2025 13:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FT4GYT/2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nyi4I9hB"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C8E1C862F
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC43231A24
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759065577; cv=none; b=jd9hmY6yuCNROCzNttcKf0Oj3xIepu22DF01Y96BvrszcGgCXe2cWV+0o1c6X8DwuRcASMbIcaXx1tPSnCuA3P5Qt5p4XAiszoFCvLSd5CW0TANyw6AnOH6QdettGFYYc6aO6Y62bPgniPCaHiRysLlrRsm1mSCiwrtj0myYfi0=
+	t=1759065665; cv=none; b=FlggXNOfnq6OKRTvoWctyqlmD8Gm3Byrl8eXqqTi0hG/ouplRAFXZlmNt8tjdUIUkT+VtS4nhhXsFN5s8BazF4AgFbCVOojBE0c4eJ/qZyfU+a1Oagg/Exiw0mR2zrtEM+0eHEE9lgEdCqFYNPRTBtWU3EBru6/epCn0bBQ6wCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759065577; c=relaxed/simple;
-	bh=KczxhiO3rq4LfuMibjOQzQvDn+yuz+agq6FXGFipxHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFPsr9KGLQrh4LOnU15FRMRPzPSf0jYHTGpPjRxNBqc0fW4GwmkD/imHHuZiKKQPxZjRIawbPIWKMjkX7Q/75MK0JkQ91+1BJTb06DuhzBYWeoAt8NuYaZWbHOHNS75NNhyaTDUu7igh2f/GEEBZQ51tzFUOgiMVliEkDRTN0YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FT4GYT/2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759065573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=snNrG5EeW/S+hcRKJgw63KoPcdk3l0w22xmJa+ekRf8=;
-	b=FT4GYT/2++6njNY53SO4lAdnJ03aiJai0sDAVcmd3rnbBGoLcfkJhTTjDthSJr3zCN7akJ
-	cuJ6GiCDFkCKJ3sTabyUpbFoLOme55yAWRyKyGj/HwMRGzjGI8uMg6yqcsKiYazbUrHJgg
-	AnjjmCM5fVEkduWtzP17IJm5Ni2waWU=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-SMOCgHnLP0GELHjSKV5CTw-1; Sun, 28 Sep 2025 09:19:32 -0400
-X-MC-Unique: SMOCgHnLP0GELHjSKV5CTw-1
-X-Mimecast-MFC-AGG-ID: SMOCgHnLP0GELHjSKV5CTw_1759065571
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7811a602576so2960697b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:19:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759065571; x=1759670371;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1759065665; c=relaxed/simple;
+	bh=d9v0N6XzVLqmTCQJRlFN7hY1wuglkNQ9teZxOx8L8Tg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uH2VNvQ1kHdaXEufZOm8pdSezPHaS6SxwdDGHRldYvB6O6J7Opuu03QNG4Af3+8/XeCSGuMDpnKu/H9jHf5pEdS5fKiVkixwhiObGudZ+fOdr8nPs03sRshd0uS61lI86b9HWed0ReKXUnxTQrOJGvNv6OcMDXZsmohbI0juKa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nyi4I9hB; arc=none smtp.client-ip=209.85.215.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b5516ee0b0bso2654442a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759065663; x=1759670463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=snNrG5EeW/S+hcRKJgw63KoPcdk3l0w22xmJa+ekRf8=;
-        b=sv+0Mp1TKvvXbxMl7l6Bgu/WH7vsnY5rz3dSfVH55IIbZxwlS8mHNsq2ocwWP1DTw1
-         tl7e605ju1eGDq0P5I+w7PuunJ65ilBUBNN7S1spAdc5zpsr4fTF+5ZzhZ2nFZ1vRgQ+
-         I8LCOCmqs8iYgB9WMmshOZiM3iCueZtsSkgXAu2kljpSMGXrRhZrzRG6BBkel4HbTwuo
-         YBoFPzkBIwbtX1Gf+6Zh0yGXz96pj6tskRWPh+4jEgQKJhRwERlNny7ewacJvy9viQUq
-         edVQ8/vrkVilFTW0b5wysq1+7gsn99pO2+LKKri2lnsakb4t1px4fUyeEjqIONo9VpfQ
-         MJpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZUobedCE78KhtA9djwdE2AWAhYydAhNf9NpQ6Pa6DHhy2xMGA82xBJNu/GqGiPNGQeuhLmg0rL0pUgGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN4Xz3oWj3VHwHum0IebnxnlLRLbyxRN93NMPgx8OLcbDdJn+e
-	JaoljWwU7E0DUC7uiyvwniQi+E5hGrNywfgRXQBiFXxpqcmbOm1qh6w8W0YsqikEVfdJbf6i6Rv
-	qudZ5o7ZcYdD+hDdQWrLwZqC7CqGx7X7LZRcH2MDeeP3r/3qv51NpTif1mqxpbYdVtg==
-X-Gm-Gg: ASbGncv47cfa3ozORjVg6bWuYy5I/VbW2XlzIuWtDAwZUQhovR7CtNtGwkCTGvVbze5
-	+ggabwYfF+xiB/Qu8wCuyHJwHhKCyPGRbWTDGjDVRAyLH9MZ682wazQ19BZeBDP0rmhoJSDE4m8
-	/dk4aYz2ZvyPtkix1QZb8U3Ne5bm2g4jzBLIPGE5egB34qnKQynYh7VO1SWOQK8LYapPAcsqb8e
-	WPvwrTGhE/f2sK9VeeUAJcD6Yu9qWDrvcW8pCo0nRmp2S+MnEOfMw8WVGmI2ORAeWfBwlO5MmhV
-	QvfpawJOBYki0kBkQThprjm/RcFkKIslyQEV9B23b3B/VRtpRiqzJJnKd1E813P+az/1FUc9C0x
-	6SMNk
-X-Received: by 2002:a05:6a00:3e27:b0:781:2538:bf95 with SMTP id d2e1a72fcca58-7812538c1afmr5753908b3a.10.1759065571012;
-        Sun, 28 Sep 2025 06:19:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGoygR7HngElZikzt76IKHuWl2MqmxpbWRCgwmp2pHOfMa3v0CliuV3U0gtlzeqwn7G94AEeQ==
-X-Received: by 2002:a05:6a00:3e27:b0:781:2538:bf95 with SMTP id d2e1a72fcca58-7812538c1afmr5753895b3a.10.1759065570588;
-        Sun, 28 Sep 2025 06:19:30 -0700 (PDT)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-782e36c803fsm2078160b3a.38.2025.09.28.06.19.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 06:19:30 -0700 (PDT)
-Date: Sun, 28 Sep 2025 21:19:24 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <cover.1758264169.git.ojaswin@linux.ibm.com>
- <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+        bh=vuyN8LaIynLMOcVVAC8DjDfcTekaNgJ1YBpvc463uzg=;
+        b=Nyi4I9hBu0+wUzOWjpDFudTwDO1bbWGHMK2gs22bRKybJXeLOB8wUrrYHfr/i/0Zn3
+         9cmllc1DkMPLi93O16KLZN3VwEr/L+N958HKnYkxtIhc0rxniA3lcIAvLrBBlMnEG5Hv
+         JaorvWHG1QGPWzd9ATVQdSFpe+SN9YSrud87DqgZiXPeDFtv/s4ZSjfQWQXIezvrxWLq
+         27KbKOq/km0aSks/kfwrJOfwQsBQY4vFY7tTk4X5/6upM3MBktvd7jM7igeGB79/J7AZ
+         5oBhp6PlZnmS+1E15FARXYsSSoYxObbtxJNRQINLQL/DowFERTP6TcJECQcDvNFGd18Z
+         tlyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759065663; x=1759670463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vuyN8LaIynLMOcVVAC8DjDfcTekaNgJ1YBpvc463uzg=;
+        b=SJ6zGdagIcvIVVBDkDwzBQz5NC6j1LJdCEAbO/OyhLWCZ0ps73jdVVqmOLizCrNhyy
+         OItbbI29MRHPAcUwTB/7uUTTMU/N+VqpP2tEOprlTazAn8nqvpVsEutczwqaQhKTm1X0
+         CBg5MQo9qfCxrf+qnKdUroqNN/VVRotZYIT29cKinbbpdzL5c3zk3wrFv+pTNDKuyUmc
+         R+v3cMps8FjO+aORpVhuS6K3xcmQ3DksedKtztNX/1JQ/uALetKL0Jpun5uGMpZR3x/d
+         DMqM6uJcHeMPpmXobbHQ9Co85FntQvXRNnCiIVOxBcpbPMH2TIJIyJ9HiNCNqKitRK9q
+         AmOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2AbfB1jswsC3yVpvZlY0cTPQyBBmLJ6/xQfLBRwCQshQVXq9rqagjSXlMECQvQmWs2HhgxaQDtizSwrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhY7WgptmnNz6q+1iv8VCbezvVx5HXFJ+lbTe/LkaCjWQGp9pZ
+	FeaKT96ZzbwsH1u8ilDPN2svTno5Jji4Lo946WrHjRwjO8TRrOfUtbe/REx95C9Yx5yclCflwb3
+	NQgKmkPk3kzouavEG+4lDKl9dEla98IUD94/cuSlesQ==
+X-Gm-Gg: ASbGncsP7rz4iXd4FI49NCYxv1hBgoiXgOD4mPA0sRu12WdrGU5RYcBX+lM3SN/JCxX
+	9nlaPoqvG/FUg4/uZdR64nT9DRSwFZwa+IJ28TGE+9P0OdOpGutfziLi4zZ284Vmxr+Qmh/XBjQ
+	Ll0C7lVpdKf8TAjxpTpFHX7trhikg4DP15c3EfUMpV1oMQQP1ulM0wPPski7Ej0C47Oqp6WRjMw
+	ncNJfw=
+X-Google-Smtp-Source: AGHT+IFRY7I1KjBJHD7Gi4iDoz0ScrOwSI8gibtvMBpXyv84g3To5Nz+4EvBusFuikjVvBGDoVwGH9iWdxQZsANhsOE=
+X-Received: by 2002:a17:902:dac2:b0:260:3c5d:9c2 with SMTP id
+ d9443c01a7336-27ed4a93585mr142568915ad.48.1759065662606; Sun, 28 Sep 2025
+ 06:21:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+References: <20250927064926.1496579-1-jianyungao89@gmail.com> <933cfdc7-9e3f-4dec-a5d9-bb193b0b7f13@arm.com>
+In-Reply-To: <933cfdc7-9e3f-4dec-a5d9-bb193b0b7f13@arm.com>
+From: Jianyun Gao <jianyungao89@gmail.com>
+Date: Sun, 28 Sep 2025 21:20:54 +0800
+X-Gm-Features: AS18NWD5h28x_EqzgNeA5bm5R8WhOU4cAhQuKUd1TqaJB4e2HcCJNRb3F5Oq-pY
+Message-ID: <CAHP3+4DpW1R4nP2c5JOK_==zDXBRkHyJggBp4KrCxv7dPfb3Eg@mail.gmail.com>
+Subject: Re: [PATCH] mm/hugetlb: Fix some typos in hugetlb module
+To: Dev Jain <dev.jain@arm.com>
+Cc: linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 12:17:57PM +0530, Ojaswin Mujoo wrote:
-> Implement atomic write support to help fuzz atomic writes
-> with fsx.
-> 
-> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: John Garry <john.g.garry@oracle.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> ---
+On Sun, Sep 28, 2025 at 8:56=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
+>
+>
+> On 27/09/25 12:19 pm, jianyun.gao wrote:
+> > There are som typos in the code comments as follows:
+> >
+> >    differenciate =3D=3D> differentiate
+> >    refernece =3D=3D> reference
+> >    permissons =3D=3D> permissions
+> >    indepdenent =3D=3D> independent
+> >    Spliting =3D=3D> Splitting
+> >
+> > Just fix it.
+> >
+> > Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
+> > ---
+> >   mm/hugetlb.c         | 6 +++---
+> >   mm/hugetlb_vmemmap.c | 6 +++---
+> >   2 files changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index eed59cfb5d21..8ff9edd09504 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -2954,7 +2954,7 @@ typedef enum {
+> >        * NOTE: This is mostly identical to MAP_CHG_NEEDED, except
+> >        * that currently vma_needs_reservation() has an unwanted side
+> >        * effect to either use end() or commit() to complete the
+> > -      * transaction.  Hence it needs to differenciate from NEEDED.
+> > +      * transaction.  Hence it needs to differentiate from NEEDED.
+> >        */
+> >       MAP_CHG_ENFORCED =3D 2,
+> >   } map_chg_state;
+> > @@ -5998,7 +5998,7 @@ void __unmap_hugepage_range(struct mmu_gather *tl=
+b, struct vm_area_struct *vma,
+> >       /*
+> >        * If we unshared PMDs, the TLB flush was not recorded in mmu_gat=
+her. We
+> >        * could defer the flush until now, since by holding i_mmap_rwsem=
+ we
+> > -      * guaranteed that the last refernece would not be dropped. But w=
+e must
+> > +      * guaranteed that the last reference would not be dropped. But w=
+e must
+> >        * do the flushing before we return, as otherwise i_mmap_rwsem wi=
+ll be
+> >        * dropped and the last reference to the shared PMDs page might b=
+e
+> >        * dropped as well.
+> > @@ -7179,7 +7179,7 @@ long hugetlb_change_protection(struct vm_area_str=
+uct *vma,
+> >               } else if (unlikely(is_pte_marker(pte))) {
+> >                       /*
+> >                        * Do nothing on a poison marker; page is
+> > -                      * corrupted, permissons do not apply.  Here
+> > +                      * corrupted, permissions do not apply.  Here
+>
+> Can also fix the extra space between "apply" and "Here".
 
-Hmm... this patch causes more regular fsx test cases fail on old kernel,
-(e.g. g/760, g/617, g/263 ...) except set "FSX_AVOID=-a". Is there a way
-to disable "atomic write" automatically if it's not supported by current
-system?
+Sure, I will fix it in the next patch.
 
-Thanks,
-Zorro
+>
+> >                        * pte_marker_uffd_wp()=3D=3Dtrue implies !poison
+> >                        * because they're mutual exclusive.
+> >                        */
+> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > index ba0fb1b6a5a8..e6f79b2c63ee 100644
+> > --- a/mm/hugetlb_vmemmap.c
+> > +++ b/mm/hugetlb_vmemmap.c
+> > @@ -75,7 +75,7 @@ static int vmemmap_split_pmd(pmd_t *pmd, struct page =
+*head, unsigned long start,
+> >       if (likely(pmd_leaf(*pmd))) {
+> >               /*
+> >                * Higher order allocations from buddy allocator must be =
+able to
+> > -              * be treated as indepdenent small pages (as they can be =
+freed
+> > +              * be treated as independent small pages (as they can be =
+freed
+> >                * individually).
+> >                */
+> >               if (!PageReserved(head))
+> > @@ -684,7 +684,7 @@ static void __hugetlb_vmemmap_optimize_folios(struc=
+t hstate *h,
+> >               ret =3D hugetlb_vmemmap_split_folio(h, folio);
+> >
+> >               /*
+> > -              * Spliting the PMD requires allocating a page, thus lets=
+ fail
+> > +              * Splitting the PMD requires allocating a page, thus let=
+s fail
+>
+> lets -> let's or let us
 
->  ltp/fsx.c | 115 +++++++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 110 insertions(+), 5 deletions(-)
-> 
-> diff --git a/ltp/fsx.c b/ltp/fsx.c
-> index 163b9453..bdb87ca9 100644
-> --- a/ltp/fsx.c
-> +++ b/ltp/fsx.c
-> @@ -40,6 +40,7 @@
->  #include <liburing.h>
->  #endif
->  #include <sys/syscall.h>
-> +#include "statx.h"
->  
->  #ifndef MAP_FILE
->  # define MAP_FILE 0
-> @@ -49,6 +50,10 @@
->  #define RWF_DONTCACHE	0x80
->  #endif
->  
-> +#ifndef RWF_ATOMIC
-> +#define RWF_ATOMIC	0x40
-> +#endif
-> +
->  #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
->  
->  /* Operation flags (bitmask) */
-> @@ -110,6 +115,7 @@ enum {
->  	OP_READ_DONTCACHE,
->  	OP_WRITE,
->  	OP_WRITE_DONTCACHE,
-> +	OP_WRITE_ATOMIC,
->  	OP_MAPREAD,
->  	OP_MAPWRITE,
->  	OP_MAX_LITE,
-> @@ -200,6 +206,11 @@ int	uring = 0;
->  int	mark_nr = 0;
->  int	dontcache_io = 1;
->  int	hugepages = 0;                  /* -h flag */
-> +int	do_atomic_writes = 1;		/* -a flag disables */
-> +
-> +/* User for atomic writes */
-> +int awu_min = 0;
-> +int awu_max = 0;
->  
->  /* Stores info needed to periodically collapse hugepages */
->  struct hugepages_collapse_info {
-> @@ -288,6 +299,7 @@ static const char *op_names[] = {
->  	[OP_READ_DONTCACHE] = "read_dontcache",
->  	[OP_WRITE] = "write",
->  	[OP_WRITE_DONTCACHE] = "write_dontcache",
-> +	[OP_WRITE_ATOMIC] = "write_atomic",
->  	[OP_MAPREAD] = "mapread",
->  	[OP_MAPWRITE] = "mapwrite",
->  	[OP_TRUNCATE] = "truncate",
-> @@ -422,6 +434,7 @@ logdump(void)
->  				prt("\t***RRRR***");
->  			break;
->  		case OP_WRITE_DONTCACHE:
-> +		case OP_WRITE_ATOMIC:
->  		case OP_WRITE:
->  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
->  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
-> @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
->  	file_size = offset + size;
->  }
->  
-> +static int is_power_of_2(unsigned n) {
-> +	return ((n & (n - 1)) == 0);
-> +}
-> +
-> +/*
-> + * Round down n to nearest power of 2.
-> + * If n is already a power of 2, return n;
-> + */
-> +static int rounddown_pow_of_2(int n) {
-> +	int i = 0;
-> +
-> +	if (is_power_of_2(n))
-> +		return n;
-> +
-> +	for (; (1 << i) < n; i++);
-> +
-> +	return 1 << (i - 1);
-> +}
-> +
->  void
->  dowrite(unsigned offset, unsigned size, int flags)
->  {
-> @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
->  	offset -= offset % writebdy;
->  	if (o_direct)
->  		size -= size % writebdy;
-> +	if (flags & RWF_ATOMIC) {
-> +		/* atomic write len must be between awu_min and awu_max */
-> +		if (size < awu_min)
-> +			size = awu_min;
-> +		if (size > awu_max)
-> +			size = awu_max;
-> +
-> +		/* atomic writes need power-of-2 sizes */
-> +		size = rounddown_pow_of_2(size);
-> +
-> +		/* atomic writes need naturally aligned offsets */
-> +		offset -= offset % size;
-> +
-> +		/* Skip the write if we are crossing max filesize */
-> +		if ((offset + size) > maxfilelen) {
-> +			if (!quiet && testcalls > simulatedopcount)
-> +				prt("skipping atomic write past maxfilelen\n");
-> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> +			return;
-> +		}
-> +	}
->  	if (size == 0) {
->  		if (!quiet && testcalls > simulatedopcount && !o_direct)
->  			prt("skipping zero size write\n");
-> @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
->  		return;
->  	}
->  
-> -	log4(OP_WRITE, offset, size, FL_NONE);
-> +	if (flags & RWF_ATOMIC)
-> +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
-> +	else
-> +		log4(OP_WRITE, offset, size, FL_NONE);
->  
->  	gendata(original_buf, good_buf, offset, size);
->  	if (offset + size > file_size) {
-> @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
->  		       (monitorstart == -1 ||
->  			(offset + size > monitorstart &&
->  			(monitorend == -1 || offset <= monitorend))))))
-> -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
-> -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
-> +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
-> +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
-> +		    (flags & RWF_ATOMIC) != 0);
->  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
->  	if (iret != size) {
->  		if (iret == -1)
-> @@ -1785,6 +1842,36 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
->  }
->  #endif
->  
-> +int test_atomic_writes(void) {
-> +	int ret;
-> +	struct statx stx;
-> +
-> +	if (o_direct != O_DIRECT) {
-> +		fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
-> +				"disabling!\n");
-> +		return 0;
-> +	}
-> +
-> +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "main: Statx failed with %d."
-> +			" Failed to determine atomic write limits, "
-> +			" disabling!\n", ret);
-> +		return 0;
-> +	}
-> +
-> +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
-> +	    stx.stx_atomic_write_unit_min > 0) {
-> +		awu_min = stx.stx_atomic_write_unit_min;
-> +		awu_max = stx.stx_atomic_write_unit_max;
-> +		return 1;
-> +	}
-> +
-> +	fprintf(stderr, "main: IO Stack does not support "
-> +			"atomic writes, disabling!\n");
-> +	return 0;
-> +}
-> +
->  #ifdef HAVE_COPY_FILE_RANGE
->  int
->  test_copy_range(void)
-> @@ -2356,6 +2443,12 @@ have_op:
->  			goto out;
->  		}
->  		break;
-> +	case OP_WRITE_ATOMIC:
-> +		if (!do_atomic_writes) {
-> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> +			goto out;
-> +		}
-> +		break;
->  	}
->  
->  	switch (op) {
-> @@ -2385,6 +2478,11 @@ have_op:
->  			dowrite(offset, size, 0);
->  		break;
->  
-> +	case OP_WRITE_ATOMIC:
-> +		TRIM_OFF_LEN(offset, size, maxfilelen);
-> +		dowrite(offset, size, RWF_ATOMIC);
-> +		break;
-> +
->  	case OP_MAPREAD:
->  		TRIM_OFF_LEN(offset, size, file_size);
->  		domapread(offset, size);
-> @@ -2511,13 +2609,14 @@ void
->  usage(void)
->  {
->  	fprintf(stdout, "usage: %s",
-> -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
-> +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
->  	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
->  	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
->  	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
->  	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
->  	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
->  	   ... fname\n\
-> +	-a: disable atomic writes\n\
->  	-b opnum: beginning operation number (default 1)\n\
->  	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
->  	-d: debug output for all operations\n\
-> @@ -3059,9 +3158,13 @@ main(int argc, char **argv)
->  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
->  
->  	while ((ch = getopt_long(argc, argv,
-> -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
->  				 longopts, NULL)) != EOF)
->  		switch (ch) {
-> +		case 'a':
-> +			prt("main(): Atomic writes disabled\n");
-> +			do_atomic_writes = 0;
-> +			break;
->  		case 'b':
->  			simulatedopcount = getnum(optarg, &endp);
->  			if (!quiet)
-> @@ -3475,6 +3578,8 @@ main(int argc, char **argv)
->  		exchange_range_calls = test_exchange_range();
->  	if (dontcache_io)
->  		dontcache_io = test_dontcache_io();
-> +	if (do_atomic_writes)
-> +		do_atomic_writes = test_atomic_writes();
->  
->  	while (keep_running())
->  		if (!test())
-> -- 
-> 2.49.0
-> 
+Okay, I will also fix it in the next patch.
 
+>
+> >                * early once we encounter the first OOM. No point in ret=
+rying
+> >                * as it can be dynamically done on remap with the memory
+> >                * we get back from the vmemmap deduplication.
+> > @@ -715,7 +715,7 @@ static void __hugetlb_vmemmap_optimize_folios(struc=
+t hstate *h,
+> >               /*
+> >                * Pages to be freed may have been accumulated.  If we
+> >                * encounter an ENOMEM,  free what we have and try again.
+> > -              * This can occur in the case that both spliting fails
+> > +              * This can occur in the case that both splitting fails
+> >                * halfway and head page allocation also failed. In this
+> >                * case __hugetlb_vmemmap_optimize_folio() would free mem=
+ory
+> >                * allowing more vmemmap remaps to occur.
+>
+> As Wei says, this patch can be merged with the earlier, thanks.
+>
+Get it, I will merge this patch to the next one.
+Thank you very much for your review!
 
