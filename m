@@ -1,148 +1,141 @@
-Return-Path: <linux-kernel+bounces-835341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C891EBA6CC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:08:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF173BA6CCB
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81214178302
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:08:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4386F1895082
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC382D2487;
-	Sun, 28 Sep 2025 09:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOm0KrhB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835E32D24BB;
+	Sun, 28 Sep 2025 09:11:48 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796762D239B;
-	Sun, 28 Sep 2025 09:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D742C0F63
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 09:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759050488; cv=none; b=G3kEi76dvBox4RUCVYW6egWBojWaIpXVJO0suPwFuAn/R6oyQG69FoiYMAtVA6m3lOPVRR2+dxsZ6UmJgJ5baXpVRFtU5b/5Ami18iBxmXxhGxXBNfaNcYdJtxT5ZdwjOci0bWNfdX9By1vwCpHZ/YC9zstipYS2LO/SiSSSACk=
+	t=1759050708; cv=none; b=masBxyZaqpQDNOVSA8gA2FYmBPNspaLXucNSF8hCHnsvgqRweBHJ3I5ze+b6F3eysmR4WDPWsgAshHYitZcpV3vwqWcNsPm+o8AMVysJAJhtZS2eZf7rwvP6Rr8NgbJq/nSXXoRWUlu4t2GBoYepGG0E/6Ge0qxv/QWJ0nJbmVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759050488; c=relaxed/simple;
-	bh=OmuM9T4sRr6WPDNjc7Tc1qjd4o37QkfxYkxf6IUDDOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VJ4rYBsfvjgqua+TeBV5QS96MsKgsRlvAPKaUvbQQphDC22wcllBtxnLFHvkxFu/dVKq9mQvtzXSjm05F5rV8TvdYsoNNXd+eo8fbkEMRAsu9sZ4gBo3iE75vgLbS4cyFyccewAjzAm0+klNb7Nyg50uWYB9QzLtc9GSkVv8R1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOm0KrhB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF63C4CEF0;
-	Sun, 28 Sep 2025 09:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759050488;
-	bh=OmuM9T4sRr6WPDNjc7Tc1qjd4o37QkfxYkxf6IUDDOw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nOm0KrhBpkdei5dRVg6YcqHlmeMefQHbPnMGdwavsDljIBSLYHTqNpurjnYC8R46M
-	 rV5zER+Goj9IfPzxSKLt+ZM5FPhC15SJwbNOnlCsDG6jRLnJByoLxPdlFEXwoi/eUZ
-	 DeZ7VAFzrYUnjsR3wcxnTf5vlp3rxPG1+XaGMTuUyopgAdDePYFUp69QUGSTPwq1iR
-	 fVR9+uz5NZSUT2PiMlXQouiPoGHuc3Ti6q3pnqr2SreDulab6CHmcCqWticL3SE1g8
-	 rKe2g2+q+pIaGQ0xUfWgjk1Fy2xFwevbVyymLVx4oj1oWHoT88Hl1+MyxVGKAFt4mc
-	 27wNfnDpOxaVQ==
-Date: Sun, 28 Sep 2025 10:07:57 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Hans de Goede <hansg@kernel.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] iio: add processed write API
-Message-ID: <20250928100757.0fa73692@jic23-huawei>
-In-Reply-To: <20250925-ltm8054-driver-v2-2-bb61a401a0dc@bootlin.com>
-References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
-	<20250925-ltm8054-driver-v2-2-bb61a401a0dc@bootlin.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759050708; c=relaxed/simple;
+	bh=6B+luOQSjYf1AJsM/Q6K77B56UsB827rEs4sgFU8rS8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ogNqxlntila2GuEXKhF4TYVAP1kOWkpTDNHYnjTw17a/NgIGLsw3dng0C4ZkEjp3GKb0ELgZRlWK3upbiCDr6G8pfiGvYAsgWTYyJd+W/FZo/D0wsjT1S7Exr0E015achK0h33In39z6J4y6hQIqMNP604vECaKY81CV2Mi/Auw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4257ae42790so55588385ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 02:11:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759050706; x=1759655506;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i4/PO4xGhJUkTcxJFqnPlSTZklfyrrbwTptLy31ouXI=;
+        b=BTPT4x3LMU0T6rCWzSTT2LXh0rSZnsUWOJS6b0rQlaWesbHGgijs36l8g4VodCgDOY
+         vq4MLF2rLkQlUnwvDSt4sMSC7yGkpxAuTRqnynthZPDG4tUOmCEcZXpzIlZtYfyByiCm
+         35kBmqL+P0mAwH9XgOd45XNcCKk5UudF6ChD97S+7ccpwW8r0MOZF7Vb53R14sNXdP6Y
+         z6qvKbXRebglLM+mv47p5m5pEsdkFiuPfV61qZntleVxmuxMjRLzMf2n1eV734dwG5l+
+         D8lzfxvHfkuxQGhLO7/vl53l6SJzIQu61rSvlqKu0iykam93gENUwm/CUfpMek0yLIYe
+         41eQ==
+X-Gm-Message-State: AOJu0Yw9Lq0wtaXYgvmgY8N8EIftmJUDZ+QExAvAvpGUPhCmp1XR5Ay/
+	/EFCvA0UuHENE9p4QxnYrmZ6KyxH6Y2dWUSJfXEzkmMfsDBD5yXpUBz4iiCYDY4Gphua4mokuLW
+	k6z2MGB0lc3SBpoFbsMF2Wcf6iHBp05FvUvzoK/Sx0FT0d9wX5+gZA+tY9lc=
+X-Google-Smtp-Source: AGHT+IFNUxeW7QNdBpSnShf79LLSdM0ZjM6TRyKzcn0qmoxMxz8EkiLSSLKvtYiFlEDREMOBfxwnaoQ9VKPQsRcdmIAJARNLor0w
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:194a:b0:428:306a:175d with SMTP id
+ e9e14a558f8ab-428306a1868mr91608415ab.28.1759050705675; Sun, 28 Sep 2025
+ 02:11:45 -0700 (PDT)
+Date: Sun, 28 Sep 2025 02:11:45 -0700
+In-Reply-To: <68b95f81.a00a0220.eb3d.0001.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d8fbd1.a00a0220.102ee.0027.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: fix BUG_ON in ext4_es_cache_extent due to
+ out-of-order extents
+From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 25 Sep 2025 14:37:34 +0200
-Romain Gantois <romain.gantois@bootlin.com> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> Add a function to allow IIO consumers to write a processed value to a
-> channel.
-> 
-> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
-Just one trivial thing I noticed.
-Thanks for adding the unit tests btw.  Makes me much more confident we don't have
-the corner case sign errors that plagued the similar functions before unit tests and fixes
-were applied.
+***
 
-J
-> ---
->  drivers/iio/inkern.c         | 120 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/iio/consumer.h |  36 +++++++++++++
->  2 files changed, 156 insertions(+)
-> 
-> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> index 2a1ecef2b82007f5ee8e8d0f8b35846bc4d2f94a..a6ec724b7c1fb197e6261c1162f8315deda20fd7 100644
-> --- a/drivers/iio/inkern.c
-> +++ b/drivers/iio/inkern.c
-> @@ -631,6 +631,57 @@ int iio_multiply_value(int *result, s64 multiplier,
->  }
->  EXPORT_SYMBOL_GPL(iio_multiply_value);
->  
-> +int iio_divide_by_value(int *result, s64 numerator,
-> +			unsigned int type, int val, int val2)
-> +{
-> +	s64 tmp_num, tmp_den;
-> +
-> +	switch (type) {
-> +	case IIO_VAL_INT:
-> +		tmp_num = numerator;
-> +		tmp_den = val;
-> +		break;
-> +	case IIO_VAL_INT_PLUS_MICRO:
-> +	case IIO_VAL_INT_PLUS_NANO:
-> +		switch (type) {
-> +		case IIO_VAL_INT_PLUS_MICRO:
-> +			tmp_num = MICRO;
-> +			tmp_den = MICRO;
-> +			break;
-> +
-> +		case IIO_VAL_INT_PLUS_NANO:
-> +			tmp_num = NANO;
-> +			tmp_den = NANO;
-> +			break;
-> +		}
-> +
-> +		tmp_num *= (s64)numerator;
+Subject: [PATCH] ext4: fix BUG_ON in ext4_es_cache_extent due to out-of-order extents
+Author: kartikey406@gmail.com
 
-Seems to be casting an s64 to an s64.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-> +		tmp_den = (s64)abs(val) * tmp_den + (s64)abs(val2);
-> +
-> +		if (val < 0 || val2 < 0)
-> +			tmp_num *= -1;
-> +
-> +		break;
-> +	case IIO_VAL_FRACTIONAL:
-> +		tmp_num = (s64)numerator * (s64)val2;
-> +		tmp_den = val;
-> +		break;
-> +	case IIO_VAL_FRACTIONAL_LOG2:
-> +		tmp_num = (s64)numerator << val2;
-> +		tmp_den = val;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!tmp_den)
-> +		return -ERANGE;
-> +
-> +	*result = div64_s64(tmp_num, tmp_den);
-> +
-> +	return IIO_VAL_INT;
-> +}
+
+syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
+opening a verity file on a corrupted ext4 filesystem mounted without
+a journal.
+
+The issue occurs when the extent tree contains out-of-order extents,
+which can happen in a corrupted filesystem. In ext4_cache_extents(),
+when processing an extent that has a lower logical block number than
+the previous extent's end, the calculation of the hole size underflows:
+
+  If prev = 4352 and lblk = 1280:
+  lblk - prev = 1280 - 4352 = -3072 (as signed)
+  = 4294964224 (as unsigned)
+
+This underflowed value is passed as 'len' to ext4_es_cache_extent(),
+where the end block calculation overflows:
+
+  end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279
+
+Then the BUG_ON(end < lblk) triggers because 1279 < 4352.
+
+Fix this by adding a check in ext4_cache_extents() to ensure extents
+are properly ordered before attempting to cache holes. If out-of-order
+extents are detected, report the filesystem corruption and return.
+
+Reported-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
+Fixes: a86c6181109a ("ext4: cache extent hole in extent status tree for ext4_da_map_blocks()")
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+---
+ fs/ext4/extents.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index ca5499e9412b..2e630b500a31 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -535,10 +535,17 @@ static void ext4_cache_extents(struct inode *inode,
+ 		ext4_lblk_t lblk = le32_to_cpu(ex->ee_block);
+ 		int len = ext4_ext_get_actual_len(ex);
+ 
+-		if (prev && (prev != lblk))
+-			ext4_es_cache_extent(inode, prev, lblk - prev, ~0,
+-					     EXTENT_STATUS_HOLE);
+-
++		if (prev && (prev != lblk)) {
++			if (lblk > prev) {
++				ext4_es_cache_extent(inode, prev, lblk - prev, ~0,
++				     EXTENT_STATUS_HOLE);
++			} else {
++				/* Extents out of order - corrupted? */
++				EXT4_ERROR_INODE(inode, "corrupted extent tree: lblk %u < prev %u",
++					 lblk, prev);
++				return;
++			}
++		}
+ 		if (ext4_ext_is_unwritten(ex))
+ 			status = EXTENT_STATUS_UNWRITTEN;
+ 		ext4_es_cache_extent(inode, lblk, len,
+-- 
+2.43.0
 
 
