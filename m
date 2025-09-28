@@ -1,129 +1,134 @@
-Return-Path: <linux-kernel+bounces-835445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F914BA71C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:41:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3A8BA71C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14D8D18998DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:41:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A711899954
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF3820101D;
-	Sun, 28 Sep 2025 14:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E97520101D;
+	Sun, 28 Sep 2025 14:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQHRjPwL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0Iw+J01"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8561714B7
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98931714B7;
+	Sun, 28 Sep 2025 14:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759070485; cv=none; b=HSpT/IdkqjntmNH3U9/yivbblLoQ6/QlfzwzchS1ixm3T4jbYCDlpjP7VE+gYwO9Keo8YXBk4cKpqTvQnu4Qgql1av2rjZkbat2/cHLGr8jE0NLGLsvgRn2s2XWOptgOpwc9op9m24rFqd+JX0M26fKgckGIyuNM0Mx9KFxnRAg=
+	t=1759070516; cv=none; b=PrVhJhSHELe3aW1X1UaDyZB6uUbZaHgna60tBZYNd2GT+LFly1FdWU/s9gTGEAAeqcid2KY87FPqCZYm95hBnmwnbc16/jvppvvKfSRpH61OJVav7aqMgfeS0ni6baFX0fmiYkywyN2ZGHuDtF+XO2VSKkL9Vc9KPioGQpE+wH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759070485; c=relaxed/simple;
-	bh=zEl3HK9Huv3wAo8Gz3obptdVAl3BiTe7KlwyVun45hk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pj/UcXva5JFthsTXV3HZZIuAZ6AqcWHZiVG3/J4qd+CC3FDdMAylqeJ1jRERpTO1Y5EOXEt4edNt/rnV5CLjaFubkJEBSyzwmzmDjmVu2pK6boUBDUA6n3kXCxUxBGRFJZjGPxcoQHVXmoibg1Y1E1afomuJnvooYa+SFzwpNAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQHRjPwL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F25BC116C6
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:41:25 +0000 (UTC)
+	s=arc-20240116; t=1759070516; c=relaxed/simple;
+	bh=SzzdI+GX07mAERTWzTnj3dkki2cHhdg6x0GIVS4BA9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqVe9W9ATMDjPSEmmdLTIRM16XyWu7VDDpn+CGZ/v0lRPM2Z+UmSt0RSAXBrPqSzEwz9COWj15k+O3sPDd2if7HGnt5YIDD6psp1gZCrMPpp9QVJdRWnvd8SnQDjXWxuLtbkHTkQhBcQ1dkXhzumqel5yZ8XBGvq1AFKfTF0lZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0Iw+J01; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAF9C4CEF5;
+	Sun, 28 Sep 2025 14:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759070485;
-	bh=zEl3HK9Huv3wAo8Gz3obptdVAl3BiTe7KlwyVun45hk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KQHRjPwLC5G8brFRuLi7o+fpS7n5vnimwAp70vgaHEgFmGnQ+8/JXmEMwOpYluWwc
-	 gPh8y3NdWf05BAJsL1h89OUxuFiv9K0M0HAyMqKJAYGCpmKa3ACFswAt33tdsAo0Uw
-	 WdTCh+3Jn7TMW4j+oJj7r1EF6IJOs7ve0Px1LcHX9VnhjdE0r+UEpc5Xm6wBzwl3Yu
-	 a8fnF/rbiGqU15Qg4uTENsF6mjnkIPDm1zebsaCCre5mcLnUqjqOoCMEqJWnK6oHig
-	 l3Ae2UGbCke7CAP4d0CH4r2FibiszgEoGSh6Cq/uBnrxy4QLsw0AP9aujqJ9E7H1Ur
-	 kFjd+rIM8OAoQ==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57bc9775989so3571149e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:41:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXSYHtf/DfcwgYzsLf88ovfKrgZwjCcNGo3boKulSo11QbLCn6ixJVUvq+16+EflHf5HjUfkUfx/BaMDJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu88BxkT/g7hLPdcNeii7K95uBRbRrFZZ8WfX98tsdmlJLxvT4
-	GYNdr/ZYzI5ioUvUTvxsm8l+hcVv9t3yGmsRnDHwUTTOyUN4bFsVkXWr+UIJ1Z2fRYb+32Pz5vr
-	YkvAVmfc0q+fBWxZLnXLZWTI6UcWnU6I=
-X-Google-Smtp-Source: AGHT+IFWQQN6QdQWgcfYnmBFENB0KuvC1Z/xcGcpQuzj5V+hESZTuEgEU7p0gTVxJK5oi7ZFD+wA09OxaRIm8jBNjGM=
-X-Received: by 2002:ac2:4f07:0:b0:55b:8afb:e638 with SMTP id
- 2adb3069b0e04-582d295ce23mr4091918e87.28.1759070484041; Sun, 28 Sep 2025
- 07:41:24 -0700 (PDT)
+	s=k20201202; t=1759070516;
+	bh=SzzdI+GX07mAERTWzTnj3dkki2cHhdg6x0GIVS4BA9c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m0Iw+J01S0fGdnbq0MAZ6PTKcjL5BY1ZlP4amzY+Kn/GmtCBnY9dg7UsSWwM1Yorm
+	 Cd2dsk1mHNjW5aDtyRHfS5v+K5t2fQOYDgVR5NhZ53bD4iWJOh9aqzXG45qM4Blxir
+	 0emDc2Vs5ir0T7W06O8Fnia5yaxbnYy1kEdS1AL2SWBMsPd+xvmeAr2t1russfADFJ
+	 LmwTnZaw7OCcQLjHiCJtpMNOS8JnuYDb2HudfgMCMcvg9vgongLpQPlPYArVRORTR/
+	 sLwXxYgBzKeBbQ30FVP+VRBHnkyPf4N2ZhvocRvD2jIuO43CU8/sbkK4yek2c/W59H
+	 iH7YAtiOApm1A==
+Date: Sun, 28 Sep 2025 17:41:52 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+	linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+	Cong Wang <cwang@multikernel.io>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org,
+	linux-mm@kvack.org, multikernel@lists.linux.dev
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture
+ support
+Message-ID: <aNlJMAHhFE-O3IX9@kernel.org>
+References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+ <78127855-104f-46e2-e5d2-52c622243b08@gentwo.org>
+ <CAM_iQpU2QucTR7+6TwE9yKb+QZg5u_=r9O_tMfsn7Ss7kJbd9A@mail.gmail.com>
+ <aNZh3uDdORZ5mfSD@kernel.org>
+ <CAM_iQpWXFQwtayT7Zv7iJd7zQZ=rX_P1ZK2P11-6ohRhLpg7Xw@mail.gmail.com>
+ <aNlErhpO1g17gdgM@kernel.org>
+ <aNlH6-hFc6OmDF_e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
- <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com> <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
-In-Reply-To: <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 28 Sep 2025 16:41:12 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
-X-Gm-Features: AS18NWDKeRljEYzTakhM3NRe_gYKBPPHlUPXn-bSPODAX07vV2YYljZFZWHKAg0
-Message-ID: <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aNlH6-hFc6OmDF_e@kernel.org>
 
-On Sun, 28 Sept 2025 at 16:39, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Sun, 28 Sept 2025 at 15:52, Huacai Chen <chenhuacai@kernel.org> wrote:
-> >
-> > Hi, Ard,
-> >
-> > On Sun, Sep 28, 2025 at 9:42=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
-> wrote:
-> > >
-> > > On Sun, 28 Sept 2025 at 10:55, Tiezhu Yang <yangtiezhu@loongson.cn> w=
-rote:
+On Sun, Sep 28, 2025 at 05:36:32PM +0300, Jarkko Sakkinen wrote:
+> On Sun, Sep 28, 2025 at 05:22:43PM +0300, Jarkko Sakkinen wrote:
+> > On Sat, Sep 27, 2025 at 01:43:23PM -0700, Cong Wang wrote:
+> > > On Fri, Sep 26, 2025 at 2:50 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
 > > > >
-> > > > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
-> > > > the following objtool warning on LoongArch:
+> > > > On Wed, Sep 24, 2025 at 11:39:44AM -0700, Cong Wang wrote:
+> > > > > On Wed, Sep 24, 2025 at 10:51 AM Christoph Lameter (Ampere)
+> > > > > <cl@gentwo.org> wrote:
+> > > > > > AFAICT various contemporary Android deployments do the multiple kernel
+> > > > > > approach in one way or another already for security purposes and for
+> > > > > > specialized controllers. However, the multi kernel approaches are often
+> > > > > > depending on specialized and dedicated hardware. It may be difficult to
+> > > > > > support with a generic approach developed here.
+> > > > >
+> > > > > You are right, the multikernel concept is indeed pretty old, the BarrelFish
+> > > > > OS was invented in around 2009. Jailhouse was released 12 years ago.
+> > > > > There are tons of papers in this area too.
 > > > >
-> > > >   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
-> > > >   falls through to next function __efistub_exit_boot_func()
-> > > >
-> > > > This is because efi_boot_kernel() doesn't end with a return instruc=
-tion
-> > > > or an unconditional jump, then objtool has determined that the func=
-tion
-> > > > can fall through into the next function.
-> > > >
-> > > > At the beginning, try to do something to make efi_boot_kernel() end=
-s with
-> > > > an unconditional jump instruction, but this modification seems not =
-proper.
-> > > >
-> > > > Since the efistub functions are useless for stack unwinder, they ca=
-n be
-> > > > ignored by objtool. After many discussions, no need to link libstub=
- to
-> > > > the vmlinux.o, only link libstub to the final vmlinux.
-> > > >
-> > >
-> > > Please try keeping these changes confined to arch/loongarch. This
-> > > problem does not exist on other architectures, and changing the way
-> > > vmlinux is constructed might create other issues down the road.
-> > ARM, RISC-V and LoongArch do things exactly in the same way. Now
-> > LoongArch is the first of the three to enable objtool, so we meet the
-> > problem first.
-> >
-> > But yes, I also don't want to change the way of constructing vmlinux.
-> > So I prefer the earliest way to fix this problem.
-> > https://lore.kernel.org/loongarch/CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSu=
-V0EmeeUb9d5FNw@mail.gmail.com/T/#meef7411abd14f4c28c85e686614aa9211fccdca0
-> >
->
-> Can we just drop the __noreturn annotation from kernel_entry_t, and
-> return EFI_SUCCESS from efi_boot_kernel()?
+> > > > Jailhouse is quite nice actually. Perhaps you should pick that up
+> > > > instead, and start refining and improving it? I'd be interested to test
+> > > > refined jailhouse patches. It's also easy build test images having the
+> > > > feature both with BuildRoot and Yocto.
+> > > 
+> > > Static partitioning is not a bad choice, except it is less flexible. We can't
+> > > get dynamic resource allocation with just static partitioning, but we can
+> > > easily get static partitioning with dynamic allocation, in fact, it should be
+> > > the default case.
+> > > 
+> > > In my own opinion, the reason why containers today are more popular
+> > > than VM's is not just performance, it is elasticity too. Static partitioning
+> > > is essentially against elasticity.
+> > 
+> > How do you make a popularity comparison between VMs and containers, and
+> > what does the word "popularity" means in the context? The whole world
+> > runs basically runs with guest VMs (just go to check AWS, Azure, Oracle
+> > Cloud and what not).
+> > 
+> > The problem in that argument is that there is no problem.
+> 
+> If I was working on such a feature I would probably package it for e.g,
+> BuildRoot with BR2_EXTERNAL type of Git and create a user space that
+> can run some test and benchmarks that actually highlight the benefits.
+> 
+> Then, I would trash the existing cover letter with something with clear
+> problem statement and motivation instead of whitepaper alike claims.
+> 
+> We can argue to the eterenity with qualitative aspects of any feature
+> but it is the quantitative proof that actually drives things forward.
 
-... or add efi_boot_kernel() to ./tools/objtool/noreturns.h?
+I'd also carefully check as per modifying kexec that more complex use
+cases are compatible such as IMA. I don't know if there is an issue with
+secure boot but I'd make sure that there is no friction with it either.
+
+There's also shared security related hardware resources such as TPM,
+and in this context two instances end up thus sharing it for e.g.
+measurements, and that type of cross-communication could have 
+unpredictable consequences (would need to be checked).
+
+BR, Jarkko
 
