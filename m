@@ -1,202 +1,213 @@
-Return-Path: <linux-kernel+bounces-835319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3A6BA6B7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD331BA6B88
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7EA189A9FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D5E16A353
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFF72BE7D2;
-	Sun, 28 Sep 2025 08:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="jsqWU/cK"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011055.outbound.protection.outlook.com [52.101.70.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFCC225791
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759048624; cv=fail; b=ItG2cFYDjFxxjShRywyeOb9CaLvXwmbnDA8dWQBO9AE2ivz3ZGjScucNU2jcLbmF+0tV8FniYq9Q8zh73M0yRTTNZzCeAV37g7N9sLi53FTBanjanKYGtY8mxMTqH6VwH60xQXmFI3yrfJA475n1L4wLLESyUl5e8x2PZD+1BsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759048624; c=relaxed/simple;
-	bh=8FdNqHyGaQ/Ma05EXvNt5dIkXQHBEnfrbXzUiIO6m2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=i2sWq9JIkpiRCxqjD5Nwy7gYjNRcGY7oyywDoPhSVnAUVyk2CBr4PTnCDeFANfkm7egYyquGGUacjs+5VtgyD693DrYcQ9W6or9QKCaVPlkzd2v+UmR7zzh8opYX26QvcvDvwS7M5CUpYsAH/x8UKh6R0ntdoQJrA/PYpkLxxeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=jsqWU/cK; arc=fail smtp.client-ip=52.101.70.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T89jsKapiXLjYZjkgjlNqXDQDsb3+HvJwZbZxNRfMggW4cRPuy+mnheL+MYTEtYkEUFxH4WqWXAA7F9ic3g3RJWWvuTJIjYE0Y6pLng6FI82+PSEK8ySobeZj06QnNaupXsEW/XpB5L1U/39jzX54MAKZvHkIP9Mw8K14snRST5iA0tfqrUuyhRmPoUHgmaVotwdEr89Av6/R5GA9kBmBlr56ZiKFXmHiyzoGpFBKwWRDKiQRWxqBG63t1vnkcJPY29OYBi9eWUqwWM2qZGg1F9MPWW8vc8OhgNo7Wz+JS5hcbYCuA9dOpUMnttQfj5ZtwPQ5OUzsCwNpeGZq+HMrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vxtwNTtwWNdhF+2uh4z3XzPow9KzMlnLaYn/K4l8rCo=;
- b=ehsDQTCV5+ky8Ki3l0DkfubW2mqAY1eDfavGLiHX2y+9wcQldu2HNROgl1ZTev7mxZG0nczepeVZvXf5hJeJlfOSLwIj6OdI9TrAMXDyMJnK6e81X2MLxEETle7/Dub8E5ByDkebK55hTRZqZWpkVU9tGwY+GBJz52XiiGw0EMl4iRoXDf/b86sXDTvfDA+MwpuonyQEuuV2kk7IgPJWQotLsi9/22U6f/XaMgNkrqFgyFTAS9R112ZXyiSBH2NMZsGaO+UgiNVm43XKUDcIRq7zK0kNg1AiUCcHM387F2wF0BlUnXjDPVOJ6nC2ngprmBzTMs/sgP68U5/WBLkq2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vxtwNTtwWNdhF+2uh4z3XzPow9KzMlnLaYn/K4l8rCo=;
- b=jsqWU/cKBDbTYEqKR3CHlDtMaOKz4FZUCrQxFmhky0Pc5OaCF5Gk+XwqdVgnaDuXWd3nIgDKHXbvfeZrfGTwXbRPxS3Yd4/2l129Pdcae71BVqsX0axlVQ0jEjUF09oBVrvBxbkuDQYp/HVIhHBVKUwm/Rw/ugVg8xyFhyg0YEwqf/W1egaysQzO5H/aHpqTeizb9L2SwPCzb6Mt2oSDmq4lOEpVyX5mpO1kvryqXT2N5i/fdztv/xGdLS8eEYYAE/PTx9ll1q+gcjva0OCGekEJ2e0wjatFchQeYQ3MerEijV3iEfMnna8jJONnRJuQfGD38wIbdxgPpWeM8/6scA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS4PR04MB9624.eurprd04.prod.outlook.com (2603:10a6:20b:4ce::9)
- by PA4PR04MB9269.eurprd04.prod.outlook.com (2603:10a6:102:2a4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sun, 28 Sep
- 2025 08:36:56 +0000
-Received: from AS4PR04MB9624.eurprd04.prod.outlook.com
- ([fe80::fa4e:dc6f:3f71:13b7]) by AS4PR04MB9624.eurprd04.prod.outlook.com
- ([fe80::fa4e:dc6f:3f71:13b7%4]) with mapi id 15.20.9160.013; Sun, 28 Sep 2025
- 08:36:56 +0000
-Date: Sun, 28 Sep 2025 16:36:59 +0800
-From: Rain Yang <jiyu.yang@oss.nxp.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: airlied@gmail.co, dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
-	jiyu.yang@oss.nxp.com, linux-kernel@vger.kernel.org,
-	liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com,
-	marek.vasut@mailbox.org, mripard@kernel.org, simona@ffwll.ch,
-	steven.price@arm.com, tzimmermann@suse.de
-Subject: Re: [PATCH v1] drm/panthor: skip regulator setup if no such prop
-Message-ID: <aNjzq_i0RLfovUGT@oss.nxp.com>
-References: <20250926090722.23097-1-jiyu.yang@oss.nxp.com>
- <20250926120311.33dc9fb1@fedora>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926120311.33dc9fb1@fedora>
-X-ClientProxiedBy: SI2PR02CA0008.apcprd02.prod.outlook.com
- (2603:1096:4:194::12) To AS4PR04MB9624.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ce::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4232BE7D2;
+	Sun, 28 Sep 2025 08:39:26 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C491A9FB6
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759048766; cv=none; b=OZTRvxMcwGGwon7XTqTSBAdrLNA50dFodmjmJJL6qXvBIyLAy7+1fboqJ08QNcFvUg2baR/7VHy/lAhbDcqLncnLQBX7FRqPtt6NEpWF7WRbfr8MA2E2bVmSF9njHQdA7m5yXF8cix2yM8jolV6ML9vJBVb/ugrFIK9N5jfEp2g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759048766; c=relaxed/simple;
+	bh=EiVpTxxt/XlNmJqKGTiXNq/ExTvkP3RexGCWhQSsol0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=REnnAPruSSBqtRw2QzoWLkHkzCVW9KqwgSkxNPyui8xcWTEtG7zerVULA065tezCFoWjQZXbIqm46A3Da9Fnh18DMwKv9aoMeLuECmRL1f9eUdMo7vnMhO+tt7R/7mMrJK+NkwhnRScrrJgnKurYpUZ/dLbheNCgiWZXn4h2s6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxT_Ax9Nhof8oPAA--.33115S3;
+	Sun, 28 Sep 2025 16:39:14 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJDx_8Mw9NhofGe5AA--.63170S3;
+	Sun, 28 Sep 2025 16:39:12 +0800 (CST)
+Subject: Re: [PATCH v1] LoongArch: Add
+ -fno-isolate-erroneous-paths-dereference in Makefile
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Rui <wangrui@loongson.cn>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250923061722.24457-1-yangtiezhu@loongson.cn>
+ <CAAhV-H4e0xeHoEJ4Vzs8pQT+sbjaAL8N=Vc=TrU8fd3iU=97nQ@mail.gmail.com>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <33c3dbaa-05e5-cb75-dd35-d05bf02fea2e@loongson.cn>
+Date: Sun, 28 Sep 2025 16:39:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9624:EE_|PA4PR04MB9269:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66ca4f41-5062-4389-256c-08ddfe6a2edf
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?onxPZACw/I6S7tm+STfSTKLF8agBI8X0qo8TJuSTHZCFx6h6yaxmjqAmMzLA?=
- =?us-ascii?Q?87YJM0UVFtHOFBmS5kdSJPB9QMDJRy7rkuFNb7oRq5yWj2xfkOBDeOtdIUqt?=
- =?us-ascii?Q?+sDmgV814leWqmR5FKESuuOxkv+PuL2eTIToE72rHYdkBCiD28lFL78G2EOm?=
- =?us-ascii?Q?LimsgA7U0YbuOTjVQigwYx5KZLSZExw9DT/YLrbQbyQ6thzUwhK2QhbpSKAm?=
- =?us-ascii?Q?wP8fwhhyCUNqrxqD5Cy/wg0dRCBMejJiDlNa8QFrvtwwstbWQ5XlYTysSXNJ?=
- =?us-ascii?Q?G5mP9tYAnqWm0/L5LX5XuqEE9LytkMg3nG2ekFEY401uZOJ2/Bcvuc0K0Jse?=
- =?us-ascii?Q?BNtHdIjDI8HP5NXVQyFtAJlFBzbvJyhsc8fSNbZFp47TC/YfMHc5i+mpBPnS?=
- =?us-ascii?Q?BfrCF7JjA7N0w8vATDP2IbzxHM+WnTfVbX868mc8vJPo+W/KDZYx7F4HuxAb?=
- =?us-ascii?Q?2ncIOJjijxjOr7xZP3eSgOcXBI9L3fpX5vzqEVn+43k4+AHvKf2qsJjKbyh5?=
- =?us-ascii?Q?YTsvN+2pwWKFPOZsueqd+hCqAb1G4NFlHp8xj6KUj/MmfdMNyLgHnB60qzmr?=
- =?us-ascii?Q?FQz0ZxlCar4zitR/QpFKaEvV6UQhtL7VHGEI82xtYZpmrC1llzvVELghoEKp?=
- =?us-ascii?Q?QMw+PTyjQPoftqVQDfKFVvu0ugdF2sR+QyKB4QAr0HF6wYxhvNOb21b41wYh?=
- =?us-ascii?Q?ge6/5h+l0XTf0xckGczxBrZm1ei094mb2kYF9JACb90pv7zuZ2hw3o3hM6KG?=
- =?us-ascii?Q?YOUuj9GBT2TH475qyHRQ1+PYcjfLmYZxFVLWzBFVEl9XobvTvLTO7lQWK/QJ?=
- =?us-ascii?Q?UMEGXLnOzsVxduu0Pd6DKtZSt6vEO+HNN4GHaqm2JO/SqWrT9+DPoiu/T1yu?=
- =?us-ascii?Q?6y2TQp/65tKDhXui2hp8XIK+QmF5VdEJaq6N/Vg6cKvH+gmb2wG5lmnX/qA/?=
- =?us-ascii?Q?U/W9icbUUjendVSmuiGX5x+LyJGnkANq29CXJUgdgT7CtJP5AZXfVOBjOc0P?=
- =?us-ascii?Q?jRv53cTg0ErpkJUKIMXmfkQGFeaE/RlyOO7hpxYJ1t0lXxk8ZlaeWlDbpFBA?=
- =?us-ascii?Q?f2I4vRaFO+fz5iL6KC+JZaHMFyLICJBZgM8oWbC5OGvo0s7UaSSY4bdYh4i8?=
- =?us-ascii?Q?4Cv5ae5GNFYsMbhV0luADPsGJ+ZiBW4AmiqWBWKHp2I/qntDAvSvl/O0plqC?=
- =?us-ascii?Q?eRk54keWD+pTAGTXot6uxiD96g+PACF5oN9nCQUeQYmLfhicYkL8jvGF5aUe?=
- =?us-ascii?Q?wwZLEyUuto52W+niU2nR/LiiHHwqJAH/2lfI/1gvVgBT2QOTWAxaud8h+Pij?=
- =?us-ascii?Q?C7Y05imrfY7MGVLldDuBXW8Fng+O/X2T6tRvokp7NoX/R0Z/NLTN9jY1RLmT?=
- =?us-ascii?Q?S75/oh3APlqmf5AOEeExERVbazjBOQRSdc4ZOxyffsDhdxmtaruR/vi/JMzD?=
- =?us-ascii?Q?DzRD86SPfiC5Sk5tGK9ORO/Ci2SgHh+tJtOdu5W0LcRkqry4CpRrqu3NeqIe?=
- =?us-ascii?Q?NS2UY6aQaWXJvVfc1oR/w1q13SRDqyQIA+vO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9624.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HvLmHz4eQyLAVcTthNVlBFDb9bs33jrVvI7HW6PEml01Vz2KK6wE+nv58p0h?=
- =?us-ascii?Q?z127SVKoG/O/ZcZ6AnO3NJKbqYUm9H+OXfFnLOQ4ZxEjHrPQriintm92AluO?=
- =?us-ascii?Q?f7HyQaOUZ+10grgf15yCLWvZBLzJ5uNsbslVmtZzrMHFbx43uKwMgVyODuom?=
- =?us-ascii?Q?LN6bgfWNrLkWlkzAhNJYeoBJkf9HQJXDmjQ6ObEzw9PqamTHGTupGKZacf//?=
- =?us-ascii?Q?VR1emOKTHptXC5YfnUogW0sgKdc1izkNMl4tBBvdGGtb1MhH2q+NShhertLU?=
- =?us-ascii?Q?ugUi6X6vsRRbkp5p0PgsIxysfxp5ZVFXw8CrFhWHq7lClmeh18TIb1+J9vRn?=
- =?us-ascii?Q?YPo0VBUGnydDyb7x4m7zV2DeW6edlQAUQUwQjRTriXXCBJmYVtvYrPJzvDQX?=
- =?us-ascii?Q?n0xlBTwkXxhQuNLWe8P6h55u2LkKfxIq960Z7E5LtWN3ONvTwaxhmQmGa8wH?=
- =?us-ascii?Q?XNeTtGji3ZfR29hvGdX5+TX7YlwsbW2L5d2advOQCG1HG7tZpd1BgzMaQTPQ?=
- =?us-ascii?Q?y8ENofjeaqBwkYdVXqCC6W3A+F6aEZ2Cc4IMWuFNqMEI9Kl2lGakXylATqzr?=
- =?us-ascii?Q?5gI9kyWhf4e7LjdDwDgNEcDggAdRasM0DwcVUwFTTAmFi2frqUDATKlfZxVY?=
- =?us-ascii?Q?cVKE6iqD/UOwVzl3io/YVjecXAUQP1mUw4avmNrsE8nmXQz6pY+65vpIBX6r?=
- =?us-ascii?Q?0RZpLj9H6ier1LWEDJo8BSzvekmLFbVE0ywFuifxI7UXrm4NZegCmwAQZIBy?=
- =?us-ascii?Q?dgm08pnIR9HZ5B/s88jbTiM5vnbCd3OpWTv7deXruG6WcHvKTivEBOkmNYxj?=
- =?us-ascii?Q?Gp1RIZBYxofinXeaGZTdq1N7pvSnKnCeBjOfvOhtIu5rouhOEmEqj2KFiuwX?=
- =?us-ascii?Q?1ozjwuxrxHF6qOQRQmkyk81u+TTxSnPUc+pLofPypTwDkbavUUlD13zDEiSL?=
- =?us-ascii?Q?QnfviWWxKM6tkeP5asxHMQxu6dawTBoun5XS4qU2D8eCNFC0zAVWy9drI+zo?=
- =?us-ascii?Q?xGmqQe1qsQyzzXSpwAKbOBOaR7VfSGP98UgvUb1+nZ/Jyt7l5ufL8Dyk+YHu?=
- =?us-ascii?Q?W+rIIJW+2qyWufq/fz7b+XYJnMCXqm0l1xsFxm0i32lXtiI6zrDMc8jZtAKW?=
- =?us-ascii?Q?kPpPLa2bZA17rVpT4T9w0yQlUs+ysBOVi5j6wqxnE2TNka8bOt+ESPH7HCxc?=
- =?us-ascii?Q?Ygwujo6Ty7HrfU2kz7tKbikL8mRAb83WAzQGILOeh1NspArq3hQe5sLkR7Co?=
- =?us-ascii?Q?mUV6PEC0eKmksePbORl2oJTVK2DlHedhjrGMP2thmGVUVHr/R6nRzAfE4/Ou?=
- =?us-ascii?Q?5yaBTD/fxe34XGOldjXynLh0OvTJtRXUY0zFnPUSdt7ZFO4FBmetrnWvjsNK?=
- =?us-ascii?Q?ymKe8F6w0D3mR3JxD3ViHmLcnzcGMSFFBko6KrF+stj0M9YukCtL38WvPOyW?=
- =?us-ascii?Q?dvP6zCqiql6sN4sLuHZ8viQTn6DQA0MIl0gBVI5WzJh2KBwB5EBENv20vlyr?=
- =?us-ascii?Q?KwlnC8THkbe7KrckKpuMleUEiRrVdRryAxXlN3zGXczzchUL6y9+W9Xv5NZk?=
- =?us-ascii?Q?CkkQQu4IiUW0mWx19uhWgGimkNqzifXVF1P5/KDk?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66ca4f41-5062-4389-256c-08ddfe6a2edf
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9624.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 08:36:56.4295
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: awyD2QgCziUIcuAGuXQpJwrqmIW5x7W4v+WQnyGRKhMKWNoSt5XdMDyzI9ZZXQnghKSblsLR/RktOh5Tdhf8Jg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9269
+In-Reply-To: <CAAhV-H4e0xeHoEJ4Vzs8pQT+sbjaAL8N=Vc=TrU8fd3iU=97nQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDx_8Mw9NhofGe5AA--.63170S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxZw4UZw18Wr1UWrykWw4rZwc_yoWrtw1xpF
+	W5tr4UCa95Xr18Zas7Grs5XrW3A3y3AF4jgFZ8KF1fA3yFqryUtw1Sgry3GF4kGF4kuryj
+	vw12g342vF1IyabCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
+	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_Ma
+	UUUUU
 
-On Fri, Sep 26, 2025 at 12:03:11PM +0200, Boris Brezillon wrote:
->On Fri, 26 Sep 2025 17:07:22 +0800
->Rain Yang <jiyu.yang@oss.nxp.com> wrote:
->
->> From: Rain Yang <jiyu.yang@nxp.com>
->> 
->> The regulator is optional, skip the setup instead of returning an
->> error if it is not present
->
->AFAICT, it's not flagged optional in the DT bindings yet, so I'd prefer
->to have this change and the DT bindings update in the same patch series
->(both will go through the drm-misc tree anway).
->
+On 2025/9/23 下午10:32, Huacai Chen wrote:
+> Hi, Tiezhu,
+> 
+> On Tue, Sep 23, 2025 at 2:17 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+>>
+>> Currently, when compiling with GCC, there is no "break 0x7" instruction
+>> for zero division due to using the option -mno-check-zero-division, but
+>> the compiler still generates "break 0x0" instruction for zero division.
+>>
+>> Here is a simple example:
+>>
+>>    $ cat test.c
+>>    int div(int a)
+>>    {
+>>            return a / 0;
+>>    }
+>>    $ gcc -O2 -S test.c -o test.s
+>>
+>> GCC generates "break 0" On LoongArch and "ud2" on x86, objtool decodes
+>> "ud2" as INSN_BUG for x86, so decode "break 0" as INSN_BUG can fix the
+>> objtool warnings for LoongArch, but this is not the intention.
+>>
+>> When decoding "break 0" as INSN_TRAP in the previous commit, the aim is
+>> to handle "break 0" as a trap. The generated "break 0" for zero division
+>> by GCC is not proper, it should generate a break instruction with proper
+>> bug type, so add the GCC option -fno-isolate-erroneous-paths-dereference
+>> to avoid generating the unexpected "break 0" instruction for now.
+> You said that this patch make performance increase a little. But this
+> is strange, because -isolate-erroneous-paths-dereference rather than
+> -no-isolate-erroneous-paths-dereference is considered as an
+> optimization.
 
-thanks, Boris.
-I will create a patch in dt-binding to make mali-supply required only applied to to rk3588
+I tested linux 6.17-rc7 with loongson3_defconfig, only a
+little improvement (about 0.3%) with "./Run -c 1".
 
->> 
->> Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
->> ---
->>  drivers/gpu/drm/panthor/panthor_devfreq.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->> 
->> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
->> index 3686515d368d..2df1d76d84a0 100644
->> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
->> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
->> @@ -146,10 +146,9 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->>  	ptdev->devfreq = pdevfreq;
->>  
->>  	ret = devm_pm_opp_set_regulators(dev, reg_names);
->> -	if (ret) {
->> +	if (ret && ret != -ENODEV) {
->>  		if (ret != -EPROBE_DEFER)
->>  			DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
->> -
->>  		return ret;
->>  	}
->>  
->
+Here are the test steps, anyone who is interested can test
+again to get the actual results on the specified environment:
+
+   git clone https://github.com/kdlucas/byte-unixbench.git
+   cd byte-unixbench/UnixBench/
+   make
+   ./Run -c 1
+   ./Run -c 8
+
+Here are the objdump info for sched_update_scaling() in
+kernel/sched/fair.o:
+
+Before:
+
+000000000000bbc8 <sched_update_scaling>:
+     bbc8:       1a00000c        pcalau12i       $t0, 0
+     bbcc:       1a00000d        pcalau12i       $t1, 0
+     bbd0:       02c0018c        addi.d          $t0, $t0, 0
+     bbd4:       288001ae        ld.w            $t2, $t1, 0
+     bbd8:       24000190        ldptr.w         $t4, $t0, 0
+     bbdc:       004081ce        slli.w          $t2, $t2, 0x0
+     bbe0:       40006200        beqz            $t4, 96 # bc40 
+<sched_update_scaling+0x78>
+     bbe4:       0280200d        addi.w          $t1, $zero, 8
+     bbe8:       0012b9ad        sltu            $t1, $t1, $t2
+     bbec:       02802012        addi.w          $t6, $zero, 8
+     bbf0:       0013b5cf        masknez         $t3, $t2, $t1
+     bbf4:       0013364d        maskeqz         $t1, $t6, $t1
+     bbf8:       001535ed        or              $t1, $t3, $t1
+     bbfc:       02800811        addi.w          $t5, $zero, 2
+     bc00:       004081af        slli.w          $t3, $t1, 0x0
+     bc04:       58001611        beq             $t4, $t5, 20    # bc18 
+<sched_update_scaling+0x50>
+     bc08:       400051c0        beqz            $t2, 80 # bc58 
+<sched_update_scaling+0x90>
+     bc0c:       000015ad        clz.w           $t1, $t1
+     bc10:       0280800f        addi.w          $t3, $zero, 32
+     bc14:       001135ef        sub.w           $t3, $t3, $t1
+     bc18:       24000d8d        ldptr.w         $t1, $t0, 12
+     bc1c:       00150004        or              $a0, $zero, $zero
+     bc20:       00213dad        div.wu          $t1, $t1, $t3
+     bc24:       2980418d        st.w            $t1, $t0, 16
+     bc28:       4c000020        jirl            $zero, $ra, 0
+     bc2c:       03400000        andi            $zero, $zero, 0x0
+     bc30:       03400000        andi            $zero, $zero, 0x0
+     bc34:       03400000        andi            $zero, $zero, 0x0
+     bc38:       03400000        andi            $zero, $zero, 0x0
+     bc3c:       03400000        andi            $zero, $zero, 0x0
+     bc40:       24000d8d        ldptr.w         $t1, $t0, 12
+     bc44:       0280040f        addi.w          $t3, $zero, 1
+     bc48:       00150004        or              $a0, $zero, $zero
+     bc4c:       00213dad        div.wu          $t1, $t1, $t3
+     bc50:       2980418d        st.w            $t1, $t0, 16
+     bc54:       4c000020        jirl            $zero, $ra, 0
+     bc58:       002a0000        break           0x0
+     bc5c:       03400000        andi            $zero, $zero, 0x0
+
+After:
+
+000000000000bbc8 <sched_update_scaling>:
+     bbc8:       1a00000c        pcalau12i       $t0, 0
+     bbcc:       1a00000d        pcalau12i       $t1, 0
+     bbd0:       02c0018c        addi.d          $t0, $t0, 0
+     bbd4:       288001ae        ld.w            $t2, $t1, 0
+     bbd8:       24000190        ldptr.w         $t4, $t0, 0
+     bbdc:       0280040f        addi.w          $t3, $zero, 1
+     bbe0:       004081ce        slli.w          $t2, $t2, 0x0
+     bbe4:       40003a00        beqz            $t4, 56 # bc1c 
+<sched_update_scaling+0x54>
+     bbe8:       0280200d        addi.w          $t1, $zero, 8
+     bbec:       0012b9ad        sltu            $t1, $t1, $t2
+     bbf0:       02802012        addi.w          $t6, $zero, 8
+     bbf4:       0013b5cf        masknez         $t3, $t2, $t1
+     bbf8:       0013364d        maskeqz         $t1, $t6, $t1
+     bbfc:       001535ed        or              $t1, $t3, $t1
+     bc00:       02800811        addi.w          $t5, $zero, 2
+     bc04:       004081af        slli.w          $t3, $t1, 0x0
+     bc08:       58001611        beq             $t4, $t5, 20    # bc1c 
+<sched_update_scaling+0x54>
+     bc0c:       000015ad        clz.w           $t1, $t1
+     bc10:       0280800f        addi.w          $t3, $zero, 32
+     bc14:       001135ef        sub.w           $t3, $t3, $t1
+     bc18:       001339ef        maskeqz         $t3, $t3, $t2
+     bc1c:       24000d8d        ldptr.w         $t1, $t0, 12
+     bc20:       00150004        or              $a0, $zero, $zero
+     bc24:       00213dad        div.wu          $t1, $t1, $t3
+     bc28:       2980418d        st.w            $t1, $t0, 16
+     bc2c:       4c000020        jirl            $zero, $ra, 0
+
+There is no beqz instruction for zero division with this patch,
+I guess it will affect the performance to some extent. IMO, the
+isolate-erroneous-paths-dereference optimization is for error
+code path, not for performance.
+
+Anyway, my initial aim is to check whether exist performance
+regression, from the point of view of the test results, there
+is no obvious differences with this patch.
+
+Thanks,
+Tiezhu
+
 
