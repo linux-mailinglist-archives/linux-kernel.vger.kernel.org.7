@@ -1,90 +1,94 @@
-Return-Path: <linux-kernel+bounces-835603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5710ABA78E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A04FBA7901
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108E6176EE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184783B41DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 22:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0C4255E53;
-	Sun, 28 Sep 2025 21:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852F7257848;
+	Sun, 28 Sep 2025 22:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAWZuSOY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dg6dNamV"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A221DF73C
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 21:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BC61FB3
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759096580; cv=none; b=bvP3zMDRj07FLR9MnD447VFqpLXBztzinu4fHiYGGVl3G74uKyBLGA+PYcOM17ipN3lVz66cqLSNwuaQrxB5oJkoF1fv/EhVLFasLTj8OWCiFqI2bbKLVCFLfztMsRqpyVmdLZ/k5F5pTY1GMZdRtdy6dz/HvnwkxFBIJQ4mapM=
+	t=1759097986; cv=none; b=DYCNaYmOV77EmEJM7TfTd80hBQynaUh8peKnkhWeJsKZUHJvVJ6I5TCnj+mzmz2zGisRopKPlACpyKvsI+wi4NKm+o/uROPODCf8PK+UrUzomD3OlzzbKxqFdV42jsv5VA60y9YtFOuie32179K4XgW2Rk1x5UCeDGJFXGE7Dy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759096580; c=relaxed/simple;
-	bh=Ag5OJvTMxXJDeRviaTg2QX6h5X6prtIOT5+vV3Pl5pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MIyXU5pKi6z8hK17I8D1Dg/MHhzHh6rd6F1BTdxYd4a2U6P7blIcXbOk8IQK9fA1esFT/c3geAeAI9YyCXalwSutF9uXl4rXIllxwbN2ZDi0EoZbwvXWOSvz9LM2GmSnrNHxnxYpCaIschnDKYYVffbMrJxW9fcZBqW8g1M5Wjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAWZuSOY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED47C4CEF0
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 21:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759096580;
-	bh=Ag5OJvTMxXJDeRviaTg2QX6h5X6prtIOT5+vV3Pl5pc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UAWZuSOYJ3j9hQ0fWorFNYqEBsdus6cRQrTLw3KiJj0mUCPOHD22dEawatpChR7pL
-	 zzbOi1CxWDKrhE1/uMPXpHeGXxzlcoWg31PTg/0mhiHowjY9JWhKlOVB0dfgyT8r+B
-	 53D4w/py+/LWGXEmrea0tuBb9gBTJU2R3A6C2tXCuoUOlh/RLJeM64TfpFFdhBn7Rt
-	 N5PgqfNxjfRR0hMe9oUSTb7aBpy3wt7e9GFJ3qToxV/wx8xQcyyXRTCrYUwfZgrhSQ
-	 AurjXItdn4/usrZ0TYB4UoDcOisUFS6GAtc4AvlClRMKdDqH27RmO1Doq4Le02wZQ0
-	 OGXH6+fNP4Xpg==
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27edcbbe7bfso41352765ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:56:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPjStPkWDq8dd+4V48/3xWAEVwfPCwKgB0sKnlJEn/7CJY3iQHO6VU1lvyoPoL/1BOeRVOoQooqMMfpYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmzG+X32BtshQrx3pXnwTtbsa7JT/+8DSUyi27BFVM+5k8Xx08
-	RANBK8BtAtZMIJwKbnh/6o0VYsxmuB0lnP4N4A57oOlPTvP7ySK6e0BKJ52I08+/ZdYfUOtpkJ9
-	OKVZcZM+UMuJORzkYnHSah8PjdxaNkhk=
-X-Google-Smtp-Source: AGHT+IEmvEYVOc//pmIHeQbDnEcLXjslRWP9TUnzYJfx2tg/laNf7LCCb9RFTpKOInRVNDKY0Rk2d9ibGpbC2jNixjo=
-X-Received: by 2002:a17:903:1aeb:b0:27e:e77f:57f3 with SMTP id
- d9443c01a7336-27ee77f5934mr118692055ad.14.1759096579693; Sun, 28 Sep 2025
- 14:56:19 -0700 (PDT)
+	s=arc-20240116; t=1759097986; c=relaxed/simple;
+	bh=4G4fkpFJdaYItTNjqcIuIQiRZdd7DVjFmGq46Xqdvno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZyXAHscIu8HztRwnaveXkyk725pQZSaWZb1lT+09hhohkLWaLaO+/AmA1mknXJmqxJL2c7D08JYIHLrQmQns2dqYsESS482D3IV4lBlY2BBsSzGUv4RFparBacsMkK8/sPon44Y9MWPgn616D+AczvZv9PCZTBotyY6XbcvspNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dg6dNamV; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id CE2FF4E40E4D;
+	Sun, 28 Sep 2025 22:19:33 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9CC906066E;
+	Sun, 28 Sep 2025 22:19:33 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 621D5102F182C;
+	Mon, 29 Sep 2025 00:19:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759097972; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=VpzD/pt9+kySB/WAKqTwz6rECss/zhOyWoiCwpxEYVI=;
+	b=Dg6dNamVTWtGrmmCOIEzpa0PXlOEZDcayuurVRsf2j7Vjbh4ajdt9n9VdTd/nTaKw0QfhB
+	xWaaEi/lbozx/PJ9Ur6+S+KqQzDmTJ+ryh91/WILqh9gT6aoO1IM2ItHIGCvnAIcPgziFp
+	PtjynRgo64DzJccLEifmyUdFxZ9gz5KtiskD4btuvBwUyS+DwUEH/Wht1MVMggByUtVaXs
+	Y8GcFfj71vGGRZbwXg8JKWpfqKhshviguedrfVSMdA8fNfztl7Y/U7cvpHTOO+bHJdswUx
+	7CBEyfsFxHBw0N+m8qjY8+Ze90HiDkKh+tt5AFPoV2y6IhOfbn2rRTGschk3nw==
+Date: Mon, 29 Sep 2025 00:19:18 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Jorge Marques <jorge.marques@analog.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Frank Li <Frank.Li@nxp.com>, Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Manikanta Guntupalli <manikanta.guntupalli@amd.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+Message-ID: <175909785772.1659314.16007344807551348138.b4-ty@bootlin.com>
+References: <20250924201837.3691486-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928-exynos7870-dt-fixes-v1-0-a40e77a73f16@disroot.org> <20250928-exynos7870-dt-fixes-v1-1-a40e77a73f16@disroot.org>
-In-Reply-To: <20250928-exynos7870-dt-fixes-v1-1-a40e77a73f16@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 29 Sep 2025 06:56:08 +0900
-X-Gmail-Original-Message-ID: <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
-X-Gm-Features: AS18NWBY-JzZiyqDsQSGva_Q19zCpOwf1vpPOKC71sJ3_Roa16ez0Y1PkZhVmYM
-Message-ID: <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
-Subject: Re: [PATCH 1/7] arm64: dts: exynos7870: relocate ${x}-names property
- after ${x}
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924201837.3691486-1-arnd@kernel.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 29 Sept 2025 at 01:44, Kaustabh Chakraborty
-<kauschluss@disroot.org> wrote:
->
-> All ${x}-names properties are conventionally placed after their
-> corresponding ${x} properties. For instance, 'clock-names' must follow
-> 'clocks', 'interrupt-names' must follow 'interrupts'. Make necessary
-> changes to follow said convention. No functional changes made.
->
+On Wed, 24 Sep 2025 22:18:33 +0200, Arnd Bergmann wrote:
+> Short MMIO transfers that are not a multiple of four bytes in size need
+> a special case for the final bytes, however the existing implementation
+> is not endian-safe and introduces an incorrect byteswap on big-endian
+> kernels.
+> 
+> This usually does not cause problems because most systems are
+> little-endian and most transfers are multiple of four bytes long, but
+> still needs to be fixed to avoid the extra byteswap.
+> 
+> [...]
 
-I don't intend to take such cosmetic changes, because they interfere
-with stable back porting, unless we have a tool for such cleanup. Did
-you use my prototype tool for that or some other tool?
+Applied, thanks!
+
+[1/1] i3c: fix big-endian FIFO transfers
+      https://git.kernel.org/i3c/c/d6ddd9beb1a5
 
 Best regards,
-Krzysztof
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
