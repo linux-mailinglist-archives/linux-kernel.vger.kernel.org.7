@@ -1,122 +1,109 @@
-Return-Path: <linux-kernel+bounces-835184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E50ABA6750
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:56:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F6CBA6759
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FFA93B9B83
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0AC13BB429
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96F926B2DA;
-	Sun, 28 Sep 2025 03:56:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58DE271A71;
+	Sun, 28 Sep 2025 03:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="QpeuWzsw"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93CC26B0AE
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFC626CE34;
+	Sun, 28 Sep 2025 03:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759031765; cv=none; b=JP9f5fSi3U7rMyt4DAHTCrIVtpm+wQ7GUwmm15V3VgeDGIxNzLuqOFjZzR3PbalcJHM8xNYPaTlB21obRYvMXFIkXrqiGIALeYmI5bzVLcBx3gsew6xOO2CzYFgDpbXcwp8d56xDWA0YQvPPYzXtOLCDwdUpX6DelXYIB2g/BQw=
+	t=1759031780; cv=none; b=QJu276uz0n0I8RhHZixfIUGW3exqiZNHgKoMK1BOA9eA2xXhpLiUOOhOKOM4GIoAk1a2ybTO3HTaJl4tfnIkcQym97XRQM1Z0Hon5vjA06GS650IOWhl43ukY9+ktUYq2gC0gc+doUfc1zRzCBqzthDAucXuKU/IzkXrESxfHHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759031765; c=relaxed/simple;
-	bh=Lyn1PYhF709Is175jdL4uoFCuKHx8j08ZrVEBSDtrhE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XFbfpie8QZkxPgI06zFyFVSzY9532u8CNo7sVB1KuRYQsqXJ89UhSZyoEo9/XIkiedTXvQzcJyZ6M4dM0lU3W/SzHBXoATzYlrmc0zcmHP20WQzE/NlCquu5nSbx7tu5a2LPgEmqD2YvjA5KktxA0bca8hgoFq0v4gNp332wFkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42721b7023eso24407135ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 20:56:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759031763; x=1759636563;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iz8AeoC8YQYHjlu89FqvEbgPQzVAr0ZU/+j3i45nWSE=;
-        b=H0APv7KaDrIMixYZhIZql755JjhiArcCeUP5Af7hCjimxKSGR+UYiwwX9UkxKc2mRh
-         UVb29qrtOHh9gU1SHcZmonPWhzzYSE8Pk6gmrJ4YNKP9d8mI2nVRG4zFuc9uHJf7Bo21
-         vKec2NWeT92I6CJtbFZ6CdbzJLdhPMZtvBnsAWqJek73rIn9Xhr9RS7192yzX19Tipi1
-         KnXrkq0CYd9pdXbhGKj6eO0uWT5C22tI1wqJXcsgZ+2IbstKWSdMvdm7xuPNkTlhfjaj
-         iSlUs8/4d8ozYiJT1ItMsHyFbyLRF+GjUHjX8lRNcva+jXybiXCeX3WbEMmNukdXW2PL
-         V7RQ==
-X-Gm-Message-State: AOJu0Ywq7f/EHd1ZbQCR770A5iC16YPePWqx6mZu2kpnF1tyFNsfq3Uc
-	9ijRDy6iPYLcZDOHo6Vukqw6tWorV8xcPoywTkkfKDN6oPffX3c04BiGx+zCLUu3P19nvK18pS5
-	R3ewL493Q/4hnaLMyKSxddkiWvd80cRocMpL45pPPOq4iYnN9x1ytQJrvShg=
-X-Google-Smtp-Source: AGHT+IHSLrrF4+OJODbxFNKWBy7NiiFLNJgZsCSxZawu5VNZfvpmv4rMuaQZ4yhJuAWLidCBG/Qn44ITXVIL+CIYvARxRUt2CEJO
+	s=arc-20240116; t=1759031780; c=relaxed/simple;
+	bh=OIfasNa+ag1qvbefr0z6kW2GWY/WyHW5gLYWTh1ReSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYQ+ZnUOGyiXX6k46KokQ6OhOGDT+V2Kwf17elKb/F9dxszfTBCi7d2/peLFVHyoBfMcXnNK2CJHn9oJVy1U7FOvPQZia2kXDt7RPJRI34idByeAlCSk5+nFxlwgHoylMZRxfa2rZXd0byTznazMu4Bim3ClN64vcwL3jQ3kiek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=QpeuWzsw; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To:
+	From:Date:cc:to:subject:message-id:date:from:reply-to;
+	bh=pr1Dpmut/fehj9bXBF3Tni2TXwBYKjIbf2dKQjxeX1A=; b=QpeuWzsw7+1mh6uWvn9WCxxp2C
+	hmqgHsX45A3NIUAJ0YCFGUiJsQeIlWDNkyfxQcwiA/2GHaKw9Mx23xCCHDaLdOFeU7AVC/gAE0FTp
+	IGGhHRvjSiUmanNTTLiF6t8QWLiqHr39ukfJZyjx7QWYMl+3xxUI8SdQZko/4V7lSkD+ilVIN+hqC
+	m8K1PLtv6dC9SnpMk8BSRg3/VoJMNcH5qZcI2PNsRx5mFVgwV3uhEuVBEbZfolxpXIqftu0BWLzDv
+	7JwrrOBh/frbn5bCcOUpsOhbWwo7a4ltw//DFUCJN/tGGTd7akCo0O2DSJwq8cVt5NDJIuHIbdgi4
+	60qSpjpA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v2iW9-008qQ2-0H;
+	Sun, 28 Sep 2025 11:56:10 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 28 Sep 2025 11:56:09 +0800
+Date: Sun, 28 Sep 2025 11:56:09 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: wufan@kernel.org
+Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dhowells@redhat.com, lukas@wunner.de,
+	ignat@cloudflare.com, davem@davemloft.net, jarkko@kernel.org,
+	zohar@linux.ibm.com, eric.snowberg@oracle.com
+Subject: Re: [PATCH v2] KEYS: X.509: Fix Basic Constraints CA flag parsing
+Message-ID: <aNix2dfs0FC74Zi2@gondor.apana.org.au>
+References: <20250911225356.2678-1-wufan@kernel.org>
+ <20250915211550.2610-1-wufan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b22:b0:425:7974:fe32 with SMTP id
- e9e14a558f8ab-425956541ddmr184491575ab.23.1759031762941; Sat, 27 Sep 2025
- 20:56:02 -0700 (PDT)
-Date: Sat, 27 Sep 2025 20:56:02 -0700
-In-Reply-To: <87ms6f2r7w.fsf@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d8b1d2.050a0220.25d7ab.0468.GAE@google.com>
-Subject: Re: [syzbot] [fs?] UBSAN: shift-out-of-bounds in minix_statfs
-From: syzbot <syzbot+5ad0824204c7bf9b67f2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	xandfury@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915211550.2610-1-wufan@kernel.org>
 
-Hello,
+On Mon, Sep 15, 2025 at 09:15:50PM +0000, wufan@kernel.org wrote:
+> From: Fan Wu <wufan@kernel.org>
+> 
+> Fix the X.509 Basic Constraints CA flag parsing to correctly handle
+> the ASN.1 DER encoded structure. The parser was incorrectly treating
+> the length field as the boolean value.
+> 
+> Per RFC 5280 section 4.1, X.509 certificates must use ASN.1 DER encoding.
+> According to ITU-T X.690, a DER-encoded BOOLEAN is represented as:
+> 
+> Tag (0x01), Length (0x01), Value (0x00 for FALSE, 0xFF for TRUE)
+> 
+> The basicConstraints extension with CA:TRUE is encoded as:
+> 
+>   SEQUENCE (0x30) | Length | BOOLEAN (0x01) | Length (0x01) | Value (0xFF)
+>                              ^-- v[2]         ^-- v[3]        ^-- v[4]
+> 
+> The parser was checking v[3] (the length field, always 0x01) instead
+> of v[4] (the actual boolean value, 0xFF for TRUE in DER encoding).
+> 
+> Also handle the case where the extension is an empty SEQUENCE (30 00),
+> which is valid for CA:FALSE when the default value is omitted as
+> required by DER encoding rules (X.690 section 11.5).
+> 
+> Per ITU-T X.690-0207:
+> - Section 11.5: Default values must be omitted in DER
+> - Section 11.1: DER requires TRUE to be encoded as 0xFF
+> 
+> Link: https://datatracker.ietf.org/doc/html/rfc5280
+> Link: https://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf
+> Fixes: 30eae2b037af ("KEYS: X.509: Parse Basic Constraints for CA")
+> Signed-off-by: Fan Wu <wufan@kernel.org>
+> ---
+>  crypto/asymmetric_keys/x509_cert_parser.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: shift-out-of-bounds in minix_statfs
-
-loop0: detected capacity change from 0 to 64
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/minix/inode.c:399:57
-shift exponent 768 is too large for 64-bit type 'unsigned long'
-CPU: 1 UID: 0 PID: 6533 Comm: syz.0.16 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
- minix_statfs+0x31c/0x340 fs/minix/inode.c:399
- statfs_by_dentry fs/statfs.c:66 [inline]
- vfs_statfs+0x144/0x2d0 fs/statfs.c:90
- ovl_check_namelen fs/overlayfs/super.c:387 [inline]
- ovl_get_upper fs/overlayfs/super.c:505 [inline]
- ovl_fill_super+0x767/0x35b0 fs/overlayfs/super.c:1392
- vfs_get_super fs/super.c:1325 [inline]
- get_tree_nodev+0xb8/0x150 fs/super.c:1344
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f895c78d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f895b9fe038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f895c9a5fa0 RCX: 00007f895c78d169
-RDX: 0000400000000000 RSI: 0000400000000080 RDI: 0000000000000000
-RBP: 00007f895c80e2a0 R08: 00004000000002c0 R09: 0000000000000000
-R10: 0000000000010000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f895c9a5fa0 R15: 00007ffffbd08258
- </TASK>
----[ end trace ]---
-
-
-Tested on:
-
-commit:         51a24b7d Merge tag 'trace-tools-v6.17-rc5' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=112e72e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5376b4bed9a84961
-dashboard link: https://syzkaller.appspot.com/bug?extid=5ad0824204c7bf9b67f2
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Note: no patches were applied.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
