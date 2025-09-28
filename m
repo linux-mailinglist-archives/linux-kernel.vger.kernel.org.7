@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-835279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2366BA6A18
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:31:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEADBA69E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF67C17EE55
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:31:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB93B7905
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17442C0F95;
-	Sun, 28 Sep 2025 07:29:08 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2FD28934D;
+	Sun, 28 Sep 2025 07:19:59 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5092C08AF
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEF954918;
+	Sun, 28 Sep 2025 07:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759044548; cv=none; b=JyZZJZl1f2x+iQXvkhLFHIROlo6W4NAqT6WgiwQrzYhE0PRR5wcxxi7iibq5xsA0z2rVak4dhDWVJZ1Yjr1NrCutTkvPVAXbWgqi0ZcVuzgP8fjLDq/W+vDOLEyuIAFdk70xo81U/7Xnad8yXxgq97hou1UcOELSTBpC3/j6sek=
+	t=1759043998; cv=none; b=f4b1+HZ8GS3TMcyrdri8JLUaMBZMNiVrbNFLxEMJCJBKVJTnO7T/+LXCeYZUKNyMKeuw7+0anPadZT8NZcnSABiDWgu/u01d9BoMJhG52MmtcwvDVVnUV2bD0klOt1KdoonYNm4hnDRKOCRYxwmxTCWD9eYnicqCxNQ/i+CkESo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759044548; c=relaxed/simple;
-	bh=Tk0wtXwuOGiBv6HCr1E3osb1eSd5LIhoOZ9IPA1fMtM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NruZmOb8jQ+NWIV7OCjZf5WHByNwvWYr3aTyEy+ZaOp45tfhzsODuReqDikz936VbSXe++JgXWRmILVY42uNKIfaUgABcBkLZjXtdF29ORtyr6xYRROOySg7wGmM+C8NXfApMcKQSh92IIYDynhCpwZ0k573pyoelq7KTAqgrBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cZGCF3ns9zYQvfh;
-	Sun, 28 Sep 2025 15:28:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 68C701A1102;
-	Sun, 28 Sep 2025 15:28:55 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgAHUhaY49hoiDJLBA--.29596S18;
-	Sun, 28 Sep 2025 15:28:55 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgups@vger.kernel.org,
+	s=arc-20240116; t=1759043998; c=relaxed/simple;
+	bh=rqiqW7XBpWmCWH9dwnSGTMOMnDvmv9oOluW8/IAQ5Ak=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=hvWR1sy7dqfvFVvloTRmDX0wRXzJIuN61L8Zq9nwO/HA1AuVcRpPmwTvmDx9vtf5QCiOWJPiRCSIcH/Uhgd3+a6foJVMiNOXLY5d9xVHmus+MSC0ZrTuqB+wMPKMZCVgFwP9frB5NJ+LDTqKN1ijfjo+E3zYWsVBlxXUcukxEGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-01 (Coremail) with SMTP id qwCowACnAKOH4dhoM2PtBw--.19109S2;
+	Sun, 28 Sep 2025 15:19:48 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: syniurge@gmail.com,
+	shyam-sundar.s-k@amd.com,
+	andi.shyti@kernel.org,
+	wsa@kernel.org
+Cc: linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH -next RFC 16/16] cpuset: remove prs_err clear when notify_partition_change
-Date: Sun, 28 Sep 2025 07:13:06 +0000
-Message-Id: <20250928071306.3797436-17-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250928071306.3797436-1-chenridong@huaweicloud.com>
-References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] i2c: fix reference leak in MP2 PCI device
+Date: Sun, 28 Sep 2025 15:19:33 +0800
+Message-Id: <20250928071933.1627-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:qwCowACnAKOH4dhoM2PtBw--.19109S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw17JF1rXr47XrWDGw4UJwb_yoW8Ww43pF
+	W5JFWxAr95GF4vgw1DX3W8ZFy3Jw4vvw4rWrW7AwnY9F1rZas0kr97tF909w15ArWUAF4x
+	tFW7tayruF1jqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbsmitUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAHUhaY49hoiDJLBA--.29596S18
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFyfCw48uryktw4fWry3Jwb_yoW3uFc_C3
-	4Fgr1vqryrXr1Ig3WYka1SqrWvya1UArnayas0q3y5AF12kwn3uwnFqF98Jrn8Za1xXrn8
-	Aas3GFnI9FnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
-	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-	WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UM6wAUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-From: Chen Ridong <chenridong@huawei.com>
+In i2c_amd_probe(), amd_mp2_find_device() utilizes
+driver_find_next_device() which internally calls driver_find_device()
+to locate the matching device. driver_find_device() increments the
+reference count of the found device by calling get_device(), but
+amd_mp2_find_device() fails to call put_device() to decrement the
+reference count before returning. This results in a reference count
+leak of the PCI device each time i2c_amd_probe() is executed, which
+may prevent the device from being properly released and cause a memory
+leak.
 
-The prs_err should be properly set when partition state is set, it
-does't have to reset in the notify_partition_change, just remove it.
+Found by code review.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
+Cc: stable@vger.kernel.org
+Fixes: 529766e0a011 ("i2c: Add drivers for the AMD PCIe MP2 I2C controller")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- kernel/cgroup/cpuset.c | 4 ----
- 1 file changed, 4 deletions(-)
+Changes in v2:
+- modified the missing initialization in the patch. Sorry for the omission.
+---
+ drivers/i2c/busses/i2c-amd-mp2-pci.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index a22cf97e6af5..262572af68bb 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -178,10 +178,6 @@ static inline void notify_partition_change(struct cpuset *cs, int old_prs)
- 	if (old_prs == cs->partition_root_state)
- 		return;
- 	cgroup_file_notify(&cs->partition_file);
--
--	/* Reset prs_err if not invalid */
--	if (is_partition_valid(cs))
--		WRITE_ONCE(cs->prs_err, PERR_NONE);
- }
+diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
+index ef7370d3dbea..60edbabc2986 100644
+--- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
++++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
+@@ -458,13 +458,16 @@ struct amd_mp2_dev *amd_mp2_find_device(void)
+ {
+ 	struct device *dev;
+ 	struct pci_dev *pci_dev;
++	struct amd_mp2_dev *mp2_dev;
  
- /*
+ 	dev = driver_find_next_device(&amd_mp2_pci_driver.driver, NULL);
+ 	if (!dev)
+ 		return NULL;
+ 
+ 	pci_dev = to_pci_dev(dev);
+-	return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
++	mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
++	put_device(dev);
++	return mp2_dev;
+ }
+ EXPORT_SYMBOL_GPL(amd_mp2_find_device);
+ 
 -- 
-2.34.1
+2.17.1
 
 
