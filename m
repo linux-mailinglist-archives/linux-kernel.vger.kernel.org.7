@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-835551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B77BA76B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:10:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAFABA76BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A845A188D712
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E888017986C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C77273D6F;
-	Sun, 28 Sep 2025 19:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E93825CC5E;
+	Sun, 28 Sep 2025 19:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UKX4EYyd"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HprrTUwg"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6D92737F9
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10662749ED
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759086482; cv=none; b=nduTLFwVTlFXukAtdgR0oOjFWUHvTwGxCmSmMabp1N4LyBZIN5GFXCkzPayOasodf+1QYTXd6bUfCmb/yupIbT6PtNhxTyaK0way4gHELyh6AxzMwJuxWxBwg19wuVNBwry6/7T7/Te3d9C/uFp5hxT3l7yBJ73gDkiIWLh5xXo=
+	t=1759086484; cv=none; b=hXoer4q/glTq0bnHOPL44npZvLETnREkyFVQH1zNyBNHquqSUT/Vy95fCyJFTmwhUXJRWUvmLphLx0kigp7TIf50qElvGKmzbL76vPZ8QPtnxX3bVoZUt2vxbmISC5o21xmeHglHNyarMNSx81twPp6BQXHmgs3/KSp4G+QDA/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759086482; c=relaxed/simple;
-	bh=eE4YtWNaCXed6BZ7yxa8qvhRb0ZMJlu8yifPEfR7bgo=;
+	s=arc-20240116; t=1759086484; c=relaxed/simple;
+	bh=iu8bF1+1izo/N9nO598vTqm7TLEKTMTdaWt9KfjORTs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nNAQPv+tNz8y9m+uG+PLANcGnRoIIOkAiPrg/IBvGG9Ki8JQV7y2q5fXw0ISyXVPCL59U2RiwTt/K/SzyJaqtrKvxuxIp6Zp6dUezkkWPCjqkct5fV05EzW5g5BeZVLzMKk3sQFlVgk4fWO3qi/tqymmgWg7xcFOvX5zvTmXNws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UKX4EYyd; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=DQwdZ2rsQDBq/YpnT/CKH8tWg/rzwOk00J6itxif2uMkOPkhwdDQm04LLRUB+pe6B1bsPjCYrsqqdJpc5KlX4EgGhietC4/CJCQLKT7vgHGmTeIPDWoCbEzJZnc1VyCpDbQNTUnNyEOzag07TP2QEO1w1jhhW/dRASJiXA7tSY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HprrTUwg; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5509ed1854so2521036a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:08:01 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7810912fc31so3027687b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759086480; x=1759691280; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759086482; x=1759691282; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pi5xSv0ip63020Fps6lPWkegEnm0TGf/4Ss482K5u6o=;
-        b=UKX4EYyd9VPPT9Kt8iDe2VvQFcLlWY8yHS9y2ZWX7mc9iFYikmS2XqXe+XxBAAcvjN
-         z/nm8B+tau5vnJO2ccZ33+7O/JzFw8kiCORKfHJmVXMAQNeSHI8iaZE6yIZINhVTpJxS
-         6wimAFRcBX4FHGH1Lf7GBBfyA9Q67CrUSVXUY/DaEYrPCFb9b+ympfzfuLnY/gaNkuY9
-         Xx5/SyJvUj3HApMoNqn4rypZQ64akkBg+GkynMnPFrdkdPjgeQnG/U8L/pOlUH4uZwaH
-         qTolVWRVaydrY8DSEE3PmY+ntOxptqhhrsUd0kUa3U6o53pINb+5SsVvsnu97Hw3q24r
-         5alw==
+        bh=r6rIkXRuvh9+tWEFzDbEPwiqaPEAKampFFEauxRboPc=;
+        b=HprrTUwgn0RuYRn7h2IPOAqgFlbeMq4vzxXmBONe1ESEeNmdtfqtdZAc7kgFz/7rcW
+         XWstQrxoyMQ9jgt+SwQ5kDcFl0t8cvQu5n03N4zuZmEeFkNQ5u9NEVLMFFWMcyCf5/JG
+         BaU0T8b35xKOx64vcboD6oHKa77eKabkTA3sp4wdoqC7iEzCiAQeKW12fV6EtXVDYtzz
+         zVupgYRXAiHFr0opipvsGZOXE2/Hz+VHThkwR+u9+PTft2JbDORB0cQ6J6s2KkN63oQQ
+         F8XsNeT7g0g8n2vm3aGmYkQae+GyfQ+MzSaPFXYFlUTNsCfZk9FTGioJ64XYoWudxhRP
+         otiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759086480; x=1759691280;
+        d=1e100.net; s=20230601; t=1759086482; x=1759691282;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pi5xSv0ip63020Fps6lPWkegEnm0TGf/4Ss482K5u6o=;
-        b=OLBsZpsH1fvTNwDxTV4DWmTpXG7u3hIqW4TmoHX5lNeAtLQbNn+2VEa7NqchY2M1WC
-         pfQKGYfe1+n4FDoWwxzoYPwNPrRHC2NZCaPhWzpJUgiDonkqRt3e/QMqf13SuAL0szN+
-         6B5fF+GeEUQ+9Kiz1/JfOj/Jwyl9MST+/Z58a2WM5QSydj5rE24g9ZkeK7LmL6vjvK3K
-         FVdB1sT2RFJ57yhmYPrkzBkfInVKJgct4HFcilfppPPK8/bLZ8uM/diCaX8owzU0EtTu
-         NLPivg6wiRZSnJn2AP1JI2b5V0tuXrjYH7Vi9fP4E46JnuZuwspe13LVKxdSnN3sDAGe
-         3wsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2EAcpHkoQJ+4ioPcmsfN3SGHFM+5/gjEAXjTW0f8zZZe+KtHWM6BWEeSohr1CaKfBw/Q6N6rhEmexTho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUBOypGhEi8F4XCSWx+Dl0WxgMK3L7N0BzvQFIghrBO9nWp7dZ
-	UTYRJWSdYB4rt4Rcxx8i0YbakoeFdRi/j9DrysGgsE8pBzZGSd4jSRwiWtvHERm0Qk4B9OPNyYt
-	4H+KdzoI+6xmvUQ==
-X-Google-Smtp-Source: AGHT+IG0pDvpM9G54/3TjfbvcFpmO/TqiGthSy0imZbx93Glz7wAQ23TYddREy6lbjR0p5lw+B7srvLFeianPg==
-X-Received: from pjjk3.prod.google.com ([2002:a17:90a:6583:b0:32d:a0b1:2b14])
+        bh=r6rIkXRuvh9+tWEFzDbEPwiqaPEAKampFFEauxRboPc=;
+        b=HWf0ezCaltjqbc3KDwl4Qu/mH8Ly5Df/7VgbSmYNYg1WIwv/6gnJSskT1IvIB3Q0+d
+         mBdveLzbS2kcOW9toaYMdehavZcgpyuN90f5MeHSsm4s+/KkB7PzvwM7NesgteVzvQSR
+         IGBPFzYMCkfpuntcj3K58YFpggL5KNgSU0vO2535+Ivyea+Y4KXWJudyGUoWwSmn+fT+
+         4rYCCq3xxM3t7iEYIWyyxEs/G1KmGBpSBu4kR0PLWeDoud6mN4GUlg6pkbUBfYnLv8lN
+         Yx4Ylg/SQVkK4fBzkKeTEFcOiHJfzm0Sia91EXab8zQaVAturHRAyUMGlbDKWYAT1auZ
+         PR7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd3rKUb5+qnS60uGS4foujKpCtbg1EBbClY5l+4UW0ysSqQ1CkZ0c2EFRFsHDFMcQ8gY8xzz/mVHepwvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS5nhjRY94e9pGKsMIU8J6/mc/pMoFKGXrYPCTsaeuPC2QIIKr
+	FJyhzyAJ2vGWd9EkZEcorCihM1HyuKmM0KxiUT7/deKFxvl+pbuiDDJHv2spub/HwG1ITX1hwdS
+	Q/J/AgjMB9BRpkQ==
+X-Google-Smtp-Source: AGHT+IG3DYQZH5AWOVC5jjKnDvm3R5bOqt3Kna9JyjjCIT0P03vRmnYOpx62s2gMEvWQZHaWnGO1XY6oqMnV7Q==
+X-Received: from pfbhm9.prod.google.com ([2002:a05:6a00:6709:b0:77f:456b:23da])
  (user=skhawaja job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4d10:b0:330:6d5e:f178 with SMTP id 98e67ed59e1d1-3342a30c47amr3373951a91.26.1759086480539;
- Sun, 28 Sep 2025 12:08:00 -0700 (PDT)
-Date: Sun, 28 Sep 2025 19:06:21 +0000
+ 2002:a05:6a00:178f:b0:781:1e0d:a181 with SMTP id d2e1a72fcca58-7811e0da5bfmr8289263b3a.14.1759086482049;
+ Sun, 28 Sep 2025 12:08:02 -0700 (PDT)
+Date: Sun, 28 Sep 2025 19:06:22 +0000
 In-Reply-To: <20250928190624.3735830-1-skhawaja@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,103 +73,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250928190624.3735830-1-skhawaja@google.com>
 X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <20250928190624.3735830-14-skhawaja@google.com>
-Subject: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+Message-ID: <20250928190624.3735830-15-skhawaja@google.com>
+Subject: [RFC PATCH 14/15] iommu/vt-d: sanitize restored root table and iommu contexts
 From: Samiullah Khawaja <skhawaja@google.com>
 To: David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
 	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
 	Pasha Tatashin <pasha.tatashin@soleen.com>, Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev
-Cc: YiFei Zhu <zhuyifei@google.com>, Samiullah Khawaja <skhawaja@google.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
+Cc: Samiullah Khawaja <skhawaja@google.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Pratyush Yadav <pratyush@kernel.org>, Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
 	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
 	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
-	praan@google.com
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, zhuyifei@google.com, 
+	Chris Li <chrisl@kernel.org>, praan@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-From: YiFei Zhu <zhuyifei@google.com>
+The persisted root table will contain context entries from the previous
+kernel. Sanitize the root table entries by setting them all to zero.
 
-Iterate through all the IOAS objects and the underlying hwpt_paging
-objects. Persist each iommu domain using API iommu_domain_preserve.
+This is temporary, the context entries for the persisted devices need to
+be kept intact.
 
-This is temporary as only the domains attached to the persisted devices
-need to preserved.
-
-Signed-off-by: YiFei Zhu <zhuyifei@google.com>
 Signed-off-by: Samiullah Khawaja <skhawaja@google.com>
 ---
- drivers/iommu/iommufd/liveupdate.c | 47 ++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ drivers/iommu/intel/liveupdate.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/iommu/iommufd/liveupdate.c b/drivers/iommu/iommufd/liveupdate.c
-index 1bdd5a82af90..0af0c6fadff1 100644
---- a/drivers/iommu/iommufd/liveupdate.c
-+++ b/drivers/iommu/iommufd/liveupdate.c
-@@ -8,9 +8,52 @@
- #include <linux/kexec_handover.h>
- #include <linux/liveupdate.h>
- #include <linux/mm.h>
-+#include <linux/pci.h>
+diff --git a/drivers/iommu/intel/liveupdate.c b/drivers/iommu/intel/liveupdate.c
+index 755325a5225c..3783632cf634 100644
+--- a/drivers/iommu/intel/liveupdate.c
++++ b/drivers/iommu/intel/liveupdate.c
+@@ -306,6 +306,26 @@ static struct iommu_ser *get_liveupdate_state(void)
+ 	return ser;
+ }
  
- #include "iommufd_private.h"
- 
-+static int iommufd_save_ioas(struct iommufd_ctx *ictx,
-+			     struct iommufd_lu *iommufd_lu)
++static void sanitize_iommu_context(struct intel_iommu *iommu)
 +{
-+	struct iommufd_hwpt_paging *hwpt_paging;
-+	struct iommufd_ioas *ioas = NULL;
-+	struct iommufd_object *obj;
-+	unsigned long index;
-+	int rc;
++	struct context_entry *context;
++	int i;
 +
-+	/* Iterate each ioas. */
-+	xa_for_each(&ictx->objects, index, obj) {
-+		if (obj->type != IOMMUFD_OBJ_IOAS)
++	/* TODO: Keep the context entries for the preserved devices. */
++	for (i = 0; i < ROOT_ENTRY_NR; i++) {
++		context = iommu_context_addr(iommu, i, 0, 0);
++		if (context)
++			memset(context, 0, PAGE_SIZE);
++
++		if (!sm_supported(iommu))
 +			continue;
 +
-+		ioas = (struct iommufd_ioas *)obj;
-+		mutex_lock(&ioas->mutex);
-+
-+		/*
-+		 * TODO: Iterate over each device of this iommufd and only save
-+		 * hwpt/domain if the device is persisted.
-+		 */
-+		list_for_each_entry(hwpt_paging, &ioas->hwpt_list, hwpt_item) {
-+			if (!hwpt_paging->common.domain)
-+				continue;
-+
-+			rc = iommu_domain_preserve(hwpt_paging->common.domain);
-+			if (rc)
-+				goto err;
-+		}
-+
-+		mutex_unlock(&ioas->mutex);
-+		ioas = NULL;
++		context = iommu_context_addr(iommu, i, 0x80, 0);
++		if (context)
++			memset(context, 0, PAGE_SIZE);
 +	}
-+
-+	return 0;
-+
-+err:
-+	if (ioas)
-+		mutex_unlock(&ioas->mutex);
-+	return rc;
 +}
 +
- static int iommufd_liveupdate_prepare(struct liveupdate_file_handler *handler,
- 				      struct file *file, u64 *data)
+ static int restore_iommu_context(struct intel_iommu *iommu)
  {
-@@ -33,6 +76,10 @@ static int iommufd_liveupdate_prepare(struct liveupdate_file_handler *handler,
+ 	struct context_entry *context;
+@@ -324,6 +344,8 @@ static int restore_iommu_context(struct intel_iommu *iommu)
+ 			BUG_ON(!kho_restore_folio(virt_to_phys(context)));
+ 	}
  
- 	iommufd_lu = folio_address(folio_lu);
- 
-+	rc = iommufd_save_ioas(ictx, iommufd_lu);
-+	if (rc)
-+		goto err_folio_put;
++	sanitize_iommu_context(iommu);
 +
- 	rc = kho_preserve_folio(folio_lu);
- 	if (rc)
- 		goto err_folio_put;
+ 	return ret;
+ }
+ 
 -- 
 2.51.0.536.g15c5d4f767-goog
 
