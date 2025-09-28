@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-835575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF6ABA77DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:01:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68399BA77E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5023B6A27
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:01:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 125127A839A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1D729AAF8;
-	Sun, 28 Sep 2025 21:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8C329ACE5;
+	Sun, 28 Sep 2025 21:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="h8PORjgs"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDp6O9gc"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E91D226CF7;
-	Sun, 28 Sep 2025 21:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355E9226CF7
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 21:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759093283; cv=none; b=JI/RZF7t90TQXchiW3gnjWtEHcoiPO9pEETKdHVh/wp7gq698MmXrlN9GFHlalIYuQgbg96vrnGb8PIplsoDxD7YgYfhpcf7KzaFM3XnXv5laMFu5fk8v5rQ6Z89UW+mk18NOsH138sOrQs1s3OlDgGqhXkAW4VrlcQBXsXoMeY=
+	t=1759093331; cv=none; b=JOptkxQrlYhI2mSNdsBhA+3TCprly4ofOmc3XG6vApZLtAUaoJbs6hI0lpsrCT3COjWv7+flA71+geAVAt9Njhs3B/j5YM883fPOFg+jSeJL3OLY/vzCYBS7IP5OAGUef61c5W+vktBJ7FY49XbeRwYPIsHbRhnS8xreXWYOr/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759093283; c=relaxed/simple;
-	bh=5HhK7XnvK65/N8XzfAZPaRc4ZNAHp83kybTevCzMBUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGpvtFW71qurguZBMF8za3nmoR3n3KH3UTQZK/3JVBDDeTjmxRWvz4MX6SBg8iltSpvzUsh+S+h71xq4p3n4C6eQAVbYEFnPE7AyOK/+K5iqhp3Bw7yf+LuQqj9xIyz/j/J3LanZQFFMJg66gc/zJalXYiM1e9c6mXvfeeW6Dwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=h8PORjgs; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=aupfVz7e9wplaDlsYMjDfHncbZB7faN8jTJ9BwCTw74=; b=h8PORjgsj4t28FG8t0P54L2Rfu
-	1KOok0ak82wgdvmBgnhNzzMNuvgXD/oIYYr3hdZaaWUnL6oqsLTWBjmeLCWY5x1RvP/66QV7hGqQQ
-	A158LZCzybAQr9k78vVXJCpx2Xg/U8ORw+3vRpwOWy432Pi9anmusm6F1hQJM/37WJoVKtubhXiaC
-	DFLcA6uTbinxM7m3JSnbXhYdDf5yBw0LJ/kTiZGlIF8YSIv9wIlEzyCABAPPuk3plzQ1xKXehHYWy
-	ZQZGPymt6NiXYwhJtISiknvxQmNZKvqAp740HYUVzFgjeZemeH6W7Rqk5//5leSVjHK7JZFp3o99e
-	QdzkYHxg==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1v2yW1-001iHZ-1z;
-	Sun, 28 Sep 2025 23:01:05 +0200
-Date: Sun, 28 Sep 2025 23:01:00 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
-Subject: Re: [PATCH 2/2] mfd: simple-mfd-i2c: add a reboot cell for the
- SpacemiT P1 chip
-Message-ID: <aNmiDIUzx5eUEOQT@aurel32.net>
-Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
-References: <20250927220824.1267318-1-aurelien@aurel32.net>
- <20250927220824.1267318-3-aurelien@aurel32.net>
- <E15EF3B2FD46EFE7+aNiYuset7FKRo_4C@kernel.org>
+	s=arc-20240116; t=1759093331; c=relaxed/simple;
+	bh=7gRqA1lzDomVvZ9HdJ5xM3tJEYy4qZM4Tf1HKy4xaKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YsYmCUgsxGQLSTUPJbWiYQJF547x3EMNihmz3zgAzxVkz3TTIBKu/See3+rf/zpikfFx8qlbOdQ8P1aFZaIW7eYxcAaRL2TT4qzsQNZsMY8oKZaCiet16Repea6OnnkuLfz9b+LPvqkHHl32nd/v8HkcX61ljYbn/xicowOp/Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDp6O9gc; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so2981365f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:02:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759093328; x=1759698128; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sxkm8jE9ToiUS31/wtNowypDOUu8isLYkTQLRPslSVU=;
+        b=MDp6O9gctyCkzhG2JANeh0QornOvlUp1gnGb91FKsoLnB93AVLOQ73QBg47oZKhnlM
+         +G+QHc2RaGPDfZ0WW9RxUnX8fgOT8boLlthN0zCjsaeE7D5W8b4dYBA5PcmY2mCVj4cq
+         bHMw1xiY8ccffu8engHLoR3tBGQNbWZbD0e2CwAAh6jZuO0Q7AgTvSY9moANdqzxQ7DQ
+         m0YfbLsCWXxxzRZnxsUEO6UFfD2AxJFead2y0Ks/koaydi8c8w1RhqjMBkl5Ykd9nCqL
+         TkQAu4QMtI0x9onMWM9uNZuT01TM/NTDoEBLn+EoupWM012lwTVKMzIu0B5zrUeyn5Jg
+         s9yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759093328; x=1759698128;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sxkm8jE9ToiUS31/wtNowypDOUu8isLYkTQLRPslSVU=;
+        b=fBopp/xQEKKcCQwi/W69cpHsy1CdHYuvwawvbkaHbAoEfwJlSRK/efYmLHoe9g2rCH
+         5hgzQSuNBENWhAZ8S/ncr+em3c5EfAryUuwjnyf8UbX2aOKCuXhtk0dBFMHgi/u9ya6M
+         KIJPKbb5qPZjazWlyfiUuO++1FzX590JpUW4ooAWMseqa0EJd8SR/xSVoADm8iteSAgp
+         ScKeA++svBVOOYJqWrh375FOijyKN+1PlMCdUBEM0JyFjIEpDk49jM0GNr97Ehuq4kJW
+         OvtxmTqJwFddKRFSF8ntVHAF909OtOgLk1X8BHGV96vJEkfAsFy1oIL2xfeQwMSrRaIl
+         eCCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdXE7IWsazPsXnq9xjwy4Q4GRgLTpBAOff0ngdoFTYu2YKCpip/D37iVdxjDO+O4DnlWfgWrQtw5bzhUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym+wP0KvaS4CM2L9NpwqvvYnN33gOrliaD5dP3JApKLGCmvkhR
+	b+oi2AIdz35PqIyxIe6KTWKHPbIT72GLCqROYx3tM7KJ1cSlNSHNPt5e
+X-Gm-Gg: ASbGncvfAuM4LswLnWhiKit10lJVdOIf0rcTBvKCQSt8VaA1osh0SOVGS0IG/+AWudo
+	TlGP3YrVnS5eSn4jx3a+yT5hF/q85WDr+DedUACeXPfD9zLJiw7NNuDOaG1YXHO5N2GrkW+4zfK
+	/aW3v9MbcIiezytbUVvjS+Q1IBQRpwPmoQpf2VltpHgM06eDavqGnYVt0HbvF57fz31MhWIFnKD
+	m2I/7pTjoxxmYRRFj7JXNNd1WLYxV+2m+2Gxt84tFymBmiv5EwDHeQaMPvFZSejOVQoWKI1akTH
+	ZtUFLfw9blaz9jquUhLmGfjh1iQrxw+xTiFFoBZcn69F5zSlgxJoROApbotdRTCYer20EEr/5o8
+	E2H1bauK48hzgwZvJqE8AsA==
+X-Google-Smtp-Source: AGHT+IE9CTRtnxkm6JMDZSimOuYV/5weeNvzrjUJ+0Z0yRZI1GfxssHnK7NaXTSzkYrHfFKdvuTsjw==
+X-Received: by 2002:adf:e6ce:0:b0:411:f07a:67fb with SMTP id ffacd0b85a97d-411f07a6bb4mr7969797f8f.55.1759093328488;
+        Sun, 28 Sep 2025 14:02:08 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fb89fb2fcsm16366786f8f.22.2025.09.28.14.02.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Sep 2025 14:02:08 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] HID: hid-debug: Fix spelling mistake "Rechargable" -> "Rechargeable"
+Date: Sun, 28 Sep 2025 22:01:18 +0100
+Message-ID: <20250928210118.242631-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <E15EF3B2FD46EFE7+aNiYuset7FKRo_4C@kernel.org>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2025-09-28 10:08, Troy Mitchell wrote:
-> Hi Aurelien, Thanks for your patch!
->=20
-> On Sun, Sep 28, 2025 at 12:07:41AM +0200, Aurelien Jarno wrote:
-> > Add a "spacemit-p1-reboot" cell for the SpacemiT P1 chip.
-> >=20
-> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > ---
-> >  drivers/mfd/simple-mfd-i2c.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-> > index 696b602051260..2e86efb0c82b8 100644
-> > --- a/drivers/mfd/simple-mfd-i2c.c
-> > +++ b/drivers/mfd/simple-mfd-i2c.c
-> > @@ -99,6 +99,7 @@ static const struct regmap_config spacemit_p1_regmap_=
-config =3D {
-> >  };
-> > =20
-> >  static const struct mfd_cell spacemit_p1_cells[] =3D {
-> > +	{ .name =3D "spacemit-p1-reboot", },
-> I=E2=80=99m not sure if this name is the best fit here.
-> Since the driver also implements reboot and power-off functionality,
-> would it make more sense to call it spacemit-p1-power?
-> I=E2=80=99ll leave it up to you.
+There is a spelling mistake in HID description. Fix it.
 
-I see your point, for this driver naming everything was among the most=20
-complex things. I have chosen "spacemit-p1-reboot" to be consistent with =
-=20
-the naming used in the driver itself. I chose them from recently added=20
-drivers supporting both poweroff and reset, that seems to all use the=20
-term reboot.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/hid/hid-debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Otherwise, LGTM.
->=20
-> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> >  	{ .name =3D "spacemit-p1-regulator", },
-> >  	{ .name =3D "spacemit-p1-rtc", },
-> >  };
-> > --=20
-> > 2.47.2
-> >=20
-> >=20
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
->=20
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index 7107071c7c51..438a12046e86 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -2523,7 +2523,7 @@ static const struct hid_usage_entry hid_usage_table[] = {
+ 		{ 0x85, 0x0088, "iDeviceName" },
+ 		{ 0x85, 0x0089, "iDeviceChemistry" },
+ 		{ 0x85, 0x008a, "ManufacturerData" },
+-		{ 0x85, 0x008b, "Rechargable" },
++		{ 0x85, 0x008b, "Rechargeable" },
+ 		{ 0x85, 0x008c, "WarningCapacityLimit" },
+ 		{ 0x85, 0x008d, "CapacityGranularity1" },
+ 		{ 0x85, 0x008e, "CapacityGranularity2" },
+-- 
+2.51.0
 
---=20
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
 
