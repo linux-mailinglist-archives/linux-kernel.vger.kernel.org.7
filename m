@@ -1,332 +1,206 @@
-Return-Path: <linux-kernel+bounces-835434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286E0BA7153
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:58:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85458BA715C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E17E18959B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16906177A23
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F651E9B1A;
-	Sun, 28 Sep 2025 13:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888AE212549;
+	Sun, 28 Sep 2025 14:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKjQnmZj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWef6/N6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBDA17597
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD90E2F2E;
+	Sun, 28 Sep 2025 14:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759067912; cv=none; b=aJtITBbS5XOJXV/DNr5nvdymqL2pwPaETo9vR0r7X3W6MExScpqAnofNjNA90G5pX1ElUa0EU8RMriA5sC50AFnTsURdfiG1gwSdkZ49KibkHX/K5PHPe6ipvTNNT8H2dDE/B4UQGX4UUoOe/Ftijz6GL8l2kv3nWKYcz1UW/Pg=
+	t=1759068542; cv=none; b=tlRCmhTfGta7YkXOuwEwIHKf9DDp81DrTD+WGLN13k8xpijtn8Z1QpNOShCcPTd1to2IlevXs3P6xUCdXUBJireG6Xe7czngZqVuLeAzyjRJOAUj8kmjc3BHWjvg4+kTLuiY2d13cJjzBCnIdMSEUFM4wzFB+aYOxcdvZMIXdOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759067912; c=relaxed/simple;
-	bh=RrHTkPkJ9KxjQHnavmnJvqPxNotZNOveUTg85TUYacM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=owr7Fwn+7YaDbjLFIY9URYr+0oF4Lj+TB2izauHKP1n3XM/FGLmzHQspvdfa7js+xei8zoRt91eNPwcILhzmJkLTwmtN2EEzg6vWZ4XAjQy6d2ERUzaq1+35EbCI/myLrJPUFPUhf0p+VqRW2blt7SNrXFdnJoxMoTkNSAZLXKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKjQnmZj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C6BC4CEF0
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:58:31 +0000 (UTC)
+	s=arc-20240116; t=1759068542; c=relaxed/simple;
+	bh=oLopCkmGri793JE1kd5+sWMGisCseqI+NsmBu5y90K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ByMQqOrgmklXBFG5OrToZD7REXlfEv9aN3nC8FdscWEi29kEt7TXrB5/1tsBXGQElbvA8LQDijhQcbiz1FG9jsqmYe0ZUwq90parFPhHkSHjV80sg2b933XfKGgPgRDii2MblXBuTOGhBW//kZgGE7Ti/4TASzNo2XvY/GVtSk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWef6/N6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4016C4CEF0;
+	Sun, 28 Sep 2025 14:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759067911;
-	bh=RrHTkPkJ9KxjQHnavmnJvqPxNotZNOveUTg85TUYacM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PKjQnmZj3fCkD3MWVEG+KERvYDGC5glGHO5U1iSEA8SLxZj4YKcoVQLfDwqnsgTGb
-	 g7UEVDkkFdDZOAh3da7i9zwLZR0i+8PCoiwFZaBmyUL8XHWQ0WpvZZ77plpxN23DrL
-	 SIlDsh9wDdg2uBb981l5OyAdwB9g0ywpKYQXRDxRHcxC6luVM3k7CznTicX1dTIT/b
-	 wNzKpZCCxvSedYJzhl0x/E8eIbUR7J5ivVthMZO6g29i9+3+7ij5qNczxwxvuBUNyx
-	 8G/eQ8suDiawrmCETdsGi6ivSTdMJZDOPn1+kbWMgvlpPgcTknHlCV0P8xLB8G729k
-	 9JeixuPDo5dwQ==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so7546681a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:58:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0qRlyV4AKvbCxbleoJIBAnxj4hAY6Q8kXaO+hlnhZ/Esv76Y7vslorQ6xWKFY7pfY3lww+Ki9iuBk2zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzicakHwtpAMpwywhY9cL20s/MIdvxXIdbmchPeAO750trzd7WG
-	VE+xDNUNmOnOmBMb5NUjM9ZyY04rLHJ56W3GP9LfAW3wZ5m0zgzlKzEKGgRpGJFN+bqotDpWC3m
-	GTwoXX270mW3+xsYFMAT7Hk11oh04btc=
-X-Google-Smtp-Source: AGHT+IGvCaXEaCCGJHQTjwko5ijQWG9wboug0FNJB/iFsDT+joLcDSwsGEgrpDHptK2NwMwDEBf4VrRUfqQe1ZGaJD8=
-X-Received: by 2002:a17:906:c141:b0:b04:5895:fe8e with SMTP id
- a640c23a62f3a-b34bb9e9b51mr1496780366b.36.1759067910449; Sun, 28 Sep 2025
- 06:58:30 -0700 (PDT)
+	s=k20201202; t=1759068542;
+	bh=oLopCkmGri793JE1kd5+sWMGisCseqI+NsmBu5y90K8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pWef6/N61eoFufqCle9xI0T0DU1bauI9krI9XxIo4sI9ZseI9gcbbjFFi85JiVBWr
+	 Q9j6FIA0BDuoMchOPOT45kc3k+akgS6Sg4iLtLIRzFv7D4eRCKzAmPobCJsOTPNn3m
+	 pTcS3BoqIJHTA8qrudy3uv1tjeVATtPSfcZ5htEpV+INz42ZaIhk0vULPa9+OJ69MZ
+	 D/bYvDjucs1IZi9Ff7HIRr5UoXOsM0UNBjQdfrFdHNIBnS4GXv+XYPkCJGWuh2xUZA
+	 f4lEbio8+Vt1GziYj++Ta3tzjnqYUtkCZ/F78PzZUzi7pOXAtgRcdWbIYrT0JlRFbP
+	 l1TlMqccYnL7g==
+Date: Sun, 28 Sep 2025 17:08:57 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+	Cong Wang <cwang@multikernel.io>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org,
+	linux-mm@kvack.org, multikernel@lists.linux.dev
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture
+ support
+Message-ID: <aNlBeSpNCvqKXBWm@kernel.org>
+References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+ <aNZWTB_AbK1qtacy@kernel.org>
+ <CAM_iQpWBHWscTbuUm54G3tvqf-EQhSYaFJqEJD4M73doeH=TKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925092902.1366058-1-guanwentao@uniontech.com>
-In-Reply-To: <20250925092902.1366058-1-guanwentao@uniontech.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 28 Sep 2025 21:58:10 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5ny_e9G5qRUMYW-d5LqjXv8rvsGMz9BQPt6+npyPmCOA@mail.gmail.com>
-X-Gm-Features: AS18NWC547i7JUcuDNSIYAe0E_ay43qn0jlubReLFKEmkn6ebN_O807Utlh1SZ8
-Message-ID: <CAAhV-H5ny_e9G5qRUMYW-d5LqjXv8rvsGMz9BQPt6+npyPmCOA@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: mm: try VMA lock-based page fault handling first
-To: Wentao Guan <guanwentao@uniontech.com>
-Cc: kernel@xen0n.name, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	zhanjun@uniontech.com, niecheng1@uniontech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM_iQpWBHWscTbuUm54G3tvqf-EQhSYaFJqEJD4M73doeH=TKQ@mail.gmail.com>
 
-Hi, Wentao,
+On Sat, Sep 27, 2025 at 01:27:04PM -0700, Cong Wang wrote:
+> On Fri, Sep 26, 2025 at 2:01 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Thu, Sep 18, 2025 at 03:25:59PM -0700, Cong Wang wrote:
+> > > This patch series introduces multikernel architecture support, enabling
+> > > multiple independent kernel instances to coexist and communicate on a
+> > > single physical machine. Each kernel instance can run on dedicated CPU
+> > > cores while sharing the underlying hardware resources.
+> > >
+> > > The multikernel architecture provides several key benefits:
+> > > - Improved fault isolation between different workloads
+> > > - Enhanced security through kernel-level separation
+> > > - Better resource utilization than traditional VM (KVM, Xen etc.)
+> > > - Potential zero-down kernel update with KHO (Kernel Hand Over)
+> >
+> > This list is like asking AI to list benefits, or like the whole cover
+> > letter has that type of feel.
+> 
+> Sorry for giving you that feeling. Please let me know how I can
+> improve it for you.
 
-Thanks for you patch, but it is full of bugs...
+There is no evidence of any of these benefits. That's the central
+issue. You pretty much must give quantatitve proof of any of these
+claims or the benefit is imaginary.
 
-On Thu, Sep 25, 2025 at 5:33=E2=80=AFPM Wentao Guan <guanwentao@uniontech.c=
-om> wrote:
->
-> Attempt VMA lock-based page fault handling first, and fall back to the
-> existing mmap_lock-based handling if that fails.
->
-> The "ebizzy -mTRp" on 3A6000 shows that PER_VMA_LOCK can
-> improve the benchmark by about 20.7%.
->
-> This is the loongarch variant of "x86/mm: try VMA lock-based page fault
-> handling first".
->
-> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> ---
-> ebizzy-0.3(can download by phoronix-test-suite):
-> before patch:
-> 97800 records/s
-> real 10.00 s user  0.25 s sys  13.54 s
-> 97835 records/s
-> real 10.00 s user  0.27 s sys  13.51 s
-> 97929 records/s
-> real 10.00 s user  0.26 s sys  13.53 s
-> 97736 records/s
-> real 10.00 s user  0.31 s sys  13.48 s
-> 97914 records/s
-> real 10.00 s user  0.30 s sys  13.50 s
-> 97916 records/s
-> real 10.00 s user  0.31 s sys  13.48 s
-> 97857 records/s
-> real 10.00 s user  0.28 s sys  13.51 s
-> 97927 records/s
-> real 10.00 s user  0.24 s sys  13.55 s
-> 97962 records/s
-> real 10.00 s user  0.41 s sys  13.39 s
-> 97501 records/s
-> real 10.00 s user  0.20 s sys  13.53 s
-> after patch:
-> 117645 records/s
-> real 10.00 s user  0.31 s sys  23.17 s
-> 118207 records/s
-> real 10.00 s user  0.37 s sys  23.18 s
-> 118426 records/s
-> real 10.00 s user  0.32 s sys  23.14 s
-> 118172 records/s
-> real 10.00 s user  0.44 s sys  23.07 s
-> 118548 records/s
-> real 10.00 s user  0.45 s sys  23.04 s
-> 118011 records/s
-> real 10.00 s user  0.32 s sys  23.15 s
-> 118143 records/s
-> real 10.00 s user  0.41 s sys  23.09 s
-> 118181 records/s
-> real 10.00 s user  0.42 s sys  23.12 s
-> 117721 records/s
-> real 10.00 s user  0.34 s sys  23.17 s
-> 118138 records/s
-> real 10.00 s user  0.42 s sys  23.04 s
-> ---
-> ---
->  arch/loongarch/Kconfig    |  1 +
->  arch/loongarch/mm/fault.c | 49 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 50 insertions(+)
->
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 0631a6b11281b..1c517954157c0 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -69,6 +69,7 @@ config LOONGARCH
->         select ARCH_SUPPORTS_LTO_CLANG_THIN
->         select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
->         select ARCH_SUPPORTS_NUMA_BALANCING
-> +       select ARCH_SUPPORTS_PER_VMA_LOCK
->         select ARCH_SUPPORTS_RT
->         select ARCH_USE_BUILTIN_BSWAP
->         select ARCH_USE_CMPXCHG_LOCKREF
-> diff --git a/arch/loongarch/mm/fault.c b/arch/loongarch/mm/fault.c
-> index deefd9617d008..d2dc3e194dd76 100644
-> --- a/arch/loongarch/mm/fault.c
-> +++ b/arch/loongarch/mm/fault.c
-> @@ -215,6 +215,53 @@ static void __kprobes __do_page_fault(struct pt_regs=
- *regs,
->                 flags |=3D FAULT_FLAG_USER;
->
->         perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
-> +       if (!(flags & FAULT_FLAG_USER))
-> +               goto lock_mmap;
-> +
-> +       vma =3D lock_vma_under_rcu(mm, address);
-> +       if (!vma)
-> +               goto lock_mmap;
-> +
-> +       if (write) {
-> +               flags |=3D FAULT_FLAG_WRITE;
-> +               if (!(vma->vm_flags & VM_WRITE)) {
-> +                       vma_end_read(vma);
-> +                       si_code =3D SEGV_ACCERR;
-Need count_vm_vma_lock_event(VMA_LOCK_SUCCESS) here.
+> 
+> >
+> > I'd probably work on benchmarks and other types of tests that can
+> > deliver comparative figures, and show data that addresses workloads
+> > with KVM, namespaces/cgroups and this, reflecting these qualities.
+> 
+> Sure, I think performance comes after usability, not vice versa.
+> 
+> 
+> >
+> > E.g. consider "Enhanced security through kernel-level separation".
+> > It's a pre-existing feature probably since dawn of time. Any new layer
+> > makes obviously more complex version "kernel-level separation". You'd
+> > had to prove that this even more complex version is more secure than
+> > pre-existing science.
+> 
+> Apologize for this. Do you mind explaining why this is more complex
+> than the KVM/Qemu/vhost/virtio/VDPA stack?
 
-> +                       goto bad_area_nosemaphore;
-> +               }
-> +       } else {
-> +               if (!(vma->vm_flags & VM_EXEC) && address =3D=3D exceptio=
-n_era(regs)){
-> +                       vma_end_read(vma);
-> +                       si_code =3D SEGV_ACCERR;
-The same.
+KVM does not complicate kernel level separation or access control per
+kernel instance at all. A guest in the end of the day is just a fancy
+executable.
 
-> +                       goto bad_area_nosemaphore;
-> +               }
-> +               if (!(vma->vm_flags & (VM_READ | VM_WRITE)) && address !=
-=3D exception_era(regs)){
-> +                       vma_end_read(vma);
-> +                       si_code =3D SEGV_ACCERR;
-The same.
+This feature on the other hand intervenes various easily breaking code
+paths.
 
-> +                       goto bad_area_nosemaphore;
-> +               }
-> +       }
-> +
-> +       fault =3D handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LO=
-CK, regs);
-> +       if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-> +               vma_end_read(vma);
-> +
-> +       if (!(fault & VM_FAULT_RETRY)) {
-> +               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-> +               goto done;
-> +       }
-> +       count_vm_vma_lock_event(VMA_LOCK_RETRY);
-> +       if (fault & VM_FAULT_MAJOR)
-> +               flags |=3D FAULT_FLAG_TRIED;
-> +
-> +       /* Quick path to respond to signals */
-> +       if (fault_signal_pending(fault, regs)) {
-> +               if (!user_mode(regs))
-> +                       no_context(regs, write, address);
-> +               return;
-> +       }
-> +lock_mmap:
-lock_mmap is exactly the same as retry, but since other architectures
-are also like this, let's keep it as is...
+> 
+> >
+> > kexec and its various corner cases and how this patch set addresses
+> > them is the part where I'm most lost.
+> 
+> Sorry for that. I will post Youtube videos to explain kexec in detail,
+> please follow our Youtube channel if you are interested. (I don't
+> want to post a link here in case people think I am promoting my
+> own interest, please email me privately.)
 
-> +
->  retry:
->         vma =3D lock_mm_and_find_vma(mm, address, regs);
->         if (unlikely(!vma))
-> @@ -292,6 +339,8 @@ static void __kprobes __do_page_fault(struct pt_regs =
-*regs,
->         }
->
->         mmap_read_unlock(mm);
-> +done:
-We need error handling here.
+Here I have to say that posting a youtube link to LKML is of your
+own interest is not unacceptable as far as I'm concerned :-)
 
-> +       return;
->  }
->
->  asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
-I think the whole correct patch is like this:
-diff --git a/arch/loongarch/mm/fault.c b/arch/loongarch/mm/fault.c
-index deefd9617d00..c87e7d38090d 100644
---- a/arch/loongarch/mm/fault.c
-+++ b/arch/loongarch/mm/fault.c
-@@ -215,6 +215,58 @@ static void __kprobes __do_page_fault(struct pt_regs *=
-regs,
-                flags |=3D FAULT_FLAG_USER;
+That said, I don't promise that I will watch any of the Youtube
+videos posted either here or privately. All the quantitative
+proof should be embedded to patches.
 
-        perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
-+
-+       if (!(flags & FAULT_FLAG_USER))
-+               goto lock_mmap;
-+
-+       vma =3D lock_vma_under_rcu(mm, address);
-+       if (!vma)
-+               goto lock_mmap;
-+
-+       if (write) {
-+               flags |=3D FAULT_FLAG_WRITE;
-+               if (!(vma->vm_flags & VM_WRITE)) {
-+                       vma_end_read(vma);
-+                       si_code =3D SEGV_ACCERR;
-+                       count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+                       goto bad_area_nosemaphore;
-+               }
-+       } else {
-+               if (!(vma->vm_flags & VM_EXEC) && address =3D=3D
-exception_era(regs)){
-+                       vma_end_read(vma);
-+                       si_code =3D SEGV_ACCERR;
-+                       count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+                       goto bad_area_nosemaphore;
-+               }
-+               if (!(vma->vm_flags & (VM_READ | VM_WRITE)) && address
-!=3D exception_era(regs)){
-+                       vma_end_read(vma);
-+                       si_code =3D SEGV_ACCERR;
-+                       count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+                       goto bad_area_nosemaphore;
-+               }
-+       }
-+
-+       fault =3D handle_mm_fault(vma, address, flags |
-FAULT_FLAG_VMA_LOCK, regs);
-+       if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-+               vma_end_read(vma);
-+
-+       if (!(fault & VM_FAULT_RETRY)) {
-+               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+               goto done;
-+       }
-+
-+       count_vm_vma_lock_event(VMA_LOCK_RETRY);
-+       if (fault & VM_FAULT_MAJOR)
-+               flags |=3D FAULT_FLAG_TRIED;
-+
-+       /* Quick path to respond to signals */
-+       if (fault_signal_pending(fault, regs)) {
-+               if (!user_mode(regs))
-+                       no_context(regs, write, address);
-+               return;
-+       }
-+lock_mmap:
-+
- retry:
-        vma =3D lock_mm_and_find_vma(mm, address, regs);
-        if (unlikely(!vma))
-@@ -276,8 +328,10 @@ static void __kprobes __do_page_fault(struct pt_regs *=
-regs,
-                 */
-                goto retry;
-        }
-+       mmap_read_unlock(mm);
-+
-+done:
-        if (unlikely(fault & VM_FAULT_ERROR)) {
--               mmap_read_unlock(mm);
-                if (fault & VM_FAULT_OOM) {
-                        do_out_of_memory(regs, write, address);
-                        return;
-@@ -290,8 +344,6 @@ static void __kprobes __do_page_fault(struct pt_regs *r=
-egs,
-                }
-                BUG();
-        }
--
--       mmap_read_unlock(mm);
- }
+> 
+> >
+> > If I look at one of multikernel distros (I don't know any other
+> > tbh) that I know it's really VT-d and that type of hardware
+> > enforcement that make Qubes shine:
+> >
+> > https://www.qubes-os.org/
+> >
+> > That said, I did not look how/if this is using CPU virtualization
+> > features as part of the solution, so correct me if I'm wrong.
+> 
+> Qubes OS is based on Xen:
+> https://en.wikipedia.org/wiki/Qubes_OS
 
- asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
 
-Huacai
+Yes, and it works great, and has much stronger security metrics than
+this could ever reach, and that is quantitative fact, thanks to great
+technologies such as VT-d :-)
 
-> --
-> 2.20.1
->
+This is why I'm repeating the requirement for quantitative proof. We
+have already great solutions to most what this can do so building
+evidence of usefulness is the huge stretch this patch set should
+make it.
+
+Nothing personal, but with the current basically just claims, I don't
+believe in this. That said, by saying this I don't I'd pick my soccer
+no. If there is enough evidence, I'm always ready to turn my opinion
+180 degrees.
+
+> 
+> >
+> > I'm not entirely sure whether this is aimed to be alternative to
+> > namespaces/cgroups or vms but more in the direction of Solaris Zones
+> > would be imho better alternative at least for containers because
+> > it saves the overhead of an extra kernel. There's also a patch set
+> > for this:
+> >
+> > https://lwn.net/Articles/780364/?ref=alian.info
+> 
+> Solaris Zones also share a single kernel. Or maybe I guess
+> you meant Kernel Zones? Isn't it a justification for our multikernel
+> approach for Linux? :-)
+> 
+> BTW, it is less flexible since it completely isolates kernels
+> without inter-kernel communication. With our design, you can
+> still choose not to use inter-kernel IPI's, which turns dynamic
+> into static.
+> 
+> >
+> > VM barrier combined with IOMMU is pretty strong and hardware
+> > enforced, and with polished configuration it can be fairly
+> > performant (e.g. via page cache bypass and stuff like that)
+> > so really the overhead that this is fighting against is
+> > context switch overhead.
+> >
+> > In security I don't believe this has any realistic chances to
+> > win over VMs and IOMMU...
+> 
+> I appreciate you sharing your opinions. I hope my information
+> helps.
+
+I'd put strong focus on getting the figures aside with the claims :-)
+
+> 
+> Regards,
+> Cong Wang
+
+BR, Jarkko
 
