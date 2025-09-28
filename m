@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-835264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEADBA69E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:20:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFF6BA69EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB93B7905
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C9E1899688
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2FD28934D;
-	Sun, 28 Sep 2025 07:19:59 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3771DE2C2;
+	Sun, 28 Sep 2025 07:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TA8veX4E"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEF954918;
-	Sun, 28 Sep 2025 07:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E68020F067
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759043998; cv=none; b=f4b1+HZ8GS3TMcyrdri8JLUaMBZMNiVrbNFLxEMJCJBKVJTnO7T/+LXCeYZUKNyMKeuw7+0anPadZT8NZcnSABiDWgu/u01d9BoMJhG52MmtcwvDVVnUV2bD0klOt1KdoonYNm4hnDRKOCRYxwmxTCWD9eYnicqCxNQ/i+CkESo=
+	t=1759044117; cv=none; b=N+WxDFuDNtcMTD7LC1S16nQGiasQ5hafLAzLQMFKjKWfgjtWABrjGAzkkdPZNxwrcGkDK/p45d6OJGO5khZk7z/HER/HYjOpauCLGixKc90Hx2XYFbKzCWViJQL7fsng7Jgk6VzuneJf9xiVe+NRYEybo+UGSC9nazWyBMshpIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759043998; c=relaxed/simple;
-	bh=rqiqW7XBpWmCWH9dwnSGTMOMnDvmv9oOluW8/IAQ5Ak=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=hvWR1sy7dqfvFVvloTRmDX0wRXzJIuN61L8Zq9nwO/HA1AuVcRpPmwTvmDx9vtf5QCiOWJPiRCSIcH/Uhgd3+a6foJVMiNOXLY5d9xVHmus+MSC0ZrTuqB+wMPKMZCVgFwP9frB5NJ+LDTqKN1ijfjo+E3zYWsVBlxXUcukxEGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowACnAKOH4dhoM2PtBw--.19109S2;
-	Sun, 28 Sep 2025 15:19:48 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: syniurge@gmail.com,
-	shyam-sundar.s-k@amd.com,
-	andi.shyti@kernel.org,
-	wsa@kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] i2c: fix reference leak in MP2 PCI device
-Date: Sun, 28 Sep 2025 15:19:33 +0800
-Message-Id: <20250928071933.1627-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowACnAKOH4dhoM2PtBw--.19109S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw17JF1rXr47XrWDGw4UJwb_yoW8Ww43pF
-	W5JFWxAr95GF4vgw1DX3W8ZFy3Jw4vvw4rWrW7AwnY9F1rZas0kr97tF909w15ArWUAF4x
-	tFW7tayruF1jqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbsmitUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1759044117; c=relaxed/simple;
+	bh=8bb2fYU+sILA0jTusZElfBQ+h6vrV3jXs7+C7Osrmsg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=WRZgy/3kZVY140D+1VYcsHDKkOJKFx0CVdIX+xE0W+1M+RRJiR1dzgR32rVwy7+z9eXz4tgdEmUozHj1YKlGI2M8ggJC/48EXua+t9Xri9+whN0a4FeBFIMRxuP4lW3YrpXhg4mCoj3vWwGDtvsjICBh+6Jd1RcdrM19rMVNqRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TA8veX4E; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b555b0fb839so2592893a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 00:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759044115; x=1759648915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XpCiF6Q0gC4mzPzTArafcdqc2RzxvEFa6IwQZvqDTak=;
+        b=TA8veX4Eu4BQcIPgio3WsVXutvC07W8RQZ5gvlCwN784FAeSltCyi0qPUspslAlsNa
+         8/bLB8pRyjvPSOwyLv8LdKiEGVOG27wSFldnV4Gb1s+SapUtOacaOzojgaISffD4BmZC
+         OkvQ23yndxPKbCtnLNwe80soqPDfveHmTdsp6IceR4i3NZr2gKApl6JtZ1YhqrZbSZDl
+         7jdYSTRvtRptHi+g8sMnKFIeSb5+Emu4SzUZn1NLqDBp8xME+ASPvkUk7Nkl2OA64MaV
+         kDk3mtt89s1tw3QnW4twlTlCjlep9ND/QRNsAsImP69BpKtTmEjrRpIbr+a6+bpPvDXE
+         vI3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759044115; x=1759648915;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XpCiF6Q0gC4mzPzTArafcdqc2RzxvEFa6IwQZvqDTak=;
+        b=qaQ/4q01C4wMKtElq0VTM+mWOHcY996XZeEoN3n9faKkHnoelURjLiDUki9IuIUor9
+         kLsk1vMT0SVPc8Ep7nnxS4doSZMIAjJsZkq0xoJu7Qf0jJgaYyV8XlgaVsskoXfcKark
+         qupL3o3ETT519LEZbTGdCup93E4ocoFHvKGGt2Va04QaiOmkHdIsz+yMVD+fPECw0bMk
+         vWGsY72BAlB3UDeI5hesFo792peU5b2uOoBVu6MV2Vjvpihnikikz6zFRVU244xxpNoP
+         j1Ru4wjvyEMTxcsyeUzlsFhUAhGDJuDgbtsN6MnuqsIIby95VJ60MO6zSFXIAU20bjEQ
+         8VMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWFS8wMUM3BSMuf+kLu4yniEenNTxiQD9dUa0h+bV9XgemtDSJvoSsEFDPOtgoNbwdvUM+7Ue0wen058I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHooN1jKD1uQWzw9kBfrGN566LjI1o+lunQlObyIDPgARgoKi4
+	DvqRUeTb5jg8y+ry9O2CxJefmIoLBa0LOBEVXZyuBcsMshrS3tSaoEHTe1l1A05T
+X-Gm-Gg: ASbGncsJpEaLlLSIRLz6glehkKRAGN5EzSxAyE+LLHY9LyRj3n9vvZ7svkVzqyBu9Tq
+	xQF8Stro/DbqgZoFqot0yXSDbrQFZ8QdBGxeCEtzqNJ9Q6Z+AT8jgrfDWw1WfO9ILAt8Z1tZYi2
+	vHWhbyLO6/HkWJ+7si3KMe9qFAHtAYRs61P5a0e7knhTjHWYCvfdPtel9xQ8n4XsOPTQKGhPHID
+	Bat8ev7vTQakrTmDa/D8qXm/irKWLN+cZdrXnZd53GeSKtwPo78GHTpsSQzWxboTwoFkZmRaSSn
+	B92NCm49SMv4aRCHL23PBRXn0NK9xNL/BBz2StIDNXTBKXelabqz2x0h+7LrnlR+w/XmKVFauhG
+	bg6Mvmq/LufMfinCqLOublg1tcK47l2se1p1HTY0RWZqT
+X-Google-Smtp-Source: AGHT+IE3K6cxGebPaghMoOfjVtkomma3llpeCyRrBR+ZzlA+2a2lY9/p7YTkmGSjAkY89QdS5pSR+g==
+X-Received: by 2002:a17:903:13ce:b0:275:c2f:1b41 with SMTP id d9443c01a7336-27ed4ada760mr117341425ad.53.1759044115399;
+        Sun, 28 Sep 2025 00:21:55 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([2804:18:936:cd7e:b4da:5f35:3f64:9397])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ab64c7sm96076225ad.130.2025.09.28.00.21.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Sep 2025 00:21:54 -0700 (PDT)
+Date: Sun, 28 Sep 2025 04:21:51 -0300
+From: =?ISO-8859-1?Q?Eric_Gon=E7alves?= <ghatto404@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2=5D_arm64=3A_dts=3A_qcom=3A_sm825?=
+ =?US-ASCII?Q?0-samsung-common=3A_correct_reserved_pins?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <oi6hdvxqcble4qikfngpqc43glf6nwl24oh2ukdqwautbt4jui@geuzqecdqgsv>
+References: <20250928044533.34798-1-ghatto404@gmail.com> <oi6hdvxqcble4qikfngpqc43glf6nwl24oh2ukdqwautbt4jui@geuzqecdqgsv>
+Message-ID: <E0197AFC-D605-449B-BAA5-AEA0F6C52413@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-In i2c_amd_probe(), amd_mp2_find_device() utilizes
-driver_find_next_device() which internally calls driver_find_device()
-to locate the matching device. driver_find_device() increments the
-reference count of the found device by calling get_device(), but
-amd_mp2_find_device() fails to call put_device() to decrement the
-reference count before returning. This results in a reference count
-leak of the PCI device each time i2c_amd_probe() is executed, which
-may prevent the device from being properly released and cause a memory
-leak.
 
-Found by code review.
 
-Cc: stable@vger.kernel.org
-Fixes: 529766e0a011 ("i2c: Add drivers for the AMD PCIe MP2 I2C controller")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the missing initialization in the patch. Sorry for the omission.
----
- drivers/i2c/busses/i2c-amd-mp2-pci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-index ef7370d3dbea..60edbabc2986 100644
---- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
-+++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-@@ -458,13 +458,16 @@ struct amd_mp2_dev *amd_mp2_find_device(void)
- {
- 	struct device *dev;
- 	struct pci_dev *pci_dev;
-+	struct amd_mp2_dev *mp2_dev;
- 
- 	dev = driver_find_next_device(&amd_mp2_pci_driver.driver, NULL);
- 	if (!dev)
- 		return NULL;
- 
- 	pci_dev = to_pci_dev(dev);
--	return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-+	mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-+	put_device(dev);
-+	return mp2_dev;
- }
- EXPORT_SYMBOL_GPL(amd_mp2_find_device);
- 
--- 
-2.17.1
-
+On September 28, 2025 3:11:16 AM GMT-03:00, Dmitry Baryshkov <dmitry=2Ebar=
+yshkov@oss=2Equalcomm=2Ecom> wrote:
+>On Sun, Sep 28, 2025 at 04:45:33AM +0000, Eric Gon=C3=A7alves wrote:
+>> The S20 series has additional reserved pins for the fingerprint sensor,
+>> GPIO 20-23=2E Correct it by adding them into gpio-reserved-ranges=2E
+>>=20
+>> Fixes: 6657fe9e9f23 ("arm64: dts: qcom: add initial support for Samsung=
+ Galaxy S20 FE")
+>> Signed-off-by: Eric Gon=C3=A7alves <ghatto404@gmail=2Ecom>
+>> ---
+>> Changes in v2:
+>> - Fixed the formatting of the <40 4> line
+>> - Added Fixes tag
+>> ---
+>>  arch/arm64/boot/dts/qcom/sm8250-samsung-common=2Edtsi | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8250-samsung-common=2Edtsi b/ar=
+ch/arm64/boot/dts/qcom/sm8250-samsung-common=2Edtsi
+>> index 96662bf9e527=2E=2Ea87e3d23e3e2 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8250-samsung-common=2Edtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8250-samsung-common=2Edtsi
+>> @@ -159,7 +159,8 @@ &pon_resin {
+>>  };
+>> =20
+>>  &tlmm {
+>> -	gpio-reserved-ranges =3D <40 4>; /* I2C (Unused) */
+>> +	gpio-reserved-ranges =3D <20 4>, /* SPI (fingerprint scanner) */
+>> +					       <40 4>, /* Unused */
+>
+>This is still not aligned to the opening angle bracket=2E Could you pleas=
+e
+>recheck your setup?
+Yeah, sorry, I had it set to 4 spaces still - I sent a v3=2E
+>
+>>  };
+>> =20
+>>  &usb_1 {
+>> --=20
+>> 2=2E51=2E0
+>>=20
+>
 
