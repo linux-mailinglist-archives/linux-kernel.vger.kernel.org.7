@@ -1,166 +1,258 @@
-Return-Path: <linux-kernel+bounces-835170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBA1BA66E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22113BA670C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CF2177BA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3B73C0D8A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3EE254864;
-	Sun, 28 Sep 2025 03:23:00 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621532566D2;
+	Sun, 28 Sep 2025 03:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TxkO2Kh7"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D5813A86C
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA01E2550A4;
+	Sun, 28 Sep 2025 03:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759029780; cv=none; b=ZefW2Dq4Gp5TYJuEbVxHnGqYH5JHgSiQ+sWftdJeqqNlOfx5Y0CNXtOis2lftqhMfhsANuVNKePdtsxBUqOYmwa4lD6GC3nKW4oOSDS/Uk+veCJpkefFR3rqig3zo6RVLazhDbwHmkfSZGq3GDI+sVxQXrbjCgtx+DEhGNZgV7I=
+	t=1759029890; cv=none; b=cHIbyfVBZUoodztTvDqGuZHydRcn5LKFGEXe+KvnBKQZD3xEGh28unvs8e4qkId+m3AyQ2qcFhp7RaZRE6MKS/L1hHdYRKrMJBcRZ0zmHw2ygtfgrSCnQhxvNT9j6YN8oojnVGMVt62tc5u0KN0pt10BkCaYiaMTAh0CnEkszag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759029780; c=relaxed/simple;
-	bh=ZPCvqdV7Kp0U4U95dY+1rRuZMONNSN0tEiD6BrodCRA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NVhRxbpv1JKqeBajEIcZwGjRstHsNd+q3a+b+Tc/lTpRnMA6wwFYiu0l1bs9f+BPiyFcVU7jzo82UgUm9rkmdt7KPBzhqKAVeTLro6JvUv5gKAUs4NehXT0hP8sxXeCCcSz9JOlUTI6/RMjp0CI9WOqg3r+aXTq/XlWgFP6NSRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-425788b03a0so92851905ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 20:22:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759029778; x=1759634578;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KRHBuN2XINbVkHcW2/nwEUT805Ogg3w8BsgWxIsJhIQ=;
-        b=wFE+ZJcJjlvYYFSJBC8PZjzrrtcCb7n0Kx5zbQ+pHOjU6ZtFdHC35tLLRfMIeJAcXm
-         r+REOcnywi8stYQEEEUwqv9HvHmHRYTjgLeoIbWrc0I00n9JJpBtGMzAqlGBv0mdLAI2
-         QGqUr8jeEJOaukMsPwfXoMpTmDv4MxsIpvdEXGEPiVqdq3NzZXFQt2GKGm4Ila5go0pX
-         yUw9fY1pyFVLZee01MsQK8+TQ49gm5qCHZUGGPQd2zdzHJUZNYc+fDlwbZC6WvaW2ShP
-         nPNOaok9FBhkOk6iQW44E8XRKH5nQSAqANSQcKbKVMsfwO/cnVFtccRoSaH5P9N7ezr2
-         5NYg==
-X-Gm-Message-State: AOJu0YynANpxSA9fiZLDuO/dKIM8mhDrgkLazS2U9c3gi8MiLCtGWWy1
-	SaDYulS8KX2+yFRgxFY3tC2XuHQSC4j1yYKsoHuozOQiJzlGDiVW2kiXBNxHBS2OaE5AxdI0yq9
-	V+vS5zYTjhckzurrzUyH/TKY9qD5ojfK56YL+OX178X7U+z+0tnRF0UiURjDQJA==
-X-Google-Smtp-Source: AGHT+IFGDh7ToEpTget4UxI2fSuAuvPFiYpkatgLaRIPMOZavqAG6r2HH/5/KTKck8HlFsmIDxvAVCXZYoGmPSP2bjaeLlBCFXtZ
+	s=arc-20240116; t=1759029890; c=relaxed/simple;
+	bh=TWmhlvIWxfUJ6FpEK14T98mwbqozPpRlHWEu0H3w9V8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYRNb2pM3tny4N1dubpXlcHBnEO09tMIh/i6CiPJP4T+ZsoqkOeO5Bm7R3OpnD4kSVVQGHWPRUH+aY17ktUm3bcJH6xljTGbx7M2RpjHX4ufbT5GCkqA5lBQc8XDbqJvzduG47LQdm7gG8U+XQ/q/0iVzJVX9vbuqqHYnrFkbak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TxkO2Kh7; arc=none smtp.client-ip=1.95.21.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=+0zMhTc6UmTn8nHcjcW7yaUfPpkltRIjpHMr/T4Ct9M=;
+	b=TxkO2Kh7+KkFu3mUH40GrngtNucmX2IFrrX03WyLL4fZEFN/FJDFPd/qNBG9Zg
+	NZpXTgv+TReQ9PjoMI90OxGKKM19FvexgtQlyDZWk+3uyWIJMiA2fWQc296rQNOD
+	GXb/lFBnZRzcWgEsJyid8cr5t7NVyKhh4GxPj1cM7FUag=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCnFdtOqthoBYWDBQ--.42004S3;
+	Sun, 28 Sep 2025 11:24:00 +0800 (CST)
+Date: Sun, 28 Sep 2025 11:23:57 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Qais Yousef <qyousef@layalina.io>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Linux ACPI <linux-acpi@vger.kernel.org>,
+	Jie Zhan <zhanjie9@hisilicon.com>, rust-for-linux@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Subject: Re: [PATCH v3 1/4] cpufreq: Make drivers using CPUFREQ_ETERNAL
+ specify transition latency
+Message-ID: <aNiqTYZai83Yguqt@dragon>
+References: <5069803.31r3eYUQgx@rafael.j.wysocki>
+ <2264949.irdbgypaU6@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218f:b0:424:1c9a:cadf with SMTP id
- e9e14a558f8ab-425955ed4d8mr212017405ab.3.1759029777736; Sat, 27 Sep 2025
- 20:22:57 -0700 (PDT)
-Date: Sat, 27 Sep 2025 20:22:57 -0700
-In-Reply-To: <68122507.050a0220.3a872c.0001.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d8aa11.050a0220.25d7ab.045e.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in
- jfs_statfs (3)
-From: syzbot <syzbot+13ba7f3e9a17f77250fe@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2264949.irdbgypaU6@rafael.j.wysocki>
+X-CM-TRANSID:Ms8vCgCnFdtOqthoBYWDBQ--.42004S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtFyUZrW7ZF4DKrWUCw4DArb_yoWxtrWfpF
+	WUXw42ya4kJa1qgw1Ikw48u34FvanrZ347Ka4j9wnYvrW7JFn0ga4qgay5tFZ8C34kAws0
+	qFyqy347GF4UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URKZAUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxfWZWjYN8nd5wAAsb
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Sep 26, 2025 at 12:12:37PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Commit a755d0e2d41b ("cpufreq: Honour transition_latency over
+> transition_delay_us") caused platforms where cpuinfo.transition_latency
+> is CPUFREQ_ETERNAL to get a very large transition latency whereas
+> previously it had been capped at 10 ms (and later at 2 ms).
+> 
+> This led to a user-observable regression between 6.6 and 6.12 as
+> described by Shawn:
+> 
+> "The dbs sampling_rate was 10000 us on 6.6 and suddently becomes
+>  6442450 us (4294967295 / 1000 * 1.5) on 6.12 for these platforms
+>  because the default transition delay was dropped [...].
+> 
+>  It slows down dbs governor's reacting to CPU loading change
+>  dramatically.  Also, as transition_delay_us is used by schedutil
+>  governor as rate_limit_us, it shows a negative impact on device
+>  idle power consumption, because the device gets slightly less time
+>  in the lowest OPP."
+> 
+> Evidently, the expectation of the drivers using CPUFREQ_ETERNAL as
+> cpuinfo.transition_latency was that it would be capped by the core,
+> but they may as well return a default transition latency value instead
+> of CPUFREQ_ETERNAL and the core need not do anything with it.
+> 
+> Accordingly, introduce CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS and make
+> all of the drivers in question use it instead of CPUFREQ_ETERNAL.  Also
+> update the related Rust binding.
+> 
+> Fixes: a755d0e2d41b ("cpufreq: Honour transition_latency over transition_delay_us")
+> Closes: https://lore.kernel.org/linux-pm/20250922125929.453444-1-shawnguo2@yeah.net/
+> Reported-by: Shawn Guo <shawnguo@kernel.org>
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
+> Cc: 6.6+ <stable@vger.kernel.org> # 6.6+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v1 -> v3:
+>    * Add updates of the Rust version of cpufreq-dt and Rust binding
+>    * Update the changelog
+>    * Add tags from Mario Limonciello and Jie Zhan
+> 
+> ---
+>  drivers/cpufreq/cpufreq-dt.c          |    2 +-
+>  drivers/cpufreq/imx6q-cpufreq.c       |    2 +-
+>  drivers/cpufreq/mediatek-cpufreq-hw.c |    2 +-
+>  drivers/cpufreq/rcpufreq_dt.rs        |    2 +-
+>  drivers/cpufreq/scmi-cpufreq.c        |    2 +-
+>  drivers/cpufreq/scpi-cpufreq.c        |    2 +-
+>  drivers/cpufreq/spear-cpufreq.c       |    2 +-
+>  include/linux/cpufreq.h               |    3 +++
+>  rust/kernel/cpufreq.rs                |    7 ++++---
+>  9 files changed, 14 insertions(+), 10 deletions(-)
+> 
+> --- a/drivers/cpufreq/cpufreq-dt.c
+> +++ b/drivers/cpufreq/cpufreq-dt.c
+> @@ -104,7 +104,7 @@ static int cpufreq_init(struct cpufreq_p
+>  
+>  	transition_latency = dev_pm_opp_get_max_transition_latency(cpu_dev);
+>  	if (!transition_latency)
+> -		transition_latency = CPUFREQ_ETERNAL;
+> +		transition_latency = CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS;
+>  
+>  	cpumask_copy(policy->cpus, priv->cpus);
+>  	policy->driver_data = priv;
+> --- a/drivers/cpufreq/imx6q-cpufreq.c
+> +++ b/drivers/cpufreq/imx6q-cpufreq.c
+> @@ -442,7 +442,7 @@ soc_opp_out:
+>  	}
+>  
+>  	if (of_property_read_u32(np, "clock-latency", &transition_latency))
+> -		transition_latency = CPUFREQ_ETERNAL;
+> +		transition_latency = CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS;
+>  
+>  	/*
+>  	 * Calculate the ramp time for max voltage change in the
+> --- a/drivers/cpufreq/mediatek-cpufreq-hw.c
+> +++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
+> @@ -309,7 +309,7 @@ static int mtk_cpufreq_hw_cpu_init(struc
+>  
+>  	latency = readl_relaxed(data->reg_bases[REG_FREQ_LATENCY]) * 1000;
+>  	if (!latency)
+> -		latency = CPUFREQ_ETERNAL;
+> +		latency = CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS;
+>  
+>  	policy->cpuinfo.transition_latency = latency;
+>  	policy->fast_switch_possible = true;
+> --- a/drivers/cpufreq/rcpufreq_dt.rs
+> +++ b/drivers/cpufreq/rcpufreq_dt.rs
+> @@ -123,7 +123,7 @@ impl cpufreq::Driver for CPUFreqDTDriver
+>  
+>          let mut transition_latency = opp_table.max_transition_latency_ns() as u32;
+>          if transition_latency == 0 {
+> -            transition_latency = cpufreq::ETERNAL_LATENCY_NS;
+> +            transition_latency = cpufreq::DEFAULT_TRANSITION_LATENCY_NS;
+>          }
+>  
+>          policy
+> --- a/drivers/cpufreq/scmi-cpufreq.c
+> +++ b/drivers/cpufreq/scmi-cpufreq.c
+> @@ -294,7 +294,7 @@ static int scmi_cpufreq_init(struct cpuf
+>  
+>  	latency = perf_ops->transition_latency_get(ph, domain);
+>  	if (!latency)
+> -		latency = CPUFREQ_ETERNAL;
+> +		latency = CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS;
+>  
+>  	policy->cpuinfo.transition_latency = latency;
+>  
+> --- a/drivers/cpufreq/scpi-cpufreq.c
+> +++ b/drivers/cpufreq/scpi-cpufreq.c
+> @@ -157,7 +157,7 @@ static int scpi_cpufreq_init(struct cpuf
+>  
+>  	latency = scpi_ops->get_transition_latency(cpu_dev);
+>  	if (!latency)
+> -		latency = CPUFREQ_ETERNAL;
+> +		latency = CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS;
+>  
+>  	policy->cpuinfo.transition_latency = latency;
+>  
+> --- a/drivers/cpufreq/spear-cpufreq.c
+> +++ b/drivers/cpufreq/spear-cpufreq.c
+> @@ -182,7 +182,7 @@ static int spear_cpufreq_probe(struct pl
+>  
+>  	if (of_property_read_u32(np, "clock-latency",
+>  				&spear_cpufreq.transition_latency))
+> -		spear_cpufreq.transition_latency = CPUFREQ_ETERNAL;
+> +		spear_cpufreq.transition_latency = CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS;
+>  
+>  	cnt = of_property_count_u32_elems(np, "cpufreq_tbl");
+>  	if (cnt <= 0) {
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -32,6 +32,9 @@
+>   */
+>  
+>  #define CPUFREQ_ETERNAL			(-1)
+> +
+> +#define CPUFREQ_DEFAULT_TANSITION_LATENCY_NS	NSEC_PER_MSEC
 
-***
+Typo of TANSITION, should be CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS.
 
-Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in jfs_statfs (3)
-Author: xandfury@gmail.com
+Shawn
 
-syzbot <syzbot+13ba7f3e9a17f77250fe@syzkaller.appspotmail.com> writes:
+> +
+>  #define CPUFREQ_NAME_LEN		16
+>  /* Print length for names. Extra 1 space for accommodating '\n' in prints */
+>  #define CPUFREQ_NAME_PLEN		(CPUFREQ_NAME_LEN + 1)
+> --- a/rust/kernel/cpufreq.rs
+> +++ b/rust/kernel/cpufreq.rs
+> @@ -39,7 +39,8 @@ use macros::vtable;
+>  const CPUFREQ_NAME_LEN: usize = bindings::CPUFREQ_NAME_LEN as usize;
+>  
+>  /// Default transition latency value in nanoseconds.
+> -pub const ETERNAL_LATENCY_NS: u32 = bindings::CPUFREQ_ETERNAL as u32;
+> +pub const DEFAULT_TRANSITION_LATENCY_NS: u32 =
+> +        bindings::CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS as u32;
+>  
+>  /// CPU frequency driver flags.
+>  pub mod flags {
+> @@ -400,13 +401,13 @@ impl TableBuilder {
+>  /// The following example demonstrates how to create a CPU frequency table.
+>  ///
+>  /// ```
+> -/// use kernel::cpufreq::{ETERNAL_LATENCY_NS, Policy};
+> +/// use kernel::cpufreq::{DEFAULT_TRANSITION_LATENCY_NS, Policy};
+>  ///
+>  /// fn update_policy(policy: &mut Policy) {
+>  ///     policy
+>  ///         .set_dvfs_possible_from_any_cpu(true)
+>  ///         .set_fast_switch_possible(true)
+> -///         .set_transition_latency_ns(ETERNAL_LATENCY_NS);
+> +///         .set_transition_latency_ns(DEFAULT_TRANSITION_LATENCY_NS);
+>  ///
+>  ///     pr_info!("The policy details are: {:?}\n", (policy.cpu(), policy.cur()));
+>  /// }
+> 
+> 
+> 
 
-> syzbot has found a reproducer for the following issue on:
->
-> HEAD commit:    475c850a7fdd Add linux-next specific files for 20250606
-> git tree:       linux-next
-> console+strace: <https://syzkaller.appspot.com/x/log.txt?x=3D11fe2a825800=
-00>
-> kernel config:  <https://syzkaller.appspot.com/x/.config?x=3D28859360c84a=
-c63d>
-> dashboard link: <https://syzkaller.appspot.com/bug?extid=3D13ba7f3e9a17f7=
-7250fe>
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e0775=
-7-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> syz repro:      <https://syzkaller.appspot.com/x/repro.syz?x=3D11c79a0c58=
-0000>
-> C reproducer:   <https://syzkaller.appspot.com/x/repro.c?x=3D162aa9d45800=
-00>
->
-> Downloadable assets:
-> disk image: <https://storage.googleapis.com/syzbot-assets/2f1cf8485b7a/di=
-sk-475c850a.raw.xz>
-> vmlinux: <https://storage.googleapis.com/syzbot-assets/976adb9f739e/vmlin=
-ux-475c850a.xz>
-> kernel image: <https://storage.googleapis.com/syzbot-assets/0ac20b1308b7/=
-bzImage-475c850a.xz>
-> mounted in repro: <https://storage.googleapis.com/syzbot-assets/fad6178a7=
-95b/mount_0.gz>
->   fsck result: failed (log: <https://syzkaller.appspot.com/x/fsck.log?x=
-=3D122aa9d4580000>)
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+13ba7f3e9a17f77250fe@syzkaller.appspotmail.com
->
-> loop0: detected capacity change from 0 to 32768
-> =E2=80=94=E2=80=94=E2=80=94=E2=80=94[ cut here ]=E2=80=94=E2=80=94=E2=80=
-=94=E2=80=94
-> UBSAN: shift-out-of-bounds in fs/jfs/super.c:140:14
-> shift exponent 115 is too large for 64-bit type =E2=80=99s64=E2=80=99 (ak=
-a =E2=80=99long long=E2=80=99)
-> CPU: 1 UID: 0 PID: 5841 Comm: syz-executor190 Not tainted 6.15.0-next-202=
-50606-syzkaller #0 PREEMPT(full)=20
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 05/07/2025
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->  ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
->  __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
->  jfs_statfs+0x4d1/0x550 fs/jfs/super.c:140
->  statfs_by_dentry fs/statfs.c:66 [inline]
->  vfs_statfs+0x144/0x2d0 fs/statfs.c:90
->  ovl_check_namelen fs/overlayfs/super.c:388 [inline]
->  ovl_lower_dir fs/overlayfs/super.c:404 [inline]
->  ovl_get_lowerstack fs/overlayfs/super.c:1150 [inline]
->  ovl_fill_super+0x9d9/0x35d0 fs/overlayfs/super.c:1416
->  vfs_get_super fs/super.c:1323 [inline]
->  get_tree_nodev+0xbb/0x150 fs/super.c:1342
->  vfs_get_tree+0x8f/0x2b0 fs/super.c:1802
->  do_new_mount+0x24a/0xa40 fs/namespace.c:3874
->  do_mount fs/namespace.c:4211 [inline]
->  __do_sys_mount fs/namespace.c:4422 [inline]
->  __se_sys_mount+0x317/0x410 fs/namespace.c:4399
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f8347037a39
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffdd0158b28 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000200000000000 RCX: 00007f8347037a39
-> RDX: 0000200000000000 RSI: 0000200000000140 RDI: 0000000000000000
-> RBP: 00007f834708005e R08: 00002000000003c0 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
-> R13: 65756e69746e6f63 R14: 633d73726f727265 R15: 0000000000000001
->  </TASK>
-> =E2=80=94[ end trace ]=E2=80=94
->
->
-> =E2=80=94
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
- master
 
