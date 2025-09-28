@@ -1,141 +1,112 @@
-Return-Path: <linux-kernel+bounces-835343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F4EBA6CCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2231BA6CD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E7E18950A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223AF189541C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA142D29A9;
-	Sun, 28 Sep 2025 09:11:48 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08042D24BC;
+	Sun, 28 Sep 2025 09:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHoiUTtC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAA22C21D0
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 09:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E4A22370A;
+	Sun, 28 Sep 2025 09:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759050708; cv=none; b=CbkNO9mkykd32p6mOA5gH2uFvATEvUlpGZ3W65lzYt3Pf4lcVRQndKmguUmBP/HY0jJH8P+cjfLggRGOJMKxdG1r66TEWNDZcJMk3C2RTbl8vRNVkG0sHq/ehZ8k2PFi/opIYmS8ynRqOs1HGbV1meRSo96rILf6Sd0GLP70QsI=
+	t=1759050766; cv=none; b=JeWO3klYng+6Qu7JyNdZh+nZRCjbHkkIoLyTokEXJZVyyWg3OcQ056dDIB2oCtD3WuyMi5YRqf7QlDglhmcRaJ47A2OclPHf6re/OI0k75/5F9HW+9hx3T9eMjjF6L4qEw+6c0thq5ucIVunpkuqwXv9RLivQ6MASbMej6SoyQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759050708; c=relaxed/simple;
-	bh=6B+luOQSjYf1AJsM/Q6K77B56UsB827rEs4sgFU8rS8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eH0fx9FeDA+0rQzFGP6wZX3185JLnQjonOCeDJcZIrdJ1Lm8l4HRk531LJbay/ntXDMsATTsdGh3F1/kKSfhdNatJMxr75G+4qItkDrVH8I/n/NilsPw3lvcA4nCxCt8tTbgk8phVoKB58EghBNocDzEdwjhizcYLpLrfy6E+tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42955823202so8956365ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 02:11:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759050706; x=1759655506;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i4/PO4xGhJUkTcxJFqnPlSTZklfyrrbwTptLy31ouXI=;
-        b=XW3Nryh3/EsVG4cUGZkQK6cfLlgZgwYTLCjmYH6pjVxCgp+J8LN6zflifk5Eror90w
-         skLgQOo5BdLJsaIF02A9zJ3MVohKxq5F23ND+0/ALL+lWmGa9I6oVE/xbxH8tGWwvgEz
-         R8GBwhjZ2SRyF8OvW8oaUDvH1cY7Vm7g8EhXNXUdLa0HSdk3CDFP2O4fZCYG6v5vGbMB
-         vDwKoq3JQBuRO38iSOXTlk3OlalMMtYW8V3h1PTSLUot1RIUuteu6ajcw8KVhZEwHmh6
-         cg/qSJorIy1VdVJWE4AwFM40Q0RaeZQyclFUqCKB4Jf2w0KFMjThJ81OIoOJOzAJp+XG
-         hd/Q==
-X-Gm-Message-State: AOJu0YzQ44nRnndrZMUf4Go44WrnBjFfHEP8KlytKt5SiMD/PbH5mZoM
-	sCW2rgVTWCiF6y87Ekt9hQLOLc8uREqDfAfGiN1Gttw7TKOq5D055pqEekQrDwnE6hraOz26DEF
-	7/xwbWikYS5CeqMIv7lGaicdv9KkA/fLTxHH6LryhAHXwYSf0ZfP90cjFruE=
-X-Google-Smtp-Source: AGHT+IFsohpehbqOZV04fjGhHEVCRATG/RCtw7XGHbuvMgjxnb1hEAksoK4W8wygZ2lapJ2+OczqpxEb7qDMB39PK0/MyRSvbO3S
+	s=arc-20240116; t=1759050766; c=relaxed/simple;
+	bh=gv0mwKjApzRim+uiFWzLIlgdmVsByXX1A64SY1PcRWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kthuHnIzSjXkHnxDMdAuldcearIiVppntIPmdPJgeM6s6FqpvJzHv6QJsNAHx+xhgdbchepTAKgOtDg+ZD7dAcypoqL6mw9OLNp3oIpHe5r2/ggIIAQ2J4THb4JploBFtVv1d5WmAMYz7Q2vrsElgBD7ghbYO2bgWhrV23eA4Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHoiUTtC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D867BC4CEF0;
+	Sun, 28 Sep 2025 09:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759050765;
+	bh=gv0mwKjApzRim+uiFWzLIlgdmVsByXX1A64SY1PcRWo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CHoiUTtCOxUXmJDcitLjRhowgfC8di6IWncVapUvoJvBG/m49eU76Zo9tVLpHskAH
+	 ft2FbSEmjRqmZMzsnWQRsBxFf4mROY4E2Y1ZA32iMnnGr2vhXWVuvZdpCTVG0qJr7U
+	 KKr6YkH6ZffLmbeZhy6aKPi5xWi85tAYdm4nRRg1vJRzUXTo2ZkerscLzFFoqKEYGI
+	 QKkwFYyROUYiHf0qfqxBsjvhPFysTwwP+H+AzSR62j5NdWfoaNJ7z7RkYThIdkfhOK
+	 9GQUEBVtpfeKnavVUSV/Ii/5XNaNZdWl6CcmeKE62/gxprKvmX5yjfMt2uPzTc3ZsE
+	 o9AYwQ5jkD1BA==
+Date: Sun, 28 Sep 2025 10:12:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: dan@dlrobertson.com, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: accel: bma400: Refactor generic interrupt
+ configuration
+Message-ID: <20250928101241.27a51491@jic23-huawei>
+In-Reply-To: <CAE3SzaRfeU9E78YNCofjgRZf76pDFEGxDdA9XwTF2_WAb8zj4Q@mail.gmail.com>
+References: <20250925170942.259314-1-akshayaj.lkd@gmail.com>
+	<CAE3SzaRfeU9E78YNCofjgRZf76pDFEGxDdA9XwTF2_WAb8zj4Q@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18cf:b0:424:86d:7bb9 with SMTP id
- e9e14a558f8ab-425bdaf0355mr174449325ab.0.1759050705940; Sun, 28 Sep 2025
- 02:11:45 -0700 (PDT)
-Date: Sun, 28 Sep 2025 02:11:45 -0700
-In-Reply-To: <68b95f81.a00a0220.eb3d.0001.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d8fbd1.a00a0220.102ee.0028.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: fix BUG_ON in ext4_es_cache_extent due to
- out-of-order extents
-From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Sun, 28 Sep 2025 00:13:46 +0530
+Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
 
-***
+> On Thu, Sep 25, 2025 at 10:39=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmai=
+l.com> wrote:
+> >
+> > Refactor generic interrupt configuration to replace hard-coded
+> > register values with logical macros and enums, thereby making the
+> > configuration understandable and in-style with common kernel
+> > patterns.
+> >
+> > Introduce a const struct with a helper to map event direction to the
+> > corresponding generic interrupt and sanitize the input before use.
+> >
+> > Rename activity_event_en() to generic_event_en() to better describe
+> > its role in activity and inactivity detection.
+> >
+> > No functional changes done.
+> >
+> > Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
+> > ---
 
-Subject: [PATCH] ext4: fix BUG_ON in ext4_es_cache_extent due to out-of-order extents
-Author: kartikey406@gmail.com
+> Hello Reviewers,
+> After waiting for a week, I have sent v2.
+> Requesting your valuable feedback on this.
+Hi Akshay,
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Really minor process thing.
+
+Even for a request like this, which should have been under the --- in the o=
+riginal
+post of v2, crop the content to what matters.
+
+Also, no need to say this at all really!  You waited a reasonable amount of=
+ time
+given you had some reviews in during that week, and the rest of the comment
+is kind of obvious.
+
+So this reply mostly added noise to a busy review queue!
+
+Jonathan
 
 
-syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
-opening a verity file on a corrupted ext4 filesystem mounted without
-a journal.
-
-The issue occurs when the extent tree contains out-of-order extents,
-which can happen in a corrupted filesystem. In ext4_cache_extents(),
-when processing an extent that has a lower logical block number than
-the previous extent's end, the calculation of the hole size underflows:
-
-  If prev = 4352 and lblk = 1280:
-  lblk - prev = 1280 - 4352 = -3072 (as signed)
-  = 4294964224 (as unsigned)
-
-This underflowed value is passed as 'len' to ext4_es_cache_extent(),
-where the end block calculation overflows:
-
-  end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279
-
-Then the BUG_ON(end < lblk) triggers because 1279 < 4352.
-
-Fix this by adding a check in ext4_cache_extents() to ensure extents
-are properly ordered before attempting to cache holes. If out-of-order
-extents are detected, report the filesystem corruption and return.
-
-Reported-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-Fixes: a86c6181109a ("ext4: cache extent hole in extent status tree for ext4_da_map_blocks()")
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
----
- fs/ext4/extents.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index ca5499e9412b..2e630b500a31 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -535,10 +535,17 @@ static void ext4_cache_extents(struct inode *inode,
- 		ext4_lblk_t lblk = le32_to_cpu(ex->ee_block);
- 		int len = ext4_ext_get_actual_len(ex);
- 
--		if (prev && (prev != lblk))
--			ext4_es_cache_extent(inode, prev, lblk - prev, ~0,
--					     EXTENT_STATUS_HOLE);
--
-+		if (prev && (prev != lblk)) {
-+			if (lblk > prev) {
-+				ext4_es_cache_extent(inode, prev, lblk - prev, ~0,
-+				     EXTENT_STATUS_HOLE);
-+			} else {
-+				/* Extents out of order - corrupted? */
-+				EXT4_ERROR_INODE(inode, "corrupted extent tree: lblk %u < prev %u",
-+					 lblk, prev);
-+				return;
-+			}
-+		}
- 		if (ext4_ext_is_unwritten(ex))
- 			status = EXTENT_STATUS_UNWRITTEN;
- 		ext4_es_cache_extent(inode, lblk, len,
--- 
-2.43.0
+>=20
+> Thanks,
+> Akshay.
 
 
