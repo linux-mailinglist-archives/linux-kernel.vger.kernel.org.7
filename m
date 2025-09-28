@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-835555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C99BA76C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:12:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E1ABA76C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252DB3A62CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 226C23AB0AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E018F259CA4;
-	Sun, 28 Sep 2025 19:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF2825B1FF;
+	Sun, 28 Sep 2025 19:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEip2Qou"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KLjcCQM7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24B734BA4D
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C272F259CA4;
+	Sun, 28 Sep 2025 19:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759086747; cv=none; b=kKbNU15EmVRqKVe6Dw4FoVzMgx3Fwy+v/ZkZwIJ9tAWBwQwTfFJVm3JD9bjOxOQ4f2KslLSApXE5ozPF08p2QdfKCz1xU9uWIdmUgdswSTG7ADvmwRAvB1y/Yqsd+wTIdMbintdYDzSnNWS6fYtVbtbpoQ9J3y9HiwJew/V2RLg=
+	t=1759086628; cv=none; b=OBe70/fMNueDFTAxNqP3uDwfc3Xj0Gn77jwz5VlezcSoa2sFC9Lm6tpzSt8ZGbGkeMeZfof4Tlzh+f1YRSSOtiylQmKws4VG8aMjLume5EIFrgZ1SK6p6mMGglT9UXRBfAjno50ON40u/Pk/R90dwJbJlTcBwZveutBgReGN5y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759086747; c=relaxed/simple;
-	bh=k4Nn0P7yaXQ1y1QJmpWUS7crBJP3aAw3tOHyFDDPG5c=;
-	h=From:To:Cc:Subject:Date:References:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=TIcToq08akdPagDzTFwyJU3ETXg62GGTxplLYVI8An2NDdrJqWfZ9U/N2MwAvyjP/mR5cYSnzumXk7OITNfz9rGCy2mfHuy2KJmAeUcWWJcMW9PYLP5qUid9ViBYQwRWRuJPHjKGliaPfiycUe3VUaGmat321TmHu4PHEuBXLBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEip2Qou; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2570bf6058aso55193705ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759086745; x=1759691545; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:user-agent:references:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V6+64T8/OVtDekwKSacVIy7b5udGbpNaR3HNtwiQ4bY=;
-        b=EEip2QouD+4rk6r/BxSIemUoJbz5DvFgTH+0Sa1xu0n+yi77Y5xCvXxPugyjcyhZuW
-         OWmMVDYy8mQF/37KVoHj/XEYy8SRUsJdDF7D0nPKo73ipIWE/sji/As1JqerI1QINKCq
-         oduZzRq8GbNwsrt9Ianh9kpoJSdKaueED1/X1MCQeYoJLahc/dgMXG+CceBn3IivwWXc
-         G76Y6fSb8gtPtuWDeMKdprh9ZCK2DngicAqEzABAKphuJWSeYd/FHfRN2iauSDgwJm44
-         ueMuVQCbR+FRr08Lu61JVjNZWBY3ur9RShvVDaEeOglrbrHJcjnTTJdKMtpEIYic+Dka
-         +M/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759086745; x=1759691545;
-        h=mime-version:message-id:in-reply-to:user-agent:references:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V6+64T8/OVtDekwKSacVIy7b5udGbpNaR3HNtwiQ4bY=;
-        b=LD3hSc0cG6kepQ7hecHRZC9tPERzAHAkWnlvAjVbgEbO7tBE+dRdMErRAayan7cK+W
-         J8QdZbCcRa4Ar7E6d/7QNpE6irZILiDII+RdAtWl3ng2v+w45oIyGVwyXBgBUnjflUav
-         C5QZbSX5XyJWhLLjMCqKBMtom4kLj22guIJjADHHYpPUFR/wr1ggRGizsbZOx+S9nGNv
-         yIRKR9RGjjXS4z0ZPdiSHI/bZ9BsQKuBba4Eim+gl+jt5AA8PRQ1D9n39orzPaRXva/p
-         Y0e/2LvfdvZYLzbR4UCB/yDMF136CWPX7x32v0aeoPAOg9EKkiamH4V2AGPOOFdpS+LA
-         5GKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ug1s5a2kgDEUrO5rd+q8w4Q4QbkDB4NTrWKsnQaQbjfGi1WaD0bb86N4pfFx5+zXk2VWSeif57uaV9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfTSHYrbyBnfVq/F00SW3Vl7LifzXiyJywo1xl7BA+G8xF//Kr
-	Z0c4Rgn2OmM/uoMzWbmFph7eD2z1sYaxdMBizeDHGBdOV0y4KTkoUztq
-X-Gm-Gg: ASbGncu2M9Se3OkrK8298bs8mcyrl6KiECmnzqUWOIdSfOtKBGXxIj705aiMriyh+HN
-	DwTOtq5Yk04oa08gA7fewKK72KJ+le1X0upD9BCA+2eOOp+lBkv14cCG7rPdJz+YNhWtNuo6h7b
-	YMHJem+xqDvsIYQ1YzFTz2fXJxlmrN8hpqEcH2yPNPurlfPcVi79y0m+we3dDpJw0UIiCiLAEiB
-	EMcjTSg40pENlYDEhVmAKw2dm06rv+iGEuYztLGakFKbQIB4oIsqSLZJ4gNO3gluq/cZL3Pme3X
-	7AM1fn6HOGErXy493uKEzb/92f976RXcrIf9Vlmp5tlxH9aov1B6c2nOgoXHNtZJYMv+phMt161
-	9jt4YrnpbfB9Ay5KVeMLZ+gfTh58wuxtIFQ==
-X-Google-Smtp-Source: AGHT+IG2g+TWi/xZtsDJNMcrRs7syD1a+LKNars74DO3AjH+g94ZzVbTjcPUhTTZp/04GuT/UkSGVg==
-X-Received: by 2002:a17:903:1110:b0:28a:2e51:9272 with SMTP id d9443c01a7336-28a2e70216fmr5541915ad.48.1759086745022;
-        Sun, 28 Sep 2025 12:12:25 -0700 (PDT)
-Received: from 1337 ([136.159.213.179])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed67076ffsm107646095ad.39.2025.09.28.12.12.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 12:12:24 -0700 (PDT)
-From: Abhinav Saxena <xandfury@gmail.com>
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: Edward Adam Davis <eadavis@qq.com>,
- syzbot+f1bb7e4ea47ea12b535c@syzkaller.appspotmail.com,
- hsweeten@visionengravers.com, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] comedi: aio_iiro_16: Prevent invlaid irq number
-Date: Sun, 28 Sep 2025 13:08:48 -0600
-References: <686bf6a0.a00a0220.b087d.01f2.GAE@google.com>
- <tencent_B0B82F456DC094ECE982EF1ECCEC7AEA6D0A@qq.com>
- <2f17944c-80ff-49a7-97ef-275f5e247e8f@mev.co.uk>
-User-agent: mu4e 1.10.8; emacs 30.2
-In-reply-to: <2f17944c-80ff-49a7-97ef-275f5e247e8f@mev.co.uk>
-Message-ID: <87frc62xyg.fsf@gmail.com>
+	s=arc-20240116; t=1759086628; c=relaxed/simple;
+	bh=ARfTGfLniAH7wUpL/BT0VpywPmBlBLL8BFcDU6AhgMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BL3kLAaRH5jJr5Sy6kplXP83IP1iPHbWtpaguJ01RJ5wTgjKJXDDrAPdbQFttpckHviJlNQBARObW6HKy67QW1WhZpGgSb5xbYLZKzHv/810IT5i80DLbAL3XFHsb5EmHlX5xOeeaNS16apcLJ87sLra3ENfB6kySyB7wRnMYdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KLjcCQM7; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759086626; x=1790622626;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ARfTGfLniAH7wUpL/BT0VpywPmBlBLL8BFcDU6AhgMY=;
+  b=KLjcCQM72/FpskmIHyhDRtcTLwuoGPBJb4BG12p+EWFr85aBiUKGORo1
+   SpH0rMfwvBY7dRN49U64xBhEJ9wqknq8DEJi3dwnzJSwjUz42h13AUyiG
+   0rAcLbUqQxWbjrkbbSqhcSmPXxgWzzykGjj9Im6nrd2n9GrZCIMmq2w++
+   yw9Y9qxBg24evxp23XrfbK7LzD99qGL5TI46n48pb+b7tTQK0lazclkV4
+   OexDZuXZdccowKmFrv5oovFPEunPlHcrIV+e/5rxZQQV1UVs3bcz1uCNQ
+   R1J37uqO1uG6ao1jCm6LsE3HbumH70z++8fNDRWym8wbNr8b3Xp1b9Foa
+   w==;
+X-CSE-ConnectionGUID: dyHLJHLIRgKfC72cNLrv8g==
+X-CSE-MsgGUID: cvlfHCa2Rw6nGB8phWaaaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11567"; a="86789065"
+X-IronPort-AV: E=Sophos;i="6.18,300,1751266800"; 
+   d="scan'208";a="86789065"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2025 12:10:25 -0700
+X-CSE-ConnectionGUID: 28kYypdTR3+5govQnOWY+w==
+X-CSE-MsgGUID: N8rFLA6UT+2MHMdcmrmaDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,300,1751266800"; 
+   d="scan'208";a="177315325"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 28 Sep 2025 12:10:22 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v2wml-0007y3-0R;
+	Sun, 28 Sep 2025 19:10:16 +0000
+Date: Mon, 29 Sep 2025 03:10:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Akhil Vinod <akhil.vinod@oss.qualcomm.com>,
+	Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com,
+	Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Subject: Re: [PATCH 2/2] bus: mhi: ep: Add loopback driver for data path
+ testing
+Message-ID: <202509290238.4kkJL0x5-lkp@intel.com>
+References: <20250923-loopback_mhi-v1-2-8618f31f44aa@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-=-="
-
---=-=-=
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250923-loopback_mhi-v1-2-8618f31f44aa@oss.qualcomm.com>
 
-Ian Abbott <abbotti@mev.co.uk> writes:
+Hi Sumit,
 
-> On 08/07/2025 13:37, Edward Adam Davis wrote:
->> The irq number 0x2166 passed by the reproducer is too large and is not
->> within the supported range [2-7, 10-12, 14, or 15], which triggers the o=
-ob.
->> Fixes: ad7a370c8be4 (=E2=80=9Cstaging: comedi: aio_iiro_16: add command
->> support for change of state detection=E2=80=9D)
->> Reported-by: syzbot+f1bb7e4ea47ea12b535c@syzkaller.appspotmail.com
->> Closes: <https://syzkaller.appspot.com/bug?extid=3Df1bb7e4ea47ea12b535c>
->> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
->> =E2=80=94
->>   drivers/comedi/drivers/aio_iiro_16.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->> diff =E2=80=93git a/drivers/comedi/drivers/aio_iiro_16.c
->> b/drivers/comedi/drivers/aio_iiro_16.c
->> index b00fab0b89d4..e43730f00c8b 100644
->> =E2=80=94 a/drivers/comedi/drivers/aio_iiro_16.c
->> +++ b/drivers/comedi/drivers/aio_iiro_16.c
->> @@ -177,7 +177,8 @@ static int aio_iiro_16_attach(struct comedi_device *=
-dev,
->>   	 * Digital input change of state interrupts are optionally supported
->>   	 * using IRQ 2-7, 10-12, 14, or 15.
->>   	 */
->> -	if ((1 << it->options[1]) & 0xdcfc) {
->> +	if (it->options[1] > 1 && it->options[1] < 16 &&
->> +	    (1 << it->options[1]) & 0xdcfc) {
->>   		ret =3D request_irq(it->options[1], aio_iiro_16_cos, 0,
->>   				  dev->board_name, dev);
->>   		if (ret =3D=3D 0)
->
-> The patch is fine apart from the misspelling of =E2=80=9Cinvalid=E2=80=9D=
- in the subject
-> line, but I=E2=80=99d already submitted a patch for this before syzbot de=
-tected
-> it:
->
-> <https://lore.kernel.org/lkml/20250707134622.75403-1-abbotti@mev.co.uk/>
+kernel test robot noticed the following build errors:
 
-#syz fix: comedi: aio_iiro_16: Fix bit shift out of bounds
+[auto build test ERROR on e6b9dce0aeeb91dfc0974ab87f02454e24566182]
 
---=-=-=--
+url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Kumar/bus-mhi-host-Add-loopback-driver-with-sysfs-interface/20250923-144109
+base:   e6b9dce0aeeb91dfc0974ab87f02454e24566182
+patch link:    https://lore.kernel.org/r/20250923-loopback_mhi-v1-2-8618f31f44aa%40oss.qualcomm.com
+patch subject: [PATCH 2/2] bus: mhi: ep: Add loopback driver for data path testing
+config: loongarch-randconfig-001-20250929 (https://download.01.org/0day-ci/archive/20250929/202509290238.4kkJL0x5-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250929/202509290238.4kkJL0x5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509290238.4kkJL0x5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   loongarch64-linux-ld: drivers/bus/mhi/ep/mhi_ep_loopback.o: in function `mhi_ep_loopback_dl_callback':
+>> mhi_ep_loopback.c:(.text+0x20): undefined reference to `sk_skb_reason_drop'
+   loongarch64-linux-ld: drivers/bus/mhi/ep/mhi_ep_loopback.o: in function `mhi_ep_loopback_work_handler':
+   mhi_ep_loopback.c:(.text+0x74): undefined reference to `sk_skb_reason_drop'
+   loongarch64-linux-ld: drivers/bus/mhi/ep/mhi_ep_loopback.o: in function `mhi_ep_loopback_ul_callback':
+>> mhi_ep_loopback.c:(.text+0x19c): undefined reference to `__alloc_skb'
+>> loongarch64-linux-ld: mhi_ep_loopback.c:(.text+0x1e4): undefined reference to `skb_put'
+>> loongarch64-linux-ld: mhi_ep_loopback.c:(.text+0x2b8): undefined reference to `sk_skb_reason_drop'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
