@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-835127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563DFBA6559
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:19:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B40DBA655F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F201899E77
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 01:19:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FE0F7A47DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 01:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F2C225416;
-	Sun, 28 Sep 2025 01:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9510822759B;
+	Sun, 28 Sep 2025 01:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="qPVWc4Rx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ST9zoHux"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDmL6Bqc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E884225791
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 01:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585B234BA42
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 01:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759022359; cv=none; b=OcerCoGTBniHmmIXVMd66SlyEYIvgeLig4aQcu6uo4KY2WdXRRF/v0nf917qcuszvTP59sBCBZo0vM65FsJw1pO/OB1dg2JSsk+rQjO8wNtfa+w8VHf9DNmTsf+2751CbrSjltq4STLBA+M/IhFWT8jYKyrZj48FvxUS5HY/MrQ=
+	t=1759022550; cv=none; b=kkJ72UNszc8a52R4Tvys09RXNBfZKuvuVX+j4Q03/lZsEvTgHBA3ZRwCGBWA0RND9GIfQ3R/vXvpGHkgMngwjGb4FB5/4ac/e4CwJC2GRg7mkorpDEfV97aWdVKdrEzjaUlnh7TQWsjEvcunkVXjDeZTCnOdlNaW+Wa2r5swv3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759022359; c=relaxed/simple;
-	bh=RefFHA/xtSK0kRCRzFzSxqY+FsRtxEJwtqSS/cGYyS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mSqYY10z7GbHESjlDqzcGS/By0qHBSmZ6mo13Us70WZ19ml1Iaz0dSwnMdV+CDY3f93G3mjpecmYlG8v7w8prf7CHC290C/YgqqIxYH3f41LwwnLxergiI9Yh0XZh3HJGxVp9SANkFocDYDGhcXu8NRjHnh7uoO2xAwtY88581A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=qPVWc4Rx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ST9zoHux; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 92CB51D0004A;
-	Sat, 27 Sep 2025 21:19:15 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Sat, 27 Sep 2025 21:19:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm2; t=1759022355; x=1759108755; bh=1TxogxZatZ
-	GvNMp5ACuFO5OBpuGGoJOFgQq9sF3nt/4=; b=qPVWc4Rxwj3foYInoPMvyIDL2v
-	fdKXNCG1Xw5jcxZV21GdJJ1Uv7/x25vkSYXAaTlENq6AJ/noVpj5zwNepy1j+RPx
-	U5lSe6s7Qd+X+FBwN21U85ArWmOTftjZTsTPTLSgJnRP1YbPL1LsXE9WfJOrVBv3
-	qW0xb4kgzb/YFqPUqMW2wtLj48aYGG+m/wvJ8NGkiIQ49Kb78q0aV5xK52Q1TIbc
-	QDaUaMp7EtFGntE7CwmqY6PXu3kyjOIaKsCa7y4+n45mtpfiQXDGgoJKT1sx28PT
-	t5jbyclOfp4o8Vo3PUGxp9KET9FiYcgYxJKRoxpO98AP0kRT0D+0ohrVY4yw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759022355; x=1759108755; bh=1TxogxZatZGvNMp5ACuFO5OBpuGGoJOFgQq
-	9sF3nt/4=; b=ST9zoHux5r8ZqzY9zvdQ/ZK3/wMmNZqXMK8r2X5ER6EjG+kY28c
-	cIh1fyQxIJCQWVop7q4gDgM8NDkpTZJa1LMdfd/SmkoWN6q8dGXFkIL0W3OAj9Tb
-	X/8MYGpwgO4UjWwQL73T82Gp/7r9CE1I+yMbKpyltAnvhxsZQI+yTa8okEBFfwTu
-	OmVPycgp23EQuUBWQ6I2o9mJH6F/k0V4e1GnDJyzbk9kmoVFTiye9BtYx8Yj54c6
-	68p6Z4S3b1pvnVRTEzyRcZE03Noku5hxXbzb66jwotVfU+8JOItbSIPaYs65BsBf
-	XQJaqlbUOzjYfOpl7Z7pKBsEhFpPRNkSOtQ==
-X-ME-Sender: <xms:E43YaOP_yNH8Gfri-_CUklvjOg0fkCTXHzPo6Xa-Nt4jmH28CvNeGw>
-    <xme:E43YaEtpiZCHLGvyVqYCSSlv99xdHTlUl8v57TPZ2WlWM0HDzccpeqqNeFG7hs0DH
-    9I99B0Vz8Y2mcQ3RH1TJdMgLoe1T8GLpcXyKrP45mHInxY1Ya5D1ns>
-X-ME-Received: <xmr:E43YaIWyoISWLjbNA-hirCGGYXKiydnnfLFWfrSLj7rfvAGkk13Zyguj92ssVhL1kwfmYHKEskScWh8NM9732TqKA9m1meoCkVW-Vi3TDhx_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejfeejlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
-    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepgefgheelheejieelhe
-    evfeekhfdtfeeftdefgefhkeffteduveejgeekvefhvdeunecuffhomhgrihhnpehkvghr
-    nhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphht
-    thhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqd
-    guvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtohep
-    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhkphesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:E43YaMsB_ctZC1mFyxfaIRhXpwSV2CUAav5U0WhvJoUtdo9n00dwkQ>
-    <xmx:E43YaEUvTUnab3g_BeJbAVK2gUfoLTOFuwLWKNImY1O2Pk40meARKA>
-    <xmx:E43YaPneH1t_4_RwV5mAKR6ovIJD6kEa_DQ2iHvLCS8v9vrL2YOPGg>
-    <xmx:E43YaNazW1gQOFOtX1knpM0-pgWm4z8pToDtCxWrhkLpqiB57GjqHg>
-    <xmx:E43YaInkIQf9fBKupRpNruyYw9_dbk7t2Xvqb62D9bp2zKthVP5W6HBo>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 27 Sep 2025 21:19:13 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] firewire: core: fix undefined reference error in ARM EABI
-Date: Sun, 28 Sep 2025 10:19:10 +0900
-Message-ID: <20250928011910.581475-1-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1759022550; c=relaxed/simple;
+	bh=RGH9s5C2/04q7NvHsl+9+cp4pXXOkuaGfJJ5n/ZBX/I=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dfzPFj3UH8dL6UpCqy8m4TuTBmpthXYnL0rQZfA4MxW8p880n0ERw0kYDTwq1RG0Z/lhD6o70HFMVHtr/JmN+i0bQ2e7ZAZ9scYkq540EPhD/e2VU1L7drQIQgZuIANyGuQ7YZhfVrvrPNtau/MRrG0duVm9X1t83H3HW7L14kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDmL6Bqc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759022547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hn7iHmC09rru4/PE6AWWnxzwMjl579sVNb/Zk7woIeM=;
+	b=VDmL6Bqcx2qFzKa8RKeOrZkX/cO3YQtQm96tSJJ5rzNmoaCJnrmkRvUMl9gEkwzm51M8ow
+	OEXjSdji9om/UePPCxBm3Oje09R7OWzP8Z40nok7IFUfYvCZL60j+0puvsfQtyeylENtyA
+	e78Ik7lMoJ+bsOiZcw1m49H0se4gq9E=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-379-iAlLsXPVM52LKTDfCdhALA-1; Sat, 27 Sep 2025 21:22:25 -0400
+X-MC-Unique: iAlLsXPVM52LKTDfCdhALA-1
+X-Mimecast-MFC-AGG-ID: iAlLsXPVM52LKTDfCdhALA_1759022545
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4de801c1446so39503031cf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 18:22:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759022543; x=1759627343;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hn7iHmC09rru4/PE6AWWnxzwMjl579sVNb/Zk7woIeM=;
+        b=ABNLCF6nHBAg1D0YrvUXMrboAhIrSM+AIpy8xKAeOsHe8Yk9LMhLI26jqGqs8ep+HF
+         tzO8rk5lMn23QnT04sPLZ+q4xL8kDJMabSB41LKhEwwMeqgpZgN41q6Yys8QM/40uRdw
+         P3KGK5mJZjUSV4X8QgFierSPy8dJmLdmFhVNkNskNLGydQG5rFLNiWp+tOXdMb+Y7vK0
+         DCXubD6wodf3Ito7SWvihFCRCu+B27LElK7SFRDI9XRsciGgZwGlEx6cKZGH2+eJnMBd
+         DhAvPjigPf4v3CE4Qv2fk1O+nZX+edYCfuS6l+fBB9bm/YstcIQrJdqhF2u6dClWqFUl
+         4V5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXdTyFcse4SDJWRNRQISy26VRJ+f7iHvJuy4IJhNIPcJotA/D0kYcn8K5n8N4AWRgZN0uY7025WK9PkmIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaowKOBa2FqzNh2A0zyOSVsq2Ce1LcqK92aYnRfUCu4CJpgLH7
+	qaPEhGJhQG6HrjmXVQa48DnfT+YQcI9g1AJpq/kT61fDLyyobG2FAdCh27NH9KowbqYUrE4sdKT
+	qG2AoeoTMxCd3j6rSBKvrfYw0BBgfb2Ju3+JK8xMeWIsoKeNxpGzEhGVlPE41/1h19Q==
+X-Gm-Gg: ASbGnctXGWCf2n9zw2tGQ+QMo99eGsRjBCh1ZizD2VVpxR5eq9oSbSPvv9P3Gf5rPXs
+	zINMWOrIw1lZKrBNaI8SqAmLvBmnZxa4NC0/w42DsJ9tQWRvKXX0FE8pbelHW6Cg04zebPciBkQ
+	y/dsPiySH7LLtePzqsVbhGs+w5ZgifRRH6eLN3B+onGVPXq7zXe+dl0bkMzaLZfI8D0TgiZUP2t
+	ZUpF4XBwXefKGjnn3q1zUhR7+x1YWMq5vj2odRWklzh6haaak82U1iF1rvrmHyKCEM02OqxYRCK
+	eWnUVRDAVTNtaGIk5HJbUJTJjM66mio6lurlnQrf1mfhIaKNTMfOayHjzOAHbI9e5/gQS7fzjDM
+	BgoiMhk8gfrY=
+X-Received: by 2002:a05:622a:14e:b0:4cb:7d9a:e1fe with SMTP id d75a77b69052e-4da4744e254mr167259891cf.9.1759022542950;
+        Sat, 27 Sep 2025 18:22:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXAYEXbjXLS1nZBJ9oTc+3bTz5QscB++OD5I9X+SJQltT996UkTpHIv9OHMc2rT2udToz4Wg==
+X-Received: by 2002:a05:622a:14e:b0:4cb:7d9a:e1fe with SMTP id d75a77b69052e-4da4744e254mr167259741cf.9.1759022542592;
+        Sat, 27 Sep 2025 18:22:22 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db0b56fe22sm48001721cf.20.2025.09.27.18.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Sep 2025 18:22:21 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <410dde3f-87f6-469a-9b1b-73c676e34049@redhat.com>
+Date: Sat, 27 Sep 2025 21:22:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking: Add local_locks to MAINTAINERS
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
+References: <20250927090110.t8Tm9yrk@linutronix.de>
+Content-Language: en-US
+In-Reply-To: <20250927090110.t8Tm9yrk@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For ARM EABI, GCC generates a reference to __aeabi_uldivmod when compiling
-a division of 64-bit integer with 32-bit integer. This function is not
-available in Linux kernel. In such cases, helper macros are defined in
-include/linux/math64.h.
-
-This commit replaces the division with div_u64().
-
-Fixes: 8ec6a8ec23b9 ("firewire: core: suppress overflow warning when computing jiffies from isochronous cycle")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202509270428.FZaO2PPq-lkp@intel.com/
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
-index 2dd715a580ac..e67395ce26b5 100644
---- a/drivers/firewire/core.h
-+++ b/drivers/firewire/core.h
-@@ -30,7 +30,7 @@ struct fw_packet;
- // This is the arbitrary value we use to indicate a mismatched gap count.
- #define GAP_COUNT_MISMATCHED	0
- 
--#define isoc_cycles_to_jiffies(cycles)	usecs_to_jiffies((u32)((u64)(cycles) * USEC_PER_SEC / 8000))
-+#define isoc_cycles_to_jiffies(cycles) usecs_to_jiffies((u32)div_u64((u64)cycles * USEC_PER_SEC, 8000))
- 
- extern __printf(2, 3)
- void fw_err(const struct fw_card *card, const char *fmt, ...);
--- 
-2.48.1
+On 9/27/25 5:01 AM, Sebastian Andrzej Siewior wrote:
+> The local_lock_t was never added to the MAINTAINERS file since its
+> inclusion.
+>
+> Add local_lock_t to the locking primitives section.
+>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2f346abc84ab0..45e6499405236 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14291,6 +14291,7 @@ S:	Maintained
+>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+>   F:	Documentation/locking/
+>   F:	arch/*/include/asm/spinlock*.h
+> +F:	include/linux/local_lock*.h
+>   F:	include/linux/lockdep*.h
+>   F:	include/linux/mutex*.h
+>   F:	include/linux/rwlock*.h
+Acked-by: Waiman Long <longman@redhat.com>
 
 
