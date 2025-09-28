@@ -1,115 +1,248 @@
-Return-Path: <linux-kernel+bounces-835198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459E0BA67BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:28:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324F4BA67BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F10A517E195
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C753BF8EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3E72877D3;
-	Sun, 28 Sep 2025 04:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D82877D3;
+	Sun, 28 Sep 2025 04:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BB5NQwkD"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VKvJboHT"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E772857C7
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 04:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240902874F1
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 04:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759033701; cv=none; b=iByiV/U5SXi+dxn921/n2+SE7QdY1M5Hy2cpY4Y8B0TKyhHd9mbFOT1nkMAjENI/O8emKKRWIBBdciKESz8+6s6mF3w4gyK4JrFn7SBhAnDkEC0mtxrB+tqtpiC7f7nu/aVOjKq0vhHiYYmAkimzUcjSJr8DpcYMTL13VFlhH0k=
+	t=1759033723; cv=none; b=gH9wbBrGG7/JDdbC2QkjEnIClIcTwOLoEtYPurGdET0JZQ+MinRR7NmOht8aHzQ1h+mth4gCcjyIEUhgPWtz7EbixwU5U6j2bzOyxZkamglxzDw6H+ADH4jfzv4LXPeldEnhtLvPTDkIsBz/DtMaXdpA6B333cI1N7lNO8e36cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759033701; c=relaxed/simple;
-	bh=nuRR6zw90qB7SgrCrIDW+FhcmnpqZupfSWo58gy++mA=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=Yyfj/mSfRDEh/Sshcl89iJRSXQgzhtRZuvETWB0qO/p5MAdUShCBmO2VMZ2+CBZaEZXemLi0sAocc2AA7H2X/X/5jAgqACqtzoXMR2V9FVhYOjx9rhnVNtYnXXw4L0wDfdg4HqCDDMsxk9AZ88xAOMwD8+KMJlVTKBwUUl8J8Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BB5NQwkD; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-76c144b06fdso28594427b3.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 21:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759033699; x=1759638499; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6wp0fDq3k0/r9k12dCZGeSiwwlkTpuN3WtXOkQGhZJI=;
-        b=BB5NQwkDMZSN41F4T2WEk/Alg/TPUCxuJ4OCW702TKm1XJF3a9T4u0ddtVvvW+8vJT
-         Qbhgro6s9suOEXafR7DDNjY3LKB2G58fKeXaJ/8HBazT8dCTjR9zozIwubWKybRotmZ9
-         WCQXIQpn9/HrHz2S/qeKpgCQOyout1+w5d6/xwh59cI9ZU4XlyDeL2w9oaMLB2XLx8CP
-         3GYtKdseXI5iwZJQ4yH1p3Y5DUqMv8fY2GB9Sv3bgA6Z8KbrMUQAJ+36+Zc90ceY+myv
-         FLLGouy2SWr6iph4yJ38mq1+F7CIUDk9gv5hB/JqebmekD1k99cPskS05D/JKfA8f5+e
-         6F+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759033699; x=1759638499;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6wp0fDq3k0/r9k12dCZGeSiwwlkTpuN3WtXOkQGhZJI=;
-        b=njLAkNrYL/7yfu7CEfLZm+kF10LgA+xrpf0KVhubfxARQL2RDoI2iDa2GZ93pl85ab
-         yetyuP/jmzE5jeoJGR0A0qmSD4HfKVYZBME2RWXu1QI6iF6XAUCRhOZXNjC5aEflHKQq
-         Qz0j6IhlCidDcMsW2m7uvhbyacyGYot7ncVt5MyrDXqDE8OsZeHXV7ASfuNvg6/7fOsP
-         sMfy7THyk30czmrZm32GHaK+kHQeXS+5RUmr66E/Q+bhftqRoZLjpk6iRte3ODqlgU2W
-         b3Gh8LQhh6GQ5VPsdTQMCtcQkyZOVO3Vga0G3tl0+OCawrzQ5tsSlfB+qpcMaHqGaXs8
-         h8Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhCqryE6V76bSgJmuBTpOPRostdVw9h5s4G9uq0JG5/Sy6+bImZjoZkoVEfcYEYuDyfna1ca7MD/pdNGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaN4ofBR8NFz0m23Vu0iR0k7duY23YLj5BV/NhZsiBxB1+oTXH
-	iZfBat/9v/btHOVxDEPGrUjQbdbhFYbpzTyaETyI57j3DOCVmSscElU6t8gp6uz9uqA5nef+5T5
-	JD2pBZQ==
-X-Gm-Gg: ASbGncserQfWaiXwmQcY9oMyxUEJ8LJSOcZ70Yp0Y7M2brvZDHqve80Kc+epB8b2nFs
-	A3wv8P+Gh8vl/IW3J/6+QG4/Xszm6VZXtHwNct9oHeT70wsEB/qXhrBYbrY82vh3/v+oCc+Mct7
-	i0MyDSXepEnx/4aJ1/Ll5MNV7QxD+L8MJytU8zFrN5Z4I4HI4kKuHaxg0ryU7csU+Xp1QDAioh8
-	2zprZXyIFOZ0G7NLHtzcf9JJmfj2NP6XTAMkrhYspCqTfdzpqK9VjetlLjNKiMlOUs0uJIaPTJR
-	BckrAc7xZEcmF4fnwIW2L/htt3tZdDNZCR/MMTPf4Qdj1rQfleiApop5jN5ocGqDLM8kOL0sph/
-	uBaJK8LQR5W7PRj4G++7tM64h1kxYUlw0xC9JOSGFBB89yCUB/YLE745Rqsa489xT/kZBzwoxnU
-	t3Fl/9kkuZoXdwzH/DjnQjh6BM5efn
-X-Google-Smtp-Source: AGHT+IEmjdyhyqxy5Fj/p/NzSZeWCCbu4ozrAL8XK6jcYUIhMH6CwQ6zd7Hg4Kbpnan97DOGis24Tg==
-X-Received: by 2002:a05:690e:259c:b0:634:7613:25a4 with SMTP id 956f58d0204a3-6361a73c57emr9911004d50.14.1759033698815;
-        Sat, 27 Sep 2025 21:28:18 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-eb383929c1bsm2473845276.19.2025.09.27.21.28.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 21:28:17 -0700 (PDT)
-Date: Sat, 27 Sep 2025 21:28:06 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Nathan Chancellor <nathan@kernel.org>
-cc: Alexey Gladkov <legion@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-    Stephen Rothwell <sfr@canb.auug.org.au>, Nicolas Shier <nsc@kernel.org>, 
-    linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH next] modpost: Initialize builtin_modname to stop SIGSEGVs
-Message-ID: <4590a243-0a7e-b7e6-e2d3-cd1b41a12237@google.com>
+	s=arc-20240116; t=1759033723; c=relaxed/simple;
+	bh=aGJzrxX/6tyC66XM5+5CXfFahLXDJKs8U5VVSlR/nJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ntn1NFaZ+Gbasam/q4qkdAoGkNG1xbyLIbGZHQ1RBNzzVibxXdU8CA+AoF5CZyHLOaF5IYhQhk3qUtTL7XQa+eQvunfN5ezydK5q6vOBVYUG7hzeBjLLONjL5gIk/5O9xM8GkQYjT/EKjYVqVFjmoOe7cj6JUnc6zdkUBtm5n2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VKvJboHT; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <71799ce4-cc2e-41d6-a5fb-d4af5c445e43@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759033719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uBCSfd9thTLA3FjzbiGVoo7eVJR3xdivXq6kfTEcxEU=;
+	b=VKvJboHTewBe8S6pxoc9+ncgfgD7CxJJDHoc19V6jDlvJ1gI1s4poS+le9OQ9GcIyejdjU
+	G55JV7+kzZwH3zcOJIAyJmzRvKM0YTG/M9NB6BnU0i7bNVdHzOTjVRACU+1nD+OESejfp4
+	j3Wq/LUL5RIXMw6d1p9i580UCSN9NiQ=
+Date: Sun, 28 Sep 2025 12:28:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH bpf-next v2] bpf: Add preempt_disable to protect
+ get_perf_callchain
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: song@kernel.org, jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250926153952.1661146-1-chen.dylane@linux.dev>
+ <CAEf4BzbLJtMGaZoFAaAgnNXe8GCStsw+kZ_3hWoGfySWZ6B5mg@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAEf4BzbLJtMGaZoFAaAgnNXe8GCStsw+kZ_3hWoGfySWZ6B5mg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Segmentation fault ./scripts/mod/modpost -o vmlinux.symvers vmlinux.o
-stops the kernel build.  It comes when write_vmlinux_export_c_file()
-tries to buf_printf alias->builtin_modname.  malloc'ed memory is not
-necessarily zeroed.  NULL new->builtin_modname before adding to aliases.
+在 2025/9/27 02:52, Andrii Nakryiko 写道:
+> On Fri, Sep 26, 2025 at 8:40 AM Tao Chen <chen.dylane@linux.dev> wrote:
+>>
+>> As Alexei noted, get_perf_callchain() return values may be reused
+>> if a task is preempted after the BPF program enters migrate disable
+>> mode. We therefore use bpf_perf_callchain_entries percpu entries
+>> similarly to bpf_try_get_buffers to preserve the current task's
+>> callchain and prevent overwriting by preempting tasks. And we also
+>> add preempt_disable to protect get_perf_callchain.
+>>
+>> Reported-by: Alexei Starovoitov <ast@kernel.org>
+>> Closes: https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   kernel/bpf/stackmap.c | 76 ++++++++++++++++++++++++++++++++++---------
+>>   1 file changed, 61 insertions(+), 15 deletions(-)
+>>
+>> Change list:
+>>   v1 -> v2:
+>>    From Alexei
+>>    - create percpu entris to preserve current task's callchain
+>>      similarly to bpf_try_get_buffers.
+>>    v1: https://lore.kernel.org/bpf/20250922075333.1452803-1-chen.dylane@linux.dev
+>>
+>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+>> index 2e182a3ac4c..8788c219926 100644
+>> --- a/kernel/bpf/stackmap.c
+>> +++ b/kernel/bpf/stackmap.c
+>> @@ -31,6 +31,55 @@ struct bpf_stack_map {
+>>          struct stack_map_bucket *buckets[] __counted_by(n_buckets);
+>>   };
+>>
+>> +struct bpf_perf_callchain_entry {
+>> +       u64 nr;
+>> +       u64 ip[PERF_MAX_STACK_DEPTH];
+>> +};
+>> +
+>> +#define MAX_PERF_CALLCHAIN_PREEMPT 3
+>> +static DEFINE_PER_CPU(struct bpf_perf_callchain_entry[MAX_PERF_CALLCHAIN_PREEMPT],
+>> +                     bpf_perf_callchain_entries);
+>> +static DEFINE_PER_CPU(int, bpf_perf_callchain_preempt_cnt);
+>> +
+>> +static int bpf_get_perf_callchain(struct bpf_perf_callchain_entry **entry,
+>> +                                 struct pt_regs *regs, u32 init_nr, bool kernel,
+>> +                                 bool user, u32 max_stack, bool crosstack,
+>> +                                 bool add_mark)
+>> +{
+>> +       struct bpf_perf_callchain_entry *bpf_entry;
+>> +       struct perf_callchain_entry *perf_entry;
+>> +       int preempt_cnt;
+>> +
+>> +       preempt_cnt = this_cpu_inc_return(bpf_perf_callchain_preempt_cnt);
+>> +       if (WARN_ON_ONCE(preempt_cnt > MAX_PERF_CALLCHAIN_PREEMPT)) {
+>> +               this_cpu_dec(bpf_perf_callchain_preempt_cnt);
+>> +               return -EBUSY;
+>> +       }
+>> +
+>> +       bpf_entry = this_cpu_ptr(&bpf_perf_callchain_entries[preempt_cnt - 1]);
+>> +
+>> +       preempt_disable();
+>> +       perf_entry = get_perf_callchain(regs, init_nr, kernel, user, max_stack,
+>> +                                       crosstack, add_mark);
+>> +       if (unlikely(!perf_entry)) {
+>> +               preempt_enable();
+>> +               this_cpu_dec(bpf_perf_callchain_preempt_cnt);
+>> +               return -EFAULT;
+>> +       }
+>> +       memcpy(bpf_entry, perf_entry, sizeof(u64) * (perf_entry->nr + 1));
+> 
+> N copies of a stack trace is not good enough, let's have N + 1 now :)
+> 
+> If we are going with our own buffers, we need to teach
+> get_perf_callchain to let us pass that buffer directly to avoid that
+> unnecessary copy.
+> 
+> Also, I know it's about 1KB, but it would be so simple and efficient
+> to just have this bpf_perf_callchain_entry on the stack. Kernel has a
+> 16KB stack, right? It feels like for something like this using 1KB of
+> the stack to simplify and speed up stack trace capture is a good
+> enough reason.
+> 
+>> +       *entry = bpf_entry;
+>> +       preempt_enable();
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void bpf_put_perf_callchain(void)
+>> +{
+>> +       if (WARN_ON_ONCE(this_cpu_read(bpf_perf_callchain_preempt_cnt) == 0))
+>> +               return;
+>> +       this_cpu_dec(bpf_perf_callchain_preempt_cnt);
+>> +}
+>> +
+>>   static inline bool stack_map_use_build_id(struct bpf_map *map)
+>>   {
+>>          return (map->map_flags & BPF_F_STACK_BUILD_ID);
+>> @@ -303,8 +352,9 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>>          u32 max_depth = map->value_size / stack_map_data_size(map);
+>>          u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+>>          bool user = flags & BPF_F_USER_STACK;
+>> -       struct perf_callchain_entry *trace;
+>> +       struct bpf_perf_callchain_entry *trace;
+>>          bool kernel = !user;
+>> +       int err;
+>>
+>>          if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+>>                                 BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+>> @@ -314,14 +364,15 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>>          if (max_depth > sysctl_perf_event_max_stack)
+>>                  max_depth = sysctl_perf_event_max_stack;
+>>
+>> -       trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+>> -                                  false, false);
+>> +       err = bpf_get_perf_callchain(&trace, regs, 0, kernel, user, max_depth,
+>> +                                    false, false);
+>> +       if (err)
+>> +               return err;
+>>
+>> -       if (unlikely(!trace))
+>> -               /* couldn't fetch the stack trace */
+>> -               return -EFAULT;
+>> +       err = __bpf_get_stackid(map, (struct perf_callchain_entry *)trace, flags);
+>> +       bpf_put_perf_callchain();
+>>
+>> -       return __bpf_get_stackid(map, trace, flags);
+>> +       return err;
+>>   }
+>>
+>>   const struct bpf_func_proto bpf_get_stackid_proto = {
+>> @@ -443,8 +494,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>>          if (sysctl_perf_event_max_stack < max_depth)
+>>                  max_depth = sysctl_perf_event_max_stack;
+>>
+>> -       if (may_fault)
+>> -               rcu_read_lock(); /* need RCU for perf's callchain below */
+>> +       preempt_disable();
+>>
+>>          if (trace_in)
+>>                  trace = trace_in;
+>> @@ -455,8 +505,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>>                                             crosstask, false);
+>>
+>>          if (unlikely(!trace) || trace->nr < skip) {
+>> -               if (may_fault)
+>> -                       rcu_read_unlock();
+>> +               preempt_enable();
+>>                  goto err_fault;
+>>          }
+>>
+>> @@ -474,10 +523,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>>          } else {
+>>                  memcpy(buf, ips, copy_len);
+>>          }
+>> -
+>> -       /* trace/ips should not be dereferenced after this point */
+>> -       if (may_fault)
+>> -               rcu_read_unlock();
+>> +       preempt_enable();
+>>
+>>          if (user_build_id)
+>>                  stack_map_get_build_id_offset(buf, trace_nr, user, may_fault);
+> 
+> really it's just build_id resolution that can take a while, which is
+> why we are trying to avoid preemption around it. But for non-build_id
+> case, can we avoid extra copying?
+> 
 
-Fixes: 5ab23c7923a1 ("modpost: Create modalias for builtin modules")
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
- scripts/mod/file2alias.c | 1 +
- 1 file changed, 1 insertion(+)
+Maybe possible, you mean optimize the memcpy(buf, ips, copy_len) for
+non-build_id? I'm trying to add an external entry in get_perf_callchain 
+to see if the perf maintainers agree. If it's approved, everything seems 
+manageable.
+>> --
+>> 2.48.1
+>>
 
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index 7da9735e7ab3..b3333560b95e 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -94,6 +94,7 @@ module_alias_printf(struct module *mod, bool append_wildcard,
- 		}
- 	}
- 
-+	new->builtin_modname = NULL;
- 	list_add_tail(&new->node, &mod->aliases);
- }
- 
+
 -- 
-2.48.2
+Best Regards
+Tao Chen
 
