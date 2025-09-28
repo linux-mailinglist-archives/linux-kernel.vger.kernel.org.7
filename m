@@ -1,365 +1,152 @@
-Return-Path: <linux-kernel+bounces-835152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB5CBA663C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:14:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C22BA6645
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B102C17CA21
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 02:14:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 211EF7A6FB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 02:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE025246BB6;
-	Sun, 28 Sep 2025 02:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481F924729A;
+	Sun, 28 Sep 2025 02:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJMrghd+"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qst8xH+F"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4144A01
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 02:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B0418C03F
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 02:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759025649; cv=none; b=g0gurAfZJUPxdZ4u3PKrvxdN2paBzCEJY8RQLfhC+ZiG1rnwuw3bYZg/iOK0UOY+/MNCyo5/emCDPlafsrnBg1bryW4bjrwJOnQGnWjfHnEafAyPZiiVgTOHOvlbughbkGtqFwibfe7lsXnZVqcChZL/qJrDFCQyLFfrjoL9Gu4=
+	t=1759025723; cv=none; b=IWu+qF8XEQ7seQOJxDJJHmGBwniSNxwIJZpjjFtSCr/61rpE5KsTuqSaHzO0QYvBW9DqCjbc7r6MHWYC17x9BOKYI9UHbdCH4s12xEtq4/g337314OlnrQDQOljVNs4/FJhX7loEJ68/Wz5sYsok1JBbZ5xZP1I66+S5ERS2me8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759025649; c=relaxed/simple;
-	bh=IH83jEiyJrKrhlVsP4em5vaOm3ovsNKL/2Uh1Adnpk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FwIiBpKGaDHIAn5tabDysl9aHuieR8Sv9Wq3VRPTmYobooyx8ft8UhL/MvOQ/Wge+71+sWiTghODRD73GcnIpX4EruC5vMpV8A9UKlKs7VpMtlsaiePZ6Tc5Qf3rmJj6j904ju7sDjprwAYO4Ts2DqX30Ff9m6NLcdu1pnLI4Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NJMrghd+; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-78ea15d3489so27931756d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 19:14:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759025646; x=1759630446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IgfyK+ERvcGdu6t0lNJixg5TdROYvSdbOndCTyoB1XA=;
-        b=NJMrghd+NzTNy+rZLfNHIxKTh0zezSix1IpIyyWbtU14v+nX1F4T+5ltr4QrSIEnb9
-         qhO7GkvsLzOwiUfAlkeJ9HXT1OnK4Heo68iLKsMQ7Pe+4D8j9NH3C7CY6UmVmt4v5ZSv
-         otE3feIkUYBE1n/wM5woBGpyB+aLZYEzzpgJNVI61j1kznRwa91FTE6ihX1RhR/Lv1s0
-         uc0B5tLWw2l2DRDfJoO6mgBBjaP3ViZUsg+CBcx6SvUcfBYc4ONwINJIX8ahmGe84hpT
-         3iKnIRNxASYAEgNKX9lBN4eRHR3IC+BGoxOdzqfBPsoM6J17m2t0OInrX7lSVnRvVJEE
-         67EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759025646; x=1759630446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IgfyK+ERvcGdu6t0lNJixg5TdROYvSdbOndCTyoB1XA=;
-        b=c/6PyHFqBGO2oL9z7DZ7meAJMOR8ctjiiHg2uAWNFGDWYJ4v/qTXeK0a6/gPn6TJ70
-         Cy17dXDCwst7ZEPT8tMmbsxgS633B5mPEcQwshHwsgWQMa2h/FdWur2D1jEcfGAvPten
-         slnlo9cRdnzPalehKxWKRrlXKXSclcET7I77zrw/r18XX1QlVs1FIBpfghwerpCsYBEO
-         ANYLTPipV7LlQTXrM2gieCDgw+bDZ2QCx/Zahgs4+D4AYg4J0hdHQ3GbYMGmeu+bAMq9
-         rkmRzUZqoiJMXxLYFD+4rSb+OBJTdzJrhUCaJt0DG1EVgllFxfIX7ugYQSZgVkOqdHmr
-         3GIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTczL7Evy/mR5qK+gJQu/oTcz13nGaAGMIYLTMIuh7rsdpCDbwVh8aMzV8ZD0x5NUJHuj1JLq080QuBg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzT3KXrvGr62SGgABtSn4ruCRoPyeX9NDQFqzT05jRzoSpgBbv
-	EwZsyJTnPpRngEI4PMeiTD5muwKWKO3XB5UNC7Bog4HV5KlxY2SnwRHhZy0xF1Fe4cWXP1uN0xk
-	Wgp/hPhwL3gFCLqYbJWQ2uiNANMsm4wQ=
-X-Gm-Gg: ASbGncuNYzWdZaue74TdNl7c7A7dhZKCd1guOebTpY5FkI3bv92RBGr3SOtM1TQGxhj
-	OeYiG6QWeABxXmHG4roMHUqiGrnrI7ilkYc8bStmiXZlNrkeRG6BOfR8I398I7iQnrN/OUu3jpX
-	SLPAbSFkykB83ylFlE3D9X1zSi3cjNVylDGF4jQNnvp3KcB7+D3oohroVg+tluFxyVDMT7NoTOt
-	Vw57fMQh2rK1+FLm52LkqPS8kRv8HLVVhZQdEB3X6iKTQbYMqw=
-X-Google-Smtp-Source: AGHT+IFBzSCWT9hh0pEexdSgkq3kl3qXsAZzuIThj+zxZ39IC7nb4rfO/kyEpmVN3tJ4CnGQisxqrYSyLve72cAkf2M=
-X-Received: by 2002:a05:6214:21a3:b0:7ef:5587:5427 with SMTP id
- 6a1803df08f44-7fc3ca0be80mr189169576d6.32.1759025645980; Sat, 27 Sep 2025
- 19:14:05 -0700 (PDT)
+	s=arc-20240116; t=1759025723; c=relaxed/simple;
+	bh=8yYtLnIxQGxoyWrusR+VVn8uKayY4/ZByOWTdcI1Seg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oDpQvMKkuOcXldG5KYRJxZg54TJ2bJWWGKz6ohnDK+aa2Iy2/GNMjV2eggeOitVnhXU6jbIcnWjqeT3d89iwWrZ1dgj2dqS16KUsmBP6Nr68UlekUjfsR3jrUVoBmIOYcpbmWY0U2eKBLIe732zXt6GWTFcUrD/0xzIKOMa37WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qst8xH+F; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bda4b547-4dea-4c05-8679-1cf021bbe340@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759025718;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n8QPEqanYvGseHMXBit3z9fL9W36Ukzni1BsxcDGJHk=;
+	b=Qst8xH+FLpIjym6iJDgo4g/zbMYMXXqFbnHQQyHyx/oiq6pKnPIPcbyphysLR51R6BMkLt
+	ss4Xf2FoKeRlMXA9pk+g9L1gZsJJ4g4TM1arn/AI/a9nEvY5hiN59ZbUk8B/EvIJqR61Nq
+	gNp+ks2gINSwLlStfhQzUpLzdl4e/RI=
+Date: Sun, 28 Sep 2025 10:14:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926093343.1000-1-laoar.shao@gmail.com> <20250926093343.1000-5-laoar.shao@gmail.com>
- <073d5246-6da7-4abb-93d6-38d814daedcc@gmail.com>
-In-Reply-To: <073d5246-6da7-4abb-93d6-38d814daedcc@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 28 Sep 2025 10:13:29 +0800
-X-Gm-Features: AS18NWAeAit0xGzG8ueU72wy7682FqeEqNkhZer2yoKGcZbdy1zHQ6f7MpL24z0
-Message-ID: <CALOAHbCS1ndOUtMizCGxFRU8Xd9oJkK2GG1OmZVN1dEZ=iZmUw@mail.gmail.com>
-Subject: Re: [PATCH v8 mm-new 04/12] mm: thp: add support for BPF based THP
- order selection
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
-	dev.jain@arm.com, hannes@cmpxchg.org, gutierrez.asier@huawei-partners.com, 
-	willy@infradead.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	ameryhung@gmail.com, rientjes@google.com, corbet@lwn.net, 21cnbao@gmail.com, 
-	shakeel.butt@linux.dev, tj@kernel.org, lance.yang@linux.dev, 
-	bpf@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] btrfs: Add the nlink annotation in btrfs_inode_item
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+ Chris Mason <clm@fb.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250926074543.585249-1-youling.tang@linux.dev>
+ <adda6065-26a2-4d31-b4f0-ccb20e0fadeb@gmx.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <adda6065-26a2-4d31-b4f0-ccb20e0fadeb@gmx.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 26, 2025 at 11:13=E2=80=AFPM Usama Arif <usamaarif642@gmail.com=
-> wrote:
->
->
->
-> On 26/09/2025 10:33, Yafang Shao wrote:
-> > This patch introduces a new BPF struct_ops called bpf_thp_ops for dynam=
-ic
-> > THP tuning. It includes a hook bpf_hook_thp_get_order(), allowing BPF
-> > programs to influence THP order selection based on factors such as:
-> > - Workload identity
-> >   For example, workloads running in specific containers or cgroups.
-> > - Allocation context
-> >   Whether the allocation occurs during a page fault, khugepaged, swap o=
-r
-> >   other paths.
-> > - VMA's memory advice settings
-> >   MADV_HUGEPAGE or MADV_NOHUGEPAGE
-> > - Memory pressure
-> >   PSI system data or associated cgroup PSI metrics
-> >
-> > The kernel API of this new BPF hook is as follows,
-> >
-> > /**
-> >  * thp_order_fn_t: Get the suggested THP order from a BPF program for a=
-llocation
-> >  * @vma: vm_area_struct associated with the THP allocation
-> >  * @type: TVA type for current @vma
-> >  * @orders: Bitmask of available THP orders for this allocation
-> >  *
-> >  * Return: The suggested THP order for allocation from the BPF program.=
- Must be
-> >  *         a valid, available order.
-> >  */
-> > typedef int thp_order_fn_t(struct vm_area_struct *vma,
-> >                          enum tva_type type,
-> >                          unsigned long orders);
-> >
-> > Only a single BPF program can be attached at any given time, though it =
-can
-> > be dynamically updated to adjust the policy. The implementation support=
-s
-> > anonymous THP, shmem THP, and mTHP, with future extensions planned for
-> > file-backed THP.
-> >
-> > This functionality is only active when system-wide THP is configured to
-> > madvise or always mode. It remains disabled in never mode. Additionally=
-,
-> > if THP is explicitly disabled for a specific task via prctl(), this BPF
-> > functionality will also be unavailable for that task.
-> >
-> > This BPF hook enables the implementation of flexible THP allocation
-> > policies at the system, per-cgroup, or per-task level.
-> >
-> > This feature requires CONFIG_BPF_THP_GET_ORDER_EXPERIMENTAL to be
-> > enabled. Note that this capability is currently unstable and may underg=
-o
-> > significant changes=E2=80=94including potential removal=E2=80=94in futu=
-re kernel versions.
-> >
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > ---
-> >  MAINTAINERS             |   1 +
-> >  include/linux/huge_mm.h |  23 +++++
-> >  mm/Kconfig              |  12 +++
-> >  mm/Makefile             |   1 +
-> >  mm/huge_memory_bpf.c    | 204 ++++++++++++++++++++++++++++++++++++++++
-> >  5 files changed, 241 insertions(+)
-> >  create mode 100644 mm/huge_memory_bpf.c
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index ca8e3d18eedd..7be34b2a64fd 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -16257,6 +16257,7 @@ F:    include/linux/huge_mm.h
-> >  F:   include/linux/khugepaged.h
-> >  F:   include/trace/events/huge_memory.h
-> >  F:   mm/huge_memory.c
-> > +F:   mm/huge_memory_bpf.c
-> >  F:   mm/khugepaged.c
-> >  F:   mm/mm_slot.h
-> >  F:   tools/testing/selftests/mm/khugepaged.c
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index a635dcbb2b99..fea94c059bed 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -56,6 +56,7 @@ enum transparent_hugepage_flag {
-> >       TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG,
-> >       TRANSPARENT_HUGEPAGE_DEFRAG_KHUGEPAGED_FLAG,
-> >       TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG,
-> > +     TRANSPARENT_HUGEPAGE_BPF_ATTACHED,      /* BPF prog is attached *=
-/
-> >  };
-> >
-> >  struct kobject;
-> > @@ -269,6 +270,23 @@ unsigned long __thp_vma_allowable_orders(struct vm=
-_area_struct *vma,
-> >                                        enum tva_type type,
-> >                                        unsigned long orders);
-> >
-> > +#ifdef CONFIG_BPF_THP_GET_ORDER_EXPERIMENTAL
-> > +
-> > +unsigned long
-> > +bpf_hook_thp_get_orders(struct vm_area_struct *vma, enum tva_type type=
-,
-> > +                     unsigned long orders);
-> > +
-> > +#else
-> > +
-> > +static inline unsigned long
-> > +bpf_hook_thp_get_orders(struct vm_area_struct *vma, enum tva_type type=
-,
-> > +                     unsigned long orders)
-> > +{
-> > +     return orders;
-> > +}
-> > +
-> > +#endif
-> > +
-> >  /**
-> >   * thp_vma_allowable_orders - determine hugepage orders that are allow=
-ed for vma
-> >   * @vma:  the vm area to check
-> > @@ -290,6 +308,11 @@ unsigned long thp_vma_allowable_orders(struct vm_a=
-rea_struct *vma,
-> >  {
-> >       vm_flags_t vm_flags =3D vma->vm_flags;
-> >
-> > +     /* The BPF-specified order overrides which order is selected. */
-> > +     orders &=3D bpf_hook_thp_get_orders(vma, type, orders);
-> > +     if (!orders)
-> > +             return 0;
-> > +
-> >       /*
-> >        * Optimization to check if required orders are enabled early. On=
-ly
-> >        * forced collapse ignores sysfs configs.
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index bde9f842a4a8..fd7459eecb2d 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -895,6 +895,18 @@ config NO_PAGE_MAPCOUNT
-> >
-> >         EXPERIMENTAL because the impact of some changes is still unclea=
-r.
-> >
-> > +config BPF_THP_GET_ORDER_EXPERIMENTAL
-> > +     bool "BPF-based THP order selection (EXPERIMENTAL)"
-> > +     depends on TRANSPARENT_HUGEPAGE && BPF_SYSCALL
-> > +
-> > +     help
-> > +       Enable dynamic THP order selection using BPF programs. This
-> > +       experimental feature allows custom BPF logic to determine optim=
-al
-> > +       transparent hugepage allocation sizes at runtime.
-> > +
-> > +       WARNING: This feature is unstable and may change in future kern=
-el
-> > +       versions.
-> > +
->
-> I am assuming this series opens up the possibility of additional hooks be=
-ing added in
-> the future. Instead of naming this BPF_THP_GET_ORDER_EXPERIMENTAL, should=
- we
-> name it BPF_THP? Otherwise we will end up with 1 Kconfig option per hook,=
- which
-> is quite bad.
+Hi, Wenruo
 
-makes sense.
-
->
-> Also It would be really nice if we dont put "EXPERIMENTAL" in the name of=
- the defconfig.
-> If its decided that its not experimental anymore without any change to th=
-e code needed,
-> renaming the defconfig will break it for everyone.
-
-makes sense to me.
-Lorenzo, what do you think ?
-
+On 9/26/25 16:34, Qu Wenruo wrote:
 >
 >
-> >  endif # TRANSPARENT_HUGEPAGE
-> >
-> >  # simple helper to make the code a bit easier to read
-> > diff --git a/mm/Makefile b/mm/Makefile
-> > index 21abb3353550..62ebfa23635a 100644
-> > --- a/mm/Makefile
-> > +++ b/mm/Makefile
-> > @@ -99,6 +99,7 @@ obj-$(CONFIG_MIGRATION) +=3D migrate.o
-> >  obj-$(CONFIG_NUMA) +=3D memory-tiers.o
-> >  obj-$(CONFIG_DEVICE_MIGRATION) +=3D migrate_device.o
-> >  obj-$(CONFIG_TRANSPARENT_HUGEPAGE) +=3D huge_memory.o khugepaged.o
-> > +obj-$(CONFIG_BPF_THP_GET_ORDER_EXPERIMENTAL) +=3D huge_memory_bpf.o
-> >  obj-$(CONFIG_PAGE_COUNTER) +=3D page_counter.o
-> >  obj-$(CONFIG_MEMCG_V1) +=3D memcontrol-v1.o
-> >  obj-$(CONFIG_MEMCG) +=3D memcontrol.o vmpressure.o
-> > diff --git a/mm/huge_memory_bpf.c b/mm/huge_memory_bpf.c
-> > new file mode 100644
-> > index 000000000000..b59a65d70a93
-> > --- /dev/null
-> > +++ b/mm/huge_memory_bpf.c
-> > @@ -0,0 +1,204 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * BPF-based THP policy management
-> > + *
-> > + * Author: Yafang Shao <laoar.shao@gmail.com>
-> > + */
-> > +
-> > +#include <linux/bpf.h>
-> > +#include <linux/btf.h>
-> > +#include <linux/huge_mm.h>
-> > +#include <linux/khugepaged.h>
-> > +
-> > +/**
-> > + * @thp_order_fn_t: Get the suggested THP order from a BPF program for=
- allocation
-> > + * @vma: vm_area_struct associated with the THP allocation
-> > + * @type: TVA type for current @vma
-> > + * @orders: Bitmask of available THP orders for this allocation
-> > + *
-> > + * Return: The suggested THP order for allocation from the BPF program=
-. Must be
-> > + *         a valid, available order.
-> > + */
-> > +typedef int thp_order_fn_t(struct vm_area_struct *vma,
-> > +                        enum tva_type type,
-> > +                        unsigned long orders);
-> > +
-> > +struct bpf_thp_ops {
-> > +     thp_order_fn_t __rcu *thp_get_order;
-> > +};
-> > +
-> > +static struct bpf_thp_ops bpf_thp;
-> > +static DEFINE_SPINLOCK(thp_ops_lock);
-> > +
-> > +unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
-> > +                                   enum tva_type type,
-> > +                                   unsigned long orders)
-> > +{
-> > +     thp_order_fn_t *bpf_hook_thp_get_order;
-> > +     int bpf_order;
-> > +
-> > +     /* No BPF program is attached */
-> > +     if (!test_bit(TRANSPARENT_HUGEPAGE_BPF_ATTACHED,
-> > +                   &transparent_hugepage_flags))
-> > +             return orders;
-> > +
-> > +     rcu_read_lock();
-> > +     bpf_hook_thp_get_order =3D rcu_dereference(bpf_thp.thp_get_order)=
-;
-> > +     if (!bpf_hook_thp_get_order)
+> 在 2025/9/26 17:15, Youling Tang 写道:
+>> From: Youling Tang <tangyouling@kylinos.cn>
+>>
+>> When I created a directory, I found that its hard link count was
+>> 1 (unlike other file system phenomena, including the "." directory,
+>> which defaults to an initial count of 2).
+>>
+>> By analyzing the code, it is found that the nlink of the directory
+>> in btrfs has always been kept at 1, which is a deliberate design.
+>>
+>> Adding its comments can prevent it from being mistakenly regarded
+>> as a BUG.
+>>
+>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>> ---
+>>   include/uapi/linux/btrfs_tree.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/uapi/linux/btrfs_tree.h 
+>> b/include/uapi/linux/btrfs_tree.h
+>> index fc29d273845d..b4f7da90fd0e 100644
+>> --- a/include/uapi/linux/btrfs_tree.h
+>> +++ b/include/uapi/linux/btrfs_tree.h
+>> @@ -876,6 +876,7 @@ struct btrfs_inode_item {
+>>       __le64 size;
+>>       __le64 nbytes;
+>>       __le64 block_group;
+>> +    /* nlink in directories is fixed at 1 */
 >
-> Should we warn over here if we are going to out? TRANSPARENT_HUGEPAGE_BPF=
-_ATTACHED
-> being set + !bpf_hook_thp_get_order shouldnt be possible, right?
+> nlink of what?
+>
+> Shouldn't be "nlink of directories" or "nlink of directory inodes"?
+>
+>
+> There are better location like 
+> btrfs-progs/Documentation/dev/On-disk-format.rst for this.
+>
+> And you're only adding one single comment for a single member?
+> Even this is a different behavior compared to other fses, why not 
+> explain what the impact of the change?
+>
+>
+> If you really want to add proper comments, spend more time and effort 
+> like commit 9c6b1c4de1c6 ("btrfs: document device locking") to do it 
+> correctly.
 
-will add a warning in the next version.
+My understanding of nlink is as follows, please correct me if I'm wrong,
 
---=20
-Regards
-Yafang
+/*
+  * nlink represents the hard link count (corresponds to inode->i_nlink 
+value).
+  * For directories, this value is always 1, which differs from other 
+filesystems
+  * where a newly created directory has an inode->i_nlink value of 2 
+(including
+  * the "." entry pointing to itself).
+  *
+  * BTRFS maintains parent-child relationships through explicit back 
+references
+  * (BTRFS_INODE_REF_KEY items) rather than link count accounting.
+  *
+  * This design simplifies metadata management in the copy-on-write 
+environment
+  * and enables more reliable consistency checking. Directory link count
+  * verification is performed during tree checking in 
+check_inode_item(), where
+  * values greater than 1 are treated as corruption.
+  *
+  * For regular files, nlink behaves traditionally and represents the actual
+  * hard link count of the file.
+  */
+
+Thanks,
+Youling.
+>
+> Thanks,
+> Qu
+>
+>>       __le32 nlink;
+>>       __le32 uid;
+>>       __le32 gid;
+>
 
