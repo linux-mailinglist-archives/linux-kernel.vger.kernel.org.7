@@ -1,190 +1,133 @@
-Return-Path: <linux-kernel+bounces-835122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3C1BA6543
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C97BA6549
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62161706DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 01:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AA717B0E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 01:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB55B1E47A5;
-	Sun, 28 Sep 2025 01:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdygDJqM"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B9234BA2D;
+	Sun, 28 Sep 2025 01:12:08 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC092AE8D
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 01:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6731B0437;
+	Sun, 28 Sep 2025 01:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759021909; cv=none; b=L1n6HR9QG2ZEKPG7LKLWU495bIv5jbEBLt80G6TRwcERjBKZ3/1TV0SdWFSiGHlENLvLTETgXm+lgurThc61sr+ChnPMgZbcWGAg+f+zXzSHV5SCTRF/EuXzYHsFV/q+yDEcHEleqHuu1qt9a8jdiztlBiPi0T0KuNElZawhQ0Q=
+	t=1759021927; cv=none; b=ZaHFJKLhk7vBRDsz1Rh8iadIZA7FgS8+op/Zc/Oz1wYLjj8EzEyWhhISAg00OPg1zFS8xuEwTO43dsDYx8wuzC6o6E1HD15OgQJWQTG2/ykC1hoWZjPbx+FN+HB64SX5dIVc5/tcAxNWqbvVUCwrKbF6uu8plXoXA3GYGZLJWJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759021909; c=relaxed/simple;
-	bh=0Hq9+Z6UAmTgmqqVKnFTiMnWZOo5KByC4nsJVMmtiGA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=a0Zg+z8lsmZVRsl2+uRh7L9l33LZUwSFXyj4m7zZMA67noFiR7+Cx/hSTiDM082Vjlaf3EOCCNrtG5Msi3k+sELAnwtAHOZGkJqkA3mHcIXPgk5bC9Q+MTNqVav9DsTc5yQrlMTU6xcbHhel96MR+GkPm5k0832GssQvzFnEvtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdygDJqM; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62fc89cd68bso6585314a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 18:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759021905; x=1759626705; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Hq9+Z6UAmTgmqqVKnFTiMnWZOo5KByC4nsJVMmtiGA=;
-        b=UdygDJqM5/ebpuEsy7OsBxVWPk/q2kOKDZ6tZ8vIj4LPn/wMfd5QnJf8yg86zyQrGB
-         UBAxrjB/heEKJomV65adOcCbGxOgz3nFLcZdCzOZBNI9NLVE3814f3IztMiX5MoKCIe/
-         0TtN84QrJ6fDL2glZZUGVAAHETBytLCBstW679lhjAYs705hIBcsxHXTabl9BX6EDypQ
-         E0yKWdzdWXANbEYHsXPa39xYhfNpoigS45HrpsDGOrQPPip7ee6wIIuTZ5FO0ospMJZC
-         sOBMXFradInWpTCBcYURx1fIG84RnD2liDupxCrOyHKIttw7Ie5lNXbQJJUSQQWNj+tZ
-         E9Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759021905; x=1759626705;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Hq9+Z6UAmTgmqqVKnFTiMnWZOo5KByC4nsJVMmtiGA=;
-        b=Uo4ES/EDfWzAhn1FqHKfjCX0EyxequZQ3bSegKeRyYaQgDtZwL7qYE3GhJXjrMD6NF
-         zlqDYfQLt8HWrrfo7ts17i+ASv7b+ulGuttU3Q3TJWsQQy1F2J7pj6yEUYskAbdhSjur
-         hCmdmZCS5/qkzEeZFB8ZilhKDh28ZlJl9NtRdZnyF10iDAN/fCdZthIAM7Y2/KwnGpUa
-         ui+54HUXsSA6YLEVkfErmQWpjnsA92D7Mxvd5asmFFIOPjhn2TIlEtahtwr44pVk2yGE
-         jxiUms9fQX5nhaWOYc0oVTSZRtI2oYYRIAYxrTnzdKN1BM+sC5tTmYq5Ofd29QklDs2Z
-         ifIw==
-X-Gm-Message-State: AOJu0YyQgH0xsvxiSAd6Tj7eAtYWZMzczBdsdTID5TXx35/OTRKGHGIZ
-	aTYvZBTKMKSlCr2K9a6zjOJ2lBNz4o9pjQMAXIA+pDQZmDen2BH5qgCQi3oMi5NOTk4rvr4Zvbw
-	+sD9zo8HB7DQZQ4r+ctHvElScrB/SWJ/PyV0q
-X-Gm-Gg: ASbGncvHPmbfpTTu/32eIbHMGBZzpS+arG4X+dvxa6WrHwdMJX+z0fLpA/MSZWUGmZk
-	/fg0vNTtRHCQlqqwjcKve00+rKg4bqdjM0gLucSdC7moWH6KukOEHYG9E6tg3SG/wMcGBhNVvbt
-	krcfMxaxP0E/IqfaSfPkDfXy0D2M0qpPzcjvoxLth21+fV7NZ9CuuKhwU4ry+xfbPUSAsx1D3g6
-	/lI/G05GhN7AP35qZmSUyrlxPdgJT9Wn7g7+43AtIe65D35lnI0UdP72QJ2F+nV8H7HEWik+2K1
-	6jQRpSftsA==
-X-Google-Smtp-Source: AGHT+IETi0bCziw0ppSoRWryfJkfCfMTpncN71NnLSgWLxJ0jg0Cy4uB0q3mI6ISw3aVumH+Ih2VtLbeSFX1Da6iDas=
-X-Received: by 2002:aa7:c6ca:0:b0:62f:67bb:d374 with SMTP id
- 4fb4d7f45d1cf-6349fa81867mr8352004a12.20.1759021905233; Sat, 27 Sep 2025
- 18:11:45 -0700 (PDT)
+	s=arc-20240116; t=1759021927; c=relaxed/simple;
+	bh=Ym+lOpEDJ6rg6IAsMDai+yUMnqKX3EHZ53E7Vkpr7iQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YMm6PNM4kJHaywQbVAktBAd/iw8hBvyOYCjMXQ+aWmzy7S4U8ltPCuvRfT4X79+1CFhn4cE5pv4O0JpOpqkMGof5GIWC0/O4NLsJMO+kO2UR1HzKin3MTBXJ73wDAMjL2WlO9mv0EoZUcc1lLxDFSuNIQvremklOSVnl6/e8ZuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 1de4ca609c0811f08b9f7d2eb6caa7cf-20250928
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
+	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD
+	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:23c84d5a-90fa-459a-9a74-8930edae4114,IP:10,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-4
+X-CID-INFO: VERSION:1.1.45,REQID:23c84d5a-90fa-459a-9a74-8930edae4114,IP:10,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-4
+X-CID-META: VersionHash:6493067,CLOUDID:ce2806c42d044d27a9092e4cfabdb046,BulkI
+	D:250928091153PVYNBJ56,BulkQuantity:0,Recheck:0,SF:17|19|24|38|43|64|66|74
+	|78|80|81|82|83|102|841|850,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:99|1,File
+	:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DK
+	R:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULS,
+	TF_CID_SPAM_SNR
+X-UUID: 1de4ca609c0811f08b9f7d2eb6caa7cf-20250928
+X-User: daiyanlong@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <daiyanlong@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 103233453; Sun, 28 Sep 2025 09:11:52 +0800
+From: YanLong Dai <daiyanlong@kylinos.cn>
+To: kalesh-anakkur.purayil@broadcom.com,
+	yanjun.zhu@linux.dev
+Cc: jgg@ziepe.ca,
+	leon@kernel.org,
+	daiyanlong@kylinos.cn,
+	dyl_wlc@163.com,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	selvin.xavier@broadcom.com
+Subject: Re:[PATCH v2 rdma-rc] RDMA/bnxt_re: Fix a potential memory leak in destroy_gsi_sqp
+Date: Sun, 28 Sep 2025 09:11:48 +0800
+Message-ID: <20250928011148.4593-1-daiyanlong@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <f207b88c-da98-4fe2-b91f-ed07354ff019@linux.dev>
+References: <f207b88c-da98-4fe2-b91f-ed07354ff019@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Sebastian Ramadan <slay.sebbeh@gmail.com>
-Date: Sun, 28 Sep 2025 11:11:31 +1000
-X-Gm-Features: AS18NWBIwe3m1PRJJlVKBiOzt0vAxYp4ZrkEYTABuW-Tdsj2ohE0UqWzXcXGfjM
-Message-ID: <CAPKFLCSmGipHsG8PUt0PgGznxSFj8N47EGSa0XVt-coXrYrFbA@mail.gmail.com>
-Subject: Reputable quotes on why Palmers approach is FAR better than Linus'
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+Hi Kalesh, Yanjun
 
-Granted, it's not perfect but... I wanted to clarify why Palmers
-portable macro approach is generally FAR better than Linus=E2=80=99
-alternative inlined nonportable approach, using quotes only from
-authoritative resources and world-renowned experts to show how out of
-line Linus' tantrum was.
+Thank you both for your time and reviews.
 
-"The key to maintainability and reliability is to avoid duplication of
-logic. Reusing code reduces the chance of introducing errors and makes
-it easier to fix bugs in one place." =E2=80=94 Martin Fowler, Refactoring:
-Improving the Design of Existing Code
+On Wed, Sep 24, 2025 at 10:31:34 +0530, Kalesh wrote:
+>Hi YanLong,
+>
+>Few generic guidelines.
+>
+>1. You should select a target tree in the subject prefix and specify a revision number. Since this is a bug fix, the target tree should be "rdma-rc".
+>2. When you send an updated version of the patch, please mention version number. Also, mention the changes made in each version. i.e. under --- you can add extra info that will not be included in the actual commit, e.g. changes between each version of patches.
+>
+>One comment in line.
 
-"The result of E1 << E2 is undefined if E2 is negative or greater than
-or equal to the width in bits of the promoted E1." =E2=80=94 ISO/IEC
-9899:2018, =C2=A76.5.7 Bitwise shift operators
+Thank you so much for your patience and guidance throughout this process.
 
-"Undefined behavior means the program may do anything: crash, produce
-wrong results, corrupt memory, or open security vulnerabilities. In
-critical systems, this unpredictability is unacceptable and can have
-lethal consequences."
-=E2=80=94 Bjarne Stroustrup, Creator of C++
+I have incorporated all of your suggestions in this v2 version:
+- Added the "rdma-rc" target tree prefix in the subject line
+- Used proper version numbering (v2)
+- Included the changelog below the '---' line as recommended
 
-"Software developers who fail to adhere to industry standards or who
-produce software with undefined or nonportable constructs expose
-themselves and their organizations to liability claims, costly
-lawsuits, and irreparable reputational damage." =E2=80=94 Gary McGraw,
-Security Expert and Author of =E2=80=98Software Security: Building Security
-In=E2=80=99
+Gentle ping on this patch.
+For easy reference, the patch is available on lore.kernel.org here: 
+https://lore.kernel.org/all/20250924061444.11288-1-daiyanlong@kylinos.cn/
 
-"Undefined behavior is the bane of debugging; encapsulating risky
-operations within well-tested macros or functions saves time by
-localizing and eliminating sources of errors." =E2=80=94 Bjarne Stroustrup,
-The C++ Programming Language, 4th Ed.
 
-"Non-compliance with standards, including the use of undefined or
-implementation-defined behavior, has led to catastrophic failures in
-safety-critical systems, causing loss of life and significant property
-damage." =E2=80=94 MISRA C:2012, Foreword
+---
 
-"When bugs are hidden deep inside repeated code patterns or scattered
-inline code, the time spent debugging multiplies exponentially.
-Encapsulation reduces the debugging surface and avoids cascades of
-failures." =E2=80=94 Steve McConnell, Code Complete, 2nd Ed.
 
-"Clean, reusable abstractions with well-defined behavior act as
-contracts that developers can rely on without re-verifying every
-usage, significantly reducing debugging time and effort." =E2=80=94 Robert =
-C.
-Martin, Clean Code, 2008
+On Fri, Sep 26, 2025 at 09:11:11AM -0700, Yanjun wrote:
+> Hi, YanLong
+> 
+> In regions where Chinese is not supported, the email may appear garbled. 
+> We recommend replacing any Chinese content in the email with the 
+> corresponding English to ensure clarity.
+> 
+> Thanks a lot.
+> Yanjun.Zhu
 
-"Undefined behavior is particularly dangerous because it can cause
-errors that are not reproducible, causing cascading failures that are
-very expensive to diagnose and fix." =E2=80=94 WG14 N2341
+Thank you for the reminder.
+I have replaced all the Chinese content in my previous email with English to ensure clarity and avoid any encoding issues.
 
-"In safety-critical systems, failure to comply with standards can
-result in catastrophic consequences including loss of life, severe
-injury, or substantial property damage." =E2=80=94 ISO 26262: Road vehicles=
- =E2=80=93
-Functional safety (ISO Standard)
 
-"Undefined behavior in software is a ticking time bomb =E2=80=94 it can cau=
-se
-unpredictable and dangerous results, especially in embedded and
-safety-critical systems where such behavior can lead to system
-failures with severe consequences." =E2=80=94 Herb Sutter, C++ Expert and
-Chair of ISO C++ Committee
+Best regards,
+YanLong Dai
 
-"Software defects arising from noncompliance with standards or from
-relying on undefined or implementation-dependent behaviors can lead to
-fatal accidents in medical devices and aerospace control systems." =E2=80=
-=94
-Nancy Leveson, Professor at MIT, author of =E2=80=98Safeware: System Safety
-and Computers=E2=80=99
-
-"Standards provide a baseline for predictable, reliable software
-behavior. When developers ignore these standards or use nonportable
-constructs, they undermine the foundation of software safety,
-increasing the likelihood of serious injury, death, or loss of
-expensive equipment." =E2=80=94 John McDermid, Professor of Software
-Engineering and Safety-Critical Systems Expert
-
-"The Therac-25 radiation therapy machine accidents, caused by software
-errors and inadequate adherence to standards, resulted in multiple
-patient deaths, highlighting the deadly consequences of poor software
-engineering practices." =E2=80=94 Nancy Leveson, =E2=80=98Engineering a Saf=
-er World=E2=80=99
-
-"The FAA mandates strict adherence to software standards like DO-178C
-precisely because deviations, including undefined or nonportable
-behaviors, have in the past led to software-induced accidents and
-near-disasters." =E2=80=94 Federal Aviation Administration (FAA), Advisory
-Circular 20-115C
-
-In summary, we can see from quotes of our educators that Palmers
-approach reduces portability errors and debugging significantly, which
-then reduces the number of lawsuits we programmers may find ourselves
-in due to actual damage and death, whereas Linus' approach is the
-opposite and not generally what businesses want.
-
-Regards, Sebastian.
-
-P.S. stop discouraging us from following industry best practices,
-Linus. This email sets the stage for you to be sued if that
-repetitious and subtly broken pattern causes instability and/or actual
-harm. You can't stand in court and say you've not been warned, now...
 
