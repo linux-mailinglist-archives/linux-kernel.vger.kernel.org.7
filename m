@@ -1,182 +1,114 @@
-Return-Path: <linux-kernel+bounces-835417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D98BA708C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D764BBA7092
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BF2A171D2A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30FAF18969F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235652C21D4;
-	Sun, 28 Sep 2025 12:46:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775E72DC346;
+	Sun, 28 Sep 2025 12:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YO2Lq1Bm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5CD1547F2
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02062D59EF
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759063618; cv=none; b=EAP3kadzX+Sxcd2s3F7NhPN3pxy055s2a4YWidnQ022W48jhN4s4kg7lX6Nu5Znuy/4BBYjuSGxnmih3vKeUuPRsU5WEtIV2O7jE1+FBDCj2LVKExDDDOo2067eIKfFMjNjRX8uEzbpQ1kuCqkB7gYkhxxmL3p4KNMEmmv/ljDs=
+	t=1759063972; cv=none; b=fyiDavAmi6LKc+pBu0XDMOMS/2yRcSBm5nk4PP95IRrzF780/MLkEg21iVDgFX5CGpyS4Wa8UkyMzfdg5Ma1rKgacqSEszE2JM8ilaWQ+oRhJREQr1jvyaru0x1xniUIsfpWG4XPWw/2/f5DtjgY5c1yRmbQ0bzSW2Dcll6y8Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759063618; c=relaxed/simple;
-	bh=6BTs4Cm7wKXvhNym4ewXDwxa/VVq9ZMe/4CGRZQtbOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WJdy0lRyy+8bj1HOT04WxWKynGcJk8Q4uco3OED0N14ajcU4DYS5bP3OVlRy4VTwg8iVyp/k91jrCVrtw8H9a37QQ6kXuMbrBbS7lzRE1qlOrNF9D7pZuu2owXkRQkEgajQS3dNCzMRtiG2CJeK0iVDWiExBYYBHNhxNMUgq3Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id A11E1442A3;
-	Sun, 28 Sep 2025 12:46:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id EEC6917;
-	Sun, 28 Sep 2025 12:46:45 +0000 (UTC)
-Date: Sun, 28 Sep 2025 08:46:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Wang Liang <wangliang74@huawei.com>
-Subject: [GIT PULL] tracing: Fixes for v6.17
-Message-ID: <20250928084641.7f90db4f@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759063972; c=relaxed/simple;
+	bh=o0dRgkYPt8FVyYHCzavSccIzNEqH+Of0fl8Q4I4bCr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXW3hITyVXGpnX9G8+5JEbrcGtTL9ZjRdWrfrMMh26974tqgAa1ezgJ78N8zW6pU1gkxR/ZHyA1KUaIYUsEu3hQiz2hPwa/bBtzMckjNAIEf3+ad4rNuyfYZFpuajuB+Ax8E7k4S81qeOQaidPnNzenayY7yR/O94JryCCWplBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YO2Lq1Bm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8D1C116C6
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759063972;
+	bh=o0dRgkYPt8FVyYHCzavSccIzNEqH+Of0fl8Q4I4bCr4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YO2Lq1Bmn4D2kQmQ/ZhMV/e7s3RykwqoKHSKFl29euneODYZgOdI7dFwScby6+t6G
+	 z2ZWxzh2+igf/+sP+EcqjKsXMsouo0KFUObzNalL957WVlHXNqQyRgeukGfpVt6CCm
+	 nK4oviBoHN/88yfofREoJnMGozBcWOuAwlDY6jio3ZfSOsvUINYFIVPEchVwHz9PjD
+	 vLBLDXKQwPsBCbb88CFkFG0jRV583lA2LIGnvChIbkiHn/2eYRiF72N0i2iDCbN3Nf
+	 LgR47E/oIAeDXMnwKH8EitORD0K3XeSwHWiBVwSjlLGZbJ32+UydnP0PnPJqZudQni
+	 SwO8yntjT/18A==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3d5088259eso61777766b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 05:52:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0Jw8DIigbblQXON290GQORiM5NLaBzhN0hK5cMcHelcKM/G1xoEsZCCOM+QSfJchYMQpVYWsF3ojiEJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWUQRU9QDBmaC+PzXpfoopbdpr+x/2VYS6Uk3cm+Or/qbCCSV7
+	bOUyZ6DitZGmyYIpZeqcVFozwV1vJQ/JHKTVsnCcrSz0wViuGkS930m3Z3o+Q5j5shD+pZik0tr
+	0lHDrVPlUFg6LwYucoy8diaRoQ0y4J60=
+X-Google-Smtp-Source: AGHT+IE0e5GdGmwcL9fJjsh+uc1S16MNhJRviy7PI0hwaXxlefeqRPOvEi//6qTK5+/VTlWMcJ2dONh2yfV3gQbs4gs=
+X-Received: by 2002:a17:907:2d26:b0:b30:880:8d4f with SMTP id
+ a640c23a62f3a-b34b720a94bmr1375731566b.2.1759063970754; Sun, 28 Sep 2025
+ 05:52:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ekhi1bwzh4991e4sz3oau3t4eocsk6zc
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: EEC6917
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/FxszMhfpXV7skJr0Tc8oQBxetxbYC97Y=
-X-HE-Tag: 1759063605-524384
-X-HE-Meta: U2FsdGVkX1/33nACOoL7JnoUH5kAWGuvFwMkJT2kbtslN+UhlUAX4+eHrTeCsqX9MXkZr76LLpyVuiRxKjshbT/SMrKhF3KlIIKhqyzGkT/5lXJOtgj2x9e7b5jKB1nIXGrPr7MD9Z/f5bApdHIlJP+2AD89xN4JZxmsgrcEvSkNhv0fG3IRlClXv5vWh6Rii8vP2R8l6S5eLZkMBtqpej+/SJ+U/qBtjrwDDrXm72qnFlxmzgJukJF3q93rBwSDzGn+oxRPulxztFkDKSRkZ0FBkJHfOVs/oWteNF8t7p5J7fKdzVtD/7awfjSs8o5AOZI0CNlVQ1vCaBKG9baqN12oATVTwwL/
+References: <20250923061722.24457-1-yangtiezhu@loongson.cn> <53b3b0e4c12f048d17e95111ac97b59fa35dea23.camel@xry111.site>
+In-Reply-To: <53b3b0e4c12f048d17e95111ac97b59fa35dea23.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 28 Sep 2025 20:52:37 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5Q9g3u2txE5qf7r9tb8R+-g+8bYOPQMHHe=bT+Xj_Zug@mail.gmail.com>
+X-Gm-Features: AS18NWD4TDESgj-bY93W3Gb8tMnvkLiBdYaDOEsQrCu3p4ikA1M5VWoltL5_4f8
+Message-ID: <CAAhV-H5Q9g3u2txE5qf7r9tb8R+-g+8bYOPQMHHe=bT+Xj_Zug@mail.gmail.com>
+Subject: Re: [PATCH v1] LoongArch: Add -fno-isolate-erroneous-paths-dereference
+ in Makefile
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, WANG Rui <wangrui@loongson.cn>, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 23, 2025 at 8:39=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Tue, 2025-09-23 at 14:17 +0800, Tiezhu Yang wrote:
+> > Currently, when compiling with GCC, there is no "break 0x7" instruction
+> > for zero division due to using the option -mno-check-zero-division, but
+> > the compiler still generates "break 0x0" instruction for zero division.
+> >
+> > Here is a simple example:
+> >
+> >   $ cat test.c
+> >   int div(int a)
+> >   {
+> >         return a / 0;
+> >   }
+> >   $ gcc -O2 -S test.c -o test.s
+> >
+> > GCC generates "break 0" On LoongArch and "ud2" on x86, objtool decodes
+> > "ud2" as INSN_BUG for x86, so decode "break 0" as INSN_BUG can fix the
+> > objtool warnings for LoongArch, but this is not the intention.
+> >
+> > When decoding "break 0" as INSN_TRAP in the previous commit, the aim is
+> > to handle "break 0" as a trap. The generated "break 0" for zero divisio=
+n
+> > by GCC is not proper, it should generate a break instruction with prope=
+r
+> > bug type, so add the GCC option -fno-isolate-erroneous-paths-dereferenc=
+e
+> > to avoid generating the unexpected "break 0" instruction for now.
+>
+> I just proposed GCC to use the same "documented undefined instruction"
+> as Clang:
+> https://gcc.gnu.org/pipermail/gcc-patches/2025-September/695981.html.
+I have discussed it with Tiezhu offline, and we prefer "break 0x1".
 
-Linus,
+Huacai
 
-tracing fixes for v6.17
-
-- Fix buffer overflow in osnoise_cpu_write()
-
-  The allocated buffer to read user space did not add a nul terminating byte
-  after copying from user the string. It then reads the string, and if user
-  space did not add a nul byte, the read will continue beyond the string.
-  Add a nul terminating byte after reading the string.
-
-- Fix missing check for lockdown on tracing
-
-  There's a path from kprobe events or uprobe events that can update the
-  tracing system even if lockdown on tracing is activate. Add a check in the
-  dynamic event path.
-
-- Add a recursion check for the function graph return path
-
-  Now that fprobes can hook to the function graph tracer and call different
-  code between the entry and the exit, the exit code may now call functions
-  that are not called in entry. This means that the exit handler can possibly
-  trigger recursion that is not caught and cause the system to crash.
-  Add the same recursion checks in the function exit handler as exists in the
-  entry handler path.
-
-
-Please pull the latest trace-v6.17-rc7 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.17-rc7
-
-Tag SHA1: 4bafc20386cc1bdcbd421fdf2e171b3943547b5b
-Head SHA1: 0db0934e7f9bb624ed98a665890dbe249f65b8fd
-
-
-Masami Hiramatsu (Google) (2):
-      tracing: dynevent: Add a missing lockdown check on dynevent
-      tracing: fgraph: Protect return handler from recursion loop
-
-Wang Liang (1):
-      tracing/osnoise: Fix slab-out-of-bounds in _parse_integer_limit()
-
-----
- kernel/trace/fgraph.c         | 12 ++++++++++++
- kernel/trace/trace_dynevent.c |  4 ++++
- kernel/trace/trace_osnoise.c  |  3 ++-
- 3 files changed, 18 insertions(+), 1 deletion(-)
----------------------------
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 1e3b32b1e82c..484ad7a18463 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 	unsigned long bitmap;
- 	unsigned long ret;
- 	int offset;
-+	int bit;
- 	int i;
- 
- 	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
-@@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 	if (fregs)
- 		ftrace_regs_set_instruction_pointer(fregs, ret);
- 
-+	bit = ftrace_test_recursion_trylock(trace.func, ret);
-+	/*
-+	 * This can fail because ftrace_test_recursion_trylock() allows one nest
-+	 * call. If we are already in a nested call, then we don't probe this and
-+	 * just return the original return address.
-+	 */
-+	if (unlikely(bit < 0))
-+		goto out;
-+
- #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
- 	trace.retval = ftrace_regs_get_return_value(fregs);
- #endif
-@@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 		}
- 	}
- 
-+	ftrace_test_recursion_unlock(bit);
-+out:
- 	/*
- 	 * The ftrace_graph_return() may still access the current
- 	 * ret_stack structure, we need to make sure the update of
-diff --git a/kernel/trace/trace_dynevent.c b/kernel/trace/trace_dynevent.c
-index 5d64a18cacac..d06854bd32b3 100644
---- a/kernel/trace/trace_dynevent.c
-+++ b/kernel/trace/trace_dynevent.c
-@@ -230,6 +230,10 @@ static int dyn_event_open(struct inode *inode, struct file *file)
- {
- 	int ret;
- 
-+	ret = security_locked_down(LOCKDOWN_TRACEFS);
-+	if (ret)
-+		return ret;
-+
- 	ret = tracing_check_open_get_tr(NULL);
- 	if (ret)
- 		return ret;
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index 337bc0eb5d71..dc734867f0fc 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -2325,12 +2325,13 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
- 	if (count < 1)
- 		return 0;
- 
--	buf = kmalloc(count, GFP_KERNEL);
-+	buf = kmalloc(count + 1, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
- 
- 	if (copy_from_user(buf, ubuf, count))
- 		return -EFAULT;
-+	buf[count] = '\0';
- 
- 	if (!zalloc_cpumask_var(&osnoise_cpumask_new, GFP_KERNEL))
- 		return -ENOMEM;
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
 
