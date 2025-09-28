@@ -1,164 +1,275 @@
-Return-Path: <linux-kernel+bounces-835375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5F7BA6ECF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:16:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCD7BA6ED9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31AE3A2F0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:16:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C948016F564
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE49B2DAFBF;
-	Sun, 28 Sep 2025 10:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6D72DCBEE;
+	Sun, 28 Sep 2025 10:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="cyJhuzYr"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0FPpTF7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A99222565;
-	Sun, 28 Sep 2025 10:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759054609; cv=pass; b=ZGPP19lW2kEEdYXYmL7A8unzAPhb7d07BIXrDu61ERhwR+Hp+UNL3MaOVQuCyBRb0u7wcKqMc3sr9l6iS4NqksiOdgPHx8epzM7MvHiiXz0jUgsMAqnpBN+u6Uctq5LXlUO1ayrieF0qcDeRKfOETAIJfUOvR5QwzwBV6qkKzj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759054609; c=relaxed/simple;
-	bh=+H9VdnqNSyhVBmdblY183rLbEM9XSxY6Yd0hQeZcY3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=auukTdoixOyJ1BhVHCoX62aDeI/sxMx8XxxpACEZRhEAoWiywgPGaobovKFGpfsyt7rHLdSm/U7ufqtO9FdGQArvA/unYNdOblqqVzAOVxhf4RjTqcugzClHdVQPXD2INo1OwWoGY/Pze0oiX2UWm3o99bXyN4YA9sNwArW//1o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=cyJhuzYr; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759054597; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jJYFM+neAQWXQB2cGsa059A37UafrOrAeVZiuV4CE7zRdQfPN0vFAT9bn9hfd34xGwacSV24TyBIY4dGjG9/nlvmiSYYfy2yMVStu+fS9POfqZO/ZJ19UBkJ5VKUbdWighpX5F5KvwZjMTVTrDgmEezZqBrbyLwZKHmnykzr26Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759054597; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VpJ42JwGW7UCIUZCk56ZiPKjeQZx31ky9Sdds9RDDE0=; 
-	b=LmEctG8cjRs0pjToGljveqgUQjyAm53JRwp4Bynq+kqA/SFHV+PnbK8EhypZtIWTR9W8lHwNQOI6MrITMSklfISjkA1ASwmTZpPawv1d9KI9CYi9rP4+T/YoDJw7teWlwIMtj3ApJkFHgIi9VzS9KUEO6oHtz/mbARZHM4BeokA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759054597;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=VpJ42JwGW7UCIUZCk56ZiPKjeQZx31ky9Sdds9RDDE0=;
-	b=cyJhuzYrD67LRh8aX9QiOmLyspEpZHV4K8rHewSUYLqgEDrAhqwxuUnkyLMzF3or
-	Q1FyNzw5ehTe4RxXnDhjW7n9JRo7pd69JePZz+dBC0RUg+P8ohk9sDLAl3XbnSgTczO
-	60n1CPuN7hU50lWLvF43JyjCFTb7fr9lrJcCKQeQ=
-Received: by mx.zohomail.com with SMTPS id 1759054595484277.04724689880084;
-	Sun, 28 Sep 2025 03:16:35 -0700 (PDT)
-Message-ID: <b07ec317-e916-49bf-bec1-1f954c186457@zohomail.com>
-Date: Sun, 28 Sep 2025 18:16:34 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCE022FE02;
+	Sun, 28 Sep 2025 10:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759054713; cv=none; b=bKpQDKhgCAIS+05x9sHl1+/d8fXQyPkM6XvEZWDjNbghiXghv3gV6HPNECrTees02niFWi0rVuKruEcBKmJSOSrr+sC56CjjA3Eo+wy8vlLT4A7/BetORZIXaSFHDk9yZqUyIMcUTXdh43IyJqDqRzthEsVfvLTlLK/1mRkmrho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759054713; c=relaxed/simple;
+	bh=qpqNZeseSpoppJPiIQZ8f4guCrUeGX/8HcqAsfo+0UU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DgqINScjWcTKsqGPCPnKmudUIW4Lb5U1w0mdwJoQPGzjaLNdXfnd0/2r4WAHeLd8slKjOICnZ+pfQJ0WwgqHeSCTjDF8yLJYWmxSiH8uEeGuUxC68VhSL7y6Tuy9JMxqpR/tuMbIn6EfVhqHqy4G+9eudanXpmVvprdSjaF5Fns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0FPpTF7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 975BEC4CEF0;
+	Sun, 28 Sep 2025 10:18:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759054712;
+	bh=qpqNZeseSpoppJPiIQZ8f4guCrUeGX/8HcqAsfo+0UU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=E0FPpTF7GLh91oAXnFoijHrD0X+RJ2ccS6qrx2KJ34l7GWtf9bI7GzmABuKW+snKL
+	 XHTAZcqeEs85gbV53TGDIeA+l6M06Pdcera9aG6XKoAUUDVFsWfrrT0obc9nPORWrh
+	 TebMQrIFkj6RKm2G9OhrUbW99w6wsIg48bPjn38CXRvWJewzabMG4d51HSQnpLuiI/
+	 fTvwpgP8k043Y4T1rSzwf0hm/HgKkKlmIv13UIv+XUpxVoQaBRWgCNBqlbzUx5jRM4
+	 0Atr5c2wjd1RjZglMdUtn26hW6zFojQq77GnBo3sHRJ42wanykGTSB48hQTc8KOe3l
+	 LLgpOpmWpZLwA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ GuangFei Luo <luogf2025@163.com>,
+ Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject:
+ [PATCH v2] ACPI: battery: Add synchronization between interface updates
+Date: Sun, 28 Sep 2025 12:18:29 +0200
+Message-ID: <12754933.O9o76ZdvQC@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] cxl/port: Avoid missing port component registers
- setup
-To: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- dan.j.williams@intel.com, shiju.jose@huawei.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250928082703.377604-1-ming.li@zohomail.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <20250928082703.377604-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr0801122797bed76955fafd33bcb314ec0000a1f87f7218a27dec8bca7e40cc5a976ec6e4309f9e97185078:zu08011227f1469caad17054085a11c72b0000c9ad2e567683e470eb3660837c9ed7f54c2cf6ff34e9d17320:rf0801122dc8cef12522f375a8397b5b9c0000da168a4a7fb79ab958201027d79c1fc903aeb25c84496bf9696c00847b6e74:ZohoMail
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-Please ignore this version.
-If cxl_port_setup_regs() fails, should remove dport from port->dports. send out v2 to fix it.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Ming
+There is no synchronization between different code paths in the ACPI
+battery driver that update its sysfs interface or its power supply
+class device interface.  In some cases this results to functional
+failures due to race conditions.
 
-On 9/28/2025 4:27 PM, Li Ming wrote:
-> port->nr_dports is used to represent how many dports added to the cxl
-> port, it will increase in add_dport() when a new dport is being added to
-> the cxl port, but it will not be reduced when a dport is removed from
-> the cxl port.
->
-> Currently, when the first dport is added to a cxl port, it will trigger
-> component registers setup on the cxl port, the implementation is using
-> port->nr_dports to confirm if the dport is the first dport.
->
-> A corner case here is that adding dport could fail after port->nr_dports
-> updating and before checking port->nr_dports for component registers
-> setup. If the failure happens during the first dport attaching, it will
-> cause that CXL subsystem has not chance to execute component registers
-> setup for the cxl port. the failure flow like below:
->
-> port->nr_dports = 0
-> dport 1 adding to the port:
-> 	add_dport()	# port->nr_dports: 1
-> 	failed on devm_add_action_or_reset() or sysfs_create_link()
-> 	return error	# port->nr_dports: 1
-> 	no chance for component registers setup execution
-> dport 2 adding to the port:
-> 	add_dport()	# port->nr_dports: 2
-> 	no failure
-> 	skip component registers setup because of port->nr_dports is 2
->
-> The solution here is that moving component registers setup closer to
-> add_dport(), so if add_dport() is executed correctly for the first
-> dport, component registers setup on the port will be executed
-> immediately after that.
->
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-> ---
-> base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
-> ---
->  drivers/cxl/core/port.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index d5f71eb1ade8..e25f326acd7a 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -1182,6 +1182,18 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
->  	if (rc)
->  		return ERR_PTR(rc);
->  
-> +	/*
-> +	 * Setup port register if this is the first dport showed up. Having
-> +	 * a dport also means that there is at least 1 active link.
-> +	 */
-> +	if (port->nr_dports == 1 &&
-> +	    port->component_reg_phys != CXL_RESOURCE_NONE) {
-> +		rc = cxl_port_setup_regs(port, port->component_reg_phys);
-> +		if (rc)
-> +			return ERR_PTR(rc);
-> +		port->component_reg_phys = CXL_RESOURCE_NONE;
-> +	}
-> +
->  	get_device(dport_dev);
->  	rc = devm_add_action_or_reset(host, cxl_dport_remove, dport);
->  	if (rc)
-> @@ -1200,18 +1212,6 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
->  
->  	cxl_debugfs_create_dport_dir(dport);
->  
-> -	/*
-> -	 * Setup port register if this is the first dport showed up. Having
-> -	 * a dport also means that there is at least 1 active link.
-> -	 */
-> -	if (port->nr_dports == 1 &&
-> -	    port->component_reg_phys != CXL_RESOURCE_NONE) {
-> -		rc = cxl_port_setup_regs(port, port->component_reg_phys);
-> -		if (rc)
-> -			return ERR_PTR(rc);
-> -		port->component_reg_phys = CXL_RESOURCE_NONE;
-> -	}
-> -
->  	return dport;
->  }
->  
+One example of this is when two ACPI notifications:
+
+  - ACPI_BATTERY_NOTIFY_STATUS (0x80)
+  - ACPI_BATTERY_NOTIFY_INFO   (0x81)
+
+are triggered (by the platform firmware) in a row with a little delay
+in between after removing and reinserting a laptop battery.  Both
+notifications cause acpi_battery_update() to be called and if the delay
+between them is sufficiently small, sysfs_add_battery() can be re-entered
+before battery->bat is set which leads to a duplicate sysfs entry error:
+
+ sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
+ CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
+ Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
+ Workqueue: kacpi_notify acpi_os_execute_deferred
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0x5d/0x80
+  sysfs_warn_dup.cold+0x17/0x23
+  sysfs_create_dir_ns+0xce/0xe0
+  kobject_add_internal+0xba/0x250
+  kobject_add+0x96/0xc0
+  ? get_device_parent+0xde/0x1e0
+  device_add+0xe2/0x870
+  __power_supply_register.part.0+0x20f/0x3f0
+  ? wake_up_q+0x4e/0x90
+  sysfs_add_battery+0xa4/0x1d0 [battery]
+  acpi_battery_update+0x19e/0x290 [battery]
+  acpi_battery_notify+0x50/0x120 [battery]
+  acpi_ev_notify_dispatch+0x49/0x70
+  acpi_os_execute_deferred+0x1a/0x30
+  process_one_work+0x177/0x330
+  worker_thread+0x251/0x390
+  ? __pfx_worker_thread+0x10/0x10
+  kthread+0xd2/0x100
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork+0x34/0x50
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+ kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
+
+There are also other scenarios in which analogous issues may occur.
+
+Address this by using a common lock in all of the code paths leading
+to updates of driver interfaces: ACPI Notify () handler, system resume
+callback and post-resume notification, device addition and removal.
+
+This new lock replaces sysfs_lock that has been used only in
+sysfs_remove_battery() which now is going to be always called under
+the new lock, so it doesn't need any internal locking any more.
+
+Fixes: 10666251554c ("ACPI: battery: Install Notify() handler directly")
+Closes: https://lore.kernel.org/linux-acpi/20250910142653.313360-1-luogf2025@163.com/
+Reported-by: GuangFei Luo <luogf2025@163.com>
+Tested-by: GuangFei Luo <luogf2025@163.com>
+Cc: 6.6+ <stable@vger.kernel.org> # 6.6+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v1 -> v2: Added a new function for acpi_battery_add() failure path to avoid
+   compiler warning regarding defining a new variable after a label.
+
+---
+ drivers/acpi/battery.c |   43 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 29 insertions(+), 14 deletions(-)
+
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -92,7 +92,7 @@ enum {
+ 
+ struct acpi_battery {
+ 	struct mutex lock;
+-	struct mutex sysfs_lock;
++	struct mutex update_lock;
+ 	struct power_supply *bat;
+ 	struct power_supply_desc bat_desc;
+ 	struct acpi_device *device;
+@@ -904,15 +904,12 @@ static int sysfs_add_battery(struct acpi
+ 
+ static void sysfs_remove_battery(struct acpi_battery *battery)
+ {
+-	mutex_lock(&battery->sysfs_lock);
+-	if (!battery->bat) {
+-		mutex_unlock(&battery->sysfs_lock);
++	if (!battery->bat)
+ 		return;
+-	}
++
+ 	battery_hook_remove_battery(battery);
+ 	power_supply_unregister(battery->bat);
+ 	battery->bat = NULL;
+-	mutex_unlock(&battery->sysfs_lock);
+ }
+ 
+ static void find_battery(const struct dmi_header *dm, void *private)
+@@ -1072,6 +1069,9 @@ static void acpi_battery_notify(acpi_han
+ 
+ 	if (!battery)
+ 		return;
++
++	guard(mutex)(&battery->update_lock);
++
+ 	old = battery->bat;
+ 	/*
+ 	 * On Acer Aspire V5-573G notifications are sometimes triggered too
+@@ -1094,21 +1094,22 @@ static void acpi_battery_notify(acpi_han
+ }
+ 
+ static int battery_notify(struct notifier_block *nb,
+-			       unsigned long mode, void *_unused)
++			  unsigned long mode, void *_unused)
+ {
+ 	struct acpi_battery *battery = container_of(nb, struct acpi_battery,
+ 						    pm_nb);
+-	int result;
+ 
+-	switch (mode) {
+-	case PM_POST_HIBERNATION:
+-	case PM_POST_SUSPEND:
++	if (mode == PM_POST_SUSPEND || mode == PM_POST_HIBERNATION) {
++		guard(mutex)(&battery->update_lock);
++
+ 		if (!acpi_battery_present(battery))
+ 			return 0;
+ 
+ 		if (battery->bat) {
+ 			acpi_battery_refresh(battery);
+ 		} else {
++			int result;
++
+ 			result = acpi_battery_get_info(battery);
+ 			if (result)
+ 				return result;
+@@ -1120,7 +1121,6 @@ static int battery_notify(struct notifie
+ 
+ 		acpi_battery_init_alarm(battery);
+ 		acpi_battery_get_state(battery);
+-		break;
+ 	}
+ 
+ 	return 0;
+@@ -1198,6 +1198,8 @@ static int acpi_battery_update_retry(str
+ {
+ 	int retry, ret;
+ 
++	guard(mutex)(&battery->update_lock);
++
+ 	for (retry = 5; retry; retry--) {
+ 		ret = acpi_battery_update(battery, false);
+ 		if (!ret)
+@@ -1208,6 +1210,13 @@ static int acpi_battery_update_retry(str
+ 	return ret;
+ }
+ 
++static void sysfs_battery_cleanup(struct acpi_battery *battery)
++{
++	guard(mutex)(&battery->update_lock);
++
++	sysfs_remove_battery(battery);
++}
++
+ static int acpi_battery_add(struct acpi_device *device)
+ {
+ 	int result = 0;
+@@ -1230,7 +1239,7 @@ static int acpi_battery_add(struct acpi_
+ 	if (result)
+ 		return result;
+ 
+-	result = devm_mutex_init(&device->dev, &battery->sysfs_lock);
++	result = devm_mutex_init(&device->dev, &battery->update_lock);
+ 	if (result)
+ 		return result;
+ 
+@@ -1262,7 +1271,7 @@ fail_pm:
+ 	device_init_wakeup(&device->dev, 0);
+ 	unregister_pm_notifier(&battery->pm_nb);
+ fail:
+-	sysfs_remove_battery(battery);
++	sysfs_battery_cleanup(battery);
+ 
+ 	return result;
+ }
+@@ -1281,6 +1290,9 @@ static void acpi_battery_remove(struct a
+ 
+ 	device_init_wakeup(&device->dev, 0);
+ 	unregister_pm_notifier(&battery->pm_nb);
++
++	guard(mutex)(&battery->update_lock);
++
+ 	sysfs_remove_battery(battery);
+ }
+ 
+@@ -1297,6 +1309,9 @@ static int acpi_battery_resume(struct de
+ 		return -EINVAL;
+ 
+ 	battery->update_time = 0;
++
++	guard(mutex)(&battery->update_lock);
++
+ 	acpi_battery_update(battery, true);
+ 	return 0;
+ }
+
 
 
 
