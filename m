@@ -1,228 +1,176 @@
-Return-Path: <linux-kernel+bounces-835483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132ADBA7443
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:34:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8198BA7446
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54C4A1897938
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B2C16F2E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11C621FF26;
-	Sun, 28 Sep 2025 15:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CDA22FE11;
+	Sun, 28 Sep 2025 15:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MB1g0xo5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DF6cBU6b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B3C33EC
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 15:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5116434BA58;
+	Sun, 28 Sep 2025 15:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759073640; cv=none; b=cD3lFxH+D0wa3wC0rHdUn0j+UrH1HLakmPBT8O/yyI2Qm+V+3UxVQzEUqEG0Nu4jegw4cnZct2RkPW82zgDUE2gi1ffbArYPWg0ueTGqxxRun5imySa0QWslMqTqPnfz82q7CYs1yf3xD7yqAgEDtyL72uBaP/dGWYvgcKyUUOQ=
+	t=1759073814; cv=none; b=dZUpbL9DgLebPm8d++boA8luptdke1VXcZ6dv0vSjt7gX9XgZOU9aNDSXAKHPsPAiwkIU5phQHQ7Ut+0M4FAcn98qoikLEhG0ctqMD2Hma5Oj/7eO+M5UvA31PUR/vCsWPaaQHXEEXikb/x46DOm/3r1f+S5foUOssAuokyIxg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759073640; c=relaxed/simple;
-	bh=6fsQx/x0ozZNvP+Zulqe3d25aQBr0JRGoixqG4wXT8Y=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
-	 In-Reply-To:Content-Type; b=Vdmlt8z82Uq2tDMHpNzDaCtphEdqR9t9+B697XSu3fbX0FClhe9k+ADthiC/GC1Vd37qTNBadkQdtydnfksRogy6k5aIReh4J1cBd6+oC8uc01FdUbrFGep6tpJ0C8/UgvnYWsJaJaTqOtwkimxh3x88nKU7nQRQ3bv5uqhTC1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MB1g0xo5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759073637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tL/Fk3H8V/wS97MtjVuXU3QD/wzzV6jASraULhcGUhg=;
-	b=MB1g0xo5EOU+8MbwgZ01su7RR4SlHkOOlcDpCcVi7zjzU+N7QOkte7HFXy6Xq3uyagqqgl
-	KP7F71np+xoXGC9csgoXxO89s8Ykhseg50AwXEOiooCgrsRAUaCNMaljaFLYx15oLQRAhC
-	2OXO7tdvsq1M4DbR43i3smmXexLW15U=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-91-SLT5v1ZJPO6t6DrIRqcqoA-1; Sun, 28 Sep 2025 11:33:55 -0400
-X-MC-Unique: SLT5v1ZJPO6t6DrIRqcqoA-1
-X-Mimecast-MFC-AGG-ID: SLT5v1ZJPO6t6DrIRqcqoA_1759073635
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8589058c6d1so450576385a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:33:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759073635; x=1759678435;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tL/Fk3H8V/wS97MtjVuXU3QD/wzzV6jASraULhcGUhg=;
-        b=AC+qNpwxiU63C/o9SkJisz/mV9qV9pSMaPAkuHCh2idpdzP2KogziGQsDhFk5urxgZ
-         wCeSIwuf3NvALzwub4KAuJSK9Kb56dCwZc6xajT+8sDnIS/sYwFp7Bdjap6uXFEV5ZRx
-         KICSU4GJCK6puPjPzm1umG7bnKNrvXT406geFkbmUovSLJjHFWXZOQ5pnU8oZOZAmsxj
-         9NAvlfpqpM/u2HpM8MeNc2PpL+Tgr7/gcJBx0HhJuETQwKq79hSlngbX+qCkJ/7Sg8NF
-         IyNBd9i1tOR7GjZPrKnausZwwaZ9SpmHYnUZjkv0hG+ET/w0S/brHS/b1gYDpH60xarc
-         Z72g==
-X-Forwarded-Encrypted: i=1; AJvYcCX3uzYmM0M2mchOEyWe14drd9B1PRWGG5H+IOc/mP9YrtrMS5EkSYd8CS3qdpJrxAra69PDuZsCl6YEMak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9WRJfYl7XluzdIFEtcMlUr0rZ4Q6kXdfV1IDx197gvGWDS1YJ
-	f+COSTR+c5ipE6NQv8IGXZoNSGDJlBklGgdtTNwYHP8RUhzjM2gZX5P52QcW1rkSimshC20mRpu
-	hsFChN/MrUTil203QxQAGorFcXBjgxIjONs4UDl5fnec+rJxcvGmWZ95Hgg6ORL987g==
-X-Gm-Gg: ASbGncutq+2PXi64rbJpuJsjDYzPZZyFrqZecZ8AGRfDnWEiz8rVmhC7wXNs1v+VKw4
-	nU6HqahGeb6e6j6Os/FPnheiJ8cUDRI2f5pDiZz4zEtg5OJ/BlN4z1AahajNUSZ42jIr+OEs7cm
-	SNBsUDx0pIKaE7GHiO0sGkbRrSGJ3rkoOEKvob4CYPj/ZlMhh1Y9QV4oOj282w6ETbAuLSgqVQ4
-	5fbUEAYdn/cIe3SJHfBXGdUbaowZ86HjpM1pLSq5D4mNhQkKnueqorptZiwrYk+eL+MKqOTkSY7
-	f7aPBOfqANeGgoZGNrHtLOKBkqsbeRULcXiwNPS+T+SXsBh30B4SNjhv21GcJ3iVacvxMLQGHWa
-	+9+wrZxQzHvo=
-X-Received: by 2002:a05:620a:29cf:b0:83b:9629:8c69 with SMTP id af79cd13be357-85ae7cd5eedmr1524458985a.62.1759073634665;
-        Sun, 28 Sep 2025 08:33:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBtJMNErbB7Wf5hHbUDmzd2D2wPHtM/gYMs++QhstQoo680VGxFh5aU9Zd4EV26qg33fljRQ==
-X-Received: by 2002:a05:620a:29cf:b0:83b:9629:8c69 with SMTP id af79cd13be357-85ae7cd5eedmr1524453885a.62.1759073633872;
-        Sun, 28 Sep 2025 08:33:53 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db119f05a0sm57427281cf.43.2025.09.28.08.33.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Sep 2025 08:33:53 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <efd4d562-c89d-4344-b36b-d542a7862515@redhat.com>
-Date: Sun, 28 Sep 2025 11:33:52 -0400
+	s=arc-20240116; t=1759073814; c=relaxed/simple;
+	bh=Ps64nDklqamC6EV1MdTjLHaAg7vz5kbJKj7+3R+gE9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+4x6RKK01XJSXZ90Fo7UakocMky/wl9vSTsEImwEDTibqVOVZ318JOBdCAVI2z1e7ir+PfPcNunjrH0mCMXoap9DCW//Ln8mlxvHbSRpGKR2om0Qyp/NXkk/SPqAOqq8TDx00MhYf1XnOi8t1tUFAmJjMN9IwvlJirpxthyCmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DF6cBU6b; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759073813; x=1790609813;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ps64nDklqamC6EV1MdTjLHaAg7vz5kbJKj7+3R+gE9M=;
+  b=DF6cBU6b/Lvudm930LeQ5Kyg7rBV3+agaSizFXMaNuEH9KLV6QKNlfrM
+   9diwsSdoXE7wN0fE8wnsKGnzz2x4s8g5k8G98pG1eyCikc6CKxp+eFqCk
+   AQI0OThSTKfI2vBHoRO/TMNdPeayl5A8i0JhnO23v5jsrEbG8vS/Czo3B
+   n0za+AHuHdyZciHfulFyaP7rZRPf3TPxKmnc3zGV6dJfSJKme5+jSZk6u
+   k39Tv88T5eEOs7UlHv1bB0nV6hfwMolsW55QGL0oc7KXu8tl8Q+CFiuGE
+   iKT4WvTepBzj9ZbZrNhqtiSwuAlMNsthVep13KtHjc/Ob5T4V/DLleVz2
+   g==;
+X-CSE-ConnectionGUID: Eo6++W3bSH+tkaBZOpM6QA==
+X-CSE-MsgGUID: KMMlJ4uCTX6RA6ktMEpHGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11567"; a="83945357"
+X-IronPort-AV: E=Sophos;i="6.18,299,1751266800"; 
+   d="scan'208";a="83945357"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2025 08:36:52 -0700
+X-CSE-ConnectionGUID: F6YSfJnxTLOaywNqfs2gRQ==
+X-CSE-MsgGUID: jMAzwS4qRquUF6Tp0XctNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,299,1751266800"; 
+   d="scan'208";a="201703507"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 28 Sep 2025 08:36:49 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v2tSA-0007t5-0s;
+	Sun, 28 Sep 2025 15:36:46 +0000
+Date: Sun, 28 Sep 2025 23:36:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: liu.xuemei1@zte.com.cn, anup@brainfault.org
+Cc: oe-kbuild-all@lists.linux.dev, atish.patra@linux.dev,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RISC-V: KVM: Transparent huge page support
+Message-ID: <202509282326.NFfcoD5h-lkp@intel.com>
+References: <20250928154450701hRC3fm00QYFnGiM0_M1No@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] locking/rwsem: add DEBUG_RWSEMS_WARN_ON to warn
- invalid rwsem
-To: buckzhang1212@yeah.net, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
-References: <20250927064756.13544-1-buckzhang1212@yeah.net>
-Content-Language: en-US
-In-Reply-To: <20250927064756.13544-1-buckzhang1212@yeah.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928154450701hRC3fm00QYFnGiM0_M1No@zte.com.cn>
 
-On 9/27/25 2:47 AM, buckzhang1212@yeah.net wrote:
-> From: "buck.zhang" <buckzhang1212@yeah.net>
->
-> Here is a kernel exception about rwsem and I can recreate it stably.
-> First We define a struct contains a rwsem.
-> Then allocate this struct by kmalloc without calling init_rwsem.
-> Finally when multiple tasks call use rwsem together,kernel will panic.
-> This lock is used normally when only one task is using  at a time.
-> the exception reason is that sem->wait_list is an invalid kernel list.
-> I want to add more warnings when enable CONFIG_DEBUG_RWSEMS
-> kernel crash log:
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000
-> pc: rwsem_down_write_slowpath+0x428/0xccc
-> lr: rwsem_down_write_slowpath+0x844/0xccc
-> sp: ffffffc0870abb00
-> x29: ffffffc0870abb60 x28: 0000000000000000 x27: ffffffffffffff05
-> ........
-> x2: ffffff809d57d830 x1 : 0000000000000000 x0 : 0000000000000000
-> Call trace:
-> rwsem_down_write_slowpath+0x428/0xccc
-> down_write+0xa8/0x108
-> Test case:
-> struct chip_rwsema {
-> 	struct rwsema sem;
-> };
-> static void work_handler1(struct chip_rwsema *csem)
-> {
-> 	down_write(&(csem->sem));
-> }
-> static void work_handler2(struct chip_rwsema *csem)
-> {
-> 	down_write(&(csem->sem));
-> }
-> static void chip_tsem(void)
-> {
-> 	struct chip_rwsema *csem;
-> 	csem = kzalloc(sizeof(struct chip_rwsema),GFP_KERNEL);
-> 	work_handler1(csem);
-> 	......
-> 	work_handler2(csem);
-> }
->
-> Signed-off-by: buck.zhang <buckzhang1212@yeah.net>
-> ---
->   kernel/locking/rwsem.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
->
-> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-> index 24df4d98f..bfc038573 100644
-> --- a/kernel/locking/rwsem.c
-> +++ b/kernel/locking/rwsem.c
-> @@ -75,7 +75,17 @@
->   		list_empty(&(sem)->wait_list) ? "" : "not "))	\
->   			debug_locks_off();			\
->   	} while (0)
-> +
-> +/*
-> + * list_invalid - check whether sem->waitlist is invalid
-> + * @head: the list to test.
-> + */
-> +static inline int rwsem_waitlist_invalid(const struct list_head *head)
-> +{
-> +	return (unsigned long) READ_ONCE(head->next) < PAGE_OFFSET;
-> +}
->   #else
-> +# define rwsem_waitlist_invalid(sem)
->   # define DEBUG_RWSEMS_WARN_ON(c, sem)
->   #endif
->   
-> @@ -1034,6 +1044,9 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, long count, unsigned int stat
->   	waiter.timeout = jiffies + RWSEM_WAIT_TIMEOUT;
->   	waiter.handoff_set = false;
->   
-> +	/* In case the rwsem is uninitiated, add more warning */
-> +	DEBUG_RWSEMS_WARN_ON(rwsem_waitlist_invalid(&sem->wait_list), sem);
-> +
->   	raw_spin_lock_irq(&sem->wait_lock);
->   	if (list_empty(&sem->wait_list)) {
->   		/*
-> @@ -1128,6 +1141,9 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
->   	waiter.timeout = jiffies + RWSEM_WAIT_TIMEOUT;
->   	waiter.handoff_set = false;
->   
-> +	/* In case the rwsem is uninitiated, add more warning */
-> +	DEBUG_RWSEMS_WARN_ON(rwsem_waitlist_invalid(&sem->wait_list), sem);
-> +
->   	raw_spin_lock_irq(&sem->wait_lock);
->   	rwsem_add_waiter(sem, &waiter);
->   
+Hi,
 
-I suppose you are trying to detect call to down_read()/down_write() 
-before the rwsem has been properly initialized. The current way to 
-detect that is to check for sem->magic. Unfortunately, this check may 
-not be run for down_read()/down_write() depending on the whether 
-CONFIG_LOCK_STAT is set or not. Does the below patch work for you for 
-your test case?
+kernel test robot noticed the following build warnings:
 
-Cheers,
-Longman
+[auto build test WARNING on kvm/queue]
+[also build test WARNING on kvm/next mst-vhost/linux-next linus/master v6.17-rc7 next-20250926]
+[cannot apply to kvm/linux-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 24df4d98f7d2..7e06a6bbdd53 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -1256,6 +1256,7 @@ static __always_inline int 
-__down_read_common(struct rw_semaphore *sem, int stat
-         int ret = 0;
-         long count;
+url:    https://github.com/intel-lab-lkp/linux/commits/liu-xuemei1-zte-com-cn/RISC-V-KVM-Transparent-huge-page-support/20250928-154904
+base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+patch link:    https://lore.kernel.org/r/20250928154450701hRC3fm00QYFnGiM0_M1No%40zte.com.cn
+patch subject: [PATCH] RISC-V: KVM: Transparent huge page support
+config: riscv-randconfig-001-20250928 (https://download.01.org/0day-ci/archive/20250928/202509282326.NFfcoD5h-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250928/202509282326.NFfcoD5h-lkp@intel.com/reproduce)
 
-+       DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
-         preempt_disable();
-         if (!rwsem_read_trylock(sem, &count)) {
-                 if (IS_ERR(rwsem_down_read_slowpath(sem, count, state))) {
-@@ -1312,6 +1313,7 @@ static __always_inline int 
-__down_write_common(struct rw_semaphore *sem, int sta
-  {
-         int ret = 0;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509282326.NFfcoD5h-lkp@intel.com/
 
-+       DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
-         preempt_disable();
-         if (unlikely(!rwsem_write_trylock(sem))) {
-                 if (IS_ERR(rwsem_down_write_slowpath(sem, state)))
+All warnings (new ones prefixed by >>):
+
+   arch/riscv/kvm/gstage.c: In function 'gstage_supports_huge_mapping':
+>> arch/riscv/kvm/gstage.c:108:39: warning: left shift count >= width of type [-Wshift-count-overflow]
+     108 |         gpa_start = memslot->base_gfn << PAGE_SIZE;
+         |                                       ^~
 
 
+vim +108 arch/riscv/kvm/gstage.c
+
+    97	
+    98	static bool gstage_supports_huge_mapping(struct kvm_memory_slot *memslot, unsigned long hva)
+    99	{
+   100		gpa_t gpa_start;
+   101		hva_t uaddr_start, uaddr_end;
+   102		size_t size;
+   103	
+   104		size = memslot->npages * PAGE_SIZE;
+   105		uaddr_start = memslot->userspace_addr;
+   106		uaddr_end = uaddr_start + size;
+   107	
+ > 108		gpa_start = memslot->base_gfn << PAGE_SIZE;
+   109	
+   110		/*
+   111		 * Pages belonging to memslots that don't have the same alignment
+   112		 * within a PMD for userspace and GPA cannot be mapped with g-stage
+   113		 * PMD entries, because we'll end up mapping the wrong pages.
+   114		 *
+   115		 * Consider a layout like the following:
+   116		 *
+   117		 *    memslot->userspace_addr:
+   118		 *    +-----+--------------------+--------------------+---+
+   119		 *    |abcde|fgh  vs-stage block  |    vs-stage block tv|xyz|
+   120		 *    +-----+--------------------+--------------------+---+
+   121		 *
+   122		 *    memslot->base_gfn << PAGE_SHIFT:
+   123		 *      +---+--------------------+--------------------+-----+
+   124		 *      |abc|def  g-stage block  |    g-stage block   |tvxyz|
+   125		 *      +---+--------------------+--------------------+-----+
+   126		 *
+   127		 * If we create those g-stage blocks, we'll end up with this incorrect
+   128		 * mapping:
+   129		 *   d -> f
+   130		 *   e -> g
+   131		 *   f -> h
+   132		 */
+   133		if ((gpa_start & (PMD_SIZE - 1)) != (uaddr_start & (PMD_SIZE - 1)))
+   134			return false;
+   135	
+   136		/*
+   137		 * Next, let's make sure we're not trying to map anything not covered
+   138		 * by the memslot. This means we have to prohibit block size mappings
+   139		 * for the beginning and end of a non-block aligned and non-block sized
+   140		 * memory slot (illustrated by the head and tail parts of the
+   141		 * userspace view above containing pages 'abcde' and 'xyz',
+   142		 * respectively).
+   143		 *
+   144		 * Note that it doesn't matter if we do the check using the
+   145		 * userspace_addr or the base_gfn, as both are equally aligned (per
+   146		 * the check above) and equally sized.
+   147		 */
+   148		return (hva >= ALIGN(uaddr_start, PMD_SIZE)) && (hva < ALIGN_DOWN(uaddr_end, PMD_SIZE));
+   149	}
+   150	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
