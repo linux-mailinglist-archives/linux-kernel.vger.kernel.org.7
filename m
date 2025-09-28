@@ -1,170 +1,200 @@
-Return-Path: <linux-kernel+bounces-835175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0B7BA670F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:25:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F36BA6721
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45D6317E831
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31B473B13C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBC2254AE7;
-	Sun, 28 Sep 2025 03:25:45 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7EE258CE1;
+	Sun, 28 Sep 2025 03:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C6c2nPC2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7BF1A262A
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5801635
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759029944; cv=none; b=ftcbo0SxB4wcy7duGC2UGwkTvpzwTCzhdt8ZfHQCYDfWedBIgp2cWmqI/FdvbK3aBY/Ygwvi5F5Br32SS5V2M7NWrJqHzcozf6SoTxyWU5oMA71M4nLHXzzzKVoBSzfjNspQsOeBgwq0EWQ93u2+TOkpTRe5PzvXIVx6Zcg7Mj0=
+	t=1759030238; cv=none; b=G8f73HtRpIY2//Boj7vqPjebHUHo2O13mOTcIH+vRkTgyHrGfI7hYgTUQmzxWWfb1//mmzxoNixfZ1JV5p7z48wZqyS+XlSm+zaebY6ZjRaENH++D8dLLRpaWLUX7xbquAyn+gD9LejU8+sfCbpSyQ9mMg7szWWbfJaQca/Mfr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759029944; c=relaxed/simple;
-	bh=ndvAh1089V55es0pZ8GCvpd4P72uPQBGK1mdrrgUkow=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QZO7UClxqZVDS/ZEe7u/vn2W/F6XqpX0ZbaQ1nDLIviU6+GHz1BacmhDJVMXzhbLmXlvR6nvHPavY8z3GzztuvjRgxRa/0BrvIm7w/WhqbrOeyEiCnpHAEnYePKv2eYPE7xbz1ReKEd2YADl7sPqKrgbBSIKs44zlbAc6xGPYiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-429aa22e058so5363525ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 20:25:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759029942; x=1759634742;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DRHEvzjMEylp9BlD+YbDO1evUo2nfIQSYhSMAKeCN24=;
-        b=SulPpJ06jKl4fmLnrSA1/ziHkjagiwTT28/OW5q9uAspP6ETb8ci785NB43OPm6+9e
-         GBlca+Me+Z3CReTKMSE5EUYrFmpiOY1R2Wty6Wmeuc1iwi9gzT7TUZn10OtyAEoaUitp
-         S5cb/+v3YB1YTlvc7ZxhV+cMGQOrFvvUC5im3tUS2MTvrZTRKIWz8Or8zy8FOQScbO6w
-         5aY7hJWQuh5hqGFPJ8S2htqX7PdRgUKSXO8HOJtqcZSbKek8NkvVJUdwsxXHNTALncJZ
-         978TPkg4GeIxN43C2/oyJUA2cYcGGOy4ulskfSI6Uw7wZbx3eUrfPzMpAeFIncAsZQLs
-         Cx9A==
-X-Gm-Message-State: AOJu0YzfuP4Xj2D/OTz1fCm3i+/nT2f0IxvjjeCAqCln/sM6gYu/L90w
-	XOvYSgRVisKRfqMcijH9a+VnJ4Kk26BZIScXAoJ91laVxFH75E62VcID4nVtoewtyquVrwTEaB3
-	bzpFFimfLGDOWap1FGh0uBipEKYAy+PCS5pRZTuFTCAhbHK/LnE+FsFDmuck=
-X-Google-Smtp-Source: AGHT+IFUht90BUntjfK4AX6JKWYXXl40k9cUXZJuGDJXCuc65jgaACfaiNP/X/2MW41BQoVqZeRWnb5ME0l7YQxlmBv5J7qdJUvA
+	s=arc-20240116; t=1759030238; c=relaxed/simple;
+	bh=efex/veyeyHUIjB317uonW+jJImDaYnL9AF1S7tnYRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rTfm5BzrTXtFXrOgriMhVYrHh8e2pLkzYmwlEgWcxKxETqhoZIh5IUZpsnjNws9UjwwAyBkrNlqviaeg8B9BFl7YfRJSXAelcOuKLP8GOSOhHzIBZDocZ9I3iBGVgX4mdNKekBHmtfl420eahzDlJUzPW2lm/SEqxqVLj8PHZR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C6c2nPC2; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759030237; x=1790566237;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=efex/veyeyHUIjB317uonW+jJImDaYnL9AF1S7tnYRg=;
+  b=C6c2nPC2P0StJbWrI+irb/v6tEFrLclLqd+vi29FRc6Q6BJ2DB8d3riG
+   XucBE/iZ5VdBTUym2TA0P2ain3wPFxWAG59QBcRLtVraPQEM24nCow2Bi
+   NPrfqSFLSYsfZM62ZUCXnGQSREjD5LO2GSsr5IV/bMcNRd1LxxtnOmdlR
+   Kwbz5cirL+cCoFzM+QndS1x9guzaE7F30ENz/MUOYpejCyM4As0hlAwIM
+   y9m7OiIf3atUnaSSDHNEFLfyBpy0IovQaPMm1YUOUly5nqShP0HHJwbIE
+   D+BEjn9siN6MR3Mz8qCdy7zPYohQLRkezBBTlck2cTB0E9PvWPcujQq55
+   Q==;
+X-CSE-ConnectionGUID: HRU25RutSNWm9UNzDGax0w==
+X-CSE-MsgGUID: Tsook3nwTTu+f7uiaURAGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="72746024"
+X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
+   d="scan'208";a="72746024"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 20:30:37 -0700
+X-CSE-ConnectionGUID: l/u2KvzMR9+wXNAuLlX67w==
+X-CSE-MsgGUID: Ka5geKoCRUSNNPNu6ilsLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
+   d="scan'208";a="201609059"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 20:30:32 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	linmiaohe@huawei.com,
+	tony.luck@intel.com
+Cc: qiuxu.zhuo@intel.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	nao.horiguchi@gmail.com,
+	farrah.chen@intel.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Zaborowski <andrew.zaborowski@intel.com>
+Subject: [PATCH 1/1] mm: prevent poison consumption when splitting THP
+Date: Sun, 28 Sep 2025 11:28:42 +0800
+Message-ID: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d82:b0:426:6097:48fd with SMTP id
- e9e14a558f8ab-42660974c3fmr139547185ab.31.1759029942461; Sat, 27 Sep 2025
- 20:25:42 -0700 (PDT)
-Date: Sat, 27 Sep 2025 20:25:42 -0700
-In-Reply-To: <0000000000005902e205d301dd7e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d8aab6.050a0220.25d7ab.045f.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] UBSAN: shift-out-of-bounds in minix_statfs
-From: syzbot <syzbot+5ad0824204c7bf9b67f2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+From: Andrew Zaborowski <andrew.zaborowski@intel.com>
 
-***
+When performing memory error injection on a THP (Transparent Huge Page)
+mapped to userspace on an x86 server, the kernel panics with the following
+trace. The expected behavior is to terminate the affected process instead
+of panicking the kernel, as the x86 Machine Check code can recover from an
+in-userspace #MC.
 
-Subject: Re: [syzbot] UBSAN: shift-out-of-bounds in minix_statfs
-Author: xandfury@gmail.com
+  mce: [Hardware Error]: CPU 0: Machine Check Exception: f Bank 3: bd80000000070134
+  mce: [Hardware Error]: RIP 10:<ffffffff8372f8bc> {memchr_inv+0x4c/0xf0}
+  mce: [Hardware Error]: TSC afff7bbff88a ADDR 1d301b000 MISC 80 PPIN 1e741e77539027db
+  mce: [Hardware Error]: PROCESSOR 0:d06d0 TIME 1758093249 SOCKET 0 APIC 0 microcode 80000320
+  mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+  mce: [Hardware Error]: Machine check: Data load in unrecoverable area of kernel
+  Kernel panic - not syncing: Fatal local machine check
 
-syzbot <syzbot+5ad0824204c7bf9b67f2@syzkaller.appspotmail.com> writes:
+The root cause of this panic is that handling a memory failure triggered by
+an in-userspace #MC necessitates splitting the THP. The splitting process
+employs a mechanism, implemented in try_to_map_unused_to_zeropage(), which
+reads the sub-pages of the THP to identify zero-filled pages. However,
+reading the sub-pages results in a second in-kernel #MC, occurring before
+the initial memory_failure() completes, ultimately leading to a kernel
+panic. See the kernel panic call trace on the two #MCs.
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    b8a98b6bf66a Merge tag =E2=80=99pci-v5.16-fixes-2=E2=80=
-=99 of git://git.ke..
-> git tree:       upstream
-> console output: <https://syzkaller.appspot.com/x/log.txt?x=3D1342c069b000=
-00>
-> kernel config:  <https://syzkaller.appspot.com/x/.config?x=3D221ffc09e39e=
-bbd1>
-> dashboard link: <https://syzkaller.appspot.com/bug?extid=3D5ad0824204c7bf=
-9b67f2>
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binuti=
-ls for Debian) 2.35.2
-> syz repro:      <https://syzkaller.appspot.com/x/repro.syz?x=3D15e8a551b0=
-0000>
-> C reproducer:   <https://syzkaller.appspot.com/x/repro.c?x=3D176da9b9b000=
-00>
->
-> Bisection is inconclusive: the issue happens on the oldest tested release=
-.
->
-> bisection log:  <https://syzkaller.appspot.com/x/bisect.txt?x=3D17e8a7bdb=
-00000>
-> final oops:     <https://syzkaller.appspot.com/x/report.txt?x=3D1418a7bdb=
-00000>
-> console output: <https://syzkaller.appspot.com/x/log.txt?x=3D1018a7bdb000=
-00>
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+5ad0824204c7bf9b67f2@syzkaller.appspotmail.com
->
-> loop0: detected capacity change from 0 to 272
-> `=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D'
-> UBSAN: shift-out-of-bounds in fs/minix/inode.c:380:57
-> shift exponent 65510 is too large for 64-bit type =E2=80=99long unsigned =
-int=E2=80=99
-> CPU: 0 PID: 3601 Comm: syz-executor657 Not tainted 5.16.0-rc4-syzkaller #=
-0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 01/01/2011
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
->  ubsan_epilogue+0xb/0x5a lib/ubsan.c:151
->  __ubsan_handle_shift_out_of_bounds.cold+0xb1/0x181 lib/ubsan.c:330
->  minix_statfs.cold+0x17/0x1c fs/minix/inode.c:380
->  statfs_by_dentry+0x133/0x210 fs/statfs.c:66
->  vfs_statfs fs/statfs.c:90 [inline]
->  fd_statfs+0x66/0x100 fs/statfs.c:120
->  __do_sys_fstatfs+0x7a/0xf0 fs/statfs.c:216
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x7f33e4f00e09
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89
-> f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
-> f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffeedacabd8 EFLAGS: 00000246 ORIG_RAX: 000000000000008a
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f33e4f00e09
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
-> RBP: 00007f33e4ec06a0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00007ffeedacaa90 R11: 0000000000000246 R12: 00007f33e4ec0730
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->  </TASK>
-> `=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D'
->
->
-> =E2=80=94
-> This report is generated by a bot. It may contain errors.
-> See <https://goo.gl/tpsmEJ> for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> <https://goo.gl/tpsmEJ#status> for how to communicate with syzbot.
-> For information about bisection process see: <https://goo.gl/tpsmEJ#bisec=
-tion>
-> syzbot can test patches for this issue, for details see:
-> <https://goo.gl/tpsmEJ#testing-patches>
+  First Machine Check occurs // [1]
+    memory_failure()         // [2]
+      try_to_split_thp_page()
+        split_huge_page()
+          split_huge_page_to_list_to_order()
+            __folio_split()  // [3]
+              remap_page()
+                remove_migration_ptes()
+                  remove_migration_pte()
+                    try_to_map_unused_to_zeropage()
+                      memchr_inv()                   // [4]
+                        Second Machine Check occurs  // [5]
+                          Kernel panic
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
- master
+[1] Triggered by accessing a hardware-poisoned THP in userspace, which is
+    typically recoverable by terminating the affected process.
+
+[2] Call folio_set_has_hwpoisoned() before try_to_split_thp_page().
+
+[3] Pass the RMP_USE_SHARED_ZEROPAGE remap flag to remap_page().
+
+[4] Re-access sub-pages of the hw-poisoned THP in the kernel.
+
+[5] Triggered in-kernel, leading to a panic kernel.
+
+In Step[2], memory_failure() sets the has_hwpoisoned flag on the THP,
+right before calling try_to_split_thp_page(). Fix this panic by not
+passing the RMP_USE_SHARED_ZEROPAGE flag to remap_page() in Step[3]
+if the THP has the has_hwpoisoned flag set. This prevents access to
+sub-pages of the poisoned THP for zero-page identification, avoiding
+a second in-kernel #MC that would cause kernel panic.
+
+[ Qiuxu: Re-worte the commit message. ]
+
+Reported-by: Farrah Chen <farrah.chen@intel.com>
+Signed-off-by: Andrew Zaborowski <andrew.zaborowski@intel.com>
+Tested-by: Farrah Chen <farrah.chen@intel.com>
+Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+---
+ mm/huge_memory.c    | 3 ++-
+ mm/memory-failure.c | 6 ++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 9c38a95e9f09..1568f0308b90 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3588,6 +3588,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+ 		struct list_head *list, bool uniform_split)
+ {
+ 	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
++	bool has_hwpoisoned = folio_test_has_hwpoisoned(folio);
+ 	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+ 	struct folio *end_folio = folio_next(folio);
+ 	bool is_anon = folio_test_anon(folio);
+@@ -3858,7 +3859,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+ 	if (nr_shmem_dropped)
+ 		shmem_uncharge(mapping->host, nr_shmem_dropped);
+ 
+-	if (!ret && is_anon)
++	if (!ret && is_anon && !has_hwpoisoned)
+ 		remap_flags = RMP_USE_SHARED_ZEROPAGE;
+ 	remap_page(folio, 1 << order, remap_flags);
+ 
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index df6ee59527dd..3ba6fd4079ab 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -2351,8 +2351,10 @@ int memory_failure(unsigned long pfn, int flags)
+ 		 * otherwise it may race with THP split.
+ 		 * And the flag can't be set in get_hwpoison_page() since
+ 		 * it is called by soft offline too and it is just called
+-		 * for !MF_COUNT_INCREASED.  So here seems to be the best
+-		 * place.
++		 * for !MF_COUNT_INCREASED.
++		 * It also tells split_huge_page() to not bother using
++		 * the shared zeropage -- the all-zeros check would
++		 * consume the poison.  So here seems to be the best place.
+ 		 *
+ 		 * Don't need care about the above error handling paths for
+ 		 * get_hwpoison_page() since they handle either free page
+-- 
+2.43.0
+
 
