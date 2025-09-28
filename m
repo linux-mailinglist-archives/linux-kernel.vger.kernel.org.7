@@ -1,161 +1,263 @@
-Return-Path: <linux-kernel+bounces-835315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71F2BA6B5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:27:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE895BA6B6D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE75189B996
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:28:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E648167C0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3412BE7B1;
-	Sun, 28 Sep 2025 08:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701972BEC2D;
+	Sun, 28 Sep 2025 08:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="aJ6bT9kY"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRth4uvt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C98192B90;
-	Sun, 28 Sep 2025 08:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759048051; cv=pass; b=O3D9jXoA4yaO3/PRHBqLElmSU+3E0s9GgpUzR7CNwO3WE2qY7Vfk66IExkLMQTIaWzLacB6Tm3ldQXxcJLDZt6u48ceaJew785W7cDWlJKa/QYEA4QeTX8g+JVSNXn43JS4va7Ven8HwBw7gLg6D/aYOLp6XLewqquF9fmEAUMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759048051; c=relaxed/simple;
-	bh=BY3MaZq6jjs6ZCm53ibX+TPc0KsKC0+Jtsqvmq6eCs8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ks2/rg88lOrkwoqIwhe9tOFcuU/JaYliTyhoD890wINtMjryUXNz3Y4y1Z3gI6F9AhOjWMvbqMq3wXRMJm4oC59c0M38vVs3ZlvbyeOQJ1mK8UrI4jXEy0yaXHsCo4yDFci9rddbvCBfNBfHqun0F4nOBOkIIkpHYZ6qVyhGhi0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=aJ6bT9kY; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759048038; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fmbG56g0bP2pjP4ZItOMq+kfQOMEuJxGDTuhiVhRVxQA/H5hFDJku3Op+NQ6mUA4M6NtOaaSYABquJ6ZJf+eSw27m39oJLDXASJKKUVXcZ8Yfz8l0fB6Qhd40vvXitTRfDca9m2nmmQ/5uTMMJXu9MjPLX36kUss1pIhhlqO19Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759048038; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0se3mk6dns8vnGKOUjB0E8DCWoF8sHHi4vPc2T0MRzA=; 
-	b=ET8LjjBNE+3a5XJx3mS3N63LmBJC4Im6guVa3hzuoUBiAX6wO3wQQVale9WFloYQ7KNgIcty4+hxodnZo0Gri1frDy4Pp8Y1ebduBbmhM7rMfwm1cLwzVfeCqeFupCcd0m1RK22x2Q7jLBqJrox35VDHGIC+WfBuII0snxpqCdg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759048038;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=0se3mk6dns8vnGKOUjB0E8DCWoF8sHHi4vPc2T0MRzA=;
-	b=aJ6bT9kYK9Ga6EY5b9CL1Lu3uXGfvCKp15OOlqF8KH7uJMuexC4Wwx3jjXDI5UjI
-	PsY0PFP3mesiG0eZNarO/VV+nTHg4bu4+jmLaE5BM8iSps2Un0UGXCjXbFPatkI5jNR
-	TfyWS9Fo73Z1aZj7zRtzelcKoRtZW1VremxT/m/c=
-Received: by mx.zohomail.com with SMTPS id 1759048036865829.4631101955218;
-	Sun, 28 Sep 2025 01:27:16 -0700 (PDT)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	shiju.jose@huawei.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: [PATCH 1/1] cxl/port: Avoid missing port component registers setup
-Date: Sun, 28 Sep 2025 16:27:03 +0800
-Message-Id: <20250928082703.377604-1-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998F8233136;
+	Sun, 28 Sep 2025 08:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759048235; cv=none; b=n6g4BSCo+IV7ILOhx/W+rVhzB30eeP1X3A76Xt0zEeKrF12KH68Rg11kXWWrWZrDYUmqh53GFI3dZnvo2JaW+om5GxDvN0Bv9/63GoF38GKjv42TzscZWWH8SEwe3uDUYijibQgfQ7DUiETmJ5QDVZMQWztJO2F5Bw7iQZ/9daM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759048235; c=relaxed/simple;
+	bh=GMKC96tBhh8BbSxjp97CncZ4AG2zr2v2pDiVFBNdiXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MhRU7wVLvhLkGSpKTEEKXKli1+Sy3ZN59Wra4aJnO939IFWnWOKNWquJpm0DVvhata7p4RkYgs8IP1UjlUKYc6CQ+7wIA24L0a93K9IHwivz0ljnZUwU8yk0UikuqF1fbMYiE5M893+Fwx9p77zx8M2k2Oo+0F5tOsnYsdRfT1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRth4uvt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E6FFC4CEF0;
+	Sun, 28 Sep 2025 08:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759048235;
+	bh=GMKC96tBhh8BbSxjp97CncZ4AG2zr2v2pDiVFBNdiXU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PRth4uvtTfYhFnlOwi2b4sWyak1UL8Gs9PC+43Khq+mki1d43bVRwzINtK+wB20qx
+	 xOasy5sRa/PD49CTXisBzz7V4zBKzb/gDrhWy3+11pXDXB0MpKdp2OJGm0y/qCyBeX
+	 pRUSWRZwttaTy9orVPXY1sAZ2CfQQFZQSMqDx4f1K0ROytwnSJ0vWRKPhffxhqIWVS
+	 mjW9ETRVwu42/vXcOaPLz/nqnHKweYNaDkzKJWJ0jz16Dqq6J/F2yCdG3NASQXQagk
+	 M4bjO3KNM+31ydN9shIvOL4RxzMdepEJcZU6NRWgcL6Bc2iDbFcfPsKije7qu3wh6B
+	 SGJp0B4pEoANA==
+Date: Sun, 28 Sep 2025 09:30:26 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/9] iio: imu: inv_icm45600: add new inv_icm45600
+ driver
+Message-ID: <20250928093000.6753d920@jic23-huawei>
+In-Reply-To: <20250924-add_newport_driver-v6-2-76687b9d8a6e@tdk.com>
+References: <20250924-add_newport_driver-v6-0-76687b9d8a6e@tdk.com>
+	<20250924-add_newport_driver-v6-2-76687b9d8a6e@tdk.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr0801122769a6103cc02dc5adc320306e0000a511a6b2ac14bde620e895d6efa8d6055e44586069d6cbbe38:zu080112274680d10ce4f7e964c6c7e30a00000112c4dde273fa05bcdbea61f072fa462a4b1da0ac87242bda:rf0801122dd41a5b0702e54ff9217fb4d20000958148868da14df2fa53f22583fa3de1197883664eb9d998c7450d39da8277:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-port->nr_dports is used to represent how many dports added to the cxl
-port, it will increase in add_dport() when a new dport is being added to
-the cxl port, but it will not be reduced when a dport is removed from
-the cxl port.
+On Wed, 24 Sep 2025 09:23:55 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
 
-Currently, when the first dport is added to a cxl port, it will trigger
-component registers setup on the cxl port, the implementation is using
-port->nr_dports to confirm if the dport is the first dport.
+> From: Remi Buisson <remi.buisson@tdk.com>
+> 
+> Core component of a new driver for InvenSense ICM-45600 devices.
+> It includes registers definition, main probe/setup, and device
+> utility functions.
+> 
+> ICM-456xx devices are latest generation of 6-axis IMU,
+> gyroscope+accelerometer and temperature sensor. This device
+> includes a 8K FIFO, supports I2C/I3C/SPI, and provides
+> intelligent motion features like pedometer, tilt detection,
+> and tap detection.
+> 
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+Hi Remi,
 
-A corner case here is that adding dport could fail after port->nr_dports
-updating and before checking port->nr_dports for component registers
-setup. If the failure happens during the first dport attaching, it will
-cause that CXL subsystem has not chance to execute component registers
-setup for the cxl port. the failure flow like below:
+Just a few really minor things from a fresh read through.
+Given the request for a commit message change on the DT that is slightly
+beyond what I'd normally just tweak whilst applying I think we'll have
+a v7 anyway, so if you could tidy these up that would be great.
+We are very early in this cycle anyway, so I'm not inclined to rush!
 
-port->nr_dports = 0
-dport 1 adding to the port:
-	add_dport()	# port->nr_dports: 1
-	failed on devm_add_action_or_reset() or sysfs_create_link()
-	return error	# port->nr_dports: 1
-	no chance for component registers setup execution
-dport 2 adding to the port:
-	add_dport()	# port->nr_dports: 2
-	no failure
-	skip component registers setup because of port->nr_dports is 2
+Jonathan
 
-The solution here is that moving component registers setup closer to
-add_dport(), so if add_dport() is executed correctly for the first
-dport, component registers setup on the port will be executed
-immediately after that.
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..04f04c72e1710efde0ab8e83f9ce26d28e102c9b
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_core.c
+> @@ -0,0 +1,623 @@
 
-Signed-off-by: Li Ming <ming.li@zohomail.com>
----
-base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
----
- drivers/cxl/core/port.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-index d5f71eb1ade8..e25f326acd7a 100644
---- a/drivers/cxl/core/port.c
-+++ b/drivers/cxl/core/port.c
-@@ -1182,6 +1182,18 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
- 	if (rc)
- 		return ERR_PTR(rc);
- 
-+	/*
-+	 * Setup port register if this is the first dport showed up. Having
-+	 * a dport also means that there is at least 1 active link.
-+	 */
-+	if (port->nr_dports == 1 &&
-+	    port->component_reg_phys != CXL_RESOURCE_NONE) {
-+		rc = cxl_port_setup_regs(port, port->component_reg_phys);
-+		if (rc)
-+			return ERR_PTR(rc);
-+		port->component_reg_phys = CXL_RESOURCE_NONE;
-+	}
-+
- 	get_device(dport_dev);
- 	rc = devm_add_action_or_reset(host, cxl_dport_remove, dport);
- 	if (rc)
-@@ -1200,18 +1212,6 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
- 
- 	cxl_debugfs_create_dport_dir(dport);
- 
--	/*
--	 * Setup port register if this is the first dport showed up. Having
--	 * a dport also means that there is at least 1 active link.
--	 */
--	if (port->nr_dports == 1 &&
--	    port->component_reg_phys != CXL_RESOURCE_NONE) {
--		rc = cxl_port_setup_regs(port, port->component_reg_phys);
--		if (rc)
--			return ERR_PTR(rc);
--		port->component_reg_phys = CXL_RESOURCE_NONE;
--	}
--
- 	return dport;
- }
- 
--- 
-2.34.1
+
+> +u32 inv_icm45600_odr_to_period(enum inv_icm45600_odr odr)
+> +{
+> +	static const u32 odr_periods[INV_ICM45600_ODR_MAX] = {
+> +		0,		/* reserved value */
+> +		0,		/* reserved value */
+> +		0,		/* reserved value */
+
+I'd preferred this done with the enum values.
+	[INV_ICM45600_ODR_6400HZ_LN] = 156250,
+etc and just a comment to say there are some reserved initial values.
+that way we don't have to compare the comments with the enum values to be sure
+there isn't one missing etc.
+
+
+> +		156250,		/* 6.4kHz */
+> +		312500,		/* 3.2kHz */
+> +		625000,		/* 1.6kHz */
+> +		1250000,	/* 800kHz */
+> +		2500000,	/* 400Hz */
+> +		5000000,	/* 200Hz */
+> +		10000000,	/* 100Hz */
+> +		20000000,	/* 50Hz */
+> +		40000000,	/* 25Hz */
+> +		80000000,	/* 12.5Hz */
+> +		160000000,	/* 6.25Hz */
+> +		320000000,	/* 3.125Hz */
+> +		640000000,	/* 1.5625Hz */
+> +	};
+> +
+> +	return odr_periods[odr];
+> +}
+
+> +
+> +/**
+> + *  inv_icm45600_setup() - check and setup chip
+> + *  @st:	driver internal state
+> + *  @chip_info:	detected chip description
+> + *  @reset:	define whether a reset is required or not
+> + *  @bus_setup:	callback for setting up bus specific registers
+> + *
+> + *  Returns: 0 on success, a negative error code otherwise.
+> + */
+> +static int inv_icm45600_setup(struct inv_icm45600_state *st,
+> +				const struct inv_icm45600_chip_info *chip_info,
+> +				bool reset, inv_icm45600_bus_setup bus_setup)
+> +{
+> +	const struct device *dev = regmap_get_device(st->map);
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	/* Set chip bus configuration if specified. */
+> +	if (bus_setup) {
+> +		ret = bus_setup(st);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* Check chip self-identification value. */
+> +	ret = regmap_read(st->map, INV_ICM45600_REG_WHOAMI, &val);
+> +	if (ret)
+> +		return ret;
+> +	if (val != chip_info->whoami) {
+> +		/*
+> +		 * SPI interface has no ack mechanism.
+> +		 * 0xFF or 0x00 wwhoami means no response from the device.
+whoami?
+
+> +		 */
+> +		if (val == U8_MAX || val == 0)
+> +			return dev_err_probe(dev, -ENODEV,
+> +					     "Invalid whoami %#02x expected %#02x (%s)\n",
+> +					     val, chip_info->whoami, chip_info->name);
+> +
+> +		dev_warn(dev, "Unexpected whoami %#02x expected %#02x (%s)\n",
+> +			 val, chip_info->whoami, chip_info->name);
+> +	}
+> +
+> +	st->chip_info = chip_info;
+> +
+> +	if (reset) {
+> +		/* Reset previous state. */
+> +		ret = regmap_write(st->map, INV_ICM45600_REG_MISC2,
+> +				   INV_ICM45600_MISC2_SOFT_RESET);
+> +		if (ret)
+> +			return ret;
+> +		/*
+> +		 * IMU reset time.
+> +		 * Datasheet: 16.84 REG_MISC2
+> +		 */
+> +		fsleep(USEC_PER_MSEC);
+> +
+> +		if (bus_setup) {
+> +			ret = bus_setup(st);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +
+> +		ret = regmap_read(st->map, INV_ICM45600_REG_INT_STATUS, &val);
+> +		if (ret)
+> +			return ret;
+> +		if (!(val & INV_ICM45600_INT_STATUS_RESET_DONE)) {
+> +			dev_err(dev, "reset error, reset done bit not set\n");
+> +			return -ENODEV;
+> +		}
+> +	}
+> +
+> +	return inv_icm45600_set_conf(st, chip_info->conf);
+> +}
+
+
+
+> +
+> +/* Runtime suspend will turn off sensors that are enabled by iio devices. */
+> +static int inv_icm45600_runtime_suspend(struct device *dev)
+> +{
+> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	/* disable all sensors */
+> +	ret = inv_icm45600_set_pwr_mgmt0(st, INV_ICM45600_SENSOR_MODE_OFF,
+> +					 INV_ICM45600_SENSOR_MODE_OFF, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	regulator_disable(st->vddio_supply);
+> +
+> +	return 0;
+> +}
+> +
+> +/* Sensors are enabled by iio devices, no need to turn them back on here. */
+> +static int inv_icm45600_runtime_resume(struct device *dev)
+> +{
+> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
+> +
+> +	guard(mutex)(&st->lock);
+
+Trivial but why is the lock needed?  I'm fairly sure nothing can race
+with this regulator getting reenabled.
+
+I guess, given you are holding the lock in the suspend path across regulator
+disable this is reasonable for balance if not strictly needed.
+So leave this if you like.
+
+> +
+> +	return inv_icm45600_enable_regulator_vddio(st);
+> +}
+> +
+> +EXPORT_NS_GPL_DEV_PM_OPS(inv_icm45600_pm_ops, IIO_ICM45600) = {
+> +	SYSTEM_SLEEP_PM_OPS(inv_icm45600_suspend, inv_icm45600_resume)
+> +	RUNTIME_PM_OPS(inv_icm45600_runtime_suspend,
+> +			   inv_icm45600_runtime_resume, NULL)
+> +};
+> +
+> +MODULE_AUTHOR("InvenSense, Inc.");
+> +MODULE_DESCRIPTION("InvenSense ICM-456xx device driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS("IIO_INV_SENSORS_TIMESTAMP");
+> 
 
 
