@@ -1,242 +1,179 @@
-Return-Path: <linux-kernel+bounces-835244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0A5BA691B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4555BA6921
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4C717C787
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5293D17D4E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60C029B233;
-	Sun, 28 Sep 2025 06:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8261DF73C;
+	Sun, 28 Sep 2025 06:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nE8AZ8dn"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012010.outbound.protection.outlook.com [52.101.53.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9+k0VK3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CNCFATm2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9+k0VK3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CNCFATm2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2A52248AF;
-	Sun, 28 Sep 2025 06:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759041350; cv=fail; b=n3/J8+4nRlWFYa2MVOxyenrteIRB1irapFSJrhXhK7Msv1PbXc6HD89WnjUejf2L2piQe0GVYCtOgrv2Mo7ZvsRRaoj4iDvtQJo2SQFCVr/3yulnY2PY3jhvLT8VLPibNhkaXSBxjHQIgi9ARg2i6MjrksLrIsPcOru6TzrPLtI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759041350; c=relaxed/simple;
-	bh=wYJjYKK6YDAtuRLNAStMbHRf6sUs/XjJMsn33BFqpVI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=msnIvySEMgw40dIUsOhk0fF0QzxWa5PNZpGLbsSZe+kITAT2WMX84JzbSoSS/d+6T9x/wfJVQe96J7xWwQ7g04MRI/52N1kGPB1n6u0zJzfLArgxrreOOIP/YjtHJY4iv3/0n0v13+g6v4ahrWqXNSw7q2RZxP7kv8gMFixUlgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nE8AZ8dn; arc=fail smtp.client-ip=52.101.53.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=scDw85p9A4nOOytev+DG7FOCjbzvqF13ttF/8Nu5LgZxLngiyw83V75Zdic6Ec7hzA+o9sgektsVVv26yZOz1YehrM6xnAog9tXBp3bH9UBJ3LICKZx0GVRVHDCPPD8YGWA5dFpgpBnkkgSOQ1NBnKY6W52gC1wSuGei4AuM/2FOLmwjzZKfuv78wT1i60KuhGxulJ/80PcoCv5Vr5QB1KnrLXiwYu62admrsnDln825wfWz/E5qyL56k/p4APrKGPMdkfRvMqRdAi+Kerrlhne1zpAFI5vDD3qTqVd2yHyNe6lmqc2jzkcpnqjJhsobSF4jJB2G4W8keCSwWj5cHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n5uHLEfQQ3Fy1kQqJGZq4VRpEPa6tWpqhTFtEYGIUbg=;
- b=rZqjbr8pTH04yPLSVtMxslDHjzD6HRymI6xi1Enqp2AoYF18zJ8C2c4AA4hgsIDHjQxzZ0W+u3oSbc99EnQvIKCnpPOY+jozBiX4DBq+2Nir/5tUtad9kYrU03LdGfGLN+eE/Gre8i1EKPbRU6PavBZzBkshpCnhXj2eBpRyYJ8YgUNVzy41pj223mNIGNj7ARdZ8tihknquYT6L7+bMIZU1EGH7UdXn5zBMBa8PkqaBzJzS3y5kwBJjfD1sAU/hqHF4B2PB24IcKN9GeWwM+31895M0Xca6Wl8GLYxdXou+KnZ9hsUnd2cYFSRAtV8Xaw40o8cozODfEAQQiLyxqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n5uHLEfQQ3Fy1kQqJGZq4VRpEPa6tWpqhTFtEYGIUbg=;
- b=nE8AZ8dnx0kcCm/pscyWV81cx9Yv6k5oRzuZuHnyYRS1VSJBniSS1lTvW5hL0tuUSamsoysLWfqWLwoaSwO/X/EtCxCHTMUNos+Reo9IY0yMxbcMkP+SBD6PI9afP+wqljYTA8gIbzP9rr2RrH2BE+r6a65e8y7OHlI5I0DTMFFHJv2+AH5/ACwoAEq9StTJoXTA0cPqq6vsiI3j2yf/kMiSCSLsOLeJrr59M3URgi7hy27rbyG1+wWp1nHlS73z0qc+NwXHtQpjfDjfph+6YMLuUYhMg+5VUMrSCAKCYLXZar4mq2CDrvTXZaN2gx22v+1dvzQF3Pl90X2z+AY+ww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL0PR12MB5505.namprd12.prod.outlook.com (2603:10b6:208:1ce::7)
- by MW3PR12MB4473.namprd12.prod.outlook.com (2603:10b6:303:56::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sun, 28 Sep
- 2025 06:35:45 +0000
-Received: from BL0PR12MB5505.namprd12.prod.outlook.com
- ([fe80::9329:96cf:507a:eb21]) by BL0PR12MB5505.namprd12.prod.outlook.com
- ([fe80::9329:96cf:507a:eb21%4]) with mapi id 15.20.9160.014; Sun, 28 Sep 2025
- 06:35:43 +0000
-Message-ID: <cd0210cc-2531-4711-8a15-2fbae77cbf0a@nvidia.com>
-Date: Sun, 28 Sep 2025 09:35:48 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 2/3] net: tls: Cancel RX async resync request on
- rdc_delta overflow
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
- John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, Boris Pismenny <borisp@nvidia.com>
-References: <1757486861-542133-1-git-send-email-tariqt@nvidia.com>
- <1757486861-542133-3-git-send-email-tariqt@nvidia.com>
- <20250914115308.6e991f7d@kernel.org>
- <0b7a83ec-d505-40c3-afa4-8f6474cd78d9@nvidia.com> <aNFxIfD2aPpB11dC@krikkit>
-Content-Language: en-US
-From: Shahar Shitrit <shshitrit@nvidia.com>
-In-Reply-To: <aNFxIfD2aPpB11dC@krikkit>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL0P290CA0013.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:5::20) To BL0PR12MB5505.namprd12.prod.outlook.com
- (2603:10b6:208:1ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A471C3314
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759041428; cv=none; b=qbnyFMIeDopcBuxMkudCCUaPrY84KMs0AAiZ/LKt3zNLlCfd4xDiNV8XDpKElIwhWWn6VOkn9+8VbyjpY/vu5GLfZ0upS9ttDw0sGSxPJUS7dWA5CvjUAUvoEpv77yMabm/S0sBVr4gl5FOIAjX612ZMnC+2bbaU+WxQ7vr3CP4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759041428; c=relaxed/simple;
+	bh=u3UkN2UIMLVqvd6wFyt6mK9hHNUfpSwCJiEhDxGdp4E=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RKgu9SNy56GDwih45XNx+qiKlQu6U53WX8svTjkPobgy3HRyFZFjtT7jyt4TzMq8+x6SuBDyt9DJqAxFTg1c6QanIHsupFEyoB27svSLYcn45vmACp91wbAgH+FOt4EVZFDupqopMEC1M8u7VTlGXITfY+WGvnu8eLNf6q9pOI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9+k0VK3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CNCFATm2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9+k0VK3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CNCFATm2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BDB2A506F;
+	Sun, 28 Sep 2025 06:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759041423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
+	b=Y9+k0VK3d1oqbtqQEAltpFUoJEOE9phkVN8fQettXrT+QOybKdM12J7uL3M/c2FSaZJT7u
+	OU+8nnWJ4jd9dXT6WymreJ0ugF101Aa/mailkja+MNXKAWJ/v6DZoeDlK9/rptTC2HIEYA
+	qqOkFfvBCr4DvAIgLC92uv4cPJvLulc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759041423;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
+	b=CNCFATm2xzbBSxylRHDgr4tQaKPpHiJTLYUx9ragm7fQKoy1/J6zF37KU8lhSwIgEHcd+F
+	AxUDvCC0A5kW71AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759041423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
+	b=Y9+k0VK3d1oqbtqQEAltpFUoJEOE9phkVN8fQettXrT+QOybKdM12J7uL3M/c2FSaZJT7u
+	OU+8nnWJ4jd9dXT6WymreJ0ugF101Aa/mailkja+MNXKAWJ/v6DZoeDlK9/rptTC2HIEYA
+	qqOkFfvBCr4DvAIgLC92uv4cPJvLulc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759041423;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
+	b=CNCFATm2xzbBSxylRHDgr4tQaKPpHiJTLYUx9ragm7fQKoy1/J6zF37KU8lhSwIgEHcd+F
+	AxUDvCC0A5kW71AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4CA1A13A3F;
+	Sun, 28 Sep 2025 06:37:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Xz/4EI/X2Gj2GQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sun, 28 Sep 2025 06:37:03 +0000
+Date: Sun, 28 Sep 2025 08:37:02 +0200
+Message-ID: <874isn9j75.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: cryolitia@uniontech.com
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Nie Cheng <niecheng1@uniontech.com>,
+	Zhan Jun <zhanjun@uniontech.com>,
+	Feng Yuan <fengyuan@uniontech.com>,
+	qaqland <anguoli@uniontech.com>,
+	kernel@uniontech.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>
+Subject: Re: [PATCH v6 0/4] ALSA: usb-audio: improve module param quirk_flags
+In-Reply-To: <20250928-sound-v6-0-7da6e5982432@uniontech.com>
+References: <20250928-sound-v6-0-7da6e5982432@uniontech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR12MB5505:EE_|MW3PR12MB4473:EE_
-X-MS-Office365-Filtering-Correlation-Id: b02411b9-f3a1-4c6e-b1ef-08ddfe59400b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c0I1MTZ1aEhEdDRtdEpQcTFBUFZOWWVZRlMrWTIzbW9kUWVPY3NmTlZpNlJX?=
- =?utf-8?B?NXg3elVwLzBCMWMwY0dDS2owNFNTQkZSZ3RkMU1vaTBIOC8ycFFuOC85eHlI?=
- =?utf-8?B?eEVFcWUvZ01GWEVsQ0M3YzRzZjhaRHMwUUJXeVJrWkVTbndjVTFFd2VwU3BG?=
- =?utf-8?B?dmZVRndaVGlzZHAzc3JkV25RYS9tQWl6Nnd6MU5uYU5RWE01ZTlNK09icFds?=
- =?utf-8?B?QTVoVE9SWStIcEhzcVlYNnRNQWJlYnhBL1dPYktYYm5QcG8xWURNUHE0dHdQ?=
- =?utf-8?B?THhRY2RIUGErT3Q3amZHcjI0TmZ0QUdzbkMrQTdqS2ZkVEs0eG1VTlk0RVBQ?=
- =?utf-8?B?UHNqTzJqTkEzaXNmSXE3Y1psYWFEbzZQOTQyN0FFWER4d0NEQWNEa0dhMUNz?=
- =?utf-8?B?cnZ2VGR6OEVhTUM0Y2tUdFBXMmJWZ3dNT3EzcHZkR2R1bHhhSFpQQzcySFBn?=
- =?utf-8?B?MUxacUl3cWxIeTY4Wnk5NHpsTFU5cTNpaHB3RDVwYVhOOEFWd2xhemQ4V3Iw?=
- =?utf-8?B?QllHTW1RcGpIdmdhUEVvcHdZTjhKY1p6MVVOcFRPWXl4TG85UTJOdG5sWWtE?=
- =?utf-8?B?NXNyT0tQWWpkV1VYa05pc2J2WnRCRm9DNFArcFhjdWtMdng0bHVrM2Z1Ulpr?=
- =?utf-8?B?K3BYNnBPL0I0QTdqcUgwbHJjcERzcGl0RFFhTkV5bkNpdWxmQTF6aFAyVzVh?=
- =?utf-8?B?VTRVMFo5VlFjVk56OEV3ellEcmNEdTN1TGJIN3ZYMVJlaTVPUS9LOEgvTWVE?=
- =?utf-8?B?cDRtZFRFN3dKWGIyVjRXeXpxNTVhR1VsaUZqWmdhQUQ3bnVrKzI1b2lWTHRn?=
- =?utf-8?B?emdYdTBReFlNV08wblBrMWdERGJTMFhldnNUcmMwbnhDUWZqWEFSWm9uVWc1?=
- =?utf-8?B?N3pPZXVWSHBMWmc5L2g0WUdiQ3YyK01EMUNmVjF3eXkrZWJIb0dKelBQcVRC?=
- =?utf-8?B?VU96eDM4MThHTGFoclhETzM5dEFRUUcyWWs5QXlGQzNVQk5pek5JaFVKb2hh?=
- =?utf-8?B?dHA1UUtiNEhLbnYzVklpUzVjMzlOeEpuRWkyM0pGVElNM3M3WjhpaWtRTUlQ?=
- =?utf-8?B?WFV5ZTdMb2h6WEVmdlB6OWFCLzQ1dU5lVVBlOXQxSC9GL1k2VUEzaGFaTTVO?=
- =?utf-8?B?K3lIQ1BDOUROM2VJMlFGdklQdGptTUVabXpVVGV0K28yb0JzdUR0dGlDbEp3?=
- =?utf-8?B?bktOUjJpaGR0NnpIdzVTdm9ISmRQMVV4UzBYczdTekJXQUVoMjYvREZBNUJk?=
- =?utf-8?B?VWNreTg0MXlXTjI5eTFucStrVm40THdITUdoZFhnMmxHakd5a1J6R3RmSExB?=
- =?utf-8?B?L2t1ZzhGLzZjaHV1cHllbTBldUh1TWY1V3dDUWNOTHE2a1JRMzRVR1NxZXRH?=
- =?utf-8?B?RytqTGlvSHU5KzgrcUxwVTJGZUpJeXZiSHowL1luY1psRHZnbWZ1dWZHaXNT?=
- =?utf-8?B?dC81VHkyL1JQRFRZbXpBTWZKK1Q3cEFQVEU0Mnp0VnJyLzVuT2g0MTFXL0hD?=
- =?utf-8?B?N091YUNjdFNZdkpTMzlhdTRGU1dEdWhHOXdzdVd5RW9zbUZqKzlLN3VIQzI5?=
- =?utf-8?B?Yzk4K2JieGtVc1JzSFNoMGRqZ1hJbG9GL3BSOXhNMElkbnNnKzdwdE8veXlC?=
- =?utf-8?B?dGNneVZNbDA4c1ZSOCtCcUpEZ1lHQkZHa3kxcUVIUllSRnpXTVNNcnExN0pn?=
- =?utf-8?B?amVadWJwaHcrZEpNa0VxaGoxTFdNNGovdUdjZjVESFdBMFhySGdXck11Sk50?=
- =?utf-8?B?UEVJZC9OejB6OEF5MzV4d0Vodk52QlYyN1JsQ0NjMnpKZ3J2VW1aaTNKVG1a?=
- =?utf-8?B?enhGaXd4WkRjZWlIeFJnTFNlajFQbUFqbFc5dEhzNmVmTlNxditSVWFSdDkr?=
- =?utf-8?B?ZFduVjczdnE5U3ZXS3pBVFRTUzN3M0ZudDRlSktGaWNYSzlINHhvUnY2Z1oz?=
- =?utf-8?Q?s7L4hZxBxBB8D5D+3YPbrHo3J8+7QBOD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB5505.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZkxzTG5sR1hzalJNV2tDc1dMNzl2WjdpTm8vcGRpbXF2dUtQZFArdkwrZVp2?=
- =?utf-8?B?TWJWOGpITi8vcW9zcmo0UmZaQzE2SVU5TG5vNEpLNnJSZzNDYVBuVGhBZUlt?=
- =?utf-8?B?WVQzRUhqOXl5V3o5c2dvVmRBUjh0T3Q5Sm5nMFkzRklmL211M3hteFNmV2lN?=
- =?utf-8?B?MnBRSmxHOFkyM0xyVS9BNS9DZHVMaUZTMXpiRUYyRWFQbllRUHpoOW9HcGlm?=
- =?utf-8?B?eDBaOFlkcjBnLzM5WEhWb05TR3lIWFZNSGRUSWs5UzdEdUVQakxyeDZDUDQv?=
- =?utf-8?B?cGFSQ3o2OUwvd05zcUlsQjR2ZDF1SDEvVVFnRUZiQjBtYzZGanJtZjdGRGJM?=
- =?utf-8?B?N2JGVytsb3N6Wmt1VnJ3TFFrU3R0UEF4M09QUUpPUnNsRStMN1hSb09QdXZ2?=
- =?utf-8?B?QnU4STUvck9VNHBBdVJXbjRYTnN4anAyMWI2clNPbmlFRHkxbkNFaDc2OFpB?=
- =?utf-8?B?YVMrZE9sZjJoTDdaN29jSG5BRDM4SS96MHAydm9ibFlnNmNFeUpuUnphZDVS?=
- =?utf-8?B?R3JYSElCeTJNZnFKeUQ3UkU2bnVsUjM2MTVIZGFnTzlvZXY4MDNqejBzWmxU?=
- =?utf-8?B?Z2dId1dNVE5WaWZOSXBCeWNrWDFFT3pHd3FaZUNTbUhkc1p5QmR1cXZhL29u?=
- =?utf-8?B?WFROWVdQOU5BbjhyQmhmdXFMT3NYR3BNRnhoamdoZTBrblp6dnp4dFhJMjFH?=
- =?utf-8?B?QTFhY1M3RnI4QjJQNlIwTW1idnh1anA4K2Q4ZzE5SDhBZVo1SUVQbmVMS1J5?=
- =?utf-8?B?bk1yckFMN2JPeFhCZ1RXZU5IeE8rVlNyOUdib0tsY1FYYU55S285NWMwL2xJ?=
- =?utf-8?B?b3ErMDY1MnVZdVJ0RVRoNXVDQit3a01scUxrWlpmL2dpR05Fdkg0NExHU0wv?=
- =?utf-8?B?bTVoeDNjT2pQdGhUa1FuanEzTUNMYmppV3F5UVF2QnFKNFNhVWNmdXc4QTJh?=
- =?utf-8?B?dU5SdkdkdXJRYkl5WE01TDNOKzA2cmdWaGhRWjl5VlF3Rm1SUzUrN2R0TTVS?=
- =?utf-8?B?MXF3blcwNU9rNjlOQTJKTTNBU3E5bFNrZ1YzWVk5czRNR2QzVStyVkxJTEE4?=
- =?utf-8?B?V1Nlck1RaDV4NjJYMEFVTm1rRVN3RmVSWXdhQk5ZQWtyRzlsVEM1U0NUUjBv?=
- =?utf-8?B?QzZab3g1M0owWC9JWlpJMHIwc1JpK0VIcTJpaHhBNUkvbkdzMVB5a25RY1FX?=
- =?utf-8?B?MThyV3hXN2RyNTRaUFhVMjFUT1VpaWdocnh2ckRkTWtIcmlPUlNJVXVWUTRT?=
- =?utf-8?B?WU9mdFZ4QzNhODV5MzJrRVprYm50Z2JSZThzQmhmK21ZNWxEVHJ6dWtHV1lM?=
- =?utf-8?B?NkkzSktqU3Q3RytRTytrWlQyNHJ3SnZnaHFVV2dsZHBnT3UrTm5DaDhYZUwv?=
- =?utf-8?B?N3dnTWJYaktDb2tpelVpbnBadjZld0x0L002OWxSaUVqWU1GYVNEWk1aeVZY?=
- =?utf-8?B?Z2xIVDBZMm5TeS9qMU1yMlB2VTFDelhDR2hRenpMNUNqcGo2SXBFa1poRm94?=
- =?utf-8?B?V1lNd0xjcGlpdksrd2FsMlFHbmNTcjdvV0MvOXVpeExtWWsweURjMHV2eVJo?=
- =?utf-8?B?cG9tWVkrV25hSGRZMTRmbklGaDRsWVhjUEZZY0ZsT0lZMHBNb3ZmcTFhWitZ?=
- =?utf-8?B?WTVCOEhXS0RmYVBBeGhuT3Z3NzJyMTlUS1NndmYzV0x5VzF4N0xTZEl3TnFI?=
- =?utf-8?B?ckNmUXhGYlFNTXdYR1RzQjVLMVpYT0VDTFFnVHhybEptVnB2YXh4alRmOHZu?=
- =?utf-8?B?TGFia2dpR1dkUkwzRFJiZmNqNnpWRGJNOHF2MVBqR0o4cTJtTDB3T2tQZ0dV?=
- =?utf-8?B?SmRSajlrMEhsMVRNbjJtazgvRkxzS2F2V01FZk5FU3F3enpHRnQ3dGVrRk5N?=
- =?utf-8?B?eVozQitQb1FwbXJNaysvb3hERXJpZ2dVcTk3SXRCdFZZSzk4RkZaZzlSREtj?=
- =?utf-8?B?TGtmWllmL1NMalgyTjhJdVc1Z2kwTXlvM1RkdEI4TVppVnJVbHlxdTlKUEQy?=
- =?utf-8?B?VURXcVFCK1k1dTdQTUVGYzVjZkFsaFErTzlRUVBNTUNiRkhXT0tQb2s1dVVV?=
- =?utf-8?B?QnZURlY2VXVudCswYXlZa2JnZmZxdE1oSjU2S0F1V0JUWnA0OFpOTFZKUE9S?=
- =?utf-8?Q?Lpgy/yYk9G/9sQc0uXXiryNLe?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b02411b9-f3a1-4c6e-b1ef-08ddfe59400b
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB5505.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 06:35:43.8907
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JoM5GUv+fYFlP8e3mHX9438P1tZvqr3raR5B7P2TMuocCQKH1jvEsW+70hyXoho9jQ7jgLRCqZjXpXCY4HGEbw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4473
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-
-
-On 22/09/2025 18:54, Sabrina Dubroca wrote:
-> 2025-09-22, 10:18:52 +0300, Shahar Shitrit wrote:
->>
->>
->> On 14/09/2025 21:53, Jakub Kicinski wrote:
->>> On Wed, 10 Sep 2025 09:47:40 +0300 Tariq Toukan wrote:
->>>> When a netdev issues an RX async resync request, the TLS module
->>>> increments rcd_delta for each new record that arrives. This tracks
->>>> how far the current record is from the point where synchronization
->>>> was lost.
->>>>
->>>> When rcd_delta reaches its threshold, it indicates that the device
->>>> response is either excessively delayed or unlikely to arrive at all
->>>> (at that point, tcp_sn may have wrapped around, so a match would no
->>>> longer be valid anyway).
->>>>
->>>> Previous patch introduced tls_offload_rx_resync_async_request_cancel()
->>>> to explicitly cancel resync requests when a device response failure
->>>> is detected.
->>>>
->>>> This patch adds a final safeguard: cancel the async resync request when
->>>> rcd_delta crosses its threshold, as reaching this point implies that
->>>> earlier cancellation did not occur.
->>>
->>> Missing a Fixes tag
->> Will add
->>>
->>>> diff --git a/net/tls/tls_device.c b/net/tls/tls_device.c
->>>> index f672a62a9a52..56c14f1647a4 100644
->>>> --- a/net/tls/tls_device.c
->>>> +++ b/net/tls/tls_device.c
->>>> @@ -721,8 +721,11 @@ tls_device_rx_resync_async(struct tls_offload_resync_async *resync_async,
->>>>  		/* shouldn't get to wraparound:
->>>>  		 * too long in async stage, something bad happened
->>>>  		 */
->>>> -		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX))
->>>> +		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX)) {
->>>> +			/* cancel resync request */
->>>> +			atomic64_set(&resync_async->req, 0);
->>>
->>> we should probably use the helper added by the previous patch (I'd
->>> probably squash them TBH)
->>
->> It's not trivial to use the helper here, since we don't have the socket.
+On Sun, 28 Sep 2025 05:07:58 +0200,
+Cryolitia PukNgae via B4 Relay wrote:
 > 
-> tls_device_rx_resync_async doesn't currently get the socket, but it
-> has only one caller, tls_device_rx_resync_new_rec, which does. So
-> tls_device_rx_resync_async could easily get the socket. Or just pass
-> resync_async to tls_offload_rx_resync_async_request_cancel, since
-> that's what it really needs?
+> As an implementation of what has been discussed previously[1].
 > 
-yes these are options, but we don't like too much passing the socket to
-tls_device_rx_resync_new_rec() merely for this matter. Also we wanted to
-keep tls_offload_rx_resync_async_request_cancel in the same format of
-tls_offload_rx_resync_async_request_start/end meaning to have the socket
-as a parameter.
+> 1. https://lore.kernel.org/all/87h5xm5g7f.wl-tiwai@suse.de/
+> 
+> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+> ---
+> Changes in v6:
+> - Apply review commens, details corrected and wording revised
+> - Link to v5: https://lore.kernel.org/r/20250925-sound-v5-0-2593586ff350@uniontech.com
+> 
+> Changes in v5:
+> - Apply review comments. Thanks a lot, Takashi Iwai!
+> - Link to v4: https://lore.kernel.org/r/20250918-sound-v4-0-82cf8123d61c@uniontech.com
+> 
+> Changes in v4:
+> - Split basic parse and dynamic change
+> - Drop usage of linked list
+> - Link to v3: https://lore.kernel.org/r/20250917-sound-v3-0-92ebe9472a0a@uniontech.com
+> 
+> Changes in v3:
+> - Instead of a new param, improve the existed one.
+> - Link to v2: https://lore.kernel.org/r/20250912-sound-v2-0-01ea3d279f4b@uniontech.com
+> 
+> Changes in v2:
+> - Cleaned up some internal rebase confusion, sorry for that
+> - Link to v1: https://lore.kernel.org/r/20250912-sound-v1-0-cc9cfd9f2d01@uniontech.com
+> 
+> ---
+> Cryolitia PukNgae (4):
+>       ALSA: usb-audio: add two-way convert between name and bit for QUIRK_FLAG_*
+>       ALSA: usb-audio: improve module param quirk_flags
+>       ALSA: usb-audio: make param quirk_flags change-able in runtime
+>       ALSA: doc: improved docs about quirk_flags in snd-usb-audio
 
+Now applied all four patches.  Thanks!
+
+
+Takashi
 
