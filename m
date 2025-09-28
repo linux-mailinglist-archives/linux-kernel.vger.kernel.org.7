@@ -1,150 +1,116 @@
-Return-Path: <linux-kernel+bounces-835393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA2DBA6F9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B405ABA6FA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA19F4E1192
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:07:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F48117B68F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B672DE70C;
-	Sun, 28 Sep 2025 11:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IUn7rIAF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98D72DAFAE;
+	Sun, 28 Sep 2025 11:13:29 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F19F2C2376;
-	Sun, 28 Sep 2025 11:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD4B15E90;
+	Sun, 28 Sep 2025 11:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759057651; cv=none; b=L/FCJIAW9NC/UQ8fAshUnzAD5zozCWqzpdh3MEQbqEWf2a2SqELCb7lhQS2hTWfBKDZFlXSWP2/9CxQLSvHTO4eOJ4N7KmyBPTUtJOur1SlNgPfnWSPIFWP30da12mKiZRE+FIKoDVs5L7mTQMevSCY2ZDP6rNjylMwdwuVdciU=
+	t=1759058009; cv=none; b=gAOH1S4hdib+AP1y5M+2nIqzy6Vu4ZTWe/T4H4MzdoEn9duxotJyhZgb8MPArtDnfIxgKo+Q/4ulEAezJGM10U8EmbNG4vZ3eHRkFFokCggk/BwNO1pKnYDgYfGNcgVZ/W2LF76bs0SlV5HLHxB37jElutRkU0zpREkbIlfhVLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759057651; c=relaxed/simple;
-	bh=FH2sTDQJhpTphvaX4szRy8f0pnudRzvD6RNhp4vVOyE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=XGtBO7Kn3kh/deviY0mdRtQ9xxv1bLogIQd5iNIbdlcTB4tdqUh3JvxJW5sPDJMpJ0L1/p/keDDaH1+m2aKjAKAQJCAEpouUINmI3uoUf8JkSt0+Y9o38cnyh7wY8plfVzr9BV7w8uCm0wN8w6Ueq/4IEb7lX8C7VEgkKaJ/Mdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IUn7rIAF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16977C19422;
-	Sun, 28 Sep 2025 11:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759057651;
-	bh=FH2sTDQJhpTphvaX4szRy8f0pnudRzvD6RNhp4vVOyE=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=IUn7rIAFypO58pGw0RWD9/heiJoxLdpdO4mpxAfEPnjXSZYy8t0s3Mp4NOpfd6PI8
-	 bRiT2SmpVgQUlq4b7Gx/SGXIhGkxrMaHRl2OTdSBpRkQqxpuGm5DW+m9AJkdRdDjuJ
-	 VLeLhBOCK9MjiUiQQebio7mTMqMjeFXN6KsQCxDBGmWdozSNO43cx77XKpVrSOzMPn
-	 4n/QlBuBVkJUHSDOoF0g+fswiuxV897iKwnFQsg+rtOw4jWEf5HdQq8I3nyW2WEV3Y
-	 f/72Xx1rwF3vc/DAiOz0Ao9oIOlfjgZtellQSs8I9UFVjC6dGt0dFZByfAncjx9rhj
-	 6xv8n7/SZ5Pmw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1v2pH4-0000000D8Ot-0N9g;
-	Sun, 28 Sep 2025 07:09:02 -0400
-Message-ID: <20250928110901.942338034@kernel.org>
-User-Agent: quilt/0.68
-Date: Sun, 28 Sep 2025 07:08:35 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Wang Liang <wangliang74@huawei.com>,
- Menglong Dong <menglong8.dong@gmail.com>,
- stable@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>,
- Jiri Olsa <jolsa@kernel.org>
-Subject: [for-linus][PATCH 3/3] tracing: fgraph: Protect return handler from recursion loop
-References: <20250928110832.098564441@kernel.org>
+	s=arc-20240116; t=1759058009; c=relaxed/simple;
+	bh=BGjEeHnpR7fquKM2+Gt10+/YCfHBGuwKrXn068aIokM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XyRjUVN1UDU2OD4GtQYgD08QtYsgsIGCOB+j22QL00KoT+56BaTaC4Z4zO3KOY5VMVgiQXnjxyQF4/wvsh6yF8bQUEHf4Uy7IuR943Ofaf5O2PBoU63vslCBpbB1GLbIeLfDVzukWyX3dvA63+YFTWoXdrvQmQ9KKRFPhsXHntY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 21148340D30;
+	Sun, 28 Sep 2025 11:13:26 +0000 (UTC)
+Date: Sun, 28 Sep 2025 19:13:21 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Jesse T <mr.bossman075@gmail.com>
+Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v2] i2c: spacemit: configure ILCR for accurate SCL
+ frequency
+Message-ID: <20250928111321-GYB1346428@gentoo.org>
+References: <20250718-k1-i2c-ilcr-v2-1-b4c68f13dcb1@linux.spacemit.com>
+ <CAJFTR8RGT0JFcsSODEgyWgJYKj6QhWa7=5Tm9_6U4Pkv56X=-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJFTR8RGT0JFcsSODEgyWgJYKj6QhWa7=5Tm9_6U4Pkv56X=-g@mail.gmail.com>
 
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Hi Jesse,
 
-function_graph_enter_regs() prevents itself from recursion by
-ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
-which is called at the exit, does not prevent such recursion.
-Therefore, while it can prevent recursive calls from
-fgraph_ops::entryfunc(), it is not able to prevent recursive calls
-to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
-This can lead an unexpected recursion bug reported by Menglong.
+On 23:37 Thu 17 Jul     , Jesse T wrote:
+> On Thu, Jul 17, 2025 at 9:08 PM Troy Mitchell
+> <troy.mitchell@linux.spacemit.com> wrote:
+> >
+> > The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
+> > master mode operations is determined by the ILCR (I2C Load Count Register).
+> > Previously, the driver relied on the hardware's reset default
+> > values for this register.
+> >
+> > The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
+> > frequencies lower than intended. For example, with the default
+> > 31.5 MHz input clock, these default settings result in an SCL
+> > frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
+> > and approximately 338 kHz (fast mode) when targeting 400 kHz.
+> > These frequencies are below the 100 kHz/400 kHz nominal speeds.
+> >
+> > This patch integrates the SCL frequency management into
+> > the Common Clock Framework (CCF). Specifically, the ILCR register,
+> > which acts as a frequency divider for the SCL clock, is now registered
+> > as a managed clock (scl_clk) within the CCF.
+> >
+> > This patch also cleans up unnecessary whitespace
+> > in the included header files.
+> >
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > ---
 
- is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
-  -> kprobe_multi_link_exit_handler -> is_endbr.
+..[snip]
+> >
+> > +static struct clk *spacemit_i2c_register_scl_clk(struct spacemit_i2c_dev *i2c,
+> > +                                                struct clk *parent)
+> > +{
+> > +       struct clk_init_data init;
+> > +       char name[32];
+> > +
+> > +       snprintf(name, sizeof(name), "%s_scl_clk", dev_name(i2c->dev));
+> > +
+> > +       init.name = name;
+> > +       init.ops = &spacemit_i2c_clk_ops;
+> > +       init.parent_data = (struct clk_parent_data[]) {
+> > +               { .fw_name = "func" },
+> 
+> Is "func" a placeholder? Can we name it i2c_scl_clk?
+> 
+no, it's the parent clk of scl that need to request, which correspond to
+the DT node 
 
-To fix this issue, acquire ftrace_test_recursion_trylock() in the
-__ftrace_return_to_handler() after unwind the shadow stack to mark
-this section must prevent recursive call of fgraph inside user-defined
-fgraph_ops::retfunc().
+      clocks = <&syscon_apbc CLK_TWSI8>,
+                ..
+      clock-names = "func", ..
 
-This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
-fprobe on function-graph tracer"), because before that fgraph was
-only used from the function graph tracer. Fprobe allowed user to run
-any callbacks from fgraph after that commit.
-
-Reported-by: Menglong Dong <menglong8.dong@gmail.com>
-Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
-Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
-Cc: stable@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/175852292275.307379.9040117316112640553.stgit@devnote2
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Menglong Dong <menglong8.dong@gmail.com>
-Acked-by: Menglong Dong <menglong8.dong@gmail.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/fgraph.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 1e3b32b1e82c..484ad7a18463 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 	unsigned long bitmap;
- 	unsigned long ret;
- 	int offset;
-+	int bit;
- 	int i;
- 
- 	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
-@@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 	if (fregs)
- 		ftrace_regs_set_instruction_pointer(fregs, ret);
- 
-+	bit = ftrace_test_recursion_trylock(trace.func, ret);
-+	/*
-+	 * This can fail because ftrace_test_recursion_trylock() allows one nest
-+	 * call. If we are already in a nested call, then we don't probe this and
-+	 * just return the original return address.
-+	 */
-+	if (unlikely(bit < 0))
-+		goto out;
-+
- #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
- 	trace.retval = ftrace_regs_get_return_value(fregs);
- #endif
-@@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 		}
- 	}
- 
-+	ftrace_test_recursion_unlock(bit);
-+out:
- 	/*
- 	 * The ftrace_graph_return() may still access the current
- 	 * ret_stack structure, we need to make sure the update of
 -- 
-2.50.1
-
-
+Yixun Lan (dlan)
 
