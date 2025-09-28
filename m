@@ -1,125 +1,80 @@
-Return-Path: <linux-kernel+bounces-835259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54563BA698D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E3ABA6A24
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8E61896CC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C22317F849
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF0D299A94;
-	Sun, 28 Sep 2025 06:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="WzYl8bjD"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167C522D78A;
+	Sun, 28 Sep 2025 07:35:46 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918701E22E9
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C6A824BD;
+	Sun, 28 Sep 2025 07:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759042729; cv=none; b=COXi26Ju+D+KU/skaPhjyZdhkgfOraHCQGYqABnYth1KUHbQuOJbpVbYKgvnQ8SbFzyjX6JgoDafS93LHT4K3L8WuleHP8fJGNEXTT1IUTkVDrTQgeEnVSbzCNVzxzggCxlb92QMCD5I1vQ43239c4G7CWjkCAIuhMEVEsesWOA=
+	t=1759044945; cv=none; b=fW9qRFTGGITdSgPOJcsm9OqPiJivkp4JRTVxBke5CnW4G7F8ir7sX14QwquTmgA7wnpnzBMzPWLgTkZC865wquPiUuQa3sDoWyVAAIXXEqJ+MZdq9+GsHDXvwoY6fxGN4cYq8C6rlpN9+nyAGYXx8vXJXvWp7srQZvBtYYv/aCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759042729; c=relaxed/simple;
-	bh=9Bla6r5MFodPMwhxVQ7tWLS8XbjrbVJNG1aVVLSnnwg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=TWIyv7OvR0IS527MjhpPnIV+SWAlF0U1dX1VDti3o/nzQymil01OeaPbCRj2eoqmV73HgSNBafCDFBUHqZUn+d3mvlxz8Kyl6DbvLlO8/3jSeHttVmM0TnCjGI47s6CPMpTrRCNwWDBxif/zZxplKRYh8GCbUdLm8Sz0C1nnWmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=WzYl8bjD; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b54c86f3fdfso3553577a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 23:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1759042727; x=1759647527; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s9qb4Xv7S/9iKlar3U/z3W5+/6qCV42UQ7G2sXllZfY=;
-        b=WzYl8bjD5Jn+MdSSd11YVJHM2w1WJQWuDJLzb7w/RwCZbW+KXdu0ObUvZUJTqlL+9P
-         42Lq/hadAv4hwdd1LvqUanivMb00mU5FHwbfjVRaxEyq7CKbf+WQB7NhvIiNhi8bALGv
-         jag24b/mJQ4C8w8nECo2b3yAkQ0H4j2rQi7w9rbeA6d7gZ9VqIN2HXuqBd3F94oC+erQ
-         0pJOKTffrJgYcYlJ20VoBm6OC5RdmUaBZ5YnWeizwWKEiNatc5sHcjQ2lZTD2U7X/6Z9
-         ayP8vKNn+KvK9dz/VBjblwVttV2fyF5SVL8rOZWUpO8nYsLCdT8NsUiRNxkrDw8DbVov
-         Urkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759042727; x=1759647527;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s9qb4Xv7S/9iKlar3U/z3W5+/6qCV42UQ7G2sXllZfY=;
-        b=sRgTqzXNzqYdSh9MGP/sbFaSlHDjWuQy71/JfOBT7mYFebWbs2KXuEZOrGMUbzk+qc
-         EEVCrZq9OPymlSfGnLXfy4J7NGppOrI1no0wvdh2AN+7pdf5ZshGyatDf55tphs/l/6U
-         9z8LSK2D8kiqoLDv1kT55cFIhsmlA4g9rVvU1MrVnjanfj7YDFy9hPc9xBA9b3BGNAdQ
-         oMvIbGvV9ITgXmgRTUW/3IIMWHEOt0b2bookeRIFznykOdYGzZY3R/akTmI2mlu1w2Ae
-         VI7CxhJWJM9LlsNKdRHQ9+B2jMESIH7EVBiOfypimcYVazxOw9YUzS8neWsszhjA6MiO
-         GmoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4bgn/w67plRK9O/isAKLIqg8c1dwzVVlbSc2h5v64yf3PlDnJInrGWzS5sR5C8cwFrQTYNvopO/6iBbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyylPRHBKIjKdBArLdlQ+BLop6C9nMUgprArwG6qYlu30ls4RdO
-	/u486hv1NAONnKuqcHkhHzPfDBrwtgNqSOIiPm6NIpf+eqbs4qIm70dLoa6jXMxqfETo/F0fskK
-	OGWRfi6Lx0g==
-X-Gm-Gg: ASbGncunGfVDiiGaIDPoR4jFXF5ESrxXxAaOr3nAyhVskYjKpdwIJ1EzaHM9alsEPHI
-	68I9G5w3qlY63EqNIPRTDBe8g6mb7VEyfD5tHfflaOIijSr/lF7ZpTkdjAlxzgbV24F5iz/Gs5y
-	mzJhmftPqlXmrHayU60KvbdwQLNX10xHk2eHCcqeYgNg9JSHzOF0rDrMNK7pTnt9qR0rZq6ntqA
-	mS2GIab3IJEdGa13+5FwbsnU5EuGFb7tlK105vvDO2e9KUivDiyAe76F8bmRvkEa7DnmiKwoI5Z
-	QsVPjDopxZ7myiVi2G8KToeP+HG+tl6XdYbGcJXCWliHgPk656HvsaH4w0wEz4mijKrYiz5cZmu
-	xNSq7s3z9KXXt1QkN3kpW1fPAGLSsgXFMDI9jB5kga8xpL11/WPmjA7qi
-X-Google-Smtp-Source: AGHT+IGzyRlP0aMu8WsFbE3pNjkGGB8M5OH35YpWtQqlIpwvlvTcJH1LjOwEOd1Ttxnx3O+rBgJR8g==
-X-Received: by 2002:a17:903:4b4f:b0:267:8b4f:df36 with SMTP id d9443c01a7336-2818ba15c86mr54104835ad.29.1759042726783;
-        Sat, 27 Sep 2025 23:58:46 -0700 (PDT)
-Received: from 5CG3510V44-KVS.bytedance.net ([203.208.189.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d32dasm97959615ad.27.2025.09.27.23.58.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 23:58:46 -0700 (PDT)
-From: Jinhui Guo <guojinhui.liam@bytedance.com>
-To: joro@8bytes.org,
-	suravee.suthikulpanit@amd.com
-Cc: guojinhui.liam@bytedance.com,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu/amd: Enable PCIe ACS once AMD IOMMU initialization succeeds
-Date: Sun, 28 Sep 2025 14:58:17 +0800
-Message-Id: <20250928065817.1279-1-guojinhui.liam@bytedance.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1759044945; c=relaxed/simple;
+	bh=IY2AM7lW9609eu5wCP0vjZkmvDxxpLcxxBG8dpZSjRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UyCTR1BrCVCENDhsMT2VBMR0EEmRt29Tr9aUSEDZAYa7K6ebrMmUHAeI9Z0RYdqLggPjJMJuMU+SwfbqjER2rA95JkGiG57VD0yYbJ8tntx0nftZjpVshxdk4SJbGK8zyqrbVFZiE/+1XMlSXf/ErWF9MnhuZ+iex50+PPid2Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [116.25.94.74])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 24516f395;
+	Sun, 28 Sep 2025 15:00:12 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: heiko@sntech.de
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	naoki@radxa.com,
+	robh@kernel.org
+Subject: Re: [PATCH v3 1/3] arm64: dts: rockchip: disable display subsystem for Radxa E52C
+Date: Sun, 28 Sep 2025 15:00:08 +0800
+Message-Id: <20250928070008.74952-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <10594621.0AQdONaE2F@diego>
+References: <10594621.0AQdONaE2F@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a998f1f3aa003a2kunm5258a7bd3278d3
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHUkaVhhKTUodT04eQx1MSVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSk1VSU5VQk9VTE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJNS0pVSktLVUtZBg
+	++
 
-Enable PCIe ACS after the AMD IOMMU has been initialized
-successfully.
+Hi,
 
-Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
----
- drivers/iommu/amd/init.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> I'm torn on the approach vs. just removing the error line in the driver.
+>
+> Returning -ENODEV from rockchip_drm_platform_of_probe() is correct,
+> but the error log could just be a debug one instead.
+>
+> Because running a system without active vops is obviously fine.
 
-diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-index ba9e582a8bbe..b695efc54d5b 100644
---- a/drivers/iommu/amd/init.c
-+++ b/drivers/iommu/amd/init.c
-@@ -3212,9 +3212,6 @@ static bool __init detect_ivrs(void)
- 	}
- 
- out:
--	/* Make sure ACS will be enabled during PCI probe */
--	pci_request_acs();
--
- 	return true;
- }
- 
-@@ -3284,6 +3281,10 @@ static int __init state_next(void)
- 			ret = -EINVAL;
- 		} else {
- 			ret = early_amd_iommu_init();
-+			if (!ret) {
-+				/* Make sure ACS will be enabled during PCI probe */
-+				pci_request_acs();
-+			}
- 			init_state = ret ? IOMMU_INIT_ERROR : IOMMU_ACPI_FINISHED;
- 		}
- 		break;
--- 
-2.20.1
+We have disabled the display subsystem in the device tree for some
+rk3328/rk3568 SBC. Not sure if drm allows silencing this log, I'll
+try to send a patch.
 
+Thanks,
+Chukun
 
