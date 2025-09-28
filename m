@@ -1,85 +1,47 @@
-Return-Path: <linux-kernel+bounces-835223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DCCBA6875
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:41:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DF9BA687E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DFAC18961ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E23E3C0224
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02322298CA4;
-	Sun, 28 Sep 2025 05:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHCenmbi"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC4A28C874;
+	Sun, 28 Sep 2025 05:44:05 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48F0194137
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 05:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ABA194137
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 05:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759038091; cv=none; b=B0ueDohSm9ulnDorXsYi9BhLpvxwkApxBuBXYz5pUmnpeP+nGrDZHwpSgYltDBY+tr72Bi/szCK8NJQHnHGKcOHFne/Jkf1Eeh0E3geNBNBVmMEFTpOs+gi/H+BzJkHgjA5rh/b1KdyRDx2XFCGz+CGWKr0la833ubby/tmcFUE=
+	t=1759038245; cv=none; b=pIBahj/6ndgcIvHy8yeCU8/191UZlSOJak5yLHVN1X54/iCCkhIRe9KQhjueICoKRB5vI7Liu1WOvw3txwh4mn6fWDEjWVTTRSVczk1TOGODgQt06hAItIu+UrnZLTKRzIhIB6bVNLzwj9m9RxgijinaaBQXlNeXOzjlbutbONM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759038091; c=relaxed/simple;
-	bh=S0v1gHURYMdw1yi6PKnRpYcVfrORhPmC76eStiDMp8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YOk30/Tl6pSKsYWqkXuCGTL5dbsamHqvKUKQQv3JIUZBpTAeoqwv3ymFgDbs8zyBoU59Nzn+w2mxBx3L7uVKZvTElyfbhnRkm45eEWC9V1vikGUz1ojDK6LzlqylrxM4OitboLX12xLHb+20pkmrRguXk0bOWPd6r2M9lWMxaAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHCenmbi; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27ee41e074dso30062675ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 22:41:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759038089; x=1759642889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BIwshfVuzFnOMAKrYLI6jEhBWZi5IYNs9VlFFa/dZNM=;
-        b=gHCenmbi+CUm+y9X4UKFg/5Y3cvwV+nJHPkAiWVWC/p1grh5USHHfBcMftMRxVywth
-         iCfsEzXT1mL4NMkMw9eiUVqsKWs8L4MsBcbSg27hDeIOgjnbPJjNZ3Tsn4xl3WBzqMca
-         C+scI0jx06Q0VpW/7l20Q5CK4YIM0UP8Z7nZTz2s6UVheSXPooQMiiylwG3sX5aVH6rg
-         L+Ijtz2lQ2kHLROIDky63xEIQnvsxmhmqxnn21nYP9wJq/e47OtdtuqkWxMvSs9nG2OD
-         v3mws+ZoDlrB5zBt2xHyCxF9Z0wNXdIKexydjwsWQEQzG48EQOxM0WudjtyX5UudxyXQ
-         zEeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759038089; x=1759642889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BIwshfVuzFnOMAKrYLI6jEhBWZi5IYNs9VlFFa/dZNM=;
-        b=KeHrI56ICW2CtKJumzn5fybBNOUzIBxCWg00G5IrPX/ZOngzeCULiJ5oIPec1IXid0
-         jUa8cS6OBAnBFgJtTFPL87r4E2ZIEV6fHbAPIoXBBVDGTsdP46zRMm7cFNL4Ba5jXZHF
-         vvyXCtA0JrPav+EKbbXif9yp8IC+ecP2SyCnaTjBNZEAsY8tTCRVoA8j0/Ct8YcQKHF6
-         Er1k+c75e+YyU4iUd8on6/sNAusCmnfQiIgxO/e6fLo4+nrf7dspVIkdgd+vt2WdKEKd
-         D5yyYuzHE1gDEnJAywzGdw606J9uQlr+NP4WMK79as5exmGQgsVe4o2RSHAeqwpuo+zL
-         Omig==
-X-Forwarded-Encrypted: i=1; AJvYcCXvvgSDRyp5re1TKwngJpjelLqz0vfSJtLlhtBX2FAMqeBHrmfQ8MsNV52KHQGmllDVunwlYyTapdYWnko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDbntwJi0hNqwB4WiNt7yZoRFm2GtvqgHtyvn0IdGez4lHM4Tg
-	bO+W4oxpQw8ioydyX7DfNh9b96WSJaEMYYXUVxzltIYZ7LPjsRUs+QEe
-X-Gm-Gg: ASbGncsUQuHuI7+XoTKTdsqQFNltnHJ5N/UiPjKeq7d/3WBHZrvwSTnbhGSTiPeJRbE
-	xLW9iQ3bSHZjt6Exq7ZCDb3i1zqBQbMkuOemKXKx6hUy5WVYA7ZmWme5QYGhqxVyMC8UrMpxwyr
-	/eH93FgGegy1XhyOggxsnb0ahFNtpt5GuUiFUB4Ed48HHIp8UreEuwpfBTs/oEj9qdoNNtki4s9
-	+K8XeCU4t8LNz52TCfNko9LPgLcpwNDR4RIMyB4BKWVrh/7I1YXd1n/1bcVN4PqCZu1edsjgMYT
-	vsZEw00sGnnUvGKnpvBHcNj5+EnREvrJAG0dop/eRS/1KKBsmEPmdhrSsnR/ttazAaVfudQWk98
-	OFUQtLQfztD9P6GUIhguMGVyPqT+Kyxrs8soUe8Sk+aFh
-X-Google-Smtp-Source: AGHT+IHgKzmQxn3LYtCYg7KtWdGt8UUYN/QqgIJUJEq3IBbdnq2sdaotugj5GIiwi4pi2voIkLiz3A==
-X-Received: by 2002:a17:902:cf42:b0:267:95ad:8cb8 with SMTP id d9443c01a7336-27ed4a96047mr129802575ad.44.1759038089009;
-        Sat, 27 Sep 2025 22:41:29 -0700 (PDT)
-Received: from fedora ([172.59.161.218])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed67076ffsm94429295ad.39.2025.09.27.22.41.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 22:41:28 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v1] gpio: gpio-grgpio: call request_irq after incrementing the reference count
-Date: Sat, 27 Sep 2025 22:40:19 -0700
-Message-ID: <20250928054019.1189591-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759038245; c=relaxed/simple;
+	bh=ZE/JNa+XwXw34IRp4mXF8odkUuzaE0d5JjptaFwGJMk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DVlMjj0HNQnhT2dZ9dHmmKLD6pzDRTm9j86UBs2etAWjpqbtSFlP9gpI0f/UyVgFYmjWhXgm/U1NnoGDYF9Xvfh2CPSnXrBebZIkrVm+dVaAyWP6QNUSl4MuEt+fEsjnhV9/5Yy7e3wDvdDdLQ2neGmB1DpWWxurH/24Xf4mpN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201604.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202509281342478548;
+        Sun, 28 Sep 2025 13:42:47 +0800
+Received: from localhost.localdomain.com (10.94.11.63) by
+ jtjnmail201604.home.langchao.com (10.100.2.4) with Microsoft SMTP Server id
+ 15.1.2507.58; Sun, 28 Sep 2025 13:42:45 +0800
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <tzimmermann@suse.de>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <airlied@gmail.com>, <simona@ffwll.ch>
+CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>, Chu
+ Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH v6 0/1] [DRIVER] gpu: drm: add support for Yhgc ZX1000 soc chipset
+Date: Sun, 28 Sep 2025 13:41:22 +0800
+Message-ID: <20250928054123.32895-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,72 +49,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 202592813424730b4f3cdd60b66c80acf0ee49930abdf
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Remove extraneous dropping of the lock just to call 'request_irq'
-and locking again afterwards. Increment reference count
-before calling 'request_irq'. Rollback reference count if
-'request_irq' fails.
+v6:
+ - simplify to return drm_atomic_helper_check_plane_state()
+ - remove empty line
+ - remove call drm_probe_ddc and smidebug
+ - replace drm_err with drm_dbg_kms
+ - add callback .disable
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- drivers/gpio/gpio-grgpio.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+v5:
+  - remove extra level of subdiretories, change to driver/gpu/drm/yhgch
+  - remove else from > +        else if (!new_plane_state->visible)
+  - remove extra check in function yhgch_plane_atomic_check
+  - remove the extra parentheses
+  - change the author like other modules
+  - use drm_edit_read function instead drm_get_edit
+  - remove debug info drm_warn call
+  - rename function name smi_connector_helper_detect_from_ddc to
+     yhgch_connector_helper_detect_from_ddc, remove extra return statement.
+  (https://lore.kernel.org/all/20250925091715.12739-1-chuguangqing@inspur.com/)
 
-diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
-index 0c0f97fa14fc..18d972fddfac 100644
---- a/drivers/gpio/gpio-grgpio.c
-+++ b/drivers/gpio/gpio-grgpio.c
-@@ -227,6 +227,7 @@ static int grgpio_irq_map(struct irq_domain *d, unsigned int irq,
- 	struct grgpio_priv *priv = d->host_data;
- 	struct grgpio_lirq *lirq;
- 	struct grgpio_uirq *uirq;
-+	bool needs_req = false;
- 	unsigned long flags;
- 	int offset = hwirq;
- 	int ret = 0;
-@@ -242,30 +243,28 @@ static int grgpio_irq_map(struct irq_domain *d, unsigned int irq,
- 		irq, offset);
- 
- 	gpio_generic_chip_lock_irqsave(&priv->chip, flags);
--
--	/* Request underlying irq if not already requested */
- 	lirq->irq = irq;
- 	uirq = &priv->uirqs[lirq->index];
--	if (uirq->refcnt == 0) {
--		/*
--		 * FIXME: This is not how locking works at all, you can't just
--		 * release the lock for a moment to do something that can't
--		 * sleep...
--		 */
--		gpio_generic_chip_unlock_irqrestore(&priv->chip, flags);
-+	needs_req = (uirq->refcnt == 0);
-+	uirq->refcnt++;
-+	gpio_generic_chip_unlock_irqrestore(&priv->chip, flags);
-+
-+	/* Request underlying irq if not already requested */
-+	if (needs_req) {
- 		ret = request_irq(uirq->uirq, grgpio_irq_handler, 0,
- 				  dev_name(priv->dev), priv);
- 		if (ret) {
- 			dev_err(priv->dev,
- 				"Could not request underlying irq %d\n",
- 				uirq->uirq);
-+
-+			// rollback
-+			gpio_generic_chip_lock_irqsave(&priv->chip, flags);
-+			uirq->refcnt--;
-+			gpio_generic_chip_unlock_irqrestore(&priv->chip, flags);
- 			return ret;
- 		}
--		gpio_generic_chip_lock_irqsave(&priv->chip, flags);
- 	}
--	uirq->refcnt++;
--
--	gpio_generic_chip_unlock_irqrestore(&priv->chip, flags);
- 
- 	/* Setup irq  */
- 	irq_set_chip_data(irq, priv);
+v4:
+  - remove  VRAM helpers from Kconfig
+  - use the coding style in ast/mgag200 for the DDC
+  - use plane_state->dst instead of crtc_h/w/x/y.
+  - delete duplicate framebuffer's atomic_check.
+  - use FIELD_PREP() directly.
+  - use dev->mode_config.
+  - delete unnecessary drm_atomic_helper_shutdown call
+  - add AUTHOR
+  - using .enable instead
+  (https://lore.kernel.org/all/20250924064954.3921-1-chuguangqing@inspur.com/)
+
+v3:
+  - The order of the code blocks has been adjusted, and the "warn-on" branch
+     has been removed.
+  - removed the related formats for the alpha channel.
+  - removed the atomic_flush function.
+  - have removed the empty line.
+  - have removed the error message here.
+  - replaced it with the drmm_encoder_init function.
+  (https://lore.kernel.org/all/20250910022311.2655-1-chuguangqing@inspur.com/)
+
+v2:
+  - Delete unnecessary comments
+  - Delete unnecessary branch
+  - Use drm_atomic_helper_check_plane_state
+  - remove the alpha formats form this list.
+  - use w,h rather than x, y
+  - delete type casting
+  - use a simple call to drm_atomic_helper_shutdown()
+  - delete yhgch_load function
+  - delete vblanking code
+  - delete unneeded i2c type
+  (https://lore.kernel.org/all/20250903054533.68540-1-chuguangqing@inspur.com/)
+
+v1:
+  (https://lore.kernel.org/all/20250808053508.52202-1-chuguangqing@inspur.com/)
+
+Chu Guangqing (1):
+  [DRIVER] gpu: drm: add support for Yhgc ZX1000 soc chipset
+
+ MAINTAINERS                            |   5 +
+ drivers/gpu/drm/Kconfig                |   2 +
+ drivers/gpu/drm/Makefile               |   1 +
+ drivers/gpu/drm/yhgch/Kconfig          |  11 +
+ drivers/gpu/drm/yhgch/Makefile         |   4 +
+ drivers/gpu/drm/yhgch/yhgch_drm_de.c   | 407 +++++++++++++++++++++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_drv.c  | 310 +++++++++++++++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_drv.h  |  51 ++++
+ drivers/gpu/drm/yhgch/yhgch_drm_i2c.c  | 114 +++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_regs.h | 208 +++++++++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_vdac.c | 134 ++++++++
+ 11 files changed, 1247 insertions(+)
+ create mode 100644 drivers/gpu/drm/yhgch/Kconfig
+ create mode 100644 drivers/gpu/drm/yhgch/Makefile
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_de.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_drv.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_drv.h
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_i2c.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_regs.h
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_vdac.c
+
 -- 
-2.51.0
+2.43.5
 
 
