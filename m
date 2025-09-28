@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-835542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C86BA769C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:08:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B18BA76A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 509351896776
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:08:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 091007ACA96
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39274264614;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935CF25D1E9;
 	Sun, 28 Sep 2025 19:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mnFTZE0v"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DbY5qTnW"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310152609EE
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72202261573
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759086470; cv=none; b=XEInyw7oGQ7HkddBP5XyGt3oUXR2VkPIkuk9dZ6XT8/aDQVCaF/uFShP2WyBvfuvdoUZuapyvq9QnF6Li9wyIdzaVQ9Dq3HCWDF86GVTc/vm0Z1LWi8DQA6xmHZZkjVyHwpBWpj99NSVxAmW8ivcMJtzpo/sPM48nChw+cHH3To=
+	t=1759086470; cv=none; b=Mly2GemyqFmHeLD1/Y0/J1iCNw2ngAH4LpFV9VochtdgU3PjGV8d6x0ejHdZ1jyI7Tb84bQ89mYMXxJYIo2RORL8s2BlIBlefZyeFWSBg/7PkwKujEHlTuTB0Eilz+bHp3Lzr7njDUV1ZM5wBGU/6+SRXe6ddXgfgaHceG86rj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759086470; c=relaxed/simple;
-	bh=zDH31s7rsPYxIzn24EVtvl9OZhYo2h1GDjEToyCXHhU=;
+	bh=MuX3jZ3sSbwfMCn0UPvl+BEUskcLBHNXaIPs4MYUTto=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FQi70l3TN1ePj/NbbsWjfhVhk34bGaUClLfXuXIvF2pCruZx3O4TdduIB0C06x8+kHkZeB3cmL4sqBAmQ2GpqJ7+3gXUMxKj1VyzKhBbjSorpNiFR5J0/Cgu2N4DWz0yHaK8ZB7oH22aLv2uFKZLsphxriPucRqTkXsZRfbs7po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mnFTZE0v; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=UvJGUDcsmvlplLHul08lJ2rc+U5eREwABGAT6OdIsWlveMpa4gLiCgNFB4h0mpVb75Lihtim64imbNdvKne30S1B1oeG5M6k7lWHQ4Vs05FUEE1+7UrcaL27JUOc8+zsNt9Gy2O0gzYl2LRgxk0Mh/2y3wpqepY1HgGgyKcbzPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DbY5qTnW; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-78117fbda6eso2468186b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:07:48 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7847cc45409so317516b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:07:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759086467; x=1759691267; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759086469; x=1759691269; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XKD+6rR+ZCf718VijhXNO1kt7/wJrzJ8IPqx+tgskHE=;
-        b=mnFTZE0vR2GT6QLf/UIMxM3z8PRaxZF4tJcVT/jnT5DWr3ZzQAANG4VPoLkhRceR+N
-         cvfYHwD4bUnOhNvg0jk35wnhOn7BWragZaAJsFMypKxh0D7UXyzlHY5TtjVaaQ4Z0YXw
-         ycuffM4v5ZShQ2oc5cR93xJaPrZJCQ5++bil+6Pij6T1km4QZZODtwipINNJlUfRQbn5
-         a/MUHI0naypMsa930t4jVmpzZDf55ujfiH/58LukhamCEBTpu0J6vAIZpp+orJGNjgRH
-         tA21RaagswYxDbFdezP33lqfU8ogm/4Y3D4C8DubSxDasj8R2c1u+sBAOfsF3Xt1l+6c
-         Kscw==
+        bh=rdi2PyKiCCjIQ8wy03XR3Gwap8/Sh7/Zx1Xvfs/uPkQ=;
+        b=DbY5qTnWSS+/nluO92jyrGiov/dbTYh9OkTEX0TykWM9igSFQMvHxSlTsGV/ukO9Kz
+         ikdzO4Qvlns4qzi2QYSKCKtoRoGHQx2suMKFYx2HwB3NVKYtDNrtWiyYNBHIvTHcmGpN
+         EQKKW/h8LoM1W91Rbbmxm72wAJx9sRORIWDhF5VnzePvn4EzyHqXBn3OSMzz5lQpEo1G
+         a19TGWHRjEifQjbt+D72jnklKyzr0xrT9vkg1LW/31ROSkeEn77z51TD+MztwUJb9KE2
+         i/xBicRUkh4mvvITSQdwVJOMrJ3JZ+6UPb306lOCs/wHxyZTjmVGLJr6tTqJpvdChH3j
+         AhqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759086467; x=1759691267;
+        d=1e100.net; s=20230601; t=1759086469; x=1759691269;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XKD+6rR+ZCf718VijhXNO1kt7/wJrzJ8IPqx+tgskHE=;
-        b=mvft9Ud8h7P1fZxmK7e0ghsGgrHNju1oOYENP5pMr2+2+MvFPV++xpzpYGXqq2d0pa
-         d2EkwONCQ5gOyOHtUk7M6ReCFPpLrudP8psKn1EPO3qr6g/vZLJ+ifDdmqmfZugfppPJ
-         Z2SN+OLkSMF2HXQZ/W8Ka7lI1LTWOChm7Qzpg3Q1ydmPxjoHh+A9D7T5AKfQa4ClU2Ve
-         hIiaTJox+zKGMzyAEiaYJ3Z9nJKq3Y/ztGzAtpC1ighyD20vKwfSPvt/Z7cLA0OWuLFp
-         sq2/gxwFdVDkl1S8wGEEONlf4fQHmI3117SV5jCNHTuMfzOPTUhP4YACvinW80Q9wYaq
-         1HVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnV5Amu/Zi2cWXLEPAM6lkLOZUAQdRzwfmy/SRIt0dNKXrKYnlYeB9jCGV+72gkBnCN+pLiJ9zwnyAAec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjTgCzD3Rr08+FZ2vjyuILI7FGYoujzyuM/ezkmOY/i5b+vy6G
-	g2Eu4/lYZWe8GXkd+OyI2aAZbda10xqCVNXVPyueRGEtRblQwtxFEjKZJ1nL0UpBeG3Ig4q9qmU
-	jYvDj0UGc9xyjpA==
-X-Google-Smtp-Source: AGHT+IGttSbQUUKNc7Fj+s9+oJWDjLUfJmgHpOgznyqZWeNNRCg9RbZUUOUsFhC6DOgwPPznvL3k5goTDcPGbA==
-X-Received: from pfbfp10.prod.google.com ([2002:a05:6a00:608a:b0:76b:651e:a69c])
+        bh=rdi2PyKiCCjIQ8wy03XR3Gwap8/Sh7/Zx1Xvfs/uPkQ=;
+        b=p47y+BFIEKJw3+UCTz1ICw3j4w4lnL7IT4CsVBPwvvQsTgNT03bVC7NMviPFMyovXT
+         cNZ3tHo1q/odUtIJN0hhxCBhGg1QEiMTI9FjZHjlxHDb39tDSZVaVfM0jzNnfZKzDAhJ
+         mNpxEd4DhOozfqb9DDv4MEKyMlj23KKs5+lDdKR+CFn/87xSh/UU1Xa8ejxHAATcQaek
+         LhonmgZnZTNWdt5YgG5RxcREL26ICRKlQs+2wP6XLhDxz+WxriW96wVZ/IYQAf8wjHoE
+         quko6As/J89ZfeEN1rMIdY0lqNQslw9Deod8AlSsMqi55ono1fGX+8bK2YCxn2/e7noY
+         4Zig==
+X-Forwarded-Encrypted: i=1; AJvYcCU5qRFShzOx4tt1z+7EukN+m3hxy5Hytyc7JV+T7bwIbvhfAWwMOYYy1hZYJZo0++Gz3GbCbP9xzN75snI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt+PWc8YkdUP9wgxi289fgB402MxgXA9VIRbvB5gJP4HDGV1yZ
+	UEoi8BLA1HWpdlG8A70PsyBqTbkjLQoRr0bRgq5DbiFPJ2pZ9bxx18M2Bi58G71I+SwqEJimb30
+	rsWnuJlLToDkSSQ==
+X-Google-Smtp-Source: AGHT+IE9CnlJcLdiotMu3CPWOFGa4Qbbs3VcUOyfssl5nXIo/nwxXTHS8424T9CoJW4l01vDjDvbImmW+vK32A==
+X-Received: from pfbde1.prod.google.com ([2002:a05:6a00:4681:b0:77e:468d:c50d])
  (user=skhawaja job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3c8b:b0:781:2757:1b4f with SMTP id d2e1a72fcca58-78127571ef2mr4881787b3a.7.1759086467484;
- Sun, 28 Sep 2025 12:07:47 -0700 (PDT)
-Date: Sun, 28 Sep 2025 19:06:12 +0000
+ 2002:a05:6a00:80ec:b0:77e:325b:f614 with SMTP id d2e1a72fcca58-780fce1fe2bmr12364767b3a.12.1759086468856;
+ Sun, 28 Sep 2025 12:07:48 -0700 (PDT)
+Date: Sun, 28 Sep 2025 19:06:13 +0000
 In-Reply-To: <20250928190624.3735830-1-skhawaja@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250928190624.3735830-1-skhawaja@google.com>
 X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <20250928190624.3735830-5-skhawaja@google.com>
-Subject: [RFC PATCH 04/15] iommu: Add preserve iommu_domain op
+Message-ID: <20250928190624.3735830-6-skhawaja@google.com>
+Subject: [RFC PATCH 05/15] iommu: Introduce API to preserve iommu domain
 From: Samiullah Khawaja <skhawaja@google.com>
 To: David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
 	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
@@ -87,35 +87,88 @@ Cc: Samiullah Khawaja <skhawaja@google.com>, Robin Murphy <robin.murphy@arm.com>
 	Chris Li <chrisl@kernel.org>, praan@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Add an optional preserve iommu_domain op that can be implemented by the
-iommu drivers to preserve the iommu domain.
+Add an API that can be called by the iommu users to preserve iommu
+domain. Currently it only marks the iommu_domain as preserved.
 
 Signed-off-by: Samiullah Khawaja <skhawaja@google.com>
 ---
- include/linux/iommu.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/iommu/iommu.c | 20 ++++++++++++++++++++
+ include/linux/iommu.h | 10 ++++++++++
+ 2 files changed, 30 insertions(+)
 
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index bfa7c8653720..2e6e9c3f26ec 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -2002,6 +2002,10 @@ static void iommu_domain_init(struct iommu_domain *domain, unsigned int type,
+ 	domain->owner = ops;
+ 	if (!domain->ops)
+ 		domain->ops = ops->default_domain_ops;
++
++#ifdef CONFIG_LIVEUPDATE
++	atomic_set(&domain->preserved, 0);
++#endif
+ }
+ 
+ static struct iommu_domain *
+@@ -2054,6 +2058,22 @@ EXPORT_SYMBOL_GPL(iommu_paging_domain_alloc_flags);
+ 
+ #ifdef CONFIG_LIVEUPDATE
+ DECLARE_RWSEM(liveupdate_state_rwsem);
++
++int iommu_domain_preserve(struct iommu_domain *domain)
++{
++	int ret;
++
++	lockdep_assert_held(&liveupdate_state_rwsem);
++	if (!domain->ops->preserve)
++		return -EOPNOTSUPP;
++
++	ret = domain->ops->preserve(domain);
++	if (!ret)
++		atomic_set(&domain->preserved, 1);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_domain_preserve);
+ #endif
+ 
+ void iommu_domain_free(struct iommu_domain *domain)
 diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index d23d078f7c18..40801d8eac61 100644
+index 40801d8eac61..aafd06134f5c 100644
 --- a/include/linux/iommu.h
 +++ b/include/linux/iommu.h
-@@ -758,6 +758,8 @@ struct iommu_ops {
-  *                           specific mechanisms.
-  * @set_pgtable_quirks: Set io page table quirks (IO_PGTABLE_QUIRK_*)
-  * @free: Release the domain after use.
-+ * @preserve: Preserve the iommu domain for liveupdate.
-+ *            Returns 0 on success, a negative errno on failure.
-  */
- struct iommu_domain_ops {
- 	int (*attach_dev)(struct iommu_domain *domain, struct device *dev);
-@@ -787,6 +789,7 @@ struct iommu_domain_ops {
- 				  unsigned long quirks);
+@@ -14,6 +14,7 @@
+ #include <linux/err.h>
+ #include <linux/of.h>
+ #include <linux/iova_bitmap.h>
++#include <linux/atomic.h>
+ #include <uapi/linux/iommufd.h>
  
- 	void (*free)(struct iommu_domain *domain);
-+	int (*preserve)(struct iommu_domain *domain);
+ #define IOMMU_READ	(1 << 0)
+@@ -248,6 +249,10 @@ struct iommu_domain {
+ 			struct list_head next;
+ 		};
+ 	};
++
++#ifdef CONFIG_LIVEUPDATE
++	atomic_t preserved;
++#endif
  };
  
- /**
+ static inline bool iommu_is_dma_domain(struct iommu_domain *domain)
+@@ -915,6 +920,11 @@ static inline struct iommu_domain *iommu_paging_domain_alloc(struct device *dev)
+ {
+ 	return iommu_paging_domain_alloc_flags(dev, 0);
+ }
++
++#ifdef CONFIG_LIVEUPDATE
++int iommu_domain_preserve(struct iommu_domain *domain);
++#endif
++
+ extern void iommu_domain_free(struct iommu_domain *domain);
+ extern int iommu_attach_device(struct iommu_domain *domain,
+ 			       struct device *dev);
 -- 
 2.51.0.536.g15c5d4f767-goog
 
