@@ -1,83 +1,143 @@
-Return-Path: <linux-kernel+bounces-835414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83605BA705D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:12:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05D0BA706E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCCFF1899545
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056633BC350
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F9B28C864;
-	Sun, 28 Sep 2025 12:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3F02DE70D;
+	Sun, 28 Sep 2025 12:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5v31OEz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="VVmEs1dM"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B1934BA4D;
-	Sun, 28 Sep 2025 12:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D392A625;
+	Sun, 28 Sep 2025 12:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759061516; cv=none; b=cDn0WsWJudTrKg28I/mmqsSR6KiSVnPcV6Nf/k7QDgQ78eLXmMhbaLg75D6NyNcAXmMj998lXZApW37GRp962at9UfO1e/z6b+EKEiavCLxnaTYqmkrV9jLGqqKmkUoR9Z4DfxbCgWeet1bp/dqlcwzXTyNmjaWAH/6YT1Ezuuo=
+	t=1759062295; cv=none; b=I9jeJntFSZmlYEEnqyojd0eJsjX4a9NU8IeJn7a03GbNQoyMS12J0rMrZLtqKoS7uQ6NI05dup9wKosJSp29r4dc+NBcK6/mXIS1azCdZhqEvtTyXOqEYa2GVp5SsTv4KVGIvLqSY+htWBThrnN7SzPd0KVQpZmIKAcOSigphIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759061516; c=relaxed/simple;
-	bh=ibzRO4DmZCBci1lUCVJotBZ9F7l1ePVZDLi3RT2Vs0Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R3zy/pU+rzN9DbsODLTmncTS948dpnL7h7x22vJh0NhVd6bbq0C9RY679qgwaKINi7SmMHFQXVTSEuX+OTrtL+blfENOeRasUUJrNS2RLhYPm8fCjnx68H5XTezZGnZEuij4Z89XzTM7ZHHAcGql+gqji1r4rkb9JIExreDTcbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5v31OEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AFDBC4CEF0;
-	Sun, 28 Sep 2025 12:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759061515;
-	bh=ibzRO4DmZCBci1lUCVJotBZ9F7l1ePVZDLi3RT2Vs0Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=r5v31OEzZSZkjgbMzCW9meb0N65t6nXZsU+a7tkXfexToTXgQEbcBvxjmepGNXZYl
-	 JjgmJzj65IwzzLPGQINIfHlDtctzjXG/UVGwpImy4uN7u/JBuwGzyCI5Zzl0fPSjyu
-	 xeBVpXDHTFi4ogoI/yVdab3g3mxEgKXbuws+ifB2c1lyZLOylE7bExsiKY3gNG0OvA
-	 WWwIx5vVxo5xNDaYXy+F2ufayE+qZI3c35XEwlWMR7b2JmEd6SosDYonNIsLUvTmHq
-	 eqycqNLC7CID7lJj6BEKNwZlwjwLm4SKfHakjmeSlrIvY9/S8VXHvM4D0AmclO5qQo
-	 T1vzaVOBNrBLQ==
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>, Hugh Dickins <hughd@google.com>
-Cc: Alexey Gladkov <legion@kernel.org>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Stephen Rothwell <sfr@canb.auug.org.au>, Nicolas Shier <nsc@kernel.org>, 
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <4590a243-0a7e-b7e6-e2d3-cd1b41a12237@google.com>
-References: <4590a243-0a7e-b7e6-e2d3-cd1b41a12237@google.com>
-Subject: Re: [PATCH next] modpost: Initialize builtin_modname to stop
- SIGSEGVs
-Message-Id: <175906151390.2640739.5095902499304192973.b4-ty@kernel.org>
-Date: Sun, 28 Sep 2025 08:11:53 -0400
+	s=arc-20240116; t=1759062295; c=relaxed/simple;
+	bh=sFecT7O3MDYqPD+Z32FePbeObYG9Y83zsOm0NJBIYfQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GB0V0X5DsssJzsIrC7b8bzAZkRQrwnadUG7IZdskx6ieZZGkj0itBCUjin1A6klRcjraF449GRwtMvVS8ECasBPp2AjiOZNd7EaaUAbhIDcrDP4/eXPSYaTKiB969FmsRk5gMpESmMFjNuL4PbgwqZkt3cMDDDTGSMmG/IqJvXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=VVmEs1dM; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=LQ0oVUoCfOIt+x7Lrmwu8ybl4g7WomzcWHQHXOArN0Q=;
+  b=VVmEs1dMHxRYWP6310N3UmeXvTSs2wunfyGQ9e1HWH9ySKoxPVRoQIzc
+   qh+IeW7Y8K1OXbjjA/paMTM/x0nsGa6wfqygPZwAkdVsIXC13BAT+WSMc
+   jgnsJ/0GdcF3ZFml4uoaD7FDj+nvKD2OFTIAjOknxbeeUb2LDIThfWMcI
+   w=;
+X-CSE-ConnectionGUID: H3kCSCiFRsiWEEcHmsvPHQ==
+X-CSE-MsgGUID: 3KepsOaeTPq4en8K/f/1cQ==
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.18,299,1751234400"; 
+   d="scan'208";a="126750158"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2025 14:23:40 +0200
+Date: Sun, 28 Sep 2025 14:23:40 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Gal Pressman <gal@nvidia.com>
+cc: Markus Elfring <Markus.Elfring@web.de>, Tariq Toukan <tariqt@nvidia.com>, 
+    cocci@inria.fr, Alexei Lazar <alazar@nvidia.com>, 
+    Andrew Lunn <andrew+netdev@lunn.ch>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+    linux-rdma@vger.kernel.org, Leon Romanovsky <leon@kernel.org>, 
+    Mark Bloch <mbloch@nvidia.com>, Nicolas Palix <nicolas.palix@imag.fr>, 
+    Richard Cochran <richardcochran@gmail.com>, 
+    Saeed Mahameed <saeedm@nvidia.com>
+Subject: Re: [cocci] [PATCH net-next 1/2] scripts/coccinelle: Find PTR_ERR()
+ to %pe candidates
+In-Reply-To: <48228618-083b-4cdb-b7df-aa9b7ff0ce92@nvidia.com>
+Message-ID: <7522bdc8-1379-d516-d1fd-f7835453f23@inria.fr>
+References: <1758192227-701925-1-git-send-email-tariqt@nvidia.com> <1758192227-701925-2-git-send-email-tariqt@nvidia.com> <48a8dbb8-adf1-475e-897d-7369e2c3f6eb@web.de> <48228618-083b-4cdb-b7df-aa9b7ff0ce92@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
+Content-Type: multipart/mixed; boundary="8323329-117506010-1759062220=:4035"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Sat, 27 Sep 2025 21:28:06 -0700, Hugh Dickins wrote:
-> Segmentation fault ./scripts/mod/modpost -o vmlinux.symvers vmlinux.o
-> stops the kernel build.  It comes when write_vmlinux_export_c_file()
-> tries to buf_printf alias->builtin_modname.  malloc'ed memory is not
-> necessarily zeroed.  NULL new->builtin_modname before adding to aliases.
-> 
-> 
+--8323329-117506010-1759062220=:4035
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Applied, thanks!
+> >> +@r@
+> >> +expression ptr;
+> >> +constant fmt;
+> >> +position p;
+> >> +identifier print_func;
+> >> +@@
+> >> +* print_func(..., fmt, ..., PTR_ERR@p(ptr), ...)
+> >
+> > How do you think about to use the metavariable type “format list”?
+>
+> I did find "format list" in the documentation, but spatch fails when I
+> try to use it.
 
-[1/1] modpost: Initialize builtin_modname to stop SIGSEGVs
-      https://git.kernel.org/kbuild/c/2ea77fca84f07
+I would suggest constant char[] fmt.
 
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
+format is for the case where you want to specify something about the %d
+%s, etc in the string.
 
+> > Would it matter to restrict expressions to pointer expressions?
+>
+> I tried changing 'expression ptr;' -> 'expression *ptr;', but then it
+> didn't find anything. Am I doing it wrong?
+
+expression *ptr should be a valid metavariable declaration.  But
+Coccinelle needs to have enough information to know that something is a
+pointer.  If you have code like a->b and you don't have the definition of
+the structure type of a, then it won't know the type of a->b.  More
+information about types is available if you use options like
+--recursive-includes, but then treatment of every C file will entail
+parsing lots of header files, which could make things very slow.  So you
+have to consider whether the information that the thing is a pointer is
+really necessary to what you are trying to do.
+
+> >> +@script:python depends on r && org@
+> >
+> > I guess that such an SmPL dependency specification can be simplified a bit.
+>
+> You mean drop the depends on r?
+>
+> >
+> >
+> >> +p << r.p;
+
+Since you have r.p, the rule will only be applied if r has succeeded and
+furthermore if p has a value.  So depends on r is not necessary.
+
+julia
+
+> >> +@@
+> >> +coccilib.org.print_todo(p[0], "WARNING: Consider using %pe to print PTR_ERR()")
+> >
+> > I suggest to reconsider the implementation detail once more
+> > if the SmPL asterisk functionality fits really to the operation modes “org” and “report”.
+> >
+> > The operation mode “context” can usually work also without an extra position variable,
+> > can't it?
+>
+> Can you please explain?
+>
+--8323329-117506010-1759062220=:4035--
 
