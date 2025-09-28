@@ -1,196 +1,158 @@
-Return-Path: <linux-kernel+bounces-835430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6903BA7123
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:42:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA44BA7138
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395621898E53
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D5733BB51B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380CE2DC329;
-	Sun, 28 Sep 2025 13:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C541CCEE0;
+	Sun, 28 Sep 2025 13:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6lhNJFd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="smEp3eel"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772382C21D4
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D344C98;
+	Sun, 28 Sep 2025 13:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759066927; cv=none; b=qRsxxhXNpEYNELuQEPZRuYycXJki9L2AF9x8FHrQy1E8wKzj6tCDGHZzBlx63wjX8cF2eRGdw4lsdzPtHeeCoTgLL6oq5RCCQ8UCIn4PckRomFczhG8v6n9N8de0RqP7l1To3JB2JJ2wL463G1tzAoEeZwnGqXALO5/Wa+MlHns=
+	t=1759067322; cv=none; b=D9TXYPLhKx6G3y6UVjYTBEI7TKt1BsLJAwroh0BHYZoKBrINnjyEe2BLRNoFliL8FFbHM7RFCxtsXQiM/5eLig5p/DhfXkrwwBVWk4UE/PT+9WcR4etL5Yum81Bc9wH4lOXXVVTYViNJnWcbSM9zcEVItpbUFbNXTcz0PR0PRFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759066927; c=relaxed/simple;
-	bh=b7lQZMpm3jaFTG6dtKVKcEubjwdkNUjuclDki/TIr1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ch7CDbgMOoiPbtTFqEiYyr38pxE9ZB4Z/3h1ITuZnYQ66LnPCijZBZm5oQbNxavhakLi7b9YE+tKyGkh3Um7tghg1WPuflA/DwN7b2y8NEj366cXhAWCf48ikc12zmXYqI/elsMe53BknmLQ6Pj1CYCDpIvitKCNtca7pQctadQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6lhNJFd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 168B1C4CEF0
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759066927;
-	bh=b7lQZMpm3jaFTG6dtKVKcEubjwdkNUjuclDki/TIr1Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m6lhNJFdEkreSucB/dxMB91UrwJt6hhk8u7yLb3moYbEyO3YNCQDQpZeyjmsvdCA1
-	 Toga5ITJofDzKTAiQhErydIP7701BjSfwg3kp6sXPKdL0m4FKAIWlEb4k0K6HA6oQj
-	 0+VWp3z+6bod1kBnBzJ5bkEyJusUvXNqljcTimM988HiBmJi6VCN8FIGarZwKCEY17
-	 2fMnLseHBVhWU0OvsUSNdzw3UGBQS59MU2Bb2Gyubs4sx/raxgTR21vYeCg9Ily9x/
-	 zuP0FbPqRv/UjoEOb3hZUnkiKVF1LmvGr4AOcMAziRkQGBrGxpFbGkowGad8zuT8ui
-	 zKfCcC33++BgA==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57b8fc6097fso4823495e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:42:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWOk6YIeoO9cay2/Nsla7GwP+ijLZ3kSCXigOCJNGITxqgnIGFLVOm/hPCd1tlk7tl3TrBeJ80yW5KUaME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzFmitAx8WaM7ewfeELldVL7uUQJ+On/CrdLj3zw70+6aFqLpn
-	1hRgzcXSatMDdrCbam3EazhGId51yxglCd3Lyr8P4jSPEB5CNFaYJzineJrUSBR1/xvqDYrrUoE
-	D9552y/+io9IzxMLDNJItio/PBq/3sYM=
-X-Google-Smtp-Source: AGHT+IENjnF+wQFCTm2WX/2LUMrC3xClXeEULM4n0/VRgHOOZVaGDYKViPHE16Jf9kIytcqTJZySM24jjWSQ6nTxM8g=
-X-Received: by 2002:a05:6512:12d1:b0:57b:8a82:1dd0 with SMTP id
- 2adb3069b0e04-582d0c28621mr4021018e87.15.1759066925407; Sun, 28 Sep 2025
- 06:42:05 -0700 (PDT)
+	s=arc-20240116; t=1759067322; c=relaxed/simple;
+	bh=T78lkvz4NHBEAD/qi90ZP6MFj9B9bdxbDxvA1l5EPYQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XT5tT0kPQc/C4h5r7mLzxKoef4aKEUosP1ULzoRKdw6QWW9nAWPlL+HrShuUMXgeGrOjCu/+RX7FduWRcQkT4c/auK9I1AgCfiao0E7O4kwdl2VFJNIRjxTMpAb/NX8qVhrs5N/vm4C/cP/QXgAZTxJ1f0ZNdbOwfxG+6+U+2pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=smEp3eel; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759067308; x=1759672108; i=markus.elfring@web.de;
+	bh=T78lkvz4NHBEAD/qi90ZP6MFj9B9bdxbDxvA1l5EPYQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=smEp3eelS7nI2eoZBF59ySuF551SY0kW4gEHtvHC9ZB/DDohJYvEdOTjUCLsHJVi
+	 CBMqRkv0HWXIbiCQoYp3qLTXYlHusmX+r93XUUIzzsi2KV4HQWatL0Fj4RLNWCKpJ
+	 m3AUDsjeWwmRYIOE1swuV1P4xkoRjIixS5KzqjD5dNG2o97JOQr0BM/n4WDnVN+ZP
+	 qEqqu4D55Sp7xyz/uJxytlIcaZaOFapiEHN4KbHP4wxALEYjIPVPcZ1IQ+H9v8D5S
+	 GMh2qDud7SNaA2MdlOidhCwF0zdKWXDMlMKhXN26CWeo+mvNMVxIx5+hRYYpVqot6
+	 oiOCkjAm0EnNhmC4rA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.189]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPrPT-1uhCJj0Ivz-00POMY; Sun, 28
+ Sep 2025 15:48:28 +0200
+Message-ID: <9f6acb84-02cb-4f76-bf37-e79b87157f1e@web.de>
+Date: Sun, 28 Sep 2025 15:48:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn>
-In-Reply-To: <20250928085506.4471-1-yangtiezhu@loongson.cn>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 28 Sep 2025 15:41:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
-X-Gm-Features: AS18NWAAyvtoI8B9uL7arznbuV6ccfy2mwG4BGuL--lHKmdvv097Yi3SZbekg3Q
-Message-ID: <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Li Chen <chenl311@chinatelecom.cn>, linux-block@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Li Chen <me@linux.beauty>, LKML <linux-kernel@vger.kernel.org>,
+ Yang Erkun <yangerkun@huawei.com>
+References: <20250926121231.32549-1-me@linux.beauty>
+Subject: Re: [PATCH] loop: fix backing file reference leak on validation error
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250926121231.32549-1-me@linux.beauty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:liPxP31WF6bcH2oVDd71Kwmdl99u1cejFWuz250Xmci+b27l/U3
+ Izn5Pd561zBVfLZKhHDj7jf1ryaGpU52Efnaxzqcp9YxaklAUjNz+ygdsucAvL5KjspJHG3
+ 9UZ9ZfUSA1tAib6BNqnhI3yyEJP+OtNt9niBDD+Nm1I2OVg6oeZPRuJaE0i0bFwMhevU2NL
+ GEOh/KrG+dt4LUsr4kuFA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VdPELCcMQ98=;1EcnOCdY9O8tibBxkvoZ11h+cbk
+ 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
 
-On Sun, 28 Sept 2025 at 10:55, Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->
-> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
-> the following objtool warning on LoongArch:
->
->   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
->   falls through to next function __efistub_exit_boot_func()
->
-> This is because efi_boot_kernel() doesn't end with a return instruction
-> or an unconditional jump, then objtool has determined that the function
-> can fall through into the next function.
->
-> At the beginning, try to do something to make efi_boot_kernel() ends with
-> an unconditional jump instruction, but this modification seems not proper.
->
-> Since the efistub functions are useless for stack unwinder, they can be
-> ignored by objtool. After many discussions, no need to link libstub to
-> the vmlinux.o, only link libstub to the final vmlinux.
->
+=E2=80=A6
+> Fix this by calling fput(file) before returning the error.
+=E2=80=A6
+> +++ b/drivers/block/loop.c
+=E2=80=A6
 
-Please try keeping these changes confined to arch/loongarch. This
-problem does not exist on other architectures, and changing the way
-vmlinux is constructed might create other issues down the road.
+How do you think about to increase the application of scope-based resource=
+ management?
+https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/file.h#L97
 
-> Do the similar things for arm64 and riscv, otherwise there may be objtool
-> warnings when arm64 and riscv support objtool, this is to make consistent
-> with the archs that use libstub.
->
-> Link: https://lore.kernel.org/lkml/pq4h7jgndnt6p45lj4kgubxjd5gidfetugcuf5rcxzxxanzetd@6rrlpjnjsmuy/
-> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  Makefile                | 1 +
->  arch/arm64/Makefile     | 5 ++++-
->  arch/loongarch/Makefile | 5 ++++-
->  arch/riscv/Makefile     | 5 ++++-
-
->  scripts/link-vmlinux.sh | 5 ++---
->  5 files changed, 15 insertions(+), 6 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 10355ecf32cb..8ba2e28ef3d1 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1201,6 +1201,7 @@ KBUILD_VMLINUX_OBJS := built-in.a $(patsubst %/, %/lib.a, $(filter %/, $(libs-y)
->  KBUILD_VMLINUX_LIBS := $(filter-out %/, $(libs-y))
->
->  export KBUILD_VMLINUX_LIBS
-> +export KBUILD_VMLINUX_LIBS_PRELINK
->  export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
->
->  ifdef CONFIG_TRIM_UNUSED_KSYMS
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 73a10f65ce8b..038f37ef2143 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -156,7 +156,10 @@ KBUILD_CPPFLAGS += -DKASAN_SHADOW_SCALE_SHIFT=$(KASAN_SHADOW_SCALE_SHIFT)
->  KBUILD_AFLAGS += -DKASAN_SHADOW_SCALE_SHIFT=$(KASAN_SHADOW_SCALE_SHIFT)
->
->  libs-y         := arch/arm64/lib/ $(libs-y)
-> -libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> +
-> +ifdef CONFIG_EFI_STUB
-> +KBUILD_VMLINUX_LIBS_PRELINK += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> +endif
->
->  # Default target when executing plain make
->  boot           := arch/arm64/boot
-> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-> index ae419e32f22e..4eb904c20718 100644
-> --- a/arch/loongarch/Makefile
-> +++ b/arch/loongarch/Makefile
-> @@ -169,7 +169,10 @@ CHECKFLAGS += $(shell $(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -dM -E -x c /dev
->  endif
->
->  libs-y += arch/loongarch/lib/
-> -libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> +
-> +ifdef CONFIG_EFI_STUB
-> +KBUILD_VMLINUX_LIBS_PRELINK += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> +endif
->
->  drivers-y              += arch/loongarch/crypto/
->
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index df57654a615e..cfd82b2c1bbf 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -173,7 +173,10 @@ boot-image-$(CONFIG_XIP_KERNEL)            := xipImage
->  KBUILD_IMAGE                           := $(boot)/$(boot-image-y)
->
->  libs-y += arch/riscv/lib/
-> -libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> +
-> +ifdef CONFIG_EFI_STUB
-> +KBUILD_VMLINUX_LIBS_PRELINK += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> +endif
->
->  ifeq ($(KBUILD_EXTMOD),)
->  ifeq ($(CONFIG_MMU),y)
-> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> index 51367c2bfc21..b3cbff31d8a9 100755
-> --- a/scripts/link-vmlinux.sh
-> +++ b/scripts/link-vmlinux.sh
-> @@ -61,12 +61,11 @@ vmlinux_link()
->         shift
->
->         if is_enabled CONFIG_LTO_CLANG || is_enabled CONFIG_X86_KERNEL_IBT; then
-> -               # Use vmlinux.o instead of performing the slow LTO link again.
->                 objs=vmlinux.o
-> -               libs=
-> +               libs="${KBUILD_VMLINUX_LIBS_PRELINK}"
->         else
->                 objs=vmlinux.a
-> -               libs="${KBUILD_VMLINUX_LIBS}"
-> +               libs="${KBUILD_VMLINUX_LIBS} ${KBUILD_VMLINUX_LIBS_PRELINK}"
->         fi
->
->         if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
-> --
-> 2.42.0
->
+Regards,
+Markus
 
