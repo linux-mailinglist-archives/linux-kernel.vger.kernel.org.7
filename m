@@ -1,158 +1,144 @@
-Return-Path: <linux-kernel+bounces-835526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EBCBA7605
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB10BA760F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 20:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C94BB3BA3BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F040C3B925A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 18:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4692571AD;
-	Sun, 28 Sep 2025 17:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A91257427;
+	Sun, 28 Sep 2025 18:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="avOpMxva"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="txCqod+7"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F23256C87;
-	Sun, 28 Sep 2025 17:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459D2635;
+	Sun, 28 Sep 2025 18:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759082271; cv=none; b=nWMB6F6dI93ksZ1GYkZKwIriqr4KlhRmCA8NR6lJohpmk3iNd6f5cnX9ypfBvEIf0F9koQ9HMuPeXwdd1XbUyAEwdc9HY+9V5yYZ/A1dXD9OMW4N8YBbRhfrm/43PusTcHxyXpyvB0cN5dAUSe/4BrwTFmvs5Wdc962OJQhyagY=
+	t=1759082478; cv=none; b=c2/94UM1yoVlYr9pYHemYxNOefcv8OkyUxSpYV8YMF6CkXFcLjWcQyy0S9kNOdu9LKyVOhIDhdWdzwwCktcFCiMTlJc2/qJ0NMLt0Q7v91T0K7CvZgW7C6LrCm4HrouhoVcsLoX+xr0TpPSrx+S0vyyrwhTfRCHZwUWGlbDcICo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759082271; c=relaxed/simple;
-	bh=G8POg89qhc3YFRtRay2TG6zhQ5wGIWVmGavGeCYc1jg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JoiVo+XHK7TM5B9KlUcbE7sVG8++m19OAO7+aLeksAuKBRqj5yOJ4d2e7dcrCQVKJnKV79SiiwqWdgLunMNj3LpxiC04T1i+5GR0PZDTtD18zj5IfVrqdnEGc54TjYi/piqOusy93QMvkv3oEVcQ4aUnfOsgaaT2KW1eozSmNWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=avOpMxva; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 311BD26151;
-	Sun, 28 Sep 2025 19:57:48 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 5jDSkinZ6OKr; Sun, 28 Sep 2025 19:57:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1759082267; bh=G8POg89qhc3YFRtRay2TG6zhQ5wGIWVmGavGeCYc1jg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=avOpMxvagnWapndS0g6pkU9rOzu32Ge0/JqVNiSg3Mhadtw5QIjgH0FnmGeTHnVoN
-	 VLEV6c/dT/+UWJB9GpOgjebZVJtq1KldJs01HTIUD910mxozBOeND+w1yd3WLz4OO2
-	 B/GGCP6EqjBiutggRBWs/CBFE+GkU2keCncqJfxmicNmlbtZjoP+b/pfB7s2A/stLs
-	 WilxswbPT2xx6tNvaquQ+LzAAkGc+HoHkpFY9lDBcVgFqIOCFXH3NN4UI8+GTidGO+
-	 aGZgiVMl47a3/SqGsYduly+ZJLo3fTeDoiYSZ5Vg6582JbLXp/7y3CZZoHa9DyUGB9
-	 kk/Ki9vyra6ow==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Sun, 28 Sep 2025 23:26:40 +0530
-Subject: [PATCH v3 6/6] arm64: dts: exynos7870-j6lte: enable display panel
- support
+	s=arc-20240116; t=1759082478; c=relaxed/simple;
+	bh=ETGlfgCHn7iTomo7gbPyeKU7/4yXFLWwgSsvm/N4bJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HdWQo8Ys/xjCiL2vU8kruSSMT63QPySkG5e+PhN7QYkoAkSp+aqy9smGuTk5FcBQU0a1ZVVaCKv8Z9fccGi0vBXK4RffT3xz/y7L3TuJqjeoZNo9mnP6lSMn5ZVSPGan4WJ4BoqF/foZJpJ3YI2teiVYyq2sDvwkrRVY6gfQ0dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=txCqod+7; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=p3zwPG2lHdfGT54vRdWzMiWo1GIY+4oyV83lYkTPCSg=; b=txCqod+7lxWDuX9hd4gJshx+rB
+	jLCDSApN3cGlTlr2qpYvhamL3LoECi5F4cqyj44c0gAV+ltxFnBfm0iBvhqi5/cdl5uJ0m9sc995z
+	GwWM8UZJRcGEQjAKV9dRXFf+ZHJWRIx9utw47og7Y0P1a5ZjlasCEtL1/RXjkOUPRaElOwzNSTKVJ
+	XBs6/TeBl3YOETm0A/qiP94hRqi3vLR+NcWeMBdzddiGk5T8/e1cSJrshXG8eoiv/sjFGHtaK6VR8
+	mLE8Ki8VcsL+syGhf3f2lX7mikw5EsBY1OS3NdMTLpbf2Cp02CQL8iSYRsOeGmlv4h4gv5ZEClUOI
+	YINvYD3Q==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1v2vhm-001XtX-0B;
+	Sun, 28 Sep 2025 20:01:02 +0200
+Date: Sun, 28 Sep 2025 20:01:01 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: Re: [PATCH 1/2] driver: reset: spacemit-p1: add driver for
+ poweroff/reboot
+Message-ID: <aNl33eHpr7gd8HJz@aurel32.net>
+Mail-Followup-To: Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+References: <20250927220824.1267318-1-aurelien@aurel32.net>
+ <20250927220824.1267318-2-aurelien@aurel32.net>
+ <20250928000255-GYA1342640@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250928-exynos7870-drm-dts-v3-6-bb7d8e570860@disroot.org>
-References: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
-In-Reply-To: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759082219; l=1965;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=G8POg89qhc3YFRtRay2TG6zhQ5wGIWVmGavGeCYc1jg=;
- b=yWWgBnadulfkxT6DEECzwI8LcB08R6butKr1fh8Ucd/eC0QfgCDlbARd9CHx+0r8IKeV4b1Gx
- zUpkQ9zSo+lAnwbGwQky/XHHTa110+oGWMw/zmHwFA3XAXUvXQkHZpi
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928000255-GYA1342640@gentoo.org>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-Enable DECON and DSI nodes, and add the compatible display panel and
-appropriate panel timings for this device. Also, remove the
-simple-framebuffer node in favor of the panel.
+Hi Yixun,
 
-This device has a 720x1480 AMOLED Samsung AMS561RA01 panel with
-S6E8AA5X01 controller.
+On 2025-09-28 08:02, Yixun Lan wrote:
+> Hi Aurelien, 
+> 
+> On 00:07 Sun 28 Sep     , Aurelien Jarno wrote:
+> > This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
+> > chip, which is commonly paired with the SpacemiT K1 SoC.
+> > 
+> > The SpacemiT P1 support is implemented as a MFD driver, so the access is
+> > done directly through the regmap interface. Reboot or poweroff is
+> > triggered by setting a specific bit in a control register, which is
+> > automatically cleared by the hardware afterwards.
+> > 
+> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> > ---
+> >  drivers/power/reset/Kconfig              |  9 +++
+> >  drivers/power/reset/Makefile             |  1 +
+> >  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
+> >  3 files changed, 98 insertions(+)
+> >  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
+> > 
+> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> > index 77ea3129c7080..5afef049760d6 100644
+> > --- a/drivers/power/reset/Kconfig
+> > +++ b/drivers/power/reset/Kconfig
+> [snip]..
+> > +
+> > +static int spacemit_p1_reboot_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct regmap *regmap;
+> > +	int ret;
+> > +
+> > +	regmap = dev_get_regmap(dev->parent, NULL);
+> > +	if (!regmap)
+> > +		return -ENODEV;
+> > +
+> > +	ret = devm_register_power_off_handler(dev, &spacemit_p1_pwroff_handler, regmap);
+> > +	if (ret) {
+> > +		dev_err(dev, "Failed to register power off handler: %d\n", ret);
+> > +		return ret;
+> suggest to simplify with dev_err_probe(), which will save few lines
+> > +	}
+> > +
+> > +	ret = devm_register_restart_handler(dev, spacemit_p1_restart_handler, regmap);
+> > +	if (ret) {
+> > +		dev_err(dev, "Failed to register restart handler: %d\n", ret);
+> > +		return ret;
+> ditto
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts | 38 ++++++++++++++++---------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+Thanks for the hint, that'll be in the next version.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-index b8ce433b93b1b488da31bbe4846f8092243611ad..f92e1f8fabf3e01b69583f82cf842178a21002a2 100644
---- a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-@@ -27,20 +27,7 @@ aliases {
- 	};
- 
- 	chosen {
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges;
--
- 		stdout-path = &serial2;
--
--		framebuffer@67000000 {
--			compatible = "simple-framebuffer";
--			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
--			width = <720>;
--			height = <1480>;
--			stride = <(720 * 4)>;
--			format = "a8r8g8b8";
--		};
- 	};
- 
- 	gpio-hall-effect-sensor {
-@@ -119,8 +106,9 @@ ramoops@46e00000 {
- 			pmsg-size = <0x4000>;
- 		};
- 
--		framebuffer@67000000 {
-+		cont_splash_mem: framebuffer@67000000 {
- 			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
-+			iommu-addresses = <&decon 0x67000000 (720 * 1480 * 4)>;
- 			no-map;
- 		};
- 	};
-@@ -133,6 +121,28 @@ vibrator {
- 	};
- };
- 
-+&decon {
-+	memory-region = <&cont_splash_mem>;
-+
-+	status = "okay";
-+};
-+
-+&dsi {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,burst-clock-frequency = <500000000>;
-+	samsung,esc-clock-frequency = <16000000>;
-+	samsung,pll-clock-frequency = <26000000>;
-+
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "samsung,s6e8aa5x01-ams561ra01";
-+		reg = <0>;
-+	};
-+};
-+
- &gpu {
- 	status = "okay";
- };
+Regards
+Aurelien
 
 -- 
-2.51.0
-
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
