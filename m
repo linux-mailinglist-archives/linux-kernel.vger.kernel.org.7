@@ -1,263 +1,150 @@
-Return-Path: <linux-kernel+bounces-835527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1C0BA7608
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D03BA75CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEBD17A01B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:57:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43AE57ABE5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D159F2561AA;
-	Sun, 28 Sep 2025 17:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7D4255F24;
+	Sun, 28 Sep 2025 17:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="koZQlMYs"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="MQT1JnPe"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DC1255F24
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 17:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9871B1C8632;
+	Sun, 28 Sep 2025 17:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759082317; cv=none; b=Axto+5JDQIi5M9TKPY01F/Za+pox4QWUJmlRT2i7FFQCEZtk57WqodcZvPXFa77vBDdnR/FOr5XfCB+0w3HrUxsZqgaYzfQ66hGgvsDvdtrcynpquZikDWvRAPurBgpwrx899+MUeRbOqHA9mvaTTMPzbuKxS4Z0zxc8NxSfIsI=
+	t=1759082232; cv=none; b=UkiJehapXhBhVQxbpNPW8wJjwsXVO7qDh+N6Pq0r76nA3gTI3uClGzs0PY+1vnlwsRuYuemfv0oq0m3ESofCYKNp9XWd5ckRVr/+hM0wKd4lW0wWdzHy8TzXzQ2mEaIiaz994Lzg6l6LATJhSys9mklDdCSw/msggA5uxl+ldq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759082317; c=relaxed/simple;
-	bh=zoth4Jd8+ebGp96SODsyzU/qIkA5bSTmUolQ8U3RIFc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MebpXdeMCw/MowK7zT8gF6wJg0cIEDUGxL+rPGEhBb51d4uJYFAkNK4SPva0xCZzER5Qb0w82VWfo8mzCiVR+FS9+IehB4dxpOfRrtAuxQpQpcm+ON+lnStCqwZE0fuQHxtkT2Fyb6TQfHZnVbDOioNVvCE+oqyK6IGufu1a+Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=koZQlMYs; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1759082279;
-	bh=WgGAPDRLizaQ2tgi+7+CIMNXt69uicKpNncJAxaf35I=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=koZQlMYsA1Da5x5bEFJHXbtZSx+3iOhg+HT/XqZjAtPZXQoannzgARsjN+QiRZ0MP
-	 iHqCkS73j963JszL0+TePMvaL2zsQX9vaidUo+y/3m1I2VY4HBHG4ji4E/w5iHIaet
-	 nusKc01igJZl5ha0QnpX4vZQ52yryG0B+Yd1sKR0=
-X-QQ-mid: esmtpgz13t1759082244tc33ca4f5
-X-QQ-Originating-IP: 1qcKc0aPTgmdkS23CtGBizQEl313ki0DE4YEetKRsV0=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 29 Sep 2025 01:57:22 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17229065183674050420
-EX-QQ-RecipientCnt: 7
-From: Wentao Guan <guanwentao@uniontech.com>
-To: chenhuacai@kernel.org
-Cc: kernel@xen0n.name,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH v3] LoongArch: mm: try VMA lock-based page fault handling first
-Date: Mon, 29 Sep 2025 01:53:55 +0800
-Message-Id: <20250928175355.308261-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1759082232; c=relaxed/simple;
+	bh=8py30CHyigZviZ2rpSpVxQKrO0mgBy5ZGBCf1zEeL8Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dpiOCUeGwTZcY0XAsIWKW9LzPKsgOX5Bc38n5oP34dgMQKFfmj9+seHY+8Q2DFEE7p0fickiAZHuYmHiv0ytc+Oszt+x5n6T2CK0H4pg8A2oYrTxiPRtRduqG/57GG0hbzjswqsA2DqBUmpNDvTHYemw6Lf+KSCsuouZB64N2ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=MQT1JnPe; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 516F226173;
+	Sun, 28 Sep 2025 19:57:07 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 8ivMluFyA8AD; Sun, 28 Sep 2025 19:57:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1759082226; bh=8py30CHyigZviZ2rpSpVxQKrO0mgBy5ZGBCf1zEeL8Q=;
+	h=From:Subject:Date:To:Cc;
+	b=MQT1JnPeQVJhHYBKZrK2Vu0LQRKywq3nBTQ7YhDKQQFbw8PnDou+7xq21v16CZtAu
+	 S/hzPa8CWFLFDHuK3PQHX8gySmnybBPenqu8eryyq0bOnUIZ1zljgym1tTKMO1kguc
+	 m4Gtl8VHMLG4Pa+zkjui9UiPaQsYewIqA8KVbZdwawUrHXWTOn3yF1qwmuCGfTX073
+	 e8q+GS4iyBEv1SOBiHD22WZ5mUBBqQIIlC3Cjj6k6QpUSaR78Ha56UmX+y4VNaK4L2
+	 GhkAMflRh87eln7E9THguM9CSs0YnHiaBLhBlbNUaqElMVM+bZx1n63p1hapnBsiVv
+	 ZL5LsUby49h2g==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 0/6] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
+Date: Sun, 28 Sep 2025 23:26:34 +0530
+Message-Id: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: MfU+/gEHf8gNdeSnhuPFY2CRNjcSuojhbnQ7+liofFH7/h2QZ4BKA45P
-	w+kXkj4YgqR79LfF/lPL9XlaJnsuiR/VWHZVYN58nrdu4loEDWseYsdXsU9uotYezCpjHu1
-	C38YezPr+fCKcvwbbAcE5NivdQARHMPU6kQXK9BMfma6oOPP7JLff4rwwky6WHR52PYDz0j
-	D7FLkBeY6LtpdMylueFEnRxC/3PoNjjJHwpGetSNL31ZQuTGPQD6JKuAFmd2CabCMgMaCij
-	f7Tvb+bDhJUV/mrjURvN+sGu3bX296jxzfAVRoFBo3k/0F03lLDYOjE08jkJb6L0ELjSLb3
-	3kqi75So4Vl1k7XMZipLErzqJ5MNuiZ6v8/NNBCnVzmH0SGIFM+iQiN0GnZYaI/zVtBzP/Z
-	7vfQKA/McQ89ZS3ucoCYKtKzxoMmQVhSo4dOu3tplVu0sD3pzbvU5v3EzX/VgI1uTvnE0yp
-	pPOSd9jneu1cICeT7yyDA8en1Eu5NO15oDgF45wQ5NO6JMm3qD1SLVX41Jz+1XeZ2keWvt0
-	0Dk6xVBwsuuFj35fzTp7IYzmrLcdDpbOBhB3FCfER8YE8dZBVE8lKU1awK3fn93amGUrsts
-	dKEG9bKOzDJxYPUhC6G/DOfyLL0cK98M+4AonXc9ZRHOazDovPvAmAmOObCrtegYuANcPPK
-	0uCQYrjA5mXLpO8sufhFDjYwsX5/AT9CP1xkPdfexzZCzzOze4/MpkNSrvAtTe/WEtCpCOt
-	fWRDTq6/Epy3NzRrd5JrwasRPgARl2KI+nPEmuQc5Q+BbT7kI0oUe314FsOtozIJtVzkwEJ
-	zQgW1H6hoIARxLE0EAmhcgcmJVeC+r6DNzNK3rznv2H+M3mBsV996lAopCvHbHQE+bwBcgb
-	FrL85rE6OoDqOQnLssV0dcXIbvy9JzwlLmfCatXiXajjEfFrkEf97ox0kK1CkTPw7wdy2w0
-	oTlNgckSKqWnbfwjGAh2KH9WQI64dao+FxCZqQkLQfnIhj4MuS5+5bEzDxtADXL+eLPztDZ
-	9ujYvTWVRVrI0jX/IHXKCgi2IKr2krGjSFg6pjFRaKzbge2FnfOAJI8u9dgJzp9dmIgGRrw
-	GrljkwbF9B1hwBPFpyqGD9YKLvNaXrnHvnSAlrmUkr3iiaxWhgaNUhUyAUk+fBL2w==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANV22WgC/23NQQ6DIBCF4as0rEsDQ3Wgq96j6QIBlUWlAUM0x
+ rsX7aZNXP4vmW8Wklz0LpHbaSHRZZ98GEqI84mYXg+do96WJsCgYhUI6qZ5CAklMmrji9oxUYn
+ G6AYFb7Qi5fAdXeunHX08S/c+jSHO+4/Mt/XL1RyOuMwpo1Iahqh0W5vmbn2KIYyXEDuygRl+E
+ MBDBApir7pSwFAoZv+RdV0/5LeXUfsAAAA=
+X-Change-ID: 20250523-exynos7870-drm-dts-87ccab731ba9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759082219; l=3858;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=8py30CHyigZviZ2rpSpVxQKrO0mgBy5ZGBCf1zEeL8Q=;
+ b=/q0ya9ZZafrks/RtT4YDPlXOFvihPaELzrwMJYW8FCOpMFEuYSs9f6XwNIPgl0eORsl7boygW
+ C2hIKUqanxPCaBSwjnco859JWtfWt8lm+PkMh7j7iaZL3KklOQgHaSk
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Attempt VMA lock-based page fault handling first, and fall back to the
-existing mmap_lock-based handling if that fails.
+Exynos7870 has a IP subsystem in its architecture dedicated to display
+management. Notably, this block includes the Display Enhancement
+Controller (DECON), and the DSI Master (DSIM).
 
-The "ebizzy -mTRp" on 3A6000 shows that PER_VMA_LOCK can
-improve the benchmark by about 17.9%(97837.7 to 115430.8).
+The following series and its sub-series implement all components for a
+functioning display pipeline. All vital information which helped shaping
+up the patches have been retrieved from Exynos7870 vendor kernel sources
+as provided by Samsung.
 
-This is the loongarch variant of "x86/mm: try VMA lock-based page fault
-handling first".
+Testing has been done on all three devices available upstream, i.e.
+Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2 Core
+(samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte). Regrettably,
+I've only been able to test the functionality on video mode, as none of
+the devices have panels working in command mode.
 
-Let us discuss the four fault cases after handle_mm_fault
-1.fault_signal_pending(fault, regs):
-handle before goto done.
-2.fault & VM_FAULT_COMPLETED:
-fallthrough to return.
-3.fault & VM_FAULT_RETRY:
-handle before goto done.
-4.fault & VM_FAULT_ERROR:
-reuse the origin way to handle.
+This series implements changes in the SoC subsystem, which includes
+devicetree additions. It depends on all sub-series listed below:
+(Legend: [R]eviewed, [A]ccepted)
 
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+exynos-sysmmu-resv-regions A https://lore.kernel.org/r/20250712-exynos-sysmmu-resv-regions-v1-1-e79681fcab1a@disroot.org
+exynos7870-mipi-phy        A https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+exynos7870-mipi-phy-fix    A https://lore.kernel.org/r/20250710-exynos7870-mipi-phy-fix-v2-1-5cf50d69c9d7@disroot.org
+exynos7870-dsim            A https://lore.kernel.org/r/20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org
+exynosdrm-decon            A https://lore.kernel.org/r/20250706-exynosdrm-decon-v4-0-735fd215f4b3@disroot.org
+panel-samsung-s6e8aa5x01   A https://lore.kernel.org/r/20250721-panel-samsung-s6e8aa5x01-v5-0-1a315aba530b@disroot.org
+panel-synaptics-tddi       - https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
-v3 changelog:
-fix checkpatch format error.
+Changes in v3:
+- fixed minor issues with devicetree in regards to compliance
+- added memory-region to framebuffer region for decon device
+- added related patchset to list: exynos-sysmmu-resv-regions
+- replaced exynos7870-pmu with exynos7-pmu compatible to the list
+  allowing a MIPI PHY subnode (krzk)
+- updated compatible string and dt node for j6lte's panel
+- reorder properties: ${x}, followed by ${x}-names (krzk)
+- Link to v2: https://lore.kernel.org/r/20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org
 
-v2 changelog:
-1. fix bug when VM_FAULT_ERROR and miss some count_vm_vma_lock_event
-2. update test result.
-ebizzy-0.3(can download by phoronix-test-suite):
-before patch:
-97800 records/s
-real 10.00 s user  0.25 s sys  13.54 s
-97835 records/s
-real 10.00 s user  0.27 s sys  13.51 s
-97929 records/s
-real 10.00 s user  0.26 s sys  13.53 s
-97736 records/s
-real 10.00 s user  0.31 s sys  13.48 s
-97914 records/s
-real 10.00 s user  0.30 s sys  13.50 s
-97916 records/s
-real 10.00 s user  0.31 s sys  13.48 s
-97857 records/s
-real 10.00 s user  0.28 s sys  13.51 s
-97927 records/s
-real 10.00 s user  0.24 s sys  13.55 s
-97962 records/s
-real 10.00 s user  0.41 s sys  13.39 s
-97501 records/s
-real 10.00 s user  0.20 s sys  13.53 s
-after patch:
-117938 records/s
-real 10.00 s user  0.40 s sys  23.48 s
-116762 records/s
-real 10.00 s user  0.39 s sys  23.20 s
-116412 records/s
-real 10.00 s user  0.37 s sys  23.22 s
-116047 records/s
-real 10.00 s user  0.45 s sys  23.04 s
-116324 records/s
-real 10.00 s user  0.45 s sys  23.08 s
-115854 records/s
-real 10.00 s user  0.33 s sys  23.17 s
-116350 records/s
-real 10.00 s user  0.38 s sys  23.15 s
-116040 records/s
-real 10.00 s user  0.34 s sys  23.16 s
-116021 records/s
-real 10.00 s user  0.36 s sys  23.10 s
-116560 records/s
-real 10.00 s user  0.37 s sys  23.23 s
+Changes in v2:
+- modified compatible hierarchy to use non-deprecated syntax (krzk)
+- fixed subject prefixes of [v1 2/5], [v1 3/5], [v1 4/5], [v1 5/5] (krzk)
+- removed simplefb nodes instead of disabling it (krzk)
+- added dt-bindings patch to allow mipi-phy node under PMU
+- changed clock names of dsim node
+- Link to v1: https://lore.kernel.org/r/20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org
+
 ---
+Kaustabh Chakraborty (6):
+      dt-bindings: samsung: exynos-sysreg: add exynos7870 sysregs
+      dt-bindings: soc: samsung: exynos-pmu: allow mipi-phy subnode for Exynos7 PMU
+      arm64: dts: exynos7870: add DSI support
+      arm64: dts: exynos7870-on7xelte: enable display panel support
+      arm64: dts: exynos7870-a2corelte: enable display panel support
+      arm64: dts: exynos7870-j6lte: enable display panel support
 
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+ .../bindings/soc/samsung/exynos-pmu.yaml           |  1 +
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |  2 +
+ .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts | 57 +++++++++++----
+ arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    | 38 ++++++----
+ arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts | 57 +++++++++++----
+ arch/arm64/boot/dts/exynos/exynos7870.dtsi         | 84 ++++++++++++++++++++++
+ 6 files changed, 197 insertions(+), 42 deletions(-)
 ---
- arch/loongarch/Kconfig    |  1 +
- arch/loongarch/mm/fault.c | 55 ++++++++++++++++++++++++++++++++++++---
- 2 files changed, 53 insertions(+), 3 deletions(-)
+base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
+change-id: 20250523-exynos7870-drm-dts-87ccab731ba9
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 0631a6b11281b..1c517954157c0 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -69,6 +69,7 @@ config LOONGARCH
- 	select ARCH_SUPPORTS_LTO_CLANG_THIN
- 	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
- 	select ARCH_SUPPORTS_NUMA_BALANCING
-+	select ARCH_SUPPORTS_PER_VMA_LOCK
- 	select ARCH_SUPPORTS_RT
- 	select ARCH_USE_BUILTIN_BSWAP
- 	select ARCH_USE_CMPXCHG_LOCKREF
-diff --git a/arch/loongarch/mm/fault.c b/arch/loongarch/mm/fault.c
-index deefd9617d008..2ba9bba55fbb6 100644
---- a/arch/loongarch/mm/fault.c
-+++ b/arch/loongarch/mm/fault.c
-@@ -215,6 +215,56 @@ static void __kprobes __do_page_fault(struct pt_regs *regs,
- 		flags |= FAULT_FLAG_USER;
- 
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
-+	if (!(flags & FAULT_FLAG_USER))
-+		goto lock_mmap;
-+
-+	vma = lock_vma_under_rcu(mm, address);
-+	if (!vma)
-+		goto lock_mmap;
-+
-+	if (write) {
-+		flags |= FAULT_FLAG_WRITE;
-+		if (!(vma->vm_flags & VM_WRITE)) {
-+			vma_end_read(vma);
-+			si_code = SEGV_ACCERR;
-+			count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+			goto bad_area_nosemaphore;
-+		}
-+	} else {
-+		if (!(vma->vm_flags & VM_EXEC) && address == exception_era(regs)) {
-+			vma_end_read(vma);
-+			si_code = SEGV_ACCERR;
-+			count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+			goto bad_area_nosemaphore;
-+		}
-+		if (!(vma->vm_flags & (VM_READ | VM_WRITE)) && address != exception_era(regs)) {
-+			vma_end_read(vma);
-+			si_code = SEGV_ACCERR;
-+			count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+			goto bad_area_nosemaphore;
-+		}
-+	}
-+
-+	fault = handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LOCK, regs);
-+	if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-+		vma_end_read(vma);
-+
-+	if (!(fault & VM_FAULT_RETRY)) {
-+		count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+		goto done;
-+	}
-+	count_vm_vma_lock_event(VMA_LOCK_RETRY);
-+	if (fault & VM_FAULT_MAJOR)
-+		flags |= FAULT_FLAG_TRIED;
-+
-+	/* Quick path to respond to signals */
-+	if (fault_signal_pending(fault, regs)) {
-+		if (!user_mode(regs))
-+			no_context(regs, write, address);
-+		return;
-+	}
-+lock_mmap:
-+
- retry:
- 	vma = lock_mm_and_find_vma(mm, address, regs);
- 	if (unlikely(!vma))
-@@ -276,8 +326,9 @@ static void __kprobes __do_page_fault(struct pt_regs *regs,
- 		 */
- 		goto retry;
- 	}
-+	mmap_read_unlock(mm);
-+done:
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
--		mmap_read_unlock(mm);
- 		if (fault & VM_FAULT_OOM) {
- 			do_out_of_memory(regs, write, address);
- 			return;
-@@ -290,8 +341,6 @@ static void __kprobes __do_page_fault(struct pt_regs *regs,
- 		}
- 		BUG();
- 	}
--
--	mmap_read_unlock(mm);
- }
- 
- asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
+Best regards,
 -- 
-2.20.1
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
