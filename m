@@ -1,90 +1,153 @@
-Return-Path: <linux-kernel+bounces-835362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0611BA6E5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:53:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD14EBA6E63
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34EF4189A3F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:54:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94ADC3BC6FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A36E2DAFA3;
-	Sun, 28 Sep 2025 09:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yjn5nNiE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F182DA77F;
+	Sun, 28 Sep 2025 09:57:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F1F221558;
-	Sun, 28 Sep 2025 09:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FA52D9EE2;
+	Sun, 28 Sep 2025 09:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759053208; cv=none; b=WSVl7/+Wm/RqFw7M8SRByLdBQwZCyu8pQrp4nfN9DAbMnwonx6Rr9dka4hfLGQypuF4+rEcgY0ryNafIUChrv/qHV4gYh38c1wJYwzfbIPtWPbG9oqUYw5j25SzxX+pviinmTKwzNjm0gylLWdcJ0WcqO5R4688cmZZGdNhfouo=
+	t=1759053455; cv=none; b=CkUb1RC3CeYCxMu3qZnpPAk0dxPCZG0aE+nh1NkFfst5xFpkAiJdeRQ9/d58oINdnQMx5RfAgw5QFwV56avF6c+g9fShoXxjZMfKZODCEPaQdbiMfJqoFymenPXX31VWUN8KhOfVR48UxTfGH1OGvEaeWSCWgpWbvUdQ60TEJgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759053208; c=relaxed/simple;
-	bh=HIf5LX+bx343feP90cVWnAiNYFupJgOU3bNRQcK9Vj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mJ+7dDIzoahzCYnHRMUGxpBJWNvapvwR3EA+Rt9D9AHFsrLu429z0FjaJhQdLLzPEtdkGX5Kz8y7kXy2V+wt6RUHE193rABhzXenAcvFIthT8sGR0GmYbNB0FCXYZJjfFZqQCmRhUJoActvam4KtRtuOE9iEDRwWw+jNM8Zpy0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yjn5nNiE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DC4C4CEF0;
-	Sun, 28 Sep 2025 09:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759053207;
-	bh=HIf5LX+bx343feP90cVWnAiNYFupJgOU3bNRQcK9Vj8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yjn5nNiEoN78pL0G/uwp1CyJkw4U/lIljze+xcm4dbC8J53/J2Epmxl7mvWKAVLNp
-	 PvoIrjIg6uLTy0G3WvPy54D8NeZ133D8g7+f3I76+yIsA8ZZSWYwM7aDsq2sI/JFS/
-	 a8dFZ4BVTpUmDThxn7Dai6t0JYwivEs6b8n6ZuKEdbamZvWeNToCpCdjIxJb6HmpAm
-	 QwWIhUuxJPayRWFRi4TIOCnra63h6/ONZ5kbNG+dsj8w7Nh02rNkf5kA6xWpMukVym
-	 qSL+Q7lU6alMYCro57yWqO0NJB4YVT7UHLuLajtIPmVl9DzEOzVPmiiU+noylf1JDk
-	 BuGpjgXoNGoMg==
-Date: Sun, 28 Sep 2025 10:53:16 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <michael.hennerich@analog.com>,
- <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
- <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
-Subject: Re: [PATCH v3 4/8] iio: adc: ad4030: Reduce register access
- transfer speed
-Message-ID: <20250928105316.782d076e@jic23-huawei>
-In-Reply-To: <fd505d37aceaafd6b20626bfd3f25c47db1fb004.1758916484.git.marcelo.schmitt@analog.com>
-References: <cover.1758916484.git.marcelo.schmitt@analog.com>
-	<fd505d37aceaafd6b20626bfd3f25c47db1fb004.1758916484.git.marcelo.schmitt@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759053455; c=relaxed/simple;
+	bh=dumUV71p1sLstCNKKFhagPnBXc90yU8aoRHsBryCCWo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=oGSJste4ZUQev0YXNtMZcSkLIzcEMP2EbcHmLp4PB8prIXWDEsbdiq7OjPUsJuUTC1/o0j0dcRyqCfOo/3lesiSGs5k01nkHrl8IpWjJjc8NnT9ZdCqM7DO0BkKWaJpOQRbxRwgdJ/meNN0lNr4I8yJdcrY8AjfOkMR4lJkYadk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cZKVf4H4gzYQvLb;
+	Sun, 28 Sep 2025 17:57:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A5B231A0FC8;
+	Sun, 28 Sep 2025 17:57:28 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgCXWmKHBtloA2FiBA--.6421S2;
+	Sun, 28 Sep 2025 17:57:28 +0800 (CST)
+Message-ID: <2ccc217a-09f5-483a-bb91-4d0a25d98434@huaweicloud.com>
+Date: Sun, 28 Sep 2025 17:57:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC 00/16] cpuset: rework local partition logic
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
+Cc: linux-kernel@vger.kernel.org, lujialin4@huawei.com,
+ chenridong@huawei.com,
+ "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>
+References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCXWmKHBtloA2FiBA--.6421S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF17JF1ktr45ArWkCrW8Crg_yoW5ZrWDpF
+	9xCrWSk34UGry3C3srJan7Zw4rGws7JFyUtrnrXw18Xr17Aw1vyFyIy3ykZa47Xr98Ary8
+	Z3ZrWr4xX3WqkF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Fri, 26 Sep 2025 17:39:42 -0300
-Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
-> Configuration register accesses are not considered a critical path in terms
-> of time to complete. Even though register access transfers can run at high
-> speeds, nanosecond completion times are not required as device
-> configuration is usually done step by step from user space. Also, high
-> frequency transfers hinder debug with external tools since they require
-> faster clocked equipment. Reduce register access transfer speed.
+On 2025/9/28 15:12, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> The current local partition implementation consolidates all operations
+> (enable, disable, invalidate, and update) within the large
+> update_parent_effective_cpumask() function, which exceeds 300 lines.
+> This monolithic approach has become increasingly difficult to understand
+> and maintain. Additionally, partition-related fields are updated in
+> multiple locations, leading to redundant code and potential corner case
+> oversights.
+> 
+> This patch series refactors the local partition logic by separating
+> operations into dedicated functions: local_partition_enable(),
+> local_partition_disable(), and local_partition_update(), creating
+> symmetry with the existing remote partition infrastructure.
+> 
+> The series is organized as follows:
+> 
+> 1. Infrastructure Preparation (Patches 1-2):
+>    - Code cleanup and preparation for the refactoring work
+> 
+> 2. Core Partition Operations (Patches 3-5):
+>    - Factor out partition_enable(), partition_disable(), and
+>      partition_update() functions from remote partition operations
+> 
+> 3. Local Partition Implementation (Patches 6-9):
+>    - Separate update_parent_effective_cpumask() into dedicated functions:
+>      * local_partition_enable()
+>      * local_partition_disable()
+>      * local_partition_invalidate()
+>      * local_partition_update()
+> 
+> 4. Optimization and Cleanup (Patches 10-16):
+>    - Remove redundant partition-related operations
+>    - Additional optimizations based on the new architecture
+> 
+> Key improvements:
+> - Centralized management of partition-related fields (partition_root_state,
+>   prs_err, nr_subparts, remote_sibling, effective_xcpus) within the
+>   partition_enable/disable/update functions
+> - Consistent operation patterns for both local and remote partitions
+>   with type-specific validation checks
+> - Fixed bug where isolcpus remained in root partition after isolated
+>   partition transitioned to root
+> 
+> Chen Ridong (16):
+>   cpuset: use update_partition_sd_lb in update_cpumasks_hier
+>   cpuset: generalize validate_partition() interface
+>   cpuset: factor out partition_enable() function
+>   cpuset: factor out partition_disable() function
+>   cpuset: factor out partition_update() function
+>   cpuset: introduce local_partition_enable()
+>   cpuset: introduce local_partition_disable()
+>   cpuset: introduce local_partition_invalidate()
+>   cpuset: introduce local_partition_update()
+>   cpuset: remove redundant partition field updates
+>   cpuset: simplify partition update logic for hotplug tasks
+>   cpuset: unify local partition disable and invalidate
+>   cpuset: use partition_disable for compute_partition_effective_cpumask
+>   cpuset: fix isolcpus stay in root when isolated partition changes to
+>     root
+>   cpuset: use partition_disable for update_prstate
+>   cpuset: remove prs_err clear when notify_partition_change
+> 
+>  kernel/cgroup/cpuset.c | 907 ++++++++++++++++++-----------------------
+>  1 file changed, 408 insertions(+), 499 deletions(-)
+> 
 
-So making debug with external tools easier isn't usually a justification we'd
-make to slow things down by default.
++cc cgroups@vger.kernel.org
 
-Is there another reason for this being useful as opposed to not a problem
-to do?   If it had been done this way in the first place I wouldn't have
-minded, but to make a change I'd like either some others to jump in and
-say, yes please do this, or a reason beyond you are using tooling that can't
-cope with 80 MHz and don't want to hack the driver when you need
-to slow it down (my tools can't cope with that rate either!)
-
-J
+-- 
+Best regards,
+Ridong
 
 
