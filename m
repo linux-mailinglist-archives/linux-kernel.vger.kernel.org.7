@@ -1,156 +1,139 @@
-Return-Path: <linux-kernel+bounces-835574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2366BA77D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 22:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF6ABA77DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829A53B1013
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 20:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5023B6A27
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08424296BC2;
-	Sun, 28 Sep 2025 20:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1D729AAF8;
+	Sun, 28 Sep 2025 21:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="UsiuXEBp"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="h8PORjgs"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD4128E5F3
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 20:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E91D226CF7;
+	Sun, 28 Sep 2025 21:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759092966; cv=none; b=DX2YFMT8JnJqVFexsA0kvqFNqfZ21AUEM4JCcVMpN6y+3MWhqYyKuZxgAhnnLQmLvsEr3hNZFNrnD26lRPqnUXDXnn3PBHDBejRsQBKqHjR8eNsgNXjWht0+aMCkY9m5RcunVdm49c6X0fElqnVBlf4cC3g7gKk1P7MjZWGyv3M=
+	t=1759093283; cv=none; b=JI/RZF7t90TQXchiW3gnjWtEHcoiPO9pEETKdHVh/wp7gq698MmXrlN9GFHlalIYuQgbg96vrnGb8PIplsoDxD7YgYfhpcf7KzaFM3XnXv5laMFu5fk8v5rQ6Z89UW+mk18NOsH138sOrQs1s3OlDgGqhXkAW4VrlcQBXsXoMeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759092966; c=relaxed/simple;
-	bh=c6JNU7cxtn4GGl1RKmZ+N+dQYleaxUy2TWlL0Y8HPys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NzSOqYeDQO9qYEJn9W0nuL4ciKXWPpGbw/cf74GvedfhAx+6A1Lg3E8j1NpYiifJT61a7bQB7KGMblgIOkHaHbDAFr5PMjGkBDmdiPjoQAdOmJfu7AvHkVviJc0useOivVPU8yG4CpS/AP6920EHr2cnlW8x+limXqoThuQ6yDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=UsiuXEBp; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-28a5b8b12a1so1231495ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1759092961; x=1759697761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UiGIGqDPqEAG/fx/GyBcjXyYsr3F4pTYCf0xPL9HStc=;
-        b=UsiuXEBpTnHMW5N7NOplrywx1l911vxXDeqAL3geeba6p9IC4s9wkTWPx9xrywv8xK
-         +zAHP5WannZsT+PppriC9in0EOooSmdX28a6Q6VWdCp1yq33GlxvQa+rWr79J4vWDT+5
-         WOO0diAo06ptXUj9YheOMR0hs+Hbj+PSrMsczFjrsq9W3XcH7onMYkqh4pFkS+mHuPhJ
-         PjdUs+F3ADztkOjfpljlWlF5BMH9urucsZuEBQ3flahOvAzmiWfmE+H56ebxYxAZ1PdK
-         O0EwbOXWA5Kg9eRHrv8dsDbKdAW8J9Zz11Ead/4darMkPFEsZeQ78eYTR83pFHMZROPH
-         D6gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759092961; x=1759697761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UiGIGqDPqEAG/fx/GyBcjXyYsr3F4pTYCf0xPL9HStc=;
-        b=RQJaQEKSNUV4WsbyI/PlsZCL+GYHUtcc2hILpAkmKRxFPzi1+TvEA2EA4bdqUR8PDd
-         3JpknuvU6sA1M6xIR88e+OjYtZo3cazryAcwM7HS68VGclZxIpYecvOfH+J02U92Y7sU
-         fiQ/ffxZv8O8UeqKD+TNvW+RbTczfbU6tImZFPSOZ/bf2df9tSeHUNmXXbP3hvgYWC8i
-         xQ/n8lUBNXl2B0SFrTqPmDZcvudtxMTX+s6tdcH6PlWf5mr/hPe+UgKG6NnyMPKlm+Oo
-         fCJHAMiYyu93ysIgnN1X9dJEICgEhwTXYjbsmeUztVSRK9V7DqV2h3J1NQqXBpKiuP2e
-         sf6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW4jIZOOYa39EyspolnEs44llGaUKNmAoNpKIrGkd+EiDdBQGkj/MRENN44CDp6dDuOGmoLL7SXBz8qAeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXp1b97mrcH+eJslnIYc9AZOrX4qdoGqGGPGXanLmHg22upCin
-	vkXX5JXWQZplRZurtswp6Kp2qdsjVfvRfhB3BOcO8RCevFn+v8XAkRMc8+v02mYY3n/IU9n7nf/
-	UR31JnnyRlf/nXbBTqByYB1Jp/bBlib8=
-X-Gm-Gg: ASbGncuwjeTxVHCNH46ixGwOQxSI8ba3DgS7067BvD0m3LpCQ7WKsDnL/lwa1rl9mYG
-	AjGgWeooysvSszH/f6nvozh3jZ54Uvp3RMgANYPs/DkYcYrUrUqqECWoSDsXpeITQntnPMcOpD0
-	RqtGTx6SLeF7l8I6QkWeC2HOY4/cXlB5sIcpaC19IR3iRHzESzoQZaKELbBNcSFJEHfCrTJ92ix
-	/m7b6E9Jolc6cC596eSZgZZ27QEApwCBtzh4EPlAKU3X0Sj8aE=
-X-Google-Smtp-Source: AGHT+IF7c1Vuxskwry28TIxl0fMtYzqbtx+tBLSfDt71UAkuiIb3LaxfXzXjmqXnRcWpmOVNDKsjmYs5K4EhIxamz+w=
-X-Received: by 2002:a17:903:22cc:b0:248:ff5a:b768 with SMTP id
- d9443c01a7336-27ed4a29f9amr152736995ad.10.1759092961471; Sun, 28 Sep 2025
- 13:56:01 -0700 (PDT)
+	s=arc-20240116; t=1759093283; c=relaxed/simple;
+	bh=5HhK7XnvK65/N8XzfAZPaRc4ZNAHp83kybTevCzMBUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JGpvtFW71qurguZBMF8za3nmoR3n3KH3UTQZK/3JVBDDeTjmxRWvz4MX6SBg8iltSpvzUsh+S+h71xq4p3n4C6eQAVbYEFnPE7AyOK/+K5iqhp3Bw7yf+LuQqj9xIyz/j/J3LanZQFFMJg66gc/zJalXYiM1e9c6mXvfeeW6Dwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=h8PORjgs; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=aupfVz7e9wplaDlsYMjDfHncbZB7faN8jTJ9BwCTw74=; b=h8PORjgsj4t28FG8t0P54L2Rfu
+	1KOok0ak82wgdvmBgnhNzzMNuvgXD/oIYYr3hdZaaWUnL6oqsLTWBjmeLCWY5x1RvP/66QV7hGqQQ
+	A158LZCzybAQr9k78vVXJCpx2Xg/U8ORw+3vRpwOWy432Pi9anmusm6F1hQJM/37WJoVKtubhXiaC
+	DFLcA6uTbinxM7m3JSnbXhYdDf5yBw0LJ/kTiZGlIF8YSIv9wIlEzyCABAPPuk3plzQ1xKXehHYWy
+	ZQZGPymt6NiXYwhJtISiknvxQmNZKvqAp740HYUVzFgjeZemeH6W7Rqk5//5leSVjHK7JZFp3o99e
+	QdzkYHxg==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1v2yW1-001iHZ-1z;
+	Sun, 28 Sep 2025 23:01:05 +0200
+Date: Sun, 28 Sep 2025 23:01:00 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: Re: [PATCH 2/2] mfd: simple-mfd-i2c: add a reboot cell for the
+ SpacemiT P1 chip
+Message-ID: <aNmiDIUzx5eUEOQT@aurel32.net>
+Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+References: <20250927220824.1267318-1-aurelien@aurel32.net>
+ <20250927220824.1267318-3-aurelien@aurel32.net>
+ <E15EF3B2FD46EFE7+aNiYuset7FKRo_4C@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
- <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com> <CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
- <20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com> <1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
- <e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com> <9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
-In-Reply-To: <9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sun, 28 Sep 2025 22:55:50 +0200
-X-Gm-Features: AS18NWCJbZWjP8ynFS6Veu9yFpZpvyV0QmDxpZo6qHFoQpkPGQRYQgKjOrmkB50
-Message-ID: <CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <E15EF3B2FD46EFE7+aNiYuset7FKRo_4C@kernel.org>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-Hello,
+On 2025-09-28 10:08, Troy Mitchell wrote:
+> Hi Aurelien, Thanks for your patch!
+>=20
+> On Sun, Sep 28, 2025 at 12:07:41AM +0200, Aurelien Jarno wrote:
+> > Add a "spacemit-p1-reboot" cell for the SpacemiT P1 chip.
+> >=20
+> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> > ---
+> >  drivers/mfd/simple-mfd-i2c.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
+> > index 696b602051260..2e86efb0c82b8 100644
+> > --- a/drivers/mfd/simple-mfd-i2c.c
+> > +++ b/drivers/mfd/simple-mfd-i2c.c
+> > @@ -99,6 +99,7 @@ static const struct regmap_config spacemit_p1_regmap_=
+config =3D {
+> >  };
+> > =20
+> >  static const struct mfd_cell spacemit_p1_cells[] =3D {
+> > +	{ .name =3D "spacemit-p1-reboot", },
+> I=E2=80=99m not sure if this name is the best fit here.
+> Since the driver also implements reboot and power-off functionality,
+> would it make more sense to call it spacemit-p1-power?
+> I=E2=80=99ll leave it up to you.
 
-On Sun, Sep 28, 2025 at 8:41=E2=80=AFAM Chuan Liu <chuan.liu@amlogic.com> w=
-rote:
->
->
-> On 9/28/2025 2:05 PM, Chuan Liu wrote:
-> > Hi Jerome & Martin:
-> >
-> > Sorry for the imprecise description of the glitch-free mux earlier.
-> >
-> > Recently, while troubleshooting a CPU hang issue caused by glitches,
-> > I realized there was a discrepancy from our previous understanding,
-> > so I'd like to clarify it here.
-[...]
-> An example of the clock waveform is shown below:
->
->
->         __    __    __    __    __    __    __    __
-> ori:  =E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  =
-|__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91
->                    ^
->                    1 * cycle original channel.
->         _   _   _   _   _   _   _   _   _   _   _   _
-> new:  =E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=
-=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91=
- |_=E2=86=91
->                                        ^
->                                        5 * cycles new channel.
->         __    __                        _   _   _   _
-> out:  =E2=86=91  |__=E2=86=91  |______________________=E2=86=91 |_=E2=86=
-=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91
->               ^                        ^
->               start switching mux.     switch to new channel.
-Thank you for the detailed report!
-This is indeed problematic behavior. I guess the result is somewhat
-random: depending on load (power draw), silicon lottery (quality),
-temperature, voltage supply, ... - one may or may not see crashes
-caused by this.
+I see your point, for this driver naming everything was among the most=20
+complex things. I have chosen "spacemit-p1-reboot" to be consistent with =
+=20
+the naming used in the driver itself. I chose them from recently added=20
+drivers supporting both poweroff and reset, that seems to all use the=20
+term reboot.
 
-Based on the previous discussion on this topic, my suggestion is to
-split the original patch:
-- one to add CLK_SET_RATE_GATE where needed (I think the meson8b.c
-driver already has this where needed) to actually enable the
-glitch-free mux behavior
-- another one with the CLK_OPS_PARENT_ENABLE change (meson8b.c would
-also need to be updated) to prevent the glitch-free mux from
-temporarily outputting an electrical low signal. Jerome also asked to
-document the behavior so we don't forget why we set this flag
+> Otherwise, LGTM.
+>=20
+> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> >  	{ .name =3D "spacemit-p1-regulator", },
+> >  	{ .name =3D "spacemit-p1-rtc", },
+> >  };
+> > --=20
+> > 2.47.2
+> >=20
+> >=20
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+>=20
 
-Both patches should get the proper "Fixes" tags.
-I think it would also be great if you could include the waveform
-example in at least the commit message as it helps understand the
-problem.
-
-Let's also give Jerome some time to comment before you send patches.
-
-
-Best regards,
-Martin
+--=20
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
