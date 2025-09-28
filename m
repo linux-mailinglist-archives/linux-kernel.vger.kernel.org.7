@@ -1,259 +1,149 @@
-Return-Path: <linux-kernel+bounces-835518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40305BA75B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:48:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E5DBA75AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F6F3B9055
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:48:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E59174323
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B81253954;
-	Sun, 28 Sep 2025 17:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="SORaCu2E"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F372367D2;
+	Sun, 28 Sep 2025 17:44:31 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273351DE3CB
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 17:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1611E260A
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 17:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759081696; cv=none; b=nUCBzVRYUZdLSOeGhexFBexOz+wLYSpcL2ONbiDlbykNcj+dsCaG3JVbYfk0JJUqqP0KTFdqtxrFP7e7dvvseIKJ6fY9temwnIWuAl9ERoPFO6HT3Y2AzA/chk+7nKS/gsBYNMqASaQE9vNIJXHMbgSVp4bN02o9bwmVX/L5EW4=
+	t=1759081470; cv=none; b=WyJoliKZRZ4+cADotw7RYT5CRT51QsLlO1yfIWYNmGLUh5tM1surz72BTHM+7xQLMnZx/1kjKCjXq/66aGLdTCAD/o+SZrwy+/3GTP+9FjduBtwrFEVze7JQLmcY1Ml+u0HuD9TINl+6fSATcyBcHx5DpNnFsmo14tiKJSIbMQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759081696; c=relaxed/simple;
-	bh=4qNTlbFEjuH9bnCDI/3xbsjA3TN4w2pHJC6MjFBFSXo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t+uPXRiLT6uZtXh7QONCtIIyf9B6fTmWgsorNvwHLixGL5ci1v2PqIg5ZgHNZ2lTxsWqsna4EPivJZ00yRgeJVq8FOUb37C+VkPj1opM7Ygo2Wn52bbjAFB77/KdWcFLxbfQaWFMR2afsGduT3GgXWvMft1IK4bgy3zhFjgD5ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=SORaCu2E; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1759081666;
-	bh=0od+6JBZeJ5IviLF7qLj8sUhTWwVv7Ij6LAzPVrXKRA=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=SORaCu2E9wyMThwRMBvXkvQ6KlU4LBLXyGv23PeD8z26hrvccgqdw0HFEC0Cs9Bto
-	 0MT7cSVrn98JQi/z/RKeIHOLBLY49mi0YpM0sXYO35vj9gU1SPPEIXqikt/ua63jys
-	 vsvlrWZ3w1AqEsk1WfglXfVWk+YGYwUxToJScerk=
-X-QQ-mid: zesmtpgz9t1759081631t021883b7
-X-QQ-Originating-IP: ifKfQK1/7p2OuYkam46LsyMMByw8Bz++5YdlIWb80RA=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 29 Sep 2025 01:47:09 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10726783025379362395
-EX-QQ-RecipientCnt: 7
-From: Wentao Guan <guanwentao@uniontech.com>
-To: chenhuacai@kernel.org
-Cc: kernel@xen0n.name,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH v2] LoongArch: mm: try VMA lock-based page fault handling first
-Date: Mon, 29 Sep 2025 01:43:41 +0800
-Message-Id: <20250928174341.307295-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1759081470; c=relaxed/simple;
+	bh=+jK8Ma3IpkzGke8O20X459XvV03rrNWyhCdUKlLQs24=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fqFpI3fZ7o5irYQW/OwqE8L1g4kOP2WMN5RYlA+ZS8IZhJZRO+taDsnbw2oCp+5kJojb8c0HzyZDYqxlmSeMm32NnFBTslcTlzOtfNAiougPH7mNYCVCn/i9Nl/+y3ajkAhRqrnai9j7UIz+x4GnIENHNUxL4/TSWGqPFwVq5E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-4256ef4eea3so45324335ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:44:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759081468; x=1759686268;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JfHz+kVBBN6qxDi9w6vxoz4MHOeNlBqzhi/tIoFuRPE=;
+        b=XlBXw0vHKNPpoQn5y/otRKkPvZfARFkE+ApkLT1pYEcRiT0cwy49tCMIWy23La0w67
+         PnjerD02udvdQTJ/S5bN3xp94jfY3BkeGHnTMme+IVyrA+ru1VDxyv889lvXV0jB2VDX
+         zcoloEmqK/oOgqloJK5ErPUoKxvY/TyQB3Jall2LdqkSs/LAsvR0XcXQ1gcyDG2w7jck
+         iIAeFHDxkiVrcsx3O1D1uMPLaAa3pg/GAM4+qS3oRjPqxNGYiK5hrDKHcCTTocJyxIzq
+         DKh7MeqaEt9nkgXdAYhpIl6UFkhajOfmw+XBbupXc9Cba4jKhyaa2gSIZfzXc6ME+PDc
+         TvNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWn940wRENEjgFRCGxLmEhyhtr6Ln4QnhRkEiNseegNIEICgdTJ3hOB4dhAXY+QiwmVTVoZKVx/cWB4ytM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznjP1AiIaPSaoUy8SYJeFD8b3f/R0BkxawQvB5h/CmFUDfjG74
+	gXG0vHuV0ennGC3oHTWiN+/FMq0RgiRlkXDSvlBfbo4cbjw1fC97fyhqYqNnm9u/7GVn6ga5dhU
+	7upoYSFybSNTxro2pJNp9h8myydJoV7WyqUwNgG2CVuvbaL+sxtooaFxp2OU=
+X-Google-Smtp-Source: AGHT+IFMLHheYfBzpYXH2L+A8ieG9iaNLiHGhD/LJKn1x6lDumvntoi3looYvzugPONUK1RFSwCI0/btp5SXrDxyLfRc9saqMxq8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: N7fjnhHz1C62yd+e3T1r55oIq1HB/wiSpZZFoE4qis+Hb08RQPlo67cz
-	sxrx0FsU9o98Vzx0MODUYgnIhFrp1ckO36XyFNjH2sbfHSWtQXR28Maq7pNfS0ir7iWkxmR
-	xW8md5Bjo5rizcY8if+dUDlWRRviIpcrSiwgU48++bLYNsFY57KCTj6aB/htJDev2ArRdSy
-	tK5F0GQTXPgzNqyjFhvgIZEtvXZtpt2O8kBVQmKkOQnTx5+h9yVmNWvnhxEESMDYrntO/Ur
-	6XlyNFgu5pJF9YQQxRcIyRix7mJzMBo48PD3uoU0f3MCaTIZB21hyvqyXPmcQpgb2RXOl+z
-	0QlJKp7VNDehnqm20zMDzS1Tk/2vULWQhnUWRjBrQyiPCoUDvXgUyEyd7U5tctrzBPMnixg
-	GJ6D+Dv/jBirfXkU/gPrc719wJnk9NbDm2erbm33ovklH7R11AneayeVt7q9oPTeNLt34sz
-	6KNPU0H0TM05+wJ38NesbENzwG30/nVdqG339SBIz7M8DOquBUaPErItJYjN1ZQyGgEBIIv
-	KXcbusjD9ikVMUN7gw7+NQlQYI//drjM7aE6KaS8BVyzZ1edfqU39z4Yfr+H0sleKiXvVzE
-	2HQfaaR7yemo9/Q+gloT5Qj9DNO1+rAibQ5QhxFSZGFO0Tl+F2500Mw3iMsTvL2/gBLmQBd
-	UHa/Hvxg8D6T7dDBP4eDDtny4GM04cQl+E2VkMw4aqBrN7rrNvdqY2jIgVkJ9jBOi+FQkWy
-	O5AR+zPpqTjHV8Gbvw/c48nLJJQ5NIm4hFA1T1jWtJC4en2NVE3l4Cs3Mfu/3NBAksQtyci
-	pCtvn4t80azA6mF4N6UFdMJzfqzeWWblRx8letPpz9BsGkTEaqp/izTrhh64x2o/2cOtoLc
-	+GN1uQmlZ21Hnvu/Lzp0j7qGfO1yHhmOeBFMl3Fms2ItP+U2G0SXMdcKtD6bfcQXv5efC+o
-	7r6Yi1bC3pbpWBDYaOjP9i2YoH2l3RCtCCkb9k0ABN8C9MdS9Fi1TmqpGU4LFZ72L9jPa26
-	gpCQVuAy9rCsUlvF83rfff2VOTq/eua54QcltsUKG28JuQEjSs
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+X-Received: by 2002:a05:6e02:12cc:b0:428:c370:d972 with SMTP id
+ e9e14a558f8ab-428c370dba4mr79681495ab.7.1759081468228; Sun, 28 Sep 2025
+ 10:44:28 -0700 (PDT)
+Date: Sun, 28 Sep 2025 10:44:28 -0700
+In-Reply-To: <6861c281.a70a0220.3b7e22.0ab8.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d973fc.a00a0220.102ee.002b.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in xfs_init_fs_context
+From: syzbot <syzbot+359a67b608de1ef72f65@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, apopple@nvidia.com, baohua@kernel.org, 
+	byungchul@sk.com, cem@kernel.org, david@fromorbit.com, david@redhat.com, 
+	gourry@gourry.net, harry.yoo@oracle.com, joshua.hahnjy@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+	matthew.brost@intel.com, mhocko@suse.com, penguin-kernel@i-love.sakura.ne.jp, 
+	rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
+	willy@infradead.org, ying.huang@linux.alibaba.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-Attempt VMA lock-based page fault handling first, and fall back to the
-existing mmap_lock-based handling if that fails.
+syzbot has found a reproducer for the following issue on:
 
-The "ebizzy -mTRp" on 3A6000 shows that PER_VMA_LOCK can
-improve the benchmark by about 17.9%(97837.7 to 115430.8).
+HEAD commit:    51a24b7deaae Merge tag 'trace-tools-v6.17-rc5' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1268bf12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
+dashboard link: https://syzkaller.appspot.com/bug?extid=359a67b608de1ef72f65
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a20334580000
 
-This is the loongarch variant of "x86/mm: try VMA lock-based page fault
-handling first".
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-51a24b7d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2d2422223a2d/vmlinux-51a24b7d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3f33b7e0feca/bzImage-51a24b7d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/345ccb8f827e/mount_8.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=161e6ae2580000)
 
-Let us discuss the four fault cases after handle_mm_fault
-1.fault_signal_pending(fault, regs):
-handle before goto done.
-2.fault & VM_FAULT_COMPLETED:
-fallthrough to return.
-3.fault & VM_FAULT_RETRY:
-handle before goto done.
-4.fault & VM_FAULT_ERROR:
-reuse the origin way to handle.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+359a67b608de1ef72f65@syzkaller.appspotmail.com
 
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+loop0: detected capacity change from 0 to 32768
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6463 at mm/page_alloc.c:4619 __alloc_pages_slowpath+0xcb3/0xce0 mm/page_alloc.c:4619
+Modules linked in:
+CPU: 0 UID: 0 PID: 6463 Comm: syz.0.279 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__alloc_pages_slowpath+0xcb3/0xce0 mm/page_alloc.c:4619
+Code: d8 48 c1 e8 03 0f b6 04 08 84 c0 75 2e f6 43 01 08 48 8b 14 24 0f 84 a2 f3 ff ff 90 0f 0b 90 e9 99 f3 ff ff e8 3e 9e 64 09 90 <0f> 0b 90 f7 c5 00 04 00 00 75 bc 90 0f 0b 90 eb b6 89 d9 80 e1 07
+RSP: 0018:ffffc9000e2ff8f0 EFLAGS: 00010246
+RAX: 97af8c55b4e88b00 RBX: 0000000000000002 RCX: dffffc0000000000
+RDX: ffffc9000e2ffa00 RSI: 0000000000000002 RDI: 0000000000048cc0
+RBP: 0000000000048cc0 R08: ffff88805ffd7297 R09: 1ffff1100bffae52
+R10: dffffc0000000000 R11: ffffed100bffae53 R12: ffffc9000e2ffa00
+R13: 1ffff92001c5ff3c R14: 0000000000048cc0 R15: dffffc0000000000
+FS:  00007fb4ec9696c0(0000) GS:ffff88808d007000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb4ebb72b60 CR3: 00000000516af000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ __alloc_frozen_pages_noprof+0x319/0x370 mm/page_alloc.c:5161
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab+0xd9/0x370 mm/slub.c:2668
+ new_slab mm/slub.c:2714 [inline]
+ ___slab_alloc+0xbeb/0x1420 mm/slub.c:3901
+ __slab_alloc mm/slub.c:3992 [inline]
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ __kmalloc_cache_noprof+0x296/0x3d0 mm/slub.c:4402
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ xfs_init_fs_context+0x54/0x500 fs/xfs/xfs_super.c:2278
+ alloc_fs_context+0x64e/0x7d0 fs/fs_context.c:318
+ do_new_mount+0x16f/0x9e0 fs/namespace.c:3787
+ do_mount fs/namespace.c:4136 [inline]
+ __do_sys_mount fs/namespace.c:4347 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4324
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb4ebb9066a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb4ec968e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fb4ec968ef0 RCX: 00007fb4ebb9066a
+RDX: 0000200000009600 RSI: 0000200000009640 RDI: 00007fb4ec968eb0
+RBP: 0000200000009600 R08: 00007fb4ec968ef0 R09: 0000000000200800
+R10: 0000000000200800 R11: 0000000000000246 R12: 0000200000009640
+R13: 00007fb4ec968eb0 R14: 0000000000009644 R15: 00002000000002c0
+ </TASK>
+
+
 ---
-v2 changelog:
-1. fix bug when VM_FAULT_ERROR and miss some count_vm_vma_lock_event
-2. update test result.
-ebizzy-0.3(can download by phoronix-test-suite):
-before patch:
-97800 records/s
-real 10.00 s user  0.25 s sys  13.54 s
-97835 records/s
-real 10.00 s user  0.27 s sys  13.51 s
-97929 records/s
-real 10.00 s user  0.26 s sys  13.53 s
-97736 records/s
-real 10.00 s user  0.31 s sys  13.48 s
-97914 records/s
-real 10.00 s user  0.30 s sys  13.50 s
-97916 records/s
-real 10.00 s user  0.31 s sys  13.48 s
-97857 records/s
-real 10.00 s user  0.28 s sys  13.51 s
-97927 records/s
-real 10.00 s user  0.24 s sys  13.55 s
-97962 records/s
-real 10.00 s user  0.41 s sys  13.39 s
-97501 records/s
-real 10.00 s user  0.20 s sys  13.53 s
-after patch:
-117938 records/s
-real 10.00 s user  0.40 s sys  23.48 s
-116762 records/s
-real 10.00 s user  0.39 s sys  23.20 s
-116412 records/s
-real 10.00 s user  0.37 s sys  23.22 s
-116047 records/s
-real 10.00 s user  0.45 s sys  23.04 s
-116324 records/s
-real 10.00 s user  0.45 s sys  23.08 s
-115854 records/s
-real 10.00 s user  0.33 s sys  23.17 s
-116350 records/s
-real 10.00 s user  0.38 s sys  23.15 s
-116040 records/s
-real 10.00 s user  0.34 s sys  23.16 s
-116021 records/s
-real 10.00 s user  0.36 s sys  23.10 s
-116560 records/s
-real 10.00 s user  0.37 s sys  23.23 s
----
-
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
----
- arch/loongarch/Kconfig    |  1 +
- arch/loongarch/mm/fault.c | 55 ++++++++++++++++++++++++++++++++++++---
- 2 files changed, 53 insertions(+), 3 deletions(-)
-
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 0631a6b11281b..1c517954157c0 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -69,6 +69,7 @@ config LOONGARCH
- 	select ARCH_SUPPORTS_LTO_CLANG_THIN
- 	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
- 	select ARCH_SUPPORTS_NUMA_BALANCING
-+	select ARCH_SUPPORTS_PER_VMA_LOCK
- 	select ARCH_SUPPORTS_RT
- 	select ARCH_USE_BUILTIN_BSWAP
- 	select ARCH_USE_CMPXCHG_LOCKREF
-diff --git a/arch/loongarch/mm/fault.c b/arch/loongarch/mm/fault.c
-index deefd9617d008..425b20f3b6b83 100644
---- a/arch/loongarch/mm/fault.c
-+++ b/arch/loongarch/mm/fault.c
-@@ -215,6 +215,56 @@ static void __kprobes __do_page_fault(struct pt_regs *regs,
- 		flags |= FAULT_FLAG_USER;
- 
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
-+	if (!(flags & FAULT_FLAG_USER))
-+		goto lock_mmap;
-+
-+	vma = lock_vma_under_rcu(mm, address);
-+	if (!vma)
-+		goto lock_mmap;
-+
-+	if (write) {
-+		flags |= FAULT_FLAG_WRITE;
-+		if (!(vma->vm_flags & VM_WRITE)) {
-+			vma_end_read(vma);
-+			si_code = SEGV_ACCERR;
-+			count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+			goto bad_area_nosemaphore;
-+		}
-+	} else {
-+		if (!(vma->vm_flags & VM_EXEC) && address == exception_era(regs)){
-+			vma_end_read(vma);
-+			si_code = SEGV_ACCERR;
-+			count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+			goto bad_area_nosemaphore;
-+		}
-+		if (!(vma->vm_flags & (VM_READ | VM_WRITE)) && address != exception_era(regs)){
-+			vma_end_read(vma);
-+			si_code = SEGV_ACCERR;
-+			count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+			goto bad_area_nosemaphore;
-+		}
-+	}
-+
-+	fault = handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LOCK, regs);
-+	if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-+		vma_end_read(vma);
-+
-+	if (!(fault & VM_FAULT_RETRY)) {
-+		count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-+		goto done;
-+	}
-+	count_vm_vma_lock_event(VMA_LOCK_RETRY);
-+	if (fault & VM_FAULT_MAJOR)
-+		flags |= FAULT_FLAG_TRIED;
-+
-+	/* Quick path to respond to signals */
-+	if (fault_signal_pending(fault, regs)) {
-+		if (!user_mode(regs))
-+			no_context(regs, write, address);
-+		return;
-+	}
-+lock_mmap:
-+
- retry:
- 	vma = lock_mm_and_find_vma(mm, address, regs);
- 	if (unlikely(!vma))
-@@ -276,8 +326,9 @@ static void __kprobes __do_page_fault(struct pt_regs *regs,
- 		 */
- 		goto retry;
- 	}
-+	mmap_read_unlock(mm);
-+done:
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
--		mmap_read_unlock(mm);
- 		if (fault & VM_FAULT_OOM) {
- 			do_out_of_memory(regs, write, address);
- 			return;
-@@ -290,8 +341,6 @@ static void __kprobes __do_page_fault(struct pt_regs *regs,
- 		}
- 		BUG();
- 	}
--
--	mmap_read_unlock(mm);
- }
- 
- asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
--- 
-2.20.1
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
