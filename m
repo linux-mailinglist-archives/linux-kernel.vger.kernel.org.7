@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-835356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747CABA6DC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D05A3BA6E0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300CF3A6450
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4B83B90F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAE72D949E;
-	Sun, 28 Sep 2025 09:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="S66go+d7"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C04E2D9EFC;
+	Sun, 28 Sep 2025 09:41:45 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08A42D062F;
-	Sun, 28 Sep 2025 09:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D81A2BF000
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 09:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759051954; cv=none; b=Hf5I2F1O13wExh7vpPHN7YhYlCDb4XxphU3D4ztkaBYYL8HapCDVOFXHcOxYwjfCR4ZE13oC++ethW1GLUjIZJ2ct0RObcZcawJHyZ1vy6zyvjMU+nL2tkvCVAiG/uNg89ohKJx56wiL6LMRiuO+jiN7EGnWUcbvk/HCheWoB3o=
+	t=1759052505; cv=none; b=DgabUMZ46DkkVWRxYWPBlKEmT5jo+hQpPHOeXAHYg41Wy4JKluANYcgX8YzdLgIXQ//j2TSToK9jvNtbXAquXPI8apeyHkSLvbSw2l4qpfjyTO+NWm874VICw9uEXCeaphrchdKggFZS8ddv9jbejVJns+ivyY3p34FPvq/AXhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759051954; c=relaxed/simple;
-	bh=SKwtz4qWqhPcESQg87ojaWvLmwrEotTfIBGcnSoeTbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRJ9yXHIgoMdMJnoXnKwho6oG1gGeDXiAPaYiCLXRL7yHoWuKi+KFzCjtrXDFlRSToJsEuf+agCLttdbwbmwKGcx+6FsQ9R2QJh8yu4ZfjUJ17bf/LF47V0ZEzo0/YxctAwhuqGqLZuZEiq5zj2ODLkjb5+k+oxPNBokcX0AdtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=S66go+d7; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=W4obhf2MMc+kaVAeVoHPf3nhTo/bKPGOyQwVk/dKIYA=; b=S66go+d73VUiXXPjRKdmdmphgX
-	fJSp4bLxi+AG0GdEXOovkaskpY4ph3IFxoWPlkw5KBlq8BCDaujWApl2reNhtFcjbYdO8NWLTAu/V
-	4jlVxRjWuwXjBlWuN3blTKJRXUGJbIfujGydt2dCgCZIEqmEkDAd9oVT2mOQqCO7ldr59MR2+/rov
-	sr5t7sQXGdcwWelHGX0LbcInHhXBZQG2QvKhdOThbQMeHV3+YdBNo41m0p+mCXk2XnC/CvR06IZBL
-	hFHJHJHKFipbKSUM63/MTC3uqDEN9slMfDkAUlhX2C3f/dSobUTyU4JBwRkEJg+QyoR0+8N3pw81V
-	7G/ljcAg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60784)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v2nlZ-000000005RS-1C6u;
-	Sun, 28 Sep 2025 10:32:25 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v2nlU-000000002Si-1OQ2;
-	Sun, 28 Sep 2025 10:32:20 +0100
-Date: Sun, 28 Sep 2025 10:32:20 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>
-Subject: Re: [PATCH RFC net-next 3/6] net: phylink: add phylink managed MAC
- Wake-on-Lan support
-Message-ID: <aNkApFc9wsnabXFW@shell.armlinux.org.uk>
-References: <aNj4HY_mk4JDsD_D@shell.armlinux.org.uk>
- <E1v2nFI-00000007jXV-1BYa@rmk-PC.armlinux.org.uk>
+	s=arc-20240116; t=1759052505; c=relaxed/simple;
+	bh=1tlzJWdN56EDcq5HthC03bg7XMECCgYcQrkhJv9S8ww=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=p0HXlk3u9GiIYciweg+bqBYhRLfMbjroacTArogjs2eqIMjJzLOOLzPCeR4/MNSc7gSpvjK7iWU8Lere604H5lObJMKMpLH87YWVZVOtr/T4sR9SJnNkimarfAOfa0Q/Q0Oo0n1xw8DA+fQiqH1f24T2Bvl+uy37BbZoy+X+SP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-92789f3367aso6252939f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 02:41:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759052502; x=1759657302;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FQ3/mFKpVGZ0sZwc0az8WJEb4oHMyVi5sQTf8ELWSSg=;
+        b=ryjBpTDgoDi+sB9BAovHbkbFjGkspKu0zuXistup4kBljDaAZbIW4w48NfO8BasJGK
+         6Le4lh9xvxlc5CmoIzQAUsvuLq6bCme/lz26G4ZNG3dGFSw8P591EaKwDvweMTxhoo/N
+         T+SNFnLlZEw/pb8O/JL8cJAV+aNgBpv0+r5PDL7L5xz4QgJvoHZKRoiLAN7YcXZuqIgR
+         UHLrKanxkHVbWKBJnBKXi0bXux4gJtMyWJbYGjWzyq4loA0suK+vXF7XQORir34ajmNg
+         4kmTMQ22K14hKtwB3QqBdPuCltHR4F6Ijwx5WxJyC8L0A00f7ejavtqkUJPkOKPvewxE
+         JqcA==
+X-Gm-Message-State: AOJu0YwsOEEAN3Y5mImTaRGTVJ6yvTBHp6MJ7toUXTrMMT0q3kZhkFt9
+	JTg3Hwe92wiyajbvviRgw7zFQCyoHeuznusK6f0hBYnlQTthz2QG4L/x5TsbhacLSIwuqqeXsLj
+	OqVcG5Y98SEUn0lRb8L9j/A8H7op2VdeDXZ41JRmWGi5051WASe+eCVSHor8=
+X-Google-Smtp-Source: AGHT+IHf0OLP5/P6OikWc2MJlwGfaaGEgqPom3oQYprCsia9O4qgIzHMQYE+AUg86+WiaIRhuZ28Nqoz/tCMZJqoOHq6yxlX+Jbg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <E1v2nFI-00000007jXV-1BYa@rmk-PC.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-Received: by 2002:a05:6e02:19c6:b0:424:64c:5b5d with SMTP id
+ e9e14a558f8ab-425955d4c9dmr206575075ab.13.1759052502727; Sun, 28 Sep 2025
+ 02:41:42 -0700 (PDT)
+Date: Sun, 28 Sep 2025 02:41:42 -0700
+In-Reply-To: <68b95f81.a00a0220.eb3d.0001.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d902d6.050a0220.25d7ab.04ee.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: validate extent entries before caching in ext4_find_extent()
+From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 28, 2025 at 09:59:04AM +0100, Russell King (Oracle) wrote:
-> Add core phylink Wake-on-Lan support.
-> 
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> ---
->  drivers/net/phy/phylink.c | 77 +++++++++++++++++++++++++++++++++++++--
->  include/linux/phylink.h   | 26 +++++++++++++
->  2 files changed, 99 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-> index 9d7799ea1c17..9a3783e719bc 100644
-> --- a/drivers/net/phy/phylink.c
-> +++ b/drivers/net/phy/phylink.c
-> @@ -93,6 +93,9 @@ struct phylink {
->  	u8 sfp_port;
->  
->  	struct eee_config eee_cfg;
-> +
-> +	u32 wolopts_mac;
-> +	u8 wol_sopass[SOPASS_MAX];
->  };
->  
->  #define phylink_printk(level, pl, fmt, ...) \
-> @@ -2575,11 +2578,17 @@ EXPORT_SYMBOL_GPL(phylink_rx_clk_stop_unblock);
->   *   can also bring down the link between the MAC and PHY.
->   * - If Wake-on-Lan is active, but being handled by the MAC, the MAC
->   *   still needs to receive packets, so we can not bring the link down.
-> + *
-> + * Note: when phylink managed Wake-on-Lan is in use, @mac_wol is ignored.
-> + * (struct phylink_mac_ops.mac_set_wol populated.)
->   */
->  void phylink_suspend(struct phylink *pl, bool mac_wol)
->  {
->  	ASSERT_RTNL();
->  
-> +	if (phylink_mac_supports_wol(pl))
-> +		mac_wol = !!pl->wolopts_mac;
-> +
->  	if (mac_wol && (!pl->netdev || pl->netdev->ethtool->wol_enabled)) {
->  		/* Wake-on-Lan enabled, MAC handling */
->  		mutex_lock(&pl->state_mutex);
-> @@ -2673,6 +2682,17 @@ void phylink_resume(struct phylink *pl)
->  }
->  EXPORT_SYMBOL_GPL(phylink_resume);
->  
-> +static bool phylink_mac_supports_wol(struct phylink *pl)
-> +{
-> +	return !!pl->mac_ops->mac_wol_set;
-> +}
-> +
-> +static bool phylink_phy_supports_wol(struct phylink *pl,
-> +				     struct phy_device *phydev)
-> +{
-> +	return phydev && (pl->config->wol_phy_legacy || phy_can_wakeup(phydev));
-> +}
-> +
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Yes, these need to be earlier.
+***
 
+Subject: [PATCH] ext4: validate extent entries before caching in ext4_find_extent()
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+
+syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
+opening a verity file on a corrupted ext4 filesystem mounted without
+a journal.
+
+The issue occurs when the extent tree contains out-of-order extents,
+which can happen in a corrupted filesystem. ext4_find_extent() calls
+ext4_cache_extents() without validating the extent entries when the
+tree depth is 0 (leaf level). This allows corrupted extent trees with
+out-of-order extents to be cached, triggering a BUG_ON in
+ext4_es_cache_extent() due to integer underflow when calculating hole
+sizes:
+
+  If prev = 4352 and lblk = 1280:
+  lblk - prev = 1280 - 4352 = -3072 (as signed)
+  = 4294964224 (as unsigned)
+  end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279 (after overflow)
+  BUG_ON(end < lblk) triggers because 1279 < 4352
+
+Fix this by adding extent entry validation using the existing
+ext4_valid_extent_entries() function before caching. This ensures
+corrupted extent trees are detected and handled properly through the
+error path, preventing both the BUG_ON and potential use-after-free
+issues.
+
+Reported-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
+Fixes: a86c6181109a ("ext4: cache extent hole in extent status tree for ext4_da_map_blocks()")
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ext4/extents.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index ca5499e9412b..f8e45623f7ea 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -924,8 +924,18 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
+ 	path[0].p_bh = NULL;
+ 
+ 	i = depth;
+-	if (!(flags & EXT4_EX_NOCACHE) && depth == 0)
++	if (!(flags & EXT4_EX_NOCACHE) && depth == 0) {
++		ext4_fsblk_t pblk = 0;
++
++		if (!ext4_valid_extent_entries(inode, eh, 0, &pblk, 0)) {
++			EXT4_ERROR_INODE(inode,
++				"invalid extent entries, pblk %llu",
++				pblk);
++			ret = -EFSCORRUPTED;
++			goto err;
++		}
+ 		ext4_cache_extents(inode, eh);
++	}
+ 	/* walk through the tree */
+ 	while (i) {
+ 		ext_debug(inode, "depth %d: num %d, max %d\n",
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.43.0
+
 
