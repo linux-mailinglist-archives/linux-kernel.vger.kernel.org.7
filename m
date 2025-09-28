@@ -1,152 +1,136 @@
-Return-Path: <linux-kernel+bounces-835382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B30BA6F29
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45B3BA6F47
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0F70179AC0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6B71898C82
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8342DCF58;
-	Sun, 28 Sep 2025 10:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609D92DEA87;
+	Sun, 28 Sep 2025 10:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F81ZZNL/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ud20ASVs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4A41DC9B5;
-	Sun, 28 Sep 2025 10:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17BC2DAFA9
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759055569; cv=none; b=mhYDjt90Yt3bwFQAJPYOPwK4+uoR/SNQX7ZPQsDF/15NIJjQRXieKdN9Vvxq3t9/UB4Ze+Xnef9oTxt9/FpVHEnYwYt8s2/THcwOUNnkYKMW1B5qUITgGWfiZxPZ1juualehvWTl/+MROzxh9DlerSGaOTU6TqWAo6isZW+3pSQ=
+	t=1759055603; cv=none; b=O+ecHk2ID6QEnnDQv0IPOIdI1Lc1NqlTvZ7X3L1cmZ3w6j3t9tn3hYTJtr2XMVzJ1JYLNp5dUWNjyPWWX9g4GCpmpkrUsWiQsbqvuMxrPMwmMDl9Et03lX1LG7g1wqLP6kxFvA4Zra6TTfoJH/64kuLf0GKYRldF0z04UK3wrYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759055569; c=relaxed/simple;
-	bh=iW5PZ047R8tg5QXPTMoCd640qW4nDqm5nKOSscw1Q0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kIz+dOPD32E2cc/gNHYP/MG1+Y8SgKj3P2v26U5FvHq15QjDn4fp5C9SBO4A7tKWgGbnk5s9dRR7sOSGA7PPX8uQU6wd7/Hc/lDM105/sFF4oKkpucTqNMwMn1km2iM6dCBguBEa8X1YhKawO/K2NUZVg6SmsxJ5+jYZjnPEARo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F81ZZNL/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75C5C4CEF0;
-	Sun, 28 Sep 2025 10:32:39 +0000 (UTC)
+	s=arc-20240116; t=1759055603; c=relaxed/simple;
+	bh=W1P4GzY1bC9YgmxJ2fNnWAboDU4JuIT0DBDqxALFX0M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xp2wELqHfaP/5OOe2X1u7l6sFWWJR9WWl6u+qxrvEGA3IDxWmR4u5E2fgOgbwK6Wl2Gix4Qsapr2yDzUapkJdsoCgyVS3SPE7K1J7a2y4WUOUOMISZM0JVhfavKIbGipVq2V2KQluujDNydVS8yuUw4VIWFALGsaSHlt8+iGHNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ud20ASVs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A58EC4CEF7
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759055566;
-	bh=iW5PZ047R8tg5QXPTMoCd640qW4nDqm5nKOSscw1Q0I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F81ZZNL/z5yVabIVXXsY82B25C8qIIiCngWBgCs5vsgoFOuZBapnROoVIRr1X+Jbm
-	 VJ7ckGwZrXEO3I+JyyMkoH9x97PKhUfnRvWgybs4eDENye39X2QEXfKIhhfL5Ng+J6
-	 YZLXmqtTDD5nb6/oH45RikBabhDQgkS5tVVikLVQ6BhXyyg8CjRcrA845JVhFdj+pX
-	 j5novLJmDT10LXDzPvbFYNof8k+OBzWHFHYtEqfX9Gbk0kQJ1lmRLdrXynrdJlJ7nt
-	 rfBu4bZGzid79nP1hHgWvJx4rEOnFfCJ8um4MLTPlSO0Aeh9NIapu64MBl1pO25tih
-	 HYc6qnxOGHadA==
-Date: Sun, 28 Sep 2025 11:32:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoni Pokusinski <apokusinski01@gmail.com>
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux@roeck-us.net, rodrigo.gobbi.7@gmail.com,
- naresh.solanki@9elements.com, michal.simek@amd.com,
- grantpeltier93@gmail.com, farouk.bouabid@cherry.de,
- marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v3 3/4] iio: mpl3115: add support for DRDY interrupt
-Message-ID: <20250928113234.3ba70df8@jic23-huawei>
-In-Reply-To: <20250928100232.tafcimfsoljdq6nt@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-References: <20250926220150.22560-1-apokusinski01@gmail.com>
-	<20250926220150.22560-4-apokusinski01@gmail.com>
-	<20250927175125.66bcc18c@jic23-huawei>
-	<20250928100232.tafcimfsoljdq6nt@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1759055603;
+	bh=W1P4GzY1bC9YgmxJ2fNnWAboDU4JuIT0DBDqxALFX0M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ud20ASVsnYuE5kNMszyEQpSoR0Bq4bejcUKHOUGjiL35VMUaD5yL3aWJSfDAcC6Td
+	 gZvVM+w5J+fLJk+M+cm+C5F6V8+n4QeTYvqpgUamaRejIQgk3V0BlYAFNlqYQL24Bc
+	 DWcQUU6VEeKpDUxZxLhye5/BzKyKh/wIMTJhcQ4gOf6DwgjgyJduc9FxYI2tEQHU8G
+	 Smimz0KWLOn1bqbGAIREMMYENc9PlF8rWaED7GAKDBcxtwEhefJidnd2amv8AtvhLY
+	 P0w6Rw13h6lhC3C6zgIAqhb2YGn56pNaWFWlqBEqDnFrzkyAsiQ1FYLlftVUlNnfCZ
+	 N4zqSVcCig0bw==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-35acca93e00so3029843fac.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:33:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUd8AfxqFZXknIdZQwGeqJQsuVnM/kDHqiXOt2wUs+QY6y95zlu59N44Z8OrHp+KArP1oaLzsBf1KQ4vp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk+FIeF/XJVYfcFQSt/tP19D9YaSAkbHH+ewSorYSzMwYgP+e4
+	D6jPwqXWOSi7SbiNe+PDjJKp5u/mV6HvPFvv21AKmUVLQFFRcdDLnUWhTekn89gjYuwNTRrygrT
+	AdH2j7S5bxFa/pm1xtfU/iuZkmLsUJaI=
+X-Google-Smtp-Source: AGHT+IHHkBehFxa/bp8CnX34GBVpEV5VAfmAS0oqHk9Wg6vhKkRCMfTaIXQ9hfF+1UwB0EGnwQh5Kq0MuUSpqvkAupk=
+X-Received: by 2002:a05:6870:a118:b0:315:b618:d6be with SMTP id
+ 586e51a60fabf-35ef20c8e8fmr6297578fac.51.1759055602481; Sun, 28 Sep 2025
+ 03:33:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+ <20250916044735.2316171-2-dolinux.peng@gmail.com> <03ad08d9-4510-19fb-bbad-652159308119@huawei.com>
+In-Reply-To: <03ad08d9-4510-19fb-bbad-652159308119@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 28 Sep 2025 12:33:11 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ix+taHWpKAeYsNBQMoxG6f7E9vyO=yqjrh5_AnjrXZbg@mail.gmail.com>
+X-Gm-Features: AS18NWDE1zAXVuNiUSbLmdX4xI4485zsbYvsUyBO0gNsC9FdVLBA2B2bjlgQB_4
+Message-ID: <CAJZ5v0ix+taHWpKAeYsNBQMoxG6f7E9vyO=yqjrh5_AnjrXZbg@mail.gmail.com>
+Subject: Re: [PATCH v3 01/14] ACPI: APEI: Remove redundant rcu_read_lock/unlock()
+ in spin_lock
+To: Hanjun Guo <guohanjun@huawei.com>, pengdonglin <dolinux.peng@gmail.com>
+Cc: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com, 
+	ap420073@gmail.com, jv@jvosburgh.net, freude@linux.ibm.com, bcrl@kvack.org, 
+	trondmy@kernel.org, longman@redhat.com, kees@kernel.org, 
+	bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	linux-nfs@vger.kernel.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-s390@vger.kernel.org, 
+	cgroups@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > > +static int mpl3115_trigger_probe(struct mpl3115_data *data,
-> > > +				 struct iio_dev *indio_dev)
-> > > +{
-> > > +	struct fwnode_handle *fwnode = dev_fwnode(&data->client->dev);
-> > > +	int ret, irq, irq_type, irq_cfg_flags = 0;
-> > > +
-> > > +	irq = fwnode_irq_get_byname(fwnode, "INT1");
-> > > +	if (irq < 0) {
-> > > +		irq = fwnode_irq_get_byname(fwnode, "INT2");
-> > > +		if (irq < 0)
-> > > +			return 0;
-> > > +
-> > > +		irq_cfg_flags |= MPL3115_INT2;
-> > > +	}
-> > > +
-> > > +	irq_type = irq_get_trigger_type(irq);
-> > > +	if (irq_type != IRQF_TRIGGER_RISING && irq_type != IRQF_TRIGGER_FALLING)
-> > > +		return -EINVAL;
-> > > +
-> > > +	irq_cfg_flags |= irq_type;  
-> > Commented on this before, but mixing flags that are local to this driver
-> > with those that are global provides not guarantees against future changes
-> > of the global ones to overlap with your local values.
-> > 
-> > So just track these as two separate values rather than combining them.
-> >  
-> 
-> So you mean 2 separate variables, one for INT1/INT2 and one for the
-> trigger RISING/FALLING, am I right?
+On Sat, Sep 27, 2025 at 5:22=E2=80=AFAM Hanjun Guo <guohanjun@huawei.com> w=
+rote:
+>
+> On 2025/9/16 12:47, pengdonglin wrote:
+> > From: pengdonglin <pengdonglin@xiaomi.com>
+> >
+> > Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side fun=
+ction definitions")
+> > there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
+> > rcu_read_lock_sched() in terms of RCU read section and the relevant gra=
+ce
+> > period. That means that spin_lock(), which implies rcu_read_lock_sched(=
+),
+> > also implies rcu_read_lock().
+> >
+> > There is no need no explicitly start a RCU read section if one has alre=
+ady
+> > been started implicitly by spin_lock().
+> >
+> > Simplify the code and remove the inner rcu_read_lock() invocation.
+> >
+> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > Cc: Tony Luck <tony.luck@intel.com>
+> > Cc: Hanjun Guo <guohanjun@huawei.com>
+> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> > Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+> > ---
+> >   drivers/acpi/apei/ghes.c | 2 --
+> >   1 file changed, 2 deletions(-)
+> >
+> > diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> > index a0d54993edb3..97ee19f2cae0 100644
+> > --- a/drivers/acpi/apei/ghes.c
+> > +++ b/drivers/acpi/apei/ghes.c
+> > @@ -1207,12 +1207,10 @@ static int ghes_notify_hed(struct notifier_bloc=
+k *this, unsigned long event,
+> >       int ret =3D NOTIFY_DONE;
+> >
+> >       spin_lock_irqsave(&ghes_notify_lock_irq, flags);
+> > -     rcu_read_lock();
+> >       list_for_each_entry_rcu(ghes, &ghes_hed, list) {
+> >               if (!ghes_proc(ghes))
+> >                       ret =3D NOTIFY_OK;
+> >       }
+> > -     rcu_read_unlock();
+> >       spin_unlock_irqrestore(&ghes_notify_lock_irq, flags);
+> >
+> >       return ret;
+>
+> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
 
-Yes.
-
-> This was the approach in v1, but the code for writing the regs CTRL3 and
-> CTRL5 should be improved, I was thinking something like:
-> 
-> if (irq_pin == MPL3115_IRQ_INT1) {
->     write_byte_data(REG5, INT_CFG_DRDY);
->     if (irq_type == IRQF_TRIGGER_RISING)
->         write_byte_data(REG3, IPOL1);
-> } else if (irq_type == IRQF_TRIGGER_RISING) {
->     write_byte_data(REG3, IPOL2);
-> }
-> 
-> This is perhaps a bit less readable than the switch(int_cfg_flags) with 4
-> cases... but IMO it's still quite ok and it's less verbose since we do not
-> duplicate the write_byte_data(REG5, INT_CFG_DRDY).
-
-That looks ok to me.
-
-...
-
-				 indio_dev->name,
-> > > +						 iio_device_id(indio_dev));
-> > > +	if (!data->drdy_trig)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	data->drdy_trig->ops = &mpl3115_trigger_ops;
-> > > +	iio_trigger_set_drvdata(data->drdy_trig, indio_dev);
-> > > +	ret = devm_iio_trigger_register(&data->client->dev, data->drdy_trig);  
-> > 
-> > Whilst unlikely the race matters. It is this call that creates the infrastructure
-> > that might allow the interrupt generation to be triggered via userspace controls.
-> > So the handler should probably be in place firsts.  I.e. do the devm_request_threaded_irq
-> > before this.
-> >  
-> Will fix in v4
-
-Side process related note: If you agree with something, just crop it out!  That means
-we get to focus in quickly on the bits where there is more discussion to be done.
-
-Your change log in v4 is where I'll see you made these changes.
-
-When there is nothing to continue the discussion around in a thread, don't reply at all.
-Thanks etc can come alongside the change log.
-
-Thanks,
-
-Jonathan
-
-p.s. I have periodic sessions of mailing people about the process stuff once the
-overall list traffic is larger than it should be for stuff like this. You just happened
-to be an 'unlucky' recipient today!
+Applied as 6.18 material, thanks!
 
