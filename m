@@ -1,121 +1,158 @@
-Return-Path: <linux-kernel+bounces-835378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B1DBA6EFA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3C2BA6F06
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E1017C610
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED4217CC17
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3451A2D9ECB;
-	Sun, 28 Sep 2025 10:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838E2DCBF3;
+	Sun, 28 Sep 2025 10:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/XX24QA"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0w1x+sS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5F31EA7EC
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0271729E115
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759055043; cv=none; b=kQwIp5yGZT4RCkwgJqFn+v4e/ex69rCodIdsEemBARntsDBFvX3Z4p6GwrH7slTRxq47ItXe7O/rkKwVWIYp6cSqBQnLC7KYn8gtSFrbw5TeGkGI1SIEItdqr50uFVYWV+ON6NlLByKcd4Fr92PMtkZJrp2Bo3hsZClWhCsT3uo=
+	t=1759055074; cv=none; b=njhxH5ni3EBTExLRMKn/6hFCdmFCzxO5Gy0TtV2EFch9phFO2nDwf/UCJHvAeaygcOcUCEE+h3Onx/0bomDP7mVciP5GeGYGvw6upNQznpJ0t80wGeNEfcTJV6A0iY4jntcmzGZgrLq6PWdxyLvUvodNvn5+Wll9GvR5iVWuZgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759055043; c=relaxed/simple;
-	bh=D6IUpv1N1uqZnzwjcSW/CDPKsLpnOn0CcSzXGCV/+/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LkfhQPnnlIz+6CN1k7X43Xg7DPPuITpEUfQJ3M6Nybo+aJnU5zPK4NfGvhjMlFYM5aQV5KVkBWQDv64g9H392BqzbNls7GYiCwcRIPd4a2Vlim2RZloMVYsHnrlDk3gEKq0WyJvOx/qLI3Ga0ZUF2o2WiCZFBdo0i1tcsg6t9SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/XX24QA; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62fa0653cd1so5307637a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:24:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759055040; x=1759659840; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LcChJkbyyCyxxnYoZ0h2dgScTYQu8ypUACGdGHRDEY8=;
-        b=D/XX24QARRVg99CyYmaO9aZB29n9O+hNxVas7M+YzXr5W7iyod8yNdTxpmyrKOV4SX
-         DIfaJZoYKVQ9KEXkBdz5AID/d9kdtcD7ndQNhTpu2Xk59V2jhcI3OpiXANWBXkrz+eQA
-         r8DCz+sL0/yp3fEIavbG55VbvrNwtgV74aMrTXJ0BsTwNp+PDCQLEAgygdChwzwpWktJ
-         /x2euhGfuhI02XnIa6MLzSDchc8s3K0CZl1Uo7vNt9Bbnj4MhMEaBsWCOGFnjkpTYuZF
-         AWMV6ZS36p5oLtbP9Leu83seM5pLLPG5rjgV/nKptnplpwcVzIdTjn9sAsWDQ/reRqYF
-         5Dyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759055040; x=1759659840;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LcChJkbyyCyxxnYoZ0h2dgScTYQu8ypUACGdGHRDEY8=;
-        b=RwWo8SkfRdpzKqhgVOZwjgQwHk/TS9fEHHwHaxoj3WrKwlzt+ErQtX+EAiRIZXx9VY
-         FMVB5zZWLa1CFWdzMTnJMeCyM2RSlpQw55vv8AQlz4e3O+x2P9HZpXxR6mGgQ804ei0L
-         +mmc7WHRlh6sTE3irktalAJVhewCXCBE/d7Xxbi2GthAAEJKMwK4iJR/X39K0O47wu8A
-         RxbeWzurqpXhL1d/U2/spyoeMKQ0LeRpwlN9FQrBhnaxRnIuETLwUQx/lRv9Msd9rI9x
-         roic5pGt/yoM96U2BSxtOa+yYjlBCEwCFR37c6h0YOsa30xxphazcfgseycWOv8DyhVL
-         NTBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdKsQBeEEX5HkedivLt+5RAlvVM9LEUga1uUQk6SXM0vWGH0BdZ2kgar2XJijCFEJO8whoatOnXyZclso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmXnWhKQYDBd+WpgDIvPXX5qbaOJVMojmZjVZfJGQ19KjwL3JT
-	nDFq7YdHWMImuajkHNXvIbQqvdniCQqlP3bLs9oWfd9H+Nhj4BeknDKxjVzZInGPD2NWs0PLCC0
-	XX3/rW2wOSiGNTWJowsKbs3t9B33vmwc=
-X-Gm-Gg: ASbGncvNXhqv7RiUWvJgrSFWUah+GDDdtGvQW4jIHqZbyOEM4Pme6nolsX3JihzgCUz
-	HHlROR8IVLcI74LHNN5Mrr7Tg56HcK7DolRTDgmw3yNGq1dAFpvtg7PQlL33o7Gse2k7b+yFWTQ
-	Cq4+0QaajmCBVNHaeW2N7PhuI0E6HTUTFoTVtHh6267WSpeyDO+ajfu0qtVSSa7iaFXdjmmZJAK
-	S+oZjBa
-X-Google-Smtp-Source: AGHT+IGAq0LbOWTh24q9bLB+mXJC5ix6EL+ilnN7HstffL1oa4ImYTxpRTBcFvmhE8oxPjiGws6tJF6LzW8U7U3nO24=
-X-Received: by 2002:a05:6402:606:b0:633:8337:da95 with SMTP id
- 4fb4d7f45d1cf-6349fa9f661mr8379897a12.38.1759055040002; Sun, 28 Sep 2025
- 03:24:00 -0700 (PDT)
+	s=arc-20240116; t=1759055074; c=relaxed/simple;
+	bh=0SFpAeRsj+73ToPc1OCYE3veDt4HP4vYJm03fBRLVFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fc+GnAjGZCwk1plFxYnOvNw/c71I3VUfMn5W3M/nO045P7KKjAKIGv0mTnqmrmcGf0/9ijXRfMrTNe7dUw9dHEwDJoBP7Jxn0zlZjkWuX/Mx8gkN+B0EqDLOSxq0T/m6WzHoZc1uerSi8KWPLtv18CAvgVOUxUID3Qj8nxOISQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0w1x+sS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55264C4CEF0;
+	Sun, 28 Sep 2025 10:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759055073;
+	bh=0SFpAeRsj+73ToPc1OCYE3veDt4HP4vYJm03fBRLVFE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=M0w1x+sSdZtVvYm0WP1ebGpHK0/h2vx/PYXiyih7hcXRENwvq/tHs3H5tCQG47n2G
+	 ZMkt8QrzTerKDYx9+Zec+DvaZg4+p1ermiQRK9jxMKWHqAcA4BnkU0IMNhqu+bIPZx
+	 CgSHwnbldWWwwBE7jyr6LoF2ZIUJdEFexve3BtSj9cle9wFRahYJEHJQyTYH40M/0L
+	 YSYq1QIwrbb89KiyzhybVzqiOsCVUDTsKixmhgyD1h4TA1iUG/V0qU3ufJN2pFZJ+3
+	 buvVnSu7k/cstow3Up5U8yIKpMdePiZKX5JM43fz52mWl4c/gtDi1Oo5yIb+liBy6I
+	 uGGhxtX6u4B2A==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	JY <JY.Ho@mediatek.com>
+Subject: [PATCH] f2fs: fix UAF issue in f2fs_merge_page_bio()
+Date: Sun, 28 Sep 2025 18:24:22 +0800
+Message-ID: <20250928102422.300429-1-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1758219786.git.leon@kernel.org> <0c64474985af55b1aa934b857808068a0e609c6e.1758219787.git.leon@kernel.org>
- <CA+=Fv5Q8dVUFVBh82mAe=fy3mV6mWtQT_0pBPLQwLNBt3f8E1g@mail.gmail.com>
- <20250923171819.GM10800@unreal> <CA+=Fv5SJcQ5C4UeX2+deV9mPAe5QxrocMG8EJ2eVcYjbLE5U+A@mail.gmail.com>
- <20250923235318.GD2617119@nvidia.com> <CA+=Fv5Tg7sQACpeG8aMZF6_E6dbRnN5ifg0aiHityXadxiHoPA@mail.gmail.com>
- <CA+=Fv5Sze_BNmHqzypmCh8p2JO6gytXH4E6hXv3gZdfoSJsMUQ@mail.gmail.com>
-In-Reply-To: <CA+=Fv5Sze_BNmHqzypmCh8p2JO6gytXH4E6hXv3gZdfoSJsMUQ@mail.gmail.com>
-From: Magnus Lindholm <linmag7@gmail.com>
-Date: Sun, 28 Sep 2025 12:23:48 +0200
-X-Gm-Features: AS18NWC4Nb9W4XCpYP_OV5Q9pNZrLenXw3hzv9kO6uALa6_OupoUAOrEskTs214
-Message-ID: <CA+=Fv5TF+RTPEkQEmVd0_=B9xbqKycLz3ck3UwcPDqacezYfFQ@mail.gmail.com>
-Subject: Re: [PATCH 1/9] alpha: Convert mapping routine to rely on physical address
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Andreas Larsson <andreas@gaisler.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Geoff Levand <geoff@infradead.org>, Helge Deller <deller@gmx.de>, Ingo Molnar <mingo@redhat.com>, 
-	iommu@lists.linux.dev, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Jason Wang <jasowang@redhat.com>, 
-	Juergen Gross <jgross@suse.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Matt Turner <mattst88@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	sparclinux@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	virtualization@lists.linux.dev, x86@kernel.org, 
-	xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-> After reverting the above commits, I'm able to build a working kernel,
-> that is, no filesystem corruption occurs. I'll take a closer look at this
-> after the weekend.
->
+As JY reported in bugzilla [1],
 
-Short update,  It is enough to revert the following commits, in order to
-have a working kernel on alpha:
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+pc : [0xffffffe51d249484] f2fs_is_cp_guaranteed+0x70/0x98
+lr : [0xffffffe51d24adbc] f2fs_merge_page_bio+0x520/0x6d4
+CPU: 3 UID: 0 PID: 6790 Comm: kworker/u16:3 Tainted: P    B   W  OE      6.12.30-android16-5-maybe-dirty-4k #1 5f7701c9cbf727d1eebe77c89bbbeb3371e895e5
+Tainted: [P]=PROPRIETARY_MODULE, [B]=BAD_PAGE, [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+Workqueue: writeback wb_workfn (flush-254:49)
+Call trace:
+ f2fs_is_cp_guaranteed+0x70/0x98
+ f2fs_inplace_write_data+0x174/0x2f4
+ f2fs_do_write_data_page+0x214/0x81c
+ f2fs_write_single_data_page+0x28c/0x764
+ f2fs_write_data_pages+0x78c/0xce4
+ do_writepages+0xe8/0x2fc
+ __writeback_single_inode+0x4c/0x4b4
+ writeback_sb_inodes+0x314/0x540
+ __writeback_inodes_wb+0xa4/0xf4
+ wb_writeback+0x160/0x448
+ wb_workfn+0x2f0/0x5dc
+ process_scheduled_works+0x1c8/0x458
+ worker_thread+0x334/0x3f0
+ kthread+0x118/0x1ac
+ ret_from_fork+0x10/0x20
 
-e78a9d72517a88faa6f16dab4d1c6f966ed378ae
-(dma-mapping: remove unused map_page callback)
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=220575
 
-d459e3b80ad1c81bf596d63d2e3347cf8c7bb0d9
-(alpha: Convert mapping routine to rely on physical address)
+The panic was caused by UAF issue w/ below race condition:
 
+kworker
+- writepages
+ - f2fs_write_cache_pages
+  - f2fs_write_single_data_page
+   - f2fs_do_write_data_page
+    - f2fs_inplace_write_data
+     - f2fs_merge_page_bio
+      - add_inu_page
+      : cache page #1 into bio & cache bio in
+        io->bio_list
+  - f2fs_write_single_data_page
+   - f2fs_do_write_data_page
+    - f2fs_inplace_write_data
+     - f2fs_merge_page_bio
+      - add_inu_page
+      : cache page #2 into bio which is linked
+        in io->bio_list
+						write
+						- f2fs_write_begin
+						: write page #1
+						 - f2fs_folio_wait_writeback
+						  - f2fs_submit_merged_ipu_write
+						   - f2fs_submit_write_bio
+						   : submit bio which inclues page #1 and #2
 
-/Magnus
+						software IRQ
+						- f2fs_write_end_io
+						 - fscrypt_free_bounce_page
+						 : freed bounced page which belongs to page #2
+      - inc_page_count( , WB_DATA_TYPE(data_folio), false)
+      : data_folio points to fio->encrypted_page
+        the bounced page can be freed before
+        accessing it in f2fs_is_cp_guarantee()
+
+It can reproduce w/ below testcase:
+Run below script in shell #1:
+for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
+-c "pwrite 0 32k" -c "fdatasync"
+
+Run below script in shell #2:
+for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
+-c "pwrite 0 32k" -c "fdatasync"
+
+So, in f2fs_merge_page_bio(), let's avoid using fio->encrypted_page after
+commit page into internal ipu cache.
+
+Fixes: 0b20fcec8651 ("f2fs: cache global IPU bio")
+Reported-by: JY <JY.Ho@mediatek.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 82ae31b8ecc4..9d1d439e2650 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -919,7 +919,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 	if (fio->io_wbc)
+ 		wbc_account_cgroup_owner(fio->io_wbc, folio, folio_size(folio));
+ 
+-	inc_page_count(fio->sbi, WB_DATA_TYPE(data_folio, false));
++	inc_page_count(fio->sbi, WB_DATA_TYPE(folio, false));
+ 
+ 	*fio->last_block = fio->new_blkaddr;
+ 	*fio->bio = bio;
+-- 
+2.49.0
+
 
