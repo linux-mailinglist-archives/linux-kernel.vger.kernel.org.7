@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-835234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3878EBA68BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:11:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD7FBA68C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578631899EB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE89189A567
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225EE296BBE;
-	Sun, 28 Sep 2025 06:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6622459ED;
+	Sun, 28 Sep 2025 06:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="2C2NKtAe"
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6u9QutQK"
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7EA1DC9B5
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D00572608
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759039886; cv=none; b=Y06dCCQ/b2Adgo4rS71keDXbbwkmtGh4DiCqROZRu5KmY1lJlkwwHEWigKu63SZGPAq71jAkhRcxHI0QIlcDtJ/ao+bnePn8tMqUfIWRn4V7N2UP6fNpiOJU6/Qnz2W3uM53yKCcXq+5U9WmcYj5HzpjfSOjz9uVOUNMlU8VCl4=
+	t=1759040140; cv=none; b=AB0Rmxs/F/QDULW2IgR5R+0AFGMCnjOfwgfJUoJZZqkWvlbbzZjqkRgYxRAwZDKYddxyJxREtNKzxx+lMeFkv3+UNLMitf7g8j/AxZIUg3UGfbXeMOqx2l/BhKXyrhX5+0q/8u2O6EF+HIsTgJWchmo3Vfz8X5IP1Nkq/8nfGDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759039886; c=relaxed/simple;
-	bh=5C/xmVLP7eepmMoja7aYCQ+lGdIxCnNESZHp8X52GI0=;
+	s=arc-20240116; t=1759040140; c=relaxed/simple;
+	bh=3jYCx1MiCETyCsR5jxMesJHBiMhydFMBMyL2OG8Pp/c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LdpJ6JpHwoxSLc56IWuV3RXF/C1ulDvM8YSGL+fl48GYgvVugwpb8fx/ldGuQM2h+VKJ+ioVZGWUlu1bfUvOThDpzl1hmEwak1MkAGmqURuFAVz3vCBCcivgkJtztrYUgsObpIbG2dQ+SHEqa91xB/0owaoBv8ZPcW/I9zQCb48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=2C2NKtAe; arc=none smtp.client-ip=113.46.200.223
+	 In-Reply-To:Content-Type; b=pxl5nb2tf3zbR1AQ7o5WHOjxREqkX4Ewbt4Eap3vZLU/S7OuxSWg0BVZjwA78EVHSU6V2s2u3KjIWIy96QilMoA7t4vT1AA1Gpx5oyOj1qRf+IQmwVkggzK7URkrpOMRxSxEzSggmPFXvhBsQd4MyJ1yLwbnxNxKmPrMMkZ7kS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6u9QutQK; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from canpmsgout05.his.huawei.com (unknown [172.19.92.145])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cZDTW3KSnzJsYg
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:10:55 +0800 (CST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=KMTQBHC+x6efVAwKq5VoPVUM/GH7pbjWkjp5ywqzP0Q=;
-	b=2C2NKtAeQpmR1NsxKXyN4D+MpxBnS1kvJltdNHjI7kF3ur5DEyxjGzbBuALPxAGmbIvxdoGuN
-	mmVcd9qK4vncMSkgdhy9Ru1ud679Rwrloh6iOMam79vOfFk6YLCP6zyd4mb459nSD7huurSagSU
-	8dTx8oOS4Dj0TqFDm4LAzkI=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4cZDTl56CWzmV71;
-	Sun, 28 Sep 2025 14:11:07 +0800 (CST)
+	bh=kSmmbL14ndwOVr1GdeCLz4P2lr6bK//bwekT0PADraU=;
+	b=6u9QutQKPcbCFaG78Qca649K+mNhw3BLpxZNkORk3j0mb0QxNb/nAlk5TPyAV5hk5cjeasMb/
+	fGb/kJAiPW/MuSxS8Tj21kC1wtyV2XCtHUfS/RwYtEYPYaNtFjYhqC2RYhOZwcHk1AWCKZRtqGp
+	LK7JIBDQSW272BZ8x8QMMCk=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cZDZv6RrDz12LDk;
+	Sun, 28 Sep 2025 14:15:35 +0800 (CST)
 Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 739A918001B;
-	Sun, 28 Sep 2025 14:11:17 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 41A9218007F;
+	Sun, 28 Sep 2025 14:15:28 +0800 (CST)
 Received: from [10.67.120.170] (10.67.120.170) by
  kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sun, 28 Sep 2025 14:11:16 +0800
-Message-ID: <8f4c0670-97a8-4d43-aab8-937231755bed@huawei.com>
-Date: Sun, 28 Sep 2025 14:11:16 +0800
+ 15.2.1544.11; Sun, 28 Sep 2025 14:15:27 +0800
+Message-ID: <22825b66-1648-4301-855c-cdbdd56bae5e@huawei.com>
+Date: Sun, 28 Sep 2025 14:15:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,9 +61,10 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] MAINTAINERS: add myself and Barry to dma_map_benchmark
  maintainers
-To: Barry Song <21cnbao@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>
-CC: Marek Szyprowski <m.szyprowski@samsung.com>, <shuah@kernel.org>,
-	<robin.murphy@arm.com>, <jonathan.cameron@huawei.com>,
+To: Shuah Khan <skhan@linuxfoundation.org>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Barry Song <21cnbao@gmail.com>,
+	<shuah@kernel.org>
+CC: <robin.murphy@arm.com>, <jonathan.cameron@huawei.com>,
 	<prime.zeng@huawei.com>, <fanghao11@huawei.com>,
 	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
 	<yangyicong@huawei.com>
@@ -71,9 +75,8 @@ References: <CGME20250917011807eucas1p2dc0c24ef4ad8effcc1a2174d54cf4161@eucas1p2
  <0c59d099-4844-4fb2-80e0-6d3fc0077985@samsung.com>
  <ae8a2c37-74db-4e53-99c1-fc7f86e80253@huawei.com>
  <5900de48-e4a4-45cc-be7d-c906a59ba04a@linuxfoundation.org>
- <CAGsJ_4yrm_3ZftZtYZ==YsEt14OR+t1FkVNzLzYjPxqXNdeURA@mail.gmail.com>
 From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <CAGsJ_4yrm_3ZftZtYZ==YsEt14OR+t1FkVNzLzYjPxqXNdeURA@mail.gmail.com>
+In-Reply-To: <5900de48-e4a4-45cc-be7d-c906a59ba04a@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
@@ -81,56 +84,41 @@ X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
 
 
 
-On 2025/9/26 14:59:36, Barry Song <21cnbao@gmail.com> wrote:
-> On Fri, Sep 26, 2025 at 6:09 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+On 2025/9/26 06:09:57, Shuah Khan <skhan@linuxfoundation.org> wrote:
+> On 9/25/25 07:11, Qinxin Xia wrote:
 >>
->> On 9/25/25 07:11, Qinxin Xia wrote:
+>>
+>> On 2025/9/22 20:20:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>> On 22.09.2025 01:50, Barry Song wrote:
+>>>> On Fri, Sep 19, 2025 at 2:17 AM Marek Szyprowski
+>>>> <m.szyprowski@samsung.com> wrote:
+>>>>> On 17.09.2025 03:17, Qinxin Xia wrote:
+>>>>>> Since Chenxiang has left HiSilicon, Barry and I will jointly
+>>>>>> maintain this module.
+>>>>>>
+>>>>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+>>>>> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> Thanks!
+>>>> Marek, would you rather merge this into the dma-mapping tree
+>>>> instead of ACKing it, or would you prefer it to go through
+>>>> a different tree?
+>>>
+>>> I expected it to be taken by Shuah, as she is responsible for the
+>>> tools/testing/selftests/ directory, where the dma tests are still 
+>>> placed.
 >>>
 >>>
->>> On 2025/9/22 20:20:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>>> On 22.09.2025 01:50, Barry Song wrote:
->>>>> On Fri, Sep 19, 2025 at 2:17 AM Marek Szyprowski
->>>>> <m.szyprowski@samsung.com> wrote:
->>>>>> On 17.09.2025 03:17, Qinxin Xia wrote:
->>>>>>> Since Chenxiang has left HiSilicon, Barry and I will jointly
->>>>>>> maintain this module.
->>>>>>>
->>>>>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->>>>>> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>> Thanks!
->>>>> Marek, would you rather merge this into the dma-mapping tree
->>>>> instead of ACKing it, or would you prefer it to go through
->>>>> a different tree?
->>>>
->>>> I expected it to be taken by Shuah, as she is responsible for the
->>>> tools/testing/selftests/ directory, where the dma tests are still placed.
->>>>
->>>>
->>>> Best regards
->>>>
->>> I'll send V2 in the next version to fix some of the review comments of V1, and maybe there's some discussion about V2, I think shuah can deal with the patches of MAINTAINERS first :）
->>
->> I can take this patch through my tree. Are you sending v2?
+>>> Best regards
+>>>
+>> I'll send V2 in the next version to fix some of the review comments of 
+>> V1, and maybe there's some discussion about V2, I think shuah can deal 
+>> with the patches of MAINTAINERS first :）
 > 
-> Qinxin mentioned a v2 for the tools/dma modification[1], but there’s
-> no need for a v2 of the maintainer patch. Could you please pull this
-> one into your tree? Thanks!
+> I can take this patch through my tree. Are you sending v2?
 > 
-> Qinxin, could you please avoid mixing topics, as it can be
-> quite confusing?
-> 
-> [1] https://lore.kernel.org/lkml/20250814133527.2679261-2-xiaqinxin@huawei.com/
-> 
-> Thanks
-> Barry
-Hello Barry,
-I'm so sorry for the confusion.
-The reason is that the movement in the tools/dma modification involves
-modifications to the MAINTAINERS and decisions about which tree to pull
-into. So, my original intention was to sync up with both you and Marek
-on this: first update the MAINTAINERS file, and then proceed with
-uploading the changes to tools/dma. Maybe I should mention this in the
-last version of tools/dma modification.
-
-Thank you so much for your understanding.
+> thanks,
+> -- Shuah
+Hello Shuah,
+Just pull this patch into your tree, as Barry said.
+So sorry for the confusion.
 
