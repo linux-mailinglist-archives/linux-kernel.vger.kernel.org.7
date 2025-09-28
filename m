@@ -1,128 +1,233 @@
-Return-Path: <linux-kernel+bounces-835431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BE8BA7132
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C8BBA7146
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609051758EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670791894E36
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC841946AA;
-	Sun, 28 Sep 2025 13:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0802F1E520F;
+	Sun, 28 Sep 2025 13:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEzQj+cH"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXr9uKyZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D914C98
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F0E4C98
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759067311; cv=none; b=SbFSIri405G5pgTRjXX5ZxxNFovNhhW+k10K9vqGxdqUwWGdOWSCcgfGLJITMabOhTFGTNKayGYkxRcHWAj5lkRdZelxweGAN6KTEDRC4bDc+AlxMl0y8O6rKYhLxPIXwbd1Htk4HOcnM0OcIIY1ts463VII50tqQhUWeV02aRQ=
+	t=1759067536; cv=none; b=gGgpi0a8UabkmBj2NAZOO/WEJ67n6UhTz6ir++CJc5rN2pxOTjshx/zzsmwwIqq+RxfTirq2sLIXNOPyETDsXlGmaNBW3fXKN4mOVjR2ddmzXyvZoNFGyIrpBfvw/wbzcMu/onZhEAApeTg0VbxQfSN8Jl48fDYpPxmbCXbK0Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759067311; c=relaxed/simple;
-	bh=FmVHxgqG382cC69d8rXWZwYyOOy1DF+PiCiPPNQ66pU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cf23bX0qYzPcoymHph8QFuoP1VjS2oquNLnCY/Iy29p3QbzNyYv26dr+qrlVHEWm0O/eXWHPcmvZv2QY16ubBqYWaqphMygAmfMzApOYQOnxo8c9Ln+H2ToNcY3ze0y//Maa6+4oHwOlyi4qHATT++TC68mz1CPYcmcB38yC8Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEzQj+cH; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b550eff972eso2452656a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:48:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759067309; x=1759672109; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=My/qHt+y2PHKSiLvEMroRzC1fUumz88ynNlnDjtDWgY=;
-        b=DEzQj+cHX+g/RZAa0Cy0TWWfpiP+fpqNL5Zd6z/ZvRNSi5CxqFYUwXEANblazCkSif
-         AaaN+Gu5dYqpBiPNCDSdBL6TSPpxhErdWFI1sT6RBJRgVv0KSjkalZETzeUIR9zqGaCE
-         5cug8wMPN7uiYJe9COvDu3riVPZAUc6Wx4V4HeKwV0R8cgK5HL7K7OqD5fowt8iDZivf
-         qExNjZ8zJqg94jccfsBn0rrrC7C7t3Asd1koK8Qe+Zep+KdmSDpQv8Ek2UE3gPGnHTBa
-         xCTm/WhMd0R5orGBdCqidE5Jt3f8NI1GuAj9sxkJwVfX52Lcggd9G/NyaGIgL0BOJrNR
-         dwVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759067309; x=1759672109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=My/qHt+y2PHKSiLvEMroRzC1fUumz88ynNlnDjtDWgY=;
-        b=VPNYS9FSAXm6uKaXsGJzSFu2bitincKbT2CbtkqYLMym5yHMbBlCuPrs3U0yWgPghv
-         RmoMxMzq1JYNK/2vFvJM2eCbDugNJZgjaafhK5GtQPrcDUowQ9xqi9Y8VjVLhlYIZx55
-         y8weMt67X/SSLUVT3wTv/3A1Y3DwQIe7SiOgz9wFyuK/tREOgLKQZn/x75CEHp8ClTq+
-         Pmf+A85abfNOoWEigqtrr7nDeG5QSZI6FZCYByEZY5iTBBQoNIN+sCJvexCxcevceoEC
-         RpH7t9+tV+RMkalzJZCtzBGBsczZlmU9Y+GYA33ll71gbgyuKg1kr2zCAJn5heRhiT22
-         noUw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3rkvjf3CSciFzLMM+bM8qVERZcJ4uKcz6eF8Ym11uba5vvy08IE9eG5ZWCYp2GOzPDZaTkFteP/QbzLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ArhJWBd22UjAn6HS+s558fB6E0kXzNoRUygkMk0wL31yucZq
-	bBeCrNVH3bMZkGMhScHCQmr7N2KYUtfOBka9kwYTbj08U1d/Sr4ZN4Ie
-X-Gm-Gg: ASbGnctYbEYoXAePrrgm6Jp/wCBA17qNeHRLmLg1Xn+Z+K9u0mP2iHX50MblE4FoBAx
-	JE4B46g8xNweRl0ZZFxHlGtfV6ECH15Ao+zU/Ne1FTP5t+kwFRHqWT/MfM10xlcQUsUVIeoQioK
-	RPnliF6MjgtBDHG0JVP593orQh2XIJn4sTUsxqw9colVS82SyBB1SEnALKbJBitzeXLU2HpCWTQ
-	coLbkNUpoutwgjvbkJmvM0CliqVUoLk6yxBQO0lmyvk5PoLSODtPhu8C/hFIguC66Th3NadKYg5
-	A/ntktJajSZSDTqnmS6K4/NMsSfTctugn3R5KwgEOCt2pyL6IjJrUKuMfWXBf4EiBmh1cUkgmEL
-	qSSi/lM1LUCwzAjwY4dVNd+jAWoUJiMU=
-X-Google-Smtp-Source: AGHT+IGXO/qWicj44HJrAinURMObPmlszOlNOo7L+z4Z78O/CaGZYYN86nJQ0OUnlCNPwKAtiNM4Hw==
-X-Received: by 2002:a17:902:f9c6:b0:275:2aac:fef8 with SMTP id d9443c01a7336-27ed4a78d81mr101059275ad.38.1759067309482;
-        Sun, 28 Sep 2025 06:48:29 -0700 (PDT)
-Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-27edcbd455asm97105605ad.122.2025.09.28.06.48.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 06:48:22 -0700 (PDT)
-Date: Sun, 28 Sep 2025 10:49:15 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-spi@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Axel Haslam <ahaslam@baylibre.com>, broonie@kernel.org,
-	nuno.sa@analog.com, dlechner@baylibre.com, andy@kernel.org
-Subject: Re: [PATCH v3 1/1] spi: offload: Add offset parameter
-Message-ID: <aNk82_gHPDCNDqjV@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1758913065.git.marcelo.schmitt@analog.com>
- <d73804d605d494c6420adb7c0b67f6707628832d.1758913065.git.marcelo.schmitt@analog.com>
- <20250928110052.6fefd6a1@jic23-huawei>
+	s=arc-20240116; t=1759067536; c=relaxed/simple;
+	bh=vkQ3DR6shjQ3t6MMcpywS4EvZ4ogezUqQVNZ4GC2D04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A24aoJYA7Yf6pnPxVa25CglCjwHW4Y+Bv+NtcO0hQ6t0jZOWGnamqiGt+1eD9646SBkZD8/t8t90iKG8RCnN8SSzzDiPPT8C2fD8bE9irWrE5IxffZaSuz8DeNgSguo4cJ25MYptJGiaF/aHQfiaVEjslFP7cLia9NtgOpgpVmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXr9uKyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC0CC4CEF5
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759067536;
+	bh=vkQ3DR6shjQ3t6MMcpywS4EvZ4ogezUqQVNZ4GC2D04=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mXr9uKyZS9M924m9O+0vEaRbTM2YgbHW2pDpmKClyuyuTvz2w0c2FfrNBYUBT+buf
+	 ey2p4zw9VOVyZcBzBvcflPm3ECJ+EbiqEzhwovyFNAm3PNtPPWHFoU4CXJe+R0lH8l
+	 QhMSc2eLl1+kCE7hR9kFsyJ1Om8IA8NuBO4rTfp8e/CAqX6GDtJKPv4PV+h6xywZRP
+	 Ajsm8R498idztEdGNHPO9MdnAS2ggrYjgTJRvXcUihFO6duNBkLy9BTLUyCmEbI3LP
+	 NqlJxtYzNZFdubalK+6/XZdoFKUSBWLv+tBvWMopRw+6f7Fon8GwEGfEbe/a1afT4+
+	 5hOz88vnF7CSQ==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b35f6f43351so722982666b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:52:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVHUY9E4+L3jM6+gRRI4Ml8gMbN68T99mrl8rgo2QKaco0lvWQhdDpj2JAmZh70G5ADpsGhNXnxlPcQO8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb6MQJCNxYparyJehSNLKgsDONK5rSI7HbeAkweg6ObtU5xFXJ
+	A1foNHdSTCi59Mn7L40lWFvohRXN54dnQblnMSEjm4sXCDgq/uzrio+oehdIATy/fNLIGlhZv7W
+	bDm8CiVITP700hlH8HoB5a5yJDTeqGGM=
+X-Google-Smtp-Source: AGHT+IHZy8MJ+ejdxNUSrUhifjle4FzCaWD2U0zXbL3dW+OQL+t2D3+N0MZXhQRGFwgwVsrAa1mwtimPwbh8/cUxOJQ=
+X-Received: by 2002:a17:907:7f0f:b0:aff:16eb:8b09 with SMTP id
+ a640c23a62f3a-b34b6449b22mr1296630666b.5.1759067534547; Sun, 28 Sep 2025
+ 06:52:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928110052.6fefd6a1@jic23-huawei>
+References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
+In-Reply-To: <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 28 Sep 2025 21:52:03 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
+X-Gm-Features: AS18NWAQgrho2v1WBMze1SiIfjphByvTZGCUNAA2HMWHlRk0-R7aennr1EqafME
+Message-ID: <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
+Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
+Hi, Ard,
 
-Yes, current ad4030 series depends on this.
-Though, since this updates the SPI subsystem, I separated it from ad4030 set.
-I missed that aspect of the devel process. If we need an immutable branch to
-make this split series for ad4030 work, then yes, please, I'd like an 
-immutable branch with this patch.
+On Sun, Sep 28, 2025 at 9:42=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> On Sun, 28 Sept 2025 at 10:55, Tiezhu Yang <yangtiezhu@loongson.cn> wrote=
+:
+> >
+> > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
+> > the following objtool warning on LoongArch:
+> >
+> >   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
+> >   falls through to next function __efistub_exit_boot_func()
+> >
+> > This is because efi_boot_kernel() doesn't end with a return instruction
+> > or an unconditional jump, then objtool has determined that the function
+> > can fall through into the next function.
+> >
+> > At the beginning, try to do something to make efi_boot_kernel() ends wi=
+th
+> > an unconditional jump instruction, but this modification seems not prop=
+er.
+> >
+> > Since the efistub functions are useless for stack unwinder, they can be
+> > ignored by objtool. After many discussions, no need to link libstub to
+> > the vmlinux.o, only link libstub to the final vmlinux.
+> >
+>
+> Please try keeping these changes confined to arch/loongarch. This
+> problem does not exist on other architectures, and changing the way
+> vmlinux is constructed might create other issues down the road.
+ARM, RISC-V and LoongArch do things exactly in the same way. Now
+LoongArch is the first of the three to enable objtool, so we meet the
+problem first.
 
-On 09/28, Jonathan Cameron wrote:
-> On Fri, 26 Sep 2025 16:01:05 -0300
-> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
-> 
-> > From: Axel Haslam <ahaslam@baylibre.com>
-> > 
-> > Add an offset parameter that can be passed in the periodic trigger.
-> > This is useful for example when ADC drivers implement a separate periodic
-> > signal to trigger conversion and need offload to read the result with
-> > some delay. While at it, add some documentation to offload periodic trigger
-> > parameters.
-> > 
-> > Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> 
-> Hi Axel, Marcelo,
-> 
-> Is there a build time dependency on this for the ad4030 series?
-> I'm assuming this will go via Mark's SPI tree, so this is really a question
-> of do we need to ask him for an immutable branch or not.
-> 
-> I don't think there is such a dependency but just wanted to check!
-> 
-> Jonathan
+But yes, I also don't want to change the way of constructing vmlinux.
+So I prefer the earliest way to fix this problem.
+https://lore.kernel.org/loongarch/CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSuV0Em=
+eeUb9d5FNw@mail.gmail.com/T/#meef7411abd14f4c28c85e686614aa9211fccdca0
+
+Huacai
+
+>
+> > Do the similar things for arm64 and riscv, otherwise there may be objto=
+ol
+> > warnings when arm64 and riscv support objtool, this is to make consiste=
+nt
+> > with the archs that use libstub.
+> >
+> > Link: https://lore.kernel.org/lkml/pq4h7jgndnt6p45lj4kgubxjd5gidfetugcu=
+f5rcxzxxanzetd@6rrlpjnjsmuy/
+> > Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> > ---
+> >  Makefile                | 1 +
+> >  arch/arm64/Makefile     | 5 ++++-
+> >  arch/loongarch/Makefile | 5 ++++-
+> >  arch/riscv/Makefile     | 5 ++++-
+>
+> >  scripts/link-vmlinux.sh | 5 ++---
+> >  5 files changed, 15 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 10355ecf32cb..8ba2e28ef3d1 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1201,6 +1201,7 @@ KBUILD_VMLINUX_OBJS :=3D built-in.a $(patsubst %/=
+, %/lib.a, $(filter %/, $(libs-y)
+> >  KBUILD_VMLINUX_LIBS :=3D $(filter-out %/, $(libs-y))
+> >
+> >  export KBUILD_VMLINUX_LIBS
+> > +export KBUILD_VMLINUX_LIBS_PRELINK
+> >  export KBUILD_LDS          :=3D arch/$(SRCARCH)/kernel/vmlinux.lds
+> >
+> >  ifdef CONFIG_TRIM_UNUSED_KSYMS
+> > diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> > index 73a10f65ce8b..038f37ef2143 100644
+> > --- a/arch/arm64/Makefile
+> > +++ b/arch/arm64/Makefile
+> > @@ -156,7 +156,10 @@ KBUILD_CPPFLAGS +=3D -DKASAN_SHADOW_SCALE_SHIFT=3D=
+$(KASAN_SHADOW_SCALE_SHIFT)
+> >  KBUILD_AFLAGS +=3D -DKASAN_SHADOW_SCALE_SHIFT=3D$(KASAN_SHADOW_SCALE_S=
+HIFT)
+> >
+> >  libs-y         :=3D arch/arm64/lib/ $(libs-y)
+> > -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/l=
+ib.a
+> > +
+> > +ifdef CONFIG_EFI_STUB
+> > +KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libst=
+ub/lib.a
+> > +endif
+> >
+> >  # Default target when executing plain make
+> >  boot           :=3D arch/arm64/boot
+> > diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+> > index ae419e32f22e..4eb904c20718 100644
+> > --- a/arch/loongarch/Makefile
+> > +++ b/arch/loongarch/Makefile
+> > @@ -169,7 +169,10 @@ CHECKFLAGS +=3D $(shell $(CC) $(KBUILD_CPPFLAGS) $=
+(KBUILD_CFLAGS) -dM -E -x c /dev
+> >  endif
+> >
+> >  libs-y +=3D arch/loongarch/lib/
+> > -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/l=
+ib.a
+> > +
+> > +ifdef CONFIG_EFI_STUB
+> > +KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libst=
+ub/lib.a
+> > +endif
+> >
+> >  drivers-y              +=3D arch/loongarch/crypto/
+> >
+> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> > index df57654a615e..cfd82b2c1bbf 100644
+> > --- a/arch/riscv/Makefile
+> > +++ b/arch/riscv/Makefile
+> > @@ -173,7 +173,10 @@ boot-image-$(CONFIG_XIP_KERNEL)            :=3D xi=
+pImage
+> >  KBUILD_IMAGE                           :=3D $(boot)/$(boot-image-y)
+> >
+> >  libs-y +=3D arch/riscv/lib/
+> > -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/l=
+ib.a
+> > +
+> > +ifdef CONFIG_EFI_STUB
+> > +KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libst=
+ub/lib.a
+> > +endif
+> >
+> >  ifeq ($(KBUILD_EXTMOD),)
+> >  ifeq ($(CONFIG_MMU),y)
+> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> > index 51367c2bfc21..b3cbff31d8a9 100755
+> > --- a/scripts/link-vmlinux.sh
+> > +++ b/scripts/link-vmlinux.sh
+> > @@ -61,12 +61,11 @@ vmlinux_link()
+> >         shift
+> >
+> >         if is_enabled CONFIG_LTO_CLANG || is_enabled CONFIG_X86_KERNEL_=
+IBT; then
+> > -               # Use vmlinux.o instead of performing the slow LTO link=
+ again.
+> >                 objs=3Dvmlinux.o
+> > -               libs=3D
+> > +               libs=3D"${KBUILD_VMLINUX_LIBS_PRELINK}"
+> >         else
+> >                 objs=3Dvmlinux.a
+> > -               libs=3D"${KBUILD_VMLINUX_LIBS}"
+> > +               libs=3D"${KBUILD_VMLINUX_LIBS} ${KBUILD_VMLINUX_LIBS_PR=
+ELINK}"
+> >         fi
+> >
+> >         if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
+> > --
+> > 2.42.0
+> >
 
