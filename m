@@ -1,229 +1,112 @@
-Return-Path: <linux-kernel+bounces-835262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E40BA699F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80153BA69A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABBD41897896
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEAAC3AA75A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FBF29B77E;
-	Sun, 28 Sep 2025 07:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F53329B8EF;
+	Sun, 28 Sep 2025 07:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xaLKBDGG"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t7/i4ZTc"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D0F28725E
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DEF287246
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759043427; cv=none; b=ojRh2ppRo59NGVUzkn8Nm+RPC5UsI09Ky8WaWrOoWRtKxNXYcNABv73LN5xqqG7IOtYKdN+O5d91D4YRNa2ZWHDNaz72DleaZJ5ItdQQKad+B6KDRQE5dqGgtUbsoLv6M7gDcGQepqzxR/7vMcwxQHOQR9dSHeEdnO+XjrQ9jgk=
+	t=1759043534; cv=none; b=XG7HIj7oTtiNtX/5U+RfXG6X0BMLyCKSmvo5TQ3jEQiwp/sJQbsqV/nDlIE64ZVB0qXAcwHRnOxZr+duXNhP49iE3s0zNwxngXLRpUnLqL77oi/Z8P/vwL6UOis0tU8+ZWmMLpsiDN8Q6BmDLKlruRPXhAx9zSzObBIWR+tQFLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759043427; c=relaxed/simple;
-	bh=Z56yVvPIyeEKIMTebrDcBNtD175374NEfnuXh17boHw=;
+	s=arc-20240116; t=1759043534; c=relaxed/simple;
+	bh=vuivaMvUxiIYVoLT6sVG8ShBVpGAyANeLDMtmKDyowI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=doq3u45XFjPJobHnx1Lu8O9AfGgTZ8LNo2FJ3rF6L41EpSpajNzjTFTjAWnWCkF+1X+mcmQpHoqY5Nw6RHTF3fKlyFa7bRZTD66LSj1pPvNjjutp9u1zY5ENIwratuSuKlIKJJSKKaDgKXtQLTSvtjSBqMXRCpc3taimZr1mTds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xaLKBDGG; arc=none smtp.client-ip=91.218.175.170
+	 In-Reply-To:Content-Type; b=UfG3fcnOgKSyLPYkwdsiv/YftHtccdfK0nFbuQwdzf+G76MdlcZg935jJoxh4B44ptkRNxT18jbmCAm0A7bAGP7A00m2w7UVntkQOThmVxqK2QrSXvYJr2Pfje8/poktJpPGRtqW1xFtWji9/ENluF96dijGLt4omRZDMD9EJyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t7/i4ZTc; arc=none smtp.client-ip=91.218.175.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <bc7a7e81-8e71-44ee-af4c-96193c9cb8e8@linux.dev>
+Message-ID: <1f7483f8-29bb-4caa-8978-2bdad0d46072@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759043423;
+	t=1759043530;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qU7GUciMm0lnQ8BPnv7uQAt0MMCZIcM83X/N344qizA=;
-	b=xaLKBDGG9/Y/6lM7WlCSgWpum+y5NE0ujs/3uZWRJvYqm27Aqis9acMJ0RfUcPJ25FIg1a
-	s8tbff0AvXEG7QfGZ9kVdOLZbCEWe3kEYU01TenKOKvaMa5Xz4qDaCzFg2YjgCd2UJg/rm
-	meGiBlGAiCvK2H2RxNdCc6tj+a7+yOs=
-Date: Sun, 28 Sep 2025 15:09:43 +0800
+	bh=tI6qHor2C/A9mqAelwnyQcCicuKGbTAFcFT0kA59dJM=;
+	b=t7/i4ZTc3snGDHXmiWpnz8ReLmrv7UQY5doU/iNDZVCX2RlNEKvK+EykawQBlqcRUpXgKE
+	z2hy5PK0Bpd0EOP/JFtjFwSuFsZ/o1jUiJKi1krhzDfAWs5JSX/W8NEmgnKTQgb0hMMa2+
+	gL6VULOC+Rsjhyn/cbxtQqEMuxQKiTE=
+Date: Sun, 28 Sep 2025 15:12:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] btrfs: Add the nlink annotation in btrfs_inode_item
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
- Chris Mason <clm@fb.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-References: <20250926074543.585249-1-youling.tang@linux.dev>
- <adda6065-26a2-4d31-b4f0-ccb20e0fadeb@gmx.com>
- <bda4b547-4dea-4c05-8679-1cf021bbe340@linux.dev>
- <b431fe00-43f3-49c2-a58b-8f79cb2134dc@gmx.com>
+Subject: =?UTF-8?B?UmU6IFvlpJbpg6jpgq7ku7ZdIFJlOiBbUEFUQ0hdW3YyXSBodW5nX3Rh?=
+ =?UTF-8?Q?sk=3A_Panic_after_fixed_number_of_hung_tasks?=
+Content-Language: en-US
+To: "Li,Rongqing" <lirongqing@baidu.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "mhiramat@kernel.org" <mhiramat@kernel.org>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "mingo@kernel.org" <mingo@kernel.org>,
+ "pauld@redhat.com" <pauld@redhat.com>,
+ "joel.granados@kernel.org" <joel.granados@kernel.org>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "feng.tang@linux.alibaba.com" <feng.tang@linux.alibaba.com>,
+ "kees@kernel.org" <kees@kernel.org>, "paulmck@kernel.org"
+ <paulmck@kernel.org>,
+ "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+ "rostedt@goodmis.org" <rostedt@goodmis.org>
+References: <20250928053137.3412-1-lirongqing@baidu.com>
+ <3c44a757-f823-4671-b3d5-548fe04e52e3@linux.dev>
+ <d33ebade05ea45c2be47717fe1b812b8@baidu.com>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <b431fe00-43f3-49c2-a58b-8f79cb2134dc@gmx.com>
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <d33ebade05ea45c2be47717fe1b812b8@baidu.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
 
-On 9/28/25 13:16, Qu Wenruo wrote:
 
->
->
-> 在 2025/9/28 11:44, Youling Tang 写道:
->> Hi, Wenruo
+
+On 2025/9/28 15:03, Li,Rongqing wrote:
+>> On 2025/9/28 13:31, lirongqing wrote:
+>>> From: Li RongQing <lirongqing@baidu.com>
+>>>
+>>> Currently, when hung_task_panic is enabled, kernel will panic
+>>> immediately upon detecting the first hung task. However, some hung
+>>> tasks are transient and the system can recover fully, while others are
+>>> unrecoverable and trigger consecutive hung task reports, and a panic is
+>> expected.
+>>>
+>>> This commit adds a new sysctl parameter hung_task_count_to_panic to
+>>> allows specifying the number of consecutive hung tasks that must be
+>>> detected before triggering a kernel panic. This provides finer control
+>>> for environments where transient hangs maybe happen but persistent
+>>> hangs should still be fatal.
+>>>
+>>> Acked-by: Lance Yang <lance.yang@linux.dev>
+>>> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+>>> ---
 >>
->> On 9/26/25 16:34, Qu Wenruo wrote:
->>>
->>>
->>> 在 2025/9/26 17:15, Youling Tang 写道:
->>>> From: Youling Tang <tangyouling@kylinos.cn>
->>>>
->>>> When I created a directory, I found that its hard link count was
->>>> 1 (unlike other file system phenomena, including the "." directory,
->>>> which defaults to an initial count of 2).
->>>>
->>>> By analyzing the code, it is found that the nlink of the directory
->>>> in btrfs has always been kept at 1, which is a deliberate design.
->>>>
->>>> Adding its comments can prevent it from being mistakenly regarded
->>>> as a BUG.
->>>>
->>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->>>> ---
->>>>   include/uapi/linux/btrfs_tree.h | 1 +
->>>>   1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/ 
->>>> btrfs_tree.h
->>>> index fc29d273845d..b4f7da90fd0e 100644
->>>> --- a/include/uapi/linux/btrfs_tree.h
->>>> +++ b/include/uapi/linux/btrfs_tree.h
->>>> @@ -876,6 +876,7 @@ struct btrfs_inode_item {
->>>>       __le64 size;
->>>>       __le64 nbytes;
->>>>       __le64 block_group;
->>>> +    /* nlink in directories is fixed at 1 */
->>>
->>> nlink of what?
->>>
->>> Shouldn't be "nlink of directories" or "nlink of directory inodes"?
->>>
->>>
->>> There are better location like 
->>> btrfs-progs/Documentation/dev/On-disk- format.rst for this.
->>>
->>> And you're only adding one single comment for a single member?
->>> Even this is a different behavior compared to other fses, why not 
->>> explain what the impact of the change?
->>>
->>>
->>> If you really want to add proper comments, spend more time and 
->>> effort like commit 9c6b1c4de1c6 ("btrfs: document device locking") 
->>> to do it correctly.
+>> It's working as expect. So:
+>> Tested-by: Lance Yang <lance.yang@linux.dev>
 >>
->> My understanding of nlink is as follows, please correct me if I'm wrong,
+>> But on second thought: regarding this new sysctl parameter, I was wondering if
+>> a name like max_hung_task_count_to_panic might be a bit more explicit, just to
+>> follow the convention from max_rcu_stall_to_panic.
 >>
->> /*
->>   * nlink represents the hard link count (corresponds to 
->> inode->i_nlink value).
->>   * For directories, this value is always 1, which differs from other 
->> filesystems
->>   * where a newly created directory has an inode->i_nlink value of 2 
->> (including
->>   * the "." entry pointing to itself).
->
-> Have you checked what's the meaning of the nlink number for other fses 
-> and why other fses go like that?
->
-I have examined ext4, XFS, and bcachefs. In these filesystems,
-when performing the following operations:
-```
-  # mkdir -p a/b
-  # cd a/b
-  # ls -la
-  drwxr-xr-x 2 root root  6 Sep 28 14:45 .
-  drwxr-xr-x 3 root root 15 Sep 28 14:45 ..
-```
+> 
+> I see that all the hung task sysctl parameters start with "hung_task"? Should we keep this convention? If so, we could name it "hung_task_max_to_panic". If not, we could call it "max_hang_task_to_panic"?
 
-In btrfs:
-```
-  # ls -la
-  drwxr-xr-x 1 root root 0 Sep 28 14:48 .
-  drwxr-xr-x 1 root root 2 Sep 28 14:48 ..
-```
-
-In filesystems like ext4, we can see that the link counts for
-directory 'a' and 'b' are 3 and 2 respectively:
-a: The directory itself + "." pointing to itself + ".." from directory b 
-pointing to it
-b: The directory itself + "." pointing to itself
-
-
-nlink changes during directory creation in ext4:
-```
-ext4_mkdir
-     ext4_init_new_dir
-         set_nlink(inode, 2) //Initial inode->i_nlink value for new 
-directory
-     ext4_inc_count(dir) //Increase parent directory's nlink by 1 (for "..")
-```
-
-In ext4, when the DIR_NLINK feature is enabled, if a directory's link
-count exceeds EXT4_LINK_MAX, it will be permanently set to 1.
-
-
-nlink changes during directory creation in bcachefs:
-```
-bch2_mkdir
-     bch2_mknod
-         __bch2_create
-             bch2_create_trans
-                 dir_u->bi_nlink++ //If creating a directory, increase 
-parent's nlink
-             bch2_inode_update_after_write
-                 set_nlink(&inode->v, bch2_inode_nlink_get(bi))
-                     bch2_inode_nlink_get //If directory, nlink 
-increased by 2
-```
-
-
-In XFS, the xfs_create function contains the following comment:
-/*
-  * A newly created regular or special file just has one directory
-  * entry pointing to them, but a directory also the "." entry
-  * pointing to itself.
-  */
-
-Thanks,
-Youling.
-
-> Especially the impact to user space tools like find?
->
->>   *
->>   * BTRFS maintains parent-child relationships through explicit back 
->> references
->>   * (BTRFS_INODE_REF_KEY items) rather than link count accounting.
->>   *
->>   * This design simplifies metadata management in the copy-on-write 
->> environment
->>   * and enables more reliable consistency checking. Directory link count
->>   * verification is performed during tree checking in 
->> check_inode_item(), where
->>   * values greater than 1 are treated as corruption.
->>   *
->>   * For regular files, nlink behaves traditionally and represents the 
->> actual
->>   * hard link count of the file.
->>   */
->>
->> Thanks,
->> Youling.
->>>
->>> Thanks,
->>> Qu
->>>
->>>>       __le32 nlink;
->>>>       __le32 uid;
->>>>       __le32 gid;
->>>
->
+Well, let's see what other folks think ;)
 
