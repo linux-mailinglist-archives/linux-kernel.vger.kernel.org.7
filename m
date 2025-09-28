@@ -1,151 +1,184 @@
-Return-Path: <linux-kernel+bounces-835613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55183BA798F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:58:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20E1BA799F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9F83B12BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:58:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45BE91895DD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4AC257459;
-	Sun, 28 Sep 2025 23:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70A3217F31;
+	Mon, 29 Sep 2025 00:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5uLhvjE"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ISK2oOvg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7B63594C
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 23:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A37333F6;
+	Mon, 29 Sep 2025 00:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759103891; cv=none; b=OekBzxXcguZoTN9iHtrR9EqQYFdVeFEJhzM7QAjuQkEUiJwVuoV4zE2H93AUJStK40HImsuMe0L1llDIxyqWtzhiwxg0l0u3EUJcXyjkwwCuo5o7tFnCWE8BIUtyoHbuqm0qvqtkLXsSwdBn2l2q2jFWLWb0aqvqtTeLWxebnY8=
+	t=1759104029; cv=none; b=cFYK+r6Bq8wUIgaYEt0RlHPBDe3wuSxfgQ03K//wPjaMrN67pkBZURb67y2aylcprY8k6LIH49Ai9Qq5zq7KdDZ8mrPd4tpSGX7j9CVZded5VfnIhb7U6jDPI1LG8ls791Xqlds0mRVXdLsQvwmtPe8jROH2hkMIg3sBPwh6HPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759103891; c=relaxed/simple;
-	bh=uZ2q3P/dE88QkgPpghf4wC2u62hbPCArf1EWD9vCj/I=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=P4huOvaW+UvsLlS0NuG1XZ7lTZJh/OSfxjJczdGpVmU94yD+waECoWUcoG5f1+T3rqgZMMPamIcOcCyDEAv8VkvaE69Jd8TEuPIk96B2DoqJ5pcy1ScYgt6uTtAbA5Gj9SLKhigtVn9sR3QeeyjJWenMVArCru38xHy54Aif3YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5uLhvjE; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso6718721e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 16:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759103888; x=1759708688; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yljnIlU4v2VwJK3/t+Nwxj+G8c/okseAmLmguNulAtk=;
-        b=a5uLhvjEtwQ8inUWHnMHRMvn9G4RQ6w/vP7zRyyZWBXm6dUeFCHYfv4I5CgdkN/Ew0
-         ERvVCusFZmxTeHMW1Ec7CDmDPRtYh/UfRWHt798yd0Pai9lh1qBvqLXB8QyA7MaPCpPr
-         nW3p6SSYm7o/cB/x1ryo7fJKNwRc0eAqIUhUtSwlgCzqs0upQ+qYrz5kmfr3GiSglUOV
-         Gq6mSG2rjEHV30z72hbvom1se9o7RSX5QxhRe816UOEEiwD3QC5aiYzeKhig66WyNFI4
-         101Wp1DAjC2+DQwqDvKW3ZusCUnjOkmtNJTfEInv/GpH5iysuYdjL1Hz9o53hnS+ASZt
-         aORg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759103888; x=1759708688;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yljnIlU4v2VwJK3/t+Nwxj+G8c/okseAmLmguNulAtk=;
-        b=a6ItILRtfVNCRpk+5wGuDGWR/EOLm+uX9KOsOpZN8RBdXZr+BC760Il1wsvaY5+EBU
-         5BdppRS9FldXs3jeRUzR1NX9tFs6hEBgiZUgERv8BR+T4A4O08Efx7w8ZeDbI0z8LCGD
-         72nJk+FynFIxduATx0vJJlSPj6160yAmXuRqxUx4f+7nKxlufAEyKfueEc5jLNhfLCt8
-         XpfF7UvJbpuzQ4UixYJlvx5SMDpvZpjBd7MXwTnyDpJRQS1pkNIcZl8jYyb7hWBnv81A
-         PvIodE00gdUWjz5kNM3YAmt7ixsGp8RecUDA9rnGZIzzOvHOmHHkbhBC4415MW1ts6/M
-         51Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfQKuWIfpD36o+FIxAA+3xteAXahWN58ytZL5DpTmxTwAoYqRa8goNV+okUl6Gxhu+d2bcgonsOPKww0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdx60pgxcGO4H0VdpwQPohf1IKJWLcE+jCAQ6vUhTrdLW1lcOb
-	cv2UYBNFUsedfefXbXohwqxTwcEOnOBoIsp/teI0vJpgg6BEXvCNvXhy
-X-Gm-Gg: ASbGncuU1S8quYQapaVXvr6i0pykxh3MguPcu2TkTzg/OxRZ1nexhmYP0Bb5wwfIomW
-	BmbW8MkPdIlQeSFKkgnRimmrzkZqQx7d8NSpx4rHoJ0TZVp7I2ir4z7+Q36sc7OyEXSz9u11+aR
-	D2F5ncD3QDKmqMNzhRhfA8m5coNQLTnN/Bcjp4QIG7IKrp5ae79DPwT0fYCfqqx4vYMWpvow/gq
-	tz86JzZyBEQh1x4RPGE+ta5YAUCLgCxnu9aDN/14dlzZgl0BrfRyULmw+w/C5A5ntSDRiYfrNcU
-	U8R6DjQX3bMQbhPlY5fvQQbhPYXVwev/lIECJ95Jtla5VxU3FPGAZVO9B4vTwvZDuTsOLVLMQ5V
-	tx0F2t0HvTgcjlAJuqia3U9SDRMG2w6bt8oYWC+2LwiHX9rY=
-X-Google-Smtp-Source: AGHT+IFatLnH+CWKbIPVnt1XCGsPTWuZfxlrZtyuUOcPTm0iQtnY1bAc/cnSijrrtlSR3Mk4EECIMg==
-X-Received: by 2002:a05:6512:3052:b0:57b:968a:6df6 with SMTP id 2adb3069b0e04-583066e7e35mr4445802e87.18.1759103887574;
-        Sun, 28 Sep 2025 16:58:07 -0700 (PDT)
-Received: from smtpclient.apple ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316c1d303sm3761723e87.123.2025.09.28.16.58.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Sep 2025 16:58:07 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1759104029; c=relaxed/simple;
+	bh=M+8HMW4Fh6OK4Hz/R6zXRnBPy/8QEo2dSANk56c/yok=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=kO25ZMEBfWwJZpL44sNVB3IrUw6/kLBdf6EafRCQwzy6rHfIjo3IEcS2ONt6p1vDEROk3FEHENZ2sGDGHQY15T/27tZLtZ8BawhBBI3PxQ+bjm1ehZ65uKYXGPq5t1Z7Wz3HcQlIr6I9Q2vNTYOa1TWSUCRNNLwgwnV/J4EIFa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ISK2oOvg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SAkd4H026037;
+	Mon, 29 Sep 2025 00:00:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=1CuVaQu2ZLTLPZRT7jm5p12CJZvNLA0UOcK2fl2Bp
+	fY=; b=ISK2oOvgrxnijsn/xvCcW+VrPQSGetwotRq6tmFDRcBP9g426uNHxsABL
+	Ja1LfygRctYlFDGpACtLRwaomQvpwNBWq4rFGrlfmOlvogZ1JkUo8x1aUhgklP2h
+	qg0qOY0sYZUq40rbeMya9uS/DOEK9zYJbb/w3Y8A3lQuoj6+pYafmPmv/Hv3/N1W
+	pOoCAys0CRXQ/JIxh4a9mpRiGJXx6DAVT3610z+k+uz+kc/CQJHDSF+BLhpp7ALU
+	6ALKWWQ4rbKvYn9ygkqsosA/Muyh63DPFK1is2UtGRWw+zeNHdmOt2VAloS8nfvf
+	3WYhUcqBTo1K10CrghE+IBcuWcUCQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7e6yaw3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Sep 2025 00:00:10 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58T009v6008385;
+	Mon, 29 Sep 2025 00:00:09 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7e6yaw0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Sep 2025 00:00:09 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58SIZDDH007292;
+	Mon, 29 Sep 2025 00:00:08 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eurjkfs9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Sep 2025 00:00:08 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58T004LZ53543286
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Sep 2025 00:00:04 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E388920043;
+	Mon, 29 Sep 2025 00:00:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 914A920040;
+	Mon, 29 Sep 2025 00:00:03 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 29 Sep 2025 00:00:03 +0000 (GMT)
+From: Halil Pasic <pasic@linux.ibm.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Dust Li <dust.li@linux.alibaba.com>,
+        Sidraya Jayagond <sidraya@linux.ibm.com>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Mahanta Jambigi <mjambigi@linux.ibm.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        Guangguan Wang <guangguan.wang@linux.alibaba.com>,
+        Halil Pasic <pasic@linux.ibm.com>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [PATCH net-next v5 0/2] net/smc: make wr buffer count configurable 
+Date: Mon, 29 Sep 2025 01:59:59 +0200
+Message-ID: <20250929000001.1752206-1-pasic@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] drm/meson: add support for 2560x1440 resolution output
-From: Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <CAFBinCCsTqsn06A5oVXGTW6PgmSQH0bHE+8PSftyWNRAbYUTcA@mail.gmail.com>
-Date: Mon, 29 Sep 2025 03:57:51 +0400
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- dri-devel@lists.freedesktop.org,
- linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Dongjin Kim <tobetter@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C8A273D4-5F5F-4BD8-911A-67EC9C3FF1F4@gmail.com>
-References: <20250927130239.825060-1-christianshewitt@gmail.com>
- <CAFBinCCsTqsn06A5oVXGTW6PgmSQH0bHE+8PSftyWNRAbYUTcA@mail.gmail.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: CutAPlPge7EgJjykul8zpkpGuZSW6pCy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyMCBTYWx0ZWRfXyY6wFq71PSLt
+ UUE0Wq5sOoRfW/SEgTHotPyeXPiexkUSWQ0K9vFbqEnODPQR8F/fwfFI0Jp2RmGedD2yiElYBrw
+ p95v2p5fSHAccDTdbTEH0/+t/sVg+8/ahdtvmfqKYQqQTaDqp14Edkq2eRtpyN/k9zyX9KZo2jh
+ 3J9ePv17iUPeQj5eAUH8fx1fOuX4AC4tzqHZLbxxsoqxI710R0AeEs3TiYbib+tAr+9Ob8pii3g
+ cQyagIZZaZsiCnkxUfawDGN14zeTRTRpI1Jm7n5KIKBONkBrl/KB3mtVcmX/PybGgTVtlJ8sSqx
+ 5f1EzH1oqEoy1wGUMbroyok4K56FOV4n0hlQ03+wpPQP1UV7kn7pXWuXJFMoebh/7MOa2PoQDrn
+ nnHYVTg5052pwpQuEdMHwo4pf9w1jw==
+X-Proofpoint-GUID: 32lPrucm31XxhfVay1fX8mcyZn2Sgkhh
+X-Authority-Analysis: v=2.4 cv=Jvj8bc4C c=1 sm=1 tr=0 ts=68d9cc0a cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=yJojWOMRYYMA:10 a=OPAOpny1AAAA:8 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=piJGGMyLFvZckxoXyWEA:9 a=Vt4qOV5uLRUYeah0QK8L:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-28_10,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 clxscore=1015 spamscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270020
 
-> On 29 Sep 2025, at 1:24=E2=80=AFam, Martin Blumenstingl =
-<martin.blumenstingl@googlemail.com> wrote:
->=20
-> Hi Christian,
->=20
-> On Sat, Sep 27, 2025 at 3:02=E2=80=AFPM Christian Hewitt
-> <christianshewitt@gmail.com> wrote:
-> [...]
->> @@ -894,6 +908,10 @@ static void meson_vclk_set(struct meson_drm =
-*priv,
->>                        m =3D 0xf7;
->>                        frac =3D vic_alternate_clock ? 0x8148 : =
-0x10000;
->>                        break;
->> +               case 4830000:
->> +                       m =3D 0xc9;
->> +                       frac =3D 0xd560;
->> +                       break;
-> Initially I thought this was wrong because it's only added for the
-> G12A (which is also used on G12B and SM1) code-path, leaving out the
-> GX SoCs.
->=20
-> Was the 2560x1440 mode tested on a computer monitor or a TV?
-> I suspect it's the former, so I think it expected the code to take the
-> MESON_VCLK_TARGET_DMT path, which automatically calculates m and frac.
->=20
-> I'll give it a try on Friday as I do have a computer monitor with that
-> resolution - so any hints for testing are welcome!
+The current value of SMC_WR_BUF_CNT is 16 which leads to heavy
+contention on the wr_tx_wait workqueue of the SMC-R linkgroup and its
+spinlock when many connections are competing for the work request
+buffers. Currently up to 256 connections per linkgroup are supported.
 
-The original patch is from Hardkernel sources - I=E2=80=99ve picked it =
-several
-years ago and then updated values semi-recently after 1000ULL changes.
-The user who originally requested that I cherry-pick it (and tested it)
-was using an Odroid N2+ board (G12B) with a Dell monitor IIRC. It=E2=80=99=
-s not
-tested by myself as I only have TV=E2=80=99s not monitors, so it will be =
-good
-to have your confirmation (either way). If it=E2=80=99s wrong I=E2=80=99ll=
- be happy to
-drop it - I=E2=80=99m just trying to upstream and offload some =
-longer-running
-and allegedly good patches in the LibreELEC kernel patchset.
+To make things worse when finally a buffer becomes available and
+smc_wr_tx_put_slot() signals the linkgroup's wr_tx_wait wq, because
+WQ_FLAG_EXCLUSIVE is not used all the waiters get woken up, most of the
+time a single one can proceed, and the rest is contending on the
+spinlock of the wq to go to sleep again.
 
-Christian=
+Addressing this by simply bumping SMC_WR_BUF_CNT to 256 was deemed
+risky, because the large-ish physically continuous allocation could fail
+and lead to TCP fall-backs. For reference see this discussion thread on
+"[PATCH net-next] net/smc: increase SMC_WR_BUF_CNT" (in archive
+https://lists.openwall.net/netdev/2024/11/05/186), which concludes with
+the agreement to try to come up with something smarter, which is what
+this series aims for.
+
+Additionally if for some reason it is known that heavy contention is not
+to be expected going with something like 256 work request buffers is
+wasteful. To address these concerns make the number of work requests
+configurable, and introduce a back-off logic with handles -ENOMEM form
+smc_wr_alloc_link_mem() gracefully.
+---
+
+Changelog:
+---------
+v5:
+ * Added back a code comment about the value of qp_attr.cap.max_send_wr 
+   after Dust Li's explanation of the comment itsef and the logic behind 
+   it, and removed the paragraph from the commit message that concerns 
+   itself with the removal of that comment. (Dust Li)
+v4: https://lore.kernel.org/netdev/20250927232144.3478161-1-pasic@linux.ibm.com/
+v3: https://lore.kernel.org/netdev/20250921214440.325325-1-pasic@linux.ibm.com/
+v2: https://lore.kernel.org/netdev/20250908220150.3329433-1-pasic@linux.ibm.com/
+v1: https://lore.kernel.org/all/20250904211254.1057445-1-pasic@linux.ibm.com/
+
+Halil Pasic (2):
+  net/smc: make wr buffer count configurable
+  net/smc: handle -ENOMEM from smc_wr_alloc_link_mem gracefully
+
+ Documentation/networking/smc-sysctl.rst | 40 +++++++++++++++++++++++++
+ include/net/netns/smc.h                 |  2 ++
+ net/smc/smc_core.c                      | 34 ++++++++++++++-------
+ net/smc/smc_core.h                      |  8 +++++
+ net/smc/smc_ib.c                        | 10 +++----
+ net/smc/smc_llc.c                       |  2 ++
+ net/smc/smc_sysctl.c                    | 22 ++++++++++++++
+ net/smc/smc_sysctl.h                    |  2 ++
+ net/smc/smc_wr.c                        | 31 +++++++++----------
+ net/smc/smc_wr.h                        |  2 --
+ 10 files changed, 121 insertions(+), 32 deletions(-)
+
+
+base-commit: e835faaed2f80ee8652f59a54703edceab04f0d9
+-- 
+2.48.1
+
 
