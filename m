@@ -1,542 +1,204 @@
-Return-Path: <linux-kernel+bounces-835298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13869BA6A97
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:09:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00905BA6CAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3479D1899D6E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48BDC1884DED
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3322BD037;
-	Sun, 28 Sep 2025 08:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600F32D12F5;
+	Sun, 28 Sep 2025 09:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VloEMx81"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="M1MKa6fM"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013037.outbound.protection.outlook.com [40.107.159.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616071DC9B5;
-	Sun, 28 Sep 2025 08:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759046936; cv=none; b=dD2f5WjBU0R8J67wnXpAfx9bnDzb00smnVqBCGsjHaS+XUu4BCtCAHDNj6ngiiKRM2dRd8f7AlicRAQM6LdzrFwkXlH6rcJ2SV6v/Q4NDvs/6egxY6piCoDrIsszWnb220FD05+TEtXBAKCkMw7JvboJlPrHDSuXLSVIbNLrsl0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759046936; c=relaxed/simple;
-	bh=Ys+JEo10QXih/yF1ss/jH4GbN72VvNwHlQwJOwMYYvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LPyjovMSCd+sg+00ymCSJevrpC3TuuTLGGXhdY+TjIxC6UEoIXB9A6XZDQn5DBYPsw4KASqs4QVhkdkCunLw674Zlx6RujC9uDcsit4eK+BECgXHzlLki5fnoZ1TP5QLLxk+/jyz26KuJxUFLx2k9kSUmnumqTkq7FzQvrwT28Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VloEMx81; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759046934; x=1790582934;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ys+JEo10QXih/yF1ss/jH4GbN72VvNwHlQwJOwMYYvo=;
-  b=VloEMx81UeBv/x+N5BpKha8ZWvuk0DktpLXvQkUoX+sk9f//+6o+aQlt
-   gYBuXG8LjXK+/3i/0iELO6wMSyNsLjpVJI9ajWLf2qS/Ce/6gsvEtRlQI
-   OOKSeemcU95YAtSKDpDhRgdJu5CImA7bwshDgTvDRo8NgkHDcJ5ft2JQn
-   6apKXPiVEapVeUMWIr8wJEcl1mEDIRGxqpPYBghoZSZom9F4D2xgB5cxM
-   MGRRrHcYI9e1/JVt7s+LzNoNapzh5wh0WnnCqUanWNKrM/SNscCDF37/H
-   WG8aDQ56K2QDTipM8jwj4oLK/GmsEy6Nja0Nlg//bJn69qZMEFQIfAdBx
-   g==;
-X-CSE-ConnectionGUID: shPLQuoITbKm+4hakEaaig==
-X-CSE-MsgGUID: UJyi+hUyTyyITvzEIoJxsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61278410"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61278410"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2025 01:08:54 -0700
-X-CSE-ConnectionGUID: bhUImA8nTl6IWgtZL3MEBQ==
-X-CSE-MsgGUID: SkMTHSktRcuG5xK6QyrkzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,299,1751266800"; 
-   d="scan'208";a="178721020"
-Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
-  by fmviesa010.fm.intel.com with ESMTP; 28 Sep 2025 01:08:49 -0700
-From: Tianyou Li <tianyou.li@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	tianyou.li@intel.com,
-	wangyang.guo@intel.com,
-	pan.deng@intel.com,
-	zhiguo.zhou@intel.com,
-	jiebin.sun@intel.com,
-	thomas.falcon@intel.com,
-	dapeng1.mi@intel.com,
-	linux-perf-users@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F772D0C8F;
+	Sun, 28 Sep 2025 09:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759050226; cv=fail; b=oehnWXg6US8Bx9MjOXpE6/R3JYLolOs9fUpo01/KogYmsm0kpuAcATY5H4zxFY9kCv3xNC0RtAJth6LGP1t6lrAL95Fwd987P0rCZ+1Kyj5lP1e6s71T0la9OVE5WOhLAV5OJsNlCUzFHBNrrOstGTnIzSO+C+UoS0QumsIL5cU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759050226; c=relaxed/simple;
+	bh=+/k1iv3yywm6CHysp33T1/H8ifAzaX4QfV4IVAiXOBQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RRxDUqBHXU/bqzDCGG1cFhZvokiRzrZdjFKb70VxnCgNfSLA8Bkxk/zvETlXpwyRXOuw1e8ypeLev7YNDSa3QpSI5upALKNQ62W46HJx6Nf+jYESfMW7qv2am8fGE3NwE432ouU+rr0ylN3MIrfyJRqR8ZJ7V19JccU2HOfo+gs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=M1MKa6fM; arc=fail smtp.client-ip=40.107.159.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b213ATpB2K1ujI4pWW+FoM8nWq99CDTm4SuVfLxEGzOWOi0yKm5QJmB9HDm5JS/BGjESQJrV2rSYEx96pg2gQMWuCjH0HgF9if4nW5AvKtL/rRqSkHZBkT1Db1QjSfqnGaNi0F+o4Np2ElO3ghbHU2Ef4+adsxSDVDufTFBQxYij28/GmWHTBHriFOlXsuymcI5vYewgWL2yY53luwMdqNc+Uh0zm0cxT3OlvuViC4EdUYgGGT/LHPZmYzYu1X1Gqb5N3C7N7D13laOFUirgUT4UF55EyopFJcLex4AfHGiz6RT+Ji/aXaUfAULMT4kPo9boIDGxpxrqFfDToYDJQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jH9+Di2izL1ut7Oo3ixjvCUpdwnnRFkHubm9mjFd8ko=;
+ b=pIcFWLYVC+iUoBL9k1YBawcm3dYu9QL6VDBl3/31GXFh8cwtyJMSg4wtEQW+I32XQsGD8TiWwiEM/WGsNBsRvObhrC5W5D4m7KVP1HExZg5Ju4DJJl8gTLM6WuTxm0p+IEcixK96ERp6HECwTXY5B990kI/CpruTBuSjG2M/QswfNCKFepSdk1PJwuQnjWzZ7rP6dVCOuUILXbFTC/+lKzpKZdyP0S4TWNgxC/TnfUmI2R9uFP7YRnL9tXrlzbMyPtp2WeBmgXiUDrZMxsm3NybvWpkrF0J9VPnaJS/ZO8Sl2NqwSTdrOlAasTQBQm1kH/3Vn3UbZOo3eoGyjPnerg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jH9+Di2izL1ut7Oo3ixjvCUpdwnnRFkHubm9mjFd8ko=;
+ b=M1MKa6fMbEA+MRI20vta0a6ieBVjs1XklTOcwPxxPwTmW1KXRLn1f2K7Jp98ZHnjVPMdVSBbfY+tk/CE35x6lvJ1WqsbJd5wWn946Tt4CRmHenMblu/DYVaBa4YSny4zN+2D1bu0M8l2i1rKAQCFvW2yvePGqaO+fS/vMH4QFrVUz9ypQCjZP92g+a2GO4p4gm9Umn8JSkbNbEAdmzlam253iBYWC/uvu4vi8IydxlqLEXpUGu5oEt0gtj/F8zQv45i2tfhhr5pHjxhpTQj6wiCPqspmlXt0ITqQ04ntmEGoCj/3ncAlYVV3bGRe9sxZ1chMCZvQvCQ+bPf3LIAo2w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS4PR04MB9624.eurprd04.prod.outlook.com (2603:10a6:20b:4ce::9)
+ by GV2PR04MB11302.eurprd04.prod.outlook.com (2603:10a6:150:2ae::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sun, 28 Sep
+ 2025 09:03:38 +0000
+Received: from AS4PR04MB9624.eurprd04.prod.outlook.com
+ ([fe80::fa4e:dc6f:3f71:13b7]) by AS4PR04MB9624.eurprd04.prod.outlook.com
+ ([fe80::fa4e:dc6f:3f71:13b7%4]) with mapi id 15.20.9160.013; Sun, 28 Sep 2025
+ 09:03:38 +0000
+From: Rain Yang <jiyu.yang@oss.nxp.com>
+To: imx@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] perf tools c2c: Add annotation support to perf c2c report
-Date: Sun, 28 Sep 2025 17:02:12 +0800
-Message-ID: <20250928090212.1324797-1-tianyou.li@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <aMpWcdjoCBsRVo72@z2>
-References: <aMpWcdjoCBsRVo72@z2>
+Cc: boris.brezillon@collabora.com,
+	steven.price@arm.com,
+	liviu.dudau@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.co,
+	simona@ffwll.ch,
+	marek.vasut@mailbox.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Rain Yang <jiyu.yang@nxp.com>
+Subject: [PATCH v2 1/2] dt-bindings: gpu: mali-valhall: make mali-supply optional
+Date: Sun, 28 Sep 2025 17:03:33 +0800
+Message-Id: <20250928090334.35389-1-jiyu.yang@oss.nxp.com>
+X-Mailer: git-send-email 2.39.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG3P274CA0001.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::13)
+ To AS4PR04MB9624.eurprd04.prod.outlook.com (2603:10a6:20b:4ce::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9624:EE_|GV2PR04MB11302:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98d5dc9b-7970-40a0-2798-08ddfe6de98b
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|19092799006|366016|376014|7416014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IElttny3xSV8tkHEo617X14Lyjh2YSx9d1bk2en+KdlWuEM+ePqggSiooJT7?=
+ =?us-ascii?Q?+2JVuYGe6smLczltlqawtm6ou62OzMbULkNQIWzD7c8Ya0NFF3ZErz4wmRNL?=
+ =?us-ascii?Q?G8o9T1AIklEoH7UWC8v612vYGZcmIOm9dtKGQpi+Q6LGlkYeChrkpovuv+Eu?=
+ =?us-ascii?Q?NrzzCllMF4H0ICANc6LT+zcI+mya3YopFeD56Ru8m9aaokPudfMqg0GjZMib?=
+ =?us-ascii?Q?CggY+tkd1HQBbUWp9fa7JAq9eJGXcau/GOPMPHvgK06T1rAQa7xKDMQXjE7F?=
+ =?us-ascii?Q?QG4zZHaNgmrbNhvY4Qb+kOy/5r9D6IIYkQbf0pWtMKHR8cTxK06dsUk6rUIB?=
+ =?us-ascii?Q?LyYRlbQ59e1bVV2kdmSpzVTeHdbncFYN1lVXN7nlF9s4PlgQbAz1puhc+uh6?=
+ =?us-ascii?Q?3rWFeFHg4KIix0OyEayCB9RHVKjdW3/ZJToCSRQ9q1aIga/urrj/sok+suYD?=
+ =?us-ascii?Q?0CK+VHfDSBl4NaKKcGFPChGfh9umWdgcZdVxhpeMuyeA/rNfgNv9TlK966Ed?=
+ =?us-ascii?Q?6HSxHi6Nzx9cfXLnyKWr4R+yLaQaC1XDuLDcGeWUAX3N4bX0Y/DrJg83O9a6?=
+ =?us-ascii?Q?S+v7xuBUwRnAJlaM0acetQ81/FrfkInrEtIUtXDBvHr4gFqrNHKWdoXmxtXv?=
+ =?us-ascii?Q?UeZ7ni0WO0qniMC7tUjYtNEynK6wpF2Z0BzQwrkJQN4ZcF9yCE87DA8pcfUt?=
+ =?us-ascii?Q?BTjZHwd1pA06KdY8F04SEq4vLw72IG2s03xJtHtFg8K8ERaE9NJlsb2UYaMe?=
+ =?us-ascii?Q?JZjTg3z/pxOKvtozUJEtNeKSZaOlmO8MskxqmhmM+7Xbqi0AdhEnthMUzVlt?=
+ =?us-ascii?Q?3hFSFQZTQBmKxrDb8J2DTg28KH2kD6KJ6fNTWJMHrEfOHsJYYhcYSfRbDtn/?=
+ =?us-ascii?Q?TEyqQ7i8fl3s0LEs7UXo2X65R0theCbSBzFIjbmRL3o7QMYIWsOgoAwTKj/2?=
+ =?us-ascii?Q?9iTBrHcZnmlceIhtL85umaakdRZfkT4dxQkA94Cam/EOrVPSBX+MckWDeO61?=
+ =?us-ascii?Q?NfgmYrQ7O4zZrvDbLGn58STo9rGxTH8ldcdkZzRflM7gJ0ZEiReq7y8VXBhS?=
+ =?us-ascii?Q?gaVe8YXZsW3CmlHpnfz1yrSxQWsYQDXGk0xBtfp5SklclDOemLEvu/ggrQa9?=
+ =?us-ascii?Q?ZXxs0ayJ49e/jKjkJ3v/eMt0Dsw1KcWs8R03uI3HgSzjcWr+XGBSJ05XoHmv?=
+ =?us-ascii?Q?mdzFDB4zdFq4rX8sstUnw8y8ODm+wKuT6voAbZm62ieREp9MkUzeMqWREh8J?=
+ =?us-ascii?Q?Pg30WmCVxwJyWuOaELEshufhxmg0ts8cebtAWmL7c3pYpe1quLgjRc3+N3kd?=
+ =?us-ascii?Q?F2kdp/3jKraV+GHql2ThWvTT1XKUww1vPHQJ0uG7nj0Nlv/Gv/2Tldq28brW?=
+ =?us-ascii?Q?/mzixg+fKmFSRNj5DAVK9Yh7aa2Xjc2NBr9ZYOCdHo293PgMrcx5cbSPlpNm?=
+ =?us-ascii?Q?OfA/Rm4EAsSMmBzYKF0aB0BicV1Can7U6j84uwEN6voH2HCvL9Xy3q11myzr?=
+ =?us-ascii?Q?7hoxrSCgMMDLSBPOHplPqnXRl6T1qy0/QXFI?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9624.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(366016)(376014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GQYl7EDiTz7OfZ6txXrxrZMDFyF/xO+sgZZl/hEiFuqdnMjlmNF6tWuYJsJA?=
+ =?us-ascii?Q?OFyk2nld0rf5ZacteM2PjRGgQ+DR67YfVUCb7Uk4h5akIEN8P5OvdYuFHCPA?=
+ =?us-ascii?Q?PkNJCSWSfwRxWXxyNjkKClq3KsJcbs8N6pR1oTVua+TO529M8uBIk8NenoQY?=
+ =?us-ascii?Q?eoCTcmwP2gDfC7iWB5deSywb82tsmq9D65xyEtpPsFCfwtr2BPu4de40MQf9?=
+ =?us-ascii?Q?zGtv/4/KkTtcTz/6BbllvmH1A/JyfBPCeNFdnd43OGbapwXnuNK9rttEjhOL?=
+ =?us-ascii?Q?v8z38vghdQZ8MAdpNYTpqLMmI32IHY7IdjTdG982bM9q/thJNX3/mZDvmhZ+?=
+ =?us-ascii?Q?zLN/K5asjA/ra5jUTlKGfmsAopBww1+Bqb4feoLjhuMqK1EzOQ5gUJ40YT1m?=
+ =?us-ascii?Q?aSqKSJ9jXmpHZfKAqGqRL0lYy/Qu9BfvtiwV0lBajAv14uzWo8vRqfcOqRUC?=
+ =?us-ascii?Q?S5cSKWGh6VYIC55v96ewBCJj/c0JMAqla5d8bp7Ro+HIkevK3YeWWYcTSTtJ?=
+ =?us-ascii?Q?F98XZQ+RFYlCD54Ii6MOgGRgyj0cIGj0uKa0HrYPDLXOgY1uPtkrNGrHiqHs?=
+ =?us-ascii?Q?RzChLVj5sd7K+wNaEw0Q03NlPkcQdKZdOvNqA2mWjn+07zGG6Ql9BR68lSlI?=
+ =?us-ascii?Q?U5tTKx9tKr7UJlp2zZuyS21OwORT7SsWNlz/d9OGvfZTqtPyF86Ez4V6f5Ah?=
+ =?us-ascii?Q?I4GZvaiJHdu65F05MAjz6EW53fi3tRgbMtjwMCGnrD+DgYCy1uNa6o9l1/5E?=
+ =?us-ascii?Q?MYC+B2HkRwnHDgQQnWmciilqXSeDlyLnY6t8zSFgcjDBSwsW12qX945QmdKI?=
+ =?us-ascii?Q?IJxAZPEZEIIQfH/d7Wif5AUtHeoKvt0AWzZRx+KkY4fY9NV4goIDVH7VjDVk?=
+ =?us-ascii?Q?VWlYJVSf1YhSle0RLslBp/4hvD4IdvGInrDFJD/jQxPWYFTMTXYmHH1IHnog?=
+ =?us-ascii?Q?n0GU8To3LP69iblgmVRBmCzWH9lyddCJSRUT6VTpMhNSy0jBgG92y2OsYibt?=
+ =?us-ascii?Q?LdSrAQerKMwAcoIntshyPZRmdtJgoNrpcX4WMRt2bYhU/mFprOm7jE626iAK?=
+ =?us-ascii?Q?fusBDo4P5Hqd+OM3ZYORMsCOuaNiEzKCPYJdPbq9lIp7CM2L15YO5rdlFU/f?=
+ =?us-ascii?Q?gFg5gGjXDzeI4c1021451ltaFmXA/hi4E7RKHd0QP5XkG4QkUjnJXleIj1j2?=
+ =?us-ascii?Q?o1Me6kquEeJf1kNSZkJKj23ExNZvKTU25Kq2Nm5dPXimwpS2WbPS/V1dImjg?=
+ =?us-ascii?Q?NmPfoqXbN1Hzt4uq0Ptw1h9CdvlsMr94k4lLRQLH5wJbGb1qlN1etsB4q1qb?=
+ =?us-ascii?Q?9A1m3SbLJmBVe2yDsTtTNxKiXitDLkR7bMtWNsgTdw/IX2RxzymNA0QPDsyN?=
+ =?us-ascii?Q?4ZHa3C3+K7FlbyHvbey3cp6IBKDFoqybslUActFD3ILLYRq4q14CJtdK/eoV?=
+ =?us-ascii?Q?KCsRTwuCvZt+xkDZ9cQY24x7cB6U2PJQnev8QGr7W6lvLSMvwWO8AMOE4zFZ?=
+ =?us-ascii?Q?dxQhP79SuGJgAp1p+5bAYxtpuprIVgc6SjRXPSGd5nFW7VqbtkB9j3CQfwuR?=
+ =?us-ascii?Q?y+oTKCyCJUXIuq3O1T4DLITYGJ07weBtn76IHw70?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98d5dc9b-7970-40a0-2798-08ddfe6de98b
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9624.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 09:03:38.3755
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7lBX7GZNYsHt969fXsTD5maIR307tdJugavv99nEIMsfxekjLun7aVwMsleNsl3oGWoY1DmwDaYM3ymqEajQHw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11302
 
-Perf c2c report currently specified the code address and source:line
-information in the cacheline browser, while it is lack of annotation
-support like perf report to directly show the disassembly code for
-the particular symbol shared that same cacheline. This patches add
-a key 'a' binding to the cacheline browser which reuse the annotation
-browser to show the disassembly view for easier analysis of cacheline
-contentions. By default, the 'TAB' key navigate to the code address
-where the contentions detected.
+From: Rain Yang <jiyu.yang@nxp.com>
 
-Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
-Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
-Reviewed-by: Pan Deng <pan.deng@intel.com>
-Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
-Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
+Not all platforms require the mali-supply regulator. This change removes
+it from the required list in the binding schema, and make mali-supply
+required for rk3588 only.
+
+Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
 ---
- tools/perf/builtin-annotate.c     |   2 +-
- tools/perf/builtin-c2c.c          | 130 ++++++++++++++++++++++++++++--
- tools/perf/ui/browsers/annotate.c |  41 +++++++++-
- tools/perf/ui/browsers/hists.c    |   2 +-
- tools/perf/util/annotate.c        |   2 +-
- tools/perf/util/annotate.h        |   2 +
- tools/perf/util/hist.h            |   6 +-
- 7 files changed, 171 insertions(+), 14 deletions(-)
+ .../devicetree/bindings/gpu/arm,mali-valhall-csf.yaml          | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 646f43b0f7c4..f977e97a9c96 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -519,7 +519,7 @@ static void hists__find_annotations(struct hists *hists,
- 			/* skip missing symbols */
- 			nd = rb_next(nd);
- 		} else if (use_browser == 1) {
--			key = hist_entry__tui_annotate(he, evsel, NULL);
-+			key = hist_entry__tui_annotate(he, evsel, NULL, NO_INITIAL_IP);
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+index b220cbd5362f..ef9791d8ed95 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+@@ -92,7 +92,6 @@ required:
+   - interrupts
+   - interrupt-names
+   - clocks
+-  - mali-supply
  
- 			switch (key) {
- 			case -1:
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 9e9ff471ddd1..bf2136d062ef 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -45,6 +45,8 @@
- #include "pmus.h"
- #include "string2.h"
- #include "util/util.h"
-+#include "util/symbol.h"
-+#include "util/annotate.h"
+ additionalProperties: false
  
- struct c2c_hists {
- 	struct hists		hists;
-@@ -62,6 +64,7 @@ struct compute_stats {
+@@ -109,6 +108,8 @@ allOf:
+         power-domains:
+           maxItems: 1
+         power-domain-names: false
++      required:
++        - mali-supply
  
- struct c2c_hist_entry {
- 	struct c2c_hists	*hists;
-+	struct evsel		*evsel;
- 	struct c2c_stats	 stats;
- 	unsigned long		*cpuset;
- 	unsigned long		*nodeset;
-@@ -225,6 +228,12 @@ he__get_c2c_hists(struct hist_entry *he,
- 	return hists;
- }
- 
-+static void c2c_he__set_evsel(struct c2c_hist_entry *c2c_he,
-+				struct evsel *evsel)
-+{
-+	c2c_he->evsel = evsel;
-+}
-+
- static void c2c_he__set_cpu(struct c2c_hist_entry *c2c_he,
- 			    struct perf_sample *sample)
- {
-@@ -334,6 +343,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
- 
- 	c2c_he__set_cpu(c2c_he, sample);
- 	c2c_he__set_node(c2c_he, sample);
-+	c2c_he__set_evsel(c2c_he, evsel);
- 
- 	hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
- 	ret = hist_entry__append_callchain(he, sample);
-@@ -371,6 +381,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
- 
- 		c2c_he__set_cpu(c2c_he, sample);
- 		c2c_he__set_node(c2c_he, sample);
-+		c2c_he__set_evsel(c2c_he, evsel);
- 
- 		hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
- 		ret = hist_entry__append_callchain(he, sample);
-@@ -2550,6 +2561,35 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
- }
- 
- #ifdef HAVE_SLANG_SUPPORT
-+
-+static int perf_c2c__toggle_annotation(struct hist_browser *browser)
-+{
-+	struct hist_entry *he = browser->he_selection;
-+	struct symbol *sym = NULL;
-+	struct c2c_hist_entry *c2c_he = NULL;
-+	struct annotated_source *src = NULL;
-+
-+	if (he == NULL) {
-+		ui_browser__help_window(&browser->b, "No entry selected for annotation");
-+		return 0;
-+	}
-+	sym = (&he->ms)->sym;
-+
-+	if (sym == NULL) {
-+		ui_browser__help_window(&browser->b, "Can not annotate, no symbol found");
-+		return 0;
-+	}
-+
-+	src = symbol__hists(sym, 0);
-+	if (src == NULL) {
-+		ui_browser__help_window(&browser->b, "Failed to initialize annotation source");
-+		return 0;
-+	}
-+
-+	c2c_he = container_of(he, struct c2c_hist_entry, he);
-+	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL, he->ip);
-+}
-+
- static void c2c_browser__update_nr_entries(struct hist_browser *hb)
- {
- 	u64 nr_entries = 0;
-@@ -2617,6 +2657,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
- 	" ENTER         Toggle callchains (if present) \n"
- 	" n             Toggle Node details info \n"
- 	" s             Toggle full length of symbol and source line columns \n"
-+	" a             Toggle annotation view \n"
- 	" q             Return back to cacheline list \n";
- 
- 	if (!he)
-@@ -2651,6 +2692,9 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
- 			c2c.node_info = (c2c.node_info + 1) % 3;
- 			setup_nodes_header();
- 			break;
-+		case 'a':
-+			perf_c2c__toggle_annotation(browser);
-+			break;
- 		case 'q':
- 			goto out;
- 		case '?':
-@@ -2989,6 +3033,11 @@ static int setup_coalesce(const char *coalesce, bool no_source)
- 	return 0;
- }
- 
-+static bool perf_c2c__has_annotation(void)
-+{
-+	return use_browser == 1;
-+}
-+
- static int perf_c2c__report(int argc, const char **argv)
- {
- 	struct itrace_synth_opts itrace_synth_opts = {
-@@ -3006,6 +3055,7 @@ static int perf_c2c__report(int argc, const char **argv)
- 	const char *display = NULL;
- 	const char *coalesce = NULL;
- 	bool no_source = false;
-+	const char *disassembler_style = NULL, *objdump_path = NULL, *addr2line_path = NULL;
- 	const struct option options[] = {
- 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
- 		   "file", "vmlinux pathname"),
-@@ -3033,6 +3083,12 @@ static int perf_c2c__report(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
- 		    "Enable LBR callgraph stitching approach"),
- 	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
-+	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
-+		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
-+	OPT_STRING(0, "objdump", &objdump_path, "path",
-+		   "objdump binary to use for disassembly and annotations"),
-+	OPT_STRING(0, "addr2line", &addr2line_path, "path",
-+		   "addr2line binary to use for line numbers"),
- 	OPT_PARENT(c2c_options),
- 	OPT_END()
- 	};
-@@ -3040,6 +3096,12 @@ static int perf_c2c__report(int argc, const char **argv)
- 	const char *output_str, *sort_str = NULL;
- 	struct perf_env *env;
- 
-+	annotation_options__init();
-+
-+	err = hists__init();
-+	if (err < 0)
-+		goto out;
-+
- 	argc = parse_options(argc, argv, options, report_c2c_usage,
- 			     PARSE_OPT_STOP_AT_NON_OPTION);
- 	if (argc)
-@@ -3052,6 +3114,36 @@ static int perf_c2c__report(int argc, const char **argv)
- 	if (c2c.stats_only)
- 		c2c.use_stdio = true;
- 
-+	/**
-+	 * Annotation related options
-+	 * disassembler_style, objdump_path, addr2line_path
-+	 * are set in the c2c_options, so we can use them here.
-+	 */
-+	if (disassembler_style) {
-+		annotate_opts.disassembler_style = strdup(disassembler_style);
-+		if (!annotate_opts.disassembler_style) {
-+			err = -ENOMEM;
-+			pr_err("Failed to allocate memory for annotation options\n");
-+			goto out;
-+		}
-+	}
-+	if (objdump_path) {
-+		annotate_opts.objdump_path = strdup(objdump_path);
-+		if (!annotate_opts.objdump_path) {
-+			err = -ENOMEM;
-+			pr_err("Failed to allocate memory for annotation options\n");
-+			goto out;
-+		}
-+	}
-+	if (addr2line_path) {
-+		symbol_conf.addr2line_path = strdup(addr2line_path);
-+		if (!symbol_conf.addr2line_path) {
-+			err = -ENOMEM;
-+			pr_err("Failed to allocate memory for annotation options\n");
-+			goto out;
-+		}
-+	}
-+
- 	err = symbol__validate_sym_arguments();
- 	if (err)
- 		goto out;
-@@ -3126,6 +3218,38 @@ static int perf_c2c__report(int argc, const char **argv)
- 	if (err)
- 		goto out_mem2node;
- 
-+	if (c2c.use_stdio)
-+		use_browser = 0;
-+	else
-+		use_browser = 1;
-+
-+	/*
-+	 * Only in the TUI browser we are doing integrated annotation,
-+	 * so don't allocate extra space that won't be used in the stdio
-+	 * implementation.
-+	 */
-+	if (perf_c2c__has_annotation()) {
-+		int ret = symbol__annotation_init();
-+
-+		if (ret < 0)
-+			goto out_mem2node;
-+		/*
-+		 * For searching by name on the "Browse map details".
-+		 * providing it only in verbose mode not to bloat too
-+		 * much struct symbol.
-+		 */
-+		if (verbose > 0) {
-+			/*
-+			 * XXX: Need to provide a less kludgy way to ask for
-+			 * more space per symbol, the u32 is for the index on
-+			 * the ui browser.
-+			 * See symbol__browser_index.
-+			 */
-+			symbol_conf.priv_size += sizeof(u32);
-+		}
-+		annotation_config__init();
-+	}
-+
- 	if (symbol__init(env) < 0)
- 		goto out_mem2node;
- 
-@@ -3135,11 +3259,6 @@ static int perf_c2c__report(int argc, const char **argv)
- 		goto out_mem2node;
- 	}
- 
--	if (c2c.use_stdio)
--		use_browser = 0;
--	else
--		use_browser = 1;
--
- 	setup_browser(false);
- 
- 	err = perf_session__process_events(session);
-@@ -3210,6 +3329,7 @@ static int perf_c2c__report(int argc, const char **argv)
- out_session:
- 	perf_session__delete(session);
- out:
-+	annotation_options__exit();
- 	return err;
- }
- 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 8fe699f98542..63d0e28fb991 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -605,7 +605,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
- 	target_ms.map = ms->map;
- 	target_ms.sym = dl->ops.target.sym;
- 	annotation__unlock(notes);
--	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt);
-+	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt, NO_INITIAL_IP);
- 
- 	/*
- 	 * The annotate_browser above changed the title with the target function
-@@ -864,6 +864,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 	const char *help = "Press 'h' for help on key bindings";
- 	int delay_secs = hbt ? hbt->refresh : 0;
- 	char *br_cntr_text = NULL;
-+	u64 init_ip = NO_INITIAL_IP;
- 	char title[256];
- 	int key;
- 
-@@ -873,6 +874,13 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 
- 	annotate_browser__calc_percent(browser, evsel);
- 
-+	/* the selection are intentionally even not from the sample percentage */
-+	if (browser->entries.rb_node == NULL && browser->selection) {
-+		init_ip = sym->start + browser->selection->offset;
-+		disasm_rb_tree__insert(browser, browser->selection);
-+		browser->curr_hot = rb_last(&browser->entries);
-+	}
-+
- 	if (browser->curr_hot) {
- 		annotate_browser__set_rb_top(browser, browser->curr_hot);
- 		browser->b.navkeypressed = false;
-@@ -973,6 +981,18 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 				ui_helpline__puts(help);
- 			annotate__scnprintf_title(hists, title, sizeof(title));
- 			annotate_browser__show(browser, title, help);
-+			/* Previous RB tree may not valid, need refresh according to new entries*/
-+			if (init_ip != NO_INITIAL_IP) {
-+				struct disasm_line *dl = find_disasm_line(sym, init_ip, true);
-+
-+				browser->curr_hot = NULL;
-+				browser->entries.rb_node = NULL;
-+				if (dl != NULL) {
-+					disasm_rb_tree__insert(browser, &dl->al);
-+					browser->curr_hot = rb_last(&browser->entries);
-+				}
-+				nd = browser->curr_hot;
-+			}
- 			continue;
- 		case 'o':
- 			annotate_opts.use_offset = !annotate_opts.use_offset;
-@@ -1106,22 +1126,23 @@ static int annotate_browser__run(struct annotate_browser *browser,
- }
- 
- int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
--			     struct hist_browser_timer *hbt)
-+			     struct hist_browser_timer *hbt, u64 init_ip)
- {
- 	/* reset abort key so that it can get Ctrl-C as a key */
- 	SLang_reset_tty();
- 	SLang_init_tty(0, 0, 0);
- 	SLtty_set_suspend_state(true);
- 
--	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt);
-+	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt, init_ip);
- }
- 
- int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
- 			       struct evsel *evsel,
--			       struct hist_browser_timer *hbt)
-+			       struct hist_browser_timer *hbt, u64 init_ip)
- {
- 	struct symbol *sym = ms->sym;
- 	struct annotation *notes = symbol__annotation(sym);
-+	struct disasm_line *dl = NULL;
- 	struct annotate_browser browser = {
- 		.b = {
- 			.refresh = annotate_browser__refresh,
-@@ -1173,6 +1194,18 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
- 		browser.he = &annotate_he;
- 	}
- 
-+	/*
-+	 * If init_ip is set, it means that there should be a line
-+	 * intentionally selected, not based on the percentages
-+	 * which caculated by the event sampling. In this case, we
-+	 * convey this information into the browser selection, where
-+	 * the selection in other cases should be empty.
-+	 */
-+	if (init_ip != NO_INITIAL_IP) {
-+		dl = find_disasm_line(sym, init_ip, false);
-+		browser.selection = &dl->al;
-+	}
-+
- 	ui_helpline__push("Press ESC to exit");
- 
- 	if (annotate_opts.code_with_type) {
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 487c0b08c003..3675a703de11 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2485,7 +2485,7 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
- 		evsel = hists_to_evsel(browser->hists);
- 
- 	he = hist_browser__selected_entry(browser);
--	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt);
-+	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt, NO_INITIAL_IP);
- 	/*
- 	 * offer option to annotate the other branch source or target
- 	 * (if they exists) when returning from annotate
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index c9b220d9f924..937effbeda69 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2622,7 +2622,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
- 	return 0;
- }
- 
--static struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
-+struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
- 					    bool allow_update)
- {
- 	struct disasm_line *dl;
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index eaf6c8aa7f47..bbe67588bbdd 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -170,6 +170,8 @@ static inline struct disasm_line *disasm_line(struct annotation_line *al)
- 	return al ? container_of(al, struct disasm_line, al) : NULL;
- }
- 
-+struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip, bool allow_update);
-+
- /*
-  * Is this offset in the same function as the line it is used?
-  * asm functions jump to other functions, for instance.
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index c64005278687..e544e1795f19 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -713,12 +713,14 @@ struct block_hist {
- #include "../ui/keysyms.h"
- void attr_to_script(char *buf, struct perf_event_attr *attr);
- 
-+#define NO_INITIAL_IP 0
-+
- int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
- 			       struct evsel *evsel,
--			       struct hist_browser_timer *hbt);
-+			       struct hist_browser_timer *hbt, u64 init_ip);
- 
- int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
--			     struct hist_browser_timer *hbt);
-+			     struct hist_browser_timer *hbt, u64 init_ip);
- 
- int evlist__tui_browse_hists(struct evlist *evlist, const char *help, struct hist_browser_timer *hbt,
- 			     float min_pcnt, struct perf_env *env, bool warn_lost_event);
+ examples:
+   - |
 -- 
-2.47.1
+2.39.5
 
 
