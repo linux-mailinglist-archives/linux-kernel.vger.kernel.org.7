@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-835394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722FEBA6FA1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:08:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF56EBA6F92
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AD257AD59D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF5C17A6B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396B62DCF7D;
-	Sun, 28 Sep 2025 11:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2E62DCF6B;
+	Sun, 28 Sep 2025 11:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j93zRoDR"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqURN7CZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08DD2C21D5;
-	Sun, 28 Sep 2025 11:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C48299922
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 11:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759057680; cv=none; b=UUhcASxwoPdgtU0aUc07sDzMG9R3yhfamd3btXtuUdR25/THVeaLL4oejdVIrUSkOGljKPHSP/KhoAhYZf6X7+BodfWFMj+IBfac3f1cMCGOewUDf3bdZQf40O3INezdcPfW0msgAiT3HcMdFE1m8gNZIBiGoKQRMaiONbB9Ek4=
+	t=1759057651; cv=none; b=tyyPcBLrMLcAlUy8FdCv+CZ5vtIDkCBmluHBk96ibBICjo5nw/zmp59P0wgicMaMgmsUcwVb7Ptfno+d4t3147daaIrntKXbbpcdUlOsnVvTf298Gs9aOL05B+Jg5lkv6AIi5K5Mx8SImdkFW+jkcz/n8k1QOL/yqi4Q1+/nDZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759057680; c=relaxed/simple;
-	bh=0aO9erk5QqK6WpcXoMryELoQBa/6Vfo2mzJiRTMSxBE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ixR1TOhG0m75gIXer1A5Ek+bkqxFFB+NnhMqxQha/ZEeuK03wi5YiI4cQx8MJY+VF3LAOCmXf6vnoKrbnWhmsdmk7fTiiBNyUdhWkge+ik9P3lceJG11g1bpssJ7b8UqPxSl+W7BrS+VmiMq593Ec21NS3PIG33ri8t04MdpJ0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j93zRoDR; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=xZ
-	5qO6uMsGJcIcgO/VDq94SOb+oBcEOxKQbcI8nndCs=; b=j93zRoDR/84ULPeDdv
-	vR+4Ll2r4WGt3K+DlF7MSvaQM18eQwShkzu3yN9GmtEBit4S1ww5pkrat2Cvm20W
-	UDL/P/DD+I5cIQuf0MuJ0wRWrgA6VYMGH6kqnoaGXcgGMcaA6FBXIVhD+laY8u19
-	PB5TBiCJwUZGwa8qGwyyIheSY=
-Received: from localhost (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgAnYuP_Ftlom3d5AQ--.64678S2;
-	Sun, 28 Sep 2025 19:07:44 +0800 (CST)
-From: Cen Zhang <zzzccc427@163.com>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	johan.hedberg@gmail.com,
-	marcel@holtmann.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	Cen Zhang <zzzccc427@gmail.com>
-Subject: [PATCH] Bluetooth: hci_sync: fix race in hci_cmd_sync_dequeue_once
-Date: Sun, 28 Sep 2025 11:07:40 +0000
-Message-ID: <20250928110740.137220-1-zzzccc427@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759057651; c=relaxed/simple;
+	bh=j0gn6MJqKEly08fl24M8zJ4GOpJQztDVzq3cj3URuiM=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=ObgREOn2vaiX1XHF2WywNGLG3pEwfOqiv3O0Da+XtwLzSxYwxxEaaCCj2lEpZh8Qi+pwfjmf1YKC/CNtHRkxClW9oRflSb4VevDpqu/jTPIEjaN+1ngVb8oPNjL67cPev/fJNW+2mz+8zpw4p2w8GLRG2AxJWKPbn5s5OZiu5RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqURN7CZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D686CC4CEF0;
+	Sun, 28 Sep 2025 11:07:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759057650;
+	bh=j0gn6MJqKEly08fl24M8zJ4GOpJQztDVzq3cj3URuiM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QqURN7CZ1vq+aU+d9X3LzECzMmBYek0i5rM0DnFDooZr3nFM4JeypWzvYWvAGicE0
+	 QtIYvxR4ktb+OJ5pc7EQGzrG9hMhkUyE6vI2m+/Lkzj1bTUkm+cnhOF0ahNicgdcsH
+	 uVmBYCkYakNcLCTCIZ3auYbaMSNB/okHU3AwM58jyvMOZHkigylUZVIdPC/sZy/m+M
+	 H86eFXi7tHJWuFtrj1Zlvy1Yfo8zZOwPvbOliuQ3EeDT8w9q4eKPnmPFstPtWnQ23b
+	 Ers1wEdWyYo4KxGWMWdNHdw03Nl/IByw9tXuRLqU9kZaRkihuhiySGPqLn1n0OtUJc
+	 aR/WYNa5NimTQ==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1v2pH3-0000000D8NO-2QU1;
+	Sun, 28 Sep 2025 07:09:01 -0400
+Message-ID: <20250928110832.098564441@kernel.org>
+User-Agent: quilt/0.68
+Date: Sun, 28 Sep 2025 07:08:32 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Wang Liang <wangliang74@huawei.com>
+Subject: [for-linus][PATCH 0/3] tracing: Fixes for v6.17
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgAnYuP_Ftlom3d5AQ--.64678S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uF45WryrKryDCFWUGF4DJwb_yoW8Gr1Upa
-	43uFy5Zr4rXr43Xryvya1rZFW8uF4xWr9rCan8WryfJw4xtr4xtw12yrySqF909rWDuF15
-	ZF4qqFy3C3W5Gr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jlCJPUUUUU=
-X-CM-SenderInfo: 5222uujfuslqqrwthudrp/1tbiXRvWhGjZEv1FeAAAs3
 
-From: Cen Zhang <zzzccc427@gmail.com>
 
-hci_cmd_sync_dequeue_once() does lookup and then cancel
-the entry under two separate lock sections. Meanwhile,
-hci_cmd_sync_work() can also delete the same entry,
-leading to double list_del() and "UAF".
+tracing fixes for v6.17
 
-Fix this by holding cmd_sync_work_lock across both
-lookup and cancel, so that the entry cannot be removed
-concurrently.
+- Fix buffer overflow in osnoise_cpu_write()
 
-Reported-by: Cen Zhang <zzzccc427@gmail.com>
-Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
----
- net/bluetooth/hci_sync.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+  The allocated buffer to read user space did not add a nul terminating byte
+  after copying from user the string. It then reads the string, and if user
+  space did not add a nul byte, the read will continue beyond the string.
+  Add a nul terminating byte after reading the string.
 
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index b6f888d83..f059b19fe 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -862,12 +862,13 @@ bool hci_cmd_sync_dequeue_once(struct hci_dev *hdev,
- 			       void *data, hci_cmd_sync_work_destroy_t destroy)
- {
- 	struct hci_cmd_sync_work_entry *entry;
--
--	entry = hci_cmd_sync_lookup_entry(hdev, func, data, destroy);
-+	mutex_lock(&hdev->cmd_sync_work_lock);
-+	entry = _hci_cmd_sync_lookup_entry(hdev, func, data, destroy);
- 	if (!entry)
- 		return false;
- 
--	hci_cmd_sync_cancel_entry(hdev, entry);
-+	_hci_cmd_sync_cancel_entry(hdev, entry, -ECANCELED);
-+	mutex_unlock(&hdev->cmd_sync_work_lock);
- 
- 	return true;
- }
--- 
-2.43.0
+- Fix missing check for lockdown on tracing
 
+  There's a path from kprobe events or uprobe events that can update the
+  tracing system even if lockdown on tracing is activate. Add a check in the
+  dynamic event path.
+
+- Add a recursion check for the function graph return path
+
+  Now that fprobes can hook to the function graph tracer and call different
+  code between the entry and the exit, the exit code may now call functions
+  that are not called in entry. This means that the exit handler can possibly
+  trigger recursion that is not caught and cause the system to crash.
+  Add the same recursion checks in the function exit handler as exists in the
+  entry handler path.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/fixes
+
+Head SHA1: 0db0934e7f9bb624ed98a665890dbe249f65b8fd
+
+
+Masami Hiramatsu (Google) (2):
+      tracing: dynevent: Add a missing lockdown check on dynevent
+      tracing: fgraph: Protect return handler from recursion loop
+
+Wang Liang (1):
+      tracing/osnoise: Fix slab-out-of-bounds in _parse_integer_limit()
+
+----
+ kernel/trace/fgraph.c         | 12 ++++++++++++
+ kernel/trace/trace_dynevent.c |  4 ++++
+ kernel/trace/trace_osnoise.c  |  3 ++-
+ 3 files changed, 18 insertions(+), 1 deletion(-)
 
