@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-835474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD29BA73E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E07BA73EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC681773B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:20:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A52C18969CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E2D229B36;
-	Sun, 28 Sep 2025 15:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCCD226CF9;
+	Sun, 28 Sep 2025 15:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="CtT4iU2T";
-	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="J0+KaShs"
-Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0SM9na7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B04AA927
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 15:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705F6A927;
+	Sun, 28 Sep 2025 15:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759072838; cv=none; b=vGB/HnLlYkrxSBaKn3PkSGdkxm42Sc+3VGYvw/O2At7KmQEKZjstjdWeg0KrtW/riGuNDQAmDTXQIcOi6RBR8AvF9tZCroGG6EJxmjFNV2yEhQLLRI0AY2rqnn/mGoaGQGYMBeahrv1ZzSRrWMAolIe18wckvXha6orH+IOBfoc=
+	t=1759072867; cv=none; b=hrPG2Q5Lvpu4eBgrGDL98vvGZ+hCdKGY7XDIBDR77ERE9lsG2d7V2rxjK9crUCKlDbABapZvszOajIjCLt459+l6mUVKfYsPu+dQWNjP+awelw5DYIvDksTLJ+HMD95cRYdB2CEFQpPGbJ9s0lJ/KrhpO2fe+v5OWuj+xJkiSqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759072838; c=relaxed/simple;
-	bh=nlgAinLCqYMESm7W18m91+Ld53eoJMfCRrOPc4ga7/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ym7ynfTXS8mNGk2T7HqOHLhtPwhW9o69CAr6ltm+q1/igzaevj6TdSfe06NgDmiYPqD48sIrbi4E0HR2AlCFKUMlXYwLF6HReIGfIudey1XxWJD6uVofK5jf4pCxKUEPnR6qPKj0UwGL9GCuHeAjmwyCYZS1KQ3GUbcLY2TxcXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=CtT4iU2T; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=J0+KaShs; arc=none smtp.client-ip=46.30.211.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759072832; x=1759677632;
-	d=ravnborg.org; s=rsa1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=Ghyryt2xK5vvnvf4Q2js9Uw55oy6LtaOfQDvQKr1uy0=;
-	b=CtT4iU2T9YA3xTrD4cIA+BE+C15rUkNnZplc587YI58g+wt9Z/k8mKxjom62woRw7fEUsvfTw8Ego
-	 OORUvh9fiJQumZdtSymONvY5MMtJ3KJXP3zsnj3KxJxk4Oiw+38jzutzIsRmg9a15NqXsODmCWj0BM
-	 /EaEWRy/uNU7FXsutNnhv+ixhqzFL2HZhBJwBMscK6dVEUiiXxvphkGrAHhj1qC784KABlOh0D02mA
-	 4cLaxB8a5GgAT75FDK3kfCkRHDAAi479jPbM5IFPQLlR8lLKW/rv/Z+yeGIJUaeXNjpvPYpXFP9UyV
-	 lTS7L9y3fNmnKV3eKZ72pOl8CYKOBDg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1759072832; x=1759677632;
-	d=ravnborg.org; s=ed1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=Ghyryt2xK5vvnvf4Q2js9Uw55oy6LtaOfQDvQKr1uy0=;
-	b=J0+KaShsfwnmVbs3PB0EalU1KScQKZ0oCMj0q/S47VSr8rYDdT1FCDrtDwmZlUzToU5sipbu8KD09
-	 RgZbdwtBQ==
-X-HalOne-ID: ab2e7cf9-9c7e-11f0-845a-494313b7f784
-Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
-	by mailrelay6.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id ab2e7cf9-9c7e-11f0-845a-494313b7f784;
-	Sun, 28 Sep 2025 15:20:31 +0000 (UTC)
-Date: Sun, 28 Sep 2025 17:20:30 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Geoff Levand <geoff@infradead.org>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>, iommu@lists.linux.dev,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Jason Wang <jasowang@redhat.com>, Juergen Gross <jgross@suse.com>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	sparclinux@vger.kernel.org,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	virtualization@lists.linux.dev, x86@kernel.org,
-	xen-devel@lists.xenproject.org, Magnus Lindholm <linmag7@gmail.com>
-Subject: Re: [PATCH v1 9/9] dma-mapping: remove unused map_page callback
-Message-ID: <20250928152030.GA136019@ravnborg.org>
-References: <cover.1759071169.git.leon@kernel.org>
- <27727b8ef9b3ad55a3a28f9622a62561c9988335.1759071169.git.leon@kernel.org>
- <20250928151725.GA135708@ravnborg.org>
+	s=arc-20240116; t=1759072867; c=relaxed/simple;
+	bh=Qy13vn/0xGJisCs8MfBrt3Mi0jPcM5ZsRRMAKMd4hds=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=kEtfiLwBOZjgQ/QQfsV1lXjZeCOjVy8NvoKv8Y5/idh51l9G/Letr9SQ3Sszxtgl7AOBixb7OkLtWCWdPmfY5DT7rDTzgg3JZhILwhn8wXYfE+cJP37uwrpI93JahO7ogqnu48y6Zb2xHYpq8a6kMjgdC3nXd7/Ol9qXbHYzOWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0SM9na7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D785C4CEF0;
+	Sun, 28 Sep 2025 15:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759072867;
+	bh=Qy13vn/0xGJisCs8MfBrt3Mi0jPcM5ZsRRMAKMd4hds=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=e0SM9na7g5z+/YmdwtIrWAvqZlqdauEPixsNjBAEuutoSLqXcYLvyWLQZOAq6GSck
+	 2fLuaOmmlsxhdaMkKMWYf4qmEjLed3qy/qbkDnMfHxM4WXdvduT1+s1ZMRqqMmXg0S
+	 EgirIm3T1nkz0fW3RLyvEtoD2fs/vZwRtI71Sjp2UsrXsVwk26j8Xyry0Syg3dQiD6
+	 t+P5uQ5ITRG5VoxNEqsOj2MbGawm1apTKPRDq0eSPpuOCQJaODbTqjJy26K+AqA8fp
+	 4Rb07T4rKlSWoAAHjcHVbiTQHLzi0dOloAmX6EiRFwG2wMrTv9/UdUqccz9FSXwAXX
+	 iOV61NQUDgQyQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928151725.GA135708@ravnborg.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 28 Sep 2025 17:20:59 +0200
+Message-Id: <DD4JABIXIZLT.120ZAR2GODC1O@kernel.org>
+Cc: "Philipp Stanner" <phasta@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Will Deacon"
+ <will@kernel.org>, "Waiman Long" <longman@redhat.com>, "Nathan Chancellor"
+ <nathan@kernel.org>, "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
+ "Bill Wendling" <morbo@google.com>, "Justin Stitt"
+ <justinstitt@google.com>, "Sumit Semwal" <sumit.semwal@linaro.org>,
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Asahi Lina" <lina+kernel@asahilina.net>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>, "Tamir Duberstein"
+ <tamird@gmail.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>, "FUJITA
+ Tomonori" <fujita.tomonori@gmail.com>, "Krishna Ketan Rai"
+ <prafulrai522@gmail.com>, "Lyude Paul" <lyude@redhat.com>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <llvm@lists.linux.dev>,
+ <dri-devel@lists.freedesktop.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [RFC PATCH] rust: sync: Add dma_fence abstractions
+References: <20250918123100.124738-2-phasta@kernel.org>
+ <aNa7BDpKS2KA__4M@tardis.local>
+In-Reply-To: <aNa7BDpKS2KA__4M@tardis.local>
 
-Hi Leon.
+On Fri Sep 26, 2025 at 6:10 PM CEST, Boqun Feng wrote:
+> I missed this part, and I don't think kernel::sync is where dma_fence
+> should be, as kernel::sync is mostly for the basic synchronization
+> between threads/irqs. dma_fence is probably better to be grouped with
+> dma-buf and other dma related primitives. Maybe in kernel::dma? Like:
 
-On Sun, Sep 28, 2025 at 05:17:25PM +0200, Sam Ravnborg wrote:
-> Hi Leon.
-> 
-> On Sun, Sep 28, 2025 at 06:02:29PM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > After conversion of arch code to use physical address mapping,
-> > there are no users of .map_page() and .unmap_page() callbacks,
-> > so let's remove them.
-> > 
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  include/linux/dma-map-ops.h |  7 -------
-> >  kernel/dma/mapping.c        | 12 ------------
-> >  kernel/dma/ops_helpers.c    |  8 +-------
-> >  3 files changed, 1 insertion(+), 26 deletions(-)
-> 
-> It looks like you missed a few sparc32 bits:
+I agree, kernel::sync may be a bit misleading.
 
-They were included, but the patch is named sparc64,
-which is why I missed it.
+> rust/kernel/dma.rs
+> rust/kernel/dma/dma_buf.rs
+> rust/kernel/dma/dma_fence.rs
+>
+> Thoughts? Miguel, Greg, Danilo and Lyude, any idea or suggestion?
 
-If you could rename the patch that would be nice.
+To me it depends on if we want to maintain the code under a global
+DMA MAPPING & SCATTERLIST API entry or if it will just be added to the
+DMA BUFFER SHARING FRAMEWORK entry.
 
-	Sam
+In case of the latter I'd go for rust/kernel/dma-buf/, analogous to
+drivers/dma-buf/. (Though, I'm not sure why this is under drivers/, there's
+nothing like dma-buf drivers; I think kernel/dma/ would have been the bette=
+r
+fit.)
+
+In any case, the target tree would probably be the drm-rust tree.
 
