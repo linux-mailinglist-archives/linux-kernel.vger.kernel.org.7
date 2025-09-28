@@ -1,170 +1,149 @@
-Return-Path: <linux-kernel+bounces-835217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF17BA6854
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:32:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7765BBA6863
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9DD18924C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323D33BF3EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A1F28725E;
-	Sun, 28 Sep 2025 05:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B48299922;
+	Sun, 28 Sep 2025 05:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FfgmSxf7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eyCOHFjT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205981C5F10;
-	Sun, 28 Sep 2025 05:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8701C5F10;
+	Sun, 28 Sep 2025 05:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759037521; cv=none; b=bkR3NsGjjAHJ8LO8K04S1zRWq9U5mm7zo3TkO4ya3gTrGphILNDv0FThptOrSJ3F6xFeJqC+Vo6+gzJx9bG9WWYkH+2UHhIaWFZNDrtHwg5l5BxVFy7SMqcJczZiJd4rlFs6l2QEDZ9EOp1tKEH3Z4AgVwVISE6KgyeXhtmXN1Y=
+	t=1759037665; cv=none; b=IMHZrjuaGkN6Lo+qRgqjjZV6OtbdRoGlJq+eyGhgqiozEUt5dFVK7sfBmCzchbwsKEo6/uXBwYwgTbcnv2qCTaBQw8JhR5ejuW/kXaS0IYHZ2escLKFJy+WJHwg4rd6FVc2uVgiqQNQ6RO1WomkcM2hbg17LbEEsMq4LDr1cNLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759037521; c=relaxed/simple;
-	bh=ucgroTDJSm6qX08whIWfAvIq4GU5IY/Av8vzyBCPrCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tl1nXiki7ckkBdRZQXVPmnZIpnEOF1YzueHWUXRvNiQxaxloF1zZ2GOcsfxnlljZOaQ+6z9M6EJ9R87YuQDCgazqQ/IeBXriQKywKHL3UswAHe7UpptpQ7NnpJE4gXtiylqG6BJrUJF6LzOcVQZSUNrC46KgbbagbrPo1BJ+9Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FfgmSxf7; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1759037665; c=relaxed/simple;
+	bh=xakyuO/1hDdekWWshDWBVaa367ilvRNGjQcMO4Ul1w4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFrDIhYR7OTSkJO4GIvumcC8YWDek6CtVfEgmXbQkqKi7qtrr41TGkB6FocIPazhdO/HUSMDQIdgzG7AcBab4VD7GgLDtkpc8WN492lts0hRPMM3sGal3VaWtFZGsPntPQfFU8RyWhseQMWWBAlp0NETY5sXuZgoAUA4bdpRdgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eyCOHFjT; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759037520; x=1790573520;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ucgroTDJSm6qX08whIWfAvIq4GU5IY/Av8vzyBCPrCY=;
-  b=FfgmSxf7X4hD0TWzn0ushfuvFb1isqa5x4cIpf3HF4pWvskfjtGf0+16
-   90/atzmPqAFYe5Vj/r58Fl/SGT8ZEscCyR/fqdobk5IpHLK6eREiCfhwQ
-   AWOS6aYHdLghq8g0vfZ/FXn4vXK6eqSOvmHo6d5owj4jiZgLELMztquSz
-   hwBn44Bi3u8xZMI+0ba7DWR4MP8GBhE74waer+YkNk5jnAkXuC4NPMzfI
-   a+yjqJ95uZmwout57bD00G3RsmmDlRTXSGMT/9HykIgj+iB8zxDNOT/8r
-   thk2GnlAAVg77E8x4qlLEcmU2GdlLx+Nn7efKTUTP++OkNKOv2Dw0svLL
-   g==;
-X-CSE-ConnectionGUID: swWLsHgKSTWrTo8ZIgBDtw==
-X-CSE-MsgGUID: Gl7PFEvLT8qORrsqjYABiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="72748757"
+  t=1759037664; x=1790573664;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xakyuO/1hDdekWWshDWBVaa367ilvRNGjQcMO4Ul1w4=;
+  b=eyCOHFjTgQZszUxf+5Zp/BWXDekvvNwkd1/iqtfz9yvuqbpbbkcyfFbr
+   qHPs6Ib0IaLNf83sDDtr1O94pkQf2JfLEHEXuX3IAnJwlSfuou5QUkGzE
+   ArSUmajt3ypYScxW77gXUZCy1pQK2+b9H8lH/SLdCjof0JAQiTfgzFLg3
+   O6bAVk01qSZxzjhCjmNmICB5OO0mV0G6pKwxyht8C4TN3FTWAf+2rwKho
+   nQ+iYh0Xlw28C8je2zChD3+ioHRh+/M/Ki+BqlVBr9gSgV8ANdUzfo+68
+   xXrpq1Gyz7t41eif1TOR632fNgnrOGVDg9NpzsdDaWLkftswxOXa5dShs
+   A==;
+X-CSE-ConnectionGUID: UNr7sfgQRlOCWE2Tk7TGBw==
+X-CSE-MsgGUID: 5ouhAP31TUKvG5mXZAVvPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="71561433"
 X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="72748757"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 22:31:59 -0700
-X-CSE-ConnectionGUID: 8i6h/zTvT4STyuqwIoredA==
-X-CSE-MsgGUID: mnzAlVQKRA24JFoMuKXPzA==
+   d="scan'208";a="71561433"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 22:34:23 -0700
+X-CSE-ConnectionGUID: PVChTyzrSFauydPISQQPkA==
+X-CSE-MsgGUID: v9k4s4GlTayhLAk+KsPTXA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="182354486"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 22:31:54 -0700
-Message-ID: <8476ee65-546a-47ff-951c-5b2a24995ccf@linux.intel.com>
-Date: Sun, 28 Sep 2025 13:31:51 +0800
+   d="scan'208";a="215083808"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 27 Sep 2025 22:34:21 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v2k37-0007a7-1O;
+	Sun, 28 Sep 2025 05:34:17 +0000
+Date: Sun, 28 Sep 2025 13:34:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ma Ke <make24@iscas.ac.cn>, syniurge@gmail.com,
+	shyam-sundar.s-k@amd.com, andi.shyti@kernel.org, wsa@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] i2c: fix reference leak in MP2 PCI device
+Message-ID: <202509281317.3OLDoUnB-lkp@intel.com>
+References: <20250927105729.19164-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v4 03/17] x86/fpu/xstate: Add xsaves_nmi
-To: Dave Hansen <dave.hansen@intel.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, broonie@kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250925061213.178796-1-dapeng1.mi@linux.intel.com>
- <20250925061213.178796-4-dapeng1.mi@linux.intel.com>
- <bc8a902f-549a-482f-bf24-04cf5f38a379@intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <bc8a902f-549a-482f-bf24-04cf5f38a379@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250927105729.19164-1-make24@iscas.ac.cn>
+
+Hi Ma,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on linus/master v6.17-rc7 next-20250926]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ma-Ke/i2c-fix-reference-leak-in-MP2-PCI-device/20250927-190047
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20250927105729.19164-1-make24%40iscas.ac.cn
+patch subject: [PATCH] i2c: fix reference leak in MP2 PCI device
+config: i386-randconfig-011-20250928 (https://download.01.org/0day-ci/archive/20250928/202509281317.3OLDoUnB-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250928/202509281317.3OLDoUnB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509281317.3OLDoUnB-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-amd-mp2-pci.c:467:2: error: use of undeclared identifier 'mp2_dev'
+     467 |         mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
+         |         ^
+   drivers/i2c/busses/i2c-amd-mp2-pci.c:469:9: error: use of undeclared identifier 'mp2_dev'; did you mean 'pci_dev'?
+     469 |         return mp2_dev;
+         |                ^~~~~~~
+         |                pci_dev
+   drivers/i2c/busses/i2c-amd-mp2-pci.c:460:18: note: 'pci_dev' declared here
+     460 |         struct pci_dev *pci_dev;
+         |                         ^
+>> drivers/i2c/busses/i2c-amd-mp2-pci.c:469:9: error: incompatible pointer types returning 'struct pci_dev *' from a function with result type 'struct amd_mp2_dev *' [-Werror,-Wincompatible-pointer-types]
+     469 |         return mp2_dev;
+         |                ^~~~~~~
+   3 errors generated.
 
 
-On 9/25/2025 11:07 PM, Dave Hansen wrote:
-> On 9/24/25 23:11, Dapeng Mi wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> There is a hardware feature (Intel PEBS XMMs group), which can handle
->> XSAVE "snapshots" from random code running. This just provides another
->> XSAVE data source at a random time.
->>
->> Add an interface to retrieve the actual register contents when the NMI
->> hit. The interface is different from the other interfaces of FPU. The
->> other mechanisms that deal with xstate try to get something coherent.
->> But this interface is *in*coherent. There's no telling what was in the
->> registers when a NMI hits. It writes whatever was in the registers when
->> the NMI hit. It's the invoker's responsibility to make sure the contents
->> are properly filtered before exposing them to the end user.
->>
->> The support of the supervisor state components is required. The
->> compacted storage format is preferred. So the XSAVES is used.
-> The changelog here is looking a bit munged from the last time I looked
-> at it. It's getting a bit hard to read. I'd probably run it through your
-> favorite LLM (and proofread it after of course) to make it more readable.
->
-> Ditto for the comments.
+vim +/mp2_dev +467 drivers/i2c/busses/i2c-amd-mp2-pci.c
 
-Sure. Thanks.
+   456	
+   457	struct amd_mp2_dev *amd_mp2_find_device(void)
+   458	{
+   459		struct device *dev;
+   460		struct pci_dev *pci_dev;
+   461	
+   462		dev = driver_find_next_device(&amd_mp2_pci_driver.driver, NULL);
+   463		if (!dev)
+   464			return NULL;
+   465	
+   466		pci_dev = to_pci_dev(dev);
+ > 467		mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
+   468		put_device(dev);
+ > 469		return mp2_dev;
+   470	}
+   471	EXPORT_SYMBOL_GPL(amd_mp2_find_device);
+   472	
 
-
->
-> Also, what supervisor components are involved here? Aren't we just
-> talking about [XYZ]MM's?
-
-Besides the SIMD registers [XYZ]MM, the CET_USR (only SSP) and APX eGPRs
-would be supported as well.
-
-
->
->> +/**
->> + * xsaves_nmi - Save selected components to a kernel xstate buffer in NMI
->> + * @xstate:	Pointer to the buffer
->> + * @mask:	Feature mask to select the components to save
->> + *
->> + * The @xstate buffer must be 64 byte aligned.
->> + *
->> + * Caution: The interface is different from the other interfaces of FPU.
->> + * The other mechanisms that deal with xstate try to get something coherent.
->> + * But this interface is *in*coherent. There's no telling what was in the
->> + * registers when a NMI hits. It writes whatever was in the registers when
->> + * the NMI hit.
->> + * The only user for the interface is perf_event. There is already a
->> + * hardware feature (See Intel PEBS XMMs group), which can handle XSAVE
->> + * "snapshots" from random code running. This just provides another XSAVE
->> + * data source at a random time.
->> + * This function can only be invoked in an NMI. It returns the *ACTUAL*
->> + * register contents when the NMI hit.
->> + */
-> First, please use actual paragraphs. This isn't a manpage.
->
-> But this whole comment kinda rubs me the wrong way.
->
-> For instance, I don't think we need to relitigate the XSAVE architecture
-> with the "The @xstate buffer must be 64 byte aligned." comment. Even if
-> we did, that's just silly when you could put a one-liner WARN_ON() in
-> the function which would be a billion times better than a comment.
-
-Yes, thanks.
-
-
->
-> I'm not sure what "interfaces of FPU" means. I know it came mostly out
-> of some earlier mails I wrote. But could we trim this down, please?
-
-I suppose the "interfaces of FPU" should indicate the xsaves() helper.
-Sure. I would rewrite the comments and make it more accurate. Thanks.
-
-
->
-> We basically want to scare anyone else away that might be tempted to use
-> this.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
