@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-835442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BE1BA71A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:36:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3AB0BA71AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DED93B9791
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8CF7165E67
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382D1F582C;
-	Sun, 28 Sep 2025 14:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02491202C5C;
+	Sun, 28 Sep 2025 14:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phvoTT7U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S682uVXe"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5738413B284;
-	Sun, 28 Sep 2025 14:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EF01714B7
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759070192; cv=none; b=m/ufLB64dwnLpyVza25yXkG1KHE+Gq7POPBHLwCCERe1c3beIR7E4RzN3YyF92s24E8qlRgWgZUYwrZnl5gVsIWOV5lgKAuJrMvHgg2jnBjeNkvM/BRdjAI4Od6oZCBnBy+UjQ/BgB9H9B8qPul5ryO4O8NXn+kqWzlcv06T+IQ=
+	t=1759070373; cv=none; b=bEv8zEvzpA9qrexMk5Xr2z9bZ7ISvGxAIifE1kUV6P6xhvPKnUg09RkSgox6yj6jH4cTHa4LGuVDOb306B38ETxeY2FND9lwK5JnDBdf/rptGiqRCgjE1PfQP0j7qTQPbL7NTUGWZjMypwP+gTDp/JOwMdgePi8RSdU6FKwS9d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759070192; c=relaxed/simple;
-	bh=xjQLvrKt9akl9GuheEGr+P2uPV9FsTvq0tDl6rUUN+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYex7twov1gm4aW8GKMM95lsHGmpu1ELcmaZ1apn5F2tO/CkSC+38aF6EoqgPUL69Ao3T4Ci3pFBlXGle8mE6nJdJz3kXAIEeyvCWo5XHq6FTjol03tDs+9ENjzJqnQMTZDGN9m/hBp/lXsbibXA2x0YJ0J+XUzWGBMvltAiPm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phvoTT7U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72425C4CEF0;
-	Sun, 28 Sep 2025 14:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759070191;
-	bh=xjQLvrKt9akl9GuheEGr+P2uPV9FsTvq0tDl6rUUN+o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=phvoTT7UCIJjosOrV+WiY/ecV/D1sXuKIFi3R8TrX2Pns5qbLfpmiAmNrA1RZGaPg
-	 aQNii2M3zKe1t490lqauPgolU6NFPn5TBq/jSXWYFKAML2rCg7S9JJcIxzp0UE+9Ph
-	 CKQdGxwbd3IRDhNVmUgS2dI5aKBcNxHp4aEHDaU9Wn9Yw1aApFd42OrD9JXzLUyU0u
-	 tnIlR+X9Y6Yh2G0h3/7z74HnJBmr8P4JBm/0wxUIWtpEsU3KqAsSqC9OeTqRM6wJPd
-	 C6QbDTQRHb/y8jMJ5M3AqrL2+yFENt7MSaboP7shXcD/8B6u7lsh3qrgdTrd+Il1yB
-	 IrPvpXWO85q1A==
-Date: Sun, 28 Sep 2025 17:36:27 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
-	linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
-	Cong Wang <cwang@multikernel.io>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, multikernel@lists.linux.dev
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture
- support
-Message-ID: <aNlH6-hFc6OmDF_e@kernel.org>
-References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
- <78127855-104f-46e2-e5d2-52c622243b08@gentwo.org>
- <CAM_iQpU2QucTR7+6TwE9yKb+QZg5u_=r9O_tMfsn7Ss7kJbd9A@mail.gmail.com>
- <aNZh3uDdORZ5mfSD@kernel.org>
- <CAM_iQpWXFQwtayT7Zv7iJd7zQZ=rX_P1ZK2P11-6ohRhLpg7Xw@mail.gmail.com>
- <aNlErhpO1g17gdgM@kernel.org>
+	s=arc-20240116; t=1759070373; c=relaxed/simple;
+	bh=7miexSVIY9sXCT+obT1zQ1e0Pd02sjjmXPW7xBDwtGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uiSj/pPZfI4hJcerEUINCtdZO+VhDE/XuaQK4SJMe6t621ZYe++dCWQo4am94x29xz2lGTO++DbSQHMXqrMERyhAQV1PDdJJKsi3t5XCo+cyb9tFNo//ZCDhG/eZn6/pSP6/XChCAH9wQjP7LruuTM+OlXqOt0nVMJaaRk/dwfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S682uVXe; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2680ee37b21so7655275ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759070371; x=1759675171; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GheiArk7ypVMh1/1PtNPjvR+VE2OgXKMbbYZQv3X8+s=;
+        b=S682uVXeMB/CqumVsJ/zhIw6BnfpWhoc1KKvHSBkqihLxPivYkoI2UVsYVPq4bBaI9
+         MboNn+6PoW4AMMjxxKq2eKGviWf0E9KNlPeKYdwdPcUvcZU7pHFOfpzN49ppJwq38mWt
+         yFcY2QrgLZ+gFJismfdV2muFRSCK6iW5120gRPhOfWP8BEZLNkLn1NPnowRoeG5Itkux
+         YC6jUkAaZ7ygysEevjsiebke7avT0bsIx3CtiKm6HlB/dB1AtLERUu7HBjUE4FUfsbZr
+         7UMW0wVcHg9B0bC5n0iGeomAuOW3Gex+fyHfEkZXloonmawRGlO9usC2udbOYbEi+zze
+         GWSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759070371; x=1759675171;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GheiArk7ypVMh1/1PtNPjvR+VE2OgXKMbbYZQv3X8+s=;
+        b=cOlSSCStORdka6vpq8hHzGhGbaLZ6lIDZLmaoFbqibPqFPPfO3rC8lVYbP/HH+ntcp
+         r9PrcYtxAb0fXx9dJAnQOqQjIL5bPNV64H/ifKmfkyyBQEl44mE+1rIJ1ByT/dG+meQa
+         UTxqRUoRKR8bwUjcpk7+84UmsTjNY2Ijxk8iwqX03bTKK8R7MSbEmjBmKGwRRfAqDZaY
+         NQaijs4LDvXIdkpgCBheLqK5F8o4JBW/TQWcWkRVsxmcKsRJopIR3iDTgD2Q7jmBQSxp
+         MK93n1A8AYgCBX+iyzAdoisplZD3HVAoywl6B0AwPLvq89rsdp6wuykkRXwJCLntEMgL
+         a3SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEzX8Rdd1WmOutk6uczK4fPEIiqlhrRTic8szkrBBPvsTslzTjY3h+BSPM4jZpdYrpDSJ6D9nBCtFgo1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7EdgkfSZuXeNcYh+GX8yL3JbnwoG8nX1ENQSi+Gu71c/KChkJ
+	F4Xay/0j6YEKDJ3fWAr9ceiCYjqfZOGaXykU6Qdi6lDmECvKCy2winRK+KPlTN2qJISrLJ+B4Vm
+	Km1GnMqTn7u35/Nu8bxWxQSWYtx3jwE0=
+X-Gm-Gg: ASbGncsKKa0K1y6aufcaHEEjc3WwaSLpkEClaGtfGNXZaXQaLv5fKG1GA4ERLBTc3mp
+	mbTglrkMQQL1ATAr9Acb/uEmW2VnhGMpBDnGeXaPfQqj4I2H/dQJXBvWjQrUrc0NgiFXegxkkYX
+	MQEwCZ8ZiPa91nET+NcDbZCp/ZutdOfPtvF4WbmZMq4mLSvPHPs7qqGP850vOWHDoZPqBaUCsa7
+	lPBV3vUyQem2Y9E8EIwUISQD7ebm7BOLvPzahS+SzSVzheJk2xJxlaO3h/FA9iwNN98rQHZyT4Q
+	Q3Akudn+ikq6L6BDbXTg5XfcSfyfsm0kGmG6
+X-Google-Smtp-Source: AGHT+IHYuLoigCXO/IuVYAvcStFqo7zlZrUbxDGRobz0IRwpzlqDn+RVpePg9UTv4hbc9kz3W2vIkL2OT4f38G+Rpk4=
+X-Received: by 2002:a17:903:2341:b0:257:3283:b859 with SMTP id
+ d9443c01a7336-27ed4a47a07mr85244135ad.9.1759070371229; Sun, 28 Sep 2025
+ 07:39:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aNlErhpO1g17gdgM@kernel.org>
+References: <aMlhpIhjbrDR4C8L@sirena.org.uk>
+In-Reply-To: <aMlhpIhjbrDR4C8L@sirena.org.uk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 28 Sep 2025 16:39:18 +0200
+X-Gm-Features: AS18NWBnSfhUHigPfGdLGRaT5eXdBPpwwiSWk230N8BH4GkuRtPWn8V78nifa80
+Message-ID: <CANiq72=jq50cCg7Xotc_wruGHiwy3CKcCH8D64-F+BEKznUz=Q@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the drm-rust tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 28, 2025 at 05:22:43PM +0300, Jarkko Sakkinen wrote:
-> On Sat, Sep 27, 2025 at 01:43:23PM -0700, Cong Wang wrote:
-> > On Fri, Sep 26, 2025 at 2:50 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > >
-> > > On Wed, Sep 24, 2025 at 11:39:44AM -0700, Cong Wang wrote:
-> > > > On Wed, Sep 24, 2025 at 10:51 AM Christoph Lameter (Ampere)
-> > > > <cl@gentwo.org> wrote:
-> > > > > AFAICT various contemporary Android deployments do the multiple kernel
-> > > > > approach in one way or another already for security purposes and for
-> > > > > specialized controllers. However, the multi kernel approaches are often
-> > > > > depending on specialized and dedicated hardware. It may be difficult to
-> > > > > support with a generic approach developed here.
-> > > >
-> > > > You are right, the multikernel concept is indeed pretty old, the BarrelFish
-> > > > OS was invented in around 2009. Jailhouse was released 12 years ago.
-> > > > There are tons of papers in this area too.
-> > >
-> > > Jailhouse is quite nice actually. Perhaps you should pick that up
-> > > instead, and start refining and improving it? I'd be interested to test
-> > > refined jailhouse patches. It's also easy build test images having the
-> > > feature both with BuildRoot and Yocto.
-> > 
-> > Static partitioning is not a bad choice, except it is less flexible. We can't
-> > get dynamic resource allocation with just static partitioning, but we can
-> > easily get static partitioning with dynamic allocation, in fact, it should be
-> > the default case.
-> > 
-> > In my own opinion, the reason why containers today are more popular
-> > than VM's is not just performance, it is elasticity too. Static partitioning
-> > is essentially against elasticity.
-> 
-> How do you make a popularity comparison between VMs and containers, and
-> what does the word "popularity" means in the context? The whole world
-> runs basically runs with guest VMs (just go to check AWS, Azure, Oracle
-> Cloud and what not).
-> 
-> The problem in that argument is that there is no problem.
+On Tue, Sep 16, 2025 at 3:10=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+>  +use crate::page::AsPageIter;
+> + use crate::fmt;
 
-If I was working on such a feature I would probably package it for e.g,
-BuildRoot with BR2_EXTERNAL type of Git and create a user space that
-can run some test and benchmarks that actually highlight the benefits.
+These should be the other way around to pass `rustfmt` (please see diff bel=
+ow).
 
-Then, I would trash the existing cover letter with something with clear
-problem statement and motivation instead of whitepaper alike claims.
+I noticed now that we have cleared the other issues. If it could be
+fixed in the merge commit, it would be great, thanks!
 
-We can argue to the eterenity with qualitative aspects of any feature
-but it is the quantitative proof that actually drives things forward.
+Cheers,
+Miguel
 
-BR, Jarkko
+diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+index 3d38d9bde582d..2cc147a4cb881 100644
+--- a/rust/kernel/alloc/kvec.rs
++++ b/rust/kernel/alloc/kvec.rs
+@@ -7,8 +7,8 @@
+     layout::ArrayLayout,
+     AllocError, Allocator, Box, Flags, NumaNode,
+ };
+-use crate::page::AsPageIter;
+ use crate::fmt;
++use crate::page::AsPageIter;
+ use core::{
+     borrow::{Borrow, BorrowMut},
+     marker::PhantomData,
 
