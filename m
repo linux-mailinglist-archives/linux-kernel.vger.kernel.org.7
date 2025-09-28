@@ -1,206 +1,215 @@
-Return-Path: <linux-kernel+bounces-835435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85458BA715C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:09:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31006BA716E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16906177A23
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE01A7ABDC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888AE212549;
-	Sun, 28 Sep 2025 14:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258D0219A7E;
+	Sun, 28 Sep 2025 14:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWef6/N6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qWLpetk1"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD90E2F2E;
-	Sun, 28 Sep 2025 14:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B42185B67;
+	Sun, 28 Sep 2025 14:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759068542; cv=none; b=tlRCmhTfGta7YkXOuwEwIHKf9DDp81DrTD+WGLN13k8xpijtn8Z1QpNOShCcPTd1to2IlevXs3P6xUCdXUBJireG6Xe7czngZqVuLeAzyjRJOAUj8kmjc3BHWjvg4+kTLuiY2d13cJjzBCnIdMSEUFM4wzFB+aYOxcdvZMIXdOU=
+	t=1759068980; cv=none; b=hqu79oz1CIsDSUS0Ik9y2uldSN8OrEaChfjf8OvpBMVrjYvhraaTE7FnZTI7ay/yv/Ch4ay9cMMvaDCY8DLjOhgIW/s9F1slaxgIOUUwfT8zg4nYSfjeHa98+BS/lPp+HfM3D/FmFWYaPDq5okVpj6IGSAUsEudnuMe0t+9KTX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759068542; c=relaxed/simple;
-	bh=oLopCkmGri793JE1kd5+sWMGisCseqI+NsmBu5y90K8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ByMQqOrgmklXBFG5OrToZD7REXlfEv9aN3nC8FdscWEi29kEt7TXrB5/1tsBXGQElbvA8LQDijhQcbiz1FG9jsqmYe0ZUwq90parFPhHkSHjV80sg2b933XfKGgPgRDii2MblXBuTOGhBW//kZgGE7Ti/4TASzNo2XvY/GVtSk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWef6/N6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4016C4CEF0;
-	Sun, 28 Sep 2025 14:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759068542;
-	bh=oLopCkmGri793JE1kd5+sWMGisCseqI+NsmBu5y90K8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pWef6/N61eoFufqCle9xI0T0DU1bauI9krI9XxIo4sI9ZseI9gcbbjFFi85JiVBWr
-	 Q9j6FIA0BDuoMchOPOT45kc3k+akgS6Sg4iLtLIRzFv7D4eRCKzAmPobCJsOTPNn3m
-	 pTcS3BoqIJHTA8qrudy3uv1tjeVATtPSfcZ5htEpV+INz42ZaIhk0vULPa9+OJ69MZ
-	 D/bYvDjucs1IZi9Ff7HIRr5UoXOsM0UNBjQdfrFdHNIBnS4GXv+XYPkCJGWuh2xUZA
-	 f4lEbio8+Vt1GziYj++Ta3tzjnqYUtkCZ/F78PzZUzi7pOXAtgRcdWbIYrT0JlRFbP
-	 l1TlMqccYnL7g==
-Date: Sun, 28 Sep 2025 17:08:57 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
-	Cong Wang <cwang@multikernel.io>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, multikernel@lists.linux.dev
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture
- support
-Message-ID: <aNlBeSpNCvqKXBWm@kernel.org>
-References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
- <aNZWTB_AbK1qtacy@kernel.org>
- <CAM_iQpWBHWscTbuUm54G3tvqf-EQhSYaFJqEJD4M73doeH=TKQ@mail.gmail.com>
+	s=arc-20240116; t=1759068980; c=relaxed/simple;
+	bh=AcVJZ3zjTGDdL14Tw7LuQrtPZgPW/ebeShaSrL2ipR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QoJfxcziM+H0+Z3Uk9nkCCLtt/C/VblgCrWoFa8iUwbl4rJnyY6KN/UJjDyX9eE/lsdgQBAT+ql9T2pO9S+z0OW8cpEAyRLdD7YdejicKZaUNBni8Gd3NfrxKTh6bzIkPLrvOS7DdtO3UCX2acFPKN6fSsX0SepW1ZH+xwpc3pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qWLpetk1; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759068967; x=1759673767; i=markus.elfring@web.de;
+	bh=AcVJZ3zjTGDdL14Tw7LuQrtPZgPW/ebeShaSrL2ipR8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qWLpetk1NOdGaf834cP6bUAVVXFqBWk7p79h8VsWG+rMBT72O5Bv3ZigEEmNtFKV
+	 jMaAd2xrXQ84vKBBNU6caX4n7t+3Bsk8SP/LJAI8OHifh4z0Z0BgauwRQD10fRg1f
+	 jlgdq0KQWgv1W7JlTdHoleFzrUeq/0pVuHL3WplNzwi6Towj0vqVz9sRCDhc3Xgae
+	 XCilKeizePykF6FAbgB7Uh74SjUSWpm2U0sfymlJT8eV+k/L8UijxNTRUdXk8XOuP
+	 OOc0jyet1l+rvi3zWPKgpYee4joYQwue67BcociliLSYbfhOB51cMCAWhgNsT+UlK
+	 aL1FrLD57fdNC5wY2w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.189]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MqZMK-1uYGT13572-00qilt; Sun, 28
+ Sep 2025 16:16:07 +0200
+Message-ID: <5b8b05c8-91db-40a2-8aff-c6e214b1202f@web.de>
+Date: Sun, 28 Sep 2025 16:16:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM_iQpWBHWscTbuUm54G3tvqf-EQhSYaFJqEJD4M73doeH=TKQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH net-next 1/2] scripts/coccinelle: Find PTR_ERR()
+ to %pe candidates
+To: Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ cocci@inria.fr, Alexei Lazar <alazar@nvidia.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Saeed Mahameed <saeedm@nvidia.com>
+References: <1758192227-701925-1-git-send-email-tariqt@nvidia.com>
+ <1758192227-701925-2-git-send-email-tariqt@nvidia.com>
+ <48a8dbb8-adf1-475e-897d-7369e2c3f6eb@web.de>
+ <48228618-083b-4cdb-b7df-aa9b7ff0ce92@nvidia.com>
+ <8b0034a7-f63b-4a98-a812-69b988dd3785@web.de>
+ <7d46a1d1-f205-4751-9f7d-6a219be04801@nvidia.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <7d46a1d1-f205-4751-9f7d-6a219be04801@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0hatDYEYy2uD29QN3EaTBTxU5tOZ6ZzrC5GplzxlKO1EXaS/LXk
+ wOxwomn9HNCRV8/CAKUNk3V473/donib2HWXdP9U+DaiKTBXcI/8HRRbDitvM2ak8deQQfC
+ B2pqx+kHnv9qLO/oGNZnhaBbkvZkaVazKppZV+65sxD4/zkl6hCi/7Qsw+b5ExD7OK1o5O2
+ j2HWjmR1BqaT70uYtC/wA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Z4NZJCk4/dw=;dA3orOOxN1X2hVgjehhdf9uVwzt
+ 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
+ 03S+Q==
 
-On Sat, Sep 27, 2025 at 01:27:04PM -0700, Cong Wang wrote:
-> On Fri, Sep 26, 2025 at 2:01 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >
-> > On Thu, Sep 18, 2025 at 03:25:59PM -0700, Cong Wang wrote:
-> > > This patch series introduces multikernel architecture support, enabling
-> > > multiple independent kernel instances to coexist and communicate on a
-> > > single physical machine. Each kernel instance can run on dedicated CPU
-> > > cores while sharing the underlying hardware resources.
-> > >
-> > > The multikernel architecture provides several key benefits:
-> > > - Improved fault isolation between different workloads
-> > > - Enhanced security through kernel-level separation
-> > > - Better resource utilization than traditional VM (KVM, Xen etc.)
-> > > - Potential zero-down kernel update with KHO (Kernel Hand Over)
-> >
-> > This list is like asking AI to list benefits, or like the whole cover
-> > letter has that type of feel.
-> 
-> Sorry for giving you that feeling. Please let me know how I can
-> improve it for you.
+>>>>> +virtual context
+>>>>> +virtual org
+>>>>> +virtual report
+>>>>
+>>>> The restriction on the support for three operation modes will need fu=
+rther development considerations.
+>>>
+>>> I don't understand what you mean?
+>>
+>> The development status might be unclear for the handling of a varying n=
+umber of operation modes
+>> by coccicheck rules, isn't it?
+>=20
+> I'm sorry, I still don't understand what you mean (the problem is likely
+> on my side).
 
-There is no evidence of any of these benefits. That's the central
-issue. You pretty much must give quantatitve proof of any of these
-claims or the benefit is imaginary.
-
-> 
-> >
-> > I'd probably work on benchmarks and other types of tests that can
-> > deliver comparative figures, and show data that addresses workloads
-> > with KVM, namespaces/cgroups and this, reflecting these qualities.
-> 
-> Sure, I think performance comes after usability, not vice versa.
-> 
-> 
-> >
-> > E.g. consider "Enhanced security through kernel-level separation".
-> > It's a pre-existing feature probably since dawn of time. Any new layer
-> > makes obviously more complex version "kernel-level separation". You'd
-> > had to prove that this even more complex version is more secure than
-> > pre-existing science.
-> 
-> Apologize for this. Do you mind explaining why this is more complex
-> than the KVM/Qemu/vhost/virtio/VDPA stack?
-
-KVM does not complicate kernel level separation or access control per
-kernel instance at all. A guest in the end of the day is just a fancy
-executable.
-
-This feature on the other hand intervenes various easily breaking code
-paths.
-
-> 
-> >
-> > kexec and its various corner cases and how this patch set addresses
-> > them is the part where I'm most lost.
-> 
-> Sorry for that. I will post Youtube videos to explain kexec in detail,
-> please follow our Youtube channel if you are interested. (I don't
-> want to post a link here in case people think I am promoting my
-> own interest, please email me privately.)
-
-Here I have to say that posting a youtube link to LKML is of your
-own interest is not unacceptable as far as I'm concerned :-)
-
-That said, I don't promise that I will watch any of the Youtube
-videos posted either here or privately. All the quantitative
-proof should be embedded to patches.
-
-> 
-> >
-> > If I look at one of multikernel distros (I don't know any other
-> > tbh) that I know it's really VT-d and that type of hardware
-> > enforcement that make Qubes shine:
-> >
-> > https://www.qubes-os.org/
-> >
-> > That said, I did not look how/if this is using CPU virtualization
-> > features as part of the solution, so correct me if I'm wrong.
-> 
-> Qubes OS is based on Xen:
-> https://en.wikipedia.org/wiki/Qubes_OS
+The development status is evolving somehow.
 
 
-Yes, and it works great, and has much stronger security metrics than
-this could ever reach, and that is quantitative fact, thanks to great
-technologies such as VT-d :-)
+> Do you want me to change anything?
 
-This is why I'm repeating the requirement for quantitative proof. We
-have already great solutions to most what this can do so building
-evidence of usefulness is the huge stretch this patch set should
-make it.
+You would like to achieve further software refinements.
+Did you notice remaining open issues from public information sources?
 
-Nothing personal, but with the current basically just claims, I don't
-believe in this. That said, by saying this I don't I'd pick my soccer
-no. If there is enough evidence, I'm always ready to turn my opinion
-180 degrees.
 
-> 
-> >
-> > I'm not entirely sure whether this is aimed to be alternative to
-> > namespaces/cgroups or vms but more in the direction of Solaris Zones
-> > would be imho better alternative at least for containers because
-> > it saves the overhead of an extra kernel. There's also a patch set
-> > for this:
-> >
-> > https://lwn.net/Articles/780364/?ref=alian.info
-> 
-> Solaris Zones also share a single kernel. Or maybe I guess
-> you meant Kernel Zones? Isn't it a justification for our multikernel
-> approach for Linux? :-)
-> 
-> BTW, it is less flexible since it completely isolates kernels
-> without inter-kernel communication. With our design, you can
-> still choose not to use inter-kernel IPI's, which turns dynamic
-> into static.
-> 
-> >
-> > VM barrier combined with IOMMU is pretty strong and hardware
-> > enforced, and with polished configuration it can be fairly
-> > performant (e.g. via page cache bypass and stuff like that)
-> > so really the overhead that this is fighting against is
-> > context switch overhead.
-> >
-> > In security I don't believe this has any realistic chances to
-> > win over VMs and IOMMU...
-> 
-> I appreciate you sharing your opinions. I hope my information
-> helps.
+>>>>> +p << r.p;
+>>>>> +@@
+>>>>> +coccilib.org.print_todo(p[0], "WARNING: Consider using %pe to print=
+ PTR_ERR()")
+>>>>
+>>>> I suggest to reconsider the implementation detail once more
+>>>> if the SmPL asterisk functionality fits really to the operation modes=
+ =E2=80=9Corg=E2=80=9D and =E2=80=9Creport=E2=80=9D.
+>>>>
+>>>> The operation mode =E2=80=9Ccontext=E2=80=9D can usually work also wi=
+thout an extra position variable,
+>>>> can't it?
+>>>
+>>> Can you please explain?
+>>
+>> Are you aware of data format requirements here?
+>=20
+> Apparently not, I'll be glad to learn.
 
-I'd put strong focus on getting the figures aside with the claims :-)
+Each =E2=80=9Coperation mode=E2=80=9D is connected with a known data forma=
+t.
+The corresponding software documentation is probably still improvable.
+Can you determine data format distinctions from published coccicheck scrip=
+ts
+(and related development discussions)?
 
-> 
-> Regards,
-> Cong Wang
-
-BR, Jarkko
+Regards,
+Markus
 
