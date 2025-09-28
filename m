@@ -1,87 +1,70 @@
-Return-Path: <linux-kernel+bounces-835373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F766BA6EC3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:10:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71CCBA6EC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E8D1882F1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:10:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E8D17CC53
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BD82DC762;
-	Sun, 28 Sep 2025 10:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9E92D9EFE;
+	Sun, 28 Sep 2025 10:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JudKWoKZ"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="TF5ksk7z"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA59C2DC337
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759054196; cv=none; b=D96tYLdp8jEi5psrOrEWxVLHFZ56ltZ0CsMHdfA/nOc1zwN/hnzH1WL/P+Cc08D3R+cnSLZjjg8RIlZ3XyALwlX+rnt1Qxi58qvdF0GkvxtaUoq2kazDtepomsxhOOgdhftksfeJ8KO8lQ6l4PaSBhkZFscNFiomW1U812ZJGd4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759054196; c=relaxed/simple;
-	bh=rTIEfIHyol16evnoilqvUSKNW7krl5FuRjb+UuNeQQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYzKVMj2KyMysGZg0S8rH96w9oww1G/LcIlThAdFw+CHu/pQO6YsW4IF/BKnb7UHFEOLWTBgvDhrUZNabapcv8xSFTMHxE49cZd/TDEbVPfA+e5CK7yIKpn8ubdcTEVevD+Uc5obEjYe2HxxTVIlKGhgyYvbL9jmAB+M9bwcSrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JudKWoKZ; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b556b3501easo3111900a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:09:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759054194; x=1759658994; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HEaRyqcNalrKfX0bmpo1LGgUVgua5hE0vbu7vpC1J+A=;
-        b=JudKWoKZxkB40WVKiwYh2uHef98wcxQmxo7PIAbclDenWCwQ4PVMzM00fboYIwz/qh
-         jqMzbAB8YRBLwcTsnba4dbVKu46uiGYwArtDHkLvuUB6Rd386iDf6wTijcxL2KMYkLXu
-         5MueIzvNEBM1I/vHGKgUFtpUZ6x35CBgtBi6Zlk8SQacH8fGQCiTT5k8IZUPxRyDmlFM
-         SqrXq8InEzXKWxzf8uYD/3GcLtknslRKvYX+OIns6r9VJx7Kpi3R9R4iqDDBNYaAzSIq
-         zCs5bdjHw0gSrI/e+lSGzSGldYRpL+OcslHzoYWSa+SLC1ZM0rp15JRxg0CAplpmSwM/
-         J0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759054194; x=1759658994;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HEaRyqcNalrKfX0bmpo1LGgUVgua5hE0vbu7vpC1J+A=;
-        b=QPEGXQoepc2z+JFmcpNeY1zmkNHA2kUDjc3Uu89P5ob+MAT1Pb9iVICpLoAYHe45el
-         GauzjwCWrbwzz7K+nBIfWs9q0Yv3vu3J9ewyWaWPc2krsDm34GcM8agMJKLHo1TSDEu0
-         eYUsIJ8G/dGI8npBsw11xRnF7Y/XoGaeseXlbjW7nNg4zx7mXel1AIQH1f+TIcxFsBbB
-         HtQopcSLQCCWjRHx38xxpbb2vad/26sP1SxWRkCc3NKXwk+wmvGfqZHNmprDsw47ICuo
-         s0o2K1k2I6kDuTvMeK0kspiLv0Zi2bqL41Y5jSCAouJSFQirWp9RMgJjaJEueUVOvrK/
-         nPQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXM1B/WotX43Hw0jo0/rmYRs8sUgXUV+1wXmkNmN2Nw6JN4zK8uKgmLtMH85hRQB0iwfVrDjPm2i1yEivI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbwv24be3FfSpLXWfn+Yd21r39e2Qxysmq1V+B6p+hczApLCL9
-	Eydq9bk6QExuqmf+p7if8c3PT/tUdkNXHOnqrYHV7lIcoeTqN02lCCij
-X-Gm-Gg: ASbGncvazzzVIcxchUjeJzaqtl9KKhs8RW1LBFvJlISXjXYhL7fkKeoy+w7hASGiGan
-	72fsNxkzlslhqGVJ+4OPLHHNUIQRv4f+cwVuiFhyorDWkGlYq6Lx4YmITgb4Al4VRsxOfAHzTDI
-	6uUbEoHGAl1QctxstyFQTPqnBFdcTzySl4SYdvt39W7FwxApWK8GHJtMo4Q7t9MniYdd3+hAGTm
-	k3At40XC+b/spRFLLMoZjnJwJ9bJSFn8wz2ZIY+v1O59QeA94R6XOsuD2oU+Kp4aGr1JxYbJWPU
-	q0j2z9nTQvL5Tx+y8TYKJa0dVstdN6PWUPyZQvIG84xvVw3vppG00lm3SFpEsIYEtJRKZpXAAAo
-	bSIDhIFYX6cXYmXj7gjYzQQTmqo7+I0ukCFtc0oGOHh/tzqFNMXys8sgRVhhD2snNpzbsZSawks
-	3X8gvuQVinSVoSQg==
-X-Google-Smtp-Source: AGHT+IGQn6LWV6iO53lyCYBVGI/gp6UKhS19n/WsBwNq3wacSvChYo5sSsOyWQJP3LB28kS3hR4IVQ==
-X-Received: by 2002:a17:903:244a:b0:25c:d4b6:f117 with SMTP id d9443c01a7336-27ed4a3de3cmr143931065ad.35.1759054194123;
-        Sun, 28 Sep 2025 03:09:54 -0700 (PDT)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:aa9a:16e7:7fcc:f4d0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3347224b0f7sm10473322a91.7.2025.09.28.03.09.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 03:09:53 -0700 (PDT)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC58286D6B;
+	Sun, 28 Sep 2025 10:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759054511; cv=pass; b=Ddpi4yvHjThr//+iSTVE2zBWOD3R4foNDNpvk6pM8LUYXyQJrglQ3IkhtQCc7SNghCBerA+r478UpEAPLjmv/gBwIO6RjgK2rw/aF6HjrRLZ3fUolvxsL4qnvu7pSuYqQtj4Gvme0d0DIQVjVcY5g8m1+iFScTX706NRD/GXx9w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759054511; c=relaxed/simple;
+	bh=GkECR7fUG6hmU1Ej06Z9oM7ZqRjezSc2DJE1BWnhOlo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y+5mMoYd5DqondYHUmpAfHWQKd+26zOXyisJl6IjFL9B8Lfvr6+WSEKS0cWBJaIWGFz20k3KvYGulKKqTTGkxLlffhCJkdjwJn7ibGpK7I4MZ5jy4s4VZAzbGDwIzTmMxTPbkRC/NFkiVH4Rl9FkNwjtEh1gXCpASXEQ9Cu8vsA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=TF5ksk7z; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759054495; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=G9Mhl/X01Rzum3sUsRFXZXN0I6vJZknn1vktWJ1gVPI5NS90+V2uemSEEU7Su0Wp6XZcianie0Yb2xKWm4jEX1O58EG98sIL+Nd8mY6B2qU7PnBlmHuCPzHSCZ7t7u4xy+iRs91cU/RUcwgtSAA8Ts9TuECVBJ/Ap1xXyN1QYzo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759054495; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jkva9SjXpOT3+FQguGv97Znb5NVX/F/3HNDCRkfOEQE=; 
+	b=L7BaZ/MNKuX0NXp6gaqr7k6aTa1ic3x/+2II1EdAnDQnnXfZL3abm1Jv4PFw3g1xeYPcmyFsbrrRGSbUGaPHFX4bU1U7ZxWLXDbbpl6ILgW51rpiJAUo3uOKUSqcMxvKma5YO8Tf8YdyhoWxFq/8v7CAGXsgRVXZkJ9Jc5aXJlk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759054495;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=jkva9SjXpOT3+FQguGv97Znb5NVX/F/3HNDCRkfOEQE=;
+	b=TF5ksk7zDPnnXXfiGB1WBmmfkocrafKfn8piVZ3OQXliIArR6oCaQOlce7lNC6n0
+	HZMSRFPd0l4BHbVTDTU+G4u2Yj+vE7OjcUr6XAONBNRu/CBE3A9Ty5YaOl7HdCoiXNX
+	ONLc+kWj4PdxJdxmz4OEFcCNeE8OJ2U2RPtWRPdU=
+Received: by mx.zohomail.com with SMTPS id 1759054494207283.78612729170607;
+	Sun, 28 Sep 2025 03:14:54 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Deepanshu Kartikey <kartikey406@gmail.com>,
-	syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-Subject: [PATCH] ext4: validate extent entries before caching in ext4_find_extent()
-Date: Sun, 28 Sep 2025 15:39:46 +0530
-Message-ID: <20250928100946.12445-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v2 1/1] cxl/port: Avoid missing port component registers setup
+Date: Sun, 28 Sep 2025 18:14:33 +0800
+Message-Id: <20250928101433.424778-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,63 +72,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227cf04a5705abc7b016dbfbb1b0000b93afb6da2cbb1a974038ff3e59f4df99b4bb604dfed74ef18:zu08011227e4476c90d80e97504c6f16240000015cf08b9d42de84800e3d6b98a61308a8bf08325f7796b72a:rf0801122dd0e457bde1a0da80244d626b0000da008d6bb7eceee86f015ed6b2687001c6661bfa44a3336eaa85683a43d77a:ZohoMail
+X-ZohoMailClient: External
 
-syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
-opening a verity file on a corrupted ext4 filesystem mounted without
-a journal.
+port->nr_dports is used to represent how many dports added to the cxl
+port, it will increase in add_dport() when a new dport is being added to
+the cxl port, but it will not be reduced when a dport is removed from
+the cxl port.
 
-The issue occurs when the extent tree contains out-of-order extents,
-which can happen in a corrupted filesystem. ext4_find_extent() calls
-ext4_cache_extents() without validating the extent entries when the
-tree depth is 0 (leaf level). This allows corrupted extent trees with
-out-of-order extents to be cached, triggering a BUG_ON in
-ext4_es_cache_extent() due to integer underflow when calculating hole
-sizes:
+Currently, when the first dport is added to a cxl port, it will trigger
+component registers setup on the cxl port, the implementation is using
+port->nr_dports to confirm if the dport is the first dport.
 
-  If prev = 4352 and lblk = 1280:
-  lblk - prev = 1280 - 4352 = -3072 (as signed)
-  = 4294964224 (as unsigned)
-  end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279 (after overflow)
-  BUG_ON(end < lblk) triggers because 1279 < 4352
+A corner case here is that adding dport could fail after port->nr_dports
+updating and before checking port->nr_dports for component registers
+setup. If the failure happens during the first dport attaching, it will
+cause that CXL subsystem has not chance to execute component registers
+setup for the cxl port. the failure flow like below:
 
-Fix this by adding extent entry validation using the existing
-ext4_valid_extent_entries() function before caching. This ensures
-corrupted extent trees are detected and handled properly through the
-error path, preventing both the BUG_ON and potential use-after-free
-issues.
+port->nr_dports = 0
+dport 1 adding to the port:
+	add_dport()	# port->nr_dports: 1
+	failed on devm_add_action_or_reset() or sysfs_create_link()
+	return error	# port->nr_dports: 1
+dport 2 adding to the port:
+	add_dport()	# port->nr_dports: 2
+	no failure
+	skip component registers setup because of port->nr_dports is 2
 
-Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+The solution here is that moving component registers setup closer to
+add_dport(), so if add_dport() is executed correctly for the first
+dport, component registers setup on the port will be executed
+immediately after that.
+
+Signed-off-by: Li Ming <ming.li@zohomail.com>
 ---
- fs/ext4/extents.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+v2:
+- remove dport from port->dports in case of component registers setup
+  failed.
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index ca5499e9412b..f8e45623f7ea 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -924,8 +924,18 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
- 	path[0].p_bh = NULL;
+base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
+---
+ drivers/cxl/core/port.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+index d5f71eb1ade8..8128fd2b5b31 100644
+--- a/drivers/cxl/core/port.c
++++ b/drivers/cxl/core/port.c
+@@ -1182,6 +1182,20 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
+ 	if (rc)
+ 		return ERR_PTR(rc);
  
- 	i = depth;
--	if (!(flags & EXT4_EX_NOCACHE) && depth == 0)
-+	if (!(flags & EXT4_EX_NOCACHE) && depth == 0) {
-+		ext4_fsblk_t pblk = 0;
-+
-+		if (!ext4_valid_extent_entries(inode, eh, 0, &pblk, 0)) {
-+			EXT4_ERROR_INODE(inode,
-+				"invalid extent entries, pblk %llu",
-+				pblk);
-+			ret = -EFSCORRUPTED;
-+			goto err;
++	/*
++	 * Setup port register if this is the first dport showed up. Having
++	 * a dport also means that there is at least 1 active link.
++	 */
++	if (port->nr_dports == 1 &&
++	    port->component_reg_phys != CXL_RESOURCE_NONE) {
++		rc = cxl_port_setup_regs(port, port->component_reg_phys);
++		if (rc) {
++			xa_erase(&port->dports, (unsigned long)dport->dport_dev);
++			return ERR_PTR(rc);
 +		}
- 		ext4_cache_extents(inode, eh);
++		port->component_reg_phys = CXL_RESOURCE_NONE;
 +	}
- 	/* walk through the tree */
- 	while (i) {
- 		ext_debug(inode, "depth %d: num %d, max %d\n",
++
+ 	get_device(dport_dev);
+ 	rc = devm_add_action_or_reset(host, cxl_dport_remove, dport);
+ 	if (rc)
+@@ -1200,18 +1214,6 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
+ 
+ 	cxl_debugfs_create_dport_dir(dport);
+ 
+-	/*
+-	 * Setup port register if this is the first dport showed up. Having
+-	 * a dport also means that there is at least 1 active link.
+-	 */
+-	if (port->nr_dports == 1 &&
+-	    port->component_reg_phys != CXL_RESOURCE_NONE) {
+-		rc = cxl_port_setup_regs(port, port->component_reg_phys);
+-		if (rc)
+-			return ERR_PTR(rc);
+-		port->component_reg_phys = CXL_RESOURCE_NONE;
+-	}
+-
+ 	return dport;
+ }
+ 
 -- 
-2.43.0
+2.34.1
 
 
