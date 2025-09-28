@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-835171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F15BA66F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E7CBA66FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7600B189A0DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E34B3B9BD6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C072550DD;
-	Sun, 28 Sep 2025 03:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843F2257423;
+	Sun, 28 Sep 2025 03:24:21 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D5413A86C;
-	Sun, 28 Sep 2025 03:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FA22550AF;
+	Sun, 28 Sep 2025 03:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759029859; cv=none; b=gCn3gW1ieuSY9pd7yjxL9IXThRO6b/Pu94SEN74kYSGT6+5eZVAr8t1kYaol7iFWROTAxNEXSoYn5XztT0k2CFzfyAZ6L6S7xnkcmQnjoi3Zxyu6vmbxPXuAvFIbDZ4RZQlrXII4beE9Zcvtg2X2brMcURP6aAdvuBUoV6UZ4Kk=
+	t=1759029861; cv=none; b=RXK/lB+8kLgyrZL5rys9pkzNKSNt2bIzXgqDBJKxlvrC2ukdC77aGl7FC4dzzCAdi3+YdQvq65Ku+NB3B8ylxKzLRPoYgoulkIXUl/pn28805jMQQZH48mdIuZpZLMlk32uHWP45K12JS/qhvHPwqgTeGEc1qnpoxZfrvdxJ9B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759029859; c=relaxed/simple;
-	bh=fXWIhwLv4hKpybTOVGv/npLVWZ8qkRWZcnby1MvkMuU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HjCKfrpcpiaFKjziJNwdZiqmh8b+b3Afc5QwjNHbBB29lhIbXBe73Nn5LkoiBAxkvQY98MiiOIYvFUpWwTEtLL9+TGD0nFOMFwRLUqkg3OupKd4340XR16tcZXK/VVgDGzppJeUgW/0IlGS4tsbjZOyHarMHQofbNNqU578N9nA=
+	s=arc-20240116; t=1759029861; c=relaxed/simple;
+	bh=9P1DgRTyTwlbkoms5dO/oxOMMmGjxNTqJcoBHpOIcAo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TpCYcwvg+LPCKZZLNAyQC8HT1F0X/rN2i0evcVZuahJA54cCW1uJ9aR+AYQxVnwq9ku4+ORj6299mN0grY25WhTYOKGWrS3+SxrKcRfP/hJApGSJF9mcAl16jLyTI5o5VrjUD1lrEuukhMbDKYiDTvssVl66BlgJ+J2YJG8lkt8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -40,10 +41,13 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Greg Kroah-Hartman
  Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Alan
  Stern" <stern@rowland.harvard.edu>, <linux-usb@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 0/2] Add Aspeed AST2700 ehci support
-Date: Sun, 28 Sep 2025 11:24:05 +0800
-Message-ID: <20250928032407.27764-1-ryan_chen@aspeedtech.com>
+CC: Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 1/2] dt-bindings: usb: ehci: Add Aspeed AST2700 compatible
+Date: Sun, 28 Sep 2025 11:24:06 +0800
+Message-ID: <20250928032407.27764-2-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250928032407.27764-1-ryan_chen@aspeedtech.com>
+References: <20250928032407.27764-1-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,27 +57,26 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-This series adds support for the EHCI controller found in Aspeed's
-new AST2700 SoC.
+Add the compatible string for Aspeed AST2700 SoC.
 
-v3:
--ehci-platform.c
- - Using dma_mask_64 as a local flag rather than modifying the global
-   defaults, to avoid unintended side effects when multiple devices probe.
+Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-v2:
--ehci-platform.c
- - remove ehci_ast2700_platform replace by of_device_id data for
-   dma_mask_64.
-
-Ryan Chen (2):
-  dt-bindings: usb: ehci: Add Aspeed AST2700 compatible
-  usb: ehci: Add Aspeed AST2700 support
-
- .../devicetree/bindings/usb/generic-ehci.yaml     |  1 +
- drivers/usb/host/ehci-platform.c                  | 15 +++++++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+index 508d958e698c..4e84bead0232 100644
+--- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
++++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+@@ -46,6 +46,7 @@ properties:
+               - aspeed,ast2400-ehci
+               - aspeed,ast2500-ehci
+               - aspeed,ast2600-ehci
++              - aspeed,ast2700-ehci
+               - brcm,bcm3384-ehci
+               - brcm,bcm63268-ehci
+               - brcm,bcm6328-ehci
 -- 
 2.34.1
 
