@@ -1,248 +1,125 @@
-Return-Path: <linux-kernel+bounces-835199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324F4BA67BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7ABBA67CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C753BF8EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8FF71892414
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D82877D3;
-	Sun, 28 Sep 2025 04:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C96E285CBF;
+	Sun, 28 Sep 2025 04:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VKvJboHT"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3a+OCW7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240902874F1
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 04:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A241E834B
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 04:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759033723; cv=none; b=gH9wbBrGG7/JDdbC2QkjEnIClIcTwOLoEtYPurGdET0JZQ+MinRR7NmOht8aHzQ1h+mth4gCcjyIEUhgPWtz7EbixwU5U6j2bzOyxZkamglxzDw6H+ADH4jfzv4LXPeldEnhtLvPTDkIsBz/DtMaXdpA6B333cI1N7lNO8e36cs=
+	t=1759034099; cv=none; b=B3e2uYmL4ebw5SR9si1JqfYk2gC1qeg/g3xM8030SLnp++NMNNLq/lew1fCsWw7wb7VghwuRXyMYQGuK4h+6O/GaFRvcFkQfe+PXuedxC8fbaIbt4WDRfTA890lf60xWQkugt8p3NqOlclIogH9X2fGjfGvTlJM9cgPSO9s55Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759033723; c=relaxed/simple;
-	bh=aGJzrxX/6tyC66XM5+5CXfFahLXDJKs8U5VVSlR/nJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ntn1NFaZ+Gbasam/q4qkdAoGkNG1xbyLIbGZHQ1RBNzzVibxXdU8CA+AoF5CZyHLOaF5IYhQhk3qUtTL7XQa+eQvunfN5ezydK5q6vOBVYUG7hzeBjLLONjL5gIk/5O9xM8GkQYjT/EKjYVqVFjmoOe7cj6JUnc6zdkUBtm5n2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VKvJboHT; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <71799ce4-cc2e-41d6-a5fb-d4af5c445e43@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759033719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uBCSfd9thTLA3FjzbiGVoo7eVJR3xdivXq6kfTEcxEU=;
-	b=VKvJboHTewBe8S6pxoc9+ncgfgD7CxJJDHoc19V6jDlvJ1gI1s4poS+le9OQ9GcIyejdjU
-	G55JV7+kzZwH3zcOJIAyJmzRvKM0YTG/M9NB6BnU0i7bNVdHzOTjVRACU+1nD+OESejfp4
-	j3Wq/LUL5RIXMw6d1p9i580UCSN9NiQ=
-Date: Sun, 28 Sep 2025 12:28:26 +0800
+	s=arc-20240116; t=1759034099; c=relaxed/simple;
+	bh=x/iAMEfhFQ96nT4EsXIin8xHsP3iS1/961id7m6vOAI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ekMDA0+BD1WyxFc47r5YHR8UPiKcw8a7aJCtDcHm+7I5M1q3AYX9APjPktRiF3xKzi7B/9fb8flypIUl3pwFNQO6ixaZQGaCUg1qbfNRye4rQfrNAu6+duDY91pYXCMEbCpUYNjBGS9TfOnXKy+GyuoWMx48/S0q/htU0mezeLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3a+OCW7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B42C19421
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 04:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759034099;
+	bh=x/iAMEfhFQ96nT4EsXIin8xHsP3iS1/961id7m6vOAI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=C3a+OCW7agSsSUJrWxa9qUULhZ0/T7cRubYvfrzrcy4VpxNK5YNUm8HtyIu/79O6W
+	 F+HCAaeXuYK3Nd39x4U3v2LhI9bm0KVJRCsgz25OnqXkrdqv34ZXXIADvab9oYWdGt
+	 njnmTXIoZHJJ506cs91VhvFqYp+G2CMtcmpkWgqAMM4v5lGNgmbB99YghPSXD3ArTe
+	 XXD9ePVYafs2DfRwRTeZsoIP/6DhENBCS3M+J7DOL+aADV1reyWHM2Xf+8g37HsJ7v
+	 jr/PH4wgK0BPYy1O+p0L3Zsi4CQZwBtE1uxv0S7kqJYb5RPQChcs9taXOgU5PcTGl8
+	 npl/XZH8qc4Pw==
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-279e2554b5fso29557095ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 21:34:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUkJTs+/v6O0JCIkmIhUYDENSDKtxH1MF8qaKIuZRpTklkE3Ut+t6aLIna18k1KHJHqhc/Kt0WYpG5CZUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUzYToXCeDq+lhlo0AQidcDCuXFQxPoxKFYiS1r/yqR/8MW3xs
+	+hPOorwITyoIGG2j0VFx+iLp52sChnJ9fABlyoM2HMZsvUiVnkSiAgmlRXompZSJRIlz77VoCjk
+	DpIhGmYwfw0SpNBoPDNOmPPl6Oq7BFTQ=
+X-Google-Smtp-Source: AGHT+IEvpC+fZhKriALPhAAHYn0OG8EEAGcMYQkIgjBYmtXlINnzWABnAmfFm/NDNUhpqe9it9R7ngTXVVvTZEYqySk=
+X-Received: by 2002:a17:903:298b:b0:24b:270e:56d4 with SMTP id
+ d9443c01a7336-27ed6ad0684mr143987145ad.4.1759034098565; Sat, 27 Sep 2025
+ 21:34:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2] bpf: Add preempt_disable to protect
- get_perf_callchain
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: song@kernel.org, jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250926153952.1661146-1-chen.dylane@linux.dev>
- <CAEf4BzbLJtMGaZoFAaAgnNXe8GCStsw+kZ_3hWoGfySWZ6B5mg@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <CAEf4BzbLJtMGaZoFAaAgnNXe8GCStsw+kZ_3hWoGfySWZ6B5mg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250928035108.10432-1-make24@iscas.ac.cn>
+In-Reply-To: <20250928035108.10432-1-make24@iscas.ac.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Sun, 28 Sep 2025 13:34:45 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPehQ+nsPk_JsNGCwZdfYCrdJ7c6x-mLgn-VaissiSQycw@mail.gmail.com>
+X-Gm-Features: AS18NWBkJsznHwnBuF6ULH6dpVms9-ecEezN84hhkizvBeyEC7vnkdoTdHYfrOk
+Message-ID: <CAJKOXPehQ+nsPk_JsNGCwZdfYCrdJ7c6x-mLgn-VaissiSQycw@mail.gmail.com>
+Subject: Re: [PATCH] soc: samsung: exynos-pmu: fix reference leak in exynos_get_pmu_regmap_by_phandle()
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: alim.akhtar@samsung.com, semen.protsenko@linaro.org, 
+	peter.griffin@linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	akpm@linux-foundation.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-在 2025/9/27 02:52, Andrii Nakryiko 写道:
-> On Fri, Sep 26, 2025 at 8:40 AM Tao Chen <chen.dylane@linux.dev> wrote:
->>
->> As Alexei noted, get_perf_callchain() return values may be reused
->> if a task is preempted after the BPF program enters migrate disable
->> mode. We therefore use bpf_perf_callchain_entries percpu entries
->> similarly to bpf_try_get_buffers to preserve the current task's
->> callchain and prevent overwriting by preempting tasks. And we also
->> add preempt_disable to protect get_perf_callchain.
->>
->> Reported-by: Alexei Starovoitov <ast@kernel.org>
->> Closes: https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   kernel/bpf/stackmap.c | 76 ++++++++++++++++++++++++++++++++++---------
->>   1 file changed, 61 insertions(+), 15 deletions(-)
->>
->> Change list:
->>   v1 -> v2:
->>    From Alexei
->>    - create percpu entris to preserve current task's callchain
->>      similarly to bpf_try_get_buffers.
->>    v1: https://lore.kernel.org/bpf/20250922075333.1452803-1-chen.dylane@linux.dev
->>
->> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->> index 2e182a3ac4c..8788c219926 100644
->> --- a/kernel/bpf/stackmap.c
->> +++ b/kernel/bpf/stackmap.c
->> @@ -31,6 +31,55 @@ struct bpf_stack_map {
->>          struct stack_map_bucket *buckets[] __counted_by(n_buckets);
->>   };
->>
->> +struct bpf_perf_callchain_entry {
->> +       u64 nr;
->> +       u64 ip[PERF_MAX_STACK_DEPTH];
->> +};
->> +
->> +#define MAX_PERF_CALLCHAIN_PREEMPT 3
->> +static DEFINE_PER_CPU(struct bpf_perf_callchain_entry[MAX_PERF_CALLCHAIN_PREEMPT],
->> +                     bpf_perf_callchain_entries);
->> +static DEFINE_PER_CPU(int, bpf_perf_callchain_preempt_cnt);
->> +
->> +static int bpf_get_perf_callchain(struct bpf_perf_callchain_entry **entry,
->> +                                 struct pt_regs *regs, u32 init_nr, bool kernel,
->> +                                 bool user, u32 max_stack, bool crosstack,
->> +                                 bool add_mark)
->> +{
->> +       struct bpf_perf_callchain_entry *bpf_entry;
->> +       struct perf_callchain_entry *perf_entry;
->> +       int preempt_cnt;
->> +
->> +       preempt_cnt = this_cpu_inc_return(bpf_perf_callchain_preempt_cnt);
->> +       if (WARN_ON_ONCE(preempt_cnt > MAX_PERF_CALLCHAIN_PREEMPT)) {
->> +               this_cpu_dec(bpf_perf_callchain_preempt_cnt);
->> +               return -EBUSY;
->> +       }
->> +
->> +       bpf_entry = this_cpu_ptr(&bpf_perf_callchain_entries[preempt_cnt - 1]);
->> +
->> +       preempt_disable();
->> +       perf_entry = get_perf_callchain(regs, init_nr, kernel, user, max_stack,
->> +                                       crosstack, add_mark);
->> +       if (unlikely(!perf_entry)) {
->> +               preempt_enable();
->> +               this_cpu_dec(bpf_perf_callchain_preempt_cnt);
->> +               return -EFAULT;
->> +       }
->> +       memcpy(bpf_entry, perf_entry, sizeof(u64) * (perf_entry->nr + 1));
-> 
-> N copies of a stack trace is not good enough, let's have N + 1 now :)
-> 
-> If we are going with our own buffers, we need to teach
-> get_perf_callchain to let us pass that buffer directly to avoid that
-> unnecessary copy.
-> 
-> Also, I know it's about 1KB, but it would be so simple and efficient
-> to just have this bpf_perf_callchain_entry on the stack. Kernel has a
-> 16KB stack, right? It feels like for something like this using 1KB of
-> the stack to simplify and speed up stack trace capture is a good
-> enough reason.
-> 
->> +       *entry = bpf_entry;
->> +       preempt_enable();
->> +
->> +       return 0;
->> +}
->> +
->> +static void bpf_put_perf_callchain(void)
->> +{
->> +       if (WARN_ON_ONCE(this_cpu_read(bpf_perf_callchain_preempt_cnt) == 0))
->> +               return;
->> +       this_cpu_dec(bpf_perf_callchain_preempt_cnt);
->> +}
->> +
->>   static inline bool stack_map_use_build_id(struct bpf_map *map)
->>   {
->>          return (map->map_flags & BPF_F_STACK_BUILD_ID);
->> @@ -303,8 +352,9 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->>          u32 max_depth = map->value_size / stack_map_data_size(map);
->>          u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->>          bool user = flags & BPF_F_USER_STACK;
->> -       struct perf_callchain_entry *trace;
->> +       struct bpf_perf_callchain_entry *trace;
->>          bool kernel = !user;
->> +       int err;
->>
->>          if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
->>                                 BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
->> @@ -314,14 +364,15 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->>          if (max_depth > sysctl_perf_event_max_stack)
->>                  max_depth = sysctl_perf_event_max_stack;
->>
->> -       trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
->> -                                  false, false);
->> +       err = bpf_get_perf_callchain(&trace, regs, 0, kernel, user, max_depth,
->> +                                    false, false);
->> +       if (err)
->> +               return err;
->>
->> -       if (unlikely(!trace))
->> -               /* couldn't fetch the stack trace */
->> -               return -EFAULT;
->> +       err = __bpf_get_stackid(map, (struct perf_callchain_entry *)trace, flags);
->> +       bpf_put_perf_callchain();
->>
->> -       return __bpf_get_stackid(map, trace, flags);
->> +       return err;
->>   }
->>
->>   const struct bpf_func_proto bpf_get_stackid_proto = {
->> @@ -443,8 +494,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->>          if (sysctl_perf_event_max_stack < max_depth)
->>                  max_depth = sysctl_perf_event_max_stack;
->>
->> -       if (may_fault)
->> -               rcu_read_lock(); /* need RCU for perf's callchain below */
->> +       preempt_disable();
->>
->>          if (trace_in)
->>                  trace = trace_in;
->> @@ -455,8 +505,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->>                                             crosstask, false);
->>
->>          if (unlikely(!trace) || trace->nr < skip) {
->> -               if (may_fault)
->> -                       rcu_read_unlock();
->> +               preempt_enable();
->>                  goto err_fault;
->>          }
->>
->> @@ -474,10 +523,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->>          } else {
->>                  memcpy(buf, ips, copy_len);
->>          }
->> -
->> -       /* trace/ips should not be dereferenced after this point */
->> -       if (may_fault)
->> -               rcu_read_unlock();
->> +       preempt_enable();
->>
->>          if (user_build_id)
->>                  stack_map_get_build_id_offset(buf, trace_nr, user, may_fault);
-> 
-> really it's just build_id resolution that can take a while, which is
-> why we are trying to avoid preemption around it. But for non-build_id
-> case, can we avoid extra copying?
-> 
+Best regards,
+Krzysztof
 
-Maybe possible, you mean optimize the memcpy(buf, ips, copy_len) for
-non-build_id? I'm trying to add an external entry in get_perf_callchain 
-to see if the perf maintainers agree. If it's approved, everything seems 
-manageable.
->> --
->> 2.48.1
->>
-
-
--- 
-Best Regards
-Tao Chen
+On Sun, 28 Sept 2025 at 12:51, Ma Ke <make24@iscas.ac.cn> wrote:
+>
+> In exynos_get_pmu_regmap_by_phandle(), driver_find_device_by_of_node()
+> utilizes driver_find_device_by_fwnode() which internally calls
+> driver_find_device() to locate the matching device.
+> driver_find_device() increments the reference count of the found
+> device by calling get_device(), but exynos_get_pmu_regmap_by_phandle()
+> fails to call put_device() to decrement the reference count before
+> returning. This results in a reference count leak of the device each
+> time exynos_get_pmu_regmap_by_phandle() is executed, which may prevent
+> the device from being properly released and cause a memory leak.
+>
+> Found by code review.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 0b7c6075022c ("soc: samsung: exynos-pmu: Add regmap support for SoCs that protect PMU regs")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/soc/samsung/exynos-pmu.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> index a77288f49d24..ed903a2dd416 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -302,6 +302,7 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
+>  {
+>         struct device_node *pmu_np;
+>         struct device *dev;
+> +       struct regmap *regmap;
+>
+>         if (propname)
+>                 pmu_np = of_parse_phandle(np, propname, 0);
+> @@ -325,7 +326,10 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
+>         if (!dev)
+>                 return ERR_PTR(-EPROBE_DEFER);
+>
+> -       return syscon_node_to_regmap(pmu_np);
+> +       regmap = syscon_node_to_regmap(pmu_np);
+> +       put_device(regmap);
+> +
+> +       return regmap;
+>  }
+>  EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
+>
+> --
+> 2.17.1
+>
 
