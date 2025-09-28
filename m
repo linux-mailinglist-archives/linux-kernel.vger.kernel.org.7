@@ -1,120 +1,90 @@
-Return-Path: <linux-kernel+bounces-835364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD34BBA6E6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0611BA6E5F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8527B3BCA3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34EF4189A3F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F331E2DAFD2;
-	Sun, 28 Sep 2025 09:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A36E2DAFA3;
+	Sun, 28 Sep 2025 09:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="fkmaC9Jh"
-Received: from mail-m21471.qiye.163.com (mail-m21471.qiye.163.com [117.135.214.71])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yjn5nNiE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE3A2DA758;
-	Sun, 28 Sep 2025 09:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F1F221558;
+	Sun, 28 Sep 2025 09:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759053479; cv=none; b=WCIrcnT83G/qKGA2UQSX6V3lWTF82lOBSvC9CBjb7FNAIB4M9xEcaEKKP53BIPp9nMlk/Y0eCKQuPBHecJtKOsya0cMWOnLwDm/qr1928ogZ3mQ+aR4ZN4IE1XU4PgnVrpnrYcomT5ZG5ObTivItDltuXvc+votzzVd3Wukn1Nc=
+	t=1759053208; cv=none; b=WSVl7/+Wm/RqFw7M8SRByLdBQwZCyu8pQrp4nfN9DAbMnwonx6Rr9dka4hfLGQypuF4+rEcgY0ryNafIUChrv/qHV4gYh38c1wJYwzfbIPtWPbG9oqUYw5j25SzxX+pviinmTKwzNjm0gylLWdcJ0WcqO5R4688cmZZGdNhfouo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759053479; c=relaxed/simple;
-	bh=J8c7JVbiIEeckY6sC/rBbPzskekmzcvgPP0Qe1vVJQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IUVvV1wzYn4bmsIyBfr+UlDadZLwQsAPXsGccqhTRBulzhYXRsWHcb5hxMRBbBBjrKhKwBkdKhSgw6fRLZlz8p/3w5lYGBDxb0vYlaY6ybU1Dtpiz6svy1tjo0XvybYlGtwvpsKtoDN/8XPSQITwlTgVZrV9myRZuqYKcB0VCxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=fkmaC9Jh; arc=none smtp.client-ip=117.135.214.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.153] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2455d07b1;
-	Sun, 28 Sep 2025 17:52:36 +0800 (GMT+08:00)
-Message-ID: <ede70598-c451-4352-ab3e-0e278ce33ad7@rock-chips.com>
-Date: Sun, 28 Sep 2025 17:52:35 +0800
+	s=arc-20240116; t=1759053208; c=relaxed/simple;
+	bh=HIf5LX+bx343feP90cVWnAiNYFupJgOU3bNRQcK9Vj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mJ+7dDIzoahzCYnHRMUGxpBJWNvapvwR3EA+Rt9D9AHFsrLu429z0FjaJhQdLLzPEtdkGX5Kz8y7kXy2V+wt6RUHE193rABhzXenAcvFIthT8sGR0GmYbNB0FCXYZJjfFZqQCmRhUJoActvam4KtRtuOE9iEDRwWw+jNM8Zpy0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yjn5nNiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DC4C4CEF0;
+	Sun, 28 Sep 2025 09:53:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759053207;
+	bh=HIf5LX+bx343feP90cVWnAiNYFupJgOU3bNRQcK9Vj8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yjn5nNiEoN78pL0G/uwp1CyJkw4U/lIljze+xcm4dbC8J53/J2Epmxl7mvWKAVLNp
+	 PvoIrjIg6uLTy0G3WvPy54D8NeZ133D8g7+f3I76+yIsA8ZZSWYwM7aDsq2sI/JFS/
+	 a8dFZ4BVTpUmDThxn7Dai6t0JYwivEs6b8n6ZuKEdbamZvWeNToCpCdjIxJb6HmpAm
+	 QwWIhUuxJPayRWFRi4TIOCnra63h6/ONZ5kbNG+dsj8w7Nh02rNkf5kA6xWpMukVym
+	 qSL+Q7lU6alMYCro57yWqO0NJB4YVT7UHLuLajtIPmVl9DzEOzVPmiiU+noylf1JDk
+	 BuGpjgXoNGoMg==
+Date: Sun, 28 Sep 2025 10:53:16 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <michael.hennerich@analog.com>,
+ <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
+ <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v3 4/8] iio: adc: ad4030: Reduce register access
+ transfer speed
+Message-ID: <20250928105316.782d076e@jic23-huawei>
+In-Reply-To: <fd505d37aceaafd6b20626bfd3f25c47db1fb004.1758916484.git.marcelo.schmitt@analog.com>
+References: <cover.1758916484.git.marcelo.schmitt@analog.com>
+	<fd505d37aceaafd6b20626bfd3f25c47db1fb004.1758916484.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] drm/rockchip: cdn-dp: Add multiple bridges to
- support PHY port selection
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Chaoyi Chen <kernel@airkyi.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20250922012039.323-1-kernel@airkyi.com>
- <20250922012039.323-6-kernel@airkyi.com>
- <idyrlzhd5sotg3ylr7vbwmczimglffc75nafxbnhhm3ot2jn4w@ixerm6elfmre>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <idyrlzhd5sotg3ylr7vbwmczimglffc75nafxbnhhm3ot2jn4w@ixerm6elfmre>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a998fbd11a503abkunma2c1ce0f943b8a
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhlLGlZNSk0YGE9JTx5PGkNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=fkmaC9JhLsx9ypREA2gyK2saMIt0xQXv11bYSJmDDFFpI7xmfpCJWCu/QwNzs8iObZJwhYNAOBXT0AKdgryMB/HWPPuwHP4cE9dr6FPYq6oyYCBt+9FMdhF+19j6+JMmlgQdJWNrnY2U734Idzqo3Sisf0O1F72QkVhyE4zITHI=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=r6bywD2WUzTYm4ELUvERid8tPQSU5/IWu32J6FLL1ok=;
-	h=date:mime-version:subject:message-id:from;
 
-On 9/23/2025 9:50 AM, Dmitry Baryshkov wrote:
+On Fri, 26 Sep 2025 17:39:42 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
-[...]
+> Configuration register accesses are not considered a critical path in terms
+> of time to complete. Even though register access transfers can run at high
+> speeds, nanosecond completion times are not required as device
+> configuration is usually done step by step from user space. Also, high
+> frequency transfers hinder debug with external tools since they require
+> faster clocked equipment. Reduce register access transfer speed.
 
+So making debug with external tools easier isn't usually a justification we'd
+make to slow things down by default.
 
->> +	/* One endpoint may correspond to one HPD bridge. */
->> +	for_each_of_graph_port_endpoint(port, dp_ep) {
->> +		/* Try to get "port" node of correspond PHY device */
->> +		struct device_node *phy_ep __free(device_node) =
->> +			of_graph_get_remote_endpoint(dp_ep);
->> +		struct device_node *phy_port __free(device_node) =
->> +			of_get_parent(phy_ep);
->> +
->> +		if (!phy_port) {
->> +			continue;
->> +		}
->> +
->> +		/*
->> +		 * A PHY port may contain two endpoints: USB connector port or CDN-DP port.
->> +		 * Try to find the node of USB connector.
-> And then there can be a retimer between PHY and the USB-C connector. Or
-> some signal MUX. Or DP-to-HDMI bridge. Please, don't parse DT for other
-> devices. Instead you can add drm_aux_bridge to your PHY and let DRM core
-> build the bridge chain following OF graph.
->
-I think building a bridge chain across multiple drm_aux_hpd_bridge may be difficult. First, drm_dp_hpd_bridge_register() cannot register the bridge immediately; instead, it is deferred until drm_aux_hpd_bridge_probe(). When it is added to the bridge_list, it may not yet be attached, and attempting to attach it at that point is too late.
+Is there another reason for this being useful as opposed to not a problem
+to do?   If it had been done this way in the first place I wouldn't have
+minded, but to make a change I'd like either some others to jump in and
+say, yes please do this, or a reason beyond you are using tooling that can't
+cope with 80 MHz and don't want to hack the driver when you need
+to slow it down (my tools can't cope with that rate either!)
 
-But, if I only use drm_aux_bridge on the USB-C connector, and use my own custom bridge on the PHY device and managing the alloc and attach bridge process myself, then things would become much easier.
-
--- 
-Best,
-Chaoyi
+J
 
 
