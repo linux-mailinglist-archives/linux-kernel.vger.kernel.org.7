@@ -1,79 +1,65 @@
-Return-Path: <linux-kernel+bounces-835228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75AEBA6896
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:55:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9569BBA689A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E951898CAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3331B176C93
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB2F29AB1A;
-	Sun, 28 Sep 2025 05:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8E3224893;
+	Sun, 28 Sep 2025 06:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BFpktTt4"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPGFbSlu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF4F1DD0EF
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 05:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2C434BA3B;
+	Sun, 28 Sep 2025 06:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759038931; cv=none; b=IwTf7OdclPTaNQahBoPFTuuMkQ3RPc8qLGS2C9EjVD0y9290oevu6SngA6UZYRNvwcE0UtgQHfiSu2LiYZk9qSv4OOEAc1w5hx/moW6PrbmRXqu07cxV4QSExuYLvibJJdG80OaTSd8Ew37jdHpO7UbLPTDljxclSbE34vIt2Wg=
+	t=1759039239; cv=none; b=VBMWUbdunDHJCLtdy3wRehCEURSpzKbI/SCUET+Esa2Ri/jZczepGdShoE+3JAmqh0cjNSTMCmHvOH5WZEBrYIvq1Er3I9GwpmwjJxd6b5iH3sCqVvQXIEP+qWYc2P/h7CPLrtZL37L5k1JiZdIjA/F4SUPHtZk7dxWBI288ids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759038931; c=relaxed/simple;
-	bh=8UCptSI2ZG/4mvMhdSTPqfjdDnupyxw2bvzPaWLpTvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gSdOKun58mayDEU9KInM9btcc//1fbJn9uBm7q/p5BmEUVy6kHhEUnC9De+YXZf+EN3WxigtG69PqiWcm6/Q8nybAcmKXROiFtp+yQXW9p54sJZ1MtfWYujBKQUQptX79WkqgThZPIlKU7fKEEr8rILp5iybc6HmpWG9xkAVjNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BFpktTt4; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e491a5b96so5028045e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 22:55:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759038928; x=1759643728; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fPowmCqSrL/N5W4KD70hzfpEFu0AHeqGugDdiPQkQ+A=;
-        b=BFpktTt48EabahLVpP6BOOugaz/6fDi7oDfA22g4JQKTNpWqmyE7mpxG3T7VCofEyn
-         LB1Vk0mMAkqkFerrmQ7RHxkMtwpbPuOptF95P3WT3qM3IZJgDQpUgR0pXt6i7ZNnUMTB
-         09rayFSUES7IrZZI78cJlkvgepJjqki3c3hb6QzbweFiuHy8vGGM0flV0uQcer7vSBou
-         GszWoAeZ8JiK0qB/dXJiPQK4o/z1pEgy2MBSskOA3bu8G4J4VMYbNdAsytLvlahpBS/p
-         iQ0SORUVP7YIXbbcspSplYQLO/+LgodLR4xcz1/f2iJkwQi2BmEOQwRXGxZP98Kq/gAk
-         yelQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759038928; x=1759643728;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fPowmCqSrL/N5W4KD70hzfpEFu0AHeqGugDdiPQkQ+A=;
-        b=JjCidDPPr8HfIDES29gNrKvuwqnpDYg9TJw3WRCSstk42J2mCUouDxECHhpVJ7TfXv
-         YlknV8pgNUxj7oODcVu53ZLevitc+mIvDwOwX99yV/fhCLwenjfzt3Amc5BOP4ORwH5t
-         V2OVnD6EMa+7+q4GGd5CGvp0XMqwi6wBTb1REvVnEH3AZTWIz5xUb2zQEfgU2xz3H9O4
-         ERZotraeq+QUvdejXRYkEPuxuJLIBa0FEQm5OOXUlxtK2Wk27tMNDva2wNltnYD1y007
-         cNt9ExixIuQdY5G9y7BFJP/A/cvpN0YwI9bcpZIoa0Gd5ZQb/0Yp8oP+k8lUsct9JFLD
-         KO+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVqkDSXTCN+cDuUBRuOko7lHYLNWXRigRDGF8g4dKe3iZgFtv4Ozj+hXjzKgMvYSM9J4X2nWWDQ41qu2iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDMrYctkPprpT163zHK7AEVnuGUeQvI6e300ki+iNfKbjsqnGx
-	47/qiKQDMDNp201A+YSsQxsczrWMxkEIaZmDtDSEEi+NpPD+9N042cgS
-X-Gm-Gg: ASbGncv+PmVYKLx8cvswLDyhGDWDfrxuv8ERLF9Z9nioMrrlQbU7PkqPNts/pD8H8zK
-	HfqJOrsJx3Lx4Q1VxkDP3G3EEsFM/SOvsk1gVT0Zz4xHMde0tQFKzD3rF+hRyI0XE2j53CyKDkz
-	4eCBnhJdvqCiqoncz+n/V5TGG3gTwBLOM00A04KT0cY5AsFxbVvAA9KvJ2KwBANJwDlw6G+0Dn/
-	xBlAglbMgXbTkjLHKGDWgrDr2GvKEgzI1bgXoxfa5q2VYMJhhrMik5bs2WBvrZl7o6Q7G+Xm6pv
-	8jrcfPpahMfNNZEOt0EK+2u3sI472639OvRVrcFPpQfzPaxlC7BB8Gk/P1u4uMygBv9EzNcElHX
-	lrEod+nUZdflnbyvkbMYegUthIQWx1T2ZrJWL/UOzsI4etzkyzsVkRm8c
-X-Google-Smtp-Source: AGHT+IHM4m0m8ZpyngATgru8cfGxZwwbEPYp3rvD/aDrVe9bRE92H+oCzL4NKnHYUkxDCBcJph9MNg==
-X-Received: by 2002:a05:600c:1c92:b0:46e:3dad:31ea with SMTP id 5b1f17b1804b1-46e3dad3310mr87440785e9.17.1759038927610;
-        Sat, 27 Sep 2025 22:55:27 -0700 (PDT)
-Received: from [10.221.203.31] ([165.85.126.96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33b562d8sm135602455e9.0.2025.09.27.22.55.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Sep 2025 22:55:27 -0700 (PDT)
-Message-ID: <b8adb2de-1b13-43ec-bd1b-cffbf40ba98e@gmail.com>
-Date: Sun, 28 Sep 2025 08:55:25 +0300
+	s=arc-20240116; t=1759039239; c=relaxed/simple;
+	bh=A4unn32HteSMgKInFEqt6Wd6rSsCwlbz3rib0fmn9JI=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:Cc:
+	 References:In-Reply-To; b=SCeexAa7Kbhg8qB/X1asdudFDyxzdmfoyW7mJkSkYvf2ZfL0R4o+ruHMUa6Qwm9j7OYtyoEUFuJjxhsfA/JB+clo5iMMz4nOmVDrpiGVWQKzkBfQY5FSA11brdkeaXF6xwu1geBWmMBdHZHZIMAJn8qGRSt0db+rN/Ch6ta+Vtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPGFbSlu; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759039236; x=1790575236;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to;
+  bh=A4unn32HteSMgKInFEqt6Wd6rSsCwlbz3rib0fmn9JI=;
+  b=YPGFbSluKocdaZs8mVEZzS7Zoi/azkLrVFM7fTFH9CPidaM6COPhCBxa
+   GUQI4B8XOeLAquhugK26Lo9U0XRTI8l0X+yz5lN85xP1nfr9yAo2+fViT
+   NfAKc8ZSChKjOdli5DruHd3JBYIFRRiob6rIIXOJsOdtTIl5LAwcRdShn
+   JWMMNQ15+MzCIOtjGRX/7QoIfLA1Y8yjgeWWZ91ewAh8QGU2sti/bxp0z
+   E3AD/ItH9R+Ldtt5fdhg+ELWY/4sjv/oitYa/VU7/GDXkVYLnakU8MYRK
+   fqOYD0ib0m2XPhHGwroLf5+aUL4Cd2nCL51wJJLcNCG2OyTpmFrJMBXET
+   Q==;
+X-CSE-ConnectionGUID: ftHkQG8nS8K/QHY54VJ1rg==
+X-CSE-MsgGUID: fcRGO0JURTC0MpQHaXuDJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="83925502"
+X-IronPort-AV: E=Sophos;i="6.18,299,1751266800"; 
+   d="scan'208,223";a="83925502"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 23:00:35 -0700
+X-CSE-ConnectionGUID: 8r0WDC+LRfKehS6aiRliPw==
+X-CSE-MsgGUID: FWPU2P0oQS2zw6HUEBBrsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,299,1751266800"; 
+   d="scan'208,223";a="177214954"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 23:00:31 -0700
+Content-Type: multipart/mixed; boundary="------------KgCv4AkrF9hpUdidMMuweJxL"
+Message-ID: <bd48852d-e5d3-4d58-9d71-891a4e31dd5b@linux.intel.com>
+Date: Sun, 28 Sep 2025 14:00:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,176 +67,216 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/1] net/mlx5: Clean up only new IRQ glue on
- request_irq() failure
-To: Pradyumn Rahar <pradyumn.rahar@oracle.com>, shayd@nvidia.com
-Cc: anand.a.khoje@oracle.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, elic@nvidia.com, jacob.e.keller@intel.com,
- kuba@kernel.org, leon@kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, manjunath.b.patil@oracle.com, mbloch@nvidia.com,
- moshe@nvidia.com, netdev@vger.kernel.org, pabeni@redhat.com,
- qing.huang@oracle.com, rajesh.sivaramasubramaniom@oracle.com,
- rama.nichanamatlu@oracle.com, rohit.sajan.kumar@oracle.com,
- saeedm@nvidia.com, tariqt@nvidia.com
-References: <d9bea817-279c-4024-9bff-c258371b3de7@nvidia.com>
- <20250923062823.89874-1-pradyumn.rahar@oracle.com>
+Subject: Re: [Patch v7 02/12] perf/x86/intel: Fix NULL event access and
+ potential PEBS record loss
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <202509081646.d101cfb7-lkp@intel.com>
+ <e92a703d-6a92-474c-acba-b15176b97548@linux.intel.com>
 Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250923062823.89874-1-pradyumn.rahar@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e92a703d-6a92-474c-acba-b15176b97548@linux.intel.com>
 
+This is a multi-part message in MIME format.
+--------------KgCv4AkrF9hpUdidMMuweJxL
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi Oliver,
 
-On 23/09/2025 9:28, Pradyumn Rahar wrote:
-> The mlx5_irq_alloc() function can inadvertently free the entire rmap
-> and end up in a crash[1] when the other threads tries to access this,
-> when request_irq() fails due to exhausted IRQ vectors. This commit
-> modifies the cleanup to remove only the specific IRQ mapping that was
-> just added.
-> 
-> This prevents removal of other valid mappings and ensures precise
-> cleanup of the failed IRQ allocation's associated glue object.
-> 
-> Note: This error is observed when both fwctl and rds configs are enabled.
-> 
-> [1]
-> mlx5_core 0000:05:00.0: Successfully registered panic handler for port 1
-> mlx5_core 0000:05:00.0: mlx5_irq_alloc:293:(pid 66740): Failed to
-> request irq. err = -28
-> infiniband mlx5_0: mlx5_ib_test_wc:290:(pid 66740): Error -28 while
-> trying to test write-combining support
-> mlx5_core 0000:05:00.0: Successfully unregistered panic handler for port 1
-> mlx5_core 0000:06:00.0: Successfully registered panic handler for port 1
-> mlx5_core 0000:06:00.0: mlx5_irq_alloc:293:(pid 66740): Failed to
-> request irq. err = -28
-> infiniband mlx5_0: mlx5_ib_test_wc:290:(pid 66740): Error -28 while
-> trying to test write-combining support
-> mlx5_core 0000:06:00.0: Successfully unregistered panic handler for port 1
-> mlx5_core 0000:03:00.0: mlx5_irq_alloc:293:(pid 28895): Failed to
-> request irq. err = -28
-> mlx5_core 0000:05:00.0: mlx5_irq_alloc:293:(pid 28895): Failed to
-> request irq. err = -28
-> general protection fault, probably for non-canonical address
-> 0xe277a58fde16f291: 0000 [#1] SMP NOPTI
-> 
-> RIP: 0010:free_irq_cpu_rmap+0x23/0x7d
-> Call Trace:
->     <TASK>
->     ? show_trace_log_lvl+0x1d6/0x2f9
->     ? show_trace_log_lvl+0x1d6/0x2f9
->     ? mlx5_irq_alloc.cold+0x5d/0xf3 [mlx5_core]
->     ? __die_body.cold+0x8/0xa
->     ? die_addr+0x39/0x53
->     ? exc_general_protection+0x1c4/0x3e9
->     ? dev_vprintk_emit+0x5f/0x90
->     ? asm_exc_general_protection+0x22/0x27
->     ? free_irq_cpu_rmap+0x23/0x7d
->     mlx5_irq_alloc.cold+0x5d/0xf3 [mlx5_core]
->     irq_pool_request_vector+0x7d/0x90 [mlx5_core]
->     mlx5_irq_request+0x2e/0xe0 [mlx5_core]
->     mlx5_irq_request_vector+0xad/0xf7 [mlx5_core]
->     comp_irq_request_pci+0x64/0xf0 [mlx5_core]
->     create_comp_eq+0x71/0x385 [mlx5_core]
->     ? mlx5e_open_xdpsq+0x11c/0x230 [mlx5_core]
->     mlx5_comp_eqn_get+0x72/0x90 [mlx5_core]
->     ? xas_load+0x8/0x91
->     mlx5_comp_irqn_get+0x40/0x90 [mlx5_core]
->     mlx5e_open_channel+0x7d/0x3c7 [mlx5_core]
->     mlx5e_open_channels+0xad/0x250 [mlx5_core]
->     mlx5e_open_locked+0x3e/0x110 [mlx5_core]
->     mlx5e_open+0x23/0x70 [mlx5_core]
->     __dev_open+0xf1/0x1a5
->     __dev_change_flags+0x1e1/0x249
->     dev_change_flags+0x21/0x5c
->     do_setlink+0x28b/0xcc4
->     ? __nla_parse+0x22/0x3d
->     ? inet6_validate_link_af+0x6b/0x108
->     ? cpumask_next+0x1f/0x35
->     ? __snmp6_fill_stats64.constprop.0+0x66/0x107
->     ? __nla_validate_parse+0x48/0x1e6
->     __rtnl_newlink+0x5ff/0xa57
->     ? kmem_cache_alloc_trace+0x164/0x2ce
->     rtnl_newlink+0x44/0x6e
->     rtnetlink_rcv_msg+0x2bb/0x362
->     ? __netlink_sendskb+0x4c/0x6c
->     ? netlink_unicast+0x28f/0x2ce
->     ? rtnl_calcit.isra.0+0x150/0x146
->     netlink_rcv_skb+0x5f/0x112
->     netlink_unicast+0x213/0x2ce
->     netlink_sendmsg+0x24f/0x4d9
->     __sock_sendmsg+0x65/0x6a
->     ____sys_sendmsg+0x28f/0x2c9
->     ? import_iovec+0x17/0x2b
->     ___sys_sendmsg+0x97/0xe0
->     __sys_sendmsg+0x81/0xd8
->     do_syscall_64+0x35/0x87
->     entry_SYSCALL_64_after_hwframe+0x6e/0x0
-> RIP: 0033:0x7fc328603727
-> Code: c3 66 90 41 54 41 89 d4 55 48 89 f5 53 89 fb 48 83 ec 10 e8 0b ed
-> ff ff 44 89 e2 48 89 ee 89 df 41 89 c0 b8 2e 00 00 00 0f 05 <48> 3d 00
-> f0 ff ff 77 35 44 89 c7 48 89 44 24 08 e8 44 ed ff ff 48
-> RSP: 002b:00007ffe8eb3f1a0 EFLAGS: 00000293 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007fc328603727
-> RDX: 0000000000000000 RSI: 00007ffe8eb3f1f0 RDI: 000000000000000d
-> RBP: 00007ffe8eb3f1f0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007ffe8eb3f3c8 R15: 00007ffe8eb3f3bc
->     </TASK>
-> ---[ end trace f43ce73c3c2b13a2 ]---
-> RIP: 0010:free_irq_cpu_rmap+0x23/0x7d
-> Code: 0f 1f 80 00 00 00 00 48 85 ff 74 6b 55 48 89 fd 53 66 83 7f 06 00
-> 74 24 31 db 48 8b 55 08 0f b7 c3 48 8b 04 c2 48 85 c0 74 09 <8b> 38 31
-> f6 e8 c4 0a b8 ff 83 c3 01 66 3b 5d 06 72 de b8 ff ff ff
-> RSP: 0018:ff384881640eaca0 EFLAGS: 00010282
-> RAX: e277a58fde16f291 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: ff2335e2e20b3600 RSI: 0000000000000000 RDI: ff2335e2e20b3400
-> RBP: ff2335e2e20b3400 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 00000000ffffffe4 R12: ff384881640ead88
-> R13: ff2335c3760751e0 R14: ff2335e2e1672200 R15: ff2335c3760751f8
-> FS:  00007fc32ac22480(0000) GS:ff2335e2d6e00000(0000)
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f651ab54000 CR3: 00000029f1206003 CR4: 0000000000771ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> PKRU: 55555554
-> Kernel panic - not syncing: Fatal exception
-> Kernel Offset: 0x1dc00000 from 0xffffffff81000000 (relocation range:
-> 0xffffffff80000000-0xffffffffbfffffff)
-> kvm-guest: disable async PF for cpu 0
-> 
-> Fixes: 3354822cde5a ("net/mlx5: Use dynamic msix vectors allocation")
-> Signed-off-by: Mohith Kumar Thummaluru<mohith.k.kumar.thummaluru@oracle.com>
-> Tested-by: Mohith Kumar Thummaluru<mohith.k.kumar.thummaluru@oracle.com>
-> Reviewed-by: Moshe Shemesh<moshe@nvidia.com>
-> Signed-off-by: Pradyumn Rahar <pradyumn.rahar@oracle.com>
-> ---
-> v1->v2: removed unnecessary braces from if conditon.
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c b/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
-> index 692ef9c2f729..82ada674f8e2 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
-> @@ -324,10 +324,8 @@ struct mlx5_irq *mlx5_irq_alloc(struct mlx5_irq_pool *pool, int i,
->   	free_irq(irq->map.virq, &irq->nh);
->   err_req_irq:
->   #ifdef CONFIG_RFS_ACCEL
-> -	if (i && rmap && *rmap) {
-> -		free_irq_cpu_rmap(*rmap);
-> -		*rmap = NULL;
-> -	}
-> +	if (i && rmap && *rmap)
-> +		irq_cpu_rmap_remove(*rmap, irq->map.virq);
->   err_irq_rmap:
->   #endif
->   	if (i && pci_msix_can_alloc_dyn(dev->pdev))
-
-
-Acked-by: Tariq Toukan <tariqt@nvidia.com>
-
+Could you please help to validate the attached patch? The patch should fix
+this warning. (Please apply this patch on top of the whole patch series).
 Thanks.
+
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 65908880f424..ef32714cb182 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2821,8 +2821,11 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs
+*iregs, struct perf_sample_d
+                 * If collision happened, the record will be dropped.
+                 */
+                if (pebs_status != (1ULL << bit)) {
+-                       for_each_set_bit(i, (unsigned long *)&pebs_status,
+size)
++                       for_each_set_bit(i, (unsigned long *)&pebs_status,
+size) {
+                                error[i]++;
++                               if (error[i] && !events[i])
++                                       events[i] = cpuc->events[i];
++                       }
+                        continue;
+                }
+
+
+On 9/8/2025 5:05 PM, Mi, Dapeng wrote:
+> On 9/8/2025 4:43 PM, kernel test robot wrote:
+>> Hello,
+>>
+>> kernel test robot noticed "WARNING:at_arch/x86/events/intel/ds.c:#intel_pmu_drain_pebs_nhm" on:
+>>
+>> commit: a7138973beb1d124386472663cf50a571a2059ce ("[Patch v7 02/12] perf/x86/intel: Fix NULL event access and potential PEBS record loss")
+>> url: https://github.com/intel-lab-lkp/linux/commits/Dapeng-Mi/perf-x86-Remove-redundant-is_x86_event-prototype/20250828-094117
+>> patch link: https://lore.kernel.org/all/20250828013435.1528459-3-dapeng1.mi@linux.intel.com/
+>> patch subject: [Patch v7 02/12] perf/x86/intel: Fix NULL event access and potential PEBS record loss
+>>
+>> in testcase: phoronix-test-suite
+>> version: 
+>> with following parameters:
+>>
+>> 	test: stress-ng-1.11.0
+>> 	option_a: Socket Activity
+>> 	cpufreq_governor: performance
+>>
+>>
+>>
+>> config: x86_64-rhel-9.4
+>> compiler: gcc-12
+>> test machine: 96 threads 2 sockets Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz (Cascade Lake) with 512G memory
+>>
+>> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>>
+>>
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <oliver.sang@intel.com>
+>> | Closes: https://lore.kernel.org/oe-lkp/202509081646.d101cfb7-lkp@intel.com
+>>
+>>
+>>
+>> The kernel config and materials to reproduce are available at:
+>> https://download.01.org/0day-ci/archive/20250908/202509081646.d101cfb7-lkp@intel.com
+>>
+>>
+>> the dmesg in above link is not very clear, so we also attached one dmesg FYI,
+>> from which:
+>>
+>> [   41.225784][   C82] ------------[ cut here ]------------
+>> [   41.225786][   C82] WARNING: CPU: 82 PID: 3704 at arch/x86/events/intel/ds.c:2592 intel_pmu_drain_pebs_nhm+0x56b/0x630
+>> [   41.225791][   C82] Modules linked in: xt_conntrack nft_chain_nat xt_MASQUERADE nf_nat nf_conntrack_netlink nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4
+>> xt_addrtype nft_compat nf_tables nfnetlink br_netfilter bridge stp llc dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio qrtr sg binfmt_misc loop fus
+>> e dm_mod overlay btrfs blake2b_generic xor raid6_pq intel_rapl_msr intel_rapl_common intel_uncore_frequency intel_uncore_frequency_common skx_edac skx_eda
+>> c_common nfit libnvdimm x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irdma sd_mod ast irqbypass ice ipmi_ssif drm_client_lib snd_pcm ghash
+>> _clmulni_intel drm_shmem_helper snd_timer gnss rapl drm_kms_helper intel_cstate snd ahci ib_uverbs libahci mei_me soundcore acpi_power_meter i2c_i801 ioat
+>> dma drm ib_core pcspkr intel_uncore ipmi_si acpi_ipmi libata mei joydev i2c_smbus intel_pch_thermal lpc_ich dca wmi ipmi_devintf ipmi_msghandler acpi_pad
+>> [   41.225831][   C82] CPU: 82 UID: 0 PID: 3704 Comm: sleep Tainted: G S                  6.17.0-rc1-00052-ga7138973beb1 #1 VOLUNTARY
+>> [   41.225834][   C82] Tainted: [S]=CPU_OUT_OF_SPEC
+>> [   41.225835][   C82] Hardware name: Intel Corporation S2600WFT/S2600WFT, BIOS SE5C620.86B.02.01.0008.031920191559 03/19/2019
+>> [   41.225836][   C82] RIP: 0010:intel_pmu_drain_pebs_nhm+0x56b/0x630
+>> [   41.225839][   C82] Code: 48 e8 b9 cd fe ff 85 c0 0f 84 a9 00 00 00 41 f6 84 24 a4 01 00 00 80 0f 84 9a 00 00 00 4c 89 ef e8 1a 2a 34 00 e9 c7 fc ff ff
+>>  <0f> 0b e9 c0 fc ff ff 0f 0b e9 b9 fc ff ff 48 8b 04 cb 48 89 84 cc
+>> [   41.225841][   C82] RSP: 0018:fffffe00012f38c0 EFLAGS: 00010046
+>> [   41.225843][   C82] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+>> [   41.225844][   C82] RDX: 0000000000000001 RSI: 0000000000000004 RDI: fffffe00012f3900
+>> [   41.225845][   C82] RBP: fffffe00013120c8 R08: 0000000000000000 R09: 0000000000000000
+>> [   20.931889][ T1340] Error: Driver 'pcspkr' is already registered, aborting...
+>> [   41.225846][   C82] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+>> [   41.225847][   C82] R13: 0000000000000000 R14: fffffe00012f3c80 R15: 0000000000000000
+>> [   41.225848][   C82] FS:  0000000000000000(0000) GS:ffff88f027c62000(0000) knlGS:0000000000000000
+>> [   21.006859][ T1512] sd 6:0:0:0: Attached scsi generic sg0 type 0
+>> [   21.013583][ T1512] sd 7:0:0:0: Attached scsi generic sg1 type 0
+>> [   41.225849][   C82] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   41.225851][   C82] CR2: 00007ffe5571fe7c CR3: 00000040c5ae1003 CR4: 00000000007726f0
+>> [   41.225852][   C82] PKRU: 55555554
+>> [   41.225853][   C82] Call Trace:
+>> [   41.225855][   C82]  <NMI>
+>> [   41.225861][   C82]  handle_pmi_common+0x29b/0x430
+>> [   41.225865][   C82]  intel_pmu_handle_irq+0x109/0x2b0
+>> [   41.225867][   C82]  perf_event_nmi_handler+0x2a/0x70
+>> [   41.225870][   C82]  nmi_handle+0x53/0x130
+>> [   41.225873][   C82]  default_do_nmi+0x11d/0x170
+>> [   41.225876][   C82]  exc_nmi+0x106/0x1b0
+>> [   41.225878][   C82]  end_repeat_nmi+0xf/0x53
+>> [   41.225880][   C82] RIP: 0010:find_next_fd+0x2a/0xb0
+>> [   41.225883][   C82] Code: 0f 1f 44 00 00 41 54 89 f2 48 c7 c0 ff ff ff ff 49 89 fc 55 c1 ea 06 53 89 f3 48 8b 77 18 89 d9 48 d3 e0 48 f7 d0 48 0b 04 d6
+>>  <48> 83 f8 ff 74 0d 48 f7 d0 f3 48 0f bc c0 83 f8 3f 76 3a 41 8b 2c
+>> [   41.225885][   C82] RSP: 0018:ffffc90025283b90 EFLAGS: 00000206
+>> [   41.225886][   C82] RAX: 0000000000000017 RBX: 0000000000000003 RCX: 0000000000000003
+>> [   41.225887][   C82] RDX: 0000000000000000 RSI: ffff88f06d277150 RDI: ffff88f06d2770e8
+>> [   41.225888][   C82] RBP: 0000000000000400 R08: 8080808080808080 R09: 979c8d9e9a8cdfff
+>> [   41.225889][   C82] R10: fefefefefefefeff R11: 0000000000000000 R12: ffff88f06d2770e8
+>> [   41.225890][   C82] R13: 0000000000088000 R14: ffff88f06d2770c0 R15: ffff88f06d2770e8
+>> [   41.225893][   C82]  ? find_next_fd+0x2a/0xb0
+>> [   41.225896][   C82]  ? find_next_fd+0x2a/0xb0
+>> [   41.225899][   C82]  </NMI>
+>> [   41.225899][   C82]  <TASK>
+>> [   41.225900][   C82]  alloc_fd+0x55/0x130
+>> [   41.225902][   C82]  do_sys_openat2+0x5a/0xf0
+>> [   41.225905][   C82]  __x64_sys_openat+0x6d/0xb0
+>> [   41.225907][   C82]  do_syscall_64+0x7f/0x2b0
+>> [   41.225909][   C82]  ? vfs_statx+0x68/0x170
+>> [   41.225911][   C82]  ? strncpy_from_user+0x26/0xf0
+>> [   41.225914][   C82]  ? vfs_fstatat+0x75/0xb0
+>> [   41.225917][   C82]  ? __do_sys_newfstatat+0x25/0x70
+>> [   41.225919][   C82]  ? path_openat+0xb6/0x2b0
+>> [   41.225921][   C82]  ? do_syscall_64+0x7f/0x2b0
+>> [   41.225922][   C82]  ? do_filp_open+0xc3/0x170
+>> [   41.225924][   C82]  ? do_syscall_64+0x7f/0x2b0
+>> [   41.225925][   C82]  ? __cond_resched+0x1e/0x70
+>> [   41.225928][   C82]  ? check_heap_object+0x34/0x1b0
+>> [   41.225931][   C82]  ? __check_object_size+0x5c/0x130
+>> [   41.225933][   C82]  ? do_sys_openat2+0x8a/0xf0
+>> [   41.225936][   C82]  ? __x64_sys_openat+0x6d/0xb0
+>> [   41.225938][   C82]  ? clear_bhb_loop+0x30/0x80
+>> [   41.225940][   C82]  ? clear_bhb_loop+0x30/0x80
+>> [   41.225942][   C82]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>> [   41.225944][   C82] RIP: 0033:0x7eff04bb9a2d
+>> [   41.225946][   C82] Code: 48 89 54 24 e0 41 83 e2 40 75 32 89 f0 25 00 00 41 00 3d 00 00 41 00 74 24 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff ff 0f 05
+>>  <48> 3d 00 f0 ff ff 77 33 c3 66 2e 0f 1f 84 00 00 00 00 00 48 8d 44
+>> [   41.225947][   C82] RSP: 002b:00007ffe5571f7e8 EFLAGS: 00000287 ORIG_RAX: 0000000000000101
+>> [   41.225949][   C82] RAX: ffffffffffffffda RBX: 0000558b3236dbe6 RCX: 00007eff04bb9a2d
+>> [   41.225950][   C82] RDX: 0000000000080000 RSI: 00007eff04bc20b1 RDI: 00000000ffffff9c
+>> [   41.225951][   C82] RBP: 00007eff04bcd1f8 R08: 0000000000000000 R09: 0000558b3236dbe6
+>> [   41.225952][   C82] R10: 0000000000000000 R11: 0000000000000287 R12: ffffffffffffffff
+>> [   41.225953][   C82] R13: 0000000000000001 R14: 00007eff04bcc020 R15: 00007eff04bcd6b8
+>> [   41.225954][   C82]  </TASK>
+>> [   41.225955][   C82] ---[ end trace 0000000000000000 ]---
+>>
+>>
+> It looks the warning is triggered in the  "error[i] != 0" case and lead to
+> the local events[] array is not initialized. Would fix it in next version.
+>
+>
+>
+>
+--------------KgCv4AkrF9hpUdidMMuweJxL
+Content-Type: text/plain; charset=UTF-8;
+ name="0001-perf-x86-intel-Fix-NULL-event-access-waring-from-tes.patch"
+Content-Disposition: attachment;
+ filename*0="0001-perf-x86-intel-Fix-NULL-event-access-waring-from-tes.pa";
+ filename*1="tch"
+Content-Transfer-Encoding: base64
+
+RnJvbSAwYWZjMDc2YTc4MzY0MzNiNDU1YzhhZmYxNWQ0YTNhZDk2MzFlYmMyIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBEYXBlbmcgTWkgPGRhcGVuZzEubWlAbGludXguaW50
+ZWwuY29tPgpEYXRlOiBTdW4sIDI4IFNlcCAyMDI1IDEzOjUwOjQ3ICswODAwClN1YmplY3Q6
+IFtQQVRDSF0gcGVyZi94ODYvaW50ZWw6IEZpeCBOVUxMIGV2ZW50IGFjY2VzcyB3YXJpbmcg
+ZnJvbSB0ZXN0IHJvYm90CgpUaGlzIHBhdGNoIGZpeGVzIHRoZSB3YXJuaW5nIGFib3V0Cmh0
+dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDkwODE2NDYuZDEwMWNmYjctbGtwQGlu
+dGVsLmNvbS8uCgpTaWduZWQtb2ZmLWJ5OiBEYXBlbmcgTWkgPGRhcGVuZzEubWlAbGludXgu
+aW50ZWwuY29tPgotLS0KIGFyY2gveDg2L2V2ZW50cy9pbnRlbC9kcy5jIHwgNSArKysrLQog
+MSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAt
+LWdpdCBhL2FyY2gveDg2L2V2ZW50cy9pbnRlbC9kcy5jIGIvYXJjaC94ODYvZXZlbnRzL2lu
+dGVsL2RzLmMKaW5kZXggNjU5MDg4ODBmNDI0Li5lZjMyNzE0Y2IxODIgMTAwNjQ0Ci0tLSBh
+L2FyY2gveDg2L2V2ZW50cy9pbnRlbC9kcy5jCisrKyBiL2FyY2gveDg2L2V2ZW50cy9pbnRl
+bC9kcy5jCkBAIC0yODIxLDggKzI4MjEsMTEgQEAgc3RhdGljIHZvaWQgaW50ZWxfcG11X2Ry
+YWluX3BlYnNfbmhtKHN0cnVjdCBwdF9yZWdzICppcmVncywgc3RydWN0IHBlcmZfc2FtcGxl
+X2QKIAkJICogSWYgY29sbGlzaW9uIGhhcHBlbmVkLCB0aGUgcmVjb3JkIHdpbGwgYmUgZHJv
+cHBlZC4KIAkJICovCiAJCWlmIChwZWJzX3N0YXR1cyAhPSAoMVVMTCA8PCBiaXQpKSB7Ci0J
+CQlmb3JfZWFjaF9zZXRfYml0KGksICh1bnNpZ25lZCBsb25nICopJnBlYnNfc3RhdHVzLCBz
+aXplKQorCQkJZm9yX2VhY2hfc2V0X2JpdChpLCAodW5zaWduZWQgbG9uZyAqKSZwZWJzX3N0
+YXR1cywgc2l6ZSkgewogCQkJCWVycm9yW2ldKys7CisJCQkJaWYgKGVycm9yW2ldICYmICFl
+dmVudHNbaV0pCisJCQkJCWV2ZW50c1tpXSA9IGNwdWMtPmV2ZW50c1tpXTsKKwkJCX0KIAkJ
+CWNvbnRpbnVlOwogCQl9CiAKLS0gCjIuMzQuMQoK
+
+--------------KgCv4AkrF9hpUdidMMuweJxL--
 
