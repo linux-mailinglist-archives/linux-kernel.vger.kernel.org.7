@@ -1,84 +1,94 @@
-Return-Path: <linux-kernel+bounces-835469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA28BA73A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:04:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2E7BA73B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C91BA17A8C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58BB1895F20
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BBE24397A;
-	Sun, 28 Sep 2025 15:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BF2218AB9;
+	Sun, 28 Sep 2025 15:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsaEhpye"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUkLj1bt"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACFA242910;
-	Sun, 28 Sep 2025 15:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED7F139D
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 15:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759071795; cv=none; b=Leds09qzvLBZo4t4rxNlECMJ1lWI/B9WJ7uknEJ+W/3IP0qKSmXpNA0YUPE0cM7d/O9Pwy2H32ccBQM6p1vlOYYnSg/G76Lv7ntuAtYmiLp1F5YmJxNyYQ9zafPMY5SabKvlR61y7VzjxgyD8y0SuzACS9E8BaCi48VN7GJWTj0=
+	t=1759072481; cv=none; b=cNkB93IDPSWdH1PHwR2yNL3EJ4oLhLxLZG3cCMU5i6Zcu/ayF7aPmDeRZCQCAup0IcyvvkE5L3BbZlrsnuu4jySaE819WtrYx0FI2sKBiGj2dF/CyuTcAqOh591K3sMmvnI83b2pQQJaCw5s1SOFCBTCE7pqoKgew63lgus0aTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759071795; c=relaxed/simple;
-	bh=Nw/X8vX+8f0l2pbMmARhDnsF0lUGz2K7mDJQIwz58Is=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ab3tPgRjnRElIfquSzYo5FRSVOplFWcJuGN48bNDPrF9MNh2jj3XnXU5uzvkNfMUvk7bGoOFKIGx4ayVvh5NJ2avYsiHrdb/L2emy2r6qYHjs/Dkz1JrbehwS620xTceO/fALgJIghSr3yraeNroRfJJN4qHeB6Xut8xbrHnQhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsaEhpye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1811C116C6;
-	Sun, 28 Sep 2025 15:03:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759071794;
-	bh=Nw/X8vX+8f0l2pbMmARhDnsF0lUGz2K7mDJQIwz58Is=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FsaEhpyeGH3xgtFa1Y8w5h7Ts5l82ievUD0lfLRGlqV4tl7HVv9bjHbYliznmCWjs
-	 XIswOwbrLhL/lqBZDDpgUGa8gdF4R6bcCbJBPSqa9GRkFwHJMd2nGn9jeZAzizyOfu
-	 54DTvGsE/K3wvtVyzMCHvcvGz9R9dmQ3OT+/w0ZCM3FzAhtlqzlY+kCeIKxno1O0Od
-	 C1Ih5862x6UMYSCAAaLZ2E1CW3M0tASDzvlC2jUWGNlTgPEIUjab8JpmERGcGq50t3
-	 CdD1LnfZcH17lDECmZ4j1WinLIfELZhHuaYwgHhdXOlf+ghx9/qq03uAwI9Cvhcn38
-	 JtS6nCcss5SzQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Geoff Levand <geoff@infradead.org>,
-	Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	iommu@lists.linux.dev,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	sparclinux@vger.kernel.org,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	s=arc-20240116; t=1759072481; c=relaxed/simple;
+	bh=CDMAwGb99g0u5zZtDjfzfeLGp6qPyMQ3iSXm2SNLDVs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=NhxeNfHIR3i5dBFmYNaSInosVYQvmcwllOBbZbW7ce9FR1xDxngOegGpAREjFp4nsmicTWTI9DmcoUoKxzfA1kxVcN3ovKxb5Lfc2ONquYCJS1xaK6AKSRqpn4gv+9tSeZ1/JZeftFS50CP+xjW75VCylZhLdFZEz2QnUthlMK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUkLj1bt; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3853998b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759072479; x=1759677279; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XaB3l4Mr/O4ed0cROnds4AszeErwSzJiBj5Hjg3S0rU=;
+        b=DUkLj1bt/Key+OEDAkflPPruZ//HaK1who/SQv02uuOas7xtv5JlZQAVEcm4BZLf/9
+         WyL1mGI0dxX6Ma2uW2sqHXsOYkfTXBcxuV4KGQ548ldf9nykKF+/ymLHEnGw730+WFXg
+         Jzvw3tjCphdcmzOQdMNkOnOBKogVRQa3bRMbzeFQRKdTYQSAywNCHf/Td4OmsqsbvTw1
+         qjJqSwUjnn578hof2nbJbANIZkIGnGuEBi0l8sYlDjAxZIcxtL+IZPt3UbJUVBS5Zj/K
+         XUA1E4FO+wI0+UKguVJpTgT5xd5Xgg7/XTsSgEgKbrgbJFs7+3KOWIx0k0QaYVx9rTz5
+         2wmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759072479; x=1759677279;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XaB3l4Mr/O4ed0cROnds4AszeErwSzJiBj5Hjg3S0rU=;
+        b=INSDKHVhkwgMU74n6C5u+P6mOyr+ibc2Hp0obZ+pFbfUdmm2oWIhHqbJCT9uwFLk8d
+         EaNOKOvC0s+sjAtRyaxWf4IgD4KTfUm0S/WPiuLsD2/f8+xZ21dKYwC9wBpRAUtbIOpf
+         duotvw28v3hBvcF29sJz2NJWJ93KdYJZexzA6qRh2QbrJZtbty1QS14IYW8+2jXn1G4O
+         tEMdCfugp3Xux/5pZw3tpQgaS9xeu8OsCH0b493phqqUzf+wBPOfgxuiOjKY2PBGhdr4
+         GkcYV8TZpf+7MLbZjc+p8NNceL+x0QiHeRgT4pD36s1LnqpUt2+FKb5HlppK3Q8AtLjq
+         qGZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5pj3hF081FELY9gCdxd8MN0HdXJQqHB6M1zT+TGXjmwu+l94HI8/25oo4l8b+oB7E0l2HAawoZRuPK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyROMXHtajE69iHNwvNQq7d/RzRYjf3af80gZeM6XeyC92YlbhK
+	0Jb178lqnAs/wRrtDi1olEJOv0MUErlNj2gp9PlmA65G4+fnvDrEUoNX
+X-Gm-Gg: ASbGnct1CLS+FUTiCqec4NL2in73CBGtmacqPkms5w1AyPEDbOXPMQq3e1WYlNuFLWS
+	Djf3aHnsusV0F04DHM04Ce5xGpn8ENlIxwj+Pp/8Ppyx5psCCIP2EmdK8tbzafQmJ41ppLMqzDr
+	JRPYHZ9hSIqTopxs7fWb0CRqX/7wTQN3g3qhETSNivDEcPbuS/ulSEV2ZHwzmybGueAJyi1hHpq
+	PGKzrh4tVM7uqmE17sj4SpD0ODuYRqDnvfuh0jF/mwPUM3vWMHcwFAtzZzsEV4w5N+ACze/JFA/
+	mqVkgci3GGrz+RJ0mcd8XHVGo8fjnlPov08Wk1CsZYTqdytGhlXv9GmiMTJrIxkN1mSYhVsEk+z
+	dEjRyMGtwgOEqsEEslsogdlP7GFoLmtBf1BuQJA3jtW8WNVnq
+X-Google-Smtp-Source: AGHT+IE4mmlOb2rS0tnqQhYepSyP8oTSLAYM7W8aDF1hwkK13jMWx3UYCzuh8SZVIhGb7llWLYYKDQ==
+X-Received: by 2002:a05:6300:4ca:20b0:2fc:d558:78a9 with SMTP id adf61e73a8af0-2fcd5587a41mr6066982637.28.1759072479401;
+        Sun, 28 Sep 2025 08:14:39 -0700 (PDT)
+Received: from localhost.localdomain ([202.8.105.115])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7820d7020a8sm3127153b3a.93.2025.09.28.08.14.34
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 28 Sep 2025 08:14:38 -0700 (PDT)
+From: Jemmy Wong <jemmywong512@gmail.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	virtualization@lists.linux.dev,
-	x86@kernel.org,
-	xen-devel@lists.xenproject.org,
-	Magnus Lindholm <linmag7@gmail.com>
-Subject: [PATCH v1 9/9] dma-mapping: remove unused map_page callback
-Date: Sun, 28 Sep 2025 18:02:29 +0300
-Message-ID: <27727b8ef9b3ad55a3a28f9622a62561c9988335.1759071169.git.leon@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1759071169.git.leon@kernel.org>
-References: <cover.1759071169.git.leon@kernel.org>
+	Andy Lutomirski <luto@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Jemmy Wong <jemmywong512@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched: Add _TIF_NEED_RESCHED_LAZY to __resched_curr check
+Date: Sun, 28 Sep 2025 23:14:21 +0800
+Message-ID: <20250928151421.60919-1-jemmywong512@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,94 +97,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Leon Romanovsky <leonro@nvidia.com>
+The TIF_NEED_RESCHED_LAZY flag can be set multiple times in a single
+call path. For example:
 
-After conversion of arch code to use physical address mapping,
-there are no users of .map_page() and .unmap_page() callbacks,
-so let's remove them.
+entity_tick()
+    update_curr(cfs_rq);
+        resched_curr_lazy(rq);
+    resched_curr_lazy(rq_of(cfs_rq));
 
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Add a check in resched_curr_lazy() to return early if the flag is
+already set, avoiding redundant operations.
+
+Signed-off-by: Jemmy Wong <jemmywong512@gmail.com>
+
 ---
- include/linux/dma-map-ops.h |  7 -------
- kernel/dma/mapping.c        | 12 ------------
- kernel/dma/ops_helpers.c    |  8 +-------
- 3 files changed, 1 insertion(+), 26 deletions(-)
+ include/linux/sched.h       | 2 +-
+ include/linux/thread_info.h | 2 ++
+ kernel/entry/common.c       | 2 +-
+ kernel/entry/kvm.c          | 2 +-
+ kernel/sched/core.c         | 2 +-
+ 5 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
-index a2ec1566aa27..e0a78991fa8a 100644
---- a/include/linux/dma-map-ops.h
-+++ b/include/linux/dma-map-ops.h
-@@ -31,13 +31,6 @@ struct dma_map_ops {
- 			void *cpu_addr, dma_addr_t dma_addr, size_t size,
- 			unsigned long attrs);
- 
--	dma_addr_t (*map_page)(struct device *dev, struct page *page,
--			unsigned long offset, size_t size,
--			enum dma_data_direction dir, unsigned long attrs);
--	void (*unmap_page)(struct device *dev, dma_addr_t dma_handle,
--			size_t size, enum dma_data_direction dir,
--			unsigned long attrs);
--
- 	dma_addr_t (*map_phys)(struct device *dev, phys_addr_t phys,
- 			size_t size, enum dma_data_direction dir,
- 			unsigned long attrs);
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 32a85bfdf873..37163eb49f9f 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -171,16 +171,6 @@ dma_addr_t dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
- 		addr = iommu_dma_map_phys(dev, phys, size, dir, attrs);
- 	else if (ops->map_phys)
- 		addr = ops->map_phys(dev, phys, size, dir, attrs);
--	else if (!is_mmio && ops->map_page) {
--		struct page *page = phys_to_page(phys);
--		size_t offset = offset_in_page(phys);
--
--		/*
--		 * The dma_ops API contract for ops->map_page() requires
--		 * kmappable memory.
--		 */
--		addr = ops->map_page(dev, page, offset, size, dir, attrs);
--	}
- 
- 	if (!is_mmio)
- 		kmsan_handle_dma(phys, size, dir);
-@@ -222,8 +212,6 @@ void dma_unmap_phys(struct device *dev, dma_addr_t addr, size_t size,
- 		iommu_dma_unmap_phys(dev, addr, size, dir, attrs);
- 	else if (ops->unmap_phys)
- 		ops->unmap_phys(dev, addr, size, dir, attrs);
--	else
--		ops->unmap_page(dev, addr, size, dir, attrs);
- 	trace_dma_unmap_phys(dev, addr, size, dir, attrs);
- 	debug_dma_unmap_phys(dev, addr, size, dir);
- }
-diff --git a/kernel/dma/ops_helpers.c b/kernel/dma/ops_helpers.c
-index 1eccbdbc99c1..20caf9cabf69 100644
---- a/kernel/dma/ops_helpers.c
-+++ b/kernel/dma/ops_helpers.c
-@@ -76,11 +76,8 @@ struct page *dma_common_alloc_pages(struct device *dev, size_t size,
- 	if (use_dma_iommu(dev))
- 		*dma_handle = iommu_dma_map_phys(dev, phys, size, dir,
- 						 DMA_ATTR_SKIP_CPU_SYNC);
--	else if (ops->map_phys)
--		*dma_handle = ops->map_phys(dev, phys, size, dir,
--					    DMA_ATTR_SKIP_CPU_SYNC);
- 	else
--		*dma_handle = ops->map_page(dev, page, 0, size, dir,
-+		*dma_handle = ops->map_phys(dev, phys, size, dir,
- 					    DMA_ATTR_SKIP_CPU_SYNC);
- 	if (*dma_handle == DMA_MAPPING_ERROR) {
- 		dma_free_contiguous(dev, page, size);
-@@ -102,8 +99,5 @@ void dma_common_free_pages(struct device *dev, size_t size, struct page *page,
- 	else if (ops->unmap_phys)
- 		ops->unmap_phys(dev, dma_handle, size, dir,
- 				DMA_ATTR_SKIP_CPU_SYNC);
--	else if (ops->unmap_page)
--		ops->unmap_page(dev, dma_handle, size, dir,
--				DMA_ATTR_SKIP_CPU_SYNC);
- 	dma_free_contiguous(dev, page, size);
- }
--- 
-2.51.0
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index e4ce0a76831e..5946434b2dc4 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2041,7 +2041,7 @@ static inline void set_tsk_need_resched(struct task_struct *tsk)
 
+ static inline void clear_tsk_need_resched(struct task_struct *tsk)
+ {
+-	atomic_long_andnot(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY,
++	atomic_long_andnot(_TIF_NEED_RESCHED_MUSK,
+ 			  (atomic_long_t *)&task_thread_info(tsk)->flags);
+ }
+
+diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+index dd925d84fa46..a7512ab612ad 100644
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -67,6 +67,8 @@ enum syscall_work_bit {
+ #define _TIF_NEED_RESCHED_LAZY _TIF_NEED_RESCHED
+ #endif
+
++#define _TIF_NEED_RESCHED_MUSK (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY)
++
+ #ifdef __KERNEL__
+
+ #ifndef arch_set_restart_data
+diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+index 408d28b5179d..ac6eff43d07e 100644
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -27,7 +27,7 @@ __always_inline unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+
+ 		local_irq_enable_exit_to_user(ti_work);
+
+-		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
++		if (ti_work & _TIF_NEED_RESCHED_MUSK)
+ 			schedule();
+
+ 		if (ti_work & _TIF_UPROBE)
+diff --git a/kernel/entry/kvm.c b/kernel/entry/kvm.c
+index 8485f63863af..cacb24f0fc86 100644
+--- a/kernel/entry/kvm.c
++++ b/kernel/entry/kvm.c
+@@ -13,7 +13,7 @@ static int xfer_to_guest_mode_work(struct kvm_vcpu *vcpu, unsigned long ti_work)
+ 			return -EINTR;
+ 		}
+
+-		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
++		if (ti_work & _TIF_NEED_RESCHED_MUSK)
+ 			schedule();
+
+ 		if (ti_work & _TIF_NOTIFY_RESUME)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ccba6fc3c3fe..15bf4b132153 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1108,7 +1108,7 @@ static void __resched_curr(struct rq *rq, int tif)
+ 	if (is_idle_task(curr) && tif == TIF_NEED_RESCHED_LAZY)
+ 		tif = TIF_NEED_RESCHED;
+
+-	if (cti->flags & ((1 << tif) | _TIF_NEED_RESCHED))
++	if (cti->flags & ((1 << tif) | _TIF_NEED_RESCHED_MUSK))
+ 		return;
+
+ 	cpu = cpu_of(rq);
+--
+2.50.1 (Apple Git-155)
 
