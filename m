@@ -1,201 +1,144 @@
-Return-Path: <linux-kernel+bounces-835339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C6BBA6CB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:04:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D435BA6CBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21553B2F9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:04:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DC097A2F01
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4BD2D12EF;
-	Sun, 28 Sep 2025 09:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278B52D193B;
+	Sun, 28 Sep 2025 09:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="qPAYykua"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013035.outbound.protection.outlook.com [40.107.159.35])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="ImulV0iQ"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41C42D0C9D;
-	Sun, 28 Sep 2025 09:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759050233; cv=fail; b=T3GJ1UM2VMUEcwuiVQj8Fit2TY8rN3xd5iRA5XpyB9PP4+BVvWoOO+fZiAAnT+I9juBNcsrjWGamRl90ZrIMSOY+VtjnwuExuqyCfCwR0hdXPjIZpQ+qM6d662nv/zamGJCPEf0D81EQw0GLPQ+K+0DZduNiDAmjNBphNv5NByo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759050233; c=relaxed/simple;
-	bh=/vtKL19T55dPkRlAelQG+/9Sc2HLnpAXUDKzHHYYJMI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cH70tDWWAyC+VdVtjLibSK/RWGQPvhER1FE7Ar8qSLh+AjBhtVwvO1qUQA6EzAO4MbHbbJZHi6/7DjMwH7rnbkjWD0qEWbfTebQVzVhgVW32o/CsHbAcPULIThO4KCPVDDV6YfSFl0pvSC68StYG5lq0MlXnIYTtFBtQULohOrU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=qPAYykua; arc=fail smtp.client-ip=40.107.159.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LLNfU39ByQF8L0Q7adpAayXAkL8BWFTTpr6QwjNSp28ezJ8pmwqDKL0VrjdnkuVCKBt/u+TOcrGYJFV6sLnExIwlVH1QYz9PWD7LHVM81nqBILqdMBx0Qk1dqy1lYGwTy7biwbHeeIpNPI6pwFpm0+AEPsQ9hf38c7EiYBEQeQ9yta9/O1yiU5WawtAYiFpup74FHs4cguaAD4OlRcUB9LlxHyCEtZPqUXSbbbU0lvCpOriTuqSPcufJTwPOlF4ETfEbSYm+Yl4GbkYS9QKnO/6MI5c3oTatNSe1i4eP8/2zj5NnUTZKG2wV8aV9g5wC4a8jfI598dr9GlOQpz1pIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VEaZZ72mspNTASiE4HYy/1H8weAC7yYw3VK4Xl5LZJI=;
- b=AzROYmZyFf1nbw4CZuLrNaByB97XwN1Dn6EmgLBYThPAQ0xbDHGTlVBMajsY50aahPT7inybVS9woKDCZEd6QUOXdOzNftHI5hHso/gRiaWnqHSJ3WLHBKVf6dEqC7l/xDtaWQqx07VxG0sUKn+o2DcdfnlZQWUgaRKxCLnzELK9RXyv9qSuPRi6gGt+PJqx9N6PKoFHcMJ4DUEYnaoHRflOFylPZPWyt9Mcmr0MXGXjOA53IqUHZEB6CIME8gW5N0kKpuu/NUEiF8GMowonsAjGkQjDxWujCk+ih5ij21WWkSgTPKn66PSs7JD5scf5l1Azus0KfFaWmqUsx4uyQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VEaZZ72mspNTASiE4HYy/1H8weAC7yYw3VK4Xl5LZJI=;
- b=qPAYykuaFJYJ3YGbWQ0TRIT7riusoy2LIQ3aqp6lZM3YgHpQlkGipPQKY9ntI6IQfrrE9BflUP3Ur5Jhx17u9/mgZi442Q8HN8q3P25wqKIhL/OCGtnIt8+PETHGXM7ggsuyry5zO3FOWiDKAOYUnbknV57ZTne09njQBhZkBNgoNCabNZbMxZTSpf9bT+ftfXew5k5cKQlXCzl+7lXo1P4nzvlIqMa4y8gtoZdxfUVN4kn/43rhTTTVmPN/CO7C+PPR/MMWZXEr3HEhYmeAm7Pn467a1gjhT8at1JB9dHI/5pPiAVz+uUSbEeAy3CcjHe/1MmoUP1nV/c2jZmz6Dw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS4PR04MB9624.eurprd04.prod.outlook.com (2603:10a6:20b:4ce::9)
- by GV2PR04MB11302.eurprd04.prod.outlook.com (2603:10a6:150:2ae::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sun, 28 Sep
- 2025 09:03:47 +0000
-Received: from AS4PR04MB9624.eurprd04.prod.outlook.com
- ([fe80::fa4e:dc6f:3f71:13b7]) by AS4PR04MB9624.eurprd04.prod.outlook.com
- ([fe80::fa4e:dc6f:3f71:13b7%4]) with mapi id 15.20.9160.013; Sun, 28 Sep 2025
- 09:03:47 +0000
-From: Rain Yang <jiyu.yang@oss.nxp.com>
-To: imx@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B2B2D12EA;
+	Sun, 28 Sep 2025 09:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759050305; cv=none; b=Hyn+J2nh2qjkHp/O2AHlpSvDNPrjt+GfPYhO45hVeSkGG93oAtNMDHrE+UCNYQV5weRaFI4at0n2fNO07x4+CZ6uKlSO13rX2iVLEFJJtBBjxppkDvVXXDGebZxD23RifTtptg5WgYfDozfaMltdBw3v2a8zaY5ZwfXnY0j1hZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759050305; c=relaxed/simple;
+	bh=17D7Os5sRAj4H/OLbJKtd+O3Kai5YbvhYWbdpkz1ibw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZqEWIMxcCGHSoADK+kzy+yKTsXeAT8RLuKKDOwYUWz9DGyt7j1n2jQo1vfiPU+KMt90PYi72aa5DKBXJ+aVgZXTCelhEwUhT40allelDlyo+q0puApWziOtQvS3heczsqnVcn0ROYQvH9WFeVzXlw+y42vSUgKEdymHMP2aLgjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=ImulV0iQ; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1759050286;
+	bh=A5XNR7o7T9bmHUiLwBsgkJ4yBPqbpMEyQqeUzOe4SXs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=ImulV0iQU+H0ZIQBDEeFdIqPecf0DTpSX/8p8uH6Wv5bzl1Y8YCsptoNE3xbkyQwU
+	 kq5YO47vkrLWjY4SXCs/kbZBb0X68J+9wi7Gc+ekBt5kc6cwH+KggMHmZfOqOx09mk
+	 QyH98HvdcSaWB0Y5FXvdYRIqyzvnRi7d5PVH+YEg=
+X-QQ-mid: zesmtpgz7t1759050284t3bf2e7e3
+X-QQ-Originating-IP: 5XgI999sx5jfiBgGyK3YT6uH/AVd7s0Bwsp5x2yvagA=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 28 Sep 2025 17:04:43 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5680258146245078500
+EX-QQ-RecipientCnt: 15
+Date: Sun, 28 Sep 2025 17:04:43 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Yixun Lan <dlan@gentoo.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Troy Mitchell <troy.mitchell@linux.dev>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Cc: boris.brezillon@collabora.com,
-	steven.price@arm.com,
-	liviu.dudau@arm.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.co,
-	simona@ffwll.ch,
-	marek.vasut@mailbox.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Rain Yang <jiyu.yang@nxp.com>
-Subject: [PATCH v2 2/2] drm/panthor: skip regulator setup if no such prop
-Date: Sun, 28 Sep 2025 17:03:34 +0800
-Message-Id: <20250928090334.35389-2-jiyu.yang@oss.nxp.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250928090334.35389-1-jiyu.yang@oss.nxp.com>
-References: <20250928090334.35389-1-jiyu.yang@oss.nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG3P274CA0001.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::13)
- To AS4PR04MB9624.eurprd04.prod.outlook.com (2603:10a6:20b:4ce::9)
+Subject: Re: [PATCH 2/2] riscv: dts: spacemit: Add MusePi Pro board device
+ tree
+Message-ID: <35C0EFBB84167959+aNj6K33fl7utuqcf@kernel.org>
+References: <20250928-k1-musepi-pro-dts-v1-0-64d0659dfdbc@linux.spacemit.com>
+ <20250928-k1-musepi-pro-dts-v1-2-5efcca0ce3ae@linux.spacemit.com>
+ <20250928080003-GYB1344940@gentoo.org>
+ <3074FC8521909735+aNjsSWwkd1aH-moh@kernel.org>
+ <20250928085010-GYC1344940@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9624:EE_|GV2PR04MB11302:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42d948c2-7936-47f6-3fdc-08ddfe6deed7
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|19092799006|366016|376014|7416014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fJpk5aDp9d2rKnrQXpqKz7EHbEK85VTmFzMV2ecBsAUmQRA4q6gtLAiwiw+u?=
- =?us-ascii?Q?uIBXxPQKXw/CM/gFd6pE7sKbYR37sgUH918VKpmyW+ChxIr1+xUrFpBdiXEt?=
- =?us-ascii?Q?f2O9p21vWFir39iiWZJeks/miuU6WFDdwYKs46aP5CVsGLvmWMvbAuD4GLiD?=
- =?us-ascii?Q?NJfNCuQhybe+GsyT/VC6LblMlG1eWXMCzGqq7IlhUrgXwAv0NP9/ItqTny6w?=
- =?us-ascii?Q?b6Z8cOFFWPgEEtjv2tyPRs1Gq2gmmd0B7gxo52ZjzgyQcPjHZgN1A5bZbmda?=
- =?us-ascii?Q?7j5z7cbjs0nMtrpqvAFYrZDYWnFOiilxEYiDB2hpoQjHiqQQFHUTDElNDiAu?=
- =?us-ascii?Q?zbfvpzsUpVRt7B+BMG1+uamBBOAfeStmDEfg8JYk26mjnlYeguYrLXgaldfd?=
- =?us-ascii?Q?+s8MYX6KTAhDhKCUYoVhHdsh9cteI3k+IU9XWHEJh8CNt9yBFHRU7bWcH9P8?=
- =?us-ascii?Q?DzvFn5bO1fChjEv/NLK4uHmnx52rRY/muMWhn1n0jvN7RDK21EpSgcikQu/p?=
- =?us-ascii?Q?9sdDZSnuAHr2rffm4EWxAcycl8pwOTulO6JFc5QYZDhywZQII1L9HeI/rtbm?=
- =?us-ascii?Q?boqZSDL4Amh1UjQRWwkV1X08Hfnh1ac3/d0MDKFgboQSZSQ7imwBDXqlXuzp?=
- =?us-ascii?Q?QK4Ss1upuS53qp4xuW8nmZ2Qo71ZcRtjgW3mK4yDwcY3bqpIb7/m6ry9Egd8?=
- =?us-ascii?Q?Z6Qj2LX2IjSzEPjEdGe4FpeV90zEmW230B00TAbCjf9neBFD8QHnrF7Wz9wD?=
- =?us-ascii?Q?BlGK5Y0mGs4TuTQhH8zQ5ZzfIwfMzhhFqiJFE1pNvtEtrUfmQ4PgRuLBLKyo?=
- =?us-ascii?Q?f3q8iHGmZwe14EHvsQbgJKUEFjOXSkDwuC8bk8tIHXVsUEyij+AofAYNkiyo?=
- =?us-ascii?Q?FWxC6ipyyAhB9sGS+bnnfia9b2JV1MceRKuoDEXcP03TzSqxNMo0oN5S561i?=
- =?us-ascii?Q?bLpjzmu1UQ8Cuo80Jfy0NyyO5y66AoLlOh8EI4BxTKXBBslAraMYwWHrlbCa?=
- =?us-ascii?Q?LbMez4jELAVgSn+9gvMy6z8LEyE3MNZTHEgT1vwY8Y/NE4WCOf0YXt5OKTGG?=
- =?us-ascii?Q?ZOkNRuIzvD6F5an7dPHFAk8I0aYx02Q1SnSyLhgARF34LBIxtaoMM1pkdGrG?=
- =?us-ascii?Q?rkYyBHTIF0hJ4IL9JQGrioh2psSoRuvXLcRd7BuHE4EdsP06iTOaL/PCsOdB?=
- =?us-ascii?Q?FJjL7LSYn20IFtJW28AeUEqgSKWYTnow34MiTzvJYwzIItv/c5b5gFWfm6Ld?=
- =?us-ascii?Q?SEDfn6XT43eoqVdsyZW9yJOLIvGo83kQfQh+mEJG87aEzfuBl9I2hog4Q8Vu?=
- =?us-ascii?Q?dR8DYbmhC7JGfNTFkONAZWCiodok3Sw/8heV6qjD0LeFKP3N7t5FmY2qgTOy?=
- =?us-ascii?Q?FVqDcv4vJHJob9Irxp1y0/a/yHkJmMi4VRPT85GV/8J9Vqyu4tUjf5t+3EFD?=
- =?us-ascii?Q?VriJyY9bLJtDAZKMRqibBejGHSpJ4E2ljhOtEJC+zeLq+YqPq2XyKtF+G5/5?=
- =?us-ascii?Q?W9aFqD68hTHli0Cj3sEIENUYa2+0LCw2oYxv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9624.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(366016)(376014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?62eELKQiGBJDSzM31tQ87IwCGTuxSKd9g2gOqnjaWhSsjNClh30/rUVwXR5e?=
- =?us-ascii?Q?Kul8D1wutP/d2ICudP/SV5LzeUGhMap1C7YjHacmAOw8/pypWC4ZzItTtgGd?=
- =?us-ascii?Q?6RtxSk8OzNvT9pDrBCGHByIoTQxK1joAzVw4mAKYafkSCg3GzzOAqg0USgml?=
- =?us-ascii?Q?Dfm75Le7eudTS2DtmWglQ9GCFgd+QfVWXDlYCbFc03gtEYAo9UxPguFelmNj?=
- =?us-ascii?Q?LJoNt6yv8iin/Tzir3Z1Ikn9UsLLrp/2D163usU2mhDea4yNUwtUO25v/3cq?=
- =?us-ascii?Q?73jl3NldQEf1pwj7MHiY2OkVJYNM6xLhNfdLrQMvp+aMXxDDM3vgUUNy8gm1?=
- =?us-ascii?Q?fVxoducCmPMggw3f5p6n0fp+eRW/kHsfb+1L2pMMpmc7w8nGiVtSjPdKAzG8?=
- =?us-ascii?Q?aH27qGAyg5oo/tih9kT2vqs7BVfDLjbbhFxBAhX8GfyNyn5jZ++6uE/GPnoD?=
- =?us-ascii?Q?aRPx7FZdQ9YH61flJMoYpZUXlrrrETZPdB9z4dBI836tmFJZWUHQwGS79Dn0?=
- =?us-ascii?Q?n6LoVYU5SThtWVrfpKwX0wz9P65NnExHNHHMJxh4reiGH8AZ6vqkm35/yDNv?=
- =?us-ascii?Q?rUifeF3y0LP1m+enuz2SifSKa6Lx9i1CunBF5EMlc/XKtu7Ys/ToN6/5s3Bi?=
- =?us-ascii?Q?1IUZHUGZZutBVtumHF7Fi/hqO+ouFIw2e+jVE97RBfnkuxSPtuMtQdOP06uc?=
- =?us-ascii?Q?5HgmNnAXy5gB2RCETURt8NlBSFYEnIP7ZSqDF6U8OHWd0PJIu5Al82MfAPtS?=
- =?us-ascii?Q?FD9OTnLkDwIFhvrE4u9Dpw9JlQiYkeS/xynP2hPwA+GG3Yf8pbu33uXgeSEt?=
- =?us-ascii?Q?0nDA7KJpa6s3jVVgbzavbl2sWq4ZYiUJi59KE1lAycjFXbCR9AqtkHkjSuuM?=
- =?us-ascii?Q?wX0gIkQnWqzByiFkjo/YNIDFpGTyvXCLiT6GUlPhnpZlf85hh7o3fEOCyWT6?=
- =?us-ascii?Q?Xp0xMnJpXujMgDOUCP+gkQoyJBrDteKIzx3K7wtJg5N+sozenkaQZYSKKiln?=
- =?us-ascii?Q?2jMjHW0JYBB/ArtyqorSKVJkU0r6dNSzGO9PvhD/1sqky6/aVxRKwcM0snhI?=
- =?us-ascii?Q?ngKzYzoXSt1aP7Npu5Qupzoh5g2NT5UeUqZGAdPeaYU0wjGup94RQD+DCsHy?=
- =?us-ascii?Q?74BPFiXp79SGr9DME8/wD3oDSAM3CzLK1DZrx5RyqDSzfjQ3gFov90DW9wXc?=
- =?us-ascii?Q?r5nHnvTL6g3XD1oax4z0zr5rGWUArE4aB204VoH3NfxsRlyzWV7wlBTMdmmt?=
- =?us-ascii?Q?kiiwLEOQHNFtirXMWbqkSTWHWMzIOdT3JU3T2DeJJ6l0MkXYO744XVfQczrZ?=
- =?us-ascii?Q?7N78r8Ag3b3BjicQ6b4CGIEMlwFPDsjACBK2L4ow/g1K5i7zb5vWtVGJQgCi?=
- =?us-ascii?Q?bGeo9dyAkLtTDZiRvMxq/z1bTEXmpemguecUS1vv8S75mpGZmJoA+h1B3dZb?=
- =?us-ascii?Q?2iD61HQ0tp6rCcUC82mPIfAEyt/fPyL0MyozLK8clACi3KvRBReph6XYyCRI?=
- =?us-ascii?Q?JNvSTzzRygoGNsp+tcSzPp/feGjTstvLVGubR3gqEVw7Ipt2VWB/8vMSoRhI?=
- =?us-ascii?Q?D6VmzjiMxhLteldUn8wmdKFGHBo640aM5udzmyyy?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42d948c2-7936-47f6-3fdc-08ddfe6deed7
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9624.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 09:03:47.3658
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sgagYFgx0VDUpzx6rvREiXHsFh8vCsNRIvRXfB7Ye4tbCQ984OGXClxF2Io+dBgfd2TbZD7P+0aOLF93T3DXqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11302
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928085010-GYC1344940@gentoo.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: N7s5zE0cAGDvGRdz4NeBScoZVRVwfVtlu6KOeiJd9AK0YvtBEQXblkbL
+	dil0UgwnZrEqPwuPAGLaOcbx6sRjDW0MLYf1VE5Xaa7530rqIziv3qwIO69fd3cYrAxFxwK
+	K8NDj6zk8T9gOq4d99sy7QUwu+/yEam56IDKA9KI2mXTQ0A9MlM64xRMriIXjfwnEBuo4Ui
+	KTpo20HpawdJzN5Vw/25GxiCMiTQAxnoR2GUXllnVX1skkF10E4NGPkbZ0Ga5/c/f7iTjX2
+	kx04QslhAsLcurO6EtA+zR/lw8rR+1K8uakV0W++JW6MMv5e8cQgJ/+dUg5SCXH/7Cxs0DC
+	Si/gHKrFzZnv8xv5mAjlsGEclpts99n3JXLfPCzEebxsRKIMdjEcvrAs7tmcYiWdjKwncrC
+	jEGpQxbCCay9cvyhGVK3vIyf/1V48hButwU/O+V8hvccxPbLhTYg4UNjv6U4ADF16FHLlWq
+	q11yRlvbrKMJYvBPe2+c0VOCYnBK++cZZ+PZcfRYRQJfCZ4S1dKbxdTQsPiktkf5qQAdS7p
+	DCFTwmD8VfD4JAIyeigU+5raYrympu578O5UJs0Pcb1we1STW/Wv3DW1En8dqABPBnsCAPh
+	FRMF9tApxyOO1ncdw6VIz6tz0uGfaWxhiSdEMSL979qii2evdLYNy31EOXSWqgrZiyhVZAu
+	T85HBO6OlY1LN1lb2v1hvZ8qMsLNKQs3jrlz5c+0cQxBIU5PgD0CiUO0al9/4T5Awl9qTZW
+	SSQQUHya84CXurDiedVrm0xH+y5JHZp22nhnoobN+AkJY4tEmh3YxZkVEKI1cBR20Gb4Kic
+	S93DKv7qPKc2KJabvJB81I0eB/Uo3870LE26HBrHJz7q1A73j2PKAloIMuISnoV4HzxdCzP
+	GtjJz/XnSbLwtDIqKScOVUs3tIPQBNrHDRtwWmpTAp38iY5oz5i/aGmAziv5YBFLW/fM3nq
+	L/dssbR4S2t4067mfzLsmqrSATAiXC/o3nhyhm5aUqTPGTg7nT8lLlG5gzrJNY9/BXO2PVz
+	1Q3rwhoScT+LMxbM5o2TdXnauNN+7mIFEuBH4xfrLyo1m8Die4d21kd+i1uhoiF6zFqKwMr
+	Fxu3pGGSePTkSDh1UELTISfH2NfxmoGEQ==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-From: Rain Yang <jiyu.yang@nxp.com>
+On Sun, Sep 28, 2025 at 04:50:10PM +0800, Yixun Lan wrote:
+> Hi Troy,
+> 
+> On 16:05 Sun 28 Sep     , Troy Mitchell wrote:
+> > On Sun, Sep 28, 2025 at 04:00:03PM +0800, Yixun Lan wrote:
+> > > Hi Troy,
+> > > 
+> > > On 12:16 Sun 28 Sep     , Troy Mitchell wrote:
+> > > > From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > > > 
+> > > > Add initial device tree support for the MusePi Pro board [1].
+> > > > The board is using the SpacemiT K1/M1 SoC.
+> > > > 
+> > > > The device tree is adapted from the SpacemiT vendor tree [2].
+> > > > 
+> > > > This minimal device tree enables booting into a serial console with UART
+> > > > output and a blinking LED.
+> > > > 
+> > > > Link:
+> > > > https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
+> > > > https://gitee.com/bianbu-linux/linux-6.6/blob/k1-bl-v2.2.y/arch/riscv/boot/dts/spacemit/k1-x_MUSE-Pi-Pro.dts [2]
+> > > > 
+> > > same as patch 1
+> > > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > > > ---
+> ..[snip]
+> > > 
+> > > while you are here, I'd suggest to push as many features as possible
+> > > instead of this minimal DT, which say - PMU, emmc, ethernet should be ready..
+> > > (ethernet is in next, should show up at v6.18-rc1)
+> > Good idea.
+> > I think I should split these into multiple commits, right?
+> > Like, PDMA and EMAC should definitely be two separate commits.
+> > 
+> IMO, not really necessary, but I wouldn't mind either..
+Thanks.
+Then I will split them to keep clear.
 
-The regulator is optional, skip the setup instead of returning an
-error if it is not present
-
-Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
----
- drivers/gpu/drm/panthor/panthor_devfreq.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
-index 3686515d368d..2df1d76d84a0 100644
---- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-+++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-@@ -146,10 +146,9 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
- 	ptdev->devfreq = pdevfreq;
- 
- 	ret = devm_pm_opp_set_regulators(dev, reg_names);
--	if (ret) {
-+	if (ret && ret != -ENODEV) {
- 		if (ret != -EPROBE_DEFER)
- 			DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
--
- 		return ret;
- 	}
- 
--- 
-2.39.5
-
+                        - Troy
+> 
+> -- 
+> Yixun Lan (dlan)
+> 
 
