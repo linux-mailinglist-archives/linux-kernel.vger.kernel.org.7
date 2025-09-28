@@ -1,191 +1,178 @@
-Return-Path: <linux-kernel+bounces-835119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC998BA6530
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 02:46:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B26BA6518
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 02:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0FF1631B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 00:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A26E188B70A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 00:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7A219755B;
-	Sun, 28 Sep 2025 00:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wat8rZcc"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63A91A7253;
+	Sun, 28 Sep 2025 00:36:36 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF79A86347
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 00:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950C810E3
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 00:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759020390; cv=none; b=iu2vy6xp9vNpFghAYj6IExxJaI5VbLLxcR1t2uBiSsW2eCQ9txybyEzGd+52DwxE6/mBZagkijOGC2GjDQLaZrkoE6JrNv0ti/MVgAJtpODy5Q0rkixl+6TNAFEaoAmABw55Vi6AgpGwuYHDJkL8A6NUKbFJf2UGxN4Y6Tez86k=
+	t=1759019796; cv=none; b=ox6VE5Hua6mtfpdF68AeEDEsFxJD++bZ6oCUKvGdZzdY9VxBuIsOQrfGN8XW/dvuuGMWc9w3WoRgqdsifZXGH8lxwYelWoB+sx4DVmpn+ZhBFontd1mUeMoyN21nUWw9alXfd7sMEkAUVb0OipYsdb40ZRWbPCA2dGwb4S6VITI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759020390; c=relaxed/simple;
-	bh=uFT8DD+GpvmowlrkoMgNzPNeWBkwZV4HRy1OuviWi4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KH2oxCdxrrM/KRcWiVp6QRKKxzKFrgItk0kBJEizd0AIoSzpgv8o9mPW4ex74h0qltIDCMyoJrgbir8F4XUF6ejPT2mCurdYNuZHmMVcA4kbHVien4hJ+a4U4hRX6Qxq60qkt0OOLT3WaKyhaW/+Y6u9nyQ5Zn7N6JknY24L1Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wat8rZcc; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27c369f8986so33833585ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 17:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759020388; x=1759625188; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R0SQxdo3RLHRiJ7AnzgCm7ZcELugvg2FhH462RqaNN4=;
-        b=Wat8rZcc9wy9u3iZaa1ZEAhmaw7yud0TBejGdtLK4GCW0Ov3lePDWZfN3h/8+9hx9b
-         nED1BT9BjQ116vlCN//ggNlZ/88yRn6NsEEJazSwAJhy20P+OeHQzo/7s5Uv6eeKSprt
-         apcGYm4J7n8URULQFxHr1ebYPFCUqC2H8uq5XLwih+oRQXpN1uUkgTyUkBV0G05vSio6
-         1e6uQbDGdnie6fvD806sy7O8QOpcpSVSQWju8Wbz+PkBBXYuZRANoqZTmdjSrnDF4+My
-         +jyTrUvhZx9urFkmwgaDpPxYqYiqJEYsv/HW5JQ1MVwbuHn2h92f+gQ4SVM5M8XjAzGd
-         wjKw==
+	s=arc-20240116; t=1759019796; c=relaxed/simple;
+	bh=jl1CFGybMjQID4/oiMoomoYa6Nqi1o57Yut2TH5fVK8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=evM9euPoAxjdB4yhub0WoWEUB5YqMUxBchVl3TcU7NLO0O+FA5jvHa3mu86iH+Mh6hx2k0ZBKfGxWUUtInpCr1mE2sL5tr3ReQu3ZFry0mlB5OP99vl2LZlN9lU7ixCeixBcHCoULoKo+mz1vY75y2WVW5PxiRNWpX+roTjF4yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-9201572ebfbso75271139f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 17:36:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759020388; x=1759625188;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R0SQxdo3RLHRiJ7AnzgCm7ZcELugvg2FhH462RqaNN4=;
-        b=hoJVVIZ7/gADnK3Y/hgunZj+300Qgmu29kiWWA1O6M59nacjIqg3WzsXXra8PxCCsn
-         rt52xAjW8rEtnCk9p7NF8AWyTuGSF1KmYdGWIKgP8pmNN3q9BkVLZDihn299arIoIVXE
-         T6rh2gkG8vP/WYpCzjwv5CNBOijuEKVGuHGWxGJodRyXnzYvQBm314S5HkRPrhV8e9a5
-         4//OJAqo/XJzkB2K+2Le2FL7miaWNAfldsTqNteuLFXsGjEixrp741SZfojNSUlSHf+p
-         qkttROTIXCxzUxEn/zbzPsZLGaKd2BXzA1HmXFe4gJ/Bo7bKSmbXKUEc1Q8TQDgd3KXY
-         GiqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjkzt1GN2eWR3ojSmQfVAo1UWpThz4SHnYQZBxp4EUbghrAQ3XvWlYjN5W8QvoIHNgjFwcETFBSvMXNz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEzQF7p1qE+T2cM2BB7dHhypzZSxEloBy7K3lK2V3Z2jVaCUAG
-	MHKCJMc5JaSsr/YIAtTHTuCFbDMe1cLFrqept8qtAJLdxXENczV/9osZ6TUIQfkE
-X-Gm-Gg: ASbGncvqYlKZqHL8jTaW3JGOP3vfJW+PR6F5YhamBDzrVeRatT4t4kV4TSxEhbaSTU5
-	0djVC8EulBk4s9nzqC1+AJYRlmEgR0GESViwgycTN7pvSlyjAZTI7vVaBpENzhTdRAyjBm9ea65
-	eUMzVO3lvjLLf9ejw6usN0/MnTsT4tj6f8SYhY1MTzSHRQy4xlmKRfIDEJRs7++842nFPrUF2N3
-	7SNQM+/eFbTMUTeq0Ym1Yu/uJjMp1RQq6dsFzochkCBI6EPH6PY99n5S+YNG0z3+CsXUEjGCWaC
-	N4bWtvdEhZbgInpZpb2ZiT6h4FzgycxZEP5wZ+tiDFwIyRirKiPOv2Q6SYOIJAEQAYkTyzjWv2F
-	mm+gXwtXF3+9jEHPbNYQrEFjrF19n/O8zPmUGiw9RYyoK+/NRGv0HxBvctIHDUx7dNSC7pakMTf
-	zY4KUVdBWq42l3J4+SqWJhCo+zzsxupKfK
-X-Google-Smtp-Source: AGHT+IHh6vp11a5YTPpS7Cpx/YPQS6tq6OUbtGBtN9cobxgvPjCMMdsgzvmVq+T4sqfObnWyrmGxdQ==
-X-Received: by 2002:a17:902:ef03:b0:27e:ef12:6e94 with SMTP id d9443c01a7336-27eef126f60mr78326435ad.55.1759020388025;
-        Sat, 27 Sep 2025 17:46:28 -0700 (PDT)
-Received: from setsuna.localnet (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ac27d4sm88980475ad.135.2025.09.27.17.46.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 17:46:27 -0700 (PDT)
-From: James Calligeros <jcalligeros99@gmail.com>
-To: Janne Grunau <j@jannau.net>, Rob Herring <robh@kernel.org>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org
-Subject:
- Re: [PATCH v2 02/11] dt-bindings: hwmon: Add Apple System Management
- Controller hwmon schema
-Date: Sun, 28 Sep 2025 10:36:03 +1000
-Message-ID: <2537878.PYKUYFuaPT@setsuna>
-In-Reply-To:
- <CAL_JsqK-9n3_H6vS80bZuZiSPi9UNuMzHEPFL_EzYTeyNS1cYg@mail.gmail.com>
-References:
- <20250827-macsmc-subdevs-v2-0-ce5e99d54c28@gmail.com>
- <20250925204925.GA637503@robin.jannau.net>
- <CAL_JsqK-9n3_H6vS80bZuZiSPi9UNuMzHEPFL_EzYTeyNS1cYg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1759019794; x=1759624594;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eSiVz7xPKubsK0qqcWocNAndgSvRvj8/CbWEA7xbm64=;
+        b=AJwmpH1qlzkaeS0C6r93cQ2YJhnxHRoFkgrJkzrn2qoITdK4iXLTvc8HSzE4pdNTuL
+         9XCJuLHnFt0wJLZ7e3F8kH497ZVdq1MHmGcY/PGQO56CIfyN2gLw8UoNN6i22ZbI1WLB
+         Hq2fNllE0gn7B3FTJl/t9nPmWEhPsf9zMzdroagpZvYhK9EZQ14rknAbNf59N+k7DzGc
+         dthSGKhv5DT+ofVTd9bfgClakWXk2XWYHWeiwrqGH1AMyBxHvWN08QqDDYlN+cx0wnZG
+         DwvF9wRCnoukZd6LQWUyRaOTS1XGLCiUAqKscyr1QOqUyL1lpgRacQl7VCgM/8qN32QY
+         AkxQ==
+X-Gm-Message-State: AOJu0YymKva20RMMnNR4C2/I4Y7aFt6YjG96j2Jo0V027lQ/MDaAHY0q
+	kQyEj6FOTM51JiIQgPqNPpTSmYidc0Cdhu3vT6Mx+hd50krAJ7LNVy4ITZ6wqiv/avfr3g5Qm2D
+	mlXWVwcoHx+XQcXI6kCTa1t4ZRDldG6LZpnLia0/T9orDl4a+5P/ZgfeC6koaGQ==
+X-Google-Smtp-Source: AGHT+IH5HhVBdlNvsOqa+2zohPznRgN70XNfq6gj/dpLgGpjJ4t7EUpLQT2xqypKPj51yVc6XlHI2lQE+MNduOFN71s5zCRqphnM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1a69:b0:428:3602:8f46 with SMTP id
+ e9e14a558f8ab-4283602934cmr86759365ab.32.1759019793761; Sat, 27 Sep 2025
+ 17:36:33 -0700 (PDT)
+Date: Sat, 27 Sep 2025 17:36:33 -0700
+In-Reply-To: <686bf6a0.a00a0220.b087d.01f2.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d88311.050a0220.25d7ab.042d.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [kernel?] UBSAN: shift-out-of-bounds in aio_iiro_16_attach
+From: syzbot <syzbot+f1bb7e4ea47ea12b535c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hi Rob,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On Friday, 26 September 2025 7:43:23=E2=80=AFam Australian Eastern Standard=
- Time Rob=20
-Herring wrote:
-> On Thu, Sep 25, 2025 at 3:49=E2=80=AFPM Janne Grunau <j@jannau.net> wrote:
-> > On Fri, Aug 29, 2025 at 11:40:57AM -0500, Rob Herring wrote:
-> > >=20
-> > > This should be something like this:
-> > >=20
-> > > "^current-[A-Za-z0-9]{4}$":
-> > >   $ref: "#/$defs/sensor"
-> > >   unevaluatedProperties: false
-> > >=20
-> > > With the $defs/sensor being:
-> > >=20
-> > > $defs:
-> > >   sensor:
-> > >     type: object
-> > >    =20
-> > >     properties:
-> > >       apple,key-id:
-> > >         $ref: /schemas/types.yaml#/definitions/string
-> > >         pattern: "^[A-Za-z0-9]{4}$"
-> > >        =20
-> > >         description:
-> > >           The SMC FourCC key of the desired sensor. Must match the
-> > >           node's suffix.
-> > >      =20
-> > >       label:
-> > >         description: Human-readable name for the sensor
-> > >    =20
-> > >     required:
-> > >       - apple,key-id
-> > >       - label
-> > >=20
-> > > Though in general, 'label' should never be required being just for hu=
-man
-> > > convenience.
-> >=20
-> > That does not sound as it would be compatible with skipping nodes in the
-> > driver if the node misses label. The driver could of course fall back
-> > to create a hwmon sensors without labels.
->=20
-> The driver absolutely should.
+***
 
-The original submission (and our downstream version) do this, but I changed
-it for v2 per Sven's feedback [1]. Outside of development/experimentation,
-we will (should) never have a sensor in the Devicetree of uknown utility.
-If we know what a sensor is for, then we should have a label for it.
+Subject: Re: [syzbot] [kernel?] UBSAN: shift-out-of-bounds in aio_iiro_16_a=
+ttach
+Author: xandfury@gmail.com
 
-> > I looks to me it would be a
-> > stretch to call the presence of the labels human convenience.
->=20
-> Then it is an abuse of 'label". "label" is supposed to be literally
-> that. Matching a sticker on a port of a device.
->=20
-> If you need to associate a sensor with some other piece of h/w, then
-> that should be via a phandle or something.
+syzbot <syzbot+f1bb7e4ea47ea12b535c@syzkaller.appspotmail.com> writes:
 
-I don't think doing so is particularly useful for this platform. Few of
-the sensors that we know about are directly related to any one piece of=20
-hardware.
-It's pretty much just the CPU cores and Broadcom module. The rest are things
-like fans, palm rest area temperature sensors, ammeters and voltmeters for=
-=20
-entire
-rails, etc.
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    a79a588fc176 Merge tag =E2=80=99pm-6.16-rc5=E2=80=99 of g=
+it://git.kernel.o..
+> git tree:       upstream
+> console output: <https://syzkaller.appspot.com/x/log.txt?x=3D14a4ac8c5800=
+00>
+> kernel config:  <https://syzkaller.appspot.com/x/.config?x=3D5ba6cef8f153=
+bfeb>
+> dashboard link: <https://syzkaller.appspot.com/bug?extid=3Df1bb7e4ea47ea1=
+2b535c>
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> syz repro:      <https://syzkaller.appspot.com/x/repro.syz?x=3D12a4ac8c58=
+0000>
+> C reproducer:   <https://syzkaller.appspot.com/x/repro.c?x=3D13fc9c8c5800=
+00>
+>
+> Downloadable assets:
+> disk image (non-bootable): <https://storage.googleapis.com/syzbot-assets/=
+d900f083ada3/non_bootable_disk-a79a588f.raw.xz>
+> vmlinux: <https://storage.googleapis.com/syzbot-assets/c7aa4e6d68b0/vmlin=
+ux-a79a588f.xz>
+> kernel image: <https://storage.googleapis.com/syzbot-assets/5d71f2c64f29/=
+bzImage-a79a588f.xz>
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+f1bb7e4ea47ea12b535c@syzkaller.appspotmail.com
+>
+> UBSAN: shift-out-of-bounds in drivers/comedi/drivers/aio_iiro_16.c:180:9
+> shift exponent 8550 is too large for 32-bit type =E2=80=99int=E2=80=99
+> CPU: 2 UID: 0 PID: 6096 Comm: syz.0.16 Not tainted 6.16.0-rc4-syzkaller-0=
+0308-ga79a588fc176 #0 PREEMPT(full)=20
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
+16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+>  ubsan_epilogue lib/ubsan.c:233 [inline]
+>  __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
+>  aio_iiro_16_attach drivers/comedi/drivers/aio_iiro_16.c:180 [inline]
+>  aio_iiro_16_attach.cold+0x19/0x1e drivers/comedi/drivers/aio_iiro_16.c:1=
+64
+>  comedi_device_attach+0x3b3/0x900 drivers/comedi/drivers.c:996
+>  do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
+>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f3eb858e929
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89
+> f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
+> f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffc84ea1e58 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f3eb87b5fa0 RCX: 00007f3eb858e929
+> RDX: 0000200000000140 RSI: 0000000040946400 RDI: 0000000000000003
+> RBP: 00007f3eb8610b39 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f3eb87b5fa0 R14: 00007f3eb87b5fa0 R15: 0000000000000003
+>  </TASK>
+> =E2=80=94[ end trace ]=E2=80=94
+>
+>
+> =E2=80=94
+> This report is generated by a bot. It may contain errors.
+> See <https://goo.gl/tpsmEJ> for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> <https://goo.gl/tpsmEJ#status> for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report=E2=80=99s subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Even where we can reliably associate a sensor to a piece of hardware,
-(e.g. the WiFi/BT board), doing so does not by itself do anything useful. We
-still need to write a human-readable label for the sensor.
-
-I was trying to avoid yet another vendor property, but would something like
-'apple,sensor-label' work here?
-
-> Rob
-
-James
-
-[1]: https://lore.kernel.org/asahi/4a95cbf3-b3ae-4b26-8db2-dd5cf14a4c0c@ker=
-nel.org/
-
-
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+ 66acb1586737
 
