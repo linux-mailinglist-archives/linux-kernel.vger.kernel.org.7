@@ -1,137 +1,170 @@
-Return-Path: <linux-kernel+bounces-835218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13BBBA685A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF17BA6854
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 295E7189254F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9DD18924C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3FC28725E;
-	Sun, 28 Sep 2025 05:32:45 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A1F28725E;
+	Sun, 28 Sep 2025 05:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FfgmSxf7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C22A54F81;
-	Sun, 28 Sep 2025 05:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205981C5F10;
+	Sun, 28 Sep 2025 05:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759037565; cv=none; b=KGqJ8KAAoA9fDPeC/H4w3o6onASoAFqbyveA4h98x8QmYFcyknd5QFF6dlih1ZBjEjMQPnuopaiCTpDSFGYqA4KqrsT8Gfg+hi5bb9jnsvcBy56JeGsA5LaKtykZ57BcHyvar6ge7kBdfpJEN/sCbRaXoNBKCYoNHtGTW9/KwEk=
+	t=1759037521; cv=none; b=bkR3NsGjjAHJ8LO8K04S1zRWq9U5mm7zo3TkO4ya3gTrGphILNDv0FThptOrSJ3F6xFeJqC+Vo6+gzJx9bG9WWYkH+2UHhIaWFZNDrtHwg5l5BxVFy7SMqcJczZiJd4rlFs6l2QEDZ9EOp1tKEH3Z4AgVwVISE6KgyeXhtmXN1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759037565; c=relaxed/simple;
-	bh=zn+xJVFHmE2tsVST8G931IHahiiL3v9HuvIdrFjbG+U=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bmdd+QmOq/1z30lad3XI8KUZwpBUVwIMHePg77nCgETE6Fs/Lw1kW8kS3oorMNRp3Yi1rs0gNLtZfvIFTX/4OaBbhrklLn/Ty9GGXL68pb7eDFPluOVrC7AquDQha78GpuocwaHzXgb83243kiza1rr6MLKu3qx0tKwWYpByMXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: <corbet@lwn.net>, <akpm@linux-foundation.org>, <lance.yang@linux.dev>,
-	<mhiramat@kernel.org>, <paulmck@kernel.org>,
-	<pawan.kumar.gupta@linux.intel.com>, <mingo@kernel.org>,
-	<dave.hansen@linux.intel.com>, <rostedt@goodmis.org>, <kees@kernel.org>,
-	<arnd@arndb.de>, <lirongqing@baidu.com>, <feng.tang@linux.alibaba.com>,
-	<pauld@redhat.com>, <joel.granados@kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH][v2] hung_task: Panic after fixed number of hung tasks
-Date: Sun, 28 Sep 2025 13:31:37 +0800
-Message-ID: <20250928053137.3412-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1759037521; c=relaxed/simple;
+	bh=ucgroTDJSm6qX08whIWfAvIq4GU5IY/Av8vzyBCPrCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tl1nXiki7ckkBdRZQXVPmnZIpnEOF1YzueHWUXRvNiQxaxloF1zZ2GOcsfxnlljZOaQ+6z9M6EJ9R87YuQDCgazqQ/IeBXriQKywKHL3UswAHe7UpptpQ7NnpJE4gXtiylqG6BJrUJF6LzOcVQZSUNrC46KgbbagbrPo1BJ+9Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FfgmSxf7; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759037520; x=1790573520;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ucgroTDJSm6qX08whIWfAvIq4GU5IY/Av8vzyBCPrCY=;
+  b=FfgmSxf7X4hD0TWzn0ushfuvFb1isqa5x4cIpf3HF4pWvskfjtGf0+16
+   90/atzmPqAFYe5Vj/r58Fl/SGT8ZEscCyR/fqdobk5IpHLK6eREiCfhwQ
+   AWOS6aYHdLghq8g0vfZ/FXn4vXK6eqSOvmHo6d5owj4jiZgLELMztquSz
+   hwBn44Bi3u8xZMI+0ba7DWR4MP8GBhE74waer+YkNk5jnAkXuC4NPMzfI
+   a+yjqJ95uZmwout57bD00G3RsmmDlRTXSGMT/9HykIgj+iB8zxDNOT/8r
+   thk2GnlAAVg77E8x4qlLEcmU2GdlLx+Nn7efKTUTP++OkNKOv2Dw0svLL
+   g==;
+X-CSE-ConnectionGUID: swWLsHgKSTWrTo8ZIgBDtw==
+X-CSE-MsgGUID: Gl7PFEvLT8qORrsqjYABiw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11566"; a="72748757"
+X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
+   d="scan'208";a="72748757"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 22:31:59 -0700
+X-CSE-ConnectionGUID: 8i6h/zTvT4STyuqwIoredA==
+X-CSE-MsgGUID: mnzAlVQKRA24JFoMuKXPzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
+   d="scan'208";a="182354486"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 22:31:54 -0700
+Message-ID: <8476ee65-546a-47ff-951c-5b2a24995ccf@linux.intel.com>
+Date: Sun, 28 Sep 2025 13:31:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjkjy-exc6.internal.baidu.com (172.31.50.50) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v4 03/17] x86/fpu/xstate: Add xsaves_nmi
+To: Dave Hansen <dave.hansen@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, broonie@kernel.org,
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250925061213.178796-1-dapeng1.mi@linux.intel.com>
+ <20250925061213.178796-4-dapeng1.mi@linux.intel.com>
+ <bc8a902f-549a-482f-bf24-04cf5f38a379@intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <bc8a902f-549a-482f-bf24-04cf5f38a379@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Li RongQing <lirongqing@baidu.com>
 
-Currently, when hung_task_panic is enabled, kernel will panic immediately
-upon detecting the first hung task. However, some hung tasks are transient
-and the system can recover fully, while others are unrecoverable and
-trigger consecutive hung task reports, and a panic is expected.
+On 9/25/2025 11:07 PM, Dave Hansen wrote:
+> On 9/24/25 23:11, Dapeng Mi wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> There is a hardware feature (Intel PEBS XMMs group), which can handle
+>> XSAVE "snapshots" from random code running. This just provides another
+>> XSAVE data source at a random time.
+>>
+>> Add an interface to retrieve the actual register contents when the NMI
+>> hit. The interface is different from the other interfaces of FPU. The
+>> other mechanisms that deal with xstate try to get something coherent.
+>> But this interface is *in*coherent. There's no telling what was in the
+>> registers when a NMI hits. It writes whatever was in the registers when
+>> the NMI hit. It's the invoker's responsibility to make sure the contents
+>> are properly filtered before exposing them to the end user.
+>>
+>> The support of the supervisor state components is required. The
+>> compacted storage format is preferred. So the XSAVES is used.
+> The changelog here is looking a bit munged from the last time I looked
+> at it. It's getting a bit hard to read. I'd probably run it through your
+> favorite LLM (and proofread it after of course) to make it more readable.
+>
+> Ditto for the comments.
 
-This commit adds a new sysctl parameter hung_task_count_to_panic to allows
-specifying the number of consecutive hung tasks that must be detected
-before triggering a kernel panic. This provides finer control for
-environments where transient hangs maybe happen but persistent hangs should
-still be fatal.
+Sure. Thanks.
 
-Acked-by: Lance Yang <lance.yang@linux.dev>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
-Diff with v1: change documentation as Lance suggested
 
- Documentation/admin-guide/sysctl/kernel.rst |  8 ++++++++
- kernel/hung_task.c                          | 14 +++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+>
+> Also, what supervisor components are involved here? Aren't we just
+> talking about [XYZ]MM's?
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 8b49eab..98b47a7 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -405,6 +405,14 @@ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
- 1 Panic immediately.
- = =================================================
- 
-+hung_task_count_to_panic
-+=====================
-+
-+When set to a non-zero value, a kernel panic will be triggered if the
-+number of detected hung tasks reaches this value.
-+
-+Note that setting hung_task_panic=1 will still cause an immediate panic
-+on the first hung task.
- 
- hung_task_check_count
- =====================
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 8708a12..87a6421 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -83,6 +83,8 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
- static unsigned int __read_mostly sysctl_hung_task_panic =
- 	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
- 
-+static unsigned int __read_mostly sysctl_hung_task_count_to_panic;
-+
- static int
- hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
- {
-@@ -219,7 +221,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 
- 	trace_sched_process_hang(t);
- 
--	if (sysctl_hung_task_panic) {
-+	if (sysctl_hung_task_panic ||
-+	    (sysctl_hung_task_count_to_panic &&
-+	     (sysctl_hung_task_detect_count >= sysctl_hung_task_count_to_panic))) {
- 		console_verbose();
- 		hung_task_show_lock = true;
- 		hung_task_call_panic = true;
-@@ -388,6 +392,14 @@ static const struct ctl_table hung_task_sysctls[] = {
- 		.extra2		= SYSCTL_ONE,
- 	},
- 	{
-+		.procname	= "hung_task_count_to_panic",
-+		.data		= &sysctl_hung_task_count_to_panic,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+	},
-+	{
- 		.procname	= "hung_task_check_count",
- 		.data		= &sysctl_hung_task_check_count,
- 		.maxlen		= sizeof(int),
--- 
-2.9.4
+Besides the SIMD registers [XYZ]MM, the CET_USR (only SSP) and APX eGPRs
+would be supported as well.
 
+
+>
+>> +/**
+>> + * xsaves_nmi - Save selected components to a kernel xstate buffer in NMI
+>> + * @xstate:	Pointer to the buffer
+>> + * @mask:	Feature mask to select the components to save
+>> + *
+>> + * The @xstate buffer must be 64 byte aligned.
+>> + *
+>> + * Caution: The interface is different from the other interfaces of FPU.
+>> + * The other mechanisms that deal with xstate try to get something coherent.
+>> + * But this interface is *in*coherent. There's no telling what was in the
+>> + * registers when a NMI hits. It writes whatever was in the registers when
+>> + * the NMI hit.
+>> + * The only user for the interface is perf_event. There is already a
+>> + * hardware feature (See Intel PEBS XMMs group), which can handle XSAVE
+>> + * "snapshots" from random code running. This just provides another XSAVE
+>> + * data source at a random time.
+>> + * This function can only be invoked in an NMI. It returns the *ACTUAL*
+>> + * register contents when the NMI hit.
+>> + */
+> First, please use actual paragraphs. This isn't a manpage.
+>
+> But this whole comment kinda rubs me the wrong way.
+>
+> For instance, I don't think we need to relitigate the XSAVE architecture
+> with the "The @xstate buffer must be 64 byte aligned." comment. Even if
+> we did, that's just silly when you could put a one-liner WARN_ON() in
+> the function which would be a billion times better than a comment.
+
+Yes, thanks.
+
+
+>
+> I'm not sure what "interfaces of FPU" means. I know it came mostly out
+> of some earlier mails I wrote. But could we trim this down, please?
+
+I suppose the "interfaces of FPU" should indicate the xsaves() helper.
+Sure. I would rewrite the comments and make it more accurate. Thanks.
+
+
+>
+> We basically want to scare anyone else away that might be tempted to use
+> this.
 
