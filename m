@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-835238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E80EBA68DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:20:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC976BA6933
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B094817BBC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEEC188E243
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59632571D8;
-	Sun, 28 Sep 2025 06:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664011A9FB8;
+	Sun, 28 Sep 2025 06:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNc9PdTV"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGBh1sXx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4392D17C91
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A56245020;
+	Sun, 28 Sep 2025 06:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759040398; cv=none; b=RvW6lqN9SbH0Te+PyoS7zzhwd0lFbDVbemsQd+6hAkH8YPeUpUncsNT/I1DMxxjwie4idMdjjFNIRvTeZkPZYaVcsfO4JG+bpmKcUMtchG7U1yysErIQwWeTO8yZmBkcgtHAkfaUo8nTdyoS2r/6DrPJjiNl+9tjIe7pfBoTBI8=
+	t=1759041618; cv=none; b=jZy2yWJnZgZ9827jWX5YrOiJrfbSawyM16RSF7rg/AMVXvWGQfTdnm8ck4SIKwfraFt0U8/hcfXyGcuO6Vd2ZJXsST++RNmygPu46D2Aj6IQNsokNawlh9oJrgCD12WseONF4pCmpZSWScXLfJk2za8vBOR2FkYiWzChnu4pe8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759040398; c=relaxed/simple;
-	bh=EczTh2ggNaPZHbqwCwAxzg8eCUmjYRljLUU+zfNR9Jc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRcUJlwiFdHFrTNJvW0C5UX8gK6qCZDgRPt/w2w6sirzWpZ2sxmNT9R8A7YBgFNCF86Uwa1RXd4ajuFz78HyTkJWq7ItRz26YFZnnVV48VbNHOdk9+7f6NncNE5elOhDrqwaZuTtiV11zEnGZtp/cPW3nEvhvVn4kIYO9zeiprU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MNc9PdTV; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3672482b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 23:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759040396; x=1759645196; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k8yGIvrkgUDdz26L60d9oWaR1bEYlZvy7H9kA4NT0xY=;
-        b=MNc9PdTV8ySh4DSO1TnHLLkURRdvco4OwDdaknU2gRsQjSwrKOzt9JzD32HTRmNZdN
-         QRUJ3QzdVaHXuGxNvGzgGqUPdbXhlPgNHvYlLccuNzw4eP1vIdeedJNgtcBAEpEJRSqn
-         /iPFPuH4cu2S+Vy5dxcDZwPBP+UKyLGH76bDj53vVnTZbfRftgXqBHJkuQzwSgxm2bZ2
-         h49k+9AXWqpnazquEXgRMe4TqMO8TcjMQCWz13KbswnYM7faGQA0mZpOc1yOr+dpmw5h
-         pd7yZiiU810dEeetHhSxzlZlKuALzLE+zhddESYmkoe4XFfAAaAW74fr3HxZLi+RbnUW
-         InOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759040396; x=1759645196;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k8yGIvrkgUDdz26L60d9oWaR1bEYlZvy7H9kA4NT0xY=;
-        b=dxkItNVJgVunw51kcM/Xp15+SfInEv4QeIxLKrtfwBBjrkxS3r0lgu09gzUsUq1cVr
-         pnEcUxuCIv7N95+ucsvjD35+CW+LsrSkaXvZJXMyqfF8SMPytYdDbDXkOekcWFoHPIWd
-         x2fw0z9kTkw7L3Tny38qwftgOplo91iIX6erl0VSRM6ia17pSLS20Nwh2R9/yAZtULjS
-         aZufV/e6DMo+57F0WlYxQpKFUVs/0StOzlKjws6TZPXB1FDVEWexkQ9Qt3rdIzkWzQqt
-         oXp/jj8lIQbUUMaqiJwQAZl8mPvxMsy+/QtpGgNk6wIE2nMmLkoRT7HKgWu7T3f+gbzQ
-         Peyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqCu+rCVTfgtw+E6gBE9Npv7nGKGqVpMqISS5mb4/xAFhm0sxenz9yCAuaSDhFnSS7FKFFUZUwK5gpE6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+Nb98izhvXhIiF3ZTFOL6PpZPKaFwn5Ejc+kcy2FL532KGdVN
-	WFPr0YxR3pIPfGj5orNADCIwg2UmgP/d7bghEzYRRNPEjSRf6HVOSIfx
-X-Gm-Gg: ASbGncvMW0rF8O3FcMiglY4v4uQYpnn/8UiMVY1uB0qXePhJNA0advh9SQkTacnw3e7
-	U6lSRr6JAWspdBc3WLDSRJu5zwrWCaAWoN3O+UH7ept1iOXRF+a7GRXD8Uhqx4lQiSbDICaEPxt
-	SjCV1mipOZ6/SZbPkzCb+RixNer8/VKj9mInXkR6igyHh1Rr2i1Z/4QbxMl5wobrFEFlko3lPxu
-	k6ZsY77PdncPRy0lHY1HEAGlyjXF5ERC+EAVXWXlxqtPaNgj/y6CICGkAUXU9s4Gew041LoEN2g
-	ht9vGfWu9MrvsPOWZ5tJ9vEsCGaiytoMNeGZJmdwz/6w8AImOzl8BJk8MouYWso+b2RTfoiSoav
-	W2ynZEKOJer9wIymOa+EL/9v6QC+cng==
-X-Google-Smtp-Source: AGHT+IGCF2nl0/6AjN0iIOilZKlYdieGcVoO4haBJAcSd4c5Q78m3e4EUcOR9h3yQKRHTOD4YaebPQ==
-X-Received: by 2002:a05:6a00:8c8:b0:781:27f8:d2e7 with SMTP id d2e1a72fcca58-78127f8d9b9mr3506127b3a.10.1759040396478;
-        Sat, 27 Sep 2025 23:19:56 -0700 (PDT)
-Received: from 7950hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238f11esm8130046b3a.19.2025.09.27.23.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Sep 2025 23:19:56 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: herbert@gondor.apana.org.au,
-	neilb@ownmail.net
-Cc: tgraf@suug.ch,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jiang.biao@linux.dev
-Subject: [PATCH] rhashtable: use likely/unlikely for rhashtable lookup
-Date: Sun, 28 Sep 2025 14:19:50 +0800
-Message-ID: <20250928061950.34531-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759041618; c=relaxed/simple;
+	bh=OLMbieYzIb5XioIjGjwsnk6KFQEqAC4Vf5edZMr1iv8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lfGic6vsGpnI9wwsYj1ASLlC9IOdzaFvyJx5U5w5HR8fFyIqTVt7rPerF9/SWqH4CdmtHSAyPSIYaHp+sM7r2mdEYZTL08q8njrBL9XD/IO7KekGoFMxSEgVxNMgb1kx3MWzcJnUbYcqyY7PhTz5GaEpAlT7z5hFJu3Im8GpKRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGBh1sXx; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759041616; x=1790577616;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OLMbieYzIb5XioIjGjwsnk6KFQEqAC4Vf5edZMr1iv8=;
+  b=iGBh1sXxll3ht9LjkXnbBQBtMWfX9LeC3Hlfm4tMRMiNI6utvMyw8xb/
+   NKK+mn1OwNX5S8uJGHPfUAKO3MoSkTQkYJaJhG5+esy9xrVjix6bwYMly
+   EicblNVQYYyNUWpy8Kizgg2OTz5Ykt0HqmdyLttv3LZIkMujSVAgou03A
+   6GbyCJj+3+0JssDaG+PMHpzm09y7HbcyNhCa5Bsz72yhZTsHwaqvtvN/4
+   HTu7ar3YVCiUd2R3DPI+kwESfYLbPw5MU4kJuoumK/A7lZRbFL5a4OOOY
+   IMBGo71oenQYrUdsZEvljLdXXR/jo+/b/gIi5ezoqj0TFyOp0Ry8N+dej
+   g==;
+X-CSE-ConnectionGUID: e2WLxCilSwiovwmLczAosw==
+X-CSE-MsgGUID: r/A5gCtaTeKWgm/vmMT/vQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61228525"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61228525"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 23:40:15 -0700
+X-CSE-ConnectionGUID: g0XnQIQJRo6oXMDG5lt09Q==
+X-CSE-MsgGUID: KpNjlxSwS7e7wzNjMDtoVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,299,1751266800"; 
+   d="scan'208";a="177088835"
+Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.165])
+  by orviesa006.jf.intel.com with ESMTP; 27 Sep 2025 23:40:12 -0700
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: linux-coco@lists.linux.dev,
+	linux-pci@vger.kernel.org,
+	dan.j.williams@intel.com
+Cc: yilun.xu@intel.com,
+	yilun.xu@linux.intel.com,
+	baolu.lu@linux.intel.com,
+	zhenzhong.duan@intel.com,
+	aneesh.kumar@kernel.org,
+	bhelgaas@google.com,
+	aik@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Address Association Register setup for RP
+Date: Sun, 28 Sep 2025 14:27:53 +0800
+Message-Id: <20250928062756.2188329-1-yilun.xu@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,204 +80,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Sometimes, the result of the rhashtable_lookup() is expected to be found
-or not found. Therefore, we can use likely() or unlikely() for such cases.
+This patchset is for Address Association Register setup for RP. It is
+based on devsec/tdx but the first 2 patches could be cleanly applied to
+devsec/staging.
 
-Following new functions are introduced, which will use likely or unlikely
-during the lookup:
+The last patch is not for apply. It takes TDX Connect as an example to
+illustrate the usage of these newly introduced helpers.
 
- rhashtable_lookup_likely
- rhashtable_lookup_unlikely
- rhltable_lookup_likely
- rhltable_lookup_unlikely
+ARM is expected to get benifit from this extra support in
+pci_ide_stream_setup(). Intel TDX Connect should retrieve the address
+range info from pci_ide.partner[PCI_IDE_RP].mem64 and use firmware call
+for setup. AMD is expected to bypass the setup or does the setup but no
+harm.
 
-A micro-benchmark is made for these new functions: lookup a existed entry
-repeatedly for 100000000 times, and rhashtable_lookup_likely() gets ~30%
-speedup.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-This patch base on the patch that I commit before:
-  rhashtable: use __always_inline for rhashtable
+Xu Yilun (3):
+  PCI/IDE: Add/export mini helpers for platform TSM drivers
+  PCI/IDE: Add Address Association Register setup for RP
+  coco/tdx-host: Illustrate IDE Address Association Register setup
 
-The new functions that we introduced can be used by other modules, and I'm
-not sure if it is a good idea to do it in this series, as they belong to
-different tree. So I decide to do it in the target tree after this patch
-merged.
----
- include/linux/rhashtable.h | 94 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 82 insertions(+), 12 deletions(-)
+ include/linux/pci-ide.h               | 17 +++++++
+ drivers/pci/ide.c                     | 72 ++++++++++++++++++++++++---
+ drivers/virt/coco/tdx-host/tdx-host.c | 33 ++----------
+ 3 files changed, 87 insertions(+), 35 deletions(-)
 
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index e740157f3cd7..a4953ab334c5 100644
---- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -355,12 +355,29 @@ static inline void rht_unlock(struct bucket_table *tbl,
- 	local_irq_restore(flags);
- }
- 
--static inline struct rhash_head *__rht_ptr(
--	struct rhash_lock_head *p, struct rhash_lock_head __rcu *const *bkt)
-+enum rht_lookup_freq {
-+	RHT_LOOKUP_NORMAL,
-+	RHT_LOOKUP_LIKELY,
-+	RHT_LOOKUP_UNLIKELY,
-+};
-+
-+static __always_inline struct rhash_head *__rht_ptr(
-+	struct rhash_lock_head *p, struct rhash_lock_head __rcu *const *bkt,
-+	const enum rht_lookup_freq freq)
- {
--	return (struct rhash_head *)
--		((unsigned long)p & ~BIT(0) ?:
--		 (unsigned long)RHT_NULLS_MARKER(bkt));
-+	unsigned long p_val = (unsigned long)p & ~BIT(0);
-+
-+	BUILD_BUG_ON(!__builtin_constant_p(freq));
-+
-+	if (freq == RHT_LOOKUP_LIKELY)
-+		return (struct rhash_head *)
-+			(likely(p_val) ? p_val : (unsigned long)RHT_NULLS_MARKER(bkt));
-+	else if (freq == RHT_LOOKUP_UNLIKELY)
-+		return (struct rhash_head *)
-+			(unlikely(p_val) ? p_val : (unsigned long)RHT_NULLS_MARKER(bkt));
-+	else
-+		return (struct rhash_head *)
-+			(p_val ?: (unsigned long)RHT_NULLS_MARKER(bkt));
- }
- 
- /*
-@@ -370,10 +387,17 @@ static inline struct rhash_head *__rht_ptr(
-  *   rht_ptr_exclusive() dereferences in a context where exclusive
-  *            access is guaranteed, such as when destroying the table.
-  */
-+static __always_inline struct rhash_head *__rht_ptr_rcu(
-+	struct rhash_lock_head __rcu *const *bkt,
-+	const enum rht_lookup_freq freq)
-+{
-+	return __rht_ptr(rcu_dereference(*bkt), bkt, freq);
-+}
-+
- static inline struct rhash_head *rht_ptr_rcu(
- 	struct rhash_lock_head __rcu *const *bkt)
- {
--	return __rht_ptr(rcu_dereference(*bkt), bkt);
-+	return __rht_ptr_rcu(bkt, RHT_LOOKUP_NORMAL);
- }
- 
- static inline struct rhash_head *rht_ptr(
-@@ -381,13 +405,15 @@ static inline struct rhash_head *rht_ptr(
- 	struct bucket_table *tbl,
- 	unsigned int hash)
- {
--	return __rht_ptr(rht_dereference_bucket(*bkt, tbl, hash), bkt);
-+	return __rht_ptr(rht_dereference_bucket(*bkt, tbl, hash), bkt,
-+			 RHT_LOOKUP_NORMAL);
- }
- 
- static inline struct rhash_head *rht_ptr_exclusive(
- 	struct rhash_lock_head __rcu *const *bkt)
- {
--	return __rht_ptr(rcu_dereference_protected(*bkt, 1), bkt);
-+	return __rht_ptr(rcu_dereference_protected(*bkt, 1), bkt,
-+			 RHT_LOOKUP_NORMAL);
- }
- 
- static inline void rht_assign_locked(struct rhash_lock_head __rcu **bkt,
-@@ -588,7 +614,8 @@ static inline int rhashtable_compare(struct rhashtable_compare_arg *arg,
- /* Internal function, do not use. */
- static __always_inline struct rhash_head *__rhashtable_lookup(
- 	struct rhashtable *ht, const void *key,
--	const struct rhashtable_params params)
-+	const struct rhashtable_params params,
-+	const enum rht_lookup_freq freq)
- {
- 	struct rhashtable_compare_arg arg = {
- 		.ht = ht,
-@@ -599,12 +626,13 @@ static __always_inline struct rhash_head *__rhashtable_lookup(
- 	struct rhash_head *he;
- 	unsigned int hash;
- 
-+	BUILD_BUG_ON(!__builtin_constant_p(freq));
- 	tbl = rht_dereference_rcu(ht->tbl, ht);
- restart:
- 	hash = rht_key_hashfn(ht, tbl, key, params);
- 	bkt = rht_bucket(tbl, hash);
- 	do {
--		rht_for_each_rcu_from(he, rht_ptr_rcu(bkt), tbl, hash) {
-+		rht_for_each_rcu_from(he, __rht_ptr_rcu(bkt, freq), tbl, hash) {
- 			if (params.obj_cmpfn ?
- 			    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
- 			    rhashtable_compare(&arg, rht_obj(ht, he)))
-@@ -643,11 +671,32 @@ static __always_inline void *rhashtable_lookup(
- 	struct rhashtable *ht, const void *key,
- 	const struct rhashtable_params params)
- {
--	struct rhash_head *he = __rhashtable_lookup(ht, key, params);
-+	struct rhash_head *he = __rhashtable_lookup(ht, key, params,
-+						    RHT_LOOKUP_NORMAL);
- 
- 	return he ? rht_obj(ht, he) : NULL;
- }
- 
-+static __always_inline void *rhashtable_lookup_likely(
-+	struct rhashtable *ht, const void *key,
-+	const struct rhashtable_params params)
-+{
-+	struct rhash_head *he = __rhashtable_lookup(ht, key, params,
-+						    RHT_LOOKUP_LIKELY);
-+
-+	return likely(he) ? rht_obj(ht, he) : NULL;
-+}
-+
-+static __always_inline void *rhashtable_lookup_unlikely(
-+	struct rhashtable *ht, const void *key,
-+	const struct rhashtable_params params)
-+{
-+	struct rhash_head *he = __rhashtable_lookup(ht, key, params,
-+						    RHT_LOOKUP_UNLIKELY);
-+
-+	return unlikely(he) ? rht_obj(ht, he) : NULL;
-+}
-+
- /**
-  * rhashtable_lookup_fast - search hash table, without RCU read lock
-  * @ht:		hash table
-@@ -693,11 +742,32 @@ static __always_inline struct rhlist_head *rhltable_lookup(
- 	struct rhltable *hlt, const void *key,
- 	const struct rhashtable_params params)
- {
--	struct rhash_head *he = __rhashtable_lookup(&hlt->ht, key, params);
-+	struct rhash_head *he = __rhashtable_lookup(&hlt->ht, key, params,
-+						    RHT_LOOKUP_NORMAL);
- 
- 	return he ? container_of(he, struct rhlist_head, rhead) : NULL;
- }
- 
-+static __always_inline struct rhlist_head *rhltable_lookup_likely(
-+	struct rhltable *hlt, const void *key,
-+	const struct rhashtable_params params)
-+{
-+	struct rhash_head *he = __rhashtable_lookup(&hlt->ht, key, params,
-+						    RHT_LOOKUP_LIKELY);
-+
-+	return likely(he) ? container_of(he, struct rhlist_head, rhead) : NULL;
-+}
-+
-+static __always_inline struct rhlist_head *rhltable_lookup_unlikely(
-+	struct rhltable *hlt, const void *key,
-+	const struct rhashtable_params params)
-+{
-+	struct rhash_head *he = __rhashtable_lookup(&hlt->ht, key, params,
-+						    RHT_LOOKUP_UNLIKELY);
-+
-+	return unlikely(he) ? container_of(he, struct rhlist_head, rhead) : NULL;
-+}
-+
- /* Internal function, please use rhashtable_insert_fast() instead. This
-  * function returns the existing element already in hashes if there is a clash,
-  * otherwise it returns an error via ERR_PTR().
 -- 
-2.51.0
+2.25.1
 
 
