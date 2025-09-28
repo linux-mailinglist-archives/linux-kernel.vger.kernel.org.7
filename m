@@ -1,80 +1,71 @@
-Return-Path: <linux-kernel+bounces-835250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B939BA6945
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EC6BA68F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 661843C052B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:40:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2AA3BC130
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DC02BDC1B;
-	Sun, 28 Sep 2025 06:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TPTD7scr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4F329ACC0;
+	Sun, 28 Sep 2025 06:28:58 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6D229E115;
-	Sun, 28 Sep 2025 06:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125A221554;
+	Sun, 28 Sep 2025 06:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759041626; cv=none; b=EvTIyhzIEpC84vpABVfFladpM9eDVBXVh8n4JvL86P+ztxKT+xSGGDSd/j2MKVKTuoIXX2tqsXSnNND5l6vjR1fULK9kW+D7Kam4RwGvOWy0iKerEH4Sq0LmPt90r+GZE08quHVJOLOePEOhwDEmioEfQnQUH0EmwU1/V6Xotn8=
+	t=1759040937; cv=none; b=uX4XX8DsbeI3rM/A4gk+wES1U7jHGBCLh4w94eqjoTeobxnPC8+SXVh1zzLgEb34y7sojG/230zXsDxGTmjadDHJ5SDV4eg05/fY3VN1mhr25+kTMF/cGd8vG+DH6HtK5hU09UGCATqAFkz08wccWCAIWW8sb95FMDvNweINJ7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759041626; c=relaxed/simple;
-	bh=cDTxcb4B+ODUAizKTHRF3o2YDVPO24Wtl1sX30pmf1Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sSe7K2lcqeY8yBv8cj9JRt0Lcv1CMij5zIAVwBaKCumbtQYgKYSgZ++nUgC6EcblcOzRiiTadS938QDkjH0npoe5VomBHgbSjILsEKFaNI6U2umvqPSpSCoLLDzzsx7c+qYtPPyK2dXwwVvuCVfjPD8V/+us1N7QxF0Pj6AN7+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TPTD7scr; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759041625; x=1790577625;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cDTxcb4B+ODUAizKTHRF3o2YDVPO24Wtl1sX30pmf1Q=;
-  b=TPTD7scr1CnpetPMDZOV29mFBXRku93aWeeoN42UVwBG14y9t20xtYec
-   hgkVqDQvcxFo4O1qaptzTBONZFKsLKIh4wM7P6SvzLsyx5pWYSeDr9iW/
-   tdd9sR7nF916MCcRl/WyTbj0XPBQ4SUAyY7pKeqsz+VPTQJf00awsj/7n
-   vl468+R/ghY0MTxJSowtETu4snM5ksTONve1zqK15y3k6X6LAu23iDbd8
-   iCFYSX9Hnd3F67V85IkP/Lvaed0wUMrjZ+RKJ0wyuUYrd1cbbEQYR+X3I
-   SfMijTEtLyOyS8AFWLeAqVxQHKpgyQk6Ea+lcE1OWZhJvwA8hm5jeHs/z
-   A==;
-X-CSE-ConnectionGUID: 8SYQ1ekNR2SI325oCifSow==
-X-CSE-MsgGUID: ee/IpVXTTh+aeSySfj4cAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61228546"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61228546"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 23:40:24 -0700
-X-CSE-ConnectionGUID: VDyHmiQCR06ImWbm1f2Vhg==
-X-CSE-MsgGUID: yfO1NG4ISXmJrNPikFM3iA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,299,1751266800"; 
-   d="scan'208";a="177088889"
-Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.165])
-  by orviesa006.jf.intel.com with ESMTP; 27 Sep 2025 23:40:22 -0700
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: linux-coco@lists.linux.dev,
-	linux-pci@vger.kernel.org,
-	dan.j.williams@intel.com
-Cc: yilun.xu@intel.com,
-	yilun.xu@linux.intel.com,
-	baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com,
-	aneesh.kumar@kernel.org,
-	bhelgaas@google.com,
-	aik@amd.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] coco/tdx-host: Illustrate IDE Address Association Register setup
-Date: Sun, 28 Sep 2025 14:27:56 +0800
-Message-Id: <20250928062756.2188329-4-yilun.xu@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250928062756.2188329-1-yilun.xu@linux.intel.com>
-References: <20250928062756.2188329-1-yilun.xu@linux.intel.com>
+	s=arc-20240116; t=1759040937; c=relaxed/simple;
+	bh=z+YHa/cOdoibGw2jRY2xxhhsZJRT/H6INHbF8sLonRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zd6r+WLJ7sEo0NJO0641TKmAxzEVULH/knMQLryPr+WI4zX+8Uze5lLUS2teuDltsLmkKf2Z4lMG5gpjB8x+J+YCiS3qiSf9thvy+3b2JSbfThItgB5Ws07zfY+U1hohJPqpR1IN8QHSOFMOUWfqrPKLQ1IErBYFXAp1GetqNZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 61d23e349c3411f08b9f7d2eb6caa7cf-20250928
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
+	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:d98a05f5-1ae2-456b-b5a6-54465287ac08,IP:15,
+	URL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,AC
+	TION:release,TS:20
+X-CID-INFO: VERSION:1.1.45,REQID:d98a05f5-1ae2-456b-b5a6-54465287ac08,IP:15,UR
+	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:20
+X-CID-META: VersionHash:6493067,CLOUDID:999dcae1378ea676a66d6000eed1a84b,BulkI
+	D:250928142846D3N2MTPY,BulkQuantity:0,Recheck:0,SF:17|19|24|38|44|66|78|10
+	2,TC:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 61d23e349c3411f08b9f7d2eb6caa7cf-20250928
+X-User: cuitao@kylinos.cn
+Received: from ctao-ubuntu.. [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <cuitao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 607324908; Sun, 28 Sep 2025 14:28:44 +0800
+From: cuitao <cuitao@kylinos.cn>
+To: axboe@kernel.dk,
+	linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	cuitao <cuitao@kylinos.cn>
+Subject: [PATCH] block: Kconfig: Fix indentation.
+Date: Sun, 28 Sep 2025 14:28:32 +0800
+Message-ID: <20250928062832.3465356-1-cuitao@kylinos.cn>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,67 +74,203 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Not for devsec-staging. Just illustrate, can't compile. Please wait for:
+The convention for indentation seems to be a single tab. Help text is
+further indented by an additional two whitespaces. Fix the lines that
+violate these rules.
 
-  [RFC PATCH v2 00/27] PCI/TSM: TDX Connect: SPDM Session and IDE Establishment
-
-Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+Signed-off-by: cuitao <cuitao@kylinos.cn>
 ---
- drivers/virt/coco/tdx-host/tdx-host.c | 33 ++++-----------------------
- 1 file changed, 4 insertions(+), 29 deletions(-)
+ block/Kconfig | 116 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 58 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/virt/coco/tdx-host/tdx-host.c b/drivers/virt/coco/tdx-host/tdx-host.c
-index 5553c63b4083..58777225b51e 100644
---- a/drivers/virt/coco/tdx-host/tdx-host.c
-+++ b/drivers/virt/coco/tdx-host/tdx-host.c
-@@ -387,29 +387,6 @@ static void tdx_ide_stream_key_stop(struct tdx_link *tlink)
+diff --git a/block/Kconfig b/block/Kconfig
+index 15027963472d..ce19774969f4 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -65,82 +65,82 @@ config BLK_DEV_INTEGRITY
+ 	select CRC_T10DIF
+ 	select CRC64
+ 	help
+-	Some storage devices allow extra information to be
+-	stored/retrieved to help protect the data.  The block layer
+-	data integrity option provides hooks which can be used by
+-	filesystems to ensure better data integrity.
++	  Some storage devices allow extra information to be
++	  stored/retrieved to help protect the data.  The block layer
++	  data integrity option provides hooks which can be used by
++	  filesystems to ensure better data integrity.
  
- DEFINE_FREE(tdx_ide_stream_key_stop, struct tdx_link *, if (!IS_ERR_OR_NULL(_T)) tdx_ide_stream_key_stop(_T))
+-	Say yes here if you have a storage device that provides the
+-	T10/SCSI Data Integrity Field or the T13/ATA External Path
+-	Protection.  If in doubt, say N.
++	  Say yes here if you have a storage device that provides the
++	  T10/SCSI Data Integrity Field or the T13/ATA External Path
++	  Protection.  If in doubt, say N.
  
--/* OPEN: Should we add general address range support in pci/ide.c ? */
--static void setup_addr_range(struct pci_dev *pdev,
--			     resource_size_t *start, resource_size_t *end)
--{
--	struct device *dev;
--	u32 devid;
--	int i;
--
--	add_pdev_to_addr_range(pdev, start, end);
--
--	for (i = 0; i < pci_num_vf(pdev); i++) {
--		devid = PCI_DEVID(pci_iov_virtfn_bus(pdev, i),
--				  pci_iov_virtfn_devfn(pdev, i));
--
--		dev = bus_find_device(&pci_bus_type, NULL, &devid,
--				      match_pci_dev_by_devid);
--		if (dev) {
--			add_pdev_to_addr_range(to_pci_dev(dev), start, end);
--			put_device(dev);
--		}
--	}
--}
--
- static void sel_stream_block_setup(struct pci_dev *pdev, struct pci_ide *ide,
- 				   u64 *rid_assoc1, u64 *rid_assoc2,
- 				   u64 *addr_assoc1, u64 *addr_assoc2,
-@@ -422,12 +399,10 @@ static void sel_stream_block_setup(struct pci_dev *pdev, struct pci_ide *ide,
- 	*rid_assoc1 = FIELD_PREP(PCI_IDE_SEL_RID_1_LIMIT, setting->rid_end);
- 	*rid_assoc2 = PREP_PCI_IDE_SEL_RID_2(setting->rid_start, pci_ide_domain(pdev));
+ config BLK_DEV_WRITE_MOUNTED
+ 	bool "Allow writing to mounted block devices"
+ 	default y
+ 	help
+-	When a block device is mounted, writing to its buffer cache is very
+-	likely going to cause filesystem corruption. It is also rather easy to
+-	crash the kernel in this way since the filesystem has no practical way
+-	of detecting these writes to buffer cache and verifying its metadata
+-	integrity. However there are some setups that need this capability
+-	like running fsck on read-only mounted root device, modifying some
+-	features on mounted ext4 filesystem, and similar. If you say N, the
+-	kernel will prevent processes from writing to block devices that are
+-	mounted by filesystems which provides some more protection from runaway
+-	privileged processes and generally makes it much harder to crash
+-	filesystem drivers. Note however that this does not prevent
+-	underlying device(s) from being modified by other means, e.g. by
+-	directly submitting SCSI commands or through access to lower layers of
+-	storage stack. If in doubt, say Y. The configuration can be overridden
+-	with the bdev_allow_write_mounted boot option.
++	  When a block device is mounted, writing to its buffer cache is very
++	  likely going to cause filesystem corruption. It is also rather easy to
++	  crash the kernel in this way since the filesystem has no practical way
++	  of detecting these writes to buffer cache and verifying its metadata
++	  integrity. However there are some setups that need this capability
++	  like running fsck on read-only mounted root device, modifying some
++	  features on mounted ext4 filesystem, and similar. If you say N, the
++	  kernel will prevent processes from writing to block devices that are
++	  mounted by filesystems which provides some more protection from runaway
++	  privileged processes and generally makes it much harder to crash
++	  filesystem drivers. Note however that this does not prevent
++	  underlying device(s) from being modified by other means, e.g. by
++	  directly submitting SCSI commands or through access to lower layers of
++	  storage stack. If in doubt, say Y. The configuration can be overridden
++	  with the bdev_allow_write_mounted boot option.
  
--	/* Only one address association register block */
--	setup_addr_range(pdev, &start, &end);
--
--	*addr_assoc1 = PREP_PCI_IDE_SEL_ADDR1(start, end);
--	*addr_assoc2 = FIELD_GET(SEL_ADDR_UPPER, end);
--	*addr_assoc3 = FIELD_GET(SEL_ADDR_UPPER, start);
-+	/* TDX Module enforces only one address association register block */
-+	*addr_assoc1 = PREP_PCI_IDE_SEL_ADDR1(setting->mem64.start, setting->mem64.end);
-+	*addr_assoc2 = FIELD_GET(SEL_ADDR_UPPER, setting->mem64.end);
-+	*addr_assoc3 = FIELD_GET(SEL_ADDR_UPPER, setting->mem64.start);
- }
+ config BLK_DEV_ZONED
+ 	bool "Zoned block device support"
+ 	help
+-	Block layer zoned block device support. This option enables
+-	support for ZAC/ZBC/ZNS host-managed and host-aware zoned block
+-	devices.
++	  Block layer zoned block device support. This option enables
++	  support for ZAC/ZBC/ZNS host-managed and host-aware zoned block
++	  devices.
  
- #define STREAM_INFO_RP_DEVFN		GENMASK_ULL(7, 0)
+-	Say yes here if you have a ZAC, ZBC, or ZNS storage device.
++	  Say yes here if you have a ZAC, ZBC, or ZNS storage device.
+ 
+ config BLK_DEV_THROTTLING
+ 	bool "Block layer bio throttling support"
+ 	depends on BLK_CGROUP
+ 	select BLK_CGROUP_RWSTAT
+ 	help
+-	Block layer bio throttling support. It can be used to limit
+-	the IO rate to a device. IO rate policies are per cgroup and
+-	one needs to mount and use blkio cgroup controller for creating
+-	cgroups and specifying per device IO rate policies.
++	  Block layer bio throttling support. It can be used to limit
++	  the IO rate to a device. IO rate policies are per cgroup and
++	  one needs to mount and use blkio cgroup controller for creating
++	  cgroups and specifying per device IO rate policies.
+ 
+-	See Documentation/admin-guide/cgroup-v1/blkio-controller.rst for more information.
++	  See Documentation/admin-guide/cgroup-v1/blkio-controller.rst for more information.
+ 
+ config BLK_WBT
+ 	bool "Enable support for block device writeback throttling"
+ 	help
+-	Enabling this option enables the block layer to throttle buffered
+-	background writeback from the VM, making it more smooth and having
+-	less impact on foreground operations. The throttling is done
+-	dynamically on an algorithm loosely based on CoDel, factoring in
+-	the realtime performance of the disk.
++	  Enabling this option enables the block layer to throttle buffered
++	  background writeback from the VM, making it more smooth and having
++	  less impact on foreground operations. The throttling is done
++	  dynamically on an algorithm loosely based on CoDel, factoring in
++	  the realtime performance of the disk.
+ 
+ config BLK_WBT_MQ
+ 	bool "Enable writeback throttling by default"
+ 	default y
+ 	depends on BLK_WBT
+ 	help
+-	Enable writeback throttling by default for request-based block devices.
++	  Enable writeback throttling by default for request-based block devices.
+ 
+ config BLK_CGROUP_IOLATENCY
+ 	bool "Enable support for latency based cgroup IO protection"
+ 	depends on BLK_CGROUP
+ 	help
+-	Enabling this option enables the .latency interface for IO throttling.
+-	The IO controller will attempt to maintain average IO latencies below
+-	the configured latency target, throttling anybody with a higher latency
+-	target than the victimized group.
++	  Enabling this option enables the .latency interface for IO throttling.
++	  The IO controller will attempt to maintain average IO latencies below
++	  the configured latency target, throttling anybody with a higher latency
++	  target than the victimized group.
+ 
+-	Note, this is an experimental interface and could be changed someday.
++	  Note, this is an experimental interface and could be changed someday.
+ 
+ config BLK_CGROUP_FC_APPID
+ 	bool "Enable support to track FC I/O Traffic across cgroup applications"
+@@ -156,31 +156,31 @@ config BLK_CGROUP_IOCOST
+ 	depends on BLK_CGROUP
+ 	select BLK_RQ_ALLOC_TIME
+ 	help
+-	Enabling this option enables the .weight interface for cost
+-	model based proportional IO control.  The IO controller
+-	distributes IO capacity between different groups based on
+-	their share of the overall weight distribution.
++	  Enabling this option enables the .weight interface for cost
++	  model based proportional IO control.  The IO controller
++	  distributes IO capacity between different groups based on
++	  their share of the overall weight distribution.
+ 
+ config BLK_CGROUP_IOPRIO
+ 	bool "Cgroup I/O controller for assigning an I/O priority class"
+ 	depends on BLK_CGROUP
+ 	help
+-	Enable the .prio interface for assigning an I/O priority class to
+-	requests. The I/O priority class affects the order in which an I/O
+-	scheduler and block devices process requests. Only some I/O schedulers
+-	and some block devices support I/O priorities.
++	  Enable the .prio interface for assigning an I/O priority class to
++	  requests. The I/O priority class affects the order in which an I/O
++	  scheduler and block devices process requests. Only some I/O schedulers
++	  and some block devices support I/O priorities.
+ 
+ config BLK_DEBUG_FS
+ 	bool "Block layer debugging information in debugfs"
+ 	default y
+ 	depends on DEBUG_FS
+ 	help
+-	Include block layer debugging information in debugfs. This information
+-	is mostly useful for kernel developers, but it doesn't incur any cost
+-	at runtime.
++	  Include block layer debugging information in debugfs. This information
++	  is mostly useful for kernel developers, but it doesn't incur any cost
++	  at runtime.
+ 
+-	Unless you are building a kernel for a tiny system, you should
+-	say Y here.
++	  Unless you are building a kernel for a tiny system, you should
++	  say Y here.
+ 
+ config BLK_SED_OPAL
+ 	bool "Logic for interfacing with Opal enabled SEDs"
+@@ -188,9 +188,9 @@ config BLK_SED_OPAL
+ 	select PSERIES_PLPKS if PPC_PSERIES
+ 	select PSERIES_PLPKS_SED if PPC_PSERIES
+ 	help
+-	Builds Logic for interfacing with Opal enabled controllers.
+-	Enabling this option enables users to setup/unlock/lock
+-	Locking ranges for SED devices using the Opal protocol.
++	  Builds Logic for interfacing with Opal enabled controllers.
++	  Enabling this option enables users to setup/unlock/lock
++	  Locking ranges for SED devices using the Opal protocol.
+ 
+ config BLK_INLINE_ENCRYPTION
+ 	bool "Enable inline encryption support in block layer"
 -- 
-2.25.1
+2.48.1
 
 
