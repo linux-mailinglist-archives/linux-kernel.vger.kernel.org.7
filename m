@@ -1,291 +1,202 @@
-Return-Path: <linux-kernel+bounces-835318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FE4BA6B77
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3A6BA6B7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4497A1899AA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:37:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7EA189A9FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C1F28D8D1;
-	Sun, 28 Sep 2025 08:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFF72BE7D2;
+	Sun, 28 Sep 2025 08:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PTrz+ZsL"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="jsqWU/cK"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011055.outbound.protection.outlook.com [52.101.70.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F4215E90
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759048597; cv=none; b=MSLIrfF3oZ5ypsg+7ha9iHWd8rw2A3PzA8rqmun1kPjJRJB91J9hPPPEW851lPdCELunOuzt2gYZm3235wCKyv6StOi6Vnaj96IPjHq2cDMoN0QufpT4vXJlVWv2QA5o9Un0G+Wgawh92+gcaXudNegnqbBadP3/9hjUquehdrA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759048597; c=relaxed/simple;
-	bh=Gp/VJMqiN0E0WUrDcQM2Bgl/BeMGlbZT5jo5D8Hu2Ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PznzVI2BH5V35yojxIjdhfte7xdm9zZJMKtbSI51rwO3gbVwiLlv0Eg/z6SDIQ47+1OXLNV87LcyC+ijiWbfQl/fiNFV5vGbfC6/qOTLAfwvUNx4KKte893lHS1V1p8kRvXxBIwgZfALMb/er5lbnD31zb+WcIM01aC51acKnFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PTrz+ZsL; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4d8a1e66-a7a2-49a0-be34-2b918c73f092@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759048582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PZzFUD3gQ/t+AjJEre6cd9w3693csXe/U0SjQqAd8+A=;
-	b=PTrz+ZsLAoBLl53mYgZx9Ph9Pgl1n3WIb3cHS+a0XyoyBqJkQ5hIu/cI1x0CpGr6z6Zo5O
-	6JLs6L/Eaz5WtBu/8GizchAJTxMzr2IJ0KppeAFR5SsmmHHGq/APbz46gxaTHY/Tir4yut
-	xKQ0+CcwrB6DF3NRG27DMRVBfJ1J5sc=
-Date: Sun, 28 Sep 2025 16:35:42 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFCC225791
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759048624; cv=fail; b=ItG2cFYDjFxxjShRywyeOb9CaLvXwmbnDA8dWQBO9AE2ivz3ZGjScucNU2jcLbmF+0tV8FniYq9Q8zh73M0yRTTNZzCeAV37g7N9sLi53FTBanjanKYGtY8mxMTqH6VwH60xQXmFI3yrfJA475n1L4wLLESyUl5e8x2PZD+1BsE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759048624; c=relaxed/simple;
+	bh=8FdNqHyGaQ/Ma05EXvNt5dIkXQHBEnfrbXzUiIO6m2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=i2sWq9JIkpiRCxqjD5Nwy7gYjNRcGY7oyywDoPhSVnAUVyk2CBr4PTnCDeFANfkm7egYyquGGUacjs+5VtgyD693DrYcQ9W6or9QKCaVPlkzd2v+UmR7zzh8opYX26QvcvDvwS7M5CUpYsAH/x8UKh6R0ntdoQJrA/PYpkLxxeg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=jsqWU/cK; arc=fail smtp.client-ip=52.101.70.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T89jsKapiXLjYZjkgjlNqXDQDsb3+HvJwZbZxNRfMggW4cRPuy+mnheL+MYTEtYkEUFxH4WqWXAA7F9ic3g3RJWWvuTJIjYE0Y6pLng6FI82+PSEK8ySobeZj06QnNaupXsEW/XpB5L1U/39jzX54MAKZvHkIP9Mw8K14snRST5iA0tfqrUuyhRmPoUHgmaVotwdEr89Av6/R5GA9kBmBlr56ZiKFXmHiyzoGpFBKwWRDKiQRWxqBG63t1vnkcJPY29OYBi9eWUqwWM2qZGg1F9MPWW8vc8OhgNo7Wz+JS5hcbYCuA9dOpUMnttQfj5ZtwPQ5OUzsCwNpeGZq+HMrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vxtwNTtwWNdhF+2uh4z3XzPow9KzMlnLaYn/K4l8rCo=;
+ b=ehsDQTCV5+ky8Ki3l0DkfubW2mqAY1eDfavGLiHX2y+9wcQldu2HNROgl1ZTev7mxZG0nczepeVZvXf5hJeJlfOSLwIj6OdI9TrAMXDyMJnK6e81X2MLxEETle7/Dub8E5ByDkebK55hTRZqZWpkVU9tGwY+GBJz52XiiGw0EMl4iRoXDf/b86sXDTvfDA+MwpuonyQEuuV2kk7IgPJWQotLsi9/22U6f/XaMgNkrqFgyFTAS9R112ZXyiSBH2NMZsGaO+UgiNVm43XKUDcIRq7zK0kNg1AiUCcHM387F2wF0BlUnXjDPVOJ6nC2ngprmBzTMs/sgP68U5/WBLkq2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vxtwNTtwWNdhF+2uh4z3XzPow9KzMlnLaYn/K4l8rCo=;
+ b=jsqWU/cKBDbTYEqKR3CHlDtMaOKz4FZUCrQxFmhky0Pc5OaCF5Gk+XwqdVgnaDuXWd3nIgDKHXbvfeZrfGTwXbRPxS3Yd4/2l129Pdcae71BVqsX0axlVQ0jEjUF09oBVrvBxbkuDQYp/HVIhHBVKUwm/Rw/ugVg8xyFhyg0YEwqf/W1egaysQzO5H/aHpqTeizb9L2SwPCzb6Mt2oSDmq4lOEpVyX5mpO1kvryqXT2N5i/fdztv/xGdLS8eEYYAE/PTx9ll1q+gcjva0OCGekEJ2e0wjatFchQeYQ3MerEijV3iEfMnna8jJONnRJuQfGD38wIbdxgPpWeM8/6scA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS4PR04MB9624.eurprd04.prod.outlook.com (2603:10a6:20b:4ce::9)
+ by PA4PR04MB9269.eurprd04.prod.outlook.com (2603:10a6:102:2a4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sun, 28 Sep
+ 2025 08:36:56 +0000
+Received: from AS4PR04MB9624.eurprd04.prod.outlook.com
+ ([fe80::fa4e:dc6f:3f71:13b7]) by AS4PR04MB9624.eurprd04.prod.outlook.com
+ ([fe80::fa4e:dc6f:3f71:13b7%4]) with mapi id 15.20.9160.013; Sun, 28 Sep 2025
+ 08:36:56 +0000
+Date: Sun, 28 Sep 2025 16:36:59 +0800
+From: Rain Yang <jiyu.yang@oss.nxp.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: airlied@gmail.co, dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+	jiyu.yang@oss.nxp.com, linux-kernel@vger.kernel.org,
+	liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com,
+	marek.vasut@mailbox.org, mripard@kernel.org, simona@ffwll.ch,
+	steven.price@arm.com, tzimmermann@suse.de
+Subject: Re: [PATCH v1] drm/panthor: skip regulator setup if no such prop
+Message-ID: <aNjzq_i0RLfovUGT@oss.nxp.com>
+References: <20250926090722.23097-1-jiyu.yang@oss.nxp.com>
+ <20250926120311.33dc9fb1@fedora>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926120311.33dc9fb1@fedora>
+X-ClientProxiedBy: SI2PR02CA0008.apcprd02.prod.outlook.com
+ (2603:1096:4:194::12) To AS4PR04MB9624.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ce::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] btrfs: Add the nlink annotation in btrfs_inode_item
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
- Chris Mason <clm@fb.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-References: <20250926074543.585249-1-youling.tang@linux.dev>
- <adda6065-26a2-4d31-b4f0-ccb20e0fadeb@gmx.com>
- <bda4b547-4dea-4c05-8679-1cf021bbe340@linux.dev>
- <b431fe00-43f3-49c2-a58b-8f79cb2134dc@gmx.com>
- <bc7a7e81-8e71-44ee-af4c-96193c9cb8e8@linux.dev>
- <d788b939-7191-426d-b2eb-944fd1c6b9ed@gmx.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <d788b939-7191-426d-b2eb-944fd1c6b9ed@gmx.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9624:EE_|PA4PR04MB9269:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66ca4f41-5062-4389-256c-08ddfe6a2edf
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?onxPZACw/I6S7tm+STfSTKLF8agBI8X0qo8TJuSTHZCFx6h6yaxmjqAmMzLA?=
+ =?us-ascii?Q?87YJM0UVFtHOFBmS5kdSJPB9QMDJRy7rkuFNb7oRq5yWj2xfkOBDeOtdIUqt?=
+ =?us-ascii?Q?+sDmgV814leWqmR5FKESuuOxkv+PuL2eTIToE72rHYdkBCiD28lFL78G2EOm?=
+ =?us-ascii?Q?LimsgA7U0YbuOTjVQigwYx5KZLSZExw9DT/YLrbQbyQ6thzUwhK2QhbpSKAm?=
+ =?us-ascii?Q?wP8fwhhyCUNqrxqD5Cy/wg0dRCBMejJiDlNa8QFrvtwwstbWQ5XlYTysSXNJ?=
+ =?us-ascii?Q?G5mP9tYAnqWm0/L5LX5XuqEE9LytkMg3nG2ekFEY401uZOJ2/Bcvuc0K0Jse?=
+ =?us-ascii?Q?BNtHdIjDI8HP5NXVQyFtAJlFBzbvJyhsc8fSNbZFp47TC/YfMHc5i+mpBPnS?=
+ =?us-ascii?Q?BfrCF7JjA7N0w8vATDP2IbzxHM+WnTfVbX868mc8vJPo+W/KDZYx7F4HuxAb?=
+ =?us-ascii?Q?2ncIOJjijxjOr7xZP3eSgOcXBI9L3fpX5vzqEVn+43k4+AHvKf2qsJjKbyh5?=
+ =?us-ascii?Q?YTsvN+2pwWKFPOZsueqd+hCqAb1G4NFlHp8xj6KUj/MmfdMNyLgHnB60qzmr?=
+ =?us-ascii?Q?FQz0ZxlCar4zitR/QpFKaEvV6UQhtL7VHGEI82xtYZpmrC1llzvVELghoEKp?=
+ =?us-ascii?Q?QMw+PTyjQPoftqVQDfKFVvu0ugdF2sR+QyKB4QAr0HF6wYxhvNOb21b41wYh?=
+ =?us-ascii?Q?ge6/5h+l0XTf0xckGczxBrZm1ei094mb2kYF9JACb90pv7zuZ2hw3o3hM6KG?=
+ =?us-ascii?Q?YOUuj9GBT2TH475qyHRQ1+PYcjfLmYZxFVLWzBFVEl9XobvTvLTO7lQWK/QJ?=
+ =?us-ascii?Q?UMEGXLnOzsVxduu0Pd6DKtZSt6vEO+HNN4GHaqm2JO/SqWrT9+DPoiu/T1yu?=
+ =?us-ascii?Q?6y2TQp/65tKDhXui2hp8XIK+QmF5VdEJaq6N/Vg6cKvH+gmb2wG5lmnX/qA/?=
+ =?us-ascii?Q?U/W9icbUUjendVSmuiGX5x+LyJGnkANq29CXJUgdgT7CtJP5AZXfVOBjOc0P?=
+ =?us-ascii?Q?jRv53cTg0ErpkJUKIMXmfkQGFeaE/RlyOO7hpxYJ1t0lXxk8ZlaeWlDbpFBA?=
+ =?us-ascii?Q?f2I4vRaFO+fz5iL6KC+JZaHMFyLICJBZgM8oWbC5OGvo0s7UaSSY4bdYh4i8?=
+ =?us-ascii?Q?4Cv5ae5GNFYsMbhV0luADPsGJ+ZiBW4AmiqWBWKHp2I/qntDAvSvl/O0plqC?=
+ =?us-ascii?Q?eRk54keWD+pTAGTXot6uxiD96g+PACF5oN9nCQUeQYmLfhicYkL8jvGF5aUe?=
+ =?us-ascii?Q?wwZLEyUuto52W+niU2nR/LiiHHwqJAH/2lfI/1gvVgBT2QOTWAxaud8h+Pij?=
+ =?us-ascii?Q?C7Y05imrfY7MGVLldDuBXW8Fng+O/X2T6tRvokp7NoX/R0Z/NLTN9jY1RLmT?=
+ =?us-ascii?Q?S75/oh3APlqmf5AOEeExERVbazjBOQRSdc4ZOxyffsDhdxmtaruR/vi/JMzD?=
+ =?us-ascii?Q?DzRD86SPfiC5Sk5tGK9ORO/Ci2SgHh+tJtOdu5W0LcRkqry4CpRrqu3NeqIe?=
+ =?us-ascii?Q?NS2UY6aQaWXJvVfc1oR/w1q13SRDqyQIA+vO?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9624.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HvLmHz4eQyLAVcTthNVlBFDb9bs33jrVvI7HW6PEml01Vz2KK6wE+nv58p0h?=
+ =?us-ascii?Q?z127SVKoG/O/ZcZ6AnO3NJKbqYUm9H+OXfFnLOQ4ZxEjHrPQriintm92AluO?=
+ =?us-ascii?Q?f7HyQaOUZ+10grgf15yCLWvZBLzJ5uNsbslVmtZzrMHFbx43uKwMgVyODuom?=
+ =?us-ascii?Q?LN6bgfWNrLkWlkzAhNJYeoBJkf9HQJXDmjQ6ObEzw9PqamTHGTupGKZacf//?=
+ =?us-ascii?Q?VR1emOKTHptXC5YfnUogW0sgKdc1izkNMl4tBBvdGGtb1MhH2q+NShhertLU?=
+ =?us-ascii?Q?ugUi6X6vsRRbkp5p0PgsIxysfxp5ZVFXw8CrFhWHq7lClmeh18TIb1+J9vRn?=
+ =?us-ascii?Q?YPo0VBUGnydDyb7x4m7zV2DeW6edlQAUQUwQjRTriXXCBJmYVtvYrPJzvDQX?=
+ =?us-ascii?Q?n0xlBTwkXxhQuNLWe8P6h55u2LkKfxIq960Z7E5LtWN3ONvTwaxhmQmGa8wH?=
+ =?us-ascii?Q?XNeTtGji3ZfR29hvGdX5+TX7YlwsbW2L5d2advOQCG1HG7tZpd1BgzMaQTPQ?=
+ =?us-ascii?Q?y8ENofjeaqBwkYdVXqCC6W3A+F6aEZ2Cc4IMWuFNqMEI9Kl2lGakXylATqzr?=
+ =?us-ascii?Q?5gI9kyWhf4e7LjdDwDgNEcDggAdRasM0DwcVUwFTTAmFi2frqUDATKlfZxVY?=
+ =?us-ascii?Q?cVKE6iqD/UOwVzl3io/YVjecXAUQP1mUw4avmNrsE8nmXQz6pY+65vpIBX6r?=
+ =?us-ascii?Q?0RZpLj9H6ier1LWEDJo8BSzvekmLFbVE0ywFuifxI7UXrm4NZegCmwAQZIBy?=
+ =?us-ascii?Q?dgm08pnIR9HZ5B/s88jbTiM5vnbCd3OpWTv7deXruG6WcHvKTivEBOkmNYxj?=
+ =?us-ascii?Q?Gp1RIZBYxofinXeaGZTdq1N7pvSnKnCeBjOfvOhtIu5rouhOEmEqj2KFiuwX?=
+ =?us-ascii?Q?1ozjwuxrxHF6qOQRQmkyk81u+TTxSnPUc+pLofPypTwDkbavUUlD13zDEiSL?=
+ =?us-ascii?Q?QnfviWWxKM6tkeP5asxHMQxu6dawTBoun5XS4qU2D8eCNFC0zAVWy9drI+zo?=
+ =?us-ascii?Q?xGmqQe1qsQyzzXSpwAKbOBOaR7VfSGP98UgvUb1+nZ/Jyt7l5ufL8Dyk+YHu?=
+ =?us-ascii?Q?W+rIIJW+2qyWufq/fz7b+XYJnMCXqm0l1xsFxm0i32lXtiI6zrDMc8jZtAKW?=
+ =?us-ascii?Q?kPpPLa2bZA17rVpT4T9w0yQlUs+ysBOVi5j6wqxnE2TNka8bOt+ESPH7HCxc?=
+ =?us-ascii?Q?Ygwujo6Ty7HrfU2kz7tKbikL8mRAb83WAzQGILOeh1NspArq3hQe5sLkR7Co?=
+ =?us-ascii?Q?mUV6PEC0eKmksePbORl2oJTVK2DlHedhjrGMP2thmGVUVHr/R6nRzAfE4/Ou?=
+ =?us-ascii?Q?5yaBTD/fxe34XGOldjXynLh0OvTJtRXUY0zFnPUSdt7ZFO4FBmetrnWvjsNK?=
+ =?us-ascii?Q?ymKe8F6w0D3mR3JxD3ViHmLcnzcGMSFFBko6KrF+stj0M9YukCtL38WvPOyW?=
+ =?us-ascii?Q?dvP6zCqiql6sN4sLuHZ8viQTn6DQA0MIl0gBVI5WzJh2KBwB5EBENv20vlyr?=
+ =?us-ascii?Q?KwlnC8THkbe7KrckKpuMleUEiRrVdRryAxXlN3zGXczzchUL6y9+W9Xv5NZk?=
+ =?us-ascii?Q?CkkQQu4IiUW0mWx19uhWgGimkNqzifXVF1P5/KDk?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66ca4f41-5062-4389-256c-08ddfe6a2edf
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9624.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 08:36:56.4295
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: awyD2QgCziUIcuAGuXQpJwrqmIW5x7W4v+WQnyGRKhMKWNoSt5XdMDyzI9ZZXQnghKSblsLR/RktOh5Tdhf8Jg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9269
 
-On 9/28/25 15:37, Qu Wenruo wrote:
+On Fri, Sep 26, 2025 at 12:03:11PM +0200, Boris Brezillon wrote:
+>On Fri, 26 Sep 2025 17:07:22 +0800
+>Rain Yang <jiyu.yang@oss.nxp.com> wrote:
+>
+>> From: Rain Yang <jiyu.yang@nxp.com>
+>> 
+>> The regulator is optional, skip the setup instead of returning an
+>> error if it is not present
+>
+>AFAICT, it's not flagged optional in the DT bindings yet, so I'd prefer
+>to have this change and the DT bindings update in the same patch series
+>(both will go through the drm-misc tree anway).
+>
 
->
->
-> 在 2025/9/28 16:39, Youling Tang 写道:
->> On 9/28/25 13:16, Qu Wenruo wrote:
->>
->>>
->>>
->>> 在 2025/9/28 11:44, Youling Tang 写道:
->>>> Hi, Wenruo
->>>>
->>>> On 9/26/25 16:34, Qu Wenruo wrote:
->>>>>
->>>>>
->>>>> 在 2025/9/26 17:15, Youling Tang 写道:
->>>>>> From: Youling Tang <tangyouling@kylinos.cn>
->>>>>>
->>>>>> When I created a directory, I found that its hard link count was
->>>>>> 1 (unlike other file system phenomena, including the "." directory,
->>>>>> which defaults to an initial count of 2).
->>>>>>
->>>>>> By analyzing the code, it is found that the nlink of the directory
->>>>>> in btrfs has always been kept at 1, which is a deliberate design.
->>>>>>
->>>>>> Adding its comments can prevent it from being mistakenly regarded
->>>>>> as a BUG.
->>>>>>
->>>>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->>>>>> ---
->>>>>>   include/uapi/linux/btrfs_tree.h | 1 +
->>>>>>   1 file changed, 1 insertion(+)
->>>>>>
->>>>>> diff --git a/include/uapi/linux/btrfs_tree.h 
->>>>>> b/include/uapi/linux/ btrfs_tree.h
->>>>>> index fc29d273845d..b4f7da90fd0e 100644
->>>>>> --- a/include/uapi/linux/btrfs_tree.h
->>>>>> +++ b/include/uapi/linux/btrfs_tree.h
->>>>>> @@ -876,6 +876,7 @@ struct btrfs_inode_item {
->>>>>>       __le64 size;
->>>>>>       __le64 nbytes;
->>>>>>       __le64 block_group;
->>>>>> +    /* nlink in directories is fixed at 1 */
->>>>>
->>>>> nlink of what?
->>>>>
->>>>> Shouldn't be "nlink of directories" or "nlink of directory inodes"?
->>>>>
->>>>>
->>>>> There are better location like btrfs-progs/Documentation/dev/On- 
->>>>> disk- format.rst for this.
->>>>>
->>>>> And you're only adding one single comment for a single member?
->>>>> Even this is a different behavior compared to other fses, why not 
->>>>> explain what the impact of the change?
->>>>>
->>>>>
->>>>> If you really want to add proper comments, spend more time and 
->>>>> effort like commit 9c6b1c4de1c6 ("btrfs: document device locking") 
->>>>> to do it correctly.
->>>>
->>>> My understanding of nlink is as follows, please correct me if I'm 
->>>> wrong,
->>>>
->>>> /*
->>>>   * nlink represents the hard link count (corresponds to inode- 
->>>> >i_nlink value).
->>>>   * For directories, this value is always 1, which differs from 
->>>> other filesystems
->>>>   * where a newly created directory has an inode->i_nlink value of 
->>>> 2 (including
->>>>   * the "." entry pointing to itself).
->>>
->>> Have you checked what's the meaning of the nlink number for other 
->>> fses and why other fses go like that?
->>>
->> I have examined ext4, XFS, and bcachefs. In these filesystems,
->> when performing the following operations:
->> ```
->>   # mkdir -p a/b
->>   # cd a/b
->>   # ls -la
->>   drwxr-xr-x 2 root root  6 Sep 28 14:45 .
->>   drwxr-xr-x 3 root root 15 Sep 28 14:45 ..
->> ```
->>
->> In btrfs:
->> ```
->>   # ls -la
->>   drwxr-xr-x 1 root root 0 Sep 28 14:48 .
->>   drwxr-xr-x 1 root root 2 Sep 28 14:48 ..
->> ```
->>
->> In filesystems like ext4, we can see that the link counts for
->> directory 'a' and 'b' are 3 and 2 respectively:
->> a: The directory itself + "." pointing to itself + ".." from 
->> directory b pointing to it
->> b: The directory itself + "." pointing to itself
->>
->>
->> nlink changes during directory creation in ext4:
->> ```
->> ext4_mkdir
->>      ext4_init_new_dir
->>          set_nlink(inode, 2) //Initial inode->i_nlink value for new 
->> directory
->>      ext4_inc_count(dir) //Increase parent directory's nlink by 1 
->> (for "..")
->> ```
->>
->> In ext4, when the DIR_NLINK feature is enabled, if a directory's link
->> count exceeds EXT4_LINK_MAX, it will be permanently set to 1.
->>
->>
->> nlink changes during directory creation in bcachefs:
->> ```
->> bch2_mkdir
->>      bch2_mknod
->>          __bch2_create
->>              bch2_create_trans
->>                  dir_u->bi_nlink++ //If creating a directory, 
->> increase parent's nlink
->>              bch2_inode_update_after_write
->>                  set_nlink(&inode->v, bch2_inode_nlink_get(bi))
->>                      bch2_inode_nlink_get //If directory, nlink 
->> increased by 2
->> ```
->>
->>
->> In XFS, the xfs_create function contains the following comment:
->> /*
->>   * A newly created regular or special file just has one directory
->>   * entry pointing to them, but a directory also the "." entry
->>   * pointing to itself.
->>   */
->
-> You didn't even understand what the nlink represents on these 
-> filesystems.
+thanks, Boris.
+I will create a patch in dt-binding to make mali-supply required only applied to to rk3588
 
-I understand that the nlink of a directory represents (1 + '.' + number 
-of subdirectories).
-This was already reflected in the a/b directory example I mentioned earlier.
-
-However, I was unaware that find uses the nlinks >= 2 scenario for 
-optimization purposes.
-Thank you for letting me know.
-
-Thanks,
-Youling.
->
-> If you even bother to check the code of find, it exactly shows the 
-> meaning of nlinks for directory:
->
-> gl/lib/fts.c:
->
-> ```
-> /* Minimum link count of a traditional Unix directory.  When leaf
->    optimization is OK and a directory's st_nlink == MIN_DIR_NLINK,
->    then the directory has no subdirectories.  */
-> enum { MIN_DIR_NLINK = 2 };
->
-> /* Whether leaf optimization is OK for a directory.  */
-> enum leaf_optimization
->   {
->     /* st_nlink is not reliable for this directory's subdirectories.  */
->     NO_LEAF_OPTIMIZATION,
->
->     /* st_nlink == 2 means the directory lacks subdirectories.  */
->     OK_LEAF_OPTIMIZATION
->   };
-> ```
->
->
-> For filesystems returning nlinks >= 2, it means they implemented the 
-> optimization to indicate the number of sub-directories of it.
->
-> If you didn't even get this correct, all your words are just words 
-> salad, no better than AI slops.
->
->>
->> Thanks,
->> Youling.
->>
->>> Especially the impact to user space tools like find?
->>>
->>>>   *
->>>>   * BTRFS maintains parent-child relationships through explicit 
->>>> back references
->>>>   * (BTRFS_INODE_REF_KEY items) rather than link count accounting.
->
-> This has nothing to do with the nlink implementation of btrfs.
->
->>>>   *
->>>>   * This design simplifies metadata management in the copy-on-write 
->>>> environment
->>>>   * and enables more reliable consistency checking.
->
-> All these make no sense.
->
->>>> Directory link count
->>>>   * verification is performed during tree checking in 
->>>> check_inode_item(), where
->>>>   * values greater than 1 are treated as corruption.
->>>>   *
->>>>   * For regular files, nlink behaves traditionally and represents 
->>>> the actual
->>>>   * hard link count of the file.
->>>>   */
->>>>
->>>> Thanks,
->>>> Youling.
->>>>>
->>>>> Thanks,
->>>>> Qu
->>>>>
->>>>>>       __le32 nlink;
->>>>>>       __le32 uid;
->>>>>>       __le32 gid;
->>>>>
->>>
->>
+>> 
+>> Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
+>> ---
+>>  drivers/gpu/drm/panthor/panthor_devfreq.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
+>> index 3686515d368d..2df1d76d84a0 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
+>> @@ -146,10 +146,9 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>>  	ptdev->devfreq = pdevfreq;
+>>  
+>>  	ret = devm_pm_opp_set_regulators(dev, reg_names);
+>> -	if (ret) {
+>> +	if (ret && ret != -ENODEV) {
+>>  		if (ret != -EPROBE_DEFER)
+>>  			DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
+>> -
+>>  		return ret;
+>>  	}
+>>  
 >
 
