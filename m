@@ -1,168 +1,142 @@
-Return-Path: <linux-kernel+bounces-835150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0703ABA6627
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:11:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33717BA6636
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 04:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B42CD17EFCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 02:11:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D75644E10D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 02:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8686E24679C;
-	Sun, 28 Sep 2025 02:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0A72472B6;
+	Sun, 28 Sep 2025 02:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="aX3Iu+WV"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fNe41TIa"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A594A01;
-	Sun, 28 Sep 2025 02:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07C84A01;
+	Sun, 28 Sep 2025 02:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759025457; cv=none; b=hruxTRDk5mCStborSvqVtwRDbe2SX3vXNdi/DClBN8XroooB6tKv3Z7hyCozLSWC6OCDnjtwktgpO0BSXmmDSNSKRyQAGuRePKYsIB9Q4cuFw6gjqECg43+BFHSdexlcKM6MXIMTiKTjpMnP0TdUs+B7j1lrPcpNauW9mZBmnLc=
+	t=1759025584; cv=none; b=LmJ3T6PYWP+z+vK5y2efuWB5M9hL78rQ+XYkf52LhtKDG00VJY3bU7yPevePLL6zF18ttU6XAenPuKYyxXdznzy4rSfU7YzpzXBkIyTGkNyLVllVJIXnu1aOm8ip5cdHR+kiCL35T7lrB+zoyOkdVH856SqZxXfHrytNfu9yGr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759025457; c=relaxed/simple;
-	bh=bXbecS0IyDLvfvVFyAQIfZWm7g6T5lIqeGstL+ERs8U=;
+	s=arc-20240116; t=1759025584; c=relaxed/simple;
+	bh=+Emr4FrEhjPRb79Sj5iVCsIWFsU8LYbVpHGTDKDkxNo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rKCqw12R6HQBUP9AYKvyphDZL2Av13/iXaw6CNgPAAtRMQrRDy/jHcDssFUDvzHpahtwVdUAoZf8aB6OeKIjrNYI9jRaIBMkKwCEstuPOLMDn3TZFyt5/IhdAAT0ltxqDm7i76MSmdmNIMmexmIYu7/InXnmHwk/VDGxWUgFidU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=aX3Iu+WV; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1759025450;
-	bh=eY0bpTnzgWUlPNePnN5gj3Yr6PlpWRkAzkaXahzV1o8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=aX3Iu+WVXqkaOEt6IYhUzisugto3NkFU0NDjsDI8z/eeHKrMMQ1i8RFzml9N7mwcp
-	 tooixD20fy83WXGkfKgQ3MtsWGC+eb/JefwFrpczYF+jAwpuhQnsPNxP4JdllR8sr9
-	 cXaUkoygOcDG4l0hGHXcnZikCzTEWt4qpzfC5qKs=
-X-QQ-mid: zesmtpgz9t1759025446tf4c98f6b
-X-QQ-Originating-IP: RtsBnZ4ihVU9CHOc9np/4YECKvEAil73OOUAMK5O8B8=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 28 Sep 2025 10:10:45 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11079297919091120086
-EX-QQ-RecipientCnt: 13
-Date: Sun, 28 Sep 2025 10:10:45 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Aurelien Jarno <aurelien@aurel32.net>, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: "open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH 1/2] driver: reset: spacemit-p1: add driver for
- poweroff/reboot
-Message-ID: <97073301A892F7D5+aNiZJbY2_WqSZR76@kernel.org>
-References: <20250927220824.1267318-1-aurelien@aurel32.net>
- <20250927220824.1267318-2-aurelien@aurel32.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UES7hVfl7lY/siPee+857Z2amUwg7z8Wmb8EDUWl+QUoA35IMgobqJwmOs3j4F9XoDBOzi5/t8QaD9CGy7QEjpKnixERE7t66drvuJVyqt2udJ8b0xVXwQNl1ACfu+xbkOg8eSnwxnecFr95kPnAJhLBGxmy1xx0GB+fSMFjgOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fNe41TIa; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1759025572; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=4eMAD3Dqtn1qpAqnyUQ5WLh5g8F+iNos89+87TfybR4=;
+	b=fNe41TIaM/mvnc6R6pUTGw2HyAXdXB9YYT8oO2hE+DqAnIvKaZGYCl8AbVT87UKcfPBreYe/nrvkGVDmISMKbrtIzzwkTz3Y/VJ6Lk/g04UZhAqXfhnyRs8B7cZ/JdU2yWeBAaSbZtIglP1QDbAUlzqzHuY4nz3UClDJPxuAq3k=
+Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0Wowd.ji_1759025570 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sun, 28 Sep 2025 10:12:51 +0800
+Date: Sun, 28 Sep 2025 10:12:50 +0800
+From: Dust Li <dust.li@linux.alibaba.com>
+To: Halil Pasic <pasic@linux.ibm.com>, Paolo Abeni <pabeni@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Sidraya Jayagond <sidraya@linux.ibm.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Mahanta Jambigi <mjambigi@linux.ibm.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/2] net/smc: make wr buffer count
+ configurable
+Message-ID: <aNiZogAqLEyOmL-x@linux.alibaba.com>
+Reply-To: dust.li@linux.alibaba.com
+References: <20250921214440.325325-1-pasic@linux.ibm.com>
+ <20250921214440.325325-2-pasic@linux.ibm.com>
+ <7cc2df09-0230-40cb-ad4f-656b0d1d785b@redhat.com>
+ <20250925132540.74091295.pasic@linux.ibm.com>
+ <20250928005515.61a57542.pasic@linux.ibm.com>
+ <aNiXQ_UfG9k-f9-n@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250927220824.1267318-2-aurelien@aurel32.net>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: OakVxA/3u/8R+RscWecTt98PzYb9aUs3vB+UBNkPt3bRCdLOSVAd4S/A
-	QF98oDqLAcCTe1QTS8A4KkwY1gxNwmFxQl0UQ8Hb4B7kqoU+Kg8qLsuRU45OWYUZK37VneJ
-	+QPjsF7Z2RubYo2koD7xKFCLlywFKWM3xpDEnFTAC5WekUgMDkErU74iqyoi13/rVmNahUP
-	BnRSCCQ4GBPh1G5lOlpchJFwlSjohHnS22TqHhECLEh99yg7VDjdHHk3dz4wObCijOubiAJ
-	AMdufrhe7dDFrhz9dvgVi49EiCxlOIsplVcuXZ8D/WgPdndwBfngN0wcUgdpyAMZb/mPbH6
-	aoF/MSt7dfR2x2wKrn9fHLXGhz3mlB4/BWwFtPIwxtL0GxnBvlQYvKpGvF69kTNM4st/Vc0
-	K6lHfYBCNKE+pERulZOkKQ5dKaJUxbCO2byJGisEiO8WPD2pH0TU355D0L7V8eMexhvBWjI
-	GvU1gxORMfkGNR/24NA+7oPIrmxTjT+FKdnrcSdnWAySieX1eglznhrCpNGZq25C6qqt1Jb
-	AZGhtIPSyAmIyOQlZQ5T5kpIIS/ivC1pkoRsQCUCvh0vxXVdx9tnnCFIXncC5IxXHF9b1/P
-	RIQHGNvhdPV+sEuNBnqN7FHeDqLmllVVj2oMnWo2FzqQc11tKUULayidaiK43eQQGR08Ddc
-	fh3c0ZDa3/7Gt6G6KNYNf4fiEzFvSHbK57N3BhVpdHbCnVOIeJ2VeEmLhsLwyH2IA0L5H75
-	suQbh/3/lXpQSNkmnI1MjqwA9yjA4iKRPX3hbO+amkOoMvykda9p/N28kH2hIQW6glwjvTC
-	EPGAmyOhho8ScW82ar/bWjBU1eULAXobSrQRZk/QpRw2BrkCJyceOcsll12Sk2h1fjCEYnv
-	oBafY02et8kCKOra46pEXo/BExFwPKsh63r2AtBFlSPL4Udc1rciBfJN1+12+nUhZs8ILs+
-	vuAoN1IpMN4tr4S6JjjwgfFJdakIPRb4lgnH5wGrJi+yRoVKhsowI8Mkx38BDMwxJUjYmWB
-	1a0adsk/uAYgZ+D1j7x3XnAVM+l73gxPeMiqiTiyHDH7StaexDKFai5lzQG6WjY4OtHZ1Lz
-	PGek2BfcL9w0PcuOMnqz4ZsolDs5RLiUZanZyu/0nWs
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aNiXQ_UfG9k-f9-n@linux.alibaba.com>
 
-On Sun, Sep 28, 2025 at 12:07:40AM +0200, Aurelien Jarno wrote:
-> This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
-> chip, which is commonly paired with the SpacemiT K1 SoC.
-> 
-> The SpacemiT P1 support is implemented as a MFD driver, so the access is
-> done directly through the regmap interface. Reboot or poweroff is
-> triggered by setting a specific bit in a control register, which is
-> automatically cleared by the hardware afterwards.
-> 
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> ---
->  drivers/power/reset/Kconfig              |  9 +++
->  drivers/power/reset/Makefile             |  1 +
->  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
->  3 files changed, 98 insertions(+)
->  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
-> 
-[...]
-> +static int spacemit_p1_reboot_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	regmap = dev_get_regmap(dev->parent, NULL);
-> +	if (!regmap)
-> +		return -ENODEV;
-> +
-> +	ret = devm_register_power_off_handler(dev, &spacemit_p1_pwroff_handler, regmap);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register power off handler: %d\n", ret);
-> +		return ret;
-> +	}
-With fixing what Yixun said, LGTM.
+On 2025-09-28 10:02:43, Dust Li wrote:
+>On 2025-09-28 00:55:15, Halil Pasic wrote:
+>>On Thu, 25 Sep 2025 13:25:40 +0200
+>>Halil Pasic <pasic@linux.ibm.com> wrote:
+>>
+>>> > [...]  
+>>> > > @@ -683,6 +678,8 @@ int smc_ib_create_queue_pair(struct smc_link *lnk)
+>>> > >  	};
+>>> > >  	int rc;
+>>> > >  
+>>> > > +	qp_attr.cap.max_send_wr = 3 * lnk->lgr->max_send_wr;
+>>> > > +	qp_attr.cap.max_recv_wr = lnk->lgr->max_recv_wr;    
+>>> > 
+>>> > Possibly:
+>>> > 
+>>> > 	cap = max(3 * lnk->lgr->max_send_wr, lnk->lgr->max_recv_wr);
+>>> > 	qp_attr.cap.max_send_wr = cap;
+>>> > 	qp_attr.cap.max_recv_wr = cap
+>>> > 
+>>> > to avoid assumption on `max_send_wr`, `max_recv_wr` relative values.  
+>>> 
+>>> Can you explain a little more. I'm happy to do the change, but I would
+>>> prefer to understand why is keeping qp_attr.cap.max_send_wr ==
+>>> qp_attr.cap.max_recv_wr better? But if you tell: "Just trust me!" I will.
+>>
+>>Due to a little accident we ended up having a private conversation
+>>on this, which I'm going to sum up quickly.
+>>
+>>Paolo stated that he has no strong preference and that I should at
+>>least add a comment, which I will do for v4. 
+>>
+>>Unfortunately I don't quite understand why qp_attr.cap.max_send_wr is 3
+>>times the number of send WR buffers we allocate. My understanding
+>>is that qp_attr.cap.max_send_wr is about the number of send WQEs.
+>
+>We have at most 2 RDMA Write for 1 RDMA send. So 3 times is necessary.
+>That is explained in the original comments. Maybe it's better to keep it.
+>
+>```
+>.cap = {
+>                /* include unsolicited rdma_writes as well,
+>                 * there are max. 2 RDMA_WRITE per 1 WR_SEND
+>                 */
+>        .max_send_wr = SMC_WR_BUF_CNT * 3,
+>        .max_recv_wr = SMC_WR_BUF_CNT * 3,
+>        .max_send_sge = SMC_IB_MAX_SEND_SGE,
+>        .max_recv_sge = lnk->wr_rx_sge_cnt,
+>        .max_inline_data = 0,
+>},
+>```
+>
+>>I assume that qp_attr.cap.max_send_wr == qp_attr.cap.max_recv_wr
+>>is not something we would want to preserve.
+>
+>IIUC, RDMA Write won't consume any RX wqe on the receive side, so I think
+>the .max_recv_wr can be SMC_WR_BUF_CNT if we don't use RDMA_WRITE_IMM.
 
-Acked-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> +
-> +	ret = devm_register_restart_handler(dev, spacemit_p1_restart_handler, regmap);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register restart handler: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct platform_device_id spacemit_p1_reboot_id_table[] = {
-> +	{ "spacemit-p1-reboot", },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, spacemit_p1_reboot_id_table);
-> +
-> +static struct platform_driver spacemit_p1_reboot_driver = {
-> +	.driver = {
-> +		.name = "spacemit-p1-reboot",
-> +	},
-> +	.probe = spacemit_p1_reboot_probe,
-> +	.id_table = spacemit_p1_reboot_id_table,
-> +};
-> +module_platform_driver(spacemit_p1_reboot_driver);
-> +
-> +MODULE_DESCRIPTION("SpacemiT P1 reboot/poweroff driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.47.2
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+I kept thinking about this a bit more, and I realized that max_recv_wr
+should be larger than SMC_WR_BUF_CNT.
+
+Since receive WQEs are posted in a softirq context, their posting may be
+delayed. Meanwhile, the sender might already have received the TX
+completion (CQE) and continue sending new messages. In this case, if the
+receiver’s post_recv() (i.e., posting of RX WQEs) is delayed, an RNR
+(Receiver Not Ready) can easily occur.
+
+Best regards,
+Dust
 
