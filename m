@@ -1,179 +1,241 @@
-Return-Path: <linux-kernel+bounces-835245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4555BA6921
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:37:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D010BA692D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5293D17D4E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438CA3BE879
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8261DF73C;
-	Sun, 28 Sep 2025 06:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C021C3314;
+	Sun, 28 Sep 2025 06:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9+k0VK3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CNCFATm2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9+k0VK3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CNCFATm2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9Fl7gB4"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A471C3314
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57587204F8B
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759041428; cv=none; b=qbnyFMIeDopcBuxMkudCCUaPrY84KMs0AAiZ/LKt3zNLlCfd4xDiNV8XDpKElIwhWWn6VOkn9+8VbyjpY/vu5GLfZ0upS9ttDw0sGSxPJUS7dWA5CvjUAUvoEpv77yMabm/S0sBVr4gl5FOIAjX612ZMnC+2bbaU+WxQ7vr3CP4=
+	t=1759041445; cv=none; b=TzFYBsLEqbAZvJgVnm9XdBD1G2sd/5rkmf3k6iCVcSKm60OwKiueTsEPHDKBjA56Mc2vuysxMaMegUdb0clWBnHkWKnADSnDoL0RPpuoHNZ9V5Sn1wBXKFzQqE2tyCJUYYz/7Ajld4K+YnVTqneKX5GkljEhc1KKgZoF7JACVlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759041428; c=relaxed/simple;
-	bh=u3UkN2UIMLVqvd6wFyt6mK9hHNUfpSwCJiEhDxGdp4E=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RKgu9SNy56GDwih45XNx+qiKlQu6U53WX8svTjkPobgy3HRyFZFjtT7jyt4TzMq8+x6SuBDyt9DJqAxFTg1c6QanIHsupFEyoB27svSLYcn45vmACp91wbAgH+FOt4EVZFDupqopMEC1M8u7VTlGXITfY+WGvnu8eLNf6q9pOI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9+k0VK3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CNCFATm2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9+k0VK3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CNCFATm2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BDB2A506F;
-	Sun, 28 Sep 2025 06:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759041423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
-	b=Y9+k0VK3d1oqbtqQEAltpFUoJEOE9phkVN8fQettXrT+QOybKdM12J7uL3M/c2FSaZJT7u
-	OU+8nnWJ4jd9dXT6WymreJ0ugF101Aa/mailkja+MNXKAWJ/v6DZoeDlK9/rptTC2HIEYA
-	qqOkFfvBCr4DvAIgLC92uv4cPJvLulc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759041423;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
-	b=CNCFATm2xzbBSxylRHDgr4tQaKPpHiJTLYUx9ragm7fQKoy1/J6zF37KU8lhSwIgEHcd+F
-	AxUDvCC0A5kW71AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759041423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
-	b=Y9+k0VK3d1oqbtqQEAltpFUoJEOE9phkVN8fQettXrT+QOybKdM12J7uL3M/c2FSaZJT7u
-	OU+8nnWJ4jd9dXT6WymreJ0ugF101Aa/mailkja+MNXKAWJ/v6DZoeDlK9/rptTC2HIEYA
-	qqOkFfvBCr4DvAIgLC92uv4cPJvLulc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759041423;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz+JsWzUlf9UhVcRJddbz99nd/mipsYFBQq3Gk4nz1E=;
-	b=CNCFATm2xzbBSxylRHDgr4tQaKPpHiJTLYUx9ragm7fQKoy1/J6zF37KU8lhSwIgEHcd+F
-	AxUDvCC0A5kW71AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4CA1A13A3F;
-	Sun, 28 Sep 2025 06:37:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Xz/4EI/X2Gj2GQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 28 Sep 2025 06:37:03 +0000
-Date: Sun, 28 Sep 2025 08:37:02 +0200
-Message-ID: <874isn9j75.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: cryolitia@uniontech.com
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Nie Cheng <niecheng1@uniontech.com>,
-	Zhan Jun <zhanjun@uniontech.com>,
-	Feng Yuan <fengyuan@uniontech.com>,
-	qaqland <anguoli@uniontech.com>,
-	kernel@uniontech.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH v6 0/4] ALSA: usb-audio: improve module param quirk_flags
-In-Reply-To: <20250928-sound-v6-0-7da6e5982432@uniontech.com>
-References: <20250928-sound-v6-0-7da6e5982432@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1759041445; c=relaxed/simple;
+	bh=VnTZ8yvEWXTdhFclZzhAdRzUA5UjrJMBqGbTF9AuniA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bb91XHmuU5mNbuSrbP2CEqEBdJhZ6JhK0LajZlV2X1W9kTN8mnkonQT5eMJOTu7yw/OfiRaWZ8O2EGnL8QeZ0jvNYjMX5FENPA4FsxmT/oKl3meE1UbXWGp9vuljC17OvCpsVc5zaCDAhiveHFeIrFiN0UvRvmkiUd1jn5/dBDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9Fl7gB4; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2680cf68265so30517515ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 23:37:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759041442; x=1759646242; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ubpMuP7II5ikdJvb/5K0JndDDuxFjf1Jocs0VnGSPuA=;
+        b=a9Fl7gB4cBdY6n6IkUVblSjwTa20MW01xKbFzYLYtfnwkTlzlnRy+IyhZ/xQEXkbEC
+         VdlbJO5pBn8bdQoSIkOZmEUFhOR4IYd3PlnmWXRVRrxvD85B+W5qJrZHeiwYLm3xb1e5
+         9cBEe2MOyT3Cd3ZGWJ/fDpO7g00C+yIZ/HLBI85GUXXhv0tIExCn6n4g68Am5DnU6fQD
+         xxBSxYjo0U6XpXAwjcdUOQoAVrBWxHePNp3iEUwXAKUfD3Zedbb+bW4vg2L7G/6ZXiOO
+         tUJnVigmwypJl5CeDZqOeaTQXCsrnCvn1NvA+aJawctJOcaC+Ig7cSxaYsRiw3l0iYKe
+         9mnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759041442; x=1759646242;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ubpMuP7II5ikdJvb/5K0JndDDuxFjf1Jocs0VnGSPuA=;
+        b=tc5UjbW+v8pZ2Uih5ffDuyPEH9lqnHVIuX0aj+b9r9bmBzgYbYYgHao0e41U7PY1BA
+         Mn43MzNLFbCpuGy4yEEmF+frtdXI99LyOOxkG2aObPwpWsBSpt74PK3T3qWl8byn6UGb
+         UqrAtRAR0GJgmHeNm4qtPmcvlWDVdmGPPAmWc5FJ4fjzNxYUlkkFs67qM5s/QZVVqI0A
+         48H3G917hRmx6TInHNktvyWi89BbgX9qqTdPhNrkRx/5a+cG/OUCpFS/BEW3mWsCmgGU
+         1bz8p5AZ37ZvlZoqoMespsoEEciJ3094AZbapSz8EzY9Z2P7hmyLTRgttT/DHuXeuJHM
+         ZRMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWwnkZ2tkK750MXSrvqzatHapFrSN8HLn4DUzmnfxyAxVq4EJMXdjQ+NR+myTKBXgdf3aiy+qsI0I99BE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweAzSGRLNBVMcmj8gUkkNZQe2yoO6oHVEtrW05GE/PQ3UMB6f0
+	8OU2yBeG7EcE7fN04JwOytLgB/J8gde0qR2BgN8g6qHgZKefePX0uBB0
+X-Gm-Gg: ASbGnctcFC8yOMNTSp7qeea2P4QowtQ+Hgos4spNJ2UKfS9PvXSikmT6gwUbzmtd40U
+	qvlTY/ZUIi5eE2W+nH5hLELPGsJGl37y7CHj9s1W1GSI7TSJEk74DO4wfQkx0hrdWL62Y+C7vI4
+	seQIeZS3pTroevircQPMgVZUYwE5eXExdXe8eP026oMkKTSbqV32+vxgRhJ6/3IGRUc4a/VZCQj
+	CANNv5bM+Acq2aLLtDmuk1oQvSdUTenRdZxQo4vyCa8nFf8iBmP3/y+JLHYhjq9qDVM971+pTv8
+	KDcQ2aNjVCadbhHrzqk4kTkAqLFcohiCvtcKIB5KEueMd/IhaKe9Qwh+Ougt8i3N5In5/oPxC9P
+	aKeXiRdPWkzZEBVrioaudqZLulVPwMW8KF/E3Nct0ZCu405Op3PYLisU8RK9bEmUsH9TEE2g=
+X-Google-Smtp-Source: AGHT+IHkOtF5578eCGnpU9nMgKsLzoxz/q9Ij/omuAZkxTc208StOe4e409+y8TjhW4sjjzmHwt/2w==
+X-Received: by 2002:a17:902:e54a:b0:270:b6d5:f001 with SMTP id d9443c01a7336-27ed4a0d542mr138016595ad.23.1759041442474;
+        Sat, 27 Sep 2025 23:37:22 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cf9d3sm97700695ad.15.2025.09.27.23.37.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 23:37:22 -0700 (PDT)
+Date: Sun, 28 Sep 2025 14:37:17 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
+	axboe@kernel.dk, ceph-devel@vger.kernel.org, ebiggers@kernel.org,
+	hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
+	jaegeuk@kernel.org, kbusch@kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, sagi@grimberg.me, tytso@mit.edu,
+	xiubli@redhat.com
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse
+ lookup tables
+Message-ID: <aNjXnYorbInXF6FM@visitorckw-System-Product-Name>
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+ <20250926065556.14250-1-409411716@gms.tku.edu.tw>
+ <CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
 
-On Sun, 28 Sep 2025 05:07:58 +0200,
-Cryolitia PukNgae via B4 Relay wrote:
+On Fri, Sep 26, 2025 at 04:33:12PM -0700, Caleb Sander Mateos wrote:
+> On Thu, Sep 25, 2025 at 11:59 PM Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> >
+> > From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> >
+> > Replace the use of strchr() in base64_decode() with precomputed reverse
+> > lookup tables for each variant. This avoids repeated string scans and
+> > improves performance. Use -1 in the tables to mark invalid characters.
+> >
+> > Decode:
+> >   64B   ~1530ns  ->  ~75ns    (~20.4x)
+> >   1KB  ~27726ns  -> ~1165ns   (~23.8x)
+> >
+> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > ---
+> >  lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++----
+> >  1 file changed, 61 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/lib/base64.c b/lib/base64.c
+> > index 1af557785..b20fdf168 100644
+> > --- a/lib/base64.c
+> > +++ b/lib/base64.c
+> > @@ -21,6 +21,63 @@ static const char base64_tables[][65] = {
+> >         [BASE64_IMAP] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,",
+> >  };
+> >
+> > +static const s8 base64_rev_tables[][256] = {
+> > +       [BASE64_STD] = {
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  -1,  -1,  -1,  63,
+> > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
+> > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
+> > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +       },
+> > +       [BASE64_URLSAFE] = {
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  -1,  -1,
+> > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
+> > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  63,
+> > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
+> > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +       },
+> > +       [BASE64_IMAP] = {
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  63,  -1,  -1,  -1,
+> > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
+> > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
+> > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+> > +       },
 > 
-> As an implementation of what has been discussed previously[1].
-> 
-> 1. https://lore.kernel.org/all/87h5xm5g7f.wl-tiwai@suse.de/
-> 
-> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
-> ---
-> Changes in v6:
-> - Apply review commens, details corrected and wording revised
-> - Link to v5: https://lore.kernel.org/r/20250925-sound-v5-0-2593586ff350@uniontech.com
-> 
-> Changes in v5:
-> - Apply review comments. Thanks a lot, Takashi Iwai!
-> - Link to v4: https://lore.kernel.org/r/20250918-sound-v4-0-82cf8123d61c@uniontech.com
-> 
-> Changes in v4:
-> - Split basic parse and dynamic change
-> - Drop usage of linked list
-> - Link to v3: https://lore.kernel.org/r/20250917-sound-v3-0-92ebe9472a0a@uniontech.com
-> 
-> Changes in v3:
-> - Instead of a new param, improve the existed one.
-> - Link to v2: https://lore.kernel.org/r/20250912-sound-v2-0-01ea3d279f4b@uniontech.com
-> 
-> Changes in v2:
-> - Cleaned up some internal rebase confusion, sorry for that
-> - Link to v1: https://lore.kernel.org/r/20250912-sound-v1-0-cc9cfd9f2d01@uniontech.com
-> 
-> ---
-> Cryolitia PukNgae (4):
->       ALSA: usb-audio: add two-way convert between name and bit for QUIRK_FLAG_*
->       ALSA: usb-audio: improve module param quirk_flags
->       ALSA: usb-audio: make param quirk_flags change-able in runtime
->       ALSA: doc: improved docs about quirk_flags in snd-usb-audio
+> Do we actually need 3 separate lookup tables? It looks like all 3
+> variants agree on the value of any characters they have in common. So
+> we could combine them into a single lookup table that would work for a
+> valid base64 string of any variant. The only downside I can see is
+> that base64 strings which are invalid in some variants might no longer
+> be rejected by base64_decode().
 
-Now applied all four patches.  Thanks!
+Ah, David also mentioned this earlier, but I forgot about it while
+writing the code. Sorry for that. I'll rectify it.
 
+Regards,
+Kuan-Wei
 
-Takashi
+> 
+> > +};
+> > +
+> >  /**
+> >   * base64_encode() - Base64-encode some binary data
+> >   * @src: the binary data to encode
+> > @@ -82,11 +139,9 @@ int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base6
+> >         int bits = 0;
+> >         int i;
+> >         u8 *bp = dst;
+> > -       const char *base64_table = base64_tables[variant];
+> > +       s8 ch;
+> >
+> >         for (i = 0; i < srclen; i++) {
+> > -               const char *p = strchr(base64_table, src[i]);
+> > -
+> >                 if (src[i] == '=') {
+> >                         ac = (ac << 6);
+> >                         bits += 6;
+> > @@ -94,9 +149,10 @@ int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base6
+> >                                 bits -= 8;
+> >                         continue;
+> >                 }
+> > -               if (p == NULL || src[i] == 0)
+> > +               ch = base64_rev_tables[variant][(u8)src[i]];
+> > +               if (ch == -1)
+> 
+> Checking for < 0 can save an additional comparison here.
+> 
+> Best,
+> Caleb
+> 
+> >                         return -1;
+> > -               ac = (ac << 6) | (p - base64_table);
+> > +               ac = (ac << 6) | ch;
+> >                 bits += 6;
+> >                 if (bits >= 8) {
+> >                         bits -= 8;
+> > --
+> > 2.34.1
+> >
+> >
 
