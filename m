@@ -1,276 +1,156 @@
-Return-Path: <linux-kernel+bounces-835240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54EC6BA68F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32D0BA68EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2AA3BC130
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E576189B9F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 06:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4F329ACC0;
-	Sun, 28 Sep 2025 06:28:58 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C3829A9FA;
+	Sun, 28 Sep 2025 06:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R+9jxZsg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2WYPk80I";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R+9jxZsg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2WYPk80I"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125A221554;
-	Sun, 28 Sep 2025 06:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A181A4E70
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759040937; cv=none; b=uX4XX8DsbeI3rM/A4gk+wES1U7jHGBCLh4w94eqjoTeobxnPC8+SXVh1zzLgEb34y7sojG/230zXsDxGTmjadDHJ5SDV4eg05/fY3VN1mhr25+kTMF/cGd8vG+DH6HtK5hU09UGCATqAFkz08wccWCAIWW8sb95FMDvNweINJ7k=
+	t=1759040924; cv=none; b=jlm2CK17QUQlJds7akl3bYtmEE/Z/xmcRt+7WU+i/EUZNdr9FXIIWeWn0baRgRP+WNLbzmDT5LdWPeC/0F+UxjdjfUuX6tC8xnrevEXp8pQ5pxWVCWF1CvbFLvEMex3wapAwNt/sh68bAyquf1mNLrJpih/dfs85ZnHcg4DBRvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759040937; c=relaxed/simple;
-	bh=z+YHa/cOdoibGw2jRY2xxhhsZJRT/H6INHbF8sLonRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zd6r+WLJ7sEo0NJO0641TKmAxzEVULH/knMQLryPr+WI4zX+8Uze5lLUS2teuDltsLmkKf2Z4lMG5gpjB8x+J+YCiS3qiSf9thvy+3b2JSbfThItgB5Ws07zfY+U1hohJPqpR1IN8QHSOFMOUWfqrPKLQ1IErBYFXAp1GetqNZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 61d23e349c3411f08b9f7d2eb6caa7cf-20250928
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:d98a05f5-1ae2-456b-b5a6-54465287ac08,IP:15,
-	URL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,AC
-	TION:release,TS:20
-X-CID-INFO: VERSION:1.1.45,REQID:d98a05f5-1ae2-456b-b5a6-54465287ac08,IP:15,UR
-	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:20
-X-CID-META: VersionHash:6493067,CLOUDID:999dcae1378ea676a66d6000eed1a84b,BulkI
-	D:250928142846D3N2MTPY,BulkQuantity:0,Recheck:0,SF:17|19|24|38|44|66|78|10
-	2,TC:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BE
-	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 61d23e349c3411f08b9f7d2eb6caa7cf-20250928
-X-User: cuitao@kylinos.cn
-Received: from ctao-ubuntu.. [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <cuitao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 607324908; Sun, 28 Sep 2025 14:28:44 +0800
-From: cuitao <cuitao@kylinos.cn>
-To: axboe@kernel.dk,
-	linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	cuitao <cuitao@kylinos.cn>
-Subject: [PATCH] block: Kconfig: Fix indentation.
-Date: Sun, 28 Sep 2025 14:28:32 +0800
-Message-ID: <20250928062832.3465356-1-cuitao@kylinos.cn>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1759040924; c=relaxed/simple;
+	bh=hfU9k/wolxf7jfzzDXf7ZpBadhW/KnBM8Y7fK+igjuo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pd0hr6fHK5vDXQ21eomjnkoiba0zRKrSICDyyDCZosM8DOn5yMVR//yPIYpIXPFKn/6GuaM+gYkLj4uO2cCo4ddUx/Svp6wP1r8+FOATSIiS6/WrTsSWakPGlvEOi+SCrZviz0K0KDdQn9KkuASPdkd1GbMoiLr1s4GGu7uQ9tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R+9jxZsg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2WYPk80I; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R+9jxZsg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2WYPk80I; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C9F248D225;
+	Sun, 28 Sep 2025 06:28:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759040919; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P88UpOD1tIxQy+jxeUn6n/DaQbo2INeizIF9Urj2U58=;
+	b=R+9jxZsgr2/Uq4ASlIAbAWRGn5ucG4uWD0EMvSIwzeSdDjt0k6bK3LMhTDmgfNWhDYhOy5
+	5uX6NC5g/UHnTH67NmzjzSFamG01jMLSPaftE3CI20JsB9qmCp5oCK+Ak/Ok1dCJSmqMr7
+	LOR40V/fBgRNfuabVIWLWkVoTzcIlwo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759040919;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P88UpOD1tIxQy+jxeUn6n/DaQbo2INeizIF9Urj2U58=;
+	b=2WYPk80IkXbrspPGWlIdWkuOeCY01t3/XAgeXnGbbtGeNDQrmY9aEvFrTn/itSmaGnh8WS
+	qAc32ejAJo/MipCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759040919; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P88UpOD1tIxQy+jxeUn6n/DaQbo2INeizIF9Urj2U58=;
+	b=R+9jxZsgr2/Uq4ASlIAbAWRGn5ucG4uWD0EMvSIwzeSdDjt0k6bK3LMhTDmgfNWhDYhOy5
+	5uX6NC5g/UHnTH67NmzjzSFamG01jMLSPaftE3CI20JsB9qmCp5oCK+Ak/Ok1dCJSmqMr7
+	LOR40V/fBgRNfuabVIWLWkVoTzcIlwo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759040919;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P88UpOD1tIxQy+jxeUn6n/DaQbo2INeizIF9Urj2U58=;
+	b=2WYPk80IkXbrspPGWlIdWkuOeCY01t3/XAgeXnGbbtGeNDQrmY9aEvFrTn/itSmaGnh8WS
+	qAc32ejAJo/MipCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93ACE13A3F;
+	Sun, 28 Sep 2025 06:28:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zYlZIpfV2GjRFwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sun, 28 Sep 2025 06:28:39 +0000
+Date: Sun, 28 Sep 2025 08:28:39 +0200
+Message-ID: <87a52f9jl4.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: broonie@kernel.org
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH 0/2] ALSA ASoC/HDA: cs35l56: Add support for B2 silicon
+In-Reply-To: <87cy7cba2y.wl-tiwai@suse.de>
+References: <20250923130326.510570-1-rf@opensource.cirrus.com>
+	<87cy7cba2y.wl-tiwai@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-The convention for indentation seems to be a single tab. Help text is
-further indented by an additional two whitespaces. Fix the lines that
-violate these rules.
+On Sat, 27 Sep 2025 09:58:45 +0200,
+Takashi Iwai wrote:
+> 
+> On Tue, 23 Sep 2025 15:03:24 +0200,
+> Richard Fitzgerald wrote:
+> > 
+> > This series adds support for the latest (B2) revision of cs35l56.
+> > 
+> > Most of the code is in ASoC, but there are some trivial changes
+> > needed to the HDA drivers. They are to prevent build breaks so
+> > they have been included in the ASoC patch.
+> > 
+> > Richard Fitzgerald (2):
+> >   ASoC: cs35l56: Set fw_regs table after getting REVID
+> >   ASoC: cs35l56: Add support for CS35L56 B2 silicon
+> 
+> Mark, shall I apply those patches to my tree?
+> They seem cleanly applicable.
 
-Signed-off-by: cuitao <cuitao@kylinos.cn>
----
- block/Kconfig | 116 +++++++++++++++++++++++++-------------------------
- 1 file changed, 58 insertions(+), 58 deletions(-)
+Assuming that they didn't get merged in ASoC tree, I picked up them
+now.  Both applied to for-next branch.
 
-diff --git a/block/Kconfig b/block/Kconfig
-index 15027963472d..ce19774969f4 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -65,82 +65,82 @@ config BLK_DEV_INTEGRITY
- 	select CRC_T10DIF
- 	select CRC64
- 	help
--	Some storage devices allow extra information to be
--	stored/retrieved to help protect the data.  The block layer
--	data integrity option provides hooks which can be used by
--	filesystems to ensure better data integrity.
-+	  Some storage devices allow extra information to be
-+	  stored/retrieved to help protect the data.  The block layer
-+	  data integrity option provides hooks which can be used by
-+	  filesystems to ensure better data integrity.
- 
--	Say yes here if you have a storage device that provides the
--	T10/SCSI Data Integrity Field or the T13/ATA External Path
--	Protection.  If in doubt, say N.
-+	  Say yes here if you have a storage device that provides the
-+	  T10/SCSI Data Integrity Field or the T13/ATA External Path
-+	  Protection.  If in doubt, say N.
- 
- config BLK_DEV_WRITE_MOUNTED
- 	bool "Allow writing to mounted block devices"
- 	default y
- 	help
--	When a block device is mounted, writing to its buffer cache is very
--	likely going to cause filesystem corruption. It is also rather easy to
--	crash the kernel in this way since the filesystem has no practical way
--	of detecting these writes to buffer cache and verifying its metadata
--	integrity. However there are some setups that need this capability
--	like running fsck on read-only mounted root device, modifying some
--	features on mounted ext4 filesystem, and similar. If you say N, the
--	kernel will prevent processes from writing to block devices that are
--	mounted by filesystems which provides some more protection from runaway
--	privileged processes and generally makes it much harder to crash
--	filesystem drivers. Note however that this does not prevent
--	underlying device(s) from being modified by other means, e.g. by
--	directly submitting SCSI commands or through access to lower layers of
--	storage stack. If in doubt, say Y. The configuration can be overridden
--	with the bdev_allow_write_mounted boot option.
-+	  When a block device is mounted, writing to its buffer cache is very
-+	  likely going to cause filesystem corruption. It is also rather easy to
-+	  crash the kernel in this way since the filesystem has no practical way
-+	  of detecting these writes to buffer cache and verifying its metadata
-+	  integrity. However there are some setups that need this capability
-+	  like running fsck on read-only mounted root device, modifying some
-+	  features on mounted ext4 filesystem, and similar. If you say N, the
-+	  kernel will prevent processes from writing to block devices that are
-+	  mounted by filesystems which provides some more protection from runaway
-+	  privileged processes and generally makes it much harder to crash
-+	  filesystem drivers. Note however that this does not prevent
-+	  underlying device(s) from being modified by other means, e.g. by
-+	  directly submitting SCSI commands or through access to lower layers of
-+	  storage stack. If in doubt, say Y. The configuration can be overridden
-+	  with the bdev_allow_write_mounted boot option.
- 
- config BLK_DEV_ZONED
- 	bool "Zoned block device support"
- 	help
--	Block layer zoned block device support. This option enables
--	support for ZAC/ZBC/ZNS host-managed and host-aware zoned block
--	devices.
-+	  Block layer zoned block device support. This option enables
-+	  support for ZAC/ZBC/ZNS host-managed and host-aware zoned block
-+	  devices.
- 
--	Say yes here if you have a ZAC, ZBC, or ZNS storage device.
-+	  Say yes here if you have a ZAC, ZBC, or ZNS storage device.
- 
- config BLK_DEV_THROTTLING
- 	bool "Block layer bio throttling support"
- 	depends on BLK_CGROUP
- 	select BLK_CGROUP_RWSTAT
- 	help
--	Block layer bio throttling support. It can be used to limit
--	the IO rate to a device. IO rate policies are per cgroup and
--	one needs to mount and use blkio cgroup controller for creating
--	cgroups and specifying per device IO rate policies.
-+	  Block layer bio throttling support. It can be used to limit
-+	  the IO rate to a device. IO rate policies are per cgroup and
-+	  one needs to mount and use blkio cgroup controller for creating
-+	  cgroups and specifying per device IO rate policies.
- 
--	See Documentation/admin-guide/cgroup-v1/blkio-controller.rst for more information.
-+	  See Documentation/admin-guide/cgroup-v1/blkio-controller.rst for more information.
- 
- config BLK_WBT
- 	bool "Enable support for block device writeback throttling"
- 	help
--	Enabling this option enables the block layer to throttle buffered
--	background writeback from the VM, making it more smooth and having
--	less impact on foreground operations. The throttling is done
--	dynamically on an algorithm loosely based on CoDel, factoring in
--	the realtime performance of the disk.
-+	  Enabling this option enables the block layer to throttle buffered
-+	  background writeback from the VM, making it more smooth and having
-+	  less impact on foreground operations. The throttling is done
-+	  dynamically on an algorithm loosely based on CoDel, factoring in
-+	  the realtime performance of the disk.
- 
- config BLK_WBT_MQ
- 	bool "Enable writeback throttling by default"
- 	default y
- 	depends on BLK_WBT
- 	help
--	Enable writeback throttling by default for request-based block devices.
-+	  Enable writeback throttling by default for request-based block devices.
- 
- config BLK_CGROUP_IOLATENCY
- 	bool "Enable support for latency based cgroup IO protection"
- 	depends on BLK_CGROUP
- 	help
--	Enabling this option enables the .latency interface for IO throttling.
--	The IO controller will attempt to maintain average IO latencies below
--	the configured latency target, throttling anybody with a higher latency
--	target than the victimized group.
-+	  Enabling this option enables the .latency interface for IO throttling.
-+	  The IO controller will attempt to maintain average IO latencies below
-+	  the configured latency target, throttling anybody with a higher latency
-+	  target than the victimized group.
- 
--	Note, this is an experimental interface and could be changed someday.
-+	  Note, this is an experimental interface and could be changed someday.
- 
- config BLK_CGROUP_FC_APPID
- 	bool "Enable support to track FC I/O Traffic across cgroup applications"
-@@ -156,31 +156,31 @@ config BLK_CGROUP_IOCOST
- 	depends on BLK_CGROUP
- 	select BLK_RQ_ALLOC_TIME
- 	help
--	Enabling this option enables the .weight interface for cost
--	model based proportional IO control.  The IO controller
--	distributes IO capacity between different groups based on
--	their share of the overall weight distribution.
-+	  Enabling this option enables the .weight interface for cost
-+	  model based proportional IO control.  The IO controller
-+	  distributes IO capacity between different groups based on
-+	  their share of the overall weight distribution.
- 
- config BLK_CGROUP_IOPRIO
- 	bool "Cgroup I/O controller for assigning an I/O priority class"
- 	depends on BLK_CGROUP
- 	help
--	Enable the .prio interface for assigning an I/O priority class to
--	requests. The I/O priority class affects the order in which an I/O
--	scheduler and block devices process requests. Only some I/O schedulers
--	and some block devices support I/O priorities.
-+	  Enable the .prio interface for assigning an I/O priority class to
-+	  requests. The I/O priority class affects the order in which an I/O
-+	  scheduler and block devices process requests. Only some I/O schedulers
-+	  and some block devices support I/O priorities.
- 
- config BLK_DEBUG_FS
- 	bool "Block layer debugging information in debugfs"
- 	default y
- 	depends on DEBUG_FS
- 	help
--	Include block layer debugging information in debugfs. This information
--	is mostly useful for kernel developers, but it doesn't incur any cost
--	at runtime.
-+	  Include block layer debugging information in debugfs. This information
-+	  is mostly useful for kernel developers, but it doesn't incur any cost
-+	  at runtime.
- 
--	Unless you are building a kernel for a tiny system, you should
--	say Y here.
-+	  Unless you are building a kernel for a tiny system, you should
-+	  say Y here.
- 
- config BLK_SED_OPAL
- 	bool "Logic for interfacing with Opal enabled SEDs"
-@@ -188,9 +188,9 @@ config BLK_SED_OPAL
- 	select PSERIES_PLPKS if PPC_PSERIES
- 	select PSERIES_PLPKS_SED if PPC_PSERIES
- 	help
--	Builds Logic for interfacing with Opal enabled controllers.
--	Enabling this option enables users to setup/unlock/lock
--	Locking ranges for SED devices using the Opal protocol.
-+	  Builds Logic for interfacing with Opal enabled controllers.
-+	  Enabling this option enables users to setup/unlock/lock
-+	  Locking ranges for SED devices using the Opal protocol.
- 
- config BLK_INLINE_ENCRYPTION
- 	bool "Enable inline encryption support in block layer"
--- 
-2.48.1
 
+thanks,
+
+Takashi
 
