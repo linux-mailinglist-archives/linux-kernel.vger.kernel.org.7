@@ -1,137 +1,232 @@
-Return-Path: <linux-kernel+bounces-835357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BD1BA6E0B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8909EBA6E17
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289931780D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0AC1898F8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411AE2D9EEF;
-	Sun, 28 Sep 2025 09:41:45 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390952D9EFE;
+	Sun, 28 Sep 2025 09:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMDDxxwq"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426972D9ED0
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 09:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB25F2C21D4
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 09:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759052504; cv=none; b=WAIDKtQvd3Af+nJRd9bxsZlB6OLbbqjk6sXaBfYwWWe6rBAhSRpF+JzI2KnfWUPm4673mxMZZKREdHKxqNOssNkuUvGD/ux/vTmWKpqtozDE6Ljrli7SD3QH+qXv87tnOI89oACL9tuLWRez6uBScvgAlbrGPKmtXa+kUp/dOzE=
+	t=1759052523; cv=none; b=jtRlxAsgF1KW2I4RoWEsVuo9zb8UPg5SvadV17otnMgcDvGXxwjlPizt7rtlcHeU45j7AFdB7iOifuNch3NDBVbNd+Nib83xzmXSATSBh5eDqax4BFRl5efwRWlNFPVz9DQ3L600uHOYM8cnkuHvT3kv5x0U0Q4EOdYIKm6Aiy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759052504; c=relaxed/simple;
-	bh=1tlzJWdN56EDcq5HthC03bg7XMECCgYcQrkhJv9S8ww=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lbatDGEy3nUgdXJfJoIYKMxBIb1rULiRlKo4wszlkiT+SmWQPwllMd+cCVzuLOLlVdlHo4rX3LIsM0Z836HUleSYhzMqDMp3SjjMsnEDFjNbWlr7B5t7y02iHNMDaBAQ2Tgh65WGYZU96Q3e8gROfs0lxd+K2qhX092YYeRLxnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8870219dce3so365071639f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 02:41:42 -0700 (PDT)
+	s=arc-20240116; t=1759052523; c=relaxed/simple;
+	bh=DUAM4seh+KWwKZYjI00J3MrOycPvJM/Yvq2EBdgrc+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lyx3YkjfesJAfkIqc8mDav5RM6s8vWNi2ZUGoTxGsc89jz86bEaF47KUwo9+s9/3WPoMS9Qj3cJcXQ2hpUyxnZLjDSC7c12bZVmqN+rPNOsD8oGbVlTIdm4lTlBxJkCpXLZ4Xp6ZJGpx88C47U6uiSf/ufQS3kd38Bk7cjpdGPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMDDxxwq; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e2e363118so35523455e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 02:42:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759052519; x=1759657319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vu/NJXREHp33yMgG701EQxLa0NQPuBp7Lu8J6U+lM+Q=;
+        b=nMDDxxwq2vsIMdluyzS4ENXcPyHcYClrIdCIDbmg1vGRzfCOoC7/poUEOIFN6U576h
+         3AMI/L34Zw367tvX+hHNbjSLBrAK7hCnwefD5PeTDZSf0ZXt7HdRxwfslGLLKejvZzdz
+         JlQxdaqQbCP68n3w899iuOUhqEyLJMrKd1Ulb/HhxP+zqZBCEGowGtgs86N1OzkupW/Y
+         OglNHPj32M0nYnlo21YLdpj5KlriNUqEYuc1QARbn231t0WCch5QTggmQkUZl8nTO4ef
+         2ZgV1P8ZyZsbrfYMq+YvkAtIv11gV+kBynjCO1c0s/K1+l3CgS6cf/c3VTWJOgER9B62
+         Zlhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759052502; x=1759657302;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FQ3/mFKpVGZ0sZwc0az8WJEb4oHMyVi5sQTf8ELWSSg=;
-        b=wHFtyDScxKuuAdEb+43Ll/3TJFCJe/Dh3p+8+MfZF2tRX8GSxXKNdcuCzP+3MBSme+
-         Ha9A5/cwfypS8YJREdRalGMtpzpnVDbrgOv8oOi6PVp+SNt3odUlFnPXcXQJ6fIu4Kzu
-         18gOdnxWDW/ImPNCP7fVUZcgpYj1tS/XImdZZIdr1jXO+pf8UWQjTu9jE8vt+a947gTc
-         ygGA/tM/yV5CGyi92a2pkDM7Xjo6MldvJVYLFC5O8cDFKLBVgoZXdwXrFLEdvrCeajBH
-         I2/BYz+13yEhvud60HuvzQu3e9tqrEpVO0qsV6PCYiR5C5lAQedtEcF07GkkMql9L424
-         E+dQ==
-X-Gm-Message-State: AOJu0Yy+oF44/2ebTfa94XdGJKE7sKIDs1cFoqjlswpckDCtyKbm1Dwu
-	WX51JmqudoODJ+7CctjJSY6o+EYXE1h5/jut6ocPkHRqObRld96Os5+LV/+LVTZrIZsTy4/xjtL
-	KUlOsm08/L5DAww32hVfHUX4/5XqyK3u6HcohPO0NVlM4N+sPi7hrJt8tLAk=
-X-Google-Smtp-Source: AGHT+IFVseFJzWM3T2nHSADc0aw168ys3L4KJKfOtzYKsCeJIn3+W1FXKRXvAVOB2Ef9pVZAAC8zdbM8Q0EMRcKsKx8GZxXDhZnu
+        d=1e100.net; s=20230601; t=1759052519; x=1759657319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vu/NJXREHp33yMgG701EQxLa0NQPuBp7Lu8J6U+lM+Q=;
+        b=Fcnw+gzENS4jVyartBD3DXG4Im/TvaYSXtOha2w7uK00eiWZ8GEEmKPNiIZ7zYekdK
+         L7srYX9dbL3FrNyQpDEpSfxTcgeJlZtRa79mEyf3JAl/Jr33qPNXv9EbN2Xmyfw9ng3r
+         qK8u58whlFt1bX9CMsJmBB5UdlHYCweLVKusy7EfZaykCcAVdzekeoYU0l4OLSmJ/XkE
+         8gUyMv5CzVzDANMWdcJZeRRTB+k+RiJwCpBQaNT2ZtLvuorE1bB6mdmHoG2ED15AK0cR
+         2L6w0lYSBZ3zYvx1IQ1Gax5WFqzJyw/Jt/rB9UMV2p78T9mNZIYbusWihoWH3e3JTC+2
+         9cgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNABcCVlgS8fXvJlzETc0nZGbU3g7m+z0s4ZpTan0O/8kmV/RkcjHNdk6xfbHkTwMWoGIL93N0aR43S4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUhymYxaJp9PeQSw7aF3Ywjv3kzG6Btgue0eoPaGkil5HhayeU
+	dFyw0KGsPE8uYnH0KhrRfclOEUpCQbxoIpLNCI1j1VOWDALFzxm3akW3
+X-Gm-Gg: ASbGncvGxrYLKURrLQ3KNo1HFgfYvKbkKzhJ0rFF4LcOS2L7Py2zxT3xdHGvXOLphYN
+	zO/CIFeT4HKoBok/qlej4K/VhZvmwO6T0MdurccyD+Em9ef66WNhlN0g2ez2zhsHlBbsvwSNSXf
+	4Gcfs4LSW1ZKhNHpFRRyjvyHzdHRC4Uuos0eMjT0MA6mz3NrMr2WFhjj1yJvtSRhFrEBziI6gdD
+	/x9PdCutDWUE4EAlrTNcPuTu4/+/wFWiI1sGiCGI9brnaCrhi2QWEiOAnMqNY3Vq8f+C2pwfQSL
+	8m0GIDF9lDtyQjJBBmECNvbt6uPaXRfORYpVfCS4aYs5foKLw27Htcw/2JGMBpp5b1sT+3pjNEo
+	YYy8oD9sPJ2TRhCuU4O0juCy4pUNk2FrlGQr7mO++Lb8MRDuMIsgye98OP599NpyO0uI=
+X-Google-Smtp-Source: AGHT+IHX9VUoLygHmYlslyIRXdrJkzsw8xckiiAqyMLWxmDpD0d2AnjicSPbtMBF6XJqzI1b2bjK8A==
+X-Received: by 2002:a05:600c:a08c:b0:46e:37a7:48d1 with SMTP id 5b1f17b1804b1-46e37a74bc9mr96431435e9.34.1759052518976;
+        Sun, 28 Sep 2025 02:41:58 -0700 (PDT)
+Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([78.212.233.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996bf1sm185108715e9.1.2025.09.28.02.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Sep 2025 02:41:58 -0700 (PDT)
+Date: Sun, 28 Sep 2025 11:41:48 +0200
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org
+Cc: conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux@roeck-us.net, rodrigo.gobbi.7@gmail.com,
+	naresh.solanki@9elements.com, michal.simek@amd.com,
+	grantpeltier93@gmail.com, farouk.bouabid@cherry.de,
+	marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v3 2/4] iio: mpl3115: use guards from cleanup.h
+Message-ID: <20250928094148.yid75l5jwywpvfei@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+References: <20250926220150.22560-1-apokusinski01@gmail.com>
+ <20250926220150.22560-3-apokusinski01@gmail.com>
+ <20250927173621.09bc9f39@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c2:b0:427:2aee:4935 with SMTP id
- e9e14a558f8ab-4272aee4a76mr136615165ab.12.1759052502423; Sun, 28 Sep 2025
- 02:41:42 -0700 (PDT)
-Date: Sun, 28 Sep 2025 02:41:42 -0700
-In-Reply-To: <68b95f81.a00a0220.eb3d.0001.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d902d6.a00a0220.102ee.0029.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: validate extent entries before caching in ext4_find_extent()
-From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250927173621.09bc9f39@jic23-huawei>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Sat, Sep 27, 2025 at 05:36:21PM +0100, Jonathan Cameron wrote:
+> On Sat, 27 Sep 2025 00:01:48 +0200
+> Antoni Pokusinski <apokusinski01@gmail.com> wrote:
+> 
+> > Include linux/cleanup.h and use the scoped_guard() to simplify the code.
+> See below. I'm not sure this is in general a good idea in this driver, but
+> see the comments below.  I think more traditional factoring out of the code
+> under the lock into a helper function should be the main change here.
+> That might or might not make sense combined with a scoped_guard().
+> 
+> 
+> > 
+> > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> > ---
+> >  drivers/iio/pressure/mpl3115.c | 42 +++++++++++++++-------------------
+> >  1 file changed, 19 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
+> > index 579da60ef441..80af672f65c6 100644
+> > --- a/drivers/iio/pressure/mpl3115.c
+> > +++ b/drivers/iio/pressure/mpl3115.c
+> > @@ -10,14 +10,16 @@
+> >   * interrupts, user offset correction, raw mode
+> >   */
+> >  
+> > -#include <linux/module.h>
+> > +#include <linux/cleanup.h>
+> > +#include <linux/delay.h>
+> >  #include <linux/i2c.h>
+> > +#include <linux/module.h>
+> > +
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/iio/sysfs.h>
+> >  #include <linux/iio/trigger_consumer.h>
+> >  #include <linux/iio/buffer.h>
+> >  #include <linux/iio/triggered_buffer.h>
+> > -#include <linux/delay.h>
+> >  
+> >  #define MPL3115_STATUS 0x00
+> >  #define MPL3115_OUT_PRESS 0x01 /* MSB first, 20 bit */
+> > @@ -163,32 +165,26 @@ static irqreturn_t mpl3115_trigger_handler(int irq, void *p)
+> >  	u8 buffer[16] __aligned(8) = { };
+> >  	int ret, pos = 0;
+> >  
+> > -	mutex_lock(&data->lock);
+> > -	ret = mpl3115_request(data);
+> > -	if (ret < 0) {
+> > -		mutex_unlock(&data->lock);
+> > -		goto done;
+> > -	}
+> > -
+> > -	if (test_bit(0, indio_dev->active_scan_mask)) {
+> > -		ret = i2c_smbus_read_i2c_block_data(data->client,
+> > -			MPL3115_OUT_PRESS, 3, &buffer[pos]);
+> > -		if (ret < 0) {
+> > -			mutex_unlock(&data->lock);
+> > +	scoped_guard(mutex, &data->lock) {
+> > +		ret = mpl3115_request(data);
+> > +		if (ret < 0)
+> >  			goto done;
+> Read the guidance in cleanup.h.  Whilst what you have here is actually not
+> a bug, it is considered fragile to combine gotos and scoped cleanup in a function.
+> Sometimes that means that if we are using guards() we need to also duplicate
+> some error handling.
+> 
+> So, the way to avoid that is to factor out the stuff under the goto to a helper
+> function.  That function than then return directly on errors like this.
+> 
+> Looks something like
+> 
+> 	scoped_guard(mutex, &data->lock) {
+> 		ret = mpl3115_fill_buffer(data, buffer);
+> 		if (ret) {
+> 			iio_trigger_notify_done(indio_dev->trig);
+> 			return IRQ_HANDLED;
+> 		}
+> 	}
+> 
+> 	iio_push_to_buffers_with_ts...
+> 	iio_trigger_notify_done(indio_dev->trig);
+> 	return IRQ_HANDLED;
+> 
+> 
+> However, it is also worth keeping in mind that sometimes scoped cleanup
+> of which guards are a special case is not the right solution for a whole
+> driver. I'm not sure if it is worth while in this case, but try the approach
+> mentioned above and see how it looks.
+> 
+> Alternative would still be to factor out the helper, but instead just have
+> 	mutex_lock(&data->lock);
+> 	ret = mpl3115_fill_buffer(data, buffer);
+> 	mutex_unlock(&data->lock);
+> 	if (ret)
+> 		goto...
+> 
+> 
+> Jonathan
+>
+Thanks for the explanation, both approaches look quite neat to me.
+However, if we use scoped_guard() then the iio_trigger_notify_done and
+return IRQ_HANDLED are duplicated, so I'd lean slightly towards the
+mutex_lock/mutex_unlock solution.
 
-***
-
-Subject: [PATCH] ext4: validate extent entries before caching in ext4_find_extent()
-Author: kartikey406@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-
-syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
-opening a verity file on a corrupted ext4 filesystem mounted without
-a journal.
-
-The issue occurs when the extent tree contains out-of-order extents,
-which can happen in a corrupted filesystem. ext4_find_extent() calls
-ext4_cache_extents() without validating the extent entries when the
-tree depth is 0 (leaf level). This allows corrupted extent trees with
-out-of-order extents to be cached, triggering a BUG_ON in
-ext4_es_cache_extent() due to integer underflow when calculating hole
-sizes:
-
-  If prev = 4352 and lblk = 1280:
-  lblk - prev = 1280 - 4352 = -3072 (as signed)
-  = 4294964224 (as unsigned)
-  end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279 (after overflow)
-  BUG_ON(end < lblk) triggers because 1279 < 4352
-
-Fix this by adding extent entry validation using the existing
-ext4_valid_extent_entries() function before caching. This ensures
-corrupted extent trees are detected and handled properly through the
-error path, preventing both the BUG_ON and potential use-after-free
-issues.
-
-Reported-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-Fixes: a86c6181109a ("ext4: cache extent hole in extent status tree for ext4_da_map_blocks()")
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/extents.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index ca5499e9412b..f8e45623f7ea 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -924,8 +924,18 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
- 	path[0].p_bh = NULL;
- 
- 	i = depth;
--	if (!(flags & EXT4_EX_NOCACHE) && depth == 0)
-+	if (!(flags & EXT4_EX_NOCACHE) && depth == 0) {
-+		ext4_fsblk_t pblk = 0;
-+
-+		if (!ext4_valid_extent_entries(inode, eh, 0, &pblk, 0)) {
-+			EXT4_ERROR_INODE(inode,
-+				"invalid extent entries, pblk %llu",
-+				pblk);
-+			ret = -EFSCORRUPTED;
-+			goto err;
-+		}
- 		ext4_cache_extents(inode, eh);
-+	}
- 	/* walk through the tree */
- 	while (i) {
- 		ext_debug(inode, "depth %d: num %d, max %d\n",
--- 
-2.43.0
-
+> > +
+> > +		if (test_bit(0, indio_dev->active_scan_mask)) {
+> > +			ret = i2c_smbus_read_i2c_block_data(data->client,
+> > +				MPL3115_OUT_PRESS, 3, &buffer[pos]);
+> > +			if (ret < 0)
+> > +				goto done;
+> > +			pos += 4;
+> >  		}
+> > -		pos += 4;
+> > -	}
+> >  
+> > -	if (test_bit(1, indio_dev->active_scan_mask)) {
+> > -		ret = i2c_smbus_read_i2c_block_data(data->client,
+> > -			MPL3115_OUT_TEMP, 2, &buffer[pos]);
+> > -		if (ret < 0) {
+> > -			mutex_unlock(&data->lock);
+> > -			goto done;
+> > +		if (test_bit(1, indio_dev->active_scan_mask)) {
+> > +			ret = i2c_smbus_read_i2c_block_data(data->client,
+> > +				MPL3115_OUT_TEMP, 2, &buffer[pos]);
+> > +			if (ret < 0)
+> > +				goto done;
+> >  		}
+> >  	}
+> > -	mutex_unlock(&data->lock);
+> >  
+> >  	iio_push_to_buffers_with_ts(indio_dev, buffer, sizeof(buffer),
+> >  				    iio_get_time_ns(indio_dev));
+> 
 
