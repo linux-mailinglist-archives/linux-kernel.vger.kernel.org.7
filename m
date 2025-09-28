@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-835547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CD2BA76B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:10:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9A9BA76A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 337B27A70F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:07:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6BA1796F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBD626F462;
-	Sun, 28 Sep 2025 19:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878EB27147C;
+	Sun, 28 Sep 2025 19:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xx9LuwPF"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bCb+BYW5"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A94026C39B
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFA326E17A
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759086477; cv=none; b=bd26PYgh4up4mFBdXT42ea8TTiAun+ugawCxZRyFkVmqQA3vo6IhD+isxrVyKvHJdIOxGyDe/5/eagp7h+q/tptPSAHXsySH0ZnNPYIHEZGskllhASf+xt/1H05CIc4N/fi0FJ5vt+YQmbZTD4Uaf3Us9Hvmz/eFVcupjo20vgw=
+	t=1759086478; cv=none; b=O4OR9yU/CQt8ZTJ5ZOAOdB+mr+rQ4Ar/truwFpy0bNUQTqcXrNDBJ7eMxTps4CMiuaUGl+dYj3cWV2H3PgGvSoxyFCzCFKQszJBYv1SnnqnQiP4sEoKjUrbqtzFKVHrVZqO2BxxQcBofK/uMb5VI1V02vXij1V2o9J6mk3LqIFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759086477; c=relaxed/simple;
-	bh=jkmwgnL7BhvDTNRmHeg8Vg8AsLanY9NZX4iIKwYAEYk=;
+	s=arc-20240116; t=1759086478; c=relaxed/simple;
+	bh=cUNulnp9gxtOtkG7ryVsF75CYtxVqmeKGRtBY6UQkRE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qxxTmiHONPOj78/zPuHBCKIccipkOE3a0DMkFN87oQMEOKSUuHAKnG7nY3NExzLi9jn5YQwm6ersWKVGIJ1N6avpt722Ysq6Z4Iy032Jlo760sn7RpdtMFPQ7RvM59Jggca+xdic9bsXDGcQHhulq3cKsixi6+fPiazDJHIrC2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xx9LuwPF; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=iO4D8+/h2/a6ngNWmcTsUzQYekuIKLDjUyd2amoGctPcIRWiTTKZ7AsZFKrYrxqggutVLrGtK4k3ApuZ9tfmI080FUSn8BtoJ3NnsncfqN/IKpG39T89ZZXN249ofd3iP24BXquhtukHhsjM/iBQv1+v+bZjIgUwC93wtjtnNMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bCb+BYW5; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--skhawaja.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77f2466eeb5so3163480b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:07:55 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7811a602576so3398812b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:07:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759086475; x=1759691275; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759086476; x=1759691276; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ucXCpHZHap8YpvFOrTnapJK/l5FI9kkW9aB4eroyCmw=;
-        b=Xx9LuwPFaKX0yyMZ+zf91gKq7rJuYCKk5S8f5LV7Q9JP3M2rH5mqYs6s6KpkoUpCnf
-         0TZJg85adPtuYPGaOt4t8RNx2dqkEyQcJ+vY/yF6PhvOioD6JA4HIPM38RZjN8reFkIf
-         voq+j4fq5jEYk5UlEehUDBl26ThH05NL34cMUCrPtjBagWvyv41HUjHg1r7TIdZJ4xB7
-         EomL/kRlyQdb5/kFk/dBguhOH/bi7NJONFaryKUWSL60i4NvKYkzxTW54GXJzLzIrj1S
-         Hc4DjUt7WL+TLc40x9x/fbpo+nOdFMJHPkPv6BQeQsY3D9xoNa5IO08quFXmzvMoElIa
-         BbSg==
+        bh=DoORliUGK7lTSGlg4cqnmqfBZFAdVY0fHhO98K40Ca0=;
+        b=bCb+BYW5dM93jC5Kc8VWJr0MyXKxaX+m/AFsTOcPn5dcz58vt5QlN7wLO9CyPxDHm5
+         MLI7pG0MGf5lNe6HOfjTEQ2ad5NORHB6K74jOWfcAzV0t6X0P2WV3/cpC79FYWaSfef9
+         A4BDv5TvmWdrnd/HMf4eB0ra+QsLM+Z2DZaWvhxmcK2myaOmfwO88G8mlppE2XkOYI1t
+         gNI/B+QJDlKpe24+oWCSAIvXgpXP4xq+e15xeQpRdU1p66HYXlYDXsHN3lqNmHSPgWlV
+         qONHCyjOwjCL760IewZw3rxmVlfUqWYUzGEJU59DiG8jOgLNZIFvHh+qHcyts40sZaMn
+         u+nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759086475; x=1759691275;
+        d=1e100.net; s=20230601; t=1759086476; x=1759691276;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ucXCpHZHap8YpvFOrTnapJK/l5FI9kkW9aB4eroyCmw=;
-        b=HS6uEgGjw2wKjjCDxZThNnSNfEV9REAnISng6ehjQ8zqBqVFLZP0PemZJeFZNlaQDW
-         Cg4JVz4L2I87ypy81ZdQq38XpcNxWIaDJpFpwMQr7tqVb2wW8L3J7oxx7VAlO/tCIsPr
-         os3KZF/+Mm1TWEVJwO3nllrgCLA7ZUe1HBeXCDe01KfGswMXtZTp1TNivVmlHHJxrsqK
-         cpa54wFhoSmj313iKFegfnNMdmKeMYsTVGAmjZnJZL+hM0eLcyB7nCkF93F9Y4TzuELe
-         lwbsvw+sJSH+T9aF/9AWLbufQkmkgMT/CYcUWcpAviL/QrHisAL8UOAgL7dNaX2Ib+4N
-         JqUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeeTq67xpy8oX9iXpovtXKLTS5ESW8CgtTgg1dSJzzm09DT/670hpLpNCuI2BJP2eBlHDT0z/3TxP6eQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQmdMaNKHPMGz9PqCY1a+IMqv8M/NanWXFiroNNXS3NUptYT1k
-	yXs9z3FGpxhPjghmQrvWEGsN9pjRziaNLCsZ9W54aMTO9DVQygkZIsgWu8kh3PH/Lta1eUBnadQ
-	SxUkvpbBhZsRGnA==
-X-Google-Smtp-Source: AGHT+IHCtCjCjURftUd42BI8Xn94s+m6l5b6UgXQA8KkQXHy6gXqsx21JjwsoB3Xl8hB9g8pCQfv/F4XvBfXyg==
-X-Received: from pfbhk3.prod.google.com ([2002:a05:6a00:8783:b0:781:65e:cee5])
+        bh=DoORliUGK7lTSGlg4cqnmqfBZFAdVY0fHhO98K40Ca0=;
+        b=KYbwUZR89NUFnSXaWRBzkYebjcbP+F2OuRrAgDeScgfB/7/OEVAPWNSu6crAjhZbEo
+         3r9YJCpysiJ0A+Jz16QnsERyWe7hV2IzTVXmZiDD5SgNegJGhsYJJXeBgUjY2iB0N5OL
+         zeD8v2K/a6MkNrK6VUYas+DDemA0wVjOMXv47JApbGePmwryFyKzrvZMh6LphvxGXNsq
+         tZUPus9/jysrUlkAwIKF+j1O3POOzBT9kK+Wea3tYBRMZvj/73FVEi4tjRjq2AuBatCK
+         K7VAPRaEY8TPueODfItazurXPYLB5JtMDQMm6Aqq7kjmRur9JwnuxCfrGr4Of48vRRjR
+         PhPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXquyJUEgOYzTNXzd5D977gOeiPBaypTbz4gEdbCeEelLY89x6upO1FNeQyeDVyZlZHv9k4e8fokISGTZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+LmjSYih1n4bKIrFooYAfgpao1PGNNsyEzCIRmrUXt7OVsOrI
+	JiwJ4UsaSwL8k3kgsmtm9OW15jxyYa4JvgC/ha/OTBoNgHZwnW02jL/NnjhlKhfszqhQEbtu0MP
+	QxE7okdkOjU7lxw==
+X-Google-Smtp-Source: AGHT+IFLhnnoCDxarwczs9atmxqzu3Xs3uCyHPAxyqgbhg5fCT67/boDgPD+SbYpcL4XGVurMCxpUaxVyD6jzw==
+X-Received: from pfux37.prod.google.com ([2002:a05:6a00:be5:b0:77f:24f4:40f7])
  (user=skhawaja job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:240d:b0:76e:885a:c32c with SMTP id d2e1a72fcca58-780fceda55bmr14907781b3a.26.1759086474819;
- Sun, 28 Sep 2025 12:07:54 -0700 (PDT)
-Date: Sun, 28 Sep 2025 19:06:17 +0000
+ 2002:a05:6a00:3906:b0:77f:40ce:9c4 with SMTP id d2e1a72fcca58-780fcf12f65mr17541869b3a.32.1759086476439;
+ Sun, 28 Sep 2025 12:07:56 -0700 (PDT)
+Date: Sun, 28 Sep 2025 19:06:18 +0000
 In-Reply-To: <20250928190624.3735830-1-skhawaja@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250928190624.3735830-1-skhawaja@google.com>
 X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <20250928190624.3735830-10-skhawaja@google.com>
-Subject: [RFC PATCH 09/15] iommu/vt-d: Add live update freeze callback
+Message-ID: <20250928190624.3735830-11-skhawaja@google.com>
+Subject: [RFC PATCH 10/15] iommu/vt-d: Restore iommu root_table and context on
+ live update
 From: Samiullah Khawaja <skhawaja@google.com>
 To: David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
 	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
@@ -87,41 +88,161 @@ Cc: Samiullah Khawaja <skhawaja@google.com>, Robin Murphy <robin.murphy@arm.com>
 	Chris Li <chrisl@kernel.org>, praan@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-The iommu_ser needs to be updated during freeze to set the physical
-address of the iommu_units and devices array as the virtual addresses
-will not be valid after kexec in the next kernel.
+During boot if the live update state is updated then the iommu live
+update state needs to be checked to see if the state of any iommu
+hardware unit was persisted before live update. If there is preserved
+state available for an iommu hardware unit then restore the root_table
+and the iommu context from preserved state.
 
 Signed-off-by: Samiullah Khawaja <skhawaja@google.com>
 ---
- drivers/iommu/intel/liveupdate.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/iommu/intel/iommu.c      |  7 +++
+ drivers/iommu/intel/iommu.h      |  1 +
+ drivers/iommu/intel/liveupdate.c | 92 +++++++++++++++++++++++++++++++-
+ 3 files changed, 99 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index caac4fd9a51e..245316db3650 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -984,6 +984,13 @@ static int iommu_alloc_root_entry(struct intel_iommu *iommu)
+ {
+ 	struct root_entry *root;
+ 
++#ifdef CONFIG_LIVEUPDATE
++	if (!intel_iommu_liveupdate_restore_root_table(iommu) &&
++	    iommu->root_entry) {
++		__iommu_flush_cache(iommu, iommu->root_entry, ROOT_SIZE);
++		return 0;
++	}
++#endif
+ 	root = iommu_alloc_pages_node_sz(iommu->node, GFP_ATOMIC, SZ_4K);
+ 	if (!root) {
+ 		pr_err("Allocating root entry for %s failed\n",
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index 273d40812d09..6119a638c530 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -1351,6 +1351,7 @@ static inline int iopf_for_domain_replace(struct iommu_domain *new,
+ 
+ #ifdef CONFIG_LIVEUPDATE
+ int intel_iommu_domain_liveupdate_preserve(struct iommu_domain *domain);
++int intel_iommu_liveupdate_restore_root_table(struct intel_iommu *iommu);
+ #endif
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
 diff --git a/drivers/iommu/intel/liveupdate.c b/drivers/iommu/intel/liveupdate.c
-index fb214736aa3c..a7d9b07aaada 100644
+index a7d9b07aaada..755325a5225c 100644
 --- a/drivers/iommu/intel/liveupdate.c
 +++ b/drivers/iommu/intel/liveupdate.c
-@@ -258,10 +258,21 @@ static void intel_liveupdate_finish(struct liveupdate_subsystem *handle, u64 dat
+@@ -253,9 +253,11 @@ static void intel_liveupdate_cancel(struct liveupdate_subsystem *handle, u64 dat
  	pr_warn("Not implemented\n");
  }
  
-+static int intel_liveupdate_freeze(struct liveupdate_subsystem *handle, u64 *data)
-+{
-+	struct iommu_ser *ser = __va(*data);
++static struct iommu_ser *serialized_state;
 +
-+	ser->iommu_units_phys = __pa(ser->iommu_units);
-+	ser->devices_phys = __pa(ser->devices);
-+
-+	return 0;
-+}
-+
- static struct liveupdate_subsystem_ops intel_liveupdate_subsystem_ops = {
- 	.prepare = intel_liveupdate_prepare,
- 	.finish = intel_liveupdate_finish,
- 	.cancel = intel_liveupdate_cancel,
-+	.freeze = intel_liveupdate_freeze,
+ static void intel_liveupdate_finish(struct liveupdate_subsystem *handle, u64 data)
+ {
+-	pr_warn("Not implemented\n");
++	serialized_state = NULL;
+ }
+ 
+ static int intel_liveupdate_freeze(struct liveupdate_subsystem *handle, u64 *data)
+@@ -280,6 +282,94 @@ static struct liveupdate_subsystem intel_liveupdate_subsystem = {
+ 	.ops = &intel_liveupdate_subsystem_ops,
  };
  
- static struct liveupdate_subsystem intel_liveupdate_subsystem = {
++static struct iommu_ser *get_liveupdate_state(void)
++{
++	struct iommu_ser *ser;
++	u64 data;
++	int ret;
++
++	if (serialized_state)
++		return serialized_state;
++
++	ret = liveupdate_get_subsystem_data(&intel_liveupdate_subsystem, &data);
++	if (WARN_ON_ONCE(ret))
++		return NULL;
++
++	if (!kho_restore_folio(data))
++		return NULL;
++
++	ser = __va(data);
++	ser->iommu_units = __va(ser->iommu_units_phys);
++	ser->devices = __va(ser->devices_phys);
++	serialized_state = ser;
++
++	return ser;
++}
++
++static int restore_iommu_context(struct intel_iommu *iommu)
++{
++	struct context_entry *context;
++	int i, ret = 0;
++
++	for (i = 0; i < ROOT_ENTRY_NR; i++) {
++		context = iommu_context_addr(iommu, i, 0, 0);
++		if (context)
++			BUG_ON(!kho_restore_folio(virt_to_phys(context)));
++
++		if (!sm_supported(iommu))
++			continue;
++
++		context = iommu_context_addr(iommu, i, 0x80, 0);
++		if (context)
++			BUG_ON(!kho_restore_folio(virt_to_phys(context)));
++	}
++
++	return ret;
++}
++
++static struct iommu_unit_ser *get_iommu_unit_state(struct iommu_ser *ser, u64 reg_phys)
++{
++	int i;
++
++	for (i = 0; i < ser->nr_iommus; ++i) {
++		if (ser->iommu_units[i].phys_addr ==  reg_phys)
++			return &ser->iommu_units[i];
++	}
++
++	return NULL;
++}
++
++int intel_iommu_liveupdate_restore_root_table(struct intel_iommu *iommu)
++{
++	struct iommu_unit_ser *iser;
++	struct iommu_ser *ser;
++	int ret;
++
++	if (!liveupdate_state_updated())
++		return -EINVAL;
++
++	ser = get_liveupdate_state();
++	if (!ser)
++		return -EINVAL;
++
++	iser = get_iommu_unit_state(ser, iommu->reg_phys);
++	if (!iser)
++		return -EINVAL;
++
++	iommu->root_entry = __va(iser->root_table);
++
++	ret = restore_iommu_context(iommu);
++	if (ret) {
++		WARN_ONCE(ret, "Cannot restore iommu [%llx] root context\n", iommu->reg_phys);
++		folio_put(virt_to_folio(iommu->root_entry));
++		iommu->root_entry = NULL;
++	}
++	pr_info("Restored IOMMU[0x%llx] Root Table at: 0x%llx\n",
++		iommu->reg_phys, iser->root_table);
++
++	return ret;
++}
++
+ static int __init intel_liveupdate_init(void)
+ {
+ 	WARN_ON_ONCE(liveupdate_register_subsystem(&intel_liveupdate_subsystem));
 -- 
 2.51.0.536.g15c5d4f767-goog
 
