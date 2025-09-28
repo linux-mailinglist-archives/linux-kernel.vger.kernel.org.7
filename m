@@ -1,274 +1,256 @@
-Return-Path: <linux-kernel+bounces-835134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E08BA6599
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:35:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B210BA65A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38877189B855
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 01:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC91717BA76
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 01:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C9C244698;
-	Sun, 28 Sep 2025 01:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54BA24467A;
+	Sun, 28 Sep 2025 01:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AfVtPPAh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WEBYNZ9o"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A72D1B4F08;
-	Sun, 28 Sep 2025 01:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759023329; cv=fail; b=plTmtp9Cx8ga5U9cFFxUwfWRZbzcprJTxpihbpGzZaYDVojghuMPBDP6Fivng2c56blaUBSYxo2Gz8OhhgeZLr2UooaugClMrVyhDVneWFVYgmt7BpUzdAZ/EMiT+4J4mkQoCZkC72TvwaPZH/0ieZGRutNoTmVNupnyk450bs0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759023329; c=relaxed/simple;
-	bh=rJMl0CpuzMk4VPtKTIpVgIZqN3rmVMfkRrxYsKEw/Dw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XeMzaEjYux/Vze4GnwTPv1HaCSTCuP7xL7p7QfM9Us12xRtpHCKfClNd+yS4NGrHHEItc7A4I52+gL6r0FFYqLez1TbRbDnUSYD8Qy2sKi5cnP9aF72yjuwexn8gRWe0FsTY6Jto9HQEIO5gZsvIn6gBhxHnR4na8ragSc7d0SU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AfVtPPAh; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759023328; x=1790559328;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=rJMl0CpuzMk4VPtKTIpVgIZqN3rmVMfkRrxYsKEw/Dw=;
-  b=AfVtPPAhWTlBUZI4FiDoASn9sWYxKeD87yUqS7EPKzBUWHvCyQjk9A6m
-   8Fcb3GSlAGA60SmTbgi+OQqmwg6u7ts6NIH+LlPKcVPrClXeZ90Bjh1Ps
-   E/ZGTnMZfCs8bzT8dG1UU/n1tclXSRw/sjhP6BFDAHvK6IWQmeBiQuM2E
-   8ieTLZal4/btCz4ARyWNzBkLgJRfTIY1ERgMU+g2m0+dnKXrBUAMaYEqc
-   wkfi1iQSA+UjEVnLqfK1mmI+w0FYQD7x+mZ7sR1AArtzvYTXqlSIUXxBw
-   CjH0NV9GaXZVgLvRtOhoatnZUHmPYSWZoKlK5gkafpTyQ7H1MGwngjH0c
-   g==;
-X-CSE-ConnectionGUID: ixrfRsu9SECPyH1BvtcopQ==
-X-CSE-MsgGUID: iEcbbsmYQ0S32r5JbPQsIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61356959"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61356959"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 18:35:27 -0700
-X-CSE-ConnectionGUID: 9OJXhvpzQLeRcK/vE1qv2A==
-X-CSE-MsgGUID: bqppzz9zT4asG6Qaoy+LnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,298,1751266800"; 
-   d="scan'208";a="177747571"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 18:35:27 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sat, 27 Sep 2025 18:35:26 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Sat, 27 Sep 2025 18:35:26 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.44)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sat, 27 Sep 2025 18:35:26 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WxtYyobT4xfMelyBsctWiL0JfmoA9ZPKrQ6PJ62vIExzjRGLogWcxJzdEvhtKmCQjttWYsR1q2d38Xb0q8n3gGzba8jKu6hhvSWd6/B2GX5mnPerHYJOrtOb7R8U8xNRnyskACyES7N5AeWiAoZpHMHW8qs6hVCYR8WYtiQB716i02OIx2zNP6yl1bzkbJDXQgubXia57X+cSah1C5MhWLHHctWprMNTeg63PgcKIROyjBC7SF7NTO7dBBUEJ9keBdAyWOPS3KVmwuHEsxIZlX9os5C7fwSgFXyNQ/mbMIiOckdzrJb8/7kD21NneWyRVcvR+YPj21g6CXH59PaMzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bxA8XoY+Fgc9KT6IwDXV93Q5DXx0ROxilvwruSyOvz8=;
- b=JoskOBr8JRFyEq/Uyx5XiZkX0q4dMHM7qK3GSf/WcsmvDPoV51Kw2L/BRb/MISKJGNA0xWHfXZSd6ZrQWVCv6rIEK9qT2sBLqqo0K0KfhAelizSz0RebZVLIPw7uqJFHRt2xUA/9VslqURQzsnvM/l0cRlKjtSJfEDW43h1T3A/5dMBRC81h9YtNdjH1Fd49xdN7zKmvei71ZK6VABR1nDgOeVhqE9yBMHbH0k9EaKd7/6bmyh3ua8uHKNa3PyPSKVq8FO1Fu6m/R4WzTvEZx7NO44bLRCd19gIq0rECprvpgOKCSRLyXjrK0AQbof/hpe5z4GRMJD+gxl4hWPGwmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- DS4PPFABF58482A.namprd11.prod.outlook.com (2603:10b6:f:fc02::45) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sun, 28 Sep
- 2025 01:35:23 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.9160.014; Sun, 28 Sep 2025
- 01:35:23 +0000
-Date: Sun, 28 Sep 2025 09:34:14 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-CC: "Hansen, Dave" <dave.hansen@intel.com>, "Gao, Chao" <chao.gao@intel.com>,
-	"seanjc@google.com" <seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>,
-	"kas@kernel.org" <kas@kernel.org>, "Annapurve, Vishal"
-	<vannapurve@google.com>, "Huang, Kai" <kai.huang@intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Yamahata, Isaku"
-	<isaku.yamahata@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v3 00/16] TDX: Enable Dynamic PAMT
-Message-ID: <aNiQlgY5fkz4mY0l@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <aNX6V6OSIwly1hu4@yzhao56-desk.sh.intel.com>
- <8f772a23-ea7f-40eb-8852-49f5e3e16c15@intel.com>
- <2b951e427c3f3f06fc310d151b7c9e960c32ec3f.camel@intel.com>
- <7927271c-61e6-4f90-9127-c855a92fe766@intel.com>
- <2fc6595ba9b2b3dc59a251fbac33daa73a107a92.camel@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2fc6595ba9b2b3dc59a251fbac33daa73a107a92.camel@intel.com>
-X-ClientProxiedBy: KL1PR01CA0059.apcprd01.prod.exchangelabs.com
- (2603:1096:820:5::23) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAC24418F;
+	Sun, 28 Sep 2025 01:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759023435; cv=none; b=JtpA7e3ZKWtUL/luTBJ3F1TEJXKXfvcIYYOztP9Plple2ErbEpzPrufi6pQFJQfzOogXH3O2qMuImEjAaOZDW0K4lxicoDSIAx1rLoTY4GQLUeg8nKBPx/f6Am3Qak04S1bwOalWz6NOPRaFmz1U2onhSQ2dxR/Xjk9Nd64GmYg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759023435; c=relaxed/simple;
+	bh=KRnlCspYDguXzWhh2C9e1CajT/5bG/oSUsqMFedflew=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=A5Eh6gEGR3sJhaKlp6tVXfdcOj9byaVl05oy1uGcdhlDTIP4EpgBgzzXUo4f8Fhr9o6Rhy2cGBHyu+yf6orpfZANI2O+x7BW9i7JUMsdJivEKVfUHTCziQaHvABJ02BAkZ00BqgZ9+bn4qbpWwdeaGUSabmJj3Q6O/k5XBJhbag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WEBYNZ9o; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1759023415; x=1759628215; i=w_armin@gmx.de;
+	bh=dACQdQJOmHxMPIzcnEO/z8uEP74o/NjiTRxLyjbm2Co=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WEBYNZ9o+zSLeq3Qzxz/9oA9KQDURnNdGw0OXyh8FgGLsPCGaRWkQs7Z9sEfs4tS
+	 fsQyCGUlSzhY/WMqyEnBRKfl8HMeyf+KJGVX4BseUQmCtHMj6cBwZ533nUMUe1AEh
+	 BnXcLQwfKjPfkAswKhnmWy3WeNk/tYDX047/U14v8XfFxcDLIpB+4i9RXDSu/CXWy
+	 cxD/EFwA4fHO+7Lla87oyMOTvuRLtsUw5+ZaPkMqZSvdH3zSvnUOg6fEM1IRnibxb
+	 LFMmT3PeHjrBAAEs5FfNR/ZdmFaXRLOW4jvWUXARhmczZAhqIge66mUbevBAjwIUa
+	 1lzh1LQ2SYxokqmjuQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MTABT-1utizx2ZKR-00U4sJ; Sun, 28
+ Sep 2025 03:36:54 +0200
+Message-ID: <7ac5615c-c2dc-4aa3-b527-aadfb701bfda@gmx.de>
+Date: Sun, 28 Sep 2025 03:36:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|DS4PPFABF58482A:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e238bfa-7880-4f85-7485-08ddfe2f4b11
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?glZ27Y7rK5RYwjfU4gfA+rgAbJWUyczzcysfZEZD3DiIY7fBSxUpw5Ecp+fA?=
- =?us-ascii?Q?4s7xhtoMr8mbEA3V/onz8edxl1TOE8M+81ST5eZYKAK0jLqTRC66DtWsm67t?=
- =?us-ascii?Q?ZpC2gTb+zsGr2FhHMCfsyLW+kHu3gMBlkvSgtYscWQcyGHVj61nHq7ZjklyY?=
- =?us-ascii?Q?bLfR4oaUgdTmG23h2REbowH2x97qHcoIB7IC6xF5IcXdX27EmSWeV/Y0qOKK?=
- =?us-ascii?Q?x4XiPIKdbPXfc1/w1r/WL/X0TbkIXyT96U0UO+8TQ5GLUXjvbcQ/4QB34Meo?=
- =?us-ascii?Q?xrS1h/eYsKH+ZHTQv3P7P/U16HbMYcLitz8V6MKd0JWtERPxb//5dM7a1acA?=
- =?us-ascii?Q?mcyxOlEuL0ap0jie91XxwWK2uyiRLKeKFwzgP4BAsXDtqbcDglXJ29JPNdlp?=
- =?us-ascii?Q?bcVQ5ncvfZgbWN3RDh/S5vDs/JkK1K6r2fajmMMYGNB8baduJ4gjI+D+kQRx?=
- =?us-ascii?Q?w4t0WI2xcWVp25BiDiVayLgifAZq2/j3LTvQnc/6+u1kAxoc0XntWwkg7/Se?=
- =?us-ascii?Q?PgRjUECB+cEexgfQGhdPDoh9RHg19CY8SWQ1LXFq54k1dhfP+POHs/6WpwEa?=
- =?us-ascii?Q?d054AMifRUTXHZSoyNKq1jn0yukYNI53WiOoE/Xmc3h6z1k5IRdSRO27PH2O?=
- =?us-ascii?Q?cmLUrEMtpdQ5cad5KCzTcZeyw1n/RaZ8Z7WhP3qG5SDacwxqIF8uYPxggipD?=
- =?us-ascii?Q?W0BOfGn7ZLL4SrzjKn2apD4d5b3Bowo28h1SkaSKFQEACmXa+Y6/U8ysJQsR?=
- =?us-ascii?Q?K5WdlAAEY7zQ1zp4JHk75Kq8I4fdaXR1ObZ0rt4dqHPBIiku/uYl5k59fEoq?=
- =?us-ascii?Q?LAXkJU4a921wqmxreJI6OD7tIC2DeKA0W9bkuoSsYyoLdT+rC76JxRtgnX6O?=
- =?us-ascii?Q?cNiZ3B5cFxuYsm5qwLylHQATEHwrJ4U9XP2xUd1T0C+PPDjzYk+Kon0tT2Ly?=
- =?us-ascii?Q?yE2BqqeC5i2gY0raB/2Q17TKyjdiaMoymEdJSTesKmzvJupcTfEku5DkqFLo?=
- =?us-ascii?Q?XXB7atYmQK/QnXRF7JXnseAqUQ66grKUYLhezf3HcBE6OPTIhMHeP6cPKvfd?=
- =?us-ascii?Q?XrLv7+nqboSii9gDe5wtsqfJK7ljt069CAMiI4sQZ2eQ598ME/12MI0ZDvko?=
- =?us-ascii?Q?bPHIygx2Y3PFQPkjOT159qmEp0UBHpX3nbuvYHcD1QZP97QcmiSNit0RXfg/?=
- =?us-ascii?Q?qBmTac9U6EDqAp58/wFxFBpRZ7bVT+3lD1BX7afSHlO/OW63R6vpiUMA9+uV?=
- =?us-ascii?Q?uUOsDGRlIOGm9rKT9C1PqGHeLyI5rLkirUEUGlKuqLs7qDoSJagZVeFYjtbt?=
- =?us-ascii?Q?VYFcbJB+LqqY+3JWTjfMJGhRNme6yWc2otB2QXb9X2mvrDTfhO1GJvaKB2UN?=
- =?us-ascii?Q?DEYBI5j9xn1+4/pKt/srqzsi3NvUJQ6CxRS7+zef3iDPxjwcD5VFoAVKqgaa?=
- =?us-ascii?Q?NI+E+XDKI+jy7W6zWbQFNoa7vL+8S3Jz?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VGiByVDjdLT/iZOh+SEP+yyB6FlUaepwVswMxH1gG4jOoDPCet6sf1L2EO+J?=
- =?us-ascii?Q?KlVO69UejWgDVZlEk8KwN/+CUU4X/ikjKyYbBOp9FSGV8IWJIQBsOnmi4d0/?=
- =?us-ascii?Q?G93e3WJ5x/Bn/nHWtfyK64VCH8/T54z8iyMauABuNeSG6vwcBayxDnIjRpP1?=
- =?us-ascii?Q?Xm/WhcmIlH+HbwbaN4vKFoor3GN6PX8bLpZyjzdinH0KYAPbjrL15IDN+5GR?=
- =?us-ascii?Q?wtIk4vNukEY3fzj4wRD7aOJZdzsTRhky2O2aZyf0KJBp3vpZcGk4KKL2+Jkx?=
- =?us-ascii?Q?s6oLcT2xjJgRFyA2a5EFHFIhjKWBaFvHO8yqnsH8xkVZNv6Ii0lpiQ0UeDdd?=
- =?us-ascii?Q?NBfvZnlP6qXQ33KdB+yZVFCUTmYd7PLtTgpbqvuo+tA0pctTAU5pSU2tcSxf?=
- =?us-ascii?Q?lQ/csLEiJyEOGdQS2FeZcWCceH7j7knhPHGMKEQelgvyNjazRnFtHSFA6KzM?=
- =?us-ascii?Q?bSaXHfpMrPpaEajtHEyUWUvrdrskb+rI9e/VMOUhxaxA49hCqW/jkiLy+ahD?=
- =?us-ascii?Q?pZGxNTDgNNQsunGAsgt9pxAiYcVui3enfUqXTMSLf8yvVWtqcOJOUzDFPnFP?=
- =?us-ascii?Q?085sUWJJh9P6qBBoo9KhjiwADHBnbVtxT5fjCd/OCmqf3WGX6ZU030Dq1IJm?=
- =?us-ascii?Q?KHPqfD1J6fpbTEMfjAbrDoVIgvK9Ci+MF1Qpyhke7bmGFU0P8vH4+v1BwW1h?=
- =?us-ascii?Q?4jwebk8nd+nZwkCsGOJOmE3CrAb/n6m3kLOzSk/QmflEZI3XRT/DoMr9Uz9S?=
- =?us-ascii?Q?SlqvLUcZ4oD8+88m5U6ua7de1KqwjCx6CX9g9Nkt8065AH1P/kElpYKhsdxT?=
- =?us-ascii?Q?g+afNg8iqrt26TRn5rRHuGSnuBjJhgYl53h5cMYmH19FQTPMqgA/ASHkRPkP?=
- =?us-ascii?Q?W/FbBei4rVjpgIrACPjY1dAFnIjSZEBRefIJwZ/Px9T/QtVwz63JRsEWqwe6?=
- =?us-ascii?Q?lSvau421InghtWqn9mOif+Z6q+uA+ZZ9QMnuSOtmRygUoUODcrycZbFHjkXC?=
- =?us-ascii?Q?hSjCu7cIB9+THD5V8jRQ/FjBmqnwtoH6eLc8s+iCVRpj3jbybYxJmlAcqyht?=
- =?us-ascii?Q?zbl/nuuwoySxZKHEhJnwHEdS7LK8VXZU12C8/1L1PYsBjT4bHeVyIOEkbrIc?=
- =?us-ascii?Q?z332MZgMl5XC1eiBV6WJalZRMLbTVYDd98aSWChWJ59FNrCp+76+E2cWUum/?=
- =?us-ascii?Q?7/7CoqVso2blT8HKbumr8NKKWAXfvncOgSH7dxxZgGRu22XZ36LhDcJLqdGB?=
- =?us-ascii?Q?FpU7nvdW4kLwpNOyz5hLBvsUtxsCP31b9GZN+TX6zBJFRVKpm6KohDoo+hn8?=
- =?us-ascii?Q?uefu4ik0SdVXsDL6Bg5xK7GTbzYjgxYKQn5MzrmW3zhHIdvqjq+ij237TTkO?=
- =?us-ascii?Q?vd3DX5lSCzoJ2s6eY31NYH6A3LpkjlQEiFWVeKBVvvTwwBKaPDenkjWksSju?=
- =?us-ascii?Q?g2OHSl5bgQECNiM3FkFUeIt1DM81x9+G7y6uGMBJwSaQHq0w/TWQrW57jR3C?=
- =?us-ascii?Q?eSpHFOr5PlSBqf/11U19nSFkNnCYI+clSCd6sWZO7xqm0gfQSVthQCMMk1/T?=
- =?us-ascii?Q?SAdzBRwjjbQJkrR0wCk4ATQo8jpVqkKjmv6GbWui?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e238bfa-7880-4f85-7485-08ddfe2f4b11
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 01:35:23.4070
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BJ/IgXgQufHM/1uBy3CflJEQn8ziyXUG0ebnzWfOEkZdk5FO7cZ075eU3Qnd8zV6G9Jk8vChzL1yhBk+0LLk1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFABF58482A
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add support for Uniwill laptop features
+From: Armin Wolf <W_Armin@gmx.de>
+To: ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, chumuzero@gmail.com,
+ corbet@lwn.net, cs@tuxedo.de, wse@tuxedocomputers.com,
+ ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org, lee@kernel.org,
+ pobrn@protonmail.com
+References: <20250928013253.10869-1-W_Armin@gmx.de>
+Content-Language: en-US
+In-Reply-To: <20250928013253.10869-1-W_Armin@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:xqEGvrJybzXo6T18wNuCWMsZe/7LwrH1qpawJ+AOzzSOUgvTL+Z
+ PwPNkMklwAmcgboEVA0kDTTE19bmOxxaUJD2YfYVWgdjI/U9aJtQGcxv+hFAh9SPRFEIgf4
+ 8/Ng15U8xy0BNGdfFWutMM7/Y85vp2fCllEvdaLoCU+6+OTl82SVSW4JgTRcGe8vnzSaflP
+ lhW+b41JC0ccdSNWWh/kA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QAA1Pdo1V2A=;jVSWl2DezgyNBX1qS87QlRJuW8g
+ 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
+ iRfMRcURamDU2A==
 
-On Sat, Sep 27, 2025 at 03:00:31AM +0800, Edgecombe, Rick P wrote:
-> On Fri, 2025-09-26 at 09:11 -0700, Dave Hansen wrote:
-> > If it can't return failure then the _only_ other option is to spin.
-> > Right?
-> 
-> Yea, but you could spin around the SEAMCALL or you could spin on
-> duplicate locks on the kernel side before making the SEAMCALL. Or put
-> more generally, you could prevent contention before you make the
-> SEACMALL. KVM does this also by kicking vCPUs out of the TDX module via
-> IPI in other cases.
-> 
-> > 
-> > I understand the reluctance to have such a nasty spin loop. But other
-> > than reworking the KVM code to do the retries at a higher level,
-> 
-> Re-working KVM code would be tough, although teaching KVM to fail zap
-> calls has come up before for TDX/gmem interactions. It was looked at
-> and decided to be too complex. Now I guess the benefit side of the
-> equation changes a little bit, but doing it only for TDX might still be
-> a bridge to far.
-> 
-> Unless anyone is holding onto another usage that might want this?
-> 
-> >  is there another option?
-> 
-> I don't see why we can't just duplicate the locking in a more matching
-> way on the kernel side. Before the plan to someday drop the global lock
-> if needed, was to switch to 2MB granular locks to match the TDX
-> module's exclusive lock internal behavior.
-> 
-> What Yan is basically pointing out is that there are shared locks that
-> are also taken on different ranges that could possibly contend with the
-> exclusive one that we are duplicating on the kernel side.
-> 
-> So the problem is not fundamental to the approach I think. We just took
-> a shortcut by ignoring the shared locks. For line-of-sight to a path to
-> remove the global lock someday, I think we could make the 2MB granular
-> locks be reader/writer to match the TDX module. Then around the
-> SEAMCALLs that take these locks, we could take them on the kernel side
-> in the right order for whichever SEAMCALL we are making.
-Not sure if that would work.
+Am 28.09.25 um 03:32 schrieb Armin Wolf:
 
-In the following scenario, where
-(a) adds PAMT pages B1, xx1 for A1's 2MB physical range.
-(b) adds PAMT pages A2, xx2 for B2's 2MB physical range.
+> This patch series adds support for the various features found on
+> laptops manufactured by Uniwill. Those features are:
+>
+>   - battery charge limiting
+>   - RGB lightbar control
+>   - hwmon support
+>   - improved hotkey support
+>   - keyboard-related settings
+>
+> This patch series is based on the following out-of-tree drivers:
+>
+>   - https://github.com/pobrn/qc71_laptop
+>   - https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+>
+> Additionally the OEM software of the Intel Nuc x15 was
+> reverse-engineered to have a better understanding about the underlying
+> hardware interface.
+>
+> The first patch introduces the uniwill-laptop driver that consists of
+> two parts: a WMI part responsible for receiving platform events and
+> a ACPI part that does the majority of the work by talking to the
+> underlying embedded controller using the INOU0000 ACPI device.
+> The whole driver uses a DMI whitelist for identifying supported
+> notebook models as both the ACPI device ID and the WMI device GUID
+> are shared with a wide range of notebook models that might use a
+> different embedded controller register layout.
+>
+> The second patch additionally adds some documentation for configuring
+> and using said driver.
+>
+> Special thanks go to:
+>
+>   - github user cyear for bring up this topic on the lm-sensors issue
+>     tracker and being the tester for various prototype versions
+>   - github user dumingqiao for testing the battery, lightbar and
+>     keyboard-related features
+>   - Tuxedo computers for giving advice on how to design the userspace
+>     interface
+>
+> NOTE: During testing it turned out that the touchpad_toggle sysfs
+> attribute does not work. The reason for this is unknown, as the driver
+> emulates the behaviour of the OEM application just fine. I suspect
+> that this feature only controls some obscure key combination we dont
+> know about, so i decided to send out this series regardless.
 
-A1, B2 are not from the same 2MB physical range,
-A1, A2 are from the same 2MB physical range.
-B1, B2 are from the same 2MB physical range.
-Physical addresses of xx1, xx2 are irrelevant.
+When testing those patches on your device, could you (Werner) also check
+if the keyboard-related sysfs attributes accept "0" and "1" and also contain
+"0" and "1" depending on the state of the associated functions?
 
+Thanks,
+Armin Wolf
 
-    CPU 0                                     CPU 1
-    ---------------------------------         -----------------------------
-    write_lock(&rwlock-of-range-A1);          write_lock(&rwlock-of-range-B2);
-    read_lock(&rwlock-of-range-B1);           read_lock(&rwlock-of-range-A2);
-    ...                                       ...
-(a) TDH.PHYMEM.PAMT.ADD(A1, B1, xx1)      (b) TDH.PHYMEM.PAMT.ADD(B2, A2, xx2)
-    ...                                       ...
-    read_unlock(&rwlock-of-range-B1);         read_unlock(&rwlock-of-range-A2);
-    write_unlock(&rwlock-of-range-A1);        write_unlock(&rwlock-of-range-B2);
-
-
-To match the reader/writer locks in the TDX module, it looks like we may
-encounter an AB-BA lock issue.
-
-Do you have any suggestions for a better approach?
-
-e.g., could the PAMT pages be allocated from a dedicated pool that ensures they
-reside in different 2MB ranges from guest private pages and TD control pages?
-
-> And that would only be the plan if we wanted to improve scalability
-> someday without changing the TDX module.
- 
+> Changes since v3:
+> - Add support for UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED event
+> - rename sysfs files to prepare for future changes
+> - use kstrtobool() for handling sysfs input
+> - add proper led locking
+>
+> Changed since v2:
+> - Use the INOU0000 ACPI device for talking to the EC as it is much
+>    faster than the WMI interface used before. Additionally the OEM
+>    application also uses this ACPI inteface through a special driver.
+> - Merge the uniwill-wmi driver into the uniwill-laptop driver as
+>    the WMI driver should only load when matching the DMI whitelist.
+> - Various small fixes
+>
+> Changes since v1:
+> - spelling fixes
+> - add missing error handling when reading PWM duty cycle
+> - fix error when setting the super key lock sysfs attribute
+>
+> Changes since the RFC series:
+> - spelling fixes
+> - mention the INOU0000 ACPI device inside thew documentation
+> - use MILLIDEGREE_PER_DEGREE instead of 1000
+> - use power_supply_get_property_direct() to prevent deadlock
+> - add support for KEY_KBDILLUMDOWN and KEY_KBDILLUMUP
+>
+> Armin Wolf (2):
+>    platform/x86: Add Uniwill laptop driver
+>    Documentation: laptops: Add documentation for uniwill laptops
+>
+>   .../ABI/testing/sysfs-driver-uniwill-laptop   |   53 +
+>   Documentation/admin-guide/laptops/index.rst   |    1 +
+>   .../admin-guide/laptops/uniwill-laptop.rst    |   60 +
+>   Documentation/wmi/devices/uniwill-laptop.rst  |  198 +++
+>   MAINTAINERS                                   |   11 +
+>   drivers/platform/x86/Kconfig                  |    2 +
+>   drivers/platform/x86/Makefile                 |    3 +
+>   drivers/platform/x86/uniwill/Kconfig          |   38 +
+>   drivers/platform/x86/uniwill/Makefile         |    8 +
+>   drivers/platform/x86/uniwill/uniwill-acpi.c   | 1547 +++++++++++++++++
+>   drivers/platform/x86/uniwill/uniwill-wmi.c    |   92 +
+>   drivers/platform/x86/uniwill/uniwill-wmi.h    |  127 ++
+>   12 files changed, 2140 insertions(+)
+>   create mode 100644 Documentation/ABI/testing/sysfs-driver-uniwill-laptop
+>   create mode 100644 Documentation/admin-guide/laptops/uniwill-laptop.rst
+>   create mode 100644 Documentation/wmi/devices/uniwill-laptop.rst
+>   create mode 100644 drivers/platform/x86/uniwill/Kconfig
+>   create mode 100644 drivers/platform/x86/uniwill/Makefile
+>   create mode 100644 drivers/platform/x86/uniwill/uniwill-acpi.c
+>   create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.c
+>   create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.h
+>
 
