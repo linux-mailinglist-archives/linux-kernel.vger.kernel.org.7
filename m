@@ -1,176 +1,402 @@
-Return-Path: <linux-kernel+bounces-835490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B70EBA7477
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 18:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E17BBA7489
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 18:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDCFD179FD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1822E3A9D25
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A081F3BA4;
-	Sun, 28 Sep 2025 16:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kHQMOjAt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0786D1E0E1F;
+	Sun, 28 Sep 2025 16:15:33 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF25E1B4236
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 16:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F923CA52
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 16:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759075277; cv=none; b=phDXWNT1sWwqPEYCm8MmxH5aDcxFWZOQqMksqYOg/eWPwQ5MWwP6ZETImhSIhPtSynehZQ3LXa3RT0AjyVaJyBSdsb0yVF6UXV/w1ga70ygdexkFzi9BAUlv8gGhhCTalTRd3lnpoDx8HHJASoqFtX0zHdMeqQYBvn4G38GClIk=
+	t=1759076132; cv=none; b=kR6cdRE6JUJGM4VTIUPjOzk0V7bbb1xYdfKcK6IgJwyF9sBh6teN3JCCTUDFdFFXOl42SRhigLrSBAf/Q8HM2DNQtttqCrxLocpsPULjzQbJzHG6vfhFYBhIsRA9BCMxv3iT1x4VG5noLVxl2vKOKl7DRerX/9MaH3f/+2udt2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759075277; c=relaxed/simple;
-	bh=EDXvLQhW1MM4RBJJnzx+FgQ0g75nmeKR9tV0uzGD5o0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PYfuhQxSBasDAsj0qPWJhrOfrLOf30ZW+c/Cifo1EBA21yAF84RxuAFugb2mxlWigVkEy9+6kzIDnkLKamp0NnGEz4MIVlwhbl0TDr4BBrfoswQMnAXEa+hzcWWnJoBq4knai/xpjSW9yYNJnMi8Ozbjrska32Tmt/WG5dDGo1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kHQMOjAt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58S4PDBI029004
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 16:01:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cPFVpHWsZToVkjvByN8+NS0wTPCw0JUGnzSj+xr+rBc=; b=kHQMOjAt18xVyxOZ
-	Gx0lnuqw/oQviTlDkFSmNPUNaSCs2b6RG3JLGtfnQOdI6UHNGdcS6BCJOYgoAhlq
-	MhjsfZCZJsw+SAbucEoNdAls4Qvjl4j/a/XbbpQbgLmn4d8zXY7GcUKEavklstNt
-	hDxzje0IKWnDSUxLs04YX6mncsUcqdCVl0fGA0W3DitbLH00E4zZm6anmLEEMCTt
-	OOqvBM3uCDqCo95O7Q00J+9VtmoTViL6pqirZjIC24CeLNmyYVyLhvbXeJrajPKK
-	Gk25qJKuc+C0op4E4BhXGDCYTEAJJ5EFPh9wEadmz1kHa0FsZVEZcXxsTkBqnyR+
-	eE/KMA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e6x5k0wu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 16:01:13 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2699ebc0319so38878125ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 09:01:13 -0700 (PDT)
+	s=arc-20240116; t=1759076132; c=relaxed/simple;
+	bh=353OJSbQ1gV2FFrwLF+DdOWqE3vrIPuMeHFqdnQYlW0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Km32whGi9V3cpdTsDW6qoazrpv4F0iaV6HS9BCYcs7IhfUpwt0gf/tiCmFFQG3HQlpcZGedplKeuL/rrLSzcjo8oMO7krkyy2XzJI6aq6+qpkTuy3sFNSJJMdhND4cdGYfpwaUpYZZTrA5IfYgjV87SwNzP7SW80eEvrZEOew/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-9201572ebfbso157719839f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 09:15:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759075272; x=1759680072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPFVpHWsZToVkjvByN8+NS0wTPCw0JUGnzSj+xr+rBc=;
-        b=rn7iVjqr4ybXXfDJYggDtYBItIXu9XnBwHOWzFmIGx/3SCbOU4tPzYWhSNAxUgwsx/
-         Coojqxb4MVC2ntyC6eeu9y9wtkA4UD2o+crjKH397B2w0bDdVB+yYSzYLAwpaB4Qjw4/
-         ew5TWG5eZ8adzyt1sfywsYsJb1T4mAVk7nh+jN1hT+tw+BQJTPYlEL04h4mlrvRIA7M9
-         0aVm7NInuy6zjrcq/CylYyWMIiutkj/LNQs7Nus2qlNUGx43IPAMTw/akwPczoaLT9Xd
-         ugJEJXMQgjtA5Rp/oVQi/DE9lRsGZshIxucCJ5rBO7pCO3QIJ4MwOX5kGFrzfcPDlTmm
-         87oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDpyI6m8Pv557S/657dSAu9OCXXPRJ8WSBOyYTkE0NUTbFbhQ1UJSXlUEkTjJXG31DJXm9RLw5smDKZeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/6jXzvyWiI+y2iFyNrNBigbpWIRW5SvSQspKEBCpriDIGcU94
-	6A+fXT+FcbV5s7k2d4oTK+zNNjnX99j7x833D6+z564yP9lX9VqX0mYI8n+PIqbbMN7SsaGknhT
-	bmAgaoxQQ9ayDDLCH8XUMFlEMkg2cLfEzi9i7HoNwvrSK4wHj6WYerH1fywtGBKHIYGg=
-X-Gm-Gg: ASbGncuJxBEJa+TwC471rYv+2nYZkNKChH11GKn9D1n248+r6/CszcgZrAufY6y6UU5
-	AIV1uTSfdZIAna29i9eOLCxE80+F8a+z5qaKVsTlAEj/v8bW+P/8qSjJrbXtmcdotvvlKsoMauA
-	o/XTpYbUCqYbHbhl3FziGojaxW/THdbUHGrJeiB1AZE4i7k2XdkVwc9Cdm0A1cXv5iCpkvS90+3
-	VQyFZuhkRrBeLjK1imXKYkvTzt+IWdwSzDLPjuXBrV+Wb0fsqNjafy/nU5OYkOWlqxRo9NQ/3n7
-	7z8pIE7xMIdweQDc3YSLrugoAVNwWsZ+Kktq2pu2ZJ9IPqLdfLvRuhdim6CGdUfeq8xBJA==
-X-Received: by 2002:a17:902:da2d:b0:269:8fa3:c227 with SMTP id d9443c01a7336-27ed4a06e11mr127912565ad.8.1759075272314;
-        Sun, 28 Sep 2025 09:01:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKu+Mjlu4lZU0z3b0X20n3n0XWiHLgmlWPxFZKPAgl2BOGgx6FGTyHcwjgZgfLcJLNliYZPQ==
-X-Received: by 2002:a17:902:da2d:b0:269:8fa3:c227 with SMTP id d9443c01a7336-27ed4a06e11mr127912335ad.8.1759075271816;
-        Sun, 28 Sep 2025 09:01:11 -0700 (PDT)
-Received: from [192.168.1.5] ([136.185.249.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed68821a0sm106708625ad.85.2025.09.28.09.01.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Sep 2025 09:01:11 -0700 (PDT)
-Message-ID: <a3b3f044-5a84-44e6-a2f1-0e590a9beed6@oss.qualcomm.com>
-Date: Sun, 28 Sep 2025 21:31:05 +0530
+        d=1e100.net; s=20230601; t=1759076128; x=1759680928;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aGbgfhwMpGr4gh1CdQSVDcxkQ1HdlbBmKndG0v12cQ0=;
+        b=HmsOO1tmLJLW8HaN+Cg3s1SSRgJwppZTiS6RxGOiIHnlPk4gU5SQvhqHyUU54rV2ke
+         uqcplPrBVZtGyHQS4eovIZeHzbae/qVQs/8n2P/3HbSwxnxgG8k7VTwjaEL/hlQsdzrf
+         WMkzKK2y4Lh8ZtHZV6u64Vsm0rYH+vFK43TPlb67LnY3FQZr3khmBETa3r/85mC9guKd
+         T70DjoK1OObhyhiL9XoXmfSgtUsYmDwKTd+a4Vs6ilmusPbtoDKxMdaF77m5iTDpbksv
+         YV9tJmfiMFITB62NZCLIT9/etvYQR7lPvB9fgsIScblm5P/+MofEjoiuwNr0MK4h3oUa
+         wNzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP6BC0haDm0a20a58rvFe5VzecldRdrYqqGvle0I0u7X4Ru/DtMTEl5fgH0d0cGnj6VEQ+IzWnSc9HPy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3hHnyIp5KCOeAJcZHj8Kjb3TvqPb+64mNPflV6zVxd0b3BWmy
+	HKIC8fBvzPp8qcAsygY2OGKBsskKcdX+yCd9HbsF3GHlVGxoLeChF+RVLRRZ6r7oX5HshhuEeHg
+	r2AaakjT5sebI/2OFfGMbjPrSChWvu1XAI3ApYYmpTD55sGUTIhgWfrlik4g=
+X-Google-Smtp-Source: AGHT+IHhdXb+dcl08rUATGzElxAGtChrMN4HGtwjRT0MUea2Q7EH/jzKKNGQEnFZ8BV29B+vw0AIWaxcGPfAh6RAKF/ZwNez4v8F
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm: swap: check for stable address space before
- operating on the VMA
-To: Barry Song <21cnbao@gmail.com>, Chris Li <chrisl@kernel.org>
-Cc: david@redhat.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
-        akpm@linux-foundation.org, shikemeng@huaweicloud.com,
-        kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-        zhangpeng.00@bytedance.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20250924181138.1762750-1-charan.kalla@oss.qualcomm.com>
- <CACePvbW=-KZhU_qi4UUw7Pjbz4o=SQwHmQyEOkxhpMvdetbPCg@mail.gmail.com>
- <CAGsJ_4zhL=4qJDmGA5E-z7=VixkUXOi+qBnN3S-WWH2UbYj=ZA@mail.gmail.com>
-Content-Language: en-US
-From: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-In-Reply-To: <CAGsJ_4zhL=4qJDmGA5E-z7=VixkUXOi+qBnN3S-WWH2UbYj=ZA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: nbcgdenz6wvO1GzJcVAHB5dSDcg3BL2a
-X-Proofpoint-ORIG-GUID: nbcgdenz6wvO1GzJcVAHB5dSDcg3BL2a
-X-Authority-Analysis: v=2.4 cv=ZtPg6t7G c=1 sm=1 tr=0 ts=68d95bc9 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=FbHnbG6Tk0goxvMXmgMzoQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=9XW7_0HgatEhwW1_NykA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxOCBTYWx0ZWRfXxfwhs5h/0I2e
- BYDLXICYwyj7KWp+GNBVv8XTKchW6x724oL1TeRrolps0Mx7+MdPOqddDUrMnEsyyLOPTP15PYs
- MbPvIqqE7VMruNWPfcSTLbGaJUixXAW9ObwLOrAkPnpUTQY+ejAkuPo4nLCVoqYFfKN/GD++Q0l
- 73wTODWRsVx83ASwyOAHs7qPyI+PbuoBc/uxd3HxGFb/HzUHwNa+No8LkaCPSu/d1VnCIjtBdyx
- zBt9vdKcu/8orvXNfHGCTRtZ6h697rd8BlyoT/TSMLGONYUcJ3OnenB3SAWrUmjDlg9tyU7CafN
- WI31t5sJR3mVaK7BpwjQP2caWJ2yzu+gPftxwFFgrZ/2uhOFQOcLBIz0PjtFTvB80JQjOv51T4P
- TTgnrqmYi0LeIUXGWxRuh/atcct4Ow==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-28_06,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270018
+X-Received: by 2002:a05:6e02:170d:b0:428:973:797d with SMTP id
+ e9e14a558f8ab-42809737edcmr120311165ab.9.1759076128175; Sun, 28 Sep 2025
+ 09:15:28 -0700 (PDT)
+Date: Sun, 28 Sep 2025 09:15:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d95f20.a70a0220.10c4b.0022.GAE@google.com>
+Subject: [syzbot] [mm?] possible deadlock in ksm_do_scan
+From: syzbot <syzbot+f1b91395f2bcbcc8128b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, chengming.zhou@linux.dev, david@redhat.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, xu.xin16@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks Barry/Chris for checking it.
+Hello,
 
-On 9/26/2025 2:00 PM, Barry Song wrote:
->> 2)  __oom_reap_task_mm()
->> It holds the mmap read lock when setting the MMF_UNSTABLE as far as I can tell.
->> So checking the MMF_UNSTABLE with another __oom_reap_task_mm() does
->> not exclude each other.
->> This is more of a question for oom reaping.
->> Does MMF_UNSTABLE have the test vs set racing here? It seems this
->> check does not protect against  __oom_reap_task_mm(). I have no idea
->> if this race is triggerable. Just want someone else to double check if
->> my understanding is correct or not.
-> I haven’t actually run the code.
-> My guess is there’s a race when checking MMF_UNSTABLE against the
-> OOM reaper. I think it’s fine either way—whether we skip an OOM-reaped
-> mm upfront or take a middle path—since the OOM reaper will handle those
-> PTEs with the PTL just like unuse_pte() does and eventually free the mm
-> of the reaped process. It’s probably better to skip it early and avoid
-> unnecessary unuse_pte() calls.
-> 
+syzbot found the following issue on:
 
-I am sorry that I can't really see any stability issue b/n oom reaper 
-and unuse_mm(), but yes that unnecessary unuse_pte() calls, as Barry 
-mentioned, after reaping.
+HEAD commit:    b5a4da2c459f Add linux-next specific files for 20250924
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a154e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=841973c5ab4f4157
+dashboard link: https://syzkaller.appspot.com/bug?extid=f1b91395f2bcbcc8128b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
->> I can see this patch does protect the intended race in dup_mm() vs
->> unuse_mm(), it adds value.
-> This also seems to add values for OOM-reaped processes to avoid a
-> useless unuse(), in case we aren’t skipping this mm right now. I’m
-> not sure if we’ve been skipping OOM-reaped processes elsewhere.
-> 
-I don't see any explicit flags that tells the process is already 
-oom-reaped/under it. There is MMF_OOM_REAP_QUEUED, but this doesn't tell 
-if it is already reaped.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If the unnecessary calls to unuse_vma() is really of a concern, then 
-check the MMF_UNSTABLE while traversing VMA may be a solution but this 
-looks ugly.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2d0e39514585/disk-b5a4da2c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c7c8001fe2ea/vmlinux-b5a4da2c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/807bea872f12/bzImage-b5a4da2c.xz
 
-> Hi Charan, do you have any observations on this? If an additional value is
-> added, could we record it in the changelog? Otherwise, can we add some
-> description in the changelog to address Chris’ concern?
-I do see that Chris ask can go as completely different change as the 
-mentioned problem exist even before this change, please CMIW.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f1b91395f2bcbcc8128b@syzkaller.appspotmail.com
 
-Thanks,
-Charan
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+ksmd/37 is trying to acquire lock:
+ffffffff8e645220 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:318 [inline]
+ffffffff8e645220 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:4896 [inline]
+ffffffff8e645220 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:5220 [inline]
+ffffffff8e645220 (fs_reclaim){+.+.}-{0:0}, at: kmem_cache_alloc_noprof+0x45/0x6e0 mm/slub.c:5251
+
+but task is already holding lock:
+ffff888028ba01e0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:368 [inline]
+ffff888028ba01e0 (&mm->mmap_lock){++++}-{4:4}, at: scan_get_next_rmap_item mm/ksm.c:2532 [inline]
+ffff888028ba01e0 (&mm->mmap_lock){++++}-{4:4}, at: ksm_do_scan+0x602/0x6540 mm/ksm.c:2659
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #7 (&mm->mmap_lock){++++}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __might_fault+0xcc/0x130 mm/memory.c:7125
+       _copy_from_iter+0xf3/0x1790 lib/iov_iter.c:259
+       copy_from_iter include/linux/uio.h:228 [inline]
+       copy_from_iter_full include/linux/uio.h:245 [inline]
+       skb_do_copy_data_nocache include/net/sock.h:2269 [inline]
+       skb_copy_to_page_nocache include/net/sock.h:2295 [inline]
+       tcp_sendmsg_locked+0x2347/0x5540 net/ipv4/tcp.c:1272
+       tcp_sendmsg+0x2f/0x50 net/ipv4/tcp.c:1413
+       sock_sendmsg_nosec net/socket.c:714 [inline]
+       __sock_sendmsg+0x19c/0x270 net/socket.c:729
+       sock_write_iter+0x279/0x360 net/socket.c:1182
+       new_sync_write fs/read_write.c:593 [inline]
+       vfs_write+0x5c9/0xb30 fs/read_write.c:686
+       ksys_write+0x145/0x250 fs/read_write.c:738
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #6 (sk_lock-AF_INET){+.+.}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3720
+       lock_sock include/net/sock.h:1679 [inline]
+       inet_shutdown+0x6a/0x390 net/ipv4/af_inet.c:907
+       nbd_mark_nsock_dead+0x2e9/0x560 drivers/block/nbd.c:318
+       sock_shutdown+0x15e/0x260 drivers/block/nbd.c:411
+       nbd_clear_sock drivers/block/nbd.c:1424 [inline]
+       nbd_config_put+0x342/0x790 drivers/block/nbd.c:1448
+       nbd_release+0xfe/0x140 drivers/block/nbd.c:1753
+       bdev_release+0x536/0x650 block/bdev.c:-1
+       blkdev_release+0x15/0x20 block/fops.c:702
+       __fput+0x44c/0xa70 fs/file_table.c:468
+       task_work_run+0x1d4/0x260 kernel/task_work.c:227
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+       exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+       syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+       syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+       do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #5 (&nsock->tx_lock){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
+       nbd_handle_cmd drivers/block/nbd.c:1140 [inline]
+       nbd_queue_rq+0x257/0xf10 drivers/block/nbd.c:1204
+       blk_mq_dispatch_rq_list+0x4c0/0x1900 block/blk-mq.c:2129
+       __blk_mq_do_dispatch_sched block/blk-mq-sched.c:168 [inline]
+       blk_mq_do_dispatch_sched block/blk-mq-sched.c:182 [inline]
+       __blk_mq_sched_dispatch_requests+0xda4/0x1570 block/blk-mq-sched.c:307
+       blk_mq_sched_dispatch_requests+0xd7/0x190 block/blk-mq-sched.c:329
+       blk_mq_run_hw_queue+0x348/0x4f0 block/blk-mq.c:2367
+       blk_mq_dispatch_list+0xd0c/0xe00 include/linux/spinlock.h:-1
+       blk_mq_flush_plug_list+0x469/0x550 block/blk-mq.c:2976
+       __blk_flush_plug+0x3d3/0x4b0 block/blk-core.c:1225
+       blk_finish_plug block/blk-core.c:1252 [inline]
+       __submit_bio+0x2d3/0x5a0 block/blk-core.c:651
+       __submit_bio_noacct_mq block/blk-core.c:724 [inline]
+       submit_bio_noacct_nocheck+0x2fb/0xa50 block/blk-core.c:755
+       submit_bh fs/buffer.c:2829 [inline]
+       block_read_full_folio+0x599/0x830 fs/buffer.c:2447
+       filemap_read_folio+0x117/0x380 mm/filemap.c:2444
+       do_read_cache_folio+0x350/0x590 mm/filemap.c:4009
+       read_mapping_folio include/linux/pagemap.h:999 [inline]
+       read_part_sector+0xb6/0x2b0 block/partitions/core.c:722
+       adfspart_check_ICS+0xa4/0xa50 block/partitions/acorn.c:360
+       check_partition block/partitions/core.c:141 [inline]
+       blk_add_partitions block/partitions/core.c:589 [inline]
+       bdev_disk_changed+0x75f/0x14b0 block/partitions/core.c:693
+       blkdev_get_whole+0x380/0x510 block/bdev.c:748
+       bdev_open+0x31e/0xd30 block/bdev.c:957
+       blkdev_open+0x457/0x600 block/fops.c:694
+       do_dentry_open+0x953/0x13f0 fs/open.c:965
+       vfs_open+0x3b/0x340 fs/open.c:1097
+       do_open fs/namei.c:3975 [inline]
+       path_openat+0x2ee5/0x3830 fs/namei.c:4134
+       do_filp_open+0x1fa/0x410 fs/namei.c:4161
+       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #4 (&cmd->lock){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
+       nbd_queue_rq+0xc8/0xf10 drivers/block/nbd.c:1196
+       blk_mq_dispatch_rq_list+0x4c0/0x1900 block/blk-mq.c:2129
+       __blk_mq_do_dispatch_sched block/blk-mq-sched.c:168 [inline]
+       blk_mq_do_dispatch_sched block/blk-mq-sched.c:182 [inline]
+       __blk_mq_sched_dispatch_requests+0xda4/0x1570 block/blk-mq-sched.c:307
+       blk_mq_sched_dispatch_requests+0xd7/0x190 block/blk-mq-sched.c:329
+       blk_mq_run_hw_queue+0x348/0x4f0 block/blk-mq.c:2367
+       blk_mq_dispatch_list+0xd0c/0xe00 include/linux/spinlock.h:-1
+       blk_mq_flush_plug_list+0x469/0x550 block/blk-mq.c:2976
+       __blk_flush_plug+0x3d3/0x4b0 block/blk-core.c:1225
+       blk_finish_plug block/blk-core.c:1252 [inline]
+       __submit_bio+0x2d3/0x5a0 block/blk-core.c:651
+       __submit_bio_noacct_mq block/blk-core.c:724 [inline]
+       submit_bio_noacct_nocheck+0x2fb/0xa50 block/blk-core.c:755
+       submit_bh fs/buffer.c:2829 [inline]
+       block_read_full_folio+0x599/0x830 fs/buffer.c:2447
+       filemap_read_folio+0x117/0x380 mm/filemap.c:2444
+       do_read_cache_folio+0x350/0x590 mm/filemap.c:4009
+       read_mapping_folio include/linux/pagemap.h:999 [inline]
+       read_part_sector+0xb6/0x2b0 block/partitions/core.c:722
+       adfspart_check_ICS+0xa4/0xa50 block/partitions/acorn.c:360
+       check_partition block/partitions/core.c:141 [inline]
+       blk_add_partitions block/partitions/core.c:589 [inline]
+       bdev_disk_changed+0x75f/0x14b0 block/partitions/core.c:693
+       blkdev_get_whole+0x380/0x510 block/bdev.c:748
+       bdev_open+0x31e/0xd30 block/bdev.c:957
+       blkdev_open+0x457/0x600 block/fops.c:694
+       do_dentry_open+0x953/0x13f0 fs/open.c:965
+       vfs_open+0x3b/0x340 fs/open.c:1097
+       do_open fs/namei.c:3975 [inline]
+       path_openat+0x2ee5/0x3830 fs/namei.c:4134
+       do_filp_open+0x1fa/0x410 fs/namei.c:4161
+       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (set->srcu){.+.+}-{0:0}:
+       lock_sync+0xba/0x160 kernel/locking/lockdep.c:5916
+       srcu_lock_sync include/linux/srcu.h:173 [inline]
+       __synchronize_srcu+0x96/0x3a0 kernel/rcu/srcutree.c:1429
+       elevator_switch+0x12b/0x640 block/elevator.c:588
+       elevator_change+0x315/0x4c0 block/elevator.c:691
+       elevator_set_default+0x186/0x260 block/elevator.c:767
+       blk_register_queue+0x34e/0x3f0 block/blk-sysfs.c:942
+       __add_disk+0x677/0xd50 block/genhd.c:528
+       add_disk_fwnode+0xfc/0x480 block/genhd.c:597
+       add_disk include/linux/blkdev.h:775 [inline]
+       nbd_dev_add+0x717/0xae0 drivers/block/nbd.c:1981
+       nbd_init+0x168/0x1f0 drivers/block/nbd.c:2688
+       do_one_initcall+0x236/0x820 init/main.c:1283
+       do_initcall_level+0x104/0x190 init/main.c:1345
+       do_initcalls+0x59/0xa0 init/main.c:1361
+       kernel_init_freeable+0x334/0x4b0 init/main.c:1593
+       kernel_init+0x1d/0x1d0 init/main.c:1483
+       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #2 (&q->elevator_lock){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
+       elevator_change+0x1e5/0x4c0 block/elevator.c:689
+       elevator_set_none+0x42/0xb0 block/elevator.c:782
+       blk_mq_elv_switch_none block/blk-mq.c:5032 [inline]
+       __blk_mq_update_nr_hw_queues block/blk-mq.c:5075 [inline]
+       blk_mq_update_nr_hw_queues+0x598/0x1ab0 block/blk-mq.c:5133
+       nbd_start_device+0x17f/0xb10 drivers/block/nbd.c:1486
+       nbd_genl_connect+0x135b/0x18f0 drivers/block/nbd.c:2236
+       genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
+       genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+       genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
+       netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+       genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+       netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+       netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+       netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+       sock_sendmsg_nosec net/socket.c:714 [inline]
+       __sock_sendmsg+0x21c/0x270 net/socket.c:729
+       ____sys_sendmsg+0x505/0x830 net/socket.c:2617
+       ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2671
+       __sys_sendmsg net/socket.c:2703 [inline]
+       __do_sys_sendmsg net/socket.c:2708 [inline]
+       __se_sys_sendmsg net/socket.c:2706 [inline]
+       __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2706
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&q->q_usage_counter(io)#49){++++}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       blk_alloc_queue+0x538/0x620 block/blk-core.c:461
+       blk_mq_alloc_queue block/blk-mq.c:4399 [inline]
+       __blk_mq_alloc_disk+0x15c/0x340 block/blk-mq.c:4446
+       nbd_dev_add+0x46c/0xae0 drivers/block/nbd.c:1951
+       nbd_init+0x168/0x1f0 drivers/block/nbd.c:2688
+       do_one_initcall+0x236/0x820 init/main.c:1283
+       do_initcall_level+0x104/0x190 init/main.c:1345
+       do_initcalls+0x59/0xa0 init/main.c:1361
+       kernel_init_freeable+0x334/0x4b0 init/main.c:1593
+       kernel_init+0x1d/0x1d0 init/main.c:1483
+       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+       fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4896 [inline]
+       slab_alloc_node mm/slub.c:5220 [inline]
+       kmem_cache_alloc_noprof+0x45/0x6e0 mm/slub.c:5251
+       alloc_rmap_item mm/ksm.c:565 [inline]
+       get_next_rmap_item mm/ksm.c:2378 [inline]
+       scan_get_next_rmap_item mm/ksm.c:2565 [inline]
+       ksm_do_scan+0xbaf/0x6540 mm/ksm.c:2659
+       ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2684
+       kthread+0x711/0x8a0 kernel/kthread.c:463
+       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+other info that might help us debug this:
+
+Chain exists of:
+  fs_reclaim --> sk_lock-AF_INET --> &mm->mmap_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(&mm->mmap_lock);
+                               lock(sk_lock-AF_INET);
+                               lock(&mm->mmap_lock);
+  lock(fs_reclaim);
+
+ *** DEADLOCK ***
+
+2 locks held by ksmd/37:
+ #0: ffffffff8e659188 (ksm_thread_mutex){+.+.}-{4:4}, at: ksm_scan_thread+0xc8/0x4b0 mm/ksm.c:2681
+ #1: ffff888028ba01e0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:368 [inline]
+ #1: ffff888028ba01e0 (&mm->mmap_lock){++++}-{4:4}, at: scan_get_next_rmap_item mm/ksm.c:2532 [inline]
+ #1: ffff888028ba01e0 (&mm->mmap_lock){++++}-{4:4}, at: ksm_do_scan+0x602/0x6540 mm/ksm.c:2659
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 37 Comm: ksmd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+ fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
+ might_alloc include/linux/sched/mm.h:318 [inline]
+ slab_pre_alloc_hook mm/slub.c:4896 [inline]
+ slab_alloc_node mm/slub.c:5220 [inline]
+ kmem_cache_alloc_noprof+0x45/0x6e0 mm/slub.c:5251
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ scan_get_next_rmap_item mm/ksm.c:2565 [inline]
+ ksm_do_scan+0xbaf/0x6540 mm/ksm.c:2659
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2684
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
