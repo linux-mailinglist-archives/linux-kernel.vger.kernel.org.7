@@ -1,215 +1,120 @@
-Return-Path: <linux-kernel+bounces-835166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7865ABA66D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:08:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C3EBA66DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 05:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7EA7189CAFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFFE17E4F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 03:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F95024EA81;
-	Sun, 28 Sep 2025 03:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUnjkmtf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE851AC88A;
+	Sun, 28 Sep 2025 03:16:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FA920297E;
-	Sun, 28 Sep 2025 03:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C534C8FE
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759028888; cv=none; b=qWMCl2nU577hCitSHJAjZKVceEvrKSMcLdf00QKqyNX/T7oSxVUizJW1QagRlpSAH5zsx8yakwrKIgHTWaJJ6DxWt0s5nXL/jlVNIlTp/DfB1KO3SYvmdqLkko/s7qR88tBgcbIHV5pJ0RoNNgCv+FhoRP9Z3ZWwKQcC3ZMl0ck=
+	t=1759029364; cv=none; b=i7eWMoVkEYm86POIrFANHUaWBIeyntgdyTR/1Pa78pP2wup84dullhPN3VdjN0O4n7jPzcwSYJ3T6erYUw5terN8SX0HkJR743jzdqe8wXDuIH097LY+Q24VpM4UGtPTXOAh6sTPS6RL/4ySOfVFQga/LoFlBB+FifPgLYZPDJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759028888; c=relaxed/simple;
-	bh=V868+L82j8ezezqdRLKP8QowA+OH8T92HjplBkwqAmk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JaiaX4DdlXES213+SEnz4xyPTdI/5bctHuMQcC8KQvX8Z8L7PEAwRIyvFNQg1W/vBOk21c2GQY166qosJMwVRe0qZ7uT02c+BJzFg+kxodZ9ij0EzU5hAfajAijChrfoQgB1+30cO5MTw69Jf6S6YWl4NDssqcjZDHDJ/7MSGQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUnjkmtf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EEC71C16AAE;
-	Sun, 28 Sep 2025 03:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759028888;
-	bh=V868+L82j8ezezqdRLKP8QowA+OH8T92HjplBkwqAmk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PUnjkmtf/OFrwVdBs4j+GVTj+wu83RJxwxbMc0q2Fw6b3/aEbC329k03leEg0rSdw
-	 VCLbKMXbxNthiJD970e+wrMPfLvmbnVG7NQcBnJzZcId1JQZ3goz2ZzJqHE8rmcKBY
-	 SEYTl34rk2M46MwoY8ouZZiSML1gqz5UzLSpVdcWZGR4Ghc67Sczgot7TiKImu2Vhe
-	 eZBophTG8SWnuLNmzZBycY1iKfJJpIxYtkC8ZSwEEVHtgKaXiJj45B/K4cbdk5fcQS
-	 az5gDZj7CH0kIQpTEEG2yotNMCiFUyQQ8c8V67fHBpSird6B5tAmnll2DSI6p2Qdtr
-	 UWhzJ+npWXpHw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F56CCA46F;
-	Sun, 28 Sep 2025 03:08:07 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Sun, 28 Sep 2025 11:08:02 +0800
-Subject: [PATCH v6 4/4] ALSA: doc: improved docs about quirk_flags in
- snd-usb-audio
+	s=arc-20240116; t=1759029364; c=relaxed/simple;
+	bh=gVCMLMcyaRQYqH4z8mFh4cDCq/QO4B43DQapNofwB6I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pb41/mnxqELUYB0dNT4LyU98nw3p3F8rhTaejvB9p36W7t1DviMc0G3rtz4XvF8ELUkenmzEPh8vyd5IO+NIL3ZgCEJToP0LwIrDResLP7Nw4XdQL6m4r5BrNdXD4YXmAWFCuFaA66i1xKD2AHDz4mS336bGux/ZO/PQqwxpPFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-911c5f72370so225918439f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Sep 2025 20:16:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759029361; x=1759634161;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xn0MSC/QvByKn+Kpg7Cakx4+vVGbIKO+vsOAI4JB5AM=;
+        b=iFRGxlTB/JtTGHGYs97i31IuzLYFwlvC+9g2cneq+VbMuM/eRQQ6r0L9rNZixnqBw3
+         u3yDFOZlftoEtVzHyiKDj4hEDtRh5Zxi4RrUbOESr/jfqKFPeC3evSMOMuS3QfW6zlTa
+         y2i3Y5SSOaytPlWrDNAWnA3/Fpu14Yrfab7Ezz11QFRy8mGREje6TfIvhpyvxxlDlycS
+         wSWOvxb7Wp0PXlOczZoyLTygrCmrPr5xG8gfz81AgKaOEKozBJHZYZr3yBGLVic+cVt+
+         5sohh+2EKvJmPh2l/0C80tCjqya5/VrqKnkSynOZqJi21wsk3VJuLFv289+bbeCXaf/s
+         eOKw==
+X-Gm-Message-State: AOJu0Yw5eMxrVwTPiUMsQDoykeUCyRxYOdwD1D1KoKSyxakanS1alM8v
+	p3bfj+JXnFwuEa0IPfa37XyE784DZSq7nrWNOK0jRkZwDoGuqeM12iu7BIiq6sTIn+xgkabXOdE
+	3sH/8/kMwuzmfH7NyUlQklYFeb5/lTgHSW+r0MgX0Wk0HLle7aeQApllvTeA=
+X-Google-Smtp-Source: AGHT+IFiXNZhfBjyeDsDCbtIPT5TjmQ0fSXyA2UGnYJNXFZVvaogCuG9caYzNFNwvlQ2Q8BopQKGqq8pBgMxvNOXkOHTDgv2v2yH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250928-sound-v6-4-7da6e5982432@uniontech.com>
-References: <20250928-sound-v6-0-7da6e5982432@uniontech.com>
-In-Reply-To: <20250928-sound-v6-0-7da6e5982432@uniontech.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, 
- Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>, 
- Feng Yuan <fengyuan@uniontech.com>, qaqland <anguoli@uniontech.com>, 
- kernel@uniontech.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759028886; l=6728;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=vdHLDRsp3zHzzZBQvS4GjQX7XHVuP6ogfKbKX7qMD1g=;
- b=V+Y9xvOPVWvix/GsoZ9sg15OPfWnhYlvCIrW7WoU13zqGT//8oBZiEM7/GOZlcCYCAcV/mbT/
- B5s83jodKHOCU9zY9QY+Wy3pEY+5cU3rNpzOhT2OAkZH2anXF9UQu6A
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+X-Received: by 2002:a05:6e02:1807:b0:425:6e9c:9443 with SMTP id
+ e9e14a558f8ab-425955084b3mr182059685ab.0.1759029361715; Sat, 27 Sep 2025
+ 20:16:01 -0700 (PDT)
+Date: Sat, 27 Sep 2025 20:16:01 -0700
+In-Reply-To: <87zfafi8w9.fsf@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d8a871.a00a0220.102ee.0024.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in extAlloc (2)
+From: syzbot <syzbot+13e8cd4926977f8337b6@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	xandfury@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Hello,
 
-Just briefly described about the option's change and its new usage.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: shift-out-of-bounds in extAlloc
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- Documentation/sound/alsa-configuration.rst | 108 ++++++++++++++++++++---------
- 1 file changed, 75 insertions(+), 33 deletions(-)
-
-diff --git a/Documentation/sound/alsa-configuration.rst b/Documentation/sound/alsa-configuration.rst
-index a2fb8ed251dd0294e7a62209ca15d5c32c6adfae..0a4eaa7d66ddd05e7c7378596a351bb6ea17f9ba 100644
---- a/Documentation/sound/alsa-configuration.rst
-+++ b/Documentation/sound/alsa-configuration.rst
-@@ -2297,39 +2297,81 @@ skip_validation
-     of the unit descriptor instead of a driver probe error, so that we
-     can check its details.
- quirk_flags
--    Contains the bit flags for various device specific workarounds.
--    Applied to the corresponding card index.
--
--        * bit 0: Skip reading sample rate for devices
--        * bit 1: Create Media Controller API entries
--        * bit 2: Allow alignment on audio sub-slot at transfer
--        * bit 3: Add length specifier to transfers
--        * bit 4: Start playback stream at first in implement feedback mode
--        * bit 5: Skip clock selector setup
--        * bit 6: Ignore errors from clock source search
--        * bit 7: Indicates ITF-USB DSD based DACs
--        * bit 8: Add a delay of 20ms at each control message handling
--        * bit 9: Add a delay of 1-2ms at each control message handling
--        * bit 10: Add a delay of 5-6ms at each control message handling
--        * bit 11: Add a delay of 50ms at each interface setup
--        * bit 12: Perform sample rate validations at probe
--        * bit 13: Disable runtime PM autosuspend
--        * bit 14: Ignore errors for mixer access
--        * bit 15: Support generic DSD raw U32_BE format
--        * bit 16: Set up the interface at first like UAC1
--        * bit 17: Apply the generic implicit feedback sync mode
--        * bit 18: Don't apply implicit feedback sync mode
--        * bit 19: Don't closed interface during setting sample rate
--        * bit 20: Force an interface reset whenever stopping & restarting
--          a stream
--        * bit 21: Do not set PCM rate (frequency) when only one rate is
--          available for the given endpoint.
--        * bit 22: Set the fixed resolution 16 for Mic Capture Volume
--        * bit 23: Set the fixed resolution 384 for Mic Capture Volume
--        * bit 24: Set minimum volume control value as mute for devices
--          where the lowest playback value represents muted state instead
--          of minimum audible volume
--        * bit 25: Be similar to bit 24 but for capture streams
-+    The option provides a refined and flexible control for applying quirk
-+    flags.  It allows to specify the quirk flags for each device, and can
-+    be modified dynamically via sysfs.
-+    The old usage accepts an array of integers, each of which applies quirk
-+    flags on the device in the order of probing.
-+    E.g., ``quirk_flags=0x01,0x02`` applies get_sample_rate to the first
-+    device, and share_media_device to the second device.
-+    The new usage accepts a string in the format of
-+    ``VID1:PID1:FLAGS1;VID2:PID2:FLAGS2;...``, where ``VIDx`` and ``PIDx``
-+    specify the device, and ``FLAGSx`` specify the flags to be applied.
-+    ``VIDx`` and ``PIDx`` are 4-digit hexadecimal numbers, and can be
-+    specified as ``*`` to match any value.  ``FLAGSx`` can be a set of
-+    flags given by name, separated by ``|``, or a hexadecimal number
-+    representing the bit flags.  The available flag names are listed below.
-+    An exclamation mark can be prefixed to a flag name to negate the flag.
-+    For example, ``1234:abcd:mixer_playback_min_mute|!ignore_ctl_error;*:*:0x01;``
-+    applies the ``mixer_playback_min_mute`` flag and clears the
-+    ``ignore_ctl_error`` flag for the device 1234:abcd, and applies the
-+    ``skip_sample_rate`` flag for all devices.
-+
-+        * bit 0: ``get_sample_rate``
-+          Skip reading sample rate for devices
-+        * bit 1: ``share_media_device``
-+          Create Media Controller API entries
-+        * bit 2: ``align_transfer``
-+          Allow alignment on audio sub-slot at transfer
-+        * bit 3: ``tx_length``
-+          Add length specifier to transfers
-+        * bit 4: ``playback_first``
-+          Start playback stream at first in implement feedback mode
-+        * bit 5: ``skip_clock_selector``
-+          Skip clock selector setup
-+        * bit 6: ``ignore_clock_source``
-+          Ignore errors from clock source search
-+        * bit 7: ``itf_usb_dsd_dac``
-+          Indicates ITF-USB DSD-based DACs
-+        * bit 8: ``ctl_msg_delay``
-+          Add a delay of 20ms at each control message handling
-+        * bit 9: ``ctl_msg_delay_1m``
-+          Add a delay of 1-2ms at each control message handling
-+        * bit 10: ``ctl_msg_delay_5m``
-+          Add a delay of 5-6ms at each control message handling
-+        * bit 11: ``iface_delay``
-+          Add a delay of 50ms at each interface setup
-+        * bit 12: ``validate_rates``
-+          Perform sample rate validations at probe
-+        * bit 13: ``disable_autosuspend``
-+          Disable runtime PM autosuspend
-+        * bit 14: ``ignore_ctl_error``
-+          Ignore errors for mixer access
-+        * bit 15: ``dsd_raw``
-+          Support generic DSD raw U32_BE format
-+        * bit 16: ``set_iface_first``
-+          Set up the interface at first like UAC1
-+        * bit 17: ``generic_implicit_fb``
-+          Apply the generic implicit feedback sync mode
-+        * bit 18: ``skip_implicit_fb``
-+          Don't apply implicit feedback sync mode
-+        * bit 19: ``iface_skip_close``
-+          Don't close interface during setting sample rate
-+        * bit 20: ``force_iface_reset``
-+          Force an interface reset whenever stopping & restarting a stream
-+        * bit 21: ``fixed_rate``
-+          Do not set PCM rate (frequency) when only one rate is available
-+          for the given endpoint
-+        * bit 22: ``mic_res_16``
-+          Set the fixed resolution 16 for Mic Capture Volume
-+        * bit 23: ``mic_res_384``
-+          Set the fixed resolution 384 for Mic Capture Volume
-+        * bit 24: ``mixer_playback_min_mute``
-+          Set minimum volume control value as mute for devices where the
-+          lowest playback value represents muted state instead of minimum
-+          audible volume
-+        * bit 25: ``mixer_capture_min_mute``
-+          Similar to bit 24 but for capture streams
- 
- This module supports multiple devices, autoprobe and hotplugging.
- 
-
--- 
-2.51.0
+loop0: detected capacity change from 0 to 32768
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/jfs/jfs_extent.c:329:16
+shift exponent 64 is too large for 64-bit type 's64' (aka 'long long')
+CPU: 0 UID: 0 PID: 6607 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+ __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+ extBalloc fs/jfs/jfs_extent.c:329 [inline]
+ extAlloc+0xd52/0xfb0 fs/jfs/jfs_extent.c:127
+ jfs_get_block+0x346/0xab0 fs/jfs/inode.c:248
+ __block_write_begin_int+0x6b2/0x1900 fs/buffer.c:2145
+ block_write_begin+0x8a/0x120 fs/buffer.c:2256
+ jfs_write_begin+0x35/0x80 fs/jfs/inode.c:300
+ generic_perform_write+0x29a/0x8c0 mm/filemap.c:4175
+ generic_file_write_iter+0x118/0x550 mm/filemap.c:4318
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x5d2/0xb40 fs/read_write.c:686
+ ksys_write+0x14b/0x260 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fddbbcbebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fddbb32e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fddbbee5fa0 RCX: 00007fddbbcbebe9
+RDX: 00000000fffffdef RSI: 00002000000000c0 RDI: 0000000000000005
+RBP: 00007fddbbd41e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fddbbee6038 R14: 00007fddbbee5fa0 R15: 00007ffefffbcc18
+ </TASK>
+---[ end trace ]---
 
 
+Tested on:
+
+commit:         51a24b7d Merge tag 'trace-tools-v6.17-rc5' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f67142580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=13e8cd4926977f8337b6
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
 
