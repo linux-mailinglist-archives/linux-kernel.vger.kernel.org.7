@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-835472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EC2BA73C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:18:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847B3BA73B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A063B98F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC14A1896247
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902D9224B0E;
-	Sun, 28 Sep 2025 15:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935BB223DE7;
+	Sun, 28 Sep 2025 15:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="XDrJz48O";
-	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="2W7jKc5o"
-Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUn5wQVX"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397AB2206BB
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 15:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A05B27707
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 15:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759072718; cv=none; b=CNTPpx2PK2JHHujkoLYlCSsdhLgsnzY5G+8ur5dTt+pTIw7fHhk0n6VQ8VlVW/157pOYuEvmoRmDwOaXuz4Y48zzNDYmhiDSKxYBplUk7z+i81Ruw89ec4UzxHuU1H6vgWDxWeAsiBuMZMaHJ8gPGsK7Ny7057KyGbBLvYH+G6w=
+	t=1759072654; cv=none; b=GN284gIa+gLsw5QLsAaXin1P6ytL48/KZ0cCtouOxbbdHO/EkwdsjohdbF3uxzbqPCTdpNgeyo2EslGW4cTQ+qD2NKVyozkbENuuzAbuf/9JIWn0GK7E+LislydM3uiT1x0e+AUat2xv+Ny+74vN4jaaguPeK6i4IOYuhiprPeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759072718; c=relaxed/simple;
-	bh=CcS6U7ffgxdTFuL3QHyJuLxKgMPZ2giKEOrKRmvUm88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXcT3w6znyrVykVJQoHYz4IUglGEMf5FIZu396jnBbed9wQjeDywhN+qGQAvapnUMj5RnJ5GYMvEYnKfq9/0OUv6RPazCbOj/S+TcMqCKdMKSkML7fQfc+eA10Wy02tWD37yem5j2XsFjJutLYW689b1hjHjEqyL/CficGl26pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=XDrJz48O; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=2W7jKc5o; arc=none smtp.client-ip=46.30.211.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759072648; x=1759677448;
-	d=ravnborg.org; s=rsa1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=/Q5hJNgUVt5SsKvfCGB08N5MVmcUGqA0PZ6u8vFRIRA=;
-	b=XDrJz48OIBYo3Q7svVdb5rADtr4uzPeBqjzvjdBidN0feLc/fG5FyC6+FiXnHOkn55ys5B7oUM9TU
-	 wNSnamick0obcSvJhF96XXEZuoST1AXGIm/ETF3M+aEeXyHZD/Uy94xCWNukoXKrPvaVVSyuR/mSdp
-	 KB96525b2afYqAiKmysXETY5dzfEWAwGX0eJNU7vM+m4GXoo64rXvhOnauh357csMR2l9engULsyz3
-	 5PXk1+lrLbhu0QL4HC7CtjxC4UA5AqK0Qya1KK4CYFDrDKU3YZgpLD4h/rFGJ9D+9noDpVHH5zdKCH
-	 rr1+z6bhES67FvuiiyDFZXKzWF0+L1g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1759072648; x=1759677448;
-	d=ravnborg.org; s=ed1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=/Q5hJNgUVt5SsKvfCGB08N5MVmcUGqA0PZ6u8vFRIRA=;
-	b=2W7jKc5o1qHQ2HRmyzqFqhAdPo7FUm8FqIPGGW/HvkJ0QqhXxxc9Hji379Sr1nafpwrNl2oS4qsP7
-	 wU9ELx/Ag==
-X-HalOne-ID: 3c50089e-9c7e-11f0-840e-494313b7f784
-Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
-	by mailrelay6.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 3c50089e-9c7e-11f0-840e-494313b7f784;
-	Sun, 28 Sep 2025 15:17:27 +0000 (UTC)
-Date: Sun, 28 Sep 2025 17:17:25 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Geoff Levand <geoff@infradead.org>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>, iommu@lists.linux.dev,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Jason Wang <jasowang@redhat.com>, Juergen Gross <jgross@suse.com>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	sparclinux@vger.kernel.org,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	virtualization@lists.linux.dev, x86@kernel.org,
-	xen-devel@lists.xenproject.org, Magnus Lindholm <linmag7@gmail.com>
-Subject: Re: [PATCH v1 9/9] dma-mapping: remove unused map_page callback
-Message-ID: <20250928151725.GA135708@ravnborg.org>
-References: <cover.1759071169.git.leon@kernel.org>
- <27727b8ef9b3ad55a3a28f9622a62561c9988335.1759071169.git.leon@kernel.org>
+	s=arc-20240116; t=1759072654; c=relaxed/simple;
+	bh=gNKSetNlSBaBKHWx6dCZg9eil+3R4RosFQhrPYIVI1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TXATyJTlYC2kkmxOAGy3P2eJaR9mH+c7kP2IhlN9tFjxnsf5kq7lbD0/i6Iv/5UHyScsX2PaRtSNAtYEH1+0MGZj2cIxAjvgZqcXniF4rICzRaQ8bJUYYfNnAMlZHzPUVc9Ys0UOtrzyjZeNMZu9V8rSjzsasgfLTiGZkyJ/hDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUn5wQVX; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54aa789f9b5so2691152e0c.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759072649; x=1759677449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+vqHkUy8fuyVbj5suFT081UY64ZPTEl5grQdmncLLbw=;
+        b=hUn5wQVXxq867EDM6Zs71FwQN3RX9rrnAPy7JtlHz3nxGJncIyX6seQAk/GoewO7O/
+         ErdsZeZ1ZwAs3nmkzDkmxGmTG27E+3zBC0yl9Qyf3dTbs+bxgzgEgmbVA7WxZlLwGNnF
+         +Y5k12VO3IFlrKMEbT6pVNadb+XEgaLTbd/eB7nnzRHwx5vr7Y9EyFHoS0xx+Nj/Qflu
+         kvlq25BNb1EP+CuO7iVu9d5VQx5cBrNrHqoxTwb3sKZMnosDPVS7og9CdoIrbBD0haml
+         Y9y4G1FS0QvRxpTd7GP4jY3SYXxquKc7Woak0x45WmRNRcTO5kprJCPD3PqfeTOLaoAE
+         m4vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759072649; x=1759677449;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vqHkUy8fuyVbj5suFT081UY64ZPTEl5grQdmncLLbw=;
+        b=hdXsY4ZVnCDRYX/6yITvFG4fcSmeW3ppDhOgkR7m/JyTbNl6FioLf/2Ls28GQCbB7O
+         rD41bJZ9sUYApZQ+wFZqAmFsuCK5ip4oT/Sujkp36mclhduRdyuTnQgW6EmdVFtmUcY1
+         x8bTk3EV4rn1P1wN1RMd9lyFyu3z9x/qOmYDioob4QH0o+MPpLEGOUgnEQyUlz38wl6C
+         N2gDLcj+FzcY+icBFhKVY5xS4oo8MNtc9ZF6VIzb4iNdUh8Bk9AWVjrNtfO2QHKxBV6z
+         z5hp+3EbqncXs1/xNRkgqmX2qBThTxM5AdUysybks7s80kvaL0oCDnhvvpm1qSfOJB8R
+         ebfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZCcw2pgu0QSw2z8TidQy5yQW+G9k6xUrLOeNgobp+VlT/QJlurys2qYZmpAjW1kROOIXiGLXKJz1t5s4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK/rsDPmwmVvX6XCzcmqzxsvdAV94UUIghi+mc0wRoe6oT0if2
+	S8Ku4IWlT1cjpAZcIlrJg72blws/nrbvRFwjCtBBYzDWE1niIF70R9G/
+X-Gm-Gg: ASbGncvknfJGQcnujef+SkIOIOKqxJEZC6cAeGcScEcoG2QzlYkX6/CuCRtnQdA5rTX
+	QC2uboaAYNXy5PKxnX+AjVbxndQHKLTd1H1rfYsmI+32+G48oCGYubvqiAXwxF0U5PsC/7wA6nI
+	L4RKN411rVD1Clr3SVAcT87IbHVl0/bxM6CflRXoDlGOiFt5Q+O4/jjU2uSrp8JY3Q2bObQDFmC
+	hQc9UXNpnQbb52bPXk8HEpPQ9mm10+Kkvmh/OSnFf+J6nLJs9xsVsdHsTBimpS+OiQdNP7BYz9u
+	p4HM6WePKZdQSftVfQ5NRy0lpeJDiQImAYqy7gHA+evDkQXqXuafp7yUcrYfrTakn06JnH639yI
+	PPoFUMvMi/phDZaIeWsoHTaWtVItU6s5BSYrD2Vg=
+X-Google-Smtp-Source: AGHT+IF8pnH4LYbG6wywYAE+rCN8FpqtNuwStfp46rg0IEu+rwT49OwVM0C6uY5V1Kl8rA0DIg5drg==
+X-Received: by 2002:a05:6122:3109:b0:54a:8690:719b with SMTP id 71dfb90a1353d-54e6086099cmr290197e0c.11.1759072649431;
+        Sun, 28 Sep 2025 08:17:29 -0700 (PDT)
+Received: from [192.168.1.145] ([104.203.11.126])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bed8a4e77sm1806934e0c.10.2025.09.28.08.17.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Sep 2025 08:17:28 -0700 (PDT)
+Message-ID: <56d8cad5-d8ab-436d-bad0-c631e414c70d@gmail.com>
+Date: Sun, 28 Sep 2025 11:17:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27727b8ef9b3ad55a3a28f9622a62561c9988335.1759071169.git.leon@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ntfs3: fix uninit memory after failed mi_read in
+ mi_format_new
+To: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>,
+ almaz.alexandrovich@paragon-software.com
+Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org,
+ syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
+References: <20250925203701.223744-2-rpthibeault@gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <20250925203701.223744-2-rpthibeault@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Leon.
-
-On Sun, Sep 28, 2025 at 06:02:29PM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
+On 9/25/25 16:36, Raphael Pinsonneault-Thibeault wrote:
+> attr_insert_range() called from ntfs_fallocate() has 2 different
+> code paths that trigger mi_read() (which calls ntfs_read_bh).
+> If the first mi_read() -> ntfs_read_bh() fails with an IO error, it
+> leaves an uninitialized buffer in the buffer cache.
+> The second mi_read() -> ntfs_read_bh() then uses that buffer,
+> where we get KMSAN warning "uninit-value in ntfs_read_bh".
 > 
-> After conversion of arch code to use physical address mapping,
-> there are no users of .map_page() and .unmap_page() callbacks,
-> so let's remove them.
+> The fix is to check if mi_read failed in mi_format_new.
 > 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  include/linux/dma-map-ops.h |  7 -------
->  kernel/dma/mapping.c        | 12 ------------
->  kernel/dma/ops_helpers.c    |  8 +-------
->  3 files changed, 1 insertion(+), 26 deletions(-)
 
-It looks like you missed a few sparc32 bits:
-mm/iommu.c:
-static const struct dma_map_ops sbus_iommu_dma_gflush_ops = {
-#ifdef CONFIG_SBUS
-        .alloc                  = sbus_iommu_alloc,
-        .free                   = sbus_iommu_free,
-#endif
-        .map_page               = sbus_iommu_map_page_gflush,
-        .unmap_page             = sbus_iommu_unmap_page,
-        .map_sg                 = sbus_iommu_map_sg_gflush,
 
-mm/io-unit.c:
-static const struct dma_map_ops iounit_dma_ops = {
-#ifdef CONFIG_SBUS
-        .alloc                  = iounit_alloc,
-        .free                   = iounit_free,
-#endif
-        .map_page               = iounit_map_page,
-        .unmap_page             = iounit_unmap_page,
-        .map_sg                 = iounit_map_sg,
+Did you do any testing for this patch?
 
-I did not compile test, but from a quick look they need to be updated.
+David Hunter
 
-	Sam
 
