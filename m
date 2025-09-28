@@ -1,339 +1,119 @@
-Return-Path: <linux-kernel+bounces-835514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94467BA7599
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:36:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E22BA759C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5E518952CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7AE3B61A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33C223BD13;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCFB23B638;
 	Sun, 28 Sep 2025 17:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XobWPXQZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEaY1OpE"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD61F221DAE;
-	Sun, 28 Sep 2025 17:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCB322D7B5
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 17:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759080958; cv=none; b=dBJeE8w/W0mjWD5EvNhxYQ2PHbb1ucQNZLIBlGtiOjhP8boExLcZD7PxPoVa7cBDBlMpzX/AqxtTDnHdfIJklmcgUzZ4kbhgJa8fJIDbEPz2c1QH9qT8l6N22NC6MzA2xW57h0Ge8VUMPDpwthcf3mlDhUw5dAx6SGUxw5gCay8=
+	t=1759080959; cv=none; b=JszMKK2HUY0xkRhGwJhuXLa/UEJrbewdxvoe30OIfCVZyKh+RmAL+DvnJiq1bkIoeQmksXX/ujvakZIWjYssTTQig2o+CyOu/oYaltkqfhXctsjgvIvMtGwzP/1OWNspwloxmBFdsyYar0iG3zzm/76ZdIggERiUY1Kv+I7ABBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759080958; c=relaxed/simple;
-	bh=ZDDoSQHfUfGlV5GTCCz5MrXChE3PkwoLjvorvdmzaHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=akk8x1i6Dmvmq4k/X/6Oi8RumlHtLLjEqcTsgu51RwkUXEx4FTspdmcJgK5j4qmMcs65daRSgugfGzABFWV5gHC+cp/IPAqz7I67LvMPGtA3P5gD9DktBtanh3Up6FkRriW5TM+jgFCW6hcZHbrG0pY6DQp/tRVebPKxQwpD4uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XobWPXQZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E763C4CEF0;
-	Sun, 28 Sep 2025 17:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759080958;
-	bh=ZDDoSQHfUfGlV5GTCCz5MrXChE3PkwoLjvorvdmzaHY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XobWPXQZa9osT//YvtFffPGE800IwVqpG3b9bXLAReVbjwNJgmD8GfOK3R7YlGYSx
-	 Vy6jIAjbbK0FqvBeAQl/PTMctS1yxFTaSs5R48U0h/jmu85cpYvNcDk90+St6NUEPU
-	 riClis+tr60aijt02YjTjQbPf56+9ATSIBMlPNuqR8y/0BUplNZAhygHyrj4Z8Qbnx
-	 32YaIhbgJpM7jDFvYoQj/K0nHHZkh97X4Y7sHoHRn0kxS67Xg2jSjTeW5z3I0eMZW6
-	 3XXuBg3KB740t+Xf4oasjDkKypqj5eGBCqUVNXbhPjAoqaFXmpJuuwFgdEE7h7PesB
-	 L1opgXulb1KrQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Rust for 6.18
-Date: Sun, 28 Sep 2025 19:35:40 +0200
-Message-ID: <20250928173541.229298-1-ojeda@kernel.org>
+	s=arc-20240116; t=1759080959; c=relaxed/simple;
+	bh=1hWHgpM/rb70qd87juqmeSrMZFHqG1itquQCJwHGhEk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VG58MV4LllokcEbpG5FPKW228UU/terXZYX5eJP98T5B1DJzqCIfZfGJjclcsxelHcvLT/V7uExvu5Xr60wA9bOZyFasJacugTpU8nG8dSL8OC0jSdzr8ZDfWUL+RWEnI+y+meHkwiOAj1bnCzwm+Fw9HNzB1toFytXN+CVlZro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEaY1OpE; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63486ff378cso7507337a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759080955; x=1759685755; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1hWHgpM/rb70qd87juqmeSrMZFHqG1itquQCJwHGhEk=;
+        b=XEaY1OpE/dFh9j4YVGsxeLW4nk+JFwe0xPU09XYNqFVJVfkz9/YKmGA98d0gTte9Bb
+         djtUHhO3mEm/g+z/tflYqgw0BtjK91KiLlZFg2KuMsI98UcnbrywSUlKEf5syJmuUYwu
+         xevmNeWOz9dwjA3SsPPH9s+wWJ4ed75E4NMp84AmbDD+VpQ44dOC8sckBBP56GvafQyj
+         V3Ne6Kq25yZjYpNjlPaKIjx3T56b7QxQ+cNsAVlk9s60XpIcce/auME6UmP9kxJaQHmk
+         Cq2SR1jCG9crhZ020EAYQ/6KssWrbr5CY8GrgyoZdKIfdJIwET9JFHbp4Aufx0EOCncF
+         8iOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759080955; x=1759685755;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1hWHgpM/rb70qd87juqmeSrMZFHqG1itquQCJwHGhEk=;
+        b=JX+asFopdlEpCYYgE0W1lVBgzxQJo8xvHYuthAgxk9AG58yBxxh+wCxkNNfnd1hbuO
+         sD7sznvYNvZsQ/EBhirKN7IuBs6pOv6iO4YO89SXr9DP+Eox974/Pz0n8XbskCpIiM5Y
+         mo6vqEdHxlUD7ZH1p9pZf1+UfZNFRM52GXqhJhscUKzeOAKojdQHztWnaB48axN8VemJ
+         zpv6mY/MCjdqlOQRI/RX/6DhElUe6RSvR29pFp4MkP9X99H6vc+7qLf39LeGoHNhMgoC
+         dt0bV5J/40F082xEdgPabGmFj2h+VQmKdLOa1Ahf4C+q1o5dlNL2kGWj/SGz3dOq8fZK
+         vO6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXjQLv+0LkrS1mEXvJsNH9l8YbzzyLHCH3EGV1lND+b+Am4w5V3O2lo12fcqM2JKw0yzqt4fvThvNT5ddE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhaOZKifHALp6QmCZlfolgvyMT8nBjz4+mDB6MCcIJTxmiV424
+	M6mUV9xYvk4vtooUHHobUWvo8MSQ7O5MxobdR0vKEZ51rMmOmVafg02DD9qid6lVFYtKi8HPan7
+	zdFQ6jiiifq/j4mlqhHBSjR1VceGeS2k=
+X-Gm-Gg: ASbGnctoF9Zxhu3G/PpdiplRdiL8moBt6Lxafu1drOeyLaYRQqwSK3rzcjjsqsVRlDy
+	b0aZSCMhq2+5FJI8cC0fWKcMWCcwQjSv10/hy2ozqt5Ea7iujtEoQRi9NeOh/zZIiEXeriPmBLh
+	1X+OF5joxyJaXUNn085k3FmaVk6S5Nf8TSU0+y/nu4/gCuB8fYk8Ersh6DTit1dBxR8cfrwyhhw
+	wNOG5u1ONGNADZ+w6g=
+X-Google-Smtp-Source: AGHT+IF4LtUw7v9U/JYoQT0Wh7nzvSFhJ3UqproTerTY3SiJCa0Vl/rRvk3JMudUZqWnlv9RN4X9SRqdzNlv4OAcKN8=
+X-Received: by 2002:a05:6402:352:b0:62f:453c:7235 with SMTP id
+ 4fb4d7f45d1cf-634ce845b9amr4127811a12.15.1759080955040; Sun, 28 Sep 2025
+ 10:35:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1759071169.git.leon@kernel.org> <512d4c498103fcfccd8c60ce1982cd961434d30b.1759071169.git.leon@kernel.org>
+In-Reply-To: <512d4c498103fcfccd8c60ce1982cd961434d30b.1759071169.git.leon@kernel.org>
+From: Magnus Lindholm <linmag7@gmail.com>
+Date: Sun, 28 Sep 2025 19:35:43 +0200
+X-Gm-Features: AS18NWBtQV3w4fhUJT0qJjc42RZ2Y4lnsCSX8_2AFcicJQutzVlCWs2uQTVZ_oE
+Message-ID: <CA+=Fv5SzdR4=NXz68gRg0iXY-6Y=GRsO24UA-DF4tuyJ8r7w7Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/9] alpha: Convert mapping routine to rely on physical address
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Leon Romanovsky <leonro@nvidia.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Andreas Larsson <andreas@gaisler.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Geoff Levand <geoff@infradead.org>, Helge Deller <deller@gmx.de>, Ingo Molnar <mingo@redhat.com>, 
+	iommu@lists.linux.dev, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Jason Wang <jasowang@redhat.com>, 
+	Juergen Gross <jgross@suse.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Matt Turner <mattst88@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
+	sparclinux@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	virtualization@lists.linux.dev, x86@kernel.org, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Sun, Sep 28, 2025 at 5:02=E2=80=AFPM Leon Romanovsky <leon@kernel.org> w=
+rote:
+>
+> From: Leon Romanovsky <leonro@nvidia.com>
+>
+> Alpha doesn't need struct *page and can perform mapping based on
+> physical addresses. So convert it to implement new .map_phys callback.
+>
+> As part of this change, remove useless BUG_ON() as DMA mapping layer
+> ensures that right direction is provided.
 
-This is the next round of the Rust support.
+After the changes in v1 this runs fine on Alpha. I've tested this on an
+ES40 Alphaserver during load (build kernel and unpack tar files).
+The v1 patch fixes the errors seen in the first revision of this patch.
 
-A small one this time. One of the trees I merge (pin-init) is going this
-cycle through DRM for convenience.
-
-No conflicts expected at this time. Nevertheless, I did a test merge and
-tested it a bit and it seems fine.
-
-When you merge other trees, you will have some. The resolutions in -next
-should be fine, except for a `rustfmt` issue in one, so please remember
-to double-check that on your merges (it may be solved by the time you
-get to it).
-
-All commits have been in linux-next for at least four rounds, most for
-two weeks or more.
-
-Please pull for v6.18 -- thanks!
-
-Cheers,
-Miguel
-
-The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
-
-  Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-6.18
-
-for you to fetch changes up to f3f6b3664302e16ef1c6b91034a72df5564d6b8a:
-
-  gpu: nova-core: use Alignment for alignment-related operations (2025-09-22 23:56:06 +0200)
-
-----------------------------------------------------------------
-Rust changes for v6.18
-
-Toolchain and infrastructure:
-
- - Derive 'Zeroable' for all structs and unions generated by 'bindgen'
-   where possible and corresponding cleanups. To do so, add the
-   'pin-init' crate as a dependency to 'bindings' and 'uapi'.
-
-   It also includes its first use in the 'cpufreq' module, with more to
-   come in the next cycle.
-
- - Add warning to the 'rustdoc' target to detect broken 'srctree/' links
-   and fix existing cases.
-
- - Remove support for unused (since v6.16) host '#[test]'s, simplifying
-   the 'rusttest' target. Tests should generally run within KUnit.
-
-'kernel' crate:
-
- - Add 'ptr' module with a new 'Alignment' type, which is always a power
-   of two and is used to validate that a given value is a valid
-   alignment and to perform masking and alignment operations:
-
-       // Checked at build time.
-       assert_eq!(Alignment::new::<16>().as_usize(), 16);
-
-       // Checked at runtime.
-       assert_eq!(Alignment::new_checked(15), None);
-
-       assert_eq!(Alignment::of::<u8>().log2(), 0);
-
-       assert_eq!(0x25u8.align_down(Alignment::new::<0x10>()), 0x20);
-       assert_eq!(0x5u8.align_up(Alignment::new::<0x10>()), Some(0x10));
-       assert_eq!(u8::MAX.align_up(Alignment::new::<0x10>()), None);
-
-   It also includes its first use in Nova.
-
- - Add 'core::mem::{align,size}_of{,_val}' to the prelude, matching
-   Rust 1.80.0.
-
- - Keep going with the steps on our migration to the standard library
-   'core::ffi::CStr' type (use 'kernel::{fmt, prelude::fmt!}' and use
-   upstream method names).
-
- - 'error' module: improve 'Error::from_errno' and 'to_result'
-   documentation, including examples/tests.
-
- - 'sync' module: extend 'aref' submodule documentation now that it
-   exists, and more updates to complete the ongoing move of 'ARef' and
-   'AlwaysRefCounted' to 'sync::aref'.
-
- - 'list' module: add an example/test for 'ListLinksSelfPtr' usage.
-
- - 'alloc' module:
-
-   - Implement 'Box::pin_slice()', which constructs a pinned slice of
-     elements.
-
-   - Provide information about the minimum alignment guarantees of
-     'Kmalloc', 'Vmalloc' and 'KVmalloc'.
-
-   - Take minimum alignment guarantees of allocators for
-     'ForeignOwnable' into account.
-
-   - Remove the 'allocator_test' (including 'Cmalloc').
-
-   - Add doctest for 'Vec::as_slice()'.
-
-   - Constify various methods.
-
- - 'time' module:
-
-   - Add methods on 'HrTimer' that can only be called with exclusive
-     access to an unarmed timer, or from timer callback context.
-
-   - Add arithmetic operations to 'Instant' and 'Delta'.
-
-   - Add a few convenience and access methods to 'HrTimer' and
-     'Instant'.
-
-'macros' crate:
-
- - Reduce collections in 'quote!' macro.
-
-And a few other cleanups and improvements.
-
-----------------------------------------------------------------
-Alexandre Courbot (2):
-      rust: add `Alignment` type
-      gpu: nova-core: use Alignment for alignment-related operations
-
-Alice Ryhl (3):
-      rust: alloc: specify the minimum alignment of each allocator
-      rust: alloc: take the allocator into account for FOREIGN_ALIGN
-      rust: alloc: implement Box::pin_slice()
-
-Benno Lossin (4):
-      rust: add `pin-init` as a dependency to `bindings` and `uapi`
-      rust: derive `Zeroable` for all structs & unions generated by bindgen where possible
-      rust: cpufreq: replace `MaybeUninit::zeroed().assume_init()` with `pin_init::zeroed()`
-      rust: sync: extend module documentation of aref
-
-Boqun Feng (1):
-      rust: list: Add an example for `ListLinksSelfPtr` usage
-
-Danilo Krummrich (1):
-      rust: alloc: add ARCH_KMALLOC_MINALIGN to bindgen blocklist
-
-Hui Zhu (2):
-      rust: alloc: kvec: add doc example for as_slice method
-      rust: alloc: kvec: simplify KUnit test module name to "rust_kvec"
-
-Lyude Paul (9):
-      rust: hrtimer: Document the return value for HrTimerHandle::cancel()
-      rust: hrtimer: Add HrTimerInstant
-      rust: hrtimer: Add HrTimer::raw_forward() and forward()
-      rust: hrtimer: Add HrTimerCallbackContext and ::forward()
-      rust: hrtimer: Add forward_now() to HrTimer and HrTimerCallbackContext
-      rust: time: Add Instant::from_ktime()
-      rust: hrtimer: Add HrTimer::expires()
-      rust: time: Implement Add<Delta>/Sub<Delta> for Instant
-      rust: time: Implement basic arithmetic operations for Delta
-
-Miguel Ojeda (10):
-      rust: kernel: remove support for unused host `#[test]`s
-      rust: alloc: remove `allocator_test`
-      Merge tag 'alloc-next-v6.18-2025-09-04' of https://github.com/Rust-for-Linux/linux into rust-next
-      rust: block: fix `srctree/` links
-      rust: drm: fix `srctree/` links
-      rust: warn if `srctree/` links do not exist
-      rust: prelude: re-export `core::mem::{align,size}_of{,_val}`
-      rust: error: improve `Error::from_errno` documentation
-      rust: error: improve `to_result` documentation
-      Merge tag 'rust-timekeeping-v6.18' of https://github.com/Rust-for-Linux/linux into rust-next
-
-Onur Özkan (3):
-      rust: make `ArrayLayout::new_unchecked` a `const fn`
-      rust: make `kvec::Vec` functions `const fn`
-      rust: error: add C header links
-
-Ritvik Gupta (1):
-      rust: kernel: cpu: mark `CpuId::current()` inline
-
-Shankari Anand (3):
-      rust: dma: Update ARef and AlwaysRefCounted imports from sync::aref
-      rust: sync: Update ARef and AlwaysRefCounted imports from sync::aref
-      rust: task: update ARef and AlwaysRefCounted imports from sync::aref
-
-Tamir Duberstein (21):
-      gpu: nova-core: use `kernel::{fmt,prelude::fmt!}`
-      rust: alloc: use `kernel::{fmt,prelude::fmt!}`
-      rust: block: use `kernel::{fmt,prelude::fmt!}`
-      rust: device: use `kernel::{fmt,prelude::fmt!}`
-      rust: file: use `kernel::{fmt,prelude::fmt!}`
-      rust: kunit: use `kernel::{fmt,prelude::fmt!}`
-      rust: seq_file: use `kernel::{fmt,prelude::fmt!}`
-      rust: sync: use `kernel::{fmt,prelude::fmt!}`
-      rust: device: use `kernel::{fmt,prelude::fmt!}`
-      drm/panic: use `core::ffi::CStr` method names
-      rust: auxiliary: use `core::ffi::CStr` method names
-      rust: configfs: use `core::ffi::CStr` method names
-      rust: cpufreq: use `core::ffi::CStr` method names
-      rust: drm: use `core::ffi::CStr` method names
-      rust: firmware: use `core::ffi::CStr` method names
-      rust: kunit: use `core::ffi::CStr` method names
-      rust: miscdevice: use `core::ffi::CStr` method names
-      rust: net: use `core::ffi::CStr` method names
-      rust: of: use `core::ffi::CStr` method names
-      rust: acpi: use `core::ffi::CStr` method names
-      rust: macros: reduce collections in `quote!` macro
-
- Documentation/gpu/nova/core/todo.rst |   1 -
- drivers/block/rnull.rs               |   2 +-
- drivers/gpu/drm/drm_panic_qr.rs      |   2 +-
- drivers/gpu/nova-core/fb.rs          |   6 +-
- drivers/gpu/nova-core/gpu.rs         |   3 +-
- drivers/gpu/nova-core/regs/macros.rs |   6 +-
- drivers/gpu/nova-core/vbios.rs       |   4 +-
- rust/Makefile                        |  29 ++---
- rust/bindgen_parameters              |   5 +
- rust/bindings/bindings_helper.h      |   1 +
- rust/bindings/lib.rs                 |   8 ++
- rust/kernel/acpi.rs                  |   7 +-
- rust/kernel/alloc.rs                 |  15 +--
- rust/kernel/alloc/allocator.rs       |   8 ++
- rust/kernel/alloc/allocator_test.rs  | 124 -------------------
- rust/kernel/alloc/kbox.rs            |  92 +++++++++++++-
- rust/kernel/alloc/kvec.rs            |  24 ++--
- rust/kernel/alloc/kvec/errors.rs     |   2 +-
- rust/kernel/alloc/layout.rs          |   2 +-
- rust/kernel/auxiliary.rs             |   4 +-
- rust/kernel/block/mq.rs              |   2 +-
- rust/kernel/block/mq/gen_disk.rs     |   4 +-
- rust/kernel/block/mq/raw_writer.rs   |   3 +-
- rust/kernel/configfs.rs              |   4 +-
- rust/kernel/cpu.rs                   |   1 +
- rust/kernel/cpufreq.rs               |   6 +-
- rust/kernel/device.rs                |   6 +-
- rust/kernel/device/property.rs       |  23 ++--
- rust/kernel/dma.rs                   |   2 +-
- rust/kernel/drm/device.rs            |   6 +-
- rust/kernel/drm/driver.rs            |   2 +-
- rust/kernel/drm/file.rs              |   2 +-
- rust/kernel/drm/gem/mod.rs           |   2 +-
- rust/kernel/drm/ioctl.rs             |   2 +-
- rust/kernel/error.rs                 |  66 ++++++++--
- rust/kernel/firmware.rs              |   2 +-
- rust/kernel/fs/file.rs               |   5 +-
- rust/kernel/kunit.rs                 |  14 +--
- rust/kernel/lib.rs                   |   5 +-
- rust/kernel/list.rs                  | 120 ++++++++++++++++++
- rust/kernel/miscdevice.rs            |   2 +-
- rust/kernel/net/phy.rs               |   2 +-
- rust/kernel/of.rs                    |   2 +-
- rust/kernel/prelude.rs               |   5 +-
- rust/kernel/ptr.rs                   | 228 +++++++++++++++++++++++++++++++++++
- rust/kernel/seq_file.rs              |   6 +-
- rust/kernel/sync/arc.rs              |   8 +-
- rust/kernel/sync/aref.rs             |  17 ++-
- rust/kernel/task.rs                  |   7 +-
- rust/kernel/time.rs                  | 163 ++++++++++++++++++++++++-
- rust/kernel/time/hrtimer.rs          | 152 ++++++++++++++++++++++-
- rust/kernel/time/hrtimer/arc.rs      |   9 +-
- rust/kernel/time/hrtimer/pin.rs      |   9 +-
- rust/kernel/time/hrtimer/pin_mut.rs  |  12 +-
- rust/kernel/time/hrtimer/tbox.rs     |   9 +-
- rust/macros/quote.rs                 | 104 ++++++++--------
- rust/uapi/lib.rs                     |   2 +
- samples/rust/rust_configfs.rs        |   2 +-
- samples/rust/rust_dma.rs             |   2 +-
- scripts/generate_rust_analyzer.py    |   4 +-
- scripts/rustdoc_test_gen.rs          |   2 +-
- 61 files changed, 1054 insertions(+), 315 deletions(-)
- delete mode 100644 rust/kernel/alloc/allocator_test.rs
- create mode 100644 rust/kernel/ptr.rs
+Tested-by: Magnus Lindholm <linmag7@gmail.com>
 
