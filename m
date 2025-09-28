@@ -1,104 +1,79 @@
-Return-Path: <linux-kernel+bounces-835324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7DD0BA6BF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:50:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB194BA6C0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A379F3A6FA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93BB917B102
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 08:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35342BEC59;
-	Sun, 28 Sep 2025 08:50:17 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4162BEFF1;
+	Sun, 28 Sep 2025 08:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JD1U3oor"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B18220F29;
-	Sun, 28 Sep 2025 08:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F5220F29;
+	Sun, 28 Sep 2025 08:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759049417; cv=none; b=SMchrwSxK2DiRO3Ija2VA1xEy3D45u+VZbxT3kmaYYgXi1KeeoA4OYEdgzrboOGh+rEvu4sZVWi6sz/6XQ1WiB0dKa8O+NOPZvmOIvQdbWxTrZXWELaA8JRmMVos5e19XHaCJMxIR/tIrmSGjkqBiR68JT3JD+zpkwR3o5lZGq4=
+	t=1759049553; cv=none; b=JPIeI30nMSNjCuPe7E+/7rL7WhOo34EgWD1VTb3k+Wf0MOiZBFdfK5hTjQ34Za6WyyrSe1wVKYmLOM40U+Si4Fsi6b5qXNEJopgj5GCHbZS8d8KqHozWi0F31sQpm7C+DKIDhQdplVbUuby47Lp9fJub2av2gBQpYlnUxLG6p/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759049417; c=relaxed/simple;
-	bh=P8TMQigKcbvYecEtdV3i9zLsC5kWD2Y4YfvF/HLWBNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7hr50kpzIN7pddoQt/SJkyapf9frDZf1yaiij8SBa7FlWkh5hi1tA/ovukL4p1DZdDmLZZsuVj62HDgMihpxsofVoBK0tFPGg3gsW/yeDZyXxLTFugKzOdgGpnVFNtQMEI8JJDMq4WeKXZG6zEen7QZrKMEV1F0P+95c5IKxrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id E00AB340824;
-	Sun, 28 Sep 2025 08:50:14 +0000 (UTC)
-Date: Sun, 28 Sep 2025 16:50:10 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Troy Mitchell <troy.mitchell@linux.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] riscv: dts: spacemit: Add MusePi Pro board device
- tree
-Message-ID: <20250928085010-GYC1344940@gentoo.org>
-References: <20250928-k1-musepi-pro-dts-v1-0-64d0659dfdbc@linux.spacemit.com>
- <20250928-k1-musepi-pro-dts-v1-2-5efcca0ce3ae@linux.spacemit.com>
- <20250928080003-GYB1344940@gentoo.org>
- <3074FC8521909735+aNjsSWwkd1aH-moh@kernel.org>
+	s=arc-20240116; t=1759049553; c=relaxed/simple;
+	bh=TmVCpd402UZVos/0N6uuXIkDpEJwZ3l8EUGkdUPHbho=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=udwHnIMhV8X/YXpSXMg9hdVSepvD9Aq8N9nrBRFqSKb8U4J4M4nk/EkB4zKMNx397rbWXnm5ycQSP/JNFxnYDaLzDVo6hj8YovxDHve5zor2AYncR0LxfuA6TXGtAXx4JPuWpv5ACYOsTLzQ1ejRhjTjzR8LmxZQ6YkNTm8mafA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JD1U3oor; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626D9C4CEF0;
+	Sun, 28 Sep 2025 08:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759049552;
+	bh=TmVCpd402UZVos/0N6uuXIkDpEJwZ3l8EUGkdUPHbho=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JD1U3oor9u0s1cB/aYwVgU9YS/ZD4Nny2ETcj5ctPiQB9PhVprAbeluFGbIBgShAu
+	 FTy5QD3AqyEXt6TF8QKXLRjeY0rIAVSr/ka9JDXSvwGz70wScZvqkiUVoFz0WhCdvp
+	 QoxG5s7YrEW/x1AJCOHksebTMAIuEge99q3uqfAW6/en9fx9X0nYei+M3hM9A2KuE9
+	 8ab8PTnQ5riBaHv2HjEaTCassNQpNLdKdnfDuI8ftm9NuOF7Futrf0QSjBS8BMVqqf
+	 C0U0PxwzBcByMhAKlfgCEACoTCOVF+mLS2fBrnrY3psKFksFd56Ys9gl5E4ChJWIHe
+	 8aSgirVK9+HjA==
+Date: Sun, 28 Sep 2025 09:52:23 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 4/9] iio: imu: inv_icm45600: add IMU IIO gyroscope
+ device
+Message-ID: <20250928095223.6e9130c3@jic23-huawei>
+In-Reply-To: <20250924-add_newport_driver-v6-4-76687b9d8a6e@tdk.com>
+References: <20250924-add_newport_driver-v6-0-76687b9d8a6e@tdk.com>
+	<20250924-add_newport_driver-v6-4-76687b9d8a6e@tdk.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3074FC8521909735+aNjsSWwkd1aH-moh@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Troy,
+On Wed, 24 Sep 2025 09:23:57 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
 
-On 16:05 Sun 28 Sep     , Troy Mitchell wrote:
-> On Sun, Sep 28, 2025 at 04:00:03PM +0800, Yixun Lan wrote:
-> > Hi Troy,
-> > 
-> > On 12:16 Sun 28 Sep     , Troy Mitchell wrote:
-> > > From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > > 
-> > > Add initial device tree support for the MusePi Pro board [1].
-> > > The board is using the SpacemiT K1/M1 SoC.
-> > > 
-> > > The device tree is adapted from the SpacemiT vendor tree [2].
-> > > 
-> > > This minimal device tree enables booting into a serial console with UART
-> > > output and a blinking LED.
-> > > 
-> > > Link:
-> > > https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
-> > > https://gitee.com/bianbu-linux/linux-6.6/blob/k1-bl-v2.2.y/arch/riscv/boot/dts/spacemit/k1-x_MUSE-Pi-Pro.dts [2]
-> > > 
-> > same as patch 1
-> > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > > ---
-..[snip]
-> > 
-> > while you are here, I'd suggest to push as many features as possible
-> > instead of this minimal DT, which say - PMU, emmc, ethernet should be ready..
-> > (ethernet is in next, should show up at v6.18-rc1)
-> Good idea.
-> I think I should split these into multiple commits, right?
-> Like, PDMA and EMAC should definitely be two separate commits.
+> From: Remi Buisson <remi.buisson@tdk.com>
 > 
-IMO, not really necessary, but I wouldn't mind either..
-
--- 
-Yixun Lan (dlan)
+> Add IIO device for gyroscope sensor
+> with data polling interface and FIFO parsing.
+> Attributes: raw, scale, sampling_frequency, calibbias.
+> Temperature is available as a processed channel.
+> 
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+Nice. LGTM.
 
