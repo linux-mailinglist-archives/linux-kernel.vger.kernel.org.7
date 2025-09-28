@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-835443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AB0BA71AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:39:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2438BA71B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8CF7165E67
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D113BA9F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02491202C5C;
-	Sun, 28 Sep 2025 14:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D381F582C;
+	Sun, 28 Sep 2025 14:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S682uVXe"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+eEDf73"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EF01714B7
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255A11F09AC
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759070373; cv=none; b=bEv8zEvzpA9qrexMk5Xr2z9bZ7ISvGxAIifE1kUV6P6xhvPKnUg09RkSgox6yj6jH4cTHa4LGuVDOb306B38ETxeY2FND9lwK5JnDBdf/rptGiqRCgjE1PfQP0j7qTQPbL7NTUGWZjMypwP+gTDp/JOwMdgePi8RSdU6FKwS9d8=
+	t=1759070407; cv=none; b=YJjpVnVLySrbmaIQjY/VQatgEpDaDj4lNgfSAKpdDPANL98583MRo6NdL7GhkDSdydytgj69Hhobac5IDDoLowXxHhMtLccQRmVDAN4sj0EGh77ICRcHPVcNYOcmEXtiR7NDzMH5X+1QkE64VXMJ46RFSbFCftsm9dtRieyE6mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759070373; c=relaxed/simple;
-	bh=7miexSVIY9sXCT+obT1zQ1e0Pd02sjjmXPW7xBDwtGg=;
+	s=arc-20240116; t=1759070407; c=relaxed/simple;
+	bh=YTfeZ2Az2Z8Gm9DtkMQMER4W7eQCdNdPKRtSzc6jOSQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uiSj/pPZfI4hJcerEUINCtdZO+VhDE/XuaQK4SJMe6t621ZYe++dCWQo4am94x29xz2lGTO++DbSQHMXqrMERyhAQV1PDdJJKsi3t5XCo+cyb9tFNo//ZCDhG/eZn6/pSP6/XChCAH9wQjP7LruuTM+OlXqOt0nVMJaaRk/dwfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S682uVXe; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2680ee37b21so7655275ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759070371; x=1759675171; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GheiArk7ypVMh1/1PtNPjvR+VE2OgXKMbbYZQv3X8+s=;
-        b=S682uVXeMB/CqumVsJ/zhIw6BnfpWhoc1KKvHSBkqihLxPivYkoI2UVsYVPq4bBaI9
-         MboNn+6PoW4AMMjxxKq2eKGviWf0E9KNlPeKYdwdPcUvcZU7pHFOfpzN49ppJwq38mWt
-         yFcY2QrgLZ+gFJismfdV2muFRSCK6iW5120gRPhOfWP8BEZLNkLn1NPnowRoeG5Itkux
-         YC6jUkAaZ7ygysEevjsiebke7avT0bsIx3CtiKm6HlB/dB1AtLERUu7HBjUE4FUfsbZr
-         7UMW0wVcHg9B0bC5n0iGeomAuOW3Gex+fyHfEkZXloonmawRGlO9usC2udbOYbEi+zze
-         GWSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759070371; x=1759675171;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GheiArk7ypVMh1/1PtNPjvR+VE2OgXKMbbYZQv3X8+s=;
-        b=cOlSSCStORdka6vpq8hHzGhGbaLZ6lIDZLmaoFbqibPqFPPfO3rC8lVYbP/HH+ntcp
-         r9PrcYtxAb0fXx9dJAnQOqQjIL5bPNV64H/ifKmfkyyBQEl44mE+1rIJ1ByT/dG+meQa
-         UTxqRUoRKR8bwUjcpk7+84UmsTjNY2Ijxk8iwqX03bTKK8R7MSbEmjBmKGwRRfAqDZaY
-         NQaijs4LDvXIdkpgCBheLqK5F8o4JBW/TQWcWkRVsxmcKsRJopIR3iDTgD2Q7jmBQSxp
-         MK93n1A8AYgCBX+iyzAdoisplZD3HVAoywl6B0AwPLvq89rsdp6wuykkRXwJCLntEMgL
-         a3SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEzX8Rdd1WmOutk6uczK4fPEIiqlhrRTic8szkrBBPvsTslzTjY3h+BSPM4jZpdYrpDSJ6D9nBCtFgo1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7EdgkfSZuXeNcYh+GX8yL3JbnwoG8nX1ENQSi+Gu71c/KChkJ
-	F4Xay/0j6YEKDJ3fWAr9ceiCYjqfZOGaXykU6Qdi6lDmECvKCy2winRK+KPlTN2qJISrLJ+B4Vm
-	Km1GnMqTn7u35/Nu8bxWxQSWYtx3jwE0=
-X-Gm-Gg: ASbGncsKKa0K1y6aufcaHEEjc3WwaSLpkEClaGtfGNXZaXQaLv5fKG1GA4ERLBTc3mp
-	mbTglrkMQQL1ATAr9Acb/uEmW2VnhGMpBDnGeXaPfQqj4I2H/dQJXBvWjQrUrc0NgiFXegxkkYX
-	MQEwCZ8ZiPa91nET+NcDbZCp/ZutdOfPtvF4WbmZMq4mLSvPHPs7qqGP850vOWHDoZPqBaUCsa7
-	lPBV3vUyQem2Y9E8EIwUISQD7ebm7BOLvPzahS+SzSVzheJk2xJxlaO3h/FA9iwNN98rQHZyT4Q
-	Q3Akudn+ikq6L6BDbXTg5XfcSfyfsm0kGmG6
-X-Google-Smtp-Source: AGHT+IHYuLoigCXO/IuVYAvcStFqo7zlZrUbxDGRobz0IRwpzlqDn+RVpePg9UTv4hbc9kz3W2vIkL2OT4f38G+Rpk4=
-X-Received: by 2002:a17:903:2341:b0:257:3283:b859 with SMTP id
- d9443c01a7336-27ed4a47a07mr85244135ad.9.1759070371229; Sun, 28 Sep 2025
- 07:39:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=SR53O2NSxGAuI6QmBQt/fOh7nTLDuKEkuZ7Z78ytqpIWD+29ZHbnJxD9swO+9IGmckK083O5JpMvgtu+O1v1lbA2Lea8vXLaXu9Xvmq8WPmmitTbK1//WMqxNLQ2inG4gBK6GGP3GQD8FpvTZh8q8IrJbe7vFFkGgd/Li8e7/Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+eEDf73; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBB3FC116D0
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759070406;
+	bh=YTfeZ2Az2Z8Gm9DtkMQMER4W7eQCdNdPKRtSzc6jOSQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=E+eEDf738DIWH8AV/fKoc38BolmBbkv2V3MzRdl9kmp+cWmedZHwK0nxfwFGGO+UQ
+	 45AqO5ZFt4tJZzxZd6CS2q3iWcAS4Cbm2N1Iy990txMQROoVk7uAHvjUuU/JHjVJcx
+	 E3P76EMaVdCAm6ljVWWca2xSfv6YP/I871kQXLIassNB/tMf1STibLRON5mCzYfrnW
+	 f3v6VVvYwtllH8yx9nPhcUazF0FUub5fedvheR2I3/cGe+iSgelMwVd2B05vSjy5SP
+	 UbAmbTHotqsZB+WoHDd19rq+DNy7tPRZbosPIetRNE91Jw7cB4CFTM8kJNYWmpZNOE
+	 yl+zwxV//VHnw==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3682ac7f33fso46008091fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:40:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvToX5esTEWbEpjzxm4HamxG/ve8VMSDUEhEpmskZ5/uazb+0Y9hUpVLDOeKQY6/W9ZeMhsfaXXPPl/B0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLhJrxbwaBl1iR1dadeBDCy3GeS9Quk1NkVEoDvwGMBfea2iq8
+	LjCfvDpJ9lL7NflHcy/qpoG9T9Inih/kgzDAyxiWHCWVRavMnMOMG8bItRG2nTKRXJifiXLXXYo
+	qdhQnCpuCDxvXeDT2oN5iYkCRowG+Mr0=
+X-Google-Smtp-Source: AGHT+IHH3ITnfb2BpbA6fI4i1D/KynnPo0itxokVo5z2R2BxNhPDjgHL5REZ4v90HN8ojvUvINWVTbbCPEGJLRT00uM=
+X-Received: by 2002:a2e:bc24:0:b0:36c:2899:7a33 with SMTP id
+ 38308e7fff4ca-36fb05aac1emr41368541fa.5.1759070405095; Sun, 28 Sep 2025
+ 07:40:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aMlhpIhjbrDR4C8L@sirena.org.uk>
-In-Reply-To: <aMlhpIhjbrDR4C8L@sirena.org.uk>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 28 Sep 2025 16:39:18 +0200
-X-Gm-Features: AS18NWBnSfhUHigPfGdLGRaT5eXdBPpwwiSWk230N8BH4GkuRtPWn8V78nifa80
-Message-ID: <CANiq72=jq50cCg7Xotc_wruGHiwy3CKcCH8D64-F+BEKznUz=Q@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the drm-rust tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
+References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
+ <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
+In-Reply-To: <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 28 Sep 2025 16:39:53 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
+X-Gm-Features: AS18NWBfnP56WGhzhDUorQf3ioUtwwx0in0DsVvUF4v8bsmet9iSfiUkxyOpxGQ
+Message-ID: <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
+Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 3:10=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
+On Sun, 28 Sept 2025 at 15:52, Huacai Chen <chenhuacai@kernel.org> wrote:
 >
->  +use crate::page::AsPageIter;
-> + use crate::fmt;
+> Hi, Ard,
+>
+> On Sun, Sep 28, 2025 at 9:42=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
+wrote:
+> >
+> > On Sun, 28 Sept 2025 at 10:55, Tiezhu Yang <yangtiezhu@loongson.cn> wro=
+te:
+> > >
+> > > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
+> > > the following objtool warning on LoongArch:
+> > >
+> > >   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
+> > >   falls through to next function __efistub_exit_boot_func()
+> > >
+> > > This is because efi_boot_kernel() doesn't end with a return instructi=
+on
+> > > or an unconditional jump, then objtool has determined that the functi=
+on
+> > > can fall through into the next function.
+> > >
+> > > At the beginning, try to do something to make efi_boot_kernel() ends =
+with
+> > > an unconditional jump instruction, but this modification seems not pr=
+oper.
+> > >
+> > > Since the efistub functions are useless for stack unwinder, they can =
+be
+> > > ignored by objtool. After many discussions, no need to link libstub t=
+o
+> > > the vmlinux.o, only link libstub to the final vmlinux.
+> > >
+> >
+> > Please try keeping these changes confined to arch/loongarch. This
+> > problem does not exist on other architectures, and changing the way
+> > vmlinux is constructed might create other issues down the road.
+> ARM, RISC-V and LoongArch do things exactly in the same way. Now
+> LoongArch is the first of the three to enable objtool, so we meet the
+> problem first.
+>
+> But yes, I also don't want to change the way of constructing vmlinux.
+> So I prefer the earliest way to fix this problem.
+> https://lore.kernel.org/loongarch/CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSuV0=
+EmeeUb9d5FNw@mail.gmail.com/T/#meef7411abd14f4c28c85e686614aa9211fccdca0
+>
 
-These should be the other way around to pass `rustfmt` (please see diff bel=
-ow).
-
-I noticed now that we have cleared the other issues. If it could be
-fixed in the merge commit, it would be great, thanks!
-
-Cheers,
-Miguel
-
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 3d38d9bde582d..2cc147a4cb881 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -7,8 +7,8 @@
-     layout::ArrayLayout,
-     AllocError, Allocator, Box, Flags, NumaNode,
- };
--use crate::page::AsPageIter;
- use crate::fmt;
-+use crate::page::AsPageIter;
- use core::{
-     borrow::{Borrow, BorrowMut},
-     marker::PhantomData,
+Can we just drop the __noreturn annotation from kernel_entry_t, and
+return EFI_SUCCESS from efi_boot_kernel()?
 
