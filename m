@@ -1,158 +1,211 @@
-Return-Path: <linux-kernel+bounces-835407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F4ABA7014
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:43:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565A6BA7017
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FEC3AF571
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:43:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91D9F189753F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48572DEA70;
-	Sun, 28 Sep 2025 11:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838482DC334;
+	Sun, 28 Sep 2025 11:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hysO746P"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JIq1Lufp"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5914C3C38;
-	Sun, 28 Sep 2025 11:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EB0221DB1
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 11:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759059788; cv=none; b=ozvRSZqr1MoAspVc1kI56VCBBaMsyzgQ6Q6n+GW3D4sNzfPMuss13ENLE0JAIzJqq2BkycDNH5brbdpmCHL1f8trm4uBp7olKL/5hh97ZRn8FMRRtOXLaIBVy4+0w5/dGA0gon9chHA9FAAQeLZVo2E3nbnD2RXq045DpxJ6Vko=
+	t=1759059926; cv=none; b=Jaj6jYzKhaGYUxgNdfolo+X2mLM+MTBWkyYxx0evLRo8Ey/F1YEJh3nIcCIpyEjttyE+pjrf0VG++FDaRtxoIuYY8XlclP47XwnbpZQiN5s+Qz0AURZ4k/JxLbzNgF2wRufAi+VGy7ByuVqCwCdpnsE8EAzp/+XpzmvLWClXh1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759059788; c=relaxed/simple;
-	bh=MjFIAl9k9tX8maWLewrIXygg9RZGYKcf7XkiGNCxuJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FKCB2v7Rune2hqNGTRdJWfg1YZ0cywHTFu7dmIwhtlMZOSBsxaiWrxTT9cNyhpdWB954AZgJON7StP8wBiUOwbUGjo+YrlQkWI76QbyMKDcBfZ9LIGV7sslumUO/Dp8RTIYVncPM456sJ5/K4LYqw+0+BeCGuFp/U48gt66a6ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hysO746P; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1759059776; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=FbEJZn1VlIH4Up2Uzqcbz9YfXVxLvi1ttktMbwcIwhA=;
-	b=hysO746P5MhOK6F3nFGQjtUJePDRaWmtP47eRL9u7y+qdAmfBl+Z5IrmUo+Gd60YSnwQCUF8h0TmSiXbk/apbdWEgZx8dpaOrVsvU+npY9xZ8BxptAywDAG4X9ch61W7J1WXU3TCMEEAlNyWTzhxZbr8Lp4a2qCqre2GynLkY24=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WoyoQGt_1759059774 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sun, 28 Sep 2025 19:42:55 +0800
-Date: Sun, 28 Sep 2025 19:42:54 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Sidraya Jayagond <sidraya@linux.ibm.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	Mahanta Jambigi <mjambigi@linux.ibm.com>,
-	Tony Lu <tonylu@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/2] net/smc: make wr buffer count
- configurable
-Message-ID: <aNkfPqTyQxYTusKw@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20250921214440.325325-1-pasic@linux.ibm.com>
- <20250921214440.325325-2-pasic@linux.ibm.com>
- <7cc2df09-0230-40cb-ad4f-656b0d1d785b@redhat.com>
- <20250925132540.74091295.pasic@linux.ibm.com>
- <20250928005515.61a57542.pasic@linux.ibm.com>
- <aNiXQ_UfG9k-f9-n@linux.alibaba.com>
- <20250928103951.6464dfd3.pasic@linux.ibm.com>
+	s=arc-20240116; t=1759059926; c=relaxed/simple;
+	bh=dOaiC7hPdRdNRTiK3Li6yW2D0QVnTDFXT2W26tA/kaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NYXyc8wtkOjuVKkBBWO6hKGlPjgZbpi/0mneMwwNfDId0d4SwF96NES6pjxKNkxi66ZFrdkrgl/8N1vemeBQcBomdm4bDGPUGP9flb5Pczraa3CeDGtexWV07EEeKpYPAyVVtoaoWSOGqLxuAnlB7xhPOF2TnYUzNhm23gPw7X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JIq1Lufp; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759059920;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O81bmHO/De5uM7lSg4FU2b4XyEO6JopNzT32LkacqfA=;
+	b=JIq1LufpQuE8ZgyxbB42qgdDzEoiLyWslWoFZWiXX1nBvJoYOI0iUJTYCWWWrcG9DM8Z1y
+	SRk3pLH0BZTEabjcCsD8hKiuAdZbgQtS6dL7JSMtOHc4NHVtKe8iokFqA6bwqUDe7XQjB5
+	S8G3ATFaBFe2Sj1eyaBxrpoVqKvG9ec=
+From: Qi Zheng <qi.zheng@linux.dev>
+To: hannes@cmpxchg.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	ziy@nvidia.com,
+	harry.yoo@oracle.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	lance.yang@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v3 4/4] mm: thp: reparent the split queue during memcg offline
+Date: Sun, 28 Sep 2025 19:45:08 +0800
+Message-ID: <2ddd0c184829e65c5b3afa34e93599783e7af3d4.1759056506.git.zhengqi.arch@bytedance.com>
+In-Reply-To: <cover.1759056506.git.zhengqi.arch@bytedance.com>
+References: <cover.1759056506.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250928103951.6464dfd3.pasic@linux.ibm.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-09-28 10:39:51, Halil Pasic wrote:
->On Sun, 28 Sep 2025 10:02:43 +0800
->Dust Li <dust.li@linux.alibaba.com> wrote:
->
->> >Unfortunately I don't quite understand why qp_attr.cap.max_send_wr is 3
->> >times the number of send WR buffers we allocate. My understanding
->> >is that qp_attr.cap.max_send_wr is about the number of send WQEs.  
->> 
->> We have at most 2 RDMA Write for 1 RDMA send. So 3 times is necessary.
->> That is explained in the original comments. Maybe it's better to keep it.
->> 
->> ```
->> .cap = {
->>                 /* include unsolicited rdma_writes as well,
->>                  * there are max. 2 RDMA_WRITE per 1 WR_SEND
->>                  */
->
->But what are "the unsolicited" rdma_writes? I have heard of
->unsolicited receive, where the data is received without
->consuming a WR previously put on the RQ on the receiving end, but
->the concept of unsolicited rdma_writes eludes me completely.
+From: Qi Zheng <zhengqi.arch@bytedance.com>
 
-unsolicited RDMA Writes means those RDMA Writes won't generate
-CQEs on the local side. You can refer to:
-https://www.rdmamojo.com/2014/05/27/solicited-event/
+Similar to list_lru, the split queue is relatively independent and does
+not need to be reparented along with objcg and LRU folios (holding
+objcg lock and lru lock). So let's apply the same mechanism as list_lru
+to reparent the split queue separately when memcg is offine.
 
->
->I guess what you are trying to say, and what I understand is
->that we first put the payload into the RMB of the remote, which
->may require up 2 RDMA_WRITE operations, probably because we may
->cross the end (and start) of the array that hosts the circular
->buffer, and then we send a CDC message to update the cursor.
->
->For the latter a  ib_post_send() is used in smc_wr_tx_send()
->and AFAICT it consumes a WR from wr_tx_bufs. For the former
->we consume a single wr_tx_rdmas which and each wr_tx_rdmas
->has 2 WR allocated.
+This is also a preparation for reparenting LRU folios.
 
-Right.
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+---
+ include/linux/huge_mm.h |  4 ++++
+ mm/huge_memory.c        | 46 +++++++++++++++++++++++++++++++++++++++++
+ mm/memcontrol.c         |  1 +
+ 3 files changed, 51 insertions(+)
 
->
->And all those WRs need a WQE. So I guess now I do understand
->SMC_WR_BUF_CNT, but I find the comment still confusing like
->hell because of these unsolicited rdma_writes.
->
->Thank you for the explanation! It was indeed helpful! Let
->me try to come up with a better comment -- unless somebody
->manages to explain "unsolicited rdma_writes" to me.
->
->>         .max_send_wr = SMC_WR_BUF_CNT * 3,
->>         .max_recv_wr = SMC_WR_BUF_CNT * 3,
->>         .max_send_sge = SMC_IB_MAX_SEND_SGE,
->>         .max_recv_sge = lnk->wr_rx_sge_cnt,
->>         .max_inline_data = 0,
->> },
->> ```
->> 
->> >I assume that qp_attr.cap.max_send_wr == qp_attr.cap.max_recv_wr
->> >is not something we would want to preserve.  
->> 
->> IIUC, RDMA Write won't consume any RX wqe on the receive side, so I think
->> the .max_recv_wr can be SMC_WR_BUF_CNT if we don't use RDMA_WRITE_IMM.
->
->Maybe we don't want to assume somebody else (another implementation)
->would not use immediate data. I'm not sure. But I don't quite understand
->the why the relationship between the send and the receive side either.
-
-I missed something here. I sent an other email right after this to
-explain my thoughts here:
-
-    I kept thinking about this a bit more, and I realized that max_recv_wr
-    should be larger than SMC_WR_BUF_CNT.
-
-    Since receive WQEs are posted in a softirq context, their posting may be
-    delayed. Meanwhile, the sender might already have received the TX
-    completion (CQE) and continue sending new messages. In this case, if the
-    receiver’s post_recv() (i.e., posting of RX WQEs) is delayed, an RNR
-    (Receiver Not Ready) can easily occur.
-
-Best regards,
-Dust
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index f327d62fc9852..0c211dcbb0ec1 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -417,6 +417,9 @@ static inline int split_huge_page(struct page *page)
+ 	return split_huge_page_to_list_to_order(page, NULL, ret);
+ }
+ void deferred_split_folio(struct folio *folio, bool partially_mapped);
++#ifdef CONFIG_MEMCG
++void reparent_deferred_split_queue(struct mem_cgroup *memcg);
++#endif
+ 
+ void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 		unsigned long address, bool freeze);
+@@ -611,6 +614,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
+ }
+ 
+ static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
++static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
+ #define split_huge_pmd(__vma, __pmd, __address)	\
+ 	do { } while (0)
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index bb32091e3133e..5fc0caca71de0 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1094,9 +1094,22 @@ static struct deferred_split *folio_split_queue_lock(struct folio *folio)
+ 	struct deferred_split *queue;
+ 
+ 	memcg = folio_memcg(folio);
++retry:
+ 	queue = memcg ? &memcg->deferred_split_queue :
+ 			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
+ 	spin_lock(&queue->split_queue_lock);
++	/*
++	 * Notice:
++	 * 1. The memcg could be NULL if cgroup_disable=memory is set.
++	 * 2. There is a period between setting CSS_DYING and reparenting
++	 *    deferred split queue, and during this period the THPs in the
++	 *    deferred split queue will be hidden from the shrinker side.
++	 */
++	if (unlikely(memcg && css_is_dying(&memcg->css))) {
++		spin_unlock(&queue->split_queue_lock);
++		memcg = parent_mem_cgroup(memcg);
++		goto retry;
++	}
+ 
+ 	return queue;
+ }
+@@ -1108,9 +1121,15 @@ folio_split_queue_lock_irqsave(struct folio *folio, unsigned long *flags)
+ 	struct deferred_split *queue;
+ 
+ 	memcg = folio_memcg(folio);
++retry:
+ 	queue = memcg ? &memcg->deferred_split_queue :
+ 			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
+ 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
++	if (unlikely(memcg && css_is_dying(&memcg->css))) {
++		spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
++		memcg = parent_mem_cgroup(memcg);
++		goto retry;
++	}
+ 
+ 	return queue;
+ }
+@@ -4275,6 +4294,33 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 	return split;
+ }
+ 
++#ifdef CONFIG_MEMCG
++void reparent_deferred_split_queue(struct mem_cgroup *memcg)
++{
++	struct mem_cgroup *parent = parent_mem_cgroup(memcg);
++	struct deferred_split *ds_queue = &memcg->deferred_split_queue;
++	struct deferred_split *parent_ds_queue = &parent->deferred_split_queue;
++	int nid;
++
++	spin_lock_irq(&ds_queue->split_queue_lock);
++	spin_lock_nested(&parent_ds_queue->split_queue_lock, SINGLE_DEPTH_NESTING);
++
++	if (!ds_queue->split_queue_len)
++		goto unlock;
++
++	list_splice_tail_init(&ds_queue->split_queue, &parent_ds_queue->split_queue);
++	parent_ds_queue->split_queue_len += ds_queue->split_queue_len;
++	ds_queue->split_queue_len = 0;
++
++	for_each_node(nid)
++		set_shrinker_bit(parent, nid, shrinker_id(deferred_split_shrinker));
++
++unlock:
++	spin_unlock(&parent_ds_queue->split_queue_lock);
++	spin_unlock_irq(&ds_queue->split_queue_lock);
++}
++#endif
++
+ #ifdef CONFIG_DEBUG_FS
+ static void split_huge_pages_all(void)
+ {
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e090f29eb03bd..d03da72e7585d 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3887,6 +3887,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+ 	zswap_memcg_offline_cleanup(memcg);
+ 
+ 	memcg_offline_kmem(memcg);
++	reparent_deferred_split_queue(memcg);
+ 	reparent_shrinker_deferred(memcg);
+ 	wb_memcg_offline(memcg);
+ 	lru_gen_offline_memcg(memcg);
+-- 
+2.20.1
 
 
