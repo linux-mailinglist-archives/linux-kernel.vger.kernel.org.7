@@ -1,111 +1,218 @@
-Return-Path: <linux-kernel+bounces-835422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD23FBA70AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:00:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F180BA70B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5DE73A6EED
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE081897D72
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4022DCF7D;
-	Sun, 28 Sep 2025 13:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b="ni/gzsPD"
-Received: from smtpfb1-g21.free.fr (smtpfb1-g21.free.fr [212.27.42.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F64C147C9B;
-	Sun, 28 Sep 2025 13:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4FD2DA742;
+	Sun, 28 Sep 2025 13:09:24 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8BE19CC0C;
+	Sun, 28 Sep 2025 13:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759064416; cv=none; b=Op2NIe8b5kcqfYbdklH5UmkY0Qg618eAGD6AkwRcKzOWB3Gq5sm/GZSqbuePvyEg8bmNDIetE1Phqruvx7ma+rkualurGoBu6I8l/yoWFsg0P08KEOKf4jE5XqSD4GJy5Bx0oiU1HA6j6wK36DDiCjbVTSYgNye+hmz+lWbz+04=
+	t=1759064964; cv=none; b=ZXGphX7bA12w8t4sw/fsAGMsRjFs8GN5toLk7YHJnXM8Z7QYr9pXLk1enCVJOYaQluq7hVN8Q0COokhBbNWuT7nPe2wNpTBZRxgObU2vmHs65V6qnbk0R1u3wx3S0IXzHf2p0L5jS+reH1Kg0ZT+qOz8r24eZ+vTKAiAdXPpxPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759064416; c=relaxed/simple;
-	bh=K20e9g5tQsgiW0VQ85uT1zIAazLLqmDoSJet8HtycMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e4JGwLXbEwlsWf1NPcXU+NFYHujmD7zPjyDklwgXmXw8pcqGoBSChXLBUgNv27Yd91s+m4XYpXY4dS88uMTfYYe7JmTn5feBKDDIZvATQbdlHfaYU2gL5FrKGRBZtxH43U3BcQAOeogRFuzRIcirqr1GwyadK3AdwGvX0y2Sv6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b=ni/gzsPD; arc=none smtp.client-ip=212.27.42.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
-Received: from smtp4-g21.free.fr (smtp4-g21.free.fr [212.27.42.4])
-	by smtpfb1-g21.free.fr (Postfix) with ESMTP id A48A0DF8DD0;
-	Sun, 28 Sep 2025 15:00:03 +0200 (CEST)
-Received: from [44.168.19.11] (unknown [86.195.82.193])
-	(Authenticated sender: bernard.pidoux@free.fr)
-	by smtp4-g21.free.fr (Postfix) with ESMTPSA id BD78719F57E;
-	Sun, 28 Sep 2025 14:59:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-	s=smtp-20201208; t=1759064396;
-	bh=K20e9g5tQsgiW0VQ85uT1zIAazLLqmDoSJet8HtycMY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ni/gzsPDKhfYMdvjaLjLpP53nG58aqF6P18Mco9PVqgNODa7hpa/5gG47NE++as11
-	 0RHuotcGHhKJksXXMtUNPlQQZpN6bIBXwF4+tTjx23eFPYvIStX9dKT2nEICwrcalF
-	 tUXclYQSUa03g9uWJ9UB9FzZr1nYKAlPvR54myeG3rs973dxMbTvqB8g3cY1LKwkaa
-	 v+Tnhxk1RHZpCKNmV8Gk/NyW+S4z8DZXKhCenXiDbl/CH4IRWbe/cFq5SASaotFTkf
-	 TceIWgiIl1YyCEF0pc0rsY6ISrK8hfjj6CHU7EhEtA+9XgVMlJRqisnty/7z7WpagQ
-	 4Zwa4YWA+mAIw==
-Message-ID: <02b4fa63-cf06-4138-8ae2-6ada09362706@free.fr>
-Date: Sun, 28 Sep 2025 14:59:47 +0200
+	s=arc-20240116; t=1759064964; c=relaxed/simple;
+	bh=9X05Q5WOyFJ6C8vva3xdsUVAL5uBvC8KUMgCArpU4PU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q37TJ1Xp3zGmBopHgrEgBs6leOIo6qSdMTDXhL0sA2iKwSmMlexGg7qVh9yYKyuNlAMH3s4wp+4I6LI0pMQIAykZtUlpCyaI2FpGjaMYj19Em2afYCPYEq8ntM3BGxfs/RPd3nNncE3Oi1tZyDhQ0J2r/Z9hDrouecUXWoxecWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 52d291589c6c11f08b9f7d2eb6caa7cf-20250928
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:8c7043a5-832c-4dac-8629-7b0b0d7af0f1,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:1fd0f28be4858f680ad5c64a2f0b3b28,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
+	,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 52d291589c6c11f08b9f7d2eb6caa7cf-20250928
+Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <pengyu@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 143251284; Sun, 28 Sep 2025 21:09:10 +0800
+From: pengyu <pengyu@kylinos.cn>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: legion@kernel.org,
+	mingo@kernel.org,
+	myrrhperiwinkle@qtmlabs.xyz,
+	tglx@linutronix.de,
+	dmitry.torokhov@gmail.com,
+	changlianzhi@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	pengyu <pengyu@kylinos.cn>,
+	syzbot+79c403850e6816dc39cf@syzkaller.appspotmail.com
+Subject: [PATCH] tty/vt: Fix possible deadlock in input_inject_event
+Date: Sun, 28 Sep 2025 21:08:19 +0800
+Message-Id: <20250928130819.383808-1-pengyu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/rose: Fix uninitialized values in rose_add_node
-To: Eric Dumazet <edumazet@google.com>, rodgepritesh@gmail.com
-Cc: netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- kuba@kernel.org, pabeni@redhat.com, linux-hams@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250912212216.66338-1-rodgepritesh@gmail.com>
- <CANn89i+6naPhD_XJ-qjQ8mRGN1aQdSzMy1446d+0iOk_UjpMOw@mail.gmail.com>
-Content-Language: en-US
-From: Bernard Pidoux <bernard.pidoux@free.fr>
-In-Reply-To: <CANn89i+6naPhD_XJ-qjQ8mRGN1aQdSzMy1446d+0iOk_UjpMOw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+syzkaller testing revealed a potential deadlock involving keyboard 
+handling:
 
-ROSE protocole is extensively used for level 2 or level 3 networking 
-packet AX25 frames through neighbours and digipeaters stations in order 
-to exchange data or messages by radio or Internet links.
+CPU0                       CPU1                      CPU2
+----                       ----                      ----
+read_lock(tasklist_lock);  evdev_write
+                          input_inject_event     write_lock(tasklist_lock);
+                         lock(&dev->event_lock);
+                        read_lock(tasklist_lock);
+<Interrupt>
+kbd_bh() / kd_sound_helper()
+input_inject_event
+lock(&dev->event_lock); // Deadlock risk
 
-nodes and routes are most often managed by FPAC suite of applications.
+The deadlock occurs because:
+1. Both kbd_bh and kd_sound_helper run in interrupt context
+2. tasklist_lock is interrupt-unsafe
+3. When evdev_write holds both dev->event_lock and tasklist_lock,
+   interrupt context attempts to acquire dev->event_lock create deadlock 
+   risks
 
-fpad sets up local nodes and adjacent neighbours using fpac.conf, 
-fpac.nodes and fpac.routes configuration files.
+Convert both kbd_bh and kd_sound_helper to use workqueues. This moves
+input_inject_event execution to process context, where it's safe to 
+acquire locks that may be held by code using interrupt-unsafe locks.
 
-Then at any time it is possible to add or delete rose nodes from the 
-list of previously defined nodes to help routing and connections using 
-ax25tools application rsparms:
+Reported-by: syzbot+79c403850e6816dc39cf@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/66f6c8ce.050a0220.46d20.001c.GAE@google.com/T/#u
+Fixes: fb09d0ac0772 ("tty: Fix the keyboard led light display problem")
 
-# rsparms  -nodes list
-2080175520/0010 -> ax0    F6BVP-9
-2080175526/0010 -> ax0    F6BVP-11
-2080835201/0010 -> ???    RSLOOP-0
+Signed-off-by: pengyu <pengyu@kylinos.cn>
+---
+ drivers/tty/vt/keyboard.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-# rsparms  -nodes add 2080444501/0 axudp F3KT-11 F6BVP-9
-
-# rsparms  -nodes list
-2080175520/0010 -> ax0    F6BVP-9
-2080175526/0010 -> ax0    F6BVP-11
-2080835201/0010 -> ???    RSLOOP-0
-          */0000 -> ax0    F3KT-11   via F6BVP-9
-
-# rsparms  -nodes d 2080444501/0 axudp F3KT-11 F6BVP-9
-
-# rsparms  -nodes list
-2080175520/0010 -> ax0    F6BVP-9
-2080175526/0010 -> ax0    F6BVP-11
-2080835201/0010 -> ???    RSLOOP-0
-
-Up to now no issues have been encountered during add or delete nodes 
-process.
-
-Bernard Pidoux, F6BVP / AI7BG
-
-https://github.com/ve7fet/linuxax25
+diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
+index ee1d9c448c7e..eb2afc86b502 100644
+--- a/drivers/tty/vt/keyboard.c
++++ b/drivers/tty/vt/keyboard.c
+@@ -131,8 +131,8 @@ static const unsigned char max_vals[] = {
+ 
+ static const int NR_TYPES = ARRAY_SIZE(max_vals);
+ 
+-static void kbd_bh(struct tasklet_struct *unused);
+-static DECLARE_TASKLET_DISABLED(keyboard_tasklet, kbd_bh);
++static void kbd_bh(struct work_struct *unused);
++static DECLARE_WORK(keyboard_work, kbd_bh);
+ 
+ static struct input_handler kbd_handler;
+ static DEFINE_SPINLOCK(kbd_event_lock);
+@@ -264,23 +264,23 @@ static int kd_sound_helper(struct input_handle *handle, void *data)
+ 	return 0;
+ }
+ 
+-static void kd_nosound(struct timer_list *unused)
++static void kd_nosound(struct work_struct *unused)
+ {
+ 	static unsigned int zero;
+ 
+ 	input_handler_for_each_handle(&kbd_handler, &zero, kd_sound_helper);
+ }
+ 
+-static DEFINE_TIMER(kd_mksound_timer, kd_nosound);
++static DECLARE_DELAYED_WORK(kd_mksound_worker, kd_nosound);
+ 
+ void kd_mksound(unsigned int hz, unsigned int ticks)
+ {
+-	timer_delete_sync(&kd_mksound_timer);
++	cancel_delayed_work_sync(&kd_mksound_worker);
+ 
+ 	input_handler_for_each_handle(&kbd_handler, &hz, kd_sound_helper);
+ 
+ 	if (hz && ticks)
+-		mod_timer(&kd_mksound_timer, jiffies + ticks);
++		schedule_delayed_work(&kd_mksound_worker, ticks);
+ }
+ EXPORT_SYMBOL(kd_mksound);
+ 
+@@ -390,7 +390,7 @@ static void put_queue_utf8(struct vc_data *vc, u32 value)
+ /* FIXME: review locking for vt.c callers */
+ static void set_leds(void)
+ {
+-	tasklet_schedule(&keyboard_tasklet);
++	schedule_work(&keyboard_work);
+ }
+ 
+ /*
+@@ -1024,10 +1024,10 @@ static int kbd_led_trigger_activate(struct led_classdev *cdev)
+ 	struct kbd_led_trigger *trigger =
+ 		container_of(cdev->trigger, struct kbd_led_trigger, trigger);
+ 
+-	tasklet_disable(&keyboard_tasklet);
++	cancel_work_sync(&keyboard_work);
+ 	if (ledstate != -1U)
+ 		led_set_brightness(cdev, ledstate & trigger->mask ? LED_FULL : LED_OFF);
+-	tasklet_enable(&keyboard_tasklet);
++	enable_work(&keyboard_work);
+ 
+ 	return 0;
+ }
+@@ -1243,7 +1243,7 @@ void vt_kbd_con_stop(unsigned int console)
+  * handle the scenario when keyboard handler is not registered yet
+  * but we already getting updates from the VT to update led state.
+  */
+-static void kbd_bh(struct tasklet_struct *unused)
++static void kbd_bh(struct work_struct *unused)
+ {
+ 	unsigned int leds;
+ 	unsigned long flags;
+@@ -1535,7 +1535,7 @@ static void kbd_event(struct input_handle *handle, unsigned int event_type,
+ 
+ 	spin_unlock(&kbd_event_lock);
+ 
+-	tasklet_schedule(&keyboard_tasklet);
++	schedule_work(&keyboard_work);
+ 	do_poke_blanked_console = 1;
+ 	schedule_console_callback();
+ }
+@@ -1607,12 +1607,12 @@ static void kbd_disconnect(struct input_handle *handle)
+  */
+ static void kbd_start(struct input_handle *handle)
+ {
+-	tasklet_disable(&keyboard_tasklet);
++	cancel_work_sync(&keyboard_work);
+ 
+ 	if (ledstate != -1U)
+ 		kbd_update_leds_helper(handle, &ledstate);
+ 
+-	tasklet_enable(&keyboard_tasklet);
++	enable_work(&keyboard_work);
+ }
+ 
+ static const struct input_device_id kbd_ids[] = {
+@@ -1662,8 +1662,8 @@ int __init kbd_init(void)
+ 	if (error)
+ 		return error;
+ 
+-	tasklet_enable(&keyboard_tasklet);
+-	tasklet_schedule(&keyboard_tasklet);
++	enable_work(&keyboard_work);
++	schedule_work(&keyboard_work);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
 
 
