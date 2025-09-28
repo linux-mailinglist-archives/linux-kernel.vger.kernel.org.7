@@ -1,644 +1,340 @@
-Return-Path: <linux-kernel+bounces-835352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCB9BA6D78
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4318DBA6DA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 11:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D7F83BCE66
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB203BE2B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFABA2C237D;
-	Sun, 28 Sep 2025 09:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C723F2D9487;
+	Sun, 28 Sep 2025 09:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="SQTtule2"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="m15ZrRW2"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazolkn19012056.outbound.protection.outlook.com [52.103.66.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF32D8375;
-	Sun, 28 Sep 2025 09:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759051787; cv=none; b=JS8EzaGbcF9pOpAMMIQozrJGWrTCElNeNqGVT/hAJVnahl6iZNsKAYs6qkDZwaV4XDBujGrBFzcEgvAgx25lI/QACk1vJgaLaaFN3/EFmObgf5LhQlOo+YXrYmP8BKMNX4OWt+1AsckYZy+URKcI+QHdUdUZRZ/aX7Ko0WxxN1g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759051787; c=relaxed/simple;
-	bh=OznBzjQjcSgXPvDVnbFVJJBVSxspxhrLW3kKRpCe8dI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f4b+b2qx8wBlEMipWilGwqwOrmknwi5drsC0SgJ6QWm79Yv18lAsCysNLQvMVBtFX/UC2d+RSfcyTbXBJQN/zptCcCTvl9cw5ec3WrxdKybQIxceP/aoaUIno/Zt7vv2Xk55Bk/0iFCd9Lougx79AtrgSfIB5zWsImzrTby40W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=SQTtule2; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=CrSbXUJZtjpQ7DMiDYvo+MQXFgpQW42bD9GpvO+4YdA=;
-	b=SQTtule2WjhKUqpb2cdqYIlGE/CAnRQ3jrR9g5c4bdWfc5fBR05V6TtdCJvo5g
-	YlBthx2iu2azTv5P57IVw9LRSZ5WBxAJsd1g+mK9pqYgwxXSKM2VpyO+ZymTR47u
-	uoF74HyeG+8e/tFqnNzqiEeXeuATlYoV2dMX8xz15g71A=
-Received: from mps-HP-EliteBook-840-G3.monolithicpower.com (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgA3ZdnP_9hobNCIBQ--.38595S3;
-	Sun, 28 Sep 2025 17:28:53 +0800 (CST)
-From: wenswang@yeah.net
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Wensheng Wang <wenswang@yeah.net>
-Subject: [PATCH v3 2/2] hwmon: add MP2925 and MP2929 driver
-Date: Sun, 28 Sep 2025 17:28:45 +0800
-Message-Id: <20250928092845.1394718-2-wenswang@yeah.net>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250928092845.1394718-1-wenswang@yeah.net>
-References: <20250928092655.1394429-1-wenswang@yeah.net>
- <20250928092845.1394718-1-wenswang@yeah.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53A72C21DD;
+	Sun, 28 Sep 2025 09:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759051845; cv=fail; b=uP64n99jTuz8xw5MrgzFZs6QYI6jD+arsJe+jho1351YbPzbfHXDyxg+PxPSLjEJ7C60fEF/pXHbg+fQtp+S1yZqIhgHzf26brE8iLbNSE1KEDFAkVu/0coLSz52OC/M/z4PCyBHY+uFj8DXNyVDoDH54/lQaXY+hFhlIPXWWY8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759051845; c=relaxed/simple;
+	bh=2wMFseewNWA8Yg2lRDrytXUzQsYg2EbA5JdVHIgxhVw=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ERspcMlveqFqj5zBTKR49uHRiZgGjLAHEMnrnaym0t+6V9H4g/REv2Z4RYwZCuMTKLa6ArH1HnNNTqJ+mOwaNt9/sVNyZWrEvsm353LbS7ibCoAJ35hR2KhoFWSdDGlwwG14BWYEONLsMv73UW4taWYGcVkt5t8xlSICp56Rj/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=m15ZrRW2; arc=fail smtp.client-ip=52.103.66.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V9xBGoKT19G5/Pp8XnFJSDJXHZQKGWaGSYoJZ0kWZI6XGW/G4NoQ9u1deldg66oTVtsXaVpjE0bsJbabEolv/qO+ayfGoKloUYWLMkV+zq3OzTK1kz9joosFjWHqNDzD3Th/QZ8A5N2qJ5xfD/AlQjdxW9udzs7r3NqCNxojq/5X45F7G0VvgqQq5FVVtYomf0DdNXFKNAVkZH5s+1Him9mhBvX5AIsuHcl2IsGMZZaofFHsMs2OYZK9K8I6Qkx8t51QrM9059GSevk2ceB9RjOpyd280aNLC89pw9e/IwcA/JVuEJXbBOmDeHWe+MUEQmMWRG1jW3+JryG4floz/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TXE45bbZ2O+3AwlteHlZGra4JghQ889bmZ9HPLXlJO8=;
+ b=GdZFhfnTUm5SeBhQEso1NYI3DxdTkL/S9sgWM2ZBDt05sV0YhhYl7fgMZY80QAlOv9nzjGtZA9uE9GFuZ4EuczkJ27bF1020Jkj7vgOxHmXsOGcO07m597X4E7EVqD2cnT7FXCfz10VR3Pm9aEOzGXyaFYbnMfdP86R0uT8UEG+Dp6EWBqIe9UD25jEw131WOt89QtkREcSXEzguzjOPa31hkcLJVYX7TwEwKKlt5HyUuRrqAsecjrwm5JUb5kxvwBSp50zGkCF/mDbaM1r/0/6mwn5A9o9MP5c9Wksco1Ot9G/GH2U+UM7GzneEoGTYG/lxjgDL7Moo0WavKRPcQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TXE45bbZ2O+3AwlteHlZGra4JghQ889bmZ9HPLXlJO8=;
+ b=m15ZrRW2rkgO1h27kK9ujZS7CVxSdBZPt0uUJcrzWBM4najI6CtB0ODGZ62ZZuvGlQFisLonepXDHIzb4Kzr6GlzOL3hXqwrKZmTejjNMLzQiTMGYjvn4I3OdHy0/1bDnz44IvEn2xhLYjLxvkzK75rXWFS+/xKF4MslN+HDbhZOOA3QaOmURFHZHZSspXegueBNv+Cpx/ESZPWxSYEntDHQN+DPCfj5yQM2gErguHonx2exy7zvqkJAUIXYHJ0AFEfiz5X1L1pr26y5rBRaJdJPRZZfk4jmHOKUC3VL0c3Ath4noXLE3rZYGV7nXu9u2nz9rTTjuo6romJs27iOWA==
+Received: from TY1PPFCDFFFA68A.apcprd02.prod.outlook.com (2603:1096:408::966)
+ by SI1PPF7CE38F105.apcprd02.prod.outlook.com (2603:1096:f:fff6::759) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Sun, 28 Sep
+ 2025 09:30:33 +0000
+Received: from TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+ ([fe80::209a:b4cd:540:c5da]) by TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+ ([fe80::209a:b4cd:540:c5da%6]) with mapi id 15.20.9094.021; Sun, 28 Sep 2025
+ 09:30:33 +0000
+Message-ID:
+ <TY1PPFCDFFFA68A1C49C083357FF49575AEF318A@TY1PPFCDFFFA68A.apcprd02.prod.outlook.com>
+Date: Sun, 28 Sep 2025 17:30:26 +0800
+User-Agent: Mozilla Thunderbird
+From: "Nutty.Liu" <nutty.liu@hotmail.com>
+Subject: Re: [RFC PATCH v2 04/18] iommu/riscv: Add IRQ domain for interrupt
+ remapping
+To: Andrew Jones <ajones@ventanamicro.com>, iommu@lists.linux.dev,
+ kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: jgg@nvidia.com, zong.li@sifive.com, tjeznach@rivosinc.com,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, anup@brainfault.org,
+ atish.patra@linux.dev, tglx@linutronix.de, alex.williamson@redhat.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-24-ajones@ventanamicro.com>
+Content-Language: en-US
+In-Reply-To: <20250920203851.2205115-24-ajones@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR04CA0018.apcprd04.prod.outlook.com
+ (2603:1096:4:197::9) To TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+ (2603:1096:408::966)
+X-Microsoft-Original-Message-ID:
+ <0be8b7c6-bfa0-4be4-a3ce-c819882bea77@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Ms8vCgA3ZdnP_9hobNCIBQ--.38595S3
-X-Coremail-Antispam: 1Uf129KBjvAXoW3tw1DCFWkJr1rCrWkXFW8Zwb_yoW8GF1ruo
-	Z3uFWrZw1DJr18urZYkF4IgF97Xa48CrWFy3W2yFs8WFy3trn5ta47Zw4ag3W7tr4rXw48
-	u3y8A3s3tFW7Zr97n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUODGOUUUUU
-X-CM-SenderInfo: 5zhq24xdqjq5hhdkh0dhw/1tbiIBWFKmjY-9ULhAAA3P
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY1PPFCDFFFA68A:EE_|SI1PPF7CE38F105:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fb86983-5042-4bea-6e60-08ddfe71ac30
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|41001999006|23021999003|8060799015|12121999013|6090799003|5072599009|19110799012|461199028|37102599003|15080799012|3412199025|40105399003|440099028|19111999003|12091999003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YWRNTmJuTk5PdzJhc1pIMm1MN0cwTFZxT1NUVkFPTy9HNjVKajhwMUpLa21Y?=
+ =?utf-8?B?YlNXWGhOZEtldnQ1TTFWV1h1aHQxQTR5U2s2cldWMGl0a2hsN3ljQXc3UlV4?=
+ =?utf-8?B?bkx5a0hUVHdmWGE2Q3lBaEEwM1ozUXdXbGlWNG9aaVpmL01VMnBuOG1kNzJ2?=
+ =?utf-8?B?USs1dkl1ajNYRDdHRFJydXBYcEZ2RFNkdUNhMXpmTzBhT0sxQWhoaXlheHJz?=
+ =?utf-8?B?c1JxNDVES1NCR3dQNVFwTHo2cVVkbkU3MGtGckZOVEhwbWU3ODhLaXR0cTZt?=
+ =?utf-8?B?ZkMvSTQ2NnljcVNhTDZoZVZibW9tNHk2TDN2Z0VONDZNODlyRm5xQjFlaGJC?=
+ =?utf-8?B?dzhGQ1ZEUkEvYmxoRkhXaHRDM0hpcTdocGl0MWJtVHpqdFFmWVJsWlh1Mnh5?=
+ =?utf-8?B?VXBjREVPQkFOWlZ4bjB5UlQzK0IvVjYwSUR5R0tmQmM4aEhKY2J2U1JrbFZ3?=
+ =?utf-8?B?bXY5Z1c3dE5iK0kxY1hVTjRnZnZqT3RnRW9hRmJzbzNpWVZoVXVwT0dFcnFN?=
+ =?utf-8?B?YkFkZVVuRTdtVFlObXRaMGJiamxiWlRPZXZrc3FPaXRxWThhS2RYMmFQQkVk?=
+ =?utf-8?B?Ynl5SCtEVUpadGM2QXNZQU9KVzlsNzM1c2ZpOFZ5dWtUVzRoL3I2UjI4bkF1?=
+ =?utf-8?B?TzhySTRncEh5eE5SNGVENW5IRWJBQ0NmK1g3OE5yTDNGSmp4K0pFMWg3Y1Vi?=
+ =?utf-8?B?bUpxZjN5dW1NbDlBN3kzNlloNklTSndOT3pLRW5kbFhIRk96U1daOGd5NU1k?=
+ =?utf-8?B?UEVHL2J2dzc0TWZJR2pUdVppN2I5dS9GOFRaUFBHSmJXN2F3R2NWMlZQZWJa?=
+ =?utf-8?B?bW4zMC90YmI2eDR6L2h6UzlWY2REYmhHSmJ0b2ZPZVpHRFloT1lwcGVGL2ZM?=
+ =?utf-8?B?RkZYN2hkK0ZOMzRyeUNVMndXblhrNlJwdjNJWlBWM3dTQ0hWZXJxUHRyQ096?=
+ =?utf-8?B?UFVyVFlua1p2UXFCS01ucENMVFNaMmZaVWFIc1VHdmoxd1E2UmpDR3BjOXQr?=
+ =?utf-8?B?cnZPYVllQVRrSTNOT2FnejRGazZOK2FLVFdpZjhvUXBwcHQzcWhtejJwdTB4?=
+ =?utf-8?B?UUNTbHlUWm9rZlhueXZDR2w5bW1DWWU4aG45MktyUlBtYkxzMHYrMzJYQWVF?=
+ =?utf-8?B?OFdFL2hqd3doSWNhUHR0SjRDU2F6VlVyWHdLVWZ2eXZxdGpKenNSOSsyTHJ6?=
+ =?utf-8?B?ZXAzWE15SlZDOGtBeWdMMmJjbjZyL2ZVcnN2OGw1QkRLRDh5VWQzNUlscDFy?=
+ =?utf-8?B?aDVEK2x5RDN0SWJPaDZ3TWplbXdCaTZkTXQrRGRYRHNQWnlVWTd0NHY5OUFh?=
+ =?utf-8?B?cDRIVFhTSVdVazF2YTIzNXlwZnhsUVBoc0hjdDd6eWpWSkhpYjFwSTdvL1Vi?=
+ =?utf-8?B?TXVwQUZxL05haHpRRFhYdXc4Qk5GSEJROWpQMTJNS1ZJTE1WWWdWOVZEY2Jz?=
+ =?utf-8?B?bFQ3WlBNSDhDOGhBNFBNMkZCb0htcTF0bFJOQy96SnkvVHMzTERMTHVHVTc1?=
+ =?utf-8?B?Y2dPWXJFYThOam15Sk1XUTZjdGFGMkwrYTl1Rkx1YTNoc3JoNXVvRkdFWTcv?=
+ =?utf-8?B?UFF5S1FvRnJoaldSZ3liaENYM2I2VC9SYmVNcWZwTDRiSExrcmtDZVEyaFlp?=
+ =?utf-8?B?ejZsSCtreFI2UERqK3ArUEgxeW5iRlNqQWltMGZraUJJMXVVOXNtOTl1blI1?=
+ =?utf-8?B?Qi9nRDh5d0t6ZCtORDFmRjI2Smd5NjVsMnhpM0pheGdzdXpmQnNCWjA1UXA2?=
+ =?utf-8?B?ZXdPN1JxcGQ1VDUyeS9jbXd4UUNEM0YweHhSZldDWW9XT3JYYWxCRERueFl2?=
+ =?utf-8?B?d090MDk3amNRQkhESDg3dz09?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SFpzWExIdUtsK2lmNFNJS0hRc01wb1lvVTE5c3pUQTJmSllreExrSDEvTDZi?=
+ =?utf-8?B?UHRjTTZvcVBFcEllRnVIOC8vSWpzZG1LYUxCTkhNS0FxenI4Q1hxVXFHMjJR?=
+ =?utf-8?B?cFNTSTJkT3dQUUJNVFozZHp0THVjWWlRUWdlazJMQ2RsYjBNbUw4WGVkSDFD?=
+ =?utf-8?B?K29nQ1JxSFYySFNqdk0xVFJhSmUwS05zREdRUC93WVlPYXg3NzY2czlqaVpH?=
+ =?utf-8?B?aHFDeXJDM2E5dUErdWFHeFVTT0d1T1Nqb2d2T09jYWEzK3N5K1ovZU9JOXVl?=
+ =?utf-8?B?S0VGc0huZ2l2ajJISUh6ZjZBMm9qVmlrZUgrcnBQVkMyZkNMVW4xc0Zqak1v?=
+ =?utf-8?B?MloxQWdHOXFSdXNLb0lMQnJGUTJUQ2ZwSU9wNWhUSzJINjNkVE93dmw2UkpC?=
+ =?utf-8?B?YnZPTnhiM1U2eTJWR2FScU9rK25CM2UveCtzRTNweSsrMnFkZFRUckozNm5F?=
+ =?utf-8?B?dHMwMzl5TGtTL3lIR1Q4eHpnOVdSZ1lpWDFGTFhDUitRbkhQVnZ1c3dMRndS?=
+ =?utf-8?B?ejlIR1p6VVpNWnY5YmlVem5YMFZ5cjJoMWtrMm5QeGJTampLSWtBUlpjcEky?=
+ =?utf-8?B?YzFUTmtLVnpyT2ZNaDBBVHRUS3BxQjRVTlZxV0NHMkpKUzBGZzRQL0drbk1R?=
+ =?utf-8?B?eTdKMzZ4NXl5akxSbG1WdTZvSVJjbHFUZTRBQ2wxNnNIV3F2Vm1sd1pmcFg2?=
+ =?utf-8?B?ZVpjRjRLYzFabkVBRnVZM2RaTndqN2JJeG1haCtmek05SWRiaDZYYUxrbG95?=
+ =?utf-8?B?cmYvL3FDTVlCWEdXSnkzazMwb2tDMnJscDVEc2FYT3grSXpvR2tUb001T1Yx?=
+ =?utf-8?B?YkRIOWdBZnpqaXBESVh1WlA3SlNPOFd4UGdOSWdaaDJONmRlNjhnUmhiTkZj?=
+ =?utf-8?B?ZmFPbmRUU3dnZVlacUg4b3JlN2IwRFRhTmxjbmVvOHRmaURCSEhuYm1mblk4?=
+ =?utf-8?B?UVhLaTZldnFGSUl4a1VTdW8vRWFwaGF2aGJDSm1adklaNFJVMXZOeVluM2FP?=
+ =?utf-8?B?clNWUVk3OWE2Tk92Rjc2dW9PbG1IN0xpaGNabXdMWk01WU0zNjZVRWtwOXk5?=
+ =?utf-8?B?MXBVRVRhTzVxbmdCbnJmdForNUdzd3ErRGptRkxxa3Rya2tucVZNMi9NWFRS?=
+ =?utf-8?B?R0FhOXlvMDJVeVYvWm5QdWdHVjM5VXMwekhsbEY0NU1rRTFhQ0ppL1dIbXMz?=
+ =?utf-8?B?QXVMWUoxNlF2L3F6Z2NtV1hTT3Vmb0MrZDI4aFk1UFZFZ3ZVWGFJZ0llZ0tD?=
+ =?utf-8?B?UHJEYUkwWlF1M2tXRE92MHNvckxTNTZGUWlIbEV6ZnFBSEV5Wk1vLzUyQStn?=
+ =?utf-8?B?dDJ4ZDdydnQzVWRuWU15V1hKZzN3ZUZOSHBialBTSUhjOFc3L1BkLzZNRUV1?=
+ =?utf-8?B?dHhvOEo3TzF4a3Bzd0NKTWN6VTVGL1pFd1lVeDlmN0hlNkM0UlJWL3EyKzBi?=
+ =?utf-8?B?RTA5VDFhc2MwdW5vVUNYc215TkdGeVVTTmgyMlI2aE9qVnZwS2FURjF2U1Ew?=
+ =?utf-8?B?Z3RwYmx1bWxPOGsvRG5iTFYxMmFRMHAyMnBlcE9vQ2hkNUpIME9lTnA1NUE5?=
+ =?utf-8?B?YkVWbkIzZTFoRG5WL2x3cVJaUnJrTGNDakN6QW4rWVhwcTk4QU9nRFRCMDZa?=
+ =?utf-8?Q?VfKaoyYl/rYNYzmOJg4xoB3MS9CLWYSo9FvbpDbN1nF0=3D?=
+X-OriginatorOrg: sct-15-20-9115-0-msonline-outlook-a092a.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb86983-5042-4bea-6e60-08ddfe71ac30
+X-MS-Exchange-CrossTenant-AuthSource: TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 09:30:33.4232
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI1PPF7CE38F105
 
-From: Wensheng Wang <wenswang@yeah.net>
 
-Add support for MPS VR mp2925 and mp2929 controller. This driver exposes
-telemetry and limit value readings and writtings.
+On 9/21/2025 4:38 AM, Andrew Jones wrote:
+> This is just a skeleton. Until irq-set-affinity functions are
+> implemented the IRQ domain doesn't serve any purpose.
+>
+> Signed-off-by: Andrew Jones<ajones@ventanamicro.com>
+> ---
+>   drivers/iommu/riscv/Makefile   |   2 +-
+>   drivers/iommu/riscv/iommu-ir.c | 114 +++++++++++++++++++++++++++++++++
+>   drivers/iommu/riscv/iommu.c    |  36 +++++++++++
+>   drivers/iommu/riscv/iommu.h    |  12 ++++
+>   4 files changed, 163 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/iommu/riscv/iommu-ir.c
+>
+> diff --git a/drivers/iommu/riscv/Makefile b/drivers/iommu/riscv/Makefile
+> index b5929f9f23e6..9c83f877d50f 100644
+> --- a/drivers/iommu/riscv/Makefile
+> +++ b/drivers/iommu/riscv/Makefile
+> @@ -1,3 +1,3 @@
+>   # SPDX-License-Identifier: GPL-2.0-only
+> -obj-y += iommu.o iommu-platform.o
+> +obj-y += iommu.o iommu-ir.o iommu-platform.o
+>   obj-$(CONFIG_RISCV_IOMMU_PCI) += iommu-pci.o
+> diff --git a/drivers/iommu/riscv/iommu-ir.c b/drivers/iommu/riscv/iommu-ir.c
+> new file mode 100644
+> index 000000000000..08cf159b587d
+> --- /dev/null
+> +++ b/drivers/iommu/riscv/iommu-ir.c
+> @@ -0,0 +1,114 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * IOMMU Interrupt Remapping
+> + *
+> + * Copyright © 2025 Ventana Micro Systems Inc.
+> + */
+> +#include <linux/irqdomain.h>
+> +#include <linux/msi.h>
+> +
+> +#include "iommu.h"
+> +
+> +static struct irq_chip riscv_iommu_ir_irq_chip = {
+> +	.name			= "IOMMU-IR",
+> +	.irq_ack		= irq_chip_ack_parent,
+> +	.irq_mask		= irq_chip_mask_parent,
+> +	.irq_unmask		= irq_chip_unmask_parent,
+> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
+> +};
+> +
+> +static int riscv_iommu_ir_irq_domain_alloc_irqs(struct irq_domain *irqdomain,
+> +						unsigned int irq_base, unsigned int nr_irqs,
+> +						void *arg)
+> +{
+> +	struct irq_data *data;
+> +	int i, ret;
+> +
+> +	ret = irq_domain_alloc_irqs_parent(irqdomain, irq_base, nr_irqs, arg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < nr_irqs; i++) {
+> +		data = irq_domain_get_irq_data(irqdomain, irq_base + i);
+Nitpick:  Would it be better to check if 'data' is NULL ?
 
-Signed-off-by: Wensheng Wang <wenswang@yeah.net>
----
-V2 -> V3:
-    fix garbage value issue when writing vout ov/uv fault
-    limit value in mp2925_write_word_data() function
+> +		data->chip = &riscv_iommu_ir_irq_chip;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops riscv_iommu_ir_irq_domain_ops = {
+> +	.alloc = riscv_iommu_ir_irq_domain_alloc_irqs,
+> +	.free = irq_domain_free_irqs_parent,
+> +};
+> +
+> +static const struct msi_parent_ops riscv_iommu_ir_msi_parent_ops = {
+> +	.prefix			= "IR-",
+> +	.supported_flags	= MSI_GENERIC_FLAGS_MASK |
+> +				  MSI_FLAG_PCI_MSIX,
+> +	.required_flags		= MSI_FLAG_USE_DEF_DOM_OPS |
+> +				  MSI_FLAG_USE_DEF_CHIP_OPS |
+> +				  MSI_FLAG_PCI_MSI_MASK_PARENT,
+> +	.chip_flags		= MSI_CHIP_FLAG_SET_ACK,
+> +	.init_dev_msi_info	= msi_parent_init_dev_msi_info,
+> +};
+> +
+> +struct irq_domain *riscv_iommu_ir_irq_domain_create(struct riscv_iommu_device *iommu,
+> +						    struct device *dev,
+> +						    struct riscv_iommu_info *info)
+> +{
+> +	struct irq_domain *irqparent = dev_get_msi_domain(dev);
+> +	struct irq_domain *irqdomain;
+> +	struct fwnode_handle *fn;
+> +	char *fwname;
+> +
+> +	fwname = kasprintf(GFP_KERNEL, "IOMMU-IR-%s", dev_name(dev));
+> +	if (!fwname)
+> +		return NULL;
+> +
+> +	fn = irq_domain_alloc_named_fwnode(fwname);
+> +	kfree(fwname);
+> +	if (!fn) {
+> +		dev_err(iommu->dev, "Couldn't allocate fwnode\n");
+> +		return NULL;
+> +	}
+> +
+> +	irqdomain = irq_domain_create_hierarchy(irqparent, 0, 0, fn,
+> +						&riscv_iommu_ir_irq_domain_ops,
+> +						info);
+> +	if (!irqdomain) {
+> +		dev_err(iommu->dev, "Failed to create IOMMU irq domain\n");
+> +		irq_domain_free_fwnode(fn);
+> +		return NULL;
+> +	}
+> +
+> +	irqdomain->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
+> +	irqdomain->msi_parent_ops = &riscv_iommu_ir_msi_parent_ops;
+> +	irq_domain_update_bus_token(irqdomain, DOMAIN_BUS_MSI_REMAP);
+> +
+> +	dev_set_msi_domain(dev, irqdomain);
+> +
+> +	return irqdomain;
+> +}
+> +
+> +void riscv_iommu_ir_irq_domain_remove(struct riscv_iommu_info *info)
+> +{
+> +	struct fwnode_handle *fn;
+> +
+> +	if (!info->irqdomain)
+> +		return;
+> +
+> +	fn = info->irqdomain->fwnode;
+> +	irq_domain_remove(info->irqdomain);
+> +	info->irqdomain = NULL;
+> +	irq_domain_free_fwnode(fn);
+> +}
+> +
+> +int riscv_iommu_ir_attach_paging_domain(struct riscv_iommu_domain *domain,
+> +					struct device *dev)
+> +{
+> +	return 0;
+> +}
+> +
+> +void riscv_iommu_ir_free_paging_domain(struct riscv_iommu_domain *domain)
+> +{
+> +}
+> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> index a44c67a848fa..db2acd9dc64b 100644
+> --- a/drivers/iommu/riscv/iommu.c
+> +++ b/drivers/iommu/riscv/iommu.c
+> @@ -17,6 +17,8 @@
+>   #include <linux/init.h>
+>   #include <linux/iommu.h>
+>   #include <linux/iopoll.h>
+> +#include <linux/irqchip/riscv-imsic.h>
+> +#include <linux/irqdomain.h>
+>   #include <linux/kernel.h>
+>   #include <linux/pci.h>
+>   
+> @@ -1026,6 +1028,9 @@ static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
+>   
+>   		WRITE_ONCE(dc->fsc, new_dc->fsc);
+>   		WRITE_ONCE(dc->ta, new_dc->ta & RISCV_IOMMU_PC_TA_PSCID);
+> +		WRITE_ONCE(dc->msiptp, new_dc->msiptp);
+> +		WRITE_ONCE(dc->msi_addr_mask, new_dc->msi_addr_mask);
+> +		WRITE_ONCE(dc->msi_addr_pattern, new_dc->msi_addr_pattern);
+Since the MSI page table pointer (msiptp) has been changed,
+should all cache entries from this MSI page table need to be invalidated ?
 
-V1 -> V2:
-    pass 0 for i2c_device_id and of_device_id struct
+Otherwise,
+Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
 
- Documentation/hwmon/index.rst  |   1 +
- Documentation/hwmon/mp2925.rst | 151 ++++++++++++++++
- MAINTAINERS                    |   7 +
- drivers/hwmon/pmbus/Kconfig    |   9 +
- drivers/hwmon/pmbus/Makefile   |   1 +
- drivers/hwmon/pmbus/mp2925.c   | 316 +++++++++++++++++++++++++++++++++
- 6 files changed, 485 insertions(+)
- create mode 100644 Documentation/hwmon/mp2925.rst
- create mode 100644 drivers/hwmon/pmbus/mp2925.c
-
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index d292a86ac5da..95bcf71ff6d9 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -175,6 +175,7 @@ Hardware Monitoring Kernel Drivers
-    mp2856
-    mp2888
-    mp2891
-+   mp2925
-    mp2975
-    mp2993
-    mp5023
-diff --git a/Documentation/hwmon/mp2925.rst b/Documentation/hwmon/mp2925.rst
-new file mode 100644
-index 000000000000..63eda215b6cb
---- /dev/null
-+++ b/Documentation/hwmon/mp2925.rst
-@@ -0,0 +1,151 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Kernel driver mp2925
-+====================
-+
-+Supported chips:
-+
-+  * MPS mp2925
-+
-+    Prefix: 'mp2925'
-+
-+  * MPS mp2929
-+
-+    Prefix: 'mp2929'
-+
-+Author:
-+
-+	Wensheng Wang <wenswang@yeah.net>
-+
-+Description
-+-----------
-+
-+This driver implements support for Monolithic Power Systems, Inc. (MPS)
-+MP2925 Dual Loop Digital Multi-phase Controller.
-+
-+Device compliant with:
-+
-+- PMBus rev 1.3 interface.
-+
-+The driver exports the following attributes via the 'sysfs' files
-+for input voltage:
-+
-+**in1_input**
-+
-+**in1_label**
-+
-+**in1_crit**
-+
-+**in1_crit_alarm**
-+
-+**in1_lcrit**
-+
-+**in1_lcrit_alarm**
-+
-+**in1_max**
-+
-+**in1_max_alarm**
-+
-+**in1_min**
-+
-+**in1_min_alarm**
-+
-+The driver provides the following attributes for output voltage:
-+
-+**in2_input**
-+
-+**in2_label**
-+
-+**in2_crit**
-+
-+**in2_crit_alarm**
-+
-+**in2_lcrit**
-+
-+**in2_lcrit_alarm**
-+
-+**in3_input**
-+
-+**in3_label**
-+
-+**in3_crit**
-+
-+**in3_crit_alarm**
-+
-+**in3_lcrit**
-+
-+**in3_lcrit_alarm**
-+
-+The driver provides the following attributes for input current:
-+
-+**curr1_input**
-+
-+**curr1_label**
-+
-+The driver provides the following attributes for output current:
-+
-+**curr2_input**
-+
-+**curr2_label**
-+
-+**curr2_crit**
-+
-+**curr2_crit_alarm**
-+
-+**curr2_max**
-+
-+**curr2_max_alarm**
-+
-+**curr3_input**
-+
-+**curr3_label**
-+
-+**curr3_crit**
-+
-+**curr3_crit_alarm**
-+
-+**curr3_max**
-+
-+**curr3_max_alarm**
-+
-+The driver provides the following attributes for input power:
-+
-+**power1_input**
-+
-+**power1_label**
-+
-+**power2_input**
-+
-+**power2_label**
-+
-+The driver provides the following attributes for output power:
-+
-+**power3_input**
-+
-+**power3_label**
-+
-+**power4_input**
-+
-+**power4_label**
-+
-+The driver provides the following attributes for temperature:
-+
-+**temp1_input**
-+
-+**temp1_crit**
-+
-+**temp1_crit_alarm**
-+
-+**temp1_max**
-+
-+**temp1_max_alarm**
-+
-+**temp2_input**
-+
-+**temp2_crit**
-+
-+**temp2_crit_alarm**
-+
-+**temp2_max**
-+
-+**temp2_max_alarm**
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 35dac69ec0d5..c606ae7be70c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17185,6 +17185,13 @@ S:	Maintained
- F:	Documentation/hwmon/mp2891.rst
- F:	drivers/hwmon/pmbus/mp2891.c
- 
-+MPS MP2925 DRIVER
-+M:	Noah Wang <wenswang@yeah.net>
-+L:	linux-hwmon@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/hwmon/mp2925.rst
-+F:	drivers/hwmon/pmbus/mp2925.c
-+
- MPS MP2993 DRIVER
- M:	Noah Wang <noahwang.wang@outlook.com>
- L:	linux-hwmon@vger.kernel.org
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index 55e492452ce8..d0e1eb500215 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -391,6 +391,15 @@ config SENSORS_MP2891
-       This driver can also be built as a module. If so, the module will
-       be called mp2891.
- 
-+config SENSORS_MP2925
-+    tristate "MPS MP2925"
-+    help
-+      If you say yes here you get hardware monitoring support for MPS
-+      MP2925 Dual Loop Digital Multi-Phase Controller.
-+
-+      This driver can also be built as a module. If so, the module will
-+      be called mp2925.
-+
- config SENSORS_MP2975
- 	tristate "MPS MP2975"
- 	help
-diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-index 29cd8a3317d2..64c1b03bf47b 100644
---- a/drivers/hwmon/pmbus/Makefile
-+++ b/drivers/hwmon/pmbus/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
- obj-$(CONFIG_SENSORS_MP2856)	+= mp2856.o
- obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
- obj-$(CONFIG_SENSORS_MP2891)	+= mp2891.o
-+obj-$(CONFIG_SENSORS_MP2925)	+= mp2925.o
- obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
- obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
- obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
-diff --git a/drivers/hwmon/pmbus/mp2925.c b/drivers/hwmon/pmbus/mp2925.c
-new file mode 100644
-index 000000000000..6bebd6023021
---- /dev/null
-+++ b/drivers/hwmon/pmbus/mp2925.c
-@@ -0,0 +1,316 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Hardware monitoring driver for MPS Multi-phase Digital VR Controllers(MP2925)
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include "pmbus.h"
-+
-+/*
-+ * Vender specific register MFR_VR_MULTI_CONFIG(0x08).
-+ * This register is used to obtain vid scale.
-+ */
-+#define MFR_VR_MULTI_CONFIG	0x08
-+
-+#define MP2925_VOUT_DIV	512
-+#define MP2925_VOUT_OVUV_UINT	195
-+#define MP2925_VOUT_OVUV_DIV	100
-+
-+#define MP2925_PAGE_NUM	2
-+
-+#define MP2925_RAIL1_FUNC	(PMBUS_HAVE_VIN | PMBUS_HAVE_PIN | \
-+							 PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT | \
-+							 PMBUS_HAVE_POUT | PMBUS_HAVE_TEMP | \
-+							 PMBUS_HAVE_STATUS_VOUT | \
-+							 PMBUS_HAVE_STATUS_IOUT | \
-+							 PMBUS_HAVE_STATUS_TEMP | \
-+							 PMBUS_HAVE_STATUS_INPUT)
-+
-+#define MP2925_RAIL2_FUNC	(PMBUS_HAVE_PIN | PMBUS_HAVE_VOUT | \
-+							 PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT | \
-+							 PMBUS_HAVE_TEMP | PMBUS_HAVE_IIN | \
-+							 PMBUS_HAVE_STATUS_VOUT | \
-+							 PMBUS_HAVE_STATUS_IOUT | \
-+							 PMBUS_HAVE_STATUS_TEMP | \
-+							 PMBUS_HAVE_STATUS_INPUT)
-+
-+struct mp2925_data {
-+	struct pmbus_driver_info info;
-+	int vout_scale[MP2925_PAGE_NUM];
-+};
-+
-+#define to_mp2925_data(x) container_of(x, struct mp2925_data, info)
-+
-+static u16 mp2925_linear_exp_transfer(u16 word, u16 expect_exponent)
-+{
-+	s16 exponent, mantissa, target_exponent;
-+
-+	exponent = ((s16)word) >> 11;
-+	mantissa = ((s16)((word & 0x7ff) << 5)) >> 5;
-+	target_exponent = (s16)((expect_exponent & 0x1f) << 11) >> 11;
-+
-+	if (exponent > target_exponent)
-+		mantissa = mantissa << (exponent - target_exponent);
-+	else
-+		mantissa = mantissa >> (target_exponent - exponent);
-+
-+	return (mantissa & 0x7ff) | ((expect_exponent << 11) & 0xf800);
-+}
-+
-+static int mp2925_read_byte_data(struct i2c_client *client, int page, int reg)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_VOUT_MODE:
-+		/*
-+		 * The MP2925 does not follow standard PMBus protocol completely,
-+		 * and the calculation of vout in this driver is based on direct
-+		 * format. As a result, the format of vout is enforced to direct.
-+		 */
-+		ret = PB_VOUT_MODE_DIRECT;
-+		break;
-+	default:
-+		ret = -ENODATA;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int mp2925_read_word_data(struct i2c_client *client, int page, int phase,
-+				 int reg)
-+{
-+	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
-+	struct mp2925_data *data = to_mp2925_data(info);
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_READ_VOUT:
-+		ret = pmbus_read_word_data(client, page, phase, reg);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = DIV_ROUND_CLOSEST((ret & GENMASK(11, 0)) * data->vout_scale[page],
-+					MP2925_VOUT_DIV);
-+		break;
-+	case PMBUS_VOUT_OV_FAULT_LIMIT:
-+	case PMBUS_VOUT_UV_FAULT_LIMIT:
-+		ret = pmbus_read_word_data(client, page, phase, reg);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = DIV_ROUND_CLOSEST((ret & GENMASK(11, 0)) * MP2925_VOUT_OVUV_UINT,
-+					MP2925_VOUT_OVUV_DIV);
-+		break;
-+	case PMBUS_STATUS_WORD:
-+	case PMBUS_READ_VIN:
-+	case PMBUS_READ_IOUT:
-+	case PMBUS_READ_POUT:
-+	case PMBUS_READ_PIN:
-+	case PMBUS_READ_IIN:
-+	case PMBUS_READ_TEMPERATURE_1:
-+	case PMBUS_VIN_OV_FAULT_LIMIT:
-+	case PMBUS_VIN_OV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_FAULT_LIMIT:
-+	case PMBUS_IOUT_OC_FAULT_LIMIT:
-+	case PMBUS_IOUT_OC_WARN_LIMIT:
-+	case PMBUS_OT_FAULT_LIMIT:
-+	case PMBUS_OT_WARN_LIMIT:
-+		ret = -ENODATA;
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int mp2925_write_word_data(struct i2c_client *client, int page, int reg,
-+				  u16 word)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_VIN_OV_FAULT_LIMIT:
-+	case PMBUS_VIN_OV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_FAULT_LIMIT:
-+		/*
-+		 * The PMBUS_VIN_OV_FAULT_LIMIT, PMBUS_VIN_OV_WARN_LIMIT,
-+		 * PMBUS_VIN_UV_WARN_LIMIT and PMBUS_VIN_UV_FAULT_LIMIT
-+		 * of MP2925 is linear11 format, and the exponent is a
-+		 * constant value(5'b11100)， so the exponent of word
-+		 * parameter should be converted to 5'b11100(0x1C).
-+		 */
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    mp2925_linear_exp_transfer(word, 0x1C));
-+		break;
-+	case PMBUS_VOUT_OV_FAULT_LIMIT:
-+	case PMBUS_VOUT_UV_FAULT_LIMIT:
-+		/*
-+		 * The bit0-bit11 is the limit value, and bit12-bit15
-+		 * should not be changed.
-+		 */
-+		ret = pmbus_read_word_data(client, page, 0xff, reg);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    (ret & ~GENMASK(11, 0)) |
-+				FIELD_PREP(GENMASK(11, 0),
-+					   DIV_ROUND_CLOSEST(word * MP2925_VOUT_OVUV_DIV,
-+							     MP2925_VOUT_OVUV_UINT)));
-+		break;
-+	case PMBUS_OT_FAULT_LIMIT:
-+	case PMBUS_OT_WARN_LIMIT:
-+		/*
-+		 * The PMBUS_OT_FAULT_LIMIT and PMBUS_OT_WARN_LIMIT of
-+		 * MP2925 is linear11 format, and the exponent is a
-+		 * constant value(5'b00000), so the exponent of word
-+		 * parameter should be converted to 5'b00000.
-+		 */
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    mp2925_linear_exp_transfer(word, 0x00));
-+		break;
-+	case PMBUS_IOUT_OC_FAULT_LIMIT:
-+	case PMBUS_IOUT_OC_WARN_LIMIT:
-+		/*
-+		 * The PMBUS_IOUT_OC_FAULT_LIMIT and PMBUS_IOUT_OC_WARN_LIMIT
-+		 * of MP2925 is linear11 format, and the exponent can not be
-+		 * changed.
-+		 */
-+		ret = pmbus_read_word_data(client, page, 0xff, reg);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    mp2925_linear_exp_transfer(word,
-+								       FIELD_GET(GENMASK(15, 11),
-+										 ret)));
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int
-+mp2925_identify_vout_scale(struct i2c_client *client, struct pmbus_driver_info *info,
-+			   int page)
-+{
-+	struct mp2925_data *data = to_mp2925_data(info);
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte_data(client, PMBUS_PAGE, page);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = i2c_smbus_read_byte_data(client, PMBUS_VOUT_MODE);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (FIELD_GET(GENMASK(5, 5), ret)) {
-+		ret = i2c_smbus_write_byte_data(client, PMBUS_PAGE,
-+						page == 0 ? 3 : 4);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = i2c_smbus_read_word_data(client, MFR_VR_MULTI_CONFIG);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (FIELD_GET(GENMASK(5, 5), ret))
-+			data->vout_scale[page] = 2560;
-+		else
-+			data->vout_scale[page] = 5120;
-+	} else if (FIELD_GET(GENMASK(4, 4), ret)) {
-+		data->vout_scale[page] = 1;
-+	} else {
-+		data->vout_scale[page] = 512;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mp2925_identify(struct i2c_client *client, struct pmbus_driver_info *info)
-+{
-+	int ret;
-+
-+	ret = mp2925_identify_vout_scale(client, info, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	return mp2925_identify_vout_scale(client, info, 1);
-+}
-+
-+static const struct pmbus_driver_info mp2925_info = {
-+	.pages = MP2925_PAGE_NUM,
-+	.format[PSC_VOLTAGE_IN] = linear,
-+	.format[PSC_CURRENT_IN] = linear,
-+	.format[PSC_CURRENT_OUT] = linear,
-+	.format[PSC_POWER] = linear,
-+	.format[PSC_TEMPERATURE] = linear,
-+	.format[PSC_VOLTAGE_OUT] = direct,
-+
-+	.m[PSC_VOLTAGE_OUT] = 1,
-+	.R[PSC_VOLTAGE_OUT] = 3,
-+	.b[PSC_VOLTAGE_OUT] = 0,
-+
-+	.func[0] = MP2925_RAIL1_FUNC,
-+	.func[1] = MP2925_RAIL2_FUNC,
-+	.read_word_data = mp2925_read_word_data,
-+	.read_byte_data = mp2925_read_byte_data,
-+	.write_word_data = mp2925_write_word_data,
-+	.identify = mp2925_identify,
-+};
-+
-+static int mp2925_probe(struct i2c_client *client)
-+{
-+	struct mp2925_data *data;
-+
-+	data = devm_kzalloc(&client->dev, sizeof(struct mp2925_data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	memcpy(&data->info, &mp2925_info, sizeof(mp2925_info));
-+
-+	return pmbus_do_probe(client, &data->info);
-+}
-+
-+static const struct i2c_device_id mp2925_id[] = {
-+	{"mp2925"},
-+	{"mp2929"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, mp2925_id);
-+
-+static const struct of_device_id __maybe_unused mp2925_of_match[] = {
-+	{.compatible = "mps,mp2925"},
-+	{.compatible = "mps,mp2929"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mp2925_of_match);
-+
-+static struct i2c_driver mp2925_driver = {
-+	.driver = {
-+		.name = "mp2925",
-+		.of_match_table = mp2925_of_match,
-+	},
-+	.probe = mp2925_probe,
-+	.id_table = mp2925_id,
-+};
-+
-+module_i2c_driver(mp2925_driver);
-+
-+MODULE_AUTHOR("Wensheng Wang <wenswang@yeah.net>");
-+MODULE_DESCRIPTION("PMBus driver for MPS MP2925");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("PMBUS");
--- 
-2.25.1
-
+Thanks,
+Nutty
 
