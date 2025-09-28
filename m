@@ -1,233 +1,332 @@
-Return-Path: <linux-kernel+bounces-835433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C8BBA7146
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286E0BA7153
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670791894E36
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E17E18959B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0802F1E520F;
-	Sun, 28 Sep 2025 13:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F651E9B1A;
+	Sun, 28 Sep 2025 13:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXr9uKyZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKjQnmZj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F0E4C98
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBDA17597
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759067536; cv=none; b=gGgpi0a8UabkmBj2NAZOO/WEJ67n6UhTz6ir++CJc5rN2pxOTjshx/zzsmwwIqq+RxfTirq2sLIXNOPyETDsXlGmaNBW3fXKN4mOVjR2ddmzXyvZoNFGyIrpBfvw/wbzcMu/onZhEAApeTg0VbxQfSN8Jl48fDYpPxmbCXbK0Hc=
+	t=1759067912; cv=none; b=aJtITBbS5XOJXV/DNr5nvdymqL2pwPaETo9vR0r7X3W6MExScpqAnofNjNA90G5pX1ElUa0EU8RMriA5sC50AFnTsURdfiG1gwSdkZ49KibkHX/K5PHPe6ipvTNNT8H2dDE/B4UQGX4UUoOe/Ftijz6GL8l2kv3nWKYcz1UW/Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759067536; c=relaxed/simple;
-	bh=vkQ3DR6shjQ3t6MMcpywS4EvZ4ogezUqQVNZ4GC2D04=;
+	s=arc-20240116; t=1759067912; c=relaxed/simple;
+	bh=RrHTkPkJ9KxjQHnavmnJvqPxNotZNOveUTg85TUYacM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A24aoJYA7Yf6pnPxVa25CglCjwHW4Y+Bv+NtcO0hQ6t0jZOWGnamqiGt+1eD9646SBkZD8/t8t90iKG8RCnN8SSzzDiPPT8C2fD8bE9irWrE5IxffZaSuz8DeNgSguo4cJ25MYptJGiaF/aHQfiaVEjslFP7cLia9NtgOpgpVmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXr9uKyZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC0CC4CEF5
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:52:15 +0000 (UTC)
+	 To:Cc:Content-Type; b=owr7Fwn+7YaDbjLFIY9URYr+0oF4Lj+TB2izauHKP1n3XM/FGLmzHQspvdfa7js+xei8zoRt91eNPwcILhzmJkLTwmtN2EEzg6vWZ4XAjQy6d2ERUzaq1+35EbCI/myLrJPUFPUhf0p+VqRW2blt7SNrXFdnJoxMoTkNSAZLXKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKjQnmZj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C6BC4CEF0
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759067536;
-	bh=vkQ3DR6shjQ3t6MMcpywS4EvZ4ogezUqQVNZ4GC2D04=;
+	s=k20201202; t=1759067911;
+	bh=RrHTkPkJ9KxjQHnavmnJvqPxNotZNOveUTg85TUYacM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mXr9uKyZS9M924m9O+0vEaRbTM2YgbHW2pDpmKClyuyuTvz2w0c2FfrNBYUBT+buf
-	 ey2p4zw9VOVyZcBzBvcflPm3ECJ+EbiqEzhwovyFNAm3PNtPPWHFoU4CXJe+R0lH8l
-	 QhMSc2eLl1+kCE7hR9kFsyJ1Om8IA8NuBO4rTfp8e/CAqX6GDtJKPv4PV+h6xywZRP
-	 Ajsm8R498idztEdGNHPO9MdnAS2ggrYjgTJRvXcUihFO6duNBkLy9BTLUyCmEbI3LP
-	 NqlJxtYzNZFdubalK+6/XZdoFKUSBWLv+tBvWMopRw+6f7Fon8GwEGfEbe/a1afT4+
-	 5hOz88vnF7CSQ==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b35f6f43351so722982666b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:52:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHUY9E4+L3jM6+gRRI4Ml8gMbN68T99mrl8rgo2QKaco0lvWQhdDpj2JAmZh70G5ADpsGhNXnxlPcQO8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb6MQJCNxYparyJehSNLKgsDONK5rSI7HbeAkweg6ObtU5xFXJ
-	A1foNHdSTCi59Mn7L40lWFvohRXN54dnQblnMSEjm4sXCDgq/uzrio+oehdIATy/fNLIGlhZv7W
-	bDm8CiVITP700hlH8HoB5a5yJDTeqGGM=
-X-Google-Smtp-Source: AGHT+IHZy8MJ+ejdxNUSrUhifjle4FzCaWD2U0zXbL3dW+OQL+t2D3+N0MZXhQRGFwgwVsrAa1mwtimPwbh8/cUxOJQ=
-X-Received: by 2002:a17:907:7f0f:b0:aff:16eb:8b09 with SMTP id
- a640c23a62f3a-b34b6449b22mr1296630666b.5.1759067534547; Sun, 28 Sep 2025
- 06:52:14 -0700 (PDT)
+	b=PKjQnmZj3fCkD3MWVEG+KERvYDGC5glGHO5U1iSEA8SLxZj4YKcoVQLfDwqnsgTGb
+	 g7UEVDkkFdDZOAh3da7i9zwLZR0i+8PCoiwFZaBmyUL8XHWQ0WpvZZ77plpxN23DrL
+	 SIlDsh9wDdg2uBb981l5OyAdwB9g0ywpKYQXRDxRHcxC6luVM3k7CznTicX1dTIT/b
+	 wNzKpZCCxvSedYJzhl0x/E8eIbUR7J5ivVthMZO6g29i9+3+7ij5qNczxwxvuBUNyx
+	 8G/eQ8suDiawrmCETdsGi6ivSTdMJZDOPn1+kbWMgvlpPgcTknHlCV0P8xLB8G729k
+	 9JeixuPDo5dwQ==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so7546681a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:58:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0qRlyV4AKvbCxbleoJIBAnxj4hAY6Q8kXaO+hlnhZ/Esv76Y7vslorQ6xWKFY7pfY3lww+Ki9iuBk2zM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzicakHwtpAMpwywhY9cL20s/MIdvxXIdbmchPeAO750trzd7WG
+	VE+xDNUNmOnOmBMb5NUjM9ZyY04rLHJ56W3GP9LfAW3wZ5m0zgzlKzEKGgRpGJFN+bqotDpWC3m
+	GTwoXX270mW3+xsYFMAT7Hk11oh04btc=
+X-Google-Smtp-Source: AGHT+IGvCaXEaCCGJHQTjwko5ijQWG9wboug0FNJB/iFsDT+joLcDSwsGEgrpDHptK2NwMwDEBf4VrRUfqQe1ZGaJD8=
+X-Received: by 2002:a17:906:c141:b0:b04:5895:fe8e with SMTP id
+ a640c23a62f3a-b34bb9e9b51mr1496780366b.36.1759067910449; Sun, 28 Sep 2025
+ 06:58:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
-In-Reply-To: <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
+References: <20250925092902.1366058-1-guanwentao@uniontech.com>
+In-Reply-To: <20250925092902.1366058-1-guanwentao@uniontech.com>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 28 Sep 2025 21:52:03 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
-X-Gm-Features: AS18NWAQgrho2v1WBMze1SiIfjphByvTZGCUNAA2HMWHlRk0-R7aennr1EqafME
-Message-ID: <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 28 Sep 2025 21:58:10 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5ny_e9G5qRUMYW-d5LqjXv8rvsGMz9BQPt6+npyPmCOA@mail.gmail.com>
+X-Gm-Features: AS18NWC547i7JUcuDNSIYAe0E_ay43qn0jlubReLFKEmkn6ebN_O807Utlh1SZ8
+Message-ID: <CAAhV-H5ny_e9G5qRUMYW-d5LqjXv8rvsGMz9BQPt6+npyPmCOA@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: mm: try VMA lock-based page fault handling first
+To: Wentao Guan <guanwentao@uniontech.com>
+Cc: kernel@xen0n.name, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	zhanjun@uniontech.com, niecheng1@uniontech.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Ard,
+Hi, Wentao,
 
-On Sun, Sep 28, 2025 at 9:42=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-> On Sun, 28 Sept 2025 at 10:55, Tiezhu Yang <yangtiezhu@loongson.cn> wrote=
-:
-> >
-> > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
-> > the following objtool warning on LoongArch:
-> >
-> >   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
-> >   falls through to next function __efistub_exit_boot_func()
-> >
-> > This is because efi_boot_kernel() doesn't end with a return instruction
-> > or an unconditional jump, then objtool has determined that the function
-> > can fall through into the next function.
-> >
-> > At the beginning, try to do something to make efi_boot_kernel() ends wi=
-th
-> > an unconditional jump instruction, but this modification seems not prop=
-er.
-> >
-> > Since the efistub functions are useless for stack unwinder, they can be
-> > ignored by objtool. After many discussions, no need to link libstub to
-> > the vmlinux.o, only link libstub to the final vmlinux.
-> >
->
-> Please try keeping these changes confined to arch/loongarch. This
-> problem does not exist on other architectures, and changing the way
-> vmlinux is constructed might create other issues down the road.
-ARM, RISC-V and LoongArch do things exactly in the same way. Now
-LoongArch is the first of the three to enable objtool, so we meet the
-problem first.
+Thanks for you patch, but it is full of bugs...
 
-But yes, I also don't want to change the way of constructing vmlinux.
-So I prefer the earliest way to fix this problem.
-https://lore.kernel.org/loongarch/CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSuV0Em=
-eeUb9d5FNw@mail.gmail.com/T/#meef7411abd14f4c28c85e686614aa9211fccdca0
+On Thu, Sep 25, 2025 at 5:33=E2=80=AFPM Wentao Guan <guanwentao@uniontech.c=
+om> wrote:
+>
+> Attempt VMA lock-based page fault handling first, and fall back to the
+> existing mmap_lock-based handling if that fails.
+>
+> The "ebizzy -mTRp" on 3A6000 shows that PER_VMA_LOCK can
+> improve the benchmark by about 20.7%.
+>
+> This is the loongarch variant of "x86/mm: try VMA lock-based page fault
+> handling first".
+>
+> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> ---
+> ebizzy-0.3(can download by phoronix-test-suite):
+> before patch:
+> 97800 records/s
+> real 10.00 s user  0.25 s sys  13.54 s
+> 97835 records/s
+> real 10.00 s user  0.27 s sys  13.51 s
+> 97929 records/s
+> real 10.00 s user  0.26 s sys  13.53 s
+> 97736 records/s
+> real 10.00 s user  0.31 s sys  13.48 s
+> 97914 records/s
+> real 10.00 s user  0.30 s sys  13.50 s
+> 97916 records/s
+> real 10.00 s user  0.31 s sys  13.48 s
+> 97857 records/s
+> real 10.00 s user  0.28 s sys  13.51 s
+> 97927 records/s
+> real 10.00 s user  0.24 s sys  13.55 s
+> 97962 records/s
+> real 10.00 s user  0.41 s sys  13.39 s
+> 97501 records/s
+> real 10.00 s user  0.20 s sys  13.53 s
+> after patch:
+> 117645 records/s
+> real 10.00 s user  0.31 s sys  23.17 s
+> 118207 records/s
+> real 10.00 s user  0.37 s sys  23.18 s
+> 118426 records/s
+> real 10.00 s user  0.32 s sys  23.14 s
+> 118172 records/s
+> real 10.00 s user  0.44 s sys  23.07 s
+> 118548 records/s
+> real 10.00 s user  0.45 s sys  23.04 s
+> 118011 records/s
+> real 10.00 s user  0.32 s sys  23.15 s
+> 118143 records/s
+> real 10.00 s user  0.41 s sys  23.09 s
+> 118181 records/s
+> real 10.00 s user  0.42 s sys  23.12 s
+> 117721 records/s
+> real 10.00 s user  0.34 s sys  23.17 s
+> 118138 records/s
+> real 10.00 s user  0.42 s sys  23.04 s
+> ---
+> ---
+>  arch/loongarch/Kconfig    |  1 +
+>  arch/loongarch/mm/fault.c | 49 +++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 50 insertions(+)
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 0631a6b11281b..1c517954157c0 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -69,6 +69,7 @@ config LOONGARCH
+>         select ARCH_SUPPORTS_LTO_CLANG_THIN
+>         select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+>         select ARCH_SUPPORTS_NUMA_BALANCING
+> +       select ARCH_SUPPORTS_PER_VMA_LOCK
+>         select ARCH_SUPPORTS_RT
+>         select ARCH_USE_BUILTIN_BSWAP
+>         select ARCH_USE_CMPXCHG_LOCKREF
+> diff --git a/arch/loongarch/mm/fault.c b/arch/loongarch/mm/fault.c
+> index deefd9617d008..d2dc3e194dd76 100644
+> --- a/arch/loongarch/mm/fault.c
+> +++ b/arch/loongarch/mm/fault.c
+> @@ -215,6 +215,53 @@ static void __kprobes __do_page_fault(struct pt_regs=
+ *regs,
+>                 flags |=3D FAULT_FLAG_USER;
+>
+>         perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+> +       if (!(flags & FAULT_FLAG_USER))
+> +               goto lock_mmap;
+> +
+> +       vma =3D lock_vma_under_rcu(mm, address);
+> +       if (!vma)
+> +               goto lock_mmap;
+> +
+> +       if (write) {
+> +               flags |=3D FAULT_FLAG_WRITE;
+> +               if (!(vma->vm_flags & VM_WRITE)) {
+> +                       vma_end_read(vma);
+> +                       si_code =3D SEGV_ACCERR;
+Need count_vm_vma_lock_event(VMA_LOCK_SUCCESS) here.
+
+> +                       goto bad_area_nosemaphore;
+> +               }
+> +       } else {
+> +               if (!(vma->vm_flags & VM_EXEC) && address =3D=3D exceptio=
+n_era(regs)){
+> +                       vma_end_read(vma);
+> +                       si_code =3D SEGV_ACCERR;
+The same.
+
+> +                       goto bad_area_nosemaphore;
+> +               }
+> +               if (!(vma->vm_flags & (VM_READ | VM_WRITE)) && address !=
+=3D exception_era(regs)){
+> +                       vma_end_read(vma);
+> +                       si_code =3D SEGV_ACCERR;
+The same.
+
+> +                       goto bad_area_nosemaphore;
+> +               }
+> +       }
+> +
+> +       fault =3D handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LO=
+CK, regs);
+> +       if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
+> +               vma_end_read(vma);
+> +
+> +       if (!(fault & VM_FAULT_RETRY)) {
+> +               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
+> +               goto done;
+> +       }
+> +       count_vm_vma_lock_event(VMA_LOCK_RETRY);
+> +       if (fault & VM_FAULT_MAJOR)
+> +               flags |=3D FAULT_FLAG_TRIED;
+> +
+> +       /* Quick path to respond to signals */
+> +       if (fault_signal_pending(fault, regs)) {
+> +               if (!user_mode(regs))
+> +                       no_context(regs, write, address);
+> +               return;
+> +       }
+> +lock_mmap:
+lock_mmap is exactly the same as retry, but since other architectures
+are also like this, let's keep it as is...
+
+> +
+>  retry:
+>         vma =3D lock_mm_and_find_vma(mm, address, regs);
+>         if (unlikely(!vma))
+> @@ -292,6 +339,8 @@ static void __kprobes __do_page_fault(struct pt_regs =
+*regs,
+>         }
+>
+>         mmap_read_unlock(mm);
+> +done:
+We need error handling here.
+
+> +       return;
+>  }
+>
+>  asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
+I think the whole correct patch is like this:
+diff --git a/arch/loongarch/mm/fault.c b/arch/loongarch/mm/fault.c
+index deefd9617d00..c87e7d38090d 100644
+--- a/arch/loongarch/mm/fault.c
++++ b/arch/loongarch/mm/fault.c
+@@ -215,6 +215,58 @@ static void __kprobes __do_page_fault(struct pt_regs *=
+regs,
+                flags |=3D FAULT_FLAG_USER;
+
+        perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
++
++       if (!(flags & FAULT_FLAG_USER))
++               goto lock_mmap;
++
++       vma =3D lock_vma_under_rcu(mm, address);
++       if (!vma)
++               goto lock_mmap;
++
++       if (write) {
++               flags |=3D FAULT_FLAG_WRITE;
++               if (!(vma->vm_flags & VM_WRITE)) {
++                       vma_end_read(vma);
++                       si_code =3D SEGV_ACCERR;
++                       count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
++                       goto bad_area_nosemaphore;
++               }
++       } else {
++               if (!(vma->vm_flags & VM_EXEC) && address =3D=3D
+exception_era(regs)){
++                       vma_end_read(vma);
++                       si_code =3D SEGV_ACCERR;
++                       count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
++                       goto bad_area_nosemaphore;
++               }
++               if (!(vma->vm_flags & (VM_READ | VM_WRITE)) && address
+!=3D exception_era(regs)){
++                       vma_end_read(vma);
++                       si_code =3D SEGV_ACCERR;
++                       count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
++                       goto bad_area_nosemaphore;
++               }
++       }
++
++       fault =3D handle_mm_fault(vma, address, flags |
+FAULT_FLAG_VMA_LOCK, regs);
++       if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
++               vma_end_read(vma);
++
++       if (!(fault & VM_FAULT_RETRY)) {
++               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
++               goto done;
++       }
++
++       count_vm_vma_lock_event(VMA_LOCK_RETRY);
++       if (fault & VM_FAULT_MAJOR)
++               flags |=3D FAULT_FLAG_TRIED;
++
++       /* Quick path to respond to signals */
++       if (fault_signal_pending(fault, regs)) {
++               if (!user_mode(regs))
++                       no_context(regs, write, address);
++               return;
++       }
++lock_mmap:
++
+ retry:
+        vma =3D lock_mm_and_find_vma(mm, address, regs);
+        if (unlikely(!vma))
+@@ -276,8 +328,10 @@ static void __kprobes __do_page_fault(struct pt_regs *=
+regs,
+                 */
+                goto retry;
+        }
++       mmap_read_unlock(mm);
++
++done:
+        if (unlikely(fault & VM_FAULT_ERROR)) {
+-               mmap_read_unlock(mm);
+                if (fault & VM_FAULT_OOM) {
+                        do_out_of_memory(regs, write, address);
+                        return;
+@@ -290,8 +344,6 @@ static void __kprobes __do_page_fault(struct pt_regs *r=
+egs,
+                }
+                BUG();
+        }
+-
+-       mmap_read_unlock(mm);
+ }
+
+ asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
 
 Huacai
 
+> --
+> 2.20.1
 >
-> > Do the similar things for arm64 and riscv, otherwise there may be objto=
-ol
-> > warnings when arm64 and riscv support objtool, this is to make consiste=
-nt
-> > with the archs that use libstub.
-> >
-> > Link: https://lore.kernel.org/lkml/pq4h7jgndnt6p45lj4kgubxjd5gidfetugcu=
-f5rcxzxxanzetd@6rrlpjnjsmuy/
-> > Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > ---
-> >  Makefile                | 1 +
-> >  arch/arm64/Makefile     | 5 ++++-
-> >  arch/loongarch/Makefile | 5 ++++-
-> >  arch/riscv/Makefile     | 5 ++++-
->
-> >  scripts/link-vmlinux.sh | 5 ++---
-> >  5 files changed, 15 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index 10355ecf32cb..8ba2e28ef3d1 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1201,6 +1201,7 @@ KBUILD_VMLINUX_OBJS :=3D built-in.a $(patsubst %/=
-, %/lib.a, $(filter %/, $(libs-y)
-> >  KBUILD_VMLINUX_LIBS :=3D $(filter-out %/, $(libs-y))
-> >
-> >  export KBUILD_VMLINUX_LIBS
-> > +export KBUILD_VMLINUX_LIBS_PRELINK
-> >  export KBUILD_LDS          :=3D arch/$(SRCARCH)/kernel/vmlinux.lds
-> >
-> >  ifdef CONFIG_TRIM_UNUSED_KSYMS
-> > diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> > index 73a10f65ce8b..038f37ef2143 100644
-> > --- a/arch/arm64/Makefile
-> > +++ b/arch/arm64/Makefile
-> > @@ -156,7 +156,10 @@ KBUILD_CPPFLAGS +=3D -DKASAN_SHADOW_SCALE_SHIFT=3D=
-$(KASAN_SHADOW_SCALE_SHIFT)
-> >  KBUILD_AFLAGS +=3D -DKASAN_SHADOW_SCALE_SHIFT=3D$(KASAN_SHADOW_SCALE_S=
-HIFT)
-> >
-> >  libs-y         :=3D arch/arm64/lib/ $(libs-y)
-> > -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/l=
-ib.a
-> > +
-> > +ifdef CONFIG_EFI_STUB
-> > +KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libst=
-ub/lib.a
-> > +endif
-> >
-> >  # Default target when executing plain make
-> >  boot           :=3D arch/arm64/boot
-> > diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-> > index ae419e32f22e..4eb904c20718 100644
-> > --- a/arch/loongarch/Makefile
-> > +++ b/arch/loongarch/Makefile
-> > @@ -169,7 +169,10 @@ CHECKFLAGS +=3D $(shell $(CC) $(KBUILD_CPPFLAGS) $=
-(KBUILD_CFLAGS) -dM -E -x c /dev
-> >  endif
-> >
-> >  libs-y +=3D arch/loongarch/lib/
-> > -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/l=
-ib.a
-> > +
-> > +ifdef CONFIG_EFI_STUB
-> > +KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libst=
-ub/lib.a
-> > +endif
-> >
-> >  drivers-y              +=3D arch/loongarch/crypto/
-> >
-> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> > index df57654a615e..cfd82b2c1bbf 100644
-> > --- a/arch/riscv/Makefile
-> > +++ b/arch/riscv/Makefile
-> > @@ -173,7 +173,10 @@ boot-image-$(CONFIG_XIP_KERNEL)            :=3D xi=
-pImage
-> >  KBUILD_IMAGE                           :=3D $(boot)/$(boot-image-y)
-> >
-> >  libs-y +=3D arch/riscv/lib/
-> > -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/l=
-ib.a
-> > +
-> > +ifdef CONFIG_EFI_STUB
-> > +KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libst=
-ub/lib.a
-> > +endif
-> >
-> >  ifeq ($(KBUILD_EXTMOD),)
-> >  ifeq ($(CONFIG_MMU),y)
-> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> > index 51367c2bfc21..b3cbff31d8a9 100755
-> > --- a/scripts/link-vmlinux.sh
-> > +++ b/scripts/link-vmlinux.sh
-> > @@ -61,12 +61,11 @@ vmlinux_link()
-> >         shift
-> >
-> >         if is_enabled CONFIG_LTO_CLANG || is_enabled CONFIG_X86_KERNEL_=
-IBT; then
-> > -               # Use vmlinux.o instead of performing the slow LTO link=
- again.
-> >                 objs=3Dvmlinux.o
-> > -               libs=3D
-> > +               libs=3D"${KBUILD_VMLINUX_LIBS_PRELINK}"
-> >         else
-> >                 objs=3Dvmlinux.a
-> > -               libs=3D"${KBUILD_VMLINUX_LIBS}"
-> > +               libs=3D"${KBUILD_VMLINUX_LIBS} ${KBUILD_VMLINUX_LIBS_PR=
-ELINK}"
-> >         fi
-> >
-> >         if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
-> > --
-> > 2.42.0
-> >
 
