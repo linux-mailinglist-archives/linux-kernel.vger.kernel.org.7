@@ -1,143 +1,135 @@
-Return-Path: <linux-kernel+bounces-835415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05D0BA706E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1AE2BA7080
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056633BC350
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:25:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11E4E1897A0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3F02DE70D;
-	Sun, 28 Sep 2025 12:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="VVmEs1dM"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005F8229B36;
+	Sun, 28 Sep 2025 12:36:31 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D392A625;
-	Sun, 28 Sep 2025 12:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1791C84A1;
+	Sun, 28 Sep 2025 12:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759062295; cv=none; b=I9jeJntFSZmlYEEnqyojd0eJsjX4a9NU8IeJn7a03GbNQoyMS12J0rMrZLtqKoS7uQ6NI05dup9wKosJSp29r4dc+NBcK6/mXIS1azCdZhqEvtTyXOqEYa2GVp5SsTv4KVGIvLqSY+htWBThrnN7SzPd0KVQpZmIKAcOSigphIY=
+	t=1759062990; cv=none; b=avXGb2BL5QOprhJxe0/D3AQyMirmqTTijnDcAD43rrK2i87F4t3l0xPJz4yxZDk0YODhVTiLHhzNtxlX4L4T0BLOiWCfCfUWd47eO7RR2/Nf3Ct/7tXq56v0WzLRffIcRYnL0bGNy/DclHOD6cjbr4UZm8WqW0CIda12UDY+sTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759062295; c=relaxed/simple;
-	bh=sFecT7O3MDYqPD+Z32FePbeObYG9Y83zsOm0NJBIYfQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GB0V0X5DsssJzsIrC7b8bzAZkRQrwnadUG7IZdskx6ieZZGkj0itBCUjin1A6klRcjraF449GRwtMvVS8ECasBPp2AjiOZNd7EaaUAbhIDcrDP4/eXPSYaTKiB969FmsRk5gMpESmMFjNuL4PbgwqZkt3cMDDDTGSMmG/IqJvXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=VVmEs1dM; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=LQ0oVUoCfOIt+x7Lrmwu8ybl4g7WomzcWHQHXOArN0Q=;
-  b=VVmEs1dMHxRYWP6310N3UmeXvTSs2wunfyGQ9e1HWH9ySKoxPVRoQIzc
-   qh+IeW7Y8K1OXbjjA/paMTM/x0nsGa6wfqygPZwAkdVsIXC13BAT+WSMc
-   jgnsJ/0GdcF3ZFml4uoaD7FDj+nvKD2OFTIAjOknxbeeUb2LDIThfWMcI
-   w=;
-X-CSE-ConnectionGUID: H3kCSCiFRsiWEEcHmsvPHQ==
-X-CSE-MsgGUID: 3KepsOaeTPq4en8K/f/1cQ==
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.18,299,1751234400"; 
-   d="scan'208";a="126750158"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2025 14:23:40 +0200
-Date: Sun, 28 Sep 2025 14:23:40 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Gal Pressman <gal@nvidia.com>
-cc: Markus Elfring <Markus.Elfring@web.de>, Tariq Toukan <tariqt@nvidia.com>, 
-    cocci@inria.fr, Alexei Lazar <alazar@nvidia.com>, 
-    Andrew Lunn <andrew+netdev@lunn.ch>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-    linux-rdma@vger.kernel.org, Leon Romanovsky <leon@kernel.org>, 
-    Mark Bloch <mbloch@nvidia.com>, Nicolas Palix <nicolas.palix@imag.fr>, 
-    Richard Cochran <richardcochran@gmail.com>, 
-    Saeed Mahameed <saeedm@nvidia.com>
-Subject: Re: [cocci] [PATCH net-next 1/2] scripts/coccinelle: Find PTR_ERR()
- to %pe candidates
-In-Reply-To: <48228618-083b-4cdb-b7df-aa9b7ff0ce92@nvidia.com>
-Message-ID: <7522bdc8-1379-d516-d1fd-f7835453f23@inria.fr>
-References: <1758192227-701925-1-git-send-email-tariqt@nvidia.com> <1758192227-701925-2-git-send-email-tariqt@nvidia.com> <48a8dbb8-adf1-475e-897d-7369e2c3f6eb@web.de> <48228618-083b-4cdb-b7df-aa9b7ff0ce92@nvidia.com>
+	s=arc-20240116; t=1759062990; c=relaxed/simple;
+	bh=l9Q144PMpYoyc7MJ9uG80U7HLDSOpM3aAqyn15dVI/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8LqbX+DVpVdaApSWnLhi2gAgHcHlf6k2IN9ush9f/3Y9iZ3Btrd6dLmMFWag0LHiFbhVs71Y5vJQWdkuF1Kg6koTUyskcKkzMzgcU77D7/ahCLtk2NR2ggqstKsAYa6Ri9oTtQL2RcGqdrsdjyRNpMtLx9mi0K9nQv2LCgEPXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id BCC58340D91;
+	Sun, 28 Sep 2025 12:36:27 +0000 (UTC)
+Date: Sun, 28 Sep 2025 20:36:22 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] spi: spacemit: introduce SpacemiT K1 SPI
+ controller driver
+Message-ID: <20250928123622-GYA1347020@gentoo.org>
+References: <20250922161717.1590690-1-elder@riscstar.com>
+ <20250922161717.1590690-3-elder@riscstar.com>
+ <20250922230639-GYA1303776@gentoo.org>
+ <786f4a5e-f62e-4cd0-a017-7b61408f34aa@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-117506010-1759062220=:4035"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <786f4a5e-f62e-4cd0-a017-7b61408f34aa@riscstar.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Alex,
 
---8323329-117506010-1759062220=:4035
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+On 07:49 Tue 23 Sep     , Alex Elder wrote:
+> On 9/22/25 6:06 PM, Yixun Lan wrote:
+> > Hi Alex,
+> > 
+> > On 11:17 Mon 22 Sep     , Alex Elder wrote:
+> >> This patch introduces the driver for the SPI controller found in the
+> >> SpacemiT K1 SoC.  Currently the driver supports master mode only.
+> >> The SPI hardware implements RX and TX FIFOs, 32 entries each, and
+> >> supports both PIO and DMA mode transfers.
+> >>
+> >> Signed-off-by: Alex Elder <elder@riscstar.com>
+> >> ---
+..
+> 
+> >> diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
+> >> new file mode 100644
+> >> index 0000000000000..2b932d80cc510
+> >> --- /dev/null
+> >> +++ b/drivers/spi/spi-spacemit-k1.c
+> >> @@ -0,0 +1,965 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Support for SpacemiT K1 SPI controller
+> >> + *
+> >> + * Copyright (C) 2025 by RISCstar Solutions Corporation.  All rights reserved.
+> >> + * Copyright (c) 2023, spacemit Corporation.
+> >> + */
+> 
+> . . .
+> 
+> >> +static irqreturn_t k1_spi_ssp_isr(int irq, void *dev_id)
+> >> +{
+> >> +	struct k1_spi_driver_data *drv_data = dev_id;
+> >> +	bool rx_done;
+> >> +	bool tx_done;
+> >> +	u32 val;
+> >> +
+> >> +	/* Get status and clear pending interrupts */
+> >> +	val = readl(drv_data->base + SSP_STATUS);
+> >> +	writel(val, drv_data->base + SSP_STATUS);
+> >> +
+> >> +	if (!drv_data->message)
+> >> +		return IRQ_NONE;
+> >> +
+> >> +	/* Check for a TX underrun or RX underrun first */
+> > s/RX underrun/RX overrun/
+> 
+> OK.
+> 
+> >> +	if (val & (SSP_STATUS_TUR | SSP_STATUS_ROR)) {
+> >> +		/* Disable all interrupts on error */
+> >> +		writel(0, drv_data->base + SSP_INT_EN);
+> > should clear status of SSP_STATUS instead of disabling ISR, see commet below
+> 
+> The status is cleared immediately after reading, above.  We hold
+> the status value so we can act on the current state of the FIFOs.
+> 
+I'm surprised by this, do you mean the status will be cleared by reading?
+can you double checck and prove it? by reading twice and compare?
 
-> >> +@r@
-> >> +expression ptr;
-> >> +constant fmt;
-> >> +position p;
-> >> +identifier print_func;
-> >> +@@
-> >> +* print_func(..., fmt, ..., PTR_ERR@p(ptr), ...)
-> >
-> > How do you think about to use the metavariable type “format list”?
->
-> I did find "format list" in the documentation, but spatch fails when I
-> try to use it.
+while according to the docs - 18.2.4.6 SSSR REGISTERS, the status bits has
+two types: 
+  R - Read only
+  R/W1C - Read only, write 1 to clear
 
-I would suggest constant char[] fmt.
+if you're right, then the docs should be fixed.
 
-format is for the case where you want to specify something about the %d
-%s, etc in the string.
-
-> > Would it matter to restrict expressions to pointer expressions?
->
-> I tried changing 'expression ptr;' -> 'expression *ptr;', but then it
-> didn't find anything. Am I doing it wrong?
-
-expression *ptr should be a valid metavariable declaration.  But
-Coccinelle needs to have enough information to know that something is a
-pointer.  If you have code like a->b and you don't have the definition of
-the structure type of a, then it won't know the type of a->b.  More
-information about types is available if you use options like
---recursive-includes, but then treatment of every C file will entail
-parsing lots of header files, which could make things very slow.  So you
-have to consider whether the information that the thing is a pointer is
-really necessary to what you are trying to do.
-
-> >> +@script:python depends on r && org@
-> >
-> > I guess that such an SmPL dependency specification can be simplified a bit.
->
-> You mean drop the depends on r?
->
-> >
-> >
-> >> +p << r.p;
-
-Since you have r.p, the rule will only be applied if r has succeeded and
-furthermore if p has a value.  So depends on r is not necessary.
-
-julia
-
-> >> +@@
-> >> +coccilib.org.print_todo(p[0], "WARNING: Consider using %pe to print PTR_ERR()")
-> >
-> > I suggest to reconsider the implementation detail once more
-> > if the SmPL asterisk functionality fits really to the operation modes “org” and “report”.
-> >
-> > The operation mode “context” can usually work also without an extra position variable,
-> > can't it?
->
-> Can you please explain?
->
---8323329-117506010-1759062220=:4035--
+-- 
+Yixun Lan (dlan)
 
