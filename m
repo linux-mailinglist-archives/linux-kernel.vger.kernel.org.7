@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-835476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE90BA73F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69A7BA73F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395123A5BDE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:25:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD19189667E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ADA226D0C;
-	Sun, 28 Sep 2025 15:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC3417597;
+	Sun, 28 Sep 2025 15:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4paY36t"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4VmBkvu"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAB9225397
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 15:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECCF21FF26
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759073118; cv=none; b=D73dyJ3NYcNJdV9+im6wnyUqBw4K8YW8ofFl97RqSig3vpvhyXxciz/CwTcYO2kgv2bAChSZbFE1QTTkLG6i2CTzgRMZkX6QXOl36J7k15dYh+pX8IDNAQ5Nu+DzRa/LcdRnaoOY+YO8bke2sz1Rvc6SF3hOY2/bD4jc6CUEPQo=
+	t=1759073178; cv=none; b=IlgQgV81v/yvgXNsfoOUfbCyupiiNiuvrxNKQb31bdj1KwXrLZbtKGWfdARk4hGRRU7l1jqRYXhIQM7sJkhdZKfR1DdNwMEkKI9Bowga9N76WcQS0nmPI4XLhWhteZ192UwbtOcFK88yxd8tWRVQEjJpgjS9rj++M1nhLYfoqhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759073118; c=relaxed/simple;
-	bh=H+x7xeTP5Rlop6u846HTPlz3WDGleJxQQfSnJGaS35k=;
+	s=arc-20240116; t=1759073178; c=relaxed/simple;
+	bh=1ERQlFtiwev+93nGlX8WZAk0e2Z6jhL93QCIb0AGxZo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYa4hnABxNQ5T3n9fhGdYeI5asi33XzVhE2IqIvIY7q4uuX8df8DjJ5n4I5Y6Kdr7jDIkv7vbiQOlbR0zCYzOX8c4rsMveYgSpBRaQDls7TpiEvmRp/j5DG8k8eqb4FUKAq9S7yHxDmxTRId2E2s1ewKd3KufAbvXagQxw8VQbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4paY36t; arc=none smtp.client-ip=209.85.221.175
+	 In-Reply-To:Content-Type; b=gw6c4Qatek+3AFKSVMweVcJlxg1On8EjWZPzQTeikq1SmlwcwNEA1jDztOT884nMEPAbvKkfmWfVvllRZegqVDWe/oYU+x04FkyJaL73EU//gW0vBJeTcb3ZtiJdcjau56nEEPW4/Bml1qHoHOgpEg0E7/epw4NvccLmnarSwOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4VmBkvu; arc=none smtp.client-ip=209.85.217.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54aa789f9b5so2694106e0c.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:25:16 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5a6743cdaa0so1824736137.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 08:26:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759073116; x=1759677916; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759073175; x=1759677975; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oGMYPzC49G0yAoq8KWoK1e/5gHShl7sG5H8YAVVDIFQ=;
-        b=B4paY36tr6R+o2lRDTPszERSOttQNQVXuUeg7GMitALNc0DJp87ywjzu8yb8xya5e2
-         IKM2PGF1QyFMq7TbBZ8CwCogxuXS2QQSM6w/cgooGcLIe/P6XVZOaA8yl8QJZY1R90Bd
-         SWMDJr+XO//g6S0iRjUp+RvinGcX+ZYTILd9QuoCREK50q0c8gdGlOIREoXcjX+sI9X8
-         kQ19IwbNUIURJTBtHxdddQKdvNMoxBaEyBLC84YzlKbk1nqbkYRNiRM+ZTZu47uHsJMB
-         TeBbhF+4OcUudrbzQUAqEC3GqZkds6YyoykvcdMma8HFZUl0PhbCMWwAeS9po1LfglY1
-         tVqQ==
+        bh=+5Alc4NB13gwKBoLXrQZ51wQV0kYW03eZU88Bc/twqo=;
+        b=R4VmBkvuKK6VI/c9tGoDe7zFR1GMnYW6wjVO1CF4PYhUIeL67qj70mgu+kiRrwn6hL
+         B8H5ToL1Yn6/61fEnV3kbsDC5YyxPQf6wR8ooUretCPS72w/B9WY8pnNm2vBoJrgQl+L
+         cM1QCkfHpcAQoKoi9qeW3GzouywUyRXLWjkDfB2UK69Oe8wp9YSLPO+/LFubzbVd2gvT
+         VvA2qJdRRmwsNzwkbQ3JtFdFccIWRR684d3/+UsYm/0Gcxk/eYqCTcgpwDEwiU4d7Kyr
+         hjg6lM2/AkgW6XL7E/E6y6lTbmjZubzoWgTFl88or5UMv1gSOHtxtmwtD2s6OxlGFCrN
+         00WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759073116; x=1759677916;
+        d=1e100.net; s=20230601; t=1759073175; x=1759677975;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGMYPzC49G0yAoq8KWoK1e/5gHShl7sG5H8YAVVDIFQ=;
-        b=egDywS36SQtoPTtxS3+PmxcVqY9fuNtUIebEr0SQsTZtMPM/0tvxRt8v+Xu0wBB3ws
-         YOTj6WdWRDMi6LE40yjf/8oG45jAvgP8ZDJR9nHaJ1EdURNIQsXlBOq+va5F1z9ef/7O
-         UpixvM8Pk2P9g3KtVLetPGf/kmwRtssKyUdM3cVOL8w2YLKciMg2cOdoysup/RneeRsx
-         y5HeqaKtcfZctaZxcDrXA5sETFdQtlKXCiNmZWM9QUhHE0NE1s6ZsnaTmoZ1V1japW5p
-         VwyXxJamEABESl30SN2isJDiACZ5tbFcRp3HWTrjDgDSUvhBNBZN8AvPfqDctNOMfciZ
-         P7Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXK2vC2tLH3ehgoTiGrDwql8O9kVWkE6KLaTXFTBdExu1RddCRQ4BELBhbxLTzfAjT3ZQmGWDbiMPAu3cI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6PcZPbUwYSoi4WdBFjLqFPYKOVoHCeSH7pyf0ivO1CkpdSnBO
-	zQpqDy32rK7IBG571DgAAOYKKRXK9qcDBOyqmfEdxm0FA8ti+Gf3Tt8i+LthRg==
-X-Gm-Gg: ASbGncu2Pc6p6ca/m7iU0WfWGH1hoz4IDRb7FIsEPCgOArQ0STrzQtSWiXhsnQ3sHR0
-	hBxgQHgV2dI5SQToBBoPEdWZj7yOz/HKguWahqHKlF++PT4Myr+LnrQ1MnUlhRvbNVP1mBfn9i1
-	XyY7u7OiMf9fQ30hnL9b130s1C4AVhojJGl/PM/iJ++TKKjcTDV2wIz5WttCtpRi9yLbbm/vEmx
-	9DYCanHly84jLcmDoHbTZthmlmY4rjLuJjjJnYyU7xvMgF0DPrI+Nxo1skJoI9Hfeilu3V2tNKl
-	Zfd4TO1i7XtdR8PyuGWvJqLG0RBdL44YgCh3RujFnwHW4qxPWR39w+u0z2R29zn/C8TSU9QDDbG
-	nKdGTiXN4NxV7C6/VhOmIk4tqTXxbXKkUnJzXZ6zvZ4HWo8qmOw==
-X-Google-Smtp-Source: AGHT+IF0xKF2bAVGZX6YLQnQJa6tiSFhgbcg/WEeQVm87W/X2LXfvblZ0Iq7cceCpPfrNrfPlWaS5A==
-X-Received: by 2002:a05:6122:1e0b:b0:54a:a30e:188a with SMTP id 71dfb90a1353d-54e5f0fabe2mr319487e0c.14.1759073115611;
-        Sun, 28 Sep 2025 08:25:15 -0700 (PDT)
+        bh=+5Alc4NB13gwKBoLXrQZ51wQV0kYW03eZU88Bc/twqo=;
+        b=RZ5vzPSNV5L2EfLou7FF5JNGip7aMqpJ/io8C8eP6h3yJJHnqLspKfJ14mzxq7G6/+
+         V0F2zKD0GELbTQ3x+G31lNH0c6h1xDS9yNjl1YaVdernus02FwRPC5GbGKszfN4oBeDZ
+         ShBXn1SqCSZUQIN6TpoHeXh+hKH2JkLakZ4LqWv3o/T/Li6Ir9EMz+0YHgN4bdqR04WR
+         9eAsM0dDf8KtPYGcWQFkY3cOWre7VxPbeeGkmrLRrlc98Jlrv4Hh8lvX8GDh7JxGB20U
+         +NVkLo8BfG8Y13mJPqIM9iyZenBom37H7VyGA8LVLdbWX2CWsifOPh7FQh/iBW1VVxua
+         TNmg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7dJ35cBscLQToFbgZKCLyPtnDxrGVnmBEU+7FU/R2p1wj2UcuJ+MulYMQGHsf4GzFLejmSCZ2kZCx97U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuyZduo/y03LtwkG5yCqQuvNGj6UdAP9hUkhGA268D5qKGyHMA
+	pEsdMyVKQlCeewC/oo5GA/XXMTYJ49Rm0xHwaDAzfYIdwR3kMgoKeA4u
+X-Gm-Gg: ASbGncuQzAHRcP4JPlApTrJp9ey57wXZNVUgw4eRA06dR/Kn7h5Bw1N58O1B1R6s2p+
+	acSTfChsRG0Y7a4MP49SMKT6ULurpCPY4sZuwMwUJlMMyQqEw5IzPmz3qDPEZYvj/TghU3NMh+u
+	eTfWJ4QdoEroZPyL/nBQX1pvYCdn8nVtXtn7T719j76+KWbxrGBIxItjmZDar3T5LWcHMdiZsrv
+	Z7TTLjEmMGR3F3b6sUytGavmd2lzx2kIvj0Y4H2bNFz3qb3HvV3UhV0axL/ucXzJXSSeH2Svq3f
+	AnyekvnmKFsCwS3/WFjVZT8Xfmvr1uO1dqiFsgJdnLNVm64iKN0YUF+dzs3q6HYLsGX/7EpL7cC
+	lhkHOnbv1Xsk501bkRfD7Gnhk8a30VuavzkSqGY7KJ7sSz6mu/g==
+X-Google-Smtp-Source: AGHT+IGjMAamUm1kSVRaAVKwnIW0mikD0OoWVZOWVPr5K6MrIi8U/5ZZFDgThH3u0kobgv3zD5x7Mg==
+X-Received: by 2002:a05:6102:94f:b0:523:4360:2b86 with SMTP id ada2fe7eead31-5acd046d79bmr5906381137.31.1759073175125;
+        Sun, 28 Sep 2025 08:26:15 -0700 (PDT)
 Received: from [192.168.1.145] ([104.203.11.126])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bedca058bsm1819366e0c.18.2025.09.28.08.25.14
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54beddbb84bsm2008261e0c.21.2025.09.28.08.26.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Sep 2025 08:25:15 -0700 (PDT)
-Message-ID: <c5194ece-e402-49ba-8b15-674c782b1a6c@gmail.com>
-Date: Sun, 28 Sep 2025 11:25:14 -0400
+        Sun, 28 Sep 2025 08:26:14 -0700 (PDT)
+Message-ID: <03cfb82c-5502-4c0f-aaa9-05c4d1a4ae80@gmail.com>
+Date: Sun, 28 Sep 2025 11:26:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,42 +81,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ntfs3: fix uninit memory after failed mi_read in
- mi_format_new
-To: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>,
- almaz.alexandrovich@paragon-software.com
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org,
- syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
-References: <20250925203701.223744-2-rpthibeault@gmail.com>
+Subject: Re: [PATCH] Fix the cleanup on alloc_mpc failure in
+ atm_mpoa_mpoad_attach
+To: Deepak Sharma <deepak.sharma.472935@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ pwn9uin@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
+ syzbot+740e04c2a93467a0f8c8@syzkaller.appspotmail.com,
+ syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
+References: <20250925204028.232320-1-deepak.sharma.472935@gmail.com>
 Content-Language: en-US
 From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <20250925203701.223744-2-rpthibeault@gmail.com>
+In-Reply-To: <20250925204028.232320-1-deepak.sharma.472935@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/25/25 16:36, Raphael Pinsonneault-Thibeault wrote:
+On 9/25/25 16:40, Deepak Sharma wrote:
 
-> -	} else if (mi_read(mi, is_mft)) {
-> -		;
-> -	} else if (rec->rhdr.sign == NTFS_FILE_SIGNATURE) {
-> -		/* Record is reused. Update its sequence number. */
-> -		seq = le16_to_cpu(rec->seq) + 1;
-> -		if (!seq)
-> -			seq = 1;
-> +	} else {
-> +		err = mi_read(mi, is_mft);
-> +		if (err) {
-> +			return err;
-> +		}
-> +
-> +		if (rec->rhdr.sign == NTFS_FILE_SIGNATURE) {
-> +			/* Record is reused. Update its sequence number. */
-> +			seq = le16_to_cpu(rec->seq) + 1;
-> +			if (!seq)
-> +				seq = 1;
-> +		}
+> 
+> Do a `timer_delete` before returning from the `alloc_mpc` failure
+> 
 
-How was this tested?
+Was this code tested?
 
 
