@@ -1,194 +1,123 @@
-Return-Path: <linux-kernel+bounces-835369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22463BA6EA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:03:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6BDABA6EA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87F6F7AA3E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:01:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F8F17D34B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35EB2DCC1B;
-	Sun, 28 Sep 2025 10:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEEC2DC339;
+	Sun, 28 Sep 2025 10:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAPSIau8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnVW8d31"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3362DC772;
-	Sun, 28 Sep 2025 10:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E972D73AD
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759053773; cv=none; b=fEPGvtdh+l6Y5vfwoYkqMBgMKpq6MNt3IA+w4aCF2Nv+RWBKj6XGRwEMtzcyLiR8qPuTIoiMTz1ADtslB/blR8+T43yMIlDHlTGVHkg7m6Y73rnSxTYSKp2CF3QISER0NZDSrYi9Q7VGBOVvUGcOGNCyY0nMPdVByIwdZIDCdhk=
+	t=1759053922; cv=none; b=m91/Gc4ZfGgDq2DrhX4HSYiPH5X7ZNEzNvC6e7iyD/6ClgS2nl/TnD3cdTndSHMNEAtba06yGGPn5UUAs39bIpPHWe/Zq82+aJ3+NGv5Ctf6cqTEfk3wOmcj5nUU/VZid9/8BacOpQ4vYQr6fcRovk0z7tcfYe+i+Jb9TUZwtg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759053773; c=relaxed/simple;
-	bh=Gfwr3mDuHWLuxD7y8MHqLYeaO90BwXW8nsqBi1q6KRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W3xXOBM4O+ijO6DH4kLDQW94sQRpEnvSi6hF5/GhOe6H9oZ8j5g09zvekQuR5sreUelnsYS29agqnymR/PodI31nJTsBWHjl62+KwS5WCJX2xO3i6FTSoFGuKcZZlu60bBOcdVcw8t9WYfLLZwhPRv9aQfXxASl10hdbqajc6/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAPSIau8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE42C4CEF0;
-	Sun, 28 Sep 2025 10:02:44 +0000 (UTC)
+	s=arc-20240116; t=1759053922; c=relaxed/simple;
+	bh=FdQdV6EKcysKfdvysmJi8PmEz/o5IuIR05/jzdQQrYY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AQVNPONahTXDL/1copwa5QxtS/78Ovtew1s0Ti8mD8w0tt3gn4dhMnA34tWOpdkSJYoYN86Fo/419MwWv0t8HP/hxh6bkE7yXvmTGSUvDDPFqNIi414TAUSHEfCcdpHWiIpIya6dsSvaQqjg4vtsoH/GcGEnwSpEp0U2L6MQXas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UnVW8d31; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CDB4C4AF09
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759053772;
-	bh=Gfwr3mDuHWLuxD7y8MHqLYeaO90BwXW8nsqBi1q6KRA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vAPSIau84lhBXGUb3FsTzgjC1ULiMbXMAaAKQhRleenOhHgNby71HJluVBegtbitF
-	 G0knwKdJPS7+qfpZaxeVuVSMU/T3T0j1xDAIkkGScEwngSEVv2MWVf4P/9UzL9jqjE
-	 dB/I86lehNJpt80A+VO1ckHH1yWwbMy4X4KeXNXCyMvMMXZG8rvGxRatBO42pzBofe
-	 VJhzSWytIHNbCfQ1iIrW4rq9uZ2YUYFWMnoLtPn18rB95rLQ1Wf5J4HXjn81wSKTbg
-	 STm346iTn9Up7iVNEwwMqBOByZll8Earw5xDUenFL0GoNC4uFtysDhCiy6QWlM5ECL
-	 z8CYltqOz8LIQ==
-Date: Sun, 28 Sep 2025 11:02:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- oe-kbuild-all@lists.linux.dev, michael.hennerich@analog.com,
- nuno.sa@analog.com, eblanc@baylibre.com, dlechner@baylibre.com,
- andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- corbet@lwn.net, marcelo.schmitt1@gmail.com, Trevor Gamblin
- <tgamblin@baylibre.com>, Axel Haslam <ahaslam@baylibre.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
-Subject: Re: [PATCH v3 6/8] iio: adc: ad4030: Add SPI offload support
-Message-ID: <20250928110239.20f81375@jic23-huawei>
-In-Reply-To: <202509272028.0zLNiR5w-lkp@intel.com>
-References: <0028720d2cb21898ef044458065ac8a0bc829588.1758916484.git.marcelo.schmitt@analog.com>
-	<202509272028.0zLNiR5w-lkp@intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1759053922;
+	bh=FdQdV6EKcysKfdvysmJi8PmEz/o5IuIR05/jzdQQrYY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UnVW8d31HjkRA8NpSPucGqBJflkwvenhwazprUTtRZz6UagdjtADK7ywERNLPJS9B
+	 lplUgfdGZ8TDBYro00L88gsdQGMOCwbsHdu1fBT4RRrXlx8+/SvHZqeu66RaiI7saN
+	 h2sgzR38VANBXfU0Uma5QtMIwvgHs9K1maVkmugTeWxaqgoV2lDP3J/fv0WEVJImag
+	 MTqAjBkNrzEys2T1s981tow7UkkSFkOCl1kHLNZToQ+NToqLqBAEIBKSvGOXHWX9BF
+	 uosH8ZAnJiSrDeh3V/NovQ7bUZa5bbY/Vbu5FThsK0HAf+U2xFuk21qoxoLsooNsTU
+	 tcnY5lq9W+ayg==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7af40016ab3so1344778a34.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:05:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX9fVJLfn91Dmdb/wvAc05C+TPzfp2mIZzDaBQ6L4JXY3qe7E5OHy6HBGj5/vVydOdewfhHrn9qhNTxBoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt8n7Rkr0sMnkoB7gOXMo7L/cJ9cXaV0obOxKNMXXosi4oLX3O
+	VqM07PD8qSZnQISSVYONXYIB6RfuYAoGN+lTafLpdbKCsRG3aMDIPaPVnX9gKo2t4vj3B+GHOVU
+	Napy/81M1m7nlM928m3xnCTwGuDrzlRc=
+X-Google-Smtp-Source: AGHT+IFCzORk5att9vJ/4iiSnpvi70q5WkKijwIWLiGYgkpl9JJsmcMEMupMwwP8EFtqH6wt4Q5+dfEpOmfuTRpBZfc=
+X-Received: by 2002:a05:6820:8391:b0:640:a3eb:333a with SMTP id
+ 006d021491bc7-640a3eb35d9mr3616610eaf.2.1759053921906; Sun, 28 Sep 2025
+ 03:05:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <40c2a6fc-8dd9-4f6c-9ebb-2f74f7d0b795@linaro.org>
+In-Reply-To: <40c2a6fc-8dd9-4f6c-9ebb-2f74f7d0b795@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 28 Sep 2025 12:05:11 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gJe3Hy6mWB+chRbvsCM_xjPX+8XpSjGZ1G8eFr9-rFjA@mail.gmail.com>
+X-Gm-Features: AS18NWD1Lpg7GlAiS-hzXaEsjBRNWMYg6zRF_35ecXG3ljPhW1zbNbtCrvT3VfE
+Message-ID: <CAJZ5v0gJe3Hy6mWB+chRbvsCM_xjPX+8XpSjGZ1G8eFr9-rFjA@mail.gmail.com>
+Subject: Re: [GIT PULL] thermal driver for v6.18-rc1 #2
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, John Madieu <john.madieu.xa@bp.renesas.com>, 
+	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux PM mailing list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 27 Sep 2025 20:59:36 +0800
-kernel test robot <lkp@intel.com> wrote:
+Hi Daniel,
 
-> Hi Marcelo,
-> 
-> kernel test robot noticed the following build errors:
+On Sun, Sep 28, 2025 at 12:34=E2=80=AFAM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> Hi Rafael,
+>
+> after an error reported by kbuild test, it appears a file missed when
+> importing the RZ/G3E new driver which stayed locally after a conflict
+> resolution. This change is on top of the previous tag. Alternatively, if
+> you wish to drop the previous PR, I can emit a new PR with this
+> offending change fixed, IOW this fix folded with initial patch (which
+> sounds cleaner to me BTW).
+>
+> The following changes since commit 79428e60897916401c9ed326f6ada4d7c7c997=
+a3:
+>
+>    dt-bindings: thermal: qcom-tsens: Document the Glymur temperature
+> Sensor (2025-09-26 13:27:44 +0200)
+>
+> are available in the Git repository at:
+>
+>
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
+> tags/thermal-v6.18-rc1-2
+>
+> for you to fetch changes up to dc67521c20b701b5237ff486ae078829dc1f8fea:
+>
+>    thermal/drivers/renesas/rzg3e: Fix add thermal driver for the Renesas
+> RZ/G3E SoC (2025-09-28 00:19:53 +0200)
+>
+> ----------------------------------------------------------------
+> - Add missing file when importing conflicting change for the Renesas
+>    RZ/G3E thermal driver (Daniel Lezcano)
+>
+> ----------------------------------------------------------------
+> John Madieu (1):
+>        thermal/drivers/renesas/rzg3e: Fix add thermal driver for the
+> Renesas RZ/G3E SoC
+>
+>   drivers/thermal/renesas/rzg3e_thermal.c | 547
+> ++++++++++++++++++++++++++++++++
+>   1 file changed, 547 insertions(+)
+>   create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
+>
+> --
 
-So, question is stubs or add a dependency.
-(Assuming there isn't a patch in flight already to add the stubs).
-
-Uwe, does it make sense to add stubs for these, similar to many of the
-other consumer interfaces?
-
-Jonathan
-
-> 
-> [auto build test ERROR on 561285d048053fec8a3d6d1e3ddc60df11c393a0]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Marcelo-Schmitt/dt-bindings-iio-adc-adi-ad4030-Reference-spi-peripheral-props/20250927-044546
-> base:   561285d048053fec8a3d6d1e3ddc60df11c393a0
-> patch link:    https://lore.kernel.org/r/0028720d2cb21898ef044458065ac8a0bc829588.1758916484.git.marcelo.schmitt%40analog.com
-> patch subject: [PATCH v3 6/8] iio: adc: ad4030: Add SPI offload support
-> config: i386-randconfig-014-20250927 (https://download.01.org/0day-ci/archive/20250927/202509272028.0zLNiR5w-lkp@intel.com/config)
-> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509272028.0zLNiR5w-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202509272028.0zLNiR5w-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/spi/spi-offload-trigger-pwm.c: In function 'spi_offload_trigger_pwm_validate':
-> >> drivers/spi/spi-offload-trigger-pwm.c:55:15: error: implicit declaration of function 'pwm_round_waveform_might_sleep' [-Wimplicit-function-declaration]  
->       55 |         ret = pwm_round_waveform_might_sleep(st->pwm, &wf);
->          |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/spi/spi-offload-trigger-pwm.c: In function 'spi_offload_trigger_pwm_enable':
-> >> drivers/spi/spi-offload-trigger-pwm.c:81:16: error: implicit declaration of function 'pwm_set_waveform_might_sleep' [-Wimplicit-function-declaration]  
->       81 |         return pwm_set_waveform_might_sleep(st->pwm, &wf, false);
->          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/spi/spi-offload-trigger-pwm.c: In function 'spi_offload_trigger_pwm_disable':
-> >> drivers/spi/spi-offload-trigger-pwm.c:90:15: error: implicit declaration of function 'pwm_get_waveform_might_sleep' [-Wimplicit-function-declaration]  
->       90 |         ret = pwm_get_waveform_might_sleep(st->pwm, &wf);
->          |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Kconfig warnings: (for reference only)
->    WARNING: unmet direct dependencies detected for SPI_OFFLOAD_TRIGGER_PWM
->    Depends on [n]: SPI [=y] && SPI_OFFLOAD [=y] && PWM [=n]
->    Selected by [y]:
->    - AD4030 [=y] && IIO [=y] && SPI [=y] && GPIOLIB [=y]
-> 
-> 
-> vim +/pwm_round_waveform_might_sleep +55 drivers/spi/spi-offload-trigger-pwm.c
-> 
-> ebb398ae1e052c David Lechner 2025-02-07   36  
-> ebb398ae1e052c David Lechner 2025-02-07   37  static int spi_offload_trigger_pwm_validate(struct spi_offload_trigger *trigger,
-> ebb398ae1e052c David Lechner 2025-02-07   38  					    struct spi_offload_trigger_config *config)
-> ebb398ae1e052c David Lechner 2025-02-07   39  {
-> ebb398ae1e052c David Lechner 2025-02-07   40  	struct spi_offload_trigger_pwm_state *st = spi_offload_trigger_get_priv(trigger);
-> ebb398ae1e052c David Lechner 2025-02-07   41  	struct spi_offload_trigger_periodic *periodic = &config->periodic;
-> ebb398ae1e052c David Lechner 2025-02-07   42  	struct pwm_waveform wf = { };
-> ebb398ae1e052c David Lechner 2025-02-07   43  	int ret;
-> ebb398ae1e052c David Lechner 2025-02-07   44  
-> ebb398ae1e052c David Lechner 2025-02-07   45  	if (config->type != SPI_OFFLOAD_TRIGGER_PERIODIC)
-> ebb398ae1e052c David Lechner 2025-02-07   46  		return -EINVAL;
-> ebb398ae1e052c David Lechner 2025-02-07   47  
-> ebb398ae1e052c David Lechner 2025-02-07   48  	if (!periodic->frequency_hz)
-> ebb398ae1e052c David Lechner 2025-02-07   49  		return -EINVAL;
-> ebb398ae1e052c David Lechner 2025-02-07   50  
-> ebb398ae1e052c David Lechner 2025-02-07   51  	wf.period_length_ns = DIV_ROUND_UP_ULL(NSEC_PER_SEC, periodic->frequency_hz);
-> ebb398ae1e052c David Lechner 2025-02-07   52  	/* REVISIT: 50% duty-cycle for now - may add config parameter later */
-> ebb398ae1e052c David Lechner 2025-02-07   53  	wf.duty_length_ns = wf.period_length_ns / 2;
-> ebb398ae1e052c David Lechner 2025-02-07   54  
-> ebb398ae1e052c David Lechner 2025-02-07  @55  	ret = pwm_round_waveform_might_sleep(st->pwm, &wf);
-> ebb398ae1e052c David Lechner 2025-02-07   56  	if (ret < 0)
-> ebb398ae1e052c David Lechner 2025-02-07   57  		return ret;
-> ebb398ae1e052c David Lechner 2025-02-07   58  
-> ebb398ae1e052c David Lechner 2025-02-07   59  	periodic->frequency_hz = DIV_ROUND_UP_ULL(NSEC_PER_SEC, wf.period_length_ns);
-> ebb398ae1e052c David Lechner 2025-02-07   60  
-> ebb398ae1e052c David Lechner 2025-02-07   61  	return 0;
-> ebb398ae1e052c David Lechner 2025-02-07   62  }
-> ebb398ae1e052c David Lechner 2025-02-07   63  
-> ebb398ae1e052c David Lechner 2025-02-07   64  static int spi_offload_trigger_pwm_enable(struct spi_offload_trigger *trigger,
-> ebb398ae1e052c David Lechner 2025-02-07   65  					  struct spi_offload_trigger_config *config)
-> ebb398ae1e052c David Lechner 2025-02-07   66  {
-> ebb398ae1e052c David Lechner 2025-02-07   67  	struct spi_offload_trigger_pwm_state *st = spi_offload_trigger_get_priv(trigger);
-> ebb398ae1e052c David Lechner 2025-02-07   68  	struct spi_offload_trigger_periodic *periodic = &config->periodic;
-> ebb398ae1e052c David Lechner 2025-02-07   69  	struct pwm_waveform wf = { };
-> ebb398ae1e052c David Lechner 2025-02-07   70  
-> ebb398ae1e052c David Lechner 2025-02-07   71  	if (config->type != SPI_OFFLOAD_TRIGGER_PERIODIC)
-> ebb398ae1e052c David Lechner 2025-02-07   72  		return -EINVAL;
-> ebb398ae1e052c David Lechner 2025-02-07   73  
-> ebb398ae1e052c David Lechner 2025-02-07   74  	if (!periodic->frequency_hz)
-> ebb398ae1e052c David Lechner 2025-02-07   75  		return -EINVAL;
-> ebb398ae1e052c David Lechner 2025-02-07   76  
-> ebb398ae1e052c David Lechner 2025-02-07   77  	wf.period_length_ns = DIV_ROUND_UP_ULL(NSEC_PER_SEC, periodic->frequency_hz);
-> ebb398ae1e052c David Lechner 2025-02-07   78  	/* REVISIT: 50% duty-cycle for now - may add config parameter later */
-> ebb398ae1e052c David Lechner 2025-02-07   79  	wf.duty_length_ns = wf.period_length_ns / 2;
-> ebb398ae1e052c David Lechner 2025-02-07   80  
-> ebb398ae1e052c David Lechner 2025-02-07  @81  	return pwm_set_waveform_might_sleep(st->pwm, &wf, false);
-> ebb398ae1e052c David Lechner 2025-02-07   82  }
-> ebb398ae1e052c David Lechner 2025-02-07   83  
-> ebb398ae1e052c David Lechner 2025-02-07   84  static void spi_offload_trigger_pwm_disable(struct spi_offload_trigger *trigger)
-> ebb398ae1e052c David Lechner 2025-02-07   85  {
-> ebb398ae1e052c David Lechner 2025-02-07   86  	struct spi_offload_trigger_pwm_state *st = spi_offload_trigger_get_priv(trigger);
-> ebb398ae1e052c David Lechner 2025-02-07   87  	struct pwm_waveform wf;
-> ebb398ae1e052c David Lechner 2025-02-07   88  	int ret;
-> ebb398ae1e052c David Lechner 2025-02-07   89  
-> ebb398ae1e052c David Lechner 2025-02-07  @90  	ret = pwm_get_waveform_might_sleep(st->pwm, &wf);
-> ebb398ae1e052c David Lechner 2025-02-07   91  	if (ret < 0) {
-> ebb398ae1e052c David Lechner 2025-02-07   92  		dev_err(st->dev, "failed to get waveform: %d\n", ret);
-> ebb398ae1e052c David Lechner 2025-02-07   93  		return;
-> ebb398ae1e052c David Lechner 2025-02-07   94  	}
-> ebb398ae1e052c David Lechner 2025-02-07   95  
-> ebb398ae1e052c David Lechner 2025-02-07   96  	wf.duty_length_ns = 0;
-> ebb398ae1e052c David Lechner 2025-02-07   97  
-> ebb398ae1e052c David Lechner 2025-02-07   98  	ret = pwm_set_waveform_might_sleep(st->pwm, &wf, false);
-> ebb398ae1e052c David Lechner 2025-02-07   99  	if (ret < 0)
-> ebb398ae1e052c David Lechner 2025-02-07  100  		dev_err(st->dev, "failed to disable PWM: %d\n", ret);
-> ebb398ae1e052c David Lechner 2025-02-07  101  }
-> ebb398ae1e052c David Lechner 2025-02-07  102  
-> 
-
+Pulled and added to linux-pm.git/linux-next, thanks!
 
