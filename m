@@ -1,117 +1,313 @@
-Return-Path: <linux-kernel+bounces-835559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F29FBA7721
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AFDBA774E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A9067A2407
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:32:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516AB1892FC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 19:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229C126A08A;
-	Sun, 28 Sep 2025 19:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F93267B90;
+	Sun, 28 Sep 2025 19:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1LxD8wj"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nI1N2sOf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE706C8FE
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A501D5150;
+	Sun, 28 Sep 2025 19:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759088038; cv=none; b=P13uS6Ui8KsHshTMTnfKSwJpY9X6FTMlzT+HSguW1rmcG+wHCxCHxQLV8o6ibhi9zRv0VUh/a5WQPLceU9XkmhENBZ7ZpiKbJpsoTqVlvJIxC9yzbAYysMxCL7rZ09iZzhx4g9hQqhMs9HEMcec0kmP2/t/s8DwJK3T12nDY90Q=
+	t=1759088908; cv=none; b=qykN0S+iE3XziJo9NpNVYOHVcaCnwUbhMqrRaltibs72ay+oNgCRGUqNe64f8n+Rvxr8CUxf72DDnYLIXkQw1T+1ttcZvgZvATdMxe/SVJpVcJycFYpyMdO8JGR41kTCqH61B3t+kQsGewggU2YU9KADyWX4PzWod8vexEJhoBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759088038; c=relaxed/simple;
-	bh=SY2WQpP4TD98VH+yCLub/gCUkYNLxrDYyequyKHzXt8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wdg73VlXv76KKVvQphEwxAJCoWfYZUPZhmSY3PRC+UkRroK/3q0+YxVfup0zXycfnc68+PdrOtpCmaoX+dU7OntJE5NyUgg0YJ8uaxhRtHmpH/jyog/nhs7JUZSflXU1l1OTv/bh8xrjiwWYKnPDSEWDWA09t+rlupg+acMm7Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d1LxD8wj; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3d50882cc2so123354566b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759088034; x=1759692834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SY2WQpP4TD98VH+yCLub/gCUkYNLxrDYyequyKHzXt8=;
-        b=d1LxD8wjuw9nLarfwFKOJIFfFvrGgw/E2dsrVP8Ogmy8ygZ/j/KMOFkXJjwLtW00Nu
-         0SOY5of7YQDgCmYg4WY7NKJJMIDwREU60O8sVmYJOKp3bXXSxv/vivgMP/20YBfYKrUl
-         scdhEIcKARbZhEYOYD8R4gWspC8UlAEvHx6lUwwq4amPKc6xXstwr1cQ5TwuCOcyTJoX
-         AiuqL+g41p8m/ugcNONdV0nCWIugc9tzkZM11jCeD7740UynR1Kg2wZoj5Mt+OJoYq/a
-         SIEopqgbFvdEDdSBESOfhjXF5TfPDDCW75TQGlmuxbzko0JWe4V7pzGAQ1x4rKlGUezp
-         sFXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759088034; x=1759692834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SY2WQpP4TD98VH+yCLub/gCUkYNLxrDYyequyKHzXt8=;
-        b=g7HB6i9T30L0+PC37pUftJuCcWlIcixatURAtpokOU2vyZUQFVmSfs52J5lp3CiTtU
-         YlAbPzVKDv6z2v6Y232bw5lSu+5V/yq5xY/NT4MTN7Wo289HzXHS93vg3p1b7k2tYQ/W
-         l7Acz5krrXjI3p48hYuZfNLHPlLuMdVTJUSAJTJo/2NBTfE0pDnD83wNGOOX4ceDD/EE
-         NKSKTEF1yKuKFgBlqLXmIPTyOZdfUH6NXbR99tljfDlWetmDgWQ+YB6O/jxnb3s7VA2a
-         kyz0/53rbYuNyISPLzJwNP+e1wtqlrcYRZIYhrGQxa0i+LIKl/C1HX40ETGXmq6ZOSrr
-         hGxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjKZaaQeGngUUxhtM6YWlAkUWLEcErfX2Vgd3KsVOTIkpOi2rJjfThSzIIguXdQ0fN6PGk/rlDmqVAvbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTp2MYNVW88IadUYdPLM96OBqqdzXu88XeiOHSfB4nlkFOj4XQ
-	UY6jZ9udlidyNCB2UnuDmj+WteFtnYg/juH4g9IhymeCqq6K+98AUpTL/3SvrkLw+P0XPfXnfcp
-	xB86R65pPIoPfohbxsFY/ln76CvA/EZo=
-X-Gm-Gg: ASbGnct0YfawLBSgdgKFL2bI6AN7tZjGOVu/LM3pKWbOi8DJDxujQ3FbwdjvAvbgikN
-	Awkd+N/zT/qvifjPfcOatz+bQA/SDxKaU/kopJ1u06SaWXX+nD5oBTXvKjvhTsv3fdTIkC4xMMq
-	rkYWbJm/3qOs3l2pGs/SyXs24wT4nCObzCuk0lDEGpat20FkJOoV73C37WzCAYeG10/kG9E2tlT
-	xu7aj8hpuQmhUhkpQ==
-X-Google-Smtp-Source: AGHT+IELSeCgCGyqnYFwLjpP9I/QUkSXTi30I9okuHYya2KnsNvX9kEtVC+RW54UOV7fvTUxJOJ9A57qSXR6SnQFGv0=
-X-Received: by 2002:a17:906:c145:b0:b07:88ef:fe1a with SMTP id
- a640c23a62f3a-b34ba93ca8amr1820788166b.40.1759088034191; Sun, 28 Sep 2025
- 12:33:54 -0700 (PDT)
+	s=arc-20240116; t=1759088908; c=relaxed/simple;
+	bh=FiCN47fJtQb18mY9IAgpHRnPcAAnBTX9SMBd6wgZt2Q=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:To:From:Mime-Version; b=VtHfI4tEI3LPELM5mcAwvgM6h+UJRf4mKrBu5As1lGkhM9K4vcfONFUpn4xtufcxNaYKWqOMe+eLUsbjmLzTZFbtO/dBGvhgT0pubazC4o7w5V32sWvEsQ5Upwul8kOr4ocQ/wxxCLAUs2ZPIs9WcR0TUGNCQnNgf60oAS/KFo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nI1N2sOf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98775C4CEF0;
+	Sun, 28 Sep 2025 19:48:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759088908;
+	bh=FiCN47fJtQb18mY9IAgpHRnPcAAnBTX9SMBd6wgZt2Q=;
+	h=Date:Subject:Cc:To:From:From;
+	b=nI1N2sOfs4BOeMIIQDRPpKl3jA3yoMGrOdp7WHeJZ4mhBiXzpe+kklFC+XT3FR+JE
+	 npIt2dLbMllcgLjRMNaNSZT4HP5XNaxTsXaDp1WDij/BeRfzDUjPVflN0pRpNfLFtf
+	 K8JVCmNPecvTe+JQ6kGoGICTu8cma6JUPKc7B6g0NiXfZ3Yt2nvt/2g5ZjIh8wwKf7
+	 zmD2OckR0LMcqv7XAgkJag7p6KfxS1b8qhfGDXTUmeeunX7jGPH5B6CS2TijS2LNi0
+	 PHN1gdflOLGSijOTX9xeocfZKZtAirbYgDeylbrupUozlbdc80foUY/qAtuQduIE9P
+	 DJgDH1RRPacqQ==
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 28 Sep 2025 21:48:24 +0200
+Message-Id: <DD4OZ2NDSZ6E.2KDADLOEY69TI@kernel.org>
+Subject: [GIT PULL] Driver core changes for 6.18-rc1
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Saravana Kannan" <saravanak@google.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250923095229.2149740-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250923095229.2149740-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 28 Sep 2025 22:33:18 +0300
-X-Gm-Features: AS18NWCwQng2zvXar3j9bvUGzv_wYAqN6A_8i_T4MH41majXCfzU6gFOBz8-dpw
-Message-ID: <CAHp75VcEQ_14EY0Fd8GD17K7VBe29VN-bU5OtsFwKfpQHWrnYg@mail.gmail.com>
-Subject: Re: [PATCH] lib/string_choices: Add str_assert_deassert() helper
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: aerc 0.20.1
 
-On Tue, Sep 23, 2025 at 12:52=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add str_assert_deassert() helper to return "assert" or "deassert"
-> string literal depending on the boolean argument. Also add the
-> inversed variant str_deassert_assert().
+Hi Linus,
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Please pull these driver-core changes.
 
-...
+I did a test merge pulling in Miguel's Rust tree and found two trivial incl=
+ude
+conflicts -- otherwise no conflicts expected.
 
-> Note checkpatch complians about adding a new line before the macro
-> definition. But this is the existing style in this file. So keeping
-> it as is.
+All changes have been in linux-next for at least six rounds (except for two
+minor patches that change the Display implementation of pci::Vendor and
+pci::Class to print the actual vendor and class name).
 
-It's a checkpatch's problem. It's fine to ignore it in this case.
+- Danilo
 
---=20
-With Best Regards,
-Andy Shevchenko
+The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e=
+:
+
+  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git=
+ tags/driver-core-6.18-rc1
+
+for you to fetch changes up to 6d97171ac6585de698df019b0bfea3f123fd8385:
+
+  rust: pci: display symbolic PCI vendor names (2025-09-25 15:52:00 +0200)
+
+----------------------------------------------------------------
+Driver core changes for 6.18-rc1
+
+- Auxiliary:
+   - Drop call to dev_pm_domain_detach() in auxiliary_bus_probe()
+   - Optimize logic of auxiliary_match_id()
+
+- Rust:
+  - Auxiliary:
+    - Use primitive C types from prelude
+
+  - DebugFs:
+    - Add debugfs support for simple read/write files and custom callbacks
+      through a File-type-based and directory-scope-based API
+    - Sample driver code for the File-type-based API
+    - Sample module code for the directory-scope-based API
+
+  - I/O:
+    - Add io::poll module and implement Rust specific read_poll_timeout()
+      helper
+
+  - IRQ:
+    - Implement support for threaded and non-threaded device IRQs based on
+      (&Device<Bound>, IRQ number) tuples (IrqRequest)
+    - Provide &Device<Bound> cookie in IRQ handlers
+
+  - PCI:
+    - Support IRQ requests from IRQ vectors for a specific pci::Device<Boun=
+d>
+    - Implement accessors for subsystem IDs, revision, devid and resource s=
+tart
+    - Provide dedicated pci::Vendor and pci::Class types for vendor and cla=
+ss
+      ID numbers
+    - Implement Display to print actual vendor and class names; Debug to pr=
+int
+      the raw ID numbers
+    - Add pci::DeviceId::from_class_and_vendor() helper
+    - Use primitive C types from prelude
+    - Various minor inline and (safety) comment improvements
+
+  - Platform:
+    - Support IRQ requests from IRQ vectors for a specific
+      platform::Device<Bound>
+
+  - Nova:
+    - Use pci::DeviceId::from_class_and_vendor() to avoid probing
+      non-display/compute PCI functions
+
+  - Misc:
+    - Add helper for cpu_relax()
+    - Update ARef import from sync::aref
+
+- sysfs:
+  - Remove bin_attrs_new field from struct attribute_group
+  - Remove read_new() and write_new() from struct bin_attribute
+
+- Misc:
+  - Document potential race condition in get_dev_from_fwnode()
+  - Constify node_group argument in software node registration functions
+  - Fix order of kernel-doc parameters in various functions
+  - Set power.no_pm flag for faux devices
+  - Set power.no_callbacks flag along with the power.no_pm flag
+  - Constify the pmu_bus bus type
+  - Minor spelling fixes
+
+----------------------------------------------------------------
+Abhinav Ananthu (2):
+      rust: auxiliary: Use `c_` types from prelude instead of
+      rust: pci: use c_* types via kernel prelude
+
+Alice Ryhl (1):
+      rust: irq: add &Device<Bound> argument to irq callbacks
+
+Alistair Popple (2):
+      rust: Update PCI binding safety comments and add inline compiler hint
+      rust: Add several miscellaneous PCI helpers
+
+Claudiu Beznea (1):
+      driver core: auxiliary bus: Drop dev_pm_domain_detach() call
+
+Daniel Almeida (6):
+      rust: irq: add irq module
+      rust: irq: add flags module
+      rust: irq: add support for non-threaded IRQs and handlers
+      rust: irq: add support for threaded IRQs and handlers
+      rust: platform: add irq accessors
+      rust: pci: add irq accessors
+
+Danilo Krummrich (1):
+      driver core: get_dev_from_fwnode(): document potential race
+
+Dmitry Torokhov (1):
+      software node: Constify node_group in registration functions
+
+FUJITA Tomonori (2):
+      rust: Add cpu_relax() helper
+      rust: Add read_poll_timeout function
+
+Gil Fine (1):
+      driver core: Fix order of the kernel-doc parameters
+
+Greg Kroah-Hartman (2):
+      Merge 6.17-rc3 into driver-core-next
+      Merge 6.17-rc6 into driver-core-next
+
+John Hubbard (8):
+      rust: pci: provide access to PCI Class and Class-related items
+      rust: pci: provide access to PCI Vendor values
+      rust: pci: add DeviceId::from_class_and_vendor() method
+      gpu: nova-core: avoid probing non-display/compute PCI functions
+      rust: pci: use pci::Vendor instead of bindings::PCI_VENDOR_ID_*
+      rust: pci: inline several tiny functions
+      rust: pci: display symbolic PCI class names
+      rust: pci: display symbolic PCI vendor names
+
+Matthew Maurer (7):
+      rust: debugfs: Add initial support for directories
+      rust: debugfs: Add support for read-only files
+      rust: debugfs: Add support for writable files
+      rust: debugfs: Add support for callback-based files
+      samples: rust: Add debugfs sample driver
+      rust: debugfs: Add support for scoped directories
+      samples: rust: Add scoped debugfs sample driver
+
+Miguel Ojeda (1):
+      MAINTAINERS: add "DEVICE I/O & IRQ [RUST]" entry
+
+Rafael J. Wysocki (2):
+      driver core: faux: Set power.no_pm for faux devices
+      driver core/PM: Set power.no_callbacks along with power.no_pm
+
+Rahul Rameshbabu (2):
+      rust: pci: fix incorrect platform reference in PCI driver unbind doc =
+comment
+      rust: pci: fix incorrect platform reference in PCI driver probe doc c=
+omment
+
+Ricardo B. Marliere (1):
+      perf: make pmu_bus const
+
+Shankari Anand (1):
+      rust: driver-core: Update ARef and AlwaysRefCounted imports from sync=
+::aref
+
+Thomas Wei=C3=9Fschuh (2):
+      sysfs: remove bin_attribute::read_new/write_new()
+      sysfs: remove attribute_group::bin_attrs_new
+
+Xichao Zhao (1):
+      drivers: base: fix "publically"->"publicly"
+
+Zijun Hu (1):
+      driver core: auxiliary bus: Optimize logic of auxiliary_match_id()
+
+ MAINTAINERS                              |  20 ++++
+ drivers/base/auxiliary.c                 |  25 +++--
+ drivers/base/core.c                      |  27 +++++-
+ drivers/base/cpu.c                       |   2 +-
+ drivers/base/faux.c                      |   1 +
+ drivers/base/swnode.c                    |   5 +-
+ drivers/gpu/nova-core/driver.rs          |  33 ++++++-
+ fs/sysfs/file.c                          |  22 +----
+ include/linux/device.h                   |   3 +
+ include/linux/property.h                 |   4 +-
+ include/linux/sysfs.h                    |  11 +--
+ kernel/events/core.c                     |   2 +-
+ rust/bindings/bindings_helper.h          |   2 +
+ rust/helpers/helpers.c                   |   2 +
+ rust/helpers/irq.c                       |   9 ++
+ rust/helpers/pci.c                       |  18 ++++
+ rust/helpers/processor.c                 |   8 ++
+ rust/kernel/auxiliary.rs                 |   4 +-
+ rust/kernel/debugfs.rs                   | 594 +++++++++++++++++++++++++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
++++++++++
+ rust/kernel/debugfs/callback_adapters.rs | 122 +++++++++++++++++++++++
+ rust/kernel/debugfs/entry.rs             | 164 +++++++++++++++++++++++++++=
+++++
+ rust/kernel/debugfs/file_ops.rs          | 247 +++++++++++++++++++++++++++=
++++++++++++++++++++
+ rust/kernel/debugfs/traits.rs            | 102 +++++++++++++++++++
+ rust/kernel/device.rs                    |   7 +-
+ rust/kernel/devres.rs                    |   4 +-
+ rust/kernel/io.rs                        |   1 +
+ rust/kernel/io/poll.rs                   | 104 ++++++++++++++++++++
+ rust/kernel/irq.rs                       |  24 +++++
+ rust/kernel/irq/flags.rs                 | 124 +++++++++++++++++++++++
+ rust/kernel/irq/request.rs               | 507 +++++++++++++++++++++++++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs                       |   3 +
+ rust/kernel/pci.rs                       | 180 +++++++++++++++++++++++++++=
++++----
+ rust/kernel/pci/id.rs                    | 578 +++++++++++++++++++++++++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+ rust/kernel/platform.rs                  | 178 +++++++++++++++++++++++++++=
++++++-
+ rust/kernel/processor.rs                 |  14 +++
+ samples/rust/Kconfig                     |  22 +++++
+ samples/rust/Makefile                    |   2 +
+ samples/rust/rust_debugfs.rs             | 151 +++++++++++++++++++++++++++=
++
+ samples/rust/rust_debugfs_scoped.rs      | 134 +++++++++++++++++++++++++
+ samples/rust/rust_dma.rs                 |   6 +-
+ samples/rust/rust_driver_auxiliary.rs    |  12 +--
+ samples/rust/rust_driver_pci.rs          |   9 +-
+ samples/rust/rust_driver_platform.rs     |   2 +-
+ 43 files changed, 3391 insertions(+), 98 deletions(-)
+ create mode 100644 rust/helpers/irq.c
+ create mode 100644 rust/helpers/processor.c
+ create mode 100644 rust/kernel/debugfs.rs
+ create mode 100644 rust/kernel/debugfs/callback_adapters.rs
+ create mode 100644 rust/kernel/debugfs/entry.rs
+ create mode 100644 rust/kernel/debugfs/file_ops.rs
+ create mode 100644 rust/kernel/debugfs/traits.rs
+ create mode 100644 rust/kernel/io/poll.rs
+ create mode 100644 rust/kernel/irq.rs
+ create mode 100644 rust/kernel/irq/flags.rs
+ create mode 100644 rust/kernel/irq/request.rs
+ create mode 100644 rust/kernel/pci/id.rs
+ create mode 100644 rust/kernel/processor.rs
+ create mode 100644 samples/rust/rust_debugfs.rs
+ create mode 100644 samples/rust/rust_debugfs_scoped.rs
 
