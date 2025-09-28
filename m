@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-835383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45B3BA6F47
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:33:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD06BA6F59
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6B71898C82
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:34:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F9C16D804
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609D92DEA87;
-	Sun, 28 Sep 2025 10:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641632D5C9E;
+	Sun, 28 Sep 2025 10:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ud20ASVs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CFQEKBdL"
+Received: from mail-m15567.qiye.163.com (mail-m15567.qiye.163.com [101.71.155.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17BC2DAFA9
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944B82D0C9A
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759055603; cv=none; b=O+ecHk2ID6QEnnDQv0IPOIdI1Lc1NqlTvZ7X3L1cmZ3w6j3t9tn3hYTJtr2XMVzJ1JYLNp5dUWNjyPWWX9g4GCpmpkrUsWiQsbqvuMxrPMwmMDl9Et03lX1LG7g1wqLP6kxFvA4Zra6TTfoJH/64kuLf0GKYRldF0z04UK3wrYk=
+	t=1759056812; cv=none; b=baC/6qEz1SNCBxOTfHUjd0dJvhNo2TKZTSMQFOvor8q5SZVIXqh50n4gSldCrEYAAJgDDy16u+KwY0ZeiO67rN9r06PxvrAxWWDeSeelp1zDP876brA33W6Z+l8/vj8wabhTcREbB8oKZqik4cXm+3l1KFPtnCEczh/S8OXSpGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759055603; c=relaxed/simple;
-	bh=W1P4GzY1bC9YgmxJ2fNnWAboDU4JuIT0DBDqxALFX0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xp2wELqHfaP/5OOe2X1u7l6sFWWJR9WWl6u+qxrvEGA3IDxWmR4u5E2fgOgbwK6Wl2Gix4Qsapr2yDzUapkJdsoCgyVS3SPE7K1J7a2y4WUOUOMISZM0JVhfavKIbGipVq2V2KQluujDNydVS8yuUw4VIWFALGsaSHlt8+iGHNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ud20ASVs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A58EC4CEF7
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759055603;
-	bh=W1P4GzY1bC9YgmxJ2fNnWAboDU4JuIT0DBDqxALFX0M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ud20ASVsnYuE5kNMszyEQpSoR0Bq4bejcUKHOUGjiL35VMUaD5yL3aWJSfDAcC6Td
-	 gZvVM+w5J+fLJk+M+cm+C5F6V8+n4QeTYvqpgUamaRejIQgk3V0BlYAFNlqYQL24Bc
-	 DWcQUU6VEeKpDUxZxLhye5/BzKyKh/wIMTJhcQ4gOf6DwgjgyJduc9FxYI2tEQHU8G
-	 Smimz0KWLOn1bqbGAIREMMYENc9PlF8rWaED7GAKDBcxtwEhefJidnd2amv8AtvhLY
-	 P0w6Rw13h6lhC3C6zgIAqhb2YGn56pNaWFWlqBEqDnFrzkyAsiQ1FYLlftVUlNnfCZ
-	 N4zqSVcCig0bw==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-35acca93e00so3029843fac.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 03:33:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUd8AfxqFZXknIdZQwGeqJQsuVnM/kDHqiXOt2wUs+QY6y95zlu59N44Z8OrHp+KArP1oaLzsBf1KQ4vp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk+FIeF/XJVYfcFQSt/tP19D9YaSAkbHH+ewSorYSzMwYgP+e4
-	D6jPwqXWOSi7SbiNe+PDjJKp5u/mV6HvPFvv21AKmUVLQFFRcdDLnUWhTekn89gjYuwNTRrygrT
-	AdH2j7S5bxFa/pm1xtfU/iuZkmLsUJaI=
-X-Google-Smtp-Source: AGHT+IHHkBehFxa/bp8CnX34GBVpEV5VAfmAS0oqHk9Wg6vhKkRCMfTaIXQ9hfF+1UwB0EGnwQh5Kq0MuUSpqvkAupk=
-X-Received: by 2002:a05:6870:a118:b0:315:b618:d6be with SMTP id
- 586e51a60fabf-35ef20c8e8fmr6297578fac.51.1759055602481; Sun, 28 Sep 2025
- 03:33:22 -0700 (PDT)
+	s=arc-20240116; t=1759056812; c=relaxed/simple;
+	bh=MzE4scLTJquRlSimZ0yFRT/Zsyv52M8cKf4BACIWark=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RtOv5cwyWDoSpcA+97IOZxhdgd38gg/DTznCbARgW8TM2n5sCXvvrIW1Q712bhgdbbC7bZoFiXIrph+LBcZl1fJpzpspKx6dcjhPfo6oNJHtEH31JJlgrLQi1Y8YyU10nSqRBXqJx0bl3p498ywMEHBTQMp9Pfxz/QQuGVe1HdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CFQEKBdL; arc=none smtp.client-ip=101.71.155.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2456910da;
+	Sun, 28 Sep 2025 18:38:03 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	hjc@rock-chips.com
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v3] drm/rockchip: analogix_dp: Apply devm_clk_get_optional() for &rockchip_dp_device.grfclk
+Date: Sun, 28 Sep 2025 18:37:34 +0800
+Message-Id: <20250928103734.4007257-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
- <20250916044735.2316171-2-dolinux.peng@gmail.com> <03ad08d9-4510-19fb-bbad-652159308119@huawei.com>
-In-Reply-To: <03ad08d9-4510-19fb-bbad-652159308119@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 28 Sep 2025 12:33:11 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ix+taHWpKAeYsNBQMoxG6f7E9vyO=yqjrh5_AnjrXZbg@mail.gmail.com>
-X-Gm-Features: AS18NWDE1zAXVuNiUSbLmdX4xI4485zsbYvsUyBO0gNsC9FdVLBA2B2bjlgQB_4
-Message-ID: <CAJZ5v0ix+taHWpKAeYsNBQMoxG6f7E9vyO=yqjrh5_AnjrXZbg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/14] ACPI: APEI: Remove redundant rcu_read_lock/unlock()
- in spin_lock
-To: Hanjun Guo <guohanjun@huawei.com>, pengdonglin <dolinux.peng@gmail.com>
-Cc: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com, 
-	ap420073@gmail.com, jv@jvosburgh.net, freude@linux.ibm.com, bcrl@kvack.org, 
-	trondmy@kernel.org, longman@redhat.com, kees@kernel.org, 
-	bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	linux-nfs@vger.kernel.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-s390@vger.kernel.org, 
-	cgroups@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a998fe6ad8303a3kunm5a055eb71de05e
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkxMGlZPQxodTk4dQkJKShpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=CFQEKBdLzj3RmovydjJ/6w0J+Z+ocOD7NCH8UCPOUnv9joMoyk3Hp31PZpKDFASAdryKQpPfo22/0OLo8xKgWTdFvb6BSK4uvk7rCil7kPubAqF6r/HV/LaZ1SZvZbsaZWPWfEHUcXLYs9WozLnsbAmpMFRDfa/nBcp2LaJry8g=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=OajlQ+6PdIYG+fmsAAOl6Cm5I8NVlpLVeebHG26Kl94=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sat, Sep 27, 2025 at 5:22=E2=80=AFAM Hanjun Guo <guohanjun@huawei.com> w=
-rote:
->
-> On 2025/9/16 12:47, pengdonglin wrote:
-> > From: pengdonglin <pengdonglin@xiaomi.com>
-> >
-> > Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side fun=
-ction definitions")
-> > there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
-> > rcu_read_lock_sched() in terms of RCU read section and the relevant gra=
-ce
-> > period. That means that spin_lock(), which implies rcu_read_lock_sched(=
-),
-> > also implies rcu_read_lock().
-> >
-> > There is no need no explicitly start a RCU read section if one has alre=
-ady
-> > been started implicitly by spin_lock().
-> >
-> > Simplify the code and remove the inner rcu_read_lock() invocation.
-> >
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > Cc: Tony Luck <tony.luck@intel.com>
-> > Cc: Hanjun Guo <guohanjun@huawei.com>
-> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> > Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
-> > ---
-> >   drivers/acpi/apei/ghes.c | 2 --
-> >   1 file changed, 2 deletions(-)
-> >
-> > diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> > index a0d54993edb3..97ee19f2cae0 100644
-> > --- a/drivers/acpi/apei/ghes.c
-> > +++ b/drivers/acpi/apei/ghes.c
-> > @@ -1207,12 +1207,10 @@ static int ghes_notify_hed(struct notifier_bloc=
-k *this, unsigned long event,
-> >       int ret =3D NOTIFY_DONE;
-> >
-> >       spin_lock_irqsave(&ghes_notify_lock_irq, flags);
-> > -     rcu_read_lock();
-> >       list_for_each_entry_rcu(ghes, &ghes_hed, list) {
-> >               if (!ghes_proc(ghes))
-> >                       ret =3D NOTIFY_OK;
-> >       }
-> > -     rcu_read_unlock();
-> >       spin_unlock_irqrestore(&ghes_notify_lock_irq, flags);
-> >
-> >       return ret;
->
-> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+The "grf" clock is optional for Rockchip eDP controller(RK3399 needs
+while RK3288 and RK3588 do not).
 
-Applied as 6.18 material, thanks!
+It can make the code more concise to use devm_clk_get_optional()
+instead of devm_clk_get() with extra checks.
+
+In addtion, DRM_DEV_ERROR() is replaced by dev_err_probe().
+
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+------
+
+Changes in v2:
+- Replace DRM_DEV_ERROR() with dev_err_probe().
+
+Changes in v3:
+- Update Reviewed-by tag.
+- Fix the spelling error 'consice' to 'concise'.
+---
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index d30f0983a53a..937f83cf42fc 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -335,15 +335,9 @@ static int rockchip_dp_of_probe(struct rockchip_dp_device *dp)
+ 		return PTR_ERR(dp->grf);
+ 	}
+ 
+-	dp->grfclk = devm_clk_get(dev, "grf");
+-	if (PTR_ERR(dp->grfclk) == -ENOENT) {
+-		dp->grfclk = NULL;
+-	} else if (PTR_ERR(dp->grfclk) == -EPROBE_DEFER) {
+-		return -EPROBE_DEFER;
+-	} else if (IS_ERR(dp->grfclk)) {
+-		DRM_DEV_ERROR(dev, "failed to get grf clock\n");
+-		return PTR_ERR(dp->grfclk);
+-	}
++	dp->grfclk = devm_clk_get_optional(dev, "grf");
++	if (IS_ERR(dp->grfclk))
++		return dev_err_probe(dev, PTR_ERR(dp->grfclk), "failed to get grf clock\n");
+ 
+ 	dp->pclk = devm_clk_get(dev, "pclk");
+ 	if (IS_ERR(dp->pclk)) {
+-- 
+2.34.1
+
 
