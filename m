@@ -1,139 +1,181 @@
-Return-Path: <linux-kernel+bounces-835437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F23BA7180
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:16:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C4EBA7187
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 16:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E311897673
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1B616D167
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847B4185B67;
-	Sun, 28 Sep 2025 14:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC6421882F;
+	Sun, 28 Sep 2025 14:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5pMhPcv"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPaurFue"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334971F462C
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3274190685
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759069003; cv=none; b=MfAxRy6gxb1dJPR6lc96Kl+5joL0LKM7nslQO1u7EA01QaV+wBTpbuKSlIXt9XjfeE2UT/RWgIO/8pqDvYh+aIn4w9sBe4qQ5z8rjrR8YePtMAEOs/UT6t+kClgCHtO/vxn5nZL6frgHflygFuxhm3H7VpJ+b7c3Of9F3rD6Utw=
+	t=1759069239; cv=none; b=GccS2j3aaAU0au8DW7cCoQzbuv7qe/GPVnigkGDfwOCF4TiENRUKUx2W4rEJXqeTSZR076HfzFlrjEyWb5nKnIcRFQiWMooobhIeMskp+Crm+s8DUBxnNciGH3ddWjDbzVjSSncY57tNazfVVWYu5PJ5HW8wHl8kHnZMbyxKQvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759069003; c=relaxed/simple;
-	bh=FmwvbHDppjU9CvYc2ySBEPJJrA8QuBJrnaeLbvaNeq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAcqd3VLVplB1OmQcCF7U9DscBaz/kmuSsqR8nsbz9jsGdLgHhkXVjjS7gvoyuxS10h7JQOj4ULF4zlSDvjxjNu+2qqZEA/nEed8u6sQocfLe0QIm3yy4C3w2RkaGVFZx5N91twXhtr05DCFBdfBQnDoyj6UnVIAglBmEtNcijU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5pMhPcv; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1759069239; c=relaxed/simple;
+	bh=MABUtmW7hs3j6sSEFukRcJjPKjgLALDyIMyqN3Z/8cI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q8OLn+yAZ5D+vlqiIpf4cDQz0kXA5F6DwTR+Po35n1EuYhwr3VdVU8n43FJmb3ncwXY3j57u+GHn1dhYp3C9jWhxc24DOBAuCWlnEat81ViFTO6tJ+XUiCNNyXJL6cXEKC+7CANuTdfsB0tLEKvj4pHIL9+uyuyg2fX6EFUZrh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPaurFue; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27c369f8986so36875445ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:16:42 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-78104c8cbb4so3847424b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759069001; x=1759673801; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qS561fu3xGPohq7c2b6s9Kqxn1syIAU/WENOzQp7H2A=;
-        b=i5pMhPcv2txHGkH1YtzaqUjxI6TKbfbfQaM+KOuZiwsetEjjnW5EfpJ6ly+tJaWx6F
-         Z9kl+Isk82Ajz+rI3D3D1gveiFFbaSgVm/ZwvaMdMzT1k+kXZZMNaExt8IhhrUmm8M9X
-         v8vCv81+Njd3cSpNgvAOk94SRWr45YBIPVrNRl+ScVjlLjcc1+jsaYuvOfSVM+E8sydO
-         I520epSXPTuWD/Zi96mrxzlxqlyukGF2A+FF/ut2ZHfE3ct8Am5LoMRFcnpOVCkX8nYB
-         9xbW3nT4dLTFxGtgfhZSTtgNdZPNRP8GWLNVQADu4gK2A0KWoYHhaWngGxAqVjtaW48+
-         7JaA==
+        d=gmail.com; s=20230601; t=1759069237; x=1759674037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBliwOJXPnzX5/lt9z5sUm0XkPB682hQdmEorp2useA=;
+        b=CPaurFue6DK9B34TD9XFm9HG7q+SEKVlXX5IDoj6wjsNxk443b+H38QBl2xrf8NZdz
+         ROqok5nkpBn68T9vOVZ+WGhzZ5rauPm/dowp8GI5E9kdvS8QnT9d24Z+eGQAOw8Jla6z
+         xfMcnwzcCBP6CiEZ3OD87dMceq1GT6TjxVPLUDtwqhBAcZ9doDPLkqrvWZ2gzcPXAh9b
+         CRxlofzgIyzkcp2ycb4YI8Akb17QyX0dC/jfIg3TWxtLxU45pJphKdXbmeaS6XkFc/XQ
+         BRxlPcxFvq2ATb29ILJ8kcMvXNfbDGJUDkS37RZJjOmWxYnfG+rZewFgYQcK78rSPmyT
+         EVsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759069001; x=1759673801;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1759069237; x=1759674037;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qS561fu3xGPohq7c2b6s9Kqxn1syIAU/WENOzQp7H2A=;
-        b=YV3pWljMYWViSpXmiWpvnpdgWx2jYUXJ7lRqjNI9WZfS9BQ5iwBK698+VAfzRB3ICC
-         MYJO214Svza2th/9l6VZF68BInAAvyaBYrYrWExgnDCo+wkU+p2zabBqBfJSxhJK0x+r
-         srH0K01qPYwCpMmMgFuUx6IGEailBHuA05AT2PMCc2I8z6ZfomIgk06skw3s1plbYSyL
-         vk2lual5s8CJaE+D2qGKUR27LuGITyLnSW1QaUksmNqnTK5MGUe2splmyl01WzxwbCyQ
-         IN3FbQgGfoAnPM74GMGreXYdJwzZpnqxpdPdCrH51rCPYvhf6aQkgaJ91IwlPVBxHFq6
-         cz1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWgAPEJfN2Vz7HGdE9DQT3oXGTfMHih7IM5V8/30RETVaiL3OF3eJo6n6YMqd+MD9Uy1UwBFwr/OFHqsGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztvFou7KOuS22odaev5Oawg3uRoSX/FfFvrq8tcoEZbHPbhSNB
-	GQAntJnuLf8/s+gn849a9KEzA+y5nYwc5tPTasHMeGFIHYP/H2MuJmiT
-X-Gm-Gg: ASbGncuh3UQgu05nc3CCJpAUELoDMEbD3L30U0kzn+degyae/2VeLHFv7PXNeSxxKTN
-	106kCQ1N0JH8a86NVzbUtEgCBDh7Ji0Q7Rr/2Xk0lNq44pdtxuzEQiXxBvSjL0RfmK6aHtk8dFE
-	tuBLvEy/Q31diumAElozdr3reTRz+mWaVG0vzkShNXtKwINsNnTVpOA0yxyPYnngHg7y/+SRNCG
-	MXRi6O5aFcp0ujU43rMRaR/KTm0i6Un8ZXVCToZQE1MogyL8vGdvFIJ6t9G5dHJQLPsmv0wOpTv
-	4BWg+GRPn7AgE6P+Kbw4XzXfjU/mB/g7VfbvZS5p+1KRDe6c14ufGPS+zyoT03K6NZbfE/wiYbW
-	UCm7+b8WR8HrMGEg8qvY4ayGVeMTjE2j7lwIhXyXBFg==
-X-Google-Smtp-Source: AGHT+IGylC8pdXw7Cs1te5retyIezZV7wuMBKjmnFoV675Y5zYlzg5VisBqeLGQ9FgxZdW/sAWmpqQ==
-X-Received: by 2002:a17:903:946:b0:271:49f:eaf5 with SMTP id d9443c01a7336-27ed4a30d16mr151724525ad.30.1759069001499;
-        Sun, 28 Sep 2025 07:16:41 -0700 (PDT)
-Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-27ed6ae5742sm103357305ad.150.2025.09.28.07.16.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 07:16:40 -0700 (PDT)
-Date: Sun, 28 Sep 2025 11:17:32 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michael.hennerich@analog.com, nuno.sa@analog.com,
-	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	corbet@lwn.net
-Subject: Re: [PATCH v3 4/8] iio: adc: ad4030: Reduce register access transfer
- speed
-Message-ID: <aNlDfJvyXjnfINy3@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1758916484.git.marcelo.schmitt@analog.com>
- <fd505d37aceaafd6b20626bfd3f25c47db1fb004.1758916484.git.marcelo.schmitt@analog.com>
- <20250928105316.782d076e@jic23-huawei>
+        bh=jBliwOJXPnzX5/lt9z5sUm0XkPB682hQdmEorp2useA=;
+        b=WYAKvCSZb3hBoCpdN/V4KwF+tnUbUFbrBOktpC+i5xV8tRnFTz4a/fnSVifx1pqwqa
+         6kI4UuoqtOlGdqOTtar5m5r4fOciFiCIqPr9q3Yvt0mg9F+ByueWQA1wMNhWeP9VdcLf
+         rB0ILjyF8BxerBaf8sE3rgqUkNaQG5hWwBsmMkr+v7ESDoDW9ARZgWzh7fqOqXdSHrOx
+         Kb1x62o+QZX2qepYdriiV3AqBTnf2Q89m7PdAIuyQJJs/SsUBcbcYEpyzmcIMhRCgdGN
+         2lZyawT2zcIa9WpjFjPWXWczHMKN4NCrbH+8gLeo0wOm5oLFD3tn9zKORiBDvie6RKIU
+         tANA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3wmhVXKsROEi3lOEispPemKAUN+Wt1AIbEQt99bnVIzdnGpE6fv+o72b5afNsMo8Qw2Kd58KYkHJXe4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo2PwClH2OkyL982NVKhsgqHffPto1w3zqPUgMxFs4x4qWM37a
+	FrCs7u6tLmgjLIfMefLQLGWfmM9QWMgjdBaKrWBSJ68zB7fsico79u0Nmw8cesgP
+X-Gm-Gg: ASbGnctRe0VJSvn/iN22sU1xN4sZYg9W8WrHnpgQzt3oYYF5uhSveuN6muPNY7nx+cU
+	GeHk4W5+uJc7Oo3KigifHVaUIYFwtg6BZETIU79b+6b/BKAQ+aHLHIDDCc+MnqdFOqCOvcpkRKy
+	OdMHCI1+buAkF4lfBSMiaIYYBDdDEK1gXMe1stut+wpIpEvGZp8iAif1/kr/nL7/Tr1mIYNTel9
+	BGOsnX1tLraGP21YqDxH8aiKC3fkeIn/m9FHVdFCEnp7Xt2vJcveiMtMo1DZVhMmaZnGDHnfo3I
+	4H4OWAUGfQbCrx4iMk4Ctr2L/XS7SJE4bqrnK+ns9eLmUK7+IB34pY4KnBc35W1jAo0AQvcX8ce
+	jag8S4QHV+c1sG7l8bDuQkdYDKJhPjLLX6taKIyIv8Q/U0Gni5eKuxxG6f2sRTaxdIYvC11tarF
+	fgq0a69g==
+X-Google-Smtp-Source: AGHT+IHVLp13cexWtdeZOpKIUVtPdhV6F5Ee+dX4OY0UFLu6wmCVbE3Gx8hDTID8re6UlOrb9jFCBA==
+X-Received: by 2002:a05:6a20:7348:b0:251:9f29:4553 with SMTP id adf61e73a8af0-2e7c1bd0c99mr17754459637.10.1759069237022;
+        Sun, 28 Sep 2025 07:20:37 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53cac77sm9207630a12.17.2025.09.28.07.20.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Sep 2025 07:20:36 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <08e2bfe4-8cee-4d72-96ed-30d1e04e8f63@roeck-us.net>
+Date: Sun, 28 Sep 2025 07:20:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928105316.782d076e@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] via_wdt: fix critical boot hang due to unnamed resource
+ allocation
+To: Li Qiang <liqiang01@kylinos.cn>, wim@linux-watchdog.org
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250928083332.3035370-1-liqiang01@kylinos.cn>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250928083332.3035370-1-liqiang01@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 09/28, Jonathan Cameron wrote:
-> On Fri, 26 Sep 2025 17:39:42 -0300
-> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+On 9/28/25 01:33, Li Qiang wrote:
+> The VIA watchdog driver uses allocate_resource() to reserve a MMIO
+> region for the watchdog control register. However, the allocated
+> resource was not given a name, which causes the kernel resource tree
+> to contain an entry marked as "<BAD>" under /proc/iomem on x86
+> platforms.
 > 
-> > Configuration register accesses are not considered a critical path in terms
-> > of time to complete. Even though register access transfers can run at high
-> > speeds, nanosecond completion times are not required as device
-> > configuration is usually done step by step from user space. Also, high
-> > frequency transfers hinder debug with external tools since they require
-> > faster clocked equipment. Reduce register access transfer speed.
+> During boot, this unnamed resource can lead to a critical hang because
+> subsequent resource lookups and conflict checks fail to handle the
+> invalid entry properly.
+
+FWIW, I only see the name used in print messages, which should show <NULL>
+when called with a NULL pointer. Some more details would have been useful,
+especially with the idea in mind that a missing resource name should be
+reported but not result in a hang and/or crash.
+
 > 
-> So making debug with external tools easier isn't usually a justification we'd
-> make to slow things down by default.
+> Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+Guenter
+
+> ---
+>   drivers/watchdog/via_wdt.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> Is there another reason for this being useful as opposed to not a problem
-> to do?   If it had been done this way in the first place I wouldn't have
-> minded, but to make a change I'd like either some others to jump in and
-> say, yes please do this, or a reason beyond you are using tooling that can't
-> cope with 80 MHz and don't want to hack the driver when you need
-> to slow it down (my tools can't cope with that rate either!)
+> diff --git a/drivers/watchdog/via_wdt.c b/drivers/watchdog/via_wdt.c
+> index d647923d68fe..f55576392651 100644
+> --- a/drivers/watchdog/via_wdt.c
+> +++ b/drivers/watchdog/via_wdt.c
+> @@ -165,6 +165,7 @@ static int wdt_probe(struct pci_dev *pdev,
+>   		dev_err(&pdev->dev, "cannot enable PCI device\n");
+>   		return -ENODEV;
+>   	}
+> +	wdt_res.name = "via_wdt";
+>   
+>   	/*
+>   	 * Allocate a MMIO region which contains watchdog control register
 
-Main motivation for this was a suggestion from David.
-https://lore.kernel.org/linux-iio/30659b16-290d-4ae5-a644-214c106bbe87@baylibre.com/
-By the way, if he agrees with, I'll add a suggested-by tag (if we decide to keep
-this patch).
-
-Reasoning a bit more about this, lowering reg access speed may help debug with
-external tools, but it won't help debug transfers ran by SPI offload hw because
-those transfers will be fast anyway. Maybe a more relevant potential benefit of
-lowering transfer speeds would be to make it more "friendly" to slower
-controllers. E.g. raspberry pi controller reaches 32 MHz maximum so, unless SPI
-core can adapt transfers in those cases, it wouldn't work on a rpi (if anyone
-ever connects this to a rpi).
-
-Me, I only have remote access to a setup with adaq4216 connected to a zedboard
-so I won't be connecting any external tool for debugging. 
-
-Another thing that came to mind now is we could just not set speed_hz of
-spi_transfers. AFAIC, those are not required.
 
