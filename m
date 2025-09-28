@@ -1,270 +1,157 @@
-Return-Path: <linux-kernel+bounces-835478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74A7BA73FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:27:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8D5BA7413
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 17:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38EE91896F07
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A32E3A6B83
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F45A22D7B6;
-	Sun, 28 Sep 2025 15:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F2D233707;
+	Sun, 28 Sep 2025 15:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="bBAJR97m"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1YhjVPK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5122222CB;
-	Sun, 28 Sep 2025 15:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD8410957;
+	Sun, 28 Sep 2025 15:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759073237; cv=none; b=RA/uZhbjbKD38w019ddB+cl3Y2fV7R9DjjKGf8kqtZG2xWZrIVf62DOXi2pL/pSglR0wZmp8em7lzTgLz7u13F6ZKkNtOTjZ+Ufcsm/LCyC/fbIqlb6ZV88nxCPxXGep5szYrgL3tlNjfPLt6JL/yNvb51h9zOEPZXPwws9Jah8=
+	t=1759073315; cv=none; b=u7SMzf4OnTozPr686ofc85bS4adH6STTrUren1JiBS56xHEr9PS97m9LTmjEcOC3p4yVIbMyDsiH3ULyA1nhKE93fyONEeP8pqd1Wwa97yD8SRkb6zUVMYz8MwbESsfes+3ihUY7EgYnQrJWxPKrRfOTqD2x+/OoYGyyJxZSvm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759073237; c=relaxed/simple;
-	bh=Nmhv7A3lyTjWqIVVgYCGAAd2pGrvYRt3+awW+o7oyxs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Wm1XJZHTCD+XgbkLP3NkYVhKvuorybrxDcokxUvlYE01/7AlgcdkOc3zKEIAg+0/a+UTscItPCn+MDYCGqWfm6C72LRIFCrfeQ6JKSqvvJxO8PMVJjbKArzq0Nf3KfSpOJxeEy6u05xs7eMz5ptOwEA+3VRTQLemr1rXmssJC/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=bBAJR97m; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cZSqF37fJz9t3Y;
-	Sun, 28 Sep 2025 17:27:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1759073225; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nmhv7A3lyTjWqIVVgYCGAAd2pGrvYRt3+awW+o7oyxs=;
-	b=bBAJR97mXoUjiV3IoPCTj+QDX5y6DZZ1tOG1uZ1CEeDmYJZjI8j85wGal+qJLXURF871O3
-	Rzqvnk4F4SJ+VYCTr76DZ/BTVy25KVYikCxlCwvOTSpvo2FWz+gQbO8jg8SpC1J9pzadiO
-	HM1t4ZtTc5DqvKhpN01ovym9idwr0JI6h2r630xPtntGAd4Pw0/YM4IJr1EgoAyZDKsaKj
-	9Yo59kRh9WR0mZ7JoNc9shgvGmb9OHZaNb31AVobP5rwgun8wqcToDA3+PPH2+5P1LVpfa
-	NAvGDXMtYwAx1fvGhX95jTqDBBcyrNSY9IBEAUGSBmN3J9Oj2XH41Lj0YjS2/w==
-Message-ID: <63b1274d05f9ad307f29dd0276f0f3014235225e.camel@mailbox.org>
-Subject: Re: [RFC PATCH] rust: sync: Add dma_fence abstractions
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
-	phasta@kernel.org, Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Gary Guo <gary@garyguo.net>, =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>, Will
- Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Nathan
- Chancellor <nathan@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, Justin
- Stitt <justinstitt@google.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Viresh Kumar
- <viresh.kumar@linaro.org>, Asahi Lina <lina+kernel@asahilina.net>, Daniel
- Almeida <daniel.almeida@collabora.com>, Tamir Duberstein
- <tamird@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, FUJITA
- Tomonori <fujita.tomonori@gmail.com>, Krishna Ketan Rai
- <prafulrai522@gmail.com>, Lyude Paul <lyude@redhat.com>, Mitchell Levy
- <levymitchell0@gmail.com>, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
- dri-devel@lists.freedesktop.org
-Date: Sun, 28 Sep 2025 17:26:37 +0200
-In-Reply-To: <5873bc43-1d60-419a-9c5b-e623fc5e9c47@amd.com>
-References: <20250918123100.124738-2-phasta@kernel.org>
-	 <aNa7BDpKS2KA__4M@tardis.local>
-	 <2aa5150d913fcd4d321db52bc6bad1770f68e778.camel@mailbox.org>
-	 <5873bc43-1d60-419a-9c5b-e623fc5e9c47@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1759073315; c=relaxed/simple;
+	bh=j3dJ7dm9Jex7hj7zDSOs/rnehFATrVSGsSj9oi0KREM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ym+C0iJ2TLmAVnSuNzYu0ONJId0MvrZSgCa4x6YuSg4Kr+WqD1LXhfzcGdeHCqyXs98pBAMIW4pZ5Bcs/f+fjJzzb0BFTeT/OZes35JrCtS1qE0YbiGeQLINiNhZdBHFCpy3G7+opCBw8C4IhD6EErUVRhfHilKxpRpCFkdXXzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1YhjVPK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D567C4CEF0;
+	Sun, 28 Sep 2025 15:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759073315;
+	bh=j3dJ7dm9Jex7hj7zDSOs/rnehFATrVSGsSj9oi0KREM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f1YhjVPKUf7C/0/LxXAZBncp5RteetEhwJWXFm/vEFPUulFmvL8IxH077S1rMLJtr
+	 d2ZgZgVpCx6rd1totAk5q+h7xqPmOOTtzW5w30YaKisVYvwJq5gRqIDGRHY5T/f4gQ
+	 O0PYgjbB/cH7oJ1jFPBNLr3rGkOI2qMk/87YL11RjncJuK6Qjt9VPe0h+TqS18yZyA
+	 BZqpYFUKRf23DvC6/+sd1BLnzDDD/hXAh8aUEZqIXh4WqdIZHr4zt3c9wvIaaQFzw4
+	 UZD9hcw+AzQFsbXJe27so0nVBzGtUu2qhqiGBcZy6B5qFDuhtL/1hVaC8gTpWufr4a
+	 sdkGg8+AkSuEw==
+Date: Sun, 28 Sep 2025 18:28:30 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Geoff Levand <geoff@infradead.org>, Helge Deller <deller@gmx.de>,
+	Ingo Molnar <mingo@redhat.com>, iommu@lists.linux.dev,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Jason Wang <jasowang@redhat.com>, Juergen Gross <jgross@suse.com>,
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Matt Turner <mattst88@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	sparclinux@vger.kernel.org,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	virtualization@lists.linux.dev, x86@kernel.org,
+	xen-devel@lists.xenproject.org, Magnus Lindholm <linmag7@gmail.com>
+Subject: Re: [PATCH v1 9/9] dma-mapping: remove unused map_page callback
+Message-ID: <20250928152830.GA324804@unreal>
+References: <cover.1759071169.git.leon@kernel.org>
+ <27727b8ef9b3ad55a3a28f9622a62561c9988335.1759071169.git.leon@kernel.org>
+ <20250928151725.GA135708@ravnborg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: 6rgqmwnpiz1ea7m3jqm8xp65b3691oez
-X-MBO-RS-ID: a59fc13fb5a4a1cd8eb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928151725.GA135708@ravnborg.org>
 
-On Sun, 2025-09-28 at 16:34 +0200, Christian K=C3=B6nig wrote:
-> On 27.09.25 11:01, Philipp Stanner wrote:
-> > On Fri, 2025-09-26 at 09:10 -0700, Boqun Feng wrote:
-> > > On Thu, Sep 18, 2025 at 02:30:59PM +0200, Philipp Stanner wrote:
-> > > > dma_fence is a synchronization mechanism which is needed by virtual=
-ly
-> > > > all GPU drivers.
-> > > >=20
-> > > > A dma_fence offers many features, among which the most important on=
-es
-> > > > are registering callbacks (for example to kick off a work item) whi=
-ch
-> > > > get executed once a fence gets signalled.
-> > > >=20
-> > > > dma_fence has a number of callbacks. Only the two most basic ones
-> > > > (get_driver_name(), get_timeline_name() are abstracted since they a=
-re
-> > > > enough to enable the basic functionality.
-> > > >=20
-> > > > Callbacks in Rust are registered by passing driver data which imple=
-ments
-> > > > the Rust callback trait, whose function will be called by the C bac=
-kend.
-> > > >=20
-> > > > dma_fence's are always refcounted, so implement AlwaysRefcounted fo=
-r
-> > > > them. Once a reference drops to zero, the C backend calls a release
-> > > > function, where we implement drop_in_place() to conveniently marry =
-that
-> > > > C-cleanup mechanism with Rust's ownership concepts.
-> > > >=20
-> > > > This patch provides basic functionality, but is still missing:
-> > > > =C2=A0 - An implementation of PinInit<T, Error> for all driver data=
-.
-> > > > =C2=A0 - A clever implementation for working dma_fence_begin_signal=
-ling()
-> > > > =C2=A0=C2=A0=C2=A0 guards. See the corresponding TODO in the code.
-> > > > =C2=A0 - Additional useful helper functions such as dma_fence_is_si=
-gnaled().
-> > > > =C2=A0=C2=A0=C2=A0 These _should_ be relatively trivial to implemen=
-t, though.
-> > > >=20
-> > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > > > ---
-> > > > So. =C2=A1Hola!
-> > > >=20
-> > > > This is a highly WIP RFC. It's obviously at many places not yet
-> > > > conforming very well to Rust's standards.
-> > > >=20
-> > > > Nevertheless, it has progressed enough that I want to request comme=
-nts
-> > > > from the community.
-> > > >=20
-> > > > There are a number of TODOs in the code to which I need input.
-> > > >=20
-> > > > Notably, it seems (half-)illegal to use a shared static reference t=
-o an
-> > > > Atomic, which I currently use for the dma_fence unit test / docstri=
-ng
-> > > > test. I'm willing to rework that if someone suggests how.
-> > > > (Still, shouldn't changing a global Atomic always be legal? It can =
-race,
-> > > > of course. But that's kind of the point of an atomic)
-> > > >=20
-> > > > What I want comments on the most is the design of the callbacks. I =
-think
-> > > > it's a great opportunity to provide Rust drivers with rust-only
-> > > > callbacks, so that they don't have to bother about the C functions.
-> > > >=20
-> > > > dma_fence wise, only the most basic callbacks currently get impleme=
-nted.
-> > > > For Nova, AFAICS, we don't need much more than signalling fences an=
-d
-> > > > registering callbacks.
-> > > >=20
-> > > >=20
-> > > > Another, solvable, issue I'm having is designing the
-> > > > dma_fence_begin_signallin() abstractions. There are TODOs about tha=
-t in
-> > > > the code. That should ideally be robust and not racy. So we might w=
-ant
-> > > > some sort of synchronized (locked?) way for using that abstraction.
-> > > >=20
-> > > >=20
-> > > > Regarding the manually created spinlock of mine: I so far never nee=
-d
-> > > > that spinlock anywhere in Rust and wasn't sure what's then the best=
- way
-> > > > to pass a "raw" spinlock to C.
-> > > >=20
-> > > >=20
-> > > > So much from my side. Hope to hear from you.
-> > > >=20
-> > > > (I've compiled and tested this with the unit test on the current -r=
-c3)
-> > > >=20
-> > > > Philipp
-> > > > ---
-> > > > =C2=A0rust/bindings/bindings_helper.h |=C2=A0=C2=A0 1 +
-> > > > =C2=A0rust/helpers/dma_fence.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 23 ++
-> > > > =C2=A0rust/helpers/helpers.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > > > =C2=A0rust/helpers/spinlock.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +
-> > > > =C2=A0rust/kernel/sync.rs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
-> > > > =C2=A0rust/kernel/sync/dma_fence.rs=C2=A0=C2=A0 | 388 +++++++++++++=
-+++++++++++++++++++
-> > >=20
-> > > I missed this part, and I don't think kernel::sync is where dma_fence
-> > > should be, as kernel::sync is mostly for the basic synchronization
-> > > between threads/irqs. dma_fence is probably better to be grouped with
-> > > dma-buf and other dma related primitives. Maybe in kernel::dma? Like:
-> > >=20
-> > > rust/kernel/dma.rs
-> > > rust/kernel/dma/dma_buf.rs
-> > > rust/kernel/dma/dma_fence.rs
-> > >=20
-> > > Thoughts? Miguel, Greg, Danilo and Lyude, any idea or suggestion?
-> >=20
-> > @Christian K=C3=B6nig's opinion would be valuable, too.
->=20
-> Oh yes, please don't mix dma_fences into SW synchronization, it's a HW sy=
-nchronization primitive.
+On Sun, Sep 28, 2025 at 05:17:25PM +0200, Sam Ravnborg wrote:
+> Hi Leon.
+> 
+> On Sun, Sep 28, 2025 at 06:02:29PM +0300, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > After conversion of arch code to use physical address mapping,
+> > there are no users of .map_page() and .unmap_page() callbacks,
+> > so let's remove them.
+> > 
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> >  include/linux/dma-map-ops.h |  7 -------
+> >  kernel/dma/mapping.c        | 12 ------------
+> >  kernel/dma/ops_helpers.c    |  8 +-------
+> >  3 files changed, 1 insertion(+), 26 deletions(-)
+> 
+> It looks like you missed a few sparc32 bits:
+> mm/iommu.c:
+> static const struct dma_map_ops sbus_iommu_dma_gflush_ops = {
+> #ifdef CONFIG_SBUS
+>         .alloc                  = sbus_iommu_alloc,
+>         .free                   = sbus_iommu_free,
+> #endif
+>         .map_page               = sbus_iommu_map_page_gflush,
+>         .unmap_page             = sbus_iommu_unmap_page,
+>         .map_sg                 = sbus_iommu_map_sg_gflush,
+> 
+> mm/io-unit.c:
+> static const struct dma_map_ops iounit_dma_ops = {
+> #ifdef CONFIG_SBUS
+>         .alloc                  = iounit_alloc,
+>         .free                   = iounit_free,
+> #endif
+>         .map_page               = iounit_map_page,
+>         .unmap_page             = iounit_unmap_page,
+>         .map_sg                 = iounit_map_sg,
+> 
+> I did not compile test, but from a quick look they need to be updated.
 
-So do you agree that it should be regarded as a part of DMA_BUF?
+There were updated, see patch #5.
+https://lore.kernel.org/all/bac909dab3c82fc6a7a4f5a31f22bac9a69f7f07.1759071169.git.leon@kernel.org/T/#u
 
->=20
-> > I'm not super convinced of that because dma_fence has not really much
-> > to do with DMA. They're not very different from completions and are a
-> > mechanism to synchronize consumers and producers.
->=20
-> That we mixed up fences and completion events caused a lot of trouble in =
-the past.
->=20
-> It's astonishing how often Sima and I had to reject peoples ideas to use =
-the dma_fence as SW sync.
->=20
-> > Actually, before f54d1867005c3 they were just called "fence" and then
-> > renamed to "dma_fence" because someone wanted that name.
->=20
-> That was also partially done to make sure that people understand that thi=
-s is not for inter SW sync.
->=20
-> On the other hand the rename didn't helped much :/
+arch/sparc/mm/iommu.c:
+  426 static const struct dma_map_ops sbus_iommu_dma_gflush_ops = {
+  427 #ifdef CONFIG_SBUS
+  428         .alloc                  = sbus_iommu_alloc,
+  429         .free                   = sbus_iommu_free,
+  430 #endif
+  431         .map_phys               = sbus_iommu_map_phys_gflush,
+  432         .unmap_phys             = sbus_iommu_unmap_phys,
+  433         .map_sg                 = sbus_iommu_map_sg_gflush,
+  434         .unmap_sg               = sbus_iommu_unmap_sg,
+  435 };
 
-gpu_fence might have been appropriate?
+arch/sparc/mm/io-unit.c:
+  276 static const struct dma_map_ops iounit_dma_ops = {
+  277 #ifdef CONFIG_SBUS
+  278         .alloc                  = iounit_alloc,
+  279         .free                   = iounit_free,
+  280 #endif
+  281         .map_phys               = iounit_map_phys,
+  282         .unmap_phys             = iounit_unmap_phys,
+  283         .map_sg                 = iounit_map_sg,
+  284         .unmap_sg               = iounit_unmap_sg,
+  285 };
 
+Thanks
 
-Gr=C3=BC=C3=9Fe
-P.
-
-
->=20
-> Regards,
-> Christian.
->=20
-> >=20
-> >=20
-> > Anyways, I don't have strong objections and mostly care about having
-> > them available somewhere.
-> >=20
-> > P.
-> >=20
-> > >=20
-> > > Regards,
-> > > Boqun
-> > >=20
-> > > > =C2=A06 files changed, 420 insertions(+)
-> > > > =C2=A0create mode 100644 rust/helpers/dma_fence.c
-> > > > =C2=A0create mode 100644 rust/kernel/sync/dma_fence.rs
-> > > >=20
-> > > [...]
-> >=20
->=20
-
+> 
+> 	Sam
+> 
 
