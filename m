@@ -1,158 +1,152 @@
-Return-Path: <linux-kernel+bounces-835379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C3C2BA6F06
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB468BA6F1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED4217CC17
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69097166625
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 10:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838E2DCBF3;
-	Sun, 28 Sep 2025 10:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3582DCF7D;
+	Sun, 28 Sep 2025 10:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0w1x+sS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjUM2nql"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0271729E115
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 10:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595042D2499;
+	Sun, 28 Sep 2025 10:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759055074; cv=none; b=njhxH5ni3EBTExLRMKn/6hFCdmFCzxO5Gy0TtV2EFch9phFO2nDwf/UCJHvAeaygcOcUCEE+h3Onx/0bomDP7mVciP5GeGYGvw6upNQznpJ0t80wGeNEfcTJV6A0iY4jntcmzGZgrLq6PWdxyLvUvodNvn5+Wll9GvR5iVWuZgs=
+	t=1759055199; cv=none; b=U6P/9iZ6x8JNEzxAUG+OrXYI6nz2nMbmZoIcRGAMhc8i8cT/dx0INxegOLD0HHeaDiZeHANK8NoZV+dy/IPebFe+UETX5YqUxn8P8N+14uTssRTK3UByLwKlrq5ZCJDXai+j5sGwzonVQMVdfv3EkPkJFmg7Zp775oEzGziBVOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759055074; c=relaxed/simple;
-	bh=0SFpAeRsj+73ToPc1OCYE3veDt4HP4vYJm03fBRLVFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fc+GnAjGZCwk1plFxYnOvNw/c71I3VUfMn5W3M/nO045P7KKjAKIGv0mTnqmrmcGf0/9ijXRfMrTNe7dUw9dHEwDJoBP7Jxn0zlZjkWuX/Mx8gkN+B0EqDLOSxq0T/m6WzHoZc1uerSi8KWPLtv18CAvgVOUxUID3Qj8nxOISQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0w1x+sS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55264C4CEF0;
-	Sun, 28 Sep 2025 10:24:32 +0000 (UTC)
+	s=arc-20240116; t=1759055199; c=relaxed/simple;
+	bh=pJxqhvQ/ydGHAUyAzeo6A50SLSfNmD2j4zHABBSczUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GLs0Ge1824NHYpPTGZ96Z+nLpo6+J+KlLJlDvWW7FmCwda8TsOFNR5HsT39AZuj1iRhzMoYlJ5vCPQvlDd4xSBa8yZsrZifiBiQA0Dgg1brFnxrBt31FlkjXPUWXYXDbnNMh68gYhf4lh2y1KcBecSwVdr29lVEN8Fgsp9zmSmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjUM2nql; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E4F0C4CEF0;
+	Sun, 28 Sep 2025 10:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759055073;
-	bh=0SFpAeRsj+73ToPc1OCYE3veDt4HP4vYJm03fBRLVFE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=M0w1x+sSdZtVvYm0WP1ebGpHK0/h2vx/PYXiyih7hcXRENwvq/tHs3H5tCQG47n2G
-	 ZMkt8QrzTerKDYx9+Zec+DvaZg4+p1ermiQRK9jxMKWHqAcA4BnkU0IMNhqu+bIPZx
-	 CgSHwnbldWWwwBE7jyr6LoF2ZIUJdEFexve3BtSj9cle9wFRahYJEHJQyTYH40M/0L
-	 YSYq1QIwrbb89KiyzhybVzqiOsCVUDTsKixmhgyD1h4TA1iUG/V0qU3ufJN2pFZJ+3
-	 buvVnSu7k/cstow3Up5U8yIKpMdePiZKX5JM43fz52mWl4c/gtDi1Oo5yIb+liBy6I
-	 uGGhxtX6u4B2A==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	JY <JY.Ho@mediatek.com>
-Subject: [PATCH] f2fs: fix UAF issue in f2fs_merge_page_bio()
-Date: Sun, 28 Sep 2025 18:24:22 +0800
-Message-ID: <20250928102422.300429-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
+	s=k20201202; t=1759055198;
+	bh=pJxqhvQ/ydGHAUyAzeo6A50SLSfNmD2j4zHABBSczUg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sjUM2nqlFnn6Ra2hHRfL0+nL1pbAPOJ9E+2J793lmSSs/lpvj7Ga7pD4myvJ4T4Oo
+	 xZGw0tHYCZCBWM5oP3bqxumAhS60rk9aQWKIoXvk6bPXS3voz2oDll7gxehTkixLSk
+	 SXn7/YFsg/KZQHbM7orqQ8mgJPzVO3ktieXMTw9yfGj9s/29u+bXVdtxD0otnXMSth
+	 B5xVxhssuVt5SmqeP0tcHLEtArSg4WUP7NimTFnjXd1ftUILitxJ80KesA4f88cCZM
+	 c1/a3B3eaVjgMx4lJ1/wBRy1Wi7ceQwrbC+waeDeWSx6cxWtxyPxn/2LQkBjL3OoEI
+	 82WUadE2+JJKw==
+Date: Sun, 28 Sep 2025 11:26:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <michael.hennerich@analog.com>,
+ <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
+ <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v3 8/8] iio: adc: ad4030: Add support for ADAQ4216 and
+ ADAQ4224
+Message-ID: <20250928112628.7a1357ab@jic23-huawei>
+In-Reply-To: <4be3b7a31146836b35cc88005f2314cff9f3db97.1758916484.git.marcelo.schmitt@analog.com>
+References: <cover.1758916484.git.marcelo.schmitt@analog.com>
+	<4be3b7a31146836b35cc88005f2314cff9f3db97.1758916484.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-As JY reported in bugzilla [1],
+On Fri, 26 Sep 2025 17:41:04 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-pc : [0xffffffe51d249484] f2fs_is_cp_guaranteed+0x70/0x98
-lr : [0xffffffe51d24adbc] f2fs_merge_page_bio+0x520/0x6d4
-CPU: 3 UID: 0 PID: 6790 Comm: kworker/u16:3 Tainted: P    B   W  OE      6.12.30-android16-5-maybe-dirty-4k #1 5f7701c9cbf727d1eebe77c89bbbeb3371e895e5
-Tainted: [P]=PROPRIETARY_MODULE, [B]=BAD_PAGE, [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-Workqueue: writeback wb_workfn (flush-254:49)
-Call trace:
- f2fs_is_cp_guaranteed+0x70/0x98
- f2fs_inplace_write_data+0x174/0x2f4
- f2fs_do_write_data_page+0x214/0x81c
- f2fs_write_single_data_page+0x28c/0x764
- f2fs_write_data_pages+0x78c/0xce4
- do_writepages+0xe8/0x2fc
- __writeback_single_inode+0x4c/0x4b4
- writeback_sb_inodes+0x314/0x540
- __writeback_inodes_wb+0xa4/0xf4
- wb_writeback+0x160/0x448
- wb_workfn+0x2f0/0x5dc
- process_scheduled_works+0x1c8/0x458
- worker_thread+0x334/0x3f0
- kthread+0x118/0x1ac
- ret_from_fork+0x10/0x20
+> ADAQ4216 and ADAQ4224 are similar to AD4030, but feature a PGA circuitry
+> that scales the analog input signal prior to it reaching the ADC. The PGA
+> is controlled through a pair of pins (A0 and A1) whose state define the
+> gain that is applied to the input signal.
+> 
+> Add support for ADAQ4216 and ADAQ4224. Provide a list of PGA options
+> through the IIO device channel scale available interface and enable control
+> of the PGA through the channel scale interface.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=220575
+One trivial comment + a suggestion that we might want to consider pushing
+the pin strap pga support to a future patch so we can not stall the driver
+on that being resolved.  Note that would mean splitting the DT patch as well.
 
-The panic was caused by UAF issue w/ below race condition:
+Anyhow, no rush on that given we have lots of time in this kernel cycle.
 
-kworker
-- writepages
- - f2fs_write_cache_pages
-  - f2fs_write_single_data_page
-   - f2fs_do_write_data_page
-    - f2fs_inplace_write_data
-     - f2fs_merge_page_bio
-      - add_inu_page
-      : cache page #1 into bio & cache bio in
-        io->bio_list
-  - f2fs_write_single_data_page
-   - f2fs_do_write_data_page
-    - f2fs_inplace_write_data
-     - f2fs_merge_page_bio
-      - add_inu_page
-      : cache page #2 into bio which is linked
-        in io->bio_list
-						write
-						- f2fs_write_begin
-						: write page #1
-						 - f2fs_folio_wait_writeback
-						  - f2fs_submit_merged_ipu_write
-						   - f2fs_submit_write_bio
-						   : submit bio which inclues page #1 and #2
+Jonathan
 
-						software IRQ
-						- f2fs_write_end_io
-						 - fscrypt_free_bounce_page
-						 : freed bounced page which belongs to page #2
-      - inc_page_count( , WB_DATA_TYPE(data_folio), false)
-      : data_folio points to fio->encrypted_page
-        the bounced page can be freed before
-        accessing it in f2fs_is_cp_guarantee()
+> @@ -996,6 +1116,17 @@ static int ad4030_write_raw(struct iio_dev *indio_dev,
+>  	return ret;
+>  }
 
-It can reproduce w/ below testcase:
-Run below script in shell #1:
-for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
--c "pwrite 0 32k" -c "fdatasync"
+> @@ -1307,6 +1439,50 @@ static int ad4030_spi_offload_setup(struct iio_dev *indio_dev,
+>  							   IIO_BUFFER_DIRECTION_IN);
+>  }
+>  
+> +static int ad4030_setup_pga(struct device *dev, struct iio_dev *indio_dev,
+> +			    struct ad4030_state *st)
+> +{
+> +	unsigned int i;
+> +	int pga_gain_dB;
+> +	int ret;
+> +
+> +	ret = device_property_read_u32(dev, "adi,pga-gain-db", &pga_gain_dB);
 
-Run below script in shell #2:
-for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
--c "pwrite 0 32k" -c "fdatasync"
+I'm not sure the pga question will resolve quickly so perhaps we initially only
+support the pins connected to gpios and add the pin strapped support later?
 
-So, in f2fs_merge_page_bio(), let's avoid using fio->encrypted_page after
-commit page into internal ipu cache.
+It's early in this cycle, so we can delay that decision for a few weeks and
+see where we are then on that DT question.
 
-Fixes: 0b20fcec8651 ("f2fs: cache global IPU bio")
-Reported-by: JY <JY.Ho@mediatek.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	if (ret == -EINVAL) {
+> +		/* Setup GPIOs for PGA control */
+> +		st->pga_gpios = devm_gpiod_get_array(dev, "pga", GPIOD_OUT_LOW);
+> +		if (IS_ERR(st->pga_gpios))
+> +			return dev_err_probe(dev, PTR_ERR(st->pga_gpios),
+> +					     "Failed to get PGA gpios.\n");
+> +
+> +		if (st->pga_gpios->ndescs != ADAQ4616_PGA_PINS)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					     "Expected 2 GPIOs for PGA control.\n");
+> +
+> +		st->scale_avail_size = ARRAY_SIZE(adaq4216_hw_gains_db);
+> +		st->pga_index = 0;
+> +		return 0;
+> +	} else if (ret != 0) {
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 82ae31b8ecc4..9d1d439e2650 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -919,7 +919,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (fio->io_wbc)
- 		wbc_account_cgroup_owner(fio->io_wbc, folio, folio_size(folio));
- 
--	inc_page_count(fio->sbi, WB_DATA_TYPE(data_folio, false));
-+	inc_page_count(fio->sbi, WB_DATA_TYPE(folio, false));
- 
- 	*fio->last_block = fio->new_blkaddr;
- 	*fio->bio = bio;
--- 
-2.49.0
+if (ret) is fairly commonly used for error checking when non 0 is what we want.
+
+> +		return dev_err_probe(dev, ret, "Failed to get PGA value.\n");
+> +	}
+> +
+> +	/* Set ADC driver to handle pin-strapped PGA pins setup */
+> +	for (i = 0; i < ARRAY_SIZE(adaq4216_hw_gains_db); i++) {
+> +		if (pga_gain_dB != adaq4216_hw_gains_db[i])
+> +			continue;
+> +
+> +		st->pga_index = i;
+> +		break;
+> +	}
+> +	if (i == ARRAY_SIZE(adaq4216_hw_gains_db))
+> +		return dev_err_probe(dev, -EINVAL, "Invalid PGA gain: %d.\n",
+> +				     pga_gain_dB);
+> +
+> +	st->scale_avail_size = 1;
+> +	st->pga_gpios = NULL;
+> +
+> +	return 0;
+> +}
 
 
