@@ -1,131 +1,229 @@
-Return-Path: <linux-kernel+bounces-835261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F045BA699C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:04:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E40BA699F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 09:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36ECE3BC1A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABBD41897896
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 07:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA82F225A35;
-	Sun, 28 Sep 2025 07:04:46 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FBF29B77E;
+	Sun, 28 Sep 2025 07:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xaLKBDGG"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87346200C2;
-	Sun, 28 Sep 2025 07:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D0F28725E
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 07:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759043086; cv=none; b=utbDAPAkHIpsMY8BwroWXkU/Ibqj3bvlBkylNO5XPMZR8u2ZECdpE1AYFAOOl3/kxdoDc/m1nb4q+IJRWiP9O7DPI1QORfelEHdhg2k5mwe95zuUx8njXqlbL+agKIJTPidQ1IHEId/KQEjs4vTlyjYJ/sEl/855SHa5PABGg9o=
+	t=1759043427; cv=none; b=ojRh2ppRo59NGVUzkn8Nm+RPC5UsI09Ky8WaWrOoWRtKxNXYcNABv73LN5xqqG7IOtYKdN+O5d91D4YRNa2ZWHDNaz72DleaZJ5ItdQQKad+B6KDRQE5dqGgtUbsoLv6M7gDcGQepqzxR/7vMcwxQHOQR9dSHeEdnO+XjrQ9jgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759043086; c=relaxed/simple;
-	bh=wh3jIY7ic2TbFwR0SQf2ct+jaUIfyaJP+Ktg1Y+IC0E=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=XpII7ylySTN5OgXtBEnkC5Oiw8wpci43Yn0fh2Q6r2IRuLCRguQPNGOd6fQdfhZOCuJxIB89mW9IUZadu19fb11Qvfklqq41IyglA7yEyDtEPrqHclSKSmGoBa2RVuFS/O2B6dlUDYz3HpP0oOpRI+cwAjEc0BsxXpHIf/b2IHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowADXK5713dhohiDrBw--.18611S2;
-	Sun, 28 Sep 2025 15:04:25 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	semen.protsenko@linaro.org,
-	peter.griffin@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] soc: samsung: exynos-pmu: fix reference leak in exynos_get_pmu_regmap_by_phandle()
-Date: Sun, 28 Sep 2025 15:04:19 +0800
-Message-Id: <20250928070419.39881-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowADXK5713dhohiDrBw--.18611S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF1xAr18WF4DCr4kZFy5Jwb_yoW8KF1Upr
-	WrJaySkrWkGrWvkrWvqr4jvFW3u34I939Y9a4xC34q93ZYqFySyryUGFy8Zas8Ary8JF15
-	tF12yFy8GFyUAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14
-	v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
-	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
-	6r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoZ2-UUUU
-	U
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1759043427; c=relaxed/simple;
+	bh=Z56yVvPIyeEKIMTebrDcBNtD175374NEfnuXh17boHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=doq3u45XFjPJobHnx1Lu8O9AfGgTZ8LNo2FJ3rF6L41EpSpajNzjTFTjAWnWCkF+1X+mcmQpHoqY5Nw6RHTF3fKlyFa7bRZTD66LSj1pPvNjjutp9u1zY5ENIwratuSuKlIKJJSKKaDgKXtQLTSvtjSBqMXRCpc3taimZr1mTds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xaLKBDGG; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bc7a7e81-8e71-44ee-af4c-96193c9cb8e8@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759043423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qU7GUciMm0lnQ8BPnv7uQAt0MMCZIcM83X/N344qizA=;
+	b=xaLKBDGG9/Y/6lM7WlCSgWpum+y5NE0ujs/3uZWRJvYqm27Aqis9acMJ0RfUcPJ25FIg1a
+	s8tbff0AvXEG7QfGZ9kVdOLZbCEWe3kEYU01TenKOKvaMa5Xz4qDaCzFg2YjgCd2UJg/rm
+	meGiBlGAiCvK2H2RxNdCc6tj+a7+yOs=
+Date: Sun, 28 Sep 2025 15:09:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH] btrfs: Add the nlink annotation in btrfs_inode_item
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+ Chris Mason <clm@fb.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250926074543.585249-1-youling.tang@linux.dev>
+ <adda6065-26a2-4d31-b4f0-ccb20e0fadeb@gmx.com>
+ <bda4b547-4dea-4c05-8679-1cf021bbe340@linux.dev>
+ <b431fe00-43f3-49c2-a58b-8f79cb2134dc@gmx.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <b431fe00-43f3-49c2-a58b-8f79cb2134dc@gmx.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-In exynos_get_pmu_regmap_by_phandle(), driver_find_device_by_of_node()
-utilizes driver_find_device_by_fwnode() which internally calls
-driver_find_device() to locate the matching device.
-driver_find_device() increments the reference count of the found
-device by calling get_device(), but exynos_get_pmu_regmap_by_phandle()
-fails to call put_device() to decrement the reference count before
-returning. This results in a reference count leak of the device each
-time exynos_get_pmu_regmap_by_phandle() is executed, which may prevent
-the device from being properly released and cause a memory leak.
+On 9/28/25 13:16, Qu Wenruo wrote:
 
-Since Exynos-PMU is a core system device that is not unloaded at
-runtime, and regmap is created during device probing, releasing the
-temporary device reference does not affect the validity of regmap.
-From the perspective of code standards and maintainability, reference
-count leakage is a genuine code defect that should be fixed. Even if
-the leakage does not immediately cause issues in certain scenarios,
-known leakage points should not be left unaddressed.
+>
+>
+> 在 2025/9/28 11:44, Youling Tang 写道:
+>> Hi, Wenruo
+>>
+>> On 9/26/25 16:34, Qu Wenruo wrote:
+>>>
+>>>
+>>> 在 2025/9/26 17:15, Youling Tang 写道:
+>>>> From: Youling Tang <tangyouling@kylinos.cn>
+>>>>
+>>>> When I created a directory, I found that its hard link count was
+>>>> 1 (unlike other file system phenomena, including the "." directory,
+>>>> which defaults to an initial count of 2).
+>>>>
+>>>> By analyzing the code, it is found that the nlink of the directory
+>>>> in btrfs has always been kept at 1, which is a deliberate design.
+>>>>
+>>>> Adding its comments can prevent it from being mistakenly regarded
+>>>> as a BUG.
+>>>>
+>>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>>>> ---
+>>>>   include/uapi/linux/btrfs_tree.h | 1 +
+>>>>   1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/ 
+>>>> btrfs_tree.h
+>>>> index fc29d273845d..b4f7da90fd0e 100644
+>>>> --- a/include/uapi/linux/btrfs_tree.h
+>>>> +++ b/include/uapi/linux/btrfs_tree.h
+>>>> @@ -876,6 +876,7 @@ struct btrfs_inode_item {
+>>>>       __le64 size;
+>>>>       __le64 nbytes;
+>>>>       __le64 block_group;
+>>>> +    /* nlink in directories is fixed at 1 */
+>>>
+>>> nlink of what?
+>>>
+>>> Shouldn't be "nlink of directories" or "nlink of directory inodes"?
+>>>
+>>>
+>>> There are better location like 
+>>> btrfs-progs/Documentation/dev/On-disk- format.rst for this.
+>>>
+>>> And you're only adding one single comment for a single member?
+>>> Even this is a different behavior compared to other fses, why not 
+>>> explain what the impact of the change?
+>>>
+>>>
+>>> If you really want to add proper comments, spend more time and 
+>>> effort like commit 9c6b1c4de1c6 ("btrfs: document device locking") 
+>>> to do it correctly.
+>>
+>> My understanding of nlink is as follows, please correct me if I'm wrong,
+>>
+>> /*
+>>   * nlink represents the hard link count (corresponds to 
+>> inode->i_nlink value).
+>>   * For directories, this value is always 1, which differs from other 
+>> filesystems
+>>   * where a newly created directory has an inode->i_nlink value of 2 
+>> (including
+>>   * the "." entry pointing to itself).
+>
+> Have you checked what's the meaning of the nlink number for other fses 
+> and why other fses go like that?
+>
+I have examined ext4, XFS, and bcachefs. In these filesystems,
+when performing the following operations:
+```
+  # mkdir -p a/b
+  # cd a/b
+  # ls -la
+  drwxr-xr-x 2 root root  6 Sep 28 14:45 .
+  drwxr-xr-x 3 root root 15 Sep 28 14:45 ..
+```
 
-Found by code review.
+In btrfs:
+```
+  # ls -la
+  drwxr-xr-x 1 root root 0 Sep 28 14:48 .
+  drwxr-xr-x 1 root root 2 Sep 28 14:48 ..
+```
 
-Cc: stable@vger.kernel.org
-Fixes: 0b7c6075022c ("soc: samsung: exynos-pmu: Add regmap support for SoCs that protect PMU regs")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the typo of the variable in the patch. Sorry for the typo;
-- added more detailed description.
----
- drivers/soc/samsung/exynos-pmu.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+In filesystems like ext4, we can see that the link counts for
+directory 'a' and 'b' are 3 and 2 respectively:
+a: The directory itself + "." pointing to itself + ".." from directory b 
+pointing to it
+b: The directory itself + "." pointing to itself
 
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index a77288f49d24..b80cc30c1100 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -302,6 +302,7 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- {
- 	struct device_node *pmu_np;
- 	struct device *dev;
-+	struct regmap *regmap;
- 
- 	if (propname)
- 		pmu_np = of_parse_phandle(np, propname, 0);
-@@ -325,7 +326,10 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 	if (!dev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
--	return syscon_node_to_regmap(pmu_np);
-+	regmap = syscon_node_to_regmap(pmu_np);
-+	put_device(dev);
-+
-+	return regmap;
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
- 
--- 
-2.17.1
 
+nlink changes during directory creation in ext4:
+```
+ext4_mkdir
+     ext4_init_new_dir
+         set_nlink(inode, 2) //Initial inode->i_nlink value for new 
+directory
+     ext4_inc_count(dir) //Increase parent directory's nlink by 1 (for "..")
+```
+
+In ext4, when the DIR_NLINK feature is enabled, if a directory's link
+count exceeds EXT4_LINK_MAX, it will be permanently set to 1.
+
+
+nlink changes during directory creation in bcachefs:
+```
+bch2_mkdir
+     bch2_mknod
+         __bch2_create
+             bch2_create_trans
+                 dir_u->bi_nlink++ //If creating a directory, increase 
+parent's nlink
+             bch2_inode_update_after_write
+                 set_nlink(&inode->v, bch2_inode_nlink_get(bi))
+                     bch2_inode_nlink_get //If directory, nlink 
+increased by 2
+```
+
+
+In XFS, the xfs_create function contains the following comment:
+/*
+  * A newly created regular or special file just has one directory
+  * entry pointing to them, but a directory also the "." entry
+  * pointing to itself.
+  */
+
+Thanks,
+Youling.
+
+> Especially the impact to user space tools like find?
+>
+>>   *
+>>   * BTRFS maintains parent-child relationships through explicit back 
+>> references
+>>   * (BTRFS_INODE_REF_KEY items) rather than link count accounting.
+>>   *
+>>   * This design simplifies metadata management in the copy-on-write 
+>> environment
+>>   * and enables more reliable consistency checking. Directory link count
+>>   * verification is performed during tree checking in 
+>> check_inode_item(), where
+>>   * values greater than 1 are treated as corruption.
+>>   *
+>>   * For regular files, nlink behaves traditionally and represents the 
+>> actual
+>>   * hard link count of the file.
+>>   */
+>>
+>> Thanks,
+>> Youling.
+>>>
+>>> Thanks,
+>>> Qu
+>>>
+>>>>       __le32 nlink;
+>>>>       __le32 uid;
+>>>>       __le32 gid;
+>>>
+>
 
