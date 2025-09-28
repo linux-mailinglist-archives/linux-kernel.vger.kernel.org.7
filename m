@@ -1,158 +1,128 @@
-Return-Path: <linux-kernel+bounces-835432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA44BA7138
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:48:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BE8BA7132
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 15:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D5733BB51B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609051758EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 13:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C541CCEE0;
-	Sun, 28 Sep 2025 13:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC841946AA;
+	Sun, 28 Sep 2025 13:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="smEp3eel"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEzQj+cH"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D344C98;
-	Sun, 28 Sep 2025 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D914C98
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 13:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759067322; cv=none; b=D9TXYPLhKx6G3y6UVjYTBEI7TKt1BsLJAwroh0BHYZoKBrINnjyEe2BLRNoFliL8FFbHM7RFCxtsXQiM/5eLig5p/DhfXkrwwBVWk4UE/PT+9WcR4etL5Yum81Bc9wH4lOXXVVTYViNJnWcbSM9zcEVItpbUFbNXTcz0PR0PRFw=
+	t=1759067311; cv=none; b=SbFSIri405G5pgTRjXX5ZxxNFovNhhW+k10K9vqGxdqUwWGdOWSCcgfGLJITMabOhTFGTNKayGYkxRcHWAj5lkRdZelxweGAN6KTEDRC4bDc+AlxMl0y8O6rKYhLxPIXwbd1Htk4HOcnM0OcIIY1ts463VII50tqQhUWeV02aRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759067322; c=relaxed/simple;
-	bh=T78lkvz4NHBEAD/qi90ZP6MFj9B9bdxbDxvA1l5EPYQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XT5tT0kPQc/C4h5r7mLzxKoef4aKEUosP1ULzoRKdw6QWW9nAWPlL+HrShuUMXgeGrOjCu/+RX7FduWRcQkT4c/auK9I1AgCfiao0E7O4kwdl2VFJNIRjxTMpAb/NX8qVhrs5N/vm4C/cP/QXgAZTxJ1f0ZNdbOwfxG+6+U+2pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=smEp3eel; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759067308; x=1759672108; i=markus.elfring@web.de;
-	bh=T78lkvz4NHBEAD/qi90ZP6MFj9B9bdxbDxvA1l5EPYQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=smEp3eelS7nI2eoZBF59ySuF551SY0kW4gEHtvHC9ZB/DDohJYvEdOTjUCLsHJVi
-	 CBMqRkv0HWXIbiCQoYp3qLTXYlHusmX+r93XUUIzzsi2KV4HQWatL0Fj4RLNWCKpJ
-	 m3AUDsjeWwmRYIOE1swuV1P4xkoRjIixS5KzqjD5dNG2o97JOQr0BM/n4WDnVN+ZP
-	 qEqqu4D55Sp7xyz/uJxytlIcaZaOFapiEHN4KbHP4wxALEYjIPVPcZ1IQ+H9v8D5S
-	 GMh2qDud7SNaA2MdlOidhCwF0zdKWXDMlMKhXN26CWeo+mvNMVxIx5+hRYYpVqot6
-	 oiOCkjAm0EnNhmC4rA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.189]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPrPT-1uhCJj0Ivz-00POMY; Sun, 28
- Sep 2025 15:48:28 +0200
-Message-ID: <9f6acb84-02cb-4f76-bf37-e79b87157f1e@web.de>
-Date: Sun, 28 Sep 2025 15:48:23 +0200
+	s=arc-20240116; t=1759067311; c=relaxed/simple;
+	bh=FmVHxgqG382cC69d8rXWZwYyOOy1DF+PiCiPPNQ66pU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cf23bX0qYzPcoymHph8QFuoP1VjS2oquNLnCY/Iy29p3QbzNyYv26dr+qrlVHEWm0O/eXWHPcmvZv2QY16ubBqYWaqphMygAmfMzApOYQOnxo8c9Ln+H2ToNcY3ze0y//Maa6+4oHwOlyi4qHATT++TC68mz1CPYcmcB38yC8Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEzQj+cH; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b550eff972eso2452656a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 06:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759067309; x=1759672109; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=My/qHt+y2PHKSiLvEMroRzC1fUumz88ynNlnDjtDWgY=;
+        b=DEzQj+cHX+g/RZAa0Cy0TWWfpiP+fpqNL5Zd6z/ZvRNSi5CxqFYUwXEANblazCkSif
+         AaaN+Gu5dYqpBiPNCDSdBL6TSPpxhErdWFI1sT6RBJRgVv0KSjkalZETzeUIR9zqGaCE
+         5cug8wMPN7uiYJe9COvDu3riVPZAUc6Wx4V4HeKwV0R8cgK5HL7K7OqD5fowt8iDZivf
+         qExNjZ8zJqg94jccfsBn0rrrC7C7t3Asd1koK8Qe+Zep+KdmSDpQv8Ek2UE3gPGnHTBa
+         xCTm/WhMd0R5orGBdCqidE5Jt3f8NI1GuAj9sxkJwVfX52Lcggd9G/NyaGIgL0BOJrNR
+         dwVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759067309; x=1759672109;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=My/qHt+y2PHKSiLvEMroRzC1fUumz88ynNlnDjtDWgY=;
+        b=VPNYS9FSAXm6uKaXsGJzSFu2bitincKbT2CbtkqYLMym5yHMbBlCuPrs3U0yWgPghv
+         RmoMxMzq1JYNK/2vFvJM2eCbDugNJZgjaafhK5GtQPrcDUowQ9xqi9Y8VjVLhlYIZx55
+         y8weMt67X/SSLUVT3wTv/3A1Y3DwQIe7SiOgz9wFyuK/tREOgLKQZn/x75CEHp8ClTq+
+         Pmf+A85abfNOoWEigqtrr7nDeG5QSZI6FZCYByEZY5iTBBQoNIN+sCJvexCxcevceoEC
+         RpH7t9+tV+RMkalzJZCtzBGBsczZlmU9Y+GYA33ll71gbgyuKg1kr2zCAJn5heRhiT22
+         noUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3rkvjf3CSciFzLMM+bM8qVERZcJ4uKcz6eF8Ym11uba5vvy08IE9eG5ZWCYp2GOzPDZaTkFteP/QbzLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/ArhJWBd22UjAn6HS+s558fB6E0kXzNoRUygkMk0wL31yucZq
+	bBeCrNVH3bMZkGMhScHCQmr7N2KYUtfOBka9kwYTbj08U1d/Sr4ZN4Ie
+X-Gm-Gg: ASbGnctYbEYoXAePrrgm6Jp/wCBA17qNeHRLmLg1Xn+Z+K9u0mP2iHX50MblE4FoBAx
+	JE4B46g8xNweRl0ZZFxHlGtfV6ECH15Ao+zU/Ne1FTP5t+kwFRHqWT/MfM10xlcQUsUVIeoQioK
+	RPnliF6MjgtBDHG0JVP593orQh2XIJn4sTUsxqw9colVS82SyBB1SEnALKbJBitzeXLU2HpCWTQ
+	coLbkNUpoutwgjvbkJmvM0CliqVUoLk6yxBQO0lmyvk5PoLSODtPhu8C/hFIguC66Th3NadKYg5
+	A/ntktJajSZSDTqnmS6K4/NMsSfTctugn3R5KwgEOCt2pyL6IjJrUKuMfWXBf4EiBmh1cUkgmEL
+	qSSi/lM1LUCwzAjwY4dVNd+jAWoUJiMU=
+X-Google-Smtp-Source: AGHT+IGXO/qWicj44HJrAinURMObPmlszOlNOo7L+z4Z78O/CaGZYYN86nJQ0OUnlCNPwKAtiNM4Hw==
+X-Received: by 2002:a17:902:f9c6:b0:275:2aac:fef8 with SMTP id d9443c01a7336-27ed4a78d81mr101059275ad.38.1759067309482;
+        Sun, 28 Sep 2025 06:48:29 -0700 (PDT)
+Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-27edcbd455asm97105605ad.122.2025.09.28.06.48.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Sep 2025 06:48:22 -0700 (PDT)
+Date: Sun, 28 Sep 2025 10:49:15 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-spi@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Axel Haslam <ahaslam@baylibre.com>, broonie@kernel.org,
+	nuno.sa@analog.com, dlechner@baylibre.com, andy@kernel.org
+Subject: Re: [PATCH v3 1/1] spi: offload: Add offset parameter
+Message-ID: <aNk82_gHPDCNDqjV@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1758913065.git.marcelo.schmitt@analog.com>
+ <d73804d605d494c6420adb7c0b67f6707628832d.1758913065.git.marcelo.schmitt@analog.com>
+ <20250928110052.6fefd6a1@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Li Chen <chenl311@chinatelecom.cn>, linux-block@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>
-Cc: Li Chen <me@linux.beauty>, LKML <linux-kernel@vger.kernel.org>,
- Yang Erkun <yangerkun@huawei.com>
-References: <20250926121231.32549-1-me@linux.beauty>
-Subject: Re: [PATCH] loop: fix backing file reference leak on validation error
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250926121231.32549-1-me@linux.beauty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:liPxP31WF6bcH2oVDd71Kwmdl99u1cejFWuz250Xmci+b27l/U3
- Izn5Pd561zBVfLZKhHDj7jf1ryaGpU52Efnaxzqcp9YxaklAUjNz+ygdsucAvL5KjspJHG3
- 9UZ9ZfUSA1tAib6BNqnhI3yyEJP+OtNt9niBDD+Nm1I2OVg6oeZPRuJaE0i0bFwMhevU2NL
- GEOh/KrG+dt4LUsr4kuFA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VdPELCcMQ98=;1EcnOCdY9O8tibBxkvoZ11h+cbk
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928110052.6fefd6a1@jic23-huawei>
 
-=E2=80=A6
-> Fix this by calling fput(file) before returning the error.
-=E2=80=A6
-> +++ b/drivers/block/loop.c
-=E2=80=A6
+Hi Jonathan,
 
-How do you think about to increase the application of scope-based resource=
- management?
-https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/file.h#L97
+Yes, current ad4030 series depends on this.
+Though, since this updates the SPI subsystem, I separated it from ad4030 set.
+I missed that aspect of the devel process. If we need an immutable branch to
+make this split series for ad4030 work, then yes, please, I'd like an 
+immutable branch with this patch.
 
-Regards,
-Markus
+On 09/28, Jonathan Cameron wrote:
+> On Fri, 26 Sep 2025 16:01:05 -0300
+> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+> 
+> > From: Axel Haslam <ahaslam@baylibre.com>
+> > 
+> > Add an offset parameter that can be passed in the periodic trigger.
+> > This is useful for example when ADC drivers implement a separate periodic
+> > signal to trigger conversion and need offload to read the result with
+> > some delay. While at it, add some documentation to offload periodic trigger
+> > parameters.
+> > 
+> > Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> 
+> Hi Axel, Marcelo,
+> 
+> Is there a build time dependency on this for the ad4030 series?
+> I'm assuming this will go via Mark's SPI tree, so this is really a question
+> of do we need to ask him for an immutable branch or not.
+> 
+> I don't think there is such a dependency but just wanted to check!
+> 
+> Jonathan
 
