@@ -1,493 +1,237 @@
-Return-Path: <linux-kernel+bounces-835601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3661ABA78D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8316BA78DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 23:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B855D16FBCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B8A1891005
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 21:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4DE23B615;
-	Sun, 28 Sep 2025 21:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1554A230D0F;
+	Sun, 28 Sep 2025 21:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dnUndF0Q"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nGPLOWWG"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695D422ACE3
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 21:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C68F155C97
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 21:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759096318; cv=none; b=f7bcvwKZyNlabJR49E//f2DLKl7k+zmTgcPEew9hFCAED2zojiGwl3GQlSGzsJ5T5ou0wrKLf9ulB0SJhadl4CQNChmiOMfmOIaGxNV2XZqIjFbQapYOUtoAJuC/aipOhQGFfe4RljVeMNcgdVkEeYx8UJSmNK5++0KaQUymYoI=
+	t=1759096520; cv=none; b=fx1MCZjLp1kA2m38jk8Zh2RRDzj5K3iTDFYf3Kxj/T6ZVay/qUWBKE7XkK/M/Awl71sZ2QsPtVElzevNoVIRmqKK4qYj/70s9DLkLaRNNQSYCxocYpsSWlhiAnaCO1bmCu8FcO1waeOJtHfGgQ2pJiVasECCvwnSIThLkVXEOrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759096318; c=relaxed/simple;
-	bh=jJjF9Z1If0vp+RkLq9QYvhHWOZlDdvvl02FzrjAZIuY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=i+O0FFtpBHx15kPrjptQ1QfkaF2UmqOHqPkq9S7yYg3S1FPNWfMCjD/hSV1e/ZugO7ArNYEtVXYtdaVzLx11KUaOxQ+xcMI/lS+xbaprbOVdb2qNSKNlmMlELFutvNQrKWbogF/ep2vEoUv2uJmy2UjTY2878LRWEYOMRzbAY1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dnUndF0Q; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3d50882cc2so138033266b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:51:54 -0700 (PDT)
+	s=arc-20240116; t=1759096520; c=relaxed/simple;
+	bh=+EAjlEO8uQDwc8jzUv6BlII0XyFQAH1/Gq1lWKA3OWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LFuAVvwRn6DZm1W0CBgu9pWi+fVwzJcrgN3ia4lvUlJ1bVqNFyTPknxMfFEy5FkM971cpCIsH3o8qoCNiuytGUi7w8k375EEgZKbwtKD69LQ84eGbGbAXK3M0XJSfKx7UCPUubbwYHs1m57s2VHdN1Ya7EHrUTN7Lk6ae70von4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nGPLOWWG; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e3bcf272aso91385e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:55:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759096312; x=1759701112; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O7gGrCqDLoDKgOMYir+QQzr+d0F80cmzls1C9OIIknI=;
-        b=dnUndF0Qr+AsyEvgXv6YGlXMiC9ILpy67XUkmE1wQPSiY43TbyclE8+pJQg3Ph82zF
-         aFCfX/jX/96cJUAGfiaEF5us+GjT96fnsq3IZRGCN8jmihlEYNrs1wuV5ys9a6w3L9sT
-         A+SOe61Fevur/32eLN21MLIvHNE2NalPDUbc0=
+        d=google.com; s=20230601; t=1759096516; x=1759701316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pMA3FY1cLbcNhfw1XHhs0JDOqj11mx6kBKtX7cr5kdQ=;
+        b=nGPLOWWGv4PHsgVvHLQWSVjI0Ll6jnULVDlEShJsziLarM4J6ZxyUguVJ65CunyAXN
+         c6cbDDsISfrwch/0hNNLvnEWqjkX84AMMFgYxA2vBAY7ifVxxVEaFbIgtkaFRzkzBGNC
+         0F1veNFd/97hZBkxOeT4bkzWly9qNr3w+o5yjUvsOJmGSqWAf7TdjuyA1QuDCyRA85hY
+         5ZEPF7cpky4rKI0r57UrcFF94tYh7oUCgFlfPHsUV74gBsaEVeWD/uHEBTR6wMRYdvnt
+         jzD5Le1tGuAttUFTa8eJHK2U9KqVdFZhu5h1bWoDsQnVPqA7KaseH9CrL8Fl9eDjLsW1
+         9QDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759096312; x=1759701112;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O7gGrCqDLoDKgOMYir+QQzr+d0F80cmzls1C9OIIknI=;
-        b=jyTUoZGXnHxZxy/q8kNoNuJ3SiMBIUd2R/hoSuDNXkO3W7Ov4P+5rfJgcw24GkI2HA
-         phhfoPsNseSDjG7/kLN8Eztve1cz6TUXt7IYFED0yoetEZYQtOOY6aVfBWwfg33MB5vM
-         mB34uvbLvOBKEjyBSQM823sGBg/2ieJk55nYBlhYavw18C6XmJRPBB9AbsCj2N19Vj3k
-         ExsqHSopZXL6CIP0PzRTnKzgqfbl0PpCSUW61wL6QdBCU/V3vOgPz2usQwiDA4Wy+Kl5
-         exXwZqSwZVVAGuJ8weRILubQi13b0a6H0kKm7mrdpY0RrY7r7fzR6tOR+DLMiRHOEjNa
-         XvcQ==
-X-Gm-Message-State: AOJu0YxHq3gYafJ8gmN7hZmKs/yw5H4QlvDpGPDVu75UEdUtFKbykZbw
-	+74+wWNnQawKTfuxakwp0kq8YyOadJlWDKMhSXLFEc1SqvHupybD0HwIvYc5ROo91V+qnSbHCQQ
-	rhdyL1Q8=
-X-Gm-Gg: ASbGncvgSSawx2kfrGOECMSgvYX2SqExNPO9IGFgVlmSg3QdXTGMLQrROaZWA8Mk9r8
-	j3MErYxg/2+xGM3jeP17ufSpaxhfVlXWiMDNgM6KA9YdrM8lMv5omKxYX3gjNpydV+KRRN5d5Ga
-	IioHFAJ3q4MJDVKnhZFRS3VN2SGIXXvUzQ44NLaCKb+4vC1C4uyuSdlp27GwS1U5IQ34eac64Q7
-	6fwtEfnJ746jQ1UIPJieBq+yFmbBvuYU5l60vuFPKFW4mOTD9s+cxebYlxsBnWO6+/Bh8Gd2zLI
-	lWMRDOcESpybOlrHbPIqFg+/qndcu3MDyc2L5ZrLu7fpTxWBVLPTs+gFg35ZJciXav0ZQ4BlY6u
-	/J6ROX+GWfft/rYlFJYJIQf7k79BY3IMuW5mlblCO7TrXEoffjjB/KwohpjPZaZ6SGKXWH3xE24
-	I5sahqu80=
-X-Google-Smtp-Source: AGHT+IFK9a6ANIJQAwAcozIsr92Alr4U0mnZKMZM4eMee39KP2qN9/0f1AIsKp6M8Q2fSC5snVpQ9g==
-X-Received: by 2002:a17:907:3f9a:b0:b3e:26ae:7288 with SMTP id a640c23a62f3a-b3e26ae7cc3mr232110566b.8.1759096312279;
-        Sun, 28 Sep 2025 14:51:52 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3f7b67b883sm23974566b.79.2025.09.28.14.51.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Sep 2025 14:51:51 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62fca01f0d9so7687281a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 14:51:51 -0700 (PDT)
-X-Received: by 2002:a17:907:7b9e:b0:b0c:b51b:81f6 with SMTP id
- a640c23a62f3a-b34bb50f1dcmr1551723566b.43.1759096310911; Sun, 28 Sep 2025
- 14:51:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759096516; x=1759701316;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMA3FY1cLbcNhfw1XHhs0JDOqj11mx6kBKtX7cr5kdQ=;
+        b=Y/TbdtvRZEcRm8K187MQhVqVh1r09pM1hz5VvnGymOLNQTylb43KtXxhlBNZldBGu7
+         EvvurmP00JGPGC0+wuHjeRB2ngL0sBxr6qcXsYgj/Vfx5TTw9AgMcQCTcS6gUiJpev87
+         QxHi9geToyCK57xDpPrT2l8blkLs2mzUV67gWQlivyM21D0tr8m7D3o6KFUP5C+af+xV
+         +D5EeyhQS0IjKWCDMvSTywqZ7xbvrW2eSEPs7pwx+QDrewJ5Qp64rZU6Yz0RJlYKZYAn
+         zRE9KJP8ff59Ry+/8MgMIjkDb/Xc+wRIrG5B3H3IbZGkxmKpPkdgjMKCBE0GcdKXk+CJ
+         gz2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXTE0YAoEgjmdrFGugKpw8OsCj60AWEnPIfcinv3SQaDSLLWf2Sj0aeHx1ahZfBrT8omJ09faJjR7gLh4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbdjNZUoo71ZmUAMVetAonSC0p0IzDjAAGGXkrDCACR5zmnXbI
+	Vf6SyRw8CP4XXij9IQV02eLWMTJFG4AI7GK8wB0Dp/T+6N4F7vq9XHOoN9mTp3miJUjAL+5JGNI
+	hjbQvJRsJScoApa8otoeu4myE6bl/46YaBSmfq8Cf
+X-Gm-Gg: ASbGncuYeQjX/E3EpjO4aBfSJku+Yg4+mrWkG4yvnDdjACoASIKSc6Z7YaxHZJS9kmd
+	aMSYm0W7hbDdSFpWTAlCBh3kbNYTlV5Dayyv3qbpaoe1vHgvL2l0x6IXe29GUUHtIqNF25ylAYg
+	fPS6h/PcR0HQlX4WFTTLQjJK7A71mUKsxiqIEZwx2N9Ye+okhfYLImaJ0Cdf0rrmADVNZTAFXvx
+	gfa2wfCYzm4aPe3EL1ZUhmFHn15V7DJbGDRqPun
+X-Google-Smtp-Source: AGHT+IGuuHuV6NhRdtb2XbDDFb64hZXsw9U4K9RD49mZlUNSm0AUIK8jLtLvPojHIhekgdfDaYZhLDQcukon9pUOy4U=
+X-Received: by 2002:a05:600c:1687:b0:453:672b:5b64 with SMTP id
+ 5b1f17b1804b1-46e3af88c70mr4043975e9.2.1759096516280; Sun, 28 Sep 2025
+ 14:55:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 28 Sep 2025 14:51:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiX38oG6=xFBNLO0pnjqHfxzjd6-1kZ5Nv9HfqNC2PoFA@mail.gmail.com>
-X-Gm-Features: AS18NWB-qD9nAMXn7q5q2sG6Y6Fl35JwUtEiRCCRDmbuGj08dohVZv2hW5A2CV0
-Message-ID: <CAHk-=wiX38oG6=xFBNLO0pnjqHfxzjd6-1kZ5Nv9HfqNC2PoFA@mail.gmail.com>
-Subject: Linux 6.17
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+In-Reply-To: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Sun, 28 Sep 2025 14:55:04 -0700
+X-Gm-Features: AS18NWCZXYADEm26_yLS0Zgi7PqfD8kDWiEzPUFTAPAgj2X_CDKkUG2kA8H6SOk
+Message-ID: <CACw3F50ijQ20Vg8ycMROSCccf_XtjB_fFvLGxvQZ7eaNQoLwGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm: prevent poison consumption when splitting THP
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
+	linmiaohe@huawei.com, tony.luck@intel.com, ziy@nvidia.com, 
+	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com, 
+	ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org, 
+	nao.horiguchi@gmail.com, farrah.chen@intel.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Andrew Zaborowski <andrew.zaborowski@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-No huge surprises this past week, so here we are, with kernel 6.17
-pushed out and ready to go.
-
-Below is the shortlog for just the last week - not the full 6.17
-release - as usual.  It's not exciting, which is all good. I think the
-biggest patch in there is some locking fixes for some bluetooth races
-that could cause use-after-free situations. Whee - that's about as
-exciting as it gets.
-
-Other than that, there' the usual driver fixlets (GPU and networking
-dominate as usual, but "dominate" is still pretty small), there's some
-minor random other driver updates, some filesystem noise, and core
-kernel and mm.
-
-And some selftest updates.
-
-This obviously means that the merge window for 6.18 will open
-tomorrow, and I already have four dozen pull requests pending. Thanks
-to the proactive people - you know who you are. But before the merge
-window opens, there's still time for some final kicking of the tires
-of the newest release.
-
-Thanks,
-           Linus
-
----
-
-Adri=C3=A1n Larumbe (1):
-      drm/panthor: Defer scheduler entity destruction to queue release
-
-Akinobu Mita (1):
-      mm/damon/sysfs: do not ignore callback's return value in
-damon_sysfs_damon_call()
-
-Alexander Popov (1):
-      x86/Kconfig: Reenable PTDUMP on i386
-
-Alexandre Ghiti (1):
-      riscv: Use an atomic xchg in pudp_huge_get_and_clear()
-
-Alok Tiwari (2):
-      vhost-scsi: fix argument order in tport allocation error message
-      bnxt_en: correct offset handling for IPv6 destination address
-
-Alvin Lee (1):
-      drm/amd/display: Use mpc.preblend flag to indicate preblend
-
-Alyssa Rosenzweig (1):
-      MAINTAINERS: remove Alyssa Rosenzweig
-
-Alyssa Ross (1):
-      virtio_config: clarify output parameters
-
-Amit Chaudhari (1):
-      HID: asus: add support for missing PX series fn keys
-
-Andrea Righi (1):
-      sched_ext: idle: Handle migration-disabled tasks in BPF code
-
-Andrew Morton (1):
-      include/linux/pgtable.h: convert arch_enter_lazy_mmu_mode() and
-friends to static inlines
-
-Ashwini Sahu (1):
-      uapi: vduse: fix typo in comment
-
-Basavaraj Natikar (1):
-      HID: amd_sfh: Add sync across amd sfh work functions
-
-Bastien Curutchet (Schneider Electric) (1):
-      spi: omap2-mcspi: drive SPI_CLK on transfer_setup()
-
-Bence Cs=C3=B3k=C3=A1s (1):
-      mailmap: add entry for Bence Cs=C3=B3k=C3=A1s
-
-Calvin Owens (1):
-      Bluetooth: Fix build after header cleanup
-
-Carolina Jubran (1):
-      net/mlx5e: Fix missing FEC RS stats for RS_544_514_INTERLEAVED_QUAD
-
-Chen Yufeng (1):
-      can: hi311x: fix null pointer dereference when resuming from
-sleep before interface was enabled
-
-Christian Loehle (1):
-      cpufreq: Initialize cpufreq-based invariance before subsys
-
-Christian Marangi (2):
-      pinctrl: airoha: fix wrong PHY LED mux value for LED1 GPIO46
-      pinctrl: airoha: fix wrong MDIO function bitmaks
-
-Christoffer Sandberg (1):
-      platform/x86/amd/pmc: Add Stellaris Slim Gen6 AMD to spurious
-8042 quirks list
-
-Claudiu Beznea (1):
-      i2c: riic: Allow setting frequencies lower than 50KHz
-
-Conor Dooley (1):
-      riscv: dts: allwinner: rename devterm i2c-gpio node to comply with bi=
-nding
-
-Dan Carpenter (1):
-      octeontx2-pf: Fix potential use after free in otx2_tc_add_flow()
-
-Daniel Lee (1):
-      platform/x86: lg-laptop: Fix WMAB call in fan_mode_store()
-
-Duy Nguyen (1):
-      can: rcar_canfd: Fix controller mode setting
-
-Eric Biggers (2):
-      crypto: af_alg - Fix incorrect boolean values in af_alg_ctx
-      kmsan: fix out-of-bounds access to shadow memory
-
-Hans de Goede (1):
-      gpiolib: Extend software-node support to support secondary software-n=
-odes
-
-Ido Schimmel (3):
-      nexthop: Forbid FDB status change while nexthop is in a group
-      selftests: fib_nexthops: Fix creation of non-FDB nexthops
-      selftests: fib_nexthops: Add test cases for FDB status change
-
-Ioana Ciornei (1):
-      gpio: regmap: fix memory leak of gpio_regmap structure
-
-Ivan Pravdin (1):
-      rtla: Fix buffer overflow in actions_parse
-
-Jacob Keller (4):
-      broadcom: fix support for PTP_PEROUT_DUTY_CYCLE
-      broadcom: fix support for PTP_EXTTS_REQUEST2 ioctl
-      ptp: document behavior of PTP_STRICT_FLAGS
-      libie: fix string names for AQ error codes
-
-Jakub Acs (1):
-      fs/proc/task_mmu: check p->vec_buf for NULL
-
-Jane Chu (1):
-      mm/hugetlb: fix copy_hugetlb_page_range() to use ->pt_share_count
-
-Janne Grunau (1):
-      HID: lenovo: Use KEY_PERFORMANCE instead of ACPI's platform_profile
-
-Jarkko Nikula (1):
-      MAINTAINERS: Remove myself as Synopsys DesignWare I2C maintainer
-
-Jason Baron (1):
-      net: allow alloc_skb_with_frags() to use MAX_SKB_FRAGS
-
-Jason Gunthorpe (4):
-      iommufd: Fix refcounting race during mmap
-      iommufd: Fix race during abort for file descriptors
-      iommufd: WARN if an object is aborted with an elevated refcount
-      iommufd/selftest: Update the fail_nth limit
-
-Jason Wang (2):
-      vhost-net: unbreak busy polling
-      vhost-net: flush batched before enabling notifications
-
-Jens Axboe (2):
-      block: fix EOD return for device with nr_sectors =3D=3D 0
-      MAINTAINERS: update io_uring and block tree git trees
-
-Jihed Chaibi (2):
-      ARM: dts: armada-370-db: Fix stereo audio input routing on Armada 370
-      ARM: dts: kirkwood: Fix sound DAI cells for OpenRD clients
-
-Jimmy Hon (1):
-      arm64: dts: rockchip: Fix the headphone detection on the orangepi 5
-
-Jinjiang Tu (1):
-      mm/hugetlb: fix folio is still mapped when deleted
-
-Johan Hovold (1):
-      reset: eyeq: fix OF node leak
-
-Johannes Thumshirn (1):
-      btrfs: zoned: don't fail mount needlessly due to too many active zone=
-s
-
-Josua Mayer (3):
-      arm64: dts: marvell: cn913x-solidrun: fix sata ports status
-      arm64: dts: marvell: cn9132-clearfog: disable eMMC high-speed modes
-      arm64: dts: marvell: cn9132-clearfog: fix multi-lane pci x2 and x4 po=
-rts
-
-Khairul Anuar Romli (1):
-      spi: cadence-qspi: defer runtime support on socfpga if reset bit
-is enabled
-
-Krzysztof Kozlowski (1):
-      ARM: dts: allwinner: Minor whitespace cleanup
-
-Leo Li (1):
-      drm/amd/display: Init DCN35 clocks from pre-os HW values
-
-Linus Torvalds (1):
-      Linux 6.17
-
-Lizhi Xu (1):
-      netfs: Prevent duplicate unlocking
-
-Louis-Alexis Eyraud (1):
-      pmdomain: mediatek: set default off flag for MT8195 AUDIO power domai=
+On Sat, Sep 27, 2025 at 8:30=E2=80=AFPM Qiuxu Zhuo <qiuxu.zhuo@intel.com> w=
+rote:
+>
+> From: Andrew Zaborowski <andrew.zaborowski@intel.com>
+>
+> When performing memory error injection on a THP (Transparent Huge Page)
+> mapped to userspace on an x86 server, the kernel panics with the followin=
+g
+> trace. The expected behavior is to terminate the affected process instead
+> of panicking the kernel, as the x86 Machine Check code can recover from a=
 n
+> in-userspace #MC.
+>
+>   mce: [Hardware Error]: CPU 0: Machine Check Exception: f Bank 3: bd8000=
+0000070134
+>   mce: [Hardware Error]: RIP 10:<ffffffff8372f8bc> {memchr_inv+0x4c/0xf0}
+>   mce: [Hardware Error]: TSC afff7bbff88a ADDR 1d301b000 MISC 80 PPIN 1e7=
+41e77539027db
+>   mce: [Hardware Error]: PROCESSOR 0:d06d0 TIME 1758093249 SOCKET 0 APIC =
+0 microcode 80000320
+>   mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+>   mce: [Hardware Error]: Machine check: Data load in unrecoverable area o=
+f kernel
+>   Kernel panic - not syncing: Fatal local machine check
+>
+> The root cause of this panic is that handling a memory failure triggered =
+by
+> an in-userspace #MC necessitates splitting the THP. The splitting process
+> employs a mechanism, implemented in try_to_map_unused_to_zeropage(), whic=
+h
+> reads the sub-pages of the THP to identify zero-filled pages. However,
+> reading the sub-pages results in a second in-kernel #MC, occurring before
+> the initial memory_failure() completes, ultimately leading to a kernel
+> panic. See the kernel panic call trace on the two #MCs.
+>
+>   First Machine Check occurs // [1]
+>     memory_failure()         // [2]
+>       try_to_split_thp_page()
+>         split_huge_page()
+>           split_huge_page_to_list_to_order()
+>             __folio_split()  // [3]
+>               remap_page()
+>                 remove_migration_ptes()
+>                   remove_migration_pte()
+>                     try_to_map_unused_to_zeropage()
 
-Lucas De Marchi (1):
-      drm/xe: Fix build with CONFIG_MODULES=3Dn
+Just an observation: Unfortunately THP only has PageHasHWPoisoned and
+don't know the exact HWPoisoned page. Otherwise, we may still use
+zeropage for these not HWPoisoned.
 
-Luiz Augusto von Dentz (4):
-      Bluetooth: hci_sync: Fix hci_resume_advertising_sync
-      Bluetooth: hci_event: Fix UAF in hci_conn_tx_dequeue
-      Bluetooth: hci_event: Fix UAF in hci_acl_create_conn_sync
-      Bluetooth: MGMT: Fix possible UAFs
+>                       memchr_inv()                   // [4]
+>                         Second Machine Check occurs  // [5]
+>                           Kernel panic
+>
+> [1] Triggered by accessing a hardware-poisoned THP in userspace, which is
+>     typically recoverable by terminating the affected process.
+>
+> [2] Call folio_set_has_hwpoisoned() before try_to_split_thp_page().
+>
+> [3] Pass the RMP_USE_SHARED_ZEROPAGE remap flag to remap_page().
+>
+> [4] Re-access sub-pages of the hw-poisoned THP in the kernel.
+>
+> [5] Triggered in-kernel, leading to a panic kernel.
+>
+> In Step[2], memory_failure() sets the has_hwpoisoned flag on the THP,
+> right before calling try_to_split_thp_page(). Fix this panic by not
+> passing the RMP_USE_SHARED_ZEROPAGE flag to remap_page() in Step[3]
+> if the THP has the has_hwpoisoned flag set. This prevents access to
+> sub-pages of the poisoned THP for zero-page identification, avoiding
+> a second in-kernel #MC that would cause kernel panic.
+>
+> [ Qiuxu: Re-worte the commit message. ]
+>
+> Reported-by: Farrah Chen <farrah.chen@intel.com>
+> Signed-off-by: Andrew Zaborowski <andrew.zaborowski@intel.com>
+> Tested-by: Farrah Chen <farrah.chen@intel.com>
+> Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> ---
+>  mm/huge_memory.c    | 3 ++-
+>  mm/memory-failure.c | 6 ++++--
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 9c38a95e9f09..1568f0308b90 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3588,6 +3588,7 @@ static int __folio_split(struct folio *folio, unsig=
+ned int new_order,
+>                 struct list_head *list, bool uniform_split)
+>  {
+>         struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
+o);
+> +       bool has_hwpoisoned =3D folio_test_has_hwpoisoned(folio);
+>         XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+>         struct folio *end_folio =3D folio_next(folio);
+>         bool is_anon =3D folio_test_anon(folio);
+> @@ -3858,7 +3859,7 @@ static int __folio_split(struct folio *folio, unsig=
+ned int new_order,
+>         if (nr_shmem_dropped)
+>                 shmem_uncharge(mapping->host, nr_shmem_dropped);
+>
+> -       if (!ret && is_anon)
+> +       if (!ret && is_anon && !has_hwpoisoned)
+>                 remap_flags =3D RMP_USE_SHARED_ZEROPAGE;
+>         remap_page(folio, 1 << order, remap_flags);
+>
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index df6ee59527dd..3ba6fd4079ab 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2351,8 +2351,10 @@ int memory_failure(unsigned long pfn, int flags)
+>                  * otherwise it may race with THP split.
+>                  * And the flag can't be set in get_hwpoison_page() since
+>                  * it is called by soft offline too and it is just called
+> -                * for !MF_COUNT_INCREASED.  So here seems to be the best
+> -                * place.
+> +                * for !MF_COUNT_INCREASED.
+> +                * It also tells split_huge_page() to not bother using
 
-Lukas Bulwahn (1):
-      ARM: imx: Kconfig: Adjust select after renamed config option
+nit: it may confuse readers of split_huge_page when they didn't see
+any check on the hwpoison flag. So from readability PoV, it may be
+better to refer to this in a more generic term like the "following THP
+splitting process" (I would prefer this), or to point precisely to
+__folio_split.
 
-Lukasz Czapnik (8):
-      i40e: add validation for ring_len param
-      i40e: fix idx validation in i40e_validate_queue_map
-      i40e: fix idx validation in config queues msg
-      i40e: fix input validation logic for action_meta
-      i40e: fix validation of VF state in get resources
-      i40e: add max boundary check for VF filters
-      i40e: add mask to apply valid bits for itr_idx
-      i40e: improve VF MAC filters accounting
+Everything else looks good to me.
 
-Marcin Juszkiewicz (1):
-      arm64: dts: rockchip: Add vcc supply for SPI Flash on NanoPC-T6
+Reviewed-by: Jiaqi Yan <jiaqiyan@google.com>
 
-Masami Hiramatsu (Google) (4):
-      tracing: dynevent: Add a missing lockdown check on dynevent
-      tracing: fprobe: Fix to remove recorded module addresses from filter
-      tracing: dynevent: Add a missing lockdown check on dynevent
-      tracing: fgraph: Protect return handler from recursion loop
-
-Matthew Schwartz (1):
-      drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_re=
-sume
-
-Max Kellermann (1):
-      netfs: fix reference leak
-
-Melissa Wen (1):
-      drm/amd/display: remove output_tf_change flag
-
-Michael S. Tsirkin (1):
-      Revert "vhost/net: Defer TX queue re-enable until after sendmsg"
-
-Michal Wajdeczko (1):
-      drm/xe/vf: Don't expose sysfs attributes not applicable for VFs
-
-Mika Westerberg (1):
-      MAINTAINERS: Add me as maintainer of Synopsys DesignWare I2C driver
-
-Moshe Shemesh (1):
-      net/mlx5: fs, fix UAF in flow counter release
-
-Mukesh Kumar Savaliya (1):
-      MAINTAINERS: Update email address for Qualcomm's I2C GENI maintainers
-
-Nickolay Goppen (1):
-      platform/x86: dell-lis3lv02d: Add Latitude E6530
-
-Nirmoy Das (1):
-      drm/ast: Use msleep instead of mdelay for edid read
-
-Nobuhiro Iwamatsu (1):
-      ARM: dts: socfpga: sodia: Fix mdio bus probe and PHY address
-
-Or Har-Toov (1):
-      IB/mlx5: Fix obj_type mismatch for SRQ event subscriptions
-
-Paul Walmsley (1):
-      MAINTAINERS: Update Paul Walmsley's E-mail address
-
-Paulo Alcantara (1):
-      smb: client: handle unlink(2) of files open by different clients
-
-Peng Fan (4):
-      firmware: imx: Add stub functions for SCMI MISC API
-      firmware: imx: Add stub functions for SCMI LMM API
-      firmware: imx: Add stub functions for SCMI CPU API
-      arm64: dts: imx8mp: Correct thermal sensor index
-
-Peter Hilber (1):
-      MAINTAINERS, mailmap: Update address for Peter Hilber
-
-Peter Zijlstra (2):
-      sched/deadline: Fix dl_server getting stuck
-      sched/deadline: Fix dl_server behaviour
-
-Petr Malat (1):
-      ethernet: rvu-af: Remove slash from the driver name
-
-Petr Pavlu (1):
-      ARM: 9458/1: module: Ensure the override of module_arch_freeing_init(=
-)
-
-Russell King (Oracle) (1):
-      ARM64: dts: mcbin: fix SATA ports on Macchiatobin
-
-Sabrina Dubroca (2):
-      xfrm: xfrm_alloc_spi shouldn't use 0 as SPI
-      xfrm: fix offloading of cross-family tunnels
-
-Samasth Norway Ananda (1):
-      fbcon: fix integer overflow in fbcon_do_set_font
-
-Sang-Heon Jeon (1):
-      smb: client: fix wrong index reference in smb2_compound_op()
-
-Sebastian Andrzej Siewior (3):
-      futex: Prevent use-after-free during requeue-PI
-      vhost: Take a reference on the task in struct vhost_task.
-      futex: Use correct exit on failure from futex_hash_allocate_default()
-
-Shyam Sundar S K (1):
-      platform/x86/dell: Set USTT mode according to BIOS after reboot
-
-Sidraya Jayagond (1):
-      net/smc: fix warning in smc_rx_splice() when calling get_page()
-
-Stefan Metzmacher (2):
-      smb: server: don't use delayed_work for post_recv_credits_work
-      smb: server: use disable_work_sync in transport_rdma.c
-
-St=C3=A9phane Grosjean (1):
-      can: peak_usb: fix shift-out-of-bounds issue
-
-Suraj Kandpal (1):
-      drm/i915/ddi: Guard reg_val against a INVALID_TRANSCODER
-
-Sven Eckelmann (1):
-      i2c: rtl9300: Drop unsupported I2C_FUNC_SMBUS_I2C_BLOCK
-
-S=C3=A9bastien Szymanski (1):
-      HID: cp2112: fix setter callbacks return value
-
-Taotao Chen (1):
-      drm/i915: set O_LARGEFILE in __create_shmem()
-
-Thierry Reding (1):
-      firmware: tegra: Do not warn on missing memory-region property
-
-Thomas Gleixner (2):
-      x86/topology: Implement topology_is_core_online() to address SMT
-regression
-      kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang < 17
-
-Thomas Hellstr=C3=B6m (1):
-      drm/xe: Don't copy pinned kernel bos twice on suspend
-
-Thomas Zimmermann (1):
-      fbcon: Fix OOB access in font allocation
-
-Troy Mitchell (1):
-      MAINTAINERS: add entry for SpacemiT K1 I2C driver
-
-Vincent Mailhol (4):
-      can: etas_es58x: populate ndo_change_mtu() to prevent buffer overflow
-      can: hi311x: populate ndo_change_mtu() to prevent buffer overflow
-      can: sun4i_can: populate ndo_change_mtu() to prevent buffer overflow
-      can: mcba_usb: populate ndo_change_mtu() to prevent buffer overflow
-
-Vladimir Oltean (2):
-      net: dsa: lantiq_gswip: move gswip_add_single_port_br() call to
-port_setup()
-      net: dsa: lantiq_gswip: suppress -EINVAL errors for bridge FDB
-entries added to the CPU port
-
-Wander Lairson Costa (1):
-      rtla/actions: Fix condition for buffer reallocation
-
-Wang Liang (2):
-      net: tun: Update napi->skb after XDP process
-      tracing/osnoise: Fix slab-out-of-bounds in _parse_integer_limit()
-
-Wolfram Sang (1):
-      MAINTAINERS: delete email for Tharun Kumar P
-
-Xinpeng Sun (2):
-      HID: intel-thc-hid: intel-quicki2c: Add WCL Device IDs
-      HID: intel-thc-hid: intel-quickspi: Add WCL Device IDs
-
-Yevgeny Kliteynik (1):
-      net/mlx5: HWS, ignore flow level for multi-dest table
-
-Yixun Lan (1):
-      dt-bindings: i2c: spacemit: extend and validate all properties
-
-Zabelin Nikita (1):
-      drm/gma500: Fix null dereference in hdmi teardown
-
-Zhen Ni (1):
-      afs: Fix potential null pointer dereference in afs_put_server
+> +                * the shared zeropage -- the all-zeros check would
+> +                * consume the poison.  So here seems to be the best plac=
+e.
+>                  *
+>                  * Don't need care about the above error handling paths f=
+or
+>                  * get_hwpoison_page() since they handle either free page
+> --
+> 2.43.0
+>
+>
 
