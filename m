@@ -1,146 +1,81 @@
-Return-Path: <linux-kernel+bounces-835420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A605BA709E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0668CBA70A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 14:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B422C3BB040
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CF41681F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Sep 2025 12:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296AD2DC762;
-	Sun, 28 Sep 2025 12:56:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4798217B50A
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 12:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B1D2DE6F8;
+	Sun, 28 Sep 2025 12:56:45 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FBA2D59EF;
+	Sun, 28 Sep 2025 12:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759064179; cv=none; b=NIT+v4FsNrY3IOZD40ohyXnb/EHrYD7wWT4F8hnpYh3MBl+PSFx8NEN1oxGxsy+uzVp0IrGPASZFttDFEaC0ADSJ0ADqT54nsF40Gl39fSOohL0omBvv/08jTal/6Vi+l9rC0utosX/QYIOJIo+yri2WRfaaD/Q+1HVhzNOmKNw=
+	t=1759064204; cv=none; b=DS8ZUI6ss9EvQbGhV6/XXh40/V3yojMhQ5saJU0Uzdjz+DYXfG3TVrInIQWtK6TZHJgLQuJVYPHoMKPX+BRijTj7E//V2lxeyPtdbrpPx77y8iCci6FTbg/k3/penpfTLPtbPlUf98nCccZ0NfvM7OleSADtCriH5ah7hNerFLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759064179; c=relaxed/simple;
-	bh=bKevjmyRdsdsLaRE5vmt5SVjNSOSz52ILMJJDZA26FU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KhKeb/Sw0B2Z0d2NxkJzKKjGz2CHNNUGFV4fLdIvIlCD7WHhm5/E8NjWZaiG1HOzX7wOT7j74xsE8bMHD4fy8fRxYe2GT12ecxgbI2Qlf+yPW4j9RLWc+NeGdW9FgFYsqPC4SgthFXxLpCn9DSb7vsnF71k8l/I517m4pWB4LBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BBC826BC;
-	Sun, 28 Sep 2025 05:56:07 -0700 (PDT)
-Received: from [10.163.64.48] (unknown [10.163.64.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8CD43F694;
-	Sun, 28 Sep 2025 05:56:12 -0700 (PDT)
-Message-ID: <933cfdc7-9e3f-4dec-a5d9-bb193b0b7f13@arm.com>
-Date: Sun, 28 Sep 2025 18:26:09 +0530
+	s=arc-20240116; t=1759064204; c=relaxed/simple;
+	bh=0c4vT2BrsOWcwbLs5Ci3ZZqsXlLN6OvFpRzhoGl1rTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qZKv2Fc0pHZPpDTACFRgh3W/EkNXvDv8OjECZuFCuWF+EEr4327LND6tzmgst2mqRUalIFMYGhZ3ErBOVnIoUblUPq7TMyNldkknKdeNKFEvK6WXvlkRWKaqcGVl/EP8XoJm2PDkf1l8Ed5mbmJXJ9UbyKC0XCe3QqzSv/NRejM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 9D4544423A;
+	Sun, 28 Sep 2025 12:56:35 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id CDAAD2000D;
+	Sun, 28 Sep 2025 12:56:29 +0000 (UTC)
+Date: Sun, 28 Sep 2025 08:56:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Menglong Dong
+ <menglong8.dong@gmail.com>, jolsa@kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, kees@kernel.org, samitolvanen@google.com,
+ rppt@kernel.org, luto@kernel.org, ast@kernel.org, andrii@kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tracing: fgraph: Protect return handler from
+ recursion loop
+Message-ID: <20250928085626.2683c2aa@batman.local.home>
+In-Reply-To: <20250927085753.02b55a18@batman.local.home>
+References: <175852291163.307379.14414635977719513326.stgit@devnote2>
+	<175852292275.307379.9040117316112640553.stgit@devnote2>
+	<20250925003410.de2ef839f6ef3921ee08a955@kernel.org>
+	<20250925032611.52475590@batman.local.home>
+	<20250927085753.02b55a18@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: Fix some typos in hugetlb module
-To: "jianyun.gao" <jianyungao89@gmail.com>, linux-mm@kvack.org
-Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250927064926.1496579-1-jianyungao89@gmail.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250927064926.1496579-1-jianyungao89@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: s5p156t4tzm9ary8dx7qu83rouyuugeh
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: CDAAD2000D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19+bHTiwi6D1KwGhrnQGdkbYnyr/OKF9sI=
+X-HE-Tag: 1759064189-878244
+X-HE-Meta: U2FsdGVkX19whh60oa8avdCZ07ZZM+JBvYdetEQn0L9/fYw7TGnylUO0nKRphDrg3e27Hg0Tkl49pof98XvhZ+ajK8qtUKRz0PNUQgJvMhR7mNH5Dnfxo8+1EcJrPbZDPkOifzJoEbw8WclzmDLi8JV2+E7wUJehi4D4+qjDQdMXcuLdoT9/3Jqsisp2onyC1d7Oolx9n0uH3YJowIkMFd1/IiW59f85xP2Gcu4fNtWafDwYWoco47/gar0h17g/8Hmcs2cF1bo96T5bA6VFm5zZvYWVBYRxMaCDhrxcsrPDOhDskpr0Gb/19orS/TaAmCJbZiiighdE3HMmNe/8vYbx+1pSP8H73k291oSwWkubat4+oNoI0BZJ2zLYay8BpAkZL1SMncDMXEIjVRomYQ==
 
+On Sat, 27 Sep 2025 08:57:53 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On 27/09/25 12:19 pm, jianyun.gao wrote:
-> There are som typos in the code comments as follows:
->
->    differenciate ==> differentiate
->    refernece ==> reference
->    permissons ==> permissions
->    indepdenent ==> independent
->    Spliting ==> Splitting
->
-> Just fix it.
->
-> Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
-> ---
->   mm/hugetlb.c         | 6 +++---
->   mm/hugetlb_vmemmap.c | 6 +++---
->   2 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index eed59cfb5d21..8ff9edd09504 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -2954,7 +2954,7 @@ typedef enum {
->   	 * NOTE: This is mostly identical to MAP_CHG_NEEDED, except
->   	 * that currently vma_needs_reservation() has an unwanted side
->   	 * effect to either use end() or commit() to complete the
-> -	 * transaction.	 Hence it needs to differenciate from NEEDED.
-> +	 * transaction.	 Hence it needs to differentiate from NEEDED.
->   	 */
->   	MAP_CHG_ENFORCED = 2,
->   } map_chg_state;
-> @@ -5998,7 +5998,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
->   	/*
->   	 * If we unshared PMDs, the TLB flush was not recorded in mmu_gather. We
->   	 * could defer the flush until now, since by holding i_mmap_rwsem we
-> -	 * guaranteed that the last refernece would not be dropped. But we must
-> +	 * guaranteed that the last reference would not be dropped. But we must
->   	 * do the flushing before we return, as otherwise i_mmap_rwsem will be
->   	 * dropped and the last reference to the shared PMDs page might be
->   	 * dropped as well.
-> @@ -7179,7 +7179,7 @@ long hugetlb_change_protection(struct vm_area_struct *vma,
->   		} else if (unlikely(is_pte_marker(pte))) {
->   			/*
->   			 * Do nothing on a poison marker; page is
-> -			 * corrupted, permissons do not apply.  Here
-> +			 * corrupted, permissions do not apply.  Here
+> Masami, you didn't include linux-trace-kernel mailing list, so it's not in patchwork.
+> 
+> Can you please resend?
 
-Can also fix the extra space between "apply" and "Here".
+Never mind, I sent it to Linus already.
 
->   			 * pte_marker_uffd_wp()==true implies !poison
->   			 * because they're mutual exclusive.
->   			 */
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index ba0fb1b6a5a8..e6f79b2c63ee 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -75,7 +75,7 @@ static int vmemmap_split_pmd(pmd_t *pmd, struct page *head, unsigned long start,
->   	if (likely(pmd_leaf(*pmd))) {
->   		/*
->   		 * Higher order allocations from buddy allocator must be able to
-> -		 * be treated as indepdenent small pages (as they can be freed
-> +		 * be treated as independent small pages (as they can be freed
->   		 * individually).
->   		 */
->   		if (!PageReserved(head))
-> @@ -684,7 +684,7 @@ static void __hugetlb_vmemmap_optimize_folios(struct hstate *h,
->   		ret = hugetlb_vmemmap_split_folio(h, folio);
->   
->   		/*
-> -		 * Spliting the PMD requires allocating a page, thus lets fail
-> +		 * Splitting the PMD requires allocating a page, thus lets fail
-
-lets -> let's or let us
-
->   		 * early once we encounter the first OOM. No point in retrying
->   		 * as it can be dynamically done on remap with the memory
->   		 * we get back from the vmemmap deduplication.
-> @@ -715,7 +715,7 @@ static void __hugetlb_vmemmap_optimize_folios(struct hstate *h,
->   		/*
->   		 * Pages to be freed may have been accumulated.  If we
->   		 * encounter an ENOMEM,  free what we have and try again.
-> -		 * This can occur in the case that both spliting fails
-> +		 * This can occur in the case that both splitting fails
->   		 * halfway and head page allocation also failed. In this
->   		 * case __hugetlb_vmemmap_optimize_folio() would free memory
->   		 * allowing more vmemmap remaps to occur.
-
-As Wei says, this patch can be merged with the earlier, thanks.
-
+-- Steve
 
