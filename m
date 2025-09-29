@@ -1,111 +1,101 @@
-Return-Path: <linux-kernel+bounces-836514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD064BA9E7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:58:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B35BA9E8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48401687AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:58:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF7327A1E16
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8056930C11D;
-	Mon, 29 Sep 2025 15:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DA830CB30;
+	Mon, 29 Sep 2025 15:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZWJBQvKT"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="veGu8sJM"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A01309F03
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B5730C0F9;
+	Mon, 29 Sep 2025 15:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759161530; cv=none; b=Md8WrfPHozOT054hdCxLIXUyreo0le2akS2+EP0ivmlT0mhnnvV6Qtggbbcu95QkolG3LPN3qLKC6K9iQGgSxn+rg5SXRyfmJjUpxTI2Jq8T9IJhRw3P3dBJGDHgLKtVBFFLtScfkjfPsCpCBvKGhGxvJLFPy6slnj0bo9dGxss=
+	t=1759161540; cv=none; b=Dr4T8xzdKEq+4civ6UvkeikS6Aftc8FpKGs5uif0HeQF/yZNmgdBJ+/dC9TvduwvrNnRHP5oyf9KGzy7RDh3WIAYjk50cLSHWgVSoy9NNmQlYnPXVbqvKpesrhpi6N1t4v34upmeNOgxD5lCBxvnqP64cAg3KDPoE4/Q78PJUDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759161530; c=relaxed/simple;
-	bh=KP5kx0VRuRBxNT9JPTkeTOUgylYmXovvWpGXUsY+dqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gHzddW5bDGDf8FfzZvkWxeq4TQnxd+e5Sy4gWgb/IuvV6Hl4HP3wEwI2imZ0p8lQbKnueaxhbmh8Gw85diNhFAPtVM1hgHhpGTW7IP7DqKWWiujRC/if+TkZokCYOgh/CvIslmiHWdh+NT74MpNAuptQ6C3vv1HHct+ZINFiuok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZWJBQvKT; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b41870fef44so39264266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759161528; x=1759766328; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KP5kx0VRuRBxNT9JPTkeTOUgylYmXovvWpGXUsY+dqk=;
-        b=ZWJBQvKT9Qc5PmNyldyHZaLCt3fwNojyu977328l5tFx8x1FT10gVhl8DQFhgpBpuW
-         wKoP8TajHfA3LEezjyvdudvDtyJpPLd4nQ1l6EP3rMvjgRT97rWShu2jP6YgeH+jMSiT
-         jZGaBmt3cPJneNkKbaLPDm/T6/JnehPZQNrw0DV/+8/BVclpkEUyexlc1wjjMhl8OX+c
-         /JNPJQD4vKsVnFs+StQM92uXQWiyG2+KlJVF+8Fwd+Yg/b6SSUnbiDnUC+4bwW+U1pSh
-         4rDQpya8OMl10l91QqpUNLfYXD2bEYp8XZQ+Qh25jHzLL9NnCZ5RcRJcAbVMJFDBzaNO
-         /SGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759161528; x=1759766328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KP5kx0VRuRBxNT9JPTkeTOUgylYmXovvWpGXUsY+dqk=;
-        b=bw46FUIoIQi/N5LBEjyKjs/T3w5XI+yKwni9MjVIEla5Naz6i/mkCGrtS3QjFgJdHU
-         /tXSr/XweGBWh2nJnA+7GNQrAaWrtwC+14elfGUVuAYh0gf/qFFzZPsp5zj9naQTMRFK
-         xlm/GD06J5BOtbglw0sSTnjQGrxj5VuAJxYYX53XQqziqXdyYuXhemCZGbmxJSdIm438
-         uj7MX7pTlcBItanxQz+8jBhmyTPmaabD9ZDRsfdPlwKP4IJDtKw6HzrdtvIjXb0A1pPw
-         n19vh25QlEg7aQhdfpqJg+cmsgUV1kujKIQXozgM3ut9cHfMiEgyLsWjSvUEqgxSGwmp
-         TKbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWIEcafEIMpNH0XHLRMqsYtfzMfHSwymIbnTYEbZLcBiS2pJEN2qfDHlP5ATKbPgQLoSkfdP6noER5U9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdnGmYjEcn7sRE8pBdAlORra83IlBt93AqfCghdunPMHFzuv8C
-	fW4kBBKBY3v2pMPElRbwusf8KhuNz2iK5i8QmCFYN+y90INhDLMSRZXW1gKFd0KfhAmxabbR5Kz
-	fo2JfTC06gRWaCoakFZlqFssl9HlNWi8=
-X-Gm-Gg: ASbGnct9y5WX+++Gs2d/lWzsdjMGusepa6alEIWO3fRcdP5gU/0Pqr/3hE1inz7Yrtn
-	F24VurgXVcgt1LU1JHbe6n1OqlQIsyBxwZfKXlJtx2IWPVqV0ZKTHQWN2ks0mXdBY6d7JU9yKPk
-	GNGLp0pPFEAWWB9aCFFaKKNsdU5NMfO+mTlew8G9FZUO6sjXXkwh5wxbEabIslnZN13xf+kXPTS
-	oXBIfxzycQ+Pw7FGC1coSFTIa4acKsOA+QTfxp20g==
-X-Google-Smtp-Source: AGHT+IEyCADO6J8WiEBVdrcDX+0EvoZzPtvlyZ0fcAEpiz0fGzu77FQXIwzegr8XJ0+/55shLRsQasieeKC3kMA42EI=
-X-Received: by 2002:a17:907:9706:b0:b3f:6e5:256 with SMTP id
- a640c23a62f3a-b3f06e527cemr412737666b.32.1759161527436; Mon, 29 Sep 2025
- 08:58:47 -0700 (PDT)
+	s=arc-20240116; t=1759161540; c=relaxed/simple;
+	bh=xK32v/0Jkwck6iAKn3UemLakhpvM4618EmLE+cDlDTo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=D8iTo34mJK/zYgu6Z+eFHQhZr5O9N7SS4Dirm/EayMLPxCsLOlmpw1jcLzH40OZAfxD/oLFBy1a6IpcdbVvy2wHZXq9N7IwuIn/KSdXL2laTju+8dSlbFp5vthc9sOKQqDef8+f5dgqxZONrXjLNhUWBsDmyqXATUl78mkBeVnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=veGu8sJM; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 7972F1A1036;
+	Mon, 29 Sep 2025 15:58:56 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 500FB606AE;
+	Mon, 29 Sep 2025 15:58:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6B215102F1A13;
+	Mon, 29 Sep 2025 17:58:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759161535; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=xK32v/0Jkwck6iAKn3UemLakhpvM4618EmLE+cDlDTo=;
+	b=veGu8sJMgZnNLDBYOB8QxNyDYhYCEkdSxQmW+fqbx/4azPd+BqakxhSgcPIXkCr9NhWpXt
+	ldSbI3IKsjWn2EqzPV4B6h480FMxNAug5jTHpVTRtoUZtBw8xKOt5XXSfmY2tfuGZTZHLO
+	DGn2WAzuzXjNSXhGrhL688fP2Ge3fBG1V1tpGqTXYFd486GrkHfK6RvxffkYFcKVLBxONs
+	D/vPqQ7Q+yQBkhDxusjfkGkbVjzhySpcBxSbzlp7HKLEUVvEx2m8N2jsbmS05MsoEAqCKM
+	3hPEkPKX/E/k9R8qr4xLq6AMrJn9JaefrX5fk6Q5iyzTFuEsFEUVJ+U3pDCMrQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Maarten Zanders <maarten@zanders.be>
+Cc: Han Xu <han.xu@nxp.com>,  Richard Weinberger <richard@nod.at>,  Vignesh
+ Raghavendra <vigneshr@ti.com>,  stable@vger.kernel.org,
+  imx@lists.linux.dev,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: nand: raw: gpmi: fix clocks when CONFIG_PM=N
+In-Reply-To: <87ecrpi741.fsf@bootlin.com> (Miquel Raynal's message of "Mon, 29
+	Sep 2025 17:57:50 +0200")
+References: <20250922153938.743640-2-maarten@zanders.be>
+	<87ecrpi741.fsf@bootlin.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Mon, 29 Sep 2025 17:58:53 +0200
+Message-ID: <878qhxi72a.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929114356.25261-2-sidharthseela@gmail.com> <willemdebruijn.kernel.a37b90bf9586@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.a37b90bf9586@gmail.com>
-From: Sidharth Seela <sidharthseela@gmail.com>
-Date: Mon, 29 Sep 2025 21:28:36 +0530
-X-Gm-Features: AS18NWCgnPycz7t2entTrmTu5YC-DafC0Q0uYk2zgNL_KC7OWEjNYY7xyUDcjPI
-Message-ID: <CAJE-K+C9_En-QWYrTJmMH-H8CP_1wgpREjFst1ybiE-bJtF13g@mail.gmail.com>
-Subject: Re: [PATCH] selftest:net: Fix uninit pointers and return values
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: antonio@openvpn.net, sd@queasysnail.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, shuah@kernel.org, 
-	kernelxing@tencent.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
-	morbo@google.com, justinstitt@google.com, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Sep 29, 2025 at 7:49=E2=80=AFPM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
-> [PATCH net]
-> and a Fixes tag
-Thankyou, I'll add that.
+On 29/09/2025 at 17:57:50 +02, Miquel Raynal <miquel.raynal@bootlin.com> wr=
+ote:
 
-> Does not need a fix. The default statement calls error() which exits the =
-program.
-> Same.
-Yes, you are correct.
+> Hello,
+>
+> On 22/09/2025 at 17:39:38 +02, Maarten Zanders <maarten@zanders.be> wrote:
+>
+>> Commit f04ced6d545e ("mtd: nand: raw: gpmi: improve power management
+>> handling") moved all clock handling into PM callbacks. With CONFIG_PM
+>> disabled, those callbacks are missing, leaving the driver unusable.
+>>
+>> Add clock init/teardown for !CONFIG_PM builds to restore basic operation.
+>> Keeping the driver working without requiring CONFIG_PM is preferred over
+>> adding a Kconfig dependency.
+>>
+>> Fixes: f04ced6d545e ("mtd: nand: raw: gpmi: improve power management han=
+dling")
+>> Signed-off-by: Maarten Zanders <maarten@zanders.be>
+>> Cc: stable@vger.kernel.org
+>
+> This patch does not apply on nand/next. Can you please rebase on
+> v6.18-rc1 when it will be out? I'll take it in a fixes PR.
 
-> Agreed on all the occurrences and the ovpn fixes.
-Alright, I'll send v2, with improvements and a changelog.
---=20
+Nevermind, my fault, it's applying fine.
+
 Thanks,
-Sidharth Seela
-www.realtimedesign.org
+Miqu=C3=A8l
 
