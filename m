@@ -1,244 +1,287 @@
-Return-Path: <linux-kernel+bounces-836013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB91BA8948
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:22:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 244CFBA894E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C304317AB1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2941891BE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2F32868AD;
-	Mon, 29 Sep 2025 09:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669B3286D4E;
+	Mon, 29 Sep 2025 09:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BkxXBzCq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLVh3ay5"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A1121FF23
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6316121FF23
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137720; cv=none; b=D/K9wN5wJuSphejYdfBldV6RdR9qMeNMNJ9WZqKTC6dSEM3sCfQLATl9lnUrW8jYAdPcR9+XsCGeYpHF15k6WzJicdTjI4vcFRnD4/WTpl6zEKLAH05h0jAfgWidRwweYJBNL+kksmV0RbQxLsJEGC70Gg6lk9ppb4quInTtBHM=
+	t=1759137747; cv=none; b=bP1Pa4SPm3FFPA9iS5Maf94fuUee1mjT/K3wFrpauMJg7zgb2x9YGxG6DCyEiG2abcCzRAD9paKzaJGsa/oiCdco1ci/viBRrut1YjHu0vHuEbeYGnR4EvJ/6BvSqMxd00Gb6yvrSpP5ScvMufBhCjdnb3/y8oxvnIcW5htdRIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137720; c=relaxed/simple;
-	bh=1mFtIsxgWL/cDrVYTrGXPefT0SWQMlxAe2lw1SiGW1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MExhTyaKu5jQItmffiIIvYn5FJ7RW/DYcQwx0CvqsUNYH2KlPPMo7nr2a0TeRwFYixzz7p9oKSepPKRIegGMSQ6Lu4ktQ76ezybDAt5npyZ+75ySa+rMRuUX4TnPzOvAzKy3fgWGqg6Z/7/hDEutZJsljv2meZaW28ds/fEJ5w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BkxXBzCq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759137718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dgQTpwdj6I19pwH7DxZR1LuGI+OTUqSIq5i+R/eVUzY=;
-	b=BkxXBzCqC/TNpuR+e44NgISmzLfIo6Vs43lIRarq0mLSff55KatThu60SrESAtZgF9Eik0
-	ptHxO3vEshmrzgtgcaiFAnPiuFlkBqTvAT2d9XpANhWeiwlevJAev+VXiscajNtPjhl6mu
-	xjod/LbGHX9VHbKD0bRzGG6tYWpa7qE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-456-63UkMjJSNN27MxbT9sBNaQ-1; Mon, 29 Sep 2025 05:21:56 -0400
-X-MC-Unique: 63UkMjJSNN27MxbT9sBNaQ-1
-X-Mimecast-MFC-AGG-ID: 63UkMjJSNN27MxbT9sBNaQ_1759137715
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e407c600eso16177325e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:21:56 -0700 (PDT)
+	s=arc-20240116; t=1759137747; c=relaxed/simple;
+	bh=I/aktwGo8Qo7qNKSEAuYs+SYS0Jet6DccxNE/NQAM3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l4ptRODBKFRM/MTwGoUcmuX/w8q0G0r0iSjOf1b9Kfo5QTzJha9two39yHCKAceAWlwGpuy8qhHdJXeV6cofSmZW1PrEKxI40ZPS1GDC6TtvXcHmUmMHr5laYridNikUuFB6x0+vr/cZzRvAnprV2sEkvMfuuLmn1Z1RQ0J4FkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLVh3ay5; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso208573466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759137744; x=1759742544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zCTEeSK/ZHc7kNha81hnHCa1TBYpj5x5N+P5M+/ssL8=;
+        b=hLVh3ay5ClJaHWxH/3vqq5EetLEl51spgeZQKNGm93g6maf99Np0q2EPwRCnuZoSGb
+         sgjNYZpxaqsXjBkZiENmDH01xzxFDwKneyUliLSwBC/Ym+gxDFgSGXFFg6m51rrk8vND
+         zq7/Dl9w3D340Tm93s2WiIf/7MEemKwXiIHyS0L1GzKBfDpMNZy07P6VuyfQMgB6qLno
+         3zG4+ufzdcB8P2lqWvMvbmIhs5MfR4VxwnCLkOnKoixFDFoSER2lZ036I3Y9rJWb7f+E
+         ukVftQLl6ROuOUNRPcvBac7/pFbuZ7iUwt136WJKqXjuDYVwWNVB85Na2SHv9npVmSDP
+         eMog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759137715; x=1759742515;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759137744; x=1759742544;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dgQTpwdj6I19pwH7DxZR1LuGI+OTUqSIq5i+R/eVUzY=;
-        b=giAYqOSeNWLxXB6nobDZ41Z3udZHWPbzm3k6jXmALDtPeQYfwH0l5kVb3wJ2oFaVR1
-         onymmQqz/tBYDZFZ7XzHL4WeekDG2e5SzlC0CxRvOTrVWF8YXGAsOmD0T8Arb1fyB/EV
-         StWAOf54Uoroy8IRDjprand1DdAss9ny69G6AkqSvSHcSif3lBzfshj4Ev7SimttX5sZ
-         VFz8257pAD5pvcBEhUg3bbDn68FP/LUwrMp2JtmVEwiwenixp4yHarCrBE2uiSAlzdjw
-         cIhgKqWIrdrM3kn7gJ/IDFUqXIXDyEmjnjjUyFa20CiGLCOHViwO2hjmd6CXKaZb/ppm
-         XlwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQaLixL25NoRzYLrepwXcGTBnfgqRvhMYeZujXUvsODkTefnNdzWE/k7ArnUH1P5Ucv6b0YchW+eln460=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuNlHlNcqsfEk1MJlBG3PrmOTyPA7TowjbOyIxa/jTchzVryim
-	SQ19A3+46Bg9823tpTNNzE7kqomff5U8RmxPA57T8pW0vlDLFiBqqU8CGhUgcx/ZhcTgxHRo9FY
-	IbLhjhI1xkzKweZHoIQ24UKrQhgpUfGk+WCzQXedGrmFXE3K2S514yggz8OsQIUyTow==
-X-Gm-Gg: ASbGncs5vak7wDiG3kjxN0N4RlzShi0IYQNP1Souhkp+L6grtjgxgthCNfZeqQ5XzhS
-	uyDY5AwZ/O1hypeH4KLT59ntOwTPzIGS0UuS4E4dt/pBY4WAklfU8bt54eAuB5N0LJNJpbChA/I
-	/lsOEg6rL39J5Z3J+sW+wVovjiPcGIw14GJz4VeZv7m1sa/C7dsb8PgbqPmI/FgKooxJOthBp5v
-	Z7ufesPjZz3NGFQA6g8zdB2viVmP9ExDFzx4PP/DkApcr7snEA0ehuHDtp3RLz/nvRaBVWe+Biy
-	JMsHpny6l6nAudk9jUv5dcqnp1tOzoXt/t0vtYR4n7lXMWFXHia1MOiSYd4x2yY4Wur9WvWNOks
-	wO5Vxkm8v05NOuom5z2xpoFQgrvS/Vf7IACB2Y171s02fOxLGG4kRPQEB6gjnqSp/ag==
-X-Received: by 2002:a05:600c:1986:b0:45d:d8d6:7fcc with SMTP id 5b1f17b1804b1-46e32a057c2mr132123875e9.27.1759137715188;
-        Mon, 29 Sep 2025 02:21:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGesYviK8pYyvk4J7HUCmypxt1moyxCjWTm9Bxvu0M1IPcLV+oSkce5n8tX4RYhtCkwU5SCNw==
-X-Received: by 2002:a05:600c:1986:b0:45d:d8d6:7fcc with SMTP id 5b1f17b1804b1-46e32a057c2mr132123575e9.27.1759137714726;
-        Mon, 29 Sep 2025 02:21:54 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f05:e100:526f:9b8:bd2a:2997? (p200300d82f05e100526f09b8bd2a2997.dip0.t-ipconnect.de. [2003:d8:2f05:e100:526f:9b8:bd2a:2997])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e56f65290sm4788855e9.13.2025.09.29.02.21.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 02:21:54 -0700 (PDT)
-Message-ID: <00838b58-06ba-4468-a226-8e20bf1fd773@redhat.com>
-Date: Mon, 29 Sep 2025 11:21:52 +0200
+        bh=zCTEeSK/ZHc7kNha81hnHCa1TBYpj5x5N+P5M+/ssL8=;
+        b=FtW339rE04G8AXyeb73vaSO6gksQaIGGQ3+yzE46ChAcBnbOqzUsx3Wzoob4eCuEO3
+         HbpZHaQgSVo0LwwkaEHppCXXbXsnz/mk+iyYhgMwtnuiiCRpfuLVM8bL+pLC0PEVi0Xe
+         ixDKJ+n7E6eULWxRqShrJH0Qo6656+297LUTK6V4zuOoRrsR73xuNFXFTJv8aQRlal8z
+         OWOVR+5D4m8VvUFSKMBT5hE/rN4CCWzUZfBl1g4WYdF8UhAefPZyBUqmS6JBxjz79WKD
+         3BYCl70WkGyM1eE9bw7pmyAZ7yRbbsiFaCylMf3YSAYF9jRvF+csFdeZVM+3fC/g7cYD
+         8JTw==
+X-Gm-Message-State: AOJu0YyquXx5s2K3P2yYG+Gt/xpYRiGawH7qtMyI/DqgDmH9mVtkVbkL
+	Hm6eJcT2Kl2OvT3YhFoxjrdoXkZ2ZtF6hfxILLIQBJYRx+i36yS/QkA3
+X-Gm-Gg: ASbGncsBSkTL4WfQqGaElNNgUfEkv+Qlc1VJN2iqMKnWUPMiFvVWcUwz3hkq4a1QZXL
+	0EQFO617HIkADKxJLCsSFfsLBP8pFQpjvp+SAbNZWFhLDL6uitPto3B1rH7r8L0Ka7Wes7jgtua
+	po1o/btrqognBIA/MSzPDrvUJtYuA+cECZ8xDBW0+H0Nw9xX88mT4euIBvOQxiPY2GShNfF9Qpq
+	yXLkVuLocStM0gRutMqZterG0KgGs/kCpWhBzAa3F46udde5Z19IDTleU/TI3ahj+bJyK0YrQug
+	ONasxDVZQy+poAfATwEil7S6aym+uWDw0skbPCcDeUx9+jSRXzla4a4gpdovi9OK1Fk4UIrp2ud
+	41uXe2Klvn/nuhWXbeprLXSucIcqdM/iUVKLhTUQCmOxqaMRtaYrToQz390I=
+X-Google-Smtp-Source: AGHT+IGCJVkx6dNS9MtGXsoCIBe9tEJRiBFbh0wQ9OAvRY7gT4l5DpV19RhN1Q6KJh7baHLQyfrebA==
+X-Received: by 2002:a17:906:f58a:b0:b04:6412:9612 with SMTP id a640c23a62f3a-b34bc876274mr1954386366b.46.1759137743202;
+        Mon, 29 Sep 2025 02:22:23 -0700 (PDT)
+Received: from victus-lab ([193.205.81.5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3e89655b09sm181082366b.77.2025.09.29.02.22.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 02:22:22 -0700 (PDT)
+From: Yuri Andriaccio <yurand2000@gmail.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: [RFC PATCH v3 00/24] Hierarchical Constant Bandwidth Server
+Date: Mon, 29 Sep 2025 11:21:57 +0200
+Message-ID: <20250929092221.10947-1-yurand2000@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] KVM: selftests: Add test coverage for guest_memfd
- without GUEST_MEMFD_FLAG_MMAP
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Fuad Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>
-References: <20250926163114.2626257-1-seanjc@google.com>
- <20250926163114.2626257-5-seanjc@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250926163114.2626257-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26.09.25 18:31, Sean Christopherson wrote:
-> From: Ackerley Tng <ackerleytng@google.com>
-> 
-> If a VM type supports KVM_CAP_GUEST_MEMFD_MMAP, the guest_memfd test will
-> run all test cases with GUEST_MEMFD_FLAG_MMAP set.  This leaves the code
-> path for creating a non-mmap()-able guest_memfd on a VM that supports
-> mappable guest memfds untested.
-> 
-> Refactor the test to run the main test suite with a given set of flags.
-> Then, for VM types that support the mappable capability, invoke the test
-> suite twice: once with no flags, and once with GUEST_MEMFD_FLAG_MMAP
-> set.
-> 
-> This ensures both creation paths are properly exercised on capable VMs.
-> 
-> test_guest_memfd_flags() tests valid flags, hence it can be run just once
-> per VM type, and valid flag identification can be moved into the test
-> function.
-> 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> [sean: use double-underscores for the inner helper]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   .../testing/selftests/kvm/guest_memfd_test.c  | 30 ++++++++++++-------
->   1 file changed, 19 insertions(+), 11 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-> index 60c6dec63490..5a50a28ce1fa 100644
-> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
-> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-> @@ -239,11 +239,16 @@ static void test_create_guest_memfd_multiple(struct kvm_vm *vm)
->   	close(fd1);
->   }
->   
-> -static void test_guest_memfd_flags(struct kvm_vm *vm, uint64_t valid_flags)
-> +static void test_guest_memfd_flags(struct kvm_vm *vm)
->   {
-> +	uint64_t valid_flags = 0;
->   	uint64_t flag;
->   	int fd;
->   
-> +	if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
-> +		valid_flags |= GUEST_MEMFD_FLAG_MMAP |
-> +			       GUEST_MEMFD_FLAG_DEFAULT_SHARED;
-> +
->   	for (flag = BIT(0); flag; flag <<= 1) {
->   		fd = __vm_create_guest_memfd(vm, page_size, flag);
->   		if (flag & valid_flags) {
-> @@ -267,16 +272,8 @@ do {									\
->   	close(fd);							\
->   } while (0)
->   
-> -static void test_guest_memfd(unsigned long vm_type)
-> +static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
->   {
-> -	uint64_t flags = 0;
-> -	struct kvm_vm *vm;
-> -
-> -	vm = vm_create_barebones_type(vm_type);
-> -
-> -	if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
-> -		flags |= GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_FLAG_DEFAULT_SHARED;
-> -
->   	test_create_guest_memfd_multiple(vm);
->   	test_create_guest_memfd_invalid_sizes(vm, flags);
->   
-> @@ -292,8 +289,19 @@ static void test_guest_memfd(unsigned long vm_type)
->   	gmem_test(file_size, vm, flags);
->   	gmem_test(fallocate, vm, flags);
->   	gmem_test(invalid_punch_hole, vm, flags);
-> +}
->   
-> -	test_guest_memfd_flags(vm, flags);
-> +static void test_guest_memfd(unsigned long vm_type)
-> +{
-> +	struct kvm_vm *vm = vm_create_barebones_type(vm_type);
-> +
-> +	test_guest_memfd_flags(vm);
-> +
-> +	__test_guest_memfd(vm, 0);
+Hello,
 
-Having a simple test_guest_memfd_noflags() wrapper might make this 
-easier to read.
+This is the v3 for Hierarchical Constant Bandwidth Server, aiming at replacing
+the current RT_GROUP_SCHED mechanism with something more robust and
+theoretically sound. The patchset has been presented at OSPM25
+(https://retis.sssup.it/ospm-summit/), and a summary of its inner workings can
+be found at https://lwn.net/Articles/1021332/ . You can find the previous
+versions of this patchset at the bottom of the page, in particular version 1
+which talks in more detail what this patchset is all about and how it is
+implemented.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+This v3 version further reworks some of the patches as suggested by Juri Lelli.
+While most of the work is refactorings, the following were also changed:
+- The first patch which removed fair-servers' bandwidth accounting has been
+  removed, as it was deemed wrong. You can find the last version of this removed
+  patch, just for history reasons, here:
+  https://lore.kernel.org/all/20250903114448.664452-1-yurand2000@gmail.com/
+- A left-over check which prevented execution of some of wakeup_preempt code has
+  been removed.
+- Cgroup pull code was erroneusly comparing cgroup with non-cgroup tasks, now it
+  has been fixed.
+- The allocation/deallocation code for rt cgroups has been checked and reworked
+  to make sure that resources are managed correctly in all the code paths.
+- Some signatures of cgroup migration related functions where changed to match
+  more closely to their non-group counterparts.
+- Descriptions and documentation were added where necessary, in particular for
+  preemption rules in wakeup_preempt.
 
+For this v3 version we've also polished the testing system we are using and made
+it public for testers to run on their own machines. The source code can be found
+at https://github.com/Yurand2000/HCBS-Test-Suite , along with a README that
+explains how to use it. Nonetheless I've reported a description of the tools and
+instruction later in the page.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Summary of the patches:
+   1-4) Preparation patches, so that the RT classes' code can be used both
+        for normal and cgroup scheduling.
+  5-15) Implementation of HCBS, no migration and only one level hierarchy.
+        The old RT_GROUP_SCHED code is removed.
+ 16-17) Remove cgroups v1 in favour of v2.
+    18) Add support for deeper hierarchies.
+ 19-24) Add support for tasks migration.
+
+Updates from v2:
+- Rebase to latest tip/master.
+- Remove fair-servers' bw reclaiming.
+- Fix a check which prevented execution of wakeup_preempt code.
+- Fix a priority check in group_pull_rt_task between tasks of different groups.
+- Rework allocation/deallocation code for rt-cgroups.
+- Update signatures for some group related migration functions.
+- Add documentation for wakeup_preempt preemption rules.
+
+Updates from v1:
+- Rebase to latest tip/master.
+- Add migration code.
+- Split big patches for more readability.
+- Refactor code to use guarded locks where applicable.
+- Remove unnecessary patches from v1 which have been addressed differently by
+  mainline updates.
+- Remove unnecessary checks and general code cleanup.
+
+Notes:
+Task migration support needs some extra work to reduce its invasiveness,
+especially patches 21-22.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Testing v3:
+
+The HCBS mechanism has been evaluated on several syntetic tests which are
+designed to stress the HCBS scheduler and verify that non-interference and
+mathematical schedulability guarantees are really enforced by the scheduling
+algorithm.
+
+The test suite currently runs different categories of tests:
+- Constraints, which are tasked to assert that hard constraints, such as
+  schedulability conditions, are respected.
+- Regression, to check that HCBS does not break anything that already exists.
+- Stress, to repeatedly invoke the scheduler in all the exposed interfaces,
+  with the goal to detect bugs and more importantly race conditions.
+- Time, simple benchmarks to assert that the dl_servers work correctly, i.e.
+  they allocate the correct amount of bandwidth, and that migration code allows
+  to fully utilize the cgroup's allocated bw.
+- Taskset: given a set of (generated) periodic tasks and their bandwidth
+  requirements, schedulability analyses are performed to decide whether or not a
+  given hardware configuration can run the taskset. In particular, for each
+  taskset, a HCBS's cgroup configuration along with the number of necessary CPUs
+  is generated. These are mathematically guaranteed to be schedulable.
+  The next step of this test suite is to configure cgroups as computed and to
+  run the taskset, to verify that the HCBS implementation works as intended and
+  that the scheduling overheads are within reasonable bounds.
+
+The source code can be found at https://github.com/Yurand2000/HCBS-Test-Suite .
+The README file should explain most if not all questions, but I'm writing
+briefly the pipeline to run these tests here:
+
+- Get the HCBS patch up and running. Any kernel/disto should work effortlessly.
+- Get, compile and _install_ the tests. 
+- Download the additional taskset files and extract them in the _install_
+  folder. You can find them here:
+  https://github.com/Yurand2000/HCBS-Test-Suite/releases/tag/250926
+- Run the `run_tests.sh full` script, to run the whole test suite.
+
+Expect a total runtime of ~3 hours. The script will automatically mount the
+cgroup and debug filesystems (if not already mounted) and will move all the
+already running SCHED_FIFO/SCHED_RR tasks in the root cgroup, so that the
+cgroups' CPU controller can be mounted. It will additionally try to reserve all
+the possible rt-bandwidth for cgroups (i.e. 90%) to run all the later tests, so
+make sure that there are no running SCHED_DEADLINE tasks if the script fails to
+setup.
+
+Some tests specifically need a minimum amount of CPU cores, up to a maximum of
+eight. If your machine has less CPUs then the tests will simply be skipped.
+
+Notes:
+
+The tasksets minimal requirements were computed using a closed-source software,
+explaining why the tasksets are supplied separately. A open-source analyser is
+being written to update this step in the future and also allow for more
+customization for the testers.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Future Work:
+
+While we wait for more comments, and expect stuff to break, we will work on
+completing the currently partial/untested, implementation of HCBS with different
+runtimes per CPU, instead of having the same runtime allocated on all CPUs, to
+include it in a future RCF.
+
+Future patches:
+ - HCBS with different runtimes per CPU.
+ - capacity aware bandwidth reservation.
+ - enable/disable dl_servers when a CPU goes online/offline.
+
+Have a nice day,
+Yuri
+
+v1: https://lore.kernel.org/all/20250605071412.139240-1-yurand2000@gmail.com/
+v2: https://lore.kernel.org/all/20250731105543.40832-1-yurand2000@gmail.com/
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Yuri Andriaccio (6):
+  sched/rt: Disable RT_GROUP_SCHED
+  sched/rt: Add rt-cgroups' dl-servers operations.
+  sched/rt: Update task event callbacks for HCBS scheduling
+  sched/rt: Allow zeroing the runtime of the root control group
+  sched/rt: Remove support for cgroups-v1
+  sched/core: Execute enqueued balance callbacks when migrating task
+    betweeen cgroups
+
+luca abeni (18):
+  sched/deadline: Do not access dl_se->rq directly
+  sched/deadline: Distinct between dl_rq and my_q
+  sched/rt: Pass an rt_rq instead of an rq where needed
+  sched/rt: Move some functions from rt.c to sched.h
+  sched/rt: Introduce HCBS specific structs in task_group
+  sched/core: Initialize root_task_group
+  sched/deadline: Add dl_init_tg
+  sched/rt: Add {alloc/free}_rt_sched_group
+  sched/deadline: Account rt-cgroups bandwidth in deadline tasks
+    schedulability tests.
+  sched/rt: Update rt-cgroup schedulability checks
+  sched/rt: Remove old RT_GROUP_SCHED data structures
+  sched/core: Cgroup v2 support
+  sched/deadline: Allow deeper hierarchies of RT cgroups
+  sched/rt: Add rt-cgroup migration
+  sched/rt: Add HCBS migration related checks and function calls
+  sched/deadline: Make rt-cgroup's servers pull tasks on timer
+    replenishment
+  sched/deadline: Fix HCBS migrations on server stop
+  sched/core: Execute enqueued balance callbacks when changing allowed
+    CPUs
+
+ include/linux/sched.h    |   10 +-
+ kernel/sched/autogroup.c |    4 +-
+ kernel/sched/core.c      |   65 +-
+ kernel/sched/deadline.c  |  251 +++-
+ kernel/sched/debug.c     |    6 -
+ kernel/sched/fair.c      |    6 +-
+ kernel/sched/rt.c        | 3069 +++++++++++++++++++-------------------
+ kernel/sched/sched.h     |  150 +-
+ kernel/sched/syscalls.c  |    6 +-
+ 9 files changed, 1850 insertions(+), 1717 deletions(-)
+
+
+base-commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
 -- 
-Cheers
-
-David / dhildenb
+2.51.0
 
 
