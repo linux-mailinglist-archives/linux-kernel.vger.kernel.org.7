@@ -1,234 +1,177 @@
-Return-Path: <linux-kernel+bounces-835901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1047BA84A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA18BA84E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6672A3C1FF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:47:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377E33C19DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B98A2116F6;
-	Mon, 29 Sep 2025 07:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716E425C81F;
+	Mon, 29 Sep 2025 07:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="VfCp2oio"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="dyOwIEQ+"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C921EEE6
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759132025; cv=none; b=EGku47CH9s2sDi1nN43xMiZVl2V7Sb4/NwNYkIIfq8EIkYL6TiuROOb3uKTydfAiVQvbAZL2K0lLkazqIuijoJdg9bO8Vg4bpQQsl5vm64cQ5uq8yvKwn6u/w3NtvD/A9MElxVA5aqVDrvRYw82zRm+ouywIa9yESa8V0U9b6RQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759132025; c=relaxed/simple;
-	bh=hHaKN9BmmrGTnqnegKyr+mInFP+y2cDrwBloAI8C5QE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QROsC0HKcmTsHw6KLVswyzTUM95rpecAQ7BU/7l493q460RjskqVVqJKz0lN4VNfL5Q6aJo884pyqKXfRWXsV0C0EoHPp0keTZNEdc9QWiKonynQBtiODZoqai19MTOjlLd9IKxQh+B32/0sEidaztaPg9Owb/JUtomGJ7WYAaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=VfCp2oio; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so969711b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1759132023; x=1759736823; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGQ9oR0Tdd0oe1jWlKmG4p4FpQMJSYOO7NfHqpie1Lg=;
-        b=VfCp2oioH1W3ZqeLp/0xq0pSxK0u3czYluel8CV05IQuRxJx+ZcNnd+NTVSYre73oM
-         Eix8J1tYiNw40yN9mweAOLlr1DQh72uBSzeb0YVIzyGDgZM01hi0XREIHVsZZAu17do0
-         HSoBcvdTkVPjKB+TeDoniW5aALk8jHOWUFjiMFBOWYKNTZ5X9GXzRxn1XxblN8/NvwiB
-         ticK8PjAHjFTitOHyKeaJU9jeZJYuPMbSdEifvVtjmCJuqv9ukmurNp1fAHmlw7vg1/G
-         wLpO4qdFSTOBLL/lR/ArDqbxlk/MezNW9doNUyx4kJI5YhW8CtyDXUSxYzh5OEgnFuDo
-         i4MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759132023; x=1759736823;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SGQ9oR0Tdd0oe1jWlKmG4p4FpQMJSYOO7NfHqpie1Lg=;
-        b=cghYdQcpxUPhnrc38PA4TYN9d2n/2KF3Pfkeuq5WaoLeT3UARne/7TirGxvqSn+vs/
-         n3UxycaxgJzdqlv0RGrMbEVaa7RAOFmdplkGuNEopdwDasajMqXQUtU3JLObN/9FiB9Y
-         QWOQVYLHvM5v0xgb/Cj7VNkPO2MF1gKTX5noEr3Vt1cdxj3LUDVdoFb+GmfxG5tndahF
-         VzPZOuhFMtY1KVoBk76rSQCZowH3+Ikgwsyewx934F5wboGsWQI4jxdPNCB+Q5atGZPH
-         U9qc5gKYyr6bWi7XapA0t/M3T9JCBkUAft2V14mFYYJ/PaC6RxeqG+aBVdpU/4arF0Qk
-         Q78Q==
-X-Gm-Message-State: AOJu0YxQUd6oaYPLCRu4MFH4WoQhdr8T4WUu9C8MTmK6kY5C3+7mi07R
-	5DgrdKDsbkzFBvAFuFR3DNyhRcsY0fnjyjkFMmQuVuBOotvjREDO6Uut0MjoETlckA==
-X-Gm-Gg: ASbGncvnc04Ke9BEbmyASdDx3LYhuajgDFhvqzVeUgrFaE2grj6//ifwdxnOJRxweja
-	3YXU48dlt0Z2NBiYQ/LrLcV8cIRy3yuNGRxmnn8WSxjCavxjv3xqMNOXITihj2azeUihD2FWeP5
-	S1tW4fMBU5Hxz9DJuTz5xlal5QWb8lWJkEt1AJZ3++wLPu6V2sHn3jMwfSp+yGdA/3Ot0fHa33D
-	0U8p81VywPc96tjNmYCFeyXLeZHN/kFO/vG0I3cxgZXN8uD4mzySnvYCy3dCu9hPB9Q+wGrRNrY
-	4rpn4cHVyrTAq62B7P4FYM9FP8Lga8DPg/2SMhaWnBCd4c/FzFSZn8i5+u7WdVhQV6f3EK1LQJH
-	BAZRThQRgxETDSRcLvG/RwIcXIAqjb909w++Eybh4uBlXFXOJH2ia+EmWeVcwcW0mGzEgWeJXV9
-	7UdGK/qoSqIQ==
-X-Google-Smtp-Source: AGHT+IF5qIIhowcNC+GZ8eZiIlrMteROEUjhvdAck+mxtwHxEvvKBOBHMf2cajG1rxZozPNcGf8p7A==
-X-Received: by 2002:a05:6a20:6a26:b0:251:a106:d96c with SMTP id adf61e73a8af0-2e7bf478c02mr20291385637.10.1759132022639;
-        Mon, 29 Sep 2025 00:47:02 -0700 (PDT)
-Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238f11esm10430689b3a.19.2025.09.29.00.46.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 00:47:02 -0700 (PDT)
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with zero runtime_remaining
-Date: Mon, 29 Sep 2025 15:46:45 +0800
-Message-Id: <20250929074645.416-1-ziqianlu@bytedance.com>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310E8216E23;
+	Mon, 29 Sep 2025 07:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759132076; cv=pass; b=O/mxlA5Da+rpt5sBu3/dP2rqNN7Wsfg6E26iQzipsfShuDw7kkLxjhtZwFS7E8UrOJ+bp3g+6DC54G2BfmtkTtdzguZWPiV3Apee8gCIzR7ydPQju/qMfNaPHiaCSd/mf5Wdv5dURrdB3O/PGp4T9hfbJCY+7/xadBHe1W+CzU8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759132076; c=relaxed/simple;
+	bh=5gWMGkdYhXs5j+k9aP3QPWoAud9qxdjD8VhYmvI25JA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QJKZpflzSZp+Bk0ujUJ4Ij7H72Vmyb6AGRjjbdueulS/9LRvoUZHK6mQgqtd6ZFKPliaiF/bye89Yz7w5WfZ22L8gUfjbXSr9zAxLVc/7focS8nbkBvkdOQ5ENWvhu1GITxxmuDSx2xCEyQDuaELVF+ZrQCHGuW++xPZMfnAtAc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=dyOwIEQ+; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759132053; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SOWnuBfyx4wo4O6Bu1lVkbkC7iJ1X4ODVrZTSc1gVUqrKbXoWMeNxzhOKmtwHY4RkQnX+FW0NFJzPD7WQrWBvbwikNsdfeT8pBtG/Ay8otTLQXtHr+DqbfBcdS+3EoV7z5eH/8TxeCN2jpqmI3j+TLqc+MN4Noagsu6XNi0Ke2o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759132053; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Wltohi1m5SDbJkLhV1v5gx0uRt+qjskx2yr9lkFdxy8=; 
+	b=IE6fehIL+J9Vd8swLUDD34BBANiQLaxz0WsM6vHNW4ogBBZLdBCu3xEoFsIKQJAkVfFgFiaWICi9ope1MvwpKvTJIkwqF5D0G4IA76BZ0UNxhKXHtzFDhGuvufarMzcqHk1gM6eEMeZpLMnuQ8udxMuo2363oxo21p4tKzJU8h8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759132052;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
+	bh=Wltohi1m5SDbJkLhV1v5gx0uRt+qjskx2yr9lkFdxy8=;
+	b=dyOwIEQ+0F8omspo+25ci3ExlwsUtZW7790twj/InISQ8Hc4rgj32dCVUYGTDmUY
+	c248G44tzRGVbXQBj2b0rMIK4UAIp4WpUcCjJ3c+ur8FP1JGdbcEe6rj2p4pSiJqFct
+	0/HCOn+NrPmIYobx+Ra9bllEItMfAG/9XQU9KAzY=
+Received: by mx.zohomail.com with SMTPS id 1759132050265403.9411869295931;
+	Mon, 29 Sep 2025 00:47:30 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Mon, 29 Sep 2025 09:46:46 +0200
+Subject: [PATCH v5 3/7] dt-bindings: mailbox: Add MT8196 GPUEB Mailbox
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250929-mt8196-gpufreq-v5-3-3056e5ecf765@collabora.com>
+References: <20250929-mt8196-gpufreq-v5-0-3056e5ecf765@collabora.com>
+In-Reply-To: <20250929-mt8196-gpufreq-v5-0-3056e5ecf765@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>, 
+ Liviu Dudau <liviu.dudau@arm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
 
-When a cfs_rq is to be throttled, its limbo list should be empty and
-that's why there is a warn in tg_throttle_down() for non empty
-cfs_rq->throttled_limbo_list.
+The MediaTek MT8196 SoC includes an embedded MCU referred to as "GPUEB",
+acting as glue logic to control power and frequency of the Mali GPU.
+This MCU runs special-purpose firmware for this use, and the main
+application processor communicates with it through a mailbox.
 
-When running a test with the following hierarchy:
+Add a binding that describes this mailbox.
 
-          root
-        /      \
-        A*     ...
-     /  |  \   ...
-        B
-       /  \
-      C*
-
-where both A and C have quota settings, that warn on non empty limbo list
-is triggered for a cfs_rq of C, let's call it cfs_rq_c(and ignore the cpu
-part of the cfs_rq for the sake of simpler representation).
-
-Debugging showed it happened like this:
-Task group C is created and quota is set, so in tg_set_cfs_bandwidth(),
-cfs_rq_c is initialized with runtime_enabled set, runtime_remaining
-equals to 0 and *unthrottled*. Before any tasks are enqueued to cfs_rq_c,
-*multiple* throttled tasks can migrate to cfs_rq_c (e.g., due to task
-group changes). When enqueue_task_fair(cfs_rq_c, throttled_task) is
-called and cfs_rq_c is in a throttled hierarchy (e.g., A is throttled),
-these throttled tasks are placed into cfs_rq_c's limbo list by
-enqueue_throttled_task().
-
-Later, when A is unthrottled, tg_unthrottle_up(cfs_rq_c) enqueues these
-tasks. The first enqueue triggers check_enqueue_throttle(), and with zero
-runtime_remaining, cfs_rq_c can be throttled in throttle_cfs_rq() if it
-can't get more runtime and enters tg_throttle_down(), where the warning
-is hit due to remaining tasks in the limbo list.
-
-Fix this by calling throttle_cfs_rq() in tg_set_cfs_bandwidth()
-immediately after enabling bandwidth and setting runtime_remaining = 0.
-This ensures cfs_rq_c is throttled upfront and cannot enter the enqueue
-path in an unthrottled state with no runtime.
-
-Also, update outdated comments in tg_throttle_down() since
-unthrottle_cfs_rq() is no longer called with zero runtime_remaining.
-
-While at it, remove a redundant assignment to se in tg_throttle_down().
-
-Fixes: e1fad12dcb66("sched/fair: Switch to task based throttle model")
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- kernel/sched/core.c  |  9 ++++++++-
- kernel/sched/fair.c  | 16 +++++++---------
- kernel/sched/sched.h |  1 +
- 3 files changed, 16 insertions(+), 10 deletions(-)
+ .../mailbox/mediatek,mt8196-gpueb-mbox.yaml        | 64 ++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 7f1e5cb94c536..421166d431fa7 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -9608,7 +9608,14 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
- 		cfs_rq->runtime_enabled = runtime_enabled;
- 		cfs_rq->runtime_remaining = 0;
- 
--		if (cfs_rq->throttled)
-+		/*
-+		 * Throttle cfs_rq now or it can be unthrottled with zero
-+		 * runtime_remaining and gets throttled on its unthrottle path.
-+		 */
-+		if (cfs_rq->runtime_enabled && !cfs_rq->throttled)
-+			throttle_cfs_rq(cfs_rq);
+diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,mt8196-gpueb-mbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,mt8196-gpueb-mbox.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..ab5b780cb83a708a3897ca1a440131d97b56c3a6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mailbox/mediatek,mt8196-gpueb-mbox.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mailbox/mediatek,mt8196-gpueb-mbox.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+		if (!cfs_rq->runtime_enabled && cfs_rq->throttled)
- 			unthrottle_cfs_rq(cfs_rq);
- 	}
- 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 22e6dd3af82fc..3ef11783369d7 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5976,7 +5976,7 @@ static int tg_throttle_down(struct task_group *tg, void *data)
- 	return 0;
- }
- 
--static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
-+bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- {
- 	struct rq *rq = rq_of(cfs_rq);
- 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
-@@ -6025,19 +6025,17 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 
- 	/*
- 	 * It's possible we are called with !runtime_remaining due to things
--	 * like user changed quota setting(see tg_set_cfs_bandwidth()) or async
--	 * unthrottled us with a positive runtime_remaining but other still
--	 * running entities consumed those runtime before we reached here.
-+	 * like async unthrottled us with a positive runtime_remaining but
-+	 * other still running entities consumed those runtime before we
-+	 * reached here.
- 	 *
--	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
--	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
--	 * throttle, which is not supposed to happen on unthrottle path.
-+	 * We can't unthrottle this cfs_rq without any runtime remaining
-+	 * because any enqueue in tg_unthrottle_up() will immediately trigger
-+	 * a throttle, which is not supposed to happen on unthrottle path.
- 	 */
- 	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
- 		return;
- 
--	se = cfs_rq->tg->se[cpu_of(rq)];
--
- 	cfs_rq->throttled = 0;
- 
- 	update_rq_clock(rq);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b5367c514c143..359bb858cffd3 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -558,6 +558,7 @@ extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth
- 
- extern void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b);
- extern void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b);
-+extern bool throttle_cfs_rq(struct cfs_rq *cfs_rq);
- extern void unthrottle_cfs_rq(struct cfs_rq *cfs_rq);
- extern bool cfs_task_bw_constrained(struct task_struct *p);
- 
++title: MediaTek MFlexGraphics GPUEB Mailbox Controller
++
++maintainers:
++  - Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
++
++properties:
++  compatible:
++    enum:
++      - mediatek,mt8196-gpueb-mbox
++
++  reg:
++    items:
++      - description: mailbox data registers
++      - description: mailbox control registers
++
++  reg-names:
++    items:
++      - const: data
++      - const: ctl
++
++  clocks:
++    items:
++      - description: main clock of the GPUEB MCU
++
++  interrupts:
++    items:
++      - description: fires when a new message is received
++
++  "#mbox-cells":
++    const: 1
++    description:
++      The number of the mailbox channel.
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - clocks
++  - interrupts
++  - "#mbox-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/mediatek,mt8196-clock.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    mailbox@4b09fd80 {
++        compatible = "mediatek,mt8196-gpueb-mbox";
++        reg = <0x4b09fd80 0x280>,
++              <0x4b170000 0x7c>;
++        reg-names = "data", "ctl";
++        clocks = <&topckgen CLK_TOP_MFG_EB>;
++        interrupts = <GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH 0>;
++        #mbox-cells = <1>;
++    };
+
 -- 
-2.39.5
+2.51.0
 
 
