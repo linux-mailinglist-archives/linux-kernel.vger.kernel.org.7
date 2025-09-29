@@ -1,159 +1,83 @@
-Return-Path: <linux-kernel+bounces-835819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3C8BA825D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5900BA8263
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28102189B9E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7AA11894785
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B892BDC3D;
-	Mon, 29 Sep 2025 06:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDF22BE652;
+	Mon, 29 Sep 2025 06:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WhdhsdC8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b4e8nJQX"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FA32BD022;
-	Mon, 29 Sep 2025 06:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F26A239E63;
+	Mon, 29 Sep 2025 06:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759127916; cv=none; b=k3yQV6lio2E8F3+c6o4Vt82hakd7yN/h2cmURVlvSPVoGX2T26PS8rOIQ4s6GtodPQpzKNrvcUu3A7PN9htS7cjtGV/5bnMqKuvln2MkeF3oJBAoQGvYcBjvCYaH45tdNdsv++pty0OMZv10mNUY15PRspKdEw0GsWdEDRcJFts=
+	t=1759128043; cv=none; b=Al/Xruw/JYsXFw+GnjfEhOi4mdmCJ9M1DAQX9h8zxGrxb/REyxaXh8kQJAZ/Iu7jBCQTFKQcOUYmm5GqS4B+vdCllsF8As9zgX8N3+qG+ygWTe2ObVatibBdMLcqEIBHLzaO0JTcuIu2MbzqZy9U9G/AkbyN3dx6XAiKFv2oJao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759127916; c=relaxed/simple;
-	bh=wvMst2x+33ACfCt/WIPSfwySVNjTCPZsnhKC3+jiOls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nrdx1R8CLw5ak5Sae29iL458Tos6Hr7W0Of4OWFbopSVs+X83M4oUtRUuyLO8/zYeCI3Q5Q626Mee4BuuM6PKtE1kFIw/PDZto5izWUWlbD8OmWZz+RJXfKByYZEjTO073Iqp98WIyFJedIAuAP75Gv0gk58yqTGI1W6pWv+zGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WhdhsdC8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SNZL8A024951;
-	Mon, 29 Sep 2025 06:38:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0Wwp0ui9LZTjW5hEyOqQaARM+F1QT11GdHJo1HDYoFo=; b=WhdhsdC8Jj64C7Hp
-	CO1QsBfCtx4WE0OZnLlnmh7edAoXHFin258qcNUaefCNBmnEXbLOHHYzJyYui43F
-	auKIdC/qy7C14khFJmuvEqjwaS3nNKo3/2GZa3QbmNaVn3prXV+yFAYfF+nWwm+z
-	WhDnv16d9lTEZbR0kRCVrXiW/gdztL5SRuRU02s+505sFZhXPPD2Y15U56upk47y
-	lGsJu0cjo9kZqdXZbAO3oQVAXoQNFHTkBQtC+Mr0XM+ylNuWVx1mvxnHBLq1CXXB
-	NG/VBRG53xwJhAoZyWBs7yPGVvumeaOMMDcrJ4JS+odTBvYQhlvtjc4z/Tpf9i0f
-	m0QmAQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e6vqv5y7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Sep 2025 06:38:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58T6cGRA027933
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Sep 2025 06:38:16 GMT
-Received: from [10.206.97.61] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Sun, 28 Sep
- 2025 23:38:09 -0700
-Message-ID: <fba96ad1-9a1f-40a7-981e-3c229439802f@quicinc.com>
-Date: Mon, 29 Sep 2025 12:07:58 +0530
+	s=arc-20240116; t=1759128043; c=relaxed/simple;
+	bh=YacQbj1YmkiJVhrtk3+KVfBFzhjCzjCVTO6GT84rzec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QaMQdJHoXJzvEy3qBG7zJEAmjZrZzU8RF9JBJO8cDVyhaa1emDOBJciCFR36JnQFqNpStdkqKc2VJWrNoEWZ8HROaMFVAob262MPMscc2AVgfb4VEfNED9pDMalA/stjG+HQSrB5UH8ldAkpkLZvvMY0Dn8bo7RNyPok3Or+c1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b4e8nJQX; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YacQbj1YmkiJVhrtk3+KVfBFzhjCzjCVTO6GT84rzec=; b=b4e8nJQXOeW+6CokvZQpUpX5YN
+	v1Xa/jLEtCpGBcZrEmKuTYpfa+RbISQjDEfwwqwBYXMIMkBKLLrt1iRfrbd5pCYHSEOUqa2YLpSFN
+	Hxf+spZ0GkJ2MGJmyjpaiaLmdwHGDRd8QdE0Rqv5h25j26GBq4yl8OkbTtsCxhuUhDzZUbZFNwZyS
+	/3c/ZVOfu/u1Kl2L4Mpr2s+HqR9Y47zTpV7V5WAnNRjenrA89Pa/WHgimhsqwF6WRCq8pXQex6DUA
+	dsm9aZFA0BFVAYTSx3MokPjZjAGRjDmi0ZW9b6Q+Unt7n0vh24/+DqS/3Mnt3Xd+VgKzzPLvWnBoe
+	A+ndfkZA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v37Yn-00000001VVX-0STq;
+	Mon, 29 Sep 2025 06:40:33 +0000
+Date: Sun, 28 Sep 2025 23:40:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: syzbot <syzbot+359a67b608de1ef72f65@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, apopple@nvidia.com, baohua@kernel.org,
+	byungchul@sk.com, cem@kernel.org, david@fromorbit.com,
+	david@redhat.com, gourry@gourry.net, harry.yoo@oracle.com,
+	joshua.hahnjy@gmail.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+	matthew.brost@intel.com, mhocko@suse.com,
+	penguin-kernel@i-love.sakura.ne.jp, rakie.kim@sk.com,
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
+	willy@infradead.org, ying.huang@linux.alibaba.com, ziy@nvidia.com
+Subject: Re: [syzbot] [mm?] WARNING in xfs_init_fs_context
+Message-ID: <aNop4ZBrfuqrX40Y@infradead.org>
+References: <6861c281.a70a0220.3b7e22.0ab8.GAE@google.com>
+ <68d973fc.a00a0220.102ee.002b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: qcs8300: add Display Serial
- Interface device nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
-        <sean@poorly.run>, <marijn.suijten@somainline.org>,
-        <andersson@kernel.org>, <robh@kernel.org>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <konradybcio@kernel.org>, <conor+dt@kernel.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <quic_rajeevny@quicinc.com>, <quic_vproddut@quicinc.com>,
-        <quic_jesszhan@quicinc.com>
-References: <20250925053602.4105329-1-quic_amakhija@quicinc.com>
- <20250925053602.4105329-3-quic_amakhija@quicinc.com>
- <vsty7sy7gi2eeyifokwcqpoycmarxietkijmlkymwrmzmdsfws@x64f4ulbc6ja>
- <8c248bf8-2f25-443d-a08f-6504c349b72b@quicinc.com>
- <5irzdmwxs2j4ppti35hc5235yxqq576doerrrk6fhcpj7f726a@eh5rl2jwb5kg>
-Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <5irzdmwxs2j4ppti35hc5235yxqq576doerrrk6fhcpj7f726a@eh5rl2jwb5kg>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MhvssdpWc1qvW-6-i1FZq1gxjdZj_yb9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxNyBTYWx0ZWRfX5islXWVO58xw
- V1/f3sV3sJt6AVJEIKHNuxEaWTfU5/5iX0q1e7Qb/zMzHTD2oEXUgUp63HHDD94axh6zOH7Uh5F
- 7KBrDBoWbhVmcn9CpytOYTEJOuszFwjU9z0Vhgkn7edwM0Gg2kfnnO3iua+22qk07W1hVxAGUwd
- C5Xrtgh14hQGRg1AfAYobTly+Ba8S5qGSu6Es2K/6csSCzD1+uaGBWwpC4naKP8l6knWuXoup8I
- oeCrhJauugb3VkzgFdLICGqDySYYCKMizhu5O2RI+UVI0s97l4EYnIenEFDm+CEl0HzSWnrkiA1
- 8SvfCNBr/Vbjq1dM1SkSYN1pR0jtl6bGEZIxtfC88fa4z89WX/r/or8hsogsD8p1qRPZ0XIzfop
- v3ynDl370wBlFTeGrtYWkgEPB9KuCw==
-X-Authority-Analysis: v=2.4 cv=IeiKmGqa c=1 sm=1 tr=0 ts=68da2959 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=KT0Ug_tu4a8vaQS03oYA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-ORIG-GUID: MhvssdpWc1qvW-6-i1FZq1gxjdZj_yb9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_02,2025-09-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 bulkscore=0
- suspectscore=0 spamscore=0 adultscore=0 impostorscore=0 phishscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270017
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68d973fc.a00a0220.102ee.002b.GAE@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+This looks like slub turning a < PAGE_SIZE allocation into a order > 0
+folio allocation, which the page allocator then complains about.
 
+We'll either need to make slab not propagate < PAGE_SIZE allocations
+to order > 0 page allocation, or make the page allocator handle the
+latter.
 
-On 9/26/2025 7:35 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 26, 2025 at 02:55:19PM +0530, Ayushi Makhija wrote:
->> On 9/26/2025 3:32 AM, Dmitry Baryshkov wrote:
->>> On Thu, Sep 25, 2025 at 11:06:01AM +0530, Ayushi Makhija wrote:
->>>> Add device tree nodes for the DSI0 controller with their corresponding
->>>> PHY found on Qualcomm QCS8300 SoC.
->>>>
->>>> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
->>>> ---
->>>>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 95 ++++++++++++++++++++++++++-
->>>>  1 file changed, 94 insertions(+), 1 deletion(-)
->>>>
->>>> +
->>>> +			mdss_dsi0_phy: phy@ae94400 {
->>>> +				compatible = "qcom,sa8775p-dsi-phy-5nm";
->>>
->>> Add qcs8300-specific compatible and use sa8775p as a fallback
->>>
->>
->> Hi Dmitry,
->>
->> I have one doubt, even though the ctrl and phy versions for sa8775p(LeMans) and qcs8300(Monaco) are same.
->> Why can't we use the same compatible string that we have used for LeMans ctrl and phy ? what is the need to define a separate
->> compatible string for monaco ctrl and phy ?
-> 
-> Konrad responded with the reason. But also, this question should have
-> been asked when you took a first look at the qcom,qcs8300-mdss.yaml.
-> It has two compats for DPU, DP and eDP PHY blocks (for exactly the same
-> reason).
-> 
-
-Hi Dmitry/Konard,
-
-The previous explanation regarding the use of two compatible strings for DPU/DP was unclear, but it is now well understood. Thanks, for the clarification. 
-
-Thanks,
-Ayushi
+And XFS shouldn't need the NOFAIL allocation here, but this will break
+things elsewhere as well.
 
 
