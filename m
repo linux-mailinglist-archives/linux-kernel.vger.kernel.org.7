@@ -1,159 +1,181 @@
-Return-Path: <linux-kernel+bounces-836296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6A4BA93B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADDEFBA93BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D90EF7A957C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0A3189F046
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F21426F28B;
-	Mon, 29 Sep 2025 12:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D372FBDE9;
+	Mon, 29 Sep 2025 12:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZ0nlt/W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="T1jfgx5K"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011031.outbound.protection.outlook.com [40.93.194.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AFC33D8
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759149982; cv=none; b=RkKygxeANnLhUf7LDRhbzLuG0qk/pxdjuCfgSb1lp9djoEur7+1ZEU0c8PnKi/9Q8ZGOLqlnJjxZ5aDjQWyAVjWV4VD5PcuTvkVQUbtF54Q4LPdvF1f/33eAG+retrb6tEMxmuHxF2eNytV0pV2e5YDqjS6Wnz38IT/oNBAUNNs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759149982; c=relaxed/simple;
-	bh=F26gpiEeM1z6DaTvZ8H/lzXDYiyq+ETRgVcGNonv7wM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDJYJGLI8HpQlK9Ba+Z7s8yUYhtMsu7HxcAEpviGKsKmT5ROawha2yPf2La4e5C1gucG0ddPj8/t2UZWz35XhBORmZ5QkjtcPyOZ/HfiqBTCcHTe94OH4nQQQBNErOnt56/IAACv8f+S+LJIY8gPw/jARe8tuEYAO/owwwc5JTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZ0nlt/W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2019C4CEF4;
-	Mon, 29 Sep 2025 12:46:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759149981;
-	bh=F26gpiEeM1z6DaTvZ8H/lzXDYiyq+ETRgVcGNonv7wM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aZ0nlt/WC1EGQ50HOXSSk0k+yQq+3R2ZKCwKVB9jlxy1vJ+0HUhA31V5kKZyPlBCz
-	 im6DqdgfegkQ442gW5ZFu9EipPSbnCgpCxLVMFt4LpkhfJxJHyi4RkT9oXg/8EvZVv
-	 b0rP3IgZMafuBIPEPhcpq/Z+LZuspgVrVa1M11ZSCDyM2C6ZQD9Vshn4vqX1d6jDNc
-	 NJ79/Jndqz+KfUNq1q0ue9fxfr6x8uY4lB2TylN1HrKSdT9lSf+9yTytMzk9N+4tFz
-	 K13QD4FGspwrxMWu/aJm70q72WRRidnnB3dTrqm0hINHvExgD8KizoaJ2QE1B+LHjT
-	 cSapvdo2GNRJQ==
-Date: Mon, 29 Sep 2025 14:46:18 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] drm/bridge: lock the encoder bridge chain mutex
- during insertion
-Message-ID: <20250929-enigmatic-delicate-mussel-f36b89@houat>
-References: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com>
- <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-3-23b62c47356a@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F5D34BA40
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759150045; cv=fail; b=QYKAuW7tDqYkH//hVUkAEBoqD8mwcPlNzw+NaKpM8wAvXFJMkaU8SFle/qrIjhw4LfCYtJWWwynH6lVgmcilZ24EDZscWlnD5OyT79U7doNGlfaOo6crJ2oTBDojHxdFR9DuWKJgVwSw3wlENmY1nF/ZbVGpud5Fz8K5OW1+Wbc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759150045; c=relaxed/simple;
+	bh=tV82/40c6JBndC64tEAP0Dhi21h6JfQXiUa6SV2UP/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=u9ghufK/nj2VDojDBCXbb9qkdsN7+SKkRHiDyAlx2C6FDZ9wasu+kN1GCZcV4aQre/7S14OlYcbX4j1sz8lvJJ+vrIXRX/uCckHqJMxpjfC2VzXUfDHNJEL1oqWgwP3obO27c2U/fK1nUaADNtRycL2B/lfM3ePah6nM/23sTeo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=T1jfgx5K; arc=fail smtp.client-ip=40.93.194.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gk+mEXZBRkGoKcJO7sU59DykUn3WRDD1vwMrgim1QVSsCl7YviAKbQWLtUmgQoRx01GVey72opmH4hGruAaHwbdVODxQKcjlNeKhxMrRYkbF0JEe0vg0lEof+wBodPb7mtNUAKQ6+O1IHUYmCVhxA9XsqXmxAzChWr8psK88mNPHoNlKT+vLVbowGuYyEj1+RSgfdBodLwn5V01EZowHmIbFVnyrug3T6mbH0V+D8cfj4ad2Bwbok7VAiS8gOgj1Lh2akDENyRaUR8an9PqqiAbQnkr1L1ZPHgY+Xq2yPlQmSHLEQyYSWTw1gUBStFFDx4sevRqYVguUlqKMUc2oAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0zG42iJ+mFmIovbfTJ0ihEglcq7bdZQHWKLSFSOaoSg=;
+ b=m2Z319H1Xe/Kd1Evy1wF7TQEHjYGiwNrY8yji0Y2fymUQLg3MXYQiO7FWVD/AU02lfGE52j/LYX51Nu1R1Pe7P7T+2NRNVOBy9ZtJbmGuKN6FO4iM8lQRygx3miShJgPHHi0hYlP/l35aOYscmg4+5MjWol/j9H7rrx1obFKM8mXPBe5qyP9T3ZlIbSklDAhLiS5GNgZwIZblh7Ms/6RS8DFrYFJmsEtPl+oGGK5NC4Y0cKv/0e+bxy/K6U/z0ef2njKjOlhcvebVYnqSQm+nnrbWGPl+9wHQ6aDba/DvV8Qyw8nRzMRi98jg2uFRj1PY+2DmcSXPP7qsAWmpW5bVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0zG42iJ+mFmIovbfTJ0ihEglcq7bdZQHWKLSFSOaoSg=;
+ b=T1jfgx5KotGWkSyEmU4VXj66GHFZJPT4ZELHcPZSHVwx2jhtYU6wsMw2TtjCsMOxruA2X0yH9gZ/ZegvL3nehUd0kctYq9w2qnny0XzM5SRz11/bS6usSrp+R6opfggHBh50EENAR0/jVpfHYgmAmpwJhJCcOEtc1NGFYrEbANqWcqMErUXjbEFCEzxHS7N1WU8A/NXlEK3uiklJ71hl+ugXmeYq8NHGquJh+IkF90LVKJ5UkvtUrLBpCeqM5W6ScW8z3pUfFNtwiuoD7vTqkRBrc+Wraqh/f4KNnxmCu4FfTcYqabVF7GigDGyyHIdqwTKrff6Z8Vv8f1qjaMPkMg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by DS4PR12MB9793.namprd12.prod.outlook.com (2603:10b6:8:2a3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
+ 2025 12:47:21 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.014; Mon, 29 Sep 2025
+ 12:47:21 +0000
+Date: Mon, 29 Sep 2025 09:47:19 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: Daniel Mentz <danielmentz@google.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Pranjal Shrivastava <praan@google.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>
+Subject: Re: [PATCH 2/2] drivers/arm-smmu-v3: Implement .iotlb_sync_map
+ callback
+Message-ID: <20250929124719.GJ2617119@nvidia.com>
+References: <20250927223953.936562-1-danielmentz@google.com>
+ <20250927223953.936562-2-danielmentz@google.com>
+ <20250929115803.GF2617119@nvidia.com>
+ <aNp6fJNoehs8hMyF@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNp6fJNoehs8hMyF@google.com>
+X-ClientProxiedBy: YT3PR01CA0016.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:86::6) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ffnt4grig7iuxmc4"
-Content-Disposition: inline
-In-Reply-To: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-3-23b62c47356a@bootlin.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|DS4PR12MB9793:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c1a57dd-3047-4e4a-9567-08ddff56549f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2DxGASXArGWlqTyOOkScTrE8BfluwUql0dPbt4Djv/2PeMRRmgoVUGR6zcH6?=
+ =?us-ascii?Q?tOWjHFSADoYBUt0Tni8cdcF1loZwS1pBASZm+wFzESvYtlpT75cxM6WVKBXX?=
+ =?us-ascii?Q?kR6cuDPcGemQliASm5X3vMWKXCihvuAkqyLDex609u2wOK0ys8clXNxwYytq?=
+ =?us-ascii?Q?nEgjjv7hmULNV+/iHHNWoX/GA5zuEcKZTS4Bfm51lZ90H+/WqWCvLrc8geNq?=
+ =?us-ascii?Q?QaW+UaLG/tNZwtHDrOXU2BHVM0hjkYtyAd3j+MP6RUpHI2rlQ1k4XEqfSDKq?=
+ =?us-ascii?Q?syf4oNpclT0b10b4cJcI7+JGnHsAtYpSQGvbtom1l366OO+pllLc6ggXEvQw?=
+ =?us-ascii?Q?2Ngmn3JSsdZZ5rh1sEYg5vnX3/ygV9H5PGpkTbIM3+6sDDl8oXfAqk+Uz74/?=
+ =?us-ascii?Q?7QGD1gjy98uolzI1SNPYQQ2Gfv9xnGdeo+Q5ikEmTaLlg4kwhWJ9m2zIjQXb?=
+ =?us-ascii?Q?3x4/SpFbnKu25LGGCGQQpoqePeNccWYMG1mhzsiXUMVRVHbW7AyLjpn5MtCR?=
+ =?us-ascii?Q?IEBxrXmRFC5mY4tAH28mf1BRM5FQdCQtiSMXrwa619ELRCa1p8A+9XdfXT6y?=
+ =?us-ascii?Q?EqvRhrXaPRuiPDVF3SLbY68xL+xZkveqUhvZv2ZGu7kkTSe3p8+AcwyoZvgM?=
+ =?us-ascii?Q?JSvmp0SY27DnctgXUt4k8H7l7KVCmoKAof1fAUbZCt3ZpIcIfr7pzMjTSQO2?=
+ =?us-ascii?Q?/1Tau2WBaB11rI1xzJnw97uK55wVHgX8kHXfNA2btIJmkwOod1XH+AKcW08i?=
+ =?us-ascii?Q?kEGcmOeEz8wXZfzBdfe0SYHMsUmReio+abUW3IVbrJQRkKR+aqKglf6H6qbz?=
+ =?us-ascii?Q?8EXmHkWyjDG42I/nOz25qOAsaQLHlMfhDDIfQp/N9/oxHPXMm+PzFlwCKJf3?=
+ =?us-ascii?Q?yXAn304a+VkKp29lsAFuhwCXRorB71hN/4zOaBe7T9zi9QHmzQEubBkFL7n8?=
+ =?us-ascii?Q?vmaVkPGqwbnsdZ3gwHOfxlcRHlJDLj2VYZ4AtxdR9m+sf9yVXb8ljcNx1+1o?=
+ =?us-ascii?Q?Vz8KS2V8PB9nprwVWchc13GpLWGmz8tYwKTTETubaE5RL+ZJibUElqCYqb15?=
+ =?us-ascii?Q?OpTQTJaCyzNxBFqUAELRNaJiybNzfOH/y4qqzLWBkaRqg45HNXPGhMsDaYCr?=
+ =?us-ascii?Q?vw72DoDLijWKgi1X6ZPWVTMJNIO8kay2iYa6f8MGONWDs9Oq30J0YYhn9OI+?=
+ =?us-ascii?Q?FlLylTuwM6sUMhoW1MY/PMZnRlUTBqYSIRR3zs2X4WXd3ynY1XoCqfm2h5WZ?=
+ =?us-ascii?Q?sGyq3alMLNALY1AGeAGLOTceXdlRX0y9Ln/F7sj92+ryLdTvqnulNO4hoLIR?=
+ =?us-ascii?Q?JC45JpOtS9KV4T18n4ywKlt49TdXbsPFzDF2fV73Tyt2gp/Uu2ZnSuIDYNDA?=
+ =?us-ascii?Q?LIu+kvWUhiAuzabYSLLawPPd7Y3dIxYc43394S85gHtaj3LDsk2bpPQFFTrh?=
+ =?us-ascii?Q?vyE/veu0AmMLKWSjThQc9OrXcRNJwNtm?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aFqkQk3HwF2R0ElWC32Xe617P3mmO95q4AIF4l2BUrcrN22q+3jtJGyepmme?=
+ =?us-ascii?Q?mASvEEC0pOwTMjUe3xbTEXdGNFaSAX6uK+SL5U04WrvWEJ/i5whSwzZynMwm?=
+ =?us-ascii?Q?Xi6anoxFyKMqZMmVk7iAjbPklxh23NwHsPgGG8AzQ4I251q9T2MYRPdgmn2P?=
+ =?us-ascii?Q?VJjlPOGw0E1rLj/3EyV1ZvRUQW0dPY6DQpUD1q3ltZRuXVjN2F88oMj84yJP?=
+ =?us-ascii?Q?ZW0haeNZxLEmdYnmPT2yIxKNU3Y2aqGzdKyZDfhX1xPOa9SLcfQFcdgM2xnR?=
+ =?us-ascii?Q?fR9pEEQswVnuh26uKCXug0P8UKd5BWXxL7KVQgnMSa0FP+iVYahWZVQICFPm?=
+ =?us-ascii?Q?bsa+aH9CIFDuW9mUsGxs7W8LLv0GtWnfY0kw2jeFVVWdnjMZ4jYthzU2HWsK?=
+ =?us-ascii?Q?0mSucz1S7xEejCgUCLTAbP2HsgVsFCyMiQ1BiOJqC+rjU4Ku1U1ybeJ2ab6A?=
+ =?us-ascii?Q?/i6dz0qXdB2pKZJQWPtnyctUguWBFn94RINsKaAs6WKfoEj2bwaD7bj/0qPw?=
+ =?us-ascii?Q?jL5mLJJTtIfFW6aLWC0YXjMDXLXt5uKw6e/OumCJoFQfKylhbHXjHCrA0B4/?=
+ =?us-ascii?Q?SNBEv93q+R/JJxvj8bFB2OPGCwztE09WcnWOWW2itVv8VuzFYbU95TPQhZPj?=
+ =?us-ascii?Q?nYLNrv1pjjAtJJOCKA0NX7X3RiPxJs4sml4/ElciRYAfxalc52mu0l5B0xu5?=
+ =?us-ascii?Q?owYYw6VVLpTvTbKDLAEacSr22upg6Q2xK0OlMY8DoBpS4bqwxn9oXnhn8WQi?=
+ =?us-ascii?Q?mAFwH7Vz/E90jCAQuhz6hnv+4XVjg5/RSjHoCV6FvQuVmvn744Uz2BcK5TZO?=
+ =?us-ascii?Q?R1R2yDPVzP7PJxMBv+eUoK2cOjUQGA/a66E9Bor2isMYv56PE3yZIGTnmb43?=
+ =?us-ascii?Q?wIyffzV0EyJ4izdYNiCKzH+Wobh5IzvgYO9nv7bxjhbBlWPwXClDmV61MP8r?=
+ =?us-ascii?Q?vpo0Fma/SqkWlCndfEMw9l70/T6e0qBFtW8PwPOfvfSOoQfQVY9NY/sotA73?=
+ =?us-ascii?Q?v6TvI33eCTqNPcTIN81+aH965W2JvMLE7mCeAsV4hiBIOrdUW+WgcSbMaxJ7?=
+ =?us-ascii?Q?BhlsevcTmqrGdUzMeJohuRB3DYydN2jEK542LuLti4PRgLtqN8wz3/EymJ5I?=
+ =?us-ascii?Q?DjARlXuiGoL9IEeuLOtME3wyDnPFZp3B+PqhyNPiJsM8N6/AZwHLg5pQr5Af?=
+ =?us-ascii?Q?/awfCI7jDW+8xzIJ8crxbGjROzcuh1vHA5zQuHwPt9JtTHKHG4jDHbdGKMgD?=
+ =?us-ascii?Q?tizzHfxRB4N/onmwvVOgnb5bvChw1kdcsfUtnLGovfBrEMEKqZT3Q+NM4vKD?=
+ =?us-ascii?Q?bXYvFf+ma3jv+fMBiTtk/iniflOfzQTfbZioukX/1pgrkuGsTDBlYO9cfJEI?=
+ =?us-ascii?Q?yG+rCFiitb6cJabwlAalS/Q4W1TTzblzmzMvw1rH3Fw8jft+W/BE1nw18kVu?=
+ =?us-ascii?Q?kx77E6CA7zTCr4vfZ8uJRTXqBnvKvqujg4A82ETN42yIbbHwTnWOX9eD1WjT?=
+ =?us-ascii?Q?R4AN9bzy2L69HNQNE0B/roS8dQUfkDxm/KV1WLgAOZUij8hblLzXx9NTa7k1?=
+ =?us-ascii?Q?LHh2nNO/3mrHH4MfUPg=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c1a57dd-3047-4e4a-9567-08ddff56549f
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 12:47:21.0105
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3kem+LhbcenDDAVAyhjrwzMcIbRyPMxVIqFxUiDKvQIK3KSVZaVracVP3qtWsNI4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9793
 
+On Mon, Sep 29, 2025 at 12:24:28PM +0000, Mostafa Saleh wrote:
+> On Mon, Sep 29, 2025 at 08:58:03AM -0300, Jason Gunthorpe wrote:
+> > On Sat, Sep 27, 2025 at 10:39:53PM +0000, Daniel Mentz wrote:
+> > > @@ -3700,6 +3713,7 @@ static const struct iommu_ops arm_smmu_ops = {
+> > >  		.map_pages		= arm_smmu_map_pages,
+> > >  		.unmap_pages		= arm_smmu_unmap_pages,
+> > >  		.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
+> > > +		.iotlb_sync_map		= arm_smmu_iotlb_sync_map,
+> > 
+> > Shouldn't this avoid defining the op on coherent systems?
+> 
+> Does that mean we need to have 2 iommu_ops, one for
+> coherent/non-coherent SMMUs, as both can be mixed in the same system.
 
---ffnt4grig7iuxmc4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/7] drm/bridge: lock the encoder bridge chain mutex
- during insertion
-MIME-Version: 1.0
+Yes, I think you'd have to do it with two ops..
 
-On Fri, Sep 26, 2025 at 05:59:44PM +0200, Luca Ceresoli wrote:
-> drm_bridge_attach() modifies the encoder bridge chain, so take a mutex
-> around such operations to allow users of the chain to protect themselves
-> from chain modifications while iterating.
->=20
-> This change does not apply to drm_bridge_detach() because:
->  * only the drm_encoder.c calls it, not bridge drivers (unlike
->    drm_bridge_attach())
->  * the only drm_bridge_detach() caller is drm_encoder_cleanup() which
->    already locks the mutex for the entire cleanup loop, thus additionally
->    locking it here would deadlock
->  * drm_bridge_detach() is recursively calling itself along the chain, so
->    care would be needed to avoid deadlocks
-> Add a comment to clarify that is intended.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
->  drivers/gpu/drm/drm_bridge.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index 630b5e6594e0affad9ba48791207c7b403da5db8..90e467cf91a134342c80d2f95=
-8b928472aaf0d8b 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -453,10 +453,12 @@ int drm_bridge_attach(struct drm_encoder *encoder, =
-struct drm_bridge *bridge,
->  	bridge->dev =3D encoder->dev;
->  	bridge->encoder =3D encoder;
-> =20
-> +	drm_encoder_chain_lock(encoder);
->  	if (previous)
->  		list_add(&bridge->chain_node, &previous->chain_node);
->  	else
->  		list_add(&bridge->chain_node, &encoder->bridge_chain);
-> +	drm_encoder_chain_unlock(encoder);
-> =20
->  	if (bridge->funcs->attach) {
->  		ret =3D bridge->funcs->attach(bridge, encoder, flags);
-> @@ -487,7 +489,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, st=
-ruct drm_bridge *bridge,
->  err_reset_bridge:
->  	bridge->dev =3D NULL;
->  	bridge->encoder =3D NULL;
-> +	drm_encoder_chain_lock(encoder);
->  	list_del(&bridge->chain_node);
-> +	drm_encoder_chain_unlock(encoder);
-> =20
->  	if (ret !=3D -EPROBE_DEFER)
->  		DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
-> @@ -503,6 +507,11 @@ int drm_bridge_attach(struct drm_encoder *encoder, s=
-truct drm_bridge *bridge,
->  }
->  EXPORT_SYMBOL(drm_bridge_attach);
-> =20
-> +/*
-> + * Invoked by the encoder during encoder cleanup in drm_encoder_cleanup(=
-),
-> + * so should generally *not* be called by driver code.
+It just seems wrong to penalize the normal fast case for these
+systems.
 
-Why not? Also, it looks entirely unrelated to the rest of the patch.
-
-> As opposed to + * drm_bridge_attach(), does not lock the encoder chain mu=
-tex. + */ void
-> drm_bridge_detach(struct drm_bridge *bridge) { if (WARN_ON(!bridge))
-
-Maxime
-
---ffnt4grig7iuxmc4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNp/mgAKCRAnX84Zoj2+
-doqOAX9Zy9Z7IPOipQKQV+gyfRFRn2CCq2vxUWDhJrXcgCK+p9lqv4e3JH3EtJpa
-sFfzlDkBfj6ugTuah9OIS670G0m39UoodcBG9xBmgKreXb4qiv4kjkcIvYx69tIj
-EY2dXXxCug==
-=SJVk
------END PGP SIGNATURE-----
-
---ffnt4grig7iuxmc4--
+Jason
 
