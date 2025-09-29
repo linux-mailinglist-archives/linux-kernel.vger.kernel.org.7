@@ -1,118 +1,224 @@
-Return-Path: <linux-kernel+bounces-836704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78B7BAA63F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D78BAA64B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E207B3C6222
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:53:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EED619202A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC14F240611;
-	Mon, 29 Sep 2025 18:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F142417F0;
+	Mon, 29 Sep 2025 18:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckgdZBaE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="l2+Gh7N6"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013034.outbound.protection.outlook.com [52.101.72.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B78217736;
-	Mon, 29 Sep 2025 18:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759172002; cv=none; b=TnqwjJa3/xv3dWv0D4ott+oHOo5/6m/7wRZY3NYjZlRvYibOUhlC03Allr06fkaOPM+tCkIKiH+tMo7np6JnXzUNYWID8OfF+W9faIe4LtKh+617RYN7a3VVw6UE1T4wUupc4XDYutz3GcQ4aUv7Yv1VqZQ33I7ideYQNODh+zA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759172002; c=relaxed/simple;
-	bh=cNk2Xp9aKC1/fZzbSc81/LUDAhZMCewvH/hYBAA+o1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FuGdCNzPiU+b+M2z+U252o2eH0vqXhcVWYNwwC4QdJa7Kr/RyzQ3DUMiatwX4pvUmijlcqrB7Wuugh9J6dHjz00AQi3Q+W44UyXtBHOpeCX30z1MOidSgejKbzE28CZ17onwzZlU/2KGg7kV4j/6QsmT59TpZWJjZIA+ryAJUQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckgdZBaE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B1F8C4CEF4;
-	Mon, 29 Sep 2025 18:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759171999;
-	bh=cNk2Xp9aKC1/fZzbSc81/LUDAhZMCewvH/hYBAA+o1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ckgdZBaEIwOILj4u0uIaJ76wpSm6QAYXTvfxzG71UvaGM118Gzsz1OzSIR4VKBijB
-	 o/ZiAUVwGkgTJZrQunJJaR8eWJOc/O8qO6Cv0+SAZ9PzzPXRVz6GpFiL7CBs+i7cJ/
-	 F1LZR7vPl9+1lArEBYr2E1vBLp/BETX7/OYcm7j/EZQl808xN2LuUugY4PmfTXAPN3
-	 fXdTaMHog3i4RlNGU0OOqs3esvC5cyfYjM2kpTdnWpvBVlKJxf2KXoJgtQI09+9EEc
-	 hnaPhcKTZ/+5qPhpj8o0OJvYoygAipHD+ZSVXhMFEkp/WcNQ354rrB0DrIKym6tvv7
-	 iNxhkTM5NqOag==
-Date: Mon, 29 Sep 2025 19:53:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Vladimir Moravcevic <vmoravcevic@axiado.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693EE22B584;
+	Mon, 29 Sep 2025 18:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759172047; cv=fail; b=e+NSqiXWbP82FMmbNhM0u8phsS3bC4GOn/N2O5Vjp/hlWU1PZ3IEYUyYpt6XPwBWS+sLSlxzxHb6ITxuZLqff6zZQx/0nKoo4ZEZ16mNKOZYQgGMMcbeVxyzKd2jZNqcXxa68yQWZ/RTgxSHPuYwLAppjeW/Gw3o3Pk5UyHQnj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759172047; c=relaxed/simple;
+	bh=wXlL4lxEfJOu7xiUNRT6/P/Gc8N7RkAoW20d+eQt0KI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qioAF48kOeQQxEtuabwCB2bDpfZCwzKMhPVdgrrCeRUTNNcXPlA4B1hn01kIJtHHNPS2UO/groFVLFGy4FOOERWichEKyJAocrXFJvE2/3oMRPu8yCIohIE2sXvnppX08TReOZgxNrMbX4SaSzPCEnxpc4K+aR+zcdJ7eQIWFQ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=l2+Gh7N6; arc=fail smtp.client-ip=52.101.72.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WdYwsybls3XsYBkXpTntJqzQIMWxr2ut6MrWK++4cWXumKTPVi25bEUFzOC4ODqXp/1emKT4zAa9LK4mRBqhOhbNytFOSSjXb3ok/03B2gOmZRpsit51sJJWscY3qBdjvJ8+0fc5UKqcqfgokoivg7Km9ydjsAPDvI+SGVBljxWzzQZD/MrZOk4rQxPFH3im1cQ8aKwJ+pjHyN3BB5ejrVz/JmyZus5ZqeKb3t/kgRLRdAC3diwhc80UaQQe3UoqVcNU9ZXQy/dHgtzoYJVia+GnK8c3bqFqhfYd/G6awvW2nEZAkC7lpUYm6xdZuhg0GdcIFRPOPGBoA5EPolJFHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j8D62V0nwPwHYnLntEFZVtSScrULlpJgB7wx38tnFRI=;
+ b=SAtuJvN8S9aO2cXPX1d+DOSf8VxM/970iUC8FgdEU6UEQZwW2Oh5SJ+V2ky4EX4Znc+C/AvYLR/n1tkT5l7sCAVjVAHSkSfU9PYEQgg1Bh03O3E32P8MEBFLXfq5ZdbJyW2lx5FsaMlwqrDiUYLY9pgqNcffFP9NPk1iA/uOPe6ibgbaHZXkK4zGdGh4526JWmAzVhj4flWqCqJzvHF3kzPsMACTkemkccNDeSzp3H4E1uv4NHTk25hl9TXhsbly8hd8G+1H+q3atflz9L1UGh9BuaGFiZ4tm97q6Ru4vpiLWgBD3CgFyd52kxWlzp8UdR0ntPdwfaH9RoOr0e/KGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j8D62V0nwPwHYnLntEFZVtSScrULlpJgB7wx38tnFRI=;
+ b=l2+Gh7N6amt1qxYariiIU5CCPwylVio7LWz5ruIz6iEVHcUSMxQj1P3fp9PpzUMgNzXzQDxJ44sU8oxe0InzPOscBk4qtgNumlm7V1T5h3H7a9VKW4bKxExlqkJ2qVGrY2cVEzW5iu1N2rN0f+V763r2k+GGT4yDlITkJD7hPo7tB2QYcPE1S1VNqchx74z2+PdYlL3bFQg65DPEz/VY1hs52eWh1w1E6NvWOYJM6+/g27MhkunXRDJaUqfXE3F9z7MWWuuUKglEV23cCseljpt3xl/NHChYEkh3MJImw9cEVn8Y/brY8iQ/bNFMP/icbwpVbIosaVUMolYq/+b9rg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by PA4PR04MB9367.eurprd04.prod.outlook.com (2603:10a6:102:2aa::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
+ 2025 18:54:01 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.014; Mon, 29 Sep 2025
+ 18:54:01 +0000
+Date: Mon, 29 Sep 2025 14:53:54 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>,
-	Tzu-Hao Wei <twei@axiado.com>,
-	Axiado Reviewers <linux-maintainer@axiado.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Prasad Bolisetty <pbolisetty@axiado.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: spi: axiado,ax3000-spi: Add binding
- for Axiado SPI DB controller
-Message-ID: <20250929-flammable-immunity-6bc48621dba3@spud>
-References: <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-0-b0c089c3ba81@axiado.com>
- <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-1-b0c089c3ba81@axiado.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Daniel Stone <daniel@fooishbar.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: npu: Add Arm Ethos-U65/U85
+Message-ID: <aNrVwn1ibQmB/rKJ@lizhi-Precision-Tower-5810>
+References: <20250926-ethos-v3-0-6bd24373e4f5@kernel.org>
+ <20250926-ethos-v3-1-6bd24373e4f5@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926-ethos-v3-1-6bd24373e4f5@kernel.org>
+X-ClientProxiedBy: AS4P191CA0035.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:657::11) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TTzfIpOXBJv0hnVG"
-Content-Disposition: inline
-In-Reply-To: <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-1-b0c089c3ba81@axiado.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|PA4PR04MB9367:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe37429b-2103-4273-1dd9-08ddff898dc3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|19092799006|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3dhQGsCf9YRE9GAZ0Dytgz6enqlsNR57zSDATv60uyRCgSRNPkfKXOR280x0?=
+ =?us-ascii?Q?UqDlQdXrjQvQdkhQGfmMClFute9AkK81TI/7cTNN+GYVqOHa8i+girc/PsTX?=
+ =?us-ascii?Q?WA9r1vfwoXPqtLdiVdivJhhGShg2GFwbUP1QxgesKZ8i2GfIN2t/cgZva7a5?=
+ =?us-ascii?Q?2BQlaIBwv2u4aUnDsBXow/cbHN1yRlql9bbql1vAyKMDd3FMXcaJFx8n5iA+?=
+ =?us-ascii?Q?XvIEeBKIB0DHKGZd/powUIYW6efPqAsYyFJFZtfu1b3DCopO1Q/hXZfUHy2T?=
+ =?us-ascii?Q?w+JkNDWC9+upcdEoZN0RSkH5sgiRSdPkSOdckW5Mo4oVCumWFI04OPAe2iym?=
+ =?us-ascii?Q?aKRDirGBqafOPkIgCV82cUTWg8Jl96bHwMj7s7aa98AxC9HrGcY0vEHgi33P?=
+ =?us-ascii?Q?eBAEfRxhUBO3Qn0MWS3Gle3SCggDeQonTd1Tc3EEUbJOB2wNxKnLlmSd8Hz6?=
+ =?us-ascii?Q?2ntFKYhowW/ja4AtmA56A9SMWCsHWK4lLlAtiuURtHe11TkCMW5oNlhyQvba?=
+ =?us-ascii?Q?ZuoJNivrE645wqjrl5TdcvgY0hX3SauJCg6QKMhcmk/XFXPAsagmT/2nnyOn?=
+ =?us-ascii?Q?uuyqVKrUYhrCq48UQICz3+LVmO+cC/E6AYrv9cWSzxRCLaM0uCZii7UEbxsq?=
+ =?us-ascii?Q?cYZMQyxxCVFLaYhW0QEdSWBGqaMDiPN5vf4N6asqlYMUMZA1aVrvswxVjErw?=
+ =?us-ascii?Q?CZo9JPxJDnXhks0zeHx/1ovOCFqSMWhPO5vQnqY9vY1qNl0CKvqiRxzbiCsg?=
+ =?us-ascii?Q?NNRMU9+Op6VS4/1x8Z3yaWCfZEmkOUEn9dbZO30Yxo7FDxsbqNkkvdMGCSw1?=
+ =?us-ascii?Q?i6rP4gmFianTlJ2lpHy7bT2XwChhfU4BKiLr9yJ1/t/pWJVsH+GpEMcECxNY?=
+ =?us-ascii?Q?GJvoU7PypNZsNa/hfV2Mah8Q9MbanOHp0Y4g5nHQ/9IHLqG4WHdrV9IOuMil?=
+ =?us-ascii?Q?UBbH8lKoIjN0223fOeDOYZZNUe92ZcTaAX+LkRn9uYYT5cNywVMUTn+DxyaQ?=
+ =?us-ascii?Q?rFjtxxyJwoYt2PrDC7daq2F0e2jm+wEMWgoNwsQhGfILvoBNIxMoDfYIfPdV?=
+ =?us-ascii?Q?lQ4NGO4u6DPQAEbSDKBEa6XqyN5h4X4+XcWl3sxYSmU8XaCtZM4Iiz56kKbb?=
+ =?us-ascii?Q?EL2Zzs29EPyOz243Y4rV1FLtVwTbQ+OVuQnKx/RzK/VOq2goLJAQ6IM84BNS?=
+ =?us-ascii?Q?5bidvzOK4KXTN5zEZn2ya2l8EKqza+BJqfEqdJqHY8+cuapoWUujDDYmMLMR?=
+ =?us-ascii?Q?NfLsjQ6ZmyQ3bRVSLRUQbalo6MoQzUQHe7vuV+rDJeVTDxa1qI6FoN0/lb/U?=
+ =?us-ascii?Q?TptblOxC98qdj7m4po2aKCCWPw1yWXG4lhtPehxB2WwutORPcJVwbM17UhlZ?=
+ =?us-ascii?Q?SwfeYxyREiijWLoeIXOSn+9vK4h1p3RGrSIEj1Dtgj5RSgTDCvno+8xTAf5l?=
+ =?us-ascii?Q?2u+zsfpzbwfFlRtLzaRv0Fw+vmPhI/iIiA7x4ARIligtYxhPewDJRQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(19092799006)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vmzHSX+oSz7JZAOymGTfy/bfFF632Vz14jLVQ/UmesHZ1UK9wR0bdT0yYaaG?=
+ =?us-ascii?Q?c9VW4JrQdBYOdP0+3JJWtlyvO2VpwB7rdGMe1oUKzzDc5d2iiKEo41Z8G2GI?=
+ =?us-ascii?Q?Zi1LRzJBFzlFjUKWfpwU5UFZFbUpDl/CYbm7izvQxzYmTYOx27F46MYNwVH9?=
+ =?us-ascii?Q?PMkirMfFjhALtPS+QiN+wn2bvkylEy8L6LZklme0JZZHjgjFdROAOxYZBD+b?=
+ =?us-ascii?Q?Xvoq6NesyEAq+vTHqNjAKoyJYCYykMjKmXbmacbTNdBV4C4K87CUlkcohJgr?=
+ =?us-ascii?Q?+d/Il5q8TctVnbF9bN4qEp4pQ93CCbZFGYeD4T1tVN/iIn3dLE2fxlRRnQ8w?=
+ =?us-ascii?Q?4Y8hp7uKDb1TfZYXvWa6nWbT2P1OAbRu1umcSIS4uTEkag8p37jA3Z8rRE9e?=
+ =?us-ascii?Q?2vNSGHtcW+cEgBL8fAIhqlMsBMqX2YQr3YYTX5jR4zfXmO5E0fXBhnf4iX34?=
+ =?us-ascii?Q?tuFTw2iLy7WH8FsTiwFsaYAAsZdGvtzDONZfeRPmMUfqp4fWm0pNPMV8bAPK?=
+ =?us-ascii?Q?joMG+/QzXCKvoRLMQ4Ny2ZrlWuPwXImcHL4t/Lm89f4ijq3vItiNAIGfXf5j?=
+ =?us-ascii?Q?wsNJd/+PVeQuT+Q6HfJnCbZUoeckptwtfLL+sJaZXfemjewVgmq5curXmb2M?=
+ =?us-ascii?Q?6cm5AY2NNyn9JA/J5icOQcwls6cPZcTXTjW0Qr07q6Efy/ytbeG6k/QooX+N?=
+ =?us-ascii?Q?b2uo/I9y7921qmWfWAVXWXXBC4PgXT6hlnDN2AcbeHzRVn0r9qYZAIvIL2rG?=
+ =?us-ascii?Q?ztINAjD71lcOmE2EHpH2Cbl8ZCGZMWCT7yqQNVvPMAOPvX9OMVLtas/asmjZ?=
+ =?us-ascii?Q?6jVKXcEgBMO/bdNMMQgyNu/s4mdKspMhFnl2lviMYBDvKWNc5J0MRThOJriU?=
+ =?us-ascii?Q?WKlVsKwVtumdV9dGLRqemUA7nxtpylE74cJXZNOaWHPMUOl3aEsPgb/EaKVP?=
+ =?us-ascii?Q?K2VPj3vp+5LCPcMEkDDMWQABNdGmPMS/mspWFh2iR9ynOidQwhhiborcP9/a?=
+ =?us-ascii?Q?WlBwkIBL7aLUSWmXp5C8DwJhX6qGOvdRc4Hge9M3RdHWb0sf0si+kIF4Qg4m?=
+ =?us-ascii?Q?NWSwtIbYUzOI8HpD2ARyqZduCRv1OnQcKMCceQ+L4SeGyCsyhx62q22VBXsk?=
+ =?us-ascii?Q?z+olcoeXZ5nFDpsMt4nC7O1QlhB4xLIIDHLaJvxbKyLMPqgp4O2lxJJ8P0qp?=
+ =?us-ascii?Q?17QN1N+ftdTdpKHmnMRy1FmqYHbAEhgLusqtlMEiFOJLKJCSSE4dTkTBr1xE?=
+ =?us-ascii?Q?Ne+jTJB0xjzfRBGIxnl+lNkfFZGxuOOMKAUkJnDPNz8oCobuSyCy6JMZsjm1?=
+ =?us-ascii?Q?jNH3+pG0QhvkKgeGaZvxU3Fxb+tTj2yTSZvwbTw0z58Bsf8hkLoMGNdLL7Qd?=
+ =?us-ascii?Q?kxAbZajAh9mkJBOqDfFAk/z8W16gw1VVsYRBrMwI5HbAId9bsGHVhm4Pq/NW?=
+ =?us-ascii?Q?sFwoISl7tiETNpPPqWK8PxA/TrmWXxehEFsGCrejRVy+QWZr+Wg3GvAMK6vv?=
+ =?us-ascii?Q?cFF+z92ihIgrGVPPBsCE8c0mTfqlSrwYVynh02MdVEHFfMSbn8l3Fp+GEoG2?=
+ =?us-ascii?Q?IvF6t6zxmN2QlppC65I=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe37429b-2103-4273-1dd9-08ddff898dc3
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 18:54:01.4355
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nqgTqYSP6bKvzOngt5BSd3b7ILLOVEVILay9+W064kUI4tQwB86gOM2nkbSJ/UKSWELAxiyOHhM1YK7pkIWtFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9367
 
-
---TTzfIpOXBJv0hnVG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 29, 2025 at 01:58:01AM -0700, Vladimir Moravcevic wrote:
-> Add documentation for Axiado Digital Block SPI controller.
->=20
-> Signed-off-by: Vladimir Moravcevic <vmoravcevic@axiado.com>
-> Signed-off-by: Prasad Bolisetty <pbolisetty@axiado.com>
-
-What did Prasad do here? Are you missing a Co-developed-by tag?
-
+On Fri, Sep 26, 2025 at 03:00:48PM -0500, Rob Herring (Arm) wrote:
+> Add a binding schema for Arm Ethos-U65/U85 NPU. The Arm Ethos-U NPUs are
+> designed for edge AI inference applications.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  .../devicetree/bindings/spi/axiado,ax3000-spi.yaml | 63 ++++++++++++++++=
-++++++
->  1 file changed, 63 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/axiado,ax3000-spi.yaml=
- b/Documentation/devicetree/bindings/spi/axiado,ax3000-spi.yaml
+>  .../devicetree/bindings/npu/arm,ethos.yaml         | 79 ++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/npu/arm,ethos.yaml b/Documentation/devicetree/bindings/npu/arm,ethos.yaml
 > new file mode 100644
-> index 0000000000000000000000000000000000000000..34fa96778dfdec89bc1478226=
-5ec23c0bc455a20
+> index 000000000000..716c4997f976
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/axiado,ax3000-spi.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/npu/arm,ethos.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/spi/axiado,ax3000-spi.yaml#
+> +$id: http://devicetree.org/schemas/npu/arm,ethos.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Axiado AX3000 SoC SPI controller
+> +title: Arm Ethos U65/U85
 > +
 > +maintainers:
-> +  - Vladimir Moravcevic <vmoravcevic@axiado.com>
-> +  - Tzu-Hao Wei <twei@axiado.com>
+> +  - Rob Herring <robh@kernel.org>
 > +
-> +allOf:
-> +  - $ref: spi-controller.yaml#
+> +description: >
+> +  The Arm Ethos-U NPUs are designed for IoT inference applications. The NPUs
+> +  can accelerate 8-bit and 16-bit integer quantized networks:
+> +
+> +    Transformer networks (U85 only)
+> +    Convolutional Neural Networks (CNN)
+> +    Recurrent Neural Networks (RNN)
+> +
+> +  Further documentation is available here:
+> +
+> +    U65 TRM: https://developer.arm.com/documentation/102023/
+> +    U85 TRM: https://developer.arm.com/documentation/102685/
 > +
 > +properties:
 > +  compatible:
-> +    enum:
-> +      - axiado,ax3000-spi
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - fsl,imx93-npu
+> +          - const: arm,ethos-u65
+> +      - items:
+> +          - {}
+
+what's means {} here ?, just not allow arm,ethos-u85 alone?
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+> +          - const: arm,ethos-u85
 > +
 > +  reg:
 > +    maxItems: 1
@@ -120,67 +226,46 @@ What did Prasad do here? Are you missing a Co-developed-by tag?
 > +  interrupts:
 > +    maxItems: 1
 > +
-> +  clock-names:
-> +    items:
-> +      - const: ref
-> +      - const: pclk
-> +
 > +  clocks:
 > +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: core
+> +      - const: apb
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  sram:
+> +    maxItems: 1
 > +
 > +required:
 > +  - compatible
 > +  - reg
 > +  - interrupts
-> +  - clock-names
 > +  - clocks
 > +
-> +unevaluatedProperties: false
+> +additionalProperties: false
 > +
 > +examples:
 > +  - |
-> +   #include <dt-bindings/interrupt-controller/irq.h>
-> +   #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/imx93-clock.h>
 > +
-> +   soc {
-> +      #address-cells =3D <2>;
-> +      #size-cells =3D <2>;
-> +
-> +      spi0: spi@80510000 {
-
-The "spi0" label here is unused and should be removed.
-
-> +         compatible =3D "axiado,ax3000-spi";
-> +         reg =3D <0x00 0x80510000 0x00 0x1000>;
-> +         clock-names =3D "ref", "pclk";
-> +         clocks =3D <&spi_clk>, <&apb_pclk>;
-> +         interrupt-parent =3D <&gic500>;
-> +         interrupts =3D <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
-> +         num-cs =3D <1>;
-
-num-cs isn't required by your binding and you have not specified a
-default. Your driver assumes a default of 4. You should include that,
-along with any maximum value, in the binding. See spi-cadence.yaml for
-an example.
-
-> +      };
-> +   };
+> +    npu@4a900000 {
+> +        compatible = "fsl,imx93-npu", "arm,ethos-u65";
+> +        reg = <0x4a900000 0x1000>;
+> +        interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
+> +        power-domains = <&mlmix>;
+> +        clocks = <&clk IMX93_CLK_ML>, <&clk IMX93_CLK_ML_APB>;
+> +        clock-names = "core", "apb";
+> +        sram = <&sram>;
+> +    };
 > +...
->=20
-> --=20
-> 2.25.1
->=20
-
---TTzfIpOXBJv0hnVG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNrVmgAKCRB4tDGHoIJi
-0vqIAQDaoK3ID+wCoVxoZ2C0zZHMOI7RwcFAW3vjlsoV+4pezQD+OLkSm7QI3424
-6TS2iP1Yc76+IilZ0IUf25FCuYukdA8=
-=sQhy
------END PGP SIGNATURE-----
-
---TTzfIpOXBJv0hnVG--
+>
+> --
+> 2.51.0
+>
 
