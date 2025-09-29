@@ -1,109 +1,200 @@
-Return-Path: <linux-kernel+bounces-836710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61997BAA679
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:05:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C99BAA689
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4C83A8E1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE18F19208BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CF123D7E9;
-	Mon, 29 Sep 2025 19:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE92022422E;
+	Mon, 29 Sep 2025 19:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRdeHsND"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J1L/VARC"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA19217736
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5DA23F40C
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759172738; cv=none; b=g5Cr6SheltXpQYhtxD6xk9hfuO5IVx/PV2FGr450ak64n5x6IJYullL8FhjPOzwwHGRJMSBS7HNt5EigBIdpAtecSUDqM3NkiHy76Yj/AXRpuf5vpHUyMTVe1yMF6Z+0XCGFK8ORXwJaJPtD8yQSVFQ5x2A0TdKZlSeNHoRY7Io=
+	t=1759172905; cv=none; b=Wkf4e6yS9DPGNuF+9QXGHE9cLdEUslHSQF0vNso5+kUuReWAM3CpHIGo2KUKjYBEvaXdHgKTQcTuy4ywAgQLNAFXIBpOxyX+pAyNU5IAponvNQNgvlfoYK3pfB505gsshsyFHYi4uFx/f90JqZTKAda9ViX4keIEg7BIXxHKsAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759172738; c=relaxed/simple;
-	bh=7dAHzaJQ6VmNHtkX0SwUOUq+IGCkupBlWo61y0sreic=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H08T5jSkXHJcs/9E0abZet8NanxydRXHrFRXRVrdkX8qi5fEPMp0XfUMuhXuN6RpfFHTO/OmejpzeAsB5doneJz6NXz3XA1B3WQOdk0KIyE+rCUlaqAHZbnHJ4fuvcIMIk1qMuB3o9XKuZCuom17ELBEONc8jo6Jl/f02TcqLQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRdeHsND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDFFC4CEF4;
-	Mon, 29 Sep 2025 19:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759172737;
-	bh=7dAHzaJQ6VmNHtkX0SwUOUq+IGCkupBlWo61y0sreic=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eRdeHsNDf9JujZo1zCiq6S0T9QrzBgeUfb+2UywsKB+bnuBuMRJOediqUplOLiPpa
-	 mzJS/aRIKZVuJPCJa0kwFfSuJ+mkHZbEMCJl+yelqKd6WoaY18PnWDdAuVCP0vbdFg
-	 hLJeBJTjpAm4DEDw1RF4VAu5+ZVRhWrxBzvId7dQygWCofyf8CaNw0kFOE1TMGxgIP
-	 YYjBkhznkO4I5M1laXRN16/tQaKzf1f5CKcQvv4dWfzNlJ17tc2Vx4v2jMhf8/oMBw
-	 It94Gk1LUM1OmGA9v4S19vTx9W06e0qug+hHhQSPhYRsWn8cfXGw449KOerh9MMRqi
-	 vnCqwaYHimGDg==
-Date: Mon, 29 Sep 2025 12:05:37 -0700
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	Svetlana Parfenova <svetlana.parfenova@syntacore.com>,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [GIT PULL] execve updates for v6.18-rc1
-Message-ID: <202509291204.89F951B4@keescook>
+	s=arc-20240116; t=1759172905; c=relaxed/simple;
+	bh=7qrHmbfGn2aKzzxiGGx0dQNxryrNWvLvsBasM7skIBk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=jmW21YkQ1GB6a/3qgSlc5A3UhpTXqu28iMYQvRKylIPdV3lM29S7b2ZJkHsZmnICw0kx/zCX8lWjDM1XCEl+sj7E3v8QI/ZkKaoaqxfcFnInRHWitlKYK8xzH4k7CId+BY0rAKABcbSgeVvUE0fCreH1dmbVkCg2/sE3+FWp7UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J1L/VARC; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2697410e7f9so110373455ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759172903; x=1759777703; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Njxey7G3aTuTqShbTBIMUulJ1i1nTX1TYxL9UTCOTos=;
+        b=J1L/VARCwC47irL1hwNV8Mjn4O54A8kpyzBXVvf0NYIzdZmEJtmLcNPbMCK/efsCYi
+         Jx4vI3T0CcvuwOwvC8hEpPbWjqH0lJ697byR/Dj+sbfiwkoXYWfG6LNbvk3oVJ+EMkyQ
+         uO7LPBaB47HB5uCSnYfPI1RaVywtsggXm71R4GtlPKWbZVyoEDFbYoB2WvaklSDmYV0h
+         aYFOdpfNrQ7U3WA+m90L2Hoo7tvZIPiGPqlIDpopLYmtzVd0Z1/ceRv2xXguS3oqfieH
+         J5iu9W2YWDdwecMLKDc9jTEJO43qx2z16gqhxAyITar1J9/+CTUD4DV67ImiqSKpLUQx
+         FZQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759172903; x=1759777703;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Njxey7G3aTuTqShbTBIMUulJ1i1nTX1TYxL9UTCOTos=;
+        b=lmcFF5Lc1RDjDe1orlbUmknQCUify0PJAoy4FyfCFzn4jAe3aDX4aO7BE4VzW90JbZ
+         4i9EvhXkEWM5QligHoldZ4uEjMn+FhjVj8DIMVumiEy0YQwLowLJXQxLYqkUjQskXaMt
+         auCnrIqi7sldEYAWQIL7g7mptIewZGNhuGJJjT54OEKewzuVpJZKlJ4RcHQmZKtLHY7H
+         S6oPtQgB15mhnhIgpy+zgFi/o14j0RpI7Pwl34ILQKWcDTkTHV2tceFWSlGXY7W4vxcj
+         GUc0qDMhsScqDY1mpcwURSH5yB2Cdcz3aVZPhak4jhV7ls6/nk+vG2TzSUKy/lR/vsvg
+         eiHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFeBEgNGuZ5QXaxn60xY5brbjOsEHdIlP3Wg+dOvgc6k8ST5pgMEzT4gsJJfhpGpxA5fFbPhx/Ou1H0Kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBJ27CzvLEMX7XSuu5SEj96GCJ/bl4cFjziw3BeJz/uZ7RndFu
+	ZMhnKuXq49eqaIWJoPg2eRmO1Abp+N58nDJ+y5I98Q37IbSC8edmKbkZsv0bQEFC+Xg8Tj6Z5us
+	Gg3KYlbJSTQ==
+X-Google-Smtp-Source: AGHT+IFmUFAVW2JIwu+mAzAudh/QlJTnKWL5DHbA3zxjJEAoKO8ELdvqM7NM2IO10H5OHVK9s9MPkQxl47Lj
+X-Received: from plhs13.prod.google.com ([2002:a17:903:320d:b0:268:4e0:9c09])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db04:b0:265:9878:4852
+ with SMTP id d9443c01a7336-27ed49ddab3mr226842215ad.15.1759172902750; Mon, 29
+ Sep 2025 12:08:22 -0700 (PDT)
+Date: Mon, 29 Sep 2025 12:07:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.570.gb178f27e6d-goog
+Message-ID: <20250929190805.201446-1-irogers@google.com>
+Subject: [PATCH v6 00/15] Support dynamic opening of capstone/llvm
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Collin Funk <collin.funk1@gmail.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Li Huafei <lihuafei1@huawei.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev, 
+	Song Liu <song@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Linking against libcapstone and libLLVM can be a significant increase
+in dependencies and file size if building statically. For something
+like `perf record` the disassembler and addr2line functionality won't
+be used. Support dynamically loading these libraries using dlopen and
+then calling the appropriate functions found using dlsym.
 
-Please pull these handful of execve updates for v6.18-rc1.
+The patch series:
+1) moves the capstone, LLVM and libbfd code to their own C files,
+2) simplifies a little the capstone code;
+3) adds perf_ variants of the functions that will either directly call
+   the function or use dlsym to discover it;
+4) adds BPF JIT disassembly support to in memory disassemblers (LLVM
+   and capstone) by just directing them at the BPF info linear JIT
+   instructions (note this doesn't support source lines);
+5) adds fallback to srcline's addr2line so that llvm_addr2line is
+   tried first, then the deprecated libbfd and then the forked command
+   tried next, moving the code for forking out of the main srcline.c
+   file in the process.
 
-Thanks!
+The addr2line LLVM functionality is written in C++. To avoid linking
+against libLLVM for this, a new LIBLLVM_DYNAMIC option is added where
+the C++ code with the libLLVM dependency will be built into a
+libperf-llvm.so and that dlsym-ed and called against. Ideally LLVM
+would extend their C API to avoid this.
 
--Kees
+v6: Refactor the libbfd along with capstone and LLVM, previous patch
+    series had tried to avoid this by just removing the deprecated
+    BUILD_NONDISTRO code. Remove the libtracefs removal into its own
+    patch.
+v5: Rebase and comment typo fix.
+v4: Rebase and addition of a patch removing an unused struct variable.
+v3: Add srcline addr2line fallback trying LLVM first then forking a
+    process. This came up in conversation with Steinar Gunderson
+    <sesse@google.com>.
+    Tweak the cover letter message to try to address Andi Kleen's
+    <ak@linux.intel.com> feedback that the series doesn't really
+    achieve anything.
+v2: Add mangling of the function names in libperf-llvm.so to avoid
+    potential infinite recursion. Add BPF JIT disassembly support to
+    LLVM and capstone. Add/rebase the BUILD_NONDISTRO cleanup onto the
+    series from:
+    https://lore.kernel.org/lkml/20250111202851.1075338-1-irogers@google.com/
+    Some other minor additional clean up.
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+Ian Rogers (15):
+  perf map: Constify objdump offset/address conversion APIs
+  perf capstone: Move capstone functionality into its own file
+  perf llvm: Move llvm functionality into its own file
+  perf libbfd: Move libbfd functionality to its own file
+  perf capstone: Remove open_capstone_handle
+  perf capstone: Support for dlopen-ing libcapstone.so
+  perf llvm: Support for dlopen-ing libLLVM.so
+  perf llvm: Mangle libperf-llvm.so function names
+  perf dso: Move read_symbol from llvm/capstone to dso
+  perf dso: Support BPF programs in dso__read_symbol
+  perf llvm: Disassemble cleanup
+  perf dso: Clean up read_symbol error handling
+  perf disasm: Make ins__scnprintf and ins__is_nop static
+  perf srcline: Fallback between addr2line implementations
+  perf disasm: Remove unused evsel from annotate_args
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.18-rc1
-
-for you to fetch changes up to 8c94db0ae97c72c253a615f990bd466b456e94f6:
-
-  binfmt_elf: preserve original ELF e_flags for core dumps (2025-09-03 20:49:32 -0700)
-
-----------------------------------------------------------------
-execve updates for v6.18-rc1
-
-- binfmt_elf: preserve original ELF e_flags for core dumps (Svetlana
-  Parfenova)
-
-- exec: Fix incorrect type for ret (Xichao Zhao)
-
-- binfmt_elf: Replace offsetof() with struct_size() in fill_note_info()
-  (Xichao Zhao)
-
-----------------------------------------------------------------
-Svetlana Parfenova (1):
-      binfmt_elf: preserve original ELF e_flags for core dumps
-
-Xichao Zhao (2):
-      exec: Fix incorrect type for ret
-      binfmt_elf: Replace offsetof() with struct_size() in fill_note_info()
-
- arch/riscv/Kconfig       |  1 +
- fs/Kconfig.binfmt        |  9 +++++++++
- include/linux/mm_types.h |  5 +++++
- fs/binfmt_elf.c          | 48 +++++++++++++++++++++++++++++++++++++-----------
- fs/exec.c                |  2 +-
- 5 files changed, 53 insertions(+), 12 deletions(-)
+ tools/perf/Makefile.config         |  14 +
+ tools/perf/Makefile.perf           |  24 +-
+ tools/perf/builtin-script.c        |   2 -
+ tools/perf/tests/make              |   2 +
+ tools/perf/util/Build              |   7 +-
+ tools/perf/util/addr2line.c        | 439 ++++++++++++++++
+ tools/perf/util/addr2line.h        |  20 +
+ tools/perf/util/annotate.c         |   1 -
+ tools/perf/util/capstone.c         | 682 +++++++++++++++++++++++++
+ tools/perf/util/capstone.h         |  24 +
+ tools/perf/util/config.c           |   2 +-
+ tools/perf/util/disasm.c           | 645 ++----------------------
+ tools/perf/util/disasm.h           |   6 +-
+ tools/perf/util/disasm_bpf.c       | 195 --------
+ tools/perf/util/disasm_bpf.h       |  12 -
+ tools/perf/util/dso.c              | 112 +++++
+ tools/perf/util/dso.h              |   4 +
+ tools/perf/util/libbfd.c           | 600 ++++++++++++++++++++++
+ tools/perf/util/libbfd.h           |  83 ++++
+ tools/perf/util/llvm-c-helpers.cpp | 120 ++++-
+ tools/perf/util/llvm-c-helpers.h   |  24 +-
+ tools/perf/util/llvm.c             | 484 ++++++++++++++++++
+ tools/perf/util/llvm.h             |  21 +
+ tools/perf/util/map.c              |  19 +-
+ tools/perf/util/map.h              |   6 +-
+ tools/perf/util/print_insn.c       | 117 +----
+ tools/perf/util/srcline.c          | 772 ++---------------------------
+ tools/perf/util/srcline.h          |   9 +-
+ tools/perf/util/symbol-elf.c       | 100 +---
+ tools/perf/util/symbol.c           | 131 -----
+ 30 files changed, 2745 insertions(+), 1932 deletions(-)
+ create mode 100644 tools/perf/util/addr2line.c
+ create mode 100644 tools/perf/util/addr2line.h
+ create mode 100644 tools/perf/util/capstone.c
+ create mode 100644 tools/perf/util/capstone.h
+ delete mode 100644 tools/perf/util/disasm_bpf.c
+ delete mode 100644 tools/perf/util/disasm_bpf.h
+ create mode 100644 tools/perf/util/libbfd.c
+ create mode 100644 tools/perf/util/libbfd.h
+ create mode 100644 tools/perf/util/llvm.c
+ create mode 100644 tools/perf/util/llvm.h
 
 -- 
-Kees Cook
+2.51.0.570.gb178f27e6d-goog
+
 
