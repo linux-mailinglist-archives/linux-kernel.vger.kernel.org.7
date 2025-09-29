@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-835927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB188BA85DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:11:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA27BBA85E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EDF189B819
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:11:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A8187A66FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0241273D6F;
-	Mon, 29 Sep 2025 08:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C24239E79;
+	Mon, 29 Sep 2025 08:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzZKGgDH"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1bCd8uE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E141239E79
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FE9625
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759133481; cv=none; b=KXZSN/3ESW4pmHqSMEhStVtxRE4v11rTib0Jp+26bI0AT9sgDE8mcQPdjrC0wRAQAClx7ab0QTJpo8YACrRBPWKb3J0g7FLBYqx9xK44WVrmZla5ulf9hUhqddB947gn2P1H+L8d1wMeMMu7IdkMDDVcgsiEXY6cajI8jSy0eiA=
+	t=1759133555; cv=none; b=OrpI4yetvN9AW42FPdoz+TjIrIi7PDRyXFVrSXZVWKp2Dig4GWSf4pYcy8ntJb20x2w3K6/gfuaGCUnvopz+hwIPNZYocX5hi9MTC7P+SzatvhnBAo/rFe0a0tl/e0wGyo9pYve/rHBpH0wdemoqSXtDHv7b1YAkRlBM9cmTJTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759133481; c=relaxed/simple;
-	bh=7qZskoFTAcc896x7pDEMBjGUIu8+uo07rVe2jac6zeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=up11JH74eyPRjviilaXbyK0fwILa/74TzgmlwxB0m+l9RqyXqX5CC59fA4UCfT6XtvIU0jtYx7guLyyndDfDkJau0lm29A871TeRvMxuqzE9Vsn3bG6Bk8IoJ77p1cZ0bgzgITnOCrq0s3tXDVhdiojJ2GfD3TCdnoT9pf5oCJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzZKGgDH; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b5579235200so3099105a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759133479; x=1759738279; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yEDTck6Ih0LB4S3mK316czhYt6Y/6Luy06LhdwUneVs=;
-        b=AzZKGgDHuGV/Cb+jVE2NF5LSjqzUTXtIEtIY7oVEORk/9kP5vP9QyFB5pL+9rDD9wv
-         UbT+rgDiq3EuF4lJBtVWQzS5f2cGcwz6J5Xc8+fPNYD94aAq8f2O07Hj6mq8HOlLR76D
-         RxMU4sFbl2QAz1SH4whasE20WAEEBdeM070QH7afBJxovlh4cvbSNtFMqEgqP1bNNcFP
-         aX9j509FGhQiOzUHebD77T7jaBeaNgNIqiS0Wb1udvUq+kxgxKjUXiXLWBslZBe0BJLV
-         zKrlR9ymqklArDKfC/1dhki+9XDfOrWp6/bhWNjwDydNJZ8u24BrhKrhtgb7sZ56znTJ
-         ZdHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759133479; x=1759738279;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yEDTck6Ih0LB4S3mK316czhYt6Y/6Luy06LhdwUneVs=;
-        b=WYW6okhHfPNvNsjeRSXdUsFfBJpA8ZiKs9+1mpgOrMvEMrizxmTCxV5KiUbDvPMm11
-         cki58jnS7p9JKdtfGOMyAYKi2BPvJ8wqyfoRjoAXITn4ea3RO88ek5hDU8kNaP0z7EPA
-         FnPspT3N0CgRqbCI/lQgw0L4W0AwThvqPrIPtEk8xRO9P0BQZMTmqyJ/wkqnLNYEC5++
-         fFNQL9x9JHX+VOOJpCala9t0r8tFs5Ly4zuWIxROq0h4N4A5BSyLbfiD+dEYGJ9y4Zg2
-         +TcduGq39u7EdM5uNyz9qbFYuFTgZh4/+jzc30sksMAu0RrP5g80knC9BoRiDRGIwpos
-         e+ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpB4kUpotDsxAzdAIHXvJh1S0HWihLbLTd5jvVNeut6VwvPli0ZQpQi8vm00JhOqAYBnc9ljUvtnXs7NU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9Ih2IZBjcgm2DrrfRH7Z8pUZ39izGA50Ks3p02Ld5J0hGw8Qn
-	Ce+j+743v840W0h+Rb+7EsJnzen/wlvoC/Pp3ySCwrkD7pJOWZdWQIn0
-X-Gm-Gg: ASbGncvZQkSCmwyb/lTWHtzR2qm0sAB4TY1qBvyT/FNxqIytH0Gz05diqsDiqNPpH1q
-	6kuV8DdCTJZ6Eh0gawjcnFehLNGtLRC13YSToRzXrN6ZXae2eKEnWDE0v1z6H3Da7AQLeA/4C19
-	mWmHT07/mVuvXxYugkU49iSJy6k3MX7ddUF/EXykJixsgwNlSatSZqd2MxbneznC2xKNUKaTw75
-	UZi7imFEqG3OgVB31TaW+JXs6XXijdG2nGNgc1pxdE8YlVBS1C7mGdaO9ZKzwoJDlvP/6aRV57N
-	sDCrbOodl9D+UtgAXokFsZYkyToBGVazhHUhO2AYA+xPlvRbF31JPZ0vvXNdt4iHSGMkUy9r3bc
-	WV1AYoGi06sGRzhar347d8+u/VGJSMGLc6gJtIxUtRg+ZMiPH
-X-Google-Smtp-Source: AGHT+IFbFtY6P6MLHr6AhqQIs9qRghu4g1lEqPTOpJqtgwSKotPoJnpXi9md1fO+Rhd39mfDohF1Xw==
-X-Received: by 2002:a17:903:234f:b0:276:76e1:2e87 with SMTP id d9443c01a7336-27ed4a4979amr154539365ad.44.1759133478813;
-        Mon, 29 Sep 2025 01:11:18 -0700 (PDT)
-Received: from localhost.localdomain ([111.92.125.119])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed68821f8sm120319765ad.73.2025.09.29.01.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 01:11:18 -0700 (PDT)
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abinash Singh <abinashsinghlalotra@gmail.com>,
-	syzbot+7fb23a5461e8c9d38a3e@syzkaller.appspotmail.com
-Subject: [PATCH RFC] bcachefs: Fix KMSAN uninit-value in __bch2_read_endio
-Date: Mon, 29 Sep 2025 13:41:10 +0530
-Message-ID: <20250929081110.11618-1-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759133555; c=relaxed/simple;
+	bh=P3xJLz/33GrYSj1aGgGnKj3afAwcVes4JbpYpwcAf48=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EJeeevVDradX1cdtw2niJ/EjVAHb5pF0btXav9iiNg4risGvTZYbGFTjMETVcZM8ES+r4OOWXiDUMBb05sy5QVO6mxVBZSpXeN1+4CiDyv4//1y2kxxJf74M70oyEvan4NEcgE7v3BuxAglI0njN6wK7WpCC+/Gzs4jwhBZnpYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1bCd8uE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5FE4C4CEF5
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:12:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759133554;
+	bh=P3xJLz/33GrYSj1aGgGnKj3afAwcVes4JbpYpwcAf48=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=n1bCd8uEdDXb3e/m0Ca210ZBSO2VDbnETWstTPb5h6gBhbb4pi98A1KmgZMeRsDAI
+	 cRoiDBnjoIRHbILIMlzLJRGIrdPve3P0MAYdFHUtxSA+6RtNelszXFklOMJfhCbFO1
+	 413S/YXccMidN48uX80gscYW/p30RtdvA/3Gcqhq6tU3OOHmz1Z/uN4roW0fS/nads
+	 YI93pHIFkg45eDp4SerlfkIGnn3LZIeHNQT0f3e49JohCK8o5w0RZUCt6Y/u65lHUZ
+	 tjAedEqF8QsxKegHQrk0WzGjtn6fq8R67vbrEgTCZnEDkURBMa2dL2aeipkwhosL+J
+	 Lm0D2vOZGwl/Q==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30cce86052cso3331264fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:12:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUFpWdV/V8EohGeOurEGcffMfOHLFjoEGUN0FF/f1IUXDZkUcas9JjSmVcii1dng9ADrbV0ah0IWg6shHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyN2/byRWzDPa47mvm8p014BiL5QiOR+8jeW4T4y9FfGXmZeoG
+	zK9GW7HYPsw4mxR2Wq8jWU9YzSalqdXl3CLO7plCFfQh/YL9UEVSj10UjxFOvO7haxOOaBiO8wk
+	HKzIFMk4cATcyEdmUvKaVnunQNNLZpxU=
+X-Google-Smtp-Source: AGHT+IHEsUC5Tp8ILZbUVUxIcIq+/7rt16ij/PVeyXnmrLUh0s2P+VnYJUNfj/SPr9b7u07NPicC6tl/WicO+PPfKw0=
+X-Received: by 2002:a05:6870:d6a4:b0:353:f24:e95a with SMTP id
+ 586e51a60fabf-35ef0761242mr6682731fac.42.1759133553974; Mon, 29 Sep 2025
+ 01:12:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <72b9ae1e-18a4-4b59-9c01-1248c38eee43@linuxfoundation.org>
+In-Reply-To: <72b9ae1e-18a4-4b59-9c01-1248c38eee43@linuxfoundation.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 29 Sep 2025 10:12:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gsa3wMJ_xKj1M=vxq3WA0Ksj4TXOxOpRYPz0PDYJb09g@mail.gmail.com>
+X-Gm-Features: AS18NWBW1DK_FG7uJ7i4RTcL2v1WnvaLFMQFkkGn90AurpyckD-me-E65oQJEO4
+Message-ID: <CAJZ5v0gsa3wMJ_xKj1M=vxq3WA0Ksj4TXOxOpRYPz0PDYJb09g@mail.gmail.com>
+Subject: Re: [GIT PULL] cpupower update for Linux 6.18-rc1
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, shuah <shuah@kernel.org>, 
+	Thomas Renninger <trenn@suse.com>, Thomas Renninger <trenn@suse.de>, "John B. Wyatt IV" <jwyatt@redhat.com>, 
+	John Kacur <jkacur@redhat.com>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-KMSAN reported a use of uninitialized memory in __bch2_read_endio():
+Hi Shuah,
 
-  BUG: KMSAN: uninit-value in __bch2_read_endio+0xb2a/0x2240
-  fs/bcachefs/io_read.c:832
-  ...
-  Uninit was stored to memory at:
-  poly1305_core_emit+0x46a/0x480 lib/crypto/poly1305-donna64.c:183
-  ...
-  __bch2_checksum_bio+0x1048/0x1130 fs/bcachefs/checksum.c:237
+On Sun, Sep 28, 2025 at 10:39=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.=
+org> wrote:
+>
+> Hi Rafael,
+>
+> Please pull the following cpupower update for Linux 6.18-rc1.
+>
+> Fixes incorrect return vale in cpupower_write_sysfs() error path
+> and passing incorrect size to cpuidle_state_write_file() while
+> writing status to disable file in cpuidle_state_disable().
+>
+> diff is attached.
+>
+> thanks,
+> -- Shuah
+>
+> ----------------------------------------------------------------
+> The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca7=
+6e:
+>
+>    Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+>
+> are available in the Git repository at:
+>
+>    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-c=
+pupower-6.18-rc1
+>
+> for you to fetch changes up to 23199d2aa6dcaf6dd2da772f93d2c94317d71459:
+>
+>    tools/cpupower: Fix incorrect size in cpuidle_state_disable() (2025-09=
+-24 17:15:35 -0600)
+>
+> ----------------------------------------------------------------
+> linux-cpupower-6.18-rc1
+>
+> Fixes incorrect return vale in cpupower_write_sysfs() error path
+> and passing incorrect size to cpuidle_state_write_file() while
+> writing status to disable file in cpuidle_state_disable().
+>
+> ----------------------------------------------------------------
+> Kaushlendra Kumar (2):
+>        tools/cpupower: fix error return value in cpupower_write_sysfs()
+>        tools/cpupower: Fix incorrect size in cpuidle_state_disable()
+>
+>   tools/power/cpupower/lib/cpuidle.c  | 5 +++--
+>   tools/power/cpupower/lib/cpupower.c | 2 +-
+>   2 files changed, 4 insertions(+), 3 deletions(-)
+> ----------------------------------------------------------------
 
-The local `digest` buffer in __bch2_checksum_bio() was left
-uninitialized before being passed into Poly1305 routines, which
-caused KMSAN to flag it as an uninitialized read.
-
-Fix this by explicitly zero-initializing `digest`.
-
-Reported-by: syzbot+7fb23a5461e8c9d38a3e@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7fb23a5461e8c9d38a3e
-Fixes: 1c6fdbd8f246 ("bcachefs: Initial commit")
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
----
- fs/bcachefs/checksum.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/bcachefs/checksum.c b/fs/bcachefs/checksum.c
-index a6795e73f0b9..433ded62c77a 100644
---- a/fs/bcachefs/checksum.c
-+++ b/fs/bcachefs/checksum.c
-@@ -216,7 +216,7 @@ static struct bch_csum __bch2_checksum_bio(struct bch_fs *c, unsigned type,
- 	case BCH_CSUM_chacha20_poly1305_80:
- 	case BCH_CSUM_chacha20_poly1305_128: {
- 		struct poly1305_desc_ctx dctx;
--		u8 digest[POLY1305_DIGEST_SIZE];
-+		u8 digest[POLY1305_DIGEST_SIZE] = { 0 };
- 		struct bch_csum ret = { 0 };
- 
- 		bch2_poly1305_init(&dctx, c, nonce);
--- 
-2.43.0
-
+Pulled and added to linux-pm.git/linux-next, thanks!
 
