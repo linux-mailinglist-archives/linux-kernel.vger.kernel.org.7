@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-836138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5349BBA8D6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:13:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939FEBA8D6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7D5189BA7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469321C09FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACB52FAC0E;
-	Mon, 29 Sep 2025 10:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="drTFvnbL"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181902FB614;
+	Mon, 29 Sep 2025 10:15:31 +0000 (UTC)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41982D5436;
-	Mon, 29 Sep 2025 10:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D1824676A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759140793; cv=none; b=g3XgW+ziWGDj4mUOp9qFIncgMlAPDXFJXycLGhIPNCU7fJJI9gvOErOEIdjlGEkvr4tE0ps9lVFwbg7upJ5hLCJjrbQbXrjtC3VFmpqLJnWUyHyD6Nr3E2ymNr8dkSQAplUQXWYN3dYgaiDyBaUXYPzUEFOdnmZ9Xm8BPItQ2Bw=
+	t=1759140930; cv=none; b=Ve8cTkkbPL66ap6jgNw5Z0UedelG5rEOhDDxTh4cQToSkC+o21sWPY6yn2u7iwcEgHeEqp2YYtIdKxhf2zwES2gziX6KNA4ZaLLt3iTQ0GrGBSbYRaf54mlgHP88jvZyLoxUgPYWZCsSIKJUqCe+oIoPaeUkAa4zwY7P0GOXztQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759140793; c=relaxed/simple;
-	bh=5TJ7rXc9PceY5+Uq+nP+sm9j3Ynhc3o6j6tQt62kVEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhB/sWz/YuuWmFQeSvMbinVyKWXhmabxYmD5vRx+JSFO7HcaGPltrVIbayTzwxvjaQQPjEiutOQPc27Dz+cqbek9c/e3iVwf4wKWcINH4n9A8r0+dW8OG7EP8TVJALpDVdx5wKtnwDLpKhm0RQwFSEtPdCzrScFRCp1hW81FYHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=drTFvnbL; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tXmRHJ8HqJUwPcuCeHwLbY1HiJTJxK6IF+F+zlaEzHU=; b=drTFvnbL+hJI5lOYlNL2eHaO9X
-	WnQws3KA0w2wuerQ7uvB08r/SHgYh9x0EjnEUb4I1HrPp7TD8Ws//UsPvAvkeibZ8/rzy8Js4hZso
-	tJ0qYFR6HpXGnYHGEha6KzCRy9ThyAigfdiVwyIqHJY9ra3gFGOtVB0S1Fm2UsI0rrgpOEP09wmt7
-	6Vg8wrUokt8dwL8KdyjjELyZwlRGBz4Rxo1Om3xtyjatNdrsdwtrVf2KUcm7nRUvTK06Eg7fQCwHk
-	kUQsePcvUbwA9k+bLeIi5aMymMN+fcLBKFsDPz50oEfPMel5/GcVYxdQdC383EYEe3g4OnAK8VAmq
-	POj5K4cA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3AsQ-0000000BzB0-3paa;
-	Mon, 29 Sep 2025 10:13:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D4280300359; Mon, 29 Sep 2025 12:12:59 +0200 (CEST)
-Date: Mon, 29 Sep 2025 12:12:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, chenyuan_fl@163.com,
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Yuan Chen <chenyuan@kylinos.cn>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v2] tracing: Fix race condition in kprobe initialization
- causing NULL pointer dereference
-Message-ID: <20250929101259.GE3245006@noisy.programming.kicks-ass.net>
-References: <20250929143916.5984441b32e6f84618b4deb8@kernel.org>
- <20250929065731.1351028-1-chenyuan_fl@163.com>
- <20250929044836.7169d5be@batman.local.home>
- <84seg5d2p3.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1759140930; c=relaxed/simple;
+	bh=VKeWPwCthMHrv46cS6qePKsRD0r2j4FUJoWvmC+PJk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qxWjoOncsYJjmOe1iYwY1dG5VWlw4iVenFO/acTDEWptvQR6IQIw0tpzHzPxRwInMXpgFAm1ySFj2XItHmMzWjlDm9XnAgPlX2ZNc0Fq4pMMSgW0ZyDXN38kzVrxx7mT4kMQz++17Bz/Lv6xjYY81jBmMUERzyUlWaY9IsTGTzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-8e3239afdf2so2691204241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:15:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759140927; x=1759745727;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CLywH616puogHM/w7g0w5lgJ4MaYI93I5ro3ENJXEGs=;
+        b=JTSVyaM534XjM8DARUXjz4p9qiz3wLRaoNDgmy1Ma7PlmVTi4/VMmuT5IBngI/aU8J
+         49w2bjjntboOBzJdPnq9VMJo+tik3KGnlk7mrDSeGWCdwgF+JsJkwNZ/0T8Dwmo2FB89
+         8259x5ARI4l4p9Zq3ngOARmWEABQpbVGGkaAr57v79sawzQG6LQ+uRKShRbnQ7aheqsx
+         drn0F+FdG+cS8CyT1cj0pKnbJnFLcI7ZMUK6I+4MLAheHdjI9RKAYzgS6MuG8gFCuFPx
+         recIBrMbIRavJJR6787Rhj6Y2XoFxL/IQYCWpQRAs0iljdetQHHQoAqan/ig9aEkMjI7
+         8z7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWHh9GIjgaLKjFGiMQRxGZ/lZKPynxTbRh8Xyzu1FqXUK3VV374WCC7Ti5RtPiOBZFxPMq67ECo9Nje+jA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2hZxvDwHHaxqPSUQLNkmaFwu06vZeshqBFWfo7GKPoCt6Emip
+	ul96m/1X0WKemLEC+MisYfeVtR0bNe4j4LFRF657pcACwqKJ2++JCX2dqQYUm72R
+X-Gm-Gg: ASbGnctRDHJxpzriNZAYFGe5IfeXD1MBYkx+GkyEIaG9XudrKr8rVtAF9FugiwcwmG4
+	p7LCNqtEETwSJ2DcON04nOS1oVYm9n7WTCypxanAzrALz1IkWMEkQwhFCUAAa7j3NCDfHlQPMBG
+	ewLw35FjnckNmNnPss93TXINMtyOuQ5ZnPB7Pgtl61RzhiuXfikIZP6VQV5UkOm8TxHmqs9K/Eo
+	31WLSxu41qJ0j1uiw9XOgJgYpH66q1sq7CocAdHn++iQoXKdRSr6I1QAjiIuGoB3ex1odPROjCM
+	tTkn3Rli2znrEnnrhCzozziIMbkj2ZFkmRFDNCbTZZ1sofzCVzVMwJTTHRSUiWM0vuVWtd/2Avh
+	PzaSkaKqZt7cbvK/cNT48Vc2IEV78fmyVuVy0B4w/xGHg/r4nQT9Yed9486jhE0KSh7t2ifg=
+X-Google-Smtp-Source: AGHT+IH03+Wu61dJRVijdTfQBUnYUi4cPNm1ySpK2p/rXGcLhi+fwYcuwkP/HJSk+FslpmQ6k83Zfg==
+X-Received: by 2002:a05:6102:510e:b0:527:d1de:893b with SMTP id ada2fe7eead31-5acd4639ad5mr6453048137.18.1759140927626;
+        Mon, 29 Sep 2025 03:15:27 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-916d1518f84sm2371668241.6.2025.09.29.03.15.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 03:15:27 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5a218470faaso3472184137.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:15:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXtL/nsnO0HNPfWYG82eJsN0T0jLp4B1sWxXPrlgX3oP4Lmgi8928aDEJAxS2eKmPos4O42531tac4rbqc=@vger.kernel.org
+X-Received: by 2002:a05:6102:f11:b0:5a3:d554:8409 with SMTP id
+ ada2fe7eead31-5acd634005dmr6695044137.25.1759140926458; Mon, 29 Sep 2025
+ 03:15:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84seg5d2p3.fsf@jogness.linutronix.de>
+References: <20250929-gpio-aggregator-fix-set-config-callback-v1-1-39046e1da609@bootlin.com>
+In-Reply-To: <20250929-gpio-aggregator-fix-set-config-callback-v1-1-39046e1da609@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Sep 2025 12:15:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX5HXx2HSAHP-H1EEKO-csBku_cMm-OaacE7GZLXwBxOg@mail.gmail.com>
+X-Gm-Features: AS18NWCqCPvheA4EHmzGW4vCHywVYoZXOJht6RqD_H4VpVYB8jhcuEiZQ8v1G8I
+Message-ID: <CAMuHMdX5HXx2HSAHP-H1EEKO-csBku_cMm-OaacE7GZLXwBxOg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: aggregator: restore the set_config operation
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 29, 2025 at 11:38:08AM +0206, John Ogness wrote:
+Hi Thomas,
 
-> >> Problem:
-> >> 1. CPU0 executes (1) assigning tp_event->perf_events = list
-> 
-> smp_wmb()
-> 
-> >> 2. CPU0 executes (2) enabling kprobe functionality via class->reg()
-> >> 3. CPU1 triggers and reaches kprobe_dispatcher
-> >> 4. CPU1 checks TP_FLAG_PROFILE - condition passes (step 2 completed)
-> 
-> smp_rmb()
-> 
-> >> 5. CPU1 calls kprobe_perf_func() and crashes at (3) because
-> >>    call->perf_events is still NULL
-> >> 
-> >> The issue: Assignment in step 1 may not be visible to CPU1 due to
-> >> missing memory barriers before step 2 sets TP_FLAG_PROFILE flag.
-> 
-> A better explanation of the issue would be: CPU1 sees that kprobe
-> functionality is enabled but does not see that perf_events has been
-> assigned.
-> 
-> Add pairing read and write memory barriers to guarantee that if CPU1
-> sees that kprobe functionality is enabled, it must also see that
-> perf_events has been assigned.
-> 
-> Note that this could also be done more efficiently using a store_release
-> when setting the flag (in step 2) and a load_acquire when loading the
-> flag (in step 4).
+On Mon, 29 Sept 2025 at 12:03, Thomas Richard
+<thomas.richard@bootlin.com> wrote:
+> Restore the set_config operation, as it was lost during the refactoring of
+> the gpio-aggregator driver while creating the gpio forwarder library.
+>
+> Fixes: b31c68fd851e7 ("gpio: aggregator: handle runtime registration of gpio_desc in gpiochip_fwd")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202509281206.a7334ae8-lkp@intel.com
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 
-The RELEASE+ACQUIRE is a better pattern for these cases. 
+Thanks for your patch!
 
-And I'll argue the barrier should be in 2 not 1, since it is 2 that sets
-the flag checked in 4.  Any store before that flag might be affected,
-not just the ->perf_events list.
+> --- a/drivers/gpio/gpio-aggregator.c
+> +++ b/drivers/gpio/gpio-aggregator.c
+> @@ -723,6 +723,7 @@ struct gpiochip_fwd *devm_gpiochip_fwd_alloc(struct device *dev,
+>         chip->get_multiple = gpio_fwd_get_multiple_locked;
+>         chip->set = gpio_fwd_set;
+>         chip->set_multiple = gpio_fwd_set_multiple_locked;
+> +       chip->set_config = gpio_fwd_set_config;
+>         chip->to_irq = gpio_fwd_to_irq;
+>         chip->base = -1;
+>         chip->ngpio = ngpios;
+>
+
+Is there any specific reason why you are doing this unconditionally,
+instead of only when any of its parents support .set_config(), like
+was done before?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
