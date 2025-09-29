@@ -1,110 +1,130 @@
-Return-Path: <linux-kernel+bounces-836117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630F2BA8C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:55:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DD5BA8CA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176283C00DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:55:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1E4173ED5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B533C2EF65A;
-	Mon, 29 Sep 2025 09:54:31 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD512ED866;
-	Mon, 29 Sep 2025 09:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962E42EE5F4;
+	Mon, 29 Sep 2025 09:55:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217722D595B
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759139671; cv=none; b=fCvtsahD6r6+6+v3itXfqZbNdVxpuDb0xayOgGSw/Bndz/OJNl65MyqJp9Xr6kywMDC7o80Ybl0RBaNjOgd9jGF0H5NJU7+ooHQ4tbMYljPLdeoHzr/606eC3vKRnOjWdbvD1blDQvWYE7TpczwLBmSXcs2gMxnBa4ft5l3ND5g=
+	t=1759139733; cv=none; b=gfMVBQMyL+0QBM+5lR0IN2F7xfX/KEajGyBA04fNFFq/dWXRoXzCUTiiCNeENOFcAkxqd7EZ3MqO+RtbFQH5I79F5rzLjNBXR5VV6SivhYAomhzSXzaAUG1+kaxtn6n5gBArISWT5Ty2RgRcyV0Xi5lB6S76FsNnQCodGBUnxHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759139671; c=relaxed/simple;
-	bh=lDn9F5tx2ppP7pvI0PEL6bF9L5E+LPHwI3GzH2Xe9BQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SS2NjxDUwvAXmh8lbx0jJXk/c6Qyz80Qo/i8KEpT+mvAfuHFM8ms9tofciUcP2nDj2dptiU5X6vw8uJ0D5ZZx2K5BYJC+DD6O/yHJflVsvo5VB5UU0XhOaXyXIbbOXOol3XtmEfL5p+HXeQxDUhjUZ92xCeGozcbeyn016lEKVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cZxNm4wjsz6L52D;
-	Mon, 29 Sep 2025 17:54:16 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 25BDE1402FE;
-	Mon, 29 Sep 2025 17:54:27 +0800 (CST)
-Received: from localhost (10.47.64.220) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 29 Sep
- 2025 10:54:25 +0100
-Date: Mon, 29 Sep 2025 10:54:24 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Len
- Brown" <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Javier Carrasco
-	<javier.carrasco@wolfvision.net>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek
-	<pavel@kernel.org>, Matthias Fend <matthias.fend@emfend.at>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Laurent
- Pinchart" <laurent.pinchart@ideasonboard.com>, Paul Elder
-	<paul.elder@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mark Brown
-	<broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@kernel.org>
-Subject: Re: [PATCH v2 16/16] spi: cadence: Remove explicit device node
- availability check
-Message-ID: <20250929105424.00007069@huawei.com>
-In-Reply-To: <20250924074602.266292-17-sakari.ailus@linux.intel.com>
-References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
-	<20250924074602.266292-17-sakari.ailus@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759139733; c=relaxed/simple;
+	bh=1myuQmDNaxTZNE5dXXtM15OEf8D7Fc8fLTd1O2Ini78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q7kdoIUh7IJoJEkAtSl8aoDI6anRqvNYAtt3nnmxOq8qtyEbbbWptq1MekFtehkvP/JiN/vbz7PQr16cpDYP4Sqs+h5Xn1SLGjsjLyx7gWnCtpeuClo4D2s/Qdig2QmXXR4S690L5SLsWau0rRmC23MeEzkP391OPuEZioF6HZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 028D5150C;
+	Mon, 29 Sep 2025 02:55:22 -0700 (PDT)
+Received: from [10.163.32.148] (unknown [10.163.32.148])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 920603F66E;
+	Mon, 29 Sep 2025 02:55:26 -0700 (PDT)
+Message-ID: <738db21f-5026-4bcb-a102-969c4379c015@arm.com>
+Date: Mon, 29 Sep 2025 15:25:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: hugetlb: avoid soft lockup when mprotect with
+ PROT_MTE
+To: Yang Shi <yang@os.amperecomputing.com>, muchun.song@linux.dev,
+ osalvador@suse.de, david@redhat.com, akpm@linux-foundation.org,
+ catalin.marinas@arm.com, will@kernel.org, carl@os.amperecomputing.com,
+ cl@gentwo.org
+Cc: linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250926162034.1785899-1-yang@os.amperecomputing.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250926162034.1785899-1-yang@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Sep 2025 10:46:02 +0300
-Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-> Don't check the availability of child device nodes explicitly as this is
-> now embedded in device_for_each_child_node().
+
+On 26/09/25 9:50 PM, Yang Shi wrote:
+> When calling mprotect() with PROT_MTE, kernel will initialize MTE tags
+> for every single page in the affected area. Soft lockup was observed
+> when doing this for large HugeTLB memory area in our customer's workload
+> (~300GB memory):
 > 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
+> watchdog: BUG: soft lockup - CPU#98 stuck for 23s! [t2_new_sysv:126916]
+> 
+> CPU: 98 PID: 126916 Comm: t2_new_sysv Kdump: loaded Not tainted 6.17-rc7
+> Hardware name: GIGACOMPUTING R2A3-T40-AAV1/Jefferson CIO, BIOS 5.4.4.1 07/15/2025
+> pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : mte_clear_page_tags+0x14/0x24
+> lr : mte_sync_tags+0x1c0/0x240
+> sp : ffff80003150bb80
+> x29: ffff80003150bb80 x28: ffff00739e9705a8 x27: 0000ffd2d6a00000
+> x26: 0000ff8e4bc00000 x25: 00e80046cde00f45 x24: 0000000000022458
+> x23: 0000000000000000 x22: 0000000000000004 x21: 000000011b380000
+> x20: ffff000000000000 x19: 000000011b379f40 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> x11: 0000000000000000 x10: 0000000000000000 x9 : ffffc875e0aa5e2c
+> x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> x5 : fffffc01ce7a5c00 x4 : 00000000046cde00 x3 : fffffc0000000000
+> x2 : 0000000000000004 x1 : 0000000000000040 x0 : ffff0046cde7c000
+> 
+> Call trace:
+>   mte_clear_page_tags+0x14/0x24
+>   set_huge_pte_at+0x25c/0x280
+>   hugetlb_change_protection+0x220/0x430
+>   change_protection+0x5c/0x8c
+>   mprotect_fixup+0x10c/0x294
+>   do_mprotect_pkey.constprop.0+0x2e0/0x3d4
+>   __arm64_sys_mprotect+0x24/0x44
+>   invoke_syscall+0x50/0x160
+>   el0_svc_common+0x48/0x144
+>   do_el0_svc+0x30/0xe0
+>   el0_svc+0x30/0xf0
+>   el0t_64_sync_handler+0xc4/0x148
+>   el0t_64_sync+0x1a4/0x1a8
+> 
+> Soft lockup is not triggered with THP or base page because there is
+> cond_resched() called for each PMD size.
+> 
+> So add cond_resched() for hugetlb to avoid soft lockup.
+> 
+> Fixes: 25c17c4b55de ("hugetlb: arm64: add mte support")
+> Tested-by: Carl Worth <carl@os.amperecomputing.com>
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 > ---
->  drivers/spi/spi-cadence-xspi.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  mm/hugetlb.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
-> index 6dcba0e0ddaa..23e426ef9b9c 100644
-> --- a/drivers/spi/spi-cadence-xspi.c
-> +++ b/drivers/spi/spi-cadence-xspi.c
-> @@ -908,9 +908,6 @@ static int cdns_xspi_of_get_plat_data(struct platform_device *pdev)
->  	unsigned int cs;
->  
->  	device_for_each_child_node(&pdev->dev, fwnode_child) {
-> -		if (!fwnode_device_is_available(fwnode_child))
-> -			continue;
-> -
->  		if (fwnode_property_read_u32(fwnode_child, "reg", &cs)) {
->  			dev_err(&pdev->dev, "Couldn't get memory chip select\n");
->  			fwnode_handle_put(fwnode_child);
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index cb5c4e79e0b8..fe6606d91b31 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -7242,6 +7242,8 @@ long hugetlb_change_protection(struct vm_area_struct *vma,
+>  						psize);
+>  		}
+>  		spin_unlock(ptl);
+> +
+> +		cond_resched();
+>  	}
+>  	/*
+>  	 * Must flush TLB before releasing i_mmap_rwsem: x86's huge_pmd_unshare
 
+LGTM
+
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
