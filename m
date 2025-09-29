@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-835814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE22BA8212
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:33:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69835BA8233
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEAA93AB274
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AAD21C0760
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB61F29E11D;
-	Mon, 29 Sep 2025 06:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4182BD5A7;
+	Mon, 29 Sep 2025 06:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b="Of1Fp7Ru"
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="U1V3e/cp"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3E91D516C;
-	Mon, 29 Sep 2025 06:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87DF256C87;
+	Mon, 29 Sep 2025 06:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759127604; cv=none; b=jJz6XdMBJcwIG5tNjqBF2alHC8khbhUGy/RiBTATubZwVxx2ksh9PMxTA3ySyBXWj7se8U+PbhBAczunFqVpfvUL4cBFQwzg6IW0hZUkJb0JG/gnKmGsRYHOEMfZk6P/4IMI7JG43kXmBbk8yrWpkSbB+bCeDq+ywqqzxYyU1LM=
+	t=1759127726; cv=none; b=fx3NxAtHjh4aIHJ3EZP3xwKweqjtqO25VvQVTwyyhHLkf+45Je3z4AOJhEkCwY8kFcSxTG8g3y1uQSynPBoeLcuQWJcl7m1MKYIaEma2vMAZs65vN7o8NBXqV2QFi6nK4vmPyYHCXsYhTKtRut625o+EJbujyBPZP7QzDr6sl5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759127604; c=relaxed/simple;
-	bh=x9nAZFHwTavntXJzo6i8En8mMnzDx03pdX8PJk4aMhQ=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=UAsZpZaIp9x+X4LHCPouPU3HMrI51CXB1DiDkyIk89kWzLn3X98NLjoBnuNdnsak4Bazbh9yg9xrqOOP0p/BVjCbMKkzgzyTixtMF+BWcAXa+IBkHUUWjRXAt3Oyg5e9XYCZ0097EvMBDzGjT8F3BmaUMoQ+A3MqiNgSADy5KUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b=Of1Fp7Ru; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [194.37.255.9] (helo=mxout.expurgate.net)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=8381f8b361=fe@dev.tdt.de>)
-	id 1v37Rg-00BYII-K1; Mon, 29 Sep 2025 08:33:12 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <fe@dev.tdt.de>)
-	id 1v37Rf-0079UB-R9; Mon, 29 Sep 2025 08:33:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.tdt.de;
-	s=z1-selector1; t=1759127591;
-	bh=x9nAZFHwTavntXJzo6i8En8mMnzDx03pdX8PJk4aMhQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Of1Fp7RuwiHF9jYc2xkapReL4dC2GBSnvgcg61SPT73R3xcZHYFX4ZvkjaK4kz2zE
-	 Y4nuXHFYXJmMZFZElaOoHlp77+3qbM5Hddl6svs8TsILUOusDwfqPT+bce9QluLSaZ
-	 PlvxUuFwCsll2mWIso+ZLfMNTlSw6A8B8CJki8F1LSle50f67pksfCAXcBIa5JBfmz
-	 qrNrclQjRs8Sfct5m9/G+XSVz97cZdR8zeq1XSKpASjSqYNZu6ObMrOEeuNEhS96oC
-	 KiqVQg3Xt/8rY/K3iEOk0oA+PKfd8IQA89JWcXRbdZP/qgAXvCknvqsRnswZ9Cl+m2
-	 0zSq0TplmM+Gw==
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 5AF24240042;
-	Mon, 29 Sep 2025 08:33:11 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 3D1C6240036;
-	Mon, 29 Sep 2025 08:33:11 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id D758126879;
-	Mon, 29 Sep 2025 08:33:10 +0200 (CEST)
+	s=arc-20240116; t=1759127726; c=relaxed/simple;
+	bh=3BDlhAYjKpAwNf4nXL+xwodfJ4mfUZA1oxHiXd4vkoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DTVMCnCt7mePPhAX2UiYHgbVHGgmnrd7+8/K9G/yAD/rFvZClnYieLVfgQrzoZRJZbwkIwte9DqWk2g2v5ObiDEoD6s6gTsatLIjZJ/p/rSq0b04I/ddxz9AtWEJn57Rl1E6IdcRUqAWkh9eUkZtXN50a9+9j0KSFl84wDxXHrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=U1V3e/cp; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1759127718;
+	bh=ejimwnI9aX/m1BdqmcNn5j7nwrGn30aTITlrZgI0KGk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=U1V3e/cpRooeSNyGBHA8H9bLmiyzPvwRGe/ym5gTinSrwZslozpTPclhf3bNF8/1z
+	 bamLM5/XgRyAcuZzK0GyFeJBAHl9pcveeGVm8enuDUTTQ6sYjC3D2h1ZMvxeWVbGGz
+	 7FOMow6QNODalfyNieeoB09+4THTVZaZ7y7IljsI=
+X-QQ-mid: zesmtpgz8t1759127713tc7836ab9
+X-QQ-Originating-IP: NwVyzrEDCHyZaDavr4gvamMM7hZdIJSffBPvgKhI67s=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 29 Sep 2025 14:35:11 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 9334752308087901994
+EX-QQ-RecipientCnt: 13
+Date: Mon, 29 Sep 2025 14:35:11 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Aurelien Jarno <aurelien@aurel32.net>, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: "open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH 1/2] driver: reset: spacemit-p1: add driver for
+ poweroff/reboot
+Message-ID: <BC3683F224622068+aNoon0so2erXE5I2@kernel.org>
+References: <20250927220824.1267318-1-aurelien@aurel32.net>
+ <20250927220824.1267318-2-aurelien@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Mon, 29 Sep 2025 08:33:10 +0200
-From: Florian Eckert <fe@dev.tdt.de>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, kumaravel.thiagarajan@microchip.com,
-	andriy.shevchenko@linux.intel.com, pnewman@connecttech.com,
-	angelogioacchino.delregno@collabora.com, peterz@infradead.org,
-	yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk,
-	macro@orcam.me.uk, schnelle@linux.ibm.com,
-	Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH] serial: 8250_pcilib: Replace deprecated PCI functions
-In-Reply-To: <da2de297-2c9c-4855-9fb7-553022538cde@kernel.org>
-References: <20250924133544.2666514-1-fe@dev.tdt.de>
- <5fed7e09-b59f-46b0-be49-881c0c1b61c1@kernel.org>
- <e4d2fa14701092977daa844cf25e7dd7@dev.tdt.de>
- <da2de297-2c9c-4855-9fb7-553022538cde@kernel.org>
-Message-ID: <cd5e677afaefb5ffa48913f4b6aa1efb@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-Content-Transfer-Encoding: quoted-printable
-X-purgate-type: clean
-X-purgate-ID: 151534::1759127592-5FF4A80C-D85077DE/0/0
-X-purgate: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250927220824.1267318-2-aurelien@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: MNbA5mkmBXEJBIKhaJOpC3fZmZ05lea9ZhrDtPenZJUApDfifsLePWu1
+	9Wljha/p41ZjRLHG/ipRbmpxYgf63TICPtS2nO7IUn4x/Gj1tcXW/iiSCH/YRWTCwfiPUns
+	EpW97Gz8akDTBlzgMTPlrnrG/qR8RRqIF9GLSBJej6t+tI0PfRKwqz8LVqyHtR7TKR4ogAO
+	3rdJ6c3xKBRZVkAxhRS9KqFdzcqxsD6Z3eQT+eiFPrAW+2s3L9l+NdyxQAJ0Ud6zeacdRO+
+	PaJboQpVc4rUI3IfGWttCTCFITjzrxponNzEyByMKxSLDNlFMYhwvqX+KmJ75JHZ6vITIaw
+	FYeT2VYQdM5LZ7l0XGrISzW6nrcO9FQsaIwqiYL4CiVv4gfa35ywoVYiTqejE672mbpy3K9
+	V+F6ztzeNbOvainFC7vJSf8pA1SQEKOvU4byMMcWO74oi8VyadPHzLe3Xg3J7Oi/B37LV1R
+	IkQ71ha/S2i5TXSa6VBgA7e49zN/Whdff2JWz1hSrpVB7LY/RY2Iu1VywtAGE0jd62zyRyT
+	Q7ygGl4luuqP4kwa48Jl79j4M+2dqfJSmPLLmxRpxV9cTlNNc4EMOuFdVH4L/eUrV8aPX2B
+	IaEFpAoF1mbxtEmgK8wO+WXQcNPlC21z4uRoQVGW3egxdzfiietZXf8TEsQhe/SMuaWHBEh
+	Jq1dTQz0MOFJg+zjaIkW7jvSaN1b3bbt9qKhXhqwtHWeO1gH0aeBxAPsrRYqI4e5rRVtdad
+	Er6ua+RIENZuMK63Ngp1ffUXBGvan4X1lCN96RlFewoKsE5G2gbOTZS7YrZOVAhIGoQOKpJ
+	MMWJ8AxBpuHmlkWgaZ8MaMIKAaOt0zqaHefYjjrglVdtc+1MmaqnMFH5RINEdM3VXZSkSA0
+	WRQAnzLB2g8r4H/DSl1achHJtzDAsyCe9ENqnUVD7wiZXUdgmWPo3tRauvFnyN9u3iz/GE3
+	NRPHsxXs/LpeajVJm331RgTLGPCOYdsDKWLK+GrmZnjzw//S2nOxtWpA4+cvLXf+cKnx677
+	PIBaMOGdol0uxycKGKqodmYPla04HFci7KPzpgCYrMAWPJt4we
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On 2025-09-29 08:00, Jiri Slaby wrote:
-> On 26. 09. 25, 14:31, Florian Eckert wrote:
->>>> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
->>> ...
->>>> --- a/drivers/tty/serial/8250/8250_pci.c
->>>> +++ b/drivers/tty/serial/8250/8250_pci.c
->>>> @@ -165,7 +165,15 @@ static int
->>>> =C2=A0 setup_port(struct serial_private *priv, struct uart_8250_port=
-=20
->>>> *port,
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 bar, unsigned in=
-t offset, int regshift)
->>>> =C2=A0 {
->>>> -=C2=A0=C2=A0=C2=A0 return serial8250_pci_setup_port(priv->dev, port=
-, bar, offset,=20
->>>> regshift);
->>>> +=C2=A0=C2=A0=C2=A0 void __iomem *iomem =3D NULL;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 if (pci_resource_flags(priv->dev, bar) & IORESOU=
-RCE_MEM) {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iomem =3D pcim_iomap(pri=
-v->dev, bar, 0);
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(iomem))
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-return -ENOMEM;
->>>=20
->>> Why not to propagate the error?
->>=20
->> Most other calls in the kernel of this function return
->> -ENOMEM on error. Therefore, I thought that this is the
->> correct return value. I can fix that in v2 if you like.
->> Let me know what you prefer.
->=20
-> Ugh, pcim_iomap() returns NULL on error, so the IS_ERR() check is all
-> wrong. What other places in the kernel use IS_ERR()? They need fixing.
+On Sun, Sep 28, 2025 at 12:07:40AM +0200, Aurelien Jarno wrote:
+> This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
+> chip, which is commonly paired with the SpacemiT K1 SoC.
+> 
+> The SpacemiT P1 support is implemented as a MFD driver, so the access is
+> done directly through the regmap interface. Reboot or poweroff is
+> triggered by setting a specific bit in a control register, which is
+> automatically cleared by the hardware afterwards.
+> 
+> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+Thanks.
 
-You're right. The function returns a pointer here and my check IS_ERR()
-is wrong. I mixed it up with the 'pcim_iomap_region()' function.
-Because I wanted to use this function before. As far as I can see, the=20
-return
-value of 'pcim_iomap()' is checked correctly in the linux sources.
-
-Sorry for the noise.
-
-I will adjust this and send a V2 patch.
-
---
-Florian
+Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
