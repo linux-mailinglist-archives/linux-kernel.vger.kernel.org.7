@@ -1,348 +1,193 @@
-Return-Path: <linux-kernel+bounces-836244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D194BA915C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:43:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E354EBA9140
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCFC1920333
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA863B4B5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BE530217F;
-	Mon, 29 Sep 2025 11:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508DE3016EE;
+	Mon, 29 Sep 2025 11:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZSj0gg2I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+foXsNS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC2E302CA0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591B19D880
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759146182; cv=none; b=gt9+fUSeViMhCTggCI7iAGmV5VPGKWTMcV4DlMWz1SSCq2O1c1SyKlKviNMRyQojtMjUUd5bNw+7XP+wwf96eP8qWkoemo4I9re65lZMHEP9mcIEJdqLB6rr1MxYiCy5jqgdV6xFcxL1GUQfqSUR5BJHanX+j7ztSn2u/VipjC8=
+	t=1759146157; cv=none; b=s6/hM78IBMh6X50UO/BmgJOlsSe5IZe14XTmCYUu65RK0FfNetDt2IgdPtrh7wuQMhMXUSqkD72qtrHC84R0cEzmuk0VrItQm0oCbMt3GJUszF9fQgT2gEIrDBf3OXKS+muYbHIHzzjXnrha9IQSmXWH+2CvgrQpYbkb+EpIn44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759146182; c=relaxed/simple;
-	bh=nEtyUr3R4f130JvlekB1xv6q2n31hAktv+O+ORIhXF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E68a9WIsi53wOKcQmlsn5gaqHUZLDRNSiS/Y0hARwqCGvZb6ORYxOAbipSrDYrm2NCv62slNzzBkCmf2JGpFhkTj0DJVPnVblUHq24HJK5qFZFjSHwJXFihwdSDiVfvdleuasxyMibkQrZRd5caHAEBDmieEec4X6awg2614byg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZSj0gg2I; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759146179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK8XYbna/kr6s7zcm8omtA4zXQRbuBS4F3NKIioLVWg=;
-	b=ZSj0gg2IF5T5OourZ/PTpeO5rkku+sRf+lggUxUBchF/ZQRBYEfCnj9npeJ5bIvcg+qF8D
-	l4J1Hz3cob6SgUaYq/DDryAmMHmcPvuSnPqyVDDbwBqzhBJd9o/jkj5JzDF3MT2ZuLGMFY
-	VLBYOUXj/y6Unk5ZzU2Xl3HuMcr5vLM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-10rq5rxoPQanakT1q6Lsrw-1; Mon,
- 29 Sep 2025 07:42:56 -0400
-X-MC-Unique: 10rq5rxoPQanakT1q6Lsrw-1
-X-Mimecast-MFC-AGG-ID: 10rq5rxoPQanakT1q6Lsrw_1759146174
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C239180057C;
-	Mon, 29 Sep 2025 11:42:54 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.44.32.41])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EC3AE19560B9;
-	Mon, 29 Sep 2025 11:42:49 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH v3 4/4] selftests/rseq: Add test for mm_cid compaction
-Date: Mon, 29 Sep 2025 13:42:25 +0200
-Message-ID: <20250929114225.36172-5-gmonaco@redhat.com>
-In-Reply-To: <20250929114225.36172-1-gmonaco@redhat.com>
-References: <20250929114225.36172-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1759146157; c=relaxed/simple;
+	bh=N3fnyLc+4qCJS9hDjFW2m2I5TjUGxQcJNTYpMDjxtkk=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=M958+h19XU4v6POnEVzLvaOus067pTouWkhokPvbhXTDifkkgREbEdKDfM7TTrdG9QpwHP7uyhHB/g6U2wpa4IO6Mtz72154uWvCUgKdTLgADR99CC8dJt2IMWSoveILSpq3Xd43+iFFojIa3mbZSF33NgFEbQVjj+dcD3vTbtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+foXsNS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0ED7C4CEF4;
+	Mon, 29 Sep 2025 11:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759146157;
+	bh=N3fnyLc+4qCJS9hDjFW2m2I5TjUGxQcJNTYpMDjxtkk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=t+foXsNS4GZta2sPX6j2vT8ysPiqLWapi3Smsve1HtlnyBJxc3ulk0bJnvaqyHGjy
+	 eja5PKmA7W34IQ+lJVHPjDrz5XLmuPOVxgwTXUxbFXecwJjs+mOXQ7B1Nje0dFqhgH
+	 YBE1uhwb4p7z4Vi7mIDSydzrfPFgJzBHoqwyTxChKgEK42QcV00gBizD8VQOtSsxxC
+	 sO54c6UAkEyZImM4yaByFFuIp4GPCjNYdeyiwf7htid0c/dW47LDrUhRNt4JWgnu5m
+	 FuWsSvg6OuupIwZhZaSQaB8SEprAfRHi2QwSHBjzlBJBgviZZp8WmQgHGsv+vJPq1U
+	 gTKNURWYYUuww==
+Message-ID: <b4d0f23a75d33f696ba585401a385c2d@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regulator updates for v6.18
+Date: Mon, 29 Sep 2025 12:42:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-A task in the kernel (task_mm_cid_work) runs somewhat periodically to
-compact the mm_cid for each process. Add a test to validate that it runs
-correctly and timely.
+The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e:
 
-The test spawns 1 thread pinned to each CPU, then each thread, including
-the main one, runs in short bursts for some time. During this period, the
-mm_cids should be spanning all numbers between 0 and nproc.
+  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
 
-At the end of this phase, a thread with high enough mm_cid (>= nproc/2)
-is selected to be the new leader, all other threads terminate.
+are available in the Git repository at:
 
-After some time, the only running thread should see 0 as mm_cid, if that
-doesn't happen, the compaction mechanism didn't work and the test fails.
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.18
 
-The test never fails if only 1 core is available, in which case, we
-cannot test anything as the only available mm_cid is 0.
+for you to fetch changes up to e609438851928381e39b5393f17156955a84122a:
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- tools/testing/selftests/rseq/.gitignore       |   1 +
- tools/testing/selftests/rseq/Makefile         |   2 +-
- .../selftests/rseq/mm_cid_compaction_test.c   | 204 ++++++++++++++++++
- 3 files changed, 206 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+  regulator: dt-bindings: qcom,sdm845-refgen-regulator: document more platforms (2025-09-23 10:56:54 +0200)
 
-diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
-index 0fda241fa62b..b3920c59bf40 100644
---- a/tools/testing/selftests/rseq/.gitignore
-+++ b/tools/testing/selftests/rseq/.gitignore
-@@ -3,6 +3,7 @@ basic_percpu_ops_test
- basic_percpu_ops_mm_cid_test
- basic_test
- basic_rseq_op_test
-+mm_cid_compaction_test
- param_test
- param_test_benchmark
- param_test_compare_twice
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 0d0a5fae5954..bc4d940f66d4 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -17,7 +17,7 @@ OVERRIDE_TARGETS = 1
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
- 		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice \
--		syscall_errors_test
-+		syscall_errors_test mm_cid_compaction_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-diff --git a/tools/testing/selftests/rseq/mm_cid_compaction_test.c b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-new file mode 100644
-index 000000000000..d13623625f5a
---- /dev/null
-+++ b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stddef.h>
-+
-+#include "../kselftest.h"
-+#include "rseq.h"
-+
-+#define VERBOSE 0
-+#define printf_verbose(fmt, ...)                    \
-+	do {                                        \
-+		if (VERBOSE)                        \
-+			printf(fmt, ##__VA_ARGS__); \
-+	} while (0)
-+
-+/* 50 ms */
-+#define RUNNER_PERIOD 50000
-+/*
-+ * Number of runs before we terminate or get the token.
-+ * The number is slowly increasing with the number of CPUs as the compaction
-+ * process can take longer on larger systems. This is an arbitrary value.
-+ */
-+#define THREAD_RUNS (3 + args->num_cpus/8)
-+
-+/*
-+ * Number of times we check that the mm_cid were compacted.
-+ * Checks are repeated every RUNNER_PERIOD.
-+ */
-+#define MM_CID_COMPACT_TIMEOUT 10
-+
-+struct thread_args {
-+	int cpu;
-+	int num_cpus;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	pthread_t *tinfo;
-+	struct thread_args *args_head;
-+};
-+
-+static void __noreturn *thread_runner(void *arg)
-+{
-+	struct thread_args *args = arg;
-+	int i, ret, curr_mm_cid;
-+	cpu_set_t cpumask;
-+
-+	CPU_ZERO(&cpumask);
-+	CPU_SET(args->cpu, &cpumask);
-+	ret = pthread_setaffinity_np(pthread_self(), sizeof(cpumask), &cpumask);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to set affinity");
-+		abort();
-+	}
-+	pthread_barrier_wait(args->barrier);
-+
-+	for (i = 0; i < THREAD_RUNS; i++)
-+		usleep(RUNNER_PERIOD);
-+	curr_mm_cid = rseq_current_mm_cid();
-+	/*
-+	 * We select one thread with high enough mm_cid to be the new leader.
-+	 * All other threads (including the main thread) will terminate.
-+	 * After some time, the mm_cid of the only remaining thread should
-+	 * converge to 0, if not, the test fails.
-+	 */
-+	if (curr_mm_cid >= args->num_cpus / 2 &&
-+	    !pthread_mutex_trylock(args->token)) {
-+		printf_verbose(
-+			"cpu%d has mm_cid=%d and will be the new leader.\n",
-+			sched_getcpu(), curr_mm_cid);
-+		for (i = 0; i < args->num_cpus; i++) {
-+			if (args->tinfo[i] == pthread_self())
-+				continue;
-+			ret = pthread_join(args->tinfo[i], NULL);
-+			if (ret) {
-+				errno = ret;
-+				perror("Error: failed to join thread");
-+				abort();
-+			}
-+		}
-+		pthread_barrier_destroy(args->barrier);
-+		free(args->tinfo);
-+		free(args->token);
-+		free(args->barrier);
-+		free(args->args_head);
-+
-+		for (i = 0; i < MM_CID_COMPACT_TIMEOUT; i++) {
-+			curr_mm_cid = rseq_current_mm_cid();
-+			printf_verbose("run %d: mm_cid=%d on cpu%d.\n", i,
-+				       curr_mm_cid, sched_getcpu());
-+			if (curr_mm_cid == 0)
-+				exit(EXIT_SUCCESS);
-+			usleep(RUNNER_PERIOD);
-+		}
-+		exit(EXIT_FAILURE);
-+	}
-+	printf_verbose("cpu%d has mm_cid=%d and is going to terminate.\n",
-+		       sched_getcpu(), curr_mm_cid);
-+	pthread_exit(NULL);
-+}
-+
-+int test_mm_cid_compaction(void)
-+{
-+	cpu_set_t affinity;
-+	int i, j, ret = 0, num_threads;
-+	pthread_t *tinfo;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	struct thread_args *args;
-+
-+	sched_getaffinity(0, sizeof(affinity), &affinity);
-+	num_threads = CPU_COUNT(&affinity);
-+	tinfo = calloc(num_threads, sizeof(*tinfo));
-+	if (!tinfo) {
-+		perror("Error: failed to allocate tinfo");
-+		return -1;
-+	}
-+	args = calloc(num_threads, sizeof(*args));
-+	if (!args) {
-+		perror("Error: failed to allocate args");
-+		ret = -1;
-+		goto out_free_tinfo;
-+	}
-+	token = malloc(sizeof(*token));
-+	if (!token) {
-+		perror("Error: failed to allocate token");
-+		ret = -1;
-+		goto out_free_args;
-+	}
-+	barrier = malloc(sizeof(*barrier));
-+	if (!barrier) {
-+		perror("Error: failed to allocate barrier");
-+		ret = -1;
-+		goto out_free_token;
-+	}
-+	if (num_threads == 1) {
-+		fprintf(stderr, "Cannot test on a single cpu. "
-+				"Skipping mm_cid_compaction test.\n");
-+		/* only skipping the test, this is not a failure */
-+		goto out_free_barrier;
-+	}
-+	pthread_mutex_init(token, NULL);
-+	ret = pthread_barrier_init(barrier, NULL, num_threads);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to initialise barrier");
-+		goto out_free_barrier;
-+	}
-+	for (i = 0, j = 0; i < CPU_SETSIZE && j < num_threads; i++) {
-+		if (!CPU_ISSET(i, &affinity))
-+			continue;
-+		args[j].num_cpus = num_threads;
-+		args[j].tinfo = tinfo;
-+		args[j].token = token;
-+		args[j].barrier = barrier;
-+		args[j].cpu = i;
-+		args[j].args_head = args;
-+		if (!j) {
-+			/* The first thread is the main one */
-+			tinfo[0] = pthread_self();
-+			++j;
-+			continue;
-+		}
-+		ret = pthread_create(&tinfo[j], NULL, thread_runner, &args[j]);
-+		if (ret) {
-+			errno = ret;
-+			perror("Error: failed to create thread");
-+			abort();
-+		}
-+		++j;
-+	}
-+	printf_verbose("Started %d threads.\n", num_threads);
-+
-+	/* Also main thread will terminate if it is not selected as leader */
-+	thread_runner(&args[0]);
-+
-+	/* only reached in case of errors */
-+out_free_barrier:
-+	free(barrier);
-+out_free_token:
-+	free(token);
-+out_free_args:
-+	free(args);
-+out_free_tinfo:
-+	free(tinfo);
-+
-+	return ret;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	if (!rseq_mm_cid_available()) {
-+		fprintf(stderr, "Error: rseq_mm_cid unavailable\n");
-+		return -1;
-+	}
-+	if (test_mm_cid_compaction())
-+		return -1;
-+	return 0;
-+}
--- 
-2.51.0
+----------------------------------------------------------------
+regulator: Updates for v6.18
 
+This is a very quiet release for regulator, almost all the changes are
+new drivers but we do also have some improvements for the Rust bindings.
+
+ - Additional APIs added to the Rust bindings.
+ - Support for Maxim MAX77838, NXP PF0900 and PF5300, Richtek RT5133 and
+   SpacemiT P1.
+
+----------------------------------------------------------------
+Alex Elder (1):
+      regulator: spacemit: support SpacemiT P1 regulators
+
+Chen Ni (1):
+      regulator: tps6594-regulator: Remove unneeded semicolon
+
+Colin Ian King (1):
+      regulator: rt5133: Fix spelling mistake "regualtor" -> "regulator"
+
+Dan Carpenter (1):
+      regulator: rt5133: Fix IS_ERR() vs NULL bug in rt5133_validate_vendor_info()
+
+Daniel Almeida (4):
+      rust: regulator: remove needless &mut from member functions
+      rust: regulator: implement Send and Sync for Regulator<T>
+      rust: regulator: remove Regulator<Dynamic>
+      rust: regulator: add devm_enable and devm_enable_optional
+
+Dmitry Baryshkov (1):
+      regulator: dt-bindings: qcom,sdm845-refgen-regulator: document more platforms
+
+Dzmitry Sankouski (1):
+      regulator: add s2dos05 regulator support
+
+Igor Belwon (1):
+      regulator: Fix MAX77838 selection
+
+Ivaylo Ivanov (2):
+      dt-bindings: regulator: document max77838 pmic
+      regulator: max77838: add max77838 regulator driver
+
+Javier Carrasco (1):
+      regulator: consumer.rst: document bulk operations
+
+Jeff Chang (2):
+      regulator: dt-bindings: Add Richtek RT5133 Support
+      regulator: rt5133: Add RT5133 PMIC regulator Support
+
+Joy Zou (2):
+      dt-bindings: regulator: add PF0900 regulator yaml
+      regulator: pf0900: Add PMIC PF0900 support
+
+Liao Yuanhong (2):
+      regulator: tps6524x: Remove unnecessary memset
+      regulator: core: Remove redundant ternary operators
+
+Marek Vasut (1):
+      regulator: dt-bindings: rpi-panel: Split 7" Raspberry Pi 720x1280 v2 binding
+
+Mark Brown (4):
+      regulator: add new PMIC PF0900 support
+      rust: regulator: relax a few constraints on
+      regulator: pf530x: NXP PF530x regulator driver
+      regulator: max77838: add max77838 regulator driver
+
+Onur Özkan (1):
+      rust: regulator: use `to_result` for error handling
+
+Qianfeng Rong (2):
+      regulator: bd718x7: Use kcalloc() instead of kzalloc()
+      regulator: scmi: Use int type to store negative error codes
+
+Rob Herring (Arm) (1):
+      regulator: dt-bindings: Clean-up active-semi,act8945a duplication
+
+Wolfram Sang (1):
+      regulator: remove unneeded 'fast_io' parameter in regmap_config
+
+Woodrow Douglass (2):
+      regulator: dt-bindings: nxp,pf530x: Add NXP PF5300/PF5301/PF5302 PMICs
+      regulator: pf530x: Add a driver for the NXP PF5300 Regulator
+
+ Documentation/devicetree/bindings/mfd/act8945a.txt |  82 --
+ .../power/supply/active-semi,act8945a-charger.yaml |  76 --
+ .../bindings/regulator/active-semi,act8945a.yaml   |  25 +-
+ .../bindings/regulator/maxim,max77838.yaml         |  68 ++
+ .../devicetree/bindings/regulator/nxp,pf0900.yaml  | 163 ++++
+ .../devicetree/bindings/regulator/nxp,pf5300.yaml  |  54 ++
+ .../regulator/qcom,sdm845-refgen-regulator.yaml    |   3 +
+ ...rrypi,7inch-touchscreen-panel-regulator-v2.yaml |  61 ++
+ ...pberrypi,7inch-touchscreen-panel-regulator.yaml |   7 +-
+ .../bindings/regulator/richtek,rt5133.yaml         | 178 ++++
+ Documentation/power/regulator/consumer.rst         |  30 +-
+ MAINTAINERS                                        |  15 +-
+ drivers/regulator/Kconfig                          |  62 ++
+ drivers/regulator/Makefile                         |   6 +
+ drivers/regulator/bd718x7-regulator.c              |   2 +-
+ drivers/regulator/core.c                           |   4 +-
+ drivers/regulator/max77838-regulator.c             | 221 +++++
+ drivers/regulator/pf0900-regulator.c               | 975 +++++++++++++++++++++
+ drivers/regulator/pf530x-regulator.c               | 375 ++++++++
+ drivers/regulator/qcom-refgen-regulator.c          |   1 -
+ drivers/regulator/rt5133-regulator.c               | 642 ++++++++++++++
+ drivers/regulator/s2dos05-regulator.c              | 165 ++++
+ drivers/regulator/scmi-regulator.c                 |   3 +-
+ drivers/regulator/spacemit-p1.c                    | 157 ++++
+ drivers/regulator/tps6524x-regulator.c             |   1 -
+ drivers/regulator/tps6594-regulator.c              |   2 +-
+ include/linux/regulator/s2dos05.h                  |  73 ++
+ rust/helpers/regulator.c                           |  10 +
+ rust/kernel/regulator.rs                           | 171 ++--
+ 29 files changed, 3354 insertions(+), 278 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/act8945a.txt
+ delete mode 100644 Documentation/devicetree/bindings/power/supply/active-semi,act8945a-charger.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77838.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/nxp,pf0900.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/nxp,pf5300.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/raspberrypi,7inch-touchscreen-panel-regulator-v2.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
+ create mode 100644 drivers/regulator/max77838-regulator.c
+ create mode 100644 drivers/regulator/pf0900-regulator.c
+ create mode 100644 drivers/regulator/pf530x-regulator.c
+ create mode 100644 drivers/regulator/rt5133-regulator.c
+ create mode 100644 drivers/regulator/s2dos05-regulator.c
+ create mode 100644 drivers/regulator/spacemit-p1.c
+ create mode 100644 include/linux/regulator/s2dos05.h
 
