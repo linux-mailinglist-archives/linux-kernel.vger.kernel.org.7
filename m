@@ -1,136 +1,144 @@
-Return-Path: <linux-kernel+bounces-835782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E760EBA80BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:00:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA6DBA80C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FB087A44EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9555E188D53F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A8A19D087;
-	Mon, 29 Sep 2025 06:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2C82264C0;
+	Mon, 29 Sep 2025 06:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NP3gChj8"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTXgpGmd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD11619CC27
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA0B1F5EA;
+	Mon, 29 Sep 2025 06:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759125620; cv=none; b=iCtnq8IdSBNaI21tcAJ+qrvJuHw0AGvENTsJwnmYFXYFfhn31DLh6tMFRczufnKRVjUfS9cHWcY2Hx/Q7KaY7X0y3XNnm7ypzhi28UPtz20MrdJ2ov2faOj4QLhe3bAgQ6aPIaAn0qFXB/RQidS8442U1OQN8yZ/k6C0h6OnS98=
+	t=1759125625; cv=none; b=ezheyznbgK2wJEz9bNm3J6sLGAQfbiHBUytPRTK7OSkBXRZPc580QICrTzNF0Uzh5szbIiBDp6GhUns1Gtk2n2O2UYh4Ogd5To8svM8aW2Oh54wUrv/aDT1Fp+hU5wk7Dhg9Pm5oqyrevfMiTe9/mXX9DKaIHX0+dBVLVrnbry4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759125620; c=relaxed/simple;
-	bh=XQwKFbTeuUhDrTKFLV/hAiNLerWw5Efb84CYWTCqx+0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VTppMaOR2yzPQ/y9Bvur/qG8cqE7QNHByAxvXwKSlgWdidreLmiHxCNQV1CYXHXtwiway8XMvCmj9/lPN+xV/WXeU85xI9lzgVs3Mrf6zzAKdJYzhuG4yzY+JGY0W58MvrKsHQgjpTE/5cWLBsREpxXqAgFn7JQ8hsPQKIhRPrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NP3gChj8; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f68fae1a8so5529923b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 23:00:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759125618; x=1759730418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dZsigXYqrzEsDLxeQmHmcVAyYOp3vFGkr0atM1S0OAw=;
-        b=NP3gChj8HmDocdlkLLZtLyTK4rt33ae0EqDPdVfEYeFCvhyDTn6IUczVPsauPYlfNU
-         m1DzzkwMjFurUfZjJQinlwAxcBk8pX+SUVrCc0g6/utuLRS1/z3UEwoSymuJKwl3bm3l
-         3AgB+mDsiHsDc8EOcBqn1U/VF/eB/cWn1/7YiUbgV4NQo8e2WQdEbk9CLh79gD1qvpOv
-         eO++WzaROp51ncwJrG6huKxNz2dkTuZs3NmQqtFdEkrBqh1VNVoDAz+8m9bdYHwyRq5l
-         kZawydyIgCtyzbJLelhHTfMMP637pZGjWCqpQPg98xjMGlZ5NbFfoXvBu4ROIk6GaJeR
-         lKOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759125618; x=1759730418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dZsigXYqrzEsDLxeQmHmcVAyYOp3vFGkr0atM1S0OAw=;
-        b=byAXtnBiqZhod767IWWHuqLbKBWlDDmDzJJ20NjQKKq2phG26CxbcMzMgrs1MGVAq7
-         ZnQh32+xcmMQ+67k5uiGuZjonuLiDAtIcvN6EXPOB74PCL9do+rg2Qtfy//sBKlMdblw
-         FIDoFxV9xMliDIAuk0sLZK6l6To40C8SBA+TL/Q3rCsbL7nkTFp6jCWtP+4bVxXiNX6n
-         mGMd6Naai7Ii39cuLqVhuDaq/qmUbya20OyFPf9oleUckJspz+MMB3hWEMLOiS7R6lp8
-         yPXtSBxIvP7ukvHDjea0C8nxOz4YzX8/z/CRK9gg6UoJNOJ1wwnJJhCsPfaWc+M43aup
-         yCDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWX5XZuJ2Bb3C8kIV/LYWgg+5OAjpWfUcG/0VUtbH9ji8cQXfxFOpUHXh2+vuin3NANCQLKVBGZ0tlmV/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5wrcKmX1ZDbah8GvNIKy6Nq5QhGn5LBsnAqN8J1Hu3ABsk5Ld
-	n6y6mfCEh2NBUnXwk45izNYjInbx8gQF+JXyA3RB3EmAM/Ey1KiiaX1I
-X-Gm-Gg: ASbGncuTipPfY3rg7Ya8B+iobpl2YwWIJEZdImXc1iuMrS8xV1kqxSvmSB8nvcofv6N
-	D4NHj5E/l7yPVZKO+uklBW5u1UGpdfBlDio5+nAPlfnbsLe3DV/4H47YGqE4H9D7aCCZxnrzdvE
-	CQ+IsuiOxOUAYIWoqyu2nC93o8TQ+4H4elt/8RBYnzwIQ4MDsQXFYm7lampOrxXT3BJHzGHSB+S
-	+3dJaHZ7BmgwXJvOVHWXTSfSL7rH6NtldfPnmVtWMLrY1BcqVCpjx5zsRVNFK36ArifFt8y7Nni
-	eKw6C74W/8a3JmZhH+wkp51A15+IyqX6YNvcSJhY74fjB5s/qk7K/cNWtm2XnTltdlo9JeubtvS
-	KPqJ4BY5XbT8XSfWJQxOy8w108cHMqY5021l6MeY4k6Jq5RLLpi/HOc74
-X-Google-Smtp-Source: AGHT+IFNoNSuQK5gnoHJXUdVGZL8uKAkkbJMlFQqragBcUI9NPSv3i2UCBzciAag2RD0Feufk0k2Ig==
-X-Received: by 2002:a05:6a00:80c:b0:781:1a62:4a35 with SMTP id d2e1a72fcca58-7811a624de1mr9955828b3a.0.1759125618118;
-        Sun, 28 Sep 2025 23:00:18 -0700 (PDT)
-Received: from localhost.localdomain ([2804:7f5:b08b:fda4:f56e:95d0:3775:a428])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b2915csm10196372b3a.55.2025.09.28.23.00.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 23:00:17 -0700 (PDT)
-From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: [PATCH v12-1 3/3] iio: ABI: Add voltage mean raw attribute
-Date: Mon, 29 Sep 2025 02:59:59 -0300
-Message-Id: <c9c3b7e67703313913a7fd411cb0cc152a288c82.1759123847.git.marilene.agarcia@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <6106ee185045ade8e1938f87f9588733d6358844.1759123847.git.marilene.agarcia@gmail.com>
-References: <6106ee185045ade8e1938f87f9588733d6358844.1759123847.git.marilene.agarcia@gmail.com>
+	s=arc-20240116; t=1759125625; c=relaxed/simple;
+	bh=mBZFk8UZ7lxek2kM3lWSsghrg3BUbJ2YXC59VzRhYB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QEwB8l2MAZroj1WBayRUXcc9fBw1U5rDphyxVE6zzdykiJ/Q4WU5KLPIp3RYRRzUQ+v+tbjHMUFRG48HEffTS1lrdEHU6er/uCJ0xtRbWZFtTG+zSlBehs+v+1CZI/+375LyYm/Za6EK5FlV86+axxk69uE8vZwdTFkfhFr0W+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTXgpGmd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B36BCC4CEF4;
+	Mon, 29 Sep 2025 06:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759125624;
+	bh=mBZFk8UZ7lxek2kM3lWSsghrg3BUbJ2YXC59VzRhYB0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KTXgpGmdJMF00Cv9NdwOEAfRbABjmxjaPpNzFPthisGc18Y4hG3mOqXuBcsALMBZJ
+	 Rk/DfHXhTwQAK8AUreBcCJW7pFDuoqF7MfXpJ9557bbjH7kcFZyT4ugGJhSQSr724j
+	 EGEKrjvVj+ECb8+LVjcDsZ+4zFDmnuca1fBog8Rc2sVF25fgTg3yge7MKYYN4idb9U
+	 KrqyPNxYIJmIrM3Gcr1cwy4mA/dp8mPzMYv4zeM3EV6/BclWtmXOPvfFyXpy+dwzI8
+	 Ks36aZMOW3oCpnGGfTh9UAZnALPvxkBmHUeePNned7ZktW+3QIn9FQoS6lbQAVBkRm
+	 HPSyNAAzTEJeQ==
+Message-ID: <da2de297-2c9c-4855-9fb7-553022538cde@kernel.org>
+Date: Mon, 29 Sep 2025 08:00:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250_pcilib: Replace deprecated PCI functions
+To: Florian Eckert <fe@dev.tdt.de>
+Cc: gregkh@linuxfoundation.org, kumaravel.thiagarajan@microchip.com,
+ tharunkumar.pasumarthi@microchip.com, andriy.shevchenko@linux.intel.com,
+ pnewman@connecttech.com, angelogioacchino.delregno@collabora.com,
+ peterz@infradead.org, yujiaoliang@vivo.com, arnd@kernel.org,
+ cang1@live.co.uk, macro@orcam.me.uk, schnelle@linux.ibm.com,
+ Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20250924133544.2666514-1-fe@dev.tdt.de>
+ <5fed7e09-b59f-46b0-be49-881c0c1b61c1@kernel.org>
+ <e4d2fa14701092977daa844cf25e7dd7@dev.tdt.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <e4d2fa14701092977daa844cf25e7dd7@dev.tdt.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add the missing in_voltageY_mean_raw attribute for the average of voltage
-measurements.
+On 26. 09. 25, 14:31, Florian Eckert wrote:
+>>> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+>> ...
+>>> --- a/drivers/tty/serial/8250/8250_pci.c
+>>> +++ b/drivers/tty/serial/8250/8250_pci.c
+>>> @@ -165,7 +165,15 @@ static int
+>>>   setup_port(struct serial_private *priv, struct uart_8250_port *port,
+>>>          u8 bar, unsigned int offset, int regshift)
+>>>   {
+>>> -    return serial8250_pci_setup_port(priv->dev, port, bar, offset, 
+>>> regshift);
+>>> +    void __iomem *iomem = NULL;
+>>> +
+>>> +    if (pci_resource_flags(priv->dev, bar) & IORESOURCE_MEM) {
+>>> +        iomem = pcim_iomap(priv->dev, bar, 0);
+>>> +        if (IS_ERR(iomem))
+>>> +            return -ENOMEM;
+>>
+>> Why not to propagate the error?
+> 
+> Most other calls in the kernel of this function return
+> -ENOMEM on error. Therefore, I thought that this is the
+> correct return value. I can fix that in v2 if you like.
+> Let me know what you prefer.
 
-Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
----
+Ugh, pcim_iomap() returns NULL on error, so the IS_ERR() check is all 
+wrong. What other places in the kernel use IS_ERR()? They need fixing.
 
-When I use _mean_raw (IIO_CHAN_INFO_AVERAGE_RAW), I get a file called 
-in_voltageY_mean_raw, so I added it to the documentation. 
-Thanks.
-
- Documentation/ABI/testing/sysfs-bus-iio | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 352ab7b8476c..3efaf91248ca 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -422,6 +422,7 @@ Description:
- 		Scaled humidity measurement in milli percent.
- 
- What:		/sys/bus/iio/devices/iio:deviceX/in_Y_mean_raw
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_mean_raw
- KernelVersion:	3.5
- Contact:	linux-iio@vger.kernel.org
- Description:
+thanks,
 -- 
-2.34.1
+js
+suse labs
 
