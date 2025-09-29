@@ -1,170 +1,200 @@
-Return-Path: <linux-kernel+bounces-836697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6580BAA5AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:37:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979E6BAA57C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A695A1C491A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B3216DE50
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A388F2690C0;
-	Mon, 29 Sep 2025 18:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA7D23E340;
+	Mon, 29 Sep 2025 18:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="dSRI2CG2"
-Received: from fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.64.237.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KbG4o0W7"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17E2641C3;
-	Mon, 29 Sep 2025 18:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.237.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEF825A2DE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759170968; cv=none; b=udzFybbKwj+vKiTG0039Qq6BL8qB3GHRQ5qnIwvt91gNhEPvrOIrLx0avLFZMf4IfcQ0q4NwndKPW9o6FsY6XHi6Q9derLvaQvFuaSXaa+pvNRDq7qjBpXJJl6E5UKf8pkF8XXxmF1yeB+An6nudDkTigaP4qf+dly55GfCGmAY=
+	t=1759170911; cv=none; b=kJ/FQ15Q4bpID7KtGQBvE+gG/j2ni1SvPTAJA2F/OiXK6ZKxiC9WXyujnxiCBUTPyIDFvCD+Zf0Py5/+w9Sl/DcjHegivzRceNaDgjYiljcCCbpxkI7VxzJ1+FE5NeVfLBJfPnS1+ofniJ0pFdMDrT0GFcmjdDaOhLvO7krMqsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759170968; c=relaxed/simple;
-	bh=V2L3IilwofpV6SrsfVTvut5ipDXkokIOm+dTBT4i7eQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bAzngxdBC01I5F1FI7Ec79WIitiY+AVcAar6FD1+i9k5Aiz+hash54FJiO9DgTGELqnKy2SS9rQ4Yj09Cwyog4ZHhKru1KdugF7ey8l5MKIx0EoMLfKDBHkrIvrhD6WAk4o6d+s6apw/+41p+SnAKosUtuTHaU6R4EhSNuIlVtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=dSRI2CG2; arc=none smtp.client-ip=3.64.237.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1759170911; c=relaxed/simple;
+	bh=fIIb2twrTp+ee3/m37i+hJz/W7LPccSw9IAoxQfZLoY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=o+HJzGUfpR4LfKx7hXY1ncq+8/V0jrMWpf583ip+dj8HygNJqMEhmWsaqLtAjhd+PsnK33sZi33W4adudTzJYwEjfXBO6H7FfBABn4m/i7/ONAfui7sNnxu0pLnZzL3DFLr+W7qNZ6QNnBnlyGQVty0hZzaMKJWPqKWXFNlMrSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KbG4o0W7; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6ee6so62522885ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:35:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759170966; x=1790706966;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k0dUe76w+6n5/NfsPbyefGVCom+xh3GGcFcV3Olhmks=;
-  b=dSRI2CG2nzslIfQ2yiH5LWBUWUSGeTUkSWxS26v26MTH1kqLkBHMrPgz
-   07fkpa3rVDC4L/+2qDFrgwnVqfhaNTJvB6eXLqs7D/JDHPC5z3bJnoN8u
-   dd4BSwX30DKdB3j54F7huAWwHUfr2uljd6T/s7bBtybVvKOnttsjPGJmC
-   o1w8o57bWQf0qu7KzUJWfhc/vbDklCpgwdYWBW8JjBSQt2Mw99O0bfJhW
-   qKNUAgtlOpE2Rc6eN8VlyD3Oqdem5Y8UUu3xxYG39fttC9vVD0WjEwt48
-   GgYW6d25q2XRfzmdIhGWYoXbG8zk7Ttm8xP8sgWQPS/IWoC1llHDNVxDJ
-   Q==;
-X-CSE-ConnectionGUID: txVK8UniRruDeLgaxDGz3Q==
-X-CSE-MsgGUID: w+hhKLjgR/OrcyPTrCGEPw==
-X-IronPort-AV: E=Sophos;i="6.18,302,1751241600"; 
-   d="scan'208";a="2743124"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 18:35:54 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:3040]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.19.222:2525] with esmtp (Farcaster)
- id ccf222b8-ffe3-486e-9f6d-298477609d22; Mon, 29 Sep 2025 18:35:54 +0000 (UTC)
-X-Farcaster-Flow-ID: ccf222b8-ffe3-486e-9f6d-298477609d22
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 29 Sep 2025 18:35:51 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Mon, 29 Sep 2025
- 18:35:45 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <gregkh@linuxfoundation.org>, <sashal@kernel.org>,
-	<mario.limonciello@amd.com>, <lijo.lazar@amd.com>, <David.Laight@ACULAB.COM>,
-	<arnd@kernel.org>, <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-	<farbere@amazon.com>
-CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Hellwig
-	<hch@infradead.org>, Dan Carpenter <dan.carpenter@linaro.org>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, Jens Axboe <axboe@kernel.dk>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>, Mateusz Guzik <mjguzik@gmail.com>, "Matthew
- Wilcox" <willy@infradead.org>, Pedro Falcato <pedro.falcato@gmail.com>
-Subject: [PATCH v2 13/13 6.1.y] minmax.h: remove some #defines that are only expanded once
-Date: Mon, 29 Sep 2025 18:33:58 +0000
-Message-ID: <20250929183358.18982-14-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250929183358.18982-1-farbere@amazon.com>
-References: <20250929183358.18982-1-farbere@amazon.com>
+        d=google.com; s=20230601; t=1759170908; x=1759775708; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cXfUqpKd6dHxyOJQiTneWF8LWJFxDmdIGTP3Vx6zlJg=;
+        b=KbG4o0W7WwmgZDQU8+KVf3EvYxvjfG1TtzcbGxe1n+OVl4u5seagQxpxcjQjO3mKht
+         yqwNZxGXvqrEWED6YjJD2272lhqpr3aif1aOHE0AASeb763yO6MCaj0/qrYEyuJNTB/c
+         TgBbPHxFolJihb0JI2I7GUJWwAm9FQeCpN7nBtb7O/7hHW/TYJ6quBcRe9xoRMrl9xqk
+         TDUNkAW9wwcbhuO5nmnsd+vnPcl6W8lnLTMMIRB097jZe3SZd5W/LZr1wqWs97dkf1GP
+         OZv8KZl1TffOyIH36liCxW6ysJpgZZJ5nB65TRgh7U2dch+LA86WeVeu7bKFw3DXCGUt
+         V2xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759170908; x=1759775708;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cXfUqpKd6dHxyOJQiTneWF8LWJFxDmdIGTP3Vx6zlJg=;
+        b=ECyFieRtBgR+MlePBWC/M7vLC1YIfRr7iJ6slFHmdIYnLNVAVT6HBzmozVSBjcnI2/
+         6TWRdL9aBZvXqI/Dr+JQCA5PpLPcUvOXQcrxgvUDXqgoFGLnDaGhU8D7Jbt1wFZ5TcQI
+         c5RPjUZLGFcFlmmiceaQjvbnwTDAOKMM1ORzUxoh4eCFhVsbo6NfAaqUvDcNIzIIwQmb
+         /PGaOxVOS635tznflDnSQL0fG64+dU/nFaZofDOZ7Qmb8bhjEDBm5XJdAKBz3Lzyvnq6
+         3tdFzcJEGbaPkWhYFqSodl2+gLsoyQS+oeXl7hVcKoNcXHHV3gQMmc1NyljAF4+61BAq
+         DwHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVIk611sCQfUfnzcpnxVQJL9tv6fq6renGhBimJ09RQTfczCOofTyNihWKZRpjfd2BmvTNlVLKjdCgOO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrDiYk3s5PXnQfUpVrYv77/onaF2TXGNiHqdsj2+69KPQnwQEY
+	Y5ztA4R7fJTbmAJaIsUjBwiWHX3dzVI5RQUcTKqqV9UdhQ6RBZFwtMgMX1N8SVE0twsS7hJIDEt
+	3igGOJw==
+X-Google-Smtp-Source: AGHT+IH981e6NsQ3ClHJ6uiza+16E4T3EA3bY2V9J26shLo1MnL8u3/WqbuFvZSBRvr4YgYDuKyVG4B9ukA=
+X-Received: from plje8.prod.google.com ([2002:a17:902:ed88:b0:269:b756:8e38])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:19ce:b0:249:1234:9f7c
+ with SMTP id d9443c01a7336-27ed4ac6238mr157088135ad.60.1759170908478; Mon, 29
+ Sep 2025 11:35:08 -0700 (PDT)
+Date: Mon, 29 Sep 2025 11:35:07 -0700
+In-Reply-To: <aNrLpkrbnwVSaQGX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D043UWA002.ant.amazon.com (10.13.139.53) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
+Mime-Version: 1.0
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-7-seanjc@google.com>
+ <diqzldlx1fyk.fsf@google.com> <aNrLpkrbnwVSaQGX@google.com>
+Message-ID: <aNrRW7RtUgFU8ivs@google.com>
+Subject: Re: [PATCH 6/6] KVM: selftests: Verify that faulting in private
+ guest_memfd memory fails
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: David Laight <David.Laight@ACULAB.COM>
+On Mon, Sep 29, 2025, Sean Christopherson wrote:
+> How's this look?
+> 
+> static void test_fault_sigbus(int fd, size_t accessible_size, size_t mmap_size)
+> {
+> 	struct sigaction sa_old, sa_new = {
+> 		.sa_handler = fault_sigbus_handler,
+> 	};
+> 	const uint8_t val = 0xaa;
+> 	uint8_t *mem;
+> 	size_t i;
+> 
+> 	mem = kvm_mmap(mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+> 
+> 	sigaction(SIGBUS, &sa_new, &sa_old);
+> 	if (sigsetjmp(jmpbuf, 1) == 0) {
+> 		memset(mem, val, mmap_size);
+> 		TEST_FAIL("memset() should have triggered SIGBUS");
+> 	}
+> 	if (sigsetjmp(jmpbuf, 1) == 0) {
+> 		(void)READ_ONCE(mem[accessible_size]);
+> 		TEST_FAIL("load at first unaccessible byte should have triggered SIGBUS");
+> 	}
+> 	sigaction(SIGBUS, &sa_old, NULL);
+> 
+> 	for (i = 0; i < accessible_size; i++)
+> 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
+> 
+> 	kvm_munmap(mem, mmap_size);
+> }
+> 
+> static void test_fault_overflow(int fd, size_t total_size)
+> {
+> 	test_fault_sigbus(fd, total_size, total_size * 4);
+> }
+> 
+> static void test_fault_private(int fd, size_t total_size)
+> {
+> 	test_fault_sigbus(fd, 0, total_size);
+> }
 
-[ Upstream commit 2b97aaf74ed534fb838d09867d09a3ca5d795208 ]
+And if I don't wantonly change variable names/types, the diff is much cleaner:
 
-The bodies of __signed_type_use() and __unsigned_type_use() are much the
-same size as their names - so put the bodies in the only line that expands
-them.
-
-Similarly __signed_type() is defined separately for 64bit and then used
-exactly once just below.
-
-Change the test for __signed_type from CONFIG_64BIT to one based on gcc
-defined macros so that the code is valid if it gets used outside of a
-kernel build.
-
-Link: https://lkml.kernel.org/r/9386d1ebb8974fbabbed2635160c3975@AcuMS.aculab.com
-Signed-off-by: David Laight <david.laight@aculab.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
- include/linux/minmax.h | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 2bbdd5b5e07e..eaaf5c008e4d 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -46,10 +46,8 @@
-  * comparison, and these expressions only need to be careful to not cause
-  * warnings for pointer use.
-  */
--#define __signed_type_use(ux) (2 + __is_nonneg(ux))
--#define __unsigned_type_use(ux) (1 + 2 * (sizeof(ux) < 4))
- #define __sign_use(ux) (is_signed_type(typeof(ux)) ? \
--	__signed_type_use(ux) : __unsigned_type_use(ux))
-+	(2 + __is_nonneg(ux)) : (1 + 2 * (sizeof(ux) < 4)))
+diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+index 8ed08be72c43..8e375de2d7d8 100644
+--- a/tools/testing/selftests/kvm/guest_memfd_test.c
++++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+@@ -83,12 +83,11 @@ void fault_sigbus_handler(int signum)
+        siglongjmp(jmpbuf, 1);
+ }
  
- /*
-  * Check whether a signed value is always non-negative.
-@@ -57,7 +55,7 @@
-  * A cast is needed to avoid any warnings from values that aren't signed
-  * integer types (in which case the result doesn't matter).
-  *
-- * On 64-bit any integer or pointer type can safely be cast to 'long'.
-+ * On 64-bit any integer or pointer type can safely be cast to 'long long'.
-  * But on 32-bit we need to avoid warnings about casting pointers to integers
-  * of different sizes without truncating 64-bit values so 'long' or 'long long'
-  * must be used depending on the size of the value.
-@@ -66,12 +64,12 @@
-  * them, but we do not use s128 types in the kernel (we do use 'u128',
-  * but they are handled by the !is_signed_type() case).
-  */
--#ifdef CONFIG_64BIT
--  #define __signed_type(ux) long
-+#if __SIZEOF_POINTER__ == __SIZEOF_LONG_LONG__
-+#define __is_nonneg(ux) statically_true((long long)(ux) >= 0)
- #else
--  #define __signed_type(ux) typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L))
-+#define __is_nonneg(ux) statically_true( \
-+	(typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L)))(ux) >= 0)
- #endif
--#define __is_nonneg(ux) statically_true((__signed_type(ux))(ux) >= 0)
+-static void test_fault_overflow(int fd, size_t total_size)
++static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
+ {
+        struct sigaction sa_old, sa_new = {
+                .sa_handler = fault_sigbus_handler,
+        };
+-       size_t map_size = total_size * 4;
+        const char val = 0xaa;
+        char *mem;
+        size_t i;
+@@ -102,12 +101,22 @@ static void test_fault_overflow(int fd, size_t total_size)
+        }
+        sigaction(SIGBUS, &sa_old, NULL);
  
- #define __types_ok(ux, uy) \
- 	(__sign_use(ux) & __sign_use(uy))
--- 
-2.47.3
-
+-       for (i = 0; i < total_size; i++)
++       for (i = 0; i < accessible_size; i++)
+                TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
+ 
+        kvm_munmap(mem, map_size);
+ }
+ 
++static void test_fault_overflow(int fd, size_t total_size)
++{
++       test_fault_sigbus(fd, total_size, total_size * 4);
++}
++
++static void test_fault_private(int fd, size_t total_size)
++{
++       test_fault_sigbus(fd, 0, total_size);
++}
++
+ static void test_mmap_not_supported(int fd, size_t total_size)
+ {
+        char *mem;
+@@ -279,10 +288,13 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
+ 
+        gmem_test(file_read_write, vm, flags);
+ 
+-       if (flags & GUEST_MEMFD_FLAG_MMAP) {
++       if (flags & GUEST_MEMFD_FLAG_MMAP &&
++           flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
+                gmem_test(mmap_supported, vm, flags);
+                gmem_test(mmap_cow, vm, flags);
+                gmem_test(fault_overflow, vm, flags);
++       } else if (flags & GUEST_MEMFD_FLAG_MMAP) {
++               gmem_test(fault_private, vm, flags);
+        } else {
+                gmem_test(mmap_not_supported, vm, flags);
+        }
+@@ -300,9 +312,11 @@ static void test_guest_memfd(unsigned long vm_type)
+ 
+        __test_guest_memfd(vm, 0);
+ 
+-       if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
++       if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP)) {
++               __test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP);
+                __test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP |
+                                       GUEST_MEMFD_FLAG_DEFAULT_SHARED);
++       }
+ 
+        kvm_vm_free(vm);
+ }
 
