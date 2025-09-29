@@ -1,111 +1,306 @@
-Return-Path: <linux-kernel+bounces-835759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C63BA7FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1139BA7FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A12175059
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A006174F14
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B6C299949;
-	Mon, 29 Sep 2025 05:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5D2299922;
+	Mon, 29 Sep 2025 05:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EfB4bdeV"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LrBhjsih"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507CD17597;
-	Mon, 29 Sep 2025 05:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F8E17597
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759123854; cv=none; b=URdpdvb8GSOouaJW5H0VVNQhBp2NkiPYl7RJSk8H20LrGf1L5y2aQpHqAAd/3AmsmffLDAFLzB/dByvywjiAto6vLcKOULuza3g13ty+rEFpKxS6ZuuFjcHvYXr0kacRG+wg4RT4lzFikBu6oi7BNLFMdxI/zunCfRJH6Br7OZ0=
+	t=1759123882; cv=none; b=WlvfbtmkPIeQ1xdkI5oxH1J/Rx7pLsXGWZqx1xBzvbYrn+VSateYWS4d34ScoSEPAIdF2ew+ri0avWPxh07zEdJkthma6Vr7o9QFz9QhKUHPTkEX76oqp30yAtPVyeBFHxbFg68KIFCEA1v4dD220ErwMIY75ZgG70/9QJm69D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759123854; c=relaxed/simple;
-	bh=q042932vr0hC0c5LLq/gdKyp7y3KYG+RrNctf606VUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RvRtbYomkTr6N9eKr2wUjYdraZqimX/NgJ0le14WsXKM+lAvjy8zYO9aPNRcPkjQFcAaU5inwR9pBpqJhBHyz2BRG2tRjoo3rQC3ZWcgJ4nHjwLZ3SpApbIe/LghcvvQ3OeXZv9cuTteVoSuIE3pj4LPxGHgqUmjXgHW3J0ebqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EfB4bdeV; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=wS
-	oZCNYAX2ePpPhlyspAXsVo1kSo/yX1dG8TSjUatxk=; b=EfB4bdeVjW7MAiOjkw
-	+TwUd28gNYptay3VaigdwfxX1r62/PnbLO3qBe394LEUTItfFM43xU0MU5ICsw0n
-	XpymiYkRWF5jUG7W+BmVjHq/K+Pl42zjzw8eZINT6o6/bs/bcRjyb24zvm+gxPTh
-	qguH4EdfoMqRndbgRN4LZ8C/E=
-Received: from localhost (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3_2RxGdpoA8B0Aw--.45924S2;
-	Mon, 29 Sep 2025 13:30:26 +0800 (CST)
-From: Cen Zhang <zzzccc427@163.com>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	pav@iki.fi
-Cc: linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	Cen Zhang <zzzccc427@163.com>
-Subject: [PATCH v2] Bluetooth: hci_sync: fix race in hci_cmd_sync_dequeue_once
-Date: Mon, 29 Sep 2025 05:30:17 +0000
-Message-ID: <20250929053017.148216-1-zzzccc427@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759123882; c=relaxed/simple;
+	bh=oJQ8FWvGBZEHTGeu87YeEHFqEIzWJWu8F4gNq+bGfkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PFQHy2W1MqflTcGIxtc6td44bjvnSrWNzaCLdHZgjroPGNHLw00bd4T3Fe7p/249T2aKUacC128pHEiH3Ol0yrjbGx8z/vQ4899fhg+/6SVWZxmA4jTiYsyU7zfOfYbOXAJm3r6lNHt6eQc+5m5FOc7ihwZhcTuzq+2abqK2A0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LrBhjsih; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-269639879c3so41035655ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759123880; x=1759728680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=doWlcC8b0McMQiBWJiLoyDRmWpY9xHMMAXxcR9siitU=;
+        b=LrBhjsihYIDplQY4dw7/DtJqd7BqDpPQX3bkFhAuan+R6WtRcnMPDuv69b6YYLm6Fl
+         V78LX5dq7YI55kE/vZQYn+oMTZW9wOi9nGzCy9QMXQGTO8WybM/tJVTxMa/+iyCIDgeI
+         o8x2SA3LJYBXdY0TKUTEZ0LS4WLq/kCl1hyUF5Uz3fFKQ9A1lMVL6L7C5dVcHdckSDyh
+         YmpN3t+27olSD3GtsDCgg5O7Yxmbn7D5WaZFDG69FZXsf0TrlFK/NCQk8qjPNjwNdqc7
+         AiqJv9Pw9kl5WujcOScdLZo2LlVZ1DHg1/liazjFKabFIzwBzhwJ06bdTu6YAg5uVYZC
+         qn+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759123880; x=1759728680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=doWlcC8b0McMQiBWJiLoyDRmWpY9xHMMAXxcR9siitU=;
+        b=HtwLOnpYIIdUF5YiIJbKnT8/MkwFA4lDLVPFt7GNq8q/2xRGujGG8w0tWjUS2pkZeQ
+         AbKBRylDLvbO9UBASQb1EBkNCcE0x7P2ninuex17U8WjhbUBvIyyonOLntO9r8beIBvB
+         pqpVJjK/x906xH5TZC8NrCCq3ni7Ywu/nXiq0nmTTMFRQO6A+5oYmv3P6ntfKJLRLuXs
+         vjuo8mUH7M0jJ+gh9K2a1QiZR87rywViBi2dnj8GpaZdDA/XPDHoE+RiyXQUqggj3qq+
+         xt5H1ehEXFnGjV3dN2yBaSlmJu3ATn8CnwZjT7vvjIy7I4V901ermRlb0SuVVMsct/Jv
+         O96Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWg5LaEpJj32W57pno6z1aycuT0iZapL3A0Q2guwqRJYzsVVX77VDtCw10XesRnyetUiW+P8cOyn+Q/19w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvC9Mwb3+pOFecPw+3Zesg1Y9PwVbK1tjt6DC3q+eckDRkndY6
+	Xq+4ejSgndo7pkUNcIp/cS/Upeend4rQchn7jfnZki2C4ps6W7G3AEi84TpuRYCYEX/+OHtmfM1
+	j+Uq+wkUXTMuoF1hr/DOlr3P10N3O54U=
+X-Gm-Gg: ASbGncv5tqk2IRdjfaeun9o/J+MVmttKVB2SK7PlKziTS8vl9TQxCXYGMGD66kGLHhG
+	1WWT61yJ7LUu/4xJvoZKJXLzmUssaYtoPkQKX0C2iRKn45GsxdVwMicmTNWV8vJxW5SR0oAiU9F
+	9aws3UYeuNMSz3bm3dfBwY4z+HAcVjIrdem0v/xWDlAgdwXzRxWd0HqiT/cU3vC90RBAYwajL8c
+	nZp5e84vWbPsEE7fPMm5kpYEg==
+X-Google-Smtp-Source: AGHT+IEPARn0z5jo3i6brNtiscZ9qzgCvgSAmevKNmZOauqFePR2TJLeWUsg7/RlFu97Vhp8VJsSGpH1vra3eNMYILs=
+X-Received: by 2002:a17:903:1983:b0:24e:95bb:88b1 with SMTP id
+ d9443c01a7336-27ed4a5a871mr165989565ad.34.1759123879994; Sun, 28 Sep 2025
+ 22:31:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_2RxGdpoA8B0Aw--.45924S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uF45WryrKryDCFWUXFWDArb_yoW8Gw1Dpa
-	43WFy5Zr4rXr43XrykAa1fZFW8uF1Igr9rCa1DWryfJ3yaqr1xtw1UtryFqF9Y9rWDuF45
-	ZF4qqFy3C3W5Gr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UFeHkUUUUU=
-X-CM-SenderInfo: 5222uujfuslqqrwthudrp/xtbBYwnXhGjaFFZXiwABsU
+References: <1758903795-18636-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1758903795-18636-3-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To: <1758903795-18636-3-git-send-email-nunodasneves@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 29 Sep 2025 13:31:04 +0800
+X-Gm-Features: AS18NWCyb6eCvgRNb_f1HZ_10ol5VSJZqhZEvIjVmmts76emnLp_YoojriLbSXw
+Message-ID: <CAMvTesAag+thUArW-EGL9dxOtGa6CX-8ALUjk9b17M5QBartPA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] mshv: Add the HVCALL_GET_PARTITION_PROPERTY_EX hypercall
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com, 
+	tiala@microsoft.com, anirudh@anirudhrb.com, paekkaladevi@linux.microsoft.com, 
+	skinsburskii@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com, 
+	wei.liu@kernel.org, decui@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-hci_cmd_sync_dequeue_once() does lookup and then cancel
-the entry under two separate lock sections. Meanwhile,
-hci_cmd_sync_work() can also delete the same entry,
-leading to double list_del() and "UAF".
+On Sat, Sep 27, 2025 at 12:23=E2=80=AFAM Nuno Das Neves
+<nunodasneves@linux.microsoft.com> wrote:
+>
+> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>
+> This hypercall can be used to fetch extended properties of a
+> partition. Extended properties are properties with values larger than
+> a u64. Some of these also need additional input arguments.
+>
+> Add helper function for using the hypercall in the mshv_root driver.
+>
+> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.micros=
+oft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Anirudh Rayabharam <anirudh@anirudhrb.com>
+> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
+> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+> ---
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
-Fix this by holding cmd_sync_work_lock across both
-lookup and cancel, so that the entry cannot be removed
-concurrently.
+>  drivers/hv/mshv_root.h         |  2 ++
+>  drivers/hv/mshv_root_hv_call.c | 31 ++++++++++++++++++++++++++
+>  include/hyperv/hvgdk_mini.h    |  1 +
+>  include/hyperv/hvhdk.h         | 40 ++++++++++++++++++++++++++++++++++
+>  include/hyperv/hvhdk_mini.h    | 26 ++++++++++++++++++++++
+>  5 files changed, 100 insertions(+)
+>
+> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> index e3931b0f1269..4aeb03bea6b6 100644
+> --- a/drivers/hv/mshv_root.h
+> +++ b/drivers/hv/mshv_root.h
+> @@ -303,6 +303,8 @@ int hv_call_unmap_stat_page(enum hv_stats_object_type=
+ type,
+>  int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages=
+,
+>                                    u64 page_struct_count, u32 host_access=
+,
+>                                    u32 flags, u8 acquire);
+> +int hv_call_get_partition_property_ex(u64 partition_id, u64 property_cod=
+e, u64 arg,
+> +                                     void *property_value, size_t proper=
+ty_value_sz);
+>
+>  extern struct mshv_root mshv_root;
+>  extern enum hv_scheduler_type hv_scheduler_type;
+> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_cal=
+l.c
+> index c9c274f29c3c..3fd3cce23f69 100644
+> --- a/drivers/hv/mshv_root_hv_call.c
+> +++ b/drivers/hv/mshv_root_hv_call.c
+> @@ -590,6 +590,37 @@ int hv_call_unmap_vp_state_page(u64 partition_id, u3=
+2 vp_index, u32 type,
+>         return hv_result_to_errno(status);
+>  }
+>
+> +int hv_call_get_partition_property_ex(u64 partition_id, u64 property_cod=
+e,
+> +                                     u64 arg, void *property_value,
+> +                                     size_t property_value_sz)
+> +{
+> +       u64 status;
+> +       unsigned long flags;
+> +       struct hv_input_get_partition_property_ex *input;
+> +       struct hv_output_get_partition_property_ex *output;
+> +
+> +       local_irq_save(flags);
+> +       input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +       output =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> +
+> +       memset(input, 0, sizeof(*input));
+> +       input->partition_id =3D partition_id;
+> +       input->property_code =3D property_code;
+> +       input->arg =3D arg;
+> +       status =3D hv_do_hypercall(HVCALL_GET_PARTITION_PROPERTY_EX, inpu=
+t, output);
+> +
+> +       if (!hv_result_success(status)) {
+> +               hv_status_debug(status, "\n");
+> +               local_irq_restore(flags);
+> +               return hv_result_to_errno(status);
+> +       }
+> +       memcpy(property_value, &output->property_value, property_value_sz=
+);
+> +
+> +       local_irq_restore(flags);
+> +
+> +       return 0;
+> +}
+> +
+>  int
+>  hv_call_clear_virtual_interrupt(u64 partition_id)
+>  {
+> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
+> index 1be7f6a02304..ff4325fb623a 100644
+> --- a/include/hyperv/hvgdk_mini.h
+> +++ b/include/hyperv/hvgdk_mini.h
+> @@ -490,6 +490,7 @@ union hv_vp_assist_msr_contents {    /* HV_REGISTER_V=
+P_ASSIST_PAGE */
+>  #define HVCALL_GET_VP_STATE                            0x00e3
+>  #define HVCALL_SET_VP_STATE                            0x00e4
+>  #define HVCALL_GET_VP_CPUID_VALUES                     0x00f4
+> +#define HVCALL_GET_PARTITION_PROPERTY_EX               0x0101
+>  #define HVCALL_MMIO_READ                               0x0106
+>  #define HVCALL_MMIO_WRITE                              0x0107
+>
+> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
+> index b4067ada02cf..416c0d45b793 100644
+> --- a/include/hyperv/hvhdk.h
+> +++ b/include/hyperv/hvhdk.h
+> @@ -376,6 +376,46 @@ struct hv_input_set_partition_property {
+>         u64 property_value;
+>  } __packed;
+>
+> +union hv_partition_property_arg {
+> +       u64 as_uint64;
+> +       struct {
+> +               union {
+> +                       u32 arg;
+> +                       u32 vp_index;
+> +               };
+> +               u16 reserved0;
+> +               u8 reserved1;
+> +               u8 object_type;
+> +       } __packed;
+> +};
+> +
+> +struct hv_input_get_partition_property_ex {
+> +       u64 partition_id;
+> +       u32 property_code; /* enum hv_partition_property_code */
+> +       u32 padding;
+> +       union {
+> +               union hv_partition_property_arg arg_data;
+> +               u64 arg;
+> +       };
+> +} __packed;
+> +
+> +/*
+> + * NOTE: Should use hv_input_set_partition_property_ex_header to compute=
+ this
+> + * size, but hv_input_get_partition_property_ex is identical so it suffi=
+ces
+> + */
+> +#define HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE \
+> +       (HV_HYP_PAGE_SIZE - sizeof(struct hv_input_get_partition_property=
+_ex))
+> +
+> +union hv_partition_property_ex {
+> +       u8 buffer[HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE];
+> +       struct hv_partition_property_vmm_capabilities vmm_capabilities;
+> +       /* More fields to be filled in when needed */
+> +};
+> +
+> +struct hv_output_get_partition_property_ex {
+> +       union hv_partition_property_ex property_value;
+> +} __packed;
+> +
+>  enum hv_vp_state_page_type {
+>         HV_VP_STATE_PAGE_REGISTERS =3D 0,
+>         HV_VP_STATE_PAGE_INTERCEPT_MESSAGE =3D 1,
+> diff --git a/include/hyperv/hvhdk_mini.h b/include/hyperv/hvhdk_mini.h
+> index 858f6a3925b3..bf2ce27dfcc5 100644
+> --- a/include/hyperv/hvhdk_mini.h
+> +++ b/include/hyperv/hvhdk_mini.h
+> @@ -96,8 +96,34 @@ enum hv_partition_property_code {
+>         HV_PARTITION_PROPERTY_XSAVE_STATES                      =3D 0x000=
+60007,
+>         HV_PARTITION_PROPERTY_MAX_XSAVE_DATA_SIZE               =3D 0x000=
+60008,
+>         HV_PARTITION_PROPERTY_PROCESSOR_CLOCK_FREQUENCY         =3D 0x000=
+60009,
+> +
+> +       /* Extended properties with larger property values */
+> +       HV_PARTITION_PROPERTY_VMM_CAPABILITIES                  =3D 0x000=
+90007,
+>  };
+>
+> +#define HV_PARTITION_VMM_CAPABILITIES_BANK_COUNT               1
+> +#define HV_PARTITION_VMM_CAPABILITIES_RESERVED_BITFIELD_COUNT  59
+> +
+> +struct hv_partition_property_vmm_capabilities {
+> +       u16 bank_count;
+> +       u16 reserved[3];
+> +       union {
+> +               u64 as_uint64[HV_PARTITION_VMM_CAPABILITIES_BANK_COUNT];
+> +               struct {
+> +                       u64 map_gpa_preserve_adjustable: 1;
+> +                       u64 vmm_can_provide_overlay_gpfn: 1;
+> +                       u64 vp_affinity_property: 1;
+> +#if IS_ENABLED(CONFIG_ARM64)
+> +                       u64 vmm_can_provide_gic_overlay_locations: 1;
+> +#else
+> +                       u64 reservedbit3: 1;
+> +#endif
+> +                       u64 assignable_synthetic_proc_features: 1;
+> +                       u64 reserved0: HV_PARTITION_VMM_CAPABILITIES_RESE=
+RVED_BITFIELD_COUNT;
+> +               } __packed;
+> +       };
+> +} __packed;
+> +
+>  enum hv_snp_status {
+>         HV_SNP_STATUS_NONE =3D 0,
+>         HV_SNP_STATUS_AVAILABLE =3D 1,
+> --
+> 2.34.1
+>
+>
 
-Reported-by: Cen Zhang <zzzccc427@163.com>
-Signed-off-by: Cen Zhang <zzzccc427@163.com>
 
----
-v2:
- - Add missing unlock when entry == NULL (suggested by Pauli Virtanen).
----
- net/bluetooth/hci_sync.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index b6f888d83..23a7fbec3 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -862,12 +862,15 @@ bool hci_cmd_sync_dequeue_once(struct hci_dev *hdev,
- 			       void *data, hci_cmd_sync_work_destroy_t destroy)
- {
- 	struct hci_cmd_sync_work_entry *entry;
--
--	entry = hci_cmd_sync_lookup_entry(hdev, func, data, destroy);
--	if (!entry)
-+	mutex_lock(&hdev->cmd_sync_work_lock);
-+	entry = _hci_cmd_sync_lookup_entry(hdev, func, data, destroy);
-+	if (!entry){
-+		mutex_unlock(&hdev->cmd_sync_work_lock);
- 		return false;
-+	}
- 
--	hci_cmd_sync_cancel_entry(hdev, entry);
-+	_hci_cmd_sync_cancel_entry(hdev, entry, -ECANCELED);
-+	mutex_unlock(&hdev->cmd_sync_work_lock);
- 
- 	return true;
- }
--- 
-2.43.0
-
+--=20
+Thanks
+Tianyu Lan
 
