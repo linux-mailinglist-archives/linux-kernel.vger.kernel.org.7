@@ -1,205 +1,164 @@
-Return-Path: <linux-kernel+bounces-835766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAEDBA8020
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C2ABA8029
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB317B1A92
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:41:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF713B3FE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BB629C325;
-	Mon, 29 Sep 2025 05:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7470F29C325;
+	Mon, 29 Sep 2025 05:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q8AlYXXd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bq29YAo4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC4A34BA53
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9F329B8DC
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759124556; cv=none; b=cgCZOwgDDNfJ0ogmlne6CfIWnzeY7a9lofPtLs7OOmCBnK8HUuaSsNGZUf2uvE7HNAJdbsn1I9/d9Y3NyA4FAouD4h8BsoQ3aU32x55RRN0vF8Qi7ZniYJ2USpuFqmCFSEnexYB7ukwAsMtIzWLmDbOOsjKiXfG2oWm2V3zw8T0=
+	t=1759124602; cv=none; b=QKpqyjOns4uniSjVtDm6Mnur77eEGJfR1ofq8S8Ci0Ruj0jMY6Mlmn7wC6qfKYPu8kG7npr19eWguI/0/uHnXYWviG6UUi+x7WLjr7K2vN5hk8a5WRx/MvgszmwYfak8Y+sYSh07v77mhhJ2oCIPda/dcfTXaNJdRFdNH31Ws6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759124556; c=relaxed/simple;
-	bh=djbdttzWVeZdtdcCBQG2ls7rum6/KDgqWatmSRYyy9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lFa6gHoqh/s9Cw6omg+aHPeTwslKmlRJMvtwL4OcCLxOVTE/F8o5pRzrDLTdT7Bqten1ZuQst4D8I8ULpwTV/c3xWtERlPr9lfztDi027bQWq/EaZeHZJDIeIzjFZw/GKRk+wF4qeyVA+U0Np7kD2Iy1SIPMzOpLj72hoiqcPnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q8AlYXXd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SMuYpl009061
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:42:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rfBzbpwct3yDDq36E8SAQ+hFmXrqjfgGSlZ22u0SUWo=; b=Q8AlYXXdoNZAjB2q
-	TEw+Ewb9XF31iytwBx8jZKR3L4h+xeL2pVn8rUmUwIk52sxlPtTL2ppJ6MIO0tsA
-	pM2ZpaR7XomqPrculQZd8FYRUtavCio+xHdB5VFXgpaZRPB4RgWzgXJ3cz2YDZJk
-	pY6U02VJK4YlXk6Kh0BPl3CFdRslagBhrQzLI9Zlj/Ks5aOBUDp1XNrpxAqchKnr
-	pqQYXiDcyigt1JmKqz6A+2MHx0DGm3QKTdXwNL6x137Ih3PXPHUlDBRiEZw2rTp3
-	FNBjCJrRX32OgDQy5ifUrXrvH82UaoEHCUZB+KqynpdaRqN1aakmfOc3T5ZSrBAP
-	y+wnnQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e7gxkyug-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:42:32 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3307af9b55eso3693947a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:42:32 -0700 (PDT)
+	s=arc-20240116; t=1759124602; c=relaxed/simple;
+	bh=KkdQm9LnjT0oDZgSyvNFLyYVXfgAVdlyFZQg4ncaicA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GySYYEZHSw31umnqyRmGTbNGTDcXKmUSSPZ9wHVXlIzCIF9B7Gqj9FYR0CUw9AqrLFgEJowQ4RkFg+BHMqHKMWItUft8lFBp5e2Rw/56JHnxnGX3VGzrK5SQcmen65duL2N82BG75anu9wDtZWpjW0gtni0QV9ZMy2m8ZwbxwAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bq29YAo4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759124599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DLDJM/v1GnCONjQIRc/rqkZtzK/nAlZhViXrPHYBAQ0=;
+	b=bq29YAo4Scu78XCZbmXpy03GT6cUYzT1rHfgMEI5o6pwp8PVNs30DJSVC458G/6IyYg6Mh
+	73e+Bm/pLmYjhrAA0y1l6EErQcM2TdO9qf/XAEXYyiarUd0tiEGlDEi9FssH9FtMX8RWOe
+	oHy6ShZivLEcWJVCLkGBsXUgCvY/aWY=
+Received: from mail-yx1-f70.google.com (mail-yx1-f70.google.com
+ [74.125.224.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-637-TCeqI2LdMq21shHOYQ17cQ-1; Mon, 29 Sep 2025 01:43:17 -0400
+X-MC-Unique: TCeqI2LdMq21shHOYQ17cQ-1
+X-Mimecast-MFC-AGG-ID: TCeqI2LdMq21shHOYQ17cQ_1759124597
+Received: by mail-yx1-f70.google.com with SMTP id 956f58d0204a3-63541ee6187so5106140d50.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:43:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759124551; x=1759729351;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rfBzbpwct3yDDq36E8SAQ+hFmXrqjfgGSlZ22u0SUWo=;
-        b=UTp2Vyw0Tuczc+JoapT1+1t2EifYiNvL81DZgYK3qj0Vj0axgKiYtI8i2PhGYEnuu1
-         h1sL1tAXhd6UQv3ZxhOZ98xY5KpgZiDh9jkIPZE5xM8vbEi8tQxmNrSh09Mb+76QscHC
-         37gPUvDX17t8mwBYSxoXYNermc89ji00jglyJSU+XHGHueMfUM70WfUmRkYRXOHNV2kd
-         YrjDdlQUG3RV3yUnl5bYRVv5Kq2Fu1Clg2hHeAmjc7LeD15EpvDYPPMeUqT4rBmcVkaC
-         U1qsLwgP1OWXBRpLLVrVq9DWszhxSmtfjzXWYxvABjyKXALBJEViO9KiiWnNZ6YGFbUO
-         0CVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwNAA3/vlcXVJ2CqcjnivYVlwZRaog7GkdriZlbqao6VsFTCjjEPmI6uDJ2vH/yTQG//VjjKJXr2aSTE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcXy5bxuEacTOQilyHbmdxulq4dlkGcprR0U3pZHCqQ2SH8AmJ
-	YZKr2636XDuAwJRZYd4kOLjgdj0jrhauA+RCOu5WSaWlzVHCfL2WiZfVYxnc8DvfINKQWRPIfgG
-	RdcuENIoHlKaD7UD7xiaK4yNHq1NQwZD+IHir+jgXYbyzQfGdG20q/EN6OmmKQHEiKu8=
-X-Gm-Gg: ASbGncsCN52FugfbuozZgY+vRzFlib6T+3vxIKACqBjuXLBS2VP+yyj47cBXRgw8OSq
-	YXzhHQrJfl18iHvFrAD9NUafLrVoHZLHPHg0UZxJFDe+8iAigKc2ivi/8sXm533a4xFmIbwL+vy
-	pJnVxNHzbanKtWuBor8hpVzkcOs2OyWjlqP1XkO/FYsTFnSTiV4orPEUxHCTAaSliN9hF1o6Q1p
-	M4DJFpU0QtOD14pIyQMGDm2dhLbD4/AfvPh8LQEGq17gs/WhHaet170VCIodiF3CmxWLrp+yw15
-	VnuQ3tf+SpkThhELnP0ixEqon7V3hJ2i7KJVGieU0Ep1kNpqTx0f+kU25ylIrE1m6M/DN1YB/Cl
-	KxR5vZfmKumQxUKLw1JoD0S7eMhXa0+hwS7Y=
-X-Received: by 2002:a17:90b:1c04:b0:332:2773:e7bf with SMTP id 98e67ed59e1d1-3342a2b9566mr15491882a91.18.1759124551530;
-        Sun, 28 Sep 2025 22:42:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcs/k3kR5lOsN+V9n/ODodNKvmnVPplyVbFJ8XSQZMHLdp/E45BWmNDfJA1eXIMQW/p9GKdw==
-X-Received: by 2002:a17:90b:1c04:b0:332:2773:e7bf with SMTP id 98e67ed59e1d1-3342a2b9566mr15491859a91.18.1759124551062;
-        Sun, 28 Sep 2025 22:42:31 -0700 (PDT)
-Received: from [10.133.33.234] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3350256d403sm11124204a91.14.2025.09.28.22.42.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Sep 2025 22:42:30 -0700 (PDT)
-Message-ID: <70241129-1e08-41f8-b60c-b72ec079702a@oss.qualcomm.com>
-Date: Mon, 29 Sep 2025 13:42:26 +0800
+        d=1e100.net; s=20230601; t=1759124597; x=1759729397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DLDJM/v1GnCONjQIRc/rqkZtzK/nAlZhViXrPHYBAQ0=;
+        b=bQTp6E5KOoOEa99UQtBE7a+8qT1FsU0Hd1WMfBh6chBvb8Q1K7AGOjSvTj0DA/2Obx
+         KsBE04X7McF+YnPbEhHsYQw0MhkQBkBUE4dbNs6IH0tjLlfBWWAL2AXKep3puer5sloX
+         o28XBCEtm249t1QfsfaM1/nw8PkW0bbiweMYz6HlTIYkjReuUbZGBEVg9HKQRUJpm72W
+         /A3xiBzJ11AEsjsG39u1nO7bHUhOmlWNLYfBU5pNO25djpYOyLF/H6TUvCLSErAWDyh/
+         q6APguCoJat/lYHO5By+la8I9Wyc9Gk8gx4HsnADh2f0gA6BVlc21+aRxn1EGj7h4tpL
+         pQMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDlT92O6XiuPnsEZUOWan3vd6GZm7j/IIN8Arbel0W9L5Iong0ns7YbIzfQxLIdp8ahF695gs2H8XCPho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZeLp8yrLwR+51H6U4Gs4gYW3VYASz1yhhhOaASKkOv6jmbJBe
+	KlinHhOEkwPQW2vGx386ndDKDVtGs3HZ7Wkgfc5rK9wNqinaW6Qy2xQcu2XBVb/MTk/qWhLtz1E
+	7weg6irVC1vGoHqFnkRpcrclTsP5IhFRHL2ztAAmN9hCnMwgLnGi4E803e6/dM/OK+eywTcolGH
+	5cd1SSTuPcV/kZXGulxsSaJ38Zmy77oz2QnhOVZXNQ
+X-Gm-Gg: ASbGncuwQJpMlp9pR8jEl/w0sk7hjIMDCc62XgFuNob5a80T+ND1FXZ62qcEyPLMNzv
+	alT0s8AiBEIIxH0L0B9N0reKiuanUYfRpLVLcrl+iM+jnX8xcPshCnxrY83lDyNQo2SDLYN/2JU
+	nxbSoVhms170GzcyJSxi1Cqzznnfns/8pRYYODPWkiWffP05piQWdN6C3J/fpA6FfHrMnvvXTvz
+	l+WWfuf
+X-Received: by 2002:a05:690e:22c4:b0:635:4ece:20ab with SMTP id 956f58d0204a3-6361a873801mr13564072d50.48.1759124596999;
+        Sun, 28 Sep 2025 22:43:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZRprYWH3GKFK0J+/EVnsfKtUL40W8QVLXJUwLVUPi9R0BTd57XmXjDp56sXiMQ2Op70w6PccJcX5wX4kfJoA=
+X-Received: by 2002:a05:690e:22c4:b0:635:4ece:20ab with SMTP id
+ 956f58d0204a3-6361a873801mr13564052d50.48.1759124596652; Sun, 28 Sep 2025
+ 22:43:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/20] arm64: dts: qcom: kaanapali: Add QUPv3
- configuration for serial engines
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com,
-        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-13-3fdbc4b9e1b1@oss.qualcomm.com>
- <9685e29d-bff3-4188-b878-230d0f161ce3@oss.qualcomm.com>
-Content-Language: en-US
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-In-Reply-To: <9685e29d-bff3-4188-b878-230d0f161ce3@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: vBA7V6IsO6b41CXpxEg4JAFqn8zSmo-0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX6aMUZ/xvpvVq
- 33HXFFELi/FlJXDWtwWrovEQudzZb+nswJDFtcZYP7FgvPoyOZE+7J9cS7ft8vq03vNkgGFbMhv
- mSlczMBhitEqoy0sMBcfZcmsxUFXv1sqXPnRVsFSqoJRhPUIa7Ttx1Usw69wDnQMchK6XAQB5+d
- aPwmwPQirFpX9QGTf2v3nV4ZxKwu5bdk2nSrYp9Z4JKEoi1DUg4hefuxC+NirtOX+ch+OnbVdRU
- IxjslfHSfWPi6ndGcMhIpLeyKLWjf0Ad4m25oIbpgdv25N7msAy0Za3w0w0+TwYZqEUx8O3aHqh
- s5hW46cILbJlZuDKvzfI3zKh3MofJ/8Ea4BXHiOaoCHZbjF1XMYMX+xpLbj6sgwQh+1tuSRW3Ft
- 6TLzCgG9Mod8DAYgfxlHM+fBIMm1Pg==
-X-Proofpoint-GUID: vBA7V6IsO6b41CXpxEg4JAFqn8zSmo-0
-X-Authority-Analysis: v=2.4 cv=dP6rWeZb c=1 sm=1 tr=0 ts=68da1c49 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=_ltKwtvy-Tbn6v8TjEMA:9
- a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_02,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 spamscore=0
- malwarescore=0 bulkscore=0 impostorscore=0 phishscore=0 suspectscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270025
+References: <20250925091335.1964283-1-eperezma@redhat.com> <20250925091335.1964283-2-eperezma@redhat.com>
+ <3e5abb75-2192-46dc-a44e-d66fed87fc63@leemhuis.info>
+In-Reply-To: <3e5abb75-2192-46dc-a44e-d66fed87fc63@leemhuis.info>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 29 Sep 2025 07:42:38 +0200
+X-Gm-Features: AS18NWBlM_AwzI2-s0Otvy63KDuzlTLedZ6DoP5wCZ9FlMjm8eYezVLoJQUZ6gw
+Message-ID: <CAJaqyWehjiVeq360A=1_+=eRSDjoF3zNsNF0Lf-45YeiT5Pk7Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] vduse: make domain_lock an rwlock
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
+	jasowang@redhat.com, linux-kernel@vger.kernel.org, 
+	Maxime Coquelin <mcoqueli@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
+	Stefano Garzarella <sgarzare@redhat.com>, 
+	Linux kernel regressions list <regressions@lists.linux.dev>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Sep 27, 2025 at 9:01=E2=80=AFAM Thorsten Leemhuis <linux@leemhuis.i=
+nfo> wrote:
+>
+> On 25.09.25 11:13, Eugenio P=C3=A9rez wrote:
+> > It will be used in a few more scenarios read-only so make it more
+> > scalable.
+> > [...]
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index e7bced0b5542..2b6a8958ffe0 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -14,6 +14,7 @@
+> >  #include <linux/cdev.h>
+> >  #include <linux/device.h>
+> >  #include <linux/eventfd.h>
+> > +#include <linux/rwlock.h>
+>
+> Lo! My daily -next builds based for Fedora using the Fedora rawhide
+> failed yesterday on various archs. I suspect it's due to above change,
+> as this was the error I got:
+>
+> """
+> In file included from drivers/vdpa/vdpa_user/vduse_dev.c:17:
+> ./include/linux/rwlock.h:5:3: error: #error "Please do not include this
+> file directly."
+>     5 | # error "Please do not include this file directly."
+>       |   ^~~~~
+> ./include/linux/rwlock.h:27:10: warning: =E2=80=98rwlock_init=E2=80=99 re=
+defined
+>    27 | # define rwlock_init(lock)                                      \
+>       |          ^~~~~~~~~~~
+> In file included from ./include/linux/spinlock_rt.h:153,
+>                  from ./include/linux/spinlock.h:455,
+>                  from ./include/linux/sched.h:37,
+>                  from ./include/linux/percpu.h:12,
+>                  from ./arch/x86/include/asm/msr.h:16,
+>                  from ./arch/x86/include/asm/tsc.h:11,
+>                  from ./arch/x86/include/asm/timex.h:6,
+>                  from ./include/linux/timex.h:67,
+>                  from ./include/linux/time32.h:13,
+>                  from ./include/linux/time.h:60,
+>                  from ./include/linux/jiffies.h:10,
+>                  from ./include/linux/ktime.h:25,
+>                  from ./include/linux/timer.h:6,
+>                  from ./include/linux/netdevice.h:24,
+>                  from ./include/linux/if_vlan.h:10,
+>                  from ./include/linux/virtio_net.h:5,
+>                  from drivers/vdpa/vdpa_user/vduse_dev.c:11:
+> """
+>
+> For a complete log, see
+> https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/f=
+edora-rawhide-x86_64/09603789-next-next-all/builder-live.log.gz
+>
+> Reverting the series made things work for me.
+>
 
-
-On 9/25/2025 8:28 PM, Konrad Dybcio wrote:
-> On 9/25/25 2:17 AM, Jingyi Wang wrote:
->> From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->>
->> Add device tree support for QUPv3 serial engine protocols on Kaanapali.
->> Kaanapali has 24 QUP serial engines across 4 QUP wrappers, each with
->> support of GPI DMA engines, and it also includes 5 I2C hubs.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> ---
-> 
-> [...]
-> 
->> +		gpi_dma2: dma-controller@800000 {
->> +			compatible = "qcom,kaanapali-gpi-dma", "qcom,sm6350-gpi-dma";
->> +			reg = <0x0 0x00800000 0x0 0x60000>;
->> +
->> +			interrupts = <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 850 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 851 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 852 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 853 IRQ_TYPE_LEVEL_HIGH>,
->> +					<GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> odd indentation (on almost all gpi_dma instances)
-> 
-> [...]
-> 
-
-will fix
-
-Thanks,
-Jingyi
-
->> -		remoteproc_soccp: remoteproc-soccp@d00000 {
->> -			compatible = "qcom,kaanapali-soccp-pas";
->> -			reg = <0x0 0x00d00000 0x0 0x200000>;
->> +			i2c22: i2c@1a8c000 {
->> +				compatible = "qcom,geni-i2c";
->> +				reg = <0x0 0x01a8c000 0x0 0x4000>;
->>  
->> -			interrupts-extended = <&intc GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
->> -					      <&soccp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
->> -					      <&soccp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
->> -					      <&soccp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
->> -					      <&soccp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
->> -					      <&soccp_smp2p_in 9 IRQ_TYPE_EDGE_RISING>,
->> -					      <&soccp_smp2p_in 10 IRQ_TYPE_EDGE_RISING>;
->> -			interrupt-names = "wdog",
->> -					  "fatal",
->> -					  "ready",
->> -					  "handover",
->> -					  "stop-ack",
->> -					  "pong",
->> -					  "wake-ack";
-> 
-> Please try to use git format-patch --patience
-> 
-> Konrad
+I don't know how this error didn't shout out in my env, fixing it.
+Thanks for the heads up!
 
 
