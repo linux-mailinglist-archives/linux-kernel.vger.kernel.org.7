@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-836304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15ECBA9406
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:56:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BACBA9412
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8529F18883E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:57:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682F23C78F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5133064BE;
-	Mon, 29 Sep 2025 12:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26C306B2F;
+	Mon, 29 Sep 2025 12:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FCgn4P2K"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="Z5DHq5qK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2545B3002AD
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759150599; cv=none; b=RfL8XuX4Enqka07VQzob6y5HQLT2mwOakL3JHwR/cV9yVUdPCT+IFAt+gacfr3wAQcE3/gD6hNVWF4nJVU4dbNnFhABA1cs/H0Fp2KfGawPD+B+ptm/LGMjQHI0a9QI6Uyp+7GOjpVLViXQHS0y7dbXPXDlcrYgsfrqPP1wl95c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759150599; c=relaxed/simple;
-	bh=czoR4K1G+s7y76NbjlWpJJ4z4V3QKtSDAu6HI/RHErw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=psqwlUwkBR2Oh28rPmx8Q3fl9uMENdEsAYCiBbfaIl4k2MkosfTEUKckJfSyXLOO42FK0zh7fqFe6H3qPHmnm2rcNCeCZK54N3zpj51KxQhHStMUqVKmI26vceMmFvl5b8ZCIQ7vDg28G8E8LCpEP6zBZ0byXMDSreeXa5PZHKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FCgn4P2K; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3c2c748bc8so243465566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:56:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759150595; x=1759755395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vT64PoBlF5OmMwmdMDL2m5IBI9zs1VxmhdKVWW/7dn8=;
-        b=FCgn4P2K1bIgFAJoDuau++Y6+Tu6orG3eYikQptlTbn2qk5fvnEX7rNz9xsa4ZIAk9
-         TNz6RZf1mVEJ+Su1njyT9bIYaseGuw0JWXQMPRpP00jx3gM9a4BJqrnV9kYHqPXbJaOq
-         dhlEb8pqe7t8ANKhDaOdu1T1Y/mpR47EeDuatvBM511yYbhWL6Uu/rIc2s4AYq5Ndc0a
-         fop7n/Pv7EAT0po0BdS0IYOt4RiIvQ6Mn+1uZG2p8wrWzsrtqds8fVEJ48NrNm2Iofnq
-         nfDx40KqhrUAlKvyAFMaZdew5N8LuEja0ysIg0wwj2ntDhoqum1eyE8GcCYO/dnVabBV
-         mIUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759150595; x=1759755395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vT64PoBlF5OmMwmdMDL2m5IBI9zs1VxmhdKVWW/7dn8=;
-        b=S61T+zsaRyQurBzTzbKmBdNQ3t08GlIld5SFyjeLZudEkxdsnhNiYx/1qYoNH91VML
-         Uevgo12W3+BcxPE5qhFp/foBORTyQuuAikSWaclGBKbUyhNvXXnYznFTyeWqD+2hOQMY
-         wm1lndL9BynJ7oibvTcX161jlnc7auPeEHmPPsZiTvft8jJ2SsGI5R7bqR2GfVK1hKyd
-         5FFEKP4PjhZt825sx+NPRJKcn60sFuweygokJ94whgoqYilIWQrtmrU4t6SRrJEmVGgM
-         ZiTpJwcSVCLKmZb4RASVFbBk6qBWN8BXzOj5+3+eeqtLK9YQs+QrgE1D2cirEaQ1ySWP
-         gW1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUI23YJCrz9hi4xagvCL/LKv27qvrGzJWHUqFG3UotmesJIcg27usSSKMPJnKdAW0GgasZdeOnsQOAt6A4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/+QQOhN6aivtc0koeqW5ul2QGbVcBmRUpXweQK098laJ/LOfl
-	TV++l5dnI4+gzsA1s/Xrj3t8JSAGhvzMdXMkT4BQU3fMUwF2s7RlKcBW5K6yd58kc7R8VMB8qRq
-	2EYgXTDCNTix3oOiR1MtHzCUxog9yRRU=
-X-Gm-Gg: ASbGncvheVfIs3uLyBxDb6qFl7ycMo7UNEnOW1241cTKUlXhm9QpZUfV2Y+Pa22eOgs
-	S8JRbXjN5qG0BcLWpn4nJOU3d5JjI7M0eGKDsSagaqsrlU8FgIjLkk7BQFCklZh4qNIjb4J8YsK
-	Cagx3KDgBJx2+Tq6TmNin+BIAXB4m8MM7+m5Ym2f/mYVPjp5B/Nl7ywJ5EgRqf6GPZk0VCbSC4c
-	FSOn5c9fpv/bMd0jFWXIDKwSK8EV8cp5d6FflYsdVwU8dN74IcSo1pzM2DxAFM=
-X-Google-Smtp-Source: AGHT+IHwgU6a7k1Tl/htBp66waMHN4IzraB7wwO8zA//bOHkHjYwuv41WV4gECwjjXP36V6Dgiwj6qkk1Bdqwjmi4TU=
-X-Received: by 2002:a17:907:7291:b0:b3f:9eaa:2bba with SMTP id
- a640c23a62f3a-b3f9eaa2f1dmr276916766b.63.1759150595150; Mon, 29 Sep 2025
- 05:56:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BB93002AD;
+	Mon, 29 Sep 2025 12:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759150605; cv=pass; b=UfVaw7TPYMBDWeT9dCVcOA+1nIQ0ytC+QZH8VYDwUndECwQFAtXVeLSkr3kgZ1kpvflsQ+UPpfBJD1UfQxAgMkX73mCCSLUgFfFy43fS+NCDU45U50GByijQrTsrBrLQsh/KHEEfnBfiYiHoMWJqYnBzYlgyJD/SZmS+DIHFEmc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759150605; c=relaxed/simple;
+	bh=jlu1RPauD+35YtIPSJ4mapRaTRJ+pjwd5qmVEcTneiQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=d0LcrTjlO2IONZ+hY2bOUtCRitqGYiBBTUUKEHT6nniIfKgsycIFFh954XMLEjWNKEVpCETfgHw2IprZR3IX05PeZwrLp6lfnd6UnRzkRfSW+FqSyRGyxRVfU04fETffJuTgJPG2ewjOD+m17qCVg5/DPEYTyoA4cgSgcgeEjXQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=Z5DHq5qK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1759150592; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=A2/6Upu8d5+35lAH4aXAPCNT7ffbly/9gxLn+md2mL/kYGOM2Ggrxo9IszT48+gsH3s3b1Ngg823aCWUZUGk1rag4oCxmd8fVDg/RyQACBTifozMMtVFLVXzWV38t6DgHWg4kbXy+1Q0yXYICRH9jOXdJhZhJIPmLg09VtguMyc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759150592; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CCMTLNWcX+amaMhpM9yRHYxq6idWilkG27Bb2c8YbEk=; 
+	b=EqeOAiKy2wK0BTwv1LZ1A5i/JpvSHLOoz63uPRI/b3CYrXBIwLct8cK57qPjN16g4++PLGe9HgbhZ9qPiIRx12l08UZozxMzxRvy+tHYyL8MRcWzZyZEpw+SAwBSdlZihJwB9BFKb2x5ORpdwLU06AXofmpG2+WqhLWh2Ha7jHQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759150592;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=CCMTLNWcX+amaMhpM9yRHYxq6idWilkG27Bb2c8YbEk=;
+	b=Z5DHq5qKF9pOmurRz7WYUceD8uit3xMEi0YfL2Kei9o2ejzAHMCzQxpMQkSuvVY/
+	ORzANSbdrveaua1EhiWRTkCZKCTqr/igdwZr6dOvD2Mxs8HOsWqpCjoDH0RyQBqPmij
+	x/q/xjzxBLByl6jO1otKgQBJbjr6tHxmzNE8kr6M=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1759150590612210.47496336906693; Mon, 29 Sep 2025 05:56:30 -0700 (PDT)
+Date: Mon, 29 Sep 2025 20:56:30 +0800
+From: Li Chen <me@linux.beauty>
+To: "Yu Kuai" <yukuai1@huaweicloud.com>
+Cc: "Jens Axboe" <axboe@kernel.dk>,
+	"linux-block" <linux-block@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"yukuai" <yukuai3@huawei.com>
+Message-ID: <199958bca6a.7ea76c7c550787.2798726002425326647@linux.beauty>
+In-Reply-To: <68aebe91-4dcd-925f-4232-1c432fe6899d@huaweicloud.com>
+References: <20250926121231.32549-1-me@linux.beauty> <68aebe91-4dcd-925f-4232-1c432fe6899d@huaweicloud.com>
+Subject: Re: [PATCH] loop: fix backing file reference leak on validation
+ error
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923104710.2973493-1-mjguzik@gmail.com> <20250929-samstag-unkenntlich-623abeff6085@brauner>
-In-Reply-To: <20250929-samstag-unkenntlich-623abeff6085@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 29 Sep 2025 14:56:23 +0200
-X-Gm-Features: AS18NWAQppLQGH4Q4QepXGfVar_40_jU-wol-wjJISWMpqe1GoM3Cv27IqmClpo
-Message-ID: <CAGudoHFm9_-AuRh52-KRCADQ8suqUMmYUUsg126kmA+N8Ah+6g@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-This was a stripped down version (no lockdep) in hopes of getting into
-6.18. It also happens to come with some renames.
+Hi Yu,
 
-Given that the inclusion did not happen, I'm going to send a rebased
-and updated with new names variant but with lockdep.
+ ---- On Mon, 29 Sep 2025 09:11:04 +0800  Yu Kuai <yukuai1@huaweicloud.com>=
+ wrote ---=20
+ > Hi,
+ >=20
+ > =E5=9C=A8 2025/09/26 20:12, Li Chen =E5=86=99=E9=81=93:
+ > > loop_change_fd() and loop_configure() call loop_check_backing_file()
+ > > to validate the new backing file. If validation fails, the reference
+ > > acquired by fget() was not dropped, leaking a file reference.
+ > >=20
+ > > Fix this by calling fput(file) before returning the error.
+ > >=20
+ > > Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+ > > ---
+ > >   drivers/block/loop.c | 8 ++++++--
+ > >   1 file changed, 6 insertions(+), 2 deletions(-)
+ > >=20
+ > > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+ > > index 053a086d547e..94ec7f747f36 100644
+ > > --- a/drivers/block/loop.c
+ > > +++ b/drivers/block/loop.c
+ > > @@ -551,8 +551,10 @@ static int loop_change_fd(struct loop_device *lo,=
+ struct block_device *bdev,
+ > >           return -EBADF;
+ > >  =20
+ > >       error =3D loop_check_backing_file(file);
+ > > -    if (error)
+ > > +    if (error) {
+ > > +        fput(file);
+ > >           return error;
+ > > +    }
+ > >  =20
+ > >       /* suppress uevents while reconfiguring the device */
+ > >       dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 1);
+ > > @@ -993,8 +995,10 @@ static int loop_configure(struct loop_device *lo,=
+ blk_mode_t mode,
+ > >           return -EBADF;
+ > >  =20
+ > >       error =3D loop_check_backing_file(file);
+ > > -    if (error)
+ > > +    if (error) {
+ > > +        fput(file);
+ > >           return error;
+ > > +    }
+ > >  =20
+ > >       is_loop =3D is_loop_device(file);
+ > >  =20
+ > >=20
+ >=20
+ > The changes look correct, however, I'll prefer to change the error path
+ > to the reverse order and add a new error tag.
 
-So the routines will be:
-inode_state_read_once
-inode_state_read
+Thanks, but I will switch to scope-based resource management in v2, as sugg=
+ested by Markus.
 
-inode_state_set{,_raw}
-inode_state_clear{,_raw}
-inode_state_assign{,_raw}
-
-Probably way later today or tomorrow.
-
-On Mon, Sep 29, 2025 at 11:30=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Tue, 23 Sep 2025 12:47:06 +0200, Mateusz Guzik wrote:
-> > First commit message quoted verbatim with rationable + API:
-> >
-> > [quote]
-> > Open-coded accesses prevent asserting they are done correctly. One
-> > obvious aspect is locking, but significantly more can checked. For
-> > example it can be detected when the code is clearing flags which are
-> > already missing, or is setting flags when it is illegal (e.g., I_FREEIN=
-G
-> > when ->i_count > 0).
-> >
-> > [...]
->
-> Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.19.inode branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.19.inode
->
-> [1/4] fs: provide accessors for ->i_state
->       https://git.kernel.org/vfs/vfs/c/e9d1a9abd054
-> [2/4] Convert the kernel to use ->i_state accessors
->       https://git.kernel.org/vfs/vfs/c/67d2f3e3d033
-> [3/4] Manual conversion of ->i_state uses
->       https://git.kernel.org/vfs/vfs/c/b8173a2f1a0a
-> [4/4] fs: make plain ->i_state access fail to compile
->       https://git.kernel.org/vfs/vfs/c/3c2b8d921da8
+Regards,
+Li
 
