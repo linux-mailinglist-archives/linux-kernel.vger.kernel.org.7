@@ -1,215 +1,222 @@
-Return-Path: <linux-kernel+bounces-835828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116CBBA82B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:47:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5661BA82E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765D37A8AB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 215E5189BF93
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2E323F424;
-	Mon, 29 Sep 2025 06:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615F02BF01E;
+	Mon, 29 Sep 2025 06:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W64zioqL"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010044.outbound.protection.outlook.com [52.101.193.44])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T2D3bKvX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2C12BE7B4;
-	Mon, 29 Sep 2025 06:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759128441; cv=fail; b=MZ57nz9k9hYLmK5FjMkk5uwfthWGqoi/snKN9k/GHfYLvagswrF5lavASZJsKo2yBfQiHh3gxSdncCjmescTdeQnNTXKiZuygnDmzfGg+jaryivcVnBo4ltezq9pgSeumC1c4t2NDQlukJWRq5F7/znzXz4G5DMvxp/kI76m6yI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759128441; c=relaxed/simple;
-	bh=UJThgFGKJtQf2ROvFR0xM8xYjJv8VPIwku2SjLsjhj0=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
-	 In-Reply-To:MIME-Version; b=bx4iUKMAKfbQxph/Ny39TN1xapjIPvsPTvYysgxc5ZclQbLx33GAsuX5LvjN0ctMjPcGCsTW2ki0Udhrz7HzC2jeB/jBhnE46+jg/EuL8ZKMmoro6xd63fGYeGRlRJKrBzjXeqR36Xf8Cl9Uv9BwFvkHMViD0uMRy9peDtOZqQ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W64zioqL; arc=fail smtp.client-ip=52.101.193.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=APeiqg4NLtN8cefZ0ryviZz1QB2sPe+id1okaOCjiex6dhF/NQTvW3bNycxwSbyopMRiSQDoVOBXOSEKf93JKx29nFfdIkKH6T8ADkveMxXARdXIAU49F+HOKcdmWcbVRihRb2UWvFF73KwsAd92unxZaCnqo6FhcFFo6GRDmz6R62VSalGcAT1Ecy7sRfTnAOLmDVtYzEeQOTzxpbWmMitT1+NHJMfaFskyrALJBz4xDGa/YGerMJ+g00CNFuuXQ/6AKYMkCo7pT8xxKEos3LrZxf9W1E2Jram1uywW5/fyhVEsmxeN9rMuxrbaAWqIgcoMRgm2GKXLcCrxXALpcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u2DK98AtKWsyTvpMnFt60SXcXWBWUFYxrOb9G4EUigY=;
- b=TbI/6K7RpUJqAdxB9wPTOR9WU4pOufv8xiLW7tWPda+CHkXRMnSI1a0Vpx3hVoJFgdX0WaVp+sqfPaZWD4NUczUtUAFzjrtYqyIhIJ1gBEobTjVs6kViOo+aGtxp72hdFAPwoJIKslw/xqRk77yCSDVEBu2xxGc/U8j2hIbOYJR96II+7bqbMs52YWT44kremoQ5flIWc336eSbO2bkgMlE+Y+XTGy+1/oBMFS99X8j8H3Qq8i4u8jmUGfkg9h0WzyL01DlQPhYW6QoCZLXdY76Ka3SR8y/CES5toZCWvW0Lxsxq+C/fBOwbEAaz70EEZLOo10kcwu8k+/wwNQVeKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u2DK98AtKWsyTvpMnFt60SXcXWBWUFYxrOb9G4EUigY=;
- b=W64zioqLPZFzkjdnEnoYTcQxvdJEQkCKD/vDYG4Tn/TJPOkXhqCTFFYevxjJ6EB4vOnRdAjRnlioHREKDGdQXGV/veqY+8N0yV27DejPnMed6P/IxXb8r3nsNRtthkLAj1LXA/M87dyiiZPR1NI3BlS/x234vOfPDw9ziqscUJTp/QKFkik0SCXyxE1fnpP+LiXy8X72hI8CvjNMQgVNFij7bYMgx89KuboBY9cfVqYVZ+n+IPQZbzoYzbyMWKUU1pe1Mngb3oAcWMlBZ56DKNIw661taTLj9KDBIZHuaRsRXb/KzpbJsH97dvlxHvTSnbxdNGuKDejsyAyVZiEg/g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS7PR12MB6264.namprd12.prod.outlook.com (2603:10b6:8:94::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
- 2025 06:47:11 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
- 06:47:11 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 29 Sep 2025 15:47:08 +0900
-Message-Id: <DD52ZFG2MKAL.35RFN8L4LH5H1@nvidia.com>
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, <acourbot@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
- Norov" <yury.norov@gmail.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH v4 6/6] rust: bitfield: Use 'as' operator for setter
- type conversion
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-7-joelagnelf@nvidia.com>
-In-Reply-To: <20250920182232.2095101-7-joelagnelf@nvidia.com>
-X-ClientProxiedBy: TYCPR01CA0033.jpnprd01.prod.outlook.com
- (2603:1096:405:1::21) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22ED2BEC41
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759128556; cv=none; b=lsWr1lMU11SOz2V3ekXISlgmLV+kWPpT8lEE4n41lTYAcT1qOVg3v6A0l+nS+ZfSNaa2yld4SdQ4BaS22P313BR5IPtiD8IrPOgUiiDO3CjxmxAutv8nTGUfFIIshd3SO71LQA1GMaoiI0gWDraEG0JrGDEvIL5n+/bVCu+tl8U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759128556; c=relaxed/simple;
+	bh=4spyL6Na5g5JJ0fDen/XknT358VQN3W+ZE8ikSf1St0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIDAtW2ONwIExNkZWCUkBxrY64CWt3pVOGclvHdRFTjMxvMuldtAiJis8v+TdJmbc/fChJN0d/CE7AStyFkD84KAI33ZebRFA0nXRWFb2KNJyPSSRCLGbRU9dPcZzlzsKQxYNV/VO/baw3hXcfVPY51+jyuyJy5LRU4/0q4CXUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T2D3bKvX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759128553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zJBrYQzKPmsXe4A2D7OxeNp2JMJW8Wi974UMLzhTcs0=;
+	b=T2D3bKvX8cpbW7VafHmGXedkK87NIPFHo/Tu7fCjIVoubNiFuZhIgzK9LcsZpVNQkzrx5A
+	frhpRucu3fio+urA6HGfYmGTKVVFY7Yh7rwr3lPwKE3zS+FrTn6Rx4N5azsynFIQbxeuE4
+	arXIWCuBGrMvDvWkbgjH4QR9cNY52xE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-446-hue81e8pOHWNQKMV5lQilQ-1; Mon,
+ 29 Sep 2025 02:49:09 -0400
+X-MC-Unique: hue81e8pOHWNQKMV5lQilQ-1
+X-Mimecast-MFC-AGG-ID: hue81e8pOHWNQKMV5lQilQ_1759128548
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1847E1800451;
+	Mon, 29 Sep 2025 06:49:08 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.40])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8E4F01800446;
+	Mon, 29 Sep 2025 06:49:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 29 Sep 2025 08:47:45 +0200 (CEST)
+Date: Mon, 29 Sep 2025 08:47:41 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Li,Rongqing" <lirongqing@baidu.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [????] [RFC 2/1] seqlock: make the read_seqbegin_or_lock() API
+ more simple and less error-prone ?
+Message-ID: <20250929064740.GA10839@redhat.com>
+References: <20250928161953.GA3112@redhat.com>
+ <20250928162054.GB3121@redhat.com>
+ <8edee550f50647218787cac1016de97a@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS7PR12MB6264:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9390422-8704-49c2-1327-08ddff24043b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RldzUlNEa1EvUlF0YTh1dnF3VVJuTEpuV003dlVSVGFpZ3BUY0NVckpIVEMz?=
- =?utf-8?B?YXZTQTBlSjFiNFRqQkt3MG5mSVNHL3ovNzFMWHdDKzJRK3ZiN1ZqSXg4bHJH?=
- =?utf-8?B?SzZFQVlQc2VONTZkb0l0YTdIeHQrcHpteS9kYVY3YmtqeE9FdkQ4TjRsWjgr?=
- =?utf-8?B?VVBDN1VnT0tISVcvV0RIQk9WTk5YSHVCTWtycmRTcW1hNFNmaDlGMG1CM0dY?=
- =?utf-8?B?Vjh0TzNwMXBkSUd0Qy9xRGR2QlRMTUFZR1UyYVg5WGRjMnpDczNIaC9uN3cr?=
- =?utf-8?B?MUdnUnN4aXdLMEJRVW1Ca0xZbGdkRVBxYW9yMkpBWmIrOThzNWZMMkViNHZW?=
- =?utf-8?B?cFAxdTVqQXhic1dSYWdGNjRZRmxwdVBTWE1EbTdVY2JRNGlSYSs5S2UrZndX?=
- =?utf-8?B?YWEzNGU1VVRxQUt6STkrRnBTMklsTUFTZkFZVit6a0xtT0xhL3dVSjRhNU1T?=
- =?utf-8?B?TTRUNUlWMUoydElCbW9KT3VhMkRBa0lvVlZXbG1QNW15OWxZaXdRZHJsRGZX?=
- =?utf-8?B?dDVIVjZ0WnlVN3ZrYTIySnBITkRoT1ZsVXp6STF6cjdwL1VoUU9GWDdOalNW?=
- =?utf-8?B?MlhrcWE3RVpjaHhVcFlEa1Y1RzdMUlQ4QkZYSXFmN2dRekhUalpjT1dXd1dD?=
- =?utf-8?B?MGErL2szZWVJek1YRjBXV0w2WU5DMFQrNC9uNU5TVVJYMmRSOGI5Ny9tbFhy?=
- =?utf-8?B?TUcwVnpmdHl1cGV0K1pkZytkS1JuRk1wL2dvLzRURVdpcVFVdTBCT210RkN4?=
- =?utf-8?B?VnNLWDRWNE5nV2k2QWlxUDh0V0xocEtsazY2VlB3MUwrVjRVbUN4VFhRMTZq?=
- =?utf-8?B?ZUxqYTFWNzdtOHhnQ3NUZFhDYVhOL25RZENwRkREeVVDVURZRmRxQnY0dUgz?=
- =?utf-8?B?Wm1mYWI2YjRoL3U2WmxCWmpMNzVxRjUraWt4ajJKaFR0VjdOTytYL0p4cXJ6?=
- =?utf-8?B?TXdQQ1dDTGRjc0loSGFFRXBHNTkzVi9QTWtIZUdjU3hKbmNKT2VVejh2QUF0?=
- =?utf-8?B?MURWUnpta2ttMEJ1bW44Tit4dkZ2ZEV1aGFwZFVrQWxkbFByTXhSWTI4Z1V6?=
- =?utf-8?B?ZURxaW9PdXdOUEFzTFdzOUJPdUJaWnFWQlJ6WVRud1VYb2hMcGo5ODRhM2tL?=
- =?utf-8?B?Z2U3cDRpenJNZVBLRUpqYVVoTEY5Z3h0K1ZxQ2N0bGdtWDJ0aFBUWnZOUWl2?=
- =?utf-8?B?ME5YRkFVS1NkcURyVXJYSlcreTFFRVpqN2l4aWxQV21aVUZyNzJnTlI2eUt3?=
- =?utf-8?B?UmFOUkpsZVhjN1lGeW1ORkMrdkVLaWhsLzlMMEY1ek4zUHpQWmxPdlpmZ3lH?=
- =?utf-8?B?TFB5ajRmaWF2cEo4NjFoUyt6OExBK3VuV0tZTngwMGd5ZmxBeWVQTHliaHdL?=
- =?utf-8?B?REhqQkVJQWNGV3VkWU9rQk1nUGNCOWIwOWhDYzl1SVNPNC8xWDIwRDBxODVk?=
- =?utf-8?B?RXhRVjRFL1FVUDNITWJ3M0EwTnVoK0tvUUV2QVFuZmYzN21LWFRRN213aUZK?=
- =?utf-8?B?ZEVTMkwwS21FSDI3d0FiaW40OTRrQkZGbVpCbHd4ek9jMzdwR1E4RnhTMWJu?=
- =?utf-8?B?aDNka3djQnVOZU84MHpCd1dLTEVoSHRVSEtlOU5CclJkNUZUZHpnRVBVdEJr?=
- =?utf-8?B?d04xZGg1WTZDb2xqaWtIazVHQmIxT09SL2t6VmxFMlNldUpDVjh1R3FYcGhU?=
- =?utf-8?B?REsxMmtLVGlINm8weDM5WVlRbm9XdExlY2tvM2o5Q2F4YnVYRUlQa0hPSy8x?=
- =?utf-8?B?bjhYdGpFY3RLV29OUTBNU3FaVmtiTG5LOWRJdDZYTEVhTnpPYVo3TEwrdm9y?=
- =?utf-8?B?V252TnFmanRtNFE0ZStMaHZEaGhDdWF6dXdqWDdseVlOcTI4Y0tySGhHSzB4?=
- =?utf-8?B?TFgycGpFVWNXd2ZnSmZDL2xtbkdwUjk2bWMxWmxiSXo3MVBPc2tQSXF3di8y?=
- =?utf-8?Q?H9w5oJJzyRvno53xLreAr2fZ3/FiNchf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SFdRaHk0ZFgzOTFEd0FNeWVXQjZFdmFqT3l0K1RkejY3NDlKa0hzMFVKcVVN?=
- =?utf-8?B?bXMwNjczdzR0NUdmNWFQbVV6R05mNkFENm9qaERxdEkyY0kvb255V1FNMDI2?=
- =?utf-8?B?Q3Y0bHRGNEtxc01hZDc3M01wS0ZxTUpzR3hJZTF0aklwWm5VdWZBQmRWQndH?=
- =?utf-8?B?MzFvODg0UnZmdlVZV2Z1d3k2MmhYSUZCRSswUVBQeEFyUDhnazJRUEJwUllq?=
- =?utf-8?B?OXdhUyt3aEZ2R05qcDNZOWFJekhuUVU2LzJrV2hOTUU1UHhNK0tnWUtjVUhZ?=
- =?utf-8?B?K0xXQzdvbytkRENaRjk2NFFUeXR4cDQraEZqTXEvZ1hSb1JnOHJwdldhSDZX?=
- =?utf-8?B?NlV5SEp4cnhsekhneUFQdjY1MytaU2cxWmRhd3oxVXFVcHBuN2tQcU1VMzFB?=
- =?utf-8?B?STRuR0p1bEkwSmJpaGI1bXZqV0tINml6NHlrbGRpVmhTVjdWdjhxOXBhbVRC?=
- =?utf-8?B?d1VINDV2KzFQWk9ESkxjRWZ5M0t3Z0F6MWFWWmM5NHhjbzBVOFUvb3lQS3Yv?=
- =?utf-8?B?ZTlTZGNHT3N6eVRxZGwrdVRqRi9IdVVzK2dKZ0JvZzFOOHd4dVV2dzBncXpC?=
- =?utf-8?B?c3dNMVhGd003RW0zWHBtZWdTRTZqSzZGWE1rSWp1QmlmT09Lc0gzS0sxTktV?=
- =?utf-8?B?VWpsUlhrOGRwMWtmS0xxVml0MXV4Q2Z0aUJrellNNGVKTnROV0M1RHBwSnZX?=
- =?utf-8?B?Y3JHdTUwN2FiR2FzeC9aUmVpYS8wbzlZZmJzaVkzWHAvbDRCeklWcFNPOGpj?=
- =?utf-8?B?Sys4MGIrcWNGTndjUGthVG9ETDN5UjNxNXh4VWJjZDUzQVBmQ1pBaGhrb0du?=
- =?utf-8?B?VmEwejdqbDFvOFZWWXlPWCtFM1hzUVRPaU1lMktYbHhxV3dUQkZIWnJzRWlX?=
- =?utf-8?B?eGRqbzVnZjJteTZDMkQ3WkZsanV3ZXVGZ25oMmZZLzZjOGpmTkxwSWsyK0Zp?=
- =?utf-8?B?ZHNmNGRLVi85ZDRWV2RodzcrTXNHM1oxa09JWFR3OFhRUG8xeDFhamt2OVBT?=
- =?utf-8?B?OXRiY2p3V1B3TURGa1RPYjloODhINW1uUmFsUmhxYXdZWnR0ZnhySkFwSHU0?=
- =?utf-8?B?TGIxSjBacXVkYmlTcDk1QUV4K0xYVnFkQVdmd2JXNmhRTm9zaGVXb2V6cUhS?=
- =?utf-8?B?QUM0Y09LTEpiNVZMWnk5UmxSbTlnNlovV0U5Y3RwM01ZSVAvSG9jMzNUU2hM?=
- =?utf-8?B?N2pUb2Z5a2NyaFNnc0VwbU9xWHZvdEF0TFc5L0hwK2crYTlobzVCdDRncEt6?=
- =?utf-8?B?bWtFcWNVU0NYSnV1QXhqZzdLOFM5YzdyTHh3SVpsSFlTYTdxcmczTzVuZ2U3?=
- =?utf-8?B?Z1c0R3VzVHphRUIwYXhwbWlGZWVPU2tWcVY3ZkUzSytMM1UzZ3FIOEU5bVRO?=
- =?utf-8?B?R2NqMElDRnQrYzFLNlg1ZUdocDVrYi8zZXFzbzV4ODEyRHJvSWtnUWxuMnVN?=
- =?utf-8?B?MlZxenZpRm5ZZWhDQlUreTd5cWNIb2hkNW5RbEdLYXF2L3hOUVBEL1F0QjVK?=
- =?utf-8?B?SmFuUThJWEE5MDRLK205VTNjNFZuMmJ0UzB0V3Nxanc3SFpmMkRVQTlXUmRp?=
- =?utf-8?B?SmRpdXk1TTlVeDNSQkpLYjNmZ1BYOFFCSmQzSlI4dzFHTUFkbDhaNDArM0lY?=
- =?utf-8?B?UHdUaEJaRlVyQUEzLzdPZWxkYVNWckM2T3B6Qk5VUjh5UkU3T0dOWFlQOWZn?=
- =?utf-8?B?bG0xdU9MZWpvckptQjdzRVBLQW1QeEY1b1FHdC9samtLS2tQZEhscFB5NWw1?=
- =?utf-8?B?amh2RjEzaThxb2lpWk5jdE5pOVpDRDc5L2dwbUE0YUlxV3ZxVWlCUGtXRlVW?=
- =?utf-8?B?OHBja1owZjNEQTdBcm5td1VsVDA4M1VyU0E2aW90dXIvcTFtbUNzQXJ6dy9r?=
- =?utf-8?B?T1RDQlBYU3A3N2NRT3JySVVDZkNXVWwwWm1xSi83akovUWJEa1pQTVpTdEtM?=
- =?utf-8?B?eHhWN0N6WnlFd2o2NUJaVW9IT0Jsa3hZdmUxV2cxQWZPMWFxeG1PUGdOZzcr?=
- =?utf-8?B?UXZTSjc1SGpsNEMyTFk2emVBRjZzbVBNUzhXQlB0MnNIOU14SG5QTmhyUGtw?=
- =?utf-8?B?eml6ekNJMXp4d3JHRVBzK001eXVWbmt4d2FpV0o1N1lvZXpibUM2MGdtUU8y?=
- =?utf-8?B?VElPTGh6YjFHTTVNc1l6NHMxbERRYzJXVHR4ZU5yQUhQWG9ieFhTMTROa3NZ?=
- =?utf-8?Q?g8WUR2d4d7rLcn0BqBTfzAJfwvW1IGoFqivUASD5hGIF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9390422-8704-49c2-1327-08ddff24043b
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 06:47:11.2819
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mgNaeNu5ur2UF45ao8gddm2RdvfPCdp4p2FRFkISlWyZX0uj/zOrkJrVrxRX4A6vAF9TpovK6puu138/nk0lWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6264
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8edee550f50647218787cac1016de97a@baidu.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sun Sep 21, 2025 at 3:22 AM JST, Joel Fernandes wrote:
-> The bitfield macro's setter currently uses the From trait for type
-> conversion, which is overly restrictive and prevents use cases such as
-> narrowing conversions (e.g., u32 storage size to u8 field size) which
-> aren't supported by From.
+On 09/29, Li,Rongqing wrote:
 >
-> Replace 'from' with 'as' in the setter implementation to support this.
+> > Another problem is that this API is error prone. Two years ago half of the
+> > read_seqbegin_or_lock() users were buggy (they followed the wrong example
+> > from Documentation/locking/seqlock.rst). And even if the code is mostly
+> > correct it is very easy to add a hard-to-detect mistake, see for example
+> >
+> > 	[PATCH][v3] afs: Remove erroneous seq |= 1 in volume lookup loop
+> > 	https://lore.kernel.org/all/20250910084235.2630-1-lirongqing@baidu.co
+> > m/
+> >
+> > Can we improve this API?
+> >
+> > -------------------------------------------------------------------------------
+> > To simplify, suppose we add the new helper
+> >
+> > 	static inline int need_seqretry_xxx(seqlock_t *lock, int *seq)
+> > 	{
+> > 		int ret = !(*seq & 1) && read_seqretry(lock, *seq);
+> >
+> > 		if (ret)
+> > 			++*seq;	/* make this counter odd */
+> >
+> > 		return ret;
+> > 	}
+> >
+> > which can be used instead of need_seqretry(). This way the users do not need
+> > to modify "seq" in the main loop. For example, we can simplify
+> > thread_group_cputime() as follows:
+> >
+> > 	--- a/kernel/sched/cputime.c
+> > 	+++ b/kernel/sched/cputime.c
+> > 	@@ -314,7 +314,7 @@ void thread_group_cputime(struct task_struct
+> > *tsk, struct task_cputime *times)
+> > 		struct signal_struct *sig = tsk->signal;
+> > 		u64 utime, stime;
+> > 		struct task_struct *t;
+> > 	-	unsigned int seq, nextseq;
+> > 	+	unsigned int seq;
+> > 		unsigned long flags;
+> >
+> > 		/*
+> > 	@@ -330,9 +330,8 @@ void thread_group_cputime(struct task_struct
+> > *tsk, struct task_cputime *times)
+> >
+> > 		rcu_read_lock();
+> > 		/* Attempt a lockless read on the first round. */
+> > 	-	nextseq = 0;
+> > 	+	seq = 0;
+> > 		do {
+> > 	-		seq = nextseq;
+> > 			flags = read_seqbegin_or_lock_irqsave(&sig->stats_lock, &seq);
+> > 			times->utime = sig->utime;
+> > 			times->stime = sig->stime;
+> > 	@@ -344,9 +343,7 @@ void thread_group_cputime(struct task_struct
+> > *tsk, struct task_cputime *times)
+> > 				times->stime += stime;
+> > 				times->sum_exec_runtime += read_sum_exec_runtime(t);
+> > 			}
+> > 	-		/* If lockless access failed, take the lock. */
+> > 	-		nextseq = 1;
+> > 	-	} while (need_seqretry(&sig->stats_lock, seq));
+> > 	+	} while (need_seqretry_xxx(&sig->stats_lock, &seq));
+> > 		done_seqretry_irqrestore(&sig->stats_lock, seq, flags);
+> > 		rcu_read_unlock();
+> > 	 }
+> >
 >
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
+> If this API can be simplified, it should prevent future errors;
+>
+> I submitted a patch, inspired by inspired by your previous patch, and hope that all places use a fixed syntax, to prevent future errors;
+>
+> https://lkml.org/lkml/2025/7/31/616
 
-Can you add a `Link: ` tag to the discussion for context?
+Well, I am not sure it makes a lot of sense to change thread_group_cputime()
+this way, "nextseq" or the "seq++" trick is a matter of taste. I tried to
+suggest a simplified API to avoid the manipulation of "seq" altogether.
 
-But I am not really convinced this is needed or desirable at all. Where
-would it make sense to define a field that is larger that its containing
-type? This looks like it can introduce confusion or errors. It's already
-not ideal that we can pass values that would be truncated; but this
-makes it worse.
+Oleg.
 
-Anyway, if we decide to keep this, I think you want to remove the=20
-
-+//!   Note that the compiler will error out if the size of the setter's
-arg exceeds the
-+//!   struct's storage size.
-
-bit that was introduced in patch 2.
+> > most (if not all) of other users can be changed the same way.
+> >
+> > -------------------------------------------------------------------------------
+> > Or perhaps we can even add a helper that hides all the details, something like
+> >
+> > 	int xxx(seqlock_t *lock, int *seq, int lockless)
+> > 	{
+> > 		if (lockless) {
+> > 			*seq = read_seqbegin(lock);
+> > 			return 1;
+> > 		}
+> >
+> > 		if (*seq & 1) {
+> > 			read_sequnlock_excl(lock);
+> > 			return 0;
+> > 		}
+> >
+> > 		if (read_seqretry(lock, *seq)) {
+> > 			read_seqlock_excl(lock);
+> > 			*seq = 1;
+> > 			return 1;
+> > 		}
+> >
+> > 		return 0;
+> >
+> > 	}
+> >
+> > 	#define __XXX(lock, seq, lockless)	\
+> > 		for (int lockless = 1, seq; xxx(lock, &seq, lockless); lockless = 0)
+> >
+> > 	#define XXX(lock)	\
+> > 		__XXX(lock, __UNIQUE_ID(seq), __UNIQUE_ID(lockless))
+> >
+> >
+> > ?
+> >
+> > This way the users can simply do:
+> >
+> > 	seqlock_t sl;
+> >
+> > 	void func(void)
+> > 	{
+> > 		XXX(&sl) {
+> > 			... read-side critical section ...
+> > 		}
+> > 	}
+> >
+> > using only the new XXX() helper. No need to declare/initialize seq, no need for
+> > need_seqretry/done_seqretry.
+> >
+> > What do you think?
+> >
+> > Oleg.
+>
 
 
