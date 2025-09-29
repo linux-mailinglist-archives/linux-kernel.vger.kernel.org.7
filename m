@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-835849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18B4BA8314
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:52:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755EBBA8317
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 985394E14ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CFF189C2C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3AF2BF00A;
-	Mon, 29 Sep 2025 06:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242D52D0610;
+	Mon, 29 Sep 2025 06:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dYIpQ+/q"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikoLRbP2"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CAE2C236D
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7B12C2368
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759128661; cv=none; b=FkubyixUWmQBluTDHe7XGlhKxO14nxrvPCDYWeJ+Bbz+473eilOrxO69hCL2F5iWX3JzdXjOKSDbq2fqk/ryVsSL9/O/FcXMloE6fdeRhwk3Rq+BjxTNGH5k8qfIUagao9HtVsXnvqU+dljLkBJoi2y2yaTbIXok4ckrKd3HI7I=
+	t=1759128663; cv=none; b=k7EQ/yOKKXaMIchrQpFauLp+s6bbwowBxKKKd6kEph6wSQKHgMmM0JPQO9wX3zcyXlHZP4v0qkYXMdfR3KuQtY3k4l4ftE90G9FAsVpMITewHQAEppmIU+ZEoB8igtttZQekitqMTGUhN05O7rR1BKbwlR/mrXbmIAaOhzsFHew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759128661; c=relaxed/simple;
-	bh=hlBg88LfZ7H7EOnBcqiE2fUhnBsLoaYZcovb0B3orxk=;
+	s=arc-20240116; t=1759128663; c=relaxed/simple;
+	bh=j41yExCsKaaUjcSIHJe6r3UBHZsX2oLK1/XLveL5/Uc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=djtfYdaifPr97fSNjeJmZH0/NFDeMJrc8uv0Kn9tk1K8Sw0+gNjoY5IZdWg1WticoxXihMST/ohPP7GG1MA9FmPfNUjSJtRSqs94KE7PbSUlkFnqGNHzoeDRSSC9z4eYYfIH+pPQVr4PXy6OREOCYoEUDThkXNhwi6r2SO+/cIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dYIpQ+/q; arc=none smtp.client-ip=209.85.160.170
+	 MIME-Version; b=EPa1ETEoOLB57J5GGuL9C/1mDkf0wxVtONIlYm+IYGThBTFXR74i1Q5BCRwRx4O+j9c1OEuL1ArCBwPLIKQgYjo57IuNDwRWO3cQKPMSnRITDchsb1QhPHEjciVupmNA+gLjk9I6ZMBXwux00i7PZjO61Mdy5Fib+YqZ6MnjF8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikoLRbP2; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4dd7233b407so35334331cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 23:51:00 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-858183680b4so577807985a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 23:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759128659; x=1759733459; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759128661; x=1759733461; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D4JMHaL/3qlwAM3Nlr5OLy2kZvghpJrKREkBmQxw/Ls=;
-        b=dYIpQ+/q/7GB3LOl5HmxgOyCIGxRCaCrDQZmy2R0e2+vzQn0yZBrx6FvnkY47sx7TY
-         8+QDXutPsfcsm0bIy/Dzh/hfJer2zFVKLo0BtP2CisWO/HjMjRTNg5pcWcvs79mtkQnA
-         Xg4DeLfGIrx5yadtYTl4431l8sT/3PEFZChSH/AfFJujrnGMYLZCOG+6DO0Vn6AHmwxk
-         czhJ3Nb0NIKyB3X9XUZZgnuo5ReiHESCGPLtZibQylUOgtfAoNHBb6KMx7PVEHxX2iMW
-         iEH7bQQxqaZd2r9wSNQmD6b1+fUriNrfIygYdMbE/jBcwmJWPNvI87X2y7NYf0HBs7Ga
-         34FQ==
+        bh=5PyA5YFgx0PLE3LSarm56xsDTtWVM1hBOP7X/Svx67I=;
+        b=ikoLRbP2uWTw4CaP7PWIeGbeUzjGUNqyEsHI83mifIxDRBeNChgfKO0GcPoUO9hoSK
+         4U7GYNFDVSW9xDkImKNTXaXwGh+V3HCl8x/L/bCs/s67u8Pdj9zSfwBBFZ+9CNHH8PRU
+         cPINpyXdot3SleBeKlmrPRvi0BwOl1fPCa4jTRvr2KbujJabnmBKdiV0ooorBeBsGl/e
+         bv0/555jrLRXO2zEV2yxkfmC2g7pul/KpyhDM4fEgX4XSYgahf8PZ0E90W5xCbfqG0Ab
+         YLbWP7nhLkKSjQaRfGPDYU/IU5e8qWbwv/UoFpNmpoDTgkY04vawza6S4XvRHZ9mpMT3
+         FOJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759128659; x=1759733459;
+        d=1e100.net; s=20230601; t=1759128661; x=1759733461;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D4JMHaL/3qlwAM3Nlr5OLy2kZvghpJrKREkBmQxw/Ls=;
-        b=ewX32vFFNS+H++BUmliICpWgvu19zljOvwp4L5ryR1aU+lgFZlo3ez2di9HzP9vJpy
-         iPJysAD/3he/eqC0aYi/dh+m2R3r7Okig3+1SZkwdQ5+dUWOG4MQx9qxgFAdlCTtDne/
-         okJKeCbyleTJoBvy331xXCEghAoED6IjlA1bfbf/GEDOQh02qhV1p0Ybl0JmzViTShU+
-         KVyDRwMd61sZINvrXZJzgiID0gOS/E9jIBegICUW6awSe9D4V+ZXGv3IuCJKzWiimKmu
-         M+Y2xjMAsJ0sMfudLMGIrRpBOr5AZb/wjfJi1QXdC5UO0vyyj8lHgdmLqlMvXHZoBP4g
-         +Fhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeu7THTKAqv6NiWkX52l03cvswzYbFP53VSyQFFYfmDqE8ApEFDQtMKN15KbUF3BiuWonxxA3rEFM9dGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKBovaVRF2kFpaaxfX13KYLanPp1njDVZOkHCMymoZz9TT2sjQ
-	nzBz9CvAea2GuNP13ora6OiAta6tc0H6Pjxi3rSNqS6ERdz34ZGclTIG
-X-Gm-Gg: ASbGncs+RLdeC4bYNhBw5Rxu4QCgUJgF0W6KDA3zc7qdOhT4aXCwbohsdgq4WsAbFLj
-	+J6de4Cg7BpihGdjWfDtkGMDdnKKXxf2JfsFMGpuDMhvW/TL095oCf5TUUGuJee2nBLudsUvj2x
-	U8PaStLrabpZ3G+o/1dzHGOq7EICFYNO0qsBElql9UN4tQB3DeKv8UnSUe3wtO2ZCDwuaVy3dfJ
-	2paygZYn3VNndb8xwNBEZkMNvMz4tMzVQgIGbQBiXfx9/qwoPDfrdhq3wiNf0M7Kd8/goAeuku4
-	xGmnIedWnM3pJPEwqRxL5suhpZNWpYFclsUegUR7qGJ6aFKwHKjeiulQxOUV8hVl0lr19Gm3CjZ
-	PD0kwz+qPHqLbxLYyBKvKWcekwbIR+DBwyB+kD+hkJzDOtBkP+Uc=
-X-Google-Smtp-Source: AGHT+IFrlukycj2XG7B/juAeJ1Nwg/8icH4BSqgTZCKc8FYlYRVX1WVmUtczR3TgVBZ+nHu95Vqjcg==
-X-Received: by 2002:a05:622a:4e0b:b0:4b7:ad88:45f9 with SMTP id d75a77b69052e-4da4744f7a3mr228793711cf.7.1759128659246;
-        Sun, 28 Sep 2025 23:50:59 -0700 (PDT)
+        bh=5PyA5YFgx0PLE3LSarm56xsDTtWVM1hBOP7X/Svx67I=;
+        b=vWw+eZ+wq/mXzdQoDrZDR+WIp6fSlCej0pwzJ8UdldWTfwk/dbmX47qF/uc+H8kAZt
+         MxsVzLNL7gol1nl6KiBxmgoLFyrtLjP231/rFtWyeTxWRXm1AB+qqBSVs1rUfrgBjw32
+         Jw1+WVwOf3riqAucqWP22LYrJLwkCm385e5ltabaur1OQ6PyNnARwdSJksuyQDdLmt+l
+         LVnrNhJbQW4l5Je76rbfLzBOU07KthnLZ39YZkVukcE4a7unIVGp10oTy9FB+ienrnCc
+         U11/zlXc/kMlnWP68RCoqvWJ1DiAd8TeQ5HaFxgksoIPZ6oMSCB4UmAMACSc4aC8dWae
+         P0Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxbSaJd46K7CEWWHGqnzFBZ+VGLKDhPZD+1F6aBfn7MwO2YXgaFbx5GYapth7BpgMJSdn7dfuNUt9g0pY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy++Ts3AJ5YF99obEWEnqIv35teE9LR1WXOCis0SuRYJRxVBUL0
+	b9MI2FMc+MUrHY3n8PJV/CvXwwLberMTdvpS1IUJBBo71IASG0kWphZp
+X-Gm-Gg: ASbGncvej47c7PGe8qNmDOTE2950TjzQUMGP0JZC++iZusaJRvHR5pp23DGVoeZDY1h
+	nJUAtbKrEGGn83rRzls7+4DrC+WdhIFHmduQkm7knysOKS5QGIXRYM8RN13/C/h01NREDUPpzeZ
+	I6DcTud1bga57tALaYAwMnoKBcWXded4iX5w4rJQJ7xlILJYhVBetlZWbPs2eVPDxxu6Iw60Z9L
+	VDZ+3PbZWXzsLmLHYkduiTIF/NZ6Rf3WYXchUBxOCRJoxRxjHuuN24NgGJonj+4YsZ+NzW0x7XI
+	WHc8WCyM04N76B7LosC6sGuAHP72ms2MsJcDLKc41uhj5Q5bC5Nv6huqGf0vM2xW5J31ozqRVR9
+	UvlPMcTJrKXpCsvSEAI+uOHLjgbpX1WtVNUnCVJPy5TqS5mAqj2c=
+X-Google-Smtp-Source: AGHT+IGVZ+6+uYWljd9/v1KclebPlFys/+ZUCb3LCNXleY/oBGrohXf0aFyBGBAY1P3g3+Pj/SY/3A==
+X-Received: by 2002:a05:620a:a498:b0:85d:aabb:47cf with SMTP id af79cd13be357-85daabb5028mr1185750585a.9.1759128661026;
+        Sun, 28 Sep 2025 23:51:01 -0700 (PDT)
 Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db10874bb9sm69517671cf.24.2025.09.28.23.50.58
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db10874bb9sm69517671cf.24.2025.09.28.23.51.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 23:50:58 -0700 (PDT)
+        Sun, 28 Sep 2025 23:51:00 -0700 (PDT)
 From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	vivek.balachandhar@gmail.com
-Subject: [PATCH v3 14/15] staging: rtl8723bs: place constant on right side of comparison
-Date: Mon, 29 Sep 2025 06:49:59 +0000
-Message-Id: <20250929065000.1010848-15-vivek.balachandhar@gmail.com>
+Subject: [PATCH v3 15/15] staging: rtl8723bs: merge nested if conditions for clarity and tab problems
+Date: Mon, 29 Sep 2025 06:50:00 +0000
+Message-Id: <20250929065000.1010848-16-vivek.balachandhar@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250929065000.1010848-1-vivek.balachandhar@gmail.com>
 References: <20250929065000.1010848-1-vivek.balachandhar@gmail.com>
@@ -91,34 +91,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reorder comparison to place the constant on the right side, in
-conformance with kernel coding style.
+Combine nested if conditions for clarity and fix tab indentation in one
+place to match kernel coding style.
 
 No functional changes.
 
 Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 741c7dc83873..d9483594afdd 100644
+index d9483594afdd..56fa51a7774b 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -776,9 +776,10 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
- 			} else {
- 				if (rtw_to_roam(adapter) != 0) {
- 					if (rtw_dec_to_roam(adapter) == 0 ||
--					    _SUCCESS != rtw_sitesurvey_cmd(adapter,
--								&pmlmepriv->assoc_ssid, 1, NULL, 0)
--					) {
-+					    rtw_sitesurvey_cmd(adapter,
-+							       &pmlmepriv->assoc_ssid,
-+							       1,
-+							       NULL, 0) != _SUCCESS) {
- 						rtw_set_to_roam(adapter, 0);
- 						rtw_free_assoc_resources(adapter, 1);
- 						rtw_indicate_disconnect(adapter);
+@@ -1254,8 +1254,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
+ 						rtw_free_stainfo(adapter,  pcur_sta);
+ 
+ 					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
+-					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
+-					    if (ptarget_wlan)
++					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true &&
++					    ptarget_wlan) {
+ 						ptarget_wlan->fixed = true;
+ 					}
+ 				}
 -- 
 2.39.5
 
