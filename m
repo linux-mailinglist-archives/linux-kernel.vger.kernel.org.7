@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-836527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DABEDBA9EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:04:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E90BA9EDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE8C1631A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E2519228A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D0630DD13;
-	Mon, 29 Sep 2025 16:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03ED730C634;
+	Mon, 29 Sep 2025 16:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B0xSdimB"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314AF30CD82
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qv0Rt6NO"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C9530C344;
+	Mon, 29 Sep 2025 16:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759161798; cv=none; b=IU8f/pDJKu173p9/XlQei4Rbx+OYrq1VMwBkBSbUqeU5KTF0NjtA+C0Qylrs5L94UZA7tghGlO/gEpcXaDYbIwVvJFLgYQ77KwWlAy3X3AskZV+bgqozdhOigqbJnaLvhGNU+TISfa0lg93cyyDqgUkgrB446q7N7xjPrWhwAis=
+	t=1759161793; cv=none; b=b6YlaDNhvI1yPTcfG7LzMAsPNTP1xn1ds2mlm0uEdmqPK1uZzAGMqjGxNqAyjJUTmDAog2Ugki+/e1Ja6m1gs2uB9aG0VDbaG5tFLrcEkryVICqoDxDbJA++ycnmH65tv3GrduF2CWyGHG7NIGc6zU0c5x4abA+Iwwy70xWOq5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759161798; c=relaxed/simple;
-	bh=jVXr4AKnZ9tRYCRE5NnK8FcxuJH0gJDr7VmgwMzBeJw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GMVnhQs5OwR55nq/4kp394INYl0rvuVN66VF1tOdkddXZoC+VZnea4BaU8g5vu2Ha++EK1SqP/t55ah2lI+aq1fErxsmmnPITxLwgPOvriaRix71LaSY85CCQIPBQfqQdqnDuk66elf74cc0EwY8632EkTrwR8z/tbZjFfOyi64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B0xSdimB; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 5BAF74E40DE1;
-	Mon, 29 Sep 2025 16:03:13 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 22860606AE;
-	Mon, 29 Sep 2025 16:03:13 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D7E9D102F198F;
-	Mon, 29 Sep 2025 18:03:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759161792; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=sQfl2NHN0WXhah4rCT/bpWcrE66H3N6ruqjxAFkBiiM=;
-	b=B0xSdimB4aS63FiBHbCdqTuzpFs+u082wH0WE3X/z8bURTWNDzgv/lhDWnkOs8dr5BfFSo
-	xnPsTiBfUJxavTckGLzv6rXPqtSPIFvnPVaM2QLZnj0x3knweqOBQRCtgAL16/a1nJe3j4
-	7aMS+woaXmRGv42J/JRvznFDXAxPm0Z0S7T1y/lu21kLzprjiwQjVn+4pd62aQPOUdzac8
-	YTSQDUxDgkVR8nnRNpdvE0F4EbbCjziB0GjfHA9Cn4kYQAKHHePLpO6nCfPDQ1fMM48tfS
-	9mIzganwJLr2Y8WiCmdO6Sz1yAOAaGAmQU9Xly3v0VQJbNrwJUkSuQJspwN+1w==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: richard@nod.at, vigneshr@ti.com, 
- Gopi Krishna Menon <krishnagopi487@gmail.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
- linux-kernel-mentees@lists.linux.dev
-In-Reply-To: <20250918184420.76047-1-krishnagopi487@gmail.com>
-References: <20250918184420.76047-1-krishnagopi487@gmail.com>
-Subject: Re: [PATCH] mtd: cfi: use struct_size() helper for cfiq allocation
-Message-Id: <175916178765.52129.18095278414992754665.b4-ty@bootlin.com>
-Date: Mon, 29 Sep 2025 18:03:07 +0200
+	s=arc-20240116; t=1759161793; c=relaxed/simple;
+	bh=6STSq9tE3G5DfqsAmf5AEGb6Al+jYvnjh0gXQVU0DPc=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jjI8n8ZIPtUxiLMpyPV/nDO2glsVrVWV+gO6bcyKGcixlxyLQ1++TwXTtNJ2qrfsTsUB3W7tfNN9czDTJq7Y9BMKV+ItifOA3Jk0CrA2LVE87GkMiQFajWnklO+hCGTDBtPCdxAHei7pdiVGskjhHejMbbAE8qEszyUxEfEhpzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qv0Rt6NO; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [4.155.116.186])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E896F2127309;
+	Mon, 29 Sep 2025 09:03:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E896F2127309
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759161791;
+	bh=wUvhaCnccGZdH3jYHhmiBOIlbwUuXLvU0I8Y9eGXGQg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=qv0Rt6NO2MY/6mJW0++CayJDTST0nuHXOpoVEl2mMVnSNtZlEOwcDXcKGEX2ve0jM
+	 NX/my9z8s2yV34EYOjloFKzEW/Z30qBL3xH1s9ctvA+wDaesDVpTY3RboapFue+ezQ
+	 +PhI7/GhzzG9NN7wv3Xed5j46OgX+tPSiFJRCYlU=
+Subject: [PATCH v2 2/4] Drivers: hv: Centralize guest memory region
+ destruction
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 29 Sep 2025 16:03:10 +0000
+Message-ID: 
+ <175916179075.55038.10422403527567975708.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+In-Reply-To: 
+ <175916156212.55038.16727147489322393965.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+References: 
+ <175916156212.55038.16727147489322393965.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,31 +60,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-On Fri, 19 Sep 2025 00:14:14 +0530, Gopi Krishna Menon wrote:
-> Documentation/process/deprecated.rst recommends against performing
-> dynamic size calculations in the arguments of memory allocator
-> function due to the risk of overflow. Such calculations can
-> wrap around and result in a smaller allocation than what the caller
-> was expecting.
-> 
-> Replace the size calculation in cfiq allocation with struct_size()
-> helper to make the code clearer and handle the overflows correctly.
-> 
-> [...]
+Centralize guest memory region destruction to prevent resource leaks and
+inconsistent cleanup across unmap and partition destruction paths.
 
-Applied to mtd/next, thanks!
+Unify region removal, encrypted partition access recovery, and region
+invalidation to improve maintainability and reliability. Reduce code
+duplication and make future updates less error-prone by encapsulating
+cleanup logic in a single helper.
 
-[1/1] mtd: cfi: use struct_size() helper for cfiq allocation
-      commit: d496b6f42eb0455caf5d8cb30cf1f01b7fc2a747
+Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+---
+ drivers/hv/mshv_root_main.c |   65 ++++++++++++++++++++++---------------------
+ 1 file changed, 34 insertions(+), 31 deletions(-)
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
+diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+index 8cb309dce6258..d8143bc8dbcfb 100644
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -1375,13 +1375,42 @@ mshv_map_user_memory(struct mshv_partition *partition,
+ 	return ret;
+ }
+ 
++static void mshv_partition_destroy_region(struct mshv_mem_region *region)
++{
++	struct mshv_partition *partition = region->partition;
++	u32 unmap_flags = 0;
++	int ret;
++
++	hlist_del(&region->hnode);
++
++	if (mshv_partition_encrypted(partition)) {
++		ret = mshv_partition_region_share(region);
++		if (ret) {
++			pt_err(partition,
++			       "Failed to regain access to memory, unpinning user pages will fail and crash the host error: %d\n",
++			       ret);
++			return;
++		}
++	}
++
++	if (region->flags.large_pages)
++		unmap_flags |= HV_UNMAP_GPA_LARGE_PAGE;
++
++	/* ignore unmap failures and continue as process may be exiting */
++	hv_call_unmap_gpa_pages(partition->pt_id, region->start_gfn,
++				region->nr_pages, unmap_flags);
++
++	mshv_region_invalidate(region);
++
++	vfree(region);
++}
++
+ /* Called for unmapping both the guest ram and the mmio space */
+ static long
+ mshv_unmap_user_memory(struct mshv_partition *partition,
+ 		       struct mshv_user_mem_region mem)
+ {
+ 	struct mshv_mem_region *region;
+-	u32 unmap_flags = 0;
+ 
+ 	if (!(mem.flags & BIT(MSHV_SET_MEM_BIT_UNMAP)))
+ 		return -EINVAL;
+@@ -1396,18 +1425,8 @@ mshv_unmap_user_memory(struct mshv_partition *partition,
+ 	    region->nr_pages != HVPFN_DOWN(mem.size))
+ 		return -EINVAL;
+ 
+-	hlist_del(&region->hnode);
++	mshv_partition_destroy_region(region);
+ 
+-	if (region->flags.large_pages)
+-		unmap_flags |= HV_UNMAP_GPA_LARGE_PAGE;
+-
+-	/* ignore unmap failures and continue as process may be exiting */
+-	hv_call_unmap_gpa_pages(partition->pt_id, region->start_gfn,
+-				region->nr_pages, unmap_flags);
+-
+-	mshv_region_invalidate(region);
+-
+-	vfree(region);
+ 	return 0;
+ }
+ 
+@@ -1743,8 +1762,8 @@ static void destroy_partition(struct mshv_partition *partition)
+ {
+ 	struct mshv_vp *vp;
+ 	struct mshv_mem_region *region;
+-	int i, ret;
+ 	struct hlist_node *n;
++	int i;
+ 
+ 	if (refcount_read(&partition->pt_ref_count)) {
+ 		pt_err(partition,
+@@ -1804,25 +1823,9 @@ static void destroy_partition(struct mshv_partition *partition)
+ 
+ 	remove_partition(partition);
+ 
+-	/* Remove regions, regain access to the memory and unpin the pages */
+ 	hlist_for_each_entry_safe(region, n, &partition->pt_mem_regions,
+-				  hnode) {
+-		hlist_del(&region->hnode);
+-
+-		if (mshv_partition_encrypted(partition)) {
+-			ret = mshv_partition_region_share(region);
+-			if (ret) {
+-				pt_err(partition,
+-				       "Failed to regain access to memory, unpinning user pages will fail and crash the host error: %d\n",
+-				      ret);
+-				return;
+-			}
+-		}
+-
+-		mshv_region_invalidate(region);
+-
+-		vfree(region);
+-	}
++				  hnode)
++		mshv_partition_destroy_region(region);
+ 
+ 	/* Withdraw and free all pages we deposited */
+ 	hv_call_withdraw_memory(U64_MAX, NUMA_NO_NODE, partition->pt_id);
 
-Kind regards,
-Miquèl
 
 
