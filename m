@@ -1,122 +1,98 @@
-Return-Path: <linux-kernel+bounces-836550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3406EBA9FE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCEB3BAA010
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFDA63C1DD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9983BC01B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB8C2EB5AF;
-	Mon, 29 Sep 2025 16:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252AD30C117;
+	Mon, 29 Sep 2025 16:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5pBEmhc"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hqDOp8JY"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D1F1426C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025852144CF;
+	Mon, 29 Sep 2025 16:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759162620; cv=none; b=SZKirX4+OJzzABWm1Q/UqHb+8UPS8ZVHDBCdcrUHZXV2zlHMUgIqth5akrPt1D3qH1RopYyXJ+4ck4g7GLX2gIrd/HfwzYAVjCoNdNORfTbgLpe+gx7tNf66jf6/vwjdX+aMcgpaNNIX+njiSsH2hk/6fQgIKcYSdYMUQ6+d9mg=
+	t=1759162927; cv=none; b=Irl3vgQGb0hB2XONvclljKkHJJshAq4wThGNNuxTOtYVCws4re7SixI1TELVFri4SUxJAsnt/R8MlvU0vtsknb2Mufcxp942hhIIEGVCUPmo7dyJ2lRPkDAtMGQAtViT+XweYS4jgUXW8sMQBt/XZA98XkAWUhwqwfi22sZQz1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759162620; c=relaxed/simple;
-	bh=qq5Q8e7Te10C8Wo9eDCpNyBThP8X8+Pc+4FkCD7R3Mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fsPvYatg5uxq6VCps5ChPvrvXTsT/oGMSJ4RFigdNZ52EMz8RFcJacWFtWQcrNul5OfKeix+MTfhc1JgBjDpD+v4pnvYZaFZD19jQqiC6Vigm19/Lvaa7CxyMyG97fY3O3oEIscQq3/F+3GKVtvDMG0CY4LTmsm7vE1LVor8Vvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5pBEmhc; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-749399349ddso60347047b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:16:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759162618; x=1759767418; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cKzIOAQG3VSXuePCJFysarRmV4K2U53AVIYmuNypgnQ=;
-        b=B5pBEmhc8+fOBuHJsYK5WF7VA1aFpV8nkreJb72sbErLLiRyC1Qozs9M18OcBIIs23
-         5xTFPqSI0pmrcFw+t73xYo3AZPOx1mvA/JhGsuVZy7iglF0Jeiav5WZ4mf7pIU9GFehv
-         lG4Yp2OW/OTp+vyM1Sg0C/nLdH/Bc+hEthf5sXslr2XDozWHZe7OtbWHBYu3seNqeYrs
-         /28zoNDDN1DsldjTg72F3pVVqsMVZCnhh+B7vCiVCCsL22g7Wy8epghtGjk0rrAnYhpH
-         ppjgqQuI/PHJelHCA6VaM5nS9yKnWQLngnpJhHAUtqkbpCyZNsjsRh5hmWDuXGxC6xEx
-         yqlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759162618; x=1759767418;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cKzIOAQG3VSXuePCJFysarRmV4K2U53AVIYmuNypgnQ=;
-        b=RY1pkDkPBRLmGMzcvmVLCX+LTnOY5UyokazTZOWitIAO2bKvuEKPvl83w5BnswltjY
-         WcIvj4d9tImjxGAxOR2+/wUxrHcfoSrys1Po4bCC/tx7IFCsfXFHN8K/cvRsTVEc+Cag
-         PCMtSoUy4am5z/UcDjJxAGBVeorzhMvpO9so2Ig0ZFjIM/AouXnJgxKMciX2jGMTtelu
-         DdtxoVTy2Omn6er88lI31C5Vgeo8mRugCoCyy2hE6eGrc9LCu5y4ulzvaT0D8PKS1q1y
-         B8/Q4Y+iOskZnLdqHxP89OCIwVBwIwf/+oRvmWcMgF4IEmy3LgHI6fo2OS7LROF//4gF
-         NBzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFQbKFzOkNOD44T4kyVyixJCa3astjxMXhS0ITkPPrYihbJOAcISJAMiplv3b8n/ZxJWLamCr2A04GNcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg0eeo5VHfNzxgdlL6LaAgNychM2kzqumJUqwnFXOVxvSYb5nQ
-	/BVDxNOjyVH3FpkceMMtQyar4ttMQe0QkWdb6CbnOO93CTKRYOjYu1x7
-X-Gm-Gg: ASbGncsUrI6iDwpyQZEilWzxgk0nMZddvBDmUBUcl1oyvE7aOrXK5jAv37gmnkMMEna
-	79Jv81D91y1bQ/tPhvPv5dO6GwA7OU4SDSj1fmQwt/CUPtsqZU9tTZ7h9EoIlPZU0vxuW+TCN4O
-	EAh0KATtPaeZ3CjOytcVdgwX6AMpvuv7O67l+xoMuVaAmEApjovaPHYTIGWXyuqUUWbU3RvHkvm
-	clIMjQPl+NjOIYqihv+qN0U5SEZGyk7APlfXWQEHAuIOR0N0tMj+or0AJI0eqqSLGYa/0H476yl
-	qyhYFQBSy8In9VpJqJgzEVf5z7BuBNeKaZBz5Szg3VEhINEi9HEBTD00IFvdgngzxIC5sxTBesb
-	TO8EpmfvWV/teoxrtntcPFGunTtG+X2aTd2BjRSaGplOwJQPEHyRxSvp3PmIyuEVf9w==
-X-Google-Smtp-Source: AGHT+IHu+j81jqxT8WdCqypyIMYi8bUERDK1Od/FPtKQre70kkWgVYXAP03ywVWVYKUxZcJ1PFX0Dw==
-X-Received: by 2002:a05:690e:23d5:b0:633:adac:db35 with SMTP id 956f58d0204a3-6361a72af2fmr13975034d50.3.1759162611159;
-        Mon, 29 Sep 2025 09:16:51 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:11::])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-636d5b1d847sm2712547d50.9.2025.09.29.09.16.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 09:16:50 -0700 (PDT)
-Date: Mon, 29 Sep 2025 09:16:48 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
-	Mina Almasry <almasrymina@google.com>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v4 2/2] net: devmem: use niov array for token
- management
-Message-ID: <aNqw8CAVjas0vvGm@devvm11784.nha0.facebook.com>
-References: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-0-39156563c3ea@meta.com>
- <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v4-2-39156563c3ea@meta.com>
- <20250926162245.5bc89cfa@kernel.org>
+	s=arc-20240116; t=1759162927; c=relaxed/simple;
+	bh=KJIBh56736H2gYsPQzPecNj3YNExm94VfLmG+kW2BUQ=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=Tn/TKkdA94wNb28+pJwN3sRWrIWxuUrHACd8V3FKznIhSvK07zbjHrbiG3tdPHvzohIYL9xKp6TDKZ5+nZ0ztUz+VoOkSZqW6l6+vEMtS3qQvlJe7CRmT7m7pb5uPK0UEwOA3JA74WQz9hG8iMm2sQ2N/iF0SPwG38IdJ1tx84g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hqDOp8JY; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.87.241])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 57030346;
+	Mon, 29 Sep 2025 18:20:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759162836;
+	bh=KJIBh56736H2gYsPQzPecNj3YNExm94VfLmG+kW2BUQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=hqDOp8JYlSTbQOHl12lR8t8Tr+LMIQXdgqjBA8Mjth28u56o4NqP4jgXUxS7H5Cah
+	 +tctrvNkksJruGrtOK3IxswMQrRI9izDB1H4Aj8a5PlxWf8rgbqdw5eqQUb8d3OCFu
+	 xMzh/7gz/FNEv1LbyDlldvxy/c6MwSGfd179I8jg=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926162245.5bc89cfa@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f7850c68-d255-465e-a549-a5fd70cfaa72@kernel.org>
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com> <20250919-vdev-state-v2-8-b2c42426965c@ideasonboard.com> <f7850c68-d255-465e-a549-a5fd70cfaa72@kernel.org>
+Subject: Re: [PATCH v2 08/10] media: ti: j721e-csi2rx: Use video_device_state
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Jai Luthra <jai.luthra@linux.dev>, linux-kernel@vger.kernel.org
+To: Hans Verkuil <hverkuil+cisco@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, linux-media@vger.kernel.org
+Date: Mon, 29 Sep 2025 21:51:50 +0530
+Message-ID: <175916291050.2234821.14335723233391402773@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-On Fri, Sep 26, 2025 at 04:22:45PM -0700, Jakub Kicinski wrote:
-> On Fri, 26 Sep 2025 09:31:34 -0700 Bobby Eshleman wrote:
-> > @@ -2530,8 +2466,12 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
-> >  		 */
-> >  		for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
-> >  			skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-> > +			struct net_devmem_dmabuf_binding *binding;
-> >  			struct net_iov *niov;
-> >  			u64 frag_offset;
-> > +			size_t size;
-> > +			size_t len;
-> 
-> unused variables here
-> 
+Quoting Hans Verkuil (2025-09-22 13:46:00)
+> On 19/09/2025 11:56, Jai Luthra wrote:
+> > Use the newly introduced video_device_state to store the active V4L2
+> > format for the video device.
+> >=20
+> > This change allows using a single function for both .s_fmt and .try_fmt
+> > hooks, while leveraging the framework helper for the .g_fmt hook.
+>=20
+> Rather than replying to 00/10, since that is CC-ed to a million people, I=
+'ll
+> reply here.
+>=20
+> For core framework changes like this I want to see it applied to the test=
+-drivers
+> as well. At minimum the vivid driver and, if we support this for M2M devi=
+ces as
+> well, either vim2m or vicodec.
+>=20
+> The test-drivers are used in the media CI regression tests, so it is impo=
+rtant
+> that this is implemented in at least some of the test drivers.
 
-Got it, will update after window opens.
+Sure, will add state support to vivid in the next revision.
 
-Best,
-Bobby
+I'm not very familiar with M2M though, and depends on what the series looks
+like, but I will give that an attempt.
+
+>=20
+> Regards,
+>=20
+>         Hans
+>=20
+
+Thanks,
+Jai
+
+[snip]
 
