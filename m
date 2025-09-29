@@ -1,127 +1,178 @@
-Return-Path: <linux-kernel+bounces-836456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C5EBA9BF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:02:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6189CBA9C15
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6C0D4E137A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:02:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A636C1C1C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74A830507B;
-	Mon, 29 Sep 2025 15:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1975E555;
+	Mon, 29 Sep 2025 15:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bkQzKBbz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMtQQ9ko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF3317736
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F102126F2BD;
+	Mon, 29 Sep 2025 15:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759158138; cv=none; b=iSHoqOKL3LakY0tHTVVLMgSmL32ijZOfG8xfAgze/KeKmmFraqDJLgngfljMWMWjLbWNjS2ChfgEZMBE6lKcAesYuEjF15wTN3sF26CGBd7vG6A8gUGetqk62HhGpHk4pUKp1jys8aEGH0tEDGF/D7UQsg2VG/gmI0H2SIBDMfg=
+	t=1759158270; cv=none; b=aXTVIwSTcNQr8/gA1gmld+AH810yKki5HY+pFgpp+6PfsLesMYx4q3Ryo08Xl12PV7f60pmx1c54sAofVppTs6nyXRoaRdcicjMugy5k+BfkMAZ+j4uJoi/kPRy4803fl+wlDhVMr0mLp0HCgkNdMfvUUMZqOigEX4Xn7e43qlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759158138; c=relaxed/simple;
-	bh=5mApbppp98IoLmLnjxv5jLlE73kH0Xbow0oj0C24KuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kQp4yq5zrpUJ09W9C/N3FuyYWOlqN/Qe5Z9f3ySaMo2NDVCnApRunLTcs0VHVQC16+Auqw8mrFED8n/nkbnwTW6FUdHlzJaGn0O+jFwnIh5fqzpogLn4R8kttnRN5Y3FGqfrclcD6F8RBfGZMtXm5+7DLjDaSaf2Lw+Yh5kSKc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bkQzKBbz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759158135;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qUZ+nrFNJvugmnH/mfkTXbsSGFlwrwfUzJJqGCuNdv4=;
-	b=bkQzKBbzz2VblCMwkfRJD36qlScaakkHdVJHJA4v84pJlirMIoCz3HTBUPkZtAmcd3P1Lk
-	FcTgnbbG9oLPhWbN4LWwCf2rBFZgKe41isyIiQwxYlXTaC3KDGW21pKqsvX7gACoioFFvr
-	Mcwiup1tF8Kx6KRDnfYuaFPtS9t5ijc=
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
- [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-7QrtvWoBNuK8x3ehBOI7Xg-1; Mon, 29 Sep 2025 11:02:13 -0400
-X-MC-Unique: 7QrtvWoBNuK8x3ehBOI7Xg-1
-X-Mimecast-MFC-AGG-ID: 7QrtvWoBNuK8x3ehBOI7Xg_1759158133
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-89021b256a1so5802638241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:02:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759158132; x=1759762932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qUZ+nrFNJvugmnH/mfkTXbsSGFlwrwfUzJJqGCuNdv4=;
-        b=XxxxL05mWwjg3L8Y4VM50QH29oNqX43SRK3rHynx5LKKltMkIncVGY6AddoYOO7Zkh
-         6ggJQ8TahM3yoC+uUp6U1EyPAoeqdaGoEKVWStVSiPe3+O8F7QSov69QvLKzBqB7tCxM
-         RwkXcEkvG4Kt7DpESOwNAs3V7Jm+PhFp518SpOtQ2HwDYruDOX+htAyL9UQ+GgSNqzZs
-         m4Vsmne4HlZvpJH82u0tVafNw+zIyrmNqmRIqWpwK9//fvMZHcpuvObRrXi7rYVM3WVc
-         AKHygZPGvv6oL7ArfilVTzhaxIP359pIwU7ttMdHBgYuYMKSdN8oNxKOnwvkJM2qDziJ
-         uk7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Jx3L+mv5f3p2nJU+WbWSbUBfQ0v/1TXSl0oRW3Kshu54fEKDSa5ffJ8b/oka5zewEpXZbSEFPVgQRow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEplVWf94+sgaep0yRQzw/bpj52sLRvujABC4xnM/7te4c9YMD
-	u8ceIntoNoHJhB0NovtE1XVOeewdUGK6ky+K8rsV0GxMCxejgPgMFkp7DvKEGC2NmQJ8ccXenXi
-	TcBETu52EEwbe0LEZ5sLc8KYRm/Xy+lYxzeBCXAc3FMtCIxL5DpoQJzKikNimccTOpAIJXDdHsg
-	idvn0Y+1v5Izy095IBzLA+BkOfF30nEYYeyIgun7+dti902UFR
-X-Gm-Gg: ASbGncsvkrOXk1N3M9bcEqaIyPtYRGmCv5pqkddDRtDrTUcL36MHp62BIDZev7xcCyW
-	ODfgUuv7SnbUh1NB3eO0nEZFWsNNlPYUZcLhrvfreez9oKl7labvadeULkIH6jBVUsw9QHvLeN9
-	C1O553hS2pZy5JHtNtz/dDaQ==
-X-Received: by 2002:a05:6102:2907:b0:523:d0d7:b963 with SMTP id ada2fe7eead31-5accfbb9a41mr4569875137.22.1759158125462;
-        Mon, 29 Sep 2025 08:02:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5o3Fh5NHpfh14EAFku8FFD1FNX9jDym8l+iTw0lA93A8OiLv/2ttBnLrVEyNpSA/mfjaMgdkDvrTr7K9j8E0=
-X-Received: by 2002:a05:6102:2907:b0:523:d0d7:b963 with SMTP id
- ada2fe7eead31-5accfbb9a41mr4569412137.22.1759158121642; Mon, 29 Sep 2025
- 08:02:01 -0700 (PDT)
+	s=arc-20240116; t=1759158270; c=relaxed/simple;
+	bh=WgLOirqnRuyUHkGKrX+OqYLUKjAVPYcz7Hc+OWcmhyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=dSnERQhl+3lcYhu4vKHDiwUaO4adOrogAL/GmMKLTPMKrjrga6FVVcXzuPqSSW+ySz4OR37+AtfYZYMYJryvvY576Y0dYoL+VI2z+UD3bdkka3f+yAyaiIvUJKEgY2Oxem+i8kwa+vWNgP6mrXKaBYtqMNVCMYA1RAsquONicrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMtQQ9ko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256D7C4CEF4;
+	Mon, 29 Sep 2025 15:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759158268;
+	bh=WgLOirqnRuyUHkGKrX+OqYLUKjAVPYcz7Hc+OWcmhyk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KMtQQ9koq4ya3jXNewcZz5hHqHUlZALafDT20H6VyPac1kR2ipc//bs4dPKZGiRCX
+	 KoNdkcsuIexHTiM3gQdRiCgb+lIBYkz6Ig45lbRtZaYSittcKniqf9vyTS6MOPuB8F
+	 UhklAWkuTyrAYh2t7ms2vle4v5Tqrwh03w6n7W4tjAVrUb3t5DAdfK4S8fkWiLprnE
+	 YSQgrc+1+uVgNggUAfOK/wP7s5Nc0wA+pnJyM/9JcAbydcaLWkUQmDiwKnzvq8gZCP
+	 Tc/XK68gyK4SUVZN+v2rwgO5ejI2P/H/dPdA12/kfRepjqsqOH7jOmH39uXXh2qRy/
+	 od3BcG4ITAEAw==
+Date: Mon, 29 Sep 2025 10:04:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	Pasha Tatashin <tatashin@google.com>,
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
+	Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH v2 00/10] LUO: PCI subsystem (phase I)
+Message-ID: <20250929150425.GA111624@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926121231.32549-1-me@linux.beauty> <9f6acb84-02cb-4f76-bf37-e79b87157f1e@web.de>
- <1999588f143.5af31c76548207.2814872385181806897@linux.beauty>
-In-Reply-To: <1999588f143.5af31c76548207.2814872385181806897@linux.beauty>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Mon, 29 Sep 2025 23:01:50 +0800
-X-Gm-Features: AS18NWC9hza2cJywOXBBWmRD7SoOIndJhptqTfOzlEwDEiiwkjBlTEbkxaGHAk8
-Message-ID: <CAFj5m9+FGzRV+fsWtsVSHV4JFh9Pit-KFHiKRWtMKBpM9LWBhQ@mail.gmail.com>
-Subject: Re: [PATCH] loop: fix backing file reference leak on validation error
-To: Li Chen <me@linux.beauty>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Li Chen <chenl311@chinatelecom.cn>, 
-	linux-block <linux-block@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	LKML <linux-kernel@vger.kernel.org>, Yang Erkun <yangerkun@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bAbB8YsheCwLi0ztY5LLWMyQ6He3sbYru697Ogq5+hR+Q@mail.gmail.com>
 
-On Mon, Sep 29, 2025 at 8:54=E2=80=AFPM Li Chen <me@linux.beauty> wrote:
->
-> Hi Markus,
->
->  ---- On Sun, 28 Sep 2025 21:48:23 +0800  Markus Elfring <Markus.Elfring@=
-web.de> wrote ---
->  > =E2=80=A6
->  > > Fix this by calling fput(file) before returning the error.
->  > =E2=80=A6
->  > > +++ b/drivers/block/loop.c
->  > =E2=80=A6
->  >
->  > How do you think about to increase the application of scope-based reso=
-urce management?
->  > https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/file.h=
-#L97
->
-> Looks good; I will add a commit to switch to scope-based resource managem=
-ent in v2.
-> Thanks for your suggestion!
+On Sat, Sep 27, 2025 at 02:05:38PM -0400, Pasha Tatashin wrote:
+> Hi Bjorn,
+> 
+> My latest submission is the following:
+> https://lore.kernel.org/all/20250807014442.3829950-1-pasha.tatashin@soleen.com/
+> 
+> And github repo is in cover letter:
+> 
+> https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v3
+> 
+> It applies cleanly against the mainline without the first three
+> patches, as they were already merged.
 
-Please don't do it as one bug fix, the whole fix chain needs to
-backport, and scope-based
-fput is just added in v6.15.
+Not sure what I'm missing.  I've tried various things but none apply
+cleanly:
 
-However, you can do it as one cleanup after the fix is merged.
+  $ git remote add luo https://github.com/googleprodkernel/linux-liveupdate.git
+  $ git fetch luo
+  From https://github.com/googleprodkernel/linux-liveupdate
+   * [new branch]                hack_pci_pf_stub_demo -> luo/hack_pci_pf_stub_demo
+   * [new branch]                iommu/rfc-v1          -> luo/iommu/rfc-v1
+   * [new branch]                kho/v5                -> luo/kho/v5
+   * [new branch]                kho/v6                -> luo/kho/v6
+   * [new branch]                kho/v7                -> luo/kho/v7
+   * [new branch]                kho/v8                -> luo/kho/v8
+   * [new branch]                lucx/v1               -> luo/lucx/v1
+   * [new branch]                luo/kho-v8            -> luo/luo/kho-v8
+   * [new branch]                luo/memfd-v0.1        -> luo/luo/memfd-v0.1
+   * [new branch]                luo/rfc-v1            -> luo/luo/rfc-v1
+   * [new branch]                luo/rfc-v2            -> luo/luo/rfc-v2
+   * [new branch]                luo/v1                -> luo/luo/v1
+   * [new branch]                luo/v2                -> luo/luo/v2
+   * [new branch]                luo/v3                -> luo/luo/v3
+   * [new branch]                luo/v4                -> luo/luo/v4
+   * [new branch]                master                -> luo/master
 
-Thanks,
+  $ b4 am -om/ https://lore.kernel.org/r/20250916-luo-pci-v2-0-c494053c3c08@kernel.org
+  Grabbing thread from lore.kernel.org/all/20250916-luo-pci-v2-0-c494053c3c08@kernel.org/t.mbox.gz
+  Analyzing 13 messages in the thread
+  Looking for additional code-review trailers on lore.kernel.org
+  Checking attestation on all messages, may take a moment...
+  ---
+    ✓ [PATCH v2 1/10] PCI/LUO: Register with Liveupdate Orchestrator
+    ✓ [PATCH v2 2/10] PCI/LUO: Create requested liveupdate device list
+    ✓ [PATCH v2 3/10] PCI/LUO: Forward prepare()/freeze()/cancel() callbacks to driver
+    ✓ [PATCH v2 4/10] PCI/LUO: Restore state at PCI enumeration
+    ✓ [PATCH v2 5/10] PCI/LUO: Forward finish callbacks to drivers
+    ✓ [PATCH v2 6/10] PCI/LUO: Save and restore driver name
+    ✓ [PATCH v2 7/10] PCI/LUO: Add liveupdate to pcieport driver
+    ✓ [PATCH v2 8/10] PCI/LUO: Add pci_liveupdate_get_driver_data()
+    ✓ [PATCH v2 9/10] PCI/LUO: Avoid write to bus master at boot
+    ✓ [PATCH v2 10/10] PCI: pci-lu-stub: Add a stub driver for Live Update testing
+    ---
+    ✓ Signed: DKIM/kernel.org
+  ---
+  Total patches: 10
+  ---
+  Cover: m/v2_20250916_chrisl_luo_pci_subsystem_phase_i.cover
+   Link: https://lore.kernel.org/r/20250916-luo-pci-v2-0-c494053c3c08@kernel.org
+   Base: base-commit 9ab803064e3d1be9673d2829785a69fd0578b24e not known, ignoring
+   Base: not specified
+	 git am m/v2_20250916_chrisl_luo_pci_subsystem_phase_i.mbx
+
+  $ git checkout -b wip/2509-chris-luo-pci-v2 luo/luo/rfc-v2; git am m/v2_20250916_chrisl_luo_pci_subsystem_phase_i.mbx
+  Updating files: 100% (21294/21294), done.
+  branch 'wip/2509-chris-luo-pci-v2' set up to track 'luo/luo/rfc-v2'.
+  Switched to a new branch 'wip/2509-chris-luo-pci-v2'
+  Applying: PCI/LUO: Register with Liveupdate Orchestrator
+  Applying: PCI/LUO: Create requested liveupdate device list
+  Applying: PCI/LUO: Forward prepare()/freeze()/cancel() callbacks to driver
+  Applying: PCI/LUO: Restore state at PCI enumeration
+  Applying: PCI/LUO: Forward finish callbacks to drivers
+  Applying: PCI/LUO: Save and restore driver name
+  error: patch failed: drivers/pci/probe.c:2714
+  error: drivers/pci/probe.c: patch does not apply
+  Patch failed at 0006 PCI/LUO: Save and restore driver name
+  hint: Use 'git am --show-current-patch=diff' to see the failed patch
+  When you have resolved this problem, run "git am --continue".
+  If you prefer to skip this patch, run "git am --skip" instead.
+  To restore the original branch and stop patching, run "git am --abort".
+
+  $ git checkout -b wip/2509-chris-luo-pci-v2 luo/luo/v2; git am m/v2_20250916_chrisl_luo_pci_subsystem_phase_i.mbx
+  Updating files: 100% (12217/12217), done.
+  branch 'wip/2509-chris-luo-pci-v2' set up to track 'luo/luo/v2'.
+  Switched to a new branch 'wip/2509-chris-luo-pci-v2'
+  Applying: PCI/LUO: Register with Liveupdate Orchestrator
+  error: patch failed: MAINTAINERS:14014
+  error: MAINTAINERS: patch does not apply
+  Patch failed at 0001 PCI/LUO: Register with Liveupdate Orchestrator
+  hint: Use 'git am --show-current-patch=diff' to see the failed patch
+  When you have resolved this problem, run "git am --continue".
+  If you prefer to skip this patch, run "git am --skip" instead.
+  To restore the original branch and stop patching, run "git am --abort".
+
+  $ git checkout -b wip/2509-chris-luo-pci-v2 luo/luo/v3; git am m/v2_20250916_chrisl_luo_pci_subsystem_phase_i.mbx
+  branch 'wip/2509-chris-luo-pci-v2' set up to track 'luo/luo/v3'.
+  Switched to a new branch 'wip/2509-chris-luo-pci-v2'
+  Applying: PCI/LUO: Register with Liveupdate Orchestrator
+  error: patch failed: MAINTAINERS:14014
+  error: MAINTAINERS: patch does not apply
+  Patch failed at 0001 PCI/LUO: Register with Liveupdate Orchestrator
+  hint: Use 'git am --show-current-patch=diff' to see the failed patch
+  When you have resolved this problem, run "git am --continue".
+  If you prefer to skip this patch, run "git am --skip" instead.
+  To restore the original branch and stop patching, run "git am --abort".
 
 
