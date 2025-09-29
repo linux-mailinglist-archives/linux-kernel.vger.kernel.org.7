@@ -1,319 +1,213 @@
-Return-Path: <linux-kernel+bounces-836427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3B8BA9A7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:45:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E3EBA9A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23C657A83FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5B43AF860
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDB230ACE3;
-	Mon, 29 Sep 2025 14:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82631D88B4;
+	Mon, 29 Sep 2025 14:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="nIFLaRPM"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="i/BC1Vf1"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010027.outbound.protection.outlook.com [52.101.46.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E201D3090D5
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759157077; cv=none; b=TcdYDPhE1jiTbdjZdzJFoC9BEjQYFmB7HBYpRTKEh0iJBJoMah8+e83oeoDiyQtu2EbN2meVheBxBxr2RgfpujecagJ30tSsc8Fcvdfxcho30l8Z2Gv4aprd1qGAr60RTeu6A0WDi/Ody2qNzviMAS8wJLljjQeJk4HQRl982p8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759157077; c=relaxed/simple;
-	bh=8oW2jLWEgnKwodbbp9b6V0oQUytrGU3HhuiVIqSGf4s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QmJKlmp8+aeGXtK5voYfLXlCWtF9FWn86fkmcM7GWdyNS0/YzVbdw7n84vi2OPP0cim099EvonQe0qtDTIbh1svEkHJfkJJKbrKFJpTL3RbKO+J/Tsysd34nj4vLl5Urznd6unGxNtdKlNdKh5Ab2vmk4IRr98CVsNUopiPoCiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=nIFLaRPM; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id ApvESGBBVvpfwyJI; Mon, 29 Sep 2025 10:44:34 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=lA47FHnFvX96rFmyVLQb2sIsUaY8syLj2K+pJhbrT9g=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=nIFLaRPMSCNvuVv7hqoA
-	UJOYe5oUeXY5lBI/HUCyoiiO5S5EJZfslwlbwFN7M7+OaNxPMyrmGIURjA9DWu8HEPY+XYl+UWQrL
-	Am9jhEWfoW/uKMEManuUk3pUJiRmGQukRBINmhG5Swi28FrfRTiOmUERTaT5GczmW3e/eKoqkQ=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14216645; Mon, 29 Sep 2025 10:44:34 -0400
-Message-ID: <7a48ea6e-1c0c-4646-8fa7-57bf0d88ba26@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 29 Sep 2025 10:44:34 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426D1308F36;
+	Mon, 29 Sep 2025 14:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759157105; cv=fail; b=tfxMuA53DVG96BZAzftYHAUwxHMjq0oWDuHwuYYAdIpTJUziV7vrGMws2euN/oX26DCZBTUjK9u8iFIutoqocBU9Yg9FyqzUUoo/3gElRyb8FeKk6bMjtxtC2MA+UuiTw9xcDIGUfZapP8KaBJBC9YOhWyINH/iZVCGaHn8qugQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759157105; c=relaxed/simple;
+	bh=Ykf1rpoQL2LT1tyd74z31WI1QY9iXi8BrOLlU/1M1+I=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=iSrrSUQIzVeqFwg9oU0oHLwMDJche5AKc2ADHsRcWIsay2Wbg/Oj9/LkQUbTyRwUH9q5HcUq0+ZmMdYyl18i21Xg/SSgYBV2j5q0VHVWMMn/ibddsFnK/7lZz8v9p0gGD9oXkS3DKf4h/4Q7sWxWjBcMDeYVTLs+7WEn4ua046Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=i/BC1Vf1; arc=fail smtp.client-ip=52.101.46.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AJ6o7YOZcbEJdm3PIKtdvYQEl97g0cfu+16Xn0YfJPn0qidHcfrECn3HR85mxzgF3DfVVrWWsTJ1nUnM1zaMU2699Bqwc5giRcijzrWwcgJyH05We6H52R5NQdWvZx27Ke4sK3hLujde10cXmhc1aZ1zq94vcr7ZossyrY8QwfNJnqovekPhcMNY5oJW/mtOUgjXbP33ZIxCTwgqp0gN4BERup2CqUQLeGW4V2Ruo+2DbEXUfi8vE4BIWy+qWEVGuC1VUDkWp/7tZUFmiixREkT+NYf3Pmtv/AfiErQRDebpXIZicnbo0zx8xYgyY3jdwDVTnsruyc0mY3V1s/YTbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ykf1rpoQL2LT1tyd74z31WI1QY9iXi8BrOLlU/1M1+I=;
+ b=SCOckdpw5WQJNYd4cvgnL6D2y010g+thwj6oHl1+LgEHCaGm1E1WsajqHVqCYi1kSM47sibU7t0Uuf8o1jLymdbKqWqQMx/LlxnpM08/wgrxKUL+x/pqNzRWJoMdC3gtAOyM2UlWwWl4Kh1Ju+jtWimNn/oDSnyvVPhc0fAonjAErL5Y15CY3OZU4KUcqcAI0w+7QpKFym2lbQQIt+5AvaZw1/JSq72Pc35VxNrJtvEXTIiieMVoWEIdEBzRykIkSm6EW7Jvdct8tMPFC2BT3of0DpTy97FgfYrkGB6fcE5hc53tyEQqzeKz8bvIgaW+OUzGPkAmXyXd7qaS5OoyRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ykf1rpoQL2LT1tyd74z31WI1QY9iXi8BrOLlU/1M1+I=;
+ b=i/BC1Vf1s7jN4rUSl6BcPiYbqzlgInhCbDUXFlWrzvQlxJGZDyR8AmrqhgIVGSXl4HpWxMBjIWDnGVRbotVlC/E34189ejAoJi0d7brSBPjeMqao535Ps74CtfRy69JUZXmvus5vlS8SvTC6E63IsF85Skx288ge4wyoxasCR6yuRrSyi4l/RkF/3BFmD0J9WsxnRact6UOpXSQ8GC3uNy/9xkiNRxyxuBFpb4cfa90FfuQ3YwDlfi25LDo/8sspqez7MYawU4l4ace8CmuSGEDuaRs/5wbtlVq3qN1WKhK2K0dCc/loeSmLas+5n2+IV+nf5sTgz8C/zO+9ZL643Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH0PR12MB8508.namprd12.prod.outlook.com (2603:10b6:610:18c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 14:45:01 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 14:45:01 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 29 Sep 2025 23:44:56 +0900
+Message-Id: <DD5D59FH4JTT.2G5WEXF3RBCQJ@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>,
+ <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
+ Norov" <yury.norov@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v4 6/6] rust: bitfield: Use 'as' operator for setter
+ type conversion
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-7-joelagnelf@nvidia.com>
+ <CANiq72k3kE-6KPkKwiDLgfkGHCQj4a2K7h9c4T13WMa5b4BAnQ@mail.gmail.com>
+In-Reply-To: <CANiq72k3kE-6KPkKwiDLgfkGHCQj4a2K7h9c4T13WMa5b4BAnQ@mail.gmail.com>
+X-ClientProxiedBy: OS0P286CA0159.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:16a::15) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2 12/16] scsi: qla2xxx: fix invalid memory access with big
- CDBs
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH v2 12/16] scsi: qla2xxx: fix invalid memory access with big
- CDBs
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
-In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1759157074
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 7468
-X-ASG-Debug-ID: 1759157074-1cf43947df3c0420001-xx1T2L
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH0PR12MB8508:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2906a09c-80ed-405a-6b93-08ddff66c4f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?emJ1cDhQOWRKNllncHd5QlJWcjh6QzUrYUxMeUVvNGIyTjdFaWszMU92cjZQ?=
+ =?utf-8?B?bnFhNWFsV0p4emNON1ZFK3UzL3JlRERWOUhYSXJqYXVDazVucUpKZ0VGQlJG?=
+ =?utf-8?B?WnZyQzQxb0NwUkJHUDZQWU13ZkxtSEdVWlBOOWp2dnpENUlLc2Y4OC9aTC9u?=
+ =?utf-8?B?bDg5ZXRuOTROVVhMOUlrT0U4ZXE2NU9CSXB4UnFZOXhxYXVQUEYxcTVMK1Ax?=
+ =?utf-8?B?aCtOQXRhR2hpV2F4TFlyNVcwdVVMeDZkajMxZDJNeXdHbkxtNEJCQ3ZhVkVK?=
+ =?utf-8?B?c2NsSU9PUVVYUngrRUpTNHZWQ1hFYnNudm9ML2RKanUwQ1IxZHh2U3Z3M3hq?=
+ =?utf-8?B?djdsSWI3K21yQWhVN0RtV3JoMHM1eERYaEUxckVCblFna3lkRUJ5L0RMRDVl?=
+ =?utf-8?B?YzZjMFdRM0FQZ2owN2x4d2hEU3ZGMmxZVldDNlVuVFFzcE5XQlROQ1RoY050?=
+ =?utf-8?B?WDlKQlJTZStQbFVzVkdPNzVVS1dZMHUwVmlnTVBqYzB2M3o1elFTbTBROGpH?=
+ =?utf-8?B?eElmWEdXU2hCd3UwOUJ2eEI0KzFYcktwU1pvM1NNaUZ1bG1hV1ZGWDhUdjRt?=
+ =?utf-8?B?NlRNYXdzd21hbTBMRVVQYVNuRVd6YkU5N2ZSL3VRVDdxMkJGUGxrRVliZGNY?=
+ =?utf-8?B?YWpIcWk1OGliZEhwYXBUQ0RyS3ZZcS9ralpsdE5yaHVyNjN0Rk04UlRBZ1FC?=
+ =?utf-8?B?S1pWY1hjV1JScmVsZzM5dWxSYjE5K1VyeGc4Q3I4bTJKUVNLNTFyUWxVdmNz?=
+ =?utf-8?B?Q2h5Y2l5bGIvM1pNRmRYZEdWRU9sY2FYcXhhS2VqeXY5eGtYVEdDMUY3bGtq?=
+ =?utf-8?B?NzFBN3JiOFRSMDgyZlRId3p3MXd6LzRrZ24rRCtXVDN2RzF0Z0hjdXZ1RFZ0?=
+ =?utf-8?B?SUVEZEcyMXJCYTRWMUpGcXMzR2RmZnNTRkJIZ0NCOFc0T0hCeXd6SFBJeG1u?=
+ =?utf-8?B?QlVHRXVMblE2aHZucnhpRng2VkY2cE5tdmNzZFFSMGxwR2RCbFNXK1pqaW5Y?=
+ =?utf-8?B?OXNtSm5FOGxPdjN1Nmc2ZkNpQ1pHdkFMbnZ0OTd2RmJqSEZ0TUpQYXFIRC9z?=
+ =?utf-8?B?M1VYU2svai9XRWdtWDJZQzFwU2lwU0RIYXBuNHpJRzRBcmFIN1dISnF3V0Jl?=
+ =?utf-8?B?cDFtL1owZHZmbklHTTRGcHIyalVpMHVCRlB6U0VQdmR0Z2FsN3lsQTVOQWlQ?=
+ =?utf-8?B?UFNCUGF6Wm4ydDh6dTk3cGQvTmdJeC9SaVpUY3YvN3dISm4zMjJrNC9heTBy?=
+ =?utf-8?B?d0VTb2djNG51dzRQNitaOExlMWw4Y2FkSmdYNnZCZ00xRmo0NEI5aC9ybDVi?=
+ =?utf-8?B?eEE2bUZ1TktuS21jbWhQTmhFaHlEY0ZDZlZHODZtcnB1S0o0MTJBWVRZQWwr?=
+ =?utf-8?B?ZUlkUWJKazBjY0ZqUjBKb3VuZ2ZqeVQ5T3RiNE5HOXpvOTR3TlZJM2o0N0p2?=
+ =?utf-8?B?RkNzOEZMMTJSWk1OdElHM0t6ZkZTZ3RWWEY1TndqVVRZZlVPY1FHNFNYZ3hD?=
+ =?utf-8?B?VFo5ZjB4UG5KU2hMSHJPUFNJS1NJem51SXd4bStiRzJzbGRSMnRaSDMwMjBQ?=
+ =?utf-8?B?UU04RDhSUmlGVWRNem0vVTdibzhZaERvU1VZcjJuY3RIZDVJcm40ODZXL01B?=
+ =?utf-8?B?TjdPaTBNUCtyYWJ3aC9FemJqcmE3SUNDWFZJYUpNU3ZlejMycnlickNuWUtF?=
+ =?utf-8?B?ZGpRMlR0MTZYZkxBM0VmclJZbFM4Z29BVVZSVzEzcFhlcjJGcWNtMkk1UGRl?=
+ =?utf-8?B?M2xiVG9aY0dOUTJQdFFRdTVlYThWQTN3SUN5RmVFMUJCN1JtMVhYTXRhc1pW?=
+ =?utf-8?B?akV2VFRsdnRXa3B6QTBPU05ZTmFWMS9JRW9KZ1k1Vjg2U2o5akc0cVRWcUk4?=
+ =?utf-8?B?UnpDaVdwR0xhNDhYSmRua1M0NmNDZjZZOEVNMnFHRUVWTEpPczlRUS85THZ5?=
+ =?utf-8?Q?MrqdHoIUE1xlCtQ8xKbCxpbHl76ECcB5?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c08vNWc1Tllqa3VPOFlXaDluR0thRE85K2hpaXYxUENSb0k3eHNybjZ3b05N?=
+ =?utf-8?B?ODN5VFBqelpuRkdFWUZZY1h0dTloWWQ2R0hGa0hmWFFYYnJ4NC9IcGdQaGNh?=
+ =?utf-8?B?Z0F0U3RGVTV4MW1RVkwzTHZvYXVIR3NtQTlqdnJlaE04ZFBNclI0VEVPWklq?=
+ =?utf-8?B?bkpjWU4xdnNoTDI0WDZuRTU3Z1hvVlR4VFZ0dEpsVkZUY0loOWl5UHZNeUx5?=
+ =?utf-8?B?ZGdaaTkzZE9QNVlIUGE5YVlDd0ZaWG10d0w0L0h6L3VLdGNCU3laV2VFTXZt?=
+ =?utf-8?B?K1YzT3g4ZkZQWkE3OFIyNGd5ZHV6Tkc2eXM3aWhyekxzTHhQM3ZLNDl1cUxC?=
+ =?utf-8?B?RUs0aDg0d2tZMktyaDc3RnJCcVgvalMycVdjdk80d1ZoS0wxQ1pxb0dQU0JD?=
+ =?utf-8?B?RnFPaGZBQUdLcDhERnAva2ZJbHVNNG45UmFXNzg3WnB2RHQrS1JUQjFUekNH?=
+ =?utf-8?B?UzBjMjdjeUlMYWJnRHdSMEZDcUNlaDB2aktHb2E4TDlrS3l5aFV0YmIrQ3NP?=
+ =?utf-8?B?WTZFY0RWTHMzc3RnZTcwSktHVEhtd2Zqdzd6V2pOVTVyRU1WUEdOTk00bWJS?=
+ =?utf-8?B?NDRRVGFVR0l0dWFia1lCZHFiL3pyWkk0QS9PdTNiVlFBaWRNaTVSK0xocDJC?=
+ =?utf-8?B?dEw1M1FQaG94WXhjS2R0aFEvS2lybU1scjJMOVJuVXpicmJKZ1pmbUxSb2JQ?=
+ =?utf-8?B?SkVNNnJQbXB5YTUrK2MvREVJOVlVd21DUFpzenAxNTIxeWpWdndJSkQ0Qkdr?=
+ =?utf-8?B?MHIyeUwzU0VlaVp4QlJ4VFZkRzdLdTBGZjRIamViQnFiREdqR3VGSDRsVU11?=
+ =?utf-8?B?R2ZMZGZpSG5vUWhxelk5eHdRV2M0NkU3UGQvcjcxeHhDOGRhbm5ObHNqVzZm?=
+ =?utf-8?B?RkJ0bjB1UWVIR214RjNHcGZOR2RwVFhrN0NRdUdNSGZObSswcFV1RVVaaFZG?=
+ =?utf-8?B?WVk0Q1Vndjg2S284eXVaTnl5OUZHZWhPd2NlSEEzWEpIenc5SmUrZWs0aHZU?=
+ =?utf-8?B?UW5DUFg4bmJyZTlqN0Zsd3phcjBEeUd0MUg5SS95VVFqd1ZuTjc4Q0x1Wnhi?=
+ =?utf-8?B?bnhQTXRDbFU0V3R4RloxRGVwbHNmSk5ielZCVHBKM0JubitnNTlEcWFRQUp5?=
+ =?utf-8?B?R2o2TWVzMkNhQU5ycGx0UzZNcmY1YVR6c2MxTGZpZkxUa3RFZUl6bXErZUtD?=
+ =?utf-8?B?TE1xd2ZYY0ltcjFOYVk5Z2VQaG0rK2RVdnZMeVgyQlVHeFduMTJRb3plNXM3?=
+ =?utf-8?B?VXBnT3pidkRyR2NGVUxtNWlOd1hZVUphOVByREJkNXdsUk9aeVZyQ0Z3WmVE?=
+ =?utf-8?B?RFNmQ05EaXZwWU9XK2dqdU9GMmR6N1BXemUwUHdkTytrU3ltbDhuN3RqcnFu?=
+ =?utf-8?B?cHozQzk5QjE5UjVYd3VPOVQveVJrUUwyci9rRHRpZzRJZkZTYlQxTkVVRjhQ?=
+ =?utf-8?B?YUpIMFB4SlhuZk9qR2NHOG9JTEEyekZLVlQxQkJwSkZTcm1ibUxlODZkWTRp?=
+ =?utf-8?B?SGcxdmI0THF4WHNJaDFiR0VkKytqaVNhUUdXQVo1bURFM2o3d2NjYmZ2RHQv?=
+ =?utf-8?B?QThFYzlwME5DR3FhVXNQNXJ1TjFvMWFpTUpFRmg0Zno4OCs4K3k2QTJmS1d1?=
+ =?utf-8?B?NnJyKzRYVHNTODYxWlBQNStmNHRGUjlsMmRzTnlPK2FHc3lRODVqSnlBakha?=
+ =?utf-8?B?V1N0NS9aVkdFM0NacG83OXdraGkwWStDSzBXSGduTHFPQVA5TmpncW9zRkZh?=
+ =?utf-8?B?WlRmc2FZT2JVYnNXWExuNjJwS1RnRXRHdWJ4Z09PMEZaRnVjMk5EWTUraUlu?=
+ =?utf-8?B?SExPaS9iM3MrQXV6UkhIaDRhTE5RSHVWcGlnTFpzekZkb2Q2WlIzYnNuWFhE?=
+ =?utf-8?B?b29WNVdHdmIrYlJFRG02eGpzZFJ4aHlvbzFnTjg5NTY4K2d4akdDNjhjcmp6?=
+ =?utf-8?B?U3YrVnBtV0dhSzJYQnNIUHU5V0NRWk5hQ2w0TWpRM0VqWnFRNzF5ZUlCUkV1?=
+ =?utf-8?B?bEhwOFZqMzFKRmdJVnViMkNRYk5Mc0h6MjRub0dkRFhnT0VVVzNpNXhNMXR4?=
+ =?utf-8?B?SnB1TzMvMTZZakhhT0xybzhpS3kxbXpTa0l4aTZ6QStmR0lJdXBOWHlBT1h5?=
+ =?utf-8?B?S200YlVCRGFJd2JkSkplYlByMllpM2dwWmhIQmxQVnFzdmR3UWx5WGd2VjQ1?=
+ =?utf-8?Q?SF5gXkm+7sVqMUNLnXSIUvNLhoMgBdN1IJ6GGTF0H9dP?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2906a09c-80ed-405a-6b93-08ddff66c4f7
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 14:45:01.4402
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nW13m0hkhvPuWT8Ne1eKTsxYhPDbUoBRxCqtg+KErpqJtJn6yqexFkkoj5fiHL2Av72Mw7g+ZsdYT0R/cvz2Vg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8508
 
-(target mode)
+On Mon Sep 29, 2025 at 10:59 PM JST, Miguel Ojeda wrote:
+> On Sat, Sep 20, 2025 at 8:23=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia=
+.com> wrote:
+>>
+>> The bitfield macro's setter currently uses the From trait for type
+>> conversion, which is overly restrictive and prevents use cases such as
+>> narrowing conversions (e.g., u32 storage size to u8 field size) which
+>> aren't supported by From.
+>
+> Being restrictive is a good thing
 
-struct atio7_fcp_cmnd is a variable-length data structure because of
-add_cdb_len, but it is embedded in struct atio_from_isp and copied
-around like a fixed-length data structure.  For big CDBs > 16 bytes,
-get_datalen_for_atio() called on a fixed-length copy of the atio will
-access invalid memory.
+On that note, I have been wondering whether we should not push the
+restriction up to having bounded primitive types with only a set number
+of bits valid, e.g. `bound_u8::<2>` is guaranteed to only contain values
+in the range `0..=3D3`.
 
-In some cases this can be fixed by moving the atio to the end of the
-data structure and using a variable-length allocation.  In other cases
-such as allocating struct qla_tgt_cmd, the fixed-length data structures
-are preallocated for speed, so in the case that add_cdb_len != 0,
-allocate a separate buffer for the CDB.  Also add memcpy_atio() as a
-safeguard against invalid memory accesses.
+Getters and setters would use these types depending on the number of
+bits of the field, meaning that a caller would have to validate the
+value they want to write if it does not implement e.g.
+`Into<bound_u8<2>>`.
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
-
-v1 -> v2: no changes
-
- drivers/scsi/qla2xxx/qla_target.c | 83 ++++++++++++++++++++++++++++---
- drivers/scsi/qla2xxx/qla_target.h |  7 ++-
- 2 files changed, 81 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 69ccba3436ec..c2876b442a08 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -210,6 +210,10 @@ static void qlt_queue_unknown_atio(scsi_qla_host_t *vha,
- 	struct qla_tgt_sess_op *u;
- 	struct qla_tgt *tgt = vha->vha_tgt.qla_tgt;
- 	unsigned long flags;
-+	unsigned int add_cdb_len = 0;
-+
-+	/* atio must be the last member of qla_tgt_sess_op for add_cdb_len */
-+	BUILD_BUG_ON(offsetof(struct qla_tgt_sess_op, atio) + sizeof(u->atio) != sizeof(*u));
- 
- 	if (tgt->tgt_stop) {
- 		ql_dbg(ql_dbg_async, vha, 0x502c,
-@@ -218,12 +222,17 @@ static void qlt_queue_unknown_atio(scsi_qla_host_t *vha,
- 		goto out_term;
- 	}
- 
--	u = kzalloc(sizeof(*u), GFP_ATOMIC);
-+	if (atio->u.raw.entry_type == ATIO_TYPE7 &&
-+	    atio->u.isp24.fcp_cmnd.task_mgmt_flags == 0)
-+		add_cdb_len =
-+			((unsigned int) atio->u.isp24.fcp_cmnd.add_cdb_len) * 4;
-+
-+	u = kzalloc(sizeof(*u) + add_cdb_len, GFP_ATOMIC);
- 	if (u == NULL)
- 		goto out_term;
- 
- 	u->vha = vha;
--	memcpy(&u->atio, atio, sizeof(*atio));
-+	memcpy(&u->atio, atio, sizeof(*atio) + add_cdb_len);
- 	INIT_LIST_HEAD(&u->cmd_list);
- 
- 	spin_lock_irqsave(&vha->cmd_list_lock, flags);
-@@ -3829,6 +3838,13 @@ void qlt_free_cmd(struct qla_tgt_cmd *cmd)
- 		qlt_decr_num_pend_cmds(cmd->vha);
- 
- 	BUG_ON(cmd->sg_mapped);
-+
-+	if (unlikely(cmd->cdb != &cmd->atio.u.isp24.fcp_cmnd.cdb[0])) {
-+		kfree(cmd->cdb);
-+		cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+		cmd->cdb_len = 16;
-+	}
-+
- 	cmd->jiffies_at_free = get_jiffies_64();
- 
- 	if (!sess || !sess->se_sess) {
-@@ -4128,7 +4144,6 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 	struct qla_hw_data *ha = vha->hw;
- 	struct fc_port *sess = cmd->sess;
- 	struct atio_from_isp *atio = &cmd->atio;
--	unsigned char *cdb;
- 	unsigned long flags;
- 	uint32_t data_length;
- 	int ret, fcp_task_attr, data_dir, bidi = 0;
-@@ -4144,7 +4159,6 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 		goto out_term;
- 	}
- 
--	cdb = &atio->u.isp24.fcp_cmnd.cdb[0];
- 	cmd->se_cmd.tag = le32_to_cpu(atio->u.isp24.exchange_addr);
- 
- 	if (atio->u.isp24.fcp_cmnd.rddata &&
-@@ -4162,7 +4176,7 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 	    atio->u.isp24.fcp_cmnd.task_attr);
- 	data_length = get_datalen_for_atio(atio);
- 
--	ret = ha->tgt.tgt_ops->handle_cmd(vha, cmd, cdb, data_length,
-+	ret = ha->tgt.tgt_ops->handle_cmd(vha, cmd, cmd->cdb, data_length,
- 				          fcp_task_attr, data_dir, bidi);
- 	if (ret != 0)
- 		goto out_term;
-@@ -4183,6 +4197,11 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1);
- 
- 	qlt_decr_num_pend_cmds(vha);
-+	if (unlikely(cmd->cdb != &cmd->atio.u.isp24.fcp_cmnd.cdb[0])) {
-+		kfree(cmd->cdb);
-+		cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+		cmd->cdb_len = 16;
-+	}
- 	cmd->vha->hw->tgt.tgt_ops->rel_cmd(cmd);
- 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
- 
-@@ -4306,18 +4325,43 @@ static void qlt_assign_qpair(struct scsi_qla_host *vha,
- 	cmd->se_cmd.cpuid = h->cpuid;
- }
- 
-+/*
-+ * Safely make a fixed-length copy of a variable-length atio by truncating the
-+ * CDB if necessary.
-+ */
-+static void memcpy_atio(struct atio_from_isp *dst,
-+	const struct atio_from_isp *src)
-+{
-+	int len;
-+
-+	memcpy(dst, src, sizeof(*dst));
-+
-+	/*
-+	 * If the CDB was truncated, prevent get_datalen_for_atio() from
-+	 * accessing invalid memory.
-+	 */
-+	len = src->u.isp24.fcp_cmnd.add_cdb_len;
-+	if (unlikely(len != 0)) {
-+		dst->u.isp24.fcp_cmnd.add_cdb_len = 0;
-+		memcpy(&dst->u.isp24.fcp_cmnd.add_cdb[0],
-+		       &src->u.isp24.fcp_cmnd.add_cdb[len * 4],
-+		       4);
-+	}
-+}
-+
- static struct qla_tgt_cmd *qlt_get_tag(scsi_qla_host_t *vha,
- 				       struct fc_port *sess,
- 				       struct atio_from_isp *atio)
- {
- 	struct qla_tgt_cmd *cmd;
-+	int add_cdb_len;
- 
- 	cmd = vha->hw->tgt.tgt_ops->get_cmd(sess);
- 	if (!cmd)
- 		return NULL;
- 
- 	cmd->cmd_type = TYPE_TGT_CMD;
--	memcpy(&cmd->atio, atio, sizeof(*atio));
-+	memcpy_atio(&cmd->atio, atio);
- 	INIT_LIST_HEAD(&cmd->sess_cmd_list);
- 	cmd->state = QLA_TGT_STATE_NEW;
- 	cmd->tgt = vha->vha_tgt.qla_tgt;
-@@ -4337,6 +4381,29 @@ static struct qla_tgt_cmd *qlt_get_tag(scsi_qla_host_t *vha,
- 	cmd->vp_idx = vha->vp_idx;
- 	cmd->edif = sess->edif.enable;
- 
-+	cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+	cmd->cdb_len = 16;
-+
-+	/*
-+	 * NOTE: memcpy_atio() set cmd->atio.u.isp24.fcp_cmnd.add_cdb_len to 0,
-+	 * so use the original value here.
-+	 */
-+	add_cdb_len = atio->u.isp24.fcp_cmnd.add_cdb_len;
-+	if (unlikely(add_cdb_len != 0)) {
-+		int cdb_len = 16 + add_cdb_len * 4;
-+		u8 *cdb;
-+
-+		cdb = kmalloc(cdb_len, GFP_ATOMIC);
-+		if (unlikely(!cdb)) {
-+			vha->hw->tgt.tgt_ops->free_cmd(cmd);
-+			return NULL;
-+		}
-+		/* CAUTION: copy CDB from atio not cmd->atio */
-+		memcpy(cdb, atio->u.isp24.fcp_cmnd.cdb, cdb_len);
-+		cmd->cdb = cdb;
-+		cmd->cdb_len = cdb_len;
-+	}
-+
- 	return cmd;
- }
- 
-@@ -5484,13 +5551,15 @@ qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
- 
- 	qlt_incr_num_pend_cmds(vha);
- 	INIT_LIST_HEAD(&cmd->cmd_list);
--	memcpy(&cmd->atio, atio, sizeof(*atio));
-+	memcpy_atio(&cmd->atio, atio);
- 
- 	cmd->tgt = vha->vha_tgt.qla_tgt;
- 	cmd->vha = vha;
- 	cmd->reset_count = ha->base_qpair->chip_reset;
- 	cmd->q_full = 1;
- 	cmd->qpair = ha->base_qpair;
-+	cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+	cmd->cdb_len = 16;
- 
- 	if (qfull) {
- 		cmd->q_full = 1;
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index 223c40bc9498..97aa6d9cfc27 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -830,11 +830,13 @@ struct qla_tgt {
- struct qla_tgt_sess_op {
- 	struct scsi_qla_host *vha;
- 	uint32_t chip_reset;
--	struct atio_from_isp atio;
- 	struct work_struct work;
- 	struct list_head cmd_list;
- 	bool aborted;
- 	struct rsp_que *rsp;
-+
-+	struct atio_from_isp atio;
-+	/* DO NOT ADD ANYTHING ELSE HERE - atio must be last member */
- };
- 
- enum trace_flags {
-@@ -925,8 +927,9 @@ struct qla_tgt_cmd {
- 	uint8_t scsi_status, sense_key, asc, ascq;
- 
- 	struct crc_context *ctx;
--	const uint8_t	*cdb;
-+	uint8_t		*cdb;
- 	uint64_t	lba;
-+	int		cdb_len;
- 	uint16_t	a_guard, e_guard, a_app_tag, e_app_tag;
- 	uint32_t	a_ref_tag, e_ref_tag;
- #define DIF_BUNDL_DMA_VALID 1
--- 
-2.43.0
-
-
+A bit radical maybe, but correcness ensues. :)
 
