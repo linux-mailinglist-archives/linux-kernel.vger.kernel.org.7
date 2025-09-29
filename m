@@ -1,102 +1,231 @@
-Return-Path: <linux-kernel+bounces-836249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4FFBA9183
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:45:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7574BA9195
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95951C1EF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FDB3C4E6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8980302163;
-	Mon, 29 Sep 2025 11:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959C02EA741;
+	Mon, 29 Sep 2025 11:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="llz7MqXS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgDkPXvV"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE23D30214A;
-	Mon, 29 Sep 2025 11:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2D5303A35
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759146295; cv=none; b=gawyyPpBiKwiBx6uK//ABLZv8XVkljgQh+8pmiiJyDTuer6ZvdZg8qpqCuAkCajhtomYccr9JLfoH/aAj4jIBzk2ifMmGA77zlhdAiHWecdR1T0GvW6LsX8WWjWiUEHxMeC//vrARl9JMwvXWRwvdjxaDU+v7UStBsyWQpb1IQ4=
+	t=1759146420; cv=none; b=nVLP8elfAQA82jAyEAuZVlsp+4W1FqBTqvDANmmrC/Tu3j2aMvDddCRXz8OGLNELb3kQZH+QJoU3sVTeLeyFvu85gM4jKvUpwNMQaOwpySikyutb4BoWift1f+L61IcemnYulyxPGBR0D19B5k5O7TLry7948V2kos+js2A7WRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759146295; c=relaxed/simple;
-	bh=izGasfRnEi7HbQteCBOxsheAwEE/2zFxEJFimTPnAsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=e0TAkfpL4fD57SrO2ttDQMGxNPtO6qZHa2zeC1xHTzg00pjmymUMXQKYdbbeolyiDBfifqmHkogPoTeI7pEApNUqJRU6AefvH7aKrY6QJglmQHrcyIxEKw/kRELRdjEcfkcXgDKQV3XH9lIXlpMC9mshXGY8BN9m3rSyYguc0i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=llz7MqXS; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759146294; x=1790682294;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=izGasfRnEi7HbQteCBOxsheAwEE/2zFxEJFimTPnAsE=;
-  b=llz7MqXSsTbVx2p9AatUeAjPkjDiKahJFClrtEGx1d/VYTtid7OC0z/m
-   Bo6cTd6QkFoFFruzKShAp+kNw9ogjkaujN11pq4eFgdx23PrA+9otQXl4
-   HgGXw6GdJRvZiY+5pb5kU5be1zb7CT0IYb7NLRAGLov0wZJFE8YM/9yau
-   dkT/7v1KNZl8kPS1FbkDIMDCNvJAXEX92ux5Su7oOtZ1HTqj1fqTKay6o
-   mbvLkOoI+WVStZJboSX7g0Qlf1eMhGhAVFZsKZx1hKgqaOahDFPSgb89O
-   N1JSbooA8j7NnEAKkxNpXNjXuCCp8xlWH64jNDJkU5wgCI+azDYqaV7Li
-   Q==;
-X-CSE-ConnectionGUID: AOWe2sJGRziAl39An+IU3g==
-X-CSE-MsgGUID: Tk2FtYWHQwWEYWO11HAZpA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11567"; a="79031491"
-X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
-   d="scan'208";a="79031491"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 04:44:53 -0700
-X-CSE-ConnectionGUID: cVKjwUhXQSifjHBb6j3iyg==
-X-CSE-MsgGUID: VQimLx5OQnip03a65w3pMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
-   d="scan'208";a="178274556"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 04:44:48 -0700
-Message-ID: <d5bfd8bf-2d28-4e79-90c8-bdca581e8000@intel.com>
-Date: Mon, 29 Sep 2025 19:44:45 +0800
+	s=arc-20240116; t=1759146420; c=relaxed/simple;
+	bh=wNuVMdmmYzdn6WLNE4CyIHqHQVdqeV7aveI2ROAPcdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HXMN9py7VM4F32PQYrI7cYvjg3+4Ww2pJ3ShhFHMX41x6dolfEEPlKmH9kI+jS30lAlTHNFoaXlIvDGOk74yZG9HDQaA4cbmXKQPHyf4m2Hool55rc2StlNaaR8itBnx7bdX6HZ5JJOpEcNOELHy8McswB1ADic/LtcfNW1Zvi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KgDkPXvV; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-586883eb9fbso1603205e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759146417; x=1759751217; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iblNyH9RQUiqFDYiroesQvDFASi4C4PHJ77i3ovtxEg=;
+        b=KgDkPXvVoAZDECYbp3n1kK4W1bFSrF+YU7EqIsQT0hxvgt/ux3WE3mW4+J/L7qrBkZ
+         4JJcvMd7PuI5ksI8LfrvLe8yVuf04Y0SGTbSi36VAWPjjZrRI2mM1md13T+T8Vhk86w5
+         U0HT1cjOXw5YSGKq5e00Y+jALhqpZm0OqhUOA0JuY+bIy3jVA/LP9lAYj5LZFZqOVvOA
+         52ITo2ol8EBxvE4xxj5OlNQU3VY0AlEZcq/fIs5GKMhVJRxAKZsqFiepThy7JPnQs/ba
+         u9QNii/hq7+gzK6hEJMv2kLSNycpniLZHQdwqEJz7CahpWbLY84EK9uOssyELE/9o9gt
+         BdVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759146417; x=1759751217;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iblNyH9RQUiqFDYiroesQvDFASi4C4PHJ77i3ovtxEg=;
+        b=rfEkHBagpemGpB1cpcn79cz/qqhO9LXH6jINuNiNl3DpgAezzYgaYEZR4b70VAtZ65
+         z+GY6+1xjBv2CocRKELsVBSl6tUDj0BeW+q1yE/dksG6Mbc9lBG31lq/PVVQb6bd7Uy/
+         VCjhAn29KQ6sCUayf2zbD0WB/vVXIVd+yq+Q4qg/OJN4sWBH4wqlhuXDT/fWQA/Ta/BV
+         1MV6IB98Xpq9TTRvf37DScuWR7yACKQipd4lRcq6FTCz9V6sq0XHGwE5pS738twNU5C8
+         YOu9Fw6U6PrqMo60sZpiT3tDekBTa2cPb+9sqwLvhmmnjIL001dgIE/3v7b/URpb2fMh
+         D6cg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnt7OwdscGzcPUsUtFpxkFB4It8SVvUut2KSbNbeA0vE4JTggprxxfJZTch/lLoPoxF0X3EhepqvT/8l0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxy4GRIx2+FdKa3PgEXyNbaOSJyv02gzk5E3tlcDyUcQ7n3wPt
+	PXh6jayo+NUw3oOXHj4CHG4xlQ3v6UCtg2OjNO04Qg+o54+p/NGiArWspd+TUu7BV4Y=
+X-Gm-Gg: ASbGncvpXKLCpYQAvmNGaUPDm9bLKOk8D0xJzIWcBCYqnihDvk8XRFiJqxfUq7TF8ie
+	UJ5TXzPYwtcMlyKs0l8uhlMaQ24BpCqXC6t72B3mqeeOTYAFJdX2GxB5n/hYjsHlF/oaCtFhgNp
+	L6X/HMV+TvOzLGHHjaMsX5U8dKBZyS2m53bXHr5iIA+NYWVyR+jhmeOPIkfdj7q3Z+NpYmpRWVV
+	T3Gf36xNj+ww+yVHc+Q/94fLSJ/KOIi82AlASBoJ5neEyVEVFt1jE3Ir8HTkT6PBJVkAJcz7Ac2
+	99e92nMDy/nQ+doOp8pp3CuVFVV+QZwxGy/XhhnVgF+alP1olvhw9BTc8AnEMm+ZeRDKY1sxirG
+	vMu4NSFd6KJJppfm7e9FSW3+m9KwQiPc+0FNCwID02E4Qoa9Ayyc/XY73w9+yQwWoDLOqTlu4
+X-Google-Smtp-Source: AGHT+IH1tc5UyrowpjgG09PaeQoeg5mBDgVtgXBs7JIEjr1VUn4l35hQOfbuJl6g30wFsygaWJEMsA==
+X-Received: by 2002:a05:6512:130b:b0:581:d8:a922 with SMTP id 2adb3069b0e04-582d406cfdamr5131282e87.50.1759146416675;
+        Mon, 29 Sep 2025 04:46:56 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316656353sm4117319e87.88.2025.09.29.04.46.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 04:46:56 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] pmdomain updates for v6.18
+Date: Mon, 29 Sep 2025 13:46:35 +0200
+Message-ID: <20250929114655.226466-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/16] x86/virt/tdx: Simplify tdmr_get_pamt_sz()
-To: "Huang, Kai" <kai.huang@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "kas@kernel.org" <kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "Annapurve, Vishal" <vannapurve@google.com>, "Gao, Chao"
- <chao.gao@intel.com>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-4-rick.p.edgecombe@intel.com>
- <1c29a3fdbc608d597a29cd5a92f40901792a8d7c.camel@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <1c29a3fdbc608d597a29cd5a92f40901792a8d7c.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 9/19/2025 8:50 AM, Huang, Kai wrote:
->>   static unsigned long tdmr_get_pamt_sz(struct tdmr_info *tdmr, int pgsz,
->> -				      u16 pamt_entry_size)
->> +				      u16 pamt_entry_size[])
-> AFAICT you don't need pass the whole 'pamt_entry_size[]' array, passing
-> the correct pamt_entry_size should be enough.
+Hi Linus,
 
-While we are at it, how about just moving the definition of 
-pamt_entry_size[] from construct_tdmrs() to here?
+Here's the pull-request with pmdomain updates for v6.18.
+More details about the highlights are as usual found in the signed tag.
+
+Please pull this in!
+
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit 5fc4ab3269dea6a0b00c7256cb6f6c0101b6a44b:
+
+  pmdomain: mediatek: set default off flag for MT8195 AUDIO power domain (2025-09-23 16:33:34 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.18
+
+for you to fetch changes up to bbc3110823eca23b066e75a920bdc8118adda0d2:
+
+  pmdomain: thead: Fix error pointer vs NULL bug in th1520_pd_reboot_init() (2025-09-26 14:50:20 +0200)
+
+----------------------------------------------------------------
+pmdomain providers:
+ - amlogic: Add support for S6/S7/S7D power-domains controller
+ - imx: Add support for i.MX91 power-domains
+ - marvell: Add support for PXA1908 power-domains
+ - mediatek: Add support for modem power sequence
+ - mediatek: Add support for RTFF Hardware in MT8196/MT6991
+ - qcom: Align power-domain definitions for rpmpd
+ - rockchip: Default to use power-domain support
+ - thead: Create auxiliary device along with a corresponding reset driver
+ - ti: Synchronize on/off state with HW-state for ti-sci power-domains
+
+----------------------------------------------------------------
+AngeloGioacchino Del Regno (7):
+      dt-bindings: power: mediatek: Document access-controllers property
+      pmdomain: mediatek: Refactor bus protection regmaps retrieval
+      pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
+      pmdomain: mediatek: Move ctl sequences out of power_on/off functions
+      pmdomain: mediatek: Add support for modem power sequences
+      pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
+      pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
+
+Brian Masney (1):
+      pmdomain: mediatek: airoha: convert from round_rate() to determine_rate()
+
+Dan Carpenter (1):
+      pmdomain: thead: Fix error pointer vs NULL bug in th1520_pd_reboot_init()
+
+Dmitry Baryshkov (4):
+      dt-bindings: power: qcom-rpmpd: split RPMh domains definitions
+      dt-bindings: power: qcom-rpmpd: sort out entries
+      dt-bindings: power: qcom-rpmpd: add generic bindings for RPM power domains
+      pmdomain: qcom: rpmpd: switch to RPMPD_* indices
+
+Duje Mihanović (2):
+      dt-bindings: clock: marvell,pxa1908: Add syscon compatible to apmu
+      pmdomain: marvell: Add PXA1908 power domains
+
+Icenowy Zheng (2):
+      driver: reset: th1520-aon: add driver for poweroff/reboot via AON FW
+      pmdomain: thead: create auxiliary device for rebooting
+
+Joy Zou (3):
+      dt-bindings: soc: imx-blk-ctrl: add i.MX91 blk-ctrl compatible
+      pmdomain: imx93-blk-ctrl: use ARRAY_SIZE() instead of hardcode number
+      pmdomain: imx93-blk-ctrl: mask DSI and PXP PD domain register on i.MX91
+
+Mikko Rapeli (1):
+      pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
+
+Tomi Valkeinen (1):
+      pmdomain: ti-sci: Set PD on/off state according to the HW state
+
+Ulf Hansson (7):
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch fixes into next
+
+Wolfram Sang (1):
+      pmdomain: remove unneeded 'fast_io' parameter in regmap_config
+
+hongyu.chen1 (2):
+      dt-bindings: power: add Amlogic S6 S7 S7D power domains
+      pmdomain: amlogic: Add support for S6 S7 S7D power domains controller
+
+ .../devicetree/bindings/clock/marvell,pxa1908.yaml |  30 +-
+ .../bindings/power/amlogic,meson-sec-pwrc.yaml     |   3 +
+ .../bindings/power/mediatek,power-controller.yaml  |  37 ++
+ .../bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml |  59 ++-
+ MAINTAINERS                                        |   3 +
+ drivers/pmdomain/Kconfig                           |   1 +
+ drivers/pmdomain/Makefile                          |   1 +
+ drivers/pmdomain/amlogic/meson-secure-pwrc.c       |  95 +++++
+ drivers/pmdomain/imx/gpc.c                         |   1 -
+ drivers/pmdomain/imx/imx93-blk-ctrl.c              |  23 +-
+ drivers/pmdomain/marvell/Kconfig                   |  18 +
+ drivers/pmdomain/marvell/Makefile                  |   3 +
+ .../pmdomain/marvell/pxa1908-power-controller.c    | 274 ++++++++++++++
+ drivers/pmdomain/mediatek/airoha-cpu-pmdomain.c    |   8 +-
+ drivers/pmdomain/mediatek/mt6795-pm-domains.h      |   5 +
+ drivers/pmdomain/mediatek/mt8167-pm-domains.h      |   5 +
+ drivers/pmdomain/mediatek/mt8173-pm-domains.h      |   5 +
+ drivers/pmdomain/mediatek/mt8183-pm-domains.h      |   5 +
+ drivers/pmdomain/mediatek/mt8186-pm-domains.h      |   5 +
+ drivers/pmdomain/mediatek/mt8188-pm-domains.h      |   6 +
+ drivers/pmdomain/mediatek/mt8192-pm-domains.h      |   5 +
+ drivers/pmdomain/mediatek/mt8195-pm-domains.h      |   5 +
+ drivers/pmdomain/mediatek/mt8365-pm-domains.h      |  14 +-
+ drivers/pmdomain/mediatek/mtk-pm-domains.c         | 399 +++++++++++++++++----
+ drivers/pmdomain/mediatek/mtk-pm-domains.h         |  74 +++-
+ drivers/pmdomain/qcom/rpmpd.c                      | 112 +++---
+ drivers/pmdomain/rockchip/Kconfig                  |   1 +
+ drivers/pmdomain/thead/th1520-pm-domains.c         |  16 +
+ drivers/pmdomain/ti/ti_sci_pm_domains.c            |  24 +-
+ drivers/power/reset/Kconfig                        |   7 +
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/th1520-aon-reboot.c            |  98 +++++
+ include/dt-bindings/power/amlogic,s6-pwrc.h        |  29 ++
+ include/dt-bindings/power/amlogic,s7-pwrc.h        |  20 ++
+ include/dt-bindings/power/amlogic,s7d-pwrc.h       |  27 ++
+ include/dt-bindings/power/marvell,pxa1908-power.h  |  17 +
+ include/dt-bindings/power/qcom,rpmhpd.h            | 233 ++++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h             | 391 +++++---------------
+ 38 files changed, 1592 insertions(+), 468 deletions(-)
+ create mode 100644 drivers/pmdomain/marvell/Kconfig
+ create mode 100644 drivers/pmdomain/marvell/Makefile
+ create mode 100644 drivers/pmdomain/marvell/pxa1908-power-controller.c
+ create mode 100644 drivers/power/reset/th1520-aon-reboot.c
+ create mode 100644 include/dt-bindings/power/amlogic,s6-pwrc.h
+ create mode 100644 include/dt-bindings/power/amlogic,s7-pwrc.h
+ create mode 100644 include/dt-bindings/power/amlogic,s7d-pwrc.h
+ create mode 100644 include/dt-bindings/power/marvell,pxa1908-power.h
 
