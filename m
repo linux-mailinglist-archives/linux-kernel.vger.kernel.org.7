@@ -1,138 +1,228 @@
-Return-Path: <linux-kernel+bounces-836763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72372BAA7EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:46:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75B4BAA7F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 163CF3C6EC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:46:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F6A7A6063
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4241B4236;
-	Mon, 29 Sep 2025 19:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E52E245008;
+	Mon, 29 Sep 2025 19:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkPKcsED"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a9y625/d"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013036.outbound.protection.outlook.com [40.107.201.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B942BB17
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759175180; cv=none; b=o38X2p6KhR5IZ3ouxv4xrOXIpmJHEHB9t9m6RkH5t3X+qx1uXlQr8vsV/4rbGFAsPsI07mI+moqXuAX9/qhi+czTiL3KU6wIgKy3X4dt/HpkJRWTHBB+aHWWJtq4fkVL5occxKckQG8FFi3z9pZsfC7vDx5WplTEU7jzqkYUmSU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759175180; c=relaxed/simple;
-	bh=5xgACw/2QtBTGS5E48A8ZkKBxvCcMMyg/YYx5RTbWZo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aZGE7hAsLMvTgn1ry1amZgfq+PfzpxefP/wyzJ3veXjyo27WAXvFRQeQWK8I02sOKZtKLJ2lrxzydEzfbFbTdIrpccEzRiJnEhZDmfpRQqtOuU2kGjmwyRbKcaq5E/O4U7q9+OEBP9J+UgzF6wSgSdOP+2nd8hblp3GUSG3eQ+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkPKcsED; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 774A7C116B1
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:46:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759175180;
-	bh=5xgACw/2QtBTGS5E48A8ZkKBxvCcMMyg/YYx5RTbWZo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PkPKcsEDdrl42hqZxhgQ51kbowAxy2I1qABXeRukWGImWEsqFeKyAVGuh/bDDIR8A
-	 mXxAcKVfu2MCT+BrCq6RTWx+hwwZv62dVUTvM3mHST9IiI0W8WS8YIIDgofRO8j/D6
-	 UVI178EJJ/s9BiPW/1MtZnV5PFNi/TcdGCEGP6Z3XVOeIj+kjral/DFgukqB4HtHPJ
-	 6rjqKCAlQN1yBYe+PeYwtn9TIIdeImPmFyIbZ3eamKH2V6kXYh8dLaF2ISua64X8VQ
-	 4SZvixvrbmEbL40qqeQKGHWl/6MZxUVBbrfEdOkO/HtJmjpTzrxr+NZXUuljoPvyXv
-	 UEzg0WmurP43w==
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-7957e2f6ba8so48732806d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:46:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfznkpEhskAVIAoFmRLD5/WHqtYrNolJh/4fzrjRcFP2oNrKINhEB8O0jCX9SO6kSmaPYi7o0NRJnXvys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlKHImSLEkDdh5JwCbkw9HrZj7tj0I6QmLtR6ztnDOB1qct3lx
-	0eVDLK7CiP8KjqHsSvUnaz4GoxBWtDUshWvL+bBzs2fq+9g9HERHkFYrnxrAAKEkjiAHAskXAuI
-	CszygFqc7/cxWCQcJtb3fF/BZcXP13ZE=
-X-Google-Smtp-Source: AGHT+IEXzouQ9DmgJcWZT4w/k/xSvEVMLKrsyJDlnS9CzAc/UnL6y8E1G2p2BPo9Ogz2x+E7MBxJZTyKfa2vhnR4aJI=
-X-Received: by 2002:a05:6214:19cb:b0:820:a83:eaec with SMTP id
- 6a1803df08f44-8200a934271mr138124936d6.35.1759175179601; Mon, 29 Sep 2025
- 12:46:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7F0EAE7;
+	Mon, 29 Sep 2025 19:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759175264; cv=fail; b=XLQlArOucD2xlUPddKsVmH96NebxCrxbCLtdzE4xXVda8VLty9kFUEjNp8oDafa1TWG2ljrPl0ICcEdV8gl9CJyCCr7vEA03v1sZKBM3lxmp5tQKf97/sDOytlK/uzzWN49EWt9PzbEQS/+jeZWMbWXDdSStzRB0QwtJzANvI7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759175264; c=relaxed/simple;
+	bh=Hefjd1TeyUNIsz6WnhlciWQYa3fU5/UUORjFmpyzVaU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nCdYMRpibGxfar13QJEhgUA+nIOfAlektTfW3OQ0Ej/13FTV1hr9ivRO0mfcQ0rc++ewX15DlSv9kDvUrxrbeqmNaO9QdECE/25Jf1oDaTSFQV0qGVtT/iVB76R771pqDy6XN5QRAPqITM4/018R2sWJHC7RApNWJDcfzXW/Q8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a9y625/d; arc=fail smtp.client-ip=40.107.201.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E8pKRt28j11cRpyuv4YADh66nQT+aISi9Q5j9+Psqtdmrnt288qA1V1pbBimvzN1gSNcLo9SJmiLtiQhYRCOzCmow/5MynDJCQuGZiALnykg/6R6V7gzwqUnJXplgq389EmeAmULTVxSrawe2PNN4G7fJ0Qyb3+zXHymaugHW1hRpB+SglzIXNbJXKDpFEvaEgZgGLWH/mFM41g7xujBwD+OX5FFm5bgnSq0m7U2U7Qpd6igO911HL1kpyJDyqLGfdRc6qWG+NvRZlXe9qIkexXdLmrONolVKZvY0SvL1z376oI9xRiuHrS7F2xJSOKCjmKXqmLQLqjR+nPMXBoing==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zFg8ZP+521vKXoXp7HiNLh7AroZ7dutepQfKmCnTa14=;
+ b=al3hpdlN7QqbUSLvTPPrx62lufojseFnkd5EZCuQcpqHbznacqIpuhKCXLCCYu1QSIJvbZnGXPIqkV2hA8HsVoiAs9ZrYIcLJ7BBSkug4CeXG7Ql0Tu24bZ4ahI9ao4zDHs6JZ82sgI1sLkTXVUhF7YT32QXfHOXRAmltabe3iGYGTkaADLoMyWNpGHOJH3ATeZf8thRGK7c7Nx1cHjptMtGyK9CvXfnNkgxvxpMDB8UFCtjJ7NC75AoTACwTS+BUs1bkffVA8kd6jHD/LsqFxGVXhZZvVB0lazKisVV9mpZVeKwTBFZKSgTxiAyPdlKbZT5p53fpoPd4LMEyTTy0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zFg8ZP+521vKXoXp7HiNLh7AroZ7dutepQfKmCnTa14=;
+ b=a9y625/dIirV2t1Uaumig8HEaqy/5y0oIbj4R3VIK0jNVcz8MGx8OztXlxnEzL95cTzVGYanOgJqG7T7Zp+XFd+m6G76d/gnaOyggXova96w8CFBCWxWGdd9aDJhS3Xyct/eXMNjv/UD8GFW6pMQEi8+g5uAuZyk/YqEaft+fdM1j/LDhahS4m7vQqoHxPyfB/j+r/4xjfinl8Rd+dCr339KPgieN8qQj9PZ4z2LsvrNuNQQqD56hiuDWI6zqSCMGtYiBxarS97jmhK4NtNXk+qdARBGHM6Uj5K0n5x+9F4VGCUZjw/eocXW2uAW0NKbyND1wCbTJHjvSmHIeQ5lAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA0PR12MB8694.namprd12.prod.outlook.com (2603:10b6:208:488::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 19:47:38 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 19:47:38 +0000
+Message-ID: <1a55b7ec-bc06-495b-8f94-92ff34b3353d@nvidia.com>
+Date: Mon, 29 Sep 2025 15:47:35 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] nova-core: bitfield: Add support for different
+ storage widths
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Yury Norov <yury.norov@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-3-joelagnelf@nvidia.com>
+ <DD52GXPTVVNN.33HBTCY3RQ681@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DD52GXPTVVNN.33HBTCY3RQ681@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0162.namprd13.prod.outlook.com
+ (2603:10b6:208:2bd::17) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904223850.884188-1-dylanbhatch@google.com>
-In-Reply-To: <20250904223850.884188-1-dylanbhatch@google.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 29 Sep 2025 12:46:08 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5zUEeM3DAw-3OVNS9KmM2vG9B1GaR9KEKS_KFQo-VG9Q@mail.gmail.com>
-X-Gm-Features: AS18NWAnkDC8NBecqooALnKp782BPyyRWLT6WeGda5eSChP0CGCqZ4fVHkcf6TA
-Message-ID: <CAPhsuW5zUEeM3DAw-3OVNS9KmM2vG9B1GaR9KEKS_KFQo-VG9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] unwind, arm64: add sframe unwinder for kernel
-To: Dylan Hatch <dylanbhatch@google.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Jiri Kosina <jikos@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Weinan Liu <wnliu@google.com>, Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
-	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	live-patching@vger.kernel.org, joe.lawrence@redhat.com, 
-	Puranjay Mohan <puranjay@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA0PR12MB8694:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d319388-1bd3-4078-1c06-08ddff910b7a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dHFRMU5WZFFDeFBuZnFrbVlPS0ExRFo3K1g2dXBmQ2pObHdCZzV1eXZUTXFw?=
+ =?utf-8?B?bkd5eCtodDlueHliZzZLWFZkTnFxNVlJdlhqNkpac2xTUzJVZEJzbnJob0py?=
+ =?utf-8?B?ZVNjRlNTTUFQQjVjUjFVTTlwMU1SR0Q1K3BCWlFNVit6anhJcVhiWHhVWnl6?=
+ =?utf-8?B?NEZVZWdHNVAvZnlheGQ2WkN3Y0JzaEpENXVXdU5qaGp4THdUSU9FeEZmdThC?=
+ =?utf-8?B?Mm0wdmhlL09jR0FyRS84NjhQa2s4c3JaWkViNDVVTFBVU041dmpqc0k5RlEz?=
+ =?utf-8?B?dHpwbUo5eVZ5QVRwamd0RjRFTklVQi9KQ1J5MHU1MCtuWEZZNWZpNEc4UVRa?=
+ =?utf-8?B?aS9rZ0JicU15WWFHREdTOFRwVExpcWxYRnN5WjVFZm5HMWJFSnhpb05Jcmps?=
+ =?utf-8?B?bmRuRUxjR2xyREh4aGowZ0x5Zzl1M1lsb25kY2p2YXR2MjY3UE1ERXBLQVJZ?=
+ =?utf-8?B?dmdjZnpCMmFoUTRKWHZmcS9NRlZGUjBRcUREUnc0QVBEYm1xWGltNzZuaGVQ?=
+ =?utf-8?B?TmVoeGVRRzRNOU4yb3pRR1pEM0R3c0VUVUpJMjdCOERkY0xrNmdibHNqMnlx?=
+ =?utf-8?B?dEJJdVVMU2E4cGpSaUxNNHZkZFJOajErUDhadzNwTmdGMGpHU1lUT1l1UFA5?=
+ =?utf-8?B?TWVOQ1VCZTh1dWxmYzBBZWlLTFNZK29GNnQ1aXduQ3hZZVhTTmN3ZUlDSmFt?=
+ =?utf-8?B?Z0VjakFHL2RNa3I4MXFqcnNrZE44NlJ2L2FzSkp2ZzduMVF4bjVoZzcraE5m?=
+ =?utf-8?B?N0xkWmMrbHpMREtpVmQyVlhZTFV4dnowVllGMTZQOTdHQXVMSWoxY3VacGVt?=
+ =?utf-8?B?Y1Y4cDNRTkxSR05mclhRZWcyNDZWcEV6TDNIcG1oQVpiYnBHV2F3eDhCRmV0?=
+ =?utf-8?B?NlVzb251eTNRdUlmQXVaMDQ5Um1ja05xRkhCOFcrL3lqVlNJUmJpUTQrZHpz?=
+ =?utf-8?B?YmVQZC9VZjhLVHZ0dkV4WHhrQUlFN2VYWVVKVmwwQWEyTTZNK2NvMTREQ1lo?=
+ =?utf-8?B?Z0QwMWxVeUVEM2hnbUoxalQ2VTE3OVNtSGw3Y21acDJ2N1ZVb2VtSEFWSlBj?=
+ =?utf-8?B?dXFEMnNBOHBiWXJQY3htS25zTjFhU3k5RTlHYlJHYkRQUHJiYTZxSEFmcW80?=
+ =?utf-8?B?OVFLV1VlNGpxbTlYV1lvbnM3ZWJENnpoeVBEVitzempaZHZFNkhYbXU2am1Q?=
+ =?utf-8?B?ckRyaDUyNmZEWHY1NUxEZlREa2R5U2h1Yy9kRE16bElKZy95QzJKWUhPeUZK?=
+ =?utf-8?B?VHJqV3BkWEtGdS8vTjI2T0xBOXdjK0krOXR6KytFRUhOMVgzcjczQ2tObURP?=
+ =?utf-8?B?eGVtdXJiMVd3VEhpNE5wOVVZeDdTcHdiMHdZYWhzTGxTeW5WVXVNV1hQeXRL?=
+ =?utf-8?B?YStZSnJQUnhhZ0ZDR3Z5eDN6QWhSMDErUmFLVnRyT0o2UndyelVxNVNKWG1z?=
+ =?utf-8?B?VkRtbmJqVlMzczdkR3JHOEhnOE1lVXZQNEI4STNBbE95TlRZRGlGSUpFRnFm?=
+ =?utf-8?B?SGJiNVdNZjN0ZFdySnRJMTNEcXFFZGk2QVYyd0hpTFg0UEpKN0xUM1ZzWHlj?=
+ =?utf-8?B?Njh6b0dpdGVoajVJZ3pyQ0RlMUExcU4rbEVmaThCTzR2WURRK3JnSXUvQjFO?=
+ =?utf-8?B?YUVsMkNNU2tQbTJZQ1Vza2Nka0hWaDJqekk0MzEwVUMxVTQ3UHBSSmJ4cXYv?=
+ =?utf-8?B?dHVoa3ZaWnBHV01NUTVzZ0FGckYwNVFrWk5tdmpnR3UrL3AzRi83MlA0Snhn?=
+ =?utf-8?B?bXhWNVl6OGY0QXpRQzJEaUMwTWh3VjlhbElOclBzTWVOaHRGaVFZSms3clY1?=
+ =?utf-8?B?Qzh4TFJHa0JuVWk5d1RMVVpjbUxSdXM1RzJoZWNCaC9FNFVkUTZ0NEZqTGFj?=
+ =?utf-8?B?MkxPQ1lCUHk5cFc3L3Jqb0tMbjZmSnB0OVJGaWhjd2E3Nk9OdFFGTTRHLzF4?=
+ =?utf-8?B?NFc2ZDQwb2hhRjZ6Ulg3MDZMWG84V2k1enR5WEpWVTJQdUlJL3dzdkNPdFoy?=
+ =?utf-8?B?RHowQWd5VHlnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cEZjNllpNXFiMzU2aEFKSDRFcU5NMlZxQkFJdzdTMzRCTDZyTElseGR2bThk?=
+ =?utf-8?B?NS9lY3RCd245cFpOOXY2MjUzWXZYdUhvdTE0Sm1oR0FIQTJHOGlYdGpVMEtZ?=
+ =?utf-8?B?b1R3S3Zqb1I1aFF1Wms5MEtqem41MWFPRDV2ckx0bis0dVlxYk9jdmFKVlcz?=
+ =?utf-8?B?UjVHQTcxNjBrOGxOYmpBa3lQZUdYSlp2MmJQN21vY0FGcUltMDV1OXJ1VkJm?=
+ =?utf-8?B?U0JpRFRUQjIvVlB6TTBFTENYNXg4M05lZlA5WlplUzhHNk5jbDdZOGFHcVZn?=
+ =?utf-8?B?OHhQOFRSQ3JsdnFlTk9uVWp4QjdiazJva1lZK3N0b0w0aTd2VDhsbHlRQ0Rm?=
+ =?utf-8?B?K0svUGNWSTlEbjhTeHBIZEJINXZ1cXF0VnBYT1VHZHdHY0xlRUMwc1BmSysr?=
+ =?utf-8?B?dGY3V3oyK3cwRFRJSy8wR1cvb3BNejA2cGlNNUJ3QjJaQ2wzbExUL1RqRUJH?=
+ =?utf-8?B?bUdmK2NaaG8zdmkxb2VHYmVhVDVnYTM2bjVnQTJwNzBiczI1clplcE1adHp6?=
+ =?utf-8?B?aXcvZHZRT293RVdwQ1VWN2FIbk52cHJEMlR0OXgyNGRzeW04dEEyZk11MmM1?=
+ =?utf-8?B?RmVwYXBWQndMZDlBYm1ScS9wSDBRcWhnQmxPWmUyc1pPMkJVK3ZRdWdoSlFP?=
+ =?utf-8?B?dTVZM2VCZWsxYTBLNHlXMk5ZblZPZS9UWDF5V0ZrWlNkNjFrZ0hpNXJQR3Iy?=
+ =?utf-8?B?OXJ3WloxY0VBVUJaVTBqWmtUc0dXbFZIaU1sck56YW5kbGxYR1NCRlBGNVpo?=
+ =?utf-8?B?ekpNeXdJWDFqVlprRStUTHcrdjVIU3hkYTVTcHkwK0h3eXFvZ2ttN2hlR1M4?=
+ =?utf-8?B?YVR4alNQRmRJUmlWNm1ZZmJBbjVFaVJVeDhQTVJOekQ1dlRjL1VQcE5PVU0z?=
+ =?utf-8?B?cEI0VHozVlMvTFFkR3YrcjJiL29qRGZsTUZMM3F6TnNZVURpNDZhaFpwd09y?=
+ =?utf-8?B?bUhadmZuUUJoc1FWVFlJM2pWSkcwRW9RWmJIR3cwbmd6azVVZlV5SEQ3ZDJJ?=
+ =?utf-8?B?K213NSs3eXlPQVVDODd4cW1CZ1BqbXUwWW5GV01HMVhYV3g1TlVpc09Dallw?=
+ =?utf-8?B?emhPOTBQNUEvRGJ0b3dYSVFYalR1ZUsydWhSbVVJT3hRN2FhM0ExVkpBY3pX?=
+ =?utf-8?B?VmZQSUNWVHEzV1prRHQzNjRVU3Q2OGdEdW1uTEdzbGFwRDFFZ0tEa1RaTCtW?=
+ =?utf-8?B?NzhJSGJ0WnB6UW92Zk90elBMbTJVU201Y0hhQ1RrckZRaldjM1M4Q1g1YXVH?=
+ =?utf-8?B?NmhaNjVabWdhTkhaR3JZcEZRRVdWL25rNWQ5a2RLV251bCsvZDlhRkdwb3pY?=
+ =?utf-8?B?ekQ0STRaK1lyRkFlSFdBUHNDOG4xQnNzMmo2STd5NGh0OVZKdU1hNW5xcDdF?=
+ =?utf-8?B?QmgraktzMnQ4aEo4SU02WHFoNWk2QkZMbk1Zb3AxQVdRSS9kVmtsN0ZwVC9L?=
+ =?utf-8?B?OEhKSWZVTFMrdXovVHJmSXVodnNRWXNjZXBpZXhVU3Y2aWRrREVlSHlpRkVo?=
+ =?utf-8?B?Wi9HTUl2eXJOUk12U0M5L2hKSnM1Rlc4bWNaNysrV3V2QmVmS0V1OWd1MlM4?=
+ =?utf-8?B?aWNDazFlaWp4ZWVhTHVrNVlBRnlnN3RhZ1JIYzl0N3h3TzhCZW0wby8wNDVu?=
+ =?utf-8?B?bU9PM3hGcmkvV3ZyMHl2ZHlsNVFrRE4wVDZ4bUFlL1BOYmhRblNpMWFvUVZI?=
+ =?utf-8?B?N1EwTitsSzB1S1BHN2NDa3E3TXVpYlZ5UWk4U3BuSk82b0grajZNRjdlb21J?=
+ =?utf-8?B?OU1CR29ZZkphN1YwcFhEWEt3WTBKaEhzNVQxNitCeGQxaXVrMnM3N1RtRGpx?=
+ =?utf-8?B?dFJKalk5aXJGUjFITm5WSHBXL3lSQ3QxbDRNYldtZE54eWtKdGVWZXVQZGVv?=
+ =?utf-8?B?ZTkxbmhmUDFQSnRxaE44ZzJCbzZUWk5YT0EwSmZxUS9BWlJDVUhQTmVCMkU3?=
+ =?utf-8?B?b0JaZWZhS1JhVm84Z0trZ243anAwajZBLzZtc010clJ1RTQvWU9pK09RSmhZ?=
+ =?utf-8?B?c2psV0VkVytxMDl6RExJSHdEdjBQK1RPNEx2Ui9oMVpLUHY0VzNRU0FKby96?=
+ =?utf-8?B?YllSNU5wWjBlcFhna2dHNDN4TmhsLzRXWmtSUmI1OURUMEd6bDZiWFoyc095?=
+ =?utf-8?Q?Vm52eH6M8M6Dih+K5clgpsXFo?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d319388-1bd3-4078-1c06-08ddff910b7a
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 19:47:38.6479
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aW1Rr9k4au2sEe1XKAzNCPnz9TR/vhGRaV/UAgDEfPM8LNTkNIKaoptxVmmlEEQv6+7EP+siJMDSDSAPvdromw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8694
 
-On Thu, Sep 4, 2025 at 3:39=E2=80=AFPM Dylan Hatch <dylanbhatch@google.com>=
- wrote:
->
-> This patchset implements a generic kernel sframe-based [1] unwinder.
-> The main goal is to support reliable stacktraces on arm64.
->
-> On x86 orc unwinder provides reliable stacktraces. But arm64 misses the
-> required support from objtool: it cannot generate orc unwind tables for
-> arm64.
->
-> Currently, there's already a sframe unwinder proposed for userspace: [2].
-> Since the sframe unwind table algorithm is similar, these two proposals
-> could integrate common functionality in the future.
->
-> Currently, only GCC supports sframe.
->
-> These patches are based on v6.17-rc4 and are available on github [3].
->
-> Ref:
-> [1]: https://sourceware.org/binutils/docs/sframe-spec.html
-> [2]: https://lore.kernel.org/lkml/cover.1730150953.git.jpoimboe@kernel.or=
-g/
-> [3]: https://github.com/dylanbhatch/linux/tree/sframe-v2
 
-I run the following test on this sframe-v2 branch:
 
-bpftrace -e 'kprobe:security_file_open {printf("%s",
-kstack);@count+=3D1; if (@count > 1) {exit();}}'
+On 9/29/2025 8:22 AM, Alexandre Courbot wrote:
+> On Sun Sep 21, 2025 at 3:22 AM JST, Joel Fernandes wrote:
+>> Previously, bitfields were hardcoded to use u32 as the underlying
+>> storage type.  Add support for different storage types (u8, u16, u32,
+>> u64) to the bitfield macro.
+>>
+>> New syntax is: struct Name: <type ex., u32> { ... }
+>>
+>> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>>  drivers/gpu/nova-core/bitfield.rs    | 71 +++++++++++++++++-----------
+>>  drivers/gpu/nova-core/regs/macros.rs | 16 +++----
+>>  2 files changed, 52 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/bitfield.rs
+>> index ba6b7caa05d9..687ef234be75 100644
+>> --- a/drivers/gpu/nova-core/bitfield.rs
+>> +++ b/drivers/gpu/nova-core/bitfield.rs
+>> @@ -51,7 +51,7 @@
+>>  //! }
+>>  //!
+>>  //! bitfield! {
+>> -//!     struct ControlReg {
+>> +//!     struct ControlReg: u32 {
+> 
+> Haven't we agreed in [1] to align the type definition syntax to that of
+> an actual Rust struct? E.g. `struct ControlReg(u32)`?
+> 
+> [1] https://lore.kernel.org/all/3814d6b7-7551-4e8c-b78a-4ac6236eb406@nvidia.com/
 
-        security_file_open+0
-        bpf_prog_eaca355a0dcdca7f_kprobe_security_file_open_1+16641632@./bp=
-ftrace.bpf.o:0
-        path_openat+1892
-        do_filp_open+132
-        do_open_execat+84
-        alloc_bprm+44
-        do_execveat_common.isra.0+116
-        __arm64_sys_execve+72
-        invoke_syscall+76
-        el0_svc_common.constprop.0+68
-        do_el0_svc+32
-        el0_svc+56
-        el0t_64_sync_handler+152
-        el0t_64_sync+388
+Sorry this slipped (conference travel and all :P). I will make the change this
+time. Btw v5 also has other changes in addition to this, your review is much
+appreciated :)
 
-This looks wrong. The right call trace should be:
+ - Joel
 
-  do_filp_open
-    =3D> path_openat
-      =3D> vfs_open
-        =3D> do_dentry_open
-          =3D> security_file_open
-            =3D> bpf_prog_eaca355a0dcdca7f_...
-
-I am not sure whether this is just a problem with the bpf program,
-or also with something else.
-
-Thanks,
-Song
 
