@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-835716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDB1BA7E0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FF4BA7E11
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D863C242D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC9B71898BB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D544212559;
-	Mon, 29 Sep 2025 03:47:40 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA58212549;
+	Mon, 29 Sep 2025 03:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxZb874d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E6FD515;
-	Mon, 29 Sep 2025 03:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB42DD515;
+	Mon, 29 Sep 2025 03:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759117659; cv=none; b=ElfulgAQQ9Cf9MD2USyGxRmtHsdpno/32PSATSgnf8OZiYCqcthz+iolnPJEnxzXwbPV06Hft42BZU/pDULhnliHtoKl0bR7qA406scIMdyUH0qei84z+AjVse7MXONdQcBkgOMMsjlnEIxe0wUXxpftZ+TUtyOegSatao3BPYc=
+	t=1759117701; cv=none; b=PhD4SK1f/Apgaa6okrZokYj3X8UoJGqhMUWND2mRvO1c2xznmYweQPmMTDERor8wIQXXhlLe0z3+/bNxyJ+GHDD3Kuf117HxNTMRFxW3CA+CzTqEqbbZpsyl13v9UUNEwzWxs4QK+DCoKeHhxJJAkbM6SZCsWDrhgElrRFpV/O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759117659; c=relaxed/simple;
-	bh=98/A/gvh5ZZHq0EdCKQVJZBXC8RCJoc/pSNT9Nc/RpM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=aL0iaRXduwMgLQJNTy6ZhdiPZu9MO8N3cUnf2mmbKvDHZkQa5CGUIjt7cIGpXrtRpLnT0wIFYEcPoALrMFO3A7M2t57IhI8DC4VwwcmetFi6M/GlMEGiyCsngxXt2WC21eWUvUL2Y8zQWpG57gC1gNqgWFyvj3FwQrGgK2jUCB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowAB33RZCAdpo+z+RCA--.20813S2;
-	Mon, 29 Sep 2025 11:47:28 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: robh@kernel.org,
-	saravanak@google.com,
-	lizhi.hou@amd.com
-Cc: devicetree@vger.kernel.org,
+	s=arc-20240116; t=1759117701; c=relaxed/simple;
+	bh=AeitMKrh+ZMi7IdhxDVaLH+9R9YhBwmzMrI6tuxwdWM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a6/bQrnQo0Zj4M8Z5Cd0dqPLuagqGW8/0yQB5O4viNpzfapyOeEW53rTUw3CtdXCnLwcLY5YSn3zAueiq2aW6vNpkgsmk0NfYfVC8TKQWSIr2ZDVNjG2SCJxXEET8oUaZTYwxx1T98Z7hpWyhahTJ8oQuuNOGwVkYzo1KnF9uUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxZb874d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DF7C113D0;
+	Mon, 29 Sep 2025 03:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759117701;
+	bh=AeitMKrh+ZMi7IdhxDVaLH+9R9YhBwmzMrI6tuxwdWM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hxZb874dZRgOv1HcVCM2nlK8+4uXf8O66F3aKe8KxXKLjxI6WmGcgKWnQBhjyG3BN
+	 1ttY2BzIRohK8OCgIGLv6mlYGglti4m/xY9UzPQ3/zEk6wMe0Mg9Y2fi7C3X/N/Jxs
+	 K86f+hUYnVviAHrGlhafXYtHTQDRsQY7NNGAhBXpMCqAkwPNSbTVwhLTIwUMVWblkg
+	 2+3Ho00ds2VPPTGBJe5DDqVoShhpmrqjbpQ72hoHiNTs01HNuwzwr0sBhjyPg6Z1GI
+	 QXBGwgIu0iQMB/BFqxTbyRfpx1PfkifXZOGvGDcmFFnnis7b3VL63v0PlQKUcsSNog
+	 KsU1RxXYKAOKw==
+From: Kees Cook <kees@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] of: unittest: Fix device reference count leak in of_unittest_pci_node_verify
-Date: Mon, 29 Sep 2025 11:47:13 +0800
-Message-Id: <20250929034713.22867-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowAB33RZCAdpo+z+RCA--.20813S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1kKFWxAryxKFW3Zr17GFg_yoW8Gw1kp3
-	yUGas09rW8GF47Kw48Zr4UZFy3A342934rGFy8A3WS9wsYq34xtFyUXayjyrs8urWkXF1Y
-	yr17tay8CF4UtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
-	W0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8txhDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH] lib/string_choices: Add str_assert_deassert() helper
+Date: Sun, 28 Sep 2025 20:48:18 -0700
+Message-Id: <175911769613.3662480.16218936940501384278.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250923095229.2149740-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250923095229.2149740-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-In of_unittest_pci_node_verify(), when the add parameter is false,
-device_find_any_child() obtains a reference to a child device. This
-function implicitly calls get_device() to increment the device's
-reference count before returning the pointer. However, the caller
-fails to properly release this reference by calling put_device(),
-leading to a device reference count leak.
+On Tue, 23 Sep 2025 10:52:29 +0100, Prabhakar wrote:
+> Add str_assert_deassert() helper to return "assert" or "deassert"
+> string literal depending on the boolean argument. Also add the
+> inversed variant str_deassert_assert().
+> 
+> 
 
-As the comment of device_find_any_child states: "NOTE: you will need
-to drop the reference with put_device() after use".
+Applied to for-next/hardening, thanks!
 
-Cc: stable@vger.kernel.org
-Fixes: 26409dd04589 ("of: unittest: Add pci_dt_testdrv pci driver")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/of/unittest.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[1/1] lib/string_choices: Add str_assert_deassert() helper
+      https://git.kernel.org/kees/c/c8a935a31bc7
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index e3503ec20f6c..d225e73781fe 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -4271,7 +4271,7 @@ static struct platform_driver unittest_pci_driver = {
- static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
- {
- 	struct device_node *pnp, *np = NULL;
--	struct device *child_dev;
-+	struct device *child_dev = NULL;
- 	char *path = NULL;
- 	const __be32 *reg;
- 	int rc = 0;
-@@ -4306,6 +4306,8 @@ static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
- 	kfree(path);
- 	if (np)
- 		of_node_put(np);
-+	if (child_dev)
-+		put_device(child_dev);
- 
- 	return rc;
- }
+Take care,
+
 -- 
-2.17.1
+Kees Cook
 
 
