@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-836219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D99BA9078
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:32:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37910BA9087
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20B03A31A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0897189F8DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2CC3002A2;
-	Mon, 29 Sep 2025 11:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyNt+cBC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151CC2FBDFB;
+	Mon, 29 Sep 2025 11:34:33 +0000 (UTC)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D679C1A239A;
-	Mon, 29 Sep 2025 11:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F4629D289
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145561; cv=none; b=Y75KZfMsNJvkjfXUeCB3GTFZ5hW8kqgO3tM0nZUqO9ulAWaq9UhwwVYm9OCxrEpwKcZ66iAWpBIDTTiIgG8lhR+pdJJIBLNYRmyLhQXURAYYgB8Zo3CTwIffqGUpWnzpUl9EKx+pj9nBLV8wahhHWFvbRieNHGJ0Nq79JAXIU08=
+	t=1759145672; cv=none; b=mjUOdwLH24UfijJL9DbP+NhWuFAHOolFHlLuMRUYYrqSxZanFKu0KAL1i7/SjC5ue2Kkh1XwD6hQZkZPeWPBiezPUTFimyC4js1IIqyXqUURLGAOm2o8BDO76QE8UiOEpJNSm3731knCus3xaqsga2NzAOt3BcoUuUvOB06Kxqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145561; c=relaxed/simple;
-	bh=g77QlILLHxVB4H6N7j+BSgLkE4s9ILeEklCcbzxdCXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ukHSeL0d4GtyBn9sNxZGRGu0SHwMDWtBtEBq5YHi9zhzvZKLGD61R92DpX5gfmN7APHlMu67AtPplpbdBRYJEg+SenPNo+GlGDWNs/Rbo4IJxXlc+CJciQjC+SieU2wRohFfwQZvWDBOS6PwwfcHsh7b6BDsP4jXZcX9X3stIgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyNt+cBC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DBDC113D0;
-	Mon, 29 Sep 2025 11:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759145561;
-	bh=g77QlILLHxVB4H6N7j+BSgLkE4s9ILeEklCcbzxdCXo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PyNt+cBCXzm38zwIkm9Stf8zzlISDPShDruCdy9370J5alm4Bo9FFYs/G/IScvgNu
-	 tXqeYZcoLF05cXU0cuR38O4A9p187w+vI0OgDdl+bZQpy0qSVKhfYwpmMe8qLgSgN+
-	 o4VQ6R+kcq1Yp062CVEMz5jJV0+kB85vuSwY9RU90jCLYTtMltEqpBijMwKghdJ0mf
-	 s1WLUS03g8F06M8SHm9pvrqAviBmoo8wdN/F67LDQ3K+Z7FfO6JT7r/vHHa3iTV9+r
-	 x+kBdVppytRgedum0YQGNvzef5iZT8TVQCdkJZrSPctjpx3aFfzgPKm/9HJJHpezRo
-	 UkmBKSJxZeTZQ==
-From: Sasha Levin <sashal@kernel.org>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] tracing: Fix lock imbalance in s_start() memory allocation failure path
-Date: Mon, 29 Sep 2025 07:32:38 -0400
-Message-ID: <20250929113238.3722055-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759145672; c=relaxed/simple;
+	bh=CyqsEr2YH2CBCrRlLUbTkQtjycgfh1uAGWvQeIO2INY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kJGuuB3+6k+xVnlX10Wlk2ye45qCqi8a6ijjeV3AKX+BbTgf+0ny17Z46+b3DHIIDYir7Y44GUlQLSiuwWaNpXC9xZLLcOt1yNHziiz0o36yrDCb+9wbKoSrDbqzNkSC7QvNRMUzYEpB9LIoiqQmpELZWQ+CzD3dHfMUwcMhl1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-58de3ab1831so3878754137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:34:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759145670; x=1759750470;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XxW5mXe/+NcsYxkIwV9fCeaWAATP0wBLi6jwkn7jUaI=;
+        b=k9fT7P8DTfye6X+zAWk4c8JdgGpW3omZnI9PFvgOxPKZBx/+03AOWf4O7MTv3avq+9
+         fmE4gU25aqLurao5YAX5HA2OYbpZCl0SA3x/yv9v71fng3N1QrutNqxmWTit84sCU/38
+         EwoqGMIo3fN0I02T9T8l8y+hBG7qy6JblobeisYxWht4g/eno6yl+akevHYvOxou+x5f
+         W/Y7NgFsGtLHciU/1aJJ3CxeUrlppZjkzlqXczLtsPMLUVkw1oeQWTcbYZc3au8djK9N
+         Etm0zbMWjsfui50poOi+mX0fK39eHL2o1vlx+h2rRdW1ZbanXrJrvPd6mtquGua9C+X0
+         0Trw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5WT6YxxhX4jPLR0nRv0DRFu8cdfTrkQd5V9sz4v0o8iacFOhhCONeqWnwi2B/l59vTRIIX//06zHizEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrGYFqqIAs325oSfYY4k0WPLzx10OG0mVznjCt2U8ZHmd2PTbP
+	bUi4nLxg3r0WgvLWPXP3qPXmh9pY1I6K/ETAE0Bctw7fSD5z8Wie7fhXT4XykvUI
+X-Gm-Gg: ASbGncsFhL9VcMtZpOmwYllGY9csHeK9glABkZ8MmVv2b+ghEyXG+TYn40aaEdOKKHS
+	NosvqA28r7iv76cw2KMgtVOwWY6Cl2YdGTo9wqOuekAtXIvYKyxleY0b4NMEKhqtIspX5G31XKr
+	ot3WKKhULb+p3rYuGe+kuVQayhzQSgzD82Y48bJmq4deKSBWSYbBo7o2cTx9NqZjNj+gPBvdVGE
+	uYG8Sgyssl7k2pu6PEoRZFQ1OR82qN5yGVgAy6di0NLZXdjq9Ny175n0POJSX5PFn8hif8WcMJd
+	6hnxIUqate4f5G3jYv0ba5ua7/79GAbieOHzBlmhcapJIwfSwj0U8AEZqF8ljpHB8IuVZ4kWYue
+	BU3FGOe95wllIoX2cwkyuA/oNmvlYjU7GRlMXVzZBuHjNmPJWs4hqSE3smT+H
+X-Google-Smtp-Source: AGHT+IFiM8ZujprfH51r36J3SNd8NhLgrkCnLW/i8i3+W1f/jLqXTkdltC+6aSPuZ0lL25OPhfIfQg==
+X-Received: by 2002:a05:6102:390d:b0:52b:563:9c8a with SMTP id ada2fe7eead31-5acd15c4e1amr6198882137.24.1759145669829;
+        Mon, 29 Sep 2025 04:34:29 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ae389da765sm3291190137.11.2025.09.29.04.34.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 04:34:28 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5a265e0ec25so3677367137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:34:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVc+gKWPIjLqhKvyCw2P/d3Z6q0xzLCZbrmRU489diNWm++w14E+r9Ar5y04yGulWFpD+f32lmf2a8RS00=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a11:b0:59e:a2d5:2945 with SMTP id
+ ada2fe7eead31-5acc8e94d9fmr6861602137.8.1759145668352; Mon, 29 Sep 2025
+ 04:34:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250909113840.122785-1-john.madieu.xa@bp.renesas.com>
+ <20250909113840.122785-4-john.madieu.xa@bp.renesas.com> <CAMuHMdXfN2qK-Yd=ZAaLek=UMkLK+NzdU5aFr0ET3o9m8RB4pA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXfN2qK-Yd=ZAaLek=UMkLK+NzdU5aFr0ET3o9m8RB4pA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Sep 2025 13:34:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUt86L1Pcui8LD=i6hyqPQYnx=Apse8_h=YyFHAeCta9Q@mail.gmail.com>
+X-Gm-Features: AS18NWAfMK9KQyXLWhPAcgQzNt-Bd1yk2_D_oAV-tjfTbvXk5XD0wBN0Yq448N4
+Message-ID: <CAMuHMdUt86L1Pcui8LD=i6hyqPQYnx=Apse8_h=YyFHAeCta9Q@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] arm64: dts: renesas: r9a09g047: Add TSU node
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: catalin.marinas@arm.com, conor+dt@kernel.org, daniel.lezcano@linaro.org, 
+	krzk+dt@kernel.org, lukasz.luba@arm.com, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, 
+	rui.zhang@intel.com, sboyd@kernel.org, will@kernel.org, 
+	biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org, john.madieu@gmail.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	rafael@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When s_start() fails to allocate memory for set_event_iter, it returns NULL
-before acquiring event_mutex. However, the corresponding s_stop() function
-always tries to unlock the mutex, causing a lock imbalance warning:
+On Wed, 24 Sept 2025 at 16:04, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, 9 Sept 2025 at 13:39, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> > Add TSU node along with thermal zones and keep it enabled in the SoC DTSI.
+> >
+> > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+>
+> LGTM, so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-  WARNING: bad unlock balance detected!
-  6.17.0-rc7-00175-g2b2e0c04f78c #7 Not tainted
-  -------------------------------------
-  syz.0.85611/376514 is trying to release lock (event_mutex) at:
-  [<ffffffff8dafc7a4>] traverse.part.0.constprop.0+0x2c4/0x650 fs/seq_file.c:131
-  but there are no more locks to release!
+Thanks, will queue in renesas-devel for v6.19.
 
-The issue was introduced by commit b355247df104 ("tracing: Cache ':mod:'
-events for modules not loaded yet") which added the kzalloc() allocation before
-the mutex lock, creating a path where s_start() could return without locking
-the mutex while s_stop() would still try to unlock it.
+Gr{oetje,eeting}s,
 
-Fix this by unconditionally acquiring the mutex immediately after allocation,
-regardless of whether the allocation succeeded.
+                        Geert
 
-Fixes: b355247df104 ("tracing: Cache ":mod:" events for modules not loaded yet")
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/trace/trace_events.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 9f3e9537417d5..e00da4182deb7 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1629,11 +1629,10 @@ static void *s_start(struct seq_file *m, loff_t *pos)
- 	loff_t l;
- 
- 	iter = kzalloc(sizeof(*iter), GFP_KERNEL);
-+	mutex_lock(&event_mutex);
- 	if (!iter)
- 		return NULL;
- 
--	mutex_lock(&event_mutex);
--
- 	iter->type = SET_EVENT_FILE;
- 	iter->file = list_entry(&tr->events, struct trace_event_file, list);
- 
 -- 
-2.51.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
