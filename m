@@ -1,172 +1,166 @@
-Return-Path: <linux-kernel+bounces-836444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86896BA9B63
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:53:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4409BA9B72
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019AF192213E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:54:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67FA517187F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A8A309DA1;
-	Mon, 29 Sep 2025 14:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4C4306D5E;
+	Mon, 29 Sep 2025 14:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ca/E6wAh"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="BONcUqcW"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E009926E6FF
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4082157A72
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759157614; cv=none; b=WmyLNHt512OyXhXgFdk0kQpig8foJ5nA9ztVLwZjkZpmvEiHUL8PJKsbHqIaaQALSmeLgKKbPSiGU835yO8TJ2lZBmckuJe0nMW6X81oFQbC3oYGad4SIbzb9dfqbdGfvymitpz0LfQpSnpW/GaDtDIB18LwbkjGkm+VbtWhL1o=
+	t=1759157652; cv=none; b=NH2Qd1pOH+ZdJ8FM0h+MFJ0DBLuTbypeZbyWX9brHnXZzA/PZj5FygNhdD/+PvrwoJXz14kvKPMFx4kiozvFC1y3kPv3rzxOBWkAv742rftD/3NtOWKt23lqX9Qoal4BhrJS4tvsjwvmawIYdK7WaCy+TH4Z2/OdtaqD5WRO0VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759157614; c=relaxed/simple;
-	bh=tQz8pBFZ7eYZMhRBds1VenR6HZgGvMMGQCto6NLpFj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NOEYWHGu6RW2TtoE49lGqJgTAvimUd4EAdqGZ06wJ3Cfw4Z63EHZ4wt6vjHGe+0/ZSWG4853kPYRFhnhMgqnjjiIimbS5O89oGVdXU3xd2eU0H/p4pGUhcey/NpULfolbPyu+I02cKBUqPprhOfkXoMrp7QxCE662yFHlT69Mc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ca/E6wAh; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id EB1144E40C1A;
-	Mon, 29 Sep 2025 14:53:29 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BFFD4606AE;
-	Mon, 29 Sep 2025 14:53:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B915B102F198F;
-	Mon, 29 Sep 2025 16:53:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759157609; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=3pVpwTaco7yFHAe69ZBiTvXHcvn2qIWppyNoGTqmjTQ=;
-	b=ca/E6wAhdfUjViADrg2w0zrDIpOzyj9i+1rFiYXvEsOH2M68QaaZA+3+H3QHiodUZFLosf
-	pWmH4K7NLln+RKv4S+dpr39P3DQVy6c5AVOHnAVM3hcytr4PfOtnjoKRJ8eCZv2Zz55By0
-	C0l5ai8pg7IqUWqXQcCUb3KdIcUAVkQLwlJlXHInfvNB2TK/BLIXqj7+d+PrMLy5Pmyp8N
-	LZU+xgQWrqpTBXtMYLK1a9+BvMqvCnzCXrMBQZISA1PB6yWUrnksSZT8dRTB8wBy5oamt/
-	7VnR4UIL3oSEFH5jZ/O0FsKkGD5I0sy1SKItyLw6WlT4YTxyRolMQO0tKOOj6A==
-Date: Mon, 29 Sep 2025 16:53:21 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] drm/bridge: lock the encoder bridge chain mutex
- during insertion
-Message-ID: <20250929165321.28b8bbcd@booty>
-In-Reply-To: <20250929-enigmatic-delicate-mussel-f36b89@houat>
-References: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com>
-	<20250926-drm-bridge-alloc-encoder-chain-mutex-v1-3-23b62c47356a@bootlin.com>
-	<20250929-enigmatic-delicate-mussel-f36b89@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759157652; c=relaxed/simple;
+	bh=BEF0PQ+6qToTtB4jvEtiJ/JJk+0I+l4ra6JG9NSReLA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=guT2lS3qsimLVc5JH7fyGsuUWgstcHjfZdtbCZDfF+yv0dNhZQe4h//ZeqyrYH2QJcpW1x5E3oQNK8fIy8sCUhq5XGli4hRGyj6Go9cm/YCRiSLZwXer+crM+Uu0+yOD0mw/7x9qy+83lXpDoXadS6H/N6e51D2Y6bTGQL7Ehv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=BONcUqcW; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id H7ELurjKS2Brw3NS; Mon, 29 Sep 2025 10:54:09 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=UYGJHafAF6iRhnjKxQ877lYHIidAKx/rB8oau7Q8f/0=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=BONcUqcWJZ4cEacd6Yo0
+	1ahBe7p5/JIM19MX52kOh1c74gkSM38Du5UM2Pdiu4xC5z28WPhjWfSNCHR2bF1r6o1PaOpCKNO3O
+	JWBH12/m4RMFzEBBRLNBD8iiIam+QYXz3MPBo95HsnvmQvnY0F12wvHyXxBzJJq7te/IzfTsjs=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14216676; Mon, 29 Sep 2025 10:54:09 -0400
+Message-ID: <4ff0e0d0-755c-498a-a852-b59800a122d5@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 29 Sep 2025 10:54:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: [SCST PATCH v2] qla2x00t-32gbit: add on_abort_cmd callback
+Content-Language: en-US
+X-ASG-Orig-Subj: [SCST PATCH v2] qla2x00t-32gbit: add on_abort_cmd callback
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1759157649
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 2854
+X-ASG-Debug-ID: 1759157649-1cf43947df3c0680001-xx1T2L
 
-On Mon, 29 Sep 2025 14:46:18 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+This enables the initiator to abort commands that are stuck pending in
+the HW without waiting for a timeout.
 
-> On Fri, Sep 26, 2025 at 05:59:44PM +0200, Luca Ceresoli wrote:
-> > drm_bridge_attach() modifies the encoder bridge chain, so take a mutex
-> > around such operations to allow users of the chain to protect themselves
-> > from chain modifications while iterating.
-> > 
-> > This change does not apply to drm_bridge_detach() because:
-> >  * only the drm_encoder.c calls it, not bridge drivers (unlike
-> >    drm_bridge_attach())
-> >  * the only drm_bridge_detach() caller is drm_encoder_cleanup() which
-> >    already locks the mutex for the entire cleanup loop, thus additionally
-> >    locking it here would deadlock
-> >  * drm_bridge_detach() is recursively calling itself along the chain, so
-> >    care would be needed to avoid deadlocks
-> > Add a comment to clarify that is intended.
-> > 
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > ---
-> >  drivers/gpu/drm/drm_bridge.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> > index 630b5e6594e0affad9ba48791207c7b403da5db8..90e467cf91a134342c80d2f958b928472aaf0d8b 100644
-> > --- a/drivers/gpu/drm/drm_bridge.c
-> > +++ b/drivers/gpu/drm/drm_bridge.c
-> > @@ -453,10 +453,12 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
-> >  	bridge->dev = encoder->dev;
-> >  	bridge->encoder = encoder;
-> >  
-> > +	drm_encoder_chain_lock(encoder);
-> >  	if (previous)
-> >  		list_add(&bridge->chain_node, &previous->chain_node);
-> >  	else
-> >  		list_add(&bridge->chain_node, &encoder->bridge_chain);
-> > +	drm_encoder_chain_unlock(encoder);
-> >  
-> >  	if (bridge->funcs->attach) {
-> >  		ret = bridge->funcs->attach(bridge, encoder, flags);
-> > @@ -487,7 +489,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
-> >  err_reset_bridge:
-> >  	bridge->dev = NULL;
-> >  	bridge->encoder = NULL;
-> > +	drm_encoder_chain_lock(encoder);
-> >  	list_del(&bridge->chain_node);
-> > +	drm_encoder_chain_unlock(encoder);
-> >  
-> >  	if (ret != -EPROBE_DEFER)
-> >  		DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
-> > @@ -503,6 +507,11 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
-> >  }
-> >  EXPORT_SYMBOL(drm_bridge_attach);
-> >  
-> > +/*
-> > + * Invoked by the encoder during encoder cleanup in drm_encoder_cleanup(),
-> > + * so should generally *not* be called by driver code.  
-> 
-> Why not?
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
 
-Because this is what drm_bridge_attach() says O:-)
+v1 -> v2: no changes
 
-> * drm_bridge_attach - attach the bridge to an encoder's chain
-...
-> * Note that bridges attached to encoders are auto-detached during encoder
-> * cleanup in drm_encoder_cleanup(), so drm_bridge_attach() should generally
-> * *not* be balanced with a drm_bridge_detach() in driver code.
+This patch applies to the out-of-tree SCST project, not to the Linux
+kernel.  Apply after all the other qla2xxx patches.
 
-Also, it's what the code does.
+ qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-> Also, it looks entirely unrelated to the rest of the patch.
-
-Sure, I can split it. It is also redundant given that's repeating what
-drm_bridge_attach() says.
-
-I wrote this comment for future people looking at this code. If
-_attach() takes a lock and _detach() does not, it could look like a
-potential mistake, and someone could spend precious hours in trying to
-fix it.
-
-Maybe replace with:
-
-  /* Must be called with the encoder bridge chain locked */
-
-?
-
-Luca
-
+diff --git a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+index 07aee6e81..cb58fae20 100644
+--- a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
++++ b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+@@ -81,6 +81,7 @@ static int sqa_xmit_response(struct scst_cmd *scst_cmd);
+ static int sqa_rdy_to_xfer(struct scst_cmd *scst_cmd);
+ static void sqa_on_free_cmd(struct scst_cmd *scst_cmd);
+ static void sqa_task_mgmt_fn_done(struct scst_mgmt_cmd *mcmd);
++static void sqa_on_abort_cmd(struct scst_cmd *scst_cmd);
+ static int sqa_get_initiator_port_transport_id(struct scst_tgt *tgt,
+ 					       struct scst_session *scst_sess,
+ 					       uint8_t **transport_id);
+@@ -1255,6 +1256,7 @@ static struct scst_tgt_template sqa_scst_template = {
+ 
+ 	.on_free_cmd			 = sqa_on_free_cmd,
+ 	.task_mgmt_fn_done		 = sqa_task_mgmt_fn_done,
++	.on_abort_cmd			 = sqa_on_abort_cmd,
+ 	.close_session			 = sqa_close_session,
+ 
+ 	.get_initiator_port_transport_id = sqa_get_initiator_port_transport_id,
+@@ -1926,6 +1928,46 @@ out_unlock:
+ 	TRACE_EXIT();
+ }
+ 
++struct sqa_abort_work {
++	struct scst_cmd *scst_cmd;
++	struct work_struct abort_work;
++};
++
++static void sqa_on_abort_cmd_work(struct work_struct *work)
++{
++	struct sqa_abort_work *abort_work =
++		container_of(work, struct sqa_abort_work, abort_work);
++	struct scst_cmd *scst_cmd = abort_work->scst_cmd;
++	struct qla_tgt_cmd *cmd = scst_cmd_get_tgt_priv(scst_cmd);
++
++	TRACE_ENTRY();
++
++	kfree(abort_work);
++	qlt_abort_cmd(cmd);
++	scst_cmd_put(scst_cmd);
++
++	TRACE_EXIT();
++}
++
++static void sqa_on_abort_cmd(struct scst_cmd *scst_cmd)
++{
++	struct sqa_abort_work *abort_work;
++
++	/*
++	 * The caller holds sess->sess_list_lock, but qlt_abort_cmd() needs to
++	 * acquire qpair->qp_lock_ptr (ha->hardware_lock); these locks are
++	 * acquired in the reverse order elsewhere.  Use a workqueue to avoid
++	 * acquiring the locks in the wrong order here.
++	 */
++	abort_work = kmalloc(sizeof(*abort_work), GFP_ATOMIC);
++	if (!abort_work)
++		return;
++	scst_cmd_get(scst_cmd);
++	abort_work->scst_cmd = scst_cmd;
++	INIT_WORK(&abort_work->abort_work, sqa_on_abort_cmd_work);
++	schedule_work(&abort_work->abort_work);
++}
++
+ /*
+  * The following structure defines the callbacks which will be executed
+  * from functions in the qla_target.c file back to this interface
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.43.0
+
+
 
