@@ -1,178 +1,174 @@
-Return-Path: <linux-kernel+bounces-836160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FC7BA8E75
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:39:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C200BA8E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 944434E05E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62223AEB1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861432FBDF0;
-	Mon, 29 Sep 2025 10:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D027B2FBDED;
+	Mon, 29 Sep 2025 10:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QdIItpR2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BBI8fDiw"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8098D2D0C9D;
-	Mon, 29 Sep 2025 10:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FF328C009
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759142332; cv=none; b=C6MRBY1Q2zazGr/iIacxXUDOK90As+rd/nvWmRmFINkKD6G361ZcmYEYEJwT9SrlH0HDaoIvpMIEuCGVhuT+xwE335sqUypVkpUmUOZLQ/CRbRai1gnYls2pflUk0LHiDCjkvZy2EfzcvH+ULvVHRbslcxQP/HzDUikgg34sY04=
+	t=1759142377; cv=none; b=sGdKhVj5EOizQCCoPAlFHDIaymUs7AMg3HUvpgHjBBMhXMjOXEvezBP+Ej/1qe6qe2i6QtJ+QWRhFFmh7n7SFRMtTPGCgCzvxIZ3jvHjqujDDLgIqKD7p/5L1sCu442BXx+cR0AXpZcejWLQODuEKmV4tuVb9e+G7bsBGTj1Eco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759142332; c=relaxed/simple;
-	bh=F7mFL/7BU9UP42iZ2FjhNNv6f/04qDku/YL69qE13wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3F6AtOx8nDK22JhVy5SY48OjmHQvps2jZDYdbJtpyKsgF4PDenR1ACvSasW+tVoqv1VAWXOeoXQVe4drjzut21PY0w2vjxshW0GGeoTDenTN5v7eeRUPErRMgquDRUNEEU1EZmdt7Cw/XqupXUJwHSsduFDjl6S3pgQOdUm8qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QdIItpR2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ih1+qq84NJQre4oDkV6+4HpON+I+D7HQ3EUsS5HOjGU=; b=QdIItpR2KZW8mc8iCJ9cnlI7lQ
-	3fTaz2pMpeHL4RJSbR4P1H9C+TG0CIWfjOiQfOlWouFppdAtTtFSr+ZsovBLh7hiPzG5Zeok+gvne
-	LqBFPQviJ9PgvaYjv2bNSgd/KTGN+rW4zV2OVTerMiv5qHVi+SjYtOgIdtL1CTtC3CdHl4RhA7TiE
-	JFr3IWqalGINS3nt57/Puq8Q3ovj4Wo3CdV+U30urgiEZ7fHNLvYHUMGYBEcEXaHO9nu/s0keRMZl
-	4Xe0kDqTBFhxCwcAQgeW23lt9jNRqyCIW8BhkH346ArVmsbOEt1ic+/v95YaF9gIIyDAiC9hcDTEQ
-	nKmbd0NQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3BHA-00000000Cw1-03ji;
-	Mon, 29 Sep 2025 10:38:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 212FF300359; Mon, 29 Sep 2025 12:38:36 +0200 (CEST)
-Date: Mon, 29 Sep 2025 12:38:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: John Stultz <jstultz@google.com>, Matt Fleming <matt@readmodwrite.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
-	Matt Fleming <mfleming@cloudflare.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Chris Arges <carges@cloudflare.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] Revert "sched/core: Tweak wait_task_inactive() to force
- dequeue sched_delayed tasks"
-Message-ID: <20250929103836.GK3419281@noisy.programming.kicks-ass.net>
-References: <20250925133310.1843863-1-matt@readmodwrite.com>
- <CANDhNCr+Q=mitFLQ0Xr8ZkZrJPVtgtu8BFaUSAVTZcAFf+VgsA@mail.gmail.com>
- <105ae6f1-f629-4fe7-9644-4242c3bed035@amd.com>
+	s=arc-20240116; t=1759142377; c=relaxed/simple;
+	bh=7pIlKXlGVE+8aeA/rJsJ/MS9sFCQKQ3ukbEC7ckMTio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=prWSTz7P2JQg+btZqhs6lCkqVpJ3/ofbcYcI/2JVXVQGeKjthQCp3T9xs+lY9uOiTzvx8R2NjVF/T6HtuWltzab/h1/vPJ+EQoS25eyvc1BFfhGoNbVfqPTtptrPmFWtyBiHN4CS4YBMnPop0rJFcXI8Sx3Plc0tsnr98BcAxPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BBI8fDiw; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a51e9c33-60b1-47ca-b060-73f5d7827629@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759142372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6tRivF3ombVQYJawRtepV/JQ0btJYvTDaYlGunrZe20=;
+	b=BBI8fDiwmJ6GAn1K8t3xVH9h4BpkyzZs9aej2sEyzDvIKkxEypDhGAZ4uuTgO4puxIQ/TK
+	L81SdgtPNL++7q7oqjnFNd2/j/ZFau9JClPAjhr1q7HczPnduGjTnYsZZL51VF92OelFMA
+	1cwzF6mXFs5jI+9W4wKz3LJlRDl54BI=
+Date: Mon, 29 Sep 2025 18:39:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <105ae6f1-f629-4fe7-9644-4242c3bed035@amd.com>
+Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: abort collapse scan on non-swap
+ entries
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+ ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
+ ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com,
+ akpm@linux-foundation.org
+References: <20250924100207.28332-1-lance.yang@linux.dev>
+ <1282de5a-3dce-443d-91d1-111103140973@redhat.com>
+ <69621b58-5142-48ea-9dd8-6baed69e50f8@linux.dev>
+ <d7012c9c-f4a9-4d49-a921-2cc175f3411d@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <d7012c9c-f4a9-4d49-a921-2cc175f3411d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 26, 2025 at 08:13:09AM +0530, K Prateek Nayak wrote:
 
-> > Peter: Those cfs_rq_throttled() exits in dequeue_entities() seem a
-> > little odd, as the desired dequeue didn't really complete, but
-> > dequeue_task_fair() will still return true indicating success - not
-> > that too many places are checking the dequeue_task return. Is that
-> > right?
 
-Bah, i'm forever confused on the throttle cases there :/
-
-> I think for most part until now it was harmless as we couldn't pick on
-> a throttled hierarchy and other calls to dequeue_task(DEQUEUE_DELAYED)
-> would later do a:
+On 2025/9/29 18:29, David Hildenbrand wrote:
+> On 24.09.25 13:47, Lance Yang wrote:
+>>
+>>
+>> On 2025/9/24 18:10, David Hildenbrand wrote:
+>>> On 24.09.25 12:02, Lance Yang wrote:
+>>>> From: Lance Yang <lance.yang@linux.dev>
+>>>>
+>>>> The existing check in hpage_collapse_scan_pmd() is specific to uffd-wp
+>>>> markers. Other special markers (e.g., GUARD, POISONED) would not be
+>>>> caught
+>>>> early, leading to failures deeper in the swap-in logic.
+>>>>
+>>>> hpage_collapse_scan_pmd()
+>>>>    `- collapse_huge_page()
+>>>>        `- __collapse_huge_page_swapin() -> fails!
+>>>>
+>>>> As David suggested[1], this patch skips any such non-swap entries 
+>>>> early.
+>>>> If a special marker is found, the scan is aborted immediately with the
+>>>> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+>>>> work.
+>>>
+>>> Note that I suggested to skip all non-present entries except swap
+>>> entries, which includes migration entries, hwpoisoned entries etc.
+>>
+>> Oops, I completely misunderstood your suggestion :(
+>>
+>> It should be to handle all special non-present entries (migration,
+>> hwpoison, markers), not just a specific type of marker ...
+>>
+>> How about this version, which handles all non-swap entries as you
+>> suggested?
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index 7ab2d1a42df3..27f432e7f07c 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -1284,7 +1284,23 @@ static int hpage_collapse_scan_pmd(struct
+>> mm_struct *mm,
+>>           for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+>>                _pte++, addr += PAGE_SIZE) {
+>>                   pte_t pteval = ptep_get(_pte);
+>> -               if (is_swap_pte(pteval)) {
+>> +               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>> +                       ++none_or_zero;
+>> +                       if (!userfaultfd_armed(vma) &&
+>> +                           (!cc->is_khugepaged ||
+>> +                            none_or_zero <= khugepaged_max_ptes_none)) {
+>> +                               continue;
+>> +                       } else {
+>> +                               result = SCAN_EXCEED_NONE_PTE;
+>> +                               count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>> +                               goto out_unmap;
+>> +                       }
+>> +               } else if (!pte_present(pteval)) {
+>> +                       if (non_swap_entry(pte_to_swp_entry(pteval))) {
+>> +                               result = SCAN_PTE_NON_PRESENT;
+>> +                               goto out_unmap;
+>> +                       }
+>> +
+>>                           ++unmapped;
+>>                           if (!cc->is_khugepaged ||
+>>                               unmapped <= khugepaged_max_ptes_swap) {
+>> @@ -1293,7 +1309,7 @@ static int hpage_collapse_scan_pmd(struct
+>> mm_struct *mm,
+>>                                    * enabled swap entries.  Please see
+>>                                    * comment below for pte_uffd_wp().
+>>                                    */
+>> -                               if (pte_swp_uffd_wp_any(pteval)) {
+>> +                               if (pte_swp_uffd_wp(pteval)) {
+>>                                           result = SCAN_PTE_UFFD_WP;
+>>                                           goto out_unmap;
+>>                                   }
+>> @@ -1304,18 +1320,6 @@ static int hpage_collapse_scan_pmd(struct
+>> mm_struct *mm,
+>>                                   goto out_unmap;
+>>                           }
+>>                   }
+>> -               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>> -                       ++none_or_zero;
+>> -                       if (!userfaultfd_armed(vma) &&
+>> -                           (!cc->is_khugepaged ||
+>> -                            none_or_zero <= khugepaged_max_ptes_none)) {
+>> -                               continue;
+>> -                       } else {
+>> -                               result = SCAN_EXCEED_NONE_PTE;
+>> -                               count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>> -                               goto out_unmap;
+>> -                       }
+>> -               }
+>>                   if (pte_uffd_wp(pteval)) {
 > 
->     queued = task_on_rq_queued(p);
->     ...
->     if (queued)
->         enqueue_task(p)
-> 
-> which would either lead to spuriously running a blocked task and it
-> would block back again, or a wakeup would properly wakeup the queued
-> task via ttwu_runnable() but wait_task_inactive() is interesting as
-> it expects the dequeue will result in a block which never happens with
-> throttled hierarchies. I'm impressed double dequeue doesn't result in
-> any major splats!
-> 
-> Matt, if possible can you try the patch attached below to check if the
-> bailout for throttled hierarchy is indeed the root cause. Thanks in
-> advance.
-> 
-> P.S. the per-task throttle in tip:sched/core would get rid of all this
-> but it would be good to have a fix via tip:sched/urgent to get it
-> backported to v6.12 LTS and the newer stable kernels.
+>  From a quick glimpse, this should work. And as raised, we might be able 
+> to unify later the scanning with the almost-duplicated code when we do 
+> the second scan.
 
-Yes, good riddance to that code :-)
+Sounds good! Let's get this one merged first, and I'll send a follow-up
+patch to unify the duplicated code as you suggested ;)
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 8ce56a8d507f..f0a4d9d7424d 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6969,6 +6969,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->  	int h_nr_runnable = 0;
->  	struct cfs_rq *cfs_rq;
->  	u64 slice = 0;
-> +	int ret = 0; /* XXX: Do we care if ret is 0 vs 1 since we only check ret < 0? */
-
-Right, we don't appear to really need that.
-
->  
->  	if (entity_is_task(se)) {
->  		p = task_of(se);
-> @@ -6998,7 +6999,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->  
->  		/* end evaluation on encountering a throttled cfs_rq */
->  		if (cfs_rq_throttled(cfs_rq))
-> -			return 0;
-> +			goto out;
->  
->  		/* Don't dequeue parent if it has other entities besides us */
->  		if (cfs_rq->load.weight) {
-> @@ -7039,7 +7040,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->  
->  		/* end evaluation on encountering a throttled cfs_rq */
->  		if (cfs_rq_throttled(cfs_rq))
-> -			return 0;
-> +			goto out;
->  	}
->  
->  	sub_nr_running(rq, h_nr_queued);
-> @@ -7048,6 +7049,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->  	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
->  		rq->next_balance = jiffies;
->  
-> +	ret = 1;
-> +out:
->  	if (p && task_delayed) {
->  		WARN_ON_ONCE(!task_sleep);
->  		WARN_ON_ONCE(p->on_rq != 1);
-> @@ -7063,7 +7066,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->  		__block_task(rq, p);
->  	}
->  
-> -	return 1;
-> +	return ret;
->  }
-
-So the difference is that we also do __block_task() when we get
-throttled somewhere in the hierarchy. IIRC when I was looking at this, I
-thought it wouldn't matter since it won't get picked anyway, on account
-of the cfs_rq being blocked/detached, so who cares.
-
-But yeah, this makes sense.
-
-Patch logistics are going to be a pain -- .17 is closed and merge window
-is open, which means Linus will have per-task throttle and /urgent don't
-work no more.
-
-At this point best we can do is a patch to stable with a note that
-upstream is no longer affected due to rework or something.
 
