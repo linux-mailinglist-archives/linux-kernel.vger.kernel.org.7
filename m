@@ -1,79 +1,95 @@
-Return-Path: <linux-kernel+bounces-836344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0BCBA9650
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:45:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04670BA965C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E1A189C90C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F103A9110
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214C33054F1;
-	Mon, 29 Sep 2025 13:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3031FBC91;
+	Mon, 29 Sep 2025 13:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f5qt/mzh"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="ZLg/f5bi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Uu2iMx7X"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A782AD24
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBA02AD24
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759153522; cv=none; b=mtaguqLN737A10lDoO9GevKlurQcCzsUo+YeqGc16tHD//Nf9CJkIBJ9ZfiCfU7o2tlWOrBTadXYlnvpepz8bqGVQxlNZV54E++j2jB2ZsJtwN+9fyR2NqeJ91IA58qoMabd9AQk3uEzUPsXzaEtxIus9GDYQGdHWT/KggiQ4Hw=
+	t=1759153611; cv=none; b=oD5mOnoHcqrRPScZOPCdE1WpWFMWZraFhJipBYVf7TKvMTOmxccxu9L4dXxhaBA1se1jtPKogYRL/SP99yJ4iYeaCf4iAkm5O5OPtledyFjoOXiq0Xkiclm5CLmQqkMkORgmSWKOm26jJa6T/60GcCPPVnkQZbtFlTcmtmXHtAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759153522; c=relaxed/simple;
-	bh=Hg1gCErI21oFk6D0poBOQ+krDb+IwW4PRHgU07/PSJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/S8CvUr4Hjfwz6Fo2nHpCjoiPMLI/GzMQHb+U07e5TtsGU18aAryX1NpQb2RtkeJknsRG1YbAUN0O7rvsiXi6Mu5zEWnNECnZUObcHmy+h0yxm2X1wpQwy9NAK6p6/jvpPREey0Bi5+V1MaCvRVToYY1rOzxwatEX1vQ5OARRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f5qt/mzh; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bWEgyYuZw9gYNOUPJqq+g3u20qMd4YshQ7tTqVtgSWY=; b=f5qt/mzhBzFHiWVMK1AaYkGBu8
-	znxKy4GS97sTcDy04OAwifO6LJr/mzwuSjSv5nt2MWPCjL/B516dt4KuwcoLXYZwxFugPdYjUY+XH
-	/kvrLb6/Jx91TLug7g1q3E0YjDXCQ+O/GAUlozYk61K5E0uoWrpfU1mqMkYYopYSYq8LdJ33AVHFv
-	RzUSRAn6xF0c3tm0aOdQw2qW05KSGU9bPbpGEkUIHhxopkP3Fw7nrYbRj3LhXe44rypx3BMq/rSKK
-	u/YHUfrqvUfDsMOVMCsJiPO2OpF39PuWucJBkS4Qd8hdLtohspNtas4RMOxgI0MOVgwUpXDPAw9/U
-	moqjNz5A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3EBM-0000000C97z-2U0d;
-	Mon, 29 Sep 2025 13:44:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5928A300359; Mon, 29 Sep 2025 15:44:47 +0200 (CEST)
-Date: Mon, 29 Sep 2025 15:44:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Libo Chen <libo.chen@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Jianyong Wu <jianyong.wu@outlook.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Tingyin Duan <tingyin.duan@gmail.com>,
-	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
-	Chen Yu <yu.chen.surf@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 05/28] sched: Add hysteresis to switch a task's
- preferred LLC
-Message-ID: <20250929134447.GM3419281@noisy.programming.kicks-ass.net>
-References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
- <e51f8a6e172606d520c91c94c0c14b045639217e.1754712565.git.tim.c.chen@linux.intel.com>
+	s=arc-20240116; t=1759153611; c=relaxed/simple;
+	bh=cEUmmAPKqmvDk/g4ktGYVigxucz+ZampVI1F4ms6JZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tcO7rWePImd66ju+0gCcRsAcV9fbO+Bqm6w63YYGuQceIwH8HPHuQNWIlUzdCY8fnroFfuNL+XXPrH9DAbpxmS1fIKAXasuLDFj5gf4V2uSnk/+bmOMPP5plBfxMKn7PadjAe0yr2mGBFvsMSv3nQqXCCu6PJoDmWlHH8pZct7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=ZLg/f5bi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Uu2iMx7X; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 203BF1D00018;
+	Mon, 29 Sep 2025 09:46:47 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 29 Sep 2025 09:46:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1759153606; x=1759240006; bh=VtDAfbV6Oj0/9M1Wdg+zZ
+	FLDn3mMhqZRbW/dQ4BuuTo=; b=ZLg/f5bipnef+4g8NsMJmsFuT3xyB6NSyk9DW
+	dFxXs+sFYuS1YPZcTpbYAvRGDfNzjaBGhG3Yyy1lJA86b8Qo9xSQGW6Vuy/IXblp
+	jzkijM88o4lJhgG4kNGr032kwGq79w3iykQh+RtdkE+pC+QUmyg7zAc6ieVYH52y
+	D2f5VxsEUUwtmwy6wMT3G8lZ+Paomn6Y95q2uS6ptmJ+vFOPpADUKcDzhdjSTj4h
+	sDCDdZmx2w0klR/S50sLuCDz22YFk924lVa+hmEbvuxnBbNq5Lyr9ulZxGxXwtx+
+	BhL/sEJEbGIolj2/XZQ8QsXFdd1l6lswnBdTsucDuXAIYQCAg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759153606; x=
+	1759240006; bh=VtDAfbV6Oj0/9M1Wdg+zZFLDn3mMhqZRbW/dQ4BuuTo=; b=U
+	u2iMx7XQjNslCVFYCdBuU4xo8IKXC31FeMRTPqBdIpNBpOyUhYy+SFDNujw/F8kn
+	OKJXGnpjkc4J8gKgRvwPGE5mlBbCMKTQM30Ct/49ZQ88bUhUAjlRDMM5meZnhQhk
+	nZEd28oGpE9aGoJEMYDhM7OeDg7ZkWizdakRkJ8dJBGSQRox79HQfL/e8m0X33q9
+	kJjx8aUqlOarul7tF1QcgGLl8meQZgkvJMHqXuBCVUqn4TYOAPMUH2Zl6rhGGsVn
+	Iu5L8caGY0NSUJInQ+vAeyUImOAvcuq31fvg7jDCv537QZ4/472OD1MvgW/9YRgr
+	33Az0rY1+WrgfwwsgYlRw==
+X-ME-Sender: <xms:xo3aaLmHJ7mF_6DLuBbQ2lMxvrNgzYdDkUKREQkVSmTm5ilvOvYRQw>
+    <xme:xo3aaGmDG89YOZaL_pPYW-R3vALq_3zhLVuHDFrBBoFGOSdFtFA_ZKXqPzv-FPlaF
+    98tiR4WJY8djjRiW4ODyBZU6pob_c6EFqTNNDzixjpGfCXqRK_huA92>
+X-ME-Received: <xmr:xo3aaEvF9IOMTOAGCgI8Tph803Oa0f4uM7oCxujX0RLnAzFoOv0tHV20NI8TGLgUJgIb_RsXkj8cAoVpSLQTGpeRuWdyqsBYcw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejkedujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkgggtugesthdtredttddtvd
+    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
+    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepteefieetfeevgedvgf
+    egffehteeljeekkeelueegfffftdfgtdetteekvedvvdfgnecuffhomhgrihhnpehkvghr
+    nhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphht
+    thhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgusheslh
+    hinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgv
+    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidufe
+    elgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvth
+X-ME-Proxy: <xmx:xo3aaBnkLg6pII-KmrHlD4wpNYnCOjajmcalF96fodj63l3kcURIHQ>
+    <xmx:xo3aaHuexI0vDQu2XBDU56DDxKNuxHnGS12bgwZ8gE3952wc2_FNjA>
+    <xmx:xo3aaPe8rCnEurDd95p-pVZfx3HrRC0Hbp8fR_aEVZfEv8FbQ8Vn0A>
+    <xmx:xo3aaPxs8MONidhDQ9QcjYteUkMLC8MQuwsFuWcaFviwRP4kCRntyQ>
+    <xmx:xo3aaGNtptQRmwiNA_WVgBnpx_DcJzZVP0Y9_At0r_TFMEZIUaQ_5MW->
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Sep 2025 09:46:45 -0400 (EDT)
+Date: Mon, 29 Sep 2025 22:46:42 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+Subject: [GIT PULL] firewire updates for v6.18 kernel
+Message-ID: <20250929134642.GA748211@workstation.local>
+Mail-Followup-To: torvalds@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,92 +98,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e51f8a6e172606d520c91c94c0c14b045639217e.1754712565.git.tim.c.chen@linux.intel.com>
 
-On Sat, Aug 09, 2025 at 01:02:18PM +0800, Chen Yu wrote:
-> From: Tim Chen <tim.c.chen@linux.intel.com>
-> 
-> Switching a process's preferred LLC generates lots of task
-> migrations across LLCs. To avoid frequent switches
-> of home LLC, implement the following policy:
-> 
-> 1. Require a 2x occ change threshold to switch preferred LLC
-> 2. Don't discard preferred LLC for a task
-> 
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> ---
->  kernel/sched/fair.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index a7be5c5ecba3..9e3c6f0eb934 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1175,6 +1175,14 @@ static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
->  #define EPOCH_PERIOD	(HZ/100)	/* 10 ms */
->  #define EPOCH_OLD	5		/* 50 ms */
->  
-> +static int llc_id(int cpu)
-> +{
-> +	if (cpu < 0)
-> +		return -1;
-> +
-> +	return per_cpu(sd_llc_id, cpu);
-> +}
-> +
->  void mm_init_sched(struct mm_struct *mm, struct mm_sched __percpu *_pcpu_sched)
->  {
->  	unsigned long epoch;
-> @@ -1307,6 +1315,7 @@ static void __no_profile task_cache_work(struct callback_head *work)
->  	struct task_struct *p = current;
->  	struct mm_struct *mm = p->mm;
->  	unsigned long m_a_occ = 0;
-> +	unsigned long last_m_a_occ = 0;
->  	int cpu, m_a_cpu = -1;
->  	cpumask_var_t cpus;
->  
-> @@ -1345,11 +1354,13 @@ static void __no_profile task_cache_work(struct callback_head *work)
->  					     per_cpu(sd_llc_id, i), occ, m_occ, m_cpu, nr);
->  			}
->  
-> -			a_occ /= nr;
-> +			// a_occ /= nr;
+Hi Linus,
 
-This seems broken.
+Please accept the changes for FireWire subsystem to your tree.
 
->  			if (a_occ > m_a_occ) {
->  				m_a_occ = a_occ;
->  				m_a_cpu = m_cpu;
->  			}
-> +			if (llc_id(cpu) == llc_id(mm->mm_sched_cpu))
-> +				last_m_a_occ = a_occ;
-
-Not 'last', 'curr' perhaps?
-
->  
->  			trace_printk("(%d) a_occ: %ld m_a_occ: %ld\n",
->  				     per_cpu(sd_llc_id, cpu), a_occ, m_a_occ);
-> @@ -1363,13 +1374,10 @@ static void __no_profile task_cache_work(struct callback_head *work)
->  		}
->  	}
->  
-> -	/*
-> -	 * If the max average cache occupancy is 'small' we don't care.
-> -	 */
-> -	if (m_a_occ < (NICE_0_LOAD >> EPOCH_OLD))
-> -		m_a_cpu = -1;
-> -
-> -	mm->mm_sched_cpu = m_a_cpu;
-> +	if (m_a_occ > (2 * last_m_a_occ)) {
-> +		/* avoid the bouncing of mm_sched_cpu */
-> +		mm->mm_sched_cpu = m_a_cpu;
-> +	}
+This update may appear to include many changes, but most of them are
+code refactoring. Except for the removal of firewire-ohci module
+parameter, there are only a few notable changes.
 
 
-The whole double thing doesn't seem right either. That means that
-anything over .5 will never be able to change, even when confronted with
-say a .8.
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
-Also, while this is a threshold, this is not in fact hysteresis.
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.18
+
+for you to fetch changes up to 40d4c761200b796a44bf2c7675ae09c87b17d4af:
+
+  firewire: core: fix undefined reference error in ARM EABI (2025-09-28 10:20:30 +0900)
+
+----------------------------------------------------------------
+firewire updates for v6.18
+
+This update includes the following changes:
+
+- Removal of the deprecated debug parameter from firewire-ohci module
+- Replacement of the module-local workqueue in 1394 OHCI PCI driver with
+  a companion IRQ thread
+- Refactoring of bus management code
+- Additional minor code cleanup
+
+The existing tracepoints serve as an alternative to the removed debug
+parameter. The use of IRQ thread is experimental, as it handles 1394 OHCI
+SelfIDComplete event only. It may be replaced in the future releases with
+another approach; e.g. by providing workqueue from core functionality
+
+----------------------------------------------------------------
+Takashi Sakamoto (42):
+      firewire: ohci: remove obsolete debug logging for IRQ events
+      firewire: ohci: remove obsolete debug logging for selfID sequence
+      firewire: ohci: remove obsolete debug logging for AT/AR results
+      firewire: ohci: remove obsolete module-level debug parameter
+      firewire: ohci: move self_id_complete tracepoint after validating register
+      firewire: ohci: use threaded IRQ handler to handle SelfIDComplete event
+      firewire: ohci: remove module-local workqueue
+      firewire: ohci: use kcalloc() variant for array allocation
+      firewire: core: utilize cleanup function to release workqueue in error path
+      firewire: ohci: use return value from fw_node_get()
+      firewire: core: add helper functions to access to fw_device data in fw_node structure
+      firewire: core: use cleanup function in bm_work
+      firewire: ohci: localize transaction data and rcode per condition branch
+      firewire: core: code refactoring to evaluate transaction result to CSR_BUS_MANAGER_ID
+      firewire: core: refer fw_card member to initiate bus reset under acquiring lock
+      firewire: core: code refactoring to detect both IEEE 1394:1995 IRM and Canon MV5i
+      firewire: core: code refactoring to investigate root node for bus manager
+      firewire: core: code refactoring whether root node is cycle master capable
+      firewire: core: remove useless lockdep_assert_held()
+      firewire: core: use macro expression for gap count mismatch
+      firewire: core: use macro expression for not-registered state of BUS_MANAGER_ID
+      firewire: core: use helper macros instead of direct access to HZ
+      firewire: core: use helper macro to compare against current jiffies
+      firewire: core: use scoped_guard() to manage critical section to update topology
+      firewire: core: maintain phy packet receivers locally in cdev layer
+      firewire: core: use spin lock specific to topology map
+      firewire: core: use spin lock specific to transaction
+      firewire: core: use spin lock specific to timer for split transaction
+      firewire: core: annotate fw_destroy_nodes with must-hold-lock
+      firewire: core: schedule bm_work item outside of spin lock
+      firewire: core: disable bus management work temporarily during updating topology
+      firewire: core: shrink critical section of fw_card spinlock in bm_work
+      firewire: core: remove useless generation check
+      firewire: core: use switch statement to evaluate transaction result to CSR_BUS_MANAGER_ID
+      firewire: core: code refactoring for the case of generation mismatch
+      firewire: core: code refactoring to split contention procedure for bus manager
+      firewire: core; eliminate pick_me goto label
+      firewire: core: minor code refactoring to delete useless local variable
+      firewire: core: suppress overflow warning when computing jiffies from isochronous cycle
+      Revert "firewire: core: shrink critical section of fw_card spinlock in bm_work"
+      Revert "firewire: core: disable bus management work temporarily during updating topology"
+      firewire: core: fix undefined reference error in ARM EABI
+
+Thorsten Blum (1):
+      firewire: core: use struct_size and flex_array_size in ioctl_add_descriptor
+
+ drivers/firewire/core-card.c        | 490 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------------------------------------------------
+ drivers/firewire/core-cdev.c        |  36 ++++++++++-----
+ drivers/firewire/core-device.c      |  27 ++++++-----
+ drivers/firewire/core-topology.c    |  91 +++++++++++++++++++------------------
+ drivers/firewire/core-transaction.c | 130 ++++++++++++++++++++++++++++++++++-------------------
+ drivers/firewire/core.h             |  22 ++++++++-
+ drivers/firewire/ohci.c             | 316 +++++++++++++++++++-------------------------------------------------------------------------------------------------------------
+ include/linux/firewire.h            |  33 +++++++++-----
+ 8 files changed, 518 insertions(+), 627 deletions(-)
+
+
+Regards
+
+Takashi Sakamoto
 
