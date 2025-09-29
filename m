@@ -1,151 +1,125 @@
-Return-Path: <linux-kernel+bounces-836045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DEABA89C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:28:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7EACBA89ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED351189701C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AF63C5E63
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AED2C3745;
-	Mon, 29 Sep 2025 09:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2948F2D0634;
+	Mon, 29 Sep 2025 09:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DBFg1m67"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GICeAGSD"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF0F2882DB;
-	Mon, 29 Sep 2025 09:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0548B2882DB
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137971; cv=none; b=p1d+qcRp9U5E0d82VbOpv2EirLMGDdMcrEBfGqxMyCwkWs1Fp4w/FLXisdJdTBHjrRH7ruWeLv9zfTIDGav06Kb7mdCgE7oPdngkC7bC8J51BoezPKiCQ5yuHK4co3wSSjLxqU9IpXTq35L9phnXwdFZUJg5mgwsk9bqj1iCdCQ=
+	t=1759137986; cv=none; b=VkuHiasjHPoOAMwkrJ5LrFNJAMttSatAVP5vldMN3Y6IZgfk7yM0tnQTIZos31tgyHYVIvB0Amo0MCA0JrNCUyj8KztQlhh2wETmin3VFBDQqj8iHiLomC/fIumw1adAQurFiGNva7Z4RvNdGIdKy5Ld89txiV/F6e4io6nlTiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137971; c=relaxed/simple;
-	bh=G80AouN6PDIGEF0/LIKnGIRSkYCCA2LgLJO3mKnzFtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ol7/gvjNWAJXrtp9iM15VdWnA5yUSD/dV6OJhDJrvuIwI/Zd+5ym81kvqvqwSMcA1rG7yYaFZvy0FBfiQfWaR6OzXlRnGQU0dlVloezU+Zm6+lIlia1oD0oPiLrex+Ry6BDqfrw7yg3KASn9f3DUPLQNmK4/GxbGV74iumwijUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DBFg1m67; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58T8sNdm013367;
-	Mon, 29 Sep 2025 09:26:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=tSstgi5clCTVdB66xxyz8fmyBJrP/
-	416Ngxv6KMH8Yg=; b=DBFg1m67acfKlQ3fRFLJwh6PzxV9AqoO/twt6xVb21PTz
-	e6Q2vusQTKPscvB8MMb+nMBU9n8Ee3a44/LwALgmvPfyhFfy/4psL1CFle2sCXkn
-	TD593xPIEtNthumc5EPAK3VvCVlDJsaZacNWfoCVXI8BvYqWeYn8nekd2Rg+rd4L
-	2kQyfgxIAOxj/HDVpyD+F23rdu2g81IFyHOe9CmwP3ofLNcselael3I9o6dw4Q9/
-	vRZ7MsyjX6hGclaz/KHF0QbJL3Zg+RjjHkqqopUt6iQUYcLjOvvmIKgIRiosi+D8
-	4JtJUSGqdHep43ZXcjPufzE2ScKJ+o491LTot1tNQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49fq0v01hp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Sep 2025 09:26:03 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58T8Ljk0001920;
-	Mon, 29 Sep 2025 09:26:02 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49e6ccpgrk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Sep 2025 09:26:02 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58T9Q2Cr035423;
-	Mon, 29 Sep 2025 09:26:02 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49e6ccpgr1-1;
-	Mon, 29 Sep 2025 09:26:02 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: njavali@marvell.com, mrangankar@marvell.com, martin.petersen@oracle.com,
-        James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH next] scsi: qla4xxx: fix typos in comments
-Date: Mon, 29 Sep 2025 02:25:54 -0700
-Message-ID: <20250929092559.51137-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1759137986; c=relaxed/simple;
+	bh=F6QPMSQ0e3v6IYWGpsg1DAlGPrduv5vyeTegzDeIf+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NCppf+7ueU+50WUBLvQMihJTQ9YMyd7iakm185ga4RoNGTpCuSYG8j56H+2TdhaqLCPMWdr6M19dcBe5GAOcX2iKXTcPSg4znk4T1GAMa0lQ2tgqDu00cJzlZsjxdYeoiFc9lXiqENYAfh4XCVSQdxMTGmvWew+VwX8Zsf0ECo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GICeAGSD; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77f605f22easo3869674b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:26:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759137984; x=1759742784; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vjBDdW6a6A4A7TeFZHGH031gzicAXAbFO5MjRo8D+ek=;
+        b=GICeAGSDCIZr+G8YWm827/UMcEck0c6Xhc0zLQvCsfvCByug0NkDIiTLlgTFuidkrp
+         miYr5wvib+HUmQgsfaR8TvgwkkUFjJyBx3vkGccWMdtzfJ3nYSCrCvkopmKM5NXpbAZi
+         zjALvleaNxjrVycaqqZlN9Nf7aJbVzRKBjyYKwF+pBxYQgQKlAF4JF+0Yh6PtODv4XNp
+         WhFqLItWTuscS5b+gUKlWFdoYczzpv/UsK6hyDn4TQaI17eAORGIQvjAuJl8IAYEFmzH
+         OO1IckKb5K9jRFo3fQmfwHlnCU4b5ygbO7AWkNPVcaJQNNpa4TH7YP1fVwNLcFhsVI1v
+         sn+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759137984; x=1759742784;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vjBDdW6a6A4A7TeFZHGH031gzicAXAbFO5MjRo8D+ek=;
+        b=O1CIuW18Ds7IxdGw3iU7xQkugwEJhg9ZN2Se3rIocFQJU4l2phlJ5wQ4WvyuX6C3e1
+         dHXQwJbKYyibUyq5n/Lk87k9m9vNuolernQlt9PkNiZB7nVmG/KmErMW1axrCatpF30q
+         zKPGrJfXRgJrB3K77pVtnYh9ZFrS++wsSy4ShtCjlBIhXbypQd6SiGk3hvRSUHfpazuD
+         BKs4u72tznUMDmzGLHGt7zzxVUH8hN3GDxbU7WQb7Px7OnjPlAmtYQ3+jM0gkhXNI1C5
+         VsK3iBaJxTPFxISeBjG3v+nkrnhKCecjuYCWfUz/MKLf/VBfyniG8SgbHJ88DnZHorus
+         SHqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSsIO7n/nxpTxn1W5bs1Sr+P22XWcLRI+7Bw7xAMKtuz4uNco/+g9w3RIpxZpHpha5rWi8yWr4oW770eM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT9AQC/rGmdNUhrsxSQvq+7leCy/31OvEgaxoUvl8wmQ9VYmCx
+	ML1u0WVE5KdWqHARzwdKpfBowCrGUjES+JMmR/8+vSNdm4o92eHeJnlWD9Gvy/Om88A=
+X-Gm-Gg: ASbGncvI9QIj5z8SZHzIYlY1RI8xkm9RwbSlM41zEh7QQuinhebr8U6Oq2c56Vpi9Lh
+	BkZQS4IVVV6rGh/uk+vr03caNvre12XER4K4+Y32+0VoLk5j8p7eZkLGG8Ya2CTRwxTb8uvZqAF
+	YE/c6twqyupbekOQuIV+D/GABQybq5spBAOn62pyv1euleuT1aI89vxw3g0MGVRYJOh0zUIMMB1
+	0Q5J2EfZ8U225vhH0h+ZonOsWmJOSIYWB2uDEVs++iUm61J92cRTeJPs3bvxH5wuP1D3s4Fklv/
+	KPfAdRbpvAGTbTupliigKKiuUDDg4jj9APDBrZD1kdOWl3I3IJahO/9/EeNlQOgQcS/mNC+HQp9
+	LGrOxqO2th9qsdnRgMaqhwTwUfKD+cwveizM=
+X-Google-Smtp-Source: AGHT+IGusX2FU775hDQyaDVeUQ2fzYFr/WVOzWLXyy7HzrXzVv07AdOmx8KqU7JGAyhS3O+CN7fWhA==
+X-Received: by 2002:a05:6a20:394a:b0:264:94:3f5f with SMTP id adf61e73a8af0-2e7c131dbb4mr21160856637.15.1759137984423;
+        Mon, 29 Sep 2025 02:26:24 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238ca29sm10479302b3a.6.2025.09.29.02.26.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 02:26:23 -0700 (PDT)
+Date: Mon, 29 Sep 2025 14:56:21 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: webgeek1234@gmail.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Aaron Kling <luceoscutum@gmail.com>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v3 0/2] cpufreq: tegra186: Fix initialization and scaling
+Message-ID: <20250929092621.zvodzktgw7ok3rin@vireshk-i7>
+References: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_03,2025-09-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- phishscore=0 mlxscore=0 suspectscore=0 adultscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2509150000 definitions=main-2509290091
-X-Proofpoint-GUID: h70ayeXlNV6U6P3KtefFnVG-d9lSkngB
-X-Authority-Analysis: v=2.4 cv=CNsnnBrD c=1 sm=1 tr=0 ts=68da50ab b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=YXOkn92C4h7wVYdyZBEA:9 cc=ntf
- awl=host:12089
-X-Proofpoint-ORIG-GUID: h70ayeXlNV6U6P3KtefFnVG-d9lSkngB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDA4NiBTYWx0ZWRfX4xGfFvbvydxp
- tAGeZhqOmAvF+LWMi/CpVzitIKFNTqotZuofbm4zAXefahA9q2fC75B2Nxk/k8wmT/fSqA4EFyG
- MwOgiU5xislffyMPxUrlKKEPGuXCaj/xx03SJlxd60Umcze9OuzLo2azxuzUw2HoKyW3lbfZIV2
- p9mWElCLLmQ0NfUoqw3OgCYMjLLlDA2j6yFsvOCuxpvz+XOSV/yWRYJ0jr1URiIyDRTcA1o/VpT
- rX9aa7ytvRqxnDOu9BsBNDBs5nsQbsCLZ8/fjwv7mLXSHW0zfR0RGytQ18yaj8ttSxyrCJ+eG7h
- YBj/qVTIb0sXtW4Dv/kVNNoJCDnBfCynFsInGzje/ZFEe/QNXTT6hgvdxPkgxfOa74qmGSUVmqT
- aY3cCLGoyw6ls48rop+nzEaDUb78AvU2yvtbCJz9s2Ql5bAwKNc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
 
-Fix several spelling mistakes in qla4xxx driver comments:
- "Unfortunely" -> "Unfortunately"
- "becase" -> "because"
- "funcions" -> "functions"
- "targer_id" -> "target_id"
+On 28-08-25, 21:48, Aaron Kling via B4 Relay wrote:
+> This series fixes an issue with shared policy per cluster not scaling
+> all cpus and with some cores being initialized by the subsystem.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v3:
+> - Use more clearly named variables in patch 2
+> - In patch 2, fail probe if no cpu rates reported by bpmp
+> - Link to v2: https://lore.kernel.org/r/20250828-tegra186-cpufreq-fixes-v2-0-fcffe4de1e15@gmail.com
+> 
+> Changes in v2:
+> - Set max freq instead of base freq in patch 2
+> - Link to v1: https://lore.kernel.org/r/20250826-tegra186-cpufreq-fixes-v1-0-97f98d3e0adb@gmail.com
+> 
+> ---
+> Aaron Kling (2):
+>       cpufreq: tegra186: Set target frequency for all cpus in policy
+>       cpufreq: tegra186: Initialize all cores to max frequencies
+> 
+>  drivers/cpufreq/tegra186-cpufreq.c | 35 +++++++++++++++++++++++++++--------
+>  1 file changed, 27 insertions(+), 8 deletions(-)
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/scsi/qla4xxx/ql4_os.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Applied. Thanks.
 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index a761c0aa5127..83ff66f954e6 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -4104,7 +4104,7 @@ void qla4xxx_srb_compl(struct kref *ref)
-  * The mid-level driver tries to ensure that queuecommand never gets
-  * invoked concurrently with itself or the interrupt handler (although
-  * the interrupt handler may call this routine as part of request-
-- * completion handling).   Unfortunely, it sometimes calls the scheduler
-+ * completion handling). Unfortunately, it sometimes calls the scheduler
-  * in interrupt context which is a big NO! NO!.
-  **/
- static int qla4xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
-@@ -4647,7 +4647,7 @@ static int qla4xxx_cmd_wait(struct scsi_qla_host *ha)
- 			cmd = scsi_host_find_tag(ha->host, index);
- 			/*
- 			 * We cannot just check if the index is valid,
--			 * becase if we are run from the scsi eh, then
-+			 * because if we are run from the scsi eh, then
- 			 * the scsi/block layer is going to prevent
- 			 * the tag from being released.
- 			 */
-@@ -4952,7 +4952,7 @@ static int qla4xxx_recover_adapter(struct scsi_qla_host *ha)
- 	/* Upon successful firmware/chip reset, re-initialize the adapter */
- 	if (status == QLA_SUCCESS) {
- 		/* For ISP-4xxx, force function 1 to always initialize
--		 * before function 3 to prevent both funcions from
-+		 * before function 3 to prevent both functions from
- 		 * stepping on top of the other */
- 		if (is_qla40XX(ha) && (ha->mac_index == 3))
- 			ssleep(6);
-@@ -6914,7 +6914,7 @@ static int qla4xxx_sess_conn_setup(struct scsi_qla_host *ha,
- 	struct ddb_entry *ddb_entry = NULL;
- 
- 	/* Create session object, with INVALID_ENTRY,
--	 * the targer_id would get set when we issue the login
-+	 * the target_id would get set when we issue the login
- 	 */
- 	cls_sess = iscsi_session_setup(&qla4xxx_iscsi_transport, ha->host,
- 				       cmds_max, sizeof(struct ddb_entry),
 -- 
-2.50.1
-
+viresh
 
