@@ -1,304 +1,236 @@
-Return-Path: <linux-kernel+bounces-835664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A920BA7BD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:11:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EA5BA7BF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA26217F974
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:11:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8D23C0EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624DE2C2340;
-	Mon, 29 Sep 2025 01:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F221EE033;
+	Mon, 29 Sep 2025 01:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="iA6Gv4Uf"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bTdfBuGu"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012022.outbound.protection.outlook.com [52.101.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887922C028E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759107901; cv=none; b=Bckk1AP9O9og0pEgHJeqn7fJ/BR7GcRcTcfrllsFimGFErkf55lAENLFl4ZbRIZtRSTCplPz4LZIY66eaCahuVGqamy8b7dP8KbaQDVf822AcBaz/rt/q/ImFTrl6Yj85i2+usPFjlVxgoGm5utWNaxIjEDBONeLYzhcSuatg8g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759107901; c=relaxed/simple;
-	bh=YxndNYekOIE4c7Py3BfYUApvqGWLMZMwxTdov0PwqSk=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z7d1UgIPkfBPjyQJylMGJ8Y7rpP0tTJ0dibkJYBwupLjP1GqjerCR6S5/dYBfUZuvhGVmdH6a43fmNHx8N3HmGxI3C9Wrf0r2I4Z1zNWsLEAfnjs9WyXjaSvTIt5X/qzCowrHijeWb096CIpUbUEhSLxb1w3GPr2/XQ7RFVCNHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=iA6Gv4Uf; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4d142e9903fso26845371cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 18:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759107896; x=1759712696; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ougWc4G/qIZT3q+j2o8YnJ0ye/FPwzyh3Yh9OeHBEk8=;
-        b=iA6Gv4UfCuldLImNHDxeF22VUESqTDA4QxoBJLZQFc485cj2iO0lwRGLwYJLqQTAQj
-         tQntflsKcN01xTOwwLu9M/WyAVEh2n2DoJvrsqct0dcZtrzeNAncR3JA6hR1cyWtk5a5
-         O5jZUw5bvDLIypoo1sQ7qsE0EBwrDE2Uw/0Q7/nZGXpiIoqAaUBA74S+qvCFH8RkhZTO
-         UEZ4hLXlH7a7GDPBvU2aPFEYwpa36jMdm9/trun5+92JSrbDs+eaFuqGOUoy6fnygBbn
-         KbI94Sh906CF7GxwDzpzVWrhZOVup5yqNaxWuvLUxs+qlMi12/EjmSNlTdAxlam2jhbG
-         kkmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759107896; x=1759712696;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ougWc4G/qIZT3q+j2o8YnJ0ye/FPwzyh3Yh9OeHBEk8=;
-        b=HclV5ZcMOdPS+uQF29Ac7/QVuWfGAF1TBzeopYWyjKKg/JVELvfyzNiBr9byG4tZ3e
-         pTvVA+EnfdN+hyhCpBQ6SncJls7x4xLU//3RXPN8oW2ZC0SOMclIvbyQYd+F1HS65kmY
-         JDCGooM1tCmKEbiSFKZ8CnOiAzdgzCXOkGqadDRM+lXCDb4Y5bzXFukQtsWp2pUftilu
-         9P9ys9bJ1zY+vUb1W5db2R7wNHCuuNpjTIWtmqnzMqppNXtCnt9FcEkImRk0RQLl9jpG
-         l001W45poSYXMS8B0gV1OurVynBr4OoS07nJBV57rx0H+ySzRHWasEhl5voWHnK47Njl
-         pt/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWJdgP3YCx14Yxy1ZTJ8JvIBk/iKXsBTLFGqkW4I50LRGEqD7MYyCBLUoCnSx9kLx/VlhgUQqc6Ew5CS2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuOujRUZo75Wk4TWtuH3wAA/JQ5c05vHViYILZ2i5QlOaATyuZ
-	4ZbHvJt5pObrEW7SRmdIrU7N4g/MNlqpNk45IFWiPEvDE52z77PDYJDJ5gY8/wVW4gk=
-X-Gm-Gg: ASbGncsJrp2Itz6N8Pk6qLI6votoWeVJ0LMsJ+ETXdu6njh2llRNeFDZyqOu2fh2I+O
-	MHuxoZFKGiKwtjQXroMIUYxsOkcd2i8RNIS1ix/+O5sAnP6jsw/2cvm+D38iYUbl9A/Rd7JIBcN
-	zwTCHn8S+7ie9nfqwV5bRo+wHtk983YgQn86gf7zQYTK+iUcH8kmGcxJib1xabzFYvJjDai2EW8
-	A0rlZZgeELItUfz+shxRnRdjU+tGQMlE3Z/OS2ZwGBTMcZeAsh4GB9i/BdbRRVNq/NxXdk3i+E8
-	ud24G3FrgzsfYt0Lk26pq2EFsxfjJqTrfh8vOSgo1lNq1ns99fabv35fyiIhTXPaka81hE1JxGg
-	sHWS/ekJUh7C6zfoYlIvZLRj0IwxPEoU0mZodj99xjAuHdRQe2aGnG55G6te7TZa9Rv77220OLZ
-	Y/qUFnEas=
-X-Google-Smtp-Source: AGHT+IFYNaFG7Jc9+8mczCUfL2NG5AxHH54S3++B2bClP4OT/C9rMlU+s2JYq6QncxNId85tdheqhw==
-X-Received: by 2002:ac8:7d43:0:b0:4b7:90c0:3156 with SMTP id d75a77b69052e-4da4735376emr195893531cf.9.1759107896425;
-        Sun, 28 Sep 2025 18:04:56 -0700 (PDT)
-Received: from soleen.c.googlers.com.com (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db0c0fbe63sm64561521cf.23.2025.09.28.18.04.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 18:04:55 -0700 (PDT)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: pratyush@kernel.org,
-	jasonmiu@google.com,
-	graf@amazon.com,
-	changyuanl@google.com,
-	pasha.tatashin@soleen.com,
-	rppt@kernel.org,
-	dmatlack@google.com,
-	rientjes@google.com,
-	corbet@lwn.net,
-	rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com,
-	ojeda@kernel.org,
-	aliceryhl@google.com,
-	masahiroy@kernel.org,
-	akpm@linux-foundation.org,
-	tj@kernel.org,
-	yoann.congal@smile.fr,
-	mmaurer@google.com,
-	roman.gushchin@linux.dev,
-	chenridong@huawei.com,
-	axboe@kernel.dk,
-	mark.rutland@arm.com,
-	jannh@google.com,
-	vincent.guittot@linaro.org,
-	hannes@cmpxchg.org,
-	dan.j.williams@intel.com,
-	david@redhat.com,
-	joel.granados@kernel.org,
-	rostedt@goodmis.org,
-	anna.schumaker@oracle.com,
-	song@kernel.org,
-	zhangguopeng@kylinos.cn,
-	linux@weissschuh.net,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-mm@kvack.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	bartosz.golaszewski@linaro.org,
-	cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com,
-	yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com,
-	quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com,
-	ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com,
-	leon@kernel.org,
-	lukas@wunner.de,
-	bhelgaas@google.com,
-	wagi@kernel.org,
-	djeffery@redhat.com,
-	stuart.w.hayes@gmail.com,
-	ptyadav@amazon.de,
-	lennart@poettering.net,
-	brauner@kernel.org,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	saeedm@nvidia.com,
-	ajayachandra@nvidia.com,
-	jgg@nvidia.com,
-	parav@nvidia.com,
-	leonro@nvidia.com,
-	witu@nvidia.com,
-	hughd@google.com,
-	skhawaja@google.com,
-	chrisl@kernel.org,
-	steven.sistare@oracle.com
-Subject: [PATCH v4 30/30] selftests/liveupdate: Add tests for per-session state and cancel cycles
-Date: Mon, 29 Sep 2025 01:03:21 +0000
-Message-ID: <20250929010321.3462457-31-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-In-Reply-To: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E762AD22;
+	Mon, 29 Sep 2025 01:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759107997; cv=fail; b=bdscJj3wWzOUSgQHBAMIMaHGAH1+k/x7sRyXCSqjBc/PdSrN3uKlzeL2OOVyYbwyag9kQ4k06tTggJ0XAQ3n0o1plgSZvtw4CWQGGw2F9HpAh69eM0BKWar4vDkWDMS4SNgY8ceFoii1P576zujzyDODBTXlltt1hPiHcaT8kgM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759107997; c=relaxed/simple;
+	bh=Tmh2Xx7mzWelrwbmmXGPRbfJMq+1x3zYlcvxHLT7fNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BzuVhju3nV4MWTubfnssFNRftOGcAr0Eumec25pFIGMdWoqDeY0AWiD4gKSAZEMPMtihMFA62XAypjveGnk6mdN7wXHqj3jgFLoa9SVpVyk6WTweD2hf8MwJ5jJSLpPjkErSbmvWqMjQ4teZnMdt9nvyyYIUVPM448ja9JrzG8o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bTdfBuGu; arc=fail smtp.client-ip=52.101.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V1a8WzK+U3dtwhHUc2sBiM2916sYI0x3APqtLWxHVhLCkOm+DikoQJGCnHnEG6dHPLY7o2U8vsCDu6lJYC4szCjG156pvsgAQmH0oWFw9uPe7IpelwqxXG6JMAnteBrE9/Be8aWLCtms1FOOldZYqr+s3MiAMXtXmBCriisVOgprrzyhaJC3lenoYylaL/4DD6mgXEqWeuhRRh6SsxON3kGyrUapnZdQXT7+HPwQ5nBEXjGeMT612W239bktm5AKYrp4a6XTNN4wNxPsyTpzR0c5+dIecrkT52Ku6yJqY2L46je1B1BqeuYgw4h5wpQJlDVMT0djLMIChFHIjEKs9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z6IRGwN2HwCbARvo2pFA5EGmh+xb/3Hdj8aGs3PcLes=;
+ b=tXz0C4hkRXBcaHeKLTEwmTeI2lXMnrTqCwMUXdll1M0huVawTpBRW5RN8UYifOiaUDEkeVljl7GxpxJmAenxTv4ncgZ6qQNPdDlDtyZKL28jIIeP/1Z4EfbaeFhnSCPQrJn2bpyw1RBko1XCZVvmXy/AHxpk6X+wWQC5oIEVAC0rJT9gE4vv/evxQ6HBLTnEAteCThv6pURg5aB2mYFe5dRQ2zW2uaXwQgpBamqvVfn+IFrxxU2JcNmvky8VJ/G7bl9x64t8eQ/GFXDYofotch3vyTeazSzfWrVoPgR+hPOLIEC72vGEJDFiYfhMMYV0kTOlzoMyKbdCmzkLO0+lkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z6IRGwN2HwCbARvo2pFA5EGmh+xb/3Hdj8aGs3PcLes=;
+ b=bTdfBuGuK4lyqlJC0vVC75Dze3zM/w/XA9s6FHSM6QWym31fjxcWS+3+3iL+AKyQgRaakcd+QfuSCXl/fKltHLWKeQ2iOSVOOD3yJYOx2FyhFFZBn4vh7JcstS07Y2ptyKDckiP7N2q/+ktsQhytbEW6q12siAII4l4xf0xYcwiQUo/lZGKgWEbEKrIZzBytN04eioEnLkjwCkIZ/TmXAFukQ4sX4z5/0DPtjou2kbcZh33iKDt0vTtO4St5QJSs1uqyGb3/i7dR4M93kyLLCXC3eKcz+GK//BvfS+UAIwDb30nEiKf7ZZORrJahG/S6oZW654zilRaZ54ZLs1KPLw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ SJ1PR12MB6220.namprd12.prod.outlook.com (2603:10b6:a03:455::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Mon, 29 Sep
+ 2025 01:06:32 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 01:06:32 +0000
+Date: Mon, 29 Sep 2025 11:06:27 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, dakr@kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	John Hubbard <jhubbard@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 05/10] gpu: nova-core: gsp: Add GSP command queue
+ handling
+Message-ID: <mkecw5p2eb6bsl54ccpxrdezeatr4sxjtkvsteu4klx6u3ldka@p42jqjvoi275>
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+ <20250922113026.3083103-6-apopple@nvidia.com>
+ <e95c59cc72145c05380d0d81d767c6ce97fbbf0a.camel@redhat.com>
+ <fiwv6movnoliptvjdlxzx4rggv5a7mid4zyvmqowvw6kt5auhh@r4dmizzmykwv>
+ <DD2DFKZTFIGS.2HDVZRV6WGXHG@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DD2DFKZTFIGS.2HDVZRV6WGXHG@nvidia.com>
+X-ClientProxiedBy: SY5P300CA0015.AUSP300.PROD.OUTLOOK.COM
+ (2603:10c6:10:1fb::7) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ1PR12MB6220:EE_
+X-MS-Office365-Filtering-Correlation-Id: 287ae8da-803f-40b0-b374-08ddfef46d82
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x0K58PJsu5UNWNnOC5turzrv8FV1GFl1mJOzDf+YdSjusJTupdNMgQIB1yrp?=
+ =?us-ascii?Q?mjzL2kdHg0NHXpi1TSADZ8+iGbUm/qwf4EcH+p2G4jNgp/T65cu48NVMj0w9?=
+ =?us-ascii?Q?ht/lOu/Bo9Z3z782oxn9mORID1d1oGZ5axwWtT40F6IhaM/JXVqow0fi+yxC?=
+ =?us-ascii?Q?YT+Qd+dmziKZBBLE3UwyJeyi2jAJwOKMLOb0WXSeI768wpPLS0U+DvPi4lH9?=
+ =?us-ascii?Q?yorjImu8CD1Y66ud/uGRUhRzrKHFblorhexN1/Pr9E5WJCEuITA/tpd4b3w7?=
+ =?us-ascii?Q?BgKB0LJAURBiu1R5Nwl1sj/E/pHOfBCELFVX6833F8WWtU/XuKXF0kcZTRDn?=
+ =?us-ascii?Q?B2EdFS1NV4biNBh6C2UjmvDSXHu1lWhX6JdTAa8/aVhYqPze0GsXrybtPykN?=
+ =?us-ascii?Q?Zb1bee3jY5U3AtUWN+leQBXrBPlgwHxiQ73aE7fgiAKK4A3RA4zjmX4peOX+?=
+ =?us-ascii?Q?rXGrqRpBZ/1cTqqF+/qxBXv6tr2G9N3Sc4O/t5aGIjwNULKA3UOjQ+H5NcaI?=
+ =?us-ascii?Q?a1MqDFOKfODyIcXgFC9Tk3U/Yu7ienzD3V9Aoy6sxjN6LBAdsR1JbwsB+qKD?=
+ =?us-ascii?Q?KC5EnIAyiFhifoOMBzGWhu+DhqVFXO2l/sjPZ3vvKysV1Jha7Y6gha2FepBg?=
+ =?us-ascii?Q?pNsGuJ6wjr3L108djpeYfeA51oX9D63ZN0maTnqF6U6M2Run5lPzoRlNVPFA?=
+ =?us-ascii?Q?rCWys8gBlpfNxAAxww6xiGRGbIbATgNNQcOx2MyL3aLIB0xHkviYlbpBe7SR?=
+ =?us-ascii?Q?SLeqXZ7+DQs2R236Z/OrsTi6JUIF71rjDp9QJAsH58wARl9iccdubYKj8IHa?=
+ =?us-ascii?Q?NFfLN4FhMRAI26YmcbVwujy246X8tahnMyBQuGLrUVOF8pEpqcFxs2X7bUPG?=
+ =?us-ascii?Q?o9iz+DF9L3POaG6q9jmPrzT8afHgFQRFyTluY87lV1obBsukcJrmCwsLjabK?=
+ =?us-ascii?Q?2HcWrxM58Dq+Cv9vNsTLpcDUZbPToJWFnhWt4FCkOA5fpWFt9g/9mMSTE5c4?=
+ =?us-ascii?Q?TNcM3B2eH4+Y/sFFCD/m8ZncMihfj7iplwAyVDlFb6aZWK0VaH1ZD/BfAiFK?=
+ =?us-ascii?Q?VwtJRDnoSlXb40eT5DZmegL/n0pU5bPqLZoOLKlobOIdXk9Sv0/LzI8A6sMB?=
+ =?us-ascii?Q?d6AJVOgwVf1BEMiuE9WDM1SCFN/hAbTg7mEFgHXtpCHSFLt0EDJwD6RXwpOa?=
+ =?us-ascii?Q?hPdhF/6Mw7wTwSV8RCz7WNVd3tZmawlY9KWvX4hO8Jdi8rTlBdBro3i5gAzY?=
+ =?us-ascii?Q?KH34cD7zwflvpeIr14sFQe7azcpo4aHevlhqJxkVqOB4se5dPrEaIsrz5Zwv?=
+ =?us-ascii?Q?t6N+6mG8mwOU7x4xJraVyjBjm+t5V9zfMFY07Zs4n1jKyTVT1rkvZApm1IDR?=
+ =?us-ascii?Q?VukJIrmyyhfPCcQuQ9oxQlRjCtH9mZHpOEMIhRP6zde/oLg9JUZpT4OpmgIS?=
+ =?us-ascii?Q?lhJdOJ8Dhlf4IQfWSCMTusjrYvJqNY1R?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?avTuqSQ3kKGzfDMce4u+c6goSnWYUULL1LbhA0QXG/IePo85Jv7vAZvkwGh6?=
+ =?us-ascii?Q?W3xpKKDhvxmLergYzxJ8xedzXUMn774r7/uY+UokHFeFNMCyxkzM4VYd54ve?=
+ =?us-ascii?Q?IvsFSA/kEZyNtyJLkpIjJtFWNBaIAGraDwzjnUAV0uhWFNH0MII5rT2tnrJ9?=
+ =?us-ascii?Q?VDQSoAGcOWxxSxw+jQIQdPLPjY0AvUFJmNsk3X3JweEGHkIhjjW8IKB1Kyfz?=
+ =?us-ascii?Q?X2t0BCXimK7ITi4DSlQv165KpOu1EYgnPg6xAK2UtYDEIDBIJ2gcGbnVG/IH?=
+ =?us-ascii?Q?/q8FsOO9Mr2V0jUQjLnyfHmL6N3D9knQC9eA6zgDr5gqvvCH4Dx0ssx4/P8R?=
+ =?us-ascii?Q?FhrlrvTWU/Y5qWHijZEQxed5ZoPD3yauRJ5rx7a3f/w4Yt8cvmu+2eaD4Wzn?=
+ =?us-ascii?Q?RffDJFnX1UtrEewXP9Fkbk/1LUE1RRiNsaoNLumkTB3FdI/TyyE4bu7G2uc+?=
+ =?us-ascii?Q?5owxsknreSiqHGapiiT7EjlXaNBngVn9FPH/+ESueORKGRm3ZPo3ltd7Yf2o?=
+ =?us-ascii?Q?T58NdJ/sP2YMaGClakE7VurLDSUqYmnXrH2C15szN6ZXgmLj7mpOpfGxdPwp?=
+ =?us-ascii?Q?4fdlhRPk4uH0LBpAZRK7UAIiCHt/P9iWJ+XeO+fz/r7NTH1VvekeAaI/zK4S?=
+ =?us-ascii?Q?ZEYxXuV5ar1vCuc8tykpFB/xfmKE2VVP77VypM6vNzeoTfSjjSMC6BpxC1wW?=
+ =?us-ascii?Q?du4BwYeN/2FMF06WNpG2UlCbyQNJXnJ4GXNx0P+rY1JRZySgwDo2k6XGL4lc?=
+ =?us-ascii?Q?ojNIeUZUFNDhfIoMFvQiVuJhvt7o+lhK1qKGoVKYVcR/9uJj/o2F+JyF2qN3?=
+ =?us-ascii?Q?EWBOhPhMrTObBEPw4U7bEbnsnssnEG1nSdQR9jyfWmdFdOe/9LosxybaVac9?=
+ =?us-ascii?Q?RIgZPRONTE0qMfW1UgN/C56G4ISlgWtgJbwDPrP+Ywt3Z72p6O5WCRc1ZEVa?=
+ =?us-ascii?Q?UOLq7EtQ2N9Yuw/3VqUpI193vbrE+ZlvncsPy5bzbOOZ5bbQy6TInqxbRk1X?=
+ =?us-ascii?Q?EA6+6+ONjAaczCqub5obX2/y/tPtOErwhewuZlxpefC3hhl5bW9ZNuQnVMw2?=
+ =?us-ascii?Q?1enp49DWCBI6oOw9fOxFJKBlf99c8xtn6oVByYQ5rnXfcbl6Ps1VStgE1fQP?=
+ =?us-ascii?Q?fxBN2lvS6gUS8vLDpvCf7W+5RjZAtqNiXkT0lI+5eJJYp7KndhqmxAH3kS3t?=
+ =?us-ascii?Q?bqvo0HBFJ5rCCDfqC+KjneRBk+NUuVHeAWfQajnqpwNcRWF9IFbV3co6LLBe?=
+ =?us-ascii?Q?1ej/P1ztb9BUybwPzv+yTKX+DWxFovfcXP95oCTGol6WGq+HwPKNPIBF5Fnh?=
+ =?us-ascii?Q?+PDrAEGmIfhy9G0P+q55/T6s4hocfd5ZBCp/QYdePZ8dews1LYNCmLj7rZcN?=
+ =?us-ascii?Q?Uzl/jGDVr8PeJtBFGtCG7UGQGs46ps+W643xQL7UoROnh4sQiV9sQ+w8jpw8?=
+ =?us-ascii?Q?wWLs5bqNGLAeAJdBXpMxVuVVFDsM9QctRdBI6NtcP4FQoZflzA2ueZcm6xlb?=
+ =?us-ascii?Q?5WKoeVxBFjYbXcVTdzyc8k+zCMzSNzDK8Roqp0egRKG4Krm+pL6VMQbirhwy?=
+ =?us-ascii?Q?VrD3ByYyoymppSlXTnD/79Gkkgy8oi5xsoAw1SIj?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 287ae8da-803f-40b0-b374-08ddfef46d82
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 01:06:32.2466
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fUG1sAI7/Myk4aZyya9aaSU3N0BgacoAHa+vkMMgUFHVdGHQ3ykVeec4m6wN/L6gv9O59kDrFgZ4uessnldEnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6220
 
-Introduce two new, non-kexec selftests to validate the state transition
-logic for individual LUO sessions, with a focus on the PREPARE, FREEZE,
-and CANCEL events. While other tests cover the full kexec lifecycle, it
-is critical to also test the internal per-session state machine's logic
-and rollback capabilities in isolation. These tests provide this focused
-coverage, ensuring the core session management ioctls behave as
-expected.
+On 2025-09-26 at 12:20 +1000, Alexandre Courbot <acourbot@nvidia.com> wrote...
+> On Thu Sep 25, 2025 at 3:32 PM JST, Alistair Popple wrote:
+> <snip>
+> >> > +    #[expect(unused)]
+> >> > +    pub(crate) fn receive_msg_from_gsp<M: GspMessageFromGsp, R>(
+> >> > +        &mut self,
+> >> > +        timeout: Delta,
+> >> > +        init: impl FnOnce(&M, SBuffer<core::array::IntoIter<&[u8], 2>>) -> Result<R>,
+> >> > +    ) -> Result<R> {
+> >> > +        let (driver_area, msg_header, slice_1) = wait_on(timeout, || {
+> >> > +            let driver_area = self.gsp_mem.driver_read_area();
+> >> > +            // TODO: find an alternative to as_flattened()
+> >> > +            #[allow(clippy::incompatible_msrv)]
+> >> > +            let (msg_header_slice, slice_1) = driver_area
+> >> > +                .0
+> >> > +                .as_flattened()
+> >> > +                .split_at(size_of::<GspMsgElement>());
+> >> > +
+> >> > +            // Can't fail because msg_slice will always be
+> >> > +            // size_of::<GspMsgElement>() bytes long by the above split.
+> >> > +            let msg_header = GspMsgElement::from_bytes(msg_header_slice).unwrap();
+> >> 
+> >> Any reason we're not just using unwrap_unchecked() here then?
+> >
+> > Because whilst my assertions about the code are currently correct if it ever
+> > changes I figured it would be better to explicitly panic than end up with
+> > undefined behaviour. Is there some other advantage to using unwrap_unchecked()?
+> > I can't imagine there'd be much of a performance difference.
+> 
+> Here I think we should just use the `?` operator. The function already
+> returns a `Result` so it would fit.
 
-The new test cases are:
-1. session_prepare_cancel_cycle:
-  - Verifies the fundamental NORMAL -> PREPARED -> NORMAL state
-    transition path.
-  - It creates a session, preserves a file, sends a per-session PREPARE
-    event, asserts the state is PREPARED, then sends a CANCEL event and
-    asserts the state has correctly returned to NORMAL.
+Actually note quite true - this is in a closure that must return `Option<_>`
+so returning `Result` doesn't fit. However it still fits because I just noticed
+`::from_bytes()` returns an `Option` so `?` will still work.
 
-2. session_freeze_cancel_cycle:
-  - Extends the first test by validating the more critical ... ->
-    FROZEN -> NORMAL rollback path.
-  - It follows the same steps but adds a FREEZE event after PREPARE,
-    asserting the session enters the FROZEN state.
-  - It then sends a CANCEL event, verifying that a session can be rolled
-    back even from this final pre-kexec state. This is essential for
-    robustly handling aborts.
+> I'd be willing to consider unwrapping is this can prevent an
+> obviously-unfallible method from having to return a `Result` - but here
+> this is not the case, and handling the error doesn't cost us more
+> than the `unwrap`, so let's do that.
 
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
----
- tools/testing/selftests/liveupdate/Makefile   |  9 ++-
- .../testing/selftests/liveupdate/liveupdate.c | 56 +++++++++++++++++++
- 2 files changed, 64 insertions(+), 1 deletion(-)
+Agreed. I assumed from_bytes() returned `Result<_>` which would not have worked
+rather than `Option<_>` which will though.
 
-diff --git a/tools/testing/selftests/liveupdate/Makefile b/tools/testing/selftests/liveupdate/Makefile
-index ffce73233149..25a6dec790bb 100644
---- a/tools/testing/selftests/liveupdate/Makefile
-+++ b/tools/testing/selftests/liveupdate/Makefile
-@@ -16,11 +16,18 @@ LUO_MANUAL_TESTS += luo_unreclaimed
- 
- TEST_FILES += do_kexec.sh
- 
--TEST_GEN_PROGS += liveupdate
-+LUO_MAIN_TESTS += liveupdate
- 
- # --- Automatic Rule Generation (Do not edit below) ---
- 
- TEST_GEN_PROGS_EXTENDED += $(LUO_MANUAL_TESTS)
-+TEST_GEN_PROGS := $(LUO_MAIN_TESTS)
-+
-+liveupdate_SOURCES := liveupdate.c $(LUO_SHARED_SRCS)
-+
-+$(OUTPUT)/liveupdate: $(liveupdate_SOURCES) $(LUO_SHARED_HDRS)
-+	$(call msg,LINK,,$@)
-+	$(Q)$(LINK.c) $^ $(LDLIBS) -o $@
- 
- # Define the full list of sources for each manual test.
- $(foreach test,$(LUO_MANUAL_TESTS), \
-diff --git a/tools/testing/selftests/liveupdate/liveupdate.c b/tools/testing/selftests/liveupdate/liveupdate.c
-index 7c0ceaac0283..804aa25ce5ae 100644
---- a/tools/testing/selftests/liveupdate/liveupdate.c
-+++ b/tools/testing/selftests/liveupdate/liveupdate.c
-@@ -17,6 +17,7 @@
- #include <sys/mman.h>
- 
- #include <linux/liveupdate.h>
-+#include "luo_test_utils.h"
- 
- #include "../kselftest.h"
- #include "../kselftest_harness.h"
-@@ -52,6 +53,16 @@ const char *const luo_state_str[] = {
- 	[LIVEUPDATE_STATE_UPDATED]  = "updated",
- };
- 
-+static int get_session_state(int session_fd)
-+{
-+	struct liveupdate_session_get_state arg = { .size = sizeof(arg) };
-+
-+	if (ioctl(session_fd, LIVEUPDATE_SESSION_GET_STATE, &arg) < 0)
-+		return -errno;
-+
-+	return arg.state;
-+}
-+
- static int run_luo_selftest_cmd(int fd_dbg, __u64 cmd_code,
- 				struct luo_arg_subsystem *subsys_arg)
- {
-@@ -345,4 +356,49 @@ TEST_F(subsystem, prepare_fail)
- 		ASSERT_EQ(0, unregister_subsystem(self->fd_dbg, &self->si[i]));
- }
- 
-+TEST_F(state, session_freeze_cancel_cycle)
-+{
-+	int session_fd;
-+	const char *session_name = "freeze_cancel_session";
-+	const int memfd_token = 5678;
-+
-+	session_fd = luo_create_session(self->fd, session_name);
-+	ASSERT_GE(session_fd, 0);
-+
-+	ASSERT_EQ(0, create_and_preserve_memfd(session_fd, memfd_token,
-+					       "freeze test data"));
-+
-+	ASSERT_EQ(0, luo_set_session_event(session_fd, LIVEUPDATE_PREPARE));
-+	ASSERT_EQ(get_session_state(session_fd), LIVEUPDATE_STATE_PREPARED);
-+
-+	ASSERT_EQ(0, luo_set_session_event(session_fd, LIVEUPDATE_FREEZE));
-+	ASSERT_EQ(get_session_state(session_fd), LIVEUPDATE_STATE_FROZEN);
-+
-+	ASSERT_EQ(0, luo_set_session_event(session_fd, LIVEUPDATE_CANCEL));
-+	ASSERT_EQ(get_session_state(session_fd), LIVEUPDATE_STATE_NORMAL);
-+
-+	close(session_fd);
-+}
-+
-+TEST_F(state, session_prepare_cancel_cycle)
-+{
-+	const char *session_name = "prepare_cancel_session";
-+	const int memfd_token = 1234;
-+	int session_fd;
-+
-+	session_fd = luo_create_session(self->fd, session_name);
-+	ASSERT_GE(session_fd, 0);
-+
-+	ASSERT_EQ(0, create_and_preserve_memfd(session_fd, memfd_token,
-+					       "prepare test data"));
-+
-+	ASSERT_EQ(0, luo_set_session_event(session_fd, LIVEUPDATE_PREPARE));
-+	ASSERT_EQ(get_session_state(session_fd), LIVEUPDATE_STATE_PREPARED);
-+
-+	ASSERT_EQ(0, luo_set_session_event(session_fd, LIVEUPDATE_CANCEL));
-+	ASSERT_EQ(get_session_state(session_fd), LIVEUPDATE_STATE_NORMAL);
-+
-+	close(session_fd);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.51.0.536.g15c5d4f767-goog
+> <snip>
+> >> > +impl GspRpcHeader {
+> >> > +    pub(crate) fn new(cmd_size: u32, function: u32) -> Self {
+> >> > +        Self {
+> >> > +            // TODO: magic number
+> >> > +            header_version: 0x03000000,
+> >> > +            signature: bindings::NV_VGPU_MSG_SIGNATURE_VALID,
+> >> > +            function,
+> >> > +            // TODO: overflow check?
+> >> > +            length: size_of::<Self>() as u32 + cmd_size,
+> >> 
+> >> (just curious, do you mean overflow as in arith overflow or overflow as in
+> >> going past the boundaries of the header?)
+> >
+> > Actually this snuck in from some of Alex's suggested code improvements (I had
+> > intended to credit him in the commit message! Will fix that) so maybe he can
+> > answer what he had in mind? I assumed arith overflow but maybe he meant ring
+> > buffer overflow or something.
+> 
+> I was thinking about arithmetic overflow, but maybe that was just
+> overthinking. :) We're probably not going to send a 4 GB payload anytime
+> soon...
 
+Lets hope not :) I guess we might want `checked_add()` to panic if we've gone
+insane though so have done that.
 
