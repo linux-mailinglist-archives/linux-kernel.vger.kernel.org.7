@@ -1,142 +1,215 @@
-Return-Path: <linux-kernel+bounces-836245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B7FBA9162
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:43:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC909BA9180
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BE143BDBD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF011883D13
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E486302CD0;
-	Mon, 29 Sep 2025 11:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97194301706;
+	Mon, 29 Sep 2025 11:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoJfOfi8"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCe9OK88"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A734F302771
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539C83016EE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759146187; cv=none; b=lNAnSP5kUFqrYSTM41UVArNeEulk6DJytGKfosXBFzJ3AlY5jeFqDCvlHdWpKXFlwj7HmFgc61/eLbEA3r17HRhx8Ygz4Zu7UqlgpdqQ23lNURlqGfUiWfH+2q9OHbqH8kZR4S1iw72Be9KKcKhhLqCKDVuC30dn/iiJw07lcaA=
+	t=1759146290; cv=none; b=iDmIFE6+EgA/0c++jZ4Jo1IurSNhnAsuBznKjEStJKYN0cEw/hyMfMEm5dn9Q3nXwOYMfMagMEuKnmTBOjdQTPWAX4ji/+0udJnYdlSRJmkb8t/gguL4BoRYOCZciHCGF/uyG5Rfz7xLVQ17Vzj3OMiyoctDy7Flk2973AdFe7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759146187; c=relaxed/simple;
-	bh=v33lLHmNhHgyven3UnpSjmdXiGRlpTjR/b+1VSj7xaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TlqJUMy/goJ2J2YkbgNi3WxoP897Oi4y8IZNyUJMjsRs07pNO6pCTkc2g+QmK8ufavds+hYdwlb85tg/0eV7H1x9f6Xd1zjvOZS/w6Emi57MouimQlcNtvd/hbnyFovgJ1UOexkUKTfJmErhd++uNJyuu72/YXZ5NR8HE4QI45Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoJfOfi8; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1759146290; c=relaxed/simple;
+	bh=zVeuPbzY0FhptkGJ1a9ugn6FeUWvhdVRR3UeMZVNM5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KI+ztulVGacre+o9zy0y6ulTrqonfm+dBK8sCCMkg54zFDQxtn7vFcUa/jsP/pM2knA+9iqQQCEl8kXTImrwIZiMLPX4JemfX4jTBYYGnU+g3WvqvWCNtK+WklwkECurHmlSgfMIFZci8zDTPlITsuib+oDYmiKL0cvpq2jeCds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCe9OK88; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-634bc2d6137so5737107a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:43:05 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2698d47e776so39273635ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759146184; x=1759750984; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6mbjVJui29v4n+pWGfvI7ZRvpZGP8q8p7zkZRQub17I=;
-        b=aoJfOfi8xfPNJk0hBDIrjzDXeXowAdw5sjRFlccBeOMS6dTKvs53AMfUej8RZzFc0E
-         0WNSQS0ovZ483/HZCfkiG4wP/KPs3Hl1HLF1D70JymNVEHnequtAe+l7q70nTBknn4XJ
-         ivd9BAOydC7UjQRrTZU6zw7pL8REKVwj8FmKwGeoKsAf0rZXsVqL0NvAZi3jhb8aBGSd
-         tF+RUbWHIFbe5kG+27TCEI7hAWipHWOT+uPcbyx1Ma9uz1JWcaB2lJFlWS7UnCpjCpvb
-         CgfKrihbA8kd+UzJX1tqa+Q5iydzbN+lj3e45gz9z8M2gdoH06MsnnoplvHMlYyRc+7u
-         cxuw==
+        d=gmail.com; s=20230601; t=1759146288; x=1759751088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UE/feaxoks8wdjZ8La5T0ON+317bxNw12dhG09tCwTc=;
+        b=HCe9OK88tWoL7BAupTEpUMqBhuQVbh/3XBDS8FUICkxOY+co66yYrtA1VGldSQHr2a
+         UAu2k2QZvVtLin6J5iPXJgIg1qqE3nhbyU0XTO/k6zQx5eUhkei+VNOy2K+O7CnlaekO
+         nu1A2vWfo56yn5M4U1tnIOACK3eYbMwkV5pzHNOyy8lgVXX9vLpwB0VIzl4gkTtv4khl
+         lfYXBbus+MvxJrT3jRbPWb+cTTY+Hoq6I88HkwMkm1/7jiT5NmFTGfjijQdAOuUmqnGQ
+         NA+8zjJPIKgfYwV+FgGTcTjQSzylKoJnnydx/Lqp33VakE7GayLynsFE/A+Ea+LvVzLP
+         hdcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759146184; x=1759750984;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6mbjVJui29v4n+pWGfvI7ZRvpZGP8q8p7zkZRQub17I=;
-        b=hYOgKZ9+M1XRo3BXuWBRjaww7+nEVgEzMlFC4W/ERILKxcFp7KN4inIS+K3CqSS8T0
-         3S5Ac2Gf6PFK9a0Ou8jXjswR4mNNSOxYvn/izh4tIbs8CiBIIzRoY/2q8cKu/nRsSidW
-         PJ9FEoLPu7gwOjI4ns2qVc1sfT3QlWkUU9S1YdAApJhbZgADsxQq9DKg6ezJaPW8vDzI
-         2AkzeveK1vxalAPFJXcPhLEQT2Uy7pRXXfa8PxFyymGmmIVVkpPQ6ZfG/BLbJYGKmGie
-         nqDslewN6x/lvSB6FTN8mZvXGqr/En82cQzV+wJvNiZikM57ULvB49ruzYaobFOSzjjj
-         5Nwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyWh4Kg5Y2iwIO8sY3hjij3s/vSmkf02b9jjIL89w8xh5XQM58G2a1HDs3BGjXKEk1aHZOBzreamaHCsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX0jQSPB2xRq0nWPIeUg0HJbtGq3CpkxZNgj3PorvpdTK18oJL
-	AlIkBr485v+p9UBd3bCZTECPZ4WNV8MpHVJzfaSK+cA/5DKkLCkICRQE
-X-Gm-Gg: ASbGnctXaVC0cKE/Q/Zcyszp+Iq8RpmN6/zzdY++zhYFT7y+vF+tnd0hrX7gAQ9E+WD
-	WPZeL8WZDsHGtEpDmfKOHTpv05Fg+jaFaS6avRxW9UiR3L9NfBnHVlL3ipFnrI7cUoEIyxUau55
-	wgeRK/IMOAWRIIxp8Si8Q+VuVOiC/zexcLALaBvotmcqZYYRlLzSeu0k6vRn+OMqFC2eUghW/yA
-	Bq2pjZhyM8YCx0/kwj8UjDTWz4MucwuCIF9uxZdiI2jsYtx4Pxu1M0llwtEt1S6S5RJlzz3TQgz
-	eFttajMq1ZjjIxAaxOsVhR4gdHQZ6cQO72GuuHLRZoKX/ANsNFRj7w560etLWm433KHFDww6NGg
-	eTVDWTS6CNmnZ1ft9fhtFirqdTGfe+2ghya9d
-X-Google-Smtp-Source: AGHT+IHpSaj2SVniGIDju9aHpbyUh48ii8/cQ5YSVvAGh2d+K7m0MNGtY13FQ+XBP5NLGndaXCuTRQ==
-X-Received: by 2002:a05:6402:504b:b0:62f:cc4b:7b53 with SMTP id 4fb4d7f45d1cf-6349fa932c5mr14065525a12.37.1759146183418;
-        Mon, 29 Sep 2025 04:43:03 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3ae3080sm7873345a12.34.2025.09.29.04.43.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Sep 2025 04:43:02 -0700 (PDT)
-Date: Mon, 29 Sep 2025 11:43:02 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Jianyun Gao <jianyungao89@gmail.com>
-Cc: dev.jain@arm.com, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
-	baohua@kernel.org, bhe@redhat.com, chengming.zhou@linux.dev,
-	chrisl@kernel.org, cl@gentwo.org, damon@lists.linux.dev,
-	david@redhat.com, dvyukov@google.com, elver@google.com,
-	glider@google.com, harry.yoo@oracle.com, jannh@google.com,
-	jgg@ziepe.ca, jhubbard@nvidia.com, kasan-dev@googlegroups.com,
-	kasong@tencent.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, mhocko@suse.com,
-	nphamcs@gmail.com, peterx@redhat.com, pfalcato@suse.de,
-	rientjes@google.com, roman.gushchin@linux.dev, rppt@kernel.org,
-	shikemeng@huaweicloud.com, sj@kernel.org, surenb@google.com,
-	vbabka@suse.cz, xu.xin16@zte.com.cn
-Subject: Re: [PATCH v2] mm: Fix some typos in mm module
-Message-ID: <20250929114302.eshtdbqkjiuflsib@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <3c3f9032-18ac-4229-b010-b8b95a11d2a4@arm.com>
- <20250929002608.1633825-1-jianyungao89@gmail.com>
+        d=1e100.net; s=20230601; t=1759146289; x=1759751089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UE/feaxoks8wdjZ8La5T0ON+317bxNw12dhG09tCwTc=;
+        b=Ypy0ovuhltWh36kzU0an6VSsylWyxnpsRzwt1E+rIbjh+LXi0BrK/T/86NnYmWTBUg
+         0BYravn0h8GyOcnitxTewY4zw3K8fahWxp5EgWsDQ1Zg095i2U86TxITkdZJKEywmWhc
+         3BUzR3sBrFIcpQ/KLwwBCKuXmNsIgy6oqNMGiFC1L/hSa9+RNzoniWXXKiyRcZMScIhq
+         OgZiazUw1zP69XWLK7rorTJ7h+ImrGPrHDAyFq/lgmu0naMcZwRuaOG7Q0SByFQMK2mH
+         1tUf4D01q6GyV7eD6ZgxomZxOEbFEEOEslfb6PoDC7h8Jh3ztFXwoxlr/TEi+fZ0dpIO
+         cHMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAWhOsX/hHTsjwgDbh8t7mltK+6RNTAYMSTnU9s4tNXmbP0xMx03UESpeFuLxJeXDZXnkGZG60B8SgCVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxTqE2duPer9MKYdb1qjNSDu1lCnfhAmXk9PfEirS0cuRqA90K
+	z4yueCaqOYKDV/gbkiGfL8CH6ilkane19H5mIHrZZqHTyIJER1f6cKjW
+X-Gm-Gg: ASbGnctuOp0REekjOcchOKwMT4KmHTFWT1j+fVqDrgPgNJgTRcSLwBSmgRELuc1F8EG
+	4iEEcWn5Sf6o5Z8LHIQCZQ7pko8gyTypq9WCJa5W/af2oHCe+AjM5zVCN2mPanTyUoooCTDO5cX
+	moGnfZ0GlCIzAFHRVTa2QwsLtxSkDLWAld8byGWr7bPHByl/rB3fp/dnWJeFNKAuUoolR4SqGvE
+	JdpennExF2l9ofjqU2x/ZHiD+HDiyIOZUD8aMdDHsZ2WmKlZMwEHQ1QKW2Lc0vcPgSScbX66DQM
+	qBfa04UgUmwViEYC5kXBKaHNaf31PeOV8NrcRukv5Fny85qAtuWiyYKdlHHPd4czxi/MJLEPSIe
+	G56PK1XmZ5Jj0khJB86aVASKmPbl3
+X-Google-Smtp-Source: AGHT+IFW39IV8MsCUWVxnyhwFPfmeS+3uE+Tr6I8ZPuadQnx51A6z7az29U8lVTzrBDUQwr69a76wg==
+X-Received: by 2002:a17:902:ec89:b0:27e:f06b:ae31 with SMTP id d9443c01a7336-27ef06bb0b8mr124136985ad.61.1759146288506;
+        Mon, 29 Sep 2025 04:44:48 -0700 (PDT)
+Received: from y740.local ([2401:4900:1f30:25ff:36cb:10ee:ba03:839f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed672a51fsm129475495ad.63.2025.09.29.04.44.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 04:44:48 -0700 (PDT)
+From: Sidharth Seela <sidharthseela@gmail.com>
+To: antonio@openvpn.net,
+	sd@queasysnail.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org,
+	willemdebruijn.kernel@gmail.com,
+	kernelxing@tencent.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Sidharth Seela <sidharthseela@gmail.com>
+Subject: [PATCH] selftest:net: Fix uninit pointers and return values
+Date: Mon, 29 Sep 2025 17:13:57 +0530
+Message-ID: <20250929114356.25261-2-sidharthseela@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929002608.1633825-1-jianyungao89@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 08:26:08AM +0800, Jianyun Gao wrote:
->From: "jianyun.gao" <jianyungao89@gmail.com>
->
->Below are some typos in the code comments:
->
->  intevals ==> intervals
->  addesses ==> addresses
->  unavaliable ==> unavailable
->  facor ==> factor
->  droping ==> dropping
->  exlusive ==> exclusive
->  decription ==> description
->  confict ==> conflict
->  desriptions ==> descriptions
->  otherwize ==> otherwise
->  vlaue ==> value
->  cheching ==> checking
->  exisitng ==> existing
->  modifed ==> modified
->  differenciate ==> differentiate
->  refernece ==> reference
->  permissons ==> permissions
->  indepdenent ==> independent
->  spliting ==> splitting
->
->Just fix it.
->
->Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
+Fix uninitialized character pointers, and functions that return
+undefined values. These issues were caught by running clang using LLVM=1
+option; and are as follows:
+--
+ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+ 1587 |         if (!sock) {
+      |             ^~~~~
+ovpn-cli.c:1635:9: note: uninitialized use occurs here
+ 1635 |         return ret;
+      |                ^~~
+ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+ 1587 |         if (!sock) {
+      |         ^~~~~~~~~~~~
+ 1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1589 |                 goto err_free;
+      |                 ~~~~~~~~~~~~~~
+ 1590 |         }
+      |         ~
+ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+ 1584 |         int mcid, ret;
+      |                      ^
+      |                       = 0
+ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+ 2107 |         case CMD_INVALID:
+      |              ^~~~~~~~~~~
+ovpn-cli.c:2111:9: note: uninitialized use occurs here
+ 2111 |         return ret;
+      |                ^~~
+ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+ 1939 |         int n, ret;
+      |                   ^
+      |
+--
+txtimestamp.c:240:2: warning: variable 'tsname' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
+  240 |         default:
+      |         ^~~~~~~
+txtimestamp.c:244:20: note: uninitialized use occurs here
+  244 |         __print_timestamp(tsname, &tss->ts[0], tskey, payload_len);
+      |                           ^~~~~~
+txtimestamp.c:220:20: note: initialize the variable 'tsname' to silence this warning
+  220 |         const char *tsname;
+      |                           ^
+      |                            = NULL
+--
+so_txtime.c:210:3: warning: variable 'reason' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
+  210 |                 default:
+      |                 ^~~~~~~
+so_txtime.c:219:27: note: uninitialized use occurs here
+  219 |                         data[ret - 1], tstamp, reason);
+      |                                                ^~~~~~
+so_txtime.c:177:21: note: initialize the variable 'reason' to silence this warning
+  177 |                 const char *reason;
+      |                                   ^
+      |
+--
 
-LGTM
+Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+---
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-
+diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+index 9201f2905f2c..20d00378f34a 100644
+--- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
++++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+@@ -1581,7 +1581,7 @@ static int ovpn_listen_mcast(void)
+ {
+ 	struct nl_sock *sock;
+ 	struct nl_cb *cb;
+-	int mcid, ret;
++	int mcid, ret = -1;
+ 
+ 	sock = nl_socket_alloc();
+ 	if (!sock) {
+@@ -1936,7 +1936,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+ {
+ 	char peer_id[10], vpnip[INET6_ADDRSTRLEN], laddr[128], lport[10];
+ 	char raddr[128], rport[10];
+-	int n, ret;
++	int n, ret = -1;
+ 	FILE *fp;
+ 
+ 	switch (ovpn->cmd) {
+diff --git a/tools/testing/selftests/net/so_txtime.c b/tools/testing/selftests/net/so_txtime.c
+index 8457b7ccbc09..b76df1efc2ef 100644
+--- a/tools/testing/selftests/net/so_txtime.c
++++ b/tools/testing/selftests/net/so_txtime.c
+@@ -174,7 +174,7 @@ static int do_recv_errqueue_timeout(int fdt)
+ 	msg.msg_controllen = sizeof(control);
+ 
+ 	while (1) {
+-		const char *reason;
++		const char *reason = NULL;
+ 
+ 		ret = recvmsg(fdt, &msg, MSG_ERRQUEUE);
+ 		if (ret == -1 && errno == EAGAIN)
+diff --git a/tools/testing/selftests/net/txtimestamp.c b/tools/testing/selftests/net/txtimestamp.c
+index dae91eb97d69..bcc14688661d 100644
+--- a/tools/testing/selftests/net/txtimestamp.c
++++ b/tools/testing/selftests/net/txtimestamp.c
+@@ -217,7 +217,7 @@ static void print_timestamp_usr(void)
+ static void print_timestamp(struct scm_timestamping *tss, int tstype,
+ 			    int tskey, int payload_len)
+ {
+-	const char *tsname;
++	const char *tsname = NULL;
+ 
+ 	validate_key(tskey, tstype);
+ 
 -- 
-Wei Yang
-Help you, Help me
+2.47.3
+
 
