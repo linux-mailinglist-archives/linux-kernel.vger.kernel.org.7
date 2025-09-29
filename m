@@ -1,307 +1,181 @@
-Return-Path: <linux-kernel+bounces-836152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75527BA8E19
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:22:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCE0BA8E15
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F791C1E64
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F3C3B07F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC132FB991;
-	Mon, 29 Sep 2025 10:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD842FB99F;
+	Mon, 29 Sep 2025 10:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="F/D6SSCs"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012069.outbound.protection.outlook.com [52.101.43.69])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YtMQXGic"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBFC28643B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759141359; cv=fail; b=KrtStTeKiiaxRL1P/R/q/gDVszJQDilERgqvUqxypDApcSXwSPG9HDfma2OVl/TFQeB4dQBeZ5INUMnx1ID+iyvnVQxlKKyhqrTv+7lRHyT9s2OVApUQSwEm1WahirHghBjIcHtjivcuRDeYvLrVPsnvl03wQOShtWDRD7cXPhY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759141359; c=relaxed/simple;
-	bh=80MXRgAhjR8AT6oKLGud8fpZf4IDl5f6BRB0jurAbRo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VVg+KzMyAFPSzbx5juk1i1VDx+LCus0KmGp5oo1GpNBRJlavLIfcyqy4Go2ja3TpiRohXFLTBkbr7TuW4UwJ/Up9iMVhrjcudjNCaHieelzy/GJHBXPg1CJOvp10/Gjxk4fOU9ZF+J8Hj4GKP5/ulEa/dUTl2YdKyXQN7bbEX9I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=F/D6SSCs; arc=fail smtp.client-ip=52.101.43.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t4ABYCu2AjA6ZlIpbIhWVlIcNEVz1tIecrVVzW/pZWhL8tq26F/NKKDfXYUsX+D5DejW8xDHw70NsQoEeYFp/8sjHz/RF49TWmZO+rjAPVqKEvqcw8Iq/f4Y2euG520AB3y4df0DAA9CFC/7LnK4jYnch09Jm/bniq9UXk6e22BZKyHxNWj/yqLZgACZ4Y/bA0fmrlGsLw8THPVhkFw+46ASRmZHFeOI4jLa8TuXwWVbGPmAv9XzRLAlgh8PTRmqHlN+pDv+kSyd63mFUsWKVdN0iTLXOp0FHE1Nah1OGHDVfYUW/8JVCD96u+31Fy0579mJJnAUy3HqHONt0KtbhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=On5XoIlnjigbhQXKfXcwL9US76nOY7n3KMeRSMs/TVM=;
- b=pQQlXi5g+0rSIrQzeKH9lx1SCkQkYl7ZEOtBaFfknnYGxrakm3PT7G+J3KHUwqYxudGOy82btwaBJrLcyRhzsoFC0P8AzrU2m+mqbBtNgR9/NFAoAZIitQ/NQUoWR+vdPxPdXC4GmcxtrudblBulKEWFjlHnp/djvYm8vtWFWfHTMa72lo1PfIzKGW/WezexQcHEcjFfucqFq4DjJWflwT/uxPkilWzGtk0nN4+E7jTmenTON+jnsU+tlj7D/S1omyZxLo388klsgBbdrfgy9J+bq7vxFfdiqSN62oqR1Ah+tbhaPUIAkGwIKWdUaPGTJmD29tLfVVgyK7SG0djxug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=On5XoIlnjigbhQXKfXcwL9US76nOY7n3KMeRSMs/TVM=;
- b=F/D6SSCsR42xh5kPSPst5PA2u62Yq7787Bo0UovVroq78jZ4FhUXIEoomCGcyenvCwwTwy2DInh/zbExFcjYZkn8QJAmneEWUc/OiHaNykGjZ5S0B2J6HHWQ5IJa2wyPRqEGYwiF4kzPTEGYY2D4zlmumNJQZlJMzacYYShDnD0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
- by IA0PR12MB8863.namprd12.prod.outlook.com (2603:10b6:208:488::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
- 2025 10:22:33 +0000
-Received: from CO6PR12MB5427.namprd12.prod.outlook.com
- ([fe80::9e93:67dd:49ac:bc14]) by CO6PR12MB5427.namprd12.prod.outlook.com
- ([fe80::9e93:67dd:49ac:bc14%6]) with mapi id 15.20.9160.008; Mon, 29 Sep 2025
- 10:22:33 +0000
-Message-ID: <450dcc7b-e53d-4059-b340-aafc3317c1f7@amd.com>
-Date: Mon, 29 Sep 2025 06:22:05 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/20] Introduce support for post-blend color
- pipeline
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>
-Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
- leo.liu@amd.com, ville.syrjala@linux.intel.com,
- pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com,
- jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com,
- agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
- xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com,
- quic_naseer@quicinc.com, quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com,
- marcan@marcan.st, Liviu.Dudau@arm.com, sashamcintosh@google.com,
- chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com,
- mcanal@igalia.com, kernel@collabora.com, daniels@collabora.com,
- leandro.ribeiro@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
-References: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
-Content-Language: en-US
-From: Harry Wentland <harry.wentland@amd.com>
-In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1PR10CA0104.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:803:28::33) To CO6PR12MB5427.namprd12.prod.outlook.com
- (2603:10b6:5:358::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53762F99B5
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759141339; cv=none; b=jhVnBbb8AOs0Wbhw2r+WZ35TraJLswkVDnCyCCbZeZhnBAA1DYjxhzBnTwx/lULfDwnOzyZKYJUHzpVUVZrKSOacUEdtpwVSnmLGkBT21exg3Pc97CKypgBjP4IH1wmxZ2ZzBJB5luUyg/hF8cvidmRmc6Qmr2ZB5SCq80rvRQE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759141339; c=relaxed/simple;
+	bh=YJjG7q3oPFCJAUZOA6f3h4dExpYvsQPN2rafoNzBl5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kMuXTpGDJluy7f9MUfr+hrjXldCDANaFUzflhOMBY+UNSWVZ4G02pLP+hHdA0bQAHnO3JxnkDsOMLig8RnU/yIQtOpzOJiemQ4dRvovWvZIMEYxVUZa5zAStfqznd4zRSb+r6XAb4WXPMQbX68Xd9RmlWzujYihdgr4MrkAn5hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YtMQXGic; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759141336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gTfF/9tS74v6KOk7XL7uKXLPFCkMs1I/RkhQW/KFaXg=;
+	b=YtMQXGic0zcUWMy5w9ZygH5nzY6ZG086HjQAYfVmgpA12ON/Xy+ilCouQJSLVwwePXchSn
+	iZsGmkmo/jxjJoC64g7hJjNReKkcuPnw9774t61JPqIyh2w4h53jB0kZE+F9K5JC5u9lCM
+	8BDgormXZocdyBSq65uvs9VRVwhPAD4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-wIsvcuDUNneXwx4DHJdCqQ-1; Mon, 29 Sep 2025 06:22:15 -0400
+X-MC-Unique: wIsvcuDUNneXwx4DHJdCqQ-1
+X-Mimecast-MFC-AGG-ID: wIsvcuDUNneXwx4DHJdCqQ_1759141334
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e44b9779eso12429495e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:22:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759141334; x=1759746134;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gTfF/9tS74v6KOk7XL7uKXLPFCkMs1I/RkhQW/KFaXg=;
+        b=FqFkNyf0AIybaB4v4AsQgnHQzDj795ExqlkGl4GSCkjUmv48TpFQt0e7E6Zaui0LsG
+         8EuitFWqAXUpXWZsh/z7x008jUNBuregDM9juZA2+Am4YLea78+IemV+JXJYHoQILokH
+         PQOzuMSTaCPkR2EV9VOiESHX8d0jb8ww9ubzgHTmslGub0ftBODX68jKA1YP+mIkqZUC
+         faYD9I9TPrxW7zXk/YhRE5+jj/t/92k8PAJpMngxcvWAoTGkvEGDLm/Wr4yK8HNQvii3
+         mTIHgiSW3/77X5QOL0p1p3+whZ9h7ZHA+r+84TMkNWDlTkegK5MYLp3+c9g1V0YNcqW+
+         ARuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXc3gWUquVGUd/fsR7Tsm9iSkpjmvelnMtCtyEn1qCJyy748dZnfc5R9lP/vwbOTpKuFWZc4Cw9XHaCPZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl0fpn3OWGZWOeX+d3CXV8nWDYDt5eIiIFHG25emEvgjDEGt+4
+	3i4iMjkse599cQO4IptvmyHcR1gXmLX2KRUOQCOibG0UTSR0MULpGZPpH1i/bQlnJmgWcI+U2Ef
+	CkXRI7BzY6cs9xb+GFeBcYE3SNL5L4FgiLiVS/UwnImJO35+yk202ZGScXzV6xQJnoA==
+X-Gm-Gg: ASbGncur0x/9nAiH8B7o/FTqrSogkethvBHybOeepFOGp7dZ2G3uYvvbT2u2MyrHuMF
+	UEzxy6cq33WoXuru5KNM6Rb7BWODU/dBztLIzfTfnusdHq2zC6QWcTs8LAk0PP/jBBHyhHvjywH
+	tgnxTgyLkLS/Keuarv9+WW0pFe2vQZ5Ae6olvugM8x98OVcnJMzonT1VXHJVTOszjtD6P1QK3r5
+	MlmZx+6GJ+eK/TRllIBape36DHuw+y2w0hxmxR96JgvU9OWkPD7iJAePUzwH7yCS64SOg0RQoB2
+	VL8jTZ4z7NdGzzmoAA2xhLcdxZ7FUFtuFUcXihG8B+WtSZRhpqbda0e6FTfR2SXplkYAm6Kr
+X-Received: by 2002:a05:600c:1e85:b0:45d:d5df:ab2d with SMTP id 5b1f17b1804b1-46e32a03456mr153455625e9.26.1759141334042;
+        Mon, 29 Sep 2025 03:22:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcPTC0WN8sznaK2VhvNvPmXdMZ5tY9SOo2+KWlJ8c8Cfvq/5YcnNrrC/JndZbTtN7rU24FIw==
+X-Received: by 2002:a05:600c:1e85:b0:45d:d5df:ab2d with SMTP id 5b1f17b1804b1-46e32a03456mr153455355e9.26.1759141333625;
+        Mon, 29 Sep 2025 03:22:13 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff1fa94.dip0.t-ipconnect.de. [79.241.250.148])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb985e080sm17624009f8f.24.2025.09.29.03.22.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 03:22:13 -0700 (PDT)
+Message-ID: <d2fa49af-112b-4de9-8c03-5f38618b1e57@redhat.com>
+Date: Mon, 29 Sep 2025 12:22:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|IA0PR12MB8863:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbdc5e9b-c9fd-4bef-e034-08ddff421a2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|7416014|376014|1800799024|366016|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MnhHNkhXR0M2VG4zc0ZUdWlZaFNXanFsMGZiUnVDTEg1WGxJa3ZtSFlWTlQ0?=
- =?utf-8?B?NU5tQzNpVzNNOXZOcjV1T1liNm45WTFsdkZtSWltNVJXaElaaDNJSHlSckcz?=
- =?utf-8?B?dUNSQUFYWWRZVElYMWpTSGZKdVFLT3FTSDRTRG1QNkJEaGo4L1hBcit3ZEVU?=
- =?utf-8?B?YWZvSXg1SmU1U2dmUjRNRDhGTE5Xbk4zS0Z0WExTTllldko5Uml5d05FY3Ju?=
- =?utf-8?B?YS9UeGRWRWZoamJKRnZsemtFSjZvSHZ1SXg3V3NjbnRkTnJDLytXMGJBaHJB?=
- =?utf-8?B?V3RzeDd1MStwck1hSktQS3lZQ2VYWXFmWUNSekFuYVpmWHZpWDRabjFwTlRa?=
- =?utf-8?B?OUl6Ui8yV1ZZalltb3M4TUxlSEdQR3d6UnY4c0paRU9rcGlXdWtoeGJXNFgr?=
- =?utf-8?B?blFBb01UZitzbDBjVHJZVFBMdllmdE94UXJkQ3FVVVIwVjFhZkZZb2pob3ZO?=
- =?utf-8?B?VDNsWTMxN0ZYMGFMRkFuNnphNUQzckM2US9uSEljL1RZUE9tQXRCOG54aFo1?=
- =?utf-8?B?V29MQTZLT09vemI5ei9jcmNRb2dzUWxRQlljdnFlbE5peWpLdXNjRDdqY3NM?=
- =?utf-8?B?OEFzKzE3QTZKNEFVd1MxTFFnL2g2bHpYT1lMUGxSaWx2akVoWE1VamhlNVA3?=
- =?utf-8?B?SEw2cTl1cURBMjFneTZKVVFMMitGT0Q2RXVlSnVRSUZJZ3ptRHArNlQ5M3Iz?=
- =?utf-8?B?YjcxcWVxYm1uTURZSFo3T010RExnWkxMaDlRblo4STdUUFR4MFRZaVJoT0ty?=
- =?utf-8?B?aXcybEJLdWxKTTVva2IvU2tkeDVCdG8wK1VKMU5hckI0SUVYaUpHbTgyaXBH?=
- =?utf-8?B?WEhYRXN6ajRDRXZvU1NrcWs0RXFpYlcvNXJwQWVTNU5QcjRqY0lPdVoxL2xR?=
- =?utf-8?B?QnUzNUZIK2RiQUxvR2ZqbHhlaWFMKzhSMUdxWnQ2cU01N0lrejFQdHlxc3Zu?=
- =?utf-8?B?ZGYva0YyaU1SS3IvcW5TVnlzNjF1TzByT0t1MG9ocU9uampPVEwrcUlMMi9E?=
- =?utf-8?B?R0Y1ODdQODhDT016NWoyVVNRZzd5Y05GUVVKb3Qxc1FXVmxFYVE1ajFYeEhN?=
- =?utf-8?B?Snk3dVdleXErK0NZbEVNTVpEZlF5TmR2N2tNR2FhZ09uTWFMQzEwcDdxSlBM?=
- =?utf-8?B?dXhaL2RqOXZwRDMvaFFYM1RxdHNzbEFDK3RCWWs0c2t4aWEzT0pzcjVUS3V3?=
- =?utf-8?B?OHQ2c2tLeVlXa212a2FJU3phRXRxSFZwOER3bTVrbWxpWnFiaFRLamxYV3FN?=
- =?utf-8?B?U2hNM0g3SUhqei9kbjRKY1RQd1IvcWJINEZncDh5bFZYcDJFSHF4OXdoM3lY?=
- =?utf-8?B?SkNrM21oMWRoN25WaFFRUllSTTRIcDlUZS9vQ2dQaG9PcHJUdEVpdW04V3VO?=
- =?utf-8?B?SHFRbGZNYUJ1S3ZjbGpPUlpxZTIvMW5KdWpVT2ZiVHE2bWNMQ1FzV2t4SUVM?=
- =?utf-8?B?NXhWbWs1cTNCZUl1K3VsN2UwK0RLdVFIOTIrV2ZrcVd4U2lKUDJ2TW43emli?=
- =?utf-8?B?SkJmU212ZkVXMTR4M0dLUE9GYk5EUXlCQUZIYm5GR215VmZVOXRRblJ2U0VH?=
- =?utf-8?B?TXhncXBPWEFrN3N1U2pVRXhFVTR0NUhKV1FGRHc1OHk1WXBJOTFtRjluak1a?=
- =?utf-8?B?QWxMREx3a3ExY2Z6RVJGMW1zbTVoUVlXOVI0VERYOFk3bDJybHcyRVpMQThE?=
- =?utf-8?B?cTBYNXlTTjhGMWduVGlManZBQ25rUHJScFpNMVUzMjlCelk4a09saGZsbVpU?=
- =?utf-8?B?VHJFNDBzMi9rRXNmeDFmUjBUL3pOdTVEMUx2M1VIcm1rZytmK2IrR0ZPc1Nh?=
- =?utf-8?B?bzltb3U5SWtYSUdJY2xxekhWS090VGkxOWJiaFZWSCtZUlRJLzU0SExLOUky?=
- =?utf-8?B?ODBZMXZnVEVpNkd4dHlOSmt6U3hLQSswbEx4ZnFxcFgySTNlNE1XY3JIY0ht?=
- =?utf-8?B?UFVhMDYzcmFxZjRXN2ZacUpraFlyUXhnRnZVeUs5eHB5dkI2aFV5cWpNR1F4?=
- =?utf-8?B?M095MEd2Um9nPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(1800799024)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZG5BK0xidjRUSnorMHdJc3F5bTNRWEFicXN4NHg0YTBCUFVEUDY1L01xRWtv?=
- =?utf-8?B?K2RwQlF0K1VnQ25SM3l2NkNlWmpydUdEMFNnOXl0cTVaNWlEdndpbUgvSzMv?=
- =?utf-8?B?bkZjYTMydzNWRnNrWnJLSG9HZUV5NER6Wjl3cmpvYXEvMkJVSFFKT2VIbUpo?=
- =?utf-8?B?Z3BPWUtJZjl2M05MeExuOXVtQWZ2QSs5eXE4NytTNDNQWnVsWkIxWVZ0VWQ0?=
- =?utf-8?B?V0lHNWxWS2dLOG4vT2MzbTlraDBjdWsvMHpKaTdXZFROaEswSFMvQkJJcDZi?=
- =?utf-8?B?czljM29QQmpPVWdxYkdGY0Q0UWt1MWM0OWZjMWMwOW45cGV2NlAvd1N4ZFBG?=
- =?utf-8?B?MzRGSEJKVjBybmYxSU00bllKMHFkVHAyd1czOXFhUDJQUjV2eWw3Y3UyS1R2?=
- =?utf-8?B?WVQxR0FKSFNrYThMRm1KNWl4eXJsc1YzWUR4eTVKMHl3NElhY1hmcVNpZUl4?=
- =?utf-8?B?d1kzVmo0T0N6cGs1L09CODB5ZDRvUjRZSjN4VWtBT2Q1a3RQcUVFVUp5RGFO?=
- =?utf-8?B?YVJmUkp5S3U4dzRUaHlPQXJ4WUZuOEdLSHg1NElUK0R4dDlTRnBkRW5TVVBq?=
- =?utf-8?B?d0JwbzYyajFndWVLVFVFVm5xaGJsS2hlTitLS2xVQktkUHdqZ0dHeGxUaFRJ?=
- =?utf-8?B?TFVGUVpIS3RMSGx5ekpwK0QvOXFwTGJBTHRHaCtWNHl3MHNldHVMYlZ2L2Zt?=
- =?utf-8?B?VVBaS2tqbjJCRXNENnpPRVg0MEdZRzdPVElnQkh3VDNibDcyOGJTR0hoYzVj?=
- =?utf-8?B?Nk1udUpkWTdjUVBIdzYzTE1Gdk4xUDZnVVpodVlLc3VuWXVIeXpTQ2RvL2dQ?=
- =?utf-8?B?VDcvOWhZejg4QmZRb3p3VDVQdzhCdGZBU0lVQ1pVN3VoNmN2QnoybmtmVWFZ?=
- =?utf-8?B?anRuT1JIbjJkbUZrcFc1RDc0REcwMmVuWW55YWU2YTRBdWJnUnUwWEtuQm9H?=
- =?utf-8?B?NnFCYUEyTzh4R2RTU05LYWlnUkFOSUZjV3NucXFCcVRoZXVFQmVEUis4MU9D?=
- =?utf-8?B?M2pQUmVqeEJubWFoSCtTdFdHdzI3WWNjMit2ZzYxMGw0SDZkVHM0Z04vSHVX?=
- =?utf-8?B?dFd0TkwvNURoSm40Uk1tTlZ0cEcxUXRVdGJrSHZXTmtNek1IdWhIVnFOZmUz?=
- =?utf-8?B?TVpBWXRadWxnU0tXeGlhQ1pxVk0rQzNwZVdCNUoyZ3ZpYmZhelEwd2dxOVhU?=
- =?utf-8?B?YlQwSUErRUFveURtQXBvb2pUOU1iZitZZHJJS2Z0V2ViNm9jdFpCekVQdS9I?=
- =?utf-8?B?WWxBOVNRVkh1dXFaYU1lRjZzdTFYSklVcTlxMVJSS2lRTGNUZzFYcFJxMkJz?=
- =?utf-8?B?Q0x2alBhdG9USmF1bHpaNUc1am5pQjFkV0puOGYwN1ZDV0MvN1NSZkNHbGhW?=
- =?utf-8?B?T2s1NGtsa0RsYnk4QjZ1Tll3a0ozNnd5MjNpY0EvczFZbEdMNHg0QS9TaVFI?=
- =?utf-8?B?bUZyd1BZVldLbWJLazVrSXZRSTFCc0pvR2JnVUtCYm1hOFhtLzFxenlNMDRH?=
- =?utf-8?B?eHUyTXdCYWZFT2hweG9KYUQ5TTAzV0w3ai9ockxtLzZlNkN4NyswYXpqWnc1?=
- =?utf-8?B?MllVNmowVk1TcGx4YThnU3ViOVdKOEJOcTNMV25GR1RmU3pieXk2VlF4Mjc0?=
- =?utf-8?B?Sjk5YVV5WVJNOFNiSFRlOCtCNFRSOFY1dnhsYkdMa09yRTFlL1YvMWMyZHZQ?=
- =?utf-8?B?YUdFVEhyVjI3RGlUamhKaXY2cFFQemdNc3grZHk3SnVrM2tnTEQ0SFdTMU9o?=
- =?utf-8?B?alJZeW9yeHZuaTB4QTBxS25tK0xvYkpLWU5CZVBHcmtKMThXOXZTK2VLQ1Rq?=
- =?utf-8?B?YWdxd3E2OTN3WXZvSHlTY0FnSCtxaTBRVm82TWV4SHRhYlJ2bUVkWUUyeldB?=
- =?utf-8?B?RTkySXR2dEh2cVVFRU4zSWpkRXh2TWtTOW5yaFVUV3pISWo2QloxRTlvMzZH?=
- =?utf-8?B?a3RITURPMGxjMTZCc1BBZzZQenEwalRuUElDS0NwTEkxbEk5L0pPYjVKNWIw?=
- =?utf-8?B?d1puZTBaOHgzbUF6M25NN3lsZWJRZmdPcGQwaS90VDJiWUJBMmlvbURQVnpi?=
- =?utf-8?B?V0xoblVWRWJRZld4dk5QUmdnN21tTXdDY3IycHlnSGxVbm4vR01scEdGQjF6?=
- =?utf-8?B?WXkxWFNOL1V2NkxibHlmaE8rN3BnUitzYzhaVEh4SnVwMkUvdjl2TnZYUlFo?=
- =?utf-8?Q?3n1t2Bvzh2ak3GcIMd2KysY=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbdc5e9b-c9fd-4bef-e034-08ddff421a2e
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 10:22:33.2042
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gvWSPiGXKDyZIcjIapCZbYdrzWisU4QwB2r0I9n9xMOzPcaxV+7//dZF7UB1dtyXBp/rKcYhmoxJU4qGsDqfQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8863
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+To: Patrick Roy <patrick.roy@linux.dev>, Ackerley Tng
+ <ackerleytng@google.com>, Fuad Tabba <tabba@google.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+ shivankg@amd.com
+References: <20250926163114.2626257-1-seanjc@google.com>
+ <20250926163114.2626257-2-seanjc@google.com>
+ <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
+ <diqz7bxh386h.fsf@google.com>
+ <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025-09-17 20:43, Nícolas F. R. A. Prado wrote:
-> This series is based on "Color Pipeline API w/ VKMS" [1]. It reuses the
-> same concept of a color pipeline API but for the post-blend stage
-> instead of pre-blend, by attaching the COLOR_PIPELINE property to the
-> CRTC rather than a plane.
+                          GUEST_MEMFD_FLAG_DEFAULT_SHARED;
+>>>
+>>> At least for now, GUEST_MEMFD_FLAG_DEFAULT_SHARED and
+>>> GUEST_MEMFD_FLAG_MMAP don't make sense without each other. Is it worth
+>>> checking for that, at least until we have in-place conversion? Having
+>>> only GUEST_MEMFD_FLAG_DEFAULT_SHARED set, but GUEST_MEMFD_FLAG_MMAP,
+>>> isn't a useful combination.
+>>>
+>>
+>> I think it's okay to have the two flags be orthogonal from the start.
 > 
-> The patches in the series first implement the necessary changes in the
-> DRM core to allow for post-blend color pipelines and expose it through
-> the uAPI, and then implement support in both the MediaTek KMS driver and
-> in VKMS.
-> 
-> This series has been tested with IGT, with the "Support post-blend color
-> pipeline API" series [2] applied, on top of VKMS, as well as with
-> Weston, with a WIP branch [3], on a MT8195-Tomato Chromebook, where both
-> gamma LUT and CTM color transformations have been simultaneously
-> configured in hardware through the API and validated (test commits for
-> weston at [4] and for kernel at [5]).
+> I think I dimly remember someone at one of the guest_memfd syncs
+> bringing up a usecase for having a VMA even if all memory is private,
+> not for faulting anything in, but to do madvise or something? Maybe it
+> was the NUMA stuff? (+Shivank)
 
-Thanks for this work. Great to see the concepts translate well
-to drm_crtc.
+Yes, that should be it. But we're never faulting in these pages, we only 
+need the VMA (for the time being, until there is the in-place conversion).
 
-I haven't looked at the Mediatek or VKMS patches but left some
-comments on the core patches.
+-- 
+Cheers
 
-Patches 1-2, 8-12 are
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-
-Harry
-
-> 
-> [1] https://lore.kernel.org/all/20250815035047.3319284-1-alex.hung@amd.com/
-> [2] https://lore.kernel.org/igt-dev/20250912-post-blend-colorops-v1-0-83fc62420cba@collabora.com/T/#t
-> [3] https://gitlab.collabora.com/nfraprado/weston/-/tree/post-blend-colorops?ref_type=heads
-> [4] https://gitlab.collabora.com/nfraprado/weston/-/tree/post-blend-color-pipeline-lut-ctm-test?ref_type=tags
-> [5] https://gitlab.collabora.com/nfraprado/linux/-/tree/debug-ctm-lut-data-post-blend-colorop?ref_type=tags
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
-> Changes in v2:
-> - Split core DRM changes for post-blend color pipelines from single
->    commit into smaller changes
-> - Added post-blend color pipeline support in VKMS
-> - Introduced driver cap, and made client cap depend on it (daniels)
-> - Made deprecated color props (GAMMA_LUT, DEGAMMA_LUT, CTM) available as
->    read-only when post-blend color pipelines are enabled (daniels)
-> - Created colorop_modeset_lock/unlock to commonize locking pattern for
->    colorops (louis.chauvet)
-> - Added helper for post-blend 1D curve colorop creation
-> - Link to v1: https://lore.kernel.org/r/20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com
-> 
-> ---
-> Nícolas F. R. A. Prado (20):
->        drm/crtc: Add color pipeline to CRTC state
->        drm/colorop: Allow parenting colorop to CRTC
->        drm: Factor out common color_pipeline property initialization code
->        drm/crtc: Add COLOR_PIPELINE property
->        drm: Introduce DRM_CAP_POST_BLEND_COLOR_PIPELINE
->        drm: Introduce DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE
->        drm/atomic: Pass post_blend_color_pipeline client cap to atomic check
->        drm/atomic: Print the color pipeline as part of the CRTC state print
->        drm/colorop: Factor out common paths from colorops helpers
->        drm/colorop: Introduce colorop helpers for crtc
->        drm/colorop: Export drm_colorop_cleanup() so drivers can extend it
->        drm/crtc: Track post-blend color pipeline client cap in drm_crtc_state
->        drm/mediatek: Support post-blend colorops for gamma and ctm
->        drm/mediatek: ccorr: Support post-blend color pipeline API
->        drm/mediatek: gamma: Support post-blend color pipeline API
->        drm/mediatek: Set post-blend color pipeline driver cap
->        drm/vkms: Rename existing color pipeline helpers to contain "pre_blend"
->        drm/vkms: Prepare pre_blend_color_transform() for post-blend pipelines
->        drm/vkms: Introduce support for post-blend color pipeline
->        drm/vkms: Set post-blend color pipeline driver cap
-> 
->   drivers/gpu/drm/drm_atomic.c              |   9 +-
->   drivers/gpu/drm/drm_atomic_uapi.c         |  65 +++++++-
->   drivers/gpu/drm/drm_colorop.c             | 245 ++++++++++++++++++++++++------
->   drivers/gpu/drm/drm_connector.c           |   1 +
->   drivers/gpu/drm/drm_crtc.c                |  77 ++++++++++
->   drivers/gpu/drm/drm_crtc_internal.h       |   6 +
->   drivers/gpu/drm/drm_ioctl.c               |  12 ++
->   drivers/gpu/drm/drm_mode_object.c         |   9 ++
->   drivers/gpu/drm/drm_plane.c               |  36 +----
->   drivers/gpu/drm/mediatek/mtk_crtc.c       | 208 ++++++++++++++++++++++++-
->   drivers/gpu/drm/mediatek/mtk_ddp_comp.c   |   6 +-
->   drivers/gpu/drm/mediatek/mtk_ddp_comp.h   |   2 +
->   drivers/gpu/drm/mediatek/mtk_disp_ccorr.c | 100 ++++++++++--
->   drivers/gpu/drm/mediatek/mtk_disp_drv.h   |   6 +-
->   drivers/gpu/drm/mediatek/mtk_disp_gamma.c | 107 ++++++++++---
->   drivers/gpu/drm/mediatek/mtk_drm_drv.c    |   3 +-
->   drivers/gpu/drm/vkms/vkms_colorop.c       | 106 ++++++++++++-
->   drivers/gpu/drm/vkms/vkms_composer.c      |  13 +-
->   drivers/gpu/drm/vkms/vkms_crtc.c          |   1 +
->   drivers/gpu/drm/vkms/vkms_drv.c           |   3 +-
->   drivers/gpu/drm/vkms/vkms_drv.h           |   3 +-
->   drivers/gpu/drm/vkms/vkms_plane.c         |   2 +-
->   include/drm/drm_atomic.h                  |  20 +++
->   include/drm/drm_atomic_uapi.h             |   2 +
->   include/drm/drm_colorop.h                 |  22 ++-
->   include/drm/drm_crtc.h                    |  27 ++++
->   include/drm/drm_drv.h                     |   6 +
->   include/drm/drm_file.h                    |   7 +
->   include/uapi/drm/drm.h                    |  25 +++
->   29 files changed, 994 insertions(+), 135 deletions(-)
-> ---
-> base-commit: 342e5ee08797cde0e8af30e6110a5dc1cba61e9c
-> change-id: 20250730-mtk-post-blend-color-pipeline-498e1a9cc53e
-> 
-> Best regards,
+David / dhildenb
 
 
