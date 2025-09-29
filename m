@@ -1,136 +1,321 @@
-Return-Path: <linux-kernel+bounces-836421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BB2BA9A4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:41:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9103BA9A52
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 059F27A7B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B30176899
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA283009CA;
-	Mon, 29 Sep 2025 14:41:00 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BC130ACF3;
+	Mon, 29 Sep 2025 14:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="X5l6rrMt"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308D5155A25
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF86155A25
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156859; cv=none; b=gbbORk6FOsjTTEGskVKgqjBs31eBc7jgEO5wsdKpooc0YD5x7Y9n6n9cKH2EQnlW5fd6fxQcKJqiTxzm1uE6N/Qw4Dc6MaS7db4mdyaW5ss9CR6NGiup2G/4x246W8E/cQvirnHZ6GKgrzbh1zbZCsitu4poom+RIwGeoess3nY=
+	t=1759156869; cv=none; b=drZhz13fZm0j4GNGMGX8NYf7+bfoV+8G7R2sK9Nk541fqUurglNnLoeQODZSkXBWoz91rW/t1pg7GedOZu2+X6J56yTR9TFYSYgs0g6K+B+9gYPFD6JEylMQajvXtmPQtgGlR1xbSxIhj6NCopzetrRSIjF3JggMsmjDgV9waFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156859; c=relaxed/simple;
-	bh=1CRbODPK7ioT15EyYl7D+bsfUQaZM/OFVQCWP3ouOmw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pZD8GUb/nYM0+FrkHAccmn/q6W73q7SJdBKAO5pF4BB46lJpuepg1nvjyDtEX0ZmIhBeNjrkndZMBcqe1GkpINXqEBnx8qtp8Dd7AOUwcn03A4FAagMfH58vahrZ8J7BP0ZdynsnDzpWbf/rlrRTlGTxPmLqqc7ZI1KRH/LJdyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42af09092b9so37411035ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:40:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759156857; x=1759761657;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GfzZ4Giby9AuuBEdLkByvfbmZudZADXVREZx6+m9Q6E=;
-        b=CDXNyvpHLSdpgxBNwdIZQ8slKEMgSTqCG6HpzmDTssc7yOpbPPbLHYW/3ielzV/JVw
-         x5nTS2ug5ohb/+lGJGR8N5hVV0jRaj2U+pBCQrwhU+E3W8O7/+B3Dul/1pjWJVplgTZ4
-         XxAypDUW8cJAGd1O82lRwX/t9KnihU4emaMou5DWj9OqNpALBGzYcn85F1tVmMMUsZKK
-         sxEJ8L7YGhTbyf+qGcR15V2EM5Tm9q3ii4NwndtE4AM+AhhIjYT6DiDjvSiBAdEeT3M7
-         rCpqJ36CGW6Fc7htzhUpl7WMv0RCtrQGGAtDFDQdAg1AMlq/HSZnJJQsgfyO5YdfViyv
-         TDbQ==
-X-Gm-Message-State: AOJu0YzXpDMGGvumu4FNPY+kXmMZyJUzvuLiyVfEj6DAkXJWTV+uSs9m
-	xjrRkSDKY9zBMJSkVS4EPOfyAe2zSwGD3uHtv2VVRINEdnY64pyLxj94Ef2QcX6/7kA272xa26K
-	veWDVxKKUfj7AGFw7YsybbPAPLSmJ3Ir5fiGSV8L2d9ESyAnOUI4rBrJyQpg=
-X-Google-Smtp-Source: AGHT+IHcHIykMVsO12AMolaZVmeyNe2XsY5kBmsyxSx2tz6JjHKCmdQnwMbURloU3kdOvR0ygCQ2ObgJMzEkVPMcUZ35xFoXUiSC
+	s=arc-20240116; t=1759156869; c=relaxed/simple;
+	bh=i1EWBvl3pgEz04bRJbDeFzyt7OHP5WzSf5nISUU3Ifg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lQmBp/dqBG16yy6wL361QrTB83eBlN8nTCO3Z7gQP+BvyOFCdGPV7j1yj59xZYSwxtExtDm9gwETQZbKfCiiBzb2YmdGphohvG9GCAfZT5AIpOxrnwUfrs2PwDPqu9IJFWJnlRbYg+I0LdvixcuF+zk8QxUYp7estkhspTxhzd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=X5l6rrMt; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id hYYlsID0EHdE499X; Mon, 29 Sep 2025 10:41:06 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=dHPUKOiCryntFUoZ4XwzAXg+TxheQ7iawZOAUoLgJWI=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=X5l6rrMt1yLhESu6/Etc
+	t6mFIMi4PsqQBepZFucl2MtYFZ4R5JxV94Kh24QoLUpE+OpqrWkF6hbvsEl0gzDrZoSk2TXQdsMcK
+	l7m20DJHyu+ucupJVulqH7wLYs0d4nEADsL7Wqk1Rt907ba4GNZtZs9WjqxoyoDrKRNPcneGR8=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14216635; Mon, 29 Sep 2025 10:41:06 -0400
+Message-ID: <dce404c2-c10d-4327-abf3-1cd4885e2081@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 29 Sep 2025 10:41:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b44:b0:428:4a1b:b26a with SMTP id
- e9e14a558f8ab-4284a1bb314mr159423805ab.6.1759156857389; Mon, 29 Sep 2025
- 07:40:57 -0700 (PDT)
-Date: Mon, 29 Sep 2025 07:40:57 -0700
-In-Reply-To: <68b95f81.a00a0220.eb3d.0001.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68da9a79.050a0220.1696c6.0017.GAE@google.com>
-Subject: Forwarded: [PATCH v2] ext4: detect invalid INLINE_DATA + EXTENTS flag combination
-From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [SCST PATCH v2 09/16] scsi: qla2xxx: fix races with aborting commands
+Content-Language: en-US
+X-ASG-Orig-Subj: [SCST PATCH v2 09/16] scsi: qla2xxx: fix races with aborting commands
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+ <814e26dc-da8d-474f-b2f2-39becfe94eec@cybernetics.com>
+In-Reply-To: <814e26dc-da8d-474f-b2f2-39becfe94eec@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1759156866
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 8329
+X-Barracuda-BRTS-Status: 1
+X-ASG-Debug-ID: 1759156866-1cf43947df3c0360001-xx1T2L
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+This patch applies to the out-of-tree SCST project, not to the Linux
+kernel.  Apply when importing the upstream patch with the same title.
 
-***
+SCST addendum:
 
-Subject: [PATCH v2] ext4: detect invalid INLINE_DATA + EXTENTS flag combination
-Author: kartikey406@gmail.com
+sqa_on_hw_pending_cmd_timeout() currently unmaps DMA, sets
+outstanding_cmds[h] to NULL, and forces the command to complete.  This
+could cause a kernel crash if the HW later accesses the DMA mapping.
+It can also cause other problems if outstanding_cmds[h] is reused for a
+different command.  Fix by doing this instead:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+- In sqa_on_hw_pending_cmd_timeout(), call qlt_send_term_exchange()
+  first and then restart the timeout.  After another timeout, reset the
+  ISP.
 
-syzbot reported a BUG_ON in ext4_es_cache_extent() when opening a verity
-file on a corrupted ext4 filesystem mounted without a journal.
-
-The issue is that the filesystem has an inode with both the INLINE_DATA
-and EXTENTS flags set:
-
-    EXT4-fs error (device loop0): ext4_cache_extents:545: inode #15:
-    comm syz.0.17: corrupted extent tree: lblk 0 < prev 66
-
-Investigation revealed that the inode has both flags set:
-    DEBUG: inode 15 - flag=1, i_inline_off=164, has_inline=1
-
-This is an invalid combination since an inode should have either:
-- INLINE_DATA: data stored directly in the inode
-- EXTENTS: data stored in extent-mapped blocks
-
-Having both flags causes ext4_has_inline_data() to return true, skipping
-extent tree validation in __ext4_iget(). The unvalidated out-of-order
-extents then trigger a BUG_ON in ext4_es_cache_extent() due to integer
-underflow when calculating hole sizes.
-
-Fix this by detecting this invalid flag combination early in ext4_iget()
-and rejecting the corrupted inode.
-
-Reported-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-Suggested-by: Zhang Yi <yi.zhang@huawei.com>
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
 ---
-Changes in v2:
-- Instead of adding validation in ext4_find_extent(), detect the invalid
-  INLINE_DATA + EXTENTS flag combination in ext4_iget() as suggested by
-  Zhang Yi to avoid redundant checks in the extent lookup path
 
- fs/ext4/inode.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v1 -> v2:
+- On second timeout, reset the ISP rather than unmapping DMA that
+  might be in use by the hardware.
+- Apply "scsi: qla2xxx: clear cmds after chip reset" from Dmitry
+  Bogdanov as prerequisite.  This is required for the ISP reset to clear
+  the locked-up command.
+- Move the revert of 26f9ce53817a ("scsi: qla2xxx: Fix missed DMA unmap
+  for aborted commands") from this patch to the previous patch since
+  that patch fixed the oops, even though this patch is still necessary
+  for its other improvements.  Rename this patch and reword the patch
+  description to match.
+- Remove TRC_CTIO_IGNORED.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..71fa3faa1475 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5445,6 +5445,15 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 	}
+ qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c | 136 ++++++++++--------
+ 1 file changed, 76 insertions(+), 60 deletions(-)
+
+diff --git a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+index e885b9711..07aee6e81 100644
+--- a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
++++ b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+@@ -187,6 +187,7 @@ static struct cmd_state_name {
+ 	{QLA_TGT_STATE_NEED_DATA, "NeedData"},
+ 	{QLA_TGT_STATE_DATA_IN, "DataIn"},
+ 	{QLA_TGT_STATE_PROCESSED, "Processed"},
++	{QLA_TGT_STATE_DONE, "Done"},
+ };
  
- 	ret = 0;
-+	/* Detect invalid flag combination - can't have both inline data and extents */
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA) &&
-+		ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-+		ext4_error_inode(inode, __func__, __LINE__, 0,
-+			"inode has both inline data and extents flags");
-+		ret = -EFSCORRUPTED;
-+		goto bad_inode;
+ static char *cmdstate_to_str(uint8_t state)
+@@ -497,23 +498,14 @@ static void sqa_qla2xxx_handle_data(struct qla_tgt_cmd *cmd)
+ {
+ 	struct scst_cmd *scst_cmd = cmd->scst_cmd;
+ 	int rx_status;
+-	unsigned long flags;
+ 
+ 	TRACE_ENTRY();
+ 
+-	spin_lock_irqsave(&cmd->cmd_lock, flags);
+-	if (cmd->aborted) {
+-		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+-
++	if (unlikely(cmd->aborted)) {
+ 		scst_set_cmd_error(scst_cmd,
+ 			SCST_LOAD_SENSE(scst_sense_internal_failure));
+-		scst_rx_data(scst_cmd, SCST_RX_STATUS_ERROR_SENSE_SET,
+-			SCST_CONTEXT_THREAD);
+-		return;
+-	}
+-	spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+-
+-	if (cmd->write_data_transferred) {
++		rx_status = SCST_RX_STATUS_ERROR_SENSE_SET;
++	} else if (likely(cmd->write_data_transferred)) {
+ 		rx_status = SCST_RX_STATUS_SUCCESS;
+ 	} else {
+ 		rx_status = SCST_RX_STATUS_ERROR_SENSE_SET;
+@@ -691,6 +683,7 @@ static void sqa_qla2xxx_free_cmd(struct qla_tgt_cmd *cmd)
+ 
+ 	TRACE_ENTRY();
+ 
++	cmd->state = QLA_TGT_STATE_DONE;
+ 	cmd->trc_flags |= TRC_CMD_DONE;
+ 	scst_tgt_cmd_done(scst_cmd, scst_work_context);
+ 
+@@ -1522,9 +1515,10 @@ static int sqa_xmit_response(struct scst_cmd *scst_cmd)
+ 	cmd = scst_cmd_get_tgt_priv(scst_cmd);
+ 
+ 	if (scst_cmd_aborted_on_xmit(scst_cmd)) {
+-		TRACE_MGMT_DBG("sqatgt(%ld/%d): CMD_ABORTED cmd[%p]",
+-			cmd->vha->host_no, cmd->vha->vp_idx,
+-			cmd);
++		TRACE_MGMT_DBG(
++		    "sqatgt(%ld/%d): tag %lld: skipping send response for aborted cmd",
++		    cmd->vha->host_no, cmd->vha->vp_idx,
++		    scst_cmd_get_tag(scst_cmd));
+ 		qlt_abort_cmd(cmd);
+ 		scst_set_delivery_status(scst_cmd, SCST_CMD_DELIVERY_ABORTED);
+ 		scst_tgt_cmd_done(scst_cmd, SCST_CONTEXT_DIRECT);
+@@ -1841,72 +1835,94 @@ static int sqa_qla2xxx_dif_tags(struct qla_tgt_cmd *cmd,
+ 	return t32;
+ }
+ 
+-static void sqa_cleanup_hw_pending_cmd(scsi_qla_host_t *vha,
+-	struct qla_tgt_cmd *cmd)
+-{
+-	uint32_t h;
+-	struct qla_qpair *qpair = cmd->qpair;
+-
+-	for (h = 1; h < qpair->req->num_outstanding_cmds; h++) {
+-		if (qpair->req->outstanding_cmds[h] == (srb_t *)cmd) {
+-			printk(KERN_INFO "Clearing handle %d for cmd %p", h,
+-			       cmd);
+-			//TRACE_DBG("Clearing handle %d for cmd %p", h, cmd);
+-			qpair->req->outstanding_cmds[h] = NULL;
+-			break;
+-		}
+-	}
+-}
+-
+ static void sqa_on_hw_pending_cmd_timeout(struct scst_cmd *scst_cmd)
+ {
+ 	struct qla_tgt_cmd *cmd = scst_cmd_get_tgt_priv(scst_cmd);
+ 	struct scsi_qla_host *vha = cmd->vha;
+ 	struct qla_qpair *qpair = cmd->qpair;
+-	uint8_t aborted = cmd->aborted;
+ 	unsigned long flags;
+ 
+ 	TRACE_ENTRY();
+-	TRACE_MGMT_DBG("sqatgt(%ld/%d): Cmd %p HW pending for too long (state %s) %s; %s;",
+-		       vha->host_no, vha->vp_idx, cmd,
+-		       cmdstate_to_str((uint8_t)cmd->state),
+-		       cmd->cmd_sent_to_fw ? "sent to fw" : "not sent to fw",
+-		       aborted ? "aborted" : "not aborted");
+ 
+-
+-	qlt_abort_cmd(cmd);
++	scst_cmd_get(scst_cmd);
+ 
+ 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
++
++	TRACE_MGMT_DBG(
++	    "sqatgt(%ld/%d): tag %lld: HW pending for too long (state %s) %s; %s",
++	    vha->host_no, vha->vp_idx, scst_cmd_get_tag(scst_cmd),
++	    cmdstate_to_str((uint8_t)cmd->state),
++	    cmd->cmd_sent_to_fw ? "sent to fw" : "not sent to fw",
++	    cmd->aborted ? "aborted" : "not aborted");
++
+ 	switch (cmd->state) {
+ 	case QLA_TGT_STATE_NEW:
+ 	case QLA_TGT_STATE_DATA_IN:
+-		PRINT_ERROR("sqa(%ld): A command in state (%s) should not be HW pending. %s",
+-			vha->host_no, cmdstate_to_str((uint8_t)cmd->state),
+-			aborted ? "aborted" : "not aborted");
+-		break;
++	case QLA_TGT_STATE_DONE:
++		PRINT_ERROR(
++		    "sqatgt(%ld/%d): tag %lld: A command in state (%s) should not be HW pending. %s",
++		    vha->host_no, vha->vp_idx, scst_cmd_get_tag(scst_cmd),
++		    cmdstate_to_str((uint8_t)cmd->state),
++		    cmd->aborted ? "aborted" : "not aborted");
++		goto out_unlock;
+ 
+ 	case QLA_TGT_STATE_NEED_DATA:
+-		/* the abort will nudge it out of FW */
+-		TRACE_MGMT_DBG("Force rx_data cmd %p", cmd);
+-		sqa_cleanup_hw_pending_cmd(vha, cmd);
+-		scst_set_cmd_error(scst_cmd,
+-		    SCST_LOAD_SENSE(scst_sense_internal_failure));
+-		scst_rx_data(scst_cmd, SCST_RX_STATUS_ERROR_SENSE_SET,
+-		    SCST_CONTEXT_THREAD);
+-		break;
+ 	case QLA_TGT_STATE_PROCESSED:
+-		if (!cmd->cmd_sent_to_fw)
+-			PRINT_ERROR("sqa(%ld): command should not be in HW pending. It's already processed. ",
+-				    vha->host_no);
+-		else
+-			TRACE_MGMT_DBG("Force finishing cmd %p", cmd);
+-		sqa_cleanup_hw_pending_cmd(vha, cmd);
+-		scst_set_delivery_status(scst_cmd, SCST_CMD_DELIVERY_FAILED);
+-		scst_tgt_cmd_done(scst_cmd, SCST_CONTEXT_THREAD);
+ 		break;
+ 	}
++
++	/* Handle race with normal CTIO completion. */
++	if (!cmd->cmd_sent_to_fw) {
++		TRACE_MGMT_DBG(
++		    "sqatgt(%ld/%d): tag %lld: cmd not sent to fw; assuming just completed",
++		    vha->host_no, vha->vp_idx,
++		    scst_cmd_get_tag(scst_cmd));
++		goto out_unlock;
 +	}
 +
- 	if (ei->i_file_acl &&
- 	    !ext4_inode_block_valid(inode, ei->i_file_acl, 1)) {
- 		ext4_error_inode(inode, function, line, 0,
++	/* The command should be aborted elsewhere if the ISP was reset. */
++	if (!qpair->fw_started || cmd->reset_count != qpair->chip_reset)
++		goto out_unlock;
++
++	/* Reset the ISP if there was a timeout after sending a term exchange. */
++	if (cmd->sent_term_exchg &&
++	     time_is_before_jiffies(cmd->jiffies_at_term_exchg +
++				    SQA_MAX_HW_PENDING_TIME * HZ / 2)) {
++		if (!test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags)) {
++			if (IS_P3P_TYPE(vha->hw))
++				set_bit(FCOE_CTX_RESET_NEEDED, &vha->dpc_flags);
++			else
++				set_bit(ISP_ABORT_NEEDED, &vha->dpc_flags);
++			qla2xxx_wake_dpc(vha);
++		}
++		goto out_unlock;
++	}
++
++	/*
++	 * We still expect a CTIO response from the hw.  Terminating the
++	 * exchange should force the CTIO response to happen sooner.
++	 */
++	if (!cmd->sent_term_exchg)
++		qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
++
++	/*
++	 * Restart the timer so that this function is called again
++	 * after another timeout.  This is similar to
++	 * scst_update_hw_pending_start() except that we also set
++	 * cmd_hw_pending to 1.
++	 *
++	 * IRQs are already OFF.
++	 */
++	spin_lock(&scst_cmd->sess->sess_list_lock);
++	scst_cmd->cmd_hw_pending = 1;
++	scst_cmd->hw_pending_start = jiffies;
++	spin_unlock(&scst_cmd->sess->sess_list_lock);
++
++out_unlock:
+ 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ 
++	scst_cmd_put(scst_cmd);
++
+ 	TRACE_EXIT();
+ }
+ 
 -- 
 2.43.0
+
+
 
