@@ -1,111 +1,249 @@
-Return-Path: <linux-kernel+bounces-836423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB03BA9A55
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:42:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4157BA9A58
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BAD27A7BC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13016170202
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C0B30B53D;
-	Mon, 29 Sep 2025 14:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1A43093A5;
+	Mon, 29 Sep 2025 14:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HWpgW3vt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="l/PEv27T"
+Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A0330B508
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD561FBC91
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156878; cv=none; b=L6M9jFEAVFXejFpY2X5wIPgvJDK8T9L74Z4A9hNcJKPS0ps9oxk8trIQ4Zw1Qwl4puNFfVAL9iKKaTlKpzPGHkOFEZe5Eq/RIDFrdstTZE8ylcNaQhJRJf+qk8YAMisYl3Y8XBPAADJO3aKGDeTFHZYTwRje4Wil54mOZkzNzyw=
+	t=1759156933; cv=none; b=BzENRKEomBNFZDgkDQUsRABv0AqkbNVL/f8nKq/n6Qr582pAwwpkRmTen9FSiOt8wMCpyp4iliEiyi79TP+cCGDKSzvBOHSJF/WO6LP1O4nJY7J5zLVekfGs4TIY3fW8sefvqp+i55xpEXTvCVRc2aiiuMuK8OSTcDkPjKtjfcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156878; c=relaxed/simple;
-	bh=pAnQQOOIXd2ZwElnUic41CLFzwzbOlUl4FANGhxifLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BDaqInj6WTcxufecr10fnTIapn1VFSVMNxlenkdjk1ar8txNrWJSavs3FKru28AE8Oicm+yeU4CpposhB28HmqfeDB9u/XeD9VWYHLrG40qs+JsQ3s9//TY6TIQJbFpjaF2NfMxIJqhwCr3AZtdzX/8mujsBmj/YRKGo0aex/mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HWpgW3vt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759156875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=c04heTAl7RQxQsGulCNruMJ6K3Bkn34DaECM68w9sbM=;
-	b=HWpgW3vtBo02s+wrACtoEnsr0pW/TGmG+RmjI1szTfZSPJxG4CPxrlIdARpeFRg50hpn1+
-	VDN1ca3ZTUcfaduolEFNRPaRsxi/3moCeyGPyhws5Djxri5Huv+6nkQBcQwzUf4Z1KTYua
-	qkp25HM/rjVEImRDZVLykjHCx3rsccE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-251-o79F5H0TN6u_LRapffCU2A-1; Mon,
- 29 Sep 2025 10:41:12 -0400
-X-MC-Unique: o79F5H0TN6u_LRapffCU2A-1
-X-Mimecast-MFC-AGG-ID: o79F5H0TN6u_LRapffCU2A_1759156871
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5292318002C2;
-	Mon, 29 Sep 2025 14:41:11 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.81.226])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D7531800576;
-	Mon, 29 Sep 2025 14:41:10 +0000 (UTC)
-Date: Mon, 29 Sep 2025 09:41:07 -0500
-From: David Teigland <teigland@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, gfs2@lists.linux.dev
-Subject: [GIT PULL] dlm updates for 6.18
-Message-ID: <aNqag0RIXLcG5BH3@redhat.com>
+	s=arc-20240116; t=1759156933; c=relaxed/simple;
+	bh=Tz+kxsZ0g++pLAMbf4h5P9V1itOkSfgVkThc4dpNrlM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DzkyH2CPUCWgoUktMxfHwZ+KSOfMAz2goSGnK+S253BfvtDoCV5T2FFpz8hGmSR3f60V9aZi48Tk48FXpXDmp+cMb+z8h9u5ahCmcwynzuTlHjJ7oGaFDyiexZIdJ8HLvXKzTvbdV3t1MQVHhlj9hUoXz1+TeAe1wiXLr35umN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=l/PEv27T; arc=none smtp.client-ip=173.71.130.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id s9Jfl0pnekPnD4QH; Mon, 29 Sep 2025 10:42:10 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=5fPD56Cr93wfYACAOCsU8Ld2sBLrAZ28w7uHz2UFANY=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=l/PEv27T1pLVxy8NQy8X
+	QqXbqc+TIJy9M5Jej/apQJdNrqvR0oJ/dj+lTB86pIyRims2k352lpuxPooUGJ0J9EDLrT+6YKZng
+	dQeH50teVAZJ5aZRSjtOwFWBXgqoPocwlyq4IC2FJtu70mr1yP7KM2l0ciPGvZSRlHvgTQJ8RA=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14216638; Mon, 29 Sep 2025 10:42:10 -0400
+Message-ID: <c3343fad-6653-4a04-9391-f20a6c387fc5@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 29 Sep 2025 10:42:10 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 10/16] scsi: qla2xxx: improve checks in qlt_xmit_response /
+ qlt_rdy_to_xfer
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v2 10/16] scsi: qla2xxx: improve checks in qlt_xmit_response /
+ qlt_rdy_to_xfer
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1759156930
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 5685
+X-ASG-Debug-ID: 1759156930-1cf43947df3c0390001-xx1T2L
 
-Hi Linus,
+(target mode)
 
-Please pull dlm updates from tag:
+Similar fixes to both functions:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.18
+qlt_xmit_response:
+- If the cmd cannot be processed, remember to call ->free_cmd() to
+  prevent the target-mode midlevel from seeing a cmd lockup.
+- Do not try to send the response if the exchange has been terminated.
+- Check for chip reset once after lock instead of both before and after
+  lock.
+- Give errors from qlt_pre_xmit_response() a lower priority to
+  compensate for removing the first check for chip reset.
 
-This set of patches add a dlm_release_lockspace() flag to request that
-node-failure recovery be performed for the node leaving the lockspace.
-The implementation of this flag requires coordination with userland
-clustering components.  It's been requested for use by GFS2.
+qlt_rdy_to_xfer:
+- Check for chip reset after lock instead of before lock to avoid races.
+- Do not try to receive data if the exchange has been terminated.
+- Give errors from qlt_pci_map_calc_cnt() a lower priority to compensate
+  for moving the check for chip reset.
 
-Thanks,
-Dave
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
 
-Alexander Aring (9):
-      dlm: check for defined force value in dlm_lockspace_release
-      dlm: use defines for force values in dlm_release_lockspace
-      dlm: add new RELEASE_RECOVER uevent attribute for release_lockspace
-      dlm: add new configfs entry release_recover for lockspace members
-      dlm: add new flag DLM_RELEASE_RECOVER for dlm_lockspace_release
-      dlm: handle invalid lockspace member remove
-      dlm: move to rinfo for all middle conversion cases
-      dlm: handle release_option as unsigned
-      dlm: check for undefined release_option values
+v1 -> v2: no changes
 
- drivers/md/md-cluster.c |  4 ++--
- fs/dlm/config.c         | 64 +++++++++++++++++++++++++++++++++++++++++++++++--
- fs/dlm/config.h         |  2 ++
- fs/dlm/lock.c           |  2 +-
- fs/dlm/lockspace.c      | 46 +++++++++++++++++++----------------
- fs/dlm/member.c         | 27 ++++++++++++++++-----
- fs/dlm/recover.c        |  2 +-
- fs/dlm/user.c           |  6 ++---
- fs/gfs2/lock_dlm.c      |  4 ++--
- fs/ocfs2/stack_user.c   |  2 +-
- include/linux/dlm.h     | 33 ++++++++++++++++++++++++-
- 11 files changed, 153 insertions(+), 39 deletions(-)
+ drivers/scsi/qla2xxx/qla_target.c | 86 +++++++++++++++++--------------
+ 1 file changed, 48 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index c6dc5e9efb69..849ab256807b 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3206,12 +3206,7 @@ int qlt_xmit_response(struct qla_tgt_cmd *cmd, int xmit_type,
+ 	uint32_t full_req_cnt = 0;
+ 	unsigned long flags = 0;
+ 	int res;
+-
+-	if (!qpair->fw_started || (cmd->reset_count != qpair->chip_reset) ||
+-	    (cmd->sess && cmd->sess->deleted)) {
+-		cmd->state = QLA_TGT_STATE_PROCESSED;
+-		return 0;
+-	}
++	int pre_xmit_res;
+ 
+ 	ql_dbg_qp(ql_dbg_tgt, qpair, 0xe018,
+ 	    "is_send_status=%d, cmd->bufflen=%d, cmd->sg_cnt=%d, cmd->dma_data_direction=%d se_cmd[%p] qp %d\n",
+@@ -3219,33 +3214,39 @@ int qlt_xmit_response(struct qla_tgt_cmd *cmd, int xmit_type,
+ 	    1 : 0, cmd->bufflen, cmd->sg_cnt, cmd->dma_data_direction,
+ 	    &cmd->se_cmd, qpair->id);
+ 
+-	res = qlt_pre_xmit_response(cmd, &prm, xmit_type, scsi_status,
++	pre_xmit_res = qlt_pre_xmit_response(cmd, &prm, xmit_type, scsi_status,
+ 	    &full_req_cnt);
+-	if (unlikely(res != 0)) {
+-		return res;
+-	}
++	/*
++	 * Check pre_xmit_res later because we want to check other errors
++	 * first.
++	 */
+ 
+ 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+ 
++	if (unlikely(cmd->sent_term_exchg ||
++		     cmd->sess->deleted ||
++		     !qpair->fw_started ||
++		     cmd->reset_count != qpair->chip_reset)) {
++		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe101,
++		    "qla_target(%d): tag %lld: skipping send response for aborted cmd\n",
++		    vha->vp_idx, cmd->se_cmd.tag);
++		qlt_unmap_sg(vha, cmd);
++		cmd->state = QLA_TGT_STATE_PROCESSED;
++		vha->hw->tgt.tgt_ops->free_cmd(cmd);
++		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
++		return 0;
++	}
++
++	/* Check for errors from qlt_pre_xmit_response(). */
++	res = pre_xmit_res;
++	if (unlikely(res))
++		goto out_unmap_unlock;
++
+ 	if (xmit_type == QLA_TGT_XMIT_STATUS)
+ 		qpair->tgt_counters.core_qla_snd_status++;
+ 	else
+ 		qpair->tgt_counters.core_qla_que_buf++;
+ 
+-	if (!qpair->fw_started || cmd->reset_count != qpair->chip_reset) {
+-		/*
+-		 * Either the port is not online or this request was from
+-		 * previous life, just abort the processing.
+-		 */
+-		cmd->state = QLA_TGT_STATE_PROCESSED;
+-		ql_dbg_qp(ql_dbg_async, qpair, 0xe101,
+-			"RESET-RSP online/active/old-count/new-count = %d/%d/%d/%d.\n",
+-			vha->flags.online, qla2x00_reset_active(vha),
+-			cmd->reset_count, qpair->chip_reset);
+-		res = 0;
+-		goto out_unmap_unlock;
+-	}
+-
+ 	/* Does F/W have an IOCBs for this request */
+ 	res = qlt_check_reserve_free_req(qpair, full_req_cnt);
+ 	if (unlikely(res))
+@@ -3360,6 +3361,7 @@ int qlt_rdy_to_xfer(struct qla_tgt_cmd *cmd)
+ 	struct qla_tgt_prm prm;
+ 	unsigned long flags = 0;
+ 	int res = 0;
++	int pci_map_res;
+ 	struct qla_qpair *qpair = cmd->qpair;
+ 
+ 	memset(&prm, 0, sizeof(prm));
+@@ -3368,28 +3370,36 @@ int qlt_rdy_to_xfer(struct qla_tgt_cmd *cmd)
+ 	prm.sg = NULL;
+ 	prm.req_cnt = 1;
+ 
+-	if (!qpair->fw_started || (cmd->reset_count != qpair->chip_reset) ||
+-	    (cmd->sess && cmd->sess->deleted)) {
+-		/*
+-		 * Either the port is not online or this request was from
+-		 * previous life, just abort the processing.
+-		 */
++	/* Calculate number of entries and segments required */
++	pci_map_res = qlt_pci_map_calc_cnt(&prm);
++	/*
++	 * Check pci_map_res later because we want to check other errors first.
++	 */
++
++	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
++
++	if (unlikely(cmd->sent_term_exchg ||
++		     cmd->sess->deleted ||
++		     !qpair->fw_started ||
++		     cmd->reset_count != qpair->chip_reset)) {
++		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe102,
++		    "qla_target(%d): tag %lld: skipping data-out for aborted cmd\n",
++		    vha->vp_idx, cmd->se_cmd.tag);
++		qlt_unmap_sg(vha, cmd);
+ 		cmd->aborted = 1;
+ 		cmd->write_data_transferred = 0;
+ 		cmd->state = QLA_TGT_STATE_DATA_IN;
+ 		vha->hw->tgt.tgt_ops->handle_data(cmd);
+-		ql_dbg_qp(ql_dbg_async, qpair, 0xe102,
+-			"RESET-XFR online/active/old-count/new-count = %d/%d/%d/%d.\n",
+-			vha->flags.online, qla2x00_reset_active(vha),
+-			cmd->reset_count, qpair->chip_reset);
++		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ 		return 0;
+ 	}
+ 
+-	/* Calculate number of entries and segments required */
+-	if (qlt_pci_map_calc_cnt(&prm) != 0)
+-		return -EAGAIN;
++	/* Check for errors from qlt_pci_map_calc_cnt(). */
++	if (unlikely(pci_map_res != 0)) {
++		res = -EAGAIN;
++		goto out_unlock_free_unmap;
++	}
+ 
+-	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+ 	/* Does F/W have an IOCBs for this request */
+ 	res = qlt_check_reserve_free_req(qpair, prm.req_cnt);
+ 	if (res != 0)
+-- 
+2.43.0
+
 
 
