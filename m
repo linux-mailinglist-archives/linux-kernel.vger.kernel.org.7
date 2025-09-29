@@ -1,158 +1,86 @@
-Return-Path: <linux-kernel+bounces-836285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A946BA9316
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:26:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D046DBA9334
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF8A16FD04
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49FC1189EF01
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C642F305954;
-	Mon, 29 Sep 2025 12:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A23305E19;
+	Mon, 29 Sep 2025 12:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4DhP4wUk"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="vazqFVDw"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739DD2DFA25
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AB847F77;
+	Mon, 29 Sep 2025 12:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759148761; cv=none; b=rFlVsY9fOMpEkrABjA3+qxSLhpyMCAOgxTKBbz1T0jMy7460f5H0HnTiQF2ABIJ+bEvZfnAs4RQQhDGdeN/tOhVLJnGRXlr3rVQVFm8hjjoZvWk9HuzRIb1NdfjQbcKDCnoO/60eAZByTX/LRy8RnOkzZl4i0aOWQRLXKSCQafQ=
+	t=1759148890; cv=none; b=Uj0Fa5WvH6/OP1HHeo3P5kigbzyOTLVvJSeAzJMAbhJtLXKeuQt1c193B7P7WEZcoAKUfpzHWH1Z2greW1mkrJO2VajsUyNOjKXdeNEc6pkMtDt3rbqf5qthC0GIUkmQ9jChRTBahqsj51iHB9IC8QhcYe9yoK4Nhsw7zF5laEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759148761; c=relaxed/simple;
-	bh=IPfBHgXBIWGkmCbENeVsi96BJ7N4st3OLtzOumLhCzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3p2xGbjhbu3ZhKKspoXBbm96WaTOnSR4BfGSt2t2lIk7+qG5SCrN88FTZDrdD7YcOznq01pEbOB2yJHU4yN3yRpcK68FhN0NoZNNH9ljtM3e+eU2ipbsLd7yvBNO5wJ+yh99h2w4+1BcpX1k4dCiEUxACPDPjrg+nJeVMwUndU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4DhP4wUk; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e32c0e273so105885e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759148758; x=1759753558; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rX8QNnM/VfgNSl8joey8ya0plk5QpjGP/jUnyfo2ncE=;
-        b=4DhP4wUkUpKjJCVQkwf7bVsotlPZMNPsaD65JWn7dh3G3h8S7xjQ8Og2SmI6iU7jiC
-         gogj/VUWdWQ14MybYb95Bjid5STdd0SlACsxbhgJpAfNhvJlk+8dJOvwUKhQQtWq1Xgx
-         KdT5oLjkqz+XGTWgPM96tLhjZ0RJ2OXXBhQq9ZVFZ3Jb62wViczes13QDYyfT7ak52jz
-         VHZQWChbDU19x6pDONMx3vQiL7WGe3WiM0N6ljKdrNgJBpBVOg+DyAp8LHWsiTL+38Pu
-         7Z5dzsewCKynD499MEMtytnRljJdDyDL/99NhOVSPoA6ijrHFtA5nZg5DBA2E89hwWJq
-         efXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759148758; x=1759753558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rX8QNnM/VfgNSl8joey8ya0plk5QpjGP/jUnyfo2ncE=;
-        b=JESr/Qh8xp/iTBhKXU2OfjegKyFsHgEwsMR8b48pmyei2N2paNMV9Ce8malHcSFhMW
-         Km/hmW2K3krGL/Nbc8h5MubP41q62xhtPGUtw5jBOZxYTIPxTohChISc8p1ZTYGK6qZa
-         EeTB0C8f1Dgp9iNUxej63+ElaGTIGbCPfzO11V7D208HzXg+JkR4nLsEPUmCo1vAkiPW
-         R7n84EmSYHklCmek7XDk/wn2t/RPXLzynUy+fq0yqXvjKHpXhv+L57POhFM299KzaKg5
-         o7Wtc4C28tuum1f4sugoU6SHhddExUtiocLOqYlSxZMC9qUKY0KkUT+1qgw30FFPW2VI
-         aknA==
-X-Forwarded-Encrypted: i=1; AJvYcCXX+w3dIr0h2+mTM9Z3udHL2+JRI3QK1q8gex9w0CS+Ou4wF1hQbJI8UZqWu/5OKJlkTK2nnqBUYjwb/xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvKpb6yoVqV4xCT0cdMIBfUHNgthQfxHIn7q5IG5lIRAxNtHKO
-	r+DfJDyAWW+MU1i21hwpxgY4DBPJdBHDFjbztu4ePHx9opf/UzpLQ83HK7oRyBkO7g==
-X-Gm-Gg: ASbGncttZcVbBq6kc2YmD5ORPyGMwlu10Z7uflHYDQtv5M5KlIfTrILrdngD/gCMifU
-	ITVu+Rp/AQ19dYLZqA/R+jz8bpty3i9IW8Xd/ISKcf/D/iAj51WKCUvTjsYseBpnsFfDwED4HnM
-	LoOo8tTYNZ6kciBRDMC72sfNgic2dcP2aZu/f8cVqc5Pt7bV245YRLbhTmagkfG+qi3BZAgrwiV
-	l3jgCQC9/gAHTCX4w2QOSGxmvW52+VkXRryJl1WNO8z/0jDJVnce4UkN2vMJWyBhZ29wnHc7fpv
-	EBPCisrgr+/sYzoN/xJognIZxyEBbIwfNhxwtuaLEIHPGZLOKnUQP6Nt4HiIJA4DVtGEKdSkbb0
-	/U5HbBAvgl1s42H+xPRSUwibUtkETkaAkSOoYSQtdSiPRdCGJIoZCTouRKGLViHqAxug8q9nHZP
-	f/r3uoNbh9C1KH
-X-Google-Smtp-Source: AGHT+IHglrqxMx9eJ6fNXPXFkzLGw3noYR5M/ZCP/DdPP9T4uHc8AX5l/UCkLJ7NIRLr0sQHonn2ig==
-X-Received: by 2002:a05:600c:8594:b0:45f:2db6:5202 with SMTP id 5b1f17b1804b1-46e5758ffc1mr335055e9.3.1759148757558;
-        Mon, 29 Sep 2025 05:25:57 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc6cf3835sm18265146f8f.46.2025.09.29.05.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 05:25:57 -0700 (PDT)
-Date: Mon, 29 Sep 2025 12:25:53 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Daniel Mentz <danielmentz@google.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Pranjal Shrivastava <praan@google.com>,
-	Liviu Dudau <liviu.dudau@arm.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>
-Subject: Re: [PATCH 2/2] drivers/arm-smmu-v3: Implement .iotlb_sync_map
- callback
-Message-ID: <aNp60ak6OASbPd_J@google.com>
-References: <20250927223953.936562-1-danielmentz@google.com>
- <20250927223953.936562-2-danielmentz@google.com>
+	s=arc-20240116; t=1759148890; c=relaxed/simple;
+	bh=8Cmtx7kRed2U7BqgS5jivN6WaQUtTqCZCu6zk3IT+OE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EfDaRtjC+I/P3ppyP2ZXy7+BhQnexRZarK1kaepKu33JSp6HZApYrc0WVU6OkzGz1jRlTuY9D0sSn7F0O0lqW4Fs/Rx0xTTuFlyrHVPOKKUkv8F5H0Oj31h6hzpC4Ug9sWGvdAIgrJw2HiFm5aFRibkbRRBros8uJEZVgq/iNVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=vazqFVDw; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=8Cmtx7kRed2U7BqgS5jivN6WaQUtTqCZCu6zk3IT+OE=; b=vazqFVDwXNelz4Ve1pgiByWgSm
+	/ipyxv8z2DlhL7W7eh7ldmKNbmoLN3nhnNL8UbkEbaaCeJFM+2kPm/PjZEEz/VL4LtnNcMmZ7wxE6
+	KUNEjsbE7FCtaj7NfiqYJ5W1q886xuLr4PeaYFC4o96ywnLaKitHxnn1gBysLawts/q5Z+YZHYhEJ
+	4QzdDx98RectK4GZ9tmHccCgG1e9mZUhd6vBLK1cAnWZ0cGry758XJyFAnckyNEY0UwrVtfS81Eeh
+	hsCxG5319lLAWb7HFlWexLE4RHPTZMYzmwFmCx3QqqJ0El29QLZ28QwdKcs+oSUzdksjrQbE/SZsY
+	6k197Q3w==;
+Received: from e227-076.eduroam.tuwien.ac.at ([128.130.227.76] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v3Cye-000723-2i; Mon, 29 Sep 2025 14:27:36 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quentin.schulz@cherry.de, kever.yang@rock-chips.com, naoki@radxa.com,
+ honyuenkwun@gmail.com, inindev@gmail.com, ivan8215145640@gmail.com,
+ neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org,
+ pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org,
+ jjm2473@gmail.com, jbx6244@gmail.com, Liangbin Lian <jjm2473@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Document LinkEase
+Date: Mon, 29 Sep 2025 14:27:34 +0200
+Message-ID: <14335288.5MRjnR8RnV@phil>
+In-Reply-To: <20250929065714.27741-2-jjm2473@gmail.com>
+References:
+ <20250929065714.27741-1-jjm2473@gmail.com>
+ <20250929065714.27741-2-jjm2473@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250927223953.936562-2-danielmentz@google.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Sat, Sep 27, 2025 at 10:39:53PM +0000, Daniel Mentz wrote:
-> Implement .iotlb_sync_map callback based on the new callback in the
-> io-pgtable code.
-> 
-> Signed-off-by: Daniel Mentz <danielmentz@google.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 2a8b46b948f0..0ffcc6c8e4bf 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -2541,6 +2541,7 @@ static int arm_smmu_domain_finalise(struct arm_smmu_domain *smmu_domain,
->  	pgtbl_cfg = (struct io_pgtable_cfg) {
->  		.pgsize_bitmap	= smmu->pgsize_bitmap,
->  		.coherent_walk	= smmu->features & ARM_SMMU_FEAT_COHERENCY,
-> +		.defer_sync_pte	= true,
->  		.tlb		= &arm_smmu_flush_ops,
->  		.iommu_dev	= smmu->dev,
->  	};
-> @@ -3366,6 +3367,18 @@ static int arm_smmu_map_pages(struct iommu_domain *domain, unsigned long iova,
->  	return ops->map_pages(ops, iova, paddr, pgsize, pgcount, prot, gfp, mapped);
->  }
->  
-> +static int arm_smmu_iotlb_sync_map(struct iommu_domain *domain,
-> +				    unsigned long iova, size_t size)
-> +{
-> +	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
-> +
-> +	if (!ops || !ops->iotlb_sync_map)
-> +		return 0;
-> +
-> +	ops->iotlb_sync_map(ops, iova, size);
-> +	return 0;
+Am Montag, 29. September 2025, 08:57:12 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Liangbin Lian:
+> LinkEase is a company focusing on the research and development of
+> network equipment and related software and hardware from Shenzhen.
+>=20
+> Add vendor prefix for it.
+>=20
+> Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
 
-Shouldn't that be
-	return ops->iotlb_sync_map(ops, iova, size);
+In v1 this patch received an
 
-As now we ignore the return from the ops and mask it to 0.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks,
-Mostafa
 
-> +}
-> +
->  static size_t arm_smmu_unmap_pages(struct iommu_domain *domain, unsigned long iova,
->  				   size_t pgsize, size_t pgcount,
->  				   struct iommu_iotlb_gather *gather)
-> @@ -3700,6 +3713,7 @@ static const struct iommu_ops arm_smmu_ops = {
->  		.map_pages		= arm_smmu_map_pages,
->  		.unmap_pages		= arm_smmu_unmap_pages,
->  		.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
-> +		.iotlb_sync_map		= arm_smmu_iotlb_sync_map,
->  		.iotlb_sync		= arm_smmu_iotlb_sync,
->  		.iova_to_phys		= arm_smmu_iova_to_phys,
->  		.free			= arm_smmu_domain_free_paging,
-> -- 
-> 2.51.0.570.gb178f27e6d-goog
-> 
 
