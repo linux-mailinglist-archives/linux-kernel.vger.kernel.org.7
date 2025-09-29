@@ -1,178 +1,292 @@
-Return-Path: <linux-kernel+bounces-836737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8388BAA735
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:25:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3F7BAA738
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003C3189E2E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0AFA1C3677
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B6924677A;
-	Mon, 29 Sep 2025 19:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C432459FD;
+	Mon, 29 Sep 2025 19:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="rohuN/+t";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pSRwhlY3"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Nf04VHCB"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010032.outbound.protection.outlook.com [52.101.46.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F77F72614;
-	Mon, 29 Sep 2025 19:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759173930; cv=none; b=NpLMIUBUBF4EhJ4VyvQrhD/wwQcYQvhxK4lwS8zoQqj8PH3YjWaVp3Aqz1Io14ZMgUbkkvg2lBrt8E3d8WUsnK6f0Yuj7V2HosqXx3HoIDrM3wjUkgm64q9tZ+w3dkfK67R5p5wHcPrNCBDw8mhxWaGKcy5UD4dAaE9UzOOCjLo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759173930; c=relaxed/simple;
-	bh=Oks3wpEIxN4yVSpCmhCTkIS2j/8DeWh0JN7rZT92jAg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=psogGW6IVH+0ehaAfmgV1w8IDIg5r4u/C2L92TqqlW2Paj/nbXRu6iQOINCx+Du+QdTPiPW01FPXMAwKhaa+mbL4YwCFNV/EaW5IThXCyeWRhpNmEeyDEUUyIvaO2mewKpJVv6CaNfiDE8JVI/blmyjx3cRbQaUV/fA49uJPqr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=rohuN/+t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pSRwhlY3; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 26D7F14000C9;
-	Mon, 29 Sep 2025 15:25:27 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-12.internal (MEProxy); Mon, 29 Sep 2025 15:25:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1759173927;
-	 x=1759260327; bh=LEYRrqmqBwGkK9yG6i30I/Zds6zim/KQqc5+mlPQMLk=; b=
-	rohuN/+thrz8tvXTDkRow/SWED9yWfGKQUcESjBVLGXv1Z44PqH+vEnYbyYzEd7s
-	7RIRLYI4b5lAghElwvjhSih/n2m3u+ppFrB/n9b+IWKzNSOTEqHvudFd91UYCRUA
-	RThcaVinKdsLT57DajPVqF8aJJmNVcYSkUduNjaDHiSyh+cfz2PJhn4hzTr24/Fu
-	dFq97g0OvONtN9D1HVWydYe6XJ5kXKj4XGfu062riOm/qbI/1s52Vrzp3GWGGxqH
-	rBhpdI+ImVKK8pRz1VwrYTvNoxqILj6j4O1J4fDjJ/snaL4Bfk8x1VUoUmHPaj5F
-	e0x1x8iGbsBmd0IpGpuBZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759173927; x=
-	1759260327; bh=LEYRrqmqBwGkK9yG6i30I/Zds6zim/KQqc5+mlPQMLk=; b=p
-	SRwhlY3x25laGfimAlMQRonwrgNS2cCvDzGglpQ9RIh3nfMnP72IGZ+DCws2SFs6
-	w6JkjjgsiLEn1sUh3B7yAH7zbSh46sUMdkkRAj6plxv0Z6IemUa1JYFhgyGRWiYu
-	J5FgwW7ghUkCJdLPkyj76T5ytjGLlu5oU2ay65I/09SujptcoluLrPYALdoajc/j
-	L8qk23yHDV5RpJZxpERmAnXnpgkygI0+7Qp0JbTzQqrXX59WKL0evJi31qb2bh1g
-	iEMx/xAHFEjWb0GELLB+jUYMdvCBeNvO1vFNzVNoZbLfQm7z67wyc/FdqTXmA/+h
-	UGiClPWNrK1BMGrkf9nGQ==
-X-ME-Sender: <xms:Jt3aaPObOdJQkEb1nnxZm0DQK_qryfULWZCjD9qDhMM_NalNBloq4A>
-    <xme:Jt3aaEyMNp5ihUykPqc1Q9wRY92j2FpbEmzN95aK-RNr-j9_WKBDdPmzPa9_6QmEx
-    rlWcdChYpoyCGmSmHF6Xy9QPYix6P6Tt3_cklc55TDArbUc-vp6EmA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejkeekgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdforghrkhcu
-    rfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrg
-    eqnecuggftrfgrthhtvghrnhephfeuvdehteeghedthedtveehuddvjeejgffgieejvdeg
-    kefhfeelheekhedvffehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgdpnhgs
-    pghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgvihhkkh
-    hirdhkrhhoghgvrhhusheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehg
-    rhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhushgssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Jt3aaA6sdYxapwe4qnAtwmKT0vZsJhSxUgJX9rb-XFQnqMaZKIac6g>
-    <xmx:Jt3aaIy8w2JgGng9WfiH0tnpMOGdB1Hy_6agUzx1jWsOKtb6vr7keA>
-    <xmx:Jt3aaHyi38ScLaL5qVMkGScdlC4RfclpAaQsfj9lv6emnaSAPDyv5g>
-    <xmx:Jt3aaAzBJJcrfxyRIGH6WMt4InTWqnn2twKgBBfKyaDFusKf9gV9Qw>
-    <xmx:J93aaATjDIfmoQ7aeKpR-MNGm4ad7hps3iCH2v-9EUoFnYLNMFG_4jZZ>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 587EC2CE0072; Mon, 29 Sep 2025 15:25:26 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC7723D7EF;
+	Mon, 29 Sep 2025 19:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759173979; cv=fail; b=r6RdlFWvlRAjS6QbGSVSpYSZHraezwgbJAz4sCKsPFNtstqkChe40HcjPx/JFuyVDueYKpDC5Ywe7h2WNV/nI22gLBK6LLQ/Gd+dVvdfZzoZ0uEhYwbpRr4wOedpNcK8wT3gMB9WVNTapoaAxf3LpScaAM/my/ZLelIjw7nvwuM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759173979; c=relaxed/simple;
+	bh=2b0FESeT0qod7MY+4TXUW9UGgec+50md6lCoNP9D5io=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uQXSJiD/raSaU7NrW4a77a6RbIbfoJIhHOacXfJE27XS9MkaGaEGsVZedXoTFSOFQz1+p/mVdNBKWixBTkU4o2RaZvaKugb3q6uj6fr4j7/ejs968wEWFbWgFZxEpRUJeeUvw9kglKsKbHq1uxi4NncADgDAdqrguExqGHRav88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Nf04VHCB; arc=fail smtp.client-ip=52.101.46.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iAb2h/1+Bh5eTXL4zBMFJlEzGm4yibJLm4iOSikFf86z7/SW9Xhi/46FvxMIxSaIA+S2GgAGiYtwfZ1K40XT0ndOSYXsGGrtln7jthbHcFG7Xe6wb+fpf9b1/WepYdhOjyCxPceZ6aqxUD3Ug6J77b96IQkXSsn/2fzTShec9T0a7nQ43AVuKKTlx0wUpG8InzcJRt52lm5M7dZARpexlhv76KbTpsMS8nE/jTZ6XMCTD2jDAFU4/nm3RuT71H8RjAAKK8ua/1eI4e2HNkeBaZ5oNrn2R6kKg2/aPPn0OpK0056D3wB4RbaggI/axYXnz1oFcGz/Fu8s7sOOxZAtvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=avWU4nmP4P2VqO6DPexPl6ymwfT0DRWSYxdCWpT+qdo=;
+ b=mxMTXjSPhx+dUimADI6fh5WMg9Xep1kkYz8/9RuuMglyuJsdH+9QzsCS9HKurZmCNO3WoviVl/u+ZNHgQlQdwqDFUgdoIeDPQXZ5DR8Y3uE5xlTNG/LTdm/aFtAf4+rLoYSxwM3nvwRG5lWIU8VxMGdlCvI/qyLBvc4182j8ffWB7b/PjnEi47fGsawtCrqKeCmUvNa+FYNtY5fU8J+frN0Hn6NjZDVAphrk1Ox57sBXPx/x+HC0hzmne3RuT3bDVmnZXvePSGgl2kcEVsfuZIf7PHTNZup5FdJ0zob39ToT/ljkJm3iml/Bk5uudyGNfc/Is8mQ/Un4S+WSTFfXlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=avWU4nmP4P2VqO6DPexPl6ymwfT0DRWSYxdCWpT+qdo=;
+ b=Nf04VHCBT1tkh/HSLSfFwSwWRTrfCTfxT0Vst0/YOeZOKd0+Bx4gmdxw2IeIT1yZS480wVjz/XSMjY/bZie0gmgRNghUyIBChfBkkXYP98mjuZo6dr6XYXgIUCeDfXFikTylU50188SPNaDPcKgXke7r14L9fVceoFSv+GtP5LY=
+Received: from PH7P222CA0010.NAMP222.PROD.OUTLOOK.COM (2603:10b6:510:33a::9)
+ by CY8PR12MB7706.namprd12.prod.outlook.com (2603:10b6:930:85::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
+ 2025 19:26:15 +0000
+Received: from CY4PEPF0000EDD7.namprd03.prod.outlook.com
+ (2603:10b6:510:33a:cafe::7a) by PH7P222CA0010.outlook.office365.com
+ (2603:10b6:510:33a::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Mon,
+ 29 Sep 2025 19:26:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CY4PEPF0000EDD7.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Mon, 29 Sep 2025 19:26:14 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 29 Sep
+ 2025 12:26:03 -0700
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 29 Sep
+ 2025 12:26:02 -0700
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 29 Sep 2025 12:26:02 -0700
+Message-ID: <8cb065f6-eee3-49f4-b657-1f4c74f1b324@amd.com>
+Date: Mon, 29 Sep 2025 14:26:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ADpVV-8_W703
-Date: Mon, 29 Sep 2025 15:25:06 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Heikki Krogerus" <heikki.krogerus@linux.intel.com>
-Cc: "Greg KH" <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <0698954f-6efd-4aa5-ba23-39b7730031b4@app.fastmail.com>
-In-Reply-To: <aNFFpUZek-k5YXls@kuha.fi.intel.com>
-References: <mpearson-lenovo@squebb.ca>
- <20250821185319.2585023-1-mpearson-lenovo@squebb.ca>
- <2025082213-antacid-correct-53b1@gregkh>
- <0ac78125-a028-4d99-b106-d792d8660d0f@app.fastmail.com>
- <1c185541-2b6b-4c43-938a-9f4f4d1499b4@app.fastmail.com>
- <2025091819-bullion-hut-8242@gregkh> <aM0J2hDgqkxioAXU@kuha.fi.intel.com>
- <84064f76-bc99-4f3c-b26b-0dacf3632279@app.fastmail.com>
- <aNFFpUZek-k5YXls@kuha.fi.intel.com>
-Subject: Re: [PATCH] usb: typec: ucsi: Handle incorrect num_connectors capability
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Peng Fan
+	<peng.fan@oss.nxp.com>
+CC: <jassisinghbrar@gmail.com>, <andersson@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20250925185043.3013388-1-tanmay.shah@amd.com>
+ <20250926073735.GD8204@nxa18884-linux.ap.freescale.net>
+ <e93f0ee7-687a-4f47-a847-90cc1ea87290@amd.com>
+ <20250928075641.GA29690@nxa18884-linux.ap.freescale.net>
+ <aNqbc5Q_tVStXkhI@p14s>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <aNqbc5Q_tVStXkhI@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD7:EE_|CY8PR12MB7706:EE_
+X-MS-Office365-Filtering-Correlation-Id: 767e9faa-efe4-4432-4ba2-08ddff8e0e1a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eDFWV1VyQ0ROcFl5d3o4eE0wODNTY3piZEZJQUFvOEhkMVNTbGJIdTduRUtL?=
+ =?utf-8?B?MGJKNkh5UUFWcGkvN2tFRTUyRGNmQzAvQlA0V0NML0J5VEhEUFRqN1ljUllE?=
+ =?utf-8?B?MmFQZmxIZmVvSkRrUmd5ai9yTjc4ZkVsdXF6RnUybXJFZXJmV01JSlJPMUdN?=
+ =?utf-8?B?eGZNM3hoZ2JlV3lVRnBMTjFER2NmMDhGOHpqWGNhV3hBOFJQa2E5NlVFZ0lp?=
+ =?utf-8?B?anp1dE5OVU1iNmdMV3NGa1R5RDU4MFhYWEFNKzg0MENLalR3dzJEby8zSGw3?=
+ =?utf-8?B?dE9OT3grckVRVjAzYXIxZC9aSEUrUElNTElOdGxTWkNyOU1rTW9IK0tXdkRG?=
+ =?utf-8?B?NzBCSWZLM08vaHRlNDRrNzhLa0dDODdiTkxORWN6QWlWSnhBNkJ0Z1BMSnBI?=
+ =?utf-8?B?WVpWbDVuY05ydWQwbUhJWTFneEU4QUtYVEtiTUpCMnJwK1ZaWVRoZVlIMjll?=
+ =?utf-8?B?ZEU4UnFJQW9saUV2b0lPbUpNWFVUMUZDaC9tODgydC9wZXhJeXZ2TFR1ekc1?=
+ =?utf-8?B?Q2d2bGw4cVFuK3ZDZ0dqdmFzYkh0d3JkZTdmRXlOWUdnazM0RnBDK00vQ3Z1?=
+ =?utf-8?B?bWRYUjRYVmpzbmVqUXhrK3RoS2p1QWt1VHQ2VTllOE9VbTZoNjNXKytDaStS?=
+ =?utf-8?B?cFpzN1lLSW1OaHNHREZueVQ1ZmlGZTdrL3BPUk0wUUM1STRYZ2tDZytnOUhI?=
+ =?utf-8?B?QWFWQXhlUUdpSVJPcGxjVXIwaXdvZTV0TEF2V1M0dHU0aXdUeTVmbmFYTUVZ?=
+ =?utf-8?B?TFNKdUJZUXozYzU1Tm85S0VjYVM1cEpWMFpLUHU2a2NTUWRJbXMvaWx6alZn?=
+ =?utf-8?B?dzRmUXNrODRlOWt3azFnaHlGKzR4bkkwOENFNUxQTk8vOXhrUCt3b211WEJB?=
+ =?utf-8?B?eVMwaTBrNkJGVFI3d1l3dG1NenA5UFJWUWdqNzY1d0UxOGttcFhINlFNeXZw?=
+ =?utf-8?B?UWtDNHNGOEkxV2FibHA3eGMzU1dwckhOVG8zWENmRy9MQmUxMjJFdUFBeXJv?=
+ =?utf-8?B?ZGswSVpLS3VBcGpRc2RBN01tcHNMV21VM1BNaktjb2JqUG9NM0NZU2p3TjBI?=
+ =?utf-8?B?TlNVVnhvUUUrQjlEYzJpMDFRdmlnZjQxS1ZmVEhVSExkWWFLZllGcGNOcUhX?=
+ =?utf-8?B?NFVSazZjdnFRUnFyMXpRdW52aHhQWFVKZnZFVVlwYjJoUmNpYlRlRm5nVVRr?=
+ =?utf-8?B?a25ETFpTZ2xwSHVMWVh2ZTIya08vQ0tGVHhKUnY5VUd4S2h4a2lkdmY1cy9T?=
+ =?utf-8?B?UDRDMFltNENuaGkyb2ZKQnZZcGxlM1JpWjJXeUdKQmVNVTQ3Y3J5b0tRakdM?=
+ =?utf-8?B?THlaM3hzUHpFaWxZVU9hSVd6blBSdGYwcXdBY0JJb1NNZUNUQXhKblZVUGxS?=
+ =?utf-8?B?eXhSRXNDdnhoaWFVUnppSDJ1Vmo4S1JIMmtFb3ZGbGJUaEZrTGpjMVVFeFZx?=
+ =?utf-8?B?VmNJeUpJWjZiazI4RVMrYzY4TVlhYjlYVmlZWXEzWnJtZ0NaeVpoK05tM2V6?=
+ =?utf-8?B?TGZnM0J3TGpBdlpjaUVCVko5TXE4c0Yrd1UwSUxMMmNDalZ6dlJlZXFaSVhI?=
+ =?utf-8?B?N0pqS0JGckpKTTk5V2VMbGNpMGxuYko1bWZwaDZZYzI3Z01qenRxMkR5cEVt?=
+ =?utf-8?B?ZHhYblhvaFVmOVA2U2pzd1p0VGFVUm9helRIL3Q3OHZYTEkxY1NVVmgvWkVt?=
+ =?utf-8?B?cjdXS1BmdHZyN2ZZOHZFYXNrdkFRR0ZHVDA3VGIzQXo2S0wwZVJmcHhyUWd5?=
+ =?utf-8?B?TWd4ZW8yc1pyaWxXRnRyc2x4RkJrSzRyYWVxR2dLdmJDQ0tmd1c4N0poUllN?=
+ =?utf-8?B?R3pqOE5QNEU2QURUbjFsU1I0QzFmTEtoTUtMSVRnZ1RKdFVkWklrMklkUUl4?=
+ =?utf-8?B?eUtNTjZGdE9CejZZOUNTUXNsbDlraVdCV01HVkpzUm8rQ2E0YXl4TElQNFJv?=
+ =?utf-8?B?WWl5eDFDbVZaOXlHOVA5TWFJOVIvR2c4MkNOakZTbS9ldlRkYUxVVVEvMHF0?=
+ =?utf-8?B?ZTJ3WFJZWG96Q21LYUNKbHZTWU5mTU1yUWx5TXdLcHdCOFBwMjRqdC94VjRE?=
+ =?utf-8?Q?1YN/XO?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 19:26:14.2611
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 767e9faa-efe4-4432-4ba2-08ddff8e0e1a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7706
 
-Hi Heikki,
 
-On Mon, Sep 22, 2025, at 8:48 AM, Heikki Krogerus wrote:
-> On Fri, Sep 19, 2025 at 11:45:48AM -0400, Mark Pearson wrote:
->> Hi Heikki,
->> 
->> On Fri, Sep 19, 2025, at 3:44 AM, Heikki Krogerus wrote:
->> > On Thu, Sep 18, 2025 at 09:50:30AM +0200, Greg KH wrote:
->> >> On Wed, Sep 17, 2025 at 02:14:28PM -0400, Mark Pearson wrote:
->> >> > Hi all,
->> >> > 
->> >> > On Fri, Aug 22, 2025, at 8:54 AM, Mark Pearson wrote:
->> >> > > Hi Greg,
->> >> > >
->> >> > > On Fri, Aug 22, 2025, at 12:51 AM, Greg KH wrote:
->> >> > >> On Thu, Aug 21, 2025 at 02:53:07PM -0400, Mark Pearson wrote:
->> >> > >>> The UCSI spec states that the num_connectors field is 7 bits, and the
->> >> > >>> 8th bit is reserved and should be set to zero.
->> >> > >>> Some buggy FW has been known to set this bit, and it can lead to a
->> >> > >>> system not booting.
->> >> > >>> Flag that the FW is not behaving correctly, and auto-fix the value
->> >> > >>> so that the system boots correctly.
->> >> > >>> 
->> >> > >>> Found on Lenovo P1 G8 during Linux enablement program. The FW will
->> >> > >>> be fixed, but seemed worth addressing in case it hit platforms that
->> >> > >>> aren't officially Linux supported.
->> >> > >>> 
->> >> > >>> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->> >> > >>
->> >> > >> Any hints as to what commit id this fixes?
->> >> > >>
->> >> > >> thanks,
->> >> > >>
->> >> > >> greg k-h
->> >> > >
->> >> > > Maybe 3cf657f ('Remove all bit-fields')?
->> >> > >
->> >> > > The commit there states that 'We can't use bit fields with data that is 
->> >> > > received or send
->> >> > > to/from the device.'
->> >> > > Not sure why that is, but I assumed this means we shouldn't change the 
->> >> > > structure to use 7 bits for num_connectors, which was my original plan.
->> >> > >
->> >> > > After that, we go all the way back to the file creation (c1b0bc2) where 
->> >> > > it was defined as 8 bit.
->> >> > >
->> >> > 
->> >> > Just a gentle nudge to see if there are any concerns or questions with the patch.
->> >> 
->> >> I was waiting for the maintainer of this code to review it :)
->> >
->> > So not Fixes tag?
->> >
->> 
->> I can add a Fixes tag for the very original commit of this file (c1b0bc2) if that's wanted.
->
-> I don't think it's necessary in this case if the fw is really fixed.
-> But what says Greg?
->
-I don't think the Fixes tag makes sense either; and to confirm - this will be fixed in FW.
 
-Greg - can we go ahead with this please?
+On 9/29/25 9:45 AM, Mathieu Poirier wrote:
+> On Sun, Sep 28, 2025 at 03:56:41PM +0800, Peng Fan wrote:
+>> Hi,
+>>
+>> On Fri, Sep 26, 2025 at 10:40:09AM -0500, Tanmay Shah wrote:
+>>>>> ---
+>>>>> drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
+>>>>> drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+>>>>> include/linux/mailbox_client.h          |  1 +
+>>>>
+>>>> The mailbox and remoteproc should be separated.
+>>>>
+>>>
+>>> Mailbox framework is introducing new API. I wanted the use case to be in the
+>>> same patch-set, otherwise we might see unused API warning.
+>>
+>> I mean two patches in one patchset.
+>>
+> 
+> Agreed
+>   
 
-Mark
+Okay.
+
+>>>
+>>> Hence, both in the same patch makes more sense. If maintainers prefer, I will
+>>> separate them.
+>>>
+>>>>> 3 files changed, 29 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+>>>>> index 5cd8ae222073..7afdb2c9006d 100644
+>>>>> --- a/drivers/mailbox/mailbox.c
+>>>>> +++ b/drivers/mailbox/mailbox.c
+>>>>> @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
+>>>>> }
+>>>>> EXPORT_SYMBOL_GPL(mbox_client_peek_data);
+>>>>>
+>>>>> +/**
+>>>>> + * mbox_queue_full - check if mailbox queue is full or not
+>>>>> + * @chan: Mailbox channel assigned to this client.
+>>>>> + *
+>>>>> + * Clients can choose not to send new msg if mbox queue is full.
+>>>>> + *
+>>>>> + * Return: true if queue is full else false. < 0 for error
+>>>>> + */
+>>>>> +int mbox_queue_full(struct mbox_chan *chan)
+>>>>> +{
+>>>>> +	unsigned long flags;
+>>>>> +	int res;
+>>>>> +
+>>>>> +	if (!chan)
+>>>>> +		return -EINVAL;
+>>>>> +
+>>>>> +	spin_lock_irqsave(&chan->lock, flags);
+>>>>
+>>>> Use scoped_guard.
+>>>
+>>> Other APIs use spin_lock_irqsave. Probably scoped_guard should be introduced
+>>> in a different patch for all APIs in the mailbox.
+>>
+>> Your code base seems not up to date.
+>>
+> 
+> Agreed
+> 
+
+Okay. I was referring to different branch when I referred other API in 
+the mailbox framework.
+
+Sure, I will use scoped_guard.
+
+>>>
+>>>>
+>>>>> +	res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
+> 
+> Please have a look at this condition again - the implementation of
+> addr_to_rbuf() [1] is checking for space differently.
+> 
+> [1]. https://elixir.bootlin.com/linux/v6.17/source/drivers/mailbox/mailbox.c#L32
+> 
+>>>>> +	spin_unlock_irqrestore(&chan->lock, flags);
+>>>>> +
+>>>>> +	return res;
+>>>>> +}
+>>>>> +EXPORT_SYMBOL_GPL(mbox_queue_full);
+>>>>
+>>>> add_to_rbuf is able to return ENOBUFS when call mbox_send_message.
+>>>> Does checking mbox_send_message return value works for you?
+>>>>
+>>>
+>>> That is the problem. mbox_send_message uses add_to_rbuf and fails. But during
+>>> failure, it prints warning message:
+>>>
+>>> dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
+>>>
+>>> In some cases there are lot of such messages on terminal. Functionally
+>>> nothing is wrong and everything is working but user keeps getting false
+>>> positive warning about increasing mbox tx queue length. That is why we need
+>>> API to check if mbox queue length is full or not before doing
+>>> mbox_send_message. Not all clients need to use it, but some cane make use of
+>>> it.
+>>
+>> I think check whether mbox_send_message returns -ENOBUFS or not should
+>> work for you. If the "Try increasing MBOX_TX_QUEUE_LEN" message
+>> bothers you, it could be update to dev_dbg per my understanding.
+>>
+> 
+> This new API is trying to avoid calling mbox_send_message(), no checking if it
+> succeeded or not.  Moving dev_err() nto dev_dbg() is also the wrong approach.
+> 
+
+Correct.
+
+>> Regards,
+>> Peng
+>>
+>>>
+>>>
+>>>>> +
+>>>>> /**
+>>>>>    * mbox_send_message -	For client to submit a message to be
+>>>>>    *				sent to the remote.
+>>>>
+>>>> Regards
+>>>> Peng
+>>>
+
 
