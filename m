@@ -1,180 +1,213 @@
-Return-Path: <linux-kernel+bounces-836373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E32BA982C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5A6BA9838
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F0F188ACDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DAF3B64D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0024B3090D0;
-	Mon, 29 Sep 2025 14:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC553090E2;
+	Mon, 29 Sep 2025 14:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rqpTimbC"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012029.outbound.protection.outlook.com [40.107.200.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="CNUpqJdR"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81A872617
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155231; cv=fail; b=L/5/uOHNUoCSa++DbfVvGEUDUNazBObECa9WKxxiV4jf25BFJEDu8Ek5JgDjlfby7XfRltLGSPEeMcw89ULKwiDxlRhr37FWjSfx35p761p3DosxnPtD33jibV9KYPpr00ZIh8H/U6/NwHciOCIilCymlQYmhyqnj6aip4ZB+Ss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155231; c=relaxed/simple;
-	bh=AWDd2uAcIi+C0iDhsnv5VGyNkG6Z9HRiC4I21D5Vj9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SRRy0zQBUVoK1TpdqFi5/pXYCpSKob/NdabV0xDvVyACfH03RN3mJuKZ8+GfkY6kvPK/SOcOMFVF6acKdF9WPyMhP8Op9g4vg++UCHCB7ofvmQL/PdxvxS1nF+6MGvzPa6lRHsxOt05eNfZg9pUz2ZqIE+oqWEmUfLZZQltAliw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rqpTimbC; arc=fail smtp.client-ip=40.107.200.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fZQx+sGcf+7d/YfzhKKrpd403r8EKAA98X1z9+P2udeSw8Ar4/3Bner0nNEHXvtFO086RaxVB2x+sTfsW/3vIePCawschfUxcVaJjioFWqT7HU6s5ssZdOtdd1tezB4UC3GIMcwVYmMjyxHxLFl8Ql3FSs++fX57BJsn+WLVlEVQbARUJ/E/Z7EJ0pg57JyjXjKxVVWgupsc+goTPzbCT2QtFeMNkpdTmHIikZHNKHK8vaO5JneHh34ft3Vo7aMAv1TugdAH5vaXASiDN9S4rzuw0EhofhMfM4Y45BhRmyctSay1IMNkju/6Thk4yTgjlifuArS5M5jEedjqMRUJTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H2Z7rA4Yv38sS+LYnK2EGScDRUyY3eO7smtZeEXRL48=;
- b=ijvPg0miSo4hkyxuDW1aEk1YQAmjw/QjFqYD3bA+D/IlD7+aeJ9iDtZAkSgRPZC6ucj8I5QY8IjGVgFYr9nq1vWKA3N6HwhD/N0gjuIUuRCNPbVGP7GFPcmXn5NBbjWf0abIZZ0KBwYdkoew06lF/4q1suJn60wfL8o6+RYoriCLVRPl5W3q0VzAnQk8+HUpK4CcLkkSVaa6XksTM+PYPiAtl0m5la0rKygpcvFNtNSaRe0LTqn79MkYe7j13zyWr5sJMYvrM6cI5cO2VcmI3UuUUuFiqz9pdZ8qU7GSPK2eEY54fIVpePkQQNchHHw37CwlcyI+HxjfkUVWcrpqRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H2Z7rA4Yv38sS+LYnK2EGScDRUyY3eO7smtZeEXRL48=;
- b=rqpTimbC6H74z5Ehozcsf7ugrjwxfMDXbSvsk7T1JgTpKNtavqJSWXQ8pxGcuV4Z6mrgQEH8aJsYxn3U/lQluVG7pcvdfLepfO6YuOgFhPEYiQJPQrTZsQ7CPLoWSHZCV7RSU9cZz3ZQ2ZjbYZE9bpnWE3ynie1y4cZK36Lo/3TI+b/ve771mIRTXn4UDWJNKPcI6ny3F/7+8YHEDZIiqzx+VZN+7YJUKetjvrB7UBynh0d3W8knvtAoDHraCaPS/8Q/6T9x7S//ZuZVUiDx+yhJvKiCLjxnY+LYPx/xCTu1fcQRD3SWnjt/hzMSVrkvcy4X7IT861DhAmQh3/V3/A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19)
- by CY8PR12MB7587.namprd12.prod.outlook.com (2603:10b6:930:9a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
- 2025 14:13:47 +0000
-Received: from IA1PR12MB9031.namprd12.prod.outlook.com
- ([fe80::1fb7:5076:77b5:559c]) by IA1PR12MB9031.namprd12.prod.outlook.com
- ([fe80::1fb7:5076:77b5:559c%6]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
- 14:13:46 +0000
-Date: Mon, 29 Sep 2025 14:13:36 +0000
-From: Dragos Tatulea <dtatulea@nvidia.com>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, mst@redhat.com, 
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	tariqt@nvidia.com, moshe@nvidia.com, kshk@linux.ibm.com, 
-	virtualization@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vdpa/mlx5: Fix incorrect error code reporting in
- query_virtqueues
-Message-ID: <sdv7e77s7v2hqjkedvhxy4zbwriqu7z6kstfqfnitst4c7yrdv@xcskbqzsf6dl>
-References: <20250929134258.80956-1-alok.a.tiwari@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929134258.80956-1-alok.a.tiwari@oracle.com>
-X-ClientProxiedBy: TL2P290CA0005.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:2::15) To IA1PR12MB9031.namprd12.prod.outlook.com
- (2603:10b6:208:3f9::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015372F25F5;
+	Mon, 29 Sep 2025 14:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759155412; cv=none; b=CAvSaKsUCusYIchxvDdpGsSjLpss37UtsTGrnG0nnSCPSMLkFVHo/Bs+XhgYvvyNJBYRlkxT0H68woG/OOsFJovmQY19+SfzCbMmkdrP/FsWWhwAAXam7oO+V2OSmlu4zMwVNX6qvNCxtbBPSxWNFnLoCb1LS70pBVmwsQyIFkU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759155412; c=relaxed/simple;
+	bh=3+O5C6Vz/MkAbscpfMKARxnmsE5d9vXjTWJzlbsLnug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtQUEKH3K1R94QHc4XaPn+jxBJmnyVE9Whg2JReipby2XzmF8HMdl0RvLPaKTnWMFoQ7Wmc1t0ndTrvR64JBCFqLRFTkrlfwoUcvqmjGRlZiGuceFj2ubllYeO+aiWnOgnsQ28eUVW8iCzROXMeNO2+4J6tPh8//2HKiiCjDpEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=CNUpqJdR; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.17])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 9205D40643CB;
+	Mon, 29 Sep 2025 14:16:45 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 9205D40643CB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1759155405;
+	bh=W1zN4RQ16FSgQFKeVYeqiwRubVmq/xZgRjCVRCpAZLY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CNUpqJdRpv3a7/gLgi4D4oErIzd0rjVicqgMppaNYr0EvsJEB1yprRBYIvIhFxlTN
+	 PyNwLY3Mk0kjbWn8TS78WcWfwZGZIKuNSaNsPPWfiH2nuh3X+2kwElQ8yBjoU3IpQ/
+	 SdmfHovckNM7CVh6Flce0gZTn8EGDikh1dhLh1w0=
+Date: Mon, 29 Sep 2025 17:16:45 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Bitterblue Smith <rtl8821cerfe2@gmail.com>, 
+	Zong-Zhe Yang <kevin_yang@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH rtw-next 4/6] wifi: rtw89: handle
+ IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
+Message-ID: <20250929130524-9e0c010a824ad34c47c2e1c4-pchelkin@ispras>
+References: <20250920132614.277719-1-pchelkin@ispras.ru>
+ <20250920132614.277719-5-pchelkin@ispras.ru>
+ <de5673b6c65d460187b9d99a14783a7e@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB9031:EE_|CY8PR12MB7587:EE_
-X-MS-Office365-Filtering-Correlation-Id: f8197002-5463-4114-2686-08ddff626797
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cqVgrY+hRFQ6gpRuqjNbTn2WS7DvNfeqE2h6WHnTrbzqnmcR9M6XGNbJs1Ut?=
- =?us-ascii?Q?dcCW/bWT6UqjkjVH1nugjPx5RUAIEvHL7dxcMmdl7Xq9jdcOHp/7KQqXo7fp?=
- =?us-ascii?Q?mxW1MNC3BNuftTtZNGrQQq3itbXKPqiK4jYgzJ+U4P/n/Hy8yOsaC+EEtiGQ?=
- =?us-ascii?Q?Xqlty4xE/eTGeGCNBRUAUY3Tn1asy7Jru/Q+nG25rSFoLvK1GwsakpraUiD3?=
- =?us-ascii?Q?eam8/+CA3NeHy5Io/9C9MGeLBcLsb1TYR/ovxyswdZdUzehlMfsXQPkGhpPX?=
- =?us-ascii?Q?ZOFO9fJcJOIS2sHd6FOs7Y21B8swyyXAVc2GFaRZ07yPSgaYOM6ZCSuAgspx?=
- =?us-ascii?Q?BkBQBFKp93hwux0rYAfdSAIsC8Iw+e3J7Iu1wj2M1isPi7lCOOo5PHUAE63a?=
- =?us-ascii?Q?QctOp/MBXMlsHk2FEzbfSM4Nx6M+wd9C3owuCnh48dl2w3FS4KWyBtZDF4Pp?=
- =?us-ascii?Q?6lhgxv+PB7tubDTWshG3DkuatTGjy6Bjt0+OIHfS7jJGQJnE0fuaHgIEL2js?=
- =?us-ascii?Q?2QQ/JCsXt7icUTC7z03V9ssqh/HMEZizWrzPUOFtMLtjpKZbC0bW+J5/ga1n?=
- =?us-ascii?Q?KVPB4gBYROsWe5EGMd8Z9UGTEXZb9Rdxgml8/ZspLK4HppUuBqYyAGJ5ujDg?=
- =?us-ascii?Q?VSNiEgZ2YKAQCqRPczYEIMgRGfXpPpxHXB40OlIGhcI2s9xKDKCYLSAPkePQ?=
- =?us-ascii?Q?bYz5xKbb6FW6ZJ62Jk5PzbSDZFK4htbp+40lx23KMhcQD/zOBi/joHKaTtQr?=
- =?us-ascii?Q?/CNIKwm/W13/gwaZBVVKgEB2ZJm6nUwNq5yFfN8FJDkSI5NtC42DQna5kcPK?=
- =?us-ascii?Q?mCL72Wga1XEHMuP931WItK9Hmy5jP5XPsp38rZuZyFeltG3vuGLjpVrDvWRd?=
- =?us-ascii?Q?4CwLrT0p5oG6JPoNgVNBJMP6F0/FdYeXV6gHqtyL6TTcbA25/s+B5xsL4xKi?=
- =?us-ascii?Q?G/WcqJr6fzGIMMJ877o5HViymSVyXQ7gbK1YKa99xQCTlSiSmSshAUamBI3T?=
- =?us-ascii?Q?Ekqo6awxuD1f33W8KzpzoUG8FQB+SoXxj8+wSzbrAem+feK5uGW9VbCcneCq?=
- =?us-ascii?Q?vP9eII/AAlzOKSDhNw6cDlBVa9RmlZVW9igD8g+zFN/tB63xaAGNcK8rvlcn?=
- =?us-ascii?Q?+s8tC6+HPcmSLczE5tiJJjnLcY/OLrYtWWsimib2HMnouSi+KclH/f1J29bA?=
- =?us-ascii?Q?9+Vpm4nJ9W1lmFXuiQvo2PRyDN/Ld2LdfkwAIyyh8YUekZYf6NMzOO+/Y6AW?=
- =?us-ascii?Q?KDaZKP//4naJNK48sAEbLPDZw92z7YvpS8am/j9XtD+Lte6MKMcU1BBj3ieL?=
- =?us-ascii?Q?t5joiyylh8euzPHzVuokzgAa2v9RnO58pDJrD/a4lH2afuD5hbDtTaByHaNI?=
- =?us-ascii?Q?0P1Z37OFbPzEU8x35xlwWdGzmUKAYMUawMUZfMXUfbw8/9bjhr30QwJ/8Yf3?=
- =?us-ascii?Q?hz+01ip+gUDOgiYKF8g/JzvYYLlw3ENL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB9031.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gR4z5mFLJbP/6kSVFXbxa2ytN2S6BJUp6L9HN6XvkdPX067aV9GUpkfYwn6Y?=
- =?us-ascii?Q?1TA4TvERDrzWwdhdrxx+lYxyTclVhM77tFlGD1qlA5WDM2i9SpyliVa639bC?=
- =?us-ascii?Q?cXQbf/jHgJEUk0I1D14oGQM3r4iNcVuCWaU7AYB27elNQCgIzK77b953+kih?=
- =?us-ascii?Q?5VMQQQQtijcs9TPpR1TO44RzXS2je5pQdFnHD4j7M4La8Y0A2r9iS6TFxaT2?=
- =?us-ascii?Q?xseU47wWpOCfdMr9xJgszYH3AAhZIPHlIAbPxlkReV4cIdSIW1bHjd9dJjI0?=
- =?us-ascii?Q?XsGn2KPDwBvliZ7r6q3K+2Ht+L3FYgordpLyRtybRJrdQ4HimeocD0BLHk/s?=
- =?us-ascii?Q?uuaafQPb15CxynbVU7I4WVMno2ZNmjS55EwM8VXlWoTPy50xODvYFaCsf9Zy?=
- =?us-ascii?Q?+FZEq0S3DPGuLrY3zC3bBGlDbZmC89wi/YHgr+FRF3ICw3uwwgVLV03qjZBL?=
- =?us-ascii?Q?hp658zhdYTQGyXvF7l7wBUsUqRF1+YZqoqXnMx3ReJ7/Kyfjc1MKJT8+fxKG?=
- =?us-ascii?Q?uhOd3TZ19gjBx7U35WcYm3nNIGgkJN/7q8WukFuSPblmIrkbgrMwzr3q8jQF?=
- =?us-ascii?Q?alQ3i8CveYi02GaQWSAMgsP/KsbqnJ14ZUbYGjP5pXPjNDT/4ja51jooxoJT?=
- =?us-ascii?Q?3yLB8LUXNwoUJQsCLOXEGZ40kyRaytD+q7r0H9WJIuByCvXhWHWnmm8W+ONA?=
- =?us-ascii?Q?v4dvagthbPWdUSl5cGgPp0FTIAsZ7tNmMK86HsyBlm1gN/cxRd4/xEzvZH8N?=
- =?us-ascii?Q?wlNHdIfenQJMsYy1PJFIP3ZYY1imABNUQ1p+KkMgCgZvrdvIkB9kwkZW3D8Z?=
- =?us-ascii?Q?VMzq0xpgcpNWE0MwlJjU839Sr8UgNB+PezFpqrt1P/RyVdrD5G/+LYJzwh8m?=
- =?us-ascii?Q?BtUxP/U5P/XU3NG6QlTzTJRLLk8NojUvwXoyO/sFvUomgx9AKe4KYDU98h3x?=
- =?us-ascii?Q?QAEcUo09XjyPf9xQNSg1ZWLrafa9B2MRInEBI7OtRCB2b2GqMMju1rYFw5E6?=
- =?us-ascii?Q?cyEtdeN/P5hlBB30B0Mq1IUzq8h2KIbZy1UwfT+AIWqrhKaw/awpGAJpY1z9?=
- =?us-ascii?Q?8gKcxdOdu4FQhXpLvJAHu+HcQMT4nZ/51l2O2Az6BueGwgeVBzqXBwLOTR/D?=
- =?us-ascii?Q?vi8KcHffMWTqThvs34JM/DBtpL98eKOFDTm6Mk8XWFWIxd29kXbc/RdLTr9z?=
- =?us-ascii?Q?AuKdmC7YvKddWVBX7VYHiYvswEh2GyjyY/6Z2Bg4jbdsT2wxWfhAgVdlgwXF?=
- =?us-ascii?Q?RlVZwYFS0vFlv77eLSQjNSuZV/Y7REZG5G+1eNKpBIZWLCMe3xu03Kk/jAeN?=
- =?us-ascii?Q?oU4MvQSZ76+GxvGLoarlYWghKliVIxEkqo2z8Fo+K3K6GziTfa/Tq/lqXm0s?=
- =?us-ascii?Q?0qSKNnq3MAkHve96upMKSMtYZjD59a6USDZ1UbqCvlVa3mAIa0CE10/fnDIz?=
- =?us-ascii?Q?1b75/ZgzqiiXKTcWc+cJHbXz847+fsy1jUvozgOdYwS47ylKjPXJGrVrI4C0?=
- =?us-ascii?Q?EVJ1X+eE5hJcITFGIIwmoSfPyyqutpSJ9E8kOSu0huGkrMjN6gkrjynDUc1k?=
- =?us-ascii?Q?8Ny5j4JpqUC3g4xHuPnbn3l2bjCcjVHQxkz66GzV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8197002-5463-4114-2686-08ddff626797
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB9031.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 14:13:46.8180
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2FKzXQdq7YLR+5pTebUTHDyHGSMmfPBltMCcO4ORbml1MQTjCSaVPpPEh8Tucx9JO8Unss4T99giDH3YgBDESw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7587
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <de5673b6c65d460187b9d99a14783a7e@realtek.com>
 
-On Mon, Sep 29, 2025 at 06:42:53AM -0700, Alok Tiwari wrote:
-> When query_virtqueues() fails, the error log prints the variable err
-> instead of cmd->err. Since err may still be zero at this point, the
-> log message can misleadingly report a success value 0 even though the
-> command actually failed.
+On Thu, 25. Sep 02:05, Ping-Ke Shih wrote:
+> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> > Frames flagged with IEEE80211_TX_CTL_REQ_TX_STATUS mean the driver has to
+> > report to mac80211 stack whether AP sent ACK for the null frame/probe
+> > request or not.  It's not implemented in USB part of the driver yet.
+>                  ^^ nit: two spaces
+> > 
+> > PCIe HCI has its own way of getting TX status incorporated into RPP
+> > feature, and it's always enabled there.  Other HCIs need a different
+>                                          ^^ nit: two spaces
 > 
-> Even worse, once err is set to the first failure, subsequent logs
-> print that same stale value. This makes the error reporting appear
-> one step behind the actual failing queue index, which is confusing
-> and misleading.
+> I wonder if you want two spaces intentionally? 
+
+Oh, it's intentional "style" used to mark sentence endings more
+distinctively.  I've already done that in the previous series.
+
+> > @@ -6294,6 +6304,7 @@ static inline void rtw89_hci_reset(struct rtw89_dev *rtwdev)
+> >  {
+> >         rtwdev->hci.ops->reset(rtwdev);
+> >         rtw89_tx_wait_list_clear(rtwdev);
+> > +       skb_queue_purge(&rtwdev->tx_rpt_queue);
 > 
-> Fix the log to report cmd->err, which reflects the real failure code
-> returned by the firmware.
->
-> Fixes: 1fcdf43ea69e ("vdpa/mlx5: Use async API for vq query command")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-Thanks for catching and fixing this Alok. The patch is straightforward
-and it looks good to me:
+> ieee80211_purge_tx_queue()? 
+> (a caller needs to hold lock)
 
-Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+Alright, plain skb_queue_purge() may lead to "Have pending ack frames!"
+WARNING later.
 
-Thanks,
-Dragos
+> > diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wireless/realtek/rtw89/mac.c
+> > index 01afdcd5f36c..831e53aedccc 100644
+> > --- a/drivers/net/wireless/realtek/rtw89/mac.c
+> > +++ b/drivers/net/wireless/realtek/rtw89/mac.c
+> > @@ -5457,15 +5457,44 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32
+> >         rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
+> >  }
+> > 
+> > +static void
+> > +rtw89_tx_rpt_tx_status(struct rtw89_dev *rtwdev, struct sk_buff *skb, bool acked)
+> > +{
+> > +       struct ieee80211_tx_info *info;
+> > +
+> > +       info = IEEE80211_SKB_CB(skb);
+> 
+> nit: just declare ` struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);` 
+> 
+> > +       ieee80211_tx_info_clear_status(info);
+> > +       if (acked)
+> > +               info->flags |= IEEE80211_TX_STAT_ACK;
+> > +       else
+> > +               info->flags &= ~IEEE80211_TX_STAT_ACK;
+> > +
+> > +       ieee80211_tx_status_irqsafe(rtwdev->hw, skb);
+> 
+> I'm not aware USB use _irqsafe version before. Can I know the context of
+> rtw89_usb_write_port_complete()? Is it IRQ context?
+> 
+
+Depends on the USB host controller if I'm not mistaken.  URB completion
+callback may be invoked either in hard IRQ or BH context.
+usb_hcd_giveback_urb() has an updated doc stating:
+
+ * Context: atomic. The completion callback is invoked either in a work queue
+ * (BH) context or in the caller's context, depending on whether the HCD_BH
+ * flag is set in the @hcd structure, except that URBs submitted to the
+ * root hub always complete in BH context.
+
+If HCD_BH is not set for the host controller in use then, depending on host
+controller, URB handler might be executed in hard IRQ context.
+
+I guess you're implying to unify the usage of ieee80211_tx_status_* for
+PCIe (which has ieee80211_tx_status_ni) and USB variants of rtw89.  These
+calls are not mixed for the single hardware so there is no real issue
+for unification.
+
+> > +}
+> > +
+> >  static void
+> >  rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
+> >  {
+> >         u8 sw_define = RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h->data);
+> >         u8 tx_status = RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h->data);
+> > +       struct sk_buff *cur, *tmp;
+> > +       unsigned long flags;
+> > +       u8 *n;
+> > 
+> >         rtw89_debug(rtwdev, RTW89_DBG_TXRX,
+> >                     "C2H TX RPT: sn %d, tx_status %d\n",
+> >                     sw_define, tx_status);
+> > +
+> > +       spin_lock_irqsave(&rtwdev->tx_rpt_queue.lock, flags);
+> > +       skb_queue_walk_safe(&rtwdev->tx_rpt_queue, cur, tmp) {
+> > +               n = (u8 *)RTW89_TX_SKB_CB(cur)->hci_priv;
+> 
+> The *n is rtw89_usb_tx_data::sn, right? I feel this is hard to ensure
+> correctness. Why not just define this in struct rtw89_tx_skb_data?
+> So no need RTW89_USB_TX_SKB_CB() for this.
+
+Ah, this should work because recent commit 19989c80734c ("wifi: rtw89: use
+ieee80211_tx_info::driver_data to store driver TX info") has allowed
+storing more than 2 'void *' pointers in private data.
+
+> 
+> > +               if (*n == sw_define) {
+> > +                       __skb_unlink(cur, &rtwdev->tx_rpt_queue);
+> > +                       rtw89_tx_rpt_tx_status(rtwdev, cur, tx_status == RTW89_TX_DONE);
+> > +                       break;
+> > +               }
+> > +       }
+> > +       spin_unlock_irqrestore(&rtwdev->tx_rpt_queue.lock, flags);
+> 
+> If we can use ieee80211_tx_status_ni() or ieee80211_tx_status_skb(), 
+
+We can't use non-_irqsafe versions here unless rtw89_usb_write_port_complete()
+is reworked not to use _irqsafe one.  And there is no way other than
+transfering this work from URB completion handler to some other async
+worker (in BH context or similar).  Not sure it'll be better overall.
+
+> I'd like use skb_queue_splice() to create a local skb list, and iterate the
+> local list, and then splice back to original.
+> 
+> (Reference to mesh_path_move_to_queue())
+
+Perhaps we can do that with ieee80211_tx_status_irqsafe() still in place.
+
+> 
+> >  }
+> > 
+> >  static void
+> > diff --git a/drivers/net/wireless/realtek/rtw89/pci.c b/drivers/net/wireless/realtek/rtw89/pci.c
+> > index 0ee5f8579447..fdf142d77ecc 100644
+> > --- a/drivers/net/wireless/realtek/rtw89/pci.c
+> > +++ b/drivers/net/wireless/realtek/rtw89/pci.c
+> > @@ -4675,6 +4675,7 @@ static const struct rtw89_hci_ops rtw89_pci_ops = {
+> >         .pause          = rtw89_pci_ops_pause,
+> >         .switch_mode    = rtw89_pci_ops_switch_mode,
+> >         .recalc_int_mit = rtw89_pci_recalc_int_mit,
+> > +       .tx_rpt_enable  = NULL, /* always enabled */
+> 
+> The comment is weird. PCI devices don't never use TX report, no?
+
+It's me mixing up the terminology, sorry.  The comment was supposed to
+indicate that PCI always have TX status reported.  (but it's done via RPP
+feature which is actually a separate thing compared to TX Report, okay)
+
+I'd rather replace it with "TX status is reported via RPP" if that comment
+is helpful.
 
