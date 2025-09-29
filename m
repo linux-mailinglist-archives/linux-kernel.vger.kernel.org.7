@@ -1,127 +1,211 @@
-Return-Path: <linux-kernel+bounces-835928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA27BBA85E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:12:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 567C8BA85F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A8187A66FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9455C189C199
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C24239E79;
-	Mon, 29 Sep 2025 08:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032CD2580EE;
+	Mon, 29 Sep 2025 08:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1bCd8uE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Tqmkh2vE"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FE9625
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE9E3C465
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759133555; cv=none; b=OrpI4yetvN9AW42FPdoz+TjIrIi7PDRyXFVrSXZVWKp2Dig4GWSf4pYcy8ntJb20x2w3K6/gfuaGCUnvopz+hwIPNZYocX5hi9MTC7P+SzatvhnBAo/rFe0a0tl/e0wGyo9pYve/rHBpH0wdemoqSXtDHv7b1YAkRlBM9cmTJTM=
+	t=1759133799; cv=none; b=tAsR6Vwt93Lr1YNTcF5Zi+c6FV0SRiPK9rbCiwW4ZL2ia+QYz9HI7nf5QHdNLRygeDpelkF8T0hEECdjsL6BCGJE5ovw2NvlDpnIGZI3gZtT9V13V1a38qiGp8EUhwjQFB9V+i6dqdnM8VlmS9oAXfKWQ4o2Qu/lkV4sOCL0eWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759133555; c=relaxed/simple;
-	bh=P3xJLz/33GrYSj1aGgGnKj3afAwcVes4JbpYpwcAf48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EJeeevVDradX1cdtw2niJ/EjVAHb5pF0btXav9iiNg4risGvTZYbGFTjMETVcZM8ES+r4OOWXiDUMBb05sy5QVO6mxVBZSpXeN1+4CiDyv4//1y2kxxJf74M70oyEvan4NEcgE7v3BuxAglI0njN6wK7WpCC+/Gzs4jwhBZnpYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1bCd8uE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5FE4C4CEF5
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759133554;
-	bh=P3xJLz/33GrYSj1aGgGnKj3afAwcVes4JbpYpwcAf48=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=n1bCd8uEdDXb3e/m0Ca210ZBSO2VDbnETWstTPb5h6gBhbb4pi98A1KmgZMeRsDAI
-	 cRoiDBnjoIRHbILIMlzLJRGIrdPve3P0MAYdFHUtxSA+6RtNelszXFklOMJfhCbFO1
-	 413S/YXccMidN48uX80gscYW/p30RtdvA/3Gcqhq6tU3OOHmz1Z/uN4roW0fS/nads
-	 YI93pHIFkg45eDp4SerlfkIGnn3LZIeHNQT0f3e49JohCK8o5w0RZUCt6Y/u65lHUZ
-	 tjAedEqF8QsxKegHQrk0WzGjtn6fq8R67vbrEgTCZnEDkURBMa2dL2aeipkwhosL+J
-	 Lm0D2vOZGwl/Q==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30cce86052cso3331264fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:12:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUFpWdV/V8EohGeOurEGcffMfOHLFjoEGUN0FF/f1IUXDZkUcas9JjSmVcii1dng9ADrbV0ah0IWg6shHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyN2/byRWzDPa47mvm8p014BiL5QiOR+8jeW4T4y9FfGXmZeoG
-	zK9GW7HYPsw4mxR2Wq8jWU9YzSalqdXl3CLO7plCFfQh/YL9UEVSj10UjxFOvO7haxOOaBiO8wk
-	HKzIFMk4cATcyEdmUvKaVnunQNNLZpxU=
-X-Google-Smtp-Source: AGHT+IHEsUC5Tp8ILZbUVUxIcIq+/7rt16ij/PVeyXnmrLUh0s2P+VnYJUNfj/SPr9b7u07NPicC6tl/WicO+PPfKw0=
-X-Received: by 2002:a05:6870:d6a4:b0:353:f24:e95a with SMTP id
- 586e51a60fabf-35ef0761242mr6682731fac.42.1759133553974; Mon, 29 Sep 2025
- 01:12:33 -0700 (PDT)
+	s=arc-20240116; t=1759133799; c=relaxed/simple;
+	bh=fT9qct/EXdaKRdXVtW6iy9jH8+BPCKrXR25OTC7J/NQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Yrke1GfUzmOdHD4DeKG36dnEqUIWKOUUw6U3l8PDNj5HRR9ymWHdiSr3FjZZa9jWfAQ0tYvcgIUNDSGCz9QlyKZWvbvApxM/B/4hH7LBRaYV/GR83M3VmlO9Gx8O9f7soNdJgkR5+E8V7zaKe4ptLCNKCrQocJEJ7Dhy/yceXE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Tqmkh2vE; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-330469eb750so4957296a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1759133797; x=1759738597; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sj/9RNZ+daEA1X7yKVXnnH8RJIjqfJc52SMXbLdJl+Q=;
+        b=Tqmkh2vE0Cb5IIxMoxf/dGP9XjXsymiT4XuBEuV57NHbwuKMleNlh2uzZ19rIssign
+         TUpz72l26vLFppqvKNnUJjma1wxTjOki5Vhe35kESKMDoWDMV4Kil0YxBACYOHIk9jEG
+         +tuuNMXYmoPHZi96vcHa60cQ6FoPE1xEN1PKb7nL1gcFNN9NQxLLNN+xbWTNeTHsJCku
+         AIfq3JKRBh9ziyrGETGuggEg9t5e/iRcOJZLDycGV3bMuzp52nhqaZPVaPKdmDT0XMqV
+         Wvcf6ZEWZ5fbB+NcumejHDWZfnK2npUhI9hUD7ufYxqc5LuaGzN2TY8AQ3Rzx39nWbT7
+         hiMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759133797; x=1759738597;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sj/9RNZ+daEA1X7yKVXnnH8RJIjqfJc52SMXbLdJl+Q=;
+        b=tTsYjZppS/eMXXkTB6RZ9kDonuDXQWLHC/Ocrxf3almkeTI61xk0ZmdMDiqN9xJw3F
+         f8Zeai8NwnS6OYVd6QG/hQ0oTc1sX0xqgraQS8oNw+hGT/hUZ78ZhN1bZzHusJ2akaXV
+         HnNnsZWt1/D5RTcl/0sc/st3xL4x28Gvznem7actLgiQM9mAIN7ddoehLL2Tfh91wq+v
+         TfLcCF3pXmBfr8B9Z2Ydn8/+abap+hka6Fd8+q1fKBTLjbQNctyjk/L2olZjhPiE6f7e
+         WlxJl3OH16B6OLGYUw7TWlgxQrScV0uEePUhy/FNPTXZKbF8ps4bbfNGbYndwQDMA/57
+         /BPA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+cXRT8xQ9oeI2XPtzMEDet7tKZe/aI0CgkOvtqTOqrv4YlWpV4Ey96voS5ATS5k/75fAPdiC0hBQTo2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQrw0TgVM2XFLdQdUQy+pi3hD3uEGTRR4CeAgmSPNohlm9bBLf
+	U6GyUx5w0eSQmA/6qyIjk8Q9Qkt0CVnkMMKyDRZBcKuQ3kW6k8+zE5FWhvq52Usyr10=
+X-Gm-Gg: ASbGncswlVYN0mXPbHCLOHiYbNDX4gpA4D3DUrHiFfjU5TnaNPuaEyw+1aa+IvHG2/p
+	u31Y/Z2hOB1qUFkunnathwEet88gBeUHtW6rheFcr05zcWv9PVI2h8kaXw6U4lS0eiLSXvBmXXm
+	SsStqzLINs0MZDngkvQSHiJCn9knWip7bjttiK2dRVRMsIlNT3i9RdCiGAvpoTFVglxutjiol1I
+	suTGT3hxqkVdNdb+xBFc61arhSBwpObEFD0EgtTkZbhbHhIFbM3nSK+Co1/y/Arz34wqZW52LU1
+	dDvUsaXeoFdQ356buWn8lA5vURVzb+ev5IOJtNkCkls53amBkE9x7m/GWfoXQF5HzCXY1JGv19g
+	I80b6BQNIOc0dVm6GXi+hh2DjV8ND4MDHPr515ryxzgYj9bsLzUuIK5YI4eTCecyj
+X-Google-Smtp-Source: AGHT+IGiP419V4N9F1bGIFD547BjpWNVr9OZdtoGYQyB69UrN3gsFpDrq3xuXiy3FTY/yZwcTTCLTQ==
+X-Received: by 2002:a17:90a:d60f:b0:32e:3837:284f with SMTP id 98e67ed59e1d1-3342a2d8c3dmr18391337a91.21.1759133796626;
+        Mon, 29 Sep 2025 01:16:36 -0700 (PDT)
+Received: from 5CG3510V44-KVS.bytedance.net ([139.177.225.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be36bdesm16286509a91.24.2025.09.29.01.16.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 01:16:35 -0700 (PDT)
+From: Jinhui Guo <guojinhui.liam@bytedance.com>
+To: corey@minyard.net
+Cc: guojinhui.liam@bytedance.com,
+	openipmi-developer@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ipmi: Close the race between __scan_channels() and deliver_response()
+Date: Mon, 29 Sep 2025 16:16:02 +0800
+Message-Id: <20250929081602.1901-1-guojinhui.liam@bytedance.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <72b9ae1e-18a4-4b59-9c01-1248c38eee43@linuxfoundation.org>
-In-Reply-To: <72b9ae1e-18a4-4b59-9c01-1248c38eee43@linuxfoundation.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 29 Sep 2025 10:12:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gsa3wMJ_xKj1M=vxq3WA0Ksj4TXOxOpRYPz0PDYJb09g@mail.gmail.com>
-X-Gm-Features: AS18NWBW1DK_FG7uJ7i4RTcL2v1WnvaLFMQFkkGn90AurpyckD-me-E65oQJEO4
-Message-ID: <CAJZ5v0gsa3wMJ_xKj1M=vxq3WA0Ksj4TXOxOpRYPz0PDYJb09g@mail.gmail.com>
-Subject: Re: [GIT PULL] cpupower update for Linux 6.18-rc1
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, shuah <shuah@kernel.org>, 
-	Thomas Renninger <trenn@suse.com>, Thomas Renninger <trenn@suse.de>, "John B. Wyatt IV" <jwyatt@redhat.com>, 
-	John Kacur <jkacur@redhat.com>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Shuah,
+The command "ipmi -b -t" would occasionally fail:
+  #ipmitool -b 6 -t 0x2c raw 0x6 0x01
+  Unable to send command: Invalid argument
+  Unable to send RAW command (channel=0x6 netfn=0x6 lun=0x0 cmd=0x1)
 
-On Sun, Sep 28, 2025 at 10:39=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.=
-org> wrote:
->
-> Hi Rafael,
->
-> Please pull the following cpupower update for Linux 6.18-rc1.
->
-> Fixes incorrect return vale in cpupower_write_sysfs() error path
-> and passing incorrect size to cpuidle_state_write_file() while
-> writing status to disable file in cpuidle_state_disable().
->
-> diff is attached.
->
-> thanks,
-> -- Shuah
->
-> ----------------------------------------------------------------
-> The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca7=
-6e:
->
->    Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
->
-> are available in the Git repository at:
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-c=
-pupower-6.18-rc1
->
-> for you to fetch changes up to 23199d2aa6dcaf6dd2da772f93d2c94317d71459:
->
->    tools/cpupower: Fix incorrect size in cpuidle_state_disable() (2025-09=
--24 17:15:35 -0600)
->
-> ----------------------------------------------------------------
-> linux-cpupower-6.18-rc1
->
-> Fixes incorrect return vale in cpupower_write_sysfs() error path
-> and passing incorrect size to cpuidle_state_write_file() while
-> writing status to disable file in cpuidle_state_disable().
->
-> ----------------------------------------------------------------
-> Kaushlendra Kumar (2):
->        tools/cpupower: fix error return value in cpupower_write_sysfs()
->        tools/cpupower: Fix incorrect size in cpuidle_state_disable()
->
->   tools/power/cpupower/lib/cpuidle.c  | 5 +++--
->   tools/power/cpupower/lib/cpupower.c | 2 +-
->   2 files changed, 4 insertions(+), 3 deletions(-)
-> ----------------------------------------------------------------
+The race window between __scan_channels() and deliver_response() causes
+the parameters of some channels to be set to 0.
 
-Pulled and added to linux-pm.git/linux-next, thanks!
+1.[CPUA] After ipmi_add_smi() calling __bmc_get_device_id() ->
+         __scan_channels(), the intf->channels_ready is set to true and
+	 is never cleared by any function. ipmi_add_smi() then invokes
+	 __scan_channels(), which issues an IPMI request and waits with
+	 wait_event() until all channels have been scanned. wait_event()
+         internally calls might_sleep(), which might yield the CPU.
+         (wait_event() could also be interrupted by an interrupt, causing
+	 the task to yield the CPU.)
+2.[CPUB] deliver_response() is invoked when the CPU receives the IPMI
+         response. After processing a IPMI response, deliver_response()
+         directly assigns intf->wchannels to intf->channel_list and sets
+	 intf->channels_ready to true. However, not all channels are actually
+	 ready for use.
+3.[CPUA] Since intf->channels_ready is already true, wait_event() never
+         enters __wait_event(). __scan_channels() immediately clears
+	 intf->null_user_handler and exits.
+4.[CPUB] Once intf->null_user_handler is set to NULL, deliver_response()
+         ignores further IPMI responses, leaving the remaining channels
+	 zero-initialized and unusable.
+
+CPUA                             CPUB
+-------------------------------  -----------------------------
+ipmi_add_smi()
+ __scan_channels()
+  intf->null_user_handler
+        = channel_handler;
+  send_channel_info_cmd(intf,
+        0);
+  wait_event(intf->waitq,
+	intf->channels_ready);
+   do {
+    might_sleep();
+                                 deliver_response()
+                                  channel_handler()
+                                   intf->channel_list =
+				         intf->wchannels + set;
+                                   intf->channels_ready = true;
+                                   send_channel_info_cmd(intf,
+				          intf->curr_channel);
+    if (condition)
+     break;
+    __wait_event(wq_head,
+	    condition);
+   } while(0)
+  intf->null_user_handler
+        = NULL;
+                                 deliver_response()
+                                  if (!msg->user)
+                                   if (intf->null_user_handler)
+                                    rv = -EINVAL;
+                                  return rv;
+-------------------------------  -----------------------------
+
+Fix the race between __scan_channels() and deliver_response() with the
+following changes.
+
+1. Drop the redundant __scan_channels() call in ipmi_add_smi(), the
+   function is already invoked via ipmi_add_smi() -> __bmc_get_device_id()
+   -> __scan_channels().
+2. channel_handler() sets intf->channels_ready to true but no one clears
+   it, preventing __scan_channels() from rescanning channels. Clear
+   intf->channels_ready to false in channel_handler() before starting
+   the channel scan.
+3. Only assign intf->channel_list = intf->wchannels and set
+   intf->channels_ready = true in channel_handler() after all channels
+   have been successfully scanned or after failing to send the IPMI
+   request.
+
+Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 8e9050f99e9e..73dab3b21221 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -3405,11 +3405,8 @@ channel_handler(struct ipmi_smi *intf, struct ipmi_recv_msg *msg)
+ 			intf->channel_list = intf->wchannels + set;
+ 			intf->channels_ready = true;
+ 			wake_up(&intf->waitq);
+-		} else {
+-			intf->channel_list = intf->wchannels + set;
+-			intf->channels_ready = true;
++		} else
+ 			rv = send_channel_info_cmd(intf, intf->curr_channel);
+-		}
+ 
+ 		if (rv) {
+ 			/* Got an error somehow, just give up. */
+@@ -3433,6 +3430,9 @@ static int __scan_channels(struct ipmi_smi *intf, struct ipmi_device_id *id)
+ {
+ 	int rv;
+ 
++	/* Clear channels_ready to force channels rescan. */
++	intf->channels_ready = false;
++
+ 	if (ipmi_version_major(id) > 1
+ 			|| (ipmi_version_major(id) == 1
+ 			    && ipmi_version_minor(id) >= 5)) {
+@@ -3633,12 +3633,6 @@ int ipmi_add_smi(struct module         *owner,
+ 		goto out_err_started;
+ 	}
+ 
+-	mutex_lock(&intf->bmc_reg_mutex);
+-	rv = __scan_channels(intf, &id);
+-	mutex_unlock(&intf->bmc_reg_mutex);
+-	if (rv)
+-		goto out_err_bmc_reg;
+-
+ 	intf->nr_users_devattr = dev_attr_nr_users;
+ 	sysfs_attr_init(&intf->nr_users_devattr.attr);
+ 	rv = device_create_file(intf->si_dev, &intf->nr_users_devattr);
+-- 
+2.20.1
+
 
