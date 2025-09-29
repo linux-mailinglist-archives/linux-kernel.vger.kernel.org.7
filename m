@@ -1,306 +1,192 @@
-Return-Path: <linux-kernel+bounces-836206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B9B9BA8FF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:23:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1881BA9021
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74B564E182C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BDF3B7387
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371092FFFBD;
-	Mon, 29 Sep 2025 11:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988512FFFBD;
+	Mon, 29 Sep 2025 11:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2oEOtbS"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZAks20Wj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD9D2FF67B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3AA824BD
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145014; cv=none; b=cMGgA55uzn69lDvbVjs9BrmEl2TXZxU7tAxnyQRCL5pjALDqNRkogHgwBbHy/Ie952XVZ9QXWdeQpB03phHrnMKWtdqDIGv40klKYibxz4tCDKyV6/1GNz9pok+/zK3ZsDOp5b3A2uReQntslzEvLlUpyloH9J9xSZvBrTmbx+o=
+	t=1759145254; cv=none; b=mAw12ncsi4NMzAgy1FFU8QXhrvwSzPmTuRzN2OoAnlojdmdCUGvVstAYRVlMBxk/Ljy1Jfqd5cZUJEX12VFJFA6xKfStCk1vUx5p00VylXyR8ql/YLouAK/11BUbpMRF28DxdX7Ozl8a0njurxkKFNRLaJ16gGqravOT5wmDu1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145014; c=relaxed/simple;
-	bh=o6GH9yM5X/l45RBwJ3B7UFsxj4Ov3IBjhVL8z/0/vWA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZD4XKH/O6jRZ3gCbWp5rGQL8psOWEL8wZ2c1AyJApp5axkPwVrlSDIC7V8/O8xZcp7HA+7JdvGZSD17RuePpT2y1q8vRe9F688qWeKlbdVyGY8z1kwzKz1JR4EhLVRaMMVUjlpTwYHe5BMIZaj4L5+QgHC0fIJyZRR+OKPoOHB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2oEOtbS; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f42b54d1b9so4417071f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759145011; x=1759749811; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cHIeUtwUMwlpj/aPUYic3SGp0yyW1lvSsod+CzPmLm8=;
-        b=P2oEOtbSaavfn66LK7SWH5vfedPyrqeQC1Gz5X00DD/awXDlc/hGm2rsLhd2kGwMEi
-         /n+W8LEf/8TdtLDTJsv8oAGkbFps1crJ5yHHqatkg+UWzc2rkT6vd/rfLvrePSK5Vwoc
-         VaW7NAN6eNdXjVf6wW6BVBUBdarnslhgnJtLw8clRSm0gjUa7gClYwNv8+xu+Z9CJ8eK
-         lqu9PqIqbPMIEL+suur4S3ICA1qxmXo0ogrTbk9AXp6BJZtUgIWl41rjoW6hxKQaRRsT
-         Ff8v23bI6QGsmQ/NzkbgOooTY5xLz0eA5Ia3PrOsMo/YwxkKuVAllmvUWtrG4BJtywlR
-         Mk3g==
+	s=arc-20240116; t=1759145254; c=relaxed/simple;
+	bh=BzGJ1VtHskkNiyRX11olsIrlyqdVGgIM0Xq4aXiJXB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tl/A6vgaO4BVWc5ZGmom5TpsyrWqMkezPum/YhLZs9p2vKHP5l0mbl/GFSs61/jSGT2DTIEvKaEI/9qKth5gg/6tR1F/cNZQv4bjWYRlCLWa4IlP70JyB8aNZPxnAAVcqeVbG3LCLwUsJKpg99c3/Lskm4u5XXdti4qzKgv9LH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZAks20Wj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759145250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bUzzR4h35LcYPP/dUTPoniliXa+mo6qwLfSHPwhOPz0=;
+	b=ZAks20Wjcpy046FEICo0DNOth0aoL++Yeq+xlgFVh6Q3rQlBHzhssqTaoF9Y6lBa+O7Zvp
+	NRvD0nRe5RuzUf7VzZ1xNoAkfye1VGp3vNnsf2qNWZdWaJiH7fmR9GObsCwbTTymVPtt4P
+	1yhF68L5gpL46j/Xabq5Xtizv/c7jFw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-619-ugSFot5ZNi27iSLVRGlQIA-1; Mon, 29 Sep 2025 07:27:29 -0400
+X-MC-Unique: ugSFot5ZNi27iSLVRGlQIA-1
+X-Mimecast-MFC-AGG-ID: ugSFot5ZNi27iSLVRGlQIA_1759145248
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ece14b9231so3263924f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:27:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759145011; x=1759749811;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759145248; x=1759750048;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cHIeUtwUMwlpj/aPUYic3SGp0yyW1lvSsod+CzPmLm8=;
-        b=FQJcb9xED/LR3iFkJB9jzftN/JFUQGI+tyUL8Pf49YDTkkhwVqhCGw4jj60kdGBZNO
-         LAAGrGVWFrV2QdiP2PTJ6jkcj1lOsAt3bslDRdz9gOhnIRFj5UP5GmreGNHmkjIkasu9
-         Tx3h4i0LrM3EK5D8NYDmEJlc5PFxq+ys97ejBdwKTgIPLHYAYKquQia2+rRSxr1s2zNv
-         O5M9a75t3P0FgqUYipEu/a4yf6jXpfXWRnAR6pG9BKST8e8igFTFtT+BW0zzWobqkxhF
-         bdNBOX2AELRmTowaZ4UTaAfRQOQlMgZ7+ix6kn3awV7IQvMfMNcCxF2swptSYumgL29t
-         JzSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxdG1Z+Z/BDjaH/u1VcQ1888xW4KrW9hBzoFywuw11OQy58jCEYnVUHqCVnC8kioulW6COBCiJNAstt6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA+SiOlxluMZX9i0/optVQwr7TrGdEgKut3tTnYUqxN4XIYIdy
-	W/o5o3yDB70EvlmPn9ul0R5SSMQU/iHOAgECb+hSiaqkvYruD+JLSZEM
-X-Gm-Gg: ASbGncuaFw5oT/NWCGZKHE/jzv2yLSKjRQpH9Wv6ktD7PmFvaMLAOBYgZEi1WZIeQdT
-	bKTqixrEOZX7NAnL8J5SM2iMseRErNVxt2QmN9lnDEjkUQbHJG357c5shQBOIGAVgu8H6E3MaDJ
-	aD5cmWIxphKx3Eu2vw5e47OF46hgc9VK0j72vJrXuoosSbFwQ2O9onZbDUDiPaQE4EGVDhuaPO5
-	YJWw/OakIA33fg4cr3iyxPJqRbbJQZBDDIE3beEDTWehLhyOYvbr4vjbk/1MhJNinnBrUTRWmzO
-	GkbV3v4XkyHUrekgDTeksf2wahxP7eLOsj4T4feF4lSgoc1SlaihT+u8BH4xb4tzwScak+woQ6C
-	puzKH9dwCGQnwQ8aVYyLvlZExsD0qxl5jfPoPYP4htZnuPvL9El7SH2JGgO9+Xksg6A==
-X-Google-Smtp-Source: AGHT+IF7t6Y5sr/tULnaPZaeuk2hwGoBeQF4vR7bTyautiXiyjXn+xefZSwap9LxXcjToXlLJXaF7A==
-X-Received: by 2002:a5d:588d:0:b0:3e9:d9bd:5043 with SMTP id ffacd0b85a97d-40e3ab8747emr14437342f8f.0.1759145010463;
-        Mon, 29 Sep 2025 04:23:30 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:6614:1d02:ab7a:3f9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-41f00aebdb7sm5143046f8f.57.2025.09.29.04.23.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 04:23:29 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
-Date: Mon, 29 Sep 2025 12:23:24 +0100
-Message-ID: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
+        bh=bUzzR4h35LcYPP/dUTPoniliXa+mo6qwLfSHPwhOPz0=;
+        b=FsnkV6eBLC1iYpiE0XYkOqmh6yeoohaCnQXIrAf4Ggcjghgwqr1E9pQwNygaacis/B
+         w/vmN3JAh8DPrI2LqvfSFaRNaOeyJdP1ew8Ph8pl4rcYuVxtXSBcsC5B5aV2CZk1dh7Z
+         ywRm1LOAAkpP5ZYIhdJBkCcevemVrtnQreEzKGl9ElzMCxX+j4wZM2sdid7XLr941iDL
+         PJ4sMUTGmYh1bDzv+BEL5yNagLBR699LrbLaS38eLPovxlbU1gLSRKvr3AxiEdaObgr6
+         ZsR/+FzQ+wNft8cqbK4q+oyTqZjlUch2b1yULy3oVe40o2uc75qXlqOLyCIUeRUpHxrO
+         lpdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJerL1434/dc3MoUqGbh+52do/j9gJZWw/DNd1nDR30ruqF61t9WfczrrNqAvdMaDEeyUDw7Aob6kyjgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO9LbFNfiBDDC8k4F+eqiMHMW1oJI9Td2eZaUb5uhWe+ZZCW1w
+	ux4PebJkWPocVW/pvYy4c84MR350o1GW72oH2RTr/7cDjCYJ3MZJj0WJ36cF7qaFY9o71GQQk1z
+	QAMqsP8VjIIhBLw5G7i90v/xdTM5oK/JGwL51YbMaX8EEmo/sA0XBb9vb6W9XUojr4Q==
+X-Gm-Gg: ASbGncujWiVCFgSjMr29XTZz3bqYwcsEB8ltY0BeL8ZDOifksk/8g13qoYQYs8Qeaht
+	PwL9kBJw1zVJ8uIvmk0EZK9OXYwy+PeGY23uFhdMpB8ghaoQgr9OkbJhVQzCa4QDVVZZixeinmt
+	9zN2pPL/JV/+bbu2ASJSvJvMYMBMnmw8N9liMBpEo84SZmbNcIkt7vDJ16gtz/35lOo/YODd9UV
+	DopjjH7H4nPKBvmqsCbxEH7bFzLzvtdauGJyrCe7iPY28XaqlH0qN1teSYxLQVqkmYJX/59RP9w
+	/5MZcNz3d6siB4l/+zv8Ad6spgQHFrqKf2XYYj02GMeWS/bwDW03r3SzZmghKAdM0hCNN5hBq1X
+	ZFVkWkFGFxIYJwlujJvXUovUr3TxAWbhIDl/GzKGBhdt57RNLN3Zbhet953vj8FrQaQtJ
+X-Received: by 2002:a05:6000:2381:b0:3ee:1461:166c with SMTP id ffacd0b85a97d-40e497c34b8mr16195947f8f.5.1759145248183;
+        Mon, 29 Sep 2025 04:27:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/tA9KRR768hrK7BG/BIDGLCJ0HvflPjA0QZhOedUiyGROdESFV5RXXJc4fB7bwIlLev1Qyg==
+X-Received: by 2002:a05:6000:2381:b0:3ee:1461:166c with SMTP id ffacd0b85a97d-40e497c34b8mr16195914f8f.5.1759145247758;
+        Mon, 29 Sep 2025 04:27:27 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f39:1500:c90f:7794:3c33:4164? (p200300d82f391500c90f77943c334164.dip0.t-ipconnect.de. [2003:d8:2f39:1500:c90f:7794:3c33:4164])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72face8sm18055901f8f.5.2025.09.29.04.27.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 04:27:27 -0700 (PDT)
+Message-ID: <ef3ebfb1-83f0-4a3e-a8a0-ac0ba729aae5@redhat.com>
+Date: Mon, 29 Sep 2025 13:27:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/thp: Drop follow_devmap_pmd() default stub
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org
+References: <20250929104643.1100421-1-anshuman.khandual@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250929104643.1100421-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 29.09.25 12:46, Anshuman Khandual wrote:
+> follow_devmap_pmd() has already been dropped by the commit fd2825b0760a
+> ("mm/gup: remove pXX_devmap usage from get_user_pages()"). The fallback
+> stub in the header which is now redundant, can be dropped off as well.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>   include/linux/huge_mm.h | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 7748489fde1b..96ce0ca54e49 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -652,12 +652,6 @@ static inline void mm_put_huge_zero_folio(struct mm_struct *mm)
+>   	return;
+>   }
+>   
+> -static inline struct page *follow_devmap_pmd(struct vm_area_struct *vma,
+> -	unsigned long addr, pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
+> -{
+> -	return NULL;
+> -}
+> -
+>   static inline bool thp_migration_supported(void)
+>   {
+>   	return false;
 
-Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
-CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
-Registers (MRCR) where both reset and deassert actions are done via
-read-modify-write (RMW) to the same register.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
-it to reset_regs. For this SoC, the number of resets is based on the
-number of MRCR registers rather than the number of module clocks. Also
-add cpg_mrcr_reset_ops to implement reset, assert, and deassert using RMW
-while holding the spinlock. This follows the RZ/T2H requirements, where
-processing after releasing a module reset must be secured by performing
-seven dummy reads of the same register, and where a module that is reset
-and released again must ensure the target bit in the Module Reset Control
-Register is set to 1.
+Documentation/mm/arch_pgtable_helpers.rst still mention devmap helpers, 
+want to clean that up as well?
 
-Update the reset controller registration to select cpg_mrcr_reset_ops for
-RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v3->v4:
-- Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clarity.
-- Updated the parameters in cpg_mrcr_set_reset_state().
-
-v2->v3:
-- Simplifed the code by adding a common function cpg_mrcr_set_bit() to handle
-  set/clear of bits with options for verify and dummy reads.
-- Added a macro for the number of dummy reads required.
-
-v1->v2:
-- Added cpg_mrcr_reset_ops for RZ/T2H specific handling
-- Updated commit message
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 111 ++++++++++++++++++++++++-
- 1 file changed, 107 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index de1cf7ba45b7..fcb2c3c22f87 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -40,6 +40,8 @@
- #define WARN_DEBUG(x)	do { } while (0)
- #endif
- 
-+#define RZT2H_RESET_REG_READ_COUNT	7
-+
- /*
-  * Module Standby and Software Reset register offets.
-  *
-@@ -137,6 +139,22 @@ static const u16 srcr_for_gen4[] = {
- 	0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
- };
- 
-+static const u16 mrcr_for_rzt2h[] = {
-+	0x240,	/* MRCTLA */
-+	0x244,	/* Reserved */
-+	0x248,	/* Reserved */
-+	0x24C,	/* Reserved */
-+	0x250,	/* MRCTLE */
-+	0x254,	/* Reserved */
-+	0x258,	/* Reserved */
-+	0x25C,	/* Reserved */
-+	0x260,	/* MRCTLI */
-+	0x264,	/* Reserved */
-+	0x268,	/* Reserved */
-+	0x26C,	/* Reserved */
-+	0x270,	/* MRCTLM */
-+};
-+
- /*
-  * Software Reset Clearing Register offsets
-  */
-@@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
- 	return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
- }
- 
-+static int cpg_mrcr_set_reset_state(struct reset_controller_dev *rcdev,
-+				    unsigned long id, bool set)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+	u32 bitmask = BIT(bit);
-+	void __iomem *reg_addr;
-+	unsigned long flags;
-+	unsigned int i;
-+	u32 val;
-+
-+	dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deassert", reg, bit);
-+
-+	spin_lock_irqsave(&priv->pub.rmw_lock, flags);
-+
-+	reg_addr = priv->pub.base0 + priv->reset_regs[reg];
-+	/* Read current value and modify */
-+	val = readl(reg_addr);
-+	if (set)
-+		val |= bitmask;
-+	else
-+		val &= ~bitmask;
-+	writel(val, reg_addr);
-+
-+	/*
-+	 * For secure processing after release from a module reset, dummy read
-+	 * the same register at least seven times.
-+	 */
-+	for (i = 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
-+		readl(reg_addr);
-+
-+	/* Verify the operation */
-+	val = readl(reg_addr);
-+	if ((set && !(bitmask & val)) || (!set && (bitmask & val))) {
-+		dev_err(priv->dev, "Reset register %u%02u operation failed\n", reg, bit);
-+		spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-+		return -EIO;
-+	}
-+
-+	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-+
-+	return 0;
-+}
-+
-+static int cpg_mrcr_reset(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	int ret;
-+
-+	ret = cpg_mrcr_set_reset_state(rcdev, id, true);
-+	if (ret)
-+		return ret;
-+
-+	return cpg_mrcr_set_reset_state(rcdev, id, false);
-+}
-+
-+static int cpg_mrcr_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	return cpg_mrcr_set_reset_state(rcdev, id, true);
-+}
-+
-+static int cpg_mrcr_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	return cpg_mrcr_set_reset_state(rcdev, id, false);
-+}
-+
- static const struct reset_control_ops cpg_mssr_reset_ops = {
- 	.reset = cpg_mssr_reset,
- 	.assert = cpg_mssr_assert,
-@@ -743,6 +827,13 @@ static const struct reset_control_ops cpg_mssr_reset_ops = {
- 	.status = cpg_mssr_status,
- };
- 
-+static const struct reset_control_ops cpg_mrcr_reset_ops = {
-+	.reset = cpg_mrcr_reset,
-+	.assert = cpg_mrcr_assert,
-+	.deassert = cpg_mrcr_deassert,
-+	.status = cpg_mssr_status,
-+};
-+
- static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
- 				const struct of_phandle_args *reset_spec)
- {
-@@ -760,11 +851,23 @@ static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
- 
- static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
- {
--	priv->rcdev.ops = &cpg_mssr_reset_ops;
-+	/*
-+	 * RZ/T2H (and family) has the Module Reset Control Registers
-+	 * which allows control resets of certain modules.
-+	 * The number of resets is not equal to the number of module clocks.
-+	 */
-+	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
-+		priv->rcdev.ops = &cpg_mrcr_reset_ops;
-+		priv->rcdev.nr_resets = ARRAY_SIZE(mrcr_for_rzt2h) * 32;
-+	} else {
-+		priv->rcdev.ops = &cpg_mssr_reset_ops;
-+		priv->rcdev.nr_resets = priv->num_mod_clks;
-+	}
-+
- 	priv->rcdev.of_node = priv->dev->of_node;
- 	priv->rcdev.of_reset_n_cells = 1;
- 	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
--	priv->rcdev.nr_resets = priv->num_mod_clks;
-+
- 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
- }
- 
-@@ -1169,6 +1272,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
- 		priv->control_regs = stbcr;
- 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
- 		priv->control_regs = mstpcr_for_rzt2h;
-+		priv->reset_regs = mrcr_for_rzt2h;
- 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4) {
- 		priv->status_regs = mstpsr_for_gen4;
- 		priv->control_regs = mstpcr_for_gen4;
-@@ -1265,8 +1369,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 		goto reserve_exit;
- 
- 	/* Reset Controller not supported for Standby Control SoCs */
--	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
--	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
-+	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 		goto reserve_exit;
- 
- 	error = cpg_mssr_reset_controller_register(priv);
 -- 
-2.51.0
+Cheers
+
+David / dhildenb
 
 
