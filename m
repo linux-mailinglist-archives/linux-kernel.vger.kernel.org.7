@@ -1,178 +1,168 @@
-Return-Path: <linux-kernel+bounces-836217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE90BA9062
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:31:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0F6BA9054
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6053A9C58
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F033C43A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7381D3002DE;
-	Mon, 29 Sep 2025 11:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648163009F0;
+	Mon, 29 Sep 2025 11:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VspuXG7W"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="KXFFZXtr";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="KXFFZXtr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48591301038
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0772E8DF0
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145420; cv=none; b=TY2XJn5Q1if6dny+cH1CVAghCXiCEugWc51cBk96WfJ65zIddwyW8mdIdRGj/GMnjypJQ5wC+rcB+iZyys77s4KjH6x5HwekjGpfp14KituNfOixuV2N3Xl/z8odIdbsAJ5SJV2NxWPhWS3FomT1EpRDuPoGVIgixg19gOIH2UY=
+	t=1759145401; cv=none; b=GQQD51qS/giwWZpcFu04+O9j80t9YDmRd8vyNgF7GIKBv+Ak0RbZR0jclhS2gT37mmCiOBE6l+QQGaDTOyVehtQP6j+uAW7JPsMzqYRevKMoF69XW7A981J72d/VTk8fbAmgxJ1Lpm3YsSOuOwPKAUk4iBIdurJ6hFfVjfraBfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145420; c=relaxed/simple;
-	bh=yxtmtgVSXJ3/407wjpHpicmQ7ibkOEIpz8wrKxutlf4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fyZ7l3eQ7/h19c74JhyqX1ilfoHUxKuloC50Cg0j19wZRkg9iPrF/auE1kJyc3eYr5nyGJGfMETvp2MQBoi4Jz859LuFeGtyRO7c6aOHUgejQ5ognL2lk+D1jsACjJacfDlbp/ymTXStqblJ8+V60wRqqxfvdV1t+aRmDkNcL+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VspuXG7W; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1f66374a-a901-49e7-95c8-96b1e5a5f22d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759145405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1759145401; c=relaxed/simple;
+	bh=Q0RMUIfZ1lLbI+KfFiVh8RSH+tZlHw8ZsERa9sIO9Gg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X8rfCEQXjmp0uxclbvYL7LLpwq7JNEL4b35L4KNA7fOs8RVy8xny0RKoXwHEatkyTKnHFgVF9JiXHmf64iNUioujhVTdCQLFamA5INQTGtYCk2cDWfDRzE01rThVwxPpwQsZoRcxL1oOYKFq0PZfSyBE1yQC557oramk9JNYHmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=KXFFZXtr; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=KXFFZXtr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 262383183F;
+	Mon, 29 Sep 2025 11:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1759145396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=p6doKxVQhLyaOgKfPSYUAjAC40Y3b75Sc0EmJyThepY=;
-	b=VspuXG7WCTzVKmR7dczYvue+Qlr+fKoTDyt/XzVx1ofqqz4QGx7R83d8r70CwfFWVOBMHl
-	bS+sGab7yy4hmZ7+JyOTildW6sPMTp0VdAT+tbawIuqKNj4VExoCO4o33cPTjNpnNWQvIk
-	rSXGmENBlSnQgKQnP4qfubfDjYKnau4=
-Date: Mon, 29 Sep 2025 19:29:45 +0800
+	bh=E3FNZgeYfwwNy9v4xrRjT/JVmGNGOcSlyg7nziKLf/8=;
+	b=KXFFZXtrlMUh/Lac3n8bMcX2tG2VT7BmCNCIzAKcvP215xcFu7whX/FHHbIf0cB0xmrCcF
+	ibujnyqktUX0ReNfEpuyOhyo77e7SSaFw97tWFsQ7lj+3MNl5+g0ZC6czX8L//J0+tiL2e
+	3yZyPJNirL6K5VQ4EejN1ucdv1coVjA=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1759145396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E3FNZgeYfwwNy9v4xrRjT/JVmGNGOcSlyg7nziKLf/8=;
+	b=KXFFZXtrlMUh/Lac3n8bMcX2tG2VT7BmCNCIzAKcvP215xcFu7whX/FHHbIf0cB0xmrCcF
+	ibujnyqktUX0ReNfEpuyOhyo77e7SSaFw97tWFsQ7lj+3MNl5+g0ZC6czX8L//J0+tiL2e
+	3yZyPJNirL6K5VQ4EejN1ucdv1coVjA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA9CE13782;
+	Mon, 29 Sep 2025 11:29:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5jrxM7Nt2mhFcAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 29 Sep 2025 11:29:55 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH 1/3] x86/alternative: Drop not needed test after call of alt_replace_call()
+Date: Mon, 29 Sep 2025 13:29:45 +0200
+Message-ID: <20250929112947.27267-2-jgross@suse.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250929112947.27267-1-jgross@suse.com>
+References: <20250929112947.27267-1-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH 1/1] mm/rmap: fix soft-dirty bit loss when remapping
- zero-filled mTHP subpage to shared zeropage
-To: David Hildenbrand <david@redhat.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, baohua@kernel.org,
- ryan.roberts@arm.com, dev.jain@arm.com, npache@redhat.com, riel@surriel.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, harry.yoo@oracle.com,
- jannh@google.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
- rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
- ying.huang@linux.alibaba.com, apopple@nvidia.com, usamaarif642@gmail.com,
- yuzhao@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- ioworker0@gmail.com, stable@vger.kernel.org, akpm@linux-foundation.org,
- lorenzo.stoakes@oracle.com
-References: <20250928044855.76359-1-lance.yang@linux.dev>
- <b19b4880-169f-4946-8c50-e82f699bb93b@redhat.com>
- <900d0314-8e9a-4779-a058-9bb3cc8840b8@linux.dev>
-Content-Language: en-US
-In-Reply-To: <900d0314-8e9a-4779-a058-9bb3cc8840b8@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.com:mid];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
+alt_replace_call() will never return a negative value, so testing the
+return value to be less than zero can be dropped.
 
+This makes it possible to switch the return type of alt_replace_call()
+and the type of insn_buff_sz to unsigned int.
 
-On 2025/9/29 18:29, Lance Yang wrote:
-> 
-> 
-> On 2025/9/29 15:25, David Hildenbrand wrote:
->> On 28.09.25 06:48, Lance Yang wrote:
->>> From: Lance Yang <lance.yang@linux.dev>
->>>
->>> When splitting an mTHP and replacing a zero-filled subpage with the 
->>> shared
->>> zeropage, try_to_map_unused_to_zeropage() currently drops the soft-dirty
->>> bit.
->>>
->>> For userspace tools like CRIU, which rely on the soft-dirty mechanism 
->>> for
->>> incremental snapshots, losing this bit means modified pages are missed,
->>> leading to inconsistent memory state after restore.
->>>
->>> Preserve the soft-dirty bit from the old PTE when creating the zeropage
->>> mapping to ensure modified pages are correctly tracked.
->>>
->>> Cc: <stable@vger.kernel.org>
->>> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage 
->>> when splitting isolated thp")
->>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->>> ---
->>>   mm/migrate.c | 4 ++++
->>>   1 file changed, 4 insertions(+)
->>>
->>> diff --git a/mm/migrate.c b/mm/migrate.c
->>> index ce83c2c3c287..bf364ba07a3f 100644
->>> --- a/mm/migrate.c
->>> +++ b/mm/migrate.c
->>> @@ -322,6 +322,10 @@ static bool try_to_map_unused_to_zeropage(struct 
->>> page_vma_mapped_walk *pvmw,
->>>       newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
->>>                       pvmw->vma->vm_page_prot));
->>> +
->>> +    if (pte_swp_soft_dirty(ptep_get(pvmw->pte)))
->>> +        newpte = pte_mksoft_dirty(newpte);
->>> +
->>>       set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
->>>       dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
->>
->> It's interesting that there isn't a single occurrence of the stof- 
->> dirty flag in khugepaged code. I guess it all works because we do the
->>
->>      _pmd = maybe_pmd_mkwrite(pmd_mkdirty(_pmd), vma);
->>
->> and the pmd_mkdirty() will imply marking it soft-dirty.
->>
->> Now to the problem at hand: I don't think this is particularly 
->> problematic in the common case: if the page is zero, it likely was 
->> never written to (that's what the unerused shrinker is targeted at), 
->> so the soft-dirty setting on the PMD is actually just an over- 
->> indication for this page.
-> 
-> Cool. Thanks for the insight! Good to know that ;)
-> 
->>
->> For example, when we just install the shared zeropage directly in 
->> do_anonymous_page(), we obviously also don't set it dirty/soft-dirty.
->>
->> Now, one could argue that if the content was changed from non-zero to 
->> zero, it ould actually be soft-dirty.
-> 
-> Exactly. A false negative could be a problem for the userspace tools, IMO.
-> 
->>
->> Long-story short: I don't think this matters much in practice, but 
->> it's an easy fix.
->>
->> As said by dev, please avoid double ptep_get() if possible.
-> 
-> Sure, will do. I'll refactor it in the next version.
-> 
->>
->> Acked-by: David Hildenbrand <david@redhat.com>
-> 
-> Thanks!
-> 
->>
->>
->> @Lance, can you double-check that the uffd-wp bit is handled 
->> correctly? I strongly assume we lose that as well here.
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+V2:
+- new patch
+---
+ arch/x86/kernel/alternative.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Yes, the uffd-wp bit was indeed being dropped, but ...
-
-The shared zeropage is read-only, which triggers a fault. IIUC,
-The kernel then falls back to checking the VM_UFFD_WP flag on
-the VMA and correctly generates a uffd-wp event, masking the
-fact that the uffd-wp bit on the PTE was lost.
-
-IMHO, explicitly preserving the uffd-wp bit on the PTE is still
-necessary, since we're not sure if losing that bit is safe in
-all cases :)
-
-> 
-> Certainly, I'll check the uffd-wp bit as well and get back to you soon.
-> 
-> Cheers,
-> Lance
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 7bde68247b5f..05d3dbe7104e 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -559,7 +559,7 @@ EXPORT_SYMBOL(BUG_func);
+  * Rewrite the "call BUG_func" replacement to point to the target of the
+  * indirect pv_ops call "call *disp(%ip)".
+  */
+-static int alt_replace_call(u8 *instr, u8 *insn_buff, struct alt_instr *a)
++static unsigned int alt_replace_call(u8 *instr, u8 *insn_buff, struct alt_instr *a)
+ {
+ 	void *target, *bug = &BUG_func;
+ 	s32 disp;
+@@ -643,7 +643,7 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+ 	 * order.
+ 	 */
+ 	for (a = start; a < end; a++) {
+-		int insn_buff_sz = 0;
++		unsigned int insn_buff_sz = 0;
+ 
+ 		/*
+ 		 * In case of nested ALTERNATIVE()s the outer alternative might
+@@ -683,11 +683,8 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+ 		memcpy(insn_buff, replacement, a->replacementlen);
+ 		insn_buff_sz = a->replacementlen;
+ 
+-		if (a->flags & ALT_FLAG_DIRECT_CALL) {
++		if (a->flags & ALT_FLAG_DIRECT_CALL)
+ 			insn_buff_sz = alt_replace_call(instr, insn_buff, a);
+-			if (insn_buff_sz < 0)
+-				continue;
+-		}
+ 
+ 		for (; insn_buff_sz < a->instrlen; insn_buff_sz++)
+ 			insn_buff[insn_buff_sz] = 0x90;
+-- 
+2.51.0
 
 
