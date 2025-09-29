@@ -1,538 +1,292 @@
-Return-Path: <linux-kernel+bounces-836154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A681BA8E3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:30:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C17CBA8E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA2B17A8674
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06C211C2385
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4B12FBE17;
-	Mon, 29 Sep 2025 10:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBD82FC863;
+	Mon, 29 Sep 2025 10:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P9pUKzNH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kalq+PR8"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010030.outbound.protection.outlook.com [52.101.61.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063E62FB995
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759141790; cv=none; b=hEZUaPwTGNWpa6JmFcCMvbxBIJVX7BTEN/XkrGNaYUwDqdTQMU7gexGCugvAciVplpQuoWqZ/QBPu2FvDNgQaSqfiTKildGKU1LhO/YaPY/4VmWgAaMLFnWqtTtjcmTqRvx93H2zYJuMWnPR+t+vdiWNJhZoqUFZt+Pw5tb38SY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759141790; c=relaxed/simple;
-	bh=+RmVL+Ttxc3WgY+MhH6l5j792SQXH1m/NGDcrTAvOQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z0g6oAB/geUxtpf980UgrofMCfT2Fz1UJ+ozWvSj5dJ6FoCsnuRB98Bb5AyaPSIyuovjyJEHtaPPXTlW+Llu0TEueqBRFMNAls+UXFyAMrGmZYhy1v4TNhhRoEeBTqj6U25Q935AHy7Pz9tqYdUZYhVlsU3etNDLtHm/b5mpI2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P9pUKzNH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58TA0Isf023578
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:29:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2Jl/YbGHod6H4gxvxtuge3GhMM7f7IzE2kDVcUT2TJk=; b=P9pUKzNHLwOkIxW6
-	SOXyZzTpWX0hMDFyBmE9MX8dUg76M53DzJAWygAI78/rhT7Tlu0BgU3dGIJ8TJA1
-	IBxb8U7TCr6mT4SJLQPo82CuJcgcxuS0iGyJt6D9JJleJsRhRjIN5DCU2VTa4JqH
-	qUAxWicft8d54e2icHxgZCEKhEhrVeDOrcT13vwKQMht1KNK7F/X0tJl+4EwmNzd
-	IJP1lICFv736AMFaMF9VXi4HxtYC7+OPFRA1KAa7+tKuKwCmmde2eRhkU7+CgHFE
-	SLCOD2rboRlqMDPtQl9pEAp2YZ8e/3ibodF0wRj3ARy7A9h2BGikONA9YBcodunp
-	WX/9QA==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59mw5t9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:29:47 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3307af9b595so4082332a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:29:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759141786; x=1759746586;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Jl/YbGHod6H4gxvxtuge3GhMM7f7IzE2kDVcUT2TJk=;
-        b=mQ3OE6ShfwWFkKUynL1hxb65bmUNpLWeLbsnczYFPYxI365aZXOHzXgXxPu3EqmtPZ
-         vGLbVEGsj6+QSzkFXhJ1mazCesTIZLVqKd6h8dt1/g8xChi5cjM4YzcW99qluYhfHrQo
-         97mn7nk7MZPKtO7kjBEXwCYeue0bh7+F5DJaPhj7Ok8WvFGHw3hdCC2XGa/DEsojIYFD
-         honC7SGhQz3jzokzzDDU+3A6KLiTHJyVbJo4IKdLIIBPrz23a8c6LwLZEIHv2xQX99Ko
-         avzzcDz8XNQ1m0uILrDMS2BYcSQfIESs/i9pCUHJXYK2+VEPJmJMkEVZS9TJ4o4vcjWt
-         baKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcSUVFvxQxJg+3RKd6D4nLoTTxyzMAU4WM/A5qlHaUa3uDL9flPfFXk/kPQQFK+IaF3Z1N9QIDcsQPfFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKUgzE7QgLbi6UCF5p+ABVDezg1Q8qM623hAPgYNMfZ3w6ybS+
-	QvHhPRpk5nnegoBhD9aMBrSq0pNTyXNlTOSA5BgPxzSf1JvjDdD4CPWcaBIj6OL9h0P8KaxBEhS
-	d8Wl5tvudQSIe9P9sLJbEXaJ82XEpwJzujxFnDOlFGAR9Th7Nvla53RUStg7Bh2wCb3biTnftqv
-	xemA==
-X-Gm-Gg: ASbGncva25+kpzuh69TmBgBAwrGgZXho5WL/cE4LmTLBf1bVaeqWedZk0uAigLDSi/L
-	Y2Kbu93ueyUF206tFr0tH9IRyWPc7UHa/2XoKGmvQGsQiC20MHIjTZm2lc43DnpBJFRNp1+cpfo
-	wwXZK3ES0lkBoOy3LRU4trvrFEAiT9Vehi3drrpZ6GA3VplriijaMh85VgGVWZWdn9OxTT9Npio
-	xDdEAQzNWBXCDlj5qJtjgBCTNgBUwEFQ9OxGO0A4WAJMLx8QDh1wejZrt6w3sSM5z6RKtZgzdU8
-	+pUs9xyfwKrin44TomczWfsW8YgkPvv0aPfPa2l1BwvMJ6bZEem0R3adFTiFHn8Q8SOOBpgEUa7
-	MWskCJ6VmBB7HrdKb2Jykrl9riU3QW7HkG0U=
-X-Received: by 2002:a17:90b:4f47:b0:32e:9daa:7347 with SMTP id 98e67ed59e1d1-3342a242c87mr16765197a91.7.1759141786150;
-        Mon, 29 Sep 2025 03:29:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHI0jg54adph62Y0WTwdiWbSUCOJJEFVQ+otQunh6fcYFPBXKEPRaek5Gs2ggnDJAtjUi2Z1A==
-X-Received: by 2002:a17:90b:4f47:b0:32e:9daa:7347 with SMTP id 98e67ed59e1d1-3342a242c87mr16765170a91.7.1759141785589;
-        Mon, 29 Sep 2025 03:29:45 -0700 (PDT)
-Received: from [10.133.33.234] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-338387099d6sm806051a91.10.2025.09.29.03.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 03:29:45 -0700 (PDT)
-Message-ID: <9fabc028-e6e1-449e-8de1-6215163cd3d5@oss.qualcomm.com>
-Date: Mon, 29 Sep 2025 18:29:37 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B712FC007
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759142012; cv=fail; b=hHprpZnkMD+H5NsDEBYfWtJwy6W/nFoqowUnUhfVDlQKK1/d1Jkn9nauTyEteWTqituRdF0Ow28TlA36cgrDn94CVCvIHEYB9dXJiE0MLrcU1nHGoTb7yGroaqyBn0z8Ro2ub78wKU048TXmHyljuny90ovIHKgonpc3Xl4RGnM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759142012; c=relaxed/simple;
+	bh=m9L8+jG/0wT03DgpgO4mwNwTApalVDpJAHOGrC3J8FM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=J7eIQEx0MeaOgBbP0sY2Ngdn27LAzktw0jNLfAZGAaNDtS7SM7lQcCjcYUXANjM2roKE1bVyxJhFBAMnl4GGZVIJMyztZST/b7q9KAgYgER9SziyHvc58k0+1NdWZnQVYPGDOQvU508SP9N1RtgkPBfrDbMDAZZ7RW7ZeLc1sTs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kalq+PR8; arc=fail smtp.client-ip=52.101.61.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PQuFZTRygnhd5RSJXX2o34pBZHoqdXSTN2Q++2dGpYWp1C+0MuSltExWH45XZeT5TSgic96/3gamDKexNn+ZJVICfNHbct5t5POi4BjtvfRsIgvy19TSi6EmmSglhXT1IwFlGsR6VWYwOfZFq8cLU+z9koZvoXV2NQZFHdR77hCUB5xtyF9o7lxNapwLkuRfndtXVPyHTw7yaEMFfgx5G78Fcy1q1qyYWZxjQV2LTyMdp7w6ppu5OPs39K2MBWzDoKt7vSqZhWOV1tlp+2zLHN14ZSS4hwq/sodAbFF8+5gwhyJGitFMKv6KTM3j3iedYjcPuAChjzfFLtqtNWMx1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h5aCZvL66BcX8YSkpYsZrG5E/TZw2wHrXdc9VadFAks=;
+ b=sLNHyaZxFJC1UHCpyh9eVSJ3Y2ON07k32/8L21e11GctcKpFuJspXYuWz6tJNdV7nTlsEdru+FHqcofaHtUhP+iEoCCK5VPKAIhHHlLdatEjI7D2SKY2jFRuWFdJNqDQVHYGmeZd4lpS+5A9P5+OTudYiJbwUjVgYgR7b2zTWu2IyBbyFkUbbXpunIjD93hICWhzVYqccCMAqyMUjiC8XcuJoGFbl2xUn70gUmtsh9hDWVVOafGzQBH0IJBr5CKpKVdIIh7knd6e6Hw3R1Woy0EpDsgx5iC1Rb4bKeoJ7wpsaylirOpRy0xRbInwxTkeLEwU7bdfPlbMuOzq129uuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h5aCZvL66BcX8YSkpYsZrG5E/TZw2wHrXdc9VadFAks=;
+ b=kalq+PR8T+QrW/RI9+MlTZvc0/w35ziwiOtVrMUd+JcQN2wtBxF9li4GW5Yv1XdnU6eQ5BeLbHRaYydVGLsKYytXlkJE1XuwOzyIibHsGJ1AiSJ5Dga1q8je50+CkHbldM5YgynYD9KbGEn7ASNUlkgQVthqtCmRa39xeNho21k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
+ by DM6PR12MB4138.namprd12.prod.outlook.com (2603:10b6:5:220::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 10:33:26 +0000
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::9e93:67dd:49ac:bc14]) by CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::9e93:67dd:49ac:bc14%6]) with mapi id 15.20.9160.008; Mon, 29 Sep 2025
+ 10:33:26 +0000
+Message-ID: <35328505-8e2c-48df-840d-25e1a7521442@amd.com>
+Date: Mon, 29 Sep 2025 06:33:03 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
+To: Sebastian Wick <sebastian@sebastianwick.net>,
+ Daniel Stone <daniel@fooishbar.org>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Xaver Hugl <xaver.hugl@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
+ leo.liu@amd.com, ville.syrjala@linux.intel.com,
+ pekka.paalanen@collabora.com, mwen@igalia.com, jadahl@redhat.com,
+ sebastian.wick@redhat.com, shashank.sharma@amd.com, agoins@nvidia.com,
+ joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
+ victoria@system76.com, uma.shankar@intel.com, quic_naseer@quicinc.com,
+ quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, marcan@marcan.st,
+ Liviu.Dudau@arm.com, sashamcintosh@google.com,
+ chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com,
+ mcanal@igalia.com, kernel@collabora.com, daniels@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Simona Vetter <simona.vetter@ffwll.ch>
+References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
+ <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
+ <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com>
+ <CAFZQkGwotQ6cxVCSgp-BhUi5DaZ7MyVvbnrDJW11Z7ztzqy58g@mail.gmail.com>
+ <CAPj87rMTOD3_tC70QX4xz3G4zdG=tmwt5VgPhq6jNyf8bbW49Q@mail.gmail.com>
+ <269ca85a59f613568543f45867fba7e604cc9f11.camel@collabora.com>
+ <CAPj87rMhsFy+uzKmNecrQG4e+BEoeX1FyEobO7bnHdQqhy1_2Q@mail.gmail.com>
+ <7a25beb8-6b81-4652-b509-b6410ae1dec1@app.fastmail.com>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <7a25beb8-6b81-4652-b509-b6410ae1dec1@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VI1PR10CA0117.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:28::46) To CO6PR12MB5427.namprd12.prod.outlook.com
+ (2603:10b6:5:358::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] remoteproc: qcom: pas: Add late attach support for
- subsystems
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com,
-        Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
-References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
- <20250924-knp-remoteproc-v1-5-611bf7be8329@oss.qualcomm.com>
- <aprekcmyp4ttmjgu6nsvoqlvmazi4vvxmsyydjcdpmnhuvl5uk@dylpjrehmd5w>
- <0bc11a0f-826e-4d57-ab59-abae71685f1e@oss.qualcomm.com>
- <qzd3lgtld7febadsupxhjds47omsw5232vgts3ubqedmusew2o@xboj26mkbbm6>
-Content-Language: en-US
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-In-Reply-To: <qzd3lgtld7febadsupxhjds47omsw5232vgts3ubqedmusew2o@xboj26mkbbm6>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Z0GkGt_gvYqx-tJ9DY1PH0k7k7fOoYpe
-X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68da5f9b cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=iPKkQtU763l47-xHpucA:9
- a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-ORIG-GUID: Z0GkGt_gvYqx-tJ9DY1PH0k7k7fOoYpe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX3uhSfXtTuybW
- BJW6YM4w6lXkpo3m+r84xS0LktHcLQ73jlQo2kBm7PKjBuG2GDKVEOaaEOvdSMDslqzZXKvOzgI
- 50MBS8Dza/fA5JWMDvD1R1q0iti/UTbCQ9wDc6EzkhLyBFZ0qSLi8lSby8TCq1CUhuPjWeBNhs+
- BFavzS21FqzKvkqQok3mfHfGXOjn88scY0+bosAj8tEcN2MKMwaOiLHCh60OIRgVponb2Yhtiwp
- 8FcNcLaTGW+3bUvobOojVi9opaYyaZr8atG+sa0e67KAW6/bOI/IeusIdLASnNN1aiES2sebFJu
- fR7UEDBVcBIKpWN9/n31uZGWvAgqPwIn3H3lTf5KnhjH2OA8siFeHGEV/9H3mD2hj9rZrA4ZnMy
- 5ypl/L6ZnY4KZ+fI4hwy/UEu4nS8tA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_04,2025-09-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|DM6PR12MB4138:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00580b76-069a-4066-4a33-08ddff439f86
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NUJjaExQY1lBZjlWbjI0VUlnWVBnWHkyU1lLbTYveXZEQVVNQTdTUHJnRlNV?=
+ =?utf-8?B?NUJ4V0F2Vjc5UUxpb01HRU9oMk9oT1NiRWRqd1IyRVVHeGo3K1h0OUM1dDdt?=
+ =?utf-8?B?N096dGhzZnRoYlI3b0drWW9OeS9yNjNuNkNRbHRiMTR5dGUxaklBR21LQlBN?=
+ =?utf-8?B?KytKY3ZodTFkUE0vdmNvbkRiVTFjMVIrVUpqNW5qOUdBa1g2MVVpb01Udllx?=
+ =?utf-8?B?Z2lPUWRRNTVuMTNRcGZ2MzJwdE9EV2VVdGZUOWx6QlRPK20wd2tlM0lIUmZS?=
+ =?utf-8?B?Q0NCRktmVzlraVcrQ2ozaUROb1J1RnpGaTZSSVd2Mm44cExoWUVyRGZuUjBp?=
+ =?utf-8?B?MTRucnp5UXhpVndmS3lidXl6b2F1SklMNkxWeDZMWDlBaERJc1FtUmJ2Ukxl?=
+ =?utf-8?B?YnExdnJtY0NGOGhOR0puMDVsRlVNMHNaRDJaVTBWcnNablJTRnNkbTEzSEM3?=
+ =?utf-8?B?eEdjaDdYa0djZGlSMkErWldTanBYZUY5NlpIL1VLVytIMG1WZFpYSWdqRU43?=
+ =?utf-8?B?VG5uQzRtT1dwR0JoYllZSWI2WGZHbUZoTkU1RXRDaGlyQVZRUGt4TVN5UUlD?=
+ =?utf-8?B?K24xMFZoOEhHYU5mUy95UFNKRWV0eXhyRkxITDN1VENEZXk1ZG5ZZE5ZdGNr?=
+ =?utf-8?B?bWlxNjZhcmlhSjlENkYycktjaGlhdHNWejhaSDNmSlVrOVRoWVZYeVBPNXhE?=
+ =?utf-8?B?NkFWRGV5UHN3OXhSU09xQ29Xb3AxR2VXOXRTVHFDZWhUWEhtZXpnOUhhL2ZJ?=
+ =?utf-8?B?emkxL3lIanNZK3lmNVg0VWJpL0J5U3Uxbm4wK1VwOVFkaDlReC9zWFBzSEZW?=
+ =?utf-8?B?MGRiMTRIQTZsNjBzU0FkTklwdGsxZm54ckRWOVI5OUFXOUpyb1JDd3hJZkdJ?=
+ =?utf-8?B?eGhkRWpCeUREOFB2b0hsMWhiNjFPU1pWU0tvaUJMeEoza3BNdXV3WkFMaFpV?=
+ =?utf-8?B?ekwzcUFJdE5PM1dZMU8vcVJ6Q2d5NEV5RWFZM21HRVZLTHNIeGtObUVBMW8r?=
+ =?utf-8?B?OFRva0Fua0ZiOXBEUjNiZWo1a0FGRlk5Zzd3d1ZaU3o5RFhDZzV4UitzOWZj?=
+ =?utf-8?B?RXdXVVl0aFNHY1lrazhJc21RaHNka2RrcVM5ei8wZG1QMWcreEU5T0Q0MmhB?=
+ =?utf-8?B?RlAxRjVvSUtEdXdLSUgzZVhZdzJ3WERLNDZlN1k1aUdyd2dUVmNabmFCOEpX?=
+ =?utf-8?B?MGNRSXN1UkUrSlJ3ZUs2ZG12bWNUN3Q4T3cxa0M2M2lGY2Fja3h6dmVnQnRm?=
+ =?utf-8?B?YytRQk4wcHQ5U1FoZkg1dEZ2NDh3YWZObDJGVVZFaUlPbmNoaFVVODd0SDNx?=
+ =?utf-8?B?RE5xYjZFOVk5elZORTRveHR3VGhkcTJEYjJweC9qclNPRUtZZEdFOHh6eXN2?=
+ =?utf-8?B?ejlMUE50OUx2Wm9wZXkxZTNoVW5yeFZWR1hxQWI5SlhJYTZsNWFnaDBKdGli?=
+ =?utf-8?B?N01tbDFkcTk5S1p5Zm51VDJveG8wSHlmNjVheDFvc2hNc2ljbWZYcWZmRnNX?=
+ =?utf-8?B?TGdhaGRQeXMzV2VKcVBqY29UMTRkQTB0VElMelA4S1JZNFp1eWRKTFZHRmlx?=
+ =?utf-8?B?WGxJQ3ZBSHBkeFZuR2xYbUtXbHBXYXRCUFhpVUtPV0N4SWxkWjdJejVqWE9Z?=
+ =?utf-8?B?aVV3eDVYQXZ1L2JHWFh0dHdZV05vWWNUamFYT2ZCdU1hUTBHVmw5UDVUeTV1?=
+ =?utf-8?B?MUVHbFZ5SWhvb05JMitOMDIwR3hLMVNpSlVQOHBwN2lyR0RmK3lQbndTRWtT?=
+ =?utf-8?B?L1ZTRWU5dmtpZzh1dlh3dERhL0c1YWFjNUZ5c3JxUkMyeUhDYks1YW1TTktE?=
+ =?utf-8?B?SFhTSEJJRmN1eXZWdWhyT21FUjJHamJVc3p1eUZkNy9YUGwxeFp3QkdvbFpV?=
+ =?utf-8?B?dU02am5hZmtsdng5Z3RjV0xqT3ZqWU1FZmFkK01OeEdBYWxDNUU0WmRjU2Vp?=
+ =?utf-8?Q?7c1UuYILsHqVO/CmVyAShLCa38GTmAds?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SHNYbzRZdUxOTHNpYk5xM1FTUFkrTXVXNHpRUGl0cm9Qb0xyWGVIdjd3QjJG?=
+ =?utf-8?B?QXBITnpsQktPbkdXUSt3S0ZoWXpma1Q3NG9LbG14Z0N1WWFjd2FwRnF0YjJP?=
+ =?utf-8?B?ZWVUNkp1RzZEM1c2cHZTa1g0QmhCVzU3NGVOQUhsai90dGZHOHBBR2kvS2xD?=
+ =?utf-8?B?Skp2MDA4R05FVHltRHFwNWx6UDVpY0Z1MVl2OTJTWDhnV3dFU1JxT1ZzNlFs?=
+ =?utf-8?B?S09YM0xZWGMwOVRBZzhsWllzclU2bkhzMzVmUVBUeHVvU2dXNWx5bEcxMHJJ?=
+ =?utf-8?B?L2l4Z2hSNW5aalpKZEZ6VjJSSjB0dnJxdS9IeWJzZmM5QzZ4YjB4dzBJN041?=
+ =?utf-8?B?MHZSRnRCTmJkbjc3aWxGcE5HR0VzOC94Q3BQNEE3MmhFSHg3YXJsSkxjZ2k0?=
+ =?utf-8?B?cUxXdXBEejI1YlNPSGVzT25rNjl3dzVLaEdGeTVkRXBZRXc0aEliNjlaWWFC?=
+ =?utf-8?B?RmpHbHlFU011Tjh0WkYyMEMxeDJUT0puRFV5Z0JieERIRU1FcXFBVlVTeUlh?=
+ =?utf-8?B?eHBUZS9TTVdHTEZrcHh0UlVDazRaTjBoWUczcWVDQnBZM2VtOVNHSGl1cnVs?=
+ =?utf-8?B?ZVdnTlNDaUFWdnpSdEFWMXZVZWt5YUNLbkRxQ0VYNlJ5ekRES0FjZXpFa2VL?=
+ =?utf-8?B?NE9YcjVWVlArTlFwc01EWGhIMjFKaXNmbXMzT1RNeEliNEpLNFZENm4vZTJl?=
+ =?utf-8?B?UWhHaWxNU0dZM016WFBOZHlScjRDdjZWV1psN2x1UmlNRDBHRVRGOGp5MHJB?=
+ =?utf-8?B?a21zeFlRd0F1UzNDQlk2amI5aUExYXpoZHpyMnN5ZTVoYjQ5M1pCOTNlVTdU?=
+ =?utf-8?B?Tis3Zk1LWCtCSldVWXBNN1ZsSE9qUThWYTFjWTJ1dzBjK1VucjY5Sm9hM1Bx?=
+ =?utf-8?B?MzEydHRvcTk2d29NNWsxRzJ3aCs2VTRLaVgyUk5jVHhpUmVBZWRHeEVBM3NV?=
+ =?utf-8?B?WTFSZERpME9kR09BTytvS0ZhdzlsTjRDMTJQcEJ1dHVNRytiTVVNK3ZqSW5P?=
+ =?utf-8?B?ZFAzVC96VnllenZCTU1iZUMxM1RwdjhqU3NQb0lId0dTZGU0VmpGQUJyN3lV?=
+ =?utf-8?B?N2d2SXJ6QW1ydUFmbThndmE2RHpudXF5M01DeU1oQ3ljRTdhL0YzSU85Ti9Y?=
+ =?utf-8?B?OTFtMGluWDFVNGkzditOTkRZYm5HNklrRWlsMWEwVDZjZFZmVkhxZXBLbWFv?=
+ =?utf-8?B?WFp5Zm13YkRJUjhKMjlsTFA2Q3o2WE5ad1dtQUNNYW13NWdFS2ZrTGREaldl?=
+ =?utf-8?B?bzk2U204VVVBZndPVWZQQXlyTmdqNXVZcmN3UVNKN3hvWHJpMDVMTVRLblBP?=
+ =?utf-8?B?RWJvZ1dzb0p0RmQ0L0NaQ0svLzh0MFNUQUhYTmJySkFYWWhGeGVKOVNtVmFi?=
+ =?utf-8?B?VVRacDYrWGptQ3ErTHlSM1c4dVFVNVo2UTJ3RGlkanlqb1JVeHhjNzVVTHQx?=
+ =?utf-8?B?T3lPUStkektRZTdkeWZtbVNZNk9MVjd6bDk5UVdPNkgxZXBoenBUdjRSMmJm?=
+ =?utf-8?B?V0cvRFI2TDNZeHFwN0o5b1Jaa2l2RU5DeEhINDRkNUd6SFdmUzdSMTQ3d3Jj?=
+ =?utf-8?B?MkptdjVadFBVRjNTbUxQT0EwbGlJWXhPNWc5SW5KTkoxVnRDNFdPZ2RZdWZr?=
+ =?utf-8?B?QWtTRU8ySWtOMFFSNjdKNmVRdFQyYnEyZzQ3VUZLYjJ2YmdweVBPdVQ1ditj?=
+ =?utf-8?B?NzBTcXZiZHgxMFdQKzdaR3pncThLOHNjeHZBU0g0R2FoMWJBaEpTZVF1YkYx?=
+ =?utf-8?B?MnV5TmY4U2pGcFNLSWh1eHNYVVljaGE1Z3pmckN5OHRWNU5XVXpYSExxZDNw?=
+ =?utf-8?B?aXY1M3ZnclhJdUJMQ2MwU0I0RVhMWVg5WTRKekh6bE0ycHowdlA2eW9scHpu?=
+ =?utf-8?B?NWhTSVY3T2FKOGh2QUh4T0VNcWJXT1A4d09WemRoNW9IVWR5KzdOKzIvY04y?=
+ =?utf-8?B?L2lCMU1QQTQwNjNLUGRRU3JXZ25WSDdNTE9hWEFSSENPWFR5Vkw4NVVUeEVL?=
+ =?utf-8?B?eDdjUHhGRXJrclg4cDJEQW5TQ3dkdzFoR1Z0TDNxU3FNWlZYNWJOTm1PK2FO?=
+ =?utf-8?B?cm5pVE9Bc2p2OEZhWnFiUXdZdjJlQkJKcnA5UlRWbHJibVRaN0U0bTljZEs0?=
+ =?utf-8?B?Wk9yU1JzVjFWaSszZTc1aDNyTHNkeldidERtNzd1Z3IrVTBGNnVxbkk4RlJ4?=
+ =?utf-8?Q?tbzxZrbTzB/M2ynhtkwlzoE=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00580b76-069a-4066-4a33-08ddff439f86
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 10:33:26.4149
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UDJzDCjc4KGcg+HbCUm42iLtFOEaH65ljW5OZ7cpLJ67sZ2G+mFgIUHXGIYbp0/GVqBkYcLcCpAvJ9PfCcj4fA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4138
 
 
 
-On 9/29/2025 5:35 PM, Dmitry Baryshkov wrote:
-> On Mon, Sep 29, 2025 at 02:42:10PM +0800, Jingyi Wang wrote:
->>
->>
->> On 9/25/2025 11:04 AM, Dmitry Baryshkov wrote:
->>> On Wed, Sep 24, 2025 at 04:37:26PM -0700, Jingyi Wang wrote:
->>>> From: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
->>>>
->>>> Subsystems can be brought out of reset by entities such as
->>>> bootloaders. Before attaching such subsystems, it is important to
->>>> check the state of the subsystem. This patch adds support to attach
->>>> to a subsystem by ensuring that the subsystem is in a sane state by
->>>> reading SMP2P bits and pinging the subsystem.
->>>>
->>>> Signed-off-by: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
->>>> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>> ---
->>>>  drivers/remoteproc/qcom_q6v5.c      | 89 ++++++++++++++++++++++++++++++++++++-
->>>>  drivers/remoteproc/qcom_q6v5.h      | 14 +++++-
->>>>  drivers/remoteproc/qcom_q6v5_adsp.c |  2 +-
->>>>  drivers/remoteproc/qcom_q6v5_mss.c  |  2 +-
->>>>  drivers/remoteproc/qcom_q6v5_pas.c  | 61 ++++++++++++++++++++++++-
->>>>  5 files changed, 163 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
->>>> index 4ee5e67a9f03..cba05e1d6d52 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5.c
->>>> +++ b/drivers/remoteproc/qcom_q6v5.c
->>>> @@ -94,6 +94,9 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
->>>>  	size_t len;
->>>>  	char *msg;
->>>>  
->>>> +	if (q6v5->early_boot)
->>>> +		complete(&q6v5->subsys_booted);
->>>
->>> Where do we clean this flag? I think you current code breaks restarting
->>> of ADSP. Once the ADSP is brought up, the flag should be cleared and
->>> further handling of the ADSP should follow the normal flow.
->>>
->>
->> q6v5->subsys_booted can not be cleared now, it is only checked in the 
->> qcom_pas_attach callback, so the bootup process will not be infected, 
->> we have tested shutdown->bootup process and it runs as expected.
+On 2025-09-26 09:51, Sebastian Wick wrote:
+> (Sorry for re-sending; used a web mail client which send html)
 > 
-> I was more interested in clearing the early_boot flag.
-> 
-
-Sure, we can clear it in the stop callback.
-
+> On Mon, Sep 15, 2025, at 2:31 PM, Daniel Stone wrote:
+>> Hi Nícolas,
 >>
->> Thanks,
->> Jingyi
->>
->>
->>>> +
->>>>  	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
->>>>  	if (!q6v5->running) {
->>>>  		complete(&q6v5->stop_done);
->>>> @@ -118,6 +121,9 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
->>>>  	size_t len;
->>>>  	char *msg;
->>>>  
->>>> +	if (q6v5->early_boot)
->>>> +		complete(&q6v5->subsys_booted);
->>>> +
->>>>  	if (!q6v5->running)
->>>>  		return IRQ_HANDLED;
->>>>  
->>>> @@ -139,6 +145,9 @@ static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
->>>>  
->>>>  	complete(&q6v5->start_done);
->>>>  
->>>> +	if (q6v5->early_boot)
->>>> +		complete(&q6v5->subsys_booted);
->>>> +
->>>>  	return IRQ_HANDLED;
->>>>  }
->>>>  
->>>> @@ -170,6 +179,9 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
->>>>  	if (q6v5->handover)
->>>>  		q6v5->handover(q6v5);
->>>>  
->>>> +	if (q6v5->early_boot)
->>>> +		complete(&q6v5->subsys_booted);
->>>> +
->>>>  	icc_set_bw(q6v5->path, 0, 0);
->>>>  
->>>>  	q6v5->handover_issued = true;
->>>> @@ -232,6 +244,77 @@ unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
->>>>  
->>>> +static irqreturn_t q6v5_pong_interrupt(int irq, void *data)
->>>> +{
->>>> +	struct qcom_q6v5 *q6v5 = data;
->>>> +
->>>> +	complete(&q6v5->ping_done);
->>>> +
->>>> +	return IRQ_HANDLED;
->>>> +}
->>>> +
->>>> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5)
->>>> +{
->>>> +	int ret;
->>>> +	int ping_failed = 0;
->>>> +
->>>> +	reinit_completion(&q6v5->ping_done);
->>>> +
->>>> +	/* Set master kernel Ping bit */
->>>> +	ret = qcom_smem_state_update_bits(q6v5->ping_state,
->>>> +					  BIT(q6v5->ping_bit), BIT(q6v5->ping_bit));
->>>> +	if (ret) {
->>>> +		dev_err(q6v5->dev, "Failed to update ping bits\n");
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	ret = wait_for_completion_timeout(&q6v5->ping_done, msecs_to_jiffies(PING_TIMEOUT));
->>>> +	if (!ret) {
->>>> +		ping_failed = -ETIMEDOUT;
->>>> +		dev_err(q6v5->dev, "Failed to get back pong\n");
->>>> +	}
->>>> +
->>>> +	/* Clear ping bit master kernel */
->>>> +	ret = qcom_smem_state_update_bits(q6v5->ping_state, BIT(q6v5->ping_bit), 0);
->>>> +	if (ret) {
->>>> +		pr_err("Failed to clear master kernel bits\n");
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	if (ping_failed)
->>>> +		return ping_failed;
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem);
->>>> +
->>>> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev)
->>>> +{
->>>> +	int ret = -ENODEV;
->>>> +
->>>> +	q6v5->ping_state = devm_qcom_smem_state_get(&pdev->dev, "ping", &q6v5->ping_bit);
->>>> +	if (IS_ERR(q6v5->ping_state)) {
->>>> +		dev_err(&pdev->dev, "failed to acquire smem state %ld\n",
->>>> +			PTR_ERR(q6v5->ping_state));
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	q6v5->pong_irq = platform_get_irq_byname(pdev, "pong");
->>>> +	if (q6v5->pong_irq < 0)
->>>> +		return q6v5->pong_irq;
->>>> +
->>>> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->pong_irq, NULL,
->>>> +					q6v5_pong_interrupt, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
->>>> +					"q6v5 pong", q6v5);
->>>> +	if (ret)
->>>> +		dev_err(&pdev->dev, "failed to acquire pong IRQ\n");
->>>> +
->>>> +	init_completion(&q6v5->ping_done);
->>>> +
->>>> +	return ret;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem_init);
->>>> +
->>>>  /**
->>>>   * qcom_q6v5_init() - initializer of the q6v5 common struct
->>>>   * @q6v5:	handle to be initialized
->>>> @@ -245,7 +328,7 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
->>>>   */
->>>>  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->>>>  		   struct rproc *rproc, int crash_reason, const char *load_state,
->>>> -		   void (*handover)(struct qcom_q6v5 *q6v5))
->>>> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5))
->>>>  {
->>>>  	int ret;
->>>>  
->>>> @@ -253,10 +336,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->>>>  	q6v5->dev = &pdev->dev;
->>>>  	q6v5->crash_reason = crash_reason;
->>>>  	q6v5->handover = handover;
->>>> +	q6v5->early_boot = early_boot;
->>>>  
->>>>  	init_completion(&q6v5->start_done);
->>>>  	init_completion(&q6v5->stop_done);
->>>>  
->>>> +	if (early_boot)
->>>> +		init_completion(&q6v5->subsys_booted);
->>>> +
->>>>  	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
->>>>  	if (q6v5->wdog_irq < 0)
->>>>  		return q6v5->wdog_irq;
->>>> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
->>>> index 5a859c41896e..8a227bf70d7e 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5.h
->>>> +++ b/drivers/remoteproc/qcom_q6v5.h
->>>> @@ -12,27 +12,35 @@ struct rproc;
->>>>  struct qcom_smem_state;
->>>>  struct qcom_sysmon;
->>>>  
->>>> +#define PING_TIMEOUT 500 /* in milliseconds */
->>>> +#define PING_TEST_WAIT 500 /* in milliseconds */
->>>> +
->>>>  struct qcom_q6v5 {
->>>>  	struct device *dev;
->>>>  	struct rproc *rproc;
->>>>  
->>>>  	struct qcom_smem_state *state;
->>>> +	struct qcom_smem_state *ping_state;
->>>>  	struct qmp *qmp;
->>>>  
->>>>  	struct icc_path *path;
->>>>  
->>>>  	unsigned stop_bit;
->>>> +	unsigned int ping_bit;
->>>>  
->>>>  	int wdog_irq;
->>>>  	int fatal_irq;
->>>>  	int ready_irq;
->>>>  	int handover_irq;
->>>>  	int stop_irq;
->>>> +	int pong_irq;
->>>>  
->>>>  	bool handover_issued;
->>>>  
->>>>  	struct completion start_done;
->>>>  	struct completion stop_done;
->>>> +	struct completion subsys_booted;
->>>> +	struct completion ping_done;
->>>>  
->>>>  	int crash_reason;
->>>>  
->>>> @@ -40,11 +48,13 @@ struct qcom_q6v5 {
->>>>  
->>>>  	const char *load_state;
->>>>  	void (*handover)(struct qcom_q6v5 *q6v5);
->>>> +
->>>> +	bool early_boot;
->>>>  };
->>>>  
->>>>  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->>>>  		   struct rproc *rproc, int crash_reason, const char *load_state,
->>>> -		   void (*handover)(struct qcom_q6v5 *q6v5));
->>>> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5));
->>>>  void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
->>>>  
->>>>  int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
->>>> @@ -52,5 +62,7 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
->>>>  int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon);
->>>>  int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
->>>>  unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
->>>> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5);
->>>> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev);
->>>>  
->>>>  #endif
->>>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
->>>> index e98b7e03162c..1576b435b921 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
->>>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
->>>> @@ -717,7 +717,7 @@ static int adsp_probe(struct platform_device *pdev)
->>>>  		goto disable_pm;
->>>>  
->>>>  	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
->>>> -			     desc->load_state, qcom_adsp_pil_handover);
->>>> +			     desc->load_state, false, qcom_adsp_pil_handover);
->>>>  	if (ret)
->>>>  		goto disable_pm;
->>>>  
->>>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
->>>> index 0c0199fb0e68..04e577541c8f 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
->>>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
->>>> @@ -2156,7 +2156,7 @@ static int q6v5_probe(struct platform_device *pdev)
->>>>  	qproc->has_mba_logs = desc->has_mba_logs;
->>>>  
->>>>  	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM, "modem",
->>>> -			     qcom_msa_handover);
->>>> +			     false, qcom_msa_handover);
->>>>  	if (ret)
->>>>  		goto detach_proxy_pds;
->>>>  
->>>> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
->>>> index 55a7da801183..99163e48a76a 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5_pas.c
->>>> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->>>> @@ -35,6 +35,8 @@
->>>>  
->>>>  #define MAX_ASSIGN_COUNT 3
->>>>  
->>>> +#define EARLY_BOOT_RETRY_INTERVAL_MS 5000
->>>> +
->>>>  struct qcom_pas_data {
->>>>  	int crash_reason_smem;
->>>>  	const char *firmware_name;
->>>> @@ -58,6 +60,7 @@ struct qcom_pas_data {
->>>>  	int region_assign_count;
->>>>  	bool region_assign_shared;
->>>>  	int region_assign_vmid;
->>>> +	bool early_boot;
->>>>  };
->>>>  
->>>>  struct qcom_pas {
->>>> @@ -430,6 +433,51 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
->>>>  	return qcom_q6v5_panic(&pas->q6v5);
->>>>  }
->>>>  
->>>> +static int qcom_pas_attach(struct rproc *rproc)
->>>> +{
->>>> +	int ret;
->>>> +	struct qcom_pas *adsp = rproc->priv;
->>>> +	bool ready_state;
->>>> +	bool crash_state;
->>>> +
->>>> +	if (!adsp->q6v5.early_boot)
->>>> +		return -EINVAL;
->>>> +
->>>> +	ret = irq_get_irqchip_state(adsp->q6v5.fatal_irq,
->>>> +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
->>>> +
->>>> +	if (crash_state) {
->>>> +		dev_err(adsp->dev, "Sub system has crashed before driver probe\n");
->>>> +		adsp->rproc->state = RPROC_CRASHED;
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	ret = irq_get_irqchip_state(adsp->q6v5.ready_irq,
->>>> +				    IRQCHIP_STATE_LINE_LEVEL, &ready_state);
->>>> +
->>>> +	if (ready_state) {
->>>> +		dev_info(adsp->dev, "Sub system has boot-up before driver probe\n");
->>>> +		adsp->rproc->state = RPROC_DETACHED;
->>>> +	} else {
->>>> +		ret = wait_for_completion_timeout(&adsp->q6v5.subsys_booted,
->>>> +						  msecs_to_jiffies(EARLY_BOOT_RETRY_INTERVAL_MS));
->>>> +		if (!ret) {
->>>> +			dev_err(adsp->dev, "Timeout on waiting for subsystem interrupt\n");
->>>> +			return -ETIMEDOUT;
->>>> +		}
->>>> +	}
->>>> +
->>>> +	ret = qcom_q6v5_ping_subsystem(&adsp->q6v5);
->>>> +	if (ret) {
->>>> +		dev_err(adsp->dev, "Failed to ping subsystem, assuming device crashed\n");
->>>> +		rproc->state = RPROC_CRASHED;
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	adsp->q6v5.running = true;
->>>> +	return ret;
->>>> +}
->>>> +
->>>>  static const struct rproc_ops qcom_pas_ops = {
->>>>  	.unprepare = qcom_pas_unprepare,
->>>>  	.start = qcom_pas_start,
->>>> @@ -438,6 +486,7 @@ static const struct rproc_ops qcom_pas_ops = {
->>>>  	.parse_fw = qcom_register_dump_segments,
->>>>  	.load = qcom_pas_load,
->>>>  	.panic = qcom_pas_panic,
->>>> +	.attach = qcom_pas_attach,
->>>>  };
->>>>  
->>>>  static const struct rproc_ops qcom_pas_minidump_ops = {
->>>> @@ -760,7 +809,7 @@ static int qcom_pas_probe(struct platform_device *pdev)
->>>>  	pas->proxy_pd_count = ret;
->>>>  
->>>>  	ret = qcom_q6v5_init(&pas->q6v5, pdev, rproc, desc->crash_reason_smem,
->>>> -			     desc->load_state, qcom_pas_handover);
->>>> +			     desc->load_state, desc->early_boot, qcom_pas_handover);
->>>>  	if (ret)
->>>>  		goto detach_proxy_pds;
->>>>  
->>>> @@ -774,6 +823,16 @@ static int qcom_pas_probe(struct platform_device *pdev)
->>>>  	}
->>>>  
->>>>  	qcom_add_ssr_subdev(rproc, &pas->ssr_subdev, desc->ssr_name);
->>>> +
->>>> +	if (pas->q6v5.early_boot) {
->>>> +		ret = qcom_q6v5_ping_subsystem_init(&pas->q6v5, pdev);
->>>> +		if (ret)
->>>> +			dev_err(&pdev->dev,
->>>> +				"Unable to find ping/pong bits, falling back to firmware load\n");
->>>> +		else
->>>> +			pas->rproc->state = RPROC_DETACHED;
->>>> +	}
->>>> +
->>>>  	ret = rproc_add(rproc);
->>>>  	if (ret)
->>>>  		goto remove_ssr_sysmon;
->>>>
->>>> -- 
->>>> 2.25.1
->>>>
+>> On Wed, 3 Sept 2025 at 19:43, Nícolas F. R. A. Prado
+>> <nfraprado@collabora.com> wrote:
+>>> On Tue, 2025-08-26 at 13:25 +0100, Daniel Stone wrote:
+>>> Based on this discussion, this is my understanding for the changes
+>>> desired on the series and their reasonings:
 >>>
+>>> 1. Add a driver cap, DRM_CAP_POST_BLEND_COLOR_PIPELINE, which drivers
+>>> will use to signal they support post-blend color pipelines.
+>>>    - Reason: Allow userspace to figure out that the driver doesn't
+>>> support post-blend color pipelines and choose to not set the client
+>>> cap, DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, so it can use legacy
+>>> color management instead.
+>>> 2. Make it so setting the client cap,
+>>> DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, fails if the driver cap,
+>>> DRM_CAP_POST_BLEND_COLOR_PIPELINE, isn't set
+>>>    - Reason: Prevent userspace from making color management unusable if
+>>> the driver doesn't support post-blend color pipelines, as the legacy
+>>> color-management properties (GAMMA_LUT, DEGAMMA_LUT, CTM) would be
+>>> unwriteable with the client cap set.
 >>
+>> Definitely.
+>>
+>>> 3. Make legacy color-management properties (GAMMA_LUT, DEGAMMA_LUT,
+>>> CTM) read-only if the client cap,
+>>> DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, is set
+>>>    - Reason: Allow drm_info to print legacy color management
+>>> configuration while still enabling post-blend color pipelines through
+>>> the client cap. Also to allow smooth handover from pre-colorop
+>>> userspace client to colorop-ready userspace client, as the latter can
+>>> now replicate the legacy color configuration through the colorops.
+>>
+>> I think yes, but I don't really feel strongly about this. If others
+>> involved have stronger opinions, I'm happy to yield.
 > 
+> So I'm going to argue that making the properties read-only or read-write is useless.
+> 
+> The only case where knowing the color pipeline of the previous user would be useful is if you want to re-use the framebuffer of said user. Otherwise, the color pipeline and the generated framebuffer have to somehow just match to produce the desired output and that does not require any previous state, making the legacy properties useless.
+> 
+> If we genuinely believe that this is something to be supported, then my question is why the new color pipeline should not be able to accurate reflect the state of the previous user, even if they used the legacy props?
+> 
+> The hardware was able to get into some state based on the legacy props, so it will be able to get into the same state with the color pipeline props; it's "just" a matter of exposing the right pipeline.
+> 
+> If we are not able to accurate reflect the previous state with the pipeline props, then use space will see inconsistent state between the legacy and color pipeline props. Which state is the right one? We cannot know. The previous user could have used either one. So having the legacy props does not help because we don't know if we should use them or the pipeline state.
+> 
+> So, I would argue that we should *remove* the legacy props if DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE is set. If the handover is relevant for a driver, they should ensure the legacy props state translates to the correct color pipeline state.
+
+I tend to agree. The DRM driver cap seems to complicate the handling for 
+userspace and drivers, which makes the whole mechanism more fragile, all 
+to work around a commonly known short-coming of DRM/KMS, which is the 
+default state problem when transitioning between userspace clients.
+
+Harry
+
+> 
+>>> Side note: Smooth handover back to pre-colorop userspace after tweaking
+>>> the colorops to something else would not be possible without making the
+>>> legacy properties writable too, so that the client could update them to
+>>> match the colorops setting before switching back. I don't imagine this
+>>> would be a common use case, and colorops are a superset of the legacy
+>>> properties so there are cases where it wouldn't even be possible to
+>>> replicate the colorop setting on the legacy properties, but thought I'd
+>>> mention this limitation for completeness' sake.
+>>
+>> That's a totally acceptable tradeoff. We don't have a standard
+>> inter-client capability handshake, so if downgrading from a
+>> newer/more-capable to an older/less-capable client is a bit janky,
+>> that's OK. There's only so much we can do given the original design
+>> decision for the KMS core to not be opinionated about a 'golden state'
+>> that could be used as a reference for userspace to work from as a
+>> base.
+>>
+>>> Also, as Xaver noted, this feedback also applies to pre-blend pipelines
+>>> and its legacy color-management properties (COLOR_ENCODING,
+>>> COLOR_RANGE), so the same changes would be desirable there for the same
+>>> reasons. So we should share this feedback on that series as well.
+>>
+>> Yep.
+>>
+>> Cheers,
+>> Daniel
+>>
 
 
