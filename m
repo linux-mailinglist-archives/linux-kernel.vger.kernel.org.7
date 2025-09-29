@@ -1,166 +1,107 @@
-Return-Path: <linux-kernel+bounces-836539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A944BA9F76
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:10:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7ADBA9F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBF7F7A66CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:09:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8F0174674
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126C430C0FC;
-	Mon, 29 Sep 2025 16:10:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BCD302CC3;
-	Mon, 29 Sep 2025 16:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A5330BF5A;
+	Mon, 29 Sep 2025 16:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFJUZ6ab"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E572309EE8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759162250; cv=none; b=gs6X4m/0rhVMp8NueG/vw7vR2ICt/q2beeIIqCEb7unDciaFJh/WMwqPkgG7I8vFOabV1FaIW48fSpnOyhM3kCiUFPMcpk1qLGBitqGTgWAf14cHF8PUPuYqMVT4hJoVo6bOrXcD87PSvQyntLbSg/920LYpn5p6HLDpUdviCuw=
+	t=1759162263; cv=none; b=SdB1h/99nuxB4cZ1DuEDLcSa9kUzrU3iyTHJJhXWIqEWaVFJ1VOswWJMJbDHQJN9xdQbJ4BvLWOIcpU0Zp6waRMQrC1J+9+ZDuNf35gosYSYGEvY0pA1v1bgJZyFr4606yWlQQR7x98RCsscc4hwQxJ47qdhIW1EU+HZZatcPMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759162250; c=relaxed/simple;
-	bh=lkWKMGyuWmIS9hRLihsDNiV+gfmfyAAU0gjj2D94/1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qeRdiiHOuJ1PJtVa1j0RryMxYqazognD2okwOZfDzf6Ih262nFdpc2DfhLmV+7A75iopXDG+NwBWvpcwglDJ3IcA+cQwI36t+hMtYDnSvyceFBWPIwJy09G9/I1DbO7E/Luc2L3+l49r8rKByYutFgtlnJClpwdliQ3i6SNVai8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECB29150C;
-	Mon, 29 Sep 2025 09:10:39 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E27AF3F66E;
-	Mon, 29 Sep 2025 09:10:45 -0700 (PDT)
-Date: Mon, 29 Sep 2025 17:10:43 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-Message-ID: <aNqvg984pmj+otfF@e133380.arm.com>
-References: <20250902162507.18520-1-Dave.Martin@arm.com>
- <b38f0459-1373-42d3-8526-e8ef9ac4d2e7@intel.com>
- <aNFfs43UBp6tjqPM@e133380.arm.com>
- <5be54a14-a7ba-49ba-8ddc-db532f2cf318@intel.com>
- <aNU5nCklRhuc4u3X@e133380.arm.com>
- <9dba03c5-cf45-4510-ab6c-2a945e73fd1c@intel.com>
- <aNp+7yjrs36/hSPS@e133380.arm.com>
- <c91846ab-e08e-48e9-83bb-357eab4b9d87@intel.com>
+	s=arc-20240116; t=1759162263; c=relaxed/simple;
+	bh=TnRd13LTY/MfKHuFsX9dGJLSiRHknR2IKwuhqq8+DcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j1PtV4e3FjAfGwrsAWSd/LMMjDyz86dpqR9rWACsQ1JLguagwbvjFhI+BQ6FpDWPwul8HYEiHMqLZe57/HEo9GPuA4laoTiyymlnuXgQeku1mg/V6my4A8OrUNGOEjHYJf2alHIyyQGh2i9fb2AUpp6afrpN4CZ0o0Rg3qnL9c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFJUZ6ab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4441BC19421
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759162263;
+	bh=TnRd13LTY/MfKHuFsX9dGJLSiRHknR2IKwuhqq8+DcU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DFJUZ6ab25RklS9kO8oV+tivtUHwZbSDaUluINK09aygf28NgXYFZ+PI6YaW/JAv+
+	 n3z/M3Wo85Nqdoz4psMCxK7E9r03URDojGzc5qPUCdsnXuoF+UDVCDRrNU5gdvvJpY
+	 koHbVdbYYxCIuUnxIVJSwwrArrLIfJ8HCqismRwWLlhECRDwGGadxd/RSf55sPK1i7
+	 x7VzBbBTmu/EyS9V5qA3ndYOOORON8gyac4qn73YqOt3O7HNOBL3s+vfDb985nLifb
+	 WdgxuSM4jEcixnsDoLy2NYcWZ6dPxp9zyNvj1+Kb4bhMdIb2qfqwlPOzbnQVZ6+pPF
+	 RnAySxeFdHwrg==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-363f137bbf8so47058671fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:11:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWlPFmA9Oz2QzDsgekgla8cH7cim3ErdhVigIxWB6d7i0/eK1bQ70u8MJbhCNxblkTvph0QhROvV+vtEA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO3XPD81Aza9cCjBq1K72Yu4TsWy60hnqksU8LnELM3y4hCGQZ
+	vUYEg+HNHOyCyQ1oJ5n0FlMWTj6CKDw/2uVFG8Rv3bvr/eXcimgeXPqkUnepTkWaAxSXArm6J7H
+	d4oFaTSMZBGYA995cA/xP782oRC1GX88=
+X-Google-Smtp-Source: AGHT+IETanXcswW69UMb0c9QLJbA83VZbKW5ySv3KY5vq4DrpUIMFVRtBjjjKR6of/ifN5P4H0F2sjZNeyUHIEGCoZI=
+X-Received: by 2002:a2e:a917:0:b0:336:9e1b:b640 with SMTP id
+ 38308e7fff4ca-36f8020caf5mr41859811fa.24.1759162261600; Mon, 29 Sep 2025
+ 09:11:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c91846ab-e08e-48e9-83bb-357eab4b9d87@intel.com>
+References: <20250922130427.2904977-1-abarnas@google.com>
+In-Reply-To: <20250922130427.2904977-1-abarnas@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 29 Sep 2025 18:10:49 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHfDVXXZwFhNk=b25Uz6aVDW-NmNHJdWGOzy6j=YpKsRQ@mail.gmail.com>
+X-Gm-Features: AS18NWD4BtMfXpGmuN2UIzHJaQT_CZZXKftd2Kvqw_-tFPRBtvNfc-lJsFN37gc
+Message-ID: <CAMj1kXHfDVXXZwFhNk=b25Uz6aVDW-NmNHJdWGOzy6j=YpKsRQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] arm64: modules: Reject loading of malformed modules
+To: =?UTF-8?Q?Adrian_Barna=C5=9B?= <abarnas@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Dylan Hatch <dylanbhatch@google.com>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette,
+On Mon, 22 Sept 2025 at 15:04, Adrian Barna=C5=9B <abarnas@google.com> wrot=
+e:
+>
+> Hi all,
+>
+> Here is version two of the patches I previously posted here:
+>
+>   v1: https://lore.kernel.org/all/20250919122321.946462-1-abarnas@google.=
+com/
+>
+> Changes:
+>   * Renamed the parameter `is_module` to `skip_dry_run` in scs_patch()
+>   * Moved comments to module_finalize() and improve justification
+>   * Instead of rejecting all modules with callback, reject those with cb
+>     pointing outside core kernel text
+>   * Replace -EPERM to -ENOEXEC when rejecting modules with incorrect cb
+>   * Fix missing return in apply_alternatives_module() placeholder
+>
+> Best regards
+> Adrian
+>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Dylan Hatch <dylanbhatch@google.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+>
+> Adrian Barna=C5=9B (2):
+>   arch: arm64: Fail module loading if dynamic SCS patching fails
+>   arch: arm64: Reject modules with internal alternative callbacks
+>
 
-On Mon, Sep 29, 2025 at 08:38:13AM -0700, Reinette Chatre wrote:
-> Hi Dave,
-> 
-> On 9/29/25 5:43 AM, Dave Martin wrote:
-
-[...]
-
-> > Generally, I agree, although I'm not sure whether that acronym belongs
-> > in the MPAM-specific code.
-> > 
-> > For this patch, though, that's irrelevant.  I've changed it to "MBA"
-> > as requested.
-> > 
-> 
-> Thank you.
-
-[...]
-
-> >> I find "worst-case precision" a bit confusing, consider for example, what
-> >> would "best-case precision" be? What do you think of "info/MB/bandwidth_gran gives
-> >> the upper limit of these interval steps"? I believe this matches what you
-> >> mentioned a couple of messages ago: "The available steps are no larger than this
-> >> value."
-> > 
-> > Yes, that works.  "Worst case" implies a value judgement that smaller
-> > steps are "better" then large steps, since the goal is control.
-> > 
-> > But your wording, to the effect that this is the largest (apparent)
-> > step size, conveys all the needed information.
-> 
-> Thank you for considering it. My preference is for stating things succinctly
-> and not leave too much for interpretation.
-
-I find that it's not always easy to work out what information is
-essential without the discussion... so I hope that didn't feel like a
-waste of time!
-
-> >> (and "per cent" -> "percent")
-> > 
-> > ( Note: https://en.wiktionary.org/wiki/per_cent )
-> 
-> Yes, in particular I note the "chiefly Commonwealth". I respect the differences
-> in the English language and was easily convinced in earlier MPAM work to
-> accept different spelling. I now regret doing so because after merge we now have a
-> supposedly coherent resctrl codebase with inconsistent spelling that is unpleasant
-> to encounter when reading the code and also complicates new work.
-> 
-> > (Though either is acceptable, the fused word has a more informal feel
-> > to it for me.  Happy to change it -- though your rewording below gets
-> > rid of it anyway.  (This word doesn't appear in resctrl.rst --
-> > evertying is "percentage" etc.)
-
-Sure, it's best not to have mixed-up conventions in the same document.
-
-(With this one, I wasn't aware that there were regional differences at
-all, so that was news to me...)
-
-[...]
-
-> >> I think putting together a couple of your proposals and statements while making the
-> >> text more accurate may work:
-> >>
-> >> 	 "bandwidth_gran":
-> >> 		The approximate granularity in which the memory bandwidth
-> >>  		percentage is allocated. The allocated bandwidth percentage
-> >> 		is rounded up to the next control step available on the
-> >> 		hardware. The available hardware steps are no larger than
-> >> 		this value.
-> > 
-> > That's better, thanks.  I'm happy to pick this up and reword the text
-> > in both places along these lines.
-> 
-> Thank you very much. Please do feel free to rework.
-> 
-> > 
-> >> I assume "available" is needed because, even though the steps are not larger
-> >> than "bandwidth_gran", the steps may not be consistent across the "min_bandwidth"
-> >> to 100% range?
-> > 
-> > Yes -- or, rather, the steps _look_ inconsistent because they are
-> > rounded to exact percentages by the interface.
-> > 
-> > I don't think we expect the actual steps in the hardware to be
-> > irregular.
-> > 
-> Thank you for clarifying.
-> 
-> Reinette
-
-OK.
-
-I'll tidy up the loose ends and repost once I've have a chance to re-
-test.
-
-Thanks for the review.
-
-Cheers
----Dave
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
