@@ -1,80 +1,125 @@
-Return-Path: <linux-kernel+bounces-836371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C0EBA981D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F77BA9817
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E75C3B5E23
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F352188A4A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449473090CE;
-	Mon, 29 Sep 2025 14:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1913090D5;
+	Mon, 29 Sep 2025 14:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b="ZBNhyTNk";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="DzMH1a8p"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tn5KEe5I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C7B3064BB
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F732FE07F;
+	Mon, 29 Sep 2025 14:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155139; cv=none; b=YBdwOCXHBtbJj9zQdn/bWXtyI32jZMhvUmVUcKkT2QEu81WMwQDKdQqg/tbSSH3Fw7Li6tMGM2EgwhWdRXSYdyW06RkeJ4rLvhVso+tnB3aRCZlcQnDHmmGcLRbjLpAFaO8qiXMhPlAuq6xWedESu1XDZUhcdn2T+DT7N1o7OR0=
+	t=1759155122; cv=none; b=uuhODoGb/0AVG8zG55mdhD9+6Frs4TPvCme5nN0nt7GvfbgHtsAQQXx1rwr6Emiy4EzSg5ZnUamWa/J3xX8TSmH8yXEROvR8vvVxCyw6WVHDicu7cr3WSjCPlEsOadA3SSe0K4B8+putpHwPMIrLkIZgM3ZpsWjBrEm92yHUNxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155139; c=relaxed/simple;
-	bh=oPuZYF/E5DhWp+sFZmQbp9zye2zGWxCQpyMYGTjp80o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Gg12fCA7vMBuP+aocfdn+iIAgGbLZGOe9Su1eUfMn5syX4IgcZPDlpY/QsinmLC/nXgImvvmop0fDGlYjyvf+7vjspW/W4rCbn79RO/NRa4mRsNB8gfGhaoSAyEUHzTTRNKDpSfhu4CvSHJcYfDghxRc9b9KK/SxCIpuU/XSMjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space; spf=pass smtp.mailfrom=elijahs.space; dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b=ZBNhyTNk; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=DzMH1a8p; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=elijahs.space
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=ZBNhyTNkuQMTegPV7L9ZxWlmdqbNIbmsbP509jKVcEC4f6WQLi1bUfZ86iQ1DLmPDO4GH+5Ix4ut3bqnQUrLtbqPb979pfp+h0GJ42ltT9YhFz9qppYvL2tMJs1C3VzTdsplFVzMoaxHBmNS0aChvwYlcoWXizR9yAIXbPezsdUIuwAdG3GAhpO4R14Ex7tafSOJW/Ga7SD7uo9JMOQ1otw1ApYN0DqwxplZSB3dys/WDFMi3/aKnES6tr7WAsrRxz++gUzA1KL1NbLKCHXH8O0HtCnGiL6D5Raat16dH48Usk04oAVM1upMBCFj/369iEj/U4ukOIoKxD16ysZg1Q==; s=purelymail2; d=elijahs.space; v=1; bh=oPuZYF/E5DhWp+sFZmQbp9zye2zGWxCQpyMYGTjp80o=; h=Received:Date:From:Subject:To;
-DKIM-Signature: a=rsa-sha256; b=DzMH1a8pbkVGIJmZgQzHmD+W6VUh3NiLYZ/TfIE2zxrr8+MEH8dioIoJfCywn8fIhmRP8nArhafZd7v7imSDZuDbRkokQfx8bQfQx2C+W32k0bFrWTcsf7z9QMQ6FlQCFSJu6myx8wiWrhEIiDeUhy/WfhYdiLycZQ1b6v0u3mGRcSxZ6IrSWSxIUFOCYAqC9ZgkiyvLdEfFebXzrlpxGEnBKbZ9JcC3NcBIUj+LTNmwli5Cy9ugNonPswOAHOXkhYoY94etT9fbTQW5jIDeAh29ad+eyZJbXFm85WUh+SUewdQtWzC8JdDge33Qn0LJ8uHgVFq/fJ8XV5O3wPYR4Q==; s=purelymail2; d=purelymail.com; v=1; bh=oPuZYF/E5DhWp+sFZmQbp9zye2zGWxCQpyMYGTjp80o=; h=Feedback-ID:Received:Date:From:Subject:To;
-Feedback-ID: 26912:4866:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1169688956;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 29 Sep 2025 14:11:37 +0000 (UTC)
-Message-ID: <f6b874f7-0031-4a7e-b781-f888249f25af@elijahs.space>
-Date: Mon, 29 Sep 2025 07:11:34 -0700
+	s=arc-20240116; t=1759155122; c=relaxed/simple;
+	bh=slCDiUU06Q4F/rnOMHNPxytY46U+eubzlvdVrMsb6k4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TzbvAIrq7gaXJGCiyVVd2gpwz4Q3gqSgvgqg4nwnRL8i46Ygda6dJZ3LdFy/9haGBVMvnwD2F75iwkwaK6/vCP2EpfdFG5IBdteZXHRdrUqBlMn/0mu3kJYNVRKigHaQQrvAFq+uOPbYG2wJj4fBVNxaraXD6JKkcIRlGMQcvms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tn5KEe5I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF79C4CEF4;
+	Mon, 29 Sep 2025 14:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759155121;
+	bh=slCDiUU06Q4F/rnOMHNPxytY46U+eubzlvdVrMsb6k4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tn5KEe5IX4agGO59SOHNa2NwDo8gLlJMZH/bdrfW2lfbUUs3ejS9ymjxu5eLbMb06
+	 Ik/8RXohWqc/FMvItYZSYIPQEsQF0r324+ErEfsXS6gO3LCuFduPFjSBSlX6KudUUX
+	 fERIfusIBewmcVAUgNGz7wdbkbC4NAaZkS5b0/jrN6G+0iKWZot2ozjE2XRJZxy84g
+	 cwvPTmYlwrcSssLnxFBslqoQNt2bWjvciSRB9OrIeljy3lD3EY2mUkIM1clhWGM1QE
+	 PggkvGJUl1XgG+clUZFkrGt402iL+mgqCilAqJQJBHikzF4+FC6xuZJUnzjK6JU4/Q
+	 M3U8GRh6DOe5Q==
+Date: Mon, 29 Sep 2025 15:11:57 +0100
+From: Simon Horman <horms@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel_team@skhynix.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, almasrymina@google.com,
+	hawk@kernel.org, toke@redhat.com, asml.silence@gmail.com
+Subject: Re: [PATCH net-next v3] netmem: replace __netmem_clear_lsb() with
+ netmem_to_nmdesc()
+Message-ID: <aNqTrWsvvvSw8GM4@horms.kernel.org>
+References: <20250926035423.51210-1-byungchul@sk.com>
+ <aNau1UuLdO296pJf@horms.kernel.org>
+ <20250929014619.GA20562@system.software.com>
+ <20250929074840.GA19203@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Elijah <me@elijahs.space>
-Subject: Re: [PATCH] rust: slab: add basic slab module
-To: Danilo Krummrich <dakr@kernel.org>, Elijah Wright <git@elijahs.space>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org
-References: <20250924193643.4001-1-git@elijahs.space>
- <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
- <DD4IKU7O94WN.2VALE9M80XGQ7@kernel.org>
-Content-Language: en-US
-In-Reply-To: <DD4IKU7O94WN.2VALE9M80XGQ7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929074840.GA19203@system.software.com>
 
-On 9/28/2025 7:47 AM, Danilo Krummrich wrote:
-> On Thu Sep 25, 2025 at 11:54 AM CEST, Danilo Krummrich wrote:
->>    (3) Implement a macro to generate a custom KmemCache Allocator trait
->>        implementation for every KmemCache instance with a static lifetime.
+On Mon, Sep 29, 2025 at 04:48:40PM +0900, Byungchul Park wrote:
+> On Mon, Sep 29, 2025 at 10:46:19AM +0900, Byungchul Park wrote:
+> > On Fri, Sep 26, 2025 at 04:18:45PM +0100, Simon Horman wrote:
+> > > On Fri, Sep 26, 2025 at 12:54:23PM +0900, Byungchul Park wrote:
+> > > > Changes from RFC v2:
+> > > >       1. Add a Reviewed-by tag (Thanks to Mina)
+> > > >       2. Rebase on main branch as of Sep 22
+> > > >
+> > > > Changes from RFC:
+> > > >       1. Optimize the implementation of netmem_to_nmdesc to use less
+> > > >          instructions (feedbacked by Pavel)
+> > > >
+> > > > --->8---
+> > > > >From 01d23fc4b20c369a2ecf29dc92319d55a4e63aa2 Mon Sep 17 00:00:00 2001
+> > > > From: Byungchul Park <byungchul@sk.com>
+> > > > Date: Tue, 29 Jul 2025 19:34:12 +0900
+> > > > Subject: [PATCH net-next v3] netmem: replace __netmem_clear_lsb() with netmem_to_nmdesc()
+> > > >
+> > > > Now that we have struct netmem_desc, it'd better access the pp fields
+> > > > via struct netmem_desc rather than struct net_iov.
+> > > >
+> > > > Introduce netmem_to_nmdesc() for safely converting netmem_ref to
+> > > > netmem_desc regardless of the type underneath e.i. netmem_desc, net_iov.
+> > > >
+> > > > While at it, remove __netmem_clear_lsb() and make netmem_to_nmdesc()
+> > > > used instead.
+> > > >
+> > > > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+> > > > Signed-off-by: Byungchul Park <byungchul@sk.com>
+> > > > Reviewed-by: Mina Almasry <almasrymina@google.com>
+> > > 
+> > > Hi Byungchul,
+> > > 
+> > > Some process issues from my side.
+> > > 
+> > > 1. The revision information, up to including the '--->8---' line above
+> > >    should be below the scissors ('---') below.
+> > > 
+> > >    This is so that it is available to reviewers, appears in mailing
+> > >    list archives, and so on. But is not included in git history.
+> > 
+> > Ah yes.  Thank you.  Lemme check.
+> > 
+> > > 2. Starting the patch description with a 'From: ' line is fine.
+> > >    But 'Date:" and 'Subject:' lines don't belong there.
+> > > 
+> > >    Perhaps 1 and 2 are some sort of tooling error?
+> > > 
+> > > 3. Unfortunately while this patch is targeted at net-next,
+> > >    it doesn't apply cleanly there.
+> > 
+> > I don't understand why.  Now I just rebased on the latest 'main' and it
+> > works well.  What should I check else?
 > 
-> Thinking about it a bit more, I think we should go with option (3) for now.
+> I think 1 and 2 ends in 3.  I will fix it and resend it after the merge
+> window.
 
-do you want me to implement that now? if so I can take a look in a few hours
+Great, thanks!
 
