@@ -1,272 +1,235 @@
-Return-Path: <linux-kernel+bounces-836701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E51BAA624
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E82BAA627
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 456037A1D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:47:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DC019235BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6541323D7C4;
-	Mon, 29 Sep 2025 18:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmLQPoLf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E057723182D;
+	Mon, 29 Sep 2025 18:49:34 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829912032D;
-	Mon, 29 Sep 2025 18:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812252032D
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759171763; cv=none; b=VQXge/WEZfN52y+fcl0GR/KLxwV2EBaopf1nISwXVt30a5jbkvDRKm+w+ji4AnS9vRGQtVIPh+pmPWnhd9QJ4DF8cvF8sOypRe5fFxr5/kUJzlAwNYSt5LSVLx7GGVWgzj1cSu+415SzgsYgTZp/zWYyNTz4xo5oP+2hV8/pP24=
+	t=1759171774; cv=none; b=j0MuLwVhuyFS3Mf/lOuOK9MEp3Lm6y6fNBUj8e5+uB9oXVa6zP+JMg3oJiMFZM3yNXRH1HfijtDoMSsiw+tAHpvkH1cJbK6ovsrYEKjBA8mtROwetYs/kURk+Y9ocDUfOfkGe9WryvaRKo2e9IITzoYSgyIjeOarv2d8SyXE/vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759171763; c=relaxed/simple;
-	bh=CIesZg8God6+nurlZmJlDErmkC0T5rSf+vpzR1sIRAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eh65tXVQhGdmU6/c+XX9HmuR+CyFVU6jIBTQ0cstAZgwTC2fqe7pFc+FS6ZUA1xXK3qKmsBs82zdqOYMqnOA6NlBdLIDy+1tEhri0ezP5z7uf1jqSEP9UlVpwayGo9PSWdTWsl3n3/6wmAQX6ytYZ1oXHb8nrjug1wk+P5+kh7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DmLQPoLf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A7FC4CEF4;
-	Mon, 29 Sep 2025 18:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759171763;
-	bh=CIesZg8God6+nurlZmJlDErmkC0T5rSf+vpzR1sIRAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DmLQPoLflrWPzRHpNZHaEQ6aDwxh9aYtXgubo4m46HHBDXYVQgDPIOQtOYSXLT0UW
-	 J0cY7HPPczP7uGVH9bcU+tgHh7JtcdZAtZ/6LkN4Q9KJns0kjSKvioKAxNeym0F/RE
-	 7Jaqb/P/p+piz8zOUQLrQ0JqLlFpk0EgPrMLapEl2mTsSX89/OCAF5ICnPviDScM8e
-	 f9N+ovN/nvQY+yVV/VjHhRlzBKhjk8QSuDeMmVdSw/y/HhudxSwo2qdDx8p6luxZWn
-	 r2qXWDt5vxv4e8T8xv12/e34WtpCFymnIXXgYbICoJ1r01KImMcZb8lqAn92hmslwc
-	 qaKj9SwXF+fMQ==
-Date: Mon, 29 Sep 2025 19:49:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
-Subject: Re: [PATCH v3 07/12] dt-bindings: media: Add usb-camera-module
-Message-ID: <20250929-disparate-fidgeting-65c2f7eff236@spud>
-References: <20250926-uvc-orientation-v3-0-6dc2fa5b4220@chromium.org>
- <20250926-uvc-orientation-v3-7-6dc2fa5b4220@chromium.org>
- <20250926-mute-boil-e75839753526@spud>
- <CANiDSCuddqjeDr80xKsZZP7CXu9qB5qqYPoZujNYLcVjK0kKkg@mail.gmail.com>
+	s=arc-20240116; t=1759171774; c=relaxed/simple;
+	bh=Lslmm8X80GCqx5RLRIZx88vPORk72hF9/DUvOJe0+qk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eyX/nL0bG89sBhoheJU43QV8G7sRW1PtZA8PKnJP2ObVCgYo5lLbZ0lVdTt2/KkF+Ay2dyq8qRYyRAeYbe6RGnZvQjw6gA5EjgeuL6nonihFnQrqMZcVb4MesiQa0ZwM+342z2Wa6WlhmmNvq7ZZHfmBGluAuznhoZVDrLWyuQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4257ae42790so76962165ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:49:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759171771; x=1759776571;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zmjmrE8YwyveUCo0SeX0ust3vz2WS+wpEQb+y3rBi2g=;
+        b=dqNtBqO7qR5wzCrM80uc8rr9Qh2tQkB+pXHhUb07W34diqhAZnREcBzYqh/6vuSHQI
+         c4Q1iaUGC6YKj6tfVmtnmZXYjCSfMQkQ8b/+eKn8HO0TVfEDei3iXKXgwLV0d59KM3PO
+         2zcAF3ZBauHKnXc0lnm0zpmYmwpuKyJ1YfAc4/JxN/qWHN/Jx0geVi8aLhozc4och1Xo
+         Ilg1b/Z3ae4qYhY+ugGtn5ISqp+BPvd9R9r+i8c2KFTsvBs2nHHgpn47QhWjpty7KwQv
+         bielKn5dan6lPRsjtt3XfGfP9f7RpyF8pDaXMFhuRxa0/Tgv3x9VGbQ5ZdPlNTjFDpHV
+         rOog==
+X-Forwarded-Encrypted: i=1; AJvYcCVofQJqRUKvkiZ6vt0YR/EOV8OmpIV0hlVuQhMxdNS1vz0bwvBDZRT6v9KSVl4L9uS1dN3pCGsFzIavxjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtChoVZusEpbyjNrkzqnLv62kUWQw+o1NOJKZq8K+J/n8/kzj6
+	Hv51nbO0r+bTfmgzPpDWaoKiU9vy+9lrkei2NJTP4b8u9Ng18F/nIkUOz2bOMgbPYApVUqG+LZg
+	wIcvw8Uk5nAkFjPJsHwziRj8CKt9J3MPAE+4nuKNYTeoAZvnP74gJuJMlcVQ=
+X-Google-Smtp-Source: AGHT+IGhakd/zPGFnF5popGZL4mlBSJbsfAerbwbFs84lZDvszSVmjOFzrWpK8u74hulcKazWWzIzT8NZTpC64VVckWyuqr59vkR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="T7A0TheW4Ey8c64A"
-Content-Disposition: inline
-In-Reply-To: <CANiDSCuddqjeDr80xKsZZP7CXu9qB5qqYPoZujNYLcVjK0kKkg@mail.gmail.com>
+X-Received: by 2002:a92:cdae:0:b0:429:4c65:e8f5 with SMTP id
+ e9e14a558f8ab-4294c65ebe3mr125904375ab.23.1759171771617; Mon, 29 Sep 2025
+ 11:49:31 -0700 (PDT)
+Date: Mon, 29 Sep 2025 11:49:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dad4bb.a70a0220.10c4b.0086.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in bch2_btree_node_read_done
+From: syzbot <syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    083fc6d7fa0d Merge tag 'sched-urgent-2025-09-26' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16fbe2e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba71155d3eacc8f42477
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16433d34580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e79f12580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/198ae77e2418/disk-083fc6d7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3d3f065fd75c/vmlinux-083fc6d7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e65812e9d7b0/bzImage-083fc6d7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/5219cf8dcb94/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in bch2_btree_node_read_done+0x950/0x5550 fs/bcachefs/btree_io.c:1128
+Read of size 8 at addr ffff88805874a010 by task syz.0.17/6055
+
+CPU: 0 UID: 0 PID: 6055 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ bch2_btree_node_read_done+0x950/0x5550 fs/bcachefs/btree_io.c:1128
+ btree_node_read_work+0x40e/0xe60 fs/bcachefs/btree_io.c:1440
+ bch2_btree_node_read+0x887/0x2a00 fs/bcachefs/btree_io.c:-1
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1906 [inline]
+ bch2_btree_root_read+0x5f0/0x760 fs/bcachefs/btree_io.c:1928
+ read_btree_roots+0x2c6/0x840 fs/bcachefs/recovery.c:615
+ bch2_fs_recovery+0x261f/0x3a50 fs/bcachefs/recovery.c:1006
+ bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
+ bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
+ do_mount fs/namespace.c:4136 [inline]
+ __do_sys_mount fs/namespace.c:4347 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4324
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feb1599066a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe09e19a98 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe09e19b20 RCX: 00007feb1599066a
+RDX: 00002000000058c0 RSI: 0000200000000000 RDI: 00007ffe09e19ae0
+RBP: 00002000000058c0 R08: 00007ffe09e19b20 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000200000000000
+R13: 00007ffe09e19ae0 R14: 00000000000058f2 R15: 0000200000000180
+ </TASK>
+
+Allocated by task 6055:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4376 [inline]
+ __kvmalloc_node_noprof+0x28d/0x550 mm/slub.c:5067
+ btree_node_data_alloc+0xdc/0x270 fs/bcachefs/btree_cache.c:151
+ __bch2_btree_node_mem_alloc+0x1dc/0x2e0 fs/bcachefs/btree_cache.c:193
+ bch2_fs_btree_cache_init+0x314/0x880 fs/bcachefs/btree_cache.c:653
+ bch2_fs_alloc fs/bcachefs/super.c:998 [inline]
+ bch2_fs_open+0x1da6/0x26e0 fs/bcachefs/super.c:2433
+ bch2_fs_get_tree+0x44f/0x1520 fs/bcachefs/fs.c:2472
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
+ do_mount fs/namespace.c:4136 [inline]
+ __do_sys_mount fs/namespace.c:4347 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4324
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888058748000
+ which belongs to the cache kmalloc-rcl-8k of size 8192
+The buggy address is located 16 bytes to the right of
+ allocated 8192-byte region [ffff888058748000, ffff88805874a000)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x58748
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff8880273c6ce1
+flags: 0x80000000000040(head|node=0|zone=1)
+page_type: f5(slab)
+raw: 0080000000000040 ffff8880198483c0 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080020002 00000000f5000000 ffff8880273c6ce1
+head: 0080000000000040 ffff8880198483c0 dead000000000122 0000000000000000
+head: 0000000000000000 0000000080020002 00000000f5000000 ffff8880273c6ce1
+head: 0080000000000003 ffffea000161d201 00000000ffffffff 00000000ffffffff
+head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x528d0(GFP_NOWAIT|__GFP_RECLAIMABLE|__GFP_IO|__GFP_FS|__GFP_NORETRY|__GFP_COMP), pid 6055, tgid 6055 (syz.0.17), ts 114481807879, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x2119/0x21b0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2660
+ new_slab mm/slub.c:2714 [inline]
+ ___slab_alloc+0x8d1/0xdc0 mm/slub.c:3901
+ __slab_alloc mm/slub.c:3992 [inline]
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ __do_kmalloc_node mm/slub.c:4375 [inline]
+ __kvmalloc_node_noprof+0x1d6/0x550 mm/slub.c:5067
+ btree_node_data_alloc+0xdc/0x270 fs/bcachefs/btree_cache.c:151
+ __bch2_btree_node_mem_alloc+0x1dc/0x2e0 fs/bcachefs/btree_cache.c:193
+ bch2_fs_btree_cache_init+0x314/0x880 fs/bcachefs/btree_cache.c:653
+ bch2_fs_alloc fs/bcachefs/super.c:998 [inline]
+ bch2_fs_open+0x1da6/0x26e0 fs/bcachefs/super.c:2433
+ bch2_fs_get_tree+0x44f/0x1520 fs/bcachefs/fs.c:2472
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
+ do_mount fs/namespace.c:4136 [inline]
+ __do_sys_mount fs/namespace.c:4347 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4324
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888058749f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888058749f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88805874a000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                         ^
+ ffff88805874a080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88805874a100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
---T7A0TheW4Ey8c64A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Mon, Sep 29, 2025 at 10:30:35AM +0200, Ricardo Ribalda wrote:
-> Hi Conor
->=20
-> On Fri, 26 Sept 2025 at 18:55, Conor Dooley <conor@kernel.org> wrote:
-> >
-> > On Fri, Sep 26, 2025 at 01:11:31PM +0000, Ricardo Ribalda wrote:
-> > > For fixed cameras modules the OS needs to know where they are mounted.
-> > > This information is used to determine if images need to be rotated or
-> > > not.
-> > >
-> > > ACPI has a property for this purpose, which is parsed by
-> > > acpi_get_physical_device_location():
-> > > https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration=
-/Device_Configuration.html#pld-physical-location-of-device
-> > >
-> > > In DT we have similar properties for video-interface-devices called
-> > > orientation and rotation:
-> > > Documentation/devicetree/bindings/media/video-interface-devices.yaml
-> > >
-> > > Add a new schema that combines usb/usb-device.yaml and
-> > > media/video-interface-devices.yaml
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  .../bindings/media/usb-camera-module.yaml          | 46 ++++++++++++=
-++++++++++
-> > >  MAINTAINERS                                        |  1 +
-> > >  2 files changed, 47 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/media/usb-camera-modul=
-e.yaml b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> > > new file mode 100644
-> > > index 0000000000000000000000000000000000000000..e4ad6f557b9151751522e=
-49b72ae6584deb0c7ba
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> > > @@ -0,0 +1,46 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/media/usb-camera-module.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: USB Camera Module
-> > > +
-> > > +maintainers:
-> > > +  - Ricardo Ribalda <ribalda@chromium.org>
-> > > +
-> > > +description: |
-> > > +  This schema allows for annotating auxiliary information for fixed =
-camera
-> > > +  modules. This information enables the system to determine if incom=
-ing frames
-> > > +  require rotation, mirroring, or other transformations. It also des=
-cribes the
-> > > +  module's relationship with other hardware elements, such as flash =
-LEDs or
-> > > +  Voice Coil Motors (VCMs).
-> > > +
-> > > +allOf:
-> > > +  - $ref: /schemas/usb/usb-device.yaml#
-> > > +  - $ref: /schemas/media/video-interface-devices.yaml#
-> > > +
-> > > +properties:
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> >
-> > What actually causes this schema to be applied? Did I miss it getting
-> > included somewhere?
->=20
-> I guess your question is why I have not defined the compatible field?
->=20
-> I tried this change[1] with no luck:
-> /usr/local/google/home/ribalda/work/linux/Documentation/devicetree/bindin=
-gs/media/uvc-camera.example.dtb:
-> device@1 (uvc-camera): compatible: ['uvc-camera'] does not contain
-> items matching the given schema
->=20
-> I think it failed, because If we add these allOfs as Rob proposed
-> https://lore.kernel.org/all/20250625185608.GA2010256-robh@kernel.org/:
-> ```
-> allOf:
->   - $ref: /schemas/usb/usb-device.yaml#
->   - $ref: /schemas/media/video-interface-devices.yaml#
-> ```
-> We cannot (or I do not know how to) have a different compatible than
-> the one from usb-device.yaml
->=20
->=20
-> Any suggestion on how to do this properly will be highly appreciated :)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-It'd work, I think, if you permitted the pattern from usb-device as a
-fallback compatible. I don't know if that would work for whatever niche
-you're attempting to fill here though.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Probably a Rob question ultimately.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
->=20
-> Thanks!
->=20
->=20
->=20
-> [1]
->=20
-> @@ -21,10 +21,14 @@ allOf:
->    - $ref: /schemas/media/video-interface-devices.yaml#
->=20
->  properties:
-> +  compatible:
-> +    const: uvc-camera
-> +
->    reg:
->      maxItems: 1
->=20
->  required:
-> +  - compatible
->    - reg
->=20
->  additionalProperties: true
-> @@ -38,8 +42,8 @@ examples:
->          #size-cells =3D <0>;
->=20
->          device@1 {
-> -            compatible =3D "usb123,4567";
-> +           compatible =3D "uvc-camera";
->              reg =3D <2>;
->              orientation =3D <0>;
->              rotation =3D <90>;
->          };
->=20
-> >
-> > > +required:
-> > > +  - reg
-> > > +
-> > > +additionalProperties: true
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    usb@11270000 {
-> > > +        reg =3D <0x11270000 0x1000>;
-> > > +        interrupts =3D <0x0 0x4e 0x0>;
-> > > +        #address-cells =3D <1>;
-> > > +        #size-cells =3D <0>;
-> > > +
-> > > +        device@1 {
-> > > +            compatible =3D "usb123,4567";
-> > > +            reg =3D <2>;
-> > > +            orientation =3D <0>;
-> > > +            rotation =3D <90>;
-> > > +        };
-> > > +    };
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index ee8cb2db483f6a5e96b62b6f2edd05b1427b69f5..1503502a3aed2625e8ff4=
-88456ccd7305cc74ba7 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -26258,6 +26258,7 @@ L:    linux-media@vger.kernel.org
-> > >  S:   Maintained
-> > >  W:   http://www.ideasonboard.org/uvc/
-> > >  T:   git git://linuxtv.org/media.git
-> > > +F:   Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> > >  F:   Documentation/userspace-api/media/drivers/uvcvideo.rst
-> > >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
-> > >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc.rst
-> > >
-> > > --
-> > > 2.51.0.536.g15c5d4f767-goog
-> > >
->=20
->=20
->=20
-> --
-> Ricardo Ribalda
->=20
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
---T7A0TheW4Ey8c64A
-Content-Type: application/pgp-signature; name="signature.asc"
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNrUqwAKCRB4tDGHoIJi
-0mASAP49pwqqfaBzHe/GqEE+pCyOCKLHjQV++1zecT+/WddTgAD/dP2GQvWciVeV
-ngYFC1P2vUnJOUWrondGz3NRTBBB/g0=
-=ew51
------END PGP SIGNATURE-----
-
---T7A0TheW4Ey8c64A--
+If you want to undo deduplication, reply with:
+#syz undup
 
