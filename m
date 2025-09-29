@@ -1,231 +1,135 @@
-Return-Path: <linux-kernel+bounces-836250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7574BA9195
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:47:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E91DBA91AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FDB3C4E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26DC1890DE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959C02EA741;
-	Mon, 29 Sep 2025 11:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C722F304BB6;
+	Mon, 29 Sep 2025 11:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgDkPXvV"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duPNxDDJ"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2D5303A35
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA6D30497A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759146420; cv=none; b=nVLP8elfAQA82jAyEAuZVlsp+4W1FqBTqvDANmmrC/Tu3j2aMvDddCRXz8OGLNELb3kQZH+QJoU3sVTeLeyFvu85gM4jKvUpwNMQaOwpySikyutb4BoWift1f+L61IcemnYulyxPGBR0D19B5k5O7TLry7948V2kos+js2A7WRk=
+	t=1759146567; cv=none; b=INBRKLFLt5Wk/wLR7hJ5udLoZSXSoL6B4ah9cEGF6pFG1m0oGx6YPJNlG0Ivy8tM4acN3SefwLD7rdPhKmwZpB8eb4ymWq8SygQik8W+FMkpl2KZMAaY7hUSBRcm+6JJaR85EYzF+AW4WE09r4f5/iZcn/iLfOZMYISyRkHw8AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759146420; c=relaxed/simple;
-	bh=wNuVMdmmYzdn6WLNE4CyIHqHQVdqeV7aveI2ROAPcdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HXMN9py7VM4F32PQYrI7cYvjg3+4Ww2pJ3ShhFHMX41x6dolfEEPlKmH9kI+jS30lAlTHNFoaXlIvDGOk74yZG9HDQaA4cbmXKQPHyf4m2Hool55rc2StlNaaR8itBnx7bdX6HZ5JJOpEcNOELHy8McswB1ADic/LtcfNW1Zvi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KgDkPXvV; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-586883eb9fbso1603205e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:46:58 -0700 (PDT)
+	s=arc-20240116; t=1759146567; c=relaxed/simple;
+	bh=3xOYS52/3sAqAFoOAMM7xyJw/GbBkIDjCptmDIQUZYg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=A5adj3lDqs+3uNBgbynVKyguOb+9xHPf6c4R6gYMWHASJDircCx6cRycD5EokspBN9jqqOSBDOCDAygq0/vBQMxkESHGD84KoPrHDyPUtdPlgBCrKriboIeHVVoJrf9A4YREfN1PlQYynKBiOPiHtE4tW9X2qd/aDN+1aMl7zog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=duPNxDDJ; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e542196c7so3933265e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759146417; x=1759751217; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iblNyH9RQUiqFDYiroesQvDFASi4C4PHJ77i3ovtxEg=;
-        b=KgDkPXvVoAZDECYbp3n1kK4W1bFSrF+YU7EqIsQT0hxvgt/ux3WE3mW4+J/L7qrBkZ
-         4JJcvMd7PuI5ksI8LfrvLe8yVuf04Y0SGTbSi36VAWPjjZrRI2mM1md13T+T8Vhk86w5
-         U0HT1cjOXw5YSGKq5e00Y+jALhqpZm0OqhUOA0JuY+bIy3jVA/LP9lAYj5LZFZqOVvOA
-         52ITo2ol8EBxvE4xxj5OlNQU3VY0AlEZcq/fIs5GKMhVJRxAKZsqFiepThy7JPnQs/ba
-         u9QNii/hq7+gzK6hEJMv2kLSNycpniLZHQdwqEJz7CahpWbLY84EK9uOssyELE/9o9gt
-         BdVg==
+        d=gmail.com; s=20230601; t=1759146564; x=1759751364; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AA8qJbDS2PXrHXWRwL/CsSJDqnLVXMkoJNGc5ktbBCE=;
+        b=duPNxDDJaN3WnEy7gBXhvYagfiWrCVdjAsfepRv492uwHQ09vz1pWMuysobNgW2j6x
+         CyGO+jx7T4uoD4W1x3q1CjXnfn2aPdlrt3sSwmJiMtBH5Kyu0jbolHRo6SAFzJs7CfQW
+         5pYychuu14C9rZdNSXu/EoRuKGKcMqqr10LepIsg5LgZeVObP52KsrF+x1J2zjGoDSJq
+         YEqLSPYhiDkfUEmUpi766LDSpHo+aR1y9tHg/ONd012WzjJsX32tVKwvE7s+iig+ORSX
+         3C7iYCY61bdj/QVVGg33+uMXpFZMKFWjwTSJVCr9s+5YtcN5R+aDKVhSgC/iWqFcyQmw
+         bekw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759146417; x=1759751217;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iblNyH9RQUiqFDYiroesQvDFASi4C4PHJ77i3ovtxEg=;
-        b=rfEkHBagpemGpB1cpcn79cz/qqhO9LXH6jINuNiNl3DpgAezzYgaYEZR4b70VAtZ65
-         z+GY6+1xjBv2CocRKELsVBSl6tUDj0BeW+q1yE/dksG6Mbc9lBG31lq/PVVQb6bd7Uy/
-         VCjhAn29KQ6sCUayf2zbD0WB/vVXIVd+yq+Q4qg/OJN4sWBH4wqlhuXDT/fWQA/Ta/BV
-         1MV6IB98Xpq9TTRvf37DScuWR7yACKQipd4lRcq6FTCz9V6sq0XHGwE5pS738twNU5C8
-         YOu9Fw6U6PrqMo60sZpiT3tDekBTa2cPb+9sqwLvhmmnjIL001dgIE/3v7b/URpb2fMh
-         D6cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnt7OwdscGzcPUsUtFpxkFB4It8SVvUut2KSbNbeA0vE4JTggprxxfJZTch/lLoPoxF0X3EhepqvT/8l0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxy4GRIx2+FdKa3PgEXyNbaOSJyv02gzk5E3tlcDyUcQ7n3wPt
-	PXh6jayo+NUw3oOXHj4CHG4xlQ3v6UCtg2OjNO04Qg+o54+p/NGiArWspd+TUu7BV4Y=
-X-Gm-Gg: ASbGncvpXKLCpYQAvmNGaUPDm9bLKOk8D0xJzIWcBCYqnihDvk8XRFiJqxfUq7TF8ie
-	UJ5TXzPYwtcMlyKs0l8uhlMaQ24BpCqXC6t72B3mqeeOTYAFJdX2GxB5n/hYjsHlF/oaCtFhgNp
-	L6X/HMV+TvOzLGHHjaMsX5U8dKBZyS2m53bXHr5iIA+NYWVyR+jhmeOPIkfdj7q3Z+NpYmpRWVV
-	T3Gf36xNj+ww+yVHc+Q/94fLSJ/KOIi82AlASBoJ5neEyVEVFt1jE3Ir8HTkT6PBJVkAJcz7Ac2
-	99e92nMDy/nQ+doOp8pp3CuVFVV+QZwxGy/XhhnVgF+alP1olvhw9BTc8AnEMm+ZeRDKY1sxirG
-	vMu4NSFd6KJJppfm7e9FSW3+m9KwQiPc+0FNCwID02E4Qoa9Ayyc/XY73w9+yQwWoDLOqTlu4
-X-Google-Smtp-Source: AGHT+IH1tc5UyrowpjgG09PaeQoeg5mBDgVtgXBs7JIEjr1VUn4l35hQOfbuJl6g30wFsygaWJEMsA==
-X-Received: by 2002:a05:6512:130b:b0:581:d8:a922 with SMTP id 2adb3069b0e04-582d406cfdamr5131282e87.50.1759146416675;
-        Mon, 29 Sep 2025 04:46:56 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316656353sm4117319e87.88.2025.09.29.04.46.55
+        d=1e100.net; s=20230601; t=1759146564; x=1759751364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AA8qJbDS2PXrHXWRwL/CsSJDqnLVXMkoJNGc5ktbBCE=;
+        b=ks1RO5dCeMASXHYqC7nzoPDymbsV57mtSHl/Ws/K8YvVd7lhCUkGhBzkYLGA2fYPEV
+         Kp2NV2OswaURf2XIsXITytJhCWbTmIXcuNfreI704dFBMqxGHqkaTldoA+T0vx9wLQga
+         QR8axHVZc3fuGkXkF1tZ/YbhDUGmi4NKxVjNh/V0sU6TjG23FvLu1E19BjhzwtI8RtKD
+         9RWXGPvZDwkLilWTZ+k2WI3JeohzAMaAtfuoHbCZuMwlC+yddFN601LbwQAbTyZ2Cj13
+         3bWmltMe6BwORTLTphCGsC9CN4jOGqQRzCTNcfNEvxOzUbdyJRy0BZuq39pevwbhGjvx
+         122Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBUJ/AIZYrenvIACVCvZwhCUlcQcO5NgJtRisjlozslx1i+f0B0gUJiJa/1YGyhnRJOHxAAhaaryUEWqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw74KaJQfZfeDuOQI+UF7UNIkEotp1ToiSI7A2wXXQePzq3PKF3
+	6uk9KcAjBm6xOsTPdq1Qw8FlXdT62iyLtBHYb1uDy/k0zASfGJ0Iq2tf
+X-Gm-Gg: ASbGncvBWnmM03gGZ6n8YsAzQcyBnRwO0G2n0+A1zZzJS8y8Ib46T39nsNuVbUmDtxc
+	TWBrgIPZcGjMD0vN5C3U/FT42GYT/o3cdo0zn1DqgZCp4I7mEOp+JKASshPThnESdHdE0gQj2mc
+	4S6UzxA9w0+c1Thpuh3fvV7SeZWBigUcA7xNjFbb44G3dkK8vy4LXmVZDFN56huiIzLxL/8IGdz
+	cRyDbvriXRt6fpgWXYmenCjKbYIInLMyIMNDxgdYJC4u8hgqeqeHK7u0rn8eGK8Qyh649y7fc7O
+	bqkVzMqUwgEdbpe0V5mo46ggCjDEADUbasRscRDyz+Ej8lAGyznFV+iU4qKpe53MV7W7hP0yhWx
+	JuqLUhC/H39bUeGLjf2gO1rk4wr5HDO9AbekCSypwfN0Q750J1nHaeFd22FSamZdPU0Txz7g=
+X-Google-Smtp-Source: AGHT+IHWIIGjN6nhJ28ac9trCVEFZnQxU7WiTxI9XitTonZzPwwSA3UglkJvouFg2U2iPv1aIzbnYw==
+X-Received: by 2002:a05:600c:4e46:b0:45d:dbf0:4831 with SMTP id 5b1f17b1804b1-46e58a02073mr3602305e9.0.1759146563815;
+        Mon, 29 Sep 2025 04:49:23 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46e56f77956sm10030835e9.20.2025.09.29.04.49.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 04:46:56 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] pmdomain updates for v6.18
-Date: Mon, 29 Sep 2025 13:46:35 +0200
-Message-ID: <20250929114655.226466-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        Mon, 29 Sep 2025 04:49:23 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Felix Fietkau <nbd@nbd.name>,
+	John Crispin <john@phrozen.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v4 0/4] arm64: Add AN7583 DTSI
+Date: Mon, 29 Sep 2025 13:49:11 +0200
+Message-ID: <20250929114917.5501-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Simple series to add initial AN7583 DTSI. More node will be
+included as they will be supported.
 
-Here's the pull-request with pmdomain updates for v6.18.
-More details about the highlights are as usual found in the signed tag.
+Changes v4:
+- Add review tag
+- Fix alphabetical order in Makefile
+- Move PSCI node after CPU node
+Changes v3:
+- Fix typo EN7583 -> AN7583
+- Add specific compatible for watchdog and crypto engine
+Changes v2:
+- Fix DTB BOT warning (fix crypto compatible and OPP node name)
 
-Please pull this in!
+Christian Marangi (4):
+  dt-bindings: crypto: Add support for Airoha AN7583 SoC
+  dt-bindings: watchdog: airoha: Add support for Airoha AN7583 SoC
+  dt-bindings: arm64: dts: airoha: Add AN7583 compatible
+  arm64: dts: Add Airoha AN7583 SoC and AN7583 Evaluation Board
 
-Kind regards
-Ulf Hansson
+ .../devicetree/bindings/arm/airoha.yaml       |   4 +
+ .../crypto/inside-secure,safexcel-eip93.yaml  |   4 +
+ .../bindings/watchdog/airoha,en7581-wdt.yaml  |   6 +-
+ arch/arm64/boot/dts/airoha/Makefile           |   1 +
+ arch/arm64/boot/dts/airoha/an7583-evb.dts     |  22 ++
+ arch/arm64/boot/dts/airoha/an7583.dtsi        | 283 ++++++++++++++++++
+ 6 files changed, 319 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/airoha/an7583-evb.dts
+ create mode 100644 arch/arm64/boot/dts/airoha/an7583.dtsi
 
+-- 
+2.51.0
 
-The following changes since commit 5fc4ab3269dea6a0b00c7256cb6f6c0101b6a44b:
-
-  pmdomain: mediatek: set default off flag for MT8195 AUDIO power domain (2025-09-23 16:33:34 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.18
-
-for you to fetch changes up to bbc3110823eca23b066e75a920bdc8118adda0d2:
-
-  pmdomain: thead: Fix error pointer vs NULL bug in th1520_pd_reboot_init() (2025-09-26 14:50:20 +0200)
-
-----------------------------------------------------------------
-pmdomain providers:
- - amlogic: Add support for S6/S7/S7D power-domains controller
- - imx: Add support for i.MX91 power-domains
- - marvell: Add support for PXA1908 power-domains
- - mediatek: Add support for modem power sequence
- - mediatek: Add support for RTFF Hardware in MT8196/MT6991
- - qcom: Align power-domain definitions for rpmpd
- - rockchip: Default to use power-domain support
- - thead: Create auxiliary device along with a corresponding reset driver
- - ti: Synchronize on/off state with HW-state for ti-sci power-domains
-
-----------------------------------------------------------------
-AngeloGioacchino Del Regno (7):
-      dt-bindings: power: mediatek: Document access-controllers property
-      pmdomain: mediatek: Refactor bus protection regmaps retrieval
-      pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
-      pmdomain: mediatek: Move ctl sequences out of power_on/off functions
-      pmdomain: mediatek: Add support for modem power sequences
-      pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
-      pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
-
-Brian Masney (1):
-      pmdomain: mediatek: airoha: convert from round_rate() to determine_rate()
-
-Dan Carpenter (1):
-      pmdomain: thead: Fix error pointer vs NULL bug in th1520_pd_reboot_init()
-
-Dmitry Baryshkov (4):
-      dt-bindings: power: qcom-rpmpd: split RPMh domains definitions
-      dt-bindings: power: qcom-rpmpd: sort out entries
-      dt-bindings: power: qcom-rpmpd: add generic bindings for RPM power domains
-      pmdomain: qcom: rpmpd: switch to RPMPD_* indices
-
-Duje Mihanović (2):
-      dt-bindings: clock: marvell,pxa1908: Add syscon compatible to apmu
-      pmdomain: marvell: Add PXA1908 power domains
-
-Icenowy Zheng (2):
-      driver: reset: th1520-aon: add driver for poweroff/reboot via AON FW
-      pmdomain: thead: create auxiliary device for rebooting
-
-Joy Zou (3):
-      dt-bindings: soc: imx-blk-ctrl: add i.MX91 blk-ctrl compatible
-      pmdomain: imx93-blk-ctrl: use ARRAY_SIZE() instead of hardcode number
-      pmdomain: imx93-blk-ctrl: mask DSI and PXP PD domain register on i.MX91
-
-Mikko Rapeli (1):
-      pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
-
-Tomi Valkeinen (1):
-      pmdomain: ti-sci: Set PD on/off state according to the HW state
-
-Ulf Hansson (7):
-      pmdomain: Merge branch dt into next
-      pmdomain: Merge branch fixes into next
-      pmdomain: Merge branch dt into next
-      pmdomain: Merge branch dt into next
-      pmdomain: Merge branch fixes into next
-      pmdomain: Merge branch dt into next
-      pmdomain: Merge branch fixes into next
-
-Wolfram Sang (1):
-      pmdomain: remove unneeded 'fast_io' parameter in regmap_config
-
-hongyu.chen1 (2):
-      dt-bindings: power: add Amlogic S6 S7 S7D power domains
-      pmdomain: amlogic: Add support for S6 S7 S7D power domains controller
-
- .../devicetree/bindings/clock/marvell,pxa1908.yaml |  30 +-
- .../bindings/power/amlogic,meson-sec-pwrc.yaml     |   3 +
- .../bindings/power/mediatek,power-controller.yaml  |  37 ++
- .../bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml |  59 ++-
- MAINTAINERS                                        |   3 +
- drivers/pmdomain/Kconfig                           |   1 +
- drivers/pmdomain/Makefile                          |   1 +
- drivers/pmdomain/amlogic/meson-secure-pwrc.c       |  95 +++++
- drivers/pmdomain/imx/gpc.c                         |   1 -
- drivers/pmdomain/imx/imx93-blk-ctrl.c              |  23 +-
- drivers/pmdomain/marvell/Kconfig                   |  18 +
- drivers/pmdomain/marvell/Makefile                  |   3 +
- .../pmdomain/marvell/pxa1908-power-controller.c    | 274 ++++++++++++++
- drivers/pmdomain/mediatek/airoha-cpu-pmdomain.c    |   8 +-
- drivers/pmdomain/mediatek/mt6795-pm-domains.h      |   5 +
- drivers/pmdomain/mediatek/mt8167-pm-domains.h      |   5 +
- drivers/pmdomain/mediatek/mt8173-pm-domains.h      |   5 +
- drivers/pmdomain/mediatek/mt8183-pm-domains.h      |   5 +
- drivers/pmdomain/mediatek/mt8186-pm-domains.h      |   5 +
- drivers/pmdomain/mediatek/mt8188-pm-domains.h      |   6 +
- drivers/pmdomain/mediatek/mt8192-pm-domains.h      |   5 +
- drivers/pmdomain/mediatek/mt8195-pm-domains.h      |   5 +
- drivers/pmdomain/mediatek/mt8365-pm-domains.h      |  14 +-
- drivers/pmdomain/mediatek/mtk-pm-domains.c         | 399 +++++++++++++++++----
- drivers/pmdomain/mediatek/mtk-pm-domains.h         |  74 +++-
- drivers/pmdomain/qcom/rpmpd.c                      | 112 +++---
- drivers/pmdomain/rockchip/Kconfig                  |   1 +
- drivers/pmdomain/thead/th1520-pm-domains.c         |  16 +
- drivers/pmdomain/ti/ti_sci_pm_domains.c            |  24 +-
- drivers/power/reset/Kconfig                        |   7 +
- drivers/power/reset/Makefile                       |   1 +
- drivers/power/reset/th1520-aon-reboot.c            |  98 +++++
- include/dt-bindings/power/amlogic,s6-pwrc.h        |  29 ++
- include/dt-bindings/power/amlogic,s7-pwrc.h        |  20 ++
- include/dt-bindings/power/amlogic,s7d-pwrc.h       |  27 ++
- include/dt-bindings/power/marvell,pxa1908-power.h  |  17 +
- include/dt-bindings/power/qcom,rpmhpd.h            | 233 ++++++++++++
- include/dt-bindings/power/qcom-rpmpd.h             | 391 +++++---------------
- 38 files changed, 1592 insertions(+), 468 deletions(-)
- create mode 100644 drivers/pmdomain/marvell/Kconfig
- create mode 100644 drivers/pmdomain/marvell/Makefile
- create mode 100644 drivers/pmdomain/marvell/pxa1908-power-controller.c
- create mode 100644 drivers/power/reset/th1520-aon-reboot.c
- create mode 100644 include/dt-bindings/power/amlogic,s6-pwrc.h
- create mode 100644 include/dt-bindings/power/amlogic,s7-pwrc.h
- create mode 100644 include/dt-bindings/power/amlogic,s7d-pwrc.h
- create mode 100644 include/dt-bindings/power/marvell,pxa1908-power.h
 
