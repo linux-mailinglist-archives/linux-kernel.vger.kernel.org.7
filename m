@@ -1,142 +1,215 @@
-Return-Path: <linux-kernel+bounces-836518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D73BA9EAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA0CBA9EBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 234863B08A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:00:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD76171BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0456A1FBC91;
-	Mon, 29 Sep 2025 16:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA0930BBAB;
+	Mon, 29 Sep 2025 16:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YfpxSTIg"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="FVF4tF84"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BE91F5847
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759161648; cv=none; b=JJn/jBa/elQCsE8oLmjyx0JqzZMY3IwwJp4lWyE9fORop/ETmtQk0fC+GglE+ELVB4JxQ6wqbrTmDg3i9iCVJFXsjWw5sjCSclw/btucmnYWa5kyLadW/0PhSz10IubkBYJaGrt7P8pNEkBK00hXg2clGS+i/x7R2pxihOq8BU8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759161648; c=relaxed/simple;
-	bh=U6AnvjRGp3O1qm/RyZLo8C0gFo1427DERoRZSdj0BTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tcnUWtN7gNhde77WLvXTBZ9m60dCNByTRQhG1QYUwmwSL6yGlfYPEVmbxXrtcGL0R07uKabF848nYbEz0/KHpSi6STTIJfc0kYTJanqGnSMjmU8lZXR/cEeaPi+DnDh5TFx+CWv7SJ/udwmhmvrEpzjG+JuL1lLDqy0eCS2GnUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=YfpxSTIg; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-795be3a3644so27156926d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759161646; x=1759766446; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xLG2JR9bcUzJhF49OBS0iB78RdPUmnc4lDRxtw6BiAE=;
-        b=YfpxSTIgfeW4cyM8j6rSAtvg8dvuwLs5l+rexwB+m3NINdSmzZoKLKyxwUX4Ejo9qj
-         +isw4hYl9uxOlN1SHowM8PK0fKG5pY4amNPzM921GDKNlozm+eTi+CcRgbpL97f21ncc
-         TNc6ljKutISHqdHAzzyXCP9KAtFGZnonwP1FTq1ZHuOdutp65z+zfjY+oj962C/hoRe2
-         nbqe3t2u9u4zZD+qsPg2p7Cpk31TCqRA19PzHDD57iy+SUU2o7keHukwxbnoxVSkEjqN
-         y8RCG1VFk9xOAvs+1xL4UmyVE26n7mcaU/UWhL7MVp8H1TaQbDw88p4/pPOsCUL2Usyl
-         cdzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759161646; x=1759766446;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xLG2JR9bcUzJhF49OBS0iB78RdPUmnc4lDRxtw6BiAE=;
-        b=Hd6xpU12AefVNaUdxDkDE+KkWT9dcxQifRlRt40f7+wQYIUmEWH94R9b/wsU2UBqfh
-         widKDvb9suX3vHLYLdRprpvCjZL06MtX0lsPYMQDoTXf8TvYV6AHS0yVOK8pKBUVwDBe
-         KsUo4McHIKZx+NWvYWWnJeRuUQPueWUhCkS/D+4K5A3M8sgs7fkrpifjgxerZxbOy2+l
-         acM/vgA0rQTPbOqQoWfC1uDSofsrJy4aPMqEwHjq0xp90jCN4i/7H6R+3JCtJXDqcpyy
-         NE+ceYdrQRLwgTQ+z59NyoCq1e2JpVwxDRMPah7GJjIWPWtNgVHmJ+hXFVl2mizaLRRl
-         aYlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOT2534yKFNk+1W7zhFZLmGHYod+Uf1yX1ZVe327xB4RWQDvpa/7A2BuEFyJedhNkj/O6xMcaL/6n0ekA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvvPjCs1WdMBjZS6Ci+bNkKzAy2H2ohfVHHgK74OgDBMXJNo6h
-	cAFAKexnk4Mo8yyQQOL1rPcZAKeFauUx71K58/aQ6rXANfGTmZLVNlYEdUZpHZTzAxQ=
-X-Gm-Gg: ASbGncsIJBbObfHOSx7QRSoGQPloCsExFqASQr5fYtf6FTyCqi/LLa2IJy6w2Md2brw
-	4FmG/v9USakQuN2QzvjGhAY87zweNAlsQRdpv8yypEg3rrIzVbYGWdZ/cAoKLkqULPFrWr5gXGh
-	SSpNrl3MYTgzyY5i0WuIA3Xla2T9pSRUSKNqcrxCOJaPb6phatIZsj3ZULleJOL2+QA6m8igCfa
-	fAN4Y7fm3L/Ei7bb4A+gGKw1yk4wfFCK6uDv090dUeup292EQ2kO9FUbUJwcQ15GYz8nuK3IgRR
-	Be25tbMHfQt9RHYUclYvNuchr/1oCwU7Gfq3fgZeWHhSCxX41/U8NxyTSEJ1zWRL/qa0Bxwicfg
-	Kpsq4dYM=
-X-Google-Smtp-Source: AGHT+IHz2Vje0PqzhbQ26O+lHr4KWI+mNgBaMfoJbiwF/Viar3gDMaG7u6LkyDnLmmdBy1asKxIVKw==
-X-Received: by 2002:ad4:5dc3:0:b0:7f7:ee24:9048 with SMTP id 6a1803df08f44-7fc2b7661ffmr266870906d6.16.1759161636381;
-        Mon, 29 Sep 2025 09:00:36 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8016ce9a3c0sm76267316d6.53.2025.09.29.09.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 09:00:35 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v3GIl-0000000CM7I-00iD;
-	Mon, 29 Sep 2025 13:00:35 -0300
-Date: Mon, 29 Sep 2025 13:00:34 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Samiullah Khawaja <skhawaja@google.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, iommu@lists.linux.dev,
-	YiFei Zhu <zhuyifei@google.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
-	Chris Li <chrisl@kernel.org>, praan@google.com
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-Message-ID: <20250929160034.GG2695987@ziepe.ca>
-References: <20250928190624.3735830-1-skhawaja@google.com>
- <20250928190624.3735830-14-skhawaja@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F9321770C
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759161739; cv=pass; b=QQFll4insbnrc7YyvYhdexJpyjPM4eCQd2c63UXTU9hSB25rFVcouB0SKPW5AXesQWCnsEg+LvXPy3tFQFg8czVg5yjfUoFWqeP5/UyCtDPo2S79bSvnAhwFyMKVIUpqSprw1Dez4hCho86Hfam3TO7R8OvA0n0OXRf8WeETYvI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759161739; c=relaxed/simple;
+	bh=tBhdtn4WywjV8YX0pSLDWDcNcDkRLFjP5hlSSBzqSms=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=I94cx6Fk5si+Mtx+lcnjS04ryCD2F8ivcxF4CV89sliL5ljxqkCkH7PytEhnA340Nkugx7Yf84DKjWNSguu7/9y/9JPuBneSmYljgOSBoFdVxFnJv+c5JCtlBLyFxWdloNZ3YGDiIDyhfwxqVBvBiehaUMIckqZXcMouDPjjPUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=FVF4tF84; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759161649; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lO4XkvatoUXQvbjF88NEo4GQV304NUsNzGnfLfpAGQJACgtdT6ns9sqamBDeq5T3rrLNKdsMf5rTsiniDa3tJWa/86fe0pQYx0iN0L5IDHhkJqeNA7IlkLDk/UNDQjKhz5/8rGOPQljktYtoDkNRPLtpPwyO4kdAEK/YNnxGO5I=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759161649; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tBhdtn4WywjV8YX0pSLDWDcNcDkRLFjP5hlSSBzqSms=; 
+	b=lVLGTmETVkCIP0WKjmObmfrsZtGUq1ZYWjIVjC8VqJrB4aS4A5ggVHhmXiQIREqehiPffKh/8rJAxzL+50geybX9h7y5p84pJK2E31LxkhYaVa87FqJQhD8htU20NLiJWF+HYRbmrJE1EAF17YQXRe/JLlubBSh4bRbsimFGL68=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759161648;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=tBhdtn4WywjV8YX0pSLDWDcNcDkRLFjP5hlSSBzqSms=;
+	b=FVF4tF848aJT71bWiRy++xWwA9rP30861XDd6VJanlPKxOzcEwMkNT5gxumr/gid
+	RGj1Z4ASg6BM+hhQSEj2Bbs32NY8JjgpZsmiJRz05Gpee1bJzyqwggVI8cMSCLp2Era
+	LWQsvLIkjLNilz17UTXRFEFBYPa2wjDsDxtsIY4M=
+Received: by mx.zohomail.com with SMTPS id 1759161645995986.0060307420077;
+	Mon, 29 Sep 2025 09:00:45 -0700 (PDT)
+Message-ID: <7307e84f9e4b0a8c67b82f7234f90bf83f201037.camel@collabora.com>
+Subject: Re: [PATCH RFC v2 05/20] drm: Introduce
+ DRM_CAP_POST_BLEND_COLOR_PIPELINE
+From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
+To: Harry Wentland <harry.wentland@amd.com>, Louis Chauvet	
+ <louis.chauvet@bootlin.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,  Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger	
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
+ <angelogioacchino.delregno@collabora.com>, Haneen Mohammed	
+ <hamohammed.sa@gmail.com>, Melissa Wen <melissa.srw@gmail.com>
+Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org, 
+	leo.liu@amd.com, ville.syrjala@linux.intel.com,
+ pekka.paalanen@collabora.com, 	contact@emersion.fr, mwen@igalia.com,
+ jadahl@redhat.com, sebastian.wick@redhat.com, 	shashank.sharma@amd.com,
+ agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, 
+	aleixpol@kde.org, xaver.hugl@gmail.com, victoria@system76.com, 
+	uma.shankar@intel.com, quic_naseer@quicinc.com, quic_cbraga@quicinc.com, 
+	quic_abhinavk@quicinc.com, marcan@marcan.st, Liviu.Dudau@arm.com, 
+	sashamcintosh@google.com, chaitanya.kumar.borah@intel.com,
+ mcanal@igalia.com, 	kernel@collabora.com, daniels@collabora.com,
+ leandro.ribeiro@collabora.com, 	dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, 	linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,  Simona Vetter
+ <simona.vetter@ffwll.ch>
+Date: Mon, 29 Sep 2025 12:00:40 -0400
+In-Reply-To: <52cce852-f4fb-4692-9318-1602fe878644@amd.com>
+References: 
+	<20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
+	 <20250917-mtk-post-blend-color-pipeline-v2-5-ac4471b44758@collabora.com>
+	 <ff53599d-fd7f-4791-a3e1-3269386c6b3e@bootlin.com>
+	 <52cce852-f4fb-4692-9318-1602fe878644@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+b1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928190624.3735830-14-skhawaja@google.com>
+X-ZohoMailClient: External
+X-ZohoMail-Owner: <7307e84f9e4b0a8c67b82f7234f90bf83f201037.camel@collabora.com>+zmo_0_nfraprado@collabora.com
 
-On Sun, Sep 28, 2025 at 07:06:21PM +0000, Samiullah Khawaja wrote:
-> +static int iommufd_save_ioas(struct iommufd_ctx *ictx,
-> +			     struct iommufd_lu *iommufd_lu)
-> +{
-> +	struct iommufd_hwpt_paging *hwpt_paging;
-> +	struct iommufd_ioas *ioas = NULL;
-> +	struct iommufd_object *obj;
-> +	unsigned long index;
-> +	int rc;
-> +
-> +	/* Iterate each ioas. */
-> +	xa_for_each(&ictx->objects, index, obj) {
-> +		if (obj->type != IOMMUFD_OBJ_IOAS)
-> +			continue;
+On Mon, 2025-09-29 at 05:40 -0400, Harry Wentland wrote:
+>=20
+>=20
+> On 2025-09-19 08:42, Louis Chauvet wrote:
+> >=20
+> >=20
+> > Le 18/09/2025 =C3=A0 02:43, N=C3=ADcolas F. R. A. Prado a =C3=A9crit=C2=
+=A0:
+> > > Add a new cap that drivers can set to signal they support post-
+> > > blend
+> > > color pipelines.
+> > >=20
+> > > Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> >=20
+> > Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> >=20
+> > > ---
+> > > =C2=A0 drivers/gpu/drm/drm_ioctl.c | 3 +++
+> > > =C2=A0 include/drm/drm_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 =
+++++++
+> > > =C2=A0 include/uapi/drm/drm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 +++++=
++
+> > > =C2=A0 3 files changed, 15 insertions(+)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/drm_ioctl.c
+> > > b/drivers/gpu/drm/drm_ioctl.c
+> > > index=20
+> > > ff193155129e7e863888d8958458978566b144f8..01592d10e3465ddceddef94
+> > > bc417f98d3ec12087 100644
+> > > --- a/drivers/gpu/drm/drm_ioctl.c
+> > > +++ b/drivers/gpu/drm/drm_ioctl.c
+> > > @@ -304,6 +304,9 @@ static int drm_getcap(struct drm_device *dev,
+> > > void=20
+> > > *data, struct drm_file *file_
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 req->value =3D=
+ drm_core_check_feature(dev, DRIVER_ATOMIC)
+> > > &&
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev->mode_config.async_page_flip;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > +=C2=A0=C2=A0=C2=A0 case DRM_CAP_POST_BLEND_COLOR_PIPELINE:
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 req->value =3D drm_core_c=
+heck_feature(dev,=20
+> > > DRIVER_POST_BLEND_COLOR_PIPELINE);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL=
+;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+> > > index=20
+> > > 42fc085f986dee9261f8b08c4fc7d93b8d6d9769..6b0f4904e69766232283d43
+> > > 0c2540d30afef850f 100644
+> > > --- a/include/drm/drm_drv.h
+> > > +++ b/include/drm/drm_drv.h
+> > > @@ -122,6 +122,12 @@ enum drm_driver_feature {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * the cursor planes to work corr=
+ectly).
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DRIVER_CURSOR_HOTSPOT=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D BIT(9),
+> > > +=C2=A0=C2=A0=C2=A0 /**
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 * @DRIVER_POST_BLEND_COLOR_PIPELINE:
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 *
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 * Driver supports post-blend color pipeline=
+.
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > +=C2=A0=C2=A0=C2=A0 DRIVER_POST_BLEND_COLOR_PIPELINE=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D BIT(10),
+>=20
+> Is this to let userspace know that the driver supports a
+> post-blending color pipeline? Why couldn't userspace simply
+> check whether crtc objects have "Color Pipeline" properties?
 
-Wrong locking
+It is, and yes userspace could figure it out that way, though since the
+property is only exposed after the client cap is set, it requires a
+more involved setup: set the client cap, check for the property, if not
+present unset the client cap.
 
-> +
-> +		ioas = (struct iommufd_ioas *)obj;
-> +		mutex_lock(&ioas->mutex);
-> +
-> +		/*
-> +		 * TODO: Iterate over each device of this iommufd and only save
-> +		 * hwpt/domain if the device is persisted.
-> +		 */
-> +		list_for_each_entry(hwpt_paging, &ioas->hwpt_list, hwpt_item) {
-> +			if (!hwpt_paging->common.domain)
-> +				continue;
+With the driver cap introduced here, setting the client cap would fail
+in the first place if the driver cap is not set, so in this case
+userspace just tries to set the client cap, if it succeeds it knows it
+can use color pipelines, if it fails it knows to use the legacy color
+properties.
 
-I don't think this should be automatic. The user should directly
-serialize/unserialize HWPTs by ID.
+--=20
+Thanks,
 
-Jason
+N=C3=ADcolas
+
+>=20
+> Harry
+>=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* IMPORTANT: Below are all the legacy=
+ flags, add new ones=20
+> > > above. */
+> > > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> > > index=20
+> > > 27cc159c1d275c7a7fe057840ef792f30a582bb7..c6c53e57958e951204154ce
+> > > 41a69696a6876f0e8 100644
+> > > --- a/include/uapi/drm/drm.h
+> > > +++ b/include/uapi/drm/drm.h
+> > > @@ -812,6 +812,12 @@ struct drm_gem_change_handle {
+> > > =C2=A0=C2=A0 * commits.
+> > > =C2=A0=C2=A0 */
+> > > =C2=A0 #define DRM_CAP_ATOMIC_ASYNC_PAGE_FLIP=C2=A0=C2=A0=C2=A0 0x15
+> > > +/**
+> > > + * DRM_CAP_POST_BLEND_COLOR_PIPELINE
+> > > + *
+> > > + * If set to 1, the driver supports post-blend color pipelines.
+> > > + */
+> > > +#define DRM_CAP_POST_BLEND_COLOR_PIPELINE=C2=A0=C2=A0=C2=A0 0x16
+> > > =C2=A0 /* DRM_IOCTL_GET_CAP ioctl argument type */
+> > > =C2=A0 struct drm_get_cap {
+> > >=20
+> >=20
 
