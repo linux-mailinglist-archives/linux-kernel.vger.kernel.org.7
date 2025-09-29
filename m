@@ -1,305 +1,154 @@
-Return-Path: <linux-kernel+bounces-835876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34992BA8402
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B54BA841E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07B5171DEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:34:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E53C3A51AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F94258CD7;
-	Mon, 29 Sep 2025 07:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97602C0F61;
+	Mon, 29 Sep 2025 07:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BcUnFc7K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BG4WBHTk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251252405E7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2002110E;
+	Mon, 29 Sep 2025 07:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759131262; cv=none; b=YtpTUnHJbCUqdSyARK4g/d1W4h3sr6oj4LUk2yak18Dm6FiRGxsZAIBM23MYYDvi0akIEIelZx6Iwg7J3/Azyca8o/jERFwXmnIIYuisp0NJsKu/mRXnvzY/iHdx4WzbBdezVqZHeXzhydprbvAWSPX3pHQbXDsmjbjkT1PeAlQ=
+	t=1759131314; cv=none; b=AACAxyfe/NiNylTxhL84YBeJTwn0hmJu85yc6sFnIVS7Uzvn0EX2heIR1IW8jqaIA8Byb5rb25diuXE/Y5qhHx95oqFrTURhoO2tswrNB1QXJdz1JRUbfnbL8Ih3mqd77uuZ+w2oSeNDEXp2qxjuAmirw8VOGNI2M5V//fawxdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759131262; c=relaxed/simple;
-	bh=zEvJclj/WUedNrvNpxgH8VDpNQD1sza3+MfSk2bWn7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OOGxvXCQu4pp9jW+RK6/G4xla+bqgRskUJzXzQ1LcjHoLR73jRfAvszNWfqCMV4JCyI82T4p4snBL/LhZm4mk0qIbn0B14YsDh73uTECcU7Gbi4vcEfHj3YlaOhfNMieDFILPnswecgnCXKdWl7MUNKMmBDiqcLod8yPqAdFvn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BcUnFc7K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759131259;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4cN6MysZF1C0J6jyCpD7LyZGkMRtdynqcaCV1B52hGE=;
-	b=BcUnFc7Ke/rfMIygfvPcbeNgyonNEyjAbgXcSiS7mGg8lBp1nb7HiJHTl5ifJf0bJrSHfV
-	l0FYgvMH5D6+oswgOHwzo2TC2JizGihe5V3kn205yErCe+sFrU8yKWX7IGEIEvGzqdHRrN
-	JwdGsvm5d+3IGAGvEXFT/VnJkveE7i0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-684-3kEKg4osNYGi5GT9Vzcm4g-1; Mon, 29 Sep 2025 03:34:17 -0400
-X-MC-Unique: 3kEKg4osNYGi5GT9Vzcm4g-1
-X-Mimecast-MFC-AGG-ID: 3kEKg4osNYGi5GT9Vzcm4g_1759131256
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e3af78819so14805005e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:34:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759131256; x=1759736056;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4cN6MysZF1C0J6jyCpD7LyZGkMRtdynqcaCV1B52hGE=;
-        b=hPMv6O3rv3KChEQ9Fg6kZkO8sCzrmBcUlycAvB8TM0MT1O/5QxMMuOuQbIbaJajzsE
-         V0a4PQSn9VFxOksZd/YMoQVpkGhhwU+WQq1+7fbEpXTWrHVHz0fFHZ5SK3J59+J839BA
-         jzaXMe58OLFbKhtsR77ISAP8wFYxwMx8ABugaXc6cLEdlIBtz2zhNAUOCsqsC45R5ChF
-         CJ2BeH0bjv2cJbJqG7GYkwkQFtn5J2RsqmZGEoQ373gugRfngKQDBDfIsZrJr+LKnVVa
-         fsX2Im3j5R60gXpgqwQbHBmxAnP1DC/cJmKYLuGCbfl9XXprwTQoz40t2QUX0tJBR7im
-         oncA==
-X-Forwarded-Encrypted: i=1; AJvYcCWb+2d5t8Rp85zOHw5R/oFy/WApRuWXPrLE7UwNTNsS7e6nuulzcM5VpwonpvaCyobwEpL7Sw0MUrO1bQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdQ7mvPYzJkZW4MZF2qVbwSJogim61WFOsOxVFj5cFJJrVpVSX
-	ndtq2vJEejbd2n04HicajM+iEy3nCjwmsSnJcfpV5zcghpO7Ly8toMxQu0a5gn0wXk04JE1myBh
-	HVN59k+RVS09NJaD3U/iJwZiPzBV46iH0QqxLw1Pe5Z9xLtvgbWk3TOey/YPzGASvqw==
-X-Gm-Gg: ASbGncuMwz3L6PIf9P41T2qO+JvOKcayC/FIS9FfRbo6jyQ5dNJ2lZqOX0eVD9dyrph
-	NBhlaK41b0i3/xsQ8td9sClRoUKiGIt6LUf1j6pMCEIDawJZZenMLXoH66iyHptI3/iD1DZ9AW4
-	RUuPbxI/horlPWrbPTij+FbEA5uPlPNlVZUFUO4B//LVMXLz10f12MvJ59y6vZmpL16Jg2Zme98
-	SvxYjggipOwyCr8+x4eVBy+hJlf93XKXwqjfQb9X/zpFRtXfQawWb5tw6XTlwvkFl3i3bxfNU3j
-	SgAVIbUKbajTp3UeXJkY1uD8nwpgA82V6WKxTJXW8Gxfwfv0T428kCJMWtufZAOSvaKfLor9FM4
-	Jcl2kx5oHzsm3nugOfCk6q2MXF1+YKtG2aU6iV1m7Byh2/dbvfXeTywolua4nByWgaQ==
-X-Received: by 2002:a05:600c:4ec6:b0:46c:7097:6363 with SMTP id 5b1f17b1804b1-46e329b441cmr135712955e9.13.1759131256021;
-        Mon, 29 Sep 2025 00:34:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGO1W3cLkDsOrAUUj/Y71FAFuKW33ai4dR71vpnx/udDB8eBJ1Ccnl/FvU8H9AzA7aJClyCqA==
-X-Received: by 2002:a05:600c:4ec6:b0:46c:7097:6363 with SMTP id 5b1f17b1804b1-46e329b441cmr135712565e9.13.1759131255575;
-        Mon, 29 Sep 2025 00:34:15 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f05:e100:526f:9b8:bd2a:2997? (p200300d82f05e100526f09b8bd2a2997.dip0.t-ipconnect.de. [2003:d8:2f05:e100:526f:9b8:bd2a:2997])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32bf61b1sm90731705e9.2.2025.09.29.00.34.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 00:34:15 -0700 (PDT)
-Message-ID: <8ef5e3fd-2ee8-453a-b8ae-584e3d606aa4@redhat.com>
-Date: Mon, 29 Sep 2025 09:34:12 +0200
+	s=arc-20240116; t=1759131314; c=relaxed/simple;
+	bh=8kU9JJJKoTLv1+7TVZKBw078/6dDLnwJPZ/41pQAOlg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XMwv20E7vM0ZUzHJAXFPowGRycHKlkw5GkKQOjzS53RYlCttWspuOd56B0JnfkdEOvTs1EEOK1Isldv1dpF2fyCQjh9nADbwDBhK3fJMpwAxwXnHXgxtlP3elWvA+bveC3y4HG7lQKDBLx3/SBUiDbEGRrpYNG86D1ajCJvKBSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BG4WBHTk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6A362C4CEF4;
+	Mon, 29 Sep 2025 07:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759131313;
+	bh=8kU9JJJKoTLv1+7TVZKBw078/6dDLnwJPZ/41pQAOlg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=BG4WBHTkVVM3Yu3QLTM6fO7WFiKCgveG2HPH66NKi2Rcy4diRsrjmmkKcUz3ujrRx
+	 ky8VDcghJ5CZfOOpQBo3Klxr61CqvoRf6tdam8rDnNW2l8if1gaTtPKRG9785QLHJt
+	 INSXDz1suo1d8WDnTvPpy45Y1SaalRSZ7OiTbmFfJuNDhRGeN6jT+tWPySem5u8I4D
+	 9W6csaeZPARYU7EjITQrT4x0ETQoxFbBXI4d9KwOwdEMyhXVOVu4Y8W8zFuV9pI2At
+	 5wW5P6bMAcP8Gr6cIhKWPl28cojK1sQxBw9XzeyGtza0iwcMINmZl1M9WkpkwiuhFa
+	 7L0Z7sE5jZvbA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CBECAC5B9;
+	Mon, 29 Sep 2025 07:35:13 +0000 (UTC)
+From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
+Subject: [PATCH v4 0/4] Upstreaming Pinephone Pro Patches
+Date: Mon, 29 Sep 2025 00:35:11 -0700
+Message-Id: <20250929-ppp_light_accel_mag_vol-down-v4-0-6598f22d3451@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm: prevent poison consumption when splitting THP
-To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, akpm@linux-foundation.org,
- lorenzo.stoakes@oracle.com, linmiaohe@huawei.com, tony.luck@intel.com
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
- baohua@kernel.org, nao.horiguchi@gmail.com, farrah.chen@intel.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andrew Zaborowski <andrew.zaborowski@intel.com>
-References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK822mgC/5XOTQ6CMBCG4auQrq1py0/BlfcwhpTpUJoAJUCqh
+ nB3Cyt1oy7fWTzfLGTC0eJETtFCRvR2sq4PkRwiAo3qDVKrQxPBRMoKwegwDGVrTTOXCgDbslO
+ m9K6l2t16mnMJeVJrhbkmgRhGrO195y/X0I2dZjc+9jXPt+uPsOeUUcirCnSMAovkbDpl2yO4j
+ mywF68Y/4KJgGFWAWSgZKLwE4v/weKASVVnWcprKfHts3Vdny14ueliAQAA
+X-Change-ID: 20250920-ppp_light_accel_mag_vol-down-817c84fdae8d
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rudraksha Gupta <guptarud@gmail.com>, Ondrej Jirman <megi@xff.cz>, 
+ Martijn Braam <martijn@brixit.nl>, 
+ =?utf-8?q?Kamil_Trzci=C5=84ski?= <ayufan@ayufan.eu>, 
+ "Leonardo G. Trombetta" <lgtrombetta@gmx.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759131312; l=3407;
+ i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
+ bh=8kU9JJJKoTLv1+7TVZKBw078/6dDLnwJPZ/41pQAOlg=;
+ b=DEXytXMmYJpHUBmD2X0aRp/a4VJrnruRIRvdqaJ3L96bCk32GzCYVYfgEX7BS4M6DwheccOe7
+ IMid102DQ4iA2pcqT/v/O5TBdAWBqtnyM33GFw/lnQeEpX4f0JW5iYG
+X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
+ pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
+X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
+ auth_id=211
+X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
+Reply-To: guptarud@gmail.com
 
-On 28.09.25 05:28, Qiuxu Zhuo wrote:
-> From: Andrew Zaborowski <andrew.zaborowski@intel.com>
-> 
-> When performing memory error injection on a THP (Transparent Huge Page)
-> mapped to userspace on an x86 server, the kernel panics with the following
-> trace. The expected behavior is to terminate the affected process instead
-> of panicking the kernel, as the x86 Machine Check code can recover from an
-> in-userspace #MC.
-> 
->    mce: [Hardware Error]: CPU 0: Machine Check Exception: f Bank 3: bd80000000070134
->    mce: [Hardware Error]: RIP 10:<ffffffff8372f8bc> {memchr_inv+0x4c/0xf0}
->    mce: [Hardware Error]: TSC afff7bbff88a ADDR 1d301b000 MISC 80 PPIN 1e741e77539027db
->    mce: [Hardware Error]: PROCESSOR 0:d06d0 TIME 1758093249 SOCKET 0 APIC 0 microcode 80000320
->    mce: [Hardware Error]: Run the above through 'mcelog --ascii'
->    mce: [Hardware Error]: Machine check: Data load in unrecoverable area of kernel
->    Kernel panic - not syncing: Fatal local machine check
-> 
-> The root cause of this panic is that handling a memory failure triggered by
-> an in-userspace #MC necessitates splitting the THP. The splitting process
-> employs a mechanism, implemented in try_to_map_unused_to_zeropage(), which
-> reads the sub-pages of the THP to identify zero-filled pages. However,
-> reading the sub-pages results in a second in-kernel #MC, occurring before
-> the initial memory_failure() completes, ultimately leading to a kernel
-> panic. See the kernel panic call trace on the two #MCs.
-> 
->    First Machine Check occurs // [1]
->      memory_failure()         // [2]
->        try_to_split_thp_page()
->          split_huge_page()
->            split_huge_page_to_list_to_order()
->              __folio_split()  // [3]
->                remap_page()
->                  remove_migration_ptes()
->                    remove_migration_pte()
->                      try_to_map_unused_to_zeropage()
->                        memchr_inv()                   // [4]
->                          Second Machine Check occurs  // [5]
->                            Kernel panic
-> 
-> [1] Triggered by accessing a hardware-poisoned THP in userspace, which is
->      typically recoverable by terminating the affected process.
-> 
-> [2] Call folio_set_has_hwpoisoned() before try_to_split_thp_page().
-> 
-> [3] Pass the RMP_USE_SHARED_ZEROPAGE remap flag to remap_page().
-> 
-> [4] Re-access sub-pages of the hw-poisoned THP in the kernel.
-> 
-> [5] Triggered in-kernel, leading to a panic kernel.
-> 
-> In Step[2], memory_failure() sets the has_hwpoisoned flag on the THP,
-> right before calling try_to_split_thp_page(). Fix this panic by not
-> passing the RMP_USE_SHARED_ZEROPAGE flag to remap_page() in Step[3]
-> if the THP has the has_hwpoisoned flag set. This prevents access to
-> sub-pages of the poisoned THP for zero-page identification, avoiding
-> a second in-kernel #MC that would cause kernel panic.
-> 
-> [ Qiuxu: Re-worte the commit message. ]
-> 
-> Reported-by: Farrah Chen <farrah.chen@intel.com>
-> Signed-off-by: Andrew Zaborowski <andrew.zaborowski@intel.com>
-> Tested-by: Farrah Chen <farrah.chen@intel.com>
-> Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> ---
->   mm/huge_memory.c    | 3 ++-
->   mm/memory-failure.c | 6 ++++--
->   2 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 9c38a95e9f09..1568f0308b90 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3588,6 +3588,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->   		struct list_head *list, bool uniform_split)
->   {
->   	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
-> +	bool has_hwpoisoned = folio_test_has_hwpoisoned(folio);
->   	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
->   	struct folio *end_folio = folio_next(folio);
->   	bool is_anon = folio_test_anon(folio);
-> @@ -3858,7 +3859,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->   	if (nr_shmem_dropped)
->   		shmem_uncharge(mapping->host, nr_shmem_dropped);
->   
-> -	if (!ret && is_anon)
-> +	if (!ret && is_anon && !has_hwpoisoned)
->   		remap_flags = RMP_USE_SHARED_ZEROPAGE;
->   	remap_page(folio, 1 << order, remap_flags);
->   
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index df6ee59527dd..3ba6fd4079ab 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -2351,8 +2351,10 @@ int memory_failure(unsigned long pfn, int flags)
->   		 * otherwise it may race with THP split.
->   		 * And the flag can't be set in get_hwpoison_page() since
->   		 * it is called by soft offline too and it is just called
-> -		 * for !MF_COUNT_INCREASED.  So here seems to be the best
-> -		 * place.
-> +		 * for !MF_COUNT_INCREASED.
-> +		 * It also tells split_huge_page() to not bother using
-> +		 * the shared zeropage -- the all-zeros check would
-> +		 * consume the poison.  So here seems to be the best place.
->   		 *
->   		 * Don't need care about the above error handling paths for
->   		 * get_hwpoison_page() since they handle either free page
+Throughout the years, many have contributed to the Pinephone Pro (ppp)
+development. Unfortunately, these patches are scattered around various
+repositories in different states.
 
-Hm, I wonder if we should actually check in try_to_map_unused_to_zeropage()
-whether the page has the hwpoison flag set. Nothing wrong with scanning
-non-affected pages.
+I will be attempting to upstream these patches. I will start off with the
+following small series:
+- Add light/proximity sensor support
+  - Link: https://codeberg.org/megi/linux/commit/f171bc7013bc7ad3de9af817bfbcbfa548ebe01c
+- Add accelerometer sensor support
+  - Link: https://codeberg.org/megi/linux/commit/b0bb7633e073a6760fa213b8c4a78ea2e73c7bf1
+- Add magnetometer sensor support
+  - Link: https://codeberg.org/megi/linux/commit/2f7e67f451f16eaf15b81aa1dbdf126d54927d35
+- Add mount-matrix for magnetometer
+  - Link: https://codeberg.org/megi/linux/commit/d7cd2eab931e32fa94408a96d73b4e6c0616107a
+- Fix voltage threshold for volume down key
+  - Link: https://codeberg.org/megi/linux/commit/7c496a5cc27ed4e38b740f36c2d8b2c62f80ae54
 
-In thp_underused() we should just skip the folio entirely I guess, so keep
-it simple.
+Unfortunately, because most of userspace (plasma, phosh, kompass,
+hwtest, etc.) use the ppp's downstream kernel as a reference, the
+incorrect mount matrix for accelerometer and magnetometer have
+propogated to userspace, and therefore we can't use them for testing as
+they will give the wrong result. Instead, we have to read the raw values
+from the device and compare it to
+https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/mount-matrix.txt#L80-L90
+as that will lead to the correct result
 
-So what about something like this:
+I would request reviewers to look at the mount-matrix tests and help me
+see if they make sense. I've read the mount-matrix documentation, but it
+isn't really clear to me if the values in the tests are the values I
+should be getting
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9c38a95e9f091..d4109fd7fa1f2 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -4121,6 +4121,9 @@ static bool thp_underused(struct folio *folio)
-         if (khugepaged_max_ptes_none == HPAGE_PMD_NR - 1)
-                 return false;
-  
-+       folio_contain_hwpoisoned_page(folio)
-+               return false;
-+
-         for (i = 0; i < folio_nr_pages(folio); i++) {
-                 kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
-                 if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 9e5ef39ce73af..393fc2ffc96e5 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -305,8 +305,9 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
-         pte_t newpte;
-         void *addr;
-  
--       if (PageCompound(page))
-+       if (PageCompound(page) || PageHWPoison(page))
-                 return false;
-+
-         VM_BUG_ON_PAGE(!PageAnon(page), page);
-         VM_BUG_ON_PAGE(!PageLocked(page), page);
-         VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
+Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+---
+Changes in v4:
+- remove leda-supply and vdd-supply from dts to suppress warning
+- credit Martijn and Kamil for the light sensor and accelerometer patches
+  - Link: https://fosstodon.org/@martijnbraam/115272859701389599
+  - Link: https://codeberg.org/megi/linux/commit/fc5660685ebe4ecf60226bfa27a1ce47c1c1d020
+- combine the magnetometer related patches
+- corrected accelerometer's mount matrix to Documentation/devicetree/bindings/iio/mount-matrix.txt
+- filled out commit messages
+- rebased onto v6.17
+- Link to v3: https://lore.kernel.org/r/20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com
 
+Changes in v3:
+- change magnetometer mount matrix
+- update volume button threshold
+- Link to v2: https://lore.kernel.org/r/20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com
 
+Changes in v2:
+- remove usb-typec node in dts from light/proximity sensor patch
+- Link to v1: https://lore.kernel.org/r/20250920-ppp_light_accel_mag_vol-down-v1-0-c8bbcd3e2e94@gmail.com
+
+---
+Ondrej Jirman (4):
+      arm64: dts: rk3399-pinephone-pro: Add light/proximity sensor support
+      arm64: dts: rk3399-pinephone-pro: Add accelerometer sensor support
+      arm64: dts: rk3399-pinephone-pro: Add magnetometer sensor support
+      arm64: dts: rk3399-pinephone-pro: Fix voltage threshold for volume keys
+
+ .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 40 ++++++++++++++++++++--
+ 1 file changed, 38 insertions(+), 2 deletions(-)
+---
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+change-id: 20250920-ppp_light_accel_mag_vol-down-817c84fdae8d
+
+Best regards,
 -- 
-Cheers
+Rudraksha Gupta <guptarud@gmail.com>
 
-David / dhildenb
 
 
