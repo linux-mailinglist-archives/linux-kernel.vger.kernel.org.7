@@ -1,99 +1,134 @@
-Return-Path: <linux-kernel+bounces-835732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E7EBA7ECF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:02:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0642BA7F0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47DED3A7A2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 619AE18958B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E66217F56;
-	Mon, 29 Sep 2025 04:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3CB148832;
+	Mon, 29 Sep 2025 04:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoxVom+K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s+v406U+"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284D41A9FAE
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADB218EAB
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759118515; cv=none; b=Dw2uM3Op1Wb7AzhIsyHxRToBSUCMwrDcH+NAoadEIHjUz6L9/jco5Vamg5NYP1y0DbYp0l8l4TGyBz0+F7IoMfcEhOQiMwSq3Nw/W0f7eIrhpiyutQDEP9UHWfr7k3F6eMZx25j5kJTQqSWMO29GLEAwNDvqdxaY6glsZGMfrbk=
+	t=1759120693; cv=none; b=jUOn61vL4LjWRngaOalATa+f9K+qyHRoaQP1Dm4F4mxvcuDBlLL21qCX6k3AwuonZ7uypV14ZTOZrbJ0J/6rYfQJTCAqpHOCom791H+UITYOkOafQkQvPZwzrQAOhScqWpnWRo91IMOF/B7LpaO0LLo1zi1p4G77j1oIt8DChbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759118515; c=relaxed/simple;
-	bh=nHlXSI3s1SeNU4+GOTvAJhhQyHmYoguxC2iBIE01rYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFiSHWwljh5ezXFye6IE7Kg1NxcSgSazNdS8/jfBokBQp4uPwCIkICLMq7se1IlVw9+CACew9Xt9LfU6vYpmPgwNTNsE1ghgmyjle2OHdIP3vFf3dsuZZoKuLXMVTCpH4gzhLCb7PLCdgHWh2YQDYvqqBoV4EGoVGftnjkCTPb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoxVom+K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E45EFC4CEF4;
-	Mon, 29 Sep 2025 04:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759118514;
-	bh=nHlXSI3s1SeNU4+GOTvAJhhQyHmYoguxC2iBIE01rYo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZoxVom+KWnRWZ4yKl5eBI8HuU1HUP8igOIfHfxoBm1tWNIV8c0dXQ0xVWUxY9XHqy
-	 mQD6PNUgqiBbnCdp62VajD59sVK500qd//4SlRGKc4mzoGKUDS0WD2sEb1PyXLtg3H
-	 Q9k9zwl7BiA/GqWgqBSsIF2HbHjHHT0gSJRnNd7yB1hIohC5gcg3qQbyDCi+84xAQq
-	 p1DyP6STDKDFK+PAp3vyks9JUTjr+C4oFfCeYwpnX88BXyF24R1mCO+dV56DlDqQCw
-	 +Jwc4vyfsdFXto0GNvLQwPRVADg3bGHFBm30SKzMUGjwdR8P6DdPd6UC67pPWHahPO
-	 oBAO1Fdk0cyPw==
-Message-ID: <1e07144c-da10-4817-a2c6-ea11988936ee@kernel.org>
-Date: Sun, 28 Sep 2025 23:01:52 -0500
+	s=arc-20240116; t=1759120693; c=relaxed/simple;
+	bh=AiENp1JXPD7Pfj2XXP9VYjsfVUN9VhGdUAyBie8UujY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=aTXH4G3/VwcXxu7P3hp7/UfleidyxUR45qpqPBUcDhLGy1pokm99FwEDKgWaWnFJ7qKdIVXw4TAaLAaYLqFWlKVAqUwYRRsvqJwR9AInWjpEM8MfMc6QRJaQuwpffds+r6xhXBzoFZAy6gFpzV176PZltWtiBCgRNxcUJWFvDXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=s+v406U+; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250929042918epoutp03651b25e95d91c074d433fdfd1dffc59d~ppnbMk-ts0512605126epoutp03L
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:29:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250929042918epoutp03651b25e95d91c074d433fdfd1dffc59d~ppnbMk-ts0512605126epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759120158;
+	bh=D5wRPUu5G4Y4BWyRfH1H7IBbVKWaqq7gWN8q6OvyK9M=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=s+v406U+PLcaD+EY0XDxC+20eJv3QWSeozFIVY7UsAN4tfULGnTc8F7vQSD3zdzyO
+	 rhzpEmMEGY6CAL4L3PLWXI/qKFUKe3zAZMSrtlp/1C6Zd+ZZoMYrbxOFkv98iJV29r
+	 f8slEvX3yQwMPcvUiHi6ykaMs8z9bAvV5r6Izqaw=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250929042918epcas2p273bdddf86958b34ea115371bc3f2d25b~ppnar_-kI1350313503epcas2p2L;
+	Mon, 29 Sep 2025 04:29:18 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.38.202]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cZp9n5Csbz6B9mH; Mon, 29 Sep
+	2025 04:29:17 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250929042917epcas2p26f004fefc4b491c5190f0854a7fe1f86~ppnZ0b28b1831418314epcas2p2N;
+	Mon, 29 Sep 2025 04:29:17 +0000 (GMT)
+Received: from tayo (unknown [10.229.9.198]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250929042917epsmtip15533e0f7be7361ed94f2258f0311f7a2~ppnZvhldn2403224032epsmtip1h;
+	Mon, 29 Sep 2025 04:29:17 +0000 (GMT)
+From: Hoyoung Lee <hy_fifty.lee@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>
+Cc: Hoyoung Lee <hy_fifty.lee@samsung.com>, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] drm/exynos: KMS cleanups for off-screen planes and
+ mode_config
+Date: Mon, 29 Sep 2025 13:31:07 +0900
+Message-ID: <20250929043110.3631025-1-hy_fifty.lee@samsung.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/CPU/AMD: Prevent reset reasons from being retained
- among boots
-To: Rong Zhang <i@rong.moe>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
- linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>
-References: <20250913144245.23237-1-i@rong.moe>
- <20250916140227.GGaMlt8xSp3eMI8Veu@fat_crate.local>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <20250916140227.GGaMlt8xSp3eMI8Veu@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250929042917epcas2p26f004fefc4b491c5190f0854a7fe1f86
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250929042917epcas2p26f004fefc4b491c5190f0854a7fe1f86
+References: <CGME20250929042917epcas2p26f004fefc4b491c5190f0854a7fe1f86@epcas2p2.samsung.com>
 
+Hi all,
 
+This small series makes Exynos KMS a bit more robust and better aligned
+with common DRM layering:
 
-On 9/16/2025 9:02 AM, Borislav Petkov wrote:
-> On Sat, Sep 13, 2025 at 10:42:45PM +0800, Rong Zhang wrote:
->> The S5_RESET_STATUS register is parsed on boot and printed to kmsg.
->> However, this could sometimes be misleading and lead to users wasting a
->> lot of time on meaningless debugging for two reasons:
->>
->> * Some bits are never cleared by hardware. It's the software's
->> responsibility to clear them as per the Processor Programming Reference
->> (see Link:).
->>
->> * Some rare hardware-initiated platform resets do not update the
->> register at all.
->>
->> In both cases, a previous reboot could leave its trace in the register,
->> resulting in users seeing unrelated reboot reasons while debugging
->> random reboots afterward.
-> 
-> Just a heads-up: we're figuring out internally what the right thing to do here
-> would be.
-> 
-> Stay tuned.
-> 
-> Thx.
-> 
+- Patch 1 treats fully off-screen planes as not visible and routes them
+through the explicit disable path instead of programming zero-sized
+dimensions in ->atomic_update(). This ensures the proper disable
+semantics run when a plane contributes nothing to the frame, and avoids
+keeping a logically enabled window around.
 
-The internal conversation points in the direction of your patch makes sense.
+- Patch 2 converts mode-config initialization to
+drmm_mode_config_init(), tying the lifetime to drm_device and dropping
+the now-unnecessary manual drm_mode_config_cleanup() in error/unbind
+paths.
 
-But I don't really see a lot of value in re-reading and printing a debug 
-message about what was cleared and what's still there.  Do you see a 
-reason to keep that around?
+- Patch 3 moves the device-wide mode_config setup (funcs/helpers and
+limits) from exynos_drm_fb.c to exynos_drm_drv.c and calls
+drm_mode_config_init() from inside exynos_drm_mode_config_init().
+Historically Exynos put this in fb.c when the driver grew around fbdev
+helpers; today it obscures ownership and ordering. Placing it in drv.c
+matches other vendors, makes the init order explicit (before creating
+CRTC/planes/connectors and binding components), and centralizes device-
+level policy in the core driver.
+
+No userspace ABI changes. Comments and reviews are very welcome.
+
+Thanks,
+Hoyoung Lee.
+
+Hoyoung Lee (3):
+  drm/exynos: plane: Disable fully off-screen planes instead of
+    zero-sized update
+  drm/exynos: Convert to drmm_mode_config_init() and drop manual cleanup
+  drm/exynos: Move mode_config setup from fb.c to drv.c
+
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   | 49 +++++++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    | 34 +---------------
+ drivers/gpu/drm/exynos/exynos_drm_fb.h    |  7 +++-
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 12 +++++-
+ 4 files changed, 60 insertions(+), 42 deletions(-)
+
+--
+2.34.1
+
 
