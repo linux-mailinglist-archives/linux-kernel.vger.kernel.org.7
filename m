@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-836010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D609BBA892A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:17:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A56BA8933
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21AF5188D22A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:18:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 087007B3E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194342868A7;
-	Mon, 29 Sep 2025 09:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4C7283FFA;
+	Mon, 29 Sep 2025 09:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghLjkkzB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MkpNUxzN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C679426CE34
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD4E277C8A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137459; cv=none; b=WIowqi5Sn92UvKDjuzA50B5qV8mYIS9hLQpPD4Sgh12hpinMQCSoLl26UJedZTbhrlgPq8adXfJO5dow8sT+Cq0ft3QIRVTZGMySeDarHYtx/7rGhYg2oFV2OYyy58TbboRoboa6HDDZe56wKgd++4vTEEvy0uonSCiTYWrXfVo=
+	t=1759137490; cv=none; b=SGbZrXxSqSbJ+VNtD+gpFHHKZstLfgo8Kcxg+XDOT4dye+VHekOkye2QwzB1lFNXo42pmAq35ENDeeB+J9BZJoq4cnJ1XQ2XvxfMhNTve99P0pXFCiQO85TJIK5QUaOdhuD6zUCqFprEP8Xy6WYiz7XQ0JbR0pWheBuGrHApoMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137459; c=relaxed/simple;
-	bh=AEKmXlzqnRXKtFhrKZjYt9Nz8CNoTLV8a+jAIEQEWJg=;
+	s=arc-20240116; t=1759137490; c=relaxed/simple;
+	bh=Ks2BBBzQqjGWEUp3vTQtsltYJN13fV/jNGcOycVGv2I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X2glLt3/NjQHLQgz39ZVKldeFYPM6U5xb0LZv94Uvn2rjvbnS2t4JArsCzjSXkVEjNTNxwf61hi7KhMX7sQQFY4Jz+F1i00fGP0hh8j6TJiBBQBaEkViZR8nMXWX6bhU4EaYvCDhAL/v2FikmIFW+EG94OAvbyXNeNTUWmZCbjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ghLjkkzB; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=YfkiRfoOzBbQsLzh2blRWxGml81qG7TQaulxpXl8zDUJFGWLb/11CQXaUTUE+Yqc3gpuW5agIOCYLLozU5EV7MLc9QmgvLqVUulgdMynS+t2aWtjh6ozBKWWHXnGmJz1ag6w8GycAiRV2IcR7rS1XK5xpd6dSs2R+HzUKhg1OYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MkpNUxzN; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759137456;
+	s=mimecast20190719; t=1759137487;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yirsZdfRpO7otxNMqYHFHsd8rv2y5Q2HXTbsU7+Tu6M=;
-	b=ghLjkkzBBSAb/eVHG2X6wY0XXwPo8++3N+hEKqlCWy5iWctdkcofqbjILP+SJs6KwxmenS
-	Kv3QWmbpRsYL+qZjL+iJEro2eMTYzoZEfeDZYrJkD4uESF4hdETWxziAY/vfpIP5LI32ma
-	nJ0kBfgC1HhdREKrVGUDvo6GIXdFl5w=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=vk82StvtzuvoQmzBkr51Z9nRoIXejYH8Zn9Ho/zzzFs=;
+	b=MkpNUxzNfQ+8uLKu9LHNwjOlteMXoMTJ84pxvC7CtjiQPf83cdFYOW1Y3VbO7Ll1rt3w40
+	sq211VeoBs9HL0UQqmkZ7cbuwl8xmJ63ESGJI6kQqR8kqNhCRnfMfkohqhxT0CEyxqjNBh
+	oIY3YjYyjq6csxmCiVmGJzqhnZ4mWQ8=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-rml97pPQM1-Xo35bZxnaYw-1; Mon, 29 Sep 2025 05:17:34 -0400
-X-MC-Unique: rml97pPQM1-Xo35bZxnaYw-1
-X-Mimecast-MFC-AGG-ID: rml97pPQM1-Xo35bZxnaYw_1759137453
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e3dcb36a1so20435265e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:17:34 -0700 (PDT)
+ us-mta-505-0jktKYBZMOibzCH-StmkvA-1; Mon, 29 Sep 2025 05:18:05 -0400
+X-MC-Unique: 0jktKYBZMOibzCH-StmkvA-1
+X-Mimecast-MFC-AGG-ID: 0jktKYBZMOibzCH-StmkvA_1759137484
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ee12ab7f33so2329427f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:18:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759137453; x=1759742253;
+        d=1e100.net; s=20230601; t=1759137484; x=1759742284;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yirsZdfRpO7otxNMqYHFHsd8rv2y5Q2HXTbsU7+Tu6M=;
-        b=OLDmt8TC5nslZ7epOET/fUv3CxGw8Pd+d+LTFCFFLOPgLQ8it7j6qdXd6e0OSOXEIq
-         M3ULpHbB9ms0ga7znZAQjlfq1RecO2nweUrdJed2YAoePo4qlPBTHvftjj04/ZkL3KGB
-         aYpEzJBXSs4O2PHX5gPwqoJSc91NbENNTkK+7FY98dceNuoVwO8TUO+iEjIDbg0OZWkF
-         MMCmtUc7cYNK2upifYPr/xyHWrowlCEyHEqwuOSiG2mg7FImmbn3ZZyu+jFaFoA4nW5R
-         djEhbddLmPylSV0d1GSkMgMDTurNx785TjDOzfk+ZXv/ByJczLXw5lTIz9gkHhm7bNu9
-         Q1OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxHeLRwhieG4F2yG31UYDE1WsHrBYsaO6ZJtPny/WDwjfk1BcmNJL2aLY4DCcbRTgcnUolCc3UDJmZqFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm3HJaHmmXwv6wXBdiNXFaNsR3bRqNi7RVSyA9TEKwzP6xxtcI
-	xWPrKXP5MlEqkVJYhHyoU4GURcTFYpLhugGucD5u0H2AsQvqxlOiYKPCLF2pACvijARIrLxfwzX
-	jqMgYnhMt1bo4556IOOnmYWNsTWEUOoMNYQosmu2meOe6uPlyBp1ZPdeAC3h06jcz2Q==
-X-Gm-Gg: ASbGnctgvZjT3zPJFFD3uV2/xduxBXTPPSfuyxDtcH9kE28oWRkmVUNTaGItVQYiQCf
-	k2VGVIZ0tI6nnev9w7t5yyeK4Yn+tgy602jmt8FOwa2kJMHbb70HmWu+YAM5W7rOWA4TgHCojL9
-	fANGzJvnoYDY7XPyd3XOXYxyqQZoWLS6EwPgwWUAK+N6FV56DWEiux8IDHh5s5EFowIHmD2xQWD
-	MG7rcyenH6Ej0iNAhVfm1dU4c17geOKz3j4eJqwmWwfOuKP1BTxMZ7yqTGIiRtzGwwh9btgo5yG
-	J9AZDWBacZJnMzE0RjXayYaDdXx4NBPq7wJ4XuZ/qrHOzlqz4B2XVCWRCNxQ+eH7+v5G1w3CxSI
-	jTC0z1cgXiIioUI1vFjZE8JPiIXTV16UaxASZaunjiYRYO4y11onDCFakIys12hXMOA==
-X-Received: by 2002:a05:600c:4511:b0:46e:19f8:88d8 with SMTP id 5b1f17b1804b1-46e32a54d21mr142727615e9.34.1759137453408;
-        Mon, 29 Sep 2025 02:17:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6Y9osOQveMMPpE1LUVYfGQ3xu2SHSNygP5Qn6MRLfg6MCgJmll3A0HA+SRU7hQaBJuTHQLQ==
-X-Received: by 2002:a05:600c:4511:b0:46e:19f8:88d8 with SMTP id 5b1f17b1804b1-46e32a54d21mr142727165e9.34.1759137452954;
-        Mon, 29 Sep 2025 02:17:32 -0700 (PDT)
+        bh=vk82StvtzuvoQmzBkr51Z9nRoIXejYH8Zn9Ho/zzzFs=;
+        b=C76xDAyEcdMQScZBEm9TqkSS29H/UO81XHtYG9cCMgxBOJM5ql5FbGDaL9WEXJv4Kj
+         MQlwGCxMuX2QBvgJra2w56fcGr1Yfjjdd8Momrg63v7RI6Piq7NhpJQc5G+JlQHIdn2+
+         RogShoMcBZcIn500Hrkgih2XpnnTK6KXLG8LfjDN0LinRkKSd51J9l03u68YPjTig1By
+         kK4HE2tgWr+3018Qgxw2BWF+8N45XcyvNtSETSOPZnRrKi/Lbymy1zR+JkYx4E/XtWpz
+         sCXIFt2vkLHh1GG9VZiNnJ+7s+CLPOcqtNSc65CXeTnSXy3cGb4h7JQRMPhUi8Y0K6eb
+         UVWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiX3mjKJzPAAWejv79IGHUN6M7+PRjig+OPalXFsZlj8pyPgggEGyzuuoIk8rvMi3XBCVmHCVVmy+N2Ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXhLuMcwtTFcsefRGrTeMV8mQiGJ0nV3JHYwZtUoeU92A5JYk4
+	27J/IoEDu+oY8zW7JtYS7CZs5lLejhvigxTotz7/RDCI0kVPi7RuXPM/veIPASKcMV0OGpf1v1V
+	AEvoTVYuImtWguZX6WfwnV8pnh8r2K/+AxBAuT8jlgch6vu5sSGX3umL1GHE9YifNKg==
+X-Gm-Gg: ASbGncsJMHlgXpYNR7LLTzfm37obC8Ap3ptZhzxFnZfyt5V9w0Ddxt6L3zXa4VnpOqy
+	CnrsNEqgdJZy7iTc9jH77fXo/Oh5fXH80cF5mo6ROwpL49CC36Nuomm+TMqyHc845L69WVD+Jwp
+	puY5tcmFeC+y3Ti2P5dqDNeIjwKxSh6KqrH52U32ZZYjUNx26q6eFJ0WY3gaRDHXRrY4EOhsJxR
+	mo+/VZFhuWMttfC5lUgI8tKpkz10T3bIVYKMoMimcg+Iqj+qKikCI1SRHsZsP5xUqcEdcoXOshk
+	qMS6UPE3lm1mb5lzp+fo5SGV2PWdLAUAeeiWO4eiPYwkQJ4Nek3X8XPveFA7Q0WD1yOiWkY8w0q
+	oHv9JyzXqNTKr9zWBT6WEye9pacp5m0veJxVkrYwuNZbiVdw2ELU8tZ0HnX20nStJOg==
+X-Received: by 2002:a5d:5d03:0:b0:3f5:453:77ea with SMTP id ffacd0b85a97d-40e4dabf28emr14251790f8f.58.1759137484480;
+        Mon, 29 Sep 2025 02:18:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXlkIee2EP6cCZceUObBZoMhwWwE2P79HU2Td+9p0UV2c9KpI5Byo6/WYxtplqGTOY5+qGuQ==
+X-Received: by 2002:a5d:5d03:0:b0:3f5:453:77ea with SMTP id ffacd0b85a97d-40e4dabf28emr14251773f8f.58.1759137484049;
+        Mon, 29 Sep 2025 02:18:04 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f05:e100:526f:9b8:bd2a:2997? (p200300d82f05e100526f09b8bd2a2997.dip0.t-ipconnect.de. [2003:d8:2f05:e100:526f:9b8:bd2a:2997])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e42eee0b6sm106927035e9.10.2025.09.29.02.17.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb871d051sm17855205f8f.14.2025.09.29.02.18.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 02:17:32 -0700 (PDT)
-Message-ID: <9f467155-cd6c-4d14-8cc6-357ffdd423bb@redhat.com>
-Date: Mon, 29 Sep 2025 11:17:30 +0200
+        Mon, 29 Sep 2025 02:18:03 -0700 (PDT)
+Message-ID: <59730bad-4731-4c25-838d-9dafee1c6c44@redhat.com>
+Date: Mon, 29 Sep 2025 11:18:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,8 +89,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] KVM: selftests: Stash the host page size in a global
- in the guest_memfd test
+Subject: Re: [PATCH 3/6] KVM: selftests: Create a new guest_memfd for each
+ testcase
 To: Sean Christopherson <seanjc@google.com>,
  Paolo Bonzini <pbonzini@redhat.com>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
@@ -99,7 +99,7 @@ To: Sean Christopherson <seanjc@google.com>,
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
  Fuad Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>
 References: <20250926163114.2626257-1-seanjc@google.com>
- <20250926163114.2626257-3-seanjc@google.com>
+ <20250926163114.2626257-4-seanjc@google.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -146,23 +146,24 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250926163114.2626257-3-seanjc@google.com>
+In-Reply-To: <20250926163114.2626257-4-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 26.09.25 18:31, Sean Christopherson wrote:
-> Use a global variable to track the host page size in the guest_memfd test
-> so that the information doesn't need to be constantly passed around.  The
-> state is purely a reflection of the underlying system, i.e. can't be set
-> by the test and is constant for a given invocation of the test, and thus
-> explicitly passing the host page size to individual testcases adds no
-> value, e.g. doesn't allow testing different combinations.
+> Refactor the guest_memfd selftest to improve test isolation by creating a
+> a new guest_memfd for each testcase.  Currently, the test reuses a single
+> guest_memfd instance for all testcases, and thus creates dependencies
+> between tests, e.g. not truncating folios from the guest_memfd instance
+> at the end of a test could lead to unexpected results (see the PUNCH_HOLE
+> purging that needs to done by in-flight the NUMA testcases[1]).
 > 
-> Making page_size a global will simplify an upcoming change to create a new
-> guest_memfd instance per testcase.
+> Invoke each test via a macro wrapper to create and close a guest_memfd
+> to cut down on the boilerplate copy+paste needed to create a test.
 > 
-> No functional change intended.
-> 
+> Link: https://lore.kernel.org/all/20250827175247.83322-10-shivankg@amd.com
+> Reported-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
 
