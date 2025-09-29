@@ -1,228 +1,253 @@
-Return-Path: <linux-kernel+bounces-836609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40B2BAA278
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC31BAA287
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4B9E4E1FEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:22:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35FF64E1EE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E36B30BB8C;
-	Mon, 29 Sep 2025 17:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588A930DD1F;
+	Mon, 29 Sep 2025 17:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="fcXwy0xZ"
-Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="anTOXc/y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6B530C0F0;
-	Mon, 29 Sep 2025 17:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759166536; cv=none; b=eoX2Y6dCaxvXM0Xa6dhzOEmZQhQoFuz3FrgB484FjApQphFAGM7VsuSHha5Yxyz0DToFnYO4Efe9FI7q6NsD3ytmkpR+8RsNTgapFASDAEl9qr2E8fSwWUj4lc5IVj8RbfX/XWGXSDR3j/zw0MdWTrqftrG9SsSa9cjRJZcpirw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759166536; c=relaxed/simple;
-	bh=rPvAb70eX+xtNxLsT31tJqXSjUME1o5yfKSfCT5CPok=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fDvEqNhO31fEMODo+2dv4KYxTaS4Rt/WCVE16Ck7B1KaPagYptjSMtEtKytng8Pku3txV7lCQS6Pp2vVAAIGJw8wcp1hdeSqoJXs+iUciWPlS8jF//IHL0Z7w5sD9QJVY+ovlVEXvZHYxXs9mpHijNc5Uh2DXSH3okp4nQM3uVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=fcXwy0xZ; arc=none smtp.client-ip=63.176.194.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759166534; x=1790702534;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=gKvaxmrs9uqyIGzbajJ1O5Hd1/ndu7xAtdLZV5bBh5k=;
-  b=fcXwy0xZFAjAG5ioqFJQdp7u9bZ9wRmoEjyyVPcJ36wXTbuWjbqRrDi7
-   B49UmJ1lE87OmyPGFnRTh4urVX2YvQ7BXyR0RaXgcG7ZphjDe/kmHXrch
-   8yMJE3K0TKE+hsJqDwrj7oH+nXc34eAmsI7+WFQJIOHItZAhtpdX+ZnQI
-   7CGMQXfX1PkHmzrlfTxQrOs8M8lTX6D3juk6EXZ+fWXR3a/j4oqby4k6T
-   uky/VIhuvQcXk1okeqSY4uphf4dKMuUnlZOkbaJyQUD/TMYbtSr8f2ZPJ
-   6o70OCOZNPv81QXGcsSUwhJTee+FiHKucpAf2Ma6YL9IFbOzwdWM1ewpv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D089230C10B
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759166643; cv=fail; b=swM3xQ71OYUa8IfzYKFHClH898Q0J5iVbA/7+VCCsWS1SpX2sPUf+74QK5M+qzs0s12ot+gI1kLl8UgYnxGTIoumTuZk18D0OfyNQwhvo6WRNGPJNv1IGccLXy7fXZm00O4Xluwm15fxPOZaVPq0X2EmPYqFDNzzb0JVCLn3LP4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759166643; c=relaxed/simple;
+	bh=0IEo4suGbBJ3vzjaSmsHwlaXfeK99spoxdetMCsDE3c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rcZDUUTWQ2PAapa3UXgwoy/7Y5NNLocmrLdvOvLph1fc0Bcpe4IRy+qgvGeGlKoY9Nxh2mfNqD35WMQ/UJOn6wCIyJKyD/cYhVeMzDu/4s/mfP72YfxECvRAcQh2HOT/vvKgnkWrTxpkl46ugTW1GZzDkYf/mN9XenhhaBC6buc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=anTOXc/y; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759166642; x=1790702642;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=0IEo4suGbBJ3vzjaSmsHwlaXfeK99spoxdetMCsDE3c=;
+  b=anTOXc/ypWSjFUUk532HfVocAP79gq15BZpmjG4CyJzS7sW9h4aYtODb
+   ne1rnj6BW+2JXsPe9ob0hDaJc2+joqD01msc+elG47cmDg16ZfKaEnX5F
+   PjhAuDKpDlPZBzRMUsuzngse99C0yfvQnSMuueiwbu4x11WXSQxqUq6xv
+   Dm5SEfa+7iS6TB6GOLAm6QZXaMOi4K4aYgZC7Y7tpP3mPbkQd2trNlyew
+   gYh365r0bGblSEncL89qTtYD38vPOkbKCrcccSHtSb5IdXRyDFj8z5XGN
+   FOnZgMZPjzBs+WDZ7Ynv3nWdza5/6PgZpvskWVlyLSSqFfm+ECL+EAl3C
    w==;
-X-CSE-ConnectionGUID: IafcEd3hQO6oGZOiLnLKqg==
-X-CSE-MsgGUID: Itl7dVAmRv28mSSF4DAfeA==
-X-IronPort-AV: E=Sophos;i="6.18,302,1751241600"; 
-   d="scan'208";a="2841710"
-Subject: RE: [PATCH 07/19 v6.1.y] minmax: make generic MIN() and MAX() macros
- available everywhere
-Thread-Topic: [PATCH 07/19 v6.1.y] minmax: make generic MIN() and MAX() macros available
- everywhere
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 17:22:02 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:7433]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.19.222:2525] with esmtp (Farcaster)
- id 39c95fb2-68e2-4279-8b5a-834631637cab; Mon, 29 Sep 2025 17:22:01 +0000 (UTC)
-X-Farcaster-Flow-ID: 39c95fb2-68e2-4279-8b5a-834631637cab
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 29 Sep 2025 17:21:59 +0000
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 29 Sep 2025 17:21:59 +0000
-Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
- EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
- 15.02.2562.020; Mon, 29 Sep 2025 17:21:59 +0000
-From: "Farber, Eliav" <farbere@amazon.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "richard@nod.at"
-	<richard@nod.at>, "anton.ivanov@cambridgegreys.com"
-	<anton.ivanov@cambridgegreys.com>, "johannes@sipsolutions.net"
-	<johannes@sipsolutions.net>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "luto@kernel.org" <luto@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
-	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com"
-	<hpa@zytor.com>, "tony.luck@intel.com" <tony.luck@intel.com>,
-	"qiuxu.zhuo@intel.com" <qiuxu.zhuo@intel.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "james.morse@arm.com" <james.morse@arm.com>,
-	"rric@kernel.org" <rric@kernel.org>, "harry.wentland@amd.com"
-	<harry.wentland@amd.com>, "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
-	"Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
-	"alexander.deucher@amd.com" <alexander.deucher@amd.com>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "Xinhui.Pan@amd.com"
-	<Xinhui.Pan@amd.com>, "airlied@gmail.com" <airlied@gmail.com>,
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "evan.quan@amd.com" <evan.quan@amd.com>,
-	"james.qian.wang@arm.com" <james.qian.wang@arm.com>, "liviu.dudau@arm.com"
-	<liviu.dudau@arm.com>, "mihail.atanassov@arm.com" <mihail.atanassov@arm.com>,
-	"brian.starkey@arm.com" <brian.starkey@arm.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "robdclark@gmail.com" <robdclark@gmail.com>,
-	"quic_abhinavk@quicinc.com" <quic_abhinavk@quicinc.com>,
-	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
-	"sean@poorly.run" <sean@poorly.run>, "jdelvare@suse.com" <jdelvare@suse.com>,
-	"linux@roeck-us.net" <linux@roeck-us.net>, "linus.walleij@linaro.org"
-	<linus.walleij@linaro.org>, "dmitry.torokhov@gmail.com"
-	<dmitry.torokhov@gmail.com>, "maz@kernel.org" <maz@kernel.org>,
-	"wens@csie.org" <wens@csie.org>, "jernej.skrabec@gmail.com"
-	<jernej.skrabec@gmail.com>, "samuel@sholland.org" <samuel@sholland.org>,
-	"agk@redhat.com" <agk@redhat.com>, "snitzer@kernel.org" <snitzer@kernel.org>,
-	"dm-devel@redhat.com" <dm-devel@redhat.com>, "rajur@chelsio.com"
-	<rajur@chelsio.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"peppe.cavallaro@st.com" <peppe.cavallaro@st.com>,
-	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-	"joabreu@synopsys.com" <joabreu@synopsys.com>, "mcoquelin.stm32@gmail.com"
-	<mcoquelin.stm32@gmail.com>, "krzysztof.kozlowski@linaro.org"
-	<krzysztof.kozlowski@linaro.org>, "malattia@linux.it" <malattia@linux.it>,
-	"hdegoede@redhat.com" <hdegoede@redhat.com>, "markgross@kernel.org"
-	<markgross@kernel.org>, "artur.paszkiewicz@intel.com"
-	<artur.paszkiewicz@intel.com>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"fei1.li@intel.com" <fei1.li@intel.com>, "clm@fb.com" <clm@fb.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>, "dsterba@suse.com"
-	<dsterba@suse.com>, "jack@suse.com" <jack@suse.com>, "tytso@mit.edu"
-	<tytso@mit.edu>, "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-	"dushistov@mail.ru" <dushistov@mail.ru>, "luc.vanoostenryck@gmail.com"
-	<luc.vanoostenryck@gmail.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"mhiramat@kernel.org" <mhiramat@kernel.org>, "pmladek@suse.com"
-	<pmladek@suse.com>, "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>, "minchan@kernel.org"
-	<minchan@kernel.org>, "ngupta@vflare.org" <ngupta@vflare.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>, "dsahern@kernel.org"
-	<dsahern@kernel.org>, "pablo@netfilter.org" <pablo@netfilter.org>,
-	"kadlec@netfilter.org" <kadlec@netfilter.org>, "fw@strlen.de" <fw@strlen.de>,
-	"jmaloy@redhat.com" <jmaloy@redhat.com>, "ying.xue@windriver.com"
-	<ying.xue@windriver.com>, "andrii@kernel.org" <andrii@kernel.org>,
-	"mykolal@fb.com" <mykolal@fb.com>, "ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev"
-	<martin.lau@linux.dev>, "song@kernel.org" <song@kernel.org>, "yhs@fb.com"
-	<yhs@fb.com>, "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@google.com" <sdf@google.com>,
-	"haoluo@google.com" <haoluo@google.com>, "jolsa@kernel.org"
-	<jolsa@kernel.org>, "shuah@kernel.org" <shuah@kernel.org>,
-	"keescook@chromium.org" <keescook@chromium.org>, "wad@chromium.org"
-	<wad@chromium.org>, "willy@infradead.org" <willy@infradead.org>,
-	"sashal@kernel.org" <sashal@kernel.org>, "ruanjinjie@huawei.com"
-	<ruanjinjie@huawei.com>, "quic_akhilpo@quicinc.com"
-	<quic_akhilpo@quicinc.com>, "David.Laight@aculab.com"
-	<David.Laight@aculab.com>, "herve.codina@bootlin.com"
-	<herve.codina@bootlin.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-um@lists.infradead.org"
-	<linux-um@lists.infradead.org>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "amd-gfx@lists.freedesktop.org"
-	<amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>, "freedreno@lists.freedesktop.org"
-	<freedreno@lists.freedesktop.org>, "linux-hwmon@vger.kernel.org"
-	<linux-hwmon@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, "linux-sunxi@lists.linux.dev"
-	<linux-sunxi@lists.linux.dev>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "netfilter-devel@vger.kernel.org"
-	<netfilter-devel@vger.kernel.org>, "coreteam@netfilter.org"
-	<coreteam@netfilter.org>, "tipc-discussion@lists.sourceforge.net"
-	<tipc-discussion@lists.sourceforge.net>, "bpf@vger.kernel.org"
-	<bpf@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Thread-Index: AQHcLZHEroQ9W2lH4EW9XJumD1KlZrSqNL0AgAAM8ACAAAMmgIAAKtlA
-Date: Mon, 29 Sep 2025 17:21:58 +0000
-Message-ID: <e754fed7d53040fb92e1ef9b64c64f6e@amazon.com>
-References: <20250924202320.32333-1-farbere@amazon.com>
- <20250924202320.32333-8-farbere@amazon.com>
- <2025092923-stove-rule-a00f@gregkh>
- <85a995bb59474300aa3d5f973d279a13@amazon.com>
- <2025092955-module-landfall-ed45@gregkh>
-In-Reply-To: <2025092955-module-landfall-ed45@gregkh>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
+X-CSE-ConnectionGUID: muGE+x4tTMSAshl0WrSRNg==
+X-CSE-MsgGUID: sQ0KzlgaT0679j24+j7dKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61524157"
+X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
+   d="scan'208";a="61524157"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 10:24:01 -0700
+X-CSE-ConnectionGUID: buCFbF6iSduJNn1RzJddOA==
+X-CSE-MsgGUID: FhuRgWV+QdC7Xlek0jEYGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
+   d="scan'208";a="209000658"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 10:23:52 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 29 Sep 2025 10:23:49 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 29 Sep 2025 10:23:49 -0700
+Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.11) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 29 Sep 2025 10:23:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yv06xB63HbkqUpt7AQTIQAS8uEm2hTybkGpfAmBNsejat0uPwC4nKSstRwoG8EIaJis7XAfc+z3X7GO8517lyDwGWz0S/9MlKwHa8KU1QX4Xm0F+wHb+zg4WWvN25L0/YKaeiIfHI4q3bSXE5/a/1CXP+jaH4eZi8h1EPJ/H+9iFEKxzhnSaOrkHYxWcXXDx4RLEINXgHsCot07lShkeZacft4Fsi7Bf17ZIt0YEEAr6POw7A06XBoSbmaAmkxMHotce/TcVBKjbVkdVnT0PgZgSz1S7TI0w4UN/4KRSHDWFtGbFAxvjiyw4J6iGBoY82cIOHUVBuVFKFeFBQlGrRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3pO0pRzfAEP9k6CJ6ysMj3OO9cBpj+Dtz98rh5sdDgc=;
+ b=PAtQfyLNYak/3CmBhgCTjoyJEafpbGnzDtjkXvv+a+yoBZmN8tAZMrh4e5qs7/N4LihAAyJfwlzTUeMQS0D+5VbMqgJp1IehQfnY9DIFR5QStbQl1PUTyLJgbgN8Mh4FBCsrfPCgsQXCGW62nx7M3dCsqcZxU3O57xIGXSpaUJiMBlg6w6GjsbpqxiIXr4CkgkK/ED+8nIPQ4rjkRtTPVCx8mioZCLFfrUt/T6OsdJ2kn6DRmvr35LPW/88Umc77JkKGU1dnqBoCQhsqo0T4NWwADDTpItJPKI66pNCvoJJKOlDwq+CrLUw1yZjyO52RIQpOUGZLYBuPOnUgOn6/3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ5PPF0D43D62C4.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::80b) by SJ2PR11MB7671.namprd11.prod.outlook.com
+ (2603:10b6:a03:4c4::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 17:23:45 +0000
+Received: from SJ5PPF0D43D62C4.namprd11.prod.outlook.com
+ ([fe80::4df9:6ae0:ba12:2dde]) by SJ5PPF0D43D62C4.namprd11.prod.outlook.com
+ ([fe80::4df9:6ae0:ba12:2dde%8]) with mapi id 15.20.9160.008; Mon, 29 Sep 2025
+ 17:23:45 +0000
+Date: Mon, 29 Sep 2025 10:23:42 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	<dan.j.williams@intel.com>, <vishal.l.verma@intel.com>,
+	<dave.jiang@intel.com>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] nvdimm: Remove duplicate linux/slab.h header
+Message-ID: <aNrAnhYMyvZ-farN@aschofie-mobl2.lan>
+References: <20250928013110.1452090-1-jiapeng.chong@linux.alibaba.com>
+ <aNngNaDpVJAyYKYx@aschofie-mobl2.lan>
+ <68daa03bbd9a5_270161294bd@iweiny-mobl.notmuch>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <68daa03bbd9a5_270161294bd@iweiny-mobl.notmuch>
+X-ClientProxiedBy: SJ0PR05CA0099.namprd05.prod.outlook.com
+ (2603:10b6:a03:334::14) To SJ5PPF0D43D62C4.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::80b)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PPF0D43D62C4:EE_|SJ2PR11MB7671:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7eb8c44-bf46-41bf-bc27-08ddff7cf184
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Ss85qm829c/PEWm4hmds2gYGkX6IW3kSTkQwByd4S4u75QSTd101gJAJOozI?=
+ =?us-ascii?Q?xPDRqbXpOIv8fi0jETKK0zfLnlH+cpMhdk68K6zO5sggYOVperseaNmlaJBq?=
+ =?us-ascii?Q?M6qdnLYbdsny5BFuAMPjM5mU5/znnzpTFFaZivBZHcES1h/uzTQQwTwTLjRj?=
+ =?us-ascii?Q?+5r5j6nXAG4GUcB3kBIJsp69TvKFaBUqrRe7oykp3QTsvMrtAVZHIdiDlRw0?=
+ =?us-ascii?Q?k/JwNLWy9iigVQYy7OjK2gS35oA+fO/5DpkhrNo43ZyfVeGVKsOCdjlP9zc9?=
+ =?us-ascii?Q?gyz4F/yG5J3li37zaOhGTPIfUjbC9KwnIPreE9KZ4EjvwHpttWKodt1Ikc1y?=
+ =?us-ascii?Q?HiEegyHujWuljQ7ybutDZFZDLviQ9XNmCNFw9/9pW7XrOSemOmkLeR4DxAB8?=
+ =?us-ascii?Q?jU8sGLaV7ysQJ/Fx0KKTIdKHsUkuuceRvgoRt8bQlbe/QBi0zH+fEpN0+VIE?=
+ =?us-ascii?Q?U+m1IfS5o6AdJP4BlKy1H89pjAHx+dUPkpsrB5Sg/QScc7xvq+BQn4/FuT55?=
+ =?us-ascii?Q?630njDfouhx7TjdD85Wci1pGFLXvZ7lplXIh/d9pJdMNkOahNxTKElySdABT?=
+ =?us-ascii?Q?hOuBH5CiR5Xpi5hxPTF+yYo84cnMfzMFw6Be2uxQM9LomyEOSgGFDW+Dsu2P?=
+ =?us-ascii?Q?v/qrskP/+CA0SAWzlpiMhCn/IMiBlqPVNL2f0whoJ6epHiEczlUxI8K++/0Z?=
+ =?us-ascii?Q?tGiJnbGNuKbQlPa5PXb8/eVlNW3SWMtwdM9ZB4NP1ptZYwamai82FeMK4xDK?=
+ =?us-ascii?Q?A/90bU2jC4hblmsyh/BoHzpE99MO/Z2pT/dwpwUqCmQ2QoXyb30wYsPonaOo?=
+ =?us-ascii?Q?l6t3vemvjFgh3jkxcIdGYwI/L37BzwPvAQcYHgm5AtUCnwgFBhbCr1Qi8M6V?=
+ =?us-ascii?Q?K1560/1RavxiK5Zi4Dn12J7OXN+VGyp8F6nj6ZQNztJCMbgV/4HaLeAwU3kG?=
+ =?us-ascii?Q?VVFNl2toyKW5+WSYH9DJVaDg9tbyLR9VjJLhEZW1hjjog6+ocXK4fBq80miW?=
+ =?us-ascii?Q?tqKJmc6iIOLPoWzTpOb2hAcHnRmsuOkilQgnCM5gemMZVdYXmcayYbx9O0+y?=
+ =?us-ascii?Q?yEvUwj83HPRQnK6xSK06PwCvWgOi36HMspk3EaIRSoIZYN/hx2eWh8ZD1rPc?=
+ =?us-ascii?Q?NUh1x7LTR3uBUCbmmdLabR/gSbIfTqpUVOFWJjUEnbUGKJRV6QnSo6+SHRUj?=
+ =?us-ascii?Q?IFTpHeOexEa6kZVwbfHC8bir2AiDd/OTb4I/Ool7HLd9mfdTff9BMqncN8Bl?=
+ =?us-ascii?Q?BFUJLeltYn7TG8/saWcgPZh/ov46MAhEYfJ4dhzbFmEdWMMwiZnFTmmt86/d?=
+ =?us-ascii?Q?lLWohiqbF8KmbVUFsjgIyV4GnGrLkXQhD1UzMFjo9N0sVJ7s3yuXuM/WaR93?=
+ =?us-ascii?Q?z8vOSUzSmrZ40fQKTljQ9bs4+RuTfg+7lw1RMwaZiZYcOaYhyw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPF0D43D62C4.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?j3+zuiTQcz8Kd7G2nigKS9kFiCI4fNAYY7W2ZpMOL0Fmv4dwa1NLhzq57q9k?=
+ =?us-ascii?Q?JyJErdd8AL/gi2ofDi3yA4fTq5wkI75V4lvAZ2sMk4PK8oNCSqiw/RXh4mQe?=
+ =?us-ascii?Q?ilceqIeq/vjsKbCWafzKvF2EEY9htz0InDk0sxl5mw4NrJW7X9xpbSGcGByV?=
+ =?us-ascii?Q?l7+J9o87HMVXu0SGC0IZT/9a8eRAUXs9FTEik6J/23se4FOd844mSqa5CPHR?=
+ =?us-ascii?Q?5XPOk0PnxhYZfvfiMaiHO0q/NTRa3jUOXZiHFA/erRjbFpAmrx1ZLGE74eCn?=
+ =?us-ascii?Q?H97ZyL980A1bLThnm0yxf01pEYOgt2tcFOtd7Qip2vmuovKDIB5or1uaXF8r?=
+ =?us-ascii?Q?sa/4urzCg0U+3DbQeCkkHz1t+1NM/beTejDfKVJ3+W3TKa1zSLPNzskP/8MI?=
+ =?us-ascii?Q?c0KF5JNff25k2hNMWmT5az8tpnjVGcDZpNnNV8C7fawgUkIxLc4TN6Ze1Iwt?=
+ =?us-ascii?Q?qZDafr+PXwbXrwpGxZGPA6JdXe7TjKnT3stuxHADVmVxWNrbGlcWO07fWdtr?=
+ =?us-ascii?Q?Gwi8GYvsYPDLlYKSwu2RIv9YezyUM8iUN+Cp6QA8vSJLteTO9nqCTdhy/dgN?=
+ =?us-ascii?Q?aH/GfkdfIY2CGw5o6wS5zWD9aW3JTVMa5kCDoxK8n38mPeA3Dg1z3h9Rg6hO?=
+ =?us-ascii?Q?269b0vevxlaYMnd7RMYV5WZiIVLZtVvVVVUXKhL9H4bhkAkQcQK0VAa70H10?=
+ =?us-ascii?Q?EQOZ1DZkovAZUEotSaAjj2g+dvq4gG/Nubs9+bzz6M3O+sky5khws063t3Md?=
+ =?us-ascii?Q?IH31n/ikScHcrGok2GUXtqJbw7hLx+93dxidwED0PMk4kWiujfRvfuQtvNPH?=
+ =?us-ascii?Q?eCbzEH3RrkyP/WjG40SpnEiRsDrUYA9dmFN7h/eIfDFeibSsACTv8wdMDaIW?=
+ =?us-ascii?Q?JJIFR8MjhD9TSkpWt6tJ6uUYbikOVeFZq1UV5k8N9funMz4gya9vmj5fwSa1?=
+ =?us-ascii?Q?uCBuMARfGHmwKpT4RkUFBv82LrvNGZyKDSRG/W+f37H0mCKxMsNdSEaXEx8L?=
+ =?us-ascii?Q?uKmxQTY+YSzHtASmazTQu3VITQdNBbsd8iC4/5f6+TwIArnnzh3oeUThGGJY?=
+ =?us-ascii?Q?ix61ImaEc5KBnR39tEa/nkvPIk9QryBXl998sGmuw6a3VygCCLhMrKVRVyAq?=
+ =?us-ascii?Q?iXLTViwYmTfEn9BYIYmvbNmrfIAWLuU4sX3vsULHGv/ZyKg/pFtlLYHdVyiz?=
+ =?us-ascii?Q?3EPbE92XdIeGlGUBvnAg5u14V6mOUPnmeqhrMw0zR+oNYNcqQnSytfZhHey7?=
+ =?us-ascii?Q?YN0B3WhMtyClRZSVwyjCjDVRnOFj4Z+rHaU6xXLGG4Flc7Ktl9jeEzRzuYfT?=
+ =?us-ascii?Q?9j6ke5DGKs8Fb4qro9fh3odtfxYmjYIhdznoIsy7IFzphuXhmMmoNffiiAEY?=
+ =?us-ascii?Q?4SbQcTRwgJ3lfa1saOSA64bMpzZDf9lDCJ8DdYsXQQVtr1UPxCw945hXpHiV?=
+ =?us-ascii?Q?23m+TJmepP5P03/loCFwZN/Dt0D3SgE2VinoKo8/tcKjKwS4iIIo7F5WtVe+?=
+ =?us-ascii?Q?jVoLx+/xzgWVE9cMbjGYJre6XFOcuzIsalaA0ePjpZqydIRJNHgHO0RLX8dX?=
+ =?us-ascii?Q?TVhSFBOe89IuEqKGH1CWXOWZR2T5FRu3Ss2uKft6m2OFURE3oZIHHlPQmvbh?=
+ =?us-ascii?Q?Ow=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7eb8c44-bf46-41bf-bc27-08ddff7cf184
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PPF0D43D62C4.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 17:23:45.1619
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WC4Ybd8aLvj4x3eUxIMRKOGpq1HxptjMBRa0t/6jqE2gJvA/zvqQ/ZjkUQiOZNYT5VDAwvLKskQGMVisEreIGPNACOB8pmVu7RwmFFwGVT8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7671
+X-OriginatorOrg: intel.com
 
-> On Mon, Sep 29, 2025 at 02:39:26PM +0000, Farber, Eliav wrote:
-> > > On Wed, Sep 24, 2025 at 08:23:08PM +0000, Eliav Farber wrote:
-> > > > From: Linus Torvalds <torvalds@linux-foundation.org>
-> > > >
-> > > > [ Upstream commit 1a251f52cfdc417c84411a056bc142cbd77baef4 ]
-> > >
-> > > <snip>
-> > >
-> > > As this didn't go into 6.6.y yet, I'll stop here on this series for n=
-ow.
-> > > Please fix up for newer kernels first and then resend these.
-> >
-> > For 6.6.y I backported 15 commits:
-> > https://lore.kernel.org/stable/20250922103241.16213-1-farbere@amazon.co=
-m/T/#t
-> >
-> > Why weren't all of them picked?
->
-> Because one of them broke the build, as I wrote a week ago here:
->         https://lore.kernel.org/all/2025092209-owl-whisking-03e3@gregkh/
+On Mon, Sep 29, 2025 at 10:05:31AM -0500, Ira Weiny wrote:
+> Alison Schofield wrote:
+> > On Sun, Sep 28, 2025 at 09:31:10AM +0800, Jiapeng Chong wrote:
+> > > ./drivers/nvdimm/bus.c: linux/slab.h is included more than once.
+> > 
+> > Hi Jiapeng,
+> > 
+> > It would have been useful here to note where else slab.h was included,
+> > since it wasn't simply a duplicate #include in bus.c.
+> 
+> Actually Alison this is a bug against linux-next where it was an issue
+> with Dave's patch here:
+> 
+> https://lore.kernel.org/all/20250923174013.3319780-3-dave.jiang@intel.com/
 
-Fixed:
-https://lore.kernel.org/stable/20250929171733.20671-1-farbere@amazon.com/T/=
-#t
+Ah, I see this removes the dup that the above patch added.
 
----
-Thanks, Eliav
+Why not remove fs.h instead of slab.h and get a clean up and de-dup
+in one shot?
+
+> 
+> I'll queue this up.
+> 
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> Thanks,
+> Ira
+> 
+> > 
+> > I found slab.h is also in #include <linux/fs.h>. Then I found that this
+> > compiles if I remove both of those includes. It would be worthwhile to
+> > check all the includes and send a new tested version of this patch that
+> > does this "Remove needless #include's in bus.c"
+> > 
+> > BTW - I didn't check all #includes.There may be more beyond slab.h & fs.h.
+> > 
+> > --Alison
+> > 
+> > > 
+> > > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> > > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=25516
+> > > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> > > ---
+> > >  drivers/nvdimm/bus.c | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+> > > index ad3a0493f474..87178a53ff9c 100644
+> > > --- a/drivers/nvdimm/bus.c
+> > > +++ b/drivers/nvdimm/bus.c
+> > > @@ -13,7 +13,6 @@
+> > >  #include <linux/async.h>
+> > >  #include <linux/ndctl.h>
+> > >  #include <linux/sched.h>
+> > > -#include <linux/slab.h>
+> > >  #include <linux/cpu.h>
+> > >  #include <linux/fs.h>
+> > >  #include <linux/io.h>
+> > > -- 
+> > > 2.43.5
+> > > 
+> > > 
+> 
+> 
 
