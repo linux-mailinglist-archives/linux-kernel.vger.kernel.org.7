@@ -1,323 +1,189 @@
-Return-Path: <linux-kernel+bounces-836307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9282EBA942D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E00FEBA9442
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428953C56FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:00:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B11F3C4AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDF7306B13;
-	Mon, 29 Sep 2025 13:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55643305E1E;
+	Mon, 29 Sep 2025 13:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jz8wwdhF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dEDcMOwV"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010037.outbound.protection.outlook.com [52.101.85.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2B130649E;
-	Mon, 29 Sep 2025 13:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759150807; cv=none; b=X6Pdu/5DpZlbH5gzU1y2QEE91I5CRfQ4RGwanZCgDKV14Fim/DMJiIt971nywxSB6H9GGGv5S2lIjXT50NDd49iN+C+GiJFs81yYWqsDt9+IlWTJ8gJ0pOHvWlVFVUyU4SLSnnVt7+dPJ3bhE4nX8G96XM1dekGQJdZ0aum2xOI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759150807; c=relaxed/simple;
-	bh=v14ZqLeXTqvnBbKfvaWvZF9NSLmuvJRKsZQBeOmW5Wk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGgQ1MYFxG5xZdLiysO3FSNbRKWg1jpS1teoeFloWag6shPrhrdWPWZ6QUF26bBNCGmPGFlrqmCVuj2oyS5eLsriOfmUr/ju9usKwla70O47flqdMlck8lZnEHrEV+PrXvO9tk1l8nQqdoPmqXNLZIcK+QNM6D3NArzkccDQEEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jz8wwdhF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3639AC4CEF4;
-	Mon, 29 Sep 2025 13:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759150806;
-	bh=v14ZqLeXTqvnBbKfvaWvZF9NSLmuvJRKsZQBeOmW5Wk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jz8wwdhF/Yk6MGtZ5Kdn5W8KFDTZFtIhNpHLM8je6/OG7jVFn/717TBkjRnVxmSPy
-	 VI1Dku+c1ztJrRasrV2hmU/nNli7IsX8XRIGI5PCB9xbYnmwPj4pjsb4xFcXXvCftj
-	 IGkGfw9u6XLg7PdBvq/L4qevkPuOrYAAbXa0HjFMi/gj/RUXV860hs6msyfOP2l43H
-	 3kPkDzyiPpaIwploKLOSx8yoBoCD4+9f+UNSRUcMaLxTKBhC7hKg4vrrlS/TvSomde
-	 e7XsEjO2ZImnkX2A/V6Ub3iFY0snOBM3YLzqDbLzkbboJAY2kJkoai/xENtnwBglub
-	 +WuX5P/Ynzd+w==
-Date: Mon, 29 Sep 2025 15:00:04 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Daniel Stone <daniel@fooishbar.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
- driver capabilities
-Message-ID: <20250929-gregarious-worm-of-memory-c5354d@houat>
-References: <CAPj87rNDtfEYV88Ue0bFXJwQop-zy++Ty7uQ9XfrQ2TbAijeRg@mail.gmail.com>
- <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
- <20250901-voracious-classy-hedgehog-ee28ef@houat>
- <voknqdv3zte2jzue5yxmysdiixxkogvpblvrccp5gu55x5ycca@srrcscly4ch4>
- <st6wob5hden6ypxt2emzokfhl3ezpbuypv2kdtf5zdrdhlyjfw@l2neflb4uupo>
- <pe6g2fanw65p67kfy5blbtiytngxmr6nkbazymojs4a66yvpl3@7j4ccnsvc6az>
- <20250910-didactic-honored-chachalaca-f233b2@houat>
- <x562ueky2z5deqqmhl222moyrbylfwi35u4hb34dpl3z52ra4c@dyw4iayrewnz>
- <20250925-fervent-merry-beagle-2baba3@penduick>
- <qx5ashx62pufott6hnsfna3qntnoyvxwxze4rihhuxcsdxi37s@bbdvc3sfsgne>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6F12FF660;
+	Mon, 29 Sep 2025 13:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759150947; cv=fail; b=jVuFQ2EVMutiZnd8qRk/d0L0c4sU/il3ppkeNybh6cIAF4qWC/J63iHJYwjOLfMCvxP8IMhcFS3mG670pglPziEgNHOkNO6PPR2rw7E2QOLNIhRUsRFh4WkFUZqH7PnXugcBf+3KuAM9+tUFBv1771DDZn3xGKxej7adYmZjdYI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759150947; c=relaxed/simple;
+	bh=3qG0n/Gp6HZTsRXptEqtUR4xwhaFlngi0LGNKk6z0Sg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=X8uANJP/D8U6foeE0NC1EAYf4aIGS3GbN3XrT0EFATkWxR5ulGD7HlY0ckxX6xlePh10wzw4ZAppWjzvEQ4af2Ir3PwFzBTRLYVD10F+Ta4OZfIY4eHO+EeB5IvwoXqXiYy+SigEnJk1W9JwmtO/UgbNWe+BAaHoZKfWjJR83+k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dEDcMOwV; arc=fail smtp.client-ip=52.101.85.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Iwdjv/s9LemI94C7RY5Mt8f95hZ1Q94bIt+EqhXl2CZ5axussoaO0M59NLaB07VL7aBDMi81Y3FU2qq5Vu6Uy20BK34EXUseIeRdMDIfBeLrwWmZPU52vNVWHW4v1c30PPVJ8Ao6JDvmVPhczKog4MWzH+vk4YLV3yVhq/vsQI3szbUL/mW0sRMnptReKj5+gdegLlCpHPXSOijzwZoxwos4jiLln5WD0OeRH7IQyAn3kJpaArLZ+uHxLpRERXE5xVi40IUS0cSjUbpLGZniPuSCgmP3OQbidUn09g3ZeOliTCyBWv7425W3TpKjxJmZVoAj8tefHHmvjs1jr8tbTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aXovXJ4yHi1y2HxqGD3Uf6qWlWHFvrFoEqfCVF0MMz4=;
+ b=MUdME8yvDouFz/mIRg1a1v3yt4thq9xEzDDc1ERzCFjCdXgq3iCgH0ytMp3s7UZ9yvkkozZxpUIa9MYXku39F3ysFPbxMu0fwfOoHMZzHd//A8/+jp719pBVtt9RUi+5Dq7p02BM0BcaIUxLiPe5OqC2dnh63hTW7rxLluMng1ndatfIfFREsAd5MFYWjPTPLP88oCNwNLjI4yq1s3SkVU2CriEZejypj4Hn4ziwmUVJzztlYACrrLL5YSH0IEJC79UczIQ7zhee7Kjd82feHFmjdBKuGO/SHulFXm+ZjzVJbSEqFpCSSP3T9tmMOholPhXKHE/yIeME1MODiah8qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aXovXJ4yHi1y2HxqGD3Uf6qWlWHFvrFoEqfCVF0MMz4=;
+ b=dEDcMOwVx38xzI1VbPzVLeMb11aIaCO1uW/JlA6wUgAuIHl49vH7kF1cWcaoqLdXd3gYK6ZRF0NXZCHfQRYQAluslGOF+TutUTG08x44F1EQgTvAQEgD02h+9rWssqrxxKHgZ54uoCJ7O9/15j6PA+OAl/xnAlS4MAGChbH0j3TumYWsOqM0T8/nYRcZMctv5Oo4E4ADXIOrmp+BlVzUKg1crFl6Vs4RtdS1bhzCcik8J+iexNokQFOVpY47zKhdFGTrNowd/U/k+Dr63rRC6OBRuG1NK1Pk6taOQfqM9tS2h0JNA6E3Um3l5kjW/MpgUQXNTY7Tbx5wnSJQCMieoQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by DS0PR12MB9323.namprd12.prod.outlook.com (2603:10b6:8:1b3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 13:02:16 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.014; Mon, 29 Sep 2025
+ 13:02:16 +0000
+Date: Mon, 29 Sep 2025 10:02:14 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Hans Verkuil <hverkuil+cisco@kernel.org>
+Cc: iommu@lists.linux.dev, Linux Kernel <linux-kernel@vger.kernel.org>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] iommu: __iommu_attach_group: check for non-NULL
+ blocking_domain
+Message-ID: <20250929130214.GK2617119@nvidia.com>
+References: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
+ <20250929120734.GG2617119@nvidia.com>
+ <58aabb55-0030-49df-81ed-d4a68174b57e@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58aabb55-0030-49df-81ed-d4a68174b57e@kernel.org>
+X-ClientProxiedBy: YT4PR01CA0211.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:ad::14) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="5omahayljejanoli"
-Content-Disposition: inline
-In-Reply-To: <qx5ashx62pufott6hnsfna3qntnoyvxwxze4rihhuxcsdxi37s@bbdvc3sfsgne>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|DS0PR12MB9323:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9887aa36-76b8-48ee-f45f-08ddff586a3a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D6o9rJvFbPRTWGuCkW29yCp6EmUIRtVdVqGFTqr18SnMnq8s63H481Cqx7iY?=
+ =?us-ascii?Q?gjXwY3i/9aCm6ECC8CZ9i+UFO+dMbDqJNxtSGgNw1nJRAZnSTR8t9OnaoB7o?=
+ =?us-ascii?Q?V+iNyb/2EuUc0DW0I66DJS6i5J98bQAOcN7wIfEJyQ2rrBpL8QLyScw9wuWe?=
+ =?us-ascii?Q?zEHrbSnZhuvAGsDwyn8ybPp+vw9wtj6du9yNgQBfq6YMOlSiwt3WUwf3Sbcw?=
+ =?us-ascii?Q?q8I1Jqco8sVMj7Qm+MihDSGknjqa4j512FFyS0hKFZaeblOJqzcN2L/rGZdj?=
+ =?us-ascii?Q?Sl87uj73w79Ohv6jRc9gSA5qKSt8Sa4DbGDESpL7ZOY6nFbmAgqRztjWGpw0?=
+ =?us-ascii?Q?D2bi2RG5BqvHBTck4WbZ9Y2OnTG4SW1TJDMfVqAFyju+DC96xwJtzyajnrMn?=
+ =?us-ascii?Q?vHxuic9f+AxHvYA/veskAa0K7w7YIDus+liNGV5JRgYdDbAlz7vMW+00aLvT?=
+ =?us-ascii?Q?ItIXmWUWhfl8S5v1gIOAVQBZglJDHUE38VcKlH00oaHPdkpgJuTUKFWe7jn1?=
+ =?us-ascii?Q?L0Cq+ep0wY8MwICCNgYGpA3j4tCwjsoIqT4cfNalPE8IXc9S2bZKq5FZ/Npl?=
+ =?us-ascii?Q?IHVpT6rIe5FpSzQGzk2ZG4c+zjIsj7xsmOnThbUNlsyFYh+KrZzaVpaqy5iv?=
+ =?us-ascii?Q?LIPfVZrmc/gq4t2v9bGF4OUSxZwsUD9YqGi4L8KAnpGb2EZuJY31n8ogf3si?=
+ =?us-ascii?Q?aXs4Bvew6vlmmtpeqipsXy0BVwO/fKTvCEEG2lTOMYBNaucHFef5kHQTC/h/?=
+ =?us-ascii?Q?XnEPjXIWAQeW7MYlbeQZfjs4v3M8ZRdDL7XV1EYRAahvevxfOfwh3t5eo0Ow?=
+ =?us-ascii?Q?U6A5upQxJJLSgibuoRF8JTZ3GN9ui8m5WdgpYa9xjOeo/CgrDotWv1gg2ZeN?=
+ =?us-ascii?Q?Alx8eNEKh5242dTbsyh8WIsDfqxsim8/RKiFN5JDejsMSisOb84o/h2TRbNe?=
+ =?us-ascii?Q?Sd6ue0lzm06BoW/KUOPm/97IsTud3klKzvpUyLjE1+Oz6jAjZxrn43Dr2BIy?=
+ =?us-ascii?Q?Zf2qF1EqY4jxmEPdPzG6MJ8ik0o04pILUa1WUejcAB1SH0Jbs5hba6UcaY91?=
+ =?us-ascii?Q?ja8vuCHClbZiw/o9r0SKBLhFYUwNRsvQ7DXTh/4sa3+GNtetAvEvVIr94GGo?=
+ =?us-ascii?Q?ruTfJnBHtpqDqSf+FZuGTcEhka6eiHtsJBTOQb2vurawySwkRSWxlSc44DBY?=
+ =?us-ascii?Q?WGoCTqXbjxvw1o39SGJkUc+vkh9ssaE6UiUaclMsSOWPSqWIP2GGPaXX8wY2?=
+ =?us-ascii?Q?MbkBPs9L+W4fvcMk18KlL1P/pI4FjGd9FN6DoRraS1FM1qAe70sWQl8VWN1L?=
+ =?us-ascii?Q?UJfHC8qm94W+yXbMZ/K/+beAHRXaVPTNtZ3WwpA3z79E/ir0sAzKCFwJvQFA?=
+ =?us-ascii?Q?ooS6BoG8z/SRxPC+PF/hK8e0PBOZsbQSZz4rv7JdspomaMh92sc/AkHgJzBx?=
+ =?us-ascii?Q?54HeDpR+H1IcIHCGJDGF74Wqrp0X16lK?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LNyja5cIImYY5wLvMXYqWJw34U+/zE4vLKtQKPyRHjvLr+XZgrhhatSB+Y2U?=
+ =?us-ascii?Q?iWFVbvVQI3FZ9d6gxXeDCh1Yt++5DsgKBNUV7cd3SUA7R1KSb05ejBubZ7X1?=
+ =?us-ascii?Q?Ddq2ypGhzc8DxfCPVHk2Ua2FaV7A+opbgV1LROJ2UKhmWNqGDitoOj3o3cmB?=
+ =?us-ascii?Q?4g26qeDEi44+4x1f8XZG1c5k1rY/g4EhjAGlBYa4e8vv/wedpe1II+S8mzxN?=
+ =?us-ascii?Q?MrF+ctwW+gB5NU3Oq/FjH7lj3n/gb+dLXgkBmy4mh0qOp0TuYc8oczgp4Ho6?=
+ =?us-ascii?Q?Dq7Ej5uVMXh1NYxyN65/duzT15fwIMarJmkcMDcbo/Ew02KdBw3a4DAcxnxH?=
+ =?us-ascii?Q?relJVxqaKt9tagexRz9lN2hSCRHEfx8hfcJv2TEhEuxzPkdOSfAz9NkU3VXz?=
+ =?us-ascii?Q?VJJsBXW+hSiACJvDMXu/mETm3L9FSyMOzQlxa9y4DV/pBl/z42g7Wt3U3QXB?=
+ =?us-ascii?Q?4dVPHuOlIK96PmGjukclCCbPlsrFOSR67Q0kBK9a3DeSHb7PtEtBRbbZVwgO?=
+ =?us-ascii?Q?QE9HzA5xnxCkfKqCD2WJFBDWeQPCHN0EN/4M89tzhWQNrMdKSMEOCGwrUfye?=
+ =?us-ascii?Q?wI5GpNVFsKYeTwa8aaV0J5GQcRmQEtryTIdTWRZxx2TaCe8iFi3kiZDrYgSn?=
+ =?us-ascii?Q?uzCnEXWd064ZHYMNsoPu2ZHolNLaDA+i/siBWOYcdC5dE15WJyGNaoVkv9ob?=
+ =?us-ascii?Q?GQ596a72d28TvcD5jcsC0OWo3FBnAJ3XtCEM660KTBCQZwO7bdy5SgF8eLSr?=
+ =?us-ascii?Q?pnUv9FXRotZQg/jz+40ULjDzoPPgvzVilA5/bPttLLfgtDvgjpKxtb85KT3k?=
+ =?us-ascii?Q?VVPfpIy2VNDDBRml0wZmXn8fIi4Q4j66XuxemUv2ra7YdoX5p8Fuwt/5t/NP?=
+ =?us-ascii?Q?rw0QV1WFrh1AnOD/SZF8RpVfeCGztFUd/IZ1zYRqay0dTG/x/ZSI5s57ked1?=
+ =?us-ascii?Q?QWzx7x2CI1NSQQbBA/lo5A5EriSj6sNYXekr8xJlhNkTwEf5E0isvyago6zb?=
+ =?us-ascii?Q?Vrg7oTx0y9J4QuF2RttivJtesHNzCcBI7fNDSNv8QihGkxTSop+JmCES9Iti?=
+ =?us-ascii?Q?VFvaO5eYaj2voxM5+BBlG3WmmYu48cATj3UAHwLhT7m6Nm8XZx6suJgD0IGQ?=
+ =?us-ascii?Q?TBNLgKZdN9ZTzOrxdA51Z4kicHDMjJ+ZH9YhlTVi9boHO5Hqp2ZHj1wZ8YP6?=
+ =?us-ascii?Q?pxh04DYyNCW9WrixtP4IjFfDkXE5/xrq1mgSleg61f7cfDgkjWM1X7hXaA+W?=
+ =?us-ascii?Q?s+fb2HwwC38/uCSkjcJOXjV0hktlIZ19joil93cita5p+wcTMOilKkkWQ//Y?=
+ =?us-ascii?Q?1JKPreqPDzwQ2Kd8tL/eclXXBzAMGY4pqnf0gKCeATCkORXd6Fkuh7xg2Jtj?=
+ =?us-ascii?Q?3x8NR55QY2V4d6Vk27znJOM0/atk2J2MxKRhN7hBnGF8RDXatYVezWk2Pd12?=
+ =?us-ascii?Q?p0ioxNHbPdKqFnUHSdpaAGEZSYthivxiz0Lkkrtwyy+wUZAqZc9rSaAUXPfk?=
+ =?us-ascii?Q?uwDQ9F8fL6FnTeZWaU9XGoD91+nWluLq8xoLuNkymPxKn+tT5NkYil1toiyG?=
+ =?us-ascii?Q?QjbGVZOsasW+jIBB/SY=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9887aa36-76b8-48ee-f45f-08ddff586a3a
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 13:02:16.2343
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J3OqciB+8+GAcXVJeRetBP/yTzEJnIArhy5p4dpwkbDpBVoExkbZ1lUM5g3MrRbu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9323
 
+On Mon, Sep 29, 2025 at 02:18:50PM +0200, Hans Verkuil wrote:
+> On 29/09/2025 14:07, Jason Gunthorpe wrote:
+> > On Mon, Sep 29, 2025 at 10:23:47AM +0200, Hans Verkuil wrote:
+> > 
+> >> Since I am unfamiliar with the iommu core code, I am uncertain whether I am
+> >> just papering over a bug elsewhere, or whether this is really the correct solution.
+> > 
+> > It is papering over something, group->domain is not supposed to be
+> > NULL at this point.. That probably means the iommu driver has not been
+> 
+> It's group->blocking_domain that's NULL, not group->domain.
 
---5omahayljejanoli
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
- driver capabilities
-MIME-Version: 1.0
+Er, I thought you were hitting a false positive on this:
 
-On Thu, Sep 25, 2025 at 05:16:07PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Sep 25, 2025 at 03:13:47PM +0200, Maxime Ripard wrote:
-> > On Wed, Sep 10, 2025 at 06:26:56PM +0300, Dmitry Baryshkov wrote:
-> > > On Wed, Sep 10, 2025 at 09:30:19AM +0200, Maxime Ripard wrote:
-> > > > On Wed, Sep 03, 2025 at 03:03:43AM +0300, Dmitry Baryshkov wrote:
-> > > > > On Tue, Sep 02, 2025 at 08:06:54PM +0200, Maxime Ripard wrote:
-> > > > > > On Tue, Sep 02, 2025 at 06:45:44AM +0300, Dmitry Baryshkov wrot=
-e:
-> > > > > > > On Mon, Sep 01, 2025 at 09:07:02AM +0200, Maxime Ripard wrote:
-> > > > > > > > On Sun, Aug 31, 2025 at 01:29:13AM +0300, Dmitry Baryshkov =
-wrote:
-> > > > > > > > > On Sat, Aug 30, 2025 at 09:30:01AM +0200, Daniel Stone wr=
-ote:
-> > > > > > > > > > Hi Dmitry,
-> > > > > > > > > >=20
-> > > > > > > > > > On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
-> > > > > > > > > > <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> > > > > > > > > > > It's not uncommon for the particular device to suppor=
-t only a subset of
-> > > > > > > > > > > HDMI InfoFrames. It's not a big problem for the kerne=
-l, since we adopted
-> > > > > > > > > > > a model of ignoring the unsupported Infoframes, but i=
-t's a bigger
-> > > > > > > > > > > problem for the userspace: we end up having files in =
-debugfs which do
-> > > > > > > > > > > mot match what is being sent on the wire.
-> > > > > > > > > > >
-> > > > > > > > > > > Sort that out, making sure that all interfaces are co=
-nsistent.
-> > > > > > > > > >=20
-> > > > > > > > > > Thanks for the series, it's a really good cleanup.
-> > > > > > > > > >=20
-> > > > > > > > > > I know that dw-hdmi-qp can support _any_ infoframe, by =
-manually
-> > > > > > > > > > packing it into the two GHDMI banks. So the supported s=
-et there is
-> > > > > > > > > > 'all of the currently well-known ones, plus any two oth=
-ers, but only
-> > > > > > > > > > two and not more'. I wonder if that has any effect on t=
-he interface
-> > > > > > > > > > you were thinking about for userspace?
-> > > > > > > > >=20
-> > > > > > > > > I was mostly concerned with the existing debugfs interfac=
-e (as it is
-> > > > > > > > > also used e.g. for edid-decode, etc).
-> > > > > > > > >=20
-> > > > > > > > > It seems "everything + 2 spare" is more or less common (A=
-DV7511, MSM
-> > > > > > > > > HDMI also have those. I don't have at hand the proper dat=
-asheet for
-> > > > > > > > > LT9611 (non-UXC one), but I think its InfoFrames are also=
- more or less
-> > > > > > > > > generic).  Maybe we should change debugfs integration to =
-register the
-> > > > > > > > > file when the frame is being enabled and removing it when=
- it gets unset.
-> > > > > > > >=20
-> > > > > > > > But, like, for what benefit?
-> > > > > > > >=20
-> > > > > > > > It's a debugfs interface for userspace to consume. The curr=
-ent setup
-> > > > > > > > works fine with edid-decode already. Why should we complica=
-te the design
-> > > > > > > > that much and create fun races like "I'm running edid-decod=
-e in parallel
-> > > > > > > > to a modeset that would remove the file I just opened, what=
- is the file
-> > > > > > > > now?".
-> > > > > > >=20
-> > > > > > > Aren't we trading that with the 'I'm running edid-decode in p=
-aralle with
-> > > > > > > to a modeset and the file suddenly becomes empty'?
-> > > > > >=20
-> > > > > > In that case, you know what the file is going to be: empty. And=
- you went
-> > > > > > from a racy, straightforward, design to a racy, complicated, de=
-sign.
-> > > > > >=20
-> > > > > > It was my question before, but I still don't really see what be=
-nefits it
-> > > > > > would have, and why we need to care about it in the core, when =
-it could
-> > > > > > be dealt with in the drivers just fine on a case by case basis.
-> > > > >=20
-> > > > > Actually it can not: debugfs files are registered from the core, =
-not
-> > > > > from the drivers. That's why I needed all the supported_infoframes
-> > > > > (which later became software_infoframes).
-> > > >=20
-> > > > That's one thing we can change then.
-> > > >=20
-> > > > > Anyway, I'm fine with having empty files there.
-> > > > >=20
-> > > > > > > > > Then in the long run we can add 'slots' and allocate some=
- of the frames
-> > > > > > > > > to the slots. E.g. ADV7511 would get 'software AVI', 'sof=
-tware SPD',
-> > > > > > > > > 'auto AUDIO' + 2 generic slots (and MPEG InfoFrame which =
-can probably be
-> > > > > > > > > salvaged as another generic one)). MSM HDMI would get 'so=
-ftware AVI',
-> > > > > > > > > 'software AUDIO' + 2 generic slots (+MPEG + obsucre HDMI =
-which I don't
-> > > > > > > > > want to use). Then the framework might be able to priorit=
-ize whether to
-> > > > > > > > > use generic slots for important data (as DRM HDR, HDMI) o=
-r less important
-> > > > > > > > > (SPD).
-> > > > > > > >=20
-> > > > > > > > Why is it something for the framework to deal with? If you =
-want to have
-> > > > > > > > extra infoframes in there, just go ahead and create additio=
-nal debugfs
-> > > > > > > > files in your driver.
-> > > > > > > >=20
-> > > > > > > > If you want to have the slot mechanism, check in your atomi=
-c_check that
-> > > > > > > > only $NUM_SLOT at most infoframes are set.
-> > > > > > >=20
-> > > > > > > The driver can only decide that 'we have VSI, SPD and DRM Inf=
-oFrames
-> > > > > > > which is -ETOOMUCH for 2 generic slots'. The framework should=
- be able to
-> > > > > > > decide 'the device has 2 generic slots, we have HDR data, use=
- VSI and
-> > > > > > > DRM InfoFrames and disable SPD for now'.
-> > > > > >=20
-> > > > > > I mean... the spec does? The spec says when a particular feature
-> > > > > > requires to send a particular infoframe. If your device cannot =
-support
-> > > > > > to have more than two "features" enabled at the same time, so b=
-e it. It
-> > > > > > something that should be checked in that driver atomic_check.
-> > > > >=20
-> > > > > Sounds good to me. Let's have those checks in the drivers until we
-> > > > > actually have seveal drivers performing generic frame allocation.
-> > > > >=20
-> > > > > > Or just don't register the SPD debugfs file, ignore it, put a c=
-omment
-> > > > > > there, and we're done too.
-> > > > >=20
-> > > > > It's generic code.
-> > > > >=20
-> > > > > > > But... We are not there yet and I don't have clear usecase (w=
-e support
-> > > > > > > HDR neither on ADV7511 nor on MSM HDMI, after carefully readi=
-ng the
-> > > > > > > guide I realised that ADV7511 has normal audio infoframes). M=
-aybe I
-> > > > > > > should drop all the 'auto' features, simplifying this series =
-and land
-> > > > > > > [1] for LT9611UXC as I wanted origianlly.
-> > > > > > >=20
-> > > > > > > [1] https://lore.kernel.org/dri-devel/20250803-lt9611uxc-hdmi=
--v1-2-cb9ce1793acf@oss.qualcomm.com/
-> > > > > >=20
-> > > > > > Looking back at that series, I think it still has value to rely=
- on the
-> > > > > > HDMI infrastructure at the very least for the atomic_check sani=
-tization.
-> > > > > >=20
-> > > > > > But since you wouldn't use the generated infoframes, just skip =
-the
-> > > > > > debugfs files registration. You're not lying to userspace anymo=
-re, and
-> > > > > > you get the benefits of the HDMI framework.
-> > > > >=20
-> > > > > We create all infoframe files for all HDMI connectors.
-> > > >=20
-> > > > Then we can provide a debugfs_init helper to register all of them, =
-or
-> > > > only some of them, and let the drivers figure it out.
-> > > >=20
-> > > > Worst case scenario, debugfs files will not get created, which is a=
- much
-> > > > better outcome than having to put boilerplate in every driver that =
-will
-> > > > get inconsistent over time.
-> > >=20
-> > > debugfs_init() for each infoframe or taking some kind of bitmask?
-> >=20
-> > I meant turning hdmi_debugfs_add and create_hdmi_*_infoframe_file into
-> > public helpers. That way, drivers that don't care can use the (renamed)
-> > hdmi_debugfs_add, and drivers with different constraints can register
-> > the relevant infoframes directly.
->=20
-> Doesn't that mean more boilerplate?
+  group->domain != group->blocking_domain
 
-I don't think it would? In the general case, it wouldn't change
-anything, and in special cases, then it's probably going to be different
-=66rom one driver to the next so there's not much we can do.
+ie NULL != NULL
 
-> In the end, LT9611UXC is a special case, for which I'm totally fine
-> not to use HDMI helpers at this point: we don't control infoframes
-> (hopefully that can change), we don't care about the TMDS clock, no
-> CEC, etc.
+But I suppose the whole expression is checking for group->domain
+already.
 
-Not using the helpers sound pretty reasonable here too.
+All your patch does is entirely disable the safetly logic :\
 
-> For all other usecases I'm fine with having atomic_check() unset all
-> unsupported infoframes and having empty files in debugfs. Then we can
-> evolve over the time, once we see a pattern. We had several drivers
-> which had very limited infoframes support, but I think this now gets
-> sorted over the time.
+What is isp_attach_iommu() trying to accomplish? It does
+arm_iommu_detach_device() and then arm_iommu_attach_device() ?
 
-I never talked about atomic_check()? You were initially concerned that
-the framework would expose data in debugfs that it's not using. Not
-registering anything in debugfs solves that, but I'm not sure we need to
-special case atomic_check.
+Why?
 
-Worst case scenario, we're going to generate infoframes the driver will
-ignore.
+Is this trying to force a non-identity translation for ISP?
 
-Maxime
-
---5omahayljejanoli
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNqC0wAKCRAnX84Zoj2+
-diX/AYD7tGMpz//OLeUzSg3QYHAZkitZyXT00YfJmgxYpCUMSnb6h8ucgQ8Om8Vk
-gbiiQX0Bf2U6KVN7HpvEuga5AMtIOqqgCE/fQHox7oXRJiC3nuzlZW5e70PMzD7l
-uQgN/qqEkQ==
-=aZZH
------END PGP SIGNATURE-----
-
---5omahayljejanoli--
+Jason
 
