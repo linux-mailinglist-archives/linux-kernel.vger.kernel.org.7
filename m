@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-836300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845DABA93E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:53:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A12EBA93EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63AD189F2AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:54:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D24171731
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CC53054F7;
-	Mon, 29 Sep 2025 12:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E27F30595C;
+	Mon, 29 Sep 2025 12:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="K9Dvhsws"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjFJCBU/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8132EC0B3;
-	Mon, 29 Sep 2025 12:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759150430; cv=pass; b=ETUFeOrOM30Wdtej1bSIBsS2oadjm5yk6NdEoAkLbM1gnfT4fahGPNBqLV9ttSrsEyJCBNNScDmrsOhorNU6VTC65Jd5Zu7Y31HJG6ttDrCpTOISubv4ouRNKaT50WcvzyyxSLI7dz3kMkm//4V3cSXhPK9w2dUsPzyiuNT14Q0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759150430; c=relaxed/simple;
-	bh=eBKxTtwMbWWsVmRTK8+SCP8Efd4jfs62T+R7mc64XII=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Vqq7YbaUxx3bFOlEJHVYQQxcJX0KgGUZoWwrOeZHpDX6r9nL+OCGrR7u8NdMvE1MB6pyQBHV5QwTwzEAlBwzuN9s8q47AsxHcbLnROTz9D83+Ma/5GwWg5ne40Oon4caVgfCIuUxk1k7DwIuSzlV03VxB7YYzqd1V+J+vzDPBso=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=K9Dvhsws; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1759150406; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XKs8IiVjPegrhhG0vEVkbIx0k3SKSv7NZ+RDhF5T9hPHatVs9ElF10F6rEF/za72TRkviTJhboelBur8bj9usRMhZoy9WyVb+MwnxIDlEG/1JdCUUmQ0KYKSlhQyUKJheNyXNTPYWDx+wHCKjLhQDYswRe3F2+EcXjT84NUJLLw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759150406; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=uOmVlFLdpvtEjwlJedRpqA8qvL1y14ne4vIVGveE6s4=; 
-	b=PXRh6+UX8zFMydyoVAaYS7Lzeots4HyiWi5Se7K7Wg2S86j3fJUM8ekQOyoEUg5S3U2qAq2uPtYSOGb3VF8yIoxxpvOqJXyL+HUb4UM/qNbr7K0suCMIReDmmOximXiLkim45+RBMtlHcnovCuccCbPURUTlr+gd4f9Da41AN+c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759150406;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=uOmVlFLdpvtEjwlJedRpqA8qvL1y14ne4vIVGveE6s4=;
-	b=K9Dvhswss/WDdeSocR3mM4hJ6dOPmMkp4JArX2Gj5I5zRvVqlm1hbqKCNFFYD4vC
-	gmpVbgwTtREtNzUU7A+ki27uZmBXeJFIxJytvWy7Q3HyHJXLlXlt+1L7gKPGhBx/uRn
-	Jf2ND4WG8qP1SBPO23NilVIQlqkUsg0ndieGAXNM=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1759150403924705.9548897883606; Mon, 29 Sep 2025 05:53:23 -0700 (PDT)
-Date: Mon, 29 Sep 2025 20:53:23 +0800
-From: Li Chen <me@linux.beauty>
-To: "Markus Elfring" <Markus.Elfring@web.de>
-Cc: "Li Chen" <chenl311@chinatelecom.cn>,
-	"linux-block" <linux-block@vger.kernel.org>,
-	"Jens Axboe" <axboe@kernel.dk>,
-	"LKML" <linux-kernel@vger.kernel.org>,
-	"Yang Erkun" <yangerkun@huawei.com>
-Message-ID: <1999588f143.5af31c76548207.2814872385181806897@linux.beauty>
-In-Reply-To: <9f6acb84-02cb-4f76-bf37-e79b87157f1e@web.de>
-References: <20250926121231.32549-1-me@linux.beauty> <9f6acb84-02cb-4f76-bf37-e79b87157f1e@web.de>
-Subject: Re: [PATCH] loop: fix backing file reference leak on validation
- error
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18E42FAC12;
+	Mon, 29 Sep 2025 12:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759150474; cv=none; b=HaMX7h6DJ+1jNviMoeKyUyryt1cRAiM1ijZKFmotXm22ggfbeg4Sr3gNdQ9huipoRyK0SNjZSrJIdS0wcBtmLzIQApR6N/1cZrKLeGudQVu1v6pZw2+1JjfGFs02fVfQl9JuA8F5EQnFN5HVzjN1apGfwWka2nGuygFR775nlZg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759150474; c=relaxed/simple;
+	bh=P/BYUfk/mkzHib6TOHlBmvk32uOprykrIp5dMYZHmwc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=C9iTTU/MtytK3uj43wUMXe3xoyvh63+JkU/J9NpbxHlA/UL157inhihkGJoX6aiHrk1EpcR/5At4GYtAOqW369cos9ei5WutKJmV5EEzaibrf38Wc+nqISeX6CbsnR22dTfwFXH8lY+UCIIUojfeS60D7sSmeiVFYff4Ahfa/Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjFJCBU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C8BFC4CEF4;
+	Mon, 29 Sep 2025 12:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759150474;
+	bh=P/BYUfk/mkzHib6TOHlBmvk32uOprykrIp5dMYZHmwc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=rjFJCBU/Hz0ffTlTH+O4WgtWOn2phyXD9UHUaxOepC3ZxWMOgu5fPYJhKMHBfU8fl
+	 OMnmxdK7d1npNHMOth1kdw9ZIn5QwpwJGxGlpLKWYk/sV8KS/IsLfSIvcnkU36J7Nh
+	 CzyBYwGJpbRS+kgOcOVO1gDMc+sG/8yoHz2cwpybHe7E/KowWHSCzmEQHy3z1cPz1D
+	 8a5tezd3JiTs0Rim9CYT5azieX6XBSUMk6JzGkuF+2SHMGPQ+h30Y5F8uMwqQRh1Kl
+	 g2Ah/YioPPMnTzb6zGzke2xm0r6EPo+fvANlshwsKbnUG4UhBD/udVtvtmQCo8dhCb
+	 uYGht/F5lj3oQ==
+Date: Mon, 29 Sep 2025 07:54:33 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-mediatek@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-pci@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Jianjun Wang <jianjun.wang@mediatek.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Ryder Lee <ryder.lee@mediatek.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20250929113806.2484-4-ansuelsmth@gmail.com>
+References: <20250929113806.2484-1-ansuelsmth@gmail.com>
+ <20250929113806.2484-4-ansuelsmth@gmail.com>
+Message-Id: <175915047324.3882585.17769722251535304485.robh@kernel.org>
+Subject: Re: [PATCH v4 3/5] dt-bindings: PCI: mediatek: Add support for
+ Airoha AN7583
 
-Hi Markus,
 
- ---- On Sun, 28 Sep 2025 21:48:23 +0800  Markus Elfring <Markus.Elfring@we=
-b.de> wrote ---=20
- > =E2=80=A6
- > > Fix this by calling fput(file) before returning the error.
- > =E2=80=A6
- > > +++ b/drivers/block/loop.c
- > =E2=80=A6
- >=20
- > How do you think about to increase the application of scope-based resour=
-ce management?
- > https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/file.h#L=
-97
+On Mon, 29 Sep 2025 13:38:02 +0200, Christian Marangi wrote:
+> Introduce Airoha AN7583 SoC compatible in mediatek PCIe controller
+> binding.
+> 
+> Similar to GEN3, the Airoha AN7583 GEN2 PCIe controller require the
+> PBUS csr property to permit the correct functionality of the PCIe
+> controller.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/pci/mediatek-pcie.yaml           | 110 ++++++++++++++++++
+>  1 file changed, 110 insertions(+)
+> 
 
-Looks good; I will add a commit to switch to scope-based resource managemen=
-t in v2.
-Thanks for your suggestion!
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Regards,
-Li
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/mediatek-pcie.example.dtb: pcie@1fa92000 (airoha,an7583-pcie): Unevaluated properties are not allowed ('resets' was unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/mediatek-pcie.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250929113806.2484-4-ansuelsmth@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
