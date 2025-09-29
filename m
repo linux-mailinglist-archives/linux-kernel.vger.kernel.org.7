@@ -1,162 +1,123 @@
-Return-Path: <linux-kernel+bounces-835973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041BCBA87B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:58:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E673FBA87C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA01D16D941
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:58:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 961E617558C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2059E2C029E;
-	Mon, 29 Sep 2025 08:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F652C11CC;
+	Mon, 29 Sep 2025 08:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ApA8atjp"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MHoEB2x2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEE9278150
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7380627A900
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759136295; cv=none; b=IRmZqCX7Ng6Fwb4DcIP9voTSVwyzbdyaFYnC7gyeKfHp6V6CTkAUD02cZr+AO6Vj4ZrurSPGOfsjPGknFdAk3dejn72X/fSbOcue+g4Guz+4TKqb3Sp1IjFLn2uCXJ6kihmiN0IwhhM048ViB9aiNHQQuHWCIepZJwnm2iKtGBw=
+	t=1759136304; cv=none; b=G2r49PGo16XiaDdLH6JaWjsUyHhnqDNUNq/JBKTw/P6VVcVMI1C70A+jooTRz+zjvt6/27Y1sa015Wmir+rApgoAlnn3ngm1xdaQlSO/EObM1EqpUX7cosSivq4Dh/xqtlaRbq2By0l4O50sGdBy3F2YGcdEDgLp3GxTwsoLqaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759136295; c=relaxed/simple;
-	bh=UxYAnoFueouxczgLGVUtAZzpt8pDexW25waY5k4GVYo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FhVHFTvT4qAbKaIN2qkqh3aE+YXxtLXQPsLpudnBBvjtYIJINakm/bdPuZQ1LWxJQB6Cso3SeEhMHqLRC2833XolCPVBho5jwGdJH6UjGfay916UYBsUPva8g5KCAVjWPlK+NxSierKgz/k2CRwPCaQJBPIzutKVLyYsHlgJAsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ApA8atjp; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4df3fabe9c2so435211cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759136293; x=1759741093; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SVirVdNngbz7qT0OdVsaXj3cZwI83nCwoCmm21kfuVY=;
-        b=ApA8atjpdDv8CFEGDKsJFV/5Z4CaB5lD2BuuG9fKP9f+ZywvCtf++HYOY+NARt3ivt
-         h7u5yGO2YW+W+arRtk6dYFqB1OdwPLZuMb3gJ+J62kkqJAKa6FIQPD7avmR/NocGPHBk
-         kmw/iGTwqmllTnzSRehwXvjP7hSK0BIsnhzn4DT5tTtlX3bSQRl61tuRhf4NNQzJtmW3
-         +JE1GuMmjXjrq1liInjhba/KdSHG6MnowL2oLFQ06Yc3Z+jmrIiapK0dq7jTfUyaL9hI
-         4j0D/VBMPh0etxkjLaw7WyzRafXl1UaIGroljR+FvvAf/kB196kSgb0980D/xO9OMlWG
-         iKnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759136293; x=1759741093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SVirVdNngbz7qT0OdVsaXj3cZwI83nCwoCmm21kfuVY=;
-        b=dfidE7yPQLVBcDWxtr1bA8s1FQLJYJFLYw05N4moocoNOg2mj9pLHft5S8/YjQ41qI
-         06elIR8gWQTmSeXOmPhBnNRv9vuWgIwb+qHeWhF2uwinpbSOiu4A2/nGVxncr6vqps2v
-         4Hpz+Yo6DE0tgdF41DFUQVwotN46/ERosuCQnUnzLUJxHG+Ofu2Z4O+tKqEJ5tavRMkW
-         9kIbQrsszFA2bQBfU8ogN3gmD0t+KoCjzE2Rq6VmwHQBo7D1ffqYuXZrqzE04oqxOs2q
-         +mrMYS4ncTRndY8a7/wSzp1UDDU0/tUkOTThnuIWQU5CEJ0YUUwLH8XY1tWvyReH30Dl
-         kVsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMvI1E6kNEF0F0EXmBlRGL1sSV7c+J1zd1HytyoY9BfAHjlyDLtV2xNKAolewQOXNAKx3E5LGAX7wcbP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9UbtZMGKL8OM6hRn7Ek8ONpuRdrIYci0C2RGf9bXSZ+iN3sXs
-	w/dnAocQdnL0fRY8uN1O8yvIcDn7PtBR5edvxtngRHKr4DXMI63BQGcLu6AwVeo6f9gaCnN3bfD
-	+IxlyZXI0N1n+vQD4oD8wzJVsQ/afmqFHhoOvgzC2
-X-Gm-Gg: ASbGncvbL/rYiODvrfYvgvg2R2CfGaXGz4Vn8aTG6IcrUy5ikIFEXe3P2rvUMt96lYK
-	u0zjktv3jfp/myn6SntchJdjIsj6oCAYoBAo3EwwlBMscgB2873qp7QGkeo9Z77owrgZ6Ii9+dw
-	iCeorF/fg1t+6wWohFAL02NZo8caD2h8cSSIIOWOeiVOH384ewNBaWQmSgfz3SIKxwUi+S4deuU
-	HltqGrvyZFjODQ=
-X-Google-Smtp-Source: AGHT+IHbEV9ksmjzrZnsJKVk6RpSSor355OveF0HymKllyVVgMcfBArBEsZqVcgG0tSED+bzPxBkkzbN5xHYFgYtqBk=
-X-Received: by 2002:a05:622a:1211:b0:4cb:2536:ed4b with SMTP id
- d75a77b69052e-4e258d167e3mr256211cf.3.1759136292264; Mon, 29 Sep 2025
- 01:58:12 -0700 (PDT)
+	s=arc-20240116; t=1759136304; c=relaxed/simple;
+	bh=gri6s986biB8Kh7dNTb+spkZYh/NMeucGz4PK0la17g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LxMTISYCKaUM6bgnjJq90XCHVVRBZlyM6N8XQc1Qm0+z56+F6sIDDW9H9zFyKXK+ILG0PF4Dfb2XVSxCZ+Y6FNI+lRN3mZUmAbcXj9kPYk0XQcJvwj1HBRt1mayKAJOPqnQ8sXgjEbUJIeaBJls4MfV4qs83kIA2xufrpvz6D/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MHoEB2x2; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759136303; x=1790672303;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=gri6s986biB8Kh7dNTb+spkZYh/NMeucGz4PK0la17g=;
+  b=MHoEB2x2lNxaMMSGT8dw8LBm7OqpJANSUq/vdbYmmhUqkACLwtUTDlUv
+   wuLm2fDoIhZhuVbDOB1EJ5JF0ErzVIIJ+rUZJQpddPjrxBJ7DIR9mHMMF
+   wYQGoG9LndWt+iHEb4Cccs7l2JFpUbdmxHPyVELyEbrO8Y6zwoWcUo2B0
+   T2lqTcYdWtxz+kgjr/REM0eCOtUI9r4CHv0Eq5oydejEzblZIlz5nADLz
+   iPBSGRpzR7F6QmI3JtZ36PI9j38cnYxk5vjKy5hYFyf5EKAOF/RbeyKV5
+   NDeheJ1ZtX28h5+sZI67KWIF5KM7n+ACx/6YtZNl613JfFXMSDA5S3yFZ
+   g==;
+X-CSE-ConnectionGUID: aFSin5zWRK6NElEOy6RowA==
+X-CSE-MsgGUID: TgiVFPFlRD6cIc1MRoabgQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61284633"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61284633"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 01:58:22 -0700
+X-CSE-ConnectionGUID: LS+k10G/S/iCbuT4y5TybQ==
+X-CSE-MsgGUID: UZqgD/9ZTNqJN/exuTkwXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="177437977"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 29 Sep 2025 01:58:21 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v39i6-00005P-0v;
+	Mon, 29 Sep 2025 08:58:18 +0000
+Date: Mon, 29 Sep 2025 16:57:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>
+Subject: include/net/sock.h:2098:16: sparse: sparse: cast to non-scalar
+Message-ID: <202509291645.fcBIaXMb-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
- <7ce29e23-aea9-4d4d-b686-3b7a752e0276@redhat.com>
-In-Reply-To: <7ce29e23-aea9-4d4d-b686-3b7a752e0276@redhat.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Mon, 29 Sep 2025 09:57:35 +0100
-X-Gm-Features: AS18NWAQi4Q7SHFPIL6_HIa2rzJqQn18m7uBGl2npRCTxGGr68iLY9x7nDg26nc
-Message-ID: <CA+EHjTzO_tkOD1C--qqk1eotwf+-2DSDUqk=szzPTN7mHJLQ_g@mail.gmail.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-To: David Hildenbrand <david@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi David.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e5f0a698b34ed76002dc5cff3804a61c80233a7a
+commit: c51da3f7a161c6822232be832abdffe47eb55b4c net: remove sock_i_uid()
+date:   3 months ago
+config: alpha-randconfig-r122-20250929 (https://download.01.org/0day-ci/archive/20250929/202509291645.fcBIaXMb-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250929/202509291645.fcBIaXMb-lkp@intel.com/reproduce)
 
-On Mon, 29 Sept 2025 at 09:38, David Hildenbrand <david@redhat.com> wrote:
->
-> On 26.09.25 18:31, Sean Christopherson wrote:
-> > Add a guest_memfd flag to allow userspace to state that the underlying
-> > memory should be configured to be shared by default, and reject user pa=
-ge
-> > faults if the guest_memfd instance's memory isn't shared by default.
-> > Because KVM doesn't yet support in-place private<=3D>shared conversions=
-, all
-> > guest_memfd memory effectively follows the default state.
->
-> I recall we discussed exactly that in the past (e.g., on April 17) in the=
- call:
->
-> "Current plan:
->   * guest_memfd creation flag to specify =E2=80=9Call memory starts as sh=
-ared=E2=80=9D
->     * Compatible with the old behavior where all memory started as privat=
-e
->     * Initially, only these can be mmap (no in-place conversion)
-> "
->
-> >
-> > Alternatively, KVM could deduce the default state based on MMAP, which =
-for
-> > all intents and purposes is what KVM currently does.  However, implicit=
-ly
-> > deriving the default state based on MMAP will result in a messy ABI whe=
-n
-> > support for in-place conversions is added.
->
-> I don't recall the details, but I faintly remember that we discussed late=
-r that with
-> mmap support, the default will be shared for now, and that no other flag =
-would be
-> required for the time being.
->
-> We could always add a "DEFAULT_PRIVATE" flag when we realize that we woul=
-d have
-> to change the default later.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509291645.fcBIaXMb-lkp@intel.com/
 
-I remember discussing this. For many confidential computing usecases,
-e.g., pKVM and TDX, it would make more sense for the default case to
-be private, since it's the more common state, and the initial state.
-It also makes sense since sharing is usually triggered by the guest.
-Ensuring that the initial state is private reduces the changes of the
-VMM forgetting to convert the memory to being private later on,
-potentially exposing all guest memory from the get go.
+sparse warnings: (new ones prefixed by >>)
+   net/packet/diag.c: note: in included file (through include/linux/sock_diag.h):
+>> include/net/sock.h:2098:16: sparse: sparse: cast to non-scalar
+   include/net/sock.h:2098:16: sparse: sparse: cast from non-scalar
+--
+   net/packet/af_packet.c:1099:13: sparse: sparse: context imbalance in '__packet_lookup_frame_in_block' - different lock contexts for basic block
+   net/packet/af_packet.c:2541:17: sparse: sparse: context imbalance in 'tpacket_rcv' - unexpected unlock
+   net/packet/af_packet.c: note: in included file (through include/net/inet_sock.h, include/net/ip.h):
+>> include/net/sock.h:2098:16: sparse: sparse: cast to non-scalar
+   include/net/sock.h:2098:16: sparse: sparse: cast from non-scalar
 
-I think it makes sense to clarify things now. Especially since with
-memory attributes, the default attribute is
-KVM_MEMORY_ATTRIBUTE_SHARED, which adds even more confusion.
+vim +2098 include/net/sock.h
 
-Cheers,
-/fuad
+^1da177e4c3f415 Linus Torvalds 2005-04-16  2094  
+e84a4927a404f36 Eric Dumazet   2025-06-20  2095  static inline kuid_t sk_uid(const struct sock *sk)
+e84a4927a404f36 Eric Dumazet   2025-06-20  2096  {
+e84a4927a404f36 Eric Dumazet   2025-06-20  2097  	/* Paired with WRITE_ONCE() in sockfs_setattr() */
+e84a4927a404f36 Eric Dumazet   2025-06-20 @2098  	return READ_ONCE(sk->sk_uid);
+e84a4927a404f36 Eric Dumazet   2025-06-20  2099  }
+e84a4927a404f36 Eric Dumazet   2025-06-20  2100  
 
+:::::: The code at line 2098 was first introduced by commit
+:::::: e84a4927a404f369c842c19de93b216627fcc690 net: annotate races around sk->sk_uid
 
+:::::: TO: Eric Dumazet <edumazet@google.com>
+:::::: CC: Jakub Kicinski <kuba@kernel.org>
 
->
-> Ackerley might remember more details.
->
-> --
-> Cheers
->
-> David / dhildenb
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
