@@ -1,225 +1,245 @@
-Return-Path: <linux-kernel+bounces-836377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13850BA984B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:17:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211CABA9854
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0363BB8BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:17:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0EDA3BD2F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545233090D6;
-	Mon, 29 Sep 2025 14:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5733093BD;
+	Mon, 29 Sep 2025 14:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b4z1hulg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbxDFyue"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCE6309F1B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF957126C17
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155443; cv=none; b=gCTpBAQryAb+LpoiX8mOdqhjtI2+xvbtzqjWJIcfI1rxmHotBjRKrOIQ50V6o/fSGNbhLq8cizSdHVegYp7+06mxH3GCjEXLPn99lKN1EasJesQRrlShFRbWwR6w5FaBT1GWCAuKYxqSWyGv/j/pMCh2EkB/aLZpB7OAt930vf0=
+	t=1759155546; cv=none; b=B0rJyCz2WAnu0enA9vCYunknzYaFItsSe4VQyI7MTfd/Dxo/5G1Xg4m9bFRYs0MmB5TZjqnLm5IfXJl2bC7hRsDiu+fgaos1locR7rDrAKvPXZlwfOfmZBWxiELRWCEMYhVasJq379gi9j8H/i/e7mNU84rwGGcOpPEsIc8+y+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155443; c=relaxed/simple;
-	bh=u5cNG2Ln2eATor8RQIMsdKn7Fix2w6G9k7RgS5STwA0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DJbpp7iHX3lEi+vWYXhRoxKu/cTto1yASfJgnhajftK6Yq0mwPWL+wOZZpf7+2wv2CgE07DpXTZ4IK/9/5c99lgNU9Oerq5+bIf9Q3vV5VPsyrl/fyHk+pswuQlmsEeiiaB+CMAr370O6J5582mx4yMLg+gJ6es0Ihc4D6RsyGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b4z1hulg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58T9efLV024781
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:17:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pLsnlOo21G1qIqIJj+gUab2xf+5Tsw86JCxBxDRSXCc=; b=b4z1hulgFMIiVNhh
-	sRnUD7WvBq0y07Ftndun0zRDTpx2DT4ECPKw5oLThsFgFAuRj1OxU3LTwyzmqvyj
-	m3WU5pL24J3XWwhkPJcDk0tl2DVmRhSN0eKGOikkCpGey6Dr7IVo3SpPtMyP+Knq
-	vE8hkiKFJmK3ro8IxO9ffVtuI3vX6wQSNRvCpgVylLXON/Nxx+IdeFOFfOUzae4b
-	lOoJaGiDENSNAjpoKDZ4odZQXi0eybdo7go8PI65f3VuLqZfApcysBn6HuVFbASC
-	higlqmP1VMZwWLK7WxC+iwdUe+oYH/krtRHd2gmSxXyCFk7H1FcZsUyGFKD+Hq6e
-	i3MXhA==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e78fwkn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:17:19 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7821487d16bso3675933b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:17:19 -0700 (PDT)
+	s=arc-20240116; t=1759155546; c=relaxed/simple;
+	bh=Cqa9Uzqm9/s5VXEeXfESLlelcJ7lJBixKsxsE328zas=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=VDTnaZsTk4z/35yeQqjtVhrekRV2rH3deJmoxZ+nps+MAPtW2nKhIe7hQZMaAvDkWmTyD3hiXtg83bSI93EW5rJn4OJHYKR5DTQYc+yr6GnLfJJGS7uzrJP+x78ILqep6Jvd9mktgApnzbm0z9lXGvJsu4QaqP/LVudf0sWgrM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbxDFyue; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-9231a251c01so722464241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759155543; x=1759760343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8f8mS2/PsiKtRfA+cy/Ijq5MGOVS0C89p6V4QtDT26M=;
+        b=SbxDFyueq+KFFxSnkeFszRWccwAMQyhNg3Ea8luK9S9Y1BM1SnkRcFKJsj889eM4xa
+         bk2pz2/GrRIOP3Szuuz/199N8jbKGx5AX5d8jQYNhk7eYEOOhmrlARwyakUvu52Uk/0s
+         +ykcPzlLMdTEQbR01LvqtP15Kl9wEm2KrmzoiL2KIU4ztsjwYdSWMCRoFtBQflkDqxU3
+         F+m9pZL7zuqckzC+dNsrlYoMPVAkaZEHEx497NVmB+kLrvxZ+uFHM0TqygZ1XLwQhFIp
+         UWGodqtaZge83fUexSHcJrmJ4M5epTko/U4SuXfRtg4H2+lVPpvZ3tA9laP/eSMgLsQD
+         EiGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759155438; x=1759760238;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pLsnlOo21G1qIqIJj+gUab2xf+5Tsw86JCxBxDRSXCc=;
-        b=XG0G7mpCVdsqVXKI9GZCfF6e5urTdSiYhoygzUbWvkx9mz+VzaGayK8f25PoMxtUGc
-         LEGghY5d6ncwflg+1IHKFRlN2Ho+8mkUfxTMWnnTgTpvM8gBoGX3XEzHINiEa01xMolZ
-         744qkuf/SIfoUzBJlEOhRXQmVkncd12aZlxTNZYO28vrfNtHIdtAAaQyE3wD1UpvBWd5
-         kD2ygyMf9GzFyWi6kjmohvwueIJ4VCEi3dBRTobVt9pRCLZ1wQBBbj+aL5QVLyoKs7K6
-         OcU80mI8iQMykhvwqK0I5NYIfw4vFBFeZ5N1CbF0P1WeAcL0Bo/Y0zgUZGIasC1/w7fn
-         aiIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQWkiuxnN2TXFuXrLZGQFNyNULECkYSJUeDN4v+zp7LB6EjPIcD5a8aVadRAg9D6RfdS0BDyjbr2EBoeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNYjbI5qcmHIkNyMWmRcCXhHOtinGzvt5sQKIKwEuAuEPrG1PH
-	Evgjm0w13+z7Qa+fGpw9pxC1AUy19ZFzXXvBYLvGPVLQJwpobx65FyRHbVEirPDxUDNM91W4NfK
-	hetkcJXPSKLkAgJ9llSeu8nx8UAoo6ohzaUtQ82OlzW/XFJgTSXN1KRdQwOqe2kOBBlfqlzXxZ6
-	g=
-X-Gm-Gg: ASbGnctIBOgSMUewVNdVuTbz97soRimciM6qIPxgjS8hOYC00+Ywuv4iua41e0IUXis
-	aeOywdwnJ74itehz628EUALUkXx9ZJD8RE9zmNcFN2DeNE+Ra3Wj38GqkBko4aqQWVqw8gMUZZQ
-	L+NH/oxnwhOt3r4cGrc+TVNWfICY2eAgf1bCnQnvMjGEyC7PVdN4RUa8X6yEcBF9b/Ch5p/txGm
-	4GY+D+HG7hclXyj1z+w94tpRra6UFg6YMOlQadrSzg7vm5qnvLfm++lCMAhzxwChA+AWGmcdtmF
-	IsTn/KYfUDSVtwCkH+QKWpUJ/DV+gpbfNh/pHndLzOAixyu1FXr23Gzmq14uEYnLHGRK/POQrSZ
-	VoGa7ZsL/Nm8x8oWvXV1bWMiyX/BUu1acCRIrbvYMHkbKrdYoiLqmCr1cbmvw4RJRqa8Iay4hou
-	U=
-X-Received: by 2002:a05:6a00:3e13:b0:776:1de4:aee6 with SMTP id d2e1a72fcca58-780fcec2c91mr14412591b3a.16.1759155438205;
-        Mon, 29 Sep 2025 07:17:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdlNnF6NRjps77bQpCKt1tqZP95RfthHoB22w6sWUcZesCEBU/V4oeksDuzvoGLvP9WKvBaA==
-X-Received: by 2002:a05:6a00:3e13:b0:776:1de4:aee6 with SMTP id d2e1a72fcca58-780fcec2c91mr14412566b3a.16.1759155437676;
-        Mon, 29 Sep 2025 07:17:17 -0700 (PDT)
-Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b23a48sm11536334b3a.59.2025.09.29.07.17.15
+        d=1e100.net; s=20230601; t=1759155543; x=1759760343;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8f8mS2/PsiKtRfA+cy/Ijq5MGOVS0C89p6V4QtDT26M=;
+        b=P8mg7Qo8PcGwAsFxU/4ott1m6V04zbgE9CPUh39SLvlqog5ixwsK1HUjIR/UHy/i7O
+         HYQUok+M8pXXce/loVqwSMTbrAj77O5yJNLFgFUeq/+rdnwFmH89tSSXkROFXUDXejjj
+         ywHvxmtnFwl8pmGtJVp2x7RDNpqYTegcfLBaM5E8l7a4nC4/9vSWrGb54c08qbdpKpt2
+         BnNECwwpbkOhMx0FRgYTDWeiK2cJJhJB5MOImnzeFTc4aOlG/lRVZPRpmiI9ECCWo8YV
+         OQO/L/gL8/r0v3yXzA2jkoMoXldnpGhTqlAOUB4gmom2NJxZTK4g7vqZfNZr6m5PePSv
+         uuNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp716kkdI8DepK/4Idzi47q8A3gZ9Va4JVbFMHemtumC0UwaJD2nUOfriupHV4erWG/5Ied1gdrW3LZtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz5eYN807Mum0PcsaS9p1EzOjY5ES/yNZH0SR3+WzBdBLl5yEf
+	7+odrt8WdVTV0Bc6m6WMsRsy/21tjC5khhpwQvqaActvBslFfPEPYUYA
+X-Gm-Gg: ASbGncvTlUvFy+1k6DQndaOKTp9n+fbhc4rjU98gHg/OAmLehR0Vf6EGXWRKJsGtrDD
+	QcGMlVnQvc+BSW3uWUBneOYDwHt6eGhIosmeVGGPIhrDiU8Ai/zMZA2B2FCiw5UunFnBc+uvXxc
+	Kf2sOVPDmLPRg6ipkbv4oH49S4d6mFx1PIUHwz8eDJ0/j5x0/22hXS68PgAXuinVSfJlEei3VEq
+	zTdGBr3e/bZ0VRWbw1XOZjQD50BdCdlEgUK73YJX+zAaKXZJMhewxUgRivwQTaD0bsTFELjiCqV
+	yATeGRMQ5G20o7zQ4nzJFnm9JG2NDnprCLlXYHR3epz+ygm495HVqbhXp8t0133HEyTdNVrjdIz
+	S3AJS7EnP4G9oeC8TRvgt+7/R3aTznd6ahvP4krRDLxIqLSPG85ZtXmlHvquvym7OfXk1YYhuDy
+	57B/sO
+X-Google-Smtp-Source: AGHT+IHbGRPyI3TBsvsm/JH3bGpt2g5z5CYtKK6z0SBXiM2oKnumeml9UIrNcgYboy1D+yW+DlMLlA==
+X-Received: by 2002:a05:6122:3117:b0:545:eb6c:c6bb with SMTP id 71dfb90a1353d-54bea300520mr5569540e0c.12.1759155543420;
+        Mon, 29 Sep 2025 07:19:03 -0700 (PDT)
+Received: from gmail.com (21.33.48.34.bc.googleusercontent.com. [34.48.33.21])
+        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-54c0c1ff0c0sm1330558e0c.11.2025.09.29.07.19.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 07:17:17 -0700 (PDT)
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Mon, 29 Sep 2025 19:47:08 +0530
-Subject: [PATCH 2/2] soc: qcom: socinfo: add the missing entries to the
- smem image table
+        Mon, 29 Sep 2025 07:19:01 -0700 (PDT)
+Date: Mon, 29 Sep 2025 10:19:01 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Sidharth Seela <sidharthseela@gmail.com>, 
+ antonio@openvpn.net, 
+ sd@queasysnail.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ shuah@kernel.org, 
+ willemdebruijn.kernel@gmail.com, 
+ kernelxing@tencent.com, 
+ nathan@kernel.org, 
+ nick.desaulniers+lkml@gmail.com, 
+ morbo@google.com, 
+ justinstitt@google.com
+Cc: netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, 
+ Sidharth Seela <sidharthseela@gmail.com>
+Message-ID: <willemdebruijn.kernel.a37b90bf9586@gmail.com>
+In-Reply-To: <20250929114356.25261-2-sidharthseela@gmail.com>
+References: <20250929114356.25261-2-sidharthseela@gmail.com>
+Subject: Re: [PATCH] selftest:net: Fix uninit pointers and return values
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250929-image_crm-v1-2-e06530c42357@oss.qualcomm.com>
-References: <20250929-image_crm-v1-0-e06530c42357@oss.qualcomm.com>
-In-Reply-To: <20250929-image_crm-v1-0-e06530c42357@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759155430; l=3539;
- i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
- h=from:subject:message-id; bh=u5cNG2Ln2eATor8RQIMsdKn7Fix2w6G9k7RgS5STwA0=;
- b=VQViHskVyyfYtK7gXmHv/Owxq+4rpwvx3SG0n9tp20YLge4pPhZwzTzieSYaTkuqeEESiBzLC
- ExHkGIPciDRCpAyY0UYDw52QHC963saR3G2wl3vz1wFMPUQtuGkEC5i
-X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
- pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Authority-Analysis: v=2.4 cv=DZAaa/tW c=1 sm=1 tr=0 ts=68da94ef cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=6TZun6eQlh8SgxM3ATMA:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyMiBTYWx0ZWRfX125rKRp+0NPG
- 2T3/ih3H9h+kKHGUeg3ZI7pGMmFcpoJvnXId1iTrGlsmZwGSPAsOVzI6NuY2TejEYMho8K4n7UH
- pn3V+DZ5Oh9Yd55Qk+c8bdrvVxNz43siftq5K0IXwuNztlIRZniMusRm/bnnOwU6XqOw+5Q7DEX
- oYvbJzVmWGZyH4TTc0quaCi9g12gNCC71BvCGOu9iCwkdLyRa4lAo0X3SYumtRSepl1KVAhxJtA
- 3z7sP92Wl4czH2gvDy9z5fp3UwO+ed7jg4w90IpKxNffeirhioGH9YaQ/Et0UK5e3osggSygX3u
- 89wC3BYBwy4Uay2wJ7piOgbLqzO86xlK+Y3Y9EB8uvy64Z4HfhV7G1RITlX7eWKjFrOIZKMWyqr
- M28oMQSl0W9Iat5DB0WcZiPb6ak+hg==
-X-Proofpoint-GUID: 1kIXdzdhbJw3t-hD4et0pK7ubK7a3uea
-X-Proofpoint-ORIG-GUID: 1kIXdzdhbJw3t-hD4et0pK7ubK7a3uea
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_05,2025-09-29_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270022
 
-Add the missing entries to the SMEM image table to ensure completeness,
-rather than adding support for one image at a time.
+[PATCH net]
 
-Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
----
- drivers/soc/qcom/socinfo.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+and a Fixes tag
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index 8d25da4c7018452f463c6ff1e7ce605d5d0c6aab..5627fb6ffbdb23338ff5e26a05964a07439aeb56 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -37,7 +37,13 @@
-  */
- #define SMEM_IMAGE_TABLE_BOOT_INDEX     0
- #define SMEM_IMAGE_TABLE_TZ_INDEX       1
-+#define SMEM_IMAGE_TABLE_TZSECAPP_INDEX	2
- #define SMEM_IMAGE_TABLE_RPM_INDEX      3
-+#define SMEM_IMAGE_TABLE_SDI_INDEX      4
-+#define SMEM_IMAGE_TABLE_HYP_INDEX      5
-+#define SMEM_IMAGE_TABLE_ADSP1_INDEX	6
-+#define SMEM_IMAGE_TABLE_ADSP2_INDEX	7
-+#define SMEM_IMAGE_TABLE_CDSP2_INDEX	8
- #define SMEM_IMAGE_TABLE_APPSBL_INDEX	9
- #define SMEM_IMAGE_TABLE_APPS_INDEX     10
- #define SMEM_IMAGE_TABLE_MPSS_INDEX     11
-@@ -46,31 +52,59 @@
- #define SMEM_IMAGE_TABLE_VIDEO_INDEX    14
- #define SMEM_IMAGE_TABLE_DSPS_INDEX     15
- #define SMEM_IMAGE_TABLE_CDSP_INDEX     16
-+#define SMEM_IMAGE_TABLE_NPU_INDEX	17
-+#define SMEM_IMAGE_TABLE_WPSS_INDEX     18
- #define SMEM_IMAGE_TABLE_CDSP1_INDEX    19
- #define SMEM_IMAGE_TABLE_GPDSP_INDEX    20
- #define SMEM_IMAGE_TABLE_GPDSP1_INDEX   21
-+#define SMEM_IMAGE_TABLE_SENSORPD_INDEX	22
-+#define SMEM_IMAGE_TABLE_AUDIOPD_INDEX	23
-+#define SMEM_IMAGE_TABLE_OEMPD_INDEX	24
-+#define SMEM_IMAGE_TABLE_CHARGERPD_INDEX	25
-+#define SMEM_IMAGE_TABLE_OISPD_INDEX	26
-+#define SMEM_IMAGE_TABLE_SOCCP_INDEX	27
- #define SMEM_IMAGE_TABLE_TME_INDEX	28
-+#define SMEM_IMAGE_TABLE_GEARVM_INDEX	29
-+#define SMEM_IMAGE_TABLE_UEFI_INDEX	30
-+#define SMEM_IMAGE_TABLE_CDSP3_INDEX	31
- #define SMEM_IMAGE_VERSION_TABLE       469
- 
- /*
-  * SMEM Image table names
-  */
- static const char *const socinfo_image_names[] = {
-+	[SMEM_IMAGE_TABLE_ADSP1_INDEX] = "adsp1",
-+	[SMEM_IMAGE_TABLE_ADSP2_INDEX] = "adsp2",
- 	[SMEM_IMAGE_TABLE_ADSP_INDEX] = "adsp",
- 	[SMEM_IMAGE_TABLE_APPSBL_INDEX] = "appsbl",
- 	[SMEM_IMAGE_TABLE_APPS_INDEX] = "apps",
-+	[SMEM_IMAGE_TABLE_AUDIOPD_INDEX] = "audiopd",
- 	[SMEM_IMAGE_TABLE_BOOT_INDEX] = "boot",
- 	[SMEM_IMAGE_TABLE_CDSP1_INDEX] = "cdsp1",
-+	[SMEM_IMAGE_TABLE_CDSP2_INDEX] = "cdsp2",
-+	[SMEM_IMAGE_TABLE_CDSP3_INDEX] = "cdsp3",
- 	[SMEM_IMAGE_TABLE_CDSP_INDEX] = "cdsp",
-+	[SMEM_IMAGE_TABLE_CHARGERPD_INDEX] = "chargerpd",
- 	[SMEM_IMAGE_TABLE_CNSS_INDEX] = "cnss",
- 	[SMEM_IMAGE_TABLE_DSPS_INDEX] = "dsps",
-+	[SMEM_IMAGE_TABLE_GEARVM_INDEX] = "gearvm",
- 	[SMEM_IMAGE_TABLE_GPDSP1_INDEX] = "gpdsp1",
- 	[SMEM_IMAGE_TABLE_GPDSP_INDEX] = "gpdsp",
-+	[SMEM_IMAGE_TABLE_HYP_INDEX] = "hyp",
- 	[SMEM_IMAGE_TABLE_MPSS_INDEX] = "mpss",
-+	[SMEM_IMAGE_TABLE_NPU_INDEX] = "npu",
-+	[SMEM_IMAGE_TABLE_OEMPD_INDEX] = "oempd",
-+	[SMEM_IMAGE_TABLE_OISPD_INDEX] = "oispd",
- 	[SMEM_IMAGE_TABLE_RPM_INDEX] = "rpm",
-+	[SMEM_IMAGE_TABLE_SDI_INDEX] = "sdi",
-+	[SMEM_IMAGE_TABLE_SENSORPD_INDEX] = "sensorpd",
-+	[SMEM_IMAGE_TABLE_SOCCP_INDEX] = "soccp",
- 	[SMEM_IMAGE_TABLE_TME_INDEX] = "tme",
- 	[SMEM_IMAGE_TABLE_TZ_INDEX] = "tz",
-+	[SMEM_IMAGE_TABLE_TZSECAPP_INDEX] = "tzsecapp",
-+	[SMEM_IMAGE_TABLE_UEFI_INDEX] = "uefi",
- 	[SMEM_IMAGE_TABLE_VIDEO_INDEX] = "video",
-+	[SMEM_IMAGE_TABLE_WPSS_INDEX] = "wpss",
- };
- 
- static const char *const pmic_models[] = {
+Sidharth Seela wrote:
+> Fix uninitialized character pointers, and functions that return
+> undefined values. These issues were caught by running clang using LLVM=1
+> option; and are as follows:
+> --
+> ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+>  1587 |         if (!sock) {
+>       |             ^~~~~
+> ovpn-cli.c:1635:9: note: uninitialized use occurs here
+>  1635 |         return ret;
+>       |                ^~~
+> ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+>  1587 |         if (!sock) {
+>       |         ^~~~~~~~~~~~
+>  1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+>       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  1589 |                 goto err_free;
+>       |                 ~~~~~~~~~~~~~~
+>  1590 |         }
+>       |         ~
+> ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+>  1584 |         int mcid, ret;
+>       |                      ^
+>       |                       = 0
+> ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+>  2107 |         case CMD_INVALID:
+>       |              ^~~~~~~~~~~
+> ovpn-cli.c:2111:9: note: uninitialized use occurs here
+>  2111 |         return ret;
+>       |                ^~~
+> ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+>  1939 |         int n, ret;
+>       |                   ^
 
--- 
-2.34.1
+These two look legitimate.
+
+>       |
+> --
+> txtimestamp.c:240:2: warning: variable 'tsname' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
+>   240 |         default:
+
+Does not need a fix. The default statement calls error() which exits the program.
+
+>       |         ^~~~~~~
+> txtimestamp.c:244:20: note: uninitialized use occurs here
+>   244 |         __print_timestamp(tsname, &tss->ts[0], tskey, payload_len);
+>       |                           ^~~~~~
+> txtimestamp.c:220:20: note: initialize the variable 'tsname' to silence this warning
+>   220 |         const char *tsname;
+>       |                           ^
+>       |                            = NULL
+> --
+> so_txtime.c:210:3: warning: variable 'reason' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
+>   210 |                 default:
+>       |                 ^~~~~~~
+
+Same.
+
+> so_txtime.c:219:27: note: uninitialized use occurs here
+>   219 |                         data[ret - 1], tstamp, reason);
+>       |                                                ^~~~~~
+> so_txtime.c:177:21: note: initialize the variable 'reason' to silence this warning
+>   177 |                 const char *reason;
+>       |                                   ^
+>       |
+> --
+> 
+> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+
+Agreed on all the occurrences and the ovpn fixes.
+
+> ---
+> 
+> diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> index 9201f2905f2c..20d00378f34a 100644
+> --- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> +++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> @@ -1581,7 +1581,7 @@ static int ovpn_listen_mcast(void)
+>  {
+>  	struct nl_sock *sock;
+>  	struct nl_cb *cb;
+> -	int mcid, ret;
+> +	int mcid, ret = -1;
+>  
+>  	sock = nl_socket_alloc();
+>  	if (!sock) {
+> @@ -1936,7 +1936,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+>  {
+>  	char peer_id[10], vpnip[INET6_ADDRSTRLEN], laddr[128], lport[10];
+>  	char raddr[128], rport[10];
+> -	int n, ret;
+> +	int n, ret = -1;
+>  	FILE *fp;
+>  
+>  	switch (ovpn->cmd) {
+> diff --git a/tools/testing/selftests/net/so_txtime.c b/tools/testing/selftests/net/so_txtime.c
+> index 8457b7ccbc09..b76df1efc2ef 100644
+> --- a/tools/testing/selftests/net/so_txtime.c
+> +++ b/tools/testing/selftests/net/so_txtime.c
+> @@ -174,7 +174,7 @@ static int do_recv_errqueue_timeout(int fdt)
+>  	msg.msg_controllen = sizeof(control);
+>  
+>  	while (1) {
+> -		const char *reason;
+> +		const char *reason = NULL;
+
+Since reason is a string that's printed, better to initialize it to a
+string. Preferably in the case statement, e.g., "unknown errno".
+
+>  
+>  		ret = recvmsg(fdt, &msg, MSG_ERRQUEUE);
+>  		if (ret == -1 && errno == EAGAIN)
+> diff --git a/tools/testing/selftests/net/txtimestamp.c b/tools/testing/selftests/net/txtimestamp.c
+> index dae91eb97d69..bcc14688661d 100644
+> --- a/tools/testing/selftests/net/txtimestamp.c
+> +++ b/tools/testing/selftests/net/txtimestamp.c
+> @@ -217,7 +217,7 @@ static void print_timestamp_usr(void)
+>  static void print_timestamp(struct scm_timestamping *tss, int tstype,
+>  			    int tskey, int payload_len)
+>  {
+> -	const char *tsname;
+> +	const char *tsname = NULL;
+>  
+>  	validate_key(tskey, tstype);
+>  
+> -- 
+> 2.47.3
+> 
+
 
 
