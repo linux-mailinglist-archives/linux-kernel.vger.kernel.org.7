@@ -1,221 +1,362 @@
-Return-Path: <linux-kernel+bounces-836479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7382DBA9CE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:29:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76D7BA9CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4BD1707F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EBA18944EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D69330C119;
-	Mon, 29 Sep 2025 15:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478B730BF58;
+	Mon, 29 Sep 2025 15:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4qWA1DX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VX9D7lW9"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4843A30C0F0;
-	Mon, 29 Sep 2025 15:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE1D433AD;
+	Mon, 29 Sep 2025 15:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759159741; cv=none; b=gRtcW4IjAhH92VfysgZiyZ+4dRi3KnEIwW8EMi+XHVN/JFea77i1F14hAPbzREO1c1hborvh7x0uUdK9eqhqFeAzLk+tJ4QC2YBqhCS7HJdJRtuR02NGUevxxRzI5MY3W8Rjpfy1XAcNaisJ+df/xWlZnyqCPip8yW0bH+6SDqU=
+	t=1759160008; cv=none; b=h+J6gWmMPT4gV+EtiiTneX5MyBq5lEx9AEjkTE1ukyKJAxao3gzgv/RCzVISBuuADNZOZsSEJ2p6Tq6lBBLX+BPE6nzqy8SV8Hhq7BK6IptAle8djFE7YFtQ/62anFVtRN8sb2pZvRpb27fZTqZC5cHGl7vxijqkoUyj0rBijmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759159741; c=relaxed/simple;
-	bh=3pzmtsbiTCR95ZsPE9rXLst/P4KeKZ76MABSMztNLe0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=BPI78vpVwX87UJlBTVQ1Ifg7g66xLJFnHX3oTFT6r/4HatsUfyQ31YurkcxnBtfpwo0JLtp/LRTi/cy0XEhNRgUvkUwN+4j1HfHooVU74an2nIwgiaQd8liR7EP8rcxwQoT444boNuQlGnmIBi1MN3zaB+yD2MUzsB7a9glnKlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4qWA1DX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC6EC4CEF7;
-	Mon, 29 Sep 2025 15:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759159740;
-	bh=3pzmtsbiTCR95ZsPE9rXLst/P4KeKZ76MABSMztNLe0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=L4qWA1DX0ZNMNSox8gWc2YkrJq7qv1bSwXIrWqY3wcqEjdFlfG91Ow1od0E86VHhk
-	 Znf1BPX3HTubbz7Qi8vCEZO+w5QDEN12ZlS03wYtehIZSWyFuRa3bi4W9tM7mZ9fPt
-	 FRe1qcLgWSV13uR4qKWlM9xX5Uws78X3RFTK9QqIyOF6teuCxzB6Dtql1J7QvasgpO
-	 +DyFu2Q8Es6jDJSYCwucZG07V91FPPI26MsI39wGaV6cjGvlW4LO/Guqd/IjNbUzcs
-	 5RcKNHU1aqZNy8iYePrMFGCKgquNjlDOiHSkBOYCnqxY8rCxfHIIMyUyHLMydWMucQ
-	 LEB4B6gx8HB6g==
-Date: Mon, 29 Sep 2025 10:29:00 -0500
+	s=arc-20240116; t=1759160008; c=relaxed/simple;
+	bh=sfLMXmfWvs2wJFOn+7tjg/2C6RHUF1SzZiCezqrPFOU=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=GXK7KKmLUxiV9cYST/zj5boNONQ8UkTPK+O743oY5Vn6+fW6wo6WifEoVUnZKAxO8fuY8CWaCK4ZINXaFr2s7BJ7hjIbgFIvGjCvvOaW86xGKvrDQo2Q974TXhc66iZaPv1/BS9dLxe8wy5YSuJScgiJzvXCYHSWLwF4VM9DuEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VX9D7lW9; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.87.241])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7BCB44C7;
+	Mon, 29 Sep 2025 17:31:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759159913;
+	bh=sfLMXmfWvs2wJFOn+7tjg/2C6RHUF1SzZiCezqrPFOU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=VX9D7lW9nUS5IQ1lkhLfLvDPe2hFb+E2cqItkJtuobWydMaOVmk4/h+cnWUuy6fEi
+	 uT1lJXspEb1ZsuTVM4WSqKEzbxFT7zRYWTT1joAlg9QPDtPITe9pNrFXjnsJT/ZStY
+	 Y1dpwZSi0xZEGbN7igkE7k9V+WYfD5ob+KjYAidI=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <20250929-radxa-dragon-q6a-v5-0-aa96ffc352f8@radxa.com>
-References: <20250929-radxa-dragon-q6a-v5-0-aa96ffc352f8@radxa.com>
-Message-Id: <175915953212.54437.14578163410705944523.robh@kernel.org>
-Subject: Re: [PATCH v5 0/2] arm64: dts: qcom: qcs6490: Introduce Radxa
- Dragon Q6A
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9beb643b-603d-46e8-9c1d-cd8060548507@kernel.org>
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com> <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com> <15df046b-0fe1-4b57-acad-66b88beac982@kernel.org> <9beb643b-603d-46e8-9c1d-cd8060548507@kernel.org>
+Subject: Re: [PATCH v2 01/10] media: v4l2-core: Introduce state management for video devices
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>, linux-kernel@vger.kernel.org
+To: Hans Verkuil <hverkuil+cisco@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, linux-media@vger.kernel.org
+Date: Mon, 29 Sep 2025 21:00:51 +0530
+Message-ID: <175915985176.11386.11080057428921957743@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
+Hi Hans,
 
-On Mon, 29 Sep 2025 14:46:40 +0800, Xilin Wu wrote:
-> Radxa Dragon Q6A (https://docs.radxa.com/en/dragon/q6a) is a single board
-> computer, based on the Qualcomm QCS6490 platform.
-> 
-> The board ships with a modified version of the Qualcomm Linux boot
-> firmware, which is stored on the onboard SPI NOR flash. This allows
-> booting standard EFI-based bootloaders from SD/eMMC/USB/UFS/NVMe. It
-> supports replaceable UFS 3.1/eMMC modules for easy user upgrades.
-> 
-> The board schematic is available at [1].
-> 
-> Features enabled and working:
-> 
-> - Configurable I2C/SPI/UART from 40-Pin GPIO
-> - Three USB-A 2.0 ports
-> - RTL8111K Ethernet connected to PCIe0
-> - eMMC module
-> - SD card
-> - M.2 M-Key 2230 PCIe 3.0 x2
-> - Headphone jack
-> - Onboard thermal sensors
-> - QSPI controller for updating boot firmware
-> - ADSP remoteproc (Type-C and charging features disabled in firmware)
-> - CDSP remoteproc (for AI applications using QNN)
-> - Venus video encode and decode accelerator
-> 
-> Features available with additional DT overlays:
-> - CSI cameras
-> - DSI display
-> 
-> Features that will be submitted separately once the required bindings are
-> merged:
-> 
-> - USB-A 3.0 port
-> - UFS 3.1 module
-> - HDMI 2.0 port including audio
-> 
-> ALSA UCM and Audioreach topology patches are available at [2] and [3].
-> 
-> [1]: https://docs.radxa.com/en/dragon/q6a/download
-> [2]: https://github.com/alsa-project/alsa-ucm-conf/pull/601
-> [3]: https://github.com/linux-msm/audioreach-topology/pull/24
-> 
-> Signed-off-by: Xilin Wu <sophon@radxa.com>
-> ---
-> Changes in v5:
-> - Change LED default function to panic-indicator
-> - Fix line break in sound node
-> - Fix status-not-last in usb_2_hsphy
-> - Remove unused regulators to avoid potential issues
-> - Link to v4: https://lore.kernel.org/r/20250924-radxa-dragon-q6a-v4-0-10d584f2c806@radxa.com
-> 
-> Changes in v4:
-> - Change CDSP firmware to use the existing one from linux-firmware
-> - Describe onboard USB 2.0 hub and ports
-> - Add configurable I2C/SPI/UART QUP controllers
-> - Link to v3: https://lore.kernel.org/r/20250915-radxa-dragon-q6a-v3-0-a6c32d988ed7@radxa.com
-> 
-> Changes in v3:
-> - Dropped patches for USB/HDMI, UFS and GPIO.
-> - Removed Reviewed-by tag from the board DTS patch as it was significantly
->   modified.
-> - Link to v2: https://lore.kernel.org/r/20250914-radxa-dragon-q6a-v2-0-045f7e92b3bb@radxa.com
-> 
-> Changes in v2:
-> - Move codec before cpu in sound node to get sorted.
-> - Drop patch dependencies in cover letter
-> - Separate the changes that have unmet dependencies, and mark them as DNM
-> - Link to v1: https://lore.kernel.org/r/20250912-radxa-dragon-q6a-v1-0-8ccdbf9cd19b@radxa.com
-> 
-> ---
-> Xilin Wu (2):
->       dt-bindings: arm: qcom: Add Radxa Dragon Q6A
->       arm64: dts: qcom: qcs6490: Introduce Radxa Dragon Q6A
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
->  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
->  .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     | 1095 ++++++++++++++++++++
->  3 files changed, 1097 insertions(+)
-> ---
-> base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
-> change-id: 20250912-radxa-dragon-q6a-eedcdeaf3e66
-> 
-> Best regards,
-> --
-> Xilin Wu <sophon@radxa.com>
-> 
-> 
-> 
+Thanks for the review.
 
+Quoting Hans Verkuil (2025-09-22 13:30:05)
+> On 22/09/2025 09:44, Hans Verkuil wrote:
+> > Hi Jai,
+> >=20
+> > Apologies that I had no time to review v1, but I'll review v2 today.
+> >=20
+> > On 19/09/2025 11:55, Jai Luthra wrote:
+> >> Similar to V4L2 subdev states, introduce state support for video devic=
+es
+> >> to provide a centralized location for storing device state information.
+> >> This includes the current (active) pixelformat used by the device and
+> >> the temporary (try) pixelformat used during format negotiation. In the
+> >> future, this may be extended or subclassed by device drivers to store
+> >> their internal state variables.
+> >>
+> >> Also introduce a flag for drivers that wish to use this state
+> >> management. When set, the framework automatically allocates the state
+> >> during device registration and stores a pointer to it within the
+> >> video_device structure.
+> >>
+> >> This change aligns video devices with V4L2 subdevices by storing
+> >> hardware state in a common framework-allocated structure. This is the
+> >> first step towards enabling the multiplexing of the underlying hardware
+> >> by using different software "contexts", each represented by the combin=
+ed
+> >> state of all video devices and V4L2 subdevices in a complex media grap=
+h.
+> >>
+> >> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> >> --
+> >> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> >> Cc: Hans Verkuil <hverkuil@kernel.org>
+> >> Cc: Ricardo Ribalda <ribalda@chromium.org>
+> >> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> >> Cc: Ma Ke <make24@iscas.ac.cn>
+> >> Cc: Jai Luthra <jai.luthra@ideasonboard.com>
+> >> Cc: linux-media@vger.kernel.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> ---
+> >>  drivers/media/v4l2-core/v4l2-dev.c | 27 +++++++++++++++++++++++++
+> >>  include/media/v4l2-dev.h           | 40 +++++++++++++++++++++++++++++=
++++++++++
+> >>  2 files changed, 67 insertions(+)
+> >>
+> >> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-c=
+ore/v4l2-dev.c
+> >> index 10a126e50c1ca25b1bd0e9872571261acfc26b39..997255709448510fcd17b6=
+de798a3df99cd7ea09 100644
+> >> --- a/drivers/media/v4l2-core/v4l2-dev.c
+> >> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+> >> @@ -163,6 +163,27 @@ void video_device_release_empty(struct video_devi=
+ce *vdev)
+> >>  }
+> >>  EXPORT_SYMBOL(video_device_release_empty);
+> >> =20
+> >> +struct video_device_state *
+> >> +__video_device_state_alloc(struct video_device *vdev)
+> >> +{
+> >> +    struct video_device_state *state =3D
+> >> +            kzalloc(sizeof(struct video_device_state), GFP_KERNEL);
+> >> +
+> >> +    if (!state)
+> >> +            return ERR_PTR(-ENOMEM);
+> >> +
+> >> +    state->vdev =3D vdev;
+> >> +
+> >> +    return state;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(__video_device_state_alloc);
+> >> +
+> >> +void __video_device_state_free(struct video_device_state *state)
+> >> +{
+> >> +    kfree(state);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(__video_device_state_free);
+> >> +
+> >>  static inline void video_get(struct video_device *vdev)
+> >>  {
+> >>      get_device(&vdev->dev);
+> >> @@ -939,6 +960,10 @@ int __video_register_device(struct video_device *=
+vdev,
+> >>      spin_lock_init(&vdev->fh_lock);
+> >>      INIT_LIST_HEAD(&vdev->fh_list);
+> >> =20
+> >> +    /* state support */
+> >> +    if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+> >> +            vdev->state =3D __video_device_state_alloc(vdev);
+> >> +
+> >>      /* Part 1: check device type */
+> >>      switch (type) {
+> >>      case VFL_TYPE_VIDEO:
+> >> @@ -1127,6 +1152,8 @@ void video_unregister_device(struct video_device=
+ *vdev)
+> >>      clear_bit(V4L2_FL_REGISTERED, &vdev->flags);
+> >>      mutex_unlock(&videodev_lock);
+> >>      v4l2_event_wake_all(vdev);
+> >> +    if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+> >> +            __video_device_state_free(vdev->state);
+> >>      device_unregister(&vdev->dev);
+> >>  }
+> >>  EXPORT_SYMBOL(video_unregister_device);
+> >> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+> >> index a213c3398dcf60be8c531df87bf40c56b4ad772d..57e4691ef467aa2b0782dd=
+4b8357bd0670643293 100644
+> >> --- a/include/media/v4l2-dev.h
+> >> +++ b/include/media/v4l2-dev.h
+> >> @@ -89,12 +89,18 @@ struct dentry;
+> >>   *  set by the core when the sub-devices device nodes are registered =
+with
+> >>   *  v4l2_device_register_ro_subdev_nodes() and used by the sub-device=
+ ioctl
+> >>   *  handler to restrict access to some ioctl calls.
+> >> + * @V4L2_FL_USES_STATE:
+> >> + *  indicates that the &struct video_device has state support.
+> >> + *  The active video and metadata formats are stored in video_device.=
+state,
+> >> + *  and the try video and metadata formats are stored in v4l2_fh.stat=
+e.
+> >> + *  All new drivers should use it.
+> >>   */
+> >>  enum v4l2_video_device_flags {
+> >>      V4L2_FL_REGISTERED              =3D 0,
+> >>      V4L2_FL_USES_V4L2_FH            =3D 1,
+> >>      V4L2_FL_QUIRK_INVERTED_CROP     =3D 2,
+> >>      V4L2_FL_SUBDEV_RO_DEVNODE       =3D 3,
+> >> +    V4L2_FL_USES_STATE              =3D 4,
+> >>  };
+> >> =20
+> >>  /* Priority helper functions */
+> >> @@ -214,6 +220,17 @@ struct v4l2_file_operations {
+> >>      int (*release) (struct file *);
+> >>  };
+> >> =20
+> >> +/**
+> >> + * struct video_device_state - Used for storing video device state in=
+formation.
+> >> + *
+> >> + * @fmt: Format of the capture stream
+> >> + * @vdev: Pointer to video device
+> >> + */
+> >> +struct video_device_state {
+> >> +    struct v4l2_format fmt;
+> >=20
+> > While typically a video_device supports only a single video format type=
+, that is
+> > not always the case. There are the following exceptions:
+> >=20
+> > 1) M2M devices have both a capture and output video format. However, fo=
+r M2M devices
+> >    the state is per-filehandle, so it shouldn't be stored in a video_de=
+vice_state
+> >    struct anyway.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Ah I see, so for M2M devices the formats are stored per-context, where the
+context is tied to the filehandle. In that case, I agree that storing the
+format state inside struct video_device would not work.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+> > 2) VBI devices can have both a raw and sliced VBI format (either captur=
+e or output)
+> > 3) AFAIK non-M2M video devices can have both a video and meta format. T=
+hat may have
+> >    changed, I'm not 100% certain about this.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+RPi CFE driver is one such case, where a single driver structure stores
+both metadata and video format. But if I understand correctly, it creates
+separate video device nodes for metadata and video capture, so it can be
+managed through a single v4l2_format.fmt union for each video device.
 
-  pip3 install dtschema --upgrade
+Are there any non-M2M drivers which allow more than one type of formats to
+be set on the same device node?
 
+> > 4) video devices can also support an OVERLAY or OUTPUT_OVERLAY format (=
+rare)
+> >=20
+> > V4L2_CAP_VIDEO_OVERLAY is currently only used in
+> > drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c, so once =
+that driver
+> > disappears we can drop video overlay support for capture devices.
 
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+Yes, bcm2835-camera should be dropped hopefully in a couple more revisions =
+of
+https://lore.kernel.org/all/20250907-vchiq-destage-v2-4-6884505dca78@ideaso=
+nboard.com/
 
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
+> >=20
+> > 2-4 are all quite rare, but 1 is very common. But for such devices the =
+state
+> > wouldn't be in video_device anyway.
+> >=20
+> > But it would be nice if the same struct can be used in both m2m devices=
+ and non-m2m
+> > devices. It's just stored either in struct v4l2_fh or struct video_devi=
+ce. It would
+> > give a lot of opportunities for creating helper functions to make the l=
+ife for
+> > driver developers easier.
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250929-radxa-dragon-q6a-v5-0-aa96ffc352f8@radxa.com:
+Sure, I think we can modify the existing state struct to store both capture
+and output formats, and keep it inside struct v4l2_fh for M2M devices.
 
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): i2c@980000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): i2c@988000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): i2c@998000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): spi@99c000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@980000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@988000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@998000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: spi@99c000 (qcom,geni-spi): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/spi/qcom,spi-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): i2c@a88000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): i2c@a94000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): spi@a90000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): spi@a98000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@a88000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: spi@a90000 (qcom,geni-spi): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/spi/qcom,spi-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@a94000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: spi@a98000 (qcom,geni-spi): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
-	from schema $id: http://devicetree.org/schemas/spi/qcom,spi-geni-qcom.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: edp@aea0000 (qcom,sc7280-edp): reg: [[0, 183107584, 0, 512], [0, 183108096, 0, 512], [0, 183108608, 0, 3072], [0, 183111680, 0, 1024]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
+This will definitely be confusing for driver developers, as currently the
+two example patches in this series access the state directly. So I will add
+framework helpers to access the correct state and format type, and document
+properly that it should never be accessed manually by drivers.
 
+>=20
+> Follow-up: assuming we want to support M2M devices as well (I think we sh=
+ould), then
+> consider renaming video_device_state since it isn't video_device specific=
+, i.e. it
+> can either live in video_device or in v4l2_fh, and in the latter case you=
+'d have
+> two instances: capture and output state.
 
+Argh, naming is the hardest problem :-)
+Do you have any suggestions?
 
+I personally don't think video_device_state is a bad name, even if it is
+stored somewhere else for m2m devices, given it is still the "state" of the
+video device, even if it is not persistent across multiple file opens.
 
+I was trying to avoid names with "context" in then, so it does not clash
+with Jacopo's work.
 
+>=20
+> Regards,
+>=20
+>         Hans
+>=20
+> >=20
+> > Regards,
+> >=20
+> >       Hans
+> >=20
+> >> +    struct video_device *vdev;
+> >> +};
+> >> +
+> >>  /*
+> >>   * Newer version of video_device, handled by videodev2.c
+> >>   *  This version moves redundant code from video device code to
+> >> @@ -238,6 +255,7 @@ struct v4l2_file_operations {
+> >>   * @queue: &struct vb2_queue associated with this device node. May be=
+ NULL.
+> >>   * @prio: pointer to &struct v4l2_prio_state with device's Priority s=
+tate.
+> >>   *   If NULL, then v4l2_dev->prio will be used.
+> >> + * @state: &struct video_device_state, holds the active state for the=
+ device.
+> >>   * @name: video device name
+> >>   * @vfl_type: V4L device type, as defined by &enum vfl_devnode_type
+> >>   * @vfl_dir: V4L receiver, transmitter or m2m
+> >> @@ -283,6 +301,7 @@ struct video_device {
+> >>      struct vb2_queue *queue;
+> >> =20
+> >>      struct v4l2_prio_state *prio;
+> >> +    struct video_device_state *state;
+> >> =20
+> >>      /* device info */
+> >>      char name[64];
+> >> @@ -546,6 +565,27 @@ static inline int video_is_registered(struct vide=
+o_device *vdev)
+> >>      return test_bit(V4L2_FL_REGISTERED, &vdev->flags);
+> >>  }
+> >> =20
+> >> +/** __video_device_state_alloc - allocate video device state structure
+> >> + *
+> >> + * @vdev: pointer to struct video_device
+> >> + *
+> >> + * .. note::
+> >> + *
+> >> + *  This function is meant to be used only inside the V4L2 core.
+> >> + */
+> >> +struct video_device_state *
+> >> +__video_device_state_alloc(struct video_device *vdev);
+> >> +
+> >> +/** __video_device_state_free - free video device state structure
+> >> + *
+> >> + * @state: pointer to the state to be freed
+> >> + *
+> >> + * .. note::
+> >> + *
+> >> + *  This function is meant to be used only inside the V4L2 core.
+> >> + */
+> >> +void __video_device_state_free(struct video_device_state *state);
+> >> +
+> >>  /**
+> >>   * v4l2_debugfs_root - returns the dentry of the top-level "v4l2" deb=
+ugfs dir
+> >>   *
+> >>
+> >=20
+> >=20
+>=20
+
+Thanks,
+Jai
 
