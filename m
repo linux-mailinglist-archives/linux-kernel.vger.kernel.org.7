@@ -1,215 +1,159 @@
-Return-Path: <linux-kernel+bounces-836521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA0CBA9EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:02:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7B5BA9EB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD76171BEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 045243B10AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA0930BBAB;
-	Mon, 29 Sep 2025 16:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBAA30C104;
+	Mon, 29 Sep 2025 16:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="FVF4tF84"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEhEzgtl"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F9321770C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759161739; cv=pass; b=QQFll4insbnrc7YyvYhdexJpyjPM4eCQd2c63UXTU9hSB25rFVcouB0SKPW5AXesQWCnsEg+LvXPy3tFQFg8czVg5yjfUoFWqeP5/UyCtDPo2S79bSvnAhwFyMKVIUpqSprw1Dez4hCho86Hfam3TO7R8OvA0n0OXRf8WeETYvI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759161739; c=relaxed/simple;
-	bh=tBhdtn4WywjV8YX0pSLDWDcNcDkRLFjP5hlSSBzqSms=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I94cx6Fk5si+Mtx+lcnjS04ryCD2F8ivcxF4CV89sliL5ljxqkCkH7PytEhnA340Nkugx7Yf84DKjWNSguu7/9y/9JPuBneSmYljgOSBoFdVxFnJv+c5JCtlBLyFxWdloNZ3YGDiIDyhfwxqVBvBiehaUMIckqZXcMouDPjjPUA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=FVF4tF84; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759161649; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lO4XkvatoUXQvbjF88NEo4GQV304NUsNzGnfLfpAGQJACgtdT6ns9sqamBDeq5T3rrLNKdsMf5rTsiniDa3tJWa/86fe0pQYx0iN0L5IDHhkJqeNA7IlkLDk/UNDQjKhz5/8rGOPQljktYtoDkNRPLtpPwyO4kdAEK/YNnxGO5I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759161649; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=tBhdtn4WywjV8YX0pSLDWDcNcDkRLFjP5hlSSBzqSms=; 
-	b=lVLGTmETVkCIP0WKjmObmfrsZtGUq1ZYWjIVjC8VqJrB4aS4A5ggVHhmXiQIREqehiPffKh/8rJAxzL+50geybX9h7y5p84pJK2E31LxkhYaVa87FqJQhD8htU20NLiJWF+HYRbmrJE1EAF17YQXRe/JLlubBSh4bRbsimFGL68=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
-	dmarc=pass header.from=<nfraprado@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759161648;
-	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=tBhdtn4WywjV8YX0pSLDWDcNcDkRLFjP5hlSSBzqSms=;
-	b=FVF4tF848aJT71bWiRy++xWwA9rP30861XDd6VJanlPKxOzcEwMkNT5gxumr/gid
-	RGj1Z4ASg6BM+hhQSEj2Bbs32NY8JjgpZsmiJRz05Gpee1bJzyqwggVI8cMSCLp2Era
-	LWQsvLIkjLNilz17UTXRFEFBYPa2wjDsDxtsIY4M=
-Received: by mx.zohomail.com with SMTPS id 1759161645995986.0060307420077;
-	Mon, 29 Sep 2025 09:00:45 -0700 (PDT)
-Message-ID: <7307e84f9e4b0a8c67b82f7234f90bf83f201037.camel@collabora.com>
-Subject: Re: [PATCH RFC v2 05/20] drm: Introduce
- DRM_CAP_POST_BLEND_COLOR_PIPELINE
-From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
-To: Harry Wentland <harry.wentland@amd.com>, Louis Chauvet	
- <louis.chauvet@bootlin.com>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,  Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger	
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Haneen Mohammed	
- <hamohammed.sa@gmail.com>, Melissa Wen <melissa.srw@gmail.com>
-Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org, 
-	leo.liu@amd.com, ville.syrjala@linux.intel.com,
- pekka.paalanen@collabora.com, 	contact@emersion.fr, mwen@igalia.com,
- jadahl@redhat.com, sebastian.wick@redhat.com, 	shashank.sharma@amd.com,
- agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, 
-	aleixpol@kde.org, xaver.hugl@gmail.com, victoria@system76.com, 
-	uma.shankar@intel.com, quic_naseer@quicinc.com, quic_cbraga@quicinc.com, 
-	quic_abhinavk@quicinc.com, marcan@marcan.st, Liviu.Dudau@arm.com, 
-	sashamcintosh@google.com, chaitanya.kumar.borah@intel.com,
- mcanal@igalia.com, 	kernel@collabora.com, daniels@collabora.com,
- leandro.ribeiro@collabora.com, 	dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, 	linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,  Simona Vetter
- <simona.vetter@ffwll.ch>
-Date: Mon, 29 Sep 2025 12:00:40 -0400
-In-Reply-To: <52cce852-f4fb-4692-9318-1602fe878644@amd.com>
-References: 
-	<20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
-	 <20250917-mtk-post-blend-color-pipeline-v2-5-ac4471b44758@collabora.com>
-	 <ff53599d-fd7f-4791-a3e1-3269386c6b3e@bootlin.com>
-	 <52cce852-f4fb-4692-9318-1602fe878644@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+b1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F061F5847
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759161717; cv=none; b=CCW5VPAz8KdPYPGIbf5lR5Yjs//TWNwlZB7gSA1BZL//5qiikloCX8Ve18LAe/aQlM0LwYdx7F229Wfm6BwQ5t9Wik21VYfHOLSl37zVoeJvJQseT4UBt5ybYliAgfwxNCNecg14nsFBnguFGNu4dPK7wqDM6q8R6ijg3R2qRFE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759161717; c=relaxed/simple;
+	bh=oadeOqdjiKMeev8PewOUiOhaRXh7jvid763ETEvZDMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6drKqnZ+K4Qe9A5T09SM3JiYd/KgxLDlN78xceruEbaywpGIrWkwTblftrlKOrTrplkf/1B74ym7bjNu2JUMJs+R/mIbj+yHhdetwxWiYUEv5OpmuZaIh5dyPZfcgy6BQ2ShlH2gElosXwqmICr26AeslpUWasnCrn3XLLVgtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iEhEzgtl; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3635bd94f3eso44900091fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759161714; x=1759766514; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=74Rsk0zhOTuyxjtX5jVC1PFwqE1QJ68IfeopCcWou6k=;
+        b=iEhEzgtl82/CO/YBmOPpu5+e10gSYv53lCxSED2qj5rhyxaxwEk3/Ch/UX9e/KId7z
+         YHGNLWjYGvniDAhuu9Hew0JaeR5kt35BC82hFbCCreNgPvU05UsCdw2FZliV4UeaEaSm
+         BFLHVqGm/Y/d0L17St1NkuI4A8y6AMdl+Cs21rVxBif3H8/M3dCcj2uqmAO8vtxEmyTJ
+         ITle15J2Bk0bLNKpd20thYgQJ4bj8DIosf9ih23dpC8QSXvhpBJx0MtU28InsU+PIcn/
+         1jTKoJ227+WC4RbAUp7UgNcCJqlNIE4y8O7rTWh7D3k0SqIbpx+vLbIPvsHOn//nuYBg
+         eRVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759161714; x=1759766514;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=74Rsk0zhOTuyxjtX5jVC1PFwqE1QJ68IfeopCcWou6k=;
+        b=b/b1bwmci9/VNzLuxKLSheZ/UDx1AsByWXiEYWpnCXjXVVs5N+dXE0wW7ouUCR+Sc2
+         IToERCLULkAUO+nsoiGGv+oV5+SYrk6ykCGmD3bC7x/1EJ5tU1GQF4YcluD2WEO4rBKW
+         1JpAVOOtBgR0Vvnms6WTCwXWd4OFvBDxtPXkTCrL/49rIwHIQfMPEAvCoyng/sw75Z/p
+         4Uvkx4H6IK6tDgZs3/WoDebTf6CmUf9DR0pHuSIQ8wc7lAHxtgmobV/rU2GXDb8Jbigq
+         pvv3g/lZAEPIzvGF/Ji4rQSyjYZLHTNOymYcGMP+40srOSdUGhxnf9jovETAl/S4RYNO
+         ebEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbIXVVoUB6kORtfyeGTKScOoTnWnAEHE9pkE1VzlqxZRKa3lVz5Em2Ei8xWH/tqmdbDfY/Dq4ICtG8R1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyp3PMm70KTiYL8NgpokzyHFROtzkJaHVQLAyPISiFXVvHMmPP
+	GyPhD8C/NB0rUgFAlVRQQVkPBXZLnyv2AggGHxMVv3nJX7F7kisbNL9stID6se7KoLRag+KcG9u
+	yhQLhKiKq7KoHUkU76EnUzqoAHW3bblZ/MAbik1s/Yg==
+X-Gm-Gg: ASbGncuwfkNkC8BSLSQ1vgpgL/daiDlTCdoJBBkAt+GVNbjj7t2QzaRCVDNMIfBv38M
+	UIMV0e+AzFD5UH8aEuDg4cmDNvnzxWtWuE97Ow2LrshtN7nFgosg724GVbkSG2eGwSoIrR3bk8L
+	+KWAloUitCPDU/nvAcySx6YUfn60Hc+vwDwB14ouTW7y0mNqe/MNPq61D4ETH4mxBkSc8tmL0ej
+	7dxt0YrSRp4XHTI
+X-Google-Smtp-Source: AGHT+IEwWC1V3nTvpmB+f+dIHO2ycq0Vs80iBUr3gJGVBaqbUlUNUlbBslyfGp0tDefml7Q2l/E51kEGs3f8lqmqYc8=
+X-Received: by 2002:a05:651c:3608:b0:333:7e5b:15c0 with SMTP id
+ 38308e7fff4ca-36f7dab3512mr48089181fa.13.1759161714014; Mon, 29 Sep 2025
+ 09:01:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <7307e84f9e4b0a8c67b82f7234f90bf83f201037.camel@collabora.com>+zmo_0_nfraprado@collabora.com
+References: <20250827043254.26611-1-jgnieto@cs.stanford.edu>
+ <a261ed13-4c0b-43cf-b177-d33272626d25@molgen.mpg.de> <aLUC3u3ZrF35nIb6@macbookair.lan>
+In-Reply-To: <aLUC3u3ZrF35nIb6@macbookair.lan>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 29 Sep 2025 12:01:41 -0400
+X-Gm-Features: AS18NWDROgcD9G9WWK-cUVeJOEWEqbKRC5wZ4GLZhXOeG8o6ocnum9b96niQbW0
+Message-ID: <CABBYNZLqcdNTh_aMe3JVKBLauNkXq=6n+xTt7q798cDkZGaO9Q@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_h5: implement CRC data integrity
+To: Javier Nieto <jgnieto@cs.stanford.edu>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, marcel@holtmann.org, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-09-29 at 05:40 -0400, Harry Wentland wrote:
->=20
->=20
-> On 2025-09-19 08:42, Louis Chauvet wrote:
-> >=20
-> >=20
-> > Le 18/09/2025 =C3=A0 02:43, N=C3=ADcolas F. R. A. Prado a =C3=A9crit=C2=
-=A0:
-> > > Add a new cap that drivers can set to signal they support post-
-> > > blend
-> > > color pipelines.
-> > >=20
-> > > Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> >=20
-> > Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> >=20
-> > > ---
-> > > =C2=A0 drivers/gpu/drm/drm_ioctl.c | 3 +++
-> > > =C2=A0 include/drm/drm_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 =
-++++++
-> > > =C2=A0 include/uapi/drm/drm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 +++++=
-+
-> > > =C2=A0 3 files changed, 15 insertions(+)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/drm_ioctl.c
-> > > b/drivers/gpu/drm/drm_ioctl.c
-> > > index=20
-> > > ff193155129e7e863888d8958458978566b144f8..01592d10e3465ddceddef94
-> > > bc417f98d3ec12087 100644
-> > > --- a/drivers/gpu/drm/drm_ioctl.c
-> > > +++ b/drivers/gpu/drm/drm_ioctl.c
-> > > @@ -304,6 +304,9 @@ static int drm_getcap(struct drm_device *dev,
-> > > void=20
-> > > *data, struct drm_file *file_
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 req->value =3D=
- drm_core_check_feature(dev, DRIVER_ATOMIC)
-> > > &&
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev->mode_config.async_page_flip;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > +=C2=A0=C2=A0=C2=A0 case DRM_CAP_POST_BLEND_COLOR_PIPELINE:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 req->value =3D drm_core_c=
-heck_feature(dev,=20
-> > > DRIVER_POST_BLEND_COLOR_PIPELINE);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default:
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL=
-;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
-> > > index=20
-> > > 42fc085f986dee9261f8b08c4fc7d93b8d6d9769..6b0f4904e69766232283d43
-> > > 0c2540d30afef850f 100644
-> > > --- a/include/drm/drm_drv.h
-> > > +++ b/include/drm/drm_drv.h
-> > > @@ -122,6 +122,12 @@ enum drm_driver_feature {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * the cursor planes to work corr=
-ectly).
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DRIVER_CURSOR_HOTSPOT=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D BIT(9),
-> > > +=C2=A0=C2=A0=C2=A0 /**
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 * @DRIVER_POST_BLEND_COLOR_PIPELINE:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 *
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 * Driver supports post-blend color pipeline=
-.
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > +=C2=A0=C2=A0=C2=A0 DRIVER_POST_BLEND_COLOR_PIPELINE=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D BIT(10),
->=20
-> Is this to let userspace know that the driver supports a
-> post-blending color pipeline? Why couldn't userspace simply
-> check whether crtc objects have "Color Pipeline" properties?
+Hi Javier,
 
-It is, and yes userspace could figure it out that way, though since the
-property is only exposed after the client cap is set, it requires a
-more involved setup: set the client cap, check for the property, if not
-present unset the client cap.
+On Sun, Aug 31, 2025 at 10:20=E2=80=AFPM Javier Nieto <jgnieto@cs.stanford.=
+edu> wrote:
+>
+> Dear Paul,
+>
+> Thanks for the review!
+>
+> On Wed, Aug 27, 2025 at 12:56:50PM +0200, Paul Menzel wrote:
+>
+> > Any btmon trace?
+>
+> The presence of CRC is limited to the H5 layer, so it is not visible on
+> btmon. However, I did advertise and connect to a few devices while
+> running btmon and everything worked and looked as normal. I also ensured
+> that CRC was being used by adding temporary debugging prints.
+>
+> > I=C2=B4d add the above to the proper commit message.
+>
+> Should I resubmit the patch as v2?
+>
+> > >   static u8 h5_cfg_field(struct h5 *h5)
+> > >   {
+> > > -   /* Sliding window size (first 3 bits) */
+> > > -   return h5->tx_win & 0x07;
+> > > +   /* Sliding window size (first 3 bits) and CRC request (fifth bit)=
+. */
+> > > +   return (h5->tx_win & 0x07) | 0x10;
+> >
+> > Could a macro be defined for the CRC request bit?
+>
+> I thought about this, but decided against it since 0x10 is only used
+> here and in one other place. Also, the existing code does not define a
+> macro for the window size bits 0x07. I am not opposed to adding it if
+> someone feels strongly about it though.
+>
+> > The diff looks good. Feel free to carry:
+> >
+> > Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> >
+> >
+> > Kind regards,
+> >
+> > Paul
+>
+> I see that my patch fails a few test cases because it fails to link
+> crc-ccitt. Do you know whether this is a problem with my patch or the
+> test environment and where the code for the tests is found?
 
-With the driver cap introduced here, setting the client cap would fail
-in the first place if the driver cap is not set, so in this case
-userspace just tries to set the client cap, if it succeeds it knows it
-can use color pipelines, if it fails it knows to use the legacy color
-properties.
+Yeah, this seems really a problem you are introducing:
+
+ld: vmlinux.o: in function `h5_rx_crc':
+hci_h5.c:(.text+0xd938d9): undefined reference to `crc_ccitt'
+ld: vmlinux.o: in function `h5_prepare_pkt':
+hci_h5.c:(.text+0xd94798): undefined reference to `crc_ccitt'
+ld: hci_h5.c:(.text+0xd947a6): undefined reference to `crc_ccitt'
+
+I guess we are missing something like select CRC_CCITT on Kconfig.
+
+> Thanks again for your feedback.
+>
+> Javier
+
+
 
 --=20
-Thanks,
-
-N=C3=ADcolas
-
->=20
-> Harry
->=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* IMPORTANT: Below are all the legacy=
- flags, add new ones=20
-> > > above. */
-> > > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> > > index=20
-> > > 27cc159c1d275c7a7fe057840ef792f30a582bb7..c6c53e57958e951204154ce
-> > > 41a69696a6876f0e8 100644
-> > > --- a/include/uapi/drm/drm.h
-> > > +++ b/include/uapi/drm/drm.h
-> > > @@ -812,6 +812,12 @@ struct drm_gem_change_handle {
-> > > =C2=A0=C2=A0 * commits.
-> > > =C2=A0=C2=A0 */
-> > > =C2=A0 #define DRM_CAP_ATOMIC_ASYNC_PAGE_FLIP=C2=A0=C2=A0=C2=A0 0x15
-> > > +/**
-> > > + * DRM_CAP_POST_BLEND_COLOR_PIPELINE
-> > > + *
-> > > + * If set to 1, the driver supports post-blend color pipelines.
-> > > + */
-> > > +#define DRM_CAP_POST_BLEND_COLOR_PIPELINE=C2=A0=C2=A0=C2=A0 0x16
-> > > =C2=A0 /* DRM_IOCTL_GET_CAP ioctl argument type */
-> > > =C2=A0 struct drm_get_cap {
-> > >=20
-> >=20
+Luiz Augusto von Dentz
 
