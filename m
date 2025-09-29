@@ -1,441 +1,223 @@
-Return-Path: <linux-kernel+bounces-835761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06EFCBA7FEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:32:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DD4BA8008
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B206E3BE2DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:32:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971497AADFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB95299922;
-	Mon, 29 Sep 2025 05:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E7929B8DD;
+	Mon, 29 Sep 2025 05:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9+CVI3t"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0g07cX5r"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011024.outbound.protection.outlook.com [40.107.208.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679C217597
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759123920; cv=none; b=Ne42VtXIuJT6Qw6wz8mAl97wbhDO0XYZc7yHv8oR1QzxMrngZzJEqJYcWh9nl43qAch2nXLPDLg0K4ahSgl5jAaeEuGEK9BPAL+ffTb4KAHoAj0youxu8vyTknStbP7jPbwXHVzKwV38lRCSF3FzKi3sitAXeHHK4GWZE19a04k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759123920; c=relaxed/simple;
-	bh=CecNPkdUQccra+tZmBoz5JgHynC4Wll2ZTqb0pfjaRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sn6fNdcGQQW+wT/5VG2kg/Hgu6ceB6oeRCVMiRONlva6oGYvcFQpBdGBzgBHMlA/Xc5u6UhUDmHWvpCnNENGfniB9EXwMblzg6j/S9iwgmfZDhT/ra6epGglvb8QpAZlZg/bmS5ASo3rpu1ULMTHxQ0mlL0dG6R3QRJY8zWzVSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9+CVI3t; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27d2c35c459so33612225ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:31:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759123918; x=1759728718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sAaaYirlZjj8WAjFmLwdR9NT4S9TojNMpC7uhhfhzzs=;
-        b=f9+CVI3tnFDWe9ibe6IssT0M+lIoGheCPCshv1Aj2q0pgHDgOz8/jzP0bwH3pjjbku
-         IsTvOVbMfmtqudWnSaHEuDrxx9Jxre1dh71cCT9xwigKUyiRXU9EL3UoVr+j8gVH0dvC
-         XnLcBnpb/bwOj/v0HJ+RLqQ2pq+6ImZkblSvmEyEZQirznSnblfJYign9azHM3NIIiEb
-         mMmagsZ4k1SNpz+b0k2Y+mshi8hM/3XU+HUeasC6T4XqH59z/mmHfTxFugEbF3uOjo9V
-         oEYus0yhiZ6/3wwd4eWpVp03h8xjBfWOwD8090wQYgXiIOjIPm9F2UmRxYf7KpzS3OpO
-         aGtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759123918; x=1759728718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sAaaYirlZjj8WAjFmLwdR9NT4S9TojNMpC7uhhfhzzs=;
-        b=icBHSQUfvs3QW3FdeOgVuvtppowHbj8Hbml7Q5m9hw2D0e0cbF67TWdph3NJS3OamG
-         rjHKG4oCdTKgVu/4oL/2s5ygQK1N6R+yz0Qh2SUH9wWvSWsaGcq7NSPtY/Ane+SHCyzg
-         rYH9Hz64acpubFPh+KJBLTyfxBIJaKtWJKA8bvAXMaBxFhbOmdpaHE/gBlmB8UiOxcyH
-         Sp3uZOe9yGbIQWtmsYgqFMjEUH2LEhwFKDR8TlJ7q1U5AgiMpVJ+aBzqYLq6tmHvOGK+
-         d33+mUtUIXLzFhAoy4mhDZ/3cVgyaLn4/qG5zwwvC7iTT8gnp3MMYi1yCp80KBSo0z39
-         Uahw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtJsAkSQR3Sar1uZ5zVE/GzgvAhT6TKW5URXy5xk++sgDTB8iOuYOHWXWEkir7EKEKPdh5W4WKljeabYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtb3Ldt9/661nnSzmF71VaDgSmTsbNa29Hhx9UXRNbB0ib1r9v
-	JlYYNfYbiW1XpAB+Uz/RmkBbhF26LDGS+WZCP2IDzP7+Nra0CAU30hEeYKA00ZxRbRu4bRdGYnl
-	IWIISjz9bbygUWuPiKFsrWTYunIDvQ+g=
-X-Gm-Gg: ASbGncu1GGrcJRlsJSBal6TXGoY10aygA+CT/LlL+e5vt/xSxy1Zp5j7WgUsHxLnoMz
-	9QpfPLVbM2aeFlR5+BdbQDMc1bLEd+d7BmL+6LxmUtZBdoIOE/5CHhfX3Z9GbPkfoamL34LhD08
-	6sLkLP2lwGrUf3JpyRMDDl8CjBvxN/BkQ9Tqk6swF9KhB/hVB3LEzAd3DlvQQPYl6TskVThvADZ
-	S4+2uGE8KYooiFwkAjAUYEu0g==
-X-Google-Smtp-Source: AGHT+IGhRx8qpixoLgtTv7fh1XF2qnQhp4iiS1sNdN1Sp+W3/Qe8Dx1oxx0XuqziYnZ+xAR33NSGrhCTnTLP5iXNUVQ=
-X-Received: by 2002:a17:903:110e:b0:266:64b7:6e38 with SMTP id
- d9443c01a7336-27ed4a47150mr166738315ad.46.1759123917708; Sun, 28 Sep 2025
- 22:31:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792F229ACF7;
+	Mon, 29 Sep 2025 05:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759124224; cv=fail; b=Qybev5FbzJ1m5IFYZRPNJWkUfsuTjzBc4FvkttDEbTF2+Jr0QNUVuS+/YkrWxTUY35v6C6qXHVggEDp/BDxhJZusvZtjMYfJeON2QX1AXunIMldDhXD3D/uLqyBHymyNtXl+qQpruCl/nckuH8YIkDc2d1En5AAcTPjtXuwFlFs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759124224; c=relaxed/simple;
+	bh=uwXL637iTkxCh/4yHK4nfim8Vrgo5r0fsTO2tPvD8hk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Lfsj1I1PKHsY7cwdSREA/pJsni4yJJmGVGPo2qmYG9oMIYJyRUzHizynoWZ2o2HhsqEeeUnXSYNuVOxEOS0zgaaBZbKH7gV1ylvVzvH+vnUlSItPDJNwDUqdsFuFthz4I1lV0tPAk98fwynbJibMsWzmfL66cbubZ+MiGaqJwyM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0g07cX5r; arc=fail smtp.client-ip=40.107.208.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pZdvBRHIReKfyuwT9j23OJF8hzpDC6d82qCEJslrnO56yylifmD4qEytkv6iVWbL5YOjSLJ6wCsrEcwE4mc+e6pJa6s8lrTDQp0BBE5jGE1BU8WeH5FCn0PA2/5zMs5sRDYGgu1IYdLKoN1+obhO0nbr8rFvBy02YowGqMaGlLqMkOIjqu2z0p/3aiiPInNies53s2J90JMlb0+0fyruILfpGFOwPG7Kp1PJC1u+I3N2PhC8q9XLO9k0LpM9dT0sDoTVEHOBZNRKZ1do5uBc61CaKjZKkOFAepCW2vyIJK2/rrMObhnTmltW/hYIsMhZr2SifB1mhaArbj5OyV/V8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H773GghB59iaLVCqgdbkSh6KdK3ukTHO0MgoUBVYou8=;
+ b=JqRzo3ci4l62Xnx5qczOVRvITPaziRjULS92m0eWhWlsSHhIeoTpFxu6zzQGzOT2DuohPNP1f179u/4GhDECUHtXEZWKt2vDEZ2s5S6oqDWJE2VWgHu4NoM5xdADhzxdHVF60xbfozSH+hZ9kumV6akLBHZtf2PQUdTV6/ojxH+FzcscbVr+Ljz+05AaZEYzzAnQHtNcCpGCgLINayhNbLX8qg7+vMYQeNeR8o2H8KivhVJB5Y95wVx2zBXqMsUwYZhxkLQiWCrzmVIfCXuTAfTR9QFHkeVyOJzZcIDPaoKUQCCY/D69+B1/PM2ai0zReGsSASz+zQR6PCUw6B2hxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H773GghB59iaLVCqgdbkSh6KdK3ukTHO0MgoUBVYou8=;
+ b=0g07cX5r87t89/BWHdC/kMlp77Mmi8X8LFU24Ti/XA/9eT34a88BJX1JpGyZZvWPnS6M3u4VBgKOc/gUyA6rx3PSvTN5xImGA5VfOo9THMT37Hqaqd77k+FM/DD78nVXPCax/N13i/OhAGzbj9gDsbZs6cO1AISNk6+JIbjJTLw=
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
+ by CY5PR12MB6058.namprd12.prod.outlook.com (2603:10b6:930:2d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
+ 2025 05:36:58 +0000
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::6798:13c6:d7ba:e01c%5]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 05:36:58 +0000
+From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>, "vkoul@kernel.org"
+	<vkoul@kernel.org>, "Simek, Michal" <michal.simek@amd.com>
+CC: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/3] dmaengine: xilinx_dma: Fix channel idle state
+ management in interrupt handler
+Thread-Topic: [PATCH 1/3] dmaengine: xilinx_dma: Fix channel idle state
+ management in interrupt handler
+Thread-Index: AQHcJ9gPk7EbJetffUKQ1IMMmS1EErSptfbw
+Date: Mon, 29 Sep 2025 05:36:58 +0000
+Message-ID:
+ <MN0PR12MB595389852415C5833530F1ADB71BA@MN0PR12MB5953.namprd12.prod.outlook.com>
+References: <20250917133609.231316-1-suraj.gupta2@amd.com>
+ <20250917133609.231316-2-suraj.gupta2@amd.com>
+In-Reply-To: <20250917133609.231316-2-suraj.gupta2@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-09-29T05:35:12.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|CY5PR12MB6058:EE_
+x-ms-office365-filtering-correlation-id: 6d2b712a-6d1d-4ed6-5e5c-08ddff1a3553
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?AGoyMCeQLhsM0q4z/tuGVb8/OmZuVwFqHXmjUdLn932LCaN71uOZh4kVRl2y?=
+ =?us-ascii?Q?TMU0sbB8BOn2vwdeejaj2BM0iOMV8+bId0mmJHCeT9WpY6auKBKsmb4P7H+J?=
+ =?us-ascii?Q?Gu29bNojuneUFxHsEweb8QEHItLtu3un6mM/Xe8hfgj5dRK++V1YC0GBLKWY?=
+ =?us-ascii?Q?L03Muu8MmnlOuiqEwkmEai2AuOlXG64t7roVSIE2/3KBSUuxTQbHBdruhQtT?=
+ =?us-ascii?Q?crGRAtHsgQw30FtQW8lh9QWYh0WOLtBQYcrveYY5STtT1B1973AYJcT4j0/e?=
+ =?us-ascii?Q?PfjkqmSrqox9/l19Nr16h3QFIadLA4NRaNRAlTFpoR+ABe/U2WOJ08wLb0KC?=
+ =?us-ascii?Q?NanaOr+pF5b0MiaaPWwr8wxr5Egb/VZj8hLf83QlRTlairmwxkx2MpLuyd4L?=
+ =?us-ascii?Q?o5rOsLI3nUGWQGILWeNjM+osNPiPLMWHWz2FZrxaGzmcHGKwQftrmmCP7beV?=
+ =?us-ascii?Q?iptSeSNjLNOtTtab0Y8ulPt1arJAiMrWS4PwcG202t21O4YCVrb3qX/CwOGu?=
+ =?us-ascii?Q?rFPE2e22+R/g7T6qwiuQkGWDWfwJ+4GkiofCluAxQoSF1ym4jH6d3M37GyKF?=
+ =?us-ascii?Q?HaLdgh0gCVgzXHilk7BZHbULqMXz0xbRaeUwF7h/OypLRfxDZYpg7wiSB2H2?=
+ =?us-ascii?Q?LgVDXGrdLMozhFBSS908o7LxK9Um6eCSq63aZMyO6K0SBNWir3dfKmScOpKF?=
+ =?us-ascii?Q?HTpiEAKdW72SDt9MZlh+ATJDJsC0rjEts4DhV8fCaKO/2rkVRD52/4gAZs/i?=
+ =?us-ascii?Q?MXjonaHoBWrDg8hNLE7drKZF7yzk7N6+S0p64yW2ndUnX528MMgdMImqbJFR?=
+ =?us-ascii?Q?3N3AW6j1XFRMyI1im9sgVWUTYrZIOPt9nbRmECntReE0Wy1KumE41/EeQ/Hc?=
+ =?us-ascii?Q?N2TfOEHPZmBH/g9eK0Rok6JB0plfrkwLfFQXEODJX//9qbFziVUld+2D9O7s?=
+ =?us-ascii?Q?6Wiz6IFPizB2nCAWiJsfeGwmQ7F18aVLmjpkHjB/FljJGfybIhA8O+JIdYM9?=
+ =?us-ascii?Q?5hCkT9q5WKeOdcYrqeNLHem/RNmlV8t0LecA+e+J2FRQavK76efDq5gtaQUT?=
+ =?us-ascii?Q?cf0cUqBJQDahQN6W54eMZezl2bGnc/Ze1xXu6sXKWrd3iPE32hmdRwFfJRDW?=
+ =?us-ascii?Q?W+0V8gOwF8txmo1V4ygZt2mb79TR1sNYoCP2r/A1EyeKFBRWHVDQb6Q9jau5?=
+ =?us-ascii?Q?uCmOw9wrrOb4uhahB5xMeIZWYHbEoa1zcxRd9r3HFbibA+n+h/3ByA2EN6b0?=
+ =?us-ascii?Q?zD3V9Nz7qvpgRGYd2nkwQOvJchtQXv/nTinkMz/f0C03RzZRLiKWbsTzuHao?=
+ =?us-ascii?Q?0VoLtWaJ7C/pn90gUArwmnqDHxYZPu9Aua8AeC5FSITDUIrl8zIwJwMP2OvC?=
+ =?us-ascii?Q?6Ikk0VLHtSMpIX0406FQ3IvCaHYkxTUZ8qmvd0sE9VZKmKH0JQZ9uynMo7cL?=
+ =?us-ascii?Q?ID8A6LU0diNEbyaLj6s1DDul/WYdjagWzfzu07/26hHoD2lp7Z0INf4TIAGk?=
+ =?us-ascii?Q?X3HBteADAX2YnHRjfOE5YO75dDKShHL2qIWw?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?luEZ8+CFqZS5mTl/t9J1kLkPZQLLhhZxr6mFAuLHIKx+DjuRRaNnuLrnDiwj?=
+ =?us-ascii?Q?8rM05GKg66JTUbc/IjARcf+uDCbszF0xJt7cSowwG0oQGqcHJ9NX5pDKP8Ab?=
+ =?us-ascii?Q?wyqCsJIXtRh+tmy+fitJv/J2h3AiQVHwI2mjnN2AJHABS3ihgBJKKTINGypX?=
+ =?us-ascii?Q?J/px62xQJQuyUwpDPlCsXMUw5DXJIBdekmOwTms2UqjDnWK+Ja9hzeQRhvnh?=
+ =?us-ascii?Q?XrXTU2z1fYsqXs1DPCC/S+Qyqqh47mWgup9Oa/r+84nDHWoZIkMI3+b4GLql?=
+ =?us-ascii?Q?jbuOEyow7nKbIsgzqHAFMngyccwK6DqpuQXWBy69LPprtZvIBEfslPMdXkW6?=
+ =?us-ascii?Q?MmEAhZEJYHdqQxj/kuDj42UmAaNOZ+G5vXVwTTp85tLavDaLebGU9iUuz+Qj?=
+ =?us-ascii?Q?zcLQdJf2ak4WPxXsnvewdc8JZlV8slZSmlXdxTk4YleQJApAQO6aKtEIX3/L?=
+ =?us-ascii?Q?TVLJ7LkhDK+vU+6bNRYYle0Yl8LLcNJM2RT0tq/Vv77rXr8gsnu0YrPgGwNa?=
+ =?us-ascii?Q?Jp8d847UdgagDVaTzb07S0pCczJsxJaIAUIJE0B6MQBfQvIdyTXjGF6Kwo5T?=
+ =?us-ascii?Q?qE1aiHJ9J+GcMlvKsUIuZM1zHEaH9Lp6Ef33EvDY9UE/5dCriL/dGfMoPUBr?=
+ =?us-ascii?Q?grbAYQU/BjOUXcof0bCVWGlcVJhFjWiMA3ajs5wkkSkYHTDZ+BaeBpOrs6LU?=
+ =?us-ascii?Q?MMOteJl+Cg0hwK6x/nb8cQuh5Gnzow4UxwIBjW29sBSCxV/KbnM65VM+hKPl?=
+ =?us-ascii?Q?PWshzPHTwv/mUxBeFltR0SsKq7ULf7MrkmrCozALdvfy0TYd1OMFyD0NKUeL?=
+ =?us-ascii?Q?ZLLnTMzR/ISIl8pTzCZNehfA1znEquofJS/ruG1zHKjxAEnOu8k4ySGa+CAf?=
+ =?us-ascii?Q?cn+8p1903Wcrn0sCLgIoGs9WF+amvpn0MOzBm/Dn7n5DkaBvVOxCrFZqKCL1?=
+ =?us-ascii?Q?V+U8i5sIExGCSWKFXmc52/09qDAo4ZqyQqBUTkeqAnpcEKH9zNnCbcMMTKhh?=
+ =?us-ascii?Q?cupd3lv2e7pdGSbo0x6jYrDRZuwThMsD6VG3CW74viMMrraKfArXgII7ytNV?=
+ =?us-ascii?Q?Y7EKA8Zxi5Zu4Nn6BhfZt7BosLL+nd6Na4iDN9QljqpMe7vCqM0W6lRvVVri?=
+ =?us-ascii?Q?QmDiG2wVcyUJHCf10piFbf8BBW7g3mcMfaexMB13MhB+pkx3esvGeDcZalr5?=
+ =?us-ascii?Q?jF76FBqEf2vAACC+62SkeTNqfbu4XqpSV5wTwBgxArIu810A8VP+oruLW1k5?=
+ =?us-ascii?Q?/lkqUQyxxIUw+ghIoli4XmXdo77Ew7qAghQOPBM9aXIW+p7Y23xcm6sG4N2m?=
+ =?us-ascii?Q?jRzwB0ZEtPmngzIDAGGJGA8xG0omxzPcLAJoK2fsJtz78BTFcdce34HahD1L?=
+ =?us-ascii?Q?87GK7aKOcPiNEdckOiH7mb4dK6LFSF+Nc5O/117KAJtGsWJAUiK8GOJ/EN4W?=
+ =?us-ascii?Q?872nL08agwYRm8tEblAXvc58C+TDC2Nzp9PZNocXIJIF5fKlsddxrJXrIz4P?=
+ =?us-ascii?Q?uwljIh4VaX/cRleJrZ4X8IqRro30V7cZRhx+6WZJ/I/tYIYL932ZPMGgMDzy?=
+ =?us-ascii?Q?vHLydqMbvhFZ82OyaLU=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1758903795-18636-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1758903795-18636-5-git-send-email-nunodasneves@linux.microsoft.com>
-In-Reply-To: <1758903795-18636-5-git-send-email-nunodasneves@linux.microsoft.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Mon, 29 Sep 2025 13:31:41 +0800
-X-Gm-Features: AS18NWAQZZ8De10I8yeYC5SAMr-1ACkihRLRDRijc7g8yhuh1pF2mEQqrh3QvQg
-Message-ID: <CAMvTesDo=d9fr=o-+e=40DZWau81GybD-59ohiEGjHDgTDiaug@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] mshv: Allocate vp state page for
- HVCALL_MAP_VP_STATE_PAGE on L1VH
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com, 
-	tiala@microsoft.com, anirudh@anirudhrb.com, paekkaladevi@linux.microsoft.com, 
-	skinsburskii@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, 
-	Jinank Jain <jinankjain@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d2b712a-6d1d-4ed6-5e5c-08ddff1a3553
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2025 05:36:58.5170
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wnSc8JiHG2RCPdgxbktZ7XRw4ps2RHUG5KYuRFOf5dvA+G2ecVNOzkCJyFs9Q9lK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6058
 
-On Sat, Sep 27, 2025 at 12:48=E2=80=AFAM Nuno Das Neves
-<nunodasneves@linux.microsoft.com> wrote:
+[AMD Official Use Only - AMD Internal Distribution Only]
+
+> -----Original Message-----
+> From: Suraj Gupta <suraj.gupta2@amd.com>
+> Sent: Wednesday, September 17, 2025 7:06 PM
+> To: vkoul@kernel.org; Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>;
+> Simek, Michal <michal.simek@amd.com>
+> Cc: dmaengine@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linu=
+x-
+> kernel@vger.kernel.org
+> Subject: [PATCH 1/3] dmaengine: xilinx_dma: Fix channel idle state manage=
+ment in
+> interrupt handler
 >
-> From: Jinank Jain <jinankjain@linux.microsoft.com>
+> Only mark the channel as idle and start new transfers when the active lis=
+t is actually
+> empty, ensuring proper channel state management and avoiding spurious tra=
+nsfer
+> attempts.
+
+Nit - also explain the spurious transfer scenario so that fixes tag is just=
+ified.
 >
-> Introduce mshv_use_overlay_gpfn() to check if a page needs to be
-> allocated and passed to the hypervisor to map VP state pages. This is
-> only needed on L1VH, and only on some (newer) versions of the
-> hypervisor, hence the need to check vmm_capabilities.
->
-> Introduce functions hv_map/unmap_vp_state_page() to handle the
-> allocation and freeing.
->
-> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
-> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-> Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-> Reviewed-by: Anirudh Rayabharam <anirudh@anirudhrb.com>
+> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> Fixes: c0bba3a99f07 ("dmaengine: vdma: Add Support for Xilinx AXI Direct =
+Memory
+> Access Engine")
 > ---
-
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
->  drivers/hv/mshv_root.h         | 11 ++---
->  drivers/hv/mshv_root_hv_call.c | 61 ++++++++++++++++++++++++---
->  drivers/hv/mshv_root_main.c    | 76 +++++++++++++++++-----------------
->  3 files changed, 98 insertions(+), 50 deletions(-)
+>  drivers/dma/xilinx/xilinx_dma.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
-> index 0cb1e2589fe1..dbe2d1d0b22f 100644
-> --- a/drivers/hv/mshv_root.h
-> +++ b/drivers/hv/mshv_root.h
-> @@ -279,11 +279,12 @@ int hv_call_set_vp_state(u32 vp_index, u64 partitio=
-n_id,
->                          /* Choose between pages and bytes */
->                          struct hv_vp_state_data state_data, u64 page_cou=
-nt,
->                          struct page **pages, u32 num_bytes, u8 *bytes);
-> -int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> -                             union hv_input_vtl input_vtl,
-> -                             struct page **state_page);
-> -int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type=
-,
-> -                               union hv_input_vtl input_vtl);
-> +int hv_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +                        union hv_input_vtl input_vtl,
-> +                        struct page **state_page);
-> +int hv_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +                          struct page *state_page,
-> +                          union hv_input_vtl input_vtl);
->  int hv_call_create_port(u64 port_partition_id, union hv_port_id port_id,
->                         u64 connection_partition_id, struct hv_port_info =
-*port_info,
->                         u8 port_vtl, u8 min_connection_vtl, int node);
-> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_cal=
-l.c
-> index 3fd3cce23f69..98c6278ff151 100644
-> --- a/drivers/hv/mshv_root_hv_call.c
-> +++ b/drivers/hv/mshv_root_hv_call.c
-> @@ -526,9 +526,9 @@ int hv_call_set_vp_state(u32 vp_index, u64 partition_=
-id,
->         return ret;
->  }
->
-> -int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> -                             union hv_input_vtl input_vtl,
-> -                             struct page **state_page)
-> +static int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32=
- type,
-> +                                    union hv_input_vtl input_vtl,
-> +                                    struct page **state_page)
->  {
->         struct hv_input_map_vp_state_page *input;
->         struct hv_output_map_vp_state_page *output;
-> @@ -547,7 +547,14 @@ int hv_call_map_vp_state_page(u64 partition_id, u32 =
-vp_index, u32 type,
->                 input->type =3D type;
->                 input->input_vtl =3D input_vtl;
->
-> -               status =3D hv_do_hypercall(HVCALL_MAP_VP_STATE_PAGE, inpu=
-t, output);
-> +               if (*state_page) {
-> +                       input->flags.map_location_provided =3D 1;
-> +                       input->requested_map_location =3D
-> +                               page_to_pfn(*state_page);
-> +               }
-> +
-> +               status =3D hv_do_hypercall(HVCALL_MAP_VP_STATE_PAGE, inpu=
-t,
-> +                                        output);
->
->                 if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY)=
- {
->                         if (hv_result_success(status))
-> @@ -565,8 +572,39 @@ int hv_call_map_vp_state_page(u64 partition_id, u32 =
-vp_index, u32 type,
->         return ret;
->  }
->
-> -int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type=
-,
-> -                               union hv_input_vtl input_vtl)
-> +static bool mshv_use_overlay_gpfn(void)
-> +{
-> +       return hv_l1vh_partition() &&
-> +              mshv_root.vmm_caps.vmm_can_provide_overlay_gpfn;
-> +}
-> +
-> +int hv_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +                        union hv_input_vtl input_vtl,
-> +                        struct page **state_page)
-> +{
-> +       int ret =3D 0;
-> +       struct page *allocated_page =3D NULL;
-> +
-> +       if (mshv_use_overlay_gpfn()) {
-> +               allocated_page =3D alloc_page(GFP_KERNEL);
-> +               if (!allocated_page)
-> +                       return -ENOMEM;
-> +               *state_page =3D allocated_page;
-> +       } else {
-> +               *state_page =3D NULL;
-> +       }
-> +
-> +       ret =3D hv_call_map_vp_state_page(partition_id, vp_index, type, i=
-nput_vtl,
-> +                                       state_page);
-> +
-> +       if (ret && allocated_page)
-> +               __free_page(allocated_page);
-> +
-> +       return ret;
-> +}
-> +
-> +static int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u=
-32 type,
-> +                                      union hv_input_vtl input_vtl)
->  {
->         unsigned long flags;
->         u64 status;
-> @@ -590,6 +628,17 @@ int hv_call_unmap_vp_state_page(u64 partition_id, u3=
-2 vp_index, u32 type,
->         return hv_result_to_errno(status);
->  }
->
-> +int hv_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +                          struct page *state_page, union hv_input_vtl in=
-put_vtl)
-> +{
-> +       int ret =3D hv_call_unmap_vp_state_page(partition_id, vp_index, t=
-ype, input_vtl);
-> +
-> +       if (mshv_use_overlay_gpfn() && state_page)
-> +               __free_page(state_page);
-> +
-> +       return ret;
-> +}
-> +
->  int hv_call_get_partition_property_ex(u64 partition_id, u64 property_cod=
-e,
->                                       u64 arg, void *property_value,
->                                       size_t property_value_sz)
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index e199770ecdfa..2d0ad17acde6 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -890,7 +890,7 @@ mshv_partition_ioctl_create_vp(struct mshv_partition =
-*partition,
->  {
->         struct mshv_create_vp args;
->         struct mshv_vp *vp;
-> -       struct page *intercept_message_page, *register_page, *ghcb_page;
-> +       struct page *intercept_msg_page, *register_page, *ghcb_page;
->         void *stats_pages[2];
->         long ret;
->
-> @@ -908,28 +908,25 @@ mshv_partition_ioctl_create_vp(struct mshv_partitio=
-n *partition,
->         if (ret)
->                 return ret;
->
-> -       ret =3D hv_call_map_vp_state_page(partition->pt_id, args.vp_index=
-,
-> -                                       HV_VP_STATE_PAGE_INTERCEPT_MESSAG=
-E,
-> -                                       input_vtl_zero,
-> -                                       &intercept_message_page);
-> +       ret =3D hv_map_vp_state_page(partition->pt_id, args.vp_index,
-> +                                  HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> +                                  input_vtl_zero, &intercept_msg_page);
->         if (ret)
->                 goto destroy_vp;
->
->         if (!mshv_partition_encrypted(partition)) {
-> -               ret =3D hv_call_map_vp_state_page(partition->pt_id, args.=
-vp_index,
-> -                                               HV_VP_STATE_PAGE_REGISTER=
-S,
-> -                                               input_vtl_zero,
-> -                                               &register_page);
-> +               ret =3D hv_map_vp_state_page(partition->pt_id, args.vp_in=
-dex,
-> +                                          HV_VP_STATE_PAGE_REGISTERS,
-> +                                          input_vtl_zero, &register_page=
-);
->                 if (ret)
->                         goto unmap_intercept_message_page;
->         }
->
->         if (mshv_partition_encrypted(partition) &&
->             is_ghcb_mapping_available()) {
-> -               ret =3D hv_call_map_vp_state_page(partition->pt_id, args.=
-vp_index,
-> -                                               HV_VP_STATE_PAGE_GHCB,
-> -                                               input_vtl_normal,
-> -                                               &ghcb_page);
-> +               ret =3D hv_map_vp_state_page(partition->pt_id, args.vp_in=
-dex,
-> +                                          HV_VP_STATE_PAGE_GHCB,
-> +                                          input_vtl_normal, &ghcb_page);
->                 if (ret)
->                         goto unmap_register_page;
->         }
-> @@ -960,7 +957,7 @@ mshv_partition_ioctl_create_vp(struct mshv_partition =
-*partition,
->         atomic64_set(&vp->run.vp_signaled_count, 0);
->
->         vp->vp_index =3D args.vp_index;
-> -       vp->vp_intercept_msg_page =3D page_to_virt(intercept_message_page=
-);
-> +       vp->vp_intercept_msg_page =3D page_to_virt(intercept_msg_page);
->         if (!mshv_partition_encrypted(partition))
->                 vp->vp_register_page =3D page_to_virt(register_page);
->
-> @@ -993,21 +990,19 @@ mshv_partition_ioctl_create_vp(struct mshv_partitio=
-n *partition,
->         if (hv_scheduler_type =3D=3D HV_SCHEDULER_TYPE_ROOT)
->                 mshv_vp_stats_unmap(partition->pt_id, args.vp_index);
->  unmap_ghcb_page:
-> -       if (mshv_partition_encrypted(partition) && is_ghcb_mapping_availa=
-ble()) {
-> -               hv_call_unmap_vp_state_page(partition->pt_id, args.vp_ind=
-ex,
-> -                                           HV_VP_STATE_PAGE_GHCB,
-> -                                           input_vtl_normal);
-> -       }
-> +       if (mshv_partition_encrypted(partition) && is_ghcb_mapping_availa=
-ble())
-> +               hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> +                                      HV_VP_STATE_PAGE_GHCB, ghcb_page,
-> +                                      input_vtl_normal);
->  unmap_register_page:
-> -       if (!mshv_partition_encrypted(partition)) {
-> -               hv_call_unmap_vp_state_page(partition->pt_id, args.vp_ind=
-ex,
-> -                                           HV_VP_STATE_PAGE_REGISTERS,
-> -                                           input_vtl_zero);
-> -       }
-> +       if (!mshv_partition_encrypted(partition))
-> +               hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> +                                      HV_VP_STATE_PAGE_REGISTERS,
-> +                                      register_page, input_vtl_zero);
->  unmap_intercept_message_page:
-> -       hv_call_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> -                                   HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> -                                   input_vtl_zero);
-> +       hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> +                              HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> +                              intercept_msg_page, input_vtl_zero);
->  destroy_vp:
->         hv_call_delete_vp(partition->pt_id, args.vp_index);
->         return ret;
-> @@ -1748,24 +1743,27 @@ static void destroy_partition(struct mshv_partiti=
-on *partition)
->                                 mshv_vp_stats_unmap(partition->pt_id, vp-=
->vp_index);
->
->                         if (vp->vp_register_page) {
-> -                               (void)hv_call_unmap_vp_state_page(partiti=
-on->pt_id,
-> -                                                                 vp->vp_=
-index,
-> -                                                                 HV_VP_S=
-TATE_PAGE_REGISTERS,
-> -                                                                 input_v=
-tl_zero);
-> +                               (void)hv_unmap_vp_state_page(partition->p=
-t_id,
-> +                                                            vp->vp_index=
-,
-> +                                                            HV_VP_STATE_=
-PAGE_REGISTERS,
-> +                                                            virt_to_page=
-(vp->vp_register_page),
-> +                                                            input_vtl_ze=
-ro);
->                                 vp->vp_register_page =3D NULL;
->                         }
->
-> -                       (void)hv_call_unmap_vp_state_page(partition->pt_i=
-d,
-> -                                                         vp->vp_index,
-> -                                                         HV_VP_STATE_PAG=
-E_INTERCEPT_MESSAGE,
-> -                                                         input_vtl_zero)=
-;
-> +                       (void)hv_unmap_vp_state_page(partition->pt_id,
-> +                                                    vp->vp_index,
-> +                                                    HV_VP_STATE_PAGE_INT=
-ERCEPT_MESSAGE,
-> +                                                    virt_to_page(vp->vp_=
-intercept_msg_page),
-> +                                                    input_vtl_zero);
->                         vp->vp_intercept_msg_page =3D NULL;
->
->                         if (vp->vp_ghcb_page) {
-> -                               (void)hv_call_unmap_vp_state_page(partiti=
-on->pt_id,
-> -                                                                 vp->vp_=
-index,
-> -                                                                 HV_VP_S=
-TATE_PAGE_GHCB,
-> -                                                                 input_v=
-tl_normal);
-> +                               (void)hv_unmap_vp_state_page(partition->p=
-t_id,
-> +                                                            vp->vp_index=
-,
-> +                                                            HV_VP_STATE_=
-PAGE_GHCB,
-> +                                                            virt_to_page=
-(vp->vp_ghcb_page),
-> +                                                            input_vtl_no=
-rmal);
->                                 vp->vp_ghcb_page =3D NULL;
->                         }
+> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
+dma.c index
+> a34d8f0ceed8..9f416eae33d0 100644
+> --- a/drivers/dma/xilinx/xilinx_dma.c
+> +++ b/drivers/dma/xilinx/xilinx_dma.c
+> @@ -1914,8 +1914,10 @@ static irqreturn_t xilinx_dma_irq_handler(int irq,=
+ void
+> *data)
+>                     XILINX_DMA_DMASR_DLY_CNT_IRQ)) {
+>               spin_lock(&chan->lock);
+>               xilinx_dma_complete_descriptor(chan);
+> -             chan->idle =3D true;
+> -             chan->start_transfer(chan);
+> +             if (list_empty(&chan->active_list)) {
+> +                     chan->idle =3D true;
+> +                     chan->start_transfer(chan);
+> +             }
+>               spin_unlock(&chan->lock);
+>       }
 >
 > --
-> 2.34.1
->
->
+> 2.25.1
 
-
---=20
-Thanks
-Tianyu Lan
 
