@@ -1,311 +1,146 @@
-Return-Path: <linux-kernel+bounces-835675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B236BA7C7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:51:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC6BA7C86
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F4B97A92CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB953AD47F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C734E207A18;
-	Mon, 29 Sep 2025 01:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CHzHYqLg"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CBB1FBEA6;
+	Mon, 29 Sep 2025 02:01:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3942F2E;
-	Mon, 29 Sep 2025 01:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4767514286;
+	Mon, 29 Sep 2025 02:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759110669; cv=none; b=SoFvXURs8zOzIDuJ+LpeYgWdlEW5eNRiUkFttN58Fbsi0Z41UeW0DMFWwN5avhaj34uMZCCTlpwB8d5Dapqzfdq3Ype1lLK0WlYoiNaGl0IXlnV/ce9izQfWbTpprRWRYaUIIpUdax6/0J81xLYZeKAqPffPKZCElac3+yyo65o=
+	t=1759111275; cv=none; b=ny5vwj0pr66km8AbRWdLgAB9KTEhLnX6ya6aRp3NyHV92cbMVAIYNB5t3huL4CnzogKVjiQfxA3JdxJ82WGgvU5H6JrniWpnlzwGRn2ZFkXiUkTddAMFuh2YGQw3hUZLwucnc4FwwgsFNrBXHgaljlG3gS/1W+vI9RYlj24wfLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759110669; c=relaxed/simple;
-	bh=QPLiG3/EaSBK7ty8Ofz3g15Hll54Bo9Sr+73BNfJa6Q=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ipQL0wEwn4h6gCK+O/56ookfEgeUtlE7+9QwT4laJx/jAZV9N+4rZ8VVw/tVNTsEi/ikDb2x+myV52GlmyAQYG7OnCCzRyhCYUPnmaetnv3r5hVs1DtmnB9JUfOOqgo/mvREUoG0Rlh0Uo9h9EJHN16xSA/G+0R5R/xMtl3lYOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CHzHYqLg; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1759110654; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=9aorilP5lRAQIaWXx/azi+eQ3upGhw4CPgjfhTO+Sro=;
-	b=CHzHYqLgqUtZ+U8hRZFXvzMFo2FAC3SIlCnHPN1KGU8M2Iqmot7mm8NVV9U6O9Jx7oJ3C7yZUqv5QG41ROZI8cCA/k/4tUTVJVD4jsgBpPnlys+bACeKN3zzMJuZ/Otd9PZufNQkS091+XOV7WodKgCfw7yHsVsvFD4qZU2YDIs=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WozqZKo_1759110652 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 29 Sep 2025 09:50:53 +0800
-Date: Mon, 29 Sep 2025 09:50:52 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: Halil Pasic <pasic@linux.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Sidraya Jayagond <sidraya@linux.ibm.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	Mahanta Jambigi <mjambigi@linux.ibm.com>,
-	Tony Lu <tonylu@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>,
-	Guangguan Wang <guangguan.wang@linux.alibaba.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH net-next v5 2/2] net/smc: handle -ENOMEM from
- smc_wr_alloc_link_mem gracefully
-Message-ID: <aNnl_CfV0EvIujK0@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20250929000001.1752206-1-pasic@linux.ibm.com>
- <20250929000001.1752206-3-pasic@linux.ibm.com>
+	s=arc-20240116; t=1759111275; c=relaxed/simple;
+	bh=Ro7Kx2h2/6a55aSoFI7nfRu4gTKQyLI+4hme6PHnEBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GnHlNm6GVVJ5dJ4WaKuCf0C1Lg3UTLwOpPe8ANLwJPp0UQCmTPLjyfHIBq9uee9YGexjgd+X6cdtrecMYCcOjyPMH8Xpv5G/FXMWkM2gLU/eEb+5zE/gQbbzr3djyr7kXmNPzSlgM2b+IRN/zoom+y3QTDoTUv+FUSSRQQW/9Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cZktb4LdNzYQtvN;
+	Mon, 29 Sep 2025 10:00:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C5B421A0A37;
+	Mon, 29 Sep 2025 10:01:10 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCXW2Nk6NloSkWuBA--.20602S3;
+	Mon, 29 Sep 2025 10:01:09 +0800 (CST)
+Message-ID: <68829b32-7a8c-475a-9e27-f71822eb541b@huaweicloud.com>
+Date: Mon, 29 Sep 2025 10:01:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929000001.1752206-3-pasic@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: validate extent entries before caching in
+ ext4_find_extent()
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+References: <20250928100946.12445-1-kartikey406@gmail.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250928100946.12445-1-kartikey406@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCXW2Nk6NloSkWuBA--.20602S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur1DJryxGw1UJryUKrWDXFb_yoW5Jr43pr
+	ZF9r1UtrykX34DG393tF4UZ3W2g348GrW7Ga9xKw4YvasxWFy8WFy7tay5XFn5ur4ruw4j
+	vF4Ykas8GanxZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2025-09-29 02:00:01, Halil Pasic wrote:
->Currently if a -ENOMEM from smc_wr_alloc_link_mem() is handled by
->giving up and going the way of a TCP fallback. This was reasonable
->before the sizes of the allocations there were compile time constants
->and reasonably small. But now those are actually configurable.
->
->So instead of giving up, keep retrying with half of the requested size
->unless we dip below the old static sizes -- then give up! In terms of
->numbers that means we give up when it is certain that we at best would
->end up allocating less than 16 send WR buffers or less than 48 recv WR
->buffers. This is to avoid regressions due to having fewer buffers
->compared the static values of the past.
->
->Please note that SMC-R is supposed to be an optimisation over TCP, and
->falling back to TCP is superior to establishing an SMC connection that
->is going to perform worse. If the memory allocation fails (and we
->propagate -ENOMEM), we fall back to TCP.
->
->Preserve (modulo truncation) the ratio of send/recv WR buffer counts.
->
->Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
->Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
->Reviewed-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
->Reviewed-by: Sidraya Jayagond <sidraya@linux.ibm.com>
->---
-> Documentation/networking/smc-sysctl.rst |  8 ++++--
-> net/smc/smc_core.c                      | 34 +++++++++++++++++--------
-> net/smc/smc_core.h                      |  2 ++
-> net/smc/smc_wr.c                        | 28 ++++++++++----------
-> 4 files changed, 46 insertions(+), 26 deletions(-)
->
->diff --git a/Documentation/networking/smc-sysctl.rst b/Documentation/networking/smc-sysctl.rst
->index 5de4893ef3e7..4a5b4c89bc97 100644
->--- a/Documentation/networking/smc-sysctl.rst
->+++ b/Documentation/networking/smc-sysctl.rst
->@@ -85,7 +85,9 @@ smcr_max_send_wr - INTEGER
-> 
-> 	Please be aware that all the buffers need to be allocated as a physically
-> 	continuous array in which each element is a single buffer and has the size
->-	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
->+	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails, we keep retrying
->+	with half of the buffer count until it is ether successful or (unlikely)
->+	we dip below the old hard coded value which is 16 where we give up much
-> 	like before having this control.
-> 
-> 	Default: 16
->@@ -103,7 +105,9 @@ smcr_max_recv_wr - INTEGER
-> 
-> 	Please be aware that all the buffers need to be allocated as a physically
-> 	continuous array in which each element is a single buffer and has the size
->-	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
->+	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails, we keep retrying
->+	with half of the buffer count until it is ether successful or (unlikely)
->+	we dip below the old hard coded value which is 16 where we give up much
-> 	like before having this control.
-> 
-> 	Default: 48
->diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
->index be0c2da83d2b..e4eabc83719e 100644
->--- a/net/smc/smc_core.c
->+++ b/net/smc/smc_core.c
->@@ -810,6 +810,8 @@ int smcr_link_init(struct smc_link_group *lgr, struct smc_link *lnk,
-> 	lnk->clearing = 0;
-> 	lnk->path_mtu = lnk->smcibdev->pattr[lnk->ibport - 1].active_mtu;
-> 	lnk->link_id = smcr_next_link_id(lgr);
->+	lnk->max_send_wr = lgr->max_send_wr;
->+	lnk->max_recv_wr = lgr->max_recv_wr;
-> 	lnk->lgr = lgr;
-> 	smc_lgr_hold(lgr); /* lgr_put in smcr_link_clear() */
-> 	lnk->link_idx = link_idx;
->@@ -836,27 +838,39 @@ int smcr_link_init(struct smc_link_group *lgr, struct smc_link *lnk,
-> 	rc = smc_llc_link_init(lnk);
-> 	if (rc)
-> 		goto out;
->-	rc = smc_wr_alloc_link_mem(lnk);
->-	if (rc)
->-		goto clear_llc_lnk;
-> 	rc = smc_ib_create_protection_domain(lnk);
-> 	if (rc)
->-		goto free_link_mem;
->-	rc = smc_ib_create_queue_pair(lnk);
->-	if (rc)
->-		goto dealloc_pd;
->+		goto clear_llc_lnk;
->+	do {
->+		rc = smc_ib_create_queue_pair(lnk);
->+		if (rc)
->+			goto dealloc_pd;
->+		rc = smc_wr_alloc_link_mem(lnk);
->+		if (!rc)
->+			break;
->+		else if (rc != -ENOMEM) /* give up */
->+			goto destroy_qp;
->+		/* retry with smaller ... */
->+		lnk->max_send_wr /= 2;
->+		lnk->max_recv_wr /= 2;
->+		/* ... unless droping below old SMC_WR_BUF_SIZE */
->+		if (lnk->max_send_wr < 16 || lnk->max_recv_wr < 48)
->+			goto destroy_qp;
->+		smc_ib_destroy_queue_pair(lnk);
->+	} while (1);
->+
-> 	rc = smc_wr_create_link(lnk);
-> 	if (rc)
->-		goto destroy_qp;
->+		goto free_link_mem;
-> 	lnk->state = SMC_LNK_ACTIVATING;
-> 	return 0;
-> 
->+free_link_mem:
->+	smc_wr_free_link_mem(lnk);
-> destroy_qp:
-> 	smc_ib_destroy_queue_pair(lnk);
-> dealloc_pd:
-> 	smc_ib_dealloc_protection_domain(lnk);
->-free_link_mem:
->-	smc_wr_free_link_mem(lnk);
-> clear_llc_lnk:
-> 	smc_llc_link_clear(lnk, false);
-> out:
->diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
->index 8d06c8bb14e9..5c18f08a4c8a 100644
->--- a/net/smc/smc_core.h
->+++ b/net/smc/smc_core.h
->@@ -175,6 +175,8 @@ struct smc_link {
-> 	struct completion	llc_testlink_resp; /* wait for rx of testlink */
-> 	int			llc_testlink_time; /* testlink interval */
-> 	atomic_t		conn_cnt; /* connections on this link */
->+	u16			max_send_wr;
->+	u16			max_recv_wr;
+Hi, Deepanshu!
 
-Here, you've moved max_send_wr/max_recv_wr from the link group to individual links.
-This means we can now have different max_send_wr/max_recv_wr values on two
-different links within the same link group.
-
-Since in Alibaba we doesn't use multi-link configurations, we haven't tested
-this scenario. Have you tested the link-down handling process in a multi-link
-setup?
-
-Otherwise, the patch looks good to me.
-
-Best regards,
-Dust
-
-> };
+On 9/28/2025 6:09 PM, Deepanshu Kartikey wrote:
+> syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
+> opening a verity file on a corrupted ext4 filesystem mounted without
+> a journal.
 > 
-> /* For now we just allow one parallel link per link group. The SMC protocol
->diff --git a/net/smc/smc_wr.c b/net/smc/smc_wr.c
->index 883fb0f1ce43..5feafa98ab1a 100644
->--- a/net/smc/smc_wr.c
->+++ b/net/smc/smc_wr.c
->@@ -547,9 +547,9 @@ void smc_wr_remember_qp_attr(struct smc_link *lnk)
-> 		    IB_QP_DEST_QPN,
-> 		    &init_attr);
+> The issue occurs when the extent tree contains out-of-order extents,
+> which can happen in a corrupted filesystem. ext4_find_extent() calls
+> ext4_cache_extents() without validating the extent entries when the
+> tree depth is 0 (leaf level). This allows corrupted extent trees with
+> out-of-order extents to be cached, triggering a BUG_ON in
+> ext4_es_cache_extent() due to integer underflow when calculating hole
+> sizes:
 > 
->-	lnk->wr_tx_cnt = min_t(size_t, lnk->lgr->max_send_wr,
->+	lnk->wr_tx_cnt = min_t(size_t, lnk->max_send_wr,
-> 			       lnk->qp_attr.cap.max_send_wr);
->-	lnk->wr_rx_cnt = min_t(size_t, lnk->lgr->max_recv_wr,
->+	lnk->wr_rx_cnt = min_t(size_t, lnk->max_recv_wr,
-> 			       lnk->qp_attr.cap.max_recv_wr);
-> }
+>   If prev = 4352 and lblk = 1280:
+>   lblk - prev = 1280 - 4352 = -3072 (as signed)
+>   = 4294964224 (as unsigned)
+>   end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279 (after overflow)
+>   BUG_ON(end < lblk) triggers because 1279 < 4352
 > 
->@@ -741,51 +741,51 @@ int smc_wr_alloc_lgr_mem(struct smc_link_group *lgr)
-> int smc_wr_alloc_link_mem(struct smc_link *link)
-> {
-> 	/* allocate link related memory */
->-	link->wr_tx_bufs = kcalloc(link->lgr->max_send_wr,
->+	link->wr_tx_bufs = kcalloc(link->max_send_wr,
-> 				   SMC_WR_BUF_SIZE, GFP_KERNEL);
-> 	if (!link->wr_tx_bufs)
-> 		goto no_mem;
->-	link->wr_rx_bufs = kcalloc(link->lgr->max_recv_wr, link->wr_rx_buflen,
->+	link->wr_rx_bufs = kcalloc(link->max_recv_wr, link->wr_rx_buflen,
-> 				   GFP_KERNEL);
-> 	if (!link->wr_rx_bufs)
-> 		goto no_mem_wr_tx_bufs;
->-	link->wr_tx_ibs = kcalloc(link->lgr->max_send_wr,
->+	link->wr_tx_ibs = kcalloc(link->max_send_wr,
-> 				  sizeof(link->wr_tx_ibs[0]), GFP_KERNEL);
-> 	if (!link->wr_tx_ibs)
-> 		goto no_mem_wr_rx_bufs;
->-	link->wr_rx_ibs = kcalloc(link->lgr->max_recv_wr,
->+	link->wr_rx_ibs = kcalloc(link->max_recv_wr,
-> 				  sizeof(link->wr_rx_ibs[0]),
-> 				  GFP_KERNEL);
-> 	if (!link->wr_rx_ibs)
-> 		goto no_mem_wr_tx_ibs;
->-	link->wr_tx_rdmas = kcalloc(link->lgr->max_send_wr,
->+	link->wr_tx_rdmas = kcalloc(link->max_send_wr,
-> 				    sizeof(link->wr_tx_rdmas[0]),
-> 				    GFP_KERNEL);
-> 	if (!link->wr_tx_rdmas)
-> 		goto no_mem_wr_rx_ibs;
->-	link->wr_tx_rdma_sges = kcalloc(link->lgr->max_send_wr,
->+	link->wr_tx_rdma_sges = kcalloc(link->max_send_wr,
-> 					sizeof(link->wr_tx_rdma_sges[0]),
-> 					GFP_KERNEL);
-> 	if (!link->wr_tx_rdma_sges)
-> 		goto no_mem_wr_tx_rdmas;
->-	link->wr_tx_sges = kcalloc(link->lgr->max_send_wr, sizeof(link->wr_tx_sges[0]),
->+	link->wr_tx_sges = kcalloc(link->max_send_wr, sizeof(link->wr_tx_sges[0]),
-> 				   GFP_KERNEL);
-> 	if (!link->wr_tx_sges)
-> 		goto no_mem_wr_tx_rdma_sges;
->-	link->wr_rx_sges = kcalloc(link->lgr->max_recv_wr,
->+	link->wr_rx_sges = kcalloc(link->max_recv_wr,
-> 				   sizeof(link->wr_rx_sges[0]) * link->wr_rx_sge_cnt,
-> 				   GFP_KERNEL);
-> 	if (!link->wr_rx_sges)
-> 		goto no_mem_wr_tx_sges;
->-	link->wr_tx_mask = bitmap_zalloc(link->lgr->max_send_wr, GFP_KERNEL);
->+	link->wr_tx_mask = bitmap_zalloc(link->max_send_wr, GFP_KERNEL);
-> 	if (!link->wr_tx_mask)
-> 		goto no_mem_wr_rx_sges;
->-	link->wr_tx_pends = kcalloc(link->lgr->max_send_wr,
->+	link->wr_tx_pends = kcalloc(link->max_send_wr,
-> 				    sizeof(link->wr_tx_pends[0]),
-> 				    GFP_KERNEL);
-> 	if (!link->wr_tx_pends)
-> 		goto no_mem_wr_tx_mask;
->-	link->wr_tx_compl = kcalloc(link->lgr->max_send_wr,
->+	link->wr_tx_compl = kcalloc(link->max_send_wr,
-> 				    sizeof(link->wr_tx_compl[0]),
-> 				    GFP_KERNEL);
-> 	if (!link->wr_tx_compl)
->@@ -906,7 +906,7 @@ int smc_wr_create_link(struct smc_link *lnk)
-> 		goto dma_unmap;
-> 	}
-> 	smc_wr_init_sge(lnk);
->-	bitmap_zero(lnk->wr_tx_mask, lnk->lgr->max_send_wr);
->+	bitmap_zero(lnk->wr_tx_mask, lnk->max_send_wr);
-> 	init_waitqueue_head(&lnk->wr_tx_wait);
-> 	rc = percpu_ref_init(&lnk->wr_tx_refs, smcr_wr_tx_refs_free, 0, GFP_KERNEL);
-> 	if (rc)
->-- 
->2.48.1
+> Fix this by adding extent entry validation using the existing
+> ext4_valid_extent_entries() function before caching. This ensures
+> corrupted extent trees are detected and handled properly through the
+> error path, preventing both the BUG_ON and potential use-after-free
+> issues.
+> 
+
+Thank you for the fix patch! However, I am curious why the check in
+__ext4_iget()->ext4_ext_check_inode() fails? It should check the
+extents of the root node and be able to caught this corruption.
+
+Thanks,
+Yi
+
+> Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> ---
+>  fs/ext4/extents.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index ca5499e9412b..f8e45623f7ea 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -924,8 +924,18 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
+>  	path[0].p_bh = NULL;
+>  
+>  	i = depth;
+> -	if (!(flags & EXT4_EX_NOCACHE) && depth == 0)
+> +	if (!(flags & EXT4_EX_NOCACHE) && depth == 0) {
+> +		ext4_fsblk_t pblk = 0;
+> +
+> +		if (!ext4_valid_extent_entries(inode, eh, 0, &pblk, 0)) {
+> +			EXT4_ERROR_INODE(inode,
+> +				"invalid extent entries, pblk %llu",
+> +				pblk);
+> +			ret = -EFSCORRUPTED;
+> +			goto err;
+> +		}
+>  		ext4_cache_extents(inode, eh);
+> +	}
+>  	/* walk through the tree */
+>  	while (i) {
+>  		ext_debug(inode, "depth %d: num %d, max %d\n",
+
 
