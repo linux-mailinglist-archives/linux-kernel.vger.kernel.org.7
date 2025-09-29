@@ -1,171 +1,122 @@
-Return-Path: <linux-kernel+bounces-836402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689C3BA9965
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4593EBA995C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9B73AA072
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001B43A75BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6033090E2;
-	Mon, 29 Sep 2025 14:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEA6309EFE;
+	Mon, 29 Sep 2025 14:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VPxxUDtl"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ybofpbcx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F572FBDE7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9A91DD543;
+	Mon, 29 Sep 2025 14:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156309; cv=none; b=s/5+my6/lCsUf/tO0rj/Z1Xdc4k7T5K1p4WchzAaABRbsXF2HfzzbrcY7eqFgMWXayZtvoEiX14hYaGugOQyzSVcT+3V6eT/wVoEqbD6u1CLHaQvg2mBbxNnw8GpET5n6hnDRlw+uWg/mV6Bgi4pEGR9Dse2ykHfwLSTBhyoqiU=
+	t=1759156294; cv=none; b=C3TwVRyJgwxMlFHzahc3NO3DPE1DBCH9zhO/whpeSw0XxKEzE/1bitNigQpBgukinygeevNvaPm+OtToXO7EJSAn0ALRvE5XNVMUH5nMiKFO8N8mS5bRBNaKOX38ge2z2oDghZ/g+zWgkh6Yp/kUwO1QzLwDgjN4nApZSq6XWC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156309; c=relaxed/simple;
-	bh=IpGX4TAXRBmFsee6tJ2oBCu5Ti2cTDB6CTERjYAHTNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EgzSua9UdOmJS1alZ3rI1HDdojr1wtIae/+Ra7hx4Tx+dZ9AgMITcs/46mSuXjI6/S9IKR6YcPJA2XFX3/D3lFnuUpAqsTPrVxIT5N/aPB7v1PUm1rifJOJhY6LC/yTzEWnU7R5sSd+h1jBfrjbQarudKz3V/lMNG2Gn5/0gxAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VPxxUDtl; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 1CDCC1A0F91;
-	Mon, 29 Sep 2025 14:31:42 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DC77D606AE;
-	Mon, 29 Sep 2025 14:31:41 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7F3B4102F16F4;
-	Mon, 29 Sep 2025 16:31:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759156300; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=xjTOCvFdY4AQNlquU9JgemAA95m0AG2lPPK+gJ1mSgQ=;
-	b=VPxxUDtl11bkw/rkUE/A+VjJ0kUI6xgmqsZYhopAaSOFiSx0IOViaggmVpfg/VjmCJEfdk
-	udZKT9ZsvEaI1h1dPA4wcmvUzxxca2ElIpCkRgrLbAl0Q6q0ZcVGzDg8huD9/dFkpgLMhb
-	SCwLHgLxn8CtRcRzu2KFP04l2OqbW4fT1Fu0XebVQay8PYoXCQZNf7qrzMlbeqAvpTKn6h
-	1z2QjkJ6rv6uiTcHJoAg6b+QLLIv2vHCuatdu6nQ4Igau/RxwLTz5hL0gnVB2A6eHFYjom
-	zAJApIqQNovmcYsTDCfuhajAvFxGJpJd6rHfuee0i851gMT5+uUuEHaaj3Av9A==
-Date: Mon, 29 Sep 2025 16:31:27 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] drm/encoder: drm_encoder_cleanup: take chain mutex
- while tearing down
-Message-ID: <20250929163127.5ad20e05@booty>
-In-Reply-To: <20250929-flat-koel-from-nibiru-665d49@houat>
-References: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com>
-	<20250926-drm-bridge-alloc-encoder-chain-mutex-v1-2-23b62c47356a@bootlin.com>
-	<20250929-flat-koel-from-nibiru-665d49@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759156294; c=relaxed/simple;
+	bh=sKuqKNpE5dhMtZf1zaC2ZqjURpyd3C7l8Ef/qH3un8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/WpLQQAY2VhIgq05GZw/Y5gWPTcD50VG9tKgVWCj9VSMe47LRQ4pPcHW7qa+Ymgbzt0AeqeqnysAAevuinVnpYfLSO5ovUaLudG3N+dsCkGTdx4yLYa4b58I73iZgL6lduSgbMgnROmvHM62Am3hddILF/UFsJMpIwp4REagP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ybofpbcx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68AE4C4CEF4;
+	Mon, 29 Sep 2025 14:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759156293;
+	bh=sKuqKNpE5dhMtZf1zaC2ZqjURpyd3C7l8Ef/qH3un8E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ybofpbcx+ejkNvAv75607kTZIE8CUsY9qhrXc/yrJ9X2bu9eV4OnGXQ3TNrOD/y2P
+	 ZTx2iK+hamBmIKKHDaVWhoOTCftImvcznOCK+7AEffOegIkND9rMYBhjXJdQX1r1ZL
+	 0JZPrZuBsBi3OkjiTPDsLn7YSdXtt3i13qbb2sqBLpmyWZ+oVdhkzjg1wkMuDpihUy
+	 6H4hKACxj53QRJs6VTVZG6utz4nyFWuKrwYhNjvjyPwNTkosbGPUWq/6n6pcvlANgh
+	 fQ2kDFeXinDxHted7Q2+zz5VDaq8aUMue0z6xZZqc8r3t6Teq5PIR23t0f4AHQZWzI
+	 MmqWDPc+OcTRw==
+Date: Mon, 29 Sep 2025 09:31:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michael.hennerich@analog.com, nuno.sa@analog.com,
+	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+	marcelo.schmitt1@gmail.com,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
+ and ADAQ4224
+Message-ID: <20250929143132.GA4099970-robh@kernel.org>
+References: <cover.1758916484.git.marcelo.schmitt@analog.com>
+ <5dc08b622dac1db561f26034c93910ccff75e965.1758916484.git.marcelo.schmitt@analog.com>
+ <20250928111955.175680cb@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928111955.175680cb@jic23-huawei>
 
-Hi Maxime,
-
-On Mon, 29 Sep 2025 14:45:10 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
-
-> On Fri, Sep 26, 2025 at 05:59:43PM +0200, Luca Ceresoli wrote:
-> > drm_encoder_cleanup() modifies the encoder chain by removing bridges via
-> > drm_bridge_detach(). Protect this whole operation by taking the mutex, so
-> > any users iterating over the chain will not access it during the change.
-> > 
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > ---
-> >  drivers/gpu/drm/drm_encoder.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
-> > index 3261f142baea30c516499d23dbf8d0acf5952cd6..3a04bedf9b759acd6826864b7f2cc9b861a8f170 100644
-> > --- a/drivers/gpu/drm/drm_encoder.c
-> > +++ b/drivers/gpu/drm/drm_encoder.c
-> > @@ -195,9 +195,11 @@ void drm_encoder_cleanup(struct drm_encoder *encoder)
-> >  	 * the indices on the drm_encoder after us in the encoder_list.
-> >  	 */
-> >  
-> > +	mutex_lock(&encoder->bridge_chain_mutex);
-> >  	list_for_each_entry_safe(bridge, next, &encoder->bridge_chain,
-> >  				 chain_node)
-> >  		drm_bridge_detach(bridge);
-> > +	mutex_unlock(&encoder->bridge_chain_mutex);  
+On Sun, Sep 28, 2025 at 11:19:55AM +0100, Jonathan Cameron wrote:
+> On Fri, 26 Sep 2025 17:40:47 -0300
+> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 > 
-> You were claiming that the mutex was to prevent issues with concurrent
-> iteration and removal of the list members. list_for_each_entry_safe() is
-> explicitly made to protect against that. Why do we need both?
+> > ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
+> > PGA (programmable gain amplifier) that scales the input signal prior to it
+> > reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
+> > and A1) that set one of four possible signal gain configurations.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> > Change log v2 -> v3
+> > - PGA gain now described in decibels.
+> > 
+> > The PGA gain is not going to fit well as a channel property because it may
+> > affect more than one channel as in AD7191.
+> > https://www.analog.com/media/en/technical-documentation/data-sheets/AD7191.pdf
+> > 
+> > I consulted a very trustworthy source [1, 2] and learned that describing signal
+> > gains in decibels is a common practice. I now think it would be ideal to describe
+> > these PGA and PGA-like gains with properties in decibel units and this patch
+> > is an attempt of doing so. The only problem with this approach is that we end up
+> > with negative values when the gain is lower than 1 (the signal is attenuated)
+> > and device tree specification doesn't support signed integer types. As the
+> > docs being proposed fail dt_binding_check, I guess I have to nack the patch myself.
+> > Any chance of dt specification eventually support signed integers?
+> > Any suggestions appreciated.
+> > 
+> > [1] https://en.wikipedia.org/wiki/Decibel
+> > [2] https://en.wikipedia.org/wiki/Gain_(electronics)
+> 
+> I still wonder if the better way to describe this is to ignore that it
+> has anything to do with PGA as such and instead describe the pin strapping.
+> 
+> DT folk, is there an existing way to do that? My grep skills are failing to
+> spot one.
+> 
+> We've papered over this for a long time in various IIO drivers by controlling
+> directly what the pin strap controls with weird and wonderful device specific
+> bindings. I wonder if we can't have a gpio driver + binding that rejects all
+> config and just lets us check the current state of an output pin.  Kind of a
+> fixed mode regulator equivalent for gpios.
 
-You're right saying we don't need both. With a mutex preventing the list
-from any change, we can actually simpify code a bit to use the non-safe
-list macro:
+If these are connected to GPIOs, isn't it possible that someone will 
+want to change their value?
 
--	struct drm_bridge *bridge, *next;
-+	struct drm_bridge *bridge;
-...
-+	mutex_lock(&encoder->bridge_chain_mutex);
-- 	list_for_each_entry_safe(bridge, next, &encoder->bridge_chain,
-+ 	list_for_each_entry(bridge, &encoder->bridge_chain,
- 				 chain_node)
- 		drm_bridge_detach(bridge);
-+	mutex_unlock(&encoder->bridge_chain_mutex);
- 
-But it's not fully correct that list_for_each_entry_safe() protects
-against concurrent removal. As I see it, all the _safe variants of
-list_for_each*() macros protect against one specific and frequent use
-case:
+Other than some generic 'pinstrap-gpios' property, I don't see what we'd 
+do here? I don't feel like pin strapping GPIOs is something that we see 
+all that often.
 
-	list_for_each_entry_safe(curs, n, some_list, membername) {
-		...
-		list_del(&curs->membername);
-		...
-	}
-
-So the _safe variant protect from removing the element at the current
-iteration (*curs). It does so by taking the following element pointer in
-advance, in the auxiliary variable @n. But _concurrent_ removal (the
-topic of this series) means the element being removed could just be the
-following one.
-
-Consider this sequence:
-
- 1. start loop: list_for_each_entry_safe() sets;
-    pos = list_first_entry()   = <bridge 1>
-    n   = list_next_entry(pos) = <bridge 2>
- 2. enter the loop 1st time, do something with *pos (bridge 1)
- 3. in the meanwhile bridge 2 is hot-unplugged
-    -> another thread removes item 2 -> drm_bridge_detach()
-    -> list_del() sets bridge->next = LIST_POISON1
- 4. loop iteration 1 finishes, list_for_each_entry_safe() sets:
-    pos = n (previously set to bridge 2)
-    n   = (bridge 2)->next = LIST_POISON1
- 5. enter the loop 2nd time, do something with *pos (bridge 2)
- 6. loop iteration 2 finishes, list_for_each_entry_safe() sets:
-    pos = n (previously set to LIST_POISON1) -> bug
-
-Do you think this explains the need for this series?
-
-If it does, I should probably add this to the cover letter and maybe
-patch 1.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Rob
 
