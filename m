@@ -1,104 +1,113 @@
-Return-Path: <linux-kernel+bounces-835999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84072BA88B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF752BA8908
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7A71C0518
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F105D3C39A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAA6283CA7;
-	Mon, 29 Sep 2025 09:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB122877D3;
+	Mon, 29 Sep 2025 09:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="li8ioU6F"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QM+gySSr"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725232820B7;
-	Mon, 29 Sep 2025 09:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948C9283FCB;
+	Mon, 29 Sep 2025 09:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137184; cv=none; b=gjNTUCAmK4MlCkkKT/ojFhQ3cbrcYVD/goxrcJbYCEHgr7eovm4VXwHQvtKETWtAqGLBTdqyb+JbV2nXzlhC/ccK4982oFbQ4nUwjvffkQl73M3HGduVj5h6zQ4QxaHnL1Yzn5/BurA3cZul5F5PKKlQd6jJ62x9xINBmUqc2GY=
+	t=1759137260; cv=none; b=KgWc0NZT2kfSa3y4fNHeGMfiuDTBc9MF3aMTiDvq1kTuklNb0stQETzb0Nq1/rbCzSNjIIO2OA27TJhyxmVFbIvZWhjSB1ntc2eAgc9p1S2FMA2uQcsyKxn/YYEDuCHWo0fHyDldNWLdigchZPPTrqJwaXQk+gAcGbVizCEn4OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137184; c=relaxed/simple;
-	bh=MDWkLK1dGijjG8v507lu0ysDW3LIvasoxZgZGYZ3a5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=leGuBOI8gb3euzc8c5FrmqQ3LtGsSsc9eBWynKBjcb4lNm1ZHFymcLTt2qy0n+du+1HVpkHx+UuqJ6pIWX6/DraSD/KuIWIU++yUCndLWpttE2cvn3dZPqrj8P5CwijtLXU0yGn9ojB2nZt4BECWDJqbFeuQcGM5xkZNsnjdvQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=li8ioU6F; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.17])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id E211A4028387;
-	Mon, 29 Sep 2025 09:12:52 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru E211A4028387
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1759137172;
-	bh=M5/86L2ysekbvzlLNJYDPTANUtIXEb03F86NeC3bLus=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=li8ioU6F086CyKOUTO/mcGQMYgoJPIctnJj3/58MoGuj0Jy7ipl5t0QCT+nPJ/gOT
-	 3aDwmUfnICUxzl7t4XJYXMIIsiknfErr6xXiw+FIP6qz7IiyVod1eSvrhSqqhrm6xP
-	 UC/gU3gutdXkHF+b7VpK8xib8x8k2TeONwGUgaxU=
-Date: Mon, 29 Sep 2025 12:12:52 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Bitterblue Smith <rtl8821cerfe2@gmail.com>, 
-	Zong-Zhe Yang <kevin_yang@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH rtw-next 2/6] wifi: rtw89: usb: fix leak in
- rtw89_usb_write_port()
-Message-ID: <20250929120454-04af8f947a628885bf00db71-pchelkin@ispras>
-References: <20250920132614.277719-1-pchelkin@ispras.ru>
- <20250920132614.277719-3-pchelkin@ispras.ru>
- <fbd7e4192bb8422980a2916489d4961d@realtek.com>
+	s=arc-20240116; t=1759137260; c=relaxed/simple;
+	bh=E8wDUmtkXtY0nCbESAutN8mDkg7pgIycI1po3zyl3Hk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e1HBSoxzP0QvMl+B9P95sas7LQH8R0EFByiPtPzu8nI7vOsepGeW/sZ9BRsdvZD+Zuesk17PQW4pbQRL21DBrrMxi6yhqqZozbGq/OEarmA5Jh+R1Dk2IG6MHowbE1qS93xeU+1i5q0oDirsTV0qfaHD8OaBMHTpIbiLz5sjfS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QM+gySSr; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1759137258; x=1790673258;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=E8wDUmtkXtY0nCbESAutN8mDkg7pgIycI1po3zyl3Hk=;
+  b=QM+gySSrsPBLh/f2TK9cctXqT8IMzJcafTAA7ZnDcOL8Y4/NuuSSSp59
+   vJ1dTgbNeLkQmpk4AfqhK/d/UDrZeVdsT1TZ+nKUCHltEP1efja/V7Duo
+   lDA4YjUu2If0c2dQbk/Dcs/2m/H7c2n8Q4FRkXvUog6cGF8HJ6HsaOwIm
+   xiv49OQ1A99oe+TSOgqsUPkeiACb04e0pF/h8NQPlojOHvUy4pSX6C56m
+   7OihAZWgPOVhoPt9wnCkj7tMlUXH/uFLKykPzZ4eT4dzCW8RbbZ/VJugj
+   1nIc4ZlCqezD+qA7bvWLXaTDl/lCtzF84FgTDuU3DBq9uQHmV0OAviEOn
+   Q==;
+X-CSE-ConnectionGUID: chH5A82TS3e+SMlPN86uYQ==
+X-CSE-MsgGUID: rTVbZpr5Q7eSfU2oUemsbw==
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="46507240"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Sep 2025 02:14:11 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 29 Sep 2025 02:13:48 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 29 Sep 2025 02:13:46 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
+	<vadim.fedorenko@linux.dev>, <rmk+kernel@armlinux.org.uk>,
+	<rosenp@gmail.com>, <christophe.jaillet@wanadoo.fr>,
+	<steen.hegelund@microchip.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net v3 0/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
+Date: Mon, 29 Sep 2025 11:13:00 +0200
+Message-ID: <20250929091302.106116-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fbd7e4192bb8422980a2916489d4961d@realtek.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 24. Sep 09:03, Ping-Ke Shih wrote:
-> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > @@ -305,8 +305,9 @@ static void rtw89_usb_ops_tx_kick_off(struct rtw89_dev *rtwdev, u8 txch)
-> >                 ret = rtw89_usb_write_port(rtwdev, txch, skb->data, skb->len,
-> >                                            txcb);
-> >                 if (ret) {
-> > -                       rtw89_err(rtwdev, "write port txch %d failed: %d\n",
-> > -                                 txch, ret);
-> > +                       if (ret != -ENODEV)
-> > +                               rtw89_err(rtwdev, "write port txch %d failed: %d\n",
-> > +                                         txch, ret);
-> > 
-> >                         skb_dequeue(&txcb->tx_ack_queue);
+The first patch will update the PHYs VSC8584, VSC8582, VSC8575 and VSC856X
+to use PHY_ID_MATCH_MODEL because only rev B exists for these PHYs.
+But for the PHYs VSC8574 and VSC8572 exists rev A, B, C, D and E.
+This is just a preparation for the second patch to allow the VSC8574 and
+VSC8572 to use the function vsc8584_probe().
 
-Hi, thanks for reviews!  I'm in process of addressing the provided
-comments.
+We want to use vsc8584_probe() for VSC8574 and VSC8572 because this
+function does the correct PTP initialization. This change is in the second
+patch.
 
-> 
-> By the way, during I review this function, txcb->tx_ack_queue is a
-> struct sk_buff_head, how about just struct sk_buff *skb? 
-> (I might ask Bitterblue Smith about this).
+v2->v3:
+- split into a series, first patch will update VSC8584, VSC8582, VSC8575
+  and VSC856X to use PHY_ID_MATCH_MODEL, second patch will do the actual
+  fix
+- improve commit message and start use vsc8584_probe()
+v1->v2:
+- rename vsc8574_probe to vsc8552_probe and introduce a new probe
+  function called vsc8574_probe and make sure that vsc8504 and vsc8552
+  will use vsc8552_probe.
 
-tx_ack_queue is implemented like in rtw88, but there is no TX aggregation
-in rtw89 yet I guess.
+Horatiu Vultur (2):
+  phy: mscc: Use PHY_ID_MATCH_MODEL for VSC8584, VSC8582, VSC8575,
+    VSC856X
+  phy: mscc: Fix PTP for VSC8574 and VSC8572
 
-> 
-> More, since skb here is from mac80211, so ieee80211_free_txskb() would be 
-> more suitable rather than dev_kfree_skb_any()?
+ drivers/net/phy/mscc/mscc.h      |  8 ++++----
+ drivers/net/phy/mscc/mscc_main.c | 29 +++++++----------------------
+ 2 files changed, 11 insertions(+), 26 deletions(-)
 
-Agree, will do this in a separate patch.
+-- 
+2.34.1
 
-> 
-> >                         kfree(txcb);
-> > --
-> > 2.51.0
-> > 
-> 
 
