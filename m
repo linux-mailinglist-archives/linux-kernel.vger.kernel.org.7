@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-836058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6248EBA8A35
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:33:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5949BA8A41
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA3E3B41EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9C23B6970
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34392C327A;
-	Mon, 29 Sep 2025 09:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFBF2D0C75;
+	Mon, 29 Sep 2025 09:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lqVhq7Er";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s3YoYH01"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kw7534sC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HMfxD7eu"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D1B2C21D5
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22702C235F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138154; cv=none; b=tWaBygP8CaruUXzygZicYLetaxYrOQQTInBDPxERs//yMWYYZDsRJS2jOCwiATPMv8av8j4yNSGrGfAihr8ARo42F1s/DgtAIKUWATBYM6ZxagD/jf1MYVh0xhxSMBz94uBTgQRGEgWVvpJl7Th7lGepcKVcCKuYp3BGATGY3rA=
+	t=1759138156; cv=none; b=ewQI+3klakgWg2CpG5zKlmrxzg07GSGrQpwesW0awHeWxWGcHYeAncypJnVnGwV0EYtwWKhiwngbUL+H5UQ2sH/y7DlCuMYCGdx1gnUdJiPdXzQEncvNN2DGtC/t/AAfXQtewDr6hTe6dToftnAClcRAvIHa3gzUfx/aU7HBQA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138154; c=relaxed/simple;
-	bh=09R0bg5+VqUMnV3knNMtLYqKuj7pmVoSejB4o3LoI2Y=;
+	s=arc-20240116; t=1759138156; c=relaxed/simple;
+	bh=rSlLMiUVZh+XO0Fv0bFe4z+VLjRR3paB6Q9r9Gha8M4=;
 	h=From:To:Cc:Subject:References:Message-ID:Content-Type:
-	 MIME-Version:Date; b=USRMSTNkk0ntpXTIk7H6JXk3dn9305DlPI+MCtC4wEtVAMF6P8uPTDplQNW6G8GK2MIuG7eUhHkjCEIWGgMS2j2ScCtnWtN00pnl866p9RgxplTLsnRehR26DMjxZhUpfSY6hwesziVb4p+icgEuxNJV3ThssgPFJEOjnnFMzB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lqVhq7Er; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s3YoYH01; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Date; b=Q52o4wipqIpNzecgiBUh49HE6txUcxCl9p32VfoEnQny2RHSzys8cMqgbwiX+IvKUsktcHMuotaE7inCu7P8iqIeLAMdxn2QXQAR44PgYWkpjRxts6VeHwlJRZAA6OOA9gO5Sj5QMgvJT0h/+hfHpmQOoJMkz/Yn7Ysb9Qpkxmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kw7534sC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HMfxD7eu; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759138149;
+	s=2020; t=1759138151;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:  references:references;
-	bh=u1qtb3bxqMCBoj5ON0Jmtrgb9p1ztJklwsvyEBOXUqo=;
-	b=lqVhq7ErxzTftxCQg30N3peVpDeST130Oq6h26cWQl0O/8YmZmhVojbi4UyPpJKn+kEwQB
-	NSvlFIVcRJxcXLfPHAG5tAhfBYG5e0Zmk2VSD33ErAzJOewCWFxZXv8mUVdIKBRsBJvW90
-	Uk7idCtSXrsmgYQxzGLikIpbucFveEwlHiGOcWpYjxK9zJXweL31ssNS5/7bw00qyXC3n+
-	XO+FjXLjiZa3TfEbPLrf5rQWVAMz27bRcMvKEzamXLKRJguaKPlBOReF5s2pINOrx6FsMh
-	CYruc1BvcKcQVbEfNdBgM5TiwVSV518k11v1K9fYcviI9lzpo+qZp4S9aXkcSA==
+	bh=+gp7Kq5WEyOuMjp3DN/zwaoZPxGHvf6GXkWR5pYbxdA=;
+	b=kw7534sCV2G+adEGhD6eEiFVY8i/z8Z3JVKxLDIhG0gUl4PJQqgqBlrYN33LHoiw5o14Dc
+	QA44YuAtzTVb8lhsKVDNo6sUYxJ1DweBrXrgAf0PYSwAypnaVGEBlhjiCfHtz2CJb8mbAP
+	zW2CWeXFSFxC6taEzABpMrXnts/xTmkftSBnC1soVWQAkwkrtnjA85jv5ZZbVjY4826giD
+	yMKuIz6y28DeAOuMWFZ/K0TwAQAfzTC3ptpMMF5qKRgKbPBbjgs3FW+TtLr96m2Qicl9tE
+	5YmWLp9W74M+Tnl2Ca9DQ9quw1DQ/5FxnYJqhdQcQWN+gWScvJQZ+P5uGxlCXg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759138149;
+	s=2020e; t=1759138151;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:  references:references;
-	bh=u1qtb3bxqMCBoj5ON0Jmtrgb9p1ztJklwsvyEBOXUqo=;
-	b=s3YoYH016uY6SvQ6yXhzTbEnXX36+yNa7i7RmUC0rlCgedQ4G+CFJw7fzRk6AZI/Ls6R11
-	1jUeVeKuu+kPUICQ==
+	bh=+gp7Kq5WEyOuMjp3DN/zwaoZPxGHvf6GXkWR5pYbxdA=;
+	b=HMfxD7euYShWfz4MEXw7ghqp8W0E/DjmE+xbVgOf+yy0khEUjzYty+R1uUWnZ6MuWi42Dn
+	HEEKTAPZhDZ9SLDw==
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] timers/core for v6.18-rc1
+Subject: [GIT pull] timers/vdso for v6.18-rc1
 References: <175913807599.495041.10251515322736195577.tglx@xen13>
-Message-ID: <175913808853.495041.3476262549602040220.tglx@xen13>
+Message-ID: <175913809032.495041.16459509621135862969.tglx@xen13>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -64,551 +64,1027 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 29 Sep 2025 11:29:08 +0200 (CEST)
+Date: Mon, 29 Sep 2025 11:29:10 +0200 (CEST)
 
 Linus,
 
-please pull the latest timers/core branch from:
+please pull the latest timers/vdso branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-core-2025=
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-vdso-2025=
 -09-29
 
-up to:  391253b25f07: time: Fix spelling mistakes in comments
+up to:  e82bf7570d5c: selftests: vDSO: Drop vdso_test_clock_getres
 
-Updates for the time(rs) core subsystem:
+Updates for the VDSO subsystem:
 
-  - Address the inconsistent shutdown sequence of per CPU clockevents on
-    CPU hotplug, which onoly removed it from the core but failed to invoke
-    the actual device driver shutdown callback. This keeps the timer
-    active, which prevents power savings and causes pointless noise in
-    virtualization.
+  - Further consolidation of the VDSO infrastructure and the common data
+    store.
 
-  - Encapsulate the open coded access to the hrtimer clock base, which is a
-    private implementation detail, so that the implementation can be
-    changed without breaking a lot of usage sites.
+  - Simplification of the related Kconfig logic
 
-  - Enhance the debug output of the clocksource watchdog to provide better
-    information for analysis.
-
-  - The usual set of cleanups and enhancements all over the place
+  - Improve the VDSO selftest suite
 
 Thanks,
 
 	tglx
 
 ------------------>
-Bibo Mao (2):
-      tick: Do not set device to detached state in tick_shutdown()
-      LoongArch: Remove clockevents shutdown call on offlining
+Rasmus Villemoes (1):
+      ARM: VDSO: Remove cntvct_ok global variable
 
-Bjorn Helgaas (1):
-      jiffies: Remove obsolete SHIFTED_HZ comment
+Thomas Wei=C3=9Fschuh (19):
+      vdso/datastore: Gate time data behind CONFIG_GENERIC_GETTIMEOFDAY
+      vdso: Move ENABLE_COMPAT_VDSO from core to arm64
+      vdso/gettimeofday: Remove !CONFIG_TIME_NS stubs
+      time: Build generic update_vsyscall() only with generic time vDSO
+      riscv: vdso: Untangle Kconfig logic
+      vdso: Drop kconfig GENERIC_VDSO_32
+      vdso: Drop kconfig GENERIC_COMPAT_VDSO
+      vdso: Drop Kconfig GENERIC_VDSO_DATA_STORE
+      vdso: Drop Kconfig GENERIC_VDSO_TIME_NS
+      vdso: Gate VDSO_GETRANDOM behind HAVE_GENERIC_VDSO
+      vdso: Add struct __kernel_old_timeval forward declaration to gettime.h
+      selftests: vDSO: Fix -Wunitialized in powerpc VDSO_CALL() wrapper
+      selftests: vDSO: vdso_test_abi: Correctly skip whole test with missing =
+vDSO
+      selftests: vDSO: vdso_test_abi: Use ksft_finished()
+      selftests: vDSO: vdso_test_abi: Drop clock availability tests
+      selftests: vDSO: vdso_test_abi: Use explicit indices for name array
+      selftests: vDSO: vdso_test_abi: Test CPUTIME clocks
+      selftests: vDSO: vdso_test_abi: Add tests for clock_gettime64()
+      selftests: vDSO: Drop vdso_test_clock_getres
 
-Haofeng Li (1):
-      time: Fix spelling mistakes in comments
 
-Jiri Wiesner (1):
-      clocksource: Print durations for sync check unconditionally
+ arch/Kconfig                                       |   2 +-
+ arch/arm/include/asm/vdso/vsyscall.h               |   2 -
+ arch/arm/kernel/vdso.c                             |  10 +-
+ arch/arm/mm/Kconfig                                |   2 -
+ arch/arm64/Kconfig                                 |   3 -
+ arch/arm64/include/asm/vdso/compat_barrier.h       |   7 +-
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h  |   6 +-
+ arch/arm64/include/asm/vdso/gettimeofday.h         |   8 ++
+ arch/arm64/kernel/vdso32/Makefile                  |   1 -
+ arch/loongarch/Kconfig                             |   2 -
+ arch/mips/Kconfig                                  |   1 -
+ arch/powerpc/Kconfig                               |   2 -
+ arch/riscv/Kconfig                                 |  12 +-
+ arch/s390/Kconfig                                  |   2 -
+ arch/x86/Kconfig                                   |   3 -
+ include/asm-generic/vdso/vsyscall.h                |   4 -
+ include/vdso/datapage.h                            |   9 +-
+ include/vdso/gettime.h                             |   1 +
+ init/Kconfig                                       |   2 +-
+ kernel/time/Makefile                               |   2 +-
+ lib/vdso/Kconfig                                   |  25 +----
+ lib/vdso/Makefile                                  |   2 +-
+ lib/vdso/datastore.c                               |   6 +-
+ lib/vdso/gettimeofday.c                            |  27 -----
+ tools/testing/selftests/pidfd/config               |   1 -
+ tools/testing/selftests/vDSO/.gitignore            |   1 -
+ tools/testing/selftests/vDSO/Makefile              |   2 -
+ tools/testing/selftests/vDSO/vdso_call.h           |   7 +-
+ tools/testing/selftests/vDSO/vdso_test_abi.c       | 101 +++++++++--------
+ .../selftests/vDSO/vdso_test_clock_getres.c        | 123 -------------------=
+--
+ 30 files changed, 91 insertions(+), 285 deletions(-)
+ delete mode 100644 tools/testing/selftests/vDSO/vdso_test_clock_getres.c
 
-Thomas Wei=C3=9Fschuh (9):
-      posix-timers: Avoid direct access to hrtimer clockbase
-      timers/itimer: Avoid direct access to hrtimer clockbase
-      sched/core: Avoid direct access to hrtimer clockbase
-      lib: test_objpool: Avoid direct access to hrtimer clockbase
-      ALSA: hrtimer: Avoid direct access to hrtimer clockbase
-      media: pwm-ir-tx: Avoid direct access to hrtimer clockbase
-      hrtimer: Use hrtimer_cb_get_time() helper
-      hrtimer: Remove hrtimer_clock_base:: Get_time
-      hrtimer: Reorder branches in hrtimer_clockid_to_base()
-
-
- arch/loongarch/kernel/time.c   |  2 --
- drivers/media/rc/pwm-ir-tx.c   |  5 +----
- include/linux/hrtimer.h        | 14 +++++---------
- include/linux/hrtimer_defs.h   |  2 --
- include/linux/jiffies.h        |  2 +-
- include/vdso/jiffies.h         |  2 +-
- kernel/sched/core.c            |  2 +-
- kernel/time/alarmtimer.c       |  2 +-
- kernel/time/clockevents.c      |  2 +-
- kernel/time/clocksource.c      |  7 +++----
- kernel/time/hrtimer.c          | 40 ++++++++++++++++++++++++++++------------
- kernel/time/itimer.c           |  3 +--
- kernel/time/posix-timers.c     |  7 +++----
- kernel/time/tick-common.c      | 16 +++++-----------
- kernel/time/tick-internal.h    |  2 +-
- kernel/time/timer_list.c       |  2 --
- lib/test_objpool.c             |  2 +-
- scripts/gdb/linux/timerlist.py |  2 --
- sound/core/hrtimer.c           |  2 +-
- 19 files changed, 54 insertions(+), 62 deletions(-)
-
-diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
-index f3092f2de8b5..6fb92cc1a4c9 100644
---- a/arch/loongarch/kernel/time.c
-+++ b/arch/loongarch/kernel/time.c
-@@ -112,8 +112,6 @@ static int arch_timer_starting(unsigned int cpu)
+diff --git a/arch/Kconfig b/arch/Kconfig
+index d1b4ffd6e085..f6ca7f303172 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -1609,7 +1609,7 @@ config HAVE_SPARSE_SYSCALL_NR
+ 	  related optimizations for a given architecture.
 =20
- static int arch_timer_dying(unsigned int cpu)
- {
--	constant_set_state_shutdown(this_cpu_ptr(&constant_clockevent_device));
+ config ARCH_HAS_VDSO_ARCH_DATA
+-	depends on GENERIC_VDSO_DATA_STORE
++	depends on HAVE_GENERIC_VDSO
+ 	bool
+=20
+ config ARCH_HAS_VDSO_TIME_DATA
+diff --git a/arch/arm/include/asm/vdso/vsyscall.h b/arch/arm/include/asm/vdso=
+/vsyscall.h
+index 4e7226ad02ec..ff1c729af05f 100644
+--- a/arch/arm/include/asm/vdso/vsyscall.h
++++ b/arch/arm/include/asm/vdso/vsyscall.h
+@@ -7,8 +7,6 @@
+ #include <vdso/datapage.h>
+ #include <asm/cacheflush.h>
+=20
+-extern bool cntvct_ok;
 -
- 	/* Clear Timer Interrupt */
- 	write_csr_tintclear(CSR_TINTCLR_TI);
-=20
-diff --git a/drivers/media/rc/pwm-ir-tx.c b/drivers/media/rc/pwm-ir-tx.c
-index 84533fdd61aa..047472dc9244 100644
---- a/drivers/media/rc/pwm-ir-tx.c
-+++ b/drivers/media/rc/pwm-ir-tx.c
-@@ -117,7 +117,6 @@ static int pwm_ir_tx_atomic(struct rc_dev *dev, unsigned =
-int *txbuf,
- static enum hrtimer_restart pwm_ir_timer(struct hrtimer *timer)
+ static __always_inline
+ void __arch_sync_vdso_time_data(struct vdso_time_data *vdata)
  {
- 	struct pwm_ir *pwm_ir =3D container_of(timer, struct pwm_ir, timer);
--	ktime_t now;
+diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
+index 325448ffbba0..e38a30477f3d 100644
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -54,11 +54,9 @@ struct elfinfo {
+ 	char		*dynstr;	/* ptr to .dynstr section */
+ };
 =20
- 	/*
- 	 * If we happen to hit an odd latency spike, loop through the
-@@ -139,9 +138,7 @@ static enum hrtimer_restart pwm_ir_timer(struct hrtimer *=
-timer)
- 		hrtimer_add_expires_ns(timer, ns);
-=20
- 		pwm_ir->txbuf_index++;
--
--		now =3D timer->base->get_time();
--	} while (hrtimer_get_expires_tv64(timer) < now);
-+	} while (hrtimer_expires_remaining(timer) > 0);
-=20
- 	return HRTIMER_RESTART;
- }
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index 1ef867bb8c44..2cf1bf65b225 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -154,14 +154,11 @@ static inline s64 hrtimer_get_expires_ns(const struct h=
-rtimer *timer)
- 	return ktime_to_ns(timer->node.expires);
- }
-=20
--static inline ktime_t hrtimer_expires_remaining(const struct hrtimer *timer)
--{
--	return ktime_sub(timer->node.expires, timer->base->get_time());
--}
-+ktime_t hrtimer_cb_get_time(const struct hrtimer *timer);
-=20
--static inline ktime_t hrtimer_cb_get_time(struct hrtimer *timer)
-+static inline ktime_t hrtimer_expires_remaining(const struct hrtimer *timer)
- {
--	return timer->base->get_time();
-+	return ktime_sub(timer->node.expires, hrtimer_cb_get_time(timer));
- }
-=20
- static inline int hrtimer_is_hres_active(struct hrtimer *timer)
-@@ -200,8 +197,7 @@ __hrtimer_expires_remaining_adjusted(const struct hrtimer=
- *timer, ktime_t now)
- static inline ktime_t
- hrtimer_expires_remaining_adjusted(const struct hrtimer *timer)
- {
--	return __hrtimer_expires_remaining_adjusted(timer,
--						    timer->base->get_time());
-+	return __hrtimer_expires_remaining_adjusted(timer, hrtimer_cb_get_time(time=
-r));
- }
-=20
- #ifdef CONFIG_TIMERFD
-@@ -363,7 +359,7 @@ hrtimer_forward(struct hrtimer *timer, ktime_t now, ktime=
-_t interval);
- static inline u64 hrtimer_forward_now(struct hrtimer *timer,
- 				      ktime_t interval)
- {
--	return hrtimer_forward(timer, timer->base->get_time(), interval);
-+	return hrtimer_forward(timer, hrtimer_cb_get_time(timer), interval);
- }
-=20
- /* Precise sleep: */
-diff --git a/include/linux/hrtimer_defs.h b/include/linux/hrtimer_defs.h
-index 84a5045f80f3..aa49ffa130e5 100644
---- a/include/linux/hrtimer_defs.h
-+++ b/include/linux/hrtimer_defs.h
-@@ -41,7 +41,6 @@
-  * @seq:		seqcount around __run_hrtimer
-  * @running:		pointer to the currently running hrtimer
-  * @active:		red black tree root node for the active timers
-- * @get_time:		function to retrieve the current time of the clock
-  * @offset:		offset of this clock to the monotonic base
+-/* Cached result of boot-time check for whether the arch timer exists,
+- * and if so, whether the virtual counter is useable.
++/* Boot-time check for whether the arch timer exists, and if so,
++ * whether the virtual counter is usable.
   */
- struct hrtimer_clock_base {
-@@ -51,7 +50,6 @@ struct hrtimer_clock_base {
- 	seqcount_raw_spinlock_t	seq;
- 	struct hrtimer		*running;
- 	struct timerqueue_head	active;
--	ktime_t			(*get_time)(void);
- 	ktime_t			offset;
- } __hrtimer_clock_base_align;
-=20
-diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
-index 91b20788273d..0d1927da8055 100644
---- a/include/linux/jiffies.h
-+++ b/include/linux/jiffies.h
-@@ -61,7 +61,7 @@
-=20
- extern void register_refined_jiffies(long clock_tick_rate);
-=20
--/* TICK_USEC is the time between ticks in usec assuming SHIFTED_HZ */
-+/* TICK_USEC is the time between ticks in usec */
- #define TICK_USEC ((USEC_PER_SEC + HZ/2) / HZ)
-=20
- /* USER_TICK_USEC is the time between ticks in usec assuming fake USER_HZ */
-diff --git a/include/vdso/jiffies.h b/include/vdso/jiffies.h
-index 2f9d596c8b29..8ca04a141412 100644
---- a/include/vdso/jiffies.h
-+++ b/include/vdso/jiffies.h
-@@ -5,7 +5,7 @@
- #include <asm/param.h>			/* for HZ */
- #include <vdso/time64.h>
-=20
--/* TICK_NSEC is the time between ticks in nsec assuming SHIFTED_HZ */
-+/* TICK_NSEC is the time between ticks in nsec */
- #define TICK_NSEC ((NSEC_PER_SEC+HZ/2)/HZ)
-=20
- #endif /* __VDSO_JIFFIES_H */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index be00629f0ba4..4dc12838ad4f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -917,7 +917,7 @@ void hrtick_start(struct rq *rq, u64 delay)
- 	 * doesn't make sense and can cause timer DoS.
+-bool cntvct_ok __ro_after_init;
+-
+ static bool __init cntvct_functional(void)
+ {
+ 	struct device_node *np;
+@@ -159,7 +157,7 @@ static void __init patch_vdso(void *ehdr)
+ 	 * want programs to incur the slight additional overhead of
+ 	 * dispatching through the VDSO only to fall back to syscalls.
  	 */
- 	delta =3D max_t(s64, delay, 10000LL);
--	rq->hrtick_time =3D ktime_add_ns(timer->base->get_time(), delta);
-+	rq->hrtick_time =3D ktime_add_ns(hrtimer_cb_get_time(timer), delta);
+-	if (!cntvct_ok) {
++	if (!cntvct_functional()) {
+ 		vdso_nullpatch_one(&einfo, "__vdso_gettimeofday");
+ 		vdso_nullpatch_one(&einfo, "__vdso_clock_gettime");
+ 		vdso_nullpatch_one(&einfo, "__vdso_clock_gettime64");
+@@ -197,8 +195,6 @@ static int __init vdso_init(void)
+ 	vdso_total_pages =3D VDSO_NR_PAGES; /* for the data/vvar pages */
+ 	vdso_total_pages +=3D text_pages;
 =20
- 	if (rq =3D=3D this_rq())
- 		__hrtick_restart(rq);
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 577f0e6842d4..069d93bfb0c7 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -35,7 +35,7 @@
+-	cntvct_ok =3D cntvct_functional();
+-
+ 	patch_vdso(vdso_start);
 =20
- /**
-  * struct alarm_base - Alarm timer bases
-- * @lock:		Lock for syncrhonized access to the base
-+ * @lock:		Lock for synchronized access to the base
-  * @timerqueue:		Timerqueue head managing the list of events
-  * @get_ktime:		Function to read the time correlating to the base
-  * @get_timespec:	Function to read the namespace time correlating to the base
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index f3e831f62906..a59bc75ab7c5 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -633,7 +633,7 @@ void tick_offline_cpu(unsigned int cpu)
- 	raw_spin_lock(&clockevents_lock);
+ 	return 0;
+diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+index 5c1023a6d78c..7b27ee9482b3 100644
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -926,9 +926,7 @@ config VDSO
+ 	default y if ARM_ARCH_TIMER
+ 	select HAVE_GENERIC_VDSO
+ 	select GENERIC_TIME_VSYSCALL
+-	select GENERIC_VDSO_32
+ 	select GENERIC_GETTIMEOFDAY
+-	select GENERIC_VDSO_DATA_STORE
+ 	help
+ 	  Place in the process address space an ELF shared object
+ 	  providing fast implementations of gettimeofday and
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index e9bbfacc35a6..e19b006842e2 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -162,8 +162,6 @@ config ARM64
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
+ 	select GENERIC_GETTIMEOFDAY
+-	select GENERIC_VDSO_DATA_STORE
+-	select GENERIC_VDSO_TIME_NS
+ 	select HARDIRQS_SW_RESEND
+ 	select HAS_IOPORT
+ 	select HAVE_MOVE_PMD
+@@ -1782,7 +1780,6 @@ config COMPAT_VDSO
+ 	bool "Enable vDSO for 32-bit applications"
+ 	depends on !CPU_BIG_ENDIAN
+ 	depends on (CC_IS_CLANG && LD_IS_LLD) || "$(CROSS_COMPILE_COMPAT)" !=3D ""
+-	select GENERIC_COMPAT_VDSO
+ 	default y
+ 	help
+ 	  Place in the process address space of 32-bit applications an
+diff --git a/arch/arm64/include/asm/vdso/compat_barrier.h b/arch/arm64/includ=
+e/asm/vdso/compat_barrier.h
+index 3ac35f4a667c..6d75e03d3827 100644
+--- a/arch/arm64/include/asm/vdso/compat_barrier.h
++++ b/arch/arm64/include/asm/vdso/compat_barrier.h
+@@ -7,11 +7,10 @@
 =20
- 	tick_broadcast_offline(cpu);
--	tick_shutdown(cpu);
-+	tick_shutdown();
-=20
- 	/*
- 	 * Unregister the clock event devices which were
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 0aef0e349e49..a1890a073196 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -144,7 +144,7 @@ static u64 suspend_start;
-  * Default for maximum permissible skew when cs->uncertainty_margin is
-  * not specified, and the lower bound even when cs->uncertainty_margin
-  * is specified.  This is also the default that is used when registering
-- * clocks with unspecifed cs->uncertainty_margin, so this macro is used
-+ * clocks with unspecified cs->uncertainty_margin, so this macro is used
-  * even in CONFIG_CLOCKSOURCE_WATCHDOG=3Dn kernels.
-  */
- #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
-@@ -407,9 +407,8 @@ void clocksource_verify_percpu(struct clocksource *cs)
- 	if (!cpumask_empty(&cpus_behind))
- 		pr_warn("        CPUs %*pbl behind CPU %d for clocksource %s.\n",
- 			cpumask_pr_args(&cpus_behind), testcpu, cs->name);
--	if (!cpumask_empty(&cpus_ahead) || !cpumask_empty(&cpus_behind))
--		pr_warn("        CPU %d check durations %lldns - %lldns for clocksource %s=
-.\n",
--			testcpu, cs_nsec_min, cs_nsec_max, cs->name);
-+	pr_info("        CPU %d check durations %lldns - %lldns for clocksource %s.=
-\n",
-+		testcpu, cs_nsec_min, cs_nsec_max, cs->name);
- }
- EXPORT_SYMBOL_GPL(clocksource_verify_percpu);
-=20
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 30899a8cc52c..7e7b2b471bae 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -59,6 +59,7 @@
- #define HRTIMER_ACTIVE_ALL	(HRTIMER_ACTIVE_SOFT | HRTIMER_ACTIVE_HARD)
-=20
- static void retrigger_next_event(void *arg);
-+static ktime_t __hrtimer_cb_get_time(clockid_t clock_id);
-=20
+ #ifndef __ASSEMBLY__
  /*
-  * The timer bases:
-@@ -76,42 +77,34 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base, hrtimer_bases) =3D
- 		{
- 			.index =3D HRTIMER_BASE_MONOTONIC,
- 			.clockid =3D CLOCK_MONOTONIC,
--			.get_time =3D &ktime_get,
- 		},
- 		{
- 			.index =3D HRTIMER_BASE_REALTIME,
- 			.clockid =3D CLOCK_REALTIME,
--			.get_time =3D &ktime_get_real,
- 		},
- 		{
- 			.index =3D HRTIMER_BASE_BOOTTIME,
- 			.clockid =3D CLOCK_BOOTTIME,
--			.get_time =3D &ktime_get_boottime,
- 		},
- 		{
- 			.index =3D HRTIMER_BASE_TAI,
- 			.clockid =3D CLOCK_TAI,
--			.get_time =3D &ktime_get_clocktai,
- 		},
- 		{
- 			.index =3D HRTIMER_BASE_MONOTONIC_SOFT,
- 			.clockid =3D CLOCK_MONOTONIC,
--			.get_time =3D &ktime_get,
- 		},
- 		{
- 			.index =3D HRTIMER_BASE_REALTIME_SOFT,
- 			.clockid =3D CLOCK_REALTIME,
--			.get_time =3D &ktime_get_real,
- 		},
- 		{
- 			.index =3D HRTIMER_BASE_BOOTTIME_SOFT,
- 			.clockid =3D CLOCK_BOOTTIME,
--			.get_time =3D &ktime_get_boottime,
- 		},
- 		{
- 			.index =3D HRTIMER_BASE_TAI_SOFT,
- 			.clockid =3D CLOCK_TAI,
--			.get_time =3D &ktime_get_clocktai,
- 		},
- 	},
- 	.csd =3D CSD_INIT(retrigger_next_event, NULL)
-@@ -208,7 +201,7 @@ static bool hrtimer_suitable_target(struct hrtimer *timer=
-, struct hrtimer_clock_
- 	/*
- 	 * The offline local CPU can't be the default target if the
- 	 * next remote target event is after this timer. Keep the
--	 * elected new base. An IPI will we issued to reprogram
-+	 * elected new base. An IPI will be issued to reprogram
- 	 * it as a last resort.
- 	 */
- 	if (!hrtimer_base_is_online(this_cpu_base))
-@@ -1253,7 +1246,7 @@ static int __hrtimer_start_range_ns(struct hrtimer *tim=
-er, ktime_t tim,
- 	remove_hrtimer(timer, base, true, force_local);
+- * Warning: This code is meant to be used with
+- * ENABLE_COMPAT_VDSO only.
++ * Warning: This code is meant to be used from the compat vDSO only.
+  */
+-#ifndef ENABLE_COMPAT_VDSO
+-#error This header is meant to be used with ENABLE_COMPAT_VDSO only
++#ifdef __arch64__
++#error This header is meant to be used with from the compat vDSO only
+ #endif
 =20
- 	if (mode & HRTIMER_MODE_REL)
--		tim =3D ktime_add_safe(tim, base->get_time());
-+		tim =3D ktime_add_safe(tim, __hrtimer_cb_get_time(base->clockid));
+ #ifdef dmb
+diff --git a/arch/arm64/include/asm/vdso/compat_gettimeofday.h b/arch/arm64/i=
+nclude/asm/vdso/compat_gettimeofday.h
+index d60ea7a72a9c..7d1a116549b1 100644
+--- a/arch/arm64/include/asm/vdso/compat_gettimeofday.h
++++ b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
+@@ -2,8 +2,8 @@
+ /*
+  * Copyright (C) 2018 ARM Limited
+  */
+-#ifndef __ASM_VDSO_GETTIMEOFDAY_H
+-#define __ASM_VDSO_GETTIMEOFDAY_H
++#ifndef __ASM_VDSO_COMPAT_GETTIMEOFDAY_H
++#define __ASM_VDSO_COMPAT_GETTIMEOFDAY_H
 =20
- 	tim =3D hrtimer_update_lowres(timer, tim, mode);
+ #ifndef __ASSEMBLY__
 =20
-@@ -1574,10 +1567,10 @@ u64 hrtimer_next_event_without(const struct hrtimer *=
-exclude)
- static inline int hrtimer_clockid_to_base(clockid_t clock_id)
+@@ -163,4 +163,4 @@ static inline bool vdso_clocksource_ok(const struct vdso_=
+clock *vc)
+=20
+ #endif /* !__ASSEMBLY__ */
+=20
+-#endif /* __ASM_VDSO_GETTIMEOFDAY_H */
++#endif /* __ASM_VDSO_COMPAT_GETTIMEOFDAY_H */
+diff --git a/arch/arm64/include/asm/vdso/gettimeofday.h b/arch/arm64/include/=
+asm/vdso/gettimeofday.h
+index da1ab8759592..c59e84105b43 100644
+--- a/arch/arm64/include/asm/vdso/gettimeofday.h
++++ b/arch/arm64/include/asm/vdso/gettimeofday.h
+@@ -5,6 +5,8 @@
+ #ifndef __ASM_VDSO_GETTIMEOFDAY_H
+ #define __ASM_VDSO_GETTIMEOFDAY_H
+=20
++#ifdef __aarch64__
++
+ #ifndef __ASSEMBLY__
+=20
+ #include <asm/alternative.h>
+@@ -96,4 +98,10 @@ static __always_inline const struct vdso_time_data *__arch=
+_get_vdso_u_time_data(
+=20
+ #endif /* !__ASSEMBLY__ */
+=20
++#else /* !__aarch64__ */
++
++#include "compat_gettimeofday.h"
++
++#endif /* __aarch64__ */
++
+ #endif /* __ASM_VDSO_GETTIMEOFDAY_H */
+diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Mak=
+efile
+index f2dfdc7dc818..230fdc26796a 100644
+--- a/arch/arm64/kernel/vdso32/Makefile
++++ b/arch/arm64/kernel/vdso32/Makefile
+@@ -59,7 +59,6 @@ VDSO_CAFLAGS +=3D -DDISABLE_BRANCH_PROFILING
+ VDSO_CAFLAGS +=3D -march=3Darmv8-a
+=20
+ VDSO_CFLAGS :=3D $(VDSO_CAFLAGS)
+-VDSO_CFLAGS +=3D -DENABLE_COMPAT_VDSO=3D1
+ # KBUILD_CFLAGS from top-level Makefile
+ VDSO_CFLAGS +=3D -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+                -fno-strict-aliasing -fno-common \
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index f0abc38c40ac..754626b58b92 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -108,8 +108,6 @@ config LOONGARCH
+ 	select GENERIC_SCHED_CLOCK
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
+-	select GENERIC_VDSO_DATA_STORE
+-	select GENERIC_VDSO_TIME_NS
+ 	select GPIOLIB
+ 	select HAS_IOPORT
+ 	select HAVE_ARCH_AUDITSYSCALL
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index caf508f6e9ec..f7e6bbd755e0 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -51,7 +51,6 @@ config MIPS
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_IDLE_POLL_SETUP
+ 	select GENERIC_TIME_VSYSCALL
+-	select GENERIC_VDSO_DATA_STORE
+ 	select GUP_GET_PXX_LOW_HIGH if CPU_MIPS32 && PHYS_ADDR_T_64BIT
+ 	select HAS_IOPORT if !NO_IOPORT_MAP || ISA
+ 	select HAVE_ARCH_COMPILER_H
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 93402a1d9c9f..d715e3d65b5c 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -207,8 +207,6 @@ config PPC
+ 	select GENERIC_PCI_IOMAP		if PCI
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
+-	select GENERIC_VDSO_DATA_STORE
+-	select GENERIC_VDSO_TIME_NS
+ 	select HAS_IOPORT			if PCI
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select HAVE_ARCH_HUGE_VMALLOC		if HAVE_ARCH_HUGE_VMAP
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index a4b233a0659e..6e5efbeb83d7 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -52,7 +52,7 @@ config RISCV
+ 	select ARCH_HAS_SYSCALL_WRAPPER
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+ 	select ARCH_HAS_UBSAN
+-	select ARCH_HAS_VDSO_ARCH_DATA if GENERIC_VDSO_DATA_STORE
++	select ARCH_HAS_VDSO_ARCH_DATA if HAVE_GENERIC_VDSO
+ 	select ARCH_KEEP_MEMBLOCK if ACPI
+ 	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
+ 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+@@ -107,7 +107,7 @@ config RISCV
+ 	select GENERIC_CPU_VULNERABILITIES
+ 	select GENERIC_EARLY_IOREMAP
+ 	select GENERIC_ENTRY
+-	select GENERIC_GETTIMEOFDAY if HAVE_GENERIC_VDSO
++	select GENERIC_GETTIMEOFDAY if HAVE_GENERIC_VDSO && 64BIT
+ 	select GENERIC_IDLE_POLL_SETUP
+ 	select GENERIC_IOREMAP if MMU
+ 	select GENERIC_IRQ_IPI if SMP
+@@ -120,9 +120,7 @@ config RISCV
+ 	select GENERIC_PCI_IOMAP
+ 	select GENERIC_SCHED_CLOCK
+ 	select GENERIC_SMP_IDLE_THREAD
+-	select GENERIC_TIME_VSYSCALL if MMU && 64BIT
+-	select GENERIC_VDSO_DATA_STORE if MMU
+-	select GENERIC_VDSO_TIME_NS if HAVE_GENERIC_VDSO
++	select GENERIC_TIME_VSYSCALL if GENERIC_GETTIMEOFDAY
+ 	select HARDIRQS_SW_RESEND
+ 	select HAS_IOPORT if MMU
+ 	select HAVE_ALIGNED_STRUCT_PAGE
+@@ -165,7 +163,7 @@ config RISCV
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+ 	select HAVE_GCC_PLUGINS
+-	select HAVE_GENERIC_VDSO if MMU && 64BIT
++	select HAVE_GENERIC_VDSO if MMU
+ 	select HAVE_IRQ_TIME_ACCOUNTING
+ 	select HAVE_KERNEL_BZIP2 if !XIP_KERNEL && !EFI_ZBOOT
+ 	select HAVE_KERNEL_GZIP if !XIP_KERNEL && !EFI_ZBOOT
+@@ -221,7 +219,7 @@ config RISCV
+ 	select THREAD_INFO_IN_TASK
+ 	select TRACE_IRQFLAGS_SUPPORT
+ 	select UACCESS_MEMCPY if !MMU
+-	select VDSO_GETRANDOM if HAVE_GENERIC_VDSO
++	select VDSO_GETRANDOM if HAVE_GENERIC_VDSO && 64BIT
+ 	select USER_STACKTRACE_SUPPORT
+ 	select ZONE_DMA32 if 64BIT
+=20
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index bf680c26a33c..e06ebbd860da 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -167,8 +167,6 @@ config S390
+ 	select GENERIC_GETTIMEOFDAY
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
+-	select GENERIC_VDSO_DATA_STORE
+-	select GENERIC_VDSO_TIME_NS
+ 	select GENERIC_IOREMAP if PCI
+ 	select HAVE_ALIGNED_STRUCT_PAGE
+ 	select HAVE_ARCH_AUDITSYSCALL
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 58d890fe2100..d1961811e291 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -14,7 +14,6 @@ config X86_32
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+ 	select CLKSRC_I8253
+ 	select CLONE_BACKWARDS
+-	select GENERIC_VDSO_32
+ 	select HAVE_DEBUG_STACKOVERFLOW
+ 	select KMAP_LOCAL
+ 	select MODULES_USE_ELF_REL
+@@ -182,8 +181,6 @@ config X86
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
+ 	select GENERIC_GETTIMEOFDAY
+-	select GENERIC_VDSO_DATA_STORE
+-	select GENERIC_VDSO_TIME_NS
+ 	select GENERIC_VDSO_OVERFLOW_PROTECT
+ 	select GUP_GET_PXX_LOW_HIGH		if X86_PAE
+ 	select HARDIRQS_SW_RESEND
+diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/v=
+syscall.h
+index 7fc0b560007d..5c6d9799f4e7 100644
+--- a/include/asm-generic/vdso/vsyscall.h
++++ b/include/asm-generic/vdso/vsyscall.h
+@@ -4,8 +4,6 @@
+=20
+ #ifndef __ASSEMBLY__
+=20
+-#ifdef CONFIG_GENERIC_VDSO_DATA_STORE
+-
+ #ifndef __arch_get_vdso_u_time_data
+ static __always_inline const struct vdso_time_data *__arch_get_vdso_u_time_d=
+ata(void)
  {
- 	switch (clock_id) {
--	case CLOCK_REALTIME:
--		return HRTIMER_BASE_REALTIME;
- 	case CLOCK_MONOTONIC:
- 		return HRTIMER_BASE_MONOTONIC;
-+	case CLOCK_REALTIME:
-+		return HRTIMER_BASE_REALTIME;
- 	case CLOCK_BOOTTIME:
- 		return HRTIMER_BASE_BOOTTIME;
- 	case CLOCK_TAI:
-@@ -1588,6 +1581,29 @@ static inline int hrtimer_clockid_to_base(clockid_t cl=
-ock_id)
+@@ -20,8 +18,6 @@ static __always_inline const struct vdso_rng_data *__arch_g=
+et_vdso_u_rng_data(vo
+ }
+ #endif
+=20
+-#endif /* CONFIG_GENERIC_VDSO_DATA_STORE */
+-
+ #ifndef __arch_update_vdso_clock
+ static __always_inline void __arch_update_vdso_clock(struct vdso_clock *vc)
+ {
+diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
+index 02533038640e..23c39b96190f 100644
+--- a/include/vdso/datapage.h
++++ b/include/vdso/datapage.h
+@@ -31,7 +31,7 @@ struct arch_vdso_time_data {};
+=20
+ #if defined(CONFIG_ARCH_HAS_VDSO_ARCH_DATA)
+ #include <asm/vdso/arch_data.h>
+-#elif defined(CONFIG_GENERIC_VDSO_DATA_STORE)
++#else
+ struct vdso_arch_data {
+ 	/* Needed for the generic code, never actually used at runtime */
+ 	char __unused;
+@@ -164,7 +164,6 @@ struct vdso_rng_data {
+  * With the hidden visibility, the compiler simply generates a PC-relative
+  * relocation, and this is what we need.
+  */
+-#ifdef CONFIG_GENERIC_VDSO_DATA_STORE
+ extern struct vdso_time_data vdso_u_time_data __attribute__((visibility("hid=
+den")));
+ extern struct vdso_rng_data vdso_u_rng_data __attribute__((visibility("hidde=
+n")));
+ extern struct vdso_arch_data vdso_u_arch_data __attribute__((visibility("hid=
+den")));
+@@ -185,8 +184,6 @@ enum vdso_pages {
+ 	VDSO_NR_PAGES
+ };
+=20
+-#endif /* CONFIG_GENERIC_VDSO_DATA_STORE */
+-
+ /*
+  * The generic vDSO implementation requires that gettimeofday.h
+  * provides:
+@@ -196,11 +193,7 @@ enum vdso_pages {
+  * - clock_gettime_fallback(): fallback for clock_gettime.
+  * - clock_getres_fallback(): fallback for clock_getres.
+  */
+-#ifdef ENABLE_COMPAT_VDSO
+-#include <asm/vdso/compat_gettimeofday.h>
+-#else
+ #include <asm/vdso/gettimeofday.h>
+-#endif /* ENABLE_COMPAT_VDSO */
+=20
+ #else /* !__ASSEMBLY__ */
+=20
+diff --git a/include/vdso/gettime.h b/include/vdso/gettime.h
+index c50d152e7b3e..9ac161866653 100644
+--- a/include/vdso/gettime.h
++++ b/include/vdso/gettime.h
+@@ -5,6 +5,7 @@
+ #include <linux/types.h>
+=20
+ struct __kernel_timespec;
++struct __kernel_old_timeval;
+ struct timezone;
+=20
+ #if !defined(CONFIG_64BIT) || defined(BUILD_VDSO32_64)
+diff --git a/init/Kconfig b/init/Kconfig
+index d811cad02a75..497bd326d39a 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1347,7 +1347,7 @@ config UTS_NS
+=20
+ config TIME_NS
+ 	bool "TIME namespace"
+-	depends on GENERIC_VDSO_TIME_NS
++	depends on GENERIC_GETTIMEOFDAY
+ 	default y
+ 	help
+ 	  In this namespace boottime and monotonic clocks can be set.
+diff --git a/kernel/time/Makefile b/kernel/time/Makefile
+index e6e9b85d4db5..f7d52d9543cc 100644
+--- a/kernel/time/Makefile
++++ b/kernel/time/Makefile
+@@ -26,7 +26,7 @@ obj-$(CONFIG_LEGACY_TIMER_TICK)			+=3D tick-legacy.o
+ ifeq ($(CONFIG_SMP),y)
+  obj-$(CONFIG_NO_HZ_COMMON)			+=3D timer_migration.o
+ endif
+-obj-$(CONFIG_HAVE_GENERIC_VDSO)			+=3D vsyscall.o
++obj-$(CONFIG_GENERIC_GETTIMEOFDAY)		+=3D vsyscall.o
+ obj-$(CONFIG_DEBUG_FS)				+=3D timekeeping_debug.o
+ obj-$(CONFIG_TEST_UDELAY)			+=3D test_udelay.o
+ obj-$(CONFIG_TIME_NS)				+=3D namespace.o
+diff --git a/lib/vdso/Kconfig b/lib/vdso/Kconfig
+index 45df764b49ad..db87ba34ef19 100644
+--- a/lib/vdso/Kconfig
++++ b/lib/vdso/Kconfig
+@@ -12,24 +12,6 @@ config GENERIC_GETTIMEOFDAY
+ 	  Each architecture that enables this feature has to
+ 	  provide the fallback implementation.
+=20
+-config GENERIC_VDSO_32
+-	bool
+-	depends on GENERIC_GETTIMEOFDAY && !64BIT
+-	help
+-	  This config option helps to avoid possible performance issues
+-	  in 32 bit only architectures.
+-
+-config GENERIC_COMPAT_VDSO
+-	bool
+-	help
+-	  This config option enables the compat VDSO layer.
+-
+-config GENERIC_VDSO_TIME_NS
+-	bool
+-	help
+-	  Selected by architectures which support time namespaces in the
+-	  VDSO
+-
+ config GENERIC_VDSO_OVERFLOW_PROTECT
+ 	bool
+ 	help
+@@ -37,14 +19,9 @@ config GENERIC_VDSO_OVERFLOW_PROTECT
+ 	  time getter functions for the price of an extra conditional
+ 	  in the hotpath.
+=20
+-endif
+-
+ config VDSO_GETRANDOM
+ 	bool
+ 	help
+ 	  Selected by architectures that support vDSO getrandom().
+=20
+-config GENERIC_VDSO_DATA_STORE
+-	bool
+-	help
+-	  Selected by architectures that use the generic vDSO data store.
++endif
+diff --git a/lib/vdso/Makefile b/lib/vdso/Makefile
+index aedd40aaa950..405f743253d7 100644
+--- a/lib/vdso/Makefile
++++ b/lib/vdso/Makefile
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+=20
+-obj-$(CONFIG_GENERIC_VDSO_DATA_STORE) +=3D datastore.o
++obj-$(CONFIG_HAVE_GENERIC_VDSO) +=3D datastore.o
+diff --git a/lib/vdso/datastore.c b/lib/vdso/datastore.c
+index 3693c6caf2c4..a565c30c71a0 100644
+--- a/lib/vdso/datastore.c
++++ b/lib/vdso/datastore.c
+@@ -11,14 +11,14 @@
+ /*
+  * The vDSO data page.
+  */
+-#ifdef CONFIG_HAVE_GENERIC_VDSO
++#ifdef CONFIG_GENERIC_GETTIMEOFDAY
+ static union {
+ 	struct vdso_time_data	data;
+ 	u8			page[PAGE_SIZE];
+ } vdso_time_data_store __page_aligned_data;
+ struct vdso_time_data *vdso_k_time_data =3D &vdso_time_data_store.data;
+ static_assert(sizeof(vdso_time_data_store) =3D=3D PAGE_SIZE);
+-#endif /* CONFIG_HAVE_GENERIC_VDSO */
++#endif /* CONFIG_GENERIC_GETTIMEOFDAY */
+=20
+ #ifdef CONFIG_VDSO_GETRANDOM
+ static union {
+@@ -46,7 +46,7 @@ static vm_fault_t vvar_fault(const struct vm_special_mappin=
+g *sm,
+=20
+ 	switch (vmf->pgoff) {
+ 	case VDSO_TIME_PAGE_OFFSET:
+-		if (!IS_ENABLED(CONFIG_HAVE_GENERIC_VDSO))
++		if (!IS_ENABLED(CONFIG_GENERIC_GETTIMEOFDAY))
+ 			return VM_FAULT_SIGBUS;
+ 		pfn =3D __phys_to_pfn(__pa_symbol(vdso_k_time_data));
+ 		if (timens_page) {
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index 02ea19f67164..95df0153f05a 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -108,15 +108,11 @@ bool vdso_get_timestamp(const struct vdso_time_data *vd=
+, const struct vdso_clock
+ 	return true;
+ }
+=20
+-#ifdef CONFIG_TIME_NS
+-
+-#ifdef CONFIG_GENERIC_VDSO_DATA_STORE
+ static __always_inline
+ const struct vdso_time_data *__arch_get_vdso_u_timens_data(const struct vdso=
+_time_data *vd)
+ {
+ 	return (void *)vd + PAGE_SIZE;
+ }
+-#endif /* CONFIG_GENERIC_VDSO_DATA_STORE */
+=20
+ static __always_inline
+ bool do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clo=
+ck *vcns,
+@@ -149,20 +145,6 @@ bool do_hres_timens(const struct vdso_time_data *vdns, c=
+onst struct vdso_clock *
+=20
+ 	return true;
+ }
+-#else
+-static __always_inline
+-const struct vdso_time_data *__arch_get_vdso_u_timens_data(const struct vdso=
+_time_data *vd)
+-{
+-	return NULL;
+-}
+-
+-static __always_inline
+-bool do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clo=
+ck *vcns,
+-		    clockid_t clk, struct __kernel_timespec *ts)
+-{
+-	return false;
+-}
+-#endif
+=20
+ static __always_inline
+ bool do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+@@ -204,7 +186,6 @@ bool do_hres(const struct vdso_time_data *vd, const struc=
+t vdso_clock *vc,
+ 	return true;
+ }
+=20
+-#ifdef CONFIG_TIME_NS
+ static __always_inline
+ bool do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_c=
+lock *vcns,
+ 		      clockid_t clk, struct __kernel_timespec *ts)
+@@ -233,14 +214,6 @@ bool do_coarse_timens(const struct vdso_time_data *vdns,=
+ const struct vdso_clock
+=20
+ 	return true;
+ }
+-#else
+-static __always_inline
+-bool do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_c=
+lock *vcns,
+-		      clockid_t clk, struct __kernel_timespec *ts)
+-{
+-	return false;
+-}
+-#endif
+=20
+ static __always_inline
+ bool do_coarse(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+diff --git a/tools/testing/selftests/pidfd/config b/tools/testing/selftests/p=
+idfd/config
+index 6133524710f7..cf7cc0ce0248 100644
+--- a/tools/testing/selftests/pidfd/config
++++ b/tools/testing/selftests/pidfd/config
+@@ -4,6 +4,5 @@ CONFIG_USER_NS=3Dy
+ CONFIG_PID_NS=3Dy
+ CONFIG_NET_NS=3Dy
+ CONFIG_TIME_NS=3Dy
+-CONFIG_GENERIC_VDSO_TIME_NS=3Dy
+ CONFIG_CGROUPS=3Dy
+ CONFIG_CHECKPOINT_RESTORE=3Dy
+diff --git a/tools/testing/selftests/vDSO/.gitignore b/tools/testing/selftest=
+s/vDSO/.gitignore
+index 30d5c8f0e5c7..ba322a353aff 100644
+--- a/tools/testing/selftests/vDSO/.gitignore
++++ b/tools/testing/selftests/vDSO/.gitignore
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ vdso_test
+ vdso_test_abi
+-vdso_test_clock_getres
+ vdso_test_correctness
+ vdso_test_gettimeofday
+ vdso_test_getcpu
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/=
+vDSO/Makefile
+index 918a2caa070e..e361aca22a74 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -4,7 +4,6 @@ include ../../../scripts/Makefile.arch
+ TEST_GEN_PROGS :=3D vdso_test_gettimeofday
+ TEST_GEN_PROGS +=3D vdso_test_getcpu
+ TEST_GEN_PROGS +=3D vdso_test_abi
+-TEST_GEN_PROGS +=3D vdso_test_clock_getres
+ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+ TEST_GEN_PROGS +=3D vdso_standalone_test_x86
+ endif
+@@ -29,7 +28,6 @@ CFLAGS_NOLIBC :=3D -nostdlib -nostdinc -ffreestanding -fno-=
+asynchronous-unwind-tab
+ $(OUTPUT)/vdso_test_gettimeofday: parse_vdso.c vdso_test_gettimeofday.c
+ $(OUTPUT)/vdso_test_getcpu: parse_vdso.c vdso_test_getcpu.c
+ $(OUTPUT)/vdso_test_abi: parse_vdso.c vdso_test_abi.c
+-$(OUTPUT)/vdso_test_clock_getres: vdso_test_clock_getres.c
+=20
+ $(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c =
+| headers
+ $(OUTPUT)/vdso_standalone_test_x86: CFLAGS:=3D$(CFLAGS_NOLIBC) $(CFLAGS)
+diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftes=
+ts/vDSO/vdso_call.h
+index bb237d771051..e7205584cbdc 100644
+--- a/tools/testing/selftests/vDSO/vdso_call.h
++++ b/tools/testing/selftests/vDSO/vdso_call.h
+@@ -44,7 +44,6 @@
+ 	register long _r6 asm ("r6");					\
+ 	register long _r7 asm ("r7");					\
+ 	register long _r8 asm ("r8");					\
+-	register long _rval asm ("r3");					\
+ 									\
+ 	LOADARGS_##nr(fn, args);					\
+ 									\
+@@ -54,13 +53,13 @@
+ 		"	bns+	1f\n"					\
+ 		"	neg	3, 3\n"					\
+ 		"1:"							\
+-		: "+r" (_r0), "=3Dr" (_r3), "+r" (_r4), "+r" (_r5),	\
++		: "+r" (_r0), "+r" (_r3), "+r" (_r4), "+r" (_r5),	\
+ 		  "+r" (_r6), "+r" (_r7), "+r" (_r8)			\
+-		: "r" (_rval)						\
++		:							\
+ 		: "r9", "r10", "r11", "r12", "cr0", "cr1", "cr5",	\
+ 		  "cr6", "cr7", "xer", "lr", "ctr", "memory"		\
+ 	);								\
+-	_rval;								\
++	_r3;								\
+ })
+=20
+ #else
+diff --git a/tools/testing/selftests/vDSO/vdso_test_abi.c b/tools/testing/sel=
+ftests/vDSO/vdso_test_abi.c
+index a54424e2336f..238d609a457a 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_abi.c
++++ b/tools/testing/selftests/vDSO/vdso_test_abi.c
+@@ -26,24 +26,31 @@
+ static const char *version;
+ static const char **name;
+=20
++/* The same as struct __kernel_timespec */
++struct vdso_timespec64 {
++	uint64_t tv_sec;
++	uint64_t tv_nsec;
++};
++
+ typedef long (*vdso_gettimeofday_t)(struct timeval *tv, struct timezone *tz);
+ typedef long (*vdso_clock_gettime_t)(clockid_t clk_id, struct timespec *ts);
++typedef long (*vdso_clock_gettime64_t)(clockid_t clk_id, struct vdso_timespe=
+c64 *ts);
+ typedef long (*vdso_clock_getres_t)(clockid_t clk_id, struct timespec *ts);
+ typedef time_t (*vdso_time_t)(time_t *t);
+=20
+-const char *vdso_clock_name[12] =3D {
+-	"CLOCK_REALTIME",
+-	"CLOCK_MONOTONIC",
+-	"CLOCK_PROCESS_CPUTIME_ID",
+-	"CLOCK_THREAD_CPUTIME_ID",
+-	"CLOCK_MONOTONIC_RAW",
+-	"CLOCK_REALTIME_COARSE",
+-	"CLOCK_MONOTONIC_COARSE",
+-	"CLOCK_BOOTTIME",
+-	"CLOCK_REALTIME_ALARM",
+-	"CLOCK_BOOTTIME_ALARM",
+-	"CLOCK_SGI_CYCLE",
+-	"CLOCK_TAI",
++static const char * const vdso_clock_name[] =3D {
++	[CLOCK_REALTIME]		=3D "CLOCK_REALTIME",
++	[CLOCK_MONOTONIC]		=3D "CLOCK_MONOTONIC",
++	[CLOCK_PROCESS_CPUTIME_ID]	=3D "CLOCK_PROCESS_CPUTIME_ID",
++	[CLOCK_THREAD_CPUTIME_ID]	=3D "CLOCK_THREAD_CPUTIME_ID",
++	[CLOCK_MONOTONIC_RAW]		=3D "CLOCK_MONOTONIC_RAW",
++	[CLOCK_REALTIME_COARSE]		=3D "CLOCK_REALTIME_COARSE",
++	[CLOCK_MONOTONIC_COARSE]	=3D "CLOCK_MONOTONIC_COARSE",
++	[CLOCK_BOOTTIME]		=3D "CLOCK_BOOTTIME",
++	[CLOCK_REALTIME_ALARM]		=3D "CLOCK_REALTIME_ALARM",
++	[CLOCK_BOOTTIME_ALARM]		=3D "CLOCK_BOOTTIME_ALARM",
++	[10 /* CLOCK_SGI_CYCLE */]	=3D "CLOCK_SGI_CYCLE",
++	[CLOCK_TAI]			=3D "CLOCK_TAI",
+ };
+=20
+ static void vdso_test_gettimeofday(void)
+@@ -70,6 +77,33 @@ static void vdso_test_gettimeofday(void)
  	}
  }
 =20
-+static ktime_t __hrtimer_cb_get_time(clockid_t clock_id)
++static void vdso_test_clock_gettime64(clockid_t clk_id)
 +{
-+	switch (clock_id) {
-+	case CLOCK_MONOTONIC:
-+		return ktime_get();
-+	case CLOCK_REALTIME:
-+		return ktime_get_real();
-+	case CLOCK_BOOTTIME:
-+		return ktime_get_boottime();
-+	case CLOCK_TAI:
-+		return ktime_get_clocktai();
-+	default:
-+		WARN(1, "Invalid clockid %d. Using MONOTONIC\n", clock_id);
-+		return ktime_get();
++	/* Find clock_gettime64. */
++	vdso_clock_gettime64_t vdso_clock_gettime64 =3D
++		(vdso_clock_gettime64_t)vdso_sym(version, name[5]);
++
++	if (!vdso_clock_gettime64) {
++		ksft_print_msg("Couldn't find %s\n", name[5]);
++		ksft_test_result_skip("%s %s\n", name[5],
++				      vdso_clock_name[clk_id]);
++		return;
++	}
++
++	struct vdso_timespec64 ts;
++	long ret =3D VDSO_CALL(vdso_clock_gettime64, 2, clk_id, &ts);
++
++	if (ret =3D=3D 0) {
++		ksft_print_msg("The time is %lld.%06lld\n",
++			       (long long)ts.tv_sec, (long long)ts.tv_nsec);
++		ksft_test_result_pass("%s %s\n", name[5],
++				      vdso_clock_name[clk_id]);
++	} else {
++		ksft_test_result_fail("%s %s\n", name[5],
++				      vdso_clock_name[clk_id]);
 +	}
 +}
 +
-+ktime_t hrtimer_cb_get_time(const struct hrtimer *timer)
-+{
-+	return __hrtimer_cb_get_time(timer->base->clockid);
-+}
-+EXPORT_SYMBOL_GPL(hrtimer_cb_get_time);
+ static void vdso_test_clock_gettime(clockid_t clk_id)
+ {
+ 	/* Find clock_gettime. */
+@@ -171,23 +205,23 @@ static inline void vdso_test_clock(clockid_t clock_id)
+ 	ksft_print_msg("clock_id: %s\n", vdso_clock_name[clock_id]);
+=20
+ 	vdso_test_clock_gettime(clock_id);
++	vdso_test_clock_gettime64(clock_id);
+=20
+ 	vdso_test_clock_getres(clock_id);
+ }
+=20
+-#define VDSO_TEST_PLAN	16
++#define VDSO_TEST_PLAN	29
+=20
+ int main(int argc, char **argv)
+ {
+ 	unsigned long sysinfo_ehdr =3D getauxval(AT_SYSINFO_EHDR);
+=20
+ 	ksft_print_header();
+-	ksft_set_plan(VDSO_TEST_PLAN);
+=20
+-	if (!sysinfo_ehdr) {
+-		ksft_print_msg("AT_SYSINFO_EHDR is not present!\n");
+-		return KSFT_SKIP;
+-	}
++	if (!sysinfo_ehdr)
++		ksft_exit_skip("AT_SYSINFO_EHDR is not present!\n");
 +
- static void __hrtimer_setup(struct hrtimer *timer,
- 			    enum hrtimer_restart (*function)(struct hrtimer *),
- 			    clockid_t clock_id, enum hrtimer_mode mode)
-diff --git a/kernel/time/itimer.c b/kernel/time/itimer.c
-index 876d389b2e21..7c6110e964e7 100644
---- a/kernel/time/itimer.c
-+++ b/kernel/time/itimer.c
-@@ -163,8 +163,7 @@ void posixtimer_rearm_itimer(struct task_struct *tsk)
- 	struct hrtimer *tmr =3D &tsk->signal->real_timer;
++	ksft_set_plan(VDSO_TEST_PLAN);
 =20
- 	if (!hrtimer_is_queued(tmr) && tsk->signal->it_real_incr !=3D 0) {
--		hrtimer_forward(tmr, tmr->base->get_time(),
--				tsk->signal->it_real_incr);
-+		hrtimer_forward_now(tmr, tsk->signal->it_real_incr);
- 		hrtimer_restart(tmr);
- 	}
- }
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index 8b582174b1f9..aa3120104a51 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -299,8 +299,7 @@ static void common_hrtimer_rearm(struct k_itimer *timr)
- {
- 	struct hrtimer *timer =3D &timr->it.real.timer;
+ 	version =3D versions[VDSO_VERSION];
+ 	name =3D (const char **)&names[VDSO_NAMES];
+@@ -198,40 +232,17 @@ int main(int argc, char **argv)
 =20
--	timr->it_overrun +=3D hrtimer_forward(timer, timer->base->get_time(),
--					    timr->it_interval);
-+	timr->it_overrun +=3D hrtimer_forward_now(timer, timr->it_interval);
- 	hrtimer_restart(timer);
- }
+ 	vdso_test_gettimeofday();
 =20
-@@ -535,7 +534,7 @@ static int do_timer_create(clockid_t which_clock, struct =
-sigevent *event,
- 		goto out;
- 	}
- 	/*
--	 * After succesful copy out, the timer ID is visible to user space
-+	 * After successful copy out, the timer ID is visible to user space
- 	 * now but not yet valid because new_timer::signal low order bit is 1.
- 	 *
- 	 * Complete the initialization with the clock specific create
-@@ -825,7 +824,7 @@ static void common_hrtimer_arm(struct k_itimer *timr, kti=
-me_t expires,
- 	hrtimer_setup(&timr->it.real.timer, posix_timer_fn, timr->it_clock, mode);
-=20
- 	if (!absolute)
--		expires =3D ktime_add_safe(expires, timer->base->get_time());
-+		expires =3D ktime_add_safe(expires, hrtimer_cb_get_time(timer));
- 	hrtimer_set_expires(timer, expires);
-=20
- 	if (!sigev_none)
-diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-index 9a3859443c04..7e33d3f2e889 100644
---- a/kernel/time/tick-common.c
-+++ b/kernel/time/tick-common.c
-@@ -411,24 +411,18 @@ int tick_cpu_dying(unsigned int dying_cpu)
- }
-=20
- /*
-- * Shutdown an event device on a given cpu:
-+ * Shutdown an event device on the outgoing CPU:
-  *
-- * This is called on a life CPU, when a CPU is dead. So we cannot
-- * access the hardware device itself.
-- * We just set the mode and remove it from the lists.
-+ * Called by the dying CPU during teardown, with clockevents_lock held
-+ * and interrupts disabled.
-  */
--void tick_shutdown(unsigned int cpu)
-+void tick_shutdown(void)
- {
--	struct tick_device *td =3D &per_cpu(tick_cpu_device, cpu);
-+	struct tick_device *td =3D this_cpu_ptr(&tick_cpu_device);
- 	struct clock_event_device *dev =3D td->evtdev;
-=20
- 	td->mode =3D TICKDEV_MODE_PERIODIC;
- 	if (dev) {
--		/*
--		 * Prevent that the clock events layer tries to call
--		 * the set mode function!
--		 */
--		clockevent_set_state(dev, CLOCK_EVT_STATE_DETACHED);
- 		clockevents_exchange_device(dev, NULL);
- 		dev->event_handler =3D clockevents_handle_noop;
- 		td->evtdev =3D NULL;
-diff --git a/kernel/time/tick-internal.h b/kernel/time/tick-internal.h
-index faac36de35b9..4e4f7bbe2a64 100644
---- a/kernel/time/tick-internal.h
-+++ b/kernel/time/tick-internal.h
-@@ -26,7 +26,7 @@ extern void tick_setup_periodic(struct clock_event_device *=
-dev, int broadcast);
- extern void tick_handle_periodic(struct clock_event_device *dev);
- extern void tick_check_new_device(struct clock_event_device *dev);
- extern void tick_offline_cpu(unsigned int cpu);
--extern void tick_shutdown(unsigned int cpu);
-+extern void tick_shutdown(void);
- extern void tick_suspend(void);
- extern void tick_resume(void);
- extern bool tick_check_replacement(struct clock_event_device *curdev,
-diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
-index b03d0ada6469..488e47e96e93 100644
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -102,8 +102,6 @@ print_base(struct seq_file *m, struct hrtimer_clock_base =
-*base, u64 now)
- 	SEQ_printf(m, "  .index:      %d\n", base->index);
-=20
- 	SEQ_printf(m, "  .resolution: %u nsecs\n", hrtimer_resolution);
+-#if _POSIX_TIMERS > 0
 -
--	SEQ_printf(m,   "  .get_time:   %ps\n", base->get_time);
- #ifdef CONFIG_HIGH_RES_TIMERS
- 	SEQ_printf(m, "  .offset:     %Lu nsecs\n",
- 		   (unsigned long long) ktime_to_ns(base->offset));
-diff --git a/lib/test_objpool.c b/lib/test_objpool.c
-index 8f688187fa87..6a34a7582fdb 100644
---- a/lib/test_objpool.c
-+++ b/lib/test_objpool.c
-@@ -164,7 +164,7 @@ static enum hrtimer_restart ot_hrtimer_handler(struct hrt=
-imer *hrt)
- 	/* do bulk-testings for objects pop/push */
- 	item->worker(item, 1);
-=20
--	hrtimer_forward(hrt, hrt->base->get_time(), item->hrtcycle);
-+	hrtimer_forward_now(hrt, item->hrtcycle);
- 	return HRTIMER_RESTART;
- }
-=20
-diff --git a/scripts/gdb/linux/timerlist.py b/scripts/gdb/linux/timerlist.py
-index 98445671fe83..ccc24d30de80 100644
---- a/scripts/gdb/linux/timerlist.py
-+++ b/scripts/gdb/linux/timerlist.py
-@@ -56,8 +56,6 @@ def print_base(base):
-     text +=3D " .index:      {}\n".format(base['index'])
-=20
-     text +=3D " .resolution: {} nsecs\n".format(constants.LX_hrtimer_resolut=
-ion)
+-#ifdef CLOCK_REALTIME
+ 	vdso_test_clock(CLOCK_REALTIME);
+-#endif
 -
--    text +=3D " .get_time:   {}\n".format(base['get_time'])
-     if constants.LX_CONFIG_HIGH_RES_TIMERS:
-         text +=3D "  .offset:     {} nsecs\n".format(base['offset'])
-     text +=3D "active timers:\n"
-diff --git a/sound/core/hrtimer.c b/sound/core/hrtimer.c
-index c364bd126ac8..2d5f4d47071f 100644
---- a/sound/core/hrtimer.c
-+++ b/sound/core/hrtimer.c
-@@ -44,7 +44,7 @@ static enum hrtimer_restart snd_hrtimer_callback(struct hrt=
-imer *hrt)
- 	}
+-#ifdef CLOCK_BOOTTIME
+ 	vdso_test_clock(CLOCK_BOOTTIME);
+-#endif
+-
+-#ifdef CLOCK_TAI
+ 	vdso_test_clock(CLOCK_TAI);
+-#endif
+-
+-#ifdef CLOCK_REALTIME_COARSE
+ 	vdso_test_clock(CLOCK_REALTIME_COARSE);
+-#endif
+-
+-#ifdef CLOCK_MONOTONIC
+ 	vdso_test_clock(CLOCK_MONOTONIC);
+-#endif
+-
+-#ifdef CLOCK_MONOTONIC_RAW
+ 	vdso_test_clock(CLOCK_MONOTONIC_RAW);
+-#endif
+-
+-#ifdef CLOCK_MONOTONIC_COARSE
+ 	vdso_test_clock(CLOCK_MONOTONIC_COARSE);
+-#endif
+-
+-#endif
++	vdso_test_clock(CLOCK_PROCESS_CPUTIME_ID);
++	vdso_test_clock(CLOCK_THREAD_CPUTIME_ID);
 =20
- 	/* calculate the drift */
--	delta =3D ktime_sub(hrt->base->get_time(), hrtimer_get_expires(hrt));
-+	delta =3D ktime_sub(hrtimer_cb_get_time(hrt), hrtimer_get_expires(hrt));
- 	if (delta > 0)
- 		ticks +=3D ktime_divns(delta, ticks * resolution);
+ 	vdso_test_time();
 =20
+-	ksft_print_cnts();
+-	return ksft_get_fail_cnt() =3D=3D 0 ? KSFT_PASS : KSFT_FAIL;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c b/tools/te=
+sting/selftests/vDSO/vdso_test_clock_getres.c
+deleted file mode 100644
+index b5d5f59f725a..000000000000
+--- a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
++++ /dev/null
+@@ -1,123 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
+-/*
+- * vdso_clock_getres.c: Sample code to test clock_getres.
+- * Copyright (c) 2019 Arm Ltd.
+- *
+- * Compile with:
+- * gcc -std=3Dgnu99 vdso_clock_getres.c
+- *
+- * Tested on ARM, ARM64, MIPS32, x86 (32-bit and 64-bit),
+- * Power (32-bit and 64-bit), S390x (32-bit and 64-bit).
+- * Might work on other architectures.
+- */
+-
+-#define _GNU_SOURCE
+-#include <elf.h>
+-#include <fcntl.h>
+-#include <stdint.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <time.h>
+-#include <sys/auxv.h>
+-#include <sys/mman.h>
+-#include <sys/time.h>
+-#include <unistd.h>
+-#include <sys/syscall.h>
+-
+-#include "../kselftest.h"
+-
+-static long syscall_clock_getres(clockid_t _clkid, struct timespec *_ts)
+-{
+-	long ret;
+-
+-	ret =3D syscall(SYS_clock_getres, _clkid, _ts);
+-
+-	return ret;
+-}
+-
+-const char *vdso_clock_name[12] =3D {
+-	"CLOCK_REALTIME",
+-	"CLOCK_MONOTONIC",
+-	"CLOCK_PROCESS_CPUTIME_ID",
+-	"CLOCK_THREAD_CPUTIME_ID",
+-	"CLOCK_MONOTONIC_RAW",
+-	"CLOCK_REALTIME_COARSE",
+-	"CLOCK_MONOTONIC_COARSE",
+-	"CLOCK_BOOTTIME",
+-	"CLOCK_REALTIME_ALARM",
+-	"CLOCK_BOOTTIME_ALARM",
+-	"CLOCK_SGI_CYCLE",
+-	"CLOCK_TAI",
+-};
+-
+-/*
+- * This function calls clock_getres in vdso and by system call
+- * with different values for clock_id.
+- *
+- * Example of output:
+- *
+- * clock_id: CLOCK_REALTIME [PASS]
+- * clock_id: CLOCK_BOOTTIME [PASS]
+- * clock_id: CLOCK_TAI [PASS]
+- * clock_id: CLOCK_REALTIME_COARSE [PASS]
+- * clock_id: CLOCK_MONOTONIC [PASS]
+- * clock_id: CLOCK_MONOTONIC_RAW [PASS]
+- * clock_id: CLOCK_MONOTONIC_COARSE [PASS]
+- */
+-static inline int vdso_test_clock(unsigned int clock_id)
+-{
+-	struct timespec x, y;
+-
+-	printf("clock_id: %s", vdso_clock_name[clock_id]);
+-	clock_getres(clock_id, &x);
+-	syscall_clock_getres(clock_id, &y);
+-
+-	if ((x.tv_sec !=3D y.tv_sec) || (x.tv_nsec !=3D y.tv_nsec)) {
+-		printf(" [FAIL]\n");
+-		return KSFT_FAIL;
+-	}
+-
+-	printf(" [PASS]\n");
+-	return KSFT_PASS;
+-}
+-
+-int main(int argc, char **argv)
+-{
+-	int ret =3D 0;
+-
+-#if _POSIX_TIMERS > 0
+-
+-#ifdef CLOCK_REALTIME
+-	ret +=3D vdso_test_clock(CLOCK_REALTIME);
+-#endif
+-
+-#ifdef CLOCK_BOOTTIME
+-	ret +=3D vdso_test_clock(CLOCK_BOOTTIME);
+-#endif
+-
+-#ifdef CLOCK_TAI
+-	ret +=3D vdso_test_clock(CLOCK_TAI);
+-#endif
+-
+-#ifdef CLOCK_REALTIME_COARSE
+-	ret +=3D vdso_test_clock(CLOCK_REALTIME_COARSE);
+-#endif
+-
+-#ifdef CLOCK_MONOTONIC
+-	ret +=3D vdso_test_clock(CLOCK_MONOTONIC);
+-#endif
+-
+-#ifdef CLOCK_MONOTONIC_RAW
+-	ret +=3D vdso_test_clock(CLOCK_MONOTONIC_RAW);
+-#endif
+-
+-#ifdef CLOCK_MONOTONIC_COARSE
+-	ret +=3D vdso_test_clock(CLOCK_MONOTONIC_COARSE);
+-#endif
+-
+-#endif
+-	if (ret > 0)
+-		return KSFT_FAIL;
+-
+-	return KSFT_PASS;
+-}
 
 
