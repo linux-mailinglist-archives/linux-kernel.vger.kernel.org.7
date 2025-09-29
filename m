@@ -1,252 +1,175 @@
-Return-Path: <linux-kernel+bounces-835804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894E9BA8185
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:21:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 861EABA8191
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA737189A4E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51B91891959
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC8D1B4223;
-	Mon, 29 Sep 2025 06:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F83253954;
+	Mon, 29 Sep 2025 06:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="USfRMIGE"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iBz9Lq7K"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8845142A99
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7EC239581
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759126870; cv=none; b=PVZgkYEHBfajAhCjTye4KOtKYPonjod5WQcDd39B9eZzEbWMBo7zSrTJkJ0Y+zbxWsSpjAmrwX4mMJ4xXzrpkkwk3Fs7oM2icIzK0vb9O1M/udJCNuVFYfwv4XcFpujqaIINWdBB/uDaffwM5FUxg+LLc7QVKx1tDOrKxdlJHOY=
+	t=1759126872; cv=none; b=NLtWkuIQRwlKf1bERxWnZ6Fz59iKM/g28JItw+iC5huz8LfOeiu4IK1gKdj5VvQrn5fW263CTv8NAO1iUuIETSgTSjcnUQrm7t5vW4GmeqOJFnQVjeEdyolNlE28w0dlh/otxsDapVua4DJh4c8UAX1RixaMyUgUXHacd8OpJAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759126870; c=relaxed/simple;
-	bh=Ct/x0vHC+gnGF7bhOiHyGsyesLhn9UEQwemK/00JaAQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=oRNrU39tdGvwf79Qb7VIYgb7bfF+fK3CzL1VJ0mH9+ZQ93GX2P584A+YRuGMjI1vuQNCO8TS0st+P364bvBq35aCvDhSOS2ajg9SdJpGj62XXrM4OTXfxZi12o8Xkm8UEhmemeEUwFGGbXZpeCBLPhQ9iFTKqa5lUurPOuuZxZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=USfRMIGE; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759126863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MPlcwctVJa17AvuiwxVh/6RW6wt+NjqgznwU1ySTOQ4=;
-	b=USfRMIGEHmHCVGO6HIWoOwjk2Btbyv0LZIpc8bsGpLdUoKp4ZcO8+SPsZECt0H6GWMKSDv
-	teaqjscf8gMtHDHIRdHCx/moLTh+HDHIHGgSNYqzkBM5kImeJTHv7mjX73HK67oHx4HhYM
-	nwrCRiVlA2Y9b78r26l5VOrp7AA0WJI=
+	s=arc-20240116; t=1759126872; c=relaxed/simple;
+	bh=q2Ex45lu0UO1PvLVxP8lWfrNJZYuJYUaYkJPz++bp7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ct7eH3cUeFJsIRRHCASZYEvt0mOgrlBC9wgeFTt0apJW+q5ebdP9chGxZ2TuTYa470lNC6lt7sbUtcvh+sT9yTEnB7SbgpxUrG654NvFTbY3j5dkKBep6yiqbtscEi/+x6+KLv/DMs4yGd0zaP5ZsUmymAgiXnkp/fVGIwOCKgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iBz9Lq7K; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SNrQo0010542
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:21:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	T5RCAnxQPgz+f42q/uUJ/xybCFPufzjjYf6jemuzLns=; b=iBz9Lq7KZUAWV5e2
+	M2gRNFr9+vsxwYogYHviBud2IpabKlqDVZIp38xfQ9RDWLmS6ghYCO2RbJOtrroT
+	UrT6chIkaQSSw8VmH/E5qavZtSEHXfUtuPjOdUqerdCSMJWaOzcHJA0lORQyrh7s
+	WXnvoCj7puHQ//FiCls57Et4m2cehQ8TpTXyqf44sW3Wx6AcFQqOzVx6C0Bqhj4y
+	rZe1iUjb1pKlxN3B91CM5Zpp/rUjzjz/KHE5gFM4Ybss48ei139M2ZsWj+ttlAZY
+	nn50H+OCzMEZBD27ssozrEVZrTm9YlXWXB67itOyQHBHWGatMpDBJ0MmRewKTkfE
+	0I9+1A==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e851c0gb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:21:03 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-77f64c5cf62so3131152b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 23:21:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759126863; x=1759731663;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5RCAnxQPgz+f42q/uUJ/xybCFPufzjjYf6jemuzLns=;
+        b=PdttT4laCo5bFfiq/WT+jT5CgfTtOlCKCjZaCVFEOWV/BBYtG+DxClvx0wWNNkDusK
+         LErsdnBW/m8wX4+1yJ6O8v5QK+J+9SjPR87dYEFcacrfGQC/ZLkCretImUFAycCwGByy
+         XEZl9JK7gO/JNl6h0qojWwhdg62CuM5Enqrixw1IgiwN85L0xgbvVPi736WjaP6/1b5f
+         LpdeE8/l0YFGaLH7OMtIm1earHz5vEjlgEcmWeUnsFBtTBv8XG99YaFTTNxLe3DWQIpg
+         P3mD1Xiu01XwdPJa41847YJHPVbrwkamP5gMqEA0pyPpbqNUVh2lR1qcGhyOotJI2EEN
+         MHew==
+X-Forwarded-Encrypted: i=1; AJvYcCVGrXj67uvKD/2GmWzAIp+rKS5GIZrChJIOkdjjx0yLI8IWRppybIPPx1oFG+gMn/k9xkw53utQTxeT0ik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHL16n8QDm2YgfCLEtqH3jw7vBFF15SJvnN45qQTEI+OIngFCa
+	W7vj0ecnySfsZHtsYIWomk38wbYV34j7lYL1ADXg5Mz1tzqob+b/Q42cPlOE2opd5Rujqdd+WPU
+	k+IouE/n65aKu9GkzSQwlJBvFYuFuaVKy3TMsZgEqkNsmEvh+0LIT9kN4RubGz3cDOdI=
+X-Gm-Gg: ASbGncsZutTnSc2HLs7g/JqC8dpm47Y0zP6Im9YcMSZ/slnzkhA7fqCnnE116wqg5xs
+	lHP3cENYEzh02P3qzfh2f+mrBOcodv5cGEiYWCZ7eRd93YHpwA+BOiqNmXQXB81dTsZv5zPzkdn
+	Z5Xovr2lpoKOEqSul63/wvz/gT7ouQRTmjMKF8kWcCnm4X2MJ/ts5wsCYuq+kWwoXT48Yptt8lX
+	fC7P2X3zo1kUwcj3FMz2AKBg0fzrCXO6AOA+nwctG0dlSR1mhPT7oKybzURutnMmQtZhmgEz5/m
+	48MrV8ka1WP9rP97BrhyItpapF25NG53EPC034Pinsb43XrW/8/oA8jxdI+OCSjQqd4Yxbbxqqr
+	v0K5Wizs8Sqmduaqd37d5ZK3At4oQSOARZ1M=
+X-Received: by 2002:a05:6a00:23cc:b0:774:615b:c8ad with SMTP id d2e1a72fcca58-780fce0a094mr16191369b3a.9.1759126863005;
+        Sun, 28 Sep 2025 23:21:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyXhVu5YJr/Bl08pETVz+ZdPLkfd/FjtkIFppmpYj1TwDX2jO0Olrp/Qot5cdvw17ItUB60g==
+X-Received: by 2002:a05:6a00:23cc:b0:774:615b:c8ad with SMTP id d2e1a72fcca58-780fce0a094mr16191351b3a.9.1759126862600;
+        Sun, 28 Sep 2025 23:21:02 -0700 (PDT)
+Received: from [10.133.33.234] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-782634d2a7bsm3892488b3a.29.2025.09.28.23.20.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Sep 2025 23:21:02 -0700 (PDT)
+Message-ID: <5820a9a9-4474-4c4d-905c-0efd9442e5e1@oss.qualcomm.com>
+Date: Mon, 29 Sep 2025 14:20:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
-Subject: Re: [PATCH v3 4/4] mm: thp: reparent the split queue during memcg
- offline
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <2ddd0c184829e65c5b3afa34e93599783e7af3d4.1759056506.git.zhengqi.arch@bytedance.com>
-Date: Mon, 29 Sep 2025 14:20:16 +0800
-Cc: hannes@cmpxchg.org,
- hughd@google.com,
- mhocko@suse.com,
- roman.gushchin@linux.dev,
- shakeel.butt@linux.dev,
- david@redhat.com,
- lorenzo.stoakes@oracle.com,
- ziy@nvidia.com,
- harry.yoo@oracle.com,
- baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com,
- npache@redhat.com,
- ryan.roberts@arm.com,
- dev.jain@arm.com,
- baohua@kernel.org,
- lance.yang@linux.dev,
- akpm@linux-foundation.org,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org,
- Qi Zheng <zhengqi.arch@bytedance.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2EC0CBCD-73FD-400A-921A-EAB45B21ACB8@linux.dev>
-References: <cover.1759056506.git.zhengqi.arch@bytedance.com>
- <2ddd0c184829e65c5b3afa34e93599783e7af3d4.1759056506.git.zhengqi.arch@bytedance.com>
-To: Qi Zheng <qi.zheng@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] dt-bindings: remoteproc: qcom,sm8550-pas: Add
+ Kaanapali CDSP
+To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
+ <20250924-knp-remoteproc-v1-2-611bf7be8329@oss.qualcomm.com>
+ <CAJKOXPc57_0pJ2ZWf2cKSKAcQMc3S_mHKQxJDzWH7t=mgim3CA@mail.gmail.com>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <CAJKOXPc57_0pJ2ZWf2cKSKAcQMc3S_mHKQxJDzWH7t=mgim3CA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=OJoqHCaB c=1 sm=1 tr=0 ts=68da254f cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=yr-pD6fi0WPqCAYln34A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMiBTYWx0ZWRfX457WbwKCRlyo
+ tVRzOFeyOzU/gBH6ch0FoExeVYtLI7fVGnwmUizS8CLwVSCSOM3gPUDv8t5pT4gJx5YG36ujlCb
+ 9tDDVk7YRdWw5QtZW/S4MdiN8EsCnG4e+eFKqZXkL8LB68qyYvNnH3FO55wZzQJPbG05gcJDXTV
+ VAAEPP+0dSoDTkVC64L8c+9qr1vtND64so9BcYS8f4H1D7JdVkrf1ZbwuATf0nZ2cuv6hiCVJrr
+ sCWLXKV1lf01wOcWbL2Z26gsFmZfJ5hnz1WtjTwkFlMf8jTrFN3F8msigTL1/kNAwyTfmnJahdV
+ jJ8L7QIJl+WGxIYmNiNOAuIl3MHcLvzyremaO/dhyyaha7CDMM4MfYcCH7NbxJ9u2mipLacGzE0
+ ILjA25yKcaMJxmz5P7rrxROdomSbKQ==
+X-Proofpoint-ORIG-GUID: owOmktGqv-60HnBXSc3W-r9HKHfCfYNF
+X-Proofpoint-GUID: owOmktGqv-60HnBXSc3W-r9HKHfCfYNF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_02,2025-09-29_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270032
 
 
 
-> On Sep 28, 2025, at 19:45, Qi Zheng <qi.zheng@linux.dev> wrote:
->=20
-> From: Qi Zheng <zhengqi.arch@bytedance.com>
->=20
-> Similar to list_lru, the split queue is relatively independent and =
-does
-> not need to be reparented along with objcg and LRU folios (holding
-> objcg lock and lru lock). So let's apply the same mechanism as =
-list_lru
-> to reparent the split queue separately when memcg is offine.
->=20
-> This is also a preparation for reparenting LRU folios.
->=20
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
-> include/linux/huge_mm.h |  4 ++++
-> mm/huge_memory.c        | 46 +++++++++++++++++++++++++++++++++++++++++
-> mm/memcontrol.c         |  1 +
-> 3 files changed, 51 insertions(+)
->=20
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index f327d62fc9852..0c211dcbb0ec1 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -417,6 +417,9 @@ static inline int split_huge_page(struct page =
-*page)
-> 	return split_huge_page_to_list_to_order(page, NULL, ret);
-> }
-> void deferred_split_folio(struct folio *folio, bool partially_mapped);
-> +#ifdef CONFIG_MEMCG
-> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
-> +#endif
->=20
-> void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
-> 		unsigned long address, bool freeze);
-> @@ -611,6 +614,7 @@ static inline int try_folio_split(struct folio =
-*folio, struct page *page,
-> }
->=20
-> static inline void deferred_split_folio(struct folio *folio, bool =
-partially_mapped) {}
-> +static inline void reparent_deferred_split_queue(struct mem_cgroup =
-*memcg) {}
-> #define split_huge_pmd(__vma, __pmd, __address) \
-> 	do { } while (0)
->=20
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index bb32091e3133e..5fc0caca71de0 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1094,9 +1094,22 @@ static struct deferred_split =
-*folio_split_queue_lock(struct folio *folio)
-> 	struct deferred_split *queue;
->=20
-> 	memcg =3D folio_memcg(folio);
-> +retry:
-> 	queue =3D memcg ? &memcg->deferred_split_queue :
-> 			=
-&NODE_DATA(folio_nid(folio))->deferred_split_queue;
-> 	spin_lock(&queue->split_queue_lock);
-> + 	/*
-> +	 * Notice:
-> +	 * 1. The memcg could be NULL if cgroup_disable=3Dmemory is set.
-> +	 * 2. There is a period between setting CSS_DYING and =
-reparenting
-> +	 *    deferred split queue, and during this period the THPs in =
-the
-> +	 *    deferred split queue will be hidden from the shrinker =
-side.
-> +	 */
-> + 	if (unlikely(memcg && css_is_dying(&memcg->css))) {
-> + 		spin_unlock(&queue->split_queue_lock);
-> + 		memcg =3D parent_mem_cgroup(memcg);
-> + 		goto retry;
-> + 	}
->=20
-> 	return queue;
-> }
-> @@ -1108,9 +1121,15 @@ folio_split_queue_lock_irqsave(struct folio =
-*folio, unsigned long *flags)
-> 	struct deferred_split *queue;
->=20
-> 	memcg =3D folio_memcg(folio);
-> +retry:
-> 	queue =3D memcg ? &memcg->deferred_split_queue :
-> 			=
-&NODE_DATA(folio_nid(folio))->deferred_split_queue;
-> 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
-> + 		if (unlikely(memcg && css_is_dying(&memcg->css))) {
-> + 		spin_unlock_irqrestore(&queue->split_queue_lock, =
-*flags);
-> + 		memcg =3D parent_mem_cgroup(memcg);
-> + 		goto retry;
-> + 	}
->=20
-> 	return queue;
-> }
-> @@ -4275,6 +4294,33 @@ static unsigned long deferred_split_scan(struct =
-shrinker *shrink,
-> 	return split;
-> }
->=20
-> +#ifdef CONFIG_MEMCG
-> +void reparent_deferred_split_queue(struct mem_cgroup *memcg)
-> +{
-> + 	struct mem_cgroup *parent =3D parent_mem_cgroup(memcg);
-> + 	struct deferred_split *ds_queue =3D =
-&memcg->deferred_split_queue;
-> + 	struct deferred_split *parent_ds_queue =3D =
-&parent->deferred_split_queue;
-> + 	int nid;
-> +
-> + 	spin_lock_irq(&ds_queue->split_queue_lock);
-> + 	spin_lock_nested(&parent_ds_queue->split_queue_lock, =
-SINGLE_DEPTH_NESTING);
-> +
-> + 	if (!ds_queue->split_queue_len)
-> + 		goto unlock;
-> +
-> + 	list_splice_tail_init(&ds_queue->split_queue, =
-&parent_ds_queue->split_queue);
-> + 	parent_ds_queue->split_queue_len +=3D ds_queue->split_queue_len;
-> + 	ds_queue->split_queue_len =3D 0;
-> +
-> + 	for_each_node(nid)
-> + 		set_shrinker_bit(parent, nid, =
-shrinker_id(deferred_split_shrinker));
-> +
-> +unlock:
-> + 	spin_unlock(&parent_ds_queue->split_queue_lock);
-> + 	spin_unlock_irq(&ds_queue->split_queue_lock);
-> +}
-> +#endif
-> +
-> #ifdef CONFIG_DEBUG_FS
-> static void split_huge_pages_all(void)
-> {
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e090f29eb03bd..d03da72e7585d 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3887,6 +3887,7 @@ static void mem_cgroup_css_offline(struct =
-cgroup_subsys_state *css)
-> 	zswap_memcg_offline_cleanup(memcg);
->=20
-> 	memcg_offline_kmem(memcg);
-> + 	reparent_deferred_split_queue(memcg);
+On 9/25/2025 9:48 AM, Krzysztof Kozłowski wrote:
+> On Thu, 25 Sept 2025 at 08:37, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
+>>
+>> Add remote processor PAS loader for Kaanapali CDSP processor, compatible
+>> with earlier SM8550 with minor difference: one more sixth "shutdown-ack"
+>> interrupt.
+>>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  .../bindings/remoteproc/qcom,sm8550-pas.yaml          | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+>> index be9e2a0bc060..031fdf36a66c 100644
+>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+>> @@ -35,6 +35,9 @@ properties:
+>>        - items:
+>>            - const: qcom,sm8750-cdsp-pas
+>>            - const: qcom,sm8650-cdsp-pas
+>> +      - items:
+>> +          - const: qcom,kaanapali-cdsp-pas
+>> +          - const: qcom,sm8550-cdsp-pas
+> 
+> 
+> This time maybe without HTML:
+> 
+> This looks wrong. This is not compatible with SM8550.
 
-Since the dying flag of a memcg is not set under split_queue_lock,
-two threads holding different split_queue_locks (e.g., one for the
-parent memcg and one for the child) can concurrently manipulate the
-same split-queue list of a folio. I think we should take the same
-solution like list_lru does to fix this.
+Could you point out what is the difference from your perspecetive?
+it is the same as SM8550 except for there is one more interrupt,
+which is also described in this patch.
 
-Muchun,
-Thanks.
-
-
-> 	reparent_shrinker_deferred(memcg);
-> 	wb_memcg_offline(memcg);
-> 	lru_gen_offline_memcg(memcg);
-> --=20
-> 2.20.1
->=20
+Thanks,
+Jingyi
 
 
