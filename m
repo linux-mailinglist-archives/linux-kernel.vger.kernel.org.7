@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-836507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BCCBA9E19
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A19FBA9E28
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC933AADBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3647189FF9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D07330C0F2;
-	Mon, 29 Sep 2025 15:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA2D30C0E9;
+	Mon, 29 Sep 2025 15:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eQhBEhJ5"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKc62zVt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1567A2FABF5
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ECB34BA5A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759161275; cv=none; b=ZVwyxtzEXzSvLsdi5Tvo+yG6A1w1xvazyc8QBlLO7B2UFEBpyj+TpUMOdQ6CCByQrg4lrDa1GofLmLXJgy2OJghz1e3fUNMQY39j822kSrdoicOUriFiE/X33LHYrqNJXjo7pHg5Zo3dWFOM4R9vLmyUQtoBxX6AiQP9U/Etg/s=
+	t=1759161317; cv=none; b=gibEk1I3VCdkaYEmzc6R4dj7nRIUjFAyWn1cXtnXXDNNTtP0/LmGPdXtC4NpKDXGk9xiORPyhbGMqtOubtiYMGQVpjaiUFrKsL4kS2FShfSltRFw98TzswH738eb7j6AGgekTDeUJk2NaFxJNGFaYzdF1t1sS1IjZH0mUPO/kTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759161275; c=relaxed/simple;
-	bh=pxV7kBbXU2ByvzUZ1puidxSyC67U1iF/n3wQaH/iU00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=seHpUHBeWwBC47px2yDoLJqB43IrnAYSP3pnvwwfpqkOl2oNmWoSLJvOZxr0dCfqZU4ZrhCugymXR5zdHTGnB8a3H+GC6Ah8s6/8eAPGCHcvoBJuH8PEN8NjYdPqtMJ/n4jmjL6mY3WaIAvVeyzAykSzSoOU3XyTHhcR6icdtpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=eQhBEhJ5; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4de659d5a06so21552771cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759161272; x=1759766072; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lc3yIVTCt7GESleGWEPj94fox63P9DXvd9ojEsera/Q=;
-        b=eQhBEhJ54d00j1x/io5YL1iUM1PKxJqcZwBAW/i5jDUgmMOfsJVZN/s5ZD72YLWJrs
-         5WPekmnC7PtV5vMGNtSImsCOUjnx+AAWk9jqpZdvzw/OBWNTo2kTbRUoofUsAEUla2ps
-         tmqk9vQfAfhaoJvCaJKXbC0ZcTtggbFahLqC96vNjEY90K5yS0gBFGHY39YyqcwfsyXC
-         2xis/Zjm97fQ+ss9aPoFy4+/FZo7MxCTdDFJ4CWii4eSkMdumrSW37HVCytlid+pzRUB
-         08Ih50Xa5foCBAFwKKirBlhNLihbxDpgZXluxXk4a0Mrc8sk9zShkPoWuIjxURxCJ2Tp
-         vIEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759161272; x=1759766072;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lc3yIVTCt7GESleGWEPj94fox63P9DXvd9ojEsera/Q=;
-        b=V+olE9SiEvWZN465KCZotXEmcdOn5Rr4qXYjvE9Oe9xIVb6LsYilTnXjRt8wKFZpMN
-         ZseZfKFGEL/jdunnay560aQU4iAcOWU5heMzpLiWyjXFKTAu6L07QAUj3y87ravRkYF7
-         IwT0UCINp9ZM80ZgzfQdOmZ/RCYzuss2Vsp6pmI66cXnnW0FK5f/nj8Cas9rvnAdKAIj
-         aPYXNFLAGMXmhu89Uw/yZWuKFFmtoqFp4XPmeI60qd8XLzwNPmKc/akk2igC1vK+unPx
-         KtxxANjxVmzgj4ZP+XE157v//qWnT1YPu6yKttqYFOZfwmImhg8qEtjmV9tSSSnvXaiA
-         KHjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU91sKDOI5HalkjHeNe+7RV6In3a7XncO6DEqDNyOt5LeFu29vufRoLgmXaDMuV686LtO2mj5L2N7JW0U4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiznfL1+pmOJy2oJCDBjV3AKpgj6nAVnFJKpjZtjASQIQFI0QG
-	p+kzfloFYCHbZzRGaB75BGHLcnhA2AKsWqIS3gO2jM5RI5xIsbPEQ9+CUPUfMl+fR2A=
-X-Gm-Gg: ASbGncsdX23vA5Q9GmiQoi1tX9VFgyjUejS8v3HhoNV45VhV7pLBP6yb+6l5JFVnb2t
-	xqnpUlXCgAYjM4+AVTb8suInD64s9FwPNERuBArn3qvoyyW3lZ8tdwitfnzqAfu/wJ1kbx1k+4o
-	PtlLbTk3BY/94ErXcmpr2lAlYB0HC4b4cUwv0PBKtoaHgkLJR7XJJDEZzN3Vu1XZQE9IQI+9jah
-	23qTUYvHwifxNOor+GMKgO23dt2RCPLy/rgo47SsGVU7M5hVNhnGoco4QqFSeVKyjv+KNW3Khhi
-	jplugv7aqhxBxQTv8QI//cRhES6XUOfgewrpdoh094ybAl9RQZ+JBe3QgF8UvU1aF/bB+VK6I6E
-	R051VDQ0=
-X-Google-Smtp-Source: AGHT+IE73a8LyblCeUGV6w2tUddEWRBZht7Dzz/jDO6Cu/jrH8WHnHtrf2D16knXnBLwZow0GuMN6g==
-X-Received: by 2002:a05:622a:13d0:b0:4b7:aa52:a710 with SMTP id d75a77b69052e-4da4d126930mr236668211cf.80.1759161271391;
-        Mon, 29 Sep 2025 08:54:31 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4dfec096b98sm40112511cf.46.2025.09.29.08.54.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 08:54:30 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v3GCs-0000000CM40-0CsH;
-	Mon, 29 Sep 2025 12:54:30 -0300
-Date: Mon, 29 Sep 2025 12:54:30 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Samiullah Khawaja <skhawaja@google.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, iommu@lists.linux.dev,
-	Robin Murphy <robin.murphy@arm.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
-	zhuyifei@google.com, Chris Li <chrisl@kernel.org>, praan@google.com
-Subject: Re: [RFC PATCH 05/15] iommu: Introduce API to preserve iommu domain
-Message-ID: <20250929155430.GD2695987@ziepe.ca>
-References: <20250928190624.3735830-1-skhawaja@google.com>
- <20250928190624.3735830-6-skhawaja@google.com>
+	s=arc-20240116; t=1759161317; c=relaxed/simple;
+	bh=5ZiYViMmHyYTGbotSTQoJNHs5BRuX6SdoxN8p8nXJh0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kq8xf65a+XSvFIa8JNGCIkmYmY8BDNsPK55sJMPi5e7cP1T7+eTI9f6s+M2XgRLMzeZK8rsOCNMpr0C9qU7UQANVZVOpF1x2u+N9lnlGlP05F5vf+HG78F2WyG7+d8ZE/qmQsYCkXB2TxB2FSM5BRhJmfmyh4BexmbTdwyk7TuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKc62zVt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 250CBC4CEF4;
+	Mon, 29 Sep 2025 15:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759161314;
+	bh=5ZiYViMmHyYTGbotSTQoJNHs5BRuX6SdoxN8p8nXJh0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=SKc62zVtn00Uk5vk3CA+EXf9fSGP6vPqQA32v4D/dWzgk2RFFeNtX0bU24zWlhcug
+	 tpDVDDdQ9jpw1MfHqiFTJajPbdM1iHKCTkq5bYO2D3fXyvBOp8D3iGEdfNY7uaLECr
+	 6zvuxpTfR4JewwSet9kfEFiCjCeNJ9qr60inA4HIqu5SMbjxcsXnaFX2gQ+wwRRdfT
+	 yXS6XCmnL8d+aGe5tG2Nr+rO7GD8GkSvC84Pt8pMP4D83VNp+ZurwfFTwDnZcn1oBk
+	 wO0WatAMmhex5sul7LemGM3f2so47JZZ/7EIw/X9o0fDvVkaCgXUpp17KBaV/GL7zD
+	 sN+LcvKRSz9/Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CECACAC5B0;
+	Mon, 29 Sep 2025 15:55:14 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Date: Mon, 29 Sep 2025 17:55:07 +0200
+Subject: [PATCH] watchdog: move nmi_watchdog sysctl into .rodata
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928190624.3735830-6-skhawaja@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250929-jag-nmiwd_const-v1-1-92200d503b1f@kernel.org>
+X-B4-Tracking: v=1; b=H4sIANqr2mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyNL3azEdN283MzylPjk/LziEt0UcxMj48QkI1MTSzMloK6CotS0zAq
+ widGxtbUAqzFcmmEAAAA=
+X-Change-ID: 20250929-jag-nmiwd_const-d7423ab25496
+To: Petr Mladek <pmladek@suse.com>, Daniel Xu <dlxu@meta.com>
+Cc: linux-kernel@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2198;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=5ZiYViMmHyYTGbotSTQoJNHs5BRuX6SdoxN8p8nXJh0=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjaq+COM2Svc8jNNFjm5q85lI9TkhtAfjlfy
+ 8z8sh5u2LRDLokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo2qvgAAoJELqXzVK3
+ lkFPzlAL/3fhRZbC1qSPUyUYd6UjCH1DU3lx6hp+FzCodX/p2mgTY/luqaOVtuTMqewvQVAJ4dV
+ RbrlwckF82kME1qIKhRyrdZrlIGxNwoe6wMf7Ji58iV0YKQXLySYW/Q44x5byReySl6ONNJ1fvR
+ 3KFPTGU3FQKR8tYayZjjVQyUa/U0B2NyvoPfPJJoqnTo0fXcZTbWdldXDrloJ/HBaip9agWMrgk
+ slAItrraZlt3emPeLB0BslyyaClokokTiB4hwq9iaJhLBTtPF/r0E/UQ3nu21DSIRe9z9+HCuuP
+ 3gPD5+XdsN6Xk0ZKJYivG+5NlHFSa4utglLilzdyiUGvRy9NQAprx/I/8X+Po0cZgfUxEvGaHmA
+ 0oW/14sZzvzR0WBb6qAIacHvUF2cKkhXohfFxYPrsiK4zH7oc10HM5pctdsLOogMS47+raE+NqC
+ ktzJ4mcOjjaTZtKO+Q3mjb3eRdqXoAXabOVJIRQlugNiUI8PpGIWrfZTKqxiV7yLcXYqqu+MIt7
+ eU=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-On Sun, Sep 28, 2025 at 07:06:13PM +0000, Samiullah Khawaja wrote:
-> Add an API that can be called by the iommu users to preserve iommu
-> domain. Currently it only marks the iommu_domain as preserved.
+Move nmi_watchdog into the watchdog_sysctls array to prevent it from
+unnecessary modification. This move effectively moves it inside the
+.rodata section.
 
-Merge it with the previous path
+Initially moved out into its own non-const array in commit 9ec272c586b0
+("watchdog/hardlockup: keep kernel.nmi_watchdog sysctl as 0444 if probe
+fails"), which made it writable only when watchdog_hardlockup_available
+was true. Moving it back to watchdog_sysctl keeps this behavior as
+writing to nmi_watchdog still fails when watchdog_hardlockup_available
+is false.
 
-> +#ifdef CONFIG_LIVEUPDATE
-> +	atomic_set(&domain->preserved, 0);
-> +#endif
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+This patch is a followup on the discussion/question I had in [1]. I
+would prefer this to be const as it locks things in .rodata and prevents
+inadvertent modifications [2].
 
-The memory is kzallocated, I don't think this is needed
+[1] https://lore.kernel.org/all/588ec9ab-b38a-40b3-8db5-575a09e9a126@meta.com/
+[2] https://lore.kernel.org/all/20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org/
+---
+ kernel/watchdog.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-> +int iommu_domain_preserve(struct iommu_domain *domain)
-> +{
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 80b56c002c7f123c49f65465fe7af9c74de4f46a..1e4e3eccb065a5ce95486f24fa07387e8218cd62 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -1213,14 +1213,11 @@ static const struct ctl_table watchdog_sysctls[] = {
+ 	},
+ #endif /* CONFIG_SMP */
+ #endif
+-};
+-
+-static struct ctl_table watchdog_hardlockup_sysctl[] = {
+ 	{
+ 		.procname       = "nmi_watchdog",
+ 		.data		= &watchdog_hardlockup_user_enabled,
+ 		.maxlen		= sizeof(int),
+-		.mode		= 0444,
++		.mode		= 0644,
+ 		.proc_handler   = proc_nmi_watchdog,
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+@@ -1230,10 +1227,6 @@ static struct ctl_table watchdog_hardlockup_sysctl[] = {
+ static void __init watchdog_sysctl_init(void)
+ {
+ 	register_sysctl_init("kernel", watchdog_sysctls);
+-
+-	if (watchdog_hardlockup_available)
+-		watchdog_hardlockup_sysctl[0].mode = 0644;
+-	register_sysctl_init("kernel", watchdog_hardlockup_sysctl);
+ }
+ 
+ #else
 
-I expect this to accept some kind of luo pointer to signal what stream
-the domain is part of.
+---
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+change-id: 20250929-jag-nmiwd_const-d7423ab25496
 
-Domains are linked to iommufd's which are linked to luo sessions. This
-all needs to be carefully conveyed down to all the lower levels.
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
 
-I also expect preserve to return some kind of handle that the caller
-can hide away to deserialize.
 
-> +	lockdep_assert_held(&liveupdate_state_rwsem);
-> +	if (!domain->ops->preserve)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = domain->ops->preserve(domain);
-> +	if (!ret)
-> +		atomic_set(&domain->preserved, 1);
-
-And if we have a caller handle then there is probably no reason to
-have this state tracking atomic.
-
-Jason
 
