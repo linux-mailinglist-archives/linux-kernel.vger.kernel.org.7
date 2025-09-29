@@ -1,305 +1,232 @@
-Return-Path: <linux-kernel+bounces-835951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCCFBA86C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:40:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCF0BA86D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF9B1885142
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3FED168B5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF22F26E14C;
-	Mon, 29 Sep 2025 08:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7898124468C;
+	Mon, 29 Sep 2025 08:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="l2ycTBkH"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013062.outbound.protection.outlook.com [52.101.83.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="WprTBntY"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D23924468C;
-	Mon, 29 Sep 2025 08:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759135206; cv=fail; b=W12EDpaqgi6a0KX/1yKHTvx9Hf6/9tbcHFpJE/eUouvwtSu4krC2si7j1lCBCFQHT8wXaybtgii6Z3qL+TmRL0R/5ZS7PNIYFxfCQ3mCuNOxDKNykBUyrb+G39lNqd57VCXnMKi4JbDR3b5ZjYBaL+1S6faHGa244qi//+U/58o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759135206; c=relaxed/simple;
-	bh=1ROelvw7wMddhdcu8KwRcvZdXl2nfNvo3oUWW79QbAk=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bxEzOPMnlloPPiToeTYGE2qKpdMGlv/D3mIEC6IBInTTaIKB7RcuGJvzy6Fe90FtN6ppEznKvE6Ua3574hm0IMZDPQpKq8xXPQI7NkqoeCIeauH5Az607QTan+e+WMduCog/aOyh1hewBOQ3/TVGdfLk7lf6aA5Ens3SJjLnWgo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=l2ycTBkH; arc=fail smtp.client-ip=52.101.83.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gRuKoHiSqV9QWP2hKRufB0fd3EvJ35WTvlFNRqiWCdL5U+0Mm4VkyaP9TG12vTb6EJXhKc2GGk+lGlyFi1aFQjb3JVwCymRVIZCvDw0Pb+WCDi/bgz3PoKqzTkPZIcLa+2WH+WtUfLT7qMsW9entqsIoFNYcDpnRm1TxnEBJpATzfsG8tGW/QCL8b3hMs+6QHeN7VRA11LcSiVD66i1klYiB48BQb/msdGjdNHsFIi2wKflLrqTtpdIsotTn1f/tQRMeuqIaTL3aQLtNU8cQJtlE0x96l7azz0C7kPIpD23fV4efVgPtP6QhzfUEzS9wLgEknN05GSzlpovs6oCrcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F73QDQE4VIKEXtAna0FrXLvaJ8W7mhgQX2kw4s/ZbNA=;
- b=uHOO7bKeE2zW2/6rVBEkFPzObSpyXyuvChQCJB/H75FVXFe0UfYknAI5rxqhvwov3ZJJY35TlqLkPJTriuPKEeNwI++jPnE6TBiZ5LZEPobmsAE11E1Iuh/hRthmFYaFn35EOO+ue2al1McVkd5kOl1R5otFEcIZPQMDnjHZ8jVJlcMBXOMobU/tTfh7Il7vyIMdXfZwYnvOUe1m9rS7m+qxh2EGaYFlgEMYQNDW1almif9d2YcDUtWP3Yd3albEisNBKEkEWQPbk0LJD2hKS0A6BJk7F/M+fu9ult819uRm7cg/M8vaGgD6B+fdVv2VXautfqvESjpl9MKOX9YoQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F73QDQE4VIKEXtAna0FrXLvaJ8W7mhgQX2kw4s/ZbNA=;
- b=l2ycTBkHoHc9BxhWswBdbNvPh+Sht4raFjX5iogpejco4Ac5Xyz0PDkHIvYpBJT9lKNueFG+9fb/v+za92fEQTb/Bkeyf1cOV5X9H9g3SeStZnEtStywsistXUBIm63Va+nuzl9e1Uqr8i2N77f5/ywjw/TM+sINfdgYUtMyTy0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DB9PR10MB4747.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:254::16)
- by AS8PR10MB7564.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:562::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
- 2025 08:39:59 +0000
-Received: from DB9PR10MB4747.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7956:ad04:35d8:6f0b]) by DB9PR10MB4747.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7956:ad04:35d8:6f0b%5]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
- 08:39:59 +0000
-Message-ID: <2e644e6c-a57a-47f9-8029-6c1450df256b@prevas.dk>
-Date: Mon, 29 Sep 2025 10:39:57 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: imx6qdl: make VAR-SOM SoM SoC-agnostic
-From: Stefan Prisacariu <stefan.prisacariu@prevas.dk>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250925104942.4148376-1-stefan.prisacariu@prevas.dk>
- <aNXAaewv/MpqL78M@lizhi-Precision-Tower-5810>
- <4a97f86d-a466-41bb-860c-ed64715d1bd0@prevas.dk>
-Content-Language: en-US
-In-Reply-To: <4a97f86d-a466-41bb-860c-ed64715d1bd0@prevas.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MM0P280CA0120.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:9::34) To DB9PR10MB4747.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:254::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30DF2737F2
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759135216; cv=none; b=p6FUI2XZYKkar8SNEmuXVh/v4y6HYi2yIZdI/MFhYVEX8ss3FcKFwOYDgVkbf/9qLgFwVO2YuPV/vlsA8EezZNUwhfg3jQo0VArEv4ZOgtqv6HaCgNTt3PKTNuew2Wal7v7XakOt4Lkj8oZRP9sCPYFFvshIj6YFv7paah1UhZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759135216; c=relaxed/simple;
+	bh=/vU3axIjTRmEvmNvhaARoMrLo54CT8EBIvYVAdhrkBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bo/jkyqBdM0OomyQRWc9QB47CDcKgxv9ajCJXYJlx/3ovOc2MOzjKr5+OFsF0B917sKo00sJk5IfbZRYpyE5rlMMwv/+nA+068i5bxT8MmDDNdKaE7zs3AJ+4iiVFsnEl0RkKIKbvU9i2laFeXYYnixtTtycCY2sKIWGLxxJ1A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=WprTBntY; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-42791510fe3so12883505ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:40:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1759135214; x=1759740014; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PCYyCdPY4pLZwGknO/yFiSab1vr2MfF6oEDxyAFa5wA=;
+        b=WprTBntYxtgNHUg1ugc/NyyA148H9eAp5WWnyW4LfeC5bp69VGfjneRT9tNzC2CuHb
+         QWl1ZJMsrPEyaOM40wTKhTwY9G9cPbBnJZVYSBKbM3uOA0PKkYTu/6kY6EH8X5cqxjUb
+         jk4fQBbPYi8ZSbZoNBE7OaOeeAaHMZkvC5055yBfVeP883D2B9M/vV/YLxZnM7ePj9Bv
+         qwJe6+RkSy10gsCbb7liq86qk5sfahcU7raIBoG2dO6ihPQtCHxI32rR75k3rryLeZ1s
+         Y9AxZBGNQf92znRO8DuYkofy3Jkq+gk0uuWLWWHVgOJyA5UhYrjC3ib85EKHU3GN0T6x
+         iQbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759135214; x=1759740014;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PCYyCdPY4pLZwGknO/yFiSab1vr2MfF6oEDxyAFa5wA=;
+        b=OQ6qt3t5BBjM2Yw3XxwTx492ooN0vb0k1t1Lh6TIma7/WgUyJDHonN7W9SC3nhcsfH
+         00bZlyYmp2B5ktbmMxNcgk6/8l9BXP/YSUNmbxCg1pCxOTbYiUlzF1P3kvTxJHVaB/PC
+         MhrE+QcR+mWldn6TWgPVLdob8Iqj5ia5vYTV0iF1tv5jJeDLkh5pMagMUg3KKqkueWA5
+         u++MWAS7xh3dhEqw7lQ8VJfOUm2E2OrdpWVlcEgGxGVEnBdB5Bl7fxxYPxZk0uQme/+z
+         GVhO01qMYof297lHSoE1MKMchRKKv1QixasaF9PFNIQnl+ZlU3fFy4gOtsaIaTAP8GRn
+         e3yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3NQZz393ycZ2HbBTM+0yiuTFvlH0gACdbYz6hQ1rn4VrzAy5TIucrOG3wQYKMCrdc3azIJJVERrQyFNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR6I9kae7Br/FLcvz/dHaofgXgkqFBM+eo0GNnmk5OBqaAphxv
+	GMzkhN9eFogCeKS9WQzx7qEoKPdaMZOJZVWx8UqJt5tCWSYi+9YheCvfPxj0MB7BFrkZUMwTsjW
+	1ieX7t2CsZv7mQdlyH3UERAQyQlSgstbvAw2jOzZdXQ==
+X-Gm-Gg: ASbGncuUQY6BvUHwVpcurWPzgNCGcZqeHSg5vTuWNSyKTAfQXVTwXXpNxAC12Y2k7cf
+	lmeOIbVkyJjbYcHHTiQolK1hj0AItLrHQFO7hU5XdaA8hrVF35uHeOkv9jJ+CrJYQi6MAt3KKSw
+	ihsYA3eB8zBNybmhnhRD11QxihEPqCbH6pwEkAjIHb7pOmvJn3dYiA35uEl2qZMAVLTFqyAu5bI
+	juvDKVZU5Pn8HdziRzg7wJ55hhwTvvkwr9lY2z+
+X-Google-Smtp-Source: AGHT+IHQtcDvH2C7e4+MP2jPAJbNMI89b/DTmyExpG5QhdiDmz9e0af/TgeRnMwKo6Uav5ZTT8Ovwftn+mQhkWt370A=
+X-Received: by 2002:a05:6e02:16c5:b0:422:a9aa:7ff4 with SMTP id
+ e9e14a558f8ab-425c2a27af1mr188988605ab.11.1759135214127; Mon, 29 Sep 2025
+ 01:40:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR10MB4747:EE_|AS8PR10MB7564:EE_
-X-MS-Office365-Filtering-Correlation-Id: b082ce32-cb4d-4df9-55b8-08ddff33c681
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NUVyTHdjVGJST1RyTmdyclBnMGd2R2VjUDlxQ1VkdnVSY0ttQVVXMUpxY3RO?=
- =?utf-8?B?aVRuZUxEZzhyU3kvV29pNTNRRmpYUTFzWUhrdzRKSlpneTlsYWQ3bEEyVWl3?=
- =?utf-8?B?ZFVWTElxdUw3MmpVbU9UdWoyT21pUm1jUGJIZ3Z2QkFueDI3WnRsd1J2Y1lv?=
- =?utf-8?B?RUVOeGFPVFBCOWt3RlBWb3krNWlFUXNwTXRoaW9DYXBRQklyc0VjMGNLYjhG?=
- =?utf-8?B?WE9mK1hrdmNBMzUrcGFSbUpzMVZnQ29hOUhGSFNtaUl6aVlBZC9keEpvbVUy?=
- =?utf-8?B?UXJKRms3VWR1dzVCUmtTL0k2MUYxckQvb3ljTVNpcTVmeThxNkNScnJhc2d6?=
- =?utf-8?B?ZGdKYjEweGtaUzhmYWx0MGxrb3JJaTNuZkJURUNONzQ4MGlNcGliKzNlWjRN?=
- =?utf-8?B?TVNXUHEwQU1yQjAyb2k1WUJjZHVqNkJOTWVKWkxjTGdjcGgwSjRiaHU0UlN4?=
- =?utf-8?B?VEVIWFd2WmdSemRpSUx5UytYOWVwQ1FVWjh1TDNVaWpOdHhmVENGdVFRbGRM?=
- =?utf-8?B?T0hTcDdTbkVEWWdHVm9sSnU5dDhZdHdrR0x1cFZqUVF5YkpFRDJCWXYzRGtq?=
- =?utf-8?B?L3NuejA5ZXp5YzF4OXNmT1RBQ3ZYdE1pRThCeiswZ0QybjZLQWxET0prd3VW?=
- =?utf-8?B?QTJVNGJHeDZYOERBTmJzeCtwdTV2OTM1OWR1V0RkU3IvMEIzY3UxdWN2Zmk4?=
- =?utf-8?B?UWx6eGpSN0ttU0VPdVVXTG1TNTdRd05FRkNlNmFUUC9xSzg1YzFMYURVdkdn?=
- =?utf-8?B?MVBmVm5hVVQyUGN5eDZLME5PRThQWXlpeVFlVFMyVHhWenpJNWRUQTlBQXlj?=
- =?utf-8?B?L0gxUDhhUzFneHoydDdmc0J4RDNoN2dkT0Z6K0kyN0t4QVVhVkVHRC9mRkZN?=
- =?utf-8?B?b1RJMHhPazh6dno1eDZEMDY3MWw4dVJWVmhnVEtVeWdZUkY1ODc3Tk9aRFNI?=
- =?utf-8?B?N3FCOE1Fd2lOUFhCN1d3YW5CbERzMW9GbThYNTFxcng2U1EwUDJhTWR3S2xU?=
- =?utf-8?B?QTVzeFphb0dhbmJacFk4eFhTUEhuY2JLK3Q4ZGpzUEpSVlpKN2thcU9NR24v?=
- =?utf-8?B?TThxQ1FUNzA1VEs3ZGpJaVBHQWplZm1KNDI5THZSUGZmbHJEUDk1QVhOcG12?=
- =?utf-8?B?c1M2T1UwN0hKKzBuUzRnL2thbkRXRXNTd2FMcEdUelcycjFtQUQ3T0VyeDV3?=
- =?utf-8?B?akp3Znlwck5MNWlIWk1UL0U4QUxBcGRMdmRIWU1aLzlXQnFLVXFqZW5vbTFM?=
- =?utf-8?B?REVodnZuMWE1cmRMSEkxZVFWR1dRbG9RaFhqeVcvblFpSGsxUHZPRjBLQzBF?=
- =?utf-8?B?aHByeDFtb2wvK3NsMGp2bzZtS2ZQS3MxTGtQL05tT2dJT2NCQjlkTDNLR1J1?=
- =?utf-8?B?K0hpU1lCdEdYam5id2NOZnk1Sm5xS0UvYUl5dHhGWm5sYWZ2M3ZhdnpRQXdY?=
- =?utf-8?B?V0N3UmdZQmdpZ29tYzZQalNrV1I1L1RXbTFBQ1QrUGN2WmdUS2VJQlNFS3dh?=
- =?utf-8?B?WHh6YU1tQW4zdkhHQ1BycWdDVlBvZlRnRFRoL2VacnNZQXBUTklSL1g0dC9H?=
- =?utf-8?B?REF1Qk1GQ3duM3BiUTlUZVlUN2FUMkRaQXYyTGVXRUdrd1kxSUdVMXk5WkRy?=
- =?utf-8?B?aUo0cDF1Snpxakdvc1FJcEUzQjFHODdxREpwK2U2T0taUzFHQUtPaUdTc2J6?=
- =?utf-8?B?QVl2c0o0bjU5YWtBbFdEa1dkbFVjSnFxUXZtSGp3Zm4vL3RyZUxUL0o3VDlX?=
- =?utf-8?B?RTdwUVRYTlg0dU93R1BCMmxzK24wbDZ3Z2FQUjZlVVM4MC9MUi96OTJPMkVr?=
- =?utf-8?B?enpzdjJ6WFZnbDNYb2NjY1JvdHRtOHBESHoyZFE0QkNLVXdWYWZhY3NpRkkw?=
- =?utf-8?B?SnlzRUlTOHoyZkppWGtCVzErc0pWQkQ0eDh5YWdhbHlhWFRlL2w2dXdycVpo?=
- =?utf-8?Q?f78H/TDro2o00r9gvKCXjCg5r/IpbXql?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB4747.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VHJKM3JPYU1jYk43MEYvZzF4NUJ0TlE1RVlDbTAyUjNGekFhbk9CR1lBaXZS?=
- =?utf-8?B?Yy9MSnBlcTB1YjVKTis5TklkMURHUDYzWGt6dXR3L2VBbzEzdlBoaTl5Y2x4?=
- =?utf-8?B?TndGTkpkTlRPTktOWmN3bm5oMTZsNHkxWmNFWVhzZVBnanUwSnZvc3RUMi9a?=
- =?utf-8?B?NTZ5SkRma3ZOd1BnK2RXdnBETGs3MXFnWEFOQ2dpM3pUTFcxSGU1b2lLdXhJ?=
- =?utf-8?B?VUxJMEE1d0xXT09lUWxJL0Vnd2MzbExucE91MGhCZjQyUHAzaTZQVDhPQU1T?=
- =?utf-8?B?WmZndTdGcnlDc1hyUnc2WU1ISkRad3NSSytqOXN6Mi9mTE1JZGF5RzA0SXZp?=
- =?utf-8?B?VHd2eFpveVJ2Z0dZTGNXTlY4NEtQcjJUVXdaR3JHNnRBMTdhZ0FTSmk4MjdW?=
- =?utf-8?B?S0dkSFhWNGhWZlQ3alozVklmOTYrb1FWSUVUUWM4akNZbUV4YXZJVkdlNjdF?=
- =?utf-8?B?QXlVQjF3VnZKSFBieHZFejQzdThoV1ozcHg3cDZMSElpTjlROGdaQnlUWDdi?=
- =?utf-8?B?WWorS2diTUV5NitBeUlrdDFEalpvcWtpLzY3QmlpT0paL1JOUWFNZC95YWNX?=
- =?utf-8?B?UjZkR1V6Q1ZBeFZxV2xtRTlzZTcrVmlyYWxIMUxZdHdtTHZ5aHhkTmhZSVFS?=
- =?utf-8?B?dlhUaTUrZ2twUjIxK3MrUnBsOERYdk9YY1ljZzZCbVo2VkYwKzkreVVGWVcz?=
- =?utf-8?B?SDAzNnlYTUdRRE50OUIyekhyK3JSb0lXOEJRSzhJMXdzaFlTQi80QVo1WVYr?=
- =?utf-8?B?eE9wdnAxN1Q5bm5PcmxzOXQxQ0JtUEt1QnZzc3ZjY1FXaVRObXlDZFZrWmhw?=
- =?utf-8?B?cVJjUWlyUWFmSHI1STZOWTZ4dkdFa2o1Nm9YQ2Y5UjhwNWlKbkV1UkI0Mzh4?=
- =?utf-8?B?RG5hOGRwQVVNRHVJMjNyMDJnV3Q2OHlTKzRkbzBjeXJrTlJMQ0ZFa3BrT1BU?=
- =?utf-8?B?KzZNOGtVOVhka3FKeUpWOThFSkRqbmd3NkFocWtxZlRQaWZYU2lBb2tTNzQ0?=
- =?utf-8?B?V2F4OFAxSUh5QjBwZzhXTzdpdTRaanNlaWZ0RTNWblZRcTU3SjA4ZFFKQ09U?=
- =?utf-8?B?QzdIcXBLb1E2QjVnNmw4aW8zbXA2M2NMS0ZzaExBd2UrZjFqSVVXRXZnY1lQ?=
- =?utf-8?B?ZjN3ZWZNK0JZb0wxN01UdGI1bUdldEFRaitvSkc3OGdkYnAzS2t2a2ZTOWEr?=
- =?utf-8?B?MXVPT2NFamNHOTVTVGUrN2dmU1RCcjlobmxoQkJhRnc1TFhJSWlRM3pKUzdQ?=
- =?utf-8?B?MThuQ3BsYmtNR0lRUm5rVklaM0J5VHd2Tldrdm1aNDFyem9VZUpQOGEwYUkz?=
- =?utf-8?B?akdjd3hldEdCaXVQSklUS0VmVVRUVDgxWlRHeTgxRkhGMUlTa0d6ZjkvQ01z?=
- =?utf-8?B?bTE2TFR2VFZ5SkxqMFFBTEd1eXcvbDdqVEhxMnhZTGYxWGlLMGdSWEZRMWJR?=
- =?utf-8?B?L01Xayt4Z3ZwZjNNR3N2d2FIejhjS29xRk1rdFV5bGY0VDF3UFc0TFhQK0Nw?=
- =?utf-8?B?SFNOc1A4WjMzM2JrcnE1T01DUnYvK2JaTG05WW94aDNKYWJmQStXYm5sMFV6?=
- =?utf-8?B?MVVWK3YwWU5Tc0NpM3R4VnhJR0c1Yy8yUEpidzIrOWp1bXR6MVNhUzdldHdG?=
- =?utf-8?B?L0x5WG5oRFBhWDFMK09pNXdoTGdrTUFrQ051U0crY2VyNFFPMUJZVkF5ZHZH?=
- =?utf-8?B?NXNlRjBTeGZwUExObk1DOGFwU3dBUGVQTTFoTE9JeDNXdFBxMmFpN0VIQ0t6?=
- =?utf-8?B?SklPcEZsUmlnK2hrK3lpdkkzeHo0VGFSeUN1K0piNDkxeTRvUVUwYVZOd3Mv?=
- =?utf-8?B?NWE2bWloNnhHTWpwZ3dMdzZOQkhwUkVnRzFtUjlOUDBvUWVGYkpmTFVZRU1k?=
- =?utf-8?B?WGNLYmQrNDlTZ1lucDdvOWMvRm1aOEZiMXZZUFh3VjNMckdCYzFicVhrOVFY?=
- =?utf-8?B?ZVk2VVlrVW5lUUZnczl4VzFsdE9ISmNPcURRbFdsb1pkOWxDTXNlS2FIS0po?=
- =?utf-8?B?MUxxVFhoeC9Hd1pXcWpXdXdMd0RlbDQ5MHlIbHUvOFBTQXM2YWwrdmM4Wkcx?=
- =?utf-8?B?d0tLczY5aEdqcVVXSzdGdytqTWlBcXY5UDYyWTBqa0c4c21DdjNWaFVHK0RC?=
- =?utf-8?B?SlB6dmY1YzUyVUs0dG9wc2RKOEIraXY3NnJPcksxWXBtaERhVC9TcFA1Mllh?=
- =?utf-8?B?L0E9PQ==?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: b082ce32-cb4d-4df9-55b8-08ddff33c681
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB4747.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 08:39:59.6710
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 291AooOcRYC+Sakk+jWH5gRkGCmnCFf1gmZ1elIx9SI1O5cVbyh8mCwtWMV7Af+ZsgfHzZQG2wJ3YdNGqrE1/buhLDx/M9ezvcLO+kajyxw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7564
+References: <20250926124912.243464-1-pmladek@suse.com> <20250926124912.243464-2-pmladek@suse.com>
+In-Reply-To: <20250926124912.243464-2-pmladek@suse.com>
+From: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Date: Mon, 29 Sep 2025 09:40:03 +0100
+X-Gm-Features: AS18NWCff_9PhMTvCu-j89Lfkx-I2AQxTzbVUdJaLNdrn0zjHo0LmnaiAIS2LGE
+Message-ID: <CALqELGzia2BObxPuDPiH-3HSDAf+r6HWmpD+iFAr+v22QGwoTw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] printk/nbcon: Block printk kthreads when any CPU is
+ in an emergency context
+To: Petr Mladek <pmladek@suse.com>
+Cc: John Ogness <john.ogness@linutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Tony Lindgren <tony@atomide.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
+	Serge Semin <fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Frank,
-
-Please let me know if you want me to sent again this patch:
-
-- with the simpler commit message
-
-- add a cover letter to move the extra information
-
-- keep the /dts-v1/; inside the .dtsi
-
-
-Thank you,
-
-Stefan
-
-
-On 26/09/2025 11.31, Stefan Prisacariu wrote:
+On Fri, 26 Sept 2025 at 13:50, Petr Mladek <pmladek@suse.com> wrote:
 >
-> On 26/09/2025 00.21, Frank Li wrote:
->> On Thu, Sep 25, 2025 at 12:49:40PM +0200, stefan.prisacariu@prevas.dk 
->> wrote:
->>> From: Stefan Prisacariu <stefan.prisacariu@prevas.dk>
->>>
->>> Make SoM .dtsi SoC-agnostic by moving SoC include to board level
->>>
->>> imx6qdl-var-som.dtsi currently includes imx6q.dtsi, which makes this 
->>> SoM
->>> description Quad/Dual specific and prevents reuse from i.MX6DL boards.
->>>
->>> Move the SoC selection to the board level:
->>>   - Drop the imx6q.dtsi include from the SoM .dtsi.
->>>   - Add imx6q.dtsi include to imx6q-var-mx6customboard.dts.
->> move imx6q.dtsi from imx6qdl-var-som.dtsi to 
->> imx6q-var-mx6customboard.dts.
->>
->>> This keeps the SoM .dtsi SoC-agnostic (it already relies on 
->>> imx6qdl.dtsi
->>> for family-common parts) and allows boards using the DualLite or 
->>> Solo to
->>> include imx6dl.dtsi instead.
->>>
->>> Why this is needed:
->>> I need to reuse imx6qdl-var-som.dtsi for a board based on i.MX6DL
->>> (VAR-SOM SoM + custom carrier). Without this change, the SoM .dtsi
->>> forces imx6q.dtsi, which is incorrect for DL and breaks the layering
->>> model used upstream.
->> Can use simple words
->>
->> To reuse imx6qdl-var-som.dtsi on i.MX6DL board.
->>
->>> Verification:
->>> The DTB for imx6q-var-mx6customboard was rebuilt before and after this
->>> change. Both the binary DTB and the decompiled DTS
->>> (via dtc -I dtb -O dts -s) are identical, confirming no functional 
->>> change
->>> for the existing board.
->> Needn't this section (good place for these informaiton is cover letter).
->>
->>> Alignment:
->>> This also aligns the layering with how it is already done for
->>> imx6q-var-dt6customboard.dts, where the SoC include is handled at the
->>> board level.
->> Needn't this section
->>
->>> No functional changes for imx6q-var-mx6customboard are intended.
->> good
->>
->>> Files were introduced in:
->>> commit e5c810848d2a ("ARM: dts: imx6qdl: Add Variscite VAR-SOM-MX6
->>> SoM support")
->>> commit a5b59a3f41bd ("ARM: dts: imx6q: Add Variscite MX6 Custom board
->>> support")
->> Needn't this section.
->>
->>> Signed-off-by: Stefan Prisacariu <stefan.prisacariu@prevas.dk>
->>> ---
->>>   arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts | 1 +
->>>   arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi         | 3 ---
->>>   2 files changed, 1 insertion(+), 3 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts 
->>> b/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts
->>> index 18a620832a2a..a55644529c67 100644
->>> --- a/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts
->>> +++ b/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts
->>> @@ -8,6 +8,7 @@
->>>
->>>   /dts-v1/;
->>>
->>> +#include "imx6q.dtsi"
->>>   #include "imx6qdl-var-som.dtsi"
->>>   #include <dt-bindings/pwm/pwm.h>
->>>
->>> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi 
->>> b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
->>> index 59833e8d11d8..51bcaf04546b 100644
->>> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
->>> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
->>> @@ -9,9 +9,6 @@
->>>    * Copyright 2022 Bootlin
->>>    */
->>>
->>> -/dts-v1/;
->> why drop this line.
+> In emergency contexts, printk() tries to flush messages directly even
+> on nbcon consoles. And it is allowed to takeover the console ownership
+> and interrupt the printk kthread in the middle of a message.
 >
-> As far as I know this line should be present in the dts not dtsi files,
-> also this will remove the requirement to have this dtsi file first 
-> included in
-> the dts files
+> Only one takeover and one repeated message should be enough in most
+> situations. The first emergency message flushes the backlog and printk
+> kthreads get to sleep. Next emergency messages are flushed directly
+> and printk() does not wake up the kthreads.
 >
-> Stefan
+> However, the one takeover is not guaranteed. Any printk() in normal
+> context on another CPU could wake up the kthreads. Or a new emergency
+> message might be added before the kthreads get to sleep. Note that
+> the interrupted .write_kthread() callbacks usually have to call
+> nbcon_reacquire_nobuf() and restore the original device setting
+> before checking for pending messages.
 >
->>
->> Frank
->>> -
->>> -#include "imx6q.dtsi"
->>>   #include <dt-bindings/clock/imx6qdl-clock.h>
->>>   #include <dt-bindings/gpio/gpio.h>
->>>   #include <dt-bindings/sound/fsl-imx-audmux.h>
->>>
->>> base-commit: 8f5ff9784f3262e6e85c68d86f8b7931827f2983
->>> -- 
->>> 2.49.1
->>>
+> The risk of the repeated takeovers will be even bigger because
+> __nbcon_atomic_flush_pending_con is going to release the console
+> ownership after each emitted record. It will be needed to prevent
+> hardlockup reports on other CPUs which are busy waiting for
+> the context ownership, for example, by nbcon_reacquire_nobuf() or
+> __uart_port_nbcon_acquire().
+>
+> The repeated takeovers break the output, for example:
+>
+>     [ 5042.650211][ T2220] Call Trace:
+>     [ 5042.6511
+>     ** replaying previous printk message **
+>     [ 5042.651192][ T2220]  <TASK>
+>     [ 5042.652160][ T2220]  kunit_run_
+>     ** replaying previous printk message **
+>     [ 5042.652160][ T2220]  kunit_run_tests+0x72/0x90
+>     [ 5042.653340][ T22
+>     ** replaying previous printk message **
+>     [ 5042.653340][ T2220]  ? srso_alias_return_thunk+0x5/0xfbef5
+>     [ 5042.654628][ T2220]  ? stack_trace_save+0x4d/0x70
+>     [ 5042.6553
+>     ** replaying previous printk message **
+>     [ 5042.655394][ T2220]  ? srso_alias_return_thunk+0x5/0xfbef5
+>     [ 5042.656713][ T2220]  ? save_trace+0x5b/0x180
+>
+> A more robust solution is to block the printk kthread entirely whenever
+> *any* CPU enters an emergency context. This ensures that critical messages
+> can be flushed without contention from the normal, non-atomic printing
+> path.
+>
+> Link: https://lore.kernel.org/all/aNQO-zl3k1l4ENfy@pathway.suse.cz
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  kernel/printk/nbcon.c | 32 +++++++++++++++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index d5d8c8c657e0..08b196e898cd 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -117,6 +117,9 @@
+>   * from scratch.
+>   */
+>
+> +/* Counter of active nbcon emergency contexts. */
+> +atomic_t nbcon_cpu_emergency_cnt;
+> +
+>  /**
+>   * nbcon_state_set - Helper function to set the console state
+>   * @con:       Console to update
+> @@ -1168,6 +1171,16 @@ static bool nbcon_kthread_should_wakeup(struct console *con, struct nbcon_contex
+>         if (kthread_should_stop())
+>                 return true;
+>
+> +       /*
+> +        * Block the kthread when the system is in an emergency or panic mode.
+> +        * It increases the chance that these contexts would be able to show
+> +        * the messages directly. And it reduces the risk of interrupted writes
+> +        * where the context with a higher priority takes over the nbcon console
+> +        * ownership in the middle of a message.
+> +        */
+> +       if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)))
+> +               return false;
+> +
+>         cookie = console_srcu_read_lock();
+>
+>         flags = console_srcu_read_flags(con);
+> @@ -1219,6 +1232,13 @@ static int nbcon_kthread_func(void *__console)
+>                 if (kthread_should_stop())
+>                         return 0;
+>
+> +               /*
+> +                * Block the kthread when the system is in an emergency or panic
+> +                * mode. See nbcon_kthread_should_wakeup() for more details.
+> +                */
+> +               if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)))
+> +                       goto wait_for_event;
+> +
+>                 backlog = false;
+>
+>                 /*
+> @@ -1660,6 +1680,8 @@ void nbcon_cpu_emergency_enter(void)
+>
+>         preempt_disable();
+>
+> +       atomic_inc(&nbcon_cpu_emergency_cnt);
+> +
+>         cpu_emergency_nesting = nbcon_get_cpu_emergency_nesting();
+>         (*cpu_emergency_nesting)++;
+>  }
+> @@ -1674,10 +1696,18 @@ void nbcon_cpu_emergency_exit(void)
+>         unsigned int *cpu_emergency_nesting;
+>
+>         cpu_emergency_nesting = nbcon_get_cpu_emergency_nesting();
+> -
+>         if (!WARN_ON_ONCE(*cpu_emergency_nesting == 0))
+>                 (*cpu_emergency_nesting)--;
+>
+> +       /*
+> +        * Wake up kthreads because there might be some pending messages
+> +        * added by other CPUs with normal priority since the last flush
+> +        * in the emergency context.
+> +        */
+> +       if (!WARN_ON_ONCE(atomic_read(&nbcon_cpu_emergency_cnt) == 0))
+> +               if (atomic_dec_return(&nbcon_cpu_emergency_cnt) == 0)
+> +                       nbcon_kthreads_wake();
+> +
+>         preempt_enable();
+>  }
+>
+> --
+> 2.51.0
+>
+
+Reviewed-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
+
+Thanks,
+
+Andrew Murray
 
