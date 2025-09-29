@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-836006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B41BA8914
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2C2BA891A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15113A913A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:15:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D899D165F76
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D0E27F756;
-	Mon, 29 Sep 2025 09:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dduOpBWH"
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52047286D7D;
+	Mon, 29 Sep 2025 09:15:56 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF67822615
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1478622615
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137350; cv=none; b=M1ee4FJIkEkcA4UxrTCCfKCOHxwnCqClwsFwnNVait0uiflOwZdmshpIYIck3wf7RwXfzqOGy+ticOA64nuyMcP/5IdwqceZRRttpx1GOwWn5tOQtAitc9hkCmEhmdt37P7M/qrCg3gUf4TR8LcdOeeaBMhck2VlBgHVoZTxfts=
+	t=1759137355; cv=none; b=em1OPlluO5Lxsgfj2j1S5XxFB3jqVBj/BqZGZZJbg56HObyPbgMjxKx4OvaeAyQeghnNd4q2OJaoYg83aY0nXbn7VcYe9mOTO5TWvN5H6pAVsjdnDV+fo/s/rrSpcqgHMyUb31yj+fyVb/XfFdbVZWEZy5ChClL7N3opatf8+LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137350; c=relaxed/simple;
-	bh=lBuNSNHfNlOFhEVkV+foyyq4/RL6rfGISeiZ2POVo24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GTh6QFrlWZZQ4q4XWTOmLHvs73F+Gs2+R5JRQEOfO5MOZbHvG724mz816Yvdl4rtkZVRkHeCO0LZoFPHw0XWsFlTjPq4jDd//4CpnpUY6hQu6zAUySoL19WDvwzvqjkn2PkAnTj1ErHlUl6P/IOoUPoGBxvWB54DsyH3U8NXdHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dduOpBWH; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1759137355; c=relaxed/simple;
+	bh=R9u55K8LEYMCF9T8YoRD0SE7dnNGouw1ZbsiBle69qs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y72bLObxkcRQWxkjw3rb9aOSa2xMB0phwsm0nrGNmqwXqzD8u5fBJtHDEJWpA/qNuwkkGf9D2wdth4DxCfb6v+H0C+i5GfhVacpZ+uv33MrvloRVknTkS695ophwN3d0obgiKcvJwnL2E/SNlBS8Sna3CZ2pi7J3CNW2tDEFjOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6089a139396so4559980d50.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759137348; x=1759742148; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nr+N/1oAI1pLjqU6aC2+UuJdu0NBIsxDWcVl4EdcQkQ=;
-        b=dduOpBWHLUmbYZtrr2ncDrdvkOkoL9yrcU3OH6+t2nLptL6VD5wRqI6FaRIXQDMHA3
-         NdVSbRsBgsrqHHCx/XUj12uqQ8dL+tlApdDPTR4rfpSEi0C3HOU1WEYjunTNnOkXn+mN
-         7gRK5TxkEik1w7/REDbxOHclHTkhxO8mazSQkNDEfhuR+5lfFA6wQUYpODPS87Ca4urf
-         Dkz5KB31yfyRiQSxmrpKS56KwlbbzCbQ5w4GQBQLc9qlwiJUKrk6RuJEbUkWYLo8H/xp
-         axx+XqDqrXfACfKri2s4wfcUzQjSr2w32rmJ9/wKtMkUSLxa9yZ+7NCrSblpIcqplwNf
-         5PXQ==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3d80891c6cso171789966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:15:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759137348; x=1759742148;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759137352; x=1759742152;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Nr+N/1oAI1pLjqU6aC2+UuJdu0NBIsxDWcVl4EdcQkQ=;
-        b=Kdezx7uhGVjigPVpdgeRcZhrspbWok24pkNjI5DFixeWXyzgQigsJvM1gjgggh/WEB
-         EvfB19NkXQinWL3KVrixnMZ1gz4/CZg2unJrCGEqRRioNyOYm08O1A0o74yxUiM/GLjD
-         B7ew7t3K7a7gha2UTpIFuvlanNXiYbDNH2OVRek+kwOSQ6EoD6dL8LhET+k3MWlCSZud
-         mZuk3UfRhsmkQEYl/gIVEn+qoxlqt34RwHOWHLxZHEptnIW76yrBSWXmGMUalE4pcfCj
-         l2YwIdKeaIlpAr4IjQ+SsTQU3sdWQs6qqOYihLwI5hnaq75ftGRbqtrDm/RCiDD8UvwP
-         03hw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4ZgHgZVATCVU/+bZA9usJUDPWO+IyFKsF9Ehw0+vl46vV4LIbCEKmrBV+V5ZQii5qBT7a3tP+t8totM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6LDu8NItr3ysbwgds+S14zAqYVVaNtg9eSKA3VqcSTKoL64Pt
-	+hjHtuC+6cqTlqTY5z0PSYVzff+rZywL/2Ii2x8wpDOmu7+WkyeaAl1jw0c6daREwXemjMFPHGz
-	BzZJ6vcwMkXRROOOl9Ydu+y1CdHl7stY=
-X-Gm-Gg: ASbGnctPcAs1hBLFOxsWP6nzeRtK5zRvJbNHozY6VeX8xXV8sOqHKD+Ed35MULT561a
-	sNk496+0Cz+Q0UHA1jMdEWu3hbRqPAy7umqIjBqradkCCP/3AmNRivEkwKHym+SPyqGCIt3adTE
-	m7X/Znqs+0ekK22oYmzJI4SEd6/zt6WsPk8vSF4EZp525FqVBP0aDTG5RABi3Tf57BMoZtbL9Sw
-	WZi+O9MmRyjQAuF0Ms=
-X-Google-Smtp-Source: AGHT+IEqG2WiadrrFUEa9J19hGrk6/NeihwO2YF4Qsh2jTfvkmzgqzQ2Ef58HmGi3ZPxOG7NeW+IecRnhi5uJO6qQl4=
-X-Received: by 2002:a05:690e:1a44:b0:637:cde3:c6f6 with SMTP id
- 956f58d0204a3-637cde3c72bmr5782117d50.10.1759137347594; Mon, 29 Sep 2025
- 02:15:47 -0700 (PDT)
+        bh=S/ySJWiSpFmZf4ki4sz6ItaQY50Q4llbhd6F9+5mYqA=;
+        b=n5Pw70PgZm7nymcmpzJti61JTdY9/LwvqXBbX7E/Z23YWKp3ZI5AoJWJvcPBXmQsMv
+         0cO+07BKx6kvqC5DBKKS3RQPNWY3+HULIpq0+R6eAfMDGbV9YXkt+USVIkSNHPadmfKf
+         GsfuivNDFfPpUbyTqd73vl/sk/VMBjAXJ95+f91TUwV9hxujuIztWjhHcb4AdNP84a/6
+         5UfT0SRt41PbXvvX/WcEGd2+hgELSCLQ2Z4nDmusVMWR+paZMAhwKeIsGn8znsUIGvLi
+         uD+Km8CL/G1OF+Ba5++YfowTm9yishk+P5zyc3yjn1H5Vl11JhvHCL4bbqOhA3iOzNe2
+         9VJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViGfeqvGLx+IVIVCbHF8go1/Q6i7nLLPXR8aKlCscJyLl1SmYBpQEdVsl/g78GcVyXcIFAoITdupJd0OM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTRH91pDDgFpWtSXONwoOxDRP1a5azaBkK1erE5Ntym/C/lSEt
+	/ixTmsPPSYYI9fL3UmaOrOR4HDVgwxhCvXIp7m8s0+CqS0TFcryuEf+rsgv9Mw==
+X-Gm-Gg: ASbGnctdGLZU9M8Azhae6cc50cpZxf3C8SmEQvzDnXowSTpVKl1lmN5Mj03kZgve0T9
+	KY4inxjSOtadyuvP78z52EMVFgw9w5qyjzieiXeAUDlpO/KkjQVKDCuBsHA+bpgOT9A/EtcdXum
+	zUlv8AM77mVEPKzy26ookT/fxKaJ7nw2vyKn4xzlNJaGMiXPny0yNIKcv5xGfL2ZKCMnLo3zJQO
+	wtnKY74WKZZvAWVejUsyAaH1ojRTK79J9jSOGj/HHWMagmD7eRLvry2CMifh1320hUYz04BVAK3
+	f12IPk5T0V+u983Rulsxf2wtZzhHrNqFUJ8A1dlGZVjWb/Rkvgng0/LqIk3NBJNwcxFsFoGpDBG
+	qZQGTI1pS1rcLKd3SwooB9215
+X-Google-Smtp-Source: AGHT+IEC99o6I5U43x9BBzmjUVvHusJBZH+ekQ9yM0YzCDDYFnPxzInOLc7bxYYRuE1LOgqfOeyByg==
+X-Received: by 2002:a17:907:72c2:b0:b2a:10a3:7112 with SMTP id a640c23a62f3a-b354c244b09mr1746488166b.24.1759137352124;
+        Mon, 29 Sep 2025 02:15:52 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:72::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b401d3d4124sm73171066b.75.2025.09.29.02.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 02:15:51 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 29 Sep 2025 02:15:47 -0700
+Subject: [PATCH RESEND] PCI/AER: Check for NULL aer_info before
+ ratelimiting in pci_print_aer()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925200625.573902-1-tmaimon77@gmail.com> <175890301752.880349.2331946518360447485.robh@kernel.org>
-In-Reply-To: <175890301752.880349.2331946518360447485.robh@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Mon, 29 Sep 2025 12:15:36 +0300
-X-Gm-Features: AS18NWBg8PJuv0n6gCvIlMejilS28fLD8rStQueT8p0_c7fgopvArq9qbAYJTN4
-Message-ID: <CAP6Zq1jmmhqYu3C7KHFK2tz9zjW352Bbw4cXeOYSjNSTELrp5Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] arm64: dts: nuvoton: add NPCM845 SoC and EVB support
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, 
-	benjaminfair@google.com, joel@jms.id.au, krzk+dt@kernel.org, 
-	tali.perry1@gmail.com, conor+dt@kernel.org, avifishman70@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250929-aer_crash_2-v1-1-68ec4f81c356@debian.org>
+X-B4-Tracking: v=1; b=H4sIAEJO2mgC/1XNsQqDMBCA4VcJN5tyF1TEqUNdO7RjEYnJqbdou
+ RRpEd+9IF06//D9GyRW4QS12UB5lSTLDLWhzECY/DyylQi1AYeuwArJetYuqE9T52zvKATHA0Z
+ EyAw8lQd5H9oDbs29uV6gzQxMkl6Lfo7JSkf9efmft5IlO0Qsi9IFqnx+jtyLn0+LjtDu+/4FS
+ 7EPWq8AAAA=
+X-Change-ID: 20250801-aer_crash_2-b21cc2ef0d00
+To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+ Jon Pan-Doh <pandoh@google.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, stable@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1622; i=leitao@debian.org;
+ h=from:subject:message-id; bh=R9u55K8LEYMCF9T8YoRD0SE7dnNGouw1ZbsiBle69qs=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo2k5GJj10pwZeQhabxuZAbcMVQsml8bUkcz4E+
+ uow6oJeyWuJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaNpORgAKCRA1o5Of/Hh3
+ bernD/wLDmkL54OkzUb+m61lGMHj30To7QCHn/pKBW3LjFUzHdsfPC/WPjAtG16FZUFGQD373ko
+ vqogdRC36R/Cd3umTq7Rw+Vg0rKhmqaqdfGsKmWUQyNgDI3XwmKmNnBFHfWfMjAOi8bSjsN9PNj
+ Y3cML4P2gFuQGkdhAcI/Hhyc43UvRAqZB/T2R+4uz/jQdi+6Icg0qPVzMOw6/AIhg6QPStFayZl
+ 9c8/LNHcphpjuH8MMz7H1PPEb5dkpotusBK20Wzakvo0rhtUhN/GDprXoILypTRlTlstl97JVSd
+ 3sdj8/maZdbMNLtcT1LFNqRg40L41Sfb2X8a90aIJe2JHnRKfiy4ja/ISGeOgc9fG0D9YCA3o8z
+ rZTKK7jLhgd9hrkTp77nI6/gDoiKU/g5XXHYCtA5AEiD9mFFXW+2d/3UCm9+M9VJdKbdIpxU+8y
+ HFVCz2x4TKz9vr2tNea2Md9/m1GUhriYdrOKT/qj7FUpt8/dKZwsIi99BYyul1P42u4UXerh6Hn
+ j5UfcNFRODwlmCq+62PsRjUZ13UWAQK5CGgS5OGj/lslHqNmocE822/74Y66pITfKBAzun4FaUz
+ XOOcyLobFtZQJVjhSnHcuAureBrxPBESEGKI31kGTArSOMVm4yhrp8ilJIWkI0O9OVKyUzf1dAf
+ jPjB5zbIZkILgqA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Hi Rob,
+Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
+when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
+calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
+does not rate limit, given this is fatal.
 
-Thanks for your comments
+This prevents a kernel crash triggered by dereferencing a NULL pointer
+in aer_ratelimit(), ensuring safer handling of PCI devices that lack
+AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
+which already performs this NULL check.
 
-Most of the warnings occur because the compatible strings are located
-in .txt device tree binding rather than in the .yaml file.
+Cc: stable@vger.kernel.org
+Fixes: a57f2bfb4a5863 ("PCI/AER: Ratelimit correctable and non-fatal error logging")
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+- This problem is still happening in upstream, and unfortunately no action
+  was done in the previous discussion.
+- Link to previous post:
+  https://lore.kernel.org/r/20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org
+---
+ drivers/pci/pcie/aer.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-The only change that needs to be done is in ti,tmp100 that
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index e286c197d7167..55abc5e17b8b1 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -786,6 +786,9 @@ static void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
+ 
+ static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
+ {
++	if (!dev->aer_info)
++		return 1;
++
+ 	switch (severity) {
+ 	case AER_NONFATAL:
+ 		return __ratelimit(&dev->aer_info->nonfatal_ratelimit);
 
-Could you approve the patches, avoiding NPCM845 compatible warnings?
-Meanwhile, I will work on converting the txt to yaml
+---
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+change-id: 20250801-aer_crash_2-b21cc2ef0d00
 
-Thanks,
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
-Tomer
-
-
-On Fri, 26 Sept 2025 at 19:11, Rob Herring (Arm) <robh@kernel.org> wrote:
->
->
-> On Thu, 25 Sep 2025 23:06:22 +0300, Tomer Maimon wrote:
-> > This series fix warnings and adds device tree support for peripherals on
-> > the Nuvoton NPCM845 SoC and its Evaluation Board (EVB).
-> > The first patch fix warning and arrange node order.
-> > The second patch introduces peripheral nodes for Ethernet, MMC, SPI, USB,
-> > RNG, ADC, PWM-FAN, I2C, and OP-TEE firmware in the NPCM845 SoC device tree.
-> > The third patch enables these peripherals for the NPCM845-EVB, adding
-> > MDIO nodes, reserved memory, aliases, and board-specific configurations
-> > like PHY modes and SPI flash partitions.
-> >
-> > The NPCM8XX device tree tested on NPCM845 evaluation board.
-> >
-> > Addressed comments from:
-> >       - Andrew Jeffery: https://patchwork.ozlabs.org/project/openbmc/patch/20250908125938.3584927-2-tmaimon77@gmail.com/
-> >                                         https://patchwork.ozlabs.org/project/openbmc/patch/20250908125938.3584927-3-tmaimon77@gmail.com/
-> >
-> > Changes since version 2:
-> >       - Fix dts warning
-> >       - Arrange node order by ascending unit address.
-> >
-> > Changes since version 1:
-> >       - Fix commit message
-> >       - Fix dtbs_check warnings.
-> >
-> > Tomer Maimon (3):
-> >   arm64: dts: nuvoton: fix warning and nodes order
-> >   arm64: dts: nuvoton: npcm845: Add peripheral nodes
-> >   arm64: dts: nuvoton: npcm845-evb: Add peripheral nodes
-> >
-> >  .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 732 +++++++++++++++++-
-> >  .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  | 440 +++++++++++
-> >  .../boot/dts/nuvoton/nuvoton-npcm845.dtsi     |   7 +
-> >  3 files changed, 1160 insertions(+), 19 deletions(-)
-> >
-> > --
-> > 2.34.1
-> >
-> >
-> >
->
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->   pip3 install dtschema --upgrade
->
->
-> This patch series was applied (using b4) to base:
->  Base: attempting to guess base-commit...
->  Base: remotes/arm-soc/for-next-12027-gf60eaa447dab (exact match)
->
-> If this is not the correct base, please add 'base-commit' tag
-> (or use b4 which does this automatically)
->
-> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nuvoton/' for 20250925200625.573902-1-tmaimon77@gmail.com:
->
-> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb000000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb002000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@c0000000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb001000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/i2c@86000/tmp100@48: failed to match any schema with compatible: ['tmp100']
-> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/pwm-fan-controller@103000: failed to match any schema with compatible: ['nuvoton,npcm845-pwm-fan']
-> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/spi@201000: failed to match any schema with compatible: ['nuvoton,npcm845-pspi']
->
->
->
->
->
 
