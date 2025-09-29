@@ -1,263 +1,247 @@
-Return-Path: <linux-kernel+bounces-835940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C38ABA8664
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:31:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC209BA8676
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 529AF7AFA27
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46663B42CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DA623B638;
-	Mon, 29 Sep 2025 08:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF3323183F;
+	Mon, 29 Sep 2025 08:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IpXqMdPh"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="FFcLe0Il"
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BCC1E0E1F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB52D1BD9C9;
+	Mon, 29 Sep 2025 08:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759134653; cv=none; b=FATC07GOuLUx8hfEg3CWjUGQ08wIqOoJnlqXEYYUxD8BNdPkLitNh3C6WJ28wqGk/5pKWovC24IyjWwqvqu+nozWwy64l1Jy4IalnBa8Yokwcbm1gL7vizPvX+RUvmEGmQ1EAro1umqrXvle/Es5cIxzVNgF1fIa47RYo4VNOo4=
+	t=1759134701; cv=none; b=jhC/MV1bFGtcN2pK1b4xwCHc48MwoWg6R51ngys7yhmZZ/R5NAmxFnyv7MIwCttdM59QoJ8e4hx2Cy6mBVJhautBerfoa2P+wcR9Lx+hrqvGs40MykmB5IzfN44rWmNnkwHKRUtpBQLGAHrqYUCJrg5ms9ri1ltrv/l5DWLiy8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759134653; c=relaxed/simple;
-	bh=1yWrEi955nPPvBu1m9KwQaY5HyLcEXUxbZckZNeDmWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GKOfVQpACF2/q6nhAMdqIq9ObcHtSmH1DT5/V7MzeymDiDSXfC/4ymNV5oFOi3ym1Wl9a4vb5xmIvCAA3SNClossuQP8kLGuMTGV52MH1bLjANKCzu59c9kAWhgxThBsapA+Ta3QZSnz5zU6My8xFSGmIjidjHtwVOztbd1e39E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IpXqMdPh; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57b35e176dbso5484664e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759134649; x=1759739449; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UJONDUXJa/G+AY4kgKaGSYPSvsqZ+MAfDWA2lmXRRpc=;
-        b=IpXqMdPho9g6CT24o5ZwTclNZciefBRbPeuJYlYGsGM0zMrolwEGdMMBNpkIeY5Cmr
-         jiL14FFLtOZbSrums49rO0jTa5tovzbezmPVQPFsRlnzI286KopVySdyDXjcug/HpTV5
-         YQ2iFwnqyGDI6FsogC4476jbaBgshaY1vrc8Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759134649; x=1759739449;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UJONDUXJa/G+AY4kgKaGSYPSvsqZ+MAfDWA2lmXRRpc=;
-        b=mF0/9KXuViyNyB+IV9N19SHGPpvlc20U/3heAl/w2Ul2UVyZhvG2P77EipBeFrjw0d
-         Td7p91K5g+sLKJtR712dEVq2oI735lfuf+frsaNR5WQpuY4E8+Omz7a/TxPHFHoiwjIM
-         lyXnDmHF2O0IF/pxQbEZE+idtDvK81yzHwxpeIfg+aYy2SGg5Rlulv3gj4RNgNyweDym
-         aawsiwZ0f5YIJgFyEUEX+nfR4fNPT7+ua6rb5PC/kteUKxEN3LR19agU7GcRCgp7bRwt
-         d+FAApfWewcaMXJnBDNq+uV/hlImVtTzh9YtPJUXecT+riUFc+wuuoOcyXpu2KsyX/5X
-         9Gxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPbwyfHjkwQXRWH6xRCYNSgn29ttpx1Iv9BdZyRL3OStMgcuuNx80k90194PIF5PKzyr3t3AgHQS8a8hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4uq/fo7UncdYiRDC+kKMkecG0nJb/y5JRczUqT+TZEutnTgn5
-	5aT/w7fyu4Yod32eYV+vjyaLDkC3CzHB2MIVLBUgh/V8Wj50FehBQ+l1cLPIxqWpyF4vHO0e0oE
-	75+A=
-X-Gm-Gg: ASbGncs7ZjrCeHDY+Gv9raOCpvXlZweXweSWuGLmn3SWNsb9sGunnkQg2/HnxNM0DD1
-	N8uoFBUQY+GRHBcRK4pj67lX5UejOmw4QEGdW+l+PlYoW032E7q/PssP92DDdrAJ8XpiD+IqNN3
-	8gjYNnORdtXtbrQSRuKbdvvcfMo661b79jmexHAJ+zv98Xre2oS/uCX68pjSqdR2IaFDIe2iFPH
-	Fb9+YAK+1ZlAgZNNg2JzvwlSAxKT8UtBxsARfSKPHYzO+PijU4kY8k6/zxJ/6o+76/cNqpasCLX
-	FPgIdKVxyToneRvLXt3hU8jrfsZtS77S9Jml6DmI+EikLWDBlDMAi18b0jxXCprE84MlZXCJSqt
-	UBvRWsBJaseJpD0vT2ZqVQNxC2Cn2npT8sQ7QuhokCQwPb8D8hr3xnZxp5ka4
-X-Google-Smtp-Source: AGHT+IFY8f53bhuFKHwdQLMsUw1LFgSd4t8TdA/h42AYdUgMuJvViNZVWrOqV3d5lfTLqOMDWL68sw==
-X-Received: by 2002:ac2:51c4:0:b0:581:88f7:5342 with SMTP id 2adb3069b0e04-582d481b96fmr4100643e87.53.1759134649056;
-        Mon, 29 Sep 2025 01:30:49 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-587efc15ea5sm595948e87.12.2025.09.29.01.30.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 01:30:48 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57b35e176dbso5484625e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:30:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWNDey8jrusmzSEt6qZIEA8J3tGsOq/V0TTfiOvivUKg+rp2VJKb/MVKKE33pLyZtktR1wJkVHgaOwZpQM=@vger.kernel.org
-X-Received: by 2002:a05:6512:1102:b0:57c:2474:3740 with SMTP id
- 2adb3069b0e04-582d3f76e30mr4820322e87.46.1759134647732; Mon, 29 Sep 2025
- 01:30:47 -0700 (PDT)
+	s=arc-20240116; t=1759134701; c=relaxed/simple;
+	bh=+j7FLUzlB5Kbpdp4tRwawZ8cWKv7CbENb5Nr7qQ1SLg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qVj9pvbvJ+Cgic6C+WeuoNAqXv5czXq6i54q+0GHhfvwZ8txdt7B2HRWQbbizm8osUMombD1q3xVWfyPpq9cBXkIIluu20hXIgLc4cy/VaI7MfTpTnYNbYVHXAybXwAznQCo6RJNH5jypNzjz0t9T8wuGZJQHJThP11bAC2exL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=FFcLe0Il; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58T5WD0Q3972843;
+	Mon, 29 Sep 2025 08:31:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=PPS06212021; bh=/dfgCLpXl
+	Jtx3/W2lv7hKqChDDgHXCgSJBQ4U6FEQPA=; b=FFcLe0IljADWX9PBr1Zct0Yyj
+	1JLjenU+UC2QCLmFloQC3UNT2H+gNd0ZvBWlZj05saCRkFzgvBiKfCn2Ytukk6w+
+	dqFA388T8Ql1uZk19bgSH336Im9HiIozJVa9BPpZFo7tFVNpDt07XlknSm34ZCz1
+	rHL7JtDmvTCpz/E2TtdKw7A8nqqaGp+WTnnI/HffqDsqyxg2TUH/hw952MSotvZy
+	NrbrWHJ/OsG4E9jn3U0J12bbH5bY3Aifn7F2FXREgF80vCAli9u7sZADPP8/uJZ2
+	WishceH/zoZUHOMjKBcEWavwQ/8IPG0DPMc06bow1C15WLSpfQ6R9C9ExmRnw==
+Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49e6w7hpnk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 29 Sep 2025 08:31:22 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Mon, 29 Sep 2025 01:31:21 -0700
+Received: from pek-lpd-ccm5.wrs.com (10.11.232.110) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Mon, 29 Sep 2025 01:31:20 -0700
+From: Yun Zhou <yun.zhou@windriver.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <dianders@chromium.org>,
+        <yun.zhou@windriver.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: fix slab-use-after-free when clk_core_populate_parent_map failed
+Date: Mon, 29 Sep 2025 16:31:19 +0800
+Message-ID: <20250929083119.2066159-1-yun.zhou@windriver.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926-uvc-orientation-v3-0-6dc2fa5b4220@chromium.org>
- <20250926-uvc-orientation-v3-7-6dc2fa5b4220@chromium.org> <20250926-mute-boil-e75839753526@spud>
-In-Reply-To: <20250926-mute-boil-e75839753526@spud>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 29 Sep 2025 10:30:35 +0200
-X-Gmail-Original-Message-ID: <CANiDSCuddqjeDr80xKsZZP7CXu9qB5qqYPoZujNYLcVjK0kKkg@mail.gmail.com>
-X-Gm-Features: AS18NWDuABHOrlsFlY-rDCN1sMikoapkz5ecsd4Y1lKthbQuEsgF6GxQRq0htYQ
-Message-ID: <CANiDSCuddqjeDr80xKsZZP7CXu9qB5qqYPoZujNYLcVjK0kKkg@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] dt-bindings: media: Add usb-camera-module
-To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Hans de Goede <hansg@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, Hans Verkuil <hverkuil@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDA4MSBTYWx0ZWRfXwoOrOMc8y5cF
+ PbJvTUGB+IMUJAsqpOGObKM2z8KvF4Z7QEGhTYBMAK0y3mCPsDFQXcG4AGjrgwIz0a3Lro31k+a
+ +qVc6ozEMOoMRRp7rJuovTyGGd6ljx+vlC7c6WuN2B2uf6QMulUlBsYksh4s3Fxo6vDUXVLSSpF
+ +cvGUEUW71yxLovrzTXmj5p/Qp6p6o5+c9OUeKxoz/o0v65N33TcELziQeZiTNiyw6p7HLqzncB
+ JZ/zfLxBLOYSTv5eXWMkoQO0VTV+DUnrUsVoOHTrQlG1N1dQCv5N4R9Yz0u3pGSmJiXovXCmK7T
+ tQ7i5Wq/PWn58tp5q0O6JDz7enEQsbpUIxwp22oq8iu+O2WkEjP/p3C5oirEF36qR9hoY5pGn2D
+ T4IxCesS2ZtrtOW92qIq/usk3F/OjQ==
+X-Authority-Analysis: v=2.4 cv=Lc0xKzfi c=1 sm=1 tr=0 ts=68da43da cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=yJojWOMRYYMA:10 a=t7CeM3EgAAAA:8 a=eLMzZ2F9_icGV3DWmJ0A:9
+ a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: RRSJ-KXXUm36X-kljhq7Xit4VliMsZOg
+X-Proofpoint-GUID: RRSJ-KXXUm36X-kljhq7Xit4VliMsZOg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_03,2025-09-29_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2509150000 definitions=main-2509290081
 
-Hi Conor
+If clk_core_populate_parent_map() fails, core->parents will be immediately
+released within clk_core_populate_parent_map(). Therefore it is can't be
+released in __clk_release() again.
 
-On Fri, 26 Sept 2025 at 18:55, Conor Dooley <conor@kernel.org> wrote:
->
-> On Fri, Sep 26, 2025 at 01:11:31PM +0000, Ricardo Ribalda wrote:
-> > For fixed cameras modules the OS needs to know where they are mounted.
-> > This information is used to determine if images need to be rotated or
-> > not.
-> >
-> > ACPI has a property for this purpose, which is parsed by
-> > acpi_get_physical_device_location():
-> > https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration/Device_Configuration.html#pld-physical-location-of-device
-> >
-> > In DT we have similar properties for video-interface-devices called
-> > orientation and rotation:
-> > Documentation/devicetree/bindings/media/video-interface-devices.yaml
-> >
-> > Add a new schema that combines usb/usb-device.yaml and
-> > media/video-interface-devices.yaml
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  .../bindings/media/usb-camera-module.yaml          | 46 ++++++++++++++++++++++
-> >  MAINTAINERS                                        |  1 +
-> >  2 files changed, 47 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/usb-camera-module.yaml b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..e4ad6f557b9151751522e49b72ae6584deb0c7ba
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> > @@ -0,0 +1,46 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/media/usb-camera-module.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: USB Camera Module
-> > +
-> > +maintainers:
-> > +  - Ricardo Ribalda <ribalda@chromium.org>
-> > +
-> > +description: |
-> > +  This schema allows for annotating auxiliary information for fixed camera
-> > +  modules. This information enables the system to determine if incoming frames
-> > +  require rotation, mirroring, or other transformations. It also describes the
-> > +  module's relationship with other hardware elements, such as flash LEDs or
-> > +  Voice Coil Motors (VCMs).
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/usb/usb-device.yaml#
-> > +  - $ref: /schemas/media/video-interface-devices.yaml#
-> > +
-> > +properties:
-> > +  reg:
-> > +    maxItems: 1
-> > +
->
-> What actually causes this schema to be applied? Did I miss it getting
-> included somewhere?
+This fixes the following KASAN reported issue:
 
-I guess your question is why I have not defined the compatible field?
+==================================================================
+BUG: KASAN: slab-use-after-free in __clk_release+0x80/0x160
+Read of size 8 at addr ffffff8043fd0980 by task kworker/u6:0/27
 
-I tried this change[1] with no luck:
-/usr/local/google/home/ribalda/work/linux/Documentation/devicetree/bindings/media/uvc-camera.example.dtb:
-device@1 (uvc-camera): compatible: ['uvc-camera'] does not contain
-items matching the given schema
+CPU: 1 PID: 27 Comm: kworker/u6:0 Tainted: G        W          6.6.69-yocto-standard+ #7
+Hardware name: Raspberry Pi 4 Model B (DT)
+Workqueue: events_unbound deferred_probe_work_func
+Call trace:
+ dump_backtrace+0x98/0xf8
+ show_stack+0x20/0x38
+ dump_stack_lvl+0x48/0x60
+ print_report+0xf8/0x5d8
+ kasan_report+0xb4/0x100
+ __asan_load8+0x9c/0xc0
+ __clk_release+0x80/0x160
+ __clk_register+0x6dc/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
 
-I think it failed, because If we add these allOfs as Rob proposed
-https://lore.kernel.org/all/20250625185608.GA2010256-robh@kernel.org/:
-```
-allOf:
-  - $ref: /schemas/usb/usb-device.yaml#
-  - $ref: /schemas/media/video-interface-devices.yaml#
-```
-We cannot (or I do not know how to) have a different compatible than
-the one from usb-device.yaml
+Allocated by task 27:
+ kasan_save_stack+0x3c/0x68
+ kasan_set_track+0x2c/0x40
+ kasan_save_alloc_info+0x24/0x38
+ __kasan_kmalloc+0xd4/0xd8
+ __kmalloc+0x74/0x238
+ __clk_register+0x718/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
 
+Freed by task 27:
+ kasan_save_stack+0x3c/0x68
+ kasan_set_track+0x2c/0x40
+ kasan_save_free_info+0x38/0x60
+ __kasan_slab_free+0x100/0x170
+ slab_free_freelist_hook+0xcc/0x218
+ __kmem_cache_free+0x158/0x210
+ kfree+0x88/0x140
+ __clk_register+0x9d0/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
 
-Any suggestion on how to do this properly will be highly appreciated :)
+The buggy address belongs to the object at ffffff8043fd0800
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 384 bytes inside of
+ freed 512-byte region [ffffff8043fd0800, ffffff8043fd0a00)
 
-Thanks!
+The buggy address belongs to the physical page:
+page:fffffffe010ff400 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffffff8043fd0e00 pfn:0x43fd0
+head:fffffffe010ff400 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x4000000000000840(slab|head|zone=1)
+page_type: 0xffffffff()
+raw: 4000000000000840 ffffff8040002f40 ffffff8040000a50 ffffff8040000a50
+raw: ffffff8043fd0e00 0000000000150002 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
+Memory state around the buggy address:
+ ffffff8043fd0880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffffff8043fd0900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffffff8043fd0980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffffff8043fd0a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffffff8043fd0a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
+Fixes: 9d05ae531c2c ("clk: Initialize struct clk_core kref earlier")
+Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+---
+ drivers/clk/clk.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[1]
-
-@@ -21,10 +21,14 @@ allOf:
-   - $ref: /schemas/media/video-interface-devices.yaml#
-
- properties:
-+  compatible:
-+    const: uvc-camera
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b821b2cdb155..b93f38de4cac 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4254,7 +4254,6 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 	 * having a cache of names/clk_hw pointers to clk_core pointers.
+ 	 */
+ 	parents = kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
+-	core->parents = parents;
+ 	if (!parents)
+ 		return -ENOMEM;
+ 
+@@ -4295,6 +4294,8 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 		}
+ 	}
+ 
++	core->parents = parents;
 +
-   reg:
-     maxItems: 1
+ 	return 0;
+ }
+ 
+@@ -4302,7 +4303,7 @@ static void clk_core_free_parent_map(struct clk_core *core)
+ {
+ 	int i = core->num_parents;
+ 
+-	if (!core->num_parents)
++	if (!core->parents)
+ 		return;
+ 
+ 	while (--i >= 0) {
+-- 
+2.27.0
 
- required:
-+  - compatible
-   - reg
-
- additionalProperties: true
-@@ -38,8 +42,8 @@ examples:
-         #size-cells = <0>;
-
-         device@1 {
--            compatible = "usb123,4567";
-+           compatible = "uvc-camera";
-             reg = <2>;
-             orientation = <0>;
-             rotation = <90>;
-         };
-
->
-> > +required:
-> > +  - reg
-> > +
-> > +additionalProperties: true
-> > +
-> > +examples:
-> > +  - |
-> > +    usb@11270000 {
-> > +        reg = <0x11270000 0x1000>;
-> > +        interrupts = <0x0 0x4e 0x0>;
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        device@1 {
-> > +            compatible = "usb123,4567";
-> > +            reg = <2>;
-> > +            orientation = <0>;
-> > +            rotation = <90>;
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index ee8cb2db483f6a5e96b62b6f2edd05b1427b69f5..1503502a3aed2625e8ff488456ccd7305cc74ba7 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -26258,6 +26258,7 @@ L:    linux-media@vger.kernel.org
-> >  S:   Maintained
-> >  W:   http://www.ideasonboard.org/uvc/
-> >  T:   git git://linuxtv.org/media.git
-> > +F:   Documentation/devicetree/bindings/media/usb-camera-module.yaml
-> >  F:   Documentation/userspace-api/media/drivers/uvcvideo.rst
-> >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
-> >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc.rst
-> >
-> > --
-> > 2.51.0.536.g15c5d4f767-goog
-> >
-
-
-
---
-Ricardo Ribalda
 
