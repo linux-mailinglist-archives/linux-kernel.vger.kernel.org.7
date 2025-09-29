@@ -1,168 +1,102 @@
-Return-Path: <linux-kernel+bounces-836329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6451EBA95B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE31BA95C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D88797AE9EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7BA1920E3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D70223371B;
-	Mon, 29 Sep 2025 13:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E7A305070;
+	Mon, 29 Sep 2025 13:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVIc60Ya"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Srzab4mW"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB96E145B16;
-	Mon, 29 Sep 2025 13:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9167321C167;
+	Mon, 29 Sep 2025 13:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759152625; cv=none; b=pAcAP/tANzrlHzmIP5AIwjkogHcIs8ylvvt2eBSwtRrwpphXYUoqdX85W9aamFu4VFGnm5WQs5BD27Uj6KPlOihAfP03uD3D2T7y1qaH51Xd0I5dyzC9bOwBw8aTU8LvyJCxoOt/N/3GngDz4FfzZxp9OfHA2Gey/CLguMojtGk=
+	t=1759152841; cv=none; b=XTPtPOJy8c8HKZk0vcpI5XJPHW7I3bLsCBv3Cnb/Hd7lfiS9SfU5VLBc4Pbst66kb9Cmcft27xxZC+64Z00EmOLk5S+b3m5NL13EAZ+pqOTXvtqxko4THOPBenoYvlZbaGgCp79SZufY9Wb//qjxvQCglmIA6zNoMQg0/hNBrLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759152625; c=relaxed/simple;
-	bh=uHgIBibYdlDuNfkcTOkEkYN0C68bkD2VvKTcK12DGcw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Tdp9/DD5UyIqS1RlfGGUtqMwOyGJHdlr1N9kG+4xSGaonO4l6WE5vIxeiRoIQN9Q/EwMlE2eWG7yvPlUZ31RiRQzJdrfYpYctJb/3XuZv9HIYcnJPdsaSHAekq6+UDq7UbKWZvtNLEg3lUUgwLS0wBBNDIAlv/1+Gm/lwCjzWiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVIc60Ya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 137CBC4CEF4;
-	Mon, 29 Sep 2025 13:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759152625;
-	bh=uHgIBibYdlDuNfkcTOkEkYN0C68bkD2VvKTcK12DGcw=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=oVIc60Yau39MZ5crY2C3OPLwS1iKMficNc3xTJAZnJKumjxSf2zk6rRZVQd6Uizbf
-	 Wn5Fm5mV4MfZikLDTjVSE7V84C7SUlpeTHnNZ+NaV1BgiMitNuZdB5HmXKRUWFxuHv
-	 er7z2RT864Lnal50po44+o6GwdxK9TOEoxIJjiqPuGHkVycUBdh3Lx9XmtO2dcRMrj
-	 eRs8nP3dpiD5Pv4Kt6v2cyyvzuwC2bGm9r3FNLOdZ+sTNFFyjnfosFPSq3CfSxm6I1
-	 hj25AryanGK0K1Dx1WWmg3UjRUXEuGmR90SnPhnjE8IGHjOh+P6zZcVygoiGAgYQpB
-	 +5xYTdb8cYtHA==
-Message-ID: <4037d353-0ec4-4f68-a09c-564b93ba313b@kernel.org>
-Date: Mon, 29 Sep 2025 15:30:22 +0200
+	s=arc-20240116; t=1759152841; c=relaxed/simple;
+	bh=fy1uCfRmy0leafZ5ZfsUbYtIokOe0KrM31TsSA7AizY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ga5XOTIU8XHWpEQSa4wmkhX1u4U6Czuu761PI7Wbs+xVp5OL8qO7wza+ZRbNrZb4q/JiuECfgzqIPKbxYs7uLTbCANAUf18mS8jOJ0TZWm5ylSAhNHVNhLgw8VLH3iKbf6Fn7nrXfHfGZL1mYcGBO72TRbbPW4zyYnFqpWkftx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Srzab4mW; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6+xyV7M49RIPN6A1jpI7ywEM33tLmaK8mcEjuSvtPNs=; b=Srzab4mWj8nZ+7CU+cDY2lxC5C
+	PUhkKvfh6TovUXmu90epRusWzl4UouHgCZEkpWr2ivPBbfOFGMB+0+KXU2huTRM1Qnfhl9vDb3mcp
+	Pb0YlBc/Vvt+VYWvhjD0QutaaVVFsU07SNXWwUmgsxA7XyH2tosxCGzNazsZq1TdenaLPKNfnK4oE
+	VhuwoRkQ795yZbT+JsQKZQHhp50pWhw8JjdQYA2Gmuqpdib4GKsKktDgVqCISVB5MoSnRYiRN6gME
+	UqmYSvJtqjN2B/1jWPeOUgdFI2nPsgJDlc2PuPFERvCt+iQp14Tsfjf5MY39Mg0aVfkw6iNF2wV6B
+	WKJKnfzg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37056)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1v3E0k-000000006em-0PUS;
+	Mon, 29 Sep 2025 14:33:50 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1v3E0h-000000003a8-2lz9;
+	Mon, 29 Sep 2025 14:33:47 +0100
+Date: Mon, 29 Sep 2025 14:33:47 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	richardcochran@gmail.com, vladimir.oltean@nxp.com,
+	vadim.fedorenko@linux.dev, rosenp@gmail.com,
+	christophe.jaillet@wanadoo.fr, steen.hegelund@microchip.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v3 2/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
+Message-ID: <aNqKuzlxWwcANiK7@shell.armlinux.org.uk>
+References: <20250929091302.106116-1-horatiu.vultur@microchip.com>
+ <20250929091302.106116-3-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH] iommu: __iommu_attach_group: check for non-NULL
- blocking_domain
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, Linux Kernel <linux-kernel@vger.kernel.org>,
- Linux Media Mailing List <linux-media@vger.kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Robin Murphy <robin.murphy@arm.com>
-References: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
- <20250929120734.GG2617119@nvidia.com>
- <58aabb55-0030-49df-81ed-d4a68174b57e@kernel.org>
- <20250929130214.GK2617119@nvidia.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250929130214.GK2617119@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929091302.106116-3-horatiu.vultur@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 29/09/2025 15:02, Jason Gunthorpe wrote:
-> On Mon, Sep 29, 2025 at 02:18:50PM +0200, Hans Verkuil wrote:
->> On 29/09/2025 14:07, Jason Gunthorpe wrote:
->>> On Mon, Sep 29, 2025 at 10:23:47AM +0200, Hans Verkuil wrote:
->>>
->>>> Since I am unfamiliar with the iommu core code, I am uncertain whether I am
->>>> just papering over a bug elsewhere, or whether this is really the correct solution.
->>>
->>> It is papering over something, group->domain is not supposed to be
->>> NULL at this point.. That probably means the iommu driver has not been
->>
->> It's group->blocking_domain that's NULL, not group->domain.
-> 
-> Er, I thought you were hitting a false positive on this:
-> 
->   group->domain != group->blocking_domain
-> 
-> ie NULL != NULL
-> 
-> But I suppose the whole expression is checking for group->domain
-> already.
-> 
-> All your patch does is entirely disable the safetly logic :\
-> 
-> What is isp_attach_iommu() trying to accomplish? It does
-> arm_iommu_detach_device() and then arm_iommu_attach_device() ?
-> 
-> Why?
-> 
-> Is this trying to force a non-identity translation for ISP?
+On Mon, Sep 29, 2025 at 11:13:02AM +0200, Horatiu Vultur wrote:
+> The PTP initialization is two-step. First part are the function
+> vsc8584_ptp_probe_once() and vsc8584_ptp_probe() at probe time which
+> initialize the locks, queues, creates the PTP device. The second part is
+> the function vsc8584_ptp_init() at config_init() time which initialize
+> PTP in the HW.
 
-I have absolutely no idea. The commit where this was added is this:
+So, to summarise, you register the PTP clock at probe time? At that
+point, you get a /dev/ptp* device. Is that device functional without
+the config_init() initialisation?
 
----------------------------------------------------------
-commit 2a0a5472af5caa0d0df334abb9975dc496f045da
-Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date:   Thu Jan 2 20:06:08 2014 -0300
+I would hope it is, because one of the fundamental concepts in kernel
+programming is... don't publish devices to userspace that are not
+completely ready for operation.
 
-[media] omap3isp: Use the ARM DMA IOMMU-aware operations
+Conversely, don't tear down a published device without first
+unpublishing it from userspace.
 
-Attach an ARM DMA I/O virtual address space to the ISP device. This
-switches to the IOMMU-aware ARM DMA backend, we can thus remove the
-explicit calls to the OMAP IOMMU map and unmap functions.
+Thanks.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Sakari Ailus <sakari.ailus@iki.fi>
-Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
----------------------------------------------------------
-
-
-That's over 11 years ago. I've CC-ed Sakari in case he remembers something about
-this.
-
-Later this was simplified a bit:
-
----------------------------------------------------------
-commit fd8e2d4b393252505783656471465c7f85f3c0a9
-Author: Suman Anna <s-anna@ti.com>
-Date:   Wed Apr 12 00:21:32 2017 -0500
-
-omap3isp: Remove iommu_group related code
-
-The OMAP IOMMU driver has added the support for IOMMU groups internally,
-and the ISP device is automatically linked to the appropriate IOMMU group.
-So, remove the explicit function calls that creates/deletes an iommu_group
-and adds the ISP device to this group.
----------------------------------------------------------
-
-
-And finally the code detaching the device (which you referred to in your
-reply) was added here (much more recently):
-
----------------------------------------------------------
-commit 6bc076eec6f85f778f33a8242b438e1bd9fcdd59
-Author: Robin Murphy <robin.murphy@arm.com>
-Date:   Mon Oct 28 17:58:36 2024 +0000
-
-media: omap3isp: Handle ARM dma_iommu_mapping
-
-It's no longer practical for the OMAP IOMMU driver to trick
-arm_setup_iommu_dma_ops() into ignoring its presence, so let's use the
-same tactic as other IOMMU API users on 32-bit ARM and explicitly kick
-the arch code's dma_iommu_mapping out of the way to avoid problems.
----------------------------------------------------------
-
-
-All I know is that something is wrong after blocking_domain was added, which
-now causes the "failed to create ARM IOMMU mapping" error from isp.c when the
-omap3isp driver is probed.
-
-My (very likely flawed) reasoning for this patch was that if there is no
-blocking_domain (i.e. it's a NULL pointer), then the group->domain should
-just be accepted. But that reasoning was just based on the field names, and with
-no actual understanding of what is going on here :-)
-
-Regards,
-
-	Hans
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
