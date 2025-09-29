@@ -1,105 +1,167 @@
-Return-Path: <linux-kernel+bounces-836350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86336BA970D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:54:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0715BA9715
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381D1167D11
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6874C189ED83
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5420A308F32;
-	Mon, 29 Sep 2025 13:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D97E3090C4;
+	Mon, 29 Sep 2025 13:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eVjDcG2z"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hY2be1ap"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F611FBC91
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782C01A9FBD;
+	Mon, 29 Sep 2025 13:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759154034; cv=none; b=p5YahUehG8nXJ/dBt3XsJMOjzIPkShB5ek+abjTgEJoPfUuYkLdSWkWsHmF7nY3FxWbwvm93g9umqUskbZCox9mzZolG5dmmHdRqnCZHVSxHIZlRULr7xNwfH4sNJWic+xQqm7DoTpVQheoobTEp4attUDQ9rWrMyDv0dUM6zhs=
+	t=1759154174; cv=none; b=IrhZ6NSW9+eKfhnJJ6gmiSKA2cIJDiQUCV72mHgkxaRkOrzdXkvcunUYL7HoT/d/U4MfLdXO3pRbG2ERGhGkIJ7SX7CxH00Qd3xnmmZQerj240E7ZAJzXD1ZUk5nOVH6Glk2b5S/TD8haCqWJzMP5JFGH1KgPU/A5JKPD3bqhRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759154034; c=relaxed/simple;
-	bh=CIBOyO+3pbAtHNloP0JWex0lAwgtx8mQ90GIW5QUQ9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ro+Hf1pzPTHQQfOQbvBRq5o6EHzRRkYkJecL6OcH5xXdQaOVvZGuC/IAmfFvC9y0PEKH1asP2OJGVIc9of9A/4nOMX2q4VsZVQZ9ftbEyE7WGTE3DnJ2ZcqVkQHrgQLofE1RrvrZC/Mdk2/y9a+gjHFFW6TE+HdtkR3b8+0OvSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eVjDcG2z; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yf9w0E04hLVeqKesfMuuOwiPuA9NfgaTUlq6K84ihNM=; b=eVjDcG2zwSAIAkj6Gdpp28AmCJ
-	gexqxAC5bEM+TsuxgjexbLSxTmTQFHT4+DcU9S69iSmWhukbnqP1mHTdVLlwBHtvbilUhl6RioCeS
-	SfBBBh3BtBGz67M//l5dJyx5pLqgabUtWHpKOxMTJaOjXxEblRTp+V9evZrE7KTSw6Q516hsjQsdr
-	uewhLQO12Yuf3i7EuwP0STAMor0ZRsKu262PrgfDPViSET9CxzCoYTzE4SIf1G7XkgFTHV5dSvdax
-	73Ewb+zPc/tHwjtycWR0X/WIdLrQVC4ZMbxhXQxE0zccAGWjM/LHWp2hZXIeBCar76ULiKanbCNPc
-	du1PAtow==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3EK3-0000000C9O2-2cAV;
-	Mon, 29 Sep 2025 13:53:47 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 30CCF300359; Mon, 29 Sep 2025 15:53:47 +0200 (CEST)
-Date: Mon, 29 Sep 2025 15:53:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Pingfan Liu <piliu@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH] sched/deadline: Derive root domain from active cpu in
- task's cpus_ptr
-Message-ID: <20250929135347.GH3289052@noisy.programming.kicks-ass.net>
-References: <20250929133602.32462-1-piliu@redhat.com>
+	s=arc-20240116; t=1759154174; c=relaxed/simple;
+	bh=InW/YTaTkD8Una1CgxcS+Sd39MuweMYKZK1qU0gW9hU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MttSkkUg2xgJKkIZ8JPZTncHMDHVYQbS9zNCH/ZNno8aNx+PTqDYgFHwAWujcvDY7DgTTT2aVdnweS+Q7WIZHiQQGTulob8qjlURNJYUmL1eCQQU+IZzxHskbOZkDxDgOd8whPqPnLq9ihlQ6nAXjwOQ2aBc3V848Y0torErUCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hY2be1ap; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759154172; x=1790690172;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=InW/YTaTkD8Una1CgxcS+Sd39MuweMYKZK1qU0gW9hU=;
+  b=hY2be1apm2in9h4tc46OFoBsMRt/s6pjPp3enLQHuimKPJbZaLZ1Jb31
+   4J0cY0fcyslHVbz95EKnyYrAgXy+z13tjx1FOGO+wp35QZYN6nUqUBDVD
+   aYSscPcHbMvZZ5JUxPc+BcWh49saIqGSSmskTBmiPMy1SL4o8UvZitDSF
+   7f2jVYjxC1AJxT3PqiM/oTZ2HkbCtaXdKjc1Ai36w1pxKhm7N5GtFQ6G4
+   oWW9qToIukRHkW7Ax7wQZ/CNVttjIrEXky8NQIjOvqHK6xju+E4klFec8
+   pjvjyMqiryUPm3DzHj+9rqHxHjc0md6K9JQiGsheeL0WECxYjWifqwP1X
+   g==;
+X-CSE-ConnectionGUID: E8iFxJQZR7qua2YwOalQXQ==
+X-CSE-MsgGUID: 7YVE4DvESeGQfoe5aUSh9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61560597"
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="61560597"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 06:56:12 -0700
+X-CSE-ConnectionGUID: p5/xDExsSWqsaFWuk/LpIA==
+X-CSE-MsgGUID: 8VheNZ6BRFOYiVFSCPX/2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="178989233"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.229])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 06:56:06 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 29 Sep 2025 16:56:03 +0300 (EEST)
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+cc: intel-xe@lists.freedesktop.org, linux-pci@vger.kernel.org, 
+    dri-devel@lists.freedesktop.org, Icenowy Zheng <uwu@icenowy.me>, 
+    Vivian Wang <wangruikang@iscas.ac.cn>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+    Simon Richter <Simon.Richter@hogyros.de>, 
+    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/xe: Move rebar to be done earlier
+In-Reply-To: <5osrqzgrh47n6rpjulvsixwbhbh5vwxrrn6p6hpodnwisjfung@lmivgjb66oed>
+Message-ID: <dfdd45b2-5a8c-cfea-ecd3-495e947022d1@linux.intel.com>
+References: <20250918-xe-pci-rebar-2-v1-0-6c094702a074@intel.com> <20250918-xe-pci-rebar-2-v1-2-6c094702a074@intel.com> <5osrqzgrh47n6rpjulvsixwbhbh5vwxrrn6p6hpodnwisjfung@lmivgjb66oed>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929133602.32462-1-piliu@redhat.com>
+Content-Type: multipart/mixed; BOUNDARY="8323328-1975384521-1759154048=:943"
+Content-ID: <f64c7704-7852-3757-2f7c-098909d873f5@linux.intel.com>
 
-On Mon, Sep 29, 2025 at 09:36:02PM +0800, Pingfan Liu wrote:
-> When testing kexec-reboot on a 144 cpus machine with
-> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
-> encounter the following bug:
-> 
-> [   97.114759] psci: CPU142 killed (polled 0 ms)
-> [   97.333236] Failed to offline CPU143 - error=-16
-> [   97.333246] ------------[ cut here ]------------
-> [   97.342682] kernel BUG at kernel/cpu.c:1569!
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> [   97.514379] Call trace:
-> [   97.516874]  smp_shutdown_nonboot_cpus+0x104/0x128
-> [   97.521769]  machine_shutdown+0x20/0x38
-> [   97.525693]  kernel_kexec+0xc4/0xf0
-> [   97.529260]  __do_sys_reboot+0x24c/0x278
-> [   97.533272]  __arm64_sys_reboot+0x2c/0x40
+--8323328-1975384521-1759154048=:943
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <abbc543f-2c76-119f-fada-3f12d93deccf@linux.intel.com>
 
-> Tracking down this issue, I found that dl_bw_deactivate() returned
-> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
-> When a CPU is inactive, its rd is set to def_root_domain. For an S-state
+On Mon, 29 Sep 2025, Lucas De Marchi wrote:
 
-You mean a blocked task?
+> Hi,
+>=20
+> On Thu, Sep 18, 2025 at 01:58:57PM -0700, Lucas De Marchi wrote:
+> > There may be cases in which the BAR0 also needs to move to accommodate
+> > the bigger BAR2. However if it's not released, the BAR2 resize fails.
+> > During the vram probe it can't be released as it's already in use by
+> > xe_mmio for early register access.
+> >=20
+> > Add a new function in xe_vram and let xe_pci call it directly before
+> > even early device probe. This allows the BAR2 to resize in cases BAR0
+> > also needs to move:
+> >=20
+> > =09[] xe 0000:03:00.0: vgaarb: deactivate vga console
+> > =09[] xe 0000:03:00.0: [drm] Attempting to resize bar from 8192MiB ->
+> > 16384MiB
+> > =09[] xe 0000:03:00.0: BAR 0 [mem 0x83000000-0x83ffffff 64bit]: releasi=
+ng
+> > =09[] xe 0000:03:00.0: BAR 2 [mem 0x4000000000-0x41ffffffff 64bit pref]=
+:
+> > releasing
+> > =09[] pcieport 0000:02:01.0: bridge window [mem 0x4000000000-0x41ffffff=
+ff
+> > 64bit pref]: releasing
+> > =09[] pcieport 0000:01:00.0: bridge window [mem 0x4000000000-0x41ffffff=
+ff
+> > 64bit pref]: releasing
+> > =09[] pcieport 0000:01:00.0: bridge window [mem 0x4000000000-0x43ffffff=
+ff
+> > 64bit pref]: assigned
+> > =09[] pcieport 0000:02:01.0: bridge window [mem 0x4000000000-0x43ffffff=
+ff
+> > 64bit pref]: assigned
+> > =09[] xe 0000:03:00.0: BAR 2 [mem 0x4000000000-0x43ffffffff 64bit pref]=
+:
+> > assigned
+> > =09[] xe 0000:03:00.0: BAR 0 [mem 0x83000000-0x83ffffff 64bit]: assigne=
+d
+> > =09[] pcieport 0000:00:01.0: PCI bridge to [bus 01-04]
+> > =09[] pcieport 0000:00:01.0:   bridge window [mem 0x83000000-0x840fffff=
+]
+> > =09[] pcieport 0000:00:01.0:   bridge window [mem
+> > 0x4000000000-0x44007fffff 64bit pref]
+> > =09[] pcieport 0000:01:00.0: PCI bridge to [bus 02-04]
+> > =09[] pcieport 0000:01:00.0:   bridge window [mem 0x83000000-0x840fffff=
+]
+> > =09[] pcieport 0000:01:00.0:   bridge window [mem
+> > 0x4000000000-0x43ffffffff 64bit pref]
+> > =09[] pcieport 0000:02:01.0: PCI bridge to [bus 03]
+> > =09[] pcieport 0000:02:01.0:   bridge window [mem 0x83000000-0x83ffffff=
+]
+> > =09[] pcieport 0000:02:01.0:   bridge window [mem
+> > 0x4000000000-0x43ffffffff 64bit pref]
+> > =09[] xe 0000:03:00.0: [drm] BAR2 resized to 16384M
+> > =09[] xe 0000:03:00.0: [drm:xe_pci_probe [xe]] BATTLEMAGE  e221:0000
+> > dgfx:1 gfx:Xe2_HPG (20.02) ...
+> >=20
+> > As shown above, it happens even before we try to read any register for
+> > platform identification.
+> >=20
+> > All the rebar logic is more pci-specific than xe-specific and can be
+> > done very early in the probe sequence. In future it would be good to
+> > move it out of xe_vram.c, but this refactor is left for later.
+>=20
+> Ilpo, can you take a look on this patch? It fixed the issue that I had
+> with BMG. It needs the first patch for the full fix, but the fixes are
+> more or less orthogonal.
 
-> deadline task (in this case, "cppc_fie"), it was not migrated to CPU0,
-> and its task_rq() information is stale. As a result, its bandwidth is
-> wrongly accounted into def_root_domain during domain rebuild.
-> 
-> This patch uses the rd from the run queue of still-active CPU to get the
-> correct root domain.
+FWIW, it looks okay to me from PCI perspective,
 
-That doesn't seem right in general. What if there are multiple root
-domains; how does it know which to use?
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+--8323328-1975384521-1759154048=:943--
 
