@@ -1,199 +1,131 @@
-Return-Path: <linux-kernel+bounces-836179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9155BA8F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:59:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006B0BA8F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A07307ADE95
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:58:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828B0189CB1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5272FDC38;
-	Mon, 29 Sep 2025 10:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YoNAgrTs"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20412FBDFE;
+	Mon, 29 Sep 2025 10:58:30 +0000 (UTC)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A19580604
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7782935950
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759143585; cv=none; b=djIeZyhzRG61/1Hl4H8fggwA+R4b8PldR7GztgNDfCczpoaePnVI+wtXtRG6P6YL8I6dY5NcZjYj2xPqHuiALhMDunis/2Jm4F47PLuaw3wFKlN1/BWFOr6Nn8VeQqyPb/i79ZA9OnjXVcVt17h1GHBdrPZJVC8Fs1S858PY3S4=
+	t=1759143510; cv=none; b=l+3vX2TlUiWepJ28GwNqHlaJNjka+N6xJ0yZqBE+VNVDneBiM/BBHKpJbVcB65r0JUEmQ8J7b8l3BZIoNlGYP4GKcA83ScT48y4vYNThX2W8B/t8jee0OkoZR7aBuWwYU2S0pzT9bF5/M3R0ngOzga8eVPUK5/jHfCb7P8nYwjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759143585; c=relaxed/simple;
-	bh=tWDyDWTLQk8rjyF/vsJo4jjdofO3C3YB0xzyW1/0dDQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=NhP4k2L4xZ0SSq/pZaw7JTjd2DdWFg9lzlixrrkPTPadV2ZJjmDqdBOJwlVIURHczGFP5SyOXVi4CPbmEPXQEY7Wf6JaDW5QqK4ztTA25yjOhJU3/sF3Q+mt0q7jLiPb/N/APVTtZ5m44EoH5ZG0MRHd7WDu9IEoR/YN044Jz/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YoNAgrTs; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250929105938epoutp041bc93f08eeb270c88972577df74fbca1~pu8O_o04G0532105321epoutp04W
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:59:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250929105938epoutp041bc93f08eeb270c88972577df74fbca1~pu8O_o04G0532105321epoutp04W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759143578;
-	bh=EwjAsCHpAtEOfYR7kD9OlxbY41/aURUPUsKMYtCrtcQ=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=YoNAgrTsHeIEbiBqM8h9dBVc4gMKO9AyUrPtB+0O+gile4DIhNmXjgwI0A/D4NX0b
-	 5kRJNuXNedG0RR1fCqIXNkdGJC6Iv08hv7CWr/YyDa4zHqukpmYDtuTPy2P5oRJWcx
-	 prsgPDETPUivthTjYi3+g/k7xaiZbHMaP7XU2kss=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250929105937epcas2p3119ec6e25d535bd5b9cddfeec7d8db21~pu8OB474j3158031580epcas2p3d;
-	Mon, 29 Sep 2025 10:59:37 +0000 (GMT)
-Received: from epcas2p2.samsung.com (unknown [182.195.38.212]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cZyr93VWGz3hhT4; Mon, 29 Sep
-	2025 10:59:37 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4~pu8M4nOrh2261322613epcas2p1D;
-	Mon, 29 Sep 2025 10:59:36 +0000 (GMT)
-Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250929105936epsmtip271ab9cf68e318a2afd593d83165bd224~pu8MzaTb_0081300813epsmtip2V;
-	Mon, 29 Sep 2025 10:59:36 +0000 (GMT)
-From: HOYOUNG SEO <hy50.seo@samsung.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, beanhuo@micron.com, bvanassche@acm.org,
-	kwangwon.min@samsung.com, kwmad.kim@samsung.com, cpgs@samsung.com,
-	h10.kim@samsung.com
-Cc: "hy50.seo" <hy50.seo@samsung.com>
-Subject: [PATCH v1] scsi: ufs: core: Introduce quirk to check UTP error
-Date: Mon, 29 Sep 2025 19:58:00 +0900
-Message-Id: <20250929105801.428105-1-hy50.seo@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759143510; c=relaxed/simple;
+	bh=AIov++tWGwEKyifuT48l+bxxj97iIWePTzxd3YrxKIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CC4y4KfXltoVoBsvurDL12KB5g856CznZaIdkSTgETDsa+u5Kj4NaSsyDKJw29Kf+RqX4+iEY0IwvxgEdPDtXy/oo34XT/BB3d5tAJ2kPjvuPysRxaMLDJThI9qdjh08JTlMLJ881p779jKY6GSLRiM5h4UvnhVipvQzsATPkPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-54a94e39720so1580641e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:58:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759143507; x=1759748307;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/+MPZozySbtur1IZVuljxCO3XEppmGl3RjxuL+jZDRc=;
+        b=Idnv0WuIbSOZ0XlGZfgtIp2LF0dwFQCZ+Fki4DQvZ4BP1NsW7ICdCigUO0PdAVSTZa
+         dV5SlygZ5rEVy9alOu5djZiO0ojpLFksDZdVlLVqky21FGu/HtXW8au8qcRxx8EPqU18
+         +WZhG0rj22Wav2M9XiGTccSI/Se1a7ZLMTvrkutBxUK5cyjiKnEwQ6IdjKZ4+zZOlGiS
+         j5kDf1KNwhWnHwIr8oumbvZ3l1vUynk2OpJlZHcpvefWanAJ76OlE5fahZnwDTurlA7A
+         HgJp97o18nR3hwno8pMbUu3l/eJsEp/r5F99I4vLs52zfLcHWTsRhY5pxtJjhJdpwnXJ
+         bEoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUd9LTT6kRjiAuNuOsDoMu1wiE80HA1Zp5XprJHw5Zl0loYA5GGM49Bp0eRj1nQfM2eP0g+nhNf7To0aNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRoE2yn4+0TXTCaNDm9ONY+mutCjiwgDDpu41wtA5LskRuE0ql
+	hUWI6yRDahPKIXZh29t2ThY7j+SKbNpMQoFOWCeTtHXRJkiIdSye2orH5yGz+fov
+X-Gm-Gg: ASbGncuOrU8df9G5hUvJbAmYiPISTpE7Djwe1ayfy4Szg+/0zZmbfZ9AGUBijEtty6L
+	FUSPcExqTcvwpUUPefEeTzdSgYQCA3DU1ByX+e5Xw5hV0DNyTuKZK8N9V2Xo/B/4AdgdZanrDjr
+	0pI9BvKl3jkS7fPEly70nq/Hudn8LGCtWXe6LYuY26bFmWB/v2Q3Ue/la9Lk+vciMBE85Ae9ukT
+	zg0Ip8doZogyWHibz1XoIJK6iU+Evk/0ZtOmxB/SLkKRwuM1IZrwOVLTzAdIXUS6EaNV+Mw4Cb7
+	Y/hTLZ4R4FwAwaBDZYSfBgfhYgmjyJhiamcgKKFN0UPE+BvUsCPLr5lZyAz9zwweA6C/46m9PgC
+	VNG1XU9NJJQndu+wh9L2+LBPFCfaGho1KwfkzMLDEERl+FEM92EiE6Se9wBLs
+X-Google-Smtp-Source: AGHT+IFCid3LYq8i2usHRaUJMOCjwt3lOJMztQ4ItPMaLE9nMVeb3/A83O4ESaHjJVu8ltP4LmS1Vg==
+X-Received: by 2002:a05:6122:1699:b0:544:9a46:7c85 with SMTP id 71dfb90a1353d-54bea1f6407mr6276834e0c.4.1759143507200;
+        Mon, 29 Sep 2025 03:58:27 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bed60fdaasm2446874e0c.0.2025.09.29.03.58.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 03:58:26 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5a3511312d6so1955613137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:58:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVyYuhsamZUrjUwLovB6tUO+tbDGjcDmrQFpdP9VaXlUX4kVrr1G5BTD5sPUkW+ZmmwcMa3iBVpTTRA6IM=@vger.kernel.org
+X-Received: by 2002:a05:6102:50aa:b0:534:cfe0:f864 with SMTP id
+ ada2fe7eead31-5acc473077dmr6450963137.4.1759143505642; Mon, 29 Sep 2025
+ 03:58:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4
-References: <CGME20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4@epcas2p1.samsung.com>
+References: <20250916163004.674341701@linutronix.de> <20250916163252.100835216@linutronix.de>
+ <20250916184440.GA1245207@ax162> <87ikhi9lhg.ffs@tglx> <87frcm9kvv.ffs@tglx>
+ <CAMuHMdVvAQbN8g7TJyK2MCLusGPwDbzrQJHw8uxDhOvjAh7_Pw@mail.gmail.com> <20250929100852.GD3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250929100852.GD3245006@noisy.programming.kicks-ass.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Sep 2025 12:58:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW_5QOw69Uyrrw=4BPM3DffG2=k5BAE4Xr=gfei7vV=+g@mail.gmail.com>
+X-Gm-Features: AS18NWDQJuqnAIK-2DUIq8EbZk99RAekWX-gMhtGREaGuJ754MDAMcZKkUQDKxM
+Message-ID: <CAMuHMdW_5QOw69Uyrrw=4BPM3DffG2=k5BAE4Xr=gfei7vV=+g@mail.gmail.com>
+Subject: Re: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang <
+ version 17
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Nathan Chancellor <nathan@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "hy50.seo" <hy50.seo@samsung.com>
+On Mon, 29 Sept 2025 at 12:09, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Sep 29, 2025 at 11:38:17AM +0200, Geert Uytterhoeven wrote:
+>
+> > > +       # Detect buggy clang, fixed in clang-17
+> > > +       depends on $(success,echo 'void b(void **);void* c();int f(void){{asm goto("jmp %l0"::::l0);return 0;l0:return 1;}void *x __attribute__((cleanup(b))) = c();{asm goto("jmp %l0"::::l1);return 2;l1:return 1;}}' | $(CC) -x c - -c -o /dev/null)
+> >
+> > This is supposed to affect only clang builds, right?  I am using
+> > gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) to build for
+> > arm32/arm64/riscv, and thus have:
+> >
+> >     CONFIG_CC_IS_GCC=y
+> >
+> > Still, this commit causes
+> >
+> >     CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y
+> >     CONFIG_CC_HAS_ASM_GOTO_TIED_OUTPUT=y
+> >
+> > to disappear from my configs? Is that expected?
+>
+> Not expected -- that means your GCC is somehow failing that test case.
+> Ideally some GCC person will investigate why this is so.
 
-If the UTP error occurs alone, the UFS is not recovered.
-It does not check for error and only generates io timeout or OCS error.
-This is because UTP error is not defined in error handler.
-To fixed this, add UFS qurik about UTP error and this quirk is enable,
-UFS reset is performed when a UTP error occurs.
+Oh, "jmp" is not a valid mnemonic on arm and riscv, and several other
+architectures...
 
-sd 0:0:0:0: [sda] tag#38 UNKNOWN(0x2003) Result: hostbyte=0x07
-driverbyte=DRIVER_OK cmd_age=0s
-sd 0:0:0:0: [sda] tag#38 CDB: opcode=0x28 28 00 00 51 24 e2 00 00 08 00
-I/O error, dev sda, sector 42542864 op 0x0:(READ) flags 0x80700 phys_seg
-8 prio class 2
-OCS error from controller = 9 for tag 39
-pa_err[1] = 0x80000010 at 2667224756 us
-pa_err: total cnt=2
-dl_err[0] = 0x80000002 at 2667148060 us
-dl_err[1] = 0x80002000 at 2667282844 us
-No record of nl_err
-No record of tl_err
-No record of dme_err
-No record of auto_hibern8_err
-fatal_err[0] = 0x804 at 2667282836 us
+Gr{oetje,eeting}s,
 
----------------------------------------------------
-		REGISTER
----------------------------------------------------
-                           NAME	      OFFSET	         VALUE
-                    STD HCI SFR	  0xfffffff0	           0x0
-                           AHIT	        0x18	         0x814
-               INTERRUPT STATUS	        0x20	        0x1000
-               INTERRUPT ENABLE	        0x24	       0x70ef5
+                        Geert
 
-Change-Id: I25156081c52a23dfe1223c18abcce9e9c6fe3868
-Signed-off-by: hy50.seo <hy50.seo@samsung.com>
----
- drivers/ufs/core/ufshcd.c | 11 +++++++++++
- include/ufs/ufshcd.h      |  6 ++++++
- include/ufs/ufshci.h      |  3 ++-
- 3 files changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index cfc149f8238e..0421178000c1 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -6735,6 +6735,14 @@ static void ufshcd_err_handler(struct work_struct *work)
- 		goto do_reset;
- 	}
- 
-+	if ((hba->dev_quirks & UFSHCD_QUIRK_UTP_ERROR) && (hba->errors & UTP_ERROR)) {
-+		ufshcd_print_host_state(hba);
-+		ufshcd_print_evt_hist(hba);
-+
-+		needs_reset = true;
-+		goto do_reset;
-+	}
-+
- 	/*
- 	 * If LINERESET was caught, UFS might have been put to PWM mode,
- 	 * check if power mode restore is needed.
-@@ -6941,6 +6949,9 @@ static irqreturn_t ufshcd_check_errors(struct ufs_hba *hba, u32 intr_status)
- 		queue_eh_work = true;
- 	}
- 
-+	if ((hba->quirks & UFSHCD_QUIRK_UTP_ERROR) && (hba->errors & UTP_ERROR))
-+		queue_eh_work = true;
-+
- 	if (hba->errors & UIC_ERROR) {
- 		hba->uic_error = 0;
- 		retval = ufshcd_update_uic_error(hba);
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index ea0021f067c9..3ac6ac5fc7fb 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -688,6 +688,12 @@ enum ufshcd_quirks {
- 	 * single doorbell mode.
- 	 */
- 	UFSHCD_QUIRK_BROKEN_LSDBS_CAP			= 1 << 25,
-+
-+	/*
-+	 * This quirk indicated that report the error when UTP error occurs.
-+	 * Enable this quirk will the error handler allows the ufs to be reocvery.
-+	 */
-+	UFSHCD_QUIRK_UTP_ERROR				= 1 << 26,
- };
- 
- enum ufshcd_caps {
-diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
-index 612500a7088f..79a052a50f91 100644
---- a/include/ufs/ufshci.h
-+++ b/include/ufs/ufshci.h
-@@ -180,6 +180,7 @@ static inline u32 ufshci_version(u32 major, u32 minor)
- #define UTP_TASK_REQ_COMPL			0x200
- #define UIC_COMMAND_COMPL			0x400
- #define DEVICE_FATAL_ERROR			0x800
-+#define UTP_ERROR				0x1000
- #define CONTROLLER_FATAL_ERROR			0x10000
- #define SYSTEM_BUS_FATAL_ERROR			0x20000
- #define CRYPTO_ENGINE_FATAL_ERROR		0x40000
-@@ -193,7 +194,7 @@ static inline u32 ufshci_version(u32 major, u32 minor)
- 
- #define UFSHCD_UIC_MASK		(UIC_COMMAND_COMPL | UFSHCD_UIC_PWR_MASK)
- 
--#define UFSHCD_ERROR_MASK	(UIC_ERROR | INT_FATAL_ERRORS)
-+#define UFSHCD_ERROR_MASK	(UIC_ERROR | INT_FATAL_ERRORS | UTP_ERROR)
- 
- #define INT_FATAL_ERRORS	(DEVICE_FATAL_ERROR |\
- 				CONTROLLER_FATAL_ERROR |\
 -- 
-2.26.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
