@@ -1,401 +1,143 @@
-Return-Path: <linux-kernel+bounces-835789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C6FBA810C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A371BA8112
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 910391754ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:07:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38CCA17C358
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B93C239581;
-	Mon, 29 Sep 2025 06:07:21 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E65423BF9F;
+	Mon, 29 Sep 2025 06:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iPRmIJZ/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929B81F5EA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E03723909F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759126040; cv=none; b=h7nGcz9nQcgUWOtUurLhUZg6vldb+5MxpKCXeOOD7yQ075Do+O3/lSBMJxo2MKQ3wereNgTkEAOyjHLh1CsRI0W2e90E0616xC3MCHIiNICyntdKK/lINp8L6rmxPCV7xfJa6+tWTPiQhArHheI6O6UKHxXTeB7uQvM+TEcNmWA=
+	t=1759126064; cv=none; b=Qtwwk+uD7UpXrTs5olT5Q9vJwGCmHavVVwYTNYTPdlZ8GT/qqkwHTqpanPadZb+7wTCZxfEcFBbN02xKie9PkkmwPGRdVs41C3IiKO46aH4MIJYCSdiie2/adh1cIlueONTqIsFgfziSnUDNOVUgJN2+07PNxicnpgXfd/qq47I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759126040; c=relaxed/simple;
-	bh=1kRpHE8YG6sHB6eG3NTKcjocrtQekSGTinyOkA3y9m8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SLbuqncXhCzEyYWQq/UoSA04EEwHNtq5jzNXN9aqsh6I9pnEiqSUeKufnBGjEjmuPUs2DQarBOlqliFik6W6NfjwnJ6FPSLno03p+YYBMynDzqJ8APRx1p3XYco4Ohn+VAkmG0Al1bg0VH4212qSPSrsSDQTJocaHXgw+sl8hs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201605.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202509291407051677;
-        Mon, 29 Sep 2025 14:07:05 +0800
-Received: from localhost.localdomain.com (10.94.18.252) by
- jtjnmail201605.home.langchao.com (10.100.2.5) with Microsoft SMTP Server id
- 15.1.2507.58; Mon, 29 Sep 2025 14:07:04 +0800
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <tzimmermann@suse.de>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>, Chu
- Guangqing <chuguangqing@inspur.com>
-Subject: Re: Re: [PATCH v6 1/1] [DRIVER] gpu: drm: add support for Yhgc ZX1000 soc chipset
-Date: Mon, 29 Sep 2025 14:07:01 +0800
-Message-ID: <20250929060701.3104-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <bvwmxalakynyfrtuns2wxvggkaq6ivbub6rv4bnrcwp7k5l3ti@slpcwysdul36>
-References: <bvwmxalakynyfrtuns2wxvggkaq6ivbub6rv4bnrcwp7k5l3ti@slpcwysdul36>
+	s=arc-20240116; t=1759126064; c=relaxed/simple;
+	bh=IbEySVpKbLCFuZ9rrIjdK5cqttbR+AKe+UCoV2F1p5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NxfHon2CDDx/sendYe4AYBDia7vkVB1KvveWmYMZfCXM6ogmcUip72PHXNLnx451HzJzU0tT++XvJKm5fsgdNcRCwWw0bX1hCKgrC2rQafsfuSoroH88zYa3G3NiC4XgOYoz96IIpFqtgOqgRebl1XQrX+g5QjOFA9KpMSIFueQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iPRmIJZ/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759126062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wBfJ6EZcrzpxQaUNzV7H/FmOU4A4hPZpwBb7rVCM3A0=;
+	b=iPRmIJZ/O41BWHt9Bib6WEbZCsG9dw66mAo/o6tJ9/p3NWUauMi1kgExwXGQ9TDcE6KetC
+	N7DrWNnva2d4Gj0rqIrrqaXpz5rMovTRlyn0Q8IzkOqWlkl/wsR1EuJfZvK8aqq+g7YCqD
+	1DchwJx2//qOoKhddzKFQkDAQvKajZk=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-223-JECvq-pZPBedLEPv7vtrsQ-1; Mon, 29 Sep 2025 02:07:40 -0400
+X-MC-Unique: JECvq-pZPBedLEPv7vtrsQ-1
+X-Mimecast-MFC-AGG-ID: JECvq-pZPBedLEPv7vtrsQ_1759126060
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-7436271d14cso61741587b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 23:07:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759126060; x=1759730860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wBfJ6EZcrzpxQaUNzV7H/FmOU4A4hPZpwBb7rVCM3A0=;
+        b=AdHpdRMBoBeFXGGNjHPoZ81WuE+am3crUpsUqq/evZ6CovDMzSHyNwC1fhRh3+xfRD
+         t51aJfHmh3yV+RPwWPUVVU8ozIjRsey/lasbZw+Ux9eAmLkHGPGvMbDZ7tL+cJ2LZgEp
+         A0SIcuN+yz4CuoeUmjfDrZ5db5BICqgeTxRVuiX4lDo0gXEHE3oOKO/zXUOcEWJ9XSQn
+         dpmzslCEqSTbYitlUEXyvmBVLLrjwhRT7v6XfN7xuoF1Mkqhd8RmDgsGKWyyQhRFnF4V
+         f8APUMxNiN0HfwnWvK7sRNMvL8M3qCQWyrShqgnz4etRzuBwxcH+BOrMWIjH+F/o6PH1
+         6Qqw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4HZNFkAhyenUXX15UjakOGP+fgJjmQbMGsfJB0s8Q4Feprkms3iwbmdABKrw3sbwBOU10pN/FqQL6Ev0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSSZ/rlarh5OaGtKZBVveJWUNofoLe/7cwbAUzVVIVA6Tt8f1Q
+	lcYOS0I91Jh33Q3ufDwHX0qzwVUO33MRlrfxBqGg+Vaj+6AgFnn9bN6BcA72BxHhQOe2RB5p66e
+	m0EF6DNT8Uh749wWek12yMlAYN2SfYH5J+ZZEmFqhZ4bx4xKVvGzChDJq5g/k3YlJdDFxFDE8qk
+	IaRF1VUDzQqbZ0hHPhLgvsm5JPvNt5EDFmOXnDGkmg
+X-Gm-Gg: ASbGnct3LeqzEUH6PFP0tvekMv1yv3Go3n+xfeO0OvaGk5gqR0nzoo6Wzw+5alkX51y
+	Qa7AwIbh/9v0t3TDSnsN51oy53LE7hU36WmlnMkm3YVBnUlJaH2sF718Tr1OKP9nwomb8ikNptX
+	8av57VW3YZIjdKVDDz51Ryhu2bgtvERbwGHfNZqB27a4cdvbdYKR0RDebVDeATXVrguqUqHgOsn
+	uz+FQ8P
+X-Received: by 2002:a53:d208:0:b0:636:20c2:8eaf with SMTP id 956f58d0204a3-636dddd2be7mr7496553d50.20.1759126059829;
+        Sun, 28 Sep 2025 23:07:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHruQhakXa8wGOKerNcye69UaAM4mVrSZQ9uhbK5P04HWTKnvPzXlUqVP3RMbc5y1i8ThnHdTlq1SvY2ch1664=
+X-Received: by 2002:a53:d208:0:b0:636:20c2:8eaf with SMTP id
+ 956f58d0204a3-636dddd2be7mr7496534d50.20.1759126059494; Sun, 28 Sep 2025
+ 23:07:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025929140705b716c57d11655618ffb65bbc76531976
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+References: <52c76446-117d-4953-9b33-32199f782b90@gmail.com>
+In-Reply-To: <52c76446-117d-4953-9b33-32199f782b90@gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 29 Sep 2025 08:07:03 +0200
+X-Gm-Features: AS18NWC7XMXAuGMO8Eptz-Q_otll5LtJWRETocFL-g0lU0gc6j4WgNxpmozonlI
+Message-ID: <CAJaqyWc58wnym96C79E-tG6yBvem5skE3M3vdzBxMYX0aNJVLQ@mail.gmail.com>
+Subject: Re: vduse: add vq group support
+To: "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, virtualization@lists.linux.dev, 
+	kvm@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
-
-> 
-> On Sun, Sep 28, 2025 at 01:41:23PM +0800, Chu Guangqing wrote:
-> > add support for Yhgc BMC soc chipset
-> 
-> Could you please provide some more details about the BMC? Quick googling
-> finds only a very links. What is the name of the vendor? Is there a product page
-> somewhere?
-> 
-
-The ZX1000 (Z106) chip is a self-developed server management chip of the 
-"Zhixin Series" by Yunhai Guochuang. It can monitor the operating status of 
-servers in real time and perform various remote management operations on 
-servers, including remote system installation, restart, power-on and power-off. 
-It supports instruction sets of mainstream processor architectures such as X86, 
-ARM, and LoongArch, with fully open firmware and software interfaces that are 
-compatible with the third-party application ecosystem.
-The company's official website is www.yhgch.com. However, there is no English 
-version of the webpage. The vendor is YHGCH. 
-> >
-> > Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
-> > ---
-> >  MAINTAINERS                            |   5 +
-> >  drivers/gpu/drm/Kconfig                |   2 +
-> >  drivers/gpu/drm/Makefile               |   1 +
-> >  drivers/gpu/drm/yhgch/Kconfig          |  11 +
-> >  drivers/gpu/drm/yhgch/Makefile         |   4 +
-> >  drivers/gpu/drm/yhgch/yhgch_drm_de.c   | 407
-> +++++++++++++++++++++++++
-> >  drivers/gpu/drm/yhgch/yhgch_drm_drv.c  | 310 +++++++++++++++++++
-> > drivers/gpu/drm/yhgch/yhgch_drm_drv.h  |  51 ++++
-> > drivers/gpu/drm/yhgch/yhgch_drm_i2c.c  | 114 +++++++
-> > drivers/gpu/drm/yhgch/yhgch_drm_regs.h | 208 +++++++++++++
-> > drivers/gpu/drm/yhgch/yhgch_drm_vdac.c | 134 ++++++++
-> >  11 files changed, 1247 insertions(+)
-> >  create mode 100644 drivers/gpu/drm/yhgch/Kconfig  create mode
-> 100644
-> > drivers/gpu/drm/yhgch/Makefile  create mode 100644
-> > drivers/gpu/drm/yhgch/yhgch_drm_de.c
-> >  create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_drv.c
-> >  create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_drv.h
-> >  create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_i2c.c
-> >  create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_regs.h
-> >  create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_vdac.c
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS index
-> > 520fb4e379a3..18fd2e2fcb81 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -27781,6 +27781,11 @@ S:	Maintained
-> >  F:	Documentation/input/devices/yealink.rst
-> >  F:	drivers/input/misc/yealink.*
-> >
-> > +YHGC DRM DRIVER
-> > +M:	chuguangqing <chuguangqing@inspur.com>
-> 
-> Please use full name here.
-> 
-ok, I will use Chu Guangqing
-
-> > +S:	Maintained
-> > +F:	drivers/gpu/drm/yhgch
-> 
-> How do you plan to maintain it? Do you plan to use drm-misc tree? (in such a
-> case it should be mentioned here). Do you expect others to commit updates /
-> fixes for you or do you have commit rights?
+On Sat, Sep 27, 2025 at 4:22=E2=80=AFPM Colin King (gmail)
+<colin.i.king@gmail.com> wrote:
 >
-We can use the drm-misc tree, but I don't have the commit rights. My colleagues
- and I will submit the code, and I will conduct the review.
- 
-> > +
-> >  Z8530 DRIVER FOR AX.25
-> >  M:	Joerg Reuter <jreuter@yaina.de>
-> >  L:	linux-hams@vger.kernel.org
-> > diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig index
-> > f7ea8e895c0c..8e0b1d12c81f 100644
-> > --- a/drivers/gpu/drm/Kconfig
-> > +++ b/drivers/gpu/drm/Kconfig
-> > @@ -396,6 +396,8 @@ source "drivers/gpu/drm/sprd/Kconfig"
-> >
-> >  source "drivers/gpu/drm/imagination/Kconfig"
-> >
-> > +source "drivers/gpu/drm/yhgch/Kconfig"
-> > +
-> >  config DRM_HYPERV
-> >  	tristate "DRM Support for Hyper-V synthetic video device"
-> >  	depends on DRM && PCI && HYPERV
-> > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile index
-> > 4dafbdc8f86a..f344e0173b29 100644
-> > --- a/drivers/gpu/drm/Makefile
-> > +++ b/drivers/gpu/drm/Makefile
-> > @@ -231,6 +231,7 @@ obj-y			+= solomon/
-> >  obj-$(CONFIG_DRM_SPRD) += sprd/
-> >  obj-$(CONFIG_DRM_LOONGSON) += loongson/
-> >  obj-$(CONFIG_DRM_POWERVR) += imagination/
-> > +obj-$(CONFIG_DRM_YHGCH)  += yhgch/
-> >
-> >  # Ensure drm headers are self-contained and pass kernel-doc
-> > hdrtest-files := \ diff --git a/drivers/gpu/drm/yhgch/Kconfig
-> > b/drivers/gpu/drm/yhgch/Kconfig new file mode 100644 index
-> > 000000000000..695d29409444
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/yhgch/Kconfig
-> > @@ -0,0 +1,11 @@
-> > +config DRM_YHGCH
-> > +    tristate "DRM Support for Yhgch BMC"
-> > +    depends on DRM && PCI && MMU
-> > +    select DRM_CLIENT_SELECTION
-> > +    select DRM_KMS_HELPER
-> > +    select DRM_GEM_SHMEM_HELPER
-> > +    help
-> > +        Choose this option if you have a Yhgch soc chipset.
-> > +        If M is selected the module will be called yhgch-drm.
-> > +        IF Y is selected the module will be built into the kernel.
-> > +        IF N is selected the module will be excluded from the kernel.
-> > diff --git a/drivers/gpu/drm/yhgch/Makefile
-> > b/drivers/gpu/drm/yhgch/Makefile new file mode 100644 index
-> > 000000000000..30de2fd27f18
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/yhgch/Makefile
-> > @@ -0,0 +1,4 @@
-> > +yhgch-drm-y := yhgch_drm_drv.o yhgch_drm_de.o yhgch_drm_vdac.o
-> > +yhgch_drm_i2c.o
-> > +
-> > +obj-$(CONFIG_DRM_YHGCH) += yhgch-drm.o
-> > +
-> > diff --git a/drivers/gpu/drm/yhgch/yhgch_drm_de.c
-> > b/drivers/gpu/drm/yhgch/yhgch_drm_de.c
-> > new file mode 100644
-> > index 000000000000..de6dbd5acca7
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/yhgch/yhgch_drm_de.c
-> > @@ -0,0 +1,407 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +
-> > +#include <linux/delay.h>
-> > +#include <drm/drm_atomic.h>
-> > +#include <drm/drm_gem_atomic_helper.h> #include
-> > +<drm/drm_atomic_helper.h> #include <drm/drm_gem_shmem_helper.h>
-> > +#include <drm/drm_format_helper.h> #include
-> <drm/drm_damage_helper.h>
-> > +#include <drm/drm_fourcc.h>
-> > +
-> > +#include <drm/drm_vblank.h>
-> > +
-> > +#include "yhgch_drm_drv.h"
-> > +#include "yhgch_drm_regs.h"
-> > +
-> > +struct yhgch_dislay_pll_config {
-> > +	u64 hdisplay;
-> > +	u64 vdisplay;
-> > +	u32 pll1_config_value;
-> > +	u32 pll2_config_value;
-> > +};
-> > +
-> > +static const struct yhgch_dislay_pll_config yhgch_pll_table[] = {
-> > +	{ 640, 480, CRT_PLL1_NS_25MHZ, CRT_PLL2_NS_25MHZ },
-> > +	{ 800, 600, CRT_PLL1_NS_40MHZ, CRT_PLL2_NS_40MHZ },
-> > +	{ 1024, 768, CRT_PLL1_NS_65MHZ, CRT_PLL2_NS_65MHZ },
-> > +	{ 1280, 1024, CRT_PLL1_NS_108MHZ, CRT_PLL2_NS_108MHZ },
-> > +	{ 1920, 1080, CRT_PLL1_NS_148MHZ, CRT_PLL2_NS_148MHZ },
-> 
-> This list is very limited by the modern standards. Is there a way to calculate
-> these values for other resultions from the driver side?
+> Hi,
 >
-This is a graphics card installed on a server, which only supports a limited 
-number of resolutions. Therefore, this simple list is used. 
+> Static analysis on linux-next has found an issue with the following commi=
+t:
+>
+> commit ffc3634b66967445f3368c3b53a42bccc52b2c7f
+> Author: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> Date:   Thu Sep 25 11:13:32 2025 +0200
+>
+>      vduse: add vq group support
+>
+>
+> This issue is as follows in function vhost_vdpa_vring_ioct:
+>
+>          case VHOST_VDPA_GET_VRING_GROUP: {
+>                  u64 group;
+>
+>                  if (!ops->get_vq_group)
+>                          return -EOPNOTSUPP;
+>                  s.index =3D idx;
+>                  group =3D ops->get_vq_group(vdpa, idx);
+>                  if (group >=3D vdpa->ngroups || group > U32_MAX || group=
+ < 0)
+>                          return -EIO;
+>                  else if (copy_to_user(argp, &s, sizeof(s)))
+>                          return -EFAULT;
+>                  s.num =3D group;
+>                  return 0;
+>          }
+>
+>
+> The copy_to_user of struct s is copying a partially initialized struct
+> s, field s.num contains garbage data from the stack and this is being
+> copied back to user space. Field s.num should be assigned some value
+> before the copy_to_user call to avoid uninitialized data from the stack
+> being leaked to user space.
+>
 
-> > +};
-> > +
-> > +static const u32 channel_formats1[] = {
-> > +	DRM_FORMAT_RGB565, DRM_FORMAT_RGB888,
-> > +	DRM_FORMAT_XRGB8888,
-> > +};
-> > +
-> > +static struct drm_plane_funcs yhgch_plane_funcs = {
-> > +	.update_plane = drm_atomic_helper_update_plane,
-> > +	.disable_plane = drm_atomic_helper_disable_plane,
-> > +	.destroy = drm_plane_cleanup,
-> > +	.reset = drm_atomic_helper_plane_reset,
-> > +	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
-> > +	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
-> > +	DRM_GEM_SHADOW_PLANE_FUNCS,
-> 
-> This macro redefines several fields defined previously. You should have gotten a
-> warning.
->
-Delete the three preceding function definitions
- 
-> > +};
-> > +
-> > +
-> > +static enum drm_mode_status
-> > +yhgch_crtc_mode_valid(struct drm_crtc *crtc,
-> > +		      const struct drm_display_mode *mode) {
-> > +	size_t i = 0;
-> > +	int vrefresh = drm_mode_vrefresh(mode);
-> > +
-> > +	if (vrefresh < 59 || vrefresh > 61)
-> > +		return MODE_NOCLOCK;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(yhgch_pll_table); i++) {
-> > +		if (yhgch_pll_table[i].hdisplay == mode->hdisplay &&
-> > +		    yhgch_pll_table[i].vdisplay == mode->vdisplay)
-> > +			return MODE_OK;
-> > +	}
-> > +
-> > +	return MODE_BAD;
-> > +}
-> > +
-> > +static void set_vclock_yhgch(struct drm_device *dev, u64 pll) {
-> > +	u32 val;
-> > +	struct yhgch_drm_private *priv = to_yhgch_drm_private(dev);
-> > +
-> > +	val = readl(priv->mmio + CRT_PLL1_NS);
-> > +	val &= ~(CRT_PLL1_NS_OUTER_BYPASS(1));
-> > +	writel(val, priv->mmio + CRT_PLL1_NS);
-> > +
-> > +	val = CRT_PLL1_NS_INTER_BYPASS(1) | CRT_PLL1_NS_POWERON(1);
-> > +	writel(val, priv->mmio + CRT_PLL1_NS);
-> > +
-> > +	writel(pll, priv->mmio + CRT_PLL1_NS);
-> > +
-> > +	usleep_range(1000, 2000);
-> > +
-> > +	val = pll & ~(CRT_PLL1_NS_POWERON(1));
-> > +	writel(val, priv->mmio + CRT_PLL1_NS);
-> > +
-> > +	usleep_range(1000, 2000);
-> > +
-> > +	val &= ~(CRT_PLL1_NS_INTER_BYPASS(1));
-> > +	writel(val, priv->mmio + CRT_PLL1_NS);
-> > +
-> > +	usleep_range(1000, 2000);
-> > +
-> > +	val |= CRT_PLL1_NS_OUTER_BYPASS(1);
-> > +	writel(val, priv->mmio + CRT_PLL1_NS); }
-> > +
-> > +static void get_pll_config(u64 x, u64 y, u32 *pll1, u32 *pll2) {
-> > +	size_t i;
-> > +	size_t count = ARRAY_SIZE(yhgch_pll_table);
-> > +
-> > +	for (i = 0; i < count; i++) {
-> > +		if (yhgch_pll_table[i].hdisplay == x &&
-> > +		    yhgch_pll_table[i].vdisplay == y) {
-> > +			*pll1 = yhgch_pll_table[i].pll1_config_value;
-> > +			*pll2 = yhgch_pll_table[i].pll2_config_value;
-> > +			return;
-> > +		}
-> > +	}
-> > +
-> > +	/* if found none, we use default value */
-> 
-> Can this happen granted your mode_valid check?
-> 
-After testing, the code will not run to this point, so delete these lines of 
-code.
+That's right! v5 of the patch fixes the issue.
 
-> > +	*pll1 = CRT_PLL1_NS_25MHZ;
-> > +	*pll2 = CRT_PLL2_NS_25MHZ;
-> > +}
-> > +
-> 
-> [...]
-> 
-> > +
-> > +static void yhgch_crtc_atomic_begin(struct drm_crtc *crtc,
-> > +				    struct drm_atomic_state *old_state) {
-> > +	u32 reg;
-> > +	struct drm_device *dev = crtc->dev;
-> > +	struct yhgch_drm_private *priv = to_yhgch_drm_private(dev);
-> > +
-> > +	yhgch_set_power_mode(priv, YHGCH_PW_MODE_CTL_MODE_MODE0);
-> > +
-> > +	/* Enable display power gate & LOCALMEM power gate */
-> > +	reg = readl(priv->mmio + YHGCH_CURRENT_GATE);
-> > +	reg &= ~YHGCH_CURR_GATE_DISPLAY_MASK;
-> > +	reg &= ~YHGCH_CURR_GATE_LOCALMEM_MASK;
-> > +	reg |= YHGCH_CURR_GATE_DISPLAY(1);
-> > +	reg |= YHGCH_CURR_GATE_LOCALMEM(1);
-> > +	yhgch_set_current_gate(priv, reg);
-> > +
-> > +	/* We can add more initialization as needed. */
-> 
-> ???
->
-Delete the redundant comments
- 
-> > +}
-> > +
-> 
-> [..]
-> 
-> > diff --git a/drivers/gpu/drm/yhgch/yhgch_drm_drv.c
-> > b/drivers/gpu/drm/yhgch/yhgch_drm_drv.c
-> > new file mode 100644
-> > index 000000000000..2d7588ab8e2c
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/yhgch/yhgch_drm_drv.c
-> > @@ -0,0 +1,310 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +#include <linux/module.h>
-> > +#include <linux/pci.h>
-> > +#include <linux/bitfield.h>
-> > +
-> > +#include <linux/aperture.h>
-> > +#include <drm/clients/drm_client_setup.h>
-> > +
-> > +#include <drm/drm_atomic_helper.h>
-> > +#include <drm/drm_drv.h>
-> > +#include <drm/drm_fbdev_ttm.h>
-> > +
-> > +#include <drm/drm_gem_framebuffer_helper.h>
-> > +#include <drm/drm_fbdev_shmem.h>
-> > +#include <drm/drm_gem_shmem_helper.h> #include
-> <drm/drm_managed.h>
-> > +#include <drm/drm_module.h> #include <drm/drm_vblank.h>
-> > +
-> > +#include <drm/drm_probe_helper.h>
-> > +
-> > +#include "yhgch_drm_drv.h"
-> > +#include "yhgch_drm_regs.h"
-> > +
-> > +#define MEM_SIZE_RESERVE4KVM 0x200000
-> 
-> Unused
->
-Delete the macro definitions that are no longer used
- 
-> > +
-> 
-> --
-> With best wishes
-> Dmitry
+Thanks!
 
-Best Regards,
-Chu Guangqing
 
