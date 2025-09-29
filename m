@@ -1,107 +1,190 @@
-Return-Path: <linux-kernel+bounces-836483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE113BA9D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F6CBA9D30
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC9A175FF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94939175EE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6028730BBB8;
-	Mon, 29 Sep 2025 15:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D6830C0E6;
+	Mon, 29 Sep 2025 15:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="VWWA0KnM"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FCR94bK2"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623DD30649C;
-	Mon, 29 Sep 2025 15:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E799F30B511;
+	Mon, 29 Sep 2025 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759160379; cv=none; b=HrOOZKBi1NlLbHc7osOQyrdIlBreFyV+D8PftNr0URpr3ttaa+oKTFr+IcD0jdDmq4WLdK7gzbVedWTUlxz7nTYQwqndt5h//+Q9Y8yKzH0zXccCcdQiJM0fbxfVQOuU5yQb7+IMcZIqYfxN2rjTTFtYcljKtbvHmT53Glmxj74=
+	t=1759160593; cv=none; b=TzYgENy3hnQEIUeOdfhMLPPhmmjqA//qndDGjvxMrJlxXmXBYhqEbV/9d8lKSQj4nftyXjsXPql9UAGoPTbajl3izHBFm55vNWVd81FehV+XNBIQwiHtqvwvMh95xM/OwRZ4PVkWeU76ykLMQvWR2aS6aulPDisVCjfHqDi/mgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759160379; c=relaxed/simple;
-	bh=WpiRmRiNktJeHW5C/m0YQuXfG2H8PJzwMojJHmpXVQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ao4kNGJpHHkkiXZgj7aAMW3jNeh8bWMoDhI5iO1EnECle9JI/ZR2a2Kyj3k45QUGMNUKoDIJHjBPfebUNqo8K+I9kqwY2yUeVWrcAUymY6WgU27ZHTxDU3ni2Uoa3zwmmpGEVAKRrKrHAmwkLkuSbvVepVi97kI8OUYYzy1BEB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=VWWA0KnM; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=IsJOyWxYTnSzM823W7VRWdUdPLOKig+uzT39p4FJXVw=; b=VWWA0KnMv1KRO+v0x0Pgoe4jJL
-	Q0z7nv9BmMZQC1tgtRC6yObi66xEw8xnvKEcur2X2k4CCkq5ddT2YHB2bqniNnmHTHb92waqUnD0X
-	ZH2S4QACc2L/mpeYv3zV1Tf3GKSwX47He0qRIg2ZNLdjgGvrjOFAtPBmeo+j3OpR14Z92J+QvRO++
-	4nRsM2gQk0iicjDOGB62XT63NlY/gpGSsULrPsfGHMPMP38qOQVA6IMzFHtKrDz/BjxyZRBhp3MGV
-	aAhCSEFUjMULfwPBTeUiglSdd9BAItwct2FipqTda3/9Bf3VAkeBY6hptTSGRglGPORmfQFFRgC8b
-	7+NHyJ1Q==;
-Received: from e227-076.eduroam.tuwien.ac.at ([128.130.227.76] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1v3FyJ-0008A3-Fe; Mon, 29 Sep 2025 17:39:27 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: guptarud@gmail.com, Dragan Simic <dsimic@manjaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Ondrej Jirman <megi@xff.cz>,
- Martijn Braam <martijn@brixit.nl>,
- Kamil =?UTF-8?B?VHJ6Y2nFhHNraQ==?= <ayufan@ayufan.eu>,
- "Leonardo G. Trombetta" <lgtrombetta@gmx.com>
-Subject: Re: [PATCH v4 0/4] Upstreaming Pinephone Pro Patches
-Date: Mon, 29 Sep 2025 17:39:26 +0200
-Message-ID: <8606261.29KlJPOoH8@phil>
-In-Reply-To: <49dafe9afc5962d8fec10e6135c9b84d@manjaro.org>
-References:
- <20250929-ppp_light_accel_mag_vol-down-v4-0-6598f22d3451@gmail.com>
- <49dafe9afc5962d8fec10e6135c9b84d@manjaro.org>
+	s=arc-20240116; t=1759160593; c=relaxed/simple;
+	bh=5q8LLF4ag2MVwttfhWyI7ecDLzD9/dPboJQ0VHDhT3A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=obHtX7hg+ilaLgLCtZvD52phHFAaSx6nA6LY546BESu8htOkL6Onc5MsLQmoEa4yBksFqfKLdtzABWCY6wXP6MLtmaeV4bu7jKRV9M3VQLOMHQLoyXh2CeOgbtkH9XRQya3rPE6ZAvn/OuxeNum8z1AT86Vwv6OAhG5DNiILkPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FCR94bK2; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 6EDB84E40E53;
+	Mon, 29 Sep 2025 15:43:09 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3B17B606AE;
+	Mon, 29 Sep 2025 15:43:09 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9E9D3102F1A0C;
+	Mon, 29 Sep 2025 17:43:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759160588; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=S1PdaIvO7vK9SB7Z0ERMuEoy98E+U47D3nVJtH+4Aqk=;
+	b=FCR94bK24e1NoOiyF+A/RbIyOW+tTMUG3y4g3og4gWZyyXJaS00FXRsl39dlwRgRIZ/k3J
+	AK+mywa0BxPUY+nCP8IMpGuJ95/GUwJs+cTfjUrCT054gC1lsqpsr4VR9ARrrcD8fX2MaS
+	rbc1p1yzzUEDmIx25+WiAWcBf9q7i3oorfLutoPa3rGXJdTqJRA+1DplYKRG2MRKmzc4/b
+	St12Emjl4h3HuzabkOq9MNbLCJ19bjikzYM0ykLd7aoWBe3I3bFacn4PYd5Cb2wI3ydGg/
+	9fUqOIui11YZn1Aa2IoZiu+Qm638BxPUI/njFLpoL2j73b04aDsJUWBfMkpEbg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Linus Walleij <linus.walleij@linaro.org>,
+  Richard Cochran <richardcochran@gmail.com>,  Gregory CLEMENT
+ <gregory.clement@bootlin.com>,  Marek =?utf-8?Q?Beh=C3=BAn?=
+ <kabel@kernel.org>,
+  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-gpio@vger.kernel.org,
+  netdev@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: Convert
+ marvell,armada-3710-(sb|nb)-pinctrl to DT schema
+In-Reply-To: <20250924223528.2956771-1-robh@kernel.org> (Rob Herring's message
+	of "Wed, 24 Sep 2025 17:35:24 -0500")
+References: <20250924223528.2956771-1-robh@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Mon, 29 Sep 2025 17:43:04 +0200
+Message-ID: <87ms6di7sn.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Am Montag, 29. September 2025, 10:32:59 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb Dragan Simic:
-> Hello Rudraksha,
->=20
-> On 2025-09-29 09:35, Rudraksha Gupta via B4 Relay wrote:
-> >       arm64: dts: rk3399-pinephone-pro: Add light/proximity sensor=20
-> > support
-> >       arm64: dts: rk3399-pinephone-pro: Add accelerometer sensor=20
-> > support
-> >       arm64: dts: rk3399-pinephone-pro: Add magnetometer sensor support
-> >       arm64: dts: rk3399-pinephone-pro: Fix voltage threshold for=20
-> > volume keys
->=20
-> Please note that the patch summaries/subjects are still a bit
-> wrong in the v4 of this series, because there should be no
-> "rk3399-pinephone-pro:" prefixes in them.
->=20
-> You can always check the commit history for the file you're
-> editing, to see what's the expected format of the patch summary.
-> It differs a bit between the subsystems and architectures, so
-> it should always be checked.
+On 24/09/2025 at 17:35:24 -05, "Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-for reference for Rockchip dts files, the preferred format is:
-arm64: dts: rockchip: Do something on boardname
+> Convert the marvell,armada3710-(sb|nb)-pinctrl binding to DT schema
+> format. The binding includes the "marvell,armada-3700-xtal-clock"
+> subnode which is simple enough to include here.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/clock/armada3700-xtal-clock.txt  |  29 ---
+>  .../marvell,armada-3710-xb-pinctrl.yaml       | 122 +++++++++++
+>  .../pinctrl/marvell,armada-37xx-pinctrl.txt   | 195 ------------------
+>  3 files changed, 122 insertions(+), 224 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/armada3700-xt=
+al-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,arm=
+ada-3710-xb-pinctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,arm=
+ada-37xx-pinctrl.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-cloc=
+k.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> deleted file mode 100644
+> index 4c0807f28cfa..000000000000
+> --- a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> +++ /dev/null
+> @@ -1,29 +0,0 @@
+> -* Xtal Clock bindings for Marvell Armada 37xx SoCs
+> -
+> -Marvell Armada 37xx SoCs allow to determine the xtal clock frequencies by
+> -reading the gpio latch register.
+> -
+> -This node must be a subnode of the node exposing the register address
+> -of the GPIO block where the gpio latch is located.
+> -See Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctr=
+l.txt
+> -
+> -Required properties:
+> -- compatible : shall be one of the following:
+> -	"marvell,armada-3700-xtal-clock"
+> -- #clock-cells : from common clock binding; shall be set to 0
+> -
+> -Optional properties:
+> -- clock-output-names : from common clock binding; allows overwrite defau=
+lt clock
+> -	output names ("xtal")
+> -
+> -Example:
+> -pinctrl_nb: pinctrl-nb@13800 {
+> -	compatible =3D "armada3710-nb-pinctrl", "syscon", "simple-mfd";
+> -	reg =3D <0x13800 0x100>, <0x13C00 0x20>;
+> -
+> -	xtalclk: xtal-clk {
+> -		compatible =3D "marvell,armada-3700-xtal-clock";
+> -		clock-output-names =3D "xtal";
+> -		#clock-cells =3D <0>;
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-371=
+0-xb-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/marvell,armad=
+a-3710-xb-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..c4d09d8720bd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pi=
+nctrl.yaml
+> @@ -0,0 +1,122 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/marvell,armada-3710-xb-pinctr=
+l.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Marvell Armada 37xx SoC pin and gpio controller
+> +
+> +maintainers:
+> +  - Gregory CLEMENT <gregory.clement@bootlin.com>
+> +  - Marek Beh=C3=BAn <kabel@kernel.org>
+> +  - Miquel Raynal <miquel.raynal@bootlin.com>
+> +
+> +description: >
+> +  Each Armada 37xx SoC come with two pin and gpio controller one for the=
+ south
+> +  bridge and the other for the north bridge.
 
-aka "arm64: dts: rockchip: " and the rest is free form but should
-mention the board.
+As I think you'll send a v2 because of the robot complaint, maybe you
+could rephrase a bit to ease the reading:
 
-But I'll generally fix those up myself if needed, so right now
-there is no need to resend just for that change.
+"...two pin/gpio controllers, one for..."
+
+> +
+> +  Inside this set of register the gpio latch allows exposing some config=
+uration
+> +  of the SoC and especially the clock frequency of the xtal. Hence, this=
+ node is
+> +  a represent as syscon allowing sharing the register between multiple h=
+ardware
+
+represented as a?
+
+> +  block.
+
+blocks?
 
 
-Heiko
+The rest looks fine, so:
 
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
+Thanks,
+Miqu=C3=A8l
 
