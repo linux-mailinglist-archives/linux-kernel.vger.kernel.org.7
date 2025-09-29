@@ -1,86 +1,216 @@
-Return-Path: <linux-kernel+bounces-836047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E90BA89CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:29:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A33EBA89D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446E9162149
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A32C1881B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7435A28B400;
-	Mon, 29 Sep 2025 09:27:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D560928725E;
+	Mon, 29 Sep 2025 09:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bkgRotVV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C7v1FoqY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bkgRotVV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C7v1FoqY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8612D286880
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698F0285CBF
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138025; cv=none; b=f8JvWftR9ELbrUbYqvnc6t0DrS85lWlTUL6IBd57qrR46aA1WU3HL77Sv7jgnHCivMOkBRPQv0Uc+cssFcKkR+/IASUZvDA0XgJW/9p0tuT2r1YUBonM834pywnBMpKYxiraBf/FtaRA2QXvWuEzX0aQajIjKxV4KuappmsTrjg=
+	t=1759138054; cv=none; b=HhhmI7/dLv8cbkHJN8aEf6fmbWANJ/Dyw3wgOYLYL5dyg5tdBFgVJKl3fqqpLhBcmcWeCZJjth6/tQ0a96BwYYZp+416D4d+jvf/SBbl5T/O8vIt62NR+lE9xmCvCShicq1RUsq/Qf0ELCPxLwHxge8XKUMwUq9SD6rZtQsAjhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138025; c=relaxed/simple;
-	bh=N6rFEwa6PcNvhyr6biIgTaz7CkN/Gt0/xv7vhZcRO9U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sn++/73zmIqY4JmLSfy9dJXRYt2VutnFLa/dh7SAjh8evMS319F6dRfVnlIeja3RX8iJ+G4s8/rk36hKDIf9XK5x1bNda8JCHJ7kwdYKx6myYvRxPFAEw6Kl/HbL0uRCq5EOELcMlloxCBNFzj6TR+JVaz6l8ZMSn4KqNrubxY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-426cea3f07eso117169245ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:27:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759138022; x=1759742822;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXWQyOOTTMwR05LBZX1h7rIQDPuOjg+ngcEVr6b5w8c=;
-        b=BQS1JBBVGEvOMZ5g5NgOYvwOKZmwu+owwLV+FVIpldbCgTlWevfaJLE4WpgEOmgZ3F
-         8v9o6maiChyE2mFegOH9+GH+6IveoyytE65EyMKKYe6Q+RMYYMWu/305R+J4uDNrksIr
-         Ibr7coel/mu1NJHfLFV6fHkkMS3NvT5QP/v3HbpLuy3aTf6y4Ul1aGQdeRTrDJmA8xXa
-         Us4KU9326jPGWHPNR7ZjVDDadgmOuDA0jFdXLs9vhNrsVZmu6YtAy8sAm00Ug9ZSGd2V
-         rsvkXaTzcXn9uEKIIBUG0oEESjdhPPGvTjeCj7s8PqFjN2vLy1MZaXMdNVjT7PmOsi0t
-         vDIA==
-X-Gm-Message-State: AOJu0YyZ3tX2yTRqrG2NFd+BlWVPdtehJ7FJ5n00Ya5mVas5MhnmFblG
-	j5mo3vkna4oRpL2nhpM52xy/ykZfX7FEbzfBJjSsv2rUqtKINFiZYimHApveHT0W+Do/FThq9QL
-	Mphm6nS6JStAxKCYPuCiqKz4AD5xPQ3A2hzzkcz1qC89heGC2YbrLId+JWCY=
-X-Google-Smtp-Source: AGHT+IFjQpGiUgO71HcNjDmxRwnttdJ8WEK9/EG4CointO1BK9mYX55EztHmEqld1DZlE9guZ+aT+zkLFLDEnD6ZIJpv10VPPyFq
+	s=arc-20240116; t=1759138054; c=relaxed/simple;
+	bh=D8cNfGS1Qx+NvxaeGxBxIPlZJrNg3Kib+Kalcokq6iQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=svD34VQoXfPiFkklxL0O4q1xa7bq4sp7elCAK5tsEcPt6XXSu8CC0a+sWIG299R+XMlRGn5XqQdBnfPE/7KzgCZD7y7DBirR6i/G1tGZ7dLVufP2R2buzl6TIIIewphF0777KFsTDzbj/8xMYPoBny/PvYB0vHdSr0frj82XWMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bkgRotVV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C7v1FoqY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bkgRotVV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C7v1FoqY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3922E2099A;
+	Mon, 29 Sep 2025 09:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759138050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=THAGxl1trzNBHfjS0/K74QzBCVdosk64YkSPhfoLeBg=;
+	b=bkgRotVVMBWn6oomD82XK13KXxaLnMiyRpu5U+STT7FwHdQh4yaUREvUo2XPmYR8P61Y86
+	KoQK5dMP0GG8bz5e22YjbeaEdAgtQeeLoBm8eXBZ4wtmtadXc7sGeXoOnyRqFUyTR/U4m5
+	mPqvjlrFbxc2jo9sRzoPEAmjA7s7NnE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759138050;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=THAGxl1trzNBHfjS0/K74QzBCVdosk64YkSPhfoLeBg=;
+	b=C7v1FoqYE59RN5ryAIF6wzn0ovidI+j/mVDXSdP8PTXrizDKGI9wi07tXmoTggbv8abPHV
+	TlYrovP5EuUOUkCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bkgRotVV;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=C7v1FoqY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759138050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=THAGxl1trzNBHfjS0/K74QzBCVdosk64YkSPhfoLeBg=;
+	b=bkgRotVVMBWn6oomD82XK13KXxaLnMiyRpu5U+STT7FwHdQh4yaUREvUo2XPmYR8P61Y86
+	KoQK5dMP0GG8bz5e22YjbeaEdAgtQeeLoBm8eXBZ4wtmtadXc7sGeXoOnyRqFUyTR/U4m5
+	mPqvjlrFbxc2jo9sRzoPEAmjA7s7NnE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759138050;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=THAGxl1trzNBHfjS0/K74QzBCVdosk64YkSPhfoLeBg=;
+	b=C7v1FoqYE59RN5ryAIF6wzn0ovidI+j/mVDXSdP8PTXrizDKGI9wi07tXmoTggbv8abPHV
+	TlYrovP5EuUOUkCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F0BC13782;
+	Mon, 29 Sep 2025 09:27:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yposIAFR2mh0SAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 29 Sep 2025 09:27:29 +0000
+Date: Mon, 29 Sep 2025 11:27:27 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: muchun.song@linux.dev, david@redhat.com, akpm@linux-foundation.org,
+	catalin.marinas@arm.com, will@kernel.org,
+	carl@os.amperecomputing.com, cl@gentwo.org, linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: hugetlb: avoid soft lockup when mprotect with
+ PROT_MTE
+Message-ID: <aNpQ_-uwp7gQDH__@localhost.localdomain>
+References: <20250926162034.1785899-1-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1788:b0:423:fd07:d3f6 with SMTP id
- e9e14a558f8ab-42c6891baddmr14122735ab.15.1759138022620; Mon, 29 Sep 2025
- 02:27:02 -0700 (PDT)
-Date: Mon, 29 Sep 2025 02:27:02 -0700
-In-Reply-To: <20250929075024.115993-1-nooraineqbal@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68da50e6.a70a0220.10c4b.002b.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] KASAN: slab-out-of-bounds Read in change_page_attr_set_clr
-From: syzbot <syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, nooraineqbal@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250926162034.1785899-1-yang@os.amperecomputing.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 3922E2099A
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-Hello,
+On Fri, Sep 26, 2025 at 09:20:34AM -0700, Yang Shi wrote:
+> When calling mprotect() with PROT_MTE, kernel will initialize MTE tags
+> for every single page in the affected area. Soft lockup was observed
+> when doing this for large HugeTLB memory area in our customer's workload
+> (~300GB memory):
+> 
+> watchdog: BUG: soft lockup - CPU#98 stuck for 23s! [t2_new_sysv:126916]
+> 
+> CPU: 98 PID: 126916 Comm: t2_new_sysv Kdump: loaded Not tainted 6.17-rc7
+> Hardware name: GIGACOMPUTING R2A3-T40-AAV1/Jefferson CIO, BIOS 5.4.4.1 07/15/2025
+> pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : mte_clear_page_tags+0x14/0x24
+> lr : mte_sync_tags+0x1c0/0x240
+> sp : ffff80003150bb80
+> x29: ffff80003150bb80 x28: ffff00739e9705a8 x27: 0000ffd2d6a00000
+> x26: 0000ff8e4bc00000 x25: 00e80046cde00f45 x24: 0000000000022458
+> x23: 0000000000000000 x22: 0000000000000004 x21: 000000011b380000
+> x20: ffff000000000000 x19: 000000011b379f40 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> x11: 0000000000000000 x10: 0000000000000000 x9 : ffffc875e0aa5e2c
+> x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> x5 : fffffc01ce7a5c00 x4 : 00000000046cde00 x3 : fffffc0000000000
+> x2 : 0000000000000004 x1 : 0000000000000040 x0 : ffff0046cde7c000
+> 
+> Call trace:
+>   mte_clear_page_tags+0x14/0x24
+>   set_huge_pte_at+0x25c/0x280
+>   hugetlb_change_protection+0x220/0x430
+>   change_protection+0x5c/0x8c
+>   mprotect_fixup+0x10c/0x294
+>   do_mprotect_pkey.constprop.0+0x2e0/0x3d4
+>   __arm64_sys_mprotect+0x24/0x44
+>   invoke_syscall+0x50/0x160
+>   el0_svc_common+0x48/0x144
+>   do_el0_svc+0x30/0xe0
+>   el0_svc+0x30/0xf0
+>   el0t_64_sync_handler+0xc4/0x148
+>   el0t_64_sync+0x1a4/0x1a8
+> 
+> Soft lockup is not triggered with THP or base page because there is
+> cond_resched() called for each PMD size.
+> 
+> So add cond_resched() for hugetlb to avoid soft lockup.
+> 
+> Fixes: 25c17c4b55de ("hugetlb: arm64: add mte support")
+> Tested-by: Carl Worth <carl@os.amperecomputing.com>
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Acked-by: Oscar Salvador <osalvador@suse.de>
 
-Reported-by: syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com
-Tested-by: syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com
+> ---
+>  mm/hugetlb.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index cb5c4e79e0b8..fe6606d91b31 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -7242,6 +7242,8 @@ long hugetlb_change_protection(struct vm_area_struct *vma,
+>  						psize);
+>  		}
+>  		spin_unlock(ptl);
+> +
+> +		cond_resched();
+>  	}
+>  	/*
+>  	 * Must flush TLB before releasing i_mmap_rwsem: x86's huge_pmd_unshare
+> -- 
+> 2.47.0
+> 
 
-Tested on:
-
-commit:         26285807 Add linux-next specific files for 20250926
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=14afeae2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=997066872b7941b6
-dashboard link: https://syzkaller.appspot.com/bug?extid=e34177f6091df113ef20
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=114d2ae2580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Oscar Salvador
+SUSE Labs
 
