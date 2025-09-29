@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-836229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B734BA90DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:37:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C6BBA90ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD718189FD9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:38:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C201C4225
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193023009D8;
-	Mon, 29 Sep 2025 11:37:50 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A30F30103D;
+	Mon, 29 Sep 2025 11:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfdPqr0q"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3506F29D289
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA2A2FBE0E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145869; cv=none; b=ux3tSJ7O3B7olrrcnakA0UGpaCRuedM3eWo33GrdTZHEFE4DVk2RBraVYGVm2a6XaNXsGbSUI9UjnEmuzLYCq3u6JybkAKOKAHrTTu2lrUrM/ygtaDcpAmClK/as5Jp1hXennQCrzQvivMx3YHZ5rdoaBQLDhO5+daiQdVf2CGA=
+	t=1759145898; cv=none; b=IaTmSg3kkbWjJHBKG2kA2dgIbQLOEVcb5JWvxJvI7AHWlhmxSJ/hmC5tf28s4HUhji+bUrt+xYvEEfVxK+0qVHm2kv2wFb0/dM4D8yOOszgl3Ui9ub7v/YcsLl3UtAlIcnVUkdGN7iIom+yP/4tYZSuD+xGknejBZ1Q8i0Djb1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145869; c=relaxed/simple;
-	bh=14SGPZS9nPNEndJRTPYwlhVvLeiJWTHVwacGI0l7DKc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHqk5YN2W9Qeu+IzSVlkL4LMaG8KW+Mggq+J2kKGo0zsOpBUAJ0XQB3egfuW9iJDv4FF/WTcV4a6Uu54f+ktzCpar92D+ZwPWnXr3CLzMxHRmHyVmAljdjEHFK1afJeSlMTdR4QQiC0n0l2XAUmRWg6GGURGkYBIZTyfQnAaiTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1759145898; c=relaxed/simple;
+	bh=4y2av6tyjlgTbUkNyHSSuQdzatlOOOBYpolj3NH1Wy4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=QJYoIopcZxtdIpfAiaIDzl3eyI/D84J8HnaGco3/X/gToXj9IRZhmqyRvB96mVIt4KuMfRXUoTJ3mJespDK/AtEgAZD9YcU68bVMiwa5oSaVczd4dG2eZUqcPVeFWYy2yge+0YIMn0KKata0P6N0Iyc73EbbOO5Honr/YxoCFo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfdPqr0q; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-54a8f6a2d80so1615699e0c.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:37:47 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e46a8a993so3387585e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:38:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759145894; x=1759750694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uRFGCABCLXwEyWrlsO0Qq+AzjRnRQjbLGashvrpUfXo=;
+        b=YfdPqr0qs3D9rKucmAqN29w/CMVC1vWcIdLoSIEnziiBCmhG8N09CfUaJ4nEjd2o71
+         1bKWK7ol0qPDGEE009pIf6s3ES54P/f+VhzYVnKgUKN9DkTEjeMZZn3xLdovyjpYBmGB
+         P8F2kUdlAGgJ0rIieLqCq3qDp+xnHkhxWl/AnyhrnrEUbzIvK/2x8ozB5jtsb9Y2aoyR
+         x2VqWMIF9U9i37vrOgeRgeQbwBfuvc4vpZRGeu0cNDv0HuByS841fLK6SH2yLF4p7sPB
+         nSpGA6WuopVO0rApD+0r3teP9HEt5mCG9fnkfFc9oR5QdGm21zxLXo1nEjDmDrDMu4mQ
+         CGFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759145867; x=1759750667;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=weWdXbQxCnMJeHS7B7BXqXEXqPpjTdZBAI+JQlcZ3Pc=;
-        b=wqt0L7fPOi1+EcQksD9cczxlAhwr9aZOUhuwMhRhcKBXGXKNtWFyngnH5vWwzDRsRu
-         j09svnxhXFE2BjClpMdLNKXXBBjzcmyiYH06mIjhIYG4kYzs5MZFE3dUZcF5l5Tj2fCN
-         Ohk5vn31lE6bBlCgl9RrB7EAhKd5BkBxZKZzQt2SlLjIB5sov1zZSD366qpPTHXDdy/V
-         lat9T+cOmRGy5LF3CgHoKOLa8HbTmU+3esw4zCbIdpPUeKU8XSefsstRcqeSSw167xfk
-         B29WmKEkPBHIz7tZXOV0WxMrzqRH1jI/OJxZ5zp4LP/G3CYojxPcgP38ehZLcHLckTV5
-         Penw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3kvim7xB5FkhJ1/riumH40qPpfw6Fq2/h2TmFFlY81Vh+HNTTi1RGGRCAFu3SMk95rshbybr0gB58KOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAMM4/QGJR+mQJKIJJytQQWSPBi3zWzPrc8oeyKP0z6bh6BC/t
-	MdCxdlMpR1/YGZkTCJUDv1WVGuDaX4j6P+Y8NzuNEfDXvIe9W0crBmftPQzWV6Qz
-X-Gm-Gg: ASbGnct26NDFR7DUGSS+2pCvQCP6oL5wajFu8UXcgu+Acoli/KYb+et2Z/U7ijbbE40
-	DjZmpX6TE89Wz3wF6faFjsELSEfxXMv917ajYhfESSpQoaOUekGD4TRCH5B+nvVIhIFzM1BedmA
-	t9IRXy9DQtu8tABq+mWtXcELLYjdVLUYd7fO7zXeFvqtBsPiKQ40U/+LCDJaDWbJ+CwqDvUaHq2
-	9u+65EuAxG/SUBUoHKmclmQdpek2ocbho9FRN8PDjU2KogAURhZrNpyfOOYbyC8Clal80WALDWZ
-	MncC/C6yJuc15DjW+CMcXMTGrQEmnJQ9n9B74Hqv345S6WcSGWeKCck6j0WXAfrx1J+AGbvpnOP
-	r9QEGwRmwv1h0F75n0MI746uCMT5B1D1Ru6GkI7+n93NPFvvgjhhOdypqtxqEYRKi
-X-Google-Smtp-Source: AGHT+IFIS6lJLQZGh1TQ2ldmvxkZGcJaBejO3Y2olSmoNE53/3y5f6PW3od97FQ6NafXXmLTH892vQ==
-X-Received: by 2002:ac5:c7c7:0:b0:54c:da0:f708 with SMTP id 71dfb90a1353d-54c0da10569mr1829298e0c.9.1759145867124;
-        Mon, 29 Sep 2025 04:37:47 -0700 (PDT)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bedca040bsm2175886e0c.15.2025.09.29.04.37.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 04:37:47 -0700 (PDT)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-54bbe260539so1813187e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:37:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXtwgmIr6JpyX8xRZxnzCPNxLdD0ou/lcJf38707r+pBUPQ6ezmQjgEmEBMw57TDBxZBpq8eyTxWqbCC3o=@vger.kernel.org
-X-Received: by 2002:a05:6122:7cf:b0:544:8d16:4541 with SMTP id
- 71dfb90a1353d-54bea102e5fmr5636901e0c.7.1759145866822; Mon, 29 Sep 2025
- 04:37:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759145894; x=1759750694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uRFGCABCLXwEyWrlsO0Qq+AzjRnRQjbLGashvrpUfXo=;
+        b=V06Zdid5BglZBDaZhiChmB1Lv2SmjSVzaKHjlQHdl8Dza6a3MwDY8QDHaCajbc66zs
+         K3i11yDVG5JSv5+44LJP7wAcT6hGLPkdUnnHFg/GJVU/EYLk9BV9zuN5EcSmaOiSN2tE
+         rwMRQz9zg4Uz7+iqk7Mnq9w4Hb3lqApn95TdPqClydC+CGlaf0sJN0k8Y3LsF8Qt4/vC
+         4dBZ3RvqKCYFvBAVlK604+dbKOtzC9iP9I3aUVOO4d5MR3P8GHF3ESAamLZM72pzYDge
+         u6MEfknyzV+19E8luAmVrYg+RAZN/XFYZVXUd/VithbxR0mUr7gJEGCq72ZJsN4IvLuF
+         VVcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdt5B8xPCT2nJpjQ1+8EYOM3dEy64tNgmS3O0SyaUPa454eLpHCksk3syRFGUKsKH14oP8mRI0xeRqxnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfD/4OIDWabR3wGjQP+cKLlrLjPdXvzvreVImACTPpT3ElTsQD
+	qaBY8i1v4cOvw4rI3POr90KK2feKTyYIlbBz4bHLf9HddQHSZU766x6s
+X-Gm-Gg: ASbGnctgFZbkSBbE3qA9QhD0WFuXWwyFjbQdzEPDx3bAp2DFzJRCsy4plCmrFQWTpRP
+	9VgEjZn1yc2xqmMMEX8mFc0UuNKFEqKPHB1JG+R76iaza9yEz/NLqu0Je1hriUUdVm8Yt7vbkay
+	NcQrB/VRLe4XZa6fmSmb1KLTIsAdt6pjH5MfXOet02vsE5ME3tQTNB2kvkXqjBqWw7qChKGJ7ZL
+	kpSeyoUd/ETmgw7Q0r/3SN7YUR5xBCtFZZdfzC1SUhV5Tnb5zqR0PsK6Bdpr6+cA3zGSNlcbJ0I
+	3aGM77EOEEWUoCMjTIDLYS0Aok7jcK24NiZVxnsgF+iOH3+lB4/aHLOODHNEhFTbOsmKqsjqukR
+	oN/acfJ2DDs/Uq4ru8D50FIVuYmWKis8pNQAQ8Gq3BoE6ao3U8Ipv0VK0/nebL4lGn+Mpv10PGx
+	V2/h/D/nu0Nf14moNr
+X-Google-Smtp-Source: AGHT+IGWicOdrTmQIVdHUSxqrzMHPdo3nASeyojQE1e0iNlPBEVxWIA083+LVJHlm20d4gbGv51hSg==
+X-Received: by 2002:a05:600c:8289:b0:46e:4a2b:d351 with SMTP id 5b1f17b1804b1-46e4a2bd52amr57340655e9.28.1759145894386;
+        Mon, 29 Sep 2025 04:38:14 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46e56f53596sm9502465e9.7.2025.09.29.04.38.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 04:38:13 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 0/5] PCI: mediatek: add support AN7583 + YAML rework
+Date: Mon, 29 Sep 2025 13:37:59 +0200
+Message-ID: <20250929113806.2484-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810122125.792966-1-claudiu.beznea.uj@bp.renesas.com> <20250810122125.792966-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250810122125.792966-4-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Sep 2025 13:37:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX5zSX5URg4vY3Mm8zo9ghE9cTBOMg8ozLZJ2QevF=7uQ@mail.gmail.com>
-X-Gm-Features: AS18NWCeuTWOa-ri5Qlkxi0ZocAYLNnINdMinkM81tK5_mT4fKgbcdtjVA380a0
-Message-ID: <CAMuHMdX5zSX5URg4vY3Mm8zo9ghE9cTBOMg8ozLZJ2QevF=7uQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] arm64: dts: renesas: r9a08g045: Add TSU node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, p.zabel@pengutronix.de, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	niklas.soderlund@ragnatech.se, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 10 Aug 2025 at 15:02, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add TSU node along with thermal zones and keep it enabled in the SoC DTSI.
-> The temperature reported by the TSU can only be read through channel 8 of
-> the ADC. Therefore, enable the ADC by default.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+This little series convert the PCIe GEN2 Documentation to YAML schema
+and adds support for Airoha AN7583 GEN2 PCIe Controller.
 
-Thanks, will queue in renesas-devel for v6.19.
+Changes v4:
+- Additional fix/improvement for YAML conversion
+- Add review tag
+- Fix wording on hifsys patch
+- Rework PCI driver to flags and improve PBus logic
+Changes v3:
+- Rework patch 1 to drop syscon compatible
+Changes v2:
+- Add cover letter
+- Describe skip_pcie_rstb variable
+- Fix hifsys schema (missing syscon)
+- Address comments on the YAML schema for PCIe GEN2
+- Keep alphabetical order for AN7583
 
-Gr{oetje,eeting}s,
+Christian Marangi (5):
+  ARM: dts: mediatek: drop wrong syscon hifsys compatible for
+    MT2701/7623
+  dt-bindings: PCI: mediatek: Convert to YAML schema
+  dt-bindings: PCI: mediatek: Add support for Airoha AN7583
+  PCI: mediatek: convert bool to single flags entry and bitmap
+  PCI: mediatek: add support for Airoha AN7583 SoC
 
-                        Geert
+ .../bindings/pci/mediatek-pcie-mt7623.yaml    | 164 +++++++
+ .../devicetree/bindings/pci/mediatek-pcie.txt | 289 ------------
+ .../bindings/pci/mediatek-pcie.yaml           | 428 ++++++++++++++++++
+ arch/arm/boot/dts/mediatek/mt2701.dtsi        |   2 +-
+ arch/arm/boot/dts/mediatek/mt7623.dtsi        |   3 +-
+ drivers/pci/controller/pcie-mediatek.c        | 120 +++--
+ 6 files changed, 680 insertions(+), 326 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie-mt7623.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.51.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
