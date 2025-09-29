@@ -1,235 +1,205 @@
-Return-Path: <linux-kernel+bounces-835764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F4ABA8011
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:41:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAEDBA8020
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4E1179B21
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:41:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB317B1A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BDA29BD91;
-	Mon, 29 Sep 2025 05:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BB629C325;
+	Mon, 29 Sep 2025 05:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ElpsDq2c"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q8AlYXXd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91CC34BA53
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC4A34BA53
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759124506; cv=none; b=NQOipxFofvsMZdLd2jabPvnL8WCk6BZbQfiPzUh6pRjgHpIq6X0o5wv58Ny6w3FGngdHn/Ra8a+fdni/oC/5bht9sgzFeebCiYi2qXa8xMVGj8XR9GTLqN0tT1hb3AaJK7fGY+9hLfhR+ZXN7sPYqFLFZDIlRrTU3ecvZrT//Sk=
+	t=1759124556; cv=none; b=cgCZOwgDDNfJ0ogmlne6CfIWnzeY7a9lofPtLs7OOmCBnK8HUuaSsNGZUf2uvE7HNAJdbsn1I9/d9Y3NyA4FAouD4h8BsoQ3aU32x55RRN0vF8Qi7ZniYJ2USpuFqmCFSEnexYB7ukwAsMtIzWLmDbOOsjKiXfG2oWm2V3zw8T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759124506; c=relaxed/simple;
-	bh=Lvn8T1wUKlrgTrrq99kvpCDXJ/g1SM5vpZu4qoHH1UE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=e5IiYGU0VzKXgLbNSnTrU+SwO9vtrjTZ0VUgjvfXrYlc6xNPWBKIHPLqsoWyVJTTLMb2Qizp3X188rzx1seKV+iThDECaXcPA/uSZ29s319OhjV/+1/FyzoWC6ZgT32fhsYVDzwkPuC4y1VvtCuv1fRWE4CUzb/T0JMTx1d0/es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ElpsDq2c; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso25286195e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759124501; x=1759729301; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hgi0ZTEkhCBobMcksMg/fMrDzp6rhP+k5TYYLF7nLLU=;
-        b=ElpsDq2cuVEc7E864ePCgL8SxKZzPPShg2JPt9JCxqYwwR/cAl9LACjMQwus4m5nEV
-         H2lMz1+XqX0MhHHP7usuLEyKOevPCP5PcYlLUGIr5a1i+XO71D0pzCVungPKvCzfPIeR
-         z/x/dviMACgkjPCjdj3gbsDJ/bjGn3BdE5FcjIqsF9Rk5L9lvMxe3PSyvLG+CcTOacur
-         ctQdBDSCTFQHpZyn83lCsvN/b8fnFYUqJ81tJsNzS+Aq5k1abqcL28xqJdComzs2XH6P
-         EPxEFKPqGyNMFjBIshyEhFWE9916yfsEFarErQSGBRjwahcdTOFVauUlHBZkiwKBg+nE
-         j8DQ==
+	s=arc-20240116; t=1759124556; c=relaxed/simple;
+	bh=djbdttzWVeZdtdcCBQG2ls7rum6/KDgqWatmSRYyy9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lFa6gHoqh/s9Cw6omg+aHPeTwslKmlRJMvtwL4OcCLxOVTE/F8o5pRzrDLTdT7Bqten1ZuQst4D8I8ULpwTV/c3xWtERlPr9lfztDi027bQWq/EaZeHZJDIeIzjFZw/GKRk+wF4qeyVA+U0Np7kD2Iy1SIPMzOpLj72hoiqcPnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q8AlYXXd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SMuYpl009061
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:42:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rfBzbpwct3yDDq36E8SAQ+hFmXrqjfgGSlZ22u0SUWo=; b=Q8AlYXXdoNZAjB2q
+	TEw+Ewb9XF31iytwBx8jZKR3L4h+xeL2pVn8rUmUwIk52sxlPtTL2ppJ6MIO0tsA
+	pM2ZpaR7XomqPrculQZd8FYRUtavCio+xHdB5VFXgpaZRPB4RgWzgXJ3cz2YDZJk
+	pY6U02VJK4YlXk6Kh0BPl3CFdRslagBhrQzLI9Zlj/Ks5aOBUDp1XNrpxAqchKnr
+	pqQYXiDcyigt1JmKqz6A+2MHx0DGm3QKTdXwNL6x137Ih3PXPHUlDBRiEZw2rTp3
+	FNBjCJrRX32OgDQy5ifUrXrvH82UaoEHCUZB+KqynpdaRqN1aakmfOc3T5ZSrBAP
+	y+wnnQ==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e7gxkyug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:42:32 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3307af9b55eso3693947a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:42:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759124501; x=1759729301;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1759124551; x=1759729351;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hgi0ZTEkhCBobMcksMg/fMrDzp6rhP+k5TYYLF7nLLU=;
-        b=n8awC4rbfJnN2WNI2D8cVcjFZ2XNmkrNdXkCIwHg1fz/eY0cvZGfPuUUv89oQcnNsI
-         qfsD26sacxCxq1TSoYbOYaDXqclbVzc41p19dCRlY4/uTty2d1P2stJN782mIJTHOTk5
-         qWC+QVjlEQ1RDBJXmJXalUdZiTnoSdYMWPN15ZDbbHd14c8m/AQNiemoCrBHBtXzdZ4k
-         xPB86ynyOPZikHKo0FNGXX7FSP4UymcYm7nOEsiz6O2X3FJoHup6Be2xJz5QUqehZd+z
-         0RKmQleABDFTrWchcJ+RNkzhvjUwtTAF7hlH3ghLzGih7qckKREIFL2gPMNRXFLDPXbn
-         Ef9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUuCFTAvLdOd6p251WsJFsL1l1M5JBDgZL/3G5nHcKmK1LPogR7Nd//GmQzIDkzxoj5Kh3mfSyDu9zf6tA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH6qPS/pAEv6Fi65Lge942V7Ej6FiN9hlAJj09Gx5JX+0b0VCm
-	VE5MjatOGebW9W2LnIQVrK1+xGqd6nVlz3BW+ixD81wR45S6TPFLBBUWKAfNwSHzpNA=
-X-Gm-Gg: ASbGnctcuwPNgp7znSNSvawP7dLt9BUPgMfF+KheSPzh1JkSSZl8NoZ1WTUs4twwuET
-	oL9V412i9wdHscUY05W3PI0zxQ+RYaLwuxAS9m06XSP2fEfT4aQraDCgHJxLTUtJNtfdDHudg48
-	AQ+0ktkdtY6KmNBjnYIQQPRKBtVlJ60T629btCHSS3usDXNgsB7/Cntscy+7lHe1cbLZkGnUUFl
-	Pg4URGVS8YaRYPYx2yiptu+3WCiiHJf3tcMN02TEYsRyVz1sruPrU4HjfMoarT8kvMCRTHsmn7y
-	X6Q5aeBdLudSI/3z/S/C9lBm1U8O77ciPgyme/+p68P8X7U7RgVrJTuGiyu34goNA2NeJXg/HeU
-	12xavhNbB8ktR2bvZbS87WHjr3ciwU/SN59Z+JDqfzuUkA3f0l6zQjjdjlRPY2YE2yEIscw==
-X-Google-Smtp-Source: AGHT+IEaKb3g6sQ6remUeoL/AUn5TgHYVpNIer58FUutG2qpwQrKJqse5m9ODma5Lan4BZIkg1Txbw==
-X-Received: by 2002:a05:600c:83c7:b0:45c:b5f7:c6e4 with SMTP id 5b1f17b1804b1-46e32a18479mr129257235e9.35.1759124500781;
-        Sun, 28 Sep 2025 22:41:40 -0700 (PDT)
-Received: from localhost (lfbn-nic-1-10-73.w2-15.abo.wanadoo.fr. [2.15.106.73])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e33e3b300sm90269625e9.1.2025.09.28.22.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 22:41:40 -0700 (PDT)
-Date: Mon, 29 Sep 2025 07:41:38 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lee Jones <lee@kernel.org>, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] pwm: Changes for v6.18-rc1
-Message-ID: <jeblxobrtuzcsgs3r7g5fxvpmauttof3qzrlvlaglueg4ls4ea@dk7kpwkplno2>
+        bh=rfBzbpwct3yDDq36E8SAQ+hFmXrqjfgGSlZ22u0SUWo=;
+        b=UTp2Vyw0Tuczc+JoapT1+1t2EifYiNvL81DZgYK3qj0Vj0axgKiYtI8i2PhGYEnuu1
+         h1sL1tAXhd6UQv3ZxhOZ98xY5KpgZiDh9jkIPZE5xM8vbEi8tQxmNrSh09Mb+76QscHC
+         37gPUvDX17t8mwBYSxoXYNermc89ji00jglyJSU+XHGHueMfUM70WfUmRkYRXOHNV2kd
+         YrjDdlQUG3RV3yUnl5bYRVv5Kq2Fu1Clg2hHeAmjc7LeD15EpvDYPPMeUqT4rBmcVkaC
+         U1qsLwgP1OWXBRpLLVrVq9DWszhxSmtfjzXWYxvABjyKXALBJEViO9KiiWnNZ6YGFbUO
+         0CVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwNAA3/vlcXVJ2CqcjnivYVlwZRaog7GkdriZlbqao6VsFTCjjEPmI6uDJ2vH/yTQG//VjjKJXr2aSTE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcXy5bxuEacTOQilyHbmdxulq4dlkGcprR0U3pZHCqQ2SH8AmJ
+	YZKr2636XDuAwJRZYd4kOLjgdj0jrhauA+RCOu5WSaWlzVHCfL2WiZfVYxnc8DvfINKQWRPIfgG
+	RdcuENIoHlKaD7UD7xiaK4yNHq1NQwZD+IHir+jgXYbyzQfGdG20q/EN6OmmKQHEiKu8=
+X-Gm-Gg: ASbGncsCN52FugfbuozZgY+vRzFlib6T+3vxIKACqBjuXLBS2VP+yyj47cBXRgw8OSq
+	YXzhHQrJfl18iHvFrAD9NUafLrVoHZLHPHg0UZxJFDe+8iAigKc2ivi/8sXm533a4xFmIbwL+vy
+	pJnVxNHzbanKtWuBor8hpVzkcOs2OyWjlqP1XkO/FYsTFnSTiV4orPEUxHCTAaSliN9hF1o6Q1p
+	M4DJFpU0QtOD14pIyQMGDm2dhLbD4/AfvPh8LQEGq17gs/WhHaet170VCIodiF3CmxWLrp+yw15
+	VnuQ3tf+SpkThhELnP0ixEqon7V3hJ2i7KJVGieU0Ep1kNpqTx0f+kU25ylIrE1m6M/DN1YB/Cl
+	KxR5vZfmKumQxUKLw1JoD0S7eMhXa0+hwS7Y=
+X-Received: by 2002:a17:90b:1c04:b0:332:2773:e7bf with SMTP id 98e67ed59e1d1-3342a2b9566mr15491882a91.18.1759124551530;
+        Sun, 28 Sep 2025 22:42:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcs/k3kR5lOsN+V9n/ODodNKvmnVPplyVbFJ8XSQZMHLdp/E45BWmNDfJA1eXIMQW/p9GKdw==
+X-Received: by 2002:a17:90b:1c04:b0:332:2773:e7bf with SMTP id 98e67ed59e1d1-3342a2b9566mr15491859a91.18.1759124551062;
+        Sun, 28 Sep 2025 22:42:31 -0700 (PDT)
+Received: from [10.133.33.234] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3350256d403sm11124204a91.14.2025.09.28.22.42.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Sep 2025 22:42:30 -0700 (PDT)
+Message-ID: <70241129-1e08-41f8-b60c-b72ec079702a@oss.qualcomm.com>
+Date: Mon, 29 Sep 2025 13:42:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kejepkqwbc4zpbkh"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/20] arm64: dts: qcom: kaanapali: Add QUPv3
+ configuration for serial engines
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-13-3fdbc4b9e1b1@oss.qualcomm.com>
+ <9685e29d-bff3-4188-b878-230d0f161ce3@oss.qualcomm.com>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <9685e29d-bff3-4188-b878-230d0f161ce3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: vBA7V6IsO6b41CXpxEg4JAFqn8zSmo-0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX6aMUZ/xvpvVq
+ 33HXFFELi/FlJXDWtwWrovEQudzZb+nswJDFtcZYP7FgvPoyOZE+7J9cS7ft8vq03vNkgGFbMhv
+ mSlczMBhitEqoy0sMBcfZcmsxUFXv1sqXPnRVsFSqoJRhPUIa7Ttx1Usw69wDnQMchK6XAQB5+d
+ aPwmwPQirFpX9QGTf2v3nV4ZxKwu5bdk2nSrYp9Z4JKEoi1DUg4hefuxC+NirtOX+ch+OnbVdRU
+ IxjslfHSfWPi6ndGcMhIpLeyKLWjf0Ad4m25oIbpgdv25N7msAy0Za3w0w0+TwYZqEUx8O3aHqh
+ s5hW46cILbJlZuDKvzfI3zKh3MofJ/8Ea4BXHiOaoCHZbjF1XMYMX+xpLbj6sgwQh+1tuSRW3Ft
+ 6TLzCgG9Mod8DAYgfxlHM+fBIMm1Pg==
+X-Proofpoint-GUID: vBA7V6IsO6b41CXpxEg4JAFqn8zSmo-0
+X-Authority-Analysis: v=2.4 cv=dP6rWeZb c=1 sm=1 tr=0 ts=68da1c49 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=_ltKwtvy-Tbn6v8TjEMA:9
+ a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_02,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 spamscore=0
+ malwarescore=0 bulkscore=0 impostorscore=0 phishscore=0 suspectscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270025
 
 
---kejepkqwbc4zpbkh
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [GIT PULL] pwm: Changes for v6.18-rc1
-MIME-Version: 1.0
 
-Hello Linus,
+On 9/25/2025 8:28 PM, Konrad Dybcio wrote:
+> On 9/25/25 2:17 AM, Jingyi Wang wrote:
+>> From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
+>>
+>> Add device tree support for QUPv3 serial engine protocols on Kaanapali.
+>> Kaanapali has 24 QUP serial engines across 4 QUP wrappers, each with
+>> support of GPI DMA engines, and it also includes 5 I2C hubs.
+>>
+>> Signed-off-by: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
+>> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+> 
+> [...]
+> 
+>> +		gpi_dma2: dma-controller@800000 {
+>> +			compatible = "qcom,kaanapali-gpi-dma", "qcom,sm6350-gpi-dma";
+>> +			reg = <0x0 0x00800000 0x0 0x60000>;
+>> +
+>> +			interrupts = <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 850 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 851 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 852 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 853 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>;
+> 
+> odd indentation (on almost all gpi_dma instances)
+> 
+> [...]
+> 
 
-the following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+will fix
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+Thanks,
+Jingyi
 
-are available in the Git repository at:
+>> -		remoteproc_soccp: remoteproc-soccp@d00000 {
+>> -			compatible = "qcom,kaanapali-soccp-pas";
+>> -			reg = <0x0 0x00d00000 0x0 0x200000>;
+>> +			i2c22: i2c@1a8c000 {
+>> +				compatible = "qcom,geni-i2c";
+>> +				reg = <0x0 0x01a8c000 0x0 0x4000>;
+>>  
+>> -			interrupts-extended = <&intc GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
+>> -					      <&soccp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+>> -					      <&soccp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+>> -					      <&soccp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+>> -					      <&soccp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+>> -					      <&soccp_smp2p_in 9 IRQ_TYPE_EDGE_RISING>,
+>> -					      <&soccp_smp2p_in 10 IRQ_TYPE_EDGE_RISING>;
+>> -			interrupt-names = "wdog",
+>> -					  "fatal",
+>> -					  "ready",
+>> -					  "handover",
+>> -					  "stop-ack",
+>> -					  "pong",
+>> -					  "wake-ack";
+> 
+> Please try to use git format-patch --patience
+> 
+> Konrad
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/p=
-wm/for-6.18-rc1
-
-for you to fetch changes up to 8f2689f194b8d1bff41150ae316abdfccf191309:
-
-  pwm: cros-ec: Avoid -Wflex-array-member-not-at-end warnings (2025-09-15 1=
-1:39:47 +0200)
-
-----------------------------------------------------------------
-pwm: Changes for v6.18-rc1
-
-The core highlights for this cycle are:
-
- - The pca9586 driver was converted to the waveform API.
- - Waveform drivers automatically provide a gpio chip to make PWMs
-   usable as GPIOs. (The pca9586 driver did that in a driver specific
-   implementation before.)
-
-Otherwise it's the usual mix of fixes and device tree and driver changes
-to support new hardware variants.
-
-----------------------------------------------------------------
-
-There is an immutable branch pending for this merge window that was
-created by Lee at
-
-	git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-inpu=
-t-pinctrl-pwm-v6.18
-
-=2E I didn't add it here because it merges cleanly into my tree; you'll get
-it via Lee's PR and probably others, too. (For the next time such a
-situation arises: Would you prefer me including such a merge anyhow?)
-
-Otherwise this PR should be boring for you
-(https://www.youtube.com/watch?v=3DV_ioxeU7Kpw). Diffstat below as usual.
-
-Thanks to all contributors!
-
-Best regards
-Uwe
-
-Colin Ian King (1):
-      pwm: Fix incorrect variable used in error message
-
-Daniel Lezcano (1):
-      dt-bindings: pwm: fsl,vf610-ftm-pwm: Add compatible for s32g2 and s32=
-g3
-
-Ghennadi Procopciuc (1):
-      pwm: Add the S32G support in the Freescale FTM driver
-
-Gustavo A. R. Silva (1):
-      pwm: cros-ec: Avoid -Wflex-array-member-not-at-end warnings
-
-Ivaylo Ivanov (1):
-      dt-bindings: pwm: samsung: add exynos8890 compatible
-
-Janne Grunau (1):
-      dt-bindings: pwm: apple,s5l-fpwm: Add t6020-fpwm compatible
-
-Jisheng Zhang (1):
-      pwm: berlin: Fix wrong register in suspend/resume
-
-Krzysztof Kozlowski (1):
-      dt-bindings: pwm: nxp,lpc1850-sct-pwm: Minor whitespace cleanup in ex=
-ample
-
-Uwe Kleine-K=F6nig (21):
-      pwm: tiehrpwm: Don't drop runtime PM reference in .free()
-      pwm: tiehrpwm: Make code comment in .free() more useful
-      pwm: tiehrpwm: Fix various off-by-one errors in duty-cycle calculation
-      pwm: tiehrpwm: Fix corner case in clock divisor calculation
-      dt-bindings: timer: renesas,rz-mtu3: Use #pwm-cells =3D <3>
-      pwm: Disable PWM_DEBUG check for disabled states
-      pwm: Check actual period and duty_cycle for ignored polarity test
-      pwm: Provide a gpio device for waveform drivers
-      pwm: tiecap: Document behaviour of hardware disable
-      pwm: mediatek: Simplify representation of channel offsets
-      pwm: mediatek: Introduce and use a few more register defines
-      pwm: mediatek: Rework parameters for clk helper function
-      pwm: mediatek: Initialize clks when the hardware is enabled at probe =
-time
-      pwm: mediatek: Implement .get_state() callback
-      pwm: mediatek: Fix various issues in the .apply() callback
-      pwm: mediatek: Lock and cache clock rate
-      pwm: pca9685: Don't disable hardware in .free()
-      pwm: pca9685: Use bulk write to atomicially update registers
-      pwm: pca9685: Make use of register caching in regmap
-      pwm: pca9685: Drop GPIO support
-      pwm: pca9586: Convert to waveform API
-
-Xi Ruoyao (1):
-      pwm: loongson: Fix LOONGSON_PWM_FREQ_DEFAULT
-
- .../devicetree/bindings/pwm/apple,s5l-fpwm.yaml    |   3 +-
- .../devicetree/bindings/pwm/fsl,vf610-ftm-pwm.yaml |  11 +-
- .../bindings/pwm/nxp,lpc1850-sct-pwm.yaml          |   2 +-
- .../devicetree/bindings/pwm/pwm-samsung.yaml       |   1 +
- .../devicetree/bindings/timer/renesas,rz-mtu3.yaml |   7 +-
- drivers/pwm/Kconfig                                |   9 +
- drivers/pwm/core.c                                 | 108 +++-
- drivers/pwm/pwm-berlin.c                           |   4 +-
- drivers/pwm/pwm-cros-ec.c                          |  10 +-
- drivers/pwm/pwm-fsl-ftm.c                          |  35 +-
- drivers/pwm/pwm-loongson.c                         |   2 +-
- drivers/pwm/pwm-mediatek.c                         | 312 ++++++++----
- drivers/pwm/pwm-pca9685.c                          | 555 +++++++++--------=
-----
- drivers/pwm/pwm-tiecap.c                           |   4 +
- drivers/pwm/pwm-tiehrpwm.c                         | 154 +++---
- include/linux/pwm.h                                |   3 +
- 16 files changed, 683 insertions(+), 537 deletions(-)
-
---kejepkqwbc4zpbkh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjaHA8ACgkQj4D7WH0S
-/k6QeAf/Y7JaZiqli26ZPUagiLUzmPPrf7ofqprB65lAS8MdzsufDsX/hq32McVa
-Aps56clnG7/62+J8gvO/ZlkBioI4NbMeeKkGL1UAmL+/8jZfwbSz72d3nB6fN1rI
-h++6YB5Zp+G4bHhEuV77ys4YRCbah6pOGgzxxHOX2V1Qdebqg+ZE1lf74l0XeBSn
-5ugy/6ysbTkEKGrX2arlawRSrWF/5/WUqXXKmvUi5lM0lTfJZTLoO1E4n/vdX6Hw
-ZYF8bJ8dn0P1PQTgNktBhOpf62C1w1pKKAqj4I1g40xYe4ccDGARKsd7qzdbtLs2
-2K6pRMfvi/1qOneK+XI6uTEZdqurBw==
-=YibB
------END PGP SIGNATURE-----
-
---kejepkqwbc4zpbkh--
 
