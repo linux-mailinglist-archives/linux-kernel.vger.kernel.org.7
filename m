@@ -1,162 +1,99 @@
-Return-Path: <linux-kernel+bounces-836121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91343BA8CD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:00:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23973BA8CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE4287A4A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:58:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB7E1891621
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136112F1FD8;
-	Mon, 29 Sep 2025 09:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4852F9D8E;
+	Mon, 29 Sep 2025 10:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFkX9Y9L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="mCn1xxc+"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AEC2F1FC8;
-	Mon, 29 Sep 2025 09:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273EA2F99BC;
+	Mon, 29 Sep 2025 10:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759139986; cv=none; b=iw/P5BO+5wJWPrBCisBLLaWpls3Xd7GPSn9cfNgpd2FBY0hUg3D58XWLTfEuOE2FWICgfaS8or8rtcqvnIXGpMxD+6pnA7EezaJ0/dQmgOKpGaXvwiDnMLUMpbmloxrlZ8QQdEYJyIIlkeHR1nQ5+d8GHNGn/INmoVffi5eHRj8=
+	t=1759140121; cv=none; b=DP7PhIW3jP+yT117R33lFrhZQpBSMCIBGBPISZXZ58c50/Dt0dGI/ndO2NELNZZCcYb7DIb7HjiSz0A9aO/BimQy3oAavBsDSXLf8kwP4I9NcJV8vZrWt/rtGcAcZLdQ83rMNXNAo3phuHsPydm3lQbPo4houvQMX/iEq/2Bx/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759139986; c=relaxed/simple;
-	bh=DagTvSp+7YAi/LuUfSuuyOhuhMMN85uMrXt9yNyDwXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAneaCyzAvSAWUlRr9WtN6mH2GZbZ8QV8OwbZgxnF9rLGcuLgwWGBtox6OsojbgKvZK6cQgPEMzhWM98zdBKWMyNKhJvoYr+XL5Eg4i8IEf0AJHB7BC1PGWWz7TgjoV/UXmkHo1tln8K6+9XLgfH8WlIgxS50PBP/exNU1lpTpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFkX9Y9L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A624C4CEF4;
-	Mon, 29 Sep 2025 09:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759139986;
-	bh=DagTvSp+7YAi/LuUfSuuyOhuhMMN85uMrXt9yNyDwXg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DFkX9Y9LmfhlZIsnhFCcBpQYWmHlN1hgAkA65NoJ3iTOFffL1Ksn+Z1wDxHLViegX
-	 QT94NEK4623YNH9tvzBP+SxfTveBPGx23MKdVdFUfrlRaCAqmIFSNZ2f7qEG8iKg8J
-	 GFifAnAKMBvrEgBy8pO1V7oOi7Q7CUe2EJhv6wipIH9Fpdi2OPfvvbCl6HIrgd0fUd
-	 WC744hLtq89xwhKChBHzJOPTlKsziojJywxf3ELq9AyzP7PP8l2Aw8JOZ4CX944aYx
-	 wbtuLfKkkfqmxa46WVFUnHgPzESiKLzCt1Kj8/1RdfV7r3RVI8OIXFQ5NU+cTuO44T
-	 t3CVC6fdKceZw==
-Date: Mon, 29 Sep 2025 10:59:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: Nishanth Menon <nm@ti.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] net: netcp: Fix crash in error path when DMA channel
- open fails
-Message-ID: <aNpYjvpr8xixDUM6@horms.kernel.org>
-References: <20250926150853.2907028-1-nm@ti.com>
- <aNa7rEQLJreJF58p@horms.kernel.org>
- <ef2bd666-f320-4dc5-b7ae-d12c0487c284@ti.com>
- <aNbCgK76kQqhcQY2@horms.kernel.org>
- <08a13fb0-dd12-491e-98af-ef67d55cc403@ti.com>
+	s=arc-20240116; t=1759140121; c=relaxed/simple;
+	bh=p5krCsk5tEj0RdSxxcj8uuSew5hXh67QcWAkeZl0lPU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Eu5e1UG3wzA7TbZq6nZLClvhWn+BrYP0Au1dp5D3xxiyTvXewwV/uc/SofK+NpQYAp4gYoU3PId89Se2NxN7Z6Qsl6rpLfYyhmY0hA/QMmXdl+6AxMrGwP1RWgPbLn3sp5H1EWgZLQNHNNt4BnUgy+2KNSH/k939ZUtAPAEG/2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=mCn1xxc+; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 6163C26106;
+	Mon, 29 Sep 2025 12:01:54 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id DgPnpGQdaUeP; Mon, 29 Sep 2025 12:01:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1759140113; bh=p5krCsk5tEj0RdSxxcj8uuSew5hXh67QcWAkeZl0lPU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=mCn1xxc+q+DoWnlmWYOr7lHIiwRv2WiGUM0nRQf4DYQBoWaBgTtR3UOYAielY4p8i
+	 CaXZMlCYoPfDlfpVgEz2Twp26sitmR05DJvZoUsW5SOxJTilElHaBbAeavd7MpSQIJ
+	 UFhMk698GAEB52fDa38Sdi5zg06FWY8q6wwMwYiPZVmz+JrOxrPtHrye89W2qTXgBe
+	 3YwYA1lt1rWyrL2X+Nu+OGMYiGN94KGTAZrQJxJvdrvn6QWPUCQIO9qJDsTWgcpHTr
+	 SN94jA9yjup6okXHquhbyticue/tb9AZj2de3wexH/vJnEiQaPR0KsiH1exu326ACJ
+	 97Ye3k4miEzGQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <08a13fb0-dd12-491e-98af-ef67d55cc403@ti.com>
+Date: Mon, 29 Sep 2025 10:01:53 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] arm64: dts: exynos7870: relocate ${x}-names property
+ after ${x}
+In-Reply-To: <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
+References: <20250928-exynos7870-dt-fixes-v1-0-a40e77a73f16@disroot.org>
+ <20250928-exynos7870-dt-fixes-v1-1-a40e77a73f16@disroot.org>
+ <CAJKOXPf+fASV2WP+ix_6qb+L-0WqsqLAG7K7FxeQgscsbOUsOA@mail.gmail.com>
+Message-ID: <6dff1e8256f3d0932d1f5ad941e129db@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 26, 2025 at 10:28:47PM +0530, Siddharth Vadapalli wrote:
-> On 26/09/25 10:12 PM, Simon Horman wrote:
-> > On Fri, Sep 26, 2025 at 09:57:02PM +0530, Siddharth Vadapalli wrote:
-> > > On 26/09/25 9:43 PM, Simon Horman wrote:
-> > > > On Fri, Sep 26, 2025 at 10:08:53AM -0500, Nishanth Menon wrote:
-> > > > > When knav_dma_open_channel() fails in netcp_setup_navigator_resources(),
-> > > > > the rx_channel field is set to an ERR_PTR value. Later, when
-> > > > > netcp_free_navigator_resources() is called in the error path, it attempts
-> > > > > to close this invalid channel pointer, causing a crash.
-> > > > > 
-> > > > > Add a check for ERR values to handle the failure scenario.
-> > > > > 
-> > > > > Fixes: 84640e27f230 ("net: netcp: Add Keystone NetCP core driver")
-> > > > > Signed-off-by: Nishanth Menon <nm@ti.com>
-> > > > > ---
-> > > > > 
-> > > > > Seen on kci log for k2hk: https://dashboard.kernelci.org/log-viewer?itemId=ti%3A2eb55ed935eb42c292e02f59&org=ti&type=test&url=http%3A%2F%2Ffiles.kernelci.org%2F%2Fti%2Fmainline%2Fmaster%2Fv6.17-rc7-59-gbf40f4b87761%2Farm%2Fmulti_v7_defconfig%2BCONFIG_EFI%3Dy%2BCONFIG_ARM_LPAE%3Dy%2Bdebug%2Bkselftest%2Btinyconfig%2Fgcc-12%2Fbaseline-nfs-boot.nfs-k2hk-evm.txt.gz
-> > > > > 
-> > > > >    drivers/net/ethernet/ti/netcp_core.c | 2 +-
-> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-> > > > > index 857820657bac..4ff17fd6caae 100644
-> > > > > --- a/drivers/net/ethernet/ti/netcp_core.c
-> > > > > +++ b/drivers/net/ethernet/ti/netcp_core.c
-> > > > > @@ -1549,7 +1549,7 @@ static void netcp_free_navigator_resources(struct netcp_intf *netcp)
-> > > > >    {
-> > > > >    	int i;
-> > > > > -	if (netcp->rx_channel) {
-> > > > > +	if (!IS_ERR(netcp->rx_channel)) {
-> > > > >    		knav_dma_close_channel(netcp->rx_channel);
-> > > > >    		netcp->rx_channel = NULL;
-> > > > >    	}
-> > > > 
-> > > > Hi Nishanth,
-> > > > 
-> > > > Thanks for your patch.
-> > > > 
-> > > > I expect that netcp_txpipe_close() has a similar problem too.
-> > > > 
-> > > > But I also think that using IS_ERR is not correct, because it seems to me
-> > > > that there are also cases where rx_channel can be NULL.
-> > > 
-> > > Could you please clarify where rx_channel is NULL? rx_channel is set by
-> > > invoking knav_dma_open_channel().
-> > 
-> > Hi Siddharth,
-> > 
-> > I am assuming that when netcp_setup_navigator_resources() is called, at
-> > least for the first time, that netcp->rx_channel is NULL. So any of the
-> > occurrence of 'goto fail' in that function before the call to
-> > knav_dma_open_channel().
+On 2025-09-28 21:56, Krzysztof Kozlowski wrote:
+> On Mon, 29 Sept 2025 at 01:44, Kaustabh Chakraborty
+> <kauschluss@disroot.org> wrote:
+>> 
+>> All ${x}-names properties are conventionally placed after their
+>> corresponding ${x} properties. For instance, 'clock-names' must follow
+>> 'clocks', 'interrupt-names' must follow 'interrupts'. Make necessary
+>> changes to follow said convention. No functional changes made.
+>> 
 > 
-> I missed this. Thank you for pointing this out.
+> I don't intend to take such cosmetic changes, because they interfere
+> with stable back porting, unless we have a tool for such cleanup. Did
+> you use my prototype tool for that or some other tool?
 
-No problem. These error paths are tricking things.
+No, I did it manually. This is due to your first remark in [1] and
+my corresponding reply in [2]. What do I do here then?
 
-> > > Also, please refer to:
-> > > https://github.com/torvalds/linux/commit/5b6cb43b4d62
-> > > which specifically points out that knav_dma_open_channel() will not return
-> > > NULL so the check for NULL isn't required.
-> > > > 
-> > > > I see that on error knav_dma_open_channel() always returns ERR_PTR(-EINVAL)
-> > > > (open coded as (void *)-EINVAL) on error. So I think a better approach
-> > > > would be to change knav_dma_open_channel() to return NULL, and update callers
-> > > > accordingly.
-> > > 
-> > > The commit referred to above made changes to the driver specifically due to
-> > > the observation that knav_dma_open_channel() never returns NULL. Modifying
-> > > knav_dma_open_channel() to return NULL will effectively result in having to
-> > > undo the changes made by the commit.
-> > 
-> > I wasn't aware of that patch. But my observation is that the return value
-> > of knav_dma_open_channel() is still not handled correctly. E.g. the bug
-> > your patch is fixing.  And I'm proposing an alternate approach which I feel
-> > will be less error-prone.
+[1] 
+https://lore.kernel.org/all/6f0451ee-ddb8-4ded-8f0a-b491de9cc308@kernel.org/
+[2] 
+https://lore.kernel.org/all/00240935c664edaec3092354a303a91f@disroot.org/
+
 > 
-> Ok. If I understand correctly, you are proposing that the 'error codes'
-> returned by knav_dma_open_channel() should be turned into a dev_err() print
-> for the user and knav_dma_open_channel() should always return NULL in case
-> of failure and a pointer to the channel in case of success. Is that right?
-
-I'm ambivalent regarding the dev_err() part. Because the error is always
-the same. And I'm not really sure that logging it adds anything. But if you
-do go that way, please consider using %pe.  consider using
-
-Regarding knav_dma_open_channel(0 always returning NULL, yes, that is my
-suggestion. Of course the callers and anything else that uses that
-return value need to be audited and updated as appropriate.
-
-Thanks!
+> Best regards,
+> Krzysztof
 
