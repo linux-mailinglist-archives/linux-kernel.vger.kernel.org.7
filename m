@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-836243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F60BA9159
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:43:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D194BA915C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5EA33A278A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:43:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCFC1920333
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35B5302169;
-	Mon, 29 Sep 2025 11:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BE530217F;
+	Mon, 29 Sep 2025 11:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fnywTWxI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZSj0gg2I"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBCC302166
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC2E302CA0
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759146177; cv=none; b=dFQfRP0+Dy4zcBd2GO/ceuoNU61V/w8kQ5DKmi3scAEqQXyzCmzOMhAHjbnGm2vp4uOCU9uh4cRGbltsnalCzu+mSCxWAEgZZ8xyzz/bSqtj0VqD3OYwD03GaSXowBYxraFq8N8euPWMu756YJAwuoND+0584MBRbk4pkoxs/0c=
+	t=1759146182; cv=none; b=gt9+fUSeViMhCTggCI7iAGmV5VPGKWTMcV4DlMWz1SSCq2O1c1SyKlKviNMRyQojtMjUUd5bNw+7XP+wwf96eP8qWkoemo4I9re65lZMHEP9mcIEJdqLB6rr1MxYiCy5jqgdV6xFcxL1GUQfqSUR5BJHanX+j7ztSn2u/VipjC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759146177; c=relaxed/simple;
-	bh=NykoXUSyrKGkgbvux2M+5GWDOj5iJlu5MUP6n9HYUDs=;
+	s=arc-20240116; t=1759146182; c=relaxed/simple;
+	bh=nEtyUr3R4f130JvlekB1xv6q2n31hAktv+O+ORIhXF8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DyBxriOVaYHcyQArO8NlG3rybGX/g+CklUzmsyNKDj2UfSRZElr7RtgIVYQZuBrgnRNacLpEnuvWo2l2Wc2St3Y53xXGV7PyqRgEv+TEAHi2JFdPC4Ooc2GZqVhCNN2g53LVV0xoL+4TeasmNQzbQJM+zCScurhZUWOTFCQgTsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fnywTWxI; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=E68a9WIsi53wOKcQmlsn5gaqHUZLDRNSiS/Y0hARwqCGvZb6ORYxOAbipSrDYrm2NCv62slNzzBkCmf2JGpFhkTj0DJVPnVblUHq24HJK5qFZFjSHwJXFihwdSDiVfvdleuasxyMibkQrZRd5caHAEBDmieEec4X6awg2614byg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZSj0gg2I; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759146174;
+	s=mimecast20190719; t=1759146179;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FfADzoiCbyBtyAaLw463Wx6LUyiLBEBIcUcZudbfl5k=;
-	b=fnywTWxILq+tOGB52U5Qm3AuquBxQqyZv9rm6C4295bksR42r1/OfIp5lJZrP4iwCuxPbv
-	Oe78ViMEEgvKRCCaMUVfmkfvBJvWs0M6PYP+gcTrQ+mEsPIQ0t9AROCNeZtis0MQBGRjro
-	pQJ6Xk5XKcO6NtKTmr2z1K60WMklULA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=wK8XYbna/kr6s7zcm8omtA4zXQRbuBS4F3NKIioLVWg=;
+	b=ZSj0gg2IF5T5OourZ/PTpeO5rkku+sRf+lggUxUBchF/ZQRBYEfCnj9npeJ5bIvcg+qF8D
+	l4J1Hz3cob6SgUaYq/DDryAmMHmcPvuSnPqyVDDbwBqzhBJd9o/jkj5JzDF3MT2ZuLGMFY
+	VLBYOUXj/y6Unk5ZzU2Xl3HuMcr5vLM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-M6vFsBw4NUqOLclGlyQs1Q-1; Mon,
- 29 Sep 2025 07:42:50 -0400
-X-MC-Unique: M6vFsBw4NUqOLclGlyQs1Q-1
-X-Mimecast-MFC-AGG-ID: M6vFsBw4NUqOLclGlyQs1Q_1759146169
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-10rq5rxoPQanakT1q6Lsrw-1; Mon,
+ 29 Sep 2025 07:42:56 -0400
+X-MC-Unique: 10rq5rxoPQanakT1q6Lsrw-1
+X-Mimecast-MFC-AGG-ID: 10rq5rxoPQanakT1q6Lsrw_1759146174
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4CE7195608E;
-	Mon, 29 Sep 2025 11:42:48 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C239180057C;
+	Mon, 29 Sep 2025 11:42:54 +0000 (UTC)
 Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.44.32.41])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6910E19560A2;
-	Mon, 29 Sep 2025 11:42:44 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EC3AE19560B9;
+	Mon, 29 Sep 2025 11:42:49 +0000 (UTC)
 From: Gabriele Monaco <gmonaco@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	linux-mm@kvack.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH v3 3/4] sched: Compact RSEQ concurrency IDs in batches
-Date: Mon, 29 Sep 2025 13:42:24 +0200
-Message-ID: <20250929114225.36172-4-gmonaco@redhat.com>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH v3 4/4] selftests/rseq: Add test for mm_cid compaction
+Date: Mon, 29 Sep 2025 13:42:25 +0200
+Message-ID: <20250929114225.36172-5-gmonaco@redhat.com>
 In-Reply-To: <20250929114225.36172-1-gmonaco@redhat.com>
 References: <20250929114225.36172-1-gmonaco@redhat.com>
 Precedence: bulk
@@ -80,168 +81,267 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Currently, task_mm_cid_work() is called from resume_user_mode_work().
-This can delay the execution of the corresponding thread for the entire
-duration of the function, negatively affecting the response in case of
-real time tasks.
-In practice, we observe task_mm_cid_work increasing the latency of
-30-35us on a 128 cores system, this order of magnitude is meaningful
-under PREEMPT_RT.
+A task in the kernel (task_mm_cid_work) runs somewhat periodically to
+compact the mm_cid for each process. Add a test to validate that it runs
+correctly and timely.
 
-Run the task_mm_cid_work in batches of up to CONFIG_RSEQ_CID_SCAN_BATCH
-CPUs, this reduces the duration of the delay for each scan.
+The test spawns 1 thread pinned to each CPU, then each thread, including
+the main one, runs in short bursts for some time. During this period, the
+mm_cids should be spanning all numbers between 0 and nproc.
 
-The task_mm_cid_work contains a mechanism to avoid running more
-frequently than every 100ms. Keep this pseudo-periodicity only on
-complete scans.
-This means each call to task_mm_cid_work returns prematurely if the
-period did not elapse and a scan is not ongoing (i.e. the next batch to
-scan is not the first).
-This way full scans are not excessively delayed while still keeping each
-run, and introduced latency, short.
+At the end of this phase, a thread with high enough mm_cid (>= nproc/2)
+is selected to be the new leader, all other threads terminate.
 
-Fixes: 223baf9d17f2 ("sched: Fix performance regression introduced by mm_cid")
+After some time, the only running thread should see 0 as mm_cid, if that
+doesn't happen, the compaction mechanism didn't work and the test fails.
+
+The test never fails if only 1 core is available, in which case, we
+cannot test anything as the only available mm_cid is 0.
+
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 ---
- include/linux/mm_types.h | 15 +++++++++++++++
- init/Kconfig             | 12 ++++++++++++
- kernel/sched/core.c      | 31 ++++++++++++++++++++++++++++---
- 3 files changed, 55 insertions(+), 3 deletions(-)
+ tools/testing/selftests/rseq/.gitignore       |   1 +
+ tools/testing/selftests/rseq/Makefile         |   2 +-
+ .../selftests/rseq/mm_cid_compaction_test.c   | 204 ++++++++++++++++++
+ 3 files changed, 206 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5dab88707014..83f6dc06b15f 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -994,6 +994,13 @@ struct mm_struct {
- 		 * When the next mm_cid scan is due (in jiffies).
- 		 */
- 		unsigned long mm_cid_next_scan;
-+		/*
-+		 * @mm_cid_scan_batch: Counter for batch used in the next scan.
-+		 *
-+		 * Scan in batches of CONFIG_RSEQ_CID_SCAN_BATCH. This field
-+		 * increments at each scan and reset when all batches are done.
-+		 */
-+		unsigned int mm_cid_scan_batch;
- 		/**
- 		 * @nr_cpus_allowed: Number of CPUs allowed for mm.
- 		 *
-@@ -1389,6 +1396,7 @@ static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
- 	raw_spin_lock_init(&mm->cpus_allowed_lock);
- 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
- 	cpumask_clear(mm_cidmask(mm));
-+	mm->mm_cid_scan_batch = 0;
- }
+diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
+index 0fda241fa62b..b3920c59bf40 100644
+--- a/tools/testing/selftests/rseq/.gitignore
++++ b/tools/testing/selftests/rseq/.gitignore
+@@ -3,6 +3,7 @@ basic_percpu_ops_test
+ basic_percpu_ops_mm_cid_test
+ basic_test
+ basic_rseq_op_test
++mm_cid_compaction_test
+ param_test
+ param_test_benchmark
+ param_test_compare_twice
+diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+index 0d0a5fae5954..bc4d940f66d4 100644
+--- a/tools/testing/selftests/rseq/Makefile
++++ b/tools/testing/selftests/rseq/Makefile
+@@ -17,7 +17,7 @@ OVERRIDE_TARGETS = 1
+ TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
+ 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
+ 		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice \
+-		syscall_errors_test
++		syscall_errors_test mm_cid_compaction_test
  
- static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
-@@ -1427,8 +1435,15 @@ static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumas
+ TEST_GEN_PROGS_EXTENDED = librseq.so
  
- static inline bool mm_cid_needs_scan(struct mm_struct *mm)
- {
-+	unsigned int next_batch;
+diff --git a/tools/testing/selftests/rseq/mm_cid_compaction_test.c b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
+new file mode 100644
+index 000000000000..d13623625f5a
+--- /dev/null
++++ b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
+@@ -0,0 +1,204 @@
++// SPDX-License-Identifier: LGPL-2.1
++#define _GNU_SOURCE
++#include <assert.h>
++#include <pthread.h>
++#include <sched.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <stddef.h>
 +
- 	if (!mm)
- 		return false;
-+	next_batch = READ_ONCE(mm->mm_cid_scan_batch);
-+	/* Always needs scan unless it's the first batch. */
-+	if (CONFIG_RSEQ_CID_SCAN_BATCH * next_batch < num_possible_cpus() &&
-+	    next_batch)
-+		return true;
- 	return time_after(jiffies, READ_ONCE(mm->mm_cid_next_scan));
- }
- #else /* CONFIG_SCHED_MM_CID */
-diff --git a/init/Kconfig b/init/Kconfig
-index 854b35e33318..8905d64c2598 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1918,6 +1918,18 @@ config DEBUG_RSEQ
- 
- 	  If unsure, say N.
- 
-+config RSEQ_CID_SCAN_BATCH
-+	int "Number of CPUs to scan at every mm_cid compaction attempt"
-+	range 1 NR_CPUS
-+	default 16
-+	depends on SCHED_MM_CID
-+	help
-+	  CPUs are scanned pseudo-periodically to compact the CID of each task,
-+	  this operation can take a longer amount of time on systems with many
-+	  CPUs, resulting in higher scheduling latency for the current task.
-+	  A higher value means the CID is compacted faster, but results in
-+	  higher scheduling latency.
++#include "../kselftest.h"
++#include "rseq.h"
 +
- config CACHESTAT_SYSCALL
- 	bool "Enable cachestat() system call" if EXPERT
- 	default y
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 30652bb4a223..14b79c143d26 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10784,11 +10784,11 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
- 
- static void task_mm_cid_work(struct callback_head *work)
- {
-+	int weight, cpu, from_cpu, this_batch, next_batch, idx;
- 	unsigned long now = jiffies, old_scan, next_scan;
- 	struct task_struct *t = current;
- 	struct cpumask *cidmask;
- 	struct mm_struct *mm;
--	int weight, cpu;
- 
- 	WARN_ON_ONCE(t != container_of(work, struct task_struct, cid_work));
- 
-@@ -10798,6 +10798,17 @@ static void task_mm_cid_work(struct callback_head *work)
- 	mm = t->mm;
- 	if (!mm)
- 		return;
-+	this_batch = READ_ONCE(mm->mm_cid_scan_batch);
-+	next_batch = this_batch + 1;
-+	from_cpu = cpumask_nth(this_batch * CONFIG_RSEQ_CID_SCAN_BATCH,
-+			       cpu_possible_mask);
-+	if (from_cpu >= nr_cpu_ids) {
-+		from_cpu = 0;
-+		next_batch = 1;
-+	}
-+	/* Delay scan only if we are done with all cpus. */
-+	if (from_cpu != 0)
-+		goto cid_compact;
- 	old_scan = READ_ONCE(mm->mm_cid_next_scan);
- 	next_scan = now + msecs_to_jiffies(MM_CID_SCAN_DELAY);
- 	if (!old_scan) {
-@@ -10813,17 +10824,31 @@ static void task_mm_cid_work(struct callback_head *work)
- 		return;
- 	if (!try_cmpxchg(&mm->mm_cid_next_scan, &old_scan, next_scan))
- 		return;
++#define VERBOSE 0
++#define printf_verbose(fmt, ...)                    \
++	do {                                        \
++		if (VERBOSE)                        \
++			printf(fmt, ##__VA_ARGS__); \
++	} while (0)
 +
-+cid_compact:
-+	if (!try_cmpxchg(&mm->mm_cid_scan_batch, &this_batch, next_batch))
-+		return;
- 	cidmask = mm_cidmask(mm);
- 	/* Clear cids that were not recently used. */
--	for_each_possible_cpu(cpu)
-+	idx = 0;
-+	cpu = from_cpu;
-+	for_each_cpu_from(cpu, cpu_possible_mask) {
-+		if (idx++ == CONFIG_RSEQ_CID_SCAN_BATCH)
-+			break;
- 		sched_mm_cid_remote_clear_old(mm, cpu);
++/* 50 ms */
++#define RUNNER_PERIOD 50000
++/*
++ * Number of runs before we terminate or get the token.
++ * The number is slowly increasing with the number of CPUs as the compaction
++ * process can take longer on larger systems. This is an arbitrary value.
++ */
++#define THREAD_RUNS (3 + args->num_cpus/8)
++
++/*
++ * Number of times we check that the mm_cid were compacted.
++ * Checks are repeated every RUNNER_PERIOD.
++ */
++#define MM_CID_COMPACT_TIMEOUT 10
++
++struct thread_args {
++	int cpu;
++	int num_cpus;
++	pthread_mutex_t *token;
++	pthread_barrier_t *barrier;
++	pthread_t *tinfo;
++	struct thread_args *args_head;
++};
++
++static void __noreturn *thread_runner(void *arg)
++{
++	struct thread_args *args = arg;
++	int i, ret, curr_mm_cid;
++	cpu_set_t cpumask;
++
++	CPU_ZERO(&cpumask);
++	CPU_SET(args->cpu, &cpumask);
++	ret = pthread_setaffinity_np(pthread_self(), sizeof(cpumask), &cpumask);
++	if (ret) {
++		errno = ret;
++		perror("Error: failed to set affinity");
++		abort();
 +	}
- 	weight = cpumask_weight(cidmask);
- 	/*
- 	 * Clear cids that are greater or equal to the cidmask weight to
- 	 * recompact it.
- 	 */
--	for_each_possible_cpu(cpu)
-+	idx = 0;
-+	cpu = from_cpu;
-+	for_each_cpu_from(cpu, cpu_possible_mask) {
-+		if (idx++ == CONFIG_RSEQ_CID_SCAN_BATCH)
-+			break;
- 		sched_mm_cid_remote_clear_weight(mm, cpu, weight);
++	pthread_barrier_wait(args->barrier);
++
++	for (i = 0; i < THREAD_RUNS; i++)
++		usleep(RUNNER_PERIOD);
++	curr_mm_cid = rseq_current_mm_cid();
++	/*
++	 * We select one thread with high enough mm_cid to be the new leader.
++	 * All other threads (including the main thread) will terminate.
++	 * After some time, the mm_cid of the only remaining thread should
++	 * converge to 0, if not, the test fails.
++	 */
++	if (curr_mm_cid >= args->num_cpus / 2 &&
++	    !pthread_mutex_trylock(args->token)) {
++		printf_verbose(
++			"cpu%d has mm_cid=%d and will be the new leader.\n",
++			sched_getcpu(), curr_mm_cid);
++		for (i = 0; i < args->num_cpus; i++) {
++			if (args->tinfo[i] == pthread_self())
++				continue;
++			ret = pthread_join(args->tinfo[i], NULL);
++			if (ret) {
++				errno = ret;
++				perror("Error: failed to join thread");
++				abort();
++			}
++		}
++		pthread_barrier_destroy(args->barrier);
++		free(args->tinfo);
++		free(args->token);
++		free(args->barrier);
++		free(args->args_head);
++
++		for (i = 0; i < MM_CID_COMPACT_TIMEOUT; i++) {
++			curr_mm_cid = rseq_current_mm_cid();
++			printf_verbose("run %d: mm_cid=%d on cpu%d.\n", i,
++				       curr_mm_cid, sched_getcpu());
++			if (curr_mm_cid == 0)
++				exit(EXIT_SUCCESS);
++			usleep(RUNNER_PERIOD);
++		}
++		exit(EXIT_FAILURE);
 +	}
- }
- 
- void init_sched_mm_cid(struct task_struct *t)
++	printf_verbose("cpu%d has mm_cid=%d and is going to terminate.\n",
++		       sched_getcpu(), curr_mm_cid);
++	pthread_exit(NULL);
++}
++
++int test_mm_cid_compaction(void)
++{
++	cpu_set_t affinity;
++	int i, j, ret = 0, num_threads;
++	pthread_t *tinfo;
++	pthread_mutex_t *token;
++	pthread_barrier_t *barrier;
++	struct thread_args *args;
++
++	sched_getaffinity(0, sizeof(affinity), &affinity);
++	num_threads = CPU_COUNT(&affinity);
++	tinfo = calloc(num_threads, sizeof(*tinfo));
++	if (!tinfo) {
++		perror("Error: failed to allocate tinfo");
++		return -1;
++	}
++	args = calloc(num_threads, sizeof(*args));
++	if (!args) {
++		perror("Error: failed to allocate args");
++		ret = -1;
++		goto out_free_tinfo;
++	}
++	token = malloc(sizeof(*token));
++	if (!token) {
++		perror("Error: failed to allocate token");
++		ret = -1;
++		goto out_free_args;
++	}
++	barrier = malloc(sizeof(*barrier));
++	if (!barrier) {
++		perror("Error: failed to allocate barrier");
++		ret = -1;
++		goto out_free_token;
++	}
++	if (num_threads == 1) {
++		fprintf(stderr, "Cannot test on a single cpu. "
++				"Skipping mm_cid_compaction test.\n");
++		/* only skipping the test, this is not a failure */
++		goto out_free_barrier;
++	}
++	pthread_mutex_init(token, NULL);
++	ret = pthread_barrier_init(barrier, NULL, num_threads);
++	if (ret) {
++		errno = ret;
++		perror("Error: failed to initialise barrier");
++		goto out_free_barrier;
++	}
++	for (i = 0, j = 0; i < CPU_SETSIZE && j < num_threads; i++) {
++		if (!CPU_ISSET(i, &affinity))
++			continue;
++		args[j].num_cpus = num_threads;
++		args[j].tinfo = tinfo;
++		args[j].token = token;
++		args[j].barrier = barrier;
++		args[j].cpu = i;
++		args[j].args_head = args;
++		if (!j) {
++			/* The first thread is the main one */
++			tinfo[0] = pthread_self();
++			++j;
++			continue;
++		}
++		ret = pthread_create(&tinfo[j], NULL, thread_runner, &args[j]);
++		if (ret) {
++			errno = ret;
++			perror("Error: failed to create thread");
++			abort();
++		}
++		++j;
++	}
++	printf_verbose("Started %d threads.\n", num_threads);
++
++	/* Also main thread will terminate if it is not selected as leader */
++	thread_runner(&args[0]);
++
++	/* only reached in case of errors */
++out_free_barrier:
++	free(barrier);
++out_free_token:
++	free(token);
++out_free_args:
++	free(args);
++out_free_tinfo:
++	free(tinfo);
++
++	return ret;
++}
++
++int main(int argc, char **argv)
++{
++	if (!rseq_mm_cid_available()) {
++		fprintf(stderr, "Error: rseq_mm_cid unavailable\n");
++		return -1;
++	}
++	if (test_mm_cid_compaction())
++		return -1;
++	return 0;
++}
 -- 
 2.51.0
 
