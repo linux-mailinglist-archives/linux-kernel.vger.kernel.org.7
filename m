@@ -1,135 +1,259 @@
-Return-Path: <linux-kernel+bounces-836003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E83BA88FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8774ABA88E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D5417E8AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:14:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB042166E45
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643082857D2;
-	Mon, 29 Sep 2025 09:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F6A284896;
+	Mon, 29 Sep 2025 09:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="yEPT6GlO"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Hq4pd3FL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="b25DWtEA";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hMG0X5o7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZWV8cEdM"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2C2283FCB;
-	Mon, 29 Sep 2025 09:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263D128506B
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137252; cv=none; b=ADPrsb1hMVY0F40LOo0a/+XQrdQNGYYs0GIFoMQb5KIEiJjuT/6Kx/CDJrKJ+ah1d7ntlYJV68ICe/Zga1JpUPNAaaRdPlbDU0AvyGRkKPy+GgWpeGakHKP4aq0hDNBRZNDrWWmaacDQ0X99tx/NschOalQJiwzzN1WUQZ7VoSk=
+	t=1759137224; cv=none; b=thvJkR8XM7a1zVPYZ1S7cuIYbT8DSeE4RJ0zDPm3/7dM1WdOjV8ekx9VKa7dXPOv5/A57bCxfyn7mbXm4I66Z8W0qbil2+0cMm1CgccCCu3WOd/efnccd2f5XTEpMysIfXCmKZfbT8GuAVPoEc6yKawx3qzVcVXygrjjJPYbpis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137252; c=relaxed/simple;
-	bh=eurQv0xeKau5jRgrZWm1V5cTpeVBo/sd9VBHUwcd3rM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ph14rmZy8isZaScT15Kh5z1giJm8RZqKmyaaEEf11qY9bo1T3iJSX3UcNkj0wvbsJAhnNRx26dSuSjJqTTMI56x8si2iOU/aEWF/oo5C83vuv+ltUFlTTrzMre0wDo13NvRE1vBHc7bOoCbI+7I6NM1LrZ448tO7te0xtI+2uOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=yEPT6GlO; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1759137251; x=1790673251;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eurQv0xeKau5jRgrZWm1V5cTpeVBo/sd9VBHUwcd3rM=;
-  b=yEPT6GlON7AoZBuyYsksiedDTR7dEiHqQWWiyCzxmaYUycRKxvlAe3wl
-   XEuF6cOuymy0w5+iVgIwNsqt2jgeWAxN3bZaknP0h1fVfG4WyLygK3ufF
-   xpbIS3W397TYsXDSYsq9ALFkrLK17la4XrwqaeEGvLsJoJ6GA9Ve2JtmC
-   F7dYgYk2KkOn4W8QHTbyEkiG97kmolkoLbr1XlgZHLqduDLPpFZwhESjf
-   0QtMVKy26rg0STEOAIQTNsWizpF3+UXy0NfCV7tbDBCMC59NGkfIDdmgB
-   TQOekarCDkXAiyzHu9m9lSbAfgWQkXzYssScg3CUJLJQR8Ut1JvTP9VCI
-   A==;
-X-CSE-ConnectionGUID: PK2+grhpRW+bN+pyp3oWNw==
-X-CSE-MsgGUID: doHqLwRVTN+NoZ+K4f0SUg==
-X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
-   d="scan'208";a="53066881"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Sep 2025 02:14:03 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 29 Sep 2025 02:13:55 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 29 Sep 2025 02:13:52 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
-	<vadim.fedorenko@linux.dev>, <rmk+kernel@armlinux.org.uk>,
-	<rosenp@gmail.com>, <christophe.jaillet@wanadoo.fr>,
-	<steen.hegelund@microchip.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net v3 2/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
-Date: Mon, 29 Sep 2025 11:13:02 +0200
-Message-ID: <20250929091302.106116-3-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250929091302.106116-1-horatiu.vultur@microchip.com>
-References: <20250929091302.106116-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1759137224; c=relaxed/simple;
+	bh=jtJHKeg4V3hrJtslZs+qvCCY9ECaZmET93hB+vqILeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jyJFH9DjHAH36mO4CKfoiVa5knm8WkUDTmM7zCK9sR62hcfeFH2sBc5QxligJZEovuT/xok2Gzv+q7LlkCt8n176rquPLhArxsIJSnYE2qNVCHIsjm4IvChoBInQEtpBuLaBQZL+Rns3SaAC9vLNWZONq/n1hdMQYQRXGMZXOUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Hq4pd3FL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=b25DWtEA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hMG0X5o7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZWV8cEdM; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A184628A42;
+	Mon, 29 Sep 2025 09:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759137220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
+	b=Hq4pd3FLlIHlpsq/WIWIpKTQIK1u5uVC206WcP0fQUSFrI19DANzMPCVUP75KY+hBZcL0Q
+	dtdVgf8LzRHS+mLGqBHxvAYy4l40BsAWLIlpobyu01j8D02b0I98f1+p5dw6q44ptuX62H
+	m9Zo3mhg2ZXRKipx4DYunUuhbPd04E4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759137220;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
+	b=b25DWtEAGkPFc4sT9issDmqy/BMl9Qbnlh5ruisp0J1gFMCT/qNvoATff8AwO5EUhSceEL
+	kSBiQsu7tqSUuVAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hMG0X5o7;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ZWV8cEdM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759137219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
+	b=hMG0X5o7qx5uLzOvtPU6oAOR/sM1jQy2B6QsQik0JJGzKLSrpedSDbKzqP6/qSgL4E6z5c
+	PYEIwt7LMqEi6gairxqjXKFRdyD4dFJYTy2ovOneowKDznaaZr9VZ4B/+OwUlRFxMrvTSI
+	pzIsg61tXM/wB+hrp8gOffgcwit1QxI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759137219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
+	b=ZWV8cEdMR8rl5mD9g70Zqdfp6Osb2Z+ASfy/UIiBlSB9+DmXXVL0n2mnz3VGfUEWe6Zu2m
+	Fw46i1nCG69w1gBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB9D413782;
+	Mon, 29 Sep 2025 09:13:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id q2iJILJN2mgkQwAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Mon, 29 Sep 2025 09:13:22 +0000
+Date: Mon, 29 Sep 2025 19:13:16 +1000
+From: David Disseldorp <ddiss@suse.de>
+To: nschichan@freebox.fr
+Cc: akpm@linux-foundation.org, andy.shevchenko@gmail.com, axboe@kernel.dk,
+ brauner@kernel.org, cyphar@cyphar.com, devicetree@vger.kernel.org,
+ ecurtin@redhat.com, email2tema@gmail.com, graf@amazon.com,
+ gregkh@linuxfoundation.org, hca@linux.ibm.com, hch@lst.de,
+ hsiangkao@linux.alibaba.com, initramfs@vger.kernel.org, jack@suse.cz,
+ julian.stecklina@cyberus-technology.de, kees@kernel.org,
+ linux-acpi@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-csky@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ mcgrof@kernel.org, mingo@redhat.com, monstr@monstr.eu,
+ mzxreary@0pointer.de, patches@lists.linux.dev, rob@landley.net,
+ safinaskar@gmail.com, sparclinux@vger.kernel.org,
+ thomas.weissschuh@linutronix.de, thorsten.blum@linux.dev,
+ torvalds@linux-foundation.org, tytso@mit.edu, viro@zeniv.linux.org.uk,
+ x86@kernel.org
+Subject: Re: [PATCH-RFC] init: simplify initrd code (was Re: [PATCH RESEND
+ 00/62] initrd: remove classic initrd support).
+Message-ID: <20250929171652.50b7a959.ddiss@suse.de>
+In-Reply-To: <20250925131055.3933381-1-nschichan@freebox.fr>
+References: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
+	<20250925131055.3933381-1-nschichan@freebox.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: A184628A42
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[linux-foundation.org,gmail.com,kernel.dk,kernel.org,cyphar.com,vger.kernel.org,redhat.com,amazon.com,linuxfoundation.org,linux.ibm.com,lst.de,linux.alibaba.com,suse.cz,cyberus-technology.de,lists.infradead.org,lists.linux-m68k.org,lists.ozlabs.org,lists.linux.dev,monstr.eu,0pointer.de,landley.net,linutronix.de,linux.dev,mit.edu,zeniv.linux.org.uk];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[to_ip_from(RL4bphh9snz1w7feaus4qmzef6)];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_NONE(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[56];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
+X-Spam-Score: -2.01
 
-The PTP initialization is two-step. First part are the function
-vsc8584_ptp_probe_once() and vsc8584_ptp_probe() at probe time which
-initialize the locks, queues, creates the PTP device. The second part is
-the function vsc8584_ptp_init() at config_init() time which initialize
-PTP in the HW.
+Hi Nicolas,
 
-For VSC8574 and VSC8572, the PTP initialization is incomplete. It is
-missing the first part but it makes the second part. Meaning that the
-ptp_clock_register() is never called.
+On Thu, 25 Sep 2025 15:10:56 +0200, nschichan@freebox.fr wrote:
 
-There is no crash without the first part when enabling PTP but this is
-unexpected because some PHys have PTP functionality exposed by the
-driver and some don't even though they share the same PTP clock PTP.
+> From: Nicolas Schichan <nschichan@freebox.fr>
+> 
+> - drop prompt_ramdisk and ramdisk_start kernel parameters
+> - drop compression support
+> - drop image autodetection, the whole /initrd.image content is now
+>   copied into /dev/ram0
+> - remove rd_load_disk() which doesn't seem to be used anywhere.
+> 
+> There is now no more limitation on the type of initrd filesystem that
+> can be loaded since the code trying to guess the initrd filesystem
+> size is gone (the whole /initrd.image file is used).
+> 
+> A few global variables in do_mounts_rd.c are now put as local
+> variables in rd_load_image() since they do not need to be visible
+> outside this function.
+> ---
+> 
+> Hello,
+> 
+> Hopefully my email config is now better and reaches gmail users
+> correctly.
+> 
+> The patch below could probably split in a few patches, but I think
+> this simplify the code greatly without removing the functionality we
+> depend on (and this allows now to use EROFS initrd images).
+> 
+> Coupled with keeping the function populate_initrd_image() in
+> init/initramfs.c, this will keep what we need from the initrd code.
+> 
+> This removes support of loading bzip/gz/xz/... compressed images as
+> well, not sure if many user depend on this feature anymore.
+> 
+> No signoff because I'm only seeking comments about those changes right
+> now.
+> 
+>  init/do_mounts.h    |   2 -
+>  init/do_mounts_rd.c | 243 +-------------------------------------------
+>  2 files changed, 4 insertions(+), 241 deletions(-)
 
-Fixes: 774626fa440e ("net: phy: mscc: Add PTP support for 2 more VSC PHYs")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/mscc/mscc_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This seems like a reasonable improvement to me. FWIW, one alternative
+approach to clean up the FS specific code here was proposed by Al:
+https://lore.kernel.org/all/20250321020826.GB2023217@ZenIV/
 
-diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
-index d05f6ed052ad0..90b62b8fd4af6 100644
---- a/drivers/net/phy/mscc/mscc_main.c
-+++ b/drivers/net/phy/mscc/mscc_main.c
-@@ -2613,7 +2613,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
- 	.remove		= &vsc85xx_remove,
--	.probe		= &vsc8574_probe,
-+	.probe		= &vsc8584_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
-@@ -2636,12 +2636,12 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_aneg    = &vsc85xx_config_aneg,
- 	.aneg_done	= &genphy_aneg_done,
- 	.read_status	= &vsc85xx_read_status,
--	.handle_interrupt = vsc85xx_handle_interrupt,
-+	.handle_interrupt = vsc8584_handle_interrupt,
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
- 	.remove		= &vsc85xx_remove,
--	.probe		= &vsc8574_probe,
-+	.probe		= &vsc8584_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
--- 
-2.34.1
+...
+> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+> index ac021ae6e6fa..5a69ff43f5ee 100644
+> --- a/init/do_mounts_rd.c
+> +++ b/init/do_mounts_rd.c
+> @@ -14,173 +14,9 @@
+>  
+>  #include <linux/decompress/generic.h>
+>  
+> -static struct file *in_file, *out_file;
+> -static loff_t in_pos, out_pos;
+> -
+> -static int __init prompt_ramdisk(char *str)
+> -{
+> -	pr_warn("ignoring the deprecated prompt_ramdisk= option\n");
+> -	return 1;
+> -}
+> -__setup("prompt_ramdisk=", prompt_ramdisk);
+> -
+> -int __initdata rd_image_start;		/* starting block # of image */
+> -
+> -static int __init ramdisk_start_setup(char *str)
+> -{
+> -	rd_image_start = simple_strtol(str,NULL,0);
+> -	return 1;
+> -}
+> -__setup("ramdisk_start=", ramdisk_start_setup);
 
+There are a couple of other places that mention these parameters, which
+should also be cleaned up.
+
+...
+>  static unsigned long nr_blocks(struct file *file)
+>  {
+> -	struct inode *inode = file->f_mapping->host;
+> -
+> -	if (!S_ISBLK(inode->i_mode))
+> -		return 0;
+> -	return i_size_read(inode) >> 10;
+> +	return i_size_read(file->f_mapping->host) >> 10;
+
+This should be >> BLOCK_SIZE_BITS, and dropped as a wrapper function
+IMO.
 
