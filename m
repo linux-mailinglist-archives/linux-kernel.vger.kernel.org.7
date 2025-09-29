@@ -1,96 +1,445 @@
-Return-Path: <linux-kernel+bounces-836711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FD3BAA683
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:08:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE878BAA6CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCC31C3490
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1482B1891604
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9059B2405EB;
-	Mon, 29 Sep 2025 19:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8751B2773DA;
+	Mon, 29 Sep 2025 19:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVQkZ6y7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oI5bcAOC"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD5C523A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE8B26B75B
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759172880; cv=none; b=HMOahxBhbA+ZluxyMpKCm8+x49pE0mZiBMm+YU7HDgNFtXPflsVUl8m0EkxA44F5ab3+XfAdRBnpdBP2BNMfYUaS5xuomr2fIAeNiaKMQdajcimik95eYHJe0m1eBtGt9zfmN1qhaqwW19wfX6ra3j9qRaFJXMFnL8QCPDUeaM8=
+	t=1759172948; cv=none; b=UWu8eCM4b9WnUeWaKXWgmLDJ3A0XS+29X34zM0ggwPtCryp7TifV3YKU4DaUWOlaWjs+PQagZg3sjjcuvMX34U5FpLfGQcESRkp7Cuv1MPOtWoS5sKfyZgEn62WkdTg6yEuejOhWw+milupjDTx+6ic0X64OSgFIrMLObPKrV1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759172880; c=relaxed/simple;
-	bh=HKhSr07W/eBJ70+p1aNdDfQ3FMo9W4Y6SCkBGlnkwcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tkQujDcveKInfaioh2vbFA7xl/tenvpXQTbVfu7o5INviAcMGYF+szZHiIJkQWz3ayRqkxUAz+9mMLqTlEQf/7zaDpe6/P/pm0ajicNrDSPlCJ/RuSMsnuvDXTL0+KKJCUv98zxWCnxh4cXgIWtBm8/DPDF9CFR9uHqANHdPLCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVQkZ6y7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E5CBC4CEF4;
-	Mon, 29 Sep 2025 19:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759172879;
-	bh=HKhSr07W/eBJ70+p1aNdDfQ3FMo9W4Y6SCkBGlnkwcY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pVQkZ6y7ShAkqGfT3m3e8MjM6EPT7PeyGkkul0KdSx6FXpLqJAWTdf56Be98GT4++
-	 VpsunfUnPAVJ05GsbPFtbTawZmW4aWvP+vSrW81OsPGexFOmoVjPinGhy3l7jfHk27
-	 4dgNTAK82drt955RjnWzkL2JU65phGnGXL8TMqI6mE+VaDtYAR/KNBeM+wGJIjRpp8
-	 FD5HiBKuZwiP7SqLURSkCZd2Mk5DTJeWfeMAepM8hy8Uc858c5coGEAH3pLLImPHsd
-	 gFqidI3YRP7jHrAstNQD5LNRnmP0y9Esqj4AmZTAp+NX16g9ljOFTjltZVv5FmJRd5
-	 twFD2AzPIWdjA==
+	s=arc-20240116; t=1759172948; c=relaxed/simple;
+	bh=fKtsBVVZrwXhvs4xGsoMfIzV+lzZRRuS+hR0a0WuWTk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=RVNTJMnwqnONlLCmA1SAX3xSUfXZ8KA8IbisXmQKTJ4rS9gZYm629GfWYvSAn1r4TJKFk5asFN2N2rUr5MU2XlyL9Ik1HECl9ith9Naao7ZglnC2Njn5UTjE5D+cV58B/QBgTgJ3pz3mNFq7zSja4y4j9nYvt17ZeGkhy1aKe+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oI5bcAOC; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b55735710f0so6661873a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:09:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759172946; x=1759777746; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=23me5LsIGKvV3LZyzJtrbgmlsoLLJrcCc9Uj9IrIdaM=;
+        b=oI5bcAOCWrWLUR4g/PFZHe5ngdBWn7yx7vA8j2m7KQgNsUPZKYXCyoRHMlYCVMhqqA
+         Dzb4UApNLUO14i2qQp5XlkVMv7L1NQUwZF8cqx+gGVbBcwSPsx2bIleiCencS7NOdTRt
+         hLUU6r3GGaCKL5D/htWY9UC6qYLrE60VIlTi6FPLDeYM5PbT03rs7gyNOwSycYrrHhzx
+         +jienYr6PevnL2zFoebZZSBcyFERet4jL0yKatUvnmSoUas88XG88Y6eNg9GnMGwtiai
+         7lLELqivkbNGkXlY1/2Vzdv/6wD563jxbO0ESj3WpTJuJYGQBU7WQFFn8ES/kBT/F1PE
+         tZ4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759172946; x=1759777746;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=23me5LsIGKvV3LZyzJtrbgmlsoLLJrcCc9Uj9IrIdaM=;
+        b=QvbxVmRphVjbNY5m/4e1af039/c/BK+vQap+7Pxrr0CQAmCLV7gdZ3r1p3eGJnE52l
+         JqQIqOUQKJqKAgA2C6kuvUMUiklaaqLZ044rn0UtWvL0/kERUFJWrrMV27hSzHcca3wT
+         49fM+CmUgsQ/RTEg/Q5DgUDxYXI0sZXRjlqEYtZKy26mMZfwjXNLtOtSM+Aa1YE6QyFi
+         zmVYWcDiYyJBKYrqjkU4QBTOErR+LdPgmb9ErOYa+rAcY+2GOnoQw4kL63O94Mz3+iH2
+         DsxPxDYwq07+hKikdMQZ9dgGddBWomwEwN9Qs7FXFo6npEzPDKRTEsCMcp9gI4BUHi4P
+         V9Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1aBmBqDr1XN9ou8Jg+ShzakgDKyzNPw7vo5QuxWzv4M/kiRqUhvb4yWEghybxH3h0TDE4YrSTs+O0ZUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxylyBPXPyV1iHU7TDv6I7J4wYhvm0xViErC+fcNb0wmlj1QIl9
+	qSEeGuV7lJUmn2zm5Pac395PUnBpw3A9xe8nLc7zNx8BjCp2Sg3OjuJ8aeIAC0v3Y7ak8OVzSgd
+	cjseVshzF0w==
+X-Google-Smtp-Source: AGHT+IEGJkvupWf4rQtKx0upUagq28uTpq7hSM4UAUkHSWoRUnkpLsZoBBntb8d18v7zVQzjqen0T6+nL+7f
+X-Received: from pgbdp9.prod.google.com ([2002:a05:6a02:f09:b0:b54:fe27:c3e4])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6d98:b0:248:86a1:a253
+ with SMTP id adf61e73a8af0-2e7c750079amr21765837637.15.1759172945527; Mon, 29
+ Sep 2025 12:09:05 -0700 (PDT)
 Date: Mon, 29 Sep 2025 12:07:59 -0700
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Ali Polatel <alip@chesswob.org>,
-	Johannes Nixdorf <johannes@nixdorf.dev>,
-	Kees Cook <kees@kernel.org>
-Subject: [GIT PULL] seccomp updates for v6.18-rc1
-Message-ID: <202509291207.66FBEC8497@keescook>
+In-Reply-To: <20250929190805.201446-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20250929190805.201446-1-irogers@google.com>
+X-Mailer: git-send-email 2.51.0.570.gb178f27e6d-goog
+Message-ID: <20250929190805.201446-10-irogers@google.com>
+Subject: [PATCH v6 09/15] perf dso: Move read_symbol from llvm/capstone to dso
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Collin Funk <collin.funk1@gmail.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Li Huafei <lihuafei1@huawei.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev, 
+	Song Liu <song@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Move the read_symbol function to dso.h, make the return type const and
+add a mutable out_buf out parameter. In future changes this will allow
+a code pointer to be returned without necessary allocating memory.
 
-Please pull this seccomp update for v6.18-rc1.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/capstone.c | 64 +++++-----------------------
+ tools/perf/util/dso.c      | 67 +++++++++++++++++++++++++++++
+ tools/perf/util/dso.h      |  4 ++
+ tools/perf/util/llvm.c     | 87 +++++++-------------------------------
+ 4 files changed, 97 insertions(+), 125 deletions(-)
 
-Thanks!
-
--Kees
-
-The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
-
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-v6.18-rc1
-
-for you to fetch changes up to b0c9bfbab925ac6385d4d06a134fd89cadf771fe:
-
-  selftests/seccomp: Add a test for the WAIT_KILLABLE_RECV fast reply race (2025-07-29 13:33:02 -0700)
-
-----------------------------------------------------------------
-seccomp updates for v6.18-rc1
-
-- Fix race with WAIT_KILLABLE_RECV (Johannes Nixdorf)
-
-----------------------------------------------------------------
-Johannes Nixdorf (2):
-      seccomp: Fix a race with WAIT_KILLABLE_RECV if the tracer replies too fast
-      selftests/seccomp: Add a test for the WAIT_KILLABLE_RECV fast reply race
-
- kernel/seccomp.c                              |  12 +--
- tools/testing/selftests/seccomp/seccomp_bpf.c | 131 ++++++++++++++++++++++++++
- 2 files changed, 136 insertions(+), 7 deletions(-)
-
+diff --git a/tools/perf/util/capstone.c b/tools/perf/util/capstone.c
+index fa9aa9cde68d..5aeae261f7ee 100644
+--- a/tools/perf/util/capstone.c
++++ b/tools/perf/util/capstone.c
+@@ -434,66 +434,23 @@ static int find_file_offset(u64 start, u64 len, u64 pgoff, void *arg)
+ 	return 0;
+ }
+ 
+-static u8 *
+-read_symbol(const char *filename, struct map *map, struct symbol *sym,
+-	    u64 *len, bool *is_64bit)
+-{
+-	struct dso *dso = map__dso(map);
+-	struct nscookie nsc;
+-	u64 start = map__rip_2objdump(map, sym->start);
+-	u64 end = map__rip_2objdump(map, sym->end);
+-	int fd, count;
+-	u8 *buf = NULL;
+-	struct find_file_offset_data data = {
+-		.ip = start,
+-	};
+-
+-	*is_64bit = false;
+-
+-	nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+-	fd = open(filename, O_RDONLY);
+-	nsinfo__mountns_exit(&nsc);
+-	if (fd < 0)
+-		return NULL;
+-
+-	if (file__read_maps(fd, /*exe=*/true, find_file_offset, &data,
+-			    is_64bit) == 0)
+-		goto err;
+-
+-	*len = end - start;
+-	buf = malloc(*len);
+-	if (buf == NULL)
+-		goto err;
+-
+-	count = pread(fd, buf, *len, data.offset);
+-	close(fd);
+-	fd = -1;
+-
+-	if ((u64)count != *len)
+-		goto err;
+-
+-	return buf;
+-
+-err:
+-	if (fd >= 0)
+-		close(fd);
+-	free(buf);
+-	return NULL;
+-}
+-
+ int symbol__disassemble_capstone(const char *filename __maybe_unused,
+ 				 struct symbol *sym __maybe_unused,
+ 				 struct annotate_args *args __maybe_unused)
+ {
+ 	struct annotation *notes = symbol__annotation(sym);
+ 	struct map *map = args->ms.map;
++	struct dso *dso = map__dso(map);
+ 	u64 start = map__rip_2objdump(map, sym->start);
+-	u64 len;
+ 	u64 offset;
+ 	int i, count, free_count;
+ 	bool is_64bit = false;
+ 	bool needs_cs_close = false;
+-	u8 *buf = NULL;
++	/* Malloc-ed buffer containing instructions read from disk. */
++	u8 *code_buf = NULL;
++	/* Pointer to code to be disassembled. */
++	const u8 *buf;
++	u64 buf_len;
+ 	csh handle;
+ 	struct cs_insn *insn = NULL;
+ 	char disasm_buf[512];
+@@ -503,7 +460,8 @@ int symbol__disassemble_capstone(const char *filename __maybe_unused,
+ 	if (args->options->objdump_path)
+ 		return -1;
+ 
+-	buf = read_symbol(filename, map, sym, &len, &is_64bit);
++	buf = dso__read_symbol(dso, filename, map, sym,
++			       &code_buf, &buf_len, &is_64bit);
+ 	if (buf == NULL)
+ 		return -1;
+ 
+@@ -532,7 +490,7 @@ int symbol__disassemble_capstone(const char *filename __maybe_unused,
+ 
+ 	needs_cs_close = true;
+ 
+-	free_count = count = perf_cs_disasm(handle, buf, len, start, len, &insn);
++	free_count = count = perf_cs_disasm(handle, buf, buf_len, start, buf_len, &insn);
+ 	for (i = 0, offset = 0; i < count; i++) {
+ 		int printed;
+ 
+@@ -556,7 +514,7 @@ int symbol__disassemble_capstone(const char *filename __maybe_unused,
+ 	}
+ 
+ 	/* It failed in the middle: probably due to unknown instructions */
+-	if (offset != len) {
++	if (offset != buf_len) {
+ 		struct list_head *list = &notes->src->source;
+ 
+ 		/* Discard all lines and fallback to objdump */
+@@ -575,7 +533,7 @@ int symbol__disassemble_capstone(const char *filename __maybe_unused,
+ 		if (free_count > 0)
+ 			perf_cs_free(insn, free_count);
+ 	}
+-	free(buf);
++	free(code_buf);
+ 	return count < 0 ? count : 0;
+ 
+ err:
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index 282e3af85d5a..87d075942de6 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -1798,3 +1798,70 @@ bool is_perf_pid_map_name(const char *dso_name)
+ 
+ 	return perf_pid_map_tid(dso_name, &tid);
+ }
++
++struct find_file_offset_data {
++	u64 ip;
++	u64 offset;
++};
++
++/* This will be called for each PHDR in an ELF binary */
++static int find_file_offset(u64 start, u64 len, u64 pgoff, void *arg)
++{
++	struct find_file_offset_data *data = arg;
++
++	if (start <= data->ip && data->ip < start + len) {
++		data->offset = pgoff + data->ip - start;
++		return 1;
++	}
++	return 0;
++}
++
++const u8 *dso__read_symbol(struct dso *dso, const char *symfs_filename,
++			   const struct map *map, const struct symbol *sym,
++			   u8 **out_buf, u64 *out_buf_len, bool *is_64bit)
++{
++	struct nscookie nsc;
++	u64 start = map__rip_2objdump(map, sym->start);
++	u64 end = map__rip_2objdump(map, sym->end);
++	int fd, count;
++	u8 *buf = NULL;
++	size_t len;
++	struct find_file_offset_data data = {
++		.ip = start,
++	};
++
++	*out_buf = NULL;
++	*out_buf_len = 0;
++	*is_64bit = false;
++
++	nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
++	fd = open(symfs_filename, O_RDONLY);
++	nsinfo__mountns_exit(&nsc);
++	if (fd < 0)
++		return NULL;
++
++	if (file__read_maps(fd, /*exe=*/true, find_file_offset, &data, is_64bit) == 0)
++		goto err;
++
++	len = end - start;
++	buf = malloc(len);
++	if (buf == NULL)
++		goto err;
++
++	count = pread(fd, buf, len, data.offset);
++	close(fd);
++	fd = -1;
++
++	if ((u64)count != len)
++		goto err;
++
++	*out_buf = buf;
++	*out_buf_len = len;
++	return buf;
++
++err:
++	if (fd >= 0)
++		close(fd);
++	free(buf);
++	return NULL;
++}
+diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+index fd8e95de77f7..f8ccb9816b89 100644
+--- a/tools/perf/util/dso.h
++++ b/tools/perf/util/dso.h
+@@ -924,4 +924,8 @@ static inline struct debuginfo *dso__debuginfo(struct dso *dso)
+ 	return debuginfo__new(dso__long_name(dso));
+ }
+ 
++const u8 *dso__read_symbol(struct dso *dso, const char *symfs_filename,
++			   const struct map *map, const struct symbol *sym,
++			   u8 **out_buf, u64 *out_buf_len, bool *is_64bit);
++
+ #endif /* __PERF_DSO */
+diff --git a/tools/perf/util/llvm.c b/tools/perf/util/llvm.c
+index f6a8943b7c9d..a0774373f0d6 100644
+--- a/tools/perf/util/llvm.c
++++ b/tools/perf/util/llvm.c
+@@ -296,71 +296,6 @@ void dso__free_a2l_llvm(struct dso *dso __maybe_unused)
+ 	/* Nothing to free. */
+ }
+ 
+-
+-struct find_file_offset_data {
+-	u64 ip;
+-	u64 offset;
+-};
+-
+-/* This will be called for each PHDR in an ELF binary */
+-static int find_file_offset(u64 start, u64 len, u64 pgoff, void *arg)
+-{
+-	struct find_file_offset_data *data = arg;
+-
+-	if (start <= data->ip && data->ip < start + len) {
+-		data->offset = pgoff + data->ip - start;
+-		return 1;
+-	}
+-	return 0;
+-}
+-
+-static u8 *
+-read_symbol(const char *filename, struct map *map, struct symbol *sym,
+-	    u64 *len, bool *is_64bit)
+-{
+-	struct dso *dso = map__dso(map);
+-	struct nscookie nsc;
+-	u64 start = map__rip_2objdump(map, sym->start);
+-	u64 end = map__rip_2objdump(map, sym->end);
+-	int fd, count;
+-	u8 *buf = NULL;
+-	struct find_file_offset_data data = {
+-		.ip = start,
+-	};
+-
+-	*is_64bit = false;
+-
+-	nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+-	fd = open(filename, O_RDONLY);
+-	nsinfo__mountns_exit(&nsc);
+-	if (fd < 0)
+-		return NULL;
+-
+-	if (file__read_maps(fd, /*exe=*/true, find_file_offset, &data,
+-			    is_64bit) == 0)
+-		goto err;
+-
+-	*len = end - start;
+-	buf = malloc(*len);
+-	if (buf == NULL)
+-		goto err;
+-
+-	count = pread(fd, buf, *len, data.offset);
+-	close(fd);
+-	fd = -1;
+-
+-	if ((u64)count != *len)
+-		goto err;
+-
+-	return buf;
+-
+-err:
+-	if (fd >= 0)
+-		close(fd);
+-	free(buf);
+-	return NULL;
+-}
+-
+ /*
+  * Whenever LLVM wants to resolve an address into a symbol, it calls this
+  * callback. We don't ever actually _return_ anything (in particular, because
+@@ -397,8 +332,11 @@ int symbol__disassemble_llvm(const char *filename, struct symbol *sym,
+ 	struct map *map = args->ms.map;
+ 	struct dso *dso = map__dso(map);
+ 	u64 start = map__rip_2objdump(map, sym->start);
+-	u8 *buf;
+-	u64 len;
++	/* Malloc-ed buffer containing instructions read from disk. */
++	u8 *code_buf = NULL;
++	/* Pointer to code to be disassembled. */
++	const u8 *buf;
++	u64 buf_len;
+ 	u64 pc;
+ 	bool is_64bit;
+ 	char triplet[64];
+@@ -418,7 +356,8 @@ int symbol__disassemble_llvm(const char *filename, struct symbol *sym,
+ 	perf_LLVMInitializeAllTargetMCs();
+ 	perf_LLVMInitializeAllDisassemblers();
+ 
+-	buf = read_symbol(filename, map, sym, &len, &is_64bit);
++	buf = dso__read_symbol(dso, filename, map, sym,
++			       &code_buf, &buf_len, &is_64bit);
+ 	if (buf == NULL)
+ 		return -1;
+ 
+@@ -466,14 +405,18 @@ int symbol__disassemble_llvm(const char *filename, struct symbol *sym,
+ 	annotation_line__add(&dl->al, &notes->src->source);
+ 
+ 	pc = start;
+-	for (u64 offset = 0; offset < len; ) {
++	for (u64 offset = 0; offset < buf_len; ) {
+ 		unsigned int ins_len;
+ 
+ 		storage.branch_addr = 0;
+ 		storage.pcrel_load_addr = 0;
+ 
+-		ins_len = perf_LLVMDisasmInstruction(disasm, buf + offset,
+-						     len - offset, pc,
++		/*
++		 * LLVM's API has the code be disassembled as non-const, cast
++		 * here as we may be disassembling from mapped read-only memory.
++		 */
++		ins_len = perf_LLVMDisasmInstruction(disasm, (u8 *)(buf + offset),
++						     buf_len - offset, pc,
+ 						     disasm_buf, sizeof(disasm_buf));
+ 		if (ins_len == 0)
+ 			goto err;
+@@ -531,7 +474,7 @@ int symbol__disassemble_llvm(const char *filename, struct symbol *sym,
+ 
+ err:
+ 	perf_LLVMDisasmDispose(disasm);
+-	free(buf);
++	free(code_buf);
+ 	free(line_storage);
+ 	return ret;
+ }
 -- 
-Kees Cook
+2.51.0.570.gb178f27e6d-goog
+
 
