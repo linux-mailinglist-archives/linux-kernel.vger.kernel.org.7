@@ -1,158 +1,157 @@
-Return-Path: <linux-kernel+bounces-836314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455E5BA949C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32377BA9496
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428143B0389
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:10:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8071D1920B27
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85C230596E;
-	Mon, 29 Sep 2025 13:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A383064B0;
+	Mon, 29 Sep 2025 13:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yS81tLhj"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YaryIr9s"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25693054E1
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3363064A3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759151435; cv=none; b=K0Lv7MMxKcZ/Ydm6srWpYGnd98u5DGeT61DUIxJHC64gq6jzrs6hMbeJJFq6SA8ASvYKijvFs6705iOIgYg01B9MPPSPilMauBbt29FDN/6uoK3boJJKDzA7e+SyFFBgFnkcKKpqIwmfi/OPzIEdXkR+zgMVRRLYNdHaf+l3pU8=
+	t=1759151421; cv=none; b=qb9zXorlsh7d9eu4pV5QnutnETswwLUeWi6n/tre32yWS7YB6pfWkaM6qw+yQAce5+H/tJLJLFsyFtPxfSz60g9/8h6ykVd7YOqYmIALBwcdTKfqsViiuNADTce2chMM1zav+NUN/QqPDDU65nJzw3INxZi60kAeTCyTEe9fpX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759151435; c=relaxed/simple;
-	bh=zldeIVGYldYbmC65e0hKwaIJnCH6totj0tsfM+V6c/c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GFuYSA5DaECvgQeW/NJLiq0APllZLwY+2lOiyhvO4Air2d8Ksqf4o6rDaFeShe1wB0OFRCbAb1gNm+xFrcecWtA1EZKB9adq8C2g+XoG/yDnlhKRIhfnyvbVcoEo0tCGGncd1p+vj3mRzRCC2Sco4jGILBGvpjPMnJPMsFtPjpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yS81tLhj; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d603cebd9so58643887b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:10:32 -0700 (PDT)
+	s=arc-20240116; t=1759151421; c=relaxed/simple;
+	bh=Mv/b8aVCVxNhM1F+1VoETRpSIMA8dMlQJBW4BOZFGXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rYamhAdOSpJbTNm3qhcVzVu3g8tj1S5CZD5Rw3+AaGNabnmJa7j/rxN9ETumwbWOgRgHmJZWdA1lYp7T/ptC6fLMU4i/70Mw8LtIhvNZF1HELBFCMhWSk7cmPHTEc48Vkwv6zA4whZuE/o/lmhbEp02Q/NrjutyAVpNWhq0MqZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YaryIr9s; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-33ca74c62acso45255641fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759151431; x=1759756231; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIgtSwakb4S2F49hv2ah0ceDD3kdcrnl68lJO2bz2SI=;
-        b=yS81tLhjbLcGbCee8oU5M9P+U1Bnh3ct0b3Dv+9XHlnPLYmGz7JmWx/994FyywBWMj
-         69XwkS4+Es4DvYiv082f6PKdNXMAOveZfQS8+BhYX+kmywfaF7hAkSAy3jGSB0E5RG1A
-         NzAPNsS1YEprfJf7xncf49UBJBLz+r1j5KiFkobzukxsqq59gaViYC3IuQRUXf45egO7
-         q/VRDvSV1kC3DgnoyKSNYCE+lzt2IVCgb8eIMOGIMTVNe06k73RXC0yoM9VDXdV02eXw
-         RHHu7TXeSC/Yu09HYHX4a48VyuEjvYJTSJCqgnyuqk+0/MnpC2JLZJGVisBjtLaeQwxR
-         kysQ==
+        d=gmail.com; s=20230601; t=1759151418; x=1759756218; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A1TScXo9HlddRXxyVV537w+xJu4r/bR5+Sl4AGG4P1c=;
+        b=YaryIr9sjVlUO3ru9JknL+gPST9dx5fZzhNWVNEB7ZZlhr4Z8x3CmvgRHoe8kqNrwB
+         lTFlhaDpVk1YWsHYUSgd97LWwWxFaTx+0pLxGjkqClo4nnuAXLziONh2UEaWDMjT9RXF
+         62EwjGCSqdyWJDiBk6eHUkKzxXjtpm4InmaEk8+QohEbI87Q7nU4tYOhdMyHgBV2abUG
+         OSqo15MibW+W03kFYk7WLk+vjhxJeR23WIEaBsg7CACeIgs8A0U93by39oVapY6GIhAM
+         XeZSLQPV1HLR6saY7fkFYxRODpgq71xv3Xhs/vIoSk+as32xmjeQB+jaS7O1Z34Fm/iR
+         lgww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759151431; x=1759756231;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TIgtSwakb4S2F49hv2ah0ceDD3kdcrnl68lJO2bz2SI=;
-        b=YL6c2AQlE0jUYkP16zYCxsb7aiZjIKbh6nnVX2Rl/DlQVfwwaiH1r2cRfCoygHN+zV
-         kvA6xHL6vAvoO9tCneX7fyqeTosczRwW68dIarEeKZI1FhvmPXQ1YydoDDVmdXRxO9Ya
-         ZMjbHpAdxe3E8MhLI1k6U7loSbbTEFNM+VrBqvhvATISxtLcXchUgv/HAnJUXiWyE+6I
-         m5p6t6J/HAsgFOD9XRCJ57hbBEib8nKq6F5MzL/IZ1xyKOOJbuhqC9IfbjFmPuwpT17m
-         MMBILprDuvR5tuhTWWqgNCghVnsSam+rIG0b6JK+yoHM8GqIYew0jWgfncL98k0yryUZ
-         BjJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHuxg8BsoGSSWj5e5200Ji/89/wykGGQN4lryK+SnE+H7gPLaAVu4bMT2azDu7LWcnOxKxIIVgZ2PkGLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW8cWg1OmJz7al7SCebqk7fBkqZtMqTB0NdqNfBIPeISrgGEJm
-	T6VnavEPYqAEFDQKxBVXMKLIgiffTMuCE+eDK9uE+Y0oRtRuG9ktD/bavhc03cnbK+m6scVWjOR
-	P7DN3msTIEhdAC89XgqFe0ANxOm2ZAbZtgk+cr6h9oQ==
-X-Gm-Gg: ASbGncvmHYw9AhS06pIg9MkB67hPehXncRsX+SOTB1reDesUpQsLSy7mmb3bT9FubXt
-	87wKQLRQACKhP5zAssjbhZftUSWsKbAfmXPjSrsMXXMb9byH8WK3MZzjrKENAnGbqBFeCvp9l3Z
-	Mznli/UZ+2lCGzZFPgfqyY8y/13QI9EXXpy4HRucs+3JgjzSiuS2aS7CkwFLCgwiC7ousZADAGE
-	0IYx8KpJcRXlJj/PX4=
-X-Google-Smtp-Source: AGHT+IEaqhle1COgySgMHCGl7/RAGDslrMpVmtc/WxzU5IvlxnhajJDxwCn8WYXyXNTN50BLyVZqReaPXPJrWYY1F9w=
-X-Received: by 2002:a05:690e:154c:20b0:639:2794:3416 with SMTP id
- 956f58d0204a3-639279436b2mr3662726d50.19.1759151431542; Mon, 29 Sep 2025
- 06:10:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759151418; x=1759756218;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A1TScXo9HlddRXxyVV537w+xJu4r/bR5+Sl4AGG4P1c=;
+        b=cQk5YK+1E4otqZKKPIK1ciuMEvrzJQORt/M/Xxl5c0gkzq0penVwd9qV7Eg0mhBva8
+         LX8p2NiYui41QZiGesdxAbZc92/jqxiVrO6xj2kQiaB8PwPzeXA41ZKIUudmWt7fcc2D
+         2ZSbI1krMkxSJJ4f1Onjqr5Bi44mMI+c00ada63yPqCmaB4G975yK/OHBUmHEVQTlf69
+         lAK+AdAyed2oKkLwu2AIv6P9OlrCwHklFPndU2ZHafkHnSpSTIX2kl+YqNjnjyhSsjwT
+         Ydkegvo5emY+YDJ0QQ2rLXhZBZF76fYQrU33UPo3l/bWyS34OroaFsUaINaiqzd6WQOg
+         ugow==
+X-Forwarded-Encrypted: i=1; AJvYcCVZGA9MKBcCE4GB2uYTRqwI5N5qz7E9NCBdanvqgnLjhwwCNG5ViMqZ9K/5l5+hS35uE07XPdfv1PHwmxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTO8MsFHYZEjF3fzkEE2VysMfYmGT6Q4bRWUwx8BXMOuQ71vz+
+	tXDHSDYn/96+tjAqrR+QCV6YPy9gH7VFwjEWP2U8mpD4bNjM4g6FuZuX
+X-Gm-Gg: ASbGncuRPJi8insbflfo6Iqh5kHozFf+kxZdv2lue76F1KJ3Mtn0urmH3WIGDsS7IrK
+	rpTlZ859u2oQn4aOHHHVQYFe55QzwOha0xZ3GWZrfjx3qqOQRi8ZEsjE35NTvaYFjhBMF+TfiKs
+	rLIHoe7tm6F0JrTTBb7ZQElhluj2ZDMQHMCR91PPUmCSP4qhiPN6yNSFLQV4s4KzCq5RUkAXOXI
+	cknsz6d7M4/8A9VNDfnVdOTVOrgvFfvWaKwB8kz5n6kHzq3JWMrTMJmjMy/28XguMssN1UBadXp
+	j4Mux4antaTew8rd8HWBqhK1UlH8pE4aA7/+CohygkKfrHKV8O2TFBcpmwEuau9GsQdlXUF1SGR
+	600dFZ8piKE8m6KZzqBgseaLxY2lKStzKbB2q4NHC2Cwg+Fc7XFY4oRvQAAnTvg==
+X-Google-Smtp-Source: AGHT+IEcUX+DjySA65AZ4EirRuxBQ8lIGoA5qOge8LkJpCU+G4WGmi1HxUDdlfwOC7g7+7QmeV3SjQ==
+X-Received: by 2002:a2e:bea0:0:b0:36d:6ae3:8146 with SMTP id 38308e7fff4ca-36f7f247f42mr47225651fa.26.1759151417546;
+        Mon, 29 Sep 2025 06:10:17 -0700 (PDT)
+Received: from NB-6746.corp.yadro.com ([188.243.183.84])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb7bfb413sm26246441fa.56.2025.09.29.06.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 06:10:17 -0700 (PDT)
+From: Artem Shimko <artyom.shimko@gmail.com>
+X-Google-Original-From: Artem Shimko <a.shimko.dev@gmail.com>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>
+Cc: a.shimko.dev@gmail.com,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] rivers: scmi: Add completion timeout handling for raw mode transfers
+Date: Mon, 29 Sep 2025 16:10:10 +0300
+Message-ID: <20250929131011.524842-2-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250929131011.524842-1-a.shimko.dev@gmail.com>
+References: <20250929131011.524842-1-a.shimko.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com> <20250926-imx_rproc_v3-v3-1-4c0ec279cc5f@nxp.com>
-In-Reply-To: <20250926-imx_rproc_v3-v3-1-4c0ec279cc5f@nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 29 Sep 2025 15:09:55 +0200
-X-Gm-Features: AS18NWBrMVxKi_O1xz826dCqJxNTtrsBYTk49Oo4lKT0mm4rt1UcT29ebmOL9cg
-Message-ID: <CAPDyKFqsDjn2+6XxY=Dkv9qZ6weTaeChwsSHvnHFnFzbYQ9bUg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/6] remoteproc: imx_rproc: Fix runtime PM cleanup and
- improve remove path
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Hiago De Franco <hiago.franco@toradex.com>, Frank Li <Frank.Li@nxp.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, linux-remoteproc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 26 Sept 2025 at 14:33, Peng Fan <peng.fan@nxp.com> wrote:
->
-> Proper cleanup should be done when rproc_add() fails by invoking both
-> pm_runtime_disable() and pm_runtime_put_noidle() to avoid leaving the
-> device in an inconsistent power state.
->
-> Fix it by adding pm_runtime_put_noidle() and pm_runtime_disable()
-> in the error path.
->
-> Also Update the remove() callback to use pm_runtime_put_noidle() instead of
-> pm_runtime_put(), to clearly indicate that only need to restore the usage
-> count.
->
-> Fixes: a876a3aacc43 ("remoteproc: imx_rproc: detect and attach to pre-booted remote cores")
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Hiago De Franco <hiago.franco@toradex.com>
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Fix race conditions in SCMI raw mode implementation by adding proper
+completion timeout handling. Multiple tests in the SCMI test suite
+were failing due to early clearing of SCMI_XFER_FLAG_IS_RAW flag in
+scmi_xfer_raw_put() function.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+The root cause:
+Tests were failing on poll() system calls with this condition:
+    if (!raw || (idx == SCMI_RAW_REPLY_QUEUE && !SCMI_XFER_IS_RAW(xfer)))
+        return;
 
-Kind regards
-Uffe
+The SCMI_XFER_FLAG_IS_RAW flag was being cleared prematurely before
+the transfer completion was properly acknowledged, causing the poll
+to return on timeout and tests to fail.
 
+Сhanges implemented:
+1. Add completion wait with timeout in  scmi_xfer_raw_worker()
+2. Signal completion in scmi_raw_message_report()
 
-> ---
->  drivers/remoteproc/imx_rproc.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index bb25221a4a8987ff427d68e2a5535f0e156b0097..8424e6ea5569b9ba6b07525643ce795faaeb2898 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -1136,11 +1136,16 @@ static int imx_rproc_probe(struct platform_device *pdev)
->         ret = rproc_add(rproc);
->         if (ret) {
->                 dev_err(dev, "rproc_add failed\n");
-> -               goto err_put_clk;
-> +               goto err_put_pm;
->         }
->
->         return 0;
->
-> +err_put_pm:
-> +       if (dcfg->method == IMX_RPROC_SCU_API) {
-> +               pm_runtime_disable(dev);
-> +               pm_runtime_put_noidle(dev);
-> +       }
->  err_put_clk:
->         clk_disable_unprepare(priv->clk);
->  err_put_scu:
-> @@ -1160,7 +1165,7 @@ static void imx_rproc_remove(struct platform_device *pdev)
->
->         if (priv->dcfg->method == IMX_RPROC_SCU_API) {
->                 pm_runtime_disable(priv->dev);
-> -               pm_runtime_put(priv->dev);
-> +               pm_runtime_put_noidle(priv->dev);
->         }
->         clk_disable_unprepare(priv->clk);
->         rproc_del(rproc);
->
-> --
-> 2.37.1
->
+This ensures:
+- Proper synchronization between transfer completion and flag clearing
+- Prevention of indefinite blocking with timeout safety mechanism
+- Stable test execution by maintaining correct flag states
+
+arm scmi tests: https://gitlab.arm.com/tests/scmi-tests/-/releases
+
+Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+---
+ drivers/firmware/arm_scmi/raw_mode.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/firmware/arm_scmi/raw_mode.c b/drivers/firmware/arm_scmi/raw_mode.c
+index 73db5492ab44..fb83beb42e7b 100644
+--- a/drivers/firmware/arm_scmi/raw_mode.c
++++ b/drivers/firmware/arm_scmi/raw_mode.c
+@@ -468,6 +468,12 @@ static void scmi_xfer_raw_worker(struct work_struct *work)
+ 
+ 		ret = scmi_xfer_raw_wait_for_message_response(cinfo, xfer,
+ 							      timeout_ms);
++		if (!ret)
++			if (!wait_for_completion_timeout(&xfer->done, timeout_ms))
++				dev_err(dev,
++					"timed out in RAW resp - HDR:%08X\n",
++					pack_scmi_header(&xfer->hdr));
++
+ 		if (!ret && xfer->hdr.status)
+ 			ret = scmi_to_linux_errno(xfer->hdr.status);
+ 
+@@ -1381,6 +1387,8 @@ void scmi_raw_message_report(void *r, struct scmi_xfer *xfer,
+ 	if (!raw || (idx == SCMI_RAW_REPLY_QUEUE && !SCMI_XFER_IS_RAW(xfer)))
+ 		return;
+ 
++	complete(&xfer->done);
++
+ 	dev = raw->handle->dev;
+ 	q = scmi_raw_queue_select(raw, idx,
+ 				  SCMI_XFER_IS_CHAN_SET(xfer) ? chan_id : 0);
+-- 
+2.43.0
+
 
