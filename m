@@ -1,495 +1,191 @@
-Return-Path: <linux-kernel+bounces-836094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0AEBA8B47
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:42:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF24BA8C3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2281A3BEE11
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:42:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFA187A67E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6002C2358;
-	Mon, 29 Sep 2025 09:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7951B286D4E;
+	Mon, 29 Sep 2025 09:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MlFP6MYX"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VV7PQgLg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4782C21C5
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C212D63EF
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138876; cv=none; b=Oopo5gKiFYyGymi2u61x3vlb2KSazzxTDzgkJg8sM3d8zu2/iaJ/O8P7OVU3wr9sP/bVC0Ar1UujD3fDTs6XC3i+/I+UKL7ysaGBgK+1PzSeBLff8RMJCcIKcPXcJYY2LpumsmQp4y56jd+Vn4YaTFXQ1LooN1AAmwWpUmzf04k=
+	t=1759138882; cv=none; b=al1KqagxpsZYBbOL4EhmBQ2GbtAsV3vVBuHxMdd7fNTeUaire7tNAelBgZ6tVhYqeAemlxz4qk7VT98n/nrJjXr3bBYgxRgpP1OLVJbmm9ElEILI/kkrJpjsj1SjbKdH3GOhFeiwMkg/EyG8ANaBegoEPwWeHkU9zAV1Lj+AJQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138876; c=relaxed/simple;
-	bh=yDuoH/nSjAl2Y/b4ycdLlfxccoYPyLx7s/KgzL7pWR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Urz722GpkzTfHnLOFCJ9nXCkXt5yz5bnkKrOJY5Nq7fm7nmMTEgusgk/p5uEc37kcU4j0GdMhKt0iGOAP1vWhOoPdBIhDhNuw7xeCibympX4UDEPA7LrMTpLpILv2J15adATbSxcne7Q2KCPOKseHvBWAfXqmenh74/4xBvJGOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MlFP6MYX; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e29d65728so29829205e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759138872; x=1759743672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iIHInAWPnhnDrW6Zcc5yNLvXKSoyZUHPa3K83oEqGuo=;
-        b=MlFP6MYXpdkixHfEKjqq46Fq2FBkvWdm8LfnRFf1AXIQ0MqQ9+tMsU8AZ2prN4VUyx
-         onfmamI9N0MSHNKH7iblgUFmx+OWNJKmkokxxGCqXU+6gKA0TU1UOzizPA/DfDp5ndqw
-         nOg6CsKK/+ok1Q567lbgnleRhF/Ve3NVHtF3qmszmdd3tcdG4BR5hzmob4b9X3BiaD9H
-         OxknwKwLkQXPPkLjv3pbldcn4zeZT2+CO7eklbmUCDO14BRgGx7gt4QnhxKVHUZYu4tg
-         xPrjZyibaz9BF1wD2HnHwRFDxb22yzeC91GNdqhQzo4Ne2GddwLXIotGOV5kuJBrpmba
-         kqlQ==
+	s=arc-20240116; t=1759138882; c=relaxed/simple;
+	bh=XEaiSZYGUcaHCJQNcBQ9owyrPFLPILRn44ra83b033o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KbNL2BVNc+xm9qtkIfgOhuHq5UmjSxmCSgJJQH8qfRtM/AjglKSSB07IC3THSbKV+orpcgiGq64q4brfvRMA5HowzhyYUg/iCRI+Z4Si5H8fZZbiPbWSDk+TRS36m666aE8mGQ33kDlz4hF3boy4pq+Uc5DY7DZU3gm1ZVC29uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VV7PQgLg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SLOH9D012624
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:41:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B0g50ZIP/+1LSITzGgzIqtGqdXOVUmvuN9/3KIaqoLs=; b=VV7PQgLg+TzEg9sF
+	umY8mV7//iJLoQnUwkWk+pxSSXM8HmUabJtfq15djGGUoGop+33UvFyldGKK98ky
+	61+djpax2r7jdaMPSLfRmcuBAhdOKAO6oGVkUJwR2/1EzPY2983L/IsziedUJieS
+	utOjzTfHyFS2B3JfpGkDtzVb2AaOg7Y1IxKYPhtSknPbn/emuFJSSUz8AD1Sflcs
+	HDe9o8tcdBt7w2VB5wEQdoYtPCmh2uiL1f/2qHGHCWYSEuQRYYjixXN7lykq4t8N
+	ydG7Ivh2FN/pZNc+XtGmR3yooWnFv3sLjeqws+pLyOVVe+NqaHTbchcZFKtnPcn6
+	7mgCkg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e78fvrh0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:41:19 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2681642efd9so34597735ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:41:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759138872; x=1759743672;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iIHInAWPnhnDrW6Zcc5yNLvXKSoyZUHPa3K83oEqGuo=;
-        b=hv7s19R9A1PwniOUbKqSQ5UG8e4ztBpHAcOi+05WQx/6H2f6YBs9Mm0g2xluMYam0G
-         5zQou2MDVv5m6qzVmY1uC02D2WtIFBYxuDGDYJtnT//+tmMxZskRxu4j+UQxrwA7T4Tj
-         mR8rxSW8TFUPRg8oInZx9PGbsMbTMO69Amvfvqg2lNKqgJ9fuIiHSJA0Cts/N5ImmZQV
-         vAlIBebpfNAwENkK5pOZM6JTU/jSsRWkSGo8bix1Iva8iOHFB1f8wgf2Pwf9ITgkYLS+
-         3fc9I2BDjkSda6zIo2wLKY7WSBUZXFOyvqhhvdMOjuTz2VypF/NWT9WjJMn4uaBqvyio
-         7kUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpwA/RZo3LdC0UKNlwWoaqiTlR2mf5l9pNuKjp5fsndz8rBbj6napZJJ0ZzjQEPeeSqrLNp2ymv3ghB14=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1fBNglhFZNf9HuOBhvwC4cLEx3San1qOuJcMp4toViox504iZ
-	ApBSOfSpAJYFuwnXGkPsn85gahQ4KtsOrNRESrqrVUW50amJd+4OItAIfVWsWWBT990=
-X-Gm-Gg: ASbGncvDpbjxcXDK3G3qZ7PrxRrK119RV535OevXIUsKbc7vbSos6BSgmdM4lenFvg4
-	Jv9IikgxmAoCjz0Qj9rGKwp6lsblbRGklqvBDdhQPIZIYwC1z+PfPCe5RoQVsylT61X+bGigX8b
-	rgVLAAW+yuzUu9GJq3+mVoJ6B0j+d6aOPakRZVlgQqnxHMJ87VSMjl2kFS6mIuqv3V8KDVQdmMd
-	lzoQC3NZdBKiXllxXLbQeZ8DI1xNAJAqxL9q7phyxPnruHhM2qUlwR+vLKY0Mc6Tg3UliiIzdie
-	VW+uWZJpoCBVp/bGQRl2V6DAzeyqK4i3uU9Pj0nHugSnruir8GZHHqI8nZBHsT+lVZlHSyUCBgv
-	x4YUjt9YSvkF7l61wKJHVV7JM7zxiHyE5IVA=
-X-Google-Smtp-Source: AGHT+IGev/AusH8meG9M791d2ZScvPWtdc89HVDeMYXEuFog2xaFNQFkhyXTfAVJhkMMvwMogWYy0g==
-X-Received: by 2002:a05:600c:34ce:b0:45b:47e1:ef6d with SMTP id 5b1f17b1804b1-46e32a2c1d6mr152801395e9.36.1759138871564;
-        Mon, 29 Sep 2025 02:41:11 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7b64:c4b7:3965:ef7d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e56f65290sm5402225e9.13.2025.09.29.02.41.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 02:41:11 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio updates for v6.18-rc1
-Date: Mon, 29 Sep 2025 11:41:07 +0200
-Message-ID: <20250929094107.34633-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1759138878; x=1759743678;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B0g50ZIP/+1LSITzGgzIqtGqdXOVUmvuN9/3KIaqoLs=;
+        b=wemezzhT5uC3z5PHYzeQ6VAPdx0u6uz0k3uYPmykQbG5OLPA85JMpgJkmJLr3lcWYS
+         1YXc6VZRZqpML2iS5MLLYI/rgs3jGaXfPTh9+8fi9s/NJxAX3u+4nVW8vyQUO0S/mGS5
+         QirNl5nZpuh4++bYx9DaLxV1szLwQegsT+jMEdB912GEiRjYW5lQY8U3IWrd9Ztqd7Wt
+         jxoNeZwWn9rfEPROEJBscKMji984ioDp6pd0GXjAjfxaHp/3jfguCObHsMWVML0uIGsJ
+         wwYz6PfFkphj6CgXwtLtWjDK4UAKw+eWxngtlNtnr4DNM+s/dXiNiRl3vPV2xusEvJSK
+         470w==
+X-Forwarded-Encrypted: i=1; AJvYcCULbZRxrjMrt3P9DXtbupE8IiQ8FDgAEt8ykNbSF9FDeFPYkwzhh4FzJCazLGEpD3zWL7nfnyGRmbKzcFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5MHR+N5Z3Tgg1QW2JZ57hKH+lsnB8D/M+QIt0kdWJLob9p8kD
+	ZzyOv4NJWZoRTRkQG0v8RqAii8KuU3ZWqOuER8FU0vruFu9sRt8vsCf04jFn7JHRHgbCnJ+lccz
+	t68BKSVRYHu+mi3e4p/LG8JdNXUJGTu1i4Y7ppvHQZadeGfHYLVYxbt6NtT0Pa4NmSp4=
+X-Gm-Gg: ASbGncsQk6fws/42YIfGHZzMUjk8XAZ1QmkdpqnKoxTs5CH9rBaLqHWZ66zbS4LnyRe
+	SMuBtBI0etqL8uJ5y4ncy/zW86Iu0UwoBy6q3P52sEVxcwHJa9p20iZ+Z7excCR9qBmdyV/5uVl
+	hUWY52lmbEaVv41lHIH+bseSd9Uw7hstaQl9VwEk6/X9yf4rHr6Iqd+MZIv1H+XRviCvxZVedO0
+	ha40igZlqfErj346piS3szkfWhPL76uRWTTDodMKzVNPJqW/NdwV+3+0W94+0Qp2AZ1ONYz6mfV
+	h4LxHH/fGyXhKGUG304VKKGC41hC6qFKpl9Q9A1VAHZ7XV/7A6Asgrzxd1lafvLqu+6Xyx26Q6O
+	eSpUb5I1U+Q03/OdAlXvCyZxyDRDs5uXLhw0=
+X-Received: by 2002:a17:903:1209:b0:27c:56af:88ea with SMTP id d9443c01a7336-27ed4a60a90mr138735845ad.60.1759138878273;
+        Mon, 29 Sep 2025 02:41:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHX2BDwLAFP5L6LqaHh38rh3/eLF8M2OlCmhN0N94ebznHjZi+EX/zj/NGuCgKmw15fA/eRzw==
+X-Received: by 2002:a17:903:1209:b0:27c:56af:88ea with SMTP id d9443c01a7336-27ed4a60a90mr138735595ad.60.1759138877800;
+        Mon, 29 Sep 2025 02:41:17 -0700 (PDT)
+Received: from [10.133.33.234] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6882140sm122815465ad.70.2025.09.29.02.41.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 02:41:17 -0700 (PDT)
+Message-ID: <540b1de6-c959-4911-925f-8163f5fa5147@oss.qualcomm.com>
+Date: Mon, 29 Sep 2025 17:41:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] dt-bindings: remoteproc: qcom,sm8550-pas: Add
+ Kaanapali CDSP
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
+ <20250924-knp-remoteproc-v1-2-611bf7be8329@oss.qualcomm.com>
+ <CAJKOXPc57_0pJ2ZWf2cKSKAcQMc3S_mHKQxJDzWH7t=mgim3CA@mail.gmail.com>
+ <5820a9a9-4474-4c4d-905c-0efd9442e5e1@oss.qualcomm.com>
+ <o6dzhmlicwiezmxlb5uqitx7e3pjpyuhbjqfumivbdkru42hvn@r4ksfa6m5nd2>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <o6dzhmlicwiezmxlb5uqitx7e3pjpyuhbjqfumivbdkru42hvn@r4ksfa6m5nd2>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=DZAaa/tW c=1 sm=1 tr=0 ts=68da543f cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=EUspDBNiAAAA:8 a=RABRrLoboZg1DbT1noAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyMiBTYWx0ZWRfX2/D2I69bWp5p
+ H8klICcaRlTTxXqkQfR2RocLuDEsCukG4owaZw0Iv9g0xgM/c6FzV0VfU4IGQNbi8WgM847JLto
+ 00TiLXgqfxFsSsngrQ/sESu3HJWjOJquLv4hSynWRrSl/caY+bQ28VcwKB8jQ7VJkDuRj/hyNrO
+ 3eTrx+IvTapw4Ic6laRhrjZ9cqhq6mdp40Arqren4ytmVJdPdJ9Ty/HamvEq8HYqimF6cJ4wnzh
+ 1Slj03BPbqZVYd0FZMeKgaBtROjCQsPx9vtcGCLkq+XTqqL9zxJFv9/zx6BmeIi4cmOco7IqvcB
+ 7/lNy8g91JmI7TEqNr6OXeyJI/h7JGR7BdrdYM1XsT4fwtnhGi2PE7Rdd1DuSnomsuPrGqyMfpG
+ +24IaKHQveGTiVJCPy59EKvjfQMNHA==
+X-Proofpoint-GUID: -HV8FQNlZIW2NNoCWjE49ncUZWe8NAV5
+X-Proofpoint-ORIG-GUID: -HV8FQNlZIW2NNoCWjE49ncUZWe8NAV5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_04,2025-09-29_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270022
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Linus,
 
-Here's the PR containing the GPIO updates for this merge window. There are
-two new drivers and support for more models in existing ones. 
+On 9/29/2025 5:34 PM, Dmitry Baryshkov wrote:
+> On Mon, Sep 29, 2025 at 02:20:54PM +0800, Jingyi Wang wrote:
+>>
+>>
+>> On 9/25/2025 9:48 AM, Krzysztof Kozłowski wrote:
+>>> On Thu, 25 Sept 2025 at 08:37, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
+>>>>
+>>>> Add remote processor PAS loader for Kaanapali CDSP processor, compatible
+>>>> with earlier SM8550 with minor difference: one more sixth "shutdown-ack"
+>>>> interrupt.
+>>>>
+>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>>> ---
+>>>>  .../bindings/remoteproc/qcom,sm8550-pas.yaml          | 19 +++++++++++++++++++
+>>>>  1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+>>>> index be9e2a0bc060..031fdf36a66c 100644
+>>>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+>>>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+>>>> @@ -35,6 +35,9 @@ properties:
+>>>>        - items:
+>>>>            - const: qcom,sm8750-cdsp-pas
+>>>>            - const: qcom,sm8650-cdsp-pas
+>>>> +      - items:
+>>>> +          - const: qcom,kaanapali-cdsp-pas
+>>>> +          - const: qcom,sm8550-cdsp-pas
+>>>
+>>>
+>>> This time maybe without HTML:
+>>>
+>>> This looks wrong. This is not compatible with SM8550.
+>>
+>> Could you point out what is the difference from your perspecetive?
+>> it is the same as SM8550 except for there is one more interrupt,
+>> which is also described in this patch.
+> 
+> I'd second Krzysztof here. Your description points out that it is _not_
+> compatible to SM8550.
+> 
 
-The generic GPIO API has been reworked and all users converted which
-allowed us to move the fields specific to the generic GPIO implementation
-out of the high-level struct gpio_chip into its own structure that wraps
-the gpio_chip.
-
-Other than that, there's nothing too exciting. Mostly minor tweaks and
-fixes all over the place, some refactoring and some small new features
-in helper modules. Details are in the signed tag.
-
-The merges you see here are either me pulling in MFD changes with GPIO
-drivers that depend on MFD changes or my own immutable branches provided
-for other trees.
+Here is the binding for sm8750 cdsp. Fallback to sm8650 but describe the
+difference in interrupt:
+https://lore.kernel.org/all/20250221160036.159557-1-krzysztof.kozlowski@linaro.org/
 
 Thanks,
-Bartosz
-
-The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
-
-  Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.18-rc1
-
-for you to fetch changes up to bc061143637532c08d9fc657eec93fdc2588068e:
-
-  gpio: mpfs: fix setting gpio direction to output (2025-09-26 11:56:26 +0200)
-
-----------------------------------------------------------------
-gpio updates for v6.18-rc1
-
-GPIO core:
-- add support for sparse pin ranges to the glue between GPIO and pinctrl
-- use a common prefix across all GPIO descriptor flags for improved
-  namespacing
-
-New drivers:
-- add new GPIO driver for the Nuvoton NCT6694
-- add new GPIO driver for MAX7360
-
-Driver improvements:
-- add support for Tegra 256 to the gpio-tegra186 driver
-- add support for Loongson-2K0300 to the gpio-loongson-64bit driver
-- refactor the gpio-aggregator module to expose its GPIO forwarder API
-  to other in-kernel users (to enable merging of a new pinctrl driver
-  that uses it)
-- convert all remaining drivers to using the modernized generic GPIO chip
-  API and remove the old interface
-- stop displaying global GPIO numbers in debugfs output of controller
-  drivers
-- extend the gpio-regmap helper with a new config option and improve its
-  support for GPIO interrupts
-- remove redundant fast_io parameter from regmap configs in GPIO drivers
-  that already use MMIO regmaps which imply it
-- add support for a new model in gpio-mmio: ixp4xx expansion bus
-- order includes alphabetically in a few drivers for better readability
-- use generic device properties where applicable
-- use devm_mutex_init() where applicable
-- extend build coverage of drivers by enabling more to be compiled with
-  COMPILE_TEST enabled
-- allow building gpio-stmpe as a module
-- use dev_err_probe() where it makes sense in drivers
-
-Late driver fixes:
-- fix setting GPIO direction to output in gpio-mpfs
-
-Documentation:
-- document the usage of software nodes with GPIO chips
-
-Device-tree bindings:
-- Add DT bindings documents for new hardware: Tegra256, MAX7360
-- Document a new model in Loongson bindings: LS2K0300
-- Document a new model using the generic GPIO binding: IXP4xx
-- Convert the DT binding for fsl,mxs-pinctrl to YAML
-- fix the schema ID in the "trivial" GPIO schema
-- describe GPIO hogs in the generic GPIO binding
-
-----------------------------------------------------------------
-Akhilesh Patil (1):
-      gpio: Kconfig: Update help for GPIO_PCA953X
-
-Alexander Stein (2):
-      gpio: stmpe: Allow to compile as a module
-      mfd: stmpe: Allow building as module
-
-Bartosz Golaszewski (80):
-      Merge tag 'gpio-aggregator-refactoring-for-v6.18-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into gpio/for-next
-      pinctrl: stm32: use new generic GPIO chip API
-      pinctrl: equilibrium: use new generic GPIO chip API
-      pinctrl: npcm8xx: use new generic GPIO chip API
-      pinctrl: npcm7xx: use new generic GPIO chip API
-      pinctrl: wpcm450: use new generic GPIO chip API
-      Merge branch 'ib-gpio_generic_chip_init' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl into gpio/for-next
-      gpio: generic: provide to_gpio_generic_chip()
-      gpio: generic: provide helpers for reading and writing registers
-      gpio: hisi: use the BGPIOF_UNREADABLE_REG_DIR flag
-      gpio: ts4800: remove the unnecessary call to platform_set_drvdata()
-      gpio: ts4800: use generic device properties
-      gpio: ts4800: use dev_err_probe()
-      gpio: ts4800: use new generic GPIO chip API
-      gpio: loongson-64bit: use new generic GPIO chip API
-      gpio: dwapb: use new generic GPIO chip API
-      gpio: amdpt: use new generic GPIO chip API
-      gpio: rda: use new generic GPIO chip API
-      gpio: grgpio: use new generic GPIO chip API
-      gpio: mpc8xxx: use new generic GPIO chip API
-      gpio: ge: use new generic GPIO chip API
-      gpio: sim: don't use GPIO base in debugfs output
-      gpio: xgene-sb: use new generic GPIO chip API
-      gpio: mxs: order includes alphabetically
-      gpio: mxs: use new generic GPIO chip API
-      gpio: mlxbf2: use dev_err_probe() where applicable
-      gpio: mlxbf2: use new generic GPIO chip API
-      gpio: xgs-iproc: use new generic GPIO chip API
-      gpio: ftgpio010: order includes alphabetically
-      gpio: ftgpio010: use new generic GPIO chip API
-      gpio: realtek-otto: use new generic GPIO chip API
-      gpio: hisi: use new generic GPIO chip API
-      gpio: vf610: use new generic GPIO chip API
-      gpio: visconti: use new generic GPIO chip API
-      gpio: stmpe: don't print out global GPIO numbers in debugfs callbacks
-      gpio: nomadik: don't print out global GPIO numbers in debugfs callbacks
-      gpio: wm831x: don't print out global GPIO numbers in debugfs callbacks
-      gpio: wm8994: don't print out global GPIO numbers in debugfs callbacks
-      gpio: mvebu: don't print out global GPIO numbers in debugfs callbacks
-      gpio: xra1403: don't print out global GPIO numbers in debugfs callbacks
-      mfd: vexpress-sysreg: Check the return value of devm_gpiochip_add_data()
-      mfd: vexpress-sysreg: Use new generic GPIO chip API
-      Merge tag 'ib-mfd-gpio-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd into gpio/for-next
-      Merge tag 'gpio/mfd-stmpe-for-v6.18-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into gpio/for-next
-      gpio: nomadik: wrap a local variable in a necessary ifdef
-      Merge tag 'v6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next
-      gpio: ixp4xx: allow building the module with COMPILE_TEST enabled
-      gpio: ixp4xx: use new generic GPIO chip API
-      gpio: idt3243x: use new generic GPIO chip API
-      gpio: blzp1600: use new generic GPIO chip API
-      gpio: tb10x: order includes alphabetically
-      gpio: tb10x: allow building the module with COMPILE_TEST=y
-      gpio: tb10x: use new generic GPIO chip API
-      gpio: mlxbf: use new generic GPIO chip API
-      gpio: ep93xx: allow building the module with COMPILE_TEST enabled
-      gpio: ep93xx: order includes alphabetically
-      gpio: ep93xx: use new generic GPIO chip API
-      gpio: mlxbf3: use new generic GPIO chip API
-      gpio: use more common syntax for compound literals
-      gpiolib: add a common prefix to GPIO descriptor flags
-      gpio: loongson1: allow building the module with COMPILE_TEST enabled
-      gpio: loongson1: use new generic GPIO chip API
-      gpio: hlwd: use new generic GPIO chip API
-      gpio: ath79: use new generic GPIO chip API
-      gpio: ath79: use the generic GPIO chip lock for IRQ handling
-      gpio: xgene-sb: use generic GPIO chip register read and write APIs
-      gpio: brcmstb: use new generic GPIO chip API
-      gpio: mt7621: use new generic GPIO chip API
-      gpio: mt7621: use the generic GPIO chip lock for IRQ handling
-      gpio: menz127: use new generic GPIO chip API
-      gpio: sifive: use new generic GPIO chip API
-      gpio: spacemit-k1: use new generic GPIO chip API
-      gpio: sodaville: use new generic GPIO chip API
-      gpio: mmio: use new generic GPIO chip API
-      gpio: move gpio-mmio-specific fields out of struct gpio_chip
-      gpio: nomadik: fix the debugfs helper stub
-      Merge tag 'ib-mfd-gpio-hwmon-i2c-can-rtc-watchdog-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd into gpio/for-next
-      Merge tag 'ib-mfd-gpio-input-pinctrl-pwm-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd into gpio/for-next
-      gpio: generic: rename BGPIOF_ flags to GPIO_GENERIC_
-      gpio: generic: move GPIO_GENERIC_ flags to the correct header
-
-Chen Ni (1):
-      gpio: loongson-64bit: Remove unneeded semicolon
-
-Christophe JAILLET (1):
-      gpio: pisosr: Use devm_mutex_init()
-
-Colin Ian King (1):
-      gpio: loongson-64bit: Fix a less than zero check on an unsigned int struct field
-
-Conor Dooley (1):
-      gpio: mpfs: fix setting gpio direction to output
-
-Dan Carpenter (1):
-      gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
-
-Dmitry Torokhov (1):
-      Documentation: gpio: add documentation about using software nodes
-
-Frank Li (1):
-      dt-bindings: gpio: Move fsl,mxs-pinctrl.txt into gpio-mxs.yaml
-
-Geert Uytterhoeven (1):
-      gpio: TODO: remove the task for converting to the new line setters
-
-Ioana Ciornei (1):
-      dt-bindings: gpio: fix trivial-gpio's schema id
-
-Kamel Bouhara (2):
-      mfd: Add max7360 support
-      pwm: max7360: Add MAX7360 PWM support
-
-Krzysztof Kozlowski (1):
-      dt-bindings: gpio: Minor whitespace cleanup in example
-
-Li Jun (1):
-      gpio: aggregator: fix macros coding style error
-
-Linus Walleij (3):
-      dt-bindings: gpio-mmio: Support hogs
-      dt-bindings: gpio-mmio: Add MMIO for IXP4xx expansion bus
-      gpio: mmio: Add compatible for the ixp4xx eb MMIO
-
-Mathieu Dubois-Briand (8):
-      dt-bindings: mfd: gpio: Add MAX7360
-      pinctrl: Add MAX7360 pinctrl driver
-      gpio: regmap: Allow to allocate regmap-irq device
-      gpio: regmap: Allow to provide init_valid_mask callback
-      gpio: max7360: Add MAX7360 gpio support
-      input: keyboard: Add support for MAX7360 keypad
-      input: misc: Add support for MAX7360 rotary
-      MAINTAINERS: Add entry on MAX7360 driver
-
-Ming Yu (7):
-      mfd: Add core driver for Nuvoton NCT6694
-      gpio: Add Nuvoton NCT6694 GPIO support
-      i2c: Add Nuvoton NCT6694 I2C support
-      can: Add Nuvoton NCT6694 CANFD support
-      watchdog: Add Nuvoton NCT6694 WDT support
-      hwmon: Add Nuvoton NCT6694 HWMON support
-      rtc: Add Nuvoton NCT6694 RTC support
-
-Prathamesh Shete (2):
-      dt-bindings: gpio: Add Tegra256 support
-      gpio: tegra186: Add support for Tegra256
-
-Thomas Richard (9):
-      gpiolib: add support to register sparse pin range
-      gpio: aggregator: move GPIO forwarder allocation in a dedicated function
-      gpio: aggregator: refactor the code to add GPIO desc in the forwarder
-      gpio: aggregator: refactor the forwarder registration part
-      gpio: aggregator: update gpiochip_fwd_setup_delay_line() parameters
-      gpio: aggregator: export symbols of the GPIO forwarder library
-      gpio: aggregator: handle runtime registration of gpio_desc in gpiochip_fwd
-      gpio: aggregator: add possibility to attach data to the forwarder
-      lib/string_choices: Add str_input_output() helper
-
-Waqar Hameed (1):
-      gpio: twl4030: Remove error print for devm_add_action_or_reset()
-
-Wolfram Sang (1):
-      gpio: remove unneeded 'fast_io' parameter in regmap_config
-
-Yao Zi (2):
-      dt-bindings: gpio: loongson: Document GPIO controller of LS2K0300 SoC
-      gpio: loongson-64bit: Add support for Loongson-2K0300 SoC
-
- .../devicetree/bindings/gpio/gpio-mmio.yaml        |  36 +-
- .../devicetree/bindings/gpio/gpio-mxs.yaml         |  80 +-
- .../devicetree/bindings/gpio/loongson,ls-gpio.yaml |  28 +-
- .../devicetree/bindings/gpio/maxim,max31910.yaml   |   6 +-
- .../bindings/gpio/maxim,max7360-gpio.yaml          |  83 ++
- .../bindings/gpio/nvidia,tegra186-gpio.yaml        |   2 +
- .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml |   2 +-
- .../devicetree/bindings/gpio/trivial-gpio.yaml     |   2 +-
- .../devicetree/bindings/mfd/maxim,max7360.yaml     | 191 +++++
- .../bindings/pinctrl/fsl,mxs-pinctrl.txt           | 127 ---
- Documentation/driver-api/gpio/board.rst            |  65 ++
- Documentation/driver-api/gpio/index.rst            |   1 +
- Documentation/driver-api/gpio/legacy-boards.rst    | 298 +++++++
- MAINTAINERS                                        |  25 +
- drivers/gpio/Kconfig                               |  49 +-
- drivers/gpio/Makefile                              |   2 +
- drivers/gpio/TODO                                  |  17 -
- drivers/gpio/gpio-aggregator.c                     | 410 +++++++--
- drivers/gpio/gpio-amdpt.c                          |  44 +-
- drivers/gpio/gpio-ath79.c                          |  88 +-
- drivers/gpio/gpio-blzp1600.c                       |  39 +-
- drivers/gpio/gpio-brcmstb.c                        | 114 +--
- drivers/gpio/gpio-cadence.c                        |   2 +-
- drivers/gpio/gpio-dwapb.c                          | 160 ++--
- drivers/gpio/gpio-ep93xx.c                         |  33 +-
- drivers/gpio/gpio-ftgpio010.c                      |  48 +-
- drivers/gpio/gpio-ge.c                             |  25 +-
- drivers/gpio/gpio-grgpio.c                         |  87 +-
- drivers/gpio/gpio-hisi.c                           |  48 +-
- drivers/gpio/gpio-hlwd.c                           | 105 +--
- drivers/gpio/gpio-idt3243x.c                       |  45 +-
- drivers/gpio/gpio-ixp4xx.c                         |  72 +-
- drivers/gpio/gpio-loongson-64bit.c                 | 228 ++++-
- drivers/gpio/gpio-loongson1.c                      |  40 +-
- drivers/gpio/gpio-max7360.c                        | 257 ++++++
- drivers/gpio/gpio-menz127.c                        |  31 +-
- drivers/gpio/gpio-mlxbf.c                          |  25 +-
- drivers/gpio/gpio-mlxbf2.c                         |  81 +-
- drivers/gpio/gpio-mlxbf3.c                         | 101 +--
- drivers/gpio/gpio-mmio.c                           | 363 ++++----
- drivers/gpio/gpio-mpc8xxx.c                        | 105 ++-
- drivers/gpio/gpio-mpfs.c                           |   2 +-
- drivers/gpio/gpio-mt7621.c                         |  80 +-
- drivers/gpio/gpio-mvebu.c                          |   3 +-
- drivers/gpio/gpio-mxc.c                            |   2 +-
- drivers/gpio/gpio-mxs.c                            |  31 +-
- drivers/gpio/gpio-nct6694.c                        | 499 +++++++++++
- drivers/gpio/gpio-nomadik.c                        |  27 +-
- drivers/gpio/gpio-pisosr.c                         |   8 +-
- drivers/gpio/gpio-rda.c                            |  35 +-
- drivers/gpio/gpio-realtek-otto.c                   |  41 +-
- drivers/gpio/gpio-regmap.c                         |  30 +-
- drivers/gpio/gpio-sifive.c                         |  74 +-
- drivers/gpio/gpio-sim.c                            |   3 +-
- drivers/gpio/gpio-sodaville.c                      |  20 +-
- drivers/gpio/gpio-spacemit-k1.c                    |  29 +-
- drivers/gpio/gpio-stmpe.c                          |  34 +-
- drivers/gpio/gpio-tb10x.c                          |  74 +-
- drivers/gpio/gpio-tegra186.c                       |  28 +
- drivers/gpio/gpio-ts4800.c                         |  39 +-
- drivers/gpio/gpio-twl4030.c                        |   4 +-
- drivers/gpio/gpio-vf610.c                          |  31 +-
- drivers/gpio/gpio-visconti.c                       |  25 +-
- drivers/gpio/gpio-wm831x.c                         |   5 +-
- drivers/gpio/gpio-wm8994.c                         |   6 +-
- drivers/gpio/gpio-xgene-sb.c                       |  58 +-
- drivers/gpio/gpio-xgs-iproc.c                      |  34 +-
- drivers/gpio/gpio-xra1403.c                        |   3 +-
- drivers/gpio/gpiolib-cdev.c                        |  90 +-
- drivers/gpio/gpiolib-of.c                          |   2 +-
- drivers/gpio/gpiolib-sysfs.c                       |  46 +-
- drivers/gpio/gpiolib.c                             | 195 +++--
- drivers/gpio/gpiolib.h                             |  36 +-
- drivers/hwmon/Kconfig                              |  10 +
- drivers/hwmon/Makefile                             |   1 +
- drivers/hwmon/nct6694-hwmon.c                      | 949 +++++++++++++++++++++
- drivers/i2c/busses/Kconfig                         |  10 +
- drivers/i2c/busses/Makefile                        |   1 +
- drivers/i2c/busses/i2c-nct6694.c                   | 196 +++++
- drivers/input/keyboard/Kconfig                     |  12 +
- drivers/input/keyboard/Makefile                    |   1 +
- drivers/input/keyboard/max7360-keypad.c            | 308 +++++++
- drivers/input/misc/Kconfig                         |  10 +
- drivers/input/misc/Makefile                        |   1 +
- drivers/input/misc/max7360-rotary.c                | 192 +++++
- drivers/mfd/Kconfig                                |  39 +-
- drivers/mfd/Makefile                               |   3 +
- drivers/mfd/max7360.c                              | 171 ++++
- drivers/mfd/nct6694.c                              | 388 +++++++++
- drivers/mfd/stmpe.c                                |   6 +
- drivers/mfd/vexpress-sysreg.c                      |  25 +-
- drivers/net/can/usb/Kconfig                        |  11 +
- drivers/net/can/usb/Makefile                       |   1 +
- drivers/net/can/usb/nct6694_canfd.c                | 832 ++++++++++++++++++
- drivers/pinctrl/Kconfig                            |  11 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/nomadik/pinctrl-nomadik.c          |   2 +-
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c          | 181 ++--
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c          | 154 ++--
- drivers/pinctrl/nuvoton/pinctrl-wpcm450.c          |  46 +-
- drivers/pinctrl/pinctrl-equilibrium.c              |  26 +-
- drivers/pinctrl/pinctrl-equilibrium.h              |   2 +-
- drivers/pinctrl/pinctrl-max7360.c                  | 215 +++++
- drivers/pinctrl/stm32/pinctrl-stm32-hdp.c          |  32 +-
- drivers/pwm/Kconfig                                |  10 +
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/pwm-max7360.c                          | 209 +++++
- drivers/rtc/Kconfig                                |  10 +
- drivers/rtc/Makefile                               |   1 +
- drivers/rtc/rtc-nct6694.c                          | 297 +++++++
- drivers/watchdog/Kconfig                           |  11 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/nct6694_wdt.c                     | 307 +++++++
- include/dt-bindings/gpio/tegra256-gpio.h           |  28 +
- include/linux/gpio/driver.h                        | 105 ++-
- include/linux/gpio/forwarder.h                     |  41 +
- include/linux/gpio/generic.h                       | 102 ++-
- include/linux/gpio/gpio-nomadik.h                  |   6 +-
- include/linux/gpio/regmap.h                        |  18 +
- include/linux/mfd/max7360.h                        | 109 +++
- include/linux/mfd/nct6694.h                        | 102 +++
- include/linux/string_choices.h                     |   6 +
- 122 files changed, 8577 insertions(+), 1783 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max7360.yaml
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,mxs-pinctrl.txt
- create mode 100644 Documentation/driver-api/gpio/legacy-boards.rst
- create mode 100644 drivers/gpio/gpio-max7360.c
- create mode 100644 drivers/gpio/gpio-nct6694.c
- create mode 100644 drivers/hwmon/nct6694-hwmon.c
- create mode 100644 drivers/i2c/busses/i2c-nct6694.c
- create mode 100644 drivers/input/keyboard/max7360-keypad.c
- create mode 100644 drivers/input/misc/max7360-rotary.c
- create mode 100644 drivers/mfd/max7360.c
- create mode 100644 drivers/mfd/nct6694.c
- create mode 100644 drivers/net/can/usb/nct6694_canfd.c
- create mode 100644 drivers/pinctrl/pinctrl-max7360.c
- create mode 100644 drivers/pwm/pwm-max7360.c
- create mode 100644 drivers/rtc/rtc-nct6694.c
- create mode 100644 drivers/watchdog/nct6694_wdt.c
- create mode 100644 include/dt-bindings/gpio/tegra256-gpio.h
- create mode 100644 include/linux/gpio/forwarder.h
- create mode 100644 include/linux/mfd/max7360.h
- create mode 100644 include/linux/mfd/nct6694.h
+Jingyi
 
