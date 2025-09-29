@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-836187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B7EBA8F56
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5BEBA8F59
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1C531C3679
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDE9189F293
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C812FFDDE;
-	Mon, 29 Sep 2025 11:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D332FF678;
+	Mon, 29 Sep 2025 11:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UJI893Zn"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTA98byZ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3522FF678
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C3D2FF676
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759143750; cv=none; b=BtK0rmr3LdFK7ouiqaYmRWXcmK6llLoUHMNA/YSP2PjR7uja71r1aKYRav0hAlfBAzEl2drp3rI+wZyWzxoaDXCbk5kGbi8pyinTGs040eS8pHo+4fdDLjnO6x5VovdYKBdME+bj/ZiPATYswCxj+XuKY7NlBu3O5Rd+bZEgwq4=
+	t=1759143760; cv=none; b=q9GGskRwgY4K4C7Q/sSlCezYWRv/DBCF5dupsL0oXpZzn0QkyqkGL53N4o9kTAAnZTubswP8wrqqaUYcvIu9BYKjkIkijJDePitkAs79ykAsnt3TY529k4yzICJrk0eT0ZQxPlC4ltoDwmATHHNxsde9DrzZ1EXCkRcvpZ9IqCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759143750; c=relaxed/simple;
-	bh=OEUy7JaWPeXS2Ype1uvWF0qyiWgASok2ncKtO4Y4Mac=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Sgblf5cUMyaJA6zKqknTqpgxTX7TdAfjmPehjAmUXKadj7UWBRljPxFlSvOsYO/72/qVGTqOqBtAYW9nzcoycVyNC/RP2VhZemgGplzFOFbnz+2dhgzTXkfZuWAgIoQXRc07n8BwkwHU3g8weJDd0axk69nw0/titL73tUdYeKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UJI893Zn; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-286a252bfc2so13581575ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:02:28 -0700 (PDT)
+	s=arc-20240116; t=1759143760; c=relaxed/simple;
+	bh=GCP8LuYtl1jmZq2NZKQmVEw9gQOGAcyHtezJJOCLTAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DpQ7EsNrJq5No60lWPND3jZiZh267jKcBG1DZJrrUo0KosRBsSpEiMcwIVGmYxIxNFFFcAdTXNAtmv8MIkXDXnvLa8GZRJ6kwnnlvOpZFpWARs8221hb0nQ17NgOcHplpuK/B5gSSd2Kp42MS3w1/b2NO7/dfdZyiUvz/1LHmaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hTA98byZ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-26c209802c0so47038405ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759143748; x=1759748548; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtXGlwWwUlaQk0BF4qliyTbm6pNsB+T8OxH6HQs+mvE=;
-        b=UJI893ZnVkKqWJE+Yas7gUzYFutuvgsJ8l25v010reFjpSOYQ/YzPRqLw2uqyrHdJr
-         3G9k4liKd9PkL+JBVRVX3UZb/AJDUakkrkkzZ069fn9UrpblLsINAVHt+KY/8EU+H1F4
-         hG6ePKx4kHhKgy0RrnHUJWkdSjprGyUfRxte1pD35rBRSjs3qg7OkH0fcwlCRGa8kO7X
-         EfWgNMO8lyoPZ9v4aXmtr8ESS9euMMZhX+WGmrdjrG6jotDads+g/KAZrCjVNG5eWGAA
-         y2RDRCwUuFxpU2i2uHv18QxJqoSCgQJglt1bSM0MA6a5tYLLWe6uk41hlpt50w2coPac
-         5WFA==
+        d=linaro.org; s=google; t=1759143757; x=1759748557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ArXlIKa0bCAPRpe0CickijlhXS7XHZf7jcmbVv++sWo=;
+        b=hTA98byZ22UWb35+btzTO/cP7WX2yWJUQJdqVXOaWI4yfwh3itcySFQZORmWu5BZEE
+         mIxzN4NcF2TJHkFs+aXwMBacELqodzwOXFW0UnPLbwl8PFOgZ5RZL9AgUXYh5hEHNPK4
+         wY59vZxyerFGgBN9zDbFitnnK0t4Z55jo+9Ou0nIOpr5JeFMa0mvlNFsewyqC8gN6Aht
+         xPKlL+u/pkGOtNm4v56I5dYtJkgBxFemFBrR22bJzFF1m0aJ0MqPGZV+g/DKCpdVQGZB
+         p7oNzAfJEFMXYzNEy5uoipsB8cjB+0rJIUBtDASZLEHeByK1kGoD3ct6HqwpfH0GQhDa
+         gaAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759143748; x=1759748548;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtXGlwWwUlaQk0BF4qliyTbm6pNsB+T8OxH6HQs+mvE=;
-        b=QzLNdLtk1mY61qH+umwsPKqw/U5YJ1Id6V4JZdHqcAwfBuXPfxYl+MJcHVejhF65/E
-         gQ6oCDcmhVQzubtPrxWApRPPo9GKfCdEqQRbl33E572EnYR2nVbMfk2gxtxD7ylcFynn
-         opKcBXiqpK8q0pgmNS+kGadNrHcSTrA+7kc1cNITQbjF89TKATX0ZnMcaCb/IYgU8UVx
-         hh4T/RmEIWyOyPf9dY/v218RcwEcNtDD4ZxM8gzChm2gtGWaJiX/k6+A/n9FGWFyCWva
-         S02JO6kad/0+kVHUiH4YgdgHN021XuK9IRV8z8negFNl/sPpCZiu+Y/86+WFH/6LyMiv
-         IFqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqjWAbXkaiW2ZsOd5EkbJUh+HadVdF9eaKW+3LP9g6OwndAWNdAFponNPoC0lyN2ZEbfaYojf2wvSumtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyitHL8hdTDV4mGW8L+B3sTJUiLeu7hkosq7dVy7Z8A25/e/wQe
-	W2iB3BLVSn0qr/7WJPjUtji1qQW1rgF5Nw7hKVShPOrJ/iM//0AKft8TfK0zIoViEvWmxmyx1J6
-	qPKw0CFi7ToKUtoURZQvucOyGEA==
-X-Google-Smtp-Source: AGHT+IEcSQC2/7RCpSj05s6B6MxghOWFZfy3etlV42502KzdeZsbh90GRnuZksSIgdfE1mOYTr6TRXFNOOA5WMB/Hw==
-X-Received: from plpm10.prod.google.com ([2002:a17:903:3dea:b0:269:8295:538d])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2ad0:b0:27c:3690:2c5d with SMTP id d9443c01a7336-28d16a45ef5mr1792685ad.0.1759143747796;
- Mon, 29 Sep 2025 04:02:27 -0700 (PDT)
-Date: Mon, 29 Sep 2025 11:02:26 +0000
-In-Reply-To: <20250926163114.2626257-4-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1759143757; x=1759748557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ArXlIKa0bCAPRpe0CickijlhXS7XHZf7jcmbVv++sWo=;
+        b=QGyCUVZDHoOdfQq7za6apFXSTOFQwBEMZ6Q0P8ApFMjjYLQ596nUUzf0TOGbXlbXHl
+         C4XQXAlRKEOTSj/hbK5utpDdbgtg+ilbqhzMq5pMFX0yvuZihUuZrieFyrMdz5U7g1vj
+         bCG6PyDpMlxKx8JbE9rxw/xl088XAlx6RTJwKuHUbUzvakNV65Q5ZsDaGkxJ/3Y6cVZF
+         /7Vr5zQ5oVbsTD2gOtAlWgrNOdtu8EjQxBTRc5HXRnMM+ceQwbA+s+zZjkNvPyRrjNaw
+         o+GCnOVoFnk2BzJt7AxJ13tbTzMlEwsc+13NPlEoTJzX/kyoSRESD3twgiGHULy26aIf
+         N1qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5MhOGPl10XhYGz5QQLUSFYYlXnQ4Kro5QK1gjDYDl5kuZccQG3itsqXeA1c0mr/r4fWB7peQUAq4fUtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyqXsPnUhAFnXwrul5+LWTDolo538tFlsM05qTHsMnNpWctlOM
+	3h16Cd1T9zRU4gj+0DGuAzAuey8lzII3b6173fVxNNbTFixfDmAyy20TMk4zVE6WtbE=
+X-Gm-Gg: ASbGncun9hEXRaak5E2E9D3c62iqRo8id2GPJJBaxQaR/zWRglayXarO4mm1t8U14aO
+	qHR+roghAVjpRPDKewhHcUCNRDHB3vC+LXuZ299+g3SoBEXcZKRymlB8TCoKWPJOUssz2vQrW+q
+	/+nTJiNfLvRaZBmD8udAWleWkF6g+DLpMtH/8uN1M34cpg8ovCjaEmGzkX4cKAPjAtpAn7yI7n4
+	viqIC3NzAgRJxKZbQ9RkACeP68qu4mPxKTzp9NpuxozsRIzGt1OYs3fTofEtwOy09yhA+cRn2xx
+	iQioRh2drd/3tN2tbAiZ+edUDrB67WKTwAXAQOvwhjizR6KHhv9Fh/WUYWKJ3WagjsQsxAKocnr
+	REwE+D9GRW1MBNoIVlMmMsqXz
+X-Google-Smtp-Source: AGHT+IFJ8tBd5DbfKm01y+6YhQUicmi46JD7jPOYKxXSxgRsT1oHLX0ubEnEv3SeXFYfJc1oZPUmzA==
+X-Received: by 2002:a17:902:c409:b0:269:96db:939 with SMTP id d9443c01a7336-27ed4af3882mr193698795ad.58.1759143757073;
+        Mon, 29 Sep 2025 04:02:37 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ac274csm124914185ad.134.2025.09.29.04.02.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 04:02:36 -0700 (PDT)
+Date: Mon, 29 Sep 2025 16:32:34 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] rust: cpufreq: streamline find_supply_names
+Message-ID: <20250929110234.ukgwsnxyrvsimhst@vireshk-i7>
+References: <20250915135954.2329723-2-thorsten.blum@linux.dev>
+ <CAH5fLgg0_NBtfVMNBwXOe4BpyUKz_S=v0CiDxyKNYZcS9j7WHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-4-seanjc@google.com>
-Message-ID: <diqzwm5h1pz1.fsf@google.com>
-Subject: Re: [PATCH 3/6] KVM: selftests: Create a new guest_memfd for each testcase
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Lisa Wang <wyihan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH5fLgg0_NBtfVMNBwXOe4BpyUKz_S=v0CiDxyKNYZcS9j7WHw@mail.gmail.com>
 
-Sean Christopherson <seanjc@google.com> writes:
+On 29-09-25, 11:38, Alice Ryhl wrote:
+> This is a pre-existing issue, but ... this treats allocation failure
+> and non-existence the same way. That sounds wrong.
 
-> Refactor the guest_memfd selftest to improve test isolation by creating a
-> a new guest_memfd for each testcase.  Currently, the test reuses a single
-> guest_memfd instance for all testcases, and thus creates dependencies
-> between tests, e.g. not truncating folios from the guest_memfd instance
-> at the end of a test could lead to unexpected results (see the PUNCH_HOLE
-> purging that needs to done by in-flight the NUMA testcases[1]).
->
+What about this over the current patch:
 
-Lisa and I ran into this recently while working on testing
-memory_failure() handling for guest_memfd too.
+diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
+index 224d063c7cec..e509b46b64c7 100644
+--- a/drivers/cpufreq/rcpufreq_dt.rs
++++ b/drivers/cpufreq/rcpufreq_dt.rs
+@@ -26,13 +26,17 @@ fn find_supply_name_exact(dev: &Device, name: &str) -> Option<CString> {
+ }
 
-> Invoke each test via a macro wrapper to create and close a guest_memfd
-> to cut down on the boilerplate copy+paste needed to create a test.
->
+ /// Finds supply name for the CPU from DT.
+-fn find_supply_names(dev: &Device, cpu: cpu::CpuId) -> Option<KVec<CString>> {
++fn find_supply_names(dev: &Device, cpu: cpu::CpuId) -> Result<Option<KVec<CString>>> {
+     // Try "cpu0" for older DTs, fallback to "cpu".
+-    (cpu.as_u32() == 0)
++    let name = (cpu.as_u32() == 0)
+         .then(|| find_supply_name_exact(dev, "cpu0"))
+         .flatten()
+-        .or_else(|| find_supply_name_exact(dev, "cpu"))
+-        .and_then(|name| kernel::kvec![name].ok())
++        .or_else(|| find_supply_name_exact(dev, "cpu"));
++
++    Ok(match name {
++        None => None,
++        Some(n) => Some(kernel::kvec![n]?),
++    })
+ }
 
-I introduced a wrapper function but a macro is a better idea since it
-also parametrizes the test name.
+ /// Represents the cpufreq dt device.
+@@ -68,7 +72,7 @@ fn init(policy: &mut cpufreq::Policy) -> Result<Self::PData> {
 
-Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+         mask.set(cpu);
 
-> Link: https://lore.kernel.org/all/20250827175247.83322-10-shivankg@amd.com
-> Reported-by: Ackerley Tng <ackerleytng@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  .../testing/selftests/kvm/guest_memfd_test.c  | 31 ++++++++++---------
->  1 file changed, 16 insertions(+), 15 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-> index 8251d019206a..60c6dec63490 100644
-> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
-> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-> @@ -26,7 +26,7 @@
->  
->  static size_t page_size;
->  
-> -static void test_file_read_write(int fd)
-> +static void test_file_read_write(int fd, size_t total_size)
->  {
->  	char buf[64];
->  
-> @@ -259,14 +259,18 @@ static void test_guest_memfd_flags(struct kvm_vm *vm, uint64_t valid_flags)
->  	}
->  }
->  
-> +#define gmem_test(__test, __vm, __flags)				\
-> +do {									\
-> +	int fd = vm_create_guest_memfd(__vm, page_size * 4, __flags);	\
-> +									\
-> +	test_##__test(fd, page_size * 4);				\
-> +	close(fd);							\
-> +} while (0)
-> +
-> 
-> [...snip...]
-> 
+-        let token = find_supply_names(dev, cpu)
++        let token = find_supply_names(dev, cpu)?
+             .map(|names| {
+                 opp::Config::<Self>::new()
+                     .set_regulator_names(names)?
+
+-- 
+viresh
 
