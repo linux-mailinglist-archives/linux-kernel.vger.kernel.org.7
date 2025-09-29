@@ -1,147 +1,224 @@
-Return-Path: <linux-kernel+bounces-836734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B519DBAA71A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:19:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E87BBAA720
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326C219219BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:19:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA953C77B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066AA2417E6;
-	Mon, 29 Sep 2025 19:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5092459EA;
+	Mon, 29 Sep 2025 19:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XZ+l9q9b"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="QXEsuj1X";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HgmlHyFV"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AB419343B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087A119E967;
+	Mon, 29 Sep 2025 19:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759173550; cv=none; b=lSvGs6hvIFzLFyz/tWeIedqJrfAI1Hr1Cc31WBWu1GgDhIgNkszHCIG1ruqI7xVrVepVJzNSvhzU2qLTP39iWw4OJS3LklM6EWTTQyQjRcnw6694B2/Qn8Jrpw8vDhIEJivgWAL7u9kibKoIhcyrQFKHG7qSJSRbeENb5CRA664=
+	t=1759173712; cv=none; b=D/bpdX9ESUEAnsiDNXGb8uLjfyT/ScuiX+/1DPohxCjlMfiGhsqH5UmTQ0tH3rkm4DF8XPH+iq9yEfCopM1Js3rZRM/E78fkjoyTlrHnLtiBOiYoHV0cn5OUGo46IZbjkPnEqTN0NjRw2ovicWMcigl8O/uVtLOIeh2cfoF08pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759173550; c=relaxed/simple;
-	bh=zBnad9EJYfVwk4ZBFsZ2fTR/TQrtexdZk0mtIk48Ptg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pqrhYe7hXao4mjxFCe/VBOnEJOPrdc7R2JwV9sXbdA+vaZsQCyrNbEJRJ/6BZGHbc4dS+ORbW6VEKrvFL2YynafB6aDATIqoRLXoD8k/eFZD9L3pN7rzxMC3EBpxlPtuAgNtDjBQXkrTLQ++kaoQLTx96w7B2tQdRK4qmiFddhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XZ+l9q9b; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-91e578e2a61so90404239f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:19:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1759173547; x=1759778347; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5dCy2LF3KV1f/Ee8OpqPdEz2rOo1BLwqJUwgqG/vhjk=;
-        b=XZ+l9q9b5G8FH7bL4mH7K581p+ujSsSfoES0ObSSuv9GATVe1kpp0/zVViF8TPdMFO
-         ItHrOm7ZHglKmYCnBCHIQ1J0z+l3o3cGxOhLUhhtJBhx0O0dRSwzioSh5QpET/OG7Rde
-         ouwSmttJ7Hd+KAHWQHpEv+E9AgFKV4t68koSI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759173547; x=1759778347;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5dCy2LF3KV1f/Ee8OpqPdEz2rOo1BLwqJUwgqG/vhjk=;
-        b=wj0zPeCyahCjmJDAtExmGMe1dV2ZAEi8E6qYnN6efaY7gGSKkaN1M13pPNz6CNkvrC
-         rAo77fgaUtsSU5sWouea+mismb0OHWrf6pTSl4h3FZRfWoJD6+XImdOIWAO0q8z0Ur4C
-         PBwrHrDAKK1h6mS5TU2MBA44yxQaGWAKNmOfffjVMyjDwNq2oYb0rjvLuEXe2JkT4UDH
-         GY1wg2ARkbRoV5+1cWhzLxffc1XwY/xSVXRi0dAmkAbHR8ufXOa5OPe/2gakp+QCCexn
-         froJk85tIZv/GFBQA8mzH7EkAByWNQfy/YPEMIfvhGD2FPITfqbnRdqytbPt+76L3XcR
-         A1tA==
-X-Forwarded-Encrypted: i=1; AJvYcCVllr1OOiVq60ELGKMgF6zbk3lcGSgs06PFyHJIlamGu165JnIGDcY26gPbe+kXzm6vl2aR1ORfY76zpcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl5v90maCYZ7DwBdFrPFRHgFGU8UROkb8uxMzAtWvuNtHJmrYl
-	D08E7g+gYEePfgvDkPnkK6kwHm2zBGGpte+/PxBm1Nsv0mJrUdxYOzJkvSyLhE9Lhr4=
-X-Gm-Gg: ASbGncv8NBKftvY2EjbhVGBGnSirVkwqqGYLR0cWzTj7wVi0n4EIbBUeZOcHIVT9Ryj
-	6KfDrWUs82ty3BX0ty2EF9SuT72OlD6OvP6U3MRNopFsh/wnXhEy0eNoDM7O3cCMOXM3C/oweYf
-	arKaNMZ7I/kE29vLmVdvlU8xCRXPu70UBmfSkupryQlZ7joJ5eOMfjuEenbY6/YmnhUszmxnaqY
-	HeD6iMPCWtOW9N8/BRb3ySkC9bWrRtjcOmMYGMzyti9h7dFdlYvnNhn+dgMjZUT6e8CXAIlcF5l
-	fKf7N5jp/Ofd/295HbVznrfrTTBvg5i+V+oERCf+ZfqO7i3U1bO3tcWeeE88Y/gtsy/R9CLRJlu
-	zw+owobLIbA6BEJNeHSMKI3yyrUgmkWSZi9WYAS9x44q/Yg==
-X-Google-Smtp-Source: AGHT+IFXQJniqhnGOTj1VN5ttpc6vFUxHUYPG52qF0U1SkqiJdALjmHy1lmnRSwcbsmg9Rs6bty/XA==
-X-Received: by 2002:a05:6602:6c13:b0:92a:e2bc:d861 with SMTP id ca18e2360f4ac-92ae2bcd88bmr545063039f.1.1759173547206;
-        Mon, 29 Sep 2025 12:19:07 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-91595607a87sm309780739f.8.2025.09.29.12.19.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 12:19:06 -0700 (PDT)
-Message-ID: <3e9d38b2-4fac-4048-8fef-e989630da9ee@linuxfoundation.org>
-Date: Mon, 29 Sep 2025 13:19:05 -0600
+	s=arc-20240116; t=1759173712; c=relaxed/simple;
+	bh=ujDbkHw/xdsvbIV0XdkfukeD3oLBVhwFpdNItyGewBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GWyiflk+QrYSOnmKKPu7gkCZjvDFH/bAdITfy4Le/trdPXi+M++MtSnpHmTKIC7t5Tt0rPgJcH/fil+Js59wIS1zmWWsNm8rjWojdDVja1XsKKuUwA6jpT5FYcgiZbqtYh2qcIr8O2BGxrmzK9mwaC4UZ+h41PRFSQCh86EfbzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=QXEsuj1X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HgmlHyFV; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2A9E5EC0170;
+	Mon, 29 Sep 2025 15:21:49 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Mon, 29 Sep 2025 15:21:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1759173709; x=
+	1759260109; bh=bfQKgoj9sFKuTXtBwbqoDkLJI+gJiyffPRmuhrKgtQc=; b=Q
+	XEsuj1XK0ok5o6RDn6FbMiz5tz1Ufhy64qZUXxr23JT0UQ4ZR5ko4By1j1fBo1HG
+	udaiUNM+iffAF3RAdJIIAWhE1FZESSzFgt/zj5F+JaKUEuAYGaay71d57hudcL9Z
+	IUIKZDoUi1V29vX29F714hXAIKTTRwkmW4o1lpIxQCHSG9qDNu2Sa7pnKFisTvpL
+	PEW82mO7QlBwcnRr4CKwHizcgZxPRql6jrg+YTAkuPfLgDs7GpLro4rXMeTop/qa
+	Jj2QVi7JZJQl79r2/DxgQpRieZMejLwdrJXuJqiOKmP8E4oTLcVpUCWR8RIMmFkH
+	XDidxyySGep6F7qyK3yaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm2; t=1759173709; x=1759260109; bh=b
+	fQKgoj9sFKuTXtBwbqoDkLJI+gJiyffPRmuhrKgtQc=; b=HgmlHyFVsQtqRHdfg
+	nnTkHgq8pVT/703XJvGcMGpQGSrhNrFoewFvHoE4E+SEoXwvg8vqMs9CFp5AVvsq
+	WpQCNVDbshXiMrszVDLwe7TbvOoiXz0EGdM4C396ytPMum0NXwjSHVi83AQPL5Fa
+	C2O5r2tsQQp0HOXhW5K1BFv+jPCIES0qcY/Za8W09eNz92YhgTZK6fS+ltzeF9Vh
+	vG8rZ/8b6RSx1zdL4qlv2ynsoYcCv2AxjoyAwrhb1guZ43ZG5DVI8BenMkQUJZ7F
+	me0LHnTAYdNmMezOCFZag0e0G7klsMpR87EEtwdmwOwrep0ptGQquSgFSGNazXAY
+	p/aug==
+X-ME-Sender: <xms:TNzaaC4TNlQkS4doqlyd0ucV2hJ9LZe21LruayHQT4SoTvqa7VakbA>
+    <xme:TNzaaE3YpQaY8HS5jX5NDd-I9uWsjEtU6ZMHkNJZCvtNHbx2_050meXQPbfq17Nb0
+    geyWSI9P-t1BFWPXWQ1Pup0pgZysOve8YfJkx8JTZMgTg3GUtC2I8Y>
+X-ME-Received: <xmr:TNzaaNCOJ1jnkXl0uociQJPCDth7P2e4e4blxYmFRiseY3UKhO_YUdphKVAZfHQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejkeekfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecuogetfedtuddqtdduucdludehmdenucfjughrpefhvfevuf
+    ffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforghrkhcurfgvrghrshhonhcu
+    oehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtth
+    gvrhhnpeevtdelgfeggfejtedtvdfgkefhuefguedtkeeffeduueduvdeiuedtleejvdfh
+    vdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhvohesshhq
+    uhgvsggsrdgtrgdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgdprhgtphht
+    thhopehjjhhohhhnshhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghthhduud
+    hksehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    fihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:TNzaaPPvVxKVDzHu4qWCm3xqLRPONgJa5nIh2p4dex0gk7iWxZGJsg>
+    <xmx:TNzaaCbXzAedOiNXkBZAVavcHL5MWE-m5CgU3DP2QoOmORHWlK0l4g>
+    <xmx:TNzaaOsueYrO-BZwkIXiP1Dqog3nTGM3JPhr2JmaBTEkk_Rw2OjQOA>
+    <xmx:TNzaaEPr2UZerHWnhKUBo9BJp3UZM3eiLvKYuEVY4xBzDkSk6oZBNA>
+    <xmx:TdzaaOoYBrfZ47_QNhXSi0-3gff0j-bnt1AdM33PueMXnxDPphjZsfxB>
+Feedback-ID: ibe194615:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Sep 2025 15:21:48 -0400 (EDT)
+From: Mark Pearson <mpearson-lenovo@squebb.ca>
+To: mpearson-lenovo@squebb.ca
+Cc: jjohnson@kernel.org,
+	ath11k@lists.infradead.org,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] wifi: ath11k: Add missing platform IDs for quirk table
+Date: Mon, 29 Sep 2025 15:21:35 -0400
+Message-ID: <20250929192146.1789648-1-mpearson-lenovo@squebb.ca>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <mpearson-lenovo@squebb.ca>
+References: <mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add myself and Barry to dma_map_benchmark
- maintainers
-To: Qinxin Xia <xiaqinxin@huawei.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Barry Song <21cnbao@gmail.com>,
- shuah@kernel.org
-Cc: robin.murphy@arm.com, jonathan.cameron@huawei.com, prime.zeng@huawei.com,
- fanghao11@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com,
- yangyicong@huawei.com, Shuah Khan <skhan@linuxfoundation.org>
-References: <CGME20250917011807eucas1p2dc0c24ef4ad8effcc1a2174d54cf4161@eucas1p2.samsung.com>
- <20250917011759.2228019-1-xiaqinxin@huawei.com>
- <11183850-d6d6-46c9-8079-330bf4c541e3@samsung.com>
- <CAGsJ_4yno_a2vD9OHhruXbNOXuVKg97NcOdFHpe283FJ9hXL7Q@mail.gmail.com>
- <0c59d099-4844-4fb2-80e0-6d3fc0077985@samsung.com>
- <ae8a2c37-74db-4e53-99c1-fc7f86e80253@huawei.com>
- <5900de48-e4a4-45cc-be7d-c906a59ba04a@linuxfoundation.org>
- <22825b66-1648-4301-855c-cdbdd56bae5e@huawei.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <22825b66-1648-4301-855c-cdbdd56bae5e@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/28/25 00:15, Qinxin Xia wrote:
-> 
-> 
-> On 2025/9/26 06:09:57, Shuah Khan <skhan@linuxfoundation.org> wrote:
->> On 9/25/25 07:11, Qinxin Xia wrote:
->>>
->>>
->>> On 2025/9/22 20:20:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>>> On 22.09.2025 01:50, Barry Song wrote:
->>>>> On Fri, Sep 19, 2025 at 2:17 AM Marek Szyprowski
->>>>> <m.szyprowski@samsung.com> wrote:
->>>>>> On 17.09.2025 03:17, Qinxin Xia wrote:
->>>>>>> Since Chenxiang has left HiSilicon, Barry and I will jointly
->>>>>>> maintain this module.
->>>>>>>
->>>>>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->>>>>> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>> Thanks!
->>>>> Marek, would you rather merge this into the dma-mapping tree
->>>>> instead of ACKing it, or would you prefer it to go through
->>>>> a different tree?
->>>>
->>>> I expected it to be taken by Shuah, as she is responsible for the
->>>> tools/testing/selftests/ directory, where the dma tests are still placed.
->>>>
->>>>
->>>> Best regards
->>>>
->>> I'll send V2 in the next version to fix some of the review comments of V1, and maybe there's some discussion about V2, I think shuah can deal with the patches of MAINTAINERS first :）
->>
->> I can take this patch through my tree. Are you sending v2?
->>
->> thanks,
->> -- Shuah
-> Hello Shuah,
-> Just pull this patch into your tree, as Barry said.
-> So sorry for the confusion.
+Lenovo platforms can come with one of two different IDs.
+The pm_quirk table was missing the second ID for each platform.
 
+Add missing ID and some extra platform identification comments.
+Reported on https://bugzilla.kernel.org/show_bug.cgi?id=219196
 
-Done - I will send this up in my kselftest pr to Linus.
+Tested-on: P14s G4 AMD.
+Fixes: ce8669a27016 ("wifi: ath11k: determine PM policy based on machine model")
+Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+---
+Changes in v2:
+ - Correct typo for T14s G4 AMD to use correct ID. Sorry!
+ - Added in Fixes and Tested-on tags correctly.
 
-thanks,
--- Shuah
+ drivers/net/wireless/ath/ath11k/core.c | 54 +++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+index d49353b6b2e7..47522fa186a1 100644
+--- a/drivers/net/wireless/ath/ath11k/core.c
++++ b/drivers/net/wireless/ath/ath11k/core.c
+@@ -912,42 +912,84 @@ static const struct ath11k_hw_params ath11k_hw_params[] = {
+ static const struct dmi_system_id ath11k_pm_quirk_table[] = {
+ 	{
+ 		.driver_data = (void *)ATH11K_PM_WOW,
+-		.matches = {
++		.matches = { /* X13 G4 AMD #1 */
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "21J3"),
++		},
++	},
++	{
++		.driver_data = (void *)ATH11K_PM_WOW,
++		.matches = { /* X13 G4 AMD #2 */
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "21J4"),
+ 		},
+ 	},
+ 	{
+ 		.driver_data = (void *)ATH11K_PM_WOW,
+-		.matches = {
++		.matches = { /* T14 G4 AMD #1 */
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "21K3"),
++		},
++	},
++	{
++		.driver_data = (void *)ATH11K_PM_WOW,
++		.matches = { /* T14 G4 AMD #2 */
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "21K4"),
+ 		},
+ 	},
+ 	{
+ 		.driver_data = (void *)ATH11K_PM_WOW,
+-		.matches = {
++		.matches = { /* P14s G4 AMD #1 */
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "21K5"),
++		},
++	},
++	{
++		.driver_data = (void *)ATH11K_PM_WOW,
++		.matches = { /* P14s G4 AMD #2 */
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "21K6"),
+ 		},
+ 	},
+ 	{
+ 		.driver_data = (void *)ATH11K_PM_WOW,
+-		.matches = {
++		.matches = { /* T16 G2 AMD #1 */
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "21K7"),
++		},
++	},
++	{
++		.driver_data = (void *)ATH11K_PM_WOW,
++		.matches = { /* T16 G2 AMD #2 */
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "21K8"),
+ 		},
+ 	},
+ 	{
+ 		.driver_data = (void *)ATH11K_PM_WOW,
+-		.matches = {
++		.matches = { /*P16s G2 AMD #1 */
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "21K9"),
++		},
++	},
++	{
++		.driver_data = (void *)ATH11K_PM_WOW,
++		.matches = { /*P16s G2 AMD #2 */
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "21KA"),
+ 		},
+ 	},
+ 	{
+ 		.driver_data = (void *)ATH11K_PM_WOW,
+-		.matches = {
++		.matches = { /*T14s G4 AMD #1 */
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "21F8"),
++		},
++	},
++	{
++		.driver_data = (void *)ATH11K_PM_WOW,
++		.matches = { /*T14s G4 AMD #2 */
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "21F9"),
+ 		},
+-- 
+2.43.0
 
 
