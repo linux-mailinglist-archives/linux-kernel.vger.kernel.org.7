@@ -1,156 +1,175 @@
-Return-Path: <linux-kernel+bounces-836629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4567BAA31A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:39:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68717BAA323
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F2216399E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CB816AF8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC7A21D5B0;
-	Mon, 29 Sep 2025 17:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D0A21D5B0;
+	Mon, 29 Sep 2025 17:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dV9wat6n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n5cXzyNv"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010004.outbound.protection.outlook.com [52.101.56.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076C121257F;
-	Mon, 29 Sep 2025 17:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759167535; cv=none; b=Jwb+4FuQt0S6XoWq96aSNof6ts8VqV3Fogwwjpri4MZZO7WdAHzanj6YvXpDLygZOjlWn/5X0lEeBVuww8Zl6vxmjgZDZaGRXJ9BTHDRhobHDZ/lLXpxibULPPR88Gw/qqk+eecJJWg3udpfPbdOIjd4PeVySqJa/FPWN5s0Ank=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759167535; c=relaxed/simple;
-	bh=ws08pkjsBDlI4gUePxOGG3L4rQzUt1yT7G7SzMo4u3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X/X2t1O6x5IgIWYIW3qRQUQj+mULz/N5IOg0Jao6k8E/oLTBSZt8j5yoo1s9gmhlKAj6bE8j/YgrgOek8eEBNHvodTpVCFDdRUi2QmoSG2EzzdzrVgpPMeReazmLgKcYWEVfmAG4C5g90LZo6AA037ImuZfAw4BRkh4F/oC0Bl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dV9wat6n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15091C4CEF4;
-	Mon, 29 Sep 2025 17:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759167534;
-	bh=ws08pkjsBDlI4gUePxOGG3L4rQzUt1yT7G7SzMo4u3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dV9wat6nw14mq0Z4D3TY/1aU9t75NnS0I2H/gUowV40XE3JWVGTsq50qDK2INWXHo
-	 /LhKlr2phCv8eonJczeX3LSLc7rYhNm2ljw8cvfO1KrMVBXWSehZk9GRwOyFqnJ060
-	 CHzcUNYmD1zplvty0WgpveV1oAE7gxfKV2y1iFC3zwrLk6S8fbkCkDA2IrqqZIGm1y
-	 HkQeBvJMD9OKnz5KT5RcMQEZUNdUdDYSmkqKUj57XF47LdI2ITyorU11TyhTiRhvuc
-	 mhyQTqHOFNlvNlgzLmoSGg+TuRvMCqGU/IvRec0BoGahoKbePjrR/0Kcf8rwoVcTBM
-	 vzklfkpZlDxbg==
-Date: Mon, 29 Sep 2025 18:38:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Joan-Na-adi <joan.na.devcode@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Joan Na <joan.na@analog.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 2/3] regulator: max77675: Add MAX77675 regulator driver
-Message-ID: <aNrEIZBhh6PllyOy@finisterre.sirena.org.uk>
-References: <20250929105618.177511-1-joan.na@analog.com>
- <20250929105618.177511-3-joan.na@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69340214813
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759167573; cv=fail; b=jMf9gN56q8WJAk5vIdEH7QWE98ukjkBFJIil2piGE+FKnndwjq+8agSQz2BOuMHKF/MYBwfT+/rtmK2mZPC7XEzbonnmZDK5s5B2FTGM73diYpfHwL0r2+C3FEuAKExNWPWptqQhVHPFuNB09SwEFy7gyVYxLDotmwuG21ZFA+o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759167573; c=relaxed/simple;
+	bh=Du/k9tWrZP0PIxoS+swFFNTn5Nq6TY1pbtGr5xutMYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TgGeb+KYNVkRpOZtqfoRNfnuCNfGkfMzcR2bt82ZAlcrFaD59uKPDFYiCpXpGorQ1iQm5JH8NgkxqO2G4PFhy4h/R13yhHXj71cpDXCs8utl/gV8h93p2urM613Qgd1ZRlykKqbsOrQyPg+RRE94imlBShjcKm+uXsLMDTOj7V4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n5cXzyNv; arc=fail smtp.client-ip=52.101.56.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mKc/qv1PHUlSvIUO4I+jwJm3cPT6XA/RSAY1rBvYjyMAogQhQdTuXqDhOLaibKU2Ca5DxJQ8Km7uYanbcbTyuHsaU/D93DTWb0LwffJizSwvG7H14BjsEnhKzNcRNcVyYBFRjLV4QJ8fdSdiXKg0aHAIsB8rDE0RAPXv++p8Vg7FNVpoXvKDRcH26djNrkd7ltQlJ7fFrdojTz5f8s4IjV+t7huEzz3JFbcL3iA6XEifAxE0DnG58x8v+JfIB8/2m7XvKqfHoQh+I+NqP0Sw1FuT++/aIINwLYw/c6gXQkiiMGIYr38cpUm1KWymtqEOaXv2m2aofQaJZOAaJeNZPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OtRdpiMoQ/tJHwKBwA1fxlbmM4w3B3EJ5OtppZVIkf8=;
+ b=UVATGIIfRig/fYRMucdFAoZHU7QvFa0ONuV3jFRCXxo9AMq74ZQpsm4+sm5aQWTs83HGJlCtDnREnWBFFmE5jG9wGGy2gggPZEzDFMPx7YYpJEkoLjUR0m/LnVNpPuAjI9ixRc+GSg5CrytvHWk0/M6+3I9LJ9W7jLXDoAuDoPvBQBFGzo4zoVXDZ5pxujjB701u+gLfJu6j+N9b2IY5149f4jR/odjeGCCfWo9tmujWpqRQr6qNEocKEhcZM1nSDf9dhtoL+z3l0aOOEU1rM+86Z6Fdq9SU5e0rlf1LsJuVQk9iHI7JYwF7jpARF+p4vXHoRXTHMPuG1pwqHKMneA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OtRdpiMoQ/tJHwKBwA1fxlbmM4w3B3EJ5OtppZVIkf8=;
+ b=n5cXzyNvCDy7Px8SNfUf3cmoMpzFp+WqGN5GlTokiNn1ZUR1GRrvcND5z4FOytPgmqJkayuxnD0UqsP8CBQ4Ze1wIBb5V++u5+HhP4dV3TqKBJlLdUrqYvvFhCkfrhn/wOoSWzVGSgeS3KtpFcEs5ZZXxVspDhKK0GbYuYCiQlj33GU1eQ/YadqYsWusblpk8YeQzUKEJOKjo0AEetHNqn/uE38uum6BSKGZbvVnBl3c+JDgmoCz2tozt0Zw1wuLSptorcTzAIYv7nUVLt1N4C6d23AKLlpi3VSpNA+vcvFFC+6HtcwuWFV0mU3V5h7ddKIgTasycaunBk355Fz2Rw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by MN0PR12MB5907.namprd12.prod.outlook.com (2603:10b6:208:37b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 17:39:27 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.014; Mon, 29 Sep 2025
+ 17:39:27 +0000
+Date: Mon, 29 Sep 2025 14:39:25 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>, iommu@lists.linux.dev,
+	Juergen Gross <jgross@suse.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 5/6] xen: swiotlb: Switch to physical address mapping
+ callbacks
+Message-ID: <20250929173925.GE2942991@nvidia.com>
+References: <cover.1758203802.git.leon@kernel.org>
+ <997c0122a24c355b4d7ee353902041a7617f4c9e.1758203802.git.leon@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <997c0122a24c355b4d7ee353902041a7617f4c9e.1758203802.git.leon@kernel.org>
+X-ClientProxiedBy: BL1PR13CA0178.namprd13.prod.outlook.com
+ (2603:10b6:208:2bd::33) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Md7+imvniJ2q5CYC"
-Content-Disposition: inline
-In-Reply-To: <20250929105618.177511-3-joan.na@analog.com>
-X-Cookie: The star of riches is shining upon you.
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|MN0PR12MB5907:EE_
+X-MS-Office365-Filtering-Correlation-Id: 605daae0-2b76-4ed3-34b7-08ddff7f2313
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bGzBX2cj3doO9BU9QyqzXAIwDAIogWi/hJkGlkKjl41FPbJmR5hKsYj6x5X9?=
+ =?us-ascii?Q?warEZs31R/7kBj5vdtooWW0H3fppFR/bhH5R2UR6pUi2Dd7V1+0LnXqYlzZE?=
+ =?us-ascii?Q?ycjAWMHt704VouS8nvg25oPOnfCVerUPi/iyofCUk2Scpsn+r1PKo9NgGYGx?=
+ =?us-ascii?Q?WpmyfWmdTt3O9TCatd1110egkbghC7KlnQOlYMB2RDTo0jVWjrvcx8K+Toh+?=
+ =?us-ascii?Q?R29GOxDt9MDRXzNsI7zNONNvkjdlDFEcHaDZDxM5TNutac2FXKfxdLuhFMtH?=
+ =?us-ascii?Q?3LLzvsB3s8pJX7qCYr/tB7t+mzYyKn1s6SW8aCFxkAiSYtDZ8WjO+VGZzyGe?=
+ =?us-ascii?Q?G8IY2teTUUHFNTO4mW3NT0R/XyXGj6wkDAlzRr3ComhwGb6hgomi8uLJXxpI?=
+ =?us-ascii?Q?aaVQEutfQYggWHjdNBHCAdX0vx49dLkYSm4aTNDGwmfLlUaUqyPLyg71yhME?=
+ =?us-ascii?Q?s3KZ2hT+wIhWXBe+EANv/WreLsW0ohdubuC/rvk9Re9AMMtJfKCalBqZp3Eg?=
+ =?us-ascii?Q?9zAMwCYdJEh3mVshs7EEjFpKQKyc76+DuMSoU6e7OS6hKwCmuXuuMY/Q3ZDO?=
+ =?us-ascii?Q?POIHElQnxhhguvVQ+XSm+4QqP7I5a5SjjkYiYw3eU20ZrpghWiZrPpm8CZ02?=
+ =?us-ascii?Q?+tOx4zoc5PZdLNYUQLEFp+OiFmDgDC8VGqz/k7oT2a1lVk4ukSha4bbtAGL/?=
+ =?us-ascii?Q?fcYFHQDowa7+QJfTKlaCEe57KEBLFJkgLxjGBMJZ8pesOx7F6NY8FJx5d0YR?=
+ =?us-ascii?Q?afEAb/nKm8q+ojvj3oTVOYi26N5PG91XIOJc2AyKhme25xGKVnSCCX7LhRK9?=
+ =?us-ascii?Q?Dk8ZYqpGlS5YfiGGPFVT0x9HHmFoZ8o/oQ2wdAmQBzEtrOVOXrR6nfFfJnVy?=
+ =?us-ascii?Q?ya2IvefD8W6hpgaOn0KyXPi7igPSUbitkpSnCs6AUxmYWRvQOlj5grnbxfJ+?=
+ =?us-ascii?Q?R9ml+igG1iHoD3KYtXHs7rzmR7T2QxBkHqbqX8nBqGvutbzXeLFSAV4ip14F?=
+ =?us-ascii?Q?j6Zo2V/1TnEvLDlwWyfvBxe+4XxoKdgM9UQLcuYfxejHU1yQvltNpaFTfefs?=
+ =?us-ascii?Q?+MZCPYi7vnKYHPpVXV3bag+PYr6cKwBCRXQhXGu2TihrA9bs6UtqRXnd/0qm?=
+ =?us-ascii?Q?XAVlqLpIzqhJQCvVbVpDTbLtdySCsJkszBz72W0O1y2MtIzfsxjhdhgOCQix?=
+ =?us-ascii?Q?1jdHI8RIlPt47b0jAf1yGAVHISW7iOcw1RfmzGTA5j9YpfTuHrZmUEW69UDK?=
+ =?us-ascii?Q?UYZnMfAULwNuVdGbHM53oYRMIyo4bbLfCPJzvXtz61OZcWzEzwYZK8NO8ugu?=
+ =?us-ascii?Q?VBC/QD6R3rQzRkqnsPcJ2mEx+npiAQUMVUUHwawOH61uXmTnjNvjslkOzaHN?=
+ =?us-ascii?Q?hMTzYpcHCMTs3eEhoCBMqvr9rcjKMbhYgYrQk+sx8bLmjHYB9dxMMR47rAuJ?=
+ =?us-ascii?Q?7RwWACByhXUqROerjJl3rGMDUrm1ubo6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7rw8PttBxy94nlK24vGIyBMo2iARMNMsxMaKZNG70lQxEWpMwSo0FxrN28xC?=
+ =?us-ascii?Q?Kk7hUJz4HAlL41FkLJuYtBT9nrU/yWYZ1q03Khm07pkNY9x2TuZSgrRy8hFj?=
+ =?us-ascii?Q?13jX917d5RNi+JjDClq371iEvDDgwBxMIM6TJoixeRt0Er4ZIWSHL0MrVN1L?=
+ =?us-ascii?Q?m4zlEEs/bQKuc3icfoHWnb7zm7KlqjAu4mEG/GcsGVbIFOzjyJtSwfBV+vBW?=
+ =?us-ascii?Q?2brXJJKXjSL4VMpMdZacmDJAaSUJTKn7jQFJaAsNLXEG7MGthif7nyhveHqA?=
+ =?us-ascii?Q?sU6Eb6Ff54dUKlSZP9QuQqip8/Tf8Dc9UNOdGfeMN1fzGSZETCFHGwuO+sd0?=
+ =?us-ascii?Q?bW1Fr11t36rydIkvA/9IUoxE7LxBYSosMln4eDYB5ws76gZ9GqZNBuFfeqYU?=
+ =?us-ascii?Q?rMglwCiH18wSvd3b0bD0CVCTPtj4HK1K+207QEAp42dF/a7OuP22i+lND53U?=
+ =?us-ascii?Q?cSCGdn9X1wF0oECl/liUExs2MOU4vg7uN0wBj83Wyj98J0YVyZXj4+OcbbFj?=
+ =?us-ascii?Q?83sBJewNhhvQSSzdEQw2sts0eK861xB7xZ+SxLH5KKV9flPj6/TLY5R1wMBn?=
+ =?us-ascii?Q?oMVonn9vLfL7iwPjt/kOt0S2IYTxMEZ4SMDQHK24Qhw68rIlaO9B6tnvyvjq?=
+ =?us-ascii?Q?Xsu9fiW5VNSqxyUteYdI2panohxblwcp/BOI1e7HOcIB6ab/LS5KddiNU5Lq?=
+ =?us-ascii?Q?ktj41SxcxTjpBkvAdQfZ0vZWUuTqkCwHpni8AJD0uc0Cr9jYGcySV9X1FHRT?=
+ =?us-ascii?Q?gSISzKg/ynhcRWxk87QP1h5yt8ehBt1hJVBhktDUIKOG1dInFEARrU8oMgu0?=
+ =?us-ascii?Q?Mdn7LDqFIh0gU/Jz3BMHhEGEz0FcVkzLeLWXkYzQiMDdAAPX837me5Mp/H7b?=
+ =?us-ascii?Q?b5XCOdkSA5OfGq0h2F4Lsy0V17qqFSFkOHnIQb+bOKHJfDTptMWWuwOcPMvh?=
+ =?us-ascii?Q?XZjpu3NFzMkMjMvHHKpY2GHnWTfDRWR+UJFq8NO07wfIKzqx123cBw7KECvm?=
+ =?us-ascii?Q?8vd92TAZbFA7zHfs6A37+BlDUi4FdWWKauwYnh1AnY8z+B4Y501i0CgthIe0?=
+ =?us-ascii?Q?vgDGwz+gbZRNCBE0GmNK/TtCf+QBeE+3IaFKf+IkOZJFuWuKKNDX6MWrr6Nn?=
+ =?us-ascii?Q?KKvXjZSssDNxlYm4BGkAhGLdQ9xQfvhNCvFHalM4z6p+tFiVPE3f9EHlDDtR?=
+ =?us-ascii?Q?oloVJTe3euWx9bF/tjqKPLdJ9dvpF02yQCiDC0mm7JnejSAjyfQ4fayzpUrr?=
+ =?us-ascii?Q?w18IGYPPnniFg0EVG0tgt6YJ4EoBBf4QOuUS8InejOwHLZCQWH6dTCd5aWEC?=
+ =?us-ascii?Q?wonTGW7DzVB2ztVa5QmrynjJxL0ckjOCUs/ouuhPyOusaSUMkkceFwrZc1er?=
+ =?us-ascii?Q?YJhHQyYRDWBPqlHPemX1tbqgTkE/tqJzk2BHzz7vWAaSOibjCZXaN0TTVpZr?=
+ =?us-ascii?Q?ph/wmz1blWVkRQaVXCTcE5Fjc+nOER30otwN5Bw85BV9ieXSCAq6eGspr4qz?=
+ =?us-ascii?Q?03cqAZcF6Omsc6RgU789hJLY85tPJjId2DKfIntwX08ujHQG1sEtObOOWI9J?=
+ =?us-ascii?Q?jb6+Z3t3INWB+/CG5rRWwRUKiXlnGYu1l2SPbWM9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 605daae0-2b76-4ed3-34b7-08ddff7f2313
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 17:39:27.2572
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F+hl7cBcv0F7z+opKl0LDt4UKsqiFSGQLrARsSse/0f/CdHu0PKCQxz+f8b4Qj1N
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5907
 
+On Thu, Sep 18, 2025 at 05:09:28PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Combine resource and page mappings routines to one function
+> and remove .map_resource/.unmap_resource callbacks completely.
+> 
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> ---
+>  drivers/xen/swiotlb-xen.c | 63 ++++++++++++++++++---------------------
+>  1 file changed, 29 insertions(+), 34 deletions(-)
 
---Md7+imvniJ2q5CYC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-On Mon, Sep 29, 2025 at 07:56:17PM +0900, Joan-Na-adi wrote:
-> This patch adds support for the Maxim Integrated MAX77675 PMIC regulator.
->=20
-> The MAX77675 is a compact, highly efficient SIMO (Single Inductor Multipl=
-e Output)
-
-This looks basically good, there's some review comments below but
-they're mostly cosmetic rather than substantial.
-
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/20250927.cU4bEADk-lkp@intel=
-=2Ecom/
-
-There's no need to do this when you fixed a bug in a patch that was
-never applied, it's only relevant when fixing a bug in code that was
-merged.
-
-> +static const struct regmap_config max77675_regmap_config =3D {
-> +	.reg_bits =3D 8,
-> +	.val_bits =3D 8,
-> +	.max_register =3D MAX77675_MAX_REGISTER,
-> +	.cache_type =3D REGCACHE_NONE,
-> +};
-
-_NONE is the default, no need to specify it.  Though it'll generally
-improve performance to have a cache so _MAPLE (plus a volatile_reg() op
-for the interrupt/status registers), it'll cut down on I2C traffic which
-is slow.
-
-> +	/* Debug print all parsed values */
-> +	pr_info("MAX77675 config parsed:\n"
-> +		 "  dvs_slew_rate: %u\n"
-> +		 "  latency_mode: %u\n"
-> +		 "  drv_sbb_strength: %u\n"
-> +		 "  manual_reset_time: %u\n"
-> +		 "  en_pullup_disable: %u\n"
-> +		 "  bias_low_power_request: %u\n"
-> +		 "  simo_int_ldo_always_on: %u\n"
-> +		 "  en_mode: %u\n"
-> +		 "  en_debounce_time: %u\n",
-> +		 config->drv_slew_rate,
-> +		 config->latency_mode,
-> +		 config->drv_sbb_strength,
-> +		 config->manual_reset_time,
-> +		 config->en_pullup_disable,
-> +		 config->bias_low_power_request,
-> +		 config->simo_int_ldo_always_on,
-> +		 config->en_mode,
-> +		 config->en_debounce_time);
-
-This is a bit noisy, we don't tend to print the entire config out during
-boot.  It's also going to be formatted weirdly (eg, only a timestamp at
-the start).  I'd tend to drop this, or at most make it debug or vdebug
-level.
-
-> +static void max77675_regulator_remove(struct i2c_client *client)
-> +{
-> +	struct max77675_regulator *maxreg =3D i2c_get_clientdata(client);
-> +
-> +	dev_info(maxreg->dev, "MAX77675 regulators removed\n");
-> +}
-
-This is a bit noisy again.  In general the driver should be silent for
-non-error stuff or parsing ID information from the hardware, it makes
-it easier to find important informtion and with serial consoles lots of
-prints from many drivers can end up slowing boot noticably.
-
---Md7+imvniJ2q5CYC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjaxCAACgkQJNaLcl1U
-h9CFiAf/RHSTkU+fTdiF3dKpYoxmDPNJHjVzqLWHZwStm0FmLE/97lPltOAiYNUg
-d0GNOUbGMxLL53GdGncgc5bIUEXnFBuhlq1D5bsCKYd+2BsA26ydhQBC2k6CgDPe
-exI3hBPo9EV6KD20qAS0/RAx0UTkOyxpt5yjFjfJ5M1dppsw1/8MdDrjBQfyQ+kY
-2Xm13NJ2ZmZiarNEXoOhVEeCOdpjUGBKY9p4SldG8M/ybbA1xoCJF3mNal/F+BhI
-dYdPmZPphHEFkFxsQgeC9Qnpf7C79gEnO8xMdyz1vQ+a/uug+wih4lSPp/yeVamG
-uHB6U/LGLHja2QItBDaUPH26ZceKww==
-=eIwZ
------END PGP SIGNATURE-----
-
---Md7+imvniJ2q5CYC--
+Jason
 
