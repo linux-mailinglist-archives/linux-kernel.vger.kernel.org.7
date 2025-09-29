@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-836220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04588BA907E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:32:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D99BA9078
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2369D189F9C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:33:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20B03A31A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3243009E1;
-	Mon, 29 Sep 2025 11:32:44 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2CC3002A2;
+	Mon, 29 Sep 2025 11:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyNt+cBC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC69580604;
-	Mon, 29 Sep 2025 11:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D679C1A239A;
+	Mon, 29 Sep 2025 11:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145563; cv=none; b=nGpyORSEm0sCHL/uwgoMAmdlH1zKqxxinEj7SlBSe7/N3IA/WbPKlRUuZLYj0wv2KGNihhI4uRxl1TriBAjGSZJ3es/N4lezCJx8XTkzzG+Kln2dLkUkN43PW7ug1LHkgy4D8bOAjJfl4AFtX7BknfmO3Q6VNn0UX1nrg9xIMbQ=
+	t=1759145561; cv=none; b=Y75KZfMsNJvkjfXUeCB3GTFZ5hW8kqgO3tM0nZUqO9ulAWaq9UhwwVYm9OCxrEpwKcZ66iAWpBIDTTiIgG8lhR+pdJJIBLNYRmyLhQXURAYYgB8Zo3CTwIffqGUpWnzpUl9EKx+pj9nBLV8wahhHWFvbRieNHGJ0Nq79JAXIU08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145563; c=relaxed/simple;
-	bh=j1hgruf19Bk7TIvpnDeT1bG+zMoRrOYhbdPE2oVnSB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SRSNHnk2hY7sJc9FH+JvpL8qGnSRuPEpSjLt8/nbMcq9sbivwyGmJaU7ReCZ5Z2FdCeAYIQrfGryAS/i4Ev7GqeO92efXUcvNBm9WVNvn0CQGDHQD2ziJ/YoLSs8sHO9swwOa9pyJbtm0Xgb5tKru2tiK0KBwXzlEpskZK79hwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowADnihRTbtpoCQfACA--.2097S2;
-	Mon, 29 Sep 2025 19:32:37 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org
+	s=arc-20240116; t=1759145561; c=relaxed/simple;
+	bh=g77QlILLHxVB4H6N7j+BSgLkE4s9ILeEklCcbzxdCXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ukHSeL0d4GtyBn9sNxZGRGu0SHwMDWtBtEBq5YHi9zhzvZKLGD61R92DpX5gfmN7APHlMu67AtPplpbdBRYJEg+SenPNo+GlGDWNs/Rbo4IJxXlc+CJciQjC+SieU2wRohFfwQZvWDBOS6PwwfcHsh7b6BDsP4jXZcX9X3stIgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyNt+cBC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DBDC113D0;
+	Mon, 29 Sep 2025 11:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759145561;
+	bh=g77QlILLHxVB4H6N7j+BSgLkE4s9ILeEklCcbzxdCXo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PyNt+cBCXzm38zwIkm9Stf8zzlISDPShDruCdy9370J5alm4Bo9FFYs/G/IScvgNu
+	 tXqeYZcoLF05cXU0cuR38O4A9p187w+vI0OgDdl+bZQpy0qSVKhfYwpmMe8qLgSgN+
+	 o4VQ6R+kcq1Yp062CVEMz5jJV0+kB85vuSwY9RU90jCLYTtMltEqpBijMwKghdJ0mf
+	 s1WLUS03g8F06M8SHm9pvrqAviBmoo8wdN/F67LDQ3K+Z7FfO6JT7r/vHHa3iTV9+r
+	 x+kBdVppytRgedum0YQGNvzef5iZT8TVQCdkJZrSPctjpx3aFfzgPKm/9HJJHpezRo
+	 UkmBKSJxZeTZQ==
+From: Sasha Levin <sashal@kernel.org>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
 Cc: linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH v2] power: supply: rt5033_charger: Fix device node reference leaks
-Date: Mon, 29 Sep 2025 19:32:34 +0800
-Message-ID: <20250929113234.1726-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20250929031536.2274-1-vulab@iscas.ac.cn>
-References: <20250929031536.2274-1-vulab@iscas.ac.cn>
+	linux-trace-kernel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH] tracing: Fix lock imbalance in s_start() memory allocation failure path
+Date: Mon, 29 Sep 2025 07:32:38 -0400
+Message-ID: <20250929113238.3722055-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,55 +57,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADnihRTbtpoCQfACA--.2097S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFW5JF17KryfuFyrKry7Awb_yoW8Jw43pr
-	95AFZIvr4DGr4Utayjy3ZrCFW5KF45ArW0kr10k34aywn3Xay7Jry5tFsxZry8AryfGF4I
-	qr1aqr4IgF45CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU0iiSUUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAcAA2jaLgfoOgAAsB
 
-The device node pointers `np_conn` and `np_edev`, obtained from
-of_parse_phandle() and of_get_parent() respectively, are not released.
-This results in a reference count leak.
+When s_start() fails to allocate memory for set_event_iter, it returns NULL
+before acquiring event_mutex. However, the corresponding s_stop() function
+always tries to unlock the mutex, causing a lock imbalance warning:
 
-Add of_node_put() calls after the last use of these device nodes to
-properly release their references and fix the leaks.
+  WARNING: bad unlock balance detected!
+  6.17.0-rc7-00175-g2b2e0c04f78c #7 Not tainted
+  -------------------------------------
+  syz.0.85611/376514 is trying to release lock (event_mutex) at:
+  [<ffffffff8dafc7a4>] traverse.part.0.constprop.0+0x2c4/0x650 fs/seq_file.c:131
+  but there are no more locks to release!
 
-Fixes: 8242336dc8a8 ("power: supply: rt5033_charger: Add cable detection and USB OTG supply")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+The issue was introduced by commit b355247df104 ("tracing: Cache ':mod:'
+events for modules not loaded yet") which added the kzalloc() allocation before
+the mutex lock, creating a path where s_start() could return without locking
+the mutex while s_stop() would still try to unlock it.
 
+Fix this by unconditionally acquiring the mutex immediately after allocation,
+regardless of whether the allocation succeeded.
+
+Fixes: b355247df104 ("tracing: Cache ":mod:" events for modules not loaded yet")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Changes in v2:
-  - Resend to the correct maintainer and mailing list.
----
- drivers/power/supply/rt5033_charger.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/trace/trace_events.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/rt5033_charger.c b/drivers/power/supply/rt5033_charger.c
-index 2fdc58439707..de724f23e453 100644
---- a/drivers/power/supply/rt5033_charger.c
-+++ b/drivers/power/supply/rt5033_charger.c
-@@ -701,6 +701,8 @@ static int rt5033_charger_probe(struct platform_device *pdev)
- 	np_conn = of_parse_phandle(pdev->dev.of_node, "richtek,usb-connector", 0);
- 	np_edev = of_get_parent(np_conn);
- 	charger->edev = extcon_find_edev_by_node(np_edev);
-+	of_node_put(np_edev);
-+	of_node_put(np_conn);
- 	if (IS_ERR(charger->edev)) {
- 		dev_warn(charger->dev, "no extcon device found in device-tree\n");
- 		goto out;
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 9f3e9537417d5..e00da4182deb7 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1629,11 +1629,10 @@ static void *s_start(struct seq_file *m, loff_t *pos)
+ 	loff_t l;
+ 
+ 	iter = kzalloc(sizeof(*iter), GFP_KERNEL);
++	mutex_lock(&event_mutex);
+ 	if (!iter)
+ 		return NULL;
+ 
+-	mutex_lock(&event_mutex);
+-
+ 	iter->type = SET_EVENT_FILE;
+ 	iter->file = list_entry(&tr->events, struct trace_event_file, list);
+ 
 -- 
-2.50.1.windows.1
+2.51.0
 
 
