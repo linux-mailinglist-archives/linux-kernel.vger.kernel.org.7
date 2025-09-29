@@ -1,257 +1,207 @@
-Return-Path: <linux-kernel+bounces-835977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2EABA87CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:59:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3F1BA8802
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F44189D42E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30868170818
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CB92C031E;
-	Mon, 29 Sep 2025 08:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E199274FCE;
+	Mon, 29 Sep 2025 09:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CgQghBqq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DVhsSCxu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986B3273805
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89D513AD1C
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759136314; cv=none; b=RvovgBXyaCeGTuD+VgeL1+u8i39S1oZOYnpIYAY3J3ax7gHBWgnFcRMo5P/unRUPeUx3vzmg1SK6tIJc3IG3FXdBipeXgK32Fi+S6mrY2II01gonmLwFtzODwq+KWIka09YHpqFbdd5SKlZuQGLB9gYcP5vFOpMvTCGdDNO7Zqw=
+	t=1759136521; cv=none; b=gmEZsgsMDh8KH1TNxy81qUnNeaPVcPSMJ1I1eg3QcwUlCkil35znr8mSz4oSlfo82dDRsGHAcY2ns6n+z5kmzah0SpxnNr7A3xLljj/spivGHg70t5u3EFR/iGu8ZN8/LcqH6WDNur0eRar5EimFC1Rxc8giu3kXTAnB9nkeYFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759136314; c=relaxed/simple;
-	bh=W5RVkBnKmsxc6H3VKwcDAVQ0kUrB/s8qRiUIqWgXJjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlMvofILOrD1GGYBnEQ0DT5cmuIAKAl66szdv3gVzfH1m6+YdUJIuhuUsYfIMhHeaHBLeTm9d03l9YjF1tNziBCsRR3tY5XBDA365yDcDBDT8T+YOVOZkr66bOR1Oh3UWy/dtlm9HPAuiGApPQU9d6cstBMM1at7q32irtCmNls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CgQghBqq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SLOH3L012624
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:58:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=wSequNqFSYA0hQaFMGDh8sH2
-	KqbBMi/C9WAGDMfQdVw=; b=CgQghBqqAX6HNwF8cUOrkL+/imUDeljUBwxSMLqU
-	EABUCjKImHemM61jfkSa5ngSAaIIN9qk6jx0xNtyw/ve46+UV8CrZ855qA5wkC0j
-	FSgIqWNYpuQxbvCgAz83PFQjPOdJBELHYSvfXbYkYH/oDfo4bcf37VgPicVaACDa
-	AII0m6+fC6Qsd6ILfrex1yeoqb6DclNrOokHpZOgLmXoY+CV2NQHiV4XpasOiexT
-	GvMBOrNzWP8MbsKx+20UPxjPyi71gb4UoYmKNhadnp/a3/onTUYD1TZcHHZKoqBL
-	zVv/0A4znKvD6uCf1A4OqshGicsKhhpGhIwxE8Tp7fwnuw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e78fvm66-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:58:31 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b302991816so84843051cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:58:31 -0700 (PDT)
+	s=arc-20240116; t=1759136521; c=relaxed/simple;
+	bh=CXgWCmSK5bofhg065+iC+3B9kKopae9BTQYZqgKPRmc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CGwPTiimba/QIe6jv0vFcgi0L2itvOqzOwIKQ77JMDGahXCIPauPbeev6nsroQq1AL3LOIu6sTBupt3ivu+InHin664buzHOczq9awD1Dtl9Dmx70zksD+CiAZojtfZWFn1VBC6VvkmpDjwmKG6rxwpOnfw1sDShU3DxwugZjQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DVhsSCxu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759136519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MjGXQB1dHuxd76x8A3VktK3UCtS7wGBVGFS8i3EWENY=;
+	b=DVhsSCxu9pTy4lVGK3NU1UCN8rDMc5k0V8MUFnvyu/qnqYyoqQkULECHh7x2mmY1P8v2NP
+	Bky1oPXNuSQkiVtie9VG/Auu7GWOkXLBseGmw9xVJr0ejk+7ZVlYvOvFHDbPaV3f8CO5qq
+	TphT+J85Ux8YXuyLXc3RlZ5JhaWBFCU=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-bpYH0HV6PyOsbCrwRNR9EA-1; Mon, 29 Sep 2025 05:01:57 -0400
+X-MC-Unique: bpYH0HV6PyOsbCrwRNR9EA-1
+X-Mimecast-MFC-AGG-ID: bpYH0HV6PyOsbCrwRNR9EA_1759136516
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e509374dcso5008085e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:01:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759136310; x=1759741110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wSequNqFSYA0hQaFMGDh8sH2KqbBMi/C9WAGDMfQdVw=;
-        b=laN/VGdP01XgDtSe7BRgLknGiPJaS2aklq9emMCk9WkvarLsQ6Rt5/bhjlinLJWUZg
-         OFQ3hu2Gn5Hf5+CBQWCDHxZL6d6DmWu2933UT1EA21wQKIAXsyAd8n9FZba6rxVARqJ1
-         SN77cQxAjzyqzrGRnAIdFBTz0N1XyeOuOR7X1yYOtNxj1/saji/J43aD+GR5eGCHPEJk
-         Zz9saYTz7xryyi+iv4ao8L6tZLxT/AeHC8d0htVHPLqXy6aPaDTwxNK+uycZXlhAkFtB
-         vlKGQkGJWQPHaaRjCuzu/O73lw90Ay1PIKGGikZ1tsoOWEhRBBGD6DDm5uRMtrcaEWC5
-         a5oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh1l3kp5Vxtg11UQN7QD6rAX5z5xGk0+k8dAYAbo/aw9cwAxAohNIBXcAiRpU3f7FY3U49mquzWGjScSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQdxwWV4mhlcmsqQ95Y03AXWsQcv6ks0U2/58yw5iI2mreBNDl
-	Z0BhxYRUCs8twByJXZ1w89VxH0Z7epUYMonPkEtAjkqxdOysRXF+fhB1V86Qe4AEQN/NATgXZDf
-	pB0qxiMMwSvm0QNf624hfFVX1zHsffgOP5demm6TogExlXWRrRMKqEtHs95RLkDcmKbs=
-X-Gm-Gg: ASbGncv/t8MECzzj2x1t7DJLLxMLHMTwTo0trKtGVsHAMw5zd1ZG27HgavgYwnmYQvW
-	RBbBBEfU4KYhMXUYc6k0Ji8xTEIjqgW4AL1SvvwF1Bp2QPM0BsqoWMCzJ8ofYVwc8gbgmhYXcq/
-	bt9bgGNHZR/v4lCagHQ1t7lB4gdzhuyrtaa8bu13YBrvIH2KSZ9acgK76ZVmCGo5k36H70inQUI
-	0W3GOwJ9kfsvWNqyRW4tKXI6uIEKGztt8tO4XE7hEpkGePuAXe8UbS2GKfARFlO76Z/R5UIKZn6
-	rAzhnkHWdAsJvlKvGNVOM9ixKp7LXVM6NGCSGjkjzdVu/WyJxwgf8FV2Fb7rnrn+o+5Eta6ZhBq
-	6Tna5G33F2mljqDGLpq2VCiyCtYV2K9N2XRxBj7xYM+VFg69rSuVF
-X-Received: by 2002:a05:622a:5c17:b0:4df:45b1:1547 with SMTP id d75a77b69052e-4df45b11effmr106393161cf.69.1759136310518;
-        Mon, 29 Sep 2025 01:58:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRXtkJG4+SzyzmUaBbzgU9Nn5Sl1tWg+sCFw1xHVc4pJ5o/wczABJ+K+k97kihrHCINuJSYw==
-X-Received: by 2002:a05:622a:5c17:b0:4df:45b1:1547 with SMTP id d75a77b69052e-4df45b11effmr106392941cf.69.1759136310059;
-        Mon, 29 Sep 2025 01:58:30 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831343130asm3993046e87.1.2025.09.29.01.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 01:58:29 -0700 (PDT)
-Date: Mon, 29 Sep 2025 11:58:26 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Samuel Holland <samuel@sholland.org>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 3/9] drm/bridge: ite-it6263: handle unsupported
- InfoFrames
-Message-ID: <y3sndmfnwtljkbrssyycg6scjujt4kkjfo3gjclo3suzvqdahl@bdrdzmiolcb4>
-References: <20250928-limit-infoframes-2-v2-0-6f8f5fd04214@oss.qualcomm.com>
- <20250928-limit-infoframes-2-v2-3-6f8f5fd04214@oss.qualcomm.com>
- <a7f0ced8-d704-4a59-bcc7-e0bd4db113fd@nxp.com>
+        d=1e100.net; s=20230601; t=1759136516; x=1759741316;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MjGXQB1dHuxd76x8A3VktK3UCtS7wGBVGFS8i3EWENY=;
+        b=B6TaQ8rlVgDeOPoInYKrhHC3XspMoyjR6qmGkm0IONrcgO0J3tA4LRoF8ufeFVHwMz
+         Kyxq1CMTPIFMhWKRkbVeOIxDvOy7e2TlMWnSvEX4c+Jlj2FbY3vUqhzV+zA44bBpE4UA
+         2K4Dnj/C1WpgVE7fxJoDOeq+gBbS124eBYpXmK2wkT0O0oCXW3ZVMcO9vcIq3lQHOref
+         TgSMbTlwne3m88zGxySDt8cwRT78I0hXTsdF+pT+IURw6pewXw/3LxP1Lkv19LrPNk/R
+         421gS+UvcU7I3emr2JcDlcjuXdot6uYHKiIVk7LjWtpOISP5FHyprdBJsqvJDdXH1gBJ
+         JGJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQU0XtKs8BSFsEJ/RQf8cwoPgm/3SybS3sbvgZncbtiS3nNF/r+T2uTqrjNNKGrcKqaKuSjqfXhknCZ7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/qRE6Xto3nXFYc6ZowP5W5XHi0H8oMW1i64viiLnnadvqBY+Z
+	kPrCTsOhpg4dt9abe9JOZbiBt7nSIy4hc64pi8NekMriH8vs3BXuiM792ceCTafYA5mvzkFeoXh
+	g9sCs3+biELFh3C5sTw4uZyb68sxObALIyqSeMFzcKZ9h5RxP9tTqNfvuhyUjI6bhew==
+X-Gm-Gg: ASbGncsAthSdfYtXNXlP1GOxnpm1feYapJsIkIVGrnOEsdtNd3MCWOr49ySSehny5VZ
+	R4CaTwLtA+c0JvgNQooJyRISWRg2XNcwDgHgqu3c8uZuOtXyBjqQXJ5lXO4uclXCWTcF319N7DO
+	a10emIgVtykktQoByE6Mh11hEnU5Jd/WmqdK9o6TQ06ckTallwf68dBwqvBeNw7RFd/3Q0fRFc6
+	7Ntx+fHf1TmOp5P3dyeIGrW7uOqZQGikSClIQN/A5cDCsl01qtxVf5g/eOyz2oBuUPxOhX2Pr/G
+	n+Id0z180paWWC4jZ/roc01/9WtVZrR7YR+xR1B5DTxSLo8wgE26LTatvIrnEMN8d3Z0h4HiFE/
+	PgqXnbTW3zlo8mWHxBTmT6+TdzCY/JzemDhEfQWqWw1K1fP0AVx8vJZhLnIWVDWyInQ==
+X-Received: by 2002:a05:600c:c04b:20b0:46e:4cd3:7d54 with SMTP id 5b1f17b1804b1-46e4cd3808cmr35899215e9.18.1759136515853;
+        Mon, 29 Sep 2025 02:01:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBbjcCVPhXVC4zY3lb87QTQrZiXmS2qntkistmHl4dTiI3URIXZQB+/Tn7CFF5wXhkypAuLw==
+X-Received: by 2002:a05:600c:c04b:20b0:46e:4cd3:7d54 with SMTP id 5b1f17b1804b1-46e4cd3808cmr35898835e9.18.1759136515430;
+        Mon, 29 Sep 2025 02:01:55 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f05:e100:526f:9b8:bd2a:2997? (p200300d82f05e100526f09b8bd2a2997.dip0.t-ipconnect.de. [2003:d8:2f05:e100:526f:9b8:bd2a:2997])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm243988785e9.7.2025.09.29.02.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 02:01:54 -0700 (PDT)
+Message-ID: <92c6e142-5911-4e0c-ac13-af251e048215@redhat.com>
+Date: Mon, 29 Sep 2025 11:01:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7f0ced8-d704-4a59-bcc7-e0bd4db113fd@nxp.com>
-X-Authority-Analysis: v=2.4 cv=DZAaa/tW c=1 sm=1 tr=0 ts=68da4a37 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=Wi-JpQQdkJIPRSjGzdwA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyMiBTYWx0ZWRfX4XjOiNBwRRaU
- gyQwfWmB1aVeNAs+ESiNRjMYPiEiLYi/n3J4r8q5GUpYdX7QySHATP0pIptXA6IfQ6aJf2QkIKA
- 0LwIKuyF8TyrTH/4KYk4fYw1zpO4AYPH6gynxEDTGh1Ed9WwHcyKndGlO95XiZ5535YWElv8inX
- o23FEYPqhZ6uu0c8S8GINVDyrW1ZPDFUZ8t/NThJesjM/arqb92Zv1QrNhgOJWJ1FTznpT7YsBi
- HfW9BRMz38MjO+IuYi+dmCz+rKtnQAXG0joJMzav446RkHwtW6AvwOKG9v6Q+xAb4eSk93J1AgZ
- g2upYQ6XQ4cRcG/4nNX5SMDDxmJaMDG29OPNzpztK1Mh3a+U17VxF4cfYdBQsYDks5FlDb3cRL7
- 43FT6deErZGhUl9nh5rmvvbAnxpzIw==
-X-Proofpoint-GUID: 5_Z0Ihb5u5TO7z5PwKRorNm5L955mo5w
-X-Proofpoint-ORIG-GUID: 5_Z0Ihb5u5TO7z5PwKRorNm5L955mo5w
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_03,2025-09-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270022
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+To: Fuad Tabba <tabba@google.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ackerley Tng <ackerleytng@google.com>
+References: <20250926163114.2626257-1-seanjc@google.com>
+ <20250926163114.2626257-2-seanjc@google.com>
+ <7ce29e23-aea9-4d4d-b686-3b7a752e0276@redhat.com>
+ <CA+EHjTzO_tkOD1C--qqk1eotwf+-2DSDUqk=szzPTN7mHJLQ_g@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CA+EHjTzO_tkOD1C--qqk1eotwf+-2DSDUqk=szzPTN7mHJLQ_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 03:56:31PM +0800, Liu Ying wrote:
-> On 09/28/2025, Dmitry Baryshkov wrote:
-> > Make hdmi_write_hdmi_infoframe() and hdmi_clear_infoframe() callbacks
-> > return -EOPNOTSUPP for unsupported InfoFrames and make sure that
-> > atomic_check() callback doesn't allow unsupported InfoFrames to be
-> > enabled.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > ---
-> >  drivers/gpu/drm/bridge/ite-it6263.c | 27 +++++++++++++++++++++++++--
-> >  1 file changed, 25 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
-> > index 2eb8fba7016cbf0dcb19aec4ca8849f1fffaa64c..cf3d76d748dde51e93b2b19cc2cbe023ca2629b8 100644
-> > --- a/drivers/gpu/drm/bridge/ite-it6263.c
-> > +++ b/drivers/gpu/drm/bridge/ite-it6263.c
-> > @@ -26,6 +26,7 @@
-> >  #include <drm/drm_crtc.h>
-> >  #include <drm/drm_edid.h>
-> >  #include <drm/drm_of.h>
-> > +#include <drm/drm_print.h>
-> >  #include <drm/drm_probe_helper.h>
-> >  
-> >  /* -----------------------------------------------------------------------------
-> > @@ -772,7 +773,7 @@ static int it6263_hdmi_clear_infoframe(struct drm_bridge *bridge,
-> >  		regmap_write(it->hdmi_regmap, HDMI_REG_PKT_NULL_CTRL, 0);
-> >  		break;
-> >  	default:
-> > -		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
-> > +		return -EOPNOTSUPP;
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -812,13 +813,35 @@ static int it6263_hdmi_write_infoframe(struct drm_bridge *bridge,
-> >  			     ENABLE_PKT | REPEAT_PKT);
-> >  		break;
-> >  	default:
-> > -		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
-> > +		return -EOPNOTSUPP;
-> >  	}
-> >  
-> >  	return 0;
-> >  }
-> >  
-> > +static int it6263_bridge_atomic_check(struct drm_bridge *bridge,
-> > +				      struct drm_bridge_state *bridge_state,
-> > +				      struct drm_crtc_state *crtc_state,
-> > +				      struct drm_connector_state *conn_state)
-> > +{
-> > +	/* not supported by the driver */
-> > +	conn_state->hdmi.infoframes.spd.set = false;
-> > +
-> > +	/* should not happen, audio support not enabled */
-> > +	if (drm_WARN_ON_ONCE(bridge->encoder->dev,
-> > +			     conn_state->connector->hdmi.infoframes.audio.set))
+On 29.09.25 10:57, Fuad Tabba wrote:
+> Hi David.
 > 
-> Maybe use drm_err_once() instead to provide the reason for the warning in
-> a string?
+> On Mon, 29 Sept 2025 at 09:38, David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 26.09.25 18:31, Sean Christopherson wrote:
+>>> Add a guest_memfd flag to allow userspace to state that the underlying
+>>> memory should be configured to be shared by default, and reject user page
+>>> faults if the guest_memfd instance's memory isn't shared by default.
+>>> Because KVM doesn't yet support in-place private<=>shared conversions, all
+>>> guest_memfd memory effectively follows the default state.
+>>
+>> I recall we discussed exactly that in the past (e.g., on April 17) in the call:
+>>
+>> "Current plan:
+>>    * guest_memfd creation flag to specify “all memory starts as shared”
+>>      * Compatible with the old behavior where all memory started as private
+>>      * Initially, only these can be mmap (no in-place conversion)
+>> "
+>>
+>>>
+>>> Alternatively, KVM could deduce the default state based on MMAP, which for
+>>> all intents and purposes is what KVM currently does.  However, implicitly
+>>> deriving the default state based on MMAP will result in a messy ABI when
+>>> support for in-place conversions is added.
+>>
+>> I don't recall the details, but I faintly remember that we discussed later that with
+>> mmap support, the default will be shared for now, and that no other flag would be
+>> required for the time being.
+>>
+>> We could always add a "DEFAULT_PRIVATE" flag when we realize that we would have
+>> to change the default later.
+> 
+> I remember discussing this. For many confidential computing usecases,
+> e.g., pKVM and TDX, it would make more sense for the default case to
+> be private, since it's the more common state, and the initial state.
+> It also makes sense since sharing is usually triggered by the guest.
+> Ensuring that the initial state is private reduces the changes of the
+> VMM forgetting to convert the memory to being private later on,
+> potentially exposing all guest memory from the get go.
+> 
+> I think it makes sense to clarify things now. Especially since with
+> memory attributes, the default attribute is
+> KVM_MEMORY_ATTRIBUTE_SHARED, which adds even more confusion.
 
-I can change all of them to drm_err_once(), sure.
-
-> 
-> > +		return -EOPNOTSUPP;
-> 
-> As this check could return error, it should be moved before
-> 'conn_state->hdmi.infoframes.spd.set = false;' to gain a little performance.
-
-I'd say, it would be negligible.
-
-> 
-> > +
-> > +	/* should not happen, HDR support not enabled */
-> > +	if (drm_WARN_ON_ONCE(bridge->encoder->dev,
-> > +			     conn_state->hdmi.infoframes.hdr_drm.set))
-> > +		return -EOPNOTSUPP;
-> 
-> I don't think IT6263 chip supports DRM infoframe.  The drm_WARN_ON_ONCE()
-> call could make driver readers think that DRM infoframe could be enabled
-> in the future as audio infoframe has the same warning and IT6263 chip does
-> support audio infoframe.  So, maybe:
-> 
-> /* IT6263 chip doesn't support DRM infoframe. */
-> conn_state->hdmi.infoframes.hdr_drm.set = false;
-
-I'd rather not do that. My point here was that the driver can not end up
-in the state where this frame is enabled, because it can only happen if
-the driver sets max_bpc (which it doesn't). Likewise Audio InfoFrame can
-not get enabled because the driver doesn't call into audio functions. On
-the contrary, SPD frame (or HDMI in several other drivers) can be
-enabled by the framework, so we silently turn then off here.
-
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static const struct drm_bridge_funcs it6263_bridge_funcs = {
-> > +	.atomic_check = it6263_bridge_atomic_check,
-> >  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-> >  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-> >  	.atomic_reset = drm_atomic_helper_bridge_reset,
-> > 
-> 
-> 
-> -- 
-> Regards,
-> Liu Ying
+Makes sense to me then, thanks.
 
 -- 
-With best wishes
-Dmitry
+Cheers
+
+David / dhildenb
+
 
