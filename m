@@ -1,201 +1,227 @@
-Return-Path: <linux-kernel+bounces-836345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04670BA965C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:46:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5320BA969E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F103A9110
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA70916B516
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3031FBC91;
-	Mon, 29 Sep 2025 13:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D193081D8;
+	Mon, 29 Sep 2025 13:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="ZLg/f5bi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Uu2iMx7X"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChFsUBXA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBA02AD24
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4220B30749E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759153611; cv=none; b=oD5mOnoHcqrRPScZOPCdE1WpWFMWZraFhJipBYVf7TKvMTOmxccxu9L4dXxhaBA1se1jtPKogYRL/SP99yJ4iYeaCf4iAkm5O5OPtledyFjoOXiq0Xkiclm5CLmQqkMkORgmSWKOm26jJa6T/60GcCPPVnkQZbtFlTcmtmXHtAE=
+	t=1759153740; cv=none; b=HX1M8d4EF+X038dtIYdIOODulRKwFQt/6v4dHENw2T3LfLInxskYXbqoDUax0VqOhHJ0n4Xp//5dGzuikeYRY1FbGaIm9aQKb17K1j9fb4ueuvcWukDd7vxXRdiNHsVW5o972i3YVsP2S3Sk70a5Cjw0NagCeDP12xFtIC6Joko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759153611; c=relaxed/simple;
-	bh=cEUmmAPKqmvDk/g4ktGYVigxucz+ZampVI1F4ms6JZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tcO7rWePImd66ju+0gCcRsAcV9fbO+Bqm6w63YYGuQceIwH8HPHuQNWIlUzdCY8fnroFfuNL+XXPrH9DAbpxmS1fIKAXasuLDFj5gf4V2uSnk/+bmOMPP5plBfxMKn7PadjAe0yr2mGBFvsMSv3nQqXCCu6PJoDmWlHH8pZct7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=ZLg/f5bi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Uu2iMx7X; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 203BF1D00018;
-	Mon, 29 Sep 2025 09:46:47 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 29 Sep 2025 09:46:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1759153606; x=1759240006; bh=VtDAfbV6Oj0/9M1Wdg+zZ
-	FLDn3mMhqZRbW/dQ4BuuTo=; b=ZLg/f5bipnef+4g8NsMJmsFuT3xyB6NSyk9DW
-	dFxXs+sFYuS1YPZcTpbYAvRGDfNzjaBGhG3Yyy1lJA86b8Qo9xSQGW6Vuy/IXblp
-	jzkijM88o4lJhgG4kNGr032kwGq79w3iykQh+RtdkE+pC+QUmyg7zAc6ieVYH52y
-	D2f5VxsEUUwtmwy6wMT3G8lZ+Paomn6Y95q2uS6ptmJ+vFOPpADUKcDzhdjSTj4h
-	sDCDdZmx2w0klR/S50sLuCDz22YFk924lVa+hmEbvuxnBbNq5Lyr9ulZxGxXwtx+
-	BhL/sEJEbGIolj2/XZQ8QsXFdd1l6lswnBdTsucDuXAIYQCAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759153606; x=
-	1759240006; bh=VtDAfbV6Oj0/9M1Wdg+zZFLDn3mMhqZRbW/dQ4BuuTo=; b=U
-	u2iMx7XQjNslCVFYCdBuU4xo8IKXC31FeMRTPqBdIpNBpOyUhYy+SFDNujw/F8kn
-	OKJXGnpjkc4J8gKgRvwPGE5mlBbCMKTQM30Ct/49ZQ88bUhUAjlRDMM5meZnhQhk
-	nZEd28oGpE9aGoJEMYDhM7OeDg7ZkWizdakRkJ8dJBGSQRox79HQfL/e8m0X33q9
-	kJjx8aUqlOarul7tF1QcgGLl8meQZgkvJMHqXuBCVUqn4TYOAPMUH2Zl6rhGGsVn
-	Iu5L8caGY0NSUJInQ+vAeyUImOAvcuq31fvg7jDCv537QZ4/472OD1MvgW/9YRgr
-	33Az0rY1+WrgfwwsgYlRw==
-X-ME-Sender: <xms:xo3aaLmHJ7mF_6DLuBbQ2lMxvrNgzYdDkUKREQkVSmTm5ilvOvYRQw>
-    <xme:xo3aaGmDG89YOZaL_pPYW-R3vALq_3zhLVuHDFrBBoFGOSdFtFA_ZKXqPzv-FPlaF
-    98tiR4WJY8djjRiW4ODyBZU6pob_c6EFqTNNDzixjpGfCXqRK_huA92>
-X-ME-Received: <xmr:xo3aaEvF9IOMTOAGCgI8Tph803Oa0f4uM7oCxujX0RLnAzFoOv0tHV20NI8TGLgUJgIb_RsXkj8cAoVpSLQTGpeRuWdyqsBYcw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejkedujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkgggtugesthdtredttddtvd
-    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepteefieetfeevgedvgf
-    egffehteeljeekkeelueegfffftdfgtdetteekvedvvdfgnecuffhomhgrihhnpehkvghr
-    nhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphht
-    thhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgusheslh
-    hinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgv
-    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidufe
-    elgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvth
-X-ME-Proxy: <xmx:xo3aaBnkLg6pII-KmrHlD4wpNYnCOjajmcalF96fodj63l3kcURIHQ>
-    <xmx:xo3aaHuexI0vDQu2XBDU56DDxKNuxHnGS12bgwZ8gE3952wc2_FNjA>
-    <xmx:xo3aaPe8rCnEurDd95p-pVZfx3HrRC0Hbp8fR_aEVZfEv8FbQ8Vn0A>
-    <xmx:xo3aaPxs8MONidhDQ9QcjYteUkMLC8MQuwsFuWcaFviwRP4kCRntyQ>
-    <xmx:xo3aaGNtptQRmwiNA_WVgBnpx_DcJzZVP0Y9_At0r_TFMEZIUaQ_5MW->
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 29 Sep 2025 09:46:45 -0400 (EDT)
-Date: Mon, 29 Sep 2025 22:46:42 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
-Subject: [GIT PULL] firewire updates for v6.18 kernel
-Message-ID: <20250929134642.GA748211@workstation.local>
-Mail-Followup-To: torvalds@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+	s=arc-20240116; t=1759153740; c=relaxed/simple;
+	bh=UMhXzzOUFx5OVA5APFYm6wVdOFYJfiFDk0hdKAQMemU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s9HgKrSuOysoh5bQnSf/IR98KGZBW5SCrjtIKqqsLBkyCltAV4K0m80vsm5PutcqeTgvuzGVt9R7GDswQVA6DZOtQyYqE0HfXt5BEvQXPDCkSSgRgttT24nuQG14s/9aTMKE95OlOsiCfyMS+gmEXr623S9PMmEHvICHTh/GDCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChFsUBXA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E86A8C4AF09
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759153739;
+	bh=UMhXzzOUFx5OVA5APFYm6wVdOFYJfiFDk0hdKAQMemU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ChFsUBXAfmJ9duD7PypxJDnR5EfU3aOqzqY6pWB9R2ARXYCjGbhWGtYDwgM21ZSf1
+	 zdHS2PRQaB1QX0pIN1n0OBeDITboPEXBKmUtGkoA1qagfx/xW2en7HV35W+VTx9i0R
+	 VLMwrcoBmtNjWeVJp5ZL92D9VKQhtyT0kVOiLsHKHblofZ+Dx+D38SRTiO/azLYJ6W
+	 mGeAPZF6phSRpXIy21fXgc1fty5fpWCDxJvMjJeExdDjqojW+9D5+6xQniy3bN6tVi
+	 9Tg//avx4ODQRozm8nuXNm1exO2m4lkz0n4HZ1Ee+DXc+/FKdyRQXrloOHwMUnLabo
+	 IOCdiohpyVzSA==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so9351663a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:48:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWyMfA596KTB8QOxj4AO+EMxWH2nWnqQvHD6zyH287jQL2w2OJ4ghMx4EVyiQeUBfGpyOpW46eaQPuAJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHxM3Xi6gM8vmtDBsfDqitTBIReYXRqZDEQW4e/u+x7DZNzK4p
+	bU9U6p+lrv1WGo+AFPm1m5OYGu57D/Ezau7kwnBA7KpKGCwg109zEJDH92pHfaKz5Lkp9N6DMvk
+	jq8EVkDl3G08WWc2to3p67W0s8anZZQ==
+X-Google-Smtp-Source: AGHT+IGp3P9nyueKP0M2BInqNV2Yp9Q8g79qJkdJ0eIQaWWP9lVHyb/0kaXduZAtR3IUytj5WfB2U3A52fbCay57ueY=
+X-Received: by 2002:a05:6402:1e90:b0:634:9e1c:dec4 with SMTP id
+ 4fb4d7f45d1cf-6349f71301bmr15430745a12.0.1759153738337; Mon, 29 Sep 2025
+ 06:48:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250926072905.126737-1-linux.amoon@gmail.com>
+ <20250926072905.126737-2-linux.amoon@gmail.com> <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
+ <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com>
+In-Reply-To: <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 29 Sep 2025 08:48:46 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com>
+X-Gm-Features: AS18NWDakHhHSWT3Jre9Ui6cjFqDPCfR0uwc3QfRpTuxBBAWT7q1IOrL5oK7MiE
+Message-ID: <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
+ nvidia,tegra-pcie.txt bindings documentation into a YAML schema
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, Sep 29, 2025 at 2:40=E2=80=AFAM Anand Moon <linux.amoon@gmail.com> =
+wrote:
+>
+> Hi Rob,
+>
+> Thanks for your review comments
+>
+> On Fri, 26 Sept 2025 at 19:26, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amoon@gmail.c=
+om> wrote:
+> > >
+> > > Convert the legacy text-based binding documentation for
+> > > nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema, followin=
+g
+> >
+> > s/YAML/DT/
+> >
+> Ok,
+> > > the Devicetree Schema format. This improves validation coverage and e=
+nables
+> > > dtbs_check compliance for Tegra PCIe nodes.
+> >
+> > Your subject needs some work too. 'existing' and 'bindings
+> > documentation' are redundant.
+> >
+> Here is the simplified version
+>
+> dt-bindings: PCI: Convert the nvidia,tegra-pcie bindings documentation
+> into a YAML schema
 
-Please accept the changes for FireWire subsystem to your tree.
+Still doesn't fit on one line and you say bindings twice:
 
-This update may appear to include many changes, but most of them are
-code refactoring. Except for the removal of firewire-ohci module
-parameter, there are only a few notable changes.
+dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
 
+>
+> Convert the existing text-based DT bindings documentation for the
+> NVIDIA Tegra PCIe host controller to a YAML schema format.
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+s/YAML/DT/
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+Lots of things are YAML. Only one thing is DT schema.
 
-are available in the Git repository at:
+>
+> > >
+> > > Cc: Jon Hunter <jonathanh@nvidia.com>
+> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > ---
+> > > v1: new patch in this series.
+> > > ---
+> > >  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 ++++++++++++++++=
++
+> > >  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ----------------=
+--
+> > >  2 files changed, 651 insertions(+), 670 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegr=
+a-pcie.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegr=
+a20-pcie.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.=
+yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
+> > > new file mode 100644
+> > > index 000000000000..dd8cba125b53
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
+> > > @@ -0,0 +1,651 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra PCIe Controller
+> > > +
+> > > +maintainers:
+> > > +  - Thierry Reding <thierry.reding@gmail.com>
+> > > +  - Jon Hunter <jonathanh@nvidia.com>
+> > > +
+> > > +description: |
+> >
+> > Don't need '|'.
+> >
+> Ok
+> > > +  PCIe controller found on NVIDIA Tegra SoCs including Tgra20, Tegra=
+30,
+> > > +  Tegra124, Tegra210, and Tegra186. Supports multiple root ports and
+> > > +  platform-specific clock, reset, and power supply configurations.
+> >
+> > I would suggest not listing every SoC here unless the list is not going=
+ to grow.
+> >
+> Here is the short format.
+>   PCIe controller found on NVIDIA Tegra SoCs which supports multiple
+>   root ports and platform-specific clock, reset, and power supply
+>   configurations.
+> Ok
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> >
+> > Only 1 entry here, don't need 'oneOf'.
+>
+> I am observing the following warning if I remove this.
+>
+>  make ARCH=3Darm64 -j$(nproc) dt_binding_check
+> DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/pci/nvidia,tegra-pcie=
+.yaml
+>   CHKDT   ./Documentation/devicetree/bindings
+> /media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devicetree/bind=
+ings/pci/nvidia,tegra-pcie.yaml:
+> properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pcie',
+> 'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210-pcie',
+> 'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.18
-
-for you to fetch changes up to 40d4c761200b796a44bf2c7675ae09c87b17d4af:
-
-  firewire: core: fix undefined reference error in ARM EABI (2025-09-28 10:20:30 +0900)
-
-----------------------------------------------------------------
-firewire updates for v6.18
-
-This update includes the following changes:
-
-- Removal of the deprecated debug parameter from firewire-ohci module
-- Replacement of the module-local workqueue in 1394 OHCI PCI driver with
-  a companion IRQ thread
-- Refactoring of bus management code
-- Additional minor code cleanup
-
-The existing tracepoints serve as an alternative to the removed debug
-parameter. The use of IRQ thread is experimental, as it handles 1394 OHCI
-SelfIDComplete event only. It may be replaced in the future releases with
-another approach; e.g. by providing workqueue from core functionality
-
-----------------------------------------------------------------
-Takashi Sakamoto (42):
-      firewire: ohci: remove obsolete debug logging for IRQ events
-      firewire: ohci: remove obsolete debug logging for selfID sequence
-      firewire: ohci: remove obsolete debug logging for AT/AR results
-      firewire: ohci: remove obsolete module-level debug parameter
-      firewire: ohci: move self_id_complete tracepoint after validating register
-      firewire: ohci: use threaded IRQ handler to handle SelfIDComplete event
-      firewire: ohci: remove module-local workqueue
-      firewire: ohci: use kcalloc() variant for array allocation
-      firewire: core: utilize cleanup function to release workqueue in error path
-      firewire: ohci: use return value from fw_node_get()
-      firewire: core: add helper functions to access to fw_device data in fw_node structure
-      firewire: core: use cleanup function in bm_work
-      firewire: ohci: localize transaction data and rcode per condition branch
-      firewire: core: code refactoring to evaluate transaction result to CSR_BUS_MANAGER_ID
-      firewire: core: refer fw_card member to initiate bus reset under acquiring lock
-      firewire: core: code refactoring to detect both IEEE 1394:1995 IRM and Canon MV5i
-      firewire: core: code refactoring to investigate root node for bus manager
-      firewire: core: code refactoring whether root node is cycle master capable
-      firewire: core: remove useless lockdep_assert_held()
-      firewire: core: use macro expression for gap count mismatch
-      firewire: core: use macro expression for not-registered state of BUS_MANAGER_ID
-      firewire: core: use helper macros instead of direct access to HZ
-      firewire: core: use helper macro to compare against current jiffies
-      firewire: core: use scoped_guard() to manage critical section to update topology
-      firewire: core: maintain phy packet receivers locally in cdev layer
-      firewire: core: use spin lock specific to topology map
-      firewire: core: use spin lock specific to transaction
-      firewire: core: use spin lock specific to timer for split transaction
-      firewire: core: annotate fw_destroy_nodes with must-hold-lock
-      firewire: core: schedule bm_work item outside of spin lock
-      firewire: core: disable bus management work temporarily during updating topology
-      firewire: core: shrink critical section of fw_card spinlock in bm_work
-      firewire: core: remove useless generation check
-      firewire: core: use switch statement to evaluate transaction result to CSR_BUS_MANAGER_ID
-      firewire: core: code refactoring for the case of generation mismatch
-      firewire: core: code refactoring to split contention procedure for bus manager
-      firewire: core; eliminate pick_me goto label
-      firewire: core: minor code refactoring to delete useless local variable
-      firewire: core: suppress overflow warning when computing jiffies from isochronous cycle
-      Revert "firewire: core: shrink critical section of fw_card spinlock in bm_work"
-      Revert "firewire: core: disable bus management work temporarily during updating topology"
-      firewire: core: fix undefined reference error in ARM EABI
-
-Thorsten Blum (1):
-      firewire: core: use struct_size and flex_array_size in ioctl_add_descriptor
-
- drivers/firewire/core-card.c        | 490 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------------------------------------------------
- drivers/firewire/core-cdev.c        |  36 ++++++++++-----
- drivers/firewire/core-device.c      |  27 ++++++-----
- drivers/firewire/core-topology.c    |  91 +++++++++++++++++++------------------
- drivers/firewire/core-transaction.c | 130 ++++++++++++++++++++++++++++++++++-------------------
- drivers/firewire/core.h             |  22 ++++++++-
- drivers/firewire/ohci.c             | 316 +++++++++++++++++++-------------------------------------------------------------------------------------------------------------
- include/linux/firewire.h            |  33 +++++++++-----
- 8 files changed, 518 insertions(+), 627 deletions(-)
+Because you made 'compatible' a list rather than a schema/map/dict.
+IOW, You need to remove the '-' as well.
 
 
-Regards
+> > > +  nvidia,num-lanes:
+> > > +    description: Number of PCIe lanes used
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> >
+> > The examples show this in child nodes.
+> yes it patternProperties example I missed this.
+>
+> patternProperties:
+>   "^pci@[0-9a-f]+$":
+>     type: object
+>
+>     properties:
+>       reg:
+>         maxItems: 1
+>
+>       nvidia,num-lanes:
+>         description: Number of PCIe lanes used
+>         $ref: /schemas/types.yaml#/definitions/uint32
+>         minimum: 1
+>
+>     unevaluatedProperties: false
 
-Takashi Sakamoto
+What about all the other properties in the child nodes? You need a
+$ref to pci-pci-bridge.yaml as well.
+
+Rob
 
