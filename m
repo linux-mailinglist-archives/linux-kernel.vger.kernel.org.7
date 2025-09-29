@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-835703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92854BA7D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:54:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03B1BA7D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C8D64E0231
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:54:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7EE189A7AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E804B20E328;
-	Mon, 29 Sep 2025 02:54:17 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B0F2116E0;
+	Mon, 29 Sep 2025 02:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="KBaxehw5"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A12E200C2
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E931E9B22;
+	Mon, 29 Sep 2025 02:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759114457; cv=none; b=dDF9/kFNWtNVbySxLNCrfwTzkHnB5NF7fwrekxSaev74bzyeLtJ8kpEkCgJVHFGrcqICufvTARrjWhAtw5UgOfmP1Y8MksygOqfhA6mbCKyfweWlRhWfEeHu01Zjy5FS780gEB1mvzCZXqQr5tdSPq44WWKd7frFNco0aTsXl7o=
+	t=1759114457; cv=none; b=d29PtDwsrClyg9EUYVQaulYveGmjBhm/iMBJJrd66Qdreiul4vOsssdiQhdEtdzhI+obEoaORbz6+JvK4JBpw37l1H69R8x/bEbCLW+2j9DaDBiEhgOwklz5Udy7Vuc37dXglWu6no/lqe3+fzVyAZL0mE5TPbmLiDnFEL7zatg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759114457; c=relaxed/simple;
-	bh=QAYCtptksbF3Zbego6PyHqNwteDGed3frGeLlceiUAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dfQnKcwVimojgSsnTVmncpl3APR+0tL5WAU6uAaf511daUM3V1pHDa97kcMe81qck7gHIMRrApZD7MPBZ3aHy1IuQ92fXVp3yLVg41UdPHjYqA1gZcggB8D7acEpSthVwoHOvgg/nhc1Q1IRITxggvO2MRoZKaKu59OUpmqlx88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowABX+RLN9NloTWOKCA--.65172S2;
-	Mon, 29 Sep 2025 10:54:06 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] iio: adc: mt6360: Handle error in cleanup path correctly
-Date: Mon, 29 Sep 2025 10:53:58 +0800
-Message-ID: <20250929025358.2064-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	bh=pojgk9Z1+Q/NV0nIiFV3uH3FiGs9bdHkXE4OeUOO3Q8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MCXQDHznlD38LnL2vZ8waUHP+/vh6kusQuzz3ff10kMfB+UkrPCJM9QQFaJx2ifM3ObOu1tn7YTaEtH+9MhrcOlK64SpEGJWeKYGoDHWQyN+NaPHxq2P+m51kGn69ODZRzYT7HhCzY9mSsaMSUlwe3oMk9e7Nztq2aBh22BiBGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=KBaxehw5; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1759114447;
+	bh=brjNCibui1BunD75iFMB/zhDYfVCb5iddYtyuRU7tNg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=KBaxehw5FTRBVnzcCNHJ3aAdKfn7YaIwpgMkzt/GIBNODs9itUtYsHSvrk8qN/Sf1
+	 ymRxkd1wPN83MvkP0lVUV9pBS9gtIDR1oeksM8vAf+ZJ5/rXLFWCC7iwQhaS2hf1FF
+	 Whhuy4kG77LxXwLheG8qLpvSG/QpBJWay9oeot/yR/VkiyaHCBESslUl+ZNWX1K+SS
+	 7FvCOgaUXjt9yPSw9BbmgFKnAoIXsiz4EN+bivEoL/4PKpRbUWeT6PO1ce/DOZo5GW
+	 i+gDePAUNVYdv9OObxIpt4lmuM6nKI7U0a5EpKw2wODRn2U6P7fRvktX+jHpHmEeQh
+	 QfS8p0FuGUBCg==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 2413864782;
+	Mon, 29 Sep 2025 10:54:04 +0800 (AWST)
+Message-ID: <dfd8160f015b405623aa7a4b9e69eda2ad1c5df5.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 2/2] ARM: dts: aspeed: yosemite5: Add Meta Yosemite5
+ BMC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Kevin Tung <kevin.tung.openbmc@gmail.com>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley	 <joel@jms.id.au>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Magnus Damm	 <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Amithash Prasasd <amithash@meta.com>, 
+ Kevin Tung <Kevin.Tung@quantatw.com>, Ken Chen <Ken.Chen@quantatw.com>, Leo
+ Yang <Leo-Yang@quantatw.com>
+Date: Mon, 29 Sep 2025 12:24:03 +0930
+In-Reply-To: <20250924-yv5_add_dts-v2-2-39a4a8e3c9e6@gmail.com>
+References: <20250924-yv5_add_dts-v2-0-39a4a8e3c9e6@gmail.com>
+	 <20250924-yv5_add_dts-v2-2-39a4a8e3c9e6@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABX+RLN9NloTWOKCA--.65172S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4kJw1DGr4ktryrJw13Jwb_yoW8Xw43pr
-	4jkFyDJFy09FyfCF4xta1UZFWFya17Gryjy34DC3ZrZ3s8Ar12gF1rJFyqva4vvrZIyan0
-	vrWUCrWUuw1UZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
-	WxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
-	Yx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4UMxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbKhF3UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwwAA2jZ4FFQ9QAAst
 
-The return value of a regmap_raw_write() in the cleanup path was
-being ignored.
+Hi Kevin,
 
-Fix this by checking the return value and propagating the error.
+On Wed, 2025-09-24 at 20:28 +0800, Kevin Tung wrote:
+> Add device tree for the Meta (Facebook) Yosemite5 compute node,
+> based on the AST2600 BMC.
+>=20
+> The Yosemite5 platform provides monitoring of voltages, power,
+> temperatures, and other critical parameters across the motherboard,
+> CXL board, E1.S expansion board, and NIC components. The BMC also
+> logs relevant events and performs appropriate system actions in
+> response to abnormal conditions.
+>=20
+> Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
+> ---
+> =C2=A0.../dts/aspeed/aspeed-bmc-facebook-yosemite5.dts=C2=A0=C2=A0 | 1068=
+ ++++++++++++++++++++
+> =C2=A01 file changed, 1068 insertions(+)
 
-Fixes: 1f4877218f7e ("iio: adc: mt6360: Add ADC driver for MT6360")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/iio/adc/mt6360-adc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+This misses adding the devicetree to the dtb target in
+arch/arm/boot/dts/aspeed/Makefile. Consequently I don't expect this was
+tested with `make DTBS_CHECK=3Dy ...`. Fixing the make target and
+checking the DTB yields the following among the usual concerns:
 
-diff --git a/drivers/iio/adc/mt6360-adc.c b/drivers/iio/adc/mt6360-adc.c
-index 69b3569c90e5..97c4af8a93fc 100644
---- a/drivers/iio/adc/mt6360-adc.c
-+++ b/drivers/iio/adc/mt6360-adc.c
-@@ -70,6 +70,7 @@ static int mt6360_adc_read_channel(struct mt6360_adc_data *mad, int channel, int
- 	ktime_t predict_end_t, timeout;
- 	unsigned int pre_wait_time;
- 	int ret;
-+	int cleanup_ret;
- 
- 	mutex_lock(&mad->adc_lock);
- 
-@@ -130,11 +131,15 @@ static int mt6360_adc_read_channel(struct mt6360_adc_data *mad, int channel, int
- out_adc_conv:
- 	/* Only keep ADC enable */
- 	adc_enable = cpu_to_be16(MT6360_ADCEN_MASK);
--	regmap_raw_write(mad->regmap, MT6360_REG_PMUADCCFG, &adc_enable, sizeof(adc_enable));
-+	cleanup_ret = regmap_raw_write(mad->regmap, MT6360_REG_PMUADCCFG,
-+				&adc_enable, sizeof(adc_enable));
-+	if (ret >= 0)
-+		ret = cleanup_ret;
- 	mad->last_off_timestamps[channel] = ktime_get();
- 	/* Config prefer channel to NO_PREFER */
- 	regmap_update_bits(mad->regmap, MT6360_REG_PMUADCRPT1, MT6360_PREFERCH_MASK,
- 			   MT6360_NO_PREFER << MT6360_PREFERCH_SHFT);
-+
- out_adc_lock:
- 	mutex_unlock(&mad->adc_lock);
- 
--- 
-2.50.1.windows.1
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: ethernet@1e6700=
+00 (aspeed,ast2600-mac): Unevaluated properties are not allowed ('ncsi-pack=
+age' was unexpected)
+        from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac10=
+0.yaml#
 
+Can you please address that? You may need to update or introduce a
+binding document as part of doing so if it's not a matter of removing
+the property from the devicetree.
+
+Andrew
 
