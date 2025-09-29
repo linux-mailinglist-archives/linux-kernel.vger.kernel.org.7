@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-836822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE955BAAA5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 23:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B486BAAA7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 23:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633B33C61DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B013B0774
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3761223DDD;
-	Mon, 29 Sep 2025 21:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D97257839;
+	Mon, 29 Sep 2025 21:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oS6+xOE0"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hP6ut+mD"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969A62139CE
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 21:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B8023D7E5
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 21:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759181622; cv=none; b=VfvVlWNNBw16TH0gkN9T9Ouw5ovqGBZ3uZIv9/E8tzt/OQ2/ujyeSIWi70V4o1iIMdCrBbhIYdoGjZ5GLO9m+IXv00s5oyAFCokq7L//2Amr09ahUXZSVsNmgc4joq3z6W7/R5XkKgqt6h82r+PpJDZAClAOf0R8eUg/6/PV/IY=
+	t=1759181741; cv=none; b=GX2P7g8w6s+oLiiQynwA7aCWjgcdIVXR3d3CBggQCpBcqa7ybY5eoiXAaiNZx4pfT446mYu7QqO2zLonhleLZCkDz9J+XClfYPaRo9Hv95BdUcIiz4oyfmGxPzTSTsRIn+7sQW48WAOij/GQKeeFcf7Uy2c0wDEp4yeLaCnySo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759181622; c=relaxed/simple;
-	bh=dfXKvQ91TOlkjdrPXceY7rW+DXPRQb4lDShzbaTpGOo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BDEwTlcaYdmL1B+XmQtpXA799i1sHC5nduLyCzo8B+31u9liinG1BuFY4xSO0vpqaZvPlsxnl+7XDtPTRsDufpMC2cBhqY73kHUP2mY9oVCtA7TONICQBXB49cg5RxPgQIVzXiDdIitmXwbv2Nasqdi4ni8mIjr6xqIsAD+rXi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oS6+xOE0; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8e286a1afc6so3022579241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:33:40 -0700 (PDT)
+	s=arc-20240116; t=1759181741; c=relaxed/simple;
+	bh=66+ImCS9s5O8hibzo78xGbhfxDpDVb0wuaO+c5fS7G4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qstgSL2YIrFTnpXcVfJAY7wDa2fwBrdYCkJKbh9YU149d0x87wWBArJQEFkEfNlzCkLg/L8maCfuYfyXIOHsp1UJGXhOlM51BGk4FK7KoGxLFNnnASZWof1lb+ih3bChLq7LW9qrnl2gUanZwaeCqwwsotoctq3f1tpTGVwZxEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hP6ut+mD; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6365c5704ceso1137093a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759181619; x=1759786419; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7DndpbGnaGr647nqjLPsyXZsnXaydKUcV/c1eXt3NA0=;
-        b=oS6+xOE0IsOGn5UIFJp8S0+wwW44uHm2Rh96CKwanCWDX/Z1D8vat81V+owytOtard
-         6oxuyML2mg2hCi0wanyodcmOaKKCywYfNwsqkO7+6HIF+1AdgMH0o9TU1stvcWm4/G35
-         NBmo9nyrHh7um5LzumsVqK7TC//7ZYgFE2G8M=
+        d=linux-foundation.org; s=google; t=1759181738; x=1759786538; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8sA6CNO1bDnDziNleAS+cBDGZ9VDerULmylgqhGURPU=;
+        b=hP6ut+mDlgFwY1xAd4AGYS4r+s6bFbuu+ukwYQCFhpgoBhrLIQXGIvHIlELGlxV4J7
+         1RzzYieITxHxFsETgb331y4p4FlZKckIKNc4eBJVpgxtQh5dJmLqqmxdJ2exDjc1F3Q4
+         ey6dpIZ3K28m7qfWOYCtkTMdxN6toabA7w5U4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759181619; x=1759786419;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759181738; x=1759786538;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7DndpbGnaGr647nqjLPsyXZsnXaydKUcV/c1eXt3NA0=;
-        b=JTKS8es+/jlvfx2VhZtyMim6HHXp7d0pdv3lz/NvJj594DHsqFYoOtMsW+Z60S/rjV
-         mDc3UiHW+tSvR+6G9ybfeTFRqaFsKZRT4YmhBP6xxm0iemlb0o0XffCYitGHZ0VyNQSK
-         csGlD9aStVrx+tc47QDpR36M/tcmfCfVf6SfNPOuHG25lTel4/q+S7VCWa0heb6OpxzM
-         SdJA7AXAnDtcqBKrSZ77HfK8MP5AADzXdxZY2SZlD+4FgTLYt7/Ljv/Tsqa3LuikNOb9
-         l/+HyvfrDXD0whSTNQV7zBs7xpTrzX7qvFEJ+H0g9kmVZ5zjvraQfvJwyrJ/2AZFXpSo
-         hjCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoT48k3WpsroZgWWIcZJe7rW7Z+KQApNpv8Ton4ABh1vgozZ/aRYX/tAfDn+XpPrEJH/UoKJgBd0VLO9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRibaU3W+LF3zewxDu8tH2hdpCBDFvROLGU3DW5Ur/2xGLrr/F
-	qQxOYBn50X6oPRkhPrSd+9PiHm3Amj4SWA5yc5pjT0a++jVF0QS8eRdED1WODVTbtQ==
-X-Gm-Gg: ASbGncvViQ9kq0BZjWvPIlGWY0v8ng/WjWPXw+m5RvnYs3jl9oGsk2I3oLL/oU73wcq
-	cMfcXfUUphLVS/KAO+B0atDtZU1IHK8Hrf3k1eoA2VDYKokpJduWpmEWVoEzwueJiPvPVkJ+hGa
-	f3I/0pAs3EHNxY48hulRQKQ8rj2M+UOwIOQZIw5/Hg4YYlDzo8pRs+xRuFSzfc9dgQLiwteDa09
-	84ELFrObvWrL2CAuNcBaeuKeECeZ32ibepzzyfCq4fc7d9jlHtVOIknc+3E158qX+KemzkCtDI2
-	YJTR4LXa/yifNQz2lcJO/2a8Z4uFEuxDY7oVxbtZSNjfcszFpIN3Ay3Pt0MYBlHS6tOandrUrp/
-	b14+0ge3GW9tqcNbkIGyMV1u0ls6OLKXXFlvNOAEyIpZlD2VN5gNcjGLE+8k+V1EItWpk9CHi2w
-	I+AL2Xw2MM9kDR
-X-Google-Smtp-Source: AGHT+IGBcKDX6t5iDAMqyGpZDqjCIaqn4UqgrhOWcA2rKa6QvdAjhZ5diuFuPMe6votfx/4yDSiOLg==
-X-Received: by 2002:a05:6102:304d:b0:52a:1104:3029 with SMTP id ada2fe7eead31-5ced60fd25bmr1445401137.17.1759181619470;
-        Mon, 29 Sep 2025 14:33:39 -0700 (PDT)
-Received: from ripwilburliny.c.googlers.com (62.37.48.34.bc.googleusercontent.com. [34.48.37.62])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ae3b232a01sm3687131137.16.2025.09.29.14.33.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 14:33:39 -0700 (PDT)
-From: Steven 'Steve' Kendall <skend@chromium.org>
-Date: Mon, 29 Sep 2025 21:33:34 +0000
-Subject: [PATCH] ALSA: hda/hdmi: Add pin fix for HP ProDesk model
+        bh=8sA6CNO1bDnDziNleAS+cBDGZ9VDerULmylgqhGURPU=;
+        b=rPgkKq+oZwFbs7BoO/zuzuW8hTKnfR2lOoJ/1oWTlt0yjfAt73gP0iLI/itahv3S1e
+         CKZgUvYtQOvCNlwlFvmLZQWAkVfUeGxE1WhUOKPUp3f+sdcq7eR5DYNrXUKiPJiwcvEL
+         oULcwJEJEw5AxGUQDKbeeDdCOz+lEZn1GcKlSeBQM9F8KU7xZQw97gnOLw/TUNd9Il5K
+         6vnl8i68fNEsOI8h4OZ2425PgLmie32qGpRyDNKOYJvo4J9QqkfvC5bytXdEiT1creDw
+         l7/NZ3aXmBbzq35y+S0KtilBSrxITP3WuoMSWz+zHmyQwzJlgvlbp7Tj1CQlKXDpe0Fr
+         Arog==
+X-Forwarded-Encrypted: i=1; AJvYcCUdufRT0avPVtTUuStmuJ1io2WzAsGWJGOd9+meX12NFHLoNzZc8DD+u8QotH9q2H8LS8/9ZUfQW+mCfi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHT0Oyzxb/roxOrekunJ1quE9DQHrdoqAKw5As/I3sWbt+B8wa
+	z62lY5R4qzq+32fXbk0l9mOLICCgocfYj4XWd10jLkFkZizz7FiYlNq/VjxJeybqjeTvwWDKcZ/
+	IhmURt+YH7w==
+X-Gm-Gg: ASbGnctCiIrGKbcYrX4hUrQUVcRBlCc55+Jstud5KGMmVrQxoQh+jBdKq9mbz9z4I3q
+	SXQQXae0uz67YR5z3qSEkNooNhyLMG9K5tr1wEvAFRga/OMBeVF/I4peOGQg/xqa+v0Peb40Y63
+	PgaPWC1zfdjQ8Jqa4ECTgJ11VLeUdJD0k9wUbc61RlevbJidlJqnC3xJVFQpksJzd9Pcme8sIdM
+	RuCishZRvyB0JRTt/oOOEii8NnAJ0k1R0rUkFsIQqQ2QSlEe2jtGoaSxC3mrUaphvNcALaVwW72
+	kXuzbCFzXkYFHMQ9GW2cG+DQu+jzLZAXzwnzplMbDNCHfqmQ0yYR6d5Ac7qE4y4+oDwee2MTCj5
+	DpfUmJV0f3RZxnU1J3rgu21OiXZhMpVY1bCgHk2Bh3uTZCUjVu+Eg1nXqIoVhgEUNcbgNQTan6V
+	/jHNTwn70zmRgWN5tUFA==
+X-Google-Smtp-Source: AGHT+IGoOUBZnYwnYWOBmqzq+cDPtF9G0eI6oSrLqo4VNr+CCl8QluuL3cc/4pPjv/43miQSbirhYw==
+X-Received: by 2002:a05:6402:1d4c:b0:634:a84d:f76c with SMTP id 4fb4d7f45d1cf-634a84df7a7mr17602035a12.27.1759181737663;
+        Mon, 29 Sep 2025 14:35:37 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3ae3227sm8715597a12.28.2025.09.29.14.35.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 14:35:37 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so322419066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:35:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWJjPw35M42d2VGuToR1ojhFA4pj98m5XyMG+MbewpvAdpphDwpXVfY5ZmXS1hQ1nDqknWhian23kcdbDU=@vger.kernel.org
+X-Received: by 2002:a17:907:2d24:b0:b04:2452:e267 with SMTP id
+ a640c23a62f3a-b34bc399695mr2148100466b.56.1759181736296; Mon, 29 Sep 2025
+ 14:35:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250929-fix-hdmi-hpprodesk-v1-1-f4a7e714ef11@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAC372mgC/x2MQQqAIBAAvyJ7bkGNAvtKdEhdc4lKFCKQ/p50H
- JiZCoUyU4FJVMh0c+HrbKA6AS6u50bIvjFoqQdptMHAD0Z/MMaU8uWp7OhG1/ugrNXOQgtTpmb
- 903l53w8HZqtmZAAAAA==
-X-Change-ID: 20250929-fix-hdmi-hpprodesk-c6c3df1bb2cb
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Steven 'Steve' Kendall <skend@chromium.org>
-X-Mailer: b4 0.14.2
+References: <cover.1758696658.git.dsterba@suse.com>
+In-Reply-To: <cover.1758696658.git.dsterba@suse.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 29 Sep 2025 14:35:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjuu2-7z3ALpt6v7L3Zoa_cqz+imGNGwaL=QPGLw7eKNQ@mail.gmail.com>
+X-Gm-Features: AS18NWAs8zD8K7JSR_3PPFlZf-NPA9cZPs8jLwEZYioNwmDaW4kMauzEDvSDsho
+Message-ID: <CAHk-=wjuu2-7z3ALpt6v7L3Zoa_cqz+imGNGwaL=QPGLw7eKNQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Btrfs updates for 6.18
+To: David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The HP ProDesk 400 (SSID 103c:83f3) also needs a quirk for
-enabling HDMI outputs.  This patch adds the required quirk
-entry.
+On Wed, 24 Sept 2025 at 07:41, David Sterba <dsterba@suse.com> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.18-tag
+>
+> for you to fetch changes up to 45c222468d33202c07c41c113301a4b9c8451b8f:
 
----
-Signed-off-by: Steven 'Steve' Kendall <skend@chromium.org>
----
- sound/hda/codecs/hdmi/hdmi.c | 1 +
- 1 file changed, 1 insertion(+)
+I see the for-6.18 branch, and it matches that commit, but no for-6.8-tag.
 
-diff --git a/sound/hda/codecs/hdmi/hdmi.c b/sound/hda/codecs/hdmi/hdmi.c
-index 44576b30f699511c79a298af5d79be81ec1fc0cc..774969dbfde4573894d87d603d64a7854a786fdf 100644
---- a/sound/hda/codecs/hdmi/hdmi.c
-+++ b/sound/hda/codecs/hdmi/hdmi.c
-@@ -1583,6 +1583,7 @@ static const struct snd_pci_quirk force_connect_list[] = {
- 	SND_PCI_QUIRK(0x103c, 0x83e2, "HP EliteDesk 800 G4", 1),
- 	SND_PCI_QUIRK(0x103c, 0x83ef, "HP MP9 G4 Retail System AMS", 1),
- 	SND_PCI_QUIRK(0x103c, 0x845a, "HP EliteDesk 800 G4 DM 65W", 1),
-+	SND_PCI_QUIRK(0x103c, 0x83f3, "HP ProDesk 400", 1),
- 	SND_PCI_QUIRK(0x103c, 0x870f, "HP", 1),
- 	SND_PCI_QUIRK(0x103c, 0x871a, "HP", 1),
- 	SND_PCI_QUIRK(0x103c, 0x8711, "HP", 1),
+I suspect you just forgot to push that one out,
 
----
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
-change-id: 20250929-fix-hdmi-hpprodesk-c6c3df1bb2cb
-
-Best regards,
--- 
-Steven 'Steve' Kendall <skend@chromium.org>
-
+            Linus
 
