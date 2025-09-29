@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-836463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DE8BA9C48
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:14:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F28BA9C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B2C3C742E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:14:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779401921F51
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D21306B08;
-	Mon, 29 Sep 2025 15:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B723A30AD09;
+	Mon, 29 Sep 2025 15:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ui7o87NV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="daY9fY4I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE1D301015
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12323309DCF
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759158874; cv=none; b=TA46Zt/tuwPZzkRDz9EmDT0kASUUTcRo8PexmJpgqdeRUUwPqFwkSqzKTV82sd+fN0O7MIc828PyzeI8EOf9saR++DOQLQKj/SXYgBj7QLADqE5dz1N5qYB0DKkfWGMqzXaOymIWgBfkWh3Kafqs18dsHcuuiS2Vz1lUMcWxpyc=
+	t=1759158889; cv=none; b=g95UQzxPEnkYGwBR4sAMnq0UaCrzDfynmBl4x+7PRTC5L/mKoXP3od1QRN1ZKU0WTQ0NTyM9LX5ZaKV4DXjXzHufSodA2l0hN+hOu3PH65GD91KGpgtdoXtQdkGzQHTpkKjnZBNQDYLdxf0nWru/qoRNUEwG7beoQIoCJH+GaKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759158874; c=relaxed/simple;
-	bh=iBlCQ9KvyCeCkRu9ZLjuA246/L+TzryyOmffdoYiQyc=;
+	s=arc-20240116; t=1759158889; c=relaxed/simple;
+	bh=GZ4e21PBVjuvuXZEYwAdRZQ6R/UqoSTS/zBSuW4rgns=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q/IMauhs3gwiUbeub+ncrgxG05xuIbLGHtep0Ta1re9t6i296pi/JNNUjCDSAsY3/9nsg4qMIYjC2hN3kQOHgRp+XtkBAK+AlhF/KI4vxg3DU5tCcgtM5NUQLRr/VobsLpBBtZEg571kmHKvv95jgEdXTLRez21qOZwkxv+FK3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ui7o87NV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31381C113D0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:14:34 +0000 (UTC)
+	 To:Cc:Content-Type; b=jXSGZQttLE21XwGZwYvbinbtQ1XiJEKsv77CQG30EqmmBiSD/eW3a1kjSxDMu0HzXEaemvC5LYrbdHheGupG73NXM2e1eEAwA0689QE83cYQQ6R1NsOqgeWc5k0oF/lGad1DNrvhybR30dAGuzBXLwd7cjcq8AtxksiPYPiJ/xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=daY9fY4I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8A2C116B1
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:14:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759158874;
-	bh=iBlCQ9KvyCeCkRu9ZLjuA246/L+TzryyOmffdoYiQyc=;
+	s=k20201202; t=1759158888;
+	bh=GZ4e21PBVjuvuXZEYwAdRZQ6R/UqoSTS/zBSuW4rgns=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ui7o87NVNFm12QGuE7Bd8xChnmEQOj/TZto2q04N4b6VpLSvQjJSoXigSO7nQUsIC
-	 30wHg2wZdrzNGlqMb87th5LRnn8BRUMn4E1av/XIIm6S3hUMjyvfPHOyACWgHgYPmq
-	 8EHhHUI42AMQHLyTL1G21S5TflHr0L7FzMCq9ACazaZfhz/oUMXpCKjQriUwkPTqwy
-	 YMneEzsPadiVpprHrFoPR4B2KFSkZaOV7472XvSmvnc7dUVzpUTrKr6eKbLKWbQa38
-	 W9P4yW8yZeXNeVMuH2FKvIwCtRBYETrv19J55K2RY+D6rG/uL8bUQQB4uaDFc3l7zN
-	 EIEWnP03SPETw==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62fca01f0d9so9316901a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:14:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXHxYE7DsJfJ2REsdddE7sJ1p+kjpFaFqFR0ur1ZauabgA8QesSrIznkFsaFr+l/eir15OkJMIO4mXpes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOgxu023mf4N+P0clgpSF+T0H89R2+dEcBvHAoqIL4AmfbgSen
-	QhGqncwUOEYfFllxowqK1rW4b8M66vQpZ31Cbsw3O3vr3HpIR4JCfJD3pQ0b5VGKWPKKoS1TWbZ
-	6lQFkZBt3MX20qF0h8xkBreZ6PxZb4w==
-X-Google-Smtp-Source: AGHT+IGe34FYZ1xtizAF3ivFL6run1i1iMMxSE0ue9AhqSYZ1xftvh4ImQ04CR1Xrylrlu0u1yZcLoK+lVTV3QkMcKQ=
-X-Received: by 2002:a05:6402:2110:b0:634:bdde:d180 with SMTP id
- 4fb4d7f45d1cf-634bdded443mr11982998a12.10.1759158872767; Mon, 29 Sep 2025
- 08:14:32 -0700 (PDT)
+	b=daY9fY4IwErAM4+E71zcw3VQlDPTho0jN7abbAOzBU9ipGrJQP6GHHrn5HXy2Pwvf
+	 jQ2yAUZpLBW1Jj6T1J9Qdtk7GTmLW/7SjDTCe+HIoJTbDjtDZWUyfA619+GER5zL75
+	 qUPIgc31KUpKpk7UUU9qopFUl3l992AMGqfBKMuJCyeZH1eQBE1PpFZBQBuuJkkCiH
+	 FceFpuhkJ0eHYH1TqhjSeU0LASXdo3UhconVgjmCjowJhAlF2VcHPGspt/fCBViuBE
+	 tJd4axeVmSVis5iCWnvRSLY+o0pOvfaHhJ3LYfdrRKVuJ/2XGuPRd/w8nQf49hk1Sz
+	 LtLGq5N8fvDFw==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-36a448c8aa2so42031411fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:14:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0ISf8tlA2R/Eu6hPPUoL1JqYCCf++xBJkwclvuYP5INep37O+uuDYhnBWQkR/22B1lBLX3iyawIYxoEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywe5hcmudhyzYYDx+eve+MibJYEKObOO38DBycIfOz2EhvJ9rg
+	ckEFfssYlo3FuKu5We4zPiu4xnT58lo6rsKRbR5twC6JDzAstRqYdNnidNhK8NzEGZ37IvG1nGi
+	yvCdUQthLCAmmEMasxvdxXuIOvIzJxGk=
+X-Google-Smtp-Source: AGHT+IGUaZjYTFlOfxsD2ALuWOy3/rA1fXR59atQkgQYb6nVuRzSl7EX/An2oOo6sqIe6k7g+X8I5lTx6uA9aBfha7c=
+X-Received: by 2002:a05:651c:23c5:10b0:372:9e15:8979 with SMTP id
+ 38308e7fff4ca-3729e158ca9mr5860851fa.24.1759158887057; Mon, 29 Sep 2025
+ 08:14:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929034713.22867-1-make24@iscas.ac.cn>
-In-Reply-To: <20250929034713.22867-1-make24@iscas.ac.cn>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 29 Sep 2025 10:14:21 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJBcKf-EMAYvnXJDB4izoyk9s-8SUn4CAUm3qatd6Yrzg@mail.gmail.com>
-X-Gm-Features: AS18NWBGeBBMrQO99aSRsWimi6qqH0KBvbFEBF3rU43MfzL2hTz_QEwQwDH9zTQ
-Message-ID: <CAL_JsqJBcKf-EMAYvnXJDB4izoyk9s-8SUn4CAUm3qatd6Yrzg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] of: unittest: Fix device reference count leak in of_unittest_pci_node_verify
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: saravanak@google.com, lizhi.hou@amd.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
-	stable@vger.kernel.org
+References: <20250916193853.410189-1-lszubowi@redhat.com>
+In-Reply-To: <20250916193853.410189-1-lszubowi@redhat.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 29 Sep 2025 17:14:35 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHbtLY_H2J_z=sRO1Yyt5fOJ-aS+ErQEXrbwL+qw5mG+w@mail.gmail.com>
+X-Gm-Features: AS18NWBrYEdwuh7eTKuA-_TE4GSbVNyBilHoFoRoxpsnt4IrSaSr5mmDliqJEng
+Message-ID: <CAMj1kXHbtLY_H2J_z=sRO1Yyt5fOJ-aS+ErQEXrbwL+qw5mG+w@mail.gmail.com>
+Subject: Re: [PATCH] efi/x86: Memory protection on EfiGcdMemoryTypeMoreReliable
+To: Lenny Szubowicz <lszubowi@redhat.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 28, 2025 at 10:47=E2=80=AFPM Ma Ke <make24@iscas.ac.cn> wrote:
+On Tue, 16 Sept 2025 at 21:39, Lenny Szubowicz <lszubowi@redhat.com> wrote:
 >
-> In of_unittest_pci_node_verify(), when the add parameter is false,
-> device_find_any_child() obtains a reference to a child device. This
-> function implicitly calls get_device() to increment the device's
-> reference count before returning the pointer. However, the caller
-> fails to properly release this reference by calling put_device(),
-> leading to a device reference count leak.
+> Check for needed memory protection changes on EFI DXE GCD memory space
+> descriptors with type EfiGcdMemoryTypeMoreReliable in addition to
+> EfiGcdMemoryTypeSystemMemory.
 >
-> As the comment of device_find_any_child states: "NOTE: you will need
-> to drop the reference with put_device() after use".
+> This fixes a fault on entry into the decompressed kernel from the
+> EFI stub that occurs when the memory allocated for the decompressed
+> kernel is more reliable memory, has NX/XP set, and the kernel needs
+> to use the EFI DXE protocol to adjust memory protections.
+>
+> The memory descriptors returned by the DXE protocol
+> GetMemorySpaceDescriptor() service use a different GCD memory type
+> to distinguish more reliable memory ranges from their conventional
+> counterparts. This is in contrast to the EFI memory descriptors
+> returned by the EFI GetMemoryMap() service which use the
+> EFI_MEMORY_MORE_RELIABLE memory attributes flag to identify
+> EFI_CONVENTIONAL_MEMORY type regions that have this additional
+> property.
+>
+> Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
 
-Please implement my review comments on the last version you sent.
+Queued up now, thanks.
 
->
-> Cc: stable@vger.kernel.org
-> Fixes: 26409dd04589 ("of: unittest: Add pci_dt_testdrv pci driver")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 > ---
->  drivers/of/unittest.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/firmware/efi/libstub/x86-stub.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-> index e3503ec20f6c..d225e73781fe 100644
-> --- a/drivers/of/unittest.c
-> +++ b/drivers/of/unittest.c
-> @@ -4271,7 +4271,7 @@ static struct platform_driver unittest_pci_driver =
-=3D {
->  static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
->  {
->         struct device_node *pnp, *np =3D NULL;
-> -       struct device *child_dev;
-> +       struct device *child_dev =3D NULL;
->         char *path =3D NULL;
->         const __be32 *reg;
->         int rc =3D 0;
-> @@ -4306,6 +4306,8 @@ static int of_unittest_pci_node_verify(struct pci_d=
-ev *pdev, bool add)
->         kfree(path);
->         if (np)
->                 of_node_put(np);
-> +       if (child_dev)
-> +               put_device(child_dev);
+> diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+> index cafc90d4caaf..0f60a12401c2 100644
+> --- a/drivers/firmware/efi/libstub/x86-stub.c
+> +++ b/drivers/firmware/efi/libstub/x86-stub.c
+> @@ -300,7 +300,7 @@ efi_status_t efi_adjust_memory_range_protection(unsigned long start,
+>                 return EFI_SUCCESS;
 >
->         return rc;
->  }
+>         /*
+> -        * Don't modify memory region attributes, they are
+> +        * Don't modify memory region attributes, if they are
+>          * already suitable, to lower the possibility to
+>          * encounter firmware bugs.
+>          */
+> @@ -315,11 +315,13 @@ efi_status_t efi_adjust_memory_range_protection(unsigned long start,
+>                 next = desc.base_address + desc.length;
+>
+>                 /*
+> -                * Only system memory is suitable for trampoline/kernel image placement,
+> -                * so only this type of memory needs its attributes to be modified.
+> +                * Only system memory and more reliable memory are suitable for
+> +                * trampoline/kernel image placement. So only those memory types
+> +                * may need to have attributes modified.
+>                  */
+>
+> -               if (desc.gcd_memory_type != EfiGcdMemoryTypeSystemMemory ||
+> +               if ((desc.gcd_memory_type != EfiGcdMemoryTypeSystemMemory &&
+> +                    desc.gcd_memory_type != EfiGcdMemoryTypeMoreReliable) ||
+>                     (desc.attributes & (EFI_MEMORY_RO | EFI_MEMORY_XP)) == 0)
+>                         continue;
+>
 > --
-> 2.17.1
+> 2.51.0
+>
 >
 
