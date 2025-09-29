@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-836478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0BBDBA9CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:29:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7382DBA9CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084EC3B0F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:29:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4BD1707F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2011230C0EE;
-	Mon, 29 Sep 2025 15:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D69330C119;
+	Mon, 29 Sep 2025 15:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LieiEkf/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4qWA1DX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5692130BBAC;
-	Mon, 29 Sep 2025 15:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4843A30C0F0;
+	Mon, 29 Sep 2025 15:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759159740; cv=none; b=XG9OgbpSAuSYauSqeaYBSIT/q1QmNlcHg0vaOfuh4l/tEuRAm7fl8ewsoo51RuXbDgM28NpipQM2bZ3WWZpg3zwosKbBLX+AJP5ZYG1FaEHHKB+l4fxXMEXSi7bHSC7FKAw0qaZjpagIHfD6a0oTvtQpwQlAFkbWbqv2TIH186I=
+	t=1759159741; cv=none; b=gRtcW4IjAhH92VfysgZiyZ+4dRi3KnEIwW8EMi+XHVN/JFea77i1F14hAPbzREO1c1hborvh7x0uUdK9eqhqFeAzLk+tJ4QC2YBqhCS7HJdJRtuR02NGUevxxRzI5MY3W8Rjpfy1XAcNaisJ+df/xWlZnyqCPip8yW0bH+6SDqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759159740; c=relaxed/simple;
-	bh=zz+GUmVsy2vB+3ANMPWPbJpVcNFY2jQbjEDvoTACVOw=;
+	s=arc-20240116; t=1759159741; c=relaxed/simple;
+	bh=3pzmtsbiTCR95ZsPE9rXLst/P4KeKZ76MABSMztNLe0=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ECbCZ7z50cPXil69p3ZOv5n6Q479IOxOeawfq5j6nkAoPx0QWXLWPCBDcgxUd/0q9kKPlk6ft45p+/3r2NbTPnyIsWEDXPXOH/VVm9FhKDVHbg9Fv25EzEC3jrm2qlJXxs2pWP1gxQGTi2PwOeGMwz96nzMm/DtnaWg6Yhvo7EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LieiEkf/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D72C116B1;
-	Mon, 29 Sep 2025 15:28:59 +0000 (UTC)
+	 Message-Id:Subject; b=BPI78vpVwX87UJlBTVQ1Ifg7g66xLJFnHX3oTFT6r/4HatsUfyQ31YurkcxnBtfpwo0JLtp/LRTi/cy0XEhNRgUvkUwN+4j1HfHooVU74an2nIwgiaQd8liR7EP8rcxwQoT444boNuQlGnmIBi1MN3zaB+yD2MUzsB7a9glnKlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4qWA1DX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC6EC4CEF7;
+	Mon, 29 Sep 2025 15:29:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759159739;
-	bh=zz+GUmVsy2vB+3ANMPWPbJpVcNFY2jQbjEDvoTACVOw=;
+	s=k20201202; t=1759159740;
+	bh=3pzmtsbiTCR95ZsPE9rXLst/P4KeKZ76MABSMztNLe0=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=LieiEkf/My5IzhSHvnx4xacBLRykPFVF30XNtrgPaxvt2XruntfGF75FreaDo5sBd
-	 7xIR+u+UDMeWUdKANsMbUYIezK3qC+eBLGFYhBfbwlCZp/dWe7mpLGu1lF2BWlcHIk
-	 A8SYBu5x4+tJ2dvEy1iXzJO04Slrd60iufQ0d5V7EBMv6kxh/iPMaOxV/+77aJZzuC
-	 d61H5tM8BVpft6iJid+miAYFAIBLgkso9EXESl+Cv0Z6HtLz35zjtQ7vjNe/9Yl4ix
-	 4pKSEvUXKrIQLuwqjrlKISh9VE34TmD2amQ3kMZBmQ/MdXd6yUGUQSxnUFTxjndsRh
-	 dvSafSW63W2JA==
-Date: Mon, 29 Sep 2025 10:28:58 -0500
+	b=L4qWA1DX0ZNMNSox8gWc2YkrJq7qv1bSwXIrWqY3wcqEjdFlfG91Ow1od0E86VHhk
+	 Znf1BPX3HTubbz7Qi8vCEZO+w5QDEN12ZlS03wYtehIZSWyFuRa3bi4W9tM7mZ9fPt
+	 FRe1qcLgWSV13uR4qKWlM9xX5Uws78X3RFTK9QqIyOF6teuCxzB6Dtql1J7QvasgpO
+	 +DyFu2Q8Es6jDJSYCwucZG07V91FPPI26MsI39wGaV6cjGvlW4LO/Guqd/IjNbUzcs
+	 5RcKNHU1aqZNy8iYePrMFGCKgquNjlDOiHSkBOYCnqxY8rCxfHIIMyUyHLMydWMucQ
+	 LEB4B6gx8HB6g==
+Date: Mon, 29 Sep 2025 10:29:00 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,58 +50,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, 
- linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- dmaengine@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
- Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Liam Girdwood <lgirdwood@gmail.com>
-To: "Sheetal ." <sheetal@nvidia.com>
-In-Reply-To: <20250929105930.1767294-1-sheetal@nvidia.com>
-References: <20250929105930.1767294-1-sheetal@nvidia.com>
-Message-Id: <175915953199.54406.1457670691076635405.robh@kernel.org>
-Subject: Re: [PATCH V2 0/4] Add tegra264 audio device tree support
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Xilin Wu <sophon@radxa.com>
+In-Reply-To: <20250929-radxa-dragon-q6a-v5-0-aa96ffc352f8@radxa.com>
+References: <20250929-radxa-dragon-q6a-v5-0-aa96ffc352f8@radxa.com>
+Message-Id: <175915953212.54437.14578163410705944523.robh@kernel.org>
+Subject: Re: [PATCH v5 0/2] arm64: dts: qcom: qcs6490: Introduce Radxa
+ Dragon Q6A
 
 
-On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
-> From: sheetal <sheetal@nvidia.com>
+On Mon, 29 Sep 2025 14:46:40 +0800, Xilin Wu wrote:
+> Radxa Dragon Q6A (https://docs.radxa.com/en/dragon/q6a) is a single board
+> computer, based on the Qualcomm QCS6490 platform.
 > 
-> Add device tree support for tegra264 audio subsystem including:
-> - Binding update for
->   - 64-channel ADMA controller
->   - 32 RX/TX ADMAIF channels
->   - tegra264-agic binding for arm,gic
-> - Add device tree nodes for
->   - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
->     DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
->   - HDA controller
->   - sound
+> The board ships with a modified version of the Qualcomm Linux boot
+> firmware, which is stored on the onboard SPI NOR flash. This allows
+> booting standard EFI-based bootloaders from SD/eMMC/USB/UFS/NVMe. It
+> supports replaceable UFS 3.1/eMMC modules for easy user upgrades.
 > 
-> Note:
->  The change is dependent on https://patchwork.ozlabs.org/project/linux-tegra/patch/20250818135241.3407180-1-thierry.reding@gmail.com/
+> The board schematic is available at [1].
 > 
-> ...
-> Changes in V2:
->  - Update the allOf condition in Patch 2/4.
+> Features enabled and working:
 > 
-> sheetal (4):
->   dt-bindings: dma: Update ADMA bindings for tegra264
->   dt-bindings: sound: Update ADMAIF bindings for tegra264
->   dt-bindings: interrupt-controller: arm,gic: Add tegra264-agic
->   arm64: tegra: Add tegra264 audio support
+> - Configurable I2C/SPI/UART from 40-Pin GPIO
+> - Three USB-A 2.0 ports
+> - RTL8111K Ethernet connected to PCIe0
+> - eMMC module
+> - SD card
+> - M.2 M-Key 2230 PCIe 3.0 x2
+> - Headphone jack
+> - Onboard thermal sensors
+> - QSPI controller for updating boot firmware
+> - ADSP remoteproc (Type-C and charging features disabled in firmware)
+> - CDSP remoteproc (for AI applications using QNN)
+> - Venus video encode and decode accelerator
 > 
->  .../bindings/dma/nvidia,tegra210-adma.yaml    |   15 +-
->  .../interrupt-controller/arm,gic.yaml         |    1 +
->  .../sound/nvidia,tegra210-admaif.yaml         |  106 +-
->  .../arm64/boot/dts/nvidia/tegra264-p3971.dtsi |  106 +
->  arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 3190 +++++++++++++++++
->  5 files changed, 3377 insertions(+), 41 deletions(-)
+> Features available with additional DT overlays:
+> - CSI cameras
+> - DSI display
 > 
+> Features that will be submitted separately once the required bindings are
+> merged:
+> 
+> - USB-A 3.0 port
+> - UFS 3.1 module
+> - HDMI 2.0 port including audio
+> 
+> ALSA UCM and Audioreach topology patches are available at [2] and [3].
+> 
+> [1]: https://docs.radxa.com/en/dragon/q6a/download
+> [2]: https://github.com/alsa-project/alsa-ucm-conf/pull/601
+> [3]: https://github.com/linux-msm/audioreach-topology/pull/24
+> 
+> Signed-off-by: Xilin Wu <sophon@radxa.com>
+> ---
+> Changes in v5:
+> - Change LED default function to panic-indicator
+> - Fix line break in sound node
+> - Fix status-not-last in usb_2_hsphy
+> - Remove unused regulators to avoid potential issues
+> - Link to v4: https://lore.kernel.org/r/20250924-radxa-dragon-q6a-v4-0-10d584f2c806@radxa.com
+> 
+> Changes in v4:
+> - Change CDSP firmware to use the existing one from linux-firmware
+> - Describe onboard USB 2.0 hub and ports
+> - Add configurable I2C/SPI/UART QUP controllers
+> - Link to v3: https://lore.kernel.org/r/20250915-radxa-dragon-q6a-v3-0-a6c32d988ed7@radxa.com
+> 
+> Changes in v3:
+> - Dropped patches for USB/HDMI, UFS and GPIO.
+> - Removed Reviewed-by tag from the board DTS patch as it was significantly
+>   modified.
+> - Link to v2: https://lore.kernel.org/r/20250914-radxa-dragon-q6a-v2-0-045f7e92b3bb@radxa.com
+> 
+> Changes in v2:
+> - Move codec before cpu in sound node to get sorted.
+> - Drop patch dependencies in cover letter
+> - Separate the changes that have unmet dependencies, and mark them as DNM
+> - Link to v1: https://lore.kernel.org/r/20250912-radxa-dragon-q6a-v1-0-8ccdbf9cd19b@radxa.com
+> 
+> ---
+> Xilin Wu (2):
+>       dt-bindings: arm: qcom: Add Radxa Dragon Q6A
+>       arm64: dts: qcom: qcs6490: Introduce Radxa Dragon Q6A
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+>  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+>  .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     | 1095 ++++++++++++++++++++
+>  3 files changed, 1097 insertions(+)
+> ---
+> base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+> change-id: 20250912-radxa-dragon-q6a-eedcdeaf3e66
+> 
+> Best regards,
 > --
-> 2.34.1
+> Xilin Wu <sophon@radxa.com>
 > 
 > 
 > 
@@ -122,45 +172,47 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.17-rc1-57-g635ae6f0a3ad (exact match)
+ Base: using specified base-commit 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250929105930.1767294-1-sheetal@nvidia.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250929-radxa-dragon-q6a-v5-0-aa96ffc352f8@radxa.com:
 
-In file included from arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi:3,
-                 from arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi:3,
-                 from arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts:5:
-arch/arm64/boot/dts/nvidia/tegra264.dtsi:8:10: fatal error: dt-bindings/power/nvidia,tegra264-powergate.h: No such file or directory
-    8 | #include <dt-bindings/power/nvidia,tegra264-powergate.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:132: arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/nvidia] Error 2
-make[2]: Target 'arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: nvidia/tegra264-p3971-0089+p3834-0008.dtb] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'nvidia/tegra210-p2371-2180.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p3450-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3737-0000+p3701-0008.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3740-0002+p3701-0008.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3737-0000+p3701-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra186-p2771-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p2371-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra194-p3509-0000+p3668-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3768-0000+p3767-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-sim-vdk.dtb' not remade because of errors.
-make: Target 'nvidia/tegra186-p3509-0000+p3636-0001.dtb' not remade because of errors.
-make: Target 'nvidia/tegra194-p2972-0000.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-smaug.dtb' not remade because of errors.
-make: Target 'nvidia/tegra194-p3509-0000+p3668-0001.dtb' not remade because of errors.
-make: Target 'nvidia/tegra234-p3768-0000+p3767-0005.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p2571.dtb' not remade because of errors.
-make: Target 'nvidia/tegra264-p3971-0089+p3834-0008.dtb' not remade because of errors.
-make: Target 'nvidia/tegra132-norrin.dtb' not remade because of errors.
-make: Target 'nvidia/tegra210-p2894-0050-a08.dtb' not remade because of errors.
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): i2c@980000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): i2c@988000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): i2c@998000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@9c0000 (qcom,geni-se-qup): spi@99c000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@980000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@988000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@998000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: spi@99c000 (qcom,geni-spi): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/qcom,spi-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): i2c@a88000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): i2c@a94000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): spi@a90000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: geniqup@ac0000 (qcom,geni-se-qup): spi@a98000: Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@a88000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: spi@a90000 (qcom,geni-spi): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/qcom,spi-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: i2c@a94000 (qcom,geni-i2c): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/i2c/qcom,i2c-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: spi@a98000 (qcom,geni-spi): Unevaluated properties are not allowed ('qcom,enable-gsi-dma' was unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/qcom,spi-geni-qcom.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dtb: edp@aea0000 (qcom,sc7280-edp): reg: [[0, 183107584, 0, 512], [0, 183108096, 0, 512], [0, 183108608, 0, 3072], [0, 183111680, 0, 1024]] is too short
+	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
 
 
 
