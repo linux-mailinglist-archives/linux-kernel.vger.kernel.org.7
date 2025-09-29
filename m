@@ -1,356 +1,193 @@
-Return-Path: <linux-kernel+bounces-836157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989FBBA8E57
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D10BA8E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420361C23AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D633A3A453E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0932F2FC031;
-	Mon, 29 Sep 2025 10:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E482FBDED;
+	Mon, 29 Sep 2025 10:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PMayS3Me"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQOnD5/6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4D12FBDF6;
-	Mon, 29 Sep 2025 10:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB552BEFF8;
+	Mon, 29 Sep 2025 10:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759142012; cv=none; b=UKYHTjKUWTFzQZ/acc3c4vwtrfLWuJzua5g31EzZf844YbW116VLOUwkHE4cnbiHDcg5nqWKzKQMV3iG2xC7GiO5n+c5RL3/ZjYQAEwnS2Bho+i2ncz55oKKW5FMjEm065zlyhcDHgtq8Ne2Lthhzy3mSkiISzjA7M92qEi9snY=
+	t=1759142112; cv=none; b=CIL+S98IaluhEUAWfzMITgL3uFYWEuRarrGbsMX6mz8SRmJxBfcgIb1+or2oNKGtFUmU14IjbmdKxDhjuKWWXWVjr8MEDtK8JrBezRTe84NXBtG/VZms3+hGt75n0zBSLIgtxZk3qdG2OiM2cpx6lvYNoiWZTazjoJap0UUfChA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759142012; c=relaxed/simple;
-	bh=VnSH6QTa5NpwE1TNlzdQCXuXVLs4Gn0vTe5U6PFFyig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lg7Ibpnuj9HIFKl/YSZq9dEmzudjsCvxb+MYR6qObhaI7rDX/B+jNNz5oJ5gPqm3lNRxVuKP3nYgwLVNTSgaQLthDaHyNuwYBnlNScQAs4uhPNINRjvPz07UgzP9nW8H2M+LpN0ouwPpyu8biKb2uJ0bDuCmRLD9pG0nTnjLqcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PMayS3Me; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759142008;
-	bh=VnSH6QTa5NpwE1TNlzdQCXuXVLs4Gn0vTe5U6PFFyig=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PMayS3MeXGIR3X4kukcqHEuV7MXltaopARkXd3WrmcEx/bMqdlh7Vw2I5czb3ZWQ0
-	 7dmnejiiyauAFmNf39VDrwELTBTB4Aadtulxe/AMyuNFD1k2FBFFNilXcYmhdnERrd
-	 d8BDoZNIgfj5fA+KGVsU9bSRVt8d4Zd8Z3kwQbfwxc+gHMrQimIC/Emol81/qv5Zlq
-	 LpFgbyomMCmNSrhsHfeuYgukjxcAiKBJGsoAzgECpRPbbZNPWiE8NEDJ6JQF52+Jnx
-	 J7OjN0OhQCypMxq/er9JTYfaBm8AWyfRS4Dg3T1Ohk3GUx+rrFSsy1CniTn8hAqrDM
-	 Zmmp3W7/4uSfA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A23F017E108C;
-	Mon, 29 Sep 2025 12:33:27 +0200 (CEST)
-Message-ID: <b62611ef-7ead-4bbe-8c96-d39e3c5c8dd8@collabora.com>
-Date: Mon, 29 Sep 2025 12:33:27 +0200
+	s=arc-20240116; t=1759142112; c=relaxed/simple;
+	bh=wYBNcG5mnxDwKWxBl9Q+NTkUS6jU20ckgneZYpAdm3c=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=j2u5hVjFIf5Q788bHgOz0YWVTUXj7IstFOT/Fg6T5U7FGUCZjF2JsZ422SU6+l5y7qyt0Mq/zkaTloXoMuMwpXn+IXBGX1Xqhcl9Mg6ZSXI6s+oU14GhVtG8cBpnfnbljV7n4wYV3nZLcGwE00i+K8FJKHj6mXMe2EJ9Ugt7nNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQOnD5/6; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759142110; x=1790678110;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=wYBNcG5mnxDwKWxBl9Q+NTkUS6jU20ckgneZYpAdm3c=;
+  b=XQOnD5/6qPojP2yAGJ79ym8YNmxuPV1sB699i/kMmf9fWZZ70RevEKvR
+   AGDzeqEPf/mTVv1LexoQzCSwvrNnD4aH5SbHoFiBbaAdb8AXN96hYmA4E
+   XZf8yUq6lLN+GYSCeo8BXTRTY+sDt+b9omqGSlnrfGfbchJLqdQxCYUIF
+   xNxLa7vdNqlDWshNnSL5Xv6srORpfUoH2dP7qKeNjt+NODxApCjJF21LE
+   mNyBMJXRBXEyvXMmVizdepTtvn8XpbR+Z/HY1m2oTVt5rwc9b2CVo1csc
+   qE2nRnGUBNptDCGqpAntYv4c/x/ysARNqTA2sQr/1/HBZCnFGe33W2z6y
+   Q==;
+X-CSE-ConnectionGUID: +cJhAtPRR/erqAoCfSkY3g==
+X-CSE-MsgGUID: k87G3lvdSXyDKYUzOW/mPQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11567"; a="78803219"
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="78803219"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 03:35:10 -0700
+X-CSE-ConnectionGUID: fnWlT/h7TTWvpNsSmgwCww==
+X-CSE-MsgGUID: +yaRE7DDTj6jFregkcgsYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="178625340"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.229])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 03:35:04 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 29 Sep 2025 13:34:59 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: Re: [PATCH 2/2] PCI: Resources outside their window must set
+ IORESOURCE_UNSET
+In-Reply-To: <20250926193029.GA2254976@bhelgaas>
+Message-ID: <ce12bdc8-517c-db9f-ba2b-303d2f30c2f0@linux.intel.com>
+References: <20250926193029.GA2254976@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
-To: Jjian Zhou <jjian.zhou@mediatek.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250926090505.26267-1-jjian.zhou@mediatek.com>
- <20250926090505.26267-3-jjian.zhou@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250926090505.26267-3-jjian.zhou@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-2026409950-1759142099=:943"
 
-Il 26/09/25 11:05, Jjian Zhou ha scritto:
-> Add mtk-vcp-mailbox driver to support the communication with
-> VCP remote microprocessor.
-> 
-> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
-> ---
->   drivers/mailbox/Kconfig                 |   9 ++
->   drivers/mailbox/Makefile                |   2 +
->   drivers/mailbox/mtk-vcp-mailbox.c       | 168 ++++++++++++++++++++++++
->   include/linux/mailbox/mtk-vcp-mailbox.h |  32 +++++
->   4 files changed, 211 insertions(+)
->   create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
->   create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
-> 
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index 02432d4a5ccd..c28bdb855663 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -294,6 +294,15 @@ config MTK_CMDQ_MBOX
->   	  critical time limitation, such as updating display configuration
->   	  during the vblank.
->   
-> +config MTK_VCP_MBOX
-> +	tristate "MediaTek VCP Mailbox Support"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	help
-> +	  Say yes here to add support for the MediaTek VCP mailbox driver.
-> +	  The mailbox implementation provides access from the application
-> +	  processor to Video Companion Processor Unit.
-> +	  If unsure say N.
-> +
->   config ZYNQMP_IPI_MBOX
->   	tristate "Xilinx ZynqMP IPI Mailbox"
->   	depends on ARCH_ZYNQMP && OF
-> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-> index 98a68f838486..07278871d254 100644
-> --- a/drivers/mailbox/Makefile
-> +++ b/drivers/mailbox/Makefile
-> @@ -63,6 +63,8 @@ obj-$(CONFIG_MTK_ADSP_MBOX)	+= mtk-adsp-mailbox.o
->   
->   obj-$(CONFIG_MTK_CMDQ_MBOX)	+= mtk-cmdq-mailbox.o
->   
-> +obj-$(CONFIG_MTK_VCP_MBOX)	+= mtk-vcp-mailbox.o
-> +
->   obj-$(CONFIG_ZYNQMP_IPI_MBOX)	+= zynqmp-ipi-mailbox.o
->   
->   obj-$(CONFIG_SUN6I_MSGBOX)	+= sun6i-msgbox.o
-> diff --git a/drivers/mailbox/mtk-vcp-mailbox.c b/drivers/mailbox/mtk-vcp-mailbox.c
-> new file mode 100644
-> index 000000000000..a2a80d124e50
-> --- /dev/null
-> +++ b/drivers/mailbox/mtk-vcp-mailbox.c
-> @@ -0,0 +1,168 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 MediaTek Corporation. All rights reserved.
-> + * Author: Jjian Zhou <jjian.zhou.@mediatek.com>
-> + */
-> +
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mailbox_controller.h>
-> +#include <linux/mailbox/mtk-vcp-mailbox.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +struct mtk_vcp_mbox {
-> +	struct mbox_controller mbox;
-> +	void __iomem *base;
-> +	struct device *dev;
-> +	const struct mtk_vcp_mbox_cfg *cfg;
-> +	struct mtk_ipi_info ipi_recv;
-> +	struct mbox_chan chans;
-> +};
-> +
-> +struct mtk_vcp_mbox_cfg {
-> +	u32 set_in;
-> +	u32 clr_out;
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-u16 is enough for both register offsets, at least for now - and I suspect it's
-going to be enough forever.
+--8323328-2026409950-1759142099=:943
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> +};
-> +
-> +static irqreturn_t mtk_vcp_mbox_irq_thread(int irq, void *data)
-> +{
-> +	struct mtk_vcp_mbox *priv = data;
-> +
-> +	/* get irq status */
-> +	priv->ipi_recv.irq_status = readl(priv->base + priv->cfg->clr_out);
-> +
-> +	__ioread32_copy(priv->ipi_recv.msg, priv->base, MBOX_SLOT_MAX_SIZE / 4);
-> +
-> +	mbox_chan_received_data(&priv->chans, &priv->ipi_recv);
-> +
-> +	/* clear irq status */
-> +	writel(priv->ipi_recv.irq_status, priv->base + priv->cfg->clr_out);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static struct mbox_chan *mtk_vcp_mbox_xlate(struct mbox_controller *mbox,
-> +					    const struct of_phandle_args *sp)
-> +{
-> +	if (sp->args_count)
-> +		return NULL;
-> +
-> +	return &mbox->chans[0];
-> +}
-> +
-> +static int mtk_vcp_mbox_send_data(struct mbox_chan *chan, void *data)
-> +{
-> +	struct mtk_vcp_mbox *priv = chan->con_priv;
-> +	struct mtk_ipi_info *ipi_info = data;
-> +	u32 status;
-> +
-> +	if (!ipi_info->msg) {
-> +		dev_err(priv->dev, "msg buffer is NULL.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	status = readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index);
+On Fri, 26 Sep 2025, Bjorn Helgaas wrote:
+> On Fri, Sep 26, 2025 at 03:21:17PM +0300, Ilpo J=C3=A4rvinen wrote:
+> > On Thu, 25 Sep 2025, Bjorn Helgaas wrote:
+> > > On Wed, Sep 24, 2025 at 04:42:28PM +0300, Ilpo J=C3=A4rvinen wrote:
+> > > > PNP resources are checked for conflicts with the other resource in =
+the
+> > > > system by quirk_system_pci_resources() that walks through all PCI
+> > > > resources. quirk_system_pci_resources() correctly filters out resou=
+rce
+> > > > with IORESOURCE_UNSET.
+> > > >=20
+> > > > Resources that do not reside within their bridge window, however, a=
+re
+> > > > not properly initialized with IORESOURCE_UNSET resulting in bogus
+> > > > conflicts detected in quirk_system_pci_resources():
+>=20
+> > > > @@ -329,6 +349,18 @@ int __pci_read_base(struct pci_dev *dev, enum =
+pci_bar_type type,
+> > > >  =09=09=09 res_name, (unsigned long long)region.start);
+> > > >  =09}
+> > > > =20
+> > > > +=09if (!(res->flags & IORESOURCE_UNSET)) {
+> > > > +=09=09struct resource *b_res;
+> > > > +
+> > > > +=09=09b_res =3D pbus_select_window_for_res_addr(dev->bus, res);
+> > > > +=09=09if (!b_res ||
+> > > > +=09=09    b_res->flags & (IORESOURCE_UNSET | IORESOURCE_DISABLED))=
+ {
+> > > > +=09=09=09pci_dbg(dev, "%s %pR: no initial claim (no window)\n",
+> > > > +=09=09=09=09res_name, res);
+> > >=20
+> > > Should this be pci_info()?  Or is there somewhere else that we
+> > > complain about a child resource that's not contained in a bridge
+> > > window?
+> >=20
+> > AFAIK, there's no other print. The kernel didn't even recognize this ca=
+se=20
+> > until now so how could there have been one?!
+>=20
+> > They'd generally show up as failures later in resource assignment if th=
+e=20
+> > resource doesn't fit to the bridge window [1], which should also set=20
+> > IORESOURCE_UNSET, but good luck for inferring things from that. It's=20
+> > tedious, I know. :-) If the bridge window is large enough, the base=20
+> > address would just change where the resource fits (I think).
+> >=20
+> > It can be pci_info() if you think that's better. I just picked the leve=
+l=20
+> > which is the least noisy. We can go with pci_info() now and if the logg=
+ing=20
+> > turns out excessive when we start to see dmesgs with it, we can of cour=
+se=20
+> > adjust it later so it's not permanent either way.
+> >=20
+> > In any case, there's not much user can do for these as it's the setup F=
+W=20
+> > gave us.
+> >=20
+> > > I recently got an internal report of child BARs being reassigned, I
+> > > think because they weren't inside a bridge window, and the dmesg log
+> > > (from an older kernel) showed the BAR reassignments, but didn't say
+> > > anything about the *reason* for the reassignment.
+> >=20
+> > Resource reassignment is only done after the resource was initially=20
+> > assigned so I'm not sure if that inferring chain is sound.
+> >=20
+> > Admittedly, you didn't exactly specify how you picked up that it was=20
+> > "reassigned" so it could be just terminology that doesn't match what=20
+> > setup-bus/res.c considers as resource reassignment. That is, if BAR's=
+=20
+> > address was simply changed from the initial, that's not "reassignment" =
+in=20
+> > the sense used by the kernel.
+>=20
+> Here's the case I saw (a v6.1 kernel, so old log messages):
+>=20
+>   pci 0000:00:00.0: bridge window [mem 0x80000000-0x97fffffff 64bit pref]=
+ to [bus 01-05] add_size 80000000 add_align 80000000
+>   pci 0000:00:00.0: BAR 15: assigned [mem 0x380000000-0xcffffffff 64bit p=
+ref]
+>   pci 0000:01:01.0: BAR 0: [mem 0xb00000000-0xbffffffff 64bit pref]
+>   ...
+>   pci 0000:01:01.7: BAR 0: [mem 0x400000000-0x4ffffffff 64bit pref]
+>   pci 0000:01:01.0: BAR 0: assigned [mem 0x400000000-0x4ffffffff 64bit pr=
+ef]
+>=20
+> Obviously these initial BAR 0 values don't fit in the
+> [0x80000000-0x97fffffff] bridge window, so I think we moved and
+> expanded it and then assigned the BARs to be inside.
+>=20
+> I was thinking might get the "can't claim; no compatible bridge
+> window" message in pci_claim_resource() as a clue, but we didn't.
 
-status = readl(priv->base + priv->cfg->set_in);
-if (status & BIT(ipi_info->index) {
-  ....
-}
+Is pci_bus_claim_resources() called in this case? That requires=20
+preserve_config. In my tests pci_bus_allocate_dev_resources() is never=20
+called, only bridge window resources are claimed.
 
-> +	if (status) {
-> +		dev_warn(priv->dev, "mailbox IPI %d is busy.\n", ipi_info->id);
-> +		return -EBUSY;
-> +	}
-> +
-> +	if (ipi_info->slot_ofs + ipi_info->len > MBOX_SLOT_MAX_SIZE)
-> +		return -EINVAL;
-> +	__iowrite32_copy(priv->base + ipi_info->slot_ofs, ipi_info->msg,
-> +			 ipi_info->len);
-> +
-> +	writel(BIT(ipi_info->index), priv->base + priv->cfg->set_in);
-> +
-> +	return 0;
-> +}
-> +
-> +static bool mtk_vcp_mbox_last_tx_done(struct mbox_chan *chan)
-> +{
-> +	struct mtk_ipi_info *ipi_info = chan->active_req;
-> +	struct mtk_vcp_mbox *priv = chan->con_priv;
-> +
-> +	return !(readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index));
-> +}
-> +
-> +static const struct mbox_chan_ops mtk_vcp_mbox_chan_ops = {
-> +	.send_data	= mtk_vcp_mbox_send_data,
-> +	.last_tx_done	= mtk_vcp_mbox_last_tx_done,
-> +};
-> +
-> +static int mtk_vcp_mbox_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mtk_vcp_mbox *priv;
-> +	struct mbox_controller *mbox;
-> +	int ret, irq;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->dev = dev;
-> +	priv->chans.con_priv = priv;
-> +	mbox = &priv->mbox;
-> +	mbox->dev = dev;
-> +	mbox->ops = &mtk_vcp_mbox_chan_ops;
-> +	mbox->txdone_irq = false;
-> +	mbox->txdone_poll = true;
-> +	mbox->of_xlate = mtk_vcp_mbox_xlate;
-> +	mbox->num_chans = 1;
-> +	mbox->chans = &priv->chans;
-> +
-> +	priv->ipi_recv.msg = devm_kzalloc(dev, MBOX_SLOT_MAX_SIZE, GFP_KERNEL);
-> +	if (!priv->ipi_recv.msg)
-> +		return -ENOMEM;
-> +
-> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	priv->cfg = of_device_get_match_data(dev);
-> +	if (!priv->cfg)
-> +		return -EINVAL;
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
+> This *seems* like a firmware defect: why would firmware bother to
+> program these BARs at all unless it also made a bridge window that
+> could reach them.
 
-Please set the driver data before requesting the interrupt: what happens if the
-ISR is run before having driver data available otherwise?! :-)
+--=20
+ i.
 
-> +	ret = devm_request_threaded_irq(dev, irq, NULL,
-> +					mtk_vcp_mbox_irq_thread, IRQF_ONESHOT,
-> +					dev_name(dev), priv);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	return devm_mbox_controller_register(dev, &priv->mbox);
-> +}
-> +
-> +static const struct mtk_vcp_mbox_cfg mt8196_cfg = {
-> +	.set_in		= 0x100,
-> +	.clr_out	= 0x10c,
-> +};
-> +
-> +static const struct of_device_id mtk_vcp_mbox_of_match[] = {
-> +	{ .compatible = "mediatek,mt8196-vcp-mbox", .data = &mt8196_cfg },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, mtk_vcp_mbox_of_match);
-> +
-> +static struct platform_driver mtk_vcp_mbox_driver = {
-> +	.probe		= mtk_vcp_mbox_probe,
-> +	.driver = {
-> +		.name	= "mtk_vcp_mbox",
-> +		.of_match_table = mtk_vcp_mbox_of_match,
-> +	},
-> +};
-> +module_platform_driver(mtk_vcp_mbox_driver);
-> +
-> +MODULE_AUTHOR("Jjian Zhou <jjian.zhou@mediatek.com>");
-> +MODULE_DESCRIPTION("MTK VCP Mailbox Controller");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mailbox/mtk-vcp-mailbox.h b/include/linux/mailbox/mtk-vcp-mailbox.h
-> new file mode 100644
-> index 000000000000..143fb0d06e30
-> --- /dev/null
-> +++ b/include/linux/mailbox/mtk-vcp-mailbox.h
-> @@ -0,0 +1,32 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> +/*
-> + * Copyright (c) 2025 MediaTek Inc.
-> + */
-> +
-> +#ifndef __MTK_VCP_MAILBOX_H__
-> +#define __MTK_VCP_MAILBOX_H__
-> +
-> +#define MBOX_SLOT_MAX_SIZE	0x100 /* mbox max slot size */
-
-Please, change this definition to MTK_VCP_MBOX_SLOT_MAX_SIZE
-
-Cheers,
-Angelo
-
-> +
-> +/**
-> + * struct mtk_ipi_info - mailbox message info for mtk-vcp-mailbox
-> + * @msg: The share buffer between IPC and mailbox driver
-> + * @len: Message length
-> + * @id: This is for identification purposes and not actually used
-> + *	by the mailbox hardware.
-> + * @index: The signal number of the mailbox message.
-> + * @slot_ofs: Data slot offset.
-> + * @irq_status: Captures incoming signals for the RX path.
-> + *
-> + * It is used between IPC with mailbox driver.
-> + */
-> +struct mtk_ipi_info {
-> +	void *msg;
-> +	u32 len;
-> +	u32 id;
-> +	u32 index;
-> +	u32 slot_ofs;
-> +	u32 irq_status;
-> +};
-> +
-> +#endif
-
+--8323328-2026409950-1759142099=:943--
 
