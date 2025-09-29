@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-836168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B84DBA8EC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38A7BA8EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788021893E07
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA461691FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0AD2FDC23;
-	Mon, 29 Sep 2025 10:50:11 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA282FBE03;
+	Mon, 29 Sep 2025 10:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a18tkNhs"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E125025A359;
-	Mon, 29 Sep 2025 10:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD092F25FC
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759143010; cv=none; b=Y5+rdjt3A6Qzl8Vcg7dZT11c2G+S/sI9dC31pOgRcY1IqbNSaUqLjlvubnoqwYbFtu0y6S7KNZvx3nCPLkpr8wuIHO1ZpemB7VwmhjSzbs3wDA7UmlrRLGkbtQ3byX7XiFyEzuTQQyl4uBjtDFxozgz8/5msC9fvXsUaLHpGUvs=
+	t=1759142851; cv=none; b=MhX6F7DUnE3ggg8YjsQA1zfIqoyNYHjBzYeBWRZq+Ie8oNN9KtrK9HG+xITgJRA9F2CIYwkFrNLhdzawqMuVAVAgw9yFV0tG2e2rUa0vUlxDkMiGPMRYaOLKeJWH2c1efZRgW+leo1WD5sDd/YCvRVOA9LrXGrFAvoMqpuAS3UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759143010; c=relaxed/simple;
-	bh=thpCi9eI6eA/zP+F4b1N8neepiWC4jNt2iKzAF4kgrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M70PxXTZJVCx5hJbsfVolEWFHyJOcePDBXZ9PPhwD0NPRXZ20QoSq+Gz12W9LSRL4Ysx8bme7aayJexq4SyPz9lIzJxkAOYv1HGDblc9rBTHP382QNiEFMndV6KknFvqgKZF6/69bsoxrSaYbU1v+B5kCQMQ988bHOn6zeCywT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowADHaxVYZNpomLm9CA--.25636S2;
-	Mon, 29 Sep 2025 18:50:02 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: linux-media@vger.kernel.org,
-	Jani Nikula <jani.nikula@intel.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH v2] media: cec: Fix debugfs leak on bus_register() failure
-Date: Mon, 29 Sep 2025 18:47:15 +0800
-Message-ID: <20250929104715.1493-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20250929025938.2120-1-vulab@iscas.ac.cn>
-References: <20250929025938.2120-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1759142851; c=relaxed/simple;
+	bh=3KmaPLC7fpBhdiaNP8bZ9DxwULE49IaCJfAvqvOZqCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SRBDNpCb49NtSmHcV1dgGw74b0lQaW1X7O1C4OcrYHdY0wwn9pm/qETt/hUoRwBRTZPHsgQqWC76GN51PRX0y6U3Ybs1ko/f3T2Ix1q/NFLisH3Q6h8kw6fs3ZCrg51mo64jebNdYrEDpXqN8djavOQnQGuwh2nNi34ol21cTLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a18tkNhs; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759142847;
+	bh=3KmaPLC7fpBhdiaNP8bZ9DxwULE49IaCJfAvqvOZqCU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a18tkNhs8rEVCzUajMFURtTiYu4uii4sccPRHMv5nnFwxi7/UthxKEr1Tdkvv83S0
+	 bLDSJCQ+rYDdrISBVqbUnxFUaU/yNfediqXKLYxH1x8EARDOlXjAIrVqM9b+CMk6JX
+	 fwAoo07WUL3604SqoyPHJLGaa5wkgTruAvMHXdZoLwBMC7Pbz+kOqj79XdA8LMVgXC
+	 iJbsJUaavV8F1TXVS7q1cJ49lTnPZ7ZCETN5+alcs7bj0c1pfAo0C8IscgWxFBb8Vu
+	 9K3Td/ZcHVwbqLlSLFg8nmZ41jR4ttUdibT7Z8IAlABo4S+sV6hNZIXT2+aqKU6ElY
+	 NGXvTt0KHBMWw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4286417E003B;
+	Mon, 29 Sep 2025 12:47:27 +0200 (CEST)
+Message-ID: <e9992ba9-bf5b-4533-948a-e19778bb6f50@collabora.com>
+Date: Mon, 29 Sep 2025 12:47:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:zQCowADHaxVYZNpomLm9CA--.25636S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrur18ZFW8XryUGry5ur4Durg_yoWDKFX_K3
-	4rZF97ur4Iqay3WanIvF1fZFy0vrZ5WF4fGFWftFy7J3ySgF4DXrsYvry3Zw1FkrZ2vFWU
-	A34jvF43Ww13GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
-	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUcBMtUUU
-	UU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREAA2jaLf-LTAAAs8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: Use devm_alloc for clk_data allocation to
+ fix memory leak on probe error
+To: Haotian Zhang <vulab@iscas.ac.cn>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250929023621.1968-1-vulab@iscas.ac.cn>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250929023621.1968-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-In cec_devnode_init(), the debugfs directory created with=0D
-debugfs_create_dir() is not removed if bus_register() fails.=0D
-This leaves a stale "cec" entry in debugfs and prevents=0D
-proper module reloading.=0D
-=0D
-Fix this by removing the debugfs directory in the error path.=0D
-=0D
-Fixes: a56960e8b406 ("[media] cec: add HDMI CEC framework (core)")=0D
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>=0D
-=0D
----=0D
-Changes in v2:=0D
-  - Remove inline #ifdefs=0D
-  - (Suggested by Jani Nikula)=0D
----=0D
- drivers/media/cec/core/cec-core.c | 3 +++=0D
- 1 file changed, 1 insertions(+)=0D
-=0D
-diff --git a/drivers/media/cec/core/cec-core.c b/drivers/media/cec/core/cec=
--core.c=0D
-index e10bd588a586..c843b0d6cc2a 100644=0D
---- a/drivers/media/cec/core/cec-core.c=0D
-+++ b/drivers/media/cec/core/cec-core.c=0D
-@@ -421,6 +421,9 @@ static int __init cec_devnode_init(void)=0D
- =0D
- 	ret =3D bus_register(&cec_bus_type);=0D
- 	if (ret < 0) {=0D
-+		debugfs_remove_recursive(top_cec_dir);=0D
- 		unregister_chrdev_region(cec_dev_t, CEC_NUM_DEVICES);=0D
- 		pr_warn("cec: bus_register failed\n");=0D
- 		return -EIO;=0D
--- =0D
-2.50.1.windows.1=0D
-=0D
+Il 29/09/25 04:36, Haotian Zhang ha scritto:
+> The probe functions for the mt6765 apmixed, top, and infrasys clocks
+> use mtk_alloc_clk_data() to allocate memory. This requires manual
+> freeing of the memory in all error handling paths and in the driver's
+> remove function.
+> 
+> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in the
+> probe function.
+> 
+> Fixes: 1aca9939bf72 ("clk: mediatek: Add MT6765 clock support")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+
+You have to resend this to the correct recipients, and you have to fix the
+commit title; something like
+
+clk: mediatek: mt6765: Switch to mtk_devm_alloc_clk_data to fix memleak
+
+For the code:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregnoòcollabora.com>
+
+> ---
+>   drivers/clk/mediatek/clk-mt6765.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk-mt6765.c
+> index d53731e7933f..5cfb9a3a5ee3 100644
+> --- a/drivers/clk/mediatek/clk-mt6765.c
+> +++ b/drivers/clk/mediatek/clk-mt6765.c
+> @@ -736,7 +736,7 @@ static int clk_mt6765_apmixed_probe(struct platform_device *pdev)
+>   	if (IS_ERR(base))
+>   		return PTR_ERR(base);
+>   
+> -	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
+> +	clk_data = mtk_devm_alloc_clk_data(CLK_APMIXED_NR_CLK);
+>   	if (!clk_data)
+>   		return -ENOMEM;
+>   
+> @@ -770,7 +770,7 @@ static int clk_mt6765_top_probe(struct platform_device *pdev)
+>   	if (IS_ERR(base))
+>   		return PTR_ERR(base);
+>   
+> -	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+> +	clk_data = mtk_devm_alloc_clk_data(CLK_TOP_NR_CLK);
+>   	if (!clk_data)
+>   		return -ENOMEM;
+>   
+> @@ -810,7 +810,7 @@ static int clk_mt6765_ifr_probe(struct platform_device *pdev)
+>   	if (IS_ERR(base))
+>   		return PTR_ERR(base);
+>   
+> -	clk_data = mtk_alloc_clk_data(CLK_IFR_NR_CLK);
+> +	clk_data = mtk_devm_alloc_clk_data(CLK_IFR_NR_CLK);
+>   	if (!clk_data)
+>   		return -ENOMEM;
+>   
+
 
 
