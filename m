@@ -1,170 +1,169 @@
-Return-Path: <linux-kernel+bounces-835956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B047BA86FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68CEBA871B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C643B4F15
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717F3174F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6632773EC;
-	Mon, 29 Sep 2025 08:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90DE625;
+	Mon, 29 Sep 2025 08:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nF4jrYDH"
-Received: from mail-yx1-f65.google.com (mail-yx1-f65.google.com [74.125.224.65])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gUvj7K7r"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C912275B16
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F027123D7E3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759135505; cv=none; b=Ja6VSEcpWdK5EBLh5mkUKtzLoWTEvsxxvTdgbKrEb6C/pLwi0/5/fvLOtOk9DWaHcZuiqwja+vNtCUKAwWO98sZZIIunz3v8E3AtV5iRpltJBwVudHkCD1Y0WAU6mrqc25AZl3vKtOxasYxDzYz0feEAB+Y95Gx0ZT9NrWVi7DI=
+	t=1759135592; cv=none; b=h6DwIJoc7nDxuhaH7GOGHKOwqfjLq4I5fxG5dp4VVhnn5hGq/K49plKWdapna6rnuH4XfCJzIRd2zzK8/5y3StdV+AyHnExXIsbZkyzvJeMv3dKx53J7lhT7IxJqWl+7zf7Qujn29cV/2Qx8Pkp3GEm+8J9SxFGhhmhGGAidXdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759135505; c=relaxed/simple;
-	bh=X75ObHJZr1Ef5aDV2F1f9MYR+RaTFrZG0VaxFYaJTtA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OvIGzTkeYG7XbM/tnFBjiqL1bq/GUxoiolEJkWWkvebnF4IJH8VXXyMFRKsCXgZUuJPBO6IRnk9dH+m4im66TCESYISLuKJi7eWqitmUCqWVlV9u2O0hmTfjZIdov+Y9YhxKRwygM1DRfTY2zEZYK1+sVQKFUHsREVhtn1cGUbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nF4jrYDH; arc=none smtp.client-ip=74.125.224.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f65.google.com with SMTP id 956f58d0204a3-633be3be1e6so3929709d50.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:45:02 -0700 (PDT)
+	s=arc-20240116; t=1759135592; c=relaxed/simple;
+	bh=BewtpsS8BJKVbE+kJssv6ZvhLH4bU0TwDjvg9fKBj0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=kiseuBHGnJ+xw4mlvtUPRVnP6hqMb1SFuNoGBielMicNJngVDKparZMpCOSqPMAh0xxIl/IFoT+QDJI7pGn4p549W9QZGs4352B+NaYSCqZUMSCW13KGJtzyGfVYV4MTdQ2nVSV06e/rc5vVehVFccEpSpi3XbXunlTbNR1UEqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gUvj7K7r; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ece1102998so2814772f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:46:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759135501; x=1759740301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JP8IQIErWyVyQbQCHDd0KKmnOzs9hqCQnTWShHnXfyA=;
-        b=nF4jrYDHYPpYw5ga/XFlhep4Zp6CCMkdaMOmCupi0ovTPYRVmjtzrrr2laGR0X3L4y
-         tDcWr/wzUkXUJxmqkJtNmm+R1cJAVhD3Mk/aHHYMF6D2f4MFztDzDK/2h/C+e/UCNX+U
-         8v2X/RYGFcioFRJXXfafqznEunb/qpjZE7HafC8Mfs8BEC5/lEMJMUUBuj6aW/j79r+N
-         EhJfwpxYu4Lxzq36pf6jxzXxuPzfusTG1KpRJE4xeOdj9AhVOiAbVEJZuI+svjr/txn8
-         ezfM6wUoOz9+4Luta0nnjIhaCgl/thkiVbvNFiCQiwnS8Sp28viDzGjD0Tsj91ITglrt
-         bM3g==
+        d=linaro.org; s=google; t=1759135588; x=1759740388; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sKLBhCJl5/nghFRodO0ItHfAYxbW+6msMIAhSSFvsw0=;
+        b=gUvj7K7rIbOZ7yU9xVwgnyZRFdQLD4HhZ0ziUTZ1CWdU4Iy/e3QaeYtLxsgkFnlG7x
+         plIuFnzTKa3QIR8OYAjZyYR+tjn+x7NcPjRJbkcxXlt9o7PqehLWP9J932wcMdoWpvQ/
+         Xro4V8VVsLwv31EgmT78t0cpLhjNDZ2xDsWKTGRanaY9PRBGDenMKxIM1nXHnfnf9OZK
+         zsV6UJ9uGJyb8QhWqjXZa+JGWnhXuKANx2A0V6wOyNFcD5eYGNMFFGBw9X5Dkfl6a9nO
+         tc7DYOOJTtim711ivJ0DZEnkyJX/GMp064E89gSqu2sfLIsf6hlE++3gvaUYUaJC/xeb
+         +c5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759135501; x=1759740301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JP8IQIErWyVyQbQCHDd0KKmnOzs9hqCQnTWShHnXfyA=;
-        b=PqmvUerN8h17vIHNx81e9VoVYNXgeYeptZ6gjCb51yYpRLyjfiu+UjeXcbHalELXTZ
-         +iHhdqxDzeqLaJMIFnTwdoG7+OztrAgKeiNpTqbyz5D3wjnANrF452dRFuIGbYJh9SW2
-         vQDbAo1NN4Ho+NDw81uXs8amufnqQfK0EcgFD+/XPEZTTnGYYiX7wlHW+n9V6eFb4mAX
-         uT/7vPmOb7zw35torZghPhwfFR0igPjiWpMZiblVHwlfPeusRCUDKPjwso8l7qMxx+4o
-         FplIeOpFQN4cn/MdlxqnBmTwOV7QJYH7/msUSfwypoJnCdQZSst84HoJNLP7QXkYn/Ug
-         lHCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTS3RCxopGbAiw6/a9DGukNilE8/1zQK6QYtqbBXdfVyzVilIhSHubG6T/ZdLuEekjEuoFNRqDWSbeZek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjKWdvxtRkcakIIkhve03kjcFaKvwYetfKfqsAiZKcGiToTwYu
-	LouWvDB04pvnHoqadO5q0SskCnx4HMhCYgbk1bSYclbEgH8GAYChoSDLhpqCWfX2pw/NU0ltJ6y
-	cAg8mJWX0ZAMc/D5Jlxe4QUlkJPynOuB32/YpSwVjvfIj
-X-Gm-Gg: ASbGnctmlAd6pB128nYpnD+pCvSSkhY2LlnKL6Rlm56Y4YkbyNCOZIyLpZAtntKlQgt
-	rTWG1Sq6icKos1tZTpAtyhWtf2M+oQ37zaBnUCZoB867fvzSHrQfuTVOjKe79sKb0c4LKz9ftgP
-	HoiEpoMfpcqUDhJZd/zIiQeUacrFkvPGdasFfRZzJqO9PBcWdYzpGQQQ5a4TrrgYRkW6BbW0cT3
-	huDkBlYlwGVzCpI5A==
-X-Google-Smtp-Source: AGHT+IFxYtBs5xRDiUYvTaJKzeNeG/IYt0ldkmoGNhRwvsol4gj4zN4L1p96bEyvoXGcb6J+7ZYjL3MG/05LU6Ra36M=
-X-Received: by 2002:a53:7e05:0:b0:635:34f5:51a4 with SMTP id
- 956f58d0204a3-636dddb3f9cmr6667956d50.13.1759135501484; Mon, 29 Sep 2025
- 01:45:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759135588; x=1759740388;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sKLBhCJl5/nghFRodO0ItHfAYxbW+6msMIAhSSFvsw0=;
+        b=NY9ZKfbbVaNnt5tSGtgvYXsOgs4TPB560zvb9wc7KL1n8qjpmt7eTkxu+kluEc7B8M
+         2EaBUXtiqgCo2kCl49hJqJvsaOFGdH3wIPmS2MhH0y1E5Ck3PfPYSMd7tsrFZ4IxQ7El
+         eCHuB2nZyVe0qFUEhh+TwH2vH50Nr/KEnuUNBxLRVK5SYfaPw8rr4SS0kAjSpqcL2KgZ
+         UF2QOuVeVSxTt91ZBnnEhZppPzEf5veDMMyael7HBCEA/i7CFLQrnBR5uo7bSWM1MLYh
+         MJeqoY9HGzkztgO/F+RlZ7o1K5WDBwTrs8kkBTZXRlzxZkatA1J9vcKPCYlFskUV+dMH
+         dc5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVo/0xWUopVeT0ysdpPv629NR7VKQRaG+CfcDQfFRhNkMEzpOy9EMqc6mc8pm6AbfylA+TZATtaDhIZK5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw35wVfFFxWp/HTrkudMGnGRqvbiXwBRpTkzN9MT9EOsefoXusN
+	lLHqnVZMZh5VVXDTJvGR0tRkL1kBueVDM1qMY4hnumvzrV8yNPUsgYzzXs95sBhUB80=
+X-Gm-Gg: ASbGncvvURzD+6Q5D0G1xbDZGnJHUHd51lfrTE2BTfrnUViu0rRK4Pcfbw1t5K3WbZ4
+	6EQUw1jgNwFEjhpzfeQ8MFQ9egWoHUJvTGC/dxbWyJOaf7kmasAlo2wcHVmVWPw6qf0OMljeGET
+	Z/aLwk7Py13uBIQU+xR7mT+sbsr2nd5Okv0HUL/kxCtbDZu46ikHPluWfrR8J/HRLWaUQlIq9Rt
+	LfB+fDVpRXr0qdyk7aI/6kqg5oWLjybuoJZOjFzhtYTAmeZ7FG6llY9qPu63Vf7NnTUjngxB5Kq
+	Nnx4f35/xC8WpBFfqycCQ9XPjAA74sUNAxl/LmLsSQkX8eNFxTxJ1FHpa1lgFKgvj2kr3KO5AHU
+	aWDi9FH/QPUB4SDfv3swI0KNpPBNHxaKKC2rxnv8=
+X-Google-Smtp-Source: AGHT+IFiyH/6Im62Ydr3EApKzn0Bk8jV3H19/X49G59QAzu2t8JmF/PPcqoUX8ITQu/9MCv12t8qSw==
+X-Received: by 2002:a05:6000:268a:b0:3e4:f194:2886 with SMTP id ffacd0b85a97d-40e436428d0mr13085167f8f.19.1759135588199;
+        Mon, 29 Sep 2025 01:46:28 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fb72fb017sm17297267f8f.3.2025.09.29.01.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 01:46:27 -0700 (PDT)
+Date: Mon, 29 Sep 2025 11:46:24 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Mary Strodl <mstrodl@csh.rit.edu>,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linus.walleij@linaro.org,
+	brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+	Mary Strodl <mstrodl@csh.rit.edu>
+Subject: Re: [PATCH v2 1/3] gpio: mpsse: use rcu to ensure worker is torn down
+Message-ID: <202509290823.hreUi6Tp-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928061950.34531-1-dongml2@chinatelecom.cn> <175911730161.1696783.8081419303155421417@noble.neil.brown.name>
-In-Reply-To: <175911730161.1696783.8081419303155421417@noble.neil.brown.name>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Mon, 29 Sep 2025 16:44:50 +0800
-X-Gm-Features: AS18NWAWEWKS_kXuZX19DMBkYVbBkJRhoGuXBBDUCeDDp3ILgruju3i5YpW8Vlw
-Message-ID: <CADxym3bHM3ykp6nSCNT_8fCVAGk04c1qgoFeAQbrCURSHk3NDg@mail.gmail.com>
-Subject: Re: [PATCH] rhashtable: use likely/unlikely for rhashtable lookup
-To: NeilBrown <neil@brown.name>
-Cc: herbert@gondor.apana.org.au, tgraf@suug.ch, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jiang.biao@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923133304.273529-2-mstrodl@csh.rit.edu>
 
-On Mon, Sep 29, 2025 at 11:41=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrot=
-e:
->
-> On Sun, 28 Sep 2025, Menglong Dong wrote:
-> > Sometimes, the result of the rhashtable_lookup() is expected to be foun=
-d
-> > or not found. Therefore, we can use likely() or unlikely() for such cas=
-es.
-> >
-> > Following new functions are introduced, which will use likely or unlike=
-ly
-> > during the lookup:
-> >
-> >  rhashtable_lookup_likely
-> >  rhashtable_lookup_unlikely
-> >  rhltable_lookup_likely
-> >  rhltable_lookup_unlikely
-> >
-> > A micro-benchmark is made for these new functions: lookup a existed ent=
-ry
-> > repeatedly for 100000000 times, and rhashtable_lookup_likely() gets ~30=
-%
-> > speedup.
->
-> I generally like this patch - it seems well structured and leaves the
-> code easy to maintain.
->
-> I think you have made a good case for rhashtable_lookup_likely() and it
-> seems sensible to optimise that case.
->
-> I'm less sure of rhashtable_lookup_unlikely() - you have provided no
-> measurements for that.
->
-> In general we expect an rhashtable to be between 33% and 75% full.  The
-> inevitable hash collisions will mean that the number of used slots in
-> the bucket table will be a little less that this.  But let's assume 50%
-> of the buckets are in use at any time on average.
->
-> If you are using rhashtable_lookup_likely() you expect to find the
-> target so you expect the bucket to not be empty, so it is reasonable to
-> tell the compiler that it is "likely" that the pointer isn't NULL.
->
-> However if you don't expect to find the target, that DOESN'T mean you
-> expect the bucket to be empty - it could have another item it in.  All
-> you can really say is that the probability of an empty bucket matches
-> the degree of utilisation of the table - so about 50% as discussed
-> above.
->
-> So I don't think it is reasonable to ever tell the compiler that an
-> bucket being empty is "likely".  You also use "likely()" for deciding
-> whether or not to subtract the key offset from the address before
-> returning a pointer.  This is a valid thing to tell the compiler, but we
-> would need numbers to confirm whether or not it was worth adding to the
-> API.
->
-> If, however, you could provide numbers showing that in an rhashtable
-> with lots of entries, a lookup for a non-existing key was faster with
-> the rhashtable_lookup_unlikely() code, then I would find that
-> interesting and worth pursuing.
+Hi Mary,
 
-Ah, you are right, I wasn't aware of this part. I think it makes no sense
-to use unlikely() if the possibility of hitting the budget is ~50%. The onl=
-y
-thing that may matter is the using of unlikely() in rhashtable_lookup()
-before returning the pointer.
+kernel test robot noticed the following build warnings:
 
-I'll do a bench testing on that part, and I'll remove the unlikely version
-directly in the next version if it doesn't help.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks a lot!
-Menglong Dong
+url:    https://github.com/intel-lab-lkp/linux/commits/Mary-Strodl/gpio-mpsse-use-rcu-to-ensure-worker-is-torn-down/20250923-214710
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20250923133304.273529-2-mstrodl%40csh.rit.edu
+patch subject: [PATCH v2 1/3] gpio: mpsse: use rcu to ensure worker is torn down
+config: i386-randconfig-141-20250929 (https://download.01.org/0day-ci/archive/20250929/202509290823.hreUi6Tp-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.4.0-5) 12.4.0
 
->
-> In general it would be interesting to know the number for both
-> successful lookups and unsuccessful lookups across all three proposed
-> lookup versions.  I don't know how helpful it would be, but I would find
-> it interesting...
->
-> Thanks,
-> NeilBrown
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202509290823.hreUi6Tp-lkp@intel.com/
+
+New smatch warnings:
+drivers/gpio/gpio-mpsse.c:341 gpio_mpsse_poll() error: dereferencing freed memory 'worker' (line 342)
+drivers/gpio/gpio-mpsse.c:604 gpio_mpsse_disconnect() error: dereferencing freed memory 'worker' (line 605)
+
+vim +/worker +341 drivers/gpio/gpio-mpsse.c
+
+a14b0c5e3b0741 Mary Strodl 2025-09-23  304  static void gpio_mpsse_poll(struct work_struct *my_work)
+c46a74ff05c0ac Mary Strodl 2024-10-09  305  {
+c46a74ff05c0ac Mary Strodl 2024-10-09  306  	unsigned long pin_mask, pin_states, flags;
+c46a74ff05c0ac Mary Strodl 2024-10-09  307  	int irq_enabled, offset, err, value, fire_irq,
+c46a74ff05c0ac Mary Strodl 2024-10-09  308  		irq, old_value[16], irq_type[16];
+a14b0c5e3b0741 Mary Strodl 2025-09-23  309  	struct mpsse_worker *worker;
+a14b0c5e3b0741 Mary Strodl 2025-09-23  310  	struct mpsse_worker *my_worker = container_of(my_work, struct mpsse_worker, work);
+a14b0c5e3b0741 Mary Strodl 2025-09-23  311  	struct mpsse_priv *priv = my_worker->priv;
+a14b0c5e3b0741 Mary Strodl 2025-09-23  312  	struct list_head destructors = LIST_HEAD_INIT(destructors);
+c46a74ff05c0ac Mary Strodl 2024-10-09  313  
+c46a74ff05c0ac Mary Strodl 2024-10-09  314  	for (offset = 0; offset < priv->gpio.ngpio; ++offset)
+c46a74ff05c0ac Mary Strodl 2024-10-09  315  		old_value[offset] = -1;
+c46a74ff05c0ac Mary Strodl 2024-10-09  316  
+a14b0c5e3b0741 Mary Strodl 2025-09-23  317  	/*
+a14b0c5e3b0741 Mary Strodl 2025-09-23  318  	 * We only want one worker. Workers race to acquire irq_race and tear
+a14b0c5e3b0741 Mary Strodl 2025-09-23  319  	 * down all other workers. This is a cond guard so that we don't deadlock
+a14b0c5e3b0741 Mary Strodl 2025-09-23  320  	 * trying to cancel a worker.
+a14b0c5e3b0741 Mary Strodl 2025-09-23  321  	 */
+a14b0c5e3b0741 Mary Strodl 2025-09-23  322  	scoped_cond_guard(mutex_try, ;, &priv->irq_race) {
+a14b0c5e3b0741 Mary Strodl 2025-09-23  323  		scoped_guard(rcu) {
+a14b0c5e3b0741 Mary Strodl 2025-09-23  324  			list_for_each_entry_rcu(worker, &priv->workers, list) {
+a14b0c5e3b0741 Mary Strodl 2025-09-23  325  				/* Don't stop ourselves */
+a14b0c5e3b0741 Mary Strodl 2025-09-23  326  				if (worker == my_worker)
+a14b0c5e3b0741 Mary Strodl 2025-09-23  327  					continue;
+a14b0c5e3b0741 Mary Strodl 2025-09-23  328  
+a14b0c5e3b0741 Mary Strodl 2025-09-23  329  				scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
+a14b0c5e3b0741 Mary Strodl 2025-09-23  330  					list_del_rcu(&worker->list);
+a14b0c5e3b0741 Mary Strodl 2025-09-23  331  
+a14b0c5e3b0741 Mary Strodl 2025-09-23  332  				/* Give worker a chance to terminate itself */
+a14b0c5e3b0741 Mary Strodl 2025-09-23  333  				atomic_set(&worker->cancelled, 1);
+a14b0c5e3b0741 Mary Strodl 2025-09-23  334  				/* Keep track of stuff to cancel */
+a14b0c5e3b0741 Mary Strodl 2025-09-23  335  				INIT_LIST_HEAD(&worker->destroy);
+a14b0c5e3b0741 Mary Strodl 2025-09-23  336  				list_add(&worker->destroy, &destructors);
+a14b0c5e3b0741 Mary Strodl 2025-09-23  337  			}
+a14b0c5e3b0741 Mary Strodl 2025-09-23  338  		}
+a14b0c5e3b0741 Mary Strodl 2025-09-23  339  		/* Make sure list consumers are finished before we tear down */
+a14b0c5e3b0741 Mary Strodl 2025-09-23  340  		synchronize_rcu();
+a14b0c5e3b0741 Mary Strodl 2025-09-23 @341  		list_for_each_entry(worker, &destructors, destroy)
+a14b0c5e3b0741 Mary Strodl 2025-09-23 @342  			gpio_mpsse_stop(worker);
+
+This needs to be list_for_each_entry_save() because gpio_mpsse_stop()
+frees the worker.  Or kfree_rcu() inside an rcu lock or something.
+
+a14b0c5e3b0741 Mary Strodl 2025-09-23  343  	}
+a14b0c5e3b0741 Mary Strodl 2025-09-23  344  
+a14b0c5e3b0741 Mary Strodl 2025-09-23  345  	while ((irq_enabled = atomic_read(&priv->irq_enabled)) &&
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
