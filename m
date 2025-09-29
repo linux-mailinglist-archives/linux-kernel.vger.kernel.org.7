@@ -1,196 +1,100 @@
-Return-Path: <linux-kernel+bounces-835709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB6BBA7DC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:22:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826E2BA7DB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 693F57A41C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:21:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2DA1189604C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5657A16132F;
-	Mon, 29 Sep 2025 03:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A80207A18;
+	Mon, 29 Sep 2025 03:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Hen5GsO3"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="oXLbvGPT"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B89A92E;
-	Mon, 29 Sep 2025 03:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5FFA92E;
+	Mon, 29 Sep 2025 03:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759116156; cv=none; b=PkQWBB5+Y164QCPMQCck/D03L7HA1wDTDYAw5e8KVrqAU2R+BDKAWlQxNznd/cwL4YsgSaC5gubmearBuMZZwtlYT+JVz9MfMKaogzJW3beAkYmqWU0xTysaLXE8+Ed6peFRooqIKbW6SxxEM2Xm5g0kPGMYdqrmoOBJKB2Ya48=
+	t=1759115720; cv=none; b=DYd7vtWyVG7zbu84L7nWPdDJ94OQsnr9wy8yFS6zFG9fxhtrV9EdfWv1IfF7J7IcJtcv5+vAuHqeqpeLk8XlDwlx7bDd+YRx4OMVRY6cfuuGS4HtMwHM2aNBbaLbXSESB2THNgwmNzoKD45voyKdQk1vwi69UVhxgg1ubCHEVYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759116156; c=relaxed/simple;
-	bh=7wGK0WZ6kvijpeVHQ1rvhxvAmkWtiIYurZ1MhX4UhFs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=odrzsaUdYiEXh4P9W+xc6Mf/qv0TFkKNJzxAS3+UKAtE9Q2WznV2vUX2d3nr5konILE72T6vnsqU36uGmxRMrTSOeHJiHEt252Po7c+HUEjFR6b3PDDG49zksEK09fur1UCuWhO01f23jvwe65FW8TqQcjlun5ZNrkKTrj4+6uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Hen5GsO3; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:Reply-To:
-	MIME-Version:Content-Type; bh=PgFboyisbuCo0/7DTrz2JvIMjhhb+s1cus
-	MR4QBJg9I=; b=Hen5GsO3RWn7k+wky5ZOo7hoQDlreKT2gTUnooE+IkOEjYSQta
-	/6JVAtdxQwTWIaOuy9G4N68SI8f6q+hnrYY1S0SvkYzzWGF2yjMEsnf9STDC01/y
-	MHXTbUqARhALqKr/G7BqjxGuAj/J7Z8PVenV4o/nONszaXFGPrt1lO260=
-Received: from 163.com (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3X5jc+Nlo7idkAw--.1589S2;
-	Mon, 29 Sep 2025 11:11:27 +0800 (CST)
-From: chenyuan_fl@163.com
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Yuan CHen <chenyuan@kylinos.cn>
-Subject: [PATCH] tracing: Fix race condition in kprobe initialization causing NULL pointer dereference
-Date: Mon, 29 Sep 2025 04:11:22 +0100
-Message-Id: <20250929031122.2825-1-chenyuan_fl@163.com>
-X-Mailer: git-send-email 2.39.5
-Reply-To: <87ms751z28.wl-kuninori.morimoto.gx@renesas.com>
+	s=arc-20240116; t=1759115720; c=relaxed/simple;
+	bh=yYkdYbRZgTnnDhLdDpzy0btLglQGn8i4eK9MrfIWpaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XgLVVY6KDYAqeecQghFjB45TE/YwG/vk8xx08wSO/VVzouBHBsHxxrfC/W/IhqOPYxi5NvoKha3u8Xct5pbRbyIEtM6BNvWP0EcOXOHlm5khh0aa8EGknrDK00jCo6kAx2h9m3jgby0WIqPRsYem7Pkw11HW3oAJoBcvWo60wgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=oXLbvGPT; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=/dhs7ijfLTghtXAQAWqGmbDRj1oseStsFI46DR79xIE=;
+	b=oXLbvGPTl/Y21WI34R0rrhNne1FlPSTfLemqQVSLS16WejO2qxF7ZZGc6joZVY
+	vmR3vjdBZKgh+X+o4uJGJuW3TonO98JC3GleQwWxOD39DaMn41dN7hBVoGGgDQ/i
+	dj0XAVboHLf8PDSdBVXIyCJhQ66+HT+yURSPssUZM/3HQ=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBHu3uV+dlorox_BQ--.46998S3;
+	Mon, 29 Sep 2025 11:14:30 +0800 (CST)
+Date: Mon, 29 Sep 2025 11:14:28 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Qais Yousef <qyousef@layalina.io>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Linux ACPI <linux-acpi@vger.kernel.org>,
+	Jie Zhan <zhanjie9@hisilicon.com>, rust-for-linux@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Subject: Re: [PATCH v3 1/4] cpufreq: Make drivers using CPUFREQ_ETERNAL
+ specify transition latency
+Message-ID: <aNn5lPYQTPCZ1hPW@dragon>
+References: <5069803.31r3eYUQgx@rafael.j.wysocki>
+ <2264949.irdbgypaU6@rafael.j.wysocki>
+ <aNiqTYZai83Yguqt@dragon>
+ <CAJZ5v0j0v6m7uRc0vf2q0W=G8q5hOm5dr5txqTZ2=sScaLaPHg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3X5jc+Nlo7idkAw--.1589S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZw4fZw4fZFW8Cr17Xr17trb_yoW7JrWfpa
-	nxKws8Kw4kJFyjvryrJr1UJ3WftFyrZFWDJry7Gw45ZF1jgr1UJF12q3yUAF13GFyDAFyf
-	t3Waqr10qryUJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jOL0nUUUUU=
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiUQTLvWjKqZC0OgADs1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0j0v6m7uRc0vf2q0W=G8q5hOm5dr5txqTZ2=sScaLaPHg@mail.gmail.com>
+X-CM-TRANSID:Mc8vCgBHu3uV+dlorox_BQ--.46998S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU0b18UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNRc0mWjZ+ZfB1wAA3G
 
-From: Yuan CHen <chenyuan@kylinos.cn>
+On Sun, Sep 28, 2025 at 12:00:22PM +0200, Rafael J. Wysocki wrote:
+> > > --- a/include/linux/cpufreq.h
+> > > +++ b/include/linux/cpufreq.h
+> > > @@ -32,6 +32,9 @@
+> > >   */
+> > >
+> > >  #define CPUFREQ_ETERNAL                      (-1)
+> > > +
+> > > +#define CPUFREQ_DEFAULT_TANSITION_LATENCY_NS NSEC_PER_MSEC
+> >
+> > Typo of TANSITION, should be CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS.
+> 
+> Yes, thanks!
+> 
+> Fixed already because CIs caught it yesterday.
 
-There is a critical race condition in kprobe initialization that can lead to
-NULL pointer dereference and kernel crash.
+With it fixed:
 
-[1135630.084782] Unable to handle kernel paging request at virtual address 0000710a04630000
-...
-[1135630.260314] pstate: 404003c9 (nZcv DAIF +PAN -UAO)
-[1135630.269239] pc : kprobe_perf_func+0x30/0x260
-[1135630.277643] lr : kprobe_dispatcher+0x44/0x60
-[1135630.286041] sp : ffffaeff4977fa40
-[1135630.293441] x29: ffffaeff4977fa40 x28: ffffaf015340e400
-[1135630.302837] x27: 0000000000000000 x26: 0000000000000000
-[1135630.312257] x25: ffffaf029ed108a8 x24: ffffaf015340e528
-[1135630.321705] x23: ffffaeff4977fc50 x22: ffffaeff4977fc50
-[1135630.331154] x21: 0000000000000000 x20: ffffaeff4977fc50
-[1135630.340586] x19: ffffaf015340e400 x18: 0000000000000000
-[1135630.349985] x17: 0000000000000000 x16: 0000000000000000
-[1135630.359285] x15: 0000000000000000 x14: 0000000000000000
-[1135630.368445] x13: 0000000000000000 x12: 0000000000000000
-[1135630.377473] x11: 0000000000000000 x10: 0000000000000000
-[1135630.386411] x9 : 0000000000000000 x8 : 0000000000000000
-[1135630.395252] x7 : 0000000000000000 x6 : 0000000000000000
-[1135630.403963] x5 : 0000000000000000 x4 : 0000000000000000
-[1135630.412545] x3 : 0000710a04630000 x2 : 0000000000000006
-[1135630.421021] x1 : ffffaeff4977fc50 x0 : 0000710a04630000
-[1135630.429410] Call trace:
-[1135630.434828]  kprobe_perf_func+0x30/0x260
-[1135630.441661]  kprobe_dispatcher+0x44/0x60
-[1135630.448396]  aggr_pre_handler+0x70/0xc8
-[1135630.454959]  kprobe_breakpoint_handler+0x140/0x1e0
-[1135630.462435]  brk_handler+0xbc/0xd8
-[1135630.468437]  do_debug_exception+0x84/0x138
-[1135630.475074]  el1_dbg+0x18/0x8c
-[1135630.480582]  security_file_permission+0x0/0xd0
-[1135630.487426]  vfs_write+0x70/0x1c0
-[1135630.493059]  ksys_write+0x5c/0xc8
-[1135630.498638]  __arm64_sys_write+0x24/0x30
-[1135630.504821]  el0_svc_common+0x78/0x130
-[1135630.510838]  el0_svc_handler+0x38/0x78
-[1135630.516834]  el0_svc+0x8/0x1b0
+Tested-by: Shawn Guo <shawnguo@kernel.org> # with cpufreq-dt driver
 
-kernel/trace/trace_kprobe.c: 1308
-0xffff3df8995039ec <kprobe_perf_func+0x2c>:     ldr     x21, [x24,#120]
-include/linux/compiler.h: 294
-0xffff3df8995039f0 <kprobe_perf_func+0x30>:     ldr     x1, [x21,x0]
+BTW, a heads-up: the patch won't apply to 6.12 stable kernel directly.
 
-kernel/trace/trace_kprobe.c
-1308: head = this_cpu_ptr(call->perf_events);
-1309: 	if (hlist_empty(head))
-1310:		return 0;
-
-crash> struct trace_event_call -o
-struct trace_event_call {
-  ...
-  [120] struct hlist_head *perf_events;  //(call->perf_event)
-  ...
-}
-
-crash> struct trace_event_call ffffaf015340e528
-struct trace_event_call {
-  ...
-  perf_events = 0xffff0ad5fa89f088, //this value is correct, but x21 = 0
-  ...
-}
-
-Race Condition Analysis:
-
-The race occurs between kprobe activation and perf_events initialization:
-
-    CPU0                                    CPU1
-    ====                                    ====
-    perf_kprobe_init
-      create_local_trace_kprobe
-        alloc_trace_kprobe
-          __register_trace_kprobe(tk);
-            arm_kprobe(p);(1)← KPROBE ACTIVE
-                                            Debug exception triggers
-                                            ...
-                                            kprobe_handler(regs)
-      perf_trace_event_init                 ...
-        tp_event->perf_events = list;(2)
-        tp_event->class->reg (3)
-                                            kprobe_dispatcher (tk->tp.flags & TP_FLAG_PROFILE)
-                                              kprobe_perf_func
-					        head = this_cpu_ptr(call->perf_events)(4)
-                                                (perf_events is still NULL)
-
-Critical Issue:
-
-The race window is:
-1. CPU0 calls `arm_kprobe(p)` at point (1) - kprobe becomes active
-2. CPU1 triggers debug exception and reaches `kprobe_dispatcher`
-3. CPU0 sets `tp_event->perf_events = list` at point (2) but this assignment
-   may not be visible to CPU1 due to memory ordering
-4. CPU0 calls `class->reg()` at point (3) setting `TP_FLAG_PROFILE`
-5. CPU1 checks `(tk->tp.flags & TP_FLAG_PROFILE)` - condition passes
-6. CPU1 calls `kprobe_perf_func()` and crashes at point (4)
-
-The kprobe becomes active immediately at point (1), allowing concurrent CPUs
-to enter kprobe handlers. However, `perf_events` assignment at point (2) happens
-at a different time and may not be visible to other CPUs due to missing memory
-barriers before point (3) sets `TP_FLAG_PROFILE`.
-
-Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
----
- kernel/trace/trace_event_perf.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
-index a6bb7577e8c5..6eff8c9d6bae 100644
---- a/kernel/trace/trace_event_perf.c
-+++ b/kernel/trace/trace_event_perf.c
-@@ -113,6 +113,11 @@ static int perf_trace_event_reg(struct trace_event_call *tp_event,
- 
- 	tp_event->perf_events = list;
- 
-+	/* Ensure perf_events assignment is visible to all CPUs before enabling
-+	 * profile functionality
-+	 */
-+	smp_mb();
-+
- 	if (!total_ref_count) {
- 		char __percpu *buf;
- 		int i;
--- 
-2.39.5
+Shawn
 
 
