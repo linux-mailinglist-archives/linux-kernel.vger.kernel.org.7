@@ -1,223 +1,344 @@
-Return-Path: <linux-kernel+bounces-835885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE068BA8435
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:38:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3565BA8441
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A703A4DE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFF33A68F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7202C0282;
-	Mon, 29 Sep 2025 07:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EB82C0287;
+	Mon, 29 Sep 2025 07:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1iO/Av5u"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010001.outbound.protection.outlook.com [52.101.46.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="il47pTnW"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538982110E
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759131507; cv=fail; b=EF2B9jReh3b23oXV1F+Eduw/APUGjV+QyPkpxxOWJJywN66j1w4qpFVfcRqnx6PpyY1cxA1MDcVRPpNV1tMn53Um9550ZrXy6Yo+vBTUIjwYp4iGace0P5oKBB5kRGeyrY1krDVUZEaJ0OYSN8RARGEP7gnafK6L9hbueL00A60=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759131507; c=relaxed/simple;
-	bh=9InhNtjHzPmcq5okkk9cVztk0AdyJI+GpjfOxGE7Dsw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NLA4Q6YZYDWq5jy36ycj381phtb1xg5vUap+wHKAK+m4bHtvhSyE8v2dckwiKeHBiVPNbFSkP5jAYmURIH9NdAr+tgU8ZnApVvmhVW4GiF0+xb/ki/TbrjgwKCoAOf86/pYe+a8C7n7fjpsVfMVgX5zUnxnkVEYcH+rg61i7vz4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1iO/Av5u; arc=fail smtp.client-ip=52.101.46.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=abTejoXL2iC2+gsY6mfdORfn+a6Sz0YfZVkZ052l+fD2x0WITiT2QTkhY4XGJXcyOjOIScVimB+vDh5u/0P9sOzXl5CxUvmhPihnF4vHwHKoS7cFGFSyl6K9jtuzAKymT+s5qO3OS3N1O9DxCyXIUNARnS9A1+EaLVjCHSmKD/WvvXrtFS51LckqbSEhMFgAqh3ikhflxlcEWkAx79bo8JBMBT2PFV0mBDGLJSSnVIHRxkdhDUoRaTraDhkOKm8g9GgN5Z43cUV1Q8dlS6YlqdcJCI5zmoP8wj+QBWFBorckwr6Nl/3TdDshPGMEn3Dcn+Pw/td7qUXa2Tb1cAcI4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CkFA7lZHHJ2lADLG9juKzzsOf7dBEPZqf85miPqn4EY=;
- b=KeLTs2/6pCKGTxg2mDcznwiXEYz1jDLblhyRakMdDydJq3PpLFkJFA4trc3VbXhOXT+hss/cEwqSKGFzDuaCzTg8vOXyxBBq04G+lLwzPy39yT+gzu1wZHTl/hmfYxkGHAllfjQ8msySBgDsZvh+bjUEIFnta6kPHRzhsGCB1VOImj0bLX3MLgHvebSgstb3s72wVHzuQK3Ch1MQIGaj7+MIMla63UHirdA/hIdE1XfNQQqSTbZIBXc+q1kg/nGL56eQZPlSpQxNKSmnuPJaF55lIn8o2CNEe/3DCy49TlaI3KG0BjvQcfb44AAD7rchaTLuRTaNJGxaiefVluJEaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CkFA7lZHHJ2lADLG9juKzzsOf7dBEPZqf85miPqn4EY=;
- b=1iO/Av5uTmSX3c/1UoOofCHTThORSv+0+P9ieW72MliEi/7XSlYZzga+lDlRNTXC9vX146cevEOUR89AN6z2oj1AIm4RheVZezEWQGCdkIP2bt1r4dfTHfEZLbCF16H/L0mOvlkNiadH8BoI+fRxgE0JmCqGxLVH86vQbQDT9mk=
-Received: from SA1P222CA0035.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2d0::10)
- by IA0PR12MB8838.namprd12.prod.outlook.com (2603:10b6:208:483::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Mon, 29 Sep
- 2025 07:38:22 +0000
-Received: from SA2PEPF00003F63.namprd04.prod.outlook.com
- (2603:10b6:806:2d0:cafe::23) by SA1P222CA0035.outlook.office365.com
- (2603:10b6:806:2d0::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Mon,
- 29 Sep 2025 07:38:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SA2PEPF00003F63.mail.protection.outlook.com (10.167.248.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Mon, 29 Sep 2025 07:38:21 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 29 Sep
- 2025 00:38:06 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 29 Sep
- 2025 00:38:05 -0700
-Received: from xhdharinit40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 29 Sep 2025 00:38:03 -0700
-From: Harini T <harini.t@amd.com>
-To: <jassisinghbrar@gmail.com>, <michal.simek@amd.com>, <peng.fan@nxp.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<git@amd.com>, Harini T <harini.t@amd.com>
-Subject: [PATCH V2 4/4] mailbox: zynqmp-ipi: Fix SGI cleanup on unbind
-Date: Mon, 29 Sep 2025 13:07:23 +0530
-Message-ID: <20250929073723.139130-5-harini.t@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250929073723.139130-1-harini.t@amd.com>
-References: <20250929073723.139130-1-harini.t@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B8F2C0289
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759131536; cv=none; b=jovc4MgvHUBsTL03bDzK35VhK+dUX5TBfAC/9e7hj8gU959kj5FuW1Sg6ofKv1JTPr1AWAITp8Sv2glL6fq3WRjEudOOS16stKU4hbaS79zEStE+8crHIfAo2h0eUtK6QO3QVaM2u8hQEO6uMpVfDCHT4I7BxbrPsv16eOd1Doo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759131536; c=relaxed/simple;
+	bh=PGOYfvLBRamM466jo0zSETpZ9WHyfXkQNRMNZPkY5PQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CGVLn7W2mH5wuaQGFJSc3BY31pyrcFihENhhpewtfP42hl5hTnsziYJfU1gJV4bPO6ZTLd23AWO2fwYs65M+FXEzS0Kq3ug1Ou0ohZ42SrawnZDWlkLhlRBO5AYPBohF+g1tT3rcKUpQglsAJgTvU+mX43BHoUkD7XbBlasTP3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=il47pTnW; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759131531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pBKcXxbFuAD2KtWE6V9eoV+FPlnLvv6nJCJZHelUJiI=;
+	b=il47pTnW5lKvMmF0hfqv3+bQcd4xRrn7/+pMihocPIoLbqKiN1aXRfl/bxjlhWc4f1ay5a
+	h4m8jnuYsv3WPBmjRn2PEN6CIR7diOFpIE3ZojuyRkp8pqDS8ChmlRDLgQF4wbx/0w+qBK
+	TeiFp75bfDTvqiMvYnpGvYOw83RLyz0=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F63:EE_|IA0PR12MB8838:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35af5335-d517-4305-2217-08ddff2b2a77
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?AWdWXj/w6OAhwhVGG4kRIzzkgcrA/bQlaKn0fntRLLfJN0PkAqcPQSEsN+ed?=
- =?us-ascii?Q?7MMv6EClrIab27DMQneUC4uwLWX5mH+sfEygsdvtvTTcOoQWasH2YY6DyVMJ?=
- =?us-ascii?Q?BekE9AyKwU7zBOkjomRCCKi9yrsrCjWtZtbXC5bkFk4wk62/WIAkb4hQ75XW?=
- =?us-ascii?Q?hcfuF3yAiS09+TVbGIL/1IgqIidyevw33aJcaI9XkaIBPG1rm8WxaDnBHNcf?=
- =?us-ascii?Q?MyPugwUhzPaco5iH+zOmZkvf/ZDdGQ+9hjMndl6uwNUm+uBYphBOL3egiTDY?=
- =?us-ascii?Q?9yD9KfpbFhzasJdxHBp8AD7FyDr+wljK2eWP1llLkmzFoAFiGPEXraOyzUN/?=
- =?us-ascii?Q?u2/89RQpKeBAtRnkN4W+tcJNaI36AHY1KUmi74MNQ0KifAUYi75OkTQq6nhp?=
- =?us-ascii?Q?beNrgtmirmGbdV9fBJN02Qyegn/lB2lpUTHORUCNUVZzxofJj5CXesZgHsf1?=
- =?us-ascii?Q?8LCGKKFcDJQ+kDzKV6T+OEpJl1ZqvbXDAFMsvPCV9C+StF1tLeUQoC2EA1LH?=
- =?us-ascii?Q?M7y4FvkT05dmD4l17GVMxTXmQBbBgPBs8ua4BMhK3rofgV1klLGzMSEAPRm4?=
- =?us-ascii?Q?icMDTJa4IotJAAIdQa/wGsXVNFeyENemMVveBQgUmRycDNrcqPdNTr7VqSDY?=
- =?us-ascii?Q?imaeQvgyxqMCjURz6L8gwXa2aeuoUbjKiqSiTrA6WRNIDFKuiukWlhBqhVz2?=
- =?us-ascii?Q?htco8t5W5JTuiJMfMhsgJIfOl45D+jH5pLFSlaUXIPl+uJnp1hYklHqrGk2D?=
- =?us-ascii?Q?SlniO3Ulhnq/fTdJTERYdcRb+40LoLHmBGJ/S9Xl5l8VGoUov4Kih8jJrTQb?=
- =?us-ascii?Q?ZfoeyoDgWCntyC2gP/X5Uk5GDnmDz81zOUIJ2GJLmjmZE2LeqBWeDRmefAM5?=
- =?us-ascii?Q?uXCtP2kND1iEMXMh5NLDFA16jV2owLbR0WQF7mM/Jv/kl1jXkUqGSnPT95Ia?=
- =?us-ascii?Q?yZHgDgkzcvwFhBCHeD3dYCY9SBG1AzfJ5Xy2Fl2ZJVPnvyWNZFfHmQ//2jt/?=
- =?us-ascii?Q?fsy5t9pJYAaNqj4KSz7UC7mlfDLQ762/bH6JgmRHv3S7CeRIrTT79vL8wgXQ?=
- =?us-ascii?Q?eREZO21gnc+g264s8cpe5TtPGqnVW3v7XePYWlZLSLzx6fmIPgtq4ZIqxbrx?=
- =?us-ascii?Q?5+VATcVGyVbMoFe5mcx/7jvf0rHsV36QAXkDyLwZLE1slqOUxkBp+wAka0nL?=
- =?us-ascii?Q?kA0Og/miDyTZG6dqjK+4E9U/yeMm+pHOFOiKPZKvUj5XBquBcqyp49uml3d8?=
- =?us-ascii?Q?m/O/kirZP4qbIeKOlP+6uJYAg64mFTA5qhepGMUcqAhPYbnI9txsaOa5ZfzR?=
- =?us-ascii?Q?xrrQousaVp9I1Bp/GykcBnDFDceGZhIcMZaptqZC8E3etc3VU8mQnQuLHMc4?=
- =?us-ascii?Q?7cQN2X47CLVhKK65qXyWkBsRjmY54nXH8kLHSmLGYw1WDylJaDWd5eltasRU?=
- =?us-ascii?Q?OZFcb7EAD8uH5yVscu4gTCxYzRbC+CWVZ4QJYXLG293SnwU+6/jy3GQIaqfi?=
- =?us-ascii?Q?zhD04B48l94C+Rg1waqXE8nFiXZkZMKLWOVn2uZjdzJr2XKcoiO9sAUHnWE0?=
- =?us-ascii?Q?FDziPNk6qowYX9Xo8rg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 07:38:21.6827
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35af5335-d517-4305-2217-08ddff2b2a77
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F63.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8838
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH v3 4/4] mm: thp: reparent the split queue during memcg
+ offline
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <08a4f0b2-1735-4e3b-9f61-d55e45e8ec86@linux.dev>
+Date: Mon, 29 Sep 2025 15:38:05 +0800
+Cc: hannes@cmpxchg.org,
+ hughd@google.com,
+ mhocko@suse.com,
+ roman.gushchin@linux.dev,
+ shakeel.butt@linux.dev,
+ david@redhat.com,
+ lorenzo.stoakes@oracle.com,
+ ziy@nvidia.com,
+ harry.yoo@oracle.com,
+ baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com,
+ npache@redhat.com,
+ ryan.roberts@arm.com,
+ dev.jain@arm.com,
+ baohua@kernel.org,
+ lance.yang@linux.dev,
+ akpm@linux-foundation.org,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org,
+ Qi Zheng <zhengqi.arch@bytedance.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1A84CFB1-FB4F-4630-A40C-73CDE7CA8C21@linux.dev>
+References: <cover.1759056506.git.zhengqi.arch@bytedance.com>
+ <2ddd0c184829e65c5b3afa34e93599783e7af3d4.1759056506.git.zhengqi.arch@bytedance.com>
+ <2EC0CBCD-73FD-400A-921A-EAB45B21ACB8@linux.dev>
+ <08a4f0b2-1735-4e3b-9f61-d55e45e8ec86@linux.dev>
+To: Qi Zheng <qi.zheng@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-The driver incorrectly determines SGI vs SPI interrupts by checking IRQ
-number < 16, which fails with dynamic IRQ allocation. During unbind,
-this causes improper SGI cleanup leading to kernel crash.
 
-Add explicit irq_type field to pdata for reliable identification of SGI
-interrupts (type-2) and only clean up SGI resources when appropriate.
 
-Fixes: 6ffb1635341b ("mailbox: zynqmp: handle SGI for shared IPI")
-Signed-off-by: Harini T <harini.t@amd.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/mailbox/zynqmp-ipi-mailbox.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+> On Sep 29, 2025, at 15:22, Qi Zheng <qi.zheng@linux.dev> wrote:
+>=20
+>=20
+>=20
+> On 9/29/25 2:20 PM, Muchun Song wrote:
+>>> On Sep 28, 2025, at 19:45, Qi Zheng <qi.zheng@linux.dev> wrote:
+>>>=20
+>>> From: Qi Zheng <zhengqi.arch@bytedance.com>
+>>>=20
+>>> Similar to list_lru, the split queue is relatively independent and =
+does
+>>> not need to be reparented along with objcg and LRU folios (holding
+>>> objcg lock and lru lock). So let's apply the same mechanism as =
+list_lru
+>>> to reparent the split queue separately when memcg is offine.
+>>>=20
+>>> This is also a preparation for reparenting LRU folios.
+>>>=20
+>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>>> ---
+>>> include/linux/huge_mm.h |  4 ++++
+>>> mm/huge_memory.c        | 46 =
++++++++++++++++++++++++++++++++++++++++++
+>>> mm/memcontrol.c         |  1 +
+>>> 3 files changed, 51 insertions(+)
+>>>=20
+>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>> index f327d62fc9852..0c211dcbb0ec1 100644
+>>> --- a/include/linux/huge_mm.h
+>>> +++ b/include/linux/huge_mm.h
+>>> @@ -417,6 +417,9 @@ static inline int split_huge_page(struct page =
+*page)
+>>> 	return split_huge_page_to_list_to_order(page, NULL, ret);
+>>> }
+>>> void deferred_split_folio(struct folio *folio, bool =
+partially_mapped);
+>>> +#ifdef CONFIG_MEMCG
+>>> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
+>>> +#endif
+>>>=20
+>>> void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>>> 		unsigned long address, bool freeze);
+>>> @@ -611,6 +614,7 @@ static inline int try_folio_split(struct folio =
+*folio, struct page *page,
+>>> }
+>>>=20
+>>> static inline void deferred_split_folio(struct folio *folio, bool =
+partially_mapped) {}
+>>> +static inline void reparent_deferred_split_queue(struct mem_cgroup =
+*memcg) {}
+>>> #define split_huge_pmd(__vma, __pmd, __address) \
+>>> 	do { } while (0)
+>>>=20
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index bb32091e3133e..5fc0caca71de0 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -1094,9 +1094,22 @@ static struct deferred_split =
+*folio_split_queue_lock(struct folio *folio)
+>>> struct deferred_split *queue;
+>>>=20
+>>> 	memcg =3D folio_memcg(folio);
+>>> +retry:
+>>> 	queue =3D memcg ? &memcg->deferred_split_queue :
+>>> 			=
+&NODE_DATA(folio_nid(folio))->deferred_split_queue;
+>>> 	spin_lock(&queue->split_queue_lock);
+>>> +  /*
+>>> +  * Notice:
+>>> +  * 1. The memcg could be NULL if cgroup_disable=3Dmemory is set.
+>>> +  * 2. There is a period between setting CSS_DYING and reparenting
+>>> +  *    deferred split queue, and during this period the THPs in the
+>>> +  *    deferred split queue will be hidden from the shrinker side.
+>=20
+> The shrinker side can find this deferred split queue by traversing
+> memcgs, so we should check CSS_DYING after we acquire child
+> split_queue_lock in :
+>=20
+> deferred_split_scan
+> --> spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>    if (css_is_dying(&memcg->css))
+>    --> retry to get parent split_queue_lock
+>=20
+> So during this period, we use parent split_queue_lock to protect
+> child deferred split queue. It's a little weird, but it's safe.
+>=20
+>>> + 	 */
+>>> +  	if (unlikely(memcg && css_is_dying(&memcg->css))) {
+>>> +  		spin_unlock(&queue->split_queue_lock);
+>>> +  		memcg =3D parent_mem_cgroup(memcg);
+>>> +  		goto retry;
+>>> +  	}
+>>>=20
+>>> return queue;
+>>> }
+>>> @@ -1108,9 +1121,15 @@ folio_split_queue_lock_irqsave(struct folio =
+*folio, unsigned long *flags)
+>>> struct deferred_split *queue;
+>>>=20
+>>> 	memcg =3D folio_memcg(folio);
+>>> +retry:
+>>> 	queue =3D memcg ? &memcg->deferred_split_queue :
+>>> 			=
+&NODE_DATA(folio_nid(folio))->deferred_split_queue;
+>>> 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
+>>> +  	if (unlikely(memcg && css_is_dying(&memcg->css))) {
+>>> +  		spin_unlock_irqrestore(&queue->split_queue_lock, =
+*flags);
+>>> +  		memcg =3D parent_mem_cgroup(memcg);
+>>> +  		goto retry;
+>>> +  	}
+>>>=20
+>>> return queue;
+>>> }
+>>> @@ -4275,6 +4294,33 @@ static unsigned long =
+deferred_split_scan(struct shrinker *shrink,
+>>> return split;
+>>> }
+>>>=20
+>>> +#ifdef CONFIG_MEMCG
+>>> +void reparent_deferred_split_queue(struct mem_cgroup *memcg)
+>>> +{
+>>> +  	struct mem_cgroup *parent =3D parent_mem_cgroup(memcg);
+>>> +  	struct deferred_split *ds_queue =3D =
+&memcg->deferred_split_queue;
+>>> +  	struct deferred_split *parent_ds_queue =3D =
+&parent->deferred_split_queue;
+>>> +  	int nid;
+>>> +
+>>> + 	spin_lock_irq(&ds_queue->split_queue_lock);
+>>> +  	spin_lock_nested(&parent_ds_queue->split_queue_lock, =
+SINGLE_DEPTH_NESTING);
+>>> +
+>>> +  	if (!ds_queue->split_queue_len)
+>>> +  		goto unlock;
+>>> +
+>>> +  	list_splice_tail_init(&ds_queue->split_queue, =
+&parent_ds_queue->split_queue);
+>>> +  	parent_ds_queue->split_queue_len +=3D ds_queue->split_queue_len;
+>>> +  	ds_queue->split_queue_len =3D 0;
+>>> +
+>>> +  	for_each_node(nid)
+>>> +  		set_shrinker_bit(parent, nid, =
+shrinker_id(deferred_split_shrinker));
+>>> +
+>>> +unlock:
+>>> +  	spin_unlock(&parent_ds_queue->split_queue_lock);
+>>> +  	spin_unlock_irq(&ds_queue->split_queue_lock);
+>>> +}
+>>> +#endif
+>>> +
+>>> #ifdef CONFIG_DEBUG_FS
+>>> static void split_huge_pages_all(void)
+>>> {
+>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>> index e090f29eb03bd..d03da72e7585d 100644
+>>> --- a/mm/memcontrol.c
+>>> +++ b/mm/memcontrol.c
+>>> @@ -3887,6 +3887,7 @@ static void mem_cgroup_css_offline(struct =
+cgroup_subsys_state *css)
+>>> zswap_memcg_offline_cleanup(memcg);
+>>>=20
+>>> 	memcg_offline_kmem(memcg);
+>>> +  	reparent_deferred_split_queue(memcg);
+>> Since the dying flag of a memcg is not set under split_queue_lock,
+>> two threads holding different split_queue_locks (e.g., one for the
+>> parent memcg and one for the child) can concurrently manipulate the
+>> same split-queue list of a folio. I think we should take the same
+>=20
+> If we ensure that we will check CSS_DYING every time we take the
+> split_queue_lock, then the lock protecting deferred split queue
+> must be the same lock.
+>=20
+> To be more clear, consider the following case:
+>=20
+> CPU0              CPU1              CPU2
+>=20
+>                  folio_split_queue_lock
+>                  --> get child queue and lock
+>=20
+> set CSS_DYING
+>=20
+>                                    deferred_split_scan
+>                  unlock child queue lock
+>                                    --> acquire child queue lock
+>                                        ***WE SHOULD CHECK CSS_DYING =
+HERE***
+>=20
+>=20
+> reparent spilt queue
+>=20
+> The deferred_split_scan() is problematic now, I will fix it as follow:
+>=20
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 5fc0caca71de0..9f1f61e7e0c8e 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -4208,6 +4208,7 @@ static unsigned long deferred_split_scan(struct =
+shrinker *shrink,
+>        struct folio *folio, *next;
+>        int split =3D 0, i;
+>        struct folio_batch fbatch;
+> +      struct mem_cgroup *memcg;
+>=20
+> #ifdef CONFIG_MEMCG
+>        if (sc->memcg)
+> @@ -4217,6 +4218,11 @@ static unsigned long deferred_split_scan(struct =
+shrinker *shrink,
+>        folio_batch_init(&fbatch);
+> retry:
+>        spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+> +      if (sc->memcg && css_is_dying(&sc->memcg->css)) {
 
-diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
-index dddbef6b2cb8..967967b2b8a9 100644
---- a/drivers/mailbox/zynqmp-ipi-mailbox.c
-+++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
-@@ -62,7 +62,8 @@
- #define DST_BIT_POS	9U
- #define SRC_BITMASK	GENMASK(11, 8)
- 
--#define MAX_SGI 16
-+/* Macro to represent SGI type for IPI IRQs */
-+#define IPI_IRQ_TYPE_SGI	2
- 
- /*
-  * Module parameters
-@@ -121,6 +122,7 @@ struct zynqmp_ipi_mbox {
-  * @dev:                  device pointer corresponding to the Xilinx ZynqMP
-  *                        IPI agent
-  * @irq:                  IPI agent interrupt ID
-+ * @irq_type:             IPI SGI or SPI IRQ type
-  * @method:               IPI SMC or HVC is going to be used
-  * @local_id:             local IPI agent ID
-  * @virq_sgi:             IRQ number mapped to SGI
-@@ -130,6 +132,7 @@ struct zynqmp_ipi_mbox {
- struct zynqmp_ipi_pdata {
- 	struct device *dev;
- 	int irq;
-+	unsigned int irq_type;
- 	unsigned int method;
- 	u32 local_id;
- 	int virq_sgi;
-@@ -887,7 +890,7 @@ static void zynqmp_ipi_free_mboxes(struct zynqmp_ipi_pdata *pdata)
- 	struct zynqmp_ipi_mbox *ipi_mbox;
- 	int i;
- 
--	if (pdata->irq < MAX_SGI)
-+	if (pdata->irq_type == IPI_IRQ_TYPE_SGI)
- 		xlnx_mbox_cleanup_sgi(pdata);
- 
- 	i = pdata->num_mboxes - 1;
-@@ -956,14 +959,16 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
- 		dev_err(dev, "failed to parse interrupts\n");
- 		goto free_mbox_dev;
- 	}
--	ret = out_irq.args[1];
-+
-+	/* Use interrupt type to distinguish SGI and SPI interrupts */
-+	pdata->irq_type = out_irq.args[0];
- 
- 	/*
- 	 * If Interrupt number is in SGI range, then request SGI else request
- 	 * IPI system IRQ.
- 	 */
--	if (ret < MAX_SGI) {
--		pdata->irq = ret;
-+	if (pdata->irq_type == IPI_IRQ_TYPE_SGI) {
-+		pdata->irq = out_irq.args[1];
- 		ret = xlnx_mbox_init_sgi(pdev, pdata->irq, pdata);
- 		if (ret)
- 			goto free_mbox_dev;
--- 
-2.43.0
+There are more than one place where we check whether a memcg is dying,
+it is better to introduce a helper like mem_cgroup_is_dying to do this
+in memcontrol.h.
+
+> +               spin_unlock_irqrestore(&ds_queue->split_queue_lock, =
+flags);
+
+Yes, we could fix this like this way. But I suggest we introduce another
+helper like folio_split_queue_lock to do the similar retry logic. Every =
+users
+of split_queue_lock are supposed to use this new helper or =
+folio_split_queue_lock
+to get the lock.
+
+> +               memcg =3D parent_mem_cgroup(sc->memcg);
+> + 		=
+spin_lock_irqsave(&memcg->deferred_split_queue.split_queue_lock, flags);
+> +       }
+>        /* Take pin on all head pages to avoid freeing them under us */
+>        list_for_each_entry_safe(folio, next, &ds_queue->split_queue,
+>                                                        _deferred_list) =
+{
+>=20
+> Of course I'll add helper functions and do some cleanup.
+
+Yes.
+
+>=20
+> Thanks,
+> Qi
+>=20
+>=20
+>> solution like list_lru does to fix this.
+>> Muchun,
+>> Thanks.
+>>> reparent_shrinker_deferred(memcg);
+>>> wb_memcg_offline(memcg);
+>>> lru_gen_offline_memcg(memcg);
+>>> --=20
+>>> 2.20.1
+
 
 
