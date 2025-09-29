@@ -1,125 +1,243 @@
-Return-Path: <linux-kernel+bounces-836100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA71BA8B8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:46:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A96BA8B97
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEEEC3BB6AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:46:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57017189DFF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FD72E0418;
-	Mon, 29 Sep 2025 09:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367692E0400;
+	Mon, 29 Sep 2025 09:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ScLp0n5E"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+298Ff7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B47D27E06D;
-	Mon, 29 Sep 2025 09:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DC427E06D;
+	Mon, 29 Sep 2025 09:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759139187; cv=none; b=t9uHiwKFmBEf6OrQuZdidf2EZasCAXv0Eum9BrtCSz01aoY8kEp4EGPctPCPaztY4y7ACLRVZvlT/O3YUitickYpYz3OTzmeMsOzKx1BVPk2H+g7Z/Qv5iJlr+JHm59FRIMzsbW+phd1fpZPFyhsmhZwqFXyMR/y2bv879Oivfg=
+	t=1759139247; cv=none; b=sIlI84tYpG5FSjkMctc5LYcCQ+NTRhMfnFw4n5mzCwQWAjS5M6Y+9Rc8BhuJirKSYqaGVRmbG+03W6c046A+3Fultxct4NX/1BzAW8QknyuJZFfBzUpH5mKg7RA117u+af1EfqwDocgv6LAfcP8T306NyUWHiQDBUey/6OgucnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759139187; c=relaxed/simple;
-	bh=tAQ0z88IVH9cwoTS3/hEi0QtFi9WWrwFP5+oS9kp2EQ=;
+	s=arc-20240116; t=1759139247; c=relaxed/simple;
+	bh=SWxVtS/I90cKp0//idHYCioZS7tVz03JzDpic4FXwek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=riV7bpmirGeff2TFV8R/bIjYQU5A4tsbjcIobTkD+G6zuLGO4f9xfjC4wq+rcqsScMfOHx4ijn6yyQlT3rMMOKNaWFCaHrW7qs9o8UOswh9G4HLx5Q/SaXG3QyC8qauZDsbLZENgavEZLQw/oUJcz8FTSkCpAYA5mWgB1pAy/1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ScLp0n5E; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.17])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id B07B74028387;
-	Mon, 29 Sep 2025 09:46:20 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru B07B74028387
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1759139180;
-	bh=KBkfj0Ry6JPnYVze3a/9swiipK9iA83UU8fx5Xmmhc0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6b/1JzjjUc+83iVQjTrr7bdBS73u2fSjy84YE3Q0LaLop+NNMXrK5CpRQK0g8/2mYc4i4og6HHFm8u4yVQ0S+fSa7wXCV4o4BxWgcZPHfbCio3TqdCVQU4O/Hrh3kmqqA61s4BQsyn375uTS2rkybYMhCs9k+wYKJ57SU6oum4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+298Ff7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2079AC4CEF4;
+	Mon, 29 Sep 2025 09:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759139247;
+	bh=SWxVtS/I90cKp0//idHYCioZS7tVz03JzDpic4FXwek=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ScLp0n5ElKTMAiPv0bYlYvA7HyLVv2+z+WDNColfFgOCpkBny+9tMBLzdb89cAROf
-	 36nXAJyDL6w4JKtRjSW4QltDay8YLjRecfzWZjVDvexH2Q0/klQfQWHm6wQkghEtES
-	 VZwdt+Q3HA0W/ICsthKOZ1fBWG/r55CU5bS3k1jg=
-Date: Mon, 29 Sep 2025 12:46:20 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, 
-	Zong-Zhe Yang <kevin_yang@realtek.com>, Po-Hao Huang <phhuang@realtek.com>, 
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH rtw-next 3/6] wifi: rtw89: implement C2H TX report handler
-Message-ID: <20250929121400-91aaec5c84b4868757ce3384-pchelkin@ispras>
-References: <20250920132614.277719-1-pchelkin@ispras.ru>
- <20250920132614.277719-4-pchelkin@ispras.ru>
- <5316222e-5d9d-4cb8-b161-06ba311bdc2d@gmail.com>
- <07ee4e8c-bcb8-4349-afd3-59bc58899116@gmail.com>
+	b=s+298Ff7MNjVbt+HJRjRUlVi81AmGqLair3fvDRI41cgeNx2c2e5JOqaNETy1P/tR
+	 jfha/HtcvfrSoIbOKlyZbKAOcYd5MOwCX/zTxBWC8et8O8V6PCm8IlbylZOsCqSg+0
+	 JVGOKRErTXI0VJn0AoyIJ4XExpKuTom5vyeY7cFsJNAbCWAKEF82rltvtqLZsLElzV
+	 agkFYQLWqKNU5I05O71SNCDPnyyh2Ho7klQqZB3cha0V2rKkzm5fZPZHy8n9/RhsEa
+	 JUfMVdoH5M5JuyWiGcIqMcwXIbpHHoPo1S8hEg/ZGFT1znESzHhgGoEINXgdwnwPtk
+	 /UsnxYmFtx9DQ==
+Date: Mon, 29 Sep 2025 11:47:23 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 01/12 for v6.18] misc
+Message-ID: <20250929-trivial-zoodirektor-9e2bc1148d03@brauner>
+References: <20250926-vfs-618-e880cf3b910f@brauner>
+ <20250926-vfs-misc-fdd0c7318e6a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="vib54rji3wezmzgu"
+Content-Disposition: inline
+In-Reply-To: <20250926-vfs-misc-fdd0c7318e6a@brauner>
+
+
+--vib54rji3wezmzgu
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <07ee4e8c-bcb8-4349-afd3-59bc58899116@gmail.com>
 
-On Wed, 24. Sep 22:16, Bitterblue Smith wrote:
-> On 24/09/2025 01:12, Bitterblue Smith wrote:
-> > On 20/09/2025 16:26, Fedor Pchelkin wrote:
-> >> diff --git a/drivers/net/wireless/realtek/rtw89/fw.h b/drivers/net/wireless/realtek/rtw89/fw.h
-> >> index ddebf7972068..f196088a8316 100644
-> >> --- a/drivers/net/wireless/realtek/rtw89/fw.h
-> >> +++ b/drivers/net/wireless/realtek/rtw89/fw.h
-> >> @@ -3747,6 +3747,11 @@ struct rtw89_c2h_scanofld {
-> >>  #define RTW89_GET_MAC_C2H_MCC_REQ_ACK_H2C_FUNC(c2h) \
-> >>  	le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(15, 8))
-> >>  
-> >> +#define RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h) \
-> >> +	le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(7, 6))
-> >> +#define RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h) \
-> >> +	le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(12, 8))
-> > 
-> > This is only 4 bits:
-> > 
-
-Right, will be fixed.
-
-> > #define TXCCXRPT_SW_DEFINE_SH		8
-> > #define TXCCXRPT_SW_DEFINE_MSK		0xf
-> > 
-> > 
-> > The rest of the series looks good to me. (I don't know much about
-> > the RCU stuff.) I will test this tomorrow.
-> > 
+On Fri, Sep 26, 2025 at 04:18:55PM +0200, Christian Brauner wrote:
+> Hey Linus,
 > 
-> Actually, I found this in my notes:
+> /* Summary */
+> This contains the usual selections of misc updates for this cycle.
 > 
-> "how to get just one tx report for each request? currently it seems
-> to provide a report for each transmission attempt. how is the vendor
-> driver coping with that?"
+> Features:
 > 
-> I think your code doesn't account for this.
+> - Add "initramfs_options" parameter to set initramfs mount options. This
+>   allows to add specific mount options to the rootfs to e.g., limit the
+>   memory size.
 > 
-> Sorry I forgot about this detail. This behaviour is new in rtw89.
-> The chips supported by rtw88 provide only one report for each request.
+> - Add RWF_NOSIGNAL flag for pwritev2()
+> 
+>   Add RWF_NOSIGNAL flag for pwritev2. This flag prevents the SIGPIPE
+>   signal from being raised when writing on disconnected pipes or
+>   sockets. The flag is handled directly by the pipe filesystem and
+>   converted to the existing MSG_NOSIGNAL flag for sockets.
+> 
+> - Allow to pass pid namespace as procfs mount option
+> 
+>   Ever since the introduction of pid namespaces, procfs has had very
+>   implicit behaviour surrounding them (the pidns used by a procfs mount
+>   is auto-selected based on the mounting process's active pidns, and the
+>   pidns itself is basically hidden once the mount has been constructed).
+> 
+>   This implicit behaviour has historically meant that userspace was
+>   required to do some special dances in order to configure the pidns of
+>   a procfs mount as desired. Examples include:
+> 
+>   * In order to bypass the mnt_too_revealing() check, Kubernetes creates
+>     a procfs mount from an empty pidns so that user namespaced
+>     containers can be nested (without this, the nested containers would
+>     fail to mount procfs). But this requires forking off a helper
+>     process because you cannot just one-shot this using mount(2).
+> 
+>   * Container runtimes in general need to fork into a container before
+>     configuring its mounts, which can lead to security issues in the
+>     case of shared-pidns containers (a privileged process in the pidns
+>     can interact with your container runtime process).
+>     While SUID_DUMP_DISABLE and user namespaces make this less of an
+>     issue, the strict need for this due to a minor uAPI wart is kind of
+>     unfortunate.
+> 
+>     Things would be much easier if there was a way for userspace to just
+>     specify the pidns they want. So this pull request contains changes
+>     to implement a new "pidns" argument which can be set using
+>     fsconfig(2):
+> 
+>         fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+>         fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid", 0);
+> 
+>     or classic mount(2) / mount(8):
+> 
+>         // mount -t proc -o pidns=/proc/self/ns/pid proc /tmp/proc
+>         mount("proc", "/tmp/proc", "proc", MS_..., "pidns=/proc/self/ns/pid");
+> 
+> Cleanups:
+> 
+> - Remove the last references to EXPORT_OP_ASYNC_LOCK.
+> 
+> - Make file_remove_privs_flags() static.
+> 
+> - Remove redundant __GFP_NOWARN when GFP_NOWAIT is used.
+> 
+> - Use try_cmpxchg() in start_dir_add().
+> 
+> - Use try_cmpxchg() in sb_init_done_wq().
+> 
+> - Replace offsetof() with struct_size() in ioctl_file_dedupe_range().
+> 
+> - Remove vfs_ioctl() export.
+> 
+> - Replace rwlock() with spinlock in epoll code as rwlock causes priority
+>   inversion on preempt rt kernels.
+> 
+> - Make ns_entries in fs/proc/namespaces const.
+> 
+> - Use a switch() statement() in init_special_inode() just like we do in
+>   may_open().
+> 
+> - Use struct_size() in dir_add() in the initramfs code.
+> 
+> - Use str_plural() in rd_load_image().
+> 
+> - Replace strcpy() with strscpy() in find_link().
+> 
+> - Rename generic_delete_inode() to inode_just_drop() and
+>   generic_drop_inode() to inode_generic_drop().
+> 
+> - Remove unused arguments from fcntl_{g,s}et_rw_hint().
+> 
+> Fixes:
+> 
+> - Document @name parameter for name_contains_dotdot() helper.
+> 
+> - Fix spelling mistake.
+> 
+> - Always return zero from replace_fd() instead of the file descriptor number.
+> 
+> - Limit the size for copy_file_range() in compat mode to prevent a signed
+>   overflow.
+> 
+> - Fix debugfs mount options not being applied.
+> 
+> - Verify the inode mode when loading it from disk in minixfs.
+> 
+> - Verify the inode mode when loading it from disk in cramfs.
+> 
+> - Don't trigger automounts with RESOLVE_NO_XDEV
+> 
+>   If openat2() was called with RESOLVE_NO_XDEV it didn't traverse
+>   through automounts, but could still trigger them.
+> 
+> - Add FL_RECLAIM flag to show_fl_flags() macro so it appears in tracepoints.
+> 
+> - Fix unused variable warning in rd_load_image() on s390.
+> 
+> - Make INITRAMFS_PRESERVE_MTIME depend on BLK_DEV_INITRD.
+> 
+> - Use ns_capable_noaudit() when determining net sysctl permissions.
+> 
+> - Don't call path_put() under namespace semaphore in listmount() and statmount().
+> 
+> /* Testing */
+> 
+> gcc (Debian 14.2.0-19) 14.2.0
+> Debian clang version 19.1.7 (3+b1)
+> 
+> No build failures or warnings were observed.
+> 
+> /* Conflicts */
 
-I think this part is also controlled with a couple of extra bits in TX
-descriptor.
+There is one issue that was reported after I had generated the pull
+request. The mnt_ns_release() function can be passed a NULL pointer and
+that case needs to be handled.
 
-The vendor driver specifies a retry limit of 8 times.  It's probably the
-default one followed by the firmware anyway because multiple retries on
-failure status are seen via debug output of rtw89_mac_c2h_tx_rpt().
-https://github.com/fofajardo/rtl8851bu/blob/1f1a14492fdac757c64a7efb7846be6374984d09/core/rtw_xmit.c#L7438
+I'm appending a patch that I would ask you to please just apply on top
+of it. If you rather want me resend the pull request please just tell
+me!
 
-When there is a failed TX status reported by the firmware, the report is
-ignored until the limit is reached or success status appears.
-https://github.com/fofajardo/rtl8851bu/blob/1f1a14492fdac757c64a7efb7846be6374984d09/phl/hal_g6/hal_api_mac.c#L9547
+--vib54rji3wezmzgu
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-mount-handle-NULL-values-in-mnt_ns_release.patch"
 
-The only concern is what happens if the sequence number of transmitted
-frames wraps (4 bits is not a big range) when the previous frames with the
-same sequence number were not processed yet - probability of the situation
-increases with high retry limit being set.  I imagine the firmware has
-some sort of handling for this but your reply suggests constraining retry
-limit in the driver, are there maybe some other reasons we should set the
-retry limit to one TX report?
+From 9f11a1a5cab7e70bdb31077e475ab15d86d03682 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 29 Sep 2025 11:41:16 +0200
+Subject: [PATCH] mount: handle NULL values in mnt_ns_release()
+
+When calling in listmount() mnt_ns_release() may be passed a NULL
+pointer. Handle that case gracefully.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 6686c9f54b40..8db446cd7f4a 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -180,7 +180,7 @@ static void mnt_ns_tree_add(struct mnt_namespace *ns)
+ static void mnt_ns_release(struct mnt_namespace *ns)
+ {
+ 	/* keep alive for {list,stat}mount() */
+-	if (refcount_dec_and_test(&ns->passive)) {
++	if (ns && refcount_dec_and_test(&ns->passive)) {
+ 		fsnotify_mntns_delete(ns);
+ 		put_user_ns(ns->user_ns);
+ 		kfree(ns);
+-- 
+2.47.3
+
+
+--vib54rji3wezmzgu--
 
