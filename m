@@ -1,202 +1,169 @@
-Return-Path: <linux-kernel+bounces-835945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6056CBA869E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:39:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45077BA86A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BBBF16F9E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:39:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A34057A628A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534BF266B52;
-	Mon, 29 Sep 2025 08:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C302266B52;
+	Mon, 29 Sep 2025 08:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLGBCqIN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="yco22s5K"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999CF258CE7;
-	Mon, 29 Sep 2025 08:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D02323B638
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759135145; cv=none; b=pSOHLsr+d9zjTNZ5WszbS7wuIzuP7A4MiMSpGjB5Zs/pQxtMuLuw9IfdhiaOkCBXDdLW+rqtffsbNkeKD4LOgwP2c494zvAKfYaDcB8NHjnDpau0TG2AAVAqkeGFLOpuBhZHaI383x5+yF+E9SUiMPZ7SbeA7YaTh+KcAcQxLkg=
+	t=1759135177; cv=none; b=QVRx6pIUk4uvwy4q6P31q00fnGowlSiSTz6SfXRChiiJD/EjVwO1ROyCu/oWKYx/OmyJFGk8Uvth/X8Y6UK3Zc4oiDGBX66cfikbdAswOtHOBXTZdV60bG3ueqGu5ZgyQqpvnsOLLDoUadeTEvt+vJH2Fsg99N6yq0MJKH77Fn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759135145; c=relaxed/simple;
-	bh=4ZnJM9NZcxpYBaNkmuPhjRp1VdvB+zXJlpGwKpRLn1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j73JxhtpmkYpwnNbvnlEHzhtkylBppIdY46L9a2tagrD9yxdt/5alAolz8oYDdrHj9l4EZwJbHm8DW7M2YwYDRAt8FXCwsDedpdOI/TgnmeBsHkIGs5tMS+6wYXUTBvkKQVe5NYY72l5acuhfoRD/sTPoOQcYQexmqka/B3YLr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLGBCqIN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2955C4CEF4;
-	Mon, 29 Sep 2025 08:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759135145;
-	bh=4ZnJM9NZcxpYBaNkmuPhjRp1VdvB+zXJlpGwKpRLn1k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VLGBCqINRyKEAaZaQd+3uNgpyfoR6TJTZ09B6EcgPZFEyr2s4Av1p9hiDb1F2RlJU
-	 /mC4sRjx+svu6XcNBOq5XAQzE0ouukkw3YRQ5b/mM401E3YGtjiHZxa2ceDoRi38Th
-	 GUscUJmVkHVJfW83xa67nFyqpzUxsqbmArDu6GYl+81Fsp2qMzKuOo4j7mTdASGmu/
-	 jUq/Q5HKKPM/cbzXdEPAyo6gyWNqA5Ru+S8jLaVnajxrf2nP/nvzZ39+7t+dab6RM8
-	 W0MLXCcnQRXmwUlk/SnD281AU3da7jRtoqL9GywieckP+9QXWHof4TyuDifOxNbgrB
-	 SQ0+U2xj05BSg==
-Date: Mon, 29 Sep 2025 10:39:00 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rdunlap@infradead.org
-Subject: Re: [PATCH 2/2] docs: Makefile: avoid a warning when using without
- texlive
-Message-ID: <20250929103900.19c11b9a@foz.lan>
-In-Reply-To: <1d993906-bae3-41eb-963f-de960cc56dd0@gmail.com>
-References: <e23e03dd41e044d55e4ae24ffd9e1b49e3f2515a.1758881658.git.mchehab+huawei@kernel.org>
-	<f9ceb569-363c-4806-9451-4a4ef83b38ca@gmail.com>
-	<1d993906-bae3-41eb-963f-de960cc56dd0@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759135177; c=relaxed/simple;
+	bh=zdXHfYiqqEfNUFSLYiYIWqzt+Vby+zwT42p0bQKU5fM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vx5vaTW9QsQaai3kAYELGfqEnodr3YCHzh4oTCZtpFFAp9KnMM4IhEbRtXCQ+6ESvMEzMUcv3MGyh5D16AAA8e/XStbWZA/40Nrznpok7AsL88RmNY2tU+P9mFUqP1pihwDPRbxwbu5VvzUwEiSqkneuQ8Lqkl9c4QrFBA8lkqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=yco22s5K; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-427e5121313so12537745ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1759135175; x=1759739975; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+yZewoV3/hMV333NTGgFLedG7WjFfUKL3HMCvn71Hw=;
+        b=yco22s5KVtawXud3CBaJvaeoMuuSO3HE/qU8AZo8yFk4dXcVs5LTwBKuw4brMB+km1
+         qUmJryPuW0fQphzoUMMD/8Eoq/9yagQojGKjUX5LoqApS2irmkc1q1oUbbnTgGJep0Ag
+         Po7N3a1nPBB8lYDb6D5CVqHG1ygpsSJFFSfVBc4RZ2haStIWntRK7wfsE6bShO36MKAp
+         Ba/7tjzyyCRXtO4vWwA2vSkfRFkSIXLBRGrtApes3bZAT9k4A8k2z6qjDuSALMG87S67
+         aZ+siUifEedFom2bX9SrZDVOvPqIkveuY0sEZMe7K/s1MJpojlRcRwqdkVaW+dJmtq5F
+         FAHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759135175; x=1759739975;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7+yZewoV3/hMV333NTGgFLedG7WjFfUKL3HMCvn71Hw=;
+        b=U+YTGZpBCOvZLYrXnV5sWb+LbzOSIb0sR72NtZE2b+im0H9Dejwj1K5rbm/o5rQOIo
+         M467uyM5cbMVedRLYVAXIO3PXy+x/WgO4bngS8SmSHpzKv3ZGMqBlf3gbAsLOVC48ieM
+         EQU839To2U/FMQJLRI2qrYRRbywbaLcWLMhZfKsk6OUJd2b3DhrsX2c4tYSWQML+w0op
+         qF3db/eytZ80LuZe+vr/vrPS9RzQ9oIgSQt5a3/iLGtNSWJQhaZMLUso50b7+NBrf0Xt
+         EUhnD5LsjvoMFrnZfIEn7vGP6G8rlFEeuQXOCQie2OPXQL6Gdg6uLgaN8BGQ+oPv6s5A
+         ol6g==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Z6M3r9gQstnBYWnyWRfHmbs5G5Oab3ES6916PYn6BjTecek4yOP2dFBk71Exf9VGobSow5mCG7dJudU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykbkTLA49lwiqjLQ4mblHGraARSggrc9wf6UaFBAbcJCftPyre
+	DxrxptD7zJ0CfhN777XCq2YzI84QpATSC3rNtqBNrpIKcuGAn02jaHX25nqwQNSWMfWXWkTAD5k
+	BjUTy7H/NkWQfhJz0S0nNpKxIHVzcuqOnA9QOJB8kdw==
+X-Gm-Gg: ASbGncsZBxRJmRVzUjwCrn7TZRV8xFdnOSM/18GSgmtPQ+Isgz6MEYxeDAxczZAAKH0
+	XwcUoU+NwFbqa0rDLRKoB+Fn9R5DkgrrrxjiOkmHpfNwNnjTpslA4s9gc0vhNCXlvMA6W24DXH9
+	DDs+3T8kOYZ3Un1crDOkfNQEDO4exJg3YH2BfSolnZRCl5IINY7lL6pHAYAApqDvLWjZoC1flym
+	L4J1WJ8GGaS7ExBlpPUYlCTUMcovcjlQxz5BcNk8/xVJfT+WAU=
+X-Google-Smtp-Source: AGHT+IGH0RD4zyGfaK6z15i7jobE8xMNaqJ74RouKvg9EZSyUDLrkj+1EJNMbNJpFYXh0Kfv76FxouXZMzCplRpBspw=
+X-Received: by 2002:a05:6e02:4409:b0:423:fb44:e8d4 with SMTP id
+ e9e14a558f8ab-425955d00a2mr225611195ab.6.1759135175264; Mon, 29 Sep 2025
+ 01:39:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250926124912.243464-1-pmladek@suse.com> <20250926124912.243464-3-pmladek@suse.com>
+In-Reply-To: <20250926124912.243464-3-pmladek@suse.com>
+From: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Date: Mon, 29 Sep 2025 09:39:23 +0100
+X-Gm-Features: AS18NWB1cWWMcOl-z-W0vgKnyVgsKKGijSL3OTnvX-cbjFUjnGidqrhxQAvwHCQ
+Message-ID: <CALqELGxuA+5Zqqrsw0XtXrDLua_rcD_odrYjV29fOXai+M0qaw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] printk/nbcon/panic: Allow printk kthread to sleep
+ when the system is in panic
+To: Petr Mladek <pmladek@suse.com>
+Cc: John Ogness <john.ogness@linutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Tony Lindgren <tony@atomide.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
+	Serge Semin <fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Em Sat, 27 Sep 2025 18:12:19 +0900
-Akira Yokosawa <akiyks@gmail.com> escreveu:
+On Fri, 26 Sept 2025 at 13:50, Petr Mladek <pmladek@suse.com> wrote:
+>
+> The printk kthread might be running when there is a panic in progress.
+> But it is not able to acquire the console ownership any longer.
+>
+> Prevent the desperate attempts to acquire the ownership and allow sleeping
+> in panic. It would make it behave the same as when there is any CPU
+> in an emergency context.
+>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  kernel/printk/internal.h | 1 +
+>  kernel/printk/nbcon.c    | 6 ++++--
+>  kernel/printk/printk.c   | 2 +-
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+> index ef282001f200..6e8578102fb3 100644
+> --- a/kernel/printk/internal.h
+> +++ b/kernel/printk/internal.h
+> @@ -332,6 +332,7 @@ struct printk_message {
+>         unsigned long           dropped;
+>  };
+>
+> +bool panic_in_progress(void);
+>  bool other_cpu_in_panic(void);
+>  bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>                              bool is_extended, bool may_supress);
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index 08b196e898cd..219ae0c8b5ed 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -1178,7 +1178,8 @@ static bool nbcon_kthread_should_wakeup(struct console *con, struct nbcon_contex
+>          * where the context with a higher priority takes over the nbcon console
+>          * ownership in the middle of a message.
+>          */
+> -       if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)))
+> +       if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)) ||
+> +           unlikely(panic_in_progress()))
+>                 return false;
+>
+>         cookie = console_srcu_read_lock();
+> @@ -1236,7 +1237,8 @@ static int nbcon_kthread_func(void *__console)
+>                  * Block the kthread when the system is in an emergency or panic
+>                  * mode. See nbcon_kthread_should_wakeup() for more details.
+>                  */
+> -               if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)))
+> +               if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)) ||
+> +                   unlikely(panic_in_progress()))
+>                         goto wait_for_event;
+>
+>                 backlog = false;
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index ebf10352736f..174d42041594 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -345,7 +345,7 @@ static void __up_console_sem(unsigned long ip)
+>  }
+>  #define up_console_sem() __up_console_sem(_RET_IP_)
+>
+> -static bool panic_in_progress(void)
+> +bool panic_in_progress(void)
+>  {
+>         return unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID);
+>  }
+> --
+> 2.51.0
+>
 
-> Sorry, a quick follow-up.
-> 
-> On Sat, 27 Sep 2025 16:35:08 +0900, Akira Yokosawa wrote:
-> > On Fri, 26 Sep 2025 12:16:19 +0200, Mauro Carvalho Chehab wrote:  
-> >> As reported by Randy, running make htmldocs on a machine
-> >> without textlive now produce warnings:
-> >>
-> >>     $ make O=DOCS htmldocs
-> >>     ../Documentation/Makefile:70: warning: overriding recipe for target 'pdfdocs'
-> >>     ../Documentation/Makefile:61: warning: ignoring old recipe for target 'pdfdocs'
-> >>
-> >> That's because the code has now two definitions for pdfdocs in
-> >> case $PDFLATEX command is not found. With the new script, such
-> >> special case is not needed anymore, as the script checks it.
-> >>
-> >> Drop the special case. Even after dropping it, on a machine
-> >> without LaTeX, it will still produce an error as expected,
-> >> as running:
-> >>
-> >>     $ ./tools/docs/sphinx-build-wrapper pdfdocs
-> >>     Error: pdflatex or latexmk required for PDF generation
-> >>
-> >> does the check. After applying the patch we have:
-> >>
-> >>     $ make SPHINXDIRS=peci htmldocs
-> >>     Using alabaster theme
-> >>     Using Python kernel-doc
-> >>
-> >>     $ make SPHINXDIRS=peci pdfdocs
-> >>     Error: pdflatex or latexmk required for PDF generation
-> >>     make[2]: *** [Documentation/Makefile:64: pdfdocs] Error 1
-> >>     make[1]: *** [/root/Makefile:1808: pdfdocs] Error 2
-> >>     make: *** [Makefile:248: __sub-make] Error 2
-> >>
-> >> Which is the expected behavior.
-> >>  
-> > 
-> > There seems to be a related issue.
-> > 
-> > At current "docs-mw", under build environments who don't have xelatex nor latexmk,
-> > 
-> >     $ make SPHINXDIRS=peci latexdocs
-> > 
-> > completes without any issue.
-> > 
-> > In the resulting .../latex/peci directory, one can run  
-> 
->      I meant:      .../peci/latex
-> 
-
-True. This is an one-line fix:
-
-	@@ -650,7 +650,7 @@ class SphinxBuilder:
-	             if not sphinxbuild and target != "mandocs":
-	                 sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")
-	 
-	-        if builder == "latex":
-	+        if target == "pdfdocs":
-	             if not self.pdflatex_cmd and not self.latexmk_cmd:
-	                 sys.exit("Error: pdflatex or latexmk required for PDF generation")
-
-With that:
-
-	$ make SPHINXDIRS=peci latexdocs
-	Using alabaster theme
-	Using Python kernel-doc
-	WARNING: dot(1) not found, for better output quality install graphviz from https://www.graphviz.org
-
-	$ tree Documentation/output/
-	Documentation/output/
-	`-- peci
-	    `-- latex
-	...
-	        |-- Makefile
-	...
-        	|-- peci.tex
-	...
-
-	$ make SPHINXDIRS=peci pdfdocs
-	Error: pdflatex or latexmk required for PDF generation
-	make[2]: *** [Documentation/Makefile:64: pdfdocs] Error 1
-	make[1]: *** [/root/Makefile:1808: pdfdocs] Error 2
-	make: *** [Makefile:248: __sub-make] Error 2
-
-	$ (cd Documentation/output/peci/latex/; make)
-	latexmk -pdf -dvi- -ps-  'peci.tex'
-	make: latexmk: No such file or directory
-	make: *** [Makefile:29: peci.pdf] Error 127
-
-the original behavior is restored.
-
-> > 
-> >     $ make PDFLATEX="latexmk -xelatex" LATEXOPTS="-interaction=batchmode -no-shell-escape"
-> > 
-> > and build peci.pdf.  
-> 
-> I failed to mention, but of course you need to transfer/share said
-> .../peci/latex/ to another build environment who has all the required
-> packages for "pdfdocs".
-> 
-> I often use such heterogeneous combination of running "make latexdocs"
-> + running make under each of .../$SPHINXDIRS/latex/ using another
-> environment.
-> 
-> This way, you need only one set of working texlive packages for testing
-> against various Sphinx's latex builder releases.
-> 
-> > 
-> > At current "build-scripts", I get this:
-> > 
-> >     $ make SPHINXDIRS=peci latexdocs
-> >     Error: pdflatex or latexmk required for PDF generation
-> >     make[2]: *** [Documentation/Makefile:68: latexdocs] Error 1
-> >     make[1]: *** [<srcdir>/Makefile:1806: latexdocs] Error 2
-> >     make: *** [Makefile:248: __sub-make] Error 2
-> > 
-> > Patch 2/2 doesn't change the behavior.
-> > 
-> > This is yet another regression.  Please teach sphinx-build-wrapper of the
-> > fact that "latexdocs" does not run those texlive commands.  It is only the
-> > "pdfdocs" phase that will run them.
-> >   
-> 
-> You see, "make latexdocs" is supposed to generate all the necessary files
-> for building PDFs to be consumed by make + latexmk/xelatex.
-> There is a clear boundary between "latexdocs" and "pdfdocs".
-
-True.
-
-Such patch should address your usecase: it will allow building
-tex files on one machine and generate pdf on a different one.
+Reviewed-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
 
 Thanks,
-Mauro
+
+Andrew Murray
 
