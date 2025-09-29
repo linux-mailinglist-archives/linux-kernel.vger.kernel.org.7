@@ -1,92 +1,123 @@
-Return-Path: <linux-kernel+bounces-835670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2187BBA7C20
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:29:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F91BA7C29
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB3964E05DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73B31635CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0311F30A9;
-	Mon, 29 Sep 2025 01:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PPo2Qs1y"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C711F4188;
+	Mon, 29 Sep 2025 01:30:39 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644312110;
-	Mon, 29 Sep 2025 01:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5248013777E;
+	Mon, 29 Sep 2025 01:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759109337; cv=none; b=Dw1b8kfMuJ8B5j29LoCQc25x9cXp5hm7m6Rl3exwLIOjrZ7Go4ILLO7XumRq3sBFoLnxh5btGWR6Jg9Ccaqp8QN2V3ca5sgnG9YaK7si9bE++HNTwAl6RS0gFRb5QCeJpOz+BnRWgjmdipmx6hdZ6KO7UtodJHAEIsuNUZ+maeQ=
+	t=1759109439; cv=none; b=pKVRPPPFtnNGrmdBCtDtdRw3fw9yJtu1DGTXKE+Ow7l6q94+R3kITLcpqUmwgIO1/l1KjQia6V11DoKPS/2Y54RbauwYhdcFurSau1KP5D5TJwLK4wzXIkzVDja3VLx7zWNMPmQCt58ljd5cOz7RWRq5dj2/OCu6Kq8RszMFId4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759109337; c=relaxed/simple;
-	bh=EmrVUjt1B7D3/886Y65cqPufs0zQ3UHheF0eHCWdCF8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsbiIl5M6OrkFdQ2ccZW66BhWYfXaA4SYG2fDEfwrL9b+7lDqUnMoRoFKaV/yLISFrL3c3WNLqZMRdpMa3CSjFPIbUVnUhF45PkqGmdECQaGcGhz6Sj8vc/VAtQmNNwC5krcPDnatSEOg2tbfqx9EF/YwXhGHwfKbWHQ+OwEQ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PPo2Qs1y; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1759109330; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=295nRhO9MYqzL4GtE97bjEtpjgYaFIkVbxp0RokEeP0=;
-	b=PPo2Qs1y20JQG6bUGvr5Vt87YI+06Tcp3cDnFrJ4GVLOSmo0g7ImKnTNv0b1tKxBqHOeIrjlT/Z/Oq4HXK32mnoIEAEjNUSH0MlHHniR/0U8OVjGBTI7uS5Y1DTGhnE534PhrmQOvp5fwPkQI4nXKwfx1c0jo8d6iWK3/rXHfPk=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WozpMtJ_1759109329 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 29 Sep 2025 09:28:50 +0800
-Date: Mon, 29 Sep 2025 09:28:49 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: Halil Pasic <pasic@linux.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Sidraya Jayagond <sidraya@linux.ibm.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	Mahanta Jambigi <mjambigi@linux.ibm.com>,
-	Tony Lu <tonylu@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>,
-	Guangguan Wang <guangguan.wang@linux.alibaba.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH net-next v5 1/2] net/smc: make wr buffer count
- configurable
-Message-ID: <aNng0d1YGP7K0C6z@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20250929000001.1752206-1-pasic@linux.ibm.com>
- <20250929000001.1752206-2-pasic@linux.ibm.com>
+	s=arc-20240116; t=1759109439; c=relaxed/simple;
+	bh=jgYfnGlpJUsBLnIp0dgG9Um0H/BiAyG/N/ufXTWeP7g=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Tuna/Fz8wTFMWXE+KpZzKYNy4oxjDBs2Arf3sY0LEDNLBVtNhe56oLXt56peyDNuWr1snK6r+FCJPJIwa2qduV0obBKlRsFvbFeb0kqmW3UADxvIIKyKu79kdBnl//qfO/xL1LHF8IjtqVG8e3+zG9eqg8ubfX3GDd/3K/oPftY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowADHaRMg4dloIUR_CA--.42010S2;
+	Mon, 29 Sep 2025 09:30:19 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: sakari.ailus@linux.intel.com,
+	bingbu.cao@intel.com,
+	lixu.zhang@intel.com,
+	stanislaw.gruszka@linux.intel.com,
+	mchehab@kernel.org,
+	wentong.wu@intel.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH v5] media: pci: intel: ivsc: improve device reference counting in mei_ace driver
+Date: Mon, 29 Sep 2025 09:30:07 +0800
+Message-Id: <20250929013007.1920-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowADHaRMg4dloIUR_CA--.42010S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFWfWrWDAr1kCryDtF1fWFg_yoW8CF1kpr
+	Wq9FWkKFWUXr4jgr1UAa18ZFyrWa1Sya9xGr43Aa1xu3W5Z347try0qa47Ca4YqFZrCFy7
+	AF13KryfAF40yw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4
+	vE14v_KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUb9mitUU
+	UUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929000001.1752206-2-pasic@linux.ibm.com>
 
-On 2025-09-29 02:00:00, Halil Pasic wrote:
->Think SMC_WR_BUF_CNT_SEND := SMC_WR_BUF_CNT used in send context and
->SMC_WR_BUF_CNT_RECV := 3 * SMC_WR_BUF_CNT used in recv context. Those
->get replaced with lgr->max_send_wr and lgr->max_recv_wr respective.
->
->Please note that although with the default sysctl values
->qp_attr.cap.max_send_wr ==  qp_attr.cap.max_recv_wr is maintained but
->can not be assumed to be generally true any more. I see no downside to
->that, but my confidence level is rather modest.
->
->Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
->Reviewed-by: Sidraya Jayagond <sidraya@linux.ibm.com>
+The device reference counting in mei_ace_setup_dev_link() was
+incomplete, as the reference acquired by device_find_child_by_name()
+was not released immediately on the success path. Add put_device() to
+properly balance the reference count. Additionally, the redundant
+put_device() in mei_ace_remove() is removed.
 
-Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+Found by code review.
 
-Best regards,
-Dust
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v5:
+- jumped to err instead of err_put to avoid calling put_device() again in err_put as reviewer's instructions;
+Changes in v4:
+- updated the subject as suggestions;
+Changes in v3:
+- deleted the tag of Fixes and CC, and moved put_device() to immediately after device_link_add() as suggestions;
+Changes in v2:
+- modified the put_device() operations and the patch title as suggestions.
+---
+ drivers/media/pci/intel/ivsc/mei_ace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
+index 98310b8511b1..b306a320b70f 100644
+--- a/drivers/media/pci/intel/ivsc/mei_ace.c
++++ b/drivers/media/pci/intel/ivsc/mei_ace.c
+@@ -414,10 +414,11 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
+ 	/* setup link between mei_ace and mei_csi */
+ 	ace->csi_link = device_link_add(csi_dev, dev, DL_FLAG_PM_RUNTIME |
+ 					DL_FLAG_RPM_ACTIVE | DL_FLAG_STATELESS);
++	put_device(csi_dev);
+ 	if (!ace->csi_link) {
+ 		ret = -EINVAL;
+ 		dev_err(dev, "failed to link to %s\n", dev_name(csi_dev));
+-		goto err_put;
++		goto err;
+ 	}
+ 
+ 	ace->csi_dev = csi_dev;
+@@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
+ 	cancel_work_sync(&ace->work);
+ 
+ 	device_link_del(ace->csi_link);
+-	put_device(ace->csi_dev);
+ 
+ 	pm_runtime_disable(&cldev->dev);
+ 	pm_runtime_set_suspended(&cldev->dev);
+-- 
+2.17.1
 
 
