@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-836786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB454BAA90A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 22:05:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A2EBAA90D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 22:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A8C3A7281
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35C13AD1A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EF526A0E7;
-	Mon, 29 Sep 2025 20:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D711D26E712;
+	Mon, 29 Sep 2025 20:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q7z+zCtl"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FaSddbAa"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990D5262FD0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751BD26B2D5
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759176288; cv=none; b=XIvr211Rc7R25K9cuux2z5zoez77F1BqX2/Th92XNYTSRx/ID1YBxka8ndz6BTQn/QIxN4o67G27xl3//Shq15mf187F1BCr5+DdxyTvKGmXapdOv27LgTw5aT2ubxvn0mmba5gXC4dOhyvXkDI8e3L4l5yZ3QD4W+TE96DobKw=
+	t=1759176291; cv=none; b=Q/PpSqtQ3+ktylmH6C81QDwWTw5tzF/z07YTqOSn+DqvjoCP2wereNgT2vI5S+TrGJdwM7QqpG0o30a8KtUMuDIlUDToo7c/CLYVZoY9ndGZ40AIoS/YiIeeyREvXWfSQ4CMLf2HXyAT71GmXC/W9/V2pVp01V2sq78ji2QA7jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759176288; c=relaxed/simple;
-	bh=C8A0EwhcfuuAx55XHopx7Qq6/pw64JlfGfx0Qq2YB1E=;
+	s=arc-20240116; t=1759176291; c=relaxed/simple;
+	bh=8a0+2vCJjyXNTtdJZlFvg8lNK8djtqhRGCpzH9ay818=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jxdMwDyj0Ndqa4tPHZ2POC/9nue4t6B+nh214Xtaw7ZvDO9A2bugHhUazczoISHZSiofSpjkq5bMqPzFY2Okzy12KL4fzOVFrgFsf6M9q6muzVH7vRWgAEGeOeimiLjqt3MvpHIhsiLpj6+ZUJJNfCnQ3s1O2AVJ8pk+DYhOqsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q7z+zCtl; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version:Content-Type; b=b1aN9q+duh9V1gi4oJdVhC6mhu9jdmzB8Y7n8OtUXir4v0HyxIi+CmEPctw84wxA09WM8uaZ+u79iMA8JALq53VH8ZhZ2fecVT2JLlTSrafO7s4ZlI//Vf1nYhiqJrVM+e+V0rHv3HO+lCeUgSkBgQ9aPUxMUWFydvB0Vyw5ixU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FaSddbAa; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759176285;
-	bh=C8A0EwhcfuuAx55XHopx7Qq6/pw64JlfGfx0Qq2YB1E=;
+	s=mail; t=1759176287;
+	bh=8a0+2vCJjyXNTtdJZlFvg8lNK8djtqhRGCpzH9ay818=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q7z+zCtlSgOSfIU3O3rBHAbr/TNn4/JCyAo+kwFkcyU4Y3JXDJgNeh+KhSRxppLs3
-	 hwnh3qKVnUUoBe1CmbidWRp+9v1f6Orh7T7sOH7q7C7E0CydoRKa809oBV70+WvYuN
-	 Dn/OfwDTGPWn6UMxDf/7iX1OzdD9kjkhSjlXDOqX16JxOsCMQhw7GXkDsWfw/ovy7t
-	 +QpPvT/eao3Xaq3V6yLgtCzt0uU+A8bjbj6RZg886mqgEwZT0KN6cuh0dzblyHSTRG
-	 0ExGK0id0KStgofh9LxeEGimxShRT+xc5RXZzvIheDAapQjje/ZVhrikL+ScVikRbd
-	 nzdC2ccadCCGQ==
+	b=FaSddbAanvCPQ3ohMTVyKMYG4OP06ihGPZDgza9EwKFh7wuuRinArtJpx2ua/06cr
+	 brl58VRNx3tPr4j7uDQg6pRbbmVPjtgVfrGXpg9vMNtA9loeitCpQAqSYcsILQzGUn
+	 UHVdX77Slebrdm3ybibqtfEbGGz+PZrLrSJVKABMIwtoE1WBRmf+mBEqP4YnJJAdU9
+	 /6gV5hEADEX3xkIYZ/IV2mXJzjvdaYxs3OtC2wabBY/PRjIPPUZaR9ae4QU3URLwlz
+	 L6nZTLMlQVxby2Ft49+qz4n1ZdN1pVGMASTObXiEINLy+beXm2Zhl8cqjH3Psys3Ob
+	 EsPLr8wt/Gpcg==
 Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:826d:bc07:e98c:84a])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3BE2A17E1465;
-	Mon, 29 Sep 2025 22:04:44 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 100FE17E02B0;
+	Mon, 29 Sep 2025 22:04:47 +0200 (CEST)
 From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -77,9 +77,9 @@ Cc: linux-kernel@vger.kernel.org,
 	intel-gfx@lists.freedesktop.org,
 	linux-mm@kvack.org,
 	kernel@collabora.com
-Subject: [PATCH 4/8] drm/i915: Use huge tmpfs mount point helpers
-Date: Mon, 29 Sep 2025 22:03:12 +0200
-Message-ID: <20250929200316.18417-5-loic.molinari@collabora.com>
+Subject: [PATCH 5/8] drm/v3d: Use huge tmpfs mount point helpers
+Date: Mon, 29 Sep 2025 22:03:13 +0200
+Message-ID: <20250929200316.18417-6-loic.molinari@collabora.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250929200316.18417-1-loic.molinari@collabora.com>
 References: <20250929200316.18417-1-loic.molinari@collabora.com>
@@ -95,33 +95,33 @@ Content-Transfer-Encoding: 8bit
 Make use of the new drm_gem_shmem_huge_mnt_create() and
 drm_gem_shmem_huge_mnt_free() helpers to avoid code duplication.
 
+drm_gem_shmem_huge_mnt_free() handles NULL pointers.
+
 Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
 ---
- drivers/gpu/drm/i915/gem/i915_gemfs.c | 33 +++------------------------
- 1 file changed, 3 insertions(+), 30 deletions(-)
+ drivers/gpu/drm/v3d/v3d_gemfs.c | 31 +++----------------------------
+ 1 file changed, 3 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gemfs.c b/drivers/gpu/drm/i915/gem/i915_gemfs.c
-index a09e2eb47175..70563a6a0b81 100644
---- a/drivers/gpu/drm/i915/gem/i915_gemfs.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gemfs.c
-@@ -3,25 +3,13 @@
-  * Copyright © 2017 Intel Corporation
-  */
+diff --git a/drivers/gpu/drm/v3d/v3d_gemfs.c b/drivers/gpu/drm/v3d/v3d_gemfs.c
+index 8ec6ed82b3d9..f54705dba217 100644
+--- a/drivers/gpu/drm/v3d/v3d_gemfs.c
++++ b/drivers/gpu/drm/v3d/v3d_gemfs.c
+@@ -1,23 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ /* Copyright (C) 2024 Raspberry Pi */
  
 -#include <linux/fs.h>
 -#include <linux/mount.h>
 -#include <linux/fs_context.h>
 -
- #include "i915_drv.h"
- #include "i915_gemfs.h"
- #include "i915_utils.h"
+ #include "v3d_drv.h"
  
 -static int add_param(struct fs_context *fc, const char *key, const char *val)
 -{
 -	return vfs_parse_fs_string(fc, key, val, strlen(val));
 -}
 -
- void i915_gemfs_init(struct drm_i915_private *i915)
+ void v3d_gemfs_init(struct v3d_dev *v3d)
  {
 -	struct file_system_type *type;
 -	struct fs_context *fc;
@@ -130,13 +130,10 @@ index a09e2eb47175..70563a6a0b81 100644
  
  	/*
  	 * By creating our own shmemfs mountpoint, we can pass in
-@@ -38,23 +26,8 @@ void i915_gemfs_init(struct drm_i915_private *i915)
- 	if (GRAPHICS_VER(i915) < 11 && !i915_vtd_active(i915))
- 		return;
+@@ -31,20 +19,8 @@ void v3d_gemfs_init(struct v3d_dev *v3d)
+ 	if (!super_pages)
+ 		goto err;
  
--	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
--		goto err;
--
 -	type = get_fs_type("tmpfs");
 -	if (!type)
 -		goto err;
@@ -155,13 +152,14 @@ index a09e2eb47175..70563a6a0b81 100644
 +	if (IS_ERR(gemfs))
  		goto err;
  
- 	i915->mm.gemfs = gemfs;
-@@ -70,5 +43,5 @@ void i915_gemfs_init(struct drm_i915_private *i915)
+ 	v3d->gemfs = gemfs;
+@@ -60,6 +36,5 @@ void v3d_gemfs_init(struct v3d_dev *v3d)
  
- void i915_gemfs_fini(struct drm_i915_private *i915)
+ void v3d_gemfs_fini(struct v3d_dev *v3d)
  {
--	kern_unmount(i915->mm.gemfs);
-+	drm_gem_shmem_huge_mnt_free(i915->mm.gemfs);
+-	if (v3d->gemfs)
+-		kern_unmount(v3d->gemfs);
++	drm_gem_shmem_huge_mnt_free(v3d->gemfs);
  }
 -- 
 2.47.3
