@@ -1,264 +1,247 @@
-Return-Path: <linux-kernel+bounces-836753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DD5BAA7A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BE1BAA7B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF081C4AE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:34:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D5E167649
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A1724EA90;
-	Mon, 29 Sep 2025 19:33:38 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE582522BE;
+	Mon, 29 Sep 2025 19:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a+AU7DVe"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012068.outbound.protection.outlook.com [40.107.200.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DB424501B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759174417; cv=none; b=ZMyPP28D3AuAuE/SIoDTquwI8n33pMt+oZTZBH8w88JzA3vjJ62abiRR+rZHPYSVy+B38a3+UgTjT/yW1QXiXCbzjDypUDxkC4v1aWFL+2yBla7n5/aWRm30WF4mnJbcMQqx/i134bF3w2T3SETbdhgXVlxaQCAodeSk4NSsPoc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759174417; c=relaxed/simple;
-	bh=wGiKZAnsb3YEe58NquH0Orcolz5vSAfFGCS6LCnK2rQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kekCsbP7QbnRq+Ort8kTB0N/SaNnj2dlyllS8fIPBt5zA/UdHGhdRWBXLJZPH1kyuW0r5QXjkfCgCaCQIF/GbZ0FTkgS0K5944Gb2HI0hXwtXMZTTgEA77TRI4iG4ruuT9yDEGu/8ycf6KoerjQMLNfCfxvYcWMIgUl8m5gkz5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-930db3a16c1so107517539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:33:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759174415; x=1759779215;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sJdp0RWEbrFOqFl4UL/kp4fgCgB78oIk7e2Gy0Zc5Cc=;
-        b=TDWXUOkxfiYqc3MdpF9YlbCWoW77K29bveUb8hCIaULQI3SZ3x1O8outWSIUKVflyE
-         N83WwuMUJB9PDoKAkWZy9l6kn3vJ68UzU91ZIGBVtmKekeht1fiwYo3OjNLkHwNDLz+m
-         +we74qgNcU8Go/tG5A+0jwR5ULa5OalO150dhiyXUI1djca43apby5583KgefjrrRBQe
-         RI3c0G4wzceAarJxsuAzIvebUweot1eVFiyQ6mVANifN3kHPNlLjGKHKIINeCVLv+Zih
-         hHsc3eIPqkLvmRFTmimDG0n8ujHat7r9u0fWolaiIBr72bQTqEtj3odMQEaqhxxn+EBb
-         lISQ==
-X-Gm-Message-State: AOJu0Yy4fePsqLICly1YvAo6pMNo000jbW6dVPRhrQvzlZ4ATMPt5K6+
-	1Z6aYqgXftdHutyfw6zbLHC1bM1jXZB/G7MGA0p7fQy/87FKLZzF6xsTtZOy7GgJNfubylqmQfm
-	BRzsAPCv1B7GN6aCG0j4Bzg5pCpoYad9Pq2Sf7VuUpiRovCkpSMsb4QJqdKBHkw==
-X-Google-Smtp-Source: AGHT+IHkAbZf7WITD2E4VyuVxniXKv3h2j6y3GF0NKq8CmmnMitgMcU9CaXHvRONy9lDWFIRCCrAhT2pcd6CnlTGrU7KNNex8D04
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7522224AFA;
+	Mon, 29 Sep 2025 19:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759174531; cv=fail; b=Wc8DNBT/jcA+gnS9B4/TB/8pSZXNPcQGCYSzLyDvIuhkrr2jg4OtCk7YHdMRIHMGe04IpSzY24bOuXvm79bazAZoFJccH6DhBUfs1Pwz/M5ESlNgb06PBdBEY/Dur/7KLGg5wwMRKxgoT3jy78caxJFIbw/fSSj2krykS09SYZ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759174531; c=relaxed/simple;
+	bh=db+7af/LA6tmsPMZdPGpFLZ5NUYYusb252VdUOSYQ+4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=qG2F87R0E2DlJA3H+gpZK3oxopNjke4/jGawbohRXQnJ3WpUaLESov1m02E2eqoclbM/DS46KqHzffCvjeel4wgupJV8ilKpP9p/wZJcO5asaDt2JETyvBCe67ZpD4Za4LpcvdUVTD2utahUHSDSKQWOr7tP+9HDUTqvg/mFJwc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a+AU7DVe; arc=fail smtp.client-ip=40.107.200.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fGHsma+c/j1JODHS9fAT8CgJKmAiINfJ4EeV70YYLfU3Dc/tvMqa6SpHgH1ETXx/apiB510AuPCTwBiOfUaMsl4LZbm9EVkHRqw+YYyXPWNAvGaVTm2DfJ5HgRBMhuqply8qqsF6g/YDwp98ihuljPjybQD5HU3zxvsSruzQsCSX4F9EM8YdJ5J0gNIrbF48VVtCI9liJZSjWuXdXoFUlIfZsVDRNrODjtCUWAT245rARaxmYJwXgcp//s+QIQabrRu6S6V1D2TNF4iyRbaq3atcXQGTArKePKyjCNGubwFpMx0R0GoxJ4401bpISMdODUztUA9w81xywjaupJRMYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iEDTtLvnSaZ9AEXtlj763DtbhaQ//S6+jMx4pKqEbZ4=;
+ b=sOgG5KcPS6S32u7qtZ11HXtj1kCFWzzJ08x1UL+LyDwE6+IgVVnjZeuc2XCtmfRWaVqQsi5eVNrPdYozTvDCRTwrsSjmJYHn+TL9VV7RDL+Paoovg/DDJVIBrVe1Ebo/aZIeoYeAskDZ4w/bq4IUJuDceU2iYyPqO6/iwMV8LHM98Z9GJ7WkKtvzwhVEWWNbKBRVPPGYdIK5x8QzqGCq5dEQ8vGd81/cwx8P63lw0Rgp98oDvmD/EBtF9ge6PxAlA1SzMh9vi/2u8zSeElhWN5Vz5UeuxzS7G48VzNdRfZ4V+9/r53GbKr6QSQsiXEU4R0MIlr+Ip6WtN/xXMO9dxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iEDTtLvnSaZ9AEXtlj763DtbhaQ//S6+jMx4pKqEbZ4=;
+ b=a+AU7DVeKlNhJOZKIJd247/mke5Bn2U01Is4XLOKJMgvZ0yosEyyG58BZDH1R0rjD2A0u/3bkzSgelD9bzi6O2wF08j8EqyFuQKy2Gjph0gBmhQn8xNg9p6dX6jYl6lfvBjGfHFaW0+iYU/nGZ7gsa+gky/tilO5TcgKVz8T804=
+Received: from BLAPR03CA0091.namprd03.prod.outlook.com (2603:10b6:208:32a::6)
+ by MN2PR12MB4222.namprd12.prod.outlook.com (2603:10b6:208:19a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 19:35:26 +0000
+Received: from BN3PEPF0000B06F.namprd21.prod.outlook.com
+ (2603:10b6:208:32a:cafe::95) by BLAPR03CA0091.outlook.office365.com
+ (2603:10b6:208:32a::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.15 via Frontend Transport; Mon,
+ 29 Sep 2025 19:35:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BN3PEPF0000B06F.mail.protection.outlook.com (10.167.243.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.1 via Frontend Transport; Mon, 29 Sep 2025 19:35:25 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 29 Sep
+ 2025 12:35:25 -0700
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 29 Sep 2025 12:35:24 -0700
+Message-ID: <09b6bf14-752d-45b2-9cbb-f64f7b6703ee@amd.com>
+Date: Mon, 29 Sep 2025 14:35:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1686:b0:427:511c:f86f with SMTP id
- e9e14a558f8ab-42bfab93823mr61562015ab.17.1759174414704; Mon, 29 Sep 2025
- 12:33:34 -0700 (PDT)
-Date: Mon, 29 Sep 2025 12:33:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dadf0e.050a0220.1696c6.001c.GAE@google.com>
-Subject: [syzbot] [sound?] possible deadlock in snd_pcm_drop
-From: syzbot <syzbot+c9ab1eb0f8f5ab1f18be@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
-	syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    4ff71af020ae Merge tag 'net-6.17-rc8' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1191c2e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9ab1eb0f8f5ab1f18be
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1644dd34580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156d6f12580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3fb4198b5763/disk-4ff71af0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1499875eb2cc/vmlinux-4ff71af0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/182864fb8af7/bzImage-4ff71af0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c9ab1eb0f8f5ab1f18be@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.2.2869/8991 is trying to acquire lock:
-ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
-ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
-
-but task is already holding lock:
-ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: spin_lock_irq include/linux/spinlock_rt.h:93 [inline]
-ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: snd_pcm_group_lock_irq sound/core/pcm_native.c:98 [inline]
-ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: snd_pcm_stream_lock_irq sound/core/pcm_native.c:137 [inline]
-ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: class_pcm_stream_lock_irq_constructor include/sound/pcm.h:679 [inline]
-ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: snd_pcm_drop+0x10d/0x270 sound/core/pcm_native.c:2223
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&group->lock#2){+.+.}-{3:3}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       rt_spin_lock+0x88/0x2c0 kernel/locking/spinlock_rt.c:56
-       spin_lock include/linux/spinlock_rt.h:44 [inline]
-       _snd_pcm_stream_lock_irqsave+0x7c/0xa0 sound/core/pcm_native.c:171
-       class_pcm_stream_lock_irqsave_constructor include/sound/pcm.h:682 [inline]
-       snd_pcm_period_elapsed+0x1e/0x80 sound/core/pcm_lib.c:1938
-       dummy_hrtimer_callback+0x80/0x180 sound/drivers/dummy.c:386
-       __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
-       __hrtimer_run_queues+0x54f/0xd40 kernel/time/hrtimer.c:1825
-       hrtimer_run_softirq+0x1a3/0x2e0 kernel/time/hrtimer.c:1842
-       handle_softirqs+0x22f/0x710 kernel/softirq.c:579
-       __do_softirq kernel/softirq.c:613 [inline]
-       run_ktimerd+0xcf/0x190 kernel/softirq.c:1043
-       smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
-       kthread+0x70e/0x8a0 kernel/kthread.c:463
-       ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
--> #1 (&base->softirq_expiry_lock){+...}-{3:3}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       rt_spin_lock+0x88/0x2c0 kernel/locking/spinlock_rt.c:56
-       spin_lock include/linux/spinlock_rt.h:44 [inline]
-       hrtimer_cpu_base_lock_expiry kernel/time/hrtimer.c:1383 [inline]
-       hrtimer_run_softirq+0x7c/0x2e0 kernel/time/hrtimer.c:1838
-       handle_softirqs+0x22f/0x710 kernel/softirq.c:579
-       __do_softirq kernel/softirq.c:613 [inline]
-       run_ktimerd+0xcf/0x190 kernel/softirq.c:1043
-       smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
-       kthread+0x70e/0x8a0 kernel/kthread.c:463
-       ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
--> #0 ((softirq_ctrl.lock)){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
-       __lock_release kernel/locking/lockdep.c:5574 [inline]
-       lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
-       __local_bh_enable_ip+0x10c/0x270 kernel/softirq.c:228
-       hrtimer_cancel+0x39/0x60 kernel/time/hrtimer.c:1491
-       dummy_hrtimer_stop+0xcf/0x100 sound/drivers/dummy.c:410
-       snd_pcm_do_stop+0x127/0x1c0 sound/core/pcm_native.c:1525
-       snd_pcm_action_single sound/core/pcm_native.c:1305 [inline]
-       snd_pcm_action+0xe4/0x240 sound/core/pcm_native.c:1388
-       snd_pcm_stop sound/core/pcm_native.c:1561 [inline]
-       snd_pcm_drop+0x160/0x270 sound/core/pcm_native.c:2228
-       snd_pcm_oss_sync+0x1de/0xc30 sound/core/oss/pcm_oss.c:1733
-       snd_pcm_oss_release+0x102/0x250 sound/core/oss/pcm_oss.c:2574
-       __fput+0x45b/0xa80 fs/file_table.c:468
-       task_work_run+0x1d4/0x260 kernel/task_work.c:227
-       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-       exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
-       exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
-       syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
-       syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
-       do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  (softirq_ctrl.lock) --> &base->softirq_expiry_lock --> &group->lock#2
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&group->lock#2);
-                               lock(&base->softirq_expiry_lock);
-                               lock(&group->lock#2);
-  lock((softirq_ctrl.lock));
-
- *** DEADLOCK ***
-
-2 locks held by syz.2.2869/8991:
- #0: ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: spin_lock_irq include/linux/spinlock_rt.h:93 [inline]
- #0: ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: snd_pcm_group_lock_irq sound/core/pcm_native.c:98 [inline]
- #0: ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: snd_pcm_stream_lock_irq sound/core/pcm_native.c:137 [inline]
- #0: ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: class_pcm_stream_lock_irq_constructor include/sound/pcm.h:679 [inline]
- #0: ffff8880302d0150 (&group->lock#2){+.+.}-{3:3}, at: snd_pcm_drop+0x10d/0x270 sound/core/pcm_native.c:2223
- #1: ffffffff8d9a8d80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #1: ffffffff8d9a8d80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #1: ffffffff8d9a8d80 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
- #1: ffffffff8d9a8d80 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1bb/0x2c0 kernel/locking/spinlock_rt.c:57
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 8991 Comm: syz.2.2869 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
- __lock_release kernel/locking/lockdep.c:5574 [inline]
- lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
- __local_bh_enable_ip+0x10c/0x270 kernel/softirq.c:228
- hrtimer_cancel+0x39/0x60 kernel/time/hrtimer.c:1491
- dummy_hrtimer_stop+0xcf/0x100 sound/drivers/dummy.c:410
- snd_pcm_do_stop+0x127/0x1c0 sound/core/pcm_native.c:1525
- snd_pcm_action_single sound/core/pcm_native.c:1305 [inline]
- snd_pcm_action+0xe4/0x240 sound/core/pcm_native.c:1388
- snd_pcm_stop sound/core/pcm_native.c:1561 [inline]
- snd_pcm_drop+0x160/0x270 sound/core/pcm_native.c:2228
- snd_pcm_oss_sync+0x1de/0xc30 sound/core/oss/pcm_oss.c:1733
- snd_pcm_oss_release+0x102/0x250 sound/core/oss/pcm_oss.c:2574
- __fput+0x45b/0xa80 fs/file_table.c:468
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc9f7ffeec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffef674cdc8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 0000000000036070 RCX: 00007fc9f7ffeec9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000bf674d0bf
-R10: 0000001b31c20000 R11: 0000000000000246 R12: 00007fc9f8255fac
-R13: 00007fc9f8255fa0 R14: ffffffffffffffff R15: 0000000000000003
- </TASK>
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Peng Fan
+	<peng.fan@oss.nxp.com>
+CC: <jassisinghbrar@gmail.com>, <andersson@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20250925185043.3013388-1-tanmay.shah@amd.com>
+ <20250926073735.GD8204@nxa18884-linux.ap.freescale.net>
+ <e93f0ee7-687a-4f47-a847-90cc1ea87290@amd.com>
+ <20250928075641.GA29690@nxa18884-linux.ap.freescale.net>
+ <aNqbc5Q_tVStXkhI@p14s> <8cb065f6-eee3-49f4-b657-1f4c74f1b324@amd.com>
+Content-Language: en-US
+In-Reply-To: <8cb065f6-eee3-49f4-b657-1f4c74f1b324@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06F:EE_|MN2PR12MB4222:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1401ece3-c7ba-4192-8e30-08ddff8f56db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cFh3T3k2bzRPcWZZL0ZSU2FHd0svU1ZJKzV2bmc3dFlReFFGRWlsZVZHdVk4?=
+ =?utf-8?B?djgxK3VtcHh0c0hiMW5hV2h3cVFoWkUwUjZEcmNUMXphUkNNekZYQ3IwVEta?=
+ =?utf-8?B?bnI5MkxSL3FQakN5V2dFUFRxRHVhWE5Qc2pqVHM0NUtkb0prdVp0NVZiWXpr?=
+ =?utf-8?B?UlMydk5mQ2g4VXNPQ2l3OENaL3Q4eVRJTTRSSnhiS3IzL0tIY21OK0tYVEZw?=
+ =?utf-8?B?SjdGbWtCeFhoTkZXc1hjVVR0ZXB4cCtKUVZyMXcvSDJ4R1FGV1ppSStXcWd3?=
+ =?utf-8?B?bXFpSENTOExZdjY1b2ZENGZ3Z0FzM0lNNk9oTDVTSEYvcVNvcTVYS0h4MUpj?=
+ =?utf-8?B?SVYrOVNDYmF0dVFNOWNnOVIzTkdMcWZqaWZzYm1saTZIM1V3SExCZmJ2Q0R2?=
+ =?utf-8?B?TG5OaHdkZVU2QVdVUGFXemk0bC93WndmenN1bW4rNXZjY1kxVWw4ZlRNTm1v?=
+ =?utf-8?B?YTJqK0NRZE9sblB3WEIvc01oTmZtY1BhbEEzckk1QnpHd3ZCMUhqa01zaThE?=
+ =?utf-8?B?U21QYno5a1lPMWFsTE9IR3FUYis3azFJV1hwcmVvbzdBVS9Ia2t0dmhuVEVK?=
+ =?utf-8?B?UWZnTy93OHRWeTcycHRHczhRVm1CVmtvL2FzS3RFeHJyNW9Zck5lbER2TzNP?=
+ =?utf-8?B?KzN2ZVNDM25GaTBYV3h3cUQ4TDFxYTZuOWVucUsvNXVvWllaSnhwS2FtUHVn?=
+ =?utf-8?B?UjBPZGtUWEVjQmZCSk1rcWQvZG1GRU1rN2l4T2g5NEk1dDFGTmFjR015VkR5?=
+ =?utf-8?B?ejkxVGJOZFVOS0FyRHc2amY4OTJOazJ2VGFpbnVicEZoTXkrQzh3TnFuVXlO?=
+ =?utf-8?B?SWR4Z0IrRi8va0Z5MzFkQmJsZU80MGMzWjNVc0hTcWY4VjhWczlSU1U2eS9Q?=
+ =?utf-8?B?THVzQXhIcDU3N1dYbmpKRU1ENmJ4UlJQNnNsVUxkN0NhSHdiY1RKaGt4RGs4?=
+ =?utf-8?B?b3kzcFp5WDc0YnlSZVR3UytsVHNhU0pOSFBmUUlWQTQ1TE9WTklTTStqNU10?=
+ =?utf-8?B?SWYzalkySEVwbU92UEo5Zkc5YTY3d0RnYUdtLzhKeXZzMkFValZ1RVVZdHNJ?=
+ =?utf-8?B?Q3BhS2lVNkUxTExQNmhnbkNRN0sraEd2bXpkL0NSV1FaalFIcmxhSHdxR0FN?=
+ =?utf-8?B?YUJkMnJaVWtVUXNwK2lxaEg3TnYwSVkyYUlHRDJjdU5vc3doMXdRV0xIdEdr?=
+ =?utf-8?B?RHdoZWhwYkhpWFllUVRlbEZ4dXJ6VnIydlQvM2psNmNTb0N1RlptQmIzVlBT?=
+ =?utf-8?B?d2ZPdko4UjA1OGI4cm9CN091U2M3R2FzUnB0ZUpYRXA3VGhKejZ1cTRYb1VR?=
+ =?utf-8?B?UVM1MTFHM3ZZd1h4L2tvMVAxQm5KMm0xZXNMQ09aM0IzN2VPRmY3aTQrQXcr?=
+ =?utf-8?B?VkVMMXB6RlV2SW5pYnp1NEZlcFJUVUV2Yk4yZmZnSzhoWHZVTXBuc1paeGJO?=
+ =?utf-8?B?ZXRuendBSWZJbmVIQThVVjhjWWh3bG9vRVJxSmJoY04rN29qMHZkUjYzTDJU?=
+ =?utf-8?B?WU9PVmJPMndIOWFkdHZSckVTdVBhOGlzQzZyMTY0WWhRbkZNV0dWU204bXpq?=
+ =?utf-8?B?ZmpvcG1haU9ldlNMbmFuU1lid2M1d3NkTjB5UklyRWI3OUllTUxWNlJyaXh6?=
+ =?utf-8?B?RXI5cHdMRFVtYytFOGVROUJxOG5BS3ZMRklyMVlvRTNpcUpWYnlTU3hMSGxN?=
+ =?utf-8?B?Z25vajhucmswQlE1SnhWd25RbDBlTHRZU08xTFZma2xJWkR2ZEVaRWVaQUJt?=
+ =?utf-8?B?VGk3VnNQM3pTaHlwQ25HM1l5V09FbVFrTlRuWmc5T21ZWi9VcG5MT05hSnNN?=
+ =?utf-8?B?QnpqWmR5SmVQTVZCZjJjRzAyMlpSNjI4Q25sa3dCeVRjVlptVHJnd0VjVnU3?=
+ =?utf-8?B?SzFJUGRjRSt2dXhBRkFrbCt4Zk1RY2RXOUdwZlRYYXBIcmh2MC80S1c3aDNk?=
+ =?utf-8?B?M0FZbGp5Qy9jUDJCaWlxZUt6VnAxazlvd0pRVktLS2hzMEdkUTNBUk16eHE4?=
+ =?utf-8?B?MWNabUQ5TDJGcnBQUzRJL3Z5eklrRElDOFZoWXA4K0Zoa0JkUWhyTnJUVE1G?=
+ =?utf-8?Q?JlSM4Z?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 19:35:25.8691
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1401ece3-c7ba-4192-8e30-08ddff8f56db
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06F.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4222
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 9/29/25 2:26 PM, Tanmay Shah wrote:
+> 
+> 
+> On 9/29/25 9:45 AM, Mathieu Poirier wrote:
+>> On Sun, Sep 28, 2025 at 03:56:41PM +0800, Peng Fan wrote:
+>>> Hi,
+>>>
+>>> On Fri, Sep 26, 2025 at 10:40:09AM -0500, Tanmay Shah wrote:
+>>>>>> ---
+>>>>>> drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
+>>>>>> drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+>>>>>> include/linux/mailbox_client.h          |  1 +
+>>>>>
+>>>>> The mailbox and remoteproc should be separated.
+>>>>>
+>>>>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+[...]
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+>>>>
+>>>>>
+>>>>>> +    res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
+>>
+>> Please have a look at this condition again - the implementation of
+>> addr_to_rbuf() [1] is checking for space differently.
+>>
+>> [1]. https://elixir.bootlin.com/linux/v6.17/source/drivers/mailbox/ 
+>> mailbox.c#L32
+>>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Here Ack as well. I think it should be same as what's there in add_to_rbuf.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+>>>>>> +    spin_unlock_irqrestore(&chan->lock, flags);
+>>>>>> +
+>>>>>> +    return res;
+>>>>>> +}
+>>>>>> +EXPORT_SYMBOL_GPL(mbox_queue_full);
+>>>>>
+>>>>> add_to_rbuf is able to return ENOBUFS when call mbox_send_message.
+>>>>> Does checking mbox_send_message return value works for you?
+>>>>>
+>>>>
+>>>> That is the problem. mbox_send_message uses add_to_rbuf and fails. 
+>>>> But during
+>>>> failure, it prints warning message:
+>>>>
+>>>> dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
+>>>>
+>>>> In some cases there are lot of such messages on terminal. Functionally
+>>>> nothing is wrong and everything is working but user keeps getting false
+>>>> positive warning about increasing mbox tx queue length. That is why 
+>>>> we need
+>>>> API to check if mbox queue length is full or not before doing
+>>>> mbox_send_message. Not all clients need to use it, but some cane 
+>>>> make use of
+>>>> it.
+>>>
+>>> I think check whether mbox_send_message returns -ENOBUFS or not should
+>>> work for you. If the "Try increasing MBOX_TX_QUEUE_LEN" message
+>>> bothers you, it could be update to dev_dbg per my understanding.
+>>>
+>>
+>> This new API is trying to avoid calling mbox_send_message(), no 
+>> checking if it
+>> succeeded or not.  Moving dev_err() nto dev_dbg() is also the wrong 
+>> approach.
+>>
+> 
+> Correct.
+> 
+>>> Regards,
+>>> Peng
+>>>
+>>>>
+>>>>
+>>>>>> +
+>>>>>> /**
+>>>>>>    * mbox_send_message -    For client to submit a message to be
+>>>>>>    *                sent to the remote.
+>>>>>
+>>>>> Regards
+>>>>> Peng
+>>>>
+> 
+> 
 
-If you want to undo deduplication, reply with:
-#syz undup
 
