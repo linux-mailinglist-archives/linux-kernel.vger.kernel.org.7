@@ -1,945 +1,226 @@
-Return-Path: <linux-kernel+bounces-835619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BC3BA79DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905D6BA79E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5237C176380
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:06:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38BE2170F15
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B0E17736;
-	Mon, 29 Sep 2025 00:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9FF155A25;
+	Mon, 29 Sep 2025 00:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqXF2gmt"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BknjnLAD"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012059.outbound.protection.outlook.com [40.93.195.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31B6523A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759104386; cv=none; b=LdY0FNtM+EcR5Bk4hcoeght69ChSCVPUyF050lhfzlIcnJgiRAiih5iTzBeUaArv7XryQNBifkwCAt/FBXTGwQY9CiW0QlzTXW3KwSkPK47TcgCzeEH/4mHeopWvePL4ZrOcKemKqBFUW+A/dEH7ubPFV/7FH+eq/O7v+jK/P0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759104386; c=relaxed/simple;
-	bh=d2QvFCSUfe+Fp+M6nQLGLPWHY2SCA5gNT2dUY1nN8nk=;
-	h=From:To:Cc:Subject:Date:References:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=Q+TrgF8OtTjEIBKrPsygd3bqAO8Qm5szrv1o5SXkH/9IHZKNPD3LREcSv3bpSrv+5eIo8AqJtZjyCPYSjafKUDKHdJ1FgcHpGZOWt19hIcVHYxYKW3GKw7XVEsfX5khE0ZrCGERvlTTky3rbDb33q2hBz/Gfs74cW6zufI+QCEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqXF2gmt; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-27edcbcd158so37536465ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 17:06:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759104382; x=1759709182; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:user-agent:references:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W9d16OjcTsBmIwTgXwPK+sgRWZxZSJXVdCuiKPgCoeY=;
-        b=AqXF2gmta+fa4a2MKBYxATiB0ypNBOdeGYxiPPQ+0GfYQIfGvf9LtaIuvj5LI28iP7
-         iSIwzK8nl3Pq+HY8uPnNdOnjapZaGXxNfcPzP9us5yos6/b2M+TQMkTtqvyUNyqoSb7T
-         fhQXRLXroaXA/hYkl7d4I4W1edAUGVTNG89UnayQMiGAhL17KtRhYg2XqpH/LNRi3i8w
-         4l17kajx7AHZMBKqty/qwzVGke8OEauTk4bLq+luJefAosySe5nBfIn2oQsgnuG+LsAM
-         CIG4ajv1sy5eeaGFRccO5lGghzuQGLUgHYjws9Ao+ycilH1yFtKJLW/NVM+mwo9bSgVe
-         DXpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759104382; x=1759709182;
-        h=mime-version:message-id:in-reply-to:user-agent:references:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W9d16OjcTsBmIwTgXwPK+sgRWZxZSJXVdCuiKPgCoeY=;
-        b=fboFMaHbrA1h+5YrNJqbQ07WDds1UDRooZhef1CazFG/74oOMPzaF+LyIqAGa33VYw
-         OxQ5gE8yQoRdw+TxxBvyrv6EvE6bCVT5bAnoN8NPW+HMZkn92N8pZqJ9CmnliFXUKf/F
-         3b4vAYvcKnFiiXoJxhXantgCmCPxIs9Jq1KxNJ20psdIJbC19lyeNOa+pAPfsQe/GRSH
-         4MpFH1zmqoR1CFyDGN16t5GMEskJonIxx2nu8VtSE/ERFwbqsBmnqsyFvC+GHEfsqJsv
-         aW9Blu5YH98wb4o04PyfC6v/HYeZKNEhyjB+wGOoPKq3PCGW4tA8hPetfrkoJxCoPSnm
-         ou9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/eapoV4C5eFXAj0rzuZbUXqO5M0oM/EVLZWOCXjZXdOd+l6kdMPvWQqi28ROd6VEep8lKWJ0YkbKYTYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHRlRciV9z3VfdnJiWigLRyRVuLXA5UwXdFBC0gQ1vFtc82chP
-	oraOzob17VJh377r8nHCWWwG9TBQVo7WrP4ZBzQafC/9ryuWGWoTOdEA
-X-Gm-Gg: ASbGnctQho4odr8MxtQzDcr34I2vH471VjewGeXWXfh80o0o+JvedkCS5Tclz7IgM0H
-	dw2+Wyt/iXhBabe6zHZWCW6PRclkqqWd0x+wknCDg+xhmSw6K3+f74f+YwI2hqJxI8A8+cthU6s
-	3Ietxgjndz8w2sYYQG061ez16zpJDq8nhpKPjXjOGLAC+SZARc5fyykLUwcrZBIWbnlsCEb9kiA
-	wXNQt4o9gJDo+B7FDVXKGcv4zxW77zNUuzryrOeC3e0OsyhkqJvU0LEZ7+f182NxYYf/smRIE0+
-	tsMjWBZr69T2mXpi7cyKuBLsGSbaacOFOew7MP8RQRnxet1NQX4CsYIf77EK60f4nCrFvPeOOyA
-	torzC9efxgVbowKBRNpw53uLtwWfd21BwfA==
-X-Google-Smtp-Source: AGHT+IE/D0XyEIZodoNhI7sLk75vJYfy3zHDsDKPd1gidLDEqKMqJvyxvqI9UN2FdcdnKRfXCUCUxg==
-X-Received: by 2002:a17:903:5c6:b0:27c:3b07:5812 with SMTP id d9443c01a7336-27ed4a31712mr108415345ad.36.1759104382210;
-        Sun, 28 Sep 2025 17:06:22 -0700 (PDT)
-Received: from 1337 ([136.159.213.179])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27eed0961b1sm82000685ad.50.2025.09.28.17.06.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 17:06:21 -0700 (PDT)
-From: Abhinav Saxena <xandfury@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Paul Moore
- <paul@paul-moore.com>, Kees Cook <kees@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- llvm@lists.linux.dev, linux-hardening@vger.kernel.org,
- linux-serial@vger.kernel.org
-Subject: Re: [PATCH RESEND v4] selftests/tty: add TIOCSTI test suite
-Date: Sun, 28 Sep 2025 18:00:19 -0600
-References: <20250903-toicsti-bug-v4-1-4894b6649ef8@gmail.com>
-User-agent: mu4e 1.10.8; emacs 30.2
-In-reply-to: <20250903-toicsti-bug-v4-1-4894b6649ef8@gmail.com>
-Message-ID: <877bxi2kcj.fsf@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5EE3D76;
+	Mon, 29 Sep 2025 00:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759105182; cv=fail; b=DQp8/5L9VMYfHx3BR9s/YA/CeoJhSMAk3hjhuO2t0mJRXKMuYS3LiaMYRo1oRHS5y4WE+Vqu3QZFq5t5RKW4VvL14TR5kQN+1wEge2CgO/zMQxeDDWbIJeoYsiWpAr7UvyFu88iIQhWd9lg+XOYf3FqaxmRBeyawAAVRdbhLNkE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759105182; c=relaxed/simple;
+	bh=40XbmKorcT7WXGjv2UuiGP2M8b2zyJWVOR9AYKNwRJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=sRbugjA1AhaI1ql2QlIQCogAasQOyIXzrdrECUK4nVCYfMJn/g5ajQx6IqnI92fDwVth6FhYIqFhYyHvh5XOi5AnJEs5xMAdFnf7DHB2OL1gK3kLsEhbIp9hWcXgmJHCd9nuFs0otIZlzZIBZXIvaxsb8NRbhN6bI5YlPnz83Ys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BknjnLAD; arc=fail smtp.client-ip=40.93.195.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Dn2sCwyLGrUU+022e+03znh7ZOFFv9qSYDDBxfK0GVxnl0TvWjqDxhd/ec2VcGqdSrAaA7dtVt9bp4KQxQDCJ8tyCfcJRCk1Dbxkc5fBksQzZZrExZKtFTm/oKhIb7jLn88U6BUpv+ZkTOQuez8HEXXmU596USju1JeZb/xrpM8k1+gr4qrU+2OUzd5u+IglSlqIo9WwpeYj71UDk5oeWeouUFZMbq+tNa1/b+Gw+9VUx+YwGhWp+O8pZoGZLBSOGvEGdsH9KksELCeuWtPjGR4iIL7xrJTcgEzDKxlgcVbYhE/wgCUpPnF6n1UWz9JAkwnnheZhAOlJHNPFqok8Jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f5c4cT6c/513bedKNYekr+BwTLH4RzTO9fusq0l4yYc=;
+ b=ECcZ3K8pnxNXu2iMIDKT0A8ijwFGWhzfOvbA0jCnYkfk6Ryy+g2DTU1COiGjvskx1CRSE3ikLsABYaOTvs9zM2PLEWSfnAbNcI/m46o/uQqRVSA31Bu21g3rx20pDZ45pQuJTehCIiKCmVDb/t6ftaxLek1Qen75g+i8vzDbPvL/6OOWFLThV8/ExK9ldK7la4k6vd3LcU9VSbuiX0DxaVAbbUFkMXS8FQ5HAJ3k6lBksrM9fPZI4namievVo4TYsQsfGYtiKxCHh5noaMihMmDnxCVSuPUqPO6N4DzZpkjRi9AbOnBsKceekOJWD61JKzkVD5mdUo1B+rpNFnYK5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f5c4cT6c/513bedKNYekr+BwTLH4RzTO9fusq0l4yYc=;
+ b=BknjnLADMoprJKU3wmcvygpk7uSVdfEWsV/G0XC7sJczvr56TDQ1neL7ObwuVrKKNxxMKYYN4d5Ig+QfaFSfuKNcWw2WGBJ+yAJO7Y3Y3OiAM/WQV8fuGUiWyvO9ijLiggCiUqHwv2GSjiTDJ3Jz+1rKWBYpCUx0OrOfSrGSHw2SNe5RYvkVboievkf9K0Y+Wg12coDdmuT+uFI7wG7DTs6QJMbQ1E8EgHbmCbCckfkTQJoG8aDv/uJc597Y2Z+M2vLbB7K/3064GdNEw/H5KSwl7Eo9x0NSKalP2EqhA7drOG1pNP4VzRLdquJIoQEYeM4q0SHNZIZKHRmQzNEsCg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ MN6PR12MB8492.namprd12.prod.outlook.com (2603:10b6:208:472::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Mon, 29 Sep
+ 2025 00:19:37 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 00:19:37 +0000
+Date: Mon, 29 Sep 2025 10:19:32 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: John Hubbard <jhubbard@nvidia.com>, rust-for-linux@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 01/10] gpu: nova-core: Set correct DMA mask
+Message-ID: <um3463eyjtecebxdgjpegankwxgezqgeiqff6xy5wducnv7ayf@pnjhxbro2sh5>
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+ <20250922113026.3083103-2-apopple@nvidia.com>
+ <7fb081e9-e607-401b-937f-f4e3a78a2874@kernel.org>
+ <0dbc8f78-5cee-4741-8d33-df3358dd5383@nvidia.com>
+ <eblaubjmsesi6gh64ekm74qyzvfk23vjcmotc33upkc5w6edin@rbsezy6f7bai>
+ <DD2PRD2XEZRE.1YACAPZWRYLZO@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DD2PRD2XEZRE.1YACAPZWRYLZO@kernel.org>
+X-ClientProxiedBy: SYBPR01CA0172.ausprd01.prod.outlook.com
+ (2603:10c6:10:52::16) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-=-="
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MN6PR12MB8492:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47a6917b-d54f-4c12-c011-08ddfeeddfac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8WRgUTszzOJWO7s9qi4WyX6a0/hgZrH94/veqZ3M/iwt546JDhmnvrE8N+3/?=
+ =?us-ascii?Q?ZDxXRPoeGts8ySD/SUf6m1+IkaEMwVi/ZprvlgUPQyh9suF/tfFPT89EvJ6M?=
+ =?us-ascii?Q?8yTpeixc7pE4BfrtbXT23+LbFZ4pCorkod5U/1NlLCELPlVO3R8k407GKedK?=
+ =?us-ascii?Q?mY5hzyJWLo/UE3/I+0NDREuXsVi3bN/blLz5sZO/3T/rkDeQSctJMzgQUtrw?=
+ =?us-ascii?Q?PlQSpjRsRZPkqQk8ZGd49eC5qWUsciq46S7Ib+jMH1DpWJmdSaeDKM6oDGTE?=
+ =?us-ascii?Q?ky93ATbJG+aHZzXhKz3PDqKog9ixMwgyZIx/jNwCXZm9SVGpO8p0anv12Dij?=
+ =?us-ascii?Q?jg1jnCcNDZtu0UuNHZzyNwGbx3yC1aeZX2zywzc1EwKU77lIPJsncGrfHDmf?=
+ =?us-ascii?Q?p8DrpKUzjelCGeTGh1DRjKzfpmLldJPGqi+ahAgMGVLZvYzY9ymiaDtXBxuB?=
+ =?us-ascii?Q?u2DBUotjKyWk2WBJcRhlWsEFqfKa5Q0Z07Z081IEyebvoHObgkXLq6lQ68AO?=
+ =?us-ascii?Q?ki1nT9/9xhx3QMHxwriNLKEl2bbWXmGGHcoNg8Lr1iRSwh9TKlspdheGdjhA?=
+ =?us-ascii?Q?LndyRHA3tGUtYxn93Iz6IgJN+eq9oifXc0/7st/+HrdRfkxYMpIkCjksPyhy?=
+ =?us-ascii?Q?istpWg8F8MCXwwOpa+fFa2niwXY/CfrTaxmeK2t0JlhSrH6WoPIHYWR4HPlR?=
+ =?us-ascii?Q?uEW0+FD3NqubUmnHVM5weIshG92SMTz6GikOHwUb33ZVFMAzeQPEU3RSHntN?=
+ =?us-ascii?Q?TGBW6SCy3NDRBk7V4lGWNNsU88tL9o89/ch/P35SpGC1fX83n/l2scXwLaJt?=
+ =?us-ascii?Q?YADrWqjXt6UgsdVP8eamh9jug4ixkpMlWxdf2civgFF3q28Dp38VALdrlgHo?=
+ =?us-ascii?Q?wrmkVgCduWA4G8U1SAKArBYrwPUumMqWdwHM24ivZnJ489EhQO6AfarF82yS?=
+ =?us-ascii?Q?U829w+GYLGBZg2bFU0CShidgBpeX3NoxxNH6JmC1EdwPzFYokOFPNvGvXm7k?=
+ =?us-ascii?Q?cHvS5vOwlqqkqJTEL0jgUdzFxyusYpHzyDJ/LsBhEXGS8uv+LW1VBpXBnCsx?=
+ =?us-ascii?Q?WXWcPmm/Cb5i0iX+bf18bDm6NxXLjpsaivozExiqkmlzdjO3cb3KWLPr+wib?=
+ =?us-ascii?Q?kQ+ckpXZX4JJXTeMCDwQQpSFcl3uzvc2kaPM094CyncMIMklHd6oPQppE5Vl?=
+ =?us-ascii?Q?G/rALK788TU94bL/HCY7wIjNY6hKzVlIkklEDvLoqiocKQaxT+HJqrBOfGEH?=
+ =?us-ascii?Q?o0ySaneHamNnQ8buqTcWMLguL9Vof9e6WiHLp2S04aX1FwFBgl9GpObMKEsw?=
+ =?us-ascii?Q?51o1Wuzx8rxHpnL/2cYvAqtUy2hLsNFqJLI62yAYD+3/DfIpq5ohXuR8oo++?=
+ =?us-ascii?Q?yYCyIgN1s++l3HXws6AwTRW+airdsm9hY2b9Nfp9Ik2613MHm8J4zcgFNo18?=
+ =?us-ascii?Q?1fyZT5uxdUNg8bJ5K+NRw4xAwlYov98e?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mC7Lr9gDWCmoeMN/Kw2knvHiS3KE9V2pt8dK0FDlDF9GQ6wsn7Hxj3KzCmsu?=
+ =?us-ascii?Q?5hMs6u+mS15zT/pLGU1VudGZE0BBwLEpQ7/85h8qLDLkQW9rjj1KyJFilVD9?=
+ =?us-ascii?Q?Sp5vlJXdb5EoxdAicByag94V+sG3VaNAr+yAuwNAqcvbTFzIQ2W8wmUlyN5x?=
+ =?us-ascii?Q?3TrY8GgLsp6ZkVOC6hoFxzwW4hyr1eD6B9saalt+su6js1vzUCykIlJKCnXI?=
+ =?us-ascii?Q?KbPTjcsOahTJJCsR+IANnGHW2M2BUUx2NjTT0Y4mhFJdfndGfHY0V6bOWvaU?=
+ =?us-ascii?Q?Iu155nqbDxQb3ejvUc2QNmeb54q0LP+nUqAnvdWGU097lD8FjZhcYiSmUjy+?=
+ =?us-ascii?Q?FF1zneSSdmUtaQYDthgC7sjn5zdZZS/8kP83s4Ay09/tmRoBdjzjUuV34YRL?=
+ =?us-ascii?Q?ivuNOB95DR6yPx1Ol4e7EQRhedP7ie1zDUF61KB5pNsJD6/Ld4LAc94mocSa?=
+ =?us-ascii?Q?qZITjfpvgEafsbwe1XSSfsHsg9aTM/HKs0QezXdfEflHU9y78ayhAq6/xzYB?=
+ =?us-ascii?Q?GgQu4yGNUiYrU1xBeMsOGspAnBhw+lIIJ81j0XDXimRZ/oS00lbmI3gsDr2V?=
+ =?us-ascii?Q?RoIz33F9tDW3Qsp+1CK6V7TzRJ1dscrTtbgsi42PkOSROGQF2EYpkzQvixxf?=
+ =?us-ascii?Q?8ABE7W2e/qmimv2Zh8VwJRDNOvxOcO+5+EZm5mNMn4z2/XKCNe1pyGld8a0I?=
+ =?us-ascii?Q?eO02QaNWAWkRqBTrR8YAdX5DDQ77uWway7Uz8dRO99wq+fhufWy8WLD8eQVp?=
+ =?us-ascii?Q?4pGL+pe2JGLnXmCQQ50bUt5QoHe/OGTiSQGWw5TqPiu3bg8hWvFEboU+Rqm7?=
+ =?us-ascii?Q?0PX3xYPNtq5K2yzkOcAJADjXszP+pGXhca3c3TaAwaLgyvJi0P0KBk4okBDE?=
+ =?us-ascii?Q?FsVeGj2thk23d1MVkcx+pa7rtXnV1FjrMfXQYZOK0KZwGdzegWXqhgkBHSC1?=
+ =?us-ascii?Q?vlXNkEdZilGIx7CEUtMn+yd8wY6v0PECuFCnn9NlX3vrW0fHiCGCi168HAuI?=
+ =?us-ascii?Q?8SEnIc1rHJUNJPQjnTM7oy8RgJGLNrmafwoqjIzP2z+PNsaWgpsWexY2N13v?=
+ =?us-ascii?Q?TtkwFdM7ODS26IL4zJ6XxeEhHiQoJn61jkval+boCd1zxBZMlB5UaaNzYeT3?=
+ =?us-ascii?Q?ZdVXXGsG9cdNlxcPQxTLEECK4X099JnSlcerizHLqmSh9fi0WPPFBHlPelfp?=
+ =?us-ascii?Q?2N/eObf+bSWCcUgWV4QEuUkdmPxiv6ECA/sKWG7xGRkL2mYTLxu/qk5udEWU?=
+ =?us-ascii?Q?K/jTtcSLoPS9NjMw+S1/EorD+nzNWLrrhoOyhCVd+ODL/sh6/h2oJPvkZCUo?=
+ =?us-ascii?Q?GGF51zRismYPi7GLQ/IojP28g9c81zxZNP5QdyxZsfFCJL4mPH9cuxMTgFYT?=
+ =?us-ascii?Q?7+nh/5OMGfawEx00b+0ZdkBRf/JkwDgUqV4/kgj9t31pCX8grzYNzv1RXm0y?=
+ =?us-ascii?Q?mynjj/2FZ8nJtxhxM93i5yl8IDg2jKraIXQk8mPNqr/UTxTnE/gaw36SgmfC?=
+ =?us-ascii?Q?e6OobGVqTQWePkTMQZxEByJWxrkyie5VJfE20tQRe/plXQOZh8Xb1gW0Qjw3?=
+ =?us-ascii?Q?gcdPYPdU1oin+PUjFDx8FzJ4WcVNe+erHNdVpiB/?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47a6917b-d54f-4c12-c011-08ddfeeddfac
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 00:19:37.4588
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: P209+NheXy2dNYCiMB3938zCXtE4gjiYCbUaUP6fbjpBPOVsgzNgY+dKcZzOfR2CypwVXxu/Wc7YrGrCHAvOVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8492
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2025-09-26 at 22:00 +1000, Danilo Krummrich <dakr@kernel.org> wrote...
+> On Tue Sep 23, 2025 at 6:29 AM CEST, Alistair Popple wrote:
+> > On 2025-09-23 at 12:16 +1000, John Hubbard <jhubbard@nvidia.com> wrote...
+> >> On 9/22/25 9:08 AM, Danilo Krummrich wrote:
+> >> > On 9/22/25 1:30 PM, Alistair Popple wrote:
+> >> >> +        // SAFETY: No DMA allocations have been made yet
+> >> > 
+> >> > It's not really about DMA allocations that have been made previously, there is
+> >> > no unsafe behavior in that.
+> >> > 
+> >> > It's about the method must not be called concurrently with any DMA allocation or
+> >> > mapping primitives.
+> >> > 
+> >> > Can you please adjust the comment correspondingly?
+> >
+> > Sure.
+> >
+> >> >> +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<47>())? };
+> >> > 
+> >> > As Boqun mentioned, we shouldn't have a magic number for this. I don't know if
+> >> > it will change for future chips, but maybe we should move this to gpu::Spec to
+> >> 
+> >> It changes to 52 bits for GH100+ (Hopper/Blackwell+). When I post those
+> >> patches, I'll use a HAL to select the value.
+> >> 
+> >> > be safe.
+> >> > 
+> >> > At least, create a constant for it (also in gpu::Spec?); in Nouveau I named this
+> >> > NOUVEAU_VA_SPACE_BITS back then. Not a great name, if you have a better idea,
+> >> > please go for it. :)
+> >
+> > Well it's certainly not the VA_SPACE width ... that's a different address space :-)
+> 
+> I mean, sure. But isn't the limitation of 47 bits coming from the MMU and hence
+> defines the VA space width and the DMA bit width we can support?
 
-Abhinav Saxena <xandfury@gmail.com> writes:
+Not at all. The 47 bit limitation comes from what the DMA engines can physically
+address, whilst the MMU converts virtual addresses to physical DMA addresses.
+So the two address spaces are different and can have different widths. Indeed
+most of our current GPUs have a virtual address space of 49 bits whilst only
+supporting 47 bits of DMA address space.
 
-> TIOCSTI is a TTY ioctl command that allows inserting characters into
-> the terminal input queue, making it appear as if the user typed those
-> characters. This functionality has behavior that varies based on system
-> configuration and process credentials.
->
-> The dev.tty.legacy_tiocsti sysctl introduced in commit 83efeeeb3d04
-> (=E2=80=9Ctty: Allow TIOCSTI to be disabled=E2=80=9D) controls TIOCSTI us=
-age. When
-> disabled, TIOCSTI requires CAP_SYS_ADMIN capability.
->
-> The current implementation checks the current process=E2=80=99s credentia=
-ls via
-> capable(CAP_SYS_ADMIN), but does not validate against the file opener=E2=
-=80=99s
-> credentials stored in file->f_cred. This creates different behavior when
-> file descriptors are passed between processes via SCM_RIGHTS.
->
-> Add a test suite with 16 test variants using fixture variants to verify
-> TIOCSTI behavior when dev.tty.legacy_tiocsti is enabled/disabled:
->
-> - Basic TIOCSTI tests (8 variants): Direct testing with different
->   capability and controlling terminal combinations
-> - FD passing tests (8 variants): Test behavior when file descriptors
->   are passed between processes with different capabilities
->
-> The FD passing tests document this behavior - some tests show different
-> results than expected based on file opener credentials, demonstrating
-> that TIOCSTI uses current process credentials rather than file opener
-> credentials.
->
-> The tests validate proper enforcement of the legacy_tiocsti sysctl. Test
-> implementation uses openpty(3) with TIOCSCTTY for isolated PTY
-> environments. See tty_ioctl(4) for details on TIOCSTI behavior and
-> security requirements.
->
-> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
-> =E2=80=94
-> RESEND: add TTY/serial maintainers and linux-serial CCs. No code changes.
-> - Link to orignal v4: <https://lore.kernel.org/r/20250902-toicsti-bug-v4-=
-1-e5c960e0b3d6@gmail.com>
->
-> Changes in v4:
-> - Moved skip conditions and sysctl setup from TEST_F to FIXTURE_SETUP (Ke=
-es Cook)
-> - Fixed fclose() error handling in set_legacy_tiocsti_setting (Kees Cook)
-> - Extracted run_basic_tiocsti_test() and run_fdpass_tiocsti_test function=
-s (Kees Cook)
-> - Removed redundant sysctl restore logic from TEST_F (Kees Cook)
-> - Simplified FIXTURE_TEARDOWN (Kees Cook)
-> - Replace drop_to_nobody() to drop_all_privs() which should be more porta=
-ble (Justin Stitt)
-> - Link to v3: <https://lore.kernel.org/r/20250730-toicsti-bug-v3-1-dd2dac=
-97f27a@gmail.com>
->
-> Add selftests for TIOCSTI ioctl
->
-> To run all tests:
-> $ sudo ./tools/testing/selftests/tty/tty_tiocsti_test
->
-> Test Results:
-> - PASSED: 13/16 tests
-> - Different behavior: 3/16 tests (documenting credential checking behavio=
-r)
->
-> All tests validated using:
-> - scripts/checkpatch.pl =E2=80=93strict (clean output)
-> - Functional testing on kernel v6.16-rc2
->
-> Changes in v3:
-> - Replaced all printf() calls with TH_LOG() for proper test logging (Kees=
- Cook)
-> - Added struct __test_metadata parameter to helper functions
-> - Moved common legacy_tiocsti availability check to FIXTURE_SETUP()
-> - Implemented sysctl modification/restoration in FIXTURE_SETUP/TEARDOWN
-> - Used openpty() with TIOCSCTTY for reliable PTY testing environment
-> - Fixed child/parent synchronization in FD passing tests
-> - Replaced manual _exit(1) handling with proper ASSERT statements
-> - Switched // comments to /* */ format throughout
-> - Expanded to 16 test variants using fixture variants
-> - Enhanced error handling and test reliability
-> - Link to v2: <https://lore.kernel.org/r/20250713-toicsti-bug-v2-1-b18378=
-7eea29@gmail.com>
-> - Link to v1: <https://lore.kernel.org/r/20250622-toicsti-bug-v1-0-f37437=
-3b04b2@gmail.com>
->
-> References:
-> - tty_ioctl(4) - documents TIOCSTI ioctl and capability requirements
-> - openpty(3) - pseudo-terminal creation and management
-> - commit 83efeeeb3d04 (=E2=80=9Ctty: Allow TIOCSTI to be disabled=E2=80=
-=9D)
-> - Documentation/security/credentials.rst
-> - <https://github.com/KSPP/linux/issues/156>
-> - <https://lore.kernel.org/linux-hardening/Y0m9l52AKmw6Yxi1@hostpad/>
-> - drivers/tty/Kconfig
-> - Documentation/driver-api/tty/
-> =E2=80=94
->  tools/testing/selftests/tty/Makefile           |   6 +-
->  tools/testing/selftests/tty/config             |   1 +
->  tools/testing/selftests/tty/tty_tiocsti_test.c | 650 +++++++++++++++++++=
-++++++
->  3 files changed, 656 insertions(+), 1 deletion(-)
->
-> diff =E2=80=93git a/tools/testing/selftests/tty/Makefile b/tools/testing/=
-selftests/tty/Makefile
-> index 50d7027b2ae3fb495dd1c0684363fa8f426be42c..7f6fbe5a0cd5663310e334d9d=
-068b21dab9136ec 100644
-> =E2=80=94 a/tools/testing/selftests/tty/Makefile
-> +++ b/tools/testing/selftests/tty/Makefile
-> @@ -1,5 +1,9 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS =3D -O2 -Wall
-> -TEST_GEN_PROGS :=3D tty_tstamp_update
-> +TEST_GEN_PROGS :=3D tty_tstamp_update tty_tiocsti_test
-> +LDLIBS +=3D -lcap
->=20=20
->  include ../lib.mk
-> +
-> +# Add libcap for TIOCSTI test
-> +$(OUTPUT)/tty_tiocsti_test: LDLIBS +=3D -lcap
-> diff =E2=80=93git a/tools/testing/selftests/tty/config b/tools/testing/se=
-lftests/tty/config
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c6373aba66366c82435bb26c0=
-19eb360eb6310eb
-> =E2=80=94 /dev/null
-> +++ b/tools/testing/selftests/tty/config
-> @@ -0,0 +1 @@
-> +CONFIG_LEGACY_TIOCSTI=3Dy
-> diff =E2=80=93git a/tools/testing/selftests/tty/tty_tiocsti_test.c b/tool=
-s/testing/selftests/tty/tty_tiocsti_test.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..5e767e6cb3ef8f05c5430eb0f=
-cc792064c446c03
-> =E2=80=94 /dev/null
-> +++ b/tools/testing/selftests/tty/tty_tiocsti_test.c
-> @@ -0,0 +1,650 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * TTY Tests - TIOCSTI
-> + *
-> + * Copyright =C2=A9 2025 Abhinav Saxena <xandfury@gmail.com>
-> + */
-> +
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <fcntl.h>
-> +#include <sys/ioctl.h>
-> +#include <errno.h>
-> +#include <stdbool.h>
-> +#include <string.h>
-> +#include <sys/socket.h>
-> +#include <sys/wait.h>
-> +#include <pwd.h>
-> +#include <termios.h>
-> +#include <grp.h>
-> +#include <sys/capability.h>
-> +#include <sys/prctl.h>
-> +#include <pty.h>
-> +#include <utmp.h>
-> +
-> +#include =E2=80=9C../kselftest_harness.h=E2=80=9D
-> +
-> +enum test_type {
-> +	TEST_PTY_TIOCSTI_BASIC,
-> +	TEST_PTY_TIOCSTI_FD_PASSING,
-> +	/* other tests cases such as serial may be added. */
-> +};
-> +
-> +/*
-> + * Test Strategy:
-> + * - Basic tests: Use PTY with/without TIOCSCTTY (controlling terminal f=
-or
-> + *   current process)
-> + * - FD passing tests: Child creates PTY, parent receives FD (demonstrat=
-es
-> + *   security issue)
-> + *
-> + * SECURITY VULNERABILITY DEMONSTRATION:
-> + * FD passing tests show that TIOCSTI uses CURRENT process credentials, =
-not
-> + * opener credentials. This means privileged processes can be given FDs =
-from
-> + * unprivileged processes and successfully perform TIOCSTI operations th=
-at the
-> + * unprivileged process couldn=E2=80=99t do directly.
-> + *
-> + * Attack scenario:
-> + * 1. Unprivileged process opens TTY (direct TIOCSTI fails due to lack of
-> + *    privileges)
-> + * 2. Unprivileged process passes FD to privileged process via SCM_RIGHTS
-> + * 3. Privileged process can use TIOCSTI on the FD (succeeds due to its
-> + *    privileges)
-> + * 4. Result: Effective privilege escalation via file descriptor passing
-> + *
-> + * This matches the kernel logic in tiocsti():
-> + * 1. if (!tty_legacy_tiocsti && !capable(CAP_SYS_ADMIN)) return -EIO;
-> + * 2. if ((current->signal->tty !=3D tty) && !capable(CAP_SYS_ADMIN))
-> + *        return -EPERM;
-> + * Note: Both checks use capable() on CURRENT process, not FD opener!
-> + *
-> + * If the file credentials were also checked along with the capable() ch=
-ecks
-> + * then the results for FD pass tests would be consistent with the basic=
- tests.
-> + */
-> +
-> +FIXTURE(tiocsti)
-> +{
-> +	int pty_master_fd; /* PTY - for basic tests */
-> +	int pty_slave_fd;
-> +	bool has_pty;
-> +	bool initial_cap_sys_admin;
-> +	int original_legacy_tiocsti_setting;
-> +	bool can_modify_sysctl;
-> +};
-> +
-> +FIXTURE_VARIANT(tiocsti)
-> +{
-> +	const enum test_type test_type;
-> +	const bool controlling_tty; /* true=3Dcurrent->signal->tty `=3D tty */
-> +	const int legacy_tiocsti; /* 0=3Drestricted, 1=3Dpermissive */
-> +	const bool requires_cap; /* true=3Dwith CAP_SYS_ADMIN, false=3Dwithout =
-*/
-> +	const int expected_success; /* 0=3Dsuccess, -EIO/-EPERM=3Dspecific erro=
-r */
-> +};
-> +
-> +/*
-> + * Tests Controlling Terminal Variants (current->signal->tty =3D' tty)
-> + *
-> + * TIOCSTI Test Matrix:
-> + *
-> + * | legacy_tiocsti | CAP_SYS_ADMIN | Expected Result | Error |
-> + * |=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94-|=E2=80=94=E2=80=94=E2=
-=80=94=E2=80=94=E2=80=94|=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
-=80=93|=E2=80=94=E2=80=94-|
-> + * | 1 (permissive) | true          | SUCCESS         | -     |
-> + * | 1 (permissive) | false         | SUCCESS         | -     |
-> + * | 0 (restricted) | true          | SUCCESS         | -     |
-> + * | 0 (restricted) | false         | FAILURE         | -EIO  |
-> + */
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_permissive_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_permissive_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_restricted_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_restricted_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D -EIO, /* FAILURE: legacy restriction */
-> +}; /* clang-format on */
-> +
-> +/*
-> + * Note for FD Passing Test Variants
-> + * Since we=E2=80=99re testing the scenario where an unprivileged proces=
-s pass an FD
-> + * to a privileged one, .requires_cap here means the caps of the child p=
-rocess.
-> + * Not the parent; parent would always be privileged.
-> + */
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_permissive_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_permissive_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_restricted_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_restricted_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D true,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D -EIO,
-> +}; /* clang-format on */
-> +
-> +/*
-> + * Non-Controlling Terminal Variants (current->signal->tty !=3D tty)
-> + *
-> + * TIOCSTI Test Matrix:
-> + *
-> + * | legacy_tiocsti | CAP_SYS_ADMIN | Expected Result | Error |
-> + * |=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94-|=E2=80=94=E2=80=94=E2=
-=80=94=E2=80=94=E2=80=94|=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
-=80=93|=E2=80=94=E2=80=94-|
-> + * | 1 (permissive) | true          | SUCCESS         | -     |
-> + * | 1 (permissive) | false         | FAILURE         | -EPERM|
-> + * | 0 (restricted) | true          | SUCCESS         | -     |
-> + * | 0 (restricted) | false         | FAILURE         | -EIO  |
-> + */
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_permissive_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_permissive_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D -EPERM,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_restricted_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_restricted_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D -EIO,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_permissive_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_permissive_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 1,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D -EPERM,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_restricted_withcap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D true,
-> +	.expected_success =3D 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_restricted_nocap) {
-> +	.test_type =3D TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty =3D false,
-> +	.legacy_tiocsti =3D 0,
-> +	.requires_cap =3D false,
-> +	.expected_success =3D -EIO,
-> +}; /* clang-format on */
-> +
-> +/* Helper function to send FD via SCM_RIGHTS */
-> +static int send_fd_via_socket(int socket_fd, int fd_to_send)
-> +{
-> +	struct msghdr msg =3D { 0 };
-> +	struct cmsghdr *cmsg;
-> +	char cmsg_buf[CMSG_SPACE(sizeof(int))];
-> +	char dummy_data =3D =E2=80=99F=E2=80=99;
-> +	struct iovec iov =3D { .iov_base =3D &dummy_data, .iov_len =3D 1 };
-> +
-> +	msg.msg_iov =3D &iov;
-> +	msg.msg_iovlen =3D 1;
-> +	msg.msg_control =3D cmsg_buf;
-> +	msg.msg_controllen =3D sizeof(cmsg_buf);
-> +
-> +	cmsg =3D CMSG_FIRSTHDR(&msg);
-> +	cmsg->cmsg_level =3D SOL_SOCKET;
-> +	cmsg->cmsg_type =3D SCM_RIGHTS;
-> +	cmsg->cmsg_len =3D CMSG_LEN(sizeof(int));
-> +
-> +	memcpy(CMSG_DATA(cmsg), &fd_to_send, sizeof(int));
-> +
-> +	return sendmsg(socket_fd, &msg, 0) < 0 ? -1 : 0;
-> +}
-> +
-> +/* Helper function to receive FD via SCM_RIGHTS */
-> +static int recv_fd_via_socket(int socket_fd)
-> +{
-> +	struct msghdr msg =3D { 0 };
-> +	struct cmsghdr *cmsg;
-> +	char cmsg_buf[CMSG_SPACE(sizeof(int))];
-> +	char dummy_data;
-> +	struct iovec iov =3D { .iov_base =3D &dummy_data, .iov_len =3D 1 };
-> +	int received_fd =3D -1;
-> +
-> +	msg.msg_iov =3D &iov;
-> +	msg.msg_iovlen =3D 1;
-> +	msg.msg_control =3D cmsg_buf;
-> +	msg.msg_controllen =3D sizeof(cmsg_buf);
-> +
-> +	if (recvmsg(socket_fd, &msg, 0) < 0)
-> +		return -1;
-> +
-> +	for (cmsg =3D CMSG_FIRSTHDR(&msg); cmsg; cmsg =3D CMSG_NXTHDR(&msg, cms=
-g)) {
-> +		if (cmsg->cmsg_level `=3D SOL_SOCKET &&
-> +		    cmsg->cmsg_type =3D' SCM_RIGHTS) {
-> +			memcpy(&received_fd, CMSG_DATA(cmsg), sizeof(int));
-> +			break;
-> +		}
-> +	}
-> +
-> +	return received_fd;
-> +}
-> +
-> +static inline bool has_cap_sys_admin(void)
-> +{
-> +	cap_t caps =3D cap_get_proc();
-> +
-> +	if (!caps)
-> +		return false;
-> +
-> +	cap_flag_value_t cap_val;
-> +	bool has_cap =3D (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE,
-> +				     &cap_val) `=3D 0) &&
-> +		       (cap_val =3D' CAP_SET);
-> +
-> +	cap_free(caps);
-> +	return has_cap;
-> +}
-> +
-> +/*
-> + * Switch to non-root user and clear all capabilities
-> + */
-> +static inline bool drop_all_privs(struct __test_metadata *_metadata)
-> +{
-> +	/* Drop supplementary groups */
-> +	ASSERT_EQ(setgroups(0, NULL), 0);
-> +
-> +	/* Switch to non-root user */
-> +	ASSERT_EQ(setgid(1000), 0);
-> +	ASSERT_EQ(setuid(1000), 0);
-> +
-> +	/* Clear all capabilities */
-> +	cap_t empty =3D cap_init();
-> +
-> +	ASSERT_NE(empty, NULL);
-> +	ASSERT_EQ(cap_set_proc(empty), 0);
-> +	cap_free(empty);
-> +
-> +	/* Prevent privilege regain */
-> +	ASSERT_EQ(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0), 0);
-> +
-> +	/* Verify privilege drop */
-> +	ASSERT_FALSE(has_cap_sys_admin());
-> +	return true;
-> +}
-> +
-> +static inline int get_legacy_tiocsti_setting(struct __test_metadata *_me=
-tadata)
-> +{
-> +	FILE *fp;
-> +	int value =3D -1;
-> +
-> +	fp =3D fopen(=E2=80=9C/proc/sys/dev/tty/legacy_tiocsti=E2=80=9D, =E2=80=
-=9Cr=E2=80=9D);
-> +	if (!fp) {
-> +		/* legacy_tiocsti sysctl not available (kernel < 6.2) */
-> +		return -1;
-> +	}
-> +
-> +	if (fscanf(fp, =E2=80=9C%d=E2=80=9D, &value) `=3D 1 && fclose(fp) =3D' =
-0) {
-> +		if (value < 0 || value > 1)
-> +			value =3D -1; /* Invalid value */
-> +	} else {
-> +		value =3D -1; /* Failed to parse */
-> +	}
-> +
-> +	return value;
-> +}
-> +
-> +static inline bool set_legacy_tiocsti_setting(struct __test_metadata *_m=
-etadata,
-> +					      int value)
-> +{
-> +	FILE *fp;
-> +	bool success =3D false;
-> +
-> +	/* Sanity-check the value */
-> +	ASSERT_GE(value, 0);
-> +	ASSERT_LE(value, 1);
-> +
-> +	/*
-> +	 * Try to open for writing; if we lack permission, return false so
-> +	 * the test harness will skip variants that need to change it
-> +	 */
-> +	fp =3D fopen(=E2=80=9C/proc/sys/dev/tty/legacy_tiocsti=E2=80=9D, =E2=80=
-=9Cw=E2=80=9D);
-> +	if (!fp)
-> +		return false;
-> +
-> +	/* Write the new setting */
-> +	if (fprintf(fp, =E2=80=9C%d\n=E2=80=9D, value) > 0 && fclose(fp) =3D=3D=
- 0)
-> +		success =3D true;
-> +	else
-> +		TH_LOG(=E2=80=9CFailed to write legacy_tiocsti: %s=E2=80=9D, strerror(=
-errno));
-> +
-> +	return success;
-> +}
-> +
-> +/*
-> + * TIOCSTI injection test function
-> + * @tty_fd: TTY slave file descriptor to test TIOCSTI on
-> + * Returns: 0 on success, -errno on failure
-> + */
-> +static inline int test_tiocsti_injection(struct __test_metadata *_metada=
-ta,
-> +					 int tty_fd)
-> +{
-> +	int ret;
-> +	char inject_char =3D =E2=80=99V=E2=80=99;
-> +
-> +	errno =3D 0;
-> +	ret =3D ioctl(tty_fd, TIOCSTI, &inject_char);
-> +	return ret =3D=3D 0 ? 0 : -errno;
-> +}
-> +
-> +/*
-> + * Child process: test TIOCSTI directly with capability/controlling
-> + * terminal setup
-> + */
-> +static void run_basic_tiocsti_test(struct __test_metadata *_metadata,
-> +				   FIXTURE_DATA(tiocsti) * self,
-> +				   const FIXTURE_VARIANT(tiocsti) * variant)
-> +{
-> +	/* Handle capability requirements */
-> +	if (self->initial_cap_sys_admin && !variant->requires_cap)
-> +		ASSERT_TRUE(drop_all_privs(_metadata));
-> +
-> +	if (variant->controlling_tty) {
-> +		/*
-> +		 * Create new session and set PTY as
-> +		 * controlling terminal
-> +		 */
-> +		pid_t sid =3D setsid();
-> +
-> +		ASSERT_GE(sid, 0);
-> +		ASSERT_EQ(ioctl(self->pty_slave_fd, TIOCSCTTY, 0), 0);
-> +	}
-> +
-> +	/*
-> +	 * Validate test environment setup and verify final
-> +	 * capability state matches expectation
-> +	 * after potential drop.
-> +	 */
-> +	ASSERT_TRUE(self->has_pty);
-> +	ASSERT_EQ(has_cap_sys_admin(), variant->requires_cap);
-> +
-> +	/* Test TIOCSTI and validate result */
-> +	int result =3D test_tiocsti_injection(_metadata, self->pty_slave_fd);
-> +
-> +	/* Check against expected result from variant */
-> +	EXPECT_EQ(result, variant->expected_success);
-> +	_exit(0);
-> +}
-> +
-> +/*
-> + * Child process: create PTY and then pass FD to parent via SCM_RIGHTS
-> + */
-> +static void run_fdpass_tiocsti_test(struct __test_metadata *_metadata,
-> +				    const FIXTURE_VARIANT(tiocsti) * variant,
-> +				    int sockfd)
-> +{
-> +	signal(SIGHUP, SIG_IGN);
-> +
-> +	/* Handle privilege dropping */
-> +	if (!variant->requires_cap && has_cap_sys_admin())
-> +		ASSERT_TRUE(drop_all_privs(_metadata));
-> +
-> +	/* Create child=E2=80=99s PTY */
-> +	int child_master_fd, child_slave_fd;
-> +
-> +	ASSERT_EQ(openpty(&child_master_fd, &child_slave_fd, NULL, NULL, NULL),
-> +		  0);
-> +
-> +	if (variant->controlling_tty) {
-> +		pid_t sid =3D setsid();
-> +
-> +		ASSERT_GE(sid, 0);
-> +		ASSERT_EQ(ioctl(child_slave_fd, TIOCSCTTY, 0), 0);
-> +	}
-> +
-> +	/* Test child=E2=80=99s direct TIOCSTI for reference */
-> +	int direct_result =3D test_tiocsti_injection(_metadata, child_slave_fd);
-> +
-> +	EXPECT_EQ(direct_result, variant->expected_success);
-> +
-> +	/* Send FD to parent */
-> +	ASSERT_EQ(send_fd_via_socket(sockfd, child_slave_fd), 0);
-> +
-> +	/* Wait for parent completion signal */
-> +	char sync_byte;
-> +	ssize_t bytes_read =3D read(sockfd, &sync_byte, 1);
-> +
-> +	ASSERT_EQ(bytes_read, 1);
-> +
-> +	close(child_master_fd);
-> +	close(child_slave_fd);
-> +	close(sockfd);
-> +	_exit(0);
-> +}
-> +
-> +FIXTURE_SETUP(tiocsti)
-> +{
-> +	/* Create PTY pair for basic tests */
-> +	self->has_pty =3D (openpty(&self->pty_master_fd, &self->pty_slave_fd,
-> +				 NULL, NULL, NULL) =3D=3D 0);
-> +	if (!self->has_pty) {
-> +		self->pty_master_fd =3D -1;
-> +		self->pty_slave_fd =3D -1;
-> +	}
-> +
-> +	self->initial_cap_sys_admin =3D has_cap_sys_admin();
-> +	self->original_legacy_tiocsti_setting =3D
-> +		get_legacy_tiocsti_setting(_metadata);
-> +
-> +	if (self->original_legacy_tiocsti_setting < 0)
-> +		SKIP(return,
-> +			   =E2=80=9Clegacy_tiocsti sysctl not available (kernel < 6.2)=E2=80=
-=9D);
-> +
-> +	/* Common skip conditions */
-> +	if (variant->test_type `=3D TEST_PTY_TIOCSTI_BASIC && !self->has_pty)
-> +		SKIP(return, "PTY not available for controlling terminal test");
-> +
-> +	if (variant->test_type =3D' TEST_PTY_TIOCSTI_FD_PASSING &&
-> +	    !self->initial_cap_sys_admin)
-> +		SKIP(return, =E2=80=9CFD Pass tests require CAP_SYS_ADMIN=E2=80=9D);
-> +
-> +	if (variant->requires_cap && !self->initial_cap_sys_admin)
-> +		SKIP(return, =E2=80=9CTest requires initial CAP_SYS_ADMIN=E2=80=9D);
-> +
-> +	/* Test if we can modify the sysctl (requires appropriate privileges) */
-> +	self->can_modify_sysctl =3D set_legacy_tiocsti_setting(
-> +		_metadata, self->original_legacy_tiocsti_setting);
-> +
-> +	/* Sysctl setup based on variant */
-> +	if (self->can_modify_sysctl &&
-> +	    self->original_legacy_tiocsti_setting !=3D variant->legacy_tiocsti)=
- {
-> +		if (!set_legacy_tiocsti_setting(_metadata,
-> +						variant->legacy_tiocsti))
-> +			SKIP(return, =E2=80=9CFailed to set legacy_tiocsti sysctl=E2=80=9D);
-> +
-> +	} else if (!self->can_modify_sysctl &&
-> +		   self->original_legacy_tiocsti_setting !=3D
-> +			   variant->legacy_tiocsti)
-> +		SKIP(return, =E2=80=9Clegacy_tiocsti setting mismatch=E2=80=9D);
-> +}
-> +
-> +FIXTURE_TEARDOWN(tiocsti)
-> +{
-> +	/*
-> +	 * Backup restoration -
-> +	 * each test should restore its own sysctl changes
-> +	 */
-> +	if (self->can_modify_sysctl) {
-> +		int current_value =3D get_legacy_tiocsti_setting(_metadata);
-> +
-> +		if (current_value !=3D self->original_legacy_tiocsti_setting) {
-> +			TH_LOG(=E2=80=9CBackup: Restoring legacy_tiocsti from %d to %d=E2=80=
-=9D,
-> +			       current_value,
-> +			       self->original_legacy_tiocsti_setting);
-> +			set_legacy_tiocsti_setting(
-> +				_metadata,
-> +				self->original_legacy_tiocsti_setting);
-> +		}
-> +	}
-> +
-> +	if (self->has_pty) {
-> +		if (self->pty_master_fd >=3D 0)
-> +			close(self->pty_master_fd);
-> +		if (self->pty_slave_fd >=3D 0)
-> +			close(self->pty_slave_fd);
-> +	}
-> +}
-> +
-> +TEST_F(tiocsti, test)
-> +{
-> +	int status;
-> +	pid_t child_pid;
-> +
-> +	if (variant->test_type =3D=3D TEST_PTY_TIOCSTI_BASIC) {
-> +		/* `=3D=3D=3D' BASIC TIOCSTI TEST `=3D=3D=3D' */
-> +		child_pid =3D fork();
-> +		ASSERT_GE(child_pid, 0);
-> +
-> +		/* Perform the actual test in the child process */
-> +		if (child_pid =3D=3D 0)
-> +			run_basic_tiocsti_test(_metadata, self, variant);
-> +
-> +	} else {
-> +		/* `=3D=3D=3D' FD PASSING SECURITY TEST `=3D=3D=3D' */
-> +		int sockpair[2];
-> +
-> +		ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sockpair), 0);
-> +
-> +		child_pid =3D fork();
-> +		ASSERT_GE(child_pid, 0);
-> +
-> +		if (child_pid =3D=3D 0) {
-> +			/* Child process - create PTY and send FD */
-> +			close(sockpair[0]);
-> +			run_fdpass_tiocsti_test(_metadata, variant,
-> +						sockpair[1]);
-> +		}
-> +
-> +		/* Parent process - receive FD and test TIOCSTI */
-> +		close(sockpair[1]);
-> +
-> +		int received_fd =3D recv_fd_via_socket(sockpair[0]);
-> +
-> +		ASSERT_GE(received_fd, 0);
-> +
-> +		bool parent_has_cap =3D self->initial_cap_sys_admin;
-> +
-> +		TH_LOG(=E2=80=9C`=3D' TIOCSTI FD Passing Test Context `=3D'=E2=80=9D);
-> +		TH_LOG(=E2=80=9Clegacy_tiocsti: %d, Parent CAP_SYS_ADMIN: %s, Child: %=
-s=E2=80=9D,
-> +		       variant->legacy_tiocsti, parent_has_cap ? =E2=80=9Cyes=E2=80=9D=
- : =E2=80=9Cno=E2=80=9D,
-> +		       variant->requires_cap ? =E2=80=9Ckept=E2=80=9D : =E2=80=9Cdropp=
-ed=E2=80=9D);
-> +
-> +		/* SECURITY TEST: Try TIOCSTI with FD opened by child */
-> +		int result =3D test_tiocsti_injection(_metadata, received_fd);
-> +
-> +		/* Log security concern if demonstrated */
-> +		if (result =3D=3D 0 && !variant->requires_cap) {
-> +			TH_LOG("*** SECURITY CONCERN DEMONSTRATED ***=E2=80=9C);
-> +			TH_LOG(=E2=80=9DPrivileged parent can use TIOCSTI on FD from unprivil=
-eged child=E2=80=9C);
-> +			TH_LOG(=E2=80=9DThis shows current process credentials are used, not =
-opener credentials=E2=80=9C);
-> +		}
-> +
-> +		EXPECT_EQ(result, variant->expected_success)
-> +		{
-> +			TH_LOG(=E2=80=9DFD passing: expected error %d, got %d=E2=80=9C,
-> +			       variant->expected_success, result);
-> +		}
-> +
-> +		/* Signal child completion */
-> +		char sync_byte =3D =E2=80=98D=E2=80=99;
-> +		ssize_t bytes_written =3D write(sockpair[0], &sync_byte, 1);
-> +
-> +		ASSERT_EQ(bytes_written, 1);
-> +
-> +		close(received_fd);
-> +		close(sockpair[0]);
-> +	}
-> +
-> +	/* Common child process cleanup for both test types */
-> +	ASSERT_EQ(waitpid(child_pid, &status, 0), child_pid);
-> +
-> +	if (WIFSIGNALED(status)) {
-> +		TH_LOG(=E2=80=9DChild terminated by signal %d=E2=80=9C, WTERMSIG(statu=
-s));
-> +		ASSERT_FALSE(WIFSIGNALED(status))
-> +		{
-> +			TH_LOG(=E2=80=9DChild process failed assertion");
-> +		}
-> +	} else {
-> +		EXPECT_EQ(WEXITSTATUS(status), 0);
-> +	}
-> +}
-> +
-> +TEST_HARNESS_MAIN
->
-> =E2=80=94
-> base-commit: e6b9dce0aeeb91dfc0974ab87f02454e24566182
-> change-id: 20250618-toicsti-bug-7822b8e94a32
->
-> Best regards,
-
-
-Hi TTY Maintainers,
-
-I had submitted this patch series a couple of weeks ago and wanted to
-gently ping to see if you=E2=80=99ve had a chance to review it.
-
-Also, if you have any other concerns or questions, I would be happy to
-address them.
-
-
-Best,
-Abhinav
-
---=-=-=--
+> > I thought from the context that the magic number was pretty obviously the
+> > supported DMA address width in bits, especially given the extra decoration
+> > of the DmaMask type. Certainly that's been the accepted practice for the rest
+> > of the kernel where pretty much all drivers just use something of the form
+> > dma_set_mask(drm_dev->dev, DMA_BIT_MASK(44)) or whatever DMA address widths
+> > they support.
+> >
+> >> GPU_DMA_BIT_WIDTH, for now?
+> >
+> > Works for me.
+> >
+> >> thanks,
+> >> -- 
+> >> John Hubbard
+> >> 
+> 
 
