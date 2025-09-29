@@ -1,123 +1,166 @@
-Return-Path: <linux-kernel+bounces-835671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F91BA7C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BCCBA7C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73B31635CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:30:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4B718984D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 01:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C711F4188;
-	Mon, 29 Sep 2025 01:30:39 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816541F4188;
+	Mon, 29 Sep 2025 01:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b="gd4XdedU"
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5248013777E;
-	Mon, 29 Sep 2025 01:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6EE1BD9C9
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759109439; cv=none; b=pKVRPPPFtnNGrmdBCtDtdRw3fw9yJtu1DGTXKE+Ow7l6q94+R3kITLcpqUmwgIO1/l1KjQia6V11DoKPS/2Y54RbauwYhdcFurSau1KP5D5TJwLK4wzXIkzVDja3VLx7zWNMPmQCt58ljd5cOz7RWRq5dj2/OCu6Kq8RszMFId4=
+	t=1759110176; cv=none; b=Mqch9b0zCEezuFjNCXO7uoLi9TiKnaHPMhosPWxJBKKaD5ftct/pGH5y7Jvf+a6AKi9+9HaLOkXmVlBMRzsdzWCKbF5eHvnzvkqvYjuWG2dMfNBt4eWgs3JFff9U2TbU84n6tHZxyCRi5HsOmEemA+vlk5AJjhqucd/OyCDZUZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759109439; c=relaxed/simple;
-	bh=jgYfnGlpJUsBLnIp0dgG9Um0H/BiAyG/N/ufXTWeP7g=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Tuna/Fz8wTFMWXE+KpZzKYNy4oxjDBs2Arf3sY0LEDNLBVtNhe56oLXt56peyDNuWr1snK6r+FCJPJIwa2qduV0obBKlRsFvbFeb0kqmW3UADxvIIKyKu79kdBnl//qfO/xL1LHF8IjtqVG8e3+zG9eqg8ubfX3GDd/3K/oPftY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowADHaRMg4dloIUR_CA--.42010S2;
-	Mon, 29 Sep 2025 09:30:19 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: sakari.ailus@linux.intel.com,
-	bingbu.cao@intel.com,
-	lixu.zhang@intel.com,
-	stanislaw.gruszka@linux.intel.com,
-	mchehab@kernel.org,
-	wentong.wu@intel.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH v5] media: pci: intel: ivsc: improve device reference counting in mei_ace driver
-Date: Mon, 29 Sep 2025 09:30:07 +0800
-Message-Id: <20250929013007.1920-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowADHaRMg4dloIUR_CA--.42010S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFWfWrWDAr1kCryDtF1fWFg_yoW8CF1kpr
-	Wq9FWkKFWUXr4jgr1UAa18ZFyrWa1Sya9xGr43Aa1xu3W5Z347try0qa47Ca4YqFZrCFy7
-	AF13KryfAF40yw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4
-	vE14v_KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUb9mitUU
-	UUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1759110176; c=relaxed/simple;
+	bh=tPsQTvM+eiwlyUIt2YhLixQTyW//Bg+Wlvfv24oXcKo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=heFmQesEg99F4/fA7UflmZVKpB2LZG9FPoYEfY9x5bTxbP1PSCM5+muMcPnGL+BeaM1svLhzWVbd8SqTuBwhtrNNItkYgUP2ZKbwkD5Vf4aiQZIOQYhsw0dKSo54iHM7RmieBml3fiC63Gt+TBVQ+my9Y00wOoPhC2tVpOirST4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b=gd4XdedU; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 58T1gX0t005260;
+	Mon, 29 Sep 2025 09:42:33 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from SHDLP.spreadtrum.com (BJMBX01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4cZkRG21pQz2MZcn3;
+	Mon, 29 Sep 2025 09:40:42 +0800 (CST)
+Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.48; Mon, 29 Sep 2025 09:42:29 +0800
+From: Xuewen Yan <xuewen.yan@unisoc.com>
+To: <surenb@google.com>, <hannes@cmpxchg.org>,
+        <mathieu.desnoyers@efficios.com>, <mhiramat@kernel.org>,
+        <rostedt@goodmis.org>, <peterz@infradead.org>
+CC: <mingo@redhat.com>, <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
+        <dietmar.eggemann@arm.com>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <xuewen.yan@unisoc.com>,
+        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <ke.wang@unisoc.com>, <yuming.han@unisoc.com>,
+        <xuewen.yan94@gmail.com>
+Subject: [RFC PATCH V4] sched: psi: Add psi events trace point
+Date: Mon, 29 Sep 2025 09:42:27 +0800
+Message-ID: <20250929014227.430-1-xuewen.yan@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 58T1gX0t005260
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=unisoc.com;
+	s=default; t=1759110162;
+	bh=PYak0UliuFkoAGMykxnjYwa4GAB9iIqJIebJ8+Y2eTA=;
+	h=From:To:CC:Subject:Date;
+	b=gd4XdedUZmAXz2NHQGd+jI3JOJ4bLn1uDiJ8hSyY7x1Q/mSowI247mnBcBTUnl9bA
+	 M9BOj77qOr4XKC3Ohk5doE/PP44ZY3CJWPS0zGihyG43zBOFQoQJiBwgy0mF6P/TQZ
+	 p/PSKuSvqU65df2QTpW7JJKV7v9sEZxFKEqwaf3gcK1WIbMhmGyAr5dhzT+h0BxKvH
+	 F9yAHedAYpo5DB6yWb462p5UrCRgkH/4xV8UOd+fUVHEmEt14TFSZS8NeF6BHz4j8/
+	 /hUx0wHbD4G7dzgJTdM9ylP9NPW8cJP86GYdQIcneW7UvbdXv/y+MLZ7AOtPEVzOG7
+	 7o+7wiavboyhQ==
 
-The device reference counting in mei_ace_setup_dev_link() was
-incomplete, as the reference acquired by device_find_child_by_name()
-was not released immediately on the success path. Add put_device() to
-properly balance the reference count. Additionally, the redundant
-put_device() in mei_ace_remove() is removed.
+Add trace point to psi triggers. This is useful to
+observe the psi events in the kernel space.
 
-Found by code review.
+One use of this is to monitor memory pressure.
+When the pressure is too high, we can kill the process
+in the kernel space to prevent OOM.
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
 ---
-Changes in v5:
-- jumped to err instead of err_put to avoid calling put_device() again in err_put as reviewer's instructions;
-Changes in v4:
-- updated the subject as suggestions;
-Changes in v3:
-- deleted the tag of Fixes and CC, and moved put_device() to immediately after device_link_add() as suggestions;
-Changes in v2:
-- modified the put_device() operations and the patch title as suggestions.
+V4:
+-generate the event only after cmpxchg() passes the check
 ---
- drivers/media/pci/intel/ivsc/mei_ace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+V3:
+-export it in the tracefs;
+---
+v2:
+-fix compilation error;
+-export the tp;
+-add more commit message;
+---
+ include/trace/events/sched.h | 27 +++++++++++++++++++++++++++
+ kernel/sched/psi.c           |  5 +++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
-index 98310b8511b1..b306a320b70f 100644
---- a/drivers/media/pci/intel/ivsc/mei_ace.c
-+++ b/drivers/media/pci/intel/ivsc/mei_ace.c
-@@ -414,10 +414,11 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
- 	/* setup link between mei_ace and mei_csi */
- 	ace->csi_link = device_link_add(csi_dev, dev, DL_FLAG_PM_RUNTIME |
- 					DL_FLAG_RPM_ACTIVE | DL_FLAG_STATELESS);
-+	put_device(csi_dev);
- 	if (!ace->csi_link) {
- 		ret = -EINVAL;
- 		dev_err(dev, "failed to link to %s\n", dev_name(csi_dev));
--		goto err_put;
-+		goto err;
- 	}
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 7b2645b50e78..db8b8f25466e 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -826,6 +826,33 @@ TRACE_EVENT(sched_wake_idle_without_ipi,
+ 	TP_printk("cpu=%d", __entry->cpu)
+ );
  
- 	ace->csi_dev = csi_dev;
-@@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
- 	cancel_work_sync(&ace->work);
++#ifdef CONFIG_PSI
++TRACE_EVENT(psi_event,
++
++	TP_PROTO(int aggregator, int state, u64 threshold, u64 win_size),
++
++	TP_ARGS(aggregator, state, threshold, win_size),
++
++	TP_STRUCT__entry(
++		__field(int,	aggregator)
++		__field(int,	state)
++		__field(u64,	threshold)
++		__field(u64,	win_size)
++	),
++
++	TP_fast_assign(
++		__entry->aggregator	= aggregator;
++		__entry->state		= state;
++		__entry->threshold	= threshold;
++		__entry->win_size	= win_size;
++	),
++
++	TP_printk("aggregator=%d state=%d threshold=%llu window_size=%llu",
++		__entry->aggregator, __entry->state, __entry->threshold,
++		__entry->win_size)
++);
++#endif /* CONFIG_PSI */
++
+ /*
+  * Following tracepoints are not exported in tracefs and provide hooking
+  * mechanisms only for testing and debugging purposes.
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 59fdb7ebbf22..e8a7fd04ba9f 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -141,6 +141,8 @@
+ #include <linux/psi.h>
+ #include "sched.h"
  
- 	device_link_del(ace->csi_link);
--	put_device(ace->csi_dev);
++EXPORT_TRACEPOINT_SYMBOL_GPL(psi_event);
++
+ static int psi_bug __read_mostly;
  
- 	pm_runtime_disable(&cldev->dev);
- 	pm_runtime_set_suspended(&cldev->dev);
+ DEFINE_STATIC_KEY_FALSE(psi_disabled);
+@@ -515,6 +517,9 @@ static void update_triggers(struct psi_group *group, u64 now,
+ 				kernfs_notify(t->of->kn);
+ 			else
+ 				wake_up_interruptible(&t->event_wait);
++
++			trace_psi_event(aggregator, t->state, t->threshold,
++					t->win.size);
+ 		}
+ 		t->last_event_time = now;
+ 		/* Reset threshold breach flag once event got generated */
 -- 
-2.17.1
+2.25.1
 
 
