@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-836337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D6BBA9602
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:41:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CDEBA9608
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87B43B654E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:41:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DB31C1BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE18307491;
-	Mon, 29 Sep 2025 13:41:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702672C1594;
-	Mon, 29 Sep 2025 13:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7693074BB;
+	Mon, 29 Sep 2025 13:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Yfmrrfy2"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6DE30748F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759153260; cv=none; b=I9fKQ0F1vtPEvS/8A3zpwOGJgFTjGxveSnBOt0tNWn5RkqMNz55gp3l2NzHbheDA96pyY/TIuwgpP8/sd1Vaa/sHSUXCyiTFik2VEm+hBI6xuofyYNtBSsLsWL+74BW0n9R6kMXISeUHHRaUCelB6tdwlG26GZeMTSemcXWz7Rs=
+	t=1759153284; cv=none; b=oqUlXFSSp/qNrs6nYZbxYrfYIvW+VzTPfRnkzlqqePzHwyIXvndTh3cLOqL5+yVMiRhzeR8wmOrwymedr+mYgJI0+nGoqmZ6rAkOPUAQMYTVBaH1gZf+8EmhChpJaoF1GS28W7dQbRCG8sR3+fXaEKdOYCvXQIXGc4tYHrctjVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759153260; c=relaxed/simple;
-	bh=Ztt/WJDdgK4YyPlBZmQEPQ4pS88vmmm50tpR1xtDOw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGdcDUUWrSLYLUDCNu3LIz045UFB1I9ld4FwQBR+ywxb8Y32Frw57LV/TFDhZCMXc8blfxCTmYQcMFlGsKbHkoeTKpqdcFXQh619c7ltx5M5/6AcPwvFExXaL8zG9oIz69s4hc4DE2lilkL6+Vr1YoLulg54NAcqr7C6uUkG5a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F388150C;
-	Mon, 29 Sep 2025 06:40:49 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D8E03F59E;
-	Mon, 29 Sep 2025 06:40:55 -0700 (PDT)
-Date: Mon, 29 Sep 2025 14:40:52 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-Message-ID: <aNqMZGLV/UXbe39u@e133380.arm.com>
-References: <20250902162507.18520-1-Dave.Martin@arm.com>
- <aNFliMZTTUiXyZzd@e133380.arm.com>
- <ffe1c6e9-e951-42d6-99ec-ec6e7496f9b0@intel.com>
+	s=arc-20240116; t=1759153284; c=relaxed/simple;
+	bh=5uahX3/t/qKl+AWu2lHhkUSygd0Oeo7v5srfItKOpo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uVNV8qKJkN8xfXv/2FjQ9KIj6u9Qpb/TFuYaFdF5iXiqLpXZlhlyV6RhqxKK17cYNfW7+asnkQa3U7+ulNHbm3I5AolLotisjxCte13AehPXd333qWzakaZNNxUtcHIthaBYcpoyxEhT48XuOTKPC+bz9HXGXe9dKTNjFsMUN78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Yfmrrfy2; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57e03279bfeso6576087e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:41:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759153281; x=1759758081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5uahX3/t/qKl+AWu2lHhkUSygd0Oeo7v5srfItKOpo0=;
+        b=Yfmrrfy2+GMnQBf9zFdyVUDEWWBk7u2IspZC66fvQ78A1OHbwndRgBelIasgsZpbpL
+         Myh+TWMFO+toEbK+5IE/UW6n3CRi4rpIoKJho27gz3Yp+1um0S1UYJKGmUzyM3TRVZbX
+         a4W+eNLF1Ep145PoknDbfr0oqYv5FrdInBntIkfrZ48eL2YuJnvPi81RCCPrT32tIbtO
+         Tj/vuH2BUk8mCzL/Z6O9F8NOCgAq9xsg8knlI0Fea5zcpL9O1J9ZKrRG8CvXjpG62Zyw
+         2mDC8jahuA1b67ayY4OTaO82SbTCBPUT4KxWBXuMIpdBMmukJervGKJwOA5gj8OtkR6C
+         3GGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759153281; x=1759758081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5uahX3/t/qKl+AWu2lHhkUSygd0Oeo7v5srfItKOpo0=;
+        b=kW4EQ9fkUgLZW7suLMLluPMD9L7DR46BFyGqAlyBmuo3/cUgYKsB5C2RJQOABnjufN
+         z3CC8OzyeGwwGbHXUN/0ZyZl//JgJCjUCj2GIVhAqffQJdz52RONeEOBE3rgKrfGbrPf
+         jk2uPv5G0ntf7nhtRcTOU9QBgKMgeXZJCAgjU3wM3ai6a9QaIJbhFJuOu7Ulq1QVyF7l
+         FC/nw5Rlmbn+inqSlVDhKeEjfBzpAOoeF4RgRO+xd/x8tirzWHENuBcSxf9Naw4ecVJr
+         ydXsc5z/c/Ce64GFHjVXX3MA2YCvTvw21JE2+Dj9moc7S6S8GfZ9a1L+mnedvBAG0jhV
+         cUWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA2InfmzIDqmWTwG+JYb/cnEirTEDcAItZJxSBOMrmRgLZLxClL0bmfwGO8fdTtRdi8BamizolTT2tekA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJMu+bDHI7P4nOS1nHTBLkNbIQZh5bpAnIGCl0iEji4bLIm42P
+	tRzaG/PMpBmanQL5Ve1qeSXYiNvnxQMHXeyK5o+ZNvy9rL0p0pDwxgxgNoQv73AXYlU8sLeo2dE
+	K6zUScMA1wvNatHixYQf8EQTYLgy0BsbAiycg8l4epA==
+X-Gm-Gg: ASbGncu5LGBtUhxuOiMh34D5dNaA1b9LTm/Cy6U07eknad66V9hn0DPkMMDNR1joF7m
+	4GnOrYuOlmFrBMBvdh3HGO3gI8nx+GVE1MSzSJn2VqOAdks7S6iOKbEGLqLfpbBrmnO+b7K6I0j
+	B9dugRAxVKYN24xrxPF6lEMAbtrsqLxnywqtGuwPLIop5OWQdXPxcTJYaKSt7ovjRieWgHwzJ/H
+	i+rpY9NWHnXoHE3DELrEYMfEawAYygOZl/JQb0=
+X-Google-Smtp-Source: AGHT+IHVwcUt8n2Dr1HYLUuIj7lg91of8OCj1ZiQGHG98cWyZH+Ddd15Wdp2OohNipHuMRCcT2tzkYcUlRcdG1A1CM8=
+X-Received: by 2002:a05:6512:304b:b0:57e:3273:93a7 with SMTP id
+ 2adb3069b0e04-589842801c8mr179708e87.21.1759153281232; Mon, 29 Sep 2025
+ 06:41:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ffe1c6e9-e951-42d6-99ec-ec6e7496f9b0@intel.com>
+References: <20250919093627.605059-1-kkartik@nvidia.com> <20250919-undusted-distrust-ff5e2f25cdd5@spud>
+ <f6c001af-bfaa-4d1a-8c32-1e2889e78650@nvidia.com>
+In-Reply-To: <f6c001af-bfaa-4d1a-8c32-1e2889e78650@nvidia.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 29 Sep 2025 15:41:08 +0200
+X-Gm-Features: AS18NWAjOCk1Qe6m9A7AF8f5gOU-rIzmkU9f6UFIkGdqyVsyB080HPyzY-M8DlA
+Message-ID: <CAMRc=Mee9JvcOCAqQxcCMBE7gUQWvZaM=wDAfyKTG5bKyZeHTA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Tegra410 support
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: Conor Dooley <conor@kernel.org>, linus.walleij@linaro.org, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
+	Prathamesh Shete <pshete@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette,
+On Mon, Sep 29, 2025 at 9:24=E2=80=AFAM Kartik Rajput <kkartik@nvidia.com> =
+wrote:
+>
+> Hi Conor,
+>
+> Thanks for reviewing the patch!
+>
+> On 19/09/25 22:44, Conor Dooley wrote:
+> > On Fri, Sep 19, 2025 at 03:06:26PM +0530, Kartik Rajput wrote:
+> >> From: Prathamesh Shete <pshete@nvidia.com>
+> >>
+> >> Add the port definitions for the main GPIO controller found on
+> >> Tegra410.
+> >>
+> >> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> >> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> >> ---
+> >
+> > Why are you modifying a binding header for devicetree when the driver
+> > only appear to grow acpi support?
+> >
+>
+> Although Tegra410 is ACPI-only and does not require a new compatible stri=
+ng,
+> we chose to add the GPIO port definitions to the DT binding header to sta=
+y
+> consistent with previous Tegra SoCs.
+>
+> Thanks,
+> Kartik
+>
 
-On Fri, Sep 26, 2025 at 01:54:10PM -0700, Reinette Chatre wrote:
-> Hi Dave,
-> 
-> Just one correction ...
-> 
-> On 9/22/25 8:04 AM, Dave Martin wrote:
+Hi!
 
-[...0
+The kernel policy is not to add symbols nobody is using. Please drop them.
 
-> > For AMD SMBA, we might have:
-> > 
-> > 	min: 1
-> > 	max: 100
-> > 	scale: 8
-> > 	unit: 1GBps
-> > 
-> 
-> Unfortunately not like this for AMD. Initial support for AMD MBA set max
-> to a hardcoded 2048 [1] that was later [2] modified to learn max from hardware.
-> Of course this broke resctrl as a generic interface and I hope we learned
-> enough since to not repeat this mistake nor give up on MB and make its interface
-> even worse by, for example, adding more architecture specific input ranges.
-> 
-> Reinette 
-> 
-> [1] commit 4d05bf71f157 ("x86/resctrl: Introduce AMD QOS feature")
-> [2] commit 0976783bb123 ("x86/resctrl: Remove hard-coded memory bandwidth limit")
-
-The "100" was just picked randomly in my example.  Looking more
-carefully at the spec, it may make sense to have:
-
-	min: 1
-	max: (1 << value of BW_LEN)
-	scale: 8
-	unit: 1GBps
-
-
-(This max value correspondings to setting the "unlimited" bit in the
-control MSR; the other bits of the bandwidth value are then ignored.
-For this instance of the schema, programming the "max" value would be
-expected to give the nearest approximation to unlimited bandwidth that
-the hardware permits.)
-
-While the memory system is under-utilised end-to-end, I would expect
-throughput from a memory-bound job to scale linearly with the control
-value, but the control level at which throughput starts to saturate
-will depend on the pattern of load throughout the system.
-
-This seems fundamentally different from percentage controls -- it looks
-impossible to simulate proportional controls with absolute throughput
-controls, nor vice-versa (?)
-
-Cheers
----Dave
+Bartosz
 
