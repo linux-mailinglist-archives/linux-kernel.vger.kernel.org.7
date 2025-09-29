@@ -1,169 +1,363 @@
-Return-Path: <linux-kernel+bounces-835773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34284BA806B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6E0BA8083
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC23A3B5C6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA46C1724D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB33927F163;
-	Mon, 29 Sep 2025 05:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFB0296BDE;
+	Mon, 29 Sep 2025 05:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ghj5Y0Pj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KfliRZdj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A780F34BA42
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DA327F163
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759125131; cv=none; b=tb7eCYY8AO1DZdvc2MHwhuavvJ1OvoVCzHfgrDgchlLl6p3I1GT8laG1iX52ET5s23Dm9K5tPPaJpaU90hNiJoFehw2F2XO/emoJGsKqkuPYB7pBhhCEaWUbUQVrR8jEIJ9Q4l3fTogaQtjQoet8OAMy8N1+x78kBAepShZyyV0=
+	t=1759125296; cv=none; b=ehfZpoJUBJh0LX/WgK9AnI1e/yxNKMWO63q+n9kuG+lUgNi4gjLVBT1Vkdj5Kc74yUAguk7pX3pbqQgg2iMHqnYoUZr8ZQoobCX0qOKgHXrR4UnzuJ83HIydWotOh9z95elmszjgjg6i9Bdf23x4ekZMfyYuHXiqTo0FhWJNLXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759125131; c=relaxed/simple;
-	bh=XUBwfWdpgq5g7qZ2fkMwmcj0ZQ089xhmdCE536NdRcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kTqD2sTx4uxh3h2UDwUc2VRBWkajy8ttg+k990xPyc7MGFYih9XigXugQXoJKbTA/lZGb+bUYjvmDomX3vQqZZBRgn5iFeBex9no7gT7b4OJiYXHeKPbqBOMIIrfKwdAMqYGH/LSEXWHEkez1HnkC/4wYpYu3MeeMnXdfpA+mM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ghj5Y0Pj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58T0hTwS023819
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:52:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bbHMiANAyI5VpOiOH9+PkDIHUQcsra2Awt7fKme/mwc=; b=ghj5Y0Pj1cimy/6o
-	lQ6eq4rbR4HLdMBNyl0net2Yt2AY7sxbPz2VHq8cW8q69RCfGpjQhvxUF4gsixwz
-	+1KuX2A2bvoLV64HDRQPoqosSUWTsYFmlat3pftJUuKSyQ8V/CWf7IrL1A7rnvYH
-	iAyvrQfpxx06f4DV526JkMWcpSXKHRmE/HhDgc+EKNwhOzD4j+B6Ts1Tht249uTZ
-	hHWQOwbJxR5GSBZ5pCDOoCOlJyr8cP1URwu56wJXdf0en2b/CVSdLRzTdZqfiluu
-	jxT1Bk8YW5QItweIk69i7iTO//WgapYlh8KCyFyJ2tsQyz7LVOOS6w9qjUNxbCMb
-	4JxDqg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e93hbt66-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:52:08 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-782063922ceso1257800b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:52:08 -0700 (PDT)
+	s=arc-20240116; t=1759125296; c=relaxed/simple;
+	bh=8/E2ldD2d5q0fEc83LhadtKerq4Ej4nbZEJYOBXdJlU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MtKDZug8sOUTXI09jmEL1lAj6zZQF2ANxeLDfGfN3PGfIZ3LDL94YCU3mJYYjctU3h7u7X8Y0QY0eXTm+JteG3ZsMlzeWOav79Ub87q3wyCO0ol4MwKNEoplkhDgDMJQSQ4pgW8vGH3nBNoRxmcBtbKWo9KNujB3mhQ9KQbGLmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KfliRZdj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759125293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E8maNDgdqKly9BiQbDozT3WeIIEQRXlKan+MIsttrfw=;
+	b=KfliRZdjTNgGbdrbEIieuwKGmILUSADJldX3lFuF2gf3/VqSPoZ1Iro6ji3NMeHep7jHj9
+	aXV/MYZdrdwYePg69U69qbP2MFCpQKTsbHngH28Bfs05YApH4oo5tS/9TtI8C7++l/wFeA
+	2H2b+6/eeHyk5P4MU2x+wZzIBbP6iTo=
+Received: from mail-yx1-f72.google.com (mail-yx1-f72.google.com
+ [74.125.224.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-zJ2OXp6yO2aYhOwtEsSJKA-1; Mon, 29 Sep 2025 01:54:48 -0400
+X-MC-Unique: zJ2OXp6yO2aYhOwtEsSJKA-1
+X-Mimecast-MFC-AGG-ID: zJ2OXp6yO2aYhOwtEsSJKA_1759125288
+Received: by mail-yx1-f72.google.com with SMTP id 956f58d0204a3-60fb0c64421so5708871d50.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:54:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759125128; x=1759729928;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bbHMiANAyI5VpOiOH9+PkDIHUQcsra2Awt7fKme/mwc=;
-        b=P6Xi6W+u15MMUGtT1tNltMY+AL7oPhGQ4gxbNENHqF2DNYHvxtjlmCpZhsipL3z+m6
-         TIDB96gFTEgYlr8B0qFraIfDgLZwvyeqvA2CV4zYVvx9eFoDGv4vO3nFVD4veCX0RAOI
-         JZxxUVLNUl8psVUb08mqmGKc8Jf+/KX3ZwjQC2/h5aSed27y2flEwU03XsGqPg7celz/
-         VoiTf59eq/4L1JBiooca0C1q54PNEHB1IlWodI6DpZTlm/wfwK84OzuRQiV0DsLd3Uda
-         3YeCkGwfhMkqXvr/zsw5zqPmw/xj93oqLXqpGvP+T6JMIsHxWgsmu27dKCA1sEIzCiXc
-         j9Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXioxLr7nzwZ7WcRrjVINF6R4ryLfc46sltb3PeZ/q9a8mcreyZMCwgYgowxS+p2DjlJvadlkjoiva9r7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsHZhoGBSpwYBZ83joZMYOdnzTqZfGkb2jFTtky/W1nQxKTiF3
-	O8YJpsgvLs/l3W3KIHmfdRmLe08FG8638gj/YRBrfZJH3OU66x8JnT5nLivXXJFAyABGwe4t35t
-	bJF/v32PlYIPQBt3lc/4TJ+C7mKGU7DPD3JSzxYWJIaZPK+AIshUmSLuY3urBvfBPO8E=
-X-Gm-Gg: ASbGncvQnLiIn2704ED2U6rhccX8CerFZ5wErOIDMCNiywB2LLbnS5pP2io+aaPQrEX
-	wRG4IVnXBQffojlTpb3D9j+1LNSegHtYJYRGYN9uCBO/GRJiBPnTlJjqT3U9IQNi7i0knG0O2R8
-	Ti+A1Ve2iE1hLYnWtdDxmxE0vu1k+Svrl6QXRdmZ8wrkceIirjJO8y7+yO+mkSuUqe6kkmv50Im
-	7D9HAp3wODdnS1Mp3zyufcssMxWXW5WmAdJ6iWs7yQVi676Zhovc8XQOSdHn5S+V51pJUsbjgPD
-	7NEHyb9D5FFYDLftqrqPTaUZa/VglJJeqPB0GsVV9FjdlUdPyETxPP5/Pt0bkFCf9x9twSJU5Mm
-	uOMY=
-X-Received: by 2002:a05:6a00:3915:b0:770:fd32:f365 with SMTP id d2e1a72fcca58-780fceba320mr15850343b3a.25.1759125127947;
-        Sun, 28 Sep 2025 22:52:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8QHbacnDb03pS+a1cSXE1NrmZSWsLadYC2GBzyt68+4gmxErOu5O3Q9uGrkNveCF4qF3Z6A==
-X-Received: by 2002:a05:6a00:3915:b0:770:fd32:f365 with SMTP id d2e1a72fcca58-780fceba320mr15850309b3a.25.1759125127505;
-        Sun, 28 Sep 2025 22:52:07 -0700 (PDT)
-Received: from [10.92.183.157] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023c2b29sm10258850b3a.36.2025.09.28.22.52.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Sep 2025 22:52:07 -0700 (PDT)
-Message-ID: <d77e580a-8d55-49ba-82b5-a1d868dab572@oss.qualcomm.com>
-Date: Mon, 29 Sep 2025 11:22:01 +0530
+        d=1e100.net; s=20230601; t=1759125288; x=1759730088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E8maNDgdqKly9BiQbDozT3WeIIEQRXlKan+MIsttrfw=;
+        b=gmdkjT958c0fEdVuBoUBVVoed6Ajftyhn1Blo6NoCLMwltLnhiNz/MNYE2L/7jJJ0O
+         +f+qh/sufEtnz0Xg7kDF0TjVWvxB5ndAWx8JupG88p7qTctlMrcHI70Lg/zU8ADnYHAD
+         CeqvURJY8BdPObSkkSGwD4r+vx/SHgTUeiBNKfQ2KeTgYwN2vSvNaFwdKdnlppbkKU7X
+         CIPckXNaYwWi4s6Sz42KZW3fthzCSLDcB8Mtt3fMh1XwSlNnOAGga9GqwU/DLdzx9A9M
+         AHJnlKOvkXZFGGp2Jg4DGQvg28AUMI0q38CO5F8sVke76CcYX+NRAuhk0dxpj0ieEIuF
+         dGiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCwPrBKHF+Un5CIAF0ymxoNUVSTXl8Zj/pH3I0qB1YfyzQ6YLSS8TMJjCR813+hbVXnbyRW2qeuiiLtgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQdt/vAA8vP+9VcPzqiwpaf7mtJZt3yZqyJx5kdNyReSFOM/VS
+	dmwHNaBHuWnMK5Yg71H6ezyY2uvAsivR3Y8cwVipupUwM/rW7FdwQ+Ru+wzg3UUjKGvAiqtl0qQ
+	pVZcIcfb442H7efwJqZ2PhkpSu9UrJX39hAtf8k9W00XgTFzqq1EfHA0v3YlawNU3E8FmKFkbUT
+	WoA24jzJ+N+gANAnZhlpAKEHtR5IXBBySKVkErvOW4
+X-Gm-Gg: ASbGncsbaiAAZrslimt0/N8F4fVe4WO5bA717oOeLmCrKxIqf/DN3WBHQeNUqS5CDhC
+	t0+4Uw1rb6gVfvV1xuzA3gY3TDuG0QP8YRUx01K6rnLVjTNQM/a8dH6oyeagXWcv2xAfQfS/Syt
+	uZeEwUF6t4KYoqv3jQyY6wOyociEWtBiC9iwalj/UPkyvyR4RBV/Zw4PtKRPp8WkOmLbTNvwBA3
+	p1bzf6Q
+X-Received: by 2002:a53:5009:0:b0:5f3:319c:ff0a with SMTP id 956f58d0204a3-6361a7b92ffmr12511249d50.28.1759125287875;
+        Sun, 28 Sep 2025 22:54:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyCK8uLcphB63nbexDPDDs8eK401XtWuvD3A7MVsBqFDygM2N9TSedA53SK67ekYVbIrFtK9DFzn6x08oNE34=
+X-Received: by 2002:a53:5009:0:b0:5f3:319c:ff0a with SMTP id
+ 956f58d0204a3-6361a7b92ffmr12511241d50.28.1759125287445; Sun, 28 Sep 2025
+ 22:54:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: codecs: lpass-macro: Add support for channel map
- mixer control
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
-        prasad.kumpatla@oss.qualcomm.com
-References: <20250902062300.212021-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <708dc6e4-1566-4c72-9f3a-a34f935ac247@oss.qualcomm.com>
-Content-Language: en-US
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-In-Reply-To: <708dc6e4-1566-4c72-9f3a-a34f935ac247@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MSBTYWx0ZWRfX+yaq5M73ZV8U
- xURjQSfugrWdcvCEDBb/oMtb7/7SYoDnR0U9ZIGLR2uKJ/MPLbfTGfOHD2pRqNNAP3AwtwnbLsk
- H1dHkj3aZhztXQo43mVcKvMcbmyA5untlqjNXgc0IHFL0xkNcWruWsp1D+SzOLzw+jfziTE++gV
- uYrb57GYtf9rtOZ6tOUSizYJqHwhqXSsZ1O6u51RdsN0X6bPw2EGlLDtb8nA5Muxe3wWF2wn3UU
- 7ejJFZO5Yi/eUMrmvyL8+NIAp1aK8cVE0qBWF8xUynPtw5LoR12T+qK6l3lwsYnuTfXCHbvSIOk
- svE2aY9ef5kKYUDezCEclGgEtFk2x3xQP11DCof1ytbM9wjSGruAGD7AqPZDHPjwCNPrrC6vKXb
- 6qHUkzwMb5GnAGvBKrOXktcCthVhjQ==
-X-Proofpoint-GUID: zZIwO4JkQdw2v87VEHri5kgU07S2MkFk
-X-Proofpoint-ORIG-GUID: zZIwO4JkQdw2v87VEHri5kgU07S2MkFk
-X-Authority-Analysis: v=2.4 cv=Rfydyltv c=1 sm=1 tr=0 ts=68da1e88 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=o-7Fb8226cIMJVCjAR8A:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_02,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270041
+References: <20250926101432.2251301-1-eperezma@redhat.com> <20250926101432.2251301-4-eperezma@redhat.com>
+ <20250926105938-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250926105938-mutt-send-email-mst@kernel.org>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 29 Sep 2025 07:54:10 +0200
+X-Gm-Features: AS18NWD0M0BrNB-5ZJFshe0N4FI1QlS26_QY2sGc-me5F0QYk2o7zDGY1K4E_wg
+Message-ID: <CAJaqyWfZLw8NicJA93yrz7f9m_t6e9fbkEyycTDb-pE=ARzYAA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] vduse: add vq group support
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, linux-kernel@vger.kernel.org, 
+	Maxime Coquelin <mcoqueli@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Cindy Lu <lulu@redhat.com>, 
+	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>, jasowang@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 26, 2025 at 4:59=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Fri, Sep 26, 2025 at 12:14:29PM +0200, Eugenio P=C3=A9rez wrote:
+> > This allows sepparate the different virtqueues in groups that shares th=
+e
+>
+> separate
+>
 
+Fixing, thanks!
 
-On 9/2/2025 6:28 PM, Konrad Dybcio wrote:
-> On 9/2/25 8:23 AM, Mohammad Rafi Shaik wrote:
->> Introduce the channel map mixer control support for LPASS macro
->> codec Digital Audio Interfaces (DAIs). The channel map mixer controls
->> are required by APPS to configure usecase-specific audio routing and
->> channel mapping.
->>
->> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
->> ---
-> 
-> [...]
-> 
->> +int lpass_macro_add_chmap_ctls(struct snd_soc_pcm_runtime *rtd,
->> +			       struct snd_soc_dai *dai, int dir)
->> +{
->> +	struct snd_pcm_chmap *info;
->> +	int ret;
->> +
->> +	info = kzalloc(sizeof(*info), GFP_KERNEL);
->> +	if (!info)
->> +		return -ENOMEM;
->> +
->> +	ret =  snd_pcm_add_chmap_ctls(rtd->pcm, dir, NULL,
-> 
-> double space after '='
-> 
-Ack,
-
-Sure will update in next version.
-
-some how extra space error/warning is not seeing while checkpatch.pl test.
-
-Thanks & Regards,
-Rafi.
-
-> Konrad
+> > same address space.  Asking the VDUSE device for the groups of the vq a=
+t
+> > the beginning as they're needed for the DMA API.
+> >
+> > Allocating 3 vq groups as net is the device that need the most groups:
+> > * Dataplane (guest passthrough)
+> > * CVQ
+> > * Shadowed vrings.
+> >
+> > Future versions of the series can include dynamic allocation of the
+> > groups array so VDUSE can declare more groups.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> > v5:
+> > * Revert core vdpa changes (Jason).
+> > * Fix group =3D=3D ngroup case in checking VQ_SETUP argument (Jason).
+> >
+> > v4:
+> > * Revert the "invalid vq group" concept and assume 0 if not set (Jason)=
+.
+> > * Make config->ngroups =3D=3D 0 invalid (Jason).
+> >
+> > v3:
+> > * Make the default group an invalid group as long as VDUSE device does
+> >   not set it to some valid u32 value.  Modify the vdpa core to take tha=
+t
+> >   into account (Jason).
+> > * Create the VDUSE_DEV_MAX_GROUPS instead of using a magic number
+> >
+> > v2:
+> > * Now the vq group is in vduse_vq_config struct instead of issuing one
+> >   VDUSE message per vq.
+> >
+> > v1:
+> > * Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
+> >
+> > RFC v3:
+> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason).  It was set to a lowe=
+r
+> >   value to reduce memory consumption, but vqs are already limited to
+> >   that value and userspace VDUSE is able to allocate that many vqs.
+> > * Remove the descs vq group capability as it will not be used and we ca=
+n
+> >   add it on top.
+> > * Do not ask for vq groups in number of vq groups < 2.
+> > * Move the valid vq groups range check to vduse_validate_config.
+> >
+> > RFC v2:
+> > * Cache group information in kernel, as we need to provide the vq map
+> >   tokens properly.
+> > * Add descs vq group to optimize SVQ forwarding and support indirect
+> >   descriptors out of the box.
+> > ---
+> >  drivers/vdpa/vdpa_user/vduse_dev.c | 46 ++++++++++++++++++++++++++----
+> >  include/uapi/linux/vduse.h         | 12 ++++++--
+> >  2 files changed, 50 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index 2b6a8958ffe0..99e37def7a83 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -40,6 +40,7 @@
+> >  #define DRV_LICENSE  "GPL v2"
+> >
+> >  #define VDUSE_DEV_MAX (1U << MINORBITS)
+> > +#define VDUSE_DEV_MAX_GROUPS 0xffff
+> >  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
+> >  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
+> >  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
+> > @@ -59,6 +60,7 @@ struct vduse_virtqueue {
+> >       struct vdpa_vq_state state;
+> >       bool ready;
+> >       bool kicked;
+> > +     u32 vq_group;
+> >       spinlock_t kick_lock;
+> >       spinlock_t irq_lock;
+> >       struct eventfd_ctx *kickfd;
+> > @@ -115,6 +117,7 @@ struct vduse_dev {
+> >       u8 status;
+> >       u32 vq_num;
+> >       u32 vq_align;
+> > +     u32 ngroups;
+> >       struct vduse_umem *umem;
+> >       struct mutex mem_lock;
+> >       unsigned int bounce_size;
+> > @@ -456,6 +459,7 @@ static void vduse_dev_reset(struct vduse_dev *dev)
+> >               vq->driver_addr =3D 0;
+> >               vq->device_addr =3D 0;
+> >               vq->num =3D 0;
+> > +             vq->vq_group =3D 0;
+> >               memset(&vq->state, 0, sizeof(vq->state));
+> >
+> >               spin_lock(&vq->kick_lock);
+> > @@ -593,6 +597,16 @@ static int vduse_vdpa_set_vq_state(struct vdpa_dev=
+ice *vdpa, u16 idx,
+> >       return 0;
+> >  }
+> >
+> > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> > +{
+> > +     struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +
+> > +     if (dev->api_version < VDUSE_API_VERSION_1)
+> > +             return 0;
+> > +
+> > +     return dev->vqs[idx]->vq_group;
+> > +}
+> > +
+> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+> >                               struct vdpa_vq_state *state)
+> >  {
+> > @@ -790,6 +804,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
+ig_ops =3D {
+> >       .set_vq_cb              =3D vduse_vdpa_set_vq_cb,
+> >       .set_vq_num             =3D vduse_vdpa_set_vq_num,
+> >       .get_vq_size            =3D vduse_vdpa_get_vq_size,
+> > +     .get_vq_group           =3D vduse_get_vq_group,
+> >       .set_vq_ready           =3D vduse_vdpa_set_vq_ready,
+> >       .get_vq_ready           =3D vduse_vdpa_get_vq_ready,
+> >       .set_vq_state           =3D vduse_vdpa_set_vq_state,
+> > @@ -1253,12 +1268,24 @@ static long vduse_dev_ioctl(struct file *file, =
+unsigned int cmd,
+> >               if (config.index >=3D dev->vq_num)
+> >                       break;
+> >
+> > -             if (!is_mem_zero((const char *)config.reserved,
+> > -                              sizeof(config.reserved)))
+> > +             if (dev->api_version < VDUSE_API_VERSION_1 && config.grou=
+p)
+> > +                     break;
+> > +
+> > +             if (dev->api_version >=3D VDUSE_API_VERSION_1) {
+> > +                     if (config.group >=3D dev->ngroups)
+> > +                             break;
+> > +                     if (dev->status & VIRTIO_CONFIG_S_DRIVER_OK)
+> > +                             break;
+> > +             }
+> > +
+> > +             if (config.reserved1 ||
+> > +                 !is_mem_zero((const char *)config.reserved2,
+> > +                              sizeof(config.reserved2)))
+> >                       break;
+> >
+> >               index =3D array_index_nospec(config.index, dev->vq_num);
+> >               dev->vqs[index]->num_max =3D config.max_size;
+> > +             dev->vqs[index]->vq_group =3D config.group;
+> >               ret =3D 0;
+> >               break;
+> >       }
+> > @@ -1738,12 +1765,20 @@ static bool features_is_valid(struct vduse_dev_=
+config *config)
+> >       return true;
+> >  }
+> >
+> > -static bool vduse_validate_config(struct vduse_dev_config *config)
+> > +static bool vduse_validate_config(struct vduse_dev_config *config,
+> > +                               u64 api_version)
+> >  {
+> >       if (!is_mem_zero((const char *)config->reserved,
+> >                        sizeof(config->reserved)))
+> >               return false;
+> >
+> > +     if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
+> > +             return false;
+> > +
+> > +     if (api_version >=3D VDUSE_API_VERSION_1 &&
+> > +         (!config->ngroups || config->ngroups > VDUSE_DEV_MAX_GROUPS))
+> > +             return false;
+> > +
+> >       if (config->vq_align > PAGE_SIZE)
+> >               return false;
+> >
+> > @@ -1859,6 +1894,7 @@ static int vduse_create_dev(struct vduse_dev_conf=
+ig *config,
+> >       dev->device_features =3D config->features;
+> >       dev->device_id =3D config->device_id;
+> >       dev->vendor_id =3D config->vendor_id;
+> > +     dev->ngroups =3D (dev->api_version < 1) ? 1 : config->ngroups;
+> >       dev->name =3D kstrdup(config->name, GFP_KERNEL);
+> >       if (!dev->name)
+> >               goto err_str;
+> > @@ -1937,7 +1973,7 @@ static long vduse_ioctl(struct file *file, unsign=
+ed int cmd,
+> >                       break;
+> >
+> >               ret =3D -EINVAL;
+> > -             if (vduse_validate_config(&config) =3D=3D false)
+> > +             if (!vduse_validate_config(&config, control->api_version)=
+)
+> >                       break;
+> >
+> >               buf =3D vmemdup_user(argp + size, config.config_size);
+> > @@ -2018,7 +2054,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev *=
+dev, const char *name)
+> >
+> >       vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
+> >                                &vduse_vdpa_config_ops, &vduse_map_ops,
+> > -                              1, 1, name, true);
+> > +                              dev->ngroups, 1, name, true);
+> >       if (IS_ERR(vdev))
+> >               return PTR_ERR(vdev);
+> >
+> > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
+> > index ccb92a1efce0..a3d51cf6df3a 100644
+> > --- a/include/uapi/linux/vduse.h
+> > +++ b/include/uapi/linux/vduse.h
+> > @@ -31,6 +31,7 @@
+> >   * @features: virtio features
+> >   * @vq_num: the number of virtqueues
+> >   * @vq_align: the allocation alignment of virtqueue's metadata
+> > + * @ngroups: number of vq groups that VDUSE device declares
+> >   * @reserved: for future use, needs to be initialized to zero
+> >   * @config_size: the size of the configuration space
+> >   * @config: the buffer of the configuration space
+> > @@ -45,7 +46,8 @@ struct vduse_dev_config {
+> >       __u64 features;
+> >       __u32 vq_num;
+> >       __u32 vq_align;
+> > -     __u32 reserved[13];
+> > +     __u32 ngroups; /* if VDUSE_API_VERSION >=3D 1 */
+> > +     __u32 reserved[12];
+> >       __u32 config_size;
+> >       __u8 config[];
+> >  };
+> > @@ -122,14 +124,18 @@ struct vduse_config_data {
+> >   * struct vduse_vq_config - basic configuration of a virtqueue
+> >   * @index: virtqueue index
+> >   * @max_size: the max size of virtqueue
+> > - * @reserved: for future use, needs to be initialized to zero
+> > + * @reserved1: for future use, needs to be initialized to zero
+> > + * @group: virtqueue group
+> > + * @reserved2: for future use, needs to be initialized to zero
+> >   *
+> >   * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
+> >   */
+> >  struct vduse_vq_config {
+> >       __u32 index;
+> >       __u16 max_size;
+> > -     __u16 reserved[13];
+> > +     __u16 reserved1;
+> > +     __u32 group;
+> > +     __u16 reserved2[10];
+> >  };
+> >
+> >  /*
+> > --
+> > 2.51.0
+>
 
 
