@@ -1,171 +1,171 @@
-Return-Path: <linux-kernel+bounces-836400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64622BA9948
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:30:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689C3BA9965
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19B33A8167
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9B73AA072
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1F73090DE;
-	Mon, 29 Sep 2025 14:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6033090E2;
+	Mon, 29 Sep 2025 14:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="A5ck5Oso"
-Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VPxxUDtl"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B771DD543
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F572FBDE7
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156231; cv=none; b=WqbumiGTkEms9eGGGYcc7ahNGS3YFuJkIas3Jmrhw97iT/rEx7tQcCninjgOBY7USun9ncmiPcP2KtNBMN3yeIJxf3ehmwNw4WB1XAPsfZJJtPU6ij58sWh9+54RQVMsrL2cSIaV2HcvLmzylc2FAQRwEA8Z3+Ml7U+V2kLHbKQ=
+	t=1759156309; cv=none; b=s/5+my6/lCsUf/tO0rj/Z1Xdc4k7T5K1p4WchzAaABRbsXF2HfzzbrcY7eqFgMWXayZtvoEiX14hYaGugOQyzSVcT+3V6eT/wVoEqbD6u1CLHaQvg2mBbxNnw8GpET5n6hnDRlw+uWg/mV6Bgi4pEGR9Dse2ykHfwLSTBhyoqiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156231; c=relaxed/simple;
-	bh=kLzwDfi9hHuZ0JYFHtKKaF2/Zh/ir2DqJazGhsuDLcs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eR7l1vnvRwqcy643kElxQF4kNBCSjw44W0XlPduloSKTnM0ft57K2n+/g/vcXYWaSTdUt1fRaLNlEoZ0K7pQ/EUwDilfmBiv5NvflFdNU8mFnCvUnDSb5n3PKDYshyBUG7PuKp6cO9LOlarsu2l7a/x9FNeoqfTZJF89R4Pp2W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=A5ck5Oso; arc=none smtp.client-ip=173.71.130.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id EdReLiLUuM23czLG; Mon, 29 Sep 2025 10:30:28 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=tebo2dUFTHeYeP42mbNTFyE3siOJRa3RaJWFQkL+ywI=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=A5ck5OsoglEpRApn73VZ
-	0WhbF2dJ4ZjYbTOyMO0OfCNyvKpE0M+ZMjUxqV/LjE/q4qs78eQWszwa4qh2Kts9eBqfsQGxoHsE1
-	4kIRYVs4jZVMdAuqS9gH+gnMKIhMe/fwMJvEpBRW9zp1qQ8ipbzFbr3wb/EgAaAtnUGraS0i78=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14216462; Mon, 29 Sep 2025 10:30:28 -0400
-Message-ID: <de6e63c5-abd3-4a19-956d-aea5dfc68f6a@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 29 Sep 2025 10:30:27 -0400
+	s=arc-20240116; t=1759156309; c=relaxed/simple;
+	bh=IpGX4TAXRBmFsee6tJ2oBCu5Ti2cTDB6CTERjYAHTNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EgzSua9UdOmJS1alZ3rI1HDdojr1wtIae/+Ra7hx4Tx+dZ9AgMITcs/46mSuXjI6/S9IKR6YcPJA2XFX3/D3lFnuUpAqsTPrVxIT5N/aPB7v1PUm1rifJOJhY6LC/yTzEWnU7R5sSd+h1jBfrjbQarudKz3V/lMNG2Gn5/0gxAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VPxxUDtl; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 1CDCC1A0F91;
+	Mon, 29 Sep 2025 14:31:42 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DC77D606AE;
+	Mon, 29 Sep 2025 14:31:41 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7F3B4102F16F4;
+	Mon, 29 Sep 2025 16:31:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759156300; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=xjTOCvFdY4AQNlquU9JgemAA95m0AG2lPPK+gJ1mSgQ=;
+	b=VPxxUDtl11bkw/rkUE/A+VjJ0kUI6xgmqsZYhopAaSOFiSx0IOViaggmVpfg/VjmCJEfdk
+	udZKT9ZsvEaI1h1dPA4wcmvUzxxca2ElIpCkRgrLbAl0Q6q0ZcVGzDg8huD9/dFkpgLMhb
+	SCwLHgLxn8CtRcRzu2KFP04l2OqbW4fT1Fu0XebVQay8PYoXCQZNf7qrzMlbeqAvpTKn6h
+	1z2QjkJ6rv6uiTcHJoAg6b+QLLIv2vHCuatdu6nQ4Igau/RxwLTz5hL0gnVB2A6eHFYjom
+	zAJApIqQNovmcYsTDCfuhajAvFxGJpJd6rHfuee0i851gMT5+uUuEHaaj3Av9A==
+Date: Mon, 29 Sep 2025 16:31:27 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] drm/encoder: drm_encoder_cleanup: take chain mutex
+ while tearing down
+Message-ID: <20250929163127.5ad20e05@booty>
+In-Reply-To: <20250929-flat-koel-from-nibiru-665d49@houat>
+References: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com>
+	<20250926-drm-bridge-alloc-encoder-chain-mutex-v1-2-23b62c47356a@bootlin.com>
+	<20250929-flat-koel-from-nibiru-665d49@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2 01/16] Revert "scsi: qla2xxx: Perform lockless command
- completion in abort path"
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH v2 01/16] Revert "scsi: qla2xxx: Perform lockless command
- completion in abort path"
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
-In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1759156228
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 3587
-X-Barracuda-BRTS-Status: 1
-X-ASG-Debug-ID: 1759156228-1cf43947df3c00c0001-xx1T2L
+X-Last-TLS-Session-Version: TLSv1.3
 
-This reverts commit 0367076b0817d5c75dfb83001ce7ce5c64d803a9.
+Hi Maxime,
 
-The commit being reverted added code to __qla2x00_abort_all_cmds() to
-call sp->done() without holding a spinlock.  But unlike the older code
-below it, this new code failed to check sp->cmd_type and just assumed
-TYPE_SRB, which results in a jump to an invalid pointer in target-mode
-with TYPE_TGT_CMD:
+On Mon, 29 Sep 2025 14:45:10 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-qla2xxx [0000:65:00.0]-d034:8: qla24xx_do_nack_work create sess success
-  0000000009f7a79b
-qla2xxx [0000:65:00.0]-5003:8: ISP System Error - mbx1=1ff5h mbx2=10h
-  mbx3=0h mbx4=0h mbx5=191h mbx6=0h mbx7=0h.
-qla2xxx [0000:65:00.0]-d01e:8: -> fwdump no buffer
-qla2xxx [0000:65:00.0]-f03a:8: qla_target(0): System error async event
-  0x8002 occurred
-qla2xxx [0000:65:00.0]-00af:8: Performing ISP error recovery -
-  ha=0000000058183fda.
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-PF: supervisor instruction fetch in kernel mode
-PF: error_code(0x0010) - not-present page
-PGD 0 P4D 0
-Oops: 0010 [#1] SMP
-CPU: 2 PID: 9446 Comm: qla2xxx_8_dpc Tainted: G           O       6.1.133 #1
-Hardware name: Supermicro Super Server/X11SPL-F, BIOS 4.2 12/15/2023
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc90001f93dc8 EFLAGS: 00010206
-RAX: 0000000000000282 RBX: 0000000000000355 RCX: ffff88810d16a000
-RDX: ffff88810dbadaa8 RSI: 0000000000080000 RDI: ffff888169dc38c0
-RBP: ffff888169dc38c0 R08: 0000000000000001 R09: 0000000000000045
-R10: ffffffffa034bdf0 R11: 0000000000000000 R12: ffff88810800bb40
-R13: 0000000000001aa8 R14: ffff888100136610 R15: ffff8881070f7400
-FS:  0000000000000000(0000) GS:ffff88bf80080000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000010c8ff006 CR4: 00000000003706e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ? __die+0x4d/0x8b
- ? page_fault_oops+0x91/0x180
- ? trace_buffer_unlock_commit_regs+0x38/0x1a0
- ? exc_page_fault+0x391/0x5e0
- ? asm_exc_page_fault+0x22/0x30
- __qla2x00_abort_all_cmds+0xcb/0x3e0 [qla2xxx_scst]
- qla2x00_abort_all_cmds+0x50/0x70 [qla2xxx_scst]
- qla2x00_abort_isp_cleanup+0x3b7/0x4b0 [qla2xxx_scst]
- qla2x00_abort_isp+0xfd/0x860 [qla2xxx_scst]
- qla2x00_do_dpc+0x581/0xa40 [qla2xxx_scst]
- kthread+0xa8/0xd0
- </TASK>
+> On Fri, Sep 26, 2025 at 05:59:43PM +0200, Luca Ceresoli wrote:
+> > drm_encoder_cleanup() modifies the encoder chain by removing bridges via
+> > drm_bridge_detach(). Protect this whole operation by taking the mutex, so
+> > any users iterating over the chain will not access it during the change.
+> > 
+> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/drm_encoder.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
+> > index 3261f142baea30c516499d23dbf8d0acf5952cd6..3a04bedf9b759acd6826864b7f2cc9b861a8f170 100644
+> > --- a/drivers/gpu/drm/drm_encoder.c
+> > +++ b/drivers/gpu/drm/drm_encoder.c
+> > @@ -195,9 +195,11 @@ void drm_encoder_cleanup(struct drm_encoder *encoder)
+> >  	 * the indices on the drm_encoder after us in the encoder_list.
+> >  	 */
+> >  
+> > +	mutex_lock(&encoder->bridge_chain_mutex);
+> >  	list_for_each_entry_safe(bridge, next, &encoder->bridge_chain,
+> >  				 chain_node)
+> >  		drm_bridge_detach(bridge);
+> > +	mutex_unlock(&encoder->bridge_chain_mutex);  
+> 
+> You were claiming that the mutex was to prevent issues with concurrent
+> iteration and removal of the list members. list_for_each_entry_safe() is
+> explicitly made to protect against that. Why do we need both?
 
-Then commit 4475afa2646d ("scsi: qla2xxx: Complete command early within
-lock") added the spinlock back, because not having the lock caused a
-race and a crash.  But qla2x00_abort_srb() in the switch below already
-checks for qla2x00_chip_is_down() and handles it the same way, so the
-code above the switch is now redundant and still buggy in target-mode.
-Remove it.
+You're right saying we don't need both. With a mutex preventing the list
+from any change, we can actually simpify code a bit to use the non-safe
+list macro:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
+-	struct drm_bridge *bridge, *next;
++	struct drm_bridge *bridge;
+...
++	mutex_lock(&encoder->bridge_chain_mutex);
+- 	list_for_each_entry_safe(bridge, next, &encoder->bridge_chain,
++ 	list_for_each_entry(bridge, &encoder->bridge_chain,
+ 				 chain_node)
+ 		drm_bridge_detach(bridge);
++	mutex_unlock(&encoder->bridge_chain_mutex);
+ 
+But it's not fully correct that list_for_each_entry_safe() protects
+against concurrent removal. As I see it, all the _safe variants of
+list_for_each*() macros protect against one specific and frequent use
+case:
 
-v1 -> v2: no changes
+	list_for_each_entry_safe(curs, n, some_list, membername) {
+		...
+		list_del(&curs->membername);
+		...
+	}
 
- drivers/scsi/qla2xxx/qla_os.c | 6 ------
- 1 file changed, 6 deletions(-)
+So the _safe variant protect from removing the element at the current
+iteration (*curs). It does so by taking the following element pointer in
+advance, in the auxiliary variable @n. But _concurrent_ removal (the
+topic of this series) means the element being removed could just be the
+following one.
 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index d4b484c0fd9d..a52293972e10 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1862,12 +1862,6 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
- 	for (cnt = 1; cnt < req->num_outstanding_cmds; cnt++) {
- 		sp = req->outstanding_cmds[cnt];
- 		if (sp) {
--			if (qla2x00_chip_is_down(vha)) {
--				req->outstanding_cmds[cnt] = NULL;
--				sp->done(sp, res);
--				continue;
--			}
--
- 			switch (sp->cmd_type) {
- 			case TYPE_SRB:
- 				qla2x00_abort_srb(qp, sp, res, &flags);
+Consider this sequence:
+
+ 1. start loop: list_for_each_entry_safe() sets;
+    pos = list_first_entry()   = <bridge 1>
+    n   = list_next_entry(pos) = <bridge 2>
+ 2. enter the loop 1st time, do something with *pos (bridge 1)
+ 3. in the meanwhile bridge 2 is hot-unplugged
+    -> another thread removes item 2 -> drm_bridge_detach()
+    -> list_del() sets bridge->next = LIST_POISON1
+ 4. loop iteration 1 finishes, list_for_each_entry_safe() sets:
+    pos = n (previously set to bridge 2)
+    n   = (bridge 2)->next = LIST_POISON1
+ 5. enter the loop 2nd time, do something with *pos (bridge 2)
+ 6. loop iteration 2 finishes, list_for_each_entry_safe() sets:
+    pos = n (previously set to LIST_POISON1) -> bug
+
+Do you think this explains the need for this series?
+
+If it does, I should probably add this to the cover letter and maybe
+patch 1.
+
+Luca
+
 -- 
-2.43.0
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
