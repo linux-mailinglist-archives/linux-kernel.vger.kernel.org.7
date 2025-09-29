@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-836322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83408BA9521
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:24:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3F8BA952A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E95F3AB162
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:24:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6C21920EF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864DB30749A;
-	Mon, 29 Sep 2025 13:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6693074BB;
+	Mon, 29 Sep 2025 13:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xNACg5sF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="W53BDsfE"
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67A82571C2
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759152253; cv=none; b=fH6IHHE+edaJ3WurOrrZyDvoHie//dkcbvzzLVPvkONvSq+jkQA/NJHiVeyQ8YkFYo5dtG9750raI0ATizOoI7zRL5vgE1LBiLbNGhu8FUHlcp1xPoYaxItuoFsqVcmaWdr45nRIdIlUKdpd74ZWA0KhT5OJskm3Wk/hVNyXA9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759152253; c=relaxed/simple;
-	bh=ywHwz1pH6qvpqhZ11wp0ypOnf//M6bqVv2hQrLVeP0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzEi+uEsbTzzbSsztiKPgG6E01TlUMfJpgDTdqoLd5ZA/AApDU+xW7t3g8+h9et5+142N+Mox2EsliCVUhPQErtkPb84zJCUWax6VVurhpMPCqYtLenMCeDSJ3oDMuWWLMkAcAJhHeO6UWOJiabdp3l+90AteqOZOf1pxwdFYEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xNACg5sF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A57EC4CEF4;
-	Mon, 29 Sep 2025 13:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759152252;
-	bh=ywHwz1pH6qvpqhZ11wp0ypOnf//M6bqVv2hQrLVeP0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xNACg5sF0/qxnSED7MjoLtSwfSWT3ZAuosv0AuJMGIAyUygwWJQWPvHsmFtveoLLf
-	 XssrtUxZmpNgy+PGWrq8IaeoAVjXAwRwtPQM4nQW/4ws7xAU4L7TE5hqb7KYpso2+v
-	 cdKaa2ugDmCUxCLBrOTlmL5vRV6nKyTPZSJHS71I=
-Date: Mon, 29 Sep 2025 15:24:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: linux-kernel@vger.kernel.org, stable@kernel.org,
-	Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: Re: [PATCH 5.15 2/3] NFSv4: Clear NFS_CAP_OPEN_XOR and
- NFS_CAP_DELEGTIME if not supported
-Message-ID: <2025092903-plentiful-banister-9ad0@gregkh>
-References: <1d4bbe4e9b6e6909067d8d5ab704e5392ec42bff.1758805195.git.siddh.raman.pant@oracle.com>
- <2e811427a30b62898f63bab33ec07d9253061a33.1758805195.git.siddh.raman.pant@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C5B307494;
+	Mon, 29 Sep 2025 13:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759152278; cv=pass; b=a7no/AwBR8SkB5aW5xQWJt479VMVnSmaCosa8gnBps3mYesJ8fca6e3FkqB+f/KIq//xm/v/VKAN4IeucwQO7YkG5FtxBRbeXKB/VqKLbuQRfJMX2Folc48kpwOIH7dF4WriFc9235shSiJ4lYokifSmst8PO45Y/daG6CxydyE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759152278; c=relaxed/simple;
+	bh=+FlFMn65PwSwsInMpFQINKycoHs65t4+qEHAT1KbyqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GQMF2l10tvk8/NKngy41TU1HAfHNuHQjDrIPv8fl0QTzj4EiDiOlH3wYSOV8S2yoKUou+JZsbiCYHxG7C8kHtC2ipGUpGckiZlfHZC4wMly4rezgK3d7UnpURqP6kaJT6arKht77IgG1vhdUNC7LCEwKyZgwfb3zA19ddqpsaSc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=W53BDsfE; arc=pass smtp.client-ip=157.107.129.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id 5037010F40F4D;
+	Mon, 29 Sep 2025 22:24:27 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id l749kElyyYoW; Mon, 29 Sep 2025 22:24:24 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id 019B410F40F49; Mon, 29 Sep 2025 22:24:23 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1759152264;
+	cv=none; b=IYytWn9Tw5sCejDHJIBM/SSZO8cOq2syUVaZLHDRbq/k4DHLhBRJacetWY1Q8UnFT3QIzkfFw9HSFWfumBeixckp5H2q/8OdqW32hn0DRgKjJ4tQpKLgVrqnw7nFmvRtDqgEWbroatDV2U2hNhKEum17ee2xW02I7istKl2oy3s=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1759152264; c=relaxed/relaxed;
+	bh=hcLsrul/wXlLzNNpWTc3vNtijAfswDidjbEuP6VB2nA=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=z7pup9enNZX9aq2tSCbLl7b6KYx13I+9+4VSMe4zmy4jP11NDs0Jc+53zGoayjwqXWXRkoFsTUpxACR9gFAhapGES9pxOzGHqbjdGmm4IIyLgjaaQNpAWeRHP1cMQjD5DaKlp42J5nj2hLi+zmKWQZ04Qk/SmXkAhKFqu7Hnz6c=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 019B410F40F49
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1759152264;
+	bh=hcLsrul/wXlLzNNpWTc3vNtijAfswDidjbEuP6VB2nA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=W53BDsfEzYPjqtAvtc79eeZxsPZKf6NbBHFvUhYRb/uycFoEOvjcEw7SJxtRxPM6f
+	 v65AbL/2SnoiE1BFnA5jSAndwo4o4ItO6GIDG2ORAy/PGKVrDT/wdf9Wy0FCiSOcm2
+	 ab8SA+cOLn3OzUq+/eaH4h+15t2r57xMJgYU8nCM=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] dt-bindings: mmc: Correct typo "upto" to "up to"
+Date: Mon, 29 Sep 2025 22:24:22 +0900
+Message-ID: <20250929132422.934713-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e811427a30b62898f63bab33ec07d9253061a33.1758805195.git.siddh.raman.pant@oracle.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 06:31:45PM +0530, Siddh Raman Pant wrote:
-> From: Trond Myklebust <trond.myklebust@hammerspace.com>
-> 
-> _nfs4_server_capabilities() should clear capabilities that are not
-> supported by the server.
-> 
-> Fixes: d2a00cceb93a ("NFSv4: Detect support for OPEN4_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION")
-> Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> (cherry picked from commit b3ac33436030bce37ecb3dcae581ecfaad28078c)
-> Signed-off-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-> ---
->  fs/nfs/nfs4proc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index 3d854e2537bc..91b95310e107 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -3906,7 +3906,8 @@ static int _nfs4_server_capabilities(struct nfs_server *server, struct nfs_fh *f
->  		memcpy(server->attr_bitmask, res.attr_bitmask, sizeof(server->attr_bitmask));
->  		server->caps &=
->  			~(NFS_CAP_ACLS | NFS_CAP_HARDLINKS | NFS_CAP_SYMLINKS |
-> -			  NFS_CAP_SECURITY_LABEL | NFS_CAP_FS_LOCATIONS);
-> +			  NFS_CAP_SECURITY_LABEL | NFS_CAP_FS_LOCATIONS |
-> +			  NFS_CAP_OPEN_XOR | NFS_CAP_DELEGTIME);
->  		server->fattr_valid = NFS_ATTR_FATTR_V4;
->  		if (res.attr_bitmask[0] & FATTR4_WORD0_ACL &&
->  				res.acl_bitmask & ACL4_SUPPORT_ALLOW_ACL)
-> -- 
-> 2.51.0
-> 
+The word "upto" is a typo for "up to". Correct this typo in the
+mmc-controller-common binding documentation.
 
-This breaks the build :(
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ .../devicetree/bindings/mmc/mmc-controller-common.yaml          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller-common.ya=
+ml b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
+index 9a7235439759..4e49035ab7a9 100644
+--- a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
++++ b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
+@@ -85,7 +85,7 @@ properties:
+         - for eMMC, the maximum supported frequency is 200MHz,
+         - for SD/SDIO cards the SDR104 mode has a max supported
+           frequency of 208MHz,
+-        - some mmc host controllers do support a max frequency upto
++        - some mmc host controllers do support a max frequency up to
+           384MHz.
+       So, lets keep the maximum supported value here.
+=20
+--=20
+2.47.3
+
 
