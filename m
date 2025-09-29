@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-836568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB008BAA09F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:50:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB729BAA09C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0EA1189D1FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD76D3AB106
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4016130AD05;
-	Mon, 29 Sep 2025 16:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEB1309DCF;
+	Mon, 29 Sep 2025 16:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="BIaxuR/a"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HTJH87j+"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3D63081CF
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B740CA52;
+	Mon, 29 Sep 2025 16:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759164647; cv=none; b=aVvn9UATVm9TVLYNV4VT1sv6e5BrggaQ2ma+32pN52mPxukkbDY39h6+kNuiDbHwKcPHfhdXmbEUq3ME2EM3CM/6Dn/481b1ZxVBMixpHpxb+4RzdAo6+EjZs2WQH3JLFBkJseaCHawH53CgqMSw2NmEA4DA+2eudDEXDyeERGY=
+	t=1759164631; cv=none; b=GPqkXifGQtg1meIMZIFXpu4G2yupnaahyo9W3+cRy41YMgqjqWCrTChf7bEl0RFpdcVUCmCHOSFrUeMIIxWhl5lmMXeQALV3jMOfRP0LSYV1+ZZ9iqCgT+/tEpNhC/2K2D8xM/vwXth4YPuWb/RA/Lub5/KhIJkA0zm/lkJFhfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759164647; c=relaxed/simple;
-	bh=58/qHynbJ4KPMwfA94nS5LugvxXvcatLKednOaZ7gxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6p0+8KYmxUUw9C4MopL355u7myml+6kSunJKA+bZeHyQJIVxc65brxygN3ZMDoWSfamT486fsVsXIJBOrTZicUCIcW38nyzujp4J3tP/4KsUp+Kg4T62pNBPXZTSSk1E3OouvwKSob0BfNnNiheSEKnYPFxlndJivlaf0Tqf00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=BIaxuR/a; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4de2c597965so31098511cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:50:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759164645; x=1759769445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e7gI1D223HLxcIxgZm6OvXUfKzGjchEMVkrQhqdo1hY=;
-        b=BIaxuR/aHK3tJbnmacwOaXn3hxrBAGfwCsh2I1K01pESxSAoGEpVGidchbW50r8ybM
-         0S1BX9gTegNlifmxGDDxsG5ZTcjj4Xd7h2LWWXhbRrClzbvQHZwZR4bO9fE7K1ypGtgf
-         37AZoeH8k3xn8oRFqLHejxrAaGAHTLaWqybusE8o6HdZlPlkVV8hrL7RwhlPU1NQvpSQ
-         CPh9P34mcddJijflB6lLty7SgDWBx5rfyjZM5Iqumfz1bGkZEhwhM+44RzoavbnAYzLI
-         s1bMvq2T+ewOuVELYEeYYGlHAJVoW/1rT0XFTSZZRZLKmWq18D4eq0XcOnwoymQUDlN4
-         DrRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759164645; x=1759769445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e7gI1D223HLxcIxgZm6OvXUfKzGjchEMVkrQhqdo1hY=;
-        b=dh94JhppOhm+PV5pSyxFzMBis3d0D2/Q96cwTPE+i/ODcqj1MRKYadqvTXIFeRTySe
-         6HRVn+/1H6n/SG0ipoPBSuoKGIORMhB6UMDqDjZjsVpM4Vue0/6cOzaiGbCAMhn9elXT
-         awvt1xR9Pdi7RxrQ1/r5c8qQxZ1r/+HdVjJV1ZMnATjBIAu50Ya1MRryoTQGgpfhNqTS
-         MIArwrfZWxFWmzY5Fp0HPlavYAlty4Z/Pvs4Iyuz4pJV0ix4TsGDZN7mfj0pzg05RvMj
-         KiXHigsV3v1+h2CTDcHuINYrKhAgQ8QoGKaehLdYXmykCvwSatXx2q59cHI2cnSH9xUM
-         ts0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQCPuYkl6NqdmAMIdO1ClCXihvGhMOB9AP60/AKA/1h4TXyH9248hHYgrgasKErRPXOr0iyFFOpbggZFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfCSFsL/Jj8pChbyu9qZskx+1LJVDgKMbOv9jMtIbVVJJqwEhW
-	yFC25bMANtbmYNU0ctspmk5HFFKMv8FR4tz0tB4T5V3zyQG/YTTELpcaNTYeuPRRQygEwgz8sqb
-	+QuxhY6Jqv03qNM00GcZdp8vYO+HreUxJOst48u9RfQ==
-X-Gm-Gg: ASbGncvXFMVkn/iAO/RStFFF89ok5GNaHbsPbHZ/om3Wu8cjQfG6Mb2mDalmDVwmMtl
-	Jtt+o0w0yeB2Ox+3UH1xEiyf4vpxTN90GJ/iL9Vmp1eQhwzrcXR3BPR87RxlBKSGSOW+MmCYMTx
-	vgxABnMqz4cl9EiB47CLNXLMjMCllt0ibBytLuzlHoI2HDIoPsqjVlCZcUjur9CcrH6ad6XERe9
-	kj22J5ShjPtQxA=
-X-Google-Smtp-Source: AGHT+IHgUzM/EXrUxROfKIF2cWvTDNuiGT8lJQeSEkEeRI5k1+IecbiWt3TnKhFMPXUH2+PKuVUlPqPVEXI2ECbgRBw=
-X-Received: by 2002:ac8:7dce:0:b0:4d0:ac40:faac with SMTP id
- d75a77b69052e-4da4bfc063fmr225146201cf.53.1759164644679; Mon, 29 Sep 2025
- 09:50:44 -0700 (PDT)
+	s=arc-20240116; t=1759164631; c=relaxed/simple;
+	bh=hRJCTgUGf9lO8IlLW7Jrp6UjL1i4hk1up5T6tDJCnuc=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=FezyEXHcbB42/wuoGvH32JYqERNJ3XRXTdlq9PSFXtjIk/JT9r2AHZs0Y0fQYF9YC5Lkz9ph+AAw/t85O8byHV7IZ2QKfufXSBsJ2ngLaxPw19PAcBwX1kJuIqoG0axHgEP1qJLTZ99DdJo2bMYD0ruVdIBvVeMfzD+7wDYB+F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HTJH87j+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.87.241])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DC4E8346;
+	Mon, 29 Sep 2025 18:48:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759164539;
+	bh=hRJCTgUGf9lO8IlLW7Jrp6UjL1i4hk1up5T6tDJCnuc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=HTJH87j+gQsMdxpX56f5w8hv9iPAVGukjFYkpAOQ6dJFQ0DqPPVGjUM9YmipVcv8b
+	 68f1gWKEEcqkHyAc1p61QhAeJcR92GjpFYipnX7wWV12htx3qogKivE09fPxVW23Zi
+	 naWiInCT7DwrXHK/m/9ZiKpuxrY0myIZpdRolzjU=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-4-skhawaja@google.com>
- <20250929155123.GC2695987@ziepe.ca>
-In-Reply-To: <20250929155123.GC2695987@ziepe.ca>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 29 Sep 2025 12:50:07 -0400
-X-Gm-Features: AS18NWCx5jBmL63GoATW04OdTxV3QHh9MjTQAXnbdttnUQiouCPiZpEnod1LS6U
-Message-ID: <CA+CK2bA3dcc8320C481zgihW9VrcW4+saU3uCxhgfH-THt8X+w@mail.gmail.com>
-Subject: Re: [RFC PATCH 03/15] iommu/vt-d: Prevent hotplugs when live update
- state is not normal
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Samiullah Khawaja <skhawaja@google.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, zhuyifei@google.com, 
-	Chris Li <chrisl@kernel.org>, praan@google.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250924121545.1456cbea@foz.lan>
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com> <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com> <20250924121545.1456cbea@foz.lan>
+Subject: Re: [PATCH v2 01/10] media: v4l2-core: Introduce state management for video devices
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date: Mon, 29 Sep 2025 22:20:12 +0530
+Message-ID: <175916461248.2234821.1065883006028083651@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-On Mon, Sep 29, 2025 at 11:51=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wro=
-te:
->
-> On Sun, Sep 28, 2025 at 07:06:11PM +0000, Samiullah Khawaja wrote:
-> > Hotplugs should not be allowed when the live update state is not normal=
-.
-> > This means either we have preserved the state of IOMMU hardware units o=
-r
-> > restoring the preserved state.
-> >
-> > The live update semaphore read lock should be taken before checking the
-> > live update state.
-> >
-> > Signed-off-by: Samiullah Khawaja <skhawaja@google.com>
-> > ---
-> >  drivers/iommu/intel/dmar.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-> > index ec975c73cfe6..248bc7e9b035 100644
-> > --- a/drivers/iommu/intel/dmar.c
-> > +++ b/drivers/iommu/intel/dmar.c
-> > @@ -26,6 +26,7 @@
-> >  #include <linux/dmi.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/iommu.h>
-> > +#include <linux/liveupdate.h>
-> >  #include <linux/numa.h>
-> >  #include <linux/limits.h>
-> >  #include <asm/irq_remapping.h>
-> > @@ -2357,6 +2358,10 @@ static int dmar_device_hotplug(acpi_handle handl=
-e, bool insert)
-> >       if (tmp =3D=3D NULL)
-> >               return 0;
-> >
-> > +     guard_liveupdate_state_read();
-> > +     if (!liveupdate_state_normal())
-> > +             return -EBUSY;
->
-> Pasha, this is madness!
->
-> Exactly why I said we should not have these crazy globals, people are
-> just going to sprinkle them randomly everywhere with no possible way
+Hi Mauro,
 
-We now have per session "state", so presumably, LUO should provide an inter=
-face:
-"struct file" -> session LUO state.
+Quoting Mauro Carvalho Chehab (2025-09-24 15:45:45)
+> Em Fri, 19 Sep 2025 15:25:53 +0530
+> Jai Luthra <jai.luthra@ideasonboard.com> escreveu:
+>=20
+> > Similar to V4L2 subdev states, introduce state support for video devices
+> > to provide a centralized location for storing device state information.
+> > This includes the current (active) pixelformat used by the device and
+> > the temporary (try) pixelformat used during format negotiation.
+>=20
+> I didn't look at the patch series yet, so I may be just jumping too
+> fast here, but storing "try" attempts doesn't seem the right thing to
+> do.
+>=20
+> Btw, IMHO, the first patch on this series should be against documentation,
+> where you would be describing not only the new feature with the supported=
+=20
+> states, but also the state machine transitions that are supported,
+> preferably with some graphs.
+>=20
+> So, before actually looking on any code changes, I'd like to see a clear
+> description of this new feature, what it is proposing to address, how
+> and what impacts (if any) this would bring to userspace.
+>=20
+> The current diffstat:
+>=20
+>  include/media/v4l2-ctrls.h                         |   5 +-
+>  include/media/v4l2-dev.h                           |  84 +++++
+>  include/media/v4l2-fh.h                            |   2 +
+>  include/media/v4l2-ioctl.h                         | 238 ++++++-------
+>  include/media/v4l2-mem2mem.h                       |  48 ++-
+>  include/media/videobuf2-v4l2.h                     |  33 +-
+>=20
+> implies that this affects for now only Documentation/driver-api/media/...
 
-We should probably add interfaces like these:
+There shouldn't be any change to userspace with this series. The state
+structure introduced here is only for internal use by the drivers, which
+currently store the applied formats in driver-specific structures.
 
-liveupdate_is_preserved(struct file *) -> return true if file is preserved.
-liveupdate_state(struct file *) -> returns the current state (or
-LIVEUPDATE_STATE_UNDEFINED if unpreserved) for the session to which
-this FD belongs (or  (in the future we could improve to per FD
-granularity, if needed, but I think per-session is going to be
-scalable enought).
-liveupdate_state_read_enter(struct file *) -> to protect state
-transition for the session to which this file belongs.
+In the next revision, I will add documentation in v4l2-dev.rst similar to
+how the subdev state is described in v4l2-subdev.rst.
 
-> of ever understanding why or what they even are supposed to protect!
->
-> There is no reason to block hotplug. Do the locking and state tracking
+>=20
+> > In the
+> > future, this may be extended or subclassed by device drivers to store
+> > their internal state variables.
+> >=20
+> > Also introduce a flag for drivers that wish to use this state
+> > management. When set, the framework automatically allocates the state
+> > during device registration and stores a pointer to it within the
+> > video_device structure.
+> >=20
+> > This change aligns video devices with V4L2 subdevices by storing
+> > hardware state in a common framework-allocated structure. This is the
+> > first step towards enabling the multiplexing of the underlying hardware
+> > by using different software "contexts", each represented by the combined
+> > state of all video devices and V4L2 subdevices in a complex media graph.
+>=20
+> ... but when you mention "contexts", I'm assuming that you're aiming
+> at either userspace API changes and/or behavoral changes that will
+> affect uAPI as well.
 
-This makes sense, adding a new device should be fine.
+Yes, the userspace side changes are documented in Jacopo's series adding
+context support for media devices, for example:
 
-> properly so you only manage the instances that need to participate in
-> luo because they are linked to already plugged devices that are also
-> participating in luo.
+https://lore.kernel.org/linux-media/20250724-multicontext-mainline-2025-v2-=
+7-c9b316773486@ideasonboard.com/
 
-Pasha
+>=20
+> Thanks,
+> Mauro
+
+Thanks,
+Jai
 
