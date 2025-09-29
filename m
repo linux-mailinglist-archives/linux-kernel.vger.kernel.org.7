@@ -1,160 +1,131 @@
-Return-Path: <linux-kernel+bounces-842587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-842572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B09BBD143
-	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 06:58:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E13BBD0EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 06 Oct 2025 06:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4793B36B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 04:58:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DEF04E4BF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 Oct 2025 04:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05595244692;
-	Mon,  6 Oct 2025 04:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D06246BA4;
+	Mon,  6 Oct 2025 04:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fh9cJ4iQ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ewwXeYac"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E04B661
-	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 04:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE8F24338F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 04:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759726697; cv=none; b=EexGzZM1cIesjTaYrbmx9lt1zX8D/3gNqwG3Fau6DUDRPX/5iZ69lHXm8X3fIQgyYGDg9sBhb2Y3F3LupdYDAWVeoJzPENx+7NvJhooExqVpJT6+MeBdZANAqYMsffAXTPl+UWuf85EItBvYUmRr/OYdys0IxG6xh9Z3826O0cM=
+	t=1759726392; cv=none; b=uvkCNFOI5Sx6nV5im34UJ/rOgcMDeqbh/6TIZ+ziRblqvdubxbzxAqQtLf5IuE5rorANppL8O28PYu9Dwk7LCdlpOlG3VCCk9yAh1bOmYIqX/UggsaDr9pSGMZze0TicU9qYqyYXYKH6v4tfaHfjZqbxNqq8oRExFkFO3MpGlr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759726697; c=relaxed/simple;
-	bh=Q2kmveq+C7RooPxNI2u+eaupkIQfD19EQoUNvxI1XPc=;
+	s=arc-20240116; t=1759726392; c=relaxed/simple;
+	bh=bB8lXHtxqfS+fdpFNaWAp+DJiVW2XoK5tnn7M+B86sg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=ewr0YoX0qufIzh0ziBaganmSwhB+DQcbfU2/fOIIS9DwMz9DwDUYtLQl0fiG/jzsX+h5sK2AMx6rk/dUEIft6LUVbB56AMAdS/niqoi3G3kJgchdg3wPD0i1gq6/XMBJc0Y3WmZOYcqJLcuNY/Wh8lvnm7RSzYJYrCS+TU7WAO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fh9cJ4iQ; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=KuqoRPYWEkrnX0tHeuVSgo9jKJ7WYQTVOeBPfdZpgJ1bTxzNbNkP0dXqwEjAvKg3JUhXKFdCQVpsRpNYLwKmv4yC7qBkFXGZUF9ELd6RBH094xu10F0VxPUz3VjjiwA6xk+D+Q4QC2DomqqmDv+mtODkCWGrAdXVSv/CK78RF58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ewwXeYac; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251006045302epoutp043d75a787936e24340e222221083b1d01~rzdI_1del0356203562epoutp045
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251006045302epoutp02d4c1517872bc1aa57577cbc05128704c~rzdJYuptL0723007230epoutp02b
 	for <linux-kernel@vger.kernel.org>; Mon,  6 Oct 2025 04:53:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251006045302epoutp043d75a787936e24340e222221083b1d01~rzdI_1del0356203562epoutp045
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251006045302epoutp02d4c1517872bc1aa57577cbc05128704c~rzdJYuptL0723007230epoutp02b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1759726382;
-	bh=nfKFNKfeJiqkNVGd8THAVIqpLF2bjXYQMQChn0Sqbbg=;
+	bh=P8Ap2nenQD/ZlTmI7JEx6gWSeN93yDfxYIpIXIUq7G8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fh9cJ4iQxFb/K2uAl8i1VNNwrNfVsnidvhyNF8fQV+VRzsYRnbbzS+Vqw16wmKEKw
-	 ntOPLe0jbAMbV4kVgctXk8E8hWQ/LRFoce40YhFZbjwdm5mk9xkkDiyW3AuCJNfaHP
-	 dTtpOg32vanRhOABQ6QKSTWY7mxeT0iLVJE5MsqM=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20251006045301epcas5p366ae7b70217b12b8c77f26d410d2ca37~rzdIhCpiN0330803308epcas5p3S;
+	b=ewwXeYacqHIA7pNa2CUuMfE/LdLjn9KXSAyl5bFfBMt9mAip7A7kN32Gt25YJWEPS
+	 /KW3octGZamaMsWguUHsYBT+n0mdPQkEUhl4MRTZXYIcjTYm66MAf5YUj3ElrGYhzP
+	 +RPKxOqojn+Q5AsRZnzzQzFlok7EIph3X3H0S5B8=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20251006045301epcas5p21033f129ba94673059bf9de1d69d1e5d~rzdIs2yuA2735427354epcas5p21;
 	Mon,  6 Oct 2025 04:53:01 +0000 (GMT)
 Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cg6Mx5Rrfz2SSKY; Mon,  6 Oct
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cg6Mx6s2Qz3hhT8; Mon,  6 Oct
 	2025 04:53:01 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250929131341epcas5p3002671c37f155252b7012e141e196d88~pwxRFPOK_3271832718epcas5p3t;
-	Mon, 29 Sep 2025 13:13:41 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250929131803epcas5p27baf405afe5d27dc0ce7747e448cd260~pw1FuHfUY1664816648epcas5p2i;
+	Mon, 29 Sep 2025 13:18:03 +0000 (GMT)
 Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250929131339epsmtip17fa8c0e777da6bc46ea4fc62eb1682a9~pwxPoySny1879918799epsmtip1T;
-	Mon, 29 Sep 2025 13:13:39 +0000 (GMT)
-Date: Mon, 29 Sep 2025 18:43:31 +0530
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250929131802epsmtip2b28658157e12f8d0997d2ad8166dbec1~pw1EbwW491869118691epsmtip2B;
+	Mon, 29 Sep 2025 13:18:02 +0000 (GMT)
+Date: Mon, 29 Sep 2025 18:47:56 +0530
 From: Neeraj Kumar <s.neeraj@samsung.com>
 To: Dave Jiang <dave.jiang@intel.com>
 Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
 	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
 	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V3 07/20] nvdimm/region_label: Add region label delete
- support
-Message-ID: <1983025922.01759726381745.JavaMail.epsvc@epcpadp2new>
+	cpgs@samsung.com, Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject: Re: [PATCH V3 08/20] nvdimm/label: Include region label in slot
+ validation
+Message-ID: <1296674576.21759726381948.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <77672d54-8133-4324-9ae7-39d11a335cb2@intel.com>
-X-CMS-MailID: 20250929131341epcas5p3002671c37f155252b7012e141e196d88
+In-Reply-To: <12f7fbd9-c35f-4ebf-809f-43f8ab240413@intel.com>
+X-CMS-MailID: 20250929131803epcas5p27baf405afe5d27dc0ce7747e448cd260
 X-Msg-Generator: CA
 Content-Type: multipart/mixed;
-	boundary="----mxO_4HALYOJvr1vdRg0el_y50LUdjfkHM5FQPcyM.heriKG9=_7331_"
+	boundary="----fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_735e_"
 CMS-TYPE: 105P
 X-CPGSPASS: Y
 X-Hop-Count: 3
-X-CMS-RootMailID: 20250917134142epcas5p49d85873cf3ea5f3166c63381ab668fc7
+X-CMS-RootMailID: 20250917134144epcas5p498fb4b005516fca56e68533ce017fba0
 References: <20250917134116.1623730-1-s.neeraj@samsung.com>
-	<CGME20250917134142epcas5p49d85873cf3ea5f3166c63381ab668fc7@epcas5p4.samsung.com>
-	<20250917134116.1623730-8-s.neeraj@samsung.com>
-	<77672d54-8133-4324-9ae7-39d11a335cb2@intel.com>
+	<CGME20250917134144epcas5p498fb4b005516fca56e68533ce017fba0@epcas5p4.samsung.com>
+	<20250917134116.1623730-9-s.neeraj@samsung.com>
+	<12f7fbd9-c35f-4ebf-809f-43f8ab240413@intel.com>
 
-------mxO_4HALYOJvr1vdRg0el_y50LUdjfkHM5FQPcyM.heriKG9=_7331_
+------fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_735e_
 Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
 
-On 22/09/25 02:37PM, Dave Jiang wrote:
+On 22/09/25 03:17PM, Dave Jiang wrote:
+>>  static void region_label_calculate_checksum(struct nvdimm_drvdata *ndd,
+>>  				   struct cxl_region_label *region_label)
+>>  {
+>> @@ -392,16 +404,30 @@ static void region_label_calculate_checksum(struct nvdimm_drvdata *ndd,
+>>  }
+>>
+>>  static bool slot_valid(struct nvdimm_drvdata *ndd,
+>> -		struct nd_namespace_label *nd_label, u32 slot)
+>> +		       union nd_lsa_label *lsa_label, u32 slot)
+>>  {
+>> +	struct cxl_region_label *region_label = &lsa_label->region_label;
+>> +	struct nd_namespace_label *nd_label = &lsa_label->ns_label;
+>> +	char *label_name;
+>>  	bool valid;
+>>
+>>  	/* check that we are written where we expect to be written */
+>> -	if (slot != nsl_get_slot(ndd, nd_label))
+>> -		return false;
+>> -	valid = nsl_validate_checksum(ndd, nd_label);
+>> +	if (is_region_label(ndd, lsa_label)) {
+>> +		label_name = "rg";
 >
->> +int nd_pmem_region_label_delete(struct nd_region *nd_region)
->> +{
->> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
->> +	struct nd_label_ent *label_ent;
->> +	int ns_region_cnt = 0;
->> +	int i, rc;
->> +
->> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
->> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
->> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
->> +
->> +		/* Find non cxl format supported ndr_mappings */
->> +		if (!ndd->cxl) {
->> +			dev_info(&nd_region->dev, "Unsupported region label\n");
->> +			return -EINVAL;
->> +		}
->> +
->> +		/* Find if any NS label using this region */
->> +		guard(mutex)(&nd_mapping->lock);
->> +		list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->> +			if (!label_ent->label)
->> +				continue;
->> +
->> +			/*
->> +			 * Check if any available NS labels has same
->> +			 * region_uuid in LSA
->> +			 */
->> +			if (nsl_region_uuid_equal(label_ent->label,
->> +						  &nd_set->uuid))
->> +				ns_region_cnt++;
->
->Why not just return -EBUSY here immediately? It seems the code returns -EBUSY as long as there's 1 or more below.
->
->> +		}
->> +	}
->> +
->> +	if (ns_region_cnt) {
->> +		dev_dbg(&nd_region->dev, "Region/Namespace label in use\n");
->> +		return -EBUSY;
->> +	}
->> +
->> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
->> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
->> +
->> +		rc = del_labels(nd_mapping, &nd_set->uuid, RG_LABEL_TYPE);
->> +		if (rc)
->> +			return rc;
->> +	}
->
->Can this be folded into the for loop above or does it a full pass to check before starting the label deletion process?
+>I suggest create a static string table enumerated by 'enum label_type'. That way you can directly address it by 'label_name[ltype]' when being used instead of assigning at run time. And maybe just use "region" and "namespace" since it's for debug output and we don't need to shorten it.
 >
 >DJ
 
-Yes, if we use "return -EBUSY" in first loop itself then we can call del_labels()
-I will fix this in next patch-set
+Sure Dave, Thanks for your suggestion. I will fix it accordingly
 
 Regards,
 Neeraj
 
-------mxO_4HALYOJvr1vdRg0el_y50LUdjfkHM5FQPcyM.heriKG9=_7331_
+------fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_735e_
 Content-Type: text/plain; charset="utf-8"
 
 
-------mxO_4HALYOJvr1vdRg0el_y50LUdjfkHM5FQPcyM.heriKG9=_7331_--
+------fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_735e_--
 
 
