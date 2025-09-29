@@ -1,354 +1,494 @@
-Return-Path: <linux-kernel+bounces-836441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3415BA9B3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:52:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AF3BA9B54
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2991C1099
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:52:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FF897A5BDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900FA30AACE;
-	Mon, 29 Sep 2025 14:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01BC30ACE3;
+	Mon, 29 Sep 2025 14:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="Qcbkh7gR"
-Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iah9okAv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21772147C9B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1A1305070
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759157520; cv=none; b=WrLS5NgTaEu9ZL0AuVlQnrKhHWgnPmFMK8f7BaMF0c2MkrtgM+eSSJkTyUJsQGOyx86iu/N4WZwXBG/eLBd5xmX8i+6q72NlHow8Lq6Ir9YUxYBlr948OcsQRL7027rFOdnUOAmmY68uBc0U95Esw4uUspRGMfNLv5gNGDF80mU=
+	t=1759157582; cv=none; b=sW1SKtjsO7CSNajLoSeDa9CKlheiPLXOuTQLplv8U690THrPgGIOMme4gqgzPY/6LQeodKrf3CWRexJj0FhyfmfAQ3k4ALOjrHQ6OP5h7RaNLOro/5Qi9WdatKy8kjKMOq/MWeN4yyBP6U+6kY1hH5sUhgVNLBeUjxApuXq97zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759157520; c=relaxed/simple;
-	bh=+VgOLQihNXC3Yn56mbhmuoWZBNh/Azj11L0jB1gt5Is=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MUqZxujqWCEIceJ9uDnK+t8xJAzJM7rn15ERCzroRn7d0mJGOlhLh/nk10FhfpOjBhHfQ+bwFwpOby7+IqcuvMBjmLLkwUQu73zOQnM/xc83JFD3AEMxMKydC/lP7DD7W3YtjuzKF385muAdWlli0KxIOHHasKME313mnEWkWVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=Qcbkh7gR; arc=none smtp.client-ip=173.71.130.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id JQot2AbfcZ4A6qD4; Mon, 29 Sep 2025 10:51:57 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=JxataOkahTQdyQrQouLCgD+k43OUqm50ZTB0msMAx0s=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=Qcbkh7gRadJdNGlVJcKl
-	iTkkmskktOpqKYk3nvidipVWPfgo/edyZ6vHDhAeqGtC1aU3ADTpalRC100/jAQIlQuXg0S09YHj6
-	4eAAJdGCirMM3tq6DCckCZ00VGUCe2y8AKwgDgDCtHawdhBYQikmzIDCTXEWf91i031/hG+5d0=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14216667; Mon, 29 Sep 2025 10:51:57 -0400
-Message-ID: <a5e6fa18-4391-4722-a575-f0c610fa1d1e@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 29 Sep 2025 10:51:57 -0400
+	s=arc-20240116; t=1759157582; c=relaxed/simple;
+	bh=IMJ+7NcspKCo2WneOhLe5l7ZSifIcueWPe1XVcAytBk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=iIPC3CWM5OY5cv2RHibv/U4v5ZI8J8ZjUMLqcge7QN0kDqIk2zRd5C0Yit3IDeKlfgKbzfAAgs5KaUIjDO/ookKZx085cO8sL0nqHzuUif4gUiL8e1nN1BGdT6lLRbGRMaBV5ul6HElU5oiVbjxGJ2rdnRiXUSQXFm0RKKKdqQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iah9okAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C090C19422
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759157582;
+	bh=IMJ+7NcspKCo2WneOhLe5l7ZSifIcueWPe1XVcAytBk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Iah9okAv6wxlNXmJTBBZW/NDGoZ+GKLucAnsA5F+WFty92/9SwkJHeOYQHaiVGCaA
+	 oE2a8wIBZvGCJGYI8+0c2i7wfHUHRHoElzX9WLSIL8JQBkogWUeCu1x4gjQaR8x1jX
+	 CYSwM4uXB8eNsaWMznrbKLArn5BRPXM1KB9NUzpIMhAh011pWgKnjRPfKnjWaIwV9X
+	 FZB4fDybgZw6WgYWJKlHkSc1Ap5I+nHo6Pgw/P7VHUABCsOuSq8CnEKpOmWjNBfotW
+	 +aJpFIca/c1yEMS8i96DyEIYNJ+PT5YitdBbVR/Vfug4vaNRS4dkSCpyVa6KvtviHP
+	 aU6IQePNDztjg==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-643a263721eso973696eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:53:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWf7UXSyOv023HZ22r3Eio+2xGwoSPujLn4d81+v/886tiUFxObFdjQfOmofVi2ZQcBG4bwWkc017xJcUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybCVdOuzGWpmU92CJK+cbTC1M8hS5Z83QgLce57w0Z2wWMBX0M
+	oC+o8C2zwcLUTfMnPN3KJcyuNx840232xr0asois8fQx3dioDJVskJOdJxkr2YUlU2jEGGYzKMX
+	BLFBMQkZdIwIrHiRBwMDuFDhYyA+cXAk=
+X-Google-Smtp-Source: AGHT+IHVpPsqERtzJa/ZtWDzFfCQKAUxo+gFUDO0HTvWxM5Qj0n5sSGAm1tpYXlWl2UzOo5qZ7dfvE6ZepFKu5pSNRw=
+X-Received: by 2002:a05:6808:f93:b0:439:b4fb:1d4f with SMTP id
+ 5614622812f47-43f4cc1f48amr5689573b6e.10.1759157581602; Mon, 29 Sep 2025
+ 07:53:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [SCST PATCH v2 15/16] scsi: qla2xxx: add back SRR support
-Content-Language: en-US
-X-ASG-Orig-Subj: [SCST PATCH v2 15/16] scsi: qla2xxx: add back SRR support
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
- <8d56cc7e-b7c9-4fa8-b138-2d73bc241035@cybernetics.com>
-In-Reply-To: <8d56cc7e-b7c9-4fa8-b138-2d73bc241035@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1759157517
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 8962
-X-Barracuda-BRTS-Status: 1
-X-ASG-Debug-ID: 1759157517-1cf43947df3c0600001-xx1T2L
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 29 Sep 2025 16:52:50 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jNZxcQ26TAPSGX43Psh0P8udTQmkOk+BrKdkS4RhUKmg@mail.gmail.com>
+X-Gm-Features: AS18NWAb8fhmXwnxmx0TAaX-ffQ1EmtucMV_92y44Casy9QSSUOPfz6emfDrbTc
+Message-ID: <CAJZ5v0jNZxcQ26TAPSGX43Psh0P8udTQmkOk+BrKdkS4RhUKmg@mail.gmail.com>
+Subject: [GIT PULL] Power management updates for v6.18-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Chanwoo Choi (samsung.com)" <chanwoo@kernel.org>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch applies to the out-of-tree SCST project, not to the Linux
-kernel.  Apply when importing the upstream patch with the same title.
+Hi Linus,
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
+Please pull from the tag
 
-v1 -> v2: sqa_on_hw_pending_cmd_timeout() changes had to be redone due to
-changes in prior patch "scsi: qla2xxx: fix races with aborting commands".
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.18-rc1
 
- qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c | 157 +++++++++++++++---
- 1 file changed, 134 insertions(+), 23 deletions(-)
+with top-most commit 40d2cf9c3c1a5a1a9a443389d6b57a87362e4237
 
-diff --git a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
-index fb5956346..3fca87ff0 100644
---- a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
-+++ b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
-@@ -72,6 +72,8 @@
- #endif
- #endif
- 
-+#define sense_initiator_detected_error HARDWARE_ERROR, 0x48, 0x00
-+
- static LIST_HEAD(sqa_tgt_glist);
- 
- /* Function definitions for callbacks from the SCST target core. */
-@@ -395,6 +397,17 @@ static struct qla_tgt_cmd *sqa_qla2xxx_get_cmd(struct fc_port *sess)
- 	return cmd;
- }
- 
-+static int sqa_qla2xxx_get_cmd_ref(struct qla_tgt_cmd *cmd)
-+{
-+	scst_cmd_get(cmd->scst_cmd);
-+	return 0;
-+}
-+
-+static void sqa_qla2xxx_put_cmd_ref(struct qla_tgt_cmd *cmd)
-+{
-+	scst_cmd_put(cmd->scst_cmd);
-+}
-+
- static DEFINE_MUTEX(sqa_mutex);
- 
- 
-@@ -527,8 +540,12 @@ static void sqa_qla2xxx_handle_data(struct qla_tgt_cmd *cmd)
- 			break;
- 		case DIF_ERR_NONE:
- 		default:
--			scst_set_cmd_error(scst_cmd,
--				SCST_LOAD_SENSE(scst_sense_aborted_command));
-+			if (cmd->srr_failed)
-+				scst_set_cmd_error(scst_cmd,
-+					SCST_LOAD_SENSE(sense_initiator_detected_error));
-+			else
-+				scst_set_cmd_error(scst_cmd,
-+					SCST_LOAD_SENSE(scst_sense_aborted_command));
- 			break;
- 		}
- 	}
-@@ -1546,6 +1563,11 @@ static int sqa_xmit_response(struct scst_cmd *scst_cmd)
- 		}
- 	}
- 
-+	if (unlikely(cmd->free_sg)) {
-+		cmd->free_sg = 0;
-+		qlt_free_sg(cmd);
-+	}
-+
- 	cmd->bufflen = scst_cmd_get_adjusted_resp_data_len(scst_cmd);
- 	cmd->sg = scst_cmd_get_sg(scst_cmd);
- 	cmd->sg_cnt = scst_cmd_get_sg_cnt(scst_cmd);
-@@ -1556,6 +1578,15 @@ static int sqa_xmit_response(struct scst_cmd *scst_cmd)
- 	cmd->lba = scst_cmd_get_lba(scst_cmd);
- 	cmd->trc_flags |= TRC_XMIT_STATUS;
- 
-+	/*
-+	 * se_cmd::data_length,t_data_sg,t_data_nents used by
-+	 * qlt_restore_orig_sg()
-+	 */
-+	cmd->se_cmd.data_length = cmd->bufflen;
-+	cmd->se_cmd.t_data_sg = cmd->sg;
-+	cmd->se_cmd.t_data_nents = cmd->sg_cnt;
-+	cmd->se_cmd.scsi_status = cmd->scsi_status;
-+
- #if QLA_ENABLE_PI
- 	if (scst_get_tgt_dif_actions(scst_cmd->cmd_dif_actions)) {
- 		cmd->blk_sz = scst_cmd_get_block_size(scst_cmd);
-@@ -1600,7 +1631,7 @@ static int sqa_xmit_response(struct scst_cmd *scst_cmd)
- 		  cmd->bufflen, cmd->sg_cnt, cmd->dma_data_direction,
- 		  cmd->se_cmd.residual_count);
- 
--	res = qlt_xmit_response(cmd, xmit_type, scst_cmd_get_status(scst_cmd));
-+	res = qlt_xmit_response(cmd, xmit_type, cmd->scsi_status);
- 
- 	switch (res) {
- 	case 0:
-@@ -1630,16 +1661,30 @@ static int sqa_rdy_to_xfer(struct scst_cmd *scst_cmd)
- 	TRACE(TRACE_SCSI, "sqatgt(%ld/%d): tag=%lld", cmd->vha->host_no,
- 	      cmd->vha->vp_idx, scst_cmd_get_tag(scst_cmd));
- 
-+	if (unlikely(cmd->free_sg)) {
-+		cmd->free_sg = 0;
-+		qlt_free_sg(cmd);
-+	}
-+
- 	cmd->bufflen = scst_cmd_get_write_fields(scst_cmd, &cmd->sg,
- 						 &cmd->sg_cnt);
-+
- 	cmd->dma_data_direction =
- 		scst_to_tgt_dma_dir(scst_cmd_get_data_direction(scst_cmd));
-+	cmd->offset = 0;
- 
--	cmd->sg = scst_cmd_get_sg(scst_cmd);
--	cmd->sg_cnt = scst_cmd_get_sg_cnt(scst_cmd);
- 	cmd->scsi_status = scst_cmd_get_status(scst_cmd);
- 	cmd->trc_flags |= TRC_XFR_RDY;
- 
-+	/*
-+	 * se_cmd::data_length,t_data_sg,t_data_nents used by
-+	 * qlt_restore_orig_sg()
-+	 */
-+	cmd->se_cmd.data_length = cmd->bufflen;
-+	cmd->se_cmd.t_data_sg = cmd->sg;
-+	cmd->se_cmd.t_data_nents = cmd->sg_cnt;
-+	cmd->se_cmd.scsi_status = cmd->scsi_status;
-+
- #if QLA_ENABLE_PI
- 	if (scst_get_tgt_dif_actions(scst_cmd->cmd_dif_actions)) {
- 		cmd->blk_sz    = scst_cmd_get_block_size(scst_cmd);
-@@ -1841,7 +1886,9 @@ static void sqa_on_hw_pending_cmd_timeout(struct scst_cmd *scst_cmd)
- 	struct qla_tgt_cmd *cmd = scst_cmd_get_tgt_priv(scst_cmd);
- 	struct scsi_qla_host *vha = cmd->vha;
- 	struct qla_qpair *qpair = cmd->qpair;
-+	struct qla_tgt_srr *srr;
- 	unsigned long flags;
-+	bool advance_cmd = false;
- 
- 	TRACE_ENTRY();
- 
-@@ -1872,13 +1919,46 @@ static void sqa_on_hw_pending_cmd_timeout(struct scst_cmd *scst_cmd)
- 		break;
- 	}
- 
--	/* Handle race with normal CTIO completion. */
--	if (!cmd->cmd_sent_to_fw) {
-+	srr = cmd->srr;
-+	if (srr) {
-+		/* Handle race with SRR processing. */
-+		if (srr->imm_ntfy_recvd && srr->ctio_recvd) {
-+			TRACE_MGMT_DBG(
-+			    "sqatgt(%ld/%d): tag %lld: cmd should be scheduled for SRR processing",
-+			    vha->host_no, vha->vp_idx,
-+			    scst_cmd_get_tag(scst_cmd));
-+			goto out_unlock;
-+		}
-+
- 		TRACE_MGMT_DBG(
--		    "sqatgt(%ld/%d): tag %lld: cmd not sent to fw; assuming just completed",
-+		    "sqatgt(%ld/%d): tag %lld: timeout waiting for %s SRR",
- 		    vha->host_no, vha->vp_idx,
--		    scst_cmd_get_tag(scst_cmd));
--		goto out_unlock;
-+		    scst_cmd_get_tag(scst_cmd),
-+		    (!srr->imm_ntfy_recvd) ? "IMM" : "CTIO");
-+
-+		if (srr->ctio_recvd) {
-+			/*
-+			 * When the SRR CTIO was received, cmd processing was
-+			 * delayed to wait for the SRR immediate notify, which
-+			 * never arrived. Process the cmd now.
-+			 *
-+			 * Note that in this case cmd->cmd_sent_to_fw == 0
-+			 * so we avoid checking that.
-+			 */
-+			advance_cmd = true;
-+		}
-+
-+		qlt_srr_abort(cmd, false);
-+		srr = NULL; /* srr may have been freed */
-+	} else {
-+		/* Handle race with normal CTIO completion. */
-+		if (!cmd->cmd_sent_to_fw) {
-+			TRACE_MGMT_DBG(
-+			    "sqatgt(%ld/%d): tag %lld: cmd not sent to fw; assuming just completed",
-+			    vha->host_no, vha->vp_idx,
-+			    scst_cmd_get_tag(scst_cmd));
-+			goto out_unlock;
-+		}
- 	}
- 
- 	/* The command should be aborted elsewhere if the ISP was reset. */
-@@ -1886,7 +1966,8 @@ static void sqa_on_hw_pending_cmd_timeout(struct scst_cmd *scst_cmd)
- 		goto out_unlock;
- 
- 	/* Reset the ISP if there was a timeout after sending a term exchange. */
--	if (cmd->sent_term_exchg &&
-+	if (!advance_cmd &&
-+	     cmd->sent_term_exchg &&
- 	     time_is_before_jiffies(cmd->jiffies_at_term_exchg +
- 				    SQA_MAX_HW_PENDING_TIME * HZ / 2)) {
- 		if (!test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags)) {
-@@ -1906,18 +1987,46 @@ static void sqa_on_hw_pending_cmd_timeout(struct scst_cmd *scst_cmd)
- 	if (!cmd->sent_term_exchg)
- 		qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
- 
--	/*
--	 * Restart the timer so that this function is called again
--	 * after another timeout.  This is similar to
--	 * scst_update_hw_pending_start() except that we also set
--	 * cmd_hw_pending to 1.
--	 *
--	 * IRQs are already OFF.
--	 */
--	spin_lock(&scst_cmd->sess->sess_list_lock);
--	scst_cmd->cmd_hw_pending = 1;
--	scst_cmd->hw_pending_start = jiffies;
--	spin_unlock(&scst_cmd->sess->sess_list_lock);
-+	if (advance_cmd) {
-+		switch (cmd->state) {
-+		case QLA_TGT_STATE_NEED_DATA:
-+			TRACE_MGMT_DBG(
-+			    "sqatgt(%ld/%d): tag %lld: force rx_data",
-+			    vha->host_no, vha->vp_idx,
-+			    scst_cmd_get_tag(scst_cmd));
-+			cmd->state = QLA_TGT_STATE_DATA_IN;
-+			scst_set_cmd_error(scst_cmd,
-+			    SCST_LOAD_SENSE(scst_sense_internal_failure));
-+			scst_rx_data(scst_cmd, SCST_RX_STATUS_ERROR_SENSE_SET,
-+			    SCST_CONTEXT_THREAD);
-+			break;
-+
-+		case QLA_TGT_STATE_PROCESSED:
-+			TRACE_MGMT_DBG(
-+			    "sqatgt(%ld/%d): tag %lld: force finishing cmd",
-+			    vha->host_no, vha->vp_idx,
-+			    scst_cmd_get_tag(scst_cmd));
-+			scst_set_delivery_status(scst_cmd, SCST_CMD_DELIVERY_FAILED);
-+			scst_tgt_cmd_done(scst_cmd, SCST_CONTEXT_THREAD);
-+			break;
-+
-+		default:
-+			break;
-+		}
-+	} else {
-+		/*
-+		 * Restart the timer so that this function is called again
-+		 * after another timeout.  This is similar to
-+		 * scst_update_hw_pending_start() except that we also set
-+		 * cmd_hw_pending to 1.
-+		 *
-+		 * IRQs are already OFF.
-+		 */
-+		spin_lock(&scst_cmd->sess->sess_list_lock);
-+		scst_cmd->cmd_hw_pending = 1;
-+		scst_cmd->hw_pending_start = jiffies;
-+		spin_unlock(&scst_cmd->sess->sess_list_lock);
-+	}
- 
- out_unlock:
- 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
-@@ -1978,6 +2087,8 @@ static struct qla_tgt_func_tmpl sqa_qla2xxx_template = {
- 	.handle_tmr		    = sqa_qla2xxx_handle_tmr,
- 	.find_cmd_by_tag	    = sqa_qla2xxx_find_cmd_by_tag,
- 	.get_cmd		    = sqa_qla2xxx_get_cmd,
-+	.get_cmd_ref		    = sqa_qla2xxx_get_cmd_ref,
-+	.put_cmd_ref		    = sqa_qla2xxx_put_cmd_ref,
- 	.rel_cmd		    = sqa_qla2xxx_rel_cmd,
- 	.free_cmd		    = sqa_qla2xxx_free_cmd,
- 	.free_mcmd		    = sqa_qla2xxx_free_mcmd,
--- 
-2.43.0
+ Merge branch 'pm-tools'
+
+on top of commit 4ea5af08590825c79ba2f146482ed54443e22c28
+
+ Merge tag 'pm-6.17-rc8' of
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+
+to receive power management updates for 6.18-rc1.
+
+The majority of these are cpufreq changes, which has been a recurring
+pattern for a few recent cycles.  Those changes include new hardware
+support (AN7583 SoC support in the airoha cpufreq driver, ipq5424
+support in the qcom-nvmem cpufreq driver, MT8196 support in the
+mediatek cpufreq driver, AM62D2 support in the ti cpufreq driver),
+DT bindings and Rust code updates, cleanups of the core and governors,
+and multiple driver fixes and cleanups.
+
+Beyond that, there are hibernation fixes (some remaining 6.16 cycle
+fallout and an issue related to hybrid suspend in the amdgpu driver),
+cleanups of the PM core code, runtime PM documentation update, cpuidle
+and power capping cleanups, and tooling updates.
+
+Specifics:
+
+ - Rearrange variable declarations involving __free() in the cpufreq
+   core and intel_pstate driver to follow common coding style (Rafael
+   Wysocki)
+
+ - Fix object lifecycle issue in update_qos_request(), rearrange
+   freq QoS updates using __free(), and adjust frequency percentage
+   computations in the intel_pstate driver (Rafael Wysocki)
+
+ - Update intel_pstate to allow it to enable HWP without EPP if the
+   new DEC (Dynamic Efficiency Control) HW feature is enabled (Rafael
+   Wysocki)
+
+ - Use on_each_cpu_mask() in drv_write() in the ACPI cpufreq driver
+   to simplify the code (Rafael Wysocki)
+
+ - Use likely() optimization in intel_pstate_sample() (Yaxiong Tian)
+
+ - Remove dead EPB-related code from intel_pstate (Srinivas Pandruvada)
+
+ - Use scope-based cleanup for cpufreq policy references in multiple
+   cpufreq drivers (Zihuan Zhang)
+
+ - Avoid calling get_governor() for the first policy in the cpufreq core
+   to simplify the initial policy path (Zihuan Zhang)
+
+ - Clean up the cpufreq core in multiple places (Zihuan Zhang)
+
+ - Use int type to store negative error codes in the cpufreq core and
+   update the speedstep-lib to use int for error codes (Qianfeng Rong)
+
+ - Update the efficient idle check for Intel extended Families in the
+   ondemand cpufreq governor (Sohil Mehta)
+
+ - Replace sscanf() with kstrtouint() in the conservative cpufreq
+   governor (Kaushlendra Kumar)
+
+ - Rename CpumaskVar::as[_mut]_ref to from_raw[_mut] in the cpumask
+   Rust code and mark CpumaskVar as transparent (Alice Ryhl, Baptiste
+   Lepers)
+
+ - Update ARef and AlwaysRefCounted imports from sync::aref in the OPP
+   Rust code (Shankari Anand)
+
+ - Add support for AN7583 SoC to the airoha cpufreq driver (Christian
+   Marangi)
+
+ - Enable cpufreq for ipq5424 in the qcom-nvmem cpufreq driver (Md Sadre
+   Alam)
+
+ - Add support for MT8196 to the mediatek-hw cpufreq driver, refactor
+   that driver and add mediatek,mt8196-cpufreq-hw DT binding (Nicolas
+   Frattaroli)
+
+ - Avoid redundant conditions in the mediatek cpufreq driver (Liao
+   Yuanhong)
+
+ - Add support for AM62D2 to the ti cpufreq driver and blocklist
+   ti,am62d2 SoC in dt-platdev (Paresh Bhagat)
+
+ - Support more speed grades on AM62Px SoC in the ti cpufreq driver,
+   allow all silicon revisions to support OPPs in it, and fix supported
+   hardware for 1GHz OPP (Judith Mendez)
+
+ - Add QCS615 compatible to DT bindings for cpufreq-qcom-hw (Taniya Das)
+
+ - Minor assorted updates of the scmi, longhaul, CPPC, and armada-37xx
+   cpufreq drivers (Akhilesh Patil, BowenYu, Dennis Beier, and Florian
+   Fainelli)
+
+ - Remove outdated cpufreq-dt.txt (Frank Li)
+
+ - Fix python gnuplot package names in the amd_pstate_tracer utility
+   (Kuan-Wei Chiu)
+
+ - Saravana Kannan will maintain the virtual-cpufreq driver (Saravana
+   Kannan)
+
+ - Prevent CPU capacity updates after registering a perf domain from
+   failing on a first CPU that is not present (Christian Loehle)
+
+ - Add support for the cases in which frequency alone is not sufficient
+   to uniquely identify an OPP (Krishna Chaitanya Chundru)
+
+ - Use to_result() for OPP error handling in Rust (Onur =C3=96zkan)
+
+ - Add support for LPDDR5 on Rockhip RK3588 SoC to rockchip-dfi devfreq
+   driver (Nicolas Frattaroli)
+
+ - Fix an issue where DDR cycle counts on RK3588/RK3528 with LPDDR4(X)
+   are reported as half by adding a cycle multiplier to the DFI driver
+   in rockchip-dfi devfreq-event driver (Nicolas Frattaroli)
+
+ - Fix missing error pointer dereference check of regulator instance in
+   the mtk-cci devfreq driver probe and remove a redundant condition from
+   an if () statement in that driver (Dan Carpenter, Liao Yuanhong)
+
+ - Fail cpuidle device registration if there is one already to avoid
+   sysfs-related issues (Rafael Wysocki)
+
+ - Use sysfs_emit()/sysfs_emit_at() instead of sprintf()/scnprintf() in
+   cpuidle (Vivek Yadav)
+
+ - Fix device and OF node leaks at probe in the qcom-spm cpuidle driver
+   and drop unnecessary initialisations from it (Johan Hovold)
+
+ - Remove unnecessary address-of operators from the intel_idle cpuidle
+   driver (Kaushlendra Kumar)
+
+ - Rearrange main loop in menu_select() to make the code in that function
+   easier to follow (Rafael Wysocki)
+
+ - Convert values in microseconds to ktime using us_to_ktime() where
+   applicable in the intel_idle power capping driver (Xichao Zhao)
+
+ - Annotate loops walking device links in the power management core
+   code as _srcu and add macros for walking device links to reduce the
+   likelihood of coding mistakes related to them (Rafael Wysocki)
+
+ - Document time units for *_time functions in the runtime PM API (Brian
+   Norris)
+
+ - Clear power.must_resume in noirq suspend error path to avoid resuming
+   a dependant device under a suspended parent or supplier (Rafael
+   Wysocki)
+
+ - Fix GFP mask handling during hybrid suspend and make the amdgpu
+   driver handle hybrid suspend correctly (Mario Limonciello, Rafael
+   Wysocki)
+
+ - Fix GFP mask handling after aborted hibernation in platform mode and
+   combine exit paths in power_down() to avoid code duplication (Rafael
+   Wysocki)
+
+ - Use vmalloc_array() and vcalloc() in the hibernation core to avoid
+   open-coded size computations (Qianfeng Rong)
+
+ - Fix typo in hibernation core code comment (Li Jun)
+
+ - Call pm_wakeup_clear() in the same place where other functions that do
+   bookkeeping prior to suspend_prepare() are called (Samuel Wu)
+
+ - Fix and clean up the x86_energy_perf_policy utility and update its
+   documentation (Len Brown, Kaushlendra Kumar)
+
+ - Fix incorrect sorting of PMT telemetry in turbostat (Kaushlendra
+   Kumar)
+
+ - Fix incorrect size in cpuidle_state_disable() and the error return
+   value of cpupower_write_sysfs() in cpupower (Kaushlendra Kumar)
+
+Thanks!
 
 
+---------------
+
+Akhilesh Patil (1):
+      cpufreq: armada-37xx: use max() to calculate target_vm
+
+Alice Ryhl (1):
+      rust: cpumask: rename CpumaskVar::as[_mut]_ref to from_raw[_mut]
+
+Baptiste Lepers (1):
+      rust: cpumask: Mark CpumaskVar as transparent
+
+BowenYu (1):
+      cpufreq: Remove unused parameter in cppc_perf_from_fbctrs()
+
+Brian Norris (1):
+      PM: runtime: Documentation: ABI: Document time units for *_time
+
+Christian Loehle (1):
+      PM: EM: Fix late boot with holes in CPU topology
+
+Christian Marangi (1):
+      cpufreq: airoha: Add support for AN7583 SoC
+
+Dan Carpenter (1):
+      PM / devfreq: mtk-cci: Fix potential error pointer dereference in pro=
+be()
+
+Dennis Beier (1):
+      cpufreq/longhaul: handle NULL policy in longhaul_exit
+
+Florian Fainelli (1):
+      cpufreq: scmi: Account for malformed DT in scmi_dev_used_by_cpus()
+
+Frank Li (1):
+      dt-bindings: Remove outdated cpufreq-dt.txt
+
+Johan Hovold (2):
+      cpuidle: qcom-spm: fix device and OF node leaks at probe
+      cpuidle: qcom-spm: drop unnecessary initialisations
+
+Judith Mendez (3):
+      cpufreq: ti: Support more speed grades on AM62Px SoC
+      cpufreq: ti: Allow all silicon revisions to support OPPs
+      arm64: dts: ti: k3-am62p: Fix supported hardware for 1GHz OPP
+
+Kaushlendra Kumar (6):
+      intel_idle: Remove unnecessary address-of operators
+      cpufreq: conservative: Replace sscanf() with kstrtouint()
+      tools/cpupower: fix error return value in cpupower_write_sysfs()
+      tools/cpupower: Fix incorrect size in cpuidle_state_disable()
+      tools/power turbostat: Fix incorrect sorting of PMT telemetry
+      tools/power x86_energy_perf_policy: Fix incorrect fopen mode usage
+
+Krishna Chaitanya Chundru (1):
+      OPP: Add support to find OPP for a set of keys
+
+Kuan-Wei Chiu (1):
+      tools/power/x86/amd_pstate_tracer: Fix python gnuplot package names
+
+Len Brown (7):
+      tools/power x86_energy_perf_policy: Enhance HWP enabled check
+      tools/power x86_energy_perf_policy: Enhance HWP enable
+      tools/power x86_energy_perf_policy: Prepare for MSR/sysfs refactoring
+      tools/power x86_energy_perf_policy: EPB access is only via sysfs
+      tools/power x86_energy_perf_policy: Prefer driver HWP limits
+      tools/power x86_energy_perf_policy: Add make snapshot target
+      tools/power x86_energy_perf_policy.8: Emphasize preference for
+SW interfaces
+
+Li Jun (1):
+      PM: hibernate: Fix typo in memory bitmaps description comment
+
+Liao Yuanhong (2):
+      cpufreq: mediatek: avoid redundant conditions
+      PM / devfreq: mtk-cci: avoid redundant conditions
+
+Mario Limonciello (AMD) (3):
+      PM: hibernate: Fix hybrid-sleep
+      PM: hibernate: Add pm_hibernation_mode_is_suspend()
+      drm/amd: Fix hybrid sleep
+
+Md Sadre Alam (1):
+      cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
+
+Nicolas Frattaroli (7):
+      dt-bindings: cpufreq: Add mediatek,mt8196-cpufreq-hw binding
+      cpufreq: mediatek-hw: Refactor match data into struct
+      cpufreq: mediatek-hw: Separate per-domain and per-instance data
+      cpufreq: mediatek-hw: Add support for MT8196
+      cpufreq: mediatek-hw: don't use error path on NULL fdvfs
+      PM / devfreq: rockchip-dfi: double count on RK3588
+      PM / devfreq: rockchip-dfi: add support for LPDDR5
+
+Onur =C3=96zkan (1):
+      rust: opp: use to_result for error handling
+
+Paresh Bhagat (2):
+      cpufreq: dt-platdev: Blacklist ti,am62d2 SoC
+      cpufreq: ti: Add support for AM62D2
+
+Qianfeng Rong (3):
+      PM: hibernate: Use vmalloc_array() and vcalloc() to improve code
+      cpufreq: Use int type to store negative error codes
+      cpufreq: speedstep-lib: Use int type to store negative error codes
+
+Rafael J. Wysocki (15):
+      cpuidle: governors: menu: Rearrange main loop in menu_select()
+      PM: sleep: core: Clear power.must_resume in noirq suspend error path
+      cpufreq: core: Rearrange variable declarations involving __free()
+      cpufreq: intel_pstate: Rearrange variable declaration involving __fre=
+e()
+      PM: core: Annotate loops walking device links as _srcu
+      PM: core: Add two macros for walking device links
+      cpufreq: intel_pstate: Fix object lifecycle issue in update_qos_reque=
+st()
+      cpufreq: intel_pstate: Rearrange freq QoS updates using __free()
+      cpufreq: intel_pstate: Adjust frequency percentage computations
+      cpufreq: ACPI: Use on_each_cpu_mask() in drv_write()
+      cpufreq: intel_pstate: Enable HWP without EPP if DEC is enabled
+      cpuidle: Fail cpuidle device registration if there is one already
+      PM: hibernate: Fix pm_hibernation_mode_is_suspend() build breakage
+      PM: hibernate: Restrict GFP mask in power_down()
+      PM: hibernate: Combine return paths in power_down()
+
+Samuel Wu (1):
+      PM: sleep: Make pm_wakeup_clear() call more clear
+
+Saravana Kannan (1):
+      MAINTAINERS: Add myself as virtual-cpufreq maintainer
+
+Shankari Anand (1):
+      rust: opp: update ARef and AlwaysRefCounted imports from sync::aref
+
+Sohil Mehta (1):
+      cpufreq: ondemand: Update the efficient idle check for Intel
+extended Families
+
+Srinivas Pandruvada (1):
+      cpufreq: intel_pstate: Remove EPB-related code
+
+Taniya Das (1):
+      dt-bindings: cpufreq: cpufreq-qcom-hw: Add QCS615 compatible
+
+Vivek Yadav (1):
+      cpuidle: sysfs: Use sysfs_emit()/sysfs_emit_at() instead of
+sprintf()/scnprintf()
+
+Xichao Zhao (1):
+      powercap: idle_inject: use us_to_ktime() where appropriate
+
+Yaxiong Tian (1):
+      cpufreq: intel_pstate: Use likely() optimization in intel_pstate_samp=
+le()
+
+Zihuan Zhang (11):
+      cpufreq: Avoid calling get_governor() for first policy
+      cpufreq: use strlen() for governor name comparison
+      cpufreq: simplify setpolicy/target check in driver verification
+      cpufreq: brcmstb-avs: Use scope-based cleanup helper
+      cpufreq: CPPC: Use scope-based cleanup helper
+      cpufreq: s5pv210: Use scope-based cleanup helper
+      cpufreq: mediatek: Use scope-based cleanup helper
+      cpufreq: tegra186: Use scope-based cleanup helper
+      cpufreq: Drop redundant freq_table parameter
+      cpufreq: Add defensive check during driver registration
+      cpufreq: Replace pointer subtraction with iteration macro
+
+---------------
+
+ Documentation/ABI/testing/sysfs-devices-power      |   8 +-
+ .../devicetree/bindings/cpufreq/cpufreq-dt.txt     |  61 -----
+ .../bindings/cpufreq/cpufreq-qcom-hw.yaml          |   2 +
+ .../cpufreq/mediatek,mt8196-cpufreq-hw.yaml        |  82 +++++++
+ MAINTAINERS                                        |   6 +
+ arch/arm64/boot/dts/ti/k3-am62p5.dtsi              |   2 +-
+ drivers/base/base.h                                |   8 +
+ drivers/base/power/main.c                          |  32 ++-
+ drivers/base/power/runtime.c                       |   3 +-
+ drivers/cpufreq/acpi-cpufreq.c                     |   9 +-
+ drivers/cpufreq/airoha-cpufreq.c                   |   1 +
+ drivers/cpufreq/armada-37xx-cpufreq.c              |   4 +-
+ drivers/cpufreq/brcmstb-avs-cpufreq.c              |   4 +-
+ drivers/cpufreq/cppc_cpufreq.c                     |  16 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/cpufreq/cpufreq.c                          |  44 ++--
+ drivers/cpufreq/cpufreq_conservative.c             |  24 +-
+ drivers/cpufreq/cpufreq_ondemand.c                 |  25 +-
+ drivers/cpufreq/cpufreq_ondemand.h                 |  23 ++
+ drivers/cpufreq/freq_table.c                       |  22 +-
+ drivers/cpufreq/intel_pstate.c                     | 182 +++++++--------
+ drivers/cpufreq/longhaul.c                         |   3 +
+ drivers/cpufreq/mediatek-cpufreq-hw.c              | 134 +++++++++--
+ drivers/cpufreq/mediatek-cpufreq.c                 |  11 +-
+ drivers/cpufreq/qcom-cpufreq-nvmem.c               |   5 +
+ drivers/cpufreq/s5pv210-cpufreq.c                  |   4 +-
+ drivers/cpufreq/scmi-cpufreq.c                     |  10 +
+ drivers/cpufreq/sh-cpufreq.c                       |   6 +-
+ drivers/cpufreq/speedstep-lib.c                    |  12 +-
+ drivers/cpufreq/speedstep-lib.h                    |  10 +-
+ drivers/cpufreq/tegra186-cpufreq.c                 |   4 +-
+ drivers/cpufreq/ti-cpufreq.c                       |  12 +-
+ drivers/cpufreq/virtual-cpufreq.c                  |   2 +-
+ drivers/cpuidle/cpuidle-qcom-spm.c                 |  11 +-
+ drivers/cpuidle/cpuidle.c                          |   8 +-
+ drivers/cpuidle/governors/menu.c                   |  70 +++---
+ drivers/cpuidle/sysfs.c                            |  34 +--
+ drivers/devfreq/event/rockchip-dfi.c               |  91 ++++++--
+ drivers/devfreq/mtk-cci-devfreq.c                  |   5 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |   2 +-
+ drivers/idle/intel_idle.c                          | 256 ++++++++++-------=
+----
+ drivers/opp/core.c                                 |  99 ++++++++
+ drivers/powercap/idle_inject.c                     |   5 +-
+ include/linux/cpufreq.h                            |   7 +-
+ include/linux/pm_opp.h                             |  30 +++
+ include/linux/suspend.h                            |   6 +
+ include/soc/rockchip/rk3588_grf.h                  |   8 +-
+ include/soc/rockchip/rockchip_grf.h                |   1 +
+ kernel/power/energy_model.c                        |  11 +-
+ kernel/power/hibernate.c                           |  39 ++--
+ kernel/power/process.c                             |   1 -
+ kernel/power/snapshot.c                            |   2 +-
+ kernel/power/suspend.c                             |   1 +
+ kernel/power/swap.c                                |   6 +-
+ rust/kernel/cpufreq.rs                             |   2 +-
+ rust/kernel/cpumask.rs                             |   5 +-
+ rust/kernel/opp.rs                                 |  29 +--
+ tools/power/cpupower/lib/cpuidle.c                 |   5 +-
+ tools/power/cpupower/lib/cpupower.c                |   2 +-
+ .../x86/amd_pstate_tracer/amd_pstate_trace.py      |   2 +-
+ tools/power/x86/turbostat/turbostat.c              |   2 +-
+ tools/power/x86/x86_energy_perf_policy/Makefile    |  29 ++-
+ .../x86_energy_perf_policy.8                       |  15 +-
+ .../x86_energy_perf_policy.c                       | 133 +++++++----
+ 64 files changed, 1050 insertions(+), 641 deletions(-)
 
