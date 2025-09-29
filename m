@@ -1,188 +1,224 @@
-Return-Path: <linux-kernel+bounces-836622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1203BAA2EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:34:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66538BAA302
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6143B866C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDD23B668A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9484F21D3CD;
-	Mon, 29 Sep 2025 17:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22D221FF35;
+	Mon, 29 Sep 2025 17:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8hWv2qe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SobtUwbv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F1C214813;
-	Mon, 29 Sep 2025 17:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3268721D3CD;
+	Mon, 29 Sep 2025 17:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759167233; cv=none; b=kihGCy5BFrYtxhGbUa4EGuvwVzTG4ILt5gv288xbPzNhjthGNHe6/9xmbDdnDvdo2ia0gMYbxFmbog+289nMqGiVg0lL6uJ7KpXr37nZWXeXW1CkoJPajOGEVxNkJAmevY2DjzNm4dVAq2krQaT03z/nONF0tP4KRRtcpUht5qY=
+	t=1759167324; cv=none; b=KwqRApl279puN9JJHleMLA2QYk/k3KfOwBdZ/lcR2zkXKYmgZVFPYWMHOZaTWPQFc0HlHOM7eYLOyZZHa8QycRvImdfSzJgn3t8ZxX+iFIXUNIbu8oriSDumrA5uudvUv0QWR4LKfg6eTlau4+q0WxNN9pYWnQ0otvJ5r3ubUMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759167233; c=relaxed/simple;
-	bh=4rZNsu8QGDCFma7zcOHapI/aN7/dV6PWZmNXgYGyJMY=;
+	s=arc-20240116; t=1759167324; c=relaxed/simple;
+	bh=So0FUbuv/OJTG050tDD8NHjMsdi9r0qn/XZ916sS2wU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yd+9kA8QEGnMW4iCoVQsGc0e5/ug/qH4MUBxoboNgJugSHtJj/+AEYEDWbwkAdC/Oe+74To8FxS3G1oOTQSzuQJp6Ur0KbJRuiywqXEs00O7V7jfjP02leVEFD5d6mLgWTWTxWqOQwenwdtPmawrHholEc0N+IHFFWopUDJbYFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8hWv2qe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05A3C4CEF4;
-	Mon, 29 Sep 2025 17:33:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fwg/yxbusNZ+EZVQNRplFYUk9He0knXeJmI4GoR0jjo3or24duhH7Gj6eyg6wgYMoCByWQLlXFURM8Fj2J+3aMmVgMdyG2BXcLuexgEspLy6KE5/t2aqEIUg3piR7/YUcGEfbivyXD6o/YLG6147UdSNL/j8ixY33Dy3MO1WzmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SobtUwbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025DEC4CEF5;
+	Mon, 29 Sep 2025 17:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759167231;
-	bh=4rZNsu8QGDCFma7zcOHapI/aN7/dV6PWZmNXgYGyJMY=;
+	s=k20201202; t=1759167323;
+	bh=So0FUbuv/OJTG050tDD8NHjMsdi9r0qn/XZ916sS2wU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F8hWv2qemqh0aLgpmmqQNk0IqAOp4EXTerzehasHk8KGl4IPWsOLUTfbBbj/b5imO
-	 odArmW+o2BxOhvAb4359t5cHtVQwyqVpPVKYCEuWgcLEF8kb1qZBOP5czSPtkIuwHJ
-	 JBjdtStCZooIK9Xz+hF5UyBwQxOYw9xueKC/1Tvq0rtbOUk1mavxK2iaNBLFX4E9MU
-	 0Ab98p3if0nFjbBgVuqzCLdYyW+JNDX5vTJMHbFXwFNgAq4qNpHijb4u04wZUlqaGR
-	 AOMKU4hfClOTlutJWXgc42ZsbYYcL4gTUKd+yKpCaxgpdjizMooqhU2nXzwAWvTCSJ
-	 sYlHdlL+vG0pg==
-Date: Mon, 29 Sep 2025 18:33:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Lakshay Piplani <lakshay.piplani@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com,
-	gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
-	peterz@infradead.org, jstephan@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	jonathan.cameron@huawei.com, vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com, shashank.rebbapragada@nxp.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: temperature: Add NXP P3T175x
- support
-Message-ID: <20250929-panther-providing-d69e6016acc9@spud>
-References: <20250929094543.2512264-1-lakshay.piplani@nxp.com>
+	b=SobtUwbvHlYnd8c49AbPLOe1066THu8BPfO6tVqlgOjO/Lg3dG7AVKs5dw0KG/uoK
+	 n9u+G2WOhL9tp4674GDfTVswxfwUTaC3eGv7nDLXjCbWxwjCDdMWn49JCfGS9tAO8t
+	 h+lRBIIsVNQRoarGAtwMszzwPcMfcY3+R3qZ90wRqBeLHPMRSrC7FW9C1UQI+TEG4O
+	 g/eVpStfWxcGF4iQYIZEb69r31Om2y5CjrX0m9fnJJJDal8DJKKaPBNewp8RQ3T2Tp
+	 P8G+H4jLKpp9Vt36Ye2OHaqoXiumTPHKak+23ldZX7cPJWlaIcpglKvXiRfV/Vu+OI
+	 Ap4dGboz+e1dg==
+Date: Mon, 29 Sep 2025 23:05:09 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v4 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
+ driver
+Message-ID: <yksxyboq33eke57n6rz4ikzlcbfda22uj5t3zsipc6m66fgoqr@ngbjg4abymcs>
+References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250912122444.3870284-3-claudiu.beznea.uj@bp.renesas.com>
+ <pnph54wv3736lemzren64ig4karlulffkvmc3dzgrhgyv2cpwu@2mcgvlqdr6wu>
+ <ca1da9cb-5003-49f2-ab8d-70b80a10d8cd@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cgliMA4ktxGmPwLv"
-Content-Disposition: inline
-In-Reply-To: <20250929094543.2512264-1-lakshay.piplani@nxp.com>
-
-
---cgliMA4ktxGmPwLv
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca1da9cb-5003-49f2-ab8d-70b80a10d8cd@tuxon.dev>
 
-On Mon, Sep 29, 2025 at 03:15:42PM +0530, Lakshay Piplani wrote:
-> Add bindings for the NXP P3T175x (P3T1750/P3T1755) temperature
-> sensor, supporting both I2C & I3C interfaces.
+On Fri, Sep 19, 2025 at 12:28:10PM +0300, Claudiu Beznea wrote:
+> 
+> 
+> On 9/19/25 11:45, Manivannan Sadhasivam wrote:
+> > On Fri, Sep 12, 2025 at 03:24:40PM +0300, Claudiu wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> >> only as a root complex, with a single-lane (x1) configuration. The
+> >> controller includes Type 1 configuration registers, as well as IP
+> >> specific registers (called AXI registers) required for various adjustments.
+> >>
+> >> Hardware manual can be downloaded from the address in the "Link" section.
+> >> The following steps should be followed to access the manual:
+> >> 1/ Click the "User Manual" button
+> >> 2/ Click "Confirm"; this will start downloading an archive
+> >> 3/ Open the downloaded archive
+> >> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> >> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+> >>
+> >> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >> ---
+> >>
+> > 
+> > [...]
+> > 
+> >> +static void rzg3s_pcie_update_bits(void __iomem *base, u32 offset, u32 mask,
+> >> +				   u32 val)
+> >> +{
+> >> +	u32 tmp;
+> >> +
+> >> +	tmp = readl(base + offset);
+> > 
+> > Unless there is an ordering requirement, you can safely use
+> > {readl/writel}_relaxed variants throughout the driver.
+> 
+> HW manual lists specific steps to follow when issuing requests. These steps
+> are listed in chapter "34.4.2.4 Issuing Special Requests" in the manual
+> pointed in patch description.
+> 
 
-Can you please mention here what the difference between devices is?
+I'm not asking you to change the order of the register config, but just asking
+you to use {readl/writel}_relaxed variants as the plain readl/writel accessors
+have memory barriers builtin, which will be unnecessary if not needed.
 
->=20
-> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
-> ---
-> V2 -> V3: Changes since V2:
->           - Removed nxp,interrupt-mode and nxp,fault-queue properties fro=
-m DT binding
->           - Updated compatible strings:
->             - nxp,p3t1750-iio =E2=86=92 nxp,p3t1750dp
->             - nxp,p3t1755-iio =E2=86=92 nxp,p3t1755dp
-> V1 -> V2: Changes since V1:
->           - Dropped nxp,alert-active-high
->           - Fixed YAML formatting, line wrapping, and examples
->=20
->  .../bindings/iio/temperature/nxp,p3t1755.yaml | 62 +++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/temperature/nxp=
-,p3t1755.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/nxp,p3t175=
-5.yaml b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
-> new file mode 100644
-> index 000000000000..16a01fa81251
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/temperature/nxp,p3t1755.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP P3T175xDP Temperature Sensor
-> +
-> +maintainers:
-> +  - Lakshay Piplani <lakshay.piplani@nxp.com>
-> +
-> +description: |
-> +  Datasheet: https://www.nxp.com/docs/en/data-sheet/P3T1755.pdf
-> +
-> +  P3T175xDP (P3T1750/P3T1755) is a digital temperature sensor with a ran=
-ge of
-> +  -40=C2=B0C to +125=C2=B0C and a 12-bit resolution. It supports communi=
-cation over both
-> +  I2C and I3C interfaces.
-> +
-> +  The I2C interface supports up to 32 static addresses and provides an A=
-LERT
-> +  output to signal when temperature thresholds are crossed.
-> +
-> +  The I3C interface supports In-Band interrupts (IBI) in interrupt mode,
-> +  allowing the device to notify the controller of threshold events witho=
-ut
-> +  dedicated alert pin.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,p3t1750dp
-> +      - nxp,p3t1755dp
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: |
-> +      In I2C mode, the device supports up to 32 static addresses.
-> +      In I3C mode, the 'reg' property encodes a triplet of
-> +      <static-address BCR PID> used for device matching.
-> +      Static address is optional if matching is done via PID.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        temp-sensor@48 {
-> +            compatible =3D "nxp,p3t1755dp";
-> +            reg =3D <0x48>;
-> +            interrupt-parent =3D <&gpio2>;
-> +            interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
-> +        };
-> +    };
-> --=20
-> 2.25.1
->=20
+> > 
+> >> +	tmp &= ~mask;
+> >> +	tmp |= val & mask;
+> >> +	writel(tmp, base + offset);
+> >> +}
+> >> +
+> > 
+> > [...]
+> > 
+> >> +static void __iomem *rzg3s_pcie_child_map_bus(struct pci_bus *bus,
+> >> +					      unsigned int devfn,
+> >> +					      int where)
+> >> +{
+> >> +	struct rzg3s_pcie_host *host = bus->sysdata;
+> >> +	unsigned int dev, func, reg;
+> >> +
+> >> +	dev = PCI_SLOT(devfn);
+> >> +	func = PCI_FUNC(devfn);
+> >> +	reg = where & ~0x3;
+> >> +
+> >> +	/* Set the destination */
+> >> +	writel(FIELD_PREP(RZG3S_PCI_REQADR1_BUS, bus->number) |
+> >> +	       FIELD_PREP(RZG3S_PCI_REQADR1_DEV, dev) |
+> >> +	       FIELD_PREP(RZG3S_PCI_REQADR1_FUNC, func) |
+> >> +	       FIELD_PREP(RZG3S_PCI_REQADR1_REG, reg),
+> >> +	       host->axi + RZG3S_PCI_REQADR1);
+> >> +
+> >> +	/* Set byte enable */
+> >> +	writel(RZG3S_PCI_REQBE_BYTE_EN, host->axi + RZG3S_PCI_REQBE);
+> >> +
+> >> +	/*
+> >> +	 * rzg3s_pcie_child_map_bus() is used to configure the controller before
+> >> +	 * executing requests. It is called only within this driver and not
+> >> +	 * through subsystem calls. Since it does not return an address that
+> >> +	 * needs to be used later, return NULL.
+> >> +	 */
+> > 
+> > What guarantees that the PCI core will not call this function through
+> > pci_ops::map_bus?
+> 
+> As of my code inspection the pci_ops::map_bus is currently called from:
+> pci_generic_config_read()
+> pci_generic_config_write()
+> pci_generic_config_read32()
+> pci_generic_config_write32()
+> 
+> As of my code inspection, these are currently called from vendor specific
+> drivers. I the core behavior will be changed, I can't guarantee the
+> statement from the comment. Please let me know if you want me to drop the
+> initialization of rzg3s_pcie_child_ops::map_bus and call
+> rzg3s_pcie_child_map_bus() explicitly instead of calling it though
+> rzg3s_pcie_child_ops::map_bus
+> 
+> As mentioned in the previous review rounds, this is implemented like this
+> as it was suggested in v1 review process.
+> 
 
---cgliMA4ktxGmPwLv
-Content-Type: application/pgp-signature; name="signature.asc"
+My concern is, since you are using it as a map_bus() callback implementation,
+there is no guarantee that the PCI core will not invoke it. If you do not intend
+it, then I would suggest dropping the callback and use it directly.
 
------BEGIN PGP SIGNATURE-----
+> > 
+> >> +	return NULL;
+> >> +}
+> >> +
+> >> +static struct pci_ops rzg3s_pcie_child_ops = {
+> >> +	.read		= rzg3s_pcie_child_read,
+> >> +	.write		= rzg3s_pcie_child_write,
+> >> +	.map_bus	= rzg3s_pcie_child_map_bus,
+> >> +};
+> >> +
+> >> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
+> >> +					     unsigned int devfn,
+> >> +					     int where)
+> >> +{
+> >> +	struct rzg3s_pcie_host *host = bus->sysdata;
+> >> +
+> >> +	if (devfn)
+> >> +		return NULL;
+> >> +
+> >> +	return host->pcie + where;
+> >> +}
+> >> +
+> >> +/* Serialization is provided by 'pci_lock' in drivers/pci/access.c */
+> >> +static int rzg3s_pcie_root_write(struct pci_bus *bus, unsigned int devfn,
+> >> +				 int where, int size, u32 val)
+> >> +{
+> >> +	struct rzg3s_pcie_host *host = bus->sysdata;
+> >> +
+> >> +	/* Enable access control to the CFGU */
+> >> +	writel(RZG3S_PCI_PERM_CFG_HWINIT_EN, host->axi + RZG3S_PCI_PERM);
+> >> +
+> > 
+> > I'm not sure if 'host->axi' written above and the address written below are in
+> > the same domain or not. 
+> 
+> host->axi and host->pci are both part of the PCI controller address space.
+> I don't have more info on it than this. HW manual don't mention anything
+> about this.
+> 
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNrC+QAKCRB4tDGHoIJi
-0mW2AP4uqFgdTFvca8mVJA+tAqUvGIeQxDEbIIM3/yjbo7QZ8wD/TfF3agyYq+6T
-r7amWo2btMqsEsrOfeuACJfJRyP5EAA=
-=BQew
------END PGP SIGNATURE-----
+Then it should be fine.
 
---cgliMA4ktxGmPwLv--
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
