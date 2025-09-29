@@ -1,130 +1,94 @@
-Return-Path: <linux-kernel+bounces-836556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762E8BAA02E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6C7BAA037
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989F93A6729
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:25:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AD4919206B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51CC30C117;
-	Mon, 29 Sep 2025 16:25:16 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8B730C617;
+	Mon, 29 Sep 2025 16:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQnM7lqH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270A72144CF;
-	Mon, 29 Sep 2025 16:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9A11F5847;
+	Mon, 29 Sep 2025 16:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759163116; cv=none; b=NRYTawP9XkV5grz+dBm1Cz2mLl8gZZQMNqTwbhUfo5OZ7u7FFxiOEIIM8Tex7q3sPf369ijeBvX0mEQot/ft1KHpXRQ6LFHs6fn4deI+cREhMrTRPrOAw7pPQVO7eaBiRCgTSRhwnesPqKsYchEg3hDb0XlMWFunn0xP8lu6LrE=
+	t=1759163167; cv=none; b=c6rjIWRLt1y6LaRJ6xKWeJP6tUJ4SuyGY+9B5czr6G55BZurmRgAQnMdS9fDqt9VxMMhAvwjQJ8HtMjc/nqoNSzRYR+u65sY60Sl79Spc5EAceAzKtARaqOzUcXp+t7uf3RLiDNQ12x8Q9wI1XTQugEcolok/3LZ1CfP62NxjSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759163116; c=relaxed/simple;
-	bh=QjHNJBNkPqQNINK+fdAh2UYmY1cG0XyouPMxXme8GhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lPrc9LWGjvrX2QRwgbuM9Kfjr9jT9q6PD81eyQiChIl4TdYqefB/arL9dI43/oaKHN1oLWDzxSNtb3zxajamyNxUqEWmg7ayDMLzY0JmBgz1jMbkU4DDv2O0JdcOW0ie1miyj+uKWs1NjNaugpr4QgmD5Tsty0nKqfCRjdu+apc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [114.245.39.210])
-	by APP-01 (Coremail) with SMTP id qwCowAD3UKPXstpoT7XhCA--.29927S2;
-	Tue, 30 Sep 2025 00:24:57 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Jonathan Cameron <jic23@kernel.org>,
-	linux-iio@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Abhash Jha <abhashkumarjha123@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH v2] iio: adc: mt6360: Handle error in cleanup path correctly
-Date: Tue, 30 Sep 2025 00:24:53 +0800
-Message-ID: <20250929162453.1203-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20250929025358.2064-1-vulab@iscas.ac.cn>
-References: <20250929025358.2064-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1759163167; c=relaxed/simple;
+	bh=n0if5/wobIXPyvF3KwqHu1JX8P031jZWEl37VJeix0s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JVrNnRMAlpiVum/AKwQfejFbwB741fYX3fJm9as+6NGawmKV58xd/RxvY9x4rf+iwETdmokUPR4oqYDCeFcKjpK3gFb4uhMyp0y7h17Z/EYK7zdk1D4uvRZNv7LCZuHtOByG99dl2EAkKXZ7aowkmAAb2Ar37craQOXMKCjnhdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQnM7lqH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4CAC4CEF4;
+	Mon, 29 Sep 2025 16:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759163167;
+	bh=n0if5/wobIXPyvF3KwqHu1JX8P031jZWEl37VJeix0s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=VQnM7lqH4fBMb/gAQxWR64StlfAtEjOmDPHwjQC5YGdqPLC89jPK3sTi3j7AIqb/3
+	 gVrprAr/vMl68WzqYgir1S6jcWc+1pFwccrQek2avmUhyOYrqfUh/EAlL+BXpu18xY
+	 pdHF4hIL8zAXLFk7olbgnFcbfwNJWibFN1NGRtPrGAfb6B9AC2YJGtHuQfRbkykS1m
+	 flexMNx98LgiGaoKjqat/OneqlffYAd3rTXkO3JBx5v+tvhOEEqv9En3ovlYHACGiA
+	 aqWGeLXMCIzrOzgNW12G2jtYbP6Uo6F4nuQkWicHM+EOntV1HEYGyTRnBrnQwtN1Xj
+	 x68VuqzZP9MsQ==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+ bhelgaas@google.com, cassel@kernel.org, kishon@kernel.org, 
+ sergio.paracuellos@gmail.com, 18255117159@163.com, jirislaby@kernel.org, 
+ m-karicheri2@ti.com, santosh.shilimkar@ti.com, 
+ Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: stable@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ srk@ti.com
+In-Reply-To: <20250912100802.3136121-1-s-vadapalli@ti.com>
+References: <20250912100802.3136121-1-s-vadapalli@ti.com>
+Subject: Re: [PATCH 0/2] PCI: Keystone: __init and IRQ Fixes
+Message-Id: <175916315956.16065.1110296363886173087.b4-ty@kernel.org>
+Date: Mon, 29 Sep 2025 21:55:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAD3UKPXstpoT7XhCA--.29927S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJrWxKryxuFW8ZrW3uF48WFg_yoW8uryfpr
-	1YkFyqkFy8KFySka1xt3WUZFWFya17Kw4Fk34kCanFv3s8Ar1IgFyrGa4q934v9rZYyan0
-	v3yUuFWUuw18ZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRAAA2jan9oN4wABsC
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-The return value of a regmap_raw_write() and regmap_update_bits()
-in the cleanup path was being ignored.
 
-Fix this by checking the return value and warn on error.
+On Fri, 12 Sep 2025 15:37:57 +0530, Siddharth Vadapalli wrote:
+> This series is based on commit
+> 320475fbd590 Merge tag 'mtd/fixes-for-6.17-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux
+> of Mainline Linux.
+> 
+> The first patch in the series has been posted as a Fix in contrast to
+> its predecessor at:
+> https://lore.kernel.org/r/20250903124505.365913-10-s-vadapalli@ti.com/
+> based on the feedback provided by Jiri Slaby <jirislaby@kernel.org> at:
+> https://lore.kernel.org/r/3d3a4b52-e343-42f3-9d69-94c259812143@kernel.org/
+> Since the Fix is independent of enabling loadable module support for the
+> pci-keystone.c driver, it is being posted as a new patch.
+> 
+> [...]
 
-Fixes: 1f4877218f7e ("iio: adc: mt6360: Add ADC driver for MT6360")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+Applied, thanks!
 
----
-Changes in v2:
- - Do not propagate cleanup path errors.
- - Log a warning on failure instead of overwriting the return value, as
-   suggested by the maintainer.
- - Also check the return value of regmap_update_bits() for consistency.
----
- drivers/iio/adc/mt6360-adc.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+[1/2] PCI: keystone: Use devm_request_irq() to free "ks-pcie-error-irq" on exit
+      commit: e51d05f523e43ce5d2bad957943a2b14f68078cd
+[2/2] PCI: keystone: Remove the __init macro for the ks_pcie_host_init() callback
+      commit: 860daf4ba3c034995bafa4c3756942262a9cd32d
 
-diff --git a/drivers/iio/adc/mt6360-adc.c b/drivers/iio/adc/mt6360-adc.c
-index 69b3569c90e5..9ee7247aacbe 100644
---- a/drivers/iio/adc/mt6360-adc.c
-+++ b/drivers/iio/adc/mt6360-adc.c
-@@ -70,6 +70,7 @@ static int mt6360_adc_read_channel(struct mt6360_adc_data *mad, int channel, int
- 	ktime_t predict_end_t, timeout;
- 	unsigned int pre_wait_time;
- 	int ret;
-+	int cleanup_ret;
- 
- 	mutex_lock(&mad->adc_lock);
- 
-@@ -130,11 +131,16 @@ static int mt6360_adc_read_channel(struct mt6360_adc_data *mad, int channel, int
- out_adc_conv:
- 	/* Only keep ADC enable */
- 	adc_enable = cpu_to_be16(MT6360_ADCEN_MASK);
--	regmap_raw_write(mad->regmap, MT6360_REG_PMUADCCFG, &adc_enable, sizeof(adc_enable));
-+	cleanup_ret = regmap_raw_write(mad->regmap, MT6360_REG_PMUADCCFG,
-+				&adc_enable, sizeof(adc_enable));
-+	if (cleanup_ret)
-+		dev_warn(mad->dev, "Failed to reset ADC config: %d\n", cleanup_ret);
- 	mad->last_off_timestamps[channel] = ktime_get();
- 	/* Config prefer channel to NO_PREFER */
--	regmap_update_bits(mad->regmap, MT6360_REG_PMUADCRPT1, MT6360_PREFERCH_MASK,
-+	cleanup_ret = regmap_update_bits(mad->regmap, MT6360_REG_PMUADCRPT1, MT6360_PREFERCH_MASK,
- 			   MT6360_NO_PREFER << MT6360_PREFERCH_SHFT);
-+	if (cleanup_ret)
-+		dev_warn(mad->dev, "Failed to reset prefer channel: %d\n", cleanup_ret);
- out_adc_lock:
- 	mutex_unlock(&mad->adc_lock);
- 
+Best regards,
 -- 
-2.50.1.windows.1
+Manivannan Sadhasivam <mani@kernel.org>
 
 
