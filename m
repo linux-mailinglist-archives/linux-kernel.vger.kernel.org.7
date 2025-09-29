@@ -1,167 +1,112 @@
-Return-Path: <linux-kernel+bounces-835715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DD9BA7DF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:41:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDB1BA7E0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C32E4E107E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D863C242D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72727212546;
-	Mon, 29 Sep 2025 03:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="kP7NE0Vd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B/Y8KrTe"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D544212559;
+	Mon, 29 Sep 2025 03:47:40 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231B435950;
-	Mon, 29 Sep 2025 03:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E6FD515;
+	Mon, 29 Sep 2025 03:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759117312; cv=none; b=gNTOXIDcWFV/p07gL8CeAN3ZePGnAMle4+BBwYm+uUCMILHxIb1Jm/nN6ryfH2jBEkB87yLAZTFIsEZCKJjxIrslJZxqvtDNd+zrq6h16eVmQxsIgv1C4DluPl0G4EZEpven8Qz/9C+54H+IiU2cAKpWZP66m9P4omLdPxLVsUk=
+	t=1759117659; cv=none; b=ElfulgAQQ9Cf9MD2USyGxRmtHsdpno/32PSATSgnf8OZiYCqcthz+iolnPJEnxzXwbPV06Hft42BZU/pDULhnliHtoKl0bR7qA406scIMdyUH0qei84z+AjVse7MXONdQcBkgOMMsjlnEIxe0wUXxpftZ+TUtyOegSatao3BPYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759117312; c=relaxed/simple;
-	bh=RI2ipaHB29egjGOrvmIxSfS8MvurjHVJ7zwPYtv3sZA=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=gmXOkbEJ4thIhhMhFaWu8n6vZ+4VdkzW+AyC2OZ1O9ps3HkyI1mogXy1J/b9SKEleqEYz2io+69k8O67rRKDuSJw5dHpzphUiZCHb789oWI12RgN+zlK4et2mYgiXTImN84uiYKyr5HWOKB4kRKfcfqCc9F83MzqQlAix+kINa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=kP7NE0Vd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B/Y8KrTe; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 283131400076;
-	Sun, 28 Sep 2025 23:41:48 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Sun, 28 Sep 2025 23:41:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1759117308; x=1759203708; bh=yjtaEvshITSwrEdSYBlewMXUbBwlvgxkvSi
-	tYOUauSA=; b=kP7NE0VdDlIq/miDmk7Sj3YNDTtpRmp6XEmCHJf+j8m27c6d8/A
-	69lT5AQ97tBOR5nOOWxX2nmFL/Z8UKzC5T7CwOyfmMG4lRauBX9Z+dN294tZIVuc
-	+F4X3AeB6T/TUJs2GnI49gxbNVbdcb+J5jwiLxJT8WDnji9xqejGAxgoqVdDSgLd
-	Ud6Zo6gZqRwgXQ25em/lNGTcJ5Bd/m56NEkWZ0Zxxnuka3ajUBCdEGM76QjSN7Fy
-	mEPlQVRFjjvaUgWKrc7Hl4WPuVife3LfO2RZ5MIr0L2oZ4HyFsDUBGPW/T91bESI
-	CCxQdlfK6uMJQ6dYtCZQKL0xnfcsdGL8qTw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759117308; x=
-	1759203708; bh=yjtaEvshITSwrEdSYBlewMXUbBwlvgxkvSitYOUauSA=; b=B
-	/Y8KrTeF8avUW/ph5EyAR++W6vbVymD/EwK1xQaMRJJD+sb10AUYtH3zjLWUwy9V
-	CZBsa9wLrmT5HXzye3P+GIY10x8VhQiMwD3ZyvhrhPAXIO3Ng8WFK1TQAxOK/+dJ
-	bECV2k6vyr6UWsjggdP3fqXXyCl0m4F6nId0RPtGRFa46xvwpe/vo0NMJ+MgUTvd
-	2qPBIqiDnj9yM+r++05ZHA123OCbS/Yk6vRGT0gsLlyTSTgjqwlPsDwvUpt1rZL7
-	jJkbBtOtiaXZ0dnDwRFr4zU5E+UHhkPNGf3L5kwFs8jsaGbVtpEFjUdDVVwt03e5
-	9zq2VYB33UXcK/GLpz8RQ==
-X-ME-Sender: <xms:-v_ZaMJ8lPT8o_it_22s0icuNX3dX0ZX6CaNAbqRexy650xrHVpyXg>
-    <xme:-v_ZaOZu9ciUvExU7IDingF4TVT4o1x0GyzGuUZqPhv6XHdhCEF49cXuTVwhh0dL_
-    k2ZdKQ9zJgWTtu4utEE3fpAr5r1_Ofq4X6vnunWtAjVpmwGLg>
-X-ME-Received: <xmr:-v_ZaO-3bq1MbsftNHI9_wQxojEjF83CPrdBN8crfz2bHbqRrZ6f4iT8NfVzpBg1bg2Tyr4rx0ewVp-55geNcMkyMXKmlJd-a31pjf65QQsw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejieeliecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthejredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    duteefhfduveehvdefueefvdffkeevkefgtdefgffgkeehjeeghfetiefhgffgleenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehtghhrrghfsehsuhhughdrtghhpdhrtghpthhtohepjhhirg
-    hnghdrsghirghosehlihhnuhigrdguvghvpdhrtghpthhtohephhgvrhgsvghrthesghho
-    nhguohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtphhtthhopehmvghnghhlohhnghekrd
-    guohhnghesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:-v_ZaPZ4aLIheUqbRt6q6xJWDJKErBHbFvKpoO2JYe6R1njzPMzHTg>
-    <xmx:-v_ZaCNZpfGv098yuLx2epYtA_38XPxvqwIDR3FaoX_SV8X1rsFSng>
-    <xmx:-v_ZaLDFDUonA674eAlrVdyUnJ0F_XjCQKO7p6z_5stjcAMWLEwN4w>
-    <xmx:-v_ZaJKnkzmMILrG71zFkZZRRjnTMplaY3ucK0fj_HfDIiX3hWTneA>
-    <xmx:_P_ZaDrFGbhOd__Tb7qZYXvD9O4nYE758VQABCFEpXDYDMmNM4McY3XB>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 28 Sep 2025 23:41:44 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1759117659; c=relaxed/simple;
+	bh=98/A/gvh5ZZHq0EdCKQVJZBXC8RCJoc/pSNT9Nc/RpM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=aL0iaRXduwMgLQJNTy6ZhdiPZu9MO8N3cUnf2mmbKvDHZkQa5CGUIjt7cIGpXrtRpLnT0wIFYEcPoALrMFO3A7M2t57IhI8DC4VwwcmetFi6M/GlMEGiyCsngxXt2WC21eWUvUL2Y8zQWpG57gC1gNqgWFyvj3FwQrGgK2jUCB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowAB33RZCAdpo+z+RCA--.20813S2;
+	Mon, 29 Sep 2025 11:47:28 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: robh@kernel.org,
+	saravanak@google.com,
+	lizhi.hou@amd.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] of: unittest: Fix device reference count leak in of_unittest_pci_node_verify
+Date: Mon, 29 Sep 2025 11:47:13 +0800
+Message-Id: <20250929034713.22867-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowAB33RZCAdpo+z+RCA--.20813S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1kKFWxAryxKFW3Zr17GFg_yoW8Gw1kp3
+	yUGas09rW8GF47Kw48Zr4UZFy3A342934rGFy8A3WS9wsYq34xtFyUXayjyrs8urWkXF1Y
+	yr17tay8CF4UtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	W0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8txhDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Menglong Dong" <menglong8.dong@gmail.com>
-Cc: herbert@gondor.apana.org.au, tgraf@suug.ch, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org, jiang.biao@linux.dev
-Subject: Re: [PATCH] rhashtable: use likely/unlikely for rhashtable lookup
-In-reply-to: <20250928061950.34531-1-dongml2@chinatelecom.cn>
-References: <20250928061950.34531-1-dongml2@chinatelecom.cn>
-Date: Mon, 29 Sep 2025 13:41:41 +1000
-Message-id: <175911730161.1696783.8081419303155421417@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
 
-On Sun, 28 Sep 2025, Menglong Dong wrote:
-> Sometimes, the result of the rhashtable_lookup() is expected to be found
-> or not found. Therefore, we can use likely() or unlikely() for such cases.
-> 
-> Following new functions are introduced, which will use likely or unlikely
-> during the lookup:
-> 
->  rhashtable_lookup_likely
->  rhashtable_lookup_unlikely
->  rhltable_lookup_likely
->  rhltable_lookup_unlikely
-> 
-> A micro-benchmark is made for these new functions: lookup a existed entry
-> repeatedly for 100000000 times, and rhashtable_lookup_likely() gets ~30%
-> speedup.
+In of_unittest_pci_node_verify(), when the add parameter is false,
+device_find_any_child() obtains a reference to a child device. This
+function implicitly calls get_device() to increment the device's
+reference count before returning the pointer. However, the caller
+fails to properly release this reference by calling put_device(),
+leading to a device reference count leak.
 
-I generally like this patch - it seems well structured and leaves the
-code easy to maintain.
+As the comment of device_find_any_child states: "NOTE: you will need
+to drop the reference with put_device() after use".
 
-I think you have made a good case for rhashtable_lookup_likely() and it
-seems sensible to optimise that case.
+Cc: stable@vger.kernel.org
+Fixes: 26409dd04589 ("of: unittest: Add pci_dt_testdrv pci driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/of/unittest.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I'm less sure of rhashtable_lookup_unlikely() - you have provided no
-measurements for that.
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index e3503ec20f6c..d225e73781fe 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -4271,7 +4271,7 @@ static struct platform_driver unittest_pci_driver = {
+ static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
+ {
+ 	struct device_node *pnp, *np = NULL;
+-	struct device *child_dev;
++	struct device *child_dev = NULL;
+ 	char *path = NULL;
+ 	const __be32 *reg;
+ 	int rc = 0;
+@@ -4306,6 +4306,8 @@ static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
+ 	kfree(path);
+ 	if (np)
+ 		of_node_put(np);
++	if (child_dev)
++		put_device(child_dev);
+ 
+ 	return rc;
+ }
+-- 
+2.17.1
 
-In general we expect an rhashtable to be between 33% and 75% full.  The
-inevitable hash collisions will mean that the number of used slots in
-the bucket table will be a little less that this.  But let's assume 50%
-of the buckets are in use at any time on average.
-
-If you are using rhashtable_lookup_likely() you expect to find the
-target so you expect the bucket to not be empty, so it is reasonable to
-tell the compiler that it is "likely" that the pointer isn't NULL.
-
-However if you don't expect to find the target, that DOESN'T mean you
-expect the bucket to be empty - it could have another item it in.  All
-you can really say is that the probability of an empty bucket matches
-the degree of utilisation of the table - so about 50% as discussed
-above.
-
-So I don't think it is reasonable to ever tell the compiler that an
-bucket being empty is "likely".  You also use "likely()" for deciding
-whether or not to subtract the key offset from the address before
-returning a pointer.  This is a valid thing to tell the compiler, but we
-would need numbers to confirm whether or not it was worth adding to the
-API.
-
-If, however, you could provide numbers showing that in an rhashtable
-with lots of entries, a lookup for a non-existing key was faster with
-the rhashtable_lookup_unlikely() code, then I would find that
-interesting and worth pursuing.
-
-In general it would be interesting to know the number for both
-successful lookups and unsuccessful lookups across all three proposed
-lookup versions.  I don't know how helpful it would be, but I would find
-it interesting...
-
-Thanks,
-NeilBrown
 
