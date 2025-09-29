@@ -1,214 +1,176 @@
-Return-Path: <linux-kernel+bounces-836730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0143BAA6F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:12:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A60BAA6FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37694192396B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:13:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946371C652C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837C422D792;
-	Mon, 29 Sep 2025 19:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CCA244669;
+	Mon, 29 Sep 2025 19:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P+DLsKEu"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013065.outbound.protection.outlook.com [40.93.196.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieOPG71m"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08EE243969
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759173139; cv=fail; b=Gr9GoBKRetkLxC3/S5YvD/rmPtu/Suwh+XRSt4BcNKZeD9wreD0af13qsQswX7+h3Q4O96L50yas6RkXPhSV9JXRxBSMw541IFpEgS35uzWXEg3ke+o8PrDKqeG8zolEjjLxnZWKZZT5pu5w/o+QiTh+QfJ+ifmWEY6K+lzcFbQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759173139; c=relaxed/simple;
-	bh=6dxlcXsbawc+0dbeGDPwp3yHM+6NLWb/ZaQArZBcJq0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dyWxuvkEkopNgYJ/JdbG5ypObfNmu5GqYczAKfcb1Xb+DGD+fQKTcPsFT0O+wZQA/oo0a1d9aoHcBa5lDHE5XO+w3Qk4pC20lxypvTXMLrz1Wwb15t4Fnxn2iQzV75L5qNLoz5gSM9sevq06agGz67ggcMZRJ5itrJrFdf9R+hw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P+DLsKEu; arc=fail smtp.client-ip=40.93.196.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F0pyve5HHxhw17bAtORJcByTr6JYD6VCjy/CrdBqFT208n/eVuXXCgQ1IOl20+fXdwr78ztyAf4prcbQp4Uwtfku6KXYkOZCRG3mVLXRaoMGcmHukZno3EZVvZgeK+vWUKr36JjZykZRQ9dINOmm2/02yZ8hL4O4Q/IhbPJmWvMr7muNBIu8Y5ltZRMtn55fJAsd5gfhgTpVte9nSV/f41SiNAEn/2UDhPOuzkKq8M6rHUsEPJiUjvDm8yzQiYuve+5rZaxvxV1uTxyvvwIyqrUr9n/O7QRNfgO/NIjvVl5moUngwispAuP55UeH1Q6N2qgwPHYJbBGyDirihB4M1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d0J1cItQkRKLU4Pf5cRn9CHeo1ftlxhfPrFjh9SYhos=;
- b=NeYfhn8mILGR7KRAwUd7I9pGF9CTQ0PKAvuszOhCf6DCCQrvYwT3LYpz7z27zbHmzF13UpHyWFuUTNkYyIly+ACpc4Zb1zkIGY5nNJ+NMhvWijhqieveB7UsCNLtEFyCQ8AH6t4R7OomaM7uwujL8W7U7zI3HecG+rdaxPGSScYDBdvepfGNkwaVodi9AvanvU+yGX2Yg+TkwCqEpvEvOZilNE3wl1amtYRxISlFCjl91FCbaqAyZIe8VSwc7wvfsVIn5bONRSHoL5xCxFmPlzWlRP7N/enXoBDMFJpCWVWFT5yaBmbFoes9rIS8NnNCy11sDDQESpdNfr6CJFnqWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d0J1cItQkRKLU4Pf5cRn9CHeo1ftlxhfPrFjh9SYhos=;
- b=P+DLsKEuHsb0kTo+xal+WHBFbL3TbTdmKfmMQupu+Z54k/2DOQSx+/3SnI7G2xjwkJpLMbNHY7CaE5JtO87OgnRAt+9LVVdK2wAdcalgFl/Al2JV8PLDJJc/+zhHFOW6GwVIM1tes3N413O3KlqnujbJmFFHft9OwORgK6Bkvf5fQx/I4I/k2LkTvoEwFn3rwISg8Lx04KmS3yYOYAPNvF3fQ5g3M/bxvtdUiT2max2O541NxH28QVA7yovNu1Uo7rnMU3m8vsC86EEGR1sFjUp63oWroYjYt6QJVoIiin6WxKQw/TZ2So6NfBfeSw3WxQQWuAPuUJYbj7nVx4mrvA==
-Received: from PH8P221CA0039.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:346::14)
- by SJ2PR12MB8806.namprd12.prod.outlook.com (2603:10b6:a03:4d0::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Mon, 29 Sep
- 2025 19:12:07 +0000
-Received: from CY4PEPF0000FCC4.namprd03.prod.outlook.com
- (2603:10b6:510:346:cafe::13) by PH8P221CA0039.outlook.office365.com
- (2603:10b6:510:346::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.21 via Frontend Transport; Mon,
- 29 Sep 2025 19:12:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CY4PEPF0000FCC4.mail.protection.outlook.com (10.167.242.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Mon, 29 Sep 2025 19:12:07 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 29 Sep
- 2025 12:11:50 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 29 Sep 2025 12:11:49 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 29 Sep 2025 12:11:49 -0700
-Date: Mon, 29 Sep 2025 12:11:47 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<jean-philippe@linaro.org>, <miko.lenczewski@arm.com>, <balbirs@nvidia.com>,
-	<peterz@infradead.org>, <smostafa@google.com>, <kevin.tian@intel.com>,
-	<praan@google.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH rfcv2 5/8] iommu/arm-smmu-v3: Pre-allocate a per-master
- invalidation array
-Message-ID: <aNrZ8z92CXs+J1pH@Asurada-Nvidia>
-References: <cover.1757373449.git.nicolinc@nvidia.com>
- <f5f635077b791b27b46ea41b5c86a52fd4549a44.1757373449.git.nicolinc@nvidia.com>
- <20250924213230.GQ2617119@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E46217736
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759173210; cv=none; b=WxVaBNM11NlNBd8DSNwrBecSGUsI16iQeWIB6LxfLEsmpxIg0oheBUlZ9EoFHRDgigwJ2IwsIJpDk7To82q8JSUAo1VkbhrEYvaDqmu8X1rbXoSTQTerNQS7COByKvW5nnJQDIGFG5apBZwH2mprWY+Ns8FQGUMtRbUuHSUmbkA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759173210; c=relaxed/simple;
+	bh=P9Y1j6zDFm6VNI5Ni4uPj/s+D1Z6aovIAiLNcjmEWq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8Qrhz+u7hbwHYt/NO9EZ5/I+moJgYGQ8gN9W5cKuVkhW5mwczdkSy6caofc9PU7tvf0tv4OsBVrJNU4CLtargY9QQmYtMiefO24rjuJjMz+s0TSaOU4784T+RicOSzBsmowMkOMWH9/8RKWWVlk2/EcuaHsS4qaYXmn6bh6psc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieOPG71m; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57a59124323so5201622e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:13:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759173207; x=1759778007; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uhqVWTFayCZqdCtpHugU4/RlDPGuDMr9RSGzGhiO5nM=;
+        b=ieOPG71mbFeI+xG4E2vS2frHAA4tOjc1rJc3uMqGWVUhjDtpz+mq3P45S4dmq6Qe/w
+         8j3w7v9z336ktyQf1PV+2nTrazFd8/DvCcUPnNtikkL6eQAESQQDrO1nHREdjKWjny5g
+         6OGi6ZgZK8tKE20Fy3+VAqVAUK4OVElrqlbI8U33/IzC9VDb9Jvp4EzHde11QdvBB3As
+         8Dhn9LELFc4S0aT2s/CHZRoh++QXJ9vGmo5xgoRTR92d+nB6VXc+Dk1UvRfTDDdlXQeu
+         s45zrnQxC7mpSR61gXpeFxjnj2590qZMY057JOc7gsSro92FPo8DbrCCbWMqRyfTzc1f
+         4WvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759173207; x=1759778007;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uhqVWTFayCZqdCtpHugU4/RlDPGuDMr9RSGzGhiO5nM=;
+        b=ZVkunDgYjHmUtn3//GpU/tLGkhFHOk1MA/W7WNypWzmiIDi7q5Vvpx64gx8bO1NeHM
+         eVjZQe8rq5r72tYPBRzgccaYxmokXVFcE0wF+PWT6SAHRh+lMJJM1dYvBJPkTUgwyFc4
+         ScVZ+JshjZqY02+Izhc6B+6Lk77h10THzuIMROh7WFKNCxQHPsqRNiwwZjVuVlp1AmFy
+         W7loaNYqGYkunmPA4ETdpuobZZua5eIH2YDy1H6u01edgyOxeQzPUNxy/jOvfPeT3Ppd
+         cIZo36ldNX/mowb3e3Il5a2depm+iG2BNQZswZ+Tl515lppw0wRAxH3y3bHek+lzU3+O
+         87DA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT/1974KNlS1T8Liuluak9ZgtvtljU5q91ukwIC6SH+um0bgCujpsbh6rLKGNfed864Y41/Qm47kBHv2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVsmYgzgC+qk6/jW8oaS4Rr93/ncZfe9dA7Bo4kvqooE+Nu3Rc
+	lHPFF+pKXVAPkKjRzIYktoHwY3GGYTDD8diJLBiccF6s14jp8k43Va0D
+X-Gm-Gg: ASbGncs521ua1ew7Ga23Vv5hvRlA0jr1yKSGAr/zgrwFvkfdq4ZOC5AgzGFZnFsGKGG
+	03qkIzMKnanVJJnozNcPrX2uT1Z4Jfk3GoFlLtz+VxYcp3X/6gWpI35HAM3sA7qnjPzk9lut0L/
+	zIOVAI3kg5xxT8cNgNl6bL9+gDNKrgHRsp4GrRtePTLoq6LH+3Qp9T+fftxvAcOhA263LQGAIu/
+	7RLsrVIJQANLDNHJ7+fAHwkewZqf05YyDCVt9zBp20pQqsEU5GerpS68LiWzhdr8rLmm7p7uqTZ
+	TmbN/D1S7PxlaOPdLlmxYeqcsHq6BI9TRjF9fGPpa4QJVpwD9I9akmMoUOjo47gLJ3/4DkHedFk
+	lmawYO6hKmFx8XmkduZ+lxqnqfFpqBrZ7NxagL3ro/fw1LM36cw==
+X-Google-Smtp-Source: AGHT+IEL0DvGvJFTjcXFtSLUYDkcvWLmwEDINloNMRh76KrCro7nYZP3SSYe4SN1qOLDLjMmnPhzfw==
+X-Received: by 2002:a05:6512:681:b0:579:8bbb:d61b with SMTP id 2adb3069b0e04-582d3ba1b83mr5213106e87.46.1759173206578;
+        Mon, 29 Sep 2025 12:13:26 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.147.37])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58567242ef3sm2473234e87.19.2025.09.29.12.13.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 12:13:26 -0700 (PDT)
+Date: Mon, 29 Sep 2025 22:13:24 +0300
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>, 
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] NFSD: Impl multiple extents in block/scsi layoutget
+Message-ID: <qddd2ydxgzhx72ybsxt2o3o2x73wkntqsfpg57fsbw5qlfgm4l@yzan3q4ybywx>
+References: <20250911160208.69086-1-sergeybashirov@gmail.com>
+ <aNo0BCzVQxR60qeT@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250924213230.GQ2617119@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC4:EE_|SJ2PR12MB8806:EE_
-X-MS-Office365-Filtering-Correlation-Id: 397e0242-0cc7-4544-e083-08ddff8c152f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6rEujkXMCx7S+zfcGgfJPJWnj7z2soo8ZyNhYF2zM9IWthRGtHHtWGfVBMnF?=
- =?us-ascii?Q?9CcynTfjsq5hE4+3rfQepgPmUKRbZv5KkKPPzs47U+j7IvXHcYlcRoDQf4Tp?=
- =?us-ascii?Q?+Mse5AXYQSpgbKJUt9lVF75tyLF1XAEyndXx5kwGr7NN6BRuTkjYMwlnfjt/?=
- =?us-ascii?Q?SAiJnz9FGKT6s6kQFeYSoRFH+oYE5j+mPIQVnT/+IJ/cfDqL+CQ38su1ivUc?=
- =?us-ascii?Q?m64S238frKB0Fc0HsPdMLnsWEaiL/f7hVdPFwKlGJHA3W8iyx116+DxpGHyw?=
- =?us-ascii?Q?VCYA8bhLO9XbV8RYV1rCiGCs7+1U+3VHNHG+x3GLhDLnanizWJC1jW/SFHCB?=
- =?us-ascii?Q?arrI5f1HXFwcz3bPnPFaiTcvQw3W8Tc04ioFu6XVqvlm1Ke95sEzE9pK+YzH?=
- =?us-ascii?Q?r9fp2HazpWmbhuNnnHjU6bqfOZ2iwu0+rPepWxdn6s2mkDQeUz9JDl8LMPLY?=
- =?us-ascii?Q?4VflBm4DDlIM1rRgc1cWlZPOuTOuWQM9MiNtCZywwShQ4urFXQupPZiW5wQM?=
- =?us-ascii?Q?sNGPVO4nWTa7xnqDCEZo6t//iLxNzai16BjnsMzKwFeJ0vulK5V3TwKs1zNi?=
- =?us-ascii?Q?3jghx2l4noNAVmGdDj4ADkVbkbtG2Qga65LbwT/7ndEKPkeEJW2Hz21boG5v?=
- =?us-ascii?Q?Psk3wBf/k2KJhI8dhMzyZaeCrOdf/T3YLQt9RHbfRV9ftxDE1Kp0IoLYVtSW?=
- =?us-ascii?Q?Ia1Bx1YGZv/u6onsZoCU3TWlXpnXF80Y+tSUCJeCTyromyM2KKb2irc9yLfN?=
- =?us-ascii?Q?v9K04kEBMraMjopngCDudBzjV5tGBJ5of2obzvYEJp5v4Scgcst72xhFBIiP?=
- =?us-ascii?Q?stezNzOwDte5z/ZkNwvB1Mxq6jfbJ7hsDPdIZO8C2O4OavcJNzo65ato60Al?=
- =?us-ascii?Q?OGX5aB1bwkQce+xgCOpIQ7kOF1g33DakmwYnE3evIaznYz4mtnbloiMiZD+E?=
- =?us-ascii?Q?qgtZrpUmMz777K2Aqat82lFDJO3TKDQDvkwjxQEuG+jOo/lJvj6eNnDzPhY0?=
- =?us-ascii?Q?TisXWfhL+4jFSeJpy2lpF9AMSNXhE9lAKraPolkCR9VCf1erb4/fZBKjPWLK?=
- =?us-ascii?Q?Squh6n+kaZazaET2vTdW5F9Xbo7QImqtl1ZtfKq98Lj6zgZXI9jvITrOfy5e?=
- =?us-ascii?Q?ZGeeq3TedbVQL509PfVlBKSbpfX9mgpJKhUnvLH39FQrgh1kmytuskAFLTdf?=
- =?us-ascii?Q?zxER3JtDGKW2MkkhRknaoYl2laTFHaGWWwjPqx5zYZOyH/JAgvAzXJkwlxcH?=
- =?us-ascii?Q?KtVK7f7PgMFVRknuvhbFiO6Fa7/nF4PU0x5dSey49AC41mvmNDHsiPuWWUC/?=
- =?us-ascii?Q?FGAJFYEgH34agJnRYXJO+7Hcugf79z/5lL9HDkZ5YUNDpxbPp5lu0P7Dosc1?=
- =?us-ascii?Q?/z76VyPptBGkLZMS7g4ig77GAEo7K5hN32I3PIy5kTzSe4/9VIGBQV+3MIhv?=
- =?us-ascii?Q?z11meGP8ELRfrNdYLp3ni4WWvuyDO7GSvEDWaFbZiVy+C2ArQ5AEfKY7/NZv?=
- =?us-ascii?Q?l43wyl3pmMGd9KJcpZ2njhrU8rVGSx6aFFBOOQ9gBTEpR9MWtL86IcUFzUKb?=
- =?us-ascii?Q?Bb9AlFDC/gsTL2wvHT8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 19:12:07.1348
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 397e0242-0cc7-4544-e083-08ddff8c152f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCC4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8806
+In-Reply-To: <aNo0BCzVQxR60qeT@infradead.org>
+User-Agent: NeoMutt/20231103
 
-On Wed, Sep 24, 2025 at 06:32:30PM -0300, Jason Gunthorpe wrote:
-> On Mon, Sep 08, 2025 at 04:26:59PM -0700, Nicolin Chen wrote:
-> > +	/* Base case has 1 ASID or 1~2 VMIDs. ATS case adds num_ids */
-> > +	if (!ats_supported)
-> > +		master->build_invs = arm_smmu_invs_alloc(2);
-> > +	else
-> > +		master->build_invs = arm_smmu_invs_alloc(2 + fwspec->num_ids);
-> > +	if (IS_ERR(master->build_invs)) {
-> > +		kfree(master->streams);
-> > +		return PTR_ERR(master->build_invs);
-> > +	}
-> > +
-> > +	/* Put the ids into order for a sorted to_merge or to_unref array */
-> > +	sort_nonatomic(fwspec->ids, fwspec->num_ids, sizeof(fwspec->ids[0]),
-> > +		       arm_smmu_ids_cmp, NULL);
+On Mon, Sep 29, 2025 at 12:23:48AM -0700, Christoph Hellwig wrote:
+> The subject line is odd.  What is impl supposed to mean?
 > 
-> The sort could be moved under the above !ats_supported, a little more
-> insurance in case something is inspecting the ids.
+> I'd say something like:
+> 
+> nfsd/blocklayout: support multiple extent per LAYOUTGET
 
-You mean this:
-----------------------------------------------------------------
-@@ -4080,19 +4080,19 @@ static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
-        master->num_streams = fwspec->num_ids;
+Impl is short for implement. But let's rephrase that if it looks odd.
 
-        /* Base case has 1 ASID or 1~2 VMIDs. ATS case adds num_ids */
--       if (!ats_supported)
-+       if (!ats_supported) {
-                master->build_invs = arm_smmu_invs_alloc(2);
--       else
-+       } else {
-+               /* Put the ids into order for a sorted to_merge or to_unref array */
-+               sort_nonatomic(fwspec->ids, fwspec->num_ids, sizeof(fwspec->ids[0]),
-+                              arm_smmu_ids_cmp, NULL);
-                master->build_invs = arm_smmu_invs_alloc(2 + fwspec->num_ids);
-+       }
-        if (IS_ERR(master->build_invs)) {
-                kfree(master->streams);
-                return PTR_ERR(master->build_invs);
-        }
+> On Thu, Sep 11, 2025 at 07:02:03PM +0300, Sergey Bashirov wrote:
+> > Checked with smatch, tested on pNFS block volume setup.
+> 
+> Any chance we could get testing for this added to pynfs?
 
--       /* Put the ids into order for a sorted to_merge or to_unref array */
--       sort_nonatomic(fwspec->ids, fwspec->num_ids, sizeof(fwspec->ids[0]),
--                      arm_smmu_ids_cmp, NULL);
--
-        mutex_lock(&smmu->streams_mutex);
-        for (i = 0; i < fwspec->num_ids; i++) {
-                struct arm_smmu_stream *new_stream = &master->streams[i];
-----------------------------------------------------------------
-?
+Thanks for pointing out pynfs! I'm not familiar with it yet, but adding
+tests is a good idea. Will take a look on it.
 
-Hmm, I am not sure how it insures against anything concurrent.
+> Also what is this patch against?  If fails to apply to linux-next for
+> me.
 
-Maybe we should sort it in arm_smmu_of_xlate() each time when
-adding a new ID? Or iommu_fwspec_add_ids() itself could sort,
-since we are thinking of generalizing this array in the core?
+At the time of submission, the patch was made on top of nfsd-testing.
 
-Thanks
-Nicolin
+> There is a lot of code movement here mixed with functional changes,
+> which makes it very hard to follow.  Any chance you could first
+> split the functions, then introduce the new pnfs_block_layout structure
+> and only then actually add multiple extents per layoutget?  That'll
+> make it a lot easier there are no unintended changes.
+
+Agree. I will try to refactor or split the patch to reduce unnecessary
+code movement produced by diff tool.
+
+> I struggle to see what the point of the nfsd4_block_map_segment helpers
+> is, as it seems to add no real value while making the code harder to
+> follow
+
+The main idea of nfsd4_block_map_segment is to logically separate work with
+XFS, handling single extent, from the loop through the pnfs_block_layout
+structure across all extents. If we combine nfsd4_block_map_segment and
+nfsd4_block_map_extent, the switch statement will end up inside the for
+loop, which will result in a large code movement in diff due to the right
+shifts and line breaks.
+
+> The subextent handling confuses me a bit - there is no such thing
+> as a subsegment in NFS.  I'd pass a never changing end of layout,
+> a moving offset, and a constant iomode directly, which should simply
+> the code quite a bit, i.e. something like:
+
+You are right, subsegment here simply means a smaller portion of the
+original requested segment and is not related to NFS structures or
+specification. Actually, I first made a version with three separate
+arguments. But then reworked it to reduce the number of arguments in the
+nfsd4_block_map_extent function. I am ok with any option, let's pass
+three variables without using structure.
+
+> > +nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
+> > +		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
+> > +{
+> > +	struct nfsd4_layout_seg *seg = &args->lg_seg;
+> > +	u64 seg_length;
+> > +	struct pnfs_block_extent *first_bex, *last_bex;
+> > +	struct pnfs_block_layout *bl;
+> > +	u32 nr_extents_max = PAGE_SIZE / sizeof(bl->extents[0]) - 1;
+> 
+> Where is that -1 coming from?  Or the magic PAGE_SIZE?
+
+PAGE_SIZE is the maximum possible size of the pnfs_block_layout
+structure in the server's memory that we would like to have. And -1
+ensures that the nr_extents field will also fit in it
+if PAGE_SIZE % sizeof(struct pnfs_block_extent) == 0.
+
+Yes, it would be nice to add a comment in the code, or even better,
+an inline function that calculates the number of extents in a given
+memory limit for the pnfs_block_layout structure.
+
+
+I will prepare new patch(es).
+
+--
+Sergey Bashirov
 
