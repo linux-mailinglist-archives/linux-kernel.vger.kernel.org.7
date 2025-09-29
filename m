@@ -1,268 +1,223 @@
-Return-Path: <linux-kernel+bounces-836448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC79BA9B9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:57:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F8C8BA9BCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5DF1922228
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:58:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C897E7A3017
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00AB303A03;
-	Mon, 29 Sep 2025 14:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C88E30B530;
+	Mon, 29 Sep 2025 14:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyfRsIAf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="r5OfsUQl"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CD8284663
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD51126E6FF;
+	Mon, 29 Sep 2025 14:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759157858; cv=none; b=T/IGwecJlxyPf+sfza8nIN5V4ZWfnn4P34+X+NwuNW/SpbMRW2HqaTj3qfQfX6CbCCbuA/5fBWBFmMur06x8iiLbYTQ2evcf3ubzewQMKq7+7x4U11gU1ZhpK+tSPJI3Q4jqg1p9sszvmw39Z9zLCWSgly+pIirZseyQKND5XNY=
+	t=1759157975; cv=none; b=oMePoRRwjVa/FtiwxqpiNZdqz28AOG+lyv6JZkOwNz8/twzCs682vW3S7WaghDJH4vkgR1VBFVSZpETtl0iBk6eCzyZ81fWrv2bYbRpxhXMOSXYVTukM1loPh0DA2vCQi7VITXv9jWR12Tn3HDXs9rMiXwKvzxipRYLBVoKrNkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759157858; c=relaxed/simple;
-	bh=JJhxQiedYInT20UrAtPJukF4RB4xd6RqlKV3pbgn5Hs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=D4PhZKlXBDUuCafDxNNVxp0P9RXiiC0QPBarXiNe3EoflgqlGzlefnsJaTdvQZ8ij5QfbXwaOqvzKDPhEC6StnRK6P1Sh0CyjmPpANftUamd6/bSOWJukrQCFSkCyICdzMgld9My9YBKR3QrQ5F+r5GyFOhcSpkuQyC3VLWgyug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyfRsIAf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DAD4C4CEF4
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759157857;
-	bh=JJhxQiedYInT20UrAtPJukF4RB4xd6RqlKV3pbgn5Hs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=TyfRsIAfcUUzyMNIApiO69WB4TNhS6c96vV6xOW92WvpOZOs1w5UOHgeNKIjqk3JW
-	 lZ+hJOQpuR6zqNTA8FCNjJk1UhN2W3otT+c68yy06Qdadb3DKR9hdf5y7IhakeHhIW
-	 JsbFdnTptcyaN67wbfzoffjrad+Hn+7nTAMGMPFb3EKybxt3vZbsStbsYVDsupkKQ2
-	 Ptmx8Gx0GtKX46rn4Ifk5f5WS9RWsKkVJvMaIbAJfkjfABcuej7A4QZ/bWuCRzQSUB
-	 R7O+gwYz7Kdn7XFhSx7jGaZN28bhiXy/vE/i6M3Y3vgEBWot8RpWRXqxnGYKBvgmQz
-	 +Mko0Cf6MieaA==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-79d36a6298dso2031182a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:57:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUpxYN9OoZeYkVUbX/Ln+C8HhyBTkR6RybtbGjKWsSHxS8NfH/YeNg2ohlMb5vUUmRgGVplE8GYLLARzsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzWGTaJyqamns9cd5EY3QAtC6pLGvgs7fLvvgrgGQLfk2U9MPx
-	guwUO+JHn8gNdhwvMPAWMcluEMCffSzdZuNJ4dCmIieoSxPFGZeuWmaVMQmYM1Syzvq9P3V1o1G
-	hcguDeB/B+cTFBw3nnT/VdIe6sjVXpJI=
-X-Google-Smtp-Source: AGHT+IFBCHOoiww/1oXN+bc9K6V6QMm+c1RxDOVHlQ/gfL7ms+95mOmbmciPTMkEx5haaQt4QDWm366l3DMmlhOYMhs=
-X-Received: by 2002:a05:6870:a79f:b0:2ff:a27f:9c67 with SMTP id
- 586e51a60fabf-35ee91f95f8mr8877983fac.30.1759157856882; Mon, 29 Sep 2025
- 07:57:36 -0700 (PDT)
+	s=arc-20240116; t=1759157975; c=relaxed/simple;
+	bh=oalG20CtRpDcuQnoJM0+JyMi45I8t8CsE4LC4YYDonc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VR9fNcwIjuQ+I/zpg1XXx9LEr0QL9cG1AFbbxmsb3Md22tf0UNsdzBEmwEjapJlk7ItO0693CcP7eFSOOo37bUL+QdfVo7OooSGxFUrr+QMFl9mlx2TV92Lz6smS3DFsNkvpTOIoPTpUHlZqAhVbDQmVMgy5QKnADlPGKHeW7nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=r5OfsUQl; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58TCna4J001126;
+	Mon, 29 Sep 2025 10:59:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=5p7vsrRZWSngxnInGFwIRuXDwtu
+	E6LKHiW+cRdATNok=; b=r5OfsUQlLNzIcjoeaVou7WrHQEyfvmlDnTVHFO3OYPO
+	xJNcDm2jX3jiJeHb8Q4gk/Vy3JOLkXdGcW1FSqU62nOcyg3Ap/fKTddGvLd5qbbY
+	+b9kDXLhVaf1YvzqQgVeY525LGLkKUs8FzKRypmgttgQmfMeU3EE85HHK7y87B8D
+	hB1q1Lt2D2mwUnXByhwLat0LGjiYsVyo6QP/1wUKo4vVlaFa3zJNTNB5Ug0tjHAw
+	A9jGAIwfkzZ9kjcbhnOtCvO5YmCjWaQ03PElAtelnmEpg4LoGvU6gZpgTQCjQ7V7
+	AsV/IwrevAgwPYoY0yipg6HLJu3Rn7KtJ/iHyZ2CJ8w==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49ecu1jey4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Sep 2025 10:59:24 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 58TExNs3013573
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 29 Sep 2025 10:59:23 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Mon, 29 Sep 2025 10:59:23 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Mon, 29 Sep 2025 10:59:23 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Mon, 29 Sep 2025 10:59:23 -0400
+Received: from Ubuntu.ad.analog.com (AMICLAUS-L01.ad.analog.com [10.48.65.188])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 58TExDG7023559;
+	Mon, 29 Sep 2025 10:59:16 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 1/5] iio: adc: ad4080: prepare driver for multi-part support
+Date: Mon, 29 Sep 2025 14:59:05 +0000
+Message-ID: <20250929145909.111243-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 29 Sep 2025 16:57:26 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0joS1VAnZ=hKtf2cx51XGNeMkqnJwq1GX-W58k_FQy39A@mail.gmail.com>
-X-Gm-Features: AS18NWCOnimc8tkP0qAX9BLmQa1vEDXjdbE3Ov5ZzKGesQ6fhI98m1ODcBNYhUo
-Message-ID: <CAJZ5v0joS1VAnZ=hKtf2cx51XGNeMkqnJwq1GX-W58k_FQy39A@mail.gmail.com>
-Subject: [GIT PULL] Thermal control updates for v6.18-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: F9a2omZQMtcPf1unF5G-76SftsASoTKv
+X-Proofpoint-GUID: F9a2omZQMtcPf1unF5G-76SftsASoTKv
+X-Authority-Analysis: v=2.4 cv=A5Nh/qWG c=1 sm=1 tr=0 ts=68da9ecc cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=yJojWOMRYYMA:10 a=gAnH3GRIAAAA:8 a=Pkl20Ks3zfJNZXB0MFMA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA4NCBTYWx0ZWRfX8THRheibrPs/
+ xJS61kTUk8YkrZBLy1NQ07Tqa8HalQAFSGAMru2zeToUHB6nX/J7+oKblk5hSQRym9DZ565w7n1
+ iwlRzp503Abh4dS4v2weiIDf+fD6MenLu8WP6d7f17TFWBXbgg0HUnpEGhiqKQCUugHuW1XGhr2
+ OjilnVMVnjplpStPE4MjcSbBtoQTwqew/yPvWWPyNoUS0dB0H369T+dIwRLbGszdFGEtFClTiby
+ 4QXlMaO0M0xbmrMqWagJU44tdyMPF98YJgOaIttr1LjHXpz+jQdafGIRch/TJbn61XMPVZ1aIAN
+ 5N1rNGsNAloN0zu4AjCi3ZaKc0UwWkBe+tJjmRAypEdTTuD1ao4YlCYQaAbaQDH3OQ4/4iPqOd4
+ FQszd75E6NPs9MIqEFXx8h48oyf7ow==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_05,2025-09-29_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ clxscore=1015 priorityscore=1501 adultscore=0 spamscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270084
 
-Hi Linus,
+Refactor the ad4080 driver to support multiple ADC variants with
+different resolution bits and LVDS CNV clock count maximums.
 
-Please pull from the tag
+Changes:
+- Update AD4080_CHIP_ID to correct value 0x50
+- Add lvds_cnv_clk_cnt_max field to chip_info structure
+- Create AD4080_CHANNEL_DEFINE macro for variable resolution/storage bits
+- Use AD4080_REG_PRODUCT_ID_L register for chip identification
+- Make LVDS CNV clock count configurable per chip variant
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- thermal-6.18-rc1
+This prepares the infrastructure for adding support for additional
+ADC parts with different specifications while maintaining backward
+compatibility with existing AD4080 functionality.
 
-with top-most commit 2085f0f4697234a0f59ed718d0e72f38688210e0
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ drivers/iio/adc/ad4080.c | 46 ++++++++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
- Merge tag 'thermal-v6.18-rc1-2' of
-ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux
+diff --git a/drivers/iio/adc/ad4080.c b/drivers/iio/adc/ad4080.c
+index 6e61787ed321..9f670c290a55 100644
+--- a/drivers/iio/adc/ad4080.c
++++ b/drivers/iio/adc/ad4080.c
+@@ -125,7 +125,7 @@
+ 
+ /* Miscellaneous Definitions */
+ #define AD4080_SPI_READ						BIT(7)
+-#define AD4080_CHIP_ID						GENMASK(2, 0)
++#define AD4080_CHIP_ID						0x50
+ 
+ #define AD4080_LVDS_CNV_CLK_CNT_MAX				7
+ 
+@@ -167,6 +167,7 @@ struct ad4080_chip_info {
+ 	const unsigned int (*scale_table)[2];
+ 	const struct iio_chan_spec *channels;
+ 	unsigned int num_channels;
++	unsigned int lvds_cnv_clk_cnt_max;
+ };
+ 
+ struct ad4080_state {
+@@ -414,23 +415,25 @@ static struct iio_chan_spec_ext_info ad4080_ext_info[] = {
+ 	{ }
+ };
+ 
+-static const struct iio_chan_spec ad4080_channel = {
+-	.type = IIO_VOLTAGE,
+-	.indexed = 1,
+-	.channel = 0,
+-	.info_mask_separate = BIT(IIO_CHAN_INFO_SCALE),
+-	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
+-	.info_mask_shared_by_all_available =
+-			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
+-	.ext_info = ad4080_ext_info,
+-	.scan_index = 0,
+-	.scan_type = {
+-		.sign = 's',
+-		.realbits = 20,
+-		.storagebits = 32,
+-	},
+-};
++#define AD4080_CHANNEL_DEFINE(bits, storage) {\
++	.type = IIO_VOLTAGE,\
++	.indexed = 1,\
++	.channel = 0,\
++	.info_mask_separate = BIT(IIO_CHAN_INFO_SCALE),\
++	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |\
++			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),\
++	.info_mask_shared_by_all_available =\
++			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),\
++	.ext_info = ad4080_ext_info,\
++	.scan_index = 0,\
++	.scan_type = {\
++		.sign = 's',\
++		.realbits = (bits),\
++		.storagebits = (storage),\
++	},\
++}
++
++static const struct iio_chan_spec ad4080_channel = AD4080_CHANNEL_DEFINE(20, 32);
+ 
+ static const struct ad4080_chip_info ad4080_chip_info = {
+ 	.name = "ad4080",
+@@ -439,6 +442,7 @@ static const struct ad4080_chip_info ad4080_chip_info = {
+ 	.num_scales = ARRAY_SIZE(ad4080_scale_table),
+ 	.num_channels = 1,
+ 	.channels = &ad4080_channel,
++	.lvds_cnv_clk_cnt_max = AD4080_LVDS_CNV_CLK_CNT_MAX,
+ };
+ 
+ static int ad4080_setup(struct iio_dev *indio_dev)
+@@ -458,11 +462,11 @@ static int ad4080_setup(struct iio_dev *indio_dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_read(st->regmap, AD4080_REG_CHIP_TYPE, &id);
++	ret = regmap_read(st->regmap, AD4080_REG_PRODUCT_ID_L, &id);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (id != AD4080_CHIP_ID)
++	if (id != st->info->product_id)
+ 		dev_info(dev, "Unrecognized CHIP_ID 0x%X\n", id);
+ 
+ 	ret = regmap_set_bits(st->regmap, AD4080_REG_GPIO_CONFIG_A,
+@@ -488,7 +492,7 @@ static int ad4080_setup(struct iio_dev *indio_dev)
+ 				 AD4080_REG_ADC_DATA_INTF_CONFIG_B,
+ 				 AD4080_ADC_DATA_INTF_CONFIG_B_LVDS_CNV_CLK_CNT_MSK,
+ 				 FIELD_PREP(AD4080_ADC_DATA_INTF_CONFIG_B_LVDS_CNV_CLK_CNT_MSK,
+-					    AD4080_LVDS_CNV_CLK_CNT_MAX));
++					    st->info->lvds_cnv_clk_cnt_max));
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.43.0
 
-on top of commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-
- Linux 6.17-rc4
-
-to receive thermal control updates for 6.18-rc1.
-
-These are mostly thermal driver updates, including new thermal drivers
-for Renesas RZ/G3S and Renesas RZ/G3E SoCs, a new power slider platform
-feature support in the Intel int340x thermal driver, a new Tegra114-
-specific SOCTHERM driver and more.
-
-There is also a Step-wise thermal governor update allowing it to start
-reducing cooling somewhat earlier if the temperature of the given
-thermal zone is falling down and a thermal testing code cleanup.
-
-Specifics:
-
- - Add new thermal driver for the Renesas RZ/G3S SoC (Claudiu Beznea)
-
- - Add new thermal driver for the Renesas RZ/G3E SoC (John Madieu)
-
- - Add support for new platform power slider feature to the Intel
-   int340x driver (Srinivas Pandruvada).
-
- - Add new Tegra114-specific SOCTHERM driver and document Tegra114
-   SOCTHERM Thermal Management System in DT bindings (Svyatoslav Ryhel)
-
- - Add temperature sensor channel to thermal-generic-adc (Svyatoslav
-   Ryhel)
-
- - Add support for per-SoC default trim values to the Renesas rcar_gen3
-   thermal driver, use it for adding R-Car V4H default trim values, fix
-   a comment typo in that driver and document Gen4 support in its
-   Kconfig entry (Marek Vasut)
-
- - Fix mapping SoCs to generic Gen4 entry in the Renesas rcar_gen3
-   thermal driver (Wolfram Sang)
-
- - Document the TSU unit in the r9a08g045-tsu and r9a09g047-tsu DT
-   bindings (Claudiu Beznea, John Madieu)
-
- - Make LMH select QCOM_SCM and add missing IRQ includes to the
-   qcom/lmh thermal driver (Dmitry Baryshkov)
-
- - Fix incorrect error message in the qcom/lmh thermal driver (Sumeet
-   Pawnikar)
-
- - Add QCS615 compatible to tsens thermal DT bindings (Gaurav Kohli)
-
- - Document the Glymur temperature sensor in qcom-tsens thermal DT
-   bindings (Manaf Meethalavalappu Pallikunhi)
-
- - Make k3_j72xx_bandgap thermal driver register the thermal sensor
-   with hwmon (Michael Walle)
-
- - Tighten GRF requirements in the rockchip thermal DT bindings,
-   silence a GRF warning in the rockchip thermal driver and unify
-   struct rockchip_tsadc_chip format in it (Sebastian Reichel)
-
- - Update the Step-wise thermal governor to allow it to reduce the
-   cooling level earlier if thermal zone temperature is dropping
-   and clean it up (Rafael Wysocki)
-
- - Clean up the thermal testing code (Rafael Wysocki)
-
- - Assorted cleanups of thermal drivers (Jiapeng Chong, Salah Triki,
-   Osama Abdelkader)
-
-Thanks!
-
-
----------------
-
-Claudiu Beznea (2):
-      dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit
-      thermal/drivers/renesas/rzg3s: Add thermal driver for the
-Renesas RZ/G3S SoC
-
-Dmitry Baryshkov (2):
-      thermal/drivers/qcom: Make LMH select QCOM_SCM
-      thermal/drivers/qcom/lmh: Add missing IRQ includes
-
-Gaurav Kohli (1):
-      dt-bindings: thermal: tsens: Add QCS615 compatible
-
-Jiapeng Chong (1):
-      thermal/drivers/mediatek/lvts_thermal: Remove unneeded semicolon
-
-John Madieu (3):
-      dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
-      thermal/drivers/renesas/rzg3e: Add thermal driver for the
-Renesas RZ/G3E SoC
-      thermal/drivers/renesas/rzg3e: Fix add thermal driver for the
-Renesas RZ/G3E SoC
-
-Manaf Meethalavalappu Pallikunhi (1):
-      dt-bindings: thermal: qcom-tsens: Document the Glymur temperature Sensor
-
-Marek Vasut (4):
-      thermal/drivers/rcar_gen3: Add support for per-SoC default trim values
-      thermal/drivers/rcar_gen3: Add support for R-Car V4H default trim values
-      thermal/drivers/rcar_gen3: Fix comment typo
-      thermal/drivers/rcar_gen3: Document Gen4 support in Kconfig entry
-
-Michael Walle (1):
-      thermal/drivers/k3_j72xx_bandgap: Register sensors with hwmon
-
-Osama Abdelkader (1):
-      thermal: hwmon: replace deprecated strcpy() with strscpy()
-
-Rafael J. Wysocki (4):
-      thermal: gov_step_wise: Clean up local variable initialization
-      thermal: gov_step_wise: Clarify cooling logic description comment
-      thermal: gov_step_wise: Allow cooling level to be reduced earlier
-      thermal: testing: Rearrange variable declarations involving __free()
-
-Salah Triki (1):
-      thermal: intel: int340x: Remove redundant acpi_has_method() call
-
-Sebastian Reichel (3):
-      thermal/drivers/rockchip: Unify struct rockchip_tsadc_chip format
-      thermal/drivers/rockchip: Shut up GRF warning
-      dt-bindings: thermal: rockchip: Tighten grf requirements
-
-Srinivas Pandruvada (6):
-      thermal: intel: int340x: Add support for power slider
-      thermal: intel: int340x: Enable power slider interface for Panther Lake
-      thermal: intel: int340x: Add module parameter for balanced Slider
-      thermal: intel: int340x: Add module parameter to change slider offset
-      thermal: intel: selftests: workload_hint: Mask unsupported types
-      thermal: intel: int340x: Power Slider: Validate slider_balance range
-
-Sumeet Pawnikar (1):
-      drivers/thermal/qcom/lmh: Fix incorrect error message
-
-Svyatoslav Ryhel (5):
-      dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management System
-      thermal/drivers/tegra/soctherm-fuse: Prepare calibration for
-Tegra114 support
-      dt-bindings: thermal: add Tegra114 soctherm header
-      thermal/drivers/tegra: Add Tegra114 specific SOCTHERM driver
-      thermal/drivers/thermal-generic-adc: Add temperature sensor channel
-
-Wolfram Sang (1):
-      thermal/drivers/rcar_gen3: Fix mapping SoCs to generic Gen4 entry
-
----------------
-
- .../bindings/thermal/nvidia,tegra124-soctherm.yaml |   2 +
- .../devicetree/bindings/thermal/qcom-tsens.yaml    |   2 +
- .../bindings/thermal/renesas,r9a08g045-tsu.yaml    |  93 ++++
- .../bindings/thermal/renesas,r9a09g047-tsu.yaml    |  87 ++++
- .../bindings/thermal/rockchip-thermal.yaml         |  15 +
- MAINTAINERS                                        |  14 +
- drivers/thermal/gov_step_wise.c                    |  25 +-
- drivers/thermal/intel/int340x_thermal/Kconfig      |   1 +
- drivers/thermal/intel/int340x_thermal/Makefile     |   1 +
- .../intel/int340x_thermal/acpi_thermal_rel.c       |   3 -
- .../int340x_thermal/processor_thermal_device.c     |  20 +
- .../int340x_thermal/processor_thermal_device.h     |   6 +
- .../int340x_thermal/processor_thermal_device_pci.c |   3 +-
- .../int340x_thermal/processor_thermal_soc_slider.c | 284 +++++++++++
- drivers/thermal/k3_j72xx_bandgap.c                 |   4 +
- drivers/thermal/mediatek/lvts_thermal.c            |   2 +-
- drivers/thermal/qcom/Kconfig                       |   3 +-
- drivers/thermal/qcom/lmh.c                         |   4 +-
- drivers/thermal/renesas/Kconfig                    |  21 +-
- drivers/thermal/renesas/Makefile                   |   3 +
- drivers/thermal/renesas/rcar_gen3_thermal.c        |  63 ++-
- drivers/thermal/renesas/rzg3e_thermal.c            | 547 +++++++++++++++++++++
- drivers/thermal/renesas/rzg3s_thermal.c            | 272 ++++++++++
- drivers/thermal/rockchip_thermal.c                 |  50 +-
- drivers/thermal/tegra/Makefile                     |   1 +
- drivers/thermal/tegra/soctherm-fuse.c              |  18 +-
- drivers/thermal/tegra/soctherm.c                   |  13 +
- drivers/thermal/tegra/soctherm.h                   |  11 +-
- drivers/thermal/tegra/tegra114-soctherm.c          | 209 ++++++++
- drivers/thermal/tegra/tegra124-soctherm.c          |   4 +
- drivers/thermal/tegra/tegra132-soctherm.c          |   4 +
- drivers/thermal/tegra/tegra210-soctherm.c          |   4 +
- drivers/thermal/testing/zone.c                     |  31 +-
- drivers/thermal/thermal-generic-adc.c              |  55 ++-
- drivers/thermal/thermal_hwmon.c                    |   2 +-
- include/dt-bindings/thermal/tegra114-soctherm.h    |  19 +
- .../intel/workload_hint/workload_hint_test.c       |   2 +
- 37 files changed, 1804 insertions(+), 94 deletions(-)
 
