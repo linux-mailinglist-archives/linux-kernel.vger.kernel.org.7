@@ -1,114 +1,154 @@
-Return-Path: <linux-kernel+bounces-836208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40318BA902A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:27:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2838EBA902D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD353C3BA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:27:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE7C189CA91
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E132FFFA2;
-	Mon, 29 Sep 2025 11:27:45 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4781922FD;
+	Mon, 29 Sep 2025 11:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dEueFhTj"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56212E8DF0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FB23002AD
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145265; cv=none; b=Y7z11C+rhGfNTCZeSvQFjKcaME+lrKAyTxx56P7HszQPVOcRAp+glzy5bY7vOqfnFPEQmtg8RFgIp/cYO0NNVELFbFhx7TIxG4CpK/3itccvrWinlmpxmGOfWWLdw3R5m6UO4Ohzd81Z9RvLc49mxLiVW1p6hlice76zeXpd6x8=
+	t=1759145271; cv=none; b=PwFsW+2eOxowVS2cWBoiiKR0b5mMIKcXNdi5BpOF1KFNng6woth/RRyV8W0fO60E7czQ4dKoHnRWT2511GkLM17f/PL5kzHTNWPClb9WbuZ5EWhMuTj1iBahqnvzjUKNdwe8IIzBy8VexTe20byIpcRzgY9nL7ZZ/lao+TDE/hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145265; c=relaxed/simple;
-	bh=rmWlDx8/WnTcn1dhj2ug2PQJyxzNzRBfLIGobT30KUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gVz7Co3DYQmbCirPqRMEzB7HssTO7TxZtakniQ2T0ZlW9m13KXfNInPfc3v51NJ85RvlrLi9a5qT9wo3fab+D4sPgQ1vm8eqLx2w5We3TGg/ShzRVHX69NC0bMTeWifPIOhmmybLkg5BzEN4M0OKET3TW27GU+q1aeNXZlOwNH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-905b08b09f5so1178785241.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:27:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759145262; x=1759750062;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3p5ZyLrRZH5goQlwa/vwelLSKRvjTSePuKZhRKGtt3c=;
-        b=XIC2Grn19oPkP1xNGXMo3JsdnxDQ+JPAOKRRoHtTPdwepO0EzRENIT+EoB8oqDovX6
-         QfmtY32RA7MLd5wHjeUH0M02cwMcOinqzpi5+oMSDW+VoGGzuYz+8LJtL8FB5dmXyalH
-         jfd2Xt+PkIeqF0MrZe0OZzf0Czq1/4ZVr7H+PQP+ZEt5wchc/10CgD2gnptm9Z+OjSNN
-         x8IVwR1njXsxJUOJjQtXFuGziWs7EW9Z4Lb4GfwzZhKDN3xXbAirwmUj9+JBhWMTKufj
-         HS/L2K5UP7lgqCmlmAqNK/w+r5fiFCQduUKTr7QoGT8tCF4YPyvZLymmTYAJ+ZLTq+ts
-         OV9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXQnyz/r3Y28BrtK4w/6BL43tNEKYM0WyWyX5/H9qRlIhFHW2R4S8m5nwQpU2si7/ljFBwnPfHpeYNywFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBB1XVDkpmONJL86f/CUN7mVhtlp9vmLmjjcWaysuAC+FPpxYv
-	3T+6cSjY6k70gySA8SAqIthyZZWckpOFio2OnHsuKhJrDOlXyP809iiHm1T9QgkD
-X-Gm-Gg: ASbGncuUGAF8F0DCCRMNliBa35nWDJEW4YLKCtHVNoUn4HQCDuRkrzUT/SoTvJqhfkQ
-	7PtRSRnKWPt1Og2wRwB8oSvDDt3caW1bYAjSUQnL39wNkv35XJ0ySAdowpnu0I/OFc9Y0QWNPnA
-	sMLOnrZJb/HpoQtzX5RCY2JGEJd8APn8VnDnMS565Gs2A77rJOIPUDIAS1pyUOD9cPZCcgrMPDb
-	9WdN7b8p5XNeReiaKEIAh3Dl+O2L7GgiMwU0GxR467OnVaOmHQrl6yRCZUqN4Db3QZ3/KSFESqF
-	vYwoPoMtGhEt5BGjTs+PK1d9Z8mBZkGS8Aun3MulQG5d+a+JizIY0weC2RZ6VzMc/9Io1Ikoj6c
-	nLLaYT0mYXgG/8103DeezZe8DK6rFIXwG2fmdOm/XHl6JhYi6aVkTCpY1zDHF2WZU3W4j8Q8=
-X-Google-Smtp-Source: AGHT+IGfGn4Xn7LnyCrBxukBP368N2l02ZHwdEoReTBI0Qb0JEKkxmNXHvKuH20Zeo6X8kiJMQRlxA==
-X-Received: by 2002:a05:6102:c4a:b0:525:df9e:9365 with SMTP id ada2fe7eead31-5accd2151f1mr6244724137.16.1759145262311;
-        Mon, 29 Sep 2025 04:27:42 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ae3b700a82sm3386269137.17.2025.09.29.04.27.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 04:27:41 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-89018e97232so870202241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:27:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXhr+zCeA3d5oZRchOiSXuIe8prv43zDU/wSoqDx7K2HK1j71k13TlZUjnZ1QPTdhc9zMNtWkqL+vCooHI=@vger.kernel.org
-X-Received: by 2002:a05:6102:442c:b0:521:7afa:3b95 with SMTP id
- ada2fe7eead31-5acd046d9damr5432533137.30.1759145260742; Mon, 29 Sep 2025
- 04:27:40 -0700 (PDT)
+	s=arc-20240116; t=1759145271; c=relaxed/simple;
+	bh=K4dDR17SKQ+iYYKthLN5oCT/pg1dmS959JMpR7euNx4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=QWYKGMUzGKW3GU2W1z1e8GtNC9i8kJUJY7QlyJ8g48cj54M/aXNS4WsOZ5cfak1mRP4UwbatBZEGnY/PMZbiwHvlXW5sMjUFNvt4bnAdvkAcP2qKH2Y7aNPLQD+hItNMZ9jHWf6mELckJgRLWsNvuGhOH4MSp+askdEabkrcxN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dEueFhTj; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250929112740euoutp0195e742dbb8d761ff23cb67c888cb4170~pvUtmKoZx3122331223euoutp01i
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:27:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250929112740euoutp0195e742dbb8d761ff23cb67c888cb4170~pvUtmKoZx3122331223euoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759145261;
+	bh=Is61J66vqLlTRTlRtdZNarB4aHnsTBxzCeofbT6hdKY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=dEueFhTjCRPSm6+BghHONFrFHGtumyK4tC7Dvuk5p17KuMdWy/QsN5ktIwRxBCWM/
+	 5uhLaO5+3GSfDtjdh/AS8MA43MuN703fx6O5d9jhenK0Nax/Rn1nCAjPmA2z1niggY
+	 42lMenU+YSZLFqg8DNF5bxUCNL88yRVJntXurYDI=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250929112740eucas1p284c5c49f54fec23c55260edf07aa1138~pvUtUob8Q1108011080eucas1p2G;
+	Mon, 29 Sep 2025 11:27:40 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250929112740eusmtip144609c4746f46fcc5e314eb037ef18bd~pvUs4XQu11536915369eusmtip1j;
+	Mon, 29 Sep 2025 11:27:40 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart Van
+	Assche <bvanassche@acm.org>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Subject: [PATCH] scsi: ufs: core: Fix PM QoS mutex initialization
+Date: Mon, 29 Sep 2025 13:27:30 +0200
+Message-Id: <20250929112730.3782765-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com> <20250925224013.2146983-3-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20250925224013.2146983-3-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Sep 2025 13:27:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUytaS3P9UrK-bpFSP-z8ys4w37d0BWCJ6c5idnM4iNTg@mail.gmail.com>
-X-Gm-Features: AS18NWB5KjkQR6-4iBJ8hPH8oU_cNUXGPtBKbJx7p1IFxsy7u1OLZLpvVydcc3k
-Message-ID: <CAMuHMdUytaS3P9UrK-bpFSP-z8ys4w37d0BWCJ6c5idnM4iNTg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250929112740eucas1p284c5c49f54fec23c55260edf07aa1138
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250929112740eucas1p284c5c49f54fec23c55260edf07aa1138
+X-EPHeader: CA
+X-CMS-RootMailID: 20250929112740eucas1p284c5c49f54fec23c55260edf07aa1138
+References: <CGME20250929112740eucas1p284c5c49f54fec23c55260edf07aa1138@eucas1p2.samsung.com>
 
-On Fri, 26 Sept 2025 at 00:41, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> Document the A/D 12-Bit successive approximation converters found in the
-> Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
->
-> RZ/T2H has two ADCs with 4 channels and one with 6.
-> RZ/N2H has two ADCs with 4 channels and one with 15.
->
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+hba->pm_qos_mutex is used very early as a part of ufshcd_init(), so it
+need to be initialized before that call. This fixes the following
+warning:
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+WARNING: kernel/locking/mutex.c:577 at __mutex_lock+0x268/0x894, CPU#4: kworker/u32:4/72
+Modules linked in:
+CPU: 4 UID: 0 PID: 72 Comm: kworker/u32:4 Not tainted 6.17.0-rc7-next-20250926+ #11223 PREEMPT
+Hardware name: Qualcomm Technologies, Inc. Robotics RB5 (DT)
+Workqueue: events_unbound deferred_probe_work_func
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __mutex_lock+0x268/0x894
+lr : __mutex_lock+0x268/0x894
+...
+Call trace:
+ __mutex_lock+0x268/0x894 (P)
+ mutex_lock_nested+0x24/0x30
+ ufshcd_pm_qos_update+0x30/0x78
+ ufshcd_setup_clocks+0x2d4/0x3c4
+ ufshcd_init+0x234/0x126c
+ ufshcd_pltfrm_init+0x62c/0x82c
+ ufs_qcom_probe+0x20/0x58
+ platform_probe+0x5c/0xac
+ really_probe+0xbc/0x298
+ __driver_probe_device+0x78/0x12c
+ driver_probe_device+0x40/0x164
+ __device_attach_driver+0xb8/0x138
+ bus_for_each_drv+0x80/0xdc
+ __device_attach+0xa8/0x1b0
+ device_initial_probe+0x14/0x20
+ bus_probe_device+0xb0/0xb4
+ deferred_probe_work_func+0x8c/0xc8
+ process_one_work+0x208/0x60c
+ worker_thread+0x244/0x388
+ kthread+0x150/0x228
+ ret_from_fork+0x10/0x20
+irq event stamp: 57267
+hardirqs last  enabled at (57267): [<ffffd761485e868c>] _raw_spin_unlock_irqrestore+0x74/0x78
+hardirqs last disabled at (57266): [<ffffd76147b13c44>] clk_enable_lock+0x7c/0xf0
+softirqs last  enabled at (56270): [<ffffd7614734446c>] handle_softirqs+0x4c4/0x4dc
+softirqs last disabled at (56265): [<ffffd76147290690>] __do_softirq+0x14/0x20
+---[ end trace 0000000000000000 ]---
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 79dde5f7dc7c ("scsi: ufs: core: Fix data race in CPU latency PM QoS request handling")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/ufs/core/ufshcd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index d9632d7c5f01..b3b14af4a726 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -10677,6 +10677,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 	 */
+ 	spin_lock_init(&hba->clk_gating.lock);
+ 
++	/* Initialize mutex for PM QoS request synchronization */
++	mutex_init(&hba->pm_qos_mutex);
++
+ 	/*
+ 	 * Set the default power management level for runtime and system PM.
+ 	 * Host controller drivers can override them in their
+@@ -10765,9 +10768,6 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 
+ 	mutex_init(&hba->wb_mutex);
+ 
+-	/* Initialize mutex for PM QoS request synchronization */
+-	mutex_init(&hba->pm_qos_mutex);
+-
+ 	init_rwsem(&hba->clk_scaling_lock);
+ 
+ 	ufshcd_init_clk_gating(hba);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
