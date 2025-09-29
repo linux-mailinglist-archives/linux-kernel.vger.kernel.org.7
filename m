@@ -1,126 +1,212 @@
-Return-Path: <linux-kernel+bounces-836195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0610FBA8F90
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:09:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004CABA8F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2B83C2E7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35CF188E5F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFE12FF66A;
-	Mon, 29 Sep 2025 11:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="BFr9qwPG"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0814C2FFDE0;
+	Mon, 29 Sep 2025 11:10:04 +0000 (UTC)
+Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12C82FF677
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEE3157487
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759144141; cv=none; b=uJw1pMSpalqFQGwVdo1tpsasQ345HmXKrg4GuhG95Ojx/nuNSqCGUML0foCn91OpXXYEvFBZqR710tsztTtYoRwoSq61TUARG4XqrbYNLyYwBkx+vV9VzzUQjjCS/jn19PFY4B9VFwHSkz/pJBHZ7OxA1OJPj7CGTRY1XeDCFVs=
+	t=1759144203; cv=none; b=WYbKlHyvdYIlKYTpDvb+tG77zf2WtKu1XCBbNRnipmjOFAh9jLkCUxPH+qhPbRCJUi1ISGEC99Nlc64yea33lYes0/OqbG6AZ+RlyQUWcgJK6x4BWnO2dp9XWABlfTNyjzcivodSi7gnPwQH/eE+JXya37fvnLqJgOzSngsLoKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759144141; c=relaxed/simple;
-	bh=z9rAk77Or04lznOmurKlQG94eT5OBpd/NEjeL8xIOsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0AmzZ6COkSIYSeR6uL1oAby2mYXL/f73VVnxicysWbrksHpLNnCzIjgn4Qkq3Y+Tv7dArAgW4LxMkMTXG++O4uOVbEHcbbMaA0H4Svb1sBj7DbRQa0LzEzddHgDiP0eZkP68eqY/tDG4t9mgORwzC3lw0DdvQe6HZjxD9P7xhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=BFr9qwPG; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cZz2t71STz9v83;
-	Mon, 29 Sep 2025 13:08:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1759144135;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HIkbgwB61F3CFgvTxKLtgC2iQ5qBPi72OUA4jDc13Rs=;
-	b=BFr9qwPGCVOcL5z8nMNsXDm3b1xc5f1vVoE+XByhUj9zv+ygRPS6k4UYgDoAB9RRo/Xv2T
-	PUXOs6ILjNZQjoOajat8A+E6ycbrJaLlImyN7HFpbS4Ui8YgettdYjxtk2GsAQuMEnz+wF
-	9Ib6tB41iGYeoMDRnJMmyHyn5oL+jpZ6JxCAc3IhMw+U+Vk+GBnJtAkWIwm+ayy9BNiNDq
-	0Jl4qA/7DndQ2g78RRRdWy1YS1hdfBtXlLYwfTxn78gfSf20oZFlY3hQ9pPBSEtsepgSSF
-	RbiWrd8SVNx5bERD1Va1zIzi/pkRNd31hHSjsv+JMYlb3kR2WcmCTTfpm9oF9w==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Mon, 29 Sep 2025 13:08:47 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, linmiaohe@huawei.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nao.horiguchi@gmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] WARNING in memory_failure
-Message-ID: <w2kwxcd6br6h4tdn6xigtuf73qklt6jhxvhtcwp7idugycgxlv@vqjx26vrnwu5>
-References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com>
- <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
- <DB0E39CD-36A9-4929-BCC6-33F27E387AEA@nvidia.com>
- <70522abd-c03a-43a9-a882-76f59f33404d@redhat.com>
- <B0781266-D168-4DCB-BFCE-3EA01F43F184@nvidia.com>
- <cad74ef8-3543-4fc5-a175-8fc23a88776a@redhat.com>
- <E82638DD-9E5D-4C69-AA0F-7DDC0E3D109B@nvidia.com>
- <fzfcprayhtwbyuauld5geudyzzrslcb3luaneejq4hyq2aqm3l@iwpn2n33gi3m>
- <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com>
+	s=arc-20240116; t=1759144203; c=relaxed/simple;
+	bh=yoWI9tBuG8dJAoBjwJL5rPMBZrjRYUFiuP7mwPKh9bA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tZdqsVmgh/Ma/+20R7LBXivFOHjI5M9AKxmbYuHd5HN3+s9RU9IcfkppR1HlJnULIZv5w/5pIsh9AdhdZOh89lrK/yzrtcXlPNZH0JaNtflXuLAc6OzM4CmJdqa8yp3Sc9V1xMYrIceDzMBwODyjEcg+oFZkk9SVYbmOc/YAZ6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-3ee1381b835so3768893f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:10:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759144200; x=1759749000;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:cc:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YJXIca+EvRQ89L7bk2b0DhD+hfD5mOr9d3XCmkqng78=;
+        b=XwiIPybdwUZx7SnAWGonmY+YnGGV2qZpqLmVYjMKQE7xweDqGlj2zSieIEvypHehq7
+         CRtVOEIUxezuvGWJxk+GxxQm7hIt+YInAUuyuDMJHtaJYZgdZ3MI6JD133+r87o03tTo
+         7ZUTEExDmflpjQVIH7ux6ROMpfRyzfrQUVIq0Ol9Q9uu06xt+NmDh/awnt4I2vgSylGg
+         IYtmS3u6LQU7ubV9Ed7LGj6FJGpG+PRWG3wMnbiPIX+j/PgzBe1Nb78Ky2Pwm9QSDasQ
+         b0IpXZyEUDdDXVaAGMuPEqBSeFTYNOafQGiQt51W+VJrkwVzhYcWmMU2+chWzvQl/t++
+         YFsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhatBM+61PUw+ZCUMI2gbdYVHIxuqTm9moxMVd0HXHmp46xcHm6TUDluRZw0gTC7wP22hQZ2alK3Eru8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC2j2EvAWgyGmRXRhAxu6d4TjOengkQcIqmKCd3tW10tNWJ+lE
+	p6P97DYG5J7qddlsX7oYRH0XXfktq7QK6O7rzUBdQMAPKoH9dzqKOgnA
+X-Gm-Gg: ASbGncu7V6h3oi5JoHVvg0AA0nxaa59RJEE/gnM5eZB1keKZyDvKPNezidfvuc+CoXd
+	1pIL0Ls/3nP4tdYenPyEfppyJhHPo//fTxoLRxDeQp33h8G3EOy8imZBGzc7C8lQ7hhpvQiguJ4
+	Dxw/iVzrDSwIkWZdmcKBedFHLEN5WGVqH1WvlSbtpDddHu632wRjWq2C0lvMKF13WSoSBQkcI5X
+	CSz11MTWvP+VXmXFoeL6Ut8Z4lobPoVv84kHCk9uZPZZ3d3PGwMEkGU9++0/i09vTOpYaR97fym
+	gf8gctEx1L5SpNq1SAdQIbiK98R56XUnyzPUhy338/N11hfBcPJmCZ5qcRPypWw+25u/txMB6Nw
+	cgDuDdDgDqiiB+Ps3OSJHD7RCWgpmBmIRa6hNWt6ew8vDgFX74yWSZCTdaT6l
+X-Google-Smtp-Source: AGHT+IH9aUETEOagpmS60xJQuZx9vaucTw+4Nh3QdG4b+6hl0xij063Qzl7J09P/zMRvHTa1TDj1pg==
+X-Received: by 2002:a05:6000:2306:b0:3ec:dd19:5ab with SMTP id ffacd0b85a97d-40e4dabf4bcmr12480013f8f.61.1759144199739;
+        Mon, 29 Sep 2025 04:09:59 -0700 (PDT)
+Received: from [192.168.88.248] (78-80-122-106.customers.tmcz.cz. [78.80.122.106])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc82f2965sm17803036f8f.55.2025.09.29.04.09.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 04:09:59 -0700 (PDT)
+Message-ID: <2da082ad-c30e-4f91-8055-43cf63a5abe4@ovn.org>
+Date: Mon, 29 Sep 2025 13:09:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com>
-X-Rspamd-Queue-Id: 4cZz2t71STz9v83
+User-Agent: Mozilla Thunderbird
+Cc: i.maximets@ovn.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com,
+ tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
+ ncardwell@google.com, ecree.xilinx@gmail.com,
+ Richard Gobert <richardbgobert@gmail.com>, kuniyu@google.com,
+ shuah@kernel.org, sdf@fomichev.me, aleksander.lobakin@intel.com,
+ florian.fainelli@broadcom.com, alexander.duyck@gmail.com,
+ linux-kernel@vger.kernel.org, linux-net-drivers@amd.com,
+ netdev@vger.kernel.org, willemdebruijn.kernel@gmail.com
+Subject: Re: [PATCH net-next v6 4/5] net: gro: remove unnecessary df checks
+To: Paolo Abeni <pabeni@redhat.com>, Aaron Conole <aconole@redhat.com>,
+ Eelco Chaudron <echaudro@redhat.com>
+References: <20250916144841.4884-1-richardbgobert@gmail.com>
+ <20250916144841.4884-5-richardbgobert@gmail.com>
+ <c557acda-ad4e-4f07-a210-99c3de5960e2@redhat.com>
+ <84aea541-7472-4b38-b58d-2e958bde4f98@gmail.com>
+ <d88f374a-07ff-46ff-aa04-a205c2d85a4c@gmail.com>
+ <dd89dc81-6c1b-4753-9682-9876c18acffc@redhat.com>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <dd89dc81-6c1b-4753-9682-9876c18acffc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 9/25/25 12:15 PM, Paolo Abeni wrote:
+> Adding the OVS maintainers for awareness..
 > 
-> I want to change all the split functions in huge_mm.h and provide
-> mapping_min_folio_order() to try_folio_split() in truncate_inode_partial_folio().
+> On 9/22/25 10:19 AM, Richard Gobert wrote:
+>> Richard Gobert wrote:
+>>> Paolo Abeni wrote:
+>>>> On 9/16/25 4:48 PM, Richard Gobert wrote:
+>>>>> Currently, packets with fixed IDs will be merged only if their
+>>>>> don't-fragment bit is set. This restriction is unnecessary since
+>>>>> packets without the don't-fragment bit will be forwarded as-is even
+>>>>> if they were merged together. The merged packets will be segmented
+>>>>> into their original forms before being forwarded, either by GSO or
+>>>>> by TSO. The IDs will also remain identical unless NETIF_F_TSO_MANGLEID
+>>>>> is set, in which case the IDs can become incrementing, which is also fine.
+>>>>>
+>>>>> Note that IP fragmentation is not an issue here, since packets are
+>>>>> segmented before being further fragmented. Fragmentation happens the
+>>>>> same way regardless of whether the packets were first merged together.
+>>>>
+>>>> I agree with Willem, that an explicit assertion somewhere (in
+>>>> ip_do_fragmentation?!?) could be useful.
+>>>>
+>>>
+>>> As I replied to Willem, I'll mention ip_finish_output_gso explicitly in the
+>>> commit message.
+>>>
+>>> Or did you mean I should add some type of WARN_ON assertion that ip_do_fragment isn't
+>>> called for GSO packets?
+>>>
+>>>> Also I'm not sure that "packets are segmented before being further
+>>>> fragmented" is always true for the OVS forwarding scenario.
+>>>>
+>>>
+>>> If this is really the case, it is a bug in OVS. Segmentation is required before
+>>> fragmentation as otherwise GRO isn't transparent and fragments will be forwarded
+>>> that contain data from multiple different packets. It's also probably less efficient,
+>>> if the segment size is smaller than the MTU. I think this should be addressed in a
+>>> separate patch series.
+>>>
+>>> I'll also mention OVS in the commit message.
+>>>
+>>
+>> I looked into it, and it seems that you are correct. Looks like fragmentation
+>> can occur without segmentation in the OVS forwarding case. As I said, this is
+>> a bug since generated fragments may contain data from multiple packets. Still,
+>> this can already happen for packets with incrementing IDs and nothing special
+>> in particular will happen for the packets discussed in this patch. This should
+>> be fixed in a separate patch series, as do all other cases where ip_do_fragment
+>> is called directly without segmenting the packets first.
 > 
-> Something like below:
+> TL;DR: apparently there is a bug in OVS segmentation/fragmentation code:
+> OVS can do fragmentation of GSO packets without segmenting them
+> beforehands, please see the threads under:
 > 
-> 1. no split function will change the given order;
-> 2. __folio_split() will no longer give VM_WARN_ONCE when provided new_order
-> is smaller than mapping_min_folio_order().
+> https://lore.kernel.org/netdev/20250916144841.4884-5-richardbgobert@gmail.com/
 > 
-> In this way, for an LBS folio that cannot be split to order 0, split
-> functions will return -EINVAL to tell caller that the folio cannot
-> be split. The caller is supposed to handle the split failure.
+> for the whole discussion.
 
-IIUC, we will remove warn on once but just return -EINVAL in __folio_split()
-function if new_order < min_order like this:
-...
-		min_order = mapping_min_folio_order(folio->mapping);
-		if (new_order < min_order) {
--			VM_WARN_ONCE(1, "Cannot split mapped folio below min-order: %u",
--				     min_order);
-			ret = -EINVAL;
-			goto out;
-		}
-...
-> 
-> WDYT?
-> 
-I think it should be fine as along as we return an error if someone is
-trying to split < min_order for file-backed folios.
+Hmm.  Thanks for pointing that out.  It does seem like OVS will fragment
+GSO packets without segmenting them first in case MRU of that packet is
+larger than the MTU of the destination port.  In practice though, MRU of
+a GSO packet should not exceed path MTU in a general case.  I suppose it
+can still happen in some corner cases, e.g. if MTU suddenly changed, in
+which case the packet should probably be dropped instead of re-fragmenting.
 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index f327d62fc985..e15c3ca07e33 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -387,34 +387,16 @@ int folio_split(struct folio *folio, unsigned int new_order, struct page *page,
->   * Return: 0: split is successful, otherwise split failed.
->   */
->  static inline int try_folio_split(struct folio *folio, struct page *page,
-> -		struct list_head *list)
-> +		struct list_head *list, unsigned int order)
->  {
--- 
-Pankaj
+I also looked through other parts of the kernel and it seems like GSO
+packets are not fragmented after being segmented in other places like
+the br-netfilter code.  Which suggests that MRU supposed to be smaller
+than MTU and so the fragmentation is not necessary, otherwise the packets
+will be dropped.
+
+Does that sound correct or am I missing some cases here?
+
+Best regards, Ilya Maximets.
 
