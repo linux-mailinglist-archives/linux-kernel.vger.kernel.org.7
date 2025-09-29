@@ -1,266 +1,222 @@
-Return-Path: <linux-kernel+bounces-835974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE724BA87BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:58:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D72CBA87F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A90189CBD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316873C49F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FBA2C08AD;
-	Mon, 29 Sep 2025 08:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD282C2343;
+	Mon, 29 Sep 2025 08:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oR2sH/11"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="trhC8hpC"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020098.outbound.protection.outlook.com [52.101.85.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7322045B7;
-	Mon, 29 Sep 2025 08:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759136295; cv=none; b=aqus8fLPbtnMTHGZkeJs8h+rk6m0hVNAifWUxSU42u7Z/PSThJTc6oiTpeIOhip30812KC9/CZqFewpYEuQT68X/hlEwvMibFNp9VSChHTKrr+zeL/W6BPR9nT5T5MOMYF97tF1gPQE6D/4LPqJs5LEu1chcXYkkRgd7n2li+TU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759136295; c=relaxed/simple;
-	bh=kPyJwZajcIrfsAryOr4Zhm56MCN/CBXtjjFS4hvGfZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T2Kduw9KI/9CM2n1w+gSG+u6kf/iPIs4ubfNlOLwRrP43x5OKKgq1Z3hx6RZEnZlva8a7bwLvS8MclbTBEKUDy3tf+cV5o5PT+TRddFx9cALEnJ887h2BQUkGDIJoUoxss0GxJWCHshae1fa+jypQ9MvJVYvarKayb4mkjon/2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oR2sH/11; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id EDC081A0FDA;
-	Mon, 29 Sep 2025 08:58:04 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B7445606AE;
-	Mon, 29 Sep 2025 08:58:04 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 03EC6102F183D;
-	Mon, 29 Sep 2025 10:57:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759136283; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=IA4upKGkVVoh8UqeMuLrdhghOn3Qbp3K2AMCSyA8Bo0=;
-	b=oR2sH/11xKpwWpute79UTBo379x6/iHym2DRBwn8GDL3kjT8Uz+CL1R8S36z+f6ZBsvo+I
-	baotOzhP79xRoUtNAbg4MU1feNO/4zDneI3Okipq5gQTW3/XixYRXARQzYccsKXlXTCTYz
-	XQ8jkcD9dm8ybpyAzYULnP/C3DbtFCT3A6rs4FPESI8altYqTgE4qBX2n7RADlW+YB+MyA
-	ree9/s5DAjCnhFaUjG/MKF1vhYR7fWRBEfJj6OZ6UPcf1o3lENAFzhgI9oEmi9jDEqqZMq
-	TOT6ahG3RHR+knFupLgdq8JemZ9UaXoQTitGVwoQsOhP0BPK5HBdzGXwz2DlLg==
-Message-ID: <4c4edfc4-f69e-43d3-8bb7-95d00bad45c5@bootlin.com>
-Date: Mon, 29 Sep 2025 10:57:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E75F277C81;
+	Mon, 29 Sep 2025 08:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759136322; cv=fail; b=JtIyJ39OE7v8g1Qc0VM+mlwqDvDH6Ws4j6A2S/z0HEilW/bfBRJOSS24mnlOC6Toq/4uvjlWA3xns0QBH8UVkKRRTpreaUATq0kiYBYnNLyAo1LjrB3V9mAl5F1cQChNzBTdLAsGkseXQFgTAGpTkjPZ1mRWKT5V+ALKgcvTux8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759136322; c=relaxed/simple;
+	bh=vYGOOTnQBaqGdCt3t08y5JBdsIEx+9rc4RRzW7ytz/Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZE330AxgMf3+yGMkonYRmBLj6EZFZCpjOrs0GWItNvyrihxz3ceeI4DfnA6qSLLEO1fuyBXQpuXRUJSZHvw52Y7v994+Wspj9zt45C0UaITyn7+HvK+sZl1jgqUc9ersz9H/jPrvZ0fqLjmiBUCyoj334H5hUrR5LyU/z/DKfhw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=trhC8hpC; arc=fail smtp.client-ip=52.101.85.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zpir4c2TSyeeoAJ1AoNe5cllpbJ6+9tGBCN3xw8Hcw2E4iL2M05uPmkz+Oh27KYkUp98fGs7ckVIWTHShxIah8uUDeletEAa/xzF6xZrtn4oAPRhOCQe6IlIApreqA0QepDezL/XiCN3XEyWte5JibIs7bX58A4n3FKugLz3MhLxRy60Z0k9CPdJ4MzdtREm9gyWRPWW1LlLuKiymZlB+ElaopEmG25PeDx79UKiKb55PpEIzfZFnyQaSwrMfwMoDNFeSgbBXnHv2jnjMvtEE6mdyGINwuX3sjK3sAa8/NsKdoh2B8AvEXMURg3VAU35Is5KivBuUmDV+jiNb7Lk2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wGrVg5qN9yKJdaqTcGaOG0zYohh9P+eZTUHjMEpllS0=;
+ b=ihHSuzQ+o5wPhAO/LeVpXlustccg8woL7PwAMN6keHOMDb9jBhZbpad+r9W87zCplI+Xid7mA6XMXvt0mhbq5+BUyXC2H1eSmKdiZT8tTi39K/OPa5noHayCFj20vIhNM2Hm/Ilmb795CEtYWzpyP9avfRMCjgDx0sLtz42rGTPM16PFSEKDPM4uJEyptSju7AWAZQVRBKWa0GrtzOOFkGfRm84W0cinFXcK4nRLIjZUFfLDqjOQexI3GbLG38EzydSTywrwyuLwu/cWcvumemgqNSc4OnUs4I9yok/NVwLGu0PHVViot7r0rIg09jVVkkKcywU8rJCTZCnNGy1jCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 50.233.182.194) smtp.rcpttodomain=lists.infradead.org
+ smtp.mailfrom=axiado.com; dmarc=none action=none header.from=axiado.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wGrVg5qN9yKJdaqTcGaOG0zYohh9P+eZTUHjMEpllS0=;
+ b=trhC8hpC12Z7Dkq0OnXHi3UbTOD0IiN1vofq2Taq3655XcYGumVafuLbSIvDRhYgxr7IHrkW5ZUxcOlTlewTASH1+QOf7gkYtZ7KwwY6E6n2GQhZvAA63ZPUcF1wceI+SLpjfbRoeXhgoxQnamFCKVqav28YltuTNSKZlWfo+/oJcy90aLppEL8H82220Co88e387NcJwFkUZQWc5cOJqhjoPW6GermcuLikDikw8FdGp0SvzAtiJ1Mi4EKNY827xM1RqKq/owR1N6ieG48MhVEDNp4x7cDsKjZa7RNo4hk+6B0ua22kFqHDt0yM0rFqupdVCbFdDTqls9yz3FBLeg==
+Received: from BYAPR07CA0084.namprd07.prod.outlook.com (2603:10b6:a03:12b::25)
+ by DS4PPFC86AF657D.namprd18.prod.outlook.com (2603:10b6:f:fc00::abe) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Mon, 29 Sep
+ 2025 08:58:33 +0000
+Received: from SJ5PEPF000001E9.namprd05.prod.outlook.com
+ (2603:10b6:a03:12b:cafe::c0) by BYAPR07CA0084.outlook.office365.com
+ (2603:10b6:a03:12b::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.16 via Frontend Transport; Mon,
+ 29 Sep 2025 08:58:33 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
+ smtp.mailfrom=axiado.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
+ designate 50.233.182.194 as permitted sender)
+ receiver=protection.outlook.com; client-ip=50.233.182.194;
+ helo=vm-swbuild15.axiadord;
+Received: from vm-swbuild15.axiadord (50.233.182.194) by
+ SJ5PEPF000001E9.mail.protection.outlook.com (10.167.242.197) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.9
+ via Frontend Transport; Mon, 29 Sep 2025 08:58:33 +0000
+From: Vladimir Moravcevic <vmoravcevic@axiado.com>
+Subject: [PATCH v2 0/3] Axiado AX3000 SoC SPI DB controller driver
+Date: Mon, 29 Sep 2025 01:58:00 -0700
+Message-Id: <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-0-b0c089c3ba81@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4 04/15] selftests/bpf: test_xsk: fix memory
- leak in testapp_stats_rx_dropped()
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexis Lothore <alexis.lothore@bootlin.com>,
- Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20250924-xsk-v4-0-20e57537b876@bootlin.com>
- <20250924-xsk-v4-4-20e57537b876@bootlin.com> <aNVEiTJywHNJeEzL@boxer>
- <fd600cd5-062e-4806-9e8e-b7f6aacad242@bootlin.com> <aNZ9VWLgNGHQg1Tv@boxer>
- <CAADnVQ+bBofJDfieyOYzSmSujSfJwDTQhiz3aJw7hE+4E2_iPA@mail.gmail.com>
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <CAADnVQ+bBofJDfieyOYzSmSujSfJwDTQhiz3aJw7hE+4E2_iPA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABhK2mgC/5WNQQ6CMBBFr0K6dkxbJBZX3sOwqO1UJkGGtKTBE
+ O5uRS/g6uf95P+3ioSRMIlLtYqImRLxWEAfKuF6Oz4QyBcWWupGtrIBu5D1XKKWUkJiB2ki8Hd
+ wPM6RhwEj+Ei5RKtsg/rsjAlBlMMpYqBll926wj2lmeNrd2f1aX8a9ZcmK5Bg1MmqYLU1NV6/4
+ 6Pjp+i2bXsD/r1jO+UAAAA=
+X-Change-ID: 20250905-axiado-ax3000-soc-spi-db-controller-driver-91a5e27c88ff
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>, 
+ Tzu-Hao Wei <twei@axiado.com>, 
+ Axiado Reviewers <linux-maintainer@axiado.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Vladimir Moravcevic <vmoravcevic@axiado.com>, 
+ Prasad Bolisetty <pbolisetty@axiado.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759136313; l=2397;
+ i=vmoravcevic@axiado.com; s=20250904; h=from:subject:message-id;
+ bh=vYGOOTnQBaqGdCt3t08y5JBdsIEx+9rc4RRzW7ytz/Y=;
+ b=gXzhi4I05IVfrPrvLWgSJkkUkDavRsbYTOmFJ7g9s0nQH/hl0oKeG9xSqdbwrMGC/PcWTZfer
+ BGuhqr1FbTABu/KHe+dYQ8PgousoMYpFnQ4/9mZgp1EBAw5PoFMW5tr
+X-Developer-Key: i=vmoravcevic@axiado.com; a=ed25519;
+ pk=iiyhWhM1F4HlCbbW3I3qKZhPCE8JsCrDQMgCBRg4YMA=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E9:EE_|DS4PPFC86AF657D:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d7b90fe-146b-460e-6f85-08ddff365e8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aE9BVkdvRjExVGtjVG40c0ZuSXFudlV4d1FWOEx2eHlWYS84dXdDY2piZDVJ?=
+ =?utf-8?B?azkvZEo3YzVxT2s4ZzRmTXJwQTA2bVRvRGxjMy8xUE9ESmtjemREUHNieUU4?=
+ =?utf-8?B?T3FlOE1nN1FwV2RWbWdZUnNVcmI3Q0JZQkwxRFZva2Vrd3MzR3QyTWJtUnJ3?=
+ =?utf-8?B?WUZXSVFvTkc5Ly9pLytJeTBNMzRxWHNKRE95bnhUcm5kbjlTVFRJbU95RzMv?=
+ =?utf-8?B?d2ZuckdGWWgyVTNVMG02TVN6WkNUTWIyRTRacERFbFpVbWRSckozRkNxUHpO?=
+ =?utf-8?B?MTZwL3ByUEV6SUJTa0VyVmpVVmY5QWJRcGc3RmVlaUV0bU5JdEltNEo4NlBh?=
+ =?utf-8?B?dW5jSFZKVFZFNUVROEFPZktkNEYvUlIvNWJFeEJKWlRHM1ZLY2dzVW9VYUZ2?=
+ =?utf-8?B?ODRHcXNnQm9PalVnTmpuV2RWY3RMSjlpREJtdkFuQmxqWWRVTkhWa0RlZ1pC?=
+ =?utf-8?B?LzRyOGFQK2E0ZXRsVzJsNzB6TzBKZTRNcndDTERtMzYyMFJaVEQ0RDRsbC9a?=
+ =?utf-8?B?c2tMa1NUVmpPMUlGU1MrNkV4K0s5dEpnZzF2OWNzZW9MM1RRaDhhb1Z5bXNN?=
+ =?utf-8?B?VFo0UHI2a0NwaEZvUk5vSnQva1N0SXI0alU1NFFxTG9hK2loOVRDOWV3cU1Y?=
+ =?utf-8?B?R29QcnpkU3NmQTZKbmg0d1VxeWJyNHg0VGhoZXcyYkRhQmd2MGZUdW9zQVJL?=
+ =?utf-8?B?dlg5OU1qbmNrMFg0MGxsUGFFQlVidzZFTmtnRlVUVjk3Y0p5R3BSckl4MnJv?=
+ =?utf-8?B?d3ZTYVlGU3E2OVVLemhodU95Sk1MZU91USs1ZktpcEdubnBhY0s3cGVtaTBV?=
+ =?utf-8?B?OUhyNEE0Nk9ROTFDREU4aGswdjE4Nm1YRmVnVFNMVFNrOVIzSlJYRHFjUllD?=
+ =?utf-8?B?eVJFS2FlbW82cDdkRUo4cU1BRGhOSUJMZmlMblN4SHRGczlhSnRSbm1yZm5N?=
+ =?utf-8?B?cmk4TThJY21lMFZ1V0RUMy9pRW9qeUhacUxPTFRoU3h2NnI3blZZZDVYZzM2?=
+ =?utf-8?B?OUE2TU43UWFmS3U0MFpSdTdlY25TNHMvZWU2czMrVXlMaHZENWhXS1laRUUw?=
+ =?utf-8?B?NjErMXNKT3Nsbm1hYytiNE1oVlJiaDYvQW9nQ0svQjJNQVAxTGxwSElLL3ZJ?=
+ =?utf-8?B?RnBzTm02Q1RNTThDUnVibUllTllSSnJoQ2k4Q0ZEWmVidkkwVTJ5RkNUUXlG?=
+ =?utf-8?B?eFd2QlNibHB1eDRZWVZPUG5PN3dLUWZVQ0ovL0hpRnpxalIwaHlEUnQ1REdH?=
+ =?utf-8?B?bHU1bVlKL0gwbm0yejVaVURFdjlNdTBzVDBnVzdpcVBwUWlSd0dlNk5DNS9t?=
+ =?utf-8?B?bE1WeGhteFBPZ0hvR2ErTDAxOVl5WWpGeUx5Z09WNUR6SUZmanRRSnMrU29E?=
+ =?utf-8?B?Y1VoOUY0NFY5RXJBTktMdzBtdkdqQUpBdU1nOERCK3JHTTM4TlY4WEVUNHBv?=
+ =?utf-8?B?SkQ0Z092TDNqbWU2TzY4QWRmV2tyT2l4OXpwUWFVYmo3ZWswTDRqZGl2cytN?=
+ =?utf-8?B?eENjaWNMUEZjYU1PZGVWMlJWQ1I4dmpDLzlTSkRhYkJFRjE4aFJNNkVtNU5p?=
+ =?utf-8?B?dlZibSs4aDRDMTdzRTFRSmR4elJUMU9VdTBOQmlEL3J3TDJJU0owRDhIblht?=
+ =?utf-8?B?c1NJTHFacDllRTB3N2NTNnJnbS9TNXc3R1JLMUZVTkNMZ3Q5RzJ2Ri9LbXdV?=
+ =?utf-8?B?cENsODQ5TEN4UjJUakZPWW5FSll6eHJXSU9QeXNkcTk0ZTJMUjFLKzlnelRo?=
+ =?utf-8?B?SzNxSnEweGlPODgzWXRSenI4ejE4OFdCRkdYSE1ZMVlXME9lQ2w3bm9VRXRw?=
+ =?utf-8?B?UmxlWUd1SStadmhlbC81a1BtWjlhTXNDS1JCclcwaUlaSjVGT01oOEdhUWRp?=
+ =?utf-8?B?dXlsMmdrWWFXazlJVExvU2UyS1RXNmtOUXZDS2FiaXhiZys5MDgvM25xVERz?=
+ =?utf-8?B?T1RIUzh4OTJyVGN6b0JLYWcvdWlmQnJTNkFUa0xUSVJqdlpCMTdMbDkwSkR0?=
+ =?utf-8?B?VlduOUQ1a2RxNFVRV3lFcmE5ZTJQcWo0ZUVmUFp6MHVmTGwwclFFcUZXcTRG?=
+ =?utf-8?Q?zu470K?=
+X-Forefront-Antispam-Report:
+	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:vm-swbuild15.axiadord;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 08:58:33.5219
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d7b90fe-146b-460e-6f85-08ddff365e8a
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[vm-swbuild15.axiadord]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001E9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFC86AF657D
 
-On 9/27/25 1:19 PM, Alexei Starovoitov wrote:
-> On Fri, Sep 26, 2025 at 12:47 PM Maciej Fijalkowski
-> <maciej.fijalkowski@intel.com> wrote:
->>
->> On Fri, Sep 26, 2025 at 08:39:28AM +0200, Bastien Curutchet wrote:
->>> Hi Maciej,
->>>
->>> On 9/25/25 3:32 PM, Maciej Fijalkowski wrote:
->>>> On Wed, Sep 24, 2025 at 04:49:39PM +0200, Bastien Curutchet (eBPF Foundation) wrote:
->>>>> testapp_stats_rx_dropped() generates pkt_stream twice. The last
->>>>> generated is released by pkt_stream_restore_default() at the end of the
->>>>> test but we lose the pointer of the first pkt_stream.
->>>>>
->>>>> Release the 'middle' pkt_stream when it's getting replaced to prevent
->>>>> memory leaks.
->>>>>
->>>>> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
->>>>> ---
->>>>>    tools/testing/selftests/bpf/test_xsk.c | 7 +++++++
->>>>>    1 file changed, 7 insertions(+)
->>>>>
->>>>> diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/test_xsk.c
->>>>> index 8d7c38eb32ca3537cb019f120c3350ebd9f8c6bc..eb18288ea1e4aa1c9337d16333b7174ecaed0999 100644
->>>>> --- a/tools/testing/selftests/bpf/test_xsk.c
->>>>> +++ b/tools/testing/selftests/bpf/test_xsk.c
->>>>> @@ -536,6 +536,13 @@ static void pkt_stream_receive_half(struct test_spec *test)
->>>>>            struct pkt_stream *pkt_stream = test->ifobj_tx->xsk->pkt_stream;
->>>>>            u32 i;
->>>>> + if (test->ifobj_rx->xsk->pkt_stream != test->rx_pkt_stream_default)
->>>>> +         /* Packet stream has already been replaced so we have to release this one.
->>>>> +          * The newly created one will be freed by the restore_default() at the
->>>>> +          * end of the test
->>>>> +          */
->>>>> +         pkt_stream_delete(test->ifobj_rx->xsk->pkt_stream);
->>>>
->>>> I don't see why this one is not addressed within test case
->>>> (testapp_stats_rx_dropped()) and other fix is (testapp_xdp_shared_umem()).
->>>>
->>>
->>> pkt_stream_receive_half() can be used by other tests. I thought it would be
->>
->> So is pkt_stream_replace_half() and other routines that eventually call
->> pkt_stream_generate() and overwrite the pkt_stream, right?
->>
->> It just feels odd to have a special treatment in one function and other
->> are left as-is just because currently we don't have another abusive test
->> case.
->>
->> Maybe it's enough of bike-shedding here, just wanted to clarify on my POV.
->>
->> In the end don't get me wrong here, this interface is a bit PITA for me
->> and thanks for whole effort!
-> 
-> My reading of this discussion that it doesn't block the series
-> and can be done in the follow up if necessary.
-> 
-> So I was planning to apply it, but it found real bugs:
-> 
-> ./test_progs -t xsk
-> [   18.066989] bpf_testmod: loading out-of-tree module taints kernel.
-> [   32.204881] BUG: Bad page state in process test_progs  pfn:11c98b
-> [   32.207167] page: refcount:0 mapcount:0 mapping:0000000000000000
-> index:0x0 pfn:0x11c98b
-> [   32.210084] flags: 0x1fffe0000000000(node=0|zone=1|lastcpupid=0x7fff)
-> [   32.212493] raw: 01fffe0000000000 dead000000000040 ff11000123c9b000
-> 0000000000000000
-> [   32.218056] raw: 0000000000000000 0000000000000001 00000000ffffffff
-> 0000000000000000
-> [   32.220900] page dumped because: page_pool leak
-> [   32.222636] Modules linked in: bpf_testmod(O) bpf_preload
-> [   32.224632] CPU: 6 UID: 0 PID: 3612 Comm: test_progs Tainted: G
->        O        6.17.0-rc5-gfec474d29325 #6969 PREEMPT
-> [   32.224638] Tainted: [O]=OOT_MODULE
-> [   32.224639] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-> [   32.224641] Call Trace:
-> [   32.224644]  <IRQ>
-> [   32.224646]  dump_stack_lvl+0x4b/0x70
-> [   32.224653]  bad_page.cold+0xbd/0xe0
-> [   32.224657]  __free_frozen_pages+0x838/0x10b0
-> [   32.224660]  ? skb_pp_cow_data+0x782/0xc30
-> [   32.224665]  bpf_xdp_shrink_data+0x221/0x530
-> [   32.224668]  ? skb_pp_cow_data+0x6d1/0xc30
-> [   32.224671]  bpf_xdp_adjust_tail+0x598/0x810
-> [   32.224673]  ? xsk_destruct_skb+0x321/0x800
-> [   32.224678]  bpf_prog_004ac6bb21de57a7_xsk_xdp_adjust_tail+0x52/0xd6
-> [   32.224681]  veth_xdp_rcv_skb+0x45d/0x15a0
-> [   32.224684]  ? get_stack_info_noinstr+0x16/0xe0
-> [   32.224688]  ? veth_set_channels+0x920/0x920
-> [   32.224691]  ? get_stack_info+0x2f/0x80
-> [   32.224693]  ? unwind_next_frame+0x3af/0x1df0
-> [   32.224697]  veth_xdp_rcv.constprop.0+0x38a/0xbe0
-> [   32.224700]  ? common_startup_64+0x13e/0x148
-> [   32.224703]  ? veth_xdp_rcv_one+0xcd0/0xcd0
-> [   32.224706]  ? stack_trace_save+0x84/0xa0
-> [   32.224709]  ? stack_depot_save_flags+0x28/0x820
-> [   32.224713]  ? __resched_curr.constprop.0+0x332/0x3b0
-> [   32.224716]  ? timerqueue_add+0x217/0x320
-> [   32.224719]  veth_poll+0x115/0x5e0
-> [   32.224722]  ? veth_xdp_rcv.constprop.0+0xbe0/0xbe0
-> [   32.224726]  ? update_load_avg+0x1cb/0x12d0
-> [   32.224730]  ? update_cfs_group+0x121/0x2c0
-> [   32.224733]  __napi_poll+0xa0/0x420
-> [   32.224736]  net_rx_action+0x901/0xe90
-> [   32.224740]  ? run_backlog_napi+0x50/0x50
-> [   32.224743]  ? clockevents_program_event+0x1cc/0x280
-> [   32.224746]  ? hrtimer_interrupt+0x31e/0x7c0
-> [   32.224749]  handle_softirqs+0x151/0x430
-> [   32.224752]  do_softirq+0x3f/0x60
-> [   32.224755]  </IRQ>
-> [   32.224756]  <TASK>
-> [   32.224757]  __local_bh_enable_ip+0x58/0x60
-> [   32.224759]  __dev_direct_xmit+0x295/0x540
-> [   32.224762]  __xsk_generic_xmit+0x180a/0x2df0
-> [   32.224764]  ? ___kmalloc_large_node+0xdf/0x130
-> [   32.224767]  ? __mutex_unlock_slowpath.isra.0+0x330/0x330
-> [   32.224770]  ? __rtnl_unlock+0x65/0xd0
-> [   32.224773]  ? xsk_create+0x700/0x700
-> [   32.224774]  ? netdev_run_todo+0xce/0xbe0
-> [   32.224777]  ? _raw_spin_lock_irqsave+0x7b/0xc0
-> [   32.224780]  xsk_sendmsg+0x365/0x770
-> [   32.224782]  ? xsk_poll+0x640/0x640
-> [   32.224783]  __sock_sendmsg+0xc1/0x150
-> [   32.224787]  __sys_sendto+0x1d0/0x260
-> [   32.224790]  ? __ia32_sys_getpeername+0xb0/0xb0
-> [   32.224793]  ? fput+0x29/0x80
-> [   32.224796]  ? __sys_bind+0x187/0x1c0
-> [   32.224798]  ? __sys_bind_socket+0x90/0x90
-> [   32.224801]  ? randomize_page+0x60/0x60
-> [   32.224804]  ? fget+0x18e/0x230
-> [   32.224807]  __x64_sys_sendto+0xe0/0x1b0
-> [   32.224810]  ? fpregs_assert_state_consistent+0x57/0xe0
-> [   32.224812]  do_syscall_64+0x46/0x180
-> [   32.224815]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> 
-> and at the end:
-> 
-> # ERROR: [receive_pkts] Receive loop timed out
-> test_xsk:FAIL:Run test unexpected error: -1 (errno 12)
-> #251/32  ns_xsk_drv/XDP_ADJUST_TAIL_SHRINK_MULTI_BUFF:FAIL
-> #251     ns_xsk_drv:FAIL
-> Summary: 1/67 PASSED, 0 SKIPPED, 1 FAILED
-> 
-> [   99.308243] page_pool_release_retry() stalled pool shutdown: id
-> 185, 48 inflight 60 sec
-> [  159.724173] page_pool_release_retry() stalled pool shutdown: id
-> 185, 48 inflight 120 sec
-> 
-> 
-> The test is great and the work to make it run as part of test_progs
-> paid off big time.
-> 
-> But we cannot enable it by default, since it will be crashing CI VMs.
-> 
-> Please reproduce the above issue.
-> You might need
-> CONFIG_DEBUG_VM=y
-> and other mm debug flags.
-> 
+Dear maintainers,
 
-I did reproduce the issue with CONFIG_DEBUG_VM=y
+This updated patch series address the review comments from the original submission.
+It introduces new SPI controller driver for Axiado AX3000 SoC and its evaluation board.
 
-> If the fix can be done quickly let's land the fix first.
-> If not, please respin the series, but disable the test by default
-> until the bug is fixed.
+The SPI controller provides:
+- Full-duplex and half-duplex transfer support
+- Configurable clock polarity and phase
+- Interrupt-driven
 
-I won't have much time this week to investigate this further, so I'll 
-respin the series with this test in the 'flaky table'.
+Functionality has been verified using the `jedec,spi-nor` interface
+to access onboard flash memory. This ensures compatibility with common NOR flash devices
+used in boot and storage subsystem.
+
+The driver integrates with the Linux SPI subsystem and follows kernel coding standards.
+
+This initial submission includes:
+- Driver implementation under `drivers/spi/`
+- Device tree bindings for supported boards
+- Kconfig and Makefile integration
+
+Further improvements, including performance tuning and extended hardware feature support,
+will be submitted in follow-up patches.
+
+Feedback is welcome.
+
+Signed-off-by: Vladimir Moravcevic <vmoravcevic@axiado.com>
+---
+Changes in v2:
+- remove _clk from clok-names and chage clock style to use <>
+- remove set but not use variable
+- switch to dev_warn_once
+- use devm_spi_alloc_host
+- update ax_spi_remove to unregister controller from the subsystem first,
+  and then tear down the other resources
+- add PM operations 
+- update maintainers in dt-bindings
+- Flush FIFO while transfer done
+- Link to v1: https://lore.kernel.org/r/20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-0-814a1fa2a83e@axiado.com
+
+---
+Vladimir Moravcevic (3):
+      dt-bindings: spi: axiado,ax3000-spi: Add binding for Axiado SPI DB controller
+      spi: axiado: Add driver for Axiado SPI DB controller
+      MAINTAINERS: Add entries for the Axiado SPI DB controller
+
+ .../devicetree/bindings/spi/axiado,ax3000-spi.yaml |   63 ++
+ MAINTAINERS                                        |   10 +
+ drivers/spi/Kconfig                                |   10 +
+ drivers/spi/Makefile                               |    1 +
+ drivers/spi/spi-axiado.c                           | 1029 ++++++++++++++++++++
+ drivers/spi/spi-axiado.h                           |  129 +++
+ 6 files changed, 1242 insertions(+)
+---
+base-commit: e6b9dce0aeeb91dfc0974ab87f02454e24566182
+change-id: 20250905-axiado-ax3000-soc-spi-db-controller-driver-91a5e27c88ff
 
 Best regards,
 -- 
-Bastien Curutchet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Vladimir Moravcevic <vmoravcevic@axiado.com>
 
 
