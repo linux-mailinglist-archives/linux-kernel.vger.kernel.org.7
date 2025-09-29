@@ -1,150 +1,187 @@
-Return-Path: <linux-kernel+bounces-836476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F20BA9CBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:27:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46E9BA9CCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD2F189312B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90D523B061B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA5C30BBA5;
-	Mon, 29 Sep 2025 15:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A93C30BBA5;
+	Mon, 29 Sep 2025 15:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAwTDv4Q"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8NMy3rJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB84284663
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F01284663;
+	Mon, 29 Sep 2025 15:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759159620; cv=none; b=sVokccJ/FjivxAzeMKvBl/XbjXUrPCYusz0y0w+1qUklSe2RGY5qkxfNvpUhNzcf5hb4XLud/4XoHqVHDzAQInQwY2gS5gULD501hY6Mc76Mfmf5u4xl+86x9M3D1TTOJFNghEc37T8RHf4mdf5ZIvt8AfC0soaFPVsNzQ5557k=
+	t=1759159739; cv=none; b=RSYWIwGWcly0E77NynCQjS2DHOYbJt9f2SerisklCTlCQ4A3ZjztpJrE1snnUC4XtnnlGNvraFLhcK9QkDhzUMshirYrQOg1DWyowV2xJLEHFPzTNLxnUw25hLp7E5oWNhgpvanN9Lxv5zTM+amN35GdHBkbhjB4jEls77Erg+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759159620; c=relaxed/simple;
-	bh=l81tY4NGxQltzYJgqWgsKH1IyY8O4rKYq2p2qmygu1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nl0aIaxolbZP+UIwNRPUyCBIbrWkNM9bnlNMBBqPedyFFbG7jjI/hv5C7jPzOanrWcYqiz7n0o3OCOc4dwWcYe43Z+8lkQQwyRYtTd2ULJdSXa067LtnmCVQDSt+m1q05Vh8LOihPsEbxsgLMbAE4Ein2izSff5bRolp9ctnrwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAwTDv4Q; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-279e2554b6fso38548345ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759159618; x=1759764418; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QUFfHCZ9kPQnI/DGEJ/PgzLIjVfpKbTJMrrLjEY+ghE=;
-        b=kAwTDv4QVZddVayfRs0hOX9ii3BE62T5c6iKDd/yjTVrTSso3+vxnufv0sEJGNGwy1
-         fKD5Y81QAsvCcsnKnkBXeJ+cyUUJ+kqCNzeXk+w03stzFmPXtQwgrnUhMBzw1UWPb4D/
-         +kCdPdlAXd3mKJMp+4RfA4SYP/BrPnhr04n/DJfQYzQuwDG6a3u+J9nYGB7NutrE3x0V
-         Bn7+2ndMRkhDRm+BmtI5C7UyRJ1xttyLSvKuokUQ8jV9FCpVWW4lPPgmLWAc8ikYPib5
-         p6fidflqWjhGfDNVZVIY05mD0LSorW5EFF4h+f5FtQXsOjtl2HQng1MphknHKeSIQlVu
-         EI5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759159618; x=1759764418;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUFfHCZ9kPQnI/DGEJ/PgzLIjVfpKbTJMrrLjEY+ghE=;
-        b=bT3TBdOOJ4jMfjnzeCB6UJpv9yBvjnvQZ2hKdtILictgxGcgSz2kaj/+Lc4wiLc96B
-         kBv9U+Iuvh0+ct4TiofUzNtOzxX0QP5x2LXdq7g2cJGQjo6DRTCqiuJeLyaiI2acv3ns
-         j8yvYOhhvGovntQHcEfHzTm6U6PUZ3haGqVp0EakcNJgPUbtjF7TVS9Zazt0rlQT0rp2
-         vjOiDX49xK6xBvKtu60y79eOY8sMRi4ShsM+EyupmVWuikI9zAj5Vs7p0EIwzJbtwIiD
-         lGZm9oqgAXrzJ+LSv3DaENxRc8cTdJh4CkeauZu5zT03imBu2TBM+aokNguX6V2EIspK
-         OIfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUR5J8HyxYn3bVy5jTabrDwqFJINdF4NxmXmW+w3SyqfNArs9YfTIsGKRQ6AwW1jLkflm1GvhSTcvGqlOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy09Ffyc3ntwCYKcQphS+piE1jUVYJJe09AOatTlexbR1ATAnGy
-	KG88p+J+qf3ICKsBlWYbXpJg6DSEZWK3/fhejA1HHqnPK46uVUHEuIaw
-X-Gm-Gg: ASbGncs8fuQ19pmj2PaSx9yMnMcw7uY7Y6XZLWMQxvjXz/3bGQ7bBxt11nNhN7EH3V6
-	NrznGOpF5kPxhBfjesLHYWJoqIfGIu8Qp5N21RZkiSi3RmbHo4aPBipFa4xzalwqMYSDqRikStH
-	pe4eKV6bSP6miJiG/de8I+x90Gmm6NrdJdOzACZpzyWjKL4XzAbq4SveXXW8ZF3m6ZKrOrXKgqf
-	74m+nL9Swr7rTvhHj4b8gNCx1aS/cPlVLuzbNVMMDlK1HEAhR7LQaeKMB94pN8JBosVBKESRltH
-	oEfkibeM7ybOYtWl9DQE7ydoiUanLnll/ZWGlQue9zR1wvB/3XL8sGnDD/xNIpjdRsha+EESsMZ
-	FE+YBiMK8dGMJeYHKqwVvDEgIg+I0yryHQz+Q+CwvBeg=
-X-Google-Smtp-Source: AGHT+IGlrXcMqMEE95Bpk6Fvp2Z3JkSBS53/nlBPtQ4p3saTyAp/aYHA69EYxK3FJ+53fX34h/VJMw==
-X-Received: by 2002:a17:902:f786:b0:240:3b9e:dd65 with SMTP id d9443c01a7336-27ed4aab57bmr188196505ad.38.1759159618299;
-        Mon, 29 Sep 2025 08:26:58 -0700 (PDT)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d37casm134991565ad.8.2025.09.29.08.26.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 08:26:57 -0700 (PDT)
-Date: Mon, 29 Sep 2025 11:26:55 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v4 6/6] rust: bitfield: Use 'as' operator for setter type
- conversion
-Message-ID: <aNqlPzZn9jUjSKfE@yury>
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-7-joelagnelf@nvidia.com>
- <CANiq72k3kE-6KPkKwiDLgfkGHCQj4a2K7h9c4T13WMa5b4BAnQ@mail.gmail.com>
+	s=arc-20240116; t=1759159739; c=relaxed/simple;
+	bh=7oZnqyq14webUvB+RE2KVjar1tQcsKEssUnIT9ldzTw=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=VpPAOjWrb5eM+Cx6XmlsjJAzGssFQNkBgC59vLP+S6hoeDwaSvBi1C6qreEaEkslq/X6MtuunOFn9OSZoqC6Jvk2Elgi8fx9DhYFAvi63N3Xnud5rZw+MWVobEt1wW9klQxt775/ufZ+CtNZJCOCSC3jfdS8hyES6eHPiiS2Ob4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8NMy3rJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC88C4CEF4;
+	Mon, 29 Sep 2025 15:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759159738;
+	bh=7oZnqyq14webUvB+RE2KVjar1tQcsKEssUnIT9ldzTw=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=f8NMy3rJ5T/3h2RaJpG0sJkWJXij76T8ItkilqkvhEPnQcxiMQP7MKZmMY/8aAnPP
+	 MvPsxxvwEVtyQ4ohtpdR5DUsb1dX/g+x8zX//aaoM1Vlzc0DHmWwYv6twCVGJ87Bax
+	 Aj41fRrWE3jxL4gTDd+BfWI/T35ubMYJCXzCmNvu8c5MJtB2uhWFSSomb7J6+5z3ie
+	 3JVEbzMJVF7lJOm2MKWUvK8pPxSvLtAb3M2ezvX/rKVn+0jn0wZiPfOczEr9aZO9tZ
+	 1IvZwl5dDQdxLGfmdpkZq1tQ7Xc+y0exqUHntDi+MWQwz12Fvj8/2zWRiwZFSqNAs7
+	 aTztIHPEe9R2g==
+Date: Mon, 29 Sep 2025 10:28:57 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72k3kE-6KPkKwiDLgfkGHCQj4a2K7h9c4T13WMa5b4BAnQ@mail.gmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ phone-devel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Amir Dahan <system64fumo@protonmail.com>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Christopher Brown <crispybrown@gmail.com>, David Heidelberg <david@ixit.cz>
+To: Paul Sajna <sajattack@postmarketos.org>
+In-Reply-To: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+Message-Id: <175915953133.54369.5423928834702362900.robh@kernel.org>
+Subject: Re: [PATCH v3 00/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
+ Improve HW support in dts
 
-On Mon, Sep 29, 2025 at 03:59:32PM +0200, Miguel Ojeda wrote:
-> On Sat, Sep 20, 2025 at 8:23 PM Joel Fernandes <joelagnelf@nvidia.com> wrote:
-> >
-> > The bitfield macro's setter currently uses the From trait for type
-> > conversion, which is overly restrictive and prevents use cases such as
-> > narrowing conversions (e.g., u32 storage size to u8 field size) which
-> > aren't supported by From.
+
+On Sun, 28 Sep 2025 22:05:23 -0700, Paul Sajna wrote:
+> Rollup of improved hardware support via devicetree for LG G7 ThinQ
+> (judyln) from sdm845-mainline kernel fork
 > 
-> Being restrictive is a good thing -- it would be nice to know more
-> context about this change, like Alexandre points out.
+> Notably, this patch-series enables full DRM acceleration and wifi,
+> among other small improvements in individual commits
 > 
-> In particular, the line:
+> after this patch-series the main things that remain to be worked
+> on include touchscreen, audio, and modem.
 > 
->     .set_nibble(0x12345678_u32)    // truncated to 0x8
+> Depends upon panel driver patch-series https://lore.kernel.org/all/20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org/T/#r9a976ca01e309b6c03100e984a26a0ffc2fe2002
 > 
-> sounds fairly alarming, and not what we usually want. Why cannot the
-> caller cast on their side, if they really want that?
+> Co-developed-by: Amir Dahan <system64fumo@protonmail.com>
+> Co-developed-by: Christopher Brown <crispybrown@gmail.com>
+> Signed-off-by: Amir Dahan <system64fumo@protonmail.com>
+> Signed-off-by: Christopher Brown <crispybrown@gmail.com>
+> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+> ---
+> Changes in v3:
+> - change firmware paths to lowercase 'lg' (matching dt-bindings)
+> - fix signoffs
+> - add wifi dmesg to commit message
+> - remove regulator-always-on from ibb
+> - remove framebuffer
+> - remove msm ids
+> - don't continue commit subject into commit messages
+> - split bluetooth node
+> - add sbu uart details to commit message
+> - change ipa gsi-loader to self
+> - Link to v2: https://lore.kernel.org/r/20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org
+> 
+> Changes in v2:
+> - sort at the start
+> - drop unnecessary labels
+> - drop unnecessary gmu
+> - multi-led
+> - split fb-panel changes
+> - expand upon firmware commit message
+> - use qcom,calibration-variant instead of
+>   qcom,ath10k-calibration-variant
+> - change firmware paths to include "LG"
+> - remove framebuffer reservation
+> - add lab/ibb
+> 
+> - Link to v1: https://lore.kernel.org/r/20250913-judyln-dts-v1-0-23b4b7790dce@postmarketos.org
+> 
+> ---
+> Amir Dahan (1):
+>       arm64: dts: qcom: sdm845-lg-common: Add leds
+> 
+> Christopher Brown (1):
+>       arm64: dts: qcom: sdm845-lg-judyln: Add battery and charger
+> 
+> Paul Sajna (9):
+>       arm64: dts: qcom: sdm845-lg-common: Sort nodes and properties
+>       arm64: dts: qcom: sdm845-lg-common: Add uarts and Bluetooth
+>       arm64: dts: qcom: sdm845-lg-judyln: Add display panel
+>       arm64: dts: qcom: sdm845-lg-judyln: Add firmware nodes, change path
+>       arm64: dts: qcom: sdm845-lg-{common, judyln}: Add wifi node
+>       arm64: dts: qcom: sdm845-lg-common: Add chassis-type
+>       arm64: dts: qcom: sdm845-lg-common: Add camera flash
+>       arm64: dts: qcom: sdm845-lg-judyln: Add lab/ibb
+>       arm64: dts: qcom: sdm845-lg-common: Change ipa gsi-loader to 'self'
+> 
+>  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 222 ++++++++++++++++++-------
+>  arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts  | 140 ++++++++++++++--
+>  2 files changed, 289 insertions(+), 73 deletions(-)
+> ---
+> base-commit: 8394712bc1340df993cb167199568f44013b45d3
+> change-id: 20250911-judyln-dts-17c41e59dc0f
+> prerequisite-message-id: <20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org>
+> prerequisite-patch-id: e51151ea7f8fdad6ad7d90713febc5c6b6fc4f9c
+> prerequisite-patch-id: b3dd44250da9cd12bc5b2d0d7e865dbe19ceed92
+> prerequisite-patch-id: fd6c8077806cb03fcf37d0e0d730314c2760e334
+> 
+> Best regards,
+> --
+> Paul Sajna <sajattack@postmarketos.org>
+> 
+> 
+> 
 
-It was my suggestion to relax the type requirement. The reasoning is
-as follows.
 
-Consider a bitfield bf with bits 5:3 described as field1. The storage
-for bf is u8, but the type is u32. This is OK, because storage and
-representation are simply different matters. And no matter how you
-declare the field inside the bitfield, you can't prevent overflow
-followed by silent truncation by just syntax measures.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-I suggested to relax the requirement that field representation must
-match (not exceed in fact) storage type, and instead bring explicit
-check in the setter. With the check, if user tries to overflow the
-field, we either throw a warning, or panic if hardening is enabled,
-or do nothing in performance-critical builds.
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-As far as I can say, Joel scheduled this in v5.
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Thanks,
-Yury
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: base-commit 8394712bc1340df993cb167199568f44013b45d3 not known, ignoring
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250926 (exact match)
+ Deps: looking for dependencies matching 3 patch-ids
+ Deps: Applying prerequisite patch: [PATCH 1/3] drm/panel: Add LG SW49410 Panel
+ Deps: Applying prerequisite patch: [PATCH 2/3] dt-bindings: display: panel: Add devicetree documentation for lg,sw49410
+ Deps: Applying prerequisite patch: [PATCH 3/3] Update MAINTAINERS for lg,sw49410
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org:
+
+arch/arm64/boot/dts/qcom/sdm845-lg-judyp.dtb: wifi@18800000 (qcom,wcn3990-wifi): 'qcom,snoc-host-cap-skip-quirk' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath10k.yaml#
+arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dtb: wifi@18800000 (qcom,wcn3990-wifi): 'qcom,snoc-host-cap-skip-quirk' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath10k.yaml#
+
+
+
+
+
 
