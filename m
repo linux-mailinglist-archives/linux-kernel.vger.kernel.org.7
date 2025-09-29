@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-835676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC6BA7C86
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B413BBA7C8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB953AD47F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4906416A50A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CBB1FBEA6;
-	Mon, 29 Sep 2025 02:01:16 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3232A1F3FEC;
+	Mon, 29 Sep 2025 02:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHC/0eF3"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4767514286;
-	Mon, 29 Sep 2025 02:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEE914286
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759111275; cv=none; b=ny5vwj0pr66km8AbRWdLgAB9KTEhLnX6ya6aRp3NyHV92cbMVAIYNB5t3huL4CnzogKVjiQfxA3JdxJ82WGgvU5H6JrniWpnlzwGRn2ZFkXiUkTddAMFuh2YGQw3hUZLwucnc4FwwgsFNrBXHgaljlG3gS/1W+vI9RYlj24wfLY=
+	t=1759111450; cv=none; b=cQfdYLqsUC+5MvaTXjAEH1I2cU8gfO/ROkBEzhXJHeBK5/Qir2jnI2MAPHqNzMMx1C+gROeGEz16eg8fnLUNf0N0yCbbMK6C45Hk7th8L4yAPGWyNtfLCxqP1zR4HLnTZ74ytRZtOgVSk/sL4Vhbi75SEoOuExblo5AE0o7ycBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759111275; c=relaxed/simple;
-	bh=Ro7Kx2h2/6a55aSoFI7nfRu4gTKQyLI+4hme6PHnEBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GnHlNm6GVVJ5dJ4WaKuCf0C1Lg3UTLwOpPe8ANLwJPp0UQCmTPLjyfHIBq9uee9YGexjgd+X6cdtrecMYCcOjyPMH8Xpv5G/FXMWkM2gLU/eEb+5zE/gQbbzr3djyr7kXmNPzSlgM2b+IRN/zoom+y3QTDoTUv+FUSSRQQW/9Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cZktb4LdNzYQtvN;
-	Mon, 29 Sep 2025 10:00:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C5B421A0A37;
-	Mon, 29 Sep 2025 10:01:10 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCXW2Nk6NloSkWuBA--.20602S3;
-	Mon, 29 Sep 2025 10:01:09 +0800 (CST)
-Message-ID: <68829b32-7a8c-475a-9e27-f71822eb541b@huaweicloud.com>
-Date: Mon, 29 Sep 2025 10:01:08 +0800
+	s=arc-20240116; t=1759111450; c=relaxed/simple;
+	bh=9ymXlgAUqmg75QM146TgToxqAsl7Qc6Pl5KLISzPeto=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l4959mdoQ014Olf52jDAt+NB20ZGKT7kKskkDYd61wgh13BMUHXNKPKMH1hyzEMP+WHmr3B71JK2GcZtTD4Kk26YKSY/A2g/H+LcuTr71HV9C+zPwATI7KFxRn9rubsrVnDg4Ql0HcWIjW0T5Ad5ALIYpvuSstmMNET9X1HYP4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHC/0eF3; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32e715cbad3so4840346a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 19:04:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759111448; x=1759716248; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E3MzDeDyhYq3R8OvxgSeuu7T6Z83NvS5x4rRCPw7PVU=;
+        b=CHC/0eF3HHxFQvLvZpaXQjgH6+3H1/b59lEV6PSdlXKe/TnEZWItDNjPUieTlNQokn
+         LjjEElNL+vV0MzKo1de5K4uqxjTHYllJQAjCTF76tpFKkIcP4xRZV8UQM8E5Db6uY80U
+         ukD/NxxSY71sSWCHyONPeQE6ak9yXD8tgIrtHiu1V4QsHnUjzj2F4oMe/am+4ER9SLot
+         Me+nwFpSS0MDBGLtOsoMk04t32dU4beGFryi/s3H1s1nVF6uBbPtDP8QhbpaWdhzgrOh
+         6lMjcomZvrh95cIdTdhBWOnUZKqiYYWpHrXbv5h1QXDApa13pyqIf0SzgEIQrstpuotf
+         Jl4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759111448; x=1759716248;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E3MzDeDyhYq3R8OvxgSeuu7T6Z83NvS5x4rRCPw7PVU=;
+        b=ZiPt4bsSOV4++E31gPiadLLLhS8T5q1H4n2K6YQJ3NO+vomnFMM68ZFqVib4PNVbei
+         lMn0Q8awJd+92ssPdEoUa6xPD/AoaAUrt3aljLE6k4m//UuricwmGFyVMgjZtDUaKtCl
+         UCOEDCbykt+OQn4LeoOcPs2pqPkAYXXgSS0JQcdED/hNxf5pCyMS+Frvpez4XreltpCO
+         WZTiH6RCCVUCvN6sPvnYbkVoJFCQSQJ1Lj2Sqz/STNh86RJJ2HmE611Lgytb8MwUn0oS
+         ooKC/dFxR8H+1nVUXPnNTEnT1Y3oaELji8Ucwkze9UGy3jkkx664ak07/3jKKCKuGGWT
+         E7rw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiUg4/ntx44T9GTPtnHRgaXIuMsdeH76VNxpD9ZX4MFMkE580m2gi2p4Oc5aEhNJnZNZeCKRpaMQzgy34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymV56wPRBg3lcvp2/kzRjVoPpqP064XyoPTQHaEHmS+PvNDxKp
+	XDAvEoOdDhn3jQ6zdDlWBujwv8CVRPbrSRiC2JTLDWby31WI4PdytV1O
+X-Gm-Gg: ASbGncv9fqeq6WOk7uxWWoYBdxJt/G9UJAxglWKaPHHbKV57V0EFuVGX65YGHTDCXX8
+	QU9WJY4xdcpmp0GdZ9AfSu5CxBTpS9Y8DTd0zZU8Hr7ezd5It0seEO9YpPF8fcWD+WQzxMYibu5
+	SMb+/npdkyXTnWXDqAy87U/VBx05VXEcyJbPhnMfcBoDJRzvW2dmjZmVfXh+G8SBNCQ4nnsEEex
+	7bd2PLM5CjO9IvZK7HoVcXnGgFWZESBoW685i0KTo5Nhop/FoMSaM09OeHf2uekT6v2AyAOwHqO
+	JcY1bVXvSnACUZcJ2IYcncC+ZWmZ12sxS1NGq6B4SFSorPaHuSs8+45AfIlGOpcA/Voat9XO9Qe
+	+n7YJfen7RIKSAoGB6fz12Yan7yTunjeWow==
+X-Google-Smtp-Source: AGHT+IGymq0r7t3+/dt2DFGlXKszVB1vTHi1oFb1DYHLzZCrXADl4zARLYFYykUgrI74v8+1nOxrWA==
+X-Received: by 2002:a17:90b:4d8a:b0:330:6f16:c4d8 with SMTP id 98e67ed59e1d1-3344ae0aee3mr15189754a91.7.1759111448349;
+        Sun, 28 Sep 2025 19:04:08 -0700 (PDT)
+Received: from cacher.localnet ([2404:c0:5c60::47f9:1e95])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53ca107sm9680873a12.13.2025.09.28.19.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Sep 2025 19:04:07 -0700 (PDT)
+From: Fa-Iz Faadhillah Ibrahim <faiz.faadhillah@gmail.com>
+To: jlee@suse.com, basak.sb2006@gmail.com, rayanmargham4@gmail.com,
+ Armin Wolf <W_Armin@gmx.de>
+Cc: kuurtb@gmail.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] platform/x86: acer-wmi: Add fan control support
+Date: Mon, 29 Sep 2025 09:04:00 +0700
+Message-ID: <6218970.lOV4Wx5bFT@cacher>
+In-Reply-To: <20250923215205.326367-1-W_Armin@gmx.de>
+References: <20250923215205.326367-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4: validate extent entries before caching in
- ext4_find_extent()
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-References: <20250928100946.12445-1-kartikey406@gmail.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250928100946.12445-1-kartikey406@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCXW2Nk6NloSkWuBA--.20602S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ur1DJryxGw1UJryUKrWDXFb_yoW5Jr43pr
-	ZF9r1UtrykX34DG393tF4UZ3W2g348GrW7Ga9xKw4YvasxWFy8WFy7tay5XFn5ur4ruw4j
-	vF4Ykas8GanxZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi, Deepanshu!
+On Wednesday, September 24, 2025 4:52=E2=80=AFAM Armin Wolf wrote:
+> This patch series aims to add fan control support to the acer-wmi
+> driver. The patches are compile-tested only and need to be tested
+> on real hardware to verify that they actually work.
+>=20
+> I CCed three users who requested support for this feature. I would be
+> very happy if one of you could test those patches and report back.
+>=20
+> Changes since v1:
+> - remove unnecessary blank line
+>=20
+> Changes since RFC v2:
+> - improve error handling when setting fan behavior
+> - Add Reviewed-by tags
+> - whitelist PHN16-72
+>=20
+> Changes since RFC v1:
+> - remove duplicate include and replace hwmon_pwm_mode with
+>   hwmon_pwm_enable in second patch
+>=20
+> Armin Wolf (4):
+>   platform/x86: acer-wmi: Fix setting of fan behavior
+>   platform/x86: acer-wmi: Add fan control support
+>   platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
+>   platform/x86: acer-wmi: Add support for PHN16-72
+>=20
+>  drivers/platform/x86/acer-wmi.c | 308 +++++++++++++++++++++++++++++---
+>  1 file changed, 283 insertions(+), 25 deletions(-)
 
-On 9/28/2025 6:09 PM, Deepanshu Kartikey wrote:
-> syzbot reported a BUG_ON in ext4_es_cache_extent() triggered when
-> opening a verity file on a corrupted ext4 filesystem mounted without
-> a journal.
-> 
-> The issue occurs when the extent tree contains out-of-order extents,
-> which can happen in a corrupted filesystem. ext4_find_extent() calls
-> ext4_cache_extents() without validating the extent entries when the
-> tree depth is 0 (leaf level). This allows corrupted extent trees with
-> out-of-order extents to be cached, triggering a BUG_ON in
-> ext4_es_cache_extent() due to integer underflow when calculating hole
-> sizes:
-> 
->   If prev = 4352 and lblk = 1280:
->   lblk - prev = 1280 - 4352 = -3072 (as signed)
->   = 4294964224 (as unsigned)
->   end = lblk + len - 1 = 4352 + 4294964224 - 1 = 1279 (after overflow)
->   BUG_ON(end < lblk) triggers because 1279 < 4352
-> 
-> Fix this by adding extent entry validation using the existing
-> ext4_valid_extent_entries() function before caching. This ensures
-> corrupted extent trees are detected and handled properly through the
-> error path, preventing both the BUG_ON and potential use-after-free
-> issues.
-> 
+Hi,
 
-Thank you for the fix patch! However, I am curious why the check in
-__ext4_iget()->ext4_ext_check_inode() fails? It should check the
-extents of the root node and be able to caught this corruption.
+I've tested your patch on my PHN16-72, Fan control works just fine, and it =
+does=20
+detect my laptop properly.
 
 Thanks,
-Yi
+=46a-Iz Faadhillah Ibrahim
 
-> Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> ---
->  fs/ext4/extents.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index ca5499e9412b..f8e45623f7ea 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -924,8 +924,18 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
->  	path[0].p_bh = NULL;
->  
->  	i = depth;
-> -	if (!(flags & EXT4_EX_NOCACHE) && depth == 0)
-> +	if (!(flags & EXT4_EX_NOCACHE) && depth == 0) {
-> +		ext4_fsblk_t pblk = 0;
-> +
-> +		if (!ext4_valid_extent_entries(inode, eh, 0, &pblk, 0)) {
-> +			EXT4_ERROR_INODE(inode,
-> +				"invalid extent entries, pblk %llu",
-> +				pblk);
-> +			ret = -EFSCORRUPTED;
-> +			goto err;
-> +		}
->  		ext4_cache_extents(inode, eh);
-> +	}
->  	/* walk through the tree */
->  	while (i) {
->  		ext_debug(inode, "depth %d: num %d, max %d\n",
+
 
 
