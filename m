@@ -1,230 +1,199 @@
-Return-Path: <linux-kernel+bounces-836177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B67BA8EF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:57:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9155BA8F11
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610C03C10B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:57:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A07307ADE95
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483F92FDC41;
-	Mon, 29 Sep 2025 10:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5272FDC38;
+	Mon, 29 Sep 2025 10:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v1cF5ZjU"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YoNAgrTs"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973F52FD7C7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A19580604
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759143464; cv=none; b=K85RuY+DLH/1KbShks519yqOnwNU9MEieRVwm6r0yJWSq1xzlU4mvnBaCK4iBcbxSAyuLzLwu6MkijPLCzSnAevQNJqoFftDTpWAK6QRfJwm2zZib7DfLUyzolHj+G8XUt2gMLf7Yt6Tp5So8sAJPbWHzFfCIrvK+qWVK73qIIQ=
+	t=1759143585; cv=none; b=djIeZyhzRG61/1Hl4H8fggwA+R4b8PldR7GztgNDfCczpoaePnVI+wtXtRG6P6YL8I6dY5NcZjYj2xPqHuiALhMDunis/2Jm4F47PLuaw3wFKlN1/BWFOr6Nn8VeQqyPb/i79ZA9OnjXVcVt17h1GHBdrPZJVC8Fs1S858PY3S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759143464; c=relaxed/simple;
-	bh=4tYuwQTrO9BTMWGb6gaK1mGhCxypY1uT9TTbquG0wME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FejG2OWz4IVFbEty2GVGr2bWsAJei4d1WrhYN/rcqXnil0HtIrMzmVMDYZ4z7vROBxi+cVTx4qwAcNkKwqSB2C+feFA6oj+MjQXjPXNZt3tkvqIjoKu6kebaqD++RdKxDspSmMWt1hun4EP3q0X3bpH2cPjywoTr+Rf4C5Wz+Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v1cF5ZjU; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e2b7eee0dso96045e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759143461; x=1759748261; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=O8UnufLq/Mcz1Rl9avuBFpaPVNHTq+GFP8JL6IXXjIo=;
-        b=v1cF5ZjUj71SWz1cvg9wbVQkMNDJoWj6cCCjbUSC3uIijeIlp6GsEGvsjGPwZxEkUX
-         hsh4JmWLfdx4W86l3KGmxmgNEBcoGWNnWTrmHVaQq4pLMNKNcvmfK/1q1jv0LGEzuUfT
-         E5xj6CLmlQmapDJKfYRH/4GAJdIjBfv1bIrELQCDSadjwW/k7Po68YTDWbjwisrVVLlx
-         aND/21xM92u/mqA77dPvnrBV6WE4dbV21Etqnj5KZmEfK82hRtGkS0sfv+zhE7sSnnwC
-         v/D3u/PCfbPy/60+BZrGykV1joxTrWxL27kMeMRDVVs25SoTKxOd2GPGQZ0JfVdcGlo5
-         zyRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759143461; x=1759748261;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O8UnufLq/Mcz1Rl9avuBFpaPVNHTq+GFP8JL6IXXjIo=;
-        b=j+0brmgUva1krh5zzq59jFNGWXMjDTglbPU+4Yaen+WNO0HlosQ2WlVfK9UOQclViO
-         2kZqfMUCJF2SGE4qXLPv7K6xhhjJWcj2IGj+PwF9mQFuuu0cVFvB6J5CHbbBDrpZagNd
-         mU/Wwsy9EjQhI4x2qVBqW2Hkb8Tf5e/bJC4h1oiE2IdgbUO0icHeEWhGcS4dWoNbI12U
-         fqN9fo+JBrDPG3XD2vUO5mcYNzlSA5evTvLB1I/VDjQtic99Q42RAsIfOPRMW9BAXSN0
-         TW8fL2ZgakU1OYbp12I0DU/4rvQ6D9HTET7Pem8jCjXfcFen7HEwg+XfgX/WpOAc5YNM
-         cRPg==
-X-Gm-Message-State: AOJu0Yz6uvSQ6ITGK7aOk5jeTWdkGHMEhWRSQb58v/XnWl81tNMEMD3v
-	8GgID0qKI8gYN/552J8TXB/XuBycWUmHELVDQflWn4kGQpb4LFovyQYC3mYejZfHCg==
-X-Gm-Gg: ASbGncsCfgWAVoW8RRRVaG5braozuNTjD7T5bDyE/Wvs5jMveUbgMvSj85uPl+20sr3
-	sltgGhnE707xweKdSSz8uxKJ91SZgpPalMnsnhrTGVB7n4z2magEhMj95MePRIr42SAWowiViPD
-	/Ez06QJOWuyrAfad8cP36V3lXlVvNxBTv6bfv5uYqZlb+8vVGRPDR8CcCQHfn5o5ziFD4E7ZYKe
-	MI3IAMExRls1m9W6o3bRv6yDmyve4UdAI+DXj8r0IHfHhLDprWdFhnHP815VLvDM97cDqYefZJr
-	+ouh/2kaIZsQ1N8q3tF9h7b2AkJqrqgTLJ6ybsJVghDWBtvHPgxFMHr//ttZh/GCobKxKvP64v+
-	ZsSXpduFX/VSJnG/tkkA1Hgkgut2RV9fHlcsjK/GVcE6i5xhat382MwOjEFJwWHlumS4E0COwP+
-	OfqpptMRjLM0Or
-X-Google-Smtp-Source: AGHT+IFGle5uSDx6pJtL9z0dOczocAV6Sw1uDcPJYNHRfsKx0x2lgw6GyR50H0eIdWA6EZ8zfTw+TA==
-X-Received: by 2002:a05:600c:a413:b0:45d:f6a6:a13e with SMTP id 5b1f17b1804b1-46e57589541mr240935e9.1.1759143460763;
-        Mon, 29 Sep 2025 03:57:40 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab61eecsm220878875e9.20.2025.09.29.03.57.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 03:57:40 -0700 (PDT)
-Date: Mon, 29 Sep 2025 10:57:36 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 02/28] KVM: arm64: Donate MMIO to the hypervisor
-Message-ID: <aNpmIC-ywzIJCTAq@google.com>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-3-smostafa@google.com>
- <aMA13Sowq91XEqP9@willie-the-truck>
- <aMlly_9kDE04Inn2@google.com>
- <aNakIop0jdz9gH-t@willie-the-truck>
+	s=arc-20240116; t=1759143585; c=relaxed/simple;
+	bh=tWDyDWTLQk8rjyF/vsJo4jjdofO3C3YB0xzyW1/0dDQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=NhP4k2L4xZ0SSq/pZaw7JTjd2DdWFg9lzlixrrkPTPadV2ZJjmDqdBOJwlVIURHczGFP5SyOXVi4CPbmEPXQEY7Wf6JaDW5QqK4ztTA25yjOhJU3/sF3Q+mt0q7jLiPb/N/APVTtZ5m44EoH5ZG0MRHd7WDu9IEoR/YN044Jz/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YoNAgrTs; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250929105938epoutp041bc93f08eeb270c88972577df74fbca1~pu8O_o04G0532105321epoutp04W
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:59:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250929105938epoutp041bc93f08eeb270c88972577df74fbca1~pu8O_o04G0532105321epoutp04W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759143578;
+	bh=EwjAsCHpAtEOfYR7kD9OlxbY41/aURUPUsKMYtCrtcQ=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=YoNAgrTsHeIEbiBqM8h9dBVc4gMKO9AyUrPtB+0O+gile4DIhNmXjgwI0A/D4NX0b
+	 5kRJNuXNedG0RR1fCqIXNkdGJC6Iv08hv7CWr/YyDa4zHqukpmYDtuTPy2P5oRJWcx
+	 prsgPDETPUivthTjYi3+g/k7xaiZbHMaP7XU2kss=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250929105937epcas2p3119ec6e25d535bd5b9cddfeec7d8db21~pu8OB474j3158031580epcas2p3d;
+	Mon, 29 Sep 2025 10:59:37 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.38.212]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cZyr93VWGz3hhT4; Mon, 29 Sep
+	2025 10:59:37 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4~pu8M4nOrh2261322613epcas2p1D;
+	Mon, 29 Sep 2025 10:59:36 +0000 (GMT)
+Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250929105936epsmtip271ab9cf68e318a2afd593d83165bd224~pu8MzaTb_0081300813epsmtip2V;
+	Mon, 29 Sep 2025 10:59:36 +0000 (GMT)
+From: HOYOUNG SEO <hy50.seo@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, beanhuo@micron.com, bvanassche@acm.org,
+	kwangwon.min@samsung.com, kwmad.kim@samsung.com, cpgs@samsung.com,
+	h10.kim@samsung.com
+Cc: "hy50.seo" <hy50.seo@samsung.com>
+Subject: [PATCH v1] scsi: ufs: core: Introduce quirk to check UTP error
+Date: Mon, 29 Sep 2025 19:58:00 +0900
+Message-Id: <20250929105801.428105-1-hy50.seo@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aNakIop0jdz9gH-t@willie-the-truck>
+X-CMS-MailID: 20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4
+References: <CGME20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4@epcas2p1.samsung.com>
 
-On Fri, Sep 26, 2025 at 03:33:06PM +0100, Will Deacon wrote:
-> On Tue, Sep 16, 2025 at 01:27:39PM +0000, Mostafa Saleh wrote:
-> > On Tue, Sep 09, 2025 at 03:12:45PM +0100, Will Deacon wrote:
-> > > On Tue, Aug 19, 2025 at 09:51:30PM +0000, Mostafa Saleh wrote:
-> > > > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > > index 861e448183fd..c9a15ef6b18d 100644
-> > > > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > > @@ -799,6 +799,70 @@ int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot)
-> > > >  	return ret;
-> > > >  }
-> > > >  
-> > > > +int __pkvm_host_donate_hyp_mmio(u64 pfn)
-> > > > +{
-> > > > +	u64 phys = hyp_pfn_to_phys(pfn);
-> > > > +	void *virt = __hyp_va(phys);
-> > > > +	int ret;
-> > > > +	kvm_pte_t pte;
-> > > > +
-> > > > +	host_lock_component();
-> > > > +	hyp_lock_component();
-> > > > +
-> > > > +	ret = kvm_pgtable_get_leaf(&host_mmu.pgt, phys, &pte, NULL);
-> > > > +	if (ret)
-> > > > +		goto unlock;
-> > > > +
-> > > > +	if (pte && !kvm_pte_valid(pte)) {
-> > > > +		ret = -EPERM;
-> > > > +		goto unlock;
-> > > > +	}
-> > > 
-> > > Shouldn't we first check that the pfn is indeed MMIO? Otherwise, testing
-> > > the pte for the ownership information isn't right.
-> > 
-> > I will add it, although the input should be trusted as it comes from the
-> > hypervisor SMMUv3 driver.
-> 
-> (more on this below)
-> 
-> > > > +int __pkvm_hyp_donate_host_mmio(u64 pfn)
-> > > > +{
-> > > > +	u64 phys = hyp_pfn_to_phys(pfn);
-> > > > +	u64 virt = (u64)__hyp_va(phys);
-> > > > +	size_t size = PAGE_SIZE;
-> > > > +
-> > > > +	host_lock_component();
-> > > > +	hyp_lock_component();
-> > > 
-> > > Shouldn't we check that:
-> > > 
-> > >   1. pfn is mmio
-> > >   2. pfn is owned by hyp
-> > >   3. The host doesn't have something mapped at pfn already
-> > > 
-> > > ?
-> > > 
-> > 
-> > I thought about this initially, but as
-> > - This code is only called from the hypervisor with trusted
-> >   inputs (only at boot)
-> > - Only called on error path
-> > 
-> > So WARN_ON in case of failure to unmap MMIO pages seemed is good enough,
-> > to avoid extra code.
-> > 
-> > But I can add the checks if you think they are necessary, we will need
-> > to add new helpers for MMIO state though.
-> 
-> I'd personally prefer to put the checks here so that callers don't have
-> to worry (or forget!) about them. That also means that the donation
-> function can be readily reused in the same way as the existing functions
-> which operate on memory pages.
-> 
-> How much work is it to add the MMIO helpers?
+From: "hy50.seo" <hy50.seo@samsung.com>
 
-It's not much work I guess, I was just worried about adding new helpers
-just to use in a rare error path.
-I will add them for v5.
+If the UTP error occurs alone, the UFS is not recovered.
+It does not check for error and only generates io timeout or OCS error.
+This is because UTP error is not defined in error handler.
+To fixed this, add UFS qurik about UTP error and this quirk is enable,
+UFS reset is performed when a UTP error occurs.
 
-Thanks,
-Mostafa
+sd 0:0:0:0: [sda] tag#38 UNKNOWN(0x2003) Result: hostbyte=0x07
+driverbyte=DRIVER_OK cmd_age=0s
+sd 0:0:0:0: [sda] tag#38 CDB: opcode=0x28 28 00 00 51 24 e2 00 00 08 00
+I/O error, dev sda, sector 42542864 op 0x0:(READ) flags 0x80700 phys_seg
+8 prio class 2
+OCS error from controller = 9 for tag 39
+pa_err[1] = 0x80000010 at 2667224756 us
+pa_err: total cnt=2
+dl_err[0] = 0x80000002 at 2667148060 us
+dl_err[1] = 0x80002000 at 2667282844 us
+No record of nl_err
+No record of tl_err
+No record of dme_err
+No record of auto_hibern8_err
+fatal_err[0] = 0x804 at 2667282836 us
 
-> 
-> > > > +	WARN_ON(kvm_pgtable_hyp_unmap(&pkvm_pgtable, virt, size) != size);
-> > > > +	WARN_ON(host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt, phys,
-> > > > +				PAGE_SIZE, &host_s2_pool, PKVM_ID_HOST));
-> > > > +	hyp_unlock_component();
-> > > > +	host_unlock_component();
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > >  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
-> > > >  {
-> > > >  	return ___pkvm_host_donate_hyp(pfn, nr_pages, PAGE_HYP);
-> > > > diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> > > > index c351b4abd5db..ba06b0c21d5a 100644
-> > > > --- a/arch/arm64/kvm/hyp/pgtable.c
-> > > > +++ b/arch/arm64/kvm/hyp/pgtable.c
-> > > > @@ -1095,13 +1095,8 @@ static int stage2_unmap_walker(const struct kvm_pgtable_visit_ctx *ctx,
-> > > >  	kvm_pte_t *childp = NULL;
-> > > >  	bool need_flush = false;
-> > > >  
-> > > > -	if (!kvm_pte_valid(ctx->old)) {
-> > > > -		if (stage2_pte_is_counted(ctx->old)) {
-> > > > -			kvm_clear_pte(ctx->ptep);
-> > > > -			mm_ops->put_page(ctx->ptep);
-> > > > -		}
-> > > > -		return 0;
-> > > > -	}
-> > > > +	if (!kvm_pte_valid(ctx->old))
-> > > > +		return stage2_pte_is_counted(ctx->old) ? -EPERM : 0;
-> > > 
-> > > Can this code be reached for the guest? For example, if
-> > > pkvm_pgtable_stage2_destroy() runs into an MMIO-guarded pte on teardown?
-> > 
-> > AFAICT, VMs page table is destroyed from reclaim_pgtable_pages() =>
-> > kvm_pgtable_stage2_destroy() => kvm_pgtable_stage2_destroy_range() ... =>
-> > stage2_free_walker()
-> > 
-> > Which doesn't interact with “stage2_unmap_walker”, so that should be
-> > fine.
-> 
-> Fair enough. I feel like this might bite us later on but, with what you
-> have, we'll see the -EPERM and then we can figure out what to do then.
-> 
-> Will
+---------------------------------------------------
+		REGISTER
+---------------------------------------------------
+                           NAME	      OFFSET	         VALUE
+                    STD HCI SFR	  0xfffffff0	           0x0
+                           AHIT	        0x18	         0x814
+               INTERRUPT STATUS	        0x20	        0x1000
+               INTERRUPT ENABLE	        0x24	       0x70ef5
+
+Change-Id: I25156081c52a23dfe1223c18abcce9e9c6fe3868
+Signed-off-by: hy50.seo <hy50.seo@samsung.com>
+---
+ drivers/ufs/core/ufshcd.c | 11 +++++++++++
+ include/ufs/ufshcd.h      |  6 ++++++
+ include/ufs/ufshci.h      |  3 ++-
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index cfc149f8238e..0421178000c1 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -6735,6 +6735,14 @@ static void ufshcd_err_handler(struct work_struct *work)
+ 		goto do_reset;
+ 	}
+ 
++	if ((hba->dev_quirks & UFSHCD_QUIRK_UTP_ERROR) && (hba->errors & UTP_ERROR)) {
++		ufshcd_print_host_state(hba);
++		ufshcd_print_evt_hist(hba);
++
++		needs_reset = true;
++		goto do_reset;
++	}
++
+ 	/*
+ 	 * If LINERESET was caught, UFS might have been put to PWM mode,
+ 	 * check if power mode restore is needed.
+@@ -6941,6 +6949,9 @@ static irqreturn_t ufshcd_check_errors(struct ufs_hba *hba, u32 intr_status)
+ 		queue_eh_work = true;
+ 	}
+ 
++	if ((hba->quirks & UFSHCD_QUIRK_UTP_ERROR) && (hba->errors & UTP_ERROR))
++		queue_eh_work = true;
++
+ 	if (hba->errors & UIC_ERROR) {
+ 		hba->uic_error = 0;
+ 		retval = ufshcd_update_uic_error(hba);
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index ea0021f067c9..3ac6ac5fc7fb 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -688,6 +688,12 @@ enum ufshcd_quirks {
+ 	 * single doorbell mode.
+ 	 */
+ 	UFSHCD_QUIRK_BROKEN_LSDBS_CAP			= 1 << 25,
++
++	/*
++	 * This quirk indicated that report the error when UTP error occurs.
++	 * Enable this quirk will the error handler allows the ufs to be reocvery.
++	 */
++	UFSHCD_QUIRK_UTP_ERROR				= 1 << 26,
+ };
+ 
+ enum ufshcd_caps {
+diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
+index 612500a7088f..79a052a50f91 100644
+--- a/include/ufs/ufshci.h
++++ b/include/ufs/ufshci.h
+@@ -180,6 +180,7 @@ static inline u32 ufshci_version(u32 major, u32 minor)
+ #define UTP_TASK_REQ_COMPL			0x200
+ #define UIC_COMMAND_COMPL			0x400
+ #define DEVICE_FATAL_ERROR			0x800
++#define UTP_ERROR				0x1000
+ #define CONTROLLER_FATAL_ERROR			0x10000
+ #define SYSTEM_BUS_FATAL_ERROR			0x20000
+ #define CRYPTO_ENGINE_FATAL_ERROR		0x40000
+@@ -193,7 +194,7 @@ static inline u32 ufshci_version(u32 major, u32 minor)
+ 
+ #define UFSHCD_UIC_MASK		(UIC_COMMAND_COMPL | UFSHCD_UIC_PWR_MASK)
+ 
+-#define UFSHCD_ERROR_MASK	(UIC_ERROR | INT_FATAL_ERRORS)
++#define UFSHCD_ERROR_MASK	(UIC_ERROR | INT_FATAL_ERRORS | UTP_ERROR)
+ 
+ #define INT_FATAL_ERRORS	(DEVICE_FATAL_ERROR |\
+ 				CONTROLLER_FATAL_ERROR |\
+-- 
+2.26.0
+
 
