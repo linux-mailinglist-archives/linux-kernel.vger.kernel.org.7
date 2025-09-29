@@ -1,96 +1,244 @@
-Return-Path: <linux-kernel+bounces-835985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2506BA8836
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AFBBA883F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8194D163BB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3481B1640F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFC427C866;
-	Mon, 29 Sep 2025 09:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859A827E049;
+	Mon, 29 Sep 2025 09:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwrBuOol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kb6UkcHW"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1350A1E3DCF;
-	Mon, 29 Sep 2025 09:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A5C23C506
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759136695; cv=none; b=lntd6Qq/GK97s3/oCD/43oOxp4lj5K5BxSU/mDt+JYsxVC/8uo0XmS7bl5VeevBsOxZSXnQp8ubmHLLEHDKr7sxoxw7UfiHNehHE5e6Xl7baNZMj6+WDDo52vzlYG5KrWWc4ytKulYsRCxtqMNmjCLX9+esqIPyGOke8BKMm6sI=
+	t=1759136725; cv=none; b=toWag2jfgCw8aPfsoi1oWQ7bctdlGrQr9i5fO4Jd8eIDZjRMFnNmiG1nmWhp804Qv/HlrVnU63fgfPUd5nXLIzmStdShEsvERYC/KlwAdJZfAZM0UbfIDX/xYKdDgIzQcOnpDa2yWa7CLmRuUhAFjHLeJNqp4vEtl6YhehbDg6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759136695; c=relaxed/simple;
-	bh=4vK0/59OtasxF5+YaSHurOi4G475+R1NyvhlSls9L2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UKEsg3AHV4mutBYKsux4iwBKp685H0VzHsaEQixu5sxQfrYBWxoVbwW643OTTf474cjYUiX2DzSzHDrM4kjljYlSoBGTljsHjRn5aFetpvlpgtyE1ZPaWMji+tv1113SzItxUOJOwdSLBhQ2IHBGyA87TzTjK20snwlKvrmRfNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwrBuOol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E09C4CEF4;
-	Mon, 29 Sep 2025 09:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759136694;
-	bh=4vK0/59OtasxF5+YaSHurOi4G475+R1NyvhlSls9L2w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZwrBuOoltu+9Re4wEEXG53gYj79TOnDHIymSsxNAE2XpWtwrtoFeIkr93BLq1Gx80
-	 xqVE8zfa2Ezx3eBrC1QErpxcv+Rl1KsrFzWBa48DV0nJbc23jsEunnjlMZ5CAY1Xcy
-	 jgp4qRpAhDShncyzDlvm9ecuWe3ZHOEse5GiTN8N2hAorGX5vGxqc/G/noE7Spxy6J
-	 ACHnUNo2QT4cp710fmoUiuNnVUi8GszjQ6g9APITiqp5VD7jKp9VNIOCfHBgyVAR+y
-	 DgawyWoqzYBBduTuDaCaNLhcyaFHJgDHalpDnNauH3ClYDT7e4QOhR2T26QnUsFHOU
-	 llVn455SZlHAQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] initrd: Replace simple_strtol with kstrtoint to improve ramdisk_start_setup
-Date: Mon, 29 Sep 2025 11:04:45 +0200
-Message-ID: <20250929-rester-warzen-d3264f947cff@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250918162447.331695-1-thorsten.blum@linux.dev>
-References: <20250918162447.331695-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1759136725; c=relaxed/simple;
+	bh=YHUcpuTalHZA4hemrg/nP7XpE6XvqXCshF/oUy6UeGo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=toTY0GPARM2JybWoLuAYmdhGPEhNELMO6vdmyHq13ekLPd+ASiZTQ8LoEoZZpyu8cbj6BYwrM79F/rntEjDcnzNHPG8vG6NY2ydbRGtj/pyE0twRw9CHzdi7L+3gC0xYZ6nCwIjcji4vPdHcRqaWbRyTpYE1zyo4dtH5ooNcHjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kb6UkcHW; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4de60f19a57so781081cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759136723; x=1759741523; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/7KexrLTQ/LQEgTu519hhOOiaONCYy510f2xT+sojQ=;
+        b=Kb6UkcHWVqCxrjWJo5D5cF1b/dyJZzUO582r3J2IOxtb9Gsdwr/SU9GVN/RHcaFo1K
+         2bwY+pjh2Sjt6NFkBlcVZsQyITJtWqtFnXR+vJm8z1dNLlBTw9v+Aa1bVTfudHd4MVE4
+         kJQub4/o/vHadVi6b16wuRX9Rmf5zDxurthnvHSQPr5OIu/grG1ucrR2jC9whCCab+UD
+         /afh2zK2Qxp0Pszxa3H1YUOmfdeNm/6ExTBNW/gpzhnrpnG40h4PODezAvsvvDwvh3U3
+         Iyt3r0BYQV+sGQvzanWzV5DVpSbl2OmChYGlzlvV9nGuCi7I9Ucnq8Zkjf2BM0qSvzp+
+         txww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759136723; x=1759741523;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C/7KexrLTQ/LQEgTu519hhOOiaONCYy510f2xT+sojQ=;
+        b=aBLGJTMPKpHEXxxFcLNChC0R+RP0YfkWlKpBHFlI6eEwjfGILNclr5P/VQKleVpeau
+         mVyGcByasqNsGuAIWuRYSBVoJ3S65WYuDlq2yrg3IzvkmlE6UNT+OBF982mxMX/lV7Ey
+         uq3p/OUV1m8IzfICtQsP5w3sxZKz5NdxTTagLCu8q5gnRCKO40UZfrXs6n6TbnOYBFzx
+         vl7j6fPWm4dh9niSmNQRiBo2x7AuABhbA558wlc46QNXBUMpy3egnNkJBrM66hzmp5ZG
+         mxCRW9XTiBowNCAWz+o2ofY/Zqb7Cdh8+a5tuLls9f80jKiL+UtVIqcETUzRzqmincnf
+         2JLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWX9ADSPjbv9IEXNEXAtQC2vLcz10DhhzHfx2JWAxeh3fDNdohXttLzxRgd6iO/upJVYcJlPMM12Qa/Fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1P1tCed4sGDgbDtlwewnQsBlwo5wqJ246mrOlCg7qvclt2jLG
+	gs+rGs9gwSb+/dNW+0dMxbRLNYaGyStc4Fd7HYYIlW4l6CFyArFPu8699rADzC/Cl6MK8uLGGqg
+	rmsdv2pjpTVnLYWBUXxZK1b837NgC5Fbvx/ca+8bL
+X-Gm-Gg: ASbGncsjD5ynpNk1TWT8XUyxMcnK4nV0Zhx5C8L8SeEEE62pQCZJ8/yzNKD62/Ld8gC
+	huDmFMQ7r8thA3N4aB3g1gvTKJthb0trY65lSz079mLiqdH4ZsMBbAthOIbBKFMHoKhd3tvLeJB
+	gbuwIZxuVFunF/gpXBXW96pkfTZwep+JDum2c3meUcwST9QudxdrSyxTa6wJJiHOTD2HVZfgktu
+	5uZ03k3Ryj9Wls/yakS7Ok7SpuHCOL+lCpg
+X-Google-Smtp-Source: AGHT+IE9FwjifHjYqEr8O9QVsg2ndMEg5anPajj+QeMi7ECPrPoQ3fsIF/+mLMicYUBikti+ripJ0opmTFD6Z8BxmYo=
+X-Received: by 2002:a05:622a:305:b0:4b3:7533:c1dd with SMTP id
+ d75a77b69052e-4e258d16373mr426881cf.1.1759136722468; Mon, 29 Sep 2025
+ 02:05:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1337; i=brauner@kernel.org; h=from:subject:message-id; bh=4vK0/59OtasxF5+YaSHurOi4G475+R1NyvhlSls9L2w=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTc8t7EeZrB8Mn7JfnPbr5fZ/BzRV5n771L2Xt9j+xMY vtltlhGpKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi++8yMtzQjOCMafPV6v4Z +1xL9Pk265P8M7ymNmiuucW6YqXzuekM/wumf0kOYjl3zb9ftXeesPwkJ+a9AiJnpcXE9bwbLTY vYQEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
+In-Reply-To: <20250926163114.2626257-2-seanjc@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Mon, 29 Sep 2025 10:04:46 +0100
+X-Gm-Features: AS18NWCOsAQZsJ0pH01KfX0ftLLUaZJXc5t68ACBrAA3mzpfYo09UYNbOtUCHs4
+Message-ID: <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Ackerley Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 18 Sep 2025 18:24:47 +0200, Thorsten Blum wrote:
-> Replace simple_strtol() with the recommended kstrtoint() for parsing the
-> 'ramdisk_start=' boot parameter. Unlike simple_strtol(), which returns a
-> a long, kstrtoint() converts the string directly to an integer and
-> avoids implicit casting.
-> 
-> Check the return value of kstrtoint() and reject invalid values. This
-> adds error handling while preserving existing behavior for valid values,
-> and removes use of the deprecated simple_strtol() helper.
-> 
-> [...]
+Hi Sean,
 
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+On Fri, 26 Sept 2025 at 17:31, Sean Christopherson <seanjc@google.com> wrote:
+>
+> Add a guest_memfd flag to allow userspace to state that the underlying
+> memory should be configured to be shared by default, and reject user page
+> faults if the guest_memfd instance's memory isn't shared by default.
+> Because KVM doesn't yet support in-place private<=>shared conversions, all
+> guest_memfd memory effectively follows the default state.
+>
+> Alternatively, KVM could deduce the default state based on MMAP, which for
+> all intents and purposes is what KVM currently does.  However, implicitly
+> deriving the default state based on MMAP will result in a messy ABI when
+> support for in-place conversions is added.
+>
+> For x86 CoCo VMs, which don't yet support MMAP, memory is currently private
+> by default (otherwise the memory would be unusable).  If MMAP implies
+> memory is shared by default, then the default state for CoCo VMs will vary
+> based on MMAP, and from userspace's perspective, will change when in-place
+> conversion support is added.  I.e. to maintain guest<=>host ABI, userspace
+> would need to immediately convert all memory from shared=>private, which
+> is both ugly and inefficient.  The inefficiency could be avoided by adding
+> a flag to state that memory is _private_ by default, irrespective of MMAP,
+> but that would lead to an equally messy and hard to document ABI.
+>
+> Bite the bullet and immediately add a flag to control the default state so
+> that the effective behavior is explicit and straightforward.
+>
+> Fixes: 3d3a04fad25a ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  Documentation/virt/kvm/api.rst                 | 10 ++++++++--
+>  include/uapi/linux/kvm.h                       |  3 ++-
+>  tools/testing/selftests/kvm/guest_memfd_test.c |  5 +++--
+>  virt/kvm/guest_memfd.c                         |  6 +++++-
+>  4 files changed, 18 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index c17a87a0a5ac..4dfe156bbe3c 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -6415,8 +6415,14 @@ guest_memfd range is not allowed (any number of memory regions can be bound to
+>  a single guest_memfd file, but the bound ranges must not overlap).
+>
+>  When the capability KVM_CAP_GUEST_MEMFD_MMAP is supported, the 'flags' field
+> -supports GUEST_MEMFD_FLAG_MMAP.  Setting this flag on guest_memfd creation
+> -enables mmap() and faulting of guest_memfd memory to host userspace.
+> +supports GUEST_MEMFD_FLAG_MMAP and  GUEST_MEMFD_FLAG_DEFAULT_SHARED.  Setting
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+There's an extra space between `and` and `GUEST_MEMFD_FLAG_DEFAULT_SHARED`.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> +the MMAP flag on guest_memfd creation enables mmap() and faulting of guest_memfd
+> +memory to host userspace (so long as the memory is currently shared).  Setting
+> +DEFAULT_SHARED makes all guest_memfd memory shared by default (versus private
+> +by default).  Note!  Because KVM doesn't yet support in-place private<=>shared
+> +conversions, DEFAULT_SHARED must be specified in order to fault memory into
+> +userspace page tables.  This limitation will go away when in-place conversions
+> +are supported.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+I think that a more accurate (and future proof) description of the
+mmap flag could be something along the lines of:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
++ Setting GUEST_MEMFD_FLAG_MMAP enables using mmap() on the file descriptor.
 
-[1/1] initrd: Replace simple_strtol with kstrtoint to improve ramdisk_start_setup
-      https://git.kernel.org/vfs/vfs/c/17230195b76e
++ Setting GUEST_MEMFD_FLAG_DEFAULT_SHARED makes all memory in the file shared
++ by default, as opposed to private. Shared memory can be faulted into host
++ userspace page tables. Private memory cannot.
+
+>  When the KVM MMU performs a PFN lookup to service a guest fault and the backing
+>  guest_memfd has the GUEST_MEMFD_FLAG_MMAP set, then the fault will always be
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 6efa98a57ec1..38a2c083b6aa 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -1599,7 +1599,8 @@ struct kvm_memory_attributes {
+>  #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
+>
+>  #define KVM_CREATE_GUEST_MEMFD _IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
+> -#define GUEST_MEMFD_FLAG_MMAP  (1ULL << 0)
+> +#define GUEST_MEMFD_FLAG_MMAP          (1ULL << 0)
+> +#define GUEST_MEMFD_FLAG_DEFAULT_SHARED        (1ULL << 1)
+>
+>  struct kvm_create_guest_memfd {
+>         __u64 size;
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index b3ca6737f304..81b11a958c7a 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -274,7 +274,7 @@ static void test_guest_memfd(unsigned long vm_type)
+>         vm = vm_create_barebones_type(vm_type);
+>
+>         if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
+> -               flags |= GUEST_MEMFD_FLAG_MMAP;
+> +               flags |= GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_FLAG_DEFAULT_SHARED;
+>
+>         test_create_guest_memfd_multiple(vm);
+>         test_create_guest_memfd_invalid_sizes(vm, flags, page_size);
+> @@ -337,7 +337,8 @@ static void test_guest_memfd_guest(void)
+>                     "Default VM type should always support guest_memfd mmap()");
+>
+>         size = vm->page_size;
+> -       fd = vm_create_guest_memfd(vm, size, GUEST_MEMFD_FLAG_MMAP);
+> +       fd = vm_create_guest_memfd(vm, size, GUEST_MEMFD_FLAG_MMAP |
+> +                                            GUEST_MEMFD_FLAG_DEFAULT_SHARED);
+>         vm_set_user_memory_region2(vm, slot, KVM_MEM_GUEST_MEMFD, gpa, size, NULL, fd, 0);
+>
+>         mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 08a6bc7d25b6..19f05a45be04 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -328,6 +328,9 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
+>         if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+>                 return VM_FAULT_SIGBUS;
+>
+> +       if (!((u64)inode->i_private & GUEST_MEMFD_FLAG_DEFAULT_SHARED))
+> +               return VM_FAULT_SIGBUS;
+> +
+>         folio = kvm_gmem_get_folio(inode, vmf->pgoff);
+>         if (IS_ERR(folio)) {
+>                 int err = PTR_ERR(folio);
+> @@ -525,7 +528,8 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+>         u64 valid_flags = 0;
+>
+>         if (kvm_arch_supports_gmem_mmap(kvm))
+> -               valid_flags |= GUEST_MEMFD_FLAG_MMAP;
+> +               valid_flags |= GUEST_MEMFD_FLAG_MMAP |
+> +                              GUEST_MEMFD_FLAG_DEFAULT_SHARED;
+
+At least for now, GUEST_MEMFD_FLAG_DEFAULT_SHARED and
+GUEST_MEMFD_FLAG_MMAP don't make sense without each other. Is it worth
+checking for that, at least until we have in-place conversion? Having
+only GUEST_MEMFD_FLAG_DEFAULT_SHARED set, but GUEST_MEMFD_FLAG_MMAP,
+isn't a useful combination.
+
+That said, these are all nits, I'll leave it to you. With that:
+
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Tested-by: Fuad Tabba <tabba@google.com>
+
+Cheers,
+/fuad
+
+
+
+>
+>         if (flags & ~valid_flags)
+>                 return -EINVAL;
+> --
+> 2.51.0.536.g15c5d4f767-goog
+>
 
