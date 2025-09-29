@@ -1,126 +1,237 @@
-Return-Path: <linux-kernel+bounces-835988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF886BA884B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:06:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F4ABA888A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAEB1893F18
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8113B4A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8878127E049;
-	Mon, 29 Sep 2025 09:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06A5283FCD;
+	Mon, 29 Sep 2025 09:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b="2rj7Svl1"
-Received: from mx08-007fc201.pphosted.com (mx08-007fc201.pphosted.com [91.207.212.40])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c31oG+E8"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FB823C506;
-	Mon, 29 Sep 2025 09:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB8A283CB8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759136767; cv=none; b=MykwRHEiolOUVd9VhUOvcviDcW/Lo60DZlr1LWV5O0pm7tuv8+zvsi3Jwa7khdWAhC+iT4qxKrmb8LFZJLg0ASy/twneSdf093IVh6IwgILr6m9KDVwQMFyPSGi4aImTDUVoBkD9hUoh/9+qVo3En2esLYFvknFwnwLqEiGFXbw=
+	t=1759137047; cv=none; b=HMo8SvDBlWkBMgrzma3fgeBXuMnh/dKqPXPsBUv7An7R509FPjq9Nnc7vAsJvveXbhWP0dD0OGDb87tvPG4LiF9pbpPw0SCY2N9d4laS6JQJm9++/6jofazDxxb0Rcht3+u4xTv931JrJpOWuTCMYN6Japrn/biIBJwXxr/+Dbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759136767; c=relaxed/simple;
-	bh=frTvTh/jan7s+DHeodJZzdQk9x60lL/gV5zS6RcE0bA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TUJ/GobkL4FnxgHbDUpOtrHkXBI3P/dA9lFqDHIlI+khWVTQrCDmvhO7zd334rOAUPqV+10c8VBQdt04X/AoKAZiu5vpFI561hX8dTq5rB0ATGt3SO60wqdgJ7PaB/VjGpRR4a5gPfT23D+oCN5lU9j0alQvW3MRi7crHOOKw/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b=2rj7Svl1; arc=none smtp.client-ip=91.207.212.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cab.de
-Received: from pps.filterd (m0456229.ppops.net [127.0.0.1])
-	by mx08-007fc201.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58T91Gs5072822;
-	Mon, 29 Sep 2025 11:05:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cab.de; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp-2025; bh=0dU35KlsEl1QBhjdMKYrJ5/tMivYBlJNdymcOfqRRhs=; b=2rj7
-	Svl1tNuzqLmNN61qwvQOy70HvUf2OJp83ZrkfBZMIe6acCmFwsKUEV1k2c3YvOJ0
-	s1kLk8Vnc6j4LnoFRbN0fAvD6o3sxvoZdUchqyKcZgUvw/Z4bF+5c5rvq/hFfIup
-	SpMpd2xZgSZ1vzXdMyNtCyt9zK/X+WNHXzfIipMDZeXMpCXrhMIFG0Lgg3JTLbzM
-	eaJ0Yx2uQALp3eC8aII0PWJDLAcwKUq6+N/2T5Of+DNhOCkg9hgqOvloO+qq/dNC
-	M1cy7vQ7OlUZFCWpa9U/tybyh7eKrMu/NPKWNnGV7adltAg+FU6l2Xcf0Q6jHliv
-	IAjUfG52hidhBT3Bjw==
-Received: from adranos.cab.de (adranos.cab.de [46.232.229.107])
-	by mx08-007fc201.pphosted.com (PPS) with ESMTPS id 49ev1ggdya-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Sep 2025 11:05:46 +0200 (MEST)
-Received: from Adranos.cab.de (10.10.1.54) by Adranos.cab.de (10.10.1.54) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Mon, 29 Sep
- 2025 11:06:01 +0200
-Received: from Adranos.cab.de ([fe80::9298:8fc8:395c:3859]) by Adranos.cab.de
- ([fe80::9298:8fc8:395c:3859%7]) with mapi id 15.02.1748.036; Mon, 29 Sep 2025
- 11:06:01 +0200
-From: Markus Heidelberg <M.Heidelberg@cab.de>
-To: Randy Dunlap <rdunlap@infradead.org>
-CC: Jonathan Corbet <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Documentation: fix spelling, typos, grammar, duplicated
- words
-Thread-Topic: [PATCH] Documentation: fix spelling, typos, grammar, duplicated
- words
-Thread-Index: AQHcLstyktyjxwWy7UeU9d2/LWnMJrSlmQ8AgAQoTAA=
-Date: Mon, 29 Sep 2025 09:06:01 +0000
-Message-ID: <aNpL6DOVTu4mpL2L@KAN23-025>
-References: <20250926095312.206231-1-m.heidelberg@cab.de>
- <44f3bd7c-b32c-420e-a738-02f40853e472@infradead.org>
-In-Reply-To: <44f3bd7c-b32c-420e-a738-02f40853e472@infradead.org>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2AA433378A84BD44B150C58B7F38ADE4@cab.de>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1759137047; c=relaxed/simple;
+	bh=LtUDNAtNKd11Kkgrls0OcB1yWDPkY+qSSLNoeZqzEEY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=lDOyiVclKCGB69MNHw1SHYSruP7YM45hCs9M2n29zT++C8/mITeehSxQHICSWmnr6eyvPkn0UEvx1Gwrjj1EBuPfMX+M+bFXdVmRS+gNl86naYL+AvyjeDrSXk5eS6+40B7248m+vPsEtTzJYU6hqmQRDkv1YCGF5vRoipZgP9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=c31oG+E8; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250929091042epoutp042f2bfa02c27244e0e436c0df4aed4ced~ptdH6t1sR3164831648epoutp04E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:10:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250929091042epoutp042f2bfa02c27244e0e436c0df4aed4ced~ptdH6t1sR3164831648epoutp04E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759137042;
+	bh=YxwWVv9gj+XnelO3Tx2MRqO2rpbzcoAAX+qcwnYQYj4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=c31oG+E8HUYenVuYRwjxJcJvqrz/mcGf1dTOQaYDnDWpc/iEhS2+Cb0yuvHluGaJS
+	 t7WkcAnUiKA7+jhhgDPWJrBuemkXwkx6fnrbJAx36EPrHzeZFhbAqeDpKHhCbzx+b3
+	 4dZzq0W0vc8tWy9jsMQl63GuQWPa5iL8/JumnnHs=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250929091042epcas5p146a8d7a07bdbfdb86dadeafa5bca7346~ptdHeoUn02587225872epcas5p13;
+	Mon, 29 Sep 2025 09:10:42 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cZwQT34cXz2SSKX; Mon, 29 Sep
+	2025 09:10:41 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250929091034epcas5p2810fc25ca2fec7a640d4121ec61478f4~ptdAS1i412305023050epcas5p2_;
+	Mon, 29 Sep 2025 09:10:34 +0000 (GMT)
+Received: from node122.. (unknown [109.105.118.122]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250929091033epsmtip2d4caa16f3d082af28178bc973ccc08a4~ptc-dmt_h0072400724epsmtip2M;
+	Mon, 29 Sep 2025 09:10:33 +0000 (GMT)
+From: Xue He <xue01.he@samsung.com>
+To: axboe@kernel.dk, akpm@linux-foundation.org, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, hexue <xue01.he@samsung.com>
+Subject: [PATCH v3] block: plug attempts to batch allocate tags multiple
+ times
+Date: Mon, 29 Sep 2025 09:06:02 +0000
+Message-Id: <20250929090602.6102-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDA4OCBTYWx0ZWRfX7FM+0fRfDr0Z
- SjT86AABBIAyiMPX9MZwdPbdMVR0oEe72pYHbunTLp+NEwWqLa61e82YuX05aUBGQHx73CvGYs9
- AZwEokRdEMBs/L9DdQj9Te6ZxGd6NNZo/NaFYnhBU0JaFMS3gT6k5rIu3x+KmuNlfKnJuMC9DVk
- 11lnkEhxoeKKX512+L2mgBemTO6lkHqf0iiaBmlV8ucme23GInQ5kjTtAr6XGls90vqH462G7m+
- u+OqS8LTnnYT5a2HUkdTGCPRKC8wPQPwzgc24LZMi3pNHVTGShefk/1DPhMryNviIGFkedneMnF
- 9U6ghX81Rc941nhTF2wR3gG0RGH2XAC+mDUWV+khtUWNUgVvxQ9ywbhY+fxru6RDrYT4qPjMz3l
- +d/HmSSpwgZWrAuv9coIAPA9u6zX8Q==
-X-Proofpoint-GUID: _PoRQnvtKrli8P1FqpnaoQRFuHPNltzz
-X-Proofpoint-ORIG-GUID: _PoRQnvtKrli8P1FqpnaoQRFuHPNltzz
-X-Authority-Analysis: v=2.4 cv=SNZPlevH c=1 sm=1 tr=0 ts=68da4bea cx=c_pps
- a=LmW7qmVeM6tFdl5svFU9Cg==:117 a=LmW7qmVeM6tFdl5svFU9Cg==:17
- a=xqWC_Br6kY4A:10 a=kldc_9v1VKEA:10 a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10
- a=uHx7LAfKJh6wF2AsyZgA:9 a=CjuIK1q_8ugA:10
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250929091034epcas5p2810fc25ca2fec7a640d4121ec61478f4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250929091034epcas5p2810fc25ca2fec7a640d4121ec61478f4
+References: <CGME20250929091034epcas5p2810fc25ca2fec7a640d4121ec61478f4@epcas5p2.samsung.com>
 
-On Fri, Sep 26, 2025 at 10:36:28AM -0700, Randy Dunlap wrote:
-> On 9/26/25 2:53 AM, Markus Heidelberg wrote:
-> > Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
-> > ---
-> >  Documentation/bpf/prog_flow_dissector.rst  | 4 ++--
-> >  Documentation/fb/fbcon.rst                 | 2 +-
-> >  Documentation/filesystems/path-lookup.rst  | 2 +-
-> >  Documentation/hwmon/lm75.rst               | 2 +-
-> >  Documentation/kernel-hacking/hacking.rst   | 2 +-
-> >  Documentation/networking/phy.rst           | 8 ++++----
-> >  Documentation/process/management-style.rst | 2 +-
-> >  7 files changed, 11 insertions(+), 11 deletions(-)
->=20
-> These changes mostly look good. I'm curious about how you
-> found these. ??
+In the existing plug mechanism, tags are allocated in batches based on
+the number of requests. However, testing has shown that the plug only
+attempts batch allocation of tags once at the beginning of a batch of
+I/O operations. Since the tag_mask does not always have enough available
+tags to satisfy the requested number, a full batch allocation is not
+guaranteed to succeed each time. The remaining tags are then allocated
+individually (occurs frequently), leading to multiple single-tag
+allocation overheads.
 
-Hi Randy,
+This patch aims to retry batch allocation of tags when the initial batch
+allocation fails to reach the requested number, thereby reducing the
+overhead of individual allocation attempts.
 
-I just stumbled upon them while reading the documentation.
-The "the to -> to the" swap I originally found in another file and then
-searched for more occurrences with something like this:
+--------------------------------------------------------------------
+perf:
+base code: __blk_mq_alloc_requests() 1.35%
+patch:__blk_mq_alloc_requests() 0.73%
+-------------------------------------------------------------------
 
-  $ git grep -w -C1 "the to"
+---
+changes since v1:
+- Modify multiple batch registrations into a single loop to achieve
+  the batch quantity
 
-Markus=
+changes since v2:
+- Modify the call location of remainder handling
+- Refactoring sbitmap cleanup time
+
+Signed-off-by: hexue <xue01.he@samsung.com>
+---
+ block/blk-mq.c | 44 +++++++++++++++++++++++++-------------------
+ lib/sbitmap.c  | 44 ++++++++++++++++++++++++++------------------
+ 2 files changed, 51 insertions(+), 37 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index ba3a4b77f578..bf9d288e3411 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -456,28 +456,34 @@ __blk_mq_alloc_requests_batch(struct blk_mq_alloc_data *data)
+ 	struct blk_mq_tags *tags;
+ 	struct request *rq;
+ 	unsigned long tag_mask;
+-	int i, nr = 0;
++	int nr_tags = data->nr_tags;
+ 
+-	tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
+-	if (unlikely(!tag_mask))
+-		return NULL;
++	do {
++		int i, nr = 0;
++
++		tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
++		if (unlikely(!tag_mask))
++			return NULL;
++
++		tags = blk_mq_tags_from_data(data);
++		for (i = 0; tag_mask; i++) {
++			if (!(tag_mask & (1UL << i)))
++				continue;
++			tag = tag_offset + i;
++			prefetch(tags->static_rqs[tag]);
++			tag_mask &= ~(1UL << i);
++			rq = blk_mq_rq_ctx_init(data, tags, tag);
++			rq_list_add_head(data->cached_rqs, rq);
++			nr++;
++		}
++		if (!(data->rq_flags & RQF_SCHED_TAGS))
++			blk_mq_add_active_requests(data->hctx, nr);
++
++		data->nr_tags -= nr;
++	} while (data->nr_tags);
+ 
+-	tags = blk_mq_tags_from_data(data);
+-	for (i = 0; tag_mask; i++) {
+-		if (!(tag_mask & (1UL << i)))
+-			continue;
+-		tag = tag_offset + i;
+-		prefetch(tags->static_rqs[tag]);
+-		tag_mask &= ~(1UL << i);
+-		rq = blk_mq_rq_ctx_init(data, tags, tag);
+-		rq_list_add_head(data->cached_rqs, rq);
+-		nr++;
+-	}
+-	if (!(data->rq_flags & RQF_SCHED_TAGS))
+-		blk_mq_add_active_requests(data->hctx, nr);
+ 	/* caller already holds a reference, add for remainder */
+-	percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
+-	data->nr_tags -= nr;
++	percpu_ref_get_many(&data->q->q_usage_counter, nr_tags - 1);
+ 
+ 	return rq_list_pop(data->cached_rqs);
+ }
+diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+index 4d188d05db15..457d18650950 100644
+--- a/lib/sbitmap.c
++++ b/lib/sbitmap.c
+@@ -534,26 +534,34 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
+ 		unsigned int map_depth = __map_depth(sb, index);
+ 		unsigned long val;
+ 
+-		sbitmap_deferred_clear(map, 0, 0, 0);
+ 		val = READ_ONCE(map->word);
+-		if (val == (1UL << (map_depth - 1)) - 1)
+-			goto next;
+-
+-		nr = find_first_zero_bit(&val, map_depth);
+-		if (nr + nr_tags <= map_depth) {
+-			atomic_long_t *ptr = (atomic_long_t *) &map->word;
+-
+-			get_mask = ((1UL << nr_tags) - 1) << nr;
+-			while (!atomic_long_try_cmpxchg(ptr, &val,
+-							  get_mask | val))
+-				;
+-			get_mask = (get_mask & ~val) >> nr;
+-			if (get_mask) {
+-				*offset = nr + (index << sb->shift);
+-				update_alloc_hint_after_get(sb, depth, hint,
+-							*offset + nr_tags - 1);
+-				return get_mask;
++		while (1) {
++			if (val == (1UL << (map_depth - 1)) - 1) {
++				if (!sbitmap_deferred_clear(map, 0, 0, 0))
++					goto next;
++				val = READ_ONCE(map->word);
+ 			}
++			nr = find_first_zero_bit(&val, map_depth);
++			if (nr + nr_tags <= map_depth)
++				break;
++
++			if (!sbitmap_deferred_clear(map, 0, 0, 0))
++				goto next;
++
++			val = READ_ONCE(map->word);
++		}
++		atomic_long_t *ptr = (atomic_long_t *) &map->word;
++
++		get_mask = ((1UL << nr_tags) - 1) << nr;
++		while (!atomic_long_try_cmpxchg(ptr, &val,
++						  get_mask | val))
++			;
++		get_mask = (get_mask & ~val) >> nr;
++		if (get_mask) {
++			*offset = nr + (index << sb->shift);
++			update_alloc_hint_after_get(sb, depth, hint,
++						*offset + nr_tags - 1);
++			return get_mask;
+ 		}
+ next:
+ 		/* Jump to next index. */
+-- 
+2.34.1
+
 
