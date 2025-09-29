@@ -1,122 +1,236 @@
-Return-Path: <linux-kernel+bounces-835873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03F5BA83E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:29:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C97CBA83F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D1517A2146
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95ADB3AFD34
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9592C028B;
-	Mon, 29 Sep 2025 07:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22609253351;
+	Mon, 29 Sep 2025 07:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZRX0INB5"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BkvYITie";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YGkrDeXE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SNSLGGAW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R1v9Sb5k"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742D32BEC3A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08E42065
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759130938; cv=none; b=eVqhZ0t1gstiM0F6XKKjgxsVi2Qxcn2P4AkAS1i5mWIcrv6QFXpCcVUomfOO/8FMK5HdLwfVAKzJBvcf3GrNIS82lBHfEpIk6WT7UGeQ9yaIrP5+Vf48dyH/hXqZV7cxlPCCZjUl6UUnw3TIoog1WVf7M1DR8wtc47qzEjH0FJc=
+	t=1759131038; cv=none; b=ZMVp1s5V6rI8cSiXSX2Z86XDGWCnSETE5GkG/h5H8qgF+Po0sXEVeY76v+xkuMDD7FX0wjlb7/Rxt7ONCHCQMVsCONXz2j9duekxNd6jJHEuJo8ECLdRb8UA053CXt9PFOgC4cUnhtLewuvGrZrI5Ip0Bqy2gLISmGqv2X07VRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759130938; c=relaxed/simple;
-	bh=7F4Bd412NUjkHLR4AZb/VhkbRK5cWLJC7xh1AlsvUNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pi8dwGNpJGjkijimR8gG5YI2p4AosKZwO7rjTzPxclU3fBmdZUegAtIgdAAj0bzBLwKGjwIP9vj+Ge5wyxk9+nCQyNhENvx6tFkUMFOEPDqAIdp4YHxHheP5R3X9Ufp3FcJ6+dZ7E5xL7ahpSAyBkXT80w2Sclk1ooVzAF3bgAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZRX0INB5; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27ee41e074dso38050285ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759130935; x=1759735735; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vUgMt/Iu4HigVywPOVpy02As/ACdmcQ/LQX8wXFvh6s=;
-        b=ZRX0INB5ednEuV6egMHPHfQXIVcrMHwCk3izCYJVrJfRq0aHh49niegTpoLK2GZ5hp
-         0Ksx/55lEPd16bu6L104h6AMAybWD4QfZwY5UE+k1lK5i5vr24XcECN8WDPL/o8sToDQ
-         NRuvuw3mzMhz6Ecta54WtJgC1uOj7L/mmCEFl26BqszKdVCrWC+EbLB2KAzj7xE4J5yl
-         nHOvh1WqnLlGAbS8EZNwD17hHrobPc/ThmaRjpYFNt0UY9BlrWQ3xTAkTjwvIra9X1SN
-         fO7nXlJctLWAfhsJCA+1yYpqca7/bBW2fKgVOor27Y0Ir18zqnICIXOZApoF2AcoVlWn
-         nMEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759130936; x=1759735736;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vUgMt/Iu4HigVywPOVpy02As/ACdmcQ/LQX8wXFvh6s=;
-        b=I9QQwiq1FaWG+MEGVzHYrfN9jls+jSEyHY9NYOqGmbDjTGDy5qXy6NFjAPWO241dt1
-         E2YPZ2IFL8+BpydFRzkAVfHfUzEFHwICU8JSS4+vk+Or+hGocy5iTCKg5y1kWZ181beH
-         1rpTRzT2XpGJsXHlFSbcRXYhJvpy9N3z9A8r5ClRNVmplcjAK0R6IDGj+4zX9k895UZw
-         Wr0we+hn6sM26TwJpNzKOw1sCM42aIdcSQp9psHhzEcWTG2nz/zB/TAfbZl6T0WlthkT
-         FYIfUiraEGIi2St5D3Gnw6A005+SsQkks/3cco5uKQdcv+8L8Cnz34JTL9LLxbJod9dZ
-         vPkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCo68liquu9cKTfdVB/Gdcb1tW40CPyBZGqPp+xQ2t8s+prewnUJSIVBBnrHRIi3Kw8g0/NsS8w/cSiao=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywov1Ad5Hh5uvso5Hmc4a580ShklTpShlRajqIlyLlnQsRBrfQ3
-	OdveYKMWJekwORIlo1eIsrlJHk5dGYgCj8p5tdgvKPYwFaBZY39drVOK7gXDPXytTFU=
-X-Gm-Gg: ASbGncsFvXbGkcCWb5ZNq+Ww6uUlP6DWOJ0ExznAduQs8WRaczK4grDJBa+LsWXXDVP
-	OciFQcm+RFp/+eQb5Sf7QCSbsRSE5bW8JIYc9wwZqXnKszMa2+HEcPKgw37Rycb2EeDbBSA8242
-	dzta+zn6UMUgHh4AwdjtY4WD4wijfihEauj6V89YEt3pnZXbSFIYleMv7a186Zy7dToQRtgH5Up
-	oLsz60NGIt+4lbvvKtTf4wpolHbKw7mbtF85op5MDAt+VMzKZ2hl5tPpZY5F5cwHj9jzFbcvGrb
-	Gm1IIbbIuvKWGGMQ/gmbqUjtrodrFgOyhCx49Ubb+9Dvd89GRzIYAh9vlrmFg8ZHuCSvP02+XNW
-	euWaGSiUl/t2WD+Ov5q5YSnuc
-X-Google-Smtp-Source: AGHT+IFV04UkDk6nLUCSmgZN+tUyoArW1g8+WIB0WCKL3KwMarnJ2CKoOoUMLY19056+D/VsX/c/Zg==
-X-Received: by 2002:a17:902:e890:b0:24c:a269:b6d5 with SMTP id d9443c01a7336-27ed493e891mr151642625ad.0.1759130935564;
-        Mon, 29 Sep 2025 00:28:55 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6997ae3sm123206695ad.106.2025.09.29.00.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 00:28:55 -0700 (PDT)
-Date: Mon, 29 Sep 2025 12:58:52 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Qais Yousef <qyousef@layalina.io>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Prashanth Prakash <pprakash@codeaurora.org>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Linux ACPI <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH v1 0/4] cpufreq: Fixes and cleanups related to
- CPUFREQ_ETERNAL
-Message-ID: <20250929072852.2krpxwaq2uxwj6cp@vireshk-i7>
-References: <8605612.T7Z3S40VBb@rafael.j.wysocki>
+	s=arc-20240116; t=1759131038; c=relaxed/simple;
+	bh=85/GZ7QczLm6DR5gJkXWuhVqaw8HBo5xL3HV749OSlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VdDw67/JU1uhVMx9FFDrLuz+spftxnwFP7WFi2e1kG+CxkF3dFP4iw1juT3cGZbNh8kuZT4om3IUKWGWM3V/A+gX0UjSCqiXWKxel5itQP7p/pZU2qhCij/P5DUrqMvPc91/RsFv4qxRdSh/u4ncz4NVXeHGKIKZrskHghzsIGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BkvYITie; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YGkrDeXE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SNSLGGAW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R1v9Sb5k; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 40F092FA26;
+	Mon, 29 Sep 2025 07:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759131032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
+	b=BkvYITiejp/KTvqq8OaoMcNss7s+sSMOTeu0xhYGmzzWoGPLKJn4eh4uEaOnAbY+ACrowT
+	oVcE8O5HcIN/uwyVfx7slhbC/qU//PgfAwLuC6XwoHYl24I9rzTGRzqbOeebK2SFUWjC00
+	yolZK8MO1vFs1SgWVBWp/ohREXCBtIM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759131032;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
+	b=YGkrDeXEg91wpN7KQGKAaW5vO6kucY/BDkCoDw7pTe110Mrcq8E028kw9ppdAoMaKMJLFl
+	AAQRkInYzF6icSBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SNSLGGAW;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=R1v9Sb5k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759131031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
+	b=SNSLGGAWN8MYg1X6dHwaRj7S9N85CLFH91L3qRaVbIJ2ykqnKr3QGKZcl6nuWML0DZ+Cu9
+	PjjbcrkIYpHx9H9IHMidfcwbiUKdCjqbfR3KSpMDjrJkP1AG0Nh7hU0TPX/wF5n4ZEFEt/
+	eiux/hZk62Mxrw7ExNTUQp23/BAmUuc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759131031;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
+	b=R1v9Sb5k4RHKMcYp3Gxdhi6aNphndmKrCe6poouH127P/iVmO96mIFKJqWy3/Le01aAKOM
+	YyZMCjVom9FFMdBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2923113782;
+	Mon, 29 Sep 2025 07:30:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yIy+CZc12mgCHgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 29 Sep 2025 07:30:31 +0000
+Message-ID: <e8735d27-2917-402a-86fa-7446b1acbfcc@suse.cz>
+Date: Mon, 29 Sep 2025 09:30:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8605612.T7Z3S40VBb@rafael.j.wysocki>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 21/23] maple_tree: Prefilled sheaf conversion and
+ testing
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+ <20250910-slub-percpu-caches-v8-21-ca3099d8352c@suse.cz>
+ <CAJuCfpGBg7xO6-swzvk3vLhMxO+F=C6udEiNmAAC6LEA7vA9=Q@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAJuCfpGBg7xO6-swzvk3vLhMxO+F=C6udEiNmAAC6LEA7vA9=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[oracle.com,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,oracle.com:email,suse.cz:mid,suse.cz:dkim,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 40F092FA26
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On 25-09-25, 17:42, Rafael J. Wysocki wrote:
-> Hi All,
+On 9/27/25 03:08, Suren Baghdasaryan wrote:
+> On Wed, Sep 10, 2025 at 1:01 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>>
+>> Use prefilled sheaves instead of bulk allocations. This should speed up
+>> the allocations and the return path of unused allocations.
+>>
+>> Remove the push and pop of nodes from the maple state as this is now
+>> handled by the slab layer with sheaves.
+>>
+>> Testing has been removed as necessary since the features of the tree
+>> have been reduced.
+>>
+>> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> The first patch in this series is meant to address the failure discussed in
+> Couple nits but otherwise looks great!
 > 
-> https://lore.kernel.org/linux-pm/20250922125929.453444-1-shawnguo2@yeah.net/
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 > 
-> but in a different way than proposed by Shawn.
+>> ---
+>>  include/linux/maple_tree.h       |   6 +-
+>>  lib/maple_tree.c                 | 326 ++++++---------------------
+>>  tools/testing/radix-tree/maple.c | 461 ++-------------------------------------
+>>  tools/testing/shared/linux.c     |   5 +-
+>>  4 files changed, 88 insertions(+), 710 deletions(-)
+>>
+>> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+>> index bafe143b1f783202e27b32567fffee4149e8e266..166fd67e00d882b1e6de1f80c1b590bba7497cd3 100644
+>> --- a/include/linux/maple_tree.h
+>> +++ b/include/linux/maple_tree.h
+>> @@ -442,7 +442,8 @@ struct ma_state {
+>>         struct maple_enode *node;       /* The node containing this entry */
+>>         unsigned long min;              /* The minimum index of this node - implied pivot min */
+>>         unsigned long max;              /* The maximum index of this node - implied pivot max */
+>> -       struct maple_alloc *alloc;      /* Allocated nodes for this operation */
+>> +       struct slab_sheaf *sheaf;       /* Allocated nodes for this operation */
+>> +       unsigned long node_request;
 > 
-> The second one is a CPPC cpufreq driver fix preventing it from using an
-> overly large transition delay in the cases when that delay cannot be
-> obtained from the platform firmware.
-> 
-> Patch [3/4] makes CPPC use a specific symbol instead of CPUFREQ_ETERNAL for
-> signaling error conditions while attempting to retrieve a transition latency
-> value from the platform firmware.
-> 
-> The last patch removes CPUFREQ_ETERNAL (which has no users any more) from
-> cpufreq, including all references to it in cpufreq documentation.
+> No comment for this poor fella?
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+adding: /* The number of nodes to allocate for this operation */
 
--- 
-viresh
 
