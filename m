@@ -1,344 +1,597 @@
-Return-Path: <linux-kernel+bounces-835889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3565BA8441
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:39:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5049DBA845C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFF33A68F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767D83A752E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EB82C0287;
-	Mon, 29 Sep 2025 07:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412DC2C11C4;
+	Mon, 29 Sep 2025 07:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="il47pTnW"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDO2QdI+"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B8F2C0289
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95252BF3DB
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759131536; cv=none; b=jovc4MgvHUBsTL03bDzK35VhK+dUX5TBfAC/9e7hj8gU959kj5FuW1Sg6ofKv1JTPr1AWAITp8Sv2glL6fq3WRjEudOOS16stKU4hbaS79zEStE+8crHIfAo2h0eUtK6QO3QVaM2u8hQEO6uMpVfDCHT4I7BxbrPsv16eOd1Doo=
+	t=1759131609; cv=none; b=jXuZdXN5NBruiskeAscA80sEgjWV5iDiZgYkbyhl9Sqsxk/gUICCd97cxBI3JqaDmTIZZ1bXJCboPcv0+V1IImr2u08VFWb/oN3BumprcDmwouTlODl4m6KLTQqggdNz9U/HYe8NGwikZhdLprKlozHpJYQrirLJtn/Wnri/UY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759131536; c=relaxed/simple;
-	bh=PGOYfvLBRamM466jo0zSETpZ9WHyfXkQNRMNZPkY5PQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CGVLn7W2mH5wuaQGFJSc3BY31pyrcFihENhhpewtfP42hl5hTnsziYJfU1gJV4bPO6ZTLd23AWO2fwYs65M+FXEzS0Kq3ug1Ou0ohZ42SrawnZDWlkLhlRBO5AYPBohF+g1tT3rcKUpQglsAJgTvU+mX43BHoUkD7XbBlasTP3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=il47pTnW; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759131531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pBKcXxbFuAD2KtWE6V9eoV+FPlnLvv6nJCJZHelUJiI=;
-	b=il47pTnW5lKvMmF0hfqv3+bQcd4xRrn7/+pMihocPIoLbqKiN1aXRfl/bxjlhWc4f1ay5a
-	h4m8jnuYsv3WPBmjRn2PEN6CIR7diOFpIE3ZojuyRkp8pqDS8ChmlRDLgQF4wbx/0w+qBK
-	TeiFp75bfDTvqiMvYnpGvYOw83RLyz0=
+	s=arc-20240116; t=1759131609; c=relaxed/simple;
+	bh=IU736SJHQT3ExduYmttu43Xgi6GnKbPa1vH3hbZruqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wn8Ya30l5GtumInPsIOmAbscnEYooZ+OzNWcntF0v1Exx3aDbyqdIyh1A0QK2SRVXia/7AxQgPGambv9Um6jl2YVh0hA7CL5bx9ySFimR9QLqn5KfzhyU/7DKZ/eiICLj+6dbcaruSrdlICGXWWj3505k1Bue6af6ZN70J6xbtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDO2QdI+; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so8617142a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759131605; x=1759736405; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7O96OJRpItyuYZsrVRlTW58CE15W2ryxqNqk3lk3600=;
+        b=BDO2QdI+lNj8A3B/omWaO6pWIKBqC0Gy9PCWz9qWj0J8wADJt93u7S7C/t0hPac2ve
+         2ES+W2gvIcgRWXEOvM2+yOKqTTEfp7/BaZxanoKSUzHate43hFp3CtIYxozvf8vUtsID
+         7WOPoQJ6JDzCKb2DJK0MtrPY32NpLHMEJ5sk9amkxXbRtmKAWviFbOprKoVCAuASNr2b
+         sJsL/PJBjk0r6vNeLDfZ3VF499mjBjsY0HUeN3/6T0npIPFJBEG/zbxJ4SVLO1hN2xa2
+         3JmjVm8fCG+AeE/yhQClsC1prcEYqoLGgTwcFREEl9qusO9dgbD0Gh2S95FasRQgGEVm
+         A87A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759131605; x=1759736405;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7O96OJRpItyuYZsrVRlTW58CE15W2ryxqNqk3lk3600=;
+        b=FAGSXCsagZ8ZpH0DLwvV/r/YXE/gCdK0tDJLyyzAKkdV9tvSIBavnZFM2vamdCFoRR
+         LRy3SMQlR1+wtv0XT+b9ahTrqMzVhv9N+ycJAcrUqph85BZCd4mOB13gzBBjXlAIh5S0
+         6VUEhUbGgOzrQFJ837PQrnRvCjXlYJqPZ8N/mz/sLFdiaXke8oJ9mLNqYvU1vbs7IM7n
+         Aj9yxIx0qVNEwPNqdzcgQDlL5GSzCXwWh5znMAh5lt/0yQx3Tg/B0dCYTRk0VcIO3TAo
+         E2ts/SJMdQmuAzV2nv7HrY6BFQX6jQ2Dvjw/jaJvnn3fk7hSiCNLiLQ6oKq1+AV5+NXA
+         FImQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9d7de5t4I49k7XXH+uQT8g/ZUHt+osPwdfYBBq46AFRMZc+L0sF5t9CbId8K8HDgTpvVyAWBqfQLa4nA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUpsmYNeMWIWro+5t+/TnI8FNPhLwAzSVnkrDXTaN/D9gIJnsj
+	QHrSwgOuuRI7GB1xNtr6pOkfHthpDAO05uOyWEehmWkUxibJZAgnWcIKOxmfNai/QIj2iG77MSm
+	2uoqFue2CvZBNGdnbQagNAnBwEOLTPa4=
+X-Gm-Gg: ASbGncs8gPLN6x277lusrwOBKimF4D9gpCj9k2L5oOqsNhcNsMm1CgsvZXcNGLLSB61
+	l3DykJ0QSjaErxIKmTWihuyLODqfMcyEelxVqV2FGC3048hWP1SYFV9QsGS1+sR73CMgyEXNZYC
+	faOK+nOjzjd64TakuHFtuI7v/jS6HAmRS0NF+bajJiSUxUjFr9l3LjzcDjyHfL7zAWC5hrr1Bca
+	Fo0V49oqDvLFpRJAME5HjfSlEU=
+X-Google-Smtp-Source: AGHT+IGn5R7mZe5s/VGCiK+X5y0WXOtQqktNX7eU61f9nIILSoAl8xD03zGmv8uKKu5PdjTLXHPvHIdb5KnwpXouWxY=
+X-Received: by 2002:aa7:d588:0:b0:628:7716:357c with SMTP id
+ 4fb4d7f45d1cf-6349faa99edmr10432021a12.25.1759131604966; Mon, 29 Sep 2025
+ 00:40:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
-Subject: Re: [PATCH v3 4/4] mm: thp: reparent the split queue during memcg
- offline
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <08a4f0b2-1735-4e3b-9f61-d55e45e8ec86@linux.dev>
-Date: Mon, 29 Sep 2025 15:38:05 +0800
-Cc: hannes@cmpxchg.org,
- hughd@google.com,
- mhocko@suse.com,
- roman.gushchin@linux.dev,
- shakeel.butt@linux.dev,
- david@redhat.com,
- lorenzo.stoakes@oracle.com,
- ziy@nvidia.com,
- harry.yoo@oracle.com,
- baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com,
- npache@redhat.com,
- ryan.roberts@arm.com,
- dev.jain@arm.com,
- baohua@kernel.org,
- lance.yang@linux.dev,
- akpm@linux-foundation.org,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org,
- Qi Zheng <zhengqi.arch@bytedance.com>
+MIME-Version: 1.0
+References: <20250926072905.126737-1-linux.amoon@gmail.com>
+ <20250926072905.126737-2-linux.amoon@gmail.com> <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
+In-Reply-To: <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 29 Sep 2025 13:09:48 +0530
+X-Gm-Features: AS18NWChS0qSBpBHCzG5pX2TziLbCoFFXqmaN-oDpWpajtS42CIlXS6QQh6Gw_w
+Message-ID: <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
+ nvidia,tegra-pcie.txt bindings documentation into a YAML schema
+To: Rob Herring <robh@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <1A84CFB1-FB4F-4630-A40C-73CDE7CA8C21@linux.dev>
-References: <cover.1759056506.git.zhengqi.arch@bytedance.com>
- <2ddd0c184829e65c5b3afa34e93599783e7af3d4.1759056506.git.zhengqi.arch@bytedance.com>
- <2EC0CBCD-73FD-400A-921A-EAB45B21ACB8@linux.dev>
- <08a4f0b2-1735-4e3b-9f61-d55e45e8ec86@linux.dev>
-To: Qi Zheng <qi.zheng@linux.dev>
-X-Migadu-Flow: FLOW_OUT
 
+Hi Rob,
 
+Thanks for your review comments
 
-> On Sep 29, 2025, at 15:22, Qi Zheng <qi.zheng@linux.dev> wrote:
->=20
->=20
->=20
-> On 9/29/25 2:20 PM, Muchun Song wrote:
->>> On Sep 28, 2025, at 19:45, Qi Zheng <qi.zheng@linux.dev> wrote:
->>>=20
->>> From: Qi Zheng <zhengqi.arch@bytedance.com>
->>>=20
->>> Similar to list_lru, the split queue is relatively independent and =
-does
->>> not need to be reparented along with objcg and LRU folios (holding
->>> objcg lock and lru lock). So let's apply the same mechanism as =
-list_lru
->>> to reparent the split queue separately when memcg is offine.
->>>=20
->>> This is also a preparation for reparenting LRU folios.
->>>=20
->>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->>> ---
->>> include/linux/huge_mm.h |  4 ++++
->>> mm/huge_memory.c        | 46 =
-+++++++++++++++++++++++++++++++++++++++++
->>> mm/memcontrol.c         |  1 +
->>> 3 files changed, 51 insertions(+)
->>>=20
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index f327d62fc9852..0c211dcbb0ec1 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -417,6 +417,9 @@ static inline int split_huge_page(struct page =
-*page)
->>> 	return split_huge_page_to_list_to_order(page, NULL, ret);
->>> }
->>> void deferred_split_folio(struct folio *folio, bool =
-partially_mapped);
->>> +#ifdef CONFIG_MEMCG
->>> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
->>> +#endif
->>>=20
->>> void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->>> 		unsigned long address, bool freeze);
->>> @@ -611,6 +614,7 @@ static inline int try_folio_split(struct folio =
-*folio, struct page *page,
->>> }
->>>=20
->>> static inline void deferred_split_folio(struct folio *folio, bool =
-partially_mapped) {}
->>> +static inline void reparent_deferred_split_queue(struct mem_cgroup =
-*memcg) {}
->>> #define split_huge_pmd(__vma, __pmd, __address) \
->>> 	do { } while (0)
->>>=20
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index bb32091e3133e..5fc0caca71de0 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -1094,9 +1094,22 @@ static struct deferred_split =
-*folio_split_queue_lock(struct folio *folio)
->>> struct deferred_split *queue;
->>>=20
->>> 	memcg =3D folio_memcg(folio);
->>> +retry:
->>> 	queue =3D memcg ? &memcg->deferred_split_queue :
->>> 			=
-&NODE_DATA(folio_nid(folio))->deferred_split_queue;
->>> 	spin_lock(&queue->split_queue_lock);
->>> +  /*
->>> +  * Notice:
->>> +  * 1. The memcg could be NULL if cgroup_disable=3Dmemory is set.
->>> +  * 2. There is a period between setting CSS_DYING and reparenting
->>> +  *    deferred split queue, and during this period the THPs in the
->>> +  *    deferred split queue will be hidden from the shrinker side.
->=20
-> The shrinker side can find this deferred split queue by traversing
-> memcgs, so we should check CSS_DYING after we acquire child
-> split_queue_lock in :
->=20
-> deferred_split_scan
-> --> spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->    if (css_is_dying(&memcg->css))
->    --> retry to get parent split_queue_lock
->=20
-> So during this period, we use parent split_queue_lock to protect
-> child deferred split queue. It's a little weird, but it's safe.
->=20
->>> + 	 */
->>> +  	if (unlikely(memcg && css_is_dying(&memcg->css))) {
->>> +  		spin_unlock(&queue->split_queue_lock);
->>> +  		memcg =3D parent_mem_cgroup(memcg);
->>> +  		goto retry;
->>> +  	}
->>>=20
->>> return queue;
->>> }
->>> @@ -1108,9 +1121,15 @@ folio_split_queue_lock_irqsave(struct folio =
-*folio, unsigned long *flags)
->>> struct deferred_split *queue;
->>>=20
->>> 	memcg =3D folio_memcg(folio);
->>> +retry:
->>> 	queue =3D memcg ? &memcg->deferred_split_queue :
->>> 			=
-&NODE_DATA(folio_nid(folio))->deferred_split_queue;
->>> 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
->>> +  	if (unlikely(memcg && css_is_dying(&memcg->css))) {
->>> +  		spin_unlock_irqrestore(&queue->split_queue_lock, =
-*flags);
->>> +  		memcg =3D parent_mem_cgroup(memcg);
->>> +  		goto retry;
->>> +  	}
->>>=20
->>> return queue;
->>> }
->>> @@ -4275,6 +4294,33 @@ static unsigned long =
-deferred_split_scan(struct shrinker *shrink,
->>> return split;
->>> }
->>>=20
->>> +#ifdef CONFIG_MEMCG
->>> +void reparent_deferred_split_queue(struct mem_cgroup *memcg)
->>> +{
->>> +  	struct mem_cgroup *parent =3D parent_mem_cgroup(memcg);
->>> +  	struct deferred_split *ds_queue =3D =
-&memcg->deferred_split_queue;
->>> +  	struct deferred_split *parent_ds_queue =3D =
-&parent->deferred_split_queue;
->>> +  	int nid;
->>> +
->>> + 	spin_lock_irq(&ds_queue->split_queue_lock);
->>> +  	spin_lock_nested(&parent_ds_queue->split_queue_lock, =
-SINGLE_DEPTH_NESTING);
->>> +
->>> +  	if (!ds_queue->split_queue_len)
->>> +  		goto unlock;
->>> +
->>> +  	list_splice_tail_init(&ds_queue->split_queue, =
-&parent_ds_queue->split_queue);
->>> +  	parent_ds_queue->split_queue_len +=3D ds_queue->split_queue_len;
->>> +  	ds_queue->split_queue_len =3D 0;
->>> +
->>> +  	for_each_node(nid)
->>> +  		set_shrinker_bit(parent, nid, =
-shrinker_id(deferred_split_shrinker));
->>> +
->>> +unlock:
->>> +  	spin_unlock(&parent_ds_queue->split_queue_lock);
->>> +  	spin_unlock_irq(&ds_queue->split_queue_lock);
->>> +}
->>> +#endif
->>> +
->>> #ifdef CONFIG_DEBUG_FS
->>> static void split_huge_pages_all(void)
->>> {
->>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->>> index e090f29eb03bd..d03da72e7585d 100644
->>> --- a/mm/memcontrol.c
->>> +++ b/mm/memcontrol.c
->>> @@ -3887,6 +3887,7 @@ static void mem_cgroup_css_offline(struct =
-cgroup_subsys_state *css)
->>> zswap_memcg_offline_cleanup(memcg);
->>>=20
->>> 	memcg_offline_kmem(memcg);
->>> +  	reparent_deferred_split_queue(memcg);
->> Since the dying flag of a memcg is not set under split_queue_lock,
->> two threads holding different split_queue_locks (e.g., one for the
->> parent memcg and one for the child) can concurrently manipulate the
->> same split-queue list of a folio. I think we should take the same
->=20
-> If we ensure that we will check CSS_DYING every time we take the
-> split_queue_lock, then the lock protecting deferred split queue
-> must be the same lock.
->=20
-> To be more clear, consider the following case:
->=20
-> CPU0              CPU1              CPU2
->=20
->                  folio_split_queue_lock
->                  --> get child queue and lock
->=20
-> set CSS_DYING
->=20
->                                    deferred_split_scan
->                  unlock child queue lock
->                                    --> acquire child queue lock
->                                        ***WE SHOULD CHECK CSS_DYING =
-HERE***
->=20
->=20
-> reparent spilt queue
->=20
-> The deferred_split_scan() is problematic now, I will fix it as follow:
->=20
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 5fc0caca71de0..9f1f61e7e0c8e 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -4208,6 +4208,7 @@ static unsigned long deferred_split_scan(struct =
-shrinker *shrink,
->        struct folio *folio, *next;
->        int split =3D 0, i;
->        struct folio_batch fbatch;
-> +      struct mem_cgroup *memcg;
->=20
-> #ifdef CONFIG_MEMCG
->        if (sc->memcg)
-> @@ -4217,6 +4218,11 @@ static unsigned long deferred_split_scan(struct =
-shrinker *shrink,
->        folio_batch_init(&fbatch);
-> retry:
->        spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> +      if (sc->memcg && css_is_dying(&sc->memcg->css)) {
+On Fri, 26 Sept 2025 at 19:26, Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amoon@gmail.com=
+> wrote:
+> >
+> > Convert the legacy text-based binding documentation for
+> > nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema, following
+>
+> s/YAML/DT/
+>
+Ok,
+> > the Devicetree Schema format. This improves validation coverage and ena=
+bles
+> > dtbs_check compliance for Tegra PCIe nodes.
+>
+> Your subject needs some work too. 'existing' and 'bindings
+> documentation' are redundant.
+>
+Here is the simplified version
 
-There are more than one place where we check whether a memcg is dying,
-it is better to introduce a helper like mem_cgroup_is_dying to do this
-in memcontrol.h.
+dt-bindings: PCI: Convert the nvidia,tegra-pcie bindings documentation
+into a YAML schema
 
-> +               spin_unlock_irqrestore(&ds_queue->split_queue_lock, =
-flags);
+Convert the existing text-based DT bindings documentation for the
+NVIDIA Tegra PCIe host controller to a YAML schema format.
 
-Yes, we could fix this like this way. But I suggest we introduce another
-helper like folio_split_queue_lock to do the similar retry logic. Every =
-users
-of split_queue_lock are supposed to use this new helper or =
-folio_split_queue_lock
-to get the lock.
+> >
+> > Cc: Jon Hunter <jonathanh@nvidia.com>
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > v1: new patch in this series.
+> > ---
+> >  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 +++++++++++++++++
+> >  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ------------------
+> >  2 files changed, 651 insertions(+), 670 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra-=
+pcie.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra2=
+0-pcie.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.ya=
+ml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
+> > new file mode 100644
+> > index 000000000000..dd8cba125b53
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
+> > @@ -0,0 +1,651 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: NVIDIA Tegra PCIe Controller
+> > +
+> > +maintainers:
+> > +  - Thierry Reding <thierry.reding@gmail.com>
+> > +  - Jon Hunter <jonathanh@nvidia.com>
+> > +
+> > +description: |
+>
+> Don't need '|'.
+>
+Ok
+> > +  PCIe controller found on NVIDIA Tegra SoCs including Tgra20, Tegra30=
+,
+> > +  Tegra124, Tegra210, and Tegra186. Supports multiple root ports and
+> > +  platform-specific clock, reset, and power supply configurations.
+>
+> I would suggest not listing every SoC here unless the list is not going t=
+o grow.
+>
+Here is the short format.
+  PCIe controller found on NVIDIA Tegra SoCs which supports multiple
+  root ports and platform-specific clock, reset, and power supply
+  configurations.
+Ok
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+>
+> Only 1 entry here, don't need 'oneOf'.
 
-> +               memcg =3D parent_mem_cgroup(sc->memcg);
-> + 		=
-spin_lock_irqsave(&memcg->deferred_split_queue.split_queue_lock, flags);
-> +       }
->        /* Take pin on all head pages to avoid freeing them under us */
->        list_for_each_entry_safe(folio, next, &ds_queue->split_queue,
->                                                        _deferred_list) =
-{
->=20
-> Of course I'll add helper functions and do some cleanup.
+I am observing the following warning if I remove this.
 
-Yes.
+ make ARCH=3Darm64 -j$(nproc) dt_binding_check
+DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/pci/nvidia,tegra-pcie.y=
+aml
+  CHKDT   ./Documentation/devicetree/bindings
+/media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devicetree/bindin=
+gs/pci/nvidia,tegra-pcie.yaml:
+properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pcie',
+'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210-pcie',
+'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
+        from schema $id: http://json-schema.org/draft-07/schema#
+/media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devicetree/bindin=
+gs/pci/nvidia,tegra-pcie.yaml:
+properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pcie',
+'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210-pcie',
+'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
+        from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+>
+> > +      - items:
+> > +          - enum:
+> > +              - nvidia,tegra20-pcie
+> > +              - nvidia,tegra30-pcie
+> > +              - nvidia,tegra124-pcie
+> > +              - nvidia,tegra210-pcie
+> > +              - nvidia,tegra186-pcie
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: PADS registers
+> > +      - description: AFI registers
+> > +      - description: Configuration space region
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: pads
+> > +      - const: afi
+> > +      - const: cs
+> > +
+> > +  device_type:
+> > +    const: pci
+>
+> Drop. This is covered by pci-host-bridge.yaml.
+Ok
+>
+> > +
+> > +  interrupts:
+> > +    items:
+> > +      - description: Controller interrupt
+> > +      - description: MSI interrupt
+> > +
+> > +  interrupt-names:
+> > +    items:
+> > +      - const: intr
+> > +      - const: msi
+> > +
+> > +  clocks:
+> > +    oneOf:
+> > +      - items:
+> > +          - description: PCIe clock
+> > +          - description: AFI clock
+> > +          - description: PLL_E clock
+>
+> Drop this list and add 'minItems: 3'
+Ok
+>
+> > +      - items:
+> > +          - description: PCIe clock
+> > +          - description: AFI clock
+> > +          - description: PLL_E clock
+> > +          - description: CML clock
+> > +
+> > +  clock-names:
+> > +    oneOf:
+> > +      - items:
+> > +          - const: pex
+> > +          - const: afi
+> > +          - const: pll_e
+>
+> Same here.
+Ok these are dumpicate will remove this.
+>
+> > +      - items:
+> > +          - const: pex
+> > +          - const: afi
+> > +          - const: pll_e
+> > +          - const: cml
+> > +
+> > +  resets:
+> > +    items:
+> > +      - description: PCIe reset
+> > +      - description: AFI reset
+> > +      - description: PCIe X reset
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: pex
+> > +      - const: afi
+> > +      - const: pcie_x
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +    description: |
+> > +      A phandle to the node that controls power to the respective PCIe
+> > +      controller and a specifier name for the PCIe controller.
+>
+> Don't need generic descriptions of common properties. Drop.
+>
+Ok
+> > +
+> > +  interconnects:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  interconnect-names:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +    description:
+> > +      Should include name of the interconnect path for each interconne=
+ct
+> > +      entry. Consult TRM documentation for information about available
+> > +      memory clients, see DMA CONTROLLER and MEMORY WRITE sections.
+>
+> You have to document what the names are.
+      items:
+      - const: dma-mem
+      - const: write
+Ok.
+>
+> > +
+> > +  pinctrl-names:
+> > +    items:
+> > +      - const: default
+> > +      - const: idle
+> > +
+> > +  pinctrl-0:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+>
+> This already has a type. Just 'pinctrl-0: true' is enough.
+>
+Ok I will drop pinctrl
+> > +
+> > +  pinctrl-1:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +
+> > +  nvidia,num-lanes:
+> > +    description: Number of PCIe lanes used
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+>
+> The examples show this in child nodes.
+yes it patternProperties example I missed this.
 
->=20
-> Thanks,
-> Qi
->=20
->=20
->> solution like list_lru does to fix this.
->> Muchun,
->> Thanks.
->>> reparent_shrinker_deferred(memcg);
->>> wb_memcg_offline(memcg);
->>> lru_gen_offline_memcg(memcg);
->>> --=20
->>> 2.20.1
+patternProperties:
+  "^pci@[0-9a-f]+$":
+    type: object
 
+    properties:
+      reg:
+        maxItems: 1
 
+      nvidia,num-lanes:
+        description: Number of PCIe lanes used
+        $ref: /schemas/types.yaml#/definitions/uint32
+        minimum: 1
+
+    unevaluatedProperties: false
+>
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - nvidia,tegra20-pcie
+> > +              - nvidia,tegra186-pcie
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 3
+>
+> 3 is already the min, so drop.
+>
+> > +          maxItems: 3
+> > +        clock-names:
+> > +          items:
+> > +            - const: pex
+> > +            - const: afi
+> > +            - const: pll_e
+>
+> Names are already defined, so just 'maxItems: 3'
+>
+> Same comments apply to the rest...
+>
+Ok correct.
+> > +        resets:
+> > +          minItems: 3
+> > +          maxItems: 3
+> > +        reset-names:
+> > +          items:
+> > +            - const: pex
+> > +            - const: afi
+> > +            - const: pcie_x
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - nvidia,tegra30-pcie
+> > +              - nvidia,tegra124-pcie
+> > +              - nvidia,tegra210-pcie
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 4
+> > +          maxItems: 4
+>
+> Just 'minItems' here.
+>
+Ok,
+> > +        clock-names:
+> > +          items:
+> > +            - const: pex
+> > +            - const: afi
+> > +            - const: pll_e
+> > +            - const: cml
+>
+> And here...
+>
+> > +        resets:
+> > +          minItems: 3
+> > +          maxItems: 3
+> > +        reset-names:
+> > +          items:
+> > +            - const: pex
+> > +            - const: afi
+> > +            - const: pcie_x
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - nvidia,tegra20-pcie
+> > +              - nvidia,tegra30-pcie
+> > +              - nvidia,tegra186-pcie
+> > +    then:
+> > +      required:
+> > +        - power-domains
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - nvidia,tegra186-pcie
+> > +    then:
+> > +      required:
+> > +        - interconnects
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - nvidia,tegra210-pcie
+> > +    then:
+> > +      required:
+> > +        - pinctrl-names
+> > +        - pinctrl-0
+> > +        - pinctrl-1
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - clocks
+> > +  - clock-names
+> > +  - resets
+> > +  - reset-names
+> > +  - interrupts
+> > +  - interrupt-map
+> > +  - interrupt-map-mask
+> > +  - ranges
+>
+> Already required by pci-host-bridge.yaml.
+>
+> > +  - bus-range
+>
+Ok
+> Generally, bus-range is only required when there's some h/w issue.
+>
+> > +  - device_type
+>
+> Already required by pci-host-bridge.yaml.
+Ok
+>
+> > +  - interconnects
+> > +  - pinctrl-names
+>
+> Above you said this was conditional.
+>
+Ok, I will drop this.
+> > +  - nvidia,num-lanes
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    bus {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <1>;
+> > +
+> > +        pcie@80003000 {
+> > +            compatible =3D "nvidia,tegra20-pcie";
+> > +            device_type =3D "pci";
+> > +            reg =3D <0x80003000 0x00000800>,
+> > +                  <0x80003800 0x00000200>,
+> > +                  <0x90000000 0x10000000>;
+> > +            reg-names =3D "pads", "afi", "cs";
+> > +            interrupts =3D <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
+> > +                         <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
+> > +            interrupt-names =3D "intr", "msi";
+> > +            interrupt-parent =3D <&intc>;
+> > +
+> > +            #interrupt-cells =3D <1>;
+> > +            interrupt-map-mask =3D <0 0 0 0>;
+> > +            interrupt-map =3D <0 0 0 0 &intc GIC_SPI 98 IRQ_TYPE_LEVEL=
+_HIGH>;
+> > +
+> > +            bus-range =3D <0x00 0xff>;
+> > +            #address-cells =3D <3>;
+> > +            #size-cells =3D <2>;
+> > +
+> > +            ranges =3D <0x02000000 0 0x80000000 0x80000000 0 0x0000100=
+0>,
+> > +                     <0x02000000 0 0x80001000 0x80001000 0 0x00001000>=
+,
+> > +                     <0x01000000 0 0          0x82000000 0 0x00010000>=
+,
+> > +                     <0x02000000 0 0xa0000000 0xa0000000 0 0x08000000>=
+,
+> > +                     <0x42000000 0 0xa8000000 0xa8000000 0 0x18000000>=
+;
+> > +
+> > +            clocks =3D <&tegra_car 70>,
+> > +                     <&tegra_car 72>,
+> > +                     <&tegra_car 118>;
+> > +            clock-names =3D "pex", "afi", "pll_e";
+> > +            resets =3D <&tegra_car 70>,
+> > +                     <&tegra_car 72>,
+> > +                     <&tegra_car 74>;
+> > +            reset-names =3D "pex", "afi", "pcie_x";
+> > +            power-domains =3D <&pd_core>;
+> > +            operating-points-v2 =3D <&pcie_dvfs_opp_table>;
+> > +
+> > +            status =3D "disabled";
+>
+> Examples must be enabled.
+Ok
+>
+> > +
+> > +            pci@1,0 {
+> > +                device_type =3D "pci";
+> > +                assigned-addresses =3D <0x82000800 0 0x80000000 0 0x10=
+00>;
+> > +                reg =3D <0x000800 0 0 0 0>;
+> > +                bus-range =3D <0x00 0xff>;
+> > +                status =3D "disabled";
+> > +
+> > +                #address-cells =3D <3>;
+> > +                #size-cells =3D <2>;
+> > +                ranges;
+> > +
+> > +                nvidia,num-lanes =3D <2>;
+>
+> This doesn't match the schema.
+I will try to validate it as a child node with patternProperties.
+>
+> > +            };
+> > +
+> > +            pci@2,0 {
+> > +                device_type =3D "pci";
+> > +                assigned-addresses =3D <0x82001000 0 0x80001000 0 0x10=
+00>;
+> > +                reg =3D <0x001000 0 0 0 0>;
+> > +                bus-range =3D <0x00 0xff>;
+> > +                status =3D "disabled";
+> > +
+> > +                #address-cells =3D <3>;
+> > +                #size-cells =3D <2>;
+> > +                ranges;
+> > +
+> > +                nvidia,num-lanes =3D <2>;
+> > +            };
+> > +        };
+> > +    };
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    bus {
+>
+> I don't think we need 4 examples.
+Ok nvidia,tegra20-pcie and nvidia,tegra210-pcie should be valid
+>
+> Rob
+Thanks
+-Anand
 
