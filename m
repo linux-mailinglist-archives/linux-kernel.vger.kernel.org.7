@@ -1,107 +1,142 @@
-Return-Path: <linux-kernel+bounces-836386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7A7BA98C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:26:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871CBBA98CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2A7A17ECAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F4418969EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5191130C0E1;
-	Mon, 29 Sep 2025 14:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241D0306D5E;
+	Mon, 29 Sep 2025 14:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1ZqkmIc"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jguj4Su+"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5986230BBB0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D81F2F9D92
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155895; cv=none; b=Uov+X31gVmV4/t65jZmM+UDjIFEQWaMBkWIo1vxGD6bNNDADu/ewOgpZfFupAxpRsVgRhpIMEJUwYErmrJPnIpfhcRHJ0qiQIw7zqczYBJC4UpYijKxkLm5e66TFDh4H3GT37HOsivSeEgYIUkcZM1V5ryIvosh4Cw2dvLLChnc=
+	t=1759155922; cv=none; b=KR0G71IBXqKqbHBYjbNpdetkzZUnyHfDAtgv/EkbYymmlWZTO/yelJAVs9qdPY0XRoHQz2w6FMl6ahpiWNj9yxEJ7WEcEAVWroMdtBLnfO+45ysmfJlWRbSRWr42qRKLQme5iQp8EU6/YrBi0STVhuC2KS+7MOPdODE4mhBOHFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155895; c=relaxed/simple;
-	bh=ot8hcRKjG+GhZEktY+15kwYYzRMRN2qEVMOH15R9us0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EfcZjzgdSlpDTroVxP9760a9Z7i+xaxkd8Uepyl9Wy+FLkdf5XOQ6GXPgJlLaG0Od6yh4hd/5U0sGPAenBRaLiK0+Wk8fVFQJLG1pnxVb3xPy96vWsqN/MZK4kCACoYwRKL//bu5m29I81W7Mgu9MB/Y3ha0KF8Il+6xTMhgRbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d1ZqkmIc; arc=none smtp.client-ip=209.85.215.178
+	s=arc-20240116; t=1759155922; c=relaxed/simple;
+	bh=K85rkuCudYsXP5pYW/dzKbInwqXPQwsVrWQ5iHSeRC0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wj6azpi83XPQEiSkJOfbqU7wkWv5J+m/GO93ufrEPyicPSoJP8+od0rzR7uzPXkO+Pb+j4Y0vt5CQoliJKarhN3/80K/2MrdbGjGY3GCtCufckNeeiq+hNQiB9dHAJlfNIMu32/RYQMl/cFL6TH8S7NVGxFN13SMllVwdNouWog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jguj4Su+; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b520539e95bso281017a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:24:54 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3652d7800a8so37294281fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759155893; x=1759760693; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ot8hcRKjG+GhZEktY+15kwYYzRMRN2qEVMOH15R9us0=;
-        b=d1ZqkmIckNX2lrSGeU65Xhu7nXJ+Z+ZnTEmzt6NMRbmj3/E9L5tISrwe5o55miaXQ6
-         r++e70H5FvP/3JdDWtBasjP3AR/Ey+el2NBIdjr5LydY78DIyQ3Vj8nmYXiFPDh1EKJx
-         mBbVyBHRY7glXEnIgxwR2mcFB+VyrdjKUe2hehIRq/LZYiMT+AghUrR0uAlDCYdPlwNI
-         TexgbRig4GjOtU6JJJleHkynApCOjRLUw/9vwNSFDGna5TDsYvY/Kqb50lawiTQVeRxj
-         Y6kfkKzSdG3tH03EwI/DZeCIdCMEmmHCy0QpV5bmD3TwYx/tMqMOKaFNX3/8CDEOOIm5
-         65Vg==
+        d=gmail.com; s=20230601; t=1759155919; x=1759760719; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPPg9TIoZPnzthQd8E1VwdjwIEaEjaVDMMssW2mg+cY=;
+        b=jguj4Su+0loOcNAxNNxH55BAURnQfg2SYpHWQNmmQkSF0DVfime/13OeHnO7IWK5GP
+         4CWHbvDOwHLKk5ZfpTkQ8rrLJUat2Y4PRZZSPbm8739wIAbWD8KgAiLns96yYFtuBcTj
+         +H3l6deLYG5MTMzy8wJkeYPzJFCc+4Jumk2r0boyTpTkX+tWyzBmj8vQsIMJqMIgNyxW
+         nlumtuDXW6Zupae6ugyBlfQ5vc74x9IKxVv02sxaITPBAh1UsYZVgsXSK+wHyn9QZcGj
+         laXn3e+7WwJWrW7K47NwUSm0FiMMYI0H0BqhHCXkEQs7fyhYd2uKoAlUnqQ2eZCMSlgu
+         Uspw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759155894; x=1759760694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ot8hcRKjG+GhZEktY+15kwYYzRMRN2qEVMOH15R9us0=;
-        b=W55bdXC5WDpMEXb+wTSMimqNBUbje8ybET5ioL9Qc7Ed/njffF7W67M8KtNyk9ADyO
-         TehVuS9dtg6Y/2roEVQRGtlI+8tEPWBMkv4JrikiIfLymodbDo99wZl3xtYMDNSH/+SI
-         qHEzTgCwF+BXLV2M2LhajOY1u1Nfrq5x/NqM+nvoag1GWNRS2MxGYIfwkxLF/9Fx7myB
-         JQnjuTjJZxuMRmKRHdD0pnt0HHnH0AqftEt30reVQFPEF56xCkIONu5WO4vpYHIf0GSG
-         2lbGhpl/Zfrr0OlDbFbTDUVvKSxwIdPQJcEuw1cZpA/qThBoNTUgK88wUd02wE5Vszky
-         Ai5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXGi85BJpyHwlh7NU+y2K4fznLR8r5Xyhx0xVUlHGOpEFfu7nle49anHoibMNpcqp+xDxlWu7AhbYL+t0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ2qacHK1Uq40eJvR1NSSIWSclW62+/33elnnHSshPm/ji+WOG
-	SfOM0B9SArMTCusLzI8XR/pQYxD61RP0v2qTKdyhzB45LfEz2i2VCTLGgDcPFr638G+yzXEmEL/
-	vywhu2vIA4CyUHcZqdLDw1NYrfTQFInvRqMAz
-X-Gm-Gg: ASbGncukLAKwPSsI77bAS97/eBXYoUIjqK4WqapLNSdXjfT4XELIq/FoBIufoDL3rYE
-	b0O+awBLKs2xrgjDteV2A5dts7ZBwmF8k3+Bh6GjYEHIeVQ3PGmdyvMKwA/1NuhULlWEJNMBH7D
-	x0uoYMY1aC7ne9kCN2QtAv6T1C7WXg/O5EKnZGmnEYe0Ff7U+4vz9UtDiVtKHXSuyGQbz7SXDIC
-	KjmkPyIae5YCPDKhTce8mGTEyiCNv/5NH4uaFnQL8ZgHKkR3wmghcZ7q4RxlKfcHzeGXTPVxmTS
-	KaeENw0PGL3vXztb3lvdnW+3oouWlKwW05Dn
-X-Google-Smtp-Source: AGHT+IFO+CKcOfhjq3yagbAUNFRqtJ2JQPPv6IOGwZ4Z+4FHLSqV7RrX0bFPoMZ075YnvnY3rrn95mijVFVOb6eOUBY=
-X-Received: by 2002:a17:902:a507:b0:25a:4437:dbb7 with SMTP id
- d9443c01a7336-27ed49d5fedmr70259715ad.4.1759155893602; Mon, 29 Sep 2025
- 07:24:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759155919; x=1759760719;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DPPg9TIoZPnzthQd8E1VwdjwIEaEjaVDMMssW2mg+cY=;
+        b=HJixtFGJUY7qamXPsTx+sJPQzQK40eP4XDqz0jdTTfexhaQi9MAHa3qjizpHzSyelA
+         uUelPTBoMj1NV0w5HIJRZJAOd/e4ACKHmhggjaDbbmkMq5gC+bZQswDxJ7wps4isL6n3
+         +YUetEvCL5IeON+morYoDEdx/S6qAX3jcBq0l5gBl6UqtpH1D77Dnc93aYoiQSwXna1F
+         kVYxVZ9oLpUry3hB5WxF4EbMYYcSPY7NtWdZV0kTQ4XBOOV30wUIVrWXrPhgk4CGdeJG
+         A+FKS3oK5V1oSKRgra+ddB/96HMj+ExUq3M+dAIcMTLfmiWSJRnDXKZ+cXC1FKscNi+a
+         pYGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvAIz8KAdLBmmLNUhtK/w4Um1GnoDAoHdkBPFuTQIxx6p6vP9O1wG7WnnzR3xuKVmvPY338nSqsQWJsyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD4HhJhbL9B7Fln7BsMTa7HQ4SF9RBD5CV3/tVU6iDBwkZz+NJ
+	6ho9jbcrhYc45wxo9EUeBqeLk/5ZlA4/3MU865RZC+aXsge/QlpJbKCi
+X-Gm-Gg: ASbGnctIJLQ+i8acTD1IGqbJS0I/z/qzxGAB9yzDp87i80vsOJVKrQh2VJjcz0Kk5I5
+	IfCpklywbTSeawSS1dyjHw9JDmF1LmmjSLb9yheIwJqT79Yp/g44SNzu4aJN8PrpfinDXqKpxcR
+	XVrH24e9KpZhh3az4+C7Ytf+jDQAE+eYWvjUbrUAou0HenSV4ly5p4MKZUU315DGGOgNq+tIG9e
+	FPvHOfottGbhue8P1F6Nu5qpCdvPHtUdhf8c/89QmZsznrmtRRVSSAjnfDQtbeS+UoqGXwCUURY
+	jBLRGE+UWE9FbCZrZsQpwn5cclSJq1JhXsdSfuj0+YJ5ZbOvs2x8CMRREqHtTXSGkP8Cs+5tkaM
+	KgcVfJ31XPuAy7NYwats4HPSNAn89lBgXCb8=
+X-Google-Smtp-Source: AGHT+IHxDGpQBwuQkWcBRlcxN2mP+i2I0/l8+XNF8RRMmqOhDyFCD+mEDRiLnbhKmmlYr8NSnFokUA==
+X-Received: by 2002:a05:651c:1986:b0:36d:755f:a6d8 with SMTP id 38308e7fff4ca-36f7d2cb85cmr46262991fa.14.1759155918449;
+        Mon, 29 Sep 2025 07:25:18 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3728c23e6c1sm13201001fa.52.2025.09.29.07.25.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 07:25:17 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v1 0/8] Add support for panels found in various Tegra devices
+Date: Mon, 29 Sep 2025 17:24:46 +0300
+Message-ID: <20250929142455.24883-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1754228164.git.y.j3ms.n@gmail.com> <DBWXJA6XF1VS.3PNHRWH030H0J@nvidia.com>
-In-Reply-To: <DBWXJA6XF1VS.3PNHRWH030H0J@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 29 Sep 2025 16:24:39 +0200
-X-Gm-Features: AS18NWAQUPZbXtjWExl55E-tjUwblkbPBQ5uQeLCMefcIVbUSmtt91RPmlpmau8
-Message-ID: <CANiq72na_d6JQdyZ1S22mus3oom_jz93rpY+ubr4yOuvMY_fSA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] rust: add `TryFrom` and `Into` derive macros
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Jesung Yang <y.j3ms.n@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 8, 2025 at 11:13=E2=80=AFAM Alexandre Courbot <acourbot@nvidia.=
-com> wrote:
->
-> I have tried this series on nova-core and it allowed me to remove 150
-> lines of boiletplate just like that. As far as nova-core is concerned,
-> this is a perfect fit.
+Add support for panels found in various Tegra30 and Tegra114 devices,
+including panels in Tegra Note 7, Surface RT, Surface 2 and Ideapad
+Yoga 11 T30.
 
-It would be nice to see the (possibly RFC) patch if you have it around!
+Anton Bambura (1):
+  gpu/drm: panel: add Samsung LTL106HL02 MIPI DSI panel driver
 
-Cheers,
-Miguel
+Svyatoslav Ryhel (7):
+  dt-bindings: display: panel: properly document LG LD070WX3 panel
+  gpu/drm: panel: add support for LG LD070WX3-SL01 MIPI DSI panel
+  ARM: tn7: adjust panel node
+  dt-bindings: display: panel: document Samsung LTL106AL01 simple panel
+  gpu/drm: panel: simple-panel: add Samsung LTL106AL01 LVDS panel
+    support
+  dt-bindings: display: panel: document Samsung LTL106HL02 MIPI DSI
+    panel
+  gpu/drm: panel-edp: add AUO B116XAN02.0 panel entry
+
+ .../bindings/display/panel/lg,ld070wx3.yaml   |  60 ++++++
+ .../display/panel/panel-simple-dsi.yaml       |   4 +-
+ .../bindings/display/panel/panel-simple.yaml  |   2 +
+ arch/arm/boot/dts/nvidia/tegra114-tn7.dts     |  13 +-
+ drivers/gpu/drm/panel/Kconfig                 |  26 +++
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ drivers/gpu/drm/panel/panel-edp.c             |   1 +
+ drivers/gpu/drm/panel/panel-lg-ld070wx3.c     | 182 ++++++++++++++++++
+ .../gpu/drm/panel/panel-samsung-ltl106hl02.c  | 179 +++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c          |  65 ++++---
+ 10 files changed, 495 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-lg-ld070wx3.c
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c
+
+-- 
+2.48.1
+
 
