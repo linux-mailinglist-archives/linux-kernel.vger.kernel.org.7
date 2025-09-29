@@ -1,223 +1,231 @@
-Return-Path: <linux-kernel+bounces-835762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DD4BA8008
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:37:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4230BA800B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971497AADFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:35:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7016217935D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E7929B8DD;
-	Mon, 29 Sep 2025 05:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532EE29B8DD;
+	Mon, 29 Sep 2025 05:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0g07cX5r"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011024.outbound.protection.outlook.com [40.107.208.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="na1OywAf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792F229ACF7;
-	Mon, 29 Sep 2025 05:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759124224; cv=fail; b=Qybev5FbzJ1m5IFYZRPNJWkUfsuTjzBc4FvkttDEbTF2+Jr0QNUVuS+/YkrWxTUY35v6C6qXHVggEDp/BDxhJZusvZtjMYfJeON2QX1AXunIMldDhXD3D/uLqyBHymyNtXl+qQpruCl/nckuH8YIkDc2d1En5AAcTPjtXuwFlFs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759124224; c=relaxed/simple;
-	bh=uwXL637iTkxCh/4yHK4nfim8Vrgo5r0fsTO2tPvD8hk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lfsj1I1PKHsY7cwdSREA/pJsni4yJJmGVGPo2qmYG9oMIYJyRUzHizynoWZ2o2HhsqEeeUnXSYNuVOxEOS0zgaaBZbKH7gV1ylvVzvH+vnUlSItPDJNwDUqdsFuFthz4I1lV0tPAk98fwynbJibMsWzmfL66cbubZ+MiGaqJwyM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0g07cX5r; arc=fail smtp.client-ip=40.107.208.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pZdvBRHIReKfyuwT9j23OJF8hzpDC6d82qCEJslrnO56yylifmD4qEytkv6iVWbL5YOjSLJ6wCsrEcwE4mc+e6pJa6s8lrTDQp0BBE5jGE1BU8WeH5FCn0PA2/5zMs5sRDYGgu1IYdLKoN1+obhO0nbr8rFvBy02YowGqMaGlLqMkOIjqu2z0p/3aiiPInNies53s2J90JMlb0+0fyruILfpGFOwPG7Kp1PJC1u+I3N2PhC8q9XLO9k0LpM9dT0sDoTVEHOBZNRKZ1do5uBc61CaKjZKkOFAepCW2vyIJK2/rrMObhnTmltW/hYIsMhZr2SifB1mhaArbj5OyV/V8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H773GghB59iaLVCqgdbkSh6KdK3ukTHO0MgoUBVYou8=;
- b=JqRzo3ci4l62Xnx5qczOVRvITPaziRjULS92m0eWhWlsSHhIeoTpFxu6zzQGzOT2DuohPNP1f179u/4GhDECUHtXEZWKt2vDEZ2s5S6oqDWJE2VWgHu4NoM5xdADhzxdHVF60xbfozSH+hZ9kumV6akLBHZtf2PQUdTV6/ojxH+FzcscbVr+Ljz+05AaZEYzzAnQHtNcCpGCgLINayhNbLX8qg7+vMYQeNeR8o2H8KivhVJB5Y95wVx2zBXqMsUwYZhxkLQiWCrzmVIfCXuTAfTR9QFHkeVyOJzZcIDPaoKUQCCY/D69+B1/PM2ai0zReGsSASz+zQR6PCUw6B2hxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H773GghB59iaLVCqgdbkSh6KdK3ukTHO0MgoUBVYou8=;
- b=0g07cX5r87t89/BWHdC/kMlp77Mmi8X8LFU24Ti/XA/9eT34a88BJX1JpGyZZvWPnS6M3u4VBgKOc/gUyA6rx3PSvTN5xImGA5VfOo9THMT37Hqaqd77k+FM/DD78nVXPCax/N13i/OhAGzbj9gDsbZs6cO1AISNk6+JIbjJTLw=
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
- by CY5PR12MB6058.namprd12.prod.outlook.com (2603:10b6:930:2d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
- 2025 05:36:58 +0000
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c%5]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
- 05:36:58 +0000
-From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
-To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>, "vkoul@kernel.org"
-	<vkoul@kernel.org>, "Simek, Michal" <michal.simek@amd.com>
-CC: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/3] dmaengine: xilinx_dma: Fix channel idle state
- management in interrupt handler
-Thread-Topic: [PATCH 1/3] dmaengine: xilinx_dma: Fix channel idle state
- management in interrupt handler
-Thread-Index: AQHcJ9gPk7EbJetffUKQ1IMMmS1EErSptfbw
-Date: Mon, 29 Sep 2025 05:36:58 +0000
-Message-ID:
- <MN0PR12MB595389852415C5833530F1ADB71BA@MN0PR12MB5953.namprd12.prod.outlook.com>
-References: <20250917133609.231316-1-suraj.gupta2@amd.com>
- <20250917133609.231316-2-suraj.gupta2@amd.com>
-In-Reply-To: <20250917133609.231316-2-suraj.gupta2@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-09-29T05:35:12.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|CY5PR12MB6058:EE_
-x-ms-office365-filtering-correlation-id: 6d2b712a-6d1d-4ed6-5e5c-08ddff1a3553
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?AGoyMCeQLhsM0q4z/tuGVb8/OmZuVwFqHXmjUdLn932LCaN71uOZh4kVRl2y?=
- =?us-ascii?Q?TMU0sbB8BOn2vwdeejaj2BM0iOMV8+bId0mmJHCeT9WpY6auKBKsmb4P7H+J?=
- =?us-ascii?Q?Gu29bNojuneUFxHsEweb8QEHItLtu3un6mM/Xe8hfgj5dRK++V1YC0GBLKWY?=
- =?us-ascii?Q?L03Muu8MmnlOuiqEwkmEai2AuOlXG64t7roVSIE2/3KBSUuxTQbHBdruhQtT?=
- =?us-ascii?Q?crGRAtHsgQw30FtQW8lh9QWYh0WOLtBQYcrveYY5STtT1B1973AYJcT4j0/e?=
- =?us-ascii?Q?PfjkqmSrqox9/l19Nr16h3QFIadLA4NRaNRAlTFpoR+ABe/U2WOJ08wLb0KC?=
- =?us-ascii?Q?NanaOr+pF5b0MiaaPWwr8wxr5Egb/VZj8hLf83QlRTlairmwxkx2MpLuyd4L?=
- =?us-ascii?Q?o5rOsLI3nUGWQGILWeNjM+osNPiPLMWHWz2FZrxaGzmcHGKwQftrmmCP7beV?=
- =?us-ascii?Q?iptSeSNjLNOtTtab0Y8ulPt1arJAiMrWS4PwcG202t21O4YCVrb3qX/CwOGu?=
- =?us-ascii?Q?rFPE2e22+R/g7T6qwiuQkGWDWfwJ+4GkiofCluAxQoSF1ym4jH6d3M37GyKF?=
- =?us-ascii?Q?HaLdgh0gCVgzXHilk7BZHbULqMXz0xbRaeUwF7h/OypLRfxDZYpg7wiSB2H2?=
- =?us-ascii?Q?LgVDXGrdLMozhFBSS908o7LxK9Um6eCSq63aZMyO6K0SBNWir3dfKmScOpKF?=
- =?us-ascii?Q?HTpiEAKdW72SDt9MZlh+ATJDJsC0rjEts4DhV8fCaKO/2rkVRD52/4gAZs/i?=
- =?us-ascii?Q?MXjonaHoBWrDg8hNLE7drKZF7yzk7N6+S0p64yW2ndUnX528MMgdMImqbJFR?=
- =?us-ascii?Q?3N3AW6j1XFRMyI1im9sgVWUTYrZIOPt9nbRmECntReE0Wy1KumE41/EeQ/Hc?=
- =?us-ascii?Q?N2TfOEHPZmBH/g9eK0Rok6JB0plfrkwLfFQXEODJX//9qbFziVUld+2D9O7s?=
- =?us-ascii?Q?6Wiz6IFPizB2nCAWiJsfeGwmQ7F18aVLmjpkHjB/FljJGfybIhA8O+JIdYM9?=
- =?us-ascii?Q?5hCkT9q5WKeOdcYrqeNLHem/RNmlV8t0LecA+e+J2FRQavK76efDq5gtaQUT?=
- =?us-ascii?Q?cf0cUqBJQDahQN6W54eMZezl2bGnc/Ze1xXu6sXKWrd3iPE32hmdRwFfJRDW?=
- =?us-ascii?Q?W+0V8gOwF8txmo1V4ygZt2mb79TR1sNYoCP2r/A1EyeKFBRWHVDQb6Q9jau5?=
- =?us-ascii?Q?uCmOw9wrrOb4uhahB5xMeIZWYHbEoa1zcxRd9r3HFbibA+n+h/3ByA2EN6b0?=
- =?us-ascii?Q?zD3V9Nz7qvpgRGYd2nkwQOvJchtQXv/nTinkMz/f0C03RzZRLiKWbsTzuHao?=
- =?us-ascii?Q?0VoLtWaJ7C/pn90gUArwmnqDHxYZPu9Aua8AeC5FSITDUIrl8zIwJwMP2OvC?=
- =?us-ascii?Q?6Ikk0VLHtSMpIX0406FQ3IvCaHYkxTUZ8qmvd0sE9VZKmKH0JQZ9uynMo7cL?=
- =?us-ascii?Q?ID8A6LU0diNEbyaLj6s1DDul/WYdjagWzfzu07/26hHoD2lp7Z0INf4TIAGk?=
- =?us-ascii?Q?X3HBteADAX2YnHRjfOE5YO75dDKShHL2qIWw?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?luEZ8+CFqZS5mTl/t9J1kLkPZQLLhhZxr6mFAuLHIKx+DjuRRaNnuLrnDiwj?=
- =?us-ascii?Q?8rM05GKg66JTUbc/IjARcf+uDCbszF0xJt7cSowwG0oQGqcHJ9NX5pDKP8Ab?=
- =?us-ascii?Q?wyqCsJIXtRh+tmy+fitJv/J2h3AiQVHwI2mjnN2AJHABS3ihgBJKKTINGypX?=
- =?us-ascii?Q?J/px62xQJQuyUwpDPlCsXMUw5DXJIBdekmOwTms2UqjDnWK+Ja9hzeQRhvnh?=
- =?us-ascii?Q?XrXTU2z1fYsqXs1DPCC/S+Qyqqh47mWgup9Oa/r+84nDHWoZIkMI3+b4GLql?=
- =?us-ascii?Q?jbuOEyow7nKbIsgzqHAFMngyccwK6DqpuQXWBy69LPprtZvIBEfslPMdXkW6?=
- =?us-ascii?Q?MmEAhZEJYHdqQxj/kuDj42UmAaNOZ+G5vXVwTTp85tLavDaLebGU9iUuz+Qj?=
- =?us-ascii?Q?zcLQdJf2ak4WPxXsnvewdc8JZlV8slZSmlXdxTk4YleQJApAQO6aKtEIX3/L?=
- =?us-ascii?Q?TVLJ7LkhDK+vU+6bNRYYle0Yl8LLcNJM2RT0tq/Vv77rXr8gsnu0YrPgGwNa?=
- =?us-ascii?Q?Jp8d847UdgagDVaTzb07S0pCczJsxJaIAUIJE0B6MQBfQvIdyTXjGF6Kwo5T?=
- =?us-ascii?Q?qE1aiHJ9J+GcMlvKsUIuZM1zHEaH9Lp6Ef33EvDY9UE/5dCriL/dGfMoPUBr?=
- =?us-ascii?Q?grbAYQU/BjOUXcof0bCVWGlcVJhFjWiMA3ajs5wkkSkYHTDZ+BaeBpOrs6LU?=
- =?us-ascii?Q?MMOteJl+Cg0hwK6x/nb8cQuh5Gnzow4UxwIBjW29sBSCxV/KbnM65VM+hKPl?=
- =?us-ascii?Q?PWshzPHTwv/mUxBeFltR0SsKq7ULf7MrkmrCozALdvfy0TYd1OMFyD0NKUeL?=
- =?us-ascii?Q?ZLLnTMzR/ISIl8pTzCZNehfA1znEquofJS/ruG1zHKjxAEnOu8k4ySGa+CAf?=
- =?us-ascii?Q?cn+8p1903Wcrn0sCLgIoGs9WF+amvpn0MOzBm/Dn7n5DkaBvVOxCrFZqKCL1?=
- =?us-ascii?Q?V+U8i5sIExGCSWKFXmc52/09qDAo4ZqyQqBUTkeqAnpcEKH9zNnCbcMMTKhh?=
- =?us-ascii?Q?cupd3lv2e7pdGSbo0x6jYrDRZuwThMsD6VG3CW74viMMrraKfArXgII7ytNV?=
- =?us-ascii?Q?Y7EKA8Zxi5Zu4Nn6BhfZt7BosLL+nd6Na4iDN9QljqpMe7vCqM0W6lRvVVri?=
- =?us-ascii?Q?QmDiG2wVcyUJHCf10piFbf8BBW7g3mcMfaexMB13MhB+pkx3esvGeDcZalr5?=
- =?us-ascii?Q?jF76FBqEf2vAACC+62SkeTNqfbu4XqpSV5wTwBgxArIu810A8VP+oruLW1k5?=
- =?us-ascii?Q?/lkqUQyxxIUw+ghIoli4XmXdo77Ew7qAghQOPBM9aXIW+p7Y23xcm6sG4N2m?=
- =?us-ascii?Q?jRzwB0ZEtPmngzIDAGGJGA8xG0omxzPcLAJoK2fsJtz78BTFcdce34HahD1L?=
- =?us-ascii?Q?87GK7aKOcPiNEdckOiH7mb4dK6LFSF+Nc5O/117KAJtGsWJAUiK8GOJ/EN4W?=
- =?us-ascii?Q?872nL08agwYRm8tEblAXvc58C+TDC2Nzp9PZNocXIJIF5fKlsddxrJXrIz4P?=
- =?us-ascii?Q?uwljIh4VaX/cRleJrZ4X8IqRro30V7cZRhx+6WZJ/I/tYIYL932ZPMGgMDzy?=
- =?us-ascii?Q?vHLydqMbvhFZ82OyaLU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783BC34BA53;
+	Mon, 29 Sep 2025 05:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759124359; cv=none; b=XHWVQj1nRDtdsKCUeB1y+lwCbJ3008JxFWiQC5hStbsB5S9cMn4j+BsvgtAnwz4CumEFo4hedjBLB72NTW+JD/6ReaWXRW/YlJheRUnkN6xHEN5z+mAfdA+i3+oeUz5xtnGn4MX35bgNvOezZcI8bf4Vf2NV/NoIRl2u62/HJuY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759124359; c=relaxed/simple;
+	bh=uFyVRrmf1hBz0VN8uXtkpg+tjIPeDCXurlVKT+XTNKQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VSiY0Rz/xCJkvOQIgegICHjGi6LMGrJIa6FoJ+OcsLDb1xYAU2k6sP2EllS8XFdgfilBdyIB8N2dowTMUjkuuvKOPJf7PcyBV4qtOQT1B44+q7qysc+IpFcDF2CWJ1Xo6iL7lJjCKarIbVKAJgWWPR8ABb5nsWnnkudCsHHHbMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=na1OywAf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14ABC4CEF4;
+	Mon, 29 Sep 2025 05:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759124358;
+	bh=uFyVRrmf1hBz0VN8uXtkpg+tjIPeDCXurlVKT+XTNKQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=na1OywAfH0QKzW9SjKCfBYqDOCfQGvagtpoZnpLstzcY00vd2L6gat0vfmosm1hvy
+	 zw66eNMTvDxGCU05voIkUdemjW1nuTukA3M3Ih6+X76tv6vgXKbjgEwu3SWDTxBsJq
+	 2OCKCpWeNYxysiIz4XvLFiZn6qmi3/z9wjbUEhyhbkOgkIgPDMzwb+EcQaXLJGMPjX
+	 MUDAeDqh9ypQqEOfDr5Y4unsEwobBUAw2GWWqrTS2rK11VxZAjO02vWuDPkvbpqtcl
+	 mPfVcnVgZ7S6mI8NW4r9u6ukq3L9zXej+6BJQ00ATvLeVe6mQxDNdQfVG6yDLszrcM
+	 6Wn6UtxFfzpDw==
+Date: Mon, 29 Sep 2025 14:39:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: <87ms751z28.wl-kuninori.morimoto.gx@renesas.com>
+Cc: chenyuan_fl@163.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Yuan CHen <chenyuan@kylinos.cn>
+Subject: Re: [PATCH] tracing: Fix race condition in kprobe initialization
+ causing NULL pointer dereference
+Message-Id: <20250929143916.5984441b32e6f84618b4deb8@kernel.org>
+In-Reply-To: <20250929031122.2825-1-chenyuan_fl@163.com>
+References: <20250929031122.2825-1-chenyuan_fl@163.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d2b712a-6d1d-4ed6-5e5c-08ddff1a3553
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2025 05:36:58.5170
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wnSc8JiHG2RCPdgxbktZ7XRw4ps2RHUG5KYuRFOf5dvA+G2ecVNOzkCJyFs9Q9lK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6058
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On Mon, 29 Sep 2025 04:11:22 +0100
+chenyuan_fl@163.com wrote:
 
-> -----Original Message-----
-> From: Suraj Gupta <suraj.gupta2@amd.com>
-> Sent: Wednesday, September 17, 2025 7:06 PM
-> To: vkoul@kernel.org; Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>;
-> Simek, Michal <michal.simek@amd.com>
-> Cc: dmaengine@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linu=
-x-
-> kernel@vger.kernel.org
-> Subject: [PATCH 1/3] dmaengine: xilinx_dma: Fix channel idle state manage=
-ment in
-> interrupt handler
->
-> Only mark the channel as idle and start new transfers when the active lis=
-t is actually
-> empty, ensuring proper channel state management and avoiding spurious tra=
-nsfer
-> attempts.
+> From: Yuan CHen <chenyuan@kylinos.cn>
+> 
+> There is a critical race condition in kprobe initialization that can lead to
+> NULL pointer dereference and kernel crash.
 
-Nit - also explain the spurious transfer scenario so that fixes tag is just=
-ified.
->
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> Fixes: c0bba3a99f07 ("dmaengine: vdma: Add Support for Xilinx AXI Direct =
-Memory
-> Access Engine")
+Good catch!
+
+> 
+> [1135630.084782] Unable to handle kernel paging request at virtual address 0000710a04630000
+> ...
+> [1135630.260314] pstate: 404003c9 (nZcv DAIF +PAN -UAO)
+> [1135630.269239] pc : kprobe_perf_func+0x30/0x260
+> [1135630.277643] lr : kprobe_dispatcher+0x44/0x60
+> [1135630.286041] sp : ffffaeff4977fa40
+> [1135630.293441] x29: ffffaeff4977fa40 x28: ffffaf015340e400
+> [1135630.302837] x27: 0000000000000000 x26: 0000000000000000
+> [1135630.312257] x25: ffffaf029ed108a8 x24: ffffaf015340e528
+> [1135630.321705] x23: ffffaeff4977fc50 x22: ffffaeff4977fc50
+> [1135630.331154] x21: 0000000000000000 x20: ffffaeff4977fc50
+> [1135630.340586] x19: ffffaf015340e400 x18: 0000000000000000
+> [1135630.349985] x17: 0000000000000000 x16: 0000000000000000
+> [1135630.359285] x15: 0000000000000000 x14: 0000000000000000
+> [1135630.368445] x13: 0000000000000000 x12: 0000000000000000
+> [1135630.377473] x11: 0000000000000000 x10: 0000000000000000
+> [1135630.386411] x9 : 0000000000000000 x8 : 0000000000000000
+> [1135630.395252] x7 : 0000000000000000 x6 : 0000000000000000
+> [1135630.403963] x5 : 0000000000000000 x4 : 0000000000000000
+> [1135630.412545] x3 : 0000710a04630000 x2 : 0000000000000006
+> [1135630.421021] x1 : ffffaeff4977fc50 x0 : 0000710a04630000
+> [1135630.429410] Call trace:
+> [1135630.434828]  kprobe_perf_func+0x30/0x260
+> [1135630.441661]  kprobe_dispatcher+0x44/0x60
+> [1135630.448396]  aggr_pre_handler+0x70/0xc8
+> [1135630.454959]  kprobe_breakpoint_handler+0x140/0x1e0
+> [1135630.462435]  brk_handler+0xbc/0xd8
+> [1135630.468437]  do_debug_exception+0x84/0x138
+> [1135630.475074]  el1_dbg+0x18/0x8c
+> [1135630.480582]  security_file_permission+0x0/0xd0
+> [1135630.487426]  vfs_write+0x70/0x1c0
+> [1135630.493059]  ksys_write+0x5c/0xc8
+> [1135630.498638]  __arm64_sys_write+0x24/0x30
+> [1135630.504821]  el0_svc_common+0x78/0x130
+> [1135630.510838]  el0_svc_handler+0x38/0x78
+> [1135630.516834]  el0_svc+0x8/0x1b0
+> 
+> kernel/trace/trace_kprobe.c: 1308
+> 0xffff3df8995039ec <kprobe_perf_func+0x2c>:     ldr     x21, [x24,#120]
+> include/linux/compiler.h: 294
+> 0xffff3df8995039f0 <kprobe_perf_func+0x30>:     ldr     x1, [x21,x0]
+> 
+> kernel/trace/trace_kprobe.c
+> 1308: head = this_cpu_ptr(call->perf_events);
+> 1309: 	if (hlist_empty(head))
+> 1310:		return 0;
+> 
+> crash> struct trace_event_call -o
+> struct trace_event_call {
+>   ...
+>   [120] struct hlist_head *perf_events;  //(call->perf_event)
+>   ...
+> }
+> 
+> crash> struct trace_event_call ffffaf015340e528
+> struct trace_event_call {
+>   ...
+>   perf_events = 0xffff0ad5fa89f088, //this value is correct, but x21 = 0
+>   ...
+> }
+> 
+> Race Condition Analysis:
+> 
+> The race occurs between kprobe activation and perf_events initialization:
+> 
+>     CPU0                                    CPU1
+>     ====                                    ====
+>     perf_kprobe_init
+>       create_local_trace_kprobe
+>         alloc_trace_kprobe
+>           __register_trace_kprobe(tk);
+>             arm_kprobe(p);(1)← KPROBE ACTIVE
+
+This is strange, alloc_trace_kprobe() does not register kprobes,
+but just allocate a trace_kprobe data structure.
+Also, __register_trace_kprobe() should not activate the kprobe
+event because it is not enabled.
+
+To enable trace_kprobe, you should call kprobe_register()
+via call->class->reg. That is (3).
+
+
+>                                             Debug exception triggers
+>                                             ...
+>                                             kprobe_handler(regs)
+>       perf_trace_event_init                 ...
+>         tp_event->perf_events = list;(2)
+>         tp_event->class->reg (3)
+
+So after this point, kprobe is armed (swbp is installed).
+
+Anyway, the point is
+ - perf_trace_event_init() sets `tp_event->perf_events` and
+   install kprobes on CPU0. But kprobe_dispatcher() on CPU1
+   sees the call->perf_events == NULL. This is because the
+   memory update is not shown in CPU1.
+
+So I think code is OK, but the explanation is not correct.
+We need a memory barrier which ensures that the `perf_events`
+is shown on other CPUs. This may happen on the machine with
+weak memory model.
+
+Can you update the analysis part?
+
+Thank you,
+
+
+>                                             kprobe_dispatcher (tk->tp.flags & TP_FLAG_PROFILE)
+>                                               kprobe_perf_func
+> 					        head = this_cpu_ptr(call->perf_events)(4)
+>                                                 (perf_events is still NULL)
+> 
+> Critical Issue:
+> 
+> The race window is:
+> 1. CPU0 calls `arm_kprobe(p)` at point (1) - kprobe becomes active
+> 2. CPU1 triggers debug exception and reaches `kprobe_dispatcher`
+> 3. CPU0 sets `tp_event->perf_events = list` at point (2) but this assignment
+>    may not be visible to CPU1 due to memory ordering
+> 4. CPU0 calls `class->reg()` at point (3) setting `TP_FLAG_PROFILE`
+> 5. CPU1 checks `(tk->tp.flags & TP_FLAG_PROFILE)` - condition passes
+> 6. CPU1 calls `kprobe_perf_func()` and crashes at point (4)
+> 
+> The kprobe becomes active immediately at point (1), allowing concurrent CPUs
+> to enter kprobe handlers. However, `perf_events` assignment at point (2) happens
+> at a different time and may not be visible to other CPUs due to missing memory
+> barriers before point (3) sets `TP_FLAG_PROFILE`.
+> 
+> Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
 > ---
->  drivers/dma/xilinx/xilinx_dma.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
-dma.c index
-> a34d8f0ceed8..9f416eae33d0 100644
-> --- a/drivers/dma/xilinx/xilinx_dma.c
-> +++ b/drivers/dma/xilinx/xilinx_dma.c
-> @@ -1914,8 +1914,10 @@ static irqreturn_t xilinx_dma_irq_handler(int irq,=
- void
-> *data)
->                     XILINX_DMA_DMASR_DLY_CNT_IRQ)) {
->               spin_lock(&chan->lock);
->               xilinx_dma_complete_descriptor(chan);
-> -             chan->idle =3D true;
-> -             chan->start_transfer(chan);
-> +             if (list_empty(&chan->active_list)) {
-> +                     chan->idle =3D true;
-> +                     chan->start_transfer(chan);
-> +             }
->               spin_unlock(&chan->lock);
->       }
->
-> --
-> 2.25.1
+>  kernel/trace/trace_event_perf.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+> index a6bb7577e8c5..6eff8c9d6bae 100644
+> --- a/kernel/trace/trace_event_perf.c
+> +++ b/kernel/trace/trace_event_perf.c
+> @@ -113,6 +113,11 @@ static int perf_trace_event_reg(struct trace_event_call *tp_event,
+>  
+>  	tp_event->perf_events = list;
+>  
+> +	/* Ensure perf_events assignment is visible to all CPUs before enabling
+> +	 * profile functionality
+> +	 */
+> +	smp_mb();
+> +
+>  	if (!total_ref_count) {
+>  		char __percpu *buf;
+>  		int i;
+> -- 
+> 2.39.5
+> 
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
