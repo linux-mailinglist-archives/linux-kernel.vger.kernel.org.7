@@ -1,158 +1,185 @@
-Return-Path: <linux-kernel+bounces-836204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611D3BA8FDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:19:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9474BA8FE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1881D3A55FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA0B1C1640
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF892FFFBA;
-	Mon, 29 Sep 2025 11:19:36 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C195A2FFFB3;
+	Mon, 29 Sep 2025 11:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="t5uYZlPz";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="ceggO/6A"
+Received: from mta-01.yadro.com (mta-01.yadro.com [195.3.219.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17581373
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB7E2FBDFB;
+	Mon, 29 Sep 2025 11:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.3.219.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759144776; cv=none; b=WvLQzbmivI3YxE2wnNV6j2364vDUyDHo/D2Tx0nJ/DEPJowNz3kbba7mRR91mQmePv8zEERe2tXZM2ARaNE8T2QVfwXlLTCLujY7JelMZu+f1FLDgP8hpe6YWtK1R4Y8CPR9rPrvlMKkwATjxWcXu/loXVSIj+gRkBYsEzxKfbA=
+	t=1759144807; cv=none; b=eoCIzXCv+nfIh6BxYIg7w9mGCBpblTHON8zbNVe0JlfMzGCQ26pxeuYfwsrNJaAH7Gzok2VJuZ0tHQTeKbitzuCNqCW1JgfwR4tuvnJ5Rygz9T9lcpFhuKfxzA5uiyeuLsypj6fxOneal5gH1VIk4fIaEPpiO8kBAAFs5KbQBds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759144776; c=relaxed/simple;
-	bh=qsC8nmTNDWgfrSJczB2vM+JxEg6Io3xeF78OMelW4vE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WaMKUGOLScHK7IwmgpQtaKi3969dclR8SIcEpiyNx/EQZz38zvGe9mG+c4p54xUMCiiA2bbBxxm26oiQ7iWmPU18mT1ZTZLK6+PIzbCLIKCxF2hk5KF3rPzTgtF+AI8Cx6+esUB8TqeZgK3cHbP92Gi4bdhaYM3knRVKvDzM84Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42486b1d287so124094775ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:19:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759144774; x=1759749574;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=08hGSZlHtga8CIS0a/iAlGFEPP1F0snL36igz9koUJw=;
-        b=UoJEcxgPXQKivumhoglHTbBV7Hoobn8sQ4fdobzO/OYt+QTGgebBnm7MHjINIeuVXk
-         caVYb3CYAtIK4pl//uzmyxhqt9RtuFEbxN9v00761M2UHuD9eT6tD3fzwab07lO9ZdJo
-         JnBeZjhZwJiQ3ElF0a5gB9mcAS6PnEXAzqI9UL7QEEUcwiDaaFe4mRDhOw2oNeCPnZLy
-         hQ5eObLl6aYrUen6iBeO5OfDIiNGNovluglrYAtNVbhYWSf68AAT6LP0Z+dhT3HXzEvC
-         zwp8r9OUmuBw8EKILlir3CIfdClnvRlfLUCnSUkQSRdUAgYLqXNcK88ZBTml41uIp7Ll
-         b0qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ4RxOdMIdS8DoKC7pKYJVTXBtQvvnK7uggWqoq4yqTXQTZwkdh6nn2uPTUiQpi8OT2G0BCDq4/qSUJ6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAK8EU9kLxbGBhcr3vvF/yJaNNrbj34Nm6Nt4smRdjpOncsShv
-	kNbeWlwfuDVpKhQY/UigpWbco6HH5U7kmkx2w2sEGRV4nCrURprhzQjwvl+WgZTn/6YA8QSkEm8
-	g5Kz+DTHrP0xGDOBZRdtAV7i2mn29yrh9B35I2lNLHGUBhC6Feagizbv3Ukc=
-X-Google-Smtp-Source: AGHT+IHRTPuY7t1PvT96TXZpWYYUVd6O0WSzFdMb58XBM4n5LsHfW+1jd3nfEcaaxzeSSdIfSqKL5qhBY2NUx6QpyAarZHplYD0g
+	s=arc-20240116; t=1759144807; c=relaxed/simple;
+	bh=FThlKf9mPp6z/y8Uoh/3G44IfMfSzTwr6+FTkAYPw3c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OrdWQzHuA4sJFPulMXoK3C4I5RiMvCEddJS4XaFa1DZbidQr0jO34vI6lwKObw5RERFk3onFqiFzNicNGtIZs9YCoJngXLXa6TwJbrHqbPPgbrumFDNkslzkYE/RLay226HNumWd8jX0f/AM3VJELy21GO8xtaaOI6dY4GSSxA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=t5uYZlPz; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=ceggO/6A; arc=none smtp.client-ip=195.3.219.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+Received: from mta-01.yadro.com (localhost [127.0.0.1])
+	by mta-01.yadro.com (Postfix) with ESMTP id D26CB20005;
+	Mon, 29 Sep 2025 14:19:53 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-01.yadro.com D26CB20005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-02;
+	t=1759144793; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=t5uYZlPz4ICjN+/R1xdwctEZsTZbghoL9Q7+bNNYqbo/iSECAew0Be8M2KyR7LKIt
+	 pnLVHyVcCfZ3PoUiOOo39wEgtP8Q8Gp2amnIkWVglI+hg7p1Z60owmqw/mcmiXToOC
+	 PN06dCNQkXGTEW9Ykf0oobDWTUBKazMqTGEN21Ca5vLHOOuNdCN7wi8bDrpIHxiIg+
+	 6DAEYcikxw3BQupVejjGkftxn5SHC75dVQqJexOa2tahGOqRUNCi2yH5rmUAl3keWP
+	 RNHjlq1aOL9MsgrYYMWBZyvl2Ya+DI6Flxg1xiIN1kGp6kG0QUPxdc6CsxDfBO55b1
+	 Ly2qhL8wC4KtQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1759144793; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=ceggO/6AAv5UQV+WgF8xzTdYagifQdxIfBihz1VKidrQU/LM5Cve4VtsUiHmm6Mru
+	 LBt+F4eQ7+rXtL0Qd3jCmBZwCqap7oJ83vtNn8Bsz8E/ho1fGrmnz2qJmBP+IHci/Z
+	 CnJYsHdAGVUMagy21AkdGbvy+oGm1mX1SImf08Tc33M0j5iBxF3ClSZ8IGETsvy/SU
+	 6ESBMSSTxoZn1pUN8wSHIcCJlNHx8BTBj0gUOXszu/nibkqiOeOvA47J432LXZz5q9
+	 oDvQ3KOYE9Fb6Ru4Olnl7jXRe/htRGpQriyH8jYLFtgGcFzzSmDxv1E3qzva9YHBox
+	 zZvwhV6ymz06w==
+Received: from RTM-EXCH-01.corp.yadro.com (unknown [10.34.9.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mta-01.yadro.com (Postfix) with ESMTPS;
+	Mon, 29 Sep 2025 14:19:49 +0300 (MSK)
+Received: from T-EXCH-12.corp.yadro.com (10.34.9.214) by
+ RTM-EXCH-01.corp.yadro.com (10.34.9.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 29 Sep 2025 14:19:50 +0300
+Received: from NB-591.corp.yadro.com (172.17.34.51) by
+ T-EXCH-12.corp.yadro.com (10.34.9.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Mon, 29 Sep 2025 14:19:50 +0300
+From: Dmitry Bogdanov <d.bogdanov@yadro.com>
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, "Christoph
+ Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Stuart Hayes
+	<stuart.w.hayes@gmail.com>, <linux-nvme@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux@yadro.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] nvme-tcp: fix usage of page_frag_cache
+Date: Mon, 29 Sep 2025 14:19:51 +0300
+Message-ID: <20250929111951.6961-1-d.bogdanov@yadro.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2184:b0:427:638b:f7b3 with SMTP id
- e9e14a558f8ab-42c735c6263mr18402065ab.22.1759144773950; Mon, 29 Sep 2025
- 04:19:33 -0700 (PDT)
-Date: Mon, 29 Sep 2025 04:19:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68da6b45.050a0220.1696c6.0015.GAE@google.com>
-Subject: [syzbot] [ext4?] WARNING in ext4_xattr_inode_dec_ref_all
-From: syzbot <syzbot+55cb5d2db550fbc52264@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTM-EXCH-04.corp.yadro.com (10.34.9.204) To
+ T-EXCH-12.corp.yadro.com (10.34.9.214)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/29 07:44:00 #27864461
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-KATA-Status: Not Scanned
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-Hello,
+nvme uses page_frag_cache to preallocate PDU for each preallocated request
+of block device. Block devices are created in parallel threads,
+consequently page_frag_cache is used in not thread-safe manner.
+That leads to incorrect refcounting of backstore pages and premature free.
 
-syzbot found the following issue on:
+That can be catched by !sendpage_ok inside network stack:
 
-HEAD commit:    b5a4da2c459f Add linux-next specific files for 20250924
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12abed34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc64d939cce41d2
-dashboard link: https://syzkaller.appspot.com/bug?extid=55cb5d2db550fbc52264
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+WARNING: CPU: 7 PID: 467 at ../net/core/skbuff.c:6931 skb_splice_from_iter+0xfa/0x310.
+	tcp_sendmsg_locked+0x782/0xce0
+	tcp_sendmsg+0x27/0x40
+	sock_sendmsg+0x8b/0xa0
+	nvme_tcp_try_send_cmd_pdu+0x149/0x2a0
+Then random panic may occur.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Fix that by serializing the usage of page_frag_cache.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/127c931e6696/disk-b5a4da2c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cf4957abd39e/vmlinux-b5a4da2c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/860d3ac61bac/bzImage-b5a4da2c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+55cb5d2db550fbc52264@syzkaller.appspotmail.com
-
-loop7: detected capacity change from 0 to 512
-EXT4-fs warning (device loop7): ext4_xattr_inode_get:542: inode #11: comm syz.7.2381: ea_inode file size=0 entry size=6
-------------[ cut here ]------------
-EA inode 11 i_nlink=2
-WARNING: fs/ext4/xattr.c:1053 at ext4_xattr_inode_update_ref+0x534/0x5d0 fs/ext4/xattr.c:1051, CPU#0: syz.7.2381/16796
-Modules linked in:
-CPU: 0 UID: 0 PID: 16796 Comm: syz.7.2381 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RAX: 13d1ab016548b300 RBX: dffffc0000000000 RCX: 0000000000080000
-RDX: ffffc9000cc0d000 RSI: 0000000000008560 RDI: 0000000000008561
-RBP: ffffc9000ba57390 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1c3a65c R12: ffff8880546a1f90
-R13: 1ffff1100a8d43f2 R14: 00000000ffffffff R15: 000000000000000b
-FS:  00007f560bbf66c0(0000) GS:ffff888125a03000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fab211156c0 CR3: 000000005ffc2000 CR4: 00000000003526f0
-DR0: 0000000000000008 DR1: 0000000000000002 DR2: 0000000000000081
-DR3: ffffffffefffff14 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ext4_xattr_inode_dec_ref fs/ext4/xattr.c:1076 [inline]
- ext4_xattr_inode_dec_ref_all+0x867/0xda0 fs/ext4/xattr.c:1218
- ext4_xattr_delete_inode+0xa4c/0xc10 fs/ext4/xattr.c:2942
- ext4_evict_inode+0xac9/0xee0 fs/ext4/inode.c:271
- evict+0x504/0x9c0 fs/inode.c:810
- ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:474
- __ext4_fill_super fs/ext4/super.c:5615 [inline]
- ext4_fill_super+0x57df/0x6090 fs/ext4/super.c:5734
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
- vfs_get_tree+0x92/0x2b0 fs/super.c:1751
- fc_mount fs/namespace.c:1208 [inline]
- do_new_mount_fc fs/namespace.c:3651 [inline]
- do_new_mount+0x302/0x9e0 fs/namespace.c:3725
- do_mount fs/namespace.c:4048 [inline]
- __do_sys_mount fs/namespace.c:4236 [inline]
- __se_sys_mount+0x313/0x410 fs/namespace.c:4213
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f560d99066a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f560bbf5e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f560bbf5ef0 RCX: 00007f560d99066a
-RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f560bbf5eb0
-RBP: 0000200000000180 R08: 00007f560bbf5ef0 R09: 0000000000800700
-R10: 0000000000800700 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007f560bbf5eb0 R14: 0000000000000473 R15: 0000200000000680
- </TASK>
-
-
+Cc: stable@vger.kernel.org # 6.12
+Fixes: 4e893ca81170 ("nvme_core: scan namespaces asynchronously")
+Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/nvme/host/tcp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 1413788ca7d52..823e07759e0d3 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -145,6 +145,7 @@ struct nvme_tcp_queue {
+ 
+ 	struct mutex		queue_lock;
+ 	struct mutex		send_mutex;
++	struct mutex		pf_cache_lock;
+ 	struct llist_head	req_list;
+ 	struct list_head	send_list;
+ 
+@@ -556,9 +557,11 @@ static int nvme_tcp_init_request(struct blk_mq_tag_set *set,
+ 	struct nvme_tcp_queue *queue = &ctrl->queues[queue_idx];
+ 	u8 hdgst = nvme_tcp_hdgst_len(queue);
+ 
++	mutex_lock(&queue->pf_cache_lock);
+ 	req->pdu = page_frag_alloc(&queue->pf_cache,
+ 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
+ 		GFP_KERNEL | __GFP_ZERO);
++	mutex_unlock(&queue->pf_cache_lock);
+ 	if (!req->pdu)
+ 		return -ENOMEM;
+ 
+@@ -1420,9 +1423,11 @@ static int nvme_tcp_alloc_async_req(struct nvme_tcp_ctrl *ctrl)
+ 	struct nvme_tcp_request *async = &ctrl->async_req;
+ 	u8 hdgst = nvme_tcp_hdgst_len(queue);
+ 
++	mutex_lock(&queue->pf_cache_lock);
+ 	async->pdu = page_frag_alloc(&queue->pf_cache,
+ 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
+ 		GFP_KERNEL | __GFP_ZERO);
++	mutex_unlock(&queue->pf_cache_lock);
+ 	if (!async->pdu)
+ 		return -ENOMEM;
+ 
+@@ -1450,6 +1455,7 @@ static void nvme_tcp_free_queue(struct nvme_ctrl *nctrl, int qid)
+ 	kfree(queue->pdu);
+ 	mutex_destroy(&queue->send_mutex);
+ 	mutex_destroy(&queue->queue_lock);
++	mutex_destroy(&queue->pf_cache_lock);
+ }
+ 
+ static int nvme_tcp_init_connection(struct nvme_tcp_queue *queue)
+@@ -1772,6 +1778,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
+ 	INIT_LIST_HEAD(&queue->send_list);
+ 	mutex_init(&queue->send_mutex);
+ 	INIT_WORK(&queue->io_work, nvme_tcp_io_work);
++	mutex_init(&queue->pf_cache_lock);
+ 
+ 	if (qid > 0)
+ 		queue->cmnd_capsule_len = nctrl->ioccsz * 16;
+@@ -1903,6 +1910,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
+ err_destroy_mutex:
+ 	mutex_destroy(&queue->send_mutex);
+ 	mutex_destroy(&queue->queue_lock);
++	mutex_destroy(&queue->pf_cache_lock);
+ 	return ret;
+ }
+ 
+-- 
+2.25.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
