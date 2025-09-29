@@ -1,87 +1,47 @@
-Return-Path: <linux-kernel+bounces-836216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7629BA905B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04588BA907E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98327189E5BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2369D189F9C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B20F3002C0;
-	Mon, 29 Sep 2025 11:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ck1404zp";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ck1404zp"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3243009E1;
+	Mon, 29 Sep 2025 11:32:44 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07C43002A1
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC69580604;
+	Mon, 29 Sep 2025 11:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145415; cv=none; b=b6zcqRKh7fFG1RHmg9CX5cFwSRsufH0yE0HOJoQ1/AQS6HJsivAK4ROijgGbFUYkaqMKPNxWAm00E2hWbqxqHCvYcvYRReY9KOyxF75vVhG91sIbFdB6Ihgj/WAE+syOYSsD7xhSsrHMbrH8L4ZqG0e20KVc5b6anYnVyJ5VWgU=
+	t=1759145563; cv=none; b=nGpyORSEm0sCHL/uwgoMAmdlH1zKqxxinEj7SlBSe7/N3IA/WbPKlRUuZLYj0wv2KGNihhI4uRxl1TriBAjGSZJ3es/N4lezCJx8XTkzzG+Kln2dLkUkN43PW7ug1LHkgy4D8bOAjJfl4AFtX7BknfmO3Q6VNn0UX1nrg9xIMbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145415; c=relaxed/simple;
-	bh=Ert/PyLXTU+1PrSLcE29tHWI73rVMIEE04cTleIo+as=;
+	s=arc-20240116; t=1759145563; c=relaxed/simple;
+	bh=j1hgruf19Bk7TIvpnDeT1bG+zMoRrOYhbdPE2oVnSB8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oz/KXsqThaiD/ejDD+jKWcAYcfmzn4fGXB7TH/cnzCPtn+6zAnVPrf8hnY/5mM7pWI4+zUtgHW/HAppQdPz43gK90iDwNZ1Hd2gdfu9yJfw8px/rM7Q6XAHtsHHtnZM4Ldr88jKDa0axEIaMh/uO3VCEbVXYtoPm5adj6GgZDlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ck1404zp; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ck1404zp; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AAF9A31863;
-	Mon, 29 Sep 2025 11:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1759145407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H5pJdfVVyxk9Zhe1m3GkIXtRWmbwvjHnx8uLJu12sw8=;
-	b=ck1404zpFdrHhJsfrUk+B1jM7VaEHOrw5FfgRh4yS+MruaiTgiXuY6tWqqfpE69/9E4scd
-	aVMMyrFRfRw0hd8Eiy9tMPyEcwsc2UVBgIreH2LRu0Z4NMtZwQYEtD4xMarBAjbkKQhsnb
-	tmVEPN4vGIgk+qiUjEl/NkNxZTF4Wok=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1759145407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H5pJdfVVyxk9Zhe1m3GkIXtRWmbwvjHnx8uLJu12sw8=;
-	b=ck1404zpFdrHhJsfrUk+B1jM7VaEHOrw5FfgRh4yS+MruaiTgiXuY6tWqqfpE69/9E4scd
-	aVMMyrFRfRw0hd8Eiy9tMPyEcwsc2UVBgIreH2LRu0Z4NMtZwQYEtD4xMarBAjbkKQhsnb
-	tmVEPN4vGIgk+qiUjEl/NkNxZTF4Wok=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6928913782;
-	Mon, 29 Sep 2025 11:30:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HQg/GL9t2miDcAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Mon, 29 Sep 2025 11:30:07 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 3/3] x86/alternative: Patch a single alternative location only once
-Date: Mon, 29 Sep 2025 13:29:47 +0200
-Message-ID: <20250929112947.27267-4-jgross@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250929112947.27267-1-jgross@suse.com>
-References: <20250929112947.27267-1-jgross@suse.com>
+	 MIME-Version; b=SRSNHnk2hY7sJc9FH+JvpL8qGnSRuPEpSjLt8/nbMcq9sbivwyGmJaU7ReCZ5Z2FdCeAYIQrfGryAS/i4Ev7GqeO92efXUcvNBm9WVNvn0CQGDHQD2ziJ/YoLSs8sHO9swwOa9pyJbtm0Xgb5tKru2tiK0KBwXzlEpskZK79hwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowADnihRTbtpoCQfACA--.2097S2;
+	Mon, 29 Sep 2025 19:32:37 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Sebastian Reichel <sre@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH v2] power: supply: rt5033_charger: Fix device node reference leaks
+Date: Mon, 29 Sep 2025 19:32:34 +0800
+Message-ID: <20250929113234.1726-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
+In-Reply-To: <20250929031536.2274-1-vulab@iscas.ac.cn>
+References: <20250929031536.2274-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,111 +49,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+X-CM-TRANSID:zQCowADnihRTbtpoCQfACA--.2097S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFW5JF17KryfuFyrKry7Awb_yoW8Jw43pr
+	95AFZIvr4DGr4Utayjy3ZrCFW5KF45ArW0kr10k34aywn3Xay7Jry5tFsxZry8AryfGF4I
+	qr1aqr4IgF45CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU0iiSUUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAcAA2jaLgfoOgAAsB
 
-Instead of patching a single location potentially multiple times in
-case of nested ALTERNATIVE()s, do the patching only after having
-evaluated all alt_instr instances for that location.
+The device node pointers `np_conn` and `np_edev`, obtained from
+of_parse_phandle() and of_get_parent() respectively, are not released.
+This results in a reference count leak.
 
-This has multiple advantages:
+Add of_node_put() calls after the last use of these device nodes to
+properly release their references and fix the leaks.
 
-- In case of replacing an indirect with a direct call using the
-  ALT_FLAG_DIRECT_CALL flag, there is no longer the need to have that
-  instance before any other instances at the same location (the
-  original instruction is needed for finding the target of the direct
-  call).
+Fixes: 8242336dc8a8 ("power: supply: rt5033_charger: Add cable detection and USB OTG supply")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 
-- In case of nested ALTERNATIVE()s there is no intermediate replacement
-  visible. This avoids any problems in case e.g. an interrupt is
-  happening between the single instances and the patched location is
-  used during handling the interrupt.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
-V2:
-- new patch
+Changes in v2:
+  - Resend to the correct maintainer and mailing list.
 ---
- arch/x86/kernel/alternative.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ drivers/power/supply/rt5033_charger.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 735cc017f2d3..ccf07131cd47 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -648,6 +648,8 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 	u8 insn_buff[MAX_PATCH_LEN];
- 	u8 *instr;
- 	struct alt_instr *a, *b;
-+	unsigned int instances = 0;
-+	bool patched = false;
- 
- 	DPRINTK(ALT, "alt table %px, -> %px", start, end);
- 
-@@ -677,9 +679,13 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 		 * padding for all alt_instr entries for this site (nested
- 		 * alternatives result in consecutive entries).
- 		 */
--		for (b = a+1; b < end && instr_va(b) == instr_va(a); b++) {
--			u8 len = max(a->instrlen, b->instrlen);
--			a->instrlen = b->instrlen = len;
-+		if (!instances) {
-+			for (b = a+1; b < end && instr_va(b) == instr_va(a); b++) {
-+				u8 len = max(a->instrlen, b->instrlen);
-+				a->instrlen = b->instrlen = len;
-+			}
-+			instances = b - a;
-+			patched = false;
- 		}
- 
- 		instr = instr_va(a);
-@@ -692,14 +698,19 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 		 * - feature not present but ALT_FLAG_NOT is set to mean,
- 		 *   patch if feature is *NOT* present.
- 		 */
--		if (!boot_cpu_has(a->cpuid) == !(a->flags & ALT_FLAG_NOT)) {
--			memcpy(insn_buff, instr, a->instrlen);
--			optimize_nops(instr, insn_buff, a->instrlen);
--		} else {
-+		if (!boot_cpu_has(a->cpuid) != !(a->flags & ALT_FLAG_NOT)) {
- 			apply_one_alternative(instr, insn_buff, a);
-+			patched = true;
- 		}
- 
--		text_poke_early(instr, insn_buff, a->instrlen);
-+		instances--;
-+		if (!instances) {
-+			if (!patched) {
-+				memcpy(insn_buff, instr, a->instrlen);
-+				optimize_nops(instr, insn_buff, a->instrlen);
-+			}
-+			text_poke_early(instr, insn_buff, a->instrlen);
-+		}
- 	}
- 
- 	kasan_enable_current();
+diff --git a/drivers/power/supply/rt5033_charger.c b/drivers/power/supply/rt5033_charger.c
+index 2fdc58439707..de724f23e453 100644
+--- a/drivers/power/supply/rt5033_charger.c
++++ b/drivers/power/supply/rt5033_charger.c
+@@ -701,6 +701,8 @@ static int rt5033_charger_probe(struct platform_device *pdev)
+ 	np_conn = of_parse_phandle(pdev->dev.of_node, "richtek,usb-connector", 0);
+ 	np_edev = of_get_parent(np_conn);
+ 	charger->edev = extcon_find_edev_by_node(np_edev);
++	of_node_put(np_edev);
++	of_node_put(np_conn);
+ 	if (IS_ERR(charger->edev)) {
+ 		dev_warn(charger->dev, "no extcon device found in device-tree\n");
+ 		goto out;
 -- 
-2.51.0
+2.50.1.windows.1
 
 
