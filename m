@@ -1,298 +1,228 @@
-Return-Path: <linux-kernel+bounces-836618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBD4BAA2CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:31:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40B2BAA278
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C40A3B0CA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:31:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4B9E4E1FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1511DE8A4;
-	Mon, 29 Sep 2025 17:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E36B30BB8C;
+	Mon, 29 Sep 2025 17:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="CMCdpSoj"
-Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="fcXwy0xZ"
+Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDD116DEB1
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6B530C0F0;
+	Mon, 29 Sep 2025 17:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759167073; cv=none; b=EST08FCUV3X7hP8xADv2P0mD6Hbf+RhXjvD9t0ccPSumtic+D8MmP3NMcepH7q+Als+npc57PLvjiuwUU20FzQ/Tub7Tk/9g7bAGePBTF1ZtvYNPUpC6rn1L5muuUiZbqjk85QA9CeAchcwkCHD80nbJ9gBVE0fLlICSBe02Alw=
+	t=1759166536; cv=none; b=eoX2Y6dCaxvXM0Xa6dhzOEmZQhQoFuz3FrgB484FjApQphFAGM7VsuSHha5Yxyz0DToFnYO4Efe9FI7q6NsD3ytmkpR+8RsNTgapFASDAEl9qr2E8fSwWUj4lc5IVj8RbfX/XWGXSDR3j/zw0MdWTrqftrG9SsSa9cjRJZcpirw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759167073; c=relaxed/simple;
-	bh=EHIy8dEPDqxt6PRozzxc6lMy2O+yWldQhMw2v42rm5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IMgpkW8OAwG6R2PM14eUuRQ7xncx2ot+IQoApcG005agI0EAjXZbssPPGe+N+AZXZxsMsg6QyoR088DkzPpA+Q7/2KZ3J6j9IC8ivMP0e8WgS9IM0zfZFPRduM0WImFUoHIbPsG3hC8pyvYS0g1LPlMF5zIt11tCKVNu9TDdT9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=CMCdpSoj; arc=none smtp.client-ip=178.62.254.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
-Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
-	(Authenticated sender: d@ilvokhin.com)
-	by mail.ilvokhin.com (Postfix) with ESMTPSA id 4562192CCB;
-	Mon, 29 Sep 2025 17:21:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
-	s=mail; t=1759166509;
-	bh=e6UOPjDX6GDXZTJ3BHTWH5HK3Gp1+g+0ZC9njXBfRgQ=;
-	h=Date:From:To:Cc:Subject;
-	b=CMCdpSoj0tPZHaPkXtBVF/c0hytwChEOQdIuQz9AqhoCv/YhF+W6f4OnE7JuJsx8o
-	 ycgRBHK9QkE1oubANw90CInR8uP/DkR3u8EFTy9D+ZiRzyfLBORKZd/BXcQs8lpLJr
-	 yTI5NO/iQkr6VPTgytuRrQACFfRoJ4N8e0SjsRkk=
-Date: Mon, 29 Sep 2025 17:21:45 +0000
-From: Dmitry Ilvokhin <d@ilvokhin.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: [PATCH] x86/irq: Optimize interrupts decimals printing
-Message-ID: <aNrAKWRnPK1LskSg@shell.ilvokhin.com>
+	s=arc-20240116; t=1759166536; c=relaxed/simple;
+	bh=rPvAb70eX+xtNxLsT31tJqXSjUME1o5yfKSfCT5CPok=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fDvEqNhO31fEMODo+2dv4KYxTaS4Rt/WCVE16Ck7B1KaPagYptjSMtEtKytng8Pku3txV7lCQS6Pp2vVAAIGJw8wcp1hdeSqoJXs+iUciWPlS8jF//IHL0Z7w5sD9QJVY+ovlVEXvZHYxXs9mpHijNc5Uh2DXSH3okp4nQM3uVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=fcXwy0xZ; arc=none smtp.client-ip=63.176.194.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1759166534; x=1790702534;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-transfer-encoding:mime-version:subject;
+  bh=gKvaxmrs9uqyIGzbajJ1O5Hd1/ndu7xAtdLZV5bBh5k=;
+  b=fcXwy0xZFAjAG5ioqFJQdp7u9bZ9wRmoEjyyVPcJ36wXTbuWjbqRrDi7
+   B49UmJ1lE87OmyPGFnRTh4urVX2YvQ7BXyR0RaXgcG7ZphjDe/kmHXrch
+   8yMJE3K0TKE+hsJqDwrj7oH+nXc34eAmsI7+WFQJIOHItZAhtpdX+ZnQI
+   7CGMQXfX1PkHmzrlfTxQrOs8M8lTX6D3juk6EXZ+fWXR3a/j4oqby4k6T
+   uky/VIhuvQcXk1okeqSY4uphf4dKMuUnlZOkbaJyQUD/TMYbtSr8f2ZPJ
+   6o70OCOZNPv81QXGcsSUwhJTee+FiHKucpAf2Ma6YL9IFbOzwdWM1ewpv
+   w==;
+X-CSE-ConnectionGUID: IafcEd3hQO6oGZOiLnLKqg==
+X-CSE-MsgGUID: Itl7dVAmRv28mSSF4DAfeA==
+X-IronPort-AV: E=Sophos;i="6.18,302,1751241600"; 
+   d="scan'208";a="2841710"
+Subject: RE: [PATCH 07/19 v6.1.y] minmax: make generic MIN() and MAX() macros
+ available everywhere
+Thread-Topic: [PATCH 07/19 v6.1.y] minmax: make generic MIN() and MAX() macros available
+ everywhere
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 17:22:02 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:7433]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.19.222:2525] with esmtp (Farcaster)
+ id 39c95fb2-68e2-4279-8b5a-834631637cab; Mon, 29 Sep 2025 17:22:01 +0000 (UTC)
+X-Farcaster-Flow-ID: 39c95fb2-68e2-4279-8b5a-834631637cab
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 29 Sep 2025 17:21:59 +0000
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 29 Sep 2025 17:21:59 +0000
+Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
+ EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
+ 15.02.2562.020; Mon, 29 Sep 2025 17:21:59 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "richard@nod.at"
+	<richard@nod.at>, "anton.ivanov@cambridgegreys.com"
+	<anton.ivanov@cambridgegreys.com>, "johannes@sipsolutions.net"
+	<johannes@sipsolutions.net>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "luto@kernel.org" <luto@kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com"
+	<hpa@zytor.com>, "tony.luck@intel.com" <tony.luck@intel.com>,
+	"qiuxu.zhuo@intel.com" <qiuxu.zhuo@intel.com>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "james.morse@arm.com" <james.morse@arm.com>,
+	"rric@kernel.org" <rric@kernel.org>, "harry.wentland@amd.com"
+	<harry.wentland@amd.com>, "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+	"Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+	"alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "Xinhui.Pan@amd.com"
+	<Xinhui.Pan@amd.com>, "airlied@gmail.com" <airlied@gmail.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "evan.quan@amd.com" <evan.quan@amd.com>,
+	"james.qian.wang@arm.com" <james.qian.wang@arm.com>, "liviu.dudau@arm.com"
+	<liviu.dudau@arm.com>, "mihail.atanassov@arm.com" <mihail.atanassov@arm.com>,
+	"brian.starkey@arm.com" <brian.starkey@arm.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "robdclark@gmail.com" <robdclark@gmail.com>,
+	"quic_abhinavk@quicinc.com" <quic_abhinavk@quicinc.com>,
+	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+	"sean@poorly.run" <sean@poorly.run>, "jdelvare@suse.com" <jdelvare@suse.com>,
+	"linux@roeck-us.net" <linux@roeck-us.net>, "linus.walleij@linaro.org"
+	<linus.walleij@linaro.org>, "dmitry.torokhov@gmail.com"
+	<dmitry.torokhov@gmail.com>, "maz@kernel.org" <maz@kernel.org>,
+	"wens@csie.org" <wens@csie.org>, "jernej.skrabec@gmail.com"
+	<jernej.skrabec@gmail.com>, "samuel@sholland.org" <samuel@sholland.org>,
+	"agk@redhat.com" <agk@redhat.com>, "snitzer@kernel.org" <snitzer@kernel.org>,
+	"dm-devel@redhat.com" <dm-devel@redhat.com>, "rajur@chelsio.com"
+	<rajur@chelsio.com>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"peppe.cavallaro@st.com" <peppe.cavallaro@st.com>,
+	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+	"joabreu@synopsys.com" <joabreu@synopsys.com>, "mcoquelin.stm32@gmail.com"
+	<mcoquelin.stm32@gmail.com>, "krzysztof.kozlowski@linaro.org"
+	<krzysztof.kozlowski@linaro.org>, "malattia@linux.it" <malattia@linux.it>,
+	"hdegoede@redhat.com" <hdegoede@redhat.com>, "markgross@kernel.org"
+	<markgross@kernel.org>, "artur.paszkiewicz@intel.com"
+	<artur.paszkiewicz@intel.com>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"fei1.li@intel.com" <fei1.li@intel.com>, "clm@fb.com" <clm@fb.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>, "dsterba@suse.com"
+	<dsterba@suse.com>, "jack@suse.com" <jack@suse.com>, "tytso@mit.edu"
+	<tytso@mit.edu>, "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+	"dushistov@mail.ru" <dushistov@mail.ru>, "luc.vanoostenryck@gmail.com"
+	<luc.vanoostenryck@gmail.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>, "pmladek@suse.com"
+	<pmladek@suse.com>, "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>, "minchan@kernel.org"
+	<minchan@kernel.org>, "ngupta@vflare.org" <ngupta@vflare.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>, "dsahern@kernel.org"
+	<dsahern@kernel.org>, "pablo@netfilter.org" <pablo@netfilter.org>,
+	"kadlec@netfilter.org" <kadlec@netfilter.org>, "fw@strlen.de" <fw@strlen.de>,
+	"jmaloy@redhat.com" <jmaloy@redhat.com>, "ying.xue@windriver.com"
+	<ying.xue@windriver.com>, "andrii@kernel.org" <andrii@kernel.org>,
+	"mykolal@fb.com" <mykolal@fb.com>, "ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev"
+	<martin.lau@linux.dev>, "song@kernel.org" <song@kernel.org>, "yhs@fb.com"
+	<yhs@fb.com>, "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@google.com" <sdf@google.com>,
+	"haoluo@google.com" <haoluo@google.com>, "jolsa@kernel.org"
+	<jolsa@kernel.org>, "shuah@kernel.org" <shuah@kernel.org>,
+	"keescook@chromium.org" <keescook@chromium.org>, "wad@chromium.org"
+	<wad@chromium.org>, "willy@infradead.org" <willy@infradead.org>,
+	"sashal@kernel.org" <sashal@kernel.org>, "ruanjinjie@huawei.com"
+	<ruanjinjie@huawei.com>, "quic_akhilpo@quicinc.com"
+	<quic_akhilpo@quicinc.com>, "David.Laight@aculab.com"
+	<David.Laight@aculab.com>, "herve.codina@bootlin.com"
+	<herve.codina@bootlin.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-um@lists.infradead.org"
+	<linux-um@lists.infradead.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "amd-gfx@lists.freedesktop.org"
+	<amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "freedreno@lists.freedesktop.org"
+	<freedreno@lists.freedesktop.org>, "linux-hwmon@vger.kernel.org"
+	<linux-hwmon@vger.kernel.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, "linux-sunxi@lists.linux.dev"
+	<linux-sunxi@lists.linux.dev>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com"
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "netfilter-devel@vger.kernel.org"
+	<netfilter-devel@vger.kernel.org>, "coreteam@netfilter.org"
+	<coreteam@netfilter.org>, "tipc-discussion@lists.sourceforge.net"
+	<tipc-discussion@lists.sourceforge.net>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Thread-Index: AQHcLZHEroQ9W2lH4EW9XJumD1KlZrSqNL0AgAAM8ACAAAMmgIAAKtlA
+Date: Mon, 29 Sep 2025 17:21:58 +0000
+Message-ID: <e754fed7d53040fb92e1ef9b64c64f6e@amazon.com>
+References: <20250924202320.32333-1-farbere@amazon.com>
+ <20250924202320.32333-8-farbere@amazon.com>
+ <2025092923-stove-rule-a00f@gregkh>
+ <85a995bb59474300aa3d5f973d279a13@amazon.com>
+ <2025092955-module-landfall-ed45@gregkh>
+In-Reply-To: <2025092955-module-landfall-ed45@gregkh>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Function seq_printf supports rich format string for decimals printing,
-but it doesn't required for printing /proc/interrupts per CPU counters,
-seq_put_decimal_ull_width function can be used instead to print per CPU
-counters, because very limited formatting is required for this case.
+> On Mon, Sep 29, 2025 at 02:39:26PM +0000, Farber, Eliav wrote:
+> > > On Wed, Sep 24, 2025 at 08:23:08PM +0000, Eliav Farber wrote:
+> > > > From: Linus Torvalds <torvalds@linux-foundation.org>
+> > > >
+> > > > [ Upstream commit 1a251f52cfdc417c84411a056bc142cbd77baef4 ]
+> > >
+> > > <snip>
+> > >
+> > > As this didn't go into 6.6.y yet, I'll stop here on this series for n=
+ow.
+> > > Please fix up for newer kernels first and then resend these.
+> >
+> > For 6.6.y I backported 15 commits:
+> > https://lore.kernel.org/stable/20250922103241.16213-1-farbere@amazon.co=
+m/T/#t
+> >
+> > Why weren't all of them picked?
+>
+> Because one of them broke the build, as I wrote a week ago here:
+>         https://lore.kernel.org/all/2025092209-owl-whisking-03e3@gregkh/
 
-Performance counter stats (truncated) for 'sh -c cat /proc/interrupts
->/dev/null' (1000 runs) before and after applying the patch below.
+Fixed:
+https://lore.kernel.org/stable/20250929171733.20671-1-farbere@amazon.com/T/=
+#t
 
-Before:
-
-      3.42 msec task-clock        #    0.802 CPUs utilized   ( +-  0.05% )
-         1      context-switches  #  291.991 /sec            ( +-  0.74% )
-         0      cpu-migrations    #    0.000 /sec
-       343      page-faults       #  100.153 K/sec           ( +-  0.01% )
- 8,932,242      instructions      #    1.66  insn per cycle  ( +-  0.34% )
- 5,374,427      cycles            #    1.569 GHz             ( +-  0.04% )
- 1,483,154      branches          #  433.068 M/sec           ( +-  0.22% )
-    28,768      branch-misses     #    1.94% of all branches ( +-  0.31% )
-
-0.00427182 +- 0.00000215 seconds time elapsed  ( +-  0.05% )
-
-After:
-
-      2.39 msec task-clock        #    0.796 CPUs utilized   ( +-  0.06% )
-         1      context-switches  #  418.541 /sec            ( +-  0.70% )
-         0      cpu-migrations    #    0.000 /sec
-       343      page-faults       #  143.560 K/sec           ( +-  0.01% )
- 7,020,982      instructions      #    1.30  insn per cycle  ( +-  0.52% )
- 5,397,266      cycles            #    2.259 GHz             ( +-  0.06% )
- 1,569,648      branches          #  656.962 M/sec           ( +-  0.08% )
-    25,419      branch-misses     #    1.62% of all branches ( +-  0.72% )
-
-0.00299996 +- 0.00000206 seconds time elapsed  ( +-  0.07% )
-
-Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
 ---
- arch/x86/kernel/irq.c | 96 +++++++++++++++++++++++--------------------
- 1 file changed, 52 insertions(+), 44 deletions(-)
-
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 10721a125226..3b5a5e2d16e1 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -61,6 +61,14 @@ void ack_bad_irq(unsigned int irq)
- 	apic_eoi();
- }
- 
-+static void put_spaced_decimal(struct seq_file *p, unsigned long long num)
-+{
-+	const char *delimiter = " ";
-+	unsigned int width = 10;
-+
-+	seq_put_decimal_ull_width(p, delimiter, num, width);
-+}
-+
- #define irq_stats(x)		(&per_cpu(irq_stat, x))
- /*
-  * /proc/interrupts printing for arch specific interrupts
-@@ -69,102 +77,102 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- {
- 	int j;
- 
--	seq_printf(p, "%*s: ", prec, "NMI");
-+	seq_printf(p, "%*s:", prec, "NMI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->__nmi_count);
-+		put_spaced_decimal(p, irq_stats(j)->__nmi_count);
- 	seq_puts(p, "  Non-maskable interrupts\n");
- #ifdef CONFIG_X86_LOCAL_APIC
--	seq_printf(p, "%*s: ", prec, "LOC");
-+	seq_printf(p, "%*s:", prec, "LOC");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->apic_timer_irqs);
-+		put_spaced_decimal(p, irq_stats(j)->apic_timer_irqs);
- 	seq_puts(p, "  Local timer interrupts\n");
- 
--	seq_printf(p, "%*s: ", prec, "SPU");
-+	seq_printf(p, "%*s:", prec, "SPU");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->irq_spurious_count);
-+		put_spaced_decimal(p, irq_stats(j)->irq_spurious_count);
- 	seq_puts(p, "  Spurious interrupts\n");
--	seq_printf(p, "%*s: ", prec, "PMI");
-+	seq_printf(p, "%*s:", prec, "PMI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->apic_perf_irqs);
-+		put_spaced_decimal(p, irq_stats(j)->apic_perf_irqs);
- 	seq_puts(p, "  Performance monitoring interrupts\n");
--	seq_printf(p, "%*s: ", prec, "IWI");
-+	seq_printf(p, "%*s:", prec, "IWI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->apic_irq_work_irqs);
-+		put_spaced_decimal(p, irq_stats(j)->apic_irq_work_irqs);
- 	seq_puts(p, "  IRQ work interrupts\n");
--	seq_printf(p, "%*s: ", prec, "RTR");
-+	seq_printf(p, "%*s:", prec, "RTR");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->icr_read_retry_count);
-+		put_spaced_decimal(p, irq_stats(j)->icr_read_retry_count);
- 	seq_puts(p, "  APIC ICR read retries\n");
- 	if (x86_platform_ipi_callback) {
--		seq_printf(p, "%*s: ", prec, "PLT");
-+		seq_printf(p, "%*s:", prec, "PLT");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ", irq_stats(j)->x86_platform_ipis);
-+			put_spaced_decimal(p, irq_stats(j)->x86_platform_ipis);
- 		seq_puts(p, "  Platform interrupts\n");
- 	}
- #endif
- #ifdef CONFIG_SMP
--	seq_printf(p, "%*s: ", prec, "RES");
-+	seq_printf(p, "%*s:", prec, "RES");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->irq_resched_count);
-+		put_spaced_decimal(p, irq_stats(j)->irq_resched_count);
- 	seq_puts(p, "  Rescheduling interrupts\n");
--	seq_printf(p, "%*s: ", prec, "CAL");
-+	seq_printf(p, "%*s:", prec, "CAL");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->irq_call_count);
-+		put_spaced_decimal(p, irq_stats(j)->irq_call_count);
- 	seq_puts(p, "  Function call interrupts\n");
--	seq_printf(p, "%*s: ", prec, "TLB");
-+	seq_printf(p, "%*s:", prec, "TLB");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->irq_tlb_count);
-+		put_spaced_decimal(p, irq_stats(j)->irq_tlb_count);
- 	seq_puts(p, "  TLB shootdowns\n");
- #endif
- #ifdef CONFIG_X86_THERMAL_VECTOR
--	seq_printf(p, "%*s: ", prec, "TRM");
-+	seq_printf(p, "%*s:", prec, "TRM");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->irq_thermal_count);
-+		put_spaced_decimal(p, irq_stats(j)->irq_thermal_count);
- 	seq_puts(p, "  Thermal event interrupts\n");
- #endif
- #ifdef CONFIG_X86_MCE_THRESHOLD
--	seq_printf(p, "%*s: ", prec, "THR");
-+	seq_printf(p, "%*s:", prec, "THR");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->irq_threshold_count);
-+		put_spaced_decimal(p, irq_stats(j)->irq_threshold_count);
- 	seq_puts(p, "  Threshold APIC interrupts\n");
- #endif
- #ifdef CONFIG_X86_MCE_AMD
--	seq_printf(p, "%*s: ", prec, "DFR");
-+	seq_printf(p, "%*s:", prec, "DFR");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->irq_deferred_error_count);
-+		put_spaced_decimal(p, irq_stats(j)->irq_deferred_error_count);
- 	seq_puts(p, "  Deferred Error APIC interrupts\n");
- #endif
- #ifdef CONFIG_X86_MCE
--	seq_printf(p, "%*s: ", prec, "MCE");
-+	seq_printf(p, "%*s:", prec, "MCE");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(mce_exception_count, j));
-+		put_spaced_decimal(p, per_cpu(mce_exception_count, j));
- 	seq_puts(p, "  Machine check exceptions\n");
--	seq_printf(p, "%*s: ", prec, "MCP");
-+	seq_printf(p, "%*s:", prec, "MCP");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(mce_poll_count, j));
-+		put_spaced_decimal(p, per_cpu(mce_poll_count, j));
- 	seq_puts(p, "  Machine check polls\n");
- #endif
- #ifdef CONFIG_X86_HV_CALLBACK_VECTOR
- 	if (test_bit(HYPERVISOR_CALLBACK_VECTOR, system_vectors)) {
--		seq_printf(p, "%*s: ", prec, "HYP");
-+		seq_printf(p, "%*s:", prec, "HYP");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ",
-+			put_spaced_decimal(p,
- 				   irq_stats(j)->irq_hv_callback_count);
- 		seq_puts(p, "  Hypervisor callback interrupts\n");
- 	}
- #endif
- #if IS_ENABLED(CONFIG_HYPERV)
- 	if (test_bit(HYPERV_REENLIGHTENMENT_VECTOR, system_vectors)) {
--		seq_printf(p, "%*s: ", prec, "HRE");
-+		seq_printf(p, "%*s:", prec, "HRE");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ",
-+			put_spaced_decimal(p,
- 				   irq_stats(j)->irq_hv_reenlightenment_count);
- 		seq_puts(p, "  Hyper-V reenlightenment interrupts\n");
- 	}
- 	if (test_bit(HYPERV_STIMER0_VECTOR, system_vectors)) {
--		seq_printf(p, "%*s: ", prec, "HVS");
-+		seq_printf(p, "%*s:", prec, "HVS");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ",
-+			put_spaced_decimal(p,
- 				   irq_stats(j)->hyperv_stimer0_count);
- 		seq_puts(p, "  Hyper-V stimer0 interrupts\n");
- 	}
-@@ -174,27 +182,27 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- 	seq_printf(p, "%*s: %10u\n", prec, "MIS", atomic_read(&irq_mis_count));
- #endif
- #if IS_ENABLED(CONFIG_KVM)
--	seq_printf(p, "%*s: ", prec, "PIN");
-+	seq_printf(p, "%*s:", prec, "PIN");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stats(j)->kvm_posted_intr_ipis);
-+		put_spaced_decimal(p, irq_stats(j)->kvm_posted_intr_ipis);
- 	seq_puts(p, "  Posted-interrupt notification event\n");
- 
--	seq_printf(p, "%*s: ", prec, "NPI");
-+	seq_printf(p, "%*s:", prec, "NPI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ",
-+		put_spaced_decimal(p,
- 			   irq_stats(j)->kvm_posted_intr_nested_ipis);
- 	seq_puts(p, "  Nested posted-interrupt event\n");
- 
--	seq_printf(p, "%*s: ", prec, "PIW");
-+	seq_printf(p, "%*s:", prec, "PIW");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ",
-+		put_spaced_decimal(p,
- 			   irq_stats(j)->kvm_posted_intr_wakeup_ipis);
- 	seq_puts(p, "  Posted-interrupt wakeup event\n");
- #endif
- #ifdef CONFIG_X86_POSTED_MSI
--	seq_printf(p, "%*s: ", prec, "PMN");
-+	seq_printf(p, "%*s:", prec, "PMN");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ",
-+		put_spaced_decimal(p,
- 			   irq_stats(j)->posted_msi_notification_count);
- 	seq_puts(p, "  Posted MSI notification event\n");
- #endif
--- 
-2.47.3
-
+Thanks, Eliav
 
