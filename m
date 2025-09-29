@@ -1,98 +1,143 @@
-Return-Path: <linux-kernel+bounces-836112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A162BA8C57
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:53:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBADCBA8C60
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0B53BCFFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67B93BD42C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A01F2ECE92;
-	Mon, 29 Sep 2025 09:53:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DE12ECD3F;
+	Mon, 29 Sep 2025 09:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiJ5hUdu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03980272810;
-	Mon, 29 Sep 2025 09:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B8C2ECD34;
+	Mon, 29 Sep 2025 09:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759139625; cv=none; b=MuZwbyaT8lX9QltIgaCXPkFhgaI87pJP/p9S67bz+GAIIfrb153CdpbZ+KzPD7mkDDIh7gSuRVTcMRrUrkvFX9RR+oeQVptvI4JNMCAJJO5WBvSa/C3wBLEd0yGB1h/qWz9tXI+3tC9LH1Ed+Tf42I7LGn2SFJljqgoSikK+HNA=
+	t=1759139637; cv=none; b=iNHmxaVlNJn4RENiZy8eYiFv/3ylHGYhZAo6lKDC7iQJ35w1ZOlgqYqWGVE8T8zO/HcXEkKnybXN0Mc4bstFMy/kDViWsW13GTH7mGlmO14Tm6fYYf9euLZSBSZKktpTFtN23m+I4D543C2pW7ETIkTN9XRlkx93TfI4rYwNGAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759139625; c=relaxed/simple;
-	bh=NUrQYStLI/WVF+npM9aFdjdOrIIatiNEvu0keulgX0c=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l1RNOyRV8vbWy0wSs3Z/iruvUj+tyHA7C5nSFbumJYQQIjEmRhLTKiAiyKM0q0ztoE4QHZr9RntyXtARRAXb5m8hfBk4xtNtgXQHlyFZNGXdGyinpmFuYFHVAuR14lEaBfGBWEgORyGsL1tuyjkinDGaww+3uWyc5ZZ7289Nm0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cZxJX60ZXz6M4Xm;
-	Mon, 29 Sep 2025 17:50:36 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 058381402FE;
-	Mon, 29 Sep 2025 17:53:42 +0800 (CST)
-Received: from localhost (10.47.64.220) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 29 Sep
- 2025 10:53:40 +0100
-Date: Mon, 29 Sep 2025 10:53:39 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: Sakari Ailus <sakari.ailus@linux.intel.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-spi@vger.kernel.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Daniel Scally
-	<djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Javier Carrasco <javier.carrasco@wolfvision.net>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek
-	<pavel@kernel.org>, Matthias Fend <matthias.fend@emfend.at>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Paul Elder
-	<paul.elder@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mark Brown
-	<broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@kernel.org>
-Subject: Re: [PATCH v2 15/16] property: Drop functions operating on
- "available" child nodes
-Message-ID: <20250929105339.00004b25@huawei.com>
-In-Reply-To: <20250924100429.GM28073@pendragon.ideasonboard.com>
-References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
-	<20250924074602.266292-16-sakari.ailus@linux.intel.com>
-	<20250924100429.GM28073@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759139637; c=relaxed/simple;
+	bh=IcBB4p77ulg56CDFEqg1DgkRSxZNM6H4ZDQTNwSyFYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lv+NK3GdCX2N3MD/gSegfehq2XVU2rkqlraI6IRltY6CFJK0lk/S6audzrUFk1e8XjGpuUQme7AkI4r79yf3wG3WpZLKvn+u6M9VXqYa+Ixz+PzN7C8F+mrJyBlh5wKJkO8rHjxTyQisO5UlU858n1D5cVanTjIP8+yO0NEOYwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiJ5hUdu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67842C4CEF4;
+	Mon, 29 Sep 2025 09:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759139636;
+	bh=IcBB4p77ulg56CDFEqg1DgkRSxZNM6H4ZDQTNwSyFYI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FiJ5hUduzwTJIQ6rjcl3gcekaQ/ug2elSnrnXxdAk0ubdohlBlBbYvb3ukQtM4Njw
+	 rLVEDmyE5buDouuEcVTUXA8giphDauULJ9reLccQKaFPxM47fVYrUgaPHq5naslkX5
+	 GAdIU1uS0KpI0UakIBTqQf458nclumS/LjVReH+BoU1IMDm4QoCDomvMbn4ZmGx4Ek
+	 ynVjEAAFgiXka2Egc0hHq2NQ9TlY9gpjuo+EGSkp6QGfH2QCpt6eEqAoY+gljILQf3
+	 fobDJEPqkwQfLlvJHzie5w7Jhmy3lZOaJ8LwUKUnyteRy+AVfAWIgiBUvZpsExNE26
+	 cgsxxkSFMQExg==
+Date: Mon, 29 Sep 2025 11:53:52 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 08/12 for v6.18] core kernel
+Message-ID: <20250929-starren-ersonnen-c6559a5110a0@brauner>
+References: <20250926-vfs-618-e880cf3b910f@brauner>
+ <20250926-vfs-core-kernel-eab0f97f9342@brauner>
+ <aNfWQL6nLBrPNQTs@laps>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aNfWQL6nLBrPNQTs@laps>
 
-
-> > -/**
-> > - * device_get_next_child_node - Return the next available child node handle for a device
-> > + * device_get_next_child_node - Return the next available child node handle  
+On Sat, Sep 27, 2025 at 08:19:12AM -0400, Sasha Levin wrote:
+> On Fri, Sep 26, 2025 at 04:19:02PM +0200, Christian Brauner wrote:
+> > Hey Linus,
+> > 
+> > /* Testing */
+> > This contains the changes to enable support for clone3() on nios2 which
+> > apparently is still a thing. The more exciting part of this is that it
+> > cleans up the inconsistency in how the 64-bit flag argument is passed
+> > from copy_process() into the various other copy_*() helpers.
+> > 
+> > gcc (Debian 14.2.0-19) 14.2.0
+> > Debian clang version 19.1.7 (3+b1)
+> > 
+> > No build failures or warnings were observed.
+> > 
+> > /* Conflicts */
+> > 
+> > Merge conflicts with mainline
+> > =============================
+> > 
+> > No known conflicts.
+> > 
+> > Merge conflicts with other trees
+> > ================================
+> > 
+> > No known conflicts.
+> > 
+> > The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+> > 
+> >  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+> > 
+> > are available in the Git repository at:
+> > 
+> >  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-6.18-rc1.clone3
 > 
-> This last line is an unrelated change. With that fixed,
+> Hi Christian,
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> After pulling this tag, I started seeing a build failure.
+> 
+> a9769a5b9878 ("rv: Add support for LTL monitors") which was merged a few weeks
+> ago added a usage of task_newtask:
+> 
+> 	static void handle_task_newtask(void *data, struct task_struct *task, unsigned long flags)
+> 
+> But commit edd3cb05c00a ("copy_process: pass clone_flags as u64 across
+> calltree") from this pull request modified the signature without updating rv.
+> 
+> ./include/rv/ltl_monitor.h: In function ‘ltl_monitor_init’:
+> ./include/rv/ltl_monitor.h:75:51: error: passing argument 1 of ‘check_trace_callback_type_task_newtask’ from incompatible pointer type [-Wincompatible-pointer-types]
+>    75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newtask);
+>       |                                                   ^~~~~~~~~~~~~~~~~~~
+>       |                                                   |
+>       |                                                   void (*)(void *, struct task_struct *, long unsigned int)
+> ./include/rv/instrumentation.h:18:48: note: in definition of macro ‘rv_attach_trace_probe’
+>    18 |                 check_trace_callback_type_##tp(rv_handler);                             \
+>       |                                                ^~~~~~~~~~
+> 
+> I've fixed it up by simply:
+> 
+> diff --git a/include/rv/ltl_monitor.h b/include/rv/ltl_monitor.h
+> index 67031a774e3d3..5368cf5fd623e 100644
+> --- a/include/rv/ltl_monitor.h
+> +++ b/include/rv/ltl_monitor.h
+> @@ -56,7 +56,7 @@ static void ltl_task_init(struct task_struct *task, bool task_creation)
+>         ltl_atoms_fetch(task, mon);
+>  }
+> -static void handle_task_newtask(void *data, struct task_struct *task, unsigned long flags)
+> +static void handle_task_newtask(void *data, struct task_struct *task, u64 flags)
+>  {
+>         ltl_task_init(task, true);
+>  }
 
-I'll assume you'll tidy that up.
+Hm, thanks! That is only in -next, I guess. I probably didn't catch this
+because I didn't have CONFIG_RV_REACTORS turn on (whatever that is).
 
-Very pleased to see this go, simply for the saving in time explaining the odd difference
-to people in driver reviews!
+@Linus please let me know if you want me to resend this pull request or
+if you just want to apply this fixup directly. Thank you!
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
+Christian
 
