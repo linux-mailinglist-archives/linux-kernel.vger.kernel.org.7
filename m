@@ -1,87 +1,150 @@
-Return-Path: <linux-kernel+bounces-836364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E0BBA978F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4E5BA97AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A267A3375
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:03:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C870416872C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9331B308F36;
-	Mon, 29 Sep 2025 14:05:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FC43090C7;
+	Mon, 29 Sep 2025 14:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIwCs6nE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E5729BDA5
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7B534BA3B;
+	Mon, 29 Sep 2025 14:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759154707; cv=none; b=ZsAF5PWDnaL6A9AJWXNsg8YLBgEeTbWzdD/qoLs2THA/vTfNU3+qDbmknCyeXlIE6n6lAXETmj9n7duKhG1FeXVjuNAy5JSnk6zkB+7t8y3wP87efLMf1CgxbO0fFMq/vK8exLLLGzcZk4LjTK3vD7nKNCgtp7vo/n+L4GWSHhc=
+	t=1759154846; cv=none; b=o51T/obC1H4tYEi1AB1a79nBDCe8ISeM4WsgmMpHl2VQW2UNUm56GRaFIvXAv8cvaWpyedXcpiUyQY3Jw3DQ9daRJSv4GtMOH7tJ623hdYSmr3BRMbG1KSGG7Ljk5xIY6BYbC94muDIK/0D0edEHLP8elyISWi+tLraQ+75ZiPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759154707; c=relaxed/simple;
-	bh=1kEuho2GfBceA8vSCmqY/6dHpBaVqzrMmCUsbKzg2ag=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CqEBf8KUciEkAiRQWKcZhLSeSkhDGAG+BJcuXZ342RkGJ6yEDvSVSdkfjFtShNRvwGWO0sAcmnYUb+cGM/fcrFuxP7i0l9+tbXz11Gtx2hVWpsCTPIAiKRmP7sPZqqPq3Zi4uhqezT1X/vcSs6AX2lQH+0MmaE+49DGeu5sRKlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42571803464so122112865ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:05:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759154704; x=1759759504;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4u1VQ1XBKz2bSv2m0HHOSqT3NjhDSxwCeRprPSzfAA=;
-        b=iYAIF7QBVcdeAJnNxrVha0Cjt9Tb5bV/yih440wtRvhcNJvYugLEwKArkEzAkNa4LU
-         7Nutt2kF1CJ6fVFePJMC+UF9enBZ+XrlXWoK8hky51WuQwQLdD63lX/L6YjdHsX969yz
-         qF+/IDO0R2bHqAUlqZ1zoxLo9j03LoQk/MelIY4uAzmXQQqson2gLcAjCW0czdP++6rd
-         VdYxkR4mPkpDu2EaFzYhXnUT0ya1qq3Vd7zjvHlahAejVVT3YtGDx4HG6REG3XCPTIPs
-         HLxbv1wOH9TCU/MxfWMTDzuhv9nMEL4NkWlbiBeNfVEMIA6W1RXRmFa4CWqWntgh8oGu
-         IDig==
-X-Forwarded-Encrypted: i=1; AJvYcCV9O6iW6hqkKOk1gLlUaV10hlHfrPOqexmT0fYIKqK3SPARoMtYQ6kZ3nUFEg5U2lRpO6qpzNJp+8udna4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHd3SvmwSMFWmHSzNciHzx8OMHGjI1U+apQ2Qqj7SzpJ4TgbDx
-	nFz6j6MOL4Re3rhcWdaB09NYBsAfOOiqwyj/H+X+oTp+maTgOEmNfpQm8uOM4UEtFusbX2Fdzyu
-	PqOfSHaabIBHfRxCyug2iHYLHDWeIyyhXpQKXpwYHrba7p6Vp2zFB6P1mqdk=
-X-Google-Smtp-Source: AGHT+IERLaW0xSc2mjfKPZkz2KQmwaASB0HGFh5e7znQsdLHOXoOG6O4wUmURcoxlR5Ze/qPO/UWrbY5O8vSqGMcwRfVvLBzopXi
+	s=arc-20240116; t=1759154846; c=relaxed/simple;
+	bh=BKY6d1yBc/lroKagYCaSuXxxZ2I6xVz7xuOdW9gGVog=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Uc4R8JDvM+8fbzgzQveiQR8c0MccrWjMIr8wasY4CT8+1mMx/o0ZnlhqaUWDwpeFooMsKLL10QSm75ZrXrxVwjcpTftVWA3PW9C+fKe5xwP3UAj8HwaKAQI9HMkb1syVxEtvwRUY7mqE4Cye83GvVK9NrG1LeYp8WCNICpFUXH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIwCs6nE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E39D5C4CEF4;
+	Mon, 29 Sep 2025 14:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759154846;
+	bh=BKY6d1yBc/lroKagYCaSuXxxZ2I6xVz7xuOdW9gGVog=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=VIwCs6nERrhW0nxOSUX19uKaSbWaPiA57FLkrY/4Uprkq5LgrHoiUivCfaZvPlDJb
+	 i6KLN/dKDKpt1NR2uxgGrDR52CIUwIHMg23DAcNlGqdewpdtJ70FJNG6vguN5c0uqv
+	 nZXAhALVBgh98eaVa0iqjXEivUiyt33u0EBXa0WBUTXuKPWVYVyzjfZ9M0LVem7OQo
+	 AEEPO53AterwJzs/a9z5iozTdGXW9hC5C2TJZP7d2vbXGRMDMCg6jLfr24uZafLKzw
+	 nS5iP9sVWdC/gpZ6Qm187pNyhz6baXQw04PzSAY31gKs37HoOgNmPLp4Ijx6IsJwhb
+	 y4VzpOZRGf51w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1523:b0:429:6c5a:61df with SMTP id
- e9e14a558f8ab-42c6f2ce383mr31072545ab.3.1759154703699; Mon, 29 Sep 2025
- 07:05:03 -0700 (PDT)
-Date: Mon, 29 Sep 2025 07:05:03 -0700
-In-Reply-To: <f051f396-cc01-4d8e-a6db-22f7578b1499@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68da920f.a70a0220.10c4b.0041.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dx_dir_lookup_rec
-From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 29 Sep 2025 16:07:18 +0200
+Message-Id: <DD5CCG4MIODH.1718JI1Z7GH8T@kernel.org>
+Subject: Re: [RFC v8 00/21] DRM scheduling cgroup controller
+Cc: <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
+ <kernel-dev@igalia.com>, <intel-xe@lists.freedesktop.org>,
+ <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, "Leo Liu"
+ <Leo.Liu@amd.com>, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ "Matthew Brost" <matthew.brost@intel.com>, =?utf-8?q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, =?utf-8?q?Michel_D=C3=A4nzer?=
+ <michel.daenzer@mailbox.org>, "Philipp Stanner" <phasta@kernel.org>,
+ "Pierre-Eric Pelloux-Prayer" <pierre-eric.pelloux-prayer@amd.com>, "Rob
+ Clark" <robdclark@gmail.com>, "Tejun Heo" <tj@kernel.org>, "Alexandre
+ Courbot" <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
+ "John Hubbard" <jhubbard@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alex Deucher"
+ <alexander.deucher@amd.com>, "Lucas De Marchi" <lucas.demarchi@intel.com>,
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rodrigo Vivi" <rodrigo.vivi@intel.com>, "Boris Brezillon"
+ <boris.brezillon@collabora.com>, "Rob Herring" <robh@kernel.org>, "Steven
+ Price" <steven.price@arm.com>, "Liviu Dudau" <liviu.dudau@arm.com>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Boqun Feng" <boqunf@netflix.com>,
+ =?utf-8?q?Gr=C3=A9goire_P=C3=A9an?= <gpean@netflix.com>
+To: "Tvrtko Ursulin" <tvrtko.ursulin@igalia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250903152327.66002-1-tvrtko.ursulin@igalia.com>
+In-Reply-To: <20250903152327.66002-1-tvrtko.ursulin@igalia.com>
 
-Hello,
+On Wed Sep 3, 2025 at 5:23 PM CEST, Tvrtko Ursulin wrote:
+> This is another respin of this old work^1 which since v7 is a total rewri=
+te and
+> completely changes how the control is done.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I only got some of the patches of the series, can you please send all of th=
+em
+for subsequent submissions? You may also want to consider resending if you'=
+re
+not getting a lot of feedback due to that. :)
 
-Reported-by: syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com
-Tested-by: syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com
+> On the userspace interface side of things it is the same as before. We ha=
+ve
+> drm.weight as an interface, taking integers from 1 to 10000, the same as =
+CPU and
+> IO cgroup controllers.
 
-Tested on:
+In general, I think it would be good to get GPU vendors to speak up to what=
+ kind
+of interfaces they're heading to with firmware schedulers and potential fir=
+mware
+APIs to control scheduling; especially given that this will be a uAPI.
 
-commit:         e5f0a698 Linux 6.17
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=10261ae2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
-dashboard link: https://syzkaller.appspot.com/bug?extid=30b53487d00b4f7f0922
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1540ff12580000
+(Adding a couple of folks to Cc.)
 
-Note: testing is done by a robot and is best-effort only.
+Having that said, I think the basic drm.weight interface is fine and should=
+ work
+in any case; i.e. with the existing DRM GPU scheduler in both modes, the
+upcoming DRM Jobqueue efforts and should be generic enough to work with
+potential firmware interfaces we may see in the future.
+
+Philipp should be talking about the DRM Jobqueue component at XDC (probably=
+ just
+in this moment).
+
+--
+
+Some more thoughts on the DRM Jobqueue and scheduling:
+
+The idea behind the DRM Jobqueue is to be, as the name suggests, a componen=
+t
+that receives jobs from userspace, handles the dependencies (i.e. dma fence=
+s),
+and executes the job, e.g. by writing to a firmware managed software ring.
+
+It basically does what the GPU scheduler does in 1:1 entity-scheduler mode,
+just without all the additional complexity of moving job ownership from one
+component to another (i.e. from entity to scheduler, etc.).
+
+With just that, there is no scheduling outside the GPU's firmware scheduler=
+ of
+course. However, additional scheduler capabilities, e.g. to support hardwar=
+e
+rings, or manage firmware schedulers that only support a limited number of
+software rings (like some Mali GPUs), can be layered on top of that:
+
+In contrast to the existing GPU scheduler, the idea would be to keep lettin=
+g the
+DRM Jobqueue handle jobs submitted by userspace from end to end (i.e. let t=
+he
+push to the hardware (or software) ring buffer), but have an additional
+component, whose only purpose is to orchestrate the DRM Jobqueues, by manag=
+ing
+when they are allowed to push to a ring and which ring they should push to.
+
+This way we get rid of one of the issue that the existing GPU scheduler mov=
+es
+job ownership between components of different lifetimes (entity and schedul=
+er),
+which is one of the fundamental hassles to deal with.
 
