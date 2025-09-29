@@ -1,216 +1,202 @@
-Return-Path: <linux-kernel+bounces-835946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659ECBA86A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:39:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6056CBA869E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0AE27A27AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:37:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BBBF16F9E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0423626FA6F;
-	Mon, 29 Sep 2025 08:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534BF266B52;
+	Mon, 29 Sep 2025 08:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="oj8MYSzE"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLGBCqIN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268BF26F28A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999CF258CE7;
+	Mon, 29 Sep 2025 08:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759135152; cv=none; b=pfRCnDMU8l+PBjO1qUPTsqRB3qQS986KkUeCSppQGJvE5trt7bO9GqtVpcZAYnY2E4lg8qsFrfDSTyyBB6/hiwldZYXGY62/R+M4ye3tUL2DZ+137rm16SUaeh2HK1uW9ECqEmgnucySYIhWh1A+0aMAQCoIwuMIv3p9vmVT2Rc=
+	t=1759135145; cv=none; b=pSOHLsr+d9zjTNZ5WszbS7wuIzuP7A4MiMSpGjB5Zs/pQxtMuLuw9IfdhiaOkCBXDdLW+rqtffsbNkeKD4LOgwP2c494zvAKfYaDcB8NHjnDpau0TG2AAVAqkeGFLOpuBhZHaI383x5+yF+E9SUiMPZ7SbeA7YaTh+KcAcQxLkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759135152; c=relaxed/simple;
-	bh=TmaQd4o0RTw+qJvwfYDsZEYphnDFl8O+aVZ7c+sBUdk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6XGQwzplELvXDZvgiBLpNf4HDaU7x1fDtwU1TD8V8FphxZ+YpC8LPbXf7RWP4zFxovbFTAQv3cN3jWP6lCjnR1QF+x4hvVSLBStnVYqngqEM4xcYwJS75F9wiAymbE1/rRizS2Ajm1HfaLjqQXO5bLPoU7SpmtjsCS7/TfhsIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=oj8MYSzE; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-91179e3fe34so164351139f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 01:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1759135148; x=1759739948; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pFRvaYMJ1vy51yLdimM3/5jbpqBBGlPL331N70STe0c=;
-        b=oj8MYSzExuMnVsz8kYjdmvDOjEkG0u4Hk4Iq0d1H2yWvWtXkeiWQnLGUKURIaBFBCH
-         fK1LnUFWBovn2ZVJ9HKh8Zgu/aHji8pIQcAZHv74rpFSK02yU+KDcobatKCyDKX7g50y
-         ajDXSpBvYnRPb4o7tzwskNyaldiRPbqIAcqvDjlWgKEFcmb67zUb7pG51y8AsvRjXrnV
-         Q8VEuEQQtC1hhZ9XjUIIWBwagwV/lDjseh7gqhCRsILyVyGZu4/cn1SWGh7zplZ0TM5w
-         FiKuFX4r3QIMxkzpVQ635DfnyDP1XvKcv2M1Ka6UGdMgkR3E/dQMUv+dRUGDQnmt/sVY
-         QqWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759135148; x=1759739948;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pFRvaYMJ1vy51yLdimM3/5jbpqBBGlPL331N70STe0c=;
-        b=ssgQ7IHD+D5tpmoj/r2Af0UMC2chZH7xWpJymdR5Vq0u3DQPDMgxuQh6xTYHppIxGu
-         hy0ICIP/6C4gG29AoGQMig3n0zVRcqdaCSPT16v9N2jMk+p6rYO6hfy5bqU/5kPQRKri
-         kkRYrOlH4aJ2Hc2CziK1aZ6QT9ihYPf14ZxKjEh6N1HwIngSZr7a/UbMHZSI9IDX75+7
-         rRXMVVA2hKWLSu5h6y7rXXKto3KPpxZxChynAuEDJzI/P6bTmnXLa4UE7ugB21GrrHnE
-         TdaSx4z4tGzD6urcqu3RFu5mhMKlBBziXbfDXz3E/kkLk1g8STclBgRzEucodB9Tc1B3
-         yfbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPT4wZHfZYXbchkf9UhbbG3MBQfRSQEqBd558lz2aPVtD3pZJ3vhXLVzK4hPOLBD/fVvXmfMbRjtXkV1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAFqMRcVcu62ZsBynE6D4oCvxihhhTYWbZrRWnAVa62YeBWtQ0
-	7RyuVn6k3L6ki+70VoagE/5+hngnqYOsFWG2po6zpkTfRXOEsgZ6u0tDWteIYRA7EMIlgirZqjy
-	fwUtAaa9EUerZy+NAs5atpxzsQl9dYMgbi1Cdr3882g==
-X-Gm-Gg: ASbGncu8e+SsIc5AnMsANx9LQfrVAxZ56CN/3WayIq28YrKw+wwSx9/7FUWLezYFLCq
-	5TxEYL0xuNtZmVQLP3S6KdXMo08ObN0iB483M1rRdY+RqjNwB9JJu7LLo1MDa/TFkYF0ydHj5d+
-	GGzve5mJx2MMEaFGgk+ScJ83htcuU6QKlwM2A8EhNa5db7+1UcXt9NTqbnwjjxObLl+MXxu5Y/F
-	4SkOxJ6cwGquy9xeiIgqZ2XU0zEs1pp73ZAdnv/TqUNBaNDCpI=
-X-Google-Smtp-Source: AGHT+IFxrKzPQAcrlzU7ZDuTd4iixFCb7z3l3mi1CDZ/S+VlSgc8ICsJKl2Oly84woPaCzcz1Abkt6vL+5MZwcT5y5g=
-X-Received: by 2002:a05:6e02:1a82:b0:42b:7615:46a1 with SMTP id
- e9e14a558f8ab-42b76154ee9mr53607275ab.6.1759135148141; Mon, 29 Sep 2025
- 01:39:08 -0700 (PDT)
+	s=arc-20240116; t=1759135145; c=relaxed/simple;
+	bh=4ZnJM9NZcxpYBaNkmuPhjRp1VdvB+zXJlpGwKpRLn1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j73JxhtpmkYpwnNbvnlEHzhtkylBppIdY46L9a2tagrD9yxdt/5alAolz8oYDdrHj9l4EZwJbHm8DW7M2YwYDRAt8FXCwsDedpdOI/TgnmeBsHkIGs5tMS+6wYXUTBvkKQVe5NYY72l5acuhfoRD/sTPoOQcYQexmqka/B3YLr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLGBCqIN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2955C4CEF4;
+	Mon, 29 Sep 2025 08:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759135145;
+	bh=4ZnJM9NZcxpYBaNkmuPhjRp1VdvB+zXJlpGwKpRLn1k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VLGBCqINRyKEAaZaQd+3uNgpyfoR6TJTZ09B6EcgPZFEyr2s4Av1p9hiDb1F2RlJU
+	 /mC4sRjx+svu6XcNBOq5XAQzE0ouukkw3YRQ5b/mM401E3YGtjiHZxa2ceDoRi38Th
+	 GUscUJmVkHVJfW83xa67nFyqpzUxsqbmArDu6GYl+81Fsp2qMzKuOo4j7mTdASGmu/
+	 jUq/Q5HKKPM/cbzXdEPAyo6gyWNqA5Ru+S8jLaVnajxrf2nP/nvzZ39+7t+dab6RM8
+	 W0MLXCcnQRXmwUlk/SnD281AU3da7jRtoqL9GywieckP+9QXWHof4TyuDifOxNbgrB
+	 SQ0+U2xj05BSg==
+Date: Mon, 29 Sep 2025 10:39:00 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rdunlap@infradead.org
+Subject: Re: [PATCH 2/2] docs: Makefile: avoid a warning when using without
+ texlive
+Message-ID: <20250929103900.19c11b9a@foz.lan>
+In-Reply-To: <1d993906-bae3-41eb-963f-de960cc56dd0@gmail.com>
+References: <e23e03dd41e044d55e4ae24ffd9e1b49e3f2515a.1758881658.git.mchehab+huawei@kernel.org>
+	<f9ceb569-363c-4806-9451-4a4ef83b38ca@gmail.com>
+	<1d993906-bae3-41eb-963f-de960cc56dd0@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926124912.243464-1-pmladek@suse.com> <20250926124912.243464-4-pmladek@suse.com>
-In-Reply-To: <20250926124912.243464-4-pmladek@suse.com>
-From: Andrew Murray <amurray@thegoodpenguin.co.uk>
-Date: Mon, 29 Sep 2025 09:38:57 +0100
-X-Gm-Features: AS18NWCXdvU2ZbPVb8EAa62GjVbFMiWAQd1KeKjdEBSGcOtZptF6Dl6utgPxIoM
-Message-ID: <CALqELGzfY2L0z231Zt94-iuy5jE-+Lzjm2TqMgHrE3jsx-DCBQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] printk/nbcon: Release nbcon consoles ownership in
- atomic flush after each emitted record
-To: Petr Mladek <pmladek@suse.com>
-Cc: John Ogness <john.ogness@linutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Tony Lindgren <tony@atomide.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
-	Serge Semin <fancer.lancer@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 26 Sept 2025 at 13:50, Petr Mladek <pmladek@suse.com> wrote:
->
-> printk() tries to flush messages with NBCON_PRIO_EMERGENCY on
-> nbcon consoles immediately. It might take seconds to flush all
-> pending lines on slow serial consoles. Note that there might be
-> hundreds of messages, for example:
->
-> [    3.771531][    T1] pci 0000:3e:08.1: [8086:324
-> ** replaying previous printk message **
-> [    3.771531][    T1] pci 0000:3e:08.1: [8086:3246] type 00 class 0x088000 PCIe Root Complex Integrated Endpoint
-> [ ... more than 2000 lines, about 200kB messages ... ]
-> [    3.837752][    T1] pci 0000:20:01.0: Adding to iommu group 18
-> [    3.837851][    T
-> ** replaying previous printk message **
-> [    3.837851][    T1] pci 0000:20:03.0: Adding to iommu group 19
-> [    3.837946][    T1] pci 0000:20:05.0: Adding to iommu group 20
-> [ ... more than 500 messages for iommu groups 21-590 ...]
-> [    3.912932][    T1] pci 0000:f6:00.1: Adding to iommu group 591
-> [    3.913070][    T1] pci 0000:f6:00.2: Adding to iommu group 592
-> [    3.913243][    T1] DMAR: Intel(R) Virtualization Technology for Directed I/O
-> [    3.913245][    T1] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
-> [    3.913245][    T1] software IO TLB: mapped [mem 0x000000004f000000-0x0000000053000000] (64MB)
-> [    3.913324][    T1] RAPL PMU: API unit is 2^-32 Joules, 3 fixed counters, 655360 ms ovfl timer
-> [    3.913325][    T1] RAPL PMU: hw unit of domain package 2^-14 Joules
-> [    3.913326][    T1] RAPL PMU: hw unit of domain dram 2^-14 Joules
-> [    3.913327][    T1] RAPL PMU: hw unit of domain psys 2^-0 Joules
-> [    3.933486][    T1] ------------[ cut here ]------------
-> [    3.933488][    T1] WARNING: CPU: 2 PID: 1 at arch/x86/events/intel/uncore.c:1156 uncore_pci_pmu_register+0x15e/0x180
-> [    3.930291][    C0] watchdog: Watchdog detected hard LOCKUP on cpu 0
-> [    3.930291][    C0] Kernel panic - not syncing: Hard LOCKUP
-> [...]
-> [    3.930291][    C0] CPU: 0 UID: 0 PID: 18 Comm: pr/ttyS0 Not tainted...
-> [...]
-> [    3.930291][    C0] RIP: 0010:nbcon_reacquire_nobuf+0x11/0x50
-> [    3.930291][    C0] Call Trace:
-> [...]
-> [    3.930291][    C0]  <TASK>
-> [    3.930291][    C0]  serial8250_console_write+0x16d/0x5c0
-> [    3.930291][    C0]  nbcon_emit_next_record+0x22c/0x250
-> [    3.930291][    C0]  nbcon_emit_one+0x93/0xe0
-> [    3.930291][    C0]  nbcon_kthread_func+0x13c/0x1c0
->
-> The are visible two takeovers of the console ownership:
->
->   - The 1st one is triggered by the "WARNING: CPU: 2 PID: 1 at
->     arch/x86/..." line printed with NBCON_PRIO_EMERGENCY.
->
->   - The 2nd one is triggered by the "Kernel panic - not syncing:
->     Hard LOCKUP" line printed with NBCON_PRIO_PANIC.
->
-> There are more than 2500 lines, at about 240kB, emitted between
-> the takeover and the 1st "WARNING" line in the emergency context.
-> This amount of pending messages had to be flushed by
-> nbcon_atomic_flush_pending() when WARN() printed its first line.
->
-> The atomic flush was holding the nbcon console context for too long so
-> that it triggered hard lockup on the CPU running the printk kthread
-> "pr/ttyS0". The kthread needed to reacquire the console ownership
-> for restoring the original serial port state in serial8250_console_write().
->
-> Prevent the hardlockup by releasing the nbcon console ownership after
-> each emitted record.
->
-> Note that __nbcon_atomic_flush_pending_con() used to hold the console
-> ownership all the time because it blocked the printk kthread. Otherwise
-> the kthread tried to flush the messages in parallel which caused repeated
-> takeovers and more replayed messages.
->
-> It is not longer a problem because the repeated takeovers are blocked
-> by the counter of emergency contexts, see nbcon_cpu_emergency_cnt.
->
-> Link: https://lore.kernel.org/all/aNQO-zl3k1l4ENfy@pathway.suse.cz
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  kernel/printk/nbcon.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> index 219ae0c8b5ed..e298346111b2 100644
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -1532,10 +1532,10 @@ static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
->         ctxt->prio                      = nbcon_get_default_prio();
->         ctxt->allow_unsafe_takeover     = allow_unsafe_takeover;
->
-> -       if (!nbcon_context_try_acquire(ctxt, false))
-> -               return -EPERM;
-> -
->         while (nbcon_seq_read(con) < stop_seq) {
-> +               if (!nbcon_context_try_acquire(ctxt, false))
-> +                       return -EPERM;
-> +
->                 /*
->                  * nbcon_emit_next_record() returns false when the console was
->                  * handed over or taken over. In both cases the context is no
-> @@ -1544,6 +1544,8 @@ static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
->                 if (!nbcon_emit_next_record(&wctxt, true))
->                         return -EAGAIN;
->
-> +               nbcon_context_release(ctxt);
-> +
->                 if (!ctxt->backlog) {
->                         /* Are there reserved but not yet finalized records? */
->                         if (nbcon_seq_read(con) < stop_seq)
-> @@ -1552,7 +1554,6 @@ static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
->                 }
->         }
->
-> -       nbcon_context_release(ctxt);
->         return err;
->  }
->
-> --
-> 2.51.0
->
+Em Sat, 27 Sep 2025 18:12:19 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-Reviewed-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
+> Sorry, a quick follow-up.
+> 
+> On Sat, 27 Sep 2025 16:35:08 +0900, Akira Yokosawa wrote:
+> > On Fri, 26 Sep 2025 12:16:19 +0200, Mauro Carvalho Chehab wrote:  
+> >> As reported by Randy, running make htmldocs on a machine
+> >> without textlive now produce warnings:
+> >>
+> >>     $ make O=DOCS htmldocs
+> >>     ../Documentation/Makefile:70: warning: overriding recipe for target 'pdfdocs'
+> >>     ../Documentation/Makefile:61: warning: ignoring old recipe for target 'pdfdocs'
+> >>
+> >> That's because the code has now two definitions for pdfdocs in
+> >> case $PDFLATEX command is not found. With the new script, such
+> >> special case is not needed anymore, as the script checks it.
+> >>
+> >> Drop the special case. Even after dropping it, on a machine
+> >> without LaTeX, it will still produce an error as expected,
+> >> as running:
+> >>
+> >>     $ ./tools/docs/sphinx-build-wrapper pdfdocs
+> >>     Error: pdflatex or latexmk required for PDF generation
+> >>
+> >> does the check. After applying the patch we have:
+> >>
+> >>     $ make SPHINXDIRS=peci htmldocs
+> >>     Using alabaster theme
+> >>     Using Python kernel-doc
+> >>
+> >>     $ make SPHINXDIRS=peci pdfdocs
+> >>     Error: pdflatex or latexmk required for PDF generation
+> >>     make[2]: *** [Documentation/Makefile:64: pdfdocs] Error 1
+> >>     make[1]: *** [/root/Makefile:1808: pdfdocs] Error 2
+> >>     make: *** [Makefile:248: __sub-make] Error 2
+> >>
+> >> Which is the expected behavior.
+> >>  
+> > 
+> > There seems to be a related issue.
+> > 
+> > At current "docs-mw", under build environments who don't have xelatex nor latexmk,
+> > 
+> >     $ make SPHINXDIRS=peci latexdocs
+> > 
+> > completes without any issue.
+> > 
+> > In the resulting .../latex/peci directory, one can run  
+> 
+>      I meant:      .../peci/latex
+> 
+
+True. This is an one-line fix:
+
+	@@ -650,7 +650,7 @@ class SphinxBuilder:
+	             if not sphinxbuild and target != "mandocs":
+	                 sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")
+	 
+	-        if builder == "latex":
+	+        if target == "pdfdocs":
+	             if not self.pdflatex_cmd and not self.latexmk_cmd:
+	                 sys.exit("Error: pdflatex or latexmk required for PDF generation")
+
+With that:
+
+	$ make SPHINXDIRS=peci latexdocs
+	Using alabaster theme
+	Using Python kernel-doc
+	WARNING: dot(1) not found, for better output quality install graphviz from https://www.graphviz.org
+
+	$ tree Documentation/output/
+	Documentation/output/
+	`-- peci
+	    `-- latex
+	...
+	        |-- Makefile
+	...
+        	|-- peci.tex
+	...
+
+	$ make SPHINXDIRS=peci pdfdocs
+	Error: pdflatex or latexmk required for PDF generation
+	make[2]: *** [Documentation/Makefile:64: pdfdocs] Error 1
+	make[1]: *** [/root/Makefile:1808: pdfdocs] Error 2
+	make: *** [Makefile:248: __sub-make] Error 2
+
+	$ (cd Documentation/output/peci/latex/; make)
+	latexmk -pdf -dvi- -ps-  'peci.tex'
+	make: latexmk: No such file or directory
+	make: *** [Makefile:29: peci.pdf] Error 127
+
+the original behavior is restored.
+
+> > 
+> >     $ make PDFLATEX="latexmk -xelatex" LATEXOPTS="-interaction=batchmode -no-shell-escape"
+> > 
+> > and build peci.pdf.  
+> 
+> I failed to mention, but of course you need to transfer/share said
+> .../peci/latex/ to another build environment who has all the required
+> packages for "pdfdocs".
+> 
+> I often use such heterogeneous combination of running "make latexdocs"
+> + running make under each of .../$SPHINXDIRS/latex/ using another
+> environment.
+> 
+> This way, you need only one set of working texlive packages for testing
+> against various Sphinx's latex builder releases.
+> 
+> > 
+> > At current "build-scripts", I get this:
+> > 
+> >     $ make SPHINXDIRS=peci latexdocs
+> >     Error: pdflatex or latexmk required for PDF generation
+> >     make[2]: *** [Documentation/Makefile:68: latexdocs] Error 1
+> >     make[1]: *** [<srcdir>/Makefile:1806: latexdocs] Error 2
+> >     make: *** [Makefile:248: __sub-make] Error 2
+> > 
+> > Patch 2/2 doesn't change the behavior.
+> > 
+> > This is yet another regression.  Please teach sphinx-build-wrapper of the
+> > fact that "latexdocs" does not run those texlive commands.  It is only the
+> > "pdfdocs" phase that will run them.
+> >   
+> 
+> You see, "make latexdocs" is supposed to generate all the necessary files
+> for building PDFs to be consumed by make + latexmk/xelatex.
+> There is a clear boundary between "latexdocs" and "pdfdocs".
+
+True.
+
+Such patch should address your usecase: it will allow building
+tex files on one machine and generate pdf on a different one.
 
 Thanks,
-
-Andrew Murray
+Mauro
 
