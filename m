@@ -1,174 +1,175 @@
-Return-Path: <linux-kernel+bounces-836131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D29BA8D27
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:10:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A49CBA8D2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF96E3BF9DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:09:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 195AC1C0044
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FA02FAC0C;
-	Mon, 29 Sep 2025 10:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419FD2FABF7;
+	Mon, 29 Sep 2025 10:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oDLZz7Yr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZLIgf0R2"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0E62FABE3
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D9E2D0283
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759140591; cv=none; b=LFlIm+ZMZsSkagH+XlyJEftzESewJ91g8sMuDZuPdt81T1Ddc7R+hd2P8Jx/f+LHbCSok0ENrHP+DvTidQDG/CKDG7aa3MnksWrje6UmVuCPuJlfpsC+Fm7ph5V40/+JLbF1g/mLyGRESMABTb6T0vbSJXlVCAWLPOXmUoUL6rQ=
+	t=1759140627; cv=none; b=P4YYWtvcBPRRRXSJOTd4ahMMfGqLhMHj7QBL18Re0o2o8KYPJyYxoy47jA2VAWrmxCGhn+slvAuYuhdAK1ZtnslxeDgCW7oLoR52GctfXBLwgudPglvLsQmqB0UDQJWkkHh2ELjbbnGkvf3rfaIPVleVkhWpKUbrUxKj7doR4Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759140591; c=relaxed/simple;
-	bh=06Ux4I3QO/gu1GAwm5gqNsrEmJdX2MdFND6fwSh05LY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mk1zV4+vkwyJ9PVSPDmn77cGGWJWWLniZniFQ4JruaWmMDTYn5QXe5qzN/yVZRMmYzF4rWO48baNAaUU5mGWXXOJiNsKnBTP3qqCr/TzkTwjr4tbGXJwNno0hNaNS/vuw5Oa9mHkUWdWAv0m8LwRpCYCBkupArMy5Ky1lMtiIho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oDLZz7Yr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58SNU2VA022463
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:09:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ukuFX1CzqOMg1c7sNCM9NZcKqMaOkjZqvA7bpG2anlQ=; b=oDLZz7YruYMhFIVW
-	u0zSPMWgmzitP/ZUBUKnzAqqqsF0Q2jifaFbAhuXRu/MDRX569pqun4SRSdv/FtK
-	3qMOlOf3Ta7qBCHSF7UwArgxkZhfOtWtLc1cYpEHHzsbNf/McPHURh5/bYHszbOo
-	LvWGN9E/5M3q20M6BGdvEvChy4z2Yzg/lwyWynyHCaxlBiFIV48S+D2Lrgig8gW9
-	8/q8Qkp04VLiIXsUHPJgGw2h7WDT0EGZxNRiTW25HSy8ML8gYmhJKfx+g8IwDama
-	LvYBv/QTA7JffWiw8oi8cLun1RiuY0CaEP5ZMXiO0uhbXqdjCNFnwylLXZoytDQH
-	Cqi/cw==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59mw483-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:09:48 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-780fdbbdd20so4716645b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 03:09:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759140587; x=1759745387;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ukuFX1CzqOMg1c7sNCM9NZcKqMaOkjZqvA7bpG2anlQ=;
-        b=Xem/oZXaupK4JXRdIsmO5Fxa48gx8psSZoPyrBI3GaptwXBFRb7yB5Xnt3u8GmvQZQ
-         mZpwAhtk/I0PJZ0PCkhN6xUN13BFQZpC6osvI/AlRjCR2mkY+cdPjVSsFhjMlYpF2nSj
-         aiMWKAbv/NbolkZS9+HsOP004z2u4GXoj5+FTKo4dzaBg5hM/uhNMbIjeVHr/i6qctu/
-         oX8J8dTCEyR+MqqXRo7SyZ2li9gTLIwpc7rcSOzAdBTqEASVKJhHfbJEKnu8AcO5Mct8
-         ayTe4KitfRVMmBPiRqI9PQ7mKmn1khD+kU0JafNSOZIAxoYkGGVOHuvFVQK6BNDmET4X
-         I02A==
-X-Forwarded-Encrypted: i=1; AJvYcCWvnC63PC83IpufKzV1XPqQgDvPt9xXKIMndJaWeBlwzgVl30NeWx5fFExCGfTXRM0zm4GZ45PP21xaLko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFEgTx977QXZJljrQsULYZH9nTgaU2Csu8dOk4spoldgJ+CCD8
-	/ggtELbGH9FOasuJdaL7x4rndiXkBPYz+RZfdAWmwr/zBt2fA36c4LqgIcaGuQGMfI3Lkf07DrO
-	sFtLQbJfXFh7lOLgn7nZyx9kcAAtGwpSiYEzxckihrubFypE8SPx0l/49SzEm+YaQhE4=
-X-Gm-Gg: ASbGncssy52We3TcXiU2kBBYXiEonV3BTS/DOKzssVFIYwqZ4u2LnzDad6EhQlKckXY
-	lneX2OTOBhAOU02WoDcrd+bD6tIgpFgNUXAtOqZoO6dctFSaWOZDwybSfYymj1IVkwDLaeWULQp
-	UQsmOf1smVKXUD5/RJJ9tpC/pm2Vex16nHltPAPyjaY008HSxWNwn1aimxhcTKJ7giYXEXdJGo3
-	IFyEZkEPu/zq3qcJ5rJ8pZ2Ebb6ix2yGI5N8eK4xYrZ5TA+GHpRy+Y5QASe/4jvbr2RnnzWMTTT
-	0jsymJsU94HUxYeSE6rW2dv4sudBY6ElB54JKfwFsAzdVHDcOMvBf12RnSVda9jgOkjNGzNWQA=
-	=
-X-Received: by 2002:a05:6a00:1892:b0:781:9ae1:1be6 with SMTP id d2e1a72fcca58-7819ae11c98mr7578411b3a.6.1759140587361;
-        Mon, 29 Sep 2025 03:09:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEONG/QNzmtooig6eHCxhIPb/wc02QLjUsMZtIaO+cmgm4v5/5vvNhS/Dl4PpsqvI5jOEbpQ==
-X-Received: by 2002:a05:6a00:1892:b0:781:9ae1:1be6 with SMTP id d2e1a72fcca58-7819ae11c98mr7578378b3a.6.1759140586881;
-        Mon, 29 Sep 2025 03:09:46 -0700 (PDT)
-Received: from [10.219.49.214] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810cfdb99fsm9344624b3a.31.2025.09.29.03.09.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 03:09:46 -0700 (PDT)
-Message-ID: <809add83-ddfe-4fa1-8947-76e0f49fc6a1@oss.qualcomm.com>
-Date: Mon, 29 Sep 2025 15:39:37 +0530
+	s=arc-20240116; t=1759140627; c=relaxed/simple;
+	bh=/Qj6ybaf/hGcvP4WosxlRa1GS7TmZWBfrwTpgHrqB3o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j6DezCyL78Yml7w6uGtWkqGnfMqJ3D5T/qPTjeGokV6JntD8zkFseu6ixkJi+7x/U3peFZnhi/G+uZA7lHV0K28s0nJWB6EJA4x034maVBioyTObKc4ncImH0Wl+yWgi1oxTyPEbVPHLEG8g2gLgRplHe19db04RhWXXOBd0fL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZLIgf0R2; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c41e3890-dea3-4ab9-8913-5bfe9665facf@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759140623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rV9QK51rsx4eLWCMpcFHElTpfQGO2X4unrpezssK7M4=;
+	b=ZLIgf0R2iCYlSrfsjOq/7WtFyFLGOg/YA6lT0DXwDmN/8fZktfpgKoMqf9JmwBwFzqUmGM
+	SPwbJ2r19RNrqWXAn2BReT26CAYlM6ZiSrGo3pztvreXdbnecNuoeLH/OL3mLrkgqsLZRQ
+	G8kDE47McoqbJdkRDKB1ELIhptJl4k8=
+Date: Mon, 29 Sep 2025 18:10:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] ASoC: qcom: sc8280xp: Add support for Kaanapali
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rao Mandadapu
- <quic_srivasam@quicinc.com>, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com, linux-sound@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20250924-knp-audio-v1-0-5afa926b567c@oss.qualcomm.com>
- <20250924-knp-audio-v1-3-5afa926b567c@oss.qualcomm.com>
- <ru7km6vtbxwnoqtt2zf24si5envayqh7qy45mc5molevrgt5pv@g32atkcwqyan>
+Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: abort collapse scan on non-swap
+ entries
 Content-Language: en-US
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-In-Reply-To: <ru7km6vtbxwnoqtt2zf24si5envayqh7qy45mc5molevrgt5pv@g32atkcwqyan>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+ ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
+ ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com,
+ akpm@linux-foundation.org
+References: <20250924100207.28332-1-lance.yang@linux.dev>
+ <1282de5a-3dce-443d-91d1-111103140973@redhat.com>
+ <69621b58-5142-48ea-9dd8-6baed69e50f8@linux.dev>
+In-Reply-To: <69621b58-5142-48ea-9dd8-6baed69e50f8@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: JIx9ANBrx45-JCO4ZNNzOkDWOt7mXCOB
-X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68da5aec cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=P4kkzRDHVV3rFGJAm7gA:9
- a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: JIx9ANBrx45-JCO4ZNNzOkDWOt7mXCOB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX1hfXAAelXvAe
- zLBUy9WijLzxH2p+fdT40x9MoqRnpyVsQ1d8ixDlEXYJ0Z7e+VYeic26s+y1KOkU485YixIBW7p
- xYIcRRhgIpzGwG1W5LH4d9FAcvFTt4IIBCPwWM8AwghkEBJtnNVMuvud7F68NH5gab8a5eT1JKJ
- ovcGzCMvbVfWsJffxNWDCpIb4CyNU6tx523Nz4d+1Mp0ozlAPO5/KNMpKpwSCVZWt4X+FOL7RSS
- dwcN6AnYQtR6GwHbgEVPtNP6add4qCvbc/DiUZ7GvvZsnyEhSruqWvwsZ+bsmpEyQIIe4db4A0A
- BQJe3E9fsmBoVnTYGE6L2iwckSseOc52pkix0FTyvycpXRqQrp1f42j2rKMEze2Qtse7D+kp+GE
- 3HS/d1sDq4gpCLtSBSgIyaplPZ2vLQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_04,2025-09-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 clxscore=1011 priorityscore=1501 lowpriorityscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
-On 9/25/2025 8:29 AM, Dmitry Baryshkov wrote:
-> On Wed, Sep 24, 2025 at 05:01:17PM -0700, Jingyi Wang wrote:
->> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
->>
->> Add compatible for sound card on Qualcomm Kaanapali boards.
->>
->> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> ---
->>   sound/soc/qcom/sc8280xp.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
->> index 288ccd7f8866..e231112175d9 100644
->> --- a/sound/soc/qcom/sc8280xp.c
->> +++ b/sound/soc/qcom/sc8280xp.c
->> @@ -198,6 +198,7 @@ static const struct of_device_id snd_sc8280xp_dt_match[] = {
->>   	{.compatible = "qcom,sm8550-sndcard", "sm8550"},
->>   	{.compatible = "qcom,sm8650-sndcard", "sm8650"},
->>   	{.compatible = "qcom,sm8750-sndcard", "sm8750"},
->> +	{.compatible = "qcom,kaanapali-sndcard", "kaanapali"},
-> sorting
 
-Sure , will update in next patch.
-
-Thanks,
-Prasad
-
->
->>   	{}
->>   };
->>   
+On 2025/9/24 19:47, Lance Yang wrote:
+> 
+> 
+> On 2025/9/24 18:10, David Hildenbrand wrote:
+>> On 24.09.25 12:02, Lance Yang wrote:
+>>> From: Lance Yang <lance.yang@linux.dev>
+>>>
+>>> The existing check in hpage_collapse_scan_pmd() is specific to uffd-wp
+>>> markers. Other special markers (e.g., GUARD, POISONED) would not be 
+>>> caught
+>>> early, leading to failures deeper in the swap-in logic.
+>>>
+>>> hpage_collapse_scan_pmd()
+>>>   `- collapse_huge_page()
+>>>       `- __collapse_huge_page_swapin() -> fails!
+>>>
+>>> As David suggested[1], this patch skips any such non-swap entries early.
+>>> If a special marker is found, the scan is aborted immediately with the
+>>> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+>>> work.
 >>
->> -- 
->> 2.25.1
->>
+>> Note that I suggested to skip all non-present entries except swap 
+>> entries, which includes migration entries, hwpoisoned entries etc.
+> 
+> Oops, I completely misunderstood your suggestion :(
+> 
+> It should be to handle all special non-present entries (migration,
+> hwpoison, markers), not just a specific type of marker ...
+> 
+> How about this version, which handles all non-swap entries as you
+> suggested?
+
+@David
+
+Gently ping ...
+
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 7ab2d1a42df3..27f432e7f07c 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1284,7 +1284,23 @@ static int hpage_collapse_scan_pmd(struct 
+> mm_struct *mm,
+>          for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+>               _pte++, addr += PAGE_SIZE) {
+>                  pte_t pteval = ptep_get(_pte);
+> -               if (is_swap_pte(pteval)) {
+> +               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+> +                       ++none_or_zero;
+> +                       if (!userfaultfd_armed(vma) &&
+> +                           (!cc->is_khugepaged ||
+> +                            none_or_zero <= khugepaged_max_ptes_none)) {
+> +                               continue;
+> +                       } else {
+> +                               result = SCAN_EXCEED_NONE_PTE;
+> +                               count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> +                               goto out_unmap;
+> +                       }
+> +               } else if (!pte_present(pteval)) {
+> +                       if (non_swap_entry(pte_to_swp_entry(pteval))) {
+> +                               result = SCAN_PTE_NON_PRESENT;
+> +                               goto out_unmap;
+> +                       }
+> +
+>                          ++unmapped;
+>                          if (!cc->is_khugepaged ||
+>                              unmapped <= khugepaged_max_ptes_swap) {
+> @@ -1293,7 +1309,7 @@ static int hpage_collapse_scan_pmd(struct 
+> mm_struct *mm,
+>                                   * enabled swap entries.  Please see
+>                                   * comment below for pte_uffd_wp().
+>                                   */
+> -                               if (pte_swp_uffd_wp_any(pteval)) {
+> +                               if (pte_swp_uffd_wp(pteval)) {
+>                                          result = SCAN_PTE_UFFD_WP;
+>                                          goto out_unmap;
+>                                  }
+> @@ -1304,18 +1320,6 @@ static int hpage_collapse_scan_pmd(struct 
+> mm_struct *mm,
+>                                  goto out_unmap;
+>                          }
+>                  }
+> -               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+> -                       ++none_or_zero;
+> -                       if (!userfaultfd_armed(vma) &&
+> -                           (!cc->is_khugepaged ||
+> -                            none_or_zero <= khugepaged_max_ptes_none)) {
+> -                               continue;
+> -                       } else {
+> -                               result = SCAN_EXCEED_NONE_PTE;
+> -                               count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> -                               goto out_unmap;
+> -                       }
+> -               }
+>                  if (pte_uffd_wp(pteval)) {
+>                          /*
+>                           * Don't collapse the page if any of the small
+> ---
+> 
+> Thanks,
+> Lance
+
 
