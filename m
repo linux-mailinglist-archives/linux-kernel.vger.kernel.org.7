@@ -1,207 +1,91 @@
-Return-Path: <linux-kernel+bounces-835982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3F1BA8802
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109C0BA882D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30868170818
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1239B160167
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E199274FCE;
-	Mon, 29 Sep 2025 09:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F949279DC3;
+	Mon, 29 Sep 2025 09:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DVhsSCxu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9Awq9J+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89D513AD1C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757562032D;
+	Mon, 29 Sep 2025 09:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759136521; cv=none; b=gmEZsgsMDh8KH1TNxy81qUnNeaPVcPSMJ1I1eg3QcwUlCkil35znr8mSz4oSlfo82dDRsGHAcY2ns6n+z5kmzah0SpxnNr7A3xLljj/spivGHg70t5u3EFR/iGu8ZN8/LcqH6WDNur0eRar5EimFC1Rxc8giu3kXTAnB9nkeYFg=
+	t=1759136624; cv=none; b=lma+EWgK5oHFhbnBi1kZY6LD7es1KZOmNlLEkn01O08SQ7rVWbmC9HRSPgymzLdXguEQEuMFQsh3MsmKT8FVkistpRR7E1wyrLecihX0RzuNZ55h8LxdN7zOkxSnGyHt2LtJ7w9pNBevl+wQKkM2Vf+1ufgTVKJJ/04RwhzbacA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759136521; c=relaxed/simple;
-	bh=CXgWCmSK5bofhg065+iC+3B9kKopae9BTQYZqgKPRmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CGwPTiimba/QIe6jv0vFcgi0L2itvOqzOwIKQ77JMDGahXCIPauPbeev6nsroQq1AL3LOIu6sTBupt3ivu+InHin664buzHOczq9awD1Dtl9Dmx70zksD+CiAZojtfZWFn1VBC6VvkmpDjwmKG6rxwpOnfw1sDShU3DxwugZjQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DVhsSCxu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759136519;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MjGXQB1dHuxd76x8A3VktK3UCtS7wGBVGFS8i3EWENY=;
-	b=DVhsSCxu9pTy4lVGK3NU1UCN8rDMc5k0V8MUFnvyu/qnqYyoqQkULECHh7x2mmY1P8v2NP
-	Bky1oPXNuSQkiVtie9VG/Auu7GWOkXLBseGmw9xVJr0ejk+7ZVlYvOvFHDbPaV3f8CO5qq
-	TphT+J85Ux8YXuyLXc3RlZ5JhaWBFCU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-bpYH0HV6PyOsbCrwRNR9EA-1; Mon, 29 Sep 2025 05:01:57 -0400
-X-MC-Unique: bpYH0HV6PyOsbCrwRNR9EA-1
-X-Mimecast-MFC-AGG-ID: bpYH0HV6PyOsbCrwRNR9EA_1759136516
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e509374dcso5008085e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:01:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759136516; x=1759741316;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MjGXQB1dHuxd76x8A3VktK3UCtS7wGBVGFS8i3EWENY=;
-        b=B6TaQ8rlVgDeOPoInYKrhHC3XspMoyjR6qmGkm0IONrcgO0J3tA4LRoF8ufeFVHwMz
-         Kyxq1CMTPIFMhWKRkbVeOIxDvOy7e2TlMWnSvEX4c+Jlj2FbY3vUqhzV+zA44bBpE4UA
-         2K4Dnj/C1WpgVE7fxJoDOeq+gBbS124eBYpXmK2wkT0O0oCXW3ZVMcO9vcIq3lQHOref
-         TgSMbTlwne3m88zGxySDt8cwRT78I0hXTsdF+pT+IURw6pewXw/3LxP1Lkv19LrPNk/R
-         421gS+UvcU7I3emr2JcDlcjuXdot6uYHKiIVk7LjWtpOISP5FHyprdBJsqvJDdXH1gBJ
-         JGJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQU0XtKs8BSFsEJ/RQf8cwoPgm/3SybS3sbvgZncbtiS3nNF/r+T2uTqrjNNKGrcKqaKuSjqfXhknCZ7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/qRE6Xto3nXFYc6ZowP5W5XHi0H8oMW1i64viiLnnadvqBY+Z
-	kPrCTsOhpg4dt9abe9JOZbiBt7nSIy4hc64pi8NekMriH8vs3BXuiM792ceCTafYA5mvzkFeoXh
-	g9sCs3+biELFh3C5sTw4uZyb68sxObALIyqSeMFzcKZ9h5RxP9tTqNfvuhyUjI6bhew==
-X-Gm-Gg: ASbGncsAthSdfYtXNXlP1GOxnpm1feYapJsIkIVGrnOEsdtNd3MCWOr49ySSehny5VZ
-	R4CaTwLtA+c0JvgNQooJyRISWRg2XNcwDgHgqu3c8uZuOtXyBjqQXJ5lXO4uclXCWTcF319N7DO
-	a10emIgVtykktQoByE6Mh11hEnU5Jd/WmqdK9o6TQ06ckTallwf68dBwqvBeNw7RFd/3Q0fRFc6
-	7Ntx+fHf1TmOp5P3dyeIGrW7uOqZQGikSClIQN/A5cDCsl01qtxVf5g/eOyz2oBuUPxOhX2Pr/G
-	n+Id0z180paWWC4jZ/roc01/9WtVZrR7YR+xR1B5DTxSLo8wgE26LTatvIrnEMN8d3Z0h4HiFE/
-	PgqXnbTW3zlo8mWHxBTmT6+TdzCY/JzemDhEfQWqWw1K1fP0AVx8vJZhLnIWVDWyInQ==
-X-Received: by 2002:a05:600c:c04b:20b0:46e:4cd3:7d54 with SMTP id 5b1f17b1804b1-46e4cd3808cmr35899215e9.18.1759136515853;
-        Mon, 29 Sep 2025 02:01:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBbjcCVPhXVC4zY3lb87QTQrZiXmS2qntkistmHl4dTiI3URIXZQB+/Tn7CFF5wXhkypAuLw==
-X-Received: by 2002:a05:600c:c04b:20b0:46e:4cd3:7d54 with SMTP id 5b1f17b1804b1-46e4cd3808cmr35898835e9.18.1759136515430;
-        Mon, 29 Sep 2025 02:01:55 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f05:e100:526f:9b8:bd2a:2997? (p200300d82f05e100526f09b8bd2a2997.dip0.t-ipconnect.de. [2003:d8:2f05:e100:526f:9b8:bd2a:2997])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm243988785e9.7.2025.09.29.02.01.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 02:01:54 -0700 (PDT)
-Message-ID: <92c6e142-5911-4e0c-ac13-af251e048215@redhat.com>
-Date: Mon, 29 Sep 2025 11:01:53 +0200
+	s=arc-20240116; t=1759136624; c=relaxed/simple;
+	bh=UuN1fPZj2OcFpCHFkOKT8ImFk923bB+EJSHcMe6/tDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E7+eYV56sViJjAztGq1cqQwEcq69yCteMK7e8+/lf3IOqNh4RiEQfjTAJjf+QUMmMdad67ZpKaqrUGSY+65hlbnZQTMcgUganzpVI2UCG1P/rF6fuLM01iKB4IxfNc9Eul0cn+9WFy0L/7vDXrmRo66ibZS+LfbM9JfzxVn+lP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9Awq9J+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3CCC4CEF4;
+	Mon, 29 Sep 2025 09:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759136624;
+	bh=UuN1fPZj2OcFpCHFkOKT8ImFk923bB+EJSHcMe6/tDE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=g9Awq9J+sOFWSAxc7NoDIqwxgfk/zdl2QOsiaT/5mMkrrWTZyKSjxRVLKXHcmTaco
+	 vewYxUwOKTDndErf6ZU3xcU79AT1E1EWW7ichaQwjREWMrT5ehr13Wt+yxWwJg00Ca
+	 BgTx7GOOXiwBZ6kiqzXcSAstbnNAlIQo6OWEy3+UwkcKamMt34iljhkTD1DWkmaPl0
+	 jppZoDP/2ZlR8AZeqCCiP1jf127hfBywWPlPTzW6YNHSIvu5Vmv7wb151kkfOwgQQM
+	 CDXE8/T2Fj1J8slJd6diJPi2+Rh1khqvyjkifYRemVCSIWYTwclvt7A+X7g7r0Ethc
+	 0myq5UwwdiVDw==
+From: Christian Brauner <brauner@kernel.org>
+To: zhouyuhang <zhouyuhang1010@163.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhou Yuhang <zhouyuhang@kylinos.cn>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: Re: [PATCH] fs: update comment in init_file()
+Date: Mon, 29 Sep 2025 11:03:33 +0200
+Message-ID: <20250929-baucontainer-nordufer-a243076550a2@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250924122139.698134-1-zhouyuhang1010@163.com>
+References: <20250924122139.698134-1-zhouyuhang1010@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-To: Fuad Tabba <tabba@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ackerley Tng <ackerleytng@google.com>
-References: <20250926163114.2626257-1-seanjc@google.com>
- <20250926163114.2626257-2-seanjc@google.com>
- <7ce29e23-aea9-4d4d-b686-3b7a752e0276@redhat.com>
- <CA+EHjTzO_tkOD1C--qqk1eotwf+-2DSDUqk=szzPTN7mHJLQ_g@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CA+EHjTzO_tkOD1C--qqk1eotwf+-2DSDUqk=szzPTN7mHJLQ_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=922; i=brauner@kernel.org; h=from:subject:message-id; bh=UuN1fPZj2OcFpCHFkOKT8ImFk923bB+EJSHcMe6/tDE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTc8s4+xeE1w8119rH9y+5v//zvcFFF+MHEFIcL7q8kB R5Z/u5r6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI/rkM/6M8FgkemfM16Jm7 7t2nqQKXwsW1fdY+OvnTvuX69jazhfWMDBuunFowS7h/6mJuy3kbRaQCZu142V2vvfKytdDaZ7N 173EDAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On 29.09.25 10:57, Fuad Tabba wrote:
-> Hi David.
+On Wed, 24 Sep 2025 20:21:39 +0800, zhouyuhang wrote:
+> The f_count member in struct file has been replaced by f_ref,
+> so update f_count to f_ref in the comment.
 > 
-> On Mon, 29 Sept 2025 at 09:38, David Hildenbrand <david@redhat.com> wrote:
->>
->> On 26.09.25 18:31, Sean Christopherson wrote:
->>> Add a guest_memfd flag to allow userspace to state that the underlying
->>> memory should be configured to be shared by default, and reject user page
->>> faults if the guest_memfd instance's memory isn't shared by default.
->>> Because KVM doesn't yet support in-place private<=>shared conversions, all
->>> guest_memfd memory effectively follows the default state.
->>
->> I recall we discussed exactly that in the past (e.g., on April 17) in the call:
->>
->> "Current plan:
->>    * guest_memfd creation flag to specify “all memory starts as shared”
->>      * Compatible with the old behavior where all memory started as private
->>      * Initially, only these can be mmap (no in-place conversion)
->> "
->>
->>>
->>> Alternatively, KVM could deduce the default state based on MMAP, which for
->>> all intents and purposes is what KVM currently does.  However, implicitly
->>> deriving the default state based on MMAP will result in a messy ABI when
->>> support for in-place conversions is added.
->>
->> I don't recall the details, but I faintly remember that we discussed later that with
->> mmap support, the default will be shared for now, and that no other flag would be
->> required for the time being.
->>
->> We could always add a "DEFAULT_PRIVATE" flag when we realize that we would have
->> to change the default later.
 > 
-> I remember discussing this. For many confidential computing usecases,
-> e.g., pKVM and TDX, it would make more sense for the default case to
-> be private, since it's the more common state, and the initial state.
-> It also makes sense since sharing is usually triggered by the guest.
-> Ensuring that the initial state is private reduces the changes of the
-> VMM forgetting to convert the memory to being private later on,
-> potentially exposing all guest memory from the get go.
-> 
-> I think it makes sense to clarify things now. Especially since with
-> memory attributes, the default attribute is
-> KVM_MEMORY_ATTRIBUTE_SHARED, which adds even more confusion.
 
-Makes sense to me then, thanks.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
--- 
-Cheers
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-David / dhildenb
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs: update comment in init_file()
+      https://git.kernel.org/vfs/vfs/c/2915c7c9229a
 
