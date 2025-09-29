@@ -1,81 +1,298 @@
-Return-Path: <linux-kernel+bounces-836412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5356BA99C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF9FBA99DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 945213A5D74
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:38:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 128891921A2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8750A309DCF;
-	Mon, 29 Sep 2025 14:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8051430BBAB;
+	Mon, 29 Sep 2025 14:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJ3zrcQL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MRYfheio"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B2F2FF677;
-	Mon, 29 Sep 2025 14:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C561E30AAB6
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156705; cv=none; b=gXYvzu/Oy41+A4wtL11FmEBMYscOBrw6pnQqUHkciV2t+LyUF4zQsxKm+V4P/UVoyU5yXbAQUT8Aopm1xMVnrWqygOR3DeB83vXLtn5g19XATMCltWuEGofwruAoRLukPedC2qvtijf13gucR3eM7HEpQE51kjQwnE8UJ7IEQis=
+	t=1759156726; cv=none; b=FSMA40/pMZ2j3to9PXiPiysNDziu0MdZPBAMJo94J7a4TBa+WZnmx06OKmFBnZRLDpMeZ+5+UqazvX/pCQZGFJQL+y2zCFJOsgYxqE37eBQYzkxOG3zvh4BjO3UgiBQgJZChKpQVkVg97LDT9nnBajs90jC3tXAD8rGYYr4sWZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156705; c=relaxed/simple;
-	bh=sLDFL9Wl+Iuq12IDgheionrwfrRHgVXtiDYtXHXsCrY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=vEWsjEZ0YowzSSymS14xF0biek1bji9G0kBMLfuxrqcjfr8Nx7anuIA2ja4heL/hU8qw/ObtrolqwnNVt8anPVz2Tg+FW6vOJycJldceWjOcR62K9aPqSlR90nsUaqdxoOHqTr5T0fxKhdEnujofMfQJ7wQ+vvMDMg+cE+Hs0Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJ3zrcQL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4DD6C4CEF4;
-	Mon, 29 Sep 2025 14:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759156704;
-	bh=sLDFL9Wl+Iuq12IDgheionrwfrRHgVXtiDYtXHXsCrY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YJ3zrcQLw5rDQWPYhH77bBI8hSRc5rpFYkP9UrVEJCDJhjwfRy/TNVb4CjibWExaX
-	 YAcIwsq/RWB3pHd8Zr3yAwxFKU4dY+CCPhezjfxwJjYOK55JhYT7d3d86M0oGDkpO2
-	 vfgB0ecsvfPzBlDJNNs8n/Zl3xE2koAiu1xRZ8w3bqrWdK2yyVyY+H82v9S5PeqjXh
-	 tZLH1qdn0QFCxXZ+BlkDmokQX3Jht8zTLvGSvK+rSL81LHsmzSLRUAggA3vER/mplb
-	 pI9dODQQEaAITpyeuQt/iOBib9HMLB+bK3QyDTJUBtUBmK1kc9JHxs2ICdDczDf+3j
-	 7X5r12Veu556A==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
- bhelgaas@google.com, mcoquelin.stm32@gmail.com, 
- alexandre.torgue@foss.st.com, Christian Bruel <christian.bruel@foss.st.com>
-Cc: linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250902122641.269725-1-christian.bruel@foss.st.com>
-References: <20250902122641.269725-1-christian.bruel@foss.st.com>
-Subject: Re: [PATCH] PCI: stm32: Remove link_status in PCIe EP.
-Message-Id: <175915669921.12348.6942864048975237850.b4-ty@kernel.org>
-Date: Mon, 29 Sep 2025 20:08:19 +0530
+	s=arc-20240116; t=1759156726; c=relaxed/simple;
+	bh=9WmWL9XdAMqLc1IZQ93b6hptEkCTraIhFiTncrT265k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Opr3n286Ij+p/z1ozXcZORN9bSAtq/A7ABS61llaNR+5R/bxcJh3ezHYu0WQL3H+6VMmnwEEJiSN7r5JNuGcNQ3hBHPANIMXwcQ4XWW1xN+trpNk6/BacAy4/EAFnYVaFWFN8Txldm+quecwikzRpe+Dc1LbcAtqWQPPiSVB+xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MRYfheio; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-267fa90a2fbso56634065ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759156724; x=1759761524; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6OSGtSHxL4eTCbju1lVBxLe38ZjlCTkyXBpsuAxWzs=;
+        b=MRYfheio2NqOXnHw8hmAZDNzot5vVxHyzhWgNJ+6prRoTDvogpFMISwjATi3FCSEG9
+         jHDFQEGcq/TRZJ2j5dwyrHQUuQS95hiXCqG/Wcte2/gmF6QWzOnXu3eh+NJzJ/W6ur3X
+         3Xo0JqZbKJuwdUIGAqnDOZL2Ek/x7a58GegLWaBKmcCxktUaE4L3o9OFow37pYaIzD1K
+         K/1v0lyMwQtnYFvjA08cK7cqLWyWuc8YWV5vPkZWPVCeE2c0CPuogUH8i/RGOU1iEHbe
+         dH3ZS/1c8UP+wnAXpcQNd05n+lQyhDONLDacOpBGPgyatZgLhMiY31Df68/AT0mgoDRD
+         v9Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759156724; x=1759761524;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6OSGtSHxL4eTCbju1lVBxLe38ZjlCTkyXBpsuAxWzs=;
+        b=R1V2IPXsYEYF/ag4Lck1CD3NzpYPmu1FBhc5MFz1kus7KQdL0E5QIhYIUN/P7cfaQu
+         rWCDjpriKXwPO3uJ+QSUKjYFvcS5SkXWzbXbfkmgFSp/dEfayZXa+QenmRnjtNjYXrV0
+         0StcmoZUSa0PgMTITpFCmiyEGFO5mqU4BmUpsacN4rhmn/GfxtGnpo/oOYvmSQSnjSs5
+         VIBFwLevu58bIrd4zjo0eW+SMILB5itHtH3IPE5JKZZGewJ8xXXNeiOTzK6l7pLeGeB+
+         daPZ0Vw1O7GJc00SZ2vkZbWf+QNPqAJD2B3oYyBs71fcM2hBQuVi8+Lu/cFUnbo+QnUX
+         uQQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXd8M9nxdwxfDbIFl33dAAMpiDRCmzUh2pP+KFC8ALDveolEGi0p7OshHxSv5uVZNtz83zWYxqLg5S3l6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPXGc4J3Q5Jr5tHTY0nALjB/rHfhw6VYJQJSAucDLpG9Xwaw0Y
+	NEAD0UoKU7foSnJImkwAo7uC0YSdLHVeTmnzgtdfq8CMHJa/I8MWdxMv6iS1JlCqVFmKDz9+sYp
+	G9Vbdg8bfuLdU0jnj/hHNMaBM+g==
+X-Google-Smtp-Source: AGHT+IE70G65dnXiaauR0ZFChz0iWPzCgGLPRgS62OFKcDUJXdvInt9rFKI+993Dw6ra7VJ4bKCZFZL/Z8OnNBPtLQ==
+X-Received: from pgbfq11.prod.google.com ([2002:a05:6a02:298b:b0:b55:139f:ce2a])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:f70f:b0:265:f460:ab26 with SMTP id d9443c01a7336-28d16d725a6mr9019795ad.3.1759156724137;
+ Mon, 29 Sep 2025 07:38:44 -0700 (PDT)
+Date: Mon, 29 Sep 2025 14:38:43 +0000
+In-Reply-To: <20250926163114.2626257-7-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-7-seanjc@google.com>
+Message-ID: <diqzldlx1fyk.fsf@google.com>
+Subject: Re: [PATCH 6/6] KVM: selftests: Verify that faulting in private
+ guest_memfd memory fails
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Sean Christopherson <seanjc@google.com> writes:
 
-On Tue, 02 Sep 2025 14:26:41 +0200, Christian Bruel wrote:
-> Guarding enable_irq/disable_irq against successive link start
-> link does not seem necessary, since it is not possible to start
-> the link twice. Similarly for stop.
-> 
-> 
+> Add a guest_memfd testcase to verify that faulting in private memory gets
+> a SIGBUS.  For now, test only the case where memory is private by default
+> since KVM doesn't yet support in-place conversion.
+>
+> Cc: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  .../testing/selftests/kvm/guest_memfd_test.c  | 62 ++++++++++++++-----
+>  1 file changed, 46 insertions(+), 16 deletions(-)
+>
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index 5dd40b77dc07..b5a631aca933 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -40,17 +40,26 @@ static void test_file_read_write(int fd, size_t total_size)
+>  		    "pwrite on a guest_mem fd should fail");
+>  }
+>  
 
-Applied, thanks!
+I feel that the tests should be grouped by concepts being tested
 
-[1/1] PCI: stm32: Remove link_status in PCIe EP.
-      commit: 7d1c807cd2ddf8ef771f214ae4dab9bebbc61522
++ test_cow_not_supported()
+    + mmap() should fail
++ test_mmap_supported()
+    + kvm_mmap()
+    + regular, successful accesses to offsets within the size of the fd
+    + kvm_munmap()
++ test_fault_overflow()
+    + kvm_mmap()
+    + a helper (perhaps "assert_fault_sigbus(char *mem)"?) that purely
+      tries to access beyond the size of the fd and catches SIGBUS
+    + regular, successful accesses to offsets within the size of the fd
+    + kvm_munmap()
++ test_fault_private()
+    + kvm_mmap()
+    + a helper (perhaps "assert_fault_sigbus(char *mem)"?) that purely
+      tries to access within the size of the fd and catches SIGBUS
+    + kvm_munmap()
 
-Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
+I think some code duplication in tests is okay if it makes the test flow
+more obvious.
 
+> -static void test_mmap_supported(int fd, size_t total_size)
+> +static void *test_mmap_common(int fd, size_t size)
+>  {
+> -	const char val = 0xaa;
+> -	char *mem;
+> -	size_t i;
+> -	int ret;
+> +	void *mem;
+>  
+> -	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+> +	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+>  	TEST_ASSERT(mem == MAP_FAILED, "Copy-on-write not allowed by guest_memfd.");
+>
+
+When grouped this way, test_mmap_common() tests that MAP_PRIVATE or COW
+is not allowed twice, once in test_mmap_supported() and once in
+test_fault_sigbus(). Is that intentional?
+
+> -	mem = kvm_mmap(total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+> +	mem = kvm_mmap(size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+> +
+> +	return mem;
+
+I feel that returning (and using) the userspace address from a test
+(test_mmap_common()) is a little hard to follow.
+
+> +}
+> +
+> +static void test_mmap_supported(int fd, size_t total_size)
+> +{
+> +	const char val = 0xaa;
+> +	char *mem;
+> +	size_t i;
+> +	int ret;
+> +
+> +	mem = test_mmap_common(fd, total_size);
+>  
+>  	memset(mem, val, total_size);
+>  	for (i = 0; i < total_size; i++)
+> @@ -78,31 +87,47 @@ void fault_sigbus_handler(int signum)
+>  	siglongjmp(jmpbuf, 1);
+>  }
+>  
+> -static void test_fault_overflow(int fd, size_t total_size)
+> +static void *test_fault_sigbus(int fd, size_t size)
+>  {
+>  	struct sigaction sa_old, sa_new = {
+>  		.sa_handler = fault_sigbus_handler,
+>  	};
+> -	size_t map_size = total_size * 4;
+> -	const char val = 0xaa;
+> -	char *mem;
+> -	size_t i;
+> +	void *mem;
+>  
+> -	mem = kvm_mmap(map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+> +	mem = test_mmap_common(fd, size);
+>  
+>  	sigaction(SIGBUS, &sa_new, &sa_old);
+>  	if (sigsetjmp(jmpbuf, 1) == 0) {
+> -		memset(mem, 0xaa, map_size);
+> +		memset(mem, 0xaa, size);
+>  		TEST_ASSERT(false, "memset() should have triggered SIGBUS.");
+>  	}
+>  	sigaction(SIGBUS, &sa_old, NULL);
+>  
+> +	return mem;
+
+I think returning the userspace address from a test is a little hard to
+follow. This one feels even more unexpected because a valid address is
+being returned (and used) from a test that has sigbus in its name.
+
+> +}
+> +
+> +static void test_fault_overflow(int fd, size_t total_size)
+> +{
+> +	size_t map_size = total_size * 4;
+> +	const char val = 0xaa;
+> +	char *mem;
+> +	size_t i;
+> +
+> +	mem = test_fault_sigbus(fd, map_size);
+> +
+>  	for (i = 0; i < total_size; i++)
+>  		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
+>  
+>  	kvm_munmap(mem, map_size);
+>  }
+>  
+> +static void test_fault_private(int fd, size_t total_size)
+> +{
+> +	void *mem = test_fault_sigbus(fd, total_size);
+> +
+> +	kvm_munmap(mem, total_size);
+> +}
+> +
+
+Testing that faults fail when GUEST_MEMFD_FLAG_DEFAULT_SHARED is not set
+is a good idea. Perhaps it could be even clearer if further split up:
+
++ test_mmap_supported()
+    + kvm_mmap()
+    + kvm_munmap()
++ test_mmap_supported_fault_supported()
+    + kvm_mmap()
+    + successful accesses to offsets within the size of the fd
+    + kvm_munmap()
++ test_mmap_supported_fault_sigbus()
+    + kvm_mmap()
+    + expect SIGBUS from accesses to offsets within the size of the fd
+    + kvm_munmap()
+
+>  static void test_mmap_not_supported(int fd, size_t total_size)
+>  {
+>  	char *mem;
+> @@ -274,9 +299,12 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
+>  
+>  	gmem_test(file_read_write, vm, flags);
+>  
+> -	if (flags & GUEST_MEMFD_FLAG_MMAP) {
+> +	if (flags & GUEST_MEMFD_FLAG_MMAP &&
+> +	    flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
+>  		gmem_test(mmap_supported, vm, flags);
+>  		gmem_test(fault_overflow, vm, flags);
+> +	} else if (flags & GUEST_MEMFD_FLAG_MMAP) {
+> +		gmem_test(fault_private, vm, flags);
+
+test_fault_private() makes me think the test is testing for private
+faults, but there's nothing private about this fault, and the fault
+doesn't even come from the guest.
+
+>  	} else {
+>  		gmem_test(mmap_not_supported, vm, flags);
+>  	}
+
+If split up as described above, this could be
+
+	if (flags & GUEST_MEMFD_FLAG_MMAP &&
+	    flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
+		gmem_test(mmap_supported_fault_supported, vm, flags);
+		gmem_test(fault_overflow, vm, flags);
+	} else if (flags & GUEST_MEMFD_FLAG_MMAP) {
+		gmem_test(mmap_supported_fault_sigbus, vm, flags);
+	} else {
+		gmem_test(mmap_not_supported, vm, flags);
+	}
+
+> @@ -294,9 +322,11 @@ static void test_guest_memfd(unsigned long vm_type)
+>  
+>  	__test_guest_memfd(vm, 0);
+>  
+> -	if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
+> +	if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP)) {
+> +		__test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP);
+>  		__test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP |
+>  				       GUEST_MEMFD_FLAG_DEFAULT_SHARED);
+> +	}
+>  
+>  	kvm_vm_free(vm);
+>  }
+
+I could send a revision, if you agree/prefer!
+
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+
+> -- 
+> 2.51.0.536.g15c5d4f767-goog
 
