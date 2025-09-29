@@ -1,193 +1,287 @@
-Return-Path: <linux-kernel+bounces-836238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E354EBA9140
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:42:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 964F5BA9153
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA863B4B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611C0192027C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508DE3016EE;
-	Mon, 29 Sep 2025 11:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10404301718;
+	Mon, 29 Sep 2025 11:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+foXsNS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aa4lMf94"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591B19D880
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1BA301710;
+	Mon, 29 Sep 2025 11:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759146157; cv=none; b=s6/hM78IBMh6X50UO/BmgJOlsSe5IZe14XTmCYUu65RK0FfNetDt2IgdPtrh7wuQMhMXUSqkD72qtrHC84R0cEzmuk0VrItQm0oCbMt3GJUszF9fQgT2gEIrDBf3OXKS+muYbHIHzzjXnrha9IQSmXWH+2CvgrQpYbkb+EpIn44=
+	t=1759146170; cv=none; b=j+9GEov8c2spKMwUqUBQpQw1L1Clyd5fI4Z1wGvPNqsDXIccQFKucaYM58gcjnhQ1WVux2EFQXJ0zSorTPLAAEnYHGSDusv6IIEHuGh0YtbDK8WyUBjKvilR73FISE9J+ck/Z3w6I5nAmVNb0CtXtM/ngr4e1Q+JYUAbLGa7pbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759146157; c=relaxed/simple;
-	bh=N3fnyLc+4qCJS9hDjFW2m2I5TjUGxQcJNTYpMDjxtkk=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=M958+h19XU4v6POnEVzLvaOus067pTouWkhokPvbhXTDifkkgREbEdKDfM7TTrdG9QpwHP7uyhHB/g6U2wpa4IO6Mtz72154uWvCUgKdTLgADR99CC8dJt2IMWSoveILSpq3Xd43+iFFojIa3mbZSF33NgFEbQVjj+dcD3vTbtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+foXsNS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0ED7C4CEF4;
-	Mon, 29 Sep 2025 11:42:36 +0000 (UTC)
+	s=arc-20240116; t=1759146170; c=relaxed/simple;
+	bh=cDUNI++Cdhhh+27w7S9Gb/xbi27mfBOBj3pw8lK+YTA=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=YtnLip1VEXjxnZBaHSja1Pp97kFnr8FtYl7qjkbnfG/Hf8KCK7Wnto3x2t/N5Mjpns1QkzqtaEU9iGhlnIjVKC4D03ZOaglTqNW3rrvI7Fh9xJwO4a+XgjFmfdrZfbK/IGpqDpBB1vX9P+/BcPtt90i3FPsIIErYoFhdVq+o29Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aa4lMf94; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90AA1C4CEF4;
+	Mon, 29 Sep 2025 11:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759146157;
-	bh=N3fnyLc+4qCJS9hDjFW2m2I5TjUGxQcJNTYpMDjxtkk=;
+	s=k20201202; t=1759146169;
+	bh=cDUNI++Cdhhh+27w7S9Gb/xbi27mfBOBj3pw8lK+YTA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=t+foXsNS4GZta2sPX6j2vT8ysPiqLWapi3Smsve1HtlnyBJxc3ulk0bJnvaqyHGjy
-	 eja5PKmA7W34IQ+lJVHPjDrz5XLmuPOVxgwTXUxbFXecwJjs+mOXQ7B1Nje0dFqhgH
-	 YBE1uhwb4p7z4Vi7mIDSydzrfPFgJzBHoqwyTxChKgEK42QcV00gBizD8VQOtSsxxC
-	 sO54c6UAkEyZImM4yaByFFuIp4GPCjNYdeyiwf7htid0c/dW47LDrUhRNt4JWgnu5m
-	 FuWsSvg6OuupIwZhZaSQaB8SEprAfRHi2QwSHBjzlBJBgviZZp8WmQgHGsv+vJPq1U
-	 gTKNURWYYUuww==
-Message-ID: <b4d0f23a75d33f696ba585401a385c2d@kernel.org>
+	b=aa4lMf94P26k55Dq55YFFdvwoFWcMao/IiePh78gpDEDN0WvIhEdK4tSIE3zhVrr1
+	 XTDP9n7/k2i8dU6ZfwTX77kcsUA73CXecMlHPifTLW3ocZhnh+3H0FfpQoRpcd6H14
+	 grGZsNeJYYDIVPkSzb3aI+7kd1ZAen8+iMqzpDFsTJ2k5yL3pxZUXRD7fjs9ClC/Qr
+	 9rTkkDRkN8RS6Q4rxzZumBgDvoLlzzNpwTfIWhmxWWPAnknsNhaMUPYB1F/Bky9aQA
+	 sEIGyD+39S1ZVyp/RTiw3R1GyXCxDcA9xhJ3XJnbcImOkVNULNry4NlcU2yRZ/FmN7
+	 lpDYUD7iDhciw==
+Message-ID: <382d89fbfb545a45925ecee481f1847e@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator updates for v6.18
-Date: Mon, 29 Sep 2025 12:42:27 +0100
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI updates for v6.18
+Date: Mon, 29 Sep 2025 12:42:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e:
+The following changes since commit 07e27ad16399afcd693be20211b0dfae63e0615f:
 
-  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.18
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.18
 
-for you to fetch changes up to e609438851928381e39b5393f17156955a84122a:
+for you to fetch changes up to 2bfb20b65d9bc1d0de58f8c28ca9d6f1d27bbc01:
 
-  regulator: dt-bindings: qcom,sdm845-refgen-regulator: document more platforms (2025-09-23 10:56:54 +0200)
-
-----------------------------------------------------------------
-regulator: Updates for v6.18
-
-This is a very quiet release for regulator, almost all the changes are
-new drivers but we do also have some improvements for the Rust bindings.
-
- - Additional APIs added to the Rust bindings.
- - Support for Maxim MAX77838, NXP PF0900 and PF5300, Richtek RT5133 and
-   SpacemiT P1.
+  spi: rpc-if: Add resume support for RZ/G3E (2025-09-23 10:57:52 +0200)
 
 ----------------------------------------------------------------
-Alex Elder (1):
-      regulator: spacemit: support SpacemiT P1 regulators
+spi: Updates for v6.18
 
-Chen Ni (1):
-      regulator: tps6594-regulator: Remove unneeded semicolon
+There's one big core change in this release, Jonas Gorski has addressed
+the issues with multiple chip selects which makes things more robust and
+stable.  Otherwise there's quite a bit of driver work, as well as some
+new drivers several existing drivers have had quite a bit of work done
+on them.
+
+Possibly the most interesting thing is the VirtIO driver, this is
+apparently useful for some automotive applications which want to keep as
+small and robust a host system as they can, moving less critical
+functionality into guests.
+
+ - James Clark has done some substantial updates on the Freescale DSPI
+   driver, porting in code from the BSP and building onm top of that to
+   fix some bugs and increase performance.
+ - Jonas Gorski has fixed the issues with handling multple chip selects,
+   making things more robust and scalable.
+ - Support for higher performance modes in the NXP FSPI driver from
+   Haibo Chen.
+ - Removal of the obsolete S3C2443 driver, the underlying SoC support
+   has been removed from the kernel.
+ - Support for Amlogic AL113L2, Atmel SAMA7D65 and SAM9x7 and for VirtIO
+   controllers.
+
+----------------------------------------------------------------
+Biju Das (2):
+      spi: rpc-if: Drop deprecated SIMPLE_DEV_PM_OPS
+      spi: rpc-if: Add resume support for RZ/G3E
+
+Claudiu Beznea (1):
+      spi: Drop dev_pm_domain_detach() call
 
 Colin Ian King (1):
-      regulator: rt5133: Fix spelling mistake "regualtor" -> "regulator"
+      spi: amlogic: Fix error checking on regmap_write call
 
-Dan Carpenter (1):
-      regulator: rt5133: Fix IS_ERR() vs NULL bug in rt5133_validate_vendor_info()
+Darshan R (1):
+      spi: sunplus: sp7021: Clean up coding style
 
-Daniel Almeida (4):
-      rust: regulator: remove needless &mut from member functions
-      rust: regulator: implement Send and Sync for Regulator<T>
-      rust: regulator: remove Regulator<Dynamic>
-      rust: regulator: add devm_enable and devm_enable_optional
+David Lechner (4):
+      MAINTAINERS: merge TRIGGER SOURCE sections
+      spi: offload trigger: adi-util-sigma-delta: clean up imports
+      include: adi-axi-common: add version check function
+      spi: axi-spi-engine: use adi_axi_pcore_ver_gteq()
 
-Dmitry Baryshkov (1):
-      regulator: dt-bindings: qcom,sdm845-refgen-regulator: document more platforms
+Dharma Balasubiramani (2):
+      dt-bindings: spi: Document sam9x7 QSPI
+      dt-bindings: spi: Define sama7d65 QSPI
 
-Dzmitry Sankouski (1):
-      regulator: add s2dos05 regulator support
+Feng Chen (2):
+      spi: dt-bindings: add Amlogic A113L2 SFC
+      spi: amlogic: add driver for Amlogic SPI Flash Controller
 
-Igor Belwon (1):
-      regulator: Fix MAX77838 selection
+Gabor Juhos (5):
+      spi: spi-qpic-snand: avoid double assignment in qcom_spi_probe()
+      spi: spi-qpic-snand: remove unused 'dev' member of struct 'qpic_ecc'
+      spi: spi-qpic-snand: remove 'clr*status' members of struct 'qpic_ecc'
+      spi: spi-qpic-snand: handle 'use_ecc' parameter of qcom_spi_config_cw_read()
+      spi: spi-qpic-snand: simplify clock handling by using devm_clk_get_enabled()
 
-Ivaylo Ivanov (2):
-      dt-bindings: regulator: document max77838 pmic
-      regulator: max77838: add max77838 regulator driver
+Haibo Chen (5):
+      spi: spi-nxp-fspi: extract function nxp_fspi_dll_override()
+      spi: spi-nxp-fspi: set back to dll override mode when clock rate < 100MHz
+      spi: spi-nxp-fspi: Add the DDR LUT command support
+      spi: spi-nxp-fspi: add the support for sample data from DQS pad
+      spi: spi-nxp-fspi: Add OCT-DTR mode support
 
-Javier Carrasco (1):
-      regulator: consumer.rst: document bulk operations
+Haixu Cui (3):
+      virtio: Add ID for virtio SPI
+      virtio-spi: Add virtio-spi.h
+      SPI: Add virtio SPI driver
 
-Jeff Chang (2):
-      regulator: dt-bindings: Add Richtek RT5133 Support
-      regulator: rt5133: Add RT5133 PMIC regulator Support
+James Clark (7):
+      spi: fsl-dspi: Avoid using -EINPROGRESS error code
+      spi: fsl-dspi: Store status directly in cur_msg->status
+      spi: spi-fsl-dspi: Stub out DMA functions
+      spi: spi-fsl-dspi: Use non-coherent memory for DMA
+      spi: spi-fsl-dspi: Use whole page for DMA buffers
+      spi: spi-fsl-dspi: Increase target mode DMA buffer size
+      spi: spi-fsl-dspi: Report FIFO overflows as errors
 
-Joy Zou (2):
-      dt-bindings: regulator: add PF0900 regulator yaml
-      regulator: pf0900: Add PMIC PF0900 support
+Jonas Gorski (7):
+      spi: fix return code when spi device has too many chipselects
+      spi: keep track of number of chipselects in spi_device
+      spi: move unused device CS initialization to __spi_add_device()
+      spi: drop check for validity of device chip selects
+      spi: don't check spi_controller::num_chipselect when parsing a dt device
+      spi: reduce device chip select limit again
+      spi: rename SPI_CS_CNT_MAX => SPI_DEVICE_CS_CNT_MAX
+
+Krzysztof Kozlowski (2):
+      spi: s3c64xx: Drop S3C2443
+      spi: dt-bindings: samsung: Drop S3C2443
 
 Liao Yuanhong (2):
-      regulator: tps6524x: Remove unnecessary memset
-      regulator: core: Remove redundant ternary operators
+      spi: bcm2835: Remove redundant semicolons
+      spi: mtk-snfi: Remove redundant semicolons
 
-Marek Vasut (1):
-      regulator: dt-bindings: rpi-panel: Split 7" Raspberry Pi 720x1280 v2 binding
+Manikandan Muralidharan (3):
+      spi: atmel: simplify MR register update in cs_activate()
+      spi: dt-bindings: atmel,at91rm9200-spi: Add support for optional 'spi_gclk' clock
+      spi: atmel: Add support for handling GCLK as a clock source
 
-Mark Brown (4):
-      regulator: add new PMIC PF0900 support
-      rust: regulator: relax a few constraints on
-      regulator: pf530x: NXP PF530x regulator driver
-      regulator: max77838: add max77838 regulator driver
+Mark Brown (15):
+      Merge existing fixes from spi/for-6.17 into new branch
+      spi: spi-qpic-snand: cleanup 'qpic_ecc' structure
+      spi: offload-trigger: followup
+      spi: use min_t() to improve code
+      spi: Remove the use of dev_err_probe()
+      add COMPILE_TEST support
+      spi: spi-fsl-dspi: Target mode improvements
+      support for Amlogic SPI Flash Controller IP
+      spi: axi-spi-engine: improve version checks
+      Miscellaneous fixes and clean-ups
+      spi: spi-nxp-fspi: add DTR mode support
+      Add QSPI support for sam9x7 and sama7d65 SoCs
+      spi: multi CS cleanup and controller CS limit
+      Virtio SPI Linux driver
+      spi: rpc-if: Add resume support for RZ/G3E
 
-Onur Özkan (1):
-      rust: regulator: use `to_result` for error handling
+Pratyush Yadav (2):
+      spi: cadence-quadspi: Flush posted register writes before INDAC access
+      spi: cadence-quadspi: Flush posted register writes before DAC access
 
-Qianfeng Rong (2):
-      regulator: bd718x7: Use kcalloc() instead of kzalloc()
-      regulator: scmi: Use int type to store negative error codes
+Qianfeng Rong (4):
+      spi: spi-fsl-lpspi: use min_t() to improve code
+      spi: npcm-fiu: use min_t() to improve code
+      spi: spl022: use min_t() to improve code
+      spi: SPISG: Use devm_kcalloc() in aml_spisg_clk_init()
 
-Rob Herring (Arm) (1):
-      regulator: dt-bindings: Clean-up active-semi,act8945a duplication
+Rosen Penev (3):
+      spi: rb4xx: depend on OF
+      spi: rb4xx: add COMPILE_TEST support
+      spi: rb4xx: use devm for clk_prepare_enable
+
+Sakari Ailus (1):
+      spi: ljca: Remove Wentong's e-mail address
+
+Santhosh Kumar K (1):
+      spi: cadence-quadspi: Fix cqspi_setup_flash()
+
+Thomas Weißschuh (1):
+      spi: loopback-test: Don't use %pK through printk
+
+Tim Kuo (1):
+      spi: mt65xx: add dual and quad mode for standard spi device
+
+Varshini Rajendran (3):
+      spi: atmel-quadspi: add padcalib, 2xgclk, and dllon capabilities
+      spi: atmel-quadspi: add support for SAM9X7 QSPI controller
+      spi: atmel-quadspi: Add support for sama7d65 QSPI
+
+Vignesh Raghavendra (1):
+      spi: cadence-quadspi: Use BIT() macros where possible
+
+Waqar Hameed (1):
+      spi: nxp-fspi: Remove error print for devm_add_action_or_reset()
 
 Wolfram Sang (1):
-      regulator: remove unneeded 'fast_io' parameter in regmap_config
+      spi: remove unneeded 'fast_io' parameter in regmap_config
 
-Woodrow Douglass (2):
-      regulator: dt-bindings: nxp,pf530x: Add NXP PF5300/PF5301/PF5302 PMICs
-      regulator: pf530x: Add a driver for the NXP PF5300 Regulator
+Xianwei Zhao (1):
+      MAINTAINERS: Add an entry for Amlogic spifc driver
 
- Documentation/devicetree/bindings/mfd/act8945a.txt |  82 --
- .../power/supply/active-semi,act8945a-charger.yaml |  76 --
- .../bindings/regulator/active-semi,act8945a.yaml   |  25 +-
- .../bindings/regulator/maxim,max77838.yaml         |  68 ++
- .../devicetree/bindings/regulator/nxp,pf0900.yaml  | 163 ++++
- .../devicetree/bindings/regulator/nxp,pf5300.yaml  |  54 ++
- .../regulator/qcom,sdm845-refgen-regulator.yaml    |   3 +
- ...rrypi,7inch-touchscreen-panel-regulator-v2.yaml |  61 ++
- ...pberrypi,7inch-touchscreen-panel-regulator.yaml |   7 +-
- .../bindings/regulator/richtek,rt5133.yaml         | 178 ++++
- Documentation/power/regulator/consumer.rst         |  30 +-
- MAINTAINERS                                        |  15 +-
- drivers/regulator/Kconfig                          |  62 ++
- drivers/regulator/Makefile                         |   6 +
- drivers/regulator/bd718x7-regulator.c              |   2 +-
- drivers/regulator/core.c                           |   4 +-
- drivers/regulator/max77838-regulator.c             | 221 +++++
- drivers/regulator/pf0900-regulator.c               | 975 +++++++++++++++++++++
- drivers/regulator/pf530x-regulator.c               | 375 ++++++++
- drivers/regulator/qcom-refgen-regulator.c          |   1 -
- drivers/regulator/rt5133-regulator.c               | 642 ++++++++++++++
- drivers/regulator/s2dos05-regulator.c              | 165 ++++
- drivers/regulator/scmi-regulator.c                 |   3 +-
- drivers/regulator/spacemit-p1.c                    | 157 ++++
- drivers/regulator/tps6524x-regulator.c             |   1 -
- drivers/regulator/tps6594-regulator.c              |   2 +-
- include/linux/regulator/s2dos05.h                  |  73 ++
- rust/helpers/regulator.c                           |  10 +
- rust/kernel/regulator.rs                           | 171 ++--
- 29 files changed, 3354 insertions(+), 278 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/act8945a.txt
- delete mode 100644 Documentation/devicetree/bindings/power/supply/active-semi,act8945a-charger.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77838.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/nxp,pf0900.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/nxp,pf5300.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/raspberrypi,7inch-touchscreen-panel-regulator-v2.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
- create mode 100644 drivers/regulator/max77838-regulator.c
- create mode 100644 drivers/regulator/pf0900-regulator.c
- create mode 100644 drivers/regulator/pf530x-regulator.c
- create mode 100644 drivers/regulator/rt5133-regulator.c
- create mode 100644 drivers/regulator/s2dos05-regulator.c
- create mode 100644 drivers/regulator/spacemit-p1.c
- create mode 100644 include/linux/regulator/s2dos05.h
+Xichao Zhao (7):
+      spi: spi_amd: Remove the use of dev_err_probe()
+      spi: SPISG: Remove the use of dev_err_probe()
+      spi: Remove the use of dev_err_probe()
+      spi: mt65xx: Remove the use of dev_err_probe()
+      spi: pxa2xx: Remove the use of dev_err_probe()
+      spi: s3c64xx: Remove the use of dev_err_probe()
+      spi: mxs: fix "transfered"->"transferred"
+
+ .../devicetree/bindings/spi/amlogic,a4-spifc.yaml  |   82 ++
+ .../bindings/spi/atmel,at91rm9200-spi.yaml         |   11 +-
+ .../devicetree/bindings/spi/atmel,quadspi.yaml     |    3 +
+ .../devicetree/bindings/spi/samsung,spi.yaml       |    1 -
+ MAINTAINERS                                        |   25 +-
+ drivers/spi/Kconfig                                |   24 +-
+ drivers/spi/Makefile                               |    2 +
+ drivers/spi/atmel-quadspi.c                        |  134 ++-
+ drivers/spi/spi-altera-platform.c                  |    1 -
+ drivers/spi/spi-amd-pci.c                          |    5 +-
+ drivers/spi/spi-amd.c                              |    2 +-
+ drivers/spi/spi-amlogic-spifc-a4.c                 | 1222 ++++++++++++++++++++
+ drivers/spi/spi-amlogic-spisg.c                    |    4 +-
+ drivers/spi/spi-atmel.c                            |   78 +-
+ drivers/spi/spi-axi-spi-engine.c                   |   17 +-
+ drivers/spi/spi-bcm2835.c                          |    2 +-
+ drivers/spi/spi-cadence-quadspi.c                  |   36 +-
+ drivers/spi/spi-fsl-dspi.c                         |  232 ++--
+ drivers/spi/spi-fsl-lpspi.c                        |    8 +-
+ drivers/spi/spi-ljca.c                             |    2 +-
+ drivers/spi/spi-loopback-test.c                    |   12 +-
+ drivers/spi/spi-microchip-core-qspi.c              |    3 +-
+ drivers/spi/spi-microchip-core.c                   |    3 +-
+ drivers/spi/spi-mt65xx.c                           |   30 +-
+ drivers/spi/spi-mtk-snfi.c                         |    1 -
+ drivers/spi/spi-mxs.c                              |    2 +-
+ drivers/spi/spi-npcm-fiu.c                         |    6 +-
+ drivers/spi/spi-nxp-fspi.c                         |  117 +-
+ .../spi/spi-offload-trigger-adi-util-sigma-delta.c |    5 +-
+ drivers/spi/spi-pl022.c                            |   13 +-
+ drivers/spi/spi-pxa2xx.c                           |    2 +-
+ drivers/spi/spi-qpic-snand.c                       |   58 +-
+ drivers/spi/spi-rb4xx.c                            |   36 +-
+ drivers/spi/spi-rpc-if.c                           |   12 +-
+ drivers/spi/spi-s3c64xx.c                          |   19 +-
+ drivers/spi/spi-sunplus-sp7021.c                   |    6 +-
+ drivers/spi/spi-virtio.c                           |  431 +++++++
+ drivers/spi/spi.c                                  |   85 +-
+ include/linux/adi-axi-common.h                     |   21 +
+ include/linux/spi/spi.h                            |   16 +-
+ include/uapi/linux/virtio_ids.h                    |    1 +
+ include/uapi/linux/virtio_spi.h                    |  181 +++
+ 42 files changed, 2583 insertions(+), 368 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/amlogic,a4-spifc.yaml
+ create mode 100644 drivers/spi/spi-amlogic-spifc-a4.c
+ create mode 100644 drivers/spi/spi-virtio.c
+ create mode 100644 include/uapi/linux/virtio_spi.h
 
