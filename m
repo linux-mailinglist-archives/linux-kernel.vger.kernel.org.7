@@ -1,125 +1,86 @@
-Return-Path: <linux-kernel+bounces-836046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7EACBA89ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:30:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E90BA89CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AF63C5E63
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:28:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446E9162149
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2948F2D0634;
-	Mon, 29 Sep 2025 09:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GICeAGSD"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7435A28B400;
+	Mon, 29 Sep 2025 09:27:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0548B2882DB
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8612D286880
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137986; cv=none; b=VkuHiasjHPoOAMwkrJ5LrFNJAMttSatAVP5vldMN3Y6IZgfk7yM0tnQTIZos31tgyHYVIvB0Amo0MCA0JrNCUyj8KztQlhh2wETmin3VFBDQqj8iHiLomC/fIumw1adAQurFiGNva7Z4RvNdGIdKy5Ld89txiV/F6e4io6nlTiM=
+	t=1759138025; cv=none; b=f8JvWftR9ELbrUbYqvnc6t0DrS85lWlTUL6IBd57qrR46aA1WU3HL77Sv7jgnHCivMOkBRPQv0Uc+cssFcKkR+/IASUZvDA0XgJW/9p0tuT2r1YUBonM834pywnBMpKYxiraBf/FtaRA2QXvWuEzX0aQajIjKxV4KuappmsTrjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137986; c=relaxed/simple;
-	bh=F6QPMSQ0e3v6IYWGpsg1DAlGPrduv5vyeTegzDeIf+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NCppf+7ueU+50WUBLvQMihJTQ9YMyd7iakm185ga4RoNGTpCuSYG8j56H+2TdhaqLCPMWdr6M19dcBe5GAOcX2iKXTcPSg4znk4T1GAMa0lQ2tgqDu00cJzlZsjxdYeoiFc9lXiqENYAfh4XCVSQdxMTGmvWew+VwX8Zsf0ECo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GICeAGSD; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77f605f22easo3869674b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759137984; x=1759742784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjBDdW6a6A4A7TeFZHGH031gzicAXAbFO5MjRo8D+ek=;
-        b=GICeAGSDCIZr+G8YWm827/UMcEck0c6Xhc0zLQvCsfvCByug0NkDIiTLlgTFuidkrp
-         miYr5wvib+HUmQgsfaR8TvgwkkUFjJyBx3vkGccWMdtzfJ3nYSCrCvkopmKM5NXpbAZi
-         zjALvleaNxjrVycaqqZlN9Nf7aJbVzRKBjyYKwF+pBxYQgQKlAF4JF+0Yh6PtODv4XNp
-         WhFqLItWTuscS5b+gUKlWFdoYczzpv/UsK6hyDn4TQaI17eAORGIQvjAuJl8IAYEFmzH
-         OO1IckKb5K9jRFo3fQmfwHlnCU4b5ygbO7AWkNPVcaJQNNpa4TH7YP1fVwNLcFhsVI1v
-         sn+w==
+	s=arc-20240116; t=1759138025; c=relaxed/simple;
+	bh=N6rFEwa6PcNvhyr6biIgTaz7CkN/Gt0/xv7vhZcRO9U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sn++/73zmIqY4JmLSfy9dJXRYt2VutnFLa/dh7SAjh8evMS319F6dRfVnlIeja3RX8iJ+G4s8/rk36hKDIf9XK5x1bNda8JCHJ7kwdYKx6myYvRxPFAEw6Kl/HbL0uRCq5EOELcMlloxCBNFzj6TR+JVaz6l8ZMSn4KqNrubxY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-426cea3f07eso117169245ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:27:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759137984; x=1759742784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vjBDdW6a6A4A7TeFZHGH031gzicAXAbFO5MjRo8D+ek=;
-        b=O1CIuW18Ds7IxdGw3iU7xQkugwEJhg9ZN2Se3rIocFQJU4l2phlJ5wQ4WvyuX6C3e1
-         dHXQwJbKYyibUyq5n/Lk87k9m9vNuolernQlt9PkNiZB7nVmG/KmErMW1axrCatpF30q
-         zKPGrJfXRgJrB3K77pVtnYh9ZFrS++wsSy4ShtCjlBIhXbypQd6SiGk3hvRSUHfpazuD
-         BKs4u72tznUMDmzGLHGt7zzxVUH8hN3GDxbU7WQb7Px7OnjPlAmtYQ3+jM0gkhXNI1C5
-         VsK3iBaJxTPFxISeBjG3v+nkrnhKCecjuYCWfUz/MKLf/VBfyniG8SgbHJ88DnZHorus
-         SHqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSsIO7n/nxpTxn1W5bs1Sr+P22XWcLRI+7Bw7xAMKtuz4uNco/+g9w3RIpxZpHpha5rWi8yWr4oW770eM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT9AQC/rGmdNUhrsxSQvq+7leCy/31OvEgaxoUvl8wmQ9VYmCx
-	ML1u0WVE5KdWqHARzwdKpfBowCrGUjES+JMmR/8+vSNdm4o92eHeJnlWD9Gvy/Om88A=
-X-Gm-Gg: ASbGncvI9QIj5z8SZHzIYlY1RI8xkm9RwbSlM41zEh7QQuinhebr8U6Oq2c56Vpi9Lh
-	BkZQS4IVVV6rGh/uk+vr03caNvre12XER4K4+Y32+0VoLk5j8p7eZkLGG8Ya2CTRwxTb8uvZqAF
-	YE/c6twqyupbekOQuIV+D/GABQybq5spBAOn62pyv1euleuT1aI89vxw3g0MGVRYJOh0zUIMMB1
-	0Q5J2EfZ8U225vhH0h+ZonOsWmJOSIYWB2uDEVs++iUm61J92cRTeJPs3bvxH5wuP1D3s4Fklv/
-	KPfAdRbpvAGTbTupliigKKiuUDDg4jj9APDBrZD1kdOWl3I3IJahO/9/EeNlQOgQcS/mNC+HQp9
-	LGrOxqO2th9qsdnRgMaqhwTwUfKD+cwveizM=
-X-Google-Smtp-Source: AGHT+IGusX2FU775hDQyaDVeUQ2fzYFr/WVOzWLXyy7HzrXzVv07AdOmx8KqU7JGAyhS3O+CN7fWhA==
-X-Received: by 2002:a05:6a20:394a:b0:264:94:3f5f with SMTP id adf61e73a8af0-2e7c131dbb4mr21160856637.15.1759137984423;
-        Mon, 29 Sep 2025 02:26:24 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238ca29sm10479302b3a.6.2025.09.29.02.26.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 02:26:23 -0700 (PDT)
-Date: Mon, 29 Sep 2025 14:56:21 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: webgeek1234@gmail.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Aaron Kling <luceoscutum@gmail.com>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v3 0/2] cpufreq: tegra186: Fix initialization and scaling
-Message-ID: <20250929092621.zvodzktgw7ok3rin@vireshk-i7>
-References: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
+        d=1e100.net; s=20230601; t=1759138022; x=1759742822;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dXWQyOOTTMwR05LBZX1h7rIQDPuOjg+ngcEVr6b5w8c=;
+        b=BQS1JBBVGEvOMZ5g5NgOYvwOKZmwu+owwLV+FVIpldbCgTlWevfaJLE4WpgEOmgZ3F
+         8v9o6maiChyE2mFegOH9+GH+6IveoyytE65EyMKKYe6Q+RMYYMWu/305R+J4uDNrksIr
+         Ibr7coel/mu1NJHfLFV6fHkkMS3NvT5QP/v3HbpLuy3aTf6y4Ul1aGQdeRTrDJmA8xXa
+         Us4KU9326jPGWHPNR7ZjVDDadgmOuDA0jFdXLs9vhNrsVZmu6YtAy8sAm00Ug9ZSGd2V
+         rsvkXaTzcXn9uEKIIBUG0oEESjdhPPGvTjeCj7s8PqFjN2vLy1MZaXMdNVjT7PmOsi0t
+         vDIA==
+X-Gm-Message-State: AOJu0YyZ3tX2yTRqrG2NFd+BlWVPdtehJ7FJ5n00Ya5mVas5MhnmFblG
+	j5mo3vkna4oRpL2nhpM52xy/ykZfX7FEbzfBJjSsv2rUqtKINFiZYimHApveHT0W+Do/FThq9QL
+	Mphm6nS6JStAxKCYPuCiqKz4AD5xPQ3A2hzzkcz1qC89heGC2YbrLId+JWCY=
+X-Google-Smtp-Source: AGHT+IFjQpGiUgO71HcNjDmxRwnttdJ8WEK9/EG4CointO1BK9mYX55EztHmEqld1DZlE9guZ+aT+zkLFLDEnD6ZIJpv10VPPyFq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
+X-Received: by 2002:a05:6e02:1788:b0:423:fd07:d3f6 with SMTP id
+ e9e14a558f8ab-42c6891baddmr14122735ab.15.1759138022620; Mon, 29 Sep 2025
+ 02:27:02 -0700 (PDT)
+Date: Mon, 29 Sep 2025 02:27:02 -0700
+In-Reply-To: <20250929075024.115993-1-nooraineqbal@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68da50e6.a70a0220.10c4b.002b.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] KASAN: slab-out-of-bounds Read in change_page_attr_set_clr
+From: syzbot <syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, nooraineqbal@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 28-08-25, 21:48, Aaron Kling via B4 Relay wrote:
-> This series fixes an issue with shared policy per cluster not scaling
-> all cpus and with some cores being initialized by the subsystem.
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
-> Changes in v3:
-> - Use more clearly named variables in patch 2
-> - In patch 2, fail probe if no cpu rates reported by bpmp
-> - Link to v2: https://lore.kernel.org/r/20250828-tegra186-cpufreq-fixes-v2-0-fcffe4de1e15@gmail.com
-> 
-> Changes in v2:
-> - Set max freq instead of base freq in patch 2
-> - Link to v1: https://lore.kernel.org/r/20250826-tegra186-cpufreq-fixes-v1-0-97f98d3e0adb@gmail.com
-> 
-> ---
-> Aaron Kling (2):
->       cpufreq: tegra186: Set target frequency for all cpus in policy
->       cpufreq: tegra186: Initialize all cores to max frequencies
-> 
->  drivers/cpufreq/tegra186-cpufreq.c | 35 +++++++++++++++++++++++++++--------
->  1 file changed, 27 insertions(+), 8 deletions(-)
+Hello,
 
-Applied. Thanks.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- 
-viresh
+Reported-by: syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com
+Tested-by: syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         26285807 Add linux-next specific files for 20250926
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=14afeae2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=997066872b7941b6
+dashboard link: https://syzkaller.appspot.com/bug?extid=e34177f6091df113ef20
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=114d2ae2580000
+
+Note: testing is done by a robot and is best-effort only.
 
