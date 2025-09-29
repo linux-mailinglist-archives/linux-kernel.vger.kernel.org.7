@@ -1,78 +1,99 @@
-Return-Path: <linux-kernel+bounces-836522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FBDBA9EC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B2FBA9EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8303D7A49F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5986E3B89BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2FC2FAC12;
-	Mon, 29 Sep 2025 16:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2736F30CB5E;
+	Mon, 29 Sep 2025 16:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="SNuUDXQa"
-Received: from pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com [34.218.115.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WIEdNKCJ"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86B430BBAB
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.218.115.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DFD30C627
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759161750; cv=none; b=Ikd7Oa0GNXInYarX5cmmD+dmkGdrboD7NVkii3rIfqpjOIguvlAUumkF18iaI9wyjoKKf7otYS6I2EDNXuaZUx7Cmujmbziwthu7ahOca9tl3MyqqMfz9BGonW10N4ArDXRm/VIAfw42lRJBLnlYdFoUHYBUxe4qyjKKEuBm4ps=
+	t=1759161795; cv=none; b=YdiQyeUYtJrVKiEi20KMZ9SVde3GgT7t0ytxORhtGz9N/EmE978eoajGZh1UGCOMqACGWExjuhhxdSVuqXBiUHu+byhG9VIgbtfmnWprff8zp1xwkwSxNI6yV+y9YcdkmKfvmDp616viWdxvX2zunkhV0q8zNAE3x6pyEdq1M4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759161750; c=relaxed/simple;
-	bh=XvEt6Ubz2SfrZFWCUbgqDrN11uzP1Rb3/SaadQIypF4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kgVMb43EW4zPPiLD4/V9T0YKLr3JzY0Si2nSTdsizYrPcqGlFBTPKSpDqHVGtkAcmq4ziwXRED/x5Z44I7k0C+QOWTB93DrfBMCcdwuP877o3EMtqHBnc2O5D5q3mrb0dbGJQG8j/uRoAIqd17zXqiX+wAmxHeV/yZjPsCMbcdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=SNuUDXQa; arc=none smtp.client-ip=34.218.115.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1759161795; c=relaxed/simple;
+	bh=1jkw+7EvuIa/Han8qcxFLmMTXaJYMq7ZJC5YxwM3xL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HvjU8ZKBCmj5wJG7uxMKy+aCgeABsh8WfmAAlNX9jp8Dl3Xc61g+nMn//BETugg+JUElFbsDb1OnYJCtys6KdTZF2AhMgW9Hx5RDmztOFAY2HAHMcNBrfoIhEkKf4Chw8To/+Dtxz8YIwR+3tFi6wLcyZDZcRjCZaf2rYwDjD5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WIEdNKCJ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-78104c8cbb4so4975049b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759161748; x=1790697748;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+HGVWrxAkg8mWbnk47FbeDyfZnbZtnHncdoKf7Bqyo8=;
-  b=SNuUDXQaVwuXW89Pw0JZAZesXDqNUoLYxCRnnQimKDwuuNAipW2A8os6
-   4hxodHLcJSRURNwnj5JKt0Ij799WrQSH8ocGVJeSzaxIizAnV2CBoiLRu
-   SPBgoX0HxxlRO0RT4eSBlQTCz8YI9iRmOwbBdB8Ukx6zuOKghRSFFgS1u
-   XUUZIWLmNCXiIhVhZJioRGmzoo7PhpmhTaIyv8dzfwLCTmzkOeiiC1EnY
-   ZwCsZ2tFFIZNyDAIpU+lSN4iQ2oHtRyPFsNwk4+pM8tMDLHuIpNKwf6Ls
-   cvTrCZKBmQWorD+vYhPrKY9359pCCDHbfZ5OFG8C4hMtTz7KATXqCWnB0
-   A==;
-X-CSE-ConnectionGUID: wht2y+cZTZ6YFWGEG+eDNg==
-X-CSE-MsgGUID: ZdV6+l7yTYCL+RXgXoKoxw==
-X-IronPort-AV: E=Sophos;i="6.18,301,1751241600"; 
-   d="scan'208";a="3752301"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 16:02:28 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:32049]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.47.1:2525] with esmtp (Farcaster)
- id de35df7c-9f59-4666-a8ad-e44850f84128; Mon, 29 Sep 2025 16:02:28 +0000 (UTC)
-X-Farcaster-Flow-ID: de35df7c-9f59-4666-a8ad-e44850f84128
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 29 Sep 2025 16:02:27 +0000
-Received: from 80a9970eed1e.amazon.com (10.187.171.30) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 29 Sep 2025 16:02:26 +0000
-From: Justinien Bouron <jbouron@amazon.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Petr Mladek
-	<pmladek@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, "Marcos
- Paulo de Souza" <mpdesouza@suse.com>, Yan Zhao <yan.y.zhao@intel.com>,
-	Justinien Bouron <jbouron@amazon.com>, Alexander Graf <graf@amazon.com>,
-	Steven Chen <chenste@linux.microsoft.com>, <kexec@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Gunnar Kudrjavets <gunnarku@amazon.com>
-Subject: [PATCH v2] kexec_core: Remove superfluous page offset handling in segment loading
-Date: Mon, 29 Sep 2025 09:02:20 -0700
-Message-ID: <20250929160220.47616-1-jbouron@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=gmail.com; s=20230601; t=1759161793; x=1759766593; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KefHEpASHlImKTlDtTejqsu/vtIp51mWF2HZGf1Fkyo=;
+        b=WIEdNKCJukuVi1h9DOdGQ8/Muw/4sk1r+sFqcwhZkzSs/T7nS0Z5rIDRn0aJ6QR4nD
+         L/ujvWnbM0exKAO889chaTUy8tlRN6IsN3nWEnANfXUV0O+wt6pJH7+L7wjJKiVQxVEV
+         etiSJTLGdU3bIKYBrO5CitRoAZ+zhm9sET7i9OoMMxIkzQ31xC+s3zWMH3SZgFr6yhnn
+         RkNGWUtxM1lrAPY8Rc4pCk6z/GF8x4C2rrkOyin9DU+vHh+X0hNrVbpVkV2oNWC4WeYS
+         7cxdtiNjT0m1NveXp8MgDzScEXYM3IQEuAjTCdAtwFxaQmZlEWn8XD+AV4r+J20HiGYg
+         NOcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759161793; x=1759766593;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KefHEpASHlImKTlDtTejqsu/vtIp51mWF2HZGf1Fkyo=;
+        b=IUAUrWuY7Bpfx6mGV45R/6qmwNMDEUq/K3Um0GZuge/waW2o9Jy+7e2mtLtEXI2IC5
+         vPWRdSh2ix3VD6B3Qy36bZBa8UMf0bo7sENq+UmSZ6obPKB969kwRFqajQy8MJUVafXr
+         ED+vnj0FVOfPuk+ucg+5FheKJGHtuH9bVNt3j629Ne+VwfI58Wzu/xdVrnjqKJj/lM7w
+         n3hevRaMsADmPkbfQilClQ04J5E2QyF2B8lL6nE5NrLvPfG5VRvWQlr0FKHGIiSoIZBI
+         YB9S1t3WUR4NHsszq2Ahbtxm+dRcWMhjTPp7sLtnbhnDwRqdq2cldOOSBId/4gdypBkm
+         qRqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPNL5NgeTqEAU6UjTCWRQk1fyUewNaZlipi3XpHokQj1jV6hfRogi3Nj1HpxZk2Lh6KUHgsCtFGfHTx8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw44xDa3s7Dn/p57ycd9MYe62yXNgvAi7dRZQ4eulCbjJIHMPc8
+	GqBwJAonoYYnA8PN9RG90exh8nYug6tFx1dZO/bpGw4qYDuW5J5Aw1xM
+X-Gm-Gg: ASbGnctVkXaeYUYSQOPUXCaLz+cidQmiapVrtcclcLfW2h1eOP3yEXlzwwVnWQBTl8I
+	Oe3smDflZimY97/0Rje14LILyCtt0EDCGyb37/ltxtmDxTOZXos97AhZR0FUZYnTn7yKtaoEQLe
+	Seppppr2av6N1n1IRZCnx5uX4tRJG9KU7Af0NL/ljOciJ6XpcA1CU57GzC3n6uvw1FMcPYdqqVf
+	b/ZAmzfvzXG917xjQjg8vat+MTzSkfWz7ACQJEy0zy8RgJgQIJaKzOpLvb6VXJXqUl5LN+VwXGc
+	odCajw45EYzvJ5bjOboyzZ5+LhDhV3RO72wUkkj/BeNs9SRWzyedOKRANn0sRrKwPtyjQqGIGMk
+	xi/vtAUyYvc+EIWv5ba2HPC0lpeEZ
+X-Google-Smtp-Source: AGHT+IFLs3m9GZxE68Q18gbvy+0afYHaST+CDXcgc2TlSHRuYVzEECyokcNZHk3sUQVFmBJDY053zw==
+X-Received: by 2002:a05:6a20:9150:b0:248:4d59:93d5 with SMTP id adf61e73a8af0-2e7d72637famr22343288637.55.1759161792642;
+        Mon, 29 Sep 2025 09:03:12 -0700 (PDT)
+Received: from y740.local ([2401:4900:1f30:25ff:36cb:10ee:ba03:839f])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c55a0ca2sm11504525a12.42.2025.09.29.09.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 09:03:12 -0700 (PDT)
+From: Sidharth Seela <sidharthseela@gmail.com>
+To: antonio@openvpn.net,
+	sd@queasysnail.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org,
+	willemdebruijn.kernel@gmail.com,
+	kernelxing@tencent.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	david.hunter.linux@gmail.com,
+	Sidharth Seela <sidharthseela@gmail.com>
+Subject: [PATCH v2] net: Fix uninit character pointer and return values
+Date: Mon, 29 Sep 2025 21:32:31 +0530
+Message-ID: <20250929160230.36941-2-sidharthseela@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,112 +101,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D045UWA002.ant.amazon.com (10.13.139.12) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-During kexec_segment loading, when copying the content of the segment
-(i.e. kexec_segment::kbuf or kexec_segment::buf) to its associated
-pages, kimage_load_{cma,normal,crash}_segment handle the case where the
-physical address of the segment is not page aligned, e.g. in
-kimage_load_normal_segment:
-```
-	page = kimage_alloc_page(image, GFP_HIGHUSER, maddr);
-	// ...
-	ptr = kmap_local_page(page);
-	// ...
-	ptr += maddr & ~PAGE_MASK;
-	mchunk = min_t(size_t, mbytes,
-		PAGE_SIZE - (maddr & ~PAGE_MASK));
-	// ^^^^ Non page-aligned segments handled here ^^^
-	// ...
-	if (image->file_mode)
-		memcpy(ptr, kbuf, uchunk);
-	else
-		result = copy_from_user(ptr, buf, uchunk);
-```
-(similar logic is present in kimage_load_{cma,crash}_segment).
+Fix uninitialized character pointer, and functions that return
+undefined values. These issues were caught by running clang using LLVM=1
+option; and are as follows:
+--
+ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+ 1587 |         if (!sock) {
+      |             ^~~~~
+ovpn-cli.c:1635:9: note: uninitialized use occurs here
+ 1635 |         return ret;
+      |                ^~~
+ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+ 1587 |         if (!sock) {
+      |         ^~~~~~~~~~~~
+ 1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1589 |                 goto err_free;
+      |                 ~~~~~~~~~~~~~~
+ 1590 |         }
+      |         ~
+ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+ 1584 |         int mcid, ret;
+      |                      ^
+      |                       = 0
+ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+ 2107 |         case CMD_INVALID:
+      |              ^~~~~~~~~~~
+ovpn-cli.c:2111:9: note: uninitialized use occurs here
+ 2111 |         return ret;
+      |                ^~~
+ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+ 1939 |         int n, ret;
+      |                   ^
+      |
+--
+so_txtime.c:210:3: warning: variable 'reason' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
+  210 |                 default:
+      |                 ^~~~~~~
+so_txtime.c:219:27: note: uninitialized use occurs here
+  219 |                         data[ret - 1], tstamp, reason);
+      |                                                ^~~~~~
+so_txtime.c:177:21: note: initialize the variable 'reason' to silence this warning
+  177 |                 const char *reason;
+      |                                   ^
+      |
+--
+Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+ovpn module")
+Fixes: ca8826095e4d4 ("selftests/net: report etf errors correctly")
 
-This is actually not needed because, prior to their loading, all
-kexec_segments first go through a vetting step in
-`sanity_check_segment_list`, which rejects any segment that is not
-page-aligned:
-```
-	for (i = 0; i < nr_segments; i++) {
-		unsigned long mstart, mend;
-		mstart = image->segment[i].mem;
-		mend   = mstart + image->segment[i].memsz;
-		// ...
-		if ((mstart & ~PAGE_MASK) || (mend & ~PAGE_MASK))
-			return -EADDRNOTAVAIL;
-		// ...
-	}
-```
-In case `sanity_check_segment_list` finds a non-page aligned the whole
-kexec load is aborted and no segment is loaded.
+Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
 
-This means that `kimage_load_{cma,normal,crash}_segment` never actually
-have to handle non page-aligned segments and `(maddr & ~PAGE_MASK) == 0`
-is always true no matter if the segment is coming from a file (i.e.
-`kexec_file_load` syscall), from a user-space buffer (i.e. `kexec_load`
-syscall) or created by the kernel through `kexec_add_buffer`. In the
-latter case, `kexec_add_buffer` actually enforces the page alignment:
-```
-	/* Ensure minimum alignment needed for segments. */
-	kbuf->memsz = ALIGN(kbuf->memsz, PAGE_SIZE);
-	kbuf->buf_align = max(kbuf->buf_align, PAGE_SIZE);
-```
+v2:
+	- Use subsystem name "net".
+	- Add fixes tags.
+	- Remove txtimestamp fix as default case calls error.
+	- Assign constant error string instead of NULL.
+--
 
-Signed-off-by: Justinien Bouron <jbouron@amazon.com>
-Reviewed-by: Gunnar Kudrjavets <gunnarku@amazon.com>
----
-Changes since v1:
-	- Reworked commit message as requested by Baoquan He
-	  <bhe@redhat.com>
-	- Removed accidental whitespace change
-	- v1 Link: https://lore.kernel.org/lkml/20250910163116.49148-1-jbouron@amazon.com/
----
- kernel/kexec_core.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 31203f0bacaf..3b279d9e0d01 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -761,9 +761,7 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
- 	while (mbytes) {
- 		size_t uchunk, mchunk;
+diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+index 9201f2905f2c..20d00378f34a 100644
+--- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
++++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+@@ -1581,7 +1581,7 @@ static int ovpn_listen_mcast(void)
+ {
+ 	struct nl_sock *sock;
+ 	struct nl_cb *cb;
+-	int mcid, ret;
++	int mcid, ret = -1;
  
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
+ 	sock = nl_socket_alloc();
+ 	if (!sock) {
+@@ -1936,7 +1936,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+ {
+ 	char peer_id[10], vpnip[INET6_ADDRSTRLEN], laddr[128], lport[10];
+ 	char raddr[128], rport[10];
+-	int n, ret;
++	int n, ret = -1;
+ 	FILE *fp;
  
- 		if (uchunk) {
-@@ -840,9 +838,7 @@ static int kimage_load_normal_segment(struct kimage *image, int idx)
- 		ptr = kmap_local_page(page);
- 		/* Start with a clear page */
- 		clear_page(ptr);
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
+ 	switch (ovpn->cmd) {
+diff --git a/tools/testing/selftests/net/so_txtime.c b/tools/testing/selftests/net/so_txtime.c
+index 8457b7ccbc09..5bf3c483069b 100644
+--- a/tools/testing/selftests/net/so_txtime.c
++++ b/tools/testing/selftests/net/so_txtime.c
+@@ -174,7 +174,7 @@ static int do_recv_errqueue_timeout(int fdt)
+ 	msg.msg_controllen = sizeof(control);
  
- 		if (uchunk) {
-@@ -905,9 +901,7 @@ static int kimage_load_crash_segment(struct kimage *image, int idx)
- 		}
- 		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
- 		ptr = kmap_local_page(page);
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
- 		if (mchunk > uchunk) {
- 			/* Zero the trailing part of the page */
+ 	while (1) {
+-		const char *reason;
++		const char *reason = "unknown errno";
+ 
+ 		ret = recvmsg(fdt, &msg, MSG_ERRQUEUE);
+ 		if (ret == -1 && errno == EAGAIN)
 -- 
-2.43.0
+2.47.3
 
 
