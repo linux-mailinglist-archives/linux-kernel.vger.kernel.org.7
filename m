@@ -1,133 +1,129 @@
-Return-Path: <linux-kernel+bounces-835882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEA7BA842C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:36:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0741FBA842F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC243B2347
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:36:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DF877A78E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914692BEFF8;
-	Mon, 29 Sep 2025 07:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKcv5QVm"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AD42BF3F4;
+	Mon, 29 Sep 2025 07:37:27 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828202BEFF2
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930DD2110E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759131377; cv=none; b=Hfs6/Pqu+qi/2cseT7VRrgNgIeZuONihEcJFAs+fJ8XjYm03Elw1NIMLYynRHsxrcHyNYpz1ZA55dbUDIrGMUdzuag9XqUql1lzJ3BvJ1m5bK9P0JR4B4NYNxco0znMExbs4bi7AZ/cXtVCfkAC9ARV5wdHQ61i3DTpaLXVi3Gw=
+	t=1759131446; cv=none; b=QHPCP/xrC5aMi75M+JcDmURHwgUu+w1wukc5rkG3Rw1vrW6auFtajuhxTL6PhsQ1VxFG4YmX5KmsV9rg9c3jOCaGVI+OSYbVY5/6t0Rjb5zwy+izuixiTpelu1HWknsXpWsHLMVcFLAn6iCW7goTf6tH3340eoQDuhukGBAQLAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759131377; c=relaxed/simple;
-	bh=iI5dyLH2jL82quewevun1RJ+cRuVB4TU0GIEvBc+ppw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eVo5uBRC2pGGvezFLtrcEnQS7Yb7XU1QrYzi5+Ee00Jk2ql9QBZ1nlz4sk3PpiWoWl/Uct4VdEB5VuE9tY6zH98yl++x7TGe0+txGqoLEBLsksSuinadFxelkXWcmzZELi5nJdCHNyKcIaaR4u/T7ZboY2BSIPlCBPJB921eygY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKcv5QVm; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b523fb676efso4193864a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759131375; x=1759736175; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WtpldhRDbRzoGsO+8pMp+y65v40hHUOFZZcRghWlbXo=;
-        b=jKcv5QVmUNfgz6zP/NqcX1zRgPKHHscG77wdCIg/wYQTDeLophx6v6zwEdol5z/Y7b
-         F7JSlvHazeewAG9GSOhVpsre5vuuitAqWyL7SlEEeVpj4rkXaTjxFkvLmccDjs3t4ik6
-         6Zu7X/siZwYP9LsE+4R0Lm4BukyxGDNY6uCobb6pEEtXAF3+edHr9mSOIABVOYBBphCo
-         tXzQt/WkBGcTH+5TsfZfY4/VN24cJ/mh9LL4mFNza37RKPEQA1by7mXFEbRaL/bVaZvP
-         SjMMC4/K9KZjJWOK5W68KqD70yb14Kq7umdR5lmwDPbD8/7kWdIbml4PlIBeS4Qi7CSj
-         Co2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759131375; x=1759736175;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WtpldhRDbRzoGsO+8pMp+y65v40hHUOFZZcRghWlbXo=;
-        b=GN706utiQPXFaktR8BIJrJoWvY3UwP29OZ8zsdlNk8rzCnWG77aZI+7D+hTOKD4PtD
-         EbBeTAlml4p3HUBiYY00FGBy2LeeS+L0VhB8MJt+wko8REAjB0Jhxbyb0MzDPf3Xa/Vh
-         USTXqYZ2WUV3mGe54YQKz5bGW0mqACXMN0fW8YHlwYQB0R8JnVyziOaMZaPsRMvoTZ5n
-         gE8UR/kVmvMeigDMGmTOYsaigQQAEpDtSNVK32/Son7axGUGyd83aDZTyRiqyP9IaeaG
-         wjKD1gp5+nAjZMyghPnyxuA5fSbW9PcclJikZ/64BGCkoI/emydIvcC8n6a6sR4BcOo+
-         9uvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW87nnaFmI2Iy1Df/HUE3lurxPZOQvYDpOviWmHxaXry9PqwdecOvV83B10yigIpo8AjsYcyhSmPBY6nrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvnAe9mzc/SrABCq6s7J7gbKYCZyfYIsjT+ZtM4iQ94i89sccX
-	USJUdrZrWWacmIV815cHoDMqevU+fBmsgNxeQQCOKU4D/nqT/d2hpaAO
-X-Gm-Gg: ASbGncvj7+1II08IQ5TTs4xexxERHq/VcHiTj8LrcO2RQIeJISF2vf/KVsrCMT7XqU7
-	ZaWDwxCqJVOUKUAtOAGZa0jLlbs0qN4mrmzxKr8HJ5BmDLfREFRSxJwV4lAubpl0eKOAwGCZMtH
-	nWRl7lSvJpUIEHWy50l1F3T/rHCp0G0zaCaLyCENn0x+zEUKDfitrX6hPUJDh6IYAAcujKe/vLH
-	ZeIOcF1nog+NB2L/sq9cKhvQHQNIOYO894ugiGvDqWv4NCTpibMQTF6Cd/3MCCK9FXxjy0/PGtX
-	aPOjXUss4+4Eq2oRj/2BpP5Mqrg6bxxxTNN1z08s8OSNB+uRgWJVLP91TFWdLR1bM00nm9zcssp
-	eoXI1T0BE8yvfMqZ5T0vectDC4ZROB2IvsycEhN9PK3dcCoBmATdtoMyBkPwqszGlVhZOsNCJ70
-	FM
-X-Google-Smtp-Source: AGHT+IEWeCcdaLlQLuxHrfc5zv7vJMgw2RSY5WHEZHUZu8lif8TvLDvdNna1pOwRzpAobj4aitc+pg==
-X-Received: by 2002:a17:903:110e:b0:266:64b7:6e38 with SMTP id d9443c01a7336-27ed4a47150mr170404685ad.46.1759131374689;
-        Mon, 29 Sep 2025 00:36:14 -0700 (PDT)
-Received: from [192.168.68.63] (104-12-136-65.lightspeed.irvnca.sbcglobal.net. [104.12.136.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27eec33b775sm92844965ad.12.2025.09.29.00.36.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 00:36:14 -0700 (PDT)
-Message-ID: <5658a127-617c-464a-9651-5ab114161f84@gmail.com>
-Date: Mon, 29 Sep 2025 00:36:13 -0700
+	s=arc-20240116; t=1759131446; c=relaxed/simple;
+	bh=tEf2v0yWBV41CAxuZkm/e8KRs0l6+pyp0tk3XAe6S/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h/btkRggGxtuK/eUKlJ9+/eLF/Wb06DM4lAjI6roWDzONDhiF0cUOfNMgZ4Selm78p+jTj9/gGdzNwn+RRYUzdGqqgukjlZBPxtIDchiRcjTr7WYY3qtYXC6kXTZ5gUJiGzv57EfkNckMIpeISZRR2fA26nvK68rOX9lgOPI1JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 1b6dd27c9d0711f08b9f7d2eb6caa7cf-20250929
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
+	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:d9d0e40c-edd5-46ee-95a6-f5c51855eb38,IP:15,
+	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-40,FILE:0,BULK:0,RULE:Release_Ham,AC
+	TION:release,TS:-50
+X-CID-INFO: VERSION:1.1.45,REQID:d9d0e40c-edd5-46ee-95a6-f5c51855eb38,IP:15,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:-40,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-50
+X-CID-META: VersionHash:6493067,CLOUDID:cecb04c47009135223c07d0fb1735ae3,BulkI
+	D:250929153710RZQSC2KQ,BulkQuantity:0,Recheck:0,SF:10|24|38|44|66|78|102|8
+	50,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,
+	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSI
+X-UUID: 1b6dd27c9d0711f08b9f7d2eb6caa7cf-20250929
+X-User: pengcan@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
+	(envelope-from <pengcan@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1407328618; Mon, 29 Sep 2025 15:37:09 +0800
+From: Can Peng <pengcan@kylinos.cn>
+To: masahiroy@kernel.org,
+	tglx@linutronix.de,
+	kees@kernel.org,
+	aliceryhl@google.com,
+	ojeda@kernel.org,
+	xur@google.com,
+	jpoimboe@kernel.org,
+	rppt@kernel.org,
+	david.kaplan@amd.com
+Cc: pengcan@kylinos.cn,
+	ruanjinjie@huawei.com,
+	namcao@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cpu: Make CONFIG_CPU_MITIGATIONS user-configurable on non-x86 architectures
+Date: Mon, 29 Sep 2025 15:36:42 +0800
+Message-Id: <20250929073642.965938-1-pengcan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Upstreaming Pinephone Pro Patches
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- Heiko Stuebner <heiko@sntech.de>, "Leonardo G. Trombetta"
- <lgtrombetta@gmx.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Ondrej Jirman <megi@xff.cz>
-References: <20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com>
- <175856183851.499898.2147562889507523573.robh@kernel.org>
-Content-Language: en-US
-From: Rudraksha Gupta <guptarud@gmail.com>
-In-Reply-To: <175856183851.499898.2147562889507523573.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On non-x86 architectures, CONFIG_CPU_MITIGATIONS is currently controlled
+indirectly via ARCH_CONFIGURES_CPU_MITIGATIONS, leaving no way for users
+to disable mitigations at build time. This forces mitigations to be
+enabled even in trusted or performance-critical environments where they
+are unnecessary.
 
+Introduce a user-visible Kconfig option for CONFIG_CPU_MITIGATIONS,
+defaulting to 'y' for safety, but allowing it to be set to 'n' when
+desired. This provides consistent configurability across all
+architectures while preserving the default secure behavior.
 
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->    pip3 install dtschema --upgrade
->
->
-> This patch series was applied (using b4) to base:
->   Base: using specified base-commit f83ec76bf285bea5727f478a68b894f5543ca76e
->
-> If this is not the correct base, please add 'base-commit' tag
-> (or use b4 which does this automatically)
->
-> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com:
->
-> arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dtb: light-sensor@48 (sensortek,stk3311): 'leda-supply', 'vdd-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
-> 	from schema $id: http://devicetree.org/schemas/iio/light/stk33xx.yaml#
+Signed-off-by: Can Peng <pengcan@kylinos.cn>
+---
+ arch/Kconfig | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Thanks, addressed in v4!
-
-
-Rudraksha
+diff --git a/arch/Kconfig b/arch/Kconfig
+index d1b4ffd6e085..b0ef0cc412eb 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -14,7 +14,18 @@ config ARCH_CONFIGURES_CPU_MITIGATIONS
+ 
+ if !ARCH_CONFIGURES_CPU_MITIGATIONS
+ config CPU_MITIGATIONS
+-	def_bool y
++	bool "Mitigations for CPU vulnerabilities"
++	default y
++	help
++	  Say Y here to enable options which enable mitigations for hardware
++	  vulnerabilities (usually related to speculative execution).
++	  Mitigations can be disabled or restricted to SMT systems at runtime
++	  via the "mitigations" kernel parameter.
++
++	  If you say N, all mitigations will be disabled.  This CANNOT be
++	  overridden at runtime.
++
++	  Say 'Y', unless you really know what you are doing.
+ endif
+ 
+ #
+-- 
+2.25.1
 
 
