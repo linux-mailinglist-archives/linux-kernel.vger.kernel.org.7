@@ -1,213 +1,153 @@
-Return-Path: <linux-kernel+bounces-836374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5A6BA9838
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:17:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE93BA983F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DAF3B64D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18BD23B6893
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC553090E2;
-	Mon, 29 Sep 2025 14:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992A32FB080;
+	Mon, 29 Sep 2025 14:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="CNUpqJdR"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MoZku9W1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015372F25F5;
-	Mon, 29 Sep 2025 14:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E0B304BB8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155412; cv=none; b=CAvSaKsUCusYIchxvDdpGsSjLpss37UtsTGrnG0nnSCPSMLkFVHo/Bs+XhgYvvyNJBYRlkxT0H68woG/OOsFJovmQY19+SfzCbMmkdrP/FsWWhwAAXam7oO+V2OSmlu4zMwVNX6qvNCxtbBPSxWNFnLoCb1LS70pBVmwsQyIFkU=
+	t=1759155436; cv=none; b=KS+tCg6QCgdjg2cOJO/ittjiRIh0jO3Q1d7j2TRa4gA+XDJbOgabMQisxIIqfHOMvGmzhvqZSQiJtLz+g8s2Acmv6v+cV7ID64omlDQ3twyxQqKPrbZGJrykGAda948+fony1fWtGozdf2OXHWf0tIuh0/i74H2Tf+cMgKu0h4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155412; c=relaxed/simple;
-	bh=3+O5C6Vz/MkAbscpfMKARxnmsE5d9vXjTWJzlbsLnug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtQUEKH3K1R94QHc4XaPn+jxBJmnyVE9Whg2JReipby2XzmF8HMdl0RvLPaKTnWMFoQ7Wmc1t0ndTrvR64JBCFqLRFTkrlfwoUcvqmjGRlZiGuceFj2ubllYeO+aiWnOgnsQ28eUVW8iCzROXMeNO2+4J6tPh8//2HKiiCjDpEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=CNUpqJdR; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.17])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 9205D40643CB;
-	Mon, 29 Sep 2025 14:16:45 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 9205D40643CB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1759155405;
-	bh=W1zN4RQ16FSgQFKeVYeqiwRubVmq/xZgRjCVRCpAZLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CNUpqJdRpv3a7/gLgi4D4oErIzd0rjVicqgMppaNYr0EvsJEB1yprRBYIvIhFxlTN
-	 PyNwLY3Mk0kjbWn8TS78WcWfwZGZIKuNSaNsPPWfiH2nuh3X+2kwElQ8yBjoU3IpQ/
-	 SdmfHovckNM7CVh6Flce0gZTn8EGDikh1dhLh1w0=
-Date: Mon, 29 Sep 2025 17:16:45 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Bitterblue Smith <rtl8821cerfe2@gmail.com>, 
-	Zong-Zhe Yang <kevin_yang@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH rtw-next 4/6] wifi: rtw89: handle
- IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
-Message-ID: <20250929130524-9e0c010a824ad34c47c2e1c4-pchelkin@ispras>
-References: <20250920132614.277719-1-pchelkin@ispras.ru>
- <20250920132614.277719-5-pchelkin@ispras.ru>
- <de5673b6c65d460187b9d99a14783a7e@realtek.com>
+	s=arc-20240116; t=1759155436; c=relaxed/simple;
+	bh=wuz6WpMR2FmYpCZb3KByeL9QSwX48+1y8xgDD41qeCw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CyLfA91OIU5InH6liFdvE78orFEWdxK8INc2KvPOsz5nMIbkF4Fx2xmLbCnEzsdUzPaAP6I3xSJO0/XA5nW8/XCYCpqpSRmHRnuFkKdzwDau9NJi7kduJkc7FamVJg+N0b6XkzmFYPkJeebv//X1gRGlJ2xBCNl7Ik2RcnfKHBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MoZku9W1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58T9wEWw032185
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:17:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=uSpw/jCs9xhUh5GAV+l3XS
+	y8IK/VN6IuG8B8IRTx+ro=; b=MoZku9W1c+YWsHwOU08oVAt4Cd06WH5uxYJDdf
+	2XT/+b1/eSBt0HnfLVtLg1NE9NaBii1LvOgPgXBPtKD6V5GCVHdmotS/blSNdisW
+	fZVQVlrvu7d2FR09UgIZpkSqLEeDRB7GYJHjGl2K99PHq5EbHXLUO6KR1OhWlU86
+	wtehvLeP5BWYm/SpnU7x3O6cT3ct8F0KEoF0udfhO07ZKyJTdfZadxo45r7eGPbQ
+	PiC5sMoKh4Hql4iEp/TPDErwwkEyNbJhGvhUSaMU8MVYtKJnsPKCUDoCJwAi5U9o
+	h4r4kRYO3sZMSB0YUMOUDjkvjBBfxDf6ArR9WZdZKn5Th9ew==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e5mcntb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:17:14 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7810af03a63so7913576b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:17:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759155433; x=1759760233;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uSpw/jCs9xhUh5GAV+l3XSy8IK/VN6IuG8B8IRTx+ro=;
+        b=K568/7SMjVAmRxx1t/HJgTpPJI9oHJRgO8nSkkgherU9Op9sdbqMn81iew925wYYVl
+         8TiHmCVhRspOycAkfsufErbjOjCm8oHe8KARtUWl+XA0bJFF+knMfTbGYjWusBGWHOuM
+         nZWELAI5ucW651BPjUIq5t18PHPNKQPLXG3qcWJLhVJ06QzRUa8AAQNZyc2kPss71KyM
+         Gduf3vD8BQDSwI08X+yihiv8Bq6UX/EgcTMA/DaWOMZ/7wHH705Xy7MQRvE9rH5nKxDr
+         Zbo2q8g1cxn1D87nGEh8/9RSBxRcya2UeFLWbIOteFmQiSjAMhk5mi5AW/bk9Q/RCHYs
+         NcTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpTEab5ASTiJ6DgPGsDK5V/8mJFSmsj82Irhnt2KLIEt9MRvYl0f7eWxjMaVfifw8useRcLc8pbw94aA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywpRZwG+FNV9DwZ4ODPW2mb7G7lErkQjJ6osuN5EIjhAOyI5di
+	0Qywh5ABtYFJB4NOSkOuKsLQr0mU4tYyQY+ULcSa/5e4vTkE5HTfbpcDwzjTBAyvCe+NjIFAzH2
+	+pddiSlzly4uYg6H/D40K0HHRQKbgKyTCXFDJToAIeOrG9td9wvs5wH7veh9RnQ+CxP4=
+X-Gm-Gg: ASbGncuG3D4o82hW8z61kLz+l81fsh147cc2B1srIrvAccdLCdzWF5ESF3miY0SDdat
+	uWfZXEl9ij1zakqObXj1c6EpMVYSrcMAj+t0lKHoT9gU7SUlOzqsYNnnKDkWRn5y2zs8a3q4C6e
+	jHxksqf3H/zbzU9SZKTAbMVSGHae2FRg1vO498EBtE7xhkd+23O8+IZmGWVPYN5l5ijgiMtBTtk
+	T0muV7k7LjvXs3ZDaq3tbW7fSrzUiYotqqvVX9axORdDrNDSshR2banTcIcsiNsVy3lHnHSkubo
+	PQ/Sk5Xa6y5jjt3pHOLX8np1T+1Zz4V+IGRkHl84W1duN26AgoaL5H2SPsHZk1NhUlvl56G7bwz
+	Lte9pTRXAvJU0jGwf0fMrOb0iRvrSIqHkqlvbEVMDiFt8xmstBARHy4cigC6T0yvsPJITu/wlOs
+	g=
+X-Received: by 2002:a05:6a00:3e0b:b0:772:2e09:bfcc with SMTP id d2e1a72fcca58-780fcef7c3emr15809846b3a.30.1759155433456;
+        Mon, 29 Sep 2025 07:17:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1gDeS5o+KAXQUuBVzHve/ZhNQQy2xaT9LbSgMWBNNxR5PRH1SP++JRQwj0MYWsqBxi1blAg==
+X-Received: by 2002:a05:6a00:3e0b:b0:772:2e09:bfcc with SMTP id d2e1a72fcca58-780fcef7c3emr15809824b3a.30.1759155432990;
+        Mon, 29 Sep 2025 07:17:12 -0700 (PDT)
+Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b23a48sm11536334b3a.59.2025.09.29.07.17.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 07:17:12 -0700 (PDT)
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Subject: [PATCH 0/2] Add the missing entries in the SMEM image table
+Date: Mon, 29 Sep 2025 19:47:06 +0530
+Message-Id: <20250929-image_crm-v1-0-e06530c42357@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <de5673b6c65d460187b9d99a14783a7e@realtek.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOKU2mgC/23MQQqDMBCF4atI1o1kJgaxq96jlBLjVAONsUkbW
+ sS7N7ppF24G/uHxzSxSsBTZsZhZoGSj9WMOOBTMDHrsidsuN0OBStRQcet0T1cTHMcaW2U0Ko0
+ ty/sp0M2+N+t8yT3Y+PThs9EJ1u+ekoALLmXTKEmVBuhOPsby8dJ3450r82ErlvAHNFD/A5gBB
+ KErAVIKI3eAZVm+JPlpweoAAAA=
+X-Change-ID: 20250714-image_crm-272b5ca25a2b
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759155430; l=802;
+ i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
+ h=from:subject:message-id; bh=wuz6WpMR2FmYpCZb3KByeL9QSwX48+1y8xgDD41qeCw=;
+ b=Ivd5o+1MFNJUhI+xw2CZ1QgKnBFe6oOyE6kdkgHM4X2JKrzw2QVMSDUXM6YVNMGehrsLvxFSw
+ /gCxTVL/YEnDBMTr/x3FnJR95XJQ8WwPN/5oM0E0QwA3dsoYZ4bYVnp
+X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
+ pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
+X-Authority-Analysis: v=2.4 cv=RMC+3oi+ c=1 sm=1 tr=0 ts=68da94ea cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=bJqOVrwxxN2ZfhMSaZAA:9
+ a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-ORIG-GUID: 0tdu7SgvN9LOlw_80IOEWv_flPYHyLOZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwNCBTYWx0ZWRfXwRAxyvviq7r+
+ nckcZWvnB/B7QPKFYA9XPszUB3Rw67dVKD83mtbN7GUjNEJyS1NrpNAxiHzZyMAzgte6huPjb/2
+ EjPzZzlZBj9mlIpJLXHU8M5CF3JCGzoiRLM+ybitM7XsyXhx+rHRYgBJJoWzY1UvV4qodB5O13f
+ StFv4I1Yr2Qg1i1NVAfgCcnCUo5ntq/ggACfbvb3QdVKGkHXw8AUf9qN2fUAtZagsKbMAt6pYb7
+ m+Tabz7KPqmG9X1dw9lNzl29wx5af7GQGB5dI9+xM9zlLMcAdtxJyX5FI5G2O8rkyg6RsOvJHvr
+ O6Ttdmuog3ukA5lPwTgyNDFI5qyqH0KVdVcEXGmXOXB/j1v8D5RVPoonu8ub5M1xYEnSUmN4R0z
+ /6JWtzsGtDcwRvPIahk3aBaqdUGIyw==
+X-Proofpoint-GUID: 0tdu7SgvN9LOlw_80IOEWv_flPYHyLOZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_05,2025-09-29_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0 spamscore=0
+ adultscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270004
 
-On Thu, 25. Sep 02:05, Ping-Ke Shih wrote:
-> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > Frames flagged with IEEE80211_TX_CTL_REQ_TX_STATUS mean the driver has to
-> > report to mac80211 stack whether AP sent ACK for the null frame/probe
-> > request or not.  It's not implemented in USB part of the driver yet.
->                  ^^ nit: two spaces
-> > 
-> > PCIe HCI has its own way of getting TX status incorporated into RPP
-> > feature, and it's always enabled there.  Other HCIs need a different
->                                          ^^ nit: two spaces
-> 
-> I wonder if you want two spaces intentionally? 
+Rather than adding support for one each image at a time, populate all
+the image details at once for the completeness. Additionally sort the
+socinfo_image_names array in alphabetical order.
 
-Oh, it's intentional "style" used to mark sentence endings more
-distinctively.  I've already done that in the previous series.
+Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+---
+Kathiravan Thirumoorthy (2):
+      soc: qcom: socinfo: arrange the socinfo_image_names array in alphabetical order
+      soc: qcom: socinfo: add the missing entries to the smem image table
 
-> > @@ -6294,6 +6304,7 @@ static inline void rtw89_hci_reset(struct rtw89_dev *rtwdev)
-> >  {
-> >         rtwdev->hci.ops->reset(rtwdev);
-> >         rtw89_tx_wait_list_clear(rtwdev);
-> > +       skb_queue_purge(&rtwdev->tx_rpt_queue);
-> 
-> ieee80211_purge_tx_queue()? 
-> (a caller needs to hold lock)
+ drivers/soc/qcom/socinfo.c | 46 ++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 40 insertions(+), 6 deletions(-)
+---
+base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
+change-id: 20250714-image_crm-272b5ca25a2b
 
-Alright, plain skb_queue_purge() may lead to "Have pending ack frames!"
-WARNING later.
+Best regards,
+-- 
+Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 
-> > diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wireless/realtek/rtw89/mac.c
-> > index 01afdcd5f36c..831e53aedccc 100644
-> > --- a/drivers/net/wireless/realtek/rtw89/mac.c
-> > +++ b/drivers/net/wireless/realtek/rtw89/mac.c
-> > @@ -5457,15 +5457,44 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32
-> >         rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
-> >  }
-> > 
-> > +static void
-> > +rtw89_tx_rpt_tx_status(struct rtw89_dev *rtwdev, struct sk_buff *skb, bool acked)
-> > +{
-> > +       struct ieee80211_tx_info *info;
-> > +
-> > +       info = IEEE80211_SKB_CB(skb);
-> 
-> nit: just declare ` struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);` 
-> 
-> > +       ieee80211_tx_info_clear_status(info);
-> > +       if (acked)
-> > +               info->flags |= IEEE80211_TX_STAT_ACK;
-> > +       else
-> > +               info->flags &= ~IEEE80211_TX_STAT_ACK;
-> > +
-> > +       ieee80211_tx_status_irqsafe(rtwdev->hw, skb);
-> 
-> I'm not aware USB use _irqsafe version before. Can I know the context of
-> rtw89_usb_write_port_complete()? Is it IRQ context?
-> 
-
-Depends on the USB host controller if I'm not mistaken.  URB completion
-callback may be invoked either in hard IRQ or BH context.
-usb_hcd_giveback_urb() has an updated doc stating:
-
- * Context: atomic. The completion callback is invoked either in a work queue
- * (BH) context or in the caller's context, depending on whether the HCD_BH
- * flag is set in the @hcd structure, except that URBs submitted to the
- * root hub always complete in BH context.
-
-If HCD_BH is not set for the host controller in use then, depending on host
-controller, URB handler might be executed in hard IRQ context.
-
-I guess you're implying to unify the usage of ieee80211_tx_status_* for
-PCIe (which has ieee80211_tx_status_ni) and USB variants of rtw89.  These
-calls are not mixed for the single hardware so there is no real issue
-for unification.
-
-> > +}
-> > +
-> >  static void
-> >  rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
-> >  {
-> >         u8 sw_define = RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h->data);
-> >         u8 tx_status = RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h->data);
-> > +       struct sk_buff *cur, *tmp;
-> > +       unsigned long flags;
-> > +       u8 *n;
-> > 
-> >         rtw89_debug(rtwdev, RTW89_DBG_TXRX,
-> >                     "C2H TX RPT: sn %d, tx_status %d\n",
-> >                     sw_define, tx_status);
-> > +
-> > +       spin_lock_irqsave(&rtwdev->tx_rpt_queue.lock, flags);
-> > +       skb_queue_walk_safe(&rtwdev->tx_rpt_queue, cur, tmp) {
-> > +               n = (u8 *)RTW89_TX_SKB_CB(cur)->hci_priv;
-> 
-> The *n is rtw89_usb_tx_data::sn, right? I feel this is hard to ensure
-> correctness. Why not just define this in struct rtw89_tx_skb_data?
-> So no need RTW89_USB_TX_SKB_CB() for this.
-
-Ah, this should work because recent commit 19989c80734c ("wifi: rtw89: use
-ieee80211_tx_info::driver_data to store driver TX info") has allowed
-storing more than 2 'void *' pointers in private data.
-
-> 
-> > +               if (*n == sw_define) {
-> > +                       __skb_unlink(cur, &rtwdev->tx_rpt_queue);
-> > +                       rtw89_tx_rpt_tx_status(rtwdev, cur, tx_status == RTW89_TX_DONE);
-> > +                       break;
-> > +               }
-> > +       }
-> > +       spin_unlock_irqrestore(&rtwdev->tx_rpt_queue.lock, flags);
-> 
-> If we can use ieee80211_tx_status_ni() or ieee80211_tx_status_skb(), 
-
-We can't use non-_irqsafe versions here unless rtw89_usb_write_port_complete()
-is reworked not to use _irqsafe one.  And there is no way other than
-transfering this work from URB completion handler to some other async
-worker (in BH context or similar).  Not sure it'll be better overall.
-
-> I'd like use skb_queue_splice() to create a local skb list, and iterate the
-> local list, and then splice back to original.
-> 
-> (Reference to mesh_path_move_to_queue())
-
-Perhaps we can do that with ieee80211_tx_status_irqsafe() still in place.
-
-> 
-> >  }
-> > 
-> >  static void
-> > diff --git a/drivers/net/wireless/realtek/rtw89/pci.c b/drivers/net/wireless/realtek/rtw89/pci.c
-> > index 0ee5f8579447..fdf142d77ecc 100644
-> > --- a/drivers/net/wireless/realtek/rtw89/pci.c
-> > +++ b/drivers/net/wireless/realtek/rtw89/pci.c
-> > @@ -4675,6 +4675,7 @@ static const struct rtw89_hci_ops rtw89_pci_ops = {
-> >         .pause          = rtw89_pci_ops_pause,
-> >         .switch_mode    = rtw89_pci_ops_switch_mode,
-> >         .recalc_int_mit = rtw89_pci_recalc_int_mit,
-> > +       .tx_rpt_enable  = NULL, /* always enabled */
-> 
-> The comment is weird. PCI devices don't never use TX report, no?
-
-It's me mixing up the terminology, sorry.  The comment was supposed to
-indicate that PCI always have TX status reported.  (but it's done via RPP
-feature which is actually a separate thing compared to TX Report, okay)
-
-I'd rather replace it with "TX status is reported via RPP" if that comment
-is helpful.
 
