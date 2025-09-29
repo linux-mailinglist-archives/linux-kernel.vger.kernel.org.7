@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-836709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F982BAA66A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:02:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61997BAA679
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADD2117AAEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4C83A8E1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C147F244684;
-	Mon, 29 Sep 2025 19:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CF123D7E9;
+	Mon, 29 Sep 2025 19:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHoWv5/Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRdeHsND"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13422241679
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA19217736
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759172566; cv=none; b=sDprgwRMbwYpSgnJbkoBixyOhaW2N5NaYfUOBM0xM8UrMj7yMnZxw8beaPbN1ItZ1H1kwCqs+YNMlj/hY3wYEmAfXpG7gA1vV+X1rUD0bdBY9PFqgvtA8PasW+fnEYEc/eR9awPF7Eu2jSxc6GIzLsPpwVoFeaT+wBojrGjEDN4=
+	t=1759172738; cv=none; b=g5Cr6SheltXpQYhtxD6xk9hfuO5IVx/PV2FGr450ak64n5x6IJYullL8FhjPOzwwHGRJMSBS7HNt5EigBIdpAtecSUDqM3NkiHy76Yj/AXRpuf5vpHUyMTVe1yMF6Z+0XCGFK8ORXwJaJPtD8yQSVFQ5x2A0TdKZlSeNHoRY7Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759172566; c=relaxed/simple;
-	bh=ai+mZqLI9ktRAJthfMIM/+h/k/K1iip4oB8EhNaXyYw=;
+	s=arc-20240116; t=1759172738; c=relaxed/simple;
+	bh=7dAHzaJQ6VmNHtkX0SwUOUq+IGCkupBlWo61y0sreic=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WgHWyKLLNrjlMXn3pY0Q4F1JXYXWhRcYXAZNUmp55hS0SrkAarNwT0l4LmHuf1ScF9yPnNsqNuNvg6LHnEVNvy+EjJSGdjsVP7llupwLpcspdaAq6LbCZxlRqH7BLSQr8RgZlX++PUdxmtYIkai669YZyuRNxNFkWIqcFDeozC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHoWv5/Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C30C4CEF5;
-	Mon, 29 Sep 2025 19:02:45 +0000 (UTC)
+	 Content-Disposition; b=H08T5jSkXHJcs/9E0abZet8NanxydRXHrFRXRVrdkX8qi5fEPMp0XfUMuhXuN6RpfFHTO/OmejpzeAsB5doneJz6NXz3XA1B3WQOdk0KIyE+rCUlaqAHZbnHJ4fuvcIMIk1qMuB3o9XKuZCuom17ELBEONc8jo6Jl/f02TcqLQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRdeHsND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDFFC4CEF4;
+	Mon, 29 Sep 2025 19:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759172565;
-	bh=ai+mZqLI9ktRAJthfMIM/+h/k/K1iip4oB8EhNaXyYw=;
+	s=k20201202; t=1759172737;
+	bh=7dAHzaJQ6VmNHtkX0SwUOUq+IGCkupBlWo61y0sreic=;
 	h=Date:From:To:Cc:Subject:From;
-	b=gHoWv5/QaKi92rgxQhUI8kH8+K5aXFb+gtKiy2WF0OcvqDeSY2OaD3MRG2+u1Zs1q
-	 sHJUy3gZvIIEAQfUlItcIctVqbhT+5T9aRMjZ76RmBuG+4O/0oIAeqsy8ZE0xuGoBS
-	 urSd/ryNX3qKRlgEZh48YErYFNpcNNvCSOYg7Tny6hrfNXkF1ds9O25KoU1oUAdAeN
-	 AyIcqEC6qPyCK/G9eO7+j3yNcq1SFDOuxoP+yE4D4ilKUEk2IRpAAxmQjSEZWRDHC/
-	 caJBUBVC3f7MsFxuAr2rK02GJu7q2VS6KlBGpN66ePTTmzZ48cUrqVVZsK8Hc2TymC
-	 cmJZ2/ITtgEug==
-Date: Mon, 29 Sep 2025 12:02:45 -0700
+	b=eRdeHsNDf9JujZo1zCiq6S0T9QrzBgeUfb+2UywsKB+bnuBuMRJOediqUplOLiPpa
+	 mzJS/aRIKZVuJPCJa0kwFfSuJ+mkHZbEMCJl+yelqKd6WoaY18PnWDdAuVCP0vbdFg
+	 hLJeBJTjpAm4DEDw1RF4VAu5+ZVRhWrxBzvId7dQygWCofyf8CaNw0kFOE1TMGxgIP
+	 YYjBkhznkO4I5M1laXRN16/tQaKzf1f5CKcQvv4dWfzNlJ17tc2Vx4v2jMhf8/oMBw
+	 It94Gk1LUM1OmGA9v4S19vTx9W06e0qug+hHhQSPhYRsWn8cfXGw449KOerh9MMRqi
+	 vnCqwaYHimGDg==
+Date: Mon, 29 Sep 2025 12:05:37 -0700
 From: Kees Cook <kees@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>,
+Cc: linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
 	Kees Cook <kees@kernel.org>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Stafford Horne <shorne@gmail.com>
-Subject: [GIT PULL] ffs-const update for v6.18-rc1
-Message-ID: <202509291157.2B1EA74A21@keescook>
+	Svetlana Parfenova <svetlana.parfenova@syntacore.com>,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [GIT PULL] execve updates for v6.18-rc1
+Message-ID: <202509291204.89F951B4@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,14 +60,7 @@ Content-Disposition: inline
 
 Hi Linus,
 
-Please pull this ffs() attribute-const update for v6.18-rc1. While
-working on various hardening refactoring a while back we encountered
-inconsistencies in the application of __attribute_const__ on the ffs()
-family of functions. This series fixes this across all archs and adds
-KUnit tests. Notably, this found a theoretical underflow in PCI (also
-fixed here) and uncovered an inefficiency in ARC (fixed in the ARC
-arch PR). I kept the series separate from the general hardening PR since
-it is a stand-alone "topic".
+Please pull these handful of execve updates for v6.18-rc1.
 
 Thanks!
 
@@ -84,76 +72,37 @@ The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/ffs-const-v6.18-rc1
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.18-rc1
 
-for you to fetch changes up to 95719dfa323709c06ec34cc96e73e0788e19934f:
+for you to fetch changes up to 8c94db0ae97c72c253a615f990bd466b456e94f6:
 
-  KUnit: ffs: Validate all the __attribute_const__ annotations (2025-09-08 14:58:52 -0700)
-
-----------------------------------------------------------------
-ffs-const update for v6.18-rc1
-
-- PCI: Fix theoretical underflow in use of ffs().
-
-- Universally apply __attribute_const__ to all architecture's ffs()-family
-  of functions.
-
-- Add KUnit tests for ffs() behavior and const-ness.
+  binfmt_elf: preserve original ELF e_flags for core dumps (2025-09-03 20:49:32 -0700)
 
 ----------------------------------------------------------------
-Kees Cook (18):
-      PCI: Test for bit underflow in pcie_set_readrq()
-      KUnit: Introduce ffs()-family tests
-      bitops: Add __attribute_const__ to generic ffs()-family implementations
-      csky: Add __attribute_const__ to ffs()-family implementations
-      x86: Add __attribute_const__ to ffs()-family implementations
-      powerpc: Add __attribute_const__ to ffs()-family implementations
-      sh: Add __attribute_const__ to ffs()-family implementations
-      alpha: Add __attribute_const__ to ffs()-family implementations
-      hexagon: Add __attribute_const__ to ffs()-family implementations
-      riscv: Add __attribute_const__ to ffs()-family implementations
-      openrisc: Add __attribute_const__ to ffs()-family implementations
-      m68k: Add __attribute_const__ to ffs()-family implementations
-      mips: Add __attribute_const__ to ffs()-family implementations
-      parisc: Add __attribute_const__ to ffs()-family implementations
-      s390: Add __attribute_const__ to ffs()-family implementations
-      xtensa: Add __attribute_const__ to ffs()-family implementations
-      sparc: Add __attribute_const__ to ffs()-family implementations
-      KUnit: ffs: Validate all the __attribute_const__ annotations
+execve updates for v6.18-rc1
 
- lib/Kconfig.debug                          |  14 +
- lib/tests/Makefile                         |   1 +
- arch/alpha/include/asm/bitops.h            |  14 +-
- arch/csky/include/asm/bitops.h             |   8 +-
- arch/hexagon/include/asm/bitops.h          |  10 +-
- arch/m68k/include/asm/bitops.h             |  14 +-
- arch/mips/include/asm/bitops.h             |   8 +-
- arch/openrisc/include/asm/bitops/__ffs.h   |   2 +-
- arch/openrisc/include/asm/bitops/__fls.h   |   2 +-
- arch/openrisc/include/asm/bitops/ffs.h     |   2 +-
- arch/openrisc/include/asm/bitops/fls.h     |   2 +-
- arch/parisc/include/asm/bitops.h           |   6 +-
- arch/powerpc/include/asm/bitops.h          |   4 +-
- arch/riscv/include/asm/bitops.h            |   6 +-
- arch/s390/include/asm/bitops.h             |  10 +-
- arch/sh/include/asm/bitops.h               |   4 +-
- arch/sparc/include/asm/bitops_64.h         |   8 +-
- arch/x86/include/asm/bitops.h              |  12 +-
- arch/xtensa/include/asm/bitops.h           |  10 +-
- include/asm-generic/bitops/__ffs.h         |   2 +-
- include/asm-generic/bitops/__fls.h         |   2 +-
- include/asm-generic/bitops/builtin-__ffs.h |   2 +-
- include/asm-generic/bitops/builtin-__fls.h |   2 +-
- include/asm-generic/bitops/builtin-fls.h   |   2 +-
- include/asm-generic/bitops/ffs.h           |   2 +-
- include/asm-generic/bitops/fls.h           |   2 +-
- include/asm-generic/bitops/fls64.h         |   4 +-
- include/linux/bitops.h                     |   2 +-
- drivers/pci/pci.c                          |   6 +-
- lib/clz_ctz.c                              |   8 +-
- lib/tests/ffs_kunit.c                      | 566 +++++++++++++++++++++++++++++
- 31 files changed, 661 insertions(+), 76 deletions(-)
- create mode 100644 lib/tests/ffs_kunit.c
+- binfmt_elf: preserve original ELF e_flags for core dumps (Svetlana
+  Parfenova)
+
+- exec: Fix incorrect type for ret (Xichao Zhao)
+
+- binfmt_elf: Replace offsetof() with struct_size() in fill_note_info()
+  (Xichao Zhao)
+
+----------------------------------------------------------------
+Svetlana Parfenova (1):
+      binfmt_elf: preserve original ELF e_flags for core dumps
+
+Xichao Zhao (2):
+      exec: Fix incorrect type for ret
+      binfmt_elf: Replace offsetof() with struct_size() in fill_note_info()
+
+ arch/riscv/Kconfig       |  1 +
+ fs/Kconfig.binfmt        |  9 +++++++++
+ include/linux/mm_types.h |  5 +++++
+ fs/binfmt_elf.c          | 48 +++++++++++++++++++++++++++++++++++++-----------
+ fs/exec.c                |  2 +-
+ 5 files changed, 53 insertions(+), 12 deletions(-)
 
 -- 
 Kees Cook
