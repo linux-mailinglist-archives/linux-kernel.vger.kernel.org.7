@@ -1,170 +1,158 @@
-Return-Path: <linux-kernel+bounces-836664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C65BAA40F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:08:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EA8BAA416
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDDEE42045B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF5A97A2973
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB61227EAA;
-	Mon, 29 Sep 2025 18:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97492288E3;
+	Mon, 29 Sep 2025 18:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdu4Kyjl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+n3Pcle"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F405D515;
-	Mon, 29 Sep 2025 18:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D04226CF1
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759169301; cv=none; b=cp0dD1CS8h5cfsSbANBkgUTfw+bF6q7XT7sXAOT2HfY1oZrcYI5IuMjMIgrntVzjMbuO0ozW/kqEBbqyqeINIMdfl0fmMgvb1mY1aEAhLfuP6zB9U9sOOe5GMcldDJoSfN/InGDbXnEubqhXoyj/kSsObo671u2hMJMdixaVdHA=
+	t=1759169413; cv=none; b=W9prw/c68imuYTUixVDoTmMDjEhFGvUanpDo3h6NyvPo1OkkCemywh4bQPjbmGGXqUL9ZwzyZCjgRnVi+FK2oRZ/f+vrimfwJ9a76Z2ek7DNRGb7TxERIUyTwm/hV/Rko2jnK40mMB2r1UWHtVK/tO4I3VcCvtDsBNrZXu8A5Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759169301; c=relaxed/simple;
-	bh=q7CThi1aWbsxB7vnD8/Oe4G64PlXMpl8kXaSOAxluZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tS62lJl7WGGtyNSElc8hCkmo1aTfJQBVY4nW6uoXlToFfBx0lyLfM+x/8kBzIWzzhc4WKiIxbhMUZSnyO/BTKeO2+vV7xr3lByJawSrRwMfdVROEkex+i9Enx/W6X5N8LwalFp+AqMOUElvaE70jTrO0XPVYdCKmSlCRusNQAbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdu4Kyjl; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759169299; x=1790705299;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=q7CThi1aWbsxB7vnD8/Oe4G64PlXMpl8kXaSOAxluZ0=;
-  b=kdu4Kyjl8ngCwMcF1v0mjzGvDrxT4U51UWXemVX86aqa6V455XnKfpdO
-   ZVhj0VCsjVBsIilpJkuaNhPCHy7Klqtj2QJuLkD0ZPJSmAYk1oe5pIh+V
-   +n70SCIAoWm7ZzDxlLg7NaVqaTVWEOSarSDsNuzx8DGX23EHBHATaxFau
-   xSXgydPNHrVfvm4dOld0NTfp/j342n4W27btWXzputDKfXo8ABby5yDxG
-   pyuS8Sm8xtrTdH9HeabpHI3lLQidFRooNgn+Ftka348MntVidU+IVTGfJ
-   eNPkpxN+nIkbH8KSKyWeO+I9EKyhcgnqmz3u8YPP//qYomOVjipiwsVFy
-   w==;
-X-CSE-ConnectionGUID: V+/CvjRgR8Oww7o/t4COLw==
-X-CSE-MsgGUID: jGJEWlhzT9KwLoDsZgZ7OQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="72096550"
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="72096550"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 11:08:19 -0700
-X-CSE-ConnectionGUID: 4MbS3nkYQqOUZPVk6dk2QA==
-X-CSE-MsgGUID: Giq89lMvQY2z3OPwW3TbIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="178727131"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.109.105]) ([10.125.109.105])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 11:08:18 -0700
-Message-ID: <c0590dca-13a6-4173-9b82-3604d26ce0c7@intel.com>
-Date: Mon, 29 Sep 2025 11:08:17 -0700
+	s=arc-20240116; t=1759169413; c=relaxed/simple;
+	bh=OWPZ6GuPzz6dEvJ2ADm8A2qwhMU3YOecigkUlxGn4Fg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pFw/BpkOzBBuAQZNg5thxG0qjlDBRZj8GceT6Gm7EHhR7V2uuaZn2pPU+3aR0Weg1ym5CDwiuLTkNOt30jr2KamKwFmXM4vLThbG4iaW7TKGKP8PBPoUhhMWoA/2kKIJXT/R90NVu+UXHNBxsj/drxsHd/I93892m4yD/sTYPdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i+n3Pcle; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-7960d69f14bso27192216d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759169410; x=1759774210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bjmGfI+aM9Ga1Ig2g2mvuKGLXAvr/Dgn4bzVg8VMK/M=;
+        b=i+n3PcleqJUJ9T8cyjlfa2JXqNtBocQaPV06Qa4/jHfVzbq5zh/44A/iNO+h/lSTrd
+         7fjjendAlCwrkVwDKRbmjW/Vzoe7c2dFOo4akfglDyON94BPlyBYjzgNI29FfrIDjSRc
+         oGBJg3TuwxjQTXSSPw4K8avrfpYRufLHM8Tu3bvfdR3n+iiB4fqbaqao7scNqJOlTUps
+         MjQeTOLoB/xq71TX6jqGe4wDGezQZUC//NsBUJj9SkFy33dMmnWnAFEpFkZ9BuAqoLE1
+         TA1vofufedSNVD68FuaWe6sXqyu0M33cvpQVeMx5h8Z2DBaIHxMHiSWyHnb2On65fm1v
+         QxcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759169410; x=1759774210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bjmGfI+aM9Ga1Ig2g2mvuKGLXAvr/Dgn4bzVg8VMK/M=;
+        b=dHfzyKrAvLBxlPP0AGsr6Ub6bS0SfoYHppHfZU81H6UFesYFa8enJBwfhQCB/XFnw2
+         S1VGETBLPR03LE/G5LW4KmkqwZmJf3l88bDzt8QHWXcE9+ksQYf2moEZY3WrupSGw0lR
+         S+2JWYmA0mu2hbXCAVluUIEZrEXBY/pgoHFUGIjT97CSpZNTyL/3sx4mbV2DZJzM1HNu
+         tr/ZFavtZE9Ll1vLwHUoWJ5aIl5pjKf3+qDtX3PBIu+wiaK7TYaDwQWsf1fPjuSFgEyH
+         M5Hr1Ax5weSA7CKRX/R7MI/BriZlnZCx/f2wclQQ0w3dnl6fMZWl6NnP5BuclViJOoYy
+         PjlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTx5SV2l+DNG80rThtrHdjXDvOcY4vd5ebpx4RJzjE2+QsdLOwZ+dvdEdE+L09Zk2IpdTqQGniNZrpFZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEkpeJoYLRwXL1tFMPFVxRY5kiam6myfVsDQXPM1HG+SRcxmhq
+	V6b69buY4kicGPiwVmBuTciZKD++IcLsywFsZhjYjh7ZTcSKJ3szXcsSegr5WmCjOiNa2StBWVJ
+	B3Mi2zXk0scSOTUQ7qWcxzBuH5te56jc=
+X-Gm-Gg: ASbGncuGIH9Z2y7Ew/KTJnlkoPLOvkdq9PBDkAL8+a9ovr3zjIN5hMygdUkf7Av17WN
+	eg8TIaxYsJBVtueadqZa0tkrkkhbCN0WGMvg5dJ4x6HWxNtpo5/b9Wm+u/sYCOLatVk6zvRySZp
+	iF2pnVXheOxDgZGcAkgg9nLq/25Z3niyAcvOC9fZVlqmQjrWn82CJ3P3hmEDye0oxTnCR5CrnZV
+	Po2+f7D
+X-Google-Smtp-Source: AGHT+IGsvBr58f8GtOgfL+nnwH2k9AWpbMH6XL9pshnNTk2Mp1zqCHalJ+sXa0/EQOqNTHncEJ0efp7KH1rOEknc4fQ=
+X-Received: by 2002:a05:6214:27e6:b0:786:2d5e:fdf1 with SMTP id
+ 6a1803df08f44-7fc28076dc7mr264116426d6.2.1759169410033; Mon, 29 Sep 2025
+ 11:10:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/16] x86/virt/tdx: Allocate reference counters for
- PAMT memory
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "Huang, Kai" <kai.huang@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "kas@kernel.org" <kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "Annapurve, Vishal" <vannapurve@google.com>, "Gao, Chao"
- <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>,
- "x86@kernel.org" <x86@kernel.org>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-6-rick.p.edgecombe@intel.com>
- <47f8b553-1cb0-4fb0-993b-affd4468475e@linux.intel.com>
- <c8b69a9c5709d8bc482ce724f23da01e8d151727.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <c8b69a9c5709d8bc482ce724f23da01e8d151727.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250929065714.27741-1-jjm2473@gmail.com> <DD57IZJQ4FQM.3T5791FLUQ8KQ@cknow.org>
+In-Reply-To: <DD57IZJQ4FQM.3T5791FLUQ8KQ@cknow.org>
+From: jjm2473 <jjm2473@gmail.com>
+Date: Tue, 30 Sep 2025 02:09:58 +0800
+X-Gm-Features: AS18NWBq9CGmQ4er962r1cmMIH84RDNYTi26gLQ7NR29ewoVtK32nqAJCIuNoXA
+Message-ID: <CAP_9mL6+uoeG7LX8YCcUFjoU13De1CdPFqxNNfoJvOdsOrYo5Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] arm64: dts: rockchip: introduce LinkEase EasePi R1
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
+	quentin.schulz@cherry.de, kever.yang@rock-chips.com, naoki@radxa.com, 
+	honyuenkwun@gmail.com, inindev@gmail.com, ivan8215145640@gmail.com, 
+	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org, 
+	pbrobinson@gmail.com, alchark@gmail.com, jbx6244@gmail.com, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/29/25 10:41, Edgecombe, Rick P wrote:
-> On Tue, 2025-09-23 at 15:45 +0800, Binbin Wu wrote:
->>> +/*
->>> + * Allocate PAMT reference counters for all physical memory.
->>> + *
->>> + * It consumes 2MiB for every 1TiB of physical memory.
->>> + */
->>> +static int init_pamt_metadata(void)
->>> +{
->>> +	size_t size = max_pfn / PTRS_PER_PTE * sizeof(*pamt_refcounts);
->> Is there guarantee that max_pfn is PTRS_PER_PTE aligned?
->> If not, it should be rounded up.
-> Vmalloc() should handle it?
+I will fix that in v4.
 
-vmalloc() will, for instance, round up to 2 pages if you ask for 4097
-bytes in 'size'. But that's not the problem. The 'size' calculation
-itself is the problem.
+I just forget to add `Acked-by` after `git format-patch`.
+I will re-patch my local tree, add `Acked-by` to commit message,
+then `git format-patch`.
 
-You need exactly 2 MiB for every 1 TiB of memory, so let's say we have:
+I have another question. If there are reviewers or co-authors later,
+do I need to add it to the commit message and send it again?
+Or should the reviewer or co-author add the message and
+continue to deliver the patch?
 
-	max_pfn = 1<<28
+Thanks!
+  Liangbin
 
-(where 28 == 40-PAGE_SIZE) then size would be *exactly* 1<<21 (2 MiB).
-Right?
-
-But what if:
-
-	max_pfn = (1<<28) + 1
-
-Then size needs to be one more page. Right? But what would the code do?
+Diederik de Haas <didi.debian@cknow.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=8829=
+=E6=97=A5=E5=91=A8=E4=B8=80 18:20=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon Sep 29, 2025 at 8:57 AM CEST, Liangbin Lian wrote:
+> > LinkEase EasePi R1 [1] is a high-performance mini router.
+> > ...
+> > [1] https://doc.linkease.com/zh/guide/easepi-r1/hardware.html
+> >
+> > Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
+> > ---
+> >
+> > Changes in v2:
+> > - Change deprecated "rockchip,system-power-controller" to "system-power=
+-controller"
+> > - Link to v1: https://lore.kernel.org/r/20250925055906.83375-1-jjm2473@=
+gmail.com/
+>
+> You received an Acked-by on patch 1 and 2 in v1 of this patch set.
+> You're supposed to add that to the next/new version(s) or explain why
+> you choose not to do that (bc f.e. there was a major change, but that
+> does not seem applicable to those patches).
+>
+> Cheers,
+>   Diederik
+>
+> > Changes in v3:
+> > - Fix typo ('status =3D "disable"' -> 'status =3D "disabled"') found by=
+ kernel test robot https://lore.kernel.org/all/202509261328.Grjhp029-lkp@in=
+tel.com/
+> > - Link to v2: https://lore.kernel.org/r/20250925092037.13582-1-jjm2473@=
+gmail.com/
+> >
+> > ---
+> >
+> > Liangbin Lian (3):
+> >   dt-bindings: vendor-prefixes: Document LinkEase
+> >   dt-bindings: arm: rockchip: Add LinkEase EasePi R1
+> >   arm64: dts: rockchip: add LinkEase EasePi R1
+> >
+> >  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+> >  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+> >  .../boot/dts/rockchip/rk3568-easepi-r1.dts    | 692 ++++++++++++++++++
+> >  4 files changed, 700 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-easepi-r1.dts
+> >
+> >
+> > base-commit: d0ca0df179c4b21e2a6c4a4fb637aa8fa14575cb
+>
 
