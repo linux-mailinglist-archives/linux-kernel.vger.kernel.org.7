@@ -1,105 +1,189 @@
-Return-Path: <linux-kernel+bounces-836202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E9ABA8FC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:15:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD46BA8FD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A422A189E56A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:16:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55BBC7B1ED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF143002AC;
-	Mon, 29 Sep 2025 11:15:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC362FFFBA;
+	Mon, 29 Sep 2025 11:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrHm+POn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BA328725E;
-	Mon, 29 Sep 2025 11:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3762FBDFB
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759144535; cv=none; b=uDz7qsT0YORHjZJ8i4VgyPMDL8wKRjoEzmYsyHos43T+qQejjUJaK7P0iUg5yJsKolTR7+aJW025xklxV8NtsnW1mePtqfrgAVMjnahm/qJG+MNMeMzzkrfORYPbrr4wFewNFz4bSkLmpaw3/iSIW0L44+bldHvFr4Mw9sEveeM=
+	t=1759144665; cv=none; b=TB+NY5VZGYgivg3S82jaRkObp1GHGugCKzIuFeV5vssk1AtS2C9UYALXgH6wNfNPrS3fG5tR3u4ZfZLXL5trNqhT16FqSYGsUyNVkk8iM63/rUhzB4jToKuHuzWxVLVodefry3P0r74tOQgNEhagwIYlkTKefXenVezVJzIARfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759144535; c=relaxed/simple;
-	bh=waEi+Nfz9fjr9CKj2hctsnOPaIBMu5fy0ormLrMhEto=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vGQ6pcLW0H/xpf97rKUiiTynHYeonQU4bV0MbGIRK2hIARJt8EK69oagVshL56uCvWhs0AVkDSubHdNlRUfPvmcHCzOAQSRQ4/8mDIfET/dhU7mmT8MN/Afin5CnahBDSppiwO/cTWNcGPRMWTNT6xMRej9x6K26k8cizRFnRTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cZz826hlGz6L4xc;
-	Mon, 29 Sep 2025 19:13:22 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 333E9140133;
-	Mon, 29 Sep 2025 19:15:30 +0800 (CST)
-Received: from localhost (10.47.64.220) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 29 Sep
- 2025 12:15:29 +0100
-Date: Mon, 29 Sep 2025 12:15:25 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Linux PM <linux-pm@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, LKML
-	<linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, "Alex
- Williamson" <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>,
-	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>
-Subject: Re: [PATCH v4 0/3] PM: runtime: Auto-cleanup macros for runtime PM
-Message-ID: <20250929121525.00001775@huawei.com>
-In-Reply-To: <6196611.lOV4Wx5bFT@rafael.j.wysocki>
-References: <6196611.lOV4Wx5bFT@rafael.j.wysocki>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759144665; c=relaxed/simple;
+	bh=QOGH17/1a5SdNwchfwgIwqy7O5B0PKqdG29VLyNFeVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dwld/bNUm3ZKykDB8BxLCvS0E5d7BgnAvYFT0kEueWdErdy+V+lvXtINU2MBdKCXTcLVOOrao/F8wf+OAwlBSPMkJ3pEjQTnrKNXvySLXRtWEicIinU4lXwyC63lotu9CEBW2Fei84XMrTXME6bWtg5BwNHk/ZFxLNyM0fuubeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrHm+POn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF73C4CEF7;
+	Mon, 29 Sep 2025 11:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759144665;
+	bh=QOGH17/1a5SdNwchfwgIwqy7O5B0PKqdG29VLyNFeVo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WrHm+POnJM234takNss03niygYMBwjiniLcOEiF02hizWTvAJXlxsUAMNJN2HDnLD
+	 RSDaksxxs5O3zlr3JI35yl0Gp9HLtCAV+vk5JqIeQ9FM0UdOiR6VvDdvKsHSXH+nWk
+	 XHSvbzCrrWnxxoTZ/fyQOnqI+YBVfwsGnctn+hIvqAtjGqIrUu1f5gz3nXqVxXI1G+
+	 SBLSdEC3bcPnozA1h38hlRcH/cJHG3UQmanuEkdCaUjlFPCdtx0JL5etwKJYOWz/3C
+	 nesqqTf7uEuplivme1/8Q39aM4wY5gmQWJzLah0IdGEyRqF8EDxUj6vBPTBimPgJHJ
+	 v3D2b2JQTORwA==
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id BCAC7F40067;
+	Mon, 29 Sep 2025 07:17:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 29 Sep 2025 07:17:43 -0400
+X-ME-Sender: <xms:12raaOiauOaC3Gt7OC0JwLuQleiT_CyxKb0IGR4F8B1OZ2vVYHFoPg>
+    <xme:12raaMZbJmxKcZzF3YPRFhMlTSeEF6tw49LbHP-eW6KqIbW9tbxRmoMHd6FEaStMl
+    L_EB6hPd-jXRLHvYW17KTiOZyAtl0oLZoEIBTjGXOyKJAvxYs9pY4c>
+X-ME-Received: <xmr:12raaCHsMqbXKafzTpZXoVXjBipsq2VQPjJBTw0M2Rswcovk2-3nxcn5woo1Rg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejjeekjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
+    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
+    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
+    grmhgvpdhnsggprhgtphhtthhopeefgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohephigrnhdrhidriihhrghosehinhhtvghlrdgtohhmpdhrtghpthhtoheprhhitghkrd
+    hprdgvughgvggtohhmsggvsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggrvhgvrdhh
+    rghnshgvnhesihhnthgvlhdrtghomhdprhgtphhtthhopegthhgrohdrghgrohesihhnth
+    gvlhdrtghomhdprhgtphhtthhopehsvggrnhhjtgesghhoohhglhgvrdgtohhmpdhrtghp
+    thhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepvhgrnhhnrghpuhhrvhgvse
+    hgohhoghhlvgdrtghomhdprhgtphhtthhopehkrghirdhhuhgrnhhgsehinhhtvghlrdgt
+    ohhmpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:12raaK-yCnJseAp-S2nmTWod-TSPlJwt-T7UbFnYNSyy5eNI_-ovOw>
+    <xmx:12raaHWaB-OYOAKo--imS9oi1QIcHKcznXba2JkjDoP1jDhkV9-zfw>
+    <xmx:12raaGZH_vzfDfWZe28TZh6M8WeiDSSj_My4d3f2R3nsOPt-gqK_Yg>
+    <xmx:12raaMWg_0-FdlYGwoxPryTh_uJwATbk1n3y7p8_3GRDBdO9YUV7mQ>
+    <xmx:12raaFI95t0vitef8bjpHzTks7uulms7slqRViIQXV3TXw5LyBwJQffV>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Sep 2025 07:17:43 -0400 (EDT)
+Date: Mon, 29 Sep 2025 12:17:40 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	"Hansen, Dave" <dave.hansen@intel.com>, "Gao, Chao" <chao.gao@intel.com>, 
+	"seanjc@google.com" <seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"Annapurve, Vishal" <vannapurve@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v3 00/16] TDX: Enable Dynamic PAMT
+Message-ID: <x5wtf2whjjofaxufloomkebek4wnaiyjnteguanpw3ijdaer6q@daize5ngmfcl>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+ <aNX6V6OSIwly1hu4@yzhao56-desk.sh.intel.com>
+ <8f772a23-ea7f-40eb-8852-49f5e3e16c15@intel.com>
+ <2b951e427c3f3f06fc310d151b7c9e960c32ec3f.camel@intel.com>
+ <7927271c-61e6-4f90-9127-c855a92fe766@intel.com>
+ <2fc6595ba9b2b3dc59a251fbac33daa73a107a92.camel@intel.com>
+ <aNiQlgY5fkz4mY0l@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNiQlgY5fkz4mY0l@yzhao56-desk.sh.intel.com>
 
-On Fri, 26 Sep 2025 17:40:29 +0200
-"Rafael J. Wysocki" <rafael@kernel.org> wrote:
+On Sun, Sep 28, 2025 at 09:34:14AM +0800, Yan Zhao wrote:
+> On Sat, Sep 27, 2025 at 03:00:31AM +0800, Edgecombe, Rick P wrote:
+> > On Fri, 2025-09-26 at 09:11 -0700, Dave Hansen wrote:
+> > > If it can't return failure then the _only_ other option is to spin.
+> > > Right?
+> > 
+> > Yea, but you could spin around the SEAMCALL or you could spin on
+> > duplicate locks on the kernel side before making the SEAMCALL. Or put
+> > more generally, you could prevent contention before you make the
+> > SEACMALL. KVM does this also by kicking vCPUs out of the TDX module via
+> > IPI in other cases.
+> > 
+> > > 
+> > > I understand the reluctance to have such a nasty spin loop. But other
+> > > than reworking the KVM code to do the retries at a higher level,
+> > 
+> > Re-working KVM code would be tough, although teaching KVM to fail zap
+> > calls has come up before for TDX/gmem interactions. It was looked at
+> > and decided to be too complex. Now I guess the benefit side of the
+> > equation changes a little bit, but doing it only for TDX might still be
+> > a bridge to far.
+> > 
+> > Unless anyone is holding onto another usage that might want this?
+> > 
+> > >  is there another option?
+> > 
+> > I don't see why we can't just duplicate the locking in a more matching
+> > way on the kernel side. Before the plan to someday drop the global lock
+> > if needed, was to switch to 2MB granular locks to match the TDX
+> > module's exclusive lock internal behavior.
+> > 
+> > What Yan is basically pointing out is that there are shared locks that
+> > are also taken on different ranges that could possibly contend with the
+> > exclusive one that we are duplicating on the kernel side.
+> > 
+> > So the problem is not fundamental to the approach I think. We just took
+> > a shortcut by ignoring the shared locks. For line-of-sight to a path to
+> > remove the global lock someday, I think we could make the 2MB granular
+> > locks be reader/writer to match the TDX module. Then around the
+> > SEAMCALLs that take these locks, we could take them on the kernel side
+> > in the right order for whichever SEAMCALL we are making.
+> Not sure if that would work.
+> 
+> In the following scenario, where
+> (a) adds PAMT pages B1, xx1 for A1's 2MB physical range.
+> (b) adds PAMT pages A2, xx2 for B2's 2MB physical range.
+> 
+> A1, B2 are not from the same 2MB physical range,
+> A1, A2 are from the same 2MB physical range.
+> B1, B2 are from the same 2MB physical range.
+> Physical addresses of xx1, xx2 are irrelevant.
+> 
+> 
+>     CPU 0                                     CPU 1
+>     ---------------------------------         -----------------------------
+>     write_lock(&rwlock-of-range-A1);          write_lock(&rwlock-of-range-B2);
+>     read_lock(&rwlock-of-range-B1);           read_lock(&rwlock-of-range-A2);
+>     ...                                       ...
+> (a) TDH.PHYMEM.PAMT.ADD(A1, B1, xx1)      (b) TDH.PHYMEM.PAMT.ADD(B2, A2, xx2)
+>     ...                                       ...
+>     read_unlock(&rwlock-of-range-B1);         read_unlock(&rwlock-of-range-A2);
+>     write_unlock(&rwlock-of-range-A1);        write_unlock(&rwlock-of-range-B2);
+> 
+> 
+> To match the reader/writer locks in the TDX module, it looks like we may
+> encounter an AB-BA lock issue.
+> 
+> Do you have any suggestions for a better approach?
+> 
+> e.g., could the PAMT pages be allocated from a dedicated pool that ensures they
+> reside in different 2MB ranges from guest private pages and TD control pages?
 
-> Hi All,
-> 
-> This supersedes
-> 
-> https://lore.kernel.org/linux-pm/12763087.O9o76ZdvQC@rafael.j.wysocki/
-> 
-> which was an update of
-> 
-> https://lore.kernel.org/linux-pm/6204724.lOV4Wx5bFT@rafael.j.wysocki/
-> 
-> that superseded both
-> 
-> https://lore.kernel.org/linux-pm/5049058.31r3eYUQgx@rafael.j.wysocki/
-> 
-> and
-> 
-> https://lore.kernel.org/linux-pm/20250919163147.4743-1-tiwai@suse.de/
-> 
-> It follows the Jonathan's suggestion to use ACQUIRE()/ACQUIRE_ERR()
-> instead af raw CLASS() to make the code somewhat cleaner.
-> 
-> Thanks!
+It can work: allocate 2M a time for PAMT and piecemeal it to TDX module
+as needed. But it means if 2M allocation is failed, TDX is not functional.
 
-Looks excellent to me.  I've already been pointing a few people at this
-in driver reviews, so I expect to see a lot of adoption in IIO (and elsewhere).
-That RPM_TRANSPARENT handling is particularly nice.
+Maybe just use a dedicated kmem_cache for PAMT allocations. Although, I
+am not sure if there's a way to specify to kmem_cache what pages to ask
+from page allocator.
 
-With the tweaks you've already called out.
-
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-Given timing, if this ends up as a next cycle thing please could we have
-an immutable branch?  If it is going to make the merge window then no need.
-
-Thanks,
-
-Jonathan
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
