@@ -1,113 +1,95 @@
-Return-Path: <linux-kernel+bounces-835995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956E1BA888D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:11:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB85BA88A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E7118966F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 547961C0680
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3551D2641E3;
-	Mon, 29 Sep 2025 09:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FLkFKoN5"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EF1283FD0;
+	Mon, 29 Sep 2025 09:12:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AD134BA41
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5A834BA41;
+	Mon, 29 Sep 2025 09:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137072; cv=none; b=YSzmhkj3YfNpGPQZyHzbkKBDnJKgeOXDqAlyhAnaUYl5skRHvJ7kJ/dp5gRvk7rGtlmed23Fbc8xPkeAVlC+7AkK1cTfMiFnfbjEzPQFFOoUBMN7KupiYIuQ4X7PMxfDx5Vwai2nyPdvaScAeUOkHN/8ZXSX2pPQZQUMESrz8ds=
+	t=1759137125; cv=none; b=cDRoc/LdALRi+9KoAWJo0lxIylP7Y6oixzKL6TPnED5hL0m9nUWf04L3foEDZwq4e1nzO1QtXJuyhxqgt3Mhbd9583H+VCWw3yM2aSe5Vsfqzv/XViXzPl2+GOla3zVIa845mx9CX9HjLN/DHIKsv/gQv+6rsRVljJr+V4khWcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137072; c=relaxed/simple;
-	bh=IzPi6YAga9PuMbnzG8is1PD6DWuMBpvZP4lMq4idAD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/clOaX4+Zci+GlefO4TRyzWKxbLf1ViLCjkriqyA9SQom6DZLfFwwmDzAbANzcjSvifW6XO4HZaUgQ943qmwh/PvoNLt7ps4ABlFk6y8LyrOMZNp03IucA/elTVK2dDOANE6ua3XOsFqpLZ9RbqOuWNiIAzhAHftI34c1aXv1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FLkFKoN5; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-28832ad6f64so10655985ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759137070; x=1759741870; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0UzoMEpxwYA11OgHMzNuzA/C9K31n+vXlsLGo3esRlE=;
-        b=FLkFKoN5rgxTsIlilQWGcR1g1CJeqhrXE+hkdzjSpbYWiA3Wj85lLHRvb+BKXZbfn4
-         DjKmUEjngS+KSrFPQRZGOhjtbGnCPdDMwNxCGTYoUWlD19wIhf4aXjF+09iQbuwc9NOa
-         Cgu2faNfcBuUq0GS0jW1GrOpTPAAthhqdO/TedYv/GyP1HEiner8SYk5PsH/Gj0zmFfJ
-         DZByhJwOrrIubNhFyNGk2xPrEneMJj8aRvHHQaxKXJ5ukCpJxw+h/fc7ofMSMikS0ttk
-         4yBZR1QT8Dew1ad489L9ikp8q4q3snU9ujDP4ilr1/YvI4trwLWtFdgvNd9wUftbAcW7
-         WeDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759137070; x=1759741870;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0UzoMEpxwYA11OgHMzNuzA/C9K31n+vXlsLGo3esRlE=;
-        b=UZ4Z3eQQGgUA5HQZKqqHJY6iw4/55aXrlg2vYo1te08KqHNbjuARicuxFWG6JU6gwK
-         9IISwxRa5vwd4mv2CVHsmCAnKgasNT8V9oNtohxdkMmjRm/FyOiyUfThx8SSfozv9tRb
-         Oo3hIfwy+4qlxxuVrkV104nVpZDQ8iMvzjzWWclXNjNA8RKuI+ozvVjh/U5S7qp/FTxN
-         rwbzkII9dKsZAMo5K2tyZ8ghdxuvIgrqXkLYK7G0gacVtHuaBc+0xredWgFEQkzhhHp9
-         0WAyiY2SApj5nYBTPYoNPE8671nJ3P+028Hl+MY58GYXiiyvYVkbAiwcAid2bt9ICnsF
-         DQ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXcZPIGtU9Sk0DVS49oN4PtF7aLo7sK46uCEbgufXCnocGQRXbv4Y1W3szZp3pWz0yPFydoJ2MQinTBwnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKFnsJEISF7rhHr9OH3LNM2m/Prr1xCRjjoov+pEFBnxR/uoeL
-	zayjVM8lgDdwdtOFdfibepEg4hxuixfpZiniL4RGwyHGcRVgYFTWVMGFYke1uAFhbtA=
-X-Gm-Gg: ASbGncvat9poPahOaeyrVvrFgsdfcDrlRS2DS03ZeG0PrtwOcOVA9RsvisypxpFaBFj
-	CDBXP/ArBYdMpMM33dx9Hf+m1c0EiaxB/mrg9JF28A11+O00v+4PaxdVj9uy+WNZbn4jiLuGUOK
-	+/Ssy9qOhO11DwfdPPKVWzHEe7T+qXtET4Ek39JrybqFtafmH88oZAyg9O0PK0iGN01+tty3MO4
-	PZt5zL8oo69TTf1y0U6TQUw+KRQlVtJIGJ1pZbn0J9jrFAa1GXGMKqVbxUS2TqPowlvMJoIN9EU
-	EbxxbITdGqCW7HPQgARbXzpEkJocrbRpeXYnvEMn5qdwhtT8hUxvg4ffCecIuDbNIAeJ3YWPmI1
-	3gy0+0OlN7z7gQNqwI4t7Q8iQ
-X-Google-Smtp-Source: AGHT+IE36qC4gdaY+djdCS+K2gAOuhROlHGPGFHjHQiGsIGh3DmF86iNkcqZhdF2hU44jns2gHjhyw==
-X-Received: by 2002:a17:902:e5c2:b0:26a:f69a:4343 with SMTP id d9443c01a7336-27ed49df6acmr178971505ad.4.1759137070390;
-        Mon, 29 Sep 2025 02:11:10 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cf181sm125192125ad.28.2025.09.29.02.11.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 02:11:09 -0700 (PDT)
-Date: Mon, 29 Sep 2025 14:41:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jia-Wei Chang <jia-wei.chang@mediatek.com>,
-	Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: Re: [PATCH] cpufreq: mediatek: fix device leak on probe failure
-Message-ID: <20250929091107.4xltfrms2zdnhov4@vireshk-i7>
-References: <20250909073819.25295-1-johan@kernel.org>
+	s=arc-20240116; t=1759137125; c=relaxed/simple;
+	bh=pzjgHw1TRVEzQipbuD6sdMwfcVRo6nvQqjOx0CUKQzM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L2S+Jrz7G1xVhaiWTxbSnvrnrhQt91rgordP0Cb91zO8+kkunzhoyirDDyyjC1nGRAmbaoh7JirOVfaFJZHoAcg41VaV0uy2OsqffagpYUoiedK3geI+PXkopezR5vheu/Dy/OirdPcKR80HscHQGt3GqMihiLAY7zPaLoSAUHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cZwNS5dd8z6M4jd;
+	Mon, 29 Sep 2025 17:08:56 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id E05CE1402F5;
+	Mon, 29 Sep 2025 17:12:01 +0800 (CST)
+Received: from localhost (10.47.64.220) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 29 Sep
+ 2025 10:12:00 +0100
+Date: Mon, 29 Sep 2025 10:11:58 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Len
+ Brown" <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Javier Carrasco
+	<javier.carrasco@wolfvision.net>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek
+	<pavel@kernel.org>, Matthias Fend <matthias.fend@emfend.at>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Laurent
+ Pinchart" <laurent.pinchart@ideasonboard.com>, Paul Elder
+	<paul.elder@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mark Brown
+	<broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@kernel.org>
+Subject: Re: [PATCH v2 02/16] ACPI: property: Use ACPI functions in
+ acpi_graph_get_next_endpoint() only
+Message-ID: <20250929101158.00000709@huawei.com>
+In-Reply-To: <20250924074602.266292-3-sakari.ailus@linux.intel.com>
+References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+	<20250924074602.266292-3-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909073819.25295-1-johan@kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On 09-09-25, 09:38, Johan Hovold wrote:
-> Make sure to drop the reference to the cci device taken by
-> of_find_device_by_node() on probe failure (e.g. probe deferral).
+On Wed, 24 Sep 2025 10:45:48 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+
+> Calling fwnode_get_next_child_node() in ACPI implementation of the fwnode
+> property API is somewhat problematic as the latter is used in the
+> impelementation of the former. Instead of using
+> fwnode_get_next_child_node() in acpi_graph_get_next_endpoint(), call
+> acpi_get_next_subnode() directly instead.
 > 
-> Fixes: 0daa47325bae ("cpufreq: mediatek: Link CCI device to CPU")
-> Cc: Jia-Wei Chang <jia-wei.chang@mediatek.com>
-> Cc: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
->  drivers/cpufreq/mediatek-cpufreq.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Makes sense to me on simply basis of making reasoning about it a little simpler.
 
-Applied. Thanks.
-
--- 
-viresh
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
