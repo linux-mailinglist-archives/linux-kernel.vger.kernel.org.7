@@ -1,114 +1,164 @@
-Return-Path: <linux-kernel+bounces-836407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2253DBA999E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:35:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8134DBA99A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24653A2672
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:35:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052B6188E3A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C71A309DCC;
-	Mon, 29 Sep 2025 14:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42357309F1B;
+	Mon, 29 Sep 2025 14:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3vVNnhO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="gOMbSM8A"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6196309DCF
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041463093A8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156508; cv=none; b=JxwM1oJUf+oDGCVPs0WvMSYjg3k1bnsmChGhOAgGC6pHxTV0xH1jlXpUryC+iaN7uXWBcsM4LeNgMqTq3VJX/Y9k4K2rSJeo6iS2blvUCKvfOYzIj81pcld0b6HbGgQq836MLg8QS3fA0nAnSICHYt2Iv0FhuvifbU/6Y/PzN2M=
+	t=1759156519; cv=none; b=jKFJmV7cb/Jzwd/2bYxNPSNhW8UWNy4nbDauTNhwLYhq1ZPntVBS5OBncb51mCLZIfw3jowOnLtqKU5+3Fah7KUYvoLREomAlUDdis3qTHujuDhTe/OkhmOXIL0ISx6PS+/FvWb+1/mo6tKWtSIlyX0nURooA9294/D32a/m2SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156508; c=relaxed/simple;
-	bh=DRSihkHoMG81fVQdMHQHT+bezqKWPcqqJdII+FwnuCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l5TeszaMPQrirHeDH0nvQ5E78El+KtMTLBygpTk1ct8QEuDsceWdVpeNF3rUS8h2GYgbsvxlFUpdZypSkyh+ViuQh7tp2Nj2hClDPtjo12ztat8oPeHmR+hw/Cvy5UQjXHynA0apnNNQLTKe+myqJ4KIW+sqmTsQ7VaArpnkIwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3vVNnhO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5EFFC4CEF7;
-	Mon, 29 Sep 2025 14:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759156508;
-	bh=DRSihkHoMG81fVQdMHQHT+bezqKWPcqqJdII+FwnuCM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=F3vVNnhONYoBUjn+EAL66VwRehAnkHJF+jLdZoi44sIK7DSBu98nkX4IlYnSn156B
-	 EwD6yJCad7V/zjuXY5WSbxHd930TIqIGGKX1992hdX3ASfwjm9KFq/OIQjxAqtspTL
-	 8HGPyaP8B6mrO7VFMfe1r2FPtMlRUHR4lKP16FODsTzq7y0TjVrqy7S/nLh59V2rjb
-	 sEsv2EXwn6CTWv1NsRn2F5vDWrCHB960wc0fAjYqgJdZIrNrvmuqMWYpuYNctSDqjw
-	 cglP55NaAFo0m78GZfy3mZt/cdbIJkEsj8PqPF7CiOzzTRm6OZmVqLFTTkCSJahU4t
-	 ygWoA+JzhDBiA==
-Date: Mon, 29 Sep 2025 22:34:59 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Bo Liu <liubo03@inspur.com>, Chao Yu <chao@kernel.org>,
-	Hongbo Li <lihongbo22@huawei.com>
-Subject: [GIT PULL] erofs updates for 6.18-rc1
-Message-ID: <aNqZE+ex0ci1etXU@debian>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Bo Liu <liubo03@inspur.com>, Chao Yu <chao@kernel.org>,
-	Hongbo Li <lihongbo22@huawei.com>
+	s=arc-20240116; t=1759156519; c=relaxed/simple;
+	bh=qsn/uVEmelb57+NS9R97B5sSGd+Lw08Is+bY8rj99gM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TvS+gL5KkeTGjXylMZneEbte0sVX58LckzG11waFtyYpPmkyBQzQAkDaXOfDzq8fzplF7hhSXM3Orrkgy6j6LOTsj0zhP8hZud6it0MjufNW93TIXmJpihEqWnE8HLZzuLqGgiY0fAcDTGAIaXzhWnCoPWKhlYHwBymDyeVIcDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=gOMbSM8A; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id MfOSxCxmcmqb1c3j; Mon, 29 Sep 2025 10:35:16 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=mS97szuR6vAQV7Sg8P25vmVcDpqU7Yzzrh7tBTzthXQ=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=gOMbSM8ASGz3fM80dkBe
+	65upqkXufXWTdjSh9yhpxPat6Y2EDleo0kuFR4Grl7SPYLUH9F3wIZsiofX5/0sZzzk0JFImiQWTp
+	6nTX9RXOKFW1F5wpJ8Q8vEBemo15scESTsx7wk/8i2nk07az0fpB7sLOjGtfzZE4QCCNvwjiDQ=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14216617; Mon, 29 Sep 2025 10:35:16 -0400
+Message-ID: <089098df-a7a5-454e-bb84-ee443e77d585@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 29 Sep 2025 10:35:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 05/16] scsi: qla2xxx: remove code for unsupported hardware
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v2 05/16] scsi: qla2xxx: remove code for unsupported hardware
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1759156516
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 2719
+X-ASG-Debug-ID: 1759156516-1cf43947df3c0230001-xx1T2L
 
-Hi Linus,
+(target mode)
 
-Could you consider this pull request for 6.18-rc1?
+As far as I can tell, CONTINUE_TGT_IO_TYPE and CTIO_A64_TYPE are message
+types from non-FWI2 boards (older than ISP24xx), which are not supported
+by qla_target.c.  Removing them makes it possible to turn a void * into
+the real type and avoid some typecasts.
 
-There is no outstanding feature for this cycle.  One change adds
-support for FS_IOC_GETFSLABEL, and the others are fixes and cleanups.
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
 
-All commits have been in -next for a while and no potential merge
-conflict is observed.
+v1 -> v2: no changes
 
-Thanks,
-Gao Xiang
+ drivers/scsi/qla2xxx/qla_target.c | 32 +++++--------------------------
+ 1 file changed, 5 insertions(+), 27 deletions(-)
 
-The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e:
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 1e81582085e3..df5c9aac5617 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3913,7 +3913,8 @@ static void *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+  * ha->hardware_lock supposed to be held on entry. Might drop it, then reaquire
+  */
+ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+-    struct rsp_que *rsp, uint32_t handle, uint32_t status, void *ctio)
++	struct rsp_que *rsp, uint32_t handle, uint32_t status,
++	struct ctio7_from_24xx *ctio)
+ {
+ 	struct qla_hw_data *ha = vha->hw;
+ 	struct se_cmd *se_cmd;
+@@ -3934,11 +3935,8 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 	if (cmd == NULL)
+ 		return;
+ 
+-	if ((le16_to_cpu(((struct ctio7_from_24xx *)ctio)->flags) & CTIO7_FLAGS_DATA_OUT) &&
+-	    cmd->sess) {
+-		qlt_chk_edif_rx_sa_delete_pending(vha, cmd->sess,
+-		    (struct ctio7_from_24xx *)ctio);
+-	}
++	if ((le16_to_cpu(ctio->flags) & CTIO7_FLAGS_DATA_OUT) && cmd->sess)
++		qlt_chk_edif_rx_sa_delete_pending(vha, cmd->sess, ctio);
+ 
+ 	se_cmd = &cmd->se_cmd;
+ 	cmd->cmd_sent_to_fw = 0;
+@@ -4007,7 +4005,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			    *((u64 *)&crc->actual_dif[0]),
+ 			    *((u64 *)&crc->expected_dif[0]));
+ 
+-			qlt_handle_dif_error(qpair, cmd, ctio);
++			qlt_handle_dif_error(qpair, cmd, crc);
+ 			return;
+ 		}
+ 
+@@ -5816,26 +5814,6 @@ static void qlt_response_pkt(struct scsi_qla_host *vha,
+ 	}
+ 	break;
+ 
+-	case CONTINUE_TGT_IO_TYPE:
+-	{
+-		struct ctio_to_2xxx *entry = (struct ctio_to_2xxx *)pkt;
+-
+-		qlt_do_ctio_completion(vha, rsp, entry->handle,
+-		    le16_to_cpu(entry->status)|(pkt->entry_status << 16),
+-		    entry);
+-		break;
+-	}
+-
+-	case CTIO_A64_TYPE:
+-	{
+-		struct ctio_to_2xxx *entry = (struct ctio_to_2xxx *)pkt;
+-
+-		qlt_do_ctio_completion(vha, rsp, entry->handle,
+-		    le16_to_cpu(entry->status)|(pkt->entry_status << 16),
+-		    entry);
+-		break;
+-	}
+-
+ 	case IMMED_NOTIFY_TYPE:
+ 		ql_dbg(ql_dbg_tgt, vha, 0xe035, "%s", "IMMED_NOTIFY\n");
+ 		qlt_handle_imm_notify(vha, (struct imm_ntfy_from_isp *)pkt);
+-- 
+2.43.0
 
-  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.18-rc1
-
-for you to fetch changes up to e2d3af0d64e5fe2ee269e8f082642f82bcca3903:
-
-  erofs: drop redundant sanity check for ztailpacking inline (2025-09-25 11:26:39 +0800)
-
-----------------------------------------------------------------
-Changes since last update:
-
- - Support FS_IOC_GETFSLABEL ioctl;
-
- - Stop meaningless read-more policy on fragment extents;
-
- - Remove a duplicate check for ztailpacking inline.
-
-----------------------------------------------------------------
-Bo Liu (OpenAnolis) (1):
-      erofs: Add support for FS_IOC_GETFSLABEL
-
-Gao Xiang (2):
-      erofs: avoid reading more for fragment maps
-      erofs: drop redundant sanity check for ztailpacking inline
-
- fs/erofs/data.c     |  4 ++++
- fs/erofs/dir.c      |  4 ++++
- fs/erofs/inode.c    | 40 ++++++++++++++++++++++++++++++++++++----
- fs/erofs/internal.h |  5 +++++
- fs/erofs/super.c    |  8 ++++++++
- fs/erofs/zdata.c    |  7 ++-----
- fs/erofs/zmap.c     |  4 ++--
- 7 files changed, 61 insertions(+), 11 deletions(-)
 
