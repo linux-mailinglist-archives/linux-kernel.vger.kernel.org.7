@@ -1,125 +1,182 @@
-Return-Path: <linux-kernel+bounces-835825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E861ABA82A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:46:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAC3BA82A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A60431669C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:46:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C55A27A8649
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277442BEC41;
-	Mon, 29 Sep 2025 06:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HNVWJqCH"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF1B2BE635;
+	Mon, 29 Sep 2025 06:47:02 +0000 (UTC)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAF6635
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651C1635
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759128397; cv=none; b=frzizCVqGrjFNngAu4mVyabyTG79j4XYokIebS333UruhuWAkOy8AWXqxKncG+bAIQIDUy91c7CrDiPPwKlGdGCxiD9l/s5YakvHDMJXxszvXOUHdp25EAQnNVT1PfC6kvHytQ8gcrdO++g2AMh9Qk4EhKFyZavMMRK23VjkaNs=
+	t=1759128421; cv=none; b=hKRqUxinbkVxDQ4GmiE4o6gUuUCx9PW10Pp0anEtLBW6eZIoqaHVvECoZnEPO1VfU9I2T8JRq38u07tcSLnqbn5xZ18uAl+GHXwacyg6lTessJykhWKQv12b2a1BJ7ECWk3tnSHhgyria4d/ChAx3ZG/WGINC34wm9nsYX6RyTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759128397; c=relaxed/simple;
-	bh=A/u6QqvzEAId89/NmZ42A0adYx0PfzegRO4+mvntsL8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=dwj37mX0YuWDY278KP3JuHXnK1ylfjquaZHpx/ozjJ5ZD8ndeFQD3mG6Yqmn+4QShaWS4ggyxtUEtXb5QU/8k6sb426/l4b4TF/sGSRngAq13KdDd2Cbe4JU0/tmbT/nDN+nBbad4fmQ+6QLpWw3DV08u7qDndu0vNeBgoeoBCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HNVWJqCH; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250929064633epoutp03344f6a1af8d543951ef2dd06ca85b5d1~prfQ0iyX61909019090epoutp039
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:46:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250929064633epoutp03344f6a1af8d543951ef2dd06ca85b5d1~prfQ0iyX61909019090epoutp039
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759128393;
-	bh=FfZBLJLuc+uuntD1S7nxM2h+LKVCtE+y0dCkxRqcjtE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=HNVWJqCHjtOX4H+DJfZ6FrHgojQmY86b8uryxjqMb5WAIUNZpmbTE68r21/TAq0ww
-	 YzEvdW8e80wxSvxhQA15Jdy/JJoY3Fpq+2FA0H3d4JfVQmN9FCszI+swlu7IC4OIrn
-	 5sTMOM9+0TMQgRwdO/dLzGr8bkCFIox6tJmU7xU4=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250929064633epcas5p3f9bb11016d7a35cd65b5e5228d9e07b6~prfQPnHzg2175121751epcas5p3F;
-	Mon, 29 Sep 2025 06:46:33 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cZsD811vkz2SSKf; Mon, 29 Sep
-	2025 06:46:32 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250929064631epcas5p2226adbf90c50ec59281f56d85d664bdd~prfOjiy3R0521705217epcas5p2e;
-	Mon, 29 Sep 2025 06:46:31 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250929064627epsmtip1e18cd0b249e2fc57699cfa1204c7b11a~prfK0LkG31254112541epsmtip1d;
-	Mon, 29 Sep 2025 06:46:27 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Pritam Manohar Sutar'" <pritam.sutar@samsung.com>, <vkoul@kernel.org>,
-	<kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <andre.draszik@linaro.org>,
-	<peter.griffin@linaro.org>, <kauschluss@disroot.org>,
-	<ivo.ivanov.ivanov1@gmail.com>, <igor.belwon@mentallysanemainliners.org>,
-	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>
-Cc: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <20250903073827.3015662-3-pritam.sutar@samsung.com>
-Subject: RE: [PATCH v8 2/6] phy: exynos5-usbdrd: support HS phy for
- ExynosAutov920
-Date: Mon, 29 Sep 2025 12:16:26 +0530
-Message-ID: <001401dc310c$c9f18710$5dd49530$@samsung.com>
+	s=arc-20240116; t=1759128421; c=relaxed/simple;
+	bh=Y20ShN7MXQAXzhkbhjDkC8nmDpuzrDaKoSwUszr/Fgo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TjE1yLYMiTetpyLwAJ+gZsar/M4Jtii5GNEG51Z5zP3hF+7ovHA0ZlPfFeCOwdt2IcAcfN4y+Ed8/X2Fe/fdqmuVxyJhmLYH68xfcmLncmQTWMd8pS+JPzpR8VQt2Yav9LyhnoDaGEifSHZflKt7bx7aa3j67H6IkwGX/M+ad78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip2t1759128410t6a09a6fd
+X-QQ-Originating-IP: IdaLYlmGSJLSQ1a+8luNa9lnBiG2H6cFH2F3fj9TJZA=
+Received: from [192.168.30.36] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 29 Sep 2025 14:46:48 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7642221811650524440
+EX-QQ-RecipientCnt: 12
+From: Xilin Wu <sophon@radxa.com>
+Subject: [PATCH v5 0/2] arm64: dts: qcom: qcs6490: Introduce Radxa Dragon
+ Q6A
+Date: Mon, 29 Sep 2025 14:46:40 +0800
+Message-Id: <20250929-radxa-dragon-q6a-v5-0-aa96ffc352f8@radxa.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRMOVGdWg5oRjNsRBgEjzIeIB8IgG7M6EYAY8VKj20JWVfgA==
-Content-Language: en-us
-X-CMS-MailID: 20250929064631epcas5p2226adbf90c50ec59281f56d85d664bdd
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250903072939epcas5p4b36818cd2e2b5c59fdd4a1b90579eb47
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
-	<CGME20250903072939epcas5p4b36818cd2e2b5c59fdd4a1b90579eb47@epcas5p4.samsung.com>
-	<20250903073827.3015662-3-pritam.sutar@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFAr2mgC/33OTW7CMBAF4Ksgr3Flj3+wWfUeiIXjGYMXJMShE
+ RXK3WvSRaMSsXxPM9/Mgw1UMg1sv3mwQmMectfWYLYbFs+hPRHPWDMDAUZ4CbwEvAeOJZy6lvc
+ 2cCKMSCEpspbVtWuhlO8zeTj+5kL9V5Vvf+U5D7eufM9nR/ls31wYJRfcxYhN8hGlbz7nkY/YX
+ dgTG2EJ6BUAKiC0STvy0KjmBVBLwKwAqgLBRgXonSPc/Qf0AoC1D3QFpEDjdILohF0C0zT9AKO
+ snMiIAQAA
+X-Change-ID: 20250912-radxa-dragon-q6a-eedcdeaf3e66
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Xilin Wu <sophon@radxa.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759128408; l=3080;
+ i=sophon@radxa.com; s=20240424; h=from:subject:message-id;
+ bh=Y20ShN7MXQAXzhkbhjDkC8nmDpuzrDaKoSwUszr/Fgo=;
+ b=pq7hnzqvkF2nLnZgdO7cmhHHXJhlL97JFMkynfO7345AXY6F6WDo1yMNtwvxQyDHEoqGdkoMr
+ f0ZAK1e9LtvBSj+/w12BNgTOvRRxPBywfj9/Dvh2gaD5fb6it9PZ82P
+X-Developer-Key: i=sophon@radxa.com; a=ed25519;
+ pk=vPnxeJnlD/PfEbyQPZzaay5ezxI/lMrke7qXy31lSM8=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NL5QmF6cTPb+XYhkav4v78CysmHhEbPPizck9iFuwm1JQpD6QCf8pnfF
+	J+Xvrq9i9NRQ7AXPPEJmz0RjXc6SmS8b+8gLxgnOLKPQOh8GEs6H0IXrGRbMURMtvtFfWVU
+	KCM4x9O6t4G+3t/u9IvLy0AhXkjQfVQBKoUkMWfLSOXz00oKPdB8sm5n4JqzxPFmR+T1JGk
+	YmUPK85vrTvnawYmJhgCKwr+L6VZofs6JdgmBkzSaIgroDSZmuXl18GLDwRuGW0kPOdLgYh
+	/V7yDFCK5RbPGr4veB6eoRITUW7Z5BLQIIzXA1g7i8FtPpKT1Zx9abD7FAGVWYIcszBpqT0
+	HEHXwSwluyxC8igJtt6kuMIIAEOlbsc1+WN48LsdpJyAcgyN48PL5uHZrlitbl0OoKIWXSP
+	iAs5NljAXh1orLY/A2v1ukSjmrWDuIXP+wC7oZ1SxRfWe3xZDdAOQ4xoezNBQ+0J1QxbgWJ
+	9YVTTXtFHNaMZWvuIZPt76lW2UWS68oRlTJNClrdRzw/GfhEXu0mMcU1mH0bOVbue17HJyP
+	ntOtLX5pAQjPqZbXxVoKMwp/wJxLnPX+0FgmDFTXthm+FrPu7UIfeoNaHcvyDqmRdzvn3GE
+	gwjI4mjY+P+8ACFECAIiyoMsUui0TpovJrxc1pCSc6PlaQi9kc3rI9pmf5t8bFUYGBglvBq
+	3zAOnl+g5wKQCZRAwRxkwyqfKUKM52Guv7v56a5dIqZuXsFTEBWGeu66llNPcRs9mYIYr2r
+	9xNp/OrqT8mWrTC7mrvu9OnJ7toFBu9NkTNxvi5HpyWTtZfJPv4XFj+9fxDfHQoGU7Xfssg
+	+OZR+JkxRli3s2sYsQEjzWEKEagatLqDxRM7H/6QglyjRJMwRqgegSBqLqLbWbiteFE0SEG
+	KhdiHZ2qNBXzlyj5+Lnj9Kjwxv08w6QZmdzgyIKDmSfLMzNDBp97KHO2mF4cKlo6qc4k+BO
+	FNXpqp2ys4UTcgX3Ch/hWr65AxnjJbhl9173A37yXVVA0DPTx4dLo1eTsnF4iTVJ1D7Qg46
+	Dv3OQ8DXkZVQ8dSqPyPQazZmf3tU3sBB6EDHp1Mw==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-Hi Pritam
+Radxa Dragon Q6A (https://docs.radxa.com/en/dragon/q6a) is a single board
+computer, based on the Qualcomm QCS6490 platform.
 
-> -----Original Message-----
-> From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> Sent: Wednesday, September 3, 2025 1:08 PM
-> To: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
-> krzk+dt@kernel.org; conor+dt@kernel.org; alim.akhtar@samsung.com;
-> andre.draszik@linaro.org; peter.griffin@linaro.org; kauschluss@disroot.org;
-> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
-> m.szyprowski@samsung.com; s.nawrocki@samsung.com;
-> pritam.sutar@samsung.com
-> Cc: linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; rosa.pila@samsung.com;
-> dev.tailor@samsung.com; faraz.ata@samsung.com;
-> muhammed.ali@samsung.com; selvarasu.g@samsung.com
-> Subject: [PATCH v8 2/6] phy: exynos5-usbdrd: support HS phy for
-> ExynosAutov920
-> 
-> Enable UTMI+ phy support for this SoC which is very similar to what the
-> existing Exynos850 supports.
-> 
-> Add required change in phy driver to support HS phy for this SoC.
-> 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+The board ships with a modified version of the Qualcomm Linux boot
+firmware, which is stored on the onboard SPI NOR flash. This allows
+booting standard EFI-based bootloaders from SD/eMMC/USB/UFS/NVMe. It
+supports replaceable UFS 3.1/eMMC modules for easy user upgrades.
+
+The board schematic is available at [1].
+
+Features enabled and working:
+
+- Configurable I2C/SPI/UART from 40-Pin GPIO
+- Three USB-A 2.0 ports
+- RTL8111K Ethernet connected to PCIe0
+- eMMC module
+- SD card
+- M.2 M-Key 2230 PCIe 3.0 x2
+- Headphone jack
+- Onboard thermal sensors
+- QSPI controller for updating boot firmware
+- ADSP remoteproc (Type-C and charging features disabled in firmware)
+- CDSP remoteproc (for AI applications using QNN)
+- Venus video encode and decode accelerator
+
+Features available with additional DT overlays:
+- CSI cameras
+- DSI display
+
+Features that will be submitted separately once the required bindings are
+merged:
+
+- USB-A 3.0 port
+- UFS 3.1 module
+- HDMI 2.0 port including audio
+
+ALSA UCM and Audioreach topology patches are available at [2] and [3].
+
+[1]: https://docs.radxa.com/en/dragon/q6a/download
+[2]: https://github.com/alsa-project/alsa-ucm-conf/pull/601
+[3]: https://github.com/linux-msm/audioreach-topology/pull/24
+
+Signed-off-by: Xilin Wu <sophon@radxa.com>
+---
+Changes in v5:
+- Change LED default function to panic-indicator
+- Fix line break in sound node
+- Fix status-not-last in usb_2_hsphy
+- Remove unused regulators to avoid potential issues
+- Link to v4: https://lore.kernel.org/r/20250924-radxa-dragon-q6a-v4-0-10d584f2c806@radxa.com
+
+Changes in v4:
+- Change CDSP firmware to use the existing one from linux-firmware
+- Describe onboard USB 2.0 hub and ports
+- Add configurable I2C/SPI/UART QUP controllers
+- Link to v3: https://lore.kernel.org/r/20250915-radxa-dragon-q6a-v3-0-a6c32d988ed7@radxa.com
+
+Changes in v3:
+- Dropped patches for USB/HDMI, UFS and GPIO.
+- Removed Reviewed-by tag from the board DTS patch as it was significantly
+  modified.
+- Link to v2: https://lore.kernel.org/r/20250914-radxa-dragon-q6a-v2-0-045f7e92b3bb@radxa.com
+
+Changes in v2:
+- Move codec before cpu in sound node to get sorted.
+- Drop patch dependencies in cover letter
+- Separate the changes that have unmet dependencies, and mark them as DNM
+- Link to v1: https://lore.kernel.org/r/20250912-radxa-dragon-q6a-v1-0-8ccdbf9cd19b@radxa.com
+
+---
+Xilin Wu (2):
+      dt-bindings: arm: qcom: Add Radxa Dragon Q6A
+      arm64: dts: qcom: qcs6490: Introduce Radxa Dragon Q6A
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     | 1095 ++++++++++++++++++++
+ 3 files changed, 1097 insertions(+)
+---
+base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+change-id: 20250912-radxa-dragon-q6a-eedcdeaf3e66
+
+Best regards,
+-- 
+Xilin Wu <sophon@radxa.com>
 
 
