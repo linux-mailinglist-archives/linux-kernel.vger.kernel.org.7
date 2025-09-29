@@ -1,207 +1,170 @@
-Return-Path: <linux-kernel+bounces-836399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1459BA9944
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64622BA9948
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF66B16FE13
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19B33A8167
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2331F2BA4;
-	Mon, 29 Sep 2025 14:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1F73090DE;
+	Mon, 29 Sep 2025 14:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrU4WGCQ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="A5ck5Oso"
+Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5AF305070
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B771DD543
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156154; cv=none; b=nWEE+FFfgWNUaoElo+XigWGzevUiSWkXtp2fRzHBUpozGtPmwjfDLognTbT8EjxRXlBK/4LJWT2oIK+U8HoTsAa7ryUnIz1TLjf4TLIUeC0MCiF928SsYGZ00EJVJXeVwxxsfYzNA9bJP//bIGX1ZV4p9vGFMGazRvPjTkr3T24=
+	t=1759156231; cv=none; b=WqbumiGTkEms9eGGGYcc7ahNGS3YFuJkIas3Jmrhw97iT/rEx7tQcCninjgOBY7USun9ncmiPcP2KtNBMN3yeIJxf3ehmwNw4WB1XAPsfZJJtPU6ij58sWh9+54RQVMsrL2cSIaV2HcvLmzylc2FAQRwEA8Z3+Ml7U+V2kLHbKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156154; c=relaxed/simple;
-	bh=8MLM0Z/ejezW8J70oUiKcw5Ly68QkQHTMKH6VfLq+gY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N8gytm01IaU8/kzk0Ko1K1ege0Y8700XgwqhZ7k3ab3xguFdobx27cgh5k92QcSHZf9trnUHmZWXxCycF22b7WUDey1K+Mkk9ofrr3v2hZ7Ahfyzxxv1BJTFD4eE3prjgdbm9Dc7Su8LTu/TNK2Vh42vs2G4U/JItbSHa8Q002I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KrU4WGCQ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57d8ff3944dso2647896e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759156150; x=1759760950; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PuYIl+8uGgDqehkynFO/d1q3OrzgUTaphIdFn/AeuA0=;
-        b=KrU4WGCQYWDT8fZ2Jip0Bp5Hj2YjYvv98oRfz40+jYqjeuK6U8oBH2ugHNUtXC63Y6
-         bokF3OFfTIU0WUJZmkBlQxmToCZgHF0HNJnAVIbYN0VaQ8jaeB3nxHbIZbJcnju+Dp0B
-         yM0GBbXf1NoZi73hu68TXd0EQ85cK7LlyBPyNWYqYT2f4Dvn4H2ML06emfviFJnwwNs9
-         bbpD5fgeVTdvV6twTa4JbTeWFaBJy8udNvzVVVBbE5T2gxeEQIwDOd+7jBzKhgjln2P1
-         AkgVP8mcSJJqWo/XaByPq+O0UqT6gaqVn6mp8zl9SAVuPsyI/C5ulWBx4mpxuW7lvDRZ
-         V9Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759156150; x=1759760950;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PuYIl+8uGgDqehkynFO/d1q3OrzgUTaphIdFn/AeuA0=;
-        b=JnsEWtx5nhfYR/e7OCayVRdq08jKv2wOroJaJLMHa1Sb2kYRSU6LEmwU439PBA66UG
-         DzoW38iy6M7FC8L5/czMQ6IRB65WKWQSyNUalqaJWt5p7re1IKcuDHEKHHVYxHsflGMr
-         Gyqnq8q0kbvdNYci+aSWHdsXkw7vT5QBDLarg50hxBLF0/MzoCNa/Es0ZDdXr3nFNQaz
-         TmS3c59U+7S3eTLcHL3NO0nqD0ABk2W3RfJ0SjVnCflMZBfCXy9THTMs8gsN2Klsc/1l
-         +biBSQugXJ2gRcJpftc/8H1gqg97pt+zhBTp7rorKY4UyG5NGSWpCAyulZoD6djeC5Bl
-         +xDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/2C3ihUFKcs33A8GJlsPsJFjp9CvPSqKPcLnxrpMSCXepaOxkBnh/EvbZDVi1+mJeAz6eREiq6eflBZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi4g6oOsxGuVsp44dSQlQ0c7PXTe17yqzw1sT1xO8hchHkzLKJ
-	MwB5Sz45zO15g9RqwfiGIelWHOx71/EVb1kSipoewI0koi70RxlHZJVX
-X-Gm-Gg: ASbGncuvUkheEpQBLIX/w8yZoBi8e2i/v56SWSdCdFt0k5OXKEx52T55S+h7Jp94RZ7
-	gNEO4FwgdcXbXrVHaoh1uo0M8JIxSSTYw9DyDtN2SflsrwltWjR2ZMpX3bhNOf4AXRDnoGVg2xf
-	c8eUTEbewa2+LOE0VO7I5OXAmEM133QuuHuCBtwqTdYttIQoftUQu8N4mEvE36F77CIQi9AioM8
-	KbFN8UT9/WJkEULyXmB5+nEZrEOYOBDlYecmcCqBEzArsfpY4ijrUESp2hZnHOB3NCq5Y4SV9k8
-	DR43rlFm3Sh6JjMenhUxznZMl336+eJnqaOCvwqgBpnnBCtoBZGLl033mzc8hT5yhyTMj6dkVXO
-	SgJPdYAsj1L6ylm3dKgVTjWKV3B6qSYokmUXeHHui
-X-Google-Smtp-Source: AGHT+IHkQVN+odoYfuINw3uwnog4DYG5PmzCIdc5SPqPqj2wtSm+xS9JNe3lu3XIGJdMoU+kXWnvlw==
-X-Received: by 2002:a05:6512:3d08:b0:574:7258:26c0 with SMTP id 2adb3069b0e04-582d0e15ed7mr6023408e87.17.1759156150185;
-        Mon, 29 Sep 2025 07:29:10 -0700 (PDT)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-586b0c1fc85sm1525737e87.64.2025.09.29.07.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 07:29:09 -0700 (PDT)
-From: Artem Shimko <artyom.shimko@gmail.com>
-X-Google-Original-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>
-Cc: a.shimko.dev@gmail.com,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: scmi: Add completion timeout handling for raw mode transfers
-Date: Mon, 29 Sep 2025 17:28:55 +0300
-Message-ID: <20250929142856.540590-1-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759156231; c=relaxed/simple;
+	bh=kLzwDfi9hHuZ0JYFHtKKaF2/Zh/ir2DqJazGhsuDLcs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eR7l1vnvRwqcy643kElxQF4kNBCSjw44W0XlPduloSKTnM0ft57K2n+/g/vcXYWaSTdUt1fRaLNlEoZ0K7pQ/EUwDilfmBiv5NvflFdNU8mFnCvUnDSb5n3PKDYshyBUG7PuKp6cO9LOlarsu2l7a/x9FNeoqfTZJF89R4Pp2W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=A5ck5Oso; arc=none smtp.client-ip=173.71.130.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id EdReLiLUuM23czLG; Mon, 29 Sep 2025 10:30:28 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=tebo2dUFTHeYeP42mbNTFyE3siOJRa3RaJWFQkL+ywI=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=A5ck5OsoglEpRApn73VZ
+	0WhbF2dJ4ZjYbTOyMO0OfCNyvKpE0M+ZMjUxqV/LjE/q4qs78eQWszwa4qh2Kts9eBqfsQGxoHsE1
+	4kIRYVs4jZVMdAuqS9gH+gnMKIhMe/fwMJvEpBRW9zp1qQ8ipbzFbr3wb/EgAaAtnUGraS0i78=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14216462; Mon, 29 Sep 2025 10:30:28 -0400
+Message-ID: <de6e63c5-abd3-4a19-956d-aea5dfc68f6a@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 29 Sep 2025 10:30:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 01/16] Revert "scsi: qla2xxx: Perform lockless command
+ completion in abort path"
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v2 01/16] Revert "scsi: qla2xxx: Perform lockless command
+ completion in abort path"
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1759156228
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 3587
+X-Barracuda-BRTS-Status: 1
+X-ASG-Debug-ID: 1759156228-1cf43947df3c00c0001-xx1T2L
 
-Fix race conditions in SCMI raw mode implementation by adding proper
-completion timeout handling. Multiple tests[1] in the SCMI test suite
-were failing due to early clearing of SCMI_XFER_FLAG_IS_RAW flag in
-scmi_xfer_raw_put() function.
+This reverts commit 0367076b0817d5c75dfb83001ce7ce5c64d803a9.
 
-TRANS=raw
-PROTOCOLS=base,clock,power_domain,performance,system_power,sensor,
-voltage,reset,powercap,pin_control VERBOSE=5
+The commit being reverted added code to __qla2x00_abort_all_cmds() to
+call sp->done() without holding a spinlock.  But unlike the older code
+below it, this new code failed to check sp->cmd_type and just assumed
+TYPE_SRB, which results in a jump to an invalid pointer in target-mode
+with TYPE_TGT_CMD:
 
-The root cause:
-Tests were failing on poll() system calls with this condition:
-    if (!raw || (idx == SCMI_RAW_REPLY_QUEUE && !SCMI_XFER_IS_RAW(xfer)))
-        return;
+qla2xxx [0000:65:00.0]-d034:8: qla24xx_do_nack_work create sess success
+  0000000009f7a79b
+qla2xxx [0000:65:00.0]-5003:8: ISP System Error - mbx1=1ff5h mbx2=10h
+  mbx3=0h mbx4=0h mbx5=191h mbx6=0h mbx7=0h.
+qla2xxx [0000:65:00.0]-d01e:8: -> fwdump no buffer
+qla2xxx [0000:65:00.0]-f03a:8: qla_target(0): System error async event
+  0x8002 occurred
+qla2xxx [0000:65:00.0]-00af:8: Performing ISP error recovery -
+  ha=0000000058183fda.
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+PF: supervisor instruction fetch in kernel mode
+PF: error_code(0x0010) - not-present page
+PGD 0 P4D 0
+Oops: 0010 [#1] SMP
+CPU: 2 PID: 9446 Comm: qla2xxx_8_dpc Tainted: G           O       6.1.133 #1
+Hardware name: Supermicro Super Server/X11SPL-F, BIOS 4.2 12/15/2023
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0018:ffffc90001f93dc8 EFLAGS: 00010206
+RAX: 0000000000000282 RBX: 0000000000000355 RCX: ffff88810d16a000
+RDX: ffff88810dbadaa8 RSI: 0000000000080000 RDI: ffff888169dc38c0
+RBP: ffff888169dc38c0 R08: 0000000000000001 R09: 0000000000000045
+R10: ffffffffa034bdf0 R11: 0000000000000000 R12: ffff88810800bb40
+R13: 0000000000001aa8 R14: ffff888100136610 R15: ffff8881070f7400
+FS:  0000000000000000(0000) GS:ffff88bf80080000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 000000010c8ff006 CR4: 00000000003706e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ? __die+0x4d/0x8b
+ ? page_fault_oops+0x91/0x180
+ ? trace_buffer_unlock_commit_regs+0x38/0x1a0
+ ? exc_page_fault+0x391/0x5e0
+ ? asm_exc_page_fault+0x22/0x30
+ __qla2x00_abort_all_cmds+0xcb/0x3e0 [qla2xxx_scst]
+ qla2x00_abort_all_cmds+0x50/0x70 [qla2xxx_scst]
+ qla2x00_abort_isp_cleanup+0x3b7/0x4b0 [qla2xxx_scst]
+ qla2x00_abort_isp+0xfd/0x860 [qla2xxx_scst]
+ qla2x00_do_dpc+0x581/0xa40 [qla2xxx_scst]
+ kthread+0xa8/0xd0
+ </TASK>
 
-The SCMI_XFER_FLAG_IS_RAW flag was being cleared prematurely before
-the transfer completion was properly acknowledged, causing the poll
-to return on timeout and tests to fail.
+Then commit 4475afa2646d ("scsi: qla2xxx: Complete command early within
+lock") added the spinlock back, because not having the lock caused a
+race and a crash.  But qla2x00_abort_srb() in the switch below already
+checks for qla2x00_chip_is_down() and handles it the same way, so the
+code above the switch is now redundant and still buggy in target-mode.
+Remove it.
 
-Сhanges implemented:
-1. Add completion wait with timeout in  scmi_xfer_raw_worker()
-2. Signal completion in scmi_raw_message_report()
-
-This ensures:
-- Proper synchronization between transfer completion and flag clearing
-- Prevention of indefinite blocking with timeout safety mechanism
-- Stable test execution by maintaining correct flag states
-
-TRANS=raw
-PROTOCOLS=base,clock,power_domain,performance,system_power,sensor,
-voltage,reset,powercap,pin_control VERBOSE=5
-
-An example of a random test failure:
- 817: Voltage get ext name for invalid domain
-     [Check 1] Get extended name for invalid domain
-       MSG HDR        : 0x04585c09
-       NUM PARAM      : 1
-       PARAMETER[00]  : 0x0000000c
-       CHECK STATUS   : PASSED [SCMI_NOT_FOUND_ERR]
-       CHECK HEADER   : PASSED [0x04585c09]
-       RETURN COUNT   : 0
-       NUM DOMAINS    : 11
-       VOLTAGE DOMAIN : 0
-     [Check 2] Get extended name for unsupp. domain
-       MSG HDR        : 0x045c5c09
-       NUM PARAM      : 1
-       PARAMETER[00]  : 0x00000000
-       CHECK STATUS   : FAILED
-           EXPECTED   : SCMI_NOT_FOUND_ERR
-           RECEIVED   : SCMI_GENERIC_ERROR  : NON CONFORMANT 
-
-After making these changes, the tests stopped failing.
-
-mount -t debugfs none /sys/kernel/debug 
-scmi_test_agent
-[  127.865032] arm-scmi arm-scmi.1.auto: Resetting SCMI Raw stack.
-[  128.360503] arm-scmi arm-scmi.1.auto: Using Base channel for protocol 0x12
-tail -n 6 arm_scmi_test_log.txt
-****************************************************
-  TOTAL TESTS: 167    PASSED: 120    FAILED: 0    SKIPPED: 47
-****************************************************
-
-Link [1] https://gitlab.arm.com/tests/scmi-tests/-/releases
-
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
 ---
-Hello maintainers and reviewers,
 
-This patch addresses a race condition in the SCMI raw mode implementation
-that was causing multiple test failures in the SCMI test suite.
+v1 -> v2: no changes
 
-The issue manifested as poll() timeouts in tests when using raw mode
-transfers. The root cause was premature completion signaling and
-SCMI_XFER_FLAG_IS_RAW flag clearing before transfers were fully
-acknowledged.
+ drivers/scsi/qla2xxx/qla_os.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Thank you for your consideration.
-
-Best regards,
-Artem Shimko
-
- drivers/firmware/arm_scmi/raw_mode.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/firmware/arm_scmi/raw_mode.c b/drivers/firmware/arm_scmi/raw_mode.c
-index 73db5492ab44..130d45192beb 100644
---- a/drivers/firmware/arm_scmi/raw_mode.c
-+++ b/drivers/firmware/arm_scmi/raw_mode.c
-@@ -468,6 +468,14 @@ static void scmi_xfer_raw_worker(struct work_struct *work)
- 
- 		ret = scmi_xfer_raw_wait_for_message_response(cinfo, xfer,
- 							      timeout_ms);
-+		if (!ret)
-+			if (!wait_for_completion_timeout(&xfer->done, timeout_ms)) {
-+				dev_err(dev,
-+					"timed out in RAW resp - HDR:%08X\n",
-+					pack_scmi_header(&xfer->hdr));
-+				ret = -ETIMEDOUT;
-+			}
-+
- 		if (!ret && xfer->hdr.status)
- 			ret = scmi_to_linux_errno(xfer->hdr.status);
- 
-@@ -1381,6 +1389,8 @@ void scmi_raw_message_report(void *r, struct scmi_xfer *xfer,
- 	if (!raw || (idx == SCMI_RAW_REPLY_QUEUE && !SCMI_XFER_IS_RAW(xfer)))
- 		return;
- 
-+	complete(&xfer->done);
-+
- 	dev = raw->handle->dev;
- 	q = scmi_raw_queue_select(raw, idx,
- 				  SCMI_XFER_IS_CHAN_SET(xfer) ? chan_id : 0);
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index d4b484c0fd9d..a52293972e10 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1862,12 +1862,6 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+ 	for (cnt = 1; cnt < req->num_outstanding_cmds; cnt++) {
+ 		sp = req->outstanding_cmds[cnt];
+ 		if (sp) {
+-			if (qla2x00_chip_is_down(vha)) {
+-				req->outstanding_cmds[cnt] = NULL;
+-				sp->done(sp, res);
+-				continue;
+-			}
+-
+ 			switch (sp->cmd_type) {
+ 			case TYPE_SRB:
+ 				qla2x00_abort_srb(qp, sp, res, &flags);
 -- 
 2.43.0
 
