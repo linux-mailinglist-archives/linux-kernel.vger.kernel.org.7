@@ -1,141 +1,162 @@
-Return-Path: <linux-kernel+bounces-836120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77F7BA8CD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:59:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91343BA8CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F1447A390F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:57:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE4287A4A6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5FE2F1FCD;
-	Mon, 29 Sep 2025 09:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136112F1FD8;
+	Mon, 29 Sep 2025 09:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HmVmRk8M"
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFkX9Y9L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBAA2EDD78
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AEC2F1FC8;
+	Mon, 29 Sep 2025 09:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759139959; cv=none; b=T2OiQw49JmaT7Wdm3UuMpCWA9j47WbhzMbWRkMh7Kepfx2k9+jZAS+PccriaFBl/XZ0f+CAlEo8HlBCX6GCMJC3nnKaQjuAfE3MVLpL05HEvQ1HPr4IrYBoXxz+FzY192rFTBBeBUMqOvwZHrKgL7jA8lwEzlRTMdPNZzBMgVD4=
+	t=1759139986; cv=none; b=iw/P5BO+5wJWPrBCisBLLaWpls3Xd7GPSn9cfNgpd2FBY0hUg3D58XWLTfEuOE2FWICgfaS8or8rtcqvnIXGpMxD+6pnA7EezaJ0/dQmgOKpGaXvwiDnMLUMpbmloxrlZ8QQdEYJyIIlkeHR1nQ5+d8GHNGn/INmoVffi5eHRj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759139959; c=relaxed/simple;
-	bh=2KUdznDw5vZ05JufQlJyZkuSTNllnaQhlyyX0vFY+xA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NAVEWiodMe5Gayza8fNybFxJ808tEA/R15CdQSTP8EHFeELoyxppYA0Oz8bZA/vDe8x19nCkURiRAyxT+sxh51Cg5mAUYSoDzE6gcwJAj80o8l/UgnHs6YmGYFgkMKjiSht0C8KboPB4uZ/zAG69hv9exvJl074rPXf43UpLBBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HmVmRk8M; arc=none smtp.client-ip=74.125.224.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-635c9db8a16so2964219d50.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759139957; x=1759744757; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2KUdznDw5vZ05JufQlJyZkuSTNllnaQhlyyX0vFY+xA=;
-        b=HmVmRk8M2S2In+vPAyFQuEH0KPEsA7gftYVcwmCL6u0TexkZrTr6w4XB6SSOt6CrFk
-         jzK15dZ/vSDaNZGI6OxWA0jeWiUrDWm2sme03NLcAunOfQSalUKBkCjOfOeVScM0B7Mb
-         ilwAqFcyFziN3kDdAw/LsXRttOxXRem8wXSYA1EHX36ZG7jEgrEckroWfMzpmQNdxSVI
-         5UPUzSXuReAUGDJwtTof+Vdng7+7eXac5jNPvb36ihG1qJowi6wcHzCDPHcvikORsNCf
-         p2C8sNh5YF7wwhW587+/wrWaOG/sSE1p/+daSIsLuXlBkyZ+GA+e9OsbPqcfvQGvwVxv
-         y6cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759139957; x=1759744757;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2KUdznDw5vZ05JufQlJyZkuSTNllnaQhlyyX0vFY+xA=;
-        b=YhfGnekS1/3z2pqLVHox/fBgfUWj9G45sYphxRa/S8QW52y3x+HpeLT4nQMVZWNO5h
-         3j8D1XD/Mz5pBBlA/8T3/P7YqZbFt7pdAjBxT8snJGQ9v+oFNXCAoSC0bXHg8ixGrozy
-         mBUhf5HY6eRQlShN6ZKnCulYy84OSwaZzjYCok8RbaIbxvCR7kq/PR0YDaEQIlGB7web
-         1wklHmu2+JrPTmC+mQOJTMI7vjqSjSmxz6JjKjQpq5GEtI1cbyi1uKqTvWoLmm2u1rRs
-         klfkiNExMGiqlrJLOzP0F6r4TZZZtT6WotSx15e2Ujfe+4iFA9TxJpjH/CitZnhRtdEq
-         tdiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDT31FHZ8HazkIDvl9ZXmIrjX9SEDA8YyleAGoRZ9qctqlIUmrAlXDZrqp2u07m8VQHzGgJLmLBa8SD4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIanS9/8FNjv+NA3CClRqqCCkHvLkO7tjuEzDIMz8y7SNGMEu2
-	juk6Jnf5ZhqZMGHdJsgWRXiqydplYdX0Ocmis0tXSTkMxcdoFVam/AUahbo27+JKwqPWIE29zYV
-	QedYgMyzbn3h/Ywz4PeNpKialJdAdkXVGeN3TJLVl7A==
-X-Gm-Gg: ASbGnctmVSJaatikOPbj8bUNJt3QZfW8PtuJ9KvVNY15krumfI5k6I3vKFWqv5tlbl9
-	jwDTsMoT/IZ5hvt9js3e5h4yme71SHWrPbA/lx2kxM+IQbBLkins/jkNHEpIwAI/wsgXQsR1xGG
-	hrqSquUK/0jB6SxbVlqCZRHkLZqs7mK45EKS+dNGjHl7bzVOBGdrT7zhJZnGb/7cEP9utvCoy/1
-	2zMSfhl
-X-Google-Smtp-Source: AGHT+IHKB6dZwmkkiRTmQMJ6qqV5u+Z5RUcKikaK+UuufgwTUJ8RoCQyTBvf2kQBGXi0WQ0jZXHoQTtqUIZWVWUBjSA=
-X-Received: by 2002:a05:690e:1a4f:b0:636:f1d:e26 with SMTP id
- 956f58d0204a3-6361a8734e7mr18613222d50.32.1759139956833; Mon, 29 Sep 2025
- 02:59:16 -0700 (PDT)
+	s=arc-20240116; t=1759139986; c=relaxed/simple;
+	bh=DagTvSp+7YAi/LuUfSuuyOhuhMMN85uMrXt9yNyDwXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAneaCyzAvSAWUlRr9WtN6mH2GZbZ8QV8OwbZgxnF9rLGcuLgwWGBtox6OsojbgKvZK6cQgPEMzhWM98zdBKWMyNKhJvoYr+XL5Eg4i8IEf0AJHB7BC1PGWWz7TgjoV/UXmkHo1tln8K6+9XLgfH8WlIgxS50PBP/exNU1lpTpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFkX9Y9L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A624C4CEF4;
+	Mon, 29 Sep 2025 09:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759139986;
+	bh=DagTvSp+7YAi/LuUfSuuyOhuhMMN85uMrXt9yNyDwXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DFkX9Y9LmfhlZIsnhFCcBpQYWmHlN1hgAkA65NoJ3iTOFffL1Ksn+Z1wDxHLViegX
+	 QT94NEK4623YNH9tvzBP+SxfTveBPGx23MKdVdFUfrlRaCAqmIFSNZ2f7qEG8iKg8J
+	 GFifAnAKMBvrEgBy8pO1V7oOi7Q7CUe2EJhv6wipIH9Fpdi2OPfvvbCl6HIrgd0fUd
+	 WC744hLtq89xwhKChBHzJOPTlKsziojJywxf3ELq9AyzP7PP8l2Aw8JOZ4CX944aYx
+	 wbtuLfKkkfqmxa46WVFUnHgPzESiKLzCt1Kj8/1RdfV7r3RVI8OIXFQ5NU+cTuO44T
+	 t3CVC6fdKceZw==
+Date: Mon, 29 Sep 2025 10:59:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Nishanth Menon <nm@ti.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] net: netcp: Fix crash in error path when DMA channel
+ open fails
+Message-ID: <aNpYjvpr8xixDUM6@horms.kernel.org>
+References: <20250926150853.2907028-1-nm@ti.com>
+ <aNa7rEQLJreJF58p@horms.kernel.org>
+ <ef2bd666-f320-4dc5-b7ae-d12c0487c284@ti.com>
+ <aNbCgK76kQqhcQY2@horms.kernel.org>
+ <08a13fb0-dd12-491e-98af-ef67d55cc403@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923-mt8196-gpufreq-v4-0-6cd63ade73d6@collabora.com>
- <20250923-mt8196-gpufreq-v4-8-6cd63ade73d6@collabora.com> <CAPDyKFpLNJRRxWPm2Eye+Fs8go-LNwWGzPUPPKmNVJkyK5N3Dw@mail.gmail.com>
- <2015216.PYKUYFuaPT@workhorse>
-In-Reply-To: <2015216.PYKUYFuaPT@workhorse>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 29 Sep 2025 11:58:40 +0200
-X-Gm-Features: AS18NWDi6KooeuuBdFZYN2-L6gygoxiX5visVgVu6hIAQ09WtQulOO0qEvr47Zc
-Message-ID: <CAPDyKFoCPkNsbq8s3d6cQXxfFhiYH1kjrocNdq8=v+g+LY8c6A@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] pmdomain: mediatek: Add support for MFlexGraphics
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08a13fb0-dd12-491e-98af-ef67d55cc403@ti.com>
 
-[...]
+On Fri, Sep 26, 2025 at 10:28:47PM +0530, Siddharth Vadapalli wrote:
+> On 26/09/25 10:12 PM, Simon Horman wrote:
+> > On Fri, Sep 26, 2025 at 09:57:02PM +0530, Siddharth Vadapalli wrote:
+> > > On 26/09/25 9:43 PM, Simon Horman wrote:
+> > > > On Fri, Sep 26, 2025 at 10:08:53AM -0500, Nishanth Menon wrote:
+> > > > > When knav_dma_open_channel() fails in netcp_setup_navigator_resources(),
+> > > > > the rx_channel field is set to an ERR_PTR value. Later, when
+> > > > > netcp_free_navigator_resources() is called in the error path, it attempts
+> > > > > to close this invalid channel pointer, causing a crash.
+> > > > > 
+> > > > > Add a check for ERR values to handle the failure scenario.
+> > > > > 
+> > > > > Fixes: 84640e27f230 ("net: netcp: Add Keystone NetCP core driver")
+> > > > > Signed-off-by: Nishanth Menon <nm@ti.com>
+> > > > > ---
+> > > > > 
+> > > > > Seen on kci log for k2hk: https://dashboard.kernelci.org/log-viewer?itemId=ti%3A2eb55ed935eb42c292e02f59&org=ti&type=test&url=http%3A%2F%2Ffiles.kernelci.org%2F%2Fti%2Fmainline%2Fmaster%2Fv6.17-rc7-59-gbf40f4b87761%2Farm%2Fmulti_v7_defconfig%2BCONFIG_EFI%3Dy%2BCONFIG_ARM_LPAE%3Dy%2Bdebug%2Bkselftest%2Btinyconfig%2Fgcc-12%2Fbaseline-nfs-boot.nfs-k2hk-evm.txt.gz
+> > > > > 
+> > > > >    drivers/net/ethernet/ti/netcp_core.c | 2 +-
+> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+> > > > > index 857820657bac..4ff17fd6caae 100644
+> > > > > --- a/drivers/net/ethernet/ti/netcp_core.c
+> > > > > +++ b/drivers/net/ethernet/ti/netcp_core.c
+> > > > > @@ -1549,7 +1549,7 @@ static void netcp_free_navigator_resources(struct netcp_intf *netcp)
+> > > > >    {
+> > > > >    	int i;
+> > > > > -	if (netcp->rx_channel) {
+> > > > > +	if (!IS_ERR(netcp->rx_channel)) {
+> > > > >    		knav_dma_close_channel(netcp->rx_channel);
+> > > > >    		netcp->rx_channel = NULL;
+> > > > >    	}
+> > > > 
+> > > > Hi Nishanth,
+> > > > 
+> > > > Thanks for your patch.
+> > > > 
+> > > > I expect that netcp_txpipe_close() has a similar problem too.
+> > > > 
+> > > > But I also think that using IS_ERR is not correct, because it seems to me
+> > > > that there are also cases where rx_channel can be NULL.
+> > > 
+> > > Could you please clarify where rx_channel is NULL? rx_channel is set by
+> > > invoking knav_dma_open_channel().
+> > 
+> > Hi Siddharth,
+> > 
+> > I am assuming that when netcp_setup_navigator_resources() is called, at
+> > least for the first time, that netcp->rx_channel is NULL. So any of the
+> > occurrence of 'goto fail' in that function before the call to
+> > knav_dma_open_channel().
+> 
+> I missed this. Thank you for pointing this out.
 
->
-> I actually have a question about a mystery that has been puzzling
-> me as I work on v5: when unloading the driver that uses the PD
-> (panthor) and my driver using `modprobe -r panthor mtk_mfg_pmdomain`,
-> I see that sometimes detach_dev is called with the pd status
-> reportedly being off, but according to my own power-on/power-off
-> counting I hacked in, it actually being on. It then proceeds to
+No problem. These error paths are tricking things.
 
-Yes, ->detach_dev() may be called for a device, when its corresponding
-PM domain is both on or off.
+> > > Also, please refer to:
+> > > https://github.com/torvalds/linux/commit/5b6cb43b4d62
+> > > which specifically points out that knav_dma_open_channel() will not return
+> > > NULL so the check for NULL isn't required.
+> > > > 
+> > > > I see that on error knav_dma_open_channel() always returns ERR_PTR(-EINVAL)
+> > > > (open coded as (void *)-EINVAL) on error. So I think a better approach
+> > > > would be to change knav_dma_open_channel() to return NULL, and update callers
+> > > > accordingly.
+> > > 
+> > > The commit referred to above made changes to the driver specifically due to
+> > > the observation that knav_dma_open_channel() never returns NULL. Modifying
+> > > knav_dma_open_channel() to return NULL will effectively result in having to
+> > > undo the changes made by the commit.
+> > 
+> > I wasn't aware of that patch. But my observation is that the return value
+> > of knav_dma_open_channel() is still not handled correctly. E.g. the bug
+> > your patch is fixing.  And I'm proposing an alternate approach which I feel
+> > will be less error-prone.
+> 
+> Ok. If I understand correctly, you are proposing that the 'error codes'
+> returned by knav_dma_open_channel() should be turned into a dev_err() print
+> for the user and knav_dma_open_channel() should always return NULL in case
+> of failure and a pointer to the channel in case of success. Is that right?
 
-> call my remove, which results in three splats from the regulator
-> subsystem as the regulators weren't balanced with disables before
-> they were freed, which isn't the main problem but more a symptom
-> of the bigger problem that power_off and power_on calls don't
-> appear to be balanced by the pmdomain subsystem when a driver is
-> removed under certain circumstances.
+I'm ambivalent regarding the dev_err() part. Because the error is always
+the same. And I'm not really sure that logging it adds anything. But if you
+do go that way, please consider using %pe.  consider using
 
-If the callbacks aren't called in a properly balanced manner that
-would be a bug in genpd. Certainly.
+Regarding knav_dma_open_channel(0 always returning NULL, yes, that is my
+suggestion. Of course the callers and anything else that uses that
+return value need to be audited and updated as appropriate.
 
->
-> Did I run into a core pmdomain bug here, or do I have to balance
-> the power_on/off myself somehow in detach_dev? If the latter, I'm
-> struggling to figure out how I can determine that the PD is still
-> on without doing my own bookkeeping, as pmdomain core seems to clear
-> these fields before my detach_dev gets to them :(
-
-When genpd_dev_pm_detach() is called, the device is being detached
-from its genpd and part of that procedure means calling the
-->detach_dev() callback.
-
-When the device has been detached, we may have the PM domain being
-powered-on for no good reason. That's why we also punt a work to check
-if we can turn it off (see the call to genpd_queue_power_off_work()).
-
-Kind regards
-Uffe
+Thanks!
 
