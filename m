@@ -1,164 +1,179 @@
-Return-Path: <linux-kernel+bounces-835767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C2ABA8029
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:43:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F2BBA8038
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF713B3FE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7B7189AE25
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7470F29C325;
-	Mon, 29 Sep 2025 05:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F20A29C343;
+	Mon, 29 Sep 2025 05:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bq29YAo4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TIHEcR5x"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9F329B8DC
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A6029B8DC
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759124602; cv=none; b=QKpqyjOns4uniSjVtDm6Mnur77eEGJfR1ofq8S8Ci0Ruj0jMY6Mlmn7wC6qfKYPu8kG7npr19eWguI/0/uHnXYWviG6UUi+x7WLjr7K2vN5hk8a5WRx/MvgszmwYfak8Y+sYSh07v77mhhJ2oCIPda/dcfTXaNJdRFdNH31Ws6A=
+	t=1759124643; cv=none; b=mpQx9YYzQNkKRLrftOAIBtu1CDp26pgCvcQjEWjQJonw9AuL5vSykyeNeAM8No5VebZpOYch3/jzzmcXDRV5bfWXpsvQW7M5mrDjIV910c600i4PL1M+bo15oaTjeS7P+r8ao/mXOm1yNzVKejnHojeqdZzKBF6ZSNbC9e++XFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759124602; c=relaxed/simple;
-	bh=KkdQm9LnjT0oDZgSyvNFLyYVXfgAVdlyFZQg4ncaicA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GySYYEZHSw31umnqyRmGTbNGTDcXKmUSSPZ9wHVXlIzCIF9B7Gqj9FYR0CUw9AqrLFgEJowQ4RkFg+BHMqHKMWItUft8lFBp5e2Rw/56JHnxnGX3VGzrK5SQcmen65duL2N82BG75anu9wDtZWpjW0gtni0QV9ZMy2m8ZwbxwAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bq29YAo4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759124599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DLDJM/v1GnCONjQIRc/rqkZtzK/nAlZhViXrPHYBAQ0=;
-	b=bq29YAo4Scu78XCZbmXpy03GT6cUYzT1rHfgMEI5o6pwp8PVNs30DJSVC458G/6IyYg6Mh
-	73e+Bm/pLmYjhrAA0y1l6EErQcM2TdO9qf/XAEXYyiarUd0tiEGlDEi9FssH9FtMX8RWOe
-	oHy6ShZivLEcWJVCLkGBsXUgCvY/aWY=
-Received: from mail-yx1-f70.google.com (mail-yx1-f70.google.com
- [74.125.224.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-637-TCeqI2LdMq21shHOYQ17cQ-1; Mon, 29 Sep 2025 01:43:17 -0400
-X-MC-Unique: TCeqI2LdMq21shHOYQ17cQ-1
-X-Mimecast-MFC-AGG-ID: TCeqI2LdMq21shHOYQ17cQ_1759124597
-Received: by mail-yx1-f70.google.com with SMTP id 956f58d0204a3-63541ee6187so5106140d50.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:43:17 -0700 (PDT)
+	s=arc-20240116; t=1759124643; c=relaxed/simple;
+	bh=HNiufS4QgvTOpQO6FbL535zp3vDJ1un9gKIOCDv3sjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YEG1qcZ5MAgNHOSg3cxj12VHmuvZfmALIdEomh7HqEoxW0l+VNps1lA1/gJdb7zizPmwLV+MqExcoVkFo1u/ac3ltbeMVj+V8KYtURKyMUEUnP6fBe4AFfAA6YuKBdWETOT88LI68T1QBXOE3LndnfxwyExg9+ON1VIVCpzU0cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TIHEcR5x; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58T0AgEN016746
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:44:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0shxXdl1M5m67yzuv0GXcdasQMNMQSFmS4e9Kkqn+q0=; b=TIHEcR5xYDni68va
+	mvFrbiD3QDfdFSWmiApYHdvRZVAKo3xoMvn7BRgUZyj96EoyHLHafET5Jk1vWyiz
+	j8Kiw9bRu4abl1Cd4hFfMrUIwujTUOOz4xgETwjcb3bYRxze4ZzcStp6VEJbBGTZ
+	3w15+a4okVTN5AN1oWwH91AV193U8Q3+UIyr3yLd9mrVdcganr+AxTWfKebM/RlZ
+	uwUyHsq7fNC4TJVow/cGF47G5uyHUAgt2MoTORl3TvCE+gsLXDoX3hLJ72u0jL+U
+	Pvt7hjNYdqpXx/yePxgZbNcnYkES/Q9mG79E7vUFuFl21W3v/HHZD3xbVdPBYluZ
+	AeNgJw==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e5mcm8hw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:44:01 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3305c08d975so4451862a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:44:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759124597; x=1759729397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DLDJM/v1GnCONjQIRc/rqkZtzK/nAlZhViXrPHYBAQ0=;
-        b=bQTp6E5KOoOEa99UQtBE7a+8qT1FsU0Hd1WMfBh6chBvb8Q1K7AGOjSvTj0DA/2Obx
-         KsBE04X7McF+YnPbEhHsYQw0MhkQBkBUE4dbNs6IH0tjLlfBWWAL2AXKep3puer5sloX
-         o28XBCEtm249t1QfsfaM1/nw8PkW0bbiweMYz6HlTIYkjReuUbZGBEVg9HKQRUJpm72W
-         /A3xiBzJ11AEsjsG39u1nO7bHUhOmlWNLYfBU5pNO25djpYOyLF/H6TUvCLSErAWDyh/
-         q6APguCoJat/lYHO5By+la8I9Wyc9Gk8gx4HsnADh2f0gA6BVlc21+aRxn1EGj7h4tpL
-         pQMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDlT92O6XiuPnsEZUOWan3vd6GZm7j/IIN8Arbel0W9L5Iong0ns7YbIzfQxLIdp8ahF695gs2H8XCPho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZeLp8yrLwR+51H6U4Gs4gYW3VYASz1yhhhOaASKkOv6jmbJBe
-	KlinHhOEkwPQW2vGx386ndDKDVtGs3HZ7Wkgfc5rK9wNqinaW6Qy2xQcu2XBVb/MTk/qWhLtz1E
-	7weg6irVC1vGoHqFnkRpcrclTsP5IhFRHL2ztAAmN9hCnMwgLnGi4E803e6/dM/OK+eywTcolGH
-	5cd1SSTuPcV/kZXGulxsSaJ38Zmy77oz2QnhOVZXNQ
-X-Gm-Gg: ASbGncuwQJpMlp9pR8jEl/w0sk7hjIMDCc62XgFuNob5a80T+ND1FXZ62qcEyPLMNzv
-	alT0s8AiBEIIxH0L0B9N0reKiuanUYfRpLVLcrl+iM+jnX8xcPshCnxrY83lDyNQo2SDLYN/2JU
-	nxbSoVhms170GzcyJSxi1Cqzznnfns/8pRYYODPWkiWffP05piQWdN6C3J/fpA6FfHrMnvvXTvz
-	l+WWfuf
-X-Received: by 2002:a05:690e:22c4:b0:635:4ece:20ab with SMTP id 956f58d0204a3-6361a873801mr13564072d50.48.1759124596999;
-        Sun, 28 Sep 2025 22:43:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZRprYWH3GKFK0J+/EVnsfKtUL40W8QVLXJUwLVUPi9R0BTd57XmXjDp56sXiMQ2Op70w6PccJcX5wX4kfJoA=
-X-Received: by 2002:a05:690e:22c4:b0:635:4ece:20ab with SMTP id
- 956f58d0204a3-6361a873801mr13564052d50.48.1759124596652; Sun, 28 Sep 2025
- 22:43:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759124640; x=1759729440;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0shxXdl1M5m67yzuv0GXcdasQMNMQSFmS4e9Kkqn+q0=;
+        b=eAZfoGT7nuI1BPMLwFtoEo9Lxo8JXncTesrDdhe8qwlqxegMf88SNn8i3zISuhiyBC
+         OC4d9fFtJVH862koBz7iqBS4VK7mrCwqP5pOdxfgVc3EXf+2briQvis5I0HxqzHDCGk8
+         UxdbKkN4Cu6hNlTIxonmjuH+xv4NT/dYssvrOzl2hdc0F6FFbAVhIeP32LEqThMK1rnH
+         gYWTkmcXp7ljo1EfXAvxBUXiGKz73Zt48UBXwq4jcf+OeBbLvadCzvRtVA8Afx+HZ+Ge
+         2MP7uoOOdhSAoSvh81B3apZ6bDDv5dqRWgxUGNM+bRTRgejhqXzw3ygmMGHw0ugMteDb
+         6uAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWt9ECj5zpMdtnJHKSbu4qoFsYvXzZb13g8/oLsoaOAGufjIpeOFd5oHBxQxq+evswe5Ux32LlSiCOGbvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNxblulDkSNMqvRUzPeXH4we//bL5C2Z3a8AsvvWHTu4lTj0X4
+	Tw6ztslreWDpSvnQyS7mM4ZscJZn+nzFgvvudvldJHGtqmdCI67xl90SG5VwcJJqk4E2atENZE+
+	DIzcorchPnkqevkXUuU2UzV67UHX5TwUoLtfaJerd8NTRVpnswqbkp1Z5alCVddzF0J8=
+X-Gm-Gg: ASbGncs9mCE4fecaUp1XFZq1OvI/Ch6O3azvco36VWqAdeVhMJsiirDtUH03sQeAc+9
+	anRo+LQyj6/+EyCFOkXEvjrDzLgy8kBM/7LCJkaHsE+d7WG2oqV03akggg3n6WJFCHXPj5yGuzW
+	I7I/2oBOnyfpf6I1lMNekD+qTAMUNohV0iOpEbRpLTAV9dzZbDpjbpVGFKwPphMyuTYJDR2K06+
+	/2+LrhTe905bx5kARcb2f8ijliAWYfFrjRCunpDAm2/vhR5ZZDKlOshktarSDvLPWsT8VR8O4qU
+	XUKru19VDmVBDJtvT+Xy4P07i/WHUFU8/P8y+gduHLK06cq4GnwBthJ3J9+4uO8IwZsqeELcR4A
+	DW+hvZVf9a51Owrs9EoVpV9kt+11+NQdXzxg=
+X-Received: by 2002:a17:90b:3852:b0:32e:24cf:e658 with SMTP id 98e67ed59e1d1-3342a22cdc9mr16537640a91.3.1759124640454;
+        Sun, 28 Sep 2025 22:44:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHl7IE2Pt6RQ3vYJq5zb9BDkApqE/UvUl6n0SAk0jFAYj2ocsRLqMrO3x/ZsK3UmEKV+StagQ==
+X-Received: by 2002:a17:90b:3852:b0:32e:24cf:e658 with SMTP id 98e67ed59e1d1-3342a22cdc9mr16537609a91.3.1759124639982;
+        Sun, 28 Sep 2025 22:43:59 -0700 (PDT)
+Received: from [10.133.33.234] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33435b4f180sm6031452a91.4.2025.09.28.22.43.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Sep 2025 22:43:59 -0700 (PDT)
+Message-ID: <65338db5-d255-498f-96cf-bd037aedcc36@oss.qualcomm.com>
+Date: Mon, 29 Sep 2025 13:43:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925091335.1964283-1-eperezma@redhat.com> <20250925091335.1964283-2-eperezma@redhat.com>
- <3e5abb75-2192-46dc-a44e-d66fed87fc63@leemhuis.info>
-In-Reply-To: <3e5abb75-2192-46dc-a44e-d66fed87fc63@leemhuis.info>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Mon, 29 Sep 2025 07:42:38 +0200
-X-Gm-Features: AS18NWBlM_AwzI2-s0Otvy63KDuzlTLedZ6DoP5wCZ9FlMjm8eYezVLoJQUZ6gw
-Message-ID: <CAJaqyWehjiVeq360A=1_+=eRSDjoF3zNsNF0Lf-45YeiT5Pk7Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] vduse: make domain_lock an rwlock
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
-	jasowang@redhat.com, linux-kernel@vger.kernel.org, 
-	Maxime Coquelin <mcoqueli@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
-	Stefano Garzarella <sgarzare@redhat.com>, 
-	Linux kernel regressions list <regressions@lists.linux.dev>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] ASoC: codecs: va-macro: Rework version checking
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        kernel test robot <lkp@intel.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+References: <20250924-knp-audio-v1-1-5afa926b567c@oss.qualcomm.com>
+ <202509261315.O9CiiXjb-lkp@intel.com>
+ <e7843f88-71d5-4f7e-9f99-df06630e02fa@oss.qualcomm.com>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <e7843f88-71d5-4f7e-9f99-df06630e02fa@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=RMC+3oi+ c=1 sm=1 tr=0 ts=68da1ca1 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=H6HILBvNmDOxdPU26TMA:9
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22 a=mmqRlSCDY2ywfjPLJ4af:22
+X-Proofpoint-ORIG-GUID: CSxMHzSBX6lxHGmkWtiMLgvkNt1eSYV0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwNCBTYWx0ZWRfXz1rpQygNMfuL
+ uiiQma3JKvyx/GgRZ+GP19IpOvCPlZLLv3C+b8optmmu2fbV+njobA6eYetBHCvn4EVS5SX2fxC
+ uM9SMVpLDDajg5g0rIW5LAMWnyCNvHeuubOhdYWXzpKIp/JgjnvfSZETsfWIP0qKXGHKb+hnEK9
+ LKDbyTZqzWcfwEDiPvKcMb+v1eAVrmRGSd0+wtjXiHMxBwCdkDU9Iu3xEbggv8RK9C+WUEZDgtd
+ sX/n+PPw1cb5DSnqgElYO7/d/Jq3m0Qbf9dShExGtZzJUNUArXOlumTIUzDf0E4fgnaRzjbyRgV
+ IPQdBWUgNkNPq/euzNb+2OIcjEFGeMoveE91oTYEYsY5Pc2x+p/p/W5d/rC980MHd6CyYiWe8p7
+ 1RvCatqzuwCylPQcUKI0xTpe3+xRMQ==
+X-Proofpoint-GUID: CSxMHzSBX6lxHGmkWtiMLgvkNt1eSYV0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_02,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0 spamscore=0
+ adultscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270004
 
-On Sat, Sep 27, 2025 at 9:01=E2=80=AFAM Thorsten Leemhuis <linux@leemhuis.i=
-nfo> wrote:
->
-> On 25.09.25 11:13, Eugenio P=C3=A9rez wrote:
-> > It will be used in a few more scenarios read-only so make it more
-> > scalable.
-> > [...]
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index e7bced0b5542..2b6a8958ffe0 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -14,6 +14,7 @@
-> >  #include <linux/cdev.h>
-> >  #include <linux/device.h>
-> >  #include <linux/eventfd.h>
-> > +#include <linux/rwlock.h>
->
-> Lo! My daily -next builds based for Fedora using the Fedora rawhide
-> failed yesterday on various archs. I suspect it's due to above change,
-> as this was the error I got:
->
-> """
-> In file included from drivers/vdpa/vdpa_user/vduse_dev.c:17:
-> ./include/linux/rwlock.h:5:3: error: #error "Please do not include this
-> file directly."
->     5 | # error "Please do not include this file directly."
->       |   ^~~~~
-> ./include/linux/rwlock.h:27:10: warning: =E2=80=98rwlock_init=E2=80=99 re=
-defined
->    27 | # define rwlock_init(lock)                                      \
->       |          ^~~~~~~~~~~
-> In file included from ./include/linux/spinlock_rt.h:153,
->                  from ./include/linux/spinlock.h:455,
->                  from ./include/linux/sched.h:37,
->                  from ./include/linux/percpu.h:12,
->                  from ./arch/x86/include/asm/msr.h:16,
->                  from ./arch/x86/include/asm/tsc.h:11,
->                  from ./arch/x86/include/asm/timex.h:6,
->                  from ./include/linux/timex.h:67,
->                  from ./include/linux/time32.h:13,
->                  from ./include/linux/time.h:60,
->                  from ./include/linux/jiffies.h:10,
->                  from ./include/linux/ktime.h:25,
->                  from ./include/linux/timer.h:6,
->                  from ./include/linux/netdevice.h:24,
->                  from ./include/linux/if_vlan.h:10,
->                  from ./include/linux/virtio_net.h:5,
->                  from drivers/vdpa/vdpa_user/vduse_dev.c:11:
-> """
->
-> For a complete log, see
-> https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/f=
-edora-rawhide-x86_64/09603789-next-next-all/builder-live.log.gz
->
-> Reverting the series made things work for me.
->
 
-I don't know how this error didn't shout out in my env, fixing it.
-Thanks for the heads up!
+
+On 9/26/2025 4:50 PM, Konrad Dybcio wrote:
+> On 9/26/25 7:36 AM, kernel test robot wrote:
+>> Hi Jingyi,
+>>
+>> kernel test robot noticed the following build errors:
+>>
+>> [auto build test ERROR on ae2d20002576d2893ecaff25db3d7ef9190ac0b6]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Jingyi-Wang/ASoC-codecs-va-macro-Rework-version-checking/20250925-080338
+>> base:   ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+>> patch link:    https://lore.kernel.org/r/20250924-knp-audio-v1-1-5afa926b567c%40oss.qualcomm.com
+>> patch subject: [PATCH 1/5] ASoC: codecs: va-macro: Rework version checking
+>> config: i386-buildonly-randconfig-001-20250926 (https://download.01.org/0day-ci/archive/20250926/202509261315.O9CiiXjb-lkp@intel.com/config)
+>> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509261315.O9CiiXjb-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202509261315.O9CiiXjb-lkp@intel.com/
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>>> sound/soc/codecs/lpass-va-macro.c:1479:8: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>>     1479 |         maj = FIELD_GET(CORE_ID_0_REV_MAJ, val);
+> 
+> Jingyi, could you please add:
+> 
+> #include <linux/bitfield.h>
+> 
+> when resending?
+> 
+> Konrad
+
+Will add in next version.
+
+Thanks,
+Jingyi
 
 
