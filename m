@@ -1,211 +1,188 @@
-Return-Path: <linux-kernel+bounces-836620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963C6BAA2DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:32:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1203BAA2EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79A1C4E206D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:32:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6143B866C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18774219303;
-	Mon, 29 Sep 2025 17:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9484F21D3CD;
+	Mon, 29 Sep 2025 17:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1fCmIzGv"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8hWv2qe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EE32AE8D
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F1C214813;
+	Mon, 29 Sep 2025 17:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759167150; cv=none; b=nkf2JpUxG87UX3wWjQtfKiZIuxxxQLCiV0pqmQrnec6/46nQAU7tP3S3j6Xc+UO8+5fHr7JfJMfTnqcVekCIUi1d9Fmtiv8FoFhRLf/OlfB08igDjFsRxVD7VI6pb65b1mrX/tp6a9zA2qd12vDvfASBh/tNztYs38GW0sPD6ng=
+	t=1759167233; cv=none; b=kihGCy5BFrYtxhGbUa4EGuvwVzTG4ILt5gv288xbPzNhjthGNHe6/9xmbDdnDvdo2ia0gMYbxFmbog+289nMqGiVg0lL6uJ7KpXr37nZWXeXW1CkoJPajOGEVxNkJAmevY2DjzNm4dVAq2krQaT03z/nONF0tP4KRRtcpUht5qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759167150; c=relaxed/simple;
-	bh=AhUg1wNJnUNUOaFXK2JklY0vm1VBVormHGNet3yMe6M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aQk8n2H/geZEcg+SaDNl6CmltL0Iwh6hq4cglvkUZgy+4XD3BCDFdmBE56AeMCt5QolAnxgXEWxnd766RlmxKDnzXEyluw0nQBk4Ut4ZonkFfBO0fdeGWX84QeBXRSz9QmhaV1h1R6YqIfTYsHcAQOSzukSHFolkJ6CMWXshqLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1fCmIzGv; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b550fab38e9so3391714a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759167148; x=1759771948; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i5JsbcE+pbrv9WUMt/sTi7gQveEd5VSWsVent3A0wsM=;
-        b=1fCmIzGv67V2LnPzHyAnaHJBJJSOS7UqlvvOb9/fh9JpVGSWhdtPXoJF2H43srkxd0
-         Yn51hzFUWn5zAhTxh/Aw7GtfLxYZLP94iAH+j1WfMIS3WCxj2hYTj+rAsata3TM/CNz6
-         kkZoELUTnrfHhYZx15ltkQ2S292HFZiiXEpVxntz0GeB7xpEp2AelW/vc1u+0zgNsV7x
-         /5s2cNd4QtRW103qdQ4KgxE01nosebgDJftotnf70BusU9up5P2Z23ZyFaXOpsmwaYkL
-         afu1ebxfGqnKinQh5PuSVLRYIptMn0amq8vHSsio0U0hsxrHvFDGcbWyqyT5m4l1ykjN
-         2ZiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759167148; x=1759771948;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i5JsbcE+pbrv9WUMt/sTi7gQveEd5VSWsVent3A0wsM=;
-        b=VGZCBHDC9f6rUIHP65wtefUxfQx0zIpbMH3UH0p3Jr1ZpLPU4b8IYrIO8ELaoKb2dO
-         fU7nsKbnnUtJzOWkBwJQGBEWUHAy7eUI1zPsaFSmNMkekiEnj7xcByo9mF6krce7upT/
-         fgXVpLCjtloNQi0YRP4LdGV/H33Oc16r40ZWfmPGCeL2s5dYxSbnqnYynQXhmnv6Wn2F
-         1s9D0IlzyLaEEb8lQk6UwVK7TKBjH+saeflKrqR4LnckQQIhG+g5RRUzSTaNhLhn7V+3
-         LHrSHiIoz/Rca4H70M+92JcdIteO48JSKspCbHxH/wtTQOhTKiqAPVbhjSYn9VWZ1n7v
-         fVCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDOgPBxmgBkcoL9uUFmJOEa+cKXrRr97ynouDQLVugWHJ4qa9zs3Ty6ooNqCw44c29w3bv4C3DJbzURwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp51nSPe28ni3Dc2tTg52SIQpQHGcI2LYy8c5uV67FyOTCTQ3I
-	wkiVFBA/1K+GK7dbMgNv++smosWqa+s/1yMneQfWWxvoaH1Ch1AGG70uRgvuaT8c9g0LvzwhgXf
-	gIcT3xQ==
-X-Google-Smtp-Source: AGHT+IFthVZp9FDHNDiWf7DEdVqLu65/sfmSoZEiv22BhqGqSE2Yu8ZjoyNg35szSSCNiS2WYA6x5zgdoLA=
-X-Received: from pgbfm22.prod.google.com ([2002:a05:6a02:4996:b0:b55:70c6:bece])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3392:b0:249:467e:ba4c
- with SMTP id adf61e73a8af0-2e7d7368009mr21819265637.42.1759167148111; Mon, 29
- Sep 2025 10:32:28 -0700 (PDT)
-Date: Mon, 29 Sep 2025 10:32:26 -0700
-In-Reply-To: <diqztt0l1pol.fsf@google.com>
+	s=arc-20240116; t=1759167233; c=relaxed/simple;
+	bh=4rZNsu8QGDCFma7zcOHapI/aN7/dV6PWZmNXgYGyJMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yd+9kA8QEGnMW4iCoVQsGc0e5/ug/qH4MUBxoboNgJugSHtJj/+AEYEDWbwkAdC/Oe+74To8FxS3G1oOTQSzuQJp6Ur0KbJRuiywqXEs00O7V7jfjP02leVEFD5d6mLgWTWTxWqOQwenwdtPmawrHholEc0N+IHFFWopUDJbYFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8hWv2qe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05A3C4CEF4;
+	Mon, 29 Sep 2025 17:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759167231;
+	bh=4rZNsu8QGDCFma7zcOHapI/aN7/dV6PWZmNXgYGyJMY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F8hWv2qemqh0aLgpmmqQNk0IqAOp4EXTerzehasHk8KGl4IPWsOLUTfbBbj/b5imO
+	 odArmW+o2BxOhvAb4359t5cHtVQwyqVpPVKYCEuWgcLEF8kb1qZBOP5czSPtkIuwHJ
+	 JBjdtStCZooIK9Xz+hF5UyBwQxOYw9xueKC/1Tvq0rtbOUk1mavxK2iaNBLFX4E9MU
+	 0Ab98p3if0nFjbBgVuqzCLdYyW+JNDX5vTJMHbFXwFNgAq4qNpHijb4u04wZUlqaGR
+	 AOMKU4hfClOTlutJWXgc42ZsbYYcL4gTUKd+yKpCaxgpdjizMooqhU2nXzwAWvTCSJ
+	 sYlHdlL+vG0pg==
+Date: Mon, 29 Sep 2025 18:33:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Lakshay Piplani <lakshay.piplani@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, marcelo.schmitt1@gmail.com,
+	gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
+	peterz@infradead.org, jstephan@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	jonathan.cameron@huawei.com, vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com, shashank.rebbapragada@nxp.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: temperature: Add NXP P3T175x
+ support
+Message-ID: <20250929-panther-providing-d69e6016acc9@spud>
+References: <20250929094543.2512264-1-lakshay.piplani@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-6-seanjc@google.com>
- <diqztt0l1pol.fsf@google.com>
-Message-ID: <aNrCqhA_hhUjflPA@google.com>
-Subject: Re: [PATCH 5/6] KVM: selftests: Add wrappers for mmap() and munmap()
- to assert success
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="us-ascii"
-
-On Mon, Sep 29, 2025, Ackerley Tng wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > Add and use wrappers for mmap() and munmap() that assert success to reduce
-> > a significant amount of boilerplate code, to ensure all tests assert on
-> > failure, and to provide consistent error messages on failure.
-> >
-> > No functional change intended.
-> >
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  .../testing/selftests/kvm/guest_memfd_test.c  | 21 +++------
-> >  .../testing/selftests/kvm/include/kvm_util.h  | 25 +++++++++++
-> >  tools/testing/selftests/kvm/lib/kvm_util.c    | 44 +++++++------------
-> >  tools/testing/selftests/kvm/mmu_stress_test.c |  5 +--
-> >  .../selftests/kvm/s390/ucontrol_test.c        | 16 +++----
-> >  .../selftests/kvm/set_memory_region_test.c    | 17 ++++---
-> >  6 files changed, 64 insertions(+), 64 deletions(-)
-> >
-> > 
-> > [...snip...]
-> > 
-> > diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-> > index 23a506d7eca3..1c68ff0fb3fb 100644
-> > --- a/tools/testing/selftests/kvm/include/kvm_util.h
-> > +++ b/tools/testing/selftests/kvm/include/kvm_util.h
-> > @@ -278,6 +278,31 @@ static inline bool kvm_has_cap(long cap)
-> >  #define __KVM_SYSCALL_ERROR(_name, _ret) \
-> >  	"%s failed, rc: %i errno: %i (%s)", (_name), (_ret), errno, strerror(errno)
-> >  
-> > +static inline void *__kvm_mmap(size_t size, int prot, int flags, int fd,
-> > +			       off_t offset)
-> 
-> Do you have a policy/rationale for putting this in kvm_util.h as opposed
-> to test_util.h? I like the idea of this wrapper but I thought this is
-> less of a kvm thing and more of a test utility, and hence it belongs in
-> test_util.c and test_util.h.
-
-To be perfectly honest, I forgot test_util.h existed :-)
-
-> Also, the name kind of associates mmap with KVM too closely IMO, but
-> test_mmap() is not a great name either.
-
-Which file will hopefully be irrevelant, because ideally it'll be temporary (see
-below). But if someone has a strong opinion and/or better idea on the name prefix,
-I definitely want to settle on a name for syscall wrappers, because I want to go
-much further than just adding an mmap() wrapper.  I chose kvm_ because there's
-basically zero chance that will ever conflict with generic selftests functionality,
-and the wrappers utilize TEST_ASSERT(), which are unique to KVM selftests.
-
-As for why the current location will hopefully be temporary, and why I want to
-settle on a name, I have patches to add several more wrappers, along with
-infrastructure to make it super easy to add new wrappers.  When trying to sort
-out the libnuma stuff for Shivank's series[*], I discovered that KVM selftests
-already has a (very partial, very crappy) libnuma equivalent in
-tools/testing/selftests/kvm/include/numaif.h.
-
-Adding wrappers for NUMA syscalls became an exercise in frustration (so much
-uninteresting boilerplate, and I kept making silly mistakes), and so that combined
-with the desire for mmap() and munmap() wrappers motivated me to add a macro
-framework similar to the kernel's DEFINE_SYSCALL magic.
-
-So, I've got patches (that I'll post with the next version of the gmem NUMA
-series) that add tools/testing/selftests/kvm/include/kvm_syscalls.h, and
-__kvm_mmap() will be moved there (ideally it wouldn't move, but I want to land
-this small series in 6.18, and so wanted to keep the changes for 6.18 small-ish).
-
-For lack of a better namespace, and because we already have __KVM_SYSCALL_ERROR(),
-I picked KVM_SYSCALL_DEFINE() for the "standard" builder, e.g. libnuma equivalents,
-and then __KVM_SYSCALL_DEFINE() for a KVM selftests specific version to handle
-asserting success.
-
-/* Define a kvm_<syscall>() API to assert success. */
-#define __KVM_SYSCALL_DEFINE(name, nr_args, args...)			\
-static inline void kvm_##name(DECLARE_ARGS(nr_args, args))		\
-{									\
-	int r;								\
-									\
-	r = name(UNPACK_ARGS(nr_args, args));				\
-	TEST_ASSERT(!r, __KVM_SYSCALL_ERROR(#name, r));			\
-}
-
-/*
- * Macro to define syscall APIs, either because KVM selftests doesn't link to
- * the standard library, e.g. libnuma, or because there is no library that yet
- * provides the syscall.  These
- */
-#define KVM_SYSCALL_DEFINE(name, nr_args, args...)			\
-static inline long name(DECLARE_ARGS(nr_args, args))			\
-{									\
-	return syscall(__NR_##name, UNPACK_ARGS(nr_args, args));	\
-}									\
-__KVM_SYSCALL_DEFINE(name, nr_args, args)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cgliMA4ktxGmPwLv"
+Content-Disposition: inline
+In-Reply-To: <20250929094543.2512264-1-lakshay.piplani@nxp.com>
 
 
-The usage looks like this (which is odd at first glance, but makes it trivially
-easy to copy+paste from the kernel SYSCALL_DEFINE invocations:
+--cgliMA4ktxGmPwLv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-KVM_SYSCALL_DEFINE(get_mempolicy, 5, int *, policy, const unsigned long *, nmask,
-		   unsigned long, maxnode, void *, addr, int, flags);
+On Mon, Sep 29, 2025 at 03:15:42PM +0530, Lakshay Piplani wrote:
+> Add bindings for the NXP P3T175x (P3T1750/P3T1755) temperature
+> sensor, supporting both I2C & I3C interfaces.
 
-KVM_SYSCALL_DEFINE(set_mempolicy, 3, int, mode, const unsigned long *, nmask,
-		   unsigned long, maxnode);
+Can you please mention here what the difference between devices is?
 
-KVM_SYSCALL_DEFINE(set_mempolicy_home_node, 4, unsigned long, start,
-		   unsigned long, len, unsigned long, home_node,
-		   unsigned long, flags);
+>=20
+> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+> ---
+> V2 -> V3: Changes since V2:
+>           - Removed nxp,interrupt-mode and nxp,fault-queue properties fro=
+m DT binding
+>           - Updated compatible strings:
+>             - nxp,p3t1750-iio =E2=86=92 nxp,p3t1750dp
+>             - nxp,p3t1755-iio =E2=86=92 nxp,p3t1755dp
+> V1 -> V2: Changes since V1:
+>           - Dropped nxp,alert-active-high
+>           - Fixed YAML formatting, line wrapping, and examples
+>=20
+>  .../bindings/iio/temperature/nxp,p3t1755.yaml | 62 +++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/temperature/nxp=
+,p3t1755.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/temperature/nxp,p3t175=
+5.yaml b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
+> new file mode 100644
+> index 000000000000..16a01fa81251
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/temperature/nxp,p3t1755.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP P3T175xDP Temperature Sensor
+> +
+> +maintainers:
+> +  - Lakshay Piplani <lakshay.piplani@nxp.com>
+> +
+> +description: |
+> +  Datasheet: https://www.nxp.com/docs/en/data-sheet/P3T1755.pdf
+> +
+> +  P3T175xDP (P3T1750/P3T1755) is a digital temperature sensor with a ran=
+ge of
+> +  -40=C2=B0C to +125=C2=B0C and a 12-bit resolution. It supports communi=
+cation over both
+> +  I2C and I3C interfaces.
+> +
+> +  The I2C interface supports up to 32 static addresses and provides an A=
+LERT
+> +  output to signal when temperature thresholds are crossed.
+> +
+> +  The I3C interface supports In-Band interrupts (IBI) in interrupt mode,
+> +  allowing the device to notify the controller of threshold events witho=
+ut
+> +  dedicated alert pin.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,p3t1750dp
+> +      - nxp,p3t1755dp
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: |
+> +      In I2C mode, the device supports up to 32 static addresses.
+> +      In I3C mode, the 'reg' property encodes a triplet of
+> +      <static-address BCR PID> used for device matching.
+> +      Static address is optional if matching is done via PID.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        temp-sensor@48 {
+> +            compatible =3D "nxp,p3t1755dp";
+> +            reg =3D <0x48>;
+> +            interrupt-parent =3D <&gpio2>;
+> +            interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
+> +        };
+> +    };
+> --=20
+> 2.25.1
+>=20
 
-KVM_SYSCALL_DEFINE(migrate_pages, 4, int, pid, unsigned long, maxnode,
-		   const unsigned long *, frommask, const unsigned long *, tomask);
+--cgliMA4ktxGmPwLv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-KVM_SYSCALL_DEFINE(move_pages, 6, int, pid, unsigned long, count, void *, pages,
-		   const int *, nodes, int *, status, int, flags);
+-----BEGIN PGP SIGNATURE-----
 
-KVM_SYSCALL_DEFINE(mbind, 6, void *, addr, unsigned long, size, int, mode,
-		   const unsigned long *, nodemask, unsigned long, maxnode,
-		   unsigned int, flags);
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNrC+QAKCRB4tDGHoIJi
+0mW2AP4uqFgdTFvca8mVJA+tAqUvGIeQxDEbIIM3/yjbo7QZ8wD/TfF3agyYq+6T
+r7amWo2btMqsEsrOfeuACJfJRyP5EAA=
+=BQew
+-----END PGP SIGNATURE-----
 
-__KVM_SYSCALL_DEFINE(munmap, 2, void *, mem, size_t, size);
-__KVM_SYSCALL_DEFINE(close, 1, int, fd);
-__KVM_SYSCALL_DEFINE(fallocate, 4, int, fd, int, mode, loff_t, offset, loff_t, len);
-__KVM_SYSCALL_DEFINE(ftruncate, 2, unsigned int, fd, off_t, length);
-
-[*] https://lore.kernel.org/all/0e986bdb-7d1b-4c14-932e-771a87532947@amd.com
+--cgliMA4ktxGmPwLv--
 
