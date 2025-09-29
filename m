@@ -1,151 +1,324 @@
-Return-Path: <linux-kernel+bounces-836646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F051BBAA38C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:46:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AC9BAA387
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 239B37A673D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3FCF421F4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD16A221FC6;
-	Mon, 29 Sep 2025 17:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDE1273F9;
+	Mon, 29 Sep 2025 17:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="jc9FD4NV"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHaY7izU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E8E14A60C
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F35733086;
+	Mon, 29 Sep 2025 17:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759167979; cv=none; b=kzx8N9iC4tujp4H0go90yjHZQ0AU6gAKKTYV0FO2T3hYc4WbYuas8Aio2M+9uDdnU42wOoH1uDqq2NNNoTb0WcluR+NEAY9lIW/bQ2ceujz3ew2j187Jlw3YS9OjRMIYNzkiRtUSzmwFznWsqHIkJ7XZ4jhMpFQriN9GOefixVY=
+	t=1759167977; cv=none; b=bI0iz5PVr/hlOwIiS4ydzyCWsKgcleMELYxV8u2L3RY6dtmAVyMdbsXOPi3uwbL8Unwnve9JAWINpNPY/emWCsTQzzwlGyzTw8JbQyXCZ25R80N0qhyOr7ShTf2NCW1l7ZQNkie94XJ/zWoPPF9Up3q37jH5Bh1jMM+ID9Pk1bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759167979; c=relaxed/simple;
-	bh=eXmObNrvqTREabEVoaPfipK3nhi82p1Oorr9WTbWpS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=urKreDperbTSmyh2qmrM0K/ckzU7ZoQwTFPI/7ZLgieuDOMKmsXez/smcdMZr1qscOv5GOOxwNnSDhFLqOlIZ3CiqWgrmTZ1GG22se0Ouj7xXvNksaRtY3PbAwVBW1E2ffR/ajwmZfUHcaKO44U0kmuqn4tWcFBMG6Ca7S5u1Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=jc9FD4NV; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4d9f7a34daaso43000161cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:46:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759167975; x=1759772775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mp5nx4TC/38dVlnjuJTLG0gnQNJPQsJ2h6t5725+5tw=;
-        b=jc9FD4NVtqi1g1dy/GzRFaT8Z494GJHEz5wiBYwqtzp1o+urxM3VhQM5jxh7f0Fsje
-         VuSH2mqlohJsb+LPLc6owBHODcFBH05OEiyh+J1lgm7nobBKnlwr/6Y1weTxJDzlAEkp
-         v8w6y/O3j0ZXNuYPFbXkIUAfbq0BINZxlwgvkoLsQoP/c1kZ3JQCmaPQ+4Z94J3oanXS
-         GdJk9zVvpPRb250ZX6kJLSDw9YZ27Hh2LQUm4C+GRTitxaZ/R4GibbJ/Lp95G7vWaesE
-         WnF1zF+lImEPP/bhZKh/KnCqoLKoTZEhS7DDtiZ1ucqh3OLj5IgnkvBYAJRsikVxwinR
-         mKtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759167975; x=1759772775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mp5nx4TC/38dVlnjuJTLG0gnQNJPQsJ2h6t5725+5tw=;
-        b=jCUoRE7dpPurS8II8dNzuQi3ayEIGeRuvm7J3zwriiBY9mFP4GYY2pBOqD8ZKgixcg
-         7JzzOtEisfwzWCkN8GMUp9mx0SuSY34QgyFSlb87kzPLAuq2UEQnzYX0DuoColkhID6a
-         feTteFQaIqwlY+QAyXPRB8E6FQ+1Hl8cia6TI06KXhCJ5iUiril+eXliFyFGW6C4ZwUY
-         MgQovuRRUE3KJQLFiePAkqamYizY/hLm32Ak26hnUTQwc0Nmh4v4eUzky1CfHCdbJwFm
-         Hn48fTT2Ch9L9sZ5y1T0zP2+vMuvA/NVP5ajP2EDx5yKMn0ypjceiJu1PiPs2zGKLN6u
-         /gnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlLgt/8NI8qdOfZQy/j70W/b2zsFI9OaxKSIugQY4RVYE5jU6q6+WDeAr0gfQ421GhEiWy2xXe/7GylTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz162OnxEVLTSM3Mka66jOETxvxVV8K4N62UU0mtzfiY5/+udco
-	IKMkiLjc+PVDVfYOTlmUXP2PAL5DhmagawOWH/n8oLaHgjT+TnjMvdGq7SdWI1ANdleLkDhuqhj
-	BbIydJporicm3mgGSq4XiNzhAdXHTqp4j2c0XnI55Ig==
-X-Gm-Gg: ASbGncs+La5CKr4+XRznXuC9jFTsm2xEbSBhOZfV1mzxgX7ILfhZefwLcDewcr0SzG1
-	wiARr1T7gpiTGrl3U4706AUasTDuIcZIavOllADY7946IR3AKCdq1z0rCQ5iZ0PurZClTSgTd5O
-	Q6pKP7kpUJYzVPzcrftWDMcllDbTY5rbFxvMVTt5vYpUOt7nA3XD1YeQQSK1Km+99ACP+dInszF
-	2YKtBdcjvinzOc=
-X-Google-Smtp-Source: AGHT+IGOnelXZkDUZzjTRtovwRCe00xrTA+7vjG5Tw/7+5pwFeMcBzkyq8GKQCfm3J+xlHW1Nz5fVVpGOss9mnAfAYg=
-X-Received: by 2002:ac8:5d56:0:b0:4cf:1eba:f30e with SMTP id
- d75a77b69052e-4da482d41d6mr58945371cf.24.1759167975081; Mon, 29 Sep 2025
- 10:46:15 -0700 (PDT)
+	s=arc-20240116; t=1759167977; c=relaxed/simple;
+	bh=y4XpJqJuDggPW3QOPPk8QsxbwQMr0oYsgzTpm857cnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1lo2CSmeW1M5upBelQbMzUvjkpIDD7CoVHHmz5AbT1Car5SBRdWulBanE3ZDTAc1N7ycB3nehTePvSH4JFby8V3UpkOYCYE1eE/TosLbn4AwWDOymFg6Ptp7KcZd2b+AsmXwDJtjqNc+oLSCVSiKzDWf9UASZtfQAzpQHBo+4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHaY7izU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E07C4CEF4;
+	Mon, 29 Sep 2025 17:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759167975;
+	bh=y4XpJqJuDggPW3QOPPk8QsxbwQMr0oYsgzTpm857cnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DHaY7izU7Pviv+1YCyqLNjOxeHQcJHmIqG7yjk6Vn8Gh3Vwp7RvnRWheQQlknGWmt
+	 4mCLrOuXlK0Ezbbh6QO9cWED0lBeVKb8D3+aqkt+cFWK35WuxwJjBLywAYltLd9B2c
+	 gZkVUD5+fzJLpK8+woibfb2HRr9x0Wkcq8mHJToywdg/OxifQ4WftdnsGQq4rEdY2B
+	 /eITTty0d6qXCuGu6V3V58uonq4ocA32lZYKzpxmVpGRjDjrVBkhyopOB7BHrKU9zb
+	 JUNt8rryKYjzBYGiGlL0peuIEXmwdvWChbpQgGxFgjEQb6PQOqDY9jKlt3Ba6bTJDn
+	 VBlvjuroLr7GQ==
+Date: Mon, 29 Sep 2025 18:46:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Joan-Na-adi <joan.na.devcode@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Joan Na <joan.na@analog.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: regulator: Add MAX77675 regulator
+ binding
+Message-ID: <20250929-morally-finally-d2c0f4dacce8@spud>
+References: <20250929105618.177511-1-joan.na@analog.com>
+ <20250929105618.177511-4-joan.na@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
- <20250929160034.GG2695987@ziepe.ca> <CAAywjhS+X5o3B60hKZiioTCqT_7cYThRTz09fHmi4WnSr3ceYA@mail.gmail.com>
-In-Reply-To: <CAAywjhS+X5o3B60hKZiioTCqT_7cYThRTz09fHmi4WnSr3ceYA@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 29 Sep 2025 13:45:37 -0400
-X-Gm-Features: AS18NWBt_WgC2Y8Hsnai8qifkqT_eI5rwr_YhDjsltDobqYe3Ir-FVVNbB0ht3U
-Message-ID: <CA+CK2bA7LK2i-AOyTwx1KNUoF5fUWEWBA49i8T_wYXBApKkUBw@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-To: Samiullah Khawaja <skhawaja@google.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
-	praan@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VGH9y9Cg8XagcEKb"
+Content-Disposition: inline
+In-Reply-To: <20250929105618.177511-4-joan.na@analog.com>
+
+
+--VGH9y9Cg8XagcEKb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2025 at 1:32=E2=80=AFPM Samiullah Khawaja <skhawaja@google.=
-com> wrote:
->
-> On Mon, Sep 29, 2025 at 9:00=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wr=
-ote:
-> >
-> > On Sun, Sep 28, 2025 at 07:06:21PM +0000, Samiullah Khawaja wrote:
-> > > +static int iommufd_save_ioas(struct iommufd_ctx *ictx,
-> > > +                          struct iommufd_lu *iommufd_lu)
-> > > +{
-> > > +     struct iommufd_hwpt_paging *hwpt_paging;
-> > > +     struct iommufd_ioas *ioas =3D NULL;
-> > > +     struct iommufd_object *obj;
-> > > +     unsigned long index;
-> > > +     int rc;
-> > > +
-> > > +     /* Iterate each ioas. */
-> > > +     xa_for_each(&ictx->objects, index, obj) {
-> > > +             if (obj->type !=3D IOMMUFD_OBJ_IOAS)
-> > > +                     continue;
-> >
-> > Wrong locking
-> >
-> > > +
-> > > +             ioas =3D (struct iommufd_ioas *)obj;
-> > > +             mutex_lock(&ioas->mutex);
-> > > +
-> > > +             /*
-> > > +              * TODO: Iterate over each device of this iommufd and o=
-nly save
-> > > +              * hwpt/domain if the device is persisted.
-> > > +              */
-> > > +             list_for_each_entry(hwpt_paging, &ioas->hwpt_list, hwpt=
-_item) {
-> > > +                     if (!hwpt_paging->common.domain)
-> > > +                             continue;
-> >
-> > I don't think this should be automatic. The user should directly
-> > serialize/unserialize HWPTs by ID.
-> Interesting. So the user should be able to serialize/unserialize HWPTs
-> before the Live Update PREPARE event? But what if a device was marked
-> for preservation but the user never serialized the attached HWPT,
-> would that be considered an error during LUO PREPARE or should iommufd
-> serialize the remaining HWPTs here?
+On Mon, Sep 29, 2025 at 07:56:18PM +0900, Joan-Na-adi wrote:
+> From: Joan Na <joan.na@analog.com>
+>=20
+> Add device tree binding YAML schema for the Maxim MAX77675 PMIC regulator.
+> This defines the node properties and supported regulator names for use
+> in device tree sources.
+>=20
+> Signed-off-by: Joan Na <joan.na@analog.com>
 
-Users ~can~ serialize their sessions before system-wide prepare event.
-During prepare event all unserialized sessions and their FDs are going
-to be serialized anyways.
+I reviewed v1 on the 26th, but see no mention nor sign of any of my
+comments here. Why is that?
 
-Pasha
+Cheers,
+Conor.
 
-> >
-> > Jason
+> ---
+>  .../bindings/regulator/maxim,max77675.yaml    | 202 ++++++++++++++++++
+>  1 file changed, 202 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max=
+77675.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77675.y=
+aml b/Documentation/devicetree/bindings/regulator/maxim,max77675.yaml
+> new file mode 100644
+> index 000000000000..f93dfdc499bc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/maxim,max77675.yaml
+> @@ -0,0 +1,202 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/maxim,max77675.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Maxim MAX77675 PMIC Regulator
+> +
+> +maintainers:
+> +  - Joan Na <joan.na@analog.com>
+> +
+> +description: |
+> +  The MAX77675 is a PMIC providing multiple switching buck regulators
+> +  (SBB0=E2=80=93SBB3), accessible via I2C. Each SBB can be configured in=
+dividually
+> +  in the Device Tree. Additional PMIC settings can be configured through
+> +  device-specific properties.
+> +  Users should use the macros from dt-bindings/regulator/maxim,max77675-=
+regulator.h
+> +
+> +allOf:
+> +  - $ref: regulator.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: maxim,max77675
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  maxim,dvs-slew-rate:
+> +    description: |
+> +      DVS slew rate setting.
+> +      0 (MAX77675_DVS_SLEW_5MV) - 5 mV/=CE=BCs
+> +      1 (MAX77675_DVS_SLEW_10MV) - 10 mV/=CE=BCs
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +
+> +  maxim,latency-mode:
+> +    description: |
+> +      Latency mode for voltage transition:
+> +      0 (MAX77675_LAT_MODE_HIGH_LATENCY) - Low quiescent current, high l=
+atency (~100=CE=BCs)
+> +      1 (MAX77675_LAT_MODE_LOW_LATENCY) - High quiescent current, low la=
+tency (~10=CE=BCs)
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +
+> +  maxim,drv-sbb-strength:
+> +    description: |
+> +      SIMO Buck-Boost Drive Strength Trim.
+> +      0 (MAX77675_DRV_SBB_FASTEST) - Fastest transition (~0.6 ns)
+> +      1 (MAX77675_DRV_SBB_FAST) - Faster transition (~1.2 ns)
+> +      2 (MAX77675_DRV_SBB_MEDIUM) - Moderate transition (~1.8 ns)
+> +      3 (MAX77675_DRV_SBB_SLOWEST) - Slowest transition (~8 ns)
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +
+> +  maxim,manual-reset-time:
+> +    description: |
+> +      Manual reset time in seconds:
+> +      0 (MAX77675_MRT_4S): 4 seconds
+> +      1 (MAX77675_MRT_8S): 8 seconds
+> +      2 (MAX77675_MRT_12S): 12 seconds
+> +      3 (MAX77675_MRT_16S): 16 seconds
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +
+> +  maxim,en-pullup-disable:
+> +    description: |
+> +      Disable internal pull-up for EN pin.
+> +      0 (MAX77675_PU_EN): Internal pull-up enabled (default).
+> +      1 (MAX77675_PU_DIS): Internal pull-up disabled.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +
+> +  maxim,bias-low-power-request:
+> +    description: |
+> +      Controls the bias low-power mode setting.
+> +      0 (MAX77675_BIAS_NORMAL): Normal bias operation
+> +      1 (MAX77675_BIAS_LPM_REQ): Request low-power bias mode
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +
+> +  maxim,simo-int-ldo-always-on:
+> +    description: |
+> +      SIMO internal channel disable configuration.
+> +      0 (MAX77675_SIMO_INT_NORMAL): SIMO channel enabled
+> +      1 (MAX77675_SIMO_INT_LDO): SIMO channel disabled
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +
+> +  maxim,en-mode:
+> +    description: |
+> +      Enable mode configuration.
+> +      0 (MAX77675_EN_PUSH_BUTTON): Push button
+> +      1 (MAX77675_EN_SLIDE_SWITCH): Slide switch
+> +      2 (MAX77675_EN_LOGIC): Logic mode
+> +      3 (MAX77675_EN_RESERVED): Reserved
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +
+> +  maxim,en-debounce-time:
+> +    description: |
+> +      Debounce timer enable.
+> +      0 (MAX77675_DBEN_100US): 100us
+> +      1 (MAX77675_DBEN_30MS): 30ms
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +
+> +  regulators:
+> +    type: object
+> +    description: Regulator child nodes
+> +    patternProperties:
+> +      "^sbb[0-3]$":
+> +        type: object
+> +        $ref: regulator.yaml#
+> +    properties:
+> +      maxim,fps-slot:
+> +        description: |
+> +          FPS slot selection.
+> +          0 (MAX77675_FPS_SLOT_0): FPS Slot 0
+> +          1 (MAX77675_FPS_SLOT_1): FPS Slot 1
+> +          2 (MAX77675_FPS_SLOT_2): FPS Slot 2
+> +          3 (MAX77675_FPS_SLOT_3): FPS Slot 3
+> +          4 (MAX77675_FPS_NONE): No FPS Slot (disabled)
+> +          5 (MAX77675_FPS_DEF): Use the defaul
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 1, 2, 3, 4, 5]
+> +
+> +      maxim,slew-rate-use-dvs:
+> +        description: |
+> +          0 (MAX77675_SR_2MV_PER_US): Fixed slew rate of 2mV/=CE=BCs.
+> +          1 (MAX77675_SR_USE_DVS): Uses maxim,dvs-slew-rate for dynamic =
+voltage scaling.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 1]
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - regulators
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/regulator/maxim,max77675-regulator.h>
+> +
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      max77675: pmic@44 {
+> +        compatible =3D "maxim,max77675";
+> +        reg =3D <0x44>;
+> +
+> +        maxim,dvs-slew-rate =3D <MAX77675_DVS_SLEW_5MV>;
+> +        maxim,latency-mode =3D <MAX77675_LAT_MODE_HIGH_LATENCY>;
+> +        maxim,drv-sbb-strength =3D <MAX77675_DRV_SBB_FASTEST>;
+> +        maxim,manual-reset-time =3D <MAX77675_MRT_4S>;
+> +        maxim,en-pullup-disable =3D <MAX77675_PU_EN>;
+> +        maxim,bias-low-power-request =3D <MAX77675_BIAS_NORMAL>;
+> +        maxim,simo-int-ldo-always-on =3D <MAX77675_SIMO_INT_NORMAL>;
+> +        maxim,en-mode =3D <MAX77675_EN_PUSH_BUTTON>;
+> +        maxim,en-debounce-time =3D <MAX77675_DBEN_100US>;
+> +
+> +        regulators {
+> +          sbb0: sbb0 {
+> +            regulator-name =3D "sbb0";
+> +            regulator-min-microvolt =3D <500000>;
+> +            regulator-max-microvolt =3D <5500000>;
+> +            maxim,fps-slot =3D <MAX77675_FPS_DEF>;
+> +            maxim,slew-rate-use-dvs =3D <MAX77675_SR_2MV_PER_US>;
+> +          };
+> +
+> +          sbb1: sbb1 {
+> +            regulator-name =3D "sbb1";
+> +            regulator-min-microvolt =3D <500000>;
+> +            regulator-max-microvolt =3D <5500000>;
+> +            regulator-allow-set-voltage;
+> +            maxim,fps-slot =3D <MAX77675_FPS_DEF>;
+> +            maxim,slew-rate-use-dvs =3D <MAX77675_SR_2MV_PER_US>;
+> +          };
+> +
+> +          sbb2: sbb2 {
+> +            regulator-name =3D "sbb2";
+> +            regulator-min-microvolt =3D <500000>;
+> +            regulator-max-microvolt =3D <5500000>;
+> +            regulator-allow-set-voltage;
+> +            maxim,fps-slot =3D <MAX77675_FPS_DEF>;
+> +            maxim,slew-rate-use-dvs =3D <MAX77675_SR_2MV_PER_US>;
+> +          };
+> +
+> +          sbb3: sbb3 {
+> +            regulator-name =3D "sbb3";
+> +            regulator-min-microvolt =3D <500000>;
+> +            regulator-max-microvolt =3D <5500000>;
+> +            regulator-allow-set-voltage;
+> +            maxim,fps-slot =3D <MAX77675_FPS_DEF>;
+> +            maxim,slew-rate-use-dvs =3D <MAX77675_SR_2MV_PER_US>;
+> +          };
+> +        };
+> +      };
+> +    };
+> +
+> --
+> 2.34.1
+>=20
+
+--VGH9y9Cg8XagcEKb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNrF4wAKCRB4tDGHoIJi
+0rKzAP4+UV3/Vx6wMnnUrs/2ydlpPI99u7laoIwKe1DjZJn2MAEA/eDoUnjf/WTN
+PiFKaLEcfvM2q0nluhQms9Ez6ItTtg4=
+=yEmL
+-----END PGP SIGNATURE-----
+
+--VGH9y9Cg8XagcEKb--
 
