@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-836318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98959BA9506
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:21:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D98CBA9512
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3E71920BB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25B03C54DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCD43074B6;
-	Mon, 29 Sep 2025 13:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D9B3074A9;
+	Mon, 29 Sep 2025 13:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQJwLIH8"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H7TTTQC0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733B13009EC;
-	Mon, 29 Sep 2025 13:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FBF306D48;
+	Mon, 29 Sep 2025 13:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759152058; cv=none; b=AX43iMx/Po+19+7vcSf+Yf+8Jy7tZcTLy8J/5PDtt0gXxrMfkK5JlaF/+8izQgtUEktumUd3kGvUUL8r304+LP9vTEyhfx8ZERl03AQxG4nVq7kAeoAQsOD2bszsVSfMqGQDkkVzbGLNBTl44B4niS+zl4eX4PDCrFEhPlJsXJw=
+	t=1759152084; cv=none; b=VuL45jAw3H6xXgDrdzY2QDmI6MJpNMkU9t1XdamGDeyXID1+ekwXKiegV6jSL/is79Fgl30jkQXKKhNBkRW6zzkrOrHRgLgLZ33uveEKUVhq/53tW9CGLJFk4U9ERJddoKqh4Lbn1zI4OAIzbshJSSqtW1uvSY2MjVAqQ0+oVqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759152058; c=relaxed/simple;
-	bh=9tkWX6G78EOBvdCsrJhOv25hEF845H6fxqO1x19Fh3w=;
+	s=arc-20240116; t=1759152084; c=relaxed/simple;
+	bh=8qUCEJKJ8ReQkogmLBZaPBurrEIKP6BOYmOK3NXnyJk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCFISgrwx0erE9B7GjGMlYIzSerpRcupuQdt0/OEQw2EkbAP3qxjhQVZ+tSMf/qur5FBmRizy3XKzcKLO9vNPKC1HfTEHKu6LrGJ7Zg1pLyp+6TygM3ufJd5VvC54aP9asHQTAAlvVP2k5OtqHr/ziMmvL4wolLDCfenonUsiVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQJwLIH8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B801C4CEF4;
-	Mon, 29 Sep 2025 13:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759152058;
-	bh=9tkWX6G78EOBvdCsrJhOv25hEF845H6fxqO1x19Fh3w=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ys1s6TSKesTTQzjA1tATIEOuc0Q+LXFNaL3JGveUk5Banh+h+bVpQx7Z5mAhCFL8LPp+G/8R6csZ9SuKxAClsEwPeS2wFBm51Rya61D+MCNytNdlNk/VWWXicNa1k/xtXGjK5VnKZ68mrSHunL+RSSnDC1lI/daG/cTScMYXDg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H7TTTQC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71FAC4CEF4;
+	Mon, 29 Sep 2025 13:21:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759152084;
+	bh=8qUCEJKJ8ReQkogmLBZaPBurrEIKP6BOYmOK3NXnyJk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQJwLIH8zDUh6ZcGOHvnc0/hvFVbXcUgvQ2on/X3UItfvSro81aGZOAoJNsnOqM4i
-	 PlKEKbc7RTKQBTTzkzJYfXGdJdoiMp+0UwTyubEDW/FGZs7COIp7r5wpkbSTDi0LHc
-	 1mJBYlf6hrIYLhy7UdP1kI6NpR6fkrnKE5X/ShGiVYICZcgYuAGbKnIpuNsq2+GOYS
-	 4govV+GYOZ6CFvILcGbhcN4cLqUpVhmtPxRNa87B/W/xl5HyTgYHuqUIjGfNjulkFR
-	 jBWjHDGZMtH031wR14/s979thhQrBWBXXOc53Jp36vfirGGCx47aLmU3/DxS8mnxME
-	 k4DnYW/ZMwpMQ==
-Date: Mon, 29 Sep 2025 14:20:55 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Jason Wang <jasowang@redhat.com>
-Subject: Re: [PATCH net-next] ptr_ring: __ptr_ring_zero_tail micro
- optimization
-Message-ID: <aNqHt7dgy3tWRGjZ@horms.kernel.org>
-References: <bcd630c7edc628e20d4f8e037341f26c90ab4365.1758976026.git.mst@redhat.com>
+	b=H7TTTQC087ZOiDtrqTnJI5wBhUgD5cPONGy+EIoDBrtD+VoCCOh7TtZIjU7evM62I
+	 s6PLKG4xI+SN/kynvTc/wUVNkYTNlVgVrdwetr7CvmxvVq1vae6dabchtx6Qkxbb/k
+	 HnLeo3ZZokxURH65MlCgaNHUkxFKLIs6C1GTcI7o=
+Date: Mon, 29 Sep 2025 15:21:21 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Wen Yang <wen.yang@linux.dev>
+Cc: linux-kernel@vger.kernel.org, Pierre Gondois <pierre.gondois@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 6.1] arch_topology: Build cacheinfo from primary CPU
+Message-ID: <2025092924-anemia-antidote-dad1@gregkh>
+References: <20250926174658.6546-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,24 +54,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bcd630c7edc628e20d4f8e037341f26c90ab4365.1758976026.git.mst@redhat.com>
+In-Reply-To: <20250926174658.6546-1-wen.yang@linux.dev>
 
-On Sat, Sep 27, 2025 at 08:29:35AM -0400, Michael S. Tsirkin wrote:
-> __ptr_ring_zero_tail currently does the - 1 operation twice:
-> - during initialization of head
-> - at each loop iteration
+On Sat, Sep 27, 2025 at 01:46:58AM +0800, Wen Yang wrote:
+> From: Pierre Gondois <pierre.gondois@arm.com>
 > 
-> Let's just do it in one place, all we need to do
-> is adjust the loop condition. this is better:
-> - a slightly clearer logic with less duplication
-> - uses prefix -- we don't need to save the old value
-> - one less - 1 operation - for example, when ring is empty
->   we now don't do - 1 at all, existing code does it once
+> commit 5944ce092b97caed5d86d961e963b883b5c44ee2 upstream.
 > 
-> Text size shrinks from 15081 to 15050 bytes.
+> commit 3fcbf1c77d08 ("arch_topology: Fix cache attributes detection
+> in the CPU hotplug path")
+> adds a call to detect_cache_attributes() to populate the cacheinfo
+> before updating the siblings mask. detect_cache_attributes() allocates
+> memory and can take the PPTT mutex (on ACPI platforms). On PREEMPT_RT
+> kernels, on secondary CPUs, this triggers a:
+>   'BUG: sleeping function called from invalid context' [1]
+> as the code is executed with preemption and interrupts disabled.
 > 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> The primary CPU was previously storing the cache information using
+> the now removed (struct cpu_topology).llc_id:
+> commit 5b8dc787ce4a ("arch_topology: Drop LLC identifier stash from
+> the CPU topology")
+> 
+> allocate_cache_info() tries to build the cacheinfo from the primary
+> CPU prior secondary CPUs boot, if the DT/ACPI description
+> contains cache information.
+> If allocate_cache_info() fails, then fallback to the current state
+> for the cacheinfo allocation. [1] will be triggered in such case.
+> 
+> When unplugging a CPU, the cacheinfo memory cannot be freed. If it
+> was, then the memory would be allocated early by the re-plugged
+> CPU and would trigger [1].
+> 
+> Note that populate_cache_leaves() might be called multiple times
+> due to populate_leaves being moved up. This is required since
+> detect_cache_attributes() might be called with per_cpu_cacheinfo(cpu)
+> being allocated but not populated.
+> 
+> [1]:
+>  | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:46
+>  | in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/111
+>  | preempt_count: 1, expected: 0
+>  | RCU nest depth: 1, expected: 1
+>  | 3 locks held by swapper/111/0:
+>  |  #0:  (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x218/0x12c8
+>  |  #1:  (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x48/0xf0
+>  |  #2:  (&zone->lock){+.+.}-{3:3}, at: rmqueue_bulk+0x64/0xa80
+>  | irq event stamp: 0
+>  | hardirqs last  enabled at (0):  0x0
+>  | hardirqs last disabled at (0):  copy_process+0x5dc/0x1ab8
+>  | softirqs last  enabled at (0):  copy_process+0x5dc/0x1ab8
+>  | softirqs last disabled at (0):  0x0
+>  | Preemption disabled at:
+>  |  migrate_enable+0x30/0x130
+>  | CPU: 111 PID: 0 Comm: swapper/111 Tainted: G        W          6.0.0-rc4-rt6-[...]
+>  | Call trace:
+>  |  __kmalloc+0xbc/0x1e8
+>  |  detect_cache_attributes+0x2d4/0x5f0
+>  |  update_siblings_masks+0x30/0x368
+>  |  store_cpu_topology+0x78/0xb8
+>  |  secondary_start_kernel+0xd0/0x198
+>  |  __secondary_switched+0xb0/0xb4
+> 
+> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> Link: https://lore.kernel.org/r/20230104183033.755668-7-pierre.gondois@arm.com
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: <stable@vger.kernel.org> # 6.1.x: c3719bd:cacheinfo: Use RISC-V's init_cache_level() as generic OF implementation
+> Cc: <stable@vger.kernel.org> # 6.1.x: 8844c3d:cacheinfo: Return error code in init_of_cache_level(
+> Cc: <stable@vger.kernel.org> # 6.1.x: de0df44:cacheinfo: Check 'cache-unified' property to count cache leaves
+> Cc: <stable@vger.kernel.org> # 6.1.x: fa4d566:ACPI: PPTT: Remove acpi_find_cache_levels()
+> Cc: <stable@vger.kernel.org> # 6.1.x: bd50036:ACPI: PPTT: Update acpi_find_last_cache_level() to acpi_get_cache_info(
+> Cc: <stable@vger.kernel.org> # 6.1.x
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+I do not understand, why do you want all of these applied as well?  Can
+you just send the full series of commits?
 
+> Signed-off-by: Wen Yang <wen.yang@linux.dev>
+
+Also, you have changed this commit a lot from the original one, please
+document what you did here.
+
+Also, why not just use 6.6.y instead?  What is forcing you to use 6.1.y
+for this platform?  What caused this issue to just show up now?
+
+thanks,
+
+greg k-h
 
