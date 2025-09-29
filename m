@@ -1,263 +1,199 @@
-Return-Path: <linux-kernel+bounces-836099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7A6BA8B82
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:45:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCEDBA89AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C1EB16D476
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D1316432E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E178F2D836A;
-	Mon, 29 Sep 2025 09:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9912328725E;
+	Mon, 29 Sep 2025 09:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="Itdk6z14"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lgTo8sms"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1F4274FCE;
-	Mon, 29 Sep 2025 09:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F6F2AD16
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759139122; cv=none; b=MuyEhVs5cQ0AVf4cGgukW/o3hK1r+bMEfUt+pKrVe51coAbHy2E47aWkVGVyOev5vRTPdPCxxvJn+51ZQyr1uOMM0qFAhf4o+FpcdFmjfEGm+EpiY8l7lOOm5HHdySIGgvWJVGbmn63bCrpt5iPb/rnxvKT/kprkXb98M2gu3lw=
+	t=1759137894; cv=none; b=LKfyq3fQGyjXy4zs+y3EcG0juPkSFA71p1wlGyA61U02vKaNw0tMcCG0qN3KOu9y8fTcW04E9WUNb6eeHR+FkjC4ICaV7tZ2WP5NQZ/K6f91Y2LPcavdu9iYat2250KtDItflchDOaey+Keg4hNO5hCEZa+NlLmW261DHJdSEFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759139122; c=relaxed/simple;
-	bh=GmQlPu7gl3wLDOBq2pqX84D3ZWLn6MYjsfs/KGS5GTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbtZzkR+YkBS1dKwSlAcGlfB9z3XgoQUn1TQWdGBGzlCxexeIz0Hl/6f92OgD0R36kYIQID+8mULLnBdtK8ndDJrlCXRc4FkPFVkKHpjYY3ZGJKx3groh3MJnTZSICOBzxsAvRIlv7r6WADXocYwgDJnjD43oIw+y8BvyDpb/R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=Itdk6z14; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+	s=arc-20240116; t=1759137894; c=relaxed/simple;
+	bh=wZ1kaw2tdBtKk+b1Jh3nI/IQqxx3O5Y5ZvL0E+lpP3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KtK7C5y1fSUnqiEmXkFrqosz0s6QOost1eAq81K4dp80d3LbiN4LdyAidtFSEY2rj8Za3L+1l5NIZsPSyUuIluKXRI1ggyldvSFiifJDi4JoRDigySxKXYG6BXlputEmZ+uq72daz7mDN29jf1euSWgcjuToMG9AogGN7Np+dNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lgTo8sms; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4de60f19a57so787591cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=gibson.dropbear.id.au; s=202508; t=1759139110;
-	bh=IerHrIutIyB5lVdkv5QHBhpAU/+3v08CaZJHmRoxpZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Itdk6z14hDPurte1t4oTqVfQN6KEQKSvjQ0GUqtRdU5YktULtQYj3vAv1LSYkk0jc
-	 SzWbtCwZ/JvBS8WegHI6wgFiq12YLjLuKl6F6zJxfH+M2m7vy71AssESDoGMkfLUAX
-	 2Dcynk5pqem1KDSXUAwB/63Vis83v/O72GFlQnK093Du2OS76mtsLLl4GlDU8z/6DJ
-	 Jb/Pxqb11ji3R4uGJBSanUpAYLuo0DSoZpHP6AiL3J8nWEamQ8nLdHGaMdseV+YLaX
-	 O4spjYvRYyx6IfZ445K27C3Ibd+x6cAtlw7WfZtKuVDMbbWSK+AYz1jMV4XR/c9L9E
-	 KDiivU5wDVJTw==
-Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
-	id 4cZxBG2NsTz4wBj; Mon, 29 Sep 2025 19:45:10 +1000 (AEST)
-Date: Mon, 29 Sep 2025 19:23:21 +1000
-From: David Gibson <david@gibson.dropbear.id.au>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Ayush Singh <ayush@beagleboard.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Andrew Davis <afd@ti.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	devicetree@vger.kernel.org, Jason Kridner <jkridner@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <aNpQCboQimgwIkJw@zatzit>
-References: <aMebXe-yJy34kST8@zatzit>
- <20250916084631.77127e29@bootlin.com>
- <aMt5kEI_WRDOf-Hw@zatzit>
- <20250918094409.0d5f92ec@bootlin.com>
- <aMzhgDYOuG4qNcc0@zatzit>
- <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
- <aNJVqSpdAJzGliNx@zatzit>
- <20250923114849.2385736d@bootlin.com>
- <aNNrbmZfZU-1xJFm@zatzit>
- <20250924143130.0a34badb@bootlin.com>
+        d=google.com; s=20230601; t=1759137892; x=1759742692; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MRVcTlJL1eQx8pGoi4WfarmtfySRYrpiJsivfm9L5qU=;
+        b=lgTo8smspgitqzbBgiCWRNesvYd3jr5smSA1VW2/cUUBO65WNYKk4IQM/jlIWwYb7I
+         e4mHBtSZy3hHHKbr/AUM09bteCz3+gczUZyvtFqa6SEx2bP8kYyeo6iDje7A+konpo2v
+         pasRXLVIhKRqrG2Kud784di4I4PyvEa6WQ8tQSp1bfwp5RNa4+D1RimCzZsRs1DesYsU
+         uisr+b/B32abGyTicamTWdqeTixJkHZj7MMGmBd1g+BnVuV+X+T/9mt1zy/HN4agS2FM
+         6IIM0ai+dsaDfErlzO41PJ8C1oBih63RYch8Lfx65KEs8PNn7Vn1hqTmw6CxORddZ4cK
+         FUTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759137892; x=1759742692;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MRVcTlJL1eQx8pGoi4WfarmtfySRYrpiJsivfm9L5qU=;
+        b=LjzaQGuf1IQJu0GFaGWsuYNiddbHHX1Xo8CnJIEbG1Fv9g1QkXb3XVCpYh6qdWP68v
+         W2rj38yfH1mq+du+vH0VgPnJl5Oaalck5nYPqjR+lreDNFnQyIzwK4EN750h17mOtAFl
+         2cYXH9d7YuyvSVJJlfbL+0BdOExcbv9kFgLinIa6Y7252SpzoQt5MPxzZJEJj83lUO0c
+         CxgvwzxyUz1nLCEDgXgnoHm9YxDBnhdFRbgLf4QiWytRg2P4isbOYnRBGDPdg6wqQtmy
+         +CmeYIoPv6FOJqHfqtCjkPR5rIurSxFijwJ1YnHRpBtQ6muZiV9LINTzjAmFKHl0/aj5
+         8H1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWjRl0eeQniP1RsyYzwdqknRfJminl8usTs716gGjII06iTnnSuuLi8097qnjbKWyrZ5D5v7AJlDOoiHk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1L66mty1SSXTkzj0tvKXj8KWM6ZzlqG8JL2FtfyhdEl8z4OtI
+	yN8ARi+aDmjtRPfsrDG3tklRZCwnLRFevnPADsLB8eRJM69AiMwp9gYKO98doF/txx4yA0JXNbn
+	+yR3d3svWNDRYTnYQ1W+D4ccYLAlKVgPBy+Rmsmwh
+X-Gm-Gg: ASbGncuU23AX4k8rI+eWdmawiVnTYFkM1XJQooTNNZkEyK3KAI3hv9npIAvfznz+4Jo
+	QTVF7XuxLflQuX1z9zO1AwPEo9S6C3DLr8iq0zE+58rAX5un7/35FHU1U/staxl9XqDqz/zdYvP
+	ufMXE+jXf+9rD2F9NvPDihrOKvX7Y2s5VTmB8AuMYm+kkOnHGYFkBgYVD+5boZzuaxfMzryVUMI
+	drhoTaZrmdE/xblU9KSXIv9nbHnoftOtKaT
+X-Google-Smtp-Source: AGHT+IH2D9DphBCRuOkppVEKmXtZNZ2q7cyhsvNHxiUL5nNhvJ5tEn/ccn5PQX0Yskjtas0xW32/md3sH7RWPEtWpQs=
+X-Received: by 2002:a05:622a:1a0d:b0:4cd:84db:a326 with SMTP id
+ d75a77b69052e-4e232918f91mr1227031cf.16.1759137891766; Mon, 29 Sep 2025
+ 02:24:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OUZx14CP7tCARnAz"
-Content-Disposition: inline
-In-Reply-To: <20250924143130.0a34badb@bootlin.com>
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-4-seanjc@google.com>
+In-Reply-To: <20250926163114.2626257-4-seanjc@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Mon, 29 Sep 2025 10:24:14 +0100
+X-Gm-Features: AS18NWBe3URlgxtzfYGoowfV7IJBj4oZVMqzsvcx-Q5dGEYrAs1THHtixY02G1Y
+Message-ID: <CA+EHjTyN_YTkn5k5eqY1gdbQ+SQX_0C1cDRzEhvLoRQRYcp7RQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] KVM: selftests: Create a new guest_memfd for each testcase
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Ackerley Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Sean,
+
+On Fri, 26 Sept 2025 at 17:31, Sean Christopherson <seanjc@google.com> wrote:
+>
+> Refactor the guest_memfd selftest to improve test isolation by creating a
+> a new guest_memfd for each testcase.  Currently, the test reuses a single
+> guest_memfd instance for all testcases, and thus creates dependencies
+> between tests, e.g. not truncating folios from the guest_memfd instance
+> at the end of a test could lead to unexpected results (see the PUNCH_HOLE
+> purging that needs to done by in-flight the NUMA testcases[1]).
+>
+> Invoke each test via a macro wrapper to create and close a guest_memfd
+> to cut down on the boilerplate copy+paste needed to create a test.
+>
+> Link: https://lore.kernel.org/all/20250827175247.83322-10-shivankg@amd.com
+> Reported-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  .../testing/selftests/kvm/guest_memfd_test.c  | 31 ++++++++++---------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
+>
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index 8251d019206a..60c6dec63490 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -26,7 +26,7 @@
+>
+>  static size_t page_size;
+>
+> -static void test_file_read_write(int fd)
+> +static void test_file_read_write(int fd, size_t total_size)
+>  {
+>         char buf[64];
+>
+> @@ -259,14 +259,18 @@ static void test_guest_memfd_flags(struct kvm_vm *vm, uint64_t valid_flags)
+>         }
+>  }
+>
+> +#define gmem_test(__test, __vm, __flags)                               \
+> +do {                                                                   \
+> +       int fd = vm_create_guest_memfd(__vm, page_size * 4, __flags);   \
+> +                                                                       \
+> +       test_##__test(fd, page_size * 4);                               \
+> +       close(fd);                                                      \
+> +} while (0)
+> +
+
+Can we have a const for total_size that sets it to `page_size * 4`
+instead of hardcoding that value twice?
+
+With that:
+
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Tested-by: Fuad Tabba <tabba@google.com>
+
+Cheers,
+/fuad
 
 
---OUZx14CP7tCARnAz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 02:31:30PM +0200, Herve Codina wrote:
-> Hi David,
->=20
-> On Wed, 24 Sep 2025 13:54:22 +1000
-> David Gibson <david@gibson.dropbear.id.au> wrote:
->=20
-> ...
->=20
-> > >=20
-> > > IMHO, no extra rules are needed in DT addon rules to constraint i2c d=
-evices
-> > > to be added in a connector node, a connector sub-node or an i2c contr=
-oller
-> > > node.
-> > >=20
-> > > This will be constrained by the connector itself (out of DT addon rul=
-es). =20
-> >=20
-> > At this point I'm just considering the end-to-end rules we want to
-> > enforce.  Exactly what stage of the process enforces each rule is
-> > another question.
-> >=20
-> > > I mean, according to rule b), the connector will allow some destinati=
-on
-> > > places. Either it will allow the i2c controller node or a connector s=
-ub-node. =20
-> >=20
-> > Sure.
-> >=20
-> > > This is specific to the connector definition and it should be out of
-> > > generic DT addon rules. =20
-> >=20
-> > Hang on... what distinction are you seeing between the "connector
-> > definition" and "generic DT addon rules".  As I see it we're trying to
-> > create a protocol that defines both the base rules and what a
-> > "connector" even means.
-> >=20
->=20
-> The "generic DT addon rules" give rules related to addon from a DT
-> perspective. In other word "What an addon DT can do"
->  - export symbols
->  - import symbols
->  - Add full node only
->  - Don't allow to modify existing node
->  - ...
->=20
-> The way addon are used is what I put behind "connector definition".
-> The connector is a specific node in a DT with a specific comptible string.
-> The definition of this node will tell "how to use it". For instance:
->   - There is 2 gpios available and an addon can use it with <&connector 0=
-> and
->     <&connector 1>.
->   - There is an i2c bus available and an addon can use if with <&i2c-a>
->   - The hotplug mecanism used for this specific connector (gpio, eeprom, =
-=2E..)
->     is also part of the "connector definition".
->=20
-> An external board DT supposed to be connected to this connector should
->   - a) Provide its description using an addon DT (compliant with "generic=
- DT
->        addon rules")
-> and
->=20
->   - b) Use resources from connector the board is connected to (compliant =
-with
->        "connector definition").
->=20
-> "generic DT addon rules": DT specification
-> "connector definition": Connector binding
 
-Ok.  I think there are some further possible distinctions here between:
 
- a. Rules for connectors in general
- b. Rules for a specific connector type (defined by the connector type
-    binding)
- c. Rules for a specific connector instance (defined by the property
-    values in that instance).
 
-Possible we can avoid using one or more of those categories, but we
-need to consider them and do so conciously.
-
-> Today, connectors are going to use the addon feature but I didn't want to
-> restrict addon feature to connectors.
-
-Hmm.  I'm not sure this is a good idea.  I had been envisaging this
-new "addon" support as explicitly tied to connectors - you can't
-addon, except in a way the base board allows, and connectors are the
-way it allows.
-
-> For instance, a FPGA driver could use the addon feature with an addon DT
-> to describe the internal part of the FPGA related to the FPGA bitstream
-> loaded by the FPGA driver. That might make sense, right ?
-
-With the distinction from the connector case being that the driver
-defines how to interpret the addon at runtime, rather than the base DT
-defining it statically?
-
-> Also upstream in the kernel, PCI boards can be described using DT.
->   https://elixir.bootlin.com/linux/v6.16/source/drivers/misc/lan966x_pci.c
->   https://elixir.bootlin.com/linux/v6.16/source/drivers/misc/lan966x_pci.=
-dtso
->=20
-> Using addon DT in that case makes sense too even if a "connector" is not =
-present.
-
-Ok.  So I think the model you're suggesting is this:
-
- * A bus/port driver (let's call it an "addon driver") can allow addon
-   DTs to be plugged in and removed, under constraints defined by that
-   driver at runtime.
-
- * The connector driver would be one specific addon driver, that can
-   handle a pretty broad range of not-too-complex addons.  The
-   constraints for the addon DT are defined by the properties of the
-   connector in the base DT, rather than by runtime logic in the
-   driver.
-
-Is that correct?
-
-A few observations
-
- - This effectively makes an addon driver a special case of a
-   discoverable bus/port driver.  Or even DT addons as a library that
-   a bus/port driver can use.  Rather than directly updating the Linux
-   device model, the driver selects an addon DT and uses that to
-   update the Linux device model.
-
- - The distinction between a connector and a general addon driver, is
-   a bit like that between the simple-bus driver and a PCI host bridge
-   driver.  The former handles a fairly wide range of relatively
-   simple cases, the latter handles a more complex and specialized
-   case.
-
-I don't dislike this model, but it does raise some questions (these
-are not rhetorical):
-
-1) Is DT a good way of describing the addon?
-
-After all, the addon driver could make updates directly to the Linux
-device model from whatever format is convenient.
-
-2) Does it make sense to use the addon to alter the global DT?
-
-Even if the addon is described by a DT, the addon/connector driver
-could read that DT and the system DT and make corresponding updates to
-the Linux device model without altering the system DT first.
-
---=20
-David Gibson (he or they)	| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
-				| around.
-http://www.ozlabs.org/~dgibson
-
---OUZx14CP7tCARnAz
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmjaT/UACgkQzQJF27ox
-2GeMjw//e5KYzaCYB3I9SlEXy1wnNnGWIYU6jQ8wi8zdcP2AbUem385LTS2rCFQH
-hqBuuIafNCnjLTnGFNVS7pg2u7I0nQw4YHgAJK8Miqc9jmrYcm++bjpI1YKAyy5I
-dJpVv6jR1uWhVZaDVbA1b2k6+ffWoGoYADl2N00CTt7bBlM4K6cBgGUs1v24AfkU
-FWdMec/vusXW9aoU+1AUj94JtERrv0cXuD01oi5cCTLpB7D7wc1POXVUK97XDJCo
-wahEWjpCQVMC2sX7+q0jUm++cz7d+/1hPvt5zaiNIKnNp4SDc4mYMpwHciXlw42C
-WkGQpAdCTrcQWNzLDBUceQ5LwPgOMJf8FKWdA3vllalwheLrtclELNNy3t92F0bz
-y6ZD3+8+cLVnXbLEdFc4O6JUrlaQSYrSwe8LgkKpcf1E1LimH3qKf6vvw7KqvJZC
-uolqfrLRAJP2oP8B+MSYRmKnJn48Y3lApkmK4dObR+ABL/+GmQF8s5XR8mB4RcYQ
-v/acGL5F8zzuvSl4ovHn7MzpvGvAYEridy7oh/+3pT8KAdct/B7D9e/1Oyxc1+Yj
-77jc9+C8zA87pP3xoL/mpfYM55iWh0LmVZHX/qRRnoJDK9o1Giofdobf4lO3sYwi
-zfrqOHfNKiMdfrBUN1G1AZncQXr2b6GkEBQDfscspYolNgNPIhk=
-=Xc5a
------END PGP SIGNATURE-----
-
---OUZx14CP7tCARnAz--
+>  static void test_guest_memfd(unsigned long vm_type)
+>  {
+>         uint64_t flags = 0;
+>         struct kvm_vm *vm;
+> -       size_t total_size;
+> -       int fd;
+> -
+> -       total_size = page_size * 4;
+>
+>         vm = vm_create_barebones_type(vm_type);
+>
+> @@ -276,24 +280,21 @@ static void test_guest_memfd(unsigned long vm_type)
+>         test_create_guest_memfd_multiple(vm);
+>         test_create_guest_memfd_invalid_sizes(vm, flags);
+>
+> -       fd = vm_create_guest_memfd(vm, total_size, flags);
+> -
+> -       test_file_read_write(fd);
+> +       gmem_test(file_read_write, vm, flags);
+>
+>         if (flags & GUEST_MEMFD_FLAG_MMAP) {
+> -               test_mmap_supported(fd, total_size);
+> -               test_fault_overflow(fd, total_size);
+> +               gmem_test(mmap_supported, vm, flags);
+> +               gmem_test(fault_overflow, vm, flags);
+>         } else {
+> -               test_mmap_not_supported(fd, total_size);
+> +               gmem_test(mmap_not_supported, vm, flags);
+>         }
+>
+> -       test_file_size(fd, total_size);
+> -       test_fallocate(fd, total_size);
+> -       test_invalid_punch_hole(fd, total_size);
+> +       gmem_test(file_size, vm, flags);
+> +       gmem_test(fallocate, vm, flags);
+> +       gmem_test(invalid_punch_hole, vm, flags);
+>
+>         test_guest_memfd_flags(vm, flags);
+>
+> -       close(fd);
+>         kvm_vm_free(vm);
+>  }
+>
+> --
+> 2.51.0.536.g15c5d4f767-goog
+>
 
