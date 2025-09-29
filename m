@@ -1,169 +1,540 @@
-Return-Path: <linux-kernel+bounces-836050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2B4BA89DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:29:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41ED7BA8A05
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29DA1881EB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3CC3BD59F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DED21FF1A1;
-	Mon, 29 Sep 2025 09:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B312241673;
+	Mon, 29 Sep 2025 09:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ALNZfKad"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q9FYwDDT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M55FIJ4x"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C97221578F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC16A2C11E7
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138140; cv=none; b=K003ui8i57nsuSWcRds1cQuz3ktSRD0PEsNq6hsmJbBarHinI3lg2uCFv4gqdjL4uaE/iKovTZhFgq983yAykxJUun4OzBGs/4yHxELhzqfe5MJOj8cWqXmRt4tXFDv2D7jaEoGRcWqAiyYIeSYZLEGZ4THx/cl9yRllEi2qizQ=
+	t=1759138146; cv=none; b=q8V0ircE4KAt+1IrSkh8kSe12LXNrp3gSl9UnxAWI12KH6As5Xx5Ts2kU6wMTJl6DI51d1XG8WiUfu446bajoezsws7H+FKZ+5/BqbJRuAtTRRR/q9usHirF2gdeoCtX3JZNPUj7dpeZ2WVTop+ooVf5f5gUcaHk72GpwA18atw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138140; c=relaxed/simple;
-	bh=9Iv/YKi4vWmW1Ixln+NK3vRNp+MgtI2uqSJRCvisxvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ir0JExfn+TpyPjxokfC4fzJLQZWhsVq1PcL+gOIVrurPKWRfsWBVn6wOV04RXfSzOIReLRwRgE9N/+SKDrXdBYrbrntdnic4g3ND1mpTWIaBjP9toB69fchNSKEjv0Yr7BeHgRZwFm2TawDABqemGg2a3e0UV0m3OErVQZGq2Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ALNZfKad; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759138138;
+	s=arc-20240116; t=1759138146; c=relaxed/simple;
+	bh=qjlQudrjSseXx3c797hhjWkkGPx0+2UqjCwGViC5Vao=;
+	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=jgaaLQVzLZ/CMMDGMVKQSpQF7okPkeUpjGg6mrJoQicwDl6xjde4kPPjynFBxCpl3oDHnKnnb10UsWp8vFJ+C6k0Yxkjo03aY7G/YY3Jx1xyJ5TuKWYkneiKtNGt32xPhn7iH8z3IOhZ3fr9CGSJY9s5tthGE+gv2Q7BJ8AMRAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q9FYwDDT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M55FIJ4x; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759138136;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uFkqt0GKSONCdD0Ht/pmTUQIhyf3zin58Hn7YjIOo84=;
-	b=ALNZfKadijhd7Nl5aP5YITR+XPE+mMwh2RJ1iUyweWg9dymL6UJ+m1V9r1LlZhromCwDe3
-	FhA7R5W5IO/jj1qu829WnCV0mK0LUTpEX93aHGWipCBwdJ98oxmuuH3iDrKxI7hhFoK/e4
-	30C9fqWbxaEEntNV7tzsmctfiLXl9WU=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-2ljB1uJQO7Wzn2u9SvIgSQ-1; Mon, 29 Sep 2025 05:28:56 -0400
-X-MC-Unique: 2ljB1uJQO7Wzn2u9SvIgSQ-1
-X-Mimecast-MFC-AGG-ID: 2ljB1uJQO7Wzn2u9SvIgSQ_1759138135
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f7b5c27d41so2324672f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:28:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759138135; x=1759742935;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uFkqt0GKSONCdD0Ht/pmTUQIhyf3zin58Hn7YjIOo84=;
-        b=Xu7DVUXnl9arAtzb7jVkgmLj43OHCzyWHB9VgPj8uytyCiGZsv26aA8IP0xMiqESzP
-         8RaY9p6inZgyj3hSdaCJ+oPINakXXWX11wWOOWuT6jWxy5FVTs6ybPG7eNI3br+oZZP8
-         qMiP8TTumzTpgkAXzsMw49zahKNqGlJwqbVxee8WidtP97m117F7xa3pGbIQTtyiGluY
-         B3atgzBsIj3/bDR5LSzRjrSlxD5S3dInjTAKlGMBOuwU9kKOWVIhlz/aQI7mQ1gIJBqH
-         vHAao3u+FXaZVruc5Gx5CO/+2Uv6o9BKbt1UxHjsvzXCQzYq3fk10mtHu8AFl8pOwdP4
-         49Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7QrPWetaVWoDzVMU2qWAeWbHjt2jQEoJyPTRA0WpkUxFBjenzrUK7HwTOqkxdorurd+ptLnffX9xxp30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1TePZJdoYLEd4QATAFxcnICR9kMx1vyg6n5x7X2ATOeCtbXt6
-	K694vX/usMzTAQGSYCr+6lVTIbiMpxLZZ+hVUnrTvmliisjNlFeSz6+ZswHAk4PVknIMe76lsiK
-	hUQS+4POXfvvS4oyVnsF6vYUIkmha8Fzp2iCTvOjLuT6+ZZ/YVtecZOoM6wNS8S3Xtw==
-X-Gm-Gg: ASbGncsj54TXpm74gXGqhuy9WSZOvxbIR7JjMBne9QT1Zih1dB80w01KsYpIRBovMkS
-	mrBjfxFk8VgWwAKKPUim0rj5ShrSAjSoKMdmiCTsdgN4JWY54a8qE6s/ljlzz/q1vcGQs43sxjq
-	fAbeQEVfDgtcZ8GCNTY2F1XsRxfwA1A+1svnppGhApx+zt6KQEaVxNoTg/ZGt5RngzIw7DLEM6c
-	xoxZpaFKXsN6ENlYe3krjlRyH81azae7AKt4JMmFTWe+WkPSdNsA/0lEpqWul8mG1Inlm/LqOqh
-	dEf/BnPtIzklhLAoEGH9nbQIcKdif1nDIufWoZdGzA8Ov2RlHBMS5a+qs3Oae+mT4QDSlgtpf/F
-	9WByDdufbzW4ZdpoJ+m7ZG/NdQtqzoGwTpHAYn1Dgy24Yd4iw35JhyMTDL2UYxct9cw==
-X-Received: by 2002:a05:6000:310e:b0:3ee:11d1:2a1e with SMTP id ffacd0b85a97d-418006e9436mr7736208f8f.10.1759138135481;
-        Mon, 29 Sep 2025 02:28:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhj92keFT9kI7se9rXn87mbCWcrzPoba9ngrzHqfBYVZUSwQh/f7s1gufI5z/APklWGCpBjg==
-X-Received: by 2002:a05:6000:310e:b0:3ee:11d1:2a1e with SMTP id ffacd0b85a97d-418006e9436mr7736181f8f.10.1759138135076;
-        Mon, 29 Sep 2025 02:28:55 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f05:e100:526f:9b8:bd2a:2997? (p200300d82f05e100526f09b8bd2a2997.dip0.t-ipconnect.de. [2003:d8:2f05:e100:526f:9b8:bd2a:2997])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e56f536a3sm6047565e9.8.2025.09.29.02.28.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 02:28:54 -0700 (PDT)
-Message-ID: <69695cae-3b1b-4d5f-8616-6de1c804b6f1@redhat.com>
-Date: Mon, 29 Sep 2025 11:28:53 +0200
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MuM6dxwYRvwht+AD9Fc50Yyh7RjG672LA3Jri4nOW+M=;
+	b=q9FYwDDT7tIKbhwgVvDcwCdo3FisA3skk8bxqrcUTVRWXPshH6PgcPv5UA/qA5E302PfPL
+	7fRDvyuRhv2meCGyt4cBrLGqWKHHq6oiweYJdtwEn70EXu6zm20d6U5WvLWbM3lSsyQ4XW
+	NF7zezJ1tHtHxhYWTm/LnL8OKoWz/proxy1Yem7tSHnnL3zYtdQDIfNVYQ7q0jI1WhP7c3
+	5zC17tErWYkae2rQ6dRrev1F5OISIxAXyXUq3i3NP2xqKsoD9R8Uf/Y+9LfhCwT8iE+h+Z
+	OJz8hAA90yhI5wqOPbr70knBfh2z/eJiFN7bRlTsxLYwoDj0bnckG+SEAsJMPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759138136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MuM6dxwYRvwht+AD9Fc50Yyh7RjG672LA3Jri4nOW+M=;
+	b=M55FIJ4xAXtvzk8OdF5frF1xeFrNFAscB6c+mKq70yL5xOwVcxB+13qeHeEMNWuhNbU71U
+	r30WZ1/psDKHpkBQ==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] core/core for v6.18-rc1
+Message-ID: <175913807599.495041.10251515322736195577.tglx@xen13>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] KVM: selftests: Verify that faulting in private
- guest_memfd memory fails
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Fuad Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>
-References: <20250926163114.2626257-1-seanjc@google.com>
- <20250926163114.2626257-7-seanjc@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250926163114.2626257-7-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Date: Mon, 29 Sep 2025 11:28:54 +0200 (CEST)
 
-On 26.09.25 18:31, Sean Christopherson wrote:
-> Add a guest_memfd testcase to verify that faulting in private memory gets
-> a SIGBUS.  For now, test only the case where memory is private by default
-> since KVM doesn't yet support in-place conversion.
-> 
-> Cc: Ackerley Tng <ackerleytng@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
+Linus,
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+please pull the latest core/core branch from:
 
--- 
-Cheers
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-core-2025-0=
+9-29
 
-David / dhildenb
+up to:  3ec09344b01a: LoongArch: Fix bitflag conflict for TIF_FIXADE
+
+A set of changes to consolidate the generic TIF bits accross architectures
+
+All architectures define the same set of generic TIF bits. This makes it
+pointlessly hard to add a new generic TIF bit or to change an existing one.
+
+Provide a generic variant and convert the architectures which utilize the
+generic entry code over to use it. The TIF space is divided into 16 generic
+bits and 16 architecture specific bits, which turned out to provide enough
+space on both sides.
+
+Thanks,
+
+	tglx
+
+------------------>
+Sven Schnelle (1):
+      s390/entry: Remove unused TIF flags
+
+Thomas Gleixner (5):
+      asm-generic: Provide generic TIF infrastructure
+      x86: Use generic TIF bits
+      s390: Use generic TIF bits
+      loongarch: Use generic TIF bits
+      riscv: Use generic TIF bits
+
+Yao Zi (1):
+      LoongArch: Fix bitflag conflict for TIF_FIXADE
+
+
+ arch/Kconfig                             |  4 ++
+ arch/loongarch/Kconfig                   |  1 +
+ arch/loongarch/include/asm/thread_info.h | 76 ++++++++++++++----------------=
+--
+ arch/riscv/Kconfig                       |  1 +
+ arch/riscv/include/asm/thread_info.h     | 31 ++++++-------
+ arch/s390/Kconfig                        |  1 +
+ arch/s390/include/asm/thread_info.h      | 50 +++++++--------------
+ arch/x86/Kconfig                         |  1 +
+ arch/x86/include/asm/thread_info.h       | 76 +++++++++++++-----------------=
+--
+ include/asm-generic/thread_info_tif.h    | 48 ++++++++++++++++++++
+ 10 files changed, 150 insertions(+), 139 deletions(-)
+ create mode 100644 include/asm-generic/thread_info_tif.h
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index d1b4ffd6e085..c20df40a7220 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -1730,6 +1730,10 @@ config ARCH_VMLINUX_NEEDS_RELOCS
+ 	  relocations preserved. This is used by some architectures to
+ 	  construct bespoke relocation tables for KASLR.
+=20
++# Select if architecture uses the common generic TIF bits
++config HAVE_GENERIC_TIF_BITS
++       bool
++
+ source "kernel/gcov/Kconfig"
+=20
+ source "scripts/gcc-plugins/Kconfig"
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index f0abc38c40ac..2e90d862ebb3 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -140,6 +140,7 @@ config LOONGARCH
+ 	select HAVE_EBPF_JIT
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if !ARCH_STRICT_ALIGN
+ 	select HAVE_EXIT_THREAD
++	select HAVE_GENERIC_TIF_BITS
+ 	select HAVE_GUP_FAST
+ 	select HAVE_FTRACE_GRAPH_FUNC
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+diff --git a/arch/loongarch/include/asm/thread_info.h b/arch/loongarch/includ=
+e/asm/thread_info.h
+index 9dfa2ef00816..4d7117fcdc78 100644
+--- a/arch/loongarch/include/asm/thread_info.h
++++ b/arch/loongarch/include/asm/thread_info.h
+@@ -65,50 +65,42 @@ register unsigned long current_stack_pointer __asm__("$sp=
+");
+  *   access
+  * - pending work-to-be-done flags are in LSW
+  * - other flags in MSW
++ *
++ * Tell the generic TIF infrastructure which special bits loongarch supports
+  */
+-#define TIF_NEED_RESCHED	0	/* rescheduling necessary */
+-#define TIF_NEED_RESCHED_LAZY	1	/* lazy rescheduling necessary */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NOTIFY_RESUME	3	/* callback before returning to user */
+-#define TIF_NOTIFY_SIGNAL	4	/* signal notifications exist */
+-#define TIF_RESTORE_SIGMASK	5	/* restore signal mask in do_signal() */
+-#define TIF_NOHZ		6	/* in adaptive nohz mode */
+-#define TIF_UPROBE		7	/* breakpointed or singlestepping */
+-#define TIF_USEDFPU		8	/* FPU was used by this task this quantum (SMP) */
+-#define TIF_USEDSIMD		9	/* SIMD has been used this quantum */
+-#define TIF_MEMDIE		10	/* is terminating due to OOM killer */
+-#define TIF_FIXADE		11	/* Fix address errors in software */
+-#define TIF_LOGADE		12	/* Log address errors to syslog */
+-#define TIF_32BIT_REGS		13	/* 32-bit general purpose registers */
+-#define TIF_32BIT_ADDR		14	/* 32-bit address space */
+-#define TIF_LOAD_WATCH		15	/* If set, load watch registers */
+-#define TIF_SINGLESTEP		16	/* Single Step */
+-#define TIF_LSX_CTX_LIVE	17	/* LSX context must be preserved */
+-#define TIF_LASX_CTX_LIVE	18	/* LASX context must be preserved */
+-#define TIF_USEDLBT		19	/* LBT was used by this task this quantum (SMP) */
+-#define TIF_LBT_CTX_LIVE	20	/* LBT context must be preserved */
+-#define TIF_PATCH_PENDING	21	/* pending live patching update */
++#define HAVE_TIF_NEED_RESCHED_LAZY
++#define HAVE_TIF_RESTORE_SIGMASK
++
++#include <asm-generic/thread_info_tif.h>
++
++/* Architecture specific bits */
++#define TIF_NOHZ		16	/* in adaptive nohz mode */
++#define TIF_USEDFPU		17	/* FPU was used by this task this quantum (SMP) */
++#define TIF_USEDSIMD		18	/* SIMD has been used this quantum */
++#define TIF_FIXADE		19	/* Fix address errors in software */
++#define TIF_LOGADE		20	/* Log address errors to syslog */
++#define TIF_32BIT_REGS		21	/* 32-bit general purpose registers */
++#define TIF_32BIT_ADDR		22	/* 32-bit address space */
++#define TIF_LOAD_WATCH		23	/* If set, load watch registers */
++#define TIF_SINGLESTEP		24	/* Single Step */
++#define TIF_LSX_CTX_LIVE	25	/* LSX context must be preserved */
++#define TIF_LASX_CTX_LIVE	26	/* LASX context must be preserved */
++#define TIF_USEDLBT		27	/* LBT was used by this task this quantum (SMP) */
++#define TIF_LBT_CTX_LIVE	28	/* LBT context must be preserved */
+=20
+-#define _TIF_NEED_RESCHED	(1<<TIF_NEED_RESCHED)
+-#define _TIF_NEED_RESCHED_LAZY	(1<<TIF_NEED_RESCHED_LAZY)
+-#define _TIF_SIGPENDING		(1<<TIF_SIGPENDING)
+-#define _TIF_NOTIFY_RESUME	(1<<TIF_NOTIFY_RESUME)
+-#define _TIF_NOTIFY_SIGNAL	(1<<TIF_NOTIFY_SIGNAL)
+-#define _TIF_NOHZ		(1<<TIF_NOHZ)
+-#define _TIF_UPROBE		(1<<TIF_UPROBE)
+-#define _TIF_USEDFPU		(1<<TIF_USEDFPU)
+-#define _TIF_USEDSIMD		(1<<TIF_USEDSIMD)
+-#define _TIF_FIXADE		(1<<TIF_FIXADE)
+-#define _TIF_LOGADE		(1<<TIF_LOGADE)
+-#define _TIF_32BIT_REGS		(1<<TIF_32BIT_REGS)
+-#define _TIF_32BIT_ADDR		(1<<TIF_32BIT_ADDR)
+-#define _TIF_LOAD_WATCH		(1<<TIF_LOAD_WATCH)
+-#define _TIF_SINGLESTEP		(1<<TIF_SINGLESTEP)
+-#define _TIF_LSX_CTX_LIVE	(1<<TIF_LSX_CTX_LIVE)
+-#define _TIF_LASX_CTX_LIVE	(1<<TIF_LASX_CTX_LIVE)
+-#define _TIF_USEDLBT		(1<<TIF_USEDLBT)
+-#define _TIF_LBT_CTX_LIVE	(1<<TIF_LBT_CTX_LIVE)
+-#define _TIF_PATCH_PENDING	(1<<TIF_PATCH_PENDING)
++#define _TIF_NOHZ		BIT(TIF_NOHZ)
++#define _TIF_USEDFPU		BIT(TIF_USEDFPU)
++#define _TIF_USEDSIMD		BIT(TIF_USEDSIMD)
++#define _TIF_FIXADE		BIT(TIF_FIXADE)
++#define _TIF_LOGADE		BIT(TIF_LOGADE)
++#define _TIF_32BIT_REGS		BIT(TIF_32BIT_REGS)
++#define _TIF_32BIT_ADDR		BIT(TIF_32BIT_ADDR)
++#define _TIF_LOAD_WATCH		BIT(TIF_LOAD_WATCH)
++#define _TIF_SINGLESTEP		BIT(TIF_SINGLESTEP)
++#define _TIF_LSX_CTX_LIVE	BIT(TIF_LSX_CTX_LIVE)
++#define _TIF_LASX_CTX_LIVE	BIT(TIF_LASX_CTX_LIVE)
++#define _TIF_USEDLBT		BIT(TIF_USEDLBT)
++#define _TIF_LBT_CTX_LIVE	BIT(TIF_LBT_CTX_LIVE)
+=20
+ #endif /* __KERNEL__ */
+ #endif /* _ASM_THREAD_INFO_H */
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 51dcd8eaa243..0c280614a284 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -161,6 +161,7 @@ config RISCV
+ 	select HAVE_FUNCTION_GRAPH_FREGS
+ 	select HAVE_FUNCTION_TRACER if !XIP_KERNEL && HAVE_DYNAMIC_FTRACE
+ 	select HAVE_EBPF_JIT if MMU
++	select HAVE_GENERIC_TIF_BITS
+ 	select HAVE_GUP_FAST if MMU
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/th=
+read_info.h
+index f5916a70879a..a315b0261b9d 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -107,23 +107,18 @@ int arch_dup_task_struct(struct task_struct *dst, struc=
+t task_struct *src);
+  * - pending work-to-be-done flags are in lowest half-word
+  * - other flags in upper half-word(s)
+  */
+-#define TIF_NEED_RESCHED	0	/* rescheduling necessary */
+-#define TIF_NEED_RESCHED_LAZY	1       /* Lazy rescheduling needed */
+-#define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+-#define TIF_SIGPENDING		3	/* signal pending */
+-#define TIF_RESTORE_SIGMASK	4	/* restore signal mask in do_signal() */
+-#define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+-#define TIF_NOTIFY_SIGNAL	9	/* signal notifications exist */
+-#define TIF_UPROBE		10	/* uprobe breakpoint or singlestep */
+-#define TIF_32BIT		11	/* compat-mode 32bit process */
+-#define TIF_RISCV_V_DEFER_RESTORE	12 /* restore Vector before returing to us=
+er */
+-
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+-#define _TIF_RISCV_V_DEFER_RESTORE	(1 << TIF_RISCV_V_DEFER_RESTORE)
++
++/*
++ * Tell the generic TIF infrastructure which bits riscv supports
++ */
++#define HAVE_TIF_NEED_RESCHED_LAZY
++#define HAVE_TIF_RESTORE_SIGMASK
++
++#include <asm-generic/thread_info_tif.h>
++
++#define TIF_32BIT			16	/* compat-mode 32bit process */
++#define TIF_RISCV_V_DEFER_RESTORE	17	/* restore Vector before returing to us=
+er */
++
++#define _TIF_RISCV_V_DEFER_RESTORE	BIT(TIF_RISCV_V_DEFER_RESTORE)
+=20
+ #endif /* _ASM_RISCV_THREAD_INFO_H */
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index bf680c26a33c..f991ab92e391 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -199,6 +199,7 @@ config S390
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
+ 	select HAVE_EBPF_JIT if HAVE_MARCH_Z196_FEATURES
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
++	select HAVE_GENERIC_TIF_BITS
+ 	select HAVE_GUP_FAST
+ 	select HAVE_FENTRY
+ 	select HAVE_FTRACE_GRAPH_FUNC
+diff --git a/arch/s390/include/asm/thread_info.h b/arch/s390/include/asm/thre=
+ad_info.h
+index f6ed2c8192c8..7878e9bfbf07 100644
+--- a/arch/s390/include/asm/thread_info.h
++++ b/arch/s390/include/asm/thread_info.h
+@@ -56,49 +56,31 @@ void arch_setup_new_exec(void);
+=20
+ /*
+  * thread information flags bit numbers
++ *
++ * Tell the generic TIF infrastructure which special bits s390 supports
+  */
+-#define TIF_NOTIFY_RESUME	0	/* callback before returning to user */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_NEED_RESCHED_LAZY	3	/* lazy rescheduling needed */
+-#define TIF_UPROBE		4	/* breakpointed or single-stepping */
+-#define TIF_PATCH_PENDING	5	/* pending live patching update */
+-#define TIF_ASCE_PRIMARY	6	/* primary asce is kernel asce */
+-#define TIF_NOTIFY_SIGNAL	7	/* signal notifications exist */
+-#define TIF_GUARDED_STORAGE	8	/* load guarded storage control block */
+-#define TIF_ISOLATE_BP_GUEST	9	/* Run KVM guests with isolated BP */
+-#define TIF_PER_TRAP		10	/* Need to handle PER trap on exit to usermode */
+-#define TIF_31BIT		16	/* 32bit process */
+-#define TIF_MEMDIE		17	/* is terminating due to OOM killer */
+-#define TIF_RESTORE_SIGMASK	18	/* restore signal mask in do_signal() */
+-#define TIF_SINGLE_STEP		19	/* This task is single stepped */
+-#define TIF_BLOCK_STEP		20	/* This task is block stepped */
+-#define TIF_UPROBE_SINGLESTEP	21	/* This task is uprobe single stepped */
+-#define TIF_SYSCALL_TRACE	24	/* syscall trace active */
+-#define TIF_SYSCALL_AUDIT	25	/* syscall auditing active */
+-#define TIF_SECCOMP		26	/* secure computing */
+-#define TIF_SYSCALL_TRACEPOINT	27	/* syscall tracepoint instrumentation */
++#define HAVE_TIF_NEED_RESCHED_LAZY
++#define HAVE_TIF_RESTORE_SIGMASK
++
++#include <asm-generic/thread_info_tif.h>
++
++/* Architecture specific bits */
++#define TIF_ASCE_PRIMARY	16	/* primary asce is kernel asce */
++#define TIF_GUARDED_STORAGE	17	/* load guarded storage control block */
++#define TIF_ISOLATE_BP_GUEST	18	/* Run KVM guests with isolated BP */
++#define TIF_PER_TRAP		19	/* Need to handle PER trap on exit to usermode */
++#define TIF_31BIT		20	/* 32bit process */
++#define TIF_SINGLE_STEP		21	/* This task is single stepped */
++#define TIF_BLOCK_STEP		22	/* This task is block stepped */
++#define TIF_UPROBE_SINGLESTEP	23	/* This task is uprobe single stepped */
+=20
+-#define _TIF_NOTIFY_RESUME	BIT(TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		BIT(TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	BIT(TIF_NEED_RESCHED)
+-#define _TIF_NEED_RESCHED_LAZY	BIT(TIF_NEED_RESCHED_LAZY)
+-#define _TIF_UPROBE		BIT(TIF_UPROBE)
+-#define _TIF_PATCH_PENDING	BIT(TIF_PATCH_PENDING)
+ #define _TIF_ASCE_PRIMARY	BIT(TIF_ASCE_PRIMARY)
+-#define _TIF_NOTIFY_SIGNAL	BIT(TIF_NOTIFY_SIGNAL)
+ #define _TIF_GUARDED_STORAGE	BIT(TIF_GUARDED_STORAGE)
+ #define _TIF_ISOLATE_BP_GUEST	BIT(TIF_ISOLATE_BP_GUEST)
+ #define _TIF_PER_TRAP		BIT(TIF_PER_TRAP)
+ #define _TIF_31BIT		BIT(TIF_31BIT)
+-#define _TIF_MEMDIE		BIT(TIF_MEMDIE)
+-#define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
+ #define _TIF_SINGLE_STEP	BIT(TIF_SINGLE_STEP)
+ #define _TIF_BLOCK_STEP		BIT(TIF_BLOCK_STEP)
+ #define _TIF_UPROBE_SINGLESTEP	BIT(TIF_UPROBE_SINGLESTEP)
+-#define _TIF_SYSCALL_TRACE	BIT(TIF_SYSCALL_TRACE)
+-#define _TIF_SYSCALL_AUDIT	BIT(TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		BIT(TIF_SECCOMP)
+-#define _TIF_SYSCALL_TRACEPOINT	BIT(TIF_SYSCALL_TRACEPOINT)
+=20
+ #endif /* _ASM_THREAD_INFO_H */
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 52c8910ba2ef..70b94e025f41 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -239,6 +239,7 @@ config X86
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	select HAVE_EISA			if X86_32
+ 	select HAVE_EXIT_THREAD
++	select HAVE_GENERIC_TIF_BITS
+ 	select HAVE_GUP_FAST
+ 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
+ 	select HAVE_FTRACE_GRAPH_FUNC		if HAVE_FUNCTION_GRAPH_TRACER
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread=
+_info.h
+index 9282465eea21..e71e0e8362ed 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -80,56 +80,42 @@ struct thread_info {
+ #endif
+=20
+ /*
+- * thread information flags
+- * - these are process state flags that various assembly files
+- *   may need to access
++ * Tell the generic TIF infrastructure which bits x86 supports
+  */
+-#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_NEED_RESCHED_LAZY	4	/* Lazy rescheduling needed */
+-#define TIF_SINGLESTEP		5	/* reenable singlestep on user return*/
+-#define TIF_SSBD		6	/* Speculative store bypass disable */
+-#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
+-#define TIF_SPEC_L1D_FLUSH	10	/* Flush L1D on mm switches (processes) */
+-#define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+-#define TIF_UPROBE		12	/* breakpointed or singlestepping */
+-#define TIF_PATCH_PENDING	13	/* pending live patching update */
+-#define TIF_NEED_FPU_LOAD	14	/* load FPU on return to userspace */
+-#define TIF_NOCPUID		15	/* CPUID is not accessible in userland */
+-#define TIF_NOTSC		16	/* TSC is not accessible in userland */
+-#define TIF_NOTIFY_SIGNAL	17	/* signal notifications exist */
+-#define TIF_MEMDIE		20	/* is terminating due to OOM killer */
+-#define TIF_POLLING_NRFLAG	21	/* idle is polling for TIF_NEED_RESCHED */
++#define HAVE_TIF_NEED_RESCHED_LAZY
++#define HAVE_TIF_POLLING_NRFLAG
++#define HAVE_TIF_SINGLESTEP
++
++#include <asm-generic/thread_info_tif.h>
++
++/* Architecture specific TIF space starts at 16 */
++#define TIF_SSBD		16	/* Speculative store bypass disable */
++#define TIF_SPEC_IB		17	/* Indirect branch speculation mitigation */
++#define TIF_SPEC_L1D_FLUSH	18	/* Flush L1D on mm switches (processes) */
++#define TIF_NEED_FPU_LOAD	19	/* load FPU on return to userspace */
++#define TIF_NOCPUID		20	/* CPUID is not accessible in userland */
++#define TIF_NOTSC		21	/* TSC is not accessible in userland */
+ #define TIF_IO_BITMAP		22	/* uses I/O bitmap */
+ #define TIF_SPEC_FORCE_UPDATE	23	/* Force speculation MSR update in context =
+switch */
+ #define TIF_FORCED_TF		24	/* true if TF in eflags artificially */
+-#define TIF_BLOCKSTEP		25	/* set when we want DEBUGCTLMSR_BTF */
++#define TIF_SINGLESTEP		25	/* reenable singlestep on user return*/
++#define TIF_BLOCKSTEP		26	/* set when we want DEBUGCTLMSR_BTF */
+ #define TIF_LAZY_MMU_UPDATES	27	/* task is updating the mmu lazily */
+-#define TIF_ADDR32		29	/* 32-bit address space on 64 bits */
+-
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
+-#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+-#define _TIF_SSBD		(1 << TIF_SSBD)
+-#define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
+-#define _TIF_SPEC_L1D_FLUSH	(1 << TIF_SPEC_L1D_FLUSH)
+-#define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+-#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+-#define _TIF_NEED_FPU_LOAD	(1 << TIF_NEED_FPU_LOAD)
+-#define _TIF_NOCPUID		(1 << TIF_NOCPUID)
+-#define _TIF_NOTSC		(1 << TIF_NOTSC)
+-#define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
+-#define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+-#define _TIF_IO_BITMAP		(1 << TIF_IO_BITMAP)
+-#define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
+-#define _TIF_FORCED_TF		(1 << TIF_FORCED_TF)
+-#define _TIF_BLOCKSTEP		(1 << TIF_BLOCKSTEP)
+-#define _TIF_LAZY_MMU_UPDATES	(1 << TIF_LAZY_MMU_UPDATES)
+-#define _TIF_ADDR32		(1 << TIF_ADDR32)
++#define TIF_ADDR32		28	/* 32-bit address space on 64 bits */
++
++#define _TIF_SSBD		BIT(TIF_SSBD)
++#define _TIF_SPEC_IB		BIT(TIF_SPEC_IB)
++#define _TIF_SPEC_L1D_FLUSH	BIT(TIF_SPEC_L1D_FLUSH)
++#define _TIF_NEED_FPU_LOAD	BIT(TIF_NEED_FPU_LOAD)
++#define _TIF_NOCPUID		BIT(TIF_NOCPUID)
++#define _TIF_NOTSC		BIT(TIF_NOTSC)
++#define _TIF_IO_BITMAP		BIT(TIF_IO_BITMAP)
++#define _TIF_SPEC_FORCE_UPDATE	BIT(TIF_SPEC_FORCE_UPDATE)
++#define _TIF_FORCED_TF		BIT(TIF_FORCED_TF)
++#define _TIF_BLOCKSTEP		BIT(TIF_BLOCKSTEP)
++#define _TIF_SINGLESTEP		BIT(TIF_SINGLESTEP)
++#define _TIF_LAZY_MMU_UPDATES	BIT(TIF_LAZY_MMU_UPDATES)
++#define _TIF_ADDR32		BIT(TIF_ADDR32)
+=20
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW_BASE					\
+diff --git a/include/asm-generic/thread_info_tif.h b/include/asm-generic/thre=
+ad_info_tif.h
+new file mode 100644
+index 000000000000..ee3793e9b1a4
+--- /dev/null
++++ b/include/asm-generic/thread_info_tif.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_GENERIC_THREAD_INFO_TIF_H_
++#define _ASM_GENERIC_THREAD_INFO_TIF_H_
++
++#include <vdso/bits.h>
++
++/* Bits 16-31 are reserved for architecture specific purposes */
++
++#define TIF_NOTIFY_RESUME	0	// callback before returning to user
++#define _TIF_NOTIFY_RESUME	BIT(TIF_NOTIFY_RESUME)
++
++#define TIF_SIGPENDING		1	// signal pending
++#define _TIF_SIGPENDING		BIT(TIF_SIGPENDING)
++
++#define TIF_NOTIFY_SIGNAL	2	// signal notifications exist
++#define _TIF_NOTIFY_SIGNAL	BIT(TIF_NOTIFY_SIGNAL)
++
++#define TIF_MEMDIE		3	// is terminating due to OOM killer
++#define _TIF_MEMDIE		BIT(TIF_MEMDIE)
++
++#define TIF_NEED_RESCHED	4	// rescheduling necessary
++#define _TIF_NEED_RESCHED	BIT(TIF_NEED_RESCHED)
++
++#ifdef HAVE_TIF_NEED_RESCHED_LAZY
++# define TIF_NEED_RESCHED_LAZY	5	// Lazy rescheduling needed
++# define _TIF_NEED_RESCHED_LAZY	BIT(TIF_NEED_RESCHED_LAZY)
++#endif
++
++#ifdef HAVE_TIF_POLLING_NRFLAG
++# define TIF_POLLING_NRFLAG	6	// idle is polling for TIF_NEED_RESCHED
++# define _TIF_POLLING_NRFLAG	BIT(TIF_POLLING_NRFLAG)
++#endif
++
++#define TIF_USER_RETURN_NOTIFY	7	// notify kernel of userspace return
++#define _TIF_USER_RETURN_NOTIFY	BIT(TIF_USER_RETURN_NOTIFY)
++
++#define TIF_UPROBE		8	// breakpointed or singlestepping
++#define _TIF_UPROBE		BIT(TIF_UPROBE)
++
++#define TIF_PATCH_PENDING	9	// pending live patching update
++#define _TIF_PATCH_PENDING	BIT(TIF_PATCH_PENDING)
++
++#ifdef HAVE_TIF_RESTORE_SIGMASK
++# define TIF_RESTORE_SIGMASK	10	// Restore signal mask in do_signal() */
++# define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
++#endif
++
++#endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
 
 
