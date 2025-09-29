@@ -1,200 +1,164 @@
-Return-Path: <linux-kernel+bounces-836691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979E6BAA57C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:36:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7AFBAA5BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B3216DE50
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1801923A94
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA7D23E340;
-	Mon, 29 Sep 2025 18:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57B523D28B;
+	Mon, 29 Sep 2025 18:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KbG4o0W7"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="BHxl/QZs"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEF825A2DE
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A660222F76F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759170911; cv=none; b=kJ/FQ15Q4bpID7KtGQBvE+gG/j2ni1SvPTAJA2F/OiXK6ZKxiC9WXyujnxiCBUTPyIDFvCD+Zf0Py5/+w9Sl/DcjHegivzRceNaDgjYiljcCCbpxkI7VxzJ1+FE5NeVfLBJfPnS1+ofniJ0pFdMDrT0GFcmjdDaOhLvO7krMqsk=
+	t=1759171074; cv=none; b=Qw7AMBoiR7o0znrjRSIPjVRWts8U0VC2NGdrimXFiESjLwUuapx/Wa9ijrphgru6cFBHyByxAa3AWqJbujlj2YbQGTn1J34If6eEHb4AL01iujRHFwehx84yN0NxeXW5jeV4HEx0HfbC1RgcsPvPxEWWHVeqmaH5cUmA44QS9uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759170911; c=relaxed/simple;
-	bh=fIIb2twrTp+ee3/m37i+hJz/W7LPccSw9IAoxQfZLoY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=o+HJzGUfpR4LfKx7hXY1ncq+8/V0jrMWpf583ip+dj8HygNJqMEhmWsaqLtAjhd+PsnK33sZi33W4adudTzJYwEjfXBO6H7FfBABn4m/i7/ONAfui7sNnxu0pLnZzL3DFLr+W7qNZ6QNnBnlyGQVty0hZzaMKJWPqKWXFNlMrSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KbG4o0W7; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6ee6so62522885ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:35:09 -0700 (PDT)
+	s=arc-20240116; t=1759171074; c=relaxed/simple;
+	bh=JQE3aDLBn4uEFiQFU9/nZ3ri3B1AK5jMtTpQbEJ6b4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVcMX8Td2MGRw0wJyQyk+RoE+TnFmz7AKCg/W0sL/EXr9G6konbx00WhKTkmRAm27y/SkeqODMdMX97WBTyyhfqXvs5opT8tSSF9zD3URQ0IzYo4V10YX8SMU/qC8vDeAQbMtMZniOhxKhWmRJVEwZCnigebgo6+NLvyJeCoR7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=BHxl/QZs; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-781997d195aso1609572b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759170908; x=1759775708; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cXfUqpKd6dHxyOJQiTneWF8LWJFxDmdIGTP3Vx6zlJg=;
-        b=KbG4o0W7WwmgZDQU8+KVf3EvYxvjfG1TtzcbGxe1n+OVl4u5seagQxpxcjQjO3mKht
-         yqwNZxGXvqrEWED6YjJD2272lhqpr3aif1aOHE0AASeb763yO6MCaj0/qrYEyuJNTB/c
-         TgBbPHxFolJihb0JI2I7GUJWwAm9FQeCpN7nBtb7O/7hHW/TYJ6quBcRe9xoRMrl9xqk
-         TDUNkAW9wwcbhuO5nmnsd+vnPcl6W8lnLTMMIRB097jZe3SZd5W/LZr1wqWs97dkf1GP
-         OZv8KZl1TffOyIH36liCxW6ysJpgZZJ5nB65TRgh7U2dch+LA86WeVeu7bKFw3DXCGUt
-         V2xw==
+        d=rivosinc.com; s=google; t=1759171072; x=1759775872; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJLpaj/c6dWR6gSCWApgd6FdexxQb0VtbiytQ5OXSGA=;
+        b=BHxl/QZs1adPEeaIHUBm/st0lzrEt3BMKN5WndQj4qfTbOSO5bZvldmdLTwCA4nCZk
+         Jm5uPmcTJyqhhiXDqZLZLwa883jKuglps6+z64IWPxnH7jEd8dcyshN0hQ6P98uvfQ5X
+         h/+E4oNTuyUkZyREUPiczW9vEVB/1pQ7KgozExmBuGyblHasxdZ5bJfhU6NplQW1i1cV
+         39/AjbhWWeIqk2bDPA7xNugNHwOJsuZcOwzzS3hzDD/OuDHH+Do10qPrW/IYqbAP62gL
+         cEZruIv0e4Vu9RjYVKkDRQHaqOSz8TeXWk+xmOv2gfBObl3jPP4QpTUg+WH+TtjCEk79
+         C0ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759170908; x=1759775708;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cXfUqpKd6dHxyOJQiTneWF8LWJFxDmdIGTP3Vx6zlJg=;
-        b=ECyFieRtBgR+MlePBWC/M7vLC1YIfRr7iJ6slFHmdIYnLNVAVT6HBzmozVSBjcnI2/
-         6TWRdL9aBZvXqI/Dr+JQCA5PpLPcUvOXQcrxgvUDXqgoFGLnDaGhU8D7Jbt1wFZ5TcQI
-         c5RPjUZLGFcFlmmiceaQjvbnwTDAOKMM1ORzUxoh4eCFhVsbo6NfAaqUvDcNIzIIwQmb
-         /PGaOxVOS635tznflDnSQL0fG64+dU/nFaZofDOZ7Qmb8bhjEDBm5XJdAKBz3Lzyvnq6
-         3tdFzcJEGbaPkWhYFqSodl2+gLsoyQS+oeXl7hVcKoNcXHHV3gQMmc1NyljAF4+61BAq
-         DwHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVIk611sCQfUfnzcpnxVQJL9tv6fq6renGhBimJ09RQTfczCOofTyNihWKZRpjfd2BmvTNlVLKjdCgOO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrDiYk3s5PXnQfUpVrYv77/onaF2TXGNiHqdsj2+69KPQnwQEY
-	Y5ztA4R7fJTbmAJaIsUjBwiWHX3dzVI5RQUcTKqqV9UdhQ6RBZFwtMgMX1N8SVE0twsS7hJIDEt
-	3igGOJw==
-X-Google-Smtp-Source: AGHT+IH981e6NsQ3ClHJ6uiza+16E4T3EA3bY2V9J26shLo1MnL8u3/WqbuFvZSBRvr4YgYDuKyVG4B9ukA=
-X-Received: from plje8.prod.google.com ([2002:a17:902:ed88:b0:269:b756:8e38])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:19ce:b0:249:1234:9f7c
- with SMTP id d9443c01a7336-27ed4ac6238mr157088135ad.60.1759170908478; Mon, 29
- Sep 2025 11:35:08 -0700 (PDT)
-Date: Mon, 29 Sep 2025 11:35:07 -0700
-In-Reply-To: <aNrLpkrbnwVSaQGX@google.com>
+        d=1e100.net; s=20230601; t=1759171072; x=1759775872;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iJLpaj/c6dWR6gSCWApgd6FdexxQb0VtbiytQ5OXSGA=;
+        b=TAa+cdX0ri6dgChEwJOUl9bnUtRuE6XeUrHI36djM+Nr3EiXjHdyWI4gGkdkgRaONO
+         r8sv3hx+l5edJRCVtEpQeHK6jNh3YYdaudGxZTPw8JYDeKzbRU/oOwL9+HGWPJsaifWY
+         468wNdka50oQkyfu0zm5EpoZp6vnM5VmLsAJ+unEJ0wUfRW849Xh76kWslTovUVPzYev
+         vo81N95NSUu9eYv5d5woHGaRp8mANb8PrQucE1uLn4wggKPu/NPd0NBucdJSZ0ki2Iat
+         BCX6G/4zTyoDRNT0IPNICkP6W/BPl0BfBbGcY1d6osAJO7fNGXjfffMWfW0ukWDYZN7l
+         Bnew==
+X-Forwarded-Encrypted: i=1; AJvYcCVb6ahNomy1OLKj38JSiqEH9r+l276T8fGSfXdqj/FmR8rffsAWjtahz4SmXBu6l0DOXQcyJ6HEFj/HEpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuyCWn5YV2Q1Kky+8rN0Vipc4KYVt8dIITutLL+Hi4fyC1NebL
+	ZBbvx74O5YWMDyd0W2E5bK8JB1oar3wAkHodL/zz6AdNaCNjJJh9HCmVjn5sR3WRDYv/fdYeJxE
+	DT1LP
+X-Gm-Gg: ASbGncvAnTg6WKD3neaaQqiz7fGyT89sHclR+c2dZrx81E8DsCqkyYi4imDyQvXRf0f
+	05sMGATJTXTDJvxDwrpLV613894ttXwYCfgfgrXwgHXuBkM8TnYf2Y3Z40QCrTRtf5LkhKgejc9
+	oXhh/hdTBngZFXgvuVxtu5G7PrLiyhZfdAPbpVSody18TyOwDxtqcRO4hMUHT3zkCg4vwOjv+iR
+	tLSTLd09mYL/tMeUjql79hBA9LUOrDp4KGT7PeZUOx6Zp5EYWYMqIeXdpBvUT+ebcHuqK2U6jQ1
+	F6dh6PyqHeE/VaJW1BnEIArFJKmJVpazsoxYAQGfMxvGPEL2EJCgmHQMPYOgGC4yxxkN4BFihI0
+	ZECl1awTxkG9zc81J/sRBAT9Drry37OHx
+X-Google-Smtp-Source: AGHT+IHBfLpwSOdsOZ3rlXG6ZEpP4ToRS6T8QkcIX5AOO47fspaa/84bLNk9yI3gfkzoA6f1KMT5jQ==
+X-Received: by 2002:a05:6a00:138d:b0:781:15b0:bed9 with SMTP id d2e1a72fcca58-78115b0c301mr15805467b3a.17.1759171071800;
+        Mon, 29 Sep 2025 11:37:51 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023c1873sm11683639b3a.23.2025.09.29.11.37.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 11:37:51 -0700 (PDT)
+Date: Mon, 29 Sep 2025 11:37:49 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"adhemerval.zanella@linaro.org" <adhemerval.zanella@linaro.org>,
+	"nsz@port70.net" <nsz@port70.net>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"dalias@libc.org" <dalias@libc.org>,
+	"jeffxu@google.com" <jeffxu@google.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
+	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"codonell@redhat.com" <codonell@redhat.com>,
+	"libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH RFC 0/3] arm64/gcs: Allow reuse of user managed shadow
+ stacks
+Message-ID: <aNrR_TD5JB5dHJ5b@debug.ba.rivosinc.com>
+References: <20250921-arm64-gcs-exit-token-v1-0-45cf64e648d5@kernel.org>
+ <760447dc3e5805bf5668e80a94bf32356e2eb2d3.camel@intel.com>
+ <8aab0f36-52ad-4fd6-98c3-bcdba45dbe16@sirena.org.uk>
+ <ac0ceb09ffaeb1f0925b61ed1b82ee6475df2368.camel@intel.com>
+ <604190c7-5931-4e74-a1c9-467e52d3001b@sirena.org.uk>
+ <eab692794cbc82080b708c581efd5973b6004be0.camel@intel.com>
+ <5397025d-7528-4b9c-b38d-b843ab004f47@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-7-seanjc@google.com>
- <diqzldlx1fyk.fsf@google.com> <aNrLpkrbnwVSaQGX@google.com>
-Message-ID: <aNrRW7RtUgFU8ivs@google.com>
-Subject: Re: [PATCH 6/6] KVM: selftests: Verify that faulting in private
- guest_memfd memory fails
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <5397025d-7528-4b9c-b38d-b843ab004f47@sirena.org.uk>
 
-On Mon, Sep 29, 2025, Sean Christopherson wrote:
-> How's this look?
-> 
-> static void test_fault_sigbus(int fd, size_t accessible_size, size_t mmap_size)
-> {
-> 	struct sigaction sa_old, sa_new = {
-> 		.sa_handler = fault_sigbus_handler,
-> 	};
-> 	const uint8_t val = 0xaa;
-> 	uint8_t *mem;
-> 	size_t i;
-> 
-> 	mem = kvm_mmap(mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
-> 
-> 	sigaction(SIGBUS, &sa_new, &sa_old);
-> 	if (sigsetjmp(jmpbuf, 1) == 0) {
-> 		memset(mem, val, mmap_size);
-> 		TEST_FAIL("memset() should have triggered SIGBUS");
-> 	}
-> 	if (sigsetjmp(jmpbuf, 1) == 0) {
-> 		(void)READ_ONCE(mem[accessible_size]);
-> 		TEST_FAIL("load at first unaccessible byte should have triggered SIGBUS");
-> 	}
-> 	sigaction(SIGBUS, &sa_old, NULL);
-> 
-> 	for (i = 0; i < accessible_size; i++)
-> 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
-> 
-> 	kvm_munmap(mem, mmap_size);
-> }
-> 
-> static void test_fault_overflow(int fd, size_t total_size)
-> {
-> 	test_fault_sigbus(fd, total_size, total_size * 4);
-> }
-> 
-> static void test_fault_private(int fd, size_t total_size)
-> {
-> 	test_fault_sigbus(fd, 0, total_size);
-> }
+On Fri, Sep 26, 2025 at 05:09:08PM +0100, Mark Brown wrote:
+>On Fri, Sep 26, 2025 at 03:46:26PM +0000, Edgecombe, Rick P wrote:
+>> On Fri, 2025-09-26 at 01:44 +0100, Mark Brown wrote:
+>
+>> > I agree it seems clearly better from a security point of view to have
+>> > writable shadow stacks than none at all, I don't think there's much
+>> > argument there other than the concerns about the memory consumption
+>> > and performance tradeoffs.
+>
+>> IIRC the WRSS equivalent works the same for ARM where you need to use a
+>> special instruction, right? So we are not talking about full writable
+>
+>Yes, it's GCSSTR for arm64.
 
-And if I don't wantonly change variable names/types, the diff is much cleaner:
+sspush / ssamoswap on RISC-V provides write mechanisms to shadow stack.
 
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index 8ed08be72c43..8e375de2d7d8 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -83,12 +83,11 @@ void fault_sigbus_handler(int signum)
-        siglongjmp(jmpbuf, 1);
- }
- 
--static void test_fault_overflow(int fd, size_t total_size)
-+static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
- {
-        struct sigaction sa_old, sa_new = {
-                .sa_handler = fault_sigbus_handler,
-        };
--       size_t map_size = total_size * 4;
-        const char val = 0xaa;
-        char *mem;
-        size_t i;
-@@ -102,12 +101,22 @@ static void test_fault_overflow(int fd, size_t total_size)
-        }
-        sigaction(SIGBUS, &sa_old, NULL);
- 
--       for (i = 0; i < total_size; i++)
-+       for (i = 0; i < accessible_size; i++)
-                TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
- 
-        kvm_munmap(mem, map_size);
- }
- 
-+static void test_fault_overflow(int fd, size_t total_size)
-+{
-+       test_fault_sigbus(fd, total_size, total_size * 4);
-+}
-+
-+static void test_fault_private(int fd, size_t total_size)
-+{
-+       test_fault_sigbus(fd, 0, total_size);
-+}
-+
- static void test_mmap_not_supported(int fd, size_t total_size)
- {
-        char *mem;
-@@ -279,10 +288,13 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
- 
-        gmem_test(file_read_write, vm, flags);
- 
--       if (flags & GUEST_MEMFD_FLAG_MMAP) {
-+       if (flags & GUEST_MEMFD_FLAG_MMAP &&
-+           flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
-                gmem_test(mmap_supported, vm, flags);
-                gmem_test(mmap_cow, vm, flags);
-                gmem_test(fault_overflow, vm, flags);
-+       } else if (flags & GUEST_MEMFD_FLAG_MMAP) {
-+               gmem_test(fault_private, vm, flags);
-        } else {
-                gmem_test(mmap_not_supported, vm, flags);
-        }
-@@ -300,9 +312,11 @@ static void test_guest_memfd(unsigned long vm_type)
- 
-        __test_guest_memfd(vm, 0);
- 
--       if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
-+       if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP)) {
-+               __test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP);
-                __test_guest_memfd(vm, GUEST_MEMFD_FLAG_MMAP |
-                                       GUEST_MEMFD_FLAG_DEFAULT_SHARED);
-+       }
- 
-        kvm_vm_free(vm);
- }
+
+>
+>> shadow stacks that could get attacked from any overflow, rather,
+>> limited spots that have the WRSS (or similar) instruction. In the
+>> presence of forward edge CFI, we might be able to worry less about
+>> attackers being able to actually reach it? Still not quite as locked
+>> down as having it disabled, but maybe not such a huge gap compared to
+>> the mmap/munmap() stuff that is the alternative we are weighing.
+>
+>Agreed, as I said it's a definite win still - just not quite as strong.
+
+If I have to put philosopher's hat, in order to have wider deployment and
+adoption, its better to have to have better security posture for majority
+users rather than making ultra secure system which is difficult to use.
+
+This just means that mechanism(s) to write-to-shadow stack flows in user space
+have to be carefully done.
+
+- Sparse and not part of compile codegen. Mostly should be hand coded and
+   reviewed.
+
+- Reachability of such gadgets and their usage by adversary should be threat
+   modeled.
+
+
+If forward cfi is enabled, I don't expect gadget of write to shadow stack
+itself being reachable without disabling fcfi or pivoting/corrupting shadow
+stack. The only other way to achieve something like that would be to re-use
+entire function (where sswrite is present) to achieve desired effect. I think
+we should be focussing more on those.
+
+
+
 
