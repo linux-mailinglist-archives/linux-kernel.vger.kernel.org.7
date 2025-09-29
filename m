@@ -1,122 +1,119 @@
-Return-Path: <linux-kernel+bounces-836401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4593EBA995C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:31:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCCBBA9971
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001B43A75BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EC7C7A5118
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEA6309EFE;
-	Mon, 29 Sep 2025 14:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2B3309EEA;
+	Mon, 29 Sep 2025 14:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ybofpbcx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="REi+Z5gF"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9A91DD543;
-	Mon, 29 Sep 2025 14:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C6F3054D6
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759156294; cv=none; b=C3TwVRyJgwxMlFHzahc3NO3DPE1DBCH9zhO/whpeSw0XxKEzE/1bitNigQpBgukinygeevNvaPm+OtToXO7EJSAn0ALRvE5XNVMUH5nMiKFO8N8mS5bRBNaKOX38ge2z2oDghZ/g+zWgkh6Yp/kUwO1QzLwDgjN4nApZSq6XWC4=
+	t=1759156331; cv=none; b=HRpO0QQpoQq2foRGozpO0wqzNRofRlNMUNHGyEezRejG/2aR8ejY/QvMmbF/uRrAMK4H/Tvb7klTxraU7cWHbG6NVfECk4FDrbNRrAqfFtUSU54Put4BvjBzI5o43wBVWjjl6M0luQJy7kALN1ou/JDjiE2qQDQjU+fw9Fj0kr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759156294; c=relaxed/simple;
-	bh=sKuqKNpE5dhMtZf1zaC2ZqjURpyd3C7l8Ef/qH3un8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/WpLQQAY2VhIgq05GZw/Y5gWPTcD50VG9tKgVWCj9VSMe47LRQ4pPcHW7qa+Ymgbzt0AeqeqnysAAevuinVnpYfLSO5ovUaLudG3N+dsCkGTdx4yLYa4b58I73iZgL6lduSgbMgnROmvHM62Am3hddILF/UFsJMpIwp4REagP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ybofpbcx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68AE4C4CEF4;
-	Mon, 29 Sep 2025 14:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759156293;
-	bh=sKuqKNpE5dhMtZf1zaC2ZqjURpyd3C7l8Ef/qH3un8E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ybofpbcx+ejkNvAv75607kTZIE8CUsY9qhrXc/yrJ9X2bu9eV4OnGXQ3TNrOD/y2P
-	 ZTx2iK+hamBmIKKHDaVWhoOTCftImvcznOCK+7AEffOegIkND9rMYBhjXJdQX1r1ZL
-	 0JZPrZuBsBi3OkjiTPDsLn7YSdXtt3i13qbb2sqBLpmyWZ+oVdhkzjg1wkMuDpihUy
-	 6H4hKACxj53QRJs6VTVZG6utz4nyFWuKrwYhNjvjyPwNTkosbGPUWq/6n6pcvlANgh
-	 fQ2kDFeXinDxHted7Q2+zz5VDaq8aUMue0z6xZZqc8r3t6Teq5PIR23t0f4AHQZWzI
-	 MmqWDPc+OcTRw==
-Date: Mon, 29 Sep 2025 09:31:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michael.hennerich@analog.com, nuno.sa@analog.com,
-	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
-	marcelo.schmitt1@gmail.com,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
- and ADAQ4224
-Message-ID: <20250929143132.GA4099970-robh@kernel.org>
-References: <cover.1758916484.git.marcelo.schmitt@analog.com>
- <5dc08b622dac1db561f26034c93910ccff75e965.1758916484.git.marcelo.schmitt@analog.com>
- <20250928111955.175680cb@jic23-huawei>
+	s=arc-20240116; t=1759156331; c=relaxed/simple;
+	bh=LrRPQuMKiOe2UB2zNAgT4DBwOCNLXjtjlT0UfiIrZ1c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W0Xs+x45HdFeLiCq0jhjXWf5UCe1yzMUZDz2oC6BqHhFfhqbbPoi5h0f8RvJ7MNScqHxgATOOrgJ2tVLBnLNh8VPUYjCqi85akwogo4edpEHM9A9r85Ju2Yl05ioL1V6fwNWDki0aZZZiFJrvpitBR0Zg43LSNFaL5HX/e8nRjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=REi+Z5gF; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id dhWndp0tgPYFqwyP; Mon, 29 Sep 2025 10:32:02 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=0Js2CVA9NOJYSlBrL8cos40aWaC+e7UZeUO/zTkOktk=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=REi+Z5gF6X28Y+INjVnP
+	SwcEg5LIxLg7mFIvOva+2X1uiOQg9xH3osRicX31B2DOkUEOKuRoFy/L29K4ToRsdBNo+VLEScif5
+	0Mu3TPPYFi2uUownFmVkV6poIGW1hYuCeCyBpDoiO0+P3RPNlnytQWb4w7IeN+czlgPR7kbN/s=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14216600; Mon, 29 Sep 2025 10:32:02 -0400
+Message-ID: <8082039b-df86-47e7-aaca-8f5413793d6f@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 29 Sep 2025 10:32:02 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928111955.175680cb@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 02/16] scsi: qla2xxx: fix initiator mode with
+ qlini_mode=exclusive
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v2 02/16] scsi: qla2xxx: fix initiator mode with
+ qlini_mode=exclusive
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1759156322
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1172
+X-Barracuda-BRTS-Status: 1
+X-ASG-Debug-ID: 1759156322-1cf43947df3c0120001-xx1T2L
 
-On Sun, Sep 28, 2025 at 11:19:55AM +0100, Jonathan Cameron wrote:
-> On Fri, 26 Sep 2025 17:40:47 -0300
-> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
-> 
-> > ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
-> > PGA (programmable gain amplifier) that scales the input signal prior to it
-> > reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
-> > and A1) that set one of four possible signal gain configurations.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> > Change log v2 -> v3
-> > - PGA gain now described in decibels.
-> > 
-> > The PGA gain is not going to fit well as a channel property because it may
-> > affect more than one channel as in AD7191.
-> > https://www.analog.com/media/en/technical-documentation/data-sheets/AD7191.pdf
-> > 
-> > I consulted a very trustworthy source [1, 2] and learned that describing signal
-> > gains in decibels is a common practice. I now think it would be ideal to describe
-> > these PGA and PGA-like gains with properties in decibel units and this patch
-> > is an attempt of doing so. The only problem with this approach is that we end up
-> > with negative values when the gain is lower than 1 (the signal is attenuated)
-> > and device tree specification doesn't support signed integer types. As the
-> > docs being proposed fail dt_binding_check, I guess I have to nack the patch myself.
-> > Any chance of dt specification eventually support signed integers?
-> > Any suggestions appreciated.
-> > 
-> > [1] https://en.wikipedia.org/wiki/Decibel
-> > [2] https://en.wikipedia.org/wiki/Gain_(electronics)
-> 
-> I still wonder if the better way to describe this is to ignore that it
-> has anything to do with PGA as such and instead describe the pin strapping.
-> 
-> DT folk, is there an existing way to do that? My grep skills are failing to
-> spot one.
-> 
-> We've papered over this for a long time in various IIO drivers by controlling
-> directly what the pin strap controls with weird and wonderful device specific
-> bindings. I wonder if we can't have a gpio driver + binding that rejects all
-> config and just lets us check the current state of an output pin.  Kind of a
-> fixed mode regulator equivalent for gpios.
+When given the module parameter qlini_mode=exclusive, qla2xxx in
+initiator mode is initially unable to successfully send SCSI commands to
+devices it finds while scanning, resulting in an escalating series of
+resets until an adapter reset clears the issue.  Fix by checking the
+active mode instead of the module parameter.
 
-If these are connected to GPIOs, isn't it possible that someone will 
-want to change their value?
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
 
-Other than some generic 'pinstrap-gpios' property, I don't see what we'd 
-do here? I don't feel like pin strapping GPIOs is something that we see 
-all that often.
+v1 -> v2: no changes
 
-Rob
+ drivers/scsi/qla2xxx/qla_os.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index a52293972e10..f0b77f13628d 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3438,13 +3438,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		ha->mqenable = 0;
+ 
+ 	if (ha->mqenable) {
+-		bool startit = false;
+-
+-		if (QLA_TGT_MODE_ENABLED())
+-			startit = false;
+-
+-		if (ql2x_ini_mode == QLA2XXX_INI_MODE_ENABLED)
+-			startit = true;
++		bool startit = !!(host->active_mode & MODE_INITIATOR);
+ 
+ 		/* Create start of day qpairs for Block MQ */
+ 		for (i = 0; i < ha->max_qpairs; i++)
+-- 
+2.43.0
+
 
