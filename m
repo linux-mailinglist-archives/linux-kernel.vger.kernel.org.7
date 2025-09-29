@@ -1,119 +1,129 @@
-Return-Path: <linux-kernel+bounces-836366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C36EBA97B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:08:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D63BA9805
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872311889FC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87610192186C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435613090D1;
-	Mon, 29 Sep 2025 14:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA0F305E19;
+	Mon, 29 Sep 2025 14:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCccVy9f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hU1tJsoQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AF82D3EEE;
-	Mon, 29 Sep 2025 14:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B013064AA
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759154881; cv=none; b=i6EqYObId3CRK39+XpRB/K0oALxnVM3rk1Co+Ytd0m0kL8T2JH7seYmLlOMKBaomIdqTMHmUv9bpkxvJqubafE6x1ZrHcUfB/IAofWNS6b2aeO+g0mxIBCZ+6/qjuZV7ZWzrKVkYyRIxobE+Rjmdeggr3eUST24o2hADLVpy38c=
+	t=1759154994; cv=none; b=nR7bYjkgGsHQ4nkjGaQsYvIQd38OkBJqh1K6ykLRToFdQ/jfk1Mh3c15CKaCQAHm+AmS+cbYGAefWVj5VpTHEgaFjscehcS7lcWT1mjU4NOHV0eP5Qosv5gNQYwIl8j3HNK0D7nqoEp5A0oWstQvwR/gRG7v5Ha4NwUn9Ocx7PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759154881; c=relaxed/simple;
-	bh=FoBBpl8ccxWYD9w4lpYelOu0xiY0jrMgcodo+JP8v2A=;
+	s=arc-20240116; t=1759154994; c=relaxed/simple;
+	bh=LOlZZge0meAaNA7/sV76IApYacLdhdMN0LsoJkQo3xM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSVm+/fDRT8XajROr2OcFofPFrQgn4FVoup+wBK6f6nKE/K0AL20LRyyrZJdI5DIx1hRBkDSeOtZVxnYWsscoTEyGJJamiqCbSTm+fWfHwydH4NE48OLCfxoY6X/vAnMAwy0QEY0Xvkfaljoi9jrdpzCJA1kA5+HlSGgqRUCdM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCccVy9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BAA8C113D0;
-	Mon, 29 Sep 2025 14:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759154881;
-	bh=FoBBpl8ccxWYD9w4lpYelOu0xiY0jrMgcodo+JP8v2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fCccVy9fg8QWar7rFeiqes3QOPgFphlHINvGJQtp3FU8hB2GoG8Bux4JM8BJcRu3D
-	 sAg9bSlRlYJnOB82tStjHNqcTaW5qYE547OoknF+XJztejHje9Jqm+XEO32XmCvoWq
-	 3mV4YFhyOnwAjYuhfyIQJ0YfhV203tQy0/kyM3eTbfdZOv2JdbYBTXSrheHEQXrMvZ
-	 4feBWuf7tGvqGOikHeKhZd/oGaTlOWH3Q+/DANIjXGPgU79me5f3ePwNE9wErqrbiq
-	 zLcMcwI3elA+/xgPXe/vtUhtOS+KLdD9OJF02HqE6PfSTfpQ3jRLP63szJX20zihfx
-	 Rc+VwwwQw6Uhg==
-Date: Mon, 29 Sep 2025 19:37:49 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Ravi Kumar Bandi <ravib@amazon.com>, thippeswamy.havalige@amd.com
-Cc: lpieralisi@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	kwilczynski@kernel.org, robh@kernel.org, michal.simek@amd.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Message-ID: <ffnsnm67kc546xrx673yvuepolafapueyfboykmcfododbpb2o@cjcmlqcvu76v>
-References: <C47CF283-C0C4-4ACF-BE07-3E87153D6EC6@amazon.com>
- <20250920225232.18757-1-ravib@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tr6Y5MCEWERA+5ZUoEAxNZjezStxcGtn/lMHUr0qS4N4W0dpu7s3JQxqRZHgn9KV+QQWQ+1KOrVpVUoBp9WNLmmgqZeHPPX8S0zxX88y92IeDsM6ZojZzY/8YN5CPuh9iRrIApkvbTfMcrCoVupjEPcvn3VgIZoTo0/G+27ZVeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hU1tJsoQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=euPO9jWmT5Hq8XFMM6BdYYsoQVvkSkQm2Hgnlq9vzKk=; b=hU1tJsoQpzMIbKpAAV4K+WCM8w
+	ZAPyaSKVS9tsK2xLYHqctXI5G08bJ8WDDCC+Y2p727AmwhchPUPSuMb03GMoadAuLWrYWDXrO3Tt1
+	c434nOO6SRJvbFsZpX2VQuK+MeyEEx9APaJDrwI7YkCWBjzWnWR37zud66J471zZ+Aq8tcD9zWmJJ
+	Nwh83PRk7iybR1WuiJsESCPOvE956vfGDwGuI7gA86/wNCzTpLSJdm4iRoAYtIjq46FtzjjgZE8as
+	+g37T2qNcc+Dik5X/Vul8ak2Agnmzv71eafOAUsVDp93iKNcIREGxeP5ntdH8ZzJdvASdxTqrkAiU
+	Xf9MPPGw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v3EZ6-000000041Hv-1Ylv;
+	Mon, 29 Sep 2025 14:09:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 800CF300359; Mon, 29 Sep 2025 16:09:20 +0200 (CEST)
+Date: Mon, 29 Sep 2025 16:09:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Libo Chen <libo.chen@oracle.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Jianyong Wu <jianyong.wu@outlook.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Tingyin Duan <tingyin.duan@gmail.com>,
+	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
+	Chen Yu <yu.chen.surf@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 06/28] sched: Save the per LLC utilization for
+ better cache aware scheduling
+Message-ID: <20250929140920.GN3419281@noisy.programming.kicks-ass.net>
+References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
+ <d77d4db175adc09cd01fdee097c16bc3e52c8be2.1754712565.git.tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250920225232.18757-1-ravib@amazon.com>
+In-Reply-To: <d77d4db175adc09cd01fdee097c16bc3e52c8be2.1754712565.git.tim.c.chen@linux.intel.com>
 
-On Sat, Sep 20, 2025 at 10:52:32PM +0000, Ravi Kumar Bandi wrote:
-> The pcie-xilinx-dma-pl driver does not enable INTx interrupts
-> after initializing the port, preventing INTx interrupts from
-> PCIe endpoints from flowing through the Xilinx XDMA root port
-> bridge. This issue affects kernel 6.6.0 and later versions.
-> 
-> This patch allows INTx interrupts generated by PCIe endpoints
-> to flow through the root port. Tested the fix on a board with
-> two endpoints generating INTx interrupts. Interrupts are
-> properly detected and serviced. The /proc/interrupts output
-> shows:
-> 
-> [...]
-> 32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
-> 52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
-> [...]
-> 
-> Changes since v1::
-> - Fixed commit message per reviewer's comments
-> 
-> Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
+On Sat, Aug 09, 2025 at 01:02:54PM +0800, Chen Yu wrote:
 
-Thippeswamy, are you fine with this change?
-
-- Mani
-
-> ---
->  drivers/pci/controller/pcie-xilinx-dma-pl.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-xilinx-dma-pl.c b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-> index b037c8f315e4..cc539292d10a 100644
-> --- a/drivers/pci/controller/pcie-xilinx-dma-pl.c
-> +++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-> @@ -659,6 +659,12 @@ static int xilinx_pl_dma_pcie_setup_irq(struct pl_dma_pcie *port)
->  		return err;
->  	}
->  
-> +	/* Enable interrupts */
-> +	pcie_write(port, XILINX_PCIE_DMA_IMR_ALL_MASK,
-> +		   XILINX_PCIE_DMA_REG_IMR);
-> +	pcie_write(port, XILINX_PCIE_DMA_IDRN_MASK,
-> +		   XILINX_PCIE_DMA_REG_IDRN_MASK);
+> +#ifdef CONFIG_SCHED_CACHE
+> +/*
+> + * Save this sched group's statistic for later use:
+> + * The task wakeup and load balance can make better
+> + * decision based on these statistics.
+> + */
+> +static void update_sg_if_llc(struct lb_env *env, struct sg_lb_stats *sgs,
+> +			     struct sched_group *group)
+> +{
+> +	/* Find the sched domain that spans this group. */
+> +	struct sched_domain *sd = env->sd->child;
+> +	struct sched_domain_shared *sd_share;
 > +
->  	return 0;
->  }
->  
-> -- 
-> 2.47.3
-> 
+> +	if (!sched_feat(SCHED_CACHE) || env->idle == CPU_NEWLY_IDLE)
+> +		return;
+> +
+> +	/* only care the sched domain that spans 1 LLC */
+> +	if (!sd || !(sd->flags & SD_SHARE_LLC) ||
+> +	    !sd->parent || (sd->parent->flags & SD_SHARE_LLC))
+> +		return;
 
--- 
-மணிவண்ணன் சதாசிவம்
+Did you want to write:
+
+	if (sd != per_cpu(sd_llc))
+		return;
+
+Or something?
+
+> +	sd_share = rcu_dereference(per_cpu(sd_llc_shared,
+> +				  cpumask_first(sched_group_span(group))));
+> +	if (!sd_share)
+> +		return;
+> +
+> +	if (likely(READ_ONCE(sd_share->util_avg) != sgs->group_util))
+> +		WRITE_ONCE(sd_share->util_avg, sgs->group_util);
+
+If you expect it to be different, does that whole load and compare still
+matter?
+
+> +}
 
