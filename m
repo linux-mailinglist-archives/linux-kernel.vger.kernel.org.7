@@ -1,275 +1,98 @@
-Return-Path: <linux-kernel+bounces-836097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF566BA8B61
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:44:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B04BA8BCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644B53A582E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:44:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE9FE7B9909
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8AD2D3A77;
-	Mon, 29 Sep 2025 09:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4TJxTual"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE38B2D5951;
+	Mon, 29 Sep 2025 09:44:17 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E602D24BB
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC3C280CC9;
+	Mon, 29 Sep 2025 09:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759139034; cv=none; b=sFO7sxBO5KM/SUs0xpJuHNUKlXLIPhjSY62eWXPvzlX/rTPaVHlR1mI/ea7rUYGnRI8GkEaXZ7ZkiiD65LJc42qfvF/yWGD8n45ydUbD0FXaFWGE/ALqtwXmzjoGrueALT2+2LMOcoa/weefi1UcjrpKRTVwUUdYEFBccwBOQlc=
+	t=1759139057; cv=none; b=RXj7lkM3IndXD9wn8gO2zWg6An/S8ALII+K9Zp6M58ELeYwOEtdJv+Bn7cm61d3VzvwVizkaOulTlSoLWY6KxA4Wb8uKKeGABL93fsvN0x11C2kNpv6GnKSep3dNuytS2ihAqLgQ4Ehc3cp80VkKk5DZVWA5yVpCGjfQmtUvcDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759139034; c=relaxed/simple;
-	bh=BU4j3BGpszxu9iYIj3uncGhrBLbWYrE0fXoVD9IaZ6Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RzMOGNjQl91dgTbOssgMLhWep4T4FOCu9DBhDip6uS42753yK3UaHvY7KEb6ut8RHJ/96SZz2PnJKjK9RYN0tfkuA8q4usjknw13hCuZWfzlrLdC5/qiAeHdGdCc3MCJrIaSWp2SFpnnzLJPQ9FmxVPQAuzEEHMcPqPaslg6lik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4TJxTual; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b54b37ba2d9so3830471a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 02:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759139032; x=1759743832; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pzYNHWstQT9I1y07+9R6xWtUGyijisMRSVgSKfx26Eg=;
-        b=4TJxTualPjMKOYdylTge1EqVJsM4v1UjFUT4IQ6NVicj2F5DsJw44m410994i8x/Mr
-         xGksg+E4EZ5tTmfXoTgQtLm9CkEEmqZCtN9ZU3o3f4uimqd150lq5dDa039GgqSyYzdc
-         y+Rx0Zw9fASYpl1MXvx4o6VBUuQn0j8uPnRZPUeRBh0fi9BrBW3hsLmSQudyPIpr31KU
-         AZT1jc59mjHAoAsXLpLLgovazL1KGWtoA0jX0vhf9N9LHSob8wabpdrtR38AGWPAxt3R
-         lNvxqLWtyZabJMk9ZDpfG7buV4t76MWHrnnJqZ20nFPG01rOixyXUjaexivE9Ihdf12b
-         w/Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759139032; x=1759743832;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pzYNHWstQT9I1y07+9R6xWtUGyijisMRSVgSKfx26Eg=;
-        b=BBZ5ztts6zF7JyQyWsWVHDllD3rnC0Nwbk9AGM0yXKEp4fKdjeMjqIV0mFv8de5n5L
-         WlwiA4Zzh0oksac/OMWiFn/w+zeVCqOUnqE5gkMfxyDBgOeheVPzAO2N954pT8DW0Xgk
-         rJ6xiyjoMwm/t7J89eY4oIHAU6vSlrsJ7SAF+5S8m2xGBEurdQhQDgUO5gN7IgHuRUQR
-         EujrUxAP403X4Z4StqS7Yr1Sk87ZAMdmaIQC7XyF8ohHMUIQQbtN+UtMyUBp6bJmHSkD
-         HMdxxkyl++19GiwAlkJOrffp8flty4zwav/EJH6XFrSJwXDJDYWcRO+lUow33/dr+3iZ
-         PocQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmZ+iFJLWt+APHRfw5lsZpbBO9JySZHNyboKX5bNCD39TO+4jA90mK2ooGQyyQdd6RKefDKb7HqU2nnBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfs8zT5ocrHFq6eRrPyqxE0s2uo1GAc7RnEP0DMtNzdKFD5XHs
-	mAp9JnFUK/NZe9G/7CxnVRsCCWRPV7soX1UyOJM1nbm0Vvn+Vs5Dgrg3RATM5eiZFy92UxBp6as
-	XEO8BToOK/sZECSn5niKHIOfBTQ==
-X-Google-Smtp-Source: AGHT+IFlMDZYgT1aOSvVAdawE5wAq1U1PDfbFgVozsOFcMF3G5UsVb7Ien2ixeifU3Gu0oJJQxAhlNx/Wggb4VwMCA==
-X-Received: from pjxu4.prod.google.com ([2002:a17:90a:db44:b0:32e:c813:df48])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2703:b0:335:29a7:70c9 with SMTP id 98e67ed59e1d1-336b3cb3f30mr7869316a91.15.1759139031807;
- Mon, 29 Sep 2025 02:43:51 -0700 (PDT)
-Date: Mon, 29 Sep 2025 09:43:50 +0000
-In-Reply-To: <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
+	s=arc-20240116; t=1759139057; c=relaxed/simple;
+	bh=1lftcBAGqzUu9NthPkBLuUTRhEAGMl1V72cKjTpoMGE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qONiddtteMu4jqwjmONHCwiXaU+Trjui/H+RylYDwvVP3DPGsCl5/3447bxi/7in15kXaDvwQ1z043NkcOgwphv4i0O3YIZxGK9xCYFdwS5Q7THX9iI/uVUUGU2R3+C/igvXJqKb5qXVI7DNlGia7rB5exH2Pcv2tlrOqs2Ov6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cZx8x3P93z6L576;
+	Mon, 29 Sep 2025 17:44:01 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id DFB6614038F;
+	Mon, 29 Sep 2025 17:44:11 +0800 (CST)
+Received: from localhost (10.47.64.220) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 29 Sep
+ 2025 10:44:10 +0100
+Date: Mon, 29 Sep 2025 10:44:08 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Len
+ Brown" <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Javier Carrasco
+	<javier.carrasco@wolfvision.net>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek
+	<pavel@kernel.org>, Matthias Fend <matthias.fend@emfend.at>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>, Paul Elder
+	<paul.elder@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mark Brown
+	<broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@kernel.org>
+Subject: Re: [PATCH v2 08/16] property: Document that fwnode API returns
+ available nodes
+Message-ID: <20250929104408.00003cf5@huawei.com>
+In-Reply-To: <20250924074602.266292-9-sakari.ailus@linux.intel.com>
+References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+	<20250924074602.266292-9-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
- <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
-Message-ID: <diqz7bxh386h.fsf@google.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-From: Ackerley Tng <ackerleytng@google.com>
-To: Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, roypat@amazon.co.uk, 
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Fuad Tabba <tabba@google.com> writes:
+On Wed, 24 Sep 2025 10:45:54 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-> Hi Sean,
->
-> On Fri, 26 Sept 2025 at 17:31, Sean Christopherson <seanjc@google.com> wrote:
->>
->> Add a guest_memfd flag to allow userspace to state that the underlying
->> memory should be configured to be shared by default, and reject user page
->> faults if the guest_memfd instance's memory isn't shared by default.
->> Because KVM doesn't yet support in-place private<=>shared conversions, all
->> guest_memfd memory effectively follows the default state.
->>
->> Alternatively, KVM could deduce the default state based on MMAP, which for
->> all intents and purposes is what KVM currently does.  However, implicitly
->> deriving the default state based on MMAP will result in a messy ABI when
->> support for in-place conversions is added.
->>
->> For x86 CoCo VMs, which don't yet support MMAP, memory is currently private
->> by default (otherwise the memory would be unusable).  If MMAP implies
->> memory is shared by default, then the default state for CoCo VMs will vary
->> based on MMAP, and from userspace's perspective, will change when in-place
->> conversion support is added.  I.e. to maintain guest<=>host ABI, userspace
->> would need to immediately convert all memory from shared=>private, which
->> is both ugly and inefficient.  The inefficiency could be avoided by adding
->> a flag to state that memory is _private_ by default, irrespective of MMAP,
->> but that would lead to an equally messy and hard to document ABI.
->>
->> Bite the bullet and immediately add a flag to control the default state so
->> that the effective behavior is explicit and straightforward.
->>
-
-I like having this flag, but didn't propose this because I thought folks
-depending on the default being shared (Patrick/Nikita) might have their
-usage broken.
-
->> Fixes: 3d3a04fad25a ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Fuad Tabba <tabba@google.com>
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> ---
->>  Documentation/virt/kvm/api.rst                 | 10 ++++++++--
->>  include/uapi/linux/kvm.h                       |  3 ++-
->>  tools/testing/selftests/kvm/guest_memfd_test.c |  5 +++--
->>  virt/kvm/guest_memfd.c                         |  6 +++++-
->>  4 files changed, 18 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
->> index c17a87a0a5ac..4dfe156bbe3c 100644
->> --- a/Documentation/virt/kvm/api.rst
->> +++ b/Documentation/virt/kvm/api.rst
->> @@ -6415,8 +6415,14 @@ guest_memfd range is not allowed (any number of memory regions can be bound to
->>  a single guest_memfd file, but the bound ranges must not overlap).
->>
->>  When the capability KVM_CAP_GUEST_MEMFD_MMAP is supported, the 'flags' field
->> -supports GUEST_MEMFD_FLAG_MMAP.  Setting this flag on guest_memfd creation
->> -enables mmap() and faulting of guest_memfd memory to host userspace.
->> +supports GUEST_MEMFD_FLAG_MMAP and  GUEST_MEMFD_FLAG_DEFAULT_SHARED.  Setting
->
-> There's an extra space between `and` and `GUEST_MEMFD_FLAG_DEFAULT_SHARED`.
->
-
-+1 on this. Also, would you consider putting the concept of "at creation
-time" or "at initialization time" into the name of the flag?
-
-"Default" could be interpreted as "whenever a folio is allocated for
-this guest_memfd", the memory the folio represents is by default
-shared.
-
-What we want to represent is that when the guest_memfd is created,
-memory at all indices are initialized as shared.
-
-Looking a bit further, when conversion is supported, if this flag is not
-specified, then all the indices are initialized as private, right?
-
->> +the MMAP flag on guest_memfd creation enables mmap() and faulting of guest_memfd
->> +memory to host userspace (so long as the memory is currently shared).  Setting
->> +DEFAULT_SHARED makes all guest_memfd memory shared by default (versus private
->> +by default).  Note!  Because KVM doesn't yet support in-place private<=>shared
->> +conversions, DEFAULT_SHARED must be specified in order to fault memory into
->> +userspace page tables.  This limitation will go away when in-place conversions
->> +are supported.
->
-> I think that a more accurate (and future proof) description of the
-> mmap flag could be something along the lines of:
->
-
-+1 on these suggestions, I agree that making the concepts of SHARED vs
-MMAP orthogonal from the start is more future proof.
-
-> + Setting GUEST_MEMFD_FLAG_MMAP enables using mmap() on the file descriptor.
->
-> + Setting GUEST_MEMFD_FLAG_DEFAULT_SHARED makes all memory in the file shared
-> + by default
-
-See above, I'd prefer clarifying this as "at initialization time" or
-something similar.
-
-> , as opposed to private. Shared memory can be faulted into host
-> + userspace page tables. Private memory cannot.
->
->>  When the KVM MMU performs a PFN lookup to service a guest fault and the backing
->>  guest_memfd has the GUEST_MEMFD_FLAG_MMAP set, then the fault will always be
->> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> index 6efa98a57ec1..38a2c083b6aa 100644
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@ -1599,7 +1599,8 @@ struct kvm_memory_attributes {
->>  #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
->>
->>  #define KVM_CREATE_GUEST_MEMFD _IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
->> -#define GUEST_MEMFD_FLAG_MMAP  (1ULL << 0)
->> +#define GUEST_MEMFD_FLAG_MMAP          (1ULL << 0)
->> +#define GUEST_MEMFD_FLAG_DEFAULT_SHARED        (1ULL << 1)
->>
->>  struct kvm_create_guest_memfd {
->>         __u64 size;
->> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
->> index b3ca6737f304..81b11a958c7a 100644
->> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
->> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
->> @@ -274,7 +274,7 @@ static void test_guest_memfd(unsigned long vm_type)
->>         vm = vm_create_barebones_type(vm_type);
->>
->>         if (vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP))
->> -               flags |= GUEST_MEMFD_FLAG_MMAP;
->> +               flags |= GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_FLAG_DEFAULT_SHARED;
->>
->>         test_create_guest_memfd_multiple(vm);
->>         test_create_guest_memfd_invalid_sizes(vm, flags, page_size);
->> @@ -337,7 +337,8 @@ static void test_guest_memfd_guest(void)
->>                     "Default VM type should always support guest_memfd mmap()");
->>
->>         size = vm->page_size;
->> -       fd = vm_create_guest_memfd(vm, size, GUEST_MEMFD_FLAG_MMAP);
->> +       fd = vm_create_guest_memfd(vm, size, GUEST_MEMFD_FLAG_MMAP |
->> +                                            GUEST_MEMFD_FLAG_DEFAULT_SHARED);
->>         vm_set_user_memory_region2(vm, slot, KVM_MEM_GUEST_MEMFD, gpa, size, NULL, fd, 0);
->>
->>         mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
->> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
->> index 08a6bc7d25b6..19f05a45be04 100644
->> --- a/virt/kvm/guest_memfd.c
->> +++ b/virt/kvm/guest_memfd.c
->> @@ -328,6 +328,9 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
->>         if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
->>                 return VM_FAULT_SIGBUS;
->>
->> +       if (!((u64)inode->i_private & GUEST_MEMFD_FLAG_DEFAULT_SHARED))
->> +               return VM_FAULT_SIGBUS;
->> +
->>         folio = kvm_gmem_get_folio(inode, vmf->pgoff);
->>         if (IS_ERR(folio)) {
->>                 int err = PTR_ERR(folio);
->> @@ -525,7 +528,8 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
->>         u64 valid_flags = 0;
->>
->>         if (kvm_arch_supports_gmem_mmap(kvm))
->> -               valid_flags |= GUEST_MEMFD_FLAG_MMAP;
->> +               valid_flags |= GUEST_MEMFD_FLAG_MMAP |
->> +                              GUEST_MEMFD_FLAG_DEFAULT_SHARED;
->
-> At least for now, GUEST_MEMFD_FLAG_DEFAULT_SHARED and
-> GUEST_MEMFD_FLAG_MMAP don't make sense without each other. Is it worth
-> checking for that, at least until we have in-place conversion? Having
-> only GUEST_MEMFD_FLAG_DEFAULT_SHARED set, but GUEST_MEMFD_FLAG_MMAP,
-> isn't a useful combination.
->
-
-I think it's okay to have the two flags be orthogonal from the start.
-
-Reviewed-by: Ackerley Tng <ackerleytng@google.com>
-
-> That said, these are all nits, I'll leave it to you. With that:
->
-> Reviewed-by: Fuad Tabba <tabba@google.com>
-> Tested-by: Fuad Tabba <tabba@google.com>
->
-> Cheers,
-> /fuad
->
->
->
->>
->>         if (flags & ~valid_flags)
->>                 return -EINVAL;
->> --
->> 2.51.0.536.g15c5d4f767-goog
->>
+> The fwnode API has historically provided two functions to iterate over a
+> fwnode's child nodes, fwnode_get_next_child_node() and
+> fwnode_get_next_available_child_node() whereas all of the fwnode API has
+> always worked on available nodes, apart unavailable ACPI child device
+> nodes could have been returned by fwnode_get_next_child_node().
+> 
+> Now that the availability check has been added to ACPI side as well,
+> document that the functions in the fwnode API return available nodes.
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
