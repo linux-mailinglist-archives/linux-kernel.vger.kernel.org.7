@@ -1,310 +1,149 @@
-Return-Path: <linux-kernel+bounces-836278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6924BA92DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A21ABA92EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A343A1C27E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:14:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C133C1C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC8630506C;
-	Mon, 29 Sep 2025 12:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03052FDC3F;
+	Mon, 29 Sep 2025 12:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="H9BMuKhA"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YSLMeOLO"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25AF3054F6;
-	Mon, 29 Sep 2025 12:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759148072; cv=pass; b=TcdBm/p1VXCCR2zlC/0qHPFmXaCfC/nBAGHnVl/Xanl+I0PE1C9l4Pdp4IV0KMo35u0T/Va3iKHpBMs+1DdJNCSCw9gquDgKLB4DgManvEXpNAJAPFCwnMtvMwuDcB8xVwbktEVcOn/M7m5vzSui9D+MqrZOYYvqzRHsNEx33V8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759148072; c=relaxed/simple;
-	bh=5I/escBKj3uilVCPN/e1SeAh9S8vgr81SFJ+zAkJog4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lJUf9oPkm8CjSV9Dg2Uva8+u4XxFGDZe02JdYMvl2y4zmR22dhBwDXGPwJ+EnUPEv3yDAQwCi60l+dTjuVSNpfmRoDXdGvtf4eDg1l9BHiY0tu9zHDw9CqAmYgxCT0KZAz8iSnwqphW9PHP14WfvrDANIULWlNf9Szjspje/kiE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=H9BMuKhA; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759148041; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=l3IeeCFfddAq9uI/UL9Z1bGtfVcNvp/qVEJ18KqA0m2pXjSHrdvxn1tzBASNztGNUDEpQ6DYz9xDe2gHerdLD7L28dOPj+W32rK35W16DZKlE7lfRE7UxQNrUSHae2lOEEeHlTXM3oWppCM2WnfFyh1Zf5kU824s0L2NGhqckZg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759148041; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oO1g6MVsIwHZqI00UWOe7M4zzpRvLEWu88wj9uOkgOA=; 
-	b=DPwhpsFk+q7iIs/sctiye/mx9b9K+KmDeuSIAYFzHnJvVhgw8jOcw5CNewfD/9YfiEJ4g6RwQQZE6C4EoY/4IbWuvCbkfxfC6BXfxMlG3rJVQ5B/VDjPA9Lmd5mf0VrD1XbPyHf5nwK72zMSGXBRNMPW8QftS8E9gGql/n2UO60=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759148041;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=oO1g6MVsIwHZqI00UWOe7M4zzpRvLEWu88wj9uOkgOA=;
-	b=H9BMuKhA5abb5FBGv3R7hSPNM4EE9i9hpN7KoDimM7ku/gZtE7Ph3jGbb52UUjTN
-	h+sr8BdzJSdy2r3+pZnefnefPEyUqY7q0boos6c2VgY7Uv+pBhVF6HOP1/6MNmuqc9n
-	a5P4dLc1N49JC71q3YyA2dprmAuypm1xT0lscqQ4=
-Received: by mx.zohomail.com with SMTPS id 1759148039321413.33555808567644;
-	Mon, 29 Sep 2025 05:13:59 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 29 Sep 2025 14:13:23 +0200
-Subject: [PATCH 4/4] clk: mediatek: Add rpm clocks to clk-mt8196-mfg
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA8D263C9E
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759148290; cv=none; b=my4JgqV2PYp2Ib3pR1RfnF37pNDQcK+EDLR2vAiSESyMAHVJRzAe73Qc+7Cu9bdQMY7iqnA9X21FAdz4phAJatpshnJF7l/x3QzTKzCMuT3aOCcSFLwrpsoFq4kICmDS41gCH028RgCBfhG2C8dAALYlcFzKNbFHHZEqWO/jp6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759148290; c=relaxed/simple;
+	bh=RaNJ2xv1Qex3xzGO5ikkMpHr2qCYlipHgRZT7sB95J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iroZZy7eVqvPqcN9wczs9Gynb75evUEHSrNbZdS4NUP015IeP+c094+Vdbd8uEx1cpHxrgPKUVqf72eLuEoknryO1cgMClvRihKqN75/RBwnVjjJ6J+5/nZTn6nwYrdxTiRXmbkRmjpyxGLy45K72O7DpSBOzIYLQCx2gpiW7Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YSLMeOLO; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so323471766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759148286; x=1759753086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJTlBc7e0UGPbCvtSLpySZFrvddmGs7zW6KyxEHAB9s=;
+        b=YSLMeOLOPJyTkjJKbmOgoxafHOyzM4Pw8KsUnYa4zu8g3iFW3orMO4UTdhrvisHep6
+         PiQgOuIfAYbJaF85i/Q5R/1wesUzcS3xTSWp+Hp9kfmjlC0YnUoCTGODh8Xz1Ki2PnLS
+         8Xp2Gu801qMShrz3I8vb1ZcMASm5lioXcEcyGOB6VLj45d4VGF7YZNAMacAOsU4izDpu
+         SUWyQZTUqpQZrENs/28me2HTH7lE49cJhKGoSPSt/WKs3KjuvU9p9cMsItUZz7cZOUCs
+         Iys4fRrQ2xmb/6T5KR6KCFktmqrKtQTE9fTAJlsoYSpssq70jn3pMVn2bpc5X5QBCFZk
+         3w8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759148286; x=1759753086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oJTlBc7e0UGPbCvtSLpySZFrvddmGs7zW6KyxEHAB9s=;
+        b=Mju+/35Is3Fy59Ykflnn6hBb5PjpIrqFBOeI//sUzRHXMNOLu8uTsWDXVsTskOmcLV
+         8zMfR8e2u68w8Bg6si/c436Zmha87ERx6LD0tMDpytr8667Tpwsvuzeq7x4gIfSa+t/M
+         izaV8PtpjKm4/kt2cCOP5wIfYhYJ8GyTLdse+5UyL5zEOOsKtRHtzUN2rLhcfZzCpIkE
+         Kh9kYj5gybr7VLbRCm9PDZ/6cxbFi/2fCYzoZaZGmO4J2aab1JXTAdy2UgaLQKM7p3jV
+         w5uBSRPB6rmVNpWCGdBLwEqIAL8AtM2RqkARzGsgL/Ii5mawYWzZvbcperatx5R6fiQK
+         pTqw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2lU9al0uzPSQCtoprOx8mDa3V1sSKZyvPiL9QeD3s7n6J3kQarTHRvMPKEzEeqamqwGojq7Q1gsx8G5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYb5nQMkzoECebptWWVFwIum8XO3MD0P3QeFrtQMIPHCY3lG6u
+	UPkov15/OcmIKYHpyTvl1bvDwPdi4IzYuN0URG6Frnu+Cvj8/U/OBogFSZUN3Zk3JKo=
+X-Gm-Gg: ASbGncv6pS4DsA6s78Asaw9wTK9BTAyX0syxDp8Z5jQup3Rk67+M3FpLktm+gdhQrHh
+	/faXjfjDpGEthHnljjdi6VQRmUIGdBlUgPqym/x/J6x48D/ipxgcl+wnMn9xDEfc6NQy7iTcrkA
+	R551Nv2oVFo84f6DbAzGTI89i9t3Be1NrKMEc+046B5FqvbJsJuHYeqCrUKZeBeCTZ+F+yJhzk/
+	ebK+VsA9zm12lcgwmlHkPhfxwRpyDKD0bFxvwyfnhk34/cbGP/PPKNNoUfJxGnFRl2tcigksT73
+	zKVV3HaKh9LrEdGWwmPNuI5PgQRTF+N3Tkpi4bIaJRq9JrTucyeWsfBnxVBPqVspnp5c4/Lb3Vf
+	ZHozaTNHWfyqFzIxl+FyfpHTiEDwLX/6UF1u7
+X-Google-Smtp-Source: AGHT+IGAZf3Av6RZk1uN6GRr+3I8Y4RqRRbIsiCyQ2gdELUp1+rf6Uu/n4ttTd0Mnoq/jbgycwGAMw==
+X-Received: by 2002:a17:907:1c89:b0:b3a:ecc1:7767 with SMTP id a640c23a62f3a-b3aecc18344mr872606966b.32.1759148286030;
+        Mon, 29 Sep 2025 05:18:06 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353efa494esm914493166b.25.2025.09.29.05.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 05:18:05 -0700 (PDT)
+Date: Mon, 29 Sep 2025 14:18:03 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mike Galbraith <efault@gmx.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v1 0/1] Allow unsafe ->write_atomic() for panic
+Message-ID: <aNp4-xslkeO-29BP@pathway.suse.cz>
+References: <20250912121852.2666874-1-john.ogness@linutronix.de>
+ <5hgyof3yowdw3v76ygz2oxkzv7vpz5kp62nx36gynmr646yrjs@ag4mvynlin4k>
+ <844ispin6a.fsf@jogness.linutronix.de>
+ <bqihuqqrfc4ayghycmtfjcowyflvbku4ledy7pwajryptlp2wg@hq6cctbmimi3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250929-mtk-pll-rpm-v1-4-49541777878d@collabora.com>
-References: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
-In-Reply-To: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Guangjie Song <guangjie.song@mediatek.com>, 
- Laura Nao <laura.nao@collabora.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Yassine Oudjana <y.oudjana@protonmail.com>
-Cc: kernel@collabora.com, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bqihuqqrfc4ayghycmtfjcowyflvbku4ledy7pwajryptlp2wg@hq6cctbmimi3>
 
-The mfgpll clocks on mt8196 require that the MFG's EB clock is on if
-their control registers are touched in any way at all. Failing to ensure
-this results in a pleasant SError interrupt if the EB clock happens to
-be off.
+On Fri 2025-09-26 08:17:53, Breno Leitao wrote:
+> Hello John,
+> 
+> On Fri, Sep 26, 2025 at 11:27:49AM +0206, John Ogness wrote:
+> > On 2025-09-17, Breno Leitao <leitao@debian.org> wrote:
+> > > Upon further consideration, it's worth noting that not all network
+> > > drivers rely on irq-unsafe locks. In practice, only a subset of drivers
+> > > use them, while most network drivers I'm familiar with maintain IRQ-safe
+> > > TX paths.
+> > >
+> > > If we could determine the IRQ safety characteristics (IRQ-safe vs
+> > > IRQ-unsafe TX) during netconsole registration, this would enable more
+> > > optimized behavior: netconsole could register as CON_NBCON_ATOMIC_UNSAFE
+> > > only when the underlying network adapter uses IRQ-unsafe locks. For
+> > > adapters with IRQ-safe implementations, netconsole could safely utilize
+> > > the ->write_atomic path without restrictions.
+> > 
+> > This is good to read. But note that if CON_NBCON_ATOMIC_UNSAFE is not
+> > set, it is expected that ->write_atomic() will also function in NMI. So
+> > being IRQ-safe may not be enough.
+> 
+> What are the other requirements for ->write_atomic() so it could be
+> executed inside a NMI?
 
-To achieve this, leverage the CCF core's runtime power management
-support. Define the necessary suspend/resume callbacks, add the
-necessary code to get RPM clocks from the DT, and make sure RPM is
-enabled before clock registration happens.
+Ideally, it should be synchronized only via the nbcon console context
+API and should not need any additional lock.
 
-For the RPM callbacks to really make much sense at all, we change the
-drvdata from clk_data to a new private struct, as is common in drivers
-across the Linux kernel.
+Note that the nbcon console context should get synchronized with
+the normal device lock via some wrappers, for example, see
+uart_port_lock() in include/linux/serial_core.h.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- drivers/clk/mediatek/clk-mt8196-mfg.c | 104 +++++++++++++++++++++++++++-------
- drivers/clk/mediatek/clk-pll.h        |   2 +
- 2 files changed, 87 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8196-mfg.c b/drivers/clk/mediatek/clk-mt8196-mfg.c
-index 8e09c0f7b7548f8e286671cea2dac64530b8ce47..64cc0c037f62d7eab8d0e7fc00c05d122bf4130c 100644
---- a/drivers/clk/mediatek/clk-mt8196-mfg.c
-+++ b/drivers/clk/mediatek/clk-mt8196-mfg.c
-@@ -13,6 +13,7 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- 
- #include "clk-mtk.h"
- #include "clk-pll.h"
-@@ -38,7 +39,7 @@
- 	    _flags, _rst_bar_mask,				\
- 	    _pd_reg, _pd_shift, _tuner_reg,			\
- 	    _tuner_en_reg, _tuner_en_bit,			\
--	    _pcw_reg, _pcw_shift, _pcwbits) {			\
-+	    _pcw_reg, _pcw_shift, _pcwbits, _rpm_clks) {	\
- 		.id = _id,					\
- 		.name = _name,					\
- 		.reg = _reg,					\
-@@ -58,26 +59,60 @@
- 		.pcw_shift = _pcw_shift,			\
- 		.pcwbits = _pcwbits,				\
- 		.pcwibits = MT8196_INTEGER_BITS,		\
-+		.rpm_clk_names = _rpm_clks,			\
-+		.num_rpm_clks = ARRAY_SIZE(_rpm_clks),		\
- 	}
- 
-+static const char * const mfgpll_rpm_clk_names[] = {
-+	NULL
-+};
-+
- static const struct mtk_pll_data mfg_ao_plls[] = {
- 	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0, 0,
--	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
--	    MFGPLL_CON1, 0, 22),
-+	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0, MFGPLL_CON1, 0, 22,
-+	    mfgpll_rpm_clk_names),
- };
- 
- static const struct mtk_pll_data mfgsc0_ao_plls[] = {
- 	PLL(CLK_MFGSC0_AO_MFGPLL_SC0, "mfgpll-sc0", MFGPLL_SC0_CON0,
- 	    MFGPLL_SC0_CON0, 0, 0, 0, BIT(0), MFGPLL_SC0_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC0_CON1, 0, 22),
-+	    MFGPLL_SC0_CON1, 0, 22, mfgpll_rpm_clk_names),
- };
- 
- static const struct mtk_pll_data mfgsc1_ao_plls[] = {
- 	PLL(CLK_MFGSC1_AO_MFGPLL_SC1, "mfgpll-sc1", MFGPLL_SC1_CON0,
- 	    MFGPLL_SC1_CON0, 0, 0, 0, BIT(0), MFGPLL_SC1_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC1_CON1, 0, 22),
-+	    MFGPLL_SC1_CON1, 0, 22, mfgpll_rpm_clk_names),
- };
- 
-+struct clk_mt8196_mfg {
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_bulk_data *rpm_clks;
-+	unsigned int num_rpm_clks;
-+};
-+
-+static int __maybe_unused clk_mt8196_mfg_resume(struct device *dev)
-+{
-+	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(dev);
-+
-+	if (!clk_mfg || !clk_mfg->rpm_clks)
-+		return 0;
-+
-+	return clk_bulk_prepare_enable(clk_mfg->num_rpm_clks, clk_mfg->rpm_clks);
-+}
-+
-+static int __maybe_unused clk_mt8196_mfg_suspend(struct device *dev)
-+{
-+	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(dev);
-+
-+	if (!clk_mfg || !clk_mfg->rpm_clks)
-+		return 0;
-+
-+	clk_bulk_disable_unprepare(clk_mfg->num_rpm_clks, clk_mfg->rpm_clks);
-+
-+	return 0;
-+}
-+
- static const struct of_device_id of_match_clk_mt8196_mfg[] = {
- 	{ .compatible = "mediatek,mt8196-mfgpll-pll-ctrl",
- 	  .data = &mfg_ao_plls },
-@@ -92,35 +127,60 @@ MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_mfg);
- static int clk_mt8196_mfg_probe(struct platform_device *pdev)
- {
- 	const struct mtk_pll_data *plls;
--	struct clk_hw_onecell_data *clk_data;
-+	struct clk_mt8196_mfg *clk_mfg;
- 	struct device_node *node = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
- 	const int num_plls = 1;
--	int r;
-+	int r, i;
- 
--	plls = of_device_get_match_data(&pdev->dev);
-+	plls = of_device_get_match_data(dev);
- 	if (!plls)
- 		return -EINVAL;
- 
--	clk_data = mtk_alloc_clk_data(num_plls);
--	if (!clk_data)
-+	clk_mfg = devm_kzalloc(dev, sizeof(*clk_mfg), GFP_KERNEL);
-+	if (!clk_mfg)
- 		return -ENOMEM;
- 
--	r = mtk_clk_register_plls(&pdev->dev, plls, num_plls, clk_data);
-+	clk_mfg->num_rpm_clks = plls[0].num_rpm_clks;
-+
-+	if (clk_mfg->num_rpm_clks) {
-+		clk_mfg->rpm_clks = devm_kcalloc(dev, clk_mfg->num_rpm_clks,
-+						 sizeof(*clk_mfg->rpm_clks),
-+						 GFP_KERNEL);
-+		if (!clk_mfg->rpm_clks)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < clk_mfg->num_rpm_clks; i++)
-+			clk_mfg->rpm_clks->id = plls[0].rpm_clk_names[i];
-+
-+		r = devm_clk_bulk_get(dev, clk_mfg->num_rpm_clks,
-+				      clk_mfg->rpm_clks);
-+		if (r)
-+			return r;
-+	}
-+
-+	clk_mfg->clk_data = mtk_alloc_clk_data(num_plls);
-+	if (!clk_mfg->clk_data)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, clk_mfg);
-+	pm_runtime_enable(dev);
-+
-+	r = mtk_clk_register_plls(dev, plls, num_plls, clk_mfg->clk_data);
- 	if (r)
- 		goto free_clk_data;
- 
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-+				   clk_mfg->clk_data);
- 	if (r)
- 		goto unregister_plls;
- 
--	platform_set_drvdata(pdev, clk_data);
--
- 	return r;
- 
- unregister_plls:
--	mtk_clk_unregister_plls(plls, num_plls, clk_data);
-+	mtk_clk_unregister_plls(plls, num_plls, clk_mfg->clk_data);
- free_clk_data:
--	mtk_free_clk_data(clk_data);
-+	mtk_free_clk_data(clk_mfg->clk_data);
- 
- 	return r;
- }
-@@ -128,20 +188,26 @@ static int clk_mt8196_mfg_probe(struct platform_device *pdev)
- static void clk_mt8196_mfg_remove(struct platform_device *pdev)
- {
- 	const struct mtk_pll_data *plls = of_device_get_match_data(&pdev->dev);
--	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-+	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(&pdev->dev);
- 	struct device_node *node = pdev->dev.of_node;
- 
- 	of_clk_del_provider(node);
--	mtk_clk_unregister_plls(plls, 1, clk_data);
--	mtk_free_clk_data(clk_data);
-+	mtk_clk_unregister_plls(plls, 1, clk_mfg->clk_data);
-+	mtk_free_clk_data(clk_mfg->clk_data);
- }
- 
-+static DEFINE_RUNTIME_DEV_PM_OPS(clk_mt8196_mfg_pm_ops,
-+				 clk_mt8196_mfg_suspend,
-+				 clk_mt8196_mfg_resume,
-+				 NULL);
-+
- static struct platform_driver clk_mt8196_mfg_drv = {
- 	.probe = clk_mt8196_mfg_probe,
- 	.remove = clk_mt8196_mfg_remove,
- 	.driver = {
- 		.name = "clk-mt8196-mfg",
- 		.of_match_table = of_match_clk_mt8196_mfg,
-+		.pm = pm_ptr(&clk_mt8196_mfg_pm_ops),
- 	},
- };
- module_platform_driver(clk_mt8196_mfg_drv);
-diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-index 0f2a1d19eea78b7390b221af47016eb9897f3596..82b86b849a67359d8f23d828f50422081c2747e3 100644
---- a/drivers/clk/mediatek/clk-pll.h
-+++ b/drivers/clk/mediatek/clk-pll.h
-@@ -53,6 +53,8 @@ struct mtk_pll_data {
- 	u8 pll_en_bit; /* Assume 0, indicates BIT(0) by default */
- 	u8 pcw_chg_bit;
- 	u8 fenc_sta_bit;
-+	const char * const *rpm_clk_names;
-+	unsigned int num_rpm_clks;
- };
- 
- /*
+> That brings me another point, I suppose that netconsole callbacks are
+> currently being called from NMI, given it is registered as a legacy
+> console, and legacy consoles are printked from inside NMIs, right?
 
--- 
-2.51.0
+The legacy console handling is automatically deferred in_nmi(), see
+is_printk_legacy_deferred().
 
+The only exception is panic() where the consoles are explicitly
+flushed. It is not 100% safe. But the risk of a deadlock is reduced
+by calling bust_spinlocks(1) which sets oops_in_progress.
+Console drivers use trylock when oops_in_progress is set.
+
+I could imagine that we allow the trick with oops_in_progress
+and trylock also in the "unsafe" write_atomic() callbacks.
+But it would be better to use only the nbcon context ownership
+as suggested above.
+
+Best Regards,
+Petr
 
