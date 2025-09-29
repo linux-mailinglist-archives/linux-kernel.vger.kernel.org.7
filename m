@@ -1,130 +1,138 @@
-Return-Path: <linux-kernel+bounces-835796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD4EBA8139
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:14:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262D3BA8133
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A6D189B43C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:15:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2652177E8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 06:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB3C240611;
-	Mon, 29 Sep 2025 06:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D853123C506;
+	Mon, 29 Sep 2025 06:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="BgL5aZOZ"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pn9FIeDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC4323D7DE;
-	Mon, 29 Sep 2025 06:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E85F46BF;
+	Mon, 29 Sep 2025 06:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759126481; cv=none; b=sA36ViWbxUMpk6h6dvUSXQejdxzhXdb9ywK6EIu9JCzgp3SebzUWksCmj1tpPuvI69T+j5FN3ll8Z0Ot57N2DzABlBIiiY6rZwLRE1o+Wmp3hd5RSeqvM9jeYzCJoTsobMsdW+S09MjIaay42OGRGwwoqGnD6ezZyJgmk4Iz61o=
+	t=1759126477; cv=none; b=KBVUXaNv0npNkgxjq/tpP/aHVsoaqzuUEHOCpARxj1aN265YP9et2WGbi1tBPGvU4e6KXddN7ESylH0AYqMq+pcfn9bGYXkYJvNx6tRkdd3e1ZzT5fhjpo7pEGHD0fsssxEotNjWcWLCowPyoHJPvONWI0lgS0hUFIz39uLhTck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759126481; c=relaxed/simple;
-	bh=m0Z08O7L4boL8QADqC2bgGp3lx55U5GQ/wSA8X0zRr0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=o5q8I2RAUGThZhCGk/ld803U+w8Z+uN2UmlfhkY2HvnMQcJ3pD2Fi4J0SBOZ6OOt01HdAWNg/TukBfvo6bnOrWf//a4JKIy5v0l6rEMkBQcGhdlovw8hM1ZmPauCZyxrbCwWsjC7ju6VJIm7f2jaPIr++7DgAUoykeXkZmJ361w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=BgL5aZOZ; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=LhCzfI3a33n71Q6JUjSWXwlIsTQV2S+5OVxI4ljc3rQ=; b=BgL5aZOZegqb7yw8oMLyOgEN6W
-	0L7R+4xokCa4gOguoUICzDSzW0wojNvTFSycSChFuKxpvKLShygFcMk2tpFmUXGDDkYLrHXjCgCgC
-	ALR9FVKwyNeEfrJ3VwGDAvn00SZ5xqWeAT8myQr37gG0mJz5IDDeI0znOTH3h3diaH+L1VYm3JXeR
-	+pl0d2g0rg9TH7dYxb1A6kNGNa7wF9/E8c9rmbjDGzc6b3YQaJI+ZhbkABOiIkQCSIak2wBbpfMTK
-	gvJVs25hcoqVmpkdBT6OnpgwK1Z6pd92BauEWWXASlvScLEvpbQ3G6NXHx3fIAjG6UacjGPn9aV7T
-	+BxtYDhQ==;
-Received: from [122.175.9.182] (port=8359 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1v379a-00000008fEe-21oW;
-	Mon, 29 Sep 2025 02:14:30 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id D86761781F94;
-	Mon, 29 Sep 2025 11:44:25 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id B9FEE17820F5;
-	Mon, 29 Sep 2025 11:44:25 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id z89e3CPQ0WEl; Mon, 29 Sep 2025 11:44:25 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 654E21781F94;
-	Mon, 29 Sep 2025 11:44:25 +0530 (IST)
-Date: Mon, 29 Sep 2025 11:44:25 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev <andrew+netdev@lunn.ch>, davem <davem@davemloft.net>, 
-	edumazet <edumazet@google.com>, kuba <kuba@kernel.org>, 
-	pabeni <pabeni@redhat.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, pmohan <pmohan@couthit.com>, 
-	basharath <basharath@couthit.com>, afd <afd@ti.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>, 
-	parvathi <parvathi@couthit.com>
-Message-ID: <1176879373.438342.1759126465054.JavaMail.zimbra@couthit.local>
-In-Reply-To: <383e4a23-447e-4024-8dc9-fc52ea209025@lunn.ch>
-References: <20250925141246.3433603-1-parvathi@couthit.com> <0080e79a-cf10-43a1-9fc5-864e2b5f5d7a@lunn.ch> <773982362.433508.1758892145106.JavaMail.zimbra@couthit.local> <383e4a23-447e-4024-8dc9-fc52ea209025@lunn.ch>
-Subject: Re: [PATCH net-next 0/3] RSTP SWITCH support for PRU-ICSSM Ethernet
- driver
+	s=arc-20240116; t=1759126477; c=relaxed/simple;
+	bh=JL+yIl56aK7gs6nv7/RiZgoMdOKs6PuQPe8OhpqgRUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hv6ahyj49yTYrz1PYrD3GJiP8dKVT3CDgPJ6O3eggSV2pte8PEtbdvok1hkWrnYglzy81YBBrg9Y0XYXUJC+PelvQRaTIfS4FYLCThOuGlpKbOmjSJ37F+/6kA3ZVb+Lk2DNHwhLZR9jIly1YFI4e7HqMMofT625L3YB+nlNjMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pn9FIeDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664D7C4CEF7;
+	Mon, 29 Sep 2025 06:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759126476;
+	bh=JL+yIl56aK7gs6nv7/RiZgoMdOKs6PuQPe8OhpqgRUM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pn9FIeDk3+6H6G9Q/GhcTm0i2sCSiD3FdmY5C0nQ1TsBKb2BD1yqctA+WAAvb4CWm
+	 V5kCCmQrnQrXvnXbgNAnuzavwzKvfZYWIBzpjXA/ZeLFlUzOf45BN/s70XvbY9egcX
+	 gAjOoFgbJwSeLYhRqxVflMOOhwnuQjyBi2HpFOG7l3QRR7vmd6cLV2NKEoHGJ1k1W5
+	 PFrYHdjrghuaIv0D5YwlnO3gBOU8ZmaMgIK2aMKAJ20VBGpKSjTUh00xzvcPxgXokQ
+	 5kEpehjNIqB0kGCNXLQK2XhGdHtVaWyJKSjBf2S3Ua8p8g0KPT/yxRorMbsO0wtBit
+	 9aKvVafGhuqYQ==
+Message-ID: <14a1f14f-f5c7-4d09-9b4b-9248c4f5162c@kernel.org>
+Date: Mon, 29 Sep 2025 08:14:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/15] serial: sc16is7xx: remove empty line
+To: Hugo Villeneuve <hugo@hugovil.com>, gregkh@linuxfoundation.org,
+ fvallee@eukrea.fr
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>
+References: <20250924153740.806444-1-hugo@hugovil.com>
+ <20250924153740.806444-12-hugo@hugovil.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250924153740.806444-12-hugo@hugovil.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC139 (Mac)/8.8.15_GA_3968)
-Thread-Topic: RSTP SWITCH support for PRU-ICSSM Ethernet driver
-Thread-Index: fliDJmawFSlr9+bMXgXTI3DYdqerOQ==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Hi,
-
->> No, this patch-set applies to both STP and RSTP. The driver and firmware
->> responds to the port-state transitions and FDB operations through the
->> standard Linux switchdev/bridge interfaces, with no STP/RSTP related
->> logic executed in driver/firmware.
->> 
->> We referred to RSTP in the commit message as it is our primary use case
->> and it implies support for STP as well.
+On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
+> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 > 
-> I would not say RSTP implied STP, because the higher level
-> implementation is very different. You need to know the low level
-> details to understand they use the same driver API.
+> Remove empty line inavertently added in commit d5078509c8b0
+> ("serial: sc16is7xx: improve do/while loop in sc16is7xx_irq()").
 > 
-> Please generalise the commit messages, mention STP as well as RSTP.
+> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> ---
+>   drivers/tty/serial/sc16is7xx.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> Thanks
-> 	Andrew
+> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+> index d1a9fa26e9bdb..a05be92f7e776 100644
+> --- a/drivers/tty/serial/sc16is7xx.c
+> +++ b/drivers/tty/serial/sc16is7xx.c
+> @@ -834,7 +834,6 @@ static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
+>   static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
+>   {
+>   	bool keep_polling;
+> -
+>   	struct sc16is7xx_port *s = (struct sc16is7xx_port *)dev_id;
 
-Understood, we will update the commit message in the next version.
+And remove the cast and switch the two definitions, so we have a 
+reversed xmas tree ;).
+
+>   	do {
 
 
-Thanks and Regards,
-Parvathi.
+-- 
+js
+suse labs
 
