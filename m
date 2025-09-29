@@ -1,66 +1,69 @@
-Return-Path: <linux-kernel+bounces-836700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2145BAA611
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:46:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E51BAA624
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288013C3114
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 456037A1D32
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AA22288E3;
-	Mon, 29 Sep 2025 18:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6541323D7C4;
+	Mon, 29 Sep 2025 18:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQcaNUdK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmLQPoLf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C509523A;
-	Mon, 29 Sep 2025 18:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829912032D;
+	Mon, 29 Sep 2025 18:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759171600; cv=none; b=l54mueNmMCjxzKHi33i4pSKR5ySbU13kG7StQKGfSrNu4kZeLDNiBMnzd4Q6CUYUNhLmg58sMYmxSJJRJNJ8t5au4226Q5choCVt49IGP9d2UcUVvYTW35BGFl/teuYn73mEobxcFae6SU2udzyWWXRoTG++RlcKUrAizPw8k4U=
+	t=1759171763; cv=none; b=VQXge/WEZfN52y+fcl0GR/KLxwV2EBaopf1nISwXVt30a5jbkvDRKm+w+ji4AnS9vRGQtVIPh+pmPWnhd9QJ4DF8cvF8sOypRe5fFxr5/kUJzlAwNYSt5LSVLx7GGVWgzj1cSu+415SzgsYgTZp/zWYyNTz4xo5oP+2hV8/pP24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759171600; c=relaxed/simple;
-	bh=TNlhXabPzTPBnmWxeucl0sJUD7WaZdRbq2zbsllnuPk=;
+	s=arc-20240116; t=1759171763; c=relaxed/simple;
+	bh=CIesZg8God6+nurlZmJlDErmkC0T5rSf+vpzR1sIRAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lM6tJEzhhupmiIstnD4CVvx2eE+J2Y+fIRlMTLTWOi+pBYzKdTSm29lsVe3j6U4V3FcVdHDkcD+FoBpqGByB29uj3t33BYTG/R2FesgdUpkCJb8mdhWTLmXQds/mjgfxSeX2Z8z1Nlc0rb+FC8s/u5kX6re7w4hZA22VWGuZeGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQcaNUdK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0C7CC4CEF4;
-	Mon, 29 Sep 2025 18:46:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eh65tXVQhGdmU6/c+XX9HmuR+CyFVU6jIBTQ0cstAZgwTC2fqe7pFc+FS6ZUA1xXK3qKmsBs82zdqOYMqnOA6NlBdLIDy+1tEhri0ezP5z7uf1jqSEP9UlVpwayGo9PSWdTWsl3n3/6wmAQX6ytYZ1oXHb8nrjug1wk+P5+kh7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DmLQPoLf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A7FC4CEF4;
+	Mon, 29 Sep 2025 18:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759171599;
-	bh=TNlhXabPzTPBnmWxeucl0sJUD7WaZdRbq2zbsllnuPk=;
+	s=k20201202; t=1759171763;
+	bh=CIesZg8God6+nurlZmJlDErmkC0T5rSf+vpzR1sIRAU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cQcaNUdKQA6pggrC6CKP9nrssk0n+iS1wwK/CpqYxj6HL1Q943J8xN+mHitHJmC/a
-	 7oh8mR2bn3LtHTdPHRf4OmmA43NX1EgE8yC+auScD3r228BBf7XvC1dW41bTuD4uQE
-	 GoPhVWzrQZekO3MrWnwsoj8Q3r1P5tsfLTJwZ44rg80HFP8CuJeRw3rnCw5MdrrtPC
-	 ouxIO4F4vcgb8ybECkfRNtofFg0Fpajv57KKg614+3Vbq86vHjPX9TJKGQwGlzZ0Lc
-	 pyd5a31ZCWnB3Tetlp39lTpA8FIAC0JaWcbqCwC3lQZ68uVW1FKLWt+ZIaGtN0SVwW
-	 +7cJQAuB9qFSg==
-Date: Mon, 29 Sep 2025 19:46:33 +0100
+	b=DmLQPoLflrWPzRHpNZHaEQ6aDwxh9aYtXgubo4m46HHBDXYVQgDPIOQtOYSXLT0UW
+	 J0cY7HPPczP7uGVH9bcU+tgHh7JtcdZAtZ/6LkN4Q9KJns0kjSKvioKAxNeym0F/RE
+	 7Jaqb/P/p+piz8zOUQLrQ0JqLlFpk0EgPrMLapEl2mTsSX89/OCAF5ICnPviDScM8e
+	 f9N+ovN/nvQY+yVV/VjHhRlzBKhjk8QSuDeMmVdSw/y/HhudxSwo2qdDx8p6luxZWn
+	 r2qXWDt5vxv4e8T8xv12/e34WtpCFymnIXXgYbICoJ1r01KImMcZb8lqAn92hmslwc
+	 qaKj9SwXF+fMQ==
+Date: Mon, 29 Sep 2025 19:49:15 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Hans de Goede <hansg@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-	linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 00/11] riscv: Add initial support for Anlogic DR1V90
-Message-ID: <20250929-unhappily-circulate-5e516175ad0f@spud>
-References: <20250922-dr1v90-basic-dt-v2-0-64d28500cb37@pigmoral.tech>
- <20250925-chowtime-stove-4078dc1af2b0@spud>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 07/12] dt-bindings: media: Add usb-camera-module
+Message-ID: <20250929-disparate-fidgeting-65c2f7eff236@spud>
+References: <20250926-uvc-orientation-v3-0-6dc2fa5b4220@chromium.org>
+ <20250926-uvc-orientation-v3-7-6dc2fa5b4220@chromium.org>
+ <20250926-mute-boil-e75839753526@spud>
+ <CANiDSCuddqjeDr80xKsZZP7CXu9qB5qqYPoZujNYLcVjK0kKkg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,69 +71,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dz2AhysS4RVYF5ne"
+	protocol="application/pgp-signature"; boundary="T7A0TheW4Ey8c64A"
 Content-Disposition: inline
-In-Reply-To: <20250925-chowtime-stove-4078dc1af2b0@spud>
+In-Reply-To: <CANiDSCuddqjeDr80xKsZZP7CXu9qB5qqYPoZujNYLcVjK0kKkg@mail.gmail.com>
 
 
---dz2AhysS4RVYF5ne
+--T7A0TheW4Ey8c64A
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 06:22:41PM +0100, Conor Dooley wrote:
-> On Mon, Sep 22, 2025 at 08:46:30PM +0800, Junhui Liu wrote:
-> > This patch series introduces initial support for the Anlogic DR1V90 SoC
-> > [1] and the Milianke MLKPAI-FS01 [2] board.
+On Mon, Sep 29, 2025 at 10:30:35AM +0200, Ricardo Ribalda wrote:
+> Hi Conor
 >=20
-> It's a bit late for v6.18 content, since the merge window likely opens
-> on Monday, but how do you intend getting the series into mainline?
+> On Fri, 26 Sept 2025 at 18:55, Conor Dooley <conor@kernel.org> wrote:
+> >
+> > On Fri, Sep 26, 2025 at 01:11:31PM +0000, Ricardo Ribalda wrote:
+> > > For fixed cameras modules the OS needs to know where they are mounted.
+> > > This information is used to determine if images need to be rotated or
+> > > not.
+> > >
+> > > ACPI has a property for this purpose, which is parsed by
+> > > acpi_get_physical_device_location():
+> > > https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration=
+/Device_Configuration.html#pld-physical-location-of-device
+> > >
+> > > In DT we have similar properties for video-interface-devices called
+> > > orientation and rotation:
+> > > Documentation/devicetree/bindings/media/video-interface-devices.yaml
+> > >
+> > > Add a new schema that combines usb/usb-device.yaml and
+> > > media/video-interface-devices.yaml
+> > >
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  .../bindings/media/usb-camera-module.yaml          | 46 ++++++++++++=
+++++++++++
+> > >  MAINTAINERS                                        |  1 +
+> > >  2 files changed, 47 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/usb-camera-modul=
+e.yaml b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..e4ad6f557b9151751522e=
+49b72ae6584deb0c7ba
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/usb-camera-module.yaml
+> > > @@ -0,0 +1,46 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/media/usb-camera-module.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: USB Camera Module
+> > > +
+> > > +maintainers:
+> > > +  - Ricardo Ribalda <ribalda@chromium.org>
+> > > +
+> > > +description: |
+> > > +  This schema allows for annotating auxiliary information for fixed =
+camera
+> > > +  modules. This information enables the system to determine if incom=
+ing frames
+> > > +  require rotation, mirroring, or other transformations. It also des=
+cribes the
+> > > +  module's relationship with other hardware elements, such as flash =
+LEDs or
+> > > +  Voice Coil Motors (VCMs).
+> > > +
+> > > +allOf:
+> > > +  - $ref: /schemas/usb/usb-device.yaml#
+> > > +  - $ref: /schemas/media/video-interface-devices.yaml#
+> > > +
+> > > +properties:
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> >
+> > What actually causes this schema to be applied? Did I miss it getting
+> > included somewhere?
 >=20
-> There is a document https://docs.kernel.org/process/maintainer-soc.html
-> containing information about how the platform maintenance process works.
-> Arnd has suggested that the best way to get a platform initially added
-> is to send the whole patchset, rather than a PR - it leaves you with
-> fewer things to deal with at once. This patchset should be sent to
-> soc@kernel.org, with a note saying that it is ready for inclusion in
-> your cover letter.=20
+> I guess your question is why I have not defined the compatible field?
 >=20
-> Ideally, the initial patchset for an SoC should contain clock (and
-> pinctrl) support, rather than use fake fixed-clocks, but you have none of
-> those in your base dts so I have no objections. fixed-clocks can become
-> a problem if the dts is imported into U-Boot via OF_UPSTREAM or
-> elsewhere, since it can cause regressions for them. I would highly
-> suggest that upstreaming the clock/reset controller is the next step
-> that you take, because other peripherals are going to need clocks.
+> I tried this change[1] with no luck:
+> /usr/local/google/home/ribalda/work/linux/Documentation/devicetree/bindin=
+gs/media/uvc-camera.example.dtb:
+> device@1 (uvc-camera): compatible: ['uvc-camera'] does not contain
+> items matching the given schema
 >=20
-> Please let me know if you have any questions - either by email (and it
-> can be off-list if needed if it relates to platform maintenance
-> questions) or on irc (I'm conchuod on libera.chat).
+> I think it failed, because If we add these allOfs as Rob proposed
+> https://lore.kernel.org/all/20250625185608.GA2010256-robh@kernel.org/:
+> ```
+> allOf:
+>   - $ref: /schemas/usb/usb-device.yaml#
+>   - $ref: /schemas/media/video-interface-devices.yaml#
+> ```
+> We cannot (or I do not know how to) have a different compatible than
+> the one from usb-device.yaml
+>=20
+>=20
+> Any suggestion on how to do this properly will be highly appreciated :)
 
-I had a chat with Junhui on irc the other day, where they expressed
-unwillingness to act as the platform maintainer, to avoid being in
-conflict with the vendor. I'm disappointed of course that the vendor's
-behaviour has had this impact, but of course I understand where Junhui
-is coming from.
+It'd work, I think, if you permitted the pattern from usb-device as a
+fallback compatible. I don't know if that would work for whatever niche
+you're attempting to fill here though.
 
-Fortunately Junhui is still willing to post patches for the platform, as
-they want to run mainline on their board. I will add the platform to my
-"misc" branch, along with the other platforms I apply patches for until
-either Junhui changes their mind or until people who understand the
-process and standards wish to take it over.
+Probably a Rob question ultimately.
 
-Cheers,
-Conor.
+>=20
+> Thanks!
+>=20
+>=20
+>=20
+> [1]
+>=20
+> @@ -21,10 +21,14 @@ allOf:
+>    - $ref: /schemas/media/video-interface-devices.yaml#
+>=20
+>  properties:
+> +  compatible:
+> +    const: uvc-camera
+> +
+>    reg:
+>      maxItems: 1
+>=20
+>  required:
+> +  - compatible
+>    - reg
+>=20
+>  additionalProperties: true
+> @@ -38,8 +42,8 @@ examples:
+>          #size-cells =3D <0>;
+>=20
+>          device@1 {
+> -            compatible =3D "usb123,4567";
+> +           compatible =3D "uvc-camera";
+>              reg =3D <2>;
+>              orientation =3D <0>;
+>              rotation =3D <90>;
+>          };
+>=20
+> >
+> > > +required:
+> > > +  - reg
+> > > +
+> > > +additionalProperties: true
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    usb@11270000 {
+> > > +        reg =3D <0x11270000 0x1000>;
+> > > +        interrupts =3D <0x0 0x4e 0x0>;
+> > > +        #address-cells =3D <1>;
+> > > +        #size-cells =3D <0>;
+> > > +
+> > > +        device@1 {
+> > > +            compatible =3D "usb123,4567";
+> > > +            reg =3D <2>;
+> > > +            orientation =3D <0>;
+> > > +            rotation =3D <90>;
+> > > +        };
+> > > +    };
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index ee8cb2db483f6a5e96b62b6f2edd05b1427b69f5..1503502a3aed2625e8ff4=
+88456ccd7305cc74ba7 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -26258,6 +26258,7 @@ L:    linux-media@vger.kernel.org
+> > >  S:   Maintained
+> > >  W:   http://www.ideasonboard.org/uvc/
+> > >  T:   git git://linuxtv.org/media.git
+> > > +F:   Documentation/devicetree/bindings/media/usb-camera-module.yaml
+> > >  F:   Documentation/userspace-api/media/drivers/uvcvideo.rst
+> > >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
+> > >  F:   Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> > >
+> > > --
+> > > 2.51.0.536.g15c5d4f767-goog
+> > >
+>=20
+>=20
+>=20
+> --
+> Ricardo Ribalda
+>=20
 
---dz2AhysS4RVYF5ne
+--T7A0TheW4Ey8c64A
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNrUCQAKCRB4tDGHoIJi
-0qzSAP0cvO1DFs2n6IQ7S/IJRMg2ehNjpGRU7+R8PXLZ24qfwgD/T4EEVP1tHhtS
-C3gmCx92Pnopimxtjl3Swp77c18Csw4=
-=zNQt
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNrUqwAKCRB4tDGHoIJi
+0mASAP49pwqqfaBzHe/GqEE+pCyOCKLHjQV++1zecT+/WddTgAD/dP2GQvWciVeV
+ngYFC1P2vUnJOUWrondGz3NRTBBB/g0=
+=ew51
 -----END PGP SIGNATURE-----
 
---dz2AhysS4RVYF5ne--
+--T7A0TheW4Ey8c64A--
 
