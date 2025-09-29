@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-836477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46E9BA9CCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BBDBA9CDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90D523B061B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084EC3B0F4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A93C30BBA5;
-	Mon, 29 Sep 2025 15:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2011230C0EE;
+	Mon, 29 Sep 2025 15:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8NMy3rJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LieiEkf/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F01284663;
-	Mon, 29 Sep 2025 15:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5692130BBAC;
+	Mon, 29 Sep 2025 15:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759159739; cv=none; b=RSYWIwGWcly0E77NynCQjS2DHOYbJt9f2SerisklCTlCQ4A3ZjztpJrE1snnUC4XtnnlGNvraFLhcK9QkDhzUMshirYrQOg1DWyowV2xJLEHFPzTNLxnUw25hLp7E5oWNhgpvanN9Lxv5zTM+amN35GdHBkbhjB4jEls77Erg+M=
+	t=1759159740; cv=none; b=XG9OgbpSAuSYauSqeaYBSIT/q1QmNlcHg0vaOfuh4l/tEuRAm7fl8ewsoo51RuXbDgM28NpipQM2bZ3WWZpg3zwosKbBLX+AJP5ZYG1FaEHHKB+l4fxXMEXSi7bHSC7FKAw0qaZjpagIHfD6a0oTvtQpwQlAFkbWbqv2TIH186I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759159739; c=relaxed/simple;
-	bh=7oZnqyq14webUvB+RE2KVjar1tQcsKEssUnIT9ldzTw=;
+	s=arc-20240116; t=1759159740; c=relaxed/simple;
+	bh=zz+GUmVsy2vB+3ANMPWPbJpVcNFY2jQbjEDvoTACVOw=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=VpPAOjWrb5eM+Cx6XmlsjJAzGssFQNkBgC59vLP+S6hoeDwaSvBi1C6qreEaEkslq/X6MtuunOFn9OSZoqC6Jvk2Elgi8fx9DhYFAvi63N3Xnud5rZw+MWVobEt1wW9klQxt775/ufZ+CtNZJCOCSC3jfdS8hyES6eHPiiS2Ob4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8NMy3rJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC88C4CEF4;
-	Mon, 29 Sep 2025 15:28:58 +0000 (UTC)
+	 Message-Id:Subject; b=ECbCZ7z50cPXil69p3ZOv5n6Q479IOxOeawfq5j6nkAoPx0QWXLWPCBDcgxUd/0q9kKPlk6ft45p+/3r2NbTPnyIsWEDXPXOH/VVm9FhKDVHbg9Fv25EzEC3jrm2qlJXxs2pWP1gxQGTi2PwOeGMwz96nzMm/DtnaWg6Yhvo7EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LieiEkf/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D72C116B1;
+	Mon, 29 Sep 2025 15:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759159738;
-	bh=7oZnqyq14webUvB+RE2KVjar1tQcsKEssUnIT9ldzTw=;
+	s=k20201202; t=1759159739;
+	bh=zz+GUmVsy2vB+3ANMPWPbJpVcNFY2jQbjEDvoTACVOw=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=f8NMy3rJ5T/3h2RaJpG0sJkWJXij76T8ItkilqkvhEPnQcxiMQP7MKZmMY/8aAnPP
-	 MvPsxxvwEVtyQ4ohtpdR5DUsb1dX/g+x8zX//aaoM1Vlzc0DHmWwYv6twCVGJ87Bax
-	 Aj41fRrWE3jxL4gTDd+BfWI/T35ubMYJCXzCmNvu8c5MJtB2uhWFSSomb7J6+5z3ie
-	 3JVEbzMJVF7lJOm2MKWUvK8pPxSvLtAb3M2ezvX/rKVn+0jn0wZiPfOczEr9aZO9tZ
-	 1IvZwl5dDQdxLGfmdpkZq1tQ7Xc+y0exqUHntDi+MWQwz12Fvj8/2zWRiwZFSqNAs7
-	 aTztIHPEe9R2g==
-Date: Mon, 29 Sep 2025 10:28:57 -0500
+	b=LieiEkf/My5IzhSHvnx4xacBLRykPFVF30XNtrgPaxvt2XruntfGF75FreaDo5sBd
+	 7xIR+u+UDMeWUdKANsMbUYIezK3qC+eBLGFYhBfbwlCZp/dWe7mpLGu1lF2BWlcHIk
+	 A8SYBu5x4+tJ2dvEy1iXzJO04Slrd60iufQ0d5V7EBMv6kxh/iPMaOxV/+77aJZzuC
+	 d61H5tM8BVpft6iJid+miAYFAIBLgkso9EXESl+Cv0Z6HtLz35zjtQ7vjNe/9Yl4ix
+	 4pKSEvUXKrIQLuwqjrlKISh9VE34TmD2amQ3kMZBmQ/MdXd6yUGUQSxnUFTxjndsRh
+	 dvSafSW63W2JA==
+Date: Mon, 29 Sep 2025 10:28:58 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,98 +50,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- phone-devel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
- Amir Dahan <system64fumo@protonmail.com>, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Christopher Brown <crispybrown@gmail.com>, David Heidelberg <david@ixit.cz>
-To: Paul Sajna <sajattack@postmarketos.org>
-In-Reply-To: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
-References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
-Message-Id: <175915953133.54369.5423928834702362900.robh@kernel.org>
-Subject: Re: [PATCH v3 00/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
- Improve HW support in dts
+Cc: devicetree@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>, 
+ linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ dmaengine@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+ Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Liam Girdwood <lgirdwood@gmail.com>
+To: "Sheetal ." <sheetal@nvidia.com>
+In-Reply-To: <20250929105930.1767294-1-sheetal@nvidia.com>
+References: <20250929105930.1767294-1-sheetal@nvidia.com>
+Message-Id: <175915953199.54406.1457670691076635405.robh@kernel.org>
+Subject: Re: [PATCH V2 0/4] Add tegra264 audio device tree support
 
 
-On Sun, 28 Sep 2025 22:05:23 -0700, Paul Sajna wrote:
-> Rollup of improved hardware support via devicetree for LG G7 ThinQ
-> (judyln) from sdm845-mainline kernel fork
+On Mon, 29 Sep 2025 16:29:26 +0530, Sheetal . wrote:
+> From: sheetal <sheetal@nvidia.com>
 > 
-> Notably, this patch-series enables full DRM acceleration and wifi,
-> among other small improvements in individual commits
+> Add device tree support for tegra264 audio subsystem including:
+> - Binding update for
+>   - 64-channel ADMA controller
+>   - 32 RX/TX ADMAIF channels
+>   - tegra264-agic binding for arm,gic
+> - Add device tree nodes for
+>   - APE subsystem (ACONNECT, AGIC, ADMA, AHUB and children (ADMAIF, I2S,
+>     DMIC, DSPK, MVC, SFC, ASRC, AMX, ADX, OPE and Mixer) nodes
+>   - HDA controller
+>   - sound
 > 
-> after this patch-series the main things that remain to be worked
-> on include touchscreen, audio, and modem.
+> Note:
+>  The change is dependent on https://patchwork.ozlabs.org/project/linux-tegra/patch/20250818135241.3407180-1-thierry.reding@gmail.com/
 > 
-> Depends upon panel driver patch-series https://lore.kernel.org/all/20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org/T/#r9a976ca01e309b6c03100e984a26a0ffc2fe2002
+> ...
+> Changes in V2:
+>  - Update the allOf condition in Patch 2/4.
 > 
-> Co-developed-by: Amir Dahan <system64fumo@protonmail.com>
-> Co-developed-by: Christopher Brown <crispybrown@gmail.com>
-> Signed-off-by: Amir Dahan <system64fumo@protonmail.com>
-> Signed-off-by: Christopher Brown <crispybrown@gmail.com>
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
-> ---
-> Changes in v3:
-> - change firmware paths to lowercase 'lg' (matching dt-bindings)
-> - fix signoffs
-> - add wifi dmesg to commit message
-> - remove regulator-always-on from ibb
-> - remove framebuffer
-> - remove msm ids
-> - don't continue commit subject into commit messages
-> - split bluetooth node
-> - add sbu uart details to commit message
-> - change ipa gsi-loader to self
-> - Link to v2: https://lore.kernel.org/r/20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org
+> sheetal (4):
+>   dt-bindings: dma: Update ADMA bindings for tegra264
+>   dt-bindings: sound: Update ADMAIF bindings for tegra264
+>   dt-bindings: interrupt-controller: arm,gic: Add tegra264-agic
+>   arm64: tegra: Add tegra264 audio support
 > 
-> Changes in v2:
-> - sort at the start
-> - drop unnecessary labels
-> - drop unnecessary gmu
-> - multi-led
-> - split fb-panel changes
-> - expand upon firmware commit message
-> - use qcom,calibration-variant instead of
->   qcom,ath10k-calibration-variant
-> - change firmware paths to include "LG"
-> - remove framebuffer reservation
-> - add lab/ibb
+>  .../bindings/dma/nvidia,tegra210-adma.yaml    |   15 +-
+>  .../interrupt-controller/arm,gic.yaml         |    1 +
+>  .../sound/nvidia,tegra210-admaif.yaml         |  106 +-
+>  .../arm64/boot/dts/nvidia/tegra264-p3971.dtsi |  106 +
+>  arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 3190 +++++++++++++++++
+>  5 files changed, 3377 insertions(+), 41 deletions(-)
 > 
-> - Link to v1: https://lore.kernel.org/r/20250913-judyln-dts-v1-0-23b4b7790dce@postmarketos.org
-> 
-> ---
-> Amir Dahan (1):
->       arm64: dts: qcom: sdm845-lg-common: Add leds
-> 
-> Christopher Brown (1):
->       arm64: dts: qcom: sdm845-lg-judyln: Add battery and charger
-> 
-> Paul Sajna (9):
->       arm64: dts: qcom: sdm845-lg-common: Sort nodes and properties
->       arm64: dts: qcom: sdm845-lg-common: Add uarts and Bluetooth
->       arm64: dts: qcom: sdm845-lg-judyln: Add display panel
->       arm64: dts: qcom: sdm845-lg-judyln: Add firmware nodes, change path
->       arm64: dts: qcom: sdm845-lg-{common, judyln}: Add wifi node
->       arm64: dts: qcom: sdm845-lg-common: Add chassis-type
->       arm64: dts: qcom: sdm845-lg-common: Add camera flash
->       arm64: dts: qcom: sdm845-lg-judyln: Add lab/ibb
->       arm64: dts: qcom: sdm845-lg-common: Change ipa gsi-loader to 'self'
-> 
->  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 222 ++++++++++++++++++-------
->  arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts  | 140 ++++++++++++++--
->  2 files changed, 289 insertions(+), 73 deletions(-)
-> ---
-> base-commit: 8394712bc1340df993cb167199568f44013b45d3
-> change-id: 20250911-judyln-dts-17c41e59dc0f
-> prerequisite-message-id: <20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org>
-> prerequisite-patch-id: e51151ea7f8fdad6ad7d90713febc5c6b6fc4f9c
-> prerequisite-patch-id: b3dd44250da9cd12bc5b2d0d7e865dbe19ceed92
-> prerequisite-patch-id: fd6c8077806cb03fcf37d0e0d730314c2760e334
-> 
-> Best regards,
 > --
-> Paul Sajna <sajattack@postmarketos.org>
+> 2.34.1
 > 
 > 
 > 
@@ -162,23 +122,45 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: base-commit 8394712bc1340df993cb167199568f44013b45d3 not known, ignoring
  Base: attempting to guess base-commit...
- Base: tags/next-20250926 (exact match)
- Deps: looking for dependencies matching 3 patch-ids
- Deps: Applying prerequisite patch: [PATCH 1/3] drm/panel: Add LG SW49410 Panel
- Deps: Applying prerequisite patch: [PATCH 2/3] dt-bindings: display: panel: Add devicetree documentation for lg,sw49410
- Deps: Applying prerequisite patch: [PATCH 3/3] Update MAINTAINERS for lg,sw49410
+ Base: tags/v6.17-rc1-57-g635ae6f0a3ad (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250929105930.1767294-1-sheetal@nvidia.com:
 
-arch/arm64/boot/dts/qcom/sdm845-lg-judyp.dtb: wifi@18800000 (qcom,wcn3990-wifi): 'qcom,snoc-host-cap-skip-quirk' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath10k.yaml#
-arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dtb: wifi@18800000 (qcom,wcn3990-wifi): 'qcom,snoc-host-cap-skip-quirk' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath10k.yaml#
+In file included from arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi:3,
+                 from arch/arm64/boot/dts/nvidia/tegra264-p3834-0008.dtsi:3,
+                 from arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dts:5:
+arch/arm64/boot/dts/nvidia/tegra264.dtsi:8:10: fatal error: dt-bindings/power/nvidia,tegra264-powergate.h: No such file or directory
+    8 | #include <dt-bindings/power/nvidia,tegra264-powergate.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [scripts/Makefile.dtbs:132: arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/nvidia] Error 2
+make[2]: Target 'arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: nvidia/tegra264-p3971-0089+p3834-0008.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'nvidia/tegra210-p2371-2180.dtb' not remade because of errors.
+make: Target 'nvidia/tegra210-p3450-0000.dtb' not remade because of errors.
+make: Target 'nvidia/tegra234-p3737-0000+p3701-0008.dtb' not remade because of errors.
+make: Target 'nvidia/tegra234-p3740-0002+p3701-0008.dtb' not remade because of errors.
+make: Target 'nvidia/tegra234-p3737-0000+p3701-0000.dtb' not remade because of errors.
+make: Target 'nvidia/tegra186-p2771-0000.dtb' not remade because of errors.
+make: Target 'nvidia/tegra210-p2371-0000.dtb' not remade because of errors.
+make: Target 'nvidia/tegra194-p3509-0000+p3668-0000.dtb' not remade because of errors.
+make: Target 'nvidia/tegra234-p3768-0000+p3767-0000.dtb' not remade because of errors.
+make: Target 'nvidia/tegra234-sim-vdk.dtb' not remade because of errors.
+make: Target 'nvidia/tegra186-p3509-0000+p3636-0001.dtb' not remade because of errors.
+make: Target 'nvidia/tegra194-p2972-0000.dtb' not remade because of errors.
+make: Target 'nvidia/tegra210-smaug.dtb' not remade because of errors.
+make: Target 'nvidia/tegra194-p3509-0000+p3668-0001.dtb' not remade because of errors.
+make: Target 'nvidia/tegra234-p3768-0000+p3767-0005.dtb' not remade because of errors.
+make: Target 'nvidia/tegra210-p2571.dtb' not remade because of errors.
+make: Target 'nvidia/tegra264-p3971-0089+p3834-0008.dtb' not remade because of errors.
+make: Target 'nvidia/tegra132-norrin.dtb' not remade because of errors.
+make: Target 'nvidia/tegra210-p2894-0050-a08.dtb' not remade because of errors.
 
 
 
