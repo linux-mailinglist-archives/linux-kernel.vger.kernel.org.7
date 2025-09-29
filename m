@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-836165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38A7BA8EA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB69BA8EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA461691FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3C3C1895584
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA282FBE03;
-	Mon, 29 Sep 2025 10:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a18tkNhs"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE762FBDFF;
+	Mon, 29 Sep 2025 10:48:46 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD092F25FC
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FE32C3261
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759142851; cv=none; b=MhX6F7DUnE3ggg8YjsQA1zfIqoyNYHjBzYeBWRZq+Ie8oNN9KtrK9HG+xITgJRA9F2CIYwkFrNLhdzawqMuVAVAgw9yFV0tG2e2rUa0vUlxDkMiGPMRYaOLKeJWH2c1efZRgW+leo1WD5sDd/YCvRVOA9LrXGrFAvoMqpuAS3UE=
+	t=1759142926; cv=none; b=eg9w0dRZy3D9137CkGFMRhqdGHNa8PsMDjSpCi6eVNTVZQuYH34TvTxFtKpCjdRgnFXEW4Ggb6GaP1QfbboZKHBBicQdaUzVei9lpQgH4fMc0s89PLj9cYtcysdf1AFfKkmWmlwlqCGtCK4I0Juh0EP81pgdlDG79+viuzD626A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759142851; c=relaxed/simple;
-	bh=3KmaPLC7fpBhdiaNP8bZ9DxwULE49IaCJfAvqvOZqCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SRBDNpCb49NtSmHcV1dgGw74b0lQaW1X7O1C4OcrYHdY0wwn9pm/qETt/hUoRwBRTZPHsgQqWC76GN51PRX0y6U3Ybs1ko/f3T2Ix1q/NFLisH3Q6h8kw6fs3ZCrg51mo64jebNdYrEDpXqN8djavOQnQGuwh2nNi34ol21cTLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a18tkNhs; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759142847;
-	bh=3KmaPLC7fpBhdiaNP8bZ9DxwULE49IaCJfAvqvOZqCU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a18tkNhs8rEVCzUajMFURtTiYu4uii4sccPRHMv5nnFwxi7/UthxKEr1Tdkvv83S0
-	 bLDSJCQ+rYDdrISBVqbUnxFUaU/yNfediqXKLYxH1x8EARDOlXjAIrVqM9b+CMk6JX
-	 fwAoo07WUL3604SqoyPHJLGaa5wkgTruAvMHXdZoLwBMC7Pbz+kOqj79XdA8LMVgXC
-	 iJbsJUaavV8F1TXVS7q1cJ49lTnPZ7ZCETN5+alcs7bj0c1pfAo0C8IscgWxFBb8Vu
-	 9K3Td/ZcHVwbqLlSLFg8nmZ41jR4ttUdibT7Z8IAlABo4S+sV6hNZIXT2+aqKU6ElY
-	 NGXvTt0KHBMWw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4286417E003B;
-	Mon, 29 Sep 2025 12:47:27 +0200 (CEST)
-Message-ID: <e9992ba9-bf5b-4533-948a-e19778bb6f50@collabora.com>
-Date: Mon, 29 Sep 2025 12:47:26 +0200
+	s=arc-20240116; t=1759142926; c=relaxed/simple;
+	bh=CU5FP/8LzRJA1HcvKtuzZIxsC3QMEVmRGfmDDVKx3kU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e00fhrXtisPSd88TVzcS4urxEZn2SLVNcD2c3tIpJzVx+/qZO2YvljHTiqUd57V8xh5gNbzRZVteRHcbgLfyrmPdE9uVR6ZjIW3UT/UMsjWzq/S+s6s8Xh7eQNHnY2toyd/03cdzrZt6ROWtu1kCi5mHm1Rr430M5DUvVLPpVHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201611.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202509291848307657;
+        Mon, 29 Sep 2025 18:48:30 +0800
+Received: from localhost.localdomain.com (10.94.6.25) by
+ jtjnmail201611.home.langchao.com (10.100.2.11) with Microsoft SMTP Server id
+ 15.1.2507.58; Mon, 29 Sep 2025 18:48:33 +0800
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <tzimmermann@suse.de>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>, Chu
+ Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH v8 0/1] [DRIVER] gpu: drm: add support for YHGCH ZX1000 soc chipset
+Date: Mon, 29 Sep 2025 18:48:30 +0800
+Message-ID: <20250929104831.8548-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250929063103.7375-1-chuguangqing@inspur.com>
+References: <20250929063103.7375-1-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: Use devm_alloc for clk_data allocation to
- fix memory leak on probe error
-To: Haotian Zhang <vulab@iscas.ac.cn>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250929023621.1968-1-vulab@iscas.ac.cn>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250929023621.1968-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 20259291848302c5c7ca0ec33c85d0c36bfdc58448c62
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Il 29/09/25 04:36, Haotian Zhang ha scritto:
-> The probe functions for the mt6765 apmixed, top, and infrasys clocks
-> use mtk_alloc_clk_data() to allocate memory. This requires manual
-> freeing of the memory in all error handling paths and in the driver's
-> remove function.
-> 
-> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in the
-> probe function.
-> 
-> Fixes: 1aca9939bf72 ("clk: mediatek: Add MT6765 clock support")
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+v8:
+ - Use YHGCH uniformly and add the company's official website.
 
-You have to resend this to the correct recipients, and you have to fix the
-commit title; something like
+v7:
+ - Delete the three preceding function definitions
+ - delete Delete the redundant code and comments
+(https://lore.kernel.org/all/20250929063103.7375-1-chuguangqing@inspur.com/)
 
-clk: mediatek: mt6765: Switch to mtk_devm_alloc_clk_data to fix memleak
+v6:
+ - simplify to return drm_atomic_helper_check_plane_state()
+ - remove empty line
+ - remove call drm_probe_ddc and smidebug
+ - replace drm_err with drm_dbg_kms
+ - add callback .disable
+ (https://lore.kernel.org/all/20250928054123.32895-1-chuguangqing@inspur.com/)
 
-For the code:
+v5:
+  - remove extra level of subdiretories, change to driver/gpu/drm/yhgch
+  - remove else from > +        else if (!new_plane_state->visible)
+  - remove extra check in function yhgch_plane_atomic_check
+  - remove the extra parentheses
+  - change the author like other modules
+  - use drm_edit_read function instead drm_get_edit
+  - remove debug info drm_warn call
+  - rename function name smi_connector_helper_detect_from_ddc to
+     yhgch_connector_helper_detect_from_ddc, remove extra return statement.
+  (https://lore.kernel.org/all/20250925091715.12739-1-chuguangqing@inspur.com/)
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregnoòcollabora.com>
+v4:
+  - remove  VRAM helpers from Kconfig
+  - use the coding style in ast/mgag200 for the DDC
+  - use plane_state->dst instead of crtc_h/w/x/y.
+  - delete duplicate framebuffer's atomic_check.
+  - use FIELD_PREP() directly.
+  - use dev->mode_config.
+  - delete unnecessary drm_atomic_helper_shutdown call
+  - add AUTHOR
+  - using .enable instead
+  (https://lore.kernel.org/all/20250924064954.3921-1-chuguangqing@inspur.com/)
 
-> ---
->   drivers/clk/mediatek/clk-mt6765.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk-mt6765.c
-> index d53731e7933f..5cfb9a3a5ee3 100644
-> --- a/drivers/clk/mediatek/clk-mt6765.c
-> +++ b/drivers/clk/mediatek/clk-mt6765.c
-> @@ -736,7 +736,7 @@ static int clk_mt6765_apmixed_probe(struct platform_device *pdev)
->   	if (IS_ERR(base))
->   		return PTR_ERR(base);
->   
-> -	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
-> +	clk_data = mtk_devm_alloc_clk_data(CLK_APMIXED_NR_CLK);
->   	if (!clk_data)
->   		return -ENOMEM;
->   
-> @@ -770,7 +770,7 @@ static int clk_mt6765_top_probe(struct platform_device *pdev)
->   	if (IS_ERR(base))
->   		return PTR_ERR(base);
->   
-> -	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-> +	clk_data = mtk_devm_alloc_clk_data(CLK_TOP_NR_CLK);
->   	if (!clk_data)
->   		return -ENOMEM;
->   
-> @@ -810,7 +810,7 @@ static int clk_mt6765_ifr_probe(struct platform_device *pdev)
->   	if (IS_ERR(base))
->   		return PTR_ERR(base);
->   
-> -	clk_data = mtk_alloc_clk_data(CLK_IFR_NR_CLK);
-> +	clk_data = mtk_devm_alloc_clk_data(CLK_IFR_NR_CLK);
->   	if (!clk_data)
->   		return -ENOMEM;
->   
+v3:
+  - The order of the code blocks has been adjusted, and the "warn-on" branch
+     has been removed.
+  - removed the related formats for the alpha channel.
+  - removed the atomic_flush function.
+  - have removed the empty line.
+  - have removed the error message here.
+  - replaced it with the drmm_encoder_init function.
+  (https://lore.kernel.org/all/20250910022311.2655-1-chuguangqing@inspur.com/)
 
+v2:
+  - Delete unnecessary comments
+  - Delete unnecessary branch
+  - Use drm_atomic_helper_check_plane_state
+  - remove the alpha formats form this list.
+  - use w,h rather than x, y
+  - delete type casting
+  - use a simple call to drm_atomic_helper_shutdown()
+  - delete yhgch_load function
+  - delete vblanking code
+  - delete unneeded i2c type
+  (https://lore.kernel.org/all/20250903054533.68540-1-chuguangqing@inspur.com/)
+
+v1:
+  (https://lore.kernel.org/all/20250808053508.52202-1-chuguangqing@inspur.com/)
+
+Chu Guangqing (1):
+  [DRIVER] gpu: drm: add support for YHGCH ZX1000 soc chipset
+
+ MAINTAINERS                            |   6 +
+ drivers/gpu/drm/Kconfig                |   2 +
+ drivers/gpu/drm/Makefile               |   1 +
+ drivers/gpu/drm/yhgch/Kconfig          |  11 +
+ drivers/gpu/drm/yhgch/Makefile         |   4 +
+ drivers/gpu/drm/yhgch/yhgch_drm_de.c   | 398 +++++++++++++++++++++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_drv.c  | 308 +++++++++++++++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_drv.h  |  51 ++++
+ drivers/gpu/drm/yhgch/yhgch_drm_i2c.c  | 114 +++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_regs.h | 208 +++++++++++++
+ drivers/gpu/drm/yhgch/yhgch_drm_vdac.c | 134 +++++++++
+ 11 files changed, 1237 insertions(+)
+ create mode 100644 drivers/gpu/drm/yhgch/Kconfig
+ create mode 100644 drivers/gpu/drm/yhgch/Makefile
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_de.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_drv.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_drv.h
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_i2c.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_regs.h
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch_drm_vdac.c
+
+-- 
+2.43.5
 
 
