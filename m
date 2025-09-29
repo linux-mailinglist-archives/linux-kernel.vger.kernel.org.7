@@ -1,173 +1,128 @@
-Return-Path: <linux-kernel+bounces-836355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BD5BA974B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:59:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4A8BA9754
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1299E3B292A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D5D3B45FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45D5308F3B;
-	Mon, 29 Sep 2025 13:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5663093C0;
+	Mon, 29 Sep 2025 13:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V0Zgc2IF"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljZudgZG"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8061A9FBD
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5703B3090C2
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 13:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759154376; cv=none; b=Q7iKTEf9A6vj1KcasMd/zbZPEkvgs0eAJRsGKvL7XnVF6MiQwyZDKenFDGR4gCG4NC58fQnJ0K5LIeCxqx44fnKHe/Ff4nv/bWQJrovRwWbcof2YB3nNyWDuyz4S+O6X2+WY0/fQZ25RO7nl5j/fkNtG5IxiM/BT6lyqBHkv/bs=
+	t=1759154386; cv=none; b=t5qylzE/uv2Rha+vOgYEyvkr2uFABMMOkDx75Oo/hOBXm3EyGgADe7mz7YGHejv5EbeAI7rjUROI2y5EUeIRJg5fZ9C5FuZix5VxVAOBP1kSEaRwhh+LNVMC8D0f3LVL4uFGRGZxtAPF7ZfoLgzmaPdECa+2WlkuMbAsX/LQe5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759154376; c=relaxed/simple;
-	bh=cHo/5Uw/EA4lLPvDE2kQ5v4olHi85t62eQxfHrF8wg4=;
+	s=arc-20240116; t=1759154386; c=relaxed/simple;
+	bh=O0Xt9oaq2AawyZ+h7FjzNvjnt1/k35svRqi2XClUHHY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NuUB6goLJWDdCkLXBcwcfQjXr437oXvw3x1YisCFO5kxNSFYB8MfGGhQ3WgZP5dx1dL8bLOAYxOBRojA3IaBLRzQ/aCJSL62/IG4nXTDf68KaGzZSidJfIuYaLdIl5eFiOf51s3PgrJ632J7xPVutunsZOoylA3DaHJSWBGbgjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V0Zgc2IF; arc=none smtp.client-ip=209.85.208.175
+	 To:Cc:Content-Type; b=rOnbnZ5Tvn0sdYm9bcIdmU/hf4hBGvwQ15EY4dpS7BGJ9TXPH+FujVM5YIjgffYoSietZP5Hw04/sfiekm5bpNEi/+LlHc7r/A8OqpAsN7w1z2nZPPL9AqJmWL2C6L8tHDKjGpcsuRzcy7K4Lz1dqiToL2Fyf8hIySHt5Jqkfx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljZudgZG; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-368348d30e0so46437431fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:59:34 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-27eda3a38ceso11961065ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 06:59:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759154372; x=1759759172; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759154385; x=1759759185; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tn3Avk5AvmztUGNnWXF/nJAfWJJ1CXyUYLany5OsKJs=;
-        b=V0Zgc2IFUDvjLFtfH7X7mlQBd4meDOlNtFqu7zk/WFIQ2ztOuHzXaJYD13DJwrx/mQ
-         rexu366Cr8ICWDI9i8yvYtHB7NJLWrLGBgSYo+KkRpL/3AZm7jzze0FTdtg2VkfGo/Po
-         UXjSxZs60bdF27r8Gcj3Z6zY33MVBRKlk2rutWsrp1tX11C+bE89V3tcnDLI3r4JpZj0
-         KEX5TxRgZO1EDvtfgVbh2Ra4dWzATrcnGS7djiCq/HILp5uMdeaLDXnag6EqiQzrrIG/
-         1fuQjEc3gd7atf5rrPRLio/RcDcK6dFeogbP5K5q3uSuegROlYqmh3BMvgGikYVNnHU/
-         Axzg==
+        bh=owq4ojdUwUTymm10C9BTuXDtxr/QsVzPAyM6ekIbFlk=;
+        b=ljZudgZGVNz000SgVtV8jeDf8IQmTZ1HLZL9Yu9YInEJVv00grJCunmGfabAuV7FQL
+         t+Ey+YwBdRt0KL+fzAKZJvwkF55sDyzJv7JJ8PLsUWfTihxwTm+X216r0XUAWapj/DKc
+         DOF3U35D5nn6kviEVxWBXIWI+tiYIH+TfrKmGrrm0/z8S0rD690FYkyYv+eVg14Oekba
+         tyOZoaO8bCL+VnoHX+ULkCXN4g7bYga8FeyhehrsSos81tPXYYo6q3d5xoZ5CpnN/vXV
+         fA4fsZor5/fIX7bfLwWPx5OzSbYb5gKIxqgUcbbPKip9i46NMPH3mt+q6+5NmUqeGXq1
+         x8DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759154372; x=1759759172;
+        d=1e100.net; s=20230601; t=1759154385; x=1759759185;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tn3Avk5AvmztUGNnWXF/nJAfWJJ1CXyUYLany5OsKJs=;
-        b=af8rpmVfh/a9OmKBfZiYavMwlxBYEiu+8Vu/c2EDzY/G5dluvSxN5JNzOyjXAjdwfI
-         mk7wiIMyH8LrTvOrxwH4EjTQBuQcmXvoyWygvVH6zqjh0e54DhfmGXtqeOAskwbyPnD1
-         2lA38QPz9eutxZtz3lVj9Khkw3hPvF6tSVlS9q+CsA+X6ne7CAgH8CVbvQTPQd7WZafo
-         M58AFARr8GG9BgT2hjIx5S5LZYJ7I6ypBfPn6guS1sWa5TDtIYFwC7/Bv39Lw0PqEDQ6
-         baVuQGGC9z0keyIxLaG599D49ZLIyW7GhpJ77ZneQ4nDcYB/P3OOHzaW0pZPDafNxYqV
-         zhFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWe2jGV/CX3aQYQIncPQpbNz8SYTAlFF6VL5KtXWL2rbfHLeTsCTNOtTO1TYv9s7EQwvDCZMAX7KChn1+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8WEDVWdTdu8vRbWTaaehXwWmLgoZXg2jqr2TSWWMWn2ZGAQ9k
-	9gT0vTMLMvQPkxjzTu46DnxOj82JEIWXmOw9gYo/AI7sO7yMxC685/W1nEQH+BN7txh04D7If7U
-	E1dCpN/tC0sOFeAi/IGm/kEbruk+1Ppc=
-X-Gm-Gg: ASbGnctsav7E7j7qzb3E3EycNx1BtxkofeGGmoRVShnf9iz6xagQq+t4G8suCY87kH8
-	FWX5n6nk3uXyHD33f37D1bPEMfu1kfrUj9uX9FB5/v1srJKJj23UCIFp9FcYmbLCcgiFM0kcAiB
-	3wQ7EImUzYqfzcirwq653oLjj4CbGspzY/kYEp4BZhrRH5+QpwmC7ZgzSbn7QNMWmMes7Fyi2mj
-	17r18pn
-X-Google-Smtp-Source: AGHT+IFQMc2ZhC+qB5qBNTFzlSmGZTbZSbdvhysvapOami6uME9wqlRM7n01iOstIURuUcWOOB3dn1XgG0MQDMDVEy8=
-X-Received: by 2002:a2e:be8b:0:b0:36e:9e8f:ba4d with SMTP id
- 38308e7fff4ca-36f7dda318cmr45418311fa.14.1759154371959; Mon, 29 Sep 2025
- 06:59:31 -0700 (PDT)
+        bh=owq4ojdUwUTymm10C9BTuXDtxr/QsVzPAyM6ekIbFlk=;
+        b=Zo6BuXf2JcrYy7g2KZLutH0BN609g9Ap38y7NHjQgfUaM8x7NAG0UQQksMIxxcUCgT
+         twAQJryvSM0J4oYAIXb+4qgdNxgqFzfVCPy3y92KUizhLUz1H+bXneM0DYUMIEOp8OPq
+         xMnExMHk/fkQWheIwGxcoABczv4mQxauyElWXb8bE/+BdY7q5FSHlsuj8G+1IQC/QUBb
+         54gmErax7rqcJenfjI2ulOOxHXGW6gF7TujAwSMpW6vIbMClk77h6cgFmfUUlr7KTTgh
+         BqbkjY3YGmumf6w47tl9COJZyzBQq+PFktTRmpUKMxr2sCWUo1Y0XfcuB9nEVYB3ManB
+         zaZw==
+X-Gm-Message-State: AOJu0YwdTeek0WBvvyeTvEZXUvFkAl4xrKlXWVdtrX1d6Ji+wlE9MH3f
+	26cv+N1HPntNkQUri7qnidLiYepJnyDRNqQ1Nu8wHFC0JeiuZI1pxi+3eHmadWmZ76T+E+KSJI8
+	K7PVLXVxJeqyK+dm2UKyfWR8AQmalB9c=
+X-Gm-Gg: ASbGncstUq5lOnC1UyTvTeuMMwr8jcjobX6W1i+JFI7wZ+1T6PdF1Sn/Z19p3tdc3wj
+	zreh85pqevF+mI7DiA/p06sra/faGchtCLRJ8VFt3AQy9X4hmNZUXz1zFxlTZPKHCS2ZlvhhKdC
+	UHvNZGi1Li4H4eXsYQy8L2Dsc9JV7VmGXsXZsanLT2kbFsb8/ObwGzNJVEmvxu2j3BzgyO9T/ii
+	tjZCFg/mXROxJYoJtz2czeLAQ3jtCdMCCSaKz+f0vEXkoAxBJ9CkONpw6B1rorUTGV4a9S6r3Bb
+	00vseeEXmjpBQBdGQ0BcHljkZGFhYznl5DXx
+X-Google-Smtp-Source: AGHT+IEC1OH3LVB4V0oxft7FgJLhEwqNNj6rUnyOmnwsKLC7LLfd/i5cH3v8mOBtoJlF7/5PaCpYXgtDTbDZevnth5I=
+X-Received: by 2002:a17:903:1a68:b0:275:c066:33dd with SMTP id
+ d9443c01a7336-27ed4ab64a4mr105372055ad.10.1759154384643; Mon, 29 Sep 2025
+ 06:59:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929131422.525315-1-a.shimko.dev@gmail.com> <20250929131422.525315-2-a.shimko.dev@gmail.com>
-In-Reply-To: <20250929131422.525315-2-a.shimko.dev@gmail.com>
-From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Mon, 29 Sep 2025 16:59:20 +0300
-X-Gm-Features: AS18NWCKpFCfKaruIKOnLjxXbmRphQr18T_eSaDDwQi8eODN-NG1hz7yNExfCRg
-Message-ID: <CAOPX744ZGubWevHs53xT_WrbUGVbmSDU4-zuPebqJ9tpng+C0A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] rivers: scmi: Add completion timeout handling for raw
- mode transfers
-To: Artem Shimko <artyom.shimko@gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com> <20250920182232.2095101-7-joelagnelf@nvidia.com>
+In-Reply-To: <20250920182232.2095101-7-joelagnelf@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 29 Sep 2025 15:59:32 +0200
+X-Gm-Features: AS18NWASygynDnatU4KPTeDzNXeVtgwJfzlJorCLrDvtP5k4ZufDBjnqp0W75-o
+Message-ID: <CANiq72k3kE-6KPkKwiDLgfkGHCQj4a2K7h9c4T13WMa5b4BAnQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] rust: bitfield: Use 'as' operator for setter type conversion
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com, 
+	Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>, 
+	Yury Norov <yury.norov@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	nouveau@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello maintainers and reviewers,
-
-Sorry, these patches were sent in error. Please disregard them.
-
-Thank you for your consideration.
-Best regards,
-Artem Shimko
-
-
-On Mon, Sep 29, 2025 at 4:14=E2=80=AFPM Artem Shimko <artyom.shimko@gmail.c=
+On Sat, Sep 20, 2025 at 8:23=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.c=
 om> wrote:
 >
-> Fix race conditions in SCMI raw mode implementation by adding proper
-> completion timeout handling. Multiple tests in the SCMI test suite
-> were failing due to early clearing of SCMI_XFER_FLAG_IS_RAW flag in
-> scmi_xfer_raw_put() function.
->
-> The root cause:
-> Tests were failing on poll() system calls with this condition:
->     if (!raw || (idx =3D=3D SCMI_RAW_REPLY_QUEUE && !SCMI_XFER_IS_RAW(xfe=
-r)))
->         return;
->
-> The SCMI_XFER_FLAG_IS_RAW flag was being cleared prematurely before
-> the transfer completion was properly acknowledged, causing the poll
-> to return on timeout and tests to fail.
->
-> =D0=A1hanges implemented:
-> 1. Add completion wait with timeout in  scmi_xfer_raw_worker()
-> 2. Signal completion in scmi_raw_message_report()
->
-> This ensures:
-> - Proper synchronization between transfer completion and flag clearing
-> - Prevention of indefinite blocking with timeout safety mechanism
-> - Stable test execution by maintaining correct flag states
->
-> arm scmi tests: https://gitlab.arm.com/tests/scmi-tests/-/releases
->
-> Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
-> ---
->  drivers/firmware/arm_scmi/raw_mode.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/firmware/arm_scmi/raw_mode.c b/drivers/firmware/arm_=
-scmi/raw_mode.c
-> index 73db5492ab44..fb83beb42e7b 100644
-> --- a/drivers/firmware/arm_scmi/raw_mode.c
-> +++ b/drivers/firmware/arm_scmi/raw_mode.c
-> @@ -468,6 +468,12 @@ static void scmi_xfer_raw_worker(struct work_struct =
-*work)
->
->                 ret =3D scmi_xfer_raw_wait_for_message_response(cinfo, xf=
-er,
->                                                               timeout_ms)=
-;
-> +               if (!ret)
-> +                       if (!wait_for_completion_timeout(&xfer->done, tim=
-eout_ms))
-> +                               dev_err(dev,
-> +                                       "timed out in RAW resp - HDR:%08X=
-\n",
-> +                                       pack_scmi_header(&xfer->hdr));
-> +
->                 if (!ret && xfer->hdr.status)
->                         ret =3D scmi_to_linux_errno(xfer->hdr.status);
->
-> @@ -1381,6 +1387,8 @@ void scmi_raw_message_report(void *r, struct scmi_x=
-fer *xfer,
->         if (!raw || (idx =3D=3D SCMI_RAW_REPLY_QUEUE && !SCMI_XFER_IS_RAW=
-(xfer)))
->                 return;
->
-> +       complete(&xfer->done);
-> +
->         dev =3D raw->handle->dev;
->         q =3D scmi_raw_queue_select(raw, idx,
->                                   SCMI_XFER_IS_CHAN_SET(xfer) ? chan_id :=
- 0);
-> --
-> 2.43.0
->
+> The bitfield macro's setter currently uses the From trait for type
+> conversion, which is overly restrictive and prevents use cases such as
+> narrowing conversions (e.g., u32 storage size to u8 field size) which
+> aren't supported by From.
+
+Being restrictive is a good thing -- it would be nice to know more
+context about this change, like Alexandre points out.
+
+In particular, the line:
+
+    .set_nibble(0x12345678_u32)    // truncated to 0x8
+
+sounds fairly alarming, and not what we usually want. Why cannot the
+caller cast on their side, if they really want that?
+
+We avoid `as` for similar reasons and nowadays enable some Clippy
+warnings to prevent its use where not needed.
+
+(By the way, please follow our usual coding conventions for comments.)
+
+Thanks!
+
+Cheers,
+Miguel
 
