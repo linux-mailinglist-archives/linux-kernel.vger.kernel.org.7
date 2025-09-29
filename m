@@ -1,236 +1,222 @@
-Return-Path: <linux-kernel+bounces-835874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C97CBA83F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4854FBA857C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95ADB3AFD34
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:30:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA50C1798BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22609253351;
-	Mon, 29 Sep 2025 07:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A3B2652B4;
+	Mon, 29 Sep 2025 07:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BkvYITie";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YGkrDeXE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SNSLGGAW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R1v9Sb5k"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LdI3C4zo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08E42065
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A127925D527
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 07:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759131038; cv=none; b=ZMVp1s5V6rI8cSiXSX2Z86XDGWCnSETE5GkG/h5H8qgF+Po0sXEVeY76v+xkuMDD7FX0wjlb7/Rxt7ONCHCQMVsCONXz2j9duekxNd6jJHEuJo8ECLdRb8UA053CXt9PFOgC4cUnhtLewuvGrZrI5Ip0Bqy2gLISmGqv2X07VRA=
+	t=1759132618; cv=none; b=hK3vw7osAWjlsUEJIOmtIeeCROHmgAanm86OUPAd9VYaWCjYU5dzK/r8qSiU8My/EhGta5LF8Z5uLty51bq2/OwEP1op77iAOW4NX8U5fGdlDzLMZL7LKamsnJ1YSlcLP3Zbwbfvs8kZFB8WX/Ak2BHjo8ycU+/ImL7PKY5XqI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759131038; c=relaxed/simple;
-	bh=85/GZ7QczLm6DR5gJkXWuhVqaw8HBo5xL3HV749OSlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VdDw67/JU1uhVMx9FFDrLuz+spftxnwFP7WFi2e1kG+CxkF3dFP4iw1juT3cGZbNh8kuZT4om3IUKWGWM3V/A+gX0UjSCqiXWKxel5itQP7p/pZU2qhCij/P5DUrqMvPc91/RsFv4qxRdSh/u4ncz4NVXeHGKIKZrskHghzsIGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BkvYITie; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YGkrDeXE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SNSLGGAW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R1v9Sb5k; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 40F092FA26;
-	Mon, 29 Sep 2025 07:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759131032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
-	b=BkvYITiejp/KTvqq8OaoMcNss7s+sSMOTeu0xhYGmzzWoGPLKJn4eh4uEaOnAbY+ACrowT
-	oVcE8O5HcIN/uwyVfx7slhbC/qU//PgfAwLuC6XwoHYl24I9rzTGRzqbOeebK2SFUWjC00
-	yolZK8MO1vFs1SgWVBWp/ohREXCBtIM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759131032;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
-	b=YGkrDeXEg91wpN7KQGKAaW5vO6kucY/BDkCoDw7pTe110Mrcq8E028kw9ppdAoMaKMJLFl
-	AAQRkInYzF6icSBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SNSLGGAW;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=R1v9Sb5k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759131031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
-	b=SNSLGGAWN8MYg1X6dHwaRj7S9N85CLFH91L3qRaVbIJ2ykqnKr3QGKZcl6nuWML0DZ+Cu9
-	PjjbcrkIYpHx9H9IHMidfcwbiUKdCjqbfR3KSpMDjrJkP1AG0Nh7hU0TPX/wF5n4ZEFEt/
-	eiux/hZk62Mxrw7ExNTUQp23/BAmUuc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759131031;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ivinBsRltrvjUvAHlfXzBwXeEkNCvnM2QUHS0Pud2rI=;
-	b=R1v9Sb5k4RHKMcYp3Gxdhi6aNphndmKrCe6poouH127P/iVmO96mIFKJqWy3/Le01aAKOM
-	YyZMCjVom9FFMdBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2923113782;
-	Mon, 29 Sep 2025 07:30:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yIy+CZc12mgCHgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 29 Sep 2025 07:30:31 +0000
-Message-ID: <e8735d27-2917-402a-86fa-7446b1acbfcc@suse.cz>
-Date: Mon, 29 Sep 2025 09:30:30 +0200
+	s=arc-20240116; t=1759132618; c=relaxed/simple;
+	bh=G6M3zccYy1tWV7hylnVWsavDSo+hmclqMRwHsfs7HCE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=L/DzNe6j4tsIRHgG3ri96GFTsS+XJmvPhEjvsaulIacbev0zh1/uzmtlr42nuiM4szVKm+/3DkNA8Q/kAehfOnFEULz3HUk/aUVIBcmX6jPDOeS5otmT3alr7S6um9TFdRvkHO0pJ4nmvzavbjOcP5pryjue1A/iz6MKGt3S0K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LdI3C4zo; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759132616; x=1790668616;
+  h=date:from:to:cc:subject:message-id;
+  bh=G6M3zccYy1tWV7hylnVWsavDSo+hmclqMRwHsfs7HCE=;
+  b=LdI3C4zoIlbMs3rw3RrZ8HJplxWG1Io11XWNIjPJ1ng88aJDhfR5eTdb
+   n6NPOWranONHjx4hr+EZ7qaL5iRiOTtyfT0teqbK4I3HkMU9VxLg0qp+J
+   HQaG5pq/21XFqZxwuCBIcoPqDm+Jo/j9RYZCkDHgzWp/203kaRG9oiWqB
+   yRSsZJ/cZ2RHlyKV1oVJidhpAZDLOiiU9e4ypqG+wBUzsYxMNhBzxZav5
+   Hu+h7jhv+5yUigV7Dq4TJrlXOeWuJxEjj+esUUC6RbXZfOt4rZzRHSAhi
+   LjCQv0HA8opqFX8uwMmV5MnkNEd1lV8RdokBh0nZvcvIUxYIM4URY/8DE
+   g==;
+X-CSE-ConnectionGUID: jqxE0x9cQ3a8IXSNtatHug==
+X-CSE-MsgGUID: BXBRte3zRo6YP2xN5SAESw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11567"; a="61286874"
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="61286874"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 00:56:56 -0700
+X-CSE-ConnectionGUID: iEhKRf+JRgOfzWFNZnQZbA==
+X-CSE-MsgGUID: OyMC2ZsTR8eca19h3A0VoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="201842533"
+Received: from lkp-server01.sh.intel.com (HELO 6d1b820ef121) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 29 Sep 2025 00:56:55 -0700
+Received: from kbuild by 6d1b820ef121 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v38ke-00002T-2R;
+	Mon, 29 Sep 2025 07:56:52 +0000
+Date: Mon, 29 Sep 2025 15:32:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 707007037fc6b68dea6f338c06e3fb2710f8864c
+Message-ID: <202509291500.ZrTEPZ8D-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 21/23] maple_tree: Prefilled sheaf conversion and
- testing
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-21-ca3099d8352c@suse.cz>
- <CAJuCfpGBg7xO6-swzvk3vLhMxO+F=C6udEiNmAAC6LEA7vA9=Q@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAJuCfpGBg7xO6-swzvk3vLhMxO+F=C6udEiNmAAC6LEA7vA9=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[oracle.com,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,oracle.com:email,suse.cz:mid,suse.cz:dkim,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 40F092FA26
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
 
-On 9/27/25 03:08, Suren Baghdasaryan wrote:
-> On Wed, Sep 10, 2025 at 1:01 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>
->> Use prefilled sheaves instead of bulk allocations. This should speed up
->> the allocations and the return path of unused allocations.
->>
->> Remove the push and pop of nodes from the maple state as this is now
->> handled by the slab layer with sheaves.
->>
->> Testing has been removed as necessary since the features of the tree
->> have been reduced.
->>
->> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Couple nits but otherwise looks great!
-> 
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> 
->> ---
->>  include/linux/maple_tree.h       |   6 +-
->>  lib/maple_tree.c                 | 326 ++++++---------------------
->>  tools/testing/radix-tree/maple.c | 461 ++-------------------------------------
->>  tools/testing/shared/linux.c     |   5 +-
->>  4 files changed, 88 insertions(+), 710 deletions(-)
->>
->> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
->> index bafe143b1f783202e27b32567fffee4149e8e266..166fd67e00d882b1e6de1f80c1b590bba7497cd3 100644
->> --- a/include/linux/maple_tree.h
->> +++ b/include/linux/maple_tree.h
->> @@ -442,7 +442,8 @@ struct ma_state {
->>         struct maple_enode *node;       /* The node containing this entry */
->>         unsigned long min;              /* The minimum index of this node - implied pivot min */
->>         unsigned long max;              /* The maximum index of this node - implied pivot max */
->> -       struct maple_alloc *alloc;      /* Allocated nodes for this operation */
->> +       struct slab_sheaf *sheaf;       /* Allocated nodes for this operation */
->> +       unsigned long node_request;
-> 
-> No comment for this poor fella?
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 707007037fc6b68dea6f338c06e3fb2710f8864c  Merge branch into tip/master: 'x86/tdx'
 
-adding: /* The number of nodes to allocate for this operation */
+elapsed time: 762m
 
+configs tested: 130
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250929    gcc-8.5.0
+arc                   randconfig-002-20250929    gcc-8.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                   randconfig-001-20250929    gcc-8.5.0
+arm                   randconfig-002-20250929    gcc-14.3.0
+arm                   randconfig-003-20250929    clang-22
+arm                   randconfig-004-20250929    gcc-10.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250929    gcc-8.5.0
+arm64                 randconfig-002-20250929    gcc-13.4.0
+arm64                 randconfig-003-20250929    clang-22
+arm64                 randconfig-004-20250929    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250929    gcc-9.5.0
+csky                  randconfig-002-20250929    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250929    clang-22
+hexagon               randconfig-002-20250929    clang-22
+i386                             allmodconfig    gcc-14
+i386                              allnoconfig    gcc-14
+i386                             allyesconfig    gcc-14
+i386        buildonly-randconfig-001-20250929    gcc-14
+i386        buildonly-randconfig-002-20250929    clang-20
+i386        buildonly-randconfig-003-20250929    gcc-14
+i386        buildonly-randconfig-004-20250929    gcc-14
+i386        buildonly-randconfig-005-20250929    gcc-14
+i386        buildonly-randconfig-006-20250929    gcc-14
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250929    gcc-12.5.0
+loongarch             randconfig-002-20250929    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                           sun3_defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                         db1xxx_defconfig    clang-22
+mips                           gcw0_defconfig    clang-22
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250929    gcc-11.5.0
+nios2                 randconfig-002-20250929    gcc-9.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250929    gcc-14.3.0
+parisc                randconfig-002-20250929    gcc-14.3.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc                    gamecube_defconfig    clang-22
+powerpc               mpc834x_itxgp_defconfig    clang-22
+powerpc                      ppc6xx_defconfig    gcc-15.1.0
+powerpc               randconfig-001-20250929    gcc-15.1.0
+powerpc               randconfig-002-20250929    gcc-8.5.0
+powerpc               randconfig-003-20250929    gcc-13.4.0
+powerpc64             randconfig-001-20250929    clang-18
+powerpc64             randconfig-002-20250929    clang-22
+powerpc64             randconfig-003-20250929    clang-22
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20250929    gcc-9.5.0
+riscv                 randconfig-002-20250929    gcc-11.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-22
+s390                  randconfig-001-20250929    gcc-11.5.0
+s390                  randconfig-002-20250929    gcc-13.4.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20250929    gcc-15.1.0
+sh                    randconfig-002-20250929    gcc-15.1.0
+sh                            shmin_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250929    gcc-8.5.0
+sparc                 randconfig-002-20250929    gcc-8.5.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20250929    clang-22
+sparc64               randconfig-002-20250929    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-14
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-14
+um                    randconfig-001-20250929    gcc-14
+um                    randconfig-002-20250929    gcc-14
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250929    gcc-14
+x86_64      buildonly-randconfig-002-20250929    gcc-14
+x86_64      buildonly-randconfig-003-20250929    clang-20
+x86_64      buildonly-randconfig-004-20250929    gcc-14
+x86_64      buildonly-randconfig-005-20250929    gcc-14
+x86_64      buildonly-randconfig-006-20250929    gcc-14
+x86_64                              defconfig    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                  nommu_kc705_defconfig    gcc-15.1.0
+xtensa                randconfig-001-20250929    gcc-8.5.0
+xtensa                randconfig-002-20250929    gcc-13.4.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
