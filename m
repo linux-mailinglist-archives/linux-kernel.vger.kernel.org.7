@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-836565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDAA5BAA081
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:43:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E78BAA093
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4D21C2925
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:43:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11E3189B67A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5C130CD85;
-	Mon, 29 Sep 2025 16:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F29308F09;
+	Mon, 29 Sep 2025 16:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RHSoHjAC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="KyQM7ztF"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDC6523A;
-	Mon, 29 Sep 2025 16:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3974CA52;
+	Mon, 29 Sep 2025 16:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759164210; cv=none; b=ewXJwtP9eGICWdmDcpSo9dthAaDtFLahESye4k3GrQIzJ/HDVsqlcy6BtuuvUdY08Ow66DvAMJ9zQgSK7MBMEpziqVOMlQ8VdJnK8yLDM1L5vm2uOclc+hedFVKiiZ7PNWqQpQDI8O3Y7Imd/LxMEBN7mxpW+xxjlekGiwkVm60=
+	t=1759164564; cv=none; b=TS3AG0+bH8XqWsxQ9nUVMwQbvMjN4NC4E6YllV+OlTI9kpFXElUBqbkylQqQws03PxTUx/qwf2IbR5tEd1TXDIbtiq0WoYk/ryo7s8/sdpKLZ9VxXLYztyudW5w47uThj+NO3Av/vPefYG6TUwc/5rf8ohGhmqaTzvqz+wm2VSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759164210; c=relaxed/simple;
-	bh=9gvMyCFcXfyM2iD/W2HNxYyQU2dDNQ6Tmjh6XgqFUG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VXur61TukzeW5u+/Sxe4WPUOnrbBcDHNHOG7ybNFEPTUVN97Kqqd2uyu2b+G5qyBCvWHL0h/CJQbHfTio6Rrua2GG27wU8JM/XwEwH52o1G+dK+Z9sIJQf/slb7w7W0wL5jq4qZ7lLUbE+lZXVPe25RIQiMrsFEasxEBPsRojqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RHSoHjAC; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759164209; x=1790700209;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9gvMyCFcXfyM2iD/W2HNxYyQU2dDNQ6Tmjh6XgqFUG4=;
-  b=RHSoHjACt2X7DOrfKtTWs84z14XsJd5Y0aoG0q1/58OXyPiBra8wKYUu
-   WsBh2wnhpX/8F2ipZ/z5tx698s29gBLVM/MaY74uttUpc3smCyjZX74j5
-   28SeNU6ue/ZkVNDZxdir0SvHpeZ7p24NX5bGaou7dBriBlDjMUmMTcCOy
-   zOzxCX8HbzdH2DSqshp4HGUwCQ7dgrNlCVTixjzveW9xVjglX8BpauGbV
-   FaLuZy2KStcBztR8wp93PEn2vAyKH7dKKBF/oep48nR5N36O3a1t1BXU8
-   qYs2dpnMPVEq9WtVAE8uWWDiCaYsrmsfnfUy0i/Jzf1/WES44w+kPMkrC
-   Q==;
-X-CSE-ConnectionGUID: Kyc23w/WQiyxeYn8fFf7Gg==
-X-CSE-MsgGUID: tiAZGR/ZRY+5RfR7jS+JYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="72024708"
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="72024708"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 09:43:28 -0700
-X-CSE-ConnectionGUID: axRRiPO5S32RMVFPf5zIxA==
-X-CSE-MsgGUID: vbHX9+gwSXWLtRwe4HytZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="177854261"
-Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.109.116]) ([10.125.109.116])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 09:43:27 -0700
-Message-ID: <235bf94a-da23-4200-87e4-c6a0c92cb21a@intel.com>
-Date: Mon, 29 Sep 2025 09:43:26 -0700
+	s=arc-20240116; t=1759164564; c=relaxed/simple;
+	bh=ZSP3mNB2sB5cl8qcTm29vCIdXpjTj/WEWNMSp+mRwSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=T0NiSRGVTK1372cGsvlSAQ+BTzg/9IBgcFQ9NehCelRKrsHRL6nJwWGN4bOpHIM60keTJggd/wHQkS2lDu1eHoul8bIzC+8Bg0+gl3PkwukN/Fe9AS+7cDkIzG9JWXuVxtThvShAU2lqyfZkQuurTtjlwOa+uh3Aoqm0c+j/9Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=KyQM7ztF; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cb6bj6GwKzlgqTr;
+	Mon, 29 Sep 2025 16:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1759164559; x=1761756560; bh=rEY7nmFk8IR9pKktb6E6mW/0
+	RF8PFkg5eHS4Lhk1X8o=; b=KyQM7ztFI28KSg4iqb+7WEKVeQvXI60ByDVoPMkw
+	UTlr0MG/jCgLVROfwXF+JuTGQkTCZ70vDgqTWLeATptOSQDXUWgEi+RzXRU9BsXr
+	WnwHe/T2y6dNGtCONqom8LEWkClM8HEbsN27Gh+v9LXsOvD+2GDlURvUvETtSoIG
+	RJzWMHulxNH26dwdRqqbVy53519kKa5Rx03Cu09t1VqC5rME/OH0kWVcPfvuNzA/
+	LS3jHJfNPI+Sz5RjFsRY6wlh29sizGq3hW03uWxAD6UA7ZgBYXuGklIwUv853UBK
+	Hckz286kj3MyO9M1WnekoJ2r/m8kn30ZjXN5SDlkXmaS0A==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id d_3rveOCYAYB; Mon, 29 Sep 2025 16:49:19 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cb6bW1WNxzlgqV7;
+	Mon, 29 Sep 2025 16:49:10 +0000 (UTC)
+Message-ID: <9b60d18d-d590-4fc1-8aff-e8a0fcebd79b@acm.org>
+Date: Mon, 29 Sep 2025 09:49:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,260 +64,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] cxl/port: Remove devm_cxl_port_enumerate_dports()
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
- shiju.jose@huawei.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250927100709.146507-1-ming.li@zohomail.com>
+Subject: Re: [PATCH v1] scsi: ufs: core: Introduce quirk to check UTP error
+To: HOYOUNG SEO <hy50.seo@samsung.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com, beanhuo@micron.com,
+ kwangwon.min@samsung.com, kwmad.kim@samsung.com, cpgs@samsung.com,
+ h10.kim@samsung.com
+References: <CGME20250929105936epcas2p1308a10b1ab51c5b543ea246bc3165fe4@epcas2p1.samsung.com>
+ <20250929105801.428105-1-hy50.seo@samsung.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250927100709.146507-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250929105801.428105-1-hy50.seo@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 9/29/25 3:58 AM, HOYOUNG SEO wrote:
+> +	/*
+> +	 * This quirk indicated that report the error when UTP error occurs.
+> +	 * Enable this quirk will the error handler allows the ufs to be reocvery.
+> +	 */
+> +	UFSHCD_QUIRK_UTP_ERROR				= 1 << 26,
 
+Quirks should only be introduced for behavior that differs between host
+controllers. I don't see why the behavior introduced by this patch
+should only be enabled for some UFS host controllers and not for all UFS
+host controllers. Please remove "UFSHCD_QUIRK_UTP_ERROR" from this patch
+such that UTP errors trigger UFS error handling for all UFS host
+controllers.
 
-On 9/27/25 3:07 AM, Li Ming wrote:
-> devm_cxl_port_enumerate_dports() is not longer used after below commit
-> commit 4f06d81e7c6a ("cxl: Defer dport allocation for switch ports")
-> 
-> Delete it and the relevant interface implemented in cxl_test.
-> 
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
+Thanks,
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
-Thanks Ming. For some reason I thought I did this. But it seems not...
-
-> ---
-> base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
-> ---
->  drivers/cxl/core/pci.c        | 87 ++++-------------------------------
->  drivers/cxl/cxlpci.h          |  1 -
->  tools/testing/cxl/Kbuild      |  1 -
->  tools/testing/cxl/test/cxl.c  | 32 -------------
->  tools/testing/cxl/test/mock.c | 15 ------
->  tools/testing/cxl/test/mock.h |  1 -
->  6 files changed, 8 insertions(+), 129 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 18825e1505d6..5b023a0178a4 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -71,85 +71,6 @@ struct cxl_dport *__devm_cxl_add_dport_by_dev(struct cxl_port *port,
->  }
->  EXPORT_SYMBOL_NS_GPL(__devm_cxl_add_dport_by_dev, "CXL");
->  
-> -struct cxl_walk_context {
-> -	struct pci_bus *bus;
-> -	struct cxl_port *port;
-> -	int type;
-> -	int error;
-> -	int count;
-> -};
-> -
-> -static int match_add_dports(struct pci_dev *pdev, void *data)
-> -{
-> -	struct cxl_walk_context *ctx = data;
-> -	struct cxl_port *port = ctx->port;
-> -	int type = pci_pcie_type(pdev);
-> -	struct cxl_register_map map;
-> -	struct cxl_dport *dport;
-> -	u32 lnkcap, port_num;
-> -	int rc;
-> -
-> -	if (pdev->bus != ctx->bus)
-> -		return 0;
-> -	if (!pci_is_pcie(pdev))
-> -		return 0;
-> -	if (type != ctx->type)
-> -		return 0;
-> -	if (pci_read_config_dword(pdev, pci_pcie_cap(pdev) + PCI_EXP_LNKCAP,
-> -				  &lnkcap))
-> -		return 0;
-> -
-> -	rc = cxl_find_regblock(pdev, CXL_REGLOC_RBI_COMPONENT, &map);
-> -	if (rc)
-> -		dev_dbg(&port->dev, "failed to find component registers\n");
-> -
-> -	port_num = FIELD_GET(PCI_EXP_LNKCAP_PN, lnkcap);
-> -	dport = devm_cxl_add_dport(port, &pdev->dev, port_num, map.resource);
-> -	if (IS_ERR(dport)) {
-> -		ctx->error = PTR_ERR(dport);
-> -		return PTR_ERR(dport);
-> -	}
-> -	ctx->count++;
-> -
-> -	return 0;
-> -}
-> -
-> -/**
-> - * devm_cxl_port_enumerate_dports - enumerate downstream ports of the upstream port
-> - * @port: cxl_port whose ->uport_dev is the upstream of dports to be enumerated
-> - *
-> - * Returns a positive number of dports enumerated or a negative error
-> - * code.
-> - */
-> -int devm_cxl_port_enumerate_dports(struct cxl_port *port)
-> -{
-> -	struct pci_bus *bus = cxl_port_to_pci_bus(port);
-> -	struct cxl_walk_context ctx;
-> -	int type;
-> -
-> -	if (!bus)
-> -		return -ENXIO;
-> -
-> -	if (pci_is_root_bus(bus))
-> -		type = PCI_EXP_TYPE_ROOT_PORT;
-> -	else
-> -		type = PCI_EXP_TYPE_DOWNSTREAM;
-> -
-> -	ctx = (struct cxl_walk_context) {
-> -		.port = port,
-> -		.bus = bus,
-> -		.type = type,
-> -	};
-> -	pci_walk_bus(bus, match_add_dports, &ctx);
-> -
-> -	if (ctx.count == 0)
-> -		return -ENODEV;
-> -	if (ctx.error)
-> -		return ctx.error;
-> -	return ctx.count;
-> -}
-> -EXPORT_SYMBOL_NS_GPL(devm_cxl_port_enumerate_dports, "CXL");
-> -
->  static int cxl_dvsec_mem_range_valid(struct cxl_dev_state *cxlds, int id)
->  {
->  	struct pci_dev *pdev = to_pci_dev(cxlds->dev);
-> @@ -1217,6 +1138,14 @@ int cxl_gpf_port_setup(struct cxl_dport *dport)
->  	return 0;
->  }
->  
-> +struct cxl_walk_context {
-> +	struct pci_bus *bus;
-> +	struct cxl_port *port;
-> +	int type;
-> +	int error;
-> +	int count;
-> +};
-> +
->  static int count_dports(struct pci_dev *pdev, void *data)
->  {
->  	struct cxl_walk_context *ctx = data;
-> diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
-> index 7ae621e618e7..1d526bea8431 100644
-> --- a/drivers/cxl/cxlpci.h
-> +++ b/drivers/cxl/cxlpci.h
-> @@ -127,7 +127,6 @@ static inline bool cxl_pci_flit_256(struct pci_dev *pdev)
->  	return lnksta2 & PCI_EXP_LNKSTA2_FLIT;
->  }
->  
-> -int devm_cxl_port_enumerate_dports(struct cxl_port *port);
->  struct cxl_dev_state;
->  void read_cdat_data(struct cxl_port *port);
->  void cxl_cor_error_detected(struct pci_dev *pdev);
-> diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
-> index 0d5ce4b74b9f..3dae06ac7fba 100644
-> --- a/tools/testing/cxl/Kbuild
-> +++ b/tools/testing/cxl/Kbuild
-> @@ -4,7 +4,6 @@ ldflags-y += --wrap=is_acpi_device_node
->  ldflags-y += --wrap=acpi_evaluate_integer
->  ldflags-y += --wrap=acpi_pci_find_root
->  ldflags-y += --wrap=nvdimm_bus_register
-> -ldflags-y += --wrap=devm_cxl_port_enumerate_dports
->  ldflags-y += --wrap=cxl_await_media_ready
->  ldflags-y += --wrap=devm_cxl_add_rch_dport
->  ldflags-y += --wrap=cxl_rcd_component_reg_phys
-> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-> index 2d135ca533d0..10f9b83a9443 100644
-> --- a/tools/testing/cxl/test/cxl.c
-> +++ b/tools/testing/cxl/test/cxl.c
-> @@ -995,37 +995,6 @@ static int get_port_array(struct cxl_port *port,
->  	return 0;
->  }
->  
-> -static int mock_cxl_port_enumerate_dports(struct cxl_port *port)
-> -{
-> -	struct platform_device **array;
-> -	int i, array_size;
-> -	int rc;
-> -
-> -	rc = get_port_array(port, &array, &array_size);
-> -	if (rc)
-> -		return rc;
-> -
-> -	for (i = 0; i < array_size; i++) {
-> -		struct platform_device *pdev = array[i];
-> -		struct cxl_dport *dport;
-> -
-> -		if (pdev->dev.parent != port->uport_dev) {
-> -			dev_dbg(&port->dev, "%s: mismatch parent %s\n",
-> -				dev_name(port->uport_dev),
-> -				dev_name(pdev->dev.parent));
-> -			continue;
-> -		}
-> -
-> -		dport = devm_cxl_add_dport(port, &pdev->dev, pdev->id,
-> -					   CXL_RESOURCE_NONE);
-> -
-> -		if (IS_ERR(dport))
-> -			return PTR_ERR(dport);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  static struct cxl_dport *mock_cxl_add_dport_by_dev(struct cxl_port *port,
->  						   struct device *dport_dev)
->  {
-> @@ -1114,7 +1083,6 @@ static struct cxl_mock_ops cxl_mock_ops = {
->  	.acpi_pci_find_root = mock_acpi_pci_find_root,
->  	.devm_cxl_switch_port_decoders_setup = mock_cxl_switch_port_decoders_setup,
->  	.devm_cxl_endpoint_decoders_setup = mock_cxl_endpoint_decoders_setup,
-> -	.devm_cxl_port_enumerate_dports = mock_cxl_port_enumerate_dports,
->  	.cxl_endpoint_parse_cdat = mock_cxl_endpoint_parse_cdat,
->  	.devm_cxl_add_dport_by_dev = mock_cxl_add_dport_by_dev,
->  	.list = LIST_HEAD_INIT(cxl_mock_ops.list),
-> diff --git a/tools/testing/cxl/test/mock.c b/tools/testing/cxl/test/mock.c
-> index 995269a75cbd..6fd4edb9215c 100644
-> --- a/tools/testing/cxl/test/mock.c
-> +++ b/tools/testing/cxl/test/mock.c
-> @@ -172,21 +172,6 @@ int __wrap_devm_cxl_endpoint_decoders_setup(struct cxl_port *port)
->  }
->  EXPORT_SYMBOL_NS_GPL(__wrap_devm_cxl_endpoint_decoders_setup, "CXL");
->  
-> -int __wrap_devm_cxl_port_enumerate_dports(struct cxl_port *port)
-> -{
-> -	int rc, index;
-> -	struct cxl_mock_ops *ops = get_cxl_mock_ops(&index);
-> -
-> -	if (ops && ops->is_mock_port(port->uport_dev))
-> -		rc = ops->devm_cxl_port_enumerate_dports(port);
-> -	else
-> -		rc = devm_cxl_port_enumerate_dports(port);
-> -	put_cxl_mock_ops(index);
-> -
-> -	return rc;
-> -}
-> -EXPORT_SYMBOL_NS_GPL(__wrap_devm_cxl_port_enumerate_dports, "CXL");
-> -
->  int __wrap_cxl_await_media_ready(struct cxl_dev_state *cxlds)
->  {
->  	int rc, index;
-> diff --git a/tools/testing/cxl/test/mock.h b/tools/testing/cxl/test/mock.h
-> index 4ed932e76aae..580f38386224 100644
-> --- a/tools/testing/cxl/test/mock.h
-> +++ b/tools/testing/cxl/test/mock.h
-> @@ -19,7 +19,6 @@ struct cxl_mock_ops {
->  	bool (*is_mock_bus)(struct pci_bus *bus);
->  	bool (*is_mock_port)(struct device *dev);
->  	bool (*is_mock_dev)(struct device *dev);
-> -	int (*devm_cxl_port_enumerate_dports)(struct cxl_port *port);
->  	int (*devm_cxl_switch_port_decoders_setup)(struct cxl_port *port);
->  	int (*devm_cxl_endpoint_decoders_setup)(struct cxl_port *port);
->  	void (*cxl_endpoint_parse_cdat)(struct cxl_port *port);
-
+Bart.
 
