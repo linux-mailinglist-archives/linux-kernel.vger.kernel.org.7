@@ -1,206 +1,327 @@
-Return-Path: <linux-kernel+bounces-836065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E731BA8AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:41:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854D4BA8A5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52D6D7B5CE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:32:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8A6018938CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 09:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49BD299A81;
-	Mon, 29 Sep 2025 09:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A77288510;
+	Mon, 29 Sep 2025 09:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Aof+a00w";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wjt0rjky"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fdrtopG4"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012034.outbound.protection.outlook.com [40.93.195.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D872287242;
-	Mon, 29 Sep 2025 09:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138333; cv=none; b=XnDPuLvl1eDRMPS/DJUTIZvkcQSLQfK0pIGL87QrhhPU+zra5HJ5DMX6MdqDuLagpsM3JlJmBc9JoJ9i8t+Ugjm4pgT+Cz3YOiFMKCDl2LvBOpNJg0F6qUPXCl7D7oUXMTbacbthaUW6diSyMivR6xjlCW8oyVxo8hHPZDx6sDU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138333; c=relaxed/simple;
-	bh=2q5RKKAdJ4SlqecBbNXLH+5eTvTAeMiEXIykHCwMExw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=laVzQIxML7hlJC4CkArHW5CESzwrP42AsNoVRYJ2ozwtDkWb+eiu2IIW4a0Kd5Dnkk001+dlg9l9n13g/sVZ4FltQ5ZKkrldkevFkPNkfolOF2p1X8A1ZLD4U7z3TmrvN7uwLGNNcRoAC1q7SYXC3jHf0ZeukOwY9w58Vp6r9ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Aof+a00w; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wjt0rjky; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759138329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MboBZN26VAAZ4HSRsz4z8gwubj9nPqnmYABiymI1l7Y=;
-	b=Aof+a00wv9jjKaWB6SFIS9Mlu2Ox6PiMHPdoHdsVc5a/wU9Pny+AuEUIrYsFnMgiajpgib
-	8Xo7WBeNJ1Qr2crvW0k5k3CCaKbtX5uc17XTpmo7FfhWsvDvmcdbvJsJdjDlRpqmeqFg6E
-	lkqcd5Y8eSXeK8MU89riu2kYbU8bJi6dr5krmZoN0eiEBr7ABMpBVxmjI/I7p5lRMOcu5c
-	PXdl3dmsZvCOckaxCo/714yF5dbUcgndYGmfDjuvbHG9vhBNeSpUUhKh+PCy1kr6ROrjXH
-	hRrvK1VBTtMe+3tRfbs5GSddLruEABEaGed80YKewD8HNsZD210xYNJukYnrgg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759138329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MboBZN26VAAZ4HSRsz4z8gwubj9nPqnmYABiymI1l7Y=;
-	b=wjt0rjkytgm4sjzjR+JDLg6Nm8RzT3Dtu9NuBdQC2RcYkNl6ZjuiTgekrd7BQxJJpisrQb
-	PmfB1inMrtb4QrBw==
-To: Steven Rostedt <rostedt@goodmis.org>, chenyuan_fl@163.com
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Yuan
- Chen <chenyuan@kylinos.cn>, Peter Zijlstra <peterz@infradead.org>,
- Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v2] tracing: Fix race condition in kprobe initialization
- causing NULL pointer dereference
-In-Reply-To: <20250929044836.7169d5be@batman.local.home>
-References: <20250929143916.5984441b32e6f84618b4deb8@kernel.org>
- <20250929065731.1351028-1-chenyuan_fl@163.com>
- <20250929044836.7169d5be@batman.local.home>
-Date: Mon, 29 Sep 2025 11:38:08 +0206
-Message-ID: <84seg5d2p3.fsf@jogness.linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B62F1714B7
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759138459; cv=fail; b=p6pNr3QxISZn/nFpIwumX8FRwkJ/F/6cByWFrFP/g3s3SYxp4aL2GtOLPgu9/jmWsv2Wxg9y+D6dHNd4LIEkrxvDnDkDf+5pcyG2K9CRq2NbIToDMpnkXSYe2bzMbTQfv5lejN157ha9fteI27hQR39G9KOw/O0zuV1H8908LKw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759138459; c=relaxed/simple;
+	bh=zyId53XsfVtQVGzB5eFWUef4dgeIeyg+2T+XG1N7gKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lruyP3U2hbZrsLFuNChQ1DLJLWGEieCrcDhBmJd1aGQN9CHP6vV8kU/LEmRrVuxq+etGli4L4dhhLeXs649poNGmqRLzTt1LrGyEfmlLA+DC+M3IBIZTUIrbDDrS+h0E8M2JfCU1F0tReS6DzsN95XE60E7b0JPJYDCpLiz+zxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fdrtopG4; arc=fail smtp.client-ip=40.93.195.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FvyYV3H0OOKq0tTObxQ345ZLbxX73NKmArRxW9Cnb4x2pVzxQxjR/mi4u2jkZoJsbkabJf+uTTJ3IOgxV0LilSS8KHRw1WuY0MsG7l4cX/86SSTuixvC080XT3Qf4dITJgiW2ILNA1LxRTDAwXNFRjL3kpMurEhub4kleDC87zAjTMEh4oyIhpS9NU5SfcZzy8nFjlLJWF8/3v6J2q+Qku+TUnwwJmaV95hxPAp9iDdNRH4SnYfaJ5Uv65upuSuWDANvZgikEF7d9gueFMOezz32GGP4UiTgFSXswh/3SqGnoCwpjBzABwvGNVOUbLWOBq6hR0QP+nLOR+qIQXCtMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d4Djt2wBM+nA0bI0bn1CJbMYGbTPM2sKZztVZRzvAFk=;
+ b=bsv686nUbzyiHyjmmVKkY6mXgdvIIf/lUoWoc30kX9em6bfarUJJZDl/EMrA0QSHwpkM6LCgFevi9BczB/JcBoOIbpzSYbbTp6vUQqJRgm8FSR8j9vu4xuFfhYKQNTqigx7eciKeb/vytIS6KZ2UFLj7GPMF6BG2UglBhMUC/CWtlrijluRGN2DCLgn68A8xZ2pcQtuu4LmsVC3i+kLEJTkwQoz3YCXyGC2yWO83Bw23DX9J7pzO+3dJeiH8swjSe0nYZcX6Jj0jZMUpR0Rn12kdcRAYwSLQ/v1crpH4iHcQX/KDzIc5Q0u2hWwmO147LhUtA3olzXGszkHOngJbUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d4Djt2wBM+nA0bI0bn1CJbMYGbTPM2sKZztVZRzvAFk=;
+ b=fdrtopG42GdGMj77WC7UJ0SNFtnwiSnkP0mEkB4fo46Bvx3XKNEHtW+t5RZjiwDZz1WpM5e64P2feFZySU9VwlL6PQXTIgCJGW9kYoJNgFdHUE2RrZta0BBVDmxOlMAd3Wmvvah3UGynZ5fKRPA+uh706/ywlr0dwSRHYCypvLU=
+Received: from DM6PR17CA0034.namprd17.prod.outlook.com (2603:10b6:5:1b3::47)
+ by BL1PR12MB5826.namprd12.prod.outlook.com (2603:10b6:208:395::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 09:34:13 +0000
+Received: from DS2PEPF00003443.namprd04.prod.outlook.com
+ (2603:10b6:5:1b3:cafe::94) by DM6PR17CA0034.outlook.office365.com
+ (2603:10b6:5:1b3::47) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Mon,
+ 29 Sep 2025 09:34:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS2PEPF00003443.mail.protection.outlook.com (10.167.17.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Mon, 29 Sep 2025 09:34:12 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 29 Sep
+ 2025 02:34:11 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 29 Sep
+ 2025 04:34:11 -0500
+Received: from [172.31.184.125] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 29 Sep 2025 02:34:04 -0700
+Message-ID: <7c93d622-49fe-4e99-8142-aed69d48aa8a@amd.com>
+Date: Mon, 29 Sep 2025 15:04:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
+ zero runtime_remaining
+To: Aaron Lu <ziqianlu@bytedance.com>, Valentin Schneider
+	<vschneid@redhat.com>, Ben Segall <bsegall@google.com>, Peter Zijlstra
+	<peterz@infradead.org>, Chengming Zhou <chengming.zhou@linux.dev>, Josh Don
+	<joshdon@google.com>, Ingo Molnar <mingo@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Xi Wang <xii@google.com>
+CC: <linux-kernel@vger.kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chuyi Zhou
+	<zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>, "Florian
+ Bezdeka" <florian.bezdeka@siemens.com>, Songtang Liu
+	<liusongtang@bytedance.com>, Chen Yu <yu.c.chen@intel.com>, Matteo Martelli
+	<matteo.martelli@codethink.co.uk>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+	<mkoutny@suse.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+References: <20250929074645.416-1-ziqianlu@bytedance.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250929074645.416-1-ziqianlu@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003443:EE_|BL1PR12MB5826:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8c10655-89dd-48fc-cc3e-08ddff3b599f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b1FDb1FRUE5iaTgvUlJhN01kQWd6SVZHMzdWaVFBNGVnZmkySHpOL3NYRkpl?=
+ =?utf-8?B?YWFPVEJVS3o0MytEYTl6SDFrMktURlZlYTRSd0RkanJRNXlwcldhZy9TQ29J?=
+ =?utf-8?B?SFNKWDZJRWthSEZkcGFJVG9UUHM2M1FENDhteDBDVXhoVU5lNmhySjFOTEVa?=
+ =?utf-8?B?Mkc1STljY29MQ0NidzlqYkpMKzRieDBqUGdreDJtd1dTZUpQMnRJVVk4UlhT?=
+ =?utf-8?B?UjNSOUVqMm5BMGl2V3A3Yy9SZ1lxbVZ2UUxIOXQxcVl0aCtDZFBWMXVOMlpj?=
+ =?utf-8?B?eVl0N1EydnQ2N3dzZXMvSXNzU2NUa3h5TTB6WDBHOERUV3kvczE4Tk9ULzBy?=
+ =?utf-8?B?VFdNbllaRThHREZUZzdoNkdqWUlrbFdENDNOYWZKY0VRZTRaMTRENGlhZklv?=
+ =?utf-8?B?dlhTdXhTQ244UXAzQ244Nmc1VTRjRWljSytwaC9jelRWSjV6UmpKS3J3THpG?=
+ =?utf-8?B?RGkrZ1BBZDJGdENkWU1pZG5nMjVmQVVMTUN0dFlLSnNQdDJQdXdOMmR0aGhp?=
+ =?utf-8?B?K012ZE5FY2lXdmkvMUM0MERqU0ZRRFRIbjhBOXVWQzJqN3VUQ2x6TTJMYU5v?=
+ =?utf-8?B?ejBFeWtGSzRDdkkxTkVYWGtFNzVHRUNPSkhDQ3QwbnMyK21ORUErRHZTYWEx?=
+ =?utf-8?B?bDRYREhIbk5WRUk3Z2IwYXFBbld6ZXVwamcvalRQU0pMak1ReGZicWJIUUF5?=
+ =?utf-8?B?QlV0MTdOeU5LaGdkTXp0UkRhTFIrQXpYSEF4eThKSTlONm5lam9mU2ZHa3Zn?=
+ =?utf-8?B?UUF0ZWRKbSt3QlR3Q2dXeUcySXRaRGpDVGdYNnRuNk54eHY1UzJPOEhCVHk3?=
+ =?utf-8?B?VWF1bElnUEhuVWpDekRpRTlhUVJSbDIrNFRrZHQwa25IUDRJQm5CR0M2VWM1?=
+ =?utf-8?B?akY1THR3dlU5R1pNeTdvdzJjbXJUV2JZQnk0UnZVNkdkaE80Y2pRL0ZyWkg3?=
+ =?utf-8?B?bnYyb2RUUmRlMVBHb1MrNlJBTk9sVjNmaUJTZ2Y0eEh4cXZTV1ZRWW1NUU5Q?=
+ =?utf-8?B?cGJLTGZRWWJBSkRUbEYrdXl1SUQvOGFwN040SU1ZQmlWczFTMENVSHc0MXFL?=
+ =?utf-8?B?UVdiUW45N1VSUHRkYjlLVjNMT2R6MDdOemliUkxiWjdYbkZvTTc3aVo0V1V2?=
+ =?utf-8?B?SUlVSjFLTVNNdTRBZWx1L2I3eisxcGlPakFYbFNnNEZ1TWR2ZW1KNlg0aTY2?=
+ =?utf-8?B?RjZIYjZJdTlNTXY1ZEo2dHpYWlFrZWU5eW5kU09tNC9TNXVHS2FYUjB6M25W?=
+ =?utf-8?B?MHE3cTZveW9yQ3NNQWc2Mkg0bWFLRk9YZVpkUElZRFh2RkJLcXRONnRsSHBD?=
+ =?utf-8?B?alZ5UjhYV3VtektKZ2UzQmo5M0ZaZEdvdUxST2Zidy9vcXgzaENBTUlBMlhV?=
+ =?utf-8?B?SjdhTlZYalJsV1lHcFZVd3ZRVVhCWHIydzVMNlVCbUp0alJEWnZXY01ibEhG?=
+ =?utf-8?B?SG1UVVdubU11cXpCV3JMTlkrMU4rKzlFOEcrVG1IK2lXVTAvTmZiN1FmZmhS?=
+ =?utf-8?B?WXRpWXBMdmE4Wm85bE12ajZndG0vY0dLUHpBcGNIMEFjWUhEa2lQWjVOQUFW?=
+ =?utf-8?B?SGFmeUdSbHVSM0ZNdUhxWXJ4aUlwSCtZZG9nVWVXQ25nWWpwWkxtWWlRTWdM?=
+ =?utf-8?B?Y0tTWlV6TDlhU2gxN3pYd3EvdjUweG9MVTNZVTE1QzJxTHlMMlZZa0xLYWwr?=
+ =?utf-8?B?cmRmSEl1aThna1ZkZzhISmYyQUlHYWFFUTR1OFViOTVrL0ZuRXhmUnRsREVp?=
+ =?utf-8?B?Vm1VQ2xVV2ZCVzZnRlNManJrRjlaRDZ6YXg1UTBNUStuSVZOS3FnRWR6aDIw?=
+ =?utf-8?B?RFVuc3J4UmZYMmEwRzhNcW5kaDNPUTFHZHB2ZFpPQUdqT1JrNDgrTzF3RDRO?=
+ =?utf-8?B?Q09lejFWMDJPYXZZamQxTWpHejlCVmI2TnlqZ0FCZHpYOGJhY2xzbTRZdTdB?=
+ =?utf-8?B?WUJVbUxFN2tidGp3RkcrWlk3MGRUc2k2RWpnWU1oOTNZZ2tzZEFSdkk5ZVpV?=
+ =?utf-8?B?ZlIrc25IOHFqZXE4R0VEN3N2V0paVFFoSWl4OVd5dmg1OURhdGRLdGNjcWpm?=
+ =?utf-8?B?UlJMM0RRN1hkY0F0SlptRHdveEFucUZFSzZqNUZKYjhrMFJORDJneTBockR6?=
+ =?utf-8?Q?mzec=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 09:34:12.7007
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8c10655-89dd-48fc-cc3e-08ddff3b599f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003443.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5826
 
-On 2025-09-29, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Mon, 29 Sep 2025 07:57:31 +0100
-> chenyuan_fl@163.com wrote:
->
->> From: Yuan Chen <chenyuan@kylinos.cn>
->>=20
->> There is a critical race condition in kprobe initialization that can lea=
-d to
->> NULL pointer dereference and kernel crash.
->>=20
->> [1135630.084782] Unable to handle kernel paging request at virtual addre=
-ss 0000710a04630000
->> ...
->> [1135630.260314] pstate: 404003c9 (nZcv DAIF +PAN -UAO)
->> [1135630.269239] pc : kprobe_perf_func+0x30/0x260
->> [1135630.277643] lr : kprobe_dispatcher+0x44/0x60
->> [1135630.286041] sp : ffffaeff4977fa40
->> [1135630.293441] x29: ffffaeff4977fa40 x28: ffffaf015340e400
->> [1135630.302837] x27: 0000000000000000 x26: 0000000000000000
->> [1135630.312257] x25: ffffaf029ed108a8 x24: ffffaf015340e528
->> [1135630.321705] x23: ffffaeff4977fc50 x22: ffffaeff4977fc50
->> [1135630.331154] x21: 0000000000000000 x20: ffffaeff4977fc50
->> [1135630.340586] x19: ffffaf015340e400 x18: 0000000000000000
->> [1135630.349985] x17: 0000000000000000 x16: 0000000000000000
->> [1135630.359285] x15: 0000000000000000 x14: 0000000000000000
->> [1135630.368445] x13: 0000000000000000 x12: 0000000000000000
->> [1135630.377473] x11: 0000000000000000 x10: 0000000000000000
->> [1135630.386411] x9 : 0000000000000000 x8 : 0000000000000000
->> [1135630.395252] x7 : 0000000000000000 x6 : 0000000000000000
->> [1135630.403963] x5 : 0000000000000000 x4 : 0000000000000000
->> [1135630.412545] x3 : 0000710a04630000 x2 : 0000000000000006
->> [1135630.421021] x1 : ffffaeff4977fc50 x0 : 0000710a04630000
->> [1135630.429410] Call trace:
->> [1135630.434828]  kprobe_perf_func+0x30/0x260
->> [1135630.441661]  kprobe_dispatcher+0x44/0x60
->> [1135630.448396]  aggr_pre_handler+0x70/0xc8
->> [1135630.454959]  kprobe_breakpoint_handler+0x140/0x1e0
->> [1135630.462435]  brk_handler+0xbc/0xd8
->> [1135630.468437]  do_debug_exception+0x84/0x138
->> [1135630.475074]  el1_dbg+0x18/0x8c
->> [1135630.480582]  security_file_permission+0x0/0xd0
->> [1135630.487426]  vfs_write+0x70/0x1c0
->> [1135630.493059]  ksys_write+0x5c/0xc8
->> [1135630.498638]  __arm64_sys_write+0x24/0x30
->> [1135630.504821]  el0_svc_common+0x78/0x130
->> [1135630.510838]  el0_svc_handler+0x38/0x78
->> [1135630.516834]  el0_svc+0x8/0x1b0
->>=20
->> kernel/trace/trace_kprobe.c: 1308
->> 0xffff3df8995039ec <kprobe_perf_func+0x2c>:     ldr     x21, [x24,#120]
->> include/linux/compiler.h: 294
->> 0xffff3df8995039f0 <kprobe_perf_func+0x30>:     ldr     x1, [x21,x0]
->>=20
->> kernel/trace/trace_kprobe.c
->> 1308: head =3D this_cpu_ptr(call->perf_events);
->> 1309:   if (hlist_empty(head))
->> 1310:           return 0;
->>=20
->> crash> struct trace_event_call -o=20=20
->> struct trace_event_call {
->>   ...
->>   [120] struct hlist_head *perf_events;  //(call->perf_event)
->>   ...
->> }
->>=20
->> crash> struct trace_event_call ffffaf015340e528=20=20
->> struct trace_event_call {
->>   ...
->>   perf_events =3D 0xffff0ad5fa89f088, //this value is correct, but x21 =
-=3D 0
->>   ...
->> }
->>=20
->> Race Condition Analysis:
->>=20
->> The race occurs between kprobe activation and perf_events initialization:
->>=20
->>   CPU0                                    CPU1
->>   =3D=3D=3D=3D                                    =3D=3D=3D=3D
->>   perf_kprobe_init
->>     perf_trace_event_init
->>       tp_event->perf_events =3D list;(1)
->>       tp_event->class->reg (2)=E2=86=90 KPROBE ACTIVE
->>                                           Debug exception triggers
->>                                           ...
->>                                           kprobe_dispatcher
->>                                             kprobe_perf_func (tk->tp.fla=
-gs & TP_FLAG_PROFILE)
->>                                               head =3D this_cpu_ptr(call=
-->perf_events)(3)
->>                                               (perf_events is still NULL)
+Hello Aaron,
 
-I do not know anything about the kprobe and perf internals. This email
-should hopefully help to act as a guide of where you need to place the
-memory barrier _pair_. If I understand the problem description
-correctly, you would need:
+On 9/29/2025 1:16 PM, Aaron Lu wrote:
+> When a cfs_rq is to be throttled, its limbo list should be empty and
+> that's why there is a warn in tg_throttle_down() for non empty
+> cfs_rq->throttled_limbo_list.
+> 
+> When running a test with the following hierarchy:
+> 
+>           root
+>         /      \
+>         A*     ...
+>      /  |  \   ...
+>         B
+>        /  \
+>       C*
+> 
+> where both A and C have quota settings, that warn on non empty limbo list
+> is triggered for a cfs_rq of C, let's call it cfs_rq_c(and ignore the cpu
+> part of the cfs_rq for the sake of simpler representation).
+> 
+> Debugging showed it happened like this:
+> Task group C is created and quota is set, so in tg_set_cfs_bandwidth(),
+> cfs_rq_c is initialized with runtime_enabled set, runtime_remaining
+> equals to 0 and *unthrottled*. Before any tasks are enqueued to cfs_rq_c,
+> *multiple* throttled tasks can migrate to cfs_rq_c (e.g., due to task
+> group changes). When enqueue_task_fair(cfs_rq_c, throttled_task) is
+> called and cfs_rq_c is in a throttled hierarchy (e.g., A is throttled),
+> these throttled tasks are placed into cfs_rq_c's limbo list by
+> enqueue_throttled_task().
+> 
+> Later, when A is unthrottled, tg_unthrottle_up(cfs_rq_c) enqueues these
+> tasks. The first enqueue triggers check_enqueue_throttle(), and with zero
+> runtime_remaining, cfs_rq_c can be throttled in throttle_cfs_rq() if it
+> can't get more runtime and enters tg_throttle_down(), where the warning
+> is hit due to remaining tasks in the limbo list.
+> 
+> Fix this by calling throttle_cfs_rq() in tg_set_cfs_bandwidth()
+> immediately after enabling bandwidth and setting runtime_remaining = 0.
+> This ensures cfs_rq_c is throttled upfront and cannot enter the enqueue
+> path in an unthrottled state with no runtime.
+> 
+> Also, update outdated comments in tg_throttle_down() since
+> unthrottle_cfs_rq() is no longer called with zero runtime_remaining.
+> 
+> While at it, remove a redundant assignment to se in tg_throttle_down().
+> 
+> Fixes: e1fad12dcb66("sched/fair: Switch to task based throttle model")
+> Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+> ---
+>  kernel/sched/core.c  |  9 ++++++++-
+>  kernel/sched/fair.c  | 16 +++++++---------
+>  kernel/sched/sched.h |  1 +
+>  3 files changed, 16 insertions(+), 10 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 7f1e5cb94c536..421166d431fa7 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -9608,7 +9608,14 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
+>  		cfs_rq->runtime_enabled = runtime_enabled;
+>  		cfs_rq->runtime_remaining = 0;
+>  
+> -		if (cfs_rq->throttled)
+> +		/*
+> +		 * Throttle cfs_rq now or it can be unthrottled with zero
+> +		 * runtime_remaining and gets throttled on its unthrottle path.
+> +		 */
+> +		if (cfs_rq->runtime_enabled && !cfs_rq->throttled)
+> +			throttle_cfs_rq(cfs_rq);
 
->> Problem:
->> 1. CPU0 executes (1) assigning tp_event->perf_events =3D list
+So one downside of this is throttle_cfs_rq() here can assign bandwidth
+to an empty cfs_rq and a genuine enqueue later on another CPU might not
+find bandwidth thus delaying its execution.
 
-smp_wmb()
+Can we instead do a check_enqueue_throttle() in enqueue_throttled_task()
+if we find cfs_rq->throttled_limbo_list to be empty?
 
->> 2. CPU0 executes (2) enabling kprobe functionality via class->reg()
->> 3. CPU1 triggers and reaches kprobe_dispatcher
->> 4. CPU1 checks TP_FLAG_PROFILE - condition passes (step 2 completed)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 18a30ae35441..fd2d4dad9c27 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5872,6 +5872,8 @@ static bool enqueue_throttled_task(struct task_struct *p)
+ 	 */
+ 	if (throttled_hierarchy(cfs_rq) &&
+ 	    !task_current_donor(rq_of(cfs_rq), p)) {
++		if (list_empty(&cfs_rq->throttled_limbo_list))
++			check_enqueue_throttle(cfs_rq);
+ 		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+ 		return true;
+ 	}
+---
 
-smp_rmb()
+> +
+> +		if (!cfs_rq->runtime_enabled && cfs_rq->throttled)
+>  			unthrottle_cfs_rq(cfs_rq);
+>  	}
+>  
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 22e6dd3af82fc..3ef11783369d7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5976,7 +5976,7 @@ static int tg_throttle_down(struct task_group *tg, void *data)
+>  	return 0;
+>  }
+>  
+> -static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+> +bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+>  {
+>  	struct rq *rq = rq_of(cfs_rq);
+>  	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+> @@ -6025,19 +6025,17 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+>  
+>  	/*
+>  	 * It's possible we are called with !runtime_remaining due to things
+> -	 * like user changed quota setting(see tg_set_cfs_bandwidth()) or async
+> -	 * unthrottled us with a positive runtime_remaining but other still
+> -	 * running entities consumed those runtime before we reached here.
+> +	 * like async unthrottled us with a positive runtime_remaining but
+> +	 * other still running entities consumed those runtime before we
+> +	 * reached here.
+>  	 *
+> -	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
+> -	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
+> -	 * throttle, which is not supposed to happen on unthrottle path.
+> +	 * We can't unthrottle this cfs_rq without any runtime remaining
+> +	 * because any enqueue in tg_unthrottle_up() will immediately trigger
+> +	 * a throttle, which is not supposed to happen on unthrottle path.
+>  	 */
+>  	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
+>  		return;
+>  
+> -	se = cfs_rq->tg->se[cpu_of(rq)];
+> -
 
->> 5. CPU1 calls kprobe_perf_func() and crashes at (3) because
->>    call->perf_events is still NULL
->>=20
->> The issue: Assignment in step 1 may not be visible to CPU1 due to
->> missing memory barriers before step 2 sets TP_FLAG_PROFILE flag.
+Ack on these bits!
 
-A better explanation of the issue would be: CPU1 sees that kprobe
-functionality is enabled but does not see that perf_events has been
-assigned.
+>  	cfs_rq->throttled = 0;
+>  
+>  	update_rq_clock(rq);
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index b5367c514c143..359bb858cffd3 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -558,6 +558,7 @@ extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth
+>  
+>  extern void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b);
+>  extern void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b);
+> +extern bool throttle_cfs_rq(struct cfs_rq *cfs_rq);
+>  extern void unthrottle_cfs_rq(struct cfs_rq *cfs_rq);
+>  extern bool cfs_task_bw_constrained(struct task_struct *p);
+>  
 
-Add pairing read and write memory barriers to guarantee that if CPU1
-sees that kprobe functionality is enabled, it must also see that
-perf_events has been assigned.
+-- 
+Thanks and Regards,
+Prateek
 
-Note that this could also be done more efficiently using a store_release
-when setting the flag (in step 2) and a load_acquire when loading the
-flag (in step 4).
-
-John Ogness
 
