@@ -1,200 +1,167 @@
-Return-Path: <linux-kernel+bounces-835684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378C6BA7CDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 04:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DD9BA7DF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3A2B4E0191
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:29:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C32E4E107E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 03:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9A620468D;
-	Mon, 29 Sep 2025 02:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72727212546;
+	Mon, 29 Sep 2025 03:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="CMxH4KEU"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011055.outbound.protection.outlook.com [40.107.130.55])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="kP7NE0Vd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B/Y8KrTe"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD5A2C859;
-	Mon, 29 Sep 2025 02:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759112940; cv=fail; b=HVTCo6O/62zHmso8FAztCK6r3h6iBLRJ6GjSGFevT01npycoyFVodwVj1rIiQsfvTaPzbtqg5K1jCf1/GNrJLSvM5LrOTnf6RZtHk++nY4QAh4OQy6ZxD3vjp07IAJggmmqGkIlB+EV5iwZKImVj/PWWyn9mL7l6MEoNA2tg69A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759112940; c=relaxed/simple;
-	bh=EYBe2Ogt0dTUkY2j3pcyIHv6nZkKPtNu65ByUHU2Kqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qys+tXPbcse7T6lpHEZTFBPW282a21sjTjm0KaP2ikoUnnUB3hyzy79q1r+/L6XPLcUSZV8ScPPBgf6mKKIrI/KXDrKZUU2o9Ee1wD7LSYpL4RnPKogyDrZS/oHzL8GbKro9rVYqnd1LErS+H1X0pd1BrlxRvQKQaY8rx8fiQ8w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=CMxH4KEU; arc=fail smtp.client-ip=40.107.130.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hImux4v3jDjdFheZSjVp6eGvQf9UFf+OIBucF0Yq9SHsuWz35rnT6xSnwN3/XoVaSlm2Q0VSR4TPKGWhsl0dTyttwK/KfHy2GinWtrY9yclq8VTzmR1ohcXibyyjR7ibrd3XeL3fImg9UiGjcx7Xw9/0K0v1cIYT0KrD+SEM5fXf2vVLxu/Om21cjC6biVlqzEvDVz1uSS2pzTQhepXxht7e0LuXAO/gZoBsaFR7YtTn2wEBrm9mJAKdPA/AeAElMxObUow68sG2pB00eE+QfaOulD29K8LCe1ga9NVuJiNp5BqOLIrsWYp+NjSyR+T/JhkNnMMHu9YvyDpykmN8lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4HaP2cpl+/9d+FCMjSJnbTXS6xlVGHejKsnqdDroPDM=;
- b=F1DaUD07vdu/P1Njx7MJPhRZTuKJizkZunbGc1QIMx2VAF5kVaG3hLdidzYrrzgfXQKSylRFN5I6idkudh/NFvlCSi20rGbikKtZ7A/qiMcRJYGfMuLZPVKCOs8po2pfhchOP24/noIyNoGtLNeDA64hZrEsf128SG2E/w/trudaUIUrTM0dczVlZ7VffXDTOnOC4BLx+uE8qir7vhHPcLe0Q/scr6o/DwyIh6qVfEjVbWdU0BgPFCtHlR1sdMT6iORieE/B2DI+bNs3L7fycNi7qqNQhpfrIfSwEsvYfbHyunh1mWTUIuKgn+Yl3x9EfBSmFZK61EGNO2KFJExLdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4HaP2cpl+/9d+FCMjSJnbTXS6xlVGHejKsnqdDroPDM=;
- b=CMxH4KEUIKiIQ+4hLoVky2VpclOZR3XpaqaZ/yG4o/+ges75a9beIMQsLSBO0OVoAM+7U07y8p0zOzCp1Hyq+/t10CNn7ygkxa4WN001eaGL2hKqcULPHhWjmx2y+vQ4Ts4smWSIgPpeDnYvNbDSsWEg0xL9p/leMJryLzC085C0E5Ei1RRhEglJSayeJyItc0GUORA5I3TEwGUGouYkgyfJ7EG0gItjsEjE5IdAwcO0yIKqzG7MEMHucmxghA38NDyvaGK8iDuFoQ5+6lL5WJjvf1jBXfERiOGkxI1HohNW3yj/11zYcGkV3KfLzD9F2nlNTyw1RcTDrR9Rqhz88g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GVXPR04MB10753.eurprd04.prod.outlook.com (2603:10a6:150:219::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
- 2025 02:28:55 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
- 02:28:55 +0000
-Date: Mon, 29 Sep 2025 11:40:48 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Peter Chen <peter.chen@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Xu Yang <xu.yang_2@nxp.com>
-Subject: Re: [PATCH v4 0/5] pmdomain: core: Introduce
- device_set_out_band_wakeup and use it in usb
-Message-ID: <20250929034048.GD29690@nxa18884-linux.ap.freescale.net>
-References: <20250922-pm-v4-v4-0-ef48428e8fe0@nxp.com>
- <CAPDyKFqQgS9j4uGkTL_taPTL96su1tqpyoek1cpZgTiaaBMpCA@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqQgS9j4uGkTL_taPTL96su1tqpyoek1cpZgTiaaBMpCA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SG2PR01CA0173.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::29) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231B435950;
+	Mon, 29 Sep 2025 03:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759117312; cv=none; b=gNTOXIDcWFV/p07gL8CeAN3ZePGnAMle4+BBwYm+uUCMILHxIb1Jm/nN6ryfH2jBEkB87yLAZTFIsEZCKJjxIrslJZxqvtDNd+zrq6h16eVmQxsIgv1C4DluPl0G4EZEpven8Qz/9C+54H+IiU2cAKpWZP66m9P4omLdPxLVsUk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759117312; c=relaxed/simple;
+	bh=RI2ipaHB29egjGOrvmIxSfS8MvurjHVJ7zwPYtv3sZA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=gmXOkbEJ4thIhhMhFaWu8n6vZ+4VdkzW+AyC2OZ1O9ps3HkyI1mogXy1J/b9SKEleqEYz2io+69k8O67rRKDuSJw5dHpzphUiZCHb789oWI12RgN+zlK4et2mYgiXTImN84uiYKyr5HWOKB4kRKfcfqCc9F83MzqQlAix+kINa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=kP7NE0Vd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B/Y8KrTe; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 283131400076;
+	Sun, 28 Sep 2025 23:41:48 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Sun, 28 Sep 2025 23:41:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1759117308; x=1759203708; bh=yjtaEvshITSwrEdSYBlewMXUbBwlvgxkvSi
+	tYOUauSA=; b=kP7NE0VdDlIq/miDmk7Sj3YNDTtpRmp6XEmCHJf+j8m27c6d8/A
+	69lT5AQ97tBOR5nOOWxX2nmFL/Z8UKzC5T7CwOyfmMG4lRauBX9Z+dN294tZIVuc
+	+F4X3AeB6T/TUJs2GnI49gxbNVbdcb+J5jwiLxJT8WDnji9xqejGAxgoqVdDSgLd
+	Ud6Zo6gZqRwgXQ25em/lNGTcJ5Bd/m56NEkWZ0Zxxnuka3ajUBCdEGM76QjSN7Fy
+	mEPlQVRFjjvaUgWKrc7Hl4WPuVife3LfO2RZ5MIr0L2oZ4HyFsDUBGPW/T91bESI
+	CCxQdlfK6uMJQ6dYtCZQKL0xnfcsdGL8qTw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759117308; x=
+	1759203708; bh=yjtaEvshITSwrEdSYBlewMXUbBwlvgxkvSitYOUauSA=; b=B
+	/Y8KrTeF8avUW/ph5EyAR++W6vbVymD/EwK1xQaMRJJD+sb10AUYtH3zjLWUwy9V
+	CZBsa9wLrmT5HXzye3P+GIY10x8VhQiMwD3ZyvhrhPAXIO3Ng8WFK1TQAxOK/+dJ
+	bECV2k6vyr6UWsjggdP3fqXXyCl0m4F6nId0RPtGRFa46xvwpe/vo0NMJ+MgUTvd
+	2qPBIqiDnj9yM+r++05ZHA123OCbS/Yk6vRGT0gsLlyTSTgjqwlPsDwvUpt1rZL7
+	jJkbBtOtiaXZ0dnDwRFr4zU5E+UHhkPNGf3L5kwFs8jsaGbVtpEFjUdDVVwt03e5
+	9zq2VYB33UXcK/GLpz8RQ==
+X-ME-Sender: <xms:-v_ZaMJ8lPT8o_it_22s0icuNX3dX0ZX6CaNAbqRexy650xrHVpyXg>
+    <xme:-v_ZaOZu9ciUvExU7IDingF4TVT4o1x0GyzGuUZqPhv6XHdhCEF49cXuTVwhh0dL_
+    k2ZdKQ9zJgWTtu4utEE3fpAr5r1_Ofq4X6vnunWtAjVpmwGLg>
+X-ME-Received: <xmr:-v_ZaO-3bq1MbsftNHI9_wQxojEjF83CPrdBN8crfz2bHbqRrZ6f4iT8NfVzpBg1bg2Tyr4rx0ewVp-55geNcMkyMXKmlJd-a31pjf65QQsw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejieeliecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpegtgfgghffvvefujghffffkrhesthejredttddtjeenucfhrhhomheppfgvihhluehr
+    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    duteefhfduveehvdefueefvdffkeevkefgtdefgffgkeehjeeghfetiefhgffgleenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
+    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehtghhrrghfsehsuhhughdrtghhpdhrtghpthhtohepjhhirg
+    hnghdrsghirghosehlihhnuhigrdguvghvpdhrtghpthhtohephhgvrhgsvghrthesghho
+    nhguohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtphhtthhopehmvghnghhlohhnghekrd
+    guohhnghesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:-v_ZaPZ4aLIheUqbRt6q6xJWDJKErBHbFvKpoO2JYe6R1njzPMzHTg>
+    <xmx:-v_ZaCNZpfGv098yuLx2epYtA_38XPxvqwIDR3FaoX_SV8X1rsFSng>
+    <xmx:-v_ZaLDFDUonA674eAlrVdyUnJ0F_XjCQKO7p6z_5stjcAMWLEwN4w>
+    <xmx:-v_ZaJKnkzmMILrG71zFkZZRRjnTMplaY3ucK0fj_HfDIiX3hWTneA>
+    <xmx:_P_ZaDrFGbhOd__Tb7qZYXvD9O4nYE758VQABCFEpXDYDMmNM4McY3XB>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 28 Sep 2025 23:41:44 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GVXPR04MB10753:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0218efe-a1ba-4f93-bdf6-08ddfefff00a
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?t+Q7E88RvXEL8cZz9XTXaUSD/kzo6FFZ2SEZ4hSMnBW0XmciNtLZamzI1GYu?=
- =?us-ascii?Q?V4Rl6MGqcB3jBv+PI2Rm2wxoyFXoitcRfEvMfGw8DosNGUrjGTBuVCPp6DQP?=
- =?us-ascii?Q?r54iqQz8jDQjjARhgwp0CtMv3JRA+A+vYH0PHO+DGWIgY+0Mm91uPJ7tDsx5?=
- =?us-ascii?Q?7DPucGn+aCJ9R6JGq1umhTpNQ8VvvdMkfYf8qJ51BqTrkSA6z8pJSHQWUo4h?=
- =?us-ascii?Q?9v24HvpQCe1zuc8X6m+aXD25KplrjO18mX699mKx0BnVu7uj9kWYlloJ3gET?=
- =?us-ascii?Q?s09QdhdQ6AVfQws9dLwQ8PUkoDoButUcEJw3N/Pj/iwbbOJmwExrRp30L76r?=
- =?us-ascii?Q?mCa0JqfGjHbrKBh1wIYA8hi0UCgG7YP8zmWJt/k5ZItfsLVmQCiOVwWgXEOz?=
- =?us-ascii?Q?zpOIqEzCwesyDCSBprtkANzNMPhf7EB4l1u5dtrqQm01gsN60EJZ3UT9FVBg?=
- =?us-ascii?Q?jD3LFFVio8l4jtThEIU1hlr1KLpoo1YvDI8TU4fcBofjn071OtuN70NNvgUW?=
- =?us-ascii?Q?EcqYX7jpL8ws9qSZ0N/PT7nFn3CVcUKKHLE1eBLTqryZujGMuvnIpOldcnZD?=
- =?us-ascii?Q?XEgovwI/yEudjJyXe5FUA/5k+EjNd5DdwZhMhdXorjUroskm+FXkMuQazWSr?=
- =?us-ascii?Q?1PZyXrO1JNwyyD2VTNj9VKWQtVkUN5T3k0Piev7u7vuU5+q/WsP9aJ1YuPTh?=
- =?us-ascii?Q?j+yKM3FzhyuKAJ5b5J4HANWMxIMNnFUZoLUD8NwMXtJPma6Z/tZS8XvCUsY3?=
- =?us-ascii?Q?TQkw1QLBbpL5N+HKvPLCyrtY1DbY8Pl/RhOnpqwU/ZLF6SdvwL+vLc+BBmJO?=
- =?us-ascii?Q?ktxLy5JCuv/exkLfGM+AC7evOTVF++s7R0b6VKqKq4anOKvxJwog0Ewq/6CM?=
- =?us-ascii?Q?66dSakwbSMEDx6935F8LEIgyMMGInhEeB6wJN1Fb7TSOy2DNNUklwjYhAFDq?=
- =?us-ascii?Q?0M6t+nqHgrt8/CP5w/RTTunFj1P2CmiKqdFupLVPFI2VM/gCNMlLeu4h5jGP?=
- =?us-ascii?Q?IVmAUiRDA/wCWLabAb1HhlteLscm1u5graDzio/bJ76IZaVFekSFU+gaROQp?=
- =?us-ascii?Q?u/nAKrv8gzQAuPV6MTGFekmhKrTw/EYrlLefbe97tw4569JD9KaKd7yP6bI6?=
- =?us-ascii?Q?Qg2XvOC2cKo7/k9ENV6XSdUO29ufi2lDZ2C2ORY41knaMnXot0dPF/hm9ols?=
- =?us-ascii?Q?MS/863QcavaZ9Z0tkKWYPM4iK6m+B5mZZ+1aQoU42l+AjVcLurIITg6b3Acq?=
- =?us-ascii?Q?Qh6ysIPxNs6Zd1X0rtOW4P7GssIMrYloi/Hu7gr9PkLW0F0KZ22/t/QobJRI?=
- =?us-ascii?Q?1zB0N34S10gR0v2sV2WmBkzZgnCwrV3LPrlPIo4S1k35p7XhZ2M3NppfOrXE?=
- =?us-ascii?Q?OnXXFdg5mX3np+ETTuUqO4mrmuyc4XgTnjc+uKmNYwCVDXi8z+CEeGeA3VEA?=
- =?us-ascii?Q?3cN+0bG721AKaEIpxfyanVopP8E1+oLY+A71gg0oTordu9+ij3i6aTi6onLk?=
- =?us-ascii?Q?oF1z8lhIPcXkquXmcvFr08MLx/S5jIOY0EG9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RS6xAgoJxu5mvD/R0Sqh3DDrZZv7QjnJzWsLTIbcA2Bw/303oAcEwpi8I3nJ?=
- =?us-ascii?Q?Cbso26+BFBgDQI0LYMKO4VOS8e2EzgehYeaDpmJ1kdJCAuvimjSnUOJfZPyi?=
- =?us-ascii?Q?xi3bPtSfsB/KzffkXJ8YGC5F8NGdI1jCVEnVRd/8Y2ALsc4JDEDcy5YjSm0B?=
- =?us-ascii?Q?Etb7wfyoP1a3eadX7B97N5HL8y/lJv7/rwJID8EfI6zyZPwCtcStUFmCtmRj?=
- =?us-ascii?Q?mDaxIE5rVJgC6KzBvllBmOOR15q99tbR56tUKuyB/VF9zM758oBYtjw5TPNl?=
- =?us-ascii?Q?Y1cNpmBfHkMvLX6/hFzIbPtnqqo2L7SqfmRoAScmJkVpAuu1vAeJEQSmwd76?=
- =?us-ascii?Q?5AWAj15aCLWRyvEyNRutK0T9rA8lTClDaa0TMiGZ29wNNUQTQD/dkwC2PJ8t?=
- =?us-ascii?Q?z9jEyQLqgoCCAjyZ3m5dQtKr9b+JQkA9dySD4ysRCawYVFhZzqSeZkqHrc6F?=
- =?us-ascii?Q?Aq/qboFVkzo9aAAGzTwjl3tI4KzmG2VtBa6wPEe+5JOAdC+Ahfe3p6b3qUjg?=
- =?us-ascii?Q?zyfvXo51GFUmqn89dTvptdXgeDgeCvFKmIKmO8Nddc3C7OGHvEywOX1cBpn6?=
- =?us-ascii?Q?flmOHzv1lBtC3MImcHWVnMQroXiDIpCyUKo1CI958DRfzg8Z/Z8zhFRco5R0?=
- =?us-ascii?Q?uw9H2RTy34IZbftGISPotrMVI4MEAZBorHMPBQkfi8EuFI4fvMzKWlLGCIYq?=
- =?us-ascii?Q?61eCU+Fi0UEISyC1dxk2Rxkbk2lcqR8r01tiRJp78qHzS9sOdvPD1O5uff81?=
- =?us-ascii?Q?SBHnLIGwewQQH02MhuU5ZYfMH8t0eyKYk8abebFwjSxr5SpbLhFDXaLFEJE9?=
- =?us-ascii?Q?9jFUIbPiIayfomi1V7fiRtbsbNpAFLuftuoavY0yvTitRP9eWIas+sevWkAt?=
- =?us-ascii?Q?L1vu6P7w12OpXWy34dqLzUKoh0MKvYpsDXwEsWV5n/kN4jHpsuE/P8v159/z?=
- =?us-ascii?Q?ah5GJdy2+DXAUwwHz3rpMAAq01ZlmI9VYiK7bRsEk/LZrqiuAKW98NhfALB9?=
- =?us-ascii?Q?7Khn915kET0yh31U2YzwWNvYLfAmI0I5N10fdM+w1fIthbWn6NsZRJQz94WY?=
- =?us-ascii?Q?upokLrrp9ugv8Z0LjXjhad5tkfJhrBu+Q8zMn3+F7Mn3suk87H9I+wA7D+KB?=
- =?us-ascii?Q?hmY8ZEsn18WNjdtZkVsX/nOgRMos52S160i6zjnTNrdYTNaYKVM6SW9FXPoa?=
- =?us-ascii?Q?kkjPCUN418X39bm0YkExGo9LRIw6YRniTYpUfYF5ECXsE+ciUxPkz7EvZK98?=
- =?us-ascii?Q?qzPdT7WcSJiw44J12DKPWUYge0GPLMLDv9GUANS/R/kPwyH0T7AcETZZQFJ6?=
- =?us-ascii?Q?qlTLZ7tdCF0qy2Q6xmwK1/waMWyRlVR5Smvo3wgi1PI+vdGoQzhbsIgXJGQn?=
- =?us-ascii?Q?ehEjxex3teoNxiu6HHykQmO159ezHBHCU7h8FcpsJhW/L2KQr6DyClKeDA9m?=
- =?us-ascii?Q?xAm2HZWteVH3GDoOWAWCZCWgrHonhzwF0BMGdUHjbnhJiRDZu63lxuvpiv4N?=
- =?us-ascii?Q?dRe7qjWAbkqDEFN19OXhuTbAFwffx/nkIMt5GWmYqLGpjD4V554NmmjaKhEq?=
- =?us-ascii?Q?acyTDKICdbHSU4fplaxw0CXz7kzI15ThibWwuiTP?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0218efe-a1ba-4f93-bdf6-08ddfefff00a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 02:28:55.6078
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L3/fjjHZkK6OVrLnIv9uPC8WY93XoXFkcBDpHwsX+P76cFlam0c8RVMX4lxXk8iPtYmuP5favhtKAvx3vGi1SQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10753
+From: NeilBrown <neilb@ownmail.net>
+To: "Menglong Dong" <menglong8.dong@gmail.com>
+Cc: herbert@gondor.apana.org.au, tgraf@suug.ch, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jiang.biao@linux.dev
+Subject: Re: [PATCH] rhashtable: use likely/unlikely for rhashtable lookup
+In-reply-to: <20250928061950.34531-1-dongml2@chinatelecom.cn>
+References: <20250928061950.34531-1-dongml2@chinatelecom.cn>
+Date: Mon, 29 Sep 2025 13:41:41 +1000
+Message-id: <175911730161.1696783.8081419303155421417@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Hi Ulf,
+On Sun, 28 Sep 2025, Menglong Dong wrote:
+> Sometimes, the result of the rhashtable_lookup() is expected to be found
+> or not found. Therefore, we can use likely() or unlikely() for such cases.
+> 
+> Following new functions are introduced, which will use likely or unlikely
+> during the lookup:
+> 
+>  rhashtable_lookup_likely
+>  rhashtable_lookup_unlikely
+>  rhltable_lookup_likely
+>  rhltable_lookup_unlikely
+> 
+> A micro-benchmark is made for these new functions: lookup a existed entry
+> repeatedly for 100000000 times, and rhashtable_lookup_likely() gets ~30%
+> speedup.
 
-On Tue, Sep 23, 2025 at 12:07:02PM +0200, Ulf Hansson wrote:
->On Mon, 22 Sept 2025 at 04:21, Peng Fan <peng.fan@nxp.com> wrote:
->>
-...
->> ---
->> Peng Fan (4):
->>       PM: wakeup: Add out-of-band system wakeup support for devices
->>       PM: domains: Allow power-off for out-of-band wakeup-capable devices
->>       usb: chipidea: ci_hdrc_imx: Set out of band wakeup for i.MX95
->>       usb: dwc3: imx8mp: Set out of band wakeup for i.MX95
->>
->> Xu Yang (1):
->>       usb: chipidea: core: detach power domain for ci_hdrc platform device
-...
->
->Rafael, I intend to pick up this series via my pmdomain tree shortly,
->unless you have some objections, of course.
+I generally like this patch - it seems well structured and leaves the
+code easy to maintain.
 
-Sorry for an early ping. I see v6.17 is released. Just want to know whether
-you would pick this up for 6.18.
+I think you have made a good case for rhashtable_lookup_likely() and it
+seems sensible to optimise that case.
+
+I'm less sure of rhashtable_lookup_unlikely() - you have provided no
+measurements for that.
+
+In general we expect an rhashtable to be between 33% and 75% full.  The
+inevitable hash collisions will mean that the number of used slots in
+the bucket table will be a little less that this.  But let's assume 50%
+of the buckets are in use at any time on average.
+
+If you are using rhashtable_lookup_likely() you expect to find the
+target so you expect the bucket to not be empty, so it is reasonable to
+tell the compiler that it is "likely" that the pointer isn't NULL.
+
+However if you don't expect to find the target, that DOESN'T mean you
+expect the bucket to be empty - it could have another item it in.  All
+you can really say is that the probability of an empty bucket matches
+the degree of utilisation of the table - so about 50% as discussed
+above.
+
+So I don't think it is reasonable to ever tell the compiler that an
+bucket being empty is "likely".  You also use "likely()" for deciding
+whether or not to subtract the key offset from the address before
+returning a pointer.  This is a valid thing to tell the compiler, but we
+would need numbers to confirm whether or not it was worth adding to the
+API.
+
+If, however, you could provide numbers showing that in an rhashtable
+with lots of entries, a lookup for a non-existing key was faster with
+the rhashtable_lookup_unlikely() code, then I would find that
+interesting and worth pursuing.
+
+In general it would be interesting to know the number for both
+successful lookups and unsuccessful lookups across all three proposed
+lookup versions.  I don't know how helpful it would be, but I would find
+it interesting...
 
 Thanks,
-Peng
-
->
->Kind regards
->Uffe
+NeilBrown
 
