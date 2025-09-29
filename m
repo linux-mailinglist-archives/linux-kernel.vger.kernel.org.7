@@ -1,410 +1,309 @@
-Return-Path: <linux-kernel+bounces-835621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B30BA79F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:26:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B09BA7A00
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6CF3B0806
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:26:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8AB51891D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C058619047A;
-	Mon, 29 Sep 2025 00:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEB219CC27;
+	Mon, 29 Sep 2025 00:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Exvqezqz"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="exVK1RfR"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013052.outbound.protection.outlook.com [40.93.201.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249C1157487
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759105587; cv=none; b=J+JOhv66ntIeloKGHicjrECARF8kg9NtqKGtTmmemlfZSSbdc9B/QDfG8M0kTZIEaE3945rUyAudRGizPmomuDo/Ra5UhV11PAui4aPAPfL/I1jJIjKeaAElvC+jisw8SD5N0sUSAmGHPuRo7b0MmfNq8NZsNCnKaRHdUOn3UCA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759105587; c=relaxed/simple;
-	bh=h0+uacpQmuanoF80PG5i1ultLtnggJa/m5m7vos4QNc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TeuYF4buG/7Bm4+cT1EuMOxiGuwUTaDY4st9prAGjGVHKF0d9FThu7YF1CaqmprZPN6LtA9mZKBRsALd070ZIkOOx7q9/TU4Cb51kRh4nVGCsPJ6b53anA1tgpr90jj/FNik7pG8JF2INHPTqeudq31Tf5smxwzQMqEx056Xbxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Exvqezqz; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-27c369f898fso43996525ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 17:26:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759105585; x=1759710385; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FZrb9ZvwMY4YVa3pVe0HMYNnPnxeY8/s3k+/iyrjb1c=;
-        b=ExvqezqzB2JjVjRLfeJEbxHn6EnhBa+Q+bjzBVgYOMEIEFxuiY7x3ncXiD8YM6Dxuq
-         yO40hkPYe5QbfWkKf/jFBAnIoWEe8KPcLl5xAfqYEgu+fjqq8QVRpA1vanow3c0ntOn8
-         YMy0V6or8O6euv26H1cVXlci66fRyWMGnAdO2/xgoRPWbTKSwgcYYER71sAl1BxbugMt
-         T5MkfdHi9OzK5iHqMPVSWCJ3gOu+Kl2qZcOTdGwiNw8e3ejMQSuMiizIEJTOaWCpc3xR
-         4MsTPpr1yrIrg0g1QHQCD/bkFeKOlA2zlwDzO2TDFcgVZmHUzL257M/X2fsNycypS6GZ
-         WhwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759105585; x=1759710385;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FZrb9ZvwMY4YVa3pVe0HMYNnPnxeY8/s3k+/iyrjb1c=;
-        b=xTc8df1I58y8liOcWbewrUb0FRp9msTeGuPYAai/X2E94/6TX7IJRMD/P3iGJc7WgQ
-         nW5CAOlR+Z5UkfDS4oEeh9zPt9ItED+OAAh8Fuuk93xSWfkJqKPXsD9Ewszdn/p3hJ/c
-         r06EbtNUUUUgqkYVkPe4d0om/0CEQxGOn2DaHIvfTEC2EIVMzELmT4BwMyuS9/rqZdFi
-         GCBwBDDkabURWByGyYWJ8kdxeUiS5kxS0eo7zHUV0qRn8CJ9CJAfyxQZbF1TeQddN0bI
-         p+Ncs4KwjosIOcHbx7r19AyDnq/6v8ZGQKl2HlzExrT+6rBkOT4SXGAg76ZYm9+oRkRp
-         KtmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4R5jjJ8UWuSEf4zWR0ZJ2M5ElUX+IOEz7E0GM47mFzNsiQMJX8EtuhuaGjxfn/XGHAmMdpqs3CKLSh+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdTwbnkYc7BU3PffSG9ztlt2AZ196L65wvdORKMUAARuP4OAeI
-	uZXYo9UefM4pNP6t4h2EszDUIe7Orv6Dyw6vygb3MNMTj5Wpsum8tlfc
-X-Gm-Gg: ASbGnctEbhVS0XLN0Wi2C0o3ZXgQ2ZcjFHB38DAaIDqOGAnjJfdIX2UTBuQ4xXO9No9
-	Khng7O/aDVG6T06HfNLOuGsV7fV4iCMxVSM+sYpGP5i/Q5Eab7eQW3m2GMH/8otcUHeGBHF/O/z
-	L4PBykgzdkA9rgwC/rEzhFJsVIR8R8ios8ItOVf8Z7zieHbfqUXr5XWqOnBP24DTWUfy9ZJ4xvn
-	aeDYH3+fO67O6BYnpARbYsW919nK6Qroarqk50VNhHwcgk34rep0V+nsL0WhlHd0/rOmeyvCLQi
-	JqiqMANMu5VpFvY0qQXIeB8IxRuil6mbXrKXYkGEhch8tJ2JnnYggahH8pJub3dQmxaK7a9kXDM
-	NijmSVPtYdrA4xprPVVLCTXGzaSBt0GeRJJoz8nYvs6q1b1/dJnHXBcCFxLBTcg==
-X-Google-Smtp-Source: AGHT+IGrz7KB/SLZGGqdC4PjQh6NI66U1D6gdU3o+zPe+ACkknBSABitdv3/6WSkVWyn8RC6rByWxA==
-X-Received: by 2002:a17:902:e806:b0:267:6754:8fd9 with SMTP id d9443c01a7336-27ed4a3cfedmr156764855ad.39.1759105585085;
-        Sun, 28 Sep 2025 17:26:25 -0700 (PDT)
-Received: from E07P150077.ecarx.com.cn ([103.52.189.23])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6882160sm111191395ad.71.2025.09.28.17.26.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 17:26:24 -0700 (PDT)
-From: Jianyun Gao <jianyungao89@gmail.com>
-To: dev.jain@arm.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	baohua@kernel.org,
-	bhe@redhat.com,
-	chengming.zhou@linux.dev,
-	chrisl@kernel.org,
-	cl@gentwo.org,
-	damon@lists.linux.dev,
-	david@redhat.com,
-	dvyukov@google.com,
-	elver@google.com,
-	glider@google.com,
-	harry.yoo@oracle.com,
-	jannh@google.com,
-	jgg@ziepe.ca,
-	jhubbard@nvidia.com,
-	jianyungao89@gmail.com,
-	kasan-dev@googlegroups.com,
-	kasong@tencent.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	mhocko@suse.com,
-	nphamcs@gmail.com,
-	peterx@redhat.com,
-	pfalcato@suse.de,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	rppt@kernel.org,
-	shikemeng@huaweicloud.com,
-	sj@kernel.org,
-	surenb@google.com,
-	vbabka@suse.cz,
-	xu.xin16@zte.com.cn
-Subject: [PATCH v2] mm: Fix some typos in mm module
-Date: Mon, 29 Sep 2025 08:26:08 +0800
-Message-Id: <20250929002608.1633825-1-jianyungao89@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <3c3f9032-18ac-4229-b010-b8b95a11d2a4@arm.com>
-References: <3c3f9032-18ac-4229-b010-b8b95a11d2a4@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2091F95C;
+	Mon, 29 Sep 2025 00:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759105784; cv=fail; b=nW4ztYR5epu4oR023VfFA8sjbUXMyIEUWsZ296jtUVE4Yoo2kgypQhXPaEg/111nN0THEQhf3Th73D0bZlKzM07f/0DB3I5yaCRNXV9K8b8uYk2S48VXkdsTK29CQv5NTBUFbiWE27iTKC3qBu49RuvgKhbkXEDuc2jrFqhEBLM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759105784; c=relaxed/simple;
+	bh=C+oQsyKBVKgcF83enb3cb9iL/MKJKACD4A7DglTpxrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JqClVlljPO+UpXm7hnNAbW8PdlMAKqTTyfpdv+ByaaRyJruAU/0JiR3Ili43gnSYgwF0Z12EgltaW5rszUF363qQfOoecXV3DtJj2ghLpBiZNu8T9AQWBuGhzvcIo2FjNaGgdN5Lu2y+Z0zdrut5YRs5grRetpD2IvHt0GTkEXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=exVK1RfR; arc=fail smtp.client-ip=40.93.201.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YINTMjQ7+wj2mekIAm15q7y+WSwetPzR2oqMYfoUmVEqZXPdgBdGWq1Vjaz1r9On3X1iRnrYZ+7ENrDgONScoPVcx0zjICnG+diwy1qez75xa/6AEeTpU1LjF1n/LoHHDTX6ky0NKSA67QK1CpTsr8Y0Ag2nFixbXZHq1knuB/xGd3rn4NNaOqgZzpAC9fNUu9GnZqw298P3EtG/l6pdovpF3o1/1gYOX9bA1sfvEhLMBISOB1bjDCzxSH5cYQcSy/q6HqcUS8DF3JVs+11nQVxEYh7amohBXIMZZO90lvNwzmLXn3UJE7rYZL4+B9IetiF11LxIMiAlYWW9wUaZ6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H47JqkeolYnsmKIZ19f6zBihNQTNlTZIihkcuiArdGw=;
+ b=x4/YhpNPiNhkiLd/xQAk1NGRPuMD6pbkLDlnM/swQIZRBKlpyPAHMV99OsmDnn1ajbA8oFtVdYO1UcoJKPNwq1zoxX3YBKZKoX2MD6lCmGYU6mtxPnWJHNOSgz/kaFC0u4y865EzhdeBb8DNK0ZdioXdoQRLAOlFoMkrVjiPxyJGfg67Xaw3TXuCxiKiS0yI00QdrB1atRG9tZexhEPaLF5fKyCPUxGa6v7axnQWaz3blFxjN8DsfS3mvmYw8NmgCY5PW1ZOHhZRoILbbFAgljGWQBlVonen1SYuUb6e0VLTmm/I2MyBYkeVXs31OFOy5u3lP+fl1Mslg6BAEfbE8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H47JqkeolYnsmKIZ19f6zBihNQTNlTZIihkcuiArdGw=;
+ b=exVK1RfRFuF2SSeiWkYsf1sN1Y703gW5rpWymPQF9YE1agGPNinzZjzaJ7u5YKlQlBKP8tfnzb/rfpsX7IFWzjZk3bpNRs3sVI1D2zD/8ES+LQQ4Vx7019IrpD+DmuHxqXGisqDPRU4eEm+Iww0ocH7vN8LjubGDL+yf7wDr6i8bho6iW//DwD1cDFSO6+YmBWLQJtdjmDxJ5ee0hfoUaS20KDgq8PP777XylqB+AVJNDRCNYEEaIJeo/v51seLMzsN4thPjPHXzGThGV5udaWRTIbOUsHkFIQAGB6njvxIuuH0BO6tHtwx+EevhS3n0PXzubreMn4/GiA2byLyNng==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ PH7PR12MB6933.namprd12.prod.outlook.com (2603:10b6:510:1b7::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Mon, 29 Sep
+ 2025 00:29:36 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 00:29:36 +0000
+Date: Mon, 29 Sep 2025 10:29:31 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, dakr@kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	John Hubbard <jhubbard@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 03/10] gpu: nova-core: gsp: Create wpr metadata
+Message-ID: <btrbmoivzhslvirfj5ourlmtr5mah4brrzbyhibneb7j7bdqhk@qclukqco4nza>
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+ <20250922113026.3083103-4-apopple@nvidia.com>
+ <e024e964c5e79b1c86dadcb8c19d14d175bcb0a7.camel@redhat.com>
+ <DD2C8MKHDRCA.1XRV8RNPCXAN7@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DD2C8MKHDRCA.1XRV8RNPCXAN7@nvidia.com>
+X-ClientProxiedBy: SY5PR01CA0048.ausprd01.prod.outlook.com
+ (2603:10c6:10:1fc::18) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|PH7PR12MB6933:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1e99919-8be0-4c8a-772f-08ddfeef445f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zreAi+lXdRYb3pmUhZOrWL9UOzLvQ8oxYYP8PMCRHtV9dgK9iZm7fhUmiaT8?=
+ =?us-ascii?Q?756efQBZxr4BLhyVlsa0Fc4cfB2p75Nraq3/DXQKi7pXuw5xvR4z+VMVFz6L?=
+ =?us-ascii?Q?65ONnGLhCyOB1RwO0kDCaqOwb3qpJQX7wFJVwy1s9NtThwajn8vBtXRK+dKh?=
+ =?us-ascii?Q?BzBAW6eElpmusUb05UxEmcl6ADlsB8c9695Qeds6mjmsj74CPCQL2hmmE3Mz?=
+ =?us-ascii?Q?/OhouhZHiPOMJJWZ91HbWYOQHUKEW/Ak33+zNBSizWh7e5Ja8ZWunkiP58Qu?=
+ =?us-ascii?Q?xZTb7mcAw3y97u93OZa/CWzw4Yx9TId4NdU3aMHDTZlJB6vJcI64hz09qe/o?=
+ =?us-ascii?Q?ZtHKvBZDWAowEWY8440qGj3AbNKqv41EKEd8Isdc7n+WzQQyAGosPCSbFyuz?=
+ =?us-ascii?Q?F9te8YRSFmUzVhMOyiBrELtGWOaBsUqauYADNEKeVFNw+sLSoNd998s7GM50?=
+ =?us-ascii?Q?yPCkWKC1PqyxqRODrNl+ua0nx24yMNr/a9fPdh22rE1xmJ91kIIbLY7sorCW?=
+ =?us-ascii?Q?PbuuR9ODEg7qaM8RljGWaMVj7VhIdueuhVqzTkcp4bODxQ/z3SGPrxHonPBx?=
+ =?us-ascii?Q?/QdGJVu2+Rw+na9XtakuhPJTTopTKtELNjq3ff5zUrD1LrDWEemgkug1t2OT?=
+ =?us-ascii?Q?UP+LGF2mwsKjL9NvGgjXQRlxO1pov56Q+1fqh5/qBJWDuKlpwUMXnqmTsaaQ?=
+ =?us-ascii?Q?Rz1F/KHicrpCLDw81gYTG81rhoaic42TyESW76zviakhXOJte9QvbdyfgiMe?=
+ =?us-ascii?Q?y1Dc76UcjzAqJ0HRJWjGs4kaCyPzPanQL9YYr+6haOfu/1k3dWKfFgMB/oUs?=
+ =?us-ascii?Q?HNguC18zWKo/tvVT5eunHzQRcu0Q+ae2P4hSxhje28aGZh9q/GTREP0JWbzi?=
+ =?us-ascii?Q?RzRXFREElYsQAH8fR/P+QgYql3TT8lIJl37Ej59KLfYgT/F1O4IvXFaT2cdI?=
+ =?us-ascii?Q?wUlGsNt6dUsuWy4oDEUIcFIL0eYIDW7gNLd4kUdS5ujUXOk3cl1ovAMUfQxF?=
+ =?us-ascii?Q?UwUPVCpy2L+cc+cm44G3LCUaAz0rVyD52tENCDdxgKiKiUi5Q81RTd4F53J0?=
+ =?us-ascii?Q?BuKo+z1wynRoG8DZKWIHn0GAj5YAbFRDB0JgeTsQh/ceONJSb7GbfwuI11pt?=
+ =?us-ascii?Q?o+I95gUS5Li6apy50M8IvpcoFsexP+6DRUE/Z4jVm/tODTZ3DkEzQ09TDVN6?=
+ =?us-ascii?Q?z62a6aW+rYpCsZrt+S80RDuGzVOgzlu4qUou1BN0qYbCtRWt6vViTokqp4OT?=
+ =?us-ascii?Q?NOP6MkjqmfjPmIRBh5kngD4J3vcla1eFAXpJU654ZBrvYPfPA06pjNV0fD5I?=
+ =?us-ascii?Q?/oTJet3k5nv2eO9dHYhl5E0gvBdgFm/JWIWPKo6FoALsf6bJAAl6270MOX4P?=
+ =?us-ascii?Q?+Hl2vRDnFwkFkOWedQ1xWn7o1O1t0dDsmSaWig28aD1LFUrdX9UeOeSbvWZo?=
+ =?us-ascii?Q?AoHRlMIVsV/czhEM8wIkGnNj/Sx9vu1Q?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tEoQjztz1+r/lPlP8CEaT7Jk43e67Wt2PAI0poU6sFez+awOxGz1M6ksMzLD?=
+ =?us-ascii?Q?NhyAIzNWAsB+A94aezra8h8dnbUy06e0uHSroPHYueiMQNJQrR8FL6d2bV5j?=
+ =?us-ascii?Q?COX/13k761xBuE5nFvsW8Nm+2dBrcaj2jGWjs9o/w83opl8FIxe/SSfrHZj8?=
+ =?us-ascii?Q?Rg+z0rt4+rVOf+4xrtzd9h6+RA0opc7SmWyGNchw6vg1iVpXnk2Nx5VHNHrh?=
+ =?us-ascii?Q?4oMnHUaOxRS0p/AtiuqBeZoX81oBpXlnkR+H8k+0dMCQ8BghB7AWYITpQaCE?=
+ =?us-ascii?Q?3H079ayW5OHFPAE9cIEOcHn+2gwBK7fOL0oNJ3pAVkzJX35iK28CumklXP3J?=
+ =?us-ascii?Q?ZZiyZzroXYMpEieGc+jofWJM0nPSnf9IKx38mMPWngil8fst8T1ZbeqgDHKp?=
+ =?us-ascii?Q?aa7Xq00He/R70wai6/yE0P3eERZQ4RgZreNe7yktvN1hwhUh4IUfx029oz2b?=
+ =?us-ascii?Q?3LNXoinrcEOjR8GPglrgwd4Voh3adS4U3Ho0/dUNn4/LerV2mubtacr5o0iQ?=
+ =?us-ascii?Q?DWtPFRfdYTPpLMmNHe4W2ZtI5/DgzUL5SSycfBD6ngNQjRDnnQsjlVQuBhiS?=
+ =?us-ascii?Q?sOXvn36VvXVnFJCKVQ56Z2GQUD686Y5X+Or/hxYL2RCTOXY7c/1TKxOzhdOu?=
+ =?us-ascii?Q?9LlKud2WE9hxNxTHc5/ZIXi2aWb18Vg9FhaA9gYX4MxkKavx4fYqg1E0RS8Z?=
+ =?us-ascii?Q?CiTJDQ5dt9pUcAUSuohBnkFBI1TSL4QvEanr0vP3RiMUsdgO6Gkx7cblKgar?=
+ =?us-ascii?Q?6RjyRSkwJAmCa0B4ZSnBf0O0qlzCGfo/aJYfHYGz+jdKIt8F4jR9zonesgwU?=
+ =?us-ascii?Q?wXqxVO4oOpEZyt0MZQdpxKDSgcKjJDp4iXhtqYgHwMLzT1BMbffxhy82HnUZ?=
+ =?us-ascii?Q?3knV6qN8Z/H6ajsaAL1Giwh3BDKUyUjOfxoMwHxjXJt7kI2j2GaY5UxHRuhf?=
+ =?us-ascii?Q?TfcpWuNqhTF4k1oLTvujS0+nDa9gtYdpxGbp3q0P6kbp6OUIjC+I7KVkq0at?=
+ =?us-ascii?Q?Vc6R9CTLncA+w9yd97dGIPFDMa1jLjORnJA+p/4p1EaTPwZ/y12xlDJBBvZa?=
+ =?us-ascii?Q?qBOUAhOHgVIP0tMlGU8eYd0dF0Q0TAkGS+xvEn4l6+jOz+bqcotOkzVo/iJt?=
+ =?us-ascii?Q?rk72xeN6ctnZ4DPv03m18mhYiCIEDUcAB0azzypol7r8B0k5Kmj7U+A/gs8B?=
+ =?us-ascii?Q?XJY7/OUeKwEB1upVri5EKmJNFLu2ZWpvky2sZozI/pXVhbOFSgfHj+MdXxaW?=
+ =?us-ascii?Q?snSjZp+F6WL1kx3obLH6HDq7nPSFGVnIs2wabE88ZQP1JIq/epWoVhvyu8EN?=
+ =?us-ascii?Q?DJhR2KMdhTSURKFwJ1T3eiTyLbJlnL91oA5PoofRvQzVdrcxN8lW/u9bcUBQ?=
+ =?us-ascii?Q?pK8Oq9GDtOVQm2lm4UmjMk6GFU2ZXXsZF2F2UEqy1RZGcO0I/oSuWs2axKCS?=
+ =?us-ascii?Q?FxmwD/mdbmBqns3LCt4eOFcxKRZDZT0qai6V2pA5CFEFc/estGYxwI5aaNaP?=
+ =?us-ascii?Q?9gdw2TdgxrNvQeKcggvtHDLmaovkinupB2y5M1UuURUEHQmFMtb6q68ukYM6?=
+ =?us-ascii?Q?Sa+ziDBq71VGf3Y7tC+LVojbzK2yy87VMlASTy8O?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1e99919-8be0-4c8a-772f-08ddfeef445f
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 00:29:35.9851
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PCTew/1HK+KgkTemwSCdbyKKPRHWvU4gGg2p9QROXvgev6Bn56efr+88EAUMyWPwBnqISAEbZr9GUCYfJigNXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6933
 
-From: "jianyun.gao" <jianyungao89@gmail.com>
+On 2025-09-26 at 11:24 +1000, Alexandre Courbot <acourbot@nvidia.com> wrote...
+> On Thu Sep 25, 2025 at 5:24 AM JST, Lyude Paul wrote:
+> > On Mon, 2025-09-22 at 21:30 +1000, Alistair Popple wrote:
+> >> The GSP requires some pieces of metadata to boot. These are passed in a
+> >> struct which the GSP transfers via DMA. Create this struct and get a
+> >> handle to it for future use when booting the GSP.
+> >> 
+> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> >> 
+> >> ---
+> >> 
+> >> Changes for v2:
+> >>  - Rebased on Alex's latest version
+> >> ---
+> >>  drivers/gpu/nova-core/fb.rs                   |  1 -
+> >>  drivers/gpu/nova-core/firmware/gsp.rs         |  3 +-
+> >>  drivers/gpu/nova-core/firmware/riscv.rs       |  6 +-
+> >>  drivers/gpu/nova-core/gsp.rs                  |  1 +
+> >>  drivers/gpu/nova-core/gsp/boot.rs             |  7 +++
+> >>  drivers/gpu/nova-core/gsp/fw.rs               | 63 ++++++++++++++++++-
+> >>  .../gpu/nova-core/gsp/fw/r570_144/bindings.rs |  2 +
+> >>  7 files changed, 75 insertions(+), 8 deletions(-)
+> >> 
+> >> diff --git a/drivers/gpu/nova-core/fb.rs b/drivers/gpu/nova-core/fb.rs
+> >> index 4d6a1f452183..5580498ba2fb 100644
+> >> --- a/drivers/gpu/nova-core/fb.rs
+> >> +++ b/drivers/gpu/nova-core/fb.rs
+> >> @@ -87,7 +87,6 @@ pub(crate) fn unregister(&self, bar: &Bar0) {
+> >>  ///
+> >>  /// Contains ranges of GPU memory reserved for a given purpose during the GSP boot process.
+> >>  #[derive(Debug)]
+> >> -#[expect(dead_code)]
+> >>  pub(crate) struct FbLayout {
+> >>      /// Range of the framebuffer. Starts at `0`.
+> >>      pub(crate) fb: Range<u64>,
+> >> diff --git a/drivers/gpu/nova-core/firmware/gsp.rs b/drivers/gpu/nova-core/firmware/gsp.rs
+> >> index 9654810834d9..67b85e1db27d 100644
+> >> --- a/drivers/gpu/nova-core/firmware/gsp.rs
+> >> +++ b/drivers/gpu/nova-core/firmware/gsp.rs
+> >> @@ -127,7 +127,7 @@ pub(crate) struct GspFirmware {
+> >>      /// Size in bytes of the firmware contained in [`Self::fw`].
+> >>      pub size: usize,
+> >>      /// Device-mapped GSP signatures matching the GPU's [`Chipset`].
+> >> -    signatures: DmaObject,
+> >> +    pub signatures: DmaObject,
+> >>      /// GSP bootloader, verifies the GSP firmware before loading and running it.
+> >>      pub bootloader: RiscvFirmware,
+> >>  }
+> >> @@ -212,7 +212,6 @@ pub(crate) fn new<'a, 'b>(
+> >>          }))
+> >>      }
+> >>  
+> >> -    #[expect(unused)]
+> >>      /// Returns the DMA handle of the radix3 level 0 page table.
+> >>      pub(crate) fn radix3_dma_handle(&self) -> DmaAddress {
+> >>          self.level0.dma_handle()
+> >> diff --git a/drivers/gpu/nova-core/firmware/riscv.rs b/drivers/gpu/nova-core/firmware/riscv.rs
+> >> index b90acfc81e78..dec33d2b631a 100644
+> >> --- a/drivers/gpu/nova-core/firmware/riscv.rs
+> >> +++ b/drivers/gpu/nova-core/firmware/riscv.rs
+> >> @@ -53,11 +53,11 @@ fn new(bin_fw: &BinFirmware<'_>) -> Result<Self> {
+> >>  #[expect(unused)]
+> >>  pub(crate) struct RiscvFirmware {
+> >>      /// Offset at which the code starts in the firmware image.
+> >> -    code_offset: u32,
+> >> +    pub code_offset: u32,
+> >>      /// Offset at which the data starts in the firmware image.
+> >> -    data_offset: u32,
+> >> +    pub data_offset: u32,
+> >>      /// Offset at which the manifest starts in the firmware image.
+> >> -    manifest_offset: u32,
+> >> +    pub manifest_offset: u32,
+> >>      /// Application version.
+> >>      app_version: u32,
+> >>      /// Device-mapped firmware image.
+> >> diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
+> >> index 0185f66971ff..2daa46f2a514 100644
+> >> --- a/drivers/gpu/nova-core/gsp.rs
+> >> +++ b/drivers/gpu/nova-core/gsp.rs
+> >> @@ -13,6 +13,7 @@
+> >>  use kernel::ptr::Alignment;
+> >>  use kernel::transmute::{AsBytes, FromBytes};
+> >>  
+> >> +use crate::fb::FbLayout;
+> >>  use fw::LibosMemoryRegionInitArgument;
+> >>  
+> >>  pub(crate) const GSP_PAGE_SHIFT: usize = 12;
+> >> diff --git a/drivers/gpu/nova-core/gsp/boot.rs b/drivers/gpu/nova-core/gsp/boot.rs
+> >> index fb22508128c4..1d2448331d7a 100644
+> >> --- a/drivers/gpu/nova-core/gsp/boot.rs
+> >> +++ b/drivers/gpu/nova-core/gsp/boot.rs
+> >> @@ -1,6 +1,8 @@
+> >>  // SPDX-License-Identifier: GPL-2.0
+> >>  
+> >>  use kernel::device;
+> >> +use kernel::dma::CoherentAllocation;
+> >> +use kernel::dma_write;
+> >>  use kernel::pci;
+> >>  use kernel::prelude::*;
+> >>  
+> >> @@ -14,6 +16,7 @@
+> >>      FIRMWARE_VERSION,
+> >>  };
+> >>  use crate::gpu::Chipset;
+> >> +use crate::gsp::GspFwWprMeta;
+> >>  use crate::regs;
+> >>  use crate::vbios::Vbios;
+> >>  
+> >> @@ -132,6 +135,10 @@ pub(crate) fn boot(
+> >>              bar,
+> >>          )?;
+> >>  
+> >> +        let wpr_meta =
+> >> +            CoherentAllocation::<GspFwWprMeta>::alloc_coherent(dev, 1, GFP_KERNEL | __GFP_ZERO)?;
+> >> +        dma_write!(wpr_meta[0] = GspFwWprMeta::new(&gsp_fw, &fb_layout))?;
+> >
+> > Not something I think we need to block this series on, but this line does make
+> > me wonder if we should have a variant of dma_write!() that uses
+> > CoherentAllocation::write(), since I think that would actually be faster then
+> > calling dma_write!() here.
+> 
+> Can you elaborate a bit on this idea? Would it be faster because it uses
+> a non-volatile write in this case?
+> 
+> On a related note, I wish we could make all these accesses to
+> single-instance coherent allocations non-fallible, as this is a pattern
+> we use often in Nova and the only thing that can fail is
+> `item_from_index`, which we know at build-time is valid as we are
+> accessing the first element.
+> 
+> So if we enforced a rule that `count` must be >= 0 in
+> `CoherentAllocation::alloc_attrs` (which is not currently enforced but
+> would make sense imho), we could maybe add a new variant to
+> `dma_read/write` that matches a non-indexed expression, and makes a
+> non-fallible access to the first element of the allocation? How does
+> that sound?
 
-Below are some typos in the code comments:
+Would this have to be limited to the first element though? I assume we could
+make a CoherentAllocation variant where the number of elements is a compile time
+constant and therefore dma_read/write on those would be infallible except at
+build time.
 
-  intevals ==> intervals
-  addesses ==> addresses
-  unavaliable ==> unavailable
-  facor ==> factor
-  droping ==> dropping
-  exlusive ==> exclusive
-  decription ==> description
-  confict ==> conflict
-  desriptions ==> descriptions
-  otherwize ==> otherwise
-  vlaue ==> value
-  cheching ==> checking
-  exisitng ==> existing
-  modifed ==> modified
-  differenciate ==> differentiate
-  refernece ==> reference
-  permissons ==> permissions
-  indepdenent ==> independent
-  spliting ==> splitting
-
-Just fix it.
-
-Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
----
-The fix for typos in the hugetlb sub-module has been added.
-
- mm/damon/sysfs.c     | 2 +-
- mm/gup.c             | 2 +-
- mm/hugetlb.c         | 6 +++---
- mm/hugetlb_vmemmap.c | 6 +++---
- mm/kmsan/core.c      | 2 +-
- mm/ksm.c             | 2 +-
- mm/memory-tiers.c    | 2 +-
- mm/memory.c          | 4 ++--
- mm/secretmem.c       | 2 +-
- mm/slab_common.c     | 2 +-
- mm/slub.c            | 2 +-
- mm/swapfile.c        | 2 +-
- mm/userfaultfd.c     | 2 +-
- mm/vma.c             | 4 ++--
- 14 files changed, 20 insertions(+), 20 deletions(-)
-
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index c96c2154128f..25ff8bd17e9c 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -1232,7 +1232,7 @@ enum damon_sysfs_cmd {
- 	DAMON_SYSFS_CMD_UPDATE_SCHEMES_EFFECTIVE_QUOTAS,
- 	/*
- 	 * @DAMON_SYSFS_CMD_UPDATE_TUNED_INTERVALS: Update the tuned monitoring
--	 * intevals.
-+	 * intervals.
- 	 */
- 	DAMON_SYSFS_CMD_UPDATE_TUNED_INTERVALS,
- 	/*
-diff --git a/mm/gup.c b/mm/gup.c
-index 0bc4d140fc07..6ed50811da8f 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2730,7 +2730,7 @@ EXPORT_SYMBOL(get_user_pages_unlocked);
-  *
-  *  *) ptes can be read atomically by the architecture.
-  *
-- *  *) valid user addesses are below TASK_MAX_SIZE
-+ *  *) valid user addresses are below TASK_MAX_SIZE
-  *
-  * The last two assumptions can be relaxed by the addition of helper functions.
-  *
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index eed59cfb5d21..3420711a81d3 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2954,7 +2954,7 @@ typedef enum {
- 	 * NOTE: This is mostly identical to MAP_CHG_NEEDED, except
- 	 * that currently vma_needs_reservation() has an unwanted side
- 	 * effect to either use end() or commit() to complete the
--	 * transaction.	 Hence it needs to differenciate from NEEDED.
-+	 * transaction. Hence it needs to differentiate from NEEDED.
- 	 */
- 	MAP_CHG_ENFORCED = 2,
- } map_chg_state;
-@@ -5998,7 +5998,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	/*
- 	 * If we unshared PMDs, the TLB flush was not recorded in mmu_gather. We
- 	 * could defer the flush until now, since by holding i_mmap_rwsem we
--	 * guaranteed that the last refernece would not be dropped. But we must
-+	 * guaranteed that the last reference would not be dropped. But we must
- 	 * do the flushing before we return, as otherwise i_mmap_rwsem will be
- 	 * dropped and the last reference to the shared PMDs page might be
- 	 * dropped as well.
-@@ -7179,7 +7179,7 @@ long hugetlb_change_protection(struct vm_area_struct *vma,
- 		} else if (unlikely(is_pte_marker(pte))) {
- 			/*
- 			 * Do nothing on a poison marker; page is
--			 * corrupted, permissons do not apply.  Here
-+			 * corrupted, permissions do not apply. Here
- 			 * pte_marker_uffd_wp()==true implies !poison
- 			 * because they're mutual exclusive.
- 			 */
-diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index ba0fb1b6a5a8..96ee2bd16ee1 100644
---- a/mm/hugetlb_vmemmap.c
-+++ b/mm/hugetlb_vmemmap.c
-@@ -75,7 +75,7 @@ static int vmemmap_split_pmd(pmd_t *pmd, struct page *head, unsigned long start,
- 	if (likely(pmd_leaf(*pmd))) {
- 		/*
- 		 * Higher order allocations from buddy allocator must be able to
--		 * be treated as indepdenent small pages (as they can be freed
-+		 * be treated as independent small pages (as they can be freed
- 		 * individually).
- 		 */
- 		if (!PageReserved(head))
-@@ -684,7 +684,7 @@ static void __hugetlb_vmemmap_optimize_folios(struct hstate *h,
- 		ret = hugetlb_vmemmap_split_folio(h, folio);
- 
- 		/*
--		 * Spliting the PMD requires allocating a page, thus lets fail
-+		 * Splitting the PMD requires allocating a page, thus let's fail
- 		 * early once we encounter the first OOM. No point in retrying
- 		 * as it can be dynamically done on remap with the memory
- 		 * we get back from the vmemmap deduplication.
-@@ -715,7 +715,7 @@ static void __hugetlb_vmemmap_optimize_folios(struct hstate *h,
- 		/*
- 		 * Pages to be freed may have been accumulated.  If we
- 		 * encounter an ENOMEM,  free what we have and try again.
--		 * This can occur in the case that both spliting fails
-+		 * This can occur in the case that both splitting fails
- 		 * halfway and head page allocation also failed. In this
- 		 * case __hugetlb_vmemmap_optimize_folio() would free memory
- 		 * allowing more vmemmap remaps to occur.
-diff --git a/mm/kmsan/core.c b/mm/kmsan/core.c
-index 1ea711786c52..1bb0e741936b 100644
---- a/mm/kmsan/core.c
-+++ b/mm/kmsan/core.c
-@@ -33,7 +33,7 @@ bool kmsan_enabled __read_mostly;
- 
- /*
-  * Per-CPU KMSAN context to be used in interrupts, where current->kmsan is
-- * unavaliable.
-+ * unavailable.
-  */
- DEFINE_PER_CPU(struct kmsan_ctx, kmsan_percpu_ctx);
- 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 160787bb121c..edd6484577d7 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -389,7 +389,7 @@ static unsigned long ewma(unsigned long prev, unsigned long curr)
-  * exponentially weighted moving average. The new pages_to_scan value is
-  * multiplied with that change factor:
-  *
-- *      new_pages_to_scan *= change facor
-+ *      new_pages_to_scan *= change factor
-  *
-  * The new_pages_to_scan value is limited by the cpu min and max values. It
-  * calculates the cpu percent for the last scan and calculates the new
-diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-index 0382b6942b8b..f97aa5497040 100644
---- a/mm/memory-tiers.c
-+++ b/mm/memory-tiers.c
-@@ -519,7 +519,7 @@ static inline void __init_node_memory_type(int node, struct memory_dev_type *mem
- 	 * for each device getting added in the same NUMA node
- 	 * with this specific memtype, bump the map count. We
- 	 * Only take memtype device reference once, so that
--	 * changing a node memtype can be done by droping the
-+	 * changing a node memtype can be done by dropping the
- 	 * only reference count taken here.
- 	 */
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 0ba4f6b71847..d6b0318df951 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4200,7 +4200,7 @@ static inline bool should_try_to_free_swap(struct folio *folio,
- 	 * If we want to map a page that's in the swapcache writable, we
- 	 * have to detect via the refcount if we're really the exclusive
- 	 * user. Try freeing the swapcache to get rid of the swapcache
--	 * reference only in case it's likely that we'll be the exlusive user.
-+	 * reference only in case it's likely that we'll be the exclusive user.
- 	 */
- 	return (fault_flags & FAULT_FLAG_WRITE) && !folio_test_ksm(folio) &&
- 		folio_ref_count(folio) == (1 + folio_nr_pages(folio));
-@@ -5274,7 +5274,7 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *pa
- 
- /**
-  * set_pte_range - Set a range of PTEs to point to pages in a folio.
-- * @vmf: Fault decription.
-+ * @vmf: Fault description.
-  * @folio: The folio that contains @page.
-  * @page: The first page to create a PTE for.
-  * @nr: The number of PTEs to create.
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 60137305bc20..a350ca20ca56 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -227,7 +227,7 @@ SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
- 	struct file *file;
- 	int fd, err;
- 
--	/* make sure local flags do not confict with global fcntl.h */
-+	/* make sure local flags do not conflict with global fcntl.h */
- 	BUILD_BUG_ON(SECRETMEM_FLAGS_MASK & O_CLOEXEC);
- 
- 	if (!secretmem_enable || !can_set_direct_map())
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index bfe7c40eeee1..9ab116156444 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -256,7 +256,7 @@ static struct kmem_cache *create_cache(const char *name,
-  * @object_size: The size of objects to be created in this cache.
-  * @args: Additional arguments for the cache creation (see
-  *        &struct kmem_cache_args).
-- * @flags: See the desriptions of individual flags. The common ones are listed
-+ * @flags: See the descriptions of individual flags. The common ones are listed
-  *         in the description below.
-  *
-  * Not to be called directly, use the kmem_cache_create() wrapper with the same
-diff --git a/mm/slub.c b/mm/slub.c
-index d257141896c9..5f2622c370cc 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2412,7 +2412,7 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
- 		memset((char *)kasan_reset_tag(x) + inuse, 0,
- 		       s->size - inuse - rsize);
- 		/*
--		 * Restore orig_size, otherwize kmalloc redzone overwritten
-+		 * Restore orig_size, otherwise kmalloc redzone overwritten
- 		 * would be reported
- 		 */
- 		set_orig_size(s, x, orig_size);
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index b4f3cc712580..b55f10ec1f3f 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1545,7 +1545,7 @@ static bool swap_entries_put_map_nr(struct swap_info_struct *si,
- 
- /*
-  * Check if it's the last ref of swap entry in the freeing path.
-- * Qualified vlaue includes 1, SWAP_HAS_CACHE or SWAP_MAP_SHMEM.
-+ * Qualified value includes 1, SWAP_HAS_CACHE or SWAP_MAP_SHMEM.
-  */
- static inline bool __maybe_unused swap_is_last_ref(unsigned char count)
- {
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index aefdf3a812a1..333f4b8bc810 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -1508,7 +1508,7 @@ static int validate_move_areas(struct userfaultfd_ctx *ctx,
- 
- 	/*
- 	 * For now, we keep it simple and only move between writable VMAs.
--	 * Access flags are equal, therefore cheching only the source is enough.
-+	 * Access flags are equal, therefore checking only the source is enough.
- 	 */
- 	if (!(src_vma->vm_flags & VM_WRITE))
- 		return -EINVAL;
-diff --git a/mm/vma.c b/mm/vma.c
-index 3b12c7579831..2e127fa97475 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -109,7 +109,7 @@ static inline bool is_mergeable_vma(struct vma_merge_struct *vmg, bool merge_nex
- static bool is_mergeable_anon_vma(struct vma_merge_struct *vmg, bool merge_next)
- {
- 	struct vm_area_struct *tgt = merge_next ? vmg->next : vmg->prev;
--	struct vm_area_struct *src = vmg->middle; /* exisitng merge case. */
-+	struct vm_area_struct *src = vmg->middle; /* existing merge case. */
- 	struct anon_vma *tgt_anon = tgt->anon_vma;
- 	struct anon_vma *src_anon = vmg->anon_vma;
- 
-@@ -798,7 +798,7 @@ static bool can_merge_remove_vma(struct vm_area_struct *vma)
-  * Returns: The merged VMA if merge succeeds, or NULL otherwise.
-  *
-  * ASSUMPTIONS:
-- * - The caller must assign the VMA to be modifed to @vmg->middle.
-+ * - The caller must assign the VMA to be modified to @vmg->middle.
-  * - The caller must have set @vmg->prev to the previous VMA, if there is one.
-  * - The caller must not set @vmg->next, as we determine this.
-  * - The caller must hold a WRITE lock on the mm_struct->mmap_lock.
--- 
-2.34.1
-
+> Or we could also introduce a new type for single-instance allocations if
+> that makes more sense.
 
