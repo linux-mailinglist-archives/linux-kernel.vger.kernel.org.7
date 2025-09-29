@@ -1,152 +1,103 @@
-Return-Path: <linux-kernel+bounces-836624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6A9BAA2F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:35:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF8EBAA308
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842C91C2C38
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:35:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708433C2C7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99482220F34;
-	Mon, 29 Sep 2025 17:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C471F21CC60;
+	Mon, 29 Sep 2025 17:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ng8STJyI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="EESAdVIs"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D6021CC61;
-	Mon, 29 Sep 2025 17:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E505D1F1538;
+	Mon, 29 Sep 2025 17:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759167318; cv=none; b=OHGXzQUtm4/LjP45s+QY/98i9lFuYLCDPevbGK+pSyVQw20lAMf8WWQ3b/P5795yQ89n261shAb3Msou1ZF9HHFcQ9TUwj7Vtu6+QnIC/IBIalbU3BYrjc/MXdeK7mvpPCMOt7RvHpNGDjDAHJJQS0eh1PnT1SHU+nKNKEk0r/Y=
+	t=1759167366; cv=none; b=ti0w3GH/MIkyqCA+3nQ3t+TEtEaWIk+rQY3wM+MXeLvTFALacJ+haGk+y8dOLlua9iAax50NLZdyRD8ruwspw1jLG6fSITh6Jh9Tz8GWwwodFtKFaWugxI1hAwNomTE+EzEGpm1s+RkLkEBhh/hdK1qP0AORBxzVzAZH1y+Napo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759167318; c=relaxed/simple;
-	bh=90YL+SrX7/GPfRhQqCef4mYMyfBtFxee2+w+s+UJzYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TFQyVJ+CWMLOwdqG0MjOyM45s9Na0qeZCsJv296TDUFTJ92RY6G+hk+iHYZeywtAbWUe65VjTUQ+mKXqkApah6QIMwXye0+hAr2FbHCScQY4HqVTJF7Gj2HGe4BR6RQYm4pMxu9r9+oE4haPy/qzXj2y6UVIMa3cmVS3oyPbgTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ng8STJyI; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759167317; x=1790703317;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=90YL+SrX7/GPfRhQqCef4mYMyfBtFxee2+w+s+UJzYc=;
-  b=ng8STJyIRVKFmrTiHGruUiRNFPOpGHhnCRclhIl02x627Lyegfy8KKGU
-   wsJrgj/VArF6CgsOqEfDp1e5aEXg3mA4vEpGW1xajUAadIrh3CdOQSuAj
-   v2RVOUjdWNRUX2YPInUCKet5MrvBJQO/YVCtq8+VoTCAj4l8NMbvLw1ND
-   JqoKJgGvZB9XjUqaXJZHgzK0oD0V78Kh8mEsuDBJkHoV1RRkAZVxvzDlp
-   ElIbOVtlsamu2wIrnIHhtL1tDJKe58NItBB/YMTu/hkZ9KtrBCjYCznvk
-   U1/rwDj+uPviTy/RIVOAwxLaITaR2+zL2zSbhfv2rW+w6u9eWo6x3l2+R
-   w==;
-X-CSE-ConnectionGUID: +FNbkZmYT26VpEQSQmNeMQ==
-X-CSE-MsgGUID: Qnv14KenTWGqEfT3tJ3kCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61327335"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61327335"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 10:35:15 -0700
-X-CSE-ConnectionGUID: pJNiWx3ESdCmDfOyofpKXQ==
-X-CSE-MsgGUID: L1vs0RXrT7GWFhRUEsktYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="178101613"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.109.105]) ([10.125.109.105])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 10:35:14 -0700
-Message-ID: <266dd7f9-89b3-4297-a179-9fe57345abb7@intel.com>
-Date: Mon, 29 Sep 2025 10:35:14 -0700
+	s=arc-20240116; t=1759167366; c=relaxed/simple;
+	bh=Pm1a2seXkwxTGCna9n1tinZLtyvkNstoAoQWdxwmx1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L4OHBGIwRA9rvSdbiSJ6W4A+5POhwdqvVcbu3lfTv8KM19tLCUiXYrS+8VzW02t0FdnOxZpfRVixFzzuRTf+y0evjdD8RXoYQ5qpdkVmULUi3KrhPzk1WfeYVted3D9NeCVcmBdTHoE4sId12lzNBHfbJ05LsRYxspnpNAlR6C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=EESAdVIs; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost.localdomain (unknown [95.53.218.11])
+	by mail.ispras.ru (Postfix) with ESMTPSA id C563940643C7;
+	Mon, 29 Sep 2025 17:35:56 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru C563940643C7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1759167357;
+	bh=GVZcB8dx3E5VhDaGE+aEXR/ox8lMIhL41EQg4m2QIjs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EESAdVIsmpp4XbxjT1DeL2gnCMDzJhVN6wcBj+p1gnq3ynwB/3rncd3/ciHo1SYCk
+	 5ISfNbAhtSioqWWyzjfZpD+apRUcNIcGeOmgboBE80Q5o1a++kTS4zdHgkib6rr1O/
+	 1TujdhKrL45Icj//k4U7J4LnnDuivnU23I77MKDg=
+From: Matvey Kovalev <matvey.kovalev@ispras.ru>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Matvey Kovalev <matvey.kovalev@ispras.ru>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] nfsd: delete unreachable confusing code in nfs4_open_delegation()
+Date: Mon, 29 Sep 2025 20:35:20 +0300
+Message-ID: <20250929173522.935-1-matvey.kovalev@ispras.ru>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 0/5] Enable automatic SVN updates for SGX enclaves
-To: Nataliia Bondarevska <bondarn@google.com>,
- "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "Annapurve, Vishal" <vannapurve@google.com>,
- "jarkko@kernel.org" <jarkko@kernel.org>,
- "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>, "Mallick, Asit K"
- <asit.k.mallick@intel.com>,
- "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
- "Cai, Chong" <chongc@google.com>, "Aktas, Erdem" <erdemaktas@google.com>,
- "Raynor, Scott" <scott.raynor@intel.com>
-References: <20250818071304.1717183-1-elena.reshetova@intel.com>
- <287a2652-bce6-4084-b9b5-c8feb24a2940@intel.com>
- <CAGtprH8rPg30gsrhJ9=44uaePqf-Ay=R+O_+D8isH8TzM4uQXQ@mail.gmail.com>
- <DM8PR11MB5750C11091D7D90B60FE7853E71BA@DM8PR11MB5750.namprd11.prod.outlook.com>
- <CAFbLv2dbF4=vEvuqKFweRR5P6qtm+E7U29=f2ByM552j6fd9Vw@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAFbLv2dbF4=vEvuqKFweRR5P6qtm+E7U29=f2ByM552j6fd9Vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/29/25 10:12, Nataliia Bondarevska wrote:
-> Tested-by: Nataliia Bondarevska <bondarn@google.com>
+op_delegate_type is assigned OPEN_DELEGATE_NONE just before the if-block
+where condition specifies it not be equal to OPEN_DELEGATE_NONE. Compiler
+treats the block as unreachable and optimizes it out from the resulting
+executable.
 
-First, thanks for testing this.
+In that aspect commit d08d32e6e5c0 ("nfsd4: return delegation immediately
+if lease fails") notably makes no difference.
 
-But I'd really, really appreciate if these tags (top posted and without
-any context trimmed no less) came with at _least_ a few words about what
-was tested. All I've got now is tag from an email address I've never
-seen before which is (apparently) only used for sending Tested-by: tags
-for this feature and nothing else.
+Seems it's better to just drop this code instead of fiddling with memory
+barriers or atomics.
 
-Also, by "a dearth of tags", I really did mean *all* the tags:
-Tested-by, Reviewed-by, Acked-by.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Could someone please spend a few minutes to explain what this tag means?
+Signed-off-by: Matvey Kovalev <matvey.kovalev@ispras.ru>
+---
+ fs/nfsd/nfs4state.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 88c347957da5b..debc6c8fef956 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -6284,11 +6284,6 @@ nfs4_open_delegation(struct svc_rqst *rqstp, struct nfsd4_open *open,
+ 	return;
+ out_no_deleg:
+ 	open->op_delegate_type = OPEN_DELEGATE_NONE;
+-	if (open->op_claim_type == NFS4_OPEN_CLAIM_PREVIOUS &&
+-	    open->op_delegate_type != OPEN_DELEGATE_NONE) {
+-		dprintk("NFSD: WARNING: refusing delegation reclaim\n");
+-		open->op_recall = true;
+-	}
+ 
+ 	/* 4.1 client asking for a delegation? */
+ 	if (open->op_deleg_want)
+-- 
+2.43.0.windows.1
+
 
