@@ -1,157 +1,189 @@
-Return-Path: <linux-kernel+bounces-835629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944B3BA7A39
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F23FBA7A3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 02:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5552F3B1C30
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:46:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76E7D18915F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 00:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AA2157487;
-	Mon, 29 Sep 2025 00:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2772B15746E;
+	Mon, 29 Sep 2025 00:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fE45z1bn"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0kZCL1d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA803A8F7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 00:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700D13A1DB;
+	Mon, 29 Sep 2025 00:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759106799; cv=none; b=HdOLxC43XLMkKKv6JhKHq4YlpxBzRA9EC76liyF78XhD48g9CFSYFbGz5sjxah5OneKe++rm/UTDJWBfMcbnnxchBKeiu8Yp5fce5rfCMdtqDe84PcWJwNNmNoaJoSNXBg6J6/jVuyNRSAOm4cylUGyWsdGUcLvnKBB32CpBh6A=
+	t=1759106868; cv=none; b=McAFHWpMlgrnHDBIdinnf8HdaxuEYZUApAzrJHCbyLCfrBEkURL9MCoFufm+RFTnra/63+r+Yinduz6y0P2w+Crgm0U/b8eVm4z5v2gSpAfUwtuFA95Se+mMvY0K5PnWiTi6PVkd26v1XxEO6z+cZ9x24Pa+VV/rqPpiNc2h2kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759106799; c=relaxed/simple;
-	bh=rdX5rxOFR4bMFbQQD4C1LhnbWJzkYUPr5Gt8qv0mVnM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uLF60Ma0+TWwiaahp88U6xr1KpsF6NfAB9dJCLhT1R34TYjOwc0K+ifRnlbb/evZo73KKcS9Vv7oRJNAs8S1PGy1WAvjp9Xz8BCjbRAPA/6rxkQ6PisNjcLjPE2TIOq3rpXq+G7HZujNTf9cqtDD3bz4oU3UkqRqih48ohYuQOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fE45z1bn; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b5507d3ccd8so3554533a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 17:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759106796; x=1759711596; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QFHbiqQfhUKp1tZTIjHf7LJ+06KegZD5xVXk100wkJA=;
-        b=fE45z1bnTZfZ0A+fscHZyYq0fSwu8PZG+NK2Gk8bnKN93+RypdriSFILVeMJ8Lrs57
-         nCm0afziN2g6YUiA9PUWZuPxNa61bsN+/UnOpc6AaQgsalrfDn+2Byok/5eJQ/RgHKYn
-         jb8lgcb66COAh/3U8L+R/g7Tjz51ezMYj/o44VJTF8A4IzpglM04+5LFLr3TGnaqZGHp
-         4IJWW/qIgCooHpdFLI/5gkJTB34Kjyn8ci5pHt71MNhEKZidEBO91ReCSAGma0zU4R5S
-         F15IKFVJ6qRbqpXG0lJ1qH5pVXbOXYgs0B8Y2OVvwHUIlh/Ig9ncYRnJGi+WuY4UEb8q
-         FRug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759106796; x=1759711596;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QFHbiqQfhUKp1tZTIjHf7LJ+06KegZD5xVXk100wkJA=;
-        b=UTJCDA25H/C0wybU3m5BqA//xN3Qyo5Khy3qG1ulq2r6cKI13IyS40wPeo564M5Y0m
-         2kIhyX+kINPU+ynO6x576i85fp+g5f64n5bd5BPL8WIGDCnjbL8R/plirvYxu0FIkIVP
-         ZUnN4WX3hsnu8lLjdtxyTbeCKiSgYtZ26SJ9TtnWTzeOITfz/bjoV9P2Kc+b+NBgzkFJ
-         xD8pgg/Qen7zSqQFKQBuL8hBF1DJIVamO/bs/ai9W4cmAfgbow6x4DKLgfOvCDdi39Zq
-         g65QV+o9K4DYSXwssKQFxXq/pJvK0ru/4tG72uwYzObByTam3Xr/w3/nBdJwL8z/ydsA
-         Q7BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjrkLYBecb8nnl9ZKYmYqevwvxPhjiZJHq3RlDh+oHukWXTmjULp/6qoAK6tmSYdBMhjp63ByA8udFK5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyISzRmmouHi6jhi94HTM6dQeD9sgJywKJjPpqGeExzSY2YAEM4
-	YRrXj/mKLCLTfe0OIhGas+/kDLyEMn45bteHcs+O4YKIf5jUibAqJJUD
-X-Gm-Gg: ASbGncudn7zHkLcB4b5cuIqzboBxrIlBzuF/0U22zPyx1Yjw6Aq36HPBnj6LDLlSCTo
-	AO19ifPv9NZyDAZbp/a4PEBqkCOU8a9TicMKaFjFI+2QmM5tR+k9z1/lfOPoM/6D1nQ90dNt/Pn
-	MljLKMMmD6/HMSIqWYC7gYgM9RVsO5BDRrUj6f5sW0mAyun5ZJOlA2TWyxrs5QPymEHIrKaWaz8
-	Yis9bop3UlEYO7UcJu9I/E2+QCphGv7j4I4EH0bqJ7TPhP68TiyU6HnZEBaVSkyPFMZa5KFYsmt
-	+jKUVTw2XXEE/S4TsELD/1kflroUaUcIfojCVs91UkkOZ+sT5Cj4QXCyzZaipcIvczhfddtMEXm
-	QqIhj5boJkleR3i9EJ51j3g7E5mJMLEp7Rw==
-X-Google-Smtp-Source: AGHT+IEYlOtRagpQCwasN9hrI6/tZf+R6mLErlpBo5fsnQRiR18Dra82gS14Ip3nHZa4PSt+uxMcgQ==
-X-Received: by 2002:a17:902:8208:b0:274:aab9:4ed4 with SMTP id d9443c01a7336-27ed4a670f1mr118045785ad.57.1759106795744;
-        Sun, 28 Sep 2025 17:46:35 -0700 (PDT)
-Received: from fedora ([172.59.161.218])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6882290sm110877515ad.76.2025.09.28.17.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 17:46:35 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: oder_chiou@realtek.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v1] ASoC: codecs: rt5670: use SOC_VALUE_ENUM_SINGLE_DECL for DAC2 L/R MX-1B
-Date: Sun, 28 Sep 2025 17:46:25 -0700
-Message-ID: <20250929004625.1310721-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759106868; c=relaxed/simple;
+	bh=YEUnlJyIiHlY7Vfpu4qR2648nJgvUPdwxj6vJ3d9yE8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=LYW7V6s6aS/RcoEmyA1ZmA0VIYEeO1mxS/x+gD/bb7WIF6t5mmuDzmgZXB4OnQYSGmYzZSdVmlyQoQqUYMVXmkE6z+rBfwRw4z96yn8jfvGCgHDclt8SATPfQuU26EblkJlyo9NhmIapFPHb143zpa8rllvirqnbm8h0ff4YFoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0kZCL1d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37DBBC4CEF0;
+	Mon, 29 Sep 2025 00:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759106865;
+	bh=YEUnlJyIiHlY7Vfpu4qR2648nJgvUPdwxj6vJ3d9yE8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H0kZCL1d9j+UwGN41Ub4WXmMCni7saAugBZ4DnmSBi8YGSFm3wKa88t9mNe+AmDwZ
+	 2rX7yCpJzNZ72UgzfeHEDalWKoOkbD+Yr4b6JfMFQAt8Wzr/AKttOUAIt/rEIacFFW
+	 Z6yXOairIRbT8LYOb8pNrBa9/vT7vMVx5GK/Iz96LFTRH3RfkQTDQrXrDcg0azrpz2
+	 lr9lr+KC4kq1RWQzllPkHOyitItmJzTEI1AUpTvJ4l610pZSzIZFx6L24tgBpL79Ew
+	 IBTtdiQ//9TQ+2Ks7KOpgWRL11gkvhAfsUMx9eISo0TDz+DqYBUmWSce79mzAKwL/7
+	 hj0hWM8TLpOlw==
+Date: Mon, 29 Sep 2025 09:47:39 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: lirongqing <lirongqing@baidu.com>
+Cc: <corbet@lwn.net>, <akpm@linux-foundation.org>, <lance.yang@linux.dev>,
+ <paulmck@kernel.org>, <pawan.kumar.gupta@linux.intel.com>,
+ <mingo@kernel.org>, <dave.hansen@linux.intel.com>, <rostedt@goodmis.org>,
+ <kees@kernel.org>, <arnd@arndb.de>, <feng.tang@linux.alibaba.com>,
+ <pauld@redhat.com>, <joel.granados@kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][v2] hung_task: Panic after fixed number of hung tasks
+Message-Id: <20250929094739.e2d49113f52a315a900a2cd7@kernel.org>
+In-Reply-To: <20250928053137.3412-1-lirongqing@baidu.com>
+References: <20250928053137.3412-1-lirongqing@baidu.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-DAC2 L/R source selection fields (MX-1B [6:4] and [2:0]) contain non
-contiguous values due to reserved bits documented in datasheet (page 66):
-<https://www.elinfor.com/pdf/RealtekMicroelectronics/ALC5670-VB-
-RealtekMicroelectronics.pdf>
+On Sun, 28 Sep 2025 13:31:37 +0800
+lirongqing <lirongqing@baidu.com> wrote:
 
-Switch from SOC_ENUM_SINGLE_DECL to SOC_VALUE_ENUM_SINGLE_DECL
-to handle discrete values.
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> Currently, when hung_task_panic is enabled, kernel will panic immediately
+> upon detecting the first hung task. However, some hung tasks are transient
+> and the system can recover fully, while others are unrecoverable and
+> trigger consecutive hung task reports, and a panic is expected.
+> 
+> This commit adds a new sysctl parameter hung_task_count_to_panic to allows
+> specifying the number of consecutive hung tasks that must be detected
+> before triggering a kernel panic. This provides finer control for
+> environments where transient hangs maybe happen but persistent hangs should
+> still be fatal.
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- sound/soc/codecs/rt5670.c | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+IIUC, perhaps there are multiple groups that require different timeouts
+for hang checks, and you want to set the hung task timeout to match
+the shorter one, but ignore the longer ones at that point.
 
-diff --git a/sound/soc/codecs/rt5670.c b/sound/soc/codecs/rt5670.c
-index efd26082f..4c75a3e71 100644
---- a/sound/soc/codecs/rt5670.c
-+++ b/sound/soc/codecs/rt5670.c
-@@ -1153,25 +1153,29 @@ static SOC_ENUM_SINGLE_DECL(rt5670_dac1r_enum, RT5670_AD_DA_MIXER,
- static const struct snd_kcontrol_new rt5670_dac1r_mux =
- 	SOC_DAPM_ENUM("DAC1 R source", rt5670_dac1r_enum);
- 
--/*DAC2 L/R source*/ /* MX-1B [6:4] [2:0] */
--/* TODO Use SOC_VALUE_ENUM_SINGLE_DECL */
--static const char * const rt5670_dac12_src[] = {
--	"IF1 DAC", "IF2 DAC", "IF3 DAC", "TxDC DAC",
--	"Bass", "VAD_ADC", "IF4 DAC"
--};
-+/* DAC2 L source*/ /* MX-1B [6:4] */
-+static const char *const rt5670_dac12_src[] = {
-+	"IF1 DAC", "IF2 DAC", "TxDC DAC", "VAD_ADC"
-+}; /* VAD_ADC or TxDP_ADC_R */
-+
-+static const unsigned int rt5670_dac12_values[] = { 0, 1, 3, 5 };
- 
--static SOC_ENUM_SINGLE_DECL(rt5670_dac2l_enum, RT5670_DAC_CTRL,
--	RT5670_DAC2_L_SEL_SFT, rt5670_dac12_src);
-+static SOC_VALUE_ENUM_SINGLE_DECL(rt5670_dac2l_enum, RT5670_DAC_CTRL,
-+				  RT5670_DAC2_L_SEL_SFT, RT5670_DAC2_L_SEL_MASK,
-+				  rt5670_dac12_src, rt5670_dac12_values);
- 
- static const struct snd_kcontrol_new rt5670_dac_l2_mux =
- 	SOC_DAPM_ENUM("DAC2 L source", rt5670_dac2l_enum);
- 
--static const char * const rt5670_dacr2_src[] = {
--	"IF1 DAC", "IF2 DAC", "IF3 DAC", "TxDC DAC", "TxDP ADC", "IF4 DAC"
--};
-+/*DAC2 R source*/ /* MX-1B [2:0] */
-+static const char *const rt5670_dacr2_src[] = { "IF1 DAC", "IF2 DAC",
-+						"TxDC DAC", "TxDP ADC" };
-+
-+static const unsigned int rt5670_dacr2_values[] = { 0, 1, 3, 4 };
- 
--static SOC_ENUM_SINGLE_DECL(rt5670_dac2r_enum, RT5670_DAC_CTRL,
--	RT5670_DAC2_R_SEL_SFT, rt5670_dacr2_src);
-+static SOC_VALUE_ENUM_SINGLE_DECL(rt5670_dac2r_enum, RT5670_DAC_CTRL,
-+				  RT5670_DAC2_R_SEL_SFT, RT5670_DAC2_R_SEL_MASK,
-+				  rt5670_dacr2_src, rt5670_dacr2_values);
- 
- static const struct snd_kcontrol_new rt5670_dac_r2_mux =
- 	SOC_DAPM_ENUM("DAC2 R source", rt5670_dac2r_enum);
+If so, this is essentially a problem with a long process that is
+performed under TASK_UNINTERRUPTIBLE. Ideally, the progress of such
+process should be checked periodically and the hang check should be
+reset unless it is real blocked.
+But this is not currently implemented. (For example, depending on
+the media, it may not be possible to check whether long IO is being
+performed.)
+
+The hung_tasks will even simulate these types of hangs as task
+hang-ups. But if you set a long detection time accordingly, you
+will also have to wait until that detection time for hangs that
+occur in a short period of time.
+
+The hung tasks on one major lock can spread in a domino effect.
+So setting a reasonably short detection time, but not panicking
+until there are enough of them, seems like a reasonable strategy.
+But in this case, I think we also need a "hard timeout limit"
+of hung tasks, which will detect longer ones. And also you should
+use peak value not accumulation value.
+
+If it is really transient (thus, it is not hung), accumulation of
+such normal but just slow operation will still kick hung_tasks.
+
+Thank you,
+
+> 
+> Acked-by: Lance Yang <lance.yang@linux.dev>
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+> Diff with v1: change documentation as Lance suggested
+> 
+>  Documentation/admin-guide/sysctl/kernel.rst |  8 ++++++++
+>  kernel/hung_task.c                          | 14 +++++++++++++-
+>  2 files changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index 8b49eab..98b47a7 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -405,6 +405,14 @@ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
+>  1 Panic immediately.
+>  = =================================================
+>  
+> +hung_task_count_to_panic
+> +=====================
+> +
+> +When set to a non-zero value, a kernel panic will be triggered if the
+> +number of detected hung tasks reaches this value.
+> +
+> +Note that setting hung_task_panic=1 will still cause an immediate panic
+> +on the first hung task.
+
+What happen if it is 0?
+
+>  
+>  hung_task_check_count
+>  =====================
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 8708a12..87a6421 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -83,6 +83,8 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
+>  static unsigned int __read_mostly sysctl_hung_task_panic =
+>  	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
+>  
+> +static unsigned int __read_mostly sysctl_hung_task_count_to_panic;
+> +
+>  static int
+>  hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
+>  {
+> @@ -219,7 +221,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>  
+>  	trace_sched_process_hang(t);
+>  
+> -	if (sysctl_hung_task_panic) {
+> +	if (sysctl_hung_task_panic ||
+> +	    (sysctl_hung_task_count_to_panic &&
+> +	     (sysctl_hung_task_detect_count >= sysctl_hung_task_count_to_panic))) {
+>  		console_verbose();
+>  		hung_task_show_lock = true;
+>  		hung_task_call_panic = true;
+> @@ -388,6 +392,14 @@ static const struct ctl_table hung_task_sysctls[] = {
+>  		.extra2		= SYSCTL_ONE,
+>  	},
+>  	{
+> +		.procname	= "hung_task_count_to_panic",
+> +		.data		= &sysctl_hung_task_count_to_panic,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ZERO,
+> +	},
+> +	{
+>  		.procname	= "hung_task_check_count",
+>  		.data		= &sysctl_hung_task_check_count,
+>  		.maxlen		= sizeof(int),
+> -- 
+> 2.9.4
+> 
+
+
 -- 
-2.51.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
