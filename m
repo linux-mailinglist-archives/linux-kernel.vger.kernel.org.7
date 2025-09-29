@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-836384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E56BA98AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:25:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C52ABA98C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18FE3A7997
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:25:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 557613AD8A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4558C30B536;
-	Mon, 29 Sep 2025 14:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AB4309DD2;
+	Mon, 29 Sep 2025 14:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WzmPzQza"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010052.outbound.protection.outlook.com [52.101.84.52])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RZQ1ipg/"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011056.outbound.protection.outlook.com [52.101.65.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425C8309DD2;
-	Mon, 29 Sep 2025 14:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D8030B53D;
+	Mon, 29 Sep 2025 14:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.56
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759155885; cv=fail; b=HHI45DclbD4o7pZyfdlzqeD5QjkIgA9GkphdlLmNDLHiZh3xrFSUP/JTBFfjoBlHjwL2IVHOF4nOA55R8LPjs3WrtNRi2W8hnCMxBZniKTtPquGKOHtGQgnwCr5n38R0cuOPCjJZVf1FsKYZ0y/2OAEI+R0pTF1Qb4KV8x1ws5w=
+	t=1759155889; cv=fail; b=INmTv7NtTktbNXzRt6Z0R3S04AqfFxFi7lRQjWDd5dIIRLcaMq9wc7p7GIhfOjPl8VVPfXGyEjwtTRj1jXjmB6cuRsIUgCnwOY5IV9MAPjwlH5Tg35bPEhqSZXrpE45MBh2GvMPqKl8YSUL19ITUaTliQUsynfO1RHZ60Kgsldo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759155885; c=relaxed/simple;
-	bh=aIHEblPEUU9onRAuFOQAmpLaupn73nS3Bk9VVkwWnYI=;
+	s=arc-20240116; t=1759155889; c=relaxed/simple;
+	bh=3lvyIi6EPuFI5jSKT6nJyBbhpNULKOOS4uIt6qtJysI=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=JdAlbuwa2W2Phqpjp3ueDdjx4+eZz0UybZiP+BA35/HlBxB8GE7VOEzlH8XC5F0XsV4sNQ3mSvh7hbyWctFKqEZ1lth8Mtzc2rmOJ4EO2sbyY39ECrKxWueVad8iG+1yRLGmeF3hZPITcQuy2j9E8YNWLVcEAH1rRGuOuxUSjCQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WzmPzQza; arc=fail smtp.client-ip=52.101.84.52
+	 To:Cc:MIME-Version; b=FQCM1k3f6yHph10QIgGJYCbBOuWExzFDT364t2tRYK/j6xNslVvPN2CNoCPTI43YnIIpExX4wCkSCc2MzcLrzGMYchhWUBucngZvSlf5IHcmaTExHtMZa69VAL0bZmshXzQOpbzfkQETrAZr1rRUJUH7kRlRnKNU240Y45dhWL0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RZQ1ipg/; arc=fail smtp.client-ip=52.101.65.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MJpWGqJ+XzDVs3DkL4pr04DGO7jCBa9w64siTcSV1S7BtDZQMFStAf+S1PUfNdoZJYXOnILs4lGgJFB6h/KQ10u7epYg8bNW/SVJlrEFAfp/jMbEokga0Tk1jM63vuF7/Bpt5Qv8dTrKOd94PkVabNb8OZPN2ytpdJkz9csHazUul9g0kRTTAvlE5UL9Sf+xGXzjP0I0HuKLm/w56HAQJ0ftGLUxgccMK+xB+tLowIwrAatlx2Yw5IeWV7IKOztd5rqvzSxgx3hXktPsuETxmOD8gM02rDRzz+aL9N9KfQjJI1Ss5QJ3/WYbQPQQJY9k0Q5l0/eUghX3biB0oTMPvA==
+ b=n9D8INc2Xu1xYpDBIYTMb1nuTakt3FfMY/BcUZyo1T08AI3+spVfB3dD9Zj+pd+JhjIKg4s6Y+6Qgr5qk5pWJtuLdSKG8bW1mvtTbBkLviUci0hZjqhxZMaa1dyhsIM7rU0YVTja4jApsYU6sY2Dbmw2AzUJ66lkzvr4HRzbyh/2LhHuhNadx0Pf88jpfr8N4UaNp8Z9VhsB6qoaEeJsS8tUHmTIm5H27KPaYJXs7eW1Zsrv0lRafOQyDZFygKIqPVe/8LlTT7bAvUfMQ0nhRCMZ6oqMu8yxwjV98syOaKSVrNTD6a1GpQ8+d/hJKxW8vXpqZ8bF49sP4USU+Q/pew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iXkawFsYT8gwsJeq7MevcIWVbx1NMYayzdoiUHA1JZM=;
- b=XZ4arO9I8WqEuw+KMiVtnJ4PeloDl+d05jj5Ke9caVFHHi/aIjEPWwLS9KxBEK8Q7FHzt4OS8qD+pV2OT+2IPCfs1NllvK2XBIMXuQuEsPtel6wvPEq/cEzx7fa2VGbiv3foaB9Q4+QG33uIUebqEbEA2U/wAITUjWUqsEdZ1J3exN3mWLHi+W+9Fiy00kaMoTz4GbX1Z20xupgEWJ3d40yjduuyzCda7pYADShvyPPMN0WwFpLKvKZnsYIkCXak2XLJE5t00fXcaXBlfNGP7fM0I6l3fTHVIrCGVTOqeYwGD7CAJt+vC3YECInnL/O3/+n+gLFkBF3us+2lstBaBQ==
+ bh=QVJl4bB8QiGoef0MB55ljZ5MSBlUEiekfe3RurAVcac=;
+ b=O8bGmsu/lTf5E/BdCyslJASvTysv6T59H9CkKKQMDUeXVfCW7/WvuUIYdDt8/a0/oaO+NNaEmnU9xkbmPOhAwtoaFNjLMsqyXBhlZQyV8p+uajTWhKzBHldKQEN73M69eQlzgZQPbzz9kfL/bPQfYJ6MEBxQWwGr5bVwYX9UJYBUpStDhkM1ktuPRzyIoEF3pXJWbJOql3AqtZvVrUIzPndsK70rwAmZ+lyWc9h8JsRPB0Bzmhez/fWFqopXnZnl6XTCP6tLj7banEHNbt4jbvtxf5fGEeXQik6pS70nicrd5UBW5jP2ZN6na6planeX/PBD5IggPWBDGmOn3MgJxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iXkawFsYT8gwsJeq7MevcIWVbx1NMYayzdoiUHA1JZM=;
- b=WzmPzQza//Vn3qFem5Sv0p+goQKt7nRHSI5fZs81GOlYUzWGW2e3DLP1Fvc3z8/8YoBlmWZ0hUHfHwiu90Wql3QbsgVgzY28dpfQRYxtCp5Cn6sImZPAx5Kt9dXWl5268qTHiKnuAU6PVZ33UImvUuNUpHm+2aEIXHeVx29hn/cIRpueZTD46AipdiUqLNGlezV5eTXYMS7TcRCMFJBfZimuBRQudX3NY9hyH8dA/7qKzFAQbRnadfouzJxDQJkRZthdtLPxNjgNqJmngEHXCuoL2+uNL1BCX1RphBc7QFHfYHj4MYL5groK/clFBX5yPKT/+ZdKpbeiOe2/rcEksg==
+ bh=QVJl4bB8QiGoef0MB55ljZ5MSBlUEiekfe3RurAVcac=;
+ b=RZQ1ipg//d2kUeQeT+H6vMwzxmlRFsaX0JGxfJ5//Xkdt7vGVNcr5m8N3L3/C9ui9TdIgDx3sLI8uUxdtTGawzKDE4jGHMzGdR6Dx8XhQBHXg3mvF3kuAEKxqRXW1YJlmbEAZ9kN3LMiWhRJugiXj8nAYtrWEgo73nRmQpTva8VDZahC3hILobuv/5rC9KKhgys+Ms60bHaHLVOFXZlMEKVP4u8dLXkYyllTI8wKB2JKGjdlNc4G0mSwn3uyV/tzLKz1wAM7Mkny1YT2HQw2tL9jnBzWj7dHdxyTo9RUVK03T79INjTnsWsZUmms8/9jUGR83GIxFTGoShFu09Zc0A==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
  by PAXPR04MB8607.eurprd04.prod.outlook.com (2603:10a6:102:21a::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
- 2025 14:24:40 +0000
+ 2025 14:24:44 +0000
 Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
  ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
  ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.014; Mon, 29 Sep 2025
- 14:24:40 +0000
+ 14:24:44 +0000
 From: Frank Li <Frank.Li@nxp.com>
-Date: Mon, 29 Sep 2025 10:24:16 -0400
-Subject: [PATCH v5 3/4] usb: dwc3: dwc3-generic-plat: Add layerscape dwc3
- support
+Date: Mon, 29 Sep 2025 10:24:17 -0400
+Subject: [PATCH v5 4/4] arm64: dts: layerscape: add dma-coherent for usb
+ node
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250929-ls_dma_coherence-v5-3-2ebee578eb7e@nxp.com>
+Message-Id: <20250929-ls_dma_coherence-v5-4-2ebee578eb7e@nxp.com>
 References: <20250929-ls_dma_coherence-v5-0-2ebee578eb7e@nxp.com>
 In-Reply-To: <20250929-ls_dma_coherence-v5-0-2ebee578eb7e@nxp.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -73,11 +73,11 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
  bjorn.andersson@oss.qualcomm.com, imx@lists.linux.dev, 
  Frank Li <Frank.Li@nxp.com>, Ze Huang <huang.ze@linux.dev>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759155863; l=2066;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759155863; l=8726;
  i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=aIHEblPEUU9onRAuFOQAmpLaupn73nS3Bk9VVkwWnYI=;
- b=4Omq6QH/aCEMLLx/5hTfiUQg0yNZxzbqWUdyUs6ER++V/YE1Kvg3vnrC/GWRm/hs0vm86u+wp
- /XZXfkMiDStASeX2351YBb3sH54sNpIHlRgdi8wRDAUDAuM7pvnW1/0
+ bh=3lvyIi6EPuFI5jSKT6nJyBbhpNULKOOS4uIt6qtJysI=;
+ b=C9ZbLT8rfFK6Boq6s+MDumbV7G/EmJlEJv8zmKodKqQHlAgvUPaNRY7qnHzFnoiwi8gm+b9tg
+ SOaTVrlgeD1BUJF+YX4KfwZOND9+xOQZ29r9NVIKScDXMO2T7bmJqRg
 X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
  pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
 X-ClientProxiedBy: SJ0PR13CA0099.namprd13.prod.outlook.com
@@ -91,157 +91,320 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|PAXPR04MB8607:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78c1d688-fe5e-4ed1-7b2a-08ddff63ed10
+X-MS-Office365-Filtering-Correlation-Id: fcd41e99-3cdb-42e8-ff11-08ddff63ef98
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|52116014|376014|7416014|19092799006|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dHlPUFpGMDI0UlBYWmwzTmZlWXBCdnNGQVFkaXUvbDg1NXRqRVBrRnhKVy9R?=
- =?utf-8?B?cU5XWWtCWFZ4R3RpMDl5UHZZcy8xSW1Cak1iV1dOMTN4dndTNkxOTklwd0pK?=
- =?utf-8?B?UHBQRHcwbncrWDhCNy9YeHkwTllsb1o4R2ljWmVsdFp1NkZpaHl3eEtiUFhE?=
- =?utf-8?B?cVBXUGZwek9ya0VyclJBMEo5ZVpiTVk4NnVvMWRaSEgyaGxnOW9ZSVNXRjF5?=
- =?utf-8?B?QXhVcE5UWDRSM1pGL2lvVkcvNW54bTBzdW5xVDRpMmhqZzJ3UlNiSVpLMUNM?=
- =?utf-8?B?K0tZMVdvbUNKaXFYSGRPbmpHRE1IWlRNbFduUkY0QUNyM2ZBVWI4bk5KemlB?=
- =?utf-8?B?OWNtM0c1SmNzU1BDODczeVV3c1FvcC9xbWs4bnRyOXZwSXhOUWRBV2lOSTdP?=
- =?utf-8?B?dlAwSjZtV0t2Sm9mREdBWDR3RDVSdlhPUEw4bzJ6MXlTMFRFaUhwVFNGazFr?=
- =?utf-8?B?S1BWd0RoOGtiYWNBOWdzbE9yckFobk8zdWo4WXFJMS9NSWdET3FvQlp3RjBy?=
- =?utf-8?B?Y0tzOXdERU5vY2gxRHpQVUZhK0FCbEtyaER0NnVkTGJwSWlhcExnZnVTLy84?=
- =?utf-8?B?TmRIemhMTXhhcGQwQm56a1dVNytrUEVPVmk0ZGlpUEUwYmluenRQSkJzM2o3?=
- =?utf-8?B?N0d2T2FVb0YxM1pNNXhxam5kbWVDSlZiR1JpNW5oT0VMWFRodUpXNXlIUFZP?=
- =?utf-8?B?eWF0a0YwcXQzUnhlRWQ0VGV0RUJJRzk4Wjd6akplK01FMEM4NUJJdXEwYXBy?=
- =?utf-8?B?eWpTMVBtRjdreWJURHVQN2hjZERqbUg5eGRUWjVYS3V0Sk9uYjFEUU9vMmha?=
- =?utf-8?B?emVmWVZjM3FTeU1yMEJWTGs3V2tuWFZRaCtwYTJieXlZM1FVWnVjTlBTaHFx?=
- =?utf-8?B?cWFFYngzQUVuSUsyRXRnSDdTalpsU3E1VmFFOVFjQVM4TzI3MjRQODNZcU5W?=
- =?utf-8?B?RE5WRENiRzdoNnRsRWY5elZGcjc0aGtreWNFalV3RURyUW9FQnptME5mWU9i?=
- =?utf-8?B?K3NRUDdrNDd6djJiSEtnZDBLTG5UU3RoR2IyTEtBSG5VSEtKSHpZdE5YWDE0?=
- =?utf-8?B?ZjljNnRBbjRyZGw2by8wSVc5b2NIYXBZTFV0NGlrSnNpdVdpZjFJQjNmUmN6?=
- =?utf-8?B?T1J5b2YwSUl4WmptQjBKMC9lZlZMZUNNTFBOODNCOUlCampBcUsxSTN0cEhU?=
- =?utf-8?B?RXdTQ3BPSHFZRHYyUEdORVBVdjB5K2VublNLYWVVZDEwZk9sUDNGbDFFSkhU?=
- =?utf-8?B?TERkK2dWYWtrVzRqYVkxdk96Wi96SXZMeTlXOEQrd0ZWTWxRZHJxdGhha1A4?=
- =?utf-8?B?djNoQ0RwamJUM0Y2SStGNnhrZktxM2lkRXhkTGFXMDJvcndyaVhDeXI1NWFy?=
- =?utf-8?B?WVJtcHZWaUc5K2dRdnRGQWlreHdKN1ZRb2RKZTU5akt2UG1FeUg3ZDhhdTZz?=
- =?utf-8?B?d0lqazhyR2xDbHZBQUlKRmF0clpqVWh1U0lPS3ZHNnhhQWpUbWF0MmExajAv?=
- =?utf-8?B?b2ZZQ01OWUs5WjJ2R3JNOXNkWXRlbUs3WjRZYUppb0lONGhiR1RHWXBQSm1R?=
- =?utf-8?B?SW1hejZhc0pzNERoZ3Zxb0tVV1lGbjFaVzZ0bERuWTdOUFRBTHJHM1BXS3Fa?=
- =?utf-8?B?cDZxenNCdUZjMit2ZXVsS2drMURrZWRtTWZOUTdiUEFHMkRRaUd2SENka0Yz?=
- =?utf-8?B?ZnpoU0t4c1JyTWtNcUE2Q0l5TlpEMGtqb2JUN1lkVk42YzNkYWtaOHZQSGtm?=
- =?utf-8?B?aldmajAralVhZzU1WG55eDQwN3B3dmF6dXBLRnd3SjROOGtHZXZGR0owRUVl?=
- =?utf-8?B?MGgyUnROWXVuT3N3QXRENXhKd3dpLzNFMkJ6eXdQakFKeFZrdWU3UUNreWp0?=
- =?utf-8?B?S0lhNjBUbTczRmMxU054dkpzV2xOcjBOUEMzdlcxejVLdGtqYURuL2tIU3Ir?=
- =?utf-8?B?K0hXNCs3NGpIakxsMzNmZEI4dHlaRWRiYitaRVlkOUErb0FYaG9peENjSFZ2?=
- =?utf-8?B?K1phQXdweVkwcmFKODB3NnVITDBrNm1Zd3JWb0F2MjZmc056NnFtM0wwL2NE?=
- =?utf-8?Q?c/CGGW?=
+	=?utf-8?B?SFJjYmRtMzg1ZmxZa2djK0FNa056ZUllVEc5YU9udVRYSHpYVi84S3FYMVYz?=
+ =?utf-8?B?M04zejFnNGdiaUFlbS9odnJnNldZVGJxbU9PVStiVmdPeTVTaTdGNTRNT3RF?=
+ =?utf-8?B?aEIwcVlwejJ0NzhJbnFiWU1WTVhKYWZwUmhMZW5PdnMxTGduYjZSeXVBYWFR?=
+ =?utf-8?B?WXl2cHc4SWNsMFN3bHNISjBPZ09NVUhIM05sR0NPNncrRkowa2dvKy9HTnI4?=
+ =?utf-8?B?bnprRm5LOWJ6S1dXMHdmME1CODFXMDRtcnZOOU5xa2dzMk9nNTlGRmx3L0tw?=
+ =?utf-8?B?d05pK096bU1mUno2a2N1alRJTGhrU0NiWFA1MXZOQXZqNWxPTTdrNHFkbzVQ?=
+ =?utf-8?B?NHZrd0o5Rmg0L3d4WGhLdXdtck8xMlpUQko3YkpIZS9jcSs4VnI1a3lQN0NL?=
+ =?utf-8?B?VDZDNldrTlF2bVN4dG1GY0gwV1FzK25FWEl5YVNvY25ja2QvakY2R3RqcEp4?=
+ =?utf-8?B?cFBmRUNuWE9acnNzc2ZOMzgrajZRMy9IcWdvQWRGd2QyUkkvdURteVFmVmpn?=
+ =?utf-8?B?SW1GSzVuTmtGQWgvS3ZVRXdQRXpRSzBMb0lkMVNKTVdBdlcyQUIySWhMVkdY?=
+ =?utf-8?B?NGJTbFNzaytSOWJMVWZVczVUeGl3WmtPdmcrdDY1NWV2U0ZmZ3htcXFERUZ3?=
+ =?utf-8?B?V0d0Z1BLOXkvMmY3Y2pkaFhkNWIwSzBjckQreFJFZmxFQUlONEFvWHNkSmtn?=
+ =?utf-8?B?bHdmMDdwZkp1MVVyTjdydmdLOWhUYnZkWE80NFJWR1lnWWJqNE5BejRkRDRD?=
+ =?utf-8?B?TGU4RXk0L0JveENCLzdtU0VtMTVNY1hHd2haTHY3ZlR5MXlnOVFXZ2hSekR5?=
+ =?utf-8?B?YXZ6UmNmOUtmaHlXbC8zTFlaallCNlFtV25BZG9mSDlkamxXd0NGSjNUMXBr?=
+ =?utf-8?B?emE4NUl3V1hlUFhPMzNONU03WkFaWnhBUEtpbGNuNEkxRFlFN1dsRGRiT0hW?=
+ =?utf-8?B?dnJEYlBBM2F2NDkwejM2bVpZaGptNmhaUUQ3MjBjM2RrbENqRjRDZmJnNzR5?=
+ =?utf-8?B?UDNpYllISHlnTFVLVWlvZHBacitZU1FpMWJYWkZ2WGdRdUw5cGFiK1pFdFQ1?=
+ =?utf-8?B?RUNZTlUwY1dJWnhDMG0xaVhWVmRBR3ZyOFpTVzkxdU5Ca1F1cE1oSDJIdFBT?=
+ =?utf-8?B?MW5BYnZFbGQ4WTFnVEprc3BrZVF1UTQ3RngwaWo1cU85NmxLaHBWM2t3SGZW?=
+ =?utf-8?B?bjQwRnhwdFlpQUNtMTY1UzlCckVRamtEak5KYVJTZThiVDcxeXVRdDBPS2k4?=
+ =?utf-8?B?cjN3cTEzcEo0VHMwS3RBUDIxQmlrWGpVZlhCQlRYNGo4RXhtSFYySXNVREo0?=
+ =?utf-8?B?T3ZFcEdrM01xbUtxaUVzR2JGVDRORWIrUUJhZm4vZnZEY3JacVgyOG1nTm5r?=
+ =?utf-8?B?Mm1YUTg3aC9jSDlzbHJvVVdYN1gwRGg4SzIvK3F0TllrZlpZQ1BUQzlLeDN1?=
+ =?utf-8?B?dzFSTEx6NGYyeHZFWExvVFpKWTdDeTQxekUxZEJHRVBaVVZBRHdEY211aGta?=
+ =?utf-8?B?QVJyL2RVajVKQTVRN2tGUW5haFJITmV3NGIrVWRMRFNibkM1ZlVHcXpNU3Rw?=
+ =?utf-8?B?QnkwSnhsalFreU1nMUNLZ1NxNS9JRExENmpTcDVDMThzaUpzYS83VFQzS202?=
+ =?utf-8?B?WXRDTVZaNVJxVlVxL0U0RVpIZFJUUGc0YjdLeTJBTG9jRHhJQ1ZuSm5vQU8w?=
+ =?utf-8?B?SjcwRTcxbEVNTXJJRGZNc2V3dmpRYlVFdE9VMy9jcXVPSm43Q2VCUFE2NWx5?=
+ =?utf-8?B?aXJXRnZ0bnhjZk9ub3gyVUFxVzNQbWxZS3d6a0h4cThPWHJrUm9BY2ZoNW9h?=
+ =?utf-8?B?VW9ZODV0S2NjRkE1U1BpNXFQK3V3cE9kNVJ2ZkZQdDN2WThzRlI0WHRwN0pE?=
+ =?utf-8?B?NzNZWmtLNEZ2ZXc5dTRyUllkc1lqTDY5L1NOR3NNREo2ZVoyWEltaTBQNmJw?=
+ =?utf-8?B?WU9kSEgzdWhSeWFzQTdDaDU4eUtCSDVlZWV1d2pKaGlZeG1ob2ZrSk54ZGd0?=
+ =?utf-8?B?d0VBaWkrOThCZ3Y3RERhNS85bE5LRDdORWpUU1RKNDhkV2t0TE9lbTVzcmY1?=
+ =?utf-8?Q?P+vuvZ?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(19092799006)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eTJXU0M3d29ZekkxVjFNVGhwQUZONkI0QTlyZDhWRExFZjQwNFdMYTR6YzdU?=
- =?utf-8?B?TXVMN0xpUENreTd3cW1rTGNDeGltampFejJsdmo2NkxMRnJFdmNqaSt6Tkdy?=
- =?utf-8?B?WG4xV3owVHE3T1dxQ3g1aXdaazFDenRVOW5ya0I3NjM5R2gyZVdMQlBWb255?=
- =?utf-8?B?aitGM3lvZXBmK3Bkdk8wcG10UWhZOVdHWG1RTmIxTk95ZkxlQ2J4cjlna0Jm?=
- =?utf-8?B?am9sZktDOWc4eUp6RzNhMXpNRWVJd3V4ZnZJTWFUdlMwVnNMRzVvaUNEZkxs?=
- =?utf-8?B?d2FCNzN2NGNzNnlFNjM2eFlxU3NBMGQrMFhWOSt3MTkyRDQ4SnRJZkRaMFBv?=
- =?utf-8?B?ZjhSOEJZWHhnQXhEb0IweS80K3NnWlpYTCtvZE9tUXE0MzQzdkRzYmtDNWlH?=
- =?utf-8?B?L1hJSTlXRDFhd0RtWmRJdEhGYWJqbE5Zb21LUzArUFBqN05Rays1UWNlWWor?=
- =?utf-8?B?U3lBZGhBdzhrcjcxMU4wKzNQNmdFMWpoazFkUkhHZU1CYVJ1UnFZVEszTXly?=
- =?utf-8?B?OEpKeWxCU21PQzBDRDFZaDk5Wk9FbHk2TENXVi9xeWZacWtVQTExSURmblJn?=
- =?utf-8?B?TWw4YmJZWE5OU1MwVzU3MXhqUlBoSmVBODdhVDBUZDlvQWFnQ0lPZzlidW5u?=
- =?utf-8?B?eUN2K0xFVmFLSFRKTVNoVXJWVlFQNXJnRXJvOEFMS0NuSklGRzdhQm8raXBJ?=
- =?utf-8?B?Yjg5YUJKOXNxY2ZvTHIvNk1MUFFOWkg5eXJ3T212WjNwckwzcWppQ1IxWWxz?=
- =?utf-8?B?TG9TSUMyVHRhTXFTaE12VUU3dnF2Q0ZibXhzeXNyQmtjZEFaSDh4dVZLbE5P?=
- =?utf-8?B?TkZYTk9TZEVVazJ2MVpSVjI1WmVaMXE0c0RrTWFVRjhQWWFMUlRTdmFzTXZY?=
- =?utf-8?B?MFppMUJRTFlzeUdrN3RCNnZUdkJBMnVhVzNNanl1Snp2RHU2TDZETlZsUFZo?=
- =?utf-8?B?aFpnVTV2bEpyNVdaL09tSHQ4ZEZjRlZzcnJHanVuZ0xmcVZpWHFFYXB1Wlpi?=
- =?utf-8?B?YlBPZ29IdlVRV0xnbTl2MkFSWEEzOFh6aE5CR0NSalc3cWhSRHdsbjR5a3pP?=
- =?utf-8?B?UEl3UkdWNklRNWZFM012eGg0UVBHWDB0cG41dXFtVDZ2dW5ZaHoyMnpacW5o?=
- =?utf-8?B?cWhGL2tMcnpHb3E0ZjRld2ZDS04xbEdyV2FHQWlDZUtOYWRqZWZIay9oNG5C?=
- =?utf-8?B?T0MzUFAyYlVzWTNKS21EM080T1lSL2lZYjF6ODlOc2JWSnBZb3NGeitEYmtW?=
- =?utf-8?B?eGZSUzNSRXRFSndFNnBkVTdhU1NibUlNYlFVTktIRXV1OUlXaVQ2ajcvZlpt?=
- =?utf-8?B?djd4RnQ2TEpMd1JqbXArMlh4VHZXdVBnV0RRdTdCSVVndTkvYTU3NDJMQUs2?=
- =?utf-8?B?U0VlbWY3TTE3aWxtTEFNUmFwWUkrVk9Ra2hVM1g0Qlhuc0xocm92NDdlQTBR?=
- =?utf-8?B?eGErcUhWZmY5VTRLZ3BzQ2ZiZEdXczhIMFl4aFB4UFVKc1MzQVpyRGg2NFZR?=
- =?utf-8?B?RFIzd3JDNzA1T1BlQ0RRTS8vckZtRDV0aGRHMnVKaE5KYkR0djVoVU1mWlNT?=
- =?utf-8?B?dElHNlo0dXhkc3RDa2N2NlI1TVNDUTdib0VYZkFLOUlxMUU2enQyRFBHbFZP?=
- =?utf-8?B?dVR3RHlxa2FsVmw5dlY5WU5Eb1dvMlNQY3BDUzd2UDVyWHFIU1Ezbk1IOTY4?=
- =?utf-8?B?eG5WWS9MQTh4TEt0bmJML2p1SDhCMVFlWFFGZlhKMksvUWJoZDFmRzltVWVW?=
- =?utf-8?B?YlNNTGR0dW1XTEpSRG9aaUJiVVZyNE1TeW0wNUx5U2ZVUDg1QTFvUDVWb1BS?=
- =?utf-8?B?L2VnUmttUmkrdU5LMVRCSENMWDZEUDBlY0pNanA3bVZrRHk5RzdJNStXc0JP?=
- =?utf-8?B?SlRFMmpOQXA2ZlJjbzJBVUpRajVsUzhWUWJ4SDhyd3FkOU9mbmtlOEQ3bFQr?=
- =?utf-8?B?ditsQ0xJSXQycDkzRm5yVjhGMVJwUGt3dEtPUkd4c09oSmZjWW5YZkpvZk5n?=
- =?utf-8?B?U21SaWNqUHpHOEpMRUx0UU5JTVFvTG4wdzZleFNDUVRQYU1jTUYzQU1qVFFB?=
- =?utf-8?B?Wm1qNG85QVBiY1RPODZrdHdnbU5FaStMQlAvY0dmWGR5RWZSQXRjV2xvRkg0?=
- =?utf-8?Q?vVqo=3D?=
+	=?utf-8?B?RC9HU1QvaHVDc1A4emNvdWhJOTExU3g5amE5TUJ2N3ppTkYyMkhDcnYxQkQ4?=
+ =?utf-8?B?SnRTYm5jNkJXbGk2d0Z1M3lHeHpYYmJJckl5ZGI5NnNIMVhpeEYwamtvZEpN?=
+ =?utf-8?B?YytCU2RKb3Zyd3dFc1lKd0FVaHVuMVNUTC9EbkFZNTl6Um9BU084ejJNK3RB?=
+ =?utf-8?B?cEd0ZlhmN0MwOEE4eDNaM241eHVwZ0g0SHhxaDV0dzIxNFd3RTNiQW9qUTVY?=
+ =?utf-8?B?UHpYc2l6ZDZ5T2JHQ2w1cHVKWVVGQ3Q0THV5N25IbkR3RHhZVDhkWVJ4Umti?=
+ =?utf-8?B?ODM3eFZoMlJESElRRmkxSGw1VytIL0YvVVpsdVUwVkl3RjducGQ4M3E4blRZ?=
+ =?utf-8?B?NUhUTkl3eDFnNXIwaTRtYlVhbi9vempvZ0o1S1NsZHhabWFmRmN3QS95ZWtH?=
+ =?utf-8?B?c2MrZGlBWnJtOTQ5U0JIazJjNWg4WmJyaGY4WmNQWUdBWWtpVU15S2lZRG0w?=
+ =?utf-8?B?QTZEeXA5di9IM3dmRVVwc0J1TXpPZFYrNFI5MGowRXVUVTJPdys2N2JJNnJs?=
+ =?utf-8?B?WGU3d0V6ZDZhNm4rU0NKRDJJT1Y4MGpQWVllczQ5cldsbFB1dUtHVVhJY1lu?=
+ =?utf-8?B?Z1JQNDdMUmRVOGNMRkFqUUFuai9TMnFUZ3lkR1JzTC96eGt6NTBNRmRMMjZu?=
+ =?utf-8?B?Qi9PQWJBdW1SYWxsNWh0SStSSDhjY3U4eU1iN0Z5d0tOeVpId1Z3VGQrdytj?=
+ =?utf-8?B?RmxZWHBvMmMyeGVWbTU3N3pxUVNuTEVhQXlvRkVOQk1UY1JZb1Z6R0d5MzZD?=
+ =?utf-8?B?WWM4T3BYOUIveGtEd1pPS21NRGNyM3podTNmUGFlYVN4VW03VWlycUpSWXh3?=
+ =?utf-8?B?RjNsZXg3Tzh2eTdkbVdsR2Y3N3l3bEtubWNNY016NXc3dHNHbnU4NTNZQWdY?=
+ =?utf-8?B?YmNuUFNva2FWeUtVQit0UnpXMjh1anYwN3pNUEhKWEVTQ1o4WmRYZGdkRFND?=
+ =?utf-8?B?OEVQdE00NWYyamFYWTNaZGxJckdiZjFHMGVRZlUyMERTTjBrRHBGODhSY2g2?=
+ =?utf-8?B?UTcvNk9GVjlpeVZlSzIzTjV6dzYxT3g1K1d3UUhKSkd1RHU3ZWJ1QnF3T0V1?=
+ =?utf-8?B?bFRTb3ZQWWtyQXh4LzhMajR2RWhwTFBsdTVSbTNZcVlVQjdtYVhscmM0QXZP?=
+ =?utf-8?B?dDdzNEFrTUxTZHNzc3oxenZaMGROaVRxcHcxVkZVNjNRNE5sL3R2eWpFbHM1?=
+ =?utf-8?B?U0dqQ1VYMzVGRnJSVG5lam5uSk1Pd3V3QUV1MUNWKzA4V0d4czVlNERtQkpM?=
+ =?utf-8?B?RkQxQ3Z6akdBR3JtbWQ1RGdXQXdIaExNQVhscCt1UmFmanA3UFJxMklwemk2?=
+ =?utf-8?B?bmdyYSt1Z3JrRG5HWSthTzJKVFBGamZ5eGNTVXA0RnJ2cjhkdTZ3Y1JhUWlS?=
+ =?utf-8?B?RUFTeWFrNEdXVkJjc2I3Wkk2NU5zYnZtT0h6WGtTajNFQVZ4Rkd1OFloYlZy?=
+ =?utf-8?B?WWNIN1pPdEpDRExJT1lWdUFsMWtrR1lYYlNWbXFGcXNRTDQraFNkOWJ4RVlG?=
+ =?utf-8?B?NU8zb0hzeUpMbGxBREJjdGFPZ3B0L2phTm5Qa093MUZGbElzanFQRjc3Zkp1?=
+ =?utf-8?B?TGYxWUNTS052Tm16b0lCT2x5WU40YlMweWZBcXF2dHhLL2s5UDZvWWVGQ2k4?=
+ =?utf-8?B?Nk5DS29KRGFiUWVIUndJekduTHpDQ1FjMXQ0YUZDQ05VN3ZCeGpMRUZNbFRp?=
+ =?utf-8?B?QUxjZnNXTE1QRlpaNlBkQWtXMngvWlZ6ZXl0WDQvVFgxak1SeHQrYklJNzZQ?=
+ =?utf-8?B?dmNKcVNzS3VqY0x5TG5ZRW0vSkhpVE03VE1JSFU1bjk0bTVXZWt6cmZ4Umd5?=
+ =?utf-8?B?Ymd0UjJlTm5Gd1VaYXBjMXJNSkxHckowa0MvV01uMUh6S3JMZmdkWGlKbHFR?=
+ =?utf-8?B?alY2U3REaHZONnF2TGlsR3hETVUxRDRiV0h2N2pycXR3aUNuYUVjMWdLUnhN?=
+ =?utf-8?B?Y0xLY1ZlTXVmYllISUtuWExJTDd5Z1RDN0l4WDY5QmJNVzd4UzM4blI3UVNX?=
+ =?utf-8?B?UzNLOHJBcXMxKzlZSjFRT1JWeFhvTVpoR3NJSWRaUHp4aUN3ZnRsckh6R3h5?=
+ =?utf-8?B?SDB3T3NwdUxUb1Z3cFZCQTlyRXcwdkZhSmNVMzcyL1Yxd3VJZUNSNHh3ZHVw?=
+ =?utf-8?Q?9gR0=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78c1d688-fe5e-4ed1-7b2a-08ddff63ed10
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcd41e99-3cdb-42e8-ff11-08ddff63ef98
 X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 14:24:40.5568
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 14:24:44.7989
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WsQt9bqa377yiQCUvH0MzL4FjyE2fB0IZR6nLo+Zm1B2LkAc7ZOn6teoa2gfrr91rPY6krKGeB5TVK/fDL1LkQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: oDPUEkXJ47jsTd7MPS/hDg6O/MYP3WqK0fS7dPceFfSH2OSElo6RsfwekAfz76YKQaBkjkIkaBrPv7UYWdxN8A==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8607
 
-Add layerscape dwc3 support by using flatten dwc3 core library. Layerscape
-dwc3 need set gsbuscfg0-reqinfo as 0x2222 when dma-coherence set.
+Add SOC special compatible string, remove fallback snps,dwc3 to let flatten
+dwc3-layerscape driver to be probed and enable dma-coherence for usb node
+since commit add layerscape dwc3 support, which set correct gsbustcfg0
+value.
+
+Add iommus property to run at old uboot, which use fixup add iommus by
+check compatible string snsp,dwc3 compatible string.
 
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-chagne in v4
-- remove of_dma_is_coherent() check
-
-chagne in v4
-- rename gsbuscfg0 to gsbuscfg0_reqinfo
-- use flatten core's properties.
-
-change in v3 (skipped)
+change in v3 - v4
+- none
 ---
- drivers/usb/dwc3/dwc3-generic-plat.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 3 ++-
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 8 ++++++--
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 9 ++++++---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 9 ++++++---
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 8 ++++++--
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 8 ++++++--
+ 6 files changed, 32 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index af95a527dcc27a7a14d38dcc887f74a888ed91e6..770fedc16bb80dff95ff12c9506728df5ca4b831 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -29,6 +29,7 @@ static void dwc3_generic_reset_control_assert(void *data)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+index fc3e138077b86cd5e3cf95c3d336cb3c6e1c45ef..ef80bf6a604f475c670e2d626a727e94fcb2a17a 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+@@ -493,10 +493,11 @@ QORIQ_CLK_PLL_DIV(4)>,
+ 		};
  
- static int dwc3_generic_probe(struct platform_device *pdev)
- {
-+	const struct dwc3_properties *properties;
- 	struct dwc3_probe_data probe_data = {};
- 	struct device *dev = &pdev->dev;
- 	struct dwc3_generic *dwc3g;
-@@ -75,7 +76,13 @@ static int dwc3_generic_probe(struct platform_device *pdev)
- 	probe_data.dwc = &dwc3g->dwc;
- 	probe_data.res = res;
- 	probe_data.ignore_clocks_and_resets = true;
--	probe_data.properties = DWC3_DEFAULT_PROPERTIES;
-+
-+	properties = of_device_get_match_data(dev);
-+	if (properties)
-+		probe_data.properties = *properties;
-+	else
-+		probe_data.properties = DWC3_DEFAULT_PROPERTIES;
-+
- 	ret = dwc3_core_probe(&probe_data);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to register DWC3 Core\n");
-@@ -146,8 +153,13 @@ static const struct dev_pm_ops dwc3_generic_dev_pm_ops = {
- 		       dwc3_generic_runtime_idle)
- };
+ 		usb0: usb@2f00000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,ls1012a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x2f00000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
++			dma-coherent;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 7d172d7e5737c4b6e42ee88676c5763fa7415260..e7f9c9319319a69d8c70d1e26446b899c3599f95 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -613,9 +613,11 @@ gpio3: gpio@2320000 {
+ 		};
  
-+static const struct dwc3_properties fsl_ls1028_dwc3 = {
-+	.gsbuscfg0_reqinfo = 0x2222,
-+};
-+
- static const struct of_device_id dwc3_generic_of_match[] = {
- 	{ .compatible = "spacemit,k1-dwc3", },
-+	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dwc3_generic_of_match);
+ 		usb0: usb@3100000 {
+-			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
++			compatible = "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3100000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++			iommus = <&smmu 1>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -623,9 +625,11 @@ usb0: usb@3100000 {
+ 		};
+ 
+ 		usb1: usb@3110000 {
+-			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
++			compatible = "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3110000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
++			iommus = <&smmu 2>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 73315c51703943d9ee5e1aa300c388ff6482423f..50d9b03a284a2aa4e13aa3323c25bbc5fe08f3d0 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -833,10 +833,11 @@ aux_bus: bus {
+ 			dma-ranges = <0x0 0x0 0x0 0x0 0x100 0x00000000>;
+ 
+ 			usb0: usb@2f00000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1043a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x2f00000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				usb3-lpm-capable;
+@@ -845,10 +846,11 @@ usb0: usb@2f00000 {
+ 			};
+ 
+ 			usb1: usb@3000000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1043a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3000000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				usb3-lpm-capable;
+@@ -857,10 +859,11 @@ usb1: usb@3000000 {
+ 			};
+ 
+ 			usb2: usb@3100000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1043a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3100000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				usb3-lpm-capable;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 770d91ef0310d971d044a1f55cc5e2cb738acc47..22173d69713d1bd2abca986e76668ad437dd34e4 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -749,10 +749,11 @@ aux_bus: bus {
+ 			dma-ranges = <0x0 0x0 0x0 0x0 0x100 0x00000000>;
+ 
+ 			usb0: usb@2f00000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1046a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x2f00000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -760,10 +761,11 @@ usb0: usb@2f00000 {
+ 			};
+ 
+ 			usb1: usb@3000000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1046a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3000000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -771,10 +773,11 @@ usb1: usb@3000000 {
+ 			};
+ 
+ 			usb2: usb@3100000 {
+-				compatible = "snps,dwc3";
++				compatible = "fsl,ls1046a-dwc3", "fsl,ls1028a-dwc3";
+ 				reg = <0x0 0x3100000 0x0 0x10000>;
+ 				interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+ 				dr_mode = "host";
++				dma-coherent;
+ 				snps,quirk-frame-length-adjustment = <0x20>;
+ 				snps,dis_rxdet_inp3_quirk;
+ 				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index 9d5726378aa015eff10578bf095908a58b9d9eee..b2f6cd237be046123de9342e2167aa32248a8a16 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -489,10 +489,12 @@ esdhc: mmc@2140000 {
+ 		};
+ 
+ 		usb0: usb@3100000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,ls1088a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3100000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
++			iommus = <&smmu 1>;
++			dma-coherent;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+@@ -500,10 +502,12 @@ usb0: usb@3100000 {
+ 		};
+ 
+ 		usb1: usb@3110000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,ls1088a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3110000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
++			iommus = <&smmu 2>;
++			dma-coherent;
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index c9541403bcd8239a48d4ef79c7c4f9e3b607b556..d899c0355e51dd457a4e7259709cea98a488f557 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -1094,24 +1094,28 @@ ftm_alarm0: rtc@2800000 {
+ 		};
+ 
+ 		usb0: usb@3100000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,lx2160a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3100000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			usb3-lpm-capable;
++			iommus = <&smmu 1>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+ 			status = "disabled";
+ 		};
+ 
+ 		usb1: usb@3110000 {
+-			compatible = "snps,dwc3";
++			compatible = "fsl,lx2160a-dwc3", "fsl,ls1028a-dwc3";
+ 			reg = <0x0 0x3110000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 			dr_mode = "host";
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			usb3-lpm-capable;
++			iommus = <&smmu 2>;
++			dma-coherent;
+ 			snps,dis_rxdet_inp3_quirk;
+ 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+ 			status = "disabled";
 
 -- 
 2.34.1
