@@ -1,278 +1,160 @@
-Return-Path: <linux-kernel+bounces-836474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF66BA9CA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:25:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36037BA9CC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA9E1764DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:25:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 882227A2D7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA4B30BBB8;
-	Mon, 29 Sep 2025 15:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F00330BBA7;
+	Mon, 29 Sep 2025 15:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUBt8klt"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BHmZ0Xcg"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5897B3002C8
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E752D3A94
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759159537; cv=none; b=IUiqjsxg3X+VfwRosaCXBqP8radJGAydG5rXLohRDuQoQn8+lqKb2zHlhRyp7/p6ua/aBqAzSuNYgTpsxrtz6XkYGz3L3/027wW4zs+hpyox/9O6BrcyifgEO4wDrP5ZIun0BgODOdqNsjAz2+JXA6Zvy6QG8w2SNoIWsW1YKp0=
+	t=1759159620; cv=none; b=LhIOnEpTWAYZ8iB8EAqgiuECnc3//p71YgJnJuQF407ykHcpuuySbjSlMYYTGo6hrn9EeEq0lnoq77+rACJ7pIQFhm76k3sMqhxiofWtP0aQqYsGTn7QDOqC2f3ndiziOn5Keh8bneJnawdSZ7+fq8mwf141A3MiwidMKHjPfaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759159537; c=relaxed/simple;
-	bh=WqUBNIieLr+/SDUl7fJ2+wJvwBysLw779QEJCJRdSXI=;
+	s=arc-20240116; t=1759159620; c=relaxed/simple;
+	bh=0VERunjZgrSaVxQvZYE9FtNitlxvBFrHYsth39nMrvk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=noLNiKtP5n5SQN0gQgd8MlRhXLvg9/YE3MgKxFvAPR6GtGw0G4Vp2m8S/dmDGZqjSdbV5/x2OFsCzTOvJyrr0oEtvJ1U+TSELU8jBvBqoVYytWlwhwWWF54lWXhSw8rRm7BDPqb6FDi5TYq9dYAQlCuCULDSI1l2bSpCS2fRYeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUBt8klt; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-636255b92c9so3799555a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:25:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=HY1aq9rwPqGrfSOrhfplqe8eO0bimI10mZ5uV41WP/9uP28uCO6dlKgHk8VLJ93xL48sjp4RzyXk3LZGpJOTGbuPypvJW0eSiE5nHqEo4UvPPTMBJUclQiErErjEpAbPxrfZQN5AAwhuNlmnktNDXyVmUsibckgcqv/crodyE0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BHmZ0Xcg; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-366ce79fbeeso43559601fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:26:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759159534; x=1759764334; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759159615; x=1759764415; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XM7Ve+zCeQD9Us3byXLLiKeLQOT/5uriOByaGQErVyU=;
-        b=NUBt8kltUqZhXyK4hJm8Cjkw+LC9UY2a0uGMWQkc2KXkIszHV3XgMds21ycusLnC0+
-         S+pJ+uxDyLsadhukix2kkLod9udf8v1UYaQj4Gs3dSbMOTtBUtiBhFvfE01Y/dCAzY4i
-         fZKmWpIxxFm8tDlBX3dtvLIRkZ6KlWw5R1tD92g3k3sv6qQtJwvof7bD6z486wc/VjZt
-         W/gUI124PSCoVa1wMzrH6gsetOgQktN+53VCHzGJRaWsoYeEbxv+Gs4Has4jhsNSQxY7
-         tjOVIurqM6YQDVvZBSYkonMI4t6SEd5S/r+Jud09VgwEd51evTV6GoIeuHw8fwKb3mDE
-         bCug==
+        bh=lD/ZRIRPRoD4eeilEpQ/Ax8KbRLZBttE2gusXUBy/7U=;
+        b=BHmZ0XcgOc/zM78FNki4dfgvA4saCKiexxHZqR0yZqfrczLkKG+0JMCPY7wqdUSBaX
+         XLJAHE0+jrfh6+SG/hMvPdgx+rQ5APy6N6hICfu3d8Orc3e+W+S6tockt3Xd8CAqHVIl
+         tGwaBAarErFRA/PBs0SjlGQNjl/lcuvwtAEjVfpX7lq6nZKzGI2HiqJEs8igV++cpwk+
+         jrmWhIWGvcRf96iwoK0M+JzTsW2fPI0j7Gofc6MYq/V6vffg90z5RLzh1gNgIAJ6JDAg
+         AsjtX50orArMXNFQeFivMUWvARYDXA1hh7swhRm9cVhnfpvIY1EOTKSEcnCgnDiCj2n/
+         HFNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759159534; x=1759764334;
+        d=1e100.net; s=20230601; t=1759159615; x=1759764415;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XM7Ve+zCeQD9Us3byXLLiKeLQOT/5uriOByaGQErVyU=;
-        b=g1cXASRAHJ4duewkG5lpEQIjU9nGOmDCWhXoImxJqEcWMvvpZz00eu+xFYwiSOZc05
-         rdaFOaQuomwHGpeSuDkNgI5k5qtcZdd6+Nr80FIB7q5mCRu2cqbTsvZg4eRofUB2oJQs
-         nmbWIr47saGG9B05KU9zjbNb35VatxtK/+VXdExCLbHgfe2WD6NnKz0z5jrXKtLwiWT7
-         a4DKbJ/QW/rVqWlHFCZT82Qqn1/m3US50qy8eRrPqHMQtnxAuaIJCUx+Ep44krQosJ8s
-         rv9cQKm/FGn0jdqauXe3TpbOy8H4e5+c4zFdeIoNU3PwpIziiAyaUhYSV7aHgtj39iFZ
-         UzNA==
-X-Forwarded-Encrypted: i=1; AJvYcCURsg5CyL20jsSuZiyFYeXCgXw+OzyvFphWmDiO6c3aEwBLXbCvJ7MnchosWInOa1f4KzgNVlJUrTo4QO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXSqH/E0RVY4RmrvvV1hTxxXXjBcZuMlinSxfz549L6+TiyRlt
-	C6uJKtNouiWs3DDSPndpgGx84vgYc6PYdaM+JEubtvOPPNQ7Tg57EYJGZtfZP/vuuuwFjH2NeUa
-	320ILb/QKTqeAJgLI8S7HASAbnSn12nI=
-X-Gm-Gg: ASbGnctPyErsd0fYnXvLeAjh3PV/vvtLEJ5ch9ihv45UQFEYKvHCCuxpTNesIrwqhK7
-	NBUnxEspSqhasC7J9f54rxjnUSg/sPAs/VX52HVlGnWCibxg/lcBoBXBxltEZhpOb7XJbLKa8kI
-	1Hk0/bebIzVRw30EDAMWdKO84tXBzZk5pnNBmc/eHZdM2ruNSpr9bh96gb0ll1aIXWcevTluiNr
-	CMimm5z8c85Dz95
-X-Google-Smtp-Source: AGHT+IFwe17UC7MYtlo9fqz6j6lKTKHcT6Cp15AoADwNa8B11f2RIkJdNXpIBJu2cwq7fPZxo+aZhrIt+fOXvufaEJs=
-X-Received: by 2002:a50:ec8d:0:b0:62f:64b0:9cc2 with SMTP id
- 4fb4d7f45d1cf-6349fa18ec3mr13281695a12.16.1759159533363; Mon, 29 Sep 2025
- 08:25:33 -0700 (PDT)
+        bh=lD/ZRIRPRoD4eeilEpQ/Ax8KbRLZBttE2gusXUBy/7U=;
+        b=wpFa1lJRQWYek+Q3xWvK5APiWwxv5zEEyV4exA9OEkuWhhV0Hf+L4AoKrBrbcPrCmQ
+         bBplWfbdFhvkeB2HNK9aC7mXWCnPz3T7dACuY4dinrATCC167ZqlCrt2Cw3efjqHfcLn
+         HdR4U3ImX1wX7+Wl2+kgbq+gUaH8NwXFIMCBH3aZ25lgM8QDa6Pgr7ChO1JfX0w+N4xg
+         ZtHCt3Gi9IHmBDmvcD5fAbSUsE8slS3VO+KUrXdE1si60PF7vrxPa6AGCzoGzDGCuwnP
+         NShfZE0B6R6hHcumcIQbvmsyT7B+k9RD/paFrEwKtf9sJ5sscUe4SDp4vkiT7tFsqim3
+         Uh9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUy4UxqYVldFO2qXJGsAxArWyMjkD7rYf9sc6lqslyKcOWoUKPZq+z3wk6wBm1Ciapnk7cmLGihLt2vthM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC5S7olcpk+FtsD21x4LyTcfmmP2SVX7qgMYvFF3h32T6WK7mV
+	m1aJ8HW5bDXnennGJXg2biRD1IA7jjwXS8QM6gpgPQQEziq8PaQ8IoFKpQKfv0W1Jf2ehfh7Yzs
+	UdGbg4QEf/OLWnCcZNb+KusxpGQimDs8FLUcYEHuyLw==
+X-Gm-Gg: ASbGnctuwrlMRPmHFgcfj8upyJY0m+Rvp0N9xTsUqM8aJuIo/6d+GTqlj+kFqhtmxMY
+	oLiRVE+LpnClIfBWEn6HSKaBw0Q1e2lwMlJ6D8JrZ/oatkBfSqSBRGnNcU2va91FGwBsSJK1iJZ
+	VNMtyoiXeOMWX40f2393o97i8Ny/3lkkQB+5oSWtY3KtOR6iEy+nYNNDy6QMVDVvdiwq0wwXZUi
+	UdCa2weAr51vy+4Iw==
+X-Google-Smtp-Source: AGHT+IEtN2lUKLnGoQ7WbW57ONBR/QKmzEKKycsDkK+DioqKXixXXuBeSvK0yyrJ+ATSRroRyWJm9ggSxHWFJcUI9/Y=
+X-Received: by 2002:a05:651c:25d3:10b0:372:950f:2ae2 with SMTP id
+ 38308e7fff4ca-372950f3057mr14578111fa.5.1759159615153; Mon, 29 Sep 2025
+ 08:26:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926072905.126737-1-linux.amoon@gmail.com>
- <20250926072905.126737-2-linux.amoon@gmail.com> <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
- <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com> <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com>
-In-Reply-To: <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 29 Sep 2025 20:55:15 +0530
-X-Gm-Features: AS18NWCn_NJWEobZTnJPq6GUQ_ZdFFQBFLXaMyvo-IrsDPmU5O_jcKkJFA3qXlk
-Message-ID: <CANAwSgTuX3t2-SNPe4OAzGuDpL5RotxX8t+Zx+gcwFKdj3ZEng@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
- nvidia,tegra-pcie.txt bindings documentation into a YAML schema
-To: Rob Herring <robh@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250929025358.2064-1-vulab@iscas.ac.cn>
+In-Reply-To: <20250929025358.2064-1-vulab@iscas.ac.cn>
+From: David Lechner <dlechner@baylibre.com>
+Date: Mon, 29 Sep 2025 17:26:44 +0200
+X-Gm-Features: AS18NWC2Vrzn89dFO6i3Pc5PcwsDZZtJqDcKNUIw8w9lRMGluo4z28T9Y4iCLNQ
+Message-ID: <CAMknhBFm1HPKv6bPnYALc_=wGBHWB3SKnWmnBZ82Pan9z9TPVw@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: mt6360: Handle error in cleanup path correctly
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob
+It looks like you missed the IIO mailing list in the CC, so this might
+not show up in Jonathan's queue.
 
-On Mon, 29 Sept 2025 at 19:19, Rob Herring <robh@kernel.org> wrote:
+On Mon, Sep 29, 2025 at 4:54=E2=80=AFAM Haotian Zhang <vulab@iscas.ac.cn> w=
+rote:
 >
-> On Mon, Sep 29, 2025 at 2:40=E2=80=AFAM Anand Moon <linux.amoon@gmail.com=
-> wrote:
-> >
-> > Hi Rob,
-> >
-> > Thanks for your review comments
-> >
-> > On Fri, 26 Sept 2025 at 19:26, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amoon@gmail=
-.com> wrote:
-> > > >
-> > > > Convert the legacy text-based binding documentation for
-> > > > nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema, follow=
-ing
-> > >
-> > > s/YAML/DT/
-> > >
-> > Ok,
-> > > > the Devicetree Schema format. This improves validation coverage and=
- enables
-> > > > dtbs_check compliance for Tegra PCIe nodes.
-> > >
-> > > Your subject needs some work too. 'existing' and 'bindings
-> > > documentation' are redundant.
-> > >
-> > Here is the simplified version
-> >
-> > dt-bindings: PCI: Convert the nvidia,tegra-pcie bindings documentation
-> > into a YAML schema
+> The return value of a regmap_raw_write() in the cleanup path was
+> being ignored.
 >
-> Still doesn't fit on one line and you say bindings twice:
+> Fix this by checking the return value and propagating the error.
 >
-> dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
+> Fixes: 1f4877218f7e ("iio: adc: mt6360: Add ADC driver for MT6360")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
+>  drivers/iio/adc/mt6360-adc.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 >
-Ok
-> >
-> > Convert the existing text-based DT bindings documentation for the
-> > NVIDIA Tegra PCIe host controller to a YAML schema format.
+> diff --git a/drivers/iio/adc/mt6360-adc.c b/drivers/iio/adc/mt6360-adc.c
+> index 69b3569c90e5..97c4af8a93fc 100644
+> --- a/drivers/iio/adc/mt6360-adc.c
+> +++ b/drivers/iio/adc/mt6360-adc.c
+> @@ -70,6 +70,7 @@ static int mt6360_adc_read_channel(struct mt6360_adc_da=
+ta *mad, int channel, int
+>         ktime_t predict_end_t, timeout;
+>         unsigned int pre_wait_time;
+>         int ret;
+> +       int cleanup_ret;
 >
-> s/YAML/DT/
+>         mutex_lock(&mad->adc_lock);
 >
-> Lots of things are YAML. Only one thing is DT schema.
-Ok, understood.
->
-> >
-> > > >
-> > > > Cc: Jon Hunter <jonathanh@nvidia.com>
-> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > > ---
-> > > > v1: new patch in this series.
-> > > > ---
-> > > >  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 ++++++++++++++=
-+++
-> > > >  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 --------------=
-----
-> > > >  2 files changed, 651 insertions(+), 670 deletions(-)
-> > > >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,te=
-gra-pcie.yaml
-> > > >  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,te=
-gra20-pcie.txt
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra-pci=
-e.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..dd8cba125b53
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> > > > @@ -0,0 +1,651 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: NVIDIA Tegra PCIe Controller
-> > > > +
-> > > > +maintainers:
-> > > > +  - Thierry Reding <thierry.reding@gmail.com>
-> > > > +  - Jon Hunter <jonathanh@nvidia.com>
-> > > > +
-> > > > +description: |
-> > >
-> > > Don't need '|'.
-> > >
-> > Ok
-> > > > +  PCIe controller found on NVIDIA Tegra SoCs including Tgra20, Teg=
-ra30,
-> > > > +  Tegra124, Tegra210, and Tegra186. Supports multiple root ports a=
-nd
-> > > > +  platform-specific clock, reset, and power supply configurations.
-> > >
-> > > I would suggest not listing every SoC here unless the list is not goi=
-ng to grow.
-> > >
-> > Here is the short format.
-> >   PCIe controller found on NVIDIA Tegra SoCs which supports multiple
-> >   root ports and platform-specific clock, reset, and power supply
-> >   configurations.
-> > Ok
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    oneOf:
-> > >
-> > > Only 1 entry here, don't need 'oneOf'.
-> >
-> > I am observing the following warning if I remove this.
-> >
-> >  make ARCH=3Darm64 -j$(nproc) dt_binding_check
-> > DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/pci/nvidia,tegra-pc=
-ie.yaml
-> >   CHKDT   ./Documentation/devicetree/bindings
-> > /media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devicetree/bi=
-ndings/pci/nvidia,tegra-pcie.yaml:
-> > properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pcie',
-> > 'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210-pcie',
-> > 'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
->
-> Because you made 'compatible' a list rather than a schema/map/dict.
-> IOW, You need to remove the '-' as well.
->
-Ok fixed.
->
-> > > > +  nvidia,num-lanes:
-> > > > +    description: Number of PCIe lanes used
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > >
-> > > The examples show this in child nodes.
-> > yes it patternProperties example I missed this.
-> >
-> > patternProperties:
-> >   "^pci@[0-9a-f]+$":
-> >     type: object
-> >
-> >     properties:
-> >       reg:
-> >         maxItems: 1
-> >
-> >       nvidia,num-lanes:
-> >         description: Number of PCIe lanes used
-> >         $ref: /schemas/types.yaml#/definitions/uint32
-> >         minimum: 1
-> >
-> >     unevaluatedProperties: false
->
-> What about all the other properties in the child nodes? You need a
-> $ref to pci-pci-bridge.yaml as well.
-Thanks for the input.
+> @@ -130,11 +131,15 @@ static int mt6360_adc_read_channel(struct mt6360_ad=
+c_data *mad, int channel, int
+>  out_adc_conv:
+>         /* Only keep ADC enable */
+>         adc_enable =3D cpu_to_be16(MT6360_ADCEN_MASK);
+> -       regmap_raw_write(mad->regmap, MT6360_REG_PMUADCCFG, &adc_enable, =
+sizeof(adc_enable));
+> +       cleanup_ret =3D regmap_raw_write(mad->regmap, MT6360_REG_PMUADCCF=
+G,
+> +                               &adc_enable, sizeof(adc_enable));
+> +       if (ret >=3D 0)
+> +               ret =3D cleanup_ret;
 
-patternProperties:
-  "^pci@[0-9a-f]+$":
-    type: object
-    allOf:
-      - $ref: /schemas/pci/pci-host-bridge.yaml#
-      - properties:
-          reg:
-            maxItems: 1
-          "#address-cells":
-            const: 3
-          "#size-cells":
-            const: 2
-          nvidia,num-lanes:
-            description: Number of PCIe lanes used
-            $ref: /schemas/types.yaml#/definitions/uint32
-            minimum: 1
-        required:
-          - "#address-cells"
-          - "#size-cells"
-          - nvidia,num-lanes
-    unevaluatedProperties: false
+This overwrites the original return error, which is IIO_VAL_INT on
+success or an error code. In either case, changing the return value
+will break things.
 
-> Rob
+In cleanup paths, there really isn't anything we can do with return
+values other than ignore them like we were already doing or log an
+error message.
 
-Thanks
--Anand
+>         mad->last_off_timestamps[channel] =3D ktime_get();
+>         /* Config prefer channel to NO_PREFER */
+>         regmap_update_bits(mad->regmap, MT6360_REG_PMUADCRPT1, MT6360_PRE=
+FERCH_MASK,
+
+The return value here is also being ignored. If we decide that we
+should add error messages, then we should add one here as well.
+
+>                            MT6360_NO_PREFER << MT6360_PREFERCH_SHFT);
+> +
+>  out_adc_lock:
+>         mutex_unlock(&mad->adc_lock);
+>
+> --
+> 2.50.1.windows.1
+>
 
