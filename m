@@ -1,118 +1,164 @@
-Return-Path: <linux-kernel+bounces-836467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EDDBA9C5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:17:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14E2BA9C5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CEC166E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6CD33ACE94
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5F130AAD7;
-	Mon, 29 Sep 2025 15:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A76C309F15;
+	Mon, 29 Sep 2025 15:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mp0ue+1M"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKfdxAX6"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA582BB17
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588A62BB17
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 15:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759159061; cv=none; b=NHjUjhsgRqWCw2LjRYiIco0f6gmoCowSP7SQwfghmlyTLr35/rJ20vWoyS76LPZmWZuiGTX3Fvo4PSO4W1kI9hEtjI43Zb8sUx+gqygemmd1SzQZkYWaHC9gDpyKJhryM5fcaubmfg66zjruCRRWcu2HZz0HwFkgovFk6NE5Qlk=
+	t=1759159070; cv=none; b=qPBGjDkF3CcmAhwDDq0p90hvfonYjUw/5AmojoBaFZGC9RGBPGXEIjBzjmlAAzNZXgMFGaoqz5oXG6zAGKQQwGwSYAOsy2PMXLSP7OXlilVr9I0SO89BaeS4L0Ah1ivBDUBDx+zV4PJUwMSzJj6Q0ThyFGs9o+rDlqYIHHhgQME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759159061; c=relaxed/simple;
-	bh=1iLyMxHlvLqemJX+awTsijKkDTe2O7NspoX88eyf7wY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nzdc7cR95BbCw1DTGp0BeuQvvxiTCl7r/UiQpb4TEE6ufkawQMQPj4ZHfV0jTuzqCponOACr9kLgR9xO2NRVriOmRwtVDXOa+oPsQqAl5Tch0V3iRfu+2/0cLrPFO9attcysdTgzPEtMsWzhRnXLdmxV+QtFgPDP0m1gATpZtBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mp0ue+1M; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1759159070; c=relaxed/simple;
+	bh=JVXLpMncXsK7lii3UJPA6maYlWrK0Wh8RIsE/dtvg5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cO6OaeVDBdlOa24SK07s3ajcA9lEDRC4rZI+kTRqUXYF0M/lPTBxIghf7NAWLTCo74XTfv3cdgR6Q+EPtF/yRMm1NyAxdIa4AofkKqvzWh5+YORdoSUJ4B0K4onZN7mOZgj5YjMhKe9UiEZxYj2Bv+zIb3tNZ8vjQvMRhALFL04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKfdxAX6; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27eda3a38ceso12170315ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:17:40 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-749399349ddso59309897b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:17:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759159059; x=1759763859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1759159067; x=1759763867; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1iLyMxHlvLqemJX+awTsijKkDTe2O7NspoX88eyf7wY=;
-        b=Mp0ue+1Mek1z7NthHslyJt9iESP3VDtVXl/XbGZT6lI4rK0mx/Nw5Th8BW7sIvlpzV
-         aXNA4JKYKQbcHQuItWu7r5PvoJJba1iRBWBWipxjs/rmrfAbNb4cvGYJ2/T72aHyxmDi
-         IEOT76nfKfY0x97sOEk7iXJ7MeD1Ivxg9IKS0rTRQux9iqnM5uls57XQABiek7YLuAX8
-         x50jjLAdSSAPHv/ZUCtO+RHPK3IoKjoe8jjkUj9gmJqMgNgs1zL6tws8YlNIS+hE9N4v
-         kJ0ijBQkotVlRcdtX2QM02ENPRAHDB59qXNOYipQZlUrGADhCC2gHprXnVo2jU5qlxfJ
-         EZ/Q==
+        bh=gvOyryAypxH3+4wG3KZkQ2EISvw8ZEcZIHjxhBYkRgE=;
+        b=nKfdxAX62iSNPu5MJoDvEaEntVnnCN0hHQFlAZVELRXjAtfLMY6TtC54wDSifD21um
+         +o3kcr94U6aIFIa9DeCl9AvlCizlZqPi8yHehvwRZ47786D1YeJcpz8BQzxOUsc+qlNV
+         7eRacwvbdCbfTTHgmZkD4bJo1yTdH8GMZKq5P47pZOXqaxkdfWP/dEEuL4r0BcTXrg4/
+         bgWGO1+6XnGIjCLlMJu92pYQBl3lY737yMQfcyOdlJtzcXgotvia8e08v6/yRcV0PpiK
+         kxFEx68tuQugXrVs5PMiuTevQcR8y8VexGS2RtX2B8huhlKnFx1ngyEqFVgm076Mggrd
+         4rgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759159059; x=1759763859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759159067; x=1759763867;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1iLyMxHlvLqemJX+awTsijKkDTe2O7NspoX88eyf7wY=;
-        b=D+bwAPrUcbb/9hML6VSqBSucSRx6VZsCCvSMBPgpcBGlHvNA5cZSh8INIszUlAI6ve
-         i+goYicv07DM9on+2DASAeFd70f/SPZ0KqhiAsNjIwVbmoaVVaL65v9/Fg9hpHnXZQyi
-         BY0rFrlEebV3hIiiKRsxjTLiCwjkso7xLOsvPouQ4Hu1Azy+Yr1CNOozx2lTuaU6XQ7H
-         b+G4MumeOTgyAKnbjLDkNUL4wlgZwttc1d8xfX0QmTWdsPmBR5rjrbltsFVHH024UbU9
-         eafgbRiXd1nUT9EWUpObZM7pRKzV4Sfzwl1md8Brs4zFt3U5rodmy3Q5XPVLe557k0X5
-         sIwg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0upkHEa40HT+gR/xXSVWvs/8cDzZhiRabvYbPCOgVWdF6QOar81MOnrz7SCuxMOgFeaWz5G2VPGUznqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjsD1wgONuzbZrTMUclD1xf6Xpsaaif/Tq+LmKx6Uk1d3AiDUF
-	DGCTfYTQVmwJuJocrTe/tDYaD79rFlUvMq+7+ur0H1223C3HqTF6bVuDSdcIAdXRh3nY8piHMl4
-	yJ44OFgHLHi6exKpjw2jlzRg/VeKM7Fk=
-X-Gm-Gg: ASbGncsPcbcFfDnjlOjecpfqoAPhIFMtX8xfBe4/arBZShQ0BKW+IUtwa9vVrgQuRNm
-	vf1euBFqdlkgoSEDzDWqoBLJ8jRHe9MrqAvUil9gGCcCuvk8y2UZ5PjGlwMPMS7ltz8oNmBnY/k
-	YE4LNKvnFQXDD8zpCNnJAkVfsrTl+UmTNrQZw3VvPBEOS0UPc9eEGaIX025SpCG/uZMRZ7C8esh
-	0wfbIH1jUXBJhOF3gFhAK9FCPYdTlnqrYth6A8PhfSAiZIERGGa8c1NTC7T2v350rdwRKc/9Jnm
-	eHgw5e077Ihznf+RFUOlE/9gwg==
-X-Google-Smtp-Source: AGHT+IF+JvH4jpihgghfd5nlg8ufLea8+tJ9snOXOMk1JKbPQlxyBxaIt2jz343GE+cDEAtKIOGKVPpUKeLyULsn0zo=
-X-Received: by 2002:a17:903:1386:b0:267:8b4f:df1f with SMTP id
- d9443c01a7336-27ed4f8284dmr68541345ad.1.1759159059465; Mon, 29 Sep 2025
- 08:17:39 -0700 (PDT)
+        bh=gvOyryAypxH3+4wG3KZkQ2EISvw8ZEcZIHjxhBYkRgE=;
+        b=JyFdiOXcw5W6evjug5MBFP+HyMiUFAp8FhuL7g6lsWJziaTHXpJ8VGnKfY3O8PVwWp
+         j82sX4w7A6xvIZRaXeevH+vMdwh8kQjQzWdEx3s5dOsoSpbauHDkdvtIG4f6KOVhvF3t
+         dAibxTEJzT78hJqrywVPc0IS4Z69rQxmYTTmwqf3FU0wtGcoyxY8P/T/yVEm7KBsJ+lD
+         b49jxL18NBx+p2NRAD7hPHr1VDU6OqbTHLFi0rQ3/1WQ2wjKzxrN4fbaWC9srvfG4vJO
+         tvZ9KzSqWfKpg5WgRVLvGKnHobxB7i8xR1Y9KuMRkTLNCGqo383XqUpld0LNmzldarE3
+         2ARw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOHByHVVvP44CJgyTTDLU7EEsBxfRYL1KTJCGvW5owuk9QG5BXEGlNbBU1Nb08cIHiVeP4tkvch5lVKzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK8xDM7blvb+21Se0rQztoXl5DmCS/58cRaa5rOqxUxDJhhRIv
+	ABkE2vx85+l59eif5CfZ3zBNBkM16OT90Vxmoa/+VASi2yY2XUEcX6R1
+X-Gm-Gg: ASbGncvjWaxjvpU8Ujl+2AajCLaMUFQBDcYH8En8khQtffCodCce9yvCh5CWKudGTO3
+	QYBoWFCFJFDQomvnoDrCUNgGlDEC+zkRzvgdgnuzQc+yAf9vV77yKQNA8RxE03PxfRs0fjFdpVn
+	/SCfiuCIY9n0d7kKt/GhmGZvptWDlj/2hZI8gTrKlzfziCrvxNa31Ze+2N1haj/Wo7U5d8pMa2r
+	2CJq5O7ITWxGftocpJlecZQwZ6PdE01IaGmLhE4TcnC+4ViOdyCdlkH1q5DCBA5HC3seyKt4fPF
+	//jf1gfoJTnYDmc7tcWsNujqPCZlawA+gQItGZTUiAPUwpbso/Eif8Ixvnkk7x5oWfBCM0F4PJ5
+	dpByCTNn7G9wmh5idCOdBPhzIo1XoEMcxV8z0y9bMvOuqe/SrntRfpw==
+X-Google-Smtp-Source: AGHT+IG03Xxr9FsAaNhFS/ao7nWzoRTl2e11K0kClHGJkJfFFVQCaVlVRxoehRsBF6M99SMNTqAnpQ==
+X-Received: by 2002:a05:690c:9a07:b0:719:3e4f:60f7 with SMTP id 00721157ae682-76401288ea4mr191557227b3.26.1759159066447;
+        Mon, 29 Sep 2025 08:17:46 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:5f::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-765bd126227sm28968727b3.16.2025.09.29.08.17.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 08:17:45 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev,
+	lkp@intel.com,
+	Chris Mason <clm@fb.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kiryl Shutsemau <kirill@shutemov.name>,
+	"Brendan Jackman" <jackmanb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"Suren Baghdasaryan" <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v2 4/4] mm/page_alloc: Batch page freeing in free_frozen_page_commit
+Date: Mon, 29 Sep 2025 08:17:27 -0700
+Message-ID: <20250929151744.2922386-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <202509281204.3086f707-lkp@intel.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-7-joelagnelf@nvidia.com> <CANiq72k3kE-6KPkKwiDLgfkGHCQj4a2K7h9c4T13WMa5b4BAnQ@mail.gmail.com>
- <DD5D59FH4JTT.2G5WEXF3RBCQJ@nvidia.com>
-In-Reply-To: <DD5D59FH4JTT.2G5WEXF3RBCQJ@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 29 Sep 2025 17:17:27 +0200
-X-Gm-Features: AS18NWCkUheGDFaapzA6FmlukqlhAVxssnWmdmmXWlzMCMUthOlFQRmkWB4hggM
-Message-ID: <CANiq72nTrp0Mt72hJ_5qwZtJYSg_ir10ENcX5nXELC_=5vvpew@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] rust: bitfield: Use 'as' operator for setter type conversion
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	dakr@kernel.org, Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Yury Norov <yury.norov@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 4:45=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.=
-com> wrote:
->
-> A bit radical maybe, but correcness ensues. :)
+On Sun, 28 Sep 2025 13:17:37 +0800 kernel test robot <oliver.sang@intel.com> wrote:
 
-I am all for Ada/Pascal-like ranges and similar ones as long as we can
-make them ergonomic enough with our current Rust and as long as we
-still define newtypes over those when appropriate.
+Hello Kernel Test Robot,
 
-Rust may get support for that eventually too (called pattern types),
-but we may want to do our own thing meanwhile, just like `Alignment`.
+> Hello,
+> 
+> kernel test robot noticed "WARNING:bad_unlock_balance_detected" on:
+> 
+> commit: 7e86100bfb0d65a17f3228a9af4c2a49ac38f057 ("[PATCH v2 4/4] mm/page_alloc: Batch page freeing in free_frozen_page_commit")
+> url: https://github.com/intel-lab-lkp/linux/commits/Joshua-Hahn/mm-page_alloc-vmstat-Simplify-refresh_cpu_vm_stats-change-detection/20250925-044532
+> patch link: https://lore.kernel.org/all/20250924204409.1706524-5-joshua.hahnjy@gmail.com/
+> patch subject: [PATCH v2 4/4] mm/page_alloc: Batch page freeing in free_frozen_page_commit
+> 
+> in testcase: trinity
+> version: 
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	group: group-03
+> 	nr_groups: 5
+> 
+> config: x86_64-randconfig-161-20250927
+> compiler: gcc-14
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202509281204.3086f707-lkp@intel.com
+> 
+> 
+> [  414.880298][ T7549] WARNING: bad unlock balance detected!
+> [  414.881071][ T7549] 6.17.0-rc6-00147-g7e86100bfb0d #1 Not tainted
+> [  414.881924][ T7549] -------------------------------------
+> [  414.882695][ T7549] date/7549 is trying to release lock (&pcp->lock) at:
+> [ 414.883649][ T7549] free_frozen_page_commit+0x425/0x9d0 
+> [  414.884764][ T7549] but there are no more locks to release!
+> [  414.885539][ T7549]
+> [  414.885539][ T7549] other info that might help us debug this:
+> [  414.886704][ T7549] 2 locks held by date/7549:
+> [ 414.887353][ T7549] #0: ffff888104f29940 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap (include/linux/seqlock.h:431 include/linux/mmap_lock.h:88 include/linux/mmap_lock.h:398 mm/mmap.c:1288) 
+> [ 414.888591][ T7549] #1: ffff8883ae40e858 (&pcp->lock){+.+.}-{3:3}, at: free_frozen_page_commit+0x46a/0x9d0 
 
-Cheers,
-Miguel
+So based on this, it seems like I must have overlooked a pretty important
+consideration here. When I unlock the pcp, it allows both the zone and pcp
+lock to be picked up by another task (pcp lock less likely), but it also
+means that this process can be migrated to a different CPU, where it will
+be trying to unlock & acquire a completely different pcp.
+
+For me the most simple solution looks to be migrate_disable() and
+migrate_enable() in the function to ensure that this task is bound to the
+CPU it originally started runing on.
+
+I'm not sure how this will affect performance, but I think in terms of
+desired behavior it does seem like this is the correct way to do it.
+
+Joshua
 
