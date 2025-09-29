@@ -1,81 +1,92 @@
-Return-Path: <linux-kernel+bounces-836205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9474BA8FE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:20:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9B9BA8FF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA0B1C1640
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:20:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74B564E182C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C195A2FFFB3;
-	Mon, 29 Sep 2025 11:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371092FFFBD;
+	Mon, 29 Sep 2025 11:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="t5uYZlPz";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="ceggO/6A"
-Received: from mta-01.yadro.com (mta-01.yadro.com [195.3.219.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2oEOtbS"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB7E2FBDFB;
-	Mon, 29 Sep 2025 11:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.3.219.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD9D2FF67B
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759144807; cv=none; b=eoCIzXCv+nfIh6BxYIg7w9mGCBpblTHON8zbNVe0JlfMzGCQ26pxeuYfwsrNJaAH7Gzok2VJuZ0tHQTeKbitzuCNqCW1JgfwR4tuvnJ5Rygz9T9lcpFhuKfxzA5uiyeuLsypj6fxOneal5gH1VIk4fIaEPpiO8kBAAFs5KbQBds=
+	t=1759145014; cv=none; b=cMGgA55uzn69lDvbVjs9BrmEl2TXZxU7tAxnyQRCL5pjALDqNRkogHgwBbHy/Ie952XVZ9QXWdeQpB03phHrnMKWtdqDIGv40klKYibxz4tCDKyV6/1GNz9pok+/zK3ZsDOp5b3A2uReQntslzEvLlUpyloH9J9xSZvBrTmbx+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759144807; c=relaxed/simple;
-	bh=FThlKf9mPp6z/y8Uoh/3G44IfMfSzTwr6+FTkAYPw3c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OrdWQzHuA4sJFPulMXoK3C4I5RiMvCEddJS4XaFa1DZbidQr0jO34vI6lwKObw5RERFk3onFqiFzNicNGtIZs9YCoJngXLXa6TwJbrHqbPPgbrumFDNkslzkYE/RLay226HNumWd8jX0f/AM3VJELy21GO8xtaaOI6dY4GSSxA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=t5uYZlPz; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=ceggO/6A; arc=none smtp.client-ip=195.3.219.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-Received: from mta-01.yadro.com (localhost [127.0.0.1])
-	by mta-01.yadro.com (Postfix) with ESMTP id D26CB20005;
-	Mon, 29 Sep 2025 14:19:53 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-01.yadro.com D26CB20005
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-02;
-	t=1759144793; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=t5uYZlPz4ICjN+/R1xdwctEZsTZbghoL9Q7+bNNYqbo/iSECAew0Be8M2KyR7LKIt
-	 pnLVHyVcCfZ3PoUiOOo39wEgtP8Q8Gp2amnIkWVglI+hg7p1Z60owmqw/mcmiXToOC
-	 PN06dCNQkXGTEW9Ykf0oobDWTUBKazMqTGEN21Ca5vLHOOuNdCN7wi8bDrpIHxiIg+
-	 6DAEYcikxw3BQupVejjGkftxn5SHC75dVQqJexOa2tahGOqRUNCi2yH5rmUAl3keWP
-	 RNHjlq1aOL9MsgrYYMWBZyvl2Ya+DI6Flxg1xiIN1kGp6kG0QUPxdc6CsxDfBO55b1
-	 Ly2qhL8wC4KtQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1759144793; bh=mfpLLcjjSLHnXsHxBUMYqBg3s2C4zQ/P2NyM/Se6WAo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ceggO/6AAv5UQV+WgF8xzTdYagifQdxIfBihz1VKidrQU/LM5Cve4VtsUiHmm6Mru
-	 LBt+F4eQ7+rXtL0Qd3jCmBZwCqap7oJ83vtNn8Bsz8E/ho1fGrmnz2qJmBP+IHci/Z
-	 CnJYsHdAGVUMagy21AkdGbvy+oGm1mX1SImf08Tc33M0j5iBxF3ClSZ8IGETsvy/SU
-	 6ESBMSSTxoZn1pUN8wSHIcCJlNHx8BTBj0gUOXszu/nibkqiOeOvA47J432LXZz5q9
-	 oDvQ3KOYE9Fb6Ru4Olnl7jXRe/htRGpQriyH8jYLFtgGcFzzSmDxv1E3qzva9YHBox
-	 zZvwhV6ymz06w==
-Received: from RTM-EXCH-01.corp.yadro.com (unknown [10.34.9.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mta-01.yadro.com (Postfix) with ESMTPS;
-	Mon, 29 Sep 2025 14:19:49 +0300 (MSK)
-Received: from T-EXCH-12.corp.yadro.com (10.34.9.214) by
- RTM-EXCH-01.corp.yadro.com (10.34.9.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 29 Sep 2025 14:19:50 +0300
-Received: from NB-591.corp.yadro.com (172.17.34.51) by
- T-EXCH-12.corp.yadro.com (10.34.9.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.12; Mon, 29 Sep 2025 14:19:50 +0300
-From: Dmitry Bogdanov <d.bogdanov@yadro.com>
-To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, "Christoph
- Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Stuart Hayes
-	<stuart.w.hayes@gmail.com>, <linux-nvme@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <linux@yadro.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] nvme-tcp: fix usage of page_frag_cache
-Date: Mon, 29 Sep 2025 14:19:51 +0300
-Message-ID: <20250929111951.6961-1-d.bogdanov@yadro.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1759145014; c=relaxed/simple;
+	bh=o6GH9yM5X/l45RBwJ3B7UFsxj4Ov3IBjhVL8z/0/vWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZD4XKH/O6jRZ3gCbWp5rGQL8psOWEL8wZ2c1AyJApp5axkPwVrlSDIC7V8/O8xZcp7HA+7JdvGZSD17RuePpT2y1q8vRe9F688qWeKlbdVyGY8z1kwzKz1JR4EhLVRaMMVUjlpTwYHe5BMIZaj4L5+QgHC0fIJyZRR+OKPoOHB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2oEOtbS; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f42b54d1b9so4417071f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759145011; x=1759749811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cHIeUtwUMwlpj/aPUYic3SGp0yyW1lvSsod+CzPmLm8=;
+        b=P2oEOtbSaavfn66LK7SWH5vfedPyrqeQC1Gz5X00DD/awXDlc/hGm2rsLhd2kGwMEi
+         /n+W8LEf/8TdtLDTJsv8oAGkbFps1crJ5yHHqatkg+UWzc2rkT6vd/rfLvrePSK5Vwoc
+         VaW7NAN6eNdXjVf6wW6BVBUBdarnslhgnJtLw8clRSm0gjUa7gClYwNv8+xu+Z9CJ8eK
+         lqu9PqIqbPMIEL+suur4S3ICA1qxmXo0ogrTbk9AXp6BJZtUgIWl41rjoW6hxKQaRRsT
+         Ff8v23bI6QGsmQ/NzkbgOooTY5xLz0eA5Ia3PrOsMo/YwxkKuVAllmvUWtrG4BJtywlR
+         Mk3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759145011; x=1759749811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cHIeUtwUMwlpj/aPUYic3SGp0yyW1lvSsod+CzPmLm8=;
+        b=FQJcb9xED/LR3iFkJB9jzftN/JFUQGI+tyUL8Pf49YDTkkhwVqhCGw4jj60kdGBZNO
+         LAAGrGVWFrV2QdiP2PTJ6jkcj1lOsAt3bslDRdz9gOhnIRFj5UP5GmreGNHmkjIkasu9
+         Tx3h4i0LrM3EK5D8NYDmEJlc5PFxq+ys97ejBdwKTgIPLHYAYKquQia2+rRSxr1s2zNv
+         O5M9a75t3P0FgqUYipEu/a4yf6jXpfXWRnAR6pG9BKST8e8igFTFtT+BW0zzWobqkxhF
+         bdNBOX2AELRmTowaZ4UTaAfRQOQlMgZ7+ix6kn3awV7IQvMfMNcCxF2swptSYumgL29t
+         JzSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxdG1Z+Z/BDjaH/u1VcQ1888xW4KrW9hBzoFywuw11OQy58jCEYnVUHqCVnC8kioulW6COBCiJNAstt6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA+SiOlxluMZX9i0/optVQwr7TrGdEgKut3tTnYUqxN4XIYIdy
+	W/o5o3yDB70EvlmPn9ul0R5SSMQU/iHOAgECb+hSiaqkvYruD+JLSZEM
+X-Gm-Gg: ASbGncuaFw5oT/NWCGZKHE/jzv2yLSKjRQpH9Wv6ktD7PmFvaMLAOBYgZEi1WZIeQdT
+	bKTqixrEOZX7NAnL8J5SM2iMseRErNVxt2QmN9lnDEjkUQbHJG357c5shQBOIGAVgu8H6E3MaDJ
+	aD5cmWIxphKx3Eu2vw5e47OF46hgc9VK0j72vJrXuoosSbFwQ2O9onZbDUDiPaQE4EGVDhuaPO5
+	YJWw/OakIA33fg4cr3iyxPJqRbbJQZBDDIE3beEDTWehLhyOYvbr4vjbk/1MhJNinnBrUTRWmzO
+	GkbV3v4XkyHUrekgDTeksf2wahxP7eLOsj4T4feF4lSgoc1SlaihT+u8BH4xb4tzwScak+woQ6C
+	puzKH9dwCGQnwQ8aVYyLvlZExsD0qxl5jfPoPYP4htZnuPvL9El7SH2JGgO9+Xksg6A==
+X-Google-Smtp-Source: AGHT+IF7t6Y5sr/tULnaPZaeuk2hwGoBeQF4vR7bTyautiXiyjXn+xefZSwap9LxXcjToXlLJXaF7A==
+X-Received: by 2002:a5d:588d:0:b0:3e9:d9bd:5043 with SMTP id ffacd0b85a97d-40e3ab8747emr14437342f8f.0.1759145010463;
+        Mon, 29 Sep 2025 04:23:30 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:6614:1d02:ab7a:3f9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-41f00aebdb7sm5143046f8f.57.2025.09.29.04.23.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 04:23:29 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
+Date: Mon, 29 Sep 2025 12:23:24 +0100
+Message-ID: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,103 +94,213 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTM-EXCH-04.corp.yadro.com (10.34.9.204) To
- T-EXCH-12.corp.yadro.com (10.34.9.214)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/29 07:44:00 #27864461
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-KATA-Status: Not Scanned
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
 
-nvme uses page_frag_cache to preallocate PDU for each preallocated request
-of block device. Block devices are created in parallel threads,
-consequently page_frag_cache is used in not thread-safe manner.
-That leads to incorrect refcounting of backstore pages and premature free.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-That can be catched by !sendpage_ok inside network stack:
+Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
+CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
+Registers (MRCR) where both reset and deassert actions are done via
+read-modify-write (RMW) to the same register.
 
-WARNING: CPU: 7 PID: 467 at ../net/core/skbuff.c:6931 skb_splice_from_iter+0xfa/0x310.
-	tcp_sendmsg_locked+0x782/0xce0
-	tcp_sendmsg+0x27/0x40
-	sock_sendmsg+0x8b/0xa0
-	nvme_tcp_try_send_cmd_pdu+0x149/0x2a0
-Then random panic may occur.
+Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
+it to reset_regs. For this SoC, the number of resets is based on the
+number of MRCR registers rather than the number of module clocks. Also
+add cpg_mrcr_reset_ops to implement reset, assert, and deassert using RMW
+while holding the spinlock. This follows the RZ/T2H requirements, where
+processing after releasing a module reset must be secured by performing
+seven dummy reads of the same register, and where a module that is reset
+and released again must ensure the target bit in the Module Reset Control
+Register is set to 1.
 
-Fix that by serializing the usage of page_frag_cache.
+Update the reset controller registration to select cpg_mrcr_reset_ops for
+RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
 
-Cc: stable@vger.kernel.org # 6.12
-Fixes: 4e893ca81170 ("nvme_core: scan namespaces asynchronously")
-Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/nvme/host/tcp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v3->v4:
+- Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clarity.
+- Updated the parameters in cpg_mrcr_set_reset_state().
 
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 1413788ca7d52..823e07759e0d3 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -145,6 +145,7 @@ struct nvme_tcp_queue {
+v2->v3:
+- Simplifed the code by adding a common function cpg_mrcr_set_bit() to handle
+  set/clear of bits with options for verify and dummy reads.
+- Added a macro for the number of dummy reads required.
+
+v1->v2:
+- Added cpg_mrcr_reset_ops for RZ/T2H specific handling
+- Updated commit message
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 111 ++++++++++++++++++++++++-
+ 1 file changed, 107 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index de1cf7ba45b7..fcb2c3c22f87 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -40,6 +40,8 @@
+ #define WARN_DEBUG(x)	do { } while (0)
+ #endif
  
- 	struct mutex		queue_lock;
- 	struct mutex		send_mutex;
-+	struct mutex		pf_cache_lock;
- 	struct llist_head	req_list;
- 	struct list_head	send_list;
++#define RZT2H_RESET_REG_READ_COUNT	7
++
+ /*
+  * Module Standby and Software Reset register offets.
+  *
+@@ -137,6 +139,22 @@ static const u16 srcr_for_gen4[] = {
+ 	0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
+ };
  
-@@ -556,9 +557,11 @@ static int nvme_tcp_init_request(struct blk_mq_tag_set *set,
- 	struct nvme_tcp_queue *queue = &ctrl->queues[queue_idx];
- 	u8 hdgst = nvme_tcp_hdgst_len(queue);
- 
-+	mutex_lock(&queue->pf_cache_lock);
- 	req->pdu = page_frag_alloc(&queue->pf_cache,
- 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
- 		GFP_KERNEL | __GFP_ZERO);
-+	mutex_unlock(&queue->pf_cache_lock);
- 	if (!req->pdu)
- 		return -ENOMEM;
- 
-@@ -1420,9 +1423,11 @@ static int nvme_tcp_alloc_async_req(struct nvme_tcp_ctrl *ctrl)
- 	struct nvme_tcp_request *async = &ctrl->async_req;
- 	u8 hdgst = nvme_tcp_hdgst_len(queue);
- 
-+	mutex_lock(&queue->pf_cache_lock);
- 	async->pdu = page_frag_alloc(&queue->pf_cache,
- 		sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
- 		GFP_KERNEL | __GFP_ZERO);
-+	mutex_unlock(&queue->pf_cache_lock);
- 	if (!async->pdu)
- 		return -ENOMEM;
- 
-@@ -1450,6 +1455,7 @@ static void nvme_tcp_free_queue(struct nvme_ctrl *nctrl, int qid)
- 	kfree(queue->pdu);
- 	mutex_destroy(&queue->send_mutex);
- 	mutex_destroy(&queue->queue_lock);
-+	mutex_destroy(&queue->pf_cache_lock);
++static const u16 mrcr_for_rzt2h[] = {
++	0x240,	/* MRCTLA */
++	0x244,	/* Reserved */
++	0x248,	/* Reserved */
++	0x24C,	/* Reserved */
++	0x250,	/* MRCTLE */
++	0x254,	/* Reserved */
++	0x258,	/* Reserved */
++	0x25C,	/* Reserved */
++	0x260,	/* MRCTLI */
++	0x264,	/* Reserved */
++	0x268,	/* Reserved */
++	0x26C,	/* Reserved */
++	0x270,	/* MRCTLM */
++};
++
+ /*
+  * Software Reset Clearing Register offsets
+  */
+@@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
+ 	return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
  }
  
- static int nvme_tcp_init_connection(struct nvme_tcp_queue *queue)
-@@ -1772,6 +1778,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
- 	INIT_LIST_HEAD(&queue->send_list);
- 	mutex_init(&queue->send_mutex);
- 	INIT_WORK(&queue->io_work, nvme_tcp_io_work);
-+	mutex_init(&queue->pf_cache_lock);
++static int cpg_mrcr_set_reset_state(struct reset_controller_dev *rcdev,
++				    unsigned long id, bool set)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int reg = id / 32;
++	unsigned int bit = id % 32;
++	u32 bitmask = BIT(bit);
++	void __iomem *reg_addr;
++	unsigned long flags;
++	unsigned int i;
++	u32 val;
++
++	dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deassert", reg, bit);
++
++	spin_lock_irqsave(&priv->pub.rmw_lock, flags);
++
++	reg_addr = priv->pub.base0 + priv->reset_regs[reg];
++	/* Read current value and modify */
++	val = readl(reg_addr);
++	if (set)
++		val |= bitmask;
++	else
++		val &= ~bitmask;
++	writel(val, reg_addr);
++
++	/*
++	 * For secure processing after release from a module reset, dummy read
++	 * the same register at least seven times.
++	 */
++	for (i = 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
++		readl(reg_addr);
++
++	/* Verify the operation */
++	val = readl(reg_addr);
++	if ((set && !(bitmask & val)) || (!set && (bitmask & val))) {
++		dev_err(priv->dev, "Reset register %u%02u operation failed\n", reg, bit);
++		spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
++		return -EIO;
++	}
++
++	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
++
++	return 0;
++}
++
++static int cpg_mrcr_reset(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	int ret;
++
++	ret = cpg_mrcr_set_reset_state(rcdev, id, true);
++	if (ret)
++		return ret;
++
++	return cpg_mrcr_set_reset_state(rcdev, id, false);
++}
++
++static int cpg_mrcr_assert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return cpg_mrcr_set_reset_state(rcdev, id, true);
++}
++
++static int cpg_mrcr_deassert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return cpg_mrcr_set_reset_state(rcdev, id, false);
++}
++
+ static const struct reset_control_ops cpg_mssr_reset_ops = {
+ 	.reset = cpg_mssr_reset,
+ 	.assert = cpg_mssr_assert,
+@@ -743,6 +827,13 @@ static const struct reset_control_ops cpg_mssr_reset_ops = {
+ 	.status = cpg_mssr_status,
+ };
  
- 	if (qid > 0)
- 		queue->cmnd_capsule_len = nctrl->ioccsz * 16;
-@@ -1903,6 +1910,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
- err_destroy_mutex:
- 	mutex_destroy(&queue->send_mutex);
- 	mutex_destroy(&queue->queue_lock);
-+	mutex_destroy(&queue->pf_cache_lock);
- 	return ret;
++static const struct reset_control_ops cpg_mrcr_reset_ops = {
++	.reset = cpg_mrcr_reset,
++	.assert = cpg_mrcr_assert,
++	.deassert = cpg_mrcr_deassert,
++	.status = cpg_mssr_status,
++};
++
+ static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
+ 				const struct of_phandle_args *reset_spec)
+ {
+@@ -760,11 +851,23 @@ static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
+ 
+ static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+ {
+-	priv->rcdev.ops = &cpg_mssr_reset_ops;
++	/*
++	 * RZ/T2H (and family) has the Module Reset Control Registers
++	 * which allows control resets of certain modules.
++	 * The number of resets is not equal to the number of module clocks.
++	 */
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
++		priv->rcdev.ops = &cpg_mrcr_reset_ops;
++		priv->rcdev.nr_resets = ARRAY_SIZE(mrcr_for_rzt2h) * 32;
++	} else {
++		priv->rcdev.ops = &cpg_mssr_reset_ops;
++		priv->rcdev.nr_resets = priv->num_mod_clks;
++	}
++
+ 	priv->rcdev.of_node = priv->dev->of_node;
+ 	priv->rcdev.of_reset_n_cells = 1;
+ 	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
+-	priv->rcdev.nr_resets = priv->num_mod_clks;
++
+ 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
  }
  
+@@ -1169,6 +1272,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 		priv->control_regs = stbcr;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
+ 		priv->control_regs = mstpcr_for_rzt2h;
++		priv->reset_regs = mrcr_for_rzt2h;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4) {
+ 		priv->status_regs = mstpsr_for_gen4;
+ 		priv->control_regs = mstpcr_for_gen4;
+@@ -1265,8 +1369,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 		goto reserve_exit;
+ 
+ 	/* Reset Controller not supported for Standby Control SoCs */
+-	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
+-	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
+ 		goto reserve_exit;
+ 
+ 	error = cpg_mssr_reset_controller_register(priv);
 -- 
-2.25.1
+2.51.0
 
 
