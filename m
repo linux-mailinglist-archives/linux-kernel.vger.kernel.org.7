@@ -1,187 +1,260 @@
-Return-Path: <linux-kernel+bounces-836268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB251BA9264
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:07:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDEBBA927E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 310F87A5A82
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:06:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A34E64E19AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80C1304BD4;
-	Mon, 29 Sep 2025 12:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087A630505F;
+	Mon, 29 Sep 2025 12:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WQlq0GRQ"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012029.outbound.protection.outlook.com [52.101.53.29])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XeGHCI2Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F68E2522B6;
-	Mon, 29 Sep 2025 12:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759147660; cv=fail; b=B0sdG4b2z31gZNN05g27sDbF+5CkhNqimX4+YF6OGTbDcRVyK3npR9XtFy3IW0eDj4q5tNoemNgWm4sQNvrKTjJ1PTXQQwfC1mJYRrVSxSrmw2KPsR1F+tvQQBYAsfgc129W24m8LfgvhCgucRu+V1Juft+F/I2ct6W0ZrEqG8Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759147660; c=relaxed/simple;
-	bh=rz5i0G2w6hisaRorJC09cE5WPxqBrHe2rfm3FEKYRv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qhTgqnjzYmVia6Q7ysV3uV8yQhfhe+xUAfDw9Fdqvexx/DJ0zEQEZRK85bUZgMimh3piD/yQuDtfk+tIWqgIsYd9zpmq6EJpwle5wvMAYOVCOf95iu25KFkswWxG64jWmuTysDDw11874gtfrcltMJj+A8FDfOhlh/hBr+ZMQsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WQlq0GRQ; arc=fail smtp.client-ip=52.101.53.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=neBelkxQjlzpYCt6Y2dlXM4h32yWYTX8ARlOlxXZtAj2J80nF4eEzMq9e89YRmEkPhBeusH8z2ZhfN8r3ICPMPwiMIc9tAhAFnI+7JNEeGMc/Xv174B4Qakt4/GJ9p2tQWeDwUkWV4JZjl3tE2mvjlJQDDyWPDjFQsFQfQDsE/v+LBsmoPh8I388Uo2nHw7o/KhlP4q24qyYV4envLTsnQLTGVqgP3Gz6vUTBhVN/0nw6xnder0YiwtfVWT+py97KfY7WhgsQzRoRjriW4+Z6xGQKUK0HpmPesq3fM6RCRUFyQ7oBbz1yYfA5qTeTxmYl5YSBdsFZwAuNRhUW7o8rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z0aGcMyEL18qrGGjnKjGvRfwjj/lbxyhN/yOiOTfVIU=;
- b=IPsZarSzCZ2UZ/RW+XeufLP/Q4zFk0A/j4507dUEeguvX6I7gmCEgQq/v4RWImLmIZM5Uvci0nXHkF2ovXs9j4RQto0wGiZBE0FcO54AfTxS4UhafeR+qlicEogjUYp4pSahYgGVakQW1r0KnKsZGT5IJ7HQRr6Qj/Kriiw9YRNDQ1Lk1E9i85qm8BRt1hxhGf0UoO90VzIy6yqwzwJZb6utxxJp702OdWNODemNCzhw0famc1JmpVVYkoM19/YQXdiuHnlinFbley+S0vMGeCIX2TjOFFCGMnaDhxIei9QPffQr/3oC+jguCKqR4Ac2dOstDdl9wvvyxyYJARVgyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z0aGcMyEL18qrGGjnKjGvRfwjj/lbxyhN/yOiOTfVIU=;
- b=WQlq0GRQzLm62Grx44JG0R+XX+dserzj46T+Rp6YYzBiX96QjJ33Muv8B7c/B8jTe4kiKv5NG95Wuda4uoPrGXu8La9XS3kzEPXUflZZCVP8velylwEST0iy05rVKi22khGAc5ZLXurAHdbtcOW/bJSWiDXIwfd5iVKQ18OoLt5aBJ1RgUfYU41w+20MBwgWt2BfYlq9NV7s4+OH0cFmJU8AiDeo6gwAv1DnaajX7jxuMSGGKu3E4kKpvg+uzsNvMA8+jBpyBinrul4XSPmVLDIV2B8L6Rc2hPu2C4Nh/BBlMriA7XbUsnC9lmRbc9nLGvfBck/dzYNQs6jM2P0gZg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by CY8PR12MB8216.namprd12.prod.outlook.com (2603:10b6:930:78::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
- 2025 12:07:36 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.014; Mon, 29 Sep 2025
- 12:07:36 +0000
-Date: Mon, 29 Sep 2025 09:07:34 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: iommu@lists.linux.dev, Linux Kernel <linux-kernel@vger.kernel.org>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] iommu: __iommu_attach_group: check for non-NULL
- blocking_domain
-Message-ID: <20250929120734.GG2617119@nvidia.com>
-References: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
-X-ClientProxiedBy: YT3PR01CA0129.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:83::17) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF4A2FCBF9
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759147707; cv=none; b=g6B5NZIuzpKuF8UWbBMZWxnKUJN8LankFCTPH+zAzu5dQQpHFZtseFL4AnBMe5cdx4qR70SWUIirK/UN6eQqNc49cvTxKjPZRN7DD9H1Ay0KuR9+mzs+Jvvf7q7YIFTI2OSxYZMCTJQE+LXAoCQVibwpftgnawsKo+ro9MV5IJs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759147707; c=relaxed/simple;
+	bh=y/O/ggdIcQGRLvHgZ95tApUPVlN69+CY/pYv6rR8ctk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t7k3FB+OlYF0yYt/kV4dXWabw6eMs1Lef2rXOAQPB1a3P6mhWlaaC8huvpcHxcO6tG897dVQXmdGxRDENQjzy0aHox8z0QRHxc4tIVOHonEwrjQokuuwLMEtgG7Mog4Eu3fM9MGR2/Ot+b7XDXWpX96T9snMJOJ3oCftQSmCkoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XeGHCI2Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759147704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WiyXLvaLe86C4CnNbDWkghciau0ml4CvMCknlnsFgLs=;
+	b=XeGHCI2Q0R02wnJAIZ5+hV3txj+LpfG+oCgaaFBU/rS9Up/9ji1jQR+5avZdljxqhc3Qox
+	1mBuf/gYG90B2H8Rd4xjWWepGW4kfz6Ubg2lFW2dtXtqZFgIWPXXpNPGSxfIptAvii6USj
+	Ps4BBcg7h0LcJvzQWv/mpcRmR7/LtG0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-575-XnFwaRhDNOi8S4uQGfmdlg-1; Mon, 29 Sep 2025 08:08:22 -0400
+X-MC-Unique: XnFwaRhDNOi8S4uQGfmdlg-1
+X-Mimecast-MFC-AGG-ID: XnFwaRhDNOi8S4uQGfmdlg_1759147701
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e35baddc1so29018055e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:08:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759147701; x=1759752501;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WiyXLvaLe86C4CnNbDWkghciau0ml4CvMCknlnsFgLs=;
+        b=Kfp5Qq1iSV7VHqoK8G3oct2CFh2caZVd9y+m1DCCiVvDsjCv3cFOcT/9YRqHp5dcQs
+         qn08Y/CyFHyEbxvzxqHdjVxFQyJG+PU9mS/DT36zTqD11ozDN3JuN3pjC1QdzmKnSz0Y
+         dN8GeJSfFsmRhDAM6PEWQClDOnFnbNNjR+CwuAjFNy/EVNv9zULqLLu0sRuK3sB0qs+H
+         Jx3iurkAsBJvdbnpB5Z9Uh2h9HOgSYP06xJXPUb7R10rUJ193bI3NvJevFuPHdNGuSTK
+         IpM9JwIVWWsplOoTaCkHqPDHCv3UIIIiF8k0dJQxrYzuPUNuy/sj4CJn0Gbg+Te+R8RL
+         mV6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVKkGzkzgN6+JcdnigmQAeMyRSSWfJq5Y/0irsqSaMcAuATdCWrW73/WM379+PyjIlr1onHQ2cnaqKy9iM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1Bt+aW2EmeKmtoZ5ZKnvf9MHpFEUwVDV6J4XQ44IfsPv4vLen
+	q8Le2KpEnfsvvoQ7njja+DcMOHiO5fKb6tgrjxfPtgwDtMQRXDorhHVznSLrc51MLlFzR13ZoHZ
+	utvktZ8EmqFZ9CIdJK9FVV4ORxlwdm2wc+xg/OzWYiOyEGBeVSGIehbUbNeon6erIZQ==
+X-Gm-Gg: ASbGncs/Z3j4E+nxUe9E3SgnUiqt94AD3b3yYs5UnS7VhMf1dLydn4SNDhM7mF3s1VD
+	k/VDBpYPLAVL6BsBRwgp8PdO/fPnBOK37XA41sb4V+h/PAAbE8l/CLlCLuKOb34I8L3BX566/4q
+	d5wKubVUgVSklGkgC6rXUpxGZyi5VoCtnToZBw5lOIsZ4zr3Lb9nxIkE+FSaCF6FEggbRlh8zRG
+	5iPtL3CxtLTYdS7lOCTXZrk0ddta0StTzfmNkOngv0BCIC9En6z8hK+GTlDDF5eMtp6X0lLEp4o
+	+4fr4lvf5woytXQxXlCcrvBN2nM1EBxqU8AEPrb82/3nSeUPLLVbRncfb1sWN35CzgogKoD7G+8
+	vbcvdE8KrTPt/P4eq4tK0Wd6wE0razVNIxepKD8IR135K/T+8eNqwX3DtyKT1f9wqwKwD
+X-Received: by 2002:a05:600c:8b05:b0:46e:3e82:6551 with SMTP id 5b1f17b1804b1-46e3e826872mr95979895e9.2.1759147700739;
+        Mon, 29 Sep 2025 05:08:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG33fiIdiXh2Apbgrxvp2qHDqZqgyu02SfE3Pyi3i8dLLAoQOztr9pyWiMkM+wl4qduG0BzsA==
+X-Received: by 2002:a05:600c:8b05:b0:46e:3e82:6551 with SMTP id 5b1f17b1804b1-46e3e826872mr95979585e9.2.1759147700309;
+        Mon, 29 Sep 2025 05:08:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f39:1500:c90f:7794:3c33:4164? (p200300d82f391500c90f77943c334164.dip0.t-ipconnect.de. [2003:d8:2f39:1500:c90f:7794:3c33:4164])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e56f53596sm10484755e9.7.2025.09.29.05.08.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 05:08:19 -0700 (PDT)
+Message-ID: <69b463e5-9854-496d-b461-4bf65e82bc0a@redhat.com>
+Date: Mon, 29 Sep 2025 14:08:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CY8PR12MB8216:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae8dd3a2-a184-445d-4f44-08ddff50c748
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bt2v24l+TJxDoLb1MVacaZ0t9gRS0FqshVw8WTLg1Hb580o8TQqHXPCjiGm5?=
- =?us-ascii?Q?HcHRcDGJMcEMp7sgQWRFQ6zLNvd5H8XXDk002R3AsSMoY2VOfyzn5sB0VLnX?=
- =?us-ascii?Q?sHFlQGZHHk11nSLQn+U5cqaXEoP+PMpalq+1XvKIDW75yj4ijN/SRq8JYWMW?=
- =?us-ascii?Q?YEJwKudjz+vghlmHAM4JdYaYSM8Rp6G4Iu/P3d/RJ2Qt7fPjAF7XNWnqwzn8?=
- =?us-ascii?Q?btaE7MELscwUVuS2DTb+go0l1BhULXKzxmhC4DKI5fieeZ8moKKqF0eNGHgH?=
- =?us-ascii?Q?caW2+4U+ClsEO35KF4mRna6vk4QQAuAJFBsjLqb2fsWymdqmJecEj75vNq22?=
- =?us-ascii?Q?xeRXoxEYM8+X6a6qEyZkj3KboswLLN2Jq/ndVrPCDsPmFkOP64GQakdTZtrJ?=
- =?us-ascii?Q?XSSauV2SspCpd91y+t7GcODjsxMBS3jaayvMO4w5MKHtRB94o7Cu8J1FxQBl?=
- =?us-ascii?Q?YyyaQqLcBFpHbI8PMN4hbdJtJEMkuQV65p3AQzsOquGHeeqUqez5MTnMMJbk?=
- =?us-ascii?Q?hDRnRh6ITnUIJiNAY18GZak7Uup3QImlhsxQpQ3kEXWwMK+jTbABLef/qGOP?=
- =?us-ascii?Q?xpEhmuBUxL6kq4mtBfD/xVqvXR9Ntjkac0ZiGLzvVrTVA+Ayrnhwf7HWkFdJ?=
- =?us-ascii?Q?V3TENRzezI4F3OxqerMzzn2DpcgbtS+6ptA6+zSIZfU/WDAgceKhKj18Rdjf?=
- =?us-ascii?Q?nzUfhhR+f+nAkZqcF6QGTKczCw5EgoG1xBmLs5ImqhPs/uFU5d11jXUXXt7G?=
- =?us-ascii?Q?n4AaHi6cF8kB+8BztEs5qkpDBE4NHOMchhtv9u8q/ytY4r0iQsIAmzdYArcB?=
- =?us-ascii?Q?yWKwieYw/RtkqJkE6US5k4oj/VyCDcYxlCGc2XMv/66DKylYzRY3y9QGQ0ki?=
- =?us-ascii?Q?ThQyZsl+E4bQts5Mu00xXo1/wqyDNRTCgpeYYqrkLovT4f5LMcP5Wc3qTEAV?=
- =?us-ascii?Q?+nZb6f2fFHONMsqWmutPEWdf/SyC2khDSggn0CbRtKZlAvG3hlkn6JDqeBVc?=
- =?us-ascii?Q?ar4HZbU/D6Ty4xyo02fKE1MLLKbl+EVw3nyLvZijvzPMbkKWK6TRsgokmOoO?=
- =?us-ascii?Q?choUYsDM6qrQhnJZZmvsZApy4RxWN1xmrJlteGZbKZHfdRVYa3XcbYG6XIM5?=
- =?us-ascii?Q?f0ZA8NlLJwUtbitvkEGJNBHAG0pV8SGPMrxKx+HdJDEwZrQEXaQvmwNOgzzW?=
- =?us-ascii?Q?gFETxhrmuKBe5OVz4qVBJgbK7UV+qDDG9WI9o6TBxThBU+FVp5jJWP3qwdKW?=
- =?us-ascii?Q?9sZcZ69bhgajjHPeRAJ3p4S6dMHx/3PFVUglCoaV5GOqx9TvZ9diEOCToNg8?=
- =?us-ascii?Q?Mww88Tw5EOS6D/93WUi0OsNYPYZJp1MY/nHd5o3dcxp5xCUhyx0pPQ4P6yuo?=
- =?us-ascii?Q?jSzroqc9n6X/0C2Ww4Neni9A7cl2xAov1l5nV8fevnmoOTospSQDvmqoee1t?=
- =?us-ascii?Q?3HwBOlupZHehsahvmwo/uhQ3DqFXzBlr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Jp0sZzpaDVazSN3q21Qu/kTl7eLevio7DpxTTwkD07sNW54hbPAf0Qq7DEq2?=
- =?us-ascii?Q?euTyjv0WaL486E+MwKMj26qPe7Z6dC6s288JVBedPQ6p3IPG8X1pm8lRFREo?=
- =?us-ascii?Q?+OvwWWbiVEerdwu02K6yHJpHctecCj36KPx00KW2UDXGc/HrMTU/QcKhKVRD?=
- =?us-ascii?Q?HLz+wUqa+X/xIvILinyv7l2exsPGNn+SHjhbiGG27Xmt3zUGiqPqZEv+SMO/?=
- =?us-ascii?Q?YWwEA6c0MvHdiYsMEtp1CsYIsulC/bF2UWG19tM0zqlQ5/kvB3o6w69TREKe?=
- =?us-ascii?Q?dRaRUdqB8rpk/TaUTh2jggJlUFnYzOIW1LcfqfQ9J8zcxrn3JgZCuOLYeOkY?=
- =?us-ascii?Q?9gJ4RVBaiM61L1j8YYgryzGPQrofkMXmud9gKo7DS6yqXBl8X+3acQ/XhPpg?=
- =?us-ascii?Q?O1Y/F/4MsdzHKOFtnEBgbzQsR/vzsd/QAyggCjvGDXng0h73KEMdIJfp85Ul?=
- =?us-ascii?Q?1K5eEky7Eey6BD8DY3MZVvafXspQyWbXtHwGOZqjD4+4bLClXltzWjsWhNRd?=
- =?us-ascii?Q?1lVMaoUPU7sVumryeMpiDB0q2KTSHfe6kjV685bshBbxvcdh7+pMg51jGQ6i?=
- =?us-ascii?Q?GpJAvH0trUwznwwnUJC51JwdE7O+LMM+RskXnZlhYGVM40QJKZUmgmuxCmcT?=
- =?us-ascii?Q?GsAVdrEk4jWV/0AjU53mdLUKX2xJADQHWjWq7cp3HEo72DIZ2ffN+IBQYnDT?=
- =?us-ascii?Q?7fREZVnjZe/QwupDaSZFq1O/K0Rs+URBzkxSKt22Uo6NFhNx9L4j3TbgNuT9?=
- =?us-ascii?Q?Q/QlXOQMVbFKyF/a6xA454cIs3aN/jz8qPxIZTvJHzGbEwyrD0xMnmOcCl4p?=
- =?us-ascii?Q?qkrna3vd+uW9iF4DjoqWnFtjXfEZjdQ74s1j35kzAg/DAO7rW5GhrhB0qT7n?=
- =?us-ascii?Q?FhZP+KfGp1KbP+XXZT9r8GD9zp/QRony0Dr55fmQWtul5CN4n1Hs6EL2wpPy?=
- =?us-ascii?Q?PYHzhlOfgUVum8kMIHq1Hr0ZP4K+okjtdyAR3wzgUu6AUj5pvFqnR1uJJ7WC?=
- =?us-ascii?Q?4c9bSyCvf2vfsARGrBeUEN20d+a3xXO2xJjQYvE75xr9OcwAGSdSuEH0oSs4?=
- =?us-ascii?Q?wZuWwUze6D8KRD8glT5gJtlnrbyc2yDVHvjrIfZEqgdfFg0zkGe3AMg5lFeO?=
- =?us-ascii?Q?V4aspngNc6U74ebjCPFQdaiIdrL4UcIuUXFZYdRIEUShohOFUvDYhF1jGLfR?=
- =?us-ascii?Q?jciR6DQ8z/YHFfYa6JCdNcWPmPWyP2LyliUzcoHw/HuSV0J1CLISQToMLC/r?=
- =?us-ascii?Q?7+XmxK31aFh6PnZXlyDd8fct3gkPdEX98KEZrLc4t3Hb+VyCBk+dYqsmQfSE?=
- =?us-ascii?Q?utDr2fBFB6BwUAALZYo/mKWO0Gkwhgh6dKhdvdRDsbf1R1wPX+/uNJLJKqra?=
- =?us-ascii?Q?PpG7sdHmWR91sV5k8DDMyhYcmfKAqVwpYcumDyiV8ai4iXir4CciqxrFdpK5?=
- =?us-ascii?Q?yrgGE3YYMzPtcqCzcoRcgMnvgPtnzNh110KJ0YMBhn+Wa3rc+oC3IzTLECN9?=
- =?us-ascii?Q?2yGG4egrcn1qywihg9yDEdlX/bArlZwfStB6UlpwaCk6lvQpUrV2czgiU1fv?=
- =?us-ascii?Q?4iiwFsPX7oPMAHnZt8Y=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae8dd3a2-a184-445d-4f44-08ddff50c748
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 12:07:36.3927
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q4cvYrDqILUTZoy0l5QwLvJ5yXFIonQHVSJYywyNuuq92uxHiipUjw24R3/OVaSB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8216
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] mm/rmap: fix soft-dirty bit loss when remapping
+ zero-filled mTHP subpage to shared zeropage
+To: Lance Yang <lance.yang@linux.dev>
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, baohua@kernel.org,
+ ryan.roberts@arm.com, dev.jain@arm.com, npache@redhat.com, riel@surriel.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, harry.yoo@oracle.com,
+ jannh@google.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ ying.huang@linux.alibaba.com, apopple@nvidia.com, usamaarif642@gmail.com,
+ yuzhao@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ ioworker0@gmail.com, stable@vger.kernel.org, akpm@linux-foundation.org,
+ lorenzo.stoakes@oracle.com
+References: <20250928044855.76359-1-lance.yang@linux.dev>
+ <b19b4880-169f-4946-8c50-e82f699bb93b@redhat.com>
+ <900d0314-8e9a-4779-a058-9bb3cc8840b8@linux.dev>
+ <1f66374a-a901-49e7-95c8-96b1e5a5f22d@linux.dev>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <1f66374a-a901-49e7-95c8-96b1e5a5f22d@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 10:23:47AM +0200, Hans Verkuil wrote:
+On 29.09.25 13:29, Lance Yang wrote:
+> 
+> 
+> On 2025/9/29 18:29, Lance Yang wrote:
+>>
+>>
+>> On 2025/9/29 15:25, David Hildenbrand wrote:
+>>> On 28.09.25 06:48, Lance Yang wrote:
+>>>> From: Lance Yang <lance.yang@linux.dev>
+>>>>
+>>>> When splitting an mTHP and replacing a zero-filled subpage with the
+>>>> shared
+>>>> zeropage, try_to_map_unused_to_zeropage() currently drops the soft-dirty
+>>>> bit.
+>>>>
+>>>> For userspace tools like CRIU, which rely on the soft-dirty mechanism
+>>>> for
+>>>> incremental snapshots, losing this bit means modified pages are missed,
+>>>> leading to inconsistent memory state after restore.
+>>>>
+>>>> Preserve the soft-dirty bit from the old PTE when creating the zeropage
+>>>> mapping to ensure modified pages are correctly tracked.
+>>>>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage
+>>>> when splitting isolated thp")
+>>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>>>> ---
+>>>>    mm/migrate.c | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>> index ce83c2c3c287..bf364ba07a3f 100644
+>>>> --- a/mm/migrate.c
+>>>> +++ b/mm/migrate.c
+>>>> @@ -322,6 +322,10 @@ static bool try_to_map_unused_to_zeropage(struct
+>>>> page_vma_mapped_walk *pvmw,
+>>>>        newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
+>>>>                        pvmw->vma->vm_page_prot));
+>>>> +
+>>>> +    if (pte_swp_soft_dirty(ptep_get(pvmw->pte)))
+>>>> +        newpte = pte_mksoft_dirty(newpte);
+>>>> +
+>>>>        set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
+>>>>        dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
+>>>
+>>> It's interesting that there isn't a single occurrence of the stof-
+>>> dirty flag in khugepaged code. I guess it all works because we do the
+>>>
+>>>       _pmd = maybe_pmd_mkwrite(pmd_mkdirty(_pmd), vma);
+>>>
+>>> and the pmd_mkdirty() will imply marking it soft-dirty.
+>>>
+>>> Now to the problem at hand: I don't think this is particularly
+>>> problematic in the common case: if the page is zero, it likely was
+>>> never written to (that's what the unerused shrinker is targeted at),
+>>> so the soft-dirty setting on the PMD is actually just an over-
+>>> indication for this page.
+>>
+>> Cool. Thanks for the insight! Good to know that ;)
+>>
+>>>
+>>> For example, when we just install the shared zeropage directly in
+>>> do_anonymous_page(), we obviously also don't set it dirty/soft-dirty.
+>>>
+>>> Now, one could argue that if the content was changed from non-zero to
+>>> zero, it ould actually be soft-dirty.
+>>
+>> Exactly. A false negative could be a problem for the userspace tools, IMO.
+>>
+>>>
+>>> Long-story short: I don't think this matters much in practice, but
+>>> it's an easy fix.
+>>>
+>>> As said by dev, please avoid double ptep_get() if possible.
+>>
+>> Sure, will do. I'll refactor it in the next version.
+>>
+>>>
+>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>
+>> Thanks!
+>>
+>>>
+>>>
+>>> @Lance, can you double-check that the uffd-wp bit is handled
+>>> correctly? I strongly assume we lose that as well here.
+> 
+> Yes, the uffd-wp bit was indeed being dropped, but ...
+> 
+> The shared zeropage is read-only, which triggers a fault. IIUC,
+> The kernel then falls back to checking the VM_UFFD_WP flag on
+> the VMA and correctly generates a uffd-wp event, masking the
+> fact that the uffd-wp bit on the PTE was lost.
 
-> Since I am unfamiliar with the iommu core code, I am uncertain whether I am
-> just papering over a bug elsewhere, or whether this is really the correct solution.
+That's not how VM_UFFD_WP works :)
 
-It is papering over something, group->domain is not supposed to be
-NULL at this point.. That probably means the iommu driver has not been
-fully setup yet.
+-- 
+Cheers
 
-This is ARM32? It should have gone down this path:
+David / dhildenb
 
-static int iommu_get_default_domain_type(struct iommu_group *group,
-					 int target_type)
-{
-	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
-		static_assert(!(IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU) &&
-				IS_ENABLED(CONFIG_IOMMU_DMA)));
-		driver_type = IOMMU_DOMAIN_IDENTITY;
-
-And I thought there shouldn't be a way to get here:
-
-> drivers/media/platform/ti/omap3isp/isp.c, function isp_attach_iommu().
-
-With a NULL group->domain?
-
-Maybe it didn't call iommu_setup_default_domain() in the right
-sequence for some reason?
-
-Can you inspect around this?
-
-Jason
 
