@@ -1,359 +1,318 @@
-Return-Path: <linux-kernel+bounces-836561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9155BAA060
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:36:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E052BAA069
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90501892B36
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C769189041A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A4430CB39;
-	Mon, 29 Sep 2025 16:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A39630C110;
+	Mon, 29 Sep 2025 16:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6EJoEMQ"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q6a9xwnb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2CB30C10B
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759163752; cv=none; b=HZ+jUQi/DSZD+ErNzONI73HzNNABzjoQ9D8RFRwPzc01mLsCZO5cl3M4fZF86ubS1KCLlizYiscyLW5aO0qJ9KjOvD3R5vGD/ini2egA7K5ZgdDXrxWd1gZi/MtrsnYK+FY4QZ/zuEXixdVOPii16YV9Krb+zlrw5UpmuVhd2ts=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759163752; c=relaxed/simple;
-	bh=nxi3r8PydOEfc0wEkxbwOLWzqmSfQiGA5eB8DVA5Hic=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dBNRV6t8CvUaoNWJdr4U8zL3nYiU1WQ09wNjH6BAmT9yrPLGeVK+5L8S6UM0r1vgzypxTdz6SmXL6EbAjSdDJ7lGEyhZx6ldpJspjljCLJF8VBfmhdZqwGeH+4QZxIjdKv2VGfkj5YF51nWLLVZ1T1NQMNXIy/bxsYDT6SPIIzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6EJoEMQ; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7810214de7cso377635b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759163750; x=1759768550; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jl0TJzOw7c1N6d488hhXazm3UzzWpEQY1F2z0NOrldo=;
-        b=B6EJoEMQbV7kmk89mcb1eQp0Y8Ha22tRcCxu6SIbC2eiIPwo0XZMZlrKhJvAKYvdp+
-         4VTAwKvasEEj6QJMSr+dhfX9SN/8EXvq0273J9UPSOK+odwFB8RiND7T/rcmmAoFXO0w
-         LpbVTdK4wce5ivL39fDEcew9+NwYteItbA+e8+2WxrBGCAfewJV+aRG/lHvLSY6Uwry/
-         T4irLIXvMG5NOWzJR8bxia9n4Qejqw8LFrxTsbmDWuAs2nQQXFno2EQktpLGgtY/hOik
-         t3ms4qpk7/nhcKyscydOsaZj8JqHcDd2sfXOf8m04U0tHdgj5iR54x4EHc0MKiZw7XQX
-         3iqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759163750; x=1759768550;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jl0TJzOw7c1N6d488hhXazm3UzzWpEQY1F2z0NOrldo=;
-        b=RHbTSQvyTXUiHGSt2Qe1HJqKz8QdsTR7V44iaJ7dusBnNuh3AyR/ko/3wVWP9Iw+Cz
-         MMHM8T/Q8BUQjkYTprDi/qxYcYMo63ouGV4k47mbXy1LwYASfO3OyjzgvTe3MD6/kqY5
-         M7/J9wlSgP/Hky5PCo105wug3FEhBbnl9TmieL5KGjKBCbHDxO2i4jLpYto+CJxMN2oa
-         UelG45B8nGfV3JLzPYfT+AR8rePbAMTU/CjKL9D83NLjmmniKLly9liJ5KuyudTXEEKY
-         QimH1MXu2NKUiQPfx/Cb/IXf75Mua7Y+2tUjdimrB+qudpIwjDAJpoXaPPAkzwOSIMew
-         hqkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrwQSrpGWyotdQtwV5OrfDCPj2BzgXdg5hWgmqKzDFvmBGLghXcifTD172/twsLOTYKOyAFqwMkOtz18s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygbLoBkNBeP75O2T/FNMtC5SKcH4tlxE33YfHGLUzBQve8guUt
-	7RP+vsejhp/BPiKqHh/fDqFzjOBmdqbnPCvnlRC8TvlvF17mgTFJypcV
-X-Gm-Gg: ASbGncshhNvY9jWuSlQC+gi++X++7/h+H2BAj40OHtoWCXR9uAac47iucmj+WyLaq5m
-	vgxBwEDeipK36g5xcImPvViz63Fzab05BwThs9xancH3U2fGkhTo2Eoerdf5Btbh62lnY3HBr8V
-	WBlzsFDc9R8kW5qaoMnKQUYboGbHOyHLnUCCIV3zxONk8McJgCwjYLV5BLqjee7BElaAtLzG/nE
-	i19iUkRU+qYpT5Ll54UugZBv+DjvXb4laFPevUqy3BaJ9vZVrpxW3EcEhU09BilkxGdmlsWQFQt
-	OWpbgrH9osbc6sKlzFA3PHkApRkVggfI05WqAmrcAZfVSSnOLMrPy2yRQhkx71U5hjbp+sBi8RK
-	7NzotbWdZwB8WvMr/ANE=
-X-Google-Smtp-Source: AGHT+IEe+mX5IHvRExB5eT7AjFhwBaVoLoo+nHJ/qfUKuNGScUHifc8/eCXvOh7oNHJaVtFlxJ8dFg==
-X-Received: by 2002:a05:6a20:4324:b0:24e:2cee:957a with SMTP id adf61e73a8af0-2e7a69e5299mr11973213637.0.1759163749495;
-        Mon, 29 Sep 2025 09:35:49 -0700 (PDT)
-Received: from localhost ([104.249.174.141])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c06fe8sm11438810b3a.77.2025.09.29.09.35.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 09:35:49 -0700 (PDT)
-From: Ben Guo <benx.guo@gmail.com>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] docs/zh_CN: Add translation of rust/testing.rst
-Date: Mon, 29 Sep 2025 16:35:15 +0000
-Message-ID: <20250929163531.376092-1-benx.guo@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773E83090C6;
+	Mon, 29 Sep 2025 16:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759163883; cv=fail; b=C9PZ1n0Cm1rrvPddreICstxreMQvLMyUxyQzIgjTLvwg5O42ox8DiANUlMR4s90BCRpPwc9/TRcQz1KqRGWrzXiKfmi9niUVNZEollhiiRyhHmVyiHKmLQeDe2gCrFargUqjl8OKy0nMhYYKVhhbByJ35kzJxrDm/GgGwKITMus=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759163883; c=relaxed/simple;
+	bh=hdlzDHd4AQvEttKLw1kEHiliNcMymLgK7K4I3smCqV8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TitaT8p5mn/hzAsgxD5qdn6ZJab0WyxtWihYlHLtY6m72MucvUargSd7Db2vN8kdRACVCe+59QGXuGCHqOq6jJDiStB9r2L62Ve0Lok18zUr+ljgj58Y6YHEBR5XtdSP4/8ZtIA2zkcwD39/YnW7rPViugIWOPBckHeqGvDiZJ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q6a9xwnb; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759163881; x=1790699881;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=hdlzDHd4AQvEttKLw1kEHiliNcMymLgK7K4I3smCqV8=;
+  b=Q6a9xwnbZS0BAdtrFxjD0cGq6wzj8LFeR32961Iux/tgk9CcPI5maw0f
+   F0RnBPKXHbMqLdhA3qh9rZiQTSX/I98vtzZz6iUEtxpNfl1lsHPmPcxeR
+   uGMG16wVY3jANir9tGe6f5S62JDtWi7Pn7EHLVoytakLQFNGXLT7C6fVP
+   NlHHolmF970Mh2a0BdzDT0KPbWgptniu4Wh+QE4vCx9s/uh/GQCMOmwDp
+   JYqya6AP/ivwTNlC3oANeplU2Vxria3trQnDUlCEWDd0MZBkQoByy5u7+
+   kxi9DzMBVLch9BFKIHLBImeNjcyiz4XPjoIyA9ODGhdxogFeaoLWVD76j
+   w==;
+X-CSE-ConnectionGUID: J3V49PBfSiiFPcgnCMzRgw==
+X-CSE-MsgGUID: x3am7JA9T6OHJ2jWZBqvJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61518294"
+X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
+   d="scan'208";a="61518294"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 09:37:46 -0700
+X-CSE-ConnectionGUID: YwwKWSCzQrCg8AzgA4ExZQ==
+X-CSE-MsgGUID: jRak0CnTQvieBhnZMxupsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
+   d="scan'208";a="201959937"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 09:37:46 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 29 Sep 2025 09:37:45 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 29 Sep 2025 09:37:45 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.57) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 29 Sep 2025 09:37:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jrUGKpfJm9HWRIluY/LEZTsEePL12zKuN+tmrvRz9mM275+4uy+My8dipWizuMdnDm3o+5G3ximfvvwLYqA1JVCs+AiRinCTCWYaGrSCbtrnEpX6d9S5yg8Adw6O6iJ/5/NcZ0rcVcLWd2jjKjUku7I3jzjiQfExE4pAgfqN2pTWxnPqTtIiOXx0UyzW8SYgZQJxAiZpEf4QqpvDwlNCRyNvdxPx3lupvBsHT2kKM9O4VZxQs9HhVq1Tp5wPPR9vhggWdLj+jxxlry7ebhVjz346on4tKjanYH1fozmJUwHrhIg9is/tYmaL3PgadhDatdPhxaA4fD5lPFaBosZRUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lbzNsZsBSfPlRTSmoceWP6g8eR7pHvcFMR8PxAPZX5c=;
+ b=Wh6tqYM7ztYc2eE2mWPlUk9giOkQUBgQSWSFZrOy9xUznv+BGaxoh1eTtQmnt94uAjrHf9m4S6wq0PDE+qCDEMRCN90ZhjiuE7dFzBulUrUMU7kQQVO0c7Sns7/ntam0EIM93LuwIp3025/t/a+XK2SNMJAsvXBZ+IcXxC4uIiP+bx6pZz94h2xURBZKr1+T7HQ5AVCGTqY0l6I/pPY8iiYQws+3ar7W9Ni+oipXRE8rHCptizx6grB5K6lmWn27iWRnUx946VkqlS8zXUHtuIbFJSU7TODseYB+GjUR8TJvxsFIlKsF41n2cAnxIbTKyx+TKO1XvvLRs6vmdokrxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by CH8PR11MB9482.namprd11.prod.outlook.com (2603:10b6:610:2bf::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 16:37:43 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 16:37:43 +0000
+Date: Mon, 29 Sep 2025 09:37:41 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Dave Martin <Dave.Martin@arm.com>
+CC: <linux-kernel@vger.kernel.org>, Reinette Chatre
+	<reinette.chatre@intel.com>, James Morse <james.morse@arm.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, <x86@kernel.org>,
+	<linux-doc@vger.kernel.org>
+Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
+ per-arch
+Message-ID: <aNq11fmlac6dH4pH@agluck-desk3>
+References: <20250902162507.18520-1-Dave.Martin@arm.com>
+ <aNFliMZTTUiXyZzd@e133380.arm.com>
+ <aNXJGw9r_k3BB4Xk@agluck-desk3>
+ <aNqQAy8nOkLRYx4F@e133380.arm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aNqQAy8nOkLRYx4F@e133380.arm.com>
+X-ClientProxiedBy: BY5PR04CA0023.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::33) To SJ1PR11MB6083.namprd11.prod.outlook.com
+ (2603:10b6:a03:48a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|CH8PR11MB9482:EE_
+X-MS-Office365-Filtering-Correlation-Id: caad7e0e-2e05-455d-26d5-08ddff76836d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?T78jxNAMhEy1cdH3TboQcc8PEEuKGxLPxRK/pTjEsOIZy+bPQd7DZFevLc0/?=
+ =?us-ascii?Q?HdL6qe5wDMhb3A1p4hygPg0LBqz+9m8OCWD0keemW3Uhh6PpmHCSooBf/vzh?=
+ =?us-ascii?Q?iXVTJ04NaC74K48IJZ24C+DVhv4LoSx1k9FJqbbkAoQ7UcuBMTN1YLVsV0tt?=
+ =?us-ascii?Q?ztaK6k1+P9QpENuDJCqb7B6yqTjhClVVfRMDEhTgz76csurxZgLOVhDU7lvC?=
+ =?us-ascii?Q?zRPHAHnFEqDvYpV/EU78fsJelbc4CbfoMuxGoXXYI7OblF2HWsLJ9jRoDvGG?=
+ =?us-ascii?Q?UYPUshrlx0Fac2G8nC8aCUFFbVzhmSdwXeXZHL7/c1clwZW0Pfp43Ew9jjFY?=
+ =?us-ascii?Q?4n3BiGd+jLb/U9cpp/iHn9WohoIcc4ogDSK+lDvIUs+eZCNNk6UXfjD+ov6Y?=
+ =?us-ascii?Q?THGAkGvEZyHJg/si+2Xpse8jOKWEZRdJpSml+ELbcJUepdQXMrYVGg6rUdpY?=
+ =?us-ascii?Q?HxLL0jg67mJF3JxbPE4JLUTd18h0EFz1L8pfsFl4hh6EWbCJKwBcONocxRJO?=
+ =?us-ascii?Q?Rqg9+ZKEwshSIJN1+dEGGS3GEbi16j7wBFJPVuxHMW30r6utzSwZknVFGd3S?=
+ =?us-ascii?Q?1dS0xZGAMj1zIX4gIjQyP+pHNHlM1L+Pp8DGXZPeX5FsKsosdaKz2vVcsmPl?=
+ =?us-ascii?Q?sjTLDbXw/dGU4TcWkeF+DMEnAdaaSkCQWDS7ea/CY58Y+blvGCb+tmbFnjyP?=
+ =?us-ascii?Q?DXyk+VPYAF0V85IJdszng07oHmLhgqpR9K1FZ6jWQ+tci++SOLhHsqc/jfo+?=
+ =?us-ascii?Q?+rMaiL39OTzzrURCfXyzl0K5VnUGUx5AdWmfEcxNQ3SgQk1H5dQOdRAnkJpJ?=
+ =?us-ascii?Q?z70ZogyXh4RGQTK5kKwTjuAy/bVQz+6vWNUyw0+Db/9XjtgRtkYaNWwq5YUj?=
+ =?us-ascii?Q?A9JJkxi0Mia/6GfwuWoSCegiN9CLzPbcmsbBTIz2mP9VR86RGr+u1ianjmK6?=
+ =?us-ascii?Q?XqKDmauEH7FlwUmwg2x1Hfnr3SCoEglEG959jrWIrzo28puxiSyXKjfQj5Vt?=
+ =?us-ascii?Q?YCbfZ/xVpTetPQChGDA4is33s7SvglKQQslF2MN6FQPc0DPzzFKq7/4qPF7T?=
+ =?us-ascii?Q?ExLpwiFOBf6EG/bdfWESNo/MPvcJAHfunFCIKnINHZn+ujcpKNKzzjxwEKC2?=
+ =?us-ascii?Q?zQjYd9DEWi15poM4tMyRfni5+S0nx6HEiaQHU4ya3ivV9hkcdR8Nxqi3qZQZ?=
+ =?us-ascii?Q?Ad9UKDO6/PvKUCPWb0eha2H5l9jjcJoA3jJv2l2osS2XVwDV81xlClgfNB2n?=
+ =?us-ascii?Q?EJ8v1iSr2tfqDwkz95jUjRgPWtsuEJ2goskJHTrujpfOxldJ3HcJT9QEdClv?=
+ =?us-ascii?Q?d6tqqtpy2MNIA4J3mKR1IqS4Y0vndzyAaRjCbtZlsjsdsz6UipyIfPTlI0RP?=
+ =?us-ascii?Q?ep1cyTUSXOnf8NvjGaWsYYjYhwTl+w9aN/SvK5iJCJu9hEZNmZe7kBbHFyUt?=
+ =?us-ascii?Q?Hn9KSDEIkFNLi1cZQxXTGAqETSdePHRk?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/9IV64HfcDCDrNll7TpdRvMoFUMX74hzhic57oJvZ+ipvQt8j8234jjXSZ7E?=
+ =?us-ascii?Q?HXHPcPzOq1+TGLN/NrpNNaoVmyDaYvjj3PA8q/bHX9aHzP/ZpY/49ewJoiJG?=
+ =?us-ascii?Q?dLG6bNIUNs60i4OCfynHpXnvPdfoddwGQzA4XH5HZ320LGvuQRS/tHRzw6I7?=
+ =?us-ascii?Q?vIwzdwUxsgMYZu3bEb8ISzcUo+9PF1zIrg4/dh1ljwA1yK5DBU+vMk4Vy43E?=
+ =?us-ascii?Q?luP3VUQz5DVDZIZHbZ+kUXVoOmkFdtHuQidJeKglLYHN/J7aO0IG4yYw1Qst?=
+ =?us-ascii?Q?lzDFVQCoKCqLmYkw6e83/1ibJ2i/LIJznYP42P+niBFAQHTQKkbd0NW3CUko?=
+ =?us-ascii?Q?F6fCc/auHBfC+nSY2kceVwqydUZlrVmPten2ypp7egtmM7YtzRsYaw/sfMIi?=
+ =?us-ascii?Q?L7Go2P5XOB0auUWZRXG36oVTgCD/b3PxOdUDbchlMeeBentplTrcuIj5Cke8?=
+ =?us-ascii?Q?Ghrh9EO7D+IVDzjt3KPewFoOBTexkivNOnzCYZCXJpyjlusdyCeOH1iQ6dhv?=
+ =?us-ascii?Q?EBajs50ZiyhsC8lfs++ccB42ShDgCFDN8iQnrCNXhbwgEOp1X4CivIyETS46?=
+ =?us-ascii?Q?hhEJzd7vZ/FZjT2xmj65+xQ7sB6ILyYakcQBsa19CwlicNLjgdaWeI8lnx9s?=
+ =?us-ascii?Q?RTrJ8Tb7BbQZJoi4uyyvZQy+Oo9u9s8rhl8z0JcMLxE4vzDs0LvlFRjwjOut?=
+ =?us-ascii?Q?DJot+Lwwvfn8vGz+ZARTA/WUt5mbVp5lh9qfbx3Ya4bUWEsmuy1zF03iGGFL?=
+ =?us-ascii?Q?HNi4SuTpHxnjCXJJokjTlO5CsymYT2atNkO6dKWk6VOTq2usZ1wYq+2AcCci?=
+ =?us-ascii?Q?PzcIXhHJY7TwAjbn0sCiIGmLk8sGI6AzynHmj2BUVNSEaSNsPCTqgmH8mUc0?=
+ =?us-ascii?Q?pMT/NZa6cuFv69g0HHJsWJwyi2edWScSsLhiAm9cAZcaIvoKe0hFeji8apyL?=
+ =?us-ascii?Q?x8vatUiy/oKHRe63YIWjjZmEdNkK9XbZ89nmbYU2DXO3e0iCamrNImTpTVE5?=
+ =?us-ascii?Q?E0A52VnCZ10+tyfYbUqquqfweegkGb2xA2OUsQp9GxHWNEx9xRKz6IjjgrJq?=
+ =?us-ascii?Q?kLFdtAZWJ28yc9CTWpIcqfHJ9aGMIxA6JaUuZOcEOu15SKw0gUjswlzrXT1s?=
+ =?us-ascii?Q?2dMhhWy6U3R5X3W6+lRW17BXny/lWFNnhniRlaUljTxVOcpqP1oi6TI1O2+s?=
+ =?us-ascii?Q?Kkcax62IaJTkRJ6/LWA71K4NiotesN9bNqALVxH4M84sf/SyI0mypO1U0MZC?=
+ =?us-ascii?Q?f1y4ciWL1AaFhc4hYZjwpgF7LVkDBa11gILN4LqtEsi+pD9cPee5L36wxpcW?=
+ =?us-ascii?Q?HA5D1tbXnIETTAJZZoyr9iR1AORu8FL7i5DNrFLdpWHowGhWOJQ9GWDLL5rR?=
+ =?us-ascii?Q?wL0DlaeOWVj7TI7hs6NdvXLcq40NUN9Bw9qVrAfSXMBFzSqux9xTSvHmm0Ve?=
+ =?us-ascii?Q?v5LyriMVYvO1hRPY2mbHAmZgH6dkQDPFUCcc8lTdDVm1oYx3EIv8SwRwaBXQ?=
+ =?us-ascii?Q?CsaPzFEtEA/f/5/P0yLsf4oyUxiEduyU/NEK5YdqtFp+46dj/bixKkQ8XRWM?=
+ =?us-ascii?Q?GT2evqkqoj3P1tI0t0qCtrf9i8fo3913lYEjUxtt?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: caad7e0e-2e05-455d-26d5-08ddff76836d
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 16:37:43.4986
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AdNsoazK90gm69DYOitSg6PvFFm0N/PZsXS9+Ww9M9JePS6c3syMpVIvGcqMqh9e+aVmfcE5yXOwfjWtprwNug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR11MB9482
+X-OriginatorOrg: intel.com
 
-Complete the translation of rust/testing.rst and add the testing TOC entry
-to rust/index.rst.
+On Mon, Sep 29, 2025 at 02:56:19PM +0100, Dave Martin wrote:
+> Hi Tony,
+> 
+> Thanks for taking at look at this -- comments below.
+> 
+> [...]
+> 
+> On Thu, Sep 25, 2025 at 03:58:35PM -0700, Luck, Tony wrote:
+> > On Mon, Sep 22, 2025 at 04:04:40PM +0100, Dave Martin wrote:
+> 
+> [...]
+> 
+> > > Would something like the following work?  A read from schemata might
+> > > produce something like this:
+> > > 
+> > > MB: 0=50, 1=50
+> > > # MB_HW: 0=32, 1=32
+> > > # MB_MIN: 0=31, 1=31
+> > > # MB_MAX: 0=32, 1=32
+> 
+> [...]
+> 
+> > > I'd be interested in people's thoughts on it, though.
+> > 
+> > Applying this to Intel upcoming region aware memory bandwidth
+> > that supports 255 steps and h/w min/max limits.
+> 
+> Following the MPAM example, would you also expect:
+> 
+> 	scale: 255
+> 	unit: 100pc
+> 
+> ...?
 
-Add the translation based on commit a3b2347343e0
-("Documentation: rust: testing: add docs on the new KUnit `#[test]` tests").
+Yes. 255 (or whatever "Q" value is provided in the ACPI table)
+corresponds to no throttling, so 100% bandwidth.
 
-Signed-off-by: Ben Guo <benx.guo@gmail.com>
----
- .../translations/zh_CN/rust/index.rst         |   1 +
- .../translations/zh_CN/rust/testing.rst       | 215 ++++++++++++++++++
- 2 files changed, 216 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/rust/testing.rst
+> 
+> > We would have info files with "min = 1, max = 255" and a schemata
+> > file that looks like this to legacy apps:
+> > 
+> > MB: 0=50;1=75
+> > #MB_HW: 0=128;1=191
+> > #MB_MIN: 0=128;1=191
+> > #MB_MAX: 0=128;1=191
+> > 
+> > But a newer app that is aware of the extensions can write:
+> > 
+> > # cat > schemata << 'EOF'
+> > MB_HW: 0=10
+> > MB_MIN: 0=10
+> > MB_MAX: 0=64
+> > EOF
+> > 
+> > which then reads back as:
+> > MB: 0=4;1=75
+> > #MB_HW: 0=10;1=191
+> > #MB_MIN: 0=10;1=191
+> > #MB_MAX: 0=64;1=191
+> > 
+> > with the legacy line updated with the rounded value of the MB_HW
+> > supplied by the user. 10/255 = 3.921% ... so call it "4".
+> 
+> I'm suggesting that this always be rounded up, so that you have a
+> guarantee that the steps are no smaller than the reported value.
 
-diff --git a/Documentation/translations/zh_CN/rust/index.rst b/Documentation/translations/zh_CN/rust/index.rst
-index b01f887e7167..efc2126f6307 100644
---- a/Documentation/translations/zh_CN/rust/index.rst
-+++ b/Documentation/translations/zh_CN/rust/index.rst
-@@ -19,6 +19,7 @@ Rust
-     general-information
-     coding-guidelines
-     arch-support
-+    testing
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/translations/zh_CN/rust/testing.rst b/Documentation/translations/zh_CN/rust/testing.rst
-new file mode 100644
-index 000000000000..ca81f1cef6eb
---- /dev/null
-+++ b/Documentation/translations/zh_CN/rust/testing.rst
-@@ -0,0 +1,215 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/rust/testing.rst
-+
-+:翻译:
-+
-+ 郭杰 Ben Guo <benx.guo@gmail.com>
-+
-+测试
-+====
-+
-+本文介绍了如何在内核中测试 Rust 代码。
-+
-+有三种测试类型：
-+
-+- KUnit 测试
-+- ``#[test]`` 测试
-+- Kselftests
-+
-+KUnit 测试
-+----------
-+
-+这些测试来自 Rust 文档中的示例。它们会被转换为 KUnit 测试。
-+
-+使用
-+****
-+
-+这些测试可以通过 KUnit 运行。例如，在命令行中使用 ``kunit_tool`` （ ``kunit.py`` ）::
-+
-+	./tools/testing/kunit/kunit.py run --make_options LLVM=1 --arch x86_64 --kconfig_add CONFIG_RUST=y
-+
-+或者，KUnit 也可以在内核启动时以内置方式运行。获取更多 KUnit 信息，请参阅
-+Documentation/dev-tools/kunit/index.rst。
-+关于内核内置与命令行测试的详细信息，请参阅 Documentation/dev-tools/kunit/architecture.rst。
-+
-+要使用这些 KUnit 文档测试，需要在内核配置中启用以下选项::
-+
-+	CONFIG_KUNIT
-+	   Kernel hacking -> Kernel Testing and Coverage -> KUnit - Enable support for unit tests
-+	CONFIG_RUST_KERNEL_DOCTESTS
-+	   Kernel hacking -> Rust hacking -> Doctests for the `kernel` crate
-+
-+KUnit 测试即文档测试
-+********************
-+
-+文档测试（ *doctests* ）一般用于展示函数、结构体或模块等的使用方法。
-+
-+它们非常方便，因为它们就写在文档旁边。例如：
-+
-+.. code-block:: rust
-+
-+	/// 求和两个数字。
-+	///
-+	/// ```
-+	/// assert_eq!(mymod::f(10, 20), 30);
-+	/// ```
-+	pub fn f(a: i32, b: i32) -> i32 {
-+	    a + b
-+	}
-+
-+在用户空间中，这些测试由 ``rustdoc`` 负责收集并运行。单独使用这个工具已经很有价值，
-+因为它可以验证示例能否成功编译（确保和代码保持同步），
-+同时还可以运行那些不依赖内核 API 的示例。
-+
-+然而，在内核中，这些测试会转换成 KUnit 测试套件。
-+这意味着文档测试会被编译成 Rust 内核对象，从而可以在构建的内核环境中运行。
-+
-+通过与 KUnit 集成，Rust 的文档测试可以复用内核现有的测试设施。
-+例如，内核日志会显示::
-+
-+	KTAP version 1
-+	1..1
-+	    KTAP version 1
-+	    # Subtest: rust_doctests_kernel
-+	    1..59
-+	    # rust_doctest_kernel_build_assert_rs_0.location: rust/kernel/build_assert.rs:13
-+	    ok 1 rust_doctest_kernel_build_assert_rs_0
-+	    # rust_doctest_kernel_build_assert_rs_1.location: rust/kernel/build_assert.rs:56
-+	    ok 2 rust_doctest_kernel_build_assert_rs_1
-+	    # rust_doctest_kernel_init_rs_0.location: rust/kernel/init.rs:122
-+	    ok 3 rust_doctest_kernel_init_rs_0
-+	    ...
-+	    # rust_doctest_kernel_types_rs_2.location: rust/kernel/types.rs:150
-+	    ok 59 rust_doctest_kernel_types_rs_2
-+	# rust_doctests_kernel: pass:59 fail:0 skip:0 total:59
-+	# Totals: pass:59 fail:0 skip:0 total:59
-+	ok 1 rust_doctests_kernel
-+
-+文档测试中，也可以正常使用 `? <https://doc.rust-lang.org/reference/expressions/operator-expr.html#the-question-mark-operator>`_ 运算符，例如：
-+
-+.. code-block:: rust
-+
-+	/// ```
-+	/// # use kernel::{spawn_work_item, workqueue};
-+	/// spawn_work_item!(workqueue::system(), || pr_info!("x\n"))?;
-+	/// # Ok::<(), Error>(())
-+	/// ```
-+
-+这些测试和普通代码一样，也可以在 ``CLIPPY=1`` 条件下通过 Clippy 进行编译，
-+因此可以从额外的 lint 检查中获益。
-+
-+为了便于开发者定位文档测试出错的具体行号，日志会输出一条 KTAP 诊断信息。
-+其中标明了原始测试的文件和行号（不是 ``rustdoc`` 生成的临时 Rust 文件位置）::
-+
-+	# rust_doctest_kernel_types_rs_2.location: rust/kernel/types.rs:150
-+
-+Rust 测试中常用的断言宏是来自 Rust 标准库（ ``core`` ）中的 ``assert!`` 和 ``assert_eq!`` 宏。
-+内核提供了一个定制版本，这些宏的调用会被转发到 KUnit。
-+和 KUnit 测试不同的是，这些宏不需要传递上下文参数（ ``struct kunit *`` ）。
-+这使得它们更易于使用，同时文档的读者无需关心底层用的是什么测试框架。
-+此外，这种方式未来也许可以让我们更容易测试第三方代码。
-+
-+当前有一个限制：KUnit 不支持在其他任务中执行断言。
-+因此，如果断言真的失败了，我们只是简单地把错误打印到内核日志里。
-+另外，文档测试不适用于非公开的函数。
-+
-+作为文档中的测试示例，应当像 “实际代码” 一样编写。
-+例如：不要使用 ``unwrap()`` 或 ``expect()``，请使用 `? <https://doc.rust-lang.org/reference/expressions/operator-expr.html#the-question-mark-operator>`_ 运算符。
-+更多背景信息，请参阅：
-+
-+	https://rust.docs.kernel.org/kernel/error/type.Result.html#error-codes-in-c-and-rust
-+
-+``#[test]`` 测试
-+----------------
-+
-+此外，还有 ``#[test]`` 测试。与文档测试类似，这些测试与用户空间中的测试方式也非常相近，并且同样会映射到 KUnit。
-+
-+这些测试通过 ``kunit_tests`` 过程宏引入，该宏将测试套件的名称作为参数。
-+
-+例如，假设想要测试前面文档测试示例中的函数 ``f``，我们可以在定义该函数的同一文件中编写：
-+
-+.. code-block:: rust
-+
-+	#[kunit_tests(rust_kernel_mymod)]
-+	mod tests {
-+	    use super::*;
-+
-+	    #[test]
-+	    fn test_f() {
-+	        assert_eq!(f(10, 20), 30);
-+	    }
-+	}
-+
-+如果我们执行这段代码，内核日志会显示::
-+
-+	    KTAP version 1
-+	    # Subtest: rust_kernel_mymod
-+	    # speed: normal
-+	    1..1
-+	    # test_f.speed: normal
-+	    ok 1 test_f
-+	ok 1 rust_kernel_mymod
-+
-+与文档测试类似， ``assert!`` 和 ``assert_eq!`` 宏被映射回 KUnit 并且不会发生 panic。
-+同样，支持 `? <https://doc.rust-lang.org/reference/expressions/operator-expr.html#the-question-mark-operator>`_ 运算符，
-+测试函数可以什么都不返回（单元类型 ``()``）或 ``Result`` （任何 ``Result<T, E>``）。例如：
-+
-+.. code-block:: rust
-+
-+	#[kunit_tests(rust_kernel_mymod)]
-+	mod tests {
-+	    use super::*;
-+
-+	    #[test]
-+	    fn test_g() -> Result {
-+	        let x = g()?;
-+	        assert_eq!(x, 30);
-+	        Ok(())
-+	    }
-+	}
-+
-+如果我们运行测试并且调用 ``g`` 失败，那么内核日志会显示::
-+
-+	    KTAP version 1
-+	    # Subtest: rust_kernel_mymod
-+	    # speed: normal
-+	    1..1
-+	    # test_g: ASSERTION FAILED at rust/kernel/lib.rs:335
-+	    Expected is_test_result_ok(test_g()) to be true, but is false
-+	    # test_g.speed: normal
-+	    not ok 1 test_g
-+	not ok 1 rust_kernel_mymod
-+
-+如果 ``#[test]`` 测试可以对用户起到示例作用，那就应该改用文档测试。
-+即使是 API 的边界情况，例如错误或边界问题，放在示例中展示也同样有价值。
-+
-+``rusttest`` 宿主机测试
-+-----------------------
-+
-+这类测试运行在用户空间，可以通过 ``rusttest`` 目标在构建内核的宿主机中编译并运行::
-+
-+	make LLVM=1 rusttest
-+
-+当前操作需要内核 ``.config``。
-+
-+目前，它们主要用于测试 ``macros`` crate 的示例。
-+
-+Kselftests
-+----------
-+
-+Kselftests 可以在 ``tools/testing/selftests/rust`` 文件夹中找到。
-+
-+测试所需的内核配置选项列在 ``tools/testing/selftests/rust/config`` 文件中，
-+可以借助 ``merge_config.sh`` 脚本合并到现有配置中::
-+
-+	./scripts/kconfig/merge_config.sh .config tools/testing/selftests/rust/config
-+
-+Kselftests 会在内核源码树中构建，以便在运行相同版本内核的系统上执行测试。
-+
-+一旦安装并启动了与源码树匹配的内核，测试即可通过以下命令编译并执行::
-+
-+	make TARGETS="rust" kselftest
-+
-+请参阅 Documentation/dev-tools/kselftest.rst 文档以获取更多信息。
--- 
-2.43.0
+Round up, rather than round-to-nearest, make sense. Though perhaps
+only cosmetic as I would be surprised if anyone has a mix of tools
+looking at the legacy schemata lines while programming using the
+direct h/w controls.
 
+> 
+> (In this case, round-up and round-to-nearest give the same answer
+> anyway, though!)
+> 
+> > 
+> > The region aware h/w supports separate bandwidth controls for each
+> > region. We could hope (or perhaps update the spec to define) that
+> > region0 is always node-local DDR memory and keep the "MB" tag for
+> > that.
+> 
+> Do you have concerns about existing software choking on the #-prefixed
+> lines?
+
+Do they even need a # prefix? We already mix lines for multiple
+resources in the schemata file with a separate prefix for each resource.
+The schemata file also allows writes to just update one resource (or
+one domain in a single resource). The schemata file started with just
+"L3". Then we added "L2", "MB", and "SMBA" with no concern that the
+initial "L3" manipulating tools would be confused.
+
+> > Then use some other tag naming for other regions. Remote DDR,
+> > local CXL, remote CXL are the ones we think are next in the h/w
+> > memory sequence. But the "region" concept would allow for other
+> > options as other memory technologies come into use.
+> 
+> Would it be reasnable just to have a set of these schema instances, per
+> region, so:
+> 
+> MB_HW: ... // implicitly region 0
+> MB_HW_1: ...
+> MB_HW_2: ...
+
+Chen Yu is currently looking at putting the word "TIER" into the
+name, since there's some precedent for describing memory in "tiers".
+
+Whatever naming scheme is used, the important part is how will users
+find out what each schemata line actually means/controls.
+
+> etc.
+> 
+> Or, did you have something else in mind?
+> 
+> My thinking is that we avoid adding complexity in the schemata file if
+> we treat mapping these schema instances onto the hardware topology as
+> an orthogonal problem.  So long as we have unique names in the schemata
+> file, we can describe elsewhere what they relate to in the hardware.
+
+Yes, exactly this.
+
+> 
+> Cheers
+> ---Dave
+
+-Tony
 
