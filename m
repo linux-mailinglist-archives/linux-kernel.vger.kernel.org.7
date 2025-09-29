@@ -1,201 +1,101 @@
-Return-Path: <linux-kernel+bounces-836526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B2FBA9EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C1ABA9ECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5986E3B89BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D2E1922775
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2736F30CB5E;
-	Mon, 29 Sep 2025 16:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BDB2EAB66;
+	Mon, 29 Sep 2025 16:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WIEdNKCJ"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DFD30C627
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 16:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HmV0fC7f"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636DF21770C;
+	Mon, 29 Sep 2025 16:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759161795; cv=none; b=YdiQyeUYtJrVKiEi20KMZ9SVde3GgT7t0ytxORhtGz9N/EmE978eoajGZh1UGCOMqACGWExjuhhxdSVuqXBiUHu+byhG9VIgbtfmnWprff8zp1xwkwSxNI6yV+y9YcdkmKfvmDp616viWdxvX2zunkhV0q8zNAE3x6pyEdq1M4U=
+	t=1759161787; cv=none; b=oeGxB99GV9Ai5PdQyscCleB4pX3p9FeUE7D0Tph/DbWODY91PH5OZ01tG9nOazqMeclDHZrVatI4ZyGy8wfjqODOc5XMnRlgNj7QPcMA3u3D0BVqrh0KJxkZlbizdxIcvz490+C2ZeyCqROt4ik8S5xOy6RNZuZEFwuLPgbYzvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759161795; c=relaxed/simple;
-	bh=1jkw+7EvuIa/Han8qcxFLmMTXaJYMq7ZJC5YxwM3xL0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HvjU8ZKBCmj5wJG7uxMKy+aCgeABsh8WfmAAlNX9jp8Dl3Xc61g+nMn//BETugg+JUElFbsDb1OnYJCtys6KdTZF2AhMgW9Hx5RDmztOFAY2HAHMcNBrfoIhEkKf4Chw8To/+Dtxz8YIwR+3tFi6wLcyZDZcRjCZaf2rYwDjD5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WIEdNKCJ; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-78104c8cbb4so4975049b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 09:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759161793; x=1759766593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KefHEpASHlImKTlDtTejqsu/vtIp51mWF2HZGf1Fkyo=;
-        b=WIEdNKCJukuVi1h9DOdGQ8/Muw/4sk1r+sFqcwhZkzSs/T7nS0Z5rIDRn0aJ6QR4nD
-         L/ujvWnbM0exKAO889chaTUy8tlRN6IsN3nWEnANfXUV0O+wt6pJH7+L7wjJKiVQxVEV
-         etiSJTLGdU3bIKYBrO5CitRoAZ+zhm9sET7i9OoMMxIkzQ31xC+s3zWMH3SZgFr6yhnn
-         RkNGWUtxM1lrAPY8Rc4pCk6z/GF8x4C2rrkOyin9DU+vHh+X0hNrVbpVkV2oNWC4WeYS
-         7cxdtiNjT0m1NveXp8MgDzScEXYM3IQEuAjTCdAtwFxaQmZlEWn8XD+AV4r+J20HiGYg
-         NOcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759161793; x=1759766593;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KefHEpASHlImKTlDtTejqsu/vtIp51mWF2HZGf1Fkyo=;
-        b=IUAUrWuY7Bpfx6mGV45R/6qmwNMDEUq/K3Um0GZuge/waW2o9Jy+7e2mtLtEXI2IC5
-         vPWRdSh2ix3VD6B3Qy36bZBa8UMf0bo7sENq+UmSZ6obPKB969kwRFqajQy8MJUVafXr
-         ED+vnj0FVOfPuk+ucg+5FheKJGHtuH9bVNt3j629Ne+VwfI58Wzu/xdVrnjqKJj/lM7w
-         n3hevRaMsADmPkbfQilClQ04J5E2QyF2B8lL6nE5NrLvPfG5VRvWQlr0FKHGIiSoIZBI
-         YB9S1t3WUR4NHsszq2Ahbtxm+dRcWMhjTPp7sLtnbhnDwRqdq2cldOOSBId/4gdypBkm
-         qRqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPNL5NgeTqEAU6UjTCWRQk1fyUewNaZlipi3XpHokQj1jV6hfRogi3Nj1HpxZk2Lh6KUHgsCtFGfHTx8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw44xDa3s7Dn/p57ycd9MYe62yXNgvAi7dRZQ4eulCbjJIHMPc8
-	GqBwJAonoYYnA8PN9RG90exh8nYug6tFx1dZO/bpGw4qYDuW5J5Aw1xM
-X-Gm-Gg: ASbGnctVkXaeYUYSQOPUXCaLz+cidQmiapVrtcclcLfW2h1eOP3yEXlzwwVnWQBTl8I
-	Oe3smDflZimY97/0Rje14LILyCtt0EDCGyb37/ltxtmDxTOZXos97AhZR0FUZYnTn7yKtaoEQLe
-	Seppppr2av6N1n1IRZCnx5uX4tRJG9KU7Af0NL/ljOciJ6XpcA1CU57GzC3n6uvw1FMcPYdqqVf
-	b/ZAmzfvzXG917xjQjg8vat+MTzSkfWz7ACQJEy0zy8RgJgQIJaKzOpLvb6VXJXqUl5LN+VwXGc
-	odCajw45EYzvJ5bjOboyzZ5+LhDhV3RO72wUkkj/BeNs9SRWzyedOKRANn0sRrKwPtyjQqGIGMk
-	xi/vtAUyYvc+EIWv5ba2HPC0lpeEZ
-X-Google-Smtp-Source: AGHT+IFLs3m9GZxE68Q18gbvy+0afYHaST+CDXcgc2TlSHRuYVzEECyokcNZHk3sUQVFmBJDY053zw==
-X-Received: by 2002:a05:6a20:9150:b0:248:4d59:93d5 with SMTP id adf61e73a8af0-2e7d72637famr22343288637.55.1759161792642;
-        Mon, 29 Sep 2025 09:03:12 -0700 (PDT)
-Received: from y740.local ([2401:4900:1f30:25ff:36cb:10ee:ba03:839f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c55a0ca2sm11504525a12.42.2025.09.29.09.03.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 09:03:12 -0700 (PDT)
-From: Sidharth Seela <sidharthseela@gmail.com>
-To: antonio@openvpn.net,
-	sd@queasysnail.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	shuah@kernel.org,
-	willemdebruijn.kernel@gmail.com,
-	kernelxing@tencent.com,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	david.hunter.linux@gmail.com,
-	Sidharth Seela <sidharthseela@gmail.com>
-Subject: [PATCH v2] net: Fix uninit character pointer and return values
-Date: Mon, 29 Sep 2025 21:32:31 +0530
-Message-ID: <20250929160230.36941-2-sidharthseela@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1759161787; c=relaxed/simple;
+	bh=hGMUgbw6cjVDwNlv+c+dlngDpeIVFXMqXu9j+hKYp2Y=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=fDJGLc3jA3u3N8gFH8mh7yelcygQ8vcmL/Q3dGsQFvn6KDVBut57LIhP9qQtqYx0mXfP2v7CPzi3mYJoaIIKJsiJYz2KZaFoLnGNfwyylSA+NS2qZKuZGE+FGlGiTLpB0MGgtCs0Kt1gz9iqwn/ScLrIPzO+jsSBZMzd8HqAoGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HmV0fC7f; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [4.155.116.186])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 832722127309;
+	Mon, 29 Sep 2025 09:02:59 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 832722127309
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759161779;
+	bh=7RUABCU6LZn2ydAZuIC8BqJa+cIkDKkNw73wboYyaSI=;
+	h=Subject:From:To:Cc:Date:From;
+	b=HmV0fC7fK7XwH8v30Q4a8HGbjIWDYHVxtJFBMcMnjfHs5MqzcDTQLFjYQG9dwKuDk
+	 Z3LcaHNqkdfqYi/9fFbTWMxtUJFySS+VhWIumU10i9pbRDYJSst8K5kUx2jmG1YLEh
+	 tV71FwqBHNFq7UK5XIRukn0KJ2R2GzvEGbfD1myg=
+Subject: [PATCH v2 0/4] Introduce movable pages for Hyper-V guests
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 29 Sep 2025 16:02:59 +0000
+Message-ID: 
+ <175916156212.55038.16727147489322393965.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Fix uninitialized character pointer, and functions that return
-undefined values. These issues were caught by running clang using LLVM=1
-option; and are as follows:
---
-ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
- 1587 |         if (!sock) {
-      |             ^~~~~
-ovpn-cli.c:1635:9: note: uninitialized use occurs here
- 1635 |         return ret;
-      |                ^~~
-ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
- 1587 |         if (!sock) {
-      |         ^~~~~~~~~~~~
- 1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 1589 |                 goto err_free;
-      |                 ~~~~~~~~~~~~~~
- 1590 |         }
-      |         ~
-ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
- 1584 |         int mcid, ret;
-      |                      ^
-      |                       = 0
-ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
- 2107 |         case CMD_INVALID:
-      |              ^~~~~~~~~~~
-ovpn-cli.c:2111:9: note: uninitialized use occurs here
- 2111 |         return ret;
-      |                ^~~
-ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
- 1939 |         int n, ret;
-      |                   ^
-      |
---
-so_txtime.c:210:3: warning: variable 'reason' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
-  210 |                 default:
-      |                 ^~~~~~~
-so_txtime.c:219:27: note: uninitialized use occurs here
-  219 |                         data[ret - 1], tstamp, reason);
-      |                                                ^~~~~~
-so_txtime.c:177:21: note: initialize the variable 'reason' to silence this warning
-  177 |                 const char *reason;
-      |                                   ^
-      |
---
-Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
-ovpn module")
-Fixes: ca8826095e4d4 ("selftests/net: report etf errors correctly")
+From the start, the root-partition driver allocates, pins, and maps all
+guest memory into the hypervisor at guest creation. This is simple: Linux
+cannot move the pages, so the guest’s view in Linux and in Microsoft
+Hypervisor never diverges.
 
-Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+However, this approach has major drawbacks:
+- NUMA: affinity can’t be changed at runtime, so you can’t migrate guest memory closer to the CPUs running it → performance hit.
+- Memory management: unused guest memory can’t be swapped out, compacted, or merged.
+- Provisioning time: upfront allocation/pinning slows guest create/destroy.
+- Overcommit: no memory overcommit on hosts with pinned-guest memory.
+
+This series adds movable memory pages for Hyper-V child partitions. Guest
+pages are no longer allocated upfront; they’re allocated and mapped into
+the hypervisor on demand (i.e., when the guest touches a GFN that isn’t yet
+backed by a host PFN).
+When a page is moved, Linux no longer holds it and it is unmapped from the hypervisor.
+As a result, Hyper-V guests behave like regular Linux processes, enabling standard Linux memory features to apply to guests.
+
+Exceptions (still pinned):
+  1. Encrypted guests (explicit).
+  2 Guests with passthrough devices (implicitly pinned by the VFIO framework).
 
 v2:
-	- Use subsystem name "net".
-	- Add fixes tags.
-	- Remove txtimestamp fix as default case calls error.
-	- Assign constant error string instead of NULL.
---
+- Split unmap batching into a separate patch.
+- Fixed commit messages from v1 review.
+- Renamed a few functions for clarity.
 
-diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
-index 9201f2905f2c..20d00378f34a 100644
---- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
-+++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
-@@ -1581,7 +1581,7 @@ static int ovpn_listen_mcast(void)
- {
- 	struct nl_sock *sock;
- 	struct nl_cb *cb;
--	int mcid, ret;
-+	int mcid, ret = -1;
- 
- 	sock = nl_socket_alloc();
- 	if (!sock) {
-@@ -1936,7 +1936,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
- {
- 	char peer_id[10], vpnip[INET6_ADDRSTRLEN], laddr[128], lport[10];
- 	char raddr[128], rport[10];
--	int n, ret;
-+	int n, ret = -1;
- 	FILE *fp;
- 
- 	switch (ovpn->cmd) {
-diff --git a/tools/testing/selftests/net/so_txtime.c b/tools/testing/selftests/net/so_txtime.c
-index 8457b7ccbc09..5bf3c483069b 100644
---- a/tools/testing/selftests/net/so_txtime.c
-+++ b/tools/testing/selftests/net/so_txtime.c
-@@ -174,7 +174,7 @@ static int do_recv_errqueue_timeout(int fdt)
- 	msg.msg_controllen = sizeof(control);
- 
- 	while (1) {
--		const char *reason;
-+		const char *reason = "unknown errno";
- 
- 		ret = recvmsg(fdt, &msg, MSG_ERRQUEUE);
- 		if (ret == -1 && errno == EAGAIN)
--- 
-2.47.3
+---
+
+Stanislav Kinsburskii (4):
+      Drivers: hv: Refactor and rename memory region handling functions
+      Drivers: hv: Centralize guest memory region destruction
+      Drivers: hv: Batch GPA unmap operations to improve large region performance
+      Drivers: hv: Add support for movable memory regions
+
+
+ drivers/hv/Kconfig             |    1 
+ drivers/hv/mshv_root.h         |   10 +
+ drivers/hv/mshv_root_hv_call.c |    2 
+ drivers/hv/mshv_root_main.c    |  472 +++++++++++++++++++++++++++++++++-------
+ 4 files changed, 403 insertions(+), 82 deletions(-)
 
 
