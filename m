@@ -1,98 +1,176 @@
-Return-Path: <linux-kernel+bounces-836682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A78BAA4B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:30:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860CFBAA4AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514983A3550
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:30:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14931921C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D843223C4ED;
-	Mon, 29 Sep 2025 18:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF1723C4FA;
+	Mon, 29 Sep 2025 18:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Szw6tfwC"
-Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X9GugUlO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B0C146A66;
-	Mon, 29 Sep 2025 18:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0027222565;
+	Mon, 29 Sep 2025 18:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759170610; cv=none; b=c77chT5HyHjOFqQZpmQPHK7L0EKCPr46tC4FjXfj3kOlXSJmcHx1dnnCBVTdWEWDsGSt8K/9Qvwg5Rg45PrAHboYoTFC7yamZw+OvpGc1uiU/uUCtHNruNGB9DuZjOpt/o+ciUPaiFfHHYnfNClZsga03d4dOkr7+39xXDpL8w0=
+	t=1759170549; cv=none; b=XOhmUSwxuzPjKbBIAW/wJoivgmzCSVe8YxpbqMc+04bPuWbHG+T6u3Y/y3XD3WGFKQeY+HIgAS5vgZaYRyJWgU8kjmZsqDhjCdr91iA1vY6K6uRNJkZUwVwpnHBATN764QaW4dNBr6l1bvAfTRD2TCbPxg8vjoW7h9J1iJR0rDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759170610; c=relaxed/simple;
-	bh=kM5RjQnF0yMkdlchTapqnhShU6eRYNtHofiGbN3Dl9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e3lAAn5O8OA/EhVLA2ijb7Vpj9V7hV4Q8TXOFwNl48JWFDIK0pPVvaaHy1YVPTbYqbw4bsnUpMgLbuuxif3UY7eqcknvax9U3R4YDWezdMw9z8XrJ9oZRZ1sQDevHjG+gtQF8vjj4l9OyrU2Eei7T/doDqzcr6nwGFxCuerRwUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Szw6tfwC; arc=none smtp.client-ip=80.12.242.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id 3IcIveJbg57iH3IcIvCDtz; Mon, 29 Sep 2025 20:28:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1759170535;
-	bh=cb2mBdVPaJ9JhXZz0HUS5QIadLlHUVA4Z4MuMhzZfaE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Szw6tfwCSLfEnASyenGdiA/HvyMI01WGDzc7cXmjWNc3pIDCiQIfZ2cWD814T6hpK
-	 DQQCnCHIBZasYvo+MmWLKmvxam6OQw/sqmui3Tc//F0wfUyXm3bYxZEcUpM/Yo+a+4
-	 IeLKHBImBxrubsxBPHcYcPJrDqHEf020uclYjXdBd6PqmRQMEytOq/+/eMheGz+RBw
-	 E/7ocmKYuXdRnynTyWH8WkcJ5pvuDd58wHNzUFmGtCJd8kNbvSUJeGVR0m6se7TYDx
-	 SoTusgo69yeoSHL+WBdw/tjZe0nMmOAyRA4dJy+qhFDTDuBOSNgMMnlKIxUJeRVs71
-	 x1u4akdeBZiRg==
-X-ME-Helo: fedora
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 29 Sep 2025 20:28:55 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ze Huang <huang.ze@linux.dev>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH] usb: dwc3: Don't call clk_bulk_disable_unprepare() twice
-Date: Mon, 29 Sep 2025 20:28:50 +0200
-Message-ID: <371860315a5c1ef6e800fa825e4c23ce335a55e2.1759170517.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759170549; c=relaxed/simple;
+	bh=ak9hBjgmlRrvvAt32Wz0Th11v4OBlRq9RMjCUbyu60A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HT6EqtiDDDjUF+ITNeXk4wbBu5CmhGUsU0jInWgkrcyrc40SLQNzyMjXgOlgMo4tD+yZSkgYDoBd1upmY6yJdjfjJcxzGTbEVpPc0KK07XKDr2WW7RKhuLzjUyWNje/UsJStsz3Og+25Tadp36U9cirqYK9SNTNcTwVXh8QaS/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X9GugUlO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F41C4CEF4;
+	Mon, 29 Sep 2025 18:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759170549;
+	bh=ak9hBjgmlRrvvAt32Wz0Th11v4OBlRq9RMjCUbyu60A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X9GugUlOsgKUsOgK5cg9nGEx0dHIPHx/ERM2NEg6fPkxWfW8ehRtAo47j7seGBjkk
+	 NoP4M1NaKfbgqYf0hEazlXUiKUZLNG83bBr5vY0WCyDCe/PeXNVdiLHrWKVa9obn6r
+	 xXa2hPAmukb0cOUNHffPfFRx2+S+ef4mUaSK2RdY=
+Date: Mon, 29 Sep 2025 20:29:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Wen Yang <wen.yang@linux.dev>
+Cc: linux-kernel@vger.kernel.org, Pierre Gondois <pierre.gondois@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 6.1] arch_topology: Build cacheinfo from primary CPU
+Message-ID: <2025092909-litter-cornstalk-2178@gregkh>
+References: <20250926174658.6546-1-wen.yang@linux.dev>
+ <2025092924-anemia-antidote-dad1@gregkh>
+ <f47441af-4147-40df-b79a-2fff4a745eac@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f47441af-4147-40df-b79a-2fff4a745eac@linux.dev>
 
-devm_clk_bulk_get_all_enabled() is used in the probe, so
-clk_bulk_disable_unprepare() should not be called explicitly in the remove
-function.
+On Tue, Sep 30, 2025 at 01:57:40AM +0800, Wen Yang wrote:
+> 
+> 
+> On 9/29/25 21:21, Greg Kroah-Hartman wrote:
+> > On Sat, Sep 27, 2025 at 01:46:58AM +0800, Wen Yang wrote:
+> > > From: Pierre Gondois <pierre.gondois@arm.com>
+> > > 
+> > > commit 5944ce092b97caed5d86d961e963b883b5c44ee2 upstream.
+> > > 
+> 
+> > > adds a call to detect_cache_attributes() to populate the cacheinfo
+> > > before updating the siblings mask. detect_cache_attributes() allocates
+> > > memory and can take the PPTT mutex (on ACPI platforms). On PREEMPT_RT
+> > > kernels, on secondary CPUs, this triggers a:
+> > >    'BUG: sleeping function called from invalid context' [1]
+> > > as the code is executed with preemption and interrupts disabled.
+> > > 
+> > > The primary CPU was previously storing the cache information using
+> > > the now removed (struct cpu_topology).llc_id:
+> > > commit 5b8dc787ce4a ("arch_topology: Drop LLC identifier stash from
+> > > the CPU topology")
+> > > 
+> > > allocate_cache_info() tries to build the cacheinfo from the primary
+> > > CPU prior secondary CPUs boot, if the DT/ACPI description
+> > > contains cache information.
+> > > If allocate_cache_info() fails, then fallback to the current state
+> > > for the cacheinfo allocation. [1] will be triggered in such case.
+> > > 
+> > > When unplugging a CPU, the cacheinfo memory cannot be freed. If it
+> > > was, then the memory would be allocated early by the re-plugged
+> > > CPU and would trigger [1].
+> > > 
+> > > Note that populate_cache_leaves() might be called multiple times
+> > > due to populate_leaves being moved up. This is required since
+> > > detect_cache_attributes() might be called with per_cpu_cacheinfo(cpu)
+> > > being allocated but not populated.
+> > > 
+> > > [1]:
+> > >   | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:46
+> > >   | in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/111
+> > >   | preempt_count: 1, expected: 0
+> > >   | RCU nest depth: 1, expected: 1
+> > >   | 3 locks held by swapper/111/0:
+> > >   |  #0:  (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x218/0x12c8
+> > >   |  #1:  (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x48/0xf0
+> > >   |  #2:  (&zone->lock){+.+.}-{3:3}, at: rmqueue_bulk+0x64/0xa80
+> > >   | irq event stamp: 0
+> > >   | hardirqs last  enabled at (0):  0x0
+> > >   | hardirqs last disabled at (0):  copy_process+0x5dc/0x1ab8
+> > >   | softirqs last  enabled at (0):  copy_process+0x5dc/0x1ab8
+> > >   | softirqs last disabled at (0):  0x0
+> > >   | Preemption disabled at:
+> > >   |  migrate_enable+0x30/0x130
+> > >   | CPU: 111 PID: 0 Comm: swapper/111 Tainted: G        W          6.0.0-rc4-rt6-[...]
+> > >   | Call trace:
+> > >   |  __kmalloc+0xbc/0x1e8
+> > >   |  detect_cache_attributes+0x2d4/0x5f0
+> > >   |  update_siblings_masks+0x30/0x368
+> > >   |  store_cpu_topology+0x78/0xb8
+> > >   |  secondary_start_kernel+0xd0/0x198
+> > >   |  __secondary_switched+0xb0/0xb4
+> > > 
+> > > Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+> > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> > > Link: https://lore.kernel.org/r/20230104183033.755668-7-pierre.gondois@arm.com
+> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > Cc: <stable@vger.kernel.org> # 6.1.x: c3719bd:cacheinfo: Use RISC-V's init_cache_level() as generic OF implementation
+> > > Cc: <stable@vger.kernel.org> # 6.1.x: 8844c3d:cacheinfo: Return error code in init_of_cache_level(
+> > > Cc: <stable@vger.kernel.org> # 6.1.x: de0df44:cacheinfo: Check 'cache-unified' property to count cache leaves
+> > > Cc: <stable@vger.kernel.org> # 6.1.x: fa4d566:ACPI: PPTT: Remove acpi_find_cache_levels()
+> > > Cc: <stable@vger.kernel.org> # 6.1.x: bd50036:ACPI: PPTT: Update acpi_find_last_cache_level() to acpi_get_cache_info(
+> > > Cc: <stable@vger.kernel.org> # 6.1.x
+> > 
+> > I do not understand, why do you want all of these applied as well?  Can
+> > you just send the full series of commits?
+> > 
+> Thanks for your comments, here is the original series:
+> https://lore.kernel.org/all/167404285593.885445.6219705651301997538.b4-ty@arm.com/
+> 
+> commit 3fcbf1c77d08 ("arch_topology: Fix cache attributes detection in the
+> CPU hotplug path") introduced a bug, and this series fixed it.
+> 
+> > > Signed-off-by: Wen Yang <wen.yang@linux.dev>
+> > 
+> > Also, you have changed this commit a lot from the original one, please
+> > document what you did here.
+> > 
+> Thanks for the reminder. We just hope to cherry-pick them onto the 6.1
+> stable branch, without modifying the original commit.
+> Also checked again, as follows:
+> 
+> $ git cherry-pick c3719bd
+> $ git cherry-pick 8844c3d
+> $ git cherry-pick de0df44
+> $ git cherry-pick fa4d566
+> $ git cherry-pick bd50036
+> $ git cherry-pick 5944ce0
+> 
+> $ git format-patch HEAD -1
+> 
+> $ diff 0001-arch_topology-Build-cacheinfo-from-primary-CPU.patch
+> 20250927_wen_yang_arch_topology_build_cacheinfo_from_primary_cpu.mbx
 
-Fixes: e0b6dc00c701 ("usb: dwc3: add generic driver to support flattened")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/usb/dwc3/dwc3-generic-plat.c | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index d96b20570002..f8ad79c08c4e 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -85,11 +85,8 @@ static int dwc3_generic_probe(struct platform_device *pdev)
- static void dwc3_generic_remove(struct platform_device *pdev)
- {
- 	struct dwc3 *dwc = platform_get_drvdata(pdev);
--	struct dwc3_generic *dwc3g = to_dwc3_generic(dwc);
- 
- 	dwc3_core_remove(dwc);
--
--	clk_bulk_disable_unprepare(dwc3g->num_clocks, dwc3g->clks);
- }
- 
- static int dwc3_generic_suspend(struct device *dev)
--- 
-2.51.0
+Can you resend these all as a patch series with your signed-off-by on
+them to show that you have tested them?
 
+And again, the commit here did not seem to match up with the original
+upstream version, but maybe my tools got it wrong.  Resend the series
+and I'll check it again.
+
+thanks,
+
+greg k-h
 
