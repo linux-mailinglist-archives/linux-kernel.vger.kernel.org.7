@@ -1,98 +1,153 @@
-Return-Path: <linux-kernel+bounces-836552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCEB3BAA010
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:22:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D34BAA016
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9983BC01B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64EEE16F3BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252AD30C117;
-	Mon, 29 Sep 2025 16:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0322E30C11E;
+	Mon, 29 Sep 2025 16:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hqDOp8JY"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AqJIZNl/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025852144CF;
-	Mon, 29 Sep 2025 16:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD91B1426C;
+	Mon, 29 Sep 2025 16:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759162927; cv=none; b=Irl3vgQGb0hB2XONvclljKkHJJshAq4wThGNNuxTOtYVCws4re7SixI1TELVFri4SUxJAsnt/R8MlvU0vtsknb2Mufcxp942hhIIEGVCUPmo7dyJ2lRPkDAtMGQAtViT+XweYS4jgUXW8sMQBt/XZA98XkAWUhwqwfi22sZQz1M=
+	t=1759162971; cv=none; b=P/Ugr2cWWsnFcmcpEXo3ANz2B2Hp9cXIPBQ4nk3288omLrTaGF1YvA8CqfJUrS+HOsIZInbQaaIp36g6OesqmUg5C/nEukRXHi5RvkR5I5bsGjdNGNVGyUwpm8KoNjtWWflDJVx7rYqRL9cBvY84hdUytatNbKCenexzFmDdYNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759162927; c=relaxed/simple;
-	bh=KJIBh56736H2gYsPQzPecNj3YNExm94VfLmG+kW2BUQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Tn/TKkdA94wNb28+pJwN3sRWrIWxuUrHACd8V3FKznIhSvK07zbjHrbiG3tdPHvzohIYL9xKp6TDKZ5+nZ0ztUz+VoOkSZqW6l6+vEMtS3qQvlJe7CRmT7m7pb5uPK0UEwOA3JA74WQz9hG8iMm2sQ2N/iF0SPwG38IdJ1tx84g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hqDOp8JY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [223.190.87.241])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 57030346;
-	Mon, 29 Sep 2025 18:20:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759162836;
-	bh=KJIBh56736H2gYsPQzPecNj3YNExm94VfLmG+kW2BUQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=hqDOp8JYlSTbQOHl12lR8t8Tr+LMIQXdgqjBA8Mjth28u56o4NqP4jgXUxS7H5Cah
-	 +tctrvNkksJruGrtOK3IxswMQrRI9izDB1H4Aj8a5PlxWf8rgbqdw5eqQUb8d3OCFu
-	 xMzh/7gz/FNEv1LbyDlldvxy/c6MwSGfd179I8jg=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1759162971; c=relaxed/simple;
+	bh=Ja04zuPU1uyHFDKWsa6zMBjZtraKPVCXSk0ngeYiWhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F0YgNOhAzIxz97ondaHW1S1K0RyDn1SvQMGN4685ZzURiI+rdPeDL4SCYpMn0AbFZ90pzvtw8leWS46FNO9rc9bgrB2AiJnrEz+iQDtxpCZmrRL3KLuc7t8s1OT/dQ5RCI3gTZwcZ1UUMO6VBQ7fsVaZ4ZV5vFfMw+E/v5lIO7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AqJIZNl/; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759162970; x=1790698970;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ja04zuPU1uyHFDKWsa6zMBjZtraKPVCXSk0ngeYiWhU=;
+  b=AqJIZNl/ZroJG4Garp/Q4teyF4tXukZ2hJbGSuKuPLZpgQT4Z5uPIheM
+   Ijyqr23ly4Pzu4WcVJqa6vuEQNgOrL3kSE33kBGtOPbM92G18LCvMtpL4
+   xVJAX/AiQDm9Z01STQlHzay/wgQWzygtv85K/O5I7ucJdpcSC0STEL87W
+   EC+gymU4oyT21j0ksc0LjYDI4fTMhVKlRx0SikWxUXuWtx/6fz8cSM8gQ
+   lEAgFSgpOwj937eJQXurnJZGFM0ct0JE0H8QPWPPYXy8K1LpnPD8b3TJ8
+   ptGyqoB1osM8Pi1B3NA3l9/wQQ3KVrUlZrk0eqkPfycvx8qDEaS3/DEMH
+   w==;
+X-CSE-ConnectionGUID: QIAXGC6HQ2OWUgLV9U131A==
+X-CSE-MsgGUID: 4hoxHhDWQc2uRfu1TlKL5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61120555"
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="61120555"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 09:22:50 -0700
+X-CSE-ConnectionGUID: TYendME6SgSovBECqpdklg==
+X-CSE-MsgGUID: fgKQzyFLTrGlvshpoqM9gA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; 
+   d="scan'208";a="182290704"
+Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.109.105]) ([10.125.109.105])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 09:22:49 -0700
+Message-ID: <0fc9a9ed-b0ba-45fc-8bd2-1bf24c14ab7f@intel.com>
+Date: Mon, 29 Sep 2025 09:22:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f7850c68-d255-465e-a549-a5fd70cfaa72@kernel.org>
-References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com> <20250919-vdev-state-v2-8-b2c42426965c@ideasonboard.com> <f7850c68-d255-465e-a549-a5fd70cfaa72@kernel.org>
-Subject: Re: [PATCH v2 08/10] media: ti: j721e-csi2rx: Use video_device_state
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Jai Luthra <jai.luthra@linux.dev>, linux-kernel@vger.kernel.org
-To: Hans Verkuil <hverkuil+cisco@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, linux-media@vger.kernel.org
-Date: Mon, 29 Sep 2025 21:51:50 +0530
-Message-ID: <175916291050.2234821.14335723233391402773@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/16] TDX: Enable Dynamic PAMT
+To: Kiryl Shutsemau <kas@kernel.org>, Yan Zhao <yan.y.zhao@intel.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Gao, Chao" <chao.gao@intel.com>, "seanjc@google.com" <seanjc@google.com>,
+ "bp@alien8.de" <bp@alien8.de>, "Annapurve, Vishal" <vannapurve@google.com>,
+ "Huang, Kai" <kai.huang@intel.com>, "mingo@redhat.com" <mingo@redhat.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+ <aNX6V6OSIwly1hu4@yzhao56-desk.sh.intel.com>
+ <8f772a23-ea7f-40eb-8852-49f5e3e16c15@intel.com>
+ <2b951e427c3f3f06fc310d151b7c9e960c32ec3f.camel@intel.com>
+ <7927271c-61e6-4f90-9127-c855a92fe766@intel.com>
+ <2fc6595ba9b2b3dc59a251fbac33daa73a107a92.camel@intel.com>
+ <aNiQlgY5fkz4mY0l@yzhao56-desk.sh.intel.com>
+ <x5wtf2whjjofaxufloomkebek4wnaiyjnteguanpw3ijdaer6q@daize5ngmfcl>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <x5wtf2whjjofaxufloomkebek4wnaiyjnteguanpw3ijdaer6q@daize5ngmfcl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Hans Verkuil (2025-09-22 13:46:00)
-> On 19/09/2025 11:56, Jai Luthra wrote:
-> > Use the newly introduced video_device_state to store the active V4L2
-> > format for the video device.
-> >=20
-> > This change allows using a single function for both .s_fmt and .try_fmt
-> > hooks, while leveraging the framework helper for the .g_fmt hook.
->=20
-> Rather than replying to 00/10, since that is CC-ed to a million people, I=
-'ll
-> reply here.
->=20
-> For core framework changes like this I want to see it applied to the test=
--drivers
-> as well. At minimum the vivid driver and, if we support this for M2M devi=
-ces as
-> well, either vim2m or vicodec.
->=20
-> The test-drivers are used in the media CI regression tests, so it is impo=
-rtant
-> that this is implemented in at least some of the test drivers.
+On 9/29/25 04:17, Kiryl Shutsemau wrote:
+>> Do you have any suggestions for a better approach?
+>>
+>> e.g., could the PAMT pages be allocated from a dedicated pool that ensures they
+>> reside in different 2MB ranges from guest private pages and TD control pages?
+> It can work: allocate 2M a time for PAMT and piecemeal it to TDX module
+> as needed. But it means if 2M allocation is failed, TDX is not functional.
+> 
+> Maybe just use a dedicated kmem_cache for PAMT allocations. Although, I
+> am not sure if there's a way to specify to kmem_cache what pages to ask
+> from page allocator.
 
-Sure, will add state support to vivid in the next revision.
-
-I'm not very familiar with M2M though, and depends on what the series looks
-like, but I will give that an attempt.
-
->=20
-> Regards,
->=20
->         Hans
->=20
-
-Thanks,
-Jai
-
-[snip]
+That seems a bit obtuse rather than just respecting normal lock ordering
+rules. No?
 
