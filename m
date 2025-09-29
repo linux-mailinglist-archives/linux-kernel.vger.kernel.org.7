@@ -1,154 +1,298 @@
-Return-Path: <linux-kernel+bounces-836608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D88BAA245
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBD4BAA2CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3314E4E1F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:21:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C40A3B0CA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063DD30C10B;
-	Mon, 29 Sep 2025 17:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1511DE8A4;
+	Mon, 29 Sep 2025 17:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qpT8HVEe"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="CMCdpSoj"
+Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F58215F4A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDD116DEB1
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759166515; cv=none; b=V7zidZrtkCkahrWbnbYtQgAcNapRS34lbTUfGTcdiY+CTUNMHK768JBTAPZSk/7Skj6AmUUWxkS/rFkkER7nNYYr8fVTHCzuZWockcQv+tv5pIqTXtpx64eUwg4FWxsuq+4tfDYLCVcYCh4n2bx8QhMuX9XzuzdIUWG00ZIr/Ic=
+	t=1759167073; cv=none; b=EST08FCUV3X7hP8xADv2P0mD6Hbf+RhXjvD9t0ccPSumtic+D8MmP3NMcepH7q+Als+npc57PLvjiuwUU20FzQ/Tub7Tk/9g7bAGePBTF1ZtvYNPUpC6rn1L5muuUiZbqjk85QA9CeAchcwkCHD80nbJ9gBVE0fLlICSBe02Alw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759166515; c=relaxed/simple;
-	bh=muqLx+ZkQE73ymU6ZJlhOW6yJMNLyerOcTjnN0fXCfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LU8+WcgKOwbQrRy9cHb/LRUbOVkYjLT4oaysglspT5g6WMwCSxTuKpEX5ISdJheePUs5AeXQEdaFzi4drsHJg7DBvatucdKddmz2YxTP2YkkhIimTw21jpwYL/RCIAKzaiZfab0RCyg9BncQdyD+JirrovbqWLd/dasx7hsTagY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qpT8HVEe; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4de66881569so35251cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 10:21:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759166513; x=1759771313; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lVa+tDyppWrdzqK7fB53mlf91vynfNxyCklwvd1eLkI=;
-        b=qpT8HVEeZcRSK5AWSCVdADBYvA5VH7XetNWnxCRUn6VX2f1XNWBRdO+qegl/+S/GqD
-         Z8sLuhacR2YtOSEvmdMP8vand6wqBpwCLT9h/367dSssZdSbcEF2yvKk+EsYaBsnRI1p
-         XfAbkbvFmepeWEqz0dFbvJHtSyOmZuTPb9REj1zUnfMhjF9AZEbMvdpjo0F+Jmdzax4f
-         n3qidhfsWXzLFXGxQv6lVZ4B+kz8vvPv3aa2xPeJaZChq4OzAKAkDaEKTnWjb+sSNJto
-         eo7oEZVD9/kkVZ0+9eMZDHPVM5vdpkN4gr45/ZXjZxLrh/paZTSHx/U2gOatJNib6P6I
-         WgCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759166513; x=1759771313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lVa+tDyppWrdzqK7fB53mlf91vynfNxyCklwvd1eLkI=;
-        b=Z3cA4Sp76ipNPWef3TwGtg/X6xW8dr5/6+96sjFb628es8zj2LluSrEqN0spsJp//H
-         +0au3D7dnUWwdtOwXJWT1LjO/E5hEt/5YNQwEG+WrANkv6GMQ9XITr/S2Xzp2UlhfSN2
-         Q7fZv4r01n1+jRd84LMhlufmDSTa5PTs94P0tzC9uje7/6iNRen5Zf3pZr+Kq+MIhSWK
-         rn0zB3TKOEAq6fuLwMmL4kHPC9261c7NcKH7VyGCg9XJiK627WrEuQrVXoCP1EjOwaND
-         t1HzfdLsv2au5sxbvVHUpdPvl991llMadYHbpXlKpG+SoyDnkulqM65BNTL0uhQsBJ3S
-         +yVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFhptyl5O0AjZHPRkRHi1GyAvtYbzRjKaO9eKEmCt5WBeLzg2Ggh8rwQ96GdJi9mdZm0W5BbzXUsVhhZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+bL5Z8z3cM7tChQwxrg/l6h8w3p46y0iRXudhLDeU7uMm1St8
-	N/oWP4iQ0KXjrQPN2BHIvQ13iKrS6kKkEYikVYViUH+P1KkWVcy6bwoe4stOFHSp5iXW6XGF1k/
-	od1gWrhHipdDFgcVo8iIk+5T3sGDx5SiKS+2XQG3n
-X-Gm-Gg: ASbGnctKtoS1o2JV4VtSMoCMiiT2r+90Xt5Wn/cSnaFlo33fZas9whxykBRAXN4Xnbu
-	pO6PGAgGVjfA+1++m9WavCzmq9TzgrSlNBBc5gQ1RdpTQahdmyc5eRwisKgvm/YR9/yzcJwyt52
-	Ac6HU7QSOFfxS/OPAfR4IZ3pNlzHaf677fwEyWsa16rQ+NKEtwy6If8Mc3zvIs5jW8d0XFCeGX2
-	l9Kk0fJq3sO86kaPsDiVdM0QxnUVflzXwgb+ck4f7iy2T8af1ff+a5gOhlxXIQ20g==
-X-Google-Smtp-Source: AGHT+IEjdFHycw2DxP3B7hAIpxlRtDVL8V3otAzvB1xjUNsgkfac7OeJzDzf67jwLTAOE6fUWugAWyCiIRZjKDwHBxQ=
-X-Received: by 2002:a05:622a:1aa1:b0:4b6:2d44:13c4 with SMTP id
- d75a77b69052e-4e2d014282bmr482371cf.10.1759166511654; Mon, 29 Sep 2025
- 10:21:51 -0700 (PDT)
+	s=arc-20240116; t=1759167073; c=relaxed/simple;
+	bh=EHIy8dEPDqxt6PRozzxc6lMy2O+yWldQhMw2v42rm5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IMgpkW8OAwG6R2PM14eUuRQ7xncx2ot+IQoApcG005agI0EAjXZbssPPGe+N+AZXZxsMsg6QyoR088DkzPpA+Q7/2KZ3J6j9IC8ivMP0e8WgS9IM0zfZFPRduM0WImFUoHIbPsG3hC8pyvYS0g1LPlMF5zIt11tCKVNu9TDdT9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=CMCdpSoj; arc=none smtp.client-ip=178.62.254.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
+Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
+	(Authenticated sender: d@ilvokhin.com)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id 4562192CCB;
+	Mon, 29 Sep 2025 17:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
+	s=mail; t=1759166509;
+	bh=e6UOPjDX6GDXZTJ3BHTWH5HK3Gp1+g+0ZC9njXBfRgQ=;
+	h=Date:From:To:Cc:Subject;
+	b=CMCdpSoj0tPZHaPkXtBVF/c0hytwChEOQdIuQz9AqhoCv/YhF+W6f4OnE7JuJsx8o
+	 ycgRBHK9QkE1oubANw90CInR8uP/DkR3u8EFTy9D+ZiRzyfLBORKZd/BXcQs8lpLJr
+	 yTI5NO/iQkr6VPTgytuRrQACFfRoJ4N8e0SjsRkk=
+Date: Mon, 29 Sep 2025 17:21:45 +0000
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: [PATCH] x86/irq: Optimize interrupts decimals printing
+Message-ID: <aNrAKWRnPK1LskSg@shell.ilvokhin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-4-skhawaja@google.com>
- <20250929155123.GC2695987@ziepe.ca>
-In-Reply-To: <20250929155123.GC2695987@ziepe.ca>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Mon, 29 Sep 2025 10:21:39 -0700
-X-Gm-Features: AS18NWDlYoSUXVy2eQshj89NVOvmF60-kHeNYJ-dUJk0Eds8zwKuAzVWnth5PVc
-Message-ID: <CAAywjhRy=BHiQgErfkdt+KWcP_ovEF2cAjMT3euHKiJX7Qfp4g@mail.gmail.com>
-Subject: Re: [RFC PATCH 03/15] iommu/vt-d: Prevent hotplugs when live update
- state is not normal
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, zhuyifei@google.com, 
-	Chris Li <chrisl@kernel.org>, praan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Sep 29, 2025 at 8:51=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Sun, Sep 28, 2025 at 07:06:11PM +0000, Samiullah Khawaja wrote:
-> > Hotplugs should not be allowed when the live update state is not normal=
-.
-> > This means either we have preserved the state of IOMMU hardware units o=
-r
-> > restoring the preserved state.
-> >
-> > The live update semaphore read lock should be taken before checking the
-> > live update state.
-> >
-> > Signed-off-by: Samiullah Khawaja <skhawaja@google.com>
-> > ---
-> >  drivers/iommu/intel/dmar.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-> > index ec975c73cfe6..248bc7e9b035 100644
-> > --- a/drivers/iommu/intel/dmar.c
-> > +++ b/drivers/iommu/intel/dmar.c
-> > @@ -26,6 +26,7 @@
-> >  #include <linux/dmi.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/iommu.h>
-> > +#include <linux/liveupdate.h>
-> >  #include <linux/numa.h>
-> >  #include <linux/limits.h>
-> >  #include <asm/irq_remapping.h>
-> > @@ -2357,6 +2358,10 @@ static int dmar_device_hotplug(acpi_handle handl=
-e, bool insert)
-> >       if (tmp =3D=3D NULL)
-> >               return 0;
-> >
-> > +     guard_liveupdate_state_read();
-> > +     if (!liveupdate_state_normal())
-> > +             return -EBUSY;
->
-> Pasha, this is madness!
->
-> Exactly why I said we should not have these crazy globals, people are
-> just going to sprinkle them randomly everywhere with no possible way
-> of ever understanding why or what they even are supposed to protect!
->
-> There is no reason to block hotplug. Do the locking and state tracking
-> properly so you only manage the instances that need to participate in
-> luo because they are linked to already plugged devices that are also
-> participating in luo.
-Agreed.
+Function seq_printf supports rich format string for decimals printing,
+but it doesn't required for printing /proc/interrupts per CPU counters,
+seq_put_decimal_ull_width function can be used instead to print per CPU
+counters, because very limited formatting is required for this case.
 
-I'll rework this and do proper state tracking once I rebase on top of
-LUOv4 for next revision.
->
-> Jason
+Performance counter stats (truncated) for 'sh -c cat /proc/interrupts
+>/dev/null' (1000 runs) before and after applying the patch below.
+
+Before:
+
+      3.42 msec task-clock        #    0.802 CPUs utilized   ( +-  0.05% )
+         1      context-switches  #  291.991 /sec            ( +-  0.74% )
+         0      cpu-migrations    #    0.000 /sec
+       343      page-faults       #  100.153 K/sec           ( +-  0.01% )
+ 8,932,242      instructions      #    1.66  insn per cycle  ( +-  0.34% )
+ 5,374,427      cycles            #    1.569 GHz             ( +-  0.04% )
+ 1,483,154      branches          #  433.068 M/sec           ( +-  0.22% )
+    28,768      branch-misses     #    1.94% of all branches ( +-  0.31% )
+
+0.00427182 +- 0.00000215 seconds time elapsed  ( +-  0.05% )
+
+After:
+
+      2.39 msec task-clock        #    0.796 CPUs utilized   ( +-  0.06% )
+         1      context-switches  #  418.541 /sec            ( +-  0.70% )
+         0      cpu-migrations    #    0.000 /sec
+       343      page-faults       #  143.560 K/sec           ( +-  0.01% )
+ 7,020,982      instructions      #    1.30  insn per cycle  ( +-  0.52% )
+ 5,397,266      cycles            #    2.259 GHz             ( +-  0.06% )
+ 1,569,648      branches          #  656.962 M/sec           ( +-  0.08% )
+    25,419      branch-misses     #    1.62% of all branches ( +-  0.72% )
+
+0.00299996 +- 0.00000206 seconds time elapsed  ( +-  0.07% )
+
+Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+---
+ arch/x86/kernel/irq.c | 96 +++++++++++++++++++++++--------------------
+ 1 file changed, 52 insertions(+), 44 deletions(-)
+
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 10721a125226..3b5a5e2d16e1 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -61,6 +61,14 @@ void ack_bad_irq(unsigned int irq)
+ 	apic_eoi();
+ }
+ 
++static void put_spaced_decimal(struct seq_file *p, unsigned long long num)
++{
++	const char *delimiter = " ";
++	unsigned int width = 10;
++
++	seq_put_decimal_ull_width(p, delimiter, num, width);
++}
++
+ #define irq_stats(x)		(&per_cpu(irq_stat, x))
+ /*
+  * /proc/interrupts printing for arch specific interrupts
+@@ -69,102 +77,102 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ {
+ 	int j;
+ 
+-	seq_printf(p, "%*s: ", prec, "NMI");
++	seq_printf(p, "%*s:", prec, "NMI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->__nmi_count);
++		put_spaced_decimal(p, irq_stats(j)->__nmi_count);
+ 	seq_puts(p, "  Non-maskable interrupts\n");
+ #ifdef CONFIG_X86_LOCAL_APIC
+-	seq_printf(p, "%*s: ", prec, "LOC");
++	seq_printf(p, "%*s:", prec, "LOC");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->apic_timer_irqs);
++		put_spaced_decimal(p, irq_stats(j)->apic_timer_irqs);
+ 	seq_puts(p, "  Local timer interrupts\n");
+ 
+-	seq_printf(p, "%*s: ", prec, "SPU");
++	seq_printf(p, "%*s:", prec, "SPU");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_spurious_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_spurious_count);
+ 	seq_puts(p, "  Spurious interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "PMI");
++	seq_printf(p, "%*s:", prec, "PMI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->apic_perf_irqs);
++		put_spaced_decimal(p, irq_stats(j)->apic_perf_irqs);
+ 	seq_puts(p, "  Performance monitoring interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "IWI");
++	seq_printf(p, "%*s:", prec, "IWI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->apic_irq_work_irqs);
++		put_spaced_decimal(p, irq_stats(j)->apic_irq_work_irqs);
+ 	seq_puts(p, "  IRQ work interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "RTR");
++	seq_printf(p, "%*s:", prec, "RTR");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->icr_read_retry_count);
++		put_spaced_decimal(p, irq_stats(j)->icr_read_retry_count);
+ 	seq_puts(p, "  APIC ICR read retries\n");
+ 	if (x86_platform_ipi_callback) {
+-		seq_printf(p, "%*s: ", prec, "PLT");
++		seq_printf(p, "%*s:", prec, "PLT");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ", irq_stats(j)->x86_platform_ipis);
++			put_spaced_decimal(p, irq_stats(j)->x86_platform_ipis);
+ 		seq_puts(p, "  Platform interrupts\n");
+ 	}
+ #endif
+ #ifdef CONFIG_SMP
+-	seq_printf(p, "%*s: ", prec, "RES");
++	seq_printf(p, "%*s:", prec, "RES");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_resched_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_resched_count);
+ 	seq_puts(p, "  Rescheduling interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "CAL");
++	seq_printf(p, "%*s:", prec, "CAL");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_call_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_call_count);
+ 	seq_puts(p, "  Function call interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "TLB");
++	seq_printf(p, "%*s:", prec, "TLB");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_tlb_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_tlb_count);
+ 	seq_puts(p, "  TLB shootdowns\n");
+ #endif
+ #ifdef CONFIG_X86_THERMAL_VECTOR
+-	seq_printf(p, "%*s: ", prec, "TRM");
++	seq_printf(p, "%*s:", prec, "TRM");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_thermal_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_thermal_count);
+ 	seq_puts(p, "  Thermal event interrupts\n");
+ #endif
+ #ifdef CONFIG_X86_MCE_THRESHOLD
+-	seq_printf(p, "%*s: ", prec, "THR");
++	seq_printf(p, "%*s:", prec, "THR");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_threshold_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_threshold_count);
+ 	seq_puts(p, "  Threshold APIC interrupts\n");
+ #endif
+ #ifdef CONFIG_X86_MCE_AMD
+-	seq_printf(p, "%*s: ", prec, "DFR");
++	seq_printf(p, "%*s:", prec, "DFR");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_deferred_error_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_deferred_error_count);
+ 	seq_puts(p, "  Deferred Error APIC interrupts\n");
+ #endif
+ #ifdef CONFIG_X86_MCE
+-	seq_printf(p, "%*s: ", prec, "MCE");
++	seq_printf(p, "%*s:", prec, "MCE");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", per_cpu(mce_exception_count, j));
++		put_spaced_decimal(p, per_cpu(mce_exception_count, j));
+ 	seq_puts(p, "  Machine check exceptions\n");
+-	seq_printf(p, "%*s: ", prec, "MCP");
++	seq_printf(p, "%*s:", prec, "MCP");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", per_cpu(mce_poll_count, j));
++		put_spaced_decimal(p, per_cpu(mce_poll_count, j));
+ 	seq_puts(p, "  Machine check polls\n");
+ #endif
+ #ifdef CONFIG_X86_HV_CALLBACK_VECTOR
+ 	if (test_bit(HYPERVISOR_CALLBACK_VECTOR, system_vectors)) {
+-		seq_printf(p, "%*s: ", prec, "HYP");
++		seq_printf(p, "%*s:", prec, "HYP");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ",
++			put_spaced_decimal(p,
+ 				   irq_stats(j)->irq_hv_callback_count);
+ 		seq_puts(p, "  Hypervisor callback interrupts\n");
+ 	}
+ #endif
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 	if (test_bit(HYPERV_REENLIGHTENMENT_VECTOR, system_vectors)) {
+-		seq_printf(p, "%*s: ", prec, "HRE");
++		seq_printf(p, "%*s:", prec, "HRE");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ",
++			put_spaced_decimal(p,
+ 				   irq_stats(j)->irq_hv_reenlightenment_count);
+ 		seq_puts(p, "  Hyper-V reenlightenment interrupts\n");
+ 	}
+ 	if (test_bit(HYPERV_STIMER0_VECTOR, system_vectors)) {
+-		seq_printf(p, "%*s: ", prec, "HVS");
++		seq_printf(p, "%*s:", prec, "HVS");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ",
++			put_spaced_decimal(p,
+ 				   irq_stats(j)->hyperv_stimer0_count);
+ 		seq_puts(p, "  Hyper-V stimer0 interrupts\n");
+ 	}
+@@ -174,27 +182,27 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ 	seq_printf(p, "%*s: %10u\n", prec, "MIS", atomic_read(&irq_mis_count));
+ #endif
+ #if IS_ENABLED(CONFIG_KVM)
+-	seq_printf(p, "%*s: ", prec, "PIN");
++	seq_printf(p, "%*s:", prec, "PIN");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->kvm_posted_intr_ipis);
++		put_spaced_decimal(p, irq_stats(j)->kvm_posted_intr_ipis);
+ 	seq_puts(p, "  Posted-interrupt notification event\n");
+ 
+-	seq_printf(p, "%*s: ", prec, "NPI");
++	seq_printf(p, "%*s:", prec, "NPI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ",
++		put_spaced_decimal(p,
+ 			   irq_stats(j)->kvm_posted_intr_nested_ipis);
+ 	seq_puts(p, "  Nested posted-interrupt event\n");
+ 
+-	seq_printf(p, "%*s: ", prec, "PIW");
++	seq_printf(p, "%*s:", prec, "PIW");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ",
++		put_spaced_decimal(p,
+ 			   irq_stats(j)->kvm_posted_intr_wakeup_ipis);
+ 	seq_puts(p, "  Posted-interrupt wakeup event\n");
+ #endif
+ #ifdef CONFIG_X86_POSTED_MSI
+-	seq_printf(p, "%*s: ", prec, "PMN");
++	seq_printf(p, "%*s:", prec, "PMN");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ",
++		put_spaced_decimal(p,
+ 			   irq_stats(j)->posted_msi_notification_count);
+ 	seq_puts(p, "  Posted MSI notification event\n");
+ #endif
+-- 
+2.47.3
+
 
