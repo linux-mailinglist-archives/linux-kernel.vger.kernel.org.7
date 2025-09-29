@@ -1,147 +1,158 @@
-Return-Path: <linux-kernel+bounces-836197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8DABA8F9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:10:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60FBBA8FA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 13:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 076FE167119
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0EA3AFE3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 11:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858AF2FF664;
-	Mon, 29 Sep 2025 11:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K9xmuKZG"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872B12FFDDB;
+	Mon, 29 Sep 2025 11:10:32 +0000 (UTC)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C3018FDAF
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A9B2D249A
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759144219; cv=none; b=setYmpppmsct9zyMLSvwB3uSJDAdletp5HAc5oR0QpmQL4eWG80qeYA9AYwQxZHAmjOXaxB0Lbm5KPjDSqivALBBxupbpDnsApAX2ZD0ZwzxOH8MxdDTKObD3ci9sRcFtvVW9UYEtxW2fn9m1G4Ys7sMwEeWQKy06h7KSJIFylI=
+	t=1759144232; cv=none; b=cVTULUT/8Es9iyezPAbgJFVmzPeMzvCNpw9PhEw01LpmmVffC7TW9YCvmRAkUXaqqXcHULNDE0pQQgM0IBWb1rrD+x+JRkJQ+JEBt2bcbIdNyUSkO/YHkoYe6/wOpp1DhjnLd73OgGqgtwaX+9pA6V8M7Sd1C+2w0XK0gx1D4JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759144219; c=relaxed/simple;
-	bh=uGU0X4XRvs5GtQI3Ay7FhA1xMjMBv4FbZpT42eARQ58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpXs9xK/A/Hl6Rjr5RL7RqR2a0R5mH/yTfwp0xniDoPFY2r7Tt3Vp0Cr98XfGOOggtmdOuTyCZKuxJVSDxmhyG5cx8x0BwBsR+PyhrZOrOZlBhFaudR5MUTvJebIzE7t6Q88nmicPNHat6xK6W/0UNnKwhkxxg+boBMEBA3XnqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K9xmuKZG; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e32c0e273so101925e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759144216; x=1759749016; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KBw4ejj4fmMEafZBPpzx+wYOwZgdJDUmWT9JGV8MXfA=;
-        b=K9xmuKZGcDFSgeUAIhLcJ9XFzhiVasKamgIvI6HTj15h8pi6ISe1lrfIsgWmfksDm3
-         hDxIILjRYg94aJDuTfAkYQLS3ntU3S9GxPcIl/uM8BZdbgYGa+591nbfoPGlbQuD3nyL
-         R9zycivHdJeBJ37GRJechamfz3RJWsmFr/J/R0bhV1mLieM7hPAbmtEVngsrJeVESBsV
-         Me79NONzl7MjjDrtLXfftM5SyZzKF6Dj9ito5WdBBpQOxrt3DJPDfaqWdbqRr5/wFNLt
-         xhltUBBz3ltIoSv4qt8l8eKMBXZgwrUbndsB8SM2hPs//eDl7Htn4bGgzuFWY5IV5el3
-         qqXQ==
+	s=arc-20240116; t=1759144232; c=relaxed/simple;
+	bh=Vub8S/uaeeP/i/sARgDCmpVy3EEPQtjFb9sPbB8ndsI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ibt+SvN38qUhjVcE/FjzYlQa8+yiPhOIw8kSNUzWRmdAyfcbBJ/x2tEUUKASrriWBhw6bOPmQ59tXzJqktJWIum42hDD8ugzsOAPy/Swzo7zYx+rRUD3tolCzIn0bIuiHy7xNLUnk4waq0ME3OpOSidWpuBBlVYk33XPQ7IQxBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-528d157a48cso2918763137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:10:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759144216; x=1759749016;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KBw4ejj4fmMEafZBPpzx+wYOwZgdJDUmWT9JGV8MXfA=;
-        b=NbleA/dCSl05JqVmlJCYT+jDolohmqem+XNvyAT4xqgJKSJJlw+sRRsLXqpGLkBtc+
-         tQmXQbgVQWvmnXB4Ef3lhlb7wl7gBLqHL1MJ3EPRDdr31OWaL6qOiUOb/Cq6xDUtPf9O
-         YAfmv1jgS29W41dhCvTO0boEon0xoQMkac+ca5Wbo9CCU5gC0cbte029vqSMvXfpIJ3Y
-         /vkUT/RiylSSpxXifRpC7KCrYZP7IHG6O64KEjYXP7RNk8q027Q+wzXr7JYEL2EDUE4r
-         /PblyzIPtJSpnpwwt0C3zPFCXraUaKpuMjEFKDJ/n41qmMq5l0OnX2fd3xpwwR1CSUzN
-         111g==
-X-Forwarded-Encrypted: i=1; AJvYcCUuvpq8OKbHcGolNhwn4XORAN9sQ3YQuSoziKJKZLiP+L1DlW4lOxgmDfwsiu5aos/6oPKOEX2hZK2ySYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnHiIQr5RuP/R9E5Cd7N7A4UDNssnE8pl65Z7326h+SsbpvLwG
-	ZxzZv66pWmX2DGc8wxYI1SgKN8fANO6GEj/L8g4hWb6p+eQ2D+9KWo8zsiAomo68Ww==
-X-Gm-Gg: ASbGncs82ua5Hca15PnJ0BofRqkB5oomGPhJbBxysfidghzTqe5z05fyERVstQ4BXKa
-	EPNq3CQU+rCg6lJGyOR4HcIKXr5i7MrLPp9V6B7K6ibJsIQngbmaCg9QxouhjeFsN9pVVdlBSut
-	VU5D9oi/ig/o/9+kTqjUAdzkZwls8vbUzQ6ZqwPUrt/QEwppAcPvD7U8fPZWnZ0WAs335og+pn9
-	YCiVhMP/lAuJucXeXN/QVWghDHWhXgnfJiCwBOhgrObCRr9Qa5KNenFcN2Qm5M/w9irJr3i3xB8
-	L3knq7ZF0AgMshJ9h7yzdynZEWgUMZQJEu/3S1VL3axBF9ZzLFh3u9K8UTWblZ/ZDrtwfZMHltb
-	CEEpBaJk6XurQ2CfQ42aK6/rqnvFsz6UDm7k+1vv6siYVtyYH3Sgf5kP2OM0Lx0DpggA=
-X-Google-Smtp-Source: AGHT+IFGf4k+JJs/tMEbOwTNQ+j0uedEPD+8WOGLeH7x1gD8a+XVxRfw6dvXWns5XmMqAfUaxJmdrw==
-X-Received: by 2002:a05:600c:37c3:b0:45b:9bcb:205 with SMTP id 5b1f17b1804b1-46e575a08e6mr402015e9.5.1759144216266;
-        Mon, 29 Sep 2025 04:10:16 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603365sm18381901f8f.37.2025.09.29.04.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 04:10:15 -0700 (PDT)
-Date: Mon, 29 Sep 2025 11:10:11 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
- mode
-Message-ID: <aNppE9A3PDiDg_1W@google.com>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-16-smostafa@google.com>
- <aMQmA9cLaeYWG5_C@willie-the-truck>
- <aNKwROPzDCWgJBGQ@google.com>
- <20250923173806.GF2547959@ziepe.ca>
+        d=1e100.net; s=20230601; t=1759144229; x=1759749029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CLLC+wbxjpk4XmEv75JaQLpBxns7cUiLP7TpNdTyiBs=;
+        b=c1S/0DA5pQv3xicLqScOHWiN7/AZ4ZHyAI9LxRo6nGx3nq/t76Kjn2PuO86KSPnJsS
+         F/joQHtnR+u04QpInFpjrgoLlsNibzYAJQEDixYCJ9ltuFrf3+DWMr3Ay/xdN7e+fHv7
+         C8ZoiqsFyz5zkZWs9PFt2shaACEM6lDMvr+TKoJhhn3yw/u8dns+blE9gBhS/JWByrja
+         TCj1OOSET3kuWHUynZs3Mf2rvAwzSQ18atrBha6v+T9E3NAKr4y3gSIjhghYZX4zzLog
+         2YMv/7nYLO9EuDdngxFSbnN8Xv37kCexYWgx/NrdhGWT+Xd2RyuqtZFtMXiilIgPUD0c
+         0DNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy7+MqGY+7niWwSbSMlUqWOzWwQyX/kEQxBgWiYmANwRgoZ4ju5RFYWeeDbD4qIV5nc2F+N4/OwpP912A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOHYj5pl6BwV+NfZAtLvHUqno8b24OWILFc88M2iFLWKXSpLm0
+	rTC56sx8gUB1ODH2Ou1rbgSPcnSK6pVNxoFGYLRx9Qm6AAVw0ShZ5OyAelR3VMFh
+X-Gm-Gg: ASbGncvFRSDjTMjJJTQ6xzi5/ZIGOvSoxtSn3eIaInHTti4plreDyXYHBe+rbXjp5wp
+	rqPgjRgLbET/1AMsWHdBt9E+6vMRh3KX5ZYPQYl0hGcUdJS2I/x2zmFXCk1JABXKuK75eM8Jg0o
+	yJlQIYDp0iGCSXeJGNsK2sP6QxCIBTxiDthpI4PBblosTWzol4kVrultm1US+wSrhjC522U37NX
+	MlPAqqJxN1RJjUhtTBh5+yf+eD5wBNe1vm3w36MsVFKtay8uW+vZzcjJFXYnz4z2vVw2zxnSBoF
+	MPOhu6Yo1XfRle/LXDza4zvUhjUIDeZzQqD3rtlS6j7t2lLfv/cjnYaHnb/LNKwKA5cB9S7bnAh
+	0KbJWSOQOuOfMs2G9P6rKMw1KJaqWYhnIUHLQiYJ1+tEmocOy6DN6kRvVso1pirif+nYAy3joOY
+	s=
+X-Google-Smtp-Source: AGHT+IGflOfVguE6Zcr4PrV8Wh0Tp/I6NVnMhjQtdbb72ejQSrTmVZQgdzAnhQ/7Uy2DV2xMSH1Xdw==
+X-Received: by 2002:a67:ea10:0:b0:5a0:a095:9a2f with SMTP id ada2fe7eead31-5ceceea8a2amr43862137.3.1759144228886;
+        Mon, 29 Sep 2025 04:10:28 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-916d1518f84sm2388121241.6.2025.09.29.04.10.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 04:10:28 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-54b21395093so2918308e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 04:10:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSBRZ3C0q5Yh9cLKZp4QnHhimg34pgGQnmzmhhTBdJj3AKmfAYCsY75uPYUKeo9cNjjrVnmcSUHe9GkK8=@vger.kernel.org
+X-Received: by 2002:a05:6122:e004:10b0:54a:89a2:21ad with SMTP id
+ 71dfb90a1353d-54fc419339bmr57791e0c.0.1759144227855; Mon, 29 Sep 2025
+ 04:10:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250923173806.GF2547959@ziepe.ca>
+References: <20250916163004.674341701@linutronix.de> <20250916163252.100835216@linutronix.de>
+ <20250916184440.GA1245207@ax162> <87ikhi9lhg.ffs@tglx> <87frcm9kvv.ffs@tglx>
+ <CAMuHMdVvAQbN8g7TJyK2MCLusGPwDbzrQJHw8uxDhOvjAh7_Pw@mail.gmail.com>
+ <20250929100852.GD3245006@noisy.programming.kicks-ass.net>
+ <CAMuHMdW_5QOw69Uyrrw=4BPM3DffG2=k5BAE4Xr=gfei7vV=+g@mail.gmail.com> <20250929110400.GL3419281@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250929110400.GL3419281@noisy.programming.kicks-ass.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Sep 2025 13:10:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWtE_E75_2peNaNDEcV6+5=hqJdi=FD37a3fazSNNeUSg@mail.gmail.com>
+X-Gm-Features: AS18NWD0T2ErSWY-q1jXuUccpNHEsRySEci4kvFa-MWsnKplWNByVUEA9VYZXc0
+Message-ID: <CAMuHMdWtE_E75_2peNaNDEcV6+5=hqJdi=FD37a3fazSNNeUSg@mail.gmail.com>
+Subject: Re: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang <
+ version 17
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Nathan Chancellor <nathan@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 02:38:06PM -0300, Jason Gunthorpe wrote:
-> On Tue, Sep 23, 2025 at 02:35:48PM +0000, Mostafa Saleh wrote:
-> > If we really want to avoid the current approach, we can keep deferring probe,
-> > until a check for a new flag set from “finalize_pkvm” which is called
-> > unconditionally of KVM state.
-> 
-> I still think the pkvm drivers should be bound to some special pkvm
-> device_driver and the driver core should handle all this special
-> dancing:
->  - Wait for pkvm to decide if it will start or not
->  - Claim a device for pkvm and make it visible in some generic way,eg
->    in sysfs
->  - Fall back to using the normal driver once we conclude pkvm won't
->    run.
-> 
-> It sounds like a pain to open code all this logic in every pkvm
-> driver? How many do you have?
+Hoi Peter,
 
-I though more about this, I think involving the driver core will be
-useful in the future for init, as it will ensure power domains are
-probed before the SMMUs when RPM is supported.
+On Mon, 29 Sept 2025 at 13:04, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Sep 29, 2025 at 12:58:14PM +0200, Geert Uytterhoeven wrote:
+> > On Mon, 29 Sept 2025 at 12:09, Peter Zijlstra <peterz@infradead.org> wr=
+ote:
+> > > On Mon, Sep 29, 2025 at 11:38:17AM +0200, Geert Uytterhoeven wrote:
+> > >
+> > > > > +       # Detect buggy clang, fixed in clang-17
+> > > > > +       depends on $(success,echo 'void b(void **);void* c();int =
+f(void){{asm goto("jmp %l0"::::l0);return 0;l0:return 1;}void *x __attribut=
+e__((cleanup(b))) =3D c();{asm goto("jmp %l0"::::l1);return 2;l1:return 1;}=
+}' | $(CC) -x c - -c -o /dev/null)
+> > > >
+> > > > This is supposed to affect only clang builds, right?  I am using
+> > > > gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) to build for
+> > > > arm32/arm64/riscv, and thus have:
+> > > >
+> > > >     CONFIG_CC_IS_GCC=3Dy
+> > > >
+> > > > Still, this commit causes
+> > > >
+> > > >     CONFIG_CC_HAS_ASM_GOTO_OUTPUT=3Dy
+> > > >     CONFIG_CC_HAS_ASM_GOTO_TIED_OUTPUT=3Dy
+> > > >
+> > > > to disappear from my configs? Is that expected?
+> > >
+> > > Not expected -- that means your GCC is somehow failing that test case=
+.
+> > > Ideally some GCC person will investigate why this is so.
+> >
+> > Oh, "jmp" is not a valid mnemonic on arm and riscv, and several other
+> > architectures...
+>
+> Ah, d'0h indeed.
+>
+> void b(void **);void* c();int f(void){{asm goto(""::::l0);return 0;l0:ret=
+urn 1;}void *x __attribute__((cleanup(b))) =3D c();{asm goto(""::::l1);retu=
+rn 2;l1:return 1;}}
+>
+> Seems to still finger the issue on x86_64. That should build on !x86
+> too, right?
 
-One simple way to do that, is the make the KVM SMMUv3 driver bind to
-the SMMUs first until KVM finish init, then it unbinds them so the
-main driver can be bind to them, that will not require any changes
-or assumptions from the main driver, but in runtime the KVM driver
-can't interact with the driver model.
+Thanks, builds fine on arm32, arm64, riscv, m68k, powerpc, mips, s390.
 
-Another possible solution, to keep a device bound to the KVM driver,
-is to probe the SMMUs from the KVM driver, then to create child devices;
-possibly use something as device_set_of_node_from_dev to bind those to
-the main SMMUv3 or find another way to probe the main SMMUv3 without
-changes.
+Gr{oetje,eeting}s,
 
-Then we have a clear parent/child representation in the kernel, we can
-also use sysfs/debugfs. But this might be more challenging, I will
-look more into both and will update the logic in v5.
+                        Geert
 
-Thanks,
-Mostafa
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> 
-> Jason
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
