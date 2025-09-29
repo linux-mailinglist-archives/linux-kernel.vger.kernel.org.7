@@ -1,163 +1,116 @@
-Return-Path: <linux-kernel+bounces-836672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BA9BAA462
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:20:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F02BAA468
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 20:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88D0B1884FCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0281C455A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 18:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB60622D9ED;
-	Mon, 29 Sep 2025 18:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42ADC23026B;
+	Mon, 29 Sep 2025 18:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FwGnsfQs"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D721915855E;
-	Mon, 29 Sep 2025 18:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cedQlwuy"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3822F228CB8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759169996; cv=none; b=EXamF5oam1utpvkvV+T5Jt8hORnqL8yAySTxNgu/lAl6ZwvK0OVMYUjC3TWg3mRfKN4qmV20rlWXSaSrEqs/12k+PB+R0ViK61Gtne72yG0rpRzB/mwHb1HOJ9ok79Kr2tCQqqKcyjtECk/bJBTyuKvyU9ZHSICn+c/wxN2qKgg=
+	t=1759170072; cv=none; b=kAE6EuuSTIS7mk6OtSwA+rHcptkCTG6uOEJ3pgMGh0rCIPtKA6j1qz1Qrxe43AykHHBo3F5MeNChg9rTEcfgZEkDAQswF18Ad/UrJvhKWqBnulTj2SNb+T90TcWLcNLzIhMsQ6m1XU8TjMtuXdmvkhIIz5CNMgZX/HRTsf0Flr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759169996; c=relaxed/simple;
-	bh=ttpDsbGS5ksIxZymbfUiVHuHK55OkNnafxAHPDpRKDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=klMP3qS8RzQWeqOGkSDLckrEMsTAgsrL9kmGb5Y71Jb0cRTAsBTQ1rXR5WrbphLLXBwni53VVccK5O8eENLlnKS+JNsPqBm62s6eOO2Ri8rozH9WCVQQswYDP7Yqsx6GAbzOMldLB7S+PqMtJpJkFib2GYB7sMMdNRVfoRpGxoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FwGnsfQs; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [IPV6:2607:fb91:1ec7:cd1:303d:40a1:4bbf:f2ba] (unknown [172.56.203.16])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B365F2127311;
-	Mon, 29 Sep 2025 11:19:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B365F2127311
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759169993;
-	bh=RC48fRHVCDacHh0fR1OhbOmQc9zmlSZh/DErJhB+dzg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FwGnsfQsvVzzvopwRSvDdZC22h8L3688myXxLGCx107VPulGLJlsfqq/XQaNTeClA
-	 UROotnX08FAzr6XffSkHfBs0YkU0vbzYxQvdOQPD4Gus9pwVcGu55MuL/UOxsBIT6t
-	 prNWl4krzgrIIegntxfngPKJH0Hd0wi1+HTqriEw=
-Message-ID: <96009fb8-0ad6-4e5b-8656-af78874a5605@linux.microsoft.com>
-Date: Mon, 29 Sep 2025 11:19:51 -0700
+	s=arc-20240116; t=1759170072; c=relaxed/simple;
+	bh=YtEAn6CmDr27aj5SF5YUmQQCee6wbRGfkRsR46WrjSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z44M0GwuoxWaX7tjpdTR6WcktZJ/i0N7RFbXWVAd8D+Oxc3cb6ivI2+fOT+g1CUMt2ADzNpDhUz32jf/QljFa3g0vh77gNEvPs2GSDxK8k1CDUXteFk5Jp1VPz2NrrKcZ1/8hSB4VH9aV/eKPzYNvuJ4rTtkFsAMOLCGSiXQ+d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cedQlwuy; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-816ac9f9507so619891985a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 11:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759170070; x=1759774870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YtEAn6CmDr27aj5SF5YUmQQCee6wbRGfkRsR46WrjSo=;
+        b=cedQlwuy74WC1aJ3/axAPb2Q7UDVwIZY//pM3PjhkKhHVo5tdjPCkJQLDMBMwYbB3V
+         dw3VbR++bAT7T6jZPZ1i5Yh87Cnr1LNNTrHeFABY0np0WSUAHCzMeiTDQbZAA54eBDJB
+         Eoyf1LBEkwRZ+VPA9VzelPCwHevNN4wea7ztfEBrX48pL0Ejui169aPSvenZFavZe3YT
+         CfBOAuhdeGfD1PqR9FpcK5RrGUkmMrTljRtTi1/Kl2R7jJQ2hlKKsT0YA/4qpZnbsAtN
+         aSHVH2VYYSCP3UySuC0f2FmC8T7N+loVcvkrMt2UperWP7LfZmK3Xml5RicPT/Uipi6/
+         sYtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759170070; x=1759774870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YtEAn6CmDr27aj5SF5YUmQQCee6wbRGfkRsR46WrjSo=;
+        b=TKoRK52pg7xkkQqBE8RB3oJpo2lFL89AGz4cZ15w0tzW3OEXVuPmgsPHSdMRLjqt8p
+         X2c6QA+ZKZlasf65xM6ulKgJXu0PhNcBcKjl6k67jGJpFoZ2vK5fsW57EniqQKX+x1iX
+         atp/Ow6IA8qDJ2s9FxNX3hG2XioEwwuGoGV2+y33iQP3bw/B8Zayf4fIedNqJREcF76Y
+         yOy/VWY3afSG1WxspEStwxvWBp+ZbZzZLzJ4qYULSpUhC/iARF02SwS8gMusT52nmeuG
+         W/SKmwZRBqGht3ldtnuCl7hM2Xh40n7huWeR4nE4DwqeLChyo/EyDsLlq52TewMblKTO
+         I1kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Kxu8iC3thxxU5ZAES9/tB33UEoJye9WF0PhBdpBdw5lAiUWU6y0z5PGaZth7Z7XesrEGN0FMy2ussSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygzLN6ci5lm73ktZaQ23lLp3/XPJ70tooQtSVTJxEmUzKOGGyQ
+	cWttC0p5RuZWuqUrOImsEKfpgb44uZy9cApmXxMiXn/YjzQjl1XKnAGIOWgBIwu3eZs+eyyqw02
+	l4hCi1ePI+LoM1AFg1LNA3xX6w6LePRo=
+X-Gm-Gg: ASbGncs5WGFtWoxMNmlpo4uf2bb9gGMb9HeZXWAqhLtegnnMMb1gP0MpUWVGlD19+yL
+	wiNqeAc1p6WDi46zB9gqeTcbXrFCgi+uy1BlI1oZBIC4UZJ8TvtNHTU9nupRSZcdpmeLKcC+UBq
+	M+B6M/6vWIDhMGggO2f6FnAj1xBX935atnKH1bjqwJJzh9YNl5bOKx8rtlhR4gWLxkjHFr0EkDk
+	Ao8zJF+
+X-Google-Smtp-Source: AGHT+IFrBeJSgMsR3HaccN16cnXjcttv9tgaaLMJKzDwaIqr0lNEmWSIpPm9V69kQrLev4/WKIw2zOmNYU6wfZ7+6Po=
+X-Received: by 2002:a05:6214:2625:b0:78e:5985:92f1 with SMTP id
+ 6a1803df08f44-869973a156fmr24287356d6.11.1759170069962; Mon, 29 Sep 2025
+ 11:21:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] mshv: Fixes for stats and vp state page mappings
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
- tiala@microsoft.com, anirudh@anirudhrb.com,
- paekkaladevi@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com
-References: <1758903795-18636-1-git-send-email-nunodasneves@linux.microsoft.com>
- <aNcd60fpoI1b6LUT@skinsburskii.localdomain>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <aNcd60fpoI1b6LUT@skinsburskii.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250929065714.27741-1-jjm2473@gmail.com> <20250929065714.27741-3-jjm2473@gmail.com>
+ <5700676.tIAgqjz4sF@phil>
+In-Reply-To: <5700676.tIAgqjz4sF@phil>
+From: jjm2473 <jjm2473@gmail.com>
+Date: Tue, 30 Sep 2025 02:20:57 +0800
+X-Gm-Features: AS18NWBViMs8caAfXLXKamwDlPSJ-YJ_sCg4Ny2_8taIjH_4vuLBQ4TYDgmLkh0
+Message-ID: <CAP_9mL6e8ekL14xycSfPmVSkL7pANLeyewWd=rjxbtMgMQXxxw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] dt-bindings: arm: rockchip: Add LinkEase EasePi R1
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quentin.schulz@cherry.de, kever.yang@rock-chips.com, naoki@radxa.com, 
+	honyuenkwun@gmail.com, inindev@gmail.com, ivan8215145640@gmail.com, 
+	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org, 
+	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org, 
+	jbx6244@gmail.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/26/2025 4:12 PM, Stanislav Kinsburskii wrote:
-> On Fri, Sep 26, 2025 at 09:23:10AM -0700, Nuno Das Neves wrote:
->> There are some differences in how L1VH partitions must map stats and vp
->> state pages, some of which are due to differences across hypervisor
->> versions. Detect and handle these cases.
->>
-> 
-> I'm not sure that support for older and actully broken versions on
-> hypervisor need to be usptreamed, as these versions will go away sooner
-> or later and this support will become dead weight.
-> 
-As far as I know, these changes are relevant for shipped versions of the
-hypervisor - they are not 'broken' except in some very specific cases
-(live migration on L1VH, I think?)
+Heiko Stuebner <heiko@sntech.de> =E4=BA=8E2025=E5=B9=B49=E6=9C=8829=E6=97=
+=A5=E5=91=A8=E4=B8=80 20:28=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Am Montag, 29. September 2025, 08:57:13 Mitteleurop=C3=A4ische Sommerzeit=
+ schrieb Liangbin Lian:
+> > LinkEase EasePi R1 is a high-performance mini router based on RK3568.
+> >
+> > Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
+>
+> In v1 this patch received an
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>
+>
+>
 
-The hypervisor team added a feature bit for these changes so that both old
-and new versions of these APIs can be supported.
+In the next version, I will add 'Acked-by' to the commit message
+and then run `git format-patch` to avoid missing it.
 
-> I think we should upstrem only the changes needed for the new versiong
-> of hypervisors instead and carry legacy support out of tree until it
-> becomes obsoleted.
-> 
-Which version do you suggest to be the cutoff?
-
-I'd prefer to support as many versions of the hypervisor as we can, as
-long as they are at all relevant. We can remove the support later.
-Removing prematurely just creates friction. Inevitably some users will
-find themselves running on an older hypervisor and then it just fails
-with a cryptic error. This includes myself, since I test L1VH on Azure
-which typically has older hypervisor versions.
-
-Nuno
-
-> Thanks,
-> Stanislav
-> 
-> 
->> Patch 1:
->> Fix for the logic of when to map the vp stats page for the root scheduler.
->>
->> Patch 2-3:
->> Add HVCALL_GET_PARTITION_PROPERTY_EX and use it to query "vmm capabilities" on
->> module init.
->>
->> Patches 4-5:
->> Check a feature bit in vmm capabilities, to take a new code path for mapping
->> stats and vp state pages. In this case, the stats and vp state pages must be
->> allocated by Linux, and a new hypercall HVCALL_MAP_VP_STATS_PAGE2 must be used
->> to map the stats page.
->>
->> ---
->> v4:
->> - Fixed some __packed attributes on unions [Stanislav]
->> - Cleaned up mshv_init_vmm_caps() [Stanislav]
->> - Cleaned up loop in hv_call_map_stats_page2() [Stanislav]
->>
->> v3:
->> https://lore.kernel.org/linux-hyperv/1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com/T/#t
->> - Fix bug in patch 4, in mshv_partition_ioctl_create_vp() cleanup path
->>   [kernel test robot]
->> - Make hv_unmap_vp_state_page() use struct page to match hv_map_vp_state_page()
->> - Remove SELF == PARENT check which doesn't belong in patch 5 [Easwar]
->>
->> v2:
->> https://lore.kernel.org/linux-hyperv/1757546089-2002-1-git-send-email-nunodasneves@linux.microsoft.com/T/#t
->> - Remove patch falling back to SELF page if PARENT mapping fails [Easwar]
->>   (To be included in a future series)
->> - Fix formatting of function definitions [Easwar]
->>   - Fix some wording in commit messages [Praveen]
->>     - Proceed with driver init even if getting vmm capabilities fails [Anirudh]
->>
->> v1:
->> https://lore.kernel.org/linux-hyperv/1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com/T/#t
->>
->> ---
->> Jinank Jain (2):
->>   mshv: Allocate vp state page for HVCALL_MAP_VP_STATE_PAGE on L1VH
->>   mshv: Introduce new hypercall to map stats page for L1VH partitions
->>
->> Nuno Das Neves (1):
->>   mshv: Only map vp->vp_stats_pages if on root scheduler
->>
->> Purna Pavan Chandra Aekkaladevi (2):
->>   mshv: Add the HVCALL_GET_PARTITION_PROPERTY_EX hypercall
->>   mshv: Get the vmm capabilities offered by the hypervisor
->>
->>  drivers/hv/mshv_root.h         |  24 +++--
->>  drivers/hv/mshv_root_hv_call.c | 185 +++++++++++++++++++++++++++++++--
->>  drivers/hv/mshv_root_main.c    | 127 ++++++++++++----------
->>  include/hyperv/hvgdk_mini.h    |   2 +
->>  include/hyperv/hvhdk.h         |  40 +++++++
->>  include/hyperv/hvhdk_mini.h    |  33 ++++++
->>  6 files changed, 337 insertions(+), 74 deletions(-)
->>
->> -- 
->> 2.34.1
-
+Thanks!
 
