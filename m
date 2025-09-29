@@ -1,128 +1,259 @@
-Return-Path: <linux-kernel+bounces-835779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B870DBA80A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:58:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34061BA80AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 07:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DF7169035
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:58:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 995B47A2220
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 05:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E304D29BDAA;
-	Mon, 29 Sep 2025 05:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEE329D28B;
+	Mon, 29 Sep 2025 05:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZlOjhS2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3TUobub"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4333670809;
-	Mon, 29 Sep 2025 05:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFE870809
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759125490; cv=none; b=WWzO89Vlqy8/19cBC7pOyltrs5YQJbxqNjpPEqIyQkoA6X18xn1oFAV9UdNmFrMLUKRa8ndQX8lqI09yTpmEnW7u4gFABMiCwH0JF76fT/OyyhW31K1phx89CCn7XxO3yOZ3ZPf7x+Q6quXUAAjiz1cWkkzmDkBJ1+0Wp9nFAmI=
+	t=1759125569; cv=none; b=uxsIgg505itfO5yjZS7sYLJ+v2ZLvrYqnwiAO6ft6wTGCmxdmo1YPLZEyAHlPKNVwPzN6Izi3k7dfklvMgJBYxmxc+DbvLffMNi1NvbP0sCtKIdunVI2V8L/mMtM+arbOSbNpH6EuxC+UzokPOHgWvde9z61cP0p0vm5BX37ulI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759125490; c=relaxed/simple;
-	bh=NG7a14oog0+qlo8SwUVNFjQbyVCCvdNwpGdcHIFK4oY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Klpn2+H/4ZKzx3Men4Tik1brKi4Uotn6WdVls0M9FomQp2MokkipjECY24SbJwswa4g17wDH/tCVFgpKPaNbkjtv+0xtnQ+RTE9kRnwRCWWUgABQEtVhplmAKaz72Mhgw5eJmSf2HDkL0lp0ICfS+i9cPg4ZE5+HhLONDWYD27o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZlOjhS2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60F8AC4CEF4;
-	Mon, 29 Sep 2025 05:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759125489;
-	bh=NG7a14oog0+qlo8SwUVNFjQbyVCCvdNwpGdcHIFK4oY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IZlOjhS2Hg4HySe24KrgXlUoUg8GUddk7NDKcjJbu0SAe/wiZCzCkdUejEbktEld7
-	 B5JMEx7BOPMG6jPd8nAzFFLONeZflD2tmoTWEBl2pW1YoHS/Yeexmo31M9cO4NGYOO
-	 PIKD7bX8zKwlL/TMozE/QotSRBWErL3BCFxVnmCjpFxCR/YR6nDaLliF6PROrVynxY
-	 CI+44DJIlGmHiHRVD3lyo60vCCmLyNrQISXdD1x9N9xY3WJMrtfu4ZtRjEoEsn1AV5
-	 sjWIXzuFhf40Bs1u7E2GpwGwvZR6lKMvgDShyIgyCuuGK2dsi00Z6uZcxBHV2mtAPA
-	 zEd5A2f1WoYkg==
-Message-ID: <bc4beaa6-8391-4ba8-b6c4-bde1c00d0375@kernel.org>
-Date: Mon, 29 Sep 2025 07:58:05 +0200
+	s=arc-20240116; t=1759125569; c=relaxed/simple;
+	bh=Hpbsw+Og6s9yKgaYsaTWo582+rMNy7Y/tZsPq9IdEuo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=V2eihywdepgqwYgh1MKyZ3gwf8EVdLvnbXKNfi57oyCOsuV2wryOiEDHvguPRjpP8Zq0gObZ8mVdNsn96b2naUMfY1aJGGNeQwfC+0RXLzJ7Mgo8mbjWjyQCBqbth68syOm9aLNVcMfPSUiUEb+VIz82A5lk2KdkAzFIcJqp2qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3TUobub; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27eed7bdfeeso36826845ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Sep 2025 22:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759125567; x=1759730367; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2oJNfpk8MW5Bw6kfx3xSXkQNJdPPXDdao0EQbasGVIk=;
+        b=Z3TUobubZ5/2G8ZssS8Y6Sx83eC5njXJ7KyDwNALkOc/zhjYhK2Csr8J+Wcab1j6+y
+         T5obBZeCMm11a7PGgBFcpjtdbbfJSCQ1K3DxY4q7Y7cM+3Gr86KnyiYOFAB3JJbyX892
+         I/LsuHnW4hy10Rm3xoAy5i7487ghvNKl4VR6XYOZt/L/avMGc032DjD0rBaIm7QQ/5Of
+         Ndz/vwoYxw45lXBitNz4aNhTKmLFixJrV6SBPbso6A3dcHS7VswPELYhcvCPOjsiAaA1
+         xuRNA2bZODUmWMgQK2GiVDN04Y3Hn3E0k5JX3rNnALAmVctTd3jUo2SOz5Ui4MVCocg5
+         MJqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759125567; x=1759730367;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2oJNfpk8MW5Bw6kfx3xSXkQNJdPPXDdao0EQbasGVIk=;
+        b=GNZ3KZzE7nqPYkutJxD0udgJ1vNMAzoYTS4rD+1EWB9D1vKSeS4ftALmbKYzkGz8Qm
+         JU5AfcwZlmRf82cAnzOtLZkSV34KR4oa2o8u3qwRU2g/rjEz6O9HxY0XII+lginU9k96
+         vdJngK2kqIq3adEoWQyvxZWJ/6s9hl6TgITHU620KzdVb24p4eC+jzjRWPVkR/q789Y/
+         K7Pb5EiEgurSz33f7gemH2u4iyvM7IhPc2sNdJ2iqvVWJ3m79W8SRNm37upnMQDFBPnp
+         AZBU5Hts/yAsEYxb9dDGJsCfW8VJ2NhxDdubQ1M07baPVk97ZDOSe4oCQJAG1UOMwOti
+         SALw==
+X-Forwarded-Encrypted: i=1; AJvYcCUa5PE+NMNVHdiyyj6720OV2PUBH1PHRn6od3VmU76eGSOstWH6FBDm1npbRtU4PVELmr+Dknv6504v4Ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyvvbfWg4x1aWiqcVglaJ9io4G5M94g8zQK54ZwnqbOHiJa4vS
+	ImFoc8TyEfPS3t27TiVYyYyst2Fr6yb5FExmoBwkLWtnBK2CHN0TQqSl
+X-Gm-Gg: ASbGncvRIuxyOZXfn2asneaPNoQfuVYKvPTXoRZqdSGo9HhB5yoTu7roCsgPBeirrg1
+	9MHDNgDn09xwJsNzWBlb8zCfIs73ujgKoUhGxfjp4qIxg/9+CNpOXLdETVoAHJoae8pvChpJgZg
+	okeyUuwwvqoaJbmdStcM2PeVnuXc4l7SGCQXf1NVNbolH7BZNPj/jiIwoLEicOu5CHwnjF9VOv7
+	0gD0iPbeC9MLSoJBoNuK+WJgLU8iRgB2d63CgLMQLYiY5VJJjNgaMuYPy8yZxmLzpk+Z79ng5GI
+	rPzxJ9qeuhzHXZQMvkLdW0wWUhN9yPUKdzVcPcOm43lSZsLie/JmT6CuDCxagQlTCUrfEzv20RQ
+	W8WGcz3qwAUyTyCucUhUvtOgX8RXn7A+7v3gJeTxb1JvEqw==
+X-Google-Smtp-Source: AGHT+IEV93Vc2c3TbwmaCoYkatVxk5uPZc3HoZY/BjqH2ZibvSGmWfVd6Kj7GpzQeMwI8HqVi8okAw==
+X-Received: by 2002:a17:902:e741:b0:24c:db7c:bc34 with SMTP id d9443c01a7336-27ed6df3f40mr178509295ad.13.1759125566572;
+        Sun, 28 Sep 2025 22:59:26 -0700 (PDT)
+Received: from localhost.localdomain ([2804:7f5:b08b:fda4:f56e:95d0:3775:a428])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69bc295sm119371015ad.123.2025.09.28.22.59.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Sep 2025 22:59:26 -0700 (PDT)
+From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: [PATCH v12 1/3] dt-bindings: iio: adc: add max14001
+Date: Mon, 29 Sep 2025 02:58:38 -0300
+Message-Id: <961e5351afa408e69541b60ec75852fbbd1ddd24.1759121938.git.marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] tty: serial: imx: Add missing wakeup event
- reporting
-To: Frank Li <Frank.li@nxp.com>, Sherry Sun <sherry.sun@nxp.com>
-Cc: gregkh@linuxfoundation.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, shenwei.wang@nxp.com,
- peng.fan@nxp.com, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20250925091132.2537430-1-sherry.sun@nxp.com>
- <20250925091132.2537430-3-sherry.sun@nxp.com>
- <aNVkhvmZ4GThHNqD@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <aNVkhvmZ4GThHNqD@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 25. 09. 25, 17:49, Frank Li wrote:
->> @@ -2732,10 +2734,14 @@ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
->>   			ucr1 |= UCR1_RTSDEN;
->>   		} else {
->>   			ucr1 &= ~UCR1_RTSDEN;
->> +			wake_active |= !!(usr1 & USR1_RTSD);
-> 
-> I think you miss understand my means. suppose bool type only support
-> ||, &&, ==, !=, !
-> 
-> 	wake_active = wake_active || (usr1 & USR1_RTSD);
+Add device-tree documentation for MAX14001/MAX14002 ADCs.
+The MAX14001/MAX14002 are isolated, single-channel analog-to-digital
+converters with programmable voltage comparators and inrush current
+control optimized for configurable binary input applications.
 
-+1 to this. Much easier to understand (for me at least).
+They share the same features, but in the MAX14001 the inrush trigger
+threshold, current magnitude, and current duration are all programmable,
+whereas in the MAX14002 these parameters are fixed.
 
-thanks,
+Co-developed-by: Kim Seer Paller <kimseer.paller@analog.com>
+Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+---
+
+Hello maintainers,
+Thank you for reviewing v11 and for your suggestions.
+I believe I have addressed the requested code changes in this v12.
+
+Notes:
+- I have not removed the “|” in the interrupt descriptions because the
+descriptions were changed as requested, and I think they now need to keep it.
+
+Changes since v11:
+- Added spi-lsb-first in the example.
+- Improved the interrupt descriptions.
+
+Best regards,
+Marilene Andrade Garcia
+
+ .../bindings/iio/adc/adi,max14001.yaml        | 89 +++++++++++++++++++
+ MAINTAINERS                                   |  8 ++
+ 2 files changed, 97 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+new file mode 100644
+index 000000000000..7b3a72dd0b0d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+@@ -0,0 +1,89 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright 2023-2025 Analog Devices Inc.
++# Copyright 2023 Kim Seer Paller
++# Copyright 2025 Marilene Andrade Garcia
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/adi,max14001.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices MAX14001-MAX14002 ADC
++
++maintainers:
++  - Kim Seer Paller <kimseer.paller@analog.com>
++  - Marilene Andrade Garcia <marilene.agarcia@gmail.com>
++
++description: |
++    Single channel 10 bit ADC with SPI interface.
++    Datasheet can be found here
++      https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
++
++$ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    oneOf:
++      - const: adi,max14002
++      - items:
++          - const: adi,max14001
++          - const: adi,max14002
++
++  reg:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 5000000
++
++  vdd-supply:
++    description:
++      Isolated DC-DC power supply input voltage.
++
++  vddl-supply:
++    description:
++      Logic power supply.
++
++  refin-supply:
++    description:
++      ADC voltage reference supply.
++
++  interrupts:
++    minItems: 1
++    items:
++      - description: |
++          cout: comparator output signal that asserts high on the COUT pin
++          when ADC readings exceed the upper threshold and low when readings
++          fall below the lower threshold.
++      - description: |
++          fault: when fault reporting is enabled, the FAULT pin is asserted
++          low whenever one of the monitored fault conditions occurs.
++
++  interrupt-names:
++    minItems: 1
++    items:
++      - const: cout
++      - const: fault
++
++required:
++  - compatible
++  - reg
++  - vdd-supply
++  - vddl-supply
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    spi {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      max14001: adc@0 {
++        compatible = "adi,max14001", "adi,max14002";
++        reg = <0>;
++        spi-max-frequency = <5000000>;
++        spi-lsb-first;
++        vdd-supply = <&vdd>;
++        vddl-supply = <&vddl>;
++      };
++    };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f090c2f6e63a..1e1a30f77a0c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14922,6 +14922,14 @@ S:	Orphan
+ F:	drivers/video/fbdev/matrox/matroxfb_*
+ F:	include/uapi/linux/matroxfb.h
+ 
++MAX14001/MAX14002 IIO ADC DRIVER
++M:	Kim Seer Paller <kimseer.paller@analog.com>
++M:	Marilene Andrade Garcia <marilene.agarcia@gmail.com>
++L:	linux-iio@vger.kernel.org
++S:	Maintained
++W:	https://ez.analog.com/linux-software-drivers
++F:	Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
++
+ MAX15301 DRIVER
+ M:	Daniel Nilsson <daniel.nilsson@flex.com>
+ L:	linux-hwmon@vger.kernel.org
+
+base-commit: b9700f87939f0f477e5c00db817f54ab8a97702b
 -- 
-js
-suse labs
+2.34.1
+
 
