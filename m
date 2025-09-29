@@ -1,252 +1,136 @@
-Return-Path: <linux-kernel+bounces-835949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-835930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB57BA86B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24377BA85FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 10:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16C216AD04
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CF0C1888FCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 08:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BBB26CE10;
-	Mon, 29 Sep 2025 08:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F50426D4DE;
+	Mon, 29 Sep 2025 08:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AEDKsbr2"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="flc3dMm+"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E515C222584
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 08:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6953D24468C;
+	Mon, 29 Sep 2025 08:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759135197; cv=none; b=K6ZT1q6jm6Hn6kcspop/igs6o0cRlQjUnux6cc3B3hk/FlSk3hCMuPD/ojTqx5Wx1iD1/pI2i9NbivxoTLyfRfj1SBSadOMB6NfD0bIU8DBP2inJEgMXPE8wdhBgIzxc47BcqoCeMY9Fh3CKT6X9TBYFouxKD+QZzHPv0T8krWM=
+	t=1759134020; cv=none; b=NzuQiLXcgSBksU22ht2bApi2nRoT1j1NETdrlbtjyyXodI37CrexLsdpF7Pcuuv05FOoSSxK+fq3af3u5PeUkBAuZPJgMzep30cXudTl9TJ+8OLAcJ6iPPihjF7vrz4ntD28/P4zAELUu6ztdXEUwo/HnmsHs0eQpsMDNUdmnsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759135197; c=relaxed/simple;
-	bh=tgyTWWc9iyml5ZCcF1nqLNFofxskc69pTAShj7pd2mM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=FhrRxwXosDuFvRIGRG47hgCyzZBBXbejqGF1GI3bpGyVh+/7u2N+esf1FSh22AQZVEFWzesz2yCxX6oNdeg+B8eDYmhsf7w4MW4xIraxOUAs86ovChuz9vDmKroeWaaXuHnhWYTJY1LT+w3jteFWBWd2hYyCkG61Zut6fjU80yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AEDKsbr2; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=XU5lVVSaP+wA1T1YwcSaR3VIxk5o7QvOy4ynIl9fYiY=; b=AEDKsbr22Fhd37Rm9pG0wF+Ecy
-	vMoKiHC/3AMa/WxOZrRHyLf5gqApjEfGdaF/6Thef7me5tM+YR3ITrWv2yqcHaRIuaxg0AC5ezbYU
-	NgXcKcjt7xXbfd8oSQjP6QBNl9WVcfx44n6dQ2lK7kVpiIzuU4dQ/DW4cY0x3feQxOXWpAXJUyfjI
-	LNCSR119cnMiNI+coQvRRrrL6OFraVw7vWCYbKvSM+UyGX9bGGERhTyM2otMQwDkfiX03uQ596o1P
-	zS6tcENf+QKz9yiqEE8ZRdgpZ+aDIHpMHhHk9zQsDeEeDdrpEjrKdV1VEwpwq4Qj5+yEnc29X5khS
-	hdZR/xdA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v39QF-0000000BwKS-2Nah;
-	Mon, 29 Sep 2025 08:39:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 69328300558; Mon, 29 Sep 2025 10:39:48 +0200 (CEST)
-Message-ID: <20250929083609.407282775@infradead.org>
-User-Agent: quilt/0.68
-Date: Mon, 29 Sep 2025 10:18:55 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org,
- hpa@zytor.com,
- ludloff@gmail.com,
- andrew.cooper3@citrix.com,
- mhiramat@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- andrii@kernel.org,
- olsajiri@gmail.com,
- jpoimboe@kernel.org
-Subject: [RFC][PATCH 2/2] x86/insn: Simplify for_each_insn_prefix()
-References: <20250929081853.230968966@infradead.org>
+	s=arc-20240116; t=1759134020; c=relaxed/simple;
+	bh=qNLm2n6TxpqtORbxwKgeIq8WwvMifAPn0b2QeQKg51Y=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Og3n1eGtQ/dOQ4tIE/gPZZryYSSSZd/gpvayUr54M+pUIqpx1HN9435J00rPimkqMVnxD+KdBc5JJMt93dtTwGP2ZL0F8wmYuOgxGxUkRPm1H9EKSfQwVDayF6UlyA7vBS7Q/wA8BBPgmFtZjDpQ8ied3Bd9/NEOyM+oeQpxrr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=flc3dMm+; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1759134009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8oK+T6aZibp3zhTv/GFM9GWZmrGwuRk6vAxJAm8TV4s=;
+	b=flc3dMm+P5PsO95Okxw565JshEKi7HR7mV9UIcwtd3ug/gnEuAInUznF+Usr5YaEtqgBbH
+	Mx/60trvF0rlUiIOsmWVDrkwCjF275k0aXYDvUMjbTdNXQuD6LMXkM0cgNo9y4jOTVvRTT
+	Eul+yDHIUPtuKuvVQEzvGRprKXbN23o5AOMMJHBr5CbOi2RQZRqcZm2XYjF6qpEsMDJKZ3
+	s3njOrU34zvhxJjjrQBqLFEHNQYYf32uY1PuF1hA4lxzmVO/SSPnFYXQCUBqwjVASYiTB9
+	1dkBS32XzwpBCdUZ5d2F6bnWEJ0u0bJZLQxAj90QOx+9eJBsiG7sO6WxKq9PyQ==
+Date: Mon, 29 Sep 2025 10:20:08 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Rudraksha Gupta <guptarud@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Ondrej
+ Jirman <megi@xff.cz>, "Leonardo G. Trombetta" <lgtrombetta@gmx.com>
+Subject: Re: [PATCH v3 0/5] Upstreaming Pinephone Pro Patches
+In-Reply-To: <b01ed528-8b29-4a6a-bdff-88f2e3b5dd2e@gmail.com>
+References: <20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com>
+ <53eabe34a310ea9c74315fa09a604e4a@manjaro.org>
+ <b01ed528-8b29-4a6a-bdff-88f2e3b5dd2e@gmail.com>
+Message-ID: <115da845d9161e6ecfa67cf189b84aa8@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Use the new-found freedom of allowing variable declarions inside
-for() to simplify the for_each_insn_prefix() iterator to no longer
-need an external temporary.
+Hello Rudraksha,
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/boot/compressed/sev-handle-vc.c |    3 +--
- arch/x86/include/asm/insn.h              |    5 ++---
- arch/x86/kernel/kprobes/core.c           |    3 +--
- arch/x86/kernel/uprobes.c                |    6 ++----
- arch/x86/lib/insn-eval.c                 |   12 +++++-------
- tools/arch/x86/include/asm/insn.h        |    5 ++---
- 6 files changed, 13 insertions(+), 21 deletions(-)
+On 2025-09-29 09:44, Rudraksha Gupta wrote:
+>> Thanks for submitting these patches.  However, please expand the patch
+>> descriptions, because their current forms are too terse and, as such,
+>> simply not acceptable.  This applies to all patches in this series.
+> 
+> Gotcha, will do! I've added the testing that I did. From
+> https://docs.kernel.org/process/submitting-patches.html
+> 
+>> The text should be written in such detail so that when read weeks,
+>> months or even years later, it can give the reader the needed details
+>> to grasp the reasoning for why the patch was created.
+> 
+> It felt like saying more than "adding x sensor" seemed like adding
+> fluff to me, so that is why I kept it short. Let me know if there is
+> something else I should add beside the tests I have done.
 
---- a/arch/x86/boot/compressed/sev-handle-vc.c
-+++ b/arch/x86/boot/compressed/sev-handle-vc.c
-@@ -29,11 +29,10 @@
- bool insn_has_rep_prefix(struct insn *insn)
- {
- 	insn_byte_t p;
--	int i;
- 
- 	insn_get_prefixes(insn);
- 
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p == 0xf2 || p == 0xf3)
- 			return true;
- 	}
---- a/arch/x86/include/asm/insn.h
-+++ b/arch/x86/include/asm/insn.h
-@@ -316,7 +316,6 @@ static inline int insn_offset_immediate(
- /**
-  * for_each_insn_prefix() -- Iterate prefixes in the instruction
-  * @insn: Pointer to struct insn.
-- * @idx:  Index storage.
-  * @prefix: Prefix byte.
-  *
-  * Iterate prefix bytes of given @insn. Each prefix byte is stored in @prefix
-@@ -325,8 +324,8 @@ static inline int insn_offset_immediate(
-  * Since prefixes.nbytes can be bigger than 4 if some prefixes
-  * are repeated, it cannot be used for looping over the prefixes.
-  */
--#define for_each_insn_prefix(insn, idx, prefix)	\
--	for (idx = 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix = insn->prefixes.bytes[idx]) != 0; idx++)
-+#define for_each_insn_prefix(insn, prefix)	\
-+	for (int idx = 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix = insn->prefixes.bytes[idx]) != 0; idx++)
- 
- #define POP_SS_OPCODE 0x1f
- #define MOV_SREG_OPCODE 0x8e
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -141,7 +141,6 @@ bool can_boost(struct insn *insn, void *
- {
- 	kprobe_opcode_t opcode;
- 	insn_byte_t prefix;
--	int i;
- 
- 	if (search_exception_tables((unsigned long)addr))
- 		return false;	/* Page fault may occur on this address. */
-@@ -154,7 +153,7 @@ bool can_boost(struct insn *insn, void *
- 	if (insn->opcode.nbytes != 1)
- 		return false;
- 
--	for_each_insn_prefix(insn, i, prefix) {
-+	for_each_insn_prefix(insn, prefix) {
- 		insn_attr_t attr;
- 
- 		attr = inat_get_opcode_attribute(prefix);
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -259,9 +259,8 @@ static volatile u32 good_2byte_insns[256
- static bool is_prefix_bad(struct insn *insn)
- {
- 	insn_byte_t p;
--	int i;
- 
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		insn_attr_t attr;
- 
- 		attr = inat_get_opcode_attribute(p);
-@@ -1404,7 +1403,6 @@ static int branch_setup_xol_ops(struct a
- {
- 	u8 opc1 = OPCODE1(insn);
- 	insn_byte_t p;
--	int i;
- 
- 	if (insn_is_nop(insn))
- 		goto setup;
-@@ -1437,7 +1435,7 @@ static int branch_setup_xol_ops(struct a
- 	 * Intel and AMD behavior differ in 64-bit mode: Intel ignores 66 prefix.
- 	 * No one uses these insns, reject any branch insns with such prefix.
- 	 */
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p == 0x66)
- 			return -ENOTSUPP;
- 	}
---- a/arch/x86/lib/insn-eval.c
-+++ b/arch/x86/lib/insn-eval.c
-@@ -63,11 +63,10 @@ static bool is_string_insn(struct insn *
- bool insn_has_rep_prefix(struct insn *insn)
- {
- 	insn_byte_t p;
--	int i;
- 
- 	insn_get_prefixes(insn);
- 
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p == 0xf2 || p == 0xf3)
- 			return true;
- 	}
-@@ -92,13 +91,13 @@ bool insn_has_rep_prefix(struct insn *in
- static int get_seg_reg_override_idx(struct insn *insn)
- {
- 	int idx = INAT_SEG_REG_DEFAULT;
--	int num_overrides = 0, i;
-+	int num_overrides = 0;
- 	insn_byte_t p;
- 
- 	insn_get_prefixes(insn);
- 
- 	/* Look for any segment override prefixes. */
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		insn_attr_t attr;
- 
- 		attr = inat_get_opcode_attribute(p);
-@@ -1701,7 +1700,6 @@ bool insn_is_nop(struct insn *insn)
- 	u8 sib = 0, sib_scale, sib_index, sib_base;
- 	u8 p = 0, rep = 0;
- 	u8 nrex, rex;
--	int i;
- 
- 	if ((nrex = insn->rex_prefix.nbytes)) {
- 		rex = insn->rex_prefix.bytes[nrex-1];
-@@ -1773,7 +1771,7 @@ bool insn_is_nop(struct insn *insn)
- 	if (p == INAT_PFX_REPE)
- 		rep = 1;
- 
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p == 0xf3) /* REPE */
- 			rep = 1;
- 	}
-@@ -1836,7 +1834,7 @@ bool insn_is_nop(struct insn *insn)
- 		if (sib && (sib_scale != 0 || sib_index != 4)) /* (%reg, %eiz, 1) */
- 			return false;
- 
--		for_each_insn_prefix(insn, i, p) {
-+		for_each_insn_prefix(insn, p) {
- 			if (p != 0x3e) /* DS */
- 				return false;
- 		}
---- a/tools/arch/x86/include/asm/insn.h
-+++ b/tools/arch/x86/include/asm/insn.h
-@@ -312,7 +312,6 @@ static inline int insn_offset_immediate(
- /**
-  * for_each_insn_prefix() -- Iterate prefixes in the instruction
-  * @insn: Pointer to struct insn.
-- * @idx:  Index storage.
-  * @prefix: Prefix byte.
-  *
-  * Iterate prefix bytes of given @insn. Each prefix byte is stored in @prefix
-@@ -321,8 +320,8 @@ static inline int insn_offset_immediate(
-  * Since prefixes.nbytes can be bigger than 4 if some prefixes
-  * are repeated, it cannot be used for looping over the prefixes.
-  */
--#define for_each_insn_prefix(insn, idx, prefix)	\
--	for (idx = 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix = insn->prefixes.bytes[idx]) != 0; idx++)
-+#define for_each_insn_prefix(insn, prefix)	\
-+	for (int idx = 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix = insn->prefixes.bytes[idx]) != 0; idx++)
- 
- #define POP_SS_OPCODE 0x1f
- #define MOV_SREG_OPCODE 0x8e
+Thanks for improving the patch descriptions in the v4 of this series.
+I just went quickly through the v4 and it looks much better.
 
+It could be said that the new patch descriptions are now a bit too
+verbose, in the sense that the test procedures and their results could
+be summed up a bit better in prose, instead of providing the "raw"
+inputs and outputs.  However, it's still better to have those, than
+not to have anything.  Writing good prose is a skill that usually
+requires learning and practice.
 
+>> I'm also under impression that you're submitting these patches 
+>> upstream
+>> blindly and without researching the rules that apply well enough, 
+>> which
+>> may not be the best possible approach.
+> 
+> Sorry! I've read
+> https://docs.kernel.org/process/submitting-patches.html a bunch of
+> times during the years I have contributed to the Linux kernel and
+> inevitably forget something. Please feel free to tell me what I've
+> done wrong! I've corrected my mistakes in v4 (and undoubtedly probably
+> introduced more, but feel free to tell me that ;) )
+
+You haven't done anything technically wrong, but the way you submitted
+the v2 and v3 made them feel a bit like you picked those patches from
+some random place and submitted them to the mailing list without really
+understanding the subject matter.  In other words, it's the 
+contributor's
+job to convince everyone else that the submitted patches are fine to
+become accepted, and the v2 and v3 simply lacked that.
+
+>> Finally, please refrain yourself from sending multiple versions of the
+>> same patch series in the same day.  Doing so makes reviewing the 
+>> patches
+>> unnecessarily hard.
+> 
+> Sorry about that once again! I'm mostly a hobbyist that loves working
+> on Linux over the weekend. I wanted to get correct my mistakes so that
+> I can get reviews over the week. I wish lkml used a forge, so I didn't
+> have to spam you, but I digress. I will keep this in mind moving
+> forward.
+
+I wonder how would some forge prevent "spamming"?  It isn't about the
+possible "spamming", but about the act of submitting different versions,
+which would be present regardless of the way they'd be submitted, and
+the reviewers would need to be aware (i.e. "spammed") of them anyway.
 
