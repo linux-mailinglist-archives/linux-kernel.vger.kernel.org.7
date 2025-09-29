@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-836777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DE2BAA88D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:55:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB90BAA8AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 21:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D6FF7A1A40
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC341920040
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 19:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB88E247280;
-	Mon, 29 Sep 2025 19:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BAC257849;
+	Mon, 29 Sep 2025 19:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAlBh20B"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5RB08Jd"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574D3245014
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE90A246782
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759175749; cv=none; b=J8iuOxc0gbK0dHpST6MKmKu2v7LUhVUZvXyI5Bf3hjeFyWWYFQ5swqux4iUmsJKgZlCw/mHe4pfMHAS9457+fj4N8Z6rveMPoHdkHXDfSFHDLSAAFAFVIUtL9hACNOSDNgUlHf2eagDhbg9JslKD3OB3XDCy6l+hBFHZ4d+/vbs=
+	t=1759175864; cv=none; b=qMBdG3wVGGJdHJsZjvgN08o5b9F571a93zxXT3e32V5QKisGPtpYZa5Vna21Fs3RvX1V2zZ6arPQOQvl3IKp6/T7dpwLap91BC+A3qZ4TOaqa3QQEs7PdFi9QpW49tw5WDRSaFfj6MB4J+t6K8abSLOMfyioBofM1czZ8/fDW8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759175749; c=relaxed/simple;
-	bh=RO76/f9CYEMfPMQPTUBiSF3Nm+ZZmO0CK1pt0ht+BNU=;
+	s=arc-20240116; t=1759175864; c=relaxed/simple;
+	bh=ILAe+VRfX0Fc+b5qLvaJzfBUJ4qz7jOpbJP92apYs7g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MhgQRsxNY0d8kyYo8aGz5VUsRRnTSKp8Dz0iunUS82d2vmwuua9xw6rr6m46LS+cK0abISAzLsFaC9uY0JBORKM3B+lbLo1hL6GGiwSPwy6ZMgSK7SyVBOUR1JtAWmzCyWzNNryJsCN0fP/+a8zUpsFnxPseQ9TKXD2RClx7+xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAlBh20B; arc=none smtp.client-ip=209.85.208.172
+	 To:Cc:Content-Type; b=WQMGpaVXlabeFR1oYqUaQLh5XVI1d4V0eK2CMFZj/xn+jUa1b6iiFe++vfVqWGl13mxtUlp5d/sWDszmp9zEPUOWQ1NuBFOkV4hhmGujV3t7WpQdjNkpQPxHLQDh+TDmIbSHAliyjEPzatLRv5UgWsRXGp7GbaQx5sltI60RKVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5RB08Jd; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3717780ea70so37052611fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:55:47 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-28d18e933a9so686315ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759175745; x=1759780545; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759175862; x=1759780662; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2FOl60H4bs8OomkAN24CFvRC0ueG1po3QRTP8yk1rSI=;
-        b=VAlBh20B3P3dm7CaEIn3O06+vQyVZ81bdMTSHJwHkvFx85Kild20mRtqc3F+5YFVV4
-         p8b721ZkYWEXmHrSFUofFk2NE0x5xJ/KvdmxM7kn4aMgXfR5Bmi9yrNeBlUUBB1rIXKd
-         C/J1DNYw8N+cEXYdjf8gYLFSr7Nqg2pDUPkJHA74qb+iY4N9XiaY3krplvntGSbX14Rt
-         XOXkyClREo9RrOy3dLOtLOMW0II0nem+QstrB8lj6/bl5A7JkoJrtmv13m+v5/AhrXb0
-         EWt7hsxbHGqeAvze5wWBwZM5x84yD0NyOYbBDvRg3q2uoFrM3c/oAhEWVZT/vJDerbdl
-         2s8w==
+        bh=ILAe+VRfX0Fc+b5qLvaJzfBUJ4qz7jOpbJP92apYs7g=;
+        b=U5RB08Jdp+02qM+f5Mp+vuiVmfSvgvAx9OiS9eb/dfT+moX3pfMb+UYBBkKAocEnWD
+         lb08aQk8t3PnXYbC6FKFPEpeNN+0C3ZK5K8O+tVbR+xM/l1tcssKZVmm03IKwOTCHEle
+         otJ3pGwplRt2pfEJJEZvwsiu9yLStl62IrDFTM2XX7CeRRpwmQk921H0CmTYR3OS71XF
+         NekIyiGHf8khHUgEJ7/Wg2ZlzVBCZ0wFeOg6ADpKhHUA9qnm0NL23qr46rSElBRBhtmX
+         ruanjoQ1J/SgQ4bkiNZDbqTlMP5Xkn+l9J62YsWvCV6Vi6j5khk+VeQK0XuWqSD6UIog
+         WvXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759175745; x=1759780545;
+        d=1e100.net; s=20230601; t=1759175862; x=1759780662;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2FOl60H4bs8OomkAN24CFvRC0ueG1po3QRTP8yk1rSI=;
-        b=HIHf6g6ugfyyaS7LCAqrBFwS8bIlvdTWZVMijXl4aBWsIpNDRfBFT2bODVXVjMQS+Q
-         0+GFDuyq7YKKDUdF4xVPASsyc/+u0/lyc9/8aXRTNDg/l/4R6LWjgAu3j3AxI1wnhlHI
-         HSY8KTf6gegivW8TINci8LSztq40BSxa/qr5LC6X8ZajoA3yi3IH2zJkfEJObTcu/f5z
-         sve/v0T1FIJil0CitaSLodUr27IpvRYyDcXVbvt9k0/Z4UoYa7+3snsph8G9cQxAqaHL
-         cZvv7Fn/DTYEcCQ0WIBuwfbD8gGqXCtY/pPG4aZS1eTAxVnAHQzCTp+shprqJWgxlwrH
-         CJjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGaENkzAZ19tZuDdgvkLi9x+qoLqfeKw8lFaIgP6WJ+oN2r92arFjtPGTQIt+oxTR9wI/Fw4ojm75t+r4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8ie6jVcBsuih9T96ykzMBT+3tAtxpZtQaR9SVpm9DJAHCoUkk
-	LkUgZTCzVwksFIq1QghiHI+M8tDLh0n2EHOoZ81X1VXzUnMtvCku11I7m3wETAnNXRSkyuV5xSb
-	AF5vwV8fmgIILOlNk6z00fY3p+lY8vAo=
-X-Gm-Gg: ASbGncsUddTKflNmZGezbBpBoQLQDMtq5fNiQDf4edvqxmrhI820GGcwkkDm8AF4OXU
-	EuGdMaecueUPvBoXNquyqWSYx1L5YS5+ekzQP0E+oq/ouiAexHKjSuxJES2GP/aFbyW2fsTRhY4
-	EmIlOa1PO93oXp4I/jJZnodP1uKRRe/Z0KUgNLQMP06NZJAv62wfSf0ufRv18jUydwO1J4cR1wf
-	iGLCw==
-X-Google-Smtp-Source: AGHT+IErP2gRQ6ZD56twcKHZTwT0kBevF4fdnA1y+SJ74LG1tfUzYR0s+sNt2FXIYbc5oOC4PL8X1Gg/KiynFJqey6Y=
-X-Received: by 2002:a05:651c:4414:10b0:372:8cce:2360 with SMTP id
- 38308e7fff4ca-3728cce261cmr18756371fa.14.1759175745085; Mon, 29 Sep 2025
- 12:55:45 -0700 (PDT)
+        bh=ILAe+VRfX0Fc+b5qLvaJzfBUJ4qz7jOpbJP92apYs7g=;
+        b=hsEcdM4mOvm3KK3ILJHIQEUhQPQqfvzkMx7sEpGZEMw2LrcSaMQeGesXWFgT/1nvaC
+         pxNTd4WBpz6Rfs9qEAth1Vnc4EVP4deHsFeTcYYDdasl4Mg8pec2yL7r2szJuVz15PLZ
+         Dco+KSCjIi4NPjJl3LHBu2Sf+XhcB20E5pKD311/EG6FbBpXslrVblaRQtNzHuLjZnbO
+         F8AOebyMHSGO1bcvWZEFktv3IIOHi1DolUhN7XbamfLi239mvEn6enQW1q+26G8/LtIB
+         pUrXx70p1uyooEc1auqMRSZOAXU4x1oc3V/Gs5H3GrP4Jhem8VAuBZkBMKRJFkey6XR7
+         hl8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU4TEmxQ5Alhns6icvJCVkn9PRi1dNXfUQCdrMALAVwUKMbmIpHgdRiYfmcQ2xe/XnKV8zChCgSGlaS2HY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZz48kbh7ZaYR21YbXo8pdPcDrwPp1Db9GrSjYTc92OMG7q7L2
+	xEO0rS6Wbidl/VOxiEAdiU6deW/GLpTIU6Bgl4naxthY9JDKo2m/rY8dNBLBoSgb5xXfD1FVN3z
+	sKXhhd1ksEIja1tQA78OkltdJpaj2yOE=
+X-Gm-Gg: ASbGncuEni6xObGJtAerYGmEsg31Z4WTrezjFOZQK98ZIJPTiCKpH4Or5FJYV3T7DPd
+	Q/SqKyiBYLdNCKRMcqzCBNLG95DGJ9P7GrASl48zRH/EbmfVKBhB8z3NIpbFaBuNINlfoz2xijE
+	uaWtwK61qDxuWodZTvrppicKCjuNi1lUDaMz/Ei75rRcYY2KUNtO99XBocqKsgFL6qRecs3wx5k
+	WHOMQ3yZQ5dIMLpb2DZgfZxPTemVj6/CyAUrtXS64np5fnTZzETLl++xqPgnb2PXHadpFjE1BYu
+	dHj2OWHZ7q10VZC8+ENhoeslsQqtWJFEfcot
+X-Google-Smtp-Source: AGHT+IGYfATe7mmNTC4A+jEkwD5MzSelb1z0lWF68kS0t/NWgoEWKg6nD9jI4X3FoSNWbDyeH2i7qWWFajxt0X+1x5w=
+X-Received: by 2002:a17:902:d501:b0:277:c230:bfc7 with SMTP id
+ d9443c01a7336-27ed4a5d82bmr113039375ad.11.1759175862141; Mon, 29 Sep 2025
+ 12:57:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904223850.884188-1-dylanbhatch@google.com> <CAPhsuW5zUEeM3DAw-3OVNS9KmM2vG9B1GaR9KEKS_KFQo-VG9Q@mail.gmail.com>
-In-Reply-To: <CAPhsuW5zUEeM3DAw-3OVNS9KmM2vG9B1GaR9KEKS_KFQo-VG9Q@mail.gmail.com>
-From: Puranjay Mohan <puranjay12@gmail.com>
-Date: Mon, 29 Sep 2025 21:55:34 +0200
-X-Gm-Features: AS18NWAIi9DineMp-TgEBH0HLfNcuGGToX7Qfv23-1VNL-wNOdBAfvSptWoYjzE
-Message-ID: <CANk7y0hUKOVXRKoJ5Ufmg-5DGSe2F5nBH+O7tLVvLRs9Oe54uA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] unwind, arm64: add sframe unwinder for kernel
-To: Song Liu <song@kernel.org>
-Cc: Dylan Hatch <dylanbhatch@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Indu Bhagat <indu.bhagat@oracle.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jiri Kosina <jikos@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Weinan Liu <wnliu@google.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
-	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	live-patching@vger.kernel.org, joe.lawrence@redhat.com, 
-	Puranjay Mohan <puranjay@kernel.org>
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+In-Reply-To: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 29 Sep 2025 21:57:28 +0200
+X-Gm-Features: AS18NWCM9kbfT7mylXQdGB8ZyL_b6RmUa1M3XR6zo5RoraO0TPm_DutHWVTmZ7c
+Message-ID: <CANiq72m=TJMWFZhHSSU_-A3+tr5h8vA+X+oKb9TcieXQ6gHyJg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2025 at 9:46=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+On Thu, Sep 25, 2025 at 3:54=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
 >
-> On Thu, Sep 4, 2025 at 3:39=E2=80=AFPM Dylan Hatch <dylanbhatch@google.co=
-m> wrote:
-> >
-> > This patchset implements a generic kernel sframe-based [1] unwinder.
-> > The main goal is to support reliable stacktraces on arm64.
-> >
-> > On x86 orc unwinder provides reliable stacktraces. But arm64 misses the
-> > required support from objtool: it cannot generate orc unwind tables for
-> > arm64.
-> >
-> > Currently, there's already a sframe unwinder proposed for userspace: [2=
-].
-> > Since the sframe unwind table algorithm is similar, these two proposals
-> > could integrate common functionality in the future.
-> >
-> > Currently, only GCC supports sframe.
-> >
-> > These patches are based on v6.17-rc4 and are available on github [3].
-> >
-> > Ref:
-> > [1]: https://sourceware.org/binutils/docs/sframe-spec.html
-> > [2]: https://lore.kernel.org/lkml/cover.1730150953.git.jpoimboe@kernel.=
-org/
-> > [3]: https://github.com/dylanbhatch/linux/tree/sframe-v2
->
-> I run the following test on this sframe-v2 branch:
->
-> bpftrace -e 'kprobe:security_file_open {printf("%s",
-> kstack);@count+=3D1; if (@count > 1) {exit();}}'
->
->         security_file_open+0
->         bpf_prog_eaca355a0dcdca7f_kprobe_security_file_open_1+16641632@./=
-bpftrace.bpf.o:0
->         path_openat+1892
->         do_filp_open+132
->         do_open_execat+84
->         alloc_bprm+44
->         do_execveat_common.isra.0+116
->         __arm64_sys_execve+72
->         invoke_syscall+76
->         el0_svc_common.constprop.0+68
->         do_el0_svc+32
->         el0_svc+56
->         el0t_64_sync_handler+152
->         el0t_64_sync+388
->
-> This looks wrong. The right call trace should be:
->
->   do_filp_open
->     =3D> path_openat
->       =3D> vfs_open
->         =3D> do_dentry_open
->           =3D> security_file_open
->             =3D> bpf_prog_eaca355a0dcdca7f_...
->
-> I am not sure whether this is just a problem with the bpf program,
-> or also with something else.
+> Changes in v2:
 
-I will try to debug this more but am just curious about BPF's
-interactions with sframe.
-The sframe data for bpf programs doesn't exist, so we would need to
-add that support
-and that wouldn't be trivial, given the BPF programs are JITed.
+For future reference, this is v3.
 
-Thanks,
-Puranjay
+Cheers,
+Miguel
 
