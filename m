@@ -1,277 +1,703 @@
-Return-Path: <linux-kernel+bounces-836281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E805ABA92F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:21:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6B8BA9304
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E743C20A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:21:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBE1C4E16C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 12:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFB33054CB;
-	Mon, 29 Sep 2025 12:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABB1305E18;
+	Mon, 29 Sep 2025 12:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4ONMTucB"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F7lKlwBA"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC6A221FD4
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 12:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE692EB5AF;
+	Mon, 29 Sep 2025 12:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759148473; cv=none; b=aUfEohRIteHfxPwsFEo9ToKuxCvM2dxSHldz/Mp0xMWps8DW42pU2lhsdVjxrUYTSuBprqyDX8Ya4tMgqazDZBObDgXlHlCoCdELbKHZI+OeKOujAzyGxEDf2rtR1VTF6L7+6go6rPFBGWJRHQe/mTh6dd+yqXuv3deAN1eJwgA=
+	t=1759148568; cv=none; b=d1EEploTyfSyio9JPRuuj12HieD694qZa5q+aYS+JU/qnpElCbg5aJP+41Wl/auieW8U3pFx+ZWy0r0z9Yoo6Ju4MeKxt4p7T1fBYQV5T6IzeSHvHNTasAl1WjSixgU+0KYtWchUp6mA7bwnmp1QhAMzQdjX/EUSWXI9HY1xjD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759148473; c=relaxed/simple;
-	bh=FWduxyhH//iGBcxtUSZRZnP2YGaDx1vWzrh4UQTg9o0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjoF/726HqJdwp8fif8TGeP+gV/XLRoagMDUHVApLpJ89zGC+lySWHYfdpZjwMiPFTK+oSA+2ZxYaeMyScDp2GDzRnteBng9Sg6T1BbAfHXLYUiLLobN+KS4IGP+qKypNdf5QhlwtFGwQEuSRyICHwt+e+w/A1C22kWPOoMEY0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4ONMTucB; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e3bcf272aso124645e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 05:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759148470; x=1759753270; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5O337N0PYzsdhyufllfit8PgCqTUUbHIq+q5cDEVCsM=;
-        b=4ONMTucB4DzfVX17ua5xD6Volx3f9qdn1CDjRsNVCTVevYlO8wMvJn8FOWAo2dk810
-         FN2o1MCwWNIhrZTW1I9b3eno5crqFUZ8135pJqtQ3Mbrt9j6cLbypAcN8XrtUyjliv2v
-         Qnp8HicNgoPqirEYDXuMOOOnq3nA7sPlDpwrUuiGSpWwSlqy/razXLOOdh4Ff8bELztV
-         tNYFr6Z/YT/r72pT8+vVDuqCbop1B23iwn3jKJLlQgGNCi+sIiO17A7ctI81VyH+XCme
-         gpllJyji26SC7oxNduA2rMkbb+9AX4kIe2JtZ9zcr3ebdTGXdu1MeefC96jmIxGHn5s8
-         t6Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759148470; x=1759753270;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5O337N0PYzsdhyufllfit8PgCqTUUbHIq+q5cDEVCsM=;
-        b=blwtybU7PvXXf5tXzCupg96sk/vH/K5To4abjJO0Hgemg53qAOkVYRVqaEelAyt1gV
-         efUSA6vv1IafVtj70FYMFQWy9cgJV5rVqfod3DEYO66rLSD2yGMlqt8sdws87K+19vZM
-         lIsKaov99NA1XbQclbqGJ3ZUu0015QCV3nDtQkUbJgXWPbwehYIWvKx8/l6FXu0lY2IJ
-         rZ+zLv83v4pIyifHyeo9BgA6pmH37NhyHjEFF0JK7CumwCAnO3Dk9O8ycHj4JJpvIIFK
-         9OBs3E02olyyFaM73VchARZqiIt3NxdfUFR4m3xO76nMN4gR5ESSA2vCqVkCWnPHYY9M
-         /A8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlImwfTfgJKgGKWh/Q7NNbQJz99IauN1sUdA/ovJO5rQArAVTMo/te5p9KfXUXwJohPK5YG9HGEDDT3wQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzs6DfbBTVl5Y3Eg4bajTGyBmsmt0E+4eKbP6g+ZCqkjVEqEaK
-	/VhhBFw0I+nHxNI/O6PD1OXnM0GN5UjtfJx+tvQQQPm30OaoUDTydp6nFfjhtF17hg==
-X-Gm-Gg: ASbGncvo0pVxfklr/8AJjh0rGcW2BNdGEgrZJxSocnUOWunGaLSijM1hMp6ParINVEL
-	kVBZkBMwSQFyYolhMvHvzUMsI5K9AYS4vJrKoThbD7Ofe8IK2F2hZ+wKvb2l3QDeub2QslCBzBc
-	metwBQ44L28ahJu7ZL9aqvF193E2pj3hsrYTjSwY90sWYjClX6kWgdmwTBi+In4iX9ZI+8fl040
-	9Lryb+AwyF/3ZOe2K7bP5W9molNs5DMyKh3878yux8qBr/IToCrsSFUnWsZsgQfTJZeadceqqPv
-	BkD1vFXgBt2HZetJUsMhREGs3mjZuHNIyH9Fh7L34QU/3V3WPO1F3Uf8p+aHNcENNSHb+Wa+1i7
-	hnLS1mC8ngmd9fgNJKoVjcR9wZlrkG+DrYp+TNzsWQWqoIbmJTfYGE5BtUMzW77+tZPven1Ssgb
-	c3RF5wWrl2zM5s
-X-Google-Smtp-Source: AGHT+IH9QHjbFtr4ulBiflfGto8TOKRCXPewb2xZU1HqH+exBgIMy3OCdzYm+syELDHA9vXZKCVfmw==
-X-Received: by 2002:a05:600c:a413:b0:45d:f6a6:a13e with SMTP id 5b1f17b1804b1-46e57589541mr380425e9.1.1759148469473;
-        Mon, 29 Sep 2025 05:21:09 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb017sm18108463f8f.3.2025.09.29.05.21.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 05:21:08 -0700 (PDT)
-Date: Mon, 29 Sep 2025 12:21:05 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Daniel Mentz <danielmentz@google.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Pranjal Shrivastava <praan@google.com>,
-	Liviu Dudau <liviu.dudau@arm.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>
-Subject: Re: [PATCH 1/2] iommu/io-pgtable-arm: Implement .iotlb_sync_map
- callback
-Message-ID: <aNp5sS7VpPirrRGE@google.com>
-References: <20250927223953.936562-1-danielmentz@google.com>
+	s=arc-20240116; t=1759148568; c=relaxed/simple;
+	bh=s5IQXqEcgAB5VpUChLCFtweMuTiZxaapht5zwbbuklY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bMvCj3HORHKM5/k1PvIWCbmUQMKddDfRv/BOqfQ0k7z/FuGER0CbN1vJZmN804ZmXmBAKx4XFt+R6/EbKTSwnrQTff8Iqdy3AoAMwFXGnHo6Ps3dWy0xPj2AHItESlV+HlVBP+tM163Go6DpWr+MPcm8+VBHdAqdafjNdnL2/+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F7lKlwBA; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759148563;
+	bh=s5IQXqEcgAB5VpUChLCFtweMuTiZxaapht5zwbbuklY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F7lKlwBA2xIrBex81Up74ZUNZGw4qX5gUCi+Dh9YKgYIMYcYyv90sIuAz8roPE3NL
+	 Pk4KLMxmlZXcc4kUXhbsDiJSnu8aMIJS4z6lOhYXV2G1DTkXXYxWuCQnpkxzKZ3qMQ
+	 ZtVA/PIRVMT2tCCSy4+CCyGxwwwQMawpUQNGsSx+av1hmy0+lyZID1xsK3iFETfWp4
+	 1ARZc/6BjPBam2pbarmowwjQjwBMFhMdQPrEQv3LvUwz6cQhefYpAkjPW0aD1uri6/
+	 TKzyFF4KdlwwnfBw6YvIqcYsp8BST7Wy/ferbgvbenWF9591Mc+wxBs2LQFugRzHEQ
+	 uW9QrTXf5WT5Q==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D716317E129E;
+	Mon, 29 Sep 2025 14:22:42 +0200 (CEST)
+Message-ID: <c968c7c7-83b8-49ee-b1a5-b8551d855df4@collabora.com>
+Date: Mon, 29 Sep 2025 14:22:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250927223953.936562-1-danielmentz@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 7/7] pmdomain: mediatek: Add support for MFlexGraphics
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250929-mt8196-gpufreq-v5-0-3056e5ecf765@collabora.com>
+ <20250929-mt8196-gpufreq-v5-7-3056e5ecf765@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250929-mt8196-gpufreq-v5-7-3056e5ecf765@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 27, 2025 at 10:39:52PM +0000, Daniel Mentz wrote:
-> On systems with a non-coherent SMMU, the CPU must perform cache
-> maintenance operations (CMOs) after updating page table entries (PTEs).
-> This ensures that the SMMU reads the latest version of the descriptors
-> and not stale data from memory.
+Il 29/09/25 09:46, Nicolas Frattaroli ha scritto:
+> Various MediaTek SoCs use GPU integration silicon named "MFlexGraphics"
+> by MediaTek. On the MT8196 and MT6991 SoCs, interacting with this
+> integration silicon is required to power on the GPU.
 > 
-> This requirement can lead to significant performance overhead,
-> especially when mapping long scatter-gather lists where each sg entry
-> maps into an iommu_map() call that only covers 4KB of address space.
+> This glue silicon is in the form of an embedded microcontroller running
+> special-purpose firmware, which autonomously adjusts clocks and
+> regulators.
 > 
-> In such scenarios, each small mapping operation modifies a single 8-byte
-> PTE but triggers a cache clean for the entire cache line (e.g., 64
-> bytes). This results in the same cache line being cleaned repeatedly,
-> once for each PTE it contains.
+> Implement a driver, modelled as a pmdomain driver with a
+> set_performance_state operation, to support these SoCs.
 > 
-> A more efficient implementation performs the cache clean operation only
-> after updating all descriptors that are co-located in the same cache
-> line. This patch introduces a mechanism to defer and batch the cache
-> maintenance:
+> The driver also exposes the actual achieved clock rate, as read back
+> from the MCU, as common clock framework clocks, by acting as a clock
+> provider as well.
 > 
-> A new boolean flag, defer_sync_pte, is added to struct io_pgtable_cfg.
-> When this flag is set, the arm-lpae backend will skip the cache sync
-> operation for leaf entries within its .map_pages implementation.
-> 
-> A new callback, .iotlb_sync_map, is added to struct io_pgtable_ops.
-> After performing a series of mapping operations, the caller is
-> responsible for invoking this callback for the entire IOVA range. This
-> function then walks the page tables for the specified range and performs
-> the necessary cache clean operations for all the modified PTEs.
-> 
-> This allows for a single, efficient cache maintenance operation to cover
-> multiple PTE updates, significantly reducing overhead for workloads that
-> perform many small, contiguous mappings.
-> 
-> Signed-off-by: Daniel Mentz <danielmentz@google.com>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 > ---
->  drivers/iommu/io-pgtable-arm.c | 66 +++++++++++++++++++++++++++++++++-
->  include/linux/io-pgtable.h     |  7 ++++
->  2 files changed, 72 insertions(+), 1 deletion(-)
+>   drivers/pmdomain/mediatek/Kconfig            |  16 +
+>   drivers/pmdomain/mediatek/Makefile           |   1 +
+>   drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c | 954 +++++++++++++++++++++++++++
+>   3 files changed, 971 insertions(+)
 > 
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index 7e8e2216c294..a970eefb07fb 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -353,7 +353,7 @@ static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
->  	for (i = 0; i < num_entries; i++)
->  		ptep[i] = pte | paddr_to_iopte(paddr + i * sz, data);
->  
-> -	if (!cfg->coherent_walk)
-> +	if (!cfg->coherent_walk && !cfg->defer_sync_pte)
->  		__arm_lpae_sync_pte(ptep, num_entries, cfg);
->  }
->  
-> @@ -582,6 +582,69 @@ static int arm_lpae_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
->  	return ret;
->  }
->  
-> +static int __arm_lpae_iotlb_sync_map(struct arm_lpae_io_pgtable *data, unsigned long iova,
-> +			      size_t size, int lvl, arm_lpae_iopte *ptep)
+> diff --git a/drivers/pmdomain/mediatek/Kconfig b/drivers/pmdomain/mediatek/Kconfig
+> index 0e34a517ab7d5a867bebaab11c0d866282a15e45..b06aaa9690f08f33519595916b8ea3ad9035fc55 100644
+> --- a/drivers/pmdomain/mediatek/Kconfig
+> +++ b/drivers/pmdomain/mediatek/Kconfig
+> @@ -26,6 +26,22 @@ config MTK_SCPSYS_PM_DOMAINS
+>   	  Control Processor System (SCPSYS) has several power management related
+>   	  tasks in the system.
+>   
+> +config MTK_MFG_PM_DOMAIN
+> +	bool "MediaTek MFlexGraphics power domain"
+> +	default ARCH_MEDIATEK
+> +	depends on PM
+> +	depends on OF
+> +	depends on COMMON_CLK
+> +	select PM_GENERIC_DOMAINS
+> +	imply MTK_GPUEB_MBOX
+> +	help
+> +	  Say y or m here to enable the power domains driver for MediaTek
+> +	  MFlexGraphics. This driver allows for power and frequency control of
+> +	  GPUs on MediaTek SoCs such as the MT8196 or MT6991.
+> +
+> +	  This driver is required for the Mali GPU to work at all on MT8196 and
+> +	  MT6991.
+> +
+>   config AIROHA_CPU_PM_DOMAIN
+>   	tristate "Airoha CPU power domain"
+>   	default ARCH_AIROHA
+> diff --git a/drivers/pmdomain/mediatek/Makefile b/drivers/pmdomain/mediatek/Makefile
+> index 18ba92e3c418154e1d428dbc6b59b97b26056d98..b424f1ed867604393b3ff96364855363aedaa40c 100644
+> --- a/drivers/pmdomain/mediatek/Makefile
+> +++ b/drivers/pmdomain/mediatek/Makefile
+> @@ -1,4 +1,5 @@
+>   # SPDX-License-Identifier: GPL-2.0-only
+> +obj-$(CONFIG_MTK_MFG_PM_DOMAIN)		+= mtk-mfg-pmdomain.o
+>   obj-$(CONFIG_MTK_SCPSYS)		+= mtk-scpsys.o
+>   obj-$(CONFIG_MTK_SCPSYS_PM_DOMAINS) 	+= mtk-pm-domains.o
+>   obj-$(CONFIG_AIROHA_CPU_PM_DOMAIN) 	+= airoha-cpu-pmdomain.o
+> diff --git a/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c b/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ba8e493b15edf6f5648deb9bddbc5d63fe0ba43b
+> --- /dev/null
+> +++ b/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
+> @@ -0,0 +1,954 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Driver for MediaTek MFlexGraphics Devices
+> + *
+> + * Copyright (C) 2025, Collabora Ltd.
+> + */
+> +
+> +#include <linux/completion.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/container_of.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_reserved_mem.h>
+> +#include <linux/overflow.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/units.h>
+> +
+
+..snip..
+
+
+> +
+> +static int mtk_mfg_eb_on(struct mtk_mfg *mfg)
 > +{
-> +	struct io_pgtable *iop = &data->iop;
-> +	size_t block_size = ARM_LPAE_BLOCK_SIZE(lvl, data);
-> +	int ret = 0, num_entries, max_entries;
-> +	unsigned long iova_offset, sync_idx_start, sync_idx_end;
-> +	int i, shift, synced_entries = 0;
+> +	struct device *dev = &mfg->pdev->dev;
+> +	u32 val;
+> +	int ret;
 > +
-> +	shift = (ARM_LPAE_LVL_SHIFT(lvl - 1, data) + ARM_LPAE_PGD_IDX(lvl - 1, data));
-> +	iova_offset = iova & ((1ULL << shift) - 1);
-> +	sync_idx_start = ARM_LPAE_LVL_IDX(iova, lvl, data);
-> +	sync_idx_end = (iova_offset + size + block_size - ARM_LPAE_GRANULE(data)) >>
-> +		ARM_LPAE_LVL_SHIFT(lvl, data);
-> +	max_entries = arm_lpae_max_entries(sync_idx_start, data);
-> +	num_entries = min_t(unsigned long, sync_idx_end - sync_idx_start, max_entries);
-> +	ptep += sync_idx_start;
+> +	/*
+> +	 * If MFG is already on from e.g. the bootloader, we should skip doing
+
+we ... who?
+
+> +	 * the power-on sequence, as it wouldn't work without powering it off
+> +	 * first.
+> +	 */
+> +	if (mtk_mfg_is_powered_on(mfg))
+> +		return 0;
 > +
-> +	if (lvl < (ARM_LPAE_MAX_LEVELS - 1)) {
-> +		for (i = 0; i < num_entries; i++) {
-> +			arm_lpae_iopte pte = READ_ONCE(ptep[i]);
-> +			unsigned long synced;
-> +
-> +			WARN_ON(!pte);
-> +
-> +			if (iopte_type(pte) == ARM_LPAE_PTE_TYPE_TABLE) {
-> +				int n = i - synced_entries;
-> +
-> +				if (n) {
-> +					__arm_lpae_sync_pte(&ptep[synced_entries], n, &iop->cfg);
-> +					synced_entries += n;
-> +				}
-> +				ret = __arm_lpae_iotlb_sync_map(data, iova, size, lvl + 1,
-> +								iopte_deref(pte, data));
-> +				synced_entries++;
-> +			}
-> +			synced = block_size - (iova & (block_size - 1));
-> +			size -= synced;
-> +			iova += synced;
-> +		}
+> +	ret = readl_poll_timeout(mfg->rpc + RPC_GHPM_RO0_CON, val,
+> +				 !(val & (GHPM_PWR_STATE_M | GHPM_STATE_M)),
+> +				 GPUEB_POLL_US, GPUEB_TIMEOUT_US);
+> +	if (ret) {
+> +		dev_err(dev, "timed out waiting for EB to power on\n");
+> +		return ret;
 > +	}
 > +
-> +	if (synced_entries != num_entries)
-> +		__arm_lpae_sync_pte(&ptep[synced_entries], num_entries - synced_entries, &iop->cfg);
+> +	mtk_mfg_update_reg_bits(mfg->rpc + mfg->ghpm_en_reg, GHPM_ENABLE_M,
+> +				GHPM_ENABLE_M);
+> +
+> +	mtk_mfg_update_reg_bits(mfg->rpc + RPC_GHPM_CFG0_CON, GHPM_ON_SEQ_M, 0);
+> +	mtk_mfg_update_reg_bits(mfg->rpc + RPC_GHPM_CFG0_CON, GHPM_ON_SEQ_M,
+> +				GHPM_ON_SEQ_M);
+> +
+> +	mtk_mfg_update_reg_bits(mfg->rpc + mfg->ghpm_en_reg, GHPM_ENABLE_M, 0);
+> +
+> +
+> +	ret = readl_poll_timeout(mfg->rpc + RPC_PWR_CON, val,
+> +				 (val & PWR_ACK_M) == PWR_ACK_M,
+> +				 GPUEB_POLL_US, GPUEB_TIMEOUT_US);
+> +	if (ret) {
+> +		dev_err(dev, "timed out waiting for EB power ack, val = 0x%X\n",
+> +			val);
+> +		return ret;
+> +	}
+> +
+> +	ret = readl_poll_timeout(mfg->gpr + GPR_LP_STATE, val,
+> +				 (val == EB_ON_RESUME),
+> +				 GPUEB_POLL_US, GPUEB_TIMEOUT_US);
+> +	if (ret) {
+> +		dev_err(dev, "timed out waiting for EB to resume, status = 0x%X\n", val);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mtk_mfg_eb_off(struct mtk_mfg *mfg)
+> +{
+> +	struct device *dev = &mfg->pdev->dev;
+> +	struct mtk_mfg_ipi_sleep_msg msg = {
+> +		.event = 0,
+> +		.state = 0,
+> +		.magic = GPUEB_SLEEP_MAGIC
+> +	};
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = mbox_send_message(mfg->slp_mbox->ch, &msg);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Cannot send sleep command: %pe\n", ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	ret = readl_poll_timeout(mfg->rpc + RPC_PWR_CON, val,
+> +				 !(val & PWR_ACK_M), GPUEB_POLL_US,
+> +				 GPUEB_TIMEOUT_US);
+> +
+> +	if (ret)
+> +		dev_err(dev, "Timed out waiting for EB to power off, val=0x%08X\n", val);
+
+Please be consistent with mtk_mfg_eb_on (and with everything else, actually).
+
+	if (ret) {
+		dev_err...
+		return ret
+	}
+
+	return 0;
+
 > +
 > +	return ret;
 > +}
-
-Can't we rely on the exisiting generic table walker "__arm_lpae_iopte_walk",
-instead writing a new one, that is already used for iova_to_phys and dirty bit.
-
-Thanks,
-Mostafa
-
 > +
-> +static int arm_lpae_iotlb_sync_map(struct io_pgtable_ops *ops, unsigned long iova,
-> +			    size_t size)
+
+..snip..
+
+> +static int mtk_mfg_set_performance(struct generic_pm_domain *pd,
+> +				   unsigned int state)
 > +{
-> +	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-> +	struct io_pgtable_cfg *cfg = &data->iop.cfg;
-> +	arm_lpae_iopte *ptep = data->pgd;
-> +	int lvl = data->start_level;
-> +	long iaext = (s64)iova >> cfg->ias;
+> +	struct mtk_mfg *mfg = mtk_mfg_from_genpd(pd);
 > +
-> +	WARN_ON(!size);
-> +	WARN_ON(iaext);
+> +	/*
+> +	 * pmdomain core intentionally sets a performance state before turning
+> +	 * a domain on, and after turning it off. We don't want to act on those,
+
+We..... who?!?!?!
+
+> +	 * as we only want to set performance states while the domain is on, and
+
+again, who's "we"? :-)
+
+> +	 * can simply defer setting whatever the pmdomain subsystem thinks we
+
+here we go again, who's that group of people? :-)
+
+> +	 * should be at when powering it on.
+> +	 */
+
+Code comments shall be declarative: you describe an action or code behavior - you
+have to explain a reason, not "who".
+
+Example:
+
+The pmdomain code intentionally sets a performance state both before turning
+on a power domain and after turning it off. However, in the case of MediaTek
+EB, the performance states can only be set while the controller is powered ON.
+If any performance request comes while it is OFF, return cleanly without
+taking any immediate action and defer setting the performance level until
+the next poweron.
+
+There's no "we", and describes all of reason, intention and intended code flow. :-)
+
+
+> +	if (mfg->pd.status != GENPD_STATE_ON)
+> +		return 0;
 > +
-> +	return __arm_lpae_iotlb_sync_map(data, iova, size, lvl, ptep);
+> +	return mtk_mfg_set_oppidx(mfg, state);
 > +}
 > +
->  static void __arm_lpae_free_pgtable(struct arm_lpae_io_pgtable *data, int lvl,
->  				    arm_lpae_iopte *ptep)
->  {
-> @@ -949,6 +1012,7 @@ arm_lpae_alloc_pgtable(struct io_pgtable_cfg *cfg)
->  	data->iop.ops = (struct io_pgtable_ops) {
->  		.map_pages	= arm_lpae_map_pages,
->  		.unmap_pages	= arm_lpae_unmap_pages,
-> +		.iotlb_sync_map	= cfg->coherent_walk ? NULL : arm_lpae_iotlb_sync_map,
->  		.iova_to_phys	= arm_lpae_iova_to_phys,
->  		.read_and_clear_dirty = arm_lpae_read_and_clear_dirty,
->  		.pgtable_walk	= arm_lpae_pgtable_walk,
-> diff --git a/include/linux/io-pgtable.h b/include/linux/io-pgtable.h
-> index 138fbd89b1e6..c4927dbc0f61 100644
-> --- a/include/linux/io-pgtable.h
-> +++ b/include/linux/io-pgtable.h
-> @@ -57,6 +57,9 @@ struct iommu_flush_ops {
->   * @oas:           Output address (paddr) size, in bits.
->   * @coherent_walk  A flag to indicate whether or not page table walks made
->   *                 by the IOMMU are coherent with the CPU caches.
-> + * @defer_sync_pte A flag to indicate whether pte sync operations for leaf
-> + *                 entries shall be skipped during calls to .map_pages. A
-> + *                 subsequent call to .iotlb_sync_map is required.
->   * @tlb:           TLB management callbacks for this set of tables.
->   * @iommu_dev:     The device representing the DMA configuration for the
->   *                 page table walker.
-> @@ -110,6 +113,7 @@ struct io_pgtable_cfg {
->  	unsigned int			ias;
->  	unsigned int			oas;
->  	bool				coherent_walk;
-> +	bool				defer_sync_pte;
->  	const struct iommu_flush_ops	*tlb;
->  	struct device			*iommu_dev;
->  
-> @@ -204,6 +208,7 @@ struct arm_lpae_io_pgtable_walk_data {
->   * @unmap_pages:  Unmap a range of virtually contiguous pages of the same size.
->   * @iova_to_phys: Translate iova to physical address.
->   * @pgtable_walk: (optional) Perform a page table walk for a given iova.
-> + * @iotlb_sync_map: Sync ptes (Required for non-coherent page table walks)
->   *
->   * These functions map directly onto the iommu_ops member functions with
->   * the same names.
-> @@ -222,6 +227,8 @@ struct io_pgtable_ops {
->  				    unsigned long iova, size_t size,
->  				    unsigned long flags,
->  				    struct iommu_dirty_bitmap *dirty);
-> +	int (*iotlb_sync_map)(struct io_pgtable_ops *ops, unsigned long iova,
-> +			      size_t size);
->  };
->  
->  /**
-> -- 
-> 2.51.0.570.gb178f27e6d-goog
+> +static int mtk_mfg_power_on(struct generic_pm_domain *pd)
+> +{
+> +	struct mtk_mfg *mfg = mtk_mfg_from_genpd(pd);
+> +	int ret;
+> +
+> +	ret = regulator_bulk_enable(mfg->variant->num_regulators,
+> +				    mfg->gpu_regs);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = clk_prepare_enable(mfg->clk_eb);
+> +	if (ret)
+> +		goto err_disable_regulators;
+> +
+> +	ret = clk_bulk_prepare_enable(mfg->variant->num_clks, mfg->gpu_clks);
+> +	if (ret)
+> +		goto err_disable_eb_clk;
+> +
+> +	ret = mtk_mfg_eb_on(mfg);
+> +	if (ret)
+> +		goto err_disable_clks;
+> +
+> +	mfg->ipi_magic = readl(mfg->gpr + GPR_IPI_MAGIC);
+> +
+> +	ret = mtk_mfg_power_control(mfg, true);
+> +	if (ret)
+> +		goto err_eb_off;
+> +
+> +	/* Don't try to set a OPP in probe before we have the OPPs */
+> +	if (mfg->gpu_opps) {
+> +		/* The aforementioned deferred setting of pmdomain's state */
+> +		ret = mtk_mfg_set_oppidx(mfg, pd->performance_state);
+> +		if (ret)
+> +			dev_warn(&mfg->pdev->dev, "Failed to set oppidx in %s\n", __func__);
+> +	}
+> +
+> +	return 0;
+> +
+> +err_eb_off:
+> +	mtk_mfg_eb_off(mfg);
+> +err_disable_clks:
+> +	clk_bulk_disable_unprepare(mfg->variant->num_clks, mfg->gpu_clks);
+> +err_disable_eb_clk:
+> +	clk_disable_unprepare(mfg->clk_eb);
+> +err_disable_regulators:
+> +	regulator_bulk_disable(mfg->variant->num_regulators, mfg->gpu_regs);
+> +
+> +	return ret;
+> +}
+> +
+> +static int mtk_mfg_power_off(struct generic_pm_domain *pd)
+> +{
+> +	struct mtk_mfg *mfg = mtk_mfg_from_genpd(pd);
+> +	struct device *dev = &mfg->pdev->dev;
+> +	int ret;
+> +
+> +	ret = mtk_mfg_power_control(mfg, false);
+> +	if (ret) {
+> +		dev_err(dev, "power_control failed: %pe\n", ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	ret = mtk_mfg_eb_off(mfg);
+> +	if (ret) {
+> +		dev_err(dev, "eb_off failed: %pe\n", ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	clk_bulk_disable_unprepare(mfg->variant->num_clks, mfg->gpu_clks);
+> +	clk_disable_unprepare(mfg->clk_eb);
+> +	return regulator_bulk_disable(mfg->variant->num_regulators, mfg->gpu_regs);
+> +}
+> +
+> +static int mtk_mfg_init_mbox(struct mtk_mfg *mfg)
+> +{
+> +	struct device *dev = &mfg->pdev->dev;
+> +	struct mtk_mfg_mbox *gf;
+> +	struct mtk_mfg_mbox *slp;
+> +
+> +	gf = devm_kzalloc(dev, sizeof(*gf), GFP_KERNEL);
+> +	if (!gf)
+> +		return -ENOMEM;
+
+Please aggregate the allocations together. This doesn't guarantee that the
+memory locations are sequential and that's not the target.
+
+The target here is to improve readability, so...
+
+gf = devm_kzalloc(...)
+error_check
+gf->rx_data = devm_kzalloc(...)
+error_check
+
+Then, you can either go with initialization and registration of gf, or you
+can allocate slp here.
+
+so, either:
+- gf and gf->rx_data allocation
+   - gf->mfg, gf.cl assignment
+   - mbox_request_channel_byname(gf)
+- slp allocation
+   - slp->mfg, slp->cl assignment
+   - mbox_request_channel_byname(slp)
+
+or
+
+- gf and gf->rx_data allocation
+- slp allocation
+- gf->mfg, gf.cl assignment
+- mbox_request_channel_byname(gf)
+   - slp->mfg, slp->cl assignment
+- mbox_request_channel_byname(slp)
+
+Honestly, though - I'd go for the first.
+
+> +
+> +	slp = devm_kzalloc(dev, sizeof(*slp), GFP_KERNEL);
+> +	if (!slp)
+> +		return -ENOMEM;
+> +
+> +	gf->mfg = mfg;
+> +	init_completion(&gf->rx_done);
+> +	gf->cl.dev = dev;
+> +	gf->cl.rx_callback = mtk_mfg_mbox_rx_callback;
+> +	gf->cl.tx_tout = GPUEB_TIMEOUT_US / USEC_PER_MSEC;
+> +	gf->rx_data = devm_kzalloc(dev, GPUEB_MBOX_MAX_RX_SIZE, GFP_KERNEL);
+> +	if (!gf->rx_data)
+> +		return -ENOMEM;
+> +	gf->ch = mbox_request_channel_byname(&gf->cl, "gpufreq");
+> +	if (IS_ERR(gf->ch))
+> +		return PTR_ERR(gf->ch);
+> +
+> +	mfg->gf_mbox = gf;
+> +
+> +	slp->mfg = mfg;
+> +	init_completion(&slp->rx_done);
+> +	slp->cl.dev = dev;
+> +	slp->cl.tx_tout = GPUEB_TIMEOUT_US / USEC_PER_MSEC;
+> +	slp->cl.tx_block = true;
+> +	slp->ch = mbox_request_channel_byname(&slp->cl, "sleep");
+> +	if (IS_ERR(slp->ch))
+> +		return PTR_ERR(slp->ch);
+> +
+> +	mfg->slp_mbox = slp;
+> +
+> +	return 0;
+> +}
+> +
+
+..snip..
+
+> +
+> +static int mtk_mfg_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *shmem __free(device_node);
+> +	struct mtk_mfg *mfg;
+> +	struct device *dev = &pdev->dev;
+> +	const struct mtk_mfg_variant *data = of_device_get_match_data(dev);
+> +	struct resource res;
+> +	int ret, i;
+> +
+> +	mfg = devm_kzalloc(dev, sizeof(*mfg), GFP_KERNEL);
+> +	if (!mfg)
+> +		return -ENOMEM;
+> +
+> +	mfg->pdev = pdev;
+> +	mfg->variant = data;
+> +
+> +	dev_set_drvdata(dev, mfg);
+> +
+> +	mfg->gpr = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(mfg->gpr))
+> +		return dev_err_probe(dev, PTR_ERR(mfg->gpr),
+> +				     "Could not retrieve GPR MMIO registers\n");
+> +
+> +	mfg->rpc = devm_platform_ioremap_resource(pdev, 1);
+> +	if (IS_ERR(mfg->rpc))
+> +		return dev_err_probe(dev, PTR_ERR(mfg->rpc),
+> +				     "Could not retrieve RPC MMIO registers\n");
+> +
+> +	mfg->clk_eb = devm_clk_get(dev, "eb");
+> +	if (IS_ERR(mfg->clk_eb))
+> +		return dev_err_probe(dev, PTR_ERR(mfg->clk_eb),
+> +				     "Could not get 'eb' clock\n");
+> +
+> +	mfg->gpu_clks = devm_kcalloc(dev, data->num_clks, sizeof(*mfg->gpu_clks),
+> +				     GFP_KERNEL);
+> +	if (!mfg->gpu_clks)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < data->num_clks; i++)
+> +		mfg->gpu_clks[i].id = data->clk_names[i];
+> +
+> +	ret = devm_clk_bulk_get(dev, data->num_clks, mfg->gpu_clks);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "couldn't get GPU clocks\n");
+> +
+> +	mfg->gpu_regs = devm_kcalloc(dev, data->num_regulators,
+> +				     sizeof(*mfg->gpu_regs), GFP_KERNEL);
+> +	if (!mfg->gpu_regs)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < data->num_regulators; i++)
+> +		mfg->gpu_regs[i].supply = data->regulator_names[i];
+> +
+> +	ret = devm_regulator_bulk_get(dev, data->num_regulators, mfg->gpu_regs);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "couldn't get GPU regulators\n");
+> +
+> +	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &res);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to get GPUEB shared memory\n");
+
+Good job! ...though, the dev_err_probe call fits in one line just fine (87 columns
+is ok)
+
+> +
+> +	mfg->shared_mem = devm_ioremap(dev, res.start, resource_size(&res));
+> +	if (!mfg->shared_mem)
+> +		return dev_err_probe(dev, -EADDRNOTAVAIL,
+> +				     "failed to ioremap GPUEB shared memory\n");
+
+-EADDRNOTAVAIL == Cannot assign requested address (and that's in the networking
+sense of it).
+
+If devm_ioremap fails, you're most likely out of memory, because we can give for
+granted that the phys addr is validated from the get go.
+
+Just go with -ENOMEM then - and besides, fits in one line if you say instead:
+
+return dev_err_probe(dev, -ENOMEM, "cannot ioremap GPUEB shared mem\n");
+
+> +	mfg->shared_mem_size = resource_size(&res);
+> +	mfg->shared_mem_phys = res.start;
+> +
+> +	if (data->init) {
+> +		ret = data->init(mfg);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "Variant init failed\n");
+> +	}
+> +
+> +	mfg->pd.name = dev_name(dev);
+> +	mfg->pd.attach_dev = mtk_mfg_attach_dev;
+> +	mfg->pd.detach_dev = mtk_mfg_detach_dev;
+> +	mfg->pd.power_off = mtk_mfg_power_off;
+> +	mfg->pd.power_on = mtk_mfg_power_on;
+> +	mfg->pd.set_performance_state = mtk_mfg_set_performance;
+> +	mfg->pd.flags = GENPD_FLAG_OPP_TABLE_FW;
+> +
+> +	ret = pm_genpd_init(&mfg->pd, NULL, false);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to initialise power domain\n");
+> +
+> +	ret = clk_prepare_enable(mfg->clk_eb);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to turn on EB clock\n");
+> +
+> +	ret = mtk_mfg_init_mbox(mfg);
+> +	if (ret) {
+> +		clk_disable_unprepare(mfg->clk_eb);
+> +		return dev_err_probe(dev, ret, "Couldn't initialise mailbox\n");
+> +	}
+> +
+
+Can you please add a comment here, explaining that mtk_mfg_power_on() is also
+responsible for turning on all of the necessary clocks, hence it raises the
+refcount of clk_eb?
+
+All that so it becomes clear that there you're not disabling the clk_eb clock
+but only lowering the refcount.
+
+Saying that because while reviewing this code, after reaching the `out` label
+the first thing that came to mind was "there we go, unclocked access" - but then
+after 30 seconds I realized that the clocks are left on by the call to function
+mtk_mfg_power_on().
+
+A very brief comment explaining what's going on wouldn't have saved those 30
+seconds because this is a review, but it would save those to the next person
+reading a driver that is upstream anyway.
+
+Of course, no strong opinions about having the comment, this is just a suggestion.
+
+> +	ret = mtk_mfg_power_on(&mfg->pd);
+> +	clk_disable_unprepare(mfg->clk_eb);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to power on MFG\n");
+> +
+> +	ret = mtk_mfg_init_shared_mem(mfg);
+> +	if (ret) {
+> +		dev_err(dev, "Couldn't initialize EB shared memory: %pe\n", ERR_PTR(ret));
+
+Why is this dev_err and not dev_err_probe?
+
+I get that the return value is already set, but nothing prevents you from calling
+dev_err_probe() without assigning the result to anything.
+
+	if (ret) {
+		dev_err_probe(dev, ret, "Couldn't initialize EB shared memory\n");
+		goto out;
+	}
+
+At least - we get the probe error prints consistent :-)
+
+> +		goto out;
+> +	}
+> +
+> +	ret = mtk_mfg_read_opp_tables(mfg);
+> +	if (ret) {
+> +		dev_err(dev, "Error reading OPP tables from EB: %pe\n",
+> +			ERR_PTR(ret));
+
+dev_err_probe.
+
+> +		goto out;
+> +	}
+> +
+> +	ret = mtk_mfg_init_clk_provider(mfg);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = of_genpd_add_provider_simple(dev->of_node, &mfg->pd);
+> +	if (ret) {
+> +		ret = dev_err_probe(dev, ret, "Failed to add pmdomain provider\n");
+
+Please avoid this redundant assignment.
+
+> +		goto out;
+> +	}
+> +
+> +	return 0;
+> +
+
+Everything else looks good to me - so after fixing this I'm confident that you'll
+get my R-b tag on this commit.
+
+Cheers,
+Angelo
+
+
+> +out:
+> +	mtk_mfg_power_off(&mfg->pd);
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id mtk_mfg_of_match[] = {
+> +	{ .compatible = "mediatek,mt8196-gpufreq", .data = &mtk_mfg_mt8196_variant },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, mtk_mfg_of_match);
+> +
+> +static void mtk_mfg_remove(struct platform_device *pdev)
+> +{
+> +	struct mtk_mfg *mfg = dev_get_drvdata(&pdev->dev);
+> +
+> +	if (mtk_mfg_is_powered_on(mfg))
+> +		mtk_mfg_power_off(&mfg->pd);
+> +
+> +	of_genpd_del_provider(pdev->dev.of_node);
+> +	pm_genpd_remove(&mfg->pd);
+> +
+> +	mbox_free_channel(mfg->gf_mbox->ch);
+> +	mfg->gf_mbox->ch = NULL;
+> +
+> +	mbox_free_channel(mfg->slp_mbox->ch);
+> +	mfg->slp_mbox->ch = NULL;
+> +}
+> +
+> +static struct platform_driver mtk_mfg_driver = {
+> +	.driver = {
+> +		.name = "mtk-mfg-pmdomain",
+> +		.of_match_table = mtk_mfg_of_match,
+> +		.suppress_bind_attrs = true,
+> +	},
+> +	.probe = mtk_mfg_probe,
+> +	.remove = mtk_mfg_remove,
+> +};
+> +module_platform_driver(mtk_mfg_driver);
+> +
+> +MODULE_AUTHOR("Nicolas Frattaroli <nicolas.frattaroli@collabora.com>");
+> +MODULE_DESCRIPTION("MediaTek MFlexGraphics Power Domain Driver");
+> +MODULE_LICENSE("GPL");
 > 
+
 
