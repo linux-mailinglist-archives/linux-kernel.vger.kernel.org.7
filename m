@@ -1,240 +1,108 @@
-Return-Path: <linux-kernel+bounces-836486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70548BA9D42
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7111CBA9DFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 17:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23ABC3BB742
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CEC21921C19
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 15:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B85230C0E2;
-	Mon, 29 Sep 2025 15:44:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB3E30B511;
-	Mon, 29 Sep 2025 15:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9105730C10C;
+	Mon, 29 Sep 2025 15:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="Nk3rY9CJ"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D35B30B535;
+	Mon, 29 Sep 2025 15:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759160666; cv=none; b=RumzMoPrBmYmXEWb3NIylM9m+B+SyiqEWavi7XY/JwV05CHjTQDUMO5VUvtgYMQ5Pxo1XccevqJfUDVetT/Haub/gr7VOCJ/LMpW+rsGpAmbLTpMPp0fHHCEI+tkVG8pbGnMOIYJNWLTvJf/PrQUddgxbnZytR7zkvM+MkXwiK8=
+	t=1759161186; cv=none; b=j9RK7s2f/jY1FJNGed/XmHKrId6lt+HI2WAn70FV5+1th/UfBFoEAnEKYReSaqVHtts48RHRFFvnrXG/f5hUjOvnB1rOWRrmM4bjTmhU916gxfiSzGR5ci3cmKxtly74edJy6KANP8vdDmptoaVUx/bmirEAReSK5JsNY5D1x8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759160666; c=relaxed/simple;
-	bh=WsZsY/xKEEydx3+25s70BqPyqNc5xJZTSdZ+XcVdWZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sh8vSpynvuSKx97uA2JRSoWrSaQXNWgHNMf2SMfFwx3mUFWwxFAbYLsCKTYYTLPsEoI2mqQ7fPAgIre8sip8AWnBPSHBgxKByTNbeVtY8TzjJtG6vm12UatmRFSQeFQhW6F4RGNkImstRKMcI7/Yy7xMK+sbxYB5KXle0ffkNbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17EA1150C;
-	Mon, 29 Sep 2025 08:44:15 -0700 (PDT)
-Received: from [10.57.1.31] (unknown [10.57.1.31])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9429C3F59E;
-	Mon, 29 Sep 2025 08:44:19 -0700 (PDT)
-Message-ID: <2432db52-ed83-491c-81d7-f8c3e4b8bf20@arm.com>
-Date: Mon, 29 Sep 2025 16:44:17 +0100
+	s=arc-20240116; t=1759161186; c=relaxed/simple;
+	bh=G8YzWykcN+7T3iq/TApLviOykadfZk2GMFlz7NLHNAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FRjeW+oTt3FTPgJ8RehoS/s3BZCf2gcfNkKtcS1dt9IYCDLbEJbpa01DdReq3da2xn8ksaEst9j3mU3CKqYfU9UYE2zdL42SmqmGscO9PVXMaNOl/Iz8Yus38IbWX9IBC4H4YZjwmUXojueHnN+aswUIEGmCeFmBFHi6JxP/5gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=Nk3rY9CJ; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1759160696; bh=G8YzWykcN+7T3iq/TApLviOykadfZk2GMFlz7NLHNAM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Nk3rY9CJqqbOqA28siTjvRRJPZoK+Q/2666t0BH6DGvk2GussB1dqO7MLLsb0+rx/
+	 Kkkcej8mYS+fr8tXMylFLYkbjl5XmSZMzQerr8mOsA6OmftZRaL3bXc+Ri3Wym3Mw6
+	 Nh0zaYM9T+ovew8WBhJDB7WRL6kDYH2r4MDsvkSo=
+Message-ID: <f0539620-87f8-4efd-b27e-443100bc92cc@lucaweiss.eu>
+Date: Mon, 29 Sep 2025 17:44:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/panthor: add custom ASN_HASH support for
- mt8196
-To: Chia-I Wu <olvaffe@gmail.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250913002155.1163908-1-olvaffe@gmail.com>
- <20250913002155.1163908-3-olvaffe@gmail.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250913002155.1163908-3-olvaffe@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 1/2] dt-bindings: input: pm8941-pwrkey: Document
+ wakeup-source property
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Courtney Cavin <courtney.cavin@sonymobile.com>,
+ Vinod Koul <vkoul@kernel.org>, Bhushan Shah <bshah@kde.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250909-resin-wakeup-v1-0-46159940e02b@lucaweiss.eu>
+ <20250909-resin-wakeup-v1-1-46159940e02b@lucaweiss.eu>
+ <efb03993-0481-45ed-8f7e-8b65519a55cb@kernel.org>
+ <phctwoxml7hscwcgaipl233lotnrkgcpe7rxvhm5syoiadu3lv@ibgeib4kjyhs>
+ <9e39f1b4-63b2-4c6a-8b31-6360be1952e6@kernel.org>
+ <dcdbc6424db6953dfc39fc05e0e050ab@lucaweiss.eu>
+ <kxgvebizxvlflu4qen3cb5v4lcuydmdixvi7624hrggo7f5u5f@zbengtjkekfj>
+ <3kww5et2q2mqddpvtqzuj3jqzvfds66qrufawcmumamrqoaugk@tiq6zoe5psom>
+Content-Language: en-US
+From: Luca Weiss <luca@lucaweiss.eu>
+In-Reply-To: <3kww5et2q2mqddpvtqzuj3jqzvfds66qrufawcmumamrqoaugk@tiq6zoe5psom>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13/09/2025 01:21, Chia-I Wu wrote:
-> Add panthor_soc_data to control custom ASN_HASH. Add compatible string
-> for "mediatek,mt8196-mali" and enable custom ASN_HASH for the soc.
+On 25-09-25 7:45 atm, Dmitry Torokhov wrote:
+> On Tue, Sep 09, 2025 at 07:54:33AM -0700, Dmitry Torokhov wrote:
+>> On Tue, Sep 09, 2025 at 04:41:26PM +0200, Luca Weiss wrote:
+>>> On 2025-09-09 16:33, Krzysztof Kozlowski wrote:
+>>>> On 09/09/2025 16:08, Dmitry Torokhov wrote:
+>>>>>>>     compatible:
+>>>>>>>       enum:
+>>>>>>> @@ -36,6 +33,11 @@ properties:
+>>>>>>>              pin should be configured for pull up.
+>>>>>>>       $ref: /schemas/types.yaml#/definitions/flag
+>>>>>>>
+>>>>>>> +  wakeup-source:
+>>>>>>> +    description: |
+>>>>>>> +           Button can wake-up the system. Only applicable
+>>>>>>> for 'resin',
+>>>>>>> +           'pwrkey' always wakes the system by default.
+>>>>>>
+>>>>>>
+>>>>>> I'll fix existing code, so don't repeat that style.
+>>>>>
+>>>>> If you ack I can reformat on my side to match the patch you just sent.
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>> Thanks for fixing that up Krzysztof! I noticed but didn't want to deviate
+>>> from the style just for this description. Of course better to fix the
+>>> formatting in the first place.
+>>>
+>>> @Dmitry: Maybe give this patch some time (1-2 weeks?) to gather more
+>>> feedback,
+>>> given the reasons outlined in the cover letter. Also on the driver patch.
+>>
+>> OK, I'll hold on to this for a couple of weeks.
 > 
-> Without custom ASN_HASH, FW fails to boot
-> 
->   panthor 48000000.gpu: [drm] *ERROR* Unhandled Page fault in AS0 at VA 0x0000000000000000
->   panthor 48000000.gpu: [drm] *ERROR* Failed to boot MCU (status=fatal)
->   panthor 48000000.gpu: probe with driver panthor failed with error -110
-> 
-> With custom ASN_HASH, panthor probes fine and userspace boots to ui just
-> fine as well
-> 
->   panthor 48000000.gpu: [drm] clock rate = 0
->   panthor 48000000.gpu: EM: created perf domain
->   panthor 48000000.gpu: [drm] Mali-G925-Immortalis id 0xd830 major 0x0 minor 0x1 status 0x5
->   panthor 48000000.gpu: [drm] Features: L2:0x8130306 Tiler:0x809 Mem:0x301 MMU:0x2830 AS:0xff
->   panthor 48000000.gpu: [drm] shader_present=0xee0077 l2_present=0x1 tiler_present=0x1
->   panthor 48000000.gpu: [drm] Firmware protected mode entry not be supported, ignoring
->   panthor 48000000.gpu: [drm] Firmware git sha: 27713280172c742d467a4b7d11180930094092ec
->   panthor 48000000.gpu: [drm] CSF FW using interface v3.13.0, Features 0x10 Instrumentation features 0x71
->   [drm] Initialized panthor 1.5.0 for 48000000.gpu on minor 1
-> 
-> Note that the clock and the regulator drivers are not upstreamed yet.
-> They might as well take a different form when upstreamed.
-> 
-> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+> Nobody voiced any objections so far, so applied both.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> 
-> ---
-> v2:
->  - remove CONFIG_DRM_PANTHOR_SOC_MT8196 and panthor_soc*.[ch]
->  - update commit message
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c |  2 ++
->  drivers/gpu/drm/panthor/panthor_device.h | 14 +++++++++++++
->  drivers/gpu/drm/panthor/panthor_drv.c    |  6 ++++++
->  drivers/gpu/drm/panthor/panthor_gpu.c    | 25 +++++++++++++++++++++++-
->  drivers/gpu/drm/panthor/panthor_regs.h   |  4 ++++
->  5 files changed, 50 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index 81df49880bd87..c7033d82cef55 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -172,6 +172,8 @@ int panthor_device_init(struct panthor_device *ptdev)
->  	struct page *p;
->  	int ret;
->  
-> +	ptdev->soc_data = of_device_get_match_data(ptdev->base.dev);
-> +
->  	init_completion(&ptdev->unplug.done);
->  	ret = drmm_mutex_init(&ptdev->base, &ptdev->unplug.lock);
->  	if (ret)
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index 4fc7cf2aeed57..9f0649ecfc4fc 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -31,6 +31,17 @@ struct panthor_perfcnt;
->  struct panthor_vm;
->  struct panthor_vm_pool;
->  
-> +/**
-> + * struct panthor_soc_data - Panthor SoC Data
-> + */
-> +struct panthor_soc_data {
-> +	/** @asn_hash_enable: True if GPU_L2_CONFIG_ASN_HASH_ENABLE must be set. */
-> +	bool asn_hash_enable;
-> +
-> +	/** @asn_hash: ASN_HASH values when asn_hash_enable is true. */
-> +	u32 asn_hash[3];
-> +};
-> +
->  /**
->   * enum panthor_device_pm_state - PM state
->   */
-> @@ -93,6 +104,9 @@ struct panthor_device {
->  	/** @base: Base drm_device. */
->  	struct drm_device base;
->  
-> +	/** @soc_data: Optional SoC data. */
-> +	const struct panthor_soc_data *soc_data;
-> +
->  	/** @phys_addr: Physical address of the iomem region. */
->  	phys_addr_t phys_addr;
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index be962b1387f03..9dd90754865ac 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1682,7 +1682,13 @@ static struct attribute *panthor_attrs[] = {
->  
->  ATTRIBUTE_GROUPS(panthor);
->  
-> +static const struct panthor_soc_data soc_data_mediatek_mt8196 = {
-> +	.asn_hash_enable = true,
-> +	.asn_hash = { 0xb, 0xe, 0x0, },
-> +};
-> +
->  static const struct of_device_id dt_match[] = {
-> +	{ .compatible = "mediatek,mt8196-mali", .data = &soc_data_mediatek_mt8196, },
->  	{ .compatible = "rockchip,rk3588-mali" },
->  	{ .compatible = "arm,mali-valhall-csf" },
->  	{}
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index db69449a5be09..9d98720ce03fd 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -52,6 +52,28 @@ static void panthor_gpu_coherency_set(struct panthor_device *ptdev)
->  		ptdev->coherent ? GPU_COHERENCY_PROT_BIT(ACE_LITE) : GPU_COHERENCY_NONE);
->  }
->  
-> +static void panthor_gpu_l2_config_set(struct panthor_device *ptdev)
-> +{
-> +	const struct panthor_soc_data *data = ptdev->soc_data;
-> +	u32 l2_config;
-> +	u32 i;
-> +
-> +	if (!data || !data->asn_hash_enable)
-> +		return;
-> +
-> +	if (GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id) < 11) {
-> +		drm_err(&ptdev->base, "Custom ASN hash not supported by the device");
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(data->asn_hash); i++)
-> +		gpu_write(ptdev, GPU_ASN_HASH(i), data->asn_hash[i]);
-> +
-> +	l2_config = gpu_read(ptdev, GPU_L2_CONFIG);
-> +	l2_config |= GPU_L2_CONFIG_ASN_HASH_ENABLE;
-> +	gpu_write(ptdev, GPU_L2_CONFIG, l2_config);
-> +}
-> +
->  static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
->  {
->  	gpu_write(ptdev, GPU_INT_CLEAR, status);
-> @@ -241,8 +263,9 @@ int panthor_gpu_l2_power_on(struct panthor_device *ptdev)
->  			      hweight64(ptdev->gpu_info.shader_present));
->  	}
->  
-> -	/* Set the desired coherency mode before the power up of L2 */
-> +	/* Set the desired coherency mode and L2 config before the power up of L2 */
->  	panthor_gpu_coherency_set(ptdev);
-> +	panthor_gpu_l2_config_set(ptdev);
->  
->  	return panthor_gpu_power_on(ptdev, L2, 1, 20000);
->  }
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
-> index 8bee76d01bf83..8fa69f33e911e 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -64,6 +64,8 @@
->  
->  #define GPU_FAULT_STATUS				0x3C
->  #define GPU_FAULT_ADDR					0x40
-> +#define GPU_L2_CONFIG					0x48
-> +#define   GPU_L2_CONFIG_ASN_HASH_ENABLE			BIT(24)
->  
->  #define GPU_PWR_KEY					0x50
->  #define  GPU_PWR_KEY_UNLOCK				0x2968A819
-> @@ -110,6 +112,8 @@
->  
->  #define GPU_REVID					0x280
->  
-> +#define GPU_ASN_HASH(n)					(0x2C0 + ((n) * 4))
-> +
->  #define GPU_COHERENCY_FEATURES				0x300
->  #define GPU_COHERENCY_PROT_BIT(name)			BIT(GPU_COHERENCY_  ## name)
->  
-
+Thanks Dmitry!
 
