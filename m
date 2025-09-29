@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-836436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6141BA9B09
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:49:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E867BA9B03
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 16:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67FD8192212D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13BD319220F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Sep 2025 14:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00E72F0699;
-	Mon, 29 Sep 2025 14:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6E03090D5;
+	Mon, 29 Sep 2025 14:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Q4NM9XOv"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="Ppu7l86P"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091DD1E1A05
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD6304BB8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 14:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759157338; cv=none; b=jxZ2FYK0hoyN8B66CxkyxY+rkRv2WkSWNK0wSQQ1+aZL6E0y110x0x5G8vx8wodZzvvbf04SqBqICSZUGB/htuLgCS4CQR2SlmNEUnA7ly7wykRXqWdauhy5Lanq6e3P3kEEMSGBWqEjLIYWxNQNmqxUe4zOyXfGgOh24TsGlzk=
+	t=1759157299; cv=none; b=VbdgEt8FVT2SP6Y8hBbZJ+FAuFUdexx0cQOsy2EVsmeZYP9AxlRuHYsDFQtiKRJNJpZ58xWSbhADfPY2GZ/2b5WSk4E+k+cBwwct4Z9KNATqlvfnpUU4PBjgHqR1YrDIeXzK5Me2t5Gg6Z9qf13vPKb0DpkkVgNcbxa18tDNg3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759157338; c=relaxed/simple;
-	bh=yOEQ5fr5ybj/a97Lbd6DN7OdxDqqM/4bxavbJoYmMpM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=OkgksYRB2fpPx8MqJXLdsTHX41K4wq2IMNioYiS46CPso+PFpa5qkPK06TettfR9/ArPij9htC73+Wt6BfpxpS6knkl69uWJoApTw/uqaxzUM7k2ZjVZydatRAxCedpScQD4CWt+pQBzkJcvcAFCPJTnDBpJCgOTb0rLsAyTxho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Q4NM9XOv; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=qtKE/Y1loUtNcdp
-	dwBREt/hPkR7NXEswPcVlC1w5L+E=; b=Q4NM9XOvwNVdvlc5gEd9VPq73qTvIcW
-	bouYNIyCH1PqRWrw5BlL+OLH/HcwxGn9I6vtg+YX0F22Fk+9ufu5vganc2ToNMp1
-	Rl0YPjqxIefCIhr/715Ba//dEqHqk9Ml6f+5Zo8CQce9vsYfOWCAX2uxaBSkD9K2
-	8ujvEMy5hUDw=
-Received: from ubuntu.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3HyMunNpof+KgBQ--.14253S2;
-	Mon, 29 Sep 2025 22:48:16 +0800 (CST)
-From: buckzhang1212@yeah.net
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: buckzhang1212@yeah.net
-Subject: [PATCH v3] locking/rwsem: add DEBUG_RWSEMS_WARN_ON to warn invalid rwsem
-Date: Mon, 29 Sep 2025 07:48:12 -0700
-Message-Id: <20250929144812.2211-1-buckzhang1212@yeah.net>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:Ms8vCgD3HyMunNpof+KgBQ--.14253S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw4rCF4DGr1fGFy3uw18AFb_yoW8Gr4rpF
-	1Yk3s2qrZrXF4xWayIq3ZaqFyUWw1rur97GF9xuw1xJ3sxJrnxXrnxtr13try8GF93ArZa
-	vFW3uFW5uayUtrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5Z2-UUUUU=
-X-CM-SenderInfo: pexfy65kdqwiqsrsq5hhdkh0dhw/1tbiCRvXr2jaZkmSDAAAsp
+	s=arc-20240116; t=1759157299; c=relaxed/simple;
+	bh=473f40mtSQM+0OzQVl4Ru5p88sAyTwDhs9qPxor6Ucw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lr46ZAd2F+EvPxgQJIN5DoOHp7RYI7/DbJolO5k9cg/m2wGsPQZaMKz/iOpVFD5yfgmbAjm4/VqRxUl2dRSV04uGaCQ/fa2ldVDtIwMAL1dTYb5ZoBkqspf4PBJ7b93YTzAJCkKVLkjLkvg5RypSNDzVlkLIm3pTilJsUkRMQRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=Ppu7l86P; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id d6l4Wcka9sFtCnlB; Mon, 29 Sep 2025 10:48:17 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=RVGMr1m30rPoyckhzK4yiD/uiBeD7Nfmj5riwnj1OQ4=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=Ppu7l86PvalLm6Kdyi1a
+	GOjvZ0zDGxlB3lbi8FPwG2BGiCTFEf4z6qcDBYh4oYMN4+tCI1zuo8hLOLEd//GkPuoweu0zE2owh
+	NVN0kPkMT8BAIgHm8tPI9Z9Hi6eDbdGz+Aayr5PO77aafY7qZZz0FK815WX1H9AbuzAozT0xNI=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14216615; Mon, 29 Sep 2025 10:48:16 -0400
+Message-ID: <54c50cf9-6d27-48f0-930d-d1f1098da692@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 29 Sep 2025 10:48:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: [SCST PATCH v2 13/16] scsi: qla2xxx: add cmd->rsp_sent
+Content-Language: en-US
+X-ASG-Orig-Subj: [SCST PATCH v2 13/16] scsi: qla2xxx: add cmd->rsp_sent
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+ <a87efa80-b76c-4165-be57-775f73ba9a2c@cybernetics.com>
+In-Reply-To: <a87efa80-b76c-4165-be57-775f73ba9a2c@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1759157297
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 909
+X-Barracuda-BRTS-Status: 1
+X-ASG-Debug-ID: 1759157297-1cf43947df3c0520001-xx1T2L
 
-From: "buck.zhang" <buckzhang1212@yeah.net>
+This patch applies to the out-of-tree SCST project, not to the Linux
+kernel.  Apply when importing the upstream patch with the same title.
 
-Add the lock->magic check to warn invalid rwsem without initialization
-
-Signed-off-by: buck.zhang <buckzhang1212@yeah.net>
-
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
 ---
-Changes in v3:
-  - Use the lock->magic check in __down_read_common/__down_write_common
-  - (Suggested by Waiman Long)
----
- kernel/locking/rwsem.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 24df4d98f..38d884643 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -1256,6 +1256,9 @@ static __always_inline int __down_read_common(struct rw_semaphore *sem, int stat
- 	int ret = 0;
- 	long count;
+v1 -> v2: no changes
+
+ qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+index e5bf210d3..fb5956346 100644
+--- a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
++++ b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
+@@ -685,6 +685,8 @@ static void sqa_qla2xxx_free_cmd(struct qla_tgt_cmd *cmd)
  
-+	/* add the lock->magic check to warn the invalid rwsem without initialization */
-+	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
-+
- 	preempt_disable();
- 	if (!rwsem_read_trylock(sem, &count)) {
- 		if (IS_ERR(rwsem_down_read_slowpath(sem, count, state))) {
-@@ -1312,6 +1315,9 @@ static __always_inline int __down_write_common(struct rw_semaphore *sem, int sta
- {
- 	int ret = 0;
+ 	cmd->state = QLA_TGT_STATE_DONE;
+ 	cmd->trc_flags |= TRC_CMD_DONE;
++	if (unlikely(!cmd->rsp_sent))
++		scst_set_delivery_status(scst_cmd, SCST_CMD_DELIVERY_FAILED);
+ 	scst_tgt_cmd_done(scst_cmd, scst_work_context);
  
-+	/* add the lock->magic check to warn the invalid rwsem without initialization */
-+	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
-+
- 	preempt_disable();
- 	if (unlikely(!rwsem_write_trylock(sem))) {
- 		if (IS_ERR(rwsem_down_write_slowpath(sem, state)))
+ 	TRACE_EXIT();
 -- 
-2.17.1
+2.43.0
+
 
 
