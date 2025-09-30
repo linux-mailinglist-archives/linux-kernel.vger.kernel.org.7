@@ -1,194 +1,236 @@
-Return-Path: <linux-kernel+bounces-838141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3991BAE880
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:26:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B85BAE892
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3201C67CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D02A3C5602
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0570924DCEB;
-	Tue, 30 Sep 2025 20:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3162494FF;
+	Tue, 30 Sep 2025 20:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vDRXq3TX"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010055.outbound.protection.outlook.com [52.101.61.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hI90/ig1"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF7C2405ED;
-	Tue, 30 Sep 2025 20:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263993; cv=fail; b=eG7tQzFNV1+rhKeRMknoUSndCyWuywbqqljHg3mbJHxIJEzqpgn6JdJ+EHMgA2vrcNoyat7UA4QbQC2THTSrRK85Lp/5N8dJLzeMp6u0GwuV2et0svOS9DCmknkoXuVHHZhoBxWGlnAoqcuBDQNn2OtgqITwOdqQMMhOn2nQL9g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759263993; c=relaxed/simple;
-	bh=KRUpiadyDqMXyRjc/HPj5mx5f9H8YYkwd0Sq5eMDf4U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FklUWK5kyqnUxGh/Z62n5J33KiTSDcez3+SYo0wM55moJpAl0YZg4or8OAurtRY+LKd8SXCdIi2RoFhQKOWFPErFarMKjY3hJA21ephpDok69dFK30TG2bu38tLrbGAZRgSGAydiIMeALYEsv4/+e1JKsn6zS3BiVs/pUDHAnqw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vDRXq3TX; arc=fail smtp.client-ip=52.101.61.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zATCf1UzrcUpGNFqGP8sWthddqQqfyTCiEuhTT3+6xtfk8aOCVjL76C4ptIqJSUlaUEmT1LvShbRJF/l6TNKXBhrroIJbwWUGhQWRwL6yrp1NwvSQFIor3NgHDQJDJmTs123NgV/8+pT8y+20AHfXys6xSoaIfOSJhbyKWjLdcSQK2dtuhQ/uv4ul8/hbfOaAiALh7/ppSVVIIR98usn0vkGhIZinyICsq+f4Wu/bH8+yIcSPe443TF/rURGK5z0FXeP14FsLCte1MWzZDT1PKelRnXYFyX/+MEG3LvumZLjQeYgf1LBbMO41y6mfbmGCXSY5hdnHfQGGvWy83iPsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Llyey2Z/XTy4m6lvHA4QNP6i1eo507saXZNbEJgcl24=;
- b=xH1N1h9Z/xY1FIPQa1JEMr+3dHZrXAH3mAGvVJMmqJHZbaTrW2gsEjinzVhAdSe5AjiD6wmmxce6mt3OijSwppP9zSMCzUWXsChsqcfm4fl5vWViGQ4Wkf0v+YxsBXzOArVQcIVF9iR9XGNK8bjFNd4KJIhjPKOpqIBDbKhaaguIjQs+WMhkjuZxlkDIUE2lkH5G1NC7L4agMyV7yg4Asrh+KjGnB/ou9LLsIZs/sRBfH9us/BLD9XvOmVLqtMOmduPXAjqzptmFO9SBE5MpVJZsJzm3hnsSbjcTvN87/R5rcS9JMovQ7FcORyzkYuUKl9IRnz0jJMDk39VRTybq1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Llyey2Z/XTy4m6lvHA4QNP6i1eo507saXZNbEJgcl24=;
- b=vDRXq3TXeAtD1UlhrkCfGhNeARsofmgBrm0WqwRQ72t86Im0z0EmlqyjacjqtC6N37rQa8WFFJy987A6d7SygRQzXzlnrqQeY3QfMka50npGP24vwMDB/jcPz5p8he5BIuDotHrDjM79ERmKIeNYJJZIMhBjPGV9j0Y04itRTqc=
-Received: from SJ0PR13CA0100.namprd13.prod.outlook.com (2603:10b6:a03:2c5::15)
- by IA1PR12MB6186.namprd12.prod.outlook.com (2603:10b6:208:3e6::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 20:26:26 +0000
-Received: from SJ1PEPF00001CE7.namprd03.prod.outlook.com
- (2603:10b6:a03:2c5:cafe::62) by SJ0PR13CA0100.outlook.office365.com
- (2603:10b6:a03:2c5::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.13 via Frontend Transport; Tue,
- 30 Sep 2025 20:26:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ1PEPF00001CE7.mail.protection.outlook.com (10.167.242.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Tue, 30 Sep 2025 20:26:25 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 30 Sep
- 2025 13:26:23 -0700
-From: Babu Moger <babu.moger@amd.com>
-To: <tony.luck@intel.com>, <reinette.chatre@intel.com>, <Dave.Martin@arm.com>,
-	<james.morse@arm.com>, <dave.hansen@linux.intel.com>, <bp@alien8.de>
-CC: <babu.moger@amd.com>, <kas@kernel.org>, <rick.p.edgecombe@intel.com>,
-	<linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<linux-coco@lists.linux.dev>, <kvm@vger.kernel.org>
-Subject: [PATCH] fs/resctrl: Fix MBM events being unconditionally enabled in mbm_event mode
-Date: Tue, 30 Sep 2025 15:26:17 -0500
-Message-ID: <6082147693739c4514e4a650a62f805956331d51.1759263540.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71344C81;
+	Tue, 30 Sep 2025 20:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759264114; cv=none; b=Gxt5JFcA6iVtQ8+2qSfzkoPHZEX3ugCruOM2SHuC08KhLV5aJvGr7SMRB2CrZDZ2Xqftz1U9WZbJpg8zACOMWCQcqo+nYIeP0QQBHieiKGTnjxP5aVaddq8V87FQSWYUPiC9Nzn71ZoaLA84fmFYkt73FcMYUEVuDzxiCkdHxjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759264114; c=relaxed/simple;
+	bh=rVT8LLqQ2BIIqhRUGOt1DEgpSaOhe56wD2gSY9BrNjg=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=XIYoCIU7PQMqQY2OLqsCVM4hvx5ZlU7vcj5wsI3iK+VREnK9ovkahCt+50pnK3T+RQzzxYhltAkA7hxukgK9lYd7ZboF42y3DuyMIbvIZM3hkdXHG7nCcymU3rPh7yazqaM78c7ZYK3mizZjuuabRdUDB5Y7kNd1dp2njabz/14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hI90/ig1; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UJt0oc002106;
+	Tue, 30 Sep 2025 20:28:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ZgxRUx
+	J+4q2dn8A5VIJXA3qVsUiULbZMIbn7ozado9A=; b=hI90/ig1hSxFSWKDr9PcA9
+	CMHVS5XkEkF6oAnQwAo9HFIEQAJkX+R8Ey/t5ERu5eH8DzPIizOfDIRZ/KRL+1FD
+	CMn4qg8v3VzSbM2DH+ludkqA1RhzvwOagPExAbeeX2Ib8M8c02ESodapHmkc2Vo+
+	KuVS0gWRQNwpbFYsY9ydISZpe5NcelwW0W5azO1S5yP5zYe9wIqdP0UWRkeADFoB
+	VYHfzpnXMr2usiKPjoopBYu/ZC2ft1V4CcEDK5iNgnqnlRwzDlHmTu8ZHT1QWBNQ
+	vYLUzHKjnSaAbn3WwnZwFG7XjmHQm08u+O+wn70uPmME15TM9LRZwQH7anD02MhA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwjshh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 20:28:17 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58UKOYFg001786;
+	Tue, 30 Sep 2025 20:28:17 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwjshd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 20:28:17 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58UJ1nGh020098;
+	Tue, 30 Sep 2025 20:28:16 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49et8s5kus-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 20:28:16 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58UKSF9n18154016
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Sep 2025 20:28:15 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 85AC958054;
+	Tue, 30 Sep 2025 20:28:15 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7EB055805A;
+	Tue, 30 Sep 2025 20:28:14 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 30 Sep 2025 20:28:14 +0000 (GMT)
+Message-ID: <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Fall back to default kernel module signature
+ verification
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Karel Srot
+ <ksrot@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg	
+ <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris	
+ <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open
+ list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+        open list
+ <linux-kernel@vger.kernel.org>
+In-Reply-To: <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
+References: <20250928030358.3873311-1-coxu@redhat.com>
+	 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 30 Sep 2025 16:28:14 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE7:EE_|IA1PR12MB6186:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7471d42b-6af1-41bb-3810-08de005fa0ec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pb7xeLjMrgTSC0ubb5G7fypcwU/KBkKorePkU03VcPPAM0iBsT7FbDCnpPx2?=
- =?us-ascii?Q?YjFVBuEYOpTdcEFZTs4lKLTTSGYOC2m/YiqaLXKXbkEW2Xc1htZn3P93vllH?=
- =?us-ascii?Q?lozJVkXwvzllf75ZHCX7lCy6EwDhpNz/vnTZyY2L2YAY/SRuOsDHxzJNIqYJ?=
- =?us-ascii?Q?e/87uJkAZqLpaz1O22CnbwJhlqvLhG68m9BVugzkYIGdFhiJbgOwVPQnIbzu?=
- =?us-ascii?Q?8Zn0bNQdF/Kvdqf70B2msEK9cfnNn3tyZo4J27XJpueLCtaRA5lV82rOQv3p?=
- =?us-ascii?Q?jvQb5ZyttAwxa4rhCthIJicXjzWoUVIX6qOos+E43OTyypOQw1gwBXPeYlPM?=
- =?us-ascii?Q?/uzq/L7xVfhxvR+1Sw/MzC7Pwva3MsDyC0lyczghcZKSjRre0Su1Edxg9F9t?=
- =?us-ascii?Q?mHWF6IuzOmzRVkYmfAiUi88MuFLWJjCCO7Xr0aqlwV3A3kKErUuSQAlPaX5m?=
- =?us-ascii?Q?W7UOzqLifjMlAyAdIypMn3XlgS0IYZz0+l7+uKyyrf/mbSra/p28MMSQeUVz?=
- =?us-ascii?Q?aYObajV9eLqCm7ZwZifNH41mi60tIuzF7x3a19K02taIQB8c69rc1rQzLDis?=
- =?us-ascii?Q?lIeczrr9IzoUtXcSpt6s85XRf0yisJ13w1o+QuasHRDZlyA+Jf4k8o4X1zWg?=
- =?us-ascii?Q?sYMc32sXlzJ3EGs/7fh2UmK19RTDOGsZJM/bR+vfWkNO2Jn2UXuzW5B5ntLT?=
- =?us-ascii?Q?8XlrCdNKUSJKd/yfJl1lO9DpGhAZ9bR5hLd+FCjaWZBKkmlOWw1E2Z45iiKS?=
- =?us-ascii?Q?7RqDna9wo3oi8zjTxFphjsaU2r2ACI1wtHhrmJXuIp28xP3GKEzhc1KkKspt?=
- =?us-ascii?Q?FLFJQ667IXrVHZKBuumVdc5bkPm3PIjLeBtqWi/Lkwaw91aEFL6Wron+k98J?=
- =?us-ascii?Q?GgfYR9JYFRakeDaRWzNfIY43D6F54IbdbMWL2NlFvchh/b9dPL+9IsmWosYl?=
- =?us-ascii?Q?DmsxJCWr/V0Texa7YtqO+AI0RJ3f5kCBmNllpYaANn37IYLSBTi250W+2p+2?=
- =?us-ascii?Q?2/QQPXiny+uWiuMFWFo4AiquDDutiuNGw58BzoC9iwpzPYB20nLXFtSWdoIQ?=
- =?us-ascii?Q?46HG++qQMzXEnw3DqXP9kmARyQkx/6HcpwqmalFlMhDAlTu5ftLTqbMpeEYN?=
- =?us-ascii?Q?bGFRZZGh04vmqEZnFRyZlsAvJko+plvHZhqxXZkSy2nX3JQvdVE85o+2fYwQ?=
- =?us-ascii?Q?YTS4FLjnYR/BdcT56ziMkB/LhTtN3yjY60YNM8mKY+1hB0PZMJIfDgxYGqlJ?=
- =?us-ascii?Q?o00WcgAWbARBvbTfeq1Sci6zOEQ7yy9MoTwDNJtc0hr73wTysJPT4AQRzVvb?=
- =?us-ascii?Q?tcBN62GLTcanzDCDKDhlIIJxrAeSjvCLDkfeGh5Jew6c5eQ1WQ0BiC6ntxxY?=
- =?us-ascii?Q?ReNz/NaebbqvcmGxl4DG2eWgi+Zbp2lbhiEP5PqEMPkTDEtnMFmLEi/mCrGj?=
- =?us-ascii?Q?uYYFUyOxmfV3sB+NRAp0zIJubLkjhAdaRxcbrJ1rGBDCmsY96EM/GB5pH1oY?=
- =?us-ascii?Q?J+vkdmhQly/AsxSTLIIVwvc4FS7TXA6thwVKfJXN4L9CFjNKdhKYfdlhZBrh?=
- =?us-ascii?Q?V5SOR7Xr0sKWDju3+Jc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 20:26:25.3607
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7471d42b-6af1-41bb-3810-08de005fa0ec
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE7.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6186
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX9wXa+qUPKdkw
+ h7ohSrateouz8s8IRgIyn/th/P2PeNjoImjN5h4izFYvcTrNZJE17/6mBW+Tj6FvpifeFoRdvUH
+ +aadSST/9YnPeOIbqXPYF8nVu2aFf1b59YOYpRep2PCb9fAdLKs8elgk0MUc382kebDggeHeUyX
+ kpDjV4b+AUIt743Uvqui6ItBDgLxqNmmqgi+JNg2db5zV4eGcD6GFArSV5J1i2WJr/NW/x8w/w/
+ gfb+7q8VA6KVXkg3MUUjQHtHA8kGR/UXq0U5FBFCPyncVDq7DwKBCvjzLwFL0oIGWlEfxjQSedS
+ Hdz++IW581EZqHlU3955zHKoOKC4zD+VNGAb7EccGN3D8nRUXub2LraZBoUoCBNtbYdEEN70u9H
+ XCZRRc/MR2fZY/PvbIu8i4BaI1wfQA==
+X-Proofpoint-ORIG-GUID: NHCRxGbQrnjHikw_TyU3VMHH7EuT4LRr
+X-Proofpoint-GUID: nOqafXKuj9pQmT9ZXLXn0MNV4CTV1aCQ
+X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68dc3d61 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8
+ a=20KFwNOVAAAA:8 a=16uMmaMVKecfaAtURF4A:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-resctrl features can be enabled or disabled using boot-time kernel
-parameters. To turn off the memory bandwidth events (mbmtotal and
-mbmlocal), users need to pass the following parameter to the kernel:
-"rdt=!mbmtotal,!mbmlocal".
+On Tue, 2025-09-30 at 09:57 -0400, Mimi Zohar wrote:
+> On Sun, 2025-09-28 at 11:03 +0800, Coiby Xu wrote:
+> > Currently, for any IMA policy that requires appraisal for kernel module=
+s
+> > e.g. ima_policy=3Dsecure_boot, PowerPC architecture specific policy,
+> > booting will fail because IMA will reject a kernel module which will
+> > be decompressed in the kernel space and then have its signature
+> > verified.
+> >=20
+> > This happens because when in-kernel module decompression
+> > (CONFIG_MODULE_DECOMPRESS) is enabled, kmod will use finit_module
+> > syscall instead of init_module to load a module. And IMA mandates IMA
+> > xattr verification for finit_module unless appraise_type=3Dimasig|modsi=
+g
+> > is specified in the rule.  However currently initramfs doesn't support
+> > xattr. And IMA rule "func=3DMODULE_CHECK appraise_type=3Dimasig|modsig"
+> > doesn't work either because IMA will treat to-be-decompressed kernel
+> > module as not having module signature as it can't decompress kernel
+> > module to check if signature exists.
+> >=20
+> > So fall back to default kernel module signature verification when we ha=
+ve
+> > no way to verify IMA xattr.
+> >=20
+> > Reported-by: Karel Srot <ksrot@redhat.com>
+> > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> > ---
+> > Another approach will be to make IMA decompress the kernel module to
+> > check the signature. This requires refactoring kernel module code to
+> > make the in-kernel module decompressing feature modular and seemingly
+> > more efforts are needed. A second disadvantage is it feels
+> > counter-intuitive to verify the same kernel module signature twice. And
+> > we still need to make ima_policy=3Dsecure_boot allow verifying appended
+> > module signature.
+> >=20
+> > Anyways, I'm open to suggestions and can try the latter approach if
+> > there are some benefits I'm not aware of or a better approach.
+>=20
+> Coiby, there are multiple issues being discussed here.  Before deciding o=
+n an
+> appropriate solution, let's frame the issues(s) properly.
+>=20
+> 1. The finit_module syscall eventually calls init_module_from_file() to r=
+ead the
+> module into memory and then decompress it.  The problem is that the kerne=
+l
+> module signature verification occurs during the kernel_read_file(), befor=
+e the
+> kernel module is decompressed.  Thus, the appended kernel module signatur=
+e
+> cannot be verified.
+>=20
+> 2. CPIO doesn't have xattr support. There were multiple attempts at inclu=
+ding
+> xattrs in CPIO, but none were upstreamed [1].  If file signatures stored =
+in
+> security.ima were available in the initramfs, then finit_module() could v=
+erify
+> them, as opposed to the appended kernel module signature.
+>=20
+> 3. The issues described above are generic, not limited to Power.  When
+> CONFIG_MODULE_SIG is configured, the arch specific IMA policy rules do no=
+t
+> include an "appraise func=3DMODULE_CHECK".
+>=20
+> 4. Unlike the arch specific IMA policy rules, the built-in secure boot IM=
+A
+> policy, specified on the boot command line as "ima_policy=3Dsecure_boot",=
+ always
+> enforces the IMA signature stored in security.ima.
+>=20
+> Partial solutions without kernel changes:
+> - Enable CONFIG_MODULE_SIG  (Doesn't solve 4)
+> - Disable kernel module compression.
+>=20
+> Complete solution:
+> - Pick up and upstream Roberto Sassu's last version of initramfs support =
+[1].
+> - Somehow prevent kernel_read_file() from failing when the kernel_read_fi=
+le_id
+> enumeration is READING_MODULE and the kernel module is compressed.  The c=
+hange
+> might be limited to ima_post_read_file().
 
-Found that memory bandwidth events (mbmtotal and mbmlocal) cannot be
-disabled when mbm_event mode is enabled. resctrl_mon_resource_init()
-unconditionally enables these events without checking if the underlying
-hardware supports them.
+or perhaps not totally.
 
-Remove the unconditional enablement of MBM features in
-resctrl_mon_resource_init() to fix the problem. The hardware support
-verification is already done in get_rdt_mon_resources().
+init_module_from_file() doesn't pass the flags variable to kernel_read_file=
+().=20
+You might want to consider defining a new kernel_read_file_id enumeration n=
+amed
+READING_COMPRESSED_MODULE.
 
-Fixes: 13390861b426 ("x86,fs/resctrl: Detect Assignable Bandwidth Monitoring feature details")
-Signed-off-by: Babu Moger <babu.moger@amd.com>
----
-Patch is created on top of latest tip/master(6.17.0-rc7):
-707007037fc6 (tip/master) Merge branch into tip/master: 'x86/tdx'
----
- fs/resctrl/monitor.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+Mimi
 
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index 4076336fbba6..572a9925bd6c 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -1782,15 +1782,13 @@ int resctrl_mon_resource_init(void)
- 		mba_mbps_default_event = QOS_L3_MBM_TOTAL_EVENT_ID;
- 
- 	if (r->mon.mbm_cntr_assignable) {
--		if (!resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
--			resctrl_enable_mon_event(QOS_L3_MBM_TOTAL_EVENT_ID);
--		if (!resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
--			resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID);
--		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask;
--		mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask &
--								   (READS_TO_LOCAL_MEM |
--								    READS_TO_LOCAL_S_MEM |
--								    NON_TEMP_WRITE_TO_LOCAL_MEM);
-+		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
-+			mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask;
-+		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
-+			mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask &
-+									   (READS_TO_LOCAL_MEM |
-+									    READS_TO_LOCAL_S_MEM |
-+									    NON_TEMP_WRITE_TO_LOCAL_MEM);
- 		r->mon.mbm_assign_on_mkdir = true;
- 		resctrl_file_fflags_init("num_mbm_cntrs",
- 					 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
--- 
-2.34.1
+>=20
+> [1] [PATCH v4 0/3] initramfs: add support for xattrs in the initial ram d=
+isk
+> https://lore.kernel.org/linux-fsdevel/20190523121803.21638-1-roberto.sass=
+u@huawei.com/
+>=20
+>=20
 
 
