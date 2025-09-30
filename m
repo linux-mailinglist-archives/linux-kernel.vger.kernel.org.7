@@ -1,205 +1,184 @@
-Return-Path: <linux-kernel+bounces-837777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B507FBAD2A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:23:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3E3BAD29C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B70F1C7678
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:23:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD0A1C7843
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CE33043CC;
-	Tue, 30 Sep 2025 14:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12672F8BF1;
+	Tue, 30 Sep 2025 14:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eaCz3Iom"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FjaX0TRe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8W4XjaNY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB17E303A32
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6824F1C84DE;
+	Tue, 30 Sep 2025 14:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759242194; cv=none; b=exE4SHrGAer88qX6RaBmWPdYZdmx5jUYuKQZlhwiO/o/KFKwLqCnxZ4wUhRx7Nl6DEa9MzxHaFg6BFjS0g05DWZrbAaxnMBRHpuaVv3a5zPPKxTe+AuMLegDOFi7IXWut548uv1V6U4sf9a8jJkLDXmOrLJd4Jp/jcd5Ba4/OmI=
+	t=1759242191; cv=none; b=rPpaUj/7nFdH+hRcGDVPehhZKBKrEQ6PW1gUP0E5apt5jcthEWkPmxiDqN78IRSphnDzsewNSUuKdzznAYQ86NivXuCA64Lq6Rr/0Xb3TJe9nO1GMcBaBhpy07tS2a4pzi9h3xyvx8Hq9gNJYcBjiWRXdu7sflQCytUsmJzwRYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759242194; c=relaxed/simple;
-	bh=RVn1Y7CUJwx3eNPVEiu6A51ryxvfn843eX3o/eMwsLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BdYhfBqp1h9LUPpDKGHxwyUHpnsRcDKzb6XVG7eHdp0jRMghVithjc27xTb3kBCXsLnUO1ABUmMhgeL6ERIAWmkWXimizkwVtHUugXQWU/7vnDaRmRnTQt/mnf/d4dVeCEhg2FBhxeic3fQeD488hKhizF1S1gWhKr+d27dDTq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eaCz3Iom; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UBnMDE014639
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:23:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PCoEmaeNR1CQ408nB7pwWG6+U1aaMDJRP47t2kBBg6w=; b=eaCz3Iomj0yPqZ7q
-	HYjg1zD8PNOaIK0wgZo6lhdjAqEC0o6pigA90iQx1+JZYyJ6DUABNAmzd20Y9Jj8
-	S7k2n9PDhQ6kTrTq2I/+7avdXa/wYyrfbPEXGGhp+Ftu2PPHtuSGfQxYV8IW+kGn
-	7SFCIB5bgLJhqZ7snConY/5ltTC4vzjQkCGIj0z8pPtmrSFvRI39K0TBMhKMx2G5
-	Hn9sFTgyrt7zkZiDbY9VDWed3GfvC4NNmmgl0MzbZrBE78flkm8L5vDpKP4RH405
-	FlSwW5fHpy+ag2i9poKVtsWU03Ii1id7hOVf2oQA1C9uUdBP/Jldbb+a6oRnRDw/
-	AfH32g==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e6vr17e3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:23:11 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3352a336ee1so9372481a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:23:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759242191; x=1759846991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PCoEmaeNR1CQ408nB7pwWG6+U1aaMDJRP47t2kBBg6w=;
-        b=dFPNRhyp5wcvUWhwZMvVe/yn3TFe/rh7dzLbbnD37rPgxLKxCD9YGC01Mj9Z/aDo4X
-         Z3r/RVbFDU/v2zfY3x5v5dvsNF1EHgsOFHOulKdC83CMFXAf6j2RTPWcj3n6FTjoq2FZ
-         82TJa9fpxxXyL25YlqQd6n4ac6zws/2pDP8+7iuQN46NUsF/M374YazvJqm0rRkgdpGl
-         Psu8Zaf/Hp58QGJWsIESeYIoJVyLOqNw46dNj0llAhc0E8973wp7A7DmML2MnwSI6h4V
-         xhtXKuW8MgTbmVzpBRfC4RNfQW1u+2fRV+Y+ERnZ5/u3HO/UVVrwVlKfksuoB6jMKC3F
-         BgCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkeYwn8umiSzhaT1tFcE85rIZXaWz9Z4qnruqh8WlqNoS9OcniWusWE9Qhplj16t7W8e69nPnYPXRkx2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyCos0BW2LBO5ir9ip8pqlQ988VDmXHOVHtXBCR687uwrWV4e4
-	ZD1fzTewNafkq+9nILTdt/YwW1SVFjDdusaCAinkCI+mZVCtN+VtrPiLKdLTTu/XA70A5p0PiWp
-	OK6imV3XR/meyZbcdr/qZeHJcbJnYnABHULhEnBrGhBK7jEN5bSM7lPmQtOrECeC+9oH6z0L9Rn
-	q8Im1LnfXAsQfcQXZ47mUTVud1uUOxsgiHSNNmyLUpjg==
-X-Gm-Gg: ASbGncsCk5EUYiHf26JxCCWLlBudFLNBHIMi67doFzPgilP0RrWuASFmesVsmVRk2xs
-	NT4SCAW836994pR+m9/cZctYwRxtqxXLSwX511QvJt2dBg+AoWnA1YzIhku/gnHp72Qj/yh1BGD
-	sR4J/fqZWn0MUlc05C3ezc3L9NkWljoo525meiRH36gWmm6cD0bMMRaEBUQ+0=
-X-Received: by 2002:a17:90b:1347:b0:330:6edd:9cf with SMTP id 98e67ed59e1d1-3342a2b0f1fmr22671394a91.22.1759242190820;
-        Tue, 30 Sep 2025 07:23:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzb25ExFEcqNL2JTIBvO7jYPWKzbGJdh+trj0QxoYd4yATaY5jEOtcnTkr/l1fj2D9IMQTydqQPESJBbvdJLc=
-X-Received: by 2002:a17:90b:1347:b0:330:6edd:9cf with SMTP id
- 98e67ed59e1d1-3342a2b0f1fmr22671322a91.22.1759242190186; Tue, 30 Sep 2025
- 07:23:10 -0700 (PDT)
+	s=arc-20240116; t=1759242191; c=relaxed/simple;
+	bh=GrPGI+yiog7WNMHggnC50f0/Q852fTmKJEq510AxMGE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=F7TBdBLKb1v3LFoAmSOZs8Tn9kLRF1JNN16HA7GVi5JHn5dWiV1RXi+w0kNx7XQomQxfZyAz/p8K+imPHT4B8wDiL6C9mbNdegbSwkXcQJuDKD1FiLB+mpDRrFW/IpJzzHkRxWmqesthEvCWCPF07yAOUV/ItqJrpsfa695EYf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FjaX0TRe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8W4XjaNY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759242183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/n7nMiXERpgb40T7ZbKDTmup8KjTwQFVnNmM/Ve1kwU=;
+	b=FjaX0TRedgyj2vyQrxNPL7AoxU54n3MTzzYUi97ISmAb1KLprsAk88FOl0J/QUZXNFwECd
+	CM0MMvVy9spWIsLZgBCAxqx5Hj/MjUUUKEbYvjZroelDNx+g1qSnK8te+AhsOzSkSJ05X7
+	jau6QjpRAD3bgM3QfmrMbaJK3toucU2Ypf5sbtII7yqYXBlYdnBzrGVaIQBSZnGIUxVF55
+	rrw0UcmgX+GgAVW9ovaNm7yTURUK0bqn8Ll4InT+UL22+/VX0v/lm0rLRK8zA8AT7MtBII
+	PANRaSlSE1cndhTLgSVzddDzK9+/6lNNGG9aFt0l2O0JrNXqW6XwA1A2jKfG7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759242183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/n7nMiXERpgb40T7ZbKDTmup8KjTwQFVnNmM/Ve1kwU=;
+	b=8W4XjaNYBdxTW2NVNiiGV/nhbibksF0A03DxoI9K2fbFLQj2wy/A2iWwixotyxUJ0iC28u
+	G5WvdFsBLTUNDoAA==
+To: Calvin Owens <calvin@wbinvd.org>, Breno Leitao <leitao@debian.org>,
+    Sebastian Siewior <bigeasy@linutronix.de>
+Cc: Petr Mladek <pmladek@suse.com>, Mike Galbraith <efault@gmx.de>,
+    Simon Horman <horms@kernel.org>, kuba@kernel.org,
+    Pavel Begunkov <asml.silence@gmail.com>,
+    Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org,
+    LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+    boqun.feng@gmail.com, Sergey Senozhatsky <senozhatsky@chromium.org>,
+    Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+In-Reply-To: <aNvh2Cd2i9MVA1d3@mozart.vkv.me>
+References: <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
+ <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
+ <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
+ <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
+ <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
+ <84a539f4kf.fsf@jogness.linutronix.de>
+ <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
+ <847by65wfj.fsf@jogness.linutronix.de> <aMGVa5kGLQBvTRB9@pathway.suse.cz>
+ <oc46gdpmmlly5o44obvmoatfqo5bhpgv7pabpvb6sjuqioymcg@gjsma3ghoz35>
+ <aNvh2Cd2i9MVA1d3@mozart.vkv.me>
+Date: Tue, 30 Sep 2025 16:29:02 +0206
+Message-ID: <84frc4j9yx.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v2-15-8e1533a58d2d@oss.qualcomm.com> <tsh4w4paux3g772ynjcbjx3ntz6ynqx2ucd273yz3ncscxihjk@dwwjbcqyheuo>
-In-Reply-To: <tsh4w4paux3g772ynjcbjx3ntz6ynqx2ucd273yz3ncscxihjk@dwwjbcqyheuo>
-From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Date: Tue, 30 Sep 2025 19:52:59 +0530
-X-Gm-Features: AS18NWDHg7DGICX2lVp5x-v_No7K2LhwMINF4nyiPyA8aZivXeot0lqk7bF6EQg
-Message-ID: <CADhhZXY8t7fnSiq7g2dsAE+aQ3AvO5_0k0Ft2_12pMhOjoirGg@mail.gmail.com>
-Subject: Re: [PATCH v2 15/24] arm64: dts: qcom: glymur: Add PMICs dtsi for CRD
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: _G5T5v0n7pfbPyrDDxjErxah0nX2bDAi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxNyBTYWx0ZWRfXyZXZGyHffIzx
- 1bzTb5sH2Wr026DOusppz6EbBCqJ4jy8Q1+D26K1J+WWDhYTQSpT4WUR2lNPTqOfX4UGA7ebXRF
- Y6ZINSa/FKasl92tcWDzGBcCsJ4FktReJvXlaTntcA2wEwSAk/PpiLhDSQnsABfX/HP6AN611T8
- l7geuJ8T/MS5umhg0rsox419PPhCd5UGvlCSW9Q7ifHrOSLvh/WUuFd3fUWIrWyFeezC3YeRt1x
- mgCfLYAQu66OiZ6tinFUQSwOjA7jNYwM5zu2zsPKaphyyluNMbMdqs27hQcWgCRDrfb2YvUHP4u
- i5W64F5+AaqlIzmribsAZ3edNQvUZSOeGv4zRWDFWiyLdNnEVZOSVZzIgJjHy7SNrtiHxsZqr31
- 7w07Kd/NVc8UbTCiIN9V8G6sGei8gg==
-X-Authority-Analysis: v=2.4 cv=IeiKmGqa c=1 sm=1 tr=0 ts=68dbe7cf cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=42uetSTeVEhJ1EzdpwsA:9 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: _G5T5v0n7pfbPyrDDxjErxah0nX2bDAi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_03,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 bulkscore=0
- suspectscore=0 spamscore=0 adultscore=0 impostorscore=0 phishscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270017
+Content-Type: text/plain
 
-Hi Abel,
+(Added Sebastian.)
 
-On Thu, Sep 25, 2025 at 1:45=E2=80=AFPM Abel Vesa <abel.vesa@linaro.org> wr=
-ote:
+On 2025-09-30, Calvin Owens <calvin@wbinvd.org> wrote:
+> On Wednesday 09/10 at 11:26 -0700, Breno Leitao wrote:
+>> On Wed, Sep 10, 2025 at 05:12:43PM +0200, Petr Mladek wrote:
+>> > On Wed 2025-09-10 14:28:40, John Ogness wrote:
+>> 
+>> > > @pmladek: We could introduce a new console flag (NBCON_ATOMIC_UNSAFE) so
+>> > > that the callback is only used by nbcon_atomic_flush_unsafe().
+>> > 
+>> > This might be an acceptable compromise. It would try to emit messages
+>> > only at the very end of panic() as the last desperate attempt.
+>> > 
+>> > Just to be sure, what do you mean with unsafe?
+>> > 
+>> >     + taking IRQ unsafe locks?
+>> 
+>> Taking IRQ unsafe locks is the major issue we have in netconsole today.
+>> Basically the drivers can implement IRQ unsafe locks in their
+>> .ndo_start_xmit() callback, and in some cases those are IRQ unsafe,
+>> which doesn't match with .write_atomic(), which expect all the inner
+>> locks to be IRQ safe.
 >
-> On 25-09-25 11:58:21, Pankaj Patil wrote:
-> > From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> >
-> > Include all the PMICs present on the Glymur board into
-> > the glymur CRD DTS file.
-> >
-> > Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> > Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/glymur-crd.dts    |  1 +
-> >  arch/arm64/boot/dts/qcom/glymur-pmics.dtsi | 19 +++++++++++++++++++
-> >  2 files changed, 20 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/=
-dts/qcom/glymur-crd.dts
-> > index e89b81dcb4f47b78307fa3ab6831657cf6491c89..97f6eedd7222368f5cbfdd0=
-2e9c4d87261d7f19a 100644
-> > --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> > +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> > @@ -6,6 +6,7 @@
-> >  /dts-v1/;
-> >
-> >  #include "glymur.dtsi"
-> > +#include "glymur-pmics.dtsi"
-> >  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> >
-> >  / {
-> > diff --git a/arch/arm64/boot/dts/qcom/glymur-pmics.dtsi b/arch/arm64/bo=
-ot/dts/qcom/glymur-pmics.dtsi
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..59dcfb67a203a7c57640603=
-7377fc9fbdce51a97
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/glymur-pmics.dtsi
-> > @@ -0,0 +1,19 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> > + */
-> > +
-> > +#define PMH0110_F_E0 0x5
-> > +#define PMH0110_H_E0 0x7
-> > +#define PMH0104_I_E0 0x8
-> > +#define PMH0104_J_E0 0x9
+> Hmm, I'm also hitting the below on next-20250926 with translated=strict,
+> the triggering acquisition is here:
 >
-> These haven't been used anywhere.
+>     https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/iommu/iova.c?id=30d4efb2f5a515a60fe6b0ca85362cbebea21e2f#n832
 >
-> Maybe you meant to define the ones suffixed with _SID, like so:
+> Naively I'd think the IOMMU code would need to be safe to call with
+> interrupts disabled? Do we need raw_spin_lock() in some places there?
 >
-> #define PMH0110_F_E0_SID       5
-> #define PMH0110_H_E0_SID       7
-> #define PMH0104_I_E0_SID       8
-> #define PMH0104_J_E0_SID       9
+> I'll have more time to dig and maybe send a patch tomorrow, any quick
+> thoughts are appreciated.
 >
-> and without the '0x' as you will get a build warning about it.
->
-> > +
-> > +#define PMH0110_F_E1 0x5
-> > +#define PMH0104_L_E1 0xb
->
-> and here is an even bigger issue. If you define it with '0x' prefix, then=
- you
-> get the warning, but if you drop the '0x' prefix it will fail to build.
->
-> I'm sorry to point this out, but this hasn't been properly tested.
+> [  319.006534][   T16] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> [  319.006536][   T16] in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 16, name: pr/legacy
+> [  319.006537][   T16] preempt_count: 0, expected: 0
+> [  319.006537][   T16] RCU nest depth: 3, expected: 3
+> [  319.006538][   T16] 8 locks held by pr/legacy/16:
+> [  319.006539][   T16]  #0: ffffffff831ffbe0 (console_lock){+.+.}-{0:0}, at: legacy_kthread_func+0x1e/0xc0
+> [  319.006546][   T16]  #1: ffffffff831ffc30 (console_srcu){....}-{0:0}, at: console_flush_all+0xf2/0x430
+> [  319.006550][   T16]  #2: ffffffff832c3ef8 (target_list_lock){+.+.}-{3:3}, at: write_ext_msg.part.0+0x28/0x4d0
+> [  319.006554][   T16]  #3: ffffffff83202720 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0xd5/0x1a0
+> [  319.006557][   T16]  #4: ffffffff83202720 (rcu_read_lock){....}-{1:3}, at: __netpoll_send_skb+0x4a/0x3c0
+> [  319.006561][   T16]  #5: ffff888107c89e98 (_xmit_ETHER#2){+...}-{3:3}, at: __netpoll_send_skb+0x2d6/0x3c0
+> [  319.006564][   T16]  #6: ffffffff83202720 (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x59/0x130
+> [  319.006567][   T16]  #7: ffffe8ffffc06218 (&cpu_rcache->lock){+.+.}-{3:3}, at: alloc_iova_fast+0x70/0x2d0
+> [  319.006570][   T16] irq event stamp: 20680
+> [  319.006571][   T16] hardirqs last  enabled at (20679): [<ffffffff81ee7c3c>] _raw_spin_unlock_irqrestore+0x3c/0x50
+> [  319.006573][   T16] hardirqs last disabled at (20680): [<ffffffff81d37b40>] netpoll_send_skb+0x30/0x70
+> [  319.006575][   T16] softirqs last  enabled at (0): [<ffffffff8138970a>] copy_process+0x7aa/0x1940
+> [  319.006577][   T16] softirqs last disabled at (0): [<0000000000000000>] 0x0
+> [  319.006580][   T16] CPU: 0 UID: 0 PID: 16 Comm: pr/legacy Not tainted 6.17.0-rc7-next-20250926 #1 PREEMPT_{RT,LAZY}
+> [  319.006582][   T16] Hardware name: ASUSTeK COMPUTER INC. WS C246M PRO Series/WS C246M PRO Series, BIOS 3301 03/23/2020
+> [  319.006583][   T16] Call Trace:
+> [  319.006584][   T16]  <TASK>
+> [  319.006586][   T16]  dump_stack_lvl+0x57/0x80
+> [  319.006590][   T16]  __might_resched.cold+0xec/0xfd
+> [  319.006592][   T16]  rt_spin_lock+0x52/0x1a0
+> [  319.006594][   T16]  ? alloc_iova_fast+0x70/0x2d0
+> [  319.006598][   T16]  alloc_iova_fast+0x70/0x2d0
+> [  319.006603][   T16]  iommu_dma_alloc_iova+0xca/0x100
+> [  319.006606][   T16]  __iommu_dma_map+0x7f/0x170
+> [  319.006611][   T16]  iommu_dma_map_phys+0xb7/0x190
+> [  319.006615][   T16]  dma_map_phys+0xc9/0x130
+> [  319.006619][   T16]  igc_tx_map.isra.0+0x155/0x570
+> [  319.006625][   T16]  igc_xmit_frame_ring+0x2f3/0x510
+> [  319.006627][   T16]  ? rt_spin_trylock+0x59/0x130
+> [  319.006631][   T16]  netpoll_start_xmit+0x11c/0x190
+> [  319.006635][   T16]  __netpoll_send_skb+0x32b/0x3c0
+> [  319.006640][   T16]  netpoll_send_skb+0x3e/0x70
 
-Sorry it seems this somehow got overlooked in testing and compilation also
-passed ( without _SID) so it went unnoticed. Will take care to correct this=
- in
-next version. Thanks for your help in identifying this.
+netpoll_send_skb() is doing local_irq_save(), which is disabling
+hardware interrupts. So nothing deeper in the stack may sleep. But
+__iova_rcache_get() is performing a spin_lock_irqsave, which for
+PREEMPT_RT can sleep.
 
->
-> Thanks for the patch though!
+It would be nice to replace that local_irq_save() with a real lock
+type.
 
-Regards,
-Kamal
+@bigeasy: You have some experience cleaning up this class of
+problems. Any suggestions?
+
+> [  319.006643][   T16]  write_ext_msg.part.0+0x457/0x4d0
+> [  319.006650][   T16]  console_emit_next_record+0xcb/0x1c0
+> [  319.006656][   T16]  console_flush_all+0x274/0x430
+> [  319.006660][   T16]  ? devkmsg_write+0x110/0x110
+> [  319.006663][   T16]  __console_flush_and_unlock+0x34/0xa0
+> [  319.006666][   T16]  legacy_kthread_func+0x23/0xc0
+> [  319.006669][   T16]  ? swake_up_locked+0x50/0x50
+> [  319.006672][   T16]  kthread+0xf9/0x200
+> [  319.006675][   T16]  ? kthread_fetch_affinity.isra.0+0x40/0x40
+> [  319.006678][   T16]  ret_from_fork+0xff/0x150
+> [  319.006681][   T16]  ? kthread_fetch_affinity.isra.0+0x40/0x40
+> [  319.006682][   T16]  ? kthread_fetch_affinity.isra.0+0x40/0x40
+> [  319.006684][   T16]  ret_from_fork_asm+0x11/0x20
+> [  319.006694][   T16]  </TASK>
+
+John Ogness
 
