@@ -1,179 +1,128 @@
-Return-Path: <linux-kernel+bounces-837241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6BEBABC32
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:10:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301B5BABC35
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22D6D7A83F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:08:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA95D4E10B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5760729AAEA;
-	Tue, 30 Sep 2025 07:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500CD2BE02B;
+	Tue, 30 Sep 2025 07:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kMRR12IS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D82SuFTX"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B479D27CB31
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2387E1494C3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759216205; cv=none; b=e0P8gl2ZhVQfVKF63FTBUJBfotVyRRUvXJMu9dY+is3lJSN96VLaoPek/6coUXRHyUwa4qZGLDaTg5glU1L9W3aSoN4VtdJ3OyeV2NBZfxLbH3jivgOBZ1Lj6sGzq12LxrYquUiCp9l3Gi/1VCjZ6N+D/FlAZyQZVbMJ+WNu8CA=
+	t=1759216243; cv=none; b=M7ojMNy6/NAAiTYj6aYCiylKTgIvf4jzuXqgsLnYiOAkSLI3V9yX9rwZvurT5+sYxUC3Y6jrDWSvRYLqH9xGhn9vClxViK6fGqL/KKDCbZ8bJ77rnC7rtSnwiX5wLHQn0DAuTDlFkkJ7LxgQoOE5n7kb5G9E4uW42/yNpeDi4pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759216205; c=relaxed/simple;
-	bh=cKThLw0NHU6Wc+n3bczOyNlGGspAuEG7VB62WabHm6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnv/8gvQxfizO3QEU/oheYt5EIky4DrOA0gmsAtUGi1ZEN3IcfKLnELDUFxhO1OevKfIdRAHVxeyjXTXi8sFGoJ11F4SQlnMrRxBm9UXaqJ6Z33vB4GdbPrQumXcjTLO5seP39NNVsgtlDBnP6EWd0GwIN7yyg4PI8K3V+EaEV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kMRR12IS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U4IVw1019070
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:10:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=mWB5st6dCk5SY60IEgGtzAA+
-	H2jR/8jDg8gNG+7YCGs=; b=kMRR12IS8enm8CrZ8x9ZiNOF+G75w47cVG7mJiT0
-	4MJCbnIMoifsmQJF6Qw1/CexJ1LSiBRaQp9oqReXZnznbu9/QH112t/NEIx+Krud
-	5vN+2sk+w002UwpGj8tjqEZgh/c96L4wMX3RZ8Jwj8fCSpfnC5/ZZQX7ymP00+X8
-	4VWnT5zGFBv2d7SVA9PiTWaA4ENPUYV/KhGo9XBZqbAQq78ZG2h2OwQK1UaYGDUY
-	NRs9rGVEq4wiN9orST9RFK3banvnqwa1y2Pdd0qgyaXPNfQhj0/Hvd+q1GVuiaCF
-	TZ9wz+TV2siD6SMBEZ68Gs2AbLvGi/p1X8n25Cr184U9Kw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e80tr39g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:10:01 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d6a41b5b66so138768771cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:10:01 -0700 (PDT)
+	s=arc-20240116; t=1759216243; c=relaxed/simple;
+	bh=Denl1qxGVo41Q7d0YQr1Lb2bxdfCpeSVRs9tMPHWmhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfphV0NSFs1dsdbC2t3CqsBkyidnwUgn4afGu6Mfo0hWj5vBEzU6rGKOMAIb+AjqNGMf7r61Ao1qvBqi+Xfw8H90O8DHLXxF7NOpnlsmjEH1IZQ53cYM3YziXdVESME2ZhOXk5sK95R89Q8WU9CVX867Cp1fO/oFtdnFoqPawYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D82SuFTX; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e491a5b96so19889625e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759216240; x=1759821040; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9RRPGHytRgN97Stdv6ppI5vkL5PAh7jux1HTdTPQWo=;
+        b=D82SuFTXvTCOfz+r9Lvwg3dSnBSzcoewksfEcKRQG2sWCJe1HdtZ5HW1O0aF/AO8qW
+         aM++AHWdbSWG0rSxMcBSbIYx01IZtaaxxma1IM7ZTwa+mN5ep30G+4VsiEMM0aCKCdaC
+         ccwi8dpApv0C9grt45DKisadO5ReJVSXxLQL6pvRyKjsOrHyWRdqWwJJkjXDqN9wyBD4
+         o2hF7cozesnLwl0V9pbRYhKX/KOaeWgqVrtpDLWYA+/OKqqCQfOvxymNwKOnQBWc4hLk
+         QPR3ywtS7xNzP0hafANAuGHhhpiSQn/s/BHQxOOr0/8VGoJ8rAqLdLyDLb0yuebVLhXk
+         WroA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759216201; x=1759821001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mWB5st6dCk5SY60IEgGtzAA+H2jR/8jDg8gNG+7YCGs=;
-        b=a2MERsrnd0WcNGgspx0V7GnrFw8UN7y/Tky+NSmdIPBs/4T1T9tmJ2wj8lvvL6trdH
-         OT2tydR56JBD7uTmq3H7F9O93dqROWpkrpUbkTFVtTA5S1nXQqKzqDfFquvz/cI7KqU0
-         m5pyZqxtDanItnlNRCbHvOdNfeaUgUhFMiWMZLP8kJmoNW4/QxbbKv7KaTzP8B4q5ruA
-         izYVM9s8w5+a8yI2hX2QIX0qbRZyniReatswhxo/JIHadVNvuat7SkEZ1QlormPgWV5R
-         TZMRpIFMbKJuorn35+A1bDdVUUhRVzXBLGOSf7P7YvpUqNEUDVDpqRJyoXxldQutK46X
-         TAjw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4CQAqhKHgF83Wdcj48YsYGOTNw7x911ruCX0fvVuuNoTbJeiwjXywbULY5xOsv027P7YKhy2E0j8ZDyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZQJzQ47wMAJ7KeWDNoTyi1IgZQ1e6GWTY/JLaz2FJPH8TA3sZ
-	4BD5CQs2LI9rtY/AWRCK/9mm7/0QyB+r/ONZZYYxkknInNJqPRsHQ4nt5XfCcQEzCbBEk+/f7wP
-	X07AyLovaRlbpzODGS5Or7UYW8xGAI55VgUPT/lJw4PnIodOgHCa+09DjRYqUl5hziGM=
-X-Gm-Gg: ASbGnctZOBK0KdQ1F7Cu5e3HQ/C6m5vzDOMatBW8j4HILWgR4CFWLsq7Ps8Z6aBomeL
-	q24AnQNXhr59vGl46FOgWT8FgBo9k1ubdNK/tAWgl1Bw6btsvW7x6Ffqa8gL932CV5CkWW+54SC
-	oUG4Ghvybc2h4G2IUjjHwPCEexr/2cyDtgN9q0oEWFCFpAmqNDxpNLtTA8htsyL0MSJJANJ2ZOn
-	N59YklC7eUN0P2jgwaERIIL3WwRkregtJYyi8tKVEehN8KN/4CglYIozJq6LOSYVeit3evTGuv5
-	S8Xd30O0SsupZ9sZDOVnhCA4OVynQRTDLsOoU6QGWF50Ivhe1U5wBBun8n/60mRkeLldBG2v5gl
-	qMYsxMTnklb0A6R11v6QHaMlZ22AMOHmvIJNBr8Z09quRKkxylI4pVb59Tg==
-X-Received: by 2002:ac8:7d10:0:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4da4b13ee9amr205819991cf.48.1759216200598;
-        Tue, 30 Sep 2025 00:10:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqfXjb8BDoz0OLkhbqOSkOjFYvwz8YqZOgVTFVVpG1nTKdQgXBzxVthwYLzYpdiitvJ/C4Vg==
-X-Received: by 2002:ac8:7d10:0:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4da4b13ee9amr205819771cf.48.1759216200128;
-        Tue, 30 Sep 2025 00:10:00 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb7710256sm31171981fa.45.2025.09.30.00.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 00:09:59 -0700 (PDT)
-Date: Tue, 30 Sep 2025 10:09:57 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: [PATCH 06/17] drm/msm/adreno: Move adreno_gpu_func to catalogue
-Message-ID: <cp7djnezyp4whhfqcnsfpes5kxfbyvqvc2ceimdrnrl7s7agyk@z7ozx6oihezd>
-References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
- <20250930-kaana-gpu-support-v1-6-73530b0700ed@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1759216240; x=1759821040;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9RRPGHytRgN97Stdv6ppI5vkL5PAh7jux1HTdTPQWo=;
+        b=cg2dSpQ9r4QppceLMHDoTs5oAgLnZYXTkrwLLExejvJrg4djNqr3CEMFM+BADjEu1b
+         CePE1+5LiaajtamQ4c8RZNuXeP7NxEaTrXfZtuNb2J22TiOSVpr5QjxvUycCopntgD1l
+         VAwOJ+a7GZ/Vb7F5OjZebi8t9RKWAQlkiI4JyXoiwZVdtf86RXaH5IUKgNw03nwdJpIH
+         eaPxmM3wV77MQMYi50Km8U+mT74EqH5sg+vJv4uU9IDbsP757VSGyTWmT8n9JTK2mYpw
+         DZbLWlVe+w3ycDPzjfcgKioW72UGrcUHQnujEiv/KAoo69z3BUyyVDU68+FbbiMoVO59
+         tFpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuD6W19s2yteHO+JwSOXoJ0q0S2o2qprpTu/+r96tI6NVYEvrnon6AFNMrGsriCYwGxN4ii5syO7uE+Oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu8UObJSdpa00QExxmJJZ8mFa6ms6XtAq+HO+mTQ16vWOaEkIH
+	h3SVaPdXcC7RpWCaZqVM9Q9W2Q7PMPwbhnhUjmafybLzILrqhOVX/iW1
+X-Gm-Gg: ASbGncvTIaaWxRrCGvRaTP6FGweVN7/NfyfbhTIZCka8ucvDUCoPGzDFZjVLlqK4XA4
+	+XzTq+5E+KobK68cYUm/QRt/fAr88aEpMXKk5aaFVTqsnn8FHGNz41QJCvUAo/Ny0LjcyyBn92c
+	DIFxM0xQGZzyoUDJs1gAkAgB3tjIvr3/zHw0ioAPmQrmhlSiluctFjt01I679Ebxlatco/nbfQy
+	IpiTFOZN+LZMuAXaUNjHehQyFegnQS0rmHNusAUvL7A8dAAmEBpRoVIjYqe5u97dIyo0XgKVJiV
+	eueXVhxDHm29lKuPW+t7OuuO33kdyrInoxLUOmP+eEYM6M1qXDqRcV+Meg46Ers5QGs2mFnkJbZ
+	u8qG+/7Q0+WDOzgfox3Xw10il67Z4UW6e/RK3N8qWnZs+/LM1L2mn4tfS63hzsDBXwBwyssz7/M
+	7nmXS5
+X-Google-Smtp-Source: AGHT+IHlxvADxFZFgcYBNDOScTJX42OY6aNgaF1tsfuhrlEv7RiVBXLK6R30nOuArkYTYX9gLCEy9g==
+X-Received: by 2002:a05:600c:3f12:b0:46e:41e6:28c7 with SMTP id 5b1f17b1804b1-46e41e6293fmr176295235e9.8.1759216240262;
+        Tue, 30 Sep 2025 00:10:40 -0700 (PDT)
+Received: from [10.221.203.31] ([165.85.126.96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996bf1sm257605555e9.1.2025.09.30.00.10.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 00:10:39 -0700 (PDT)
+Message-ID: <5d2eef31-8e5a-4831-b050-cdfd65e99e27@gmail.com>
+Date: Tue, 30 Sep 2025 10:10:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930-kaana-gpu-support-v1-6-73530b0700ed@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyOSBTYWx0ZWRfX6gsEuaDaqpt1
- w79OhY9ItGZ8R7CTrE8DCHXxw906XQUmGb9K/n5YZBe89G11coW/bP7i7aAl3+mtyiW/m+tFQ9Y
- WKZ4QxLuXGOZV4jmJe9oF1ynR8DJE0NQ4NVr9dQR1481fd5aoS8upZY1GktBPj6hDxRg0h4u4oG
- tIJO+yqnxRSqa4Dxe5yd6WFzqEWctGbpPJc3YgCCEiw/5o0+gpbX2nmDhpgUMxQPkM+HC0eWnKe
- kXjv9pg9oYY0pY41iwND9Oiix0uzSY9rD7YQ3fjmqThvy6msMY7gB8jgN7EOds1GfrE+ivcw3dh
- cRwkzkiFX8u3tDVDsCIkLwhXRaFMF9LsovXeMmZLZm1s8n2qTYddqZkAKNrB5G8aKXnKMNi21Pl
- EcKq+db9BYnFo+gFZdrDpWM/nX8lDg==
-X-Proofpoint-GUID: OvVuIx0pKt0yyn0JviMWbehVeLrUfDjh
-X-Authority-Analysis: v=2.4 cv=OMkqHCaB c=1 sm=1 tr=0 ts=68db8249 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KsGV-J2CeG6-G7wVncMA:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: OvVuIx0pKt0yyn0JviMWbehVeLrUfDjh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270029
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] page_pool: Clamp pool size to max 16K pages
+To: Dragos Tatulea <dtatulea@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250926131605.2276734-2-dtatulea@nvidia.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250926131605.2276734-2-dtatulea@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 30, 2025 at 11:18:11AM +0530, Akhil P Oommen wrote:
-> In A6x family (which is a pretty big one), there are separate
-> adreno_func definitions for each sub-generations. To streamline the
-> identification of the correct struct for a gpu, move it to the
-> catalogue and move the gpu_init routine to struct adreno_gpu_funcs.
+
+
+On 26/09/2025 16:16, Dragos Tatulea wrote:
+> page_pool_init() returns E2BIG when the page_pool size goes above 32K
+> pages. As some drivers are configuring the page_pool size according to
+> the MTU and ring size, there are cases where this limit is exceeded and
+> the queue creation fails.
 > 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> The page_pool size doesn't have to cover a full queue, especially for
+> larger ring size. So clamp the size instead of returning an error. Do
+> this in the core to avoid having each driver do the clamping.
+> 
+> The current limit was deemed to high [1] so it was reduced to 16K to avoid
+> page waste.
+> 
+> [1] https://lore.kernel.org/all/1758532715-820422-3-git-send-email-tariqt@nvidia.com/
+> 
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
 > ---
->  drivers/gpu/drm/msm/adreno/a2xx_catalog.c  |   8 +-
->  drivers/gpu/drm/msm/adreno/a2xx_gpu.c      |  50 +++----
->  drivers/gpu/drm/msm/adreno/a3xx_catalog.c  |  14 +-
->  drivers/gpu/drm/msm/adreno/a3xx_gpu.c      |  52 +++----
->  drivers/gpu/drm/msm/adreno/a4xx_catalog.c  |   8 +-
->  drivers/gpu/drm/msm/adreno/a4xx_gpu.c      |  54 ++++----
->  drivers/gpu/drm/msm/adreno/a5xx_catalog.c  |  18 +--
->  drivers/gpu/drm/msm/adreno/a5xx_gpu.c      |  61 ++++-----
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c  |  50 +++----
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      | 209 ++++++++++++++---------------
->  drivers/gpu/drm/msm/adreno/adreno_device.c |   2 +-
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  11 +-
->  12 files changed, 275 insertions(+), 262 deletions(-)
+> Changes since v1 [1]:
+> - Switched to clamping in page_pool. (Jakub)
+> - Reduced 32K -> 16K limit. (Jakub)
+> - Dropped mlx5 patch. (Jakub)
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
-> index 5ddd015f930d9a7dd04e2d2035daa0b2f5ff3f27..af3e4cceadd11d4e0ec4ba75f75e405af276cb7e 100644
-> --- a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
-> @@ -8,6 +8,8 @@
->  
->  #include "adreno_gpu.h"
->  
-> +extern const struct adreno_gpu_funcs a2xx_gpu_funcs;
+> [1] https://lore.kernel.org/all/1758532715-820422-1-git-send-email-tariqt@nvidia.com/
 
-Please move these definitions to aNxx_gpu.h (a2xx_gpu.h, etc). LGTM
-otherwise.
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
--- 
-With best wishes
-Dmitry
 
