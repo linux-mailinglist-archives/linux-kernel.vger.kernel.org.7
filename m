@@ -1,94 +1,153 @@
-Return-Path: <linux-kernel+bounces-838225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56428BAEBB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A3BBAEBB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4320319407BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:06:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 757B8169DEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FCA2D248A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BEA2D2394;
 	Tue, 30 Sep 2025 23:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qYnwYtx4"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E59433B3;
-	Tue, 30 Sep 2025 23:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLMYUycy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60670276050
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759273575; cv=none; b=eldSqn8wcPsvkW9IAKTZBXGBVVuEGRseeJq8Ulb0NJBR17aNEWrYr2T+JfjDAlA4jk2EiFmMGu+tLBe/SQ0zT+TL3Kq1yUlvrm/QHwEn6nheJUj0Gqpiq04Ap+qUyA+TI4CzlMY4gMZ8k4jcxJXeAx7Rjk6NYlaQE6YfSV0p78I=
+	t=1759273574; cv=none; b=Jgj+EehbKFKFtP/LqtLKTlCbhasYKBwMRSHD5D1Q5HaaFmsZNdkwC/q+byYfSUs7r6Mm2bLu94+3LXXvwJm8hFUPlrDMyJb4HKfv+kKzXjzZ44KxIOUixXaPMNaMQR7bPtsQjFfcN+4a8J2h5y7A6Nu2zjkqyLXuXxETgljskJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759273575; c=relaxed/simple;
-	bh=szDdDwtgfZnLrFWVhLjFoVGQWUsLeMIC4k0JDdLabws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4d+6aT2rnPmjTaf2ele23+SDwTSAtFsYglOnT4l2pJiM41iDvsdXNP4TDSUMUais3y5fgl3GwW4WhmlZm/AGjGRNxzvrbRDGAD4ozE1xzreqArlln9oHBcnwsNO1oh50kZ4005+mdNH3ouUC7eHU7kQVAMSQkiU6LWSM79Q990=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qYnwYtx4; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 8DA9E14C2D3;
-	Wed,  1 Oct 2025 01:05:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1759273564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FmFeZ1v5uOZjZ7aeAHzofBoLFsltvLy7eHvIFyvV/go=;
-	b=qYnwYtx4Cfg6dZdODlQ3/OI59MQkTmkgn5a8JKljlpKiDcf/1djforil4kk17e/urlv8qe
-	bmR8c1Gwt7Yo96rBOrBeldeSrr/212Wx1n3tyJlZfuvFbF1835kplxx0bHN+ciEzu3DXw8
-	BzpOA1vQVqNL7E94uR5qlsu8ica7m1G9U6PJ4Sis8PsS5blJUx7urfaMFPgBsrpBqtIUvS
-	8Tc452/dTaGQu5arJ71ju+hRoaUezwxFVOWLQPphxBR8sNyQdStSMSh9Ylcjy7joWZfOeE
-	oYad0Y3kpUrOTQpZRBCQZIsyZdu4Rg+sZ3eSgB1eqgt6MdKW4+8eh/zpoEUlBA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1008360f;
-	Tue, 30 Sep 2025 23:05:57 +0000 (UTC)
-Date: Wed, 1 Oct 2025 08:05:42 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
-Message-ID: <aNxiRgzpyDGMA4ec@codewreck.org>
-References: <20250930143822.939301999@linuxfoundation.org>
+	s=arc-20240116; t=1759273574; c=relaxed/simple;
+	bh=mFz+L72B9DjiruUWCPt3+uUkwCHLqPB81lzn9f7L9es=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QtrHDqul8P+lpED0lp+jir+NVJO+KOPiZ63DoxSZDF+YTBRlMvyLBtnwyVOjtsSSAD2e6AvgjOr5ZSZY8aX3W/og5+CT4zraTD0piNSAYSmlG0Niwi7KTVgCgtxBVqGmjE5As7VmTE/M8SxukwIxx/xn0kC3EKG7RpLjeVLTNkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLMYUycy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D73C19425
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759273573;
+	bh=mFz+L72B9DjiruUWCPt3+uUkwCHLqPB81lzn9f7L9es=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TLMYUycydyqqjUP15CWlEFWzraN18TkKIePRecxtCkCy1V5Q6/cfOULx67IJAdEQY
+	 EFNXsgnj/eXNVpwvz/ZXK8sN2Kv+2EroVbxbQTHggT3RrnWzpqW/+Z+m7tk7o9dfFo
+	 sEq6s7AbWNouIEML4E8VJ1WTkAEhu3E135shP2Vr1R/buR2pnuVKgi3JwzjqUc5Wm0
+	 DWzbQKPLIcspHPUxfkQnFXFz1R8Rm8sSnElOO/CFIwGkfzxfOMPgGpPyR3P6DpgPBJ
+	 o2/bpIo5eTMgdzFUbE3ysoaO3uOcJaWiK5lanpjA19JNzBPG/nwdL23imNUc9InoM5
+	 H64dZ454YRRPw==
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7811a02316bso3748574b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:06:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW7MdGyeNT2JRDsME0kBXpABjd24JWG3Im4dguiQv+aWR+znJclrxPYGiszjPp6ADINTR1JAK1zpeRRTck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTscRZi7dx4S49KlwdwP/1KAZphVwu0GvgtrQ3k3/vsXxK82Ea
+	1/hBoW6uH7QptKDW2i0rrdIJyarMhr+aC9bxFHQk6GEd0jOn81TdkIUuY59bGxOUtmQoTFR6gdV
+	7V8QvEEMaKGXYVEYWAOz8qAZTcvSH7Kw=
+X-Google-Smtp-Source: AGHT+IEtVABxEKyxN7a+U3Kp2sBw7bT8AmKlK9sbcU4p8q7V3u9HMuNYcQ/g3mBtE/Xshs31HBFf6QR4rED4d0MupEk=
+X-Received: by 2002:a17:903:4b48:b0:275:2aac:fef8 with SMTP id
+ d9443c01a7336-28e7f33067fmr14927905ad.38.1759273573411; Tue, 30 Sep 2025
+ 16:06:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250930143822.939301999@linuxfoundation.org>
+References: <CGME20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9@epcas5p4.samsung.com>
+ <20250930040348.3702923-1-h.dewangan@samsung.com> <20250930040348.3702923-9-h.dewangan@samsung.com>
+ <CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com>
+ <75d06769-4896-4095-9969-03a517705196@samsung.com> <CAJKOXPe0kGFoUxOGupwD_rSshTBVFhH3184xOH=NquSGn2QxcQ@mail.gmail.com>
+In-Reply-To: <CAJKOXPe0kGFoUxOGupwD_rSshTBVFhH3184xOH=NquSGn2QxcQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 1 Oct 2025 08:06:01 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPchnA2k4sghuSBxA4h=CKJEQU0=09F+AAxPxA-rBpUW_g@mail.gmail.com>
+X-Gm-Features: AS18NWB-7qq3WRSu2_4sN54O9Pq__ESSuLB-fBN1o7du1U_PSVDKaJXEOusJU-4
+Message-ID: <CAJKOXPchnA2k4sghuSBxA4h=CKJEQU0=09F+AAxPxA-rBpUW_g@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_08=2F29=5D_media=3A_mfc=3A_Add_Exynos=E2=80=91MFC_drive?=
+	=?UTF-8?Q?r_probe_support?=
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Himanshu Dewangan <h.dewangan@samsung.com>, mchehab@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, sumit.semwal@linaro.org, 
+	christian.koenig@amd.com, alim.akhtar@samsung.com, manjun@samsung.com, 
+	nagaraju.s@samsung.com, ih0206.lee@samsung.com, jehyung.lee@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Greg Kroah-Hartman wrote on Tue, Sep 30, 2025 at 04:45:31PM +0200:
-> This is the start of the stable review cycle for the 5.10.245 release.
-> There are 122 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.245-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+On Wed, 1 Oct 2025 at 07:59, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Wed, 1 Oct 2025 at 00:46, Marek Szyprowski <m.szyprowski@samsung.com> =
+wrote:
+> >
+> > Hi Krzysztof,
+> >
+> > On 30.09.2025 07:54, Krzysztof Kozlowski wrote:
+> > > On Tue, 30 Sept 2025 at 12:56, Himanshu Dewangan <h.dewangan@samsung.=
+com> wrote:
+> > >> From: Nagaraju Siddineni <nagaraju.s@samsung.com>
+> > >>
+> > >> Introduce a new Kconfig entry VIDEO_EXYNOS_MFC for the Samsung
+> > >> Exynos MFC driver that supports firmware version=E2=80=AF13 and late=
+r.
+> > >> Extend the top=E2=80=91level Samsung platform Kconfig to disable the=
+ legacy
+> > >> S5P=E2=80=91MFC driver when its firmware version is >=E2=80=AFv12 an=
+d to select the
+> > >> new Exynos=E2=80=91MFC driver only when VIDEO_SAMSUNG_S5P_MFC is not=
+ enabled.
+> > >>
+> > >> Add exynos-mfc Kconfig and Makefile for probe functionality and crea=
+tion
+> > >> of decoder and encoder device files by registering the driver object
+> > >> exynos_mfc.o and other relevant source files.
+> > >>
+> > >> Provide header files mfc_core_ops.h and mfc_rm.h containing core
+> > >>    operation prototypes, resource=E2=80=91manager helpers,
+> > >>    and core=E2=80=91selection utilities.
+> > >>
+> > >> Add a configurable option MFC_USE_COREDUMP to enable core=E2=80=91du=
+mp
+> > >> support for debugging MFC errors.
+> > >>
+> > >> These changes bring support for newer Exynos=E2=80=91based MFC hardw=
+are,
+> > >> cleanly separate it from the legacy S5P=E2=80=91MFC driver, and lay =
+the
+> > >> groundwork for future feature development and debugging.
+> > >>
+> > > No, NAK. Existing driver is well tested and already used on newest
+> > > Exynos SoC, so all this new driver is exactly how you should not work
+> > > in upstream. You need to integrate into existing driver.
+> > >
+> > > Samsung received this review multiple times already.
+> >
+> > Please don't be so categorical. The MFC hardware evolved quite a bit
+> > from the ancient times of S5PV210 SoC, when s5p-mfc driver was designed=
+.
+> > The feature list of the new hardware hardly matches those and I really
+> > don't see the reason for forcing support for so different hardware in a
+> > single driver. Sometimes it is easier just to have 2 separate drivers i=
+f
+> > the common part is just the acronym in the hardware block name...
+> >
+>
+> I know it is easier for Samsung to write new driver, but this should
+> answer to - why the maintainers and the community would like to
+> maintain two drivers. Sure, make a case why we would like to take this
+> code.
+>
+> The easiest argument here why we wouldn't is: new vendor downstream
+> code means replicating all known issues, old coding style, everything
+> which we already fixed and changed.
 
-Tested 9abf794d1d5c ("Linux 5.10.245-rc1") on:
-- arm i.MX6ULL (Armadillo 640)
-- arm64 i.MX8MP (Armadillo G4)
-
-No obvious regression in dmesg or basic tests:
-Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
--- 
-Dominique Martinet
+And 15 second look at one of the patches already confirmed this:
+replicating downstream issue - undocumented DT ABI not following
+current style, code relying on some other downstream drivers. 15
+seconds was enough to find it.
 
