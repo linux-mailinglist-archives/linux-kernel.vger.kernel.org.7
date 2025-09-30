@@ -1,162 +1,216 @@
-Return-Path: <linux-kernel+bounces-837677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979DFBACE56
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:43:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F56FBACE62
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52CE617D6F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0AE163EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F192F60A4;
-	Tue, 30 Sep 2025 12:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44D12DA779;
+	Tue, 30 Sep 2025 12:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEhVLWWm"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8rlVDg4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19603146A66
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205CA2571DD;
+	Tue, 30 Sep 2025 12:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759236208; cv=none; b=Sv74uoOQzWjoqeuekqaey1kddg9BxfyuEavo4io8bh/tyQDwViIHRtiDrjCprzNwSjyYKnAaC4C5FetfzKfN05t07WEyZ44OLoZct5z15NwQwnpX1YEYTEzjA3pcoZ1JrmBKinvCcKbDaLWbYbT28ms6xX69WXYLDFg2JYE4qfc=
+	t=1759236220; cv=none; b=mS5R16k5lf7Tt5udLs3rRHIVH6FqJxnxKbWLOObtjSbNTQlb9zOSpD1auXNtNAHfPuHOaGD03G/X7lOL6WN1e3HevZndBU+dFd/uv4XLci1YTGEEAErnWiJkN1PmFJfaoeedC/nh4d1A1fUkEg+8WxRTZXyGkFL40VhRtyYGHKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759236208; c=relaxed/simple;
-	bh=QnQeibjSRFSP40OHNh7RhWh+U6kpwxTlw1H0q2TQGa8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JjHUHNwc4Ak1c8gQxWADWUukJcagWlv9otR+2UwvdcIGWBuqrGfWZgLSvuTYCxZbiuCPO03L0zBfzo+ecMz2o4IVuGUC10Mw067jV26COZEYiz+r6t4MAKaoh38hL2iC5D9OScyu5SoENfadrm2hs5d/eP4c5L21LTJ5ZAL8Q6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEhVLWWm; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33226dc4fc9so6265718a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759236206; x=1759841006; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1/Agq+DmRlV3c936zuz7MXdyoSR3KCIK7Avb8fH1+Us=;
-        b=WEhVLWWmArAT/onG8Rie2YQkjnIcQgx90XBVtct7ZKzp9vH7AiHaAiOQ70ov8Av/VL
-         vCVbILxOM6NrYCEG9a4pzHTHYUJ4x347tn8EpU0k0csARIgX5KrOjgDqCat96c3a9Ckx
-         eVa35i97qvoOQ9ZjIQxsQtfdCKuDslov98NnHTVskZN0ehhMwsI0eCiatWthHi8IJQvB
-         gvvy9NGrK8OEFTGgIdI2hzqsXb4yYmBAv9o+JmKsfEH6wvZP4INLQr7rU8zO8YbD2vEt
-         6shHaIaqfa6wY1M7cfxdJrx85mv5EsQ+kt94a7M43MxJTvyavn2sSl3tgJ/2oEpy6ACy
-         tCnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759236206; x=1759841006;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1/Agq+DmRlV3c936zuz7MXdyoSR3KCIK7Avb8fH1+Us=;
-        b=pEzelnK5OdxAlr2JFzU/mj+psarhrUV22SNEy08Jikwshn3U3Bk+S3rOYMeNw35nuF
-         KSCbywqO6EiXD/MVRbAcuC3Gt/t9CnCOZHAH1fhqj53fsskO3e7I+DnWNrEFRJVIoPZR
-         Ebg1UZ4LEblfoMZH6PY/UHhTGX12bksAXrQJ1mrp2e/6smyF4F42/Aip5bc4N2//qGoV
-         /l9UbndrKygNpCD2f+ulPHAHzI9H/Ve2+F1pYa1lElckvy5eaFfh4ejukDfHAz36Ov1k
-         eyujLAb3tUCOIrorfWEBik3EJ7yNIcYTinsZr6YPhiPTAQPCuP5I/atstwBNDtjcl4zq
-         /qEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWR0KxAyZPN4sT5iZ4HLzBjBIkoGHqAkOxDI029Wng1K3/sq50DVfD9qFvXRdqLY+ew0qHG74N67MUweY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXrfSq+nPAiiorDwNPl8zA6nKmaqVljR2vtGVPFBIsD1DfnDMF
-	5LF00pgM7uXZxgVeGf3IwgT26yZezqPt2HWfYL4CbjIfk88Ttz9XVaWP0MXRqpevSDASaRosjgp
-	nv2HkHSOAFQNRubJuTkFc/mOapCKIetg=
-X-Gm-Gg: ASbGnctronBi/XZAVD/DmnjttmRONQlENJ6UOCs/tIFF3heHOfipw5vfciFjAp3wYpB
-	dW7Q1nn33uCTYYDoNlg19YrWXbamDyeM0y2G8aE+0qDkNJ8h11TSxfPUsEtI2ZT5TDi8xcqwN5q
-	stgUGaUplxn1d/uvDr0Z1nXp50o+96vNJMpnjCtye4z82QxtRiCRzPPjccYVczDHca5dCS/UkVp
-	FHxHd6H07zLfHupv6jQ3nyqner1gs5xsOdE5QKpSCrdNpnVhUdnV3jnVGC4MzyHiQTk1tI=
-X-Google-Smtp-Source: AGHT+IGlDVENqyPUF/wBYi60oP57IjahL5kiurXffE7HAwGcLmim1a+I7hD66oNEXQccJV8ZSViK42Xuiz9c9fax5QA=
-X-Received: by 2002:a17:90b:58c5:b0:32e:d011:ea0f with SMTP id
- 98e67ed59e1d1-3342a2d1bacmr17879511a91.25.1759236206384; Tue, 30 Sep 2025
- 05:43:26 -0700 (PDT)
+	s=arc-20240116; t=1759236220; c=relaxed/simple;
+	bh=zvA09JRHRoS4Irppg02GUnqfKuR65JfJN0o6RT9T3Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZQ1fSb3L2uDzi5R6Uyu8FuHMdUwAPWmS5HsbrAucLrvahLHRXYOPxKqpZE8D9tKP49SJ9vGRwyVvAYBYXjCTBtbMUOXE/2XqDSpyhaKFGArNxDJIW/dfou1GP1AwxgdvdbrkO6uSQiQrcM4rGwjpkhXCDnONzpJ2hndCOUsYVeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8rlVDg4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 959DBC4CEF0;
+	Tue, 30 Sep 2025 12:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759236220;
+	bh=zvA09JRHRoS4Irppg02GUnqfKuR65JfJN0o6RT9T3Zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O8rlVDg43qnBpa7ebXTZag6Q4/81uW9oquKxzE1JzXlMDITIlLq/ntCXxxwmTKK8U
+	 JNmezGevD5eWFQ9yVukMPjvcufLsEgBf7YnrW8Lei7XHxegRaxhMXl6OoD7ZHSSu/v
+	 x/lkAg8KRa/Jc8b5lmI+KlDQzjYBhMfvbfcaKF781Sft17zlb97keWPUqCD4SMnKsK
+	 7n/doag6Wxnu+SxV6dCH+V+k/EGbdAHPr79NwPu1U6yiiPd9+UVXEfFpUYqLaj0mtI
+	 zTVix4jtSTzujJcWSHjsAkwMl/0eicsivatqg6OCC8Si/rsY+TtAnif1VmAfFeFQBm
+	 pCUxUaFPEongA==
+Date: Tue, 30 Sep 2025 15:43:36 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 07/10] tpm-buf: check for corruption in
+ tpm_buf_append_handle()
+Message-ID: <aNvQeLXGb3Dhty79@kernel.org>
+References: <20250929194832.2913286-1-jarkko@kernel.org>
+ <20250929194832.2913286-8-jarkko@kernel.org>
+ <aNu7R8J8h8Kmon0H@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919183042.273687-1-marek.vasut@mailbox.org>
-In-Reply-To: <20250919183042.273687-1-marek.vasut@mailbox.org>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Tue, 30 Sep 2025 14:43:14 +0200
-X-Gm-Features: AS18NWDS9-HN51yhqFAHzOnB17BCVRavC4Epbi5odLIjFtiVIVzgVXHC6qF2PyQ
-Message-ID: <CAH9NwWcK_z_4CcDBRYS2nf3AxYV9-XwirvTd+O9uJtHMhyA3Og@mail.gmail.com>
-Subject: Re: [PATCH] drm/etnaviv: add HWDB entry for GC8000 Nano Ultra VIP r6205
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Simona Vetter <simona@ffwll.ch>, etnaviv@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNu7R8J8h8Kmon0H@earth.li>
 
-> This is the GPU/NPU combined device found on the ST STM32MP25 SoC.
-> Feature bits taken from the downstream kernel driver 6.4.21.
->
-> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+On Tue, Sep 30, 2025 at 12:13:11PM +0100, Jonathan McDowell wrote:
+> On Mon, Sep 29, 2025 at 10:48:29PM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Unify TPM_BUF_BOUNDARY_ERROR and TPM_BUF_OVERFLOW into TPM_BUF_INVALID
+> > flag because semantically they are identical.
+> > 
+> > Test and set TPM_BUF_INVALID in tpm_buf_append_handle() following the
+> > pattern from other functions in tpm-buf.c.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> 
+> Reviewed-by: Jonathan McDowell <noodles@meta.com>
 
-Acked-by: Christian Gmeiner <cgmeiner@igalia.com>
+Thanks.
 
-> ---
-> Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: etnaviv@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_hwdb.c | 32 ++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
-> index 8665f2658d51b..32d710baf17fe 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
-> @@ -196,6 +196,38 @@ static const struct etnaviv_chip_identity etnaviv_chip_identities[] = {
->                 .minor_features10 = 0x90044250,
->                 .minor_features11 = 0x00000024,
->         },
-> +       {
-> +               .model = 0x8000,
-> +               .revision = 0x6205,
-> +               .product_id = 0x80003,
-> +               .customer_id = 0x15,
-> +               .eco_id = 0,
-> +               .stream_count = 16,
-> +               .register_max = 64,
-> +               .thread_count = 512,
-> +               .shader_core_count = 2,
-> +               .nn_core_count = 2,
-> +               .vertex_cache_size = 16,
-> +               .vertex_output_buffer_size = 1024,
-> +               .pixel_pipes = 1,
-> +               .instruction_count = 512,
-> +               .num_constants = 320,
-> +               .buffer_size = 0,
-> +               .varyings_count = 16,
-> +               .features = 0xe0287c8d,
-> +               .minor_features0 = 0xc1799eff,
-> +               .minor_features1 = 0xfefbfad9,
-> +               .minor_features2 = 0xeb9d4fbf,
-> +               .minor_features3 = 0xedfffced,
-> +               .minor_features4 = 0xdb0dafc7,
-> +               .minor_features5 = 0x7b5ac333,
-> +               .minor_features6 = 0xfcce6000,
-> +               .minor_features7 = 0x03fbfa6f,
-> +               .minor_features8 = 0x00ef0ef0,
-> +               .minor_features9 = 0x0eca703c,
-> +               .minor_features10 = 0x898048f0,
-> +               .minor_features11 = 0x00000034,
-> +       },
->         {
->                 .model = 0x8000,
->                 .revision = 0x7120,
-> --
-> 2.51.0
->
+> 
+> > ---
+> > v3:
+> > - No changes.
+> > v2:
+> > - A new patch.
+> > ---
+> >  drivers/char/tpm/tpm-buf.c                | 14 ++++++++------
+> >  include/linux/tpm.h                       |  8 +++-----
+> >  security/keys/trusted-keys/trusted_tpm2.c |  6 +++---
+> >  3 files changed, 14 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+> > index dc882fc9fa9e..69ee77400539 100644
+> > --- a/drivers/char/tpm/tpm-buf.c
+> > +++ b/drivers/char/tpm/tpm-buf.c
+> > @@ -104,13 +104,12 @@ EXPORT_SYMBOL_GPL(tpm_buf_length);
+> >   */
+> >  void tpm_buf_append(struct tpm_buf *buf, const u8 *new_data, u16 new_length)
+> >  {
+> > -	/* Return silently if overflow has already happened. */
+> > -	if (buf->flags & TPM_BUF_OVERFLOW)
+> > +	if (buf->flags & TPM_BUF_INVALID)
+> >  		return;
+> >  
+> >  	if ((buf->length + new_length) > PAGE_SIZE) {
+> >  		WARN(1, "tpm_buf: write overflow\n");
+> > -		buf->flags |= TPM_BUF_OVERFLOW;
+> > +		buf->flags |= TPM_BUF_INVALID;
+> >  		return;
+> >  	}
+> >  
+> > @@ -157,8 +156,12 @@ EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
+> >   */
+> >  void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf, u32 handle)
+> >  {
+> > +	if (buf->flags & TPM_BUF_INVALID)
+> > +		return;
+> > +
+> >  	if (buf->flags & TPM_BUF_TPM2B) {
+> >  		dev_err(&chip->dev, "Invalid buffer type (TPM2B)\n");
+> > +		buf->flags |= TPM_BUF_INVALID;
+> >  		return;
+> >  	}
+> >  
+> > @@ -177,14 +180,13 @@ static void tpm_buf_read(struct tpm_buf *buf, off_t *offset, size_t count, void
+> >  {
+> >  	off_t next_offset;
+> >  
+> > -	/* Return silently if overflow has already happened. */
+> > -	if (buf->flags & TPM_BUF_BOUNDARY_ERROR)
+> > +	if (buf->flags & TPM_BUF_INVALID)
+> >  		return;
+> >  
+> >  	next_offset = *offset + count;
+> >  	if (next_offset > buf->length) {
+> >  		WARN(1, "tpm_buf: read out of boundary\n");
+> > -		buf->flags |= TPM_BUF_BOUNDARY_ERROR;
+> > +		buf->flags |= TPM_BUF_INVALID;
+> >  		return;
+> >  	}
+> >  
+> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> > index e72e7657faa2..5283f32781c4 100644
+> > --- a/include/linux/tpm.h
+> > +++ b/include/linux/tpm.h
+> > @@ -366,12 +366,10 @@ struct tpm_header {
+> >  } __packed;
+> >  
+> >  enum tpm_buf_flags {
+> > -	/* the capacity exceeded: */
+> > -	TPM_BUF_OVERFLOW	= BIT(0),
+> >  	/* TPM2B format: */
+> > -	TPM_BUF_TPM2B		= BIT(1),
+> > -	/* read out of boundary: */
+> > -	TPM_BUF_BOUNDARY_ERROR	= BIT(2),
+> > +	TPM_BUF_TPM2B		= BIT(0),
+> > +	/* The buffer is in invalid and unusable state: */
+> > +	TPM_BUF_INVALID		= BIT(1),
+> >  };
+> >  
+> >  /*
+> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> > index 8e3b283a59b2..119d5152c0db 100644
+> > --- a/security/keys/trusted-keys/trusted_tpm2.c
+> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> > @@ -295,7 +295,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >  	/* creation PCR */
+> >  	tpm_buf_append_u32(&buf, 0);
+> >  
+> > -	if (buf.flags & TPM_BUF_OVERFLOW) {
+> > +	if (buf.flags & TPM_BUF_INVALID) {
+> >  		rc = -E2BIG;
+> >  		tpm2_end_auth_session(chip);
+> >  		goto out;
+> > @@ -308,7 +308,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >  		goto out;
+> >  
+> >  	blob_len = tpm_buf_read_u32(&buf, &offset);
+> > -	if (blob_len > MAX_BLOB_SIZE || buf.flags & TPM_BUF_BOUNDARY_ERROR) {
+> > +	if (blob_len > MAX_BLOB_SIZE || buf.flags & TPM_BUF_INVALID) {
+> >  		rc = -E2BIG;
+> >  		goto out;
+> >  	}
+> > @@ -414,7 +414,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> >  
+> >  	tpm_buf_append(&buf, blob, blob_len);
+> >  
+> > -	if (buf.flags & TPM_BUF_OVERFLOW) {
+> > +	if (buf.flags & TPM_BUF_INVALID) {
+> >  		rc = -E2BIG;
+> >  		tpm2_end_auth_session(chip);
+> >  		goto out;
+> > -- 
+> > 2.39.5
+> > 
+> > 
+> 
+> J.
+> 
+> -- 
+> Web [       Reality is for people with no grasp of fantasy.        ]
+> site: https:// [                                          ]      Made by
+> www.earth.li/~noodles/  [                      ]         HuggieTag 0.0.24
 
-
--- 
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info/privacypolicy
+BR, Jarkko
 
