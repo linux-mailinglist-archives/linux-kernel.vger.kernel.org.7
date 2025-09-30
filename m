@@ -1,145 +1,114 @@
-Return-Path: <linux-kernel+bounces-837213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FA1BABB47
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF77DBABB4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC7C1897586
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801DB1C451E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B63F2BD5AD;
-	Tue, 30 Sep 2025 06:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98BC2BDC0C;
+	Tue, 30 Sep 2025 06:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RcLHUDPa"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YwlxW3JT"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02B37D07D;
-	Tue, 30 Sep 2025 06:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916E17D07D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759215104; cv=none; b=iwXbrzTsM8fR2903aMns5snMaLxNwARJEwg6zeiRFYnnD6pfAWKM1EEnQMsVWhhUw4w9YNk6hXsWpkUNp2ik2A6byiBB6BPQ4rNAJqE0jYWtQSY8stFukbdy7KG68yhXFe1ec237+t4SwMUN4i2TJciylEl4VUcrj0KhQ/2z53A=
+	t=1759215142; cv=none; b=qLVxW/yrgKJyl14EOwg9N171no1PlvlHz58aay3mdmXSrU2GVjNqKKqE4oF1K5ps3bJS2cxy9dLjxy2M4GSObVIWvuYnwMySMv3FU7l+GPxUxPG1jvNEhug4MwC0IW87yNUh6Latskvm3CBmYgArKMApOhpB9OFkjCSbB39r7DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759215104; c=relaxed/simple;
-	bh=aJX3DGU+W1LZ8Dh+Z/Lm/fAFVzq9jzJXUxHKVTd4I1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aNUh/FsUruIyRgJ1/fFh4iVgQU1DSxlDag+aqKTk2EbQyLh+uQMRcXfS5b8uyx10HdVvbrFagn3lBanhz0eVU5GkuVK1HNIwgqpNQgNcu+11r/s+dyTeFGzdiCVN/qa1d9bmOwYzYWar45hYgoSyDZssjidkU0SrpNLElAyKXCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RcLHUDPa; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2ad95cd2-3a09-4873-b6c4-1e00a88dceb7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759215099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yGN6BMSkXgx6PB6NEFYkeWWUVlKsILAVHZBwRtmuzRI=;
-	b=RcLHUDPak47T8AShrEH2BQNBqjOkZVnsG6DDUI6CgHbkDdkuF/qi+GBb1hVpjXJOcJs5tI
-	xqTja3a64qobHcaFO05TFcvfPnaKyOLYen9dXJTqom6mF4e0ZJK5KGMDeLEpv6UJRpFGye
-	CckGYTS2op4N2qbq6P99hGEv6fuQY/o=
-Date: Tue, 30 Sep 2025 14:51:23 +0800
+	s=arc-20240116; t=1759215142; c=relaxed/simple;
+	bh=cYaBpm56hinhNoSwuyHJ0YHIPFozFBLLQv/kuBfheQY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JQjVWSjGUVAyw2OvJFvPuEysl34+ghMA8Y1M2g6m/cDIscyrMJ7pzLL8TODcPVaTAcU8mPhldF/+fPztS+C+9cohIMJrAdndlJIHdx+b/LDcgmzy12G/MA0R7qgkdP+TzUcZ5qmsnS82JpZydIBb9X+/DG97KgysUerQl1pPVjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YwlxW3JT; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-25d21fddb85so101961635ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 23:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759215140; x=1759819940; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWMHlYc0hMoE1GM3bsB+Lb3OGqc1VWCQ8QLyLifKnkM=;
+        b=YwlxW3JTJ2AyDfqlhFx4i1adAwlBh2lqBeOLhZ7xon+E/tXTPB/vPhkdPKILRCQdXD
+         GhVAP8yVEaCJdnD+XaB3g1U+ORQ2eRcYUjHXQESMMkq1ghz9LNHH8AX1WS/97k5MI+t6
+         fSPC/wsXjvWKJGEbTlflYmNwFgt3Va4lRYB7mFtKDKy24HUsMXTYBqD6jRmAN/rVQWft
+         D/QAeEBmUuQmMrE6FW9nMBo0Mf/zIxbrilD/c5JvbZAox/XRcMgtZh59sDhISJk4EYvn
+         PsK4z+aycnaClEhPjNI+FDWRgnNxsQqxJhyxzLXHdBlq7aUIE4qXTZclFG358++rSdVb
+         v4xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759215140; x=1759819940;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWMHlYc0hMoE1GM3bsB+Lb3OGqc1VWCQ8QLyLifKnkM=;
+        b=lL07i00yXT007FKClFPRXnr8qtSDWJBMvOc+886FHLav4UDfMjah3BgIzvjjQEJ1aW
+         QxFIIT7NOZK4J1p+Aw5baO1BU3/NlRoXb7mBPzka6IdcnUg8NpPs3F/ybwEgbQ/0vACS
+         qaIWV8AAwSYnOMJzxjIiYIzhhsjNLQOi23APDKPb6WeSCW0Zjq2eZZqKcfQiXx28GcUc
+         35r75jHAvXEI+Xazag9/xvgwoJPKLLem4La+jgEmzfSz4FD8DMY3/hkGfIu3Jj1GrclD
+         wBIp81myZaJcn+ED5c0SszoTjRJDi9sxe/AHjaXw7Ugtdkbwi+LeNDCL0ryo8wBh0Efx
+         2PCg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3CLGRkutS/3Eu2dnde/rY8UTJmTKZ5ubB8S39tfmc16VS01qkYlsAFi0vYfxXLEGGwtwk0B49YzFhaL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvVXwOFhFHif3UoAZoE9xJGCTNHaQe6pJjB4UlmujQkBv631Ca
+	G4nA52V638rorSSxC/xLn98YjNQQ0rBwI2uGpzpwP8/OQY2jvJ0zJjfzNy93XpJQeiTFQAVbAcX
+	hiZ0fCocL6co8tUcog5h+7kGlHA==
+X-Google-Smtp-Source: AGHT+IGC7MITWguwW4mNJBum52j1+kua3rPzsQOwcaHFJ0a5mYZtyTF4W2e7W0OIUPIt9GOaiwODKYzxXGoW4ftPsw==
+X-Received: from plot5.prod.google.com ([2002:a17:902:8c85:b0:273:8fca:6e12])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:e84e:b0:269:9719:fffd with SMTP id d9443c01a7336-27ed49b8623mr245208965ad.1.1759215139860;
+ Mon, 29 Sep 2025 23:52:19 -0700 (PDT)
+Date: Tue, 30 Sep 2025 06:52:18 +0000
+In-Reply-To: <aNq6qWVEBLkWhWFc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/1] mm/rmap: fix soft-dirty and uffd-wp bit loss when
- remapping zero-filled mTHP subpage to shared zeropage
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: peterx@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- baohua@kernel.org, ryan.roberts@arm.com, dev.jain@arm.com,
- npache@redhat.com, riel@surriel.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, harry.yoo@oracle.com, jannh@google.com,
- matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
- byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, usamaarif642@gmail.com, yuzhao@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, ioworker0@gmail.com,
- stable@vger.kernel.org, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com
-References: <20250930060557.85133-1-lance.yang@linux.dev>
- <026a2673-8195-4927-8cde-f7517b601125@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <026a2673-8195-4927-8cde-f7517b601125@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-3-seanjc@google.com>
+ <diqz1pnp34st.fsf@google.com> <aNq6qWVEBLkWhWFc@google.com>
+Message-ID: <diqzikh01lgd.fsf@google.com>
+Subject: Re: [PATCH 2/6] KVM: selftests: Stash the host page size in a global
+ in the guest_memfd test
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Sean Christopherson <seanjc@google.com> writes:
 
+> On Mon, Sep 29, 2025, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> 
+>> > Use a global variable to track the host page size in the guest_memfd test
+>> > so that the information doesn't need to be constantly passed around.  The
+>> > state is purely a reflection of the underlying system, i.e. can't be set
+>> > by the test and is constant for a given invocation of the test, and thus
+>> > explicitly passing the host page size to individual testcases adds no
+>> > value, e.g. doesn't allow testing different combinations.
+>> >
+>> 
+>> I was going to pass in page_size to each of these test cases to test
+>> HugeTLB support, that's how page_size crept into the parameters of these
+>> functions.
+>> 
+>> Could we do a getpagesize() within the gmem_test() macro that you
+>> introduced instead?
+>
+> We could, and I actually had it that way to start.  But I found that burying the
+> effective setting of page_size made it harder to see that it's a runtime constant,
+> versus something that can be configured by the test.
 
-On 2025/9/30 14:31, David Hildenbrand wrote:
-> On 30.09.25 08:05, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
->>
->> When splitting an mTHP and replacing a zero-filled subpage with the 
->> shared
->> zeropage, try_to_map_unused_to_zeropage() currently drops several 
->> important
->> PTE bits.
->>
->> For userspace tools like CRIU, which rely on the soft-dirty mechanism for
->> incremental snapshots, losing the soft-dirty bit means modified pages are
->> missed, leading to inconsistent memory state after restore.
->>
->> As pointed out by David, the more critical uffd-wp bit is also dropped.
->> This breaks the userfaultfd write-protection mechanism, causing writes
->> to be silently missed by monitoring applications, which can lead to data
->> corruption.
->>
->> Preserve both the soft-dirty and uffd-wp bits from the old PTE when
->> creating the new zeropage mapping to ensure they are correctly tracked.
->>
->> Cc: <stable@vger.kernel.org>
->> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage 
->> when splitting isolated thp")
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Suggested-by: Dev Jain <dev.jain@arm.com>
->> Acked-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->> v2 -> v3:
->>   - ptep_get() gets called only once per iteration (per Dev)
->>   - https://lore.kernel.org/linux-mm/20250930043351.34927-1- 
->> lance.yang@linux.dev/
->>
->> v1 -> v2:
->>   - Avoid calling ptep_get() multiple times (per Dev)
->>   - Double-check the uffd-wp bit (per David)
->>   - Collect Acked-by from David - thanks!
->>   - https://lore.kernel.org/linux-mm/20250928044855.76359-1- 
->> lance.yang@linux.dev/
->>
->>   mm/migrate.c | 14 ++++++++++----
->>   1 file changed, 10 insertions(+), 4 deletions(-)
->>
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index ce83c2c3c287..bafd8cb3bebe 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -297,6 +297,7 @@ bool isolate_folio_to_list(struct folio *folio, 
->> struct list_head *list)
->>   static bool try_to_map_unused_to_zeropage(struct 
->> page_vma_mapped_walk *pvmw,
->>                         struct folio *folio,
->> +                      pte_t old_pte,
->>                         unsigned long idx)
-> 
-> Nit:
-> 
-> static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk 
-> *pvmw,
->          struct folio *folio, pte_t old_pte, unsigned long idx)
-
-Well, let me clean that up ;p
-
-> 
-> LGTM, Thanks!
-
-Cheers!
-
+I guess I could also just update the global static variable page_size
+for HugeTLB tests since we won't be running tests with different page
+sizes in parallel. Maybe that's better, actually.
 
