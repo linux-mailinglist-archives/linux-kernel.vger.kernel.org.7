@@ -1,147 +1,204 @@
-Return-Path: <linux-kernel+bounces-837849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF40BAD9DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:13:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E86BADA07
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC8E189F013
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F421943AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF3E2FD1DD;
-	Tue, 30 Sep 2025 15:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkX2FHjv"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789432FFDE6
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE1D3074AB;
+	Tue, 30 Sep 2025 15:14:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5612B246BB0;
+	Tue, 30 Sep 2025 15:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759245206; cv=none; b=I3B0s3RMyYhD/rmflLq5cgd3TIQ5yIj70aFlgfZpyfS0psyzmWNS2yWm3+72s9mQfSC+9CPXOYsDdXoqEWVAeDHR8EBHKtnOfa/+/+u4MNm8jB0vPbrMI/FfPNBzr+85XRMMJfzvCNTReUEJIv6lR18g6xKP2321jT11prWMsiE=
+	t=1759245259; cv=none; b=qZtxGrBgJl+DcBG4HMqnzB7Y/riD5zTrO4pU4eHCda+D2lEgptQ4k9iv4UTaFKixgqMBmbIejH+fPWvT0eC1NYigu+nE2BNdKLUReo/na9yd/PuQYVBbQGF+9XyF826fs+1FoBUVae3KI1rHBgQdqseCLjoAbHM9NAzS6Tph0/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759245206; c=relaxed/simple;
-	bh=BSewBfFWhJBl490BIH5OZ5knEj952tmRcHjCLHNd3ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eNAhVPoOJVS/iQiq+TFX/L88ENFaOFgkDSq3ZKNeHMdZgODHsZpCsIIM+4nHdcAyfKUhQv4s3hfW4Xt2XUpa0w4KL/oaW9tQtyfDQdpVOP5g4h+lLRFGPM3gVeTSPhf8SPE8SeqRX3jaW9HpXiFhnKWzMhyl4jr9V0a4wGM5kHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkX2FHjv; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-36a6a397477so58845561fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:13:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759245203; x=1759850003; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BSewBfFWhJBl490BIH5OZ5knEj952tmRcHjCLHNd3ws=;
-        b=DkX2FHjvnJZkH/LdoCtIYQFCZSWwI/2Va5/I0UK6YIIN7+XvhylrqT1x8k2EV92ueP
-         1e/tdcz7vI4lS1MbU3jyD8OkPiHdSWe0JKPyB1DAHrNDcvow5YAmunMVudz3BbykNIWM
-         FsZmXJSn3jeRTnC8VvBynrASUfzTAnrs1Ix6cyZWRIzyucT4w32YFJ7qSFMz++DLT2Kn
-         KjxvEployqbI4g0t3cQH+MO7L8rFBfP0GlbzwQG3S75dQRu6/k19DfwZyYec+i2x2/OE
-         MV3ENHNW4UF0EgsLmQi10prjWjYQq8FXscP0aZF4SG7Xu90IKbsUagZCcJYMromKStGu
-         33ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759245203; x=1759850003;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BSewBfFWhJBl490BIH5OZ5knEj952tmRcHjCLHNd3ws=;
-        b=Qm9iTUihHpFBmjFUzvkdmKDM1U+jSWu5n2eW8EMDgkdIb9CaV52xSnMDu5IiD6vaq8
-         NcgHX5kU+IdnNDk8tJrF7p6/h2gHpWF0vQfSkcLuK443tNo6QJ+0off7U2a7KYvU383u
-         tKN/CnFaIvU8Mf/bc37Jx2GJRLWqNRyGG/3DXfxd3XSSmV2vEPAM1MmxO/CaYvGKxdnU
-         4xMJ+kmdYCHm40iM34tmwXkKgMolZ4kK3hjqFkq3LPj1/UYT9M0QrUKatsStDQIzH3Ys
-         8CC3czHclY051s6vH8JBW6/6/8K3pmh9yEYhmu/ftgBRYxEMoaGVZntmYTJQy8O9si8U
-         rwXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUpTTw+nSqGwnBf7DOiG7xZBuDd+UQHWlJ9RjFAY6O4dJhk7ChDmyK8UEOQ1R8NOBxR4iMfukozWXXAUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAocj0fRXehu1Xwob60vC+L0JAAfoFtAOp9XPTvt6QRl+bpLqb
-	oY2koenL6R4LbkRm0HO45jlTVWtXrodkx36TET3aQP71t3v9tU0B9XFlMutGIIv4glgq50CuhlJ
-	/6Ez+Madfkms2Qc0d+euYDS6ozq2qXdrf9vs8
-X-Gm-Gg: ASbGncsrMEzjoTrFocO3FTkTNFLu7ELYdty0VJtkCz7/CthgyxNkHB6HqO5eZhYppNZ
-	QSt6rYHfS8KKBHZzSEyLzRbC+JqB/mv4Ok43qOF0F8GAgAI5Q4zyuHmaE3h+7fuu0NLPM3lWCzZ
-	eBkEvJB/pbUQVVXu8WjVBYArOx4SKjLD8Q9pYnhGS2kqS/CfV9iuTYS5UMpdYk7gum0kRPCJBe5
-	WVGwjh03kPMjYB+bh0/GuHqJSnnzTeD/3gCUMOTgfqMEHx6KfkVox/fJXbXJ/CNf69UCiM2hDmj
-	r3YJl8IR9W9wUf1C1BHuOg==
-X-Google-Smtp-Source: AGHT+IF4toYIrIqD3kiLsHfmm4JRYPSghmYhxXGwVPbDmOVVXAkp72RxcbXIqWOsLeoh54cMOZe90BiMurhEoL3Goy4=
-X-Received: by 2002:a05:651c:2542:10b0:372:90ab:8bfa with SMTP id
- 38308e7fff4ca-37290ab904bmr26694711fa.37.1759245202296; Tue, 30 Sep 2025
- 08:13:22 -0700 (PDT)
+	s=arc-20240116; t=1759245259; c=relaxed/simple;
+	bh=Bs0GJUcinrEJPT+rMoGNbl4mEgc3r5S7YTQeXs8ki0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=drwQFJ6yUE6HOgdB4tq9gQR4x0BU6Cwaf+u4WfhKEukO1slhf11C8SoSO/AzOkfV8Euc56qalj4X44NR13md3blA7PBdxhNWEnY9F1exVZpTjlDQ3kMEyoSKLk3pC7XpQ9VQh6r/iKkWP8wKJLTAJkDIOS+TwoPhlR7NWpg4/UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BAFA1424;
+	Tue, 30 Sep 2025 08:14:08 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D65A3F59E;
+	Tue, 30 Sep 2025 08:14:15 -0700 (PDT)
+Date: Tue, 30 Sep 2025 16:14:14 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] coresight: Add format attribute for setting the
+ timestamp interval
+Message-ID: <20250930151414.GK7985@e132581.arm.com>
+References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
+ <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925204251.232473-1-deepak.sharma.472935@gmail.com>
- <54234daf-ace1-4369-baea-eab94fcea74b@redhat.com> <CABbzaOUQC_nshtuZaNJk48JiuYOY0pPxK9i3fW=SsTsFM1Sk9w@mail.gmail.com>
- <377697dd-15bc-4a2d-be19-1d136adb351c@redhat.com>
-In-Reply-To: <377697dd-15bc-4a2d-be19-1d136adb351c@redhat.com>
-From: Cortex Auth <deepak.takumi.120@gmail.com>
-Date: Tue, 30 Sep 2025 20:43:11 +0530
-X-Gm-Features: AS18NWCPx3KYKK3cvUH6TSzAvXHruvjzP3zvXDvzd6ohqBVPIRDoOlk-IyqoDss
-Message-ID: <CAC_ur0rRtuVS7GTxUuEU=yOfrsTRZH0dcGwgoQCy9wB_b6pE2A@mail.gmail.com>
-Subject: Re: [PATCH net v2] atm: Fix the cleanup on alloc_mpc failure in atm_mpoa_mpoad_attach
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Deepak Sharma <deepak.sharma.472935@gmail.com>, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, horms@kernel.org, pwn9uin@gmail.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com, 
-	skhan@linuxfoundation.org, 
-	syzbot+740e04c2a93467a0f8c8@syzkaller.appspotmail.com, 
-	syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
 
-On Tue, Sep 30, 2025 at 8:01=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
-te:
->
-> On 9/30/25 3:33 PM, Deepak Sharma wrote:
-> > On Tue, Sep 30, 2025 at 2:15=E2=80=AFPM Paolo Abeni <pabeni@redhat.com>=
- wrote:
-> >> AFAICS the mpc_timer can rearm itself, so this the above is not enough
-> >> and you should use timer_shutdown_sync() instead.
-> >
-> > Hi,
-> >
-> > As I understand it, `timer_shutdown_sync` will prevent any further
-> > re-arming of the timer. I think this is not what we want here; since ev=
-en if
-> > we somehow fail to allocate our first MPOA client object on our first
-> > ioctl call,
-> > and hence end up wanting to disarm the timer, maybe on next call we can
-> > allocate it successfully, and we would want that caches are processed
-> > (which are processed for every time out). So we still want it to be
-> > possible that
-> > we can re-arm it.
->
-> Ah, I missed the goal here is just being able to rearm the timer (i.e.
-> there is no related UaF).
->
-> Given the above, I think you could instead simply replace add_timer()
-> with mod_timer().
->
-> /P
->
+On Thu, Aug 14, 2025 at 11:49:56AM +0100, James Clark wrote:
 
-I think yeah we could do that.
+[...]
 
-I have just been going with what code seems to have wanted to do;
-Arm the timer if `mpcs` was NULL (no MPOA client existed)
-And if there's any error, delete it as (was done in case of error by
-the `_notifier` call, where we have no MPOA client yet).
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -25,6 +25,11 @@
+>  #include "coresight-syscfg.h"
+>  #include "coresight-trace-id.h"
+>  
+> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
+> +#include <linux/perf/arm_pmu.h>
+> +#include "coresight-etm4x.h"
+> +#endif
+> +
+>  static struct pmu etm_pmu;
+>  static bool etm_perf_up;
+>  
+> @@ -69,7 +74,10 @@ PMU_FORMAT_ATTR(sinkid,		"config2:0-31");
+>  /* config ID - set if a system configuration is selected */
+>  PMU_FORMAT_ATTR(configid,	"config2:32-63");
+>  PMU_FORMAT_ATTR(cc_threshold,	"config3:0-11");
+> -
+> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
+> +/* Interval = (2 ^ ts_level) */
+> +GEN_PMU_FORMAT_ATTR(ts_level);
+> +#endif
+>  
+>  /*
+>   * contextid always traces the "PID".  The PID is in CONTEXTIDR_EL1
+> @@ -103,6 +111,9 @@ static struct attribute *etm_config_formats_attr[] = {
+>  	&format_attr_configid.attr,
+>  	&format_attr_branch_broadcast.attr,
+>  	&format_attr_cc_threshold.attr,
+> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
+> +	&format_attr_ts_level.attr,
+> +#endif
 
-I just extended it to the `alloc_mpoa` failure too, because
-in that case too `mpcs` remains NULL
+By using .visible() callback for attrs, we can improve a bit code
+without spreading "#ifdef IS_ENABLED()" in this file. E.g.,
 
-`mod_timer` would still work, because the timer callback will not do much
-if it finds the `mpcs` to be NULL
+   static umode_t format_attr_is_visible(struct kobject *kobj,
+                                   struct attribute *attr, int n)
+   {
+        struct device *dev = kobj_to_dev(kobj);
 
-If it sounds good, I can go ahead with it
+        if (attr == &format_attr_ts_level.attr &&
+	    !IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X))
+                return 0;
 
-Thanks,
+        return attr->mode;
+   }
 
-Deepak
+Otherwise, LGTM:
+
+Reviewed-by: Leo Yan <leo.yan@arm.com>
+
+>  	NULL,
+>  };
+>  
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index 1a2d02bdcb88..42277c201d4f 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/amba/bus.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/perf/arm_pmu.h>
+>  #include <linux/perf_event.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> @@ -615,7 +616,7 @@ static void etm4_enable_hw_smp_call(void *info)
+>   *  +--------------+
+>   *         |
+>   *  +------v-------+
+> - *  | Counter x    |   (reload to 1 on underflow)
+> + *  | Counter x    |   (reload to 2 ^ ts_level on underflow)
+>   *  +--------------+
+>   *         |
+>   *  +------v--------------+
+> @@ -626,11 +627,17 @@ static void etm4_enable_hw_smp_call(void *info)
+>   *  | Timestamp Generator  |  (timestamp on resource y)
+>   *  +----------------------+
+>   */
+> -static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
+> +static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata,
+> +				       struct perf_event_attr *attr)
+>  {
+>  	int ctridx;
+>  	int rselector;
+>  	struct etmv4_config *config = &drvdata->config;
+> +	u8 ts_level = ATTR_CFG_GET_FLD(attr, ts_level);
+> +
+> +	/* Disable when ts_level == MAX */
+> +	if (ts_level == FIELD_GET(ATTR_CFG_FLD_ts_level_MASK, UINT_MAX))
+> +		return 0;
+>  
+>  	/* No point in trying if we don't have at least one counter */
+>  	if (!drvdata->nr_cntr)
+> @@ -666,12 +673,8 @@ static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
+>  		return -ENOSPC;
+>  	}
+>  
+> -	/*
+> -	 * Initialise original and reload counter value to the smallest
+> -	 * possible value in order to get as much precision as we can.
+> -	 */
+> -	config->cntr_val[ctridx] = 1;
+> -	config->cntrldvr[ctridx] = 1;
+> +	/* Initialise original and reload counter value. */
+> +	config->cntr_val[ctridx] = config->cntrldvr[ctridx] = 1 << ts_level;
+>  
+>  	/*
+>  	 * Trace Counter Control Register TRCCNTCTLRn
+> @@ -761,7 +764,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>  		 * order to correlate instructions executed on different CPUs
+>  		 * (CPU-wide trace scenarios).
+>  		 */
+> -		ret = etm4_config_timestamp_event(drvdata);
+> +		ret = etm4_config_timestamp_event(drvdata, attr);
+>  
+>  		/*
+>  		 * No need to go further if timestamp intervals can't
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
+> index aaa6633b2d67..54558de158fa 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.h
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
+> @@ -598,6 +598,12 @@
+>  #define ETM_CNTR_MAX_VAL		0xFFFF
+>  #define ETM_TRACEID_MASK		0x3f
+>  
+> +#define ATTR_CFG_FLD_ts_level_CFG	config3
+> +#define ATTR_CFG_FLD_ts_level_LO	12
+> +#define ATTR_CFG_FLD_ts_level_HI	15
+> +#define ATTR_CFG_FLD_ts_level_MASK	GENMASK(ATTR_CFG_FLD_ts_level_HI, \
+> +						ATTR_CFG_FLD_ts_level_LO)
+> +
+>  /* ETMv4 programming modes */
+>  #define ETM_MODE_EXCLUDE		BIT(0)
+>  #define ETM_MODE_LOAD			BIT(1)
+> 
+> -- 
+> 2.34.1
+> 
 
