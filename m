@@ -1,284 +1,351 @@
-Return-Path: <linux-kernel+bounces-837350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07C7BAC1B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:46:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94193BAC1BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17D527A9AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC50F16B21D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCC12853EF;
-	Tue, 30 Sep 2025 08:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mv3TOeKE"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EC213B7AE
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC842F49E9;
+	Tue, 30 Sep 2025 08:46:50 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9732147E6;
+	Tue, 30 Sep 2025 08:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759221988; cv=none; b=Vehx2Lpe6vGklbafEHA/9b4K86SIJgw2J2cccLY9xmqk36rAOAmynBYlaHdhd2QlkdwACPkVExBkNiY5FV1n6f8lGmHf+h7b+MU4zSjkg3ImRMqqkahv+8b8NEy/ks2N8R7fZuR2s7qGv9NugD6SECtI4A2xBU87rSeygDybG/Y=
+	t=1759222009; cv=none; b=SzCRWZG0EHZ+mRl1mUGzmXz21LJEmIxLhfGFW/r1+cC34Dc5PadIQYL/CTKwJzmUMXGfR3DSd65cQa6lshGB0cpgl6RAX4/aMvbx+wFu/GAIJfP5aJrz95G7ZeRC9e4xTL6lgaR5e7m04LEB/svwhJB0KR0WJq9/vH3SrMY2veQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759221988; c=relaxed/simple;
-	bh=n073neUCiDTGhaEDHA2IjeRoyHl37uk5yKvHEz0WeF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8ho38r5OAZaMw9WbpwhI5R9eg4IrlTkvlzFa6VK8x73TiuJGaxDy5F3XauEvzLexYaPuIMAftLGCpCbEjF4W4FyWynp8DPbFamqPdpwwEo8F2hFHadCloWYXyofi7+rc0ud12s0lq+5pD9fbwaJRI6JtFPawJ6tiqN4HlTMRrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mv3TOeKE; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62ecd3c21d3so10313512a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759221985; x=1759826785; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n073neUCiDTGhaEDHA2IjeRoyHl37uk5yKvHEz0WeF0=;
-        b=Mv3TOeKEN6Zr/0oLsjVqT/vDb6MxZdEz6gUlUfGcfshUnYRmVVvsojFoiIhezkFbqR
-         xSDxYXAd3Ea01B93c79nK3tr3DhcmGZDoQHC4T68F7PlgkMbnux3sxFrdfCKOR+0+jC/
-         o00TfORGWVgOxB8rr7qpz8/eVEIMtvi3XmzBMXiD8FFFHPpcBIy2qlB/Ih4cKA/9HCNK
-         owTslWKT60XzY6JsVuYBNsoBw6AUcf2FxU2HjAJBou3RKLDT97+gnkn159eVLyxIZuoQ
-         dtB2BpmWd+M9lIkf42IegTdo+U/1mS5/27K2IjHJstqLliQtDb7gUM6l1LOQxcDmgddg
-         ubbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759221985; x=1759826785;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n073neUCiDTGhaEDHA2IjeRoyHl37uk5yKvHEz0WeF0=;
-        b=RIB3YyyFEU+c4wEhs6Uyi2mH7O/SGYQuSmg0LIc/Hpea4d1Le0xJrpYPydZ62cfClR
-         yZ2YsWEbJWuTXH3thA3QGa3WdZGvrhPyLhe2oavrvJ331kdHJtxbP3zFhLCTGGiHS0w7
-         aMf4Y6TOYDbmkW2ZNOMlVFHYYowYoLpDerx9USh0ZDRpFVvYtN4T0wPgfJcEbRaUEgkd
-         FI1fI9iONDUjoGDUUgh9SpKyL1juODGjO76RLRQyvMYUHDX/3GHDWpCpfDwZi/K40yMM
-         SRAyLIrg58S52q/Pu3pP/UOXRHMuBC/ixNnihlS8IcPMmWhKYoSUYn1pG+ZUnws6L256
-         Jx3A==
-X-Gm-Message-State: AOJu0YzXB42DNc/0P7E0+vN2GNBhGCRS3FK05/wDB67deEmyUHCJowzN
-	Pr9vNR7/sZKHnqhwREPxSBcUeciWHusKqM/4zMMzL0oMDvyhucip2U9KM3SX9JreDnM=
-X-Gm-Gg: ASbGncuyI84ZnyvtMHrXBmwjwxZ1iU02bK7Wbj1jPLNdfWHBCOgaV4WJ9rJX0NeIUeM
-	By53kLnFo4I1ayo8KhjpLE6YRzgjH8aPlamEp1hf3nnsYiLTIfJX/ay1WJzxPWHfFPMS5j2fPIK
-	rupT0KsteAQL10ljX2veT/cqUl4DnIJ38pb9nZnWKErfI+MRZvC79aj6bWajXEnJJIo1xVbYp9u
-	0RpMPKz1IyyO3IaoQiyFxyhLbsBmBDDWtS/MuESlPz8uFKtmsy+ed1RxpJjiZ9/fhZY79KWXlwj
-	5nrmwPrFaKokeRcfsqZLlP4zDekQTd+rubpy9/e+COvo5SV9eZ6m7qoQRcZcjhqUot0CCM5aGLn
-	pPgGkmV0ZyTcB2egEAzo2YH9R0yQmfJ3STk2DhQV6VCdDm4DqvxMrO7TT/7NdP9g3jzXPcDI1ZE
-	EVVi4/8Nyic3A8kv08UBzSLAu3mBAcbGrEyduaWFH2BdvetMPVeGN4eptyW656Cs9TnOIhzXK6r
-	z3ymSs=
-X-Google-Smtp-Source: AGHT+IHxsEMyNpkOmoP1U/w50PEW9dqktFGCuYCKbZWdgaPwWE+RQg0SNgb7DMeYUYG17C1wAJEwQA==
-X-Received: by 2002:a17:907:969f:b0:b3f:e1e9:22c1 with SMTP id a640c23a62f3a-b3fe1e92469mr628491566b.53.1759221984572;
-        Tue, 30 Sep 2025 01:46:24 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3545a9769bsm1105990566b.99.2025.09.30.01.46.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 01:46:24 -0700 (PDT)
-Message-ID: <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
-Date: Tue, 30 Sep 2025 10:46:23 +0200
+	s=arc-20240116; t=1759222009; c=relaxed/simple;
+	bh=s9ULe7hxdEO8bjc/8y93NhWDuaH0UNtXtNAflLvDmSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ax4IOLbHveShOgEEDzdi8rC664J8TbkAdY/G7cJmBEcvFm5EAIzNtgwS1EOm1f9x7naJTJ2sOitzh6Qw65AB2P/55+uRdgZO/a2nP2bqqIaNbwxQT1nIAgpmsrmmjj6GLwK23gjgLuTh4eCl6z/3v4ptqdp3gRIPH5sn/JqySK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app2 (Coremail) with SMTP id TQJkCgD3iJLomNto0KbuAA--.14033S2;
+	Tue, 30 Sep 2025 16:46:37 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	linux-phy@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	zhengyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	Yulin Lu <luyulin@eswincomputing.com>
+Subject: [PATCH v5 3/3] phy: eswin: Create eswin directory and add EIC7700 SATA PHY driver
+Date: Tue, 30 Sep 2025 16:46:28 +0800
+Message-Id: <20250930084628.1151-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250930083754.15-1-luyulin@eswincomputing.com>
+References: <20250930083754.15-1-luyulin@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
- xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com>
- <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------WyvLv7FPqaRR3LZWOKqhQ93Q"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgD3iJLomNto0KbuAA--.14033S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF43tw4rZw4rGw1fAr45Awb_yoWfXFWxpF
+	4DCFyUWrWktF47Ka93J3WqyF13GrnFqrya9FyDKasIvFW3Jr18Za9Iqa95trn0vrn7X3yU
+	K3sYqa47Ga15Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRJPE-UUUUU=
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------WyvLv7FPqaRR3LZWOKqhQ93Q
-Content-Type: multipart/mixed; boundary="------------aKTd8pK9QFbBkB2G6cgX0bFZ";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
- xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Message-ID: <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com>
- <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
+Created the eswin phy driver directory and added support for
+the SATA phy driver on the EIC7700 SoC platform.
 
---------------aKTd8pK9QFbBkB2G6cgX0bFZ
-Content-Type: multipart/mixed; boundary="------------N30kQOTdZwedXtdN5VMqEbar"
+Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+---
+ drivers/phy/Kconfig                  |   1 +
+ drivers/phy/Makefile                 |   1 +
+ drivers/phy/eswin/Kconfig            |  14 ++
+ drivers/phy/eswin/Makefile           |   2 +
+ drivers/phy/eswin/phy-eic7700-sata.c | 192 +++++++++++++++++++++++++++
+ 5 files changed, 210 insertions(+)
+ create mode 100644 drivers/phy/eswin/Kconfig
+ create mode 100644 drivers/phy/eswin/Makefile
+ create mode 100644 drivers/phy/eswin/phy-eic7700-sata.c
 
---------------N30kQOTdZwedXtdN5VMqEbar
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 678dd0452f0a..6d50704917f0 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -105,6 +105,7 @@ source "drivers/phy/allwinner/Kconfig"
+ source "drivers/phy/amlogic/Kconfig"
+ source "drivers/phy/broadcom/Kconfig"
+ source "drivers/phy/cadence/Kconfig"
++source "drivers/phy/eswin/Kconfig"
+ source "drivers/phy/freescale/Kconfig"
+ source "drivers/phy/hisilicon/Kconfig"
+ source "drivers/phy/ingenic/Kconfig"
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index bfb27fb5a494..482a143d3417 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -17,6 +17,7 @@ obj-y					+= allwinner/	\
+ 					   amlogic/	\
+ 					   broadcom/	\
+ 					   cadence/	\
++					   eswin/	\
+ 					   freescale/	\
+ 					   hisilicon/	\
+ 					   ingenic/	\
+diff --git a/drivers/phy/eswin/Kconfig b/drivers/phy/eswin/Kconfig
+new file mode 100644
+index 000000000000..3fcd76582c3b
+--- /dev/null
++++ b/drivers/phy/eswin/Kconfig
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Phy drivers for Eswin platforms
++#
++config PHY_EIC7700_SATA
++	tristate "eic7700 Sata SerDes/PHY driver"
++	depends on ARCH_ESWIN || COMPILE_TEST
++	depends on HAS_IOMEM
++	select GENERIC_PHY
++	help
++	  Enable this to support SerDes/Phy found on ESWIN's
++	  EIC7700 SoC.This Phy supports SATA 1.5 Gb/s,
++	  SATA 3.0 Gb/s, SATA 6.0 Gb/s speeds.
++	  It supports one SATA host port to accept one SATA device.
+diff --git a/drivers/phy/eswin/Makefile b/drivers/phy/eswin/Makefile
+new file mode 100644
+index 000000000000..db08c66be812
+--- /dev/null
++++ b/drivers/phy/eswin/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_PHY_EIC7700_SATA)	+= phy-eic7700-sata.o
+diff --git a/drivers/phy/eswin/phy-eic7700-sata.c b/drivers/phy/eswin/phy-eic7700-sata.c
+new file mode 100644
+index 000000000000..19b7ddf2583f
+--- /dev/null
++++ b/drivers/phy/eswin/phy-eic7700-sata.c
+@@ -0,0 +1,192 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ESWIN SATA PHY driver
++ *
++ * Copyright 2024, Beijing ESWIN Computing Technology Co., Ltd..
++ * All rights reserved.
++ *
++ * Authors: Yulin Lu <luyulin@eswincomputing.com>
++ */
++
++#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++
++#define SATA_CLK_CTRL				0x0
++#define SATA_AXI_LP_CTRL			0x08
++#define SATA_MPLL_CTRL				0x20
++#define SATA_P0_PHY_STAT			0x24
++#define SATA_PHY_CTRL0				0x28
++#define SATA_PHY_CTRL1				0x2c
++#define SATA_REG_CTRL				0x34
++#define SATA_REF_CTRL1				0x38
++#define SATA_LOS_IDEN				0x3c
++#define SATA_RESET_CTRL				0x40
++
++#define SATA_SYS_CLK_EN				BIT(28)
++#define SATA_PHY_RESET				BIT(0)
++#define SATA_PORT_RESET				BIT(1)
++#define SATA_CLK_RST_SOURCE_PHY			BIT(0)
++#define SATA_P0_PHY_TX_AMPLITUDE_GEN1_MASK	GENMASK(6, 0)
++#define SATA_P0_PHY_TX_AMPLITUDE_GEN2_MASK	GENMASK(14, 8)
++#define SATA_P0_PHY_TX_AMPLITUDE_GEN3_MASK	GENMASK(22, 16)
++#define SATA_P0_PHY_TX_PREEMPH_GEN1_MASK	GENMASK(5, 0)
++#define SATA_P0_PHY_TX_PREEMPH_GEN2_MASK	GENMASK(13, 8)
++#define SATA_P0_PHY_TX_PREEMPH_GEN3_MASK	GENMASK(21, 16)
++#define SATA_LOS_LEVEL_MASK			GENMASK(4, 0)
++#define SATA_LOS_BIAS_MASK			GENMASK(18, 16)
++#define SATA_M_CSYSREQ				BIT(0)
++#define SATA_S_CSYSREQ				BIT(16)
++#define SATA_REF_REPEATCLK_EN			BIT(0)
++#define SATA_REF_USE_PAD			BIT(20)
++#define SATA_MPLL_MULTIPLIER_MASK		GENMASK(22, 16)
++#define SATA_P0_PHY_READY			BIT(0)
++
++#define PHY_READY_TIMEOUT			(usecs_to_jiffies(4000))
++
++struct eic7700_sata_phy {
++	void __iomem *regs;
++	struct phy *phy;
++};
++
++static int wait_for_phy_ready(void __iomem *base, u32 reg, u32 checkbit,
++			      u32 status)
++{
++	unsigned long timeout = jiffies + PHY_READY_TIMEOUT;
++
++	while (time_before(jiffies, timeout)) {
++		if ((readl(base + reg) & checkbit) == status)
++			return 0;
++		usleep_range(50, 70);
++	}
++
++	return -ETIMEDOUT;
++}
++
++static int eic7700_sata_phy_init(struct phy *phy)
++{
++	struct eic7700_sata_phy *sata_phy = phy_get_drvdata(phy);
++	u32 val;
++	int ret;
++
++	/*
++	 * The SATA_CLK_CTRL register offset controls the pmalive, rxoob, and
++	 * rbc clocks gate provided by the PHY through the HSP bus, and it is
++	 * not registered in the clock tree.
++	 */
++	val = readl(sata_phy->regs + SATA_CLK_CTRL);
++	val |= SATA_SYS_CLK_EN;
++	writel(val, sata_phy->regs + SATA_CLK_CTRL);
++
++	writel(SATA_CLK_RST_SOURCE_PHY, sata_phy->regs + SATA_REF_CTRL1);
++	writel(FIELD_PREP(SATA_P0_PHY_TX_AMPLITUDE_GEN1_MASK, 0x42) |
++	       FIELD_PREP(SATA_P0_PHY_TX_AMPLITUDE_GEN2_MASK, 0x46) |
++	       FIELD_PREP(SATA_P0_PHY_TX_AMPLITUDE_GEN3_MASK, 0x73),
++	       sata_phy->regs + SATA_PHY_CTRL0);
++	writel(FIELD_PREP(SATA_P0_PHY_TX_PREEMPH_GEN1_MASK, 0x5) |
++	       FIELD_PREP(SATA_P0_PHY_TX_PREEMPH_GEN2_MASK, 0x5) |
++	       FIELD_PREP(SATA_P0_PHY_TX_PREEMPH_GEN3_MASK, 0x8),
++	       sata_phy->regs + SATA_PHY_CTRL1);
++	writel(FIELD_PREP(SATA_LOS_LEVEL_MASK, 0x9) |
++	       FIELD_PREP(SATA_LOS_BIAS_MASK, 0x2),
++	       sata_phy->regs + SATA_LOS_IDEN);
++	writel(SATA_M_CSYSREQ | SATA_S_CSYSREQ,
++	       sata_phy->regs + SATA_AXI_LP_CTRL);
++	writel(SATA_REF_REPEATCLK_EN | SATA_REF_USE_PAD,
++	       sata_phy->regs + SATA_REG_CTRL);
++	writel(FIELD_PREP(SATA_MPLL_MULTIPLIER_MASK, 0x3c),
++	       sata_phy->regs + SATA_MPLL_CTRL);
++	usleep_range(15, 20);
++
++	/*
++	 * The SATA_RESET_CTRL register offset controls reset/deassert for both
++	 * the port and the PHY through the HSP bus, and it is not registered
++	 * in the reset tree.
++	 */
++	val = readl(sata_phy->regs + SATA_RESET_CTRL);
++	val &= ~(SATA_PHY_RESET | SATA_PORT_RESET);
++	writel(val, sata_phy->regs + SATA_RESET_CTRL);
++
++	ret = wait_for_phy_ready(sata_phy->regs, SATA_P0_PHY_STAT,
++				 SATA_P0_PHY_READY, 1);
++	if (ret < 0)
++		dev_err(&sata_phy->phy->dev,
++			"PHY READY check failed\n");
++	return ret;
++}
++
++static int eic7700_sata_phy_exit(struct phy *phy)
++{
++	struct eic7700_sata_phy *sata_phy = phy_get_drvdata(phy);
++	u32 val;
++
++	val = readl(sata_phy->regs + SATA_RESET_CTRL);
++	val |= SATA_PHY_RESET | SATA_PORT_RESET;
++	writel(val, sata_phy->regs + SATA_RESET_CTRL);
++
++	val = readl(sata_phy->regs + SATA_CLK_CTRL);
++	val &= ~SATA_SYS_CLK_EN;
++	writel(val, sata_phy->regs + SATA_CLK_CTRL);
++
++	return 0;
++}
++
++static const struct phy_ops eic7700_sata_phy_ops = {
++	.init		= eic7700_sata_phy_init,
++	.exit		= eic7700_sata_phy_exit,
++	.owner		= THIS_MODULE,
++};
++
++static int eic7700_sata_phy_probe(struct platform_device *pdev)
++{
++	struct eic7700_sata_phy *sata_phy;
++	struct phy_provider *phy_provider;
++	struct device *dev = &pdev->dev;
++
++	sata_phy = devm_kzalloc(dev, sizeof(*sata_phy), GFP_KERNEL);
++	if (!sata_phy)
++		return -ENOMEM;
++
++	sata_phy->regs = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(sata_phy->regs))
++		return PTR_ERR(sata_phy->regs);
++
++	dev_set_drvdata(dev, sata_phy);
++
++	sata_phy->phy = devm_phy_create(dev, NULL, &eic7700_sata_phy_ops);
++	if (IS_ERR(sata_phy->phy))
++		return dev_err_probe(dev, PTR_ERR(sata_phy->phy),
++				     "failed to create PHY\n");
++
++	phy_set_drvdata(sata_phy->phy, sata_phy);
++
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	if (IS_ERR(phy_provider))
++		return dev_err_probe(dev, PTR_ERR(phy_provider),
++				     "failed to register PHY provider\n");
++
++	return 0;
++}
++
++static const struct of_device_id eic7700_sata_phy_of_match[] = {
++	{ .compatible = "eswin,eic7700-sata-phy" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, eic7700_sata_phy_of_match);
++
++static struct platform_driver eic7700_sata_phy_driver = {
++	.probe	= eic7700_sata_phy_probe,
++	.driver = {
++		.of_match_table	= eic7700_sata_phy_of_match,
++		.name  = "eic7700-sata-phy",
++	}
++};
++module_platform_driver(eic7700_sata_phy_driver);
++
++MODULE_DESCRIPTION("SATA PHY driver for the ESWIN EIC7700 SoC");
++MODULE_AUTHOR("Yulin Lu <luyulin@eswincomputing.com>");
++MODULE_LICENSE("GPL");
+-- 
+2.25.1
 
-T24gMzAuMDkuMjUgMTA6MzEsIFBldGVyIFppamxzdHJhIHdyb3RlOg0KPiBPbiBUdWUsIFNl
-cCAzMCwgMjAyNSBhdCAwOTowMzo1M0FNICswMjAwLCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0K
-PiANCj4+ICtzdGF0aWMgX19hbHdheXNfaW5saW5lIGJvb2wgX193cm1zcnFfY29uc3RhbnQo
-dTMyIG1zciwgdTY0IHZhbCwgaW50IHR5cGUpDQo+PiArew0KPj4gKwlCVUlMRF9CVUdfT04o
-IV9fYnVpbHRpbl9jb25zdGFudF9wKG1zcikpOw0KPj4gKw0KPj4gKwlhc21faW5saW5lIHZv
-bGF0aWxlIGdvdG8oDQo+PiArCQkiMTpcbiINCj4+ICsJCUFMVEVSTkFUSVZFXzIoUFJFUEFS
-RV9SQ1hfUkRYX0ZPUl9XUk1TUg0KPj4gKwkJCSAgICAgICIyOiBkcyB3cm1zciIsDQo+PiAr
-CQkJICAgICAgUFJFUEFSRV9SQ1hfUkRYX0ZPUl9XUk1TUg0KPj4gKwkJCSAgICAgIEFTTV9X
-Uk1TUk5TLA0KPj4gKwkJCSAgICAgIFg4Nl9GRUFUVVJFX1dSTVNSTlMsDQo+PiArCQkJICAg
-ICAgQVNNX1dSTVNSTlNfSU1NLA0KPj4gKwkJCSAgICAgIFg4Nl9GRUFUVVJFX01TUl9JTU0p
-DQo+PiArCQlfQVNNX0VYVEFCTEVfVFlQRSgxYiwgJWxbYmFkbXNyXSwgJWNbdHlwZV0pCS8q
-IEZvciBXUk1TUk5TIGltbWVkaWF0ZSAqLw0KPj4gKwkJX0FTTV9FWFRBQkxFX1RZUEUoMmIs
-ICVsW2JhZG1zcl0sICVjW3R5cGVdKQkvKiBGb3IgV1JNU1IoTlMpICovDQo+PiArDQo+PiAr
-CQk6DQo+PiArCQk6IFt2YWxdICJhIiAodmFsKSwgW21zcl0gImkiIChtc3IpLCBbdHlwZV0g
-ImkiICh0eXBlKQ0KPj4gKwkJOiAibWVtb3J5IiwgImVjeCIsICJyZHgiDQo+PiArCQk6IGJh
-ZG1zcik7DQo+PiArDQo+PiArCXJldHVybiBmYWxzZTsNCj4+ICsNCj4+ICtiYWRtc3I6DQo+
-PiArCXJldHVybiB0cnVlOw0KPj4gK30NCj4gDQo+IEp1c3Qgd29uZGVyaW5nLCB3b3VsZCBz
-b21ldGhpbmcgdGhpcyB3b3JrPw0KPiANCj4gCWFzbV9pbmxpbmUgdm9sYXRpbGUgZ290bygN
-Cj4gCQkiMTpcbiINCj4gCQlBTFRFUk5BVElWRShQUkVQQVJFX1JDWF9SRFhfRk9SX1dSTVNS
-DQo+IAkJCSAgICAiMjpcbiINCj4gCQkJICAgIEFMVEVSTkFUSVZFKCJkcyB3cm1zciIsDQo+
-IAkJCSAgICAgICAgICAgICAgICBBU01fV1JNU1JOUywgWDg2X0ZFQVRVUkVfV1JNU1JOUyks
-DQo+IAkJCSAgICBBU01fV1JNU1JOU19JTU0sIFg4Nl9GRUFUVVJFX01TUl9JTU0pOw0KPiAJ
-CV9BU01fRVhUQUJMRV9UWVBFKDFiLCAlbFtiYWRtc3JdLCAlY1t0eXBlXSkJLyogRm9yIFdS
-TVNSTlMgaW1tZWRpYXRlICovDQo+IAkJX0FTTV9FWFRBQkxFX1RZUEUoMmIsICVsW2JhZG1z
-cl0sICVjW3R5cGVdKQkvKiBGb3IgV1JNU1IoTlMpICovDQo+IA0KPiAJCToNCj4gCQk6IFt2
-YWxdICJhIiAodmFsKSwgW21zcl0gImkiIChtc3IpLCBbdHlwZV0gImkiICh0eXBlKQ0KPiAJ
-CTogIm1lbW9yeSIsICJlY3giLCAicmR4Ig0KPiAJCTogYmFkbXNyKTsNCj4gDQo+IEl0cyBh
-IGJpdCB3ZWlyZCBiZWNhdXNlIHRoZSBuZXN0ZWQgYWx0ZXJuYXRpdmUgaXNuJ3QgZm9yIHRo
-ZSBleGFjdCBzYW1lDQo+IHBvc2l0aW9uIEkgc3VwcG9zZS4gQnV0IEkgZmluZCBpdCBhIG1v
-cmUgcmVhZGFibGUgZm9ybS4NCg0KSSBkb24ndCB0aGluayBpdCB3b3VsZCB3b3JrLiBOZXN0
-ZWQgQUxURVJOQVRJVkUoKXMgZG8gd29yayBvbmx5IHdpdGgNCmFsbCBvZiB0aGVtIHN0YXJ0
-aW5nIGF0IHRoZSBzYW1lIGxvY2F0aW9uLiBIYXZlIGEgbG9vayBhdCB0aGUNCkFMVEVSTkFU
-SVZFKCkgbWFjcm8sIHdoaWNoIGlzIGRlZmluaW5nIHRoZSBsYWJlbCAiNzcxIiB2aWEgT0xE
-SU5TVFIoKQ0KYW5kIHRoZW4gcmVmZXJyaW5nIHRvIHRoaXMgbGFiZWwgdmlhIEFMVElOU1RS
-X0VOVFJZKCkuIEluIHlvdXIgY2FzZQ0KdGhlIEFMVElOU1RSX0VOVFJZKCkgb2YgdGhlIG91
-dGVyIEFMVEVSTkFUSVZFKCkgaW52b2NhdGlvbiB3b3VsZCBmaW5kDQp0aGUgd3JvbmcgIjc3
-MSIgbGFiZWwgKHRoZSBvbmUgb2YgdGhlIGlubmVyIEFMVEVSTkFUSVZFKCkpLg0KDQpBbGxv
-d2luZyBzdWNoIGNvbnN0cnVjdHMgd291bGQgcHJvYmFibHkgcmVxdWlyZSBzd2l0Y2hpbmcg
-ZnJvbSBwcmVwcm9jZXNzb3INCm1hY3JvcyB0byBhc3NlbWJsZXIgbWFjcm9zLg0KDQoNCkp1
-ZXJnZW4NCg==
---------------N30kQOTdZwedXtdN5VMqEbar
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
-
---------------N30kQOTdZwedXtdN5VMqEbar--
-
---------------aKTd8pK9QFbBkB2G6cgX0bFZ--
-
---------------WyvLv7FPqaRR3LZWOKqhQ93Q
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjbmN8FAwAAAAAACgkQsN6d1ii/Ey/F
-awf/fno3luNeDyyPCvIMnrq1g+67KuO6WYcxOoweSiZcMtyPM9Uz5GnGBU9o7sorklegCHuQQ4al
-ZffznYe40JhyZ9tNG8AxL4Lmo8j0CPbTOJXCL0m99rJMR3LpVFboU8fFeOe14jjewN+yw3u6RES4
-D9BAlUnTfwrXVZf7z5wg1H3kwU6NXhUBNHfQxYDBCfI8qVmlmGI9GAWZp+Opj+4cdfwThp7iMuda
-p2aF1Kvs4z0V/o+EmepBogTBccSFvbT0SW2mZvty3nPMIuELOA9UstzbESAqfwyshMD+H+rWJbTu
-HVQb02U5G64+ieSeh0Aqe+FVohJKU4NcvgevOp0rlw==
-=bYlT
------END PGP SIGNATURE-----
-
---------------WyvLv7FPqaRR3LZWOKqhQ93Q--
 
