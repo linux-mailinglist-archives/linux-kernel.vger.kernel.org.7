@@ -1,154 +1,246 @@
-Return-Path: <linux-kernel+bounces-838128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5C1BAE810
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 150C3BAE81A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C543A8C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:13:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BFE73AD1CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC4828C00C;
-	Tue, 30 Sep 2025 20:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF23C222565;
+	Tue, 30 Sep 2025 20:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0TRGPzD"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JUGjYF/Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3255A1A83ED
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527223594A;
+	Tue, 30 Sep 2025 20:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263184; cv=none; b=Dhrd9MjR4mYRl4K+C25eMQzfJ3gyIC7cRZr5NuCnQCQt7oS1uRh+gmQttDtzjxF/hbQB/ETv/8ORs7aHyDuLz3R+SEC14NSDC/+hUmLGboQzIcLYXuvtRVQNVQZva+gA/7doRzI12OZbf+ehWOqAfEVKWYvlH56xP91os7f+K6I=
+	t=1759263344; cv=none; b=VFBg+B4rQ8zFTpA+G5T3NAmS2hRNNZAHvHD9x4d+2e5W9p4rnOORxOlGLXWCbBNe+1p+JpKXY/jbKvu8VCob/EseJ6G679mCwby/Ic+fPKWBz2VEyRdrYuyzRI0R/BTuhyzYLx8ssI85fXY6CBeNedUNvXDFRTn1cLFJmE6wZB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759263184; c=relaxed/simple;
-	bh=uZ2S6dKSY8g1rbmRM06pb3DssGvzzzn78HdItZZ7jqQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eBv8rttAwf19/zlDdYe9UeFf8/tglZUdvoG8UKKix1DHuOKJ6WnZ3AIPvJqdelp54hIr7NHjt8OWl+O0LDNohECs3IsXU38zyTI57gVxHuEWehGOcbvS4GjYmoPG0u/L15f+rC4ikwTO76I5930X8mVLqxwqympZI5d0CvLfJPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0TRGPzD; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5796051ee6aso1248084e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:13:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759263181; x=1759867981; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vy7D8szbhIRwtgr1N1d15ZOmlMfXdraquxLR+CvWcVg=;
-        b=g0TRGPzDupQAninCxfXz0BXWIYAFvJpbUdNKW1UM0XMOnr5vySRZ3QhVO3uIJL6VNN
-         VenOsiDxbaahecsm82k5kwFRN/7aR7jDGAf1xsXTCe1o3UyRbTGnx6voSDW+NI2RJEhC
-         ZUP69hGAkWEM00vn0iAn6X/6FZlYI80UkJ417J6RuEsUY+oPY4PxATGPcMZxNcCTrqCo
-         j72M4LSUvmiBoXphfQ3FwYwFPLx/NjrBep7XWjV5aADpizZcxTCgmBumEt63b9OK2BFB
-         JvYoMwOGn8xrMM1/DuMIS+2V8cWILReVBIUl7oggYp1GFoWPuQnYYDLrZwuW+k0O6o9v
-         aNkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759263181; x=1759867981;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vy7D8szbhIRwtgr1N1d15ZOmlMfXdraquxLR+CvWcVg=;
-        b=Y28kSKZRw+HxqXCmZzzJ/ghSdKQITq2oD5Dnovx0ptz78OO8hpcl9zNB+9du86hM4v
-         vwYcTNMwWrmk3eOBi0pRXbkeut2KwGz1H2c9XcdjEKZUZdrtYvEY6ed7ThkrYfSD52Tk
-         c/p6wvX1eKTucxcWCPIX2hCj6Pw3+Q+Vm7GoSRs8p146qdGPy5FbVrgzPuSYhKjNlpvm
-         zjkP6uhtMwO0cMVDa0HsdrT3pjlOnbu8uLvH9TUQDs11/LdtZm/0J5n2hZdaqz8GYlqX
-         KSTOgk271vMsBQDgR+xpqkLiGclTkkvazFJ6jvHLmvqVXARstryobX4nku6hTYwMfMe9
-         9KQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJiKwofIPtfGdF9G0DjJx6EvebQ4i/BL4Qpi+v2SYaoDZ34NREvFzLqL6lZUaSREd8m9smVTxb2urXDxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg7APFvYD75w8VAd+pBht6kIPj1f82irok4CGtcxIGSRKWmzua
-	SiB5MrPL19rfKNWnitISGM+3G8YlmBSJRwjalBiFlBEMnDeZN1NKC9IeMmbDuvUG8OdSnrvoGIo
-	yT42VmGvaVBUh2cwQNRI24fki6ZNlBWE=
-X-Gm-Gg: ASbGncsVJUASmZL1SkmPULJQgoFc6mXkZTZzWGKrE2tHxsknj75raGJS9N6WN4UUTp4
-	27QY+ODnZvXPe8QwdmpfM2MujgfT5KuXYkMUy6rQZw3PkamfbQzZ8UQKqHUcxAWYmaFTIqRnd6I
-	7bjQSGmgColDV+Pmhf4USx/F4gbi/RPnDgogwc6748DX7LMO+iTXQlmWfveEov84AMGVa4bSX/4
-	e1eLPHzjruvnQwdh9thiTd6HsrKC0Wm+7+x12TcM+RXB7RMtXI7Yb7vnH03NDr5pNGkJ2Xj/WjM
-	Id0UOYVu+p0puF9SVohGX0cbR/an+OHZJVBkGtPmGvLljzytiKzASRQ6uFjB
-X-Google-Smtp-Source: AGHT+IFtvw/2t0q6x52tfdQq5Jy2e/VSbjt1lzNtaWguSG6A/2TPrH6YJ+0urbPzdntmF9O0R56v9RKpZ+3tGWsFzOA=
-X-Received: by 2002:a05:6512:3b9a:b0:55f:5965:e4e5 with SMTP id
- 2adb3069b0e04-58af9f3d196mr109397e87.6.1759263181040; Tue, 30 Sep 2025
- 13:13:01 -0700 (PDT)
+	s=arc-20240116; t=1759263344; c=relaxed/simple;
+	bh=3x7jog6xs+wclsw8f6u6GaV72x3hAyzwQQtqOYgaEUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U1xhrV8nJjn6ufY19yo6fAMsLnXASgDPx6I0LepBVjbJja6+au3HQ7ktu06yDQASbB5dQ7EhxH3MKkn81RgpOSsaMx+GGodsr81rzu75zMVhq/iOidGHjRYuzvmA95F29X6w/3R4WMFJwJ8/Djqw3V1MPbf6Ckanl8l7vMf7jLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JUGjYF/Q; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759263342; x=1790799342;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3x7jog6xs+wclsw8f6u6GaV72x3hAyzwQQtqOYgaEUA=;
+  b=JUGjYF/QeHVhMwvR3ZJME5UFNXhewp96pobwv+mz3MxG4TahbVa1O7BS
+   m3xSy5r+GKs7YisO+MGdwTrUDQH4fNYx69dFDIorsEAUV6HNiDloMpBd9
+   Nrq06otPEbPv+IqiD9xnIkfhjC92NWY57l4w0I7/LNNxLMhicmgax5LWk
+   03ajH1YVXtrxIuJe/aX/13yUvp5YYSjOkg0lf2qJo0crdK4Uj7MuB6XXL
+   7dN52uNL2Rj33Bbu86+JhSo83Q6mmNVaGgsGUuOp3M8wuNWLacAqPKF/K
+   WPUiS8qkY2+NvpVssNA47qQh4Ge8OjBp0G4md7jSAtVYbYtzLRCXQPSQj
+   Q==;
+X-CSE-ConnectionGUID: bjKRMzWtRQ+h7FwxRCuRwg==
+X-CSE-MsgGUID: 6AipJ7TVR860gHBJvozrAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="79181965"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="79181965"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 13:15:41 -0700
+X-CSE-ConnectionGUID: hfbcjST4T8a2+E5u67ptvw==
+X-CSE-MsgGUID: w3tgJ9PbR+6tHH3YPTAhgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="182629826"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 30 Sep 2025 13:15:37 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v3gl4-0002Sd-0n;
+	Tue, 30 Sep 2025 20:15:34 +0000
+Date: Wed, 1 Oct 2025 04:15:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Andrew Murray <amurray@thegoodpenguin.co.uk>,
+	Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH 1/3] printk/nbcon: Block printk kthreads when any CPU is
+ in an emergency context
+Message-ID: <202510010320.jV84a9vM-lkp@intel.com>
+References: <20250926124912.243464-2-pmladek@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755235180.git.y.j3ms.n@gmail.com>
-In-Reply-To: <cover.1755235180.git.y.j3ms.n@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 30 Sep 2025 22:12:42 +0200
-X-Gm-Features: AS18NWCr6YpjKIG8ty5QsX8lB_uHMxpdXprhMtC5CD6I1cvtweLAmRebm3I8mVk
-Message-ID: <CANiq72nbERSOWKRUTJ96YYKCDeAoHLBuiVP+XkDUKg7JYkoyiA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] rust: add `TryFrom` and `Into` derive macros
-To: Jesung Yang <y.j3ms.n@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926124912.243464-2-pmladek@suse.com>
 
-On Fri, Aug 15, 2025 at 7:32=E2=80=AFAM Jesung Yang <y.j3ms.n@gmail.com> wr=
-ote:
->
-> This patch series introduces derive macros for `TryFrom` and `Into`
-> traits.
+Hi Petr,
 
-I took a quick look -- it is a nice series!
+kernel test robot noticed the following build warnings:
 
-Some notes:
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on linus/master v6.17 next-20250929]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  - My biggest concern is the overflow caveat, which is a fairly big
-one if one, especially if one is dealing with runtime values.
+url:    https://github.com/intel-lab-lkp/linux/commits/Petr-Mladek/printk-nbcon-Block-printk-kthreads-when-any-CPU-is-in-an-emergency-context/20250926-205414
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250926124912.243464-2-pmladek%40suse.com
+patch subject: [PATCH 1/3] printk/nbcon: Block printk kthreads when any CPU is in an emergency context
+config: arc-randconfig-r131-20251001 (https://download.01.org/0day-ci/archive/20251001/202510010320.jV84a9vM-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251001/202510010320.jV84a9vM-lkp@intel.com/reproduce)
 
-    Can we do better? Accessing the discriminant via `as` is available
-in const context, and you already have every variant easily available,
-so can we check that every variant fits in the relevant target types?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510010320.jV84a9vM-lkp@intel.com/
 
-    For instance, by creating some item-level const blocks
-(`static_assert!`s) -- dummy example for an unsigned-to-unsigned case:
+sparse warnings: (new ones prefixed by >>)
+>> kernel/printk/nbcon.c:121:10: sparse: sparse: symbol 'nbcon_cpu_emergency_cnt' was not declared. Should it be static?
 
-        const _: () =3D { assert! (E::A as u128 <=3D u8::MAX as u128); };
-        const _: () =3D { assert! (E::B as u128 <=3D u8::MAX as u128); };
-        ...
+vim +/nbcon_cpu_emergency_cnt +121 kernel/printk/nbcon.c
 
-    and so on. There may be better ways to do it -- I just quickly
-brute forced it that unsigned case with what you already had for
-handling variants:
+     4	
+     5	#include <linux/atomic.h>
+     6	#include <linux/bug.h>
+     7	#include <linux/console.h>
+     8	#include <linux/delay.h>
+     9	#include <linux/errno.h>
+    10	#include <linux/export.h>
+    11	#include <linux/init.h>
+    12	#include <linux/irqflags.h>
+    13	#include <linux/kthread.h>
+    14	#include <linux/minmax.h>
+    15	#include <linux/percpu.h>
+    16	#include <linux/preempt.h>
+    17	#include <linux/slab.h>
+    18	#include <linux/smp.h>
+    19	#include <linux/stddef.h>
+    20	#include <linux/string.h>
+    21	#include <linux/types.h>
+    22	#include "internal.h"
+    23	#include "printk_ringbuffer.h"
+    24	/*
+    25	 * Printk console printing implementation for consoles which does not depend
+    26	 * on the legacy style console_lock mechanism.
+    27	 *
+    28	 * The state of the console is maintained in the "nbcon_state" atomic
+    29	 * variable.
+    30	 *
+    31	 * The console is locked when:
+    32	 *
+    33	 *   - The 'prio' field contains the priority of the context that owns the
+    34	 *     console. Only higher priority contexts are allowed to take over the
+    35	 *     lock. A value of 0 (NBCON_PRIO_NONE) means the console is not locked.
+    36	 *
+    37	 *   - The 'cpu' field denotes on which CPU the console is locked. It is used
+    38	 *     to prevent busy waiting on the same CPU. Also it informs the lock owner
+    39	 *     that it has lost the lock in a more complex scenario when the lock was
+    40	 *     taken over by a higher priority context, released, and taken on another
+    41	 *     CPU with the same priority as the interrupted owner.
+    42	 *
+    43	 * The acquire mechanism uses a few more fields:
+    44	 *
+    45	 *   - The 'req_prio' field is used by the handover approach to make the
+    46	 *     current owner aware that there is a context with a higher priority
+    47	 *     waiting for the friendly handover.
+    48	 *
+    49	 *   - The 'unsafe' field allows to take over the console in a safe way in the
+    50	 *     middle of emitting a message. The field is set only when accessing some
+    51	 *     shared resources or when the console device is manipulated. It can be
+    52	 *     cleared, for example, after emitting one character when the console
+    53	 *     device is in a consistent state.
+    54	 *
+    55	 *   - The 'unsafe_takeover' field is set when a hostile takeover took the
+    56	 *     console in an unsafe state. The console will stay in the unsafe state
+    57	 *     until re-initialized.
+    58	 *
+    59	 * The acquire mechanism uses three approaches:
+    60	 *
+    61	 *   1) Direct acquire when the console is not owned or is owned by a lower
+    62	 *      priority context and is in a safe state.
+    63	 *
+    64	 *   2) Friendly handover mechanism uses a request/grant handshake. It is used
+    65	 *      when the current owner has lower priority and the console is in an
+    66	 *      unsafe state.
+    67	 *
+    68	 *      The requesting context:
+    69	 *
+    70	 *        a) Sets its priority into the 'req_prio' field.
+    71	 *
+    72	 *        b) Waits (with a timeout) for the owning context to unlock the
+    73	 *           console.
+    74	 *
+    75	 *        c) Takes the lock and clears the 'req_prio' field.
+    76	 *
+    77	 *      The owning context:
+    78	 *
+    79	 *        a) Observes the 'req_prio' field set on exit from the unsafe
+    80	 *           console state.
+    81	 *
+    82	 *        b) Gives up console ownership by clearing the 'prio' field.
+    83	 *
+    84	 *   3) Unsafe hostile takeover allows to take over the lock even when the
+    85	 *      console is an unsafe state. It is used only in panic() by the final
+    86	 *      attempt to flush consoles in a try and hope mode.
+    87	 *
+    88	 *      Note that separate record buffers are used in panic(). As a result,
+    89	 *      the messages can be read and formatted without any risk even after
+    90	 *      using the hostile takeover in unsafe state.
+    91	 *
+    92	 * The release function simply clears the 'prio' field.
+    93	 *
+    94	 * All operations on @console::nbcon_state are atomic cmpxchg based to
+    95	 * handle concurrency.
+    96	 *
+    97	 * The acquire/release functions implement only minimal policies:
+    98	 *
+    99	 *   - Preference for higher priority contexts.
+   100	 *   - Protection of the panic CPU.
+   101	 *
+   102	 * All other policy decisions must be made at the call sites:
+   103	 *
+   104	 *   - What is marked as an unsafe section.
+   105	 *   - Whether to spin-wait if there is already an owner and the console is
+   106	 *     in an unsafe state.
+   107	 *   - Whether to attempt an unsafe hostile takeover.
+   108	 *
+   109	 * The design allows to implement the well known:
+   110	 *
+   111	 *     acquire()
+   112	 *     output_one_printk_record()
+   113	 *     release()
+   114	 *
+   115	 * The output of one printk record might be interrupted with a higher priority
+   116	 * context. The new owner is supposed to reprint the entire interrupted record
+   117	 * from scratch.
+   118	 */
+   119	
+   120	/* Counter of active nbcon emergency contexts. */
+ > 121	atomic_t nbcon_cpu_emergency_cnt;
+   122	
 
-        variants.iter().map(|variant| {
-            quote! {
-                const _: () =3D { assert!(#enum_ident::#variant as u128
-<=3D #ty::MAX as u128); };
-            }
-        });
-
-    Maybe this was already discussed elsewhere and there is a reason
-not to do something like this, but it seems to me that we should try
-to avoid that risk.
-
-  - On other news, I will post in the coming days the `syn` patches,
-and my plan is to merge them for next cycle, so when those are out,
-Benno thought you could give them a go (we can still merge this with
-your current approach and then convert, but still, more `syn` users
-and converting the existing macros would be nice :).
-
-    (By the way, the linked patches about converting the existing
-macros to `syn` are an RFC in the sense that they cannot be applied,
-but having `syn` itself is something we already agreed on a long time
-ago.)
-
-  - Couple nits: typo arise -> arises, and I would do `repr-rust`
-instead of `repr-rs` since that is the anchor in the reference that
-you are linking.
-
-Thanks a lot!
-
-Cheers,
-Miguel
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
