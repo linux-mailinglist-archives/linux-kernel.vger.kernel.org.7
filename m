@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-838015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A72BAE395
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:38:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE078BAE3AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC13380390
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106177A997F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16032218AAF;
-	Tue, 30 Sep 2025 17:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94C4305979;
+	Tue, 30 Sep 2025 17:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MEskeLdS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XZgU4oaW"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24D12116E0;
-	Tue, 30 Sep 2025 17:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB38D1C862D;
+	Tue, 30 Sep 2025 17:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253914; cv=none; b=MtnCamCPFt3N0/w1Gcx9I9A8pr4LRKyBKe2RkBSgBW/a5r+SVglAxpwR/B4YRqTlM+VLhHAM91HJ28OZNvmh7Ynqf3q0BEm+vrDN295EkL7OPm4WnlGaYT4SSJ+aodOsLzZfJFzgatym+iDAl2oAhHrOSTg7Wx7QMfFEidG00dU=
+	t=1759253968; cv=none; b=QRD/k7sqODUqVNaO7t9J8WyXDmQawtsz6O6kUKbNUBR28l/GjwSXl2pSujpB1nHw/tDelG3Rd8QEMUfhh7Ew2T/YCPU2gCKQD9p6tJgcMVTGe0F2ohHOVzLTX3xC+1ZrqWJWDog6JhXvXORIX7YizVWx7oFFpucK+Jlkboyt1WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253914; c=relaxed/simple;
-	bh=PZ+6MLo+7bvlEyUM8ZBXm2SbK4AOmM3uGttbrdaBPoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mFDQzC5xjcmGIpwQP1W6CAb8jnMx909ULeB3cJpzMU/2TAxjTBA0TT74+zFGI994B1+RaZMjXHxpHUaTqTxtdez9JQrQh1ys/vFWFrAX8TxplhZPfI1I0rJzhMVxQ7FNJIUBoIgpZyLcdiXtL1BQva7YXKusQjVbyX4CIucDnCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MEskeLdS; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759253913; x=1790789913;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PZ+6MLo+7bvlEyUM8ZBXm2SbK4AOmM3uGttbrdaBPoE=;
-  b=MEskeLdS5N/v6s95QNuoe4vcsg5UbvioHnSdB6MlN1WMcNsvB+ZEvrGq
-   dXj3/EulvyteRI6nP1U7JVVyIs6tI2VPeOgRlikOTyKz042b641ShUkXI
-   8LaAOj2fTrirqSq5XBD270tHmfG714l42ruYtPervIQPRII0ponsnFFC1
-   bBShGKZc0J3/XUXV0f5bFvrjnjvnOzJEDIdJ0sEEo/B6+ZqXCQVAQJsNP
-   lK8fNiB2HLi6AfFA6JEYhaYF47vtMFAVdj+j9H31jK7vWNf7X3jld8jyA
-   TpkcQc/NxVE4Ya54py/ONtyMXdKQa0DUUNnGDecYgPM8CoWF3WXUdqc9Z
-   w==;
-X-CSE-ConnectionGUID: keO6qEx6TMSfipstzcizGg==
-X-CSE-MsgGUID: PsHy5Xn6RYy23+oMWMDe6Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61559961"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="61559961"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 10:38:32 -0700
-X-CSE-ConnectionGUID: 88EHz+d9S7esJ+lxU1lzRA==
-X-CSE-MsgGUID: yvX89GVYTRqaeDkNUDZLHA==
-X-ExtLoop1: 1
-Received: from ray2.jf.intel.com (HELO [10.24.81.144]) ([10.24.81.144])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 10:38:31 -0700
-Message-ID: <9be8a4d6-41d6-4e44-af98-bd2d6eae6f71@intel.com>
-Date: Tue, 30 Sep 2025 10:38:30 -0700
+	s=arc-20240116; t=1759253968; c=relaxed/simple;
+	bh=dJ22hKA0Pw46/eMtwHJfDRVC5brR1Fd+Ptpn07rVw+A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iQPXv6kpt9ns/QeweRs3atVCCT7L6WHPFQCNtFut/4qoyciQ6CY2zkqMx6HJHjEdmos3zb7Gw9macf5qf+MjCchfzBxcIr8sQ/7n01zzPwIbWOKOvJnatEb4wEPEnnUg0dSlRr/JmBpfKSzivGdmkSN5+6p1DwgHcHE6MVdKnyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XZgU4oaW; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759253951; x=1759858751; i=markus.elfring@web.de;
+	bh=dJ22hKA0Pw46/eMtwHJfDRVC5brR1Fd+Ptpn07rVw+A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XZgU4oaW7BOwhHTup9t5ED9kRtmQRwaLIt55LbrgDlNFj2cTpUJLM3rmF4K7nwe7
+	 mzhsRicpsyW90HLjXAhPnzh6uL88b9OtuNvyZXvdkiQjnqed+GP+vUezVxLQQwsSH
+	 9IE3X6RRWecjefupjbGE6xef8EUrQFj1HYGxfrk4CzH6wS87YV9FEY7f6I3oGg8jZ
+	 zFhmhyt+cx593TSFStQReFII59EXGjy3oTDmVqpNS0eKqDH7RIiSGLXdpzt/r4xH8
+	 nup5qK7G+tPL+nw4k10p45y+vbNLMJBney+zVxYJ2Z85beI83r7yukT3QDOUouDLm
+	 459RYsd3StOH2D2E1g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mav6t-1uTDts2lzP-00aR68; Tue, 30
+ Sep 2025 19:39:11 +0200
+Message-ID: <277fbd11-6533-4f45-a846-cf31abfb06d9@web.de>
+Date: Tue, 30 Sep 2025 19:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,89 +56,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/16] x86/virt/tdx: Add tdx_alloc/free_page() helpers
-To: Xiaoyao Li <xiaoyao.li@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, kas@kernel.org, bp@alien8.de,
- chao.gao@intel.com, dave.hansen@linux.intel.com, isaku.yamahata@intel.com,
- kai.huang@intel.com, kvm@vger.kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
- seanjc@google.com, tglx@linutronix.de, x86@kernel.org, yan.y.zhao@intel.com,
- vannapurve@google.com
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-8-rick.p.edgecombe@intel.com>
- <1f25ef49-fb7f-449c-be1d-71c19465219f@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <1f25ef49-fb7f-449c-be1d-71c19465219f@intel.com>
+Subject: [PATCH 4/6] Coccinelle: ptr_err_to_pe: Omit a redundant space
+ character
+From: Markus Elfring <Markus.Elfring@web.de>
+To: Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ cocci@inria.fr, Alexei Lazar <alazar@nvidia.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Saeed Mahameed <saeedm@nvidia.com>
+References: <d5d3df5c-3cbf-403c-ad89-aa039ed85579@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <d5d3df5c-3cbf-403c-ad89-aa039ed85579@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O58Z0tenR95pqkFlVQReIQKIrnCZPgmwLTINoBPLcq/rz6je78X
+ I9wlB7XA+mOUULOWmo/zNnlAqjvgJ/txjtA1iKXNU43DPWWayOHLH8SqA/o9T+zYgyhf4iW
+ YIwasVpMiD3uBhIsx+vbs/6BzPtSHptLfo/2wdfN5jWR1DhrrGiYKrfx4gTCINK2HtLkg46
+ wXj6BsU8PCxu3kgTMh7nA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YGCqnEc+tpA=;J/TcG41QIuUmuFRkbV688znzMJ4
+ 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
 
-On 9/30/25 07:03, Xiaoyao Li wrote:
-> My understanding/expectation is that, when refcount is not zero it needs
-> to increment the refcount instead of simply return. And ...
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 30 Sep 2025 17:33:10 +0200
 
-That's a good point.
+An extra space character is not required after an SmPL asterisk.
+Thus omit it.
 
-This doesn't properly handle the case where the PAMT exists and the
-refcount is already incremented.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ scripts/coccinelle/misc/ptr_err_to_pe.cocci | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We need something like this with a fast path for a non-zero refcount
-that doesn't take the lock:
+diff --git a/scripts/coccinelle/misc/ptr_err_to_pe.cocci b/scripts/coccine=
+lle/misc/ptr_err_to_pe.cocci
+index fb4b5bf91081..b2db0dc3395e 100644
+=2D-- a/scripts/coccinelle/misc/ptr_err_to_pe.cocci
++++ b/scripts/coccinelle/misc/ptr_err_to_pe.cocci
+@@ -18,7 +18,7 @@ constant char[] fmt;
+ position p;
+ identifier print_func;
+ @@
+-* print_func(..., fmt, ..., PTR_ERR@p(ptr), ...)
++*print_func(..., fmt, ..., PTR_ERR@p(ptr), ...)
+=20
+ @script:python depends on r && report@
+ p << r.p;
+=2D-=20
+2.51.0
 
-	// When the refcount is nonzero, the PAMT is allocated already.
-	// Bump it up and return.
-	if (atomic_inc_not_zero(pamt_refcount))
-		return;
 
-	// No PAMT is present. Take the lock to ensure there is no race
-	// to allocate it and proceed to allocate one.
-
-	... existing code here
-
-Without this, all of the atomic manipulation is within the lock and the
-atomic_t could just be a plain int.
 
