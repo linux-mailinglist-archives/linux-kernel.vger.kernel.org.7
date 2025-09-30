@@ -1,166 +1,192 @@
-Return-Path: <linux-kernel+bounces-837764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916D3BAD220
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D208BAD22C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE423322F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:59:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC25419268EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C0A18CBE1;
-	Tue, 30 Sep 2025 13:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99992F7454;
+	Tue, 30 Sep 2025 14:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="O+35PJ3e"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KUCfnjlq"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9872B1A8F97
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B9D18A93F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759240760; cv=none; b=q8CToqkOZaHmeXc9h3LyB5BTE74fx1ef+k8Te3R96pXALsfUOFx/qoWHnlahqZ42xrV1UDTux/709aFbIBt8H3NO8FPpKTVWjE1iyvv9M9DIaNAzUrR8FDqZfUXpXr7VoI+tlVQhMcfdbmzCxfTohuBUOHu1t+KXNwpl/GgqieQ=
+	t=1759240980; cv=none; b=dZp+SQc4TVNZvVzEQemkS1DsvuQajm++lQgB1WPOW7UKr64fuj7lSFPkm/mzz3zDVrVzgjaYDJ2WCwiwEVOf4R4ZOW1cqlvCTk3Uv0g8P5GUCUK8F9xQGCRNDGQyfLWtdiTfz6K8fGiOaPJF86xUZueyNMZPR5AUxL2TsiNv4D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759240760; c=relaxed/simple;
-	bh=7ZIeyeEBb0qTqoKYPRyQaMzNn6s9dqeEoUQZcEJwHEw=;
+	s=arc-20240116; t=1759240980; c=relaxed/simple;
+	bh=hImG9Aug79IRyPKw7qzR2igYgWA5NDp2NJnsXWQxodY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXmgtC8Vc0xYf1S0bGpqfc/SAOfb5dPo3HTVuAvOODOChcYWzrhNiAKQwWkNl1338151PJ28miEDtrKz6itmABKxgHoCJeIYeY7mQJPNEBLRPojE0MHSseKO+OUffZ1VWMoGjo1n20ukIdR3DIg3Fi+WgWe6qSlGvrsC1/6PckM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=O+35PJ3e; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f605f22easo5408124b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:59:18 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HVGN+zxZGjEYEY6U6nB8cIKk+geYVowtSbPNpk2BycjX/Hj+hut/cUMJCHSaHNdsAzLM2+ZI2CRAbLZyM9oLJiven0XIeMRzuGaaur51hl5m5/Il8K60jP6MLVSof6PvClQqnTgFr52iw04QRGf1M/uarb4I+2o/qtVMkqzT9rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KUCfnjlq; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso12195083a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759240758; x=1759845558; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LjWUtHOtj5aDOxJQNu28PlCHm2FClKEoHbTsTRz97go=;
-        b=O+35PJ3e54uWAaWci050FttJZ34HJn7IAC9TK3oHFWY3ro/O55rqXrHwfcthCtvPDa
-         BJhtyjwCa7YYAkRLTxKAqcjglCoJ3m6/JFiWzJhPqEr/b47tAIifmT4COvH9XSvd4KO5
-         wXNChGQL8VBDvcySjtUwQpP81ZZl2S1H2Jq5Yqb2ngmq333ETP344ekmMzrdflvKDPl/
-         u1eTp2X3jgWcENsXb1ulMdMtgFYitI7eWuZWIGnyIXmqLr4paPhsvMvVwml2Id8l0S6c
-         jrq4NrCWTA1LZZCkUBepFJsYiPgL87wkv1pocCj1slk4x7Xezj6wEaRWblCc6B0+EtPW
-         eAHg==
+        d=suse.com; s=google; t=1759240976; x=1759845776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=db4oB+dnmVLJdBFQUKkZOAMclZ3E72AB5HReZPRQbFY=;
+        b=KUCfnjlq0xLkffq97Sx/RNTQJfpaCBHmpbg0jcv5sAeHROdHRYQ8Kw1J0fNnOl13aV
+         gzWmYn08DcWpnT8mGpgYe/VqTfxG6xG2THJ8ufEK089GJdTauG4sYMjIv9RWE/3q6PR7
+         uIai2HimDh+QAQ4DGb6mSavFquClRT2dPB+t021NQX1jDB7akP0W3nFbWco+zbHe5AjE
+         xO9JZqds196gqycXL14QpGgGxJUhXBT6JXP4UukGIefe/sn6giHLSIU7y5lH59QbqAAn
+         rsPEMdLu0j2lAkuFdJN/fZENpPKF6UlaOjucIT/QlYirYWXtYJBksWWtys8nKBv4XAD3
+         ssLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759240758; x=1759845558;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LjWUtHOtj5aDOxJQNu28PlCHm2FClKEoHbTsTRz97go=;
-        b=JIYGdBKu2oMFRQ+N00tRBT1VoGF9gisT2XHJQrUIy6W/MLkE63RVBaYDgMw660JXO6
-         UsX80pqs9y0ONn5frw8QLhm9jFsoEOYnYywlPP7GFM0+W5aDysgQNlHNDiiJLFkOEylj
-         if5ZSXndUzju45juLYsOjRmX5FRAzJ2TAUlPXS0Aay9RyLLG2J4sQoJqeOxzrJEzwSO9
-         8SfPRIkhDH8SMFsSai06Q0zyjVAwW4m0szD8h1UIfuAJaWbTjmT+Ac9XvNwPDnW6s7Q/
-         K8OPvARfbqVW2eUFKq8s4pJbqfmQ29lFMfK7u8Si19X8TVch02FCiRnGW2i1kd/aXfQQ
-         yaJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXWeJyffzVGWra6mhEegOqWsAwdyWynFfxERz1tSapwenIyAifPwKOId/dJ12v/bUIGvTqconNbWnFAac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUfyaMrPAyLXPpIMrd1EELGHSaHuduO5fbSvAHd4esT/46S0Em
-	FVO2EprMaNsCGZoNaawug7lO1n1PB+goZMiCd8uVwDyTYF0SefCKH+vFb3zN9H1/EIM=
-X-Gm-Gg: ASbGncuMr0WpeGLIz/2ieUNRQ7C9JEViUH/z7M4SumfKQGYzdYtXxYy+MC4EkWd7Yab
-	PK/Yi6yyFdoWWDGYPk+gTzKuR5tIvLAITn8hEP1Ae8VZ8NNG+dHvwADii/DbHr4ZL1F4JIXaV3M
-	QF2+UFlSU/gbBIvlSRzUtttn947c46SiXC4mXylq2EA03gzDrsDQp8y/U+ACBF5TI0GsDCrguOy
-	kEFksSXSpyx88xc93aZSIa0zrtKpkp4cG+yiBnskHLry8B1sQUhdYht/mx4CEj7IZGLr5vLSrTA
-	o9Nf/utrQNreX/QOqGwxKIdpOcKI/GLQ7lDkP06Lg3mW0Q/gIPPm2E+sd76DtuRRnxYmOPYYOYq
-	dlZ/ZRURFMNjzezl2kMOsxL1EHXkoiBA=
-X-Google-Smtp-Source: AGHT+IEgBdYFmpFsQlLd3igFNhSM2bn5LlcXWT1cbyPcqW/u7eTqHoO1i9rVJ1owB/tgZ5CnEV8DHA==
-X-Received: by 2002:a05:6a20:9f9b:b0:30f:7840:2c96 with SMTP id adf61e73a8af0-30f7840af75mr9397829637.47.1759240757873;
-        Tue, 30 Sep 2025 06:59:17 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53b9615sm14076293a12.2.2025.09.30.06.59.17
+        d=1e100.net; s=20230601; t=1759240976; x=1759845776;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=db4oB+dnmVLJdBFQUKkZOAMclZ3E72AB5HReZPRQbFY=;
+        b=ANOmtDJjVOPFv4ACX8CvWvzc7nXm+nLtvhTxX90KnX3/BaymAb4JMs2p4KSu+6ctyu
+         TXSvrDDaZVZ6VTlo1zruTlFmPs8MCB+TJm7E6vV2RE0+tbgT+S6YT+3sHnD3xMLwtiBJ
+         eEG6nXcWxOWQZNuVXWo+pv9U2tj9oF7n4nvhjAnTRyr70jzguFEAWO7Vqrr+wSmqj5EU
+         vlsrtYQPIWZF7EKfBApY0vWMxVM7A1V5MQpuDXFiON0m9eCrD8nkc5+wGtIYNPTSdiws
+         TLc7annAhFec+c2FIYJfd3l3fLIrQhCJVMT+rrtx0YBBmD+hulxB359EWHww6Q+To/w0
+         bNXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBCGmafwpB05S15UJDBuq1QImQu+BCSZ6iT8FMXW0xfqf/3YlnJ0AnWkhtALD0aH3kzwNZiSQyoxx9EJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzolNd3Z12BdGYPVWBzVNWPDDLeBfbFi/AP853KWWnbH8D+PnT
+	y+NJB6a9KBl+uH4Sd/hwkPcw6yRv6lW0s/uUQqL8IeAnK0Tmho1RVDm2sufMyTpQY7rj49S4JrZ
+	Y4Npz
+X-Gm-Gg: ASbGncu+/jKxl1y/hJ0DkqADWlYtiigSGnlB+kAQWXuLDKqamZPSGU+30gAvDA64UJZ
+	xTlJdP3kKs1SWxsKyR8YRpUrCjVLsHChaB2qVW/VNlsA/EzCr3jQoJnc80mxITP35dqywR2csPu
+	gXNhN1VOczBRAUacdaRqdUrpfIvaUobcZxW/N9eLr8CxZJ4efmy4rmx0+3blC6ZxjT3ID4zhBOX
+	cw6UmcbI/8tjrYqe+YZgJQAKwA8xVmOrTJBlHp8og9yedvRdBK6pUZi8CMTI6ZxnxD0JekpMlp4
+	w8w77OCgjSyvbi2sgJX15B5jyJutdOJEkIiuxY6EpXQ5LGjU9P+TOjLTHib0xymQ1rJpoVQJjgR
+	noxkQx0V/yizO4tbXs480lthTJ1IN5cZXCPEVv1/YiRu+NBkGLvAzOwIxZOMQfhZBd4+cD3Y=
+X-Google-Smtp-Source: AGHT+IEeAKRVJFWvUX+ebo0ADsGSIRuTxkgSHEm/uyOzRMG2ulX2Iq/k1vfZ2HZ/NayCWmtejwwsrg==
+X-Received: by 2002:aa7:d9cd:0:b0:632:9110:c012 with SMTP id 4fb4d7f45d1cf-6349fa8a537mr14218078a12.25.1759240975900;
+        Tue, 30 Sep 2025 07:02:55 -0700 (PDT)
+Received: from localhost (109-81-95-234.rct.o2.cz. [109.81.95.234])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-634a365093asm9741048a12.18.2025.09.30.07.02.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 06:59:17 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v3asu-0000000CZmQ-0Zal;
-	Tue, 30 Sep 2025 10:59:16 -0300
-Date: Tue, 30 Sep 2025 10:59:16 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
-	YiFei Zhu <zhuyifei@google.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
-	Chris Li <chrisl@kernel.org>, praan@google.com
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-Message-ID: <20250930135916.GN2695987@ziepe.ca>
-References: <20250928190624.3735830-1-skhawaja@google.com>
- <20250928190624.3735830-14-skhawaja@google.com>
- <20250929160034.GG2695987@ziepe.ca>
- <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
+        Tue, 30 Sep 2025 07:02:55 -0700 (PDT)
+Date: Tue, 30 Sep 2025 16:02:54 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Mauricio Faria de Oliveira <mfo@igalia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Oscar Salvador <osalvador@suse.de>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH 0/3] mm/page_owner: add options 'print_handle' and
+ 'print_stack' for 'show_stacks'
+Message-ID: <aNvjDsBuw3hqwy31@tiehlicka>
+References: <20250924174023.261125-1-mfo@igalia.com>
+ <aNVpFn9W0jYYr9vs@tiehlicka>
+ <4c2a467113efd085530eb055e4a4e1fe@igalia.com>
+ <aNY49sdoFVe03m_Y@tiehlicka>
+ <d9af42d5cb9d427632087c5f51e50501@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
+In-Reply-To: <d9af42d5cb9d427632087c5f51e50501@igalia.com>
 
-On Tue, Sep 30, 2025 at 09:07:48AM -0400, Pasha Tatashin wrote:
-> On Mon, Sep 29, 2025 at 12:00 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Sun, Sep 28, 2025 at 07:06:21PM +0000, Samiullah Khawaja wrote:
-> > > +static int iommufd_save_ioas(struct iommufd_ctx *ictx,
-> > > +                          struct iommufd_lu *iommufd_lu)
-> > > +{
-> > > +     struct iommufd_hwpt_paging *hwpt_paging;
-> > > +     struct iommufd_ioas *ioas = NULL;
-> > > +     struct iommufd_object *obj;
-> > > +     unsigned long index;
-> > > +     int rc;
-> > > +
-> > > +     /* Iterate each ioas. */
-> > > +     xa_for_each(&ictx->objects, index, obj) {
-> > > +             if (obj->type != IOMMUFD_OBJ_IOAS)
-> > > +                     continue;
-> >
-> > Wrong locking
-> >
-> > > +
-> > > +             ioas = (struct iommufd_ioas *)obj;
-> > > +             mutex_lock(&ioas->mutex);
-> > > +
-> > > +             /*
-> > > +              * TODO: Iterate over each device of this iommufd and only save
-> > > +              * hwpt/domain if the device is persisted.
-> > > +              */
-> > > +             list_for_each_entry(hwpt_paging, &ioas->hwpt_list, hwpt_item) {
-> > > +                     if (!hwpt_paging->common.domain)
-> > > +                             continue;
-> >
-> > I don't think this should be automatic. The user should directly
-> > serialize/unserialize HWPTs by ID.
+On Fri 26-09-25 13:47:15, Mauricio Faria de Oliveira wrote:
+> On 2025-09-26 03:55, Michal Hocko wrote:
+> > On Thu 25-09-25 16:38:46, Mauricio Faria de Oliveira wrote:
+> >> On 2025-09-25 13:08, Michal Hocko wrote:
+> > [...]
+> >> > Could you elaborate some more on why the performance really matters here?
+> >> 
+> >> Sure.
+> >> 
+> >> One reason is optimizing data processing.
+> >> 
+> >> Currently, the step to obtain the key of a strack trace (e.g., hashing)
+> >> incurs
+> >> a considerable work (done for all stack traces, on every sample) that
+> >> actually
+> >> is duplicated work (the same result for each stack trace, on every
+> >> sample).
+> > 
+> > OK, that was not really clear to me but the above seems to suggest that
+> > by hashing you really mean hashing in the userspace when trying to
+> > create a key so that you can watch memory consumption trends per stack
+> > trace (hash in this case) without post processing.
 > 
-> Why not?  Live Updated uAPI is handled through FDs, and both iommufd
-> and vfiofd have to be preserved; I assume we can automatically
-> determine the hwpt to be preserved through dependencies. Why would we
-> delegate this to the user?
+> Yes.
+> 
+> > Stating that more explicitly in the changelog along with an example on
+> > how you are using this would be really helpful. 
+> 
+> Sure. Thanks for pointing that out, and making the effort to understand.
+> 
+> > When the interface was originally introduced the primary usecase was to
+> > examine biggest memory consumers - e.g. when memory counters do not add
+> > up to counters that track most common users (e.g. userspace memory, slab
+> > caches etc.). In those case you need to see those stack traces as those
+> > are giving you the most valuable information.
+> > 
+> > I can see you are coming from a different direction and you want to
+> > collect data repeatedly and watch for trends rather than analyzing a
+> > particular situation. This seems like a useful usecase in itself.
+> 
+> Precisely. I can make that more explicit in the changelog as well.
+> 
+> > My main question is whether this should squashed into the existing file
+> > with a rather strange semantic of controling the file content depending
+> > on a different file content. Instead, would it make more sense to add
+> > two more files, one to display your requested key:value data and another
+> > to resolve key -> stack trace?
+> 
+> I see your point. Either way works for me, honestly.
+> Let me justify the current way, but it's certainly OK to change it, if
+> that is preferred.
+> 
+> The use of option files has precedents in page_owner itself
+> (count_threshould) and ftrace (/sys/kernel/debug/trace/options/*).
+> 
+> The use of output files needs more code/complexity for a similar result,
+> AFAICT (I actually started it this way, but changed it to minimize
+> changes). 
+> The reason is debugfs_create_bool() is more specialized/simpler to
+> handle than debugfs_create_file().
+> 
+> It ends up with a similar pattern in a common "__stack_print()" to avoid
+> duplicate code (conditions on parameters to configure the output), and
+> it adds:
+> - 2 ops structs per file (file_operations and seq_operations, as in
+> 'show_stacks'), for plumbing different behaviors down to different
+> functions, to call the common function with different parameters.
+> - It should be possible to reduce it with private fields (from
+> debugfs_create_file(data) to seq_file.private), however, since
+> seq_file.private is used (iterator in stack_start|next()), this needs
+> more code: a new struct for the private field (to store the current
+> iterator and add the new parameters).
+> 
+> So, I went for the (IMHO) simpler and smaller implementation with option
+> files instead of output files.
+> 
+> Please let me know which way is preferred, and I'll send v2 with that
+> (in addition to the changelog suggestions).
 
-There are HWPTs outside the IOAS so it is inconsisent.
+Sure, I see. The main problem with the option file is that it is
+inherently suited for a single consumer which is a hard assumption to
+make at this stage. So I think it is worth having a separate 2 files
+which provide the missing functionality.
 
-We are not going to reconstruct the IOAS.
-
-The IDR ids of the HWPT may not be available on restore (we cannot
-make this ABI), so without userspace expressly labeling them and
-recovering the new IDR ids it doesn't work.
-
-Finally we expect to discard the preserved HWPTs and replace them we
-rebuilt ones at least as a first step. Userspace needs to sequence all
-of this..
-
-Jason
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
 
