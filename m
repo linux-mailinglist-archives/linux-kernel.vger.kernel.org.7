@@ -1,147 +1,76 @@
-Return-Path: <linux-kernel+bounces-837042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3B8BAB25B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3BBBAB270
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D9E1C201E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1391C4A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C0E231A32;
-	Tue, 30 Sep 2025 03:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Fwu5AsG9"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC68228CBC;
+	Tue, 30 Sep 2025 03:27:33 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166A52940D;
-	Tue, 30 Sep 2025 03:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698C913777E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759202615; cv=none; b=VLafGFFqImaSr6amCOen6nKC1JpD9bl00gQwaPImx7ySl9QYF32eH4Rp+4F8bEYGp9pmCY/PkxtrrCq9dCZEJ5XbcSIaFR9dammvefF9qPieiWGUGzgxh6lBCJZgcq6cSdv6JjbMpbgnQGs1hhVqByoGJpvi1VWOO9JthYX+k8g=
+	t=1759202852; cv=none; b=Ie+j7i1mn+8yWywkS/mlLZLd1mqWcx0+9akMUkqILT6GTxWN9hWhBV73hRi1wcsKyvdikUsz4e9WWGAh+WgseCFRTPple2bJjQQF8sbFl1lYKdqslfiI07LCewc9T4ngFq6MLXDD5jZDPbqxZlWd0b/Hl5hY3vijkWGma+6z6js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759202615; c=relaxed/simple;
-	bh=eJh7zhLV5x7Mxn5GEAWbeJPUNyyO3U9W8Qlr8GufUhk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MfOEArYB7J20FBMmPNhwx7ikvxv0YjSwew4YkOedw7jGurUdP2lNDQu4uiG6v0edqt0g/m7tlYk1rC1kv0+Q2zqP8YDu0osxGK7HHfaHIpOjUBhJqU2m1PueOJfeaV+3ddX1UuTImiRADExKiI2f5q9eu9bFLpPe8FcGPPCewVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Fwu5AsG9; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1759202608; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=rrg8tK/c3UsFS3eLKyUv3jp0wQnj3xFNgYt0DA+mTfU=;
-	b=Fwu5AsG9VwkiDzm/68F6vwNOmggWT5wO729QcqriJJ819apDMcoYXTNGxQzj19tGU5BdWoWu/JdhZG1wOXsAsM5niYmluJNGfVcCA+T4rIZ+03AADWfxQwnB+NTrZSwKTrTBhlSiSXpx/DVJVmVjDtZGLEOUlFC9fcVcWEjvJ3c=
-Received: from 30.74.144.121(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wp9xPwB_1759202607 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 30 Sep 2025 11:23:27 +0800
-Message-ID: <52756d02-8bb2-42b6-b311-db9c28473623@linux.alibaba.com>
-Date: Tue, 30 Sep 2025 11:23:26 +0800
+	s=arc-20240116; t=1759202852; c=relaxed/simple;
+	bh=PQSBg812Yx1yXTtxwQuWqKA6s47bl8Wen48AF09fm2o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Nl0z1+g6PW9uhku2cwHaK6jEf2auYU6EUPoe1GtgC2SlVR0hMR2mPPVHz1066m1+AQcMkOT5oysrJMZ/e2EbouWlU8WIS7F9yAGdJQaM35h7yCenW7SnP6W6JTzEiPcMi8UM3Fn9HRfSnQnnr/Vzw170WAnldv+G9s/a+xKnlRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-927f4207211so205723939f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:27:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759202850; x=1759807650;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PQSBg812Yx1yXTtxwQuWqKA6s47bl8Wen48AF09fm2o=;
+        b=g9Uuancbmh/x8KFmjEn6vGdahuucEh1WK5sG6phDyNe2NSyTLH0SwZ4wGKDCVYmDoK
+         zpRFdibK36cG6PD2mK2JQ9T2fHyGjk3pEPZNIO5cZAgPeOP2oRb4tYoQtJgaVQtODGFi
+         C+B6+juyDqJdxMz8bfX7XRbOx+DJvr6zp2EBLiwUj9ypl0kU1baSIkIY+PvXVuVdA0m/
+         rFya80+repzwN/sVurLVCEAj8YPQ1ZdpD9Sp9reFAkEPFugvrJEcl6uJhCg1bsUI1V9Y
+         WbvPlwHH/ZL3qTteXvMVH2DcGo8rYFFR3Z3qJ+pEG3yIaOggmWjv+xhBbBwLlND/Elhl
+         txXw==
+X-Gm-Message-State: AOJu0YzZ1Tv8y9KQ/u5eE2PxD1eeAd1Qzef0z5o8R7z+rxMczk87SgcH
+	b4TjMzOVPGzZD7OsK2ZiREXBjxUIFjSlpnRcXwLnTHXrXeFx11Z1nFc4hGj2o4gpl3BhiQjWiT7
+	8hExE8cMYEv369KIOsXuIj5Vjvtp0bQ27bITGOHzx+RsdV7ThRb/ewcyTFgw=
+X-Google-Smtp-Source: AGHT+IHffwbbYHe5jEqnFDxVFZ19pPUc/2LtdPPbMun4qoaOiuKF/NNjN33inzLNotXquAJdB9uP6CZClwlF0gNu97lIdy0cVz8h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] power: reset: sc27xx: Use
- devm_register_sys_off_handler
-To: =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Lee Jones <lee@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250926-sc2730-reboot-v1-0-62ebfd3d31bb@abscue.de>
- <20250926-sc2730-reboot-v1-3-62ebfd3d31bb@abscue.de>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250926-sc2730-reboot-v1-3-62ebfd3d31bb@abscue.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:14ce:b0:928:69e6:296 with SMTP id
+ ca18e2360f4ac-92869e602f9mr951635039f.14.1759202850630; Mon, 29 Sep 2025
+ 20:27:30 -0700 (PDT)
+Date: Mon, 29 Sep 2025 20:27:30 -0700
+In-Reply-To: <00000000000094071d061e9d0f66@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68db4e22.a70a0220.10c4b.00e5.GAE@google.com>
+Subject: Forwarded: WARNING in drm_wait_one_vblank (2)
+From: syzbot <syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-On 2025/9/27 00:23, Otto Pflüger wrote:
-> Use the new device life-cycle managed register function to remove the
-> need for global variables in the driver.
-> 
-> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-> ---
+Subject: WARNING in drm_wait_one_vblank (2)
+Author: chintanlike@gmail.com
 
-LGTM. Thanks.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
->   drivers/power/reset/sc27xx-poweroff.c | 24 +++++++++++++++++-------
->   1 file changed, 17 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/power/reset/sc27xx-poweroff.c b/drivers/power/reset/sc27xx-poweroff.c
-> index 90287c31992c4889f9241e82a21a1949ecca7702..20eb9f32cb2b99adeb16502172adf9d6257cd05f 100644
-> --- a/drivers/power/reset/sc27xx-poweroff.c
-> +++ b/drivers/power/reset/sc27xx-poweroff.c
-> @@ -9,6 +9,7 @@
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
->   #include <linux/pm.h>
-> +#include <linux/reboot.h>
->   #include <linux/regmap.h>
->   #include <linux/syscore_ops.h>
->   
-> @@ -17,8 +18,6 @@
->   #define SC27XX_SLP_CTRL		0xdf0
->   #define SC27XX_LDO_XTL_EN	BIT(3)
->   
-> -static struct regmap *regmap;
-> -
->   /*
->    * On Spreadtrum platform, we need power off system through external SC27xx
->    * series PMICs, and it is one similar SPI bus mapped by regmap to access PMIC,
-> @@ -44,26 +43,37 @@ static struct syscore_ops poweroff_syscore_ops = {
->   	.shutdown = sc27xx_poweroff_shutdown,
->   };
->   
-> -static void sc27xx_poweroff_do_poweroff(void)
-> +static int sc27xx_poweroff_do_poweroff(struct sys_off_data *off_data)
->   {
-> +	struct regmap *regmap = off_data->cb_data;
-> +
->   	/* Disable the external subsys connection's power firstly */
->   	regmap_write(regmap, SC27XX_SLP_CTRL, SC27XX_LDO_XTL_EN);
->   
->   	regmap_write(regmap, SC27XX_PWR_PD_HW, SC27XX_PWR_OFF_EN);
-> +
-> +	mdelay(1000);
-> +
-> +	pr_emerg("Unable to poweroff system\n");
-> +
-> +	return NOTIFY_DONE;
->   }
->   
->   static int sc27xx_poweroff_probe(struct platform_device *pdev)
->   {
-> -	if (regmap)
-> -		return -EINVAL;
-> +	struct regmap *regmap;
->   
->   	regmap = dev_get_regmap(pdev->dev.parent, NULL);
->   	if (!regmap)
->   		return -ENODEV;
->   
-> -	pm_power_off = sc27xx_poweroff_do_poweroff;
->   	register_syscore_ops(&poweroff_syscore_ops);
-> -	return 0;
-> +
-> +	return devm_register_sys_off_handler(&pdev->dev,
-> +					     SYS_OFF_MODE_POWER_OFF,
-> +					     SYS_OFF_PRIO_DEFAULT,
-> +					     sc27xx_poweroff_do_poweroff,
-> +					     regmap);
->   }
->   
->   static struct platform_driver sc27xx_poweroff_driver = {
-> 
-
+#syz test
 
