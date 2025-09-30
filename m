@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-837636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF02BACCE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:23:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E51EBACCF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70DED3A80EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01DC19251E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594092F9D8E;
-	Tue, 30 Sep 2025 12:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1ED2FAC16;
+	Tue, 30 Sep 2025 12:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VeB6/Iys"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KayxsDOP"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D0E1DD9AD
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A217B34BA3B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235020; cv=none; b=E2RCXwwvRLTTY5Pd7q+WtAr1Y1riBA4XIjUPrEb27mp3UoRXId0L3ffZw0cAPwvaHlBpcW5ikuPkFq5fOCsIGULbal4A9+qO5poHnH0ry1nw6cfrI6NXxspJdHlWwxLWMq3WozMLueodXAJgBj9Sqz2RkY8fnv0x/k/ie7YW1Fg=
+	t=1759235109; cv=none; b=eUCfJe73EzqrNPTZIry639kJVkZ1JQ6Q0Sy4h4l9wr/PulAUsmnnMEQDpQKL4yW7xaIdWXdI0+zCID6mvkFtcrjBZv+oN9Dd44rhxKDdi8CiGF+c5hIWK+CaKRmRv7ebDAytMDW1YylYy1su4SilpFLoicCGb8MbdtWLER4z0CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235020; c=relaxed/simple;
-	bh=CFblSBEdSaQGPX0Gc4Q+qwyfooSQGZjP6fJV0qhJXws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dONG/2XFwyRMm5rs45aaBjUTOQaXlffTrypwPUkAtjHXOJitbYMMN2enxkP7i3+MO91NXmLp5DfDDdupJZi8lkFmJMVQ/6gBBEpEjewFTlMzgVcm1JE5D6e+GtcAu5sCmr1PJkfA/9f59iLrkovqfLo3/+HKd398g5Bf0dXc188=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VeB6/Iys; arc=none smtp.client-ip=209.85.208.170
+	s=arc-20240116; t=1759235109; c=relaxed/simple;
+	bh=N3iWQBr+C6sq5xql6Cd1AX/fvpXX92N8aQvLLb5U5E8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Xx+bKMX+gHzhvpmRao2PLaABHvF7aJU+WtTYkAanhQoMK35JC25w1TOWwp07QcRFBdVR/Qr5JgCO9IWhFrD4GhAQXLK//oNftOvo1CcsuAfM96l8aSYBdnLhBsfoTEp/JBIRNYX/7Cgz0rBRHqF9n3Q402CECjBeFePlWK7ws2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KayxsDOP; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-367444a3e2aso67541591fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:23:38 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3fa528f127fso4627685f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:25:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759235017; x=1759839817; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R5mPBHZgztFe+UJNNaee0Rp7S41YshdGbGpEnWAlyw0=;
-        b=VeB6/IysHU6UTkhoMmezC0i5vJzBLzgRMh/19vWeF7D8jw5B4rsja9YZjH8aMRw1xw
-         CnZvtj8YEFLkBIivPYiE7qkA8wiw3zpREhwRqUpTmJyKNXSBM05vKlRk50IMHcxjvK61
-         21g/NhbHx+tQlNcawKDn1+yX+8e5TCgt42WZVwUr37Fpt2nPnf1Vdb5+H5n9GAM7lHQO
-         yKw/O0JjBCgSFR9PEGwgdzj0Uf6J3dSFf3ytAkLjdpOcHLhSS+G/lXOM6GkZktOes6Nj
-         hSOf2ReqPUGL57uKMz+mxc+yZsO/oIedb/z6PF12QNUw4Bt9iqlfvstfYuJCcorGOB22
-         HxsQ==
+        d=linaro.org; s=google; t=1759235105; x=1759839905; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S6lOcLfmjHHMwdRKIuWAlaFWrbjWxKqUiXJMf1tdzpQ=;
+        b=KayxsDOPIF+Wrm+kQOBRpu9ibozip57hTC9ymTs/ic6YA3Pbm4IV40dKAMSqryYspd
+         wYOS6DtGkLc2WhIJyhphMPUgTdOeGA+gdXj88PhsNyE7E5BS6YHIlYK7eXN6n7RXvKy5
+         eSsT7uEhGonZxy+jDM8E2dQLHBU3uxHcabK/KgG6+e8WCJZ7EKHuvQs0cPEiCbb2jKlP
+         Nwlcu6c/YZltw9iltwQRCmPej+iXAk/rqErkHoH7uGuuyvNkFNuy7I24Yy+EWl4yNpa0
+         Hfd6fVPf4HkIFQyqMUm/0NpkNPHTuGHD4sEfrcPMEUtawlOtvTdc7CIvgsC7YtcVvIlx
+         D1vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759235017; x=1759839817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R5mPBHZgztFe+UJNNaee0Rp7S41YshdGbGpEnWAlyw0=;
-        b=ZR/uDXu3s6bj24RZ9cxjesfcD+NJTaBFPUZZ2EyccL1W+EVQyzUlmwR0CQFvk1yvVa
-         +4aNupgVORQOqqvKymSaAp7Kr2yB4L0wHNHOmP9wf0tjeOEhLddLcp0Cc0UzovKwfcG0
-         M9oTGwWgXfUH1gVDqGqemcecX0sKRRAECRPc04ySsrErx1ADaFTGq+9im9jgt9RrNAND
-         5D+p1xU3CeXzmOW+Vk0bTiLI3Aj1V71nT231AkR71VE/yveMIPrJ1oUBnZr5a0EYZLz3
-         xt/+PPPhzcrgLpbQJZC4cfr/jphZ0OkQpVgSHA+SaQVBkUVgA3ckkNj07bPRTcfQCkso
-         GOmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhTRMLbnlsRU8sByz4gtiqsk3dHlA2zeN58P9XQPcGf2Kfg/AEonQPaAacfHR+VaaozYqEd+pkwpmEDLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM1V3tI1MwR8DsNiqyPmSWku9a1uusGs8ebjW93WKXQJc0h2DV
-	hub2pjDuL0hWE4IJUPABz107Dz+lW7pQAaOyyX6A7UXzElifo3lh9Q/4f7lKP9jLJLezD8LsV0A
-	FS0mDeWx8d02OTOyEXON/ttJVBUNFRFWK/NhevX0+tw==
-X-Gm-Gg: ASbGncshNo+fBkzz5EHxV2uZ47cIX5ofCi+ltAubIw8khw8T8WpF/265qjCCWKC6usU
-	T5vj/Iyy+Hrcs19VmfNFc13CYooXnA7W1w2Lz4mudZ9MRfT2jLNVB6YFNbC5R4YzuPFQ53WJ/Ie
-	LpU7oF5TFvTJd5jh4Fb3i5qKy6M80A0RZDpvumh0ALrdZMAmdCNHfzgdDJAKtsLHrAHtjbHTULc
-	R8LKQ0pZpXuDYF3cn7nin+4Hm0k56J5BuhNkKLZ3w==
-X-Google-Smtp-Source: AGHT+IGSs2X9ijyFw3JfP/dbcoV1x5reGxsDzHTGImekBQcST65Fp+vF2qwnOoDfoooKD5etndPOpCBR4hOz+YmTkyE=
-X-Received: by 2002:a05:651c:1541:b0:363:f65f:ddcb with SMTP id
- 38308e7fff4ca-36f7d8c0278mr61009281fa.18.1759235016634; Tue, 30 Sep 2025
- 05:23:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759235105; x=1759839905;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S6lOcLfmjHHMwdRKIuWAlaFWrbjWxKqUiXJMf1tdzpQ=;
+        b=bWki1M6Gc9Gmri9SqjLz2Y80FdcFS69CKMpxhp6lK+yvuHdXrAx5Xr9HlZHGD7+6K1
+         YldxHYPNz8mlWpJO/l5VfVvwrmA2sQ8YnY3gGg9yOS6viyQ4wHT6xOjOquARQVpZbV+/
+         pDR+lz96wtcm6z5LSq6GX8mhtXi+9PEADRFCni3vdjfTYWk1dkaNht7fKs3V045rCg1V
+         O21xOTbcPyNgOy6lW/26JEnZxxs7fNINFsSXIMgP1RtGls8u2iqKV0ndXFvC4yayalWN
+         etRR+vR1m7yHY/ZA9rX04aLNBxuHxZKU30d0Cs2Zj4sYneA3p3PZFFavQ99P8zEMAfL6
+         NVhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXd3MQtxm9dY3s2bJQiNulBqZ328e5WKO/WM88QZae3PdN1iwqvnjuylyokfQ4WKbsw2lNaPeBd5tNWQoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI3iwv3KWoTs09Gaf1ibrcGDRPp7LbFfHEe7jooTG5RDDmThF0
+	DWXggaIRqiVQI8EHY7QegJWfI0WfF/nYyDWMpxoguXxNTva5+HNIfZslSdSLqs+SJU4=
+X-Gm-Gg: ASbGncs74jkAbPNmxebf07ZRCOGzO7VDP8YP2/L+rrr+qfAZqoaiYhBTVzqASF605gn
+	ttizf0CdWonIZfR6OGLlLutTerw0+wGfR16fM+2UkyEjY0qqWrlcfzscWeEJ2Ie1uN6TPnKGuoZ
+	cK576zKfV0HYPnrDEBN7eeCKwADjagmarb+hHU0VX/OnDt3fIuA/Ga7u0jsz76p1w94uIhP2BX4
+	UZU3bf7SjpM5zb/vEjgGcw7Rc0oDGEworTYq5a5seSfH2Wu42PKlG9mWgFwpxg5tsB874WAJZ1k
+	RmL2Sx4ogOuQWvDeMOYKRKnqdiXPTus6UIxsKNFzYUpsOP2I44v6PCrk8Umolr8D5ppjexMGPYz
+	gRRMCA419787xlHHTCEnliY4DgdiN53S7YFJXneD0ZFLYwHQPC9XUU2FP1o1QvDs=
+X-Google-Smtp-Source: AGHT+IHLfXLZ95GySBe9ZuBPDMocDcdm4e3YftS67zYrym4isY22xPTXaFrasbFvqRJbXcP0Bwxl5A==
+X-Received: by 2002:a5d:5888:0:b0:3ea:d634:1493 with SMTP id ffacd0b85a97d-4240f261673mr4414743f8f.3.1759235104947;
+        Tue, 30 Sep 2025 05:25:04 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fc82f2ff6sm22407808f8f.56.2025.09.30.05.25.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 05:25:04 -0700 (PDT)
+Date: Tue, 30 Sep 2025 15:25:01 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yan Burman <yanb@mellanox.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Amir Vadai <amirv@mellanox.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net/mlx4: prevent potential use after free in
+ mlx4_en_do_uc_filter()
+Message-ID: <aNvMHX4g8RksFFvV@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905135547.934729-1-antonio.borneo@foss.st.com> <20250905135547.934729-3-antonio.borneo@foss.st.com>
-In-Reply-To: <20250905135547.934729-3-antonio.borneo@foss.st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 30 Sep 2025 14:23:25 +0200
-X-Gm-Features: AS18NWDLuT_uRRtCvqxguuDTeW5zZ6aEk6iy9iHLeu2I6jlVchqTLlkeIzQ-p-Y
-Message-ID: <CACRpkdZCKXYEegV1cK6X9A9k8ORLWweBQs40PWYuTof3JgcC2w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] dt-bindings: pincfg-node: Add property "skew-delay-direction"
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, 
-	Fabien Dessenne <fabien.dessenne@foss.st.com>, Valentin Caron <valentin.caron@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hi Antonio,
+Print "entry->mac" before freeing "entry".  The "entry" pointer is
+freed with kfree_rcu() so it's unlikely that we would trigger this
+in real life, but it's safer to re-order it.
 
-thanks for your patch!
+Fixes: cc5387f7346a ("net/mlx4_en: Add unicast MAC filtering")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And sorry that it takes so long for me to review it! :(
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+index d2071aff7b8f..308b4458e0d4 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -1180,9 +1180,9 @@ static void mlx4_en_do_uc_filter(struct mlx4_en_priv *priv,
+ 				mlx4_unregister_mac(mdev->dev, priv->port, mac);
+ 
+ 				hlist_del_rcu(&entry->hlist);
+-				kfree_rcu(entry, rcu);
+ 				en_dbg(DRV, priv, "Removed MAC %pM on port:%d\n",
+ 				       entry->mac, priv->port);
++				kfree_rcu(entry, rcu);
+ 				++removed;
+ 			}
+ 		}
+-- 
+2.51.0
 
-On Fri, Sep 5, 2025 at 3:56=E2=80=AFPM Antonio Borneo
-<antonio.borneo@foss.st.com> wrote:
-
-> Add the property "skew-delay-direction" to specify on which pin's
-> direction (either input, output or both) the value of the generic
-> property 'skew-delay' applies.
-> For backward compatibility, 'skew-delay' applies on both input and
-> output directions when the new property is not present or has
-> value '0'.
->
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
-(...)
-> +  skew-delay-direction:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2]
-> +    default: 0
-> +    description: |
-> +      0: skew-delay applies to both input and output directions
-> +      1: skew-delay applies only to the output direction
-> +      2: skew-delay applies only to the input direction
-
-Unfortunately I don't think this will work, because skew-delay
-has a value, and with this scheme we can only specify that we
-want this value to affect both in/out, only in or only out.
-
-What happens when someone want to configure different
-skew delay for input and output?
-
-I think it is better to add:
-
-skew-delay-input =3D <u32>;
-skew-delay-output =3D <u32>;
-
-So the drivers that need this explicitly specified will need
-to just define one of these instead.
-
-If you want to be very determined, make the schema
-not accept skew-delay if either skew-delay-input
-or skew-delay-output is specified.
-
-Yours,
-Linus Walleij
 
