@@ -1,190 +1,115 @@
-Return-Path: <linux-kernel+bounces-838078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B013BAE61F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:58:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14AFBAE631
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A76194531C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:58:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EE974E06AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE86327F00A;
-	Tue, 30 Sep 2025 18:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA7328137A;
+	Tue, 30 Sep 2025 18:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLuiSbIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dNlRUwSh"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022AE27A928;
-	Tue, 30 Sep 2025 18:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A0E27E07A
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759258703; cv=none; b=W6cWAXETRndIL6XEr5Iv1qAqFVga7s8KDypERX8ESZUUzpMqKSpoz+x2UAnYOIAF7s403IBdtnarevUj/7qhSAl0FSkAQcT/1pi1+s9UYe8W5mU2FAFO9mvwTJmanRxokcJea4C9XubL2eDxm6SeblWX9lgTmEjkJOCynxx3gmQ=
+	t=1759258792; cv=none; b=DURUoLDV+MuJC60pJsJjth35VKYdmIIOvZ8UwCZIqp4jfRIlb1A1CwiwBv7muFlVUGUvW+VvjeAcx3ML9SLUsnwLOM9DnFAZncbJHyhZgvLczQbuiRwSml6bmaW9WtWozwmhP81RnCPoJOugSwJnqYbcCzR1HvrOO/+l1bwxxRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759258703; c=relaxed/simple;
-	bh=ftQwGWLKK1s5Gh7SLQ8fWSKuz7Q2521DX+kCSsNK2TE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbHDfg1uGfjZmFmD0p88HvcV4bgvjWint8HXcSkArAgXrG9E2HXiYNP7gLm4GJHABtktLmK74T9/mFZIYJuKc2k5b0Zn9BA1taVCVCluf0LXhYcSINVtuBrCqFMg3q9kdZFCH6hqqi41mRj5auCTDyGL1ufTwat0JI+kHy7HjYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLuiSbIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5835C4CEF0;
-	Tue, 30 Sep 2025 18:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759258702;
-	bh=ftQwGWLKK1s5Gh7SLQ8fWSKuz7Q2521DX+kCSsNK2TE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PLuiSbIWeUPuyaB2cIR6Hva0pJrqWgWKi2/sn6DMebDOKbo2K/1thjS5iF2U0h2JN
-	 Cez0uXzPvBOcDq6giu0Tg0y+q3Mkr7SQlXJjhBIpgfanco4oaWjrvDZujkaB0AKPGE
-	 GmMIFW2sVuDr+jQgYh1wlbefJovOhuJnogvui0fctqU8cFlJ9hPXw5xkMI2HzB1296
-	 uzTnDYxxhxcNWhe7Idupcodh0a6myEzn3JGZNBLIecr8wSYtPSLX6cyvE7Ei/CxTOW
-	 i/MbbNCYqEs6SpR9DTysteH7ULMELtZgXR2Y+4QzcgQXSha+DIzEKcq4xKGqA6gegg
-	 KG94pAdBE4uag==
-Date: Tue, 30 Sep 2025 19:58:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Stanimir Varbanov <svarbanov@suse.de>,
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-	Rob Herring <robh@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Saenz Julienne <nsaenz@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 1/4] dt-bindings: Add Raspberry Pi's RP1 ADC
-Message-ID: <20250930-overlord-scion-d60cff2ef1f5@spud>
-References: <20250925000416.2408457-1-svarbanov@suse.de>
- <20250925000416.2408457-2-svarbanov@suse.de>
- <20250925-outlying-causal-015d8ba33c53@spud>
- <89dd04b9-e261-4bdd-83ab-499e46fc9c01@roeck-us.net>
- <88bd67f2-de8c-407b-ba98-08663eee2d7e@suse.de>
- <CAMEGJJ0KqPX462iigbMP+fwoyZgZ1J1PqaWt82MrNTW1VMwbpQ@mail.gmail.com>
+	s=arc-20240116; t=1759258792; c=relaxed/simple;
+	bh=6nTNdN8QgQi439b7lJaE73iUb6WNpc9gie2egShamqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AhC8HVO3nHcsnhsuabUeNHpz2V1Zh4czQW/RJmnsOPIArOPw/fihOXV6y9faEEMseM+pJBLD8XDTSKjUb6zRq1UT1+9oV107z6CjsvGLqEvBdRfjFpA2PYZTNaSg8nXIJEwaqyg701CKDuokav0F42Q0kkaiB1FwRgsGv2YH1y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dNlRUwSh; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3682ac7f33fso2358671fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759258787; x=1759863587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GvDjTcYLd2HV1In46+KbPiFTSYwmuM/iqbqpVCZWQpw=;
+        b=dNlRUwShbzHApk2XtI2lUe4HiODWT2iw1/vBuWx52K9gqLkVuOv78YYihxG9O32953
+         KtjUgqdWpYvPCmEfQrpKCPOVCn2ohYuPI2iDUFN0qEH81BAMx5UCxT3nvIXZlV7e732n
+         xyDPv3/+6fD/S9UFm82QPeCanOxCimS5SWSKjP9wSH9yosIjHztUz69S6zh8F6kBofxP
+         xqCpzgSIoBa2RKxLiYDifHK57p9TYOfHSzvXWTiVNYh2Ay4LWPXaztGR+vmbQZlC9Tx/
+         RLEaRC7nYjKJWATNGucsm4IAgSIJN7W+ZIF/o4j4BJk5dO557lNeLCc+wMqxIumdo8UG
+         Didg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759258787; x=1759863587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GvDjTcYLd2HV1In46+KbPiFTSYwmuM/iqbqpVCZWQpw=;
+        b=UU2QxAygWZKLE75UK/wwGj9FsFQ/2ibcJZiokzW/kPEFDZfrmDBcc1FOzqfoUSqHav
+         bVacTGx2GDz1K8wMZRP7OsHWEuru+OMt8D18ojvanjKOw2VTLnPjas+nibE+pTS69kxA
+         6lwX9774jdPYjEDGdpC2/gtY4/oFCuuB9U7OjLQ1D+SeX21Q9sS9uIhoYt/d7aAsagaA
+         FjBhXF8qZAFD/ukqXJm6Cv3umnsBq4IgHz1al2tjqmbv6nm8b2q9L3+e0cv9oPpk3R58
+         j1YMAbRp0Kw8HrVR3Fle60v8LmxV25+eY9fyg+efvd6LKQPM6Ii1G90Nr/IsLv9VOCqy
+         B4Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ0XoXN5B+1xgg+lBkn0DUrGYGcILkudQYMcALKSvQFL0jfzUuIcr4X1oeLlHUeUWQ3ImOzkjlyxegbgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrSVS6GCeNVz8VB+JhwjapKF53FX1D9HNxVy1tzCV4weROfLqu
+	KUCYhkIOeyaScr9h70pSs74Vm6Kg7US0zW+fkwRDifIcIWrL/jI9V49ox9EWU5V4uCBcW0RwiaP
+	Z6X/j4XqaGDgyV8OdP2q6jdvFbQJ2iVdJY3xB2YEiUA==
+X-Gm-Gg: ASbGncvlD+yIHTd6ppffJEShP6ZKd8s+Sm6CRuIP0zoJtK1sp2t1+mzM+NkO1P/4sNr
+	SHt+vZHumIT1ficGxhnQMO+swwYhP5tfRoZ05MEOkjZtBQQcDDPlAv1KYHf1Xp1WDt/966AFyhD
+	dgOWE4sYxkbUKUCKn34FpQAvs4jGxNuCvUB6zbQf7fta5eQiSz7pKMEhmOyIlutHFOQtZ1NvFZ4
+	8LjMyxkCrB3fRWMpSjMWDIrG1gZcjHsRkwXWPaDRg==
+X-Google-Smtp-Source: AGHT+IF7yHga9ZFNNFlUCnGviYoo6xKxu/Xxa9beEf2FScatMz1T1FuiOO+dTwFx3frzoKVek9xu9weGLn68tdeB/cg=
+X-Received: by 2002:a2e:bc86:0:b0:336:ca1d:2289 with SMTP id
+ 38308e7fff4ca-373a677fdc0mr2955161fa.14.1759258787562; Tue, 30 Sep 2025
+ 11:59:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7ME1twZYxASzgwyN"
-Content-Disposition: inline
-In-Reply-To: <CAMEGJJ0KqPX462iigbMP+fwoyZgZ1J1PqaWt82MrNTW1VMwbpQ@mail.gmail.com>
-
-
---7ME1twZYxASzgwyN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250925202738.2202195-1-helgaas@kernel.org>
+In-Reply-To: <20250925202738.2202195-1-helgaas@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 30 Sep 2025 20:59:36 +0200
+X-Gm-Features: AS18NWC6gpnBlQLHWM2WkfMaHl46t22UwIFLpSG0ECkTHywqRwSwkayxYupfms8
+Message-ID: <CACRpkdZFy2Kb0BaEkMiTi3j89H-6G=chuZSijtRRg7QCCktLDA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: ixp4xx: Guard ARM32-specific hook_fault_code()
+To: Bjorn Helgaas <helgaas@kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 11:47:58AM +0100, Phil Elwell wrote:
-> Hi Stanimir, Guenter,
->=20
-> On Tue, 30 Sept 2025 at 11:21, Stanimir Varbanov <svarbanov@suse.de> wrot=
-e:
-> >
-> > Hi,
-> >
-> > On 9/25/25 11:37 PM, Guenter Roeck wrote:
-> > > On Thu, Sep 25, 2025 at 08:40:54PM +0100, Conor Dooley wrote:
-> > >> On Thu, Sep 25, 2025 at 03:04:13AM +0300, Stanimir Varbanov wrote:
-> > >>> Document dt-bindings for Raspberry Pi's RP1 ADC.
-> > >>>
-> > >>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> > >>> ---
-> > >>>  .../bindings/hwmon/raspberrypi,rp1-adc.yaml   | 46 +++++++++++++++=
-++++
-> > >>>  1 file changed, 46 insertions(+)
-> > >>>  create mode 100644 Documentation/devicetree/bindings/hwmon/raspber=
-rypi,rp1-adc.yaml
-> > >>>
-> > >>> diff --git a/Documentation/devicetree/bindings/hwmon/raspberrypi,rp=
-1-adc.yaml b/Documentation/devicetree/bindings/hwmon/raspberrypi,rp1-adc.ya=
-ml
-> > >>> new file mode 100644
-> > >>> index 000000000000..5266b253fd2b
-> > >>> --- /dev/null
-> > >>> +++ b/Documentation/devicetree/bindings/hwmon/raspberrypi,rp1-adc.y=
-aml
-> > >>> @@ -0,0 +1,46 @@
-> > >>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > >>> +%YAML 1.2
-> > >>> +---
-> > >>> +$id: http://devicetree.org/schemas/hwmon/raspberrypi,rp1-adc.yaml#
-> > >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >>> +
-> > >>> +title: Rasberry Pi RP1 ADC device
-> > >>> +
-> > >>> +maintainers:
-> > >>> +  - Stanimir Varbanov <svarbanov@suse.de>
-> > >>> +
-> > >>> +description: |
-> > >>> +  The RP1 ADC is a five input successive-approximation ADC with 12=
--bit
-> > >>> +  resolution (ENOB 9.5-bit) at 500kSPS. It has four external inputs
-> > >>> +  and one internal temperature sensor.
-> > >>> +
-> > >>> +properties:
-> > >>> +  compatible:
-> > >>> +    const: raspberrypi,rp1-adc
-> > >>> +
-> > >>> +  reg:
-> > >>> +    maxItems: 1
-> > >>> +
-> > >>> +  clocks:
-> > >>> +    maxItems: 1
-> > >>> +
-> > >>> +  vref-supply:
-> > >>> +    description:
-> > >>> +      Reference voltage regulator 3.3V.
-> > >>
-> > >> Looks like you're missing the io-channels-cells property that allows
-> > >> this device to be a provider of adc channels to other devices.
-> > >>
-> > > Only makes sense if the driver is implemented as iio driver.
-> > > Which would be fine with me, assuming this is a generic ADC.
-> > > The iio -> hwmon bridge can then be used to instantiate a
-> > > hwmon device if needed.
-> > >
-> >
-> > According to the RP1 peripheral document the information about ADC is
-> > limited and I cannot be 100% sure that this is generic ADC, but it looks
-> > like it is. On RPi5 board the ADC inputs are not configurable, but that
-> > could change on another board.
-> >
-> > I personally don't have objections to implement it as IIO driver.
-> >
-> > Phil, are you fine with implementing the driver as IIO?
->=20
-> The problem with adding unused functionality, apart from the effort
-> involved, is that testing it is harder. Will the IIO driver be
-> inherently better/simpler because some of the hwmon support gets
-> picked up by the generic IIO/HWMON bridge?
->=20
-> Ultimately we'll make whatever changes are considered necessary in
-> order to get this simple driver accepted, but it would be nice to feel
-> there was some real world benefit now for the work, not on Pi 6/7/etc.
+On Thu, Sep 25, 2025 at 10:27=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
+ wrote:
 
-tbh, I don't care how the driver side of things is done, I would just
-like for the binding documentation to be complete. If there's no usecase
-at all where the device provides io channels, then omit the property.
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>
+> hook_fault_code() is an ARM32-specific API.  Guard it and related code wi=
+th
+> CONFIG_ARM #ifdefs so the driver can be compile tested on other
+> architectures.
+>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
---7ME1twZYxASzgwyN
-Content-Type: application/pgp-signature; name="signature.asc"
+It looks OK to me
+Acked-by: Linus Walleij <linus.walleij@linar.org>
 
------BEGIN PGP SIGNATURE-----
+I see some other ARM32 drivers use it too, but we surely do
+not have a arch-agnostic way of handling bus errors so perhaps it
+need to be like this.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNwoSAAKCRB4tDGHoIJi
-0sgKAPwPyHVOPL3+vGEY13Q+XNBtSaCSUTqKSTF8wzaH2E54/gD9HS1r/CHIxVmU
-pM/olI54HwZAmhzTQDkVGvN9sY8T8wI=
-=fHEy
------END PGP SIGNATURE-----
+I think Russell created the fault hooks originally so CC:ing him
+in.
 
---7ME1twZYxASzgwyN--
+Yours,
+Linus Walleij
 
