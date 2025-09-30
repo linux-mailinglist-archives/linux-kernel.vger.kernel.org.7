@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-836913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA25BAADA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F165BAADC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A72AB179F88
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D24188B916
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0EB156677;
-	Tue, 30 Sep 2025 01:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51241DE887;
+	Tue, 30 Sep 2025 01:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="gy3W9hE0"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZXEQkeO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199AF10785;
-	Tue, 30 Sep 2025 01:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068561DDC2C;
+	Tue, 30 Sep 2025 01:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759195191; cv=none; b=Vrz7HgTTkE5o7rR4Qjv3EsXuZzNKZvWLfwW0qeijuT+oT+nI2jTE+gufRpRYBcoiUoQViXJsQVr97PV6Qkfo3XThBxdeBbaugSCYsUyOPxYeCiZjMr0INVOz3LMgVzURrwCr8vMRBeY3z2ZAQzzzvmCavXsCBpfR2j5qASi1fpI=
+	t=1759195255; cv=none; b=QUBBIHmgDxF1bo93/VPpTlU2ovAbPpnQPU4cNrqpXiqUIWoWe+DX5aSCzD3nV25SDZO0utxz79QVPyh0V28jumfVk9nJIlSqNeGWoehns+6nlXDOUf07jOSzm809NiY5dcf8lBl5gZfgQuNZJd4Yw2/xar7xrBfHXdWeZom3A/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759195191; c=relaxed/simple;
-	bh=+X2eBqyYecJUmoG6ArUGAgGMpp0cB/of+2r97/XfFJU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oVUmAa8dHM3wh4dh543rMHfHT+6CllnZB1NfJYdND4gWR6aZ+SADERzimAJS3IuVF74WxCVY65sgvjWliAs46n/DJTbhgVuVd2HD7LQCGTFqu6TqhmyAN7aCmkrD3iaXoGSw2vIIct0DebaOja9ktU0fAt0tIIjYDgIDutnaLhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=gy3W9hE0; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58U1Je1S2181329, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1759195181; bh=+X2eBqyYecJUmoG6ArUGAgGMpp0cB/of+2r97/XfFJU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=gy3W9hE08IbBsaO1dhFrCuN/3YJ9HeM9xs58AcWFe3Pc8khpwVF8+8AiKcXJy1eH3
-	 BE9C3dQ6D2eRLbtnciXHxVeMQZb8WhVVOyc/jALzL+nXEE+hlo9NVofJZYqjshipEr
-	 H4FOLwbz9XFWOrQ/liu0Jmr3LkryJUGsuRyYaqoljWo6gU4B9hXeYwV3e+sl2G65gB
-	 arT2SvlbFeIQKn+NFqNoJAwYKYhRUSHAAoesnIvW7Byi8X+YaB8jxqU714psGYm0dS
-	 KmOorT/ckkoVT7TyYiOwVKzf72e2Je4WrCM73/Wkx6C848rUuA8ZVe6b8afpiIktnq
-	 /NqqG0ZSnZmbg==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58U1Je1S2181329
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Sep 2025 09:19:40 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Tue, 30 Sep 2025 09:19:41 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Tue, 30 Sep 2025 09:19:41 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Yu-Chun Lin <eleanor15x@gmail.com>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
-        "visitorckw@gmail.com"
-	<visitorckw@gmail.com>,
-        =?big5?B?U3RhbmxleSBDaGFuZ1up96h8vHdd?=
-	<stanley_chang@realtek.com>,
-        =?big5?B?Q1lfSHVhbmdbtsDgsq7LXQ==?=
-	<cy.huang@realtek.com>
-Subject: RE: [PATCH rtw-next v2] wifi: rtw89: Replace hardcoded strings with helper functions
-Thread-Topic: [PATCH rtw-next v2] wifi: rtw89: Replace hardcoded strings with
- helper functions
-Thread-Index: AQHcMZ3/mdEYn0w0EUij6sEji8MiZbSq7NTQ
-Date: Tue, 30 Sep 2025 01:19:41 +0000
-Message-ID: <a7b36065cc1549a6aa8c2f2c95bdad3f@realtek.com>
-References: <20250930000545.2192692-1-eleanor15x@gmail.com>
-In-Reply-To: <20250930000545.2192692-1-eleanor15x@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1759195255; c=relaxed/simple;
+	bh=X22pEFpCAgMRW1UK5UodG0zf7Y6uxPShDgKLYOKw3ZI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=KBwCc/FKSKOtBY72+4c1UaFW05ELT6OxGJTiyZgBE+eslHMnIT9ayWOD8raIf4ABO974IlZbaiVMI9osDeryv5dHNesbdJDcVhdbMuzMR6lbfkWe+9sftDnDUBt/EMxGRvT+1yg32LXzPVKrXFdRu9/L3vKjwCvdzkcebQPkkgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZXEQkeO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81021C4CEF4;
+	Tue, 30 Sep 2025 01:20:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759195254;
+	bh=X22pEFpCAgMRW1UK5UodG0zf7Y6uxPShDgKLYOKw3ZI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=lZXEQkeO2EVxyntPgxq6Gql93fRNspkOZNZtbl+lq1HcCX92H2oyukLagXeNja6BX
+	 4DDkkDTh73oK4NoG01u8DTfeIjtW62B/F3nHksUOqYE0Ikz0jyXEHFEAVgFZU5Ryi9
+	 ACauuux9ZdMqfLx0/QTD9HyfbDKCEE3uCtnnSeEk1qBglr9aJc/BSpZNQlSEsJf68U
+	 tlIfrR5E//B4cHQJko8c+fR6qhncw/ghsPML0WHBQ1d3RypmPoK4d6Bcq6jq4AjPje
+	 Ud1xR/NDusWUt73DHEwJFJQNzWE2j3b9VKO4O0aypsg+oCLCXkG41Aq1Z8p25T70Fi
+	 4AfClI+xAaAVQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 346C139D0C1A;
+	Tue, 30 Sep 2025 01:20:49 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/2] net: stmmac: Drop frames causing HLBS
+ error
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175919524773.1775912.3053137579146685906.git-patchwork-notify@kernel.org>
+Date: Tue, 30 Sep 2025 01:20:47 +0000
+References: <20250925-hlbs_2-v3-0-3b39472776c2@altera.com>
+In-Reply-To: <20250925-hlbs_2-v3-0-3b39472776c2@altera.com>
+To: G@codeaurora.org, Thomas@codeaurora.org,
+	Rohan <rohan.g.thomas@altera.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ matthew.gerlach@altera.com
 
-WXUtQ2h1biBMaW4gPGVsZWFub3IxNXhAZ21haWwuY29tPiB3cm90ZToNCj4gUmVwbGFjZSBoYXJk
-Y29kZWQgc3RyaW5ncyB3aXRoICdzdHJfb25fb2ZmKCknLCAnc3RyX2VuYWJsZV9kaXNhYmxlKCkn
-LA0KPiBhbmQgJ3N0cl9yZWFkX3dyaXRlKCknLg0KPiANCj4gVGhlIGNoYW5nZSBpbXByb3ZlcyBy
-ZWFkYWJpbGl0eS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFl1LUNodW4gTGluIDxlbGVhbm9yMTV4
-QGdtYWlsLmNvbT4NCg0KQWNrZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0ZWsuY29t
-Pg0KDQoNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkv
-d293LmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3dvdy5jDQo+IGluZGV4
-IDVmYWE1MWFkODk2YS4uNjk1MGZlZDk2MjY3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93
-aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3dvdy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNz
-L3JlYWx0ZWsvcnR3ODkvd293LmMNCj4gQEAgLTEsNiArMSw3IEBADQo+ICAvLyBTUERYLUxpY2Vu
-c2UtSWRlbnRpZmllcjogR1BMLTIuMCBPUiBCU0QtMy1DbGF1c2UNCj4gIC8qIENvcHlyaWdodChj
-KSAyMDE5LTIwMjIgIFJlYWx0ZWsgQ29ycG9yYXRpb24NCj4gICAqLw0KPiArDQoNCk5vIG5lZWQg
-dG8gYWRkIHRoaXMgYmxpbmsgbGluZS4gSSdsbCByZW1vdmUgdGhpcyB3aGVuIG1lcmdpbmcgcGF0
-Y2guIA0KKFNlbmRpbmcgdjMgaXMgYWxzbyBmaW5lIHRvIG1lKQ0KDQo+ICAjaW5jbHVkZSAiY2Ft
-LmgiDQo+ICAjaW5jbHVkZSAiY29yZS5oIg0KPiAgI2luY2x1ZGUgImRlYnVnLmgiDQo+IEBAIC0x
-MjQ4LDcgKzEyNDksNyBAQCBzdGF0aWMgaW50IHJ0dzg5X3dvd19jaGVja19md19zdGF0dXMoc3Ry
-dWN0IHJ0dzg5X2RldiAqcnR3ZGV2LCBib29sIHdvd19lbmFibGUpDQo+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIG1hYy0+d293X2N0cmwuYWRkciwgbWFjLT53b3dfY3Ry
-bC5tYXNrKTsNCj4gICAgICAgICBpZiAocmV0KQ0KPiAgICAgICAgICAgICAgICAgcnR3ODlfZXJy
-KHJ0d2RldiwgImZhaWxlZCB0byBjaGVjayB3b3cgc3RhdHVzICVzXG4iLA0KPiAtICAgICAgICAg
-ICAgICAgICAgICAgICAgIHdvd19lbmFibGUgPyAiZW5hYmxlZCIgOiAiZGlzYWJsZWQiKTsNCj4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICBzdHJfZW5hYmxlZF9kaXNhYmxlZCh3b3dfZW5hYmxl
-KSk7DQo+ICAgICAgICAgcmV0dXJuIHJldDsNCj4gIH0NCj4gDQo+IC0tDQo+IDIuMzQuMQ0KDQo=
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 25 Sep 2025 22:06:12 +0800 you wrote:
+> This patchset consists of following patchset to avoid netdev watchdog
+> reset due to Head-of-Line Blocking due to EST scheduling error.
+>  1. Drop those frames causing HLBS error
+>  2. Add HLBS frame drops to taprio stats
+> 
+> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v3,1/2] net: stmmac: est: Drop frames causing HLBS error
+    https://git.kernel.org/netdev/net-next/c/7ce48d497475
+  - [net-next,v3,2/2] net: stmmac: tc: Add HLBS drop count to taprio stats
+    https://git.kernel.org/netdev/net-next/c/de17376cad97
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
