@@ -1,141 +1,132 @@
-Return-Path: <linux-kernel+bounces-837699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C99BACF9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:08:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D54BACFDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D3057A368C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994421766A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4E62D3237;
-	Tue, 30 Sep 2025 13:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DE730275E;
+	Tue, 30 Sep 2025 13:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="g28c2ui+"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="f8asWyTT"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D2714A4CC
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002A82D7DDF;
+	Tue, 30 Sep 2025 13:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759237709; cv=none; b=oFWFz7xIX3WuOdqFgTDQ/vVvAhsX0jOoKUdiBXnrrIR+WLcKd0nu9Eby2QkhSjzad5lqoYWlj9MMmRHBncia9W9KRFU7VsIjNni6XeDBeYE/8ct0SqpVQGlKJl0DodIIdbGvGvA7jspyueVlUhnDsM3S52iQv3hYnP0nu8+3IQY=
+	t=1759238061; cv=none; b=GogrIxqBE8nC07OOs7zWQ4eBupKzKqrgOjc/8w93XdsQJcV8c24RsgICNINla1muC14o6KjLphpWZSnxpq/DiNr/bX5YgdCBXPKnZK7iP/9838YamfV44iK1P/C9EgFRAncCXeSR83i2TG6KUlSWX9UYzcH9N4VJ44ot5SBuzjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759237709; c=relaxed/simple;
-	bh=QMo/NLhsSftlgF3+wcn015ZLW7Keu0wGP7s46oyS4Tg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IJN9FIFWlUOirdVeXguQoVSyg2Xi6tmYbCDOjY+16QKedVuQguFYWqQO6/2IMdUiBfYUVPep0Od6ELhMvZ85ZpcwfVMBIwUArF9cqHzczEv59sxuGwgL/C++c0qaAvsxvHUvaqyxY80+qq8s8tPF9NQpAQ8cr8+RcnXEfvFOK9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=g28c2ui+; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4dce9229787so53360351cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:08:27 -0700 (PDT)
+	s=arc-20240116; t=1759238061; c=relaxed/simple;
+	bh=9yEJzMwJrg8nW2CWuxK9n2LKu9lVJL5AAGsW7FMdtwk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NFv0H63SdLgS40770U1/S4fGB7yLcNrKacTRLDFqqCn5M6sL4FnNUXxk8aB5QH1lvwO6jQViESHuJ1wAYO9+NGutWe87ktgdEmt2LV9BGayZNg+RsLppIb3tWPoRLWHhnESuRlmb/u/RVFH+OWokbCUd6P4c+OhXZ4s3rSvot90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=f8asWyTT; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 460CA1D11;
+	Tue, 30 Sep 2025 13:06:07 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=f8asWyTT;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 4902721EA;
+	Tue, 30 Sep 2025 13:08:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759237707; x=1759842507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hRcDoRpxowwRXdHrfG07NYS9MxX7g9BwMVASN54W7s8=;
-        b=g28c2ui+qL3dKbIL6vmvxlTPAmZ0XbOgQyH8ZoL+0JTZfMHBC0E5eEmHcittFF3p39
-         E3rFKKje8H/ORZopMSvncEx1qSvQbqAxtX2uUOxminO8yV3bsC9u+9EYmEMdzvuZVq/y
-         j2CGqQ2Yslb9dbrlNhWLo8oKK5rk65Ma/79Eu3AAbQizaGnftZDOcYIfJF7cw7Io3U0v
-         FpCY1pDzPX/s7kc4RMWEXe0IWmqnc+H8t/q8eLsYrTui81X6ls9IhSk/fqe3llChUIWR
-         nixud6Pz2Bxg5yQvCbvONdA/W4HmjKelWV8C+ztU4ntC3aEezItLea70qjuLk3MdLFF9
-         BUtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759237707; x=1759842507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hRcDoRpxowwRXdHrfG07NYS9MxX7g9BwMVASN54W7s8=;
-        b=NY1RBWL8dOLigJcVyqjrV4CI5ykACHn8CzdyPhWalEiV6NqHINSrjL6TBnYBd7n6Rs
-         GGEY/DbI41QsJhwMa+s43hkJB4JZXe+9VopWMbyb6GdpZonyQinelmB9QDRVnuJRpRpY
-         6mWZBzmsy3qmMOMZOZabBa2IYvjviR6j90u6uTDswm3SwXKb8zoWFjEB2GjK96SR6/fy
-         C7aDjZoX2gzrsKiHXAIunkdLQtHC9rWsc4UziWMNuBO+cKzMDI9XnHc9Be7MCN2y3YpS
-         QtXIb5wUeN2vPDjPnMoZnkohk0ak31WpNdsGTjU5lrf9VhXFvz52pvw5Dwb1QCCZQt8k
-         qynQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4p1TUnZNKL5aFX9oSF0cQM7zXfmZWHFC97TxemtwgnrotMxUseVRB7/Jvaas0PbaKbTIiHDweebknvOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+QyO/0LLRIdaegP9ci6tIBOWJzCTzpMw4T00dFVzi1YIxLSDP
-	GN1hLmCffM+QRTDIQv3w/Y3mDsI5tx0PfrGLDBh0JfVBgVpyVNWBBC9a5OSVwC24Kk6sXAJEPH6
-	Nqy87Bl8NGG1FfBVWtiEo9yBHP0dGc1T8hH/uOcwG9w==
-X-Gm-Gg: ASbGnctTInS3mMfQg0u7A53T/+M6a4jFyMFAjww2J2XpiSsSIGJgJMpX6dL/03ziyV3
-	2IphTYdrJVZAzrFqc9eDMKSlrKxDrmAiB6hqkYiakMLORo+9oQmUNWNb+bIhW1ZB4wtc9Hhnsrw
-	+s127a2bENhXntuxJYoaJfO/dhs3GKR3Puvl6VWwU+BLYjkRUyTV0NrLQ5DpNdxdRwrpkozU3EG
-	xaZ+iXsXMiit0Ddiz+2VJ33iPP60163hjCa8aveqmeuoPMzrg==
-X-Google-Smtp-Source: AGHT+IFcMihqlPG0r/0rax5NoPUqvU2KK1RnwmX3J74Q6jm2qArxP58LY1QIdRkFSghRH0CiBSZeHf0F2FZ3n2h/HKU=
-X-Received: by 2002:a05:622a:212:b0:4b7:a8ce:a419 with SMTP id
- d75a77b69052e-4da486b7062mr313238641cf.26.1759237706520; Tue, 30 Sep 2025
- 06:08:26 -0700 (PDT)
+	d=paragon-software.com; s=mail; t=1759237723;
+	bh=jPuqJGVAy7IKIL7V2PDzHuE8jtrLL6h8srVPH7bCEBc=;
+	h=From:To:CC:Subject:Date;
+	b=f8asWyTTpS/z54T9m4sjy7uZteYwrsN/zcm3qtWshBoxZ+7LiHbQGOqn5wNAdxNVE
+	 19/hI0ZtxbpXuFgZ7IYVT0EHMMfm3uiB+WO417pYi+6GFBJ1YAiwZVUo8SUdLLIoke
+	 TaJ4DL9+pm8NfnVC4umixgWEnb2q6S92VpIDsosI=
+Received: from localhost.localdomain (172.30.20.168) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Tue, 30 Sep 2025 16:08:42 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <torvalds@linux-foundation.org>
+CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] ntfs3: bugfixes for 6.18
+Date: Tue, 30 Sep 2025 15:08:33 +0200
+Message-ID: <20250930130833.4866-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
- <20250929160034.GG2695987@ziepe.ca>
-In-Reply-To: <20250929160034.GG2695987@ziepe.ca>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 30 Sep 2025 09:07:48 -0400
-X-Gm-Features: AS18NWAN9frLXrJzwwTE-jqpam-hhSqeSv7aVqzTjHPfUwbIPaE3h_RH3XbXIJo
-Message-ID: <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Samiullah Khawaja <skhawaja@google.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
-	praan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Mon, Sep 29, 2025 at 12:00=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wro=
-te:
->
-> On Sun, Sep 28, 2025 at 07:06:21PM +0000, Samiullah Khawaja wrote:
-> > +static int iommufd_save_ioas(struct iommufd_ctx *ictx,
-> > +                          struct iommufd_lu *iommufd_lu)
-> > +{
-> > +     struct iommufd_hwpt_paging *hwpt_paging;
-> > +     struct iommufd_ioas *ioas =3D NULL;
-> > +     struct iommufd_object *obj;
-> > +     unsigned long index;
-> > +     int rc;
-> > +
-> > +     /* Iterate each ioas. */
-> > +     xa_for_each(&ictx->objects, index, obj) {
-> > +             if (obj->type !=3D IOMMUFD_OBJ_IOAS)
-> > +                     continue;
->
-> Wrong locking
->
-> > +
-> > +             ioas =3D (struct iommufd_ioas *)obj;
-> > +             mutex_lock(&ioas->mutex);
-> > +
-> > +             /*
-> > +              * TODO: Iterate over each device of this iommufd and onl=
-y save
-> > +              * hwpt/domain if the device is persisted.
-> > +              */
-> > +             list_for_each_entry(hwpt_paging, &ioas->hwpt_list, hwpt_i=
-tem) {
-> > +                     if (!hwpt_paging->common.domain)
-> > +                             continue;
->
-> I don't think this should be automatic. The user should directly
-> serialize/unserialize HWPTs by ID.
+Please pull this branch containing ntfs3 code for 6.18.
 
-Why not?  Live Updated uAPI is handled through FDs, and both iommufd
-and vfiofd have to be preserved; I assume we can automatically
-determine the hwpt to be preserved through dependencies. Why would we
-delegate this to the user?
+Regards,
+Konstantin
 
-Pasha
+----------------------------------------------------------------
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.18
+
+for you to fetch changes up to 7d460636b6402343ca150682f7bae896c4ff2a76:
+
+  ntfs3: stop using write_cache_pages (2025-09-10 11:01:41 +0200)
+
+----------------------------------------------------------------
+Changes for 6.18-rc1
+
+Added:
+    support for FS_IOC_{GET,SET}FSLABEL ioctl;
+    reject index allocation if $BITMAP is empty but blocks exist.
+
+Fixed:
+    integer overflow in run_unpack();
+    resource leak bug in wnd_extend().
+
+Changed:
+    pretend $Extend records as regular files;
+    stop using write_cache_pages.
+
+----------------------------------------------------------------
+Christoph Hellwig (1):
+      ntfs3: stop using write_cache_pages
+
+Ethan Ferguson (3):
+      ntfs3: transition magic number to shared constant
+      ntfs3: add FS_IOC_GETFSLABEL ioctl
+      ntfs3: add FS_IOC_SETFSLABEL ioctl
+
+Haoxiang Li (1):
+      fs/ntfs3: Fix a resource leak bug in wnd_extend()
+
+Moon Hee Lee (1):
+      fs/ntfs3: reject index allocation if $BITMAP is empty but blocks exist
+
+Tetsuo Handa (1):
+      ntfs3: pretend $Extend records as regular files
+
+Vitaly Grigoryev (1):
+      fs: ntfs3: Fix integer overflow in run_unpack()
+
+ fs/ntfs3/bitmap.c  |  1 +
+ fs/ntfs3/file.c    | 28 ++++++++++++++++++++++++++++
+ fs/ntfs3/index.c   | 10 ++++++++++
+ fs/ntfs3/inode.c   | 16 +++++++++++-----
+ fs/ntfs3/ntfs_fs.h |  2 +-
+ fs/ntfs3/run.c     | 12 +++++++++---
+ 6 files changed, 60 insertions(+), 9 deletions(-)
 
