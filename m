@@ -1,54 +1,70 @@
-Return-Path: <linux-kernel+bounces-838194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E330BAEA3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 00:04:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F411ABAEA63
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 00:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5849B3BB658
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60805194262D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FC12857FC;
-	Tue, 30 Sep 2025 22:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737472C029F;
+	Tue, 30 Sep 2025 22:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2EleeKZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6FGlfXY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D4319C540;
-	Tue, 30 Sep 2025 22:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD3919C540;
+	Tue, 30 Sep 2025 22:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759269863; cv=none; b=ZUZ3xHnSbqD+d0KlBSCpY2hbLex9byB02HevyIO7Af6Uz17MD8EfqDizhKKUPesuBfnVJRIEDcwb6kB6TWax/k9zfsi8DquQ73fYISOSkbNXUE46c3CqcyzKNv1OPDMyptyr3+2scBE3YFFm0hWuKS1qVKZXkvM+4P3/loMxTXM=
+	t=1759269914; cv=none; b=bOUtRcNKzC5j/wuFBfD76/jI1dZMKUIYFIxIjLQy2O3SCZ5OJmUB4X6WxhqPz9Em/LwRqCXEu0CWIzsKGGIg4PfdpHOstjrv1hy97PbLUqj6zczZRo0f7fUYVAUweboKBB8TABm/tHFodWdFA91hfgESIb9ZrS/lzLBrJSMEll4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759269863; c=relaxed/simple;
-	bh=OpwwMbhJZ2rP3NRKllcR4zXPav8iTuPDNfNUf+Ss5qg=;
+	s=arc-20240116; t=1759269914; c=relaxed/simple;
+	bh=CR+oDBlxH+wJG2IaTz6xx9ORxqdao+j6vCNUPR5fcqk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qpCqlimvQO7NhdRfVYZ1grp7x44WmL4GHy11w8LQJoiVf7/6IAm5Ijmh+uaG7xVxAdQ5le/CFXaesajCkXXVjcafFkHSSRP4vkutYBpJvY8M+M50BC1G9jBkLDAB1SG5qILzQ+33VzMsQ1ia5yp554O4O9rZGEhmBZsvmOMgkI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2EleeKZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384A1C4CEF0;
-	Tue, 30 Sep 2025 22:04:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p1MA9QyARRgjg9mLjAqlEU+sD4HmsIDd9622u1XQ/oHrc/6CXcoLXgm2eLic/Rdig1On1wEMsVKLLu71Nj9oUa1QP7DPH7HCjgYhSA+7qIy+9+9FQn181F2yTdHyA3UTG9BGSDhp03BJuOc6aBKwxMoG3yfEwqAY3KLEjNRT1X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6FGlfXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77F9C4CEF0;
+	Tue, 30 Sep 2025 22:05:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759269863;
-	bh=OpwwMbhJZ2rP3NRKllcR4zXPav8iTuPDNfNUf+Ss5qg=;
+	s=k20201202; t=1759269914;
+	bh=CR+oDBlxH+wJG2IaTz6xx9ORxqdao+j6vCNUPR5fcqk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U2EleeKZjQ1Omw1IsbFLaA1ULnAEHgUFQgnUl1id/tS1ccvWAEhAfEnNi7wuhNvJS
-	 tndXrzAEXbjsk53JF44IC6455DjclVyhDtDnS7O5w8Zn9sPgOdEsT8REZeUGoj0d7o
-	 4kcn89dLbrR8nqcacTt0klC9XYLBxOsfFVLSAztvlmZNAa+S4DePAWjLOuBDkRjCxX
-	 KX9yS5m4kto3HVylOWHFl/3pDxOrG73oRaWJ8er5QHSbzrgP/GO/TWlEeBHlQZtGml
-	 oj0yOzEX0sfDfyB7AJ4A0oatNkNndFfdAYtSlJtLYTi25FKiVsqIn7lQoWUzDy9t2o
-	 elJrTZ+EPYGMw==
-Date: Tue, 30 Sep 2025 15:04:22 -0700
-From: Kees Cook <kees@kernel.org>
-To: syzbot <syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] [mm?] WARNING in path_noexec (2)
-Message-ID: <202509301457.30490A014C@keescook>
-References: <68dc3ade.a70a0220.10c4b.015b.GAE@google.com>
+	b=N6FGlfXYVPrw+RIVXIQV2hF66+/z8rW9HJJQ7jXRju3ek7X4ydhic/wFCE2Zc+hbX
+	 Kvd4jWlup0zuTMibWUdcl4Utmypg5Ppr6nW+rengren7rUOB9pJBPxNjND0otGxQ8a
+	 51fKSZyEQjhPrQDxkuI6RGiyL8MA5cLfzecAj/Q5flYt49dAwUEewUE0PTGbUiQq9w
+	 iFEVhsyvWkU81EimfpkRXPk1OmfXekxoYuX/xZdOP1xxu97OrmQ/vf7wBZkT746aNF
+	 uelHffQGkf2aCeCG5obUOkR9925uv3IxbG8wLO4If25xCjLLtPKyKg/o7jY0od3wUo
+	 H5vvqlknYfAfw==
+Date: Tue, 30 Sep 2025 22:05:12 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Mukesh R <mrathor@linux.microsoft.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-arch@vger.kernel.org,
+	virtualization@lists.linux.dev, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, jikos@kernel.org, bentiss@kernel.org,
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, dmitry.torokhov@gmail.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, bhelgaas@google.com,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	deller@gmx.de, arnd@arndb.de, sgarzare@redhat.com, horms@kernel.org
+Subject: Re: [PATCH v1 2/2] Drivers: hv: Make CONFIG_HYPERV bool
+Message-ID: <aNxUGNmRyPCzyUCb@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250906010952.2145389-1-mrathor@linux.microsoft.com>
+ <20250906010952.2145389-3-mrathor@linux.microsoft.com>
+ <2025090621-rumble-cost-2c0d@gregkh>
+ <d7d7b23f-eaea-2dbc-9c9d-4bee082f6fe7@linux.microsoft.com>
+ <2025091253-overwrite-carol-b197@gregkh>
+ <a8c8305c-b518-c840-fc64-50bcba302725@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,48 +73,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68dc3ade.a70a0220.10c4b.015b.GAE@google.com>
+In-Reply-To: <a8c8305c-b518-c840-fc64-50bcba302725@linux.microsoft.com>
 
-On Tue, Sep 30, 2025 at 01:17:34PM -0700, syzbot wrote:
-> Reported-by: syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com
+On Fri, Sep 12, 2025 at 11:10:00AM -0700, Mukesh R wrote:
+[...]
+> > What was it made against?
+> > 
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 6000 at fs/exec.c:119 path_noexec+0x1af/0x200 fs/exec.c:118
+> Sorry to hear that. It was built against hyper-next, but perhaps I 
+> accidentally used our internal mirror. Let me rebase and send V2
+> right away.
 
-Christian, this is:
+Sorry for the late reply -- I was away for two weeks. I can pick this
+series up.
 
-bool path_noexec(const struct path *path)
-{
-        /* If it's an anonymous inode make sure that we catch any shenanigans. */
-        VFS_WARN_ON_ONCE(IS_ANON_FILE(d_inode(path->dentry)) &&
-                         !(path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC));
-        return (path->mnt->mnt_flags & MNT_NOEXEC) ||
-               (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
-}
+Greg, feel free to ignore this series.
 
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e5fd6f980000
+Wei
 
-I think is from the created fd_dma_buf. I expect this would fix it:
-
-
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 2bcf9ceca997..6e2ab1a4560d 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -189,6 +189,8 @@ static int dma_buf_fs_init_context(struct fs_context *fc)
- {
- 	struct pseudo_fs_context *ctx;
- 
-+	fc->s_iflags |= SB_I_NOEXEC;
-+	fc->s_iflags |= SB_I_NODEV;
- 	ctx = init_pseudo(fc, DMA_BUF_MAGIC);
- 	if (!ctx)
- 		return -ENOMEM;
-
-
-Which reminds me, this still isn't landed either for secretmem:
-https://lore.kernel.org/all/20250707171735.GE1880847@ZenIV/
-
--- 
-Kees Cook
+> 
+> Thanks,
+> -Mukesh
+> 
+> 
+> 
 
