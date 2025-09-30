@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-837310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0252BABEF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:58:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA52BABF1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6105192654D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEF5167B42
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0E022172D;
-	Tue, 30 Sep 2025 07:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FF224678F;
+	Tue, 30 Sep 2025 08:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKEnQkLh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWKt/7Zm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BF67D07D;
-	Tue, 30 Sep 2025 07:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB252BE02D;
+	Tue, 30 Sep 2025 08:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759219074; cv=none; b=KvQ6NmYq+awl+IxbDe+G1D31Tix11F6CM/f/vLM/LuA+bvG26tvHs+wLWL49VI1qQWvz0B6ycusrdGM6r4XcJcI9Wyeu9cUt3AniuMSZG2MuRfoan2us11+M9WVgIa572BaYarYTfhyYRv27MH40w3ap/bVOJdJxN+8NaOKlQkQ=
+	t=1759219215; cv=none; b=bJzcWp7i73ZhSx724ygdSxiJyVl2/3TxkrSOpO2Oif3yQ3+Zacn9ghEKAaBaHub6U3PCDClY6+sSYWsD0KTMxfR+UX3N5sqkPsvSYFDed/+tOpTJiAoGhxCB7cFqxwhHsMRq5Btv5RlVSO6HZuk0RSRVyeLGa0ikU/ePp286mVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759219074; c=relaxed/simple;
-	bh=i3BtTTr7nZIJz33RyVUpfLlfxu4epWOssHy+VLrcscQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNryZTMOREUpenBbTyZBZLuPwgBU+IJWtbAEVHEATQUGRgwQkm5CQrEouCeQvoXNkqTUCZH0zaLHzw22fwBq0MfenYPPn6iVjxfEnO80ddOZ/zm0PyAQhOzc1ni8lQIUQfnsiinHLc6r9RFaQtPlNLHUo2B1sbqD1fHrvnMcNzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKEnQkLh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879DEC4CEF0;
-	Tue, 30 Sep 2025 07:57:52 +0000 (UTC)
+	s=arc-20240116; t=1759219215; c=relaxed/simple;
+	bh=zG9qfsVVo81au4JBV44ET3CSYRwfxfbh6yvOOusU0BM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=jrxljKlZj72AlEa0+NL40ngx9yfW4F5THjqvDanieE+6QJoINoNns0CJB5La9ci4bCmJpycvLTt93iP1u7Kk9SjYTMEbUFR6juhPdz2pKcr4lqB+/K4mregfOnrLAVYIDHPYnNu4tTZlCVW8BXJumyusxCXKMI+Z9lYTdWZj4o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWKt/7Zm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E2AC4CEF0;
+	Tue, 30 Sep 2025 08:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759219073;
-	bh=i3BtTTr7nZIJz33RyVUpfLlfxu4epWOssHy+VLrcscQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lKEnQkLh/7QlrpMJsb5yRxE5AbBpzJMJNRvLELIbdmZqsMudIfJkl5IIjVlvWd45t
-	 9CdHZPBwdsFyTXltr7C+E/ikvBD8M3GKILT1uJbM/dqVtkzxxeI95NEbtW/zrd+Ep5
-	 UJKj7ByQ5cHM7iDUE5YdLldljkvDneKjj7T0/Jl4BAwLIv6rMPS82rffMeFvtqMlii
-	 rJtHqvVmDH+CUonBV/bnseaOumQHFjDS8yuzzqj15+2YNU8QWaz2EfS70aqZHG3yUz
-	 GrVG3wKTr88ok96rH2QGVO9OvriGTC+fSkO/DeP0k5odor2Iw88fzatiG+tDDQkt+a
-	 OH7f8EY3JlCxQ==
-Date: Tue, 30 Sep 2025 10:57:48 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 07/10] vfio/pci: Add dma-buf export config for MMIO
- regions
-Message-ID: <20250930075748.GF324804@unreal>
-References: <cover.1759070796.git.leon@kernel.org>
- <b1b44823f93fd9e7fa73dc165141d716cb74fa90.1759070796.git.leon@kernel.org>
- <20250929151740.21f001e3.alex.williamson@redhat.com>
+	s=k20201202; t=1759219213;
+	bh=zG9qfsVVo81au4JBV44ET3CSYRwfxfbh6yvOOusU0BM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jWKt/7ZmeH2xcwe6K2lJnWu6GKxrzEXRAfLHoPhgOzRVweVnec8JujNIoLgQTf2+/
+	 8Qqwz1uwI1K1JWEcjlrKv4YiA2Ex0dmkswmOyBHWhG8Gha9o2hyI4A16b4CxbIBDEO
+	 TozIF/vP6KfrZi+zkiKLXQpOJ/DcrHF4gKFX0Qu0Z09cOiS5iWOXzpipYt6md+ELXF
+	 U0KVDhVO34Fs95V2eRwhntUATxRxi0AcIRyaNKGbSqNgXw/K9odSKDQ/s1gAJvBnNK
+	 4ORS4hrp6FZ0Rw3YRDuEwFCEM7MBAuQfAxjwI8tS16fGivlKh/g3MU7MYICf7qA/gH
+	 yD01tbkNGKzzA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFAC39D0C1A;
+	Tue, 30 Sep 2025 08:00:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929151740.21f001e3.alex.williamson@redhat.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v7 1/1] Documentation: net: add flow control
+ guide
+ and document ethtool API
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175921920651.1883014.4986159833879484611.git-patchwork-notify@kernel.org>
+Date: Tue, 30 Sep 2025 08:00:06 +0000
+References: <20250924120241.724850-1-o.rempel@pengutronix.de>
+In-Reply-To: <20250924120241.724850-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, f.fainelli@gmail.com, maxime.chevallier@bootlin.com,
+ kory.maincent@bootlin.com, lukma@denx.de, corbet@lwn.net,
+ donald.hunter@gmail.com, vadim.fedorenko@linux.dev, jiri@resnulli.us,
+ vladimir.oltean@nxp.com, ast@kernel.org, daniel@iogearbox.net,
+ hawk@kernel.org, john.fastabend@gmail.com, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux@armlinux.org.uk,
+ Divya.Koppera@microchip.com, sd@queasysnail.net, sdf@fomichev.me
 
-On Mon, Sep 29, 2025 at 03:17:40PM -0600, Alex Williamson wrote:
-> On Sun, 28 Sep 2025 17:50:17 +0300
-> Leon Romanovsky <leon@kernel.org> wrote:
-> 
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Add new kernel config which indicates support for dma-buf export
-> > of MMIO regions, which implementation is provided in next patches.
-> > 
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  drivers/vfio/pci/Kconfig | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-> > index 2b0172f54665..55ae888bf26a 100644
-> > --- a/drivers/vfio/pci/Kconfig
-> > +++ b/drivers/vfio/pci/Kconfig
-> > @@ -55,6 +55,26 @@ config VFIO_PCI_ZDEV_KVM
-> >  
-> >  	  To enable s390x KVM vfio-pci extensions, say Y.
-> >  
-> > +config VFIO_PCI_DMABUF
-> > +	bool "VFIO PCI extensions for DMA-BUF"
-> > +	depends on VFIO_PCI_CORE
-> > +	depends on PCI_P2PDMA && DMA_SHARED_BUFFER
-> > +	default y
-> > +	help
-> > +	  Enable support for VFIO PCI extensions that allow exporting
-> > +	  device MMIO regions as DMA-BUFs for peer devices to access via
-> > +	  peer-to-peer (P2P) DMA.
-> > +
-> > +	  This feature enables a VFIO-managed PCI device to export a portion
-> > +	  of its MMIO BAR as a DMA-BUF file descriptor, which can be passed
-> > +	  to other userspace drivers or kernel subsystems capable of
-> > +	  initiating DMA to that region.
-> > +
-> > +	  Say Y here if you want to enable VFIO DMABUF-based MMIO export
-> > +	  support for peer-to-peer DMA use cases.
-> > +
-> > +	  If unsure, say N.
-> > +
-> >  source "drivers/vfio/pci/mlx5/Kconfig"
-> >  
-> >  source "drivers/vfio/pci/hisilicon/Kconfig"
-> 
-> This is only necessary if we think there's a need to build a kernel with
-> P2PDMA and VFIO_PCI, but not VFIO_PCI_DMABUF.  Does that need really
-> exist?
+Hello:
 
-It is used to filter build of vfio_pci_dmabuf.c - drivers/vfio/pci/Makefile:
-vfio-pci-core-$(CONFIG_VFIO_PCI_DMABUF) += vfio_pci_dmabuf.o
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
+On Wed, 24 Sep 2025 14:02:41 +0200 you wrote:
+> Introduce a new document, flow_control.rst, to provide a comprehensive
+> guide on Ethernet Flow Control in Linux. The guide explains how flow
+> control works, how autonegotiation resolves pause capabilities, and how
+> to configure it using ethtool and Netlink.
 > 
-> I also find it unusual to create the Kconfig before adding the
-> supporting code.  Maybe this could be popped to the end or rolled into
-> the last patch if we decided to keep it.  Thanks,
+> In parallel, document the pause and pause-stat attributes in the
+> ethtool.yaml netlink spec. This enables the ynl tool to generate
+> kernel-doc comments for the corresponding enums in the UAPI header,
+> making the C interface self-documenting.
+> 
+> [...]
 
-It is leftover from previous version, I can squash it, but first we need
-to decide what to do with pcim_p2pdma_init() call, if it needs to be
-guarded or not.
+Here is the summary with links:
+  - [net-next,v7,1/1] Documentation: net: add flow control guide and document ethtool API
+    https://git.kernel.org/netdev/net-next/c/7bd80ed89d72
 
-Thanks
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> 
-> Alex
-> 
-> 
+
 
