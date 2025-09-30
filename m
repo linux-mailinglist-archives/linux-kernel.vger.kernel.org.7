@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-837657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB15BACD8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:32:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E761CBACD99
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30F23A77BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76404189FA53
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314262F5A11;
-	Tue, 30 Sep 2025 12:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3392D7805;
+	Tue, 30 Sep 2025 12:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TbfAOzad"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lh/1rbeM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gGon9Wlo";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lh/1rbeM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gGon9Wlo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBB126059E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8380F262FF3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235561; cv=none; b=Adnl26999z73nqyfjpDD/wt5BM3BmwEj3Cc2AAe+V1r2LxjiYIg8LICzK4NVVvXO2cSBxfCvXCJuLzPrEluk764Br9Ylhz4bM7jWzr62HMTZdaN1tdm/aFyvxo0VZDqs0mLGsXHtaD+CWcex8joTwSu2WuviJ1l5uWCV7UQiqUQ=
+	t=1759235639; cv=none; b=H0j8gW/Bi88M8LQ9H/6CYJJXoKHsPxHFJ23wOLg2VEJ4ExkiVWWV/Bl2Kj+3kB8e79aecvvWVtrIiFBpbmNggq4yBE0Ep60xh88L6x2gZ4U0yitZGoqB/U1KyL2Du+0MG+RJ61lSY0csBJQpOHa3noYN0tTRZdEjMXk03paJnxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235561; c=relaxed/simple;
-	bh=YCihytYoFEPvc+LW3TD22q+/WXxZuDSV1H6/KH+fhMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Bi9tqnI5vbU2fwwZBYZxLXp+idbKjwAsqbHvmPq8IMXo0B2TKermxUa7Nb48xoZGaST+6lTQSAYvCRiDwFAsnSa5rvALjhOZWSPZRVk96+TJHhZIhuS+Mj6XcZ4WvjX+9TdI7lxFO1sLuk3mqvtzHJrOImmmutM9I3CnWTzPGRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TbfAOzad; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e2c3b6d4cso43954045e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759235558; x=1759840358; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oo5sOp/6AYH4FHUPQLIVvo5r8GtAmL8I6jk/YzlSnfk=;
-        b=TbfAOzad01ZGUUEA5Puh2vae6b3Knm7lZVFTy/q3yOFnUfokFrxjLTW+wHr3lKTXXj
-         eHhvvyy601PkwxuBjSCGn7op/FmGXHg7gexZmf0fTafo/1CmQ/su8CXYUxqzgsAo0T2T
-         m4mRgGknjA/FGhzASGqk/cslGBPjozhvqwZPPIU2o6o7PzUCGjwY2vX4KghbP3maBVvC
-         Lso7BziW28iqmzAl1dBJRuFUjWaUGbEziYyif6KkCAi/93ACF+alCRqCh/2x/X1c4Vqx
-         FqYvzMS4EBg2iMTqvQ9Fc5b8MfSxhHj8FpVmgxwAvVpwQc3jvir07Qm9MeBVEmWfzwiM
-         yD4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759235558; x=1759840358;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oo5sOp/6AYH4FHUPQLIVvo5r8GtAmL8I6jk/YzlSnfk=;
-        b=RxkWQR0IPdEQnNOl6FOb3ldG9nl3XWcZTmURhWL368ajS0TOMj5W2BVgaeav1P5Mfr
-         fHKDxOTXooofDCdxP48Vp9ruC6YK1DEWd9UXyKYySO7vQbk+405oQvGZnYrwMNFinrIY
-         0U0HSJYf6Ps05nQcm7FVrcF37g4z2ohGi85FrvN37CYHASP1W/nLCgGcHZX5Co8y5yfb
-         9pXz9UHVtI0rrzKQbTbi3V72IGVGR293fWnVbz5XzBSv0FEAy0Fmc1ZgY/AEh6LSvoTJ
-         hVkhKJGHuWI2zUR4b0uQ9S7UDfOwKfbWbM3inDzPhiHJTo6Z2lH4tEhovOHwW4Wk8wih
-         wfbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBoOA1ZCDNIXMecFqFBtDrhXhsKIt3CHaNK36PC/+wDYEdEXgCB4XGvNdz8ZyJrvaEge0LazFP/xmQI0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkcsNvlwvaAXP7giRY2R6H45u9G7KtQR21Yzk4cfvZIAIBCTtq
-	pEKN9tUBBlfBYMgsI1CPxtxVV00zViaetJ3Q/08EZtw4UPvAs6VzTPOtJ1hwsuzQJEU=
-X-Gm-Gg: ASbGncsBVp7Lo72hKSxeumhrIIs2nxsi9Lmk2FSTuIdjTMu9Qi3yTXKHdix3elvr94r
-	5fWcHVCqDlXD5E+uv+WJH0RIbC+zrXACBoMoaQOzWvl1dKRi5roxhslN/2uL5wKLxdjrAhrKZj8
-	ASMBgYw9gW4YzIB8HcjOB0srffgw2usQCYFUyD0+av8+DEIOfQ/y5qelY+Vv4upICWYZmoEs1CO
-	wZdFn0f2BpZScRSU90ddEHrUOxJCtahA9RdoQ+m1Kh78HBBD/akC14TBDPtm2HhFOS4xzTUZs7D
-	4XeuJoXwS+mqszg5EcyoGHlzDQ6X1aTtjsek1MysCmLXy5ixGMDR8Wj4/s/uo0LSQodr4cg+E++
-	gXg3oyF6TDWZhPPePvlfEzbDhzAXBFKSd6t2PKKcJ8dAeYDssTLXpS9G25KSW5cc=
-X-Google-Smtp-Source: AGHT+IGtnuuyKdDtHZCb3YIUp4ExKAmej4+wqFfGXxKG2xkl3FbcmieoXV3KE7JoIKB5oOnwCudRlw==
-X-Received: by 2002:a05:600c:154d:b0:46e:4581:6634 with SMTP id 5b1f17b1804b1-46e458166eamr108608805e9.29.1759235558058;
-        Tue, 30 Sep 2025 05:32:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e5707c1e7sm54805665e9.21.2025.09.30.05.32.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 05:32:37 -0700 (PDT)
-Date: Tue, 30 Sep 2025 15:32:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 resend] mtdchar: fix integer overflow in read/write ioctls
-Message-ID: <aNvN4kfJ2ROB353Q@stanley.mountain>
+	s=arc-20240116; t=1759235639; c=relaxed/simple;
+	bh=5nL1028SAfOhOIFmgXyOWd4pgxr29ALHzz2k1lwk948=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hI/x5e/l1XT+z94IL9u2gG5bNdd+1Fpl2cgBjP86PuZ7RWXz56cMWh4vFQUOoCB/q7jhCyrCb7HnGnSjjU+Kwn13oPWm7ilePgXix+lqMvXYH7kt3UuhA775UzucUCdVIfPA6iuDGfzQcyTWZbfuuTqgw2hdZXmOX84FdVKfTJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lh/1rbeM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gGon9Wlo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lh/1rbeM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gGon9Wlo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8AA301F7DE;
+	Tue, 30 Sep 2025 12:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759235635; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2znZdlMorDPELgJlQixTa7ClZzREQMnXYZcZV5K2D+Y=;
+	b=Lh/1rbeMa2nT6dhLtKUiqQcq4i6tXYHHwc9Y8N/3wVfoFIJGu3X6ykI2xwv2+Fu4ZLTKlv
+	GrCgyXH1qjD5+Dg/zgWOxKoJC4nhmY1Oz9gt7Dk+YVfr16xbxu0sKbu2sAkxTg+AAfDY9S
+	kp6wlBL4+nCsjAvPY8D5gp6RK7zDiFU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759235635;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2znZdlMorDPELgJlQixTa7ClZzREQMnXYZcZV5K2D+Y=;
+	b=gGon9WloFLG3kpbYxKaIFWfAPn+x1FAyg+eZme0Il1AZzh9OXq9ZgMBXYLG57xf/KmzoYI
+	bLdohzxfVRB4OEAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759235635; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2znZdlMorDPELgJlQixTa7ClZzREQMnXYZcZV5K2D+Y=;
+	b=Lh/1rbeMa2nT6dhLtKUiqQcq4i6tXYHHwc9Y8N/3wVfoFIJGu3X6ykI2xwv2+Fu4ZLTKlv
+	GrCgyXH1qjD5+Dg/zgWOxKoJC4nhmY1Oz9gt7Dk+YVfr16xbxu0sKbu2sAkxTg+AAfDY9S
+	kp6wlBL4+nCsjAvPY8D5gp6RK7zDiFU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759235635;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2znZdlMorDPELgJlQixTa7ClZzREQMnXYZcZV5K2D+Y=;
+	b=gGon9WloFLG3kpbYxKaIFWfAPn+x1FAyg+eZme0Il1AZzh9OXq9ZgMBXYLG57xf/KmzoYI
+	bLdohzxfVRB4OEAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 765C313A3F;
+	Tue, 30 Sep 2025 12:33:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5exVHDPO22igMgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 30 Sep 2025 12:33:55 +0000
+Date: Tue, 30 Sep 2025 14:33:55 +0200
+Message-ID: <87y0pwjf0s.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Steven 'Steve' Kendall <skend@chromium.org>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/hdmi: Add pin fix for HP ProDesk model
+In-Reply-To: <20250929-fix-hdmi-hpprodesk-v1-1-f4a7e714ef11@chromium.org>
+References: <20250929-fix-hdmi-hpprodesk-v1-1-f4a7e714ef11@chromium.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-The "req.start" and "req.len" variables are u64 values that come from the
-user at the start of the function.  We mask away the high 32 bits of
-"req.len" so that's capped at U32_MAX but the "req.start" variable can go
-up to U64_MAX which means that the addition can still integer overflow.
+On Mon, 29 Sep 2025 23:33:34 +0200,
+Steven 'Steve' Kendall wrote:
+> 
+> The HP ProDesk 400 (SSID 103c:83f3) also needs a quirk for
+> enabling HDMI outputs.  This patch adds the required quirk
+> entry.
+> 
+> ---
+> Signed-off-by: Steven 'Steve' Kendall <skend@chromium.org>
 
-Use check_add_overflow() to fix this bug.
+At the next time, please avoid '---' separator before Signed-off-by
+line; otherwise git-am won't pick it up.
 
-Fixes: 095bb6e44eb1 ("mtdchar: add MEMREAD ioctl")
-Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE ioctl")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: fix the tags.
-RESEND: I sent this last year but it wasn't applied.
-https://lore.kernel.org/all/Z1ax3K3-zSJExPNV@stanley.mountain/
+I applied now manually.
 
- drivers/mtd/mtdchar.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-index 8dc4f5c493fc..335c702633ff 100644
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -599,6 +599,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
- 	uint8_t *datbuf = NULL, *oobbuf = NULL;
- 	size_t datbuf_len, oobbuf_len;
- 	int ret = 0;
-+	u64 end;
- 
- 	if (copy_from_user(&req, argp, sizeof(req)))
- 		return -EFAULT;
-@@ -618,7 +619,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
- 	req.len &= 0xffffffff;
- 	req.ooblen &= 0xffffffff;
- 
--	if (req.start + req.len > mtd->size)
-+	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size)
- 		return -EINVAL;
- 
- 	datbuf_len = min_t(size_t, req.len, mtd->erasesize);
-@@ -698,6 +699,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
- 	size_t datbuf_len, oobbuf_len;
- 	size_t orig_len, orig_ooblen;
- 	int ret = 0;
-+	u64 end;
- 
- 	if (copy_from_user(&req, argp, sizeof(req)))
- 		return -EFAULT;
-@@ -724,7 +726,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
- 	req.len &= 0xffffffff;
- 	req.ooblen &= 0xffffffff;
- 
--	if (req.start + req.len > mtd->size) {
-+	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
--- 
-2.45.2
+thanks,
 
+Takashi
 
