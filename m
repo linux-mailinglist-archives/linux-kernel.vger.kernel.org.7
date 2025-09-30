@@ -1,157 +1,160 @@
-Return-Path: <linux-kernel+bounces-837773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79E5BAD284
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:18:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90A2BAD28D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C0B1C771B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1F14A15AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC7E1F0E39;
-	Tue, 30 Sep 2025 14:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2775C2F9DAA;
+	Tue, 30 Sep 2025 14:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hCTMaLnt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O9YuYWYc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yhxuy5ew"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E252628D;
-	Tue, 30 Sep 2025 14:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2A13FB1B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759241918; cv=none; b=CBhCW3TeVMio1YtRaOqXIKw+XueitCNszGxgTSz4AHvZGd9VLv8ZGQl9SswKJpEgzx1FYFcYaCfo539s17mM3egAbS0I95yEI98qVRdmCbwPzNeuqTFcFxJcsWJ9C9KjMdghOCOkLiKu3SbO0p8/s/DXA8q1rttsDU6mIRto9yo=
+	t=1759241982; cv=none; b=UvjN1eOfm/pzaH0pQpo4dZmsngMzkwzuR8h6Z5J/ESPddnUreQneJJHvhIlL/Y98IObvugrf+yrge3d8PhST/m9m0JwEsDcyCgqj4xTC1/+sbi05Oe2FqeZwvFrnDHS6TBaLdGSz0nnIEJap/Mzlg848nI8IhaQj8FHG8Nyf2Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759241918; c=relaxed/simple;
-	bh=/Z9vHgFitGnywr0evX36Ur856Ith0O06Y1XN/TLpmFw=;
+	s=arc-20240116; t=1759241982; c=relaxed/simple;
+	bh=GSqtGKeLEkDO8mOc2Pcj0fzEKM7m/L0trIvQsuHGZ+o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WG3RErY8zqPgURg78E2LCSRqqw/cB7WW4BmbC3JzHTb43iu0skV/DA76Ak+VSq+jjBzqxoEr1qv5mvOz1+5U/UXN/wcg4rb9z2DCgk0TyrJneYKE5zL75jbOWOAZfP5byXN7Y4q9PSx3y2W7hLJGGd3oRPTZ/HnoeYRjkbqicIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hCTMaLnt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O9YuYWYc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 30 Sep 2025 16:18:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759241914;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AUa3P5BA7Ar6Emm+p460eFkGleUa0VHRFnVxjlOnyUU=;
-	b=hCTMaLntdwlggOSyv9hkSECLvqBMw10QA9tj1urT5JtfSD5e1Zp0WHkWDXkDEM8wfjStlZ
-	0O7ekQeT/PwmtEvrfbngfoX3CHcqwfSxtwEVxVT9EvCFSmp8JIFA0kSUABT/wMYZJRhVu8
-	B3Cag+ffToUw6j6MxyKU1FYdXQAvr/2c1PEeQpfvuwK1MsDPQxqssZpqxvI5nPUJFVBjNp
-	DD4eCdATiyHRcWka+QiGQob+OkI/yT1xrQcjrPFQxZ30V+X9PBo69iZtRGk5j7dXHbfmZX
-	9NclbWHngx3avhu1KNe3nQijnZAb2o5UCS6FcIKNunkPlE6SbhPTas863ehtPw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759241914;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AUa3P5BA7Ar6Emm+p460eFkGleUa0VHRFnVxjlOnyUU=;
-	b=O9YuYWYcW/AwG7x6bM5tYChRYRjSPkkgFuA29+zfYUfMTG82dbT5DG501xc0ia70CXzl2e
-	Yj5rebxnQPkiZ7Bw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Nam Cao <namcao@linutronix.de>, Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] rv: Add signal reactor
-Message-ID: <20250930161252-ea116bda-293e-4f81-ab0f-075dd03dee52@linutronix.de>
-References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
- <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
- <20250922162900.eNwI7CS0@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KbcGB7gYQ66EuIKXN/rrUgexn+uJ87xcQmOZ+mh/MvtQOlEzIOVIFFBlMXQTj76Py+0QIiD8kBWHzygSssXgOOOEcruwgPagkjgUgcI60gVc4t7KQYFyRUY2NVTTo9QCDUG/IT52NQHKSVANFDrwrkrJ9bYlTVDEx9yUw++isYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yhxuy5ew; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so13887555e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759241979; x=1759846779; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UDjqq7jrvNjkxYsdvJ5PPEYM1NX5CibO3X/31GcV+t4=;
+        b=Yhxuy5ewqtHtT5+GU5Z05rg4D2EA75Q9+s7iO1LX9UbDq6Bt+M4RjAAM19KhgnaWED
+         1hgORD0jrKCg/7kEmkdm3DSv+aieNIIrRxpDtaCWrQxxH23L+HthN6u/s2qch9xOHJCx
+         h6hw0f0EduAWK7XUJfAQPv0tTUOXdELc2e0+Z+uqpxXTRpHlUU5Xxds1mwfcjKVW0H+4
+         Ybr/gCovG6tgtJN9J8fNwQ0fWBRYEOsbBmWzZdGaFWj1lfvqBBY7QYk9t7T2JmqkZc+5
+         J5DzHqU/CZtF+8uk5ZjZh1Dv1uzbhh07CXYsRFWTqMUTn0HNV0xP7UNm8aU9B6WtqDci
+         2OeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759241979; x=1759846779;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UDjqq7jrvNjkxYsdvJ5PPEYM1NX5CibO3X/31GcV+t4=;
+        b=Nkj3NdV+CbNL1I1wdgidnNYWGQkSIyu0+XJqhd0m8M9xSHFZVDZfsti7itx1DkAaNP
+         hN3ipiTA92HWcKQYZQm3hiGK1WASRLAoJShqbb4RXv07SYe6LI+ePue3nYmKDCZfoiGN
+         fGLEWsXQ/oDfwItSoP/kdiPFWyQQuPe52Vma8wLcgK4iAUm7CsU0RsWbdLgNGWMj9oXV
+         ip/UUuqgm6S5eNDCEV76tfsYTDWlett3QHpgvTdRItAFdm9IMceary5h+9f/nzY9yoCd
+         3I5uCcvRz98QCFVgd9Y0BbD8E4eCrVxG85GQUFH/5lItFFyf5xU4BfGwWNRWfCn2sWnJ
+         SXHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNW+Sal2roiuqi4XW/3Kn0v7Gug51OCC8Rf4HzbtqMHCr+cxUvhKsMF5a6qGwT2XOSJXa2/gLjhUUDONA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhVpPq+xqja/h3DxkWGhCdKGFY7AhXN1RGYXBiVQzbtsqgEUsO
+	k63smJZv/4fF+5sVBhIqgjzkBaoqQLfVpQws5MafbyHj9uEL9upZKaKchxiT3kSV1vM=
+X-Gm-Gg: ASbGncvlKun+4+82Zys8B+5v4AhYyDt3UN4XHXLhP7J3/Z77iOKJyxtpFcGSqhzEDRq
+	VUM7OOhfn+RcEqZzglK5Q7DteODjG5rWiaiNWWUKgflG9A7wCK8xjTPQNoFo7UjxVTeIKfWsoJe
+	xTrMT0mR9y1PTJqMhZjl9WDrDbUTfP7sn+ycGmHpEChy5qDGUz91E+mnVAcX3amFeQLjIpXz0KZ
+	Nb3oUL6Nh4CNObYYRSORV6U0EVkuDAUg1DEi47xc7PLspN5xe4AP5rSXpcIJn+TNwacRhmCLhRi
+	6tuw9+pZ0bSBW6qADpPsJVmSVNczJhuxhRQ4Sz2UyOSjf8WiLwX2TEIxkRtBbHm7vxFd6GfA4h3
+	edmmPvJdYsD9hw14XIOL7vY/UhUQ8LNZDxlhIUbwMPOHMvAMxMyTNji3IJArnyMs=
+X-Google-Smtp-Source: AGHT+IGZAD/5oX1ipv48pfdQeRFK5TqRyymJQORmTLlc+sbKKPcFj0zcXeK1EO+S0yZ9fWsth2JhjA==
+X-Received: by 2002:a05:600c:468e:b0:46e:36ba:9253 with SMTP id 5b1f17b1804b1-46e6127b93cmr330185e9.15.1759241978952;
+        Tue, 30 Sep 2025 07:19:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e56f3dc27sm67637095e9.5.2025.09.30.07.19.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 07:19:38 -0700 (PDT)
+Date: Tue, 30 Sep 2025 17:19:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: David Brownell <david-b@pacbell.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lubomir Rintel <lkundrak@v3.sk>,
+	Christian Heusel <christian@heusel.eu>,
+	Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] rndis_host: Check for integer overflows in
+ rndis_rx_fixup()
+Message-ID: <aNvm91A4Mmu_qamc@stanley.mountain>
+References: <aNvOh3f2B5g0eeRC@stanley.mountain>
+ <2025093055-awoke-facedown-64d5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250922162900.eNwI7CS0@linutronix.de>
+In-Reply-To: <2025093055-awoke-facedown-64d5@gregkh>
 
-On Mon, Sep 22, 2025 at 06:29:00PM +0200, Nam Cao wrote:
-> On Fri, Sep 19, 2025 at 02:26:12PM +0200, Gabriele Monaco wrote:
-> > On Fri, 2025-09-19 at 12:49 +0200, Thomas Weißschuh wrote:
-
-(...)
-
-> > > For now only SIGBUS is supported, but additional signals can be added.
+On Tue, Sep 30, 2025 at 03:56:39PM +0200, Greg KH wrote:
+> On Tue, Sep 30, 2025 at 03:35:19PM +0300, Dan Carpenter wrote:
+> > The "data_offset" and "data_len" values come from received skb->data so
+> > we don't trust them.  They are u32 types. Check that the "data_offset +
+> > data_len + 8" addition does not have an integer overflow.
 > > 
-> > Curious choice of a default signal, is this specific to your use-case?
+> > Fixes: 64e049102d3d ("[PATCH] USB: usbnet (8/9) module for RNDIS devices")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/net/usb/rndis_host.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Any signal should do. Looking through the signal list, I think SIGTRAP is
-> more appropriate.
-
-Indeed. Thanks for the hint.
-
-> > > +config RV_REACT_SIGNAL
-> > > +	bool "Signal reactor"
-> > > +	depends on RV_REACTORS
-> > > +	default y
-> > > +	help
-> > > +	  Enables the signal reactor. The signal reactors sends a signal to
-> > > the
-> > > +	  task triggering an exception.
-> > 
-> > This assumption is not always correct, imagine a failure in the sleep monitor
-> > caused by the wakeup event. The offending task is not current but the wakee.
-> > 
-> > This is a bit tricky because reactors don't have access to that task, just to
-> > keep the same implementation between per-cpu and per-task monitors.
+> David has passed away many years ago, odd that this was sent to him
+> given that get_maintainers.pl doesn't show it :(
 > 
-> Yeah, this one is tricky. We probably need to pass the correct task_struct
-> to reactor, but then I'm not sure how to handle the other monitor types,
-> e.g. per-cpu monitors.
+> > diff --git a/drivers/net/usb/rndis_host.c b/drivers/net/usb/rndis_host.c
+> > index 7b3739b29c8f..913aca6ff434 100644
+> > --- a/drivers/net/usb/rndis_host.c
+> > +++ b/drivers/net/usb/rndis_host.c
+> > @@ -513,8 +513,9 @@ int rndis_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+> >  		data_len = le32_to_cpu(hdr->data_len);
+> >  
+> >  		/* don't choke if we see oob, per-packet data, etc */
+> > -		if (unlikely(msg_type != RNDIS_MSG_PACKET || skb->len < msg_len
+> > -				|| (data_offset + data_len + 8) > msg_len)) {
+> > +		if (unlikely(msg_type != RNDIS_MSG_PACKET || skb->len < msg_len ||
+> > +				size_add(data_offset, data_len) > U32_MAX - 8 ||
+> > +				(data_offset + data_len + 8) > msg_len)) {
 > 
-> I have no alternative to offer, let me give it some thought.
-
-Thanks.
-
-> > > +static void rv_signal_force_sig(int signal, const char *message)
-> > > +{
-> > > +	/* The message already contains a subsystem prefix, so use raw
-> > > printk() */
-> > > +	printk(KERN_WARNING "%s", message);
-> > > +	pr_warn("Killing PID %d with signal %d", task_pid_nr(current),
-> > > signal);
+> Nice, I missed this in my old audit of this code (there's still lots of
+> other types of these bugs in this codebase, remember the rndis standard
+> says "there is no security", and should never be used by untrusted
+> devices.)
 > 
-> RV reactors have to use printk_deferred() instead. See:
-> https://lore.kernel.org/lkml/874k50hqmj.fsf@jogness.linutronix.de/
-
-When the direct-call path is removed, this will only be used through task_work.
-For that direct printk() should be fine, right?
-
-> But I suggest dropping the printk from this reactor. We already have a
-> printk reactor for that.
-
-Works for me.
-
-(...)
-
-> > Why do you use the task_work at all instead of signalling directly?
-> > If that's something not safe from a (any) tracepoint because it can sleep
+> But will this work?  If size_add(x, y) wraps, it will return SIZE_MAX,
+> which we hope is bigger than (U32_MAX - 8)?  That feels fragile.
 > 
-> If I remember correctly, sending signals requires a spinlock and therefore
-> may sleep on PREEMPT_RT.
-> 
-> > you should definitely not call it if allocation fails.
-> 
-> Yep.
-> 
-> We probably can get away with not reacting at all if allocation fails, by
-> crafting our tests such that only one reaction happens at a time, and
-> allocation won't fail.
 
-It would be nice if the reactor works without having to worry about its
-implementation in the testcases or even general users. In 6.18 we will get
-kmalloc_nolock() which is meant to be usable from tracepoint context. My
-plan is to use that for the next revision.
+SIZE_MAX is always going to be >= U32_MAX so it works.
 
+Right now size_t is exactly the same as unsigned long.  I think we might
+end up making it a separate thing so we can enforce stricter checking.
 
-Thomas
+> Then we do:
+> 	skb_pull(skb, 8 + data_offset);
+> so if data_offset was huge, that doesn't really do anything, and then we
+> treat data_len independent of data_offset.  So even if that check
+> overflowed, I don't think anything "real" will happen here except a
+> packet is dropped.
+> 
+> or am I missing something elsewhere in this function?
+
+Yeah.  You're right.  I don't see anything very bad happening with an
+integer overflow.
+
+regards,
+dan carpenter
+
 
