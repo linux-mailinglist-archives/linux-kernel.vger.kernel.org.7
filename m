@@ -1,193 +1,125 @@
-Return-Path: <linux-kernel+bounces-837977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDD7BAE299
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:22:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAC48BAE2A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714F04A3E4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:22:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B4D51C3E75
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA322FBE16;
-	Tue, 30 Sep 2025 17:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B69F30BF62;
+	Tue, 30 Sep 2025 17:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Zvd+J7jT"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J+9hjDoH"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCA330C600
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4036A2FBE16
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759252931; cv=none; b=kECLqFpVOPkqYNK0EA2nHFrIqfEL3BsxpUMHoCj1woBXNnmLG0/sETKtJJwa/gMb+ZTw1RgLJr4PuybOUGaoFLmP8vBxvbDcnzalBpSUIeXJhaNynmyhMELRt95Xr0HAvQmOOWHBmTHKSoUFbpkviINdNs3EoBmShgKjmmWb8o4=
+	t=1759253003; cv=none; b=QXvhvuHr3+dP9UWzxaWFNWR0FtBGSYS9RklvtEieNN1qZo7AD52vQ2WX3eX1RovhEaOkWY2VFoUA1ag9yWcIaCAwPIJ1SnNA3tY2ngaP+H6bNuVLl7aZbHnc1MQcIa6tj+0UcKetTAi+OPCZpAgOaZy+QIVE4Wys90OWlu3P1p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759252931; c=relaxed/simple;
-	bh=ygwUX/1tQYNO8Z3SG4OQhTz6XDitcn9QQTD2XNDaWnM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Cf8BVKZO841ObgSRJJJdVR5qAVDxe1uF/jXCLQjVWvMIiKwomZSXLg9S+dRhyzNVRjGNQWyB5GIyOd7Jj0YjZ294KE68JW6ltm7fzWpjNg4UM4hj7r32z4MBn9iH1pfgqJfeyS0nopRJZxWcKFwElysjUN5S/raH2TVvcPWqOUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Zvd+J7jT; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e414f90ceso11384525e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:22:06 -0700 (PDT)
+	s=arc-20240116; t=1759253003; c=relaxed/simple;
+	bh=Gmprb3G0hVbY/wqnk/AWfgc0XcA4SLvjCB8vCR8Kz1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ygp+wxmE8p0eQ/cydwH/qLk2bLMZmTFawySDPQcS/D6GFFydy3eWN99r/KLqdF7SST9kYyLo6um/Jfgzn7u+59zKnk/6gJf2R1+EBJ0b73Dc4E0EmY3YWnDh9MYk8aBL1YCFVTvDt77n1ZLZmoOyx6rh0clZZ0hNOBbXQQhIYoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J+9hjDoH; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4dac61ed7a5so53261151cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759252925; x=1759857725; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aLcpX2pmqFVTyeyKqISxLvLObbz2xb7M6zZbF5c/M0w=;
-        b=Zvd+J7jTQxIXBbFVBAYjBLCFyOuawf/75RRdvoywV6FFxNOpTq70QLkFn2KEevWFPg
-         C7jK+MWyFwJSERSHEUNF/XUZMyMKk4hTRZIVUX92+BQ2BPsbY1mqQx3FPlVXyN7/YbCT
-         soB7nDCACTI4Y8wI/A3vGcm7WLzMPm7SFltIqPipk2UPYu75d3CWB6Xt3kw7ekyejRKM
-         W6pfT00VqT+Rrz+SFzwz1BGaYo15x1Sg5xqyQ3kx87oib2kJhb7EHwhPITgrnZm+8IWn
-         xn8tIfBfjG6iJbkj/GkKcvygBB7YFoY0HzeHSMCtJ/Ybr1xvMrurnoFM/WYi14MW1bLL
-         5kwQ==
+        d=gmail.com; s=20230601; t=1759253000; x=1759857800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sNXg0KH+3u6gOVaOqmzWivNbyQ6+EgiPLfdVOQgDUu0=;
+        b=J+9hjDoHRYzJQxLIASQpF85NhmT8TKvp0GMN7GlIFhHhG5RGsAXDYebJDXMr1GD6pb
+         OPUVoH8SIl+E607J9M533JIRiMYO8EpRdNeCd+kKU0ZmVmsDCKh/+LesbtfjTqf7r36r
+         X/FpGULbPwqgQFqo6Z0NYqRSv41yELkQYqav/rPRHr7iiNkkUqoaR9n5NamqSqp7J64l
+         pRMypillSb06sU7eL73TuOfOu/LW5+ZH8/08u9zt+VhVbTiJuIEktN9wfpTYBb1i0g7G
+         t9qfEDrjtDDHMeOS4yX+fs3B+w61XRTcsVBN51Rt8U0MnwMv3wGttLvImvIxWEbnJ9D4
+         qO7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759252925; x=1759857725;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aLcpX2pmqFVTyeyKqISxLvLObbz2xb7M6zZbF5c/M0w=;
-        b=H2PNKoHPy784XHrj/4nGj9XT3GBrIkaH9iKBPfyDiLgxr52H33lLGDo7tl+MdZKDZa
-         4ut99Ncc1pR8/pPVHmgOI2u/Gy0grIfe3QwVsYAMzezyX7eO6PKo1tMmV9EBPhspO4wo
-         Y7hU8U9s8yDfl3kbf4daRFQ9WKYhd0hFIjygclIAesUeC4LhT8unavK9Lev48dkcOSYw
-         /CfRYmJ8VCSQn7RwePTknEAc4rvzSVU5TtylUGnoV1uzblcopuir/LGXuwZRI6kE+Jq9
-         R7aleDwTZTudiIzNwx9PtiUSRv+tEzJXN/lu8Rv3DDldgxqXAQOx5CC9JM0xBOvPlPzG
-         D/hg==
-X-Gm-Message-State: AOJu0YzeWqQJCwzgT2eThljCwieKdahSdH3s4FFX5zRNeNMFqYC14KeZ
-	ZRgUaKnNsfTH2mE1dwiIH6PH0GiqqoKXlsc0p3eBQ93/rY2htM9TnxnExOsZOO6K5Ys=
-X-Gm-Gg: ASbGnctnWqJppgNuF/qB3jcTUrGEszRiXiCiTYn74tlmjVswb1Qm/jrIT123ZApu6bt
-	4y0q/9GQB8VgiPVt6M8SEwrw296CG3qTmVkZNJDm4vMPl7pryogtraJtyb5v8yy+VMtCfWEBX6T
-	Fh9JzfJZR6pTCsLuHeglCKztvuttgxEKG0pwQsUr62x4U7DPeRBStpIFYxEYflOTBGAs2p2t9qx
-	2IO/RADhzb4H2WWGVjOm2HlZVszi/UqoQgxrpwzYwJNLvIjuMrA7B8TvpLAiUTVsBRSuJUL0Zq/
-	RBEwnGqGAx5YwGZ3n75Yjr3vKmUYr2D6v0UCq3Gmaz22C2/W10nqueV221YEhKVwp6E5102rzVf
-	TErCMcySVt2FYTqeuGYwMs0xrHO2fFkcRH9dITV9dG1oGOQ2d9d76gOITxfNmMUGn2f4tJA==
-X-Google-Smtp-Source: AGHT+IE6+GIKVcLHfdesBGw0a0n3RqOmAcVF/EI842DFmf+4JhKX+V5imSFpFavv7JiYyYzgPEqBMg==
-X-Received: by 2002:a05:600c:4e52:b0:45b:7b00:c129 with SMTP id 5b1f17b1804b1-46e612e6f9fmr4823605e9.35.1759252925439;
-        Tue, 30 Sep 2025 10:22:05 -0700 (PDT)
-Received: from [127.0.0.1] (88.36.160.45.gramnet.com.br. [45.160.36.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a17a0dsm2459465e9.17.2025.09.30.10.22.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 10:22:05 -0700 (PDT)
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Tue, 30 Sep 2025 14:21:11 -0300
-Subject: [PATCH v5 5/5] kdb: Adapt kdb_msg_write to work with NBCON
- consoles
+        d=1e100.net; s=20230601; t=1759253000; x=1759857800;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sNXg0KH+3u6gOVaOqmzWivNbyQ6+EgiPLfdVOQgDUu0=;
+        b=GJry/ANLRZgufrfm2aJwNT7b4qupFrljm38EMHFH32VF5DzxXpKkbfJ+9pkyeAW3K1
+         Cni1/YaNQk3c1F51DM337ziOb3HemM4kblJ0PCVNkU+uyR6BDySEH2Yk9oQgEvdCYg7P
+         X0Bcs923DGb2OWbpFLZExh9r9ORSOmQvd9y4UJli1dVQLaw4Kt3Gw90OjCrcyn6itify
+         lPcDaiAnDVBxcU/NQgUlA7dbJYbWZdyx1XYykMqzaH8qN5J4lD7i4an5i1WWFzzhfHEJ
+         goMYDSEAr4fUf3577mTkkcKgVZ6vLmRD4C9oSJAg2uf4jD+JIISQS0zcoCDldgZCGPt+
+         Z0Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMynr5Vb6MOeLxS0rZckTCk9/XlV0mMa9SfO/lYydTqg2dQPeADE/dFvz6+bOy94Zfj+o8DFPzLN0qTXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkqwwcseCDF7TpssTjKFJg8MRSlLKCvxBRQWBPNNELim/iE7O3
+	A7noFd+as9R/dTPRSluhpAxF88vwUG60yj/L9QEt+DSiWJXdESZLup45
+X-Gm-Gg: ASbGncsQOAXMLKQlMGZCBUsvNkzzVdTauWvv9QvSEvAd2OvcvBUQAYaCGbvKLz3/lz/
+	JQ+gwkiIOTJoFopLkq216i/dsPaDalKTn6+fwCuMnZTEVdeSwRjP+b4E7U0KKeDHnh9kfrs3yD9
+	tpaqp5q6IFqQLtLLmkDdHqBe1JM7UWFcr/fYfwPDOF/lc1hxoXVUl70laKPnkBwIfkip5MBpqnr
+	qX/m/QqTg7CvMoHYDCpY8+5qjyxNtwYVsPJCvkAOrutuHxK6RydygamxsUTQ6ozpJJqGbyWHsJc
+	aK1BY/x6zw7/h1iFYPIkakhT5bTVSz0NRCQ24hBP+q8//OHAH1AlfczOFfV6lN4xTl5oeKaz4Om
+	vxJVG9WAhRG0MnY5Y32UBeUygo84FhRP9tSVyW9mFotnnx3Gd/+wIIB/5ud/kiFD0loSvzrCkPB
+	AHTJgR95Rh
+X-Google-Smtp-Source: AGHT+IE6pmTMC5913viVxHCB4hjx7BlppxYkXAL1vAw+AKddbNTwcrXB5U4RHHgog0XwsfyAUet6eA==
+X-Received: by 2002:ac8:5741:0:b0:4b3:4a3a:48b8 with SMTP id d75a77b69052e-4e41e827c5emr4195621cf.73.1759252999952;
+        Tue, 30 Sep 2025 10:23:19 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db11222768sm101479241cf.37.2025.09.30.10.23.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 10:23:19 -0700 (PDT)
+Message-ID: <3b5693e2-c63b-4977-96ba-72374832dfa4@gmail.com>
+Date: Tue, 30 Sep 2025 10:23:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250930143822.939301999@linuxfoundation.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250930143822.939301999@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-nbcon-kgdboc-v5-5-8125893cfb4f@suse.com>
-References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
-In-Reply-To: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Jason Wessel <jason.wessel@windriver.com>, 
- Daniel Thompson <danielt@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
- Marcos Paulo de Souza <mpdesouza@suse.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759252905; l=3161;
- i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=ygwUX/1tQYNO8Z3SG4OQhTz6XDitcn9QQTD2XNDaWnM=;
- b=X3rMY7ZtKq4g6XYCM3D20/MmRpjrwKyQV7cX9mB1G+W2N1cnhvHvBaIRhWKRsckS7OO9hEphp
- b+DwAK11c96A2o+6UZA3SRCfN/cC4qpjDrRxOliSssscTx5Yl/AMnX2
-X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
- pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
 
-Function kdb_msg_write was calling con->write for any found console,
-but it won't work on NBCON consoles. In this case we should acquire the
-ownership of the console using NBCON_PRIO_EMERGENCY, since printing
-kdb messages should only be interrupted by a panic.
+On 9/30/25 07:45, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.245 release.
+> There are 122 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.245-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-At this point, the console is required to use the atomic callback. The
-console is skipped if the write_atomic callback is not set or if the
-context could not be acquired. The validation of NBCON is done by the
-console_is_usable helper. The context is released right after
-write_atomic finishes.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-The oops_in_progress handling is only needed in the legacy consoles,
-so it was moved around the con->write callback.
-
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
----
- kernel/debug/kdb/kdb_io.c | 47 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 32 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index 9b11b10b120cf07e451a7a4d92ce50f9a6c066b2..7f41ce5d1b4b2b9970f7c84d8df40d13c9e9a084 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -589,24 +589,41 @@ static void kdb_msg_write(const char *msg, int msg_len)
- 	 */
- 	cookie = console_srcu_read_lock();
- 	for_each_console_srcu(c) {
--		if (!(console_srcu_read_flags(c) & CON_ENABLED))
-+		short flags = console_srcu_read_flags(c);
-+
-+		if (!console_is_usable(c, flags, true))
- 			continue;
- 		if (c == dbg_io_ops->cons)
- 			continue;
--		if (!c->write)
--			continue;
--		/*
--		 * Set oops_in_progress to encourage the console drivers to
--		 * disregard their internal spin locks: in the current calling
--		 * context the risk of deadlock is a bigger problem than risks
--		 * due to re-entering the console driver. We operate directly on
--		 * oops_in_progress rather than using bust_spinlocks() because
--		 * the calls bust_spinlocks() makes on exit are not appropriate
--		 * for this calling context.
--		 */
--		++oops_in_progress;
--		c->write(c, msg, msg_len);
--		--oops_in_progress;
-+
-+		if (flags & CON_NBCON) {
-+			struct nbcon_write_context wctxt = { };
-+
-+			/*
-+			 * Do not continue if the console is NBCON and the context
-+			 * can't be acquired.
-+			 */
-+			if (!nbcon_kdb_try_acquire(c, &wctxt))
-+				continue;
-+
-+			nbcon_write_context_set_buf(&wctxt, (char *)msg, msg_len);
-+
-+			c->write_atomic(c, &wctxt);
-+			nbcon_kdb_release(&wctxt);
-+		} else {
-+			/*
-+			 * Set oops_in_progress to encourage the console drivers to
-+			 * disregard their internal spin locks: in the current calling
-+			 * context the risk of deadlock is a bigger problem than risks
-+			 * due to re-entering the console driver. We operate directly on
-+			 * oops_in_progress rather than using bust_spinlocks() because
-+			 * the calls bust_spinlocks() makes on exit are not appropriate
-+			 * for this calling context.
-+			 */
-+			++oops_in_progress;
-+			c->write(c, msg, msg_len);
-+			--oops_in_progress;
-+		}
- 		touch_nmi_watchdog();
- 	}
- 	console_srcu_read_unlock(cookie);
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.51.0
-
+Florian
 
