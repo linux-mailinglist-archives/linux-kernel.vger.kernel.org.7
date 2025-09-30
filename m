@@ -1,414 +1,241 @@
-Return-Path: <linux-kernel+bounces-837967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1CC6BAE266
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:17:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB50BAE26F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D762A7AE5F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:16:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7A51C74CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47A426B0AE;
-	Tue, 30 Sep 2025 17:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAAF8287E;
+	Tue, 30 Sep 2025 17:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZHZ8xwu0"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P065e3F+"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011034.outbound.protection.outlook.com [52.101.62.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC3D1684B0
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759252647; cv=none; b=BiRjkiEf6kLNxO7cWOAlbwcaKOoYRAhwkm0dN5BEr6dwpDtuGGTbHJ4PA3a1LX36TPKZ2RHPIwJ12x11wbqHsJiG5zu7yzHcLYu4huT2dBCaNSQ8ap/hrsADAco5DdKymEPsTR/Yy/3WYpnmKI9IUXr15P4zO+Tj7HDnQWaoEGE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759252647; c=relaxed/simple;
-	bh=+dDf6+3YhN4vz3PDVIAYw6UpFs5vKV8CVEAHEvVlH40=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cXTzn3fnnplcDs5UmN1+tC4wv3Vd3x/3+UfUeUGkJSI+2su7rjj5YEbo1/oM2QnwdOlBTho4U4I9EPBFlI9rgHAZk9d9Kl3l/Hx+QDzypJcKCPsKSb66gaIhO13i3U+P4F8I2iyNBbpy4hd/wT1aCBqcgZPyTLokAm1xxaz3bp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZHZ8xwu0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e29d65728so42121255e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:17:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759252644; x=1759857444; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RNePBLAvYV3wK8ibZpgmHCPCbmbpde/eqvSInVk0KIc=;
-        b=ZHZ8xwu0vt0IgYY4eg2K8R0PfVoqqLSkxQWQvL3U3Q7THTaR0Z3Abd0cACL1JL4FT7
-         Zk8LUL3Lfzi0GKkNAiILWwahVnuXOmPxlXmRSBCNLg6biK51dGY7fkm9V+YNbD4ALLXC
-         iBfoIpwcqbSix+AEgs+hUkBS/HAu+kKZiQp8TymWpcwxTdBVK+IhRKz+SmNOdGoIqDFY
-         372qINC1jdmI3DfcaoRn5/ttnz7yD7U9+P+BeZLT+FuNUPQI0E2NuZpBlUyL8vj/Rssm
-         cBZQfMCltKvi0pcTwwAlxjxOx2XO7hDxMkJ5dkkUODRGczldT/Qq9Qlm+cCOaOE2EF87
-         2hsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759252644; x=1759857444;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RNePBLAvYV3wK8ibZpgmHCPCbmbpde/eqvSInVk0KIc=;
-        b=Rc21wDcht/KG+Zg/aTJEhYUKa4FYJlu52JqNCqARzea4AVgaKqpJbxOR6GRR2odLtO
-         WJ5ZsgfKaLIbVdsroB3d6ntU9IJ0fswniACNkT1awz3W+UWw5VXYP54NAqhbKN5LliFR
-         YTZ1wb5NuzIM6doDi0nYpLG5tlCZmAJB1ucD1MyisCrzoG2OtQKUwv9mHQsY2c+25DVf
-         WvHM6N1DLqDz/XOAAkax3G3YtzWKS1EbtZz6/vrOcm+VaZ2g+oYTgq9bUzScrjCPGaZp
-         mCuIaukB0U0PafhHj404lOEIIkdK9isc0hr6MHiylqRh8OtzCmu1pZokj4qy8UJbjcWJ
-         H8fw==
-X-Forwarded-Encrypted: i=1; AJvYcCU63n2oXBmQiO+5j2RNOYPPVRT/ryo3/J5ULBe6/kiQenxZ/3YQUsUaxYPs46gvlVRXnCr3/y7HpCee9II=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2CW5H7KJTE2oRT0haXpqcvyFCFBUdqIutaT7cMxAsNcC3tSQd
-	yQvygxnBEh5uBmkrdp5G1gvnmwwCo6c6iAR3OaC6m75agGGFn6LlRHeCGW0v8LMRO78=
-X-Gm-Gg: ASbGncucY90kR7aXIqSoo25Sg1p2fkS5tXlkdBdouaPX4nA7bVQqs/3LeeQua+h5ldn
-	kauK8CPU1VDNYjdsp7p2AazvTviel9o853tJrflprDJMpY51BSoxrsLgXAC0objv9GfDo2i8beC
-	tjEuBq7RhQhEVjDWbzYzRnByUBquOuCFmMsQtsIvR9/9/fPQ8DoeorjVdPSYu0e0MptcrW4zs0z
-	fmLg8/NctZCCbRC3BhQ9RSWjmUsMN5xKOT+7SunoLdM8xGGyC5OCwmuv8Qmsd+PMDk8Zvx+ztDz
-	cIE+Laqgt5gM238vVbZ1eFPpc4zBGql/U/SsJ/oAQlq4qLvciCqdd19iz2mNEbW1Ld3Znf7R72B
-	Pvhu2ZKbt0z+xqJwG7AVeEBIZmF5biODyRuO/bBvipVm5NCSS22hoUVgpKPxhiJHtzsM=
-X-Google-Smtp-Source: AGHT+IElfAfSUmqbhDMTil+yEDuc0QOUeaDmYZur34EATX4bKiElLsQT72CWpqSOwiVb4bZzmxTvtQ==
-X-Received: by 2002:a05:600c:8b18:b0:46e:4a13:e6c6 with SMTP id 5b1f17b1804b1-46e612bfe6fmr4845315e9.19.1759252643701;
-        Tue, 30 Sep 2025 10:17:23 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb017sm23443480f8f.3.2025.09.30.10.17.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 10:17:23 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 30 Sep 2025 19:17:21 +0200
-Subject: [PATCH] dt-bindings: usb: switch: split out ports definition
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D5F25A323;
+	Tue, 30 Sep 2025 17:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759252666; cv=fail; b=ZFJht0Qkv37QqwVp2y2J6VlnB8z1oEtgGKuRTSaznTlkakxCqikm/PiuAMJ3QfGlK91863ySWV24ZOUh2m/nawhBLDS9BsQvsDvVrf1ET+u9vldnBO6YS3uO9/dyA4gmEcW/qInEizmTonWPdyo18txLvKoLJfT9zU2Ty5gwDaE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759252666; c=relaxed/simple;
+	bh=H/DQMZmTjc2VID7TX4kuL1QbP73Q+KMYpkhQ+3C5QoU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=n5N6jN8yu3JEexo8YRBcCZSrJLpzTS+zkbAbA7A2PxSsKRJ1c0LeRAv8iKpoQtuMc2vCvUWS1ADhF3WAAF2uqMxX/22bk01qxwIAisbR8UbdZLlhh4xupeHX4SSH2V+voPoUxhauQOyInTDB0mXMaEM5YqYoeoAjzbZtzO0pYGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P065e3F+; arc=fail smtp.client-ip=52.101.62.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rUpVwJdhQGVoaA0PqVCeqTlfaqqbhJpSWRhEAhjTcttht8OO/2HK8p+WN79WuAng+aL7UEBmeT9IaEXKyFIF+9fYhLfa4RgRmoe0rUfa5XEnCMvcxlKJwo1qz5iG24CU/5F0UPPvjJfI1q8YnTXLiLOFL1aI0qxS9LQdem8uSKFWScZLqVjg10/wPkQOS7Esv42KA52AASlBQDbCE3QgogETSfBISE33HYHg7/ZBbjG9pJx3dHsQyXs0/4uwpYnUsEyppfGshKZ4Tgfmpry5fQd18CdYCUTC01X8tHj1Zo9msZ/wQBqqdXK7IPpeAnWfxuikcnt+BZm5+SMJpQUwSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H/DQMZmTjc2VID7TX4kuL1QbP73Q+KMYpkhQ+3C5QoU=;
+ b=xNRsr9shQB2Hkd0kFhZXvRiW431Jd61dpz5q6YwtrLQh8lZj9RKkY6V22tP6e+G+22Tg+zlAfpOsHCs8YmbZcED+6D29NL4IFYuNsjV1cppJ/e2gy/bRtI78HSeejBTjnpltOsE2qIBlitZJge15rkGasxksO0ZTRIMls7SzHugBk/zrBP7VnN6wSsIz3rqRyk+GnQu7pEk8rNlqRdvBHE8m95v5qNfBapQwvon++qQvKkWdovK+tkMzNgNNmajyl7e6UVQyjfs1bpW4DwdLtxYjr1x3cDR7pyv2ChRuezjAfko/4g9X1fOQOrviOXIBieUmK9Pb9sVHf1zqXTcE5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H/DQMZmTjc2VID7TX4kuL1QbP73Q+KMYpkhQ+3C5QoU=;
+ b=P065e3F+nKMQGBHfUUhC74kQOqA6fpt4TGktTvY9HDli+kfxpLvJmLhsntp8QBghc36hE13FyZZgEJAfw/LVj2Nijsgl//kC+ZdFONAUOyQAT0KiECaY4H99c5DbbwQ4Ysk2LqOqDFe3EYdriclmv/mtRCUzLsZJES/K5y3p27YiQt6A4q4ZEdz8shugvsbnyf3RlgoiHHYk7n7u5/9QkxNaf4Ija92qIcHnCnUd254cyQF+hXkr9BYBlAy+7My42sjFpnbl29+kvXGJUb3VfElnOz7rL6gMrr2XbcJobXt4kgfq8m2pm4pNwokW35msRyHFhvPftGgVB7uWz/gqkw==
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
+ by SJ2PR12MB9244.namprd12.prod.outlook.com (2603:10b6:a03:574::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 17:17:39 +0000
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::d620:1806:4b87:6056]) by CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::d620:1806:4b87:6056%3]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 17:17:39 +0000
+From: Timur Tabi <ttabi@nvidia.com>
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	Alistair Popple <apopple@nvidia.com>, Alexandre Courbot
+	<acourbot@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
+CC: "lossin@kernel.org" <lossin@kernel.org>, "ojeda@kernel.org"
+	<ojeda@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "tmgross@umich.edu" <tmgross@umich.edu>,
+	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "simona@ffwll.ch"
+	<simona@ffwll.ch>, "mripard@kernel.org" <mripard@kernel.org>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Hubbard
+	<jhubbard@nvidia.com>, "nouveau@lists.freedesktop.org"
+	<nouveau@lists.freedesktop.org>, "bjorn3_gh@protonmail.com"
+	<bjorn3_gh@protonmail.com>, "airlied@gmail.com" <airlied@gmail.com>,
+	"aliceryhl@google.com" <aliceryhl@google.com>, Joel Fernandes
+	<joelagnelf@nvidia.com>, "gary@garyguo.net" <gary@garyguo.net>,
+	"lyude@redhat.com" <lyude@redhat.com>
+Subject: Re: [PATCH v3 11/13] nova-core: falcon: Add support to check if
+ RISC-V is active
+Thread-Topic: [PATCH v3 11/13] nova-core: falcon: Add support to check if
+ RISC-V is active
+Thread-Index: AQHcMgyiTbPm6K4MM0yGvQVtGSdCWrSr+CQA
+Date: Tue, 30 Sep 2025 17:17:38 +0000
+Message-ID: <4733b951415d8b531a297cba860c83b7631eaa82.camel@nvidia.com>
+References: <20250930131648.411720-1-apopple@nvidia.com>
+	 <20250930131648.411720-12-apopple@nvidia.com>
+In-Reply-To: <20250930131648.411720-12-apopple@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|SJ2PR12MB9244:EE_
+x-ms-office365-filtering-correlation-id: 1345ad34-910d-474f-7c83-08de004541dd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MThSaDNkU1FSOS9VK2xSRkRzNCtNNkdFaXdGeWtKZFZHV0hnc3VSTHNSc0pX?=
+ =?utf-8?B?WlFSdXk4UE1Fek9VcGI5dXhweURKN0ttUXJNekt3WGdhQWFKOHRFMEp3SDBX?=
+ =?utf-8?B?eGcxcDV2QTE2NVFhTkpRR0ZnL1BiZHc2ckNmSkxqZXdFM3l3RmRJZHZ0bVkx?=
+ =?utf-8?B?QVFnWlNEZXhVQVJLNnhWU0JxNmFlTU5mTFUyaEZnTGJMMkt0Rjh6WkRYWHFR?=
+ =?utf-8?B?U3ZRMWV4UnNIbTBxUVVRa0FRd2hwcjJPalFJM2djV1MxTERGNDhjTUNpajJN?=
+ =?utf-8?B?QlNLVG84bU9Zck1OUmRSVUpSVlA1bE1ydHF6NW13L2liZjFXdlJBWlVibml2?=
+ =?utf-8?B?QmFUSm1Wdk5sdHZVL0ZqVUJEeUJIS3phL0NxZFRyT295R0hIKzdWaEoxaGRK?=
+ =?utf-8?B?WENlUFpzNm9zbEN3bHBEbmFEdloxTVNQblMvNlB5czFWaTJXaW8xRlQxSDEz?=
+ =?utf-8?B?dTEwY3lYZzdtMmhxdm8zOUhodTJkeHVzQzNueDd1RENzdDQyWVRTTVEzSHhk?=
+ =?utf-8?B?blBsU2p1MWNDWG1JTFN0SGE2Y3h4aXN1UVlQSVMwRkc3cFhJUVY3c3hvcEFX?=
+ =?utf-8?B?YlhOWTM5NXpFN1lBNUxRL1ZGREdsTXJCaTdGM0F4MFZYMDFETFFoNHNRRTlQ?=
+ =?utf-8?B?QmdhOEdIL0pNOXQrTUxIOXg3d1Nwc1F2OFcxQzdQQVloaVRDdXlHdkxpNDdi?=
+ =?utf-8?B?TGVKSDkxanFvMXJ6WkQveURYQkFocm1ycmNMY1RJdkxzZ08wR3VLV2tIT0ZT?=
+ =?utf-8?B?RXlDelVCSFY1Uy9Pb2pzNy9OQUxoVGJvZmMvREhFc0l2aWVoK09SYTRjZ1hn?=
+ =?utf-8?B?dy9ON05ldnZmck1mSlQzaXJkV0lub1dkVVlHcEpoQ0NCeVZCRVAvdFZ5WlJX?=
+ =?utf-8?B?Z2h4SzZDUXhFRjZ0b1JwYmFGdVVtdjJrZHFrOW1iT1JxaytmOTNZTGVmNnEv?=
+ =?utf-8?B?TzZ1UTZmYXBWcjVRR0NnVnVVWlNFdUZiZm12ek54OFQzMkhXcHIrT2VPQjFE?=
+ =?utf-8?B?cVljejk2a25yQjZieDNndXR2V1lxSDVCQzFjSGRUeGFyVE55V1JoN1VJOVEv?=
+ =?utf-8?B?SVFsUm9lb3lhcUdVbkI3MTRJTGRyZU15ajR4WnJLbVBlZXlIWnkvWXgwTVZs?=
+ =?utf-8?B?MW92Y010cXRQZE03dCtIemtmaUswZVZ4M2xmbkMvVkhwM2MzNDVvRFZPUXNh?=
+ =?utf-8?B?cFZwTTBRU3ZQOFpGNG9PZjhHN09rckVwY29ReTRHTUNMUlFnMlpVTWRLRFd3?=
+ =?utf-8?B?N05SZWlualJlTnJPSm9pVER4TGhndWhxa2RDVDk0RVd2dWE2RHMreEFORk1G?=
+ =?utf-8?B?MXFha1I5OVZmaDNYRk40Sk14WHpRODlDMDFmRkRzLzU1U3VuaFFQZ3V2elFa?=
+ =?utf-8?B?QVc3cjl3VkcrSHJZaktqUlBYU0RXWWlhNmVZZnRYSFBHOEJNbGlsMjdJNHpu?=
+ =?utf-8?B?K2FQaUhETExVMVRuR1MwMitCT3pUaXdKTk9pQUxNNldwaFJTQ0xtVndCdU9z?=
+ =?utf-8?B?RDd1WTBHajBaV0psWW9vVy9GUGZqU0FmdXBld2F1b0drSHZ1RHdEVWZ3Q2c2?=
+ =?utf-8?B?MVh4UFJuSWpxWE5BQTNuNGJWcTE0NjZlVWVoTFgvNUhZZGcrVmFCYml0K2Ix?=
+ =?utf-8?B?Q1RudWRQbHU4cGNIRHhuc1NzUjVXMW54ZTRnTEhSV053QzJDR3lKZ2ZSaC9S?=
+ =?utf-8?B?Ums2VGhIekp0dyt5VDJoRlJRNVZDN0x1ZVhpMkN6OWtuWk9Ud2Y4aWRuM2p4?=
+ =?utf-8?B?YlpKQVRwNUFCREZIR0J0SE9QS0t1Z0lneXdVTGRqcE54aDFtRzZ3SnFtV0lj?=
+ =?utf-8?B?STV5THhmNDZpT2I1TlBxMEduNUxJNG42TlNRNHA4MHkzU3U2U1lqbnIvVEhN?=
+ =?utf-8?B?cklLSk4rbm1BSTBlWFdBdEJ2aTZIblBOdVAwaU02LytaRXhSWHhzb3lTdFcz?=
+ =?utf-8?B?d2hrSHpZU0ZqbW5XMHJicGF2ellHMXVqTi9Fd2xmZC9WUGNFbXZ4cDVLMGY2?=
+ =?utf-8?B?eEJiTDU3RWpQZ2VEOTF3SzZUSVBIRUhrUTROUWZrdlRSNUlFSmk0ckhVR04v?=
+ =?utf-8?Q?doHyrB?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?L3JiU0JZaDJBZDlPeXJUNEZhUDBQeHdXMmRWM3BUVVhwVUtad1k5bFNJTkVB?=
+ =?utf-8?B?YTB1RWxWYkVPSWVZTlcrd1UyV3JUVVN1LzFaczZXbjNvZUYvdUY4UzJLcVVs?=
+ =?utf-8?B?TmtQNXF4MWw0U0JiWFpRWkVKVEZHV04xUXNLazJMZnJWQmRxZjFLT3lkMmhF?=
+ =?utf-8?B?d0RUTzlVOFJxQy9IcndvUHJmRHlscFk3c2JMZXNPc043ZVNTc2ZnQ1h4cmI1?=
+ =?utf-8?B?YTRhYVRqZFkxQ1FZQlFVRnEwNnExSzYrK0IwUWxBSkhNUEpPay8ySHdGcGNo?=
+ =?utf-8?B?bUFuL0RyYUlCemIvR2pwNi80S3FaVXZETGVIbGExbmpNYm16U1h2T3d6bUNN?=
+ =?utf-8?B?dmkvaFF2dVFheTlZSnRZejlHdU1Qbi96MGJRcGpNQVFWd0FiNWQ3Z2p5Q0R4?=
+ =?utf-8?B?WnIxcWR4UitHQWFKU3dmMlRFbzJZM1BPOVVTMmZuLytON3pTR1g3S0dlcFp0?=
+ =?utf-8?B?QnprN2VGU0tiZlR6QVRmeTRqeU5mUDJCbGZMYTY1cEdJbEFOWGxNNTN2ZWIw?=
+ =?utf-8?B?dk9zd1lHMkNRaDdLNURhOUJsREpnWE5qM0lETFh3aVB5VjdPS1hkT3c3blA3?=
+ =?utf-8?B?bG5zSkNkWDZiWnJUVGI3anhmUnVSQ3RzSGxmaFhiNWg5R0lwaFZrUTNMQ005?=
+ =?utf-8?B?cG5mb1VMK3l4V0prWTlWZlZXRm9helZBRnBXWWhSQWVCdURlS2tHaVo3WGVB?=
+ =?utf-8?B?ZlJqdzcyTXppRHEzUHhqd3NFM0RKL0ljN1hQRWJNZDAvSkgzRDh1cys2Rkwx?=
+ =?utf-8?B?ZXc0aTc4LzJURm0wV3RiT0ticmxvZjl1dXBsNkpwQkIvckhOZmU4MWU0djN3?=
+ =?utf-8?B?Q3FTbm54MjMycmhPYUQ1TkszbldDZzc3SEdtWlN0Wi9NZ0tXUmdEbmNZZGdK?=
+ =?utf-8?B?YUVBU3RqVXZIR2hySjhwTjNVRDRIRTFLMUtsWktSVlprQXpTVHI5eUJOOUpv?=
+ =?utf-8?B?ZUxpM2RFQlIwTksrTmxEZlpCL3BibXRBM21hbWgxM09XYVVaRTVibUZCL21N?=
+ =?utf-8?B?cm5PVzd4WFZDVmJLUUtrc3o1QTJuTFFMaGxVQUlNMFloQTVLQzZZb2xKWXFN?=
+ =?utf-8?B?YTZHdDRBU0U0NC85OFZQOVQ5cXd1aGlST0NhYm5MenRxK1RhKzFmbVhBREVt?=
+ =?utf-8?B?Mm1aNFlzekw0Q1h4azFEUTFCTmhWWnl1TllMSVkyR1VXSkVZTGMyTGtjMGFj?=
+ =?utf-8?B?LzJvSXRTZHFwbWVTTlhPTXhpUE1XaW4xd3loblFibm1JWHlRZTE4dExqRWpP?=
+ =?utf-8?B?T1huZmNEYVR6MHlHOWxEYzJvZUdWMG9vSGVqcDVrZ1BzRlE1SGRJYkQ0R05n?=
+ =?utf-8?B?SlFpak9sU1VnWEE4d01NV0kxUFVwS2ZoTHV5WEhkUHZseUQrWEhkR3NWUGtm?=
+ =?utf-8?B?TU5DUmY1dDZOSkhyVnQ5dUU1TkVuL1NNYWZBVWxnMDdMUEdLazNydGZoeHln?=
+ =?utf-8?B?OGdtMHdxSThsK1c4VXRhc1FvVkpDNmQ3YVVKSU5BNjFlWFRwZlhVc3FicVJw?=
+ =?utf-8?B?cHJZR1MyU0pmWG95TWtVWmhWMUp0cTVOOGYxNEszUTJueVAra254TDNyWWh3?=
+ =?utf-8?B?Z0xXUTE0NGtXMDY2RGVoek0ySWkyRkFBVm9EQThWVnRuRWRNRTNRMnhlNjFP?=
+ =?utf-8?B?Q25nQXRiSUtibTRvYTlMWENTbDRnOXpjOTNYdEJzQkJYWXA0SWowbU41SS80?=
+ =?utf-8?B?WWdzeDMyZTAwOFJ4TGJLMVdMRzlHQ0ZJVDlUamNGSlVZaFZLdFJ5OStHWU4x?=
+ =?utf-8?B?UDArTk4vSUZkekZxeVRySFdMWEx0cC9pd2FJOUlsUEFIdndOSmZmU0ZUV3U4?=
+ =?utf-8?B?NlZzaFlsbDFpVlRkTXVrT0JuWGVsbmhhT3B6em96UGpxQW52VVBHN0UzZU9w?=
+ =?utf-8?B?ZGpheC9aRDVNTUhOeDlGRlk1RTVLbWpteExveVBJQjBJa3pGR3FCTytVb3oz?=
+ =?utf-8?B?Q2ozWGk0NjFSVzIzd0M2cVVPdTh3aXc3RFFsUTFUZysreDF1d1JDNGMvSXBK?=
+ =?utf-8?B?SUVyK3cvTzUwVnFUS3JZVHV6YitVQmM5VlRsM3p1dEY2WGNSRVJFOXpxaG15?=
+ =?utf-8?B?b2p3bGt4VVRHNytXdEVSc3k5L0xVTkdBUE80d3JpME9CQVo0QmhDdFJlZ2x2?=
+ =?utf-8?Q?xjz58DETms28blVXcQYkJ50Kk?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <76E25835C30E694FA27279F7E29D6680@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v1-1-060568de9538@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKAQ3GgC/x2NQQqDMBBFryKz7sBoTLG9SnGhcdRZqGnGViHk7
- gZXjweP/yMoB2GFdxEh8F9UtjVL+SjAzd06McqQHSqqLL0M4b55cahLc1rCUU78Lh5/2tdmuIl
- 6yO5mJNfUTL0dzbOEvOYD5/p++rQpXbUAOVp5AAAA
-X-Change-ID: 20250930-topic-sm8x50-fix-qmp-usb43dp-usb-switch-0c84e0b5f361
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Romain Gantois <romain.gantois@bootlin.com>, Li Jun <jun.li@nxp.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Luca Weiss <luca.weiss@fairphone.com>, Abel Vesa <abel.vesa@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11052;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=+dDf6+3YhN4vz3PDVIAYw6UpFs5vKV8CVEAHEvVlH40=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBo3BCihvjWzPnZJlhuvLZ6p0GUKsLhNQeMd0D0Boz9
- 8oDpIKmJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaNwQogAKCRB33NvayMhJ0cCnD/
- 4sX406R2aFjpxvYRVXxdYNHyWS+bQ0NWwtfX7a9BcMA2e/NxnIRA2upqPHp8CbtZUUdLxnqUkMwvic
- ZfWZLurSh3Zul3FvrDx77K5j6N+CCwx0VAwqb0B9dR7n4oSa0e+nnnYNTvZxaPMbIUHdmW9jSZvTWe
- sdiA6qZ2NdWWGyfPqNgbprHsJ9GulUpGM9Xf9ye4gMKcCUebeh46ztBXFuw2TyArwv5BboZRlEU8AT
- L5N+PgzSc+GBPFr5kJe0ENIAfwsX0YWZd9bLgDqtB25SJo9Au5qAi7AvSXLALF6IheULmjPlRp0cG8
- 1rmQFE9OAXtVWOxjVh+Dk1Sol1IYqhO4l8Am2AlscIefWGo53l2HD2VPaWVUhpMQVMElX203eoqImR
- ALTvtipR5YQxqS2X9YSelreAAqYXhUO2wRwO6kCo+0YvC1rPRM6WdyY1A90WA2NXVVTlI82fK14d5q
- xm2GFOQOYqgA1ZSJpDzGhoR/52iP4KGPLkxTYEi910T3qUrcy2LxFOO5C5ub4FW+CS7+roF/o6hJFg
- 396De3BB76e2uzLq/mJPxiu9xWL+zSRGa0DHxKiC6lJVNOsANguPUXa66G1OFllKVaydZNZKqQuBm0
- AwjcM/W3kSVdHdLFUUEwobhDutHxehRMz8PwFyh5SllOkzKHRBc5d09UMrWQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1345ad34-910d-474f-7c83-08de004541dd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2025 17:17:39.0264
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wmHfwWCd1ir7dbFJWmfSVqe/ZRgsagFh8eRPvGG9VhjWKGB056W1ggBpRstGq0u4EsN6FdVnRaBSi2ri3aEipQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9244
 
-The ports definition currently defined in the usb-switch.yaml
-fits standards devices which are either recipient of altmode
-muxing and orientation switching events or an element of the
-USB Super Speed data lanes.
-
-This doesn't necessarely fit combo PHYs like the Qualcomm
-USB3/DP Combo which has a different ports representation.
-
-Move the ports definition to a separate usb-switch-ports.yaml
-and reference it next to the usb-switch.yaml, except for
-the Qualcomm USB3/DP Combo PHY bindings.
-
-Reported-by: Rob Herring <robh@kernel.org>
-Closes: https://lore.kernel.org/all/175462129176.394940.16810637795278334342.robh@kernel.org/
-Fixes: 3bad7fe22796 ("dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- .../bindings/phy/fsl,imx8mq-usb-phy.yaml           |  4 +-
- .../bindings/phy/samsung,usb3-drd-phy.yaml         |  4 +-
- .../devicetree/bindings/usb/fcs,fsa4480.yaml       |  1 +
- .../devicetree/bindings/usb/gpio-sbu-mux.yaml      |  1 +
- .../devicetree/bindings/usb/nxp,ptn36502.yaml      |  1 +
- .../devicetree/bindings/usb/onnn,nb7vpq904m.yaml   |  1 +
- .../devicetree/bindings/usb/parade,ps8830.yaml     |  1 +
- .../bindings/usb/qcom,wcd939x-usbss.yaml           |  1 +
- .../devicetree/bindings/usb/ti,tusb1046.yaml       |  1 +
- .../devicetree/bindings/usb/usb-switch-ports.yaml  | 68 ++++++++++++++++++++++
- .../devicetree/bindings/usb/usb-switch.yaml        | 52 -----------------
- 11 files changed, 81 insertions(+), 54 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml b/Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml
-index 6a47e08e0e97b286538798190225ca2966a7ab34..f9cffbb2df07d6fa352a844071af7cc894652d0c 100644
---- a/Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml
-@@ -142,7 +142,9 @@ allOf:
-       required:
-         - orientation-switch
-     then:
--      $ref: /schemas/usb/usb-switch.yaml#
-+      allOf:
-+        - $ref: /schemas/usb/usb-switch.yaml#
-+        - $ref: /schemas/usb/usb-switch-ports.yaml#
- 
- unevaluatedProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-index e906403208c02951ff2bf5ed8420d53ad70eb29c..ea1135c91fb74c01ba860b9588ca89e611701359 100644
---- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-@@ -125,7 +125,9 @@ allOf:
-           contains:
-             const: google,gs101-usb31drd-phy
-     then:
--      $ref: /schemas/usb/usb-switch.yaml#
-+      allOf:
-+        - $ref: /schemas/usb/usb-switch.yaml#
-+        - $ref: /schemas/usb/usb-switch-ports.yaml#
- 
-       properties:
-         clocks:
-diff --git a/Documentation/devicetree/bindings/usb/fcs,fsa4480.yaml b/Documentation/devicetree/bindings/usb/fcs,fsa4480.yaml
-index e3a7df91f7f15e9a6d8eb4971bc2b9646bdad0c6..89b1fb90aeebc0ccfc50ea52b67015034294e1a8 100644
---- a/Documentation/devicetree/bindings/usb/fcs,fsa4480.yaml
-+++ b/Documentation/devicetree/bindings/usb/fcs,fsa4480.yaml
-@@ -76,6 +76,7 @@ required:
- 
- allOf:
-   - $ref: usb-switch.yaml#
-+  - $ref: usb-switch-ports.yaml#
- 
- additionalProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-index e588514fab2d8c9d0d3717865fe2e733664fc28b..793662f6f3bff4a4b4b73b38983abca12e1e61d2 100644
---- a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-+++ b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-@@ -52,6 +52,7 @@ required:
- 
- allOf:
-   - $ref: usb-switch.yaml#
-+  - $ref: usb-switch-ports.yaml#
-   - if:
-       required:
-         - mode-switch
-diff --git a/Documentation/devicetree/bindings/usb/nxp,ptn36502.yaml b/Documentation/devicetree/bindings/usb/nxp,ptn36502.yaml
-index d805dde80796f31a066cf52ba2f226ce2e9e9cc2..4d2fcaa718708fe5d0a05ebce211f0a729d6c617 100644
---- a/Documentation/devicetree/bindings/usb/nxp,ptn36502.yaml
-+++ b/Documentation/devicetree/bindings/usb/nxp,ptn36502.yaml
-@@ -46,6 +46,7 @@ required:
- 
- allOf:
-   - $ref: usb-switch.yaml#
-+  - $ref: usb-switch-ports.yaml#
- 
- additionalProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/usb/onnn,nb7vpq904m.yaml b/Documentation/devicetree/bindings/usb/onnn,nb7vpq904m.yaml
-index 589914d22bf250ff94c98ed22b32616d2c0cca1c..25fab5fdc2cd712a8075c2ee20bdc80829c3b043 100644
---- a/Documentation/devicetree/bindings/usb/onnn,nb7vpq904m.yaml
-+++ b/Documentation/devicetree/bindings/usb/onnn,nb7vpq904m.yaml
-@@ -91,6 +91,7 @@ required:
- 
- allOf:
-   - $ref: usb-switch.yaml#
-+  - $ref: usb-switch-ports.yaml#
- 
- additionalProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/usb/parade,ps8830.yaml b/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
-index aeb33667818eb0d116a3467d30220002a3b5df73..eaeab1c01a594e05666d01cf6b82a6d7127ae075 100644
---- a/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
-+++ b/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
-@@ -81,6 +81,7 @@ required:
- 
- allOf:
-   - $ref: usb-switch.yaml#
-+  - $ref: usb-switch-ports.yaml#
- 
- additionalProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,wcd939x-usbss.yaml b/Documentation/devicetree/bindings/usb/qcom,wcd939x-usbss.yaml
-index 96346723f3e9c92c32325c7395eff49336cbcaf8..96dcec9b76204606397cc1e31338832e518816f3 100644
---- a/Documentation/devicetree/bindings/usb/qcom,wcd939x-usbss.yaml
-+++ b/Documentation/devicetree/bindings/usb/qcom,wcd939x-usbss.yaml
-@@ -60,6 +60,7 @@ required:
- 
- allOf:
-   - $ref: usb-switch.yaml#
-+  - $ref: usb-switch-ports.yaml#
- 
- additionalProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/usb/ti,tusb1046.yaml b/Documentation/devicetree/bindings/usb/ti,tusb1046.yaml
-index f713cac4a8ac8e89c017999bc11e4b3a38d3ac2e..e1501ea6b50bf76e4bac6cbc2a3243f7107029d0 100644
---- a/Documentation/devicetree/bindings/usb/ti,tusb1046.yaml
-+++ b/Documentation/devicetree/bindings/usb/ti,tusb1046.yaml
-@@ -11,6 +11,7 @@ maintainers:
- 
- allOf:
-   - $ref: usb-switch.yaml#
-+  - $ref: usb-switch-ports.yaml#
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/usb/usb-switch-ports.yaml b/Documentation/devicetree/bindings/usb/usb-switch-ports.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..6bf0c97e30ae7069481e41ef8745804e5efde974
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/usb-switch-ports.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/usb-switch-ports.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: USB Orientation and Mode Switches Ports Graph Properties
-+
-+maintainers:
-+  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+
-+description:
-+  Ports Graph properties for devices handling USB mode and orientation switching.
-+
-+properties:
-+  port:
-+    $ref: /schemas/graph.yaml#/$defs/port-base
-+    description:
-+      A port node to link the device to a TypeC controller for the purpose of
-+      handling altmode muxing and orientation switching.
-+
-+    properties:
-+      endpoint:
-+        $ref: /schemas/graph.yaml#/$defs/endpoint-base
-+        unevaluatedProperties: false
-+        properties:
-+          data-lanes:
-+            $ref: /schemas/types.yaml#/definitions/uint32-array
-+            minItems: 1
-+            maxItems: 8
-+            uniqueItems: true
-+            items:
-+              maximum: 8
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+    properties:
-+      port@0:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description:
-+          Super Speed (SS) Output endpoint to the Type-C connector
-+
-+      port@1:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        description:
-+          Super Speed (SS) Input endpoint from the Super-Speed PHY
-+        unevaluatedProperties: false
-+
-+        properties:
-+          endpoint:
-+            $ref: /schemas/graph.yaml#/$defs/endpoint-base
-+            unevaluatedProperties: false
-+            properties:
-+              data-lanes:
-+                $ref: /schemas/types.yaml#/definitions/uint32-array
-+                minItems: 1
-+                maxItems: 8
-+                uniqueItems: true
-+                items:
-+                  maximum: 8
-+
-+oneOf:
-+  - required:
-+      - port
-+  - required:
-+      - ports
-+
-+additionalProperties: true
-diff --git a/Documentation/devicetree/bindings/usb/usb-switch.yaml b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-index 89620191263023bec800dec114c0017c41b7c056..f77731493dc4901d0e95746b0cf1ffa3ee7ddfd0 100644
---- a/Documentation/devicetree/bindings/usb/usb-switch.yaml
-+++ b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-@@ -25,56 +25,4 @@ properties:
-     description: Possible handler of SuperSpeed signals retiming
-     type: boolean
- 
--  port:
--    $ref: /schemas/graph.yaml#/$defs/port-base
--    description:
--      A port node to link the device to a TypeC controller for the purpose of
--      handling altmode muxing and orientation switching.
--
--    properties:
--      endpoint:
--        $ref: /schemas/graph.yaml#/$defs/endpoint-base
--        unevaluatedProperties: false
--        properties:
--          data-lanes:
--            $ref: /schemas/types.yaml#/definitions/uint32-array
--            minItems: 1
--            maxItems: 8
--            uniqueItems: true
--            items:
--              maximum: 8
--
--  ports:
--    $ref: /schemas/graph.yaml#/properties/ports
--    properties:
--      port@0:
--        $ref: /schemas/graph.yaml#/properties/port
--        description:
--          Super Speed (SS) Output endpoint to the Type-C connector
--
--      port@1:
--        $ref: /schemas/graph.yaml#/$defs/port-base
--        description:
--          Super Speed (SS) Input endpoint from the Super-Speed PHY
--        unevaluatedProperties: false
--
--        properties:
--          endpoint:
--            $ref: /schemas/graph.yaml#/$defs/endpoint-base
--            unevaluatedProperties: false
--            properties:
--              data-lanes:
--                $ref: /schemas/types.yaml#/definitions/uint32-array
--                minItems: 1
--                maxItems: 8
--                uniqueItems: true
--                items:
--                  maximum: 8
--
--oneOf:
--  - required:
--      - port
--  - required:
--      - ports
--
- additionalProperties: true
-
----
-base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
-change-id: 20250930-topic-sm8x50-fix-qmp-usb43dp-usb-switch-0c84e0b5f361
-
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
-
+T24gVHVlLCAyMDI1LTA5LTMwIGF0IDIzOjE2ICsxMDAwLCBBbGlzdGFpciBQb3BwbGUgd3JvdGU6
+DQo+IEZyb206IEpvZWwgRmVybmFuZGVzIDxqb2VsYWduZWxmQG52aWRpYS5jb20+DQo+IA0KPiBB
+ZGQgZGVmaW5pdGlvbiBmb3IgUklTQ1ZfQ1BVQ1RMIHJlZ2lzdGVyIGFuZCB1c2UgaXQgaW4gYSBu
+ZXcgZmFsY29uIEFQSQ0KPiB0byBjaGVjayBpZiB0aGUgUklTQy1WIGNvcmUgb2YgYSBGYWxjb24g
+aXMgYWN0aXZlLiBJdCBpcyByZXF1aXJlZCBieQ0KPiB0aGUgc2VxdWVuY2VyIHRvIGtub3cgaWYg
+dGhlIEdTUCdzIFJJU0NWIHByb2Nlc3NvciBpcyBhY3RpdmUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
+OiBKb2VsIEZlcm5hbmRlcyA8am9lbGFnbmVsZkBudmlkaWEuY29tPg0KPiBSZXZpZXdlZC1ieTog
+THl1ZGUgUGF1bCA8bHl1ZGVAcmVkaGF0LmNvbT4NCg0KWW91IGRpZG4ndCBtYWtlIGFueSBvZiBt
+eSBwcmV2aW91c2x5IHN1Z2dlc3RlZCBjaGFuZ2VzLg0KDQo+IC0tLQ0KPiDCoGRyaXZlcnMvZ3B1
+L25vdmEtY29yZS9mYWxjb24ucnMgfCA5ICsrKysrKysrKw0KPiDCoGRyaXZlcnMvZ3B1L25vdmEt
+Y29yZS9yZWdzLnJzwqDCoCB8IDUgKysrKysNCj4gwqAyIGZpbGVzIGNoYW5nZWQsIDE0IGluc2Vy
+dGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ub3ZhLWNvcmUvZmFsY29u
+LnJzIGIvZHJpdmVycy9ncHUvbm92YS1jb3JlL2ZhbGNvbi5ycw0KPiBpbmRleCAzN2U2Mjk4MTk1
+ZTQuLmM3OTA3ZjE2YmNmNCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvbm92YS1jb3JlL2Zh
+bGNvbi5ycw0KPiArKysgYi9kcml2ZXJzL2dwdS9ub3ZhLWNvcmUvZmFsY29uLnJzDQo+IEBAIC02
+MTAsNCArNjEwLDEzIEBAIHB1YihjcmF0ZSkgZm4gc2lnbmF0dXJlX3JlZ19mdXNlX3ZlcnNpb24o
+DQo+IMKgwqDCoMKgwqDCoMKgwqAgc2VsZi5oYWwNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IC5zaWduYXR1cmVfcmVnX2Z1c2VfdmVyc2lvbihzZWxmLCBiYXIsIGVuZ2luZV9pZF9tYXNrLCB1
+Y29kZV9pZCkNCj4gwqDCoMKgwqAgfQ0KPiArDQo+ICvCoMKgwqAgLy8vIENoZWNrIGlmIHRoZSBS
+SVNDLVYgY29yZSBpcyBhY3RpdmUuDQo+ICvCoMKgwqAgLy8vDQo+ICvCoMKgwqAgLy8vIFJldHVy
+bnMgYHRydWVgIGlmIHRoZSBSSVNDLVYgY29yZSBpcyBhY3RpdmUsIGBmYWxzZWAgb3RoZXJ3aXNl
+Lg0KPiArwqDCoMKgICNbZXhwZWN0KHVudXNlZCldDQo+ICvCoMKgwqAgcHViKGNyYXRlKSBmbiBp
+c19yaXNjdl9hY3RpdmUoJnNlbGYsIGJhcjogJkJhcjApIC0+IFJlc3VsdDxib29sPiB7DQo+ICvC
+oMKgwqDCoMKgwqDCoCBsZXQgY3B1Y3RsID0gcmVnczo6TlZfUFJJU0NWX1JJU0NWX0NQVUNUTDo6
+cmVhZChiYXIsICZFOjpJRCk7DQo+ICvCoMKgwqDCoMKgwqDCoCBPayhjcHVjdGwuYWN0aXZlX3N0
+YXQoKSkNCj4gK8KgwqDCoCB9DQoNClRoaXMgc2hvdWxkIHJldHVybiBqdXN0IGJvb2wsIG5vdCBS
+ZXN1bHQ8Ym9vbD4uICBFaXRoZXIgaXQncyBhY3RpdmUgb3IgaXQncyBub3QuICBUaGVyZSBpcyBu
+byB0aGlyZA0Kb3B0aW9uLg0KDQo+IMKgfQ0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvbm92
+YS1jb3JlL3JlZ3MucnMgYi9kcml2ZXJzL2dwdS9ub3ZhLWNvcmUvcmVncy5ycw0KPiBpbmRleCAw
+NTg1Njk5YWU5NTEuLjVkZjZhMmJmNDJhZCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvbm92
+YS1jb3JlL3JlZ3MucnMNCj4gKysrIGIvZHJpdmVycy9ncHUvbm92YS1jb3JlL3JlZ3MucnMNCj4g
+QEAgLTMyNCw2ICszMjQsMTEgQEAgcHViKGNyYXRlKSBmbiBtZW1fc2NydWJiaW5nX2RvbmUoc2Vs
+ZikgLT4gYm9vbCB7DQo+IMKgDQo+IMKgLy8gUFJJU0NWDQo+IMKgDQo+ICtyZWdpc3RlciEoTlZf
+UFJJU0NWX1JJU0NWX0NQVUNUTCBAIFBGYWxjb25CYXNlWzB4MDAwMDEzODhdIHsNCj4gK8KgwqDC
+oCA3OjfCoMKgwqDCoCBhY3RpdmVfc3RhdCBhcyBib29sOw0KPiArwqDCoMKgIDA6MMKgwqDCoMKg
+IGhhbHRlZCBhcyBib29sOw0KPiArfSk7DQoNCkkgdGhpbmsgdGhlIGNvbnZlbnRpb24gaXMgdG8g
+bGlzdCB0aGUgYml0cyBpbiBpbmNyZWFzZSBwb3NpdGlvbi4gIFRoYXQgaXMsICdhY3RpdmVfc3Rh
+dCcgc2hvdWxkIGJlDQpvbiB0aGUgbGluZSBiZWxvdyAnaGFsdGVkJycNCg0KQWxzbyBJIHRoaW5r
+IHRoYXQgdGhpcyBzaG91bGQgYWN0dWFsbHkgYmUgUEZhbGNvbjJCYXNlWzB4MDAwMDAzODhdDQoN
+Cj4gKw0KPiDCoHJlZ2lzdGVyIShOVl9QUklTQ1ZfUklTQ1ZfQkNSX0NUUkwgQCBQRmFsY29uQmFz
+ZVsweDAwMDAxNjY4XSB7DQo+IMKgwqDCoMKgIDA6MMKgwqDCoMKgIHZhbGlkIGFzIGJvb2w7DQo+
+IMKgwqDCoMKgIDQ6NMKgwqDCoMKgIGNvcmVfc2VsZWN0IGFzIGJvb2wgPT4gUGVyZWdyaW5lQ29y
+ZVNlbGVjdDsNCg0KQW5kIHRoaXMgc2hvdWxkIGJlIFBGYWxjb24yQmFzZVsweDAwMDAwNjY4XQ0K
+DQo=
 
