@@ -1,218 +1,242 @@
-Return-Path: <linux-kernel+bounces-837658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D04BACD8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:33:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D74BACC5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D351653EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:32:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A2317A9120
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACEF2F5465;
-	Tue, 30 Sep 2025 12:32:50 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF6C2F9C38;
+	Tue, 30 Sep 2025 12:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="pOJ5Bo76";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Fk36Da/C"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29DF25228B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3DD23183F;
+	Tue, 30 Sep 2025 12:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235570; cv=none; b=QusC7ikFsTclz9P1y/6mfc/cL/jNwbfF+tCCZR0Wu/YsNiyz5UXFA3SVhCAQw72tsj6LgNLMkkAvEnW6IRa6pPdZgQ6ycSBhK44bWVJN8+0n4OE6+MPMfkxPTSsFbJwWd2KgRJ8ds7iKH3F3yVQ+20gkydsgOLRbzp0SrwOpnDw=
+	t=1759233962; cv=none; b=rQdMl1KY/W661St3AU2vQXaKDTTpTlxja2HifJZGhX/fvBLkd4HNDSTQ58tEFADwo639rfQ1kcFX73WNtiuWJzyZUKOwaADJU404m+p9AnhNtrKvuCNVP8MXxQrYOEd7ebhDof6AgDYjaForb6BrAPTRpH3xpdFuLtvod2kAxxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235570; c=relaxed/simple;
-	bh=o5WgECBb3XEdUTamZl7EY74JCh4ZAHhDYaBuiP0jtpY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WpjHX9UQeOJAQrpdQePHOL+nBTwkiPGAxcBBFP/5lZtNSFag707JEXK0c3sG3ZbZ04GyVIUO2g6Kt3pKs837sBXYtJDeUEmWo31KwEciA4kOWM1avgusHzjuiAgnKwF4MNI6UnaeotyQ63HYSVFTn7U2Myh6jUdW/1KGHSgMEnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=unknown smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=andestech.com
-Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
-	by Atcsqr.andestech.com with ESMTP id 58UC5xj7088713
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:05:59 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 58UC5hY5088638
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Sep 2025 20:05:43 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
- with Microsoft SMTP Server id 14.3.498.0; Tue, 30 Sep 2025 20:05:43 +0800
-Date: Tue, 30 Sep 2025 20:05:37 +0800
-From: Randolph Lin <randolph@andestech.com>
-To: Rob Herring <robh@kernel.org>
-CC: Bjorn Helgaas <helgaas@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
-        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <alex@ghiti.fr>, <aou@eecs.berkeley.edu>, <palmer@dabbelt.com>,
-        <paul.walmsley@sifive.com>, <ben717@andestech.com>,
-        <inochiama@gmail.com>, <thippeswamy.havalige@amd.com>,
-        <namcao@linutronix.de>, <shradha.t@samsung.com>,
-        <randolph.sklin@gmail.com>, <tim609@andestech.com>
-Subject: Re: [PATCH v3 1/5] PCI: dwc: Skip failed outbound iATU and continue
-Message-ID: <aNvHkUwKW-vD-hwV@swlinux02>
-References: <aNPq42O1Ml3ppF2M@swlinux02>
- <20250926211023.GA2128495@bhelgaas>
- <CAL_Jsq+HDgghAQps5M0jV7ELxR=M7pRCuEKwgSMcJQfS3Ecsrg@mail.gmail.com>
+	s=arc-20240116; t=1759233962; c=relaxed/simple;
+	bh=jFIkL4prmYeCbZOsejsqEGgN4EPfp/Rp74PA+aBVUBs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=N6POSC2EO2Owpps/TdnmdhfDiSGsfTHE8oOaQbXg7JcaBhMjew3+VRYbbq0RwLNDU213igmsibrE5+g65cqKCiXqhvhOUshlK3qZv4zc9UYqJTAZXamzLATS6dSx6cc2ikj4dvvWpTYkM8BlTwrU0TFFIT1ClWvmI3eeVjF72Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=pOJ5Bo76; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Fk36Da/C; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id DD9057A0015;
+	Tue, 30 Sep 2025 08:05:58 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-12.internal (MEProxy); Tue, 30 Sep 2025 08:05:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1759233958;
+	 x=1759320358; bh=nq0GN9PRh99W21XkvPPazW0cqGY5esYpC6Jj9s3RJ20=; b=
+	pOJ5Bo76T+av2xZyEAwC3FZk7seiRsa8LDd0UV3oOeXRsjo+SZHj3uCdtY/9Kbf+
+	KDBaU8TKHD4o3UIqcoeAaEZ0FWqHJ3sJTtl4xo2sTA7Gp+TFr4Okz02nqbjxTbdl
+	XSsZbtOS2kwtsiz2Ea5gMfgEiNU6rUFEuBpzqvlO07xQOAKkA2StIyFQDuQgf1Tc
+	q6Dxi4F85IQFpEQFzXngYfW0OJouf55045Fe/+/FkzJuHlOw3uTnQDSXlHDKeIRf
+	TiehZ24PMMr0bD/vFsG4+VcLCbz9kkO14/uYVGxVoJjsmyFw5EniBd0mkpixd7TJ
+	g0OBHbUrw3aR4P2Glt6vBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759233958; x=
+	1759320358; bh=nq0GN9PRh99W21XkvPPazW0cqGY5esYpC6Jj9s3RJ20=; b=F
+	k36Da/C/YvazKd2lJ1mI7pj58jEQ3JoeORk9b7XpfRh8YV0yhWGpk1e0+lCDZ1/m
+	aZIQMuv6XQRFl4UBIfqSavwCT3iKqxdxfbexKn+qkreKYMECW+jbPGnLVhwEw53G
+	WsO/E9nXnpMFAH6JGvOgxkKAMqyFQC6MpoaqXnFBkt6T+ZsFh7MYcNplGdKN+nb3
+	/WaddGlaESZneKm1xswGvupm4W5GvV+pwy4SQPL++s2yRyDEvDTIiQMAp8+avAOv
+	T+6gYOrd/Zw/9VUdGaWIRKAVP+44eHlbNHr+8uFOo+rOgCG8XWUl5sVHaDyo8AV0
+	r3WWzfu3hd8pTVUPdoYKQ==
+X-ME-Sender: <xms:psfbaJTMG-CGPVP-5WIVXAnkVRgg8JgxWjshy1S-RA_zILzmfGxV2g>
+    <xme:psfbaNnmoTHJPHZlOlQcvGdNbiX0YzrNBiqs7atdFZGiZgZfsP9U0Jg6J8QvO86Km
+    AleS-MyuMWi3Kl6qy2CqKEp2Z6TFcjefJp6G91G0rFQYyHbkkoFDxvX>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdektdekvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdforghrkhcu
+    rfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrg
+    eqnecuggftrfgrthhtvghrnheptdffvefgtefhveetuddvfeelveektdduvdelgfehgfei
+    keffjeetjeevffektdfhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdq
+    lhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopeehpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehjjhhohhhnshhonheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheprghthhduudhksehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtg
+    hpthhtohepsggrohgthhgvnhdrqhhirghnghesohhsshdrqhhurghltghomhhmrdgtohhm
+    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghl
+    rdhorhhg
+X-ME-Proxy: <xmx:psfbaM8JLF3MitQNge6OY6_-uJSMQXuYM5warZs8ex3cGXRxhwffUQ>
+    <xmx:psfbaOCWUa0ySZebsqxclpBj7gItye9tpD1CDqcfH75hyfKfBN1m0w>
+    <xmx:psfbaJRMQNZ_ui8uAz1FpEvaO_a6MB4_Csfbgv2F7PpO8dCVQJ_Tlg>
+    <xmx:psfbaNuxzX2EU8mtb6K3gCy3vDo-MaTBN1A1P-nOQjmdRIWtMpwzNQ>
+    <xmx:psfbaNdEi148Dd4pCKaf-U7idj3vyfY9b0R3_G5mLXy6yd2Ku01Ak0W7>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4E3092CE0072; Tue, 30 Sep 2025 08:05:58 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+HDgghAQps5M0jV7ELxR=M7pRCuEKwgSMcJQfS3Ecsrg@mail.gmail.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 58UC5xj7088713
+X-ThreadId: AVTq1tek_bVo
+Date: Tue, 30 Sep 2025 08:05:38 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Baochen Qiang" <baochen.qiang@oss.qualcomm.com>
+Cc: jjohnson@kernel.org, ath11k@lists.infradead.org,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <eddb5c03-e919-485b-a6d4-06485cd87db9@app.fastmail.com>
+In-Reply-To: <83de6105-ef4c-48dc-8960-430893ae253e@oss.qualcomm.com>
+References: <mpearson-lenovo@squebb.ca>
+ <20250929192146.1789648-1-mpearson-lenovo@squebb.ca>
+ <83de6105-ef4c-48dc-8960-430893ae253e@oss.qualcomm.com>
+Subject: Re: [PATCH v2] wifi: ath11k: Add missing platform IDs for quirk table
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+On Mon, Sep 29, 2025, at 10:17 PM, Baochen Qiang wrote:
+> On 9/30/2025 3:21 AM, Mark Pearson wrote:
+>> Lenovo platforms can come with one of two different IDs.
+>> The pm_quirk table was missing the second ID for each platform.
+>> 
+>> Add missing ID and some extra platform identification comments.
+>> Reported on https://bugzilla.kernel.org/show_bug.cgi?id=219196
+>> 
+>> Tested-on: P14s G4 AMD.
+>
+> Leave a blank line as 'Tested-on:' is not an official tag
+>
+>> Fixes: ce8669a27016 ("wifi: ath11k: determine PM policy based on machine model")
+>
+> Better to move the bugzilla link here and reword as below?
+>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219196
+>
+>> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>> ---
+>> Changes in v2:
+>>  - Correct typo for T14s G4 AMD to use correct ID. Sorry!
+>>  - Added in Fixes and Tested-on tags correctly.
+>> 
+>>  drivers/net/wireless/ath/ath11k/core.c | 54 +++++++++++++++++++++++---
+>>  1 file changed, 48 insertions(+), 6 deletions(-)
+>> 
+>> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+>> index d49353b6b2e7..47522fa186a1 100644
+>> --- a/drivers/net/wireless/ath/ath11k/core.c
+>> +++ b/drivers/net/wireless/ath/ath11k/core.c
+>> @@ -912,42 +912,84 @@ static const struct ath11k_hw_params ath11k_hw_params[] = {
+>>  static const struct dmi_system_id ath11k_pm_quirk_table[] = {
+>>  	{
+>>  		.driver_data = (void *)ATH11K_PM_WOW,
+>> -		.matches = {
+>> +		.matches = { /* X13 G4 AMD #1 */
+>> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "21J3"),
+>> +		},
+>> +	},
+>> +	{
+>> +		.driver_data = (void *)ATH11K_PM_WOW,
+>> +		.matches = { /* X13 G4 AMD #2 */
+>>  			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>>  			DMI_MATCH(DMI_PRODUCT_NAME, "21J4"),
+>>  		},
+>>  	},
+>>  	{
+>>  		.driver_data = (void *)ATH11K_PM_WOW,
+>> -		.matches = {
+>> +		.matches = { /* T14 G4 AMD #1 */
+>> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "21K3"),
+>> +		},
+>> +	},
+>> +	{
+>> +		.driver_data = (void *)ATH11K_PM_WOW,
+>> +		.matches = { /* T14 G4 AMD #2 */
+>>  			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>>  			DMI_MATCH(DMI_PRODUCT_NAME, "21K4"),
+>>  		},
+>>  	},
+>>  	{
+>>  		.driver_data = (void *)ATH11K_PM_WOW,
+>> -		.matches = {
+>> +		.matches = { /* P14s G4 AMD #1 */
+>> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "21K5"),
+>> +		},
+>> +	},
+>> +	{
+>> +		.driver_data = (void *)ATH11K_PM_WOW,
+>> +		.matches = { /* P14s G4 AMD #2 */
+>>  			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>>  			DMI_MATCH(DMI_PRODUCT_NAME, "21K6"),
+>>  		},
+>>  	},
+>>  	{
+>>  		.driver_data = (void *)ATH11K_PM_WOW,
+>> -		.matches = {
+>> +		.matches = { /* T16 G2 AMD #1 */
+>> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "21K7"),
+>> +		},
+>> +	},
+>> +	{
+>> +		.driver_data = (void *)ATH11K_PM_WOW,
+>> +		.matches = { /* T16 G2 AMD #2 */
+>>  			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>>  			DMI_MATCH(DMI_PRODUCT_NAME, "21K8"),
+>>  		},
+>>  	},
+>>  	{
+>>  		.driver_data = (void *)ATH11K_PM_WOW,
+>> -		.matches = {
+>> +		.matches = { /*P16s G2 AMD #1 */
+>> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "21K9"),
+>> +		},
+>> +	},
+>> +	{
+>> +		.driver_data = (void *)ATH11K_PM_WOW,
+>> +		.matches = { /*P16s G2 AMD #2 */
+>>  			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>>  			DMI_MATCH(DMI_PRODUCT_NAME, "21KA"),
+>>  		},
+>>  	},
+>>  	{
+>>  		.driver_data = (void *)ATH11K_PM_WOW,
+>> -		.matches = {
+>> +		.matches = { /*T14s G4 AMD #1 */
+>> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "21F8"),
+>> +		},
+>> +	},
+>> +	{
+>> +		.driver_data = (void *)ATH11K_PM_WOW,
+>> +		.matches = { /*T14s G4 AMD #2 */
+>>  			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+>>  			DMI_MATCH(DMI_PRODUCT_NAME, "21F9"),
+>>  		},
+>
+> assuming Jeff can resolve above nits ...
+>
+> Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 
-On Mon, Sep 29, 2025 at 09:03:59AM -0500, Rob Herring wrote:
-> [EXTERNAL MAIL]
-> 
-> On Fri, Sep 26, 2025 at 4:10 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> >
-> > On Wed, Sep 24, 2025 at 08:58:11PM +0800, Randolph Lin wrote:
-> > > On Tue, Sep 23, 2025 at 09:42:23AM -0500, Bjorn Helgaas wrote:
-> > > > On Tue, Sep 23, 2025 at 07:36:43PM +0800, Randolph Lin wrote:
-> > > > > Previously, outbound iATU programming included range checks
-> > > > > based on hardware limitations. If a configuration did not meet
-> > > > > these constraints, the loop would stop immediately.
-> > > > >
-> > > > > This patch updates the behavior to enhance flexibility. Instead
-> > > > > of stopping at the first issue, it now logs a warning with
-> > > > > details of the affected window and proceeds to program the
-> > > > > remaining iATU entries.
-> > > > >
-> > > > > This enables partial configuration to complete in cases where
-> > > > > some iATU windows may not meet requirements, improving overall
-> > > > > compatibility.
-> > > >
-> > > > It's not really clear why this is needed.  I assume it's related
-> > > > to dropping qilai_pcie_outbound_atu_addr_valid().
-> > >
-> > > Yes, I want to drop the previous atu_addr_valid function.
-> > >
-> > > > I guess dw_pcie_prog_outbound_atu() must return an error for one
-> > > > of the QiLai ranges?  Which one, and what exactly is the problem?
-> > > > I still suspect something wrong in the devicetree description.
-> > >
-> > > The main issue is not the returned error; just need to avoid
-> > > terminating the process when the configuration exceeds the
-> > > hardware’s expected limits.
-> > >
-> > > There are two methods to fix the issue on the Qilai SoC:
-> > >
-> > > 1. Simply skip the entries that do not match the designware hardware
-> > > iATU limitations.  An error will be returned, but it can be ignored.
-> > > On the Qilai SoC, the iATU limitation is the 4GB boundary. Qilai SoC
-> > > only need to configure iATU support to translate addresses below the
-> > > "32-bits" address range. Although 64-bits addresses do not match the
-> > > designware hardware iATU limitations, there is no need to configure
-> > > 64-bits addresses, since the connection is hard-wired.
-> > >
-> > > 2. Set the devicetree only 2 viewport for iATU and force using
-> > > devicetree value.  This is a workaround in the devicetree, but the
-> > > fix logic is not easy to document.  Instead, we should enforce the
-> > > use of the viewport defined in the devicetree and modify the
-> > > designware generic code accordingly — using the viewport values from
-> > > the devicetree instead of reading them from the designware
-> > > registers.  Since only two viewports are available for iATU, we
-> > > should reserve one for the configuration registers and the other for
-> > > 32-bit address access.  Therefore, reverse logic still needs to be
-> > > added to the designware generic code.
-> > >
-> > > Method 2 adds excessive complexity to the designware generic code.
-> > > Instead, directly configuring the iATU and reporting an error when
-> > > the configuration exceeds the hardware iATU limitations is a simpler
-> > > and more effective approach to applying the fix.
-> >
-> > I don't know the DesignWare iATU design very well, so I don't know if
-> > this issue is something unique to Qilai or if it's something that
-> > could be handled via devicetree.
-> 
-> I believe it should probably be handled in the DT. The iATU is
-> programmed based on the bridge window resources which are in turn
-> based on DT ranges and dma-ranges. If there's a failure, then
-> ranges/dma-ranges is wrong. Or the driver could adjust the bridge
-> window resources before programming the iATU.
-> 
+Thanks for the review.
+Jeff, let me know if you need a v3 with the small changes.
 
-Thank you very much. That’s a great hint for me.
-
-My driver can handle most of the logic within the .init callback of the
-dw_pcie_host_ops structure. This includes parsing the Device Tree data
-and performing the required pre-initialization steps, such as counting
-how many bridge window resources comply with the iATU limitations and
-verifying the 32-bit address mappings within those bridge window
-resources.
-
-The following additional logic is still required to ensure
-pci->num_ob_windows correctly reflects the driver’s pre-initialization
-value, with the current approach remaining more generic and purposeful.
-
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -907,8 +907,10 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
-                max = 0;
-        }
-
--       pci->num_ob_windows = ob;
--       pci->num_ib_windows = ib;
-+       if (!pci->num_ob_windows)
-+               pci->num_ob_windows = ob;
-+       if (!pci->num_ib_windows)
-+               pci->num_ib_windows = ib;
-        pci->region_align = 1 << fls(min);
-        pci->region_limit = (max << 32) | (SZ_4G - 1);
-
-> Please provide what the DT looks like (for ranges/dma-ranges) and
-> where problem entry is.
-> 
-
-bus@80000000 {
-	compatible = "simple-bus";
-	#address-cells = <2>;
-	#size-cells = <2>;
-	dma-ranges = <0x44 0x00000000 0x04 0x00000000 0x04 0x00000000>;
-	ranges = <0x00 0x80000000 0x00 0x80000000 0x00 0x20000000>,
-		 <0x00 0x04000000 0x00 0x04000000 0x00 0x00001000>,
-		 <0x00 0x00000000 0x20 0x00000000 0x20 0x00000000>;
-
-	pci@80000000 {
-		compatible = "andestech,qilai-pcie";
-		device_type = "pci";
-		reg = <0x00 0x80000000 0x00 0x20000000>, /* DBI registers */
-		      <0x00 0x04000000 0x00 0x00001000>, /* APB registers */
-		      <0x00 0x00000000 0x00 0x00010000>; /* Configuration registers */
-		reg-names = "dbi", "apb", "config";
-
-		linux,pci-domain = <0>;
-		bus-range = <0x0 0xff>;
-		num-viewport = <4>;
-		#address-cells = <3>;
-		#size-cells = <2>;
-		ranges = <0x02000000 0x00 0x10000000 0x00 0x10000000 0x00 0xf0000000>,
-			 <0x43000000 0x01 0x00000000 0x01 0x00000000 0x1f 0x00000000>;
-
-Just look at the last "ranges" property — the first line is the only one
-we want to program into the iATU, as its size is below SZ_4G
-(the iATU region limitation for this SoC).
-
-The next line exceeds the iATU region limitation; therefore, we do not
-want to program it into the iATU. It is natively wire-connected by
-design and does not need to pass through the iATU.
-
-> Rob
-
-Sincerely,
-Randolph
+Mark
 
