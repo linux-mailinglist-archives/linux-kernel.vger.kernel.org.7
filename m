@@ -1,121 +1,157 @@
-Return-Path: <linux-kernel+bounces-837634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5854FBACCCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:19:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2E1BACCD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128FB3C6567
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DAD2189AB66
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1602BE7D0;
-	Tue, 30 Sep 2025 12:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCAA2F6598;
+	Tue, 30 Sep 2025 12:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgfOdVsZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="bCNRln/+"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A581F582C
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB6F2628D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759234773; cv=none; b=rDatlK9MzxSfkrrfS5MNfmWSAMTv/iQVGUmmvCMdq6i++Ad6NG8Pg6pg3oenxKSlVaFAcjtMvXLTavyjt8qDadsqFuCYaOdi7EKmqDTtkIMVE1HZWF+LsJC3VrD2uPcrJnYnr4PtIzs/W0xo0DxwYy37uYtGTVDsL6UsQTdFUek=
+	t=1759234823; cv=none; b=LL4lXU3AndZpFUb4aueQoFudT2e8aR+5kKro/ShcM7mcvh8kwx6TwrRpHhGPDLTQHDiNGAqoKder2yLWFw2m0/nB4tyFF9iqwkXq4MSIIprhczlWVH92icAonz3vmYil5Ul8E5V2ZLM64Q3kKG3vgNFS2IofzmiYqfd6/u0gNsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759234773; c=relaxed/simple;
-	bh=K/02sF+wmK8zVvZYoYSnvHtVxTq3OlWrSzPnKA270yo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BsgigiTP3UXFhQv3ObQOCKCoaYv8vEf8YUrQZ39eG3THjKOYfKYABSdx3K3/D9kBbjrgwuox1cBo4yOeejnxxnlyuNJlG5wtlvgF4sj7mdkKmE5QrHzGF5/S83KriMyk28TnUFz6EpxZ062+BKIzbZ9+xNcD06DEcs230vsp5Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgfOdVsZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0011C4CEF0;
-	Tue, 30 Sep 2025 12:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759234772;
-	bh=K/02sF+wmK8zVvZYoYSnvHtVxTq3OlWrSzPnKA270yo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DgfOdVsZlwSmJA7IW7k1lnvV4jlq5FSwwBDuzMpIZGBtUdDVSJgTquIthFlGa5Q8U
-	 98BLtzqFOohEkkPbc8+FNu7gjY9gDH91lZ3yY37wiMqeZfQ1FunDIqwYk9aVycgpCQ
-	 dXxcDiggi1UD9be3PF1r8wXAh7sugOD+P308J7IUiCylTcWtP1fagJFIAoAuTBVEiU
-	 DjsygnIC5ZyklUWrMKJ+lbJToLW3Vi4CVgR6YK7x5n6zedQdHtCfnR97n3qgBYQMFF
-	 1/JRi/+JyjcMRDQmpoKNYfnAxvKTmdlfBPrraklKJNyL2IozHxYiSgCJw1xVbYn8LX
-	 py8sii1AYhYAQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: Michael Walle <mwalle@kernel.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Guenter Roeck <linux@roeck-us.net>,  Pratyush
- Yadav <pratyush@kernel.org>,  Cheng Ming Lin <chengminglin@mxic.com.tw>,
-  miquel.raynal@bootlin.com,  richard@nod.at,  vigneshr@ti.com,
-  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  alvinzhou@mxic.com.tw,  leoyu@mxic.com.tw,  Maarten Zanders
- <maarten@zanders.be>
-Subject: Re: [PATCH v2 1/3] mtd: spi-nor: macronix: Drop the redundant flash
- info fields
-In-Reply-To: <CAAyq3SYyqi-oR8T039Zd0uaF6UieX3SdF9UF2kxOG6+yJqAEUg@mail.gmail.com>
-	(Cheng Ming Lin's message of "Tue, 30 Sep 2025 15:36:40 +0800")
-References: <20250407075400.1113177-1-linchengming884@gmail.com>
-	<20250407075400.1113177-2-linchengming884@gmail.com>
-	<d98f6eee-d5f7-43b7-bbc8-d6e7e274723a@roeck-us.net>
-	<mafs05xh6pf7s.fsf@kernel.org>
-	<da58fc81-3c99-4951-85bc-e3c139283b5a@roeck-us.net>
-	<a2a0c40e-69d7-4408-add2-88616c92b0ca@roeck-us.net>
-	<aa2a4480-9b78-4ed9-8f9d-b18a87eb01e9@linaro.org>
-	<CAAyq3SYybDgBvkTKh2ZB4UdKq1XV_nnzx3Tj1P915W5x_7_nNA@mail.gmail.com>
-	<DD10QMSJVZ2K.26U45JAXV5EY7@kernel.org>
-	<CAAyq3SYyqi-oR8T039Zd0uaF6UieX3SdF9UF2kxOG6+yJqAEUg@mail.gmail.com>
-Date: Tue, 30 Sep 2025 14:19:29 +0200
-Message-ID: <mafs01pnoceum.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1759234823; c=relaxed/simple;
+	bh=JfRlA2NUhU1kG602IPax22A5h+dNSAH5OIBQUrcaHKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eE0X0hRQ8d2gg99YWtNVnuV6dmnl71sNFA+4HT+f5pM4Xrs7Fyi/HMDqx00uCGmPpDKDLhdLiGaNz6uLX5dsh1w2rifaaqH870SuvcvGS0Ak1vxLzCr2zU8Tppr/TY4zUGiqOyS5dC5X+cbVVH1joaCOoVpQeIVlqQE9QNuZIN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=bCNRln/+; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-86be8a110f5so10050796d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:20:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1759234820; x=1759839620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JfRlA2NUhU1kG602IPax22A5h+dNSAH5OIBQUrcaHKQ=;
+        b=bCNRln/+5waSdfJ3foDmTXNkpjmKdWJAiEttRZWF0MEoRaViGJ3VHa1Z8l95LLvNU+
+         be6HqiiqzY+dT6q/B6Yb0i0UVCNdpwpgH37+326UACJ1E2xGiJB3HENdDMcUROq8dScn
+         U4lRuJkJGloOzViJq8UleaQypp/AxRGPvH5A9PPcpKeIYEhrrxiQKc2esSvbo5Ex0fyp
+         /6IMRmlRnSbDVDdll5zJLtuf32ZOw7wwTbZllDO9BoWqDeq4enRbwV3YoQiO2kSF8s8M
+         XiEjyXnp+IMd7xfAwLoPmAAfelVnINGf3rYJdlz62s/RXOqc5vqFru5IAlwrkILb18rw
+         lvUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759234820; x=1759839620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JfRlA2NUhU1kG602IPax22A5h+dNSAH5OIBQUrcaHKQ=;
+        b=HQNuDXtkary3bLxlb8o6bdK4PP0Ya9FwrUSvwizh7a6kGFGEdC+xapR9e1Wbv4kI8x
+         hUfkKr7IlADgXIVcVSQZYaDf7EOSafAq7oJpTbcsOAe9q/VkyG+V4inn5oL+5lmq88EK
+         1UylE9D2ymOf8l/o2oVhUuBbpqZM+3miMwnxrhBSYR7zbjZ0uEYkhtcuG9GjSQnTj6vm
+         c6ZMTQICzTsJIVKYeBryVTBxgNXQegofIubuTsH0BuAG4nNSJci134q/yZ8srfLMAgS6
+         6GvEEj8U8BBVXfJdA4TPcyknMLLywk0hn+GnL7cPRfk0Oi0SvDb7NyEdPB8QvWB8E2kn
+         PwWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXotum7HEcUuxo7WoTAeoKGaHGNFRfSulXiqcI+c4TjRHiVaWVQBIF2fn5SBZ8B9g7CQEg2yE0WmpDMg8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRkKDlb2x4C6+K/B9j3HyZjLh/TTxeRs654hTYgPG4FPm+m9zY
+	ss/9OxYf854gj1ryRcvucuhxJl8MYDf6gdnRNXBnsCXJdmx7HN/+ZBJW5qfArfL8cVDodliYJDW
+	YbPjJ2LNn47e78s1yLCdtjaUBiinRW4NR1Jj0Dx+iCA==
+X-Gm-Gg: ASbGncuZStQwWm9vA2G5b/wHuhSoPFmaZGFUhCT/z8X4w5CDFr2EOwm6l0NQaoB56Y/
+	+hPYbJfs9O2Kn+big3x2Au51vzUznS2dFbxtnCSNy9+ujhy8lnVyDE2MaOrLFY2y5T6/q23KR8v
+	nb7XA+0hPs3jfCnt617DtN11q40u98y7mvXXKGGDBIcQuNTxWZB3EbsSIc5viSkIv/IqmHE+wC2
+	eTgsKpTXsU3k7lDgETV91kVrMj6wQUDjVBYpkmW
+X-Google-Smtp-Source: AGHT+IGNbjw6RNqsJAvb7qKyVX9JU+8Q52yRLDkjXoWDZvMcGT/3qrwgZCNcyKpRwrI6Z9Mglf9tBhqM86fyt3kXMf8=
+X-Received: by 2002:ad4:594c:0:b0:794:5578:6a with SMTP id 6a1803df08f44-7fc29999880mr292314156d6.10.1759234820411;
+ Tue, 30 Sep 2025 05:20:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
+ <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
+ <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com>
+ <CAFZQkGwotQ6cxVCSgp-BhUi5DaZ7MyVvbnrDJW11Z7ztzqy58g@mail.gmail.com>
+ <CAPj87rMTOD3_tC70QX4xz3G4zdG=tmwt5VgPhq6jNyf8bbW49Q@mail.gmail.com>
+ <269ca85a59f613568543f45867fba7e604cc9f11.camel@collabora.com>
+ <CAPj87rMhsFy+uzKmNecrQG4e+BEoeX1FyEobO7bnHdQqhy1_2Q@mail.gmail.com> <2a985767-0fe1-40fc-b45e-921bbf201e07@app.fastmail.com>
+In-Reply-To: <2a985767-0fe1-40fc-b45e-921bbf201e07@app.fastmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Tue, 30 Sep 2025 14:20:09 +0200
+X-Gm-Features: AS18NWC_qgpU_0cN4JQ19aLDGw_PL71UmwKNqFB1ss4l60CpIYnHrco3rK8zc9M
+Message-ID: <CAPj87rMHP_np_9vtnyJ_NU4S3W09DoMRrLPps-33hTngdLyKCw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
+To: Sebastian Wick <sebastian@sebastianwick.net>
+Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Xaver Hugl <xaver.hugl@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Alex Hung <alex.hung@amd.com>, 
+	wayland-devel@lists.freedesktop.org, harry.wentland@amd.com, leo.liu@amd.com, 
+	ville.syrjala@linux.intel.com, pekka.paalanen@collabora.com, mwen@igalia.com, 
+	jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com, 
+	agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org, 
+	victoria@system76.com, uma.shankar@intel.com, quic_naseer@quicinc.com, 
+	quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, marcan@marcan.st, 
+	Liviu.Dudau@arm.com, sashamcintosh@google.com, 
+	chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com, mcanal@igalia.com, 
+	kernel@collabora.com, daniels@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30 2025, Cheng Ming Lin wrote:
+Hi,
 
-> Hi Michael,
+On Fri, 26 Sept 2025 at 15:45, Sebastian Wick
+<sebastian@sebastianwick.net> wrote:
+> So I'm going to argue that making the properties read-only or read-write =
+is useless.
 >
-> Michael Walle <mwalle@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=8824=E6=
-=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=888:11=E5=AF=AB=E9=81=93=EF=BC=9A
->>
->> > The root cause of this problem lies in the failure of parsing the SFDP
->> > data for the flash, rather than an issue with the patch itself. I beli=
-eve
->> > we should not revert this patch.
->>
->> I disagree. There are Macronix flashes with that ID which doesn't
->> have SFDP.  And this patch is dropping support for them. See also
->> [1]. Now I'm not sure it is worth reverting this commit. Nobody,
->> except Guenter complained, but only *so far* (and that patch is in
->> since 6.16). Any opinions?
+> The only case where knowing the color pipeline of the previous user would=
+ be useful is if you want to re-use the framebuffer of said user. Otherwise=
+, the color pipeline and the generated framebuffer have to somehow just mat=
+ch to produce the desired output and that does not require any previous sta=
+te, making the legacy properties useless.
 
-When I read this I was just hoping no one complains and we end up just
-dropping support for these flashes that no one seems to use...
+I don't think it's useless; if nothing else, drm_info is a thing and
+having it work is nice.
 
+> If we genuinely believe that this is something to be supported, then my q=
+uestion is why the new color pipeline should not be able to accurate reflec=
+t the state of the previous user, even if they used the legacy props?
+
+That's reasonable. My hunch was that it would be too much code in the
+kernel to essentially just do format reinterpretation on userspace's
+behalf.
+
+> The hardware was able to get into some state based on the legacy props, s=
+o it will be able to get into the same state with the color pipeline props;=
+ it's "just" a matter of exposing the right pipeline.
 >
-> I agree with reverting this patch. When I initially verified it, the
-> devices I had on hand all supported SFDP, so I did not catch this issue.
-> After checking again, I confirm that some older flashes without SFDP are
-> indeed affected.
-
-Do you know if these flashes are used in any devices that are actively
-used and maintained? If so, we should revert. If it is likely they
-aren't actively used, then maybe we just keep things as they are?
-Dunno...
-
+> If we are not able to accurate reflect the previous state with the pipeli=
+ne props, then use space will see inconsistent state between the legacy and=
+ color pipeline props. Which state is the right one? We cannot know. The pr=
+evious user could have used either one. So having the legacy props does not=
+ help because we don't know if we should use them or the pipeline state.
 >
-> Would it make sense to only change the `.name` field to use a comment,
-> while keeping the rest as is? That way we can still support flashes that
-> may not provide SFDP.
+> So, I would argue that we should *remove* the legacy props if DRM_CLIENT_=
+CAP_POST_BLEND_COLOR_PIPELINE is set. If the handover is relevant for a dri=
+ver, they should ensure the legacy props state translates to the correct co=
+lor pipeline state.
 
-Sure, that would be a good improvement over a plain revert. Maybe as a
-follow up patch to the revert?
+FWIW, the usecase I can see in mind would be doing a fade-style
+transition between the old and new clients. But I don't really care
+too strongly about it to be honest; I mostly care about having
+drm_info work because it's a super-useful tool.
 
---=20
-Regards,
-Pratyush Yadav
+Cheers,
+Daniel
 
