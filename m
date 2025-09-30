@@ -1,163 +1,148 @@
-Return-Path: <linux-kernel+bounces-838100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20322BAE710
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50052BAE719
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50491C2755
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108B71C7A54
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A55228689B;
-	Tue, 30 Sep 2025 19:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAB82868B0;
+	Tue, 30 Sep 2025 19:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UPjRbwDh"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GeSikPyr"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A66828640F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3F0285CAB
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759260461; cv=none; b=qwqs+cHenN51Wa6+yCwC7/mhC8QVsLGy+qoAU0RVUY7U18ZI8XDeyc+HS8p7g52jE+Fl7Qy+Tnhicdv0RUCaSq+vW70Urzwk54e0L8Iaa0rMHcSzH6tNNARYAgIPfAwgxlKK/K1e/w4gEYbW5GsM+4nMTMOYfBwgQ1xm+aN/rAc=
+	t=1759260588; cv=none; b=t2PmTygmdms4wBFvMTymqbVa2kfJXG758//9qb4CM+hXzjPQqwcN1AQix9g1mIl0MdKjDV8NaD8Lw+wZa/8MHfxBHPF9SrEl0FeLZrdpfcB1YkTSsxj/ezG0vb1ZAz+dNEa8+cMZGDWbn51issnM3I5fCwbLj0dPBa536/xhvNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759260461; c=relaxed/simple;
-	bh=0kyHnmwQ/a13Xmqwsp8Z7wPblzDgblhkclYLzTai/nk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CpmKUSIiUHiybXU5RBbNhFbJ7gkEpKtUzGN+7A2ZqgtTBoZyqnn2UftBuek5EPwRmi8qVWfCessAuXTAMq7lcRl5VWNswwOV4UvvOfeG+OWfzMHuwiMgDEWtZlt7vOEw9NSY/zGpLsg0oaiJZ139O9/1hsZKzaTcxRxWqRB0Ek4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UPjRbwDh; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-279e2554c8fso64693545ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:27:39 -0700 (PDT)
+	s=arc-20240116; t=1759260588; c=relaxed/simple;
+	bh=P+qZ2fZAEXfL436ybjprlYZc2AIijh26vuzV2ZNtQnk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KqlyVT23H+sFXmDl1GWlWFKxQ2J2ScpGNLUGtOKWf2OV/Ag7xQ+9YqoFROqLDlDwCd9f3L7MLbgnO5kf54vyhpQlXHZ7q0vN2EBHuEw0A7Bk4sl24FrgEjRnouJqKqLd/p7/BiDqwOIXZ+a+6j1dHhnkz05kt3lOLJm2AHja3kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GeSikPyr; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-267fa90a2fbso2237565ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759260459; x=1759865259; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nQxDxajR/Sam1KSYzGdudBRiapg5rl5sWBWoYDLBG+c=;
-        b=UPjRbwDh6KxNGp15PjjdQQaYVL5h0zXwAw+E3mJDn9R6fg0YjiFnuTZQ7BB3eo9NgU
-         D9L/hYBbYAn3YRQYAsU4qBouX5pQDZ54ODYvVl3kzCrY11XugqMXjSb7MZA8mUYUjkZC
-         eHJxn1NYUDKXyHVhWrfwG8l0/E1KoCE4nrbG4w2zrMOdaptypRallQsLa8XVWkYc/1yk
-         09NcSTePFbC0qBvdn35+jB+rLwAYkD7Ev2geG92iz462cHSLZRwKYDpADaS6NPOSvEYF
-         27Oykzk2hAv+0PB3EgadHR3GCzEHOxqg6VYlJPQr5ud0QbMyIcPyNEyEGySJXKQYY+4c
-         a4jQ==
+        d=google.com; s=20230601; t=1759260586; x=1759865386; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bRnlDy13lHDP7WqEGAF8ErlJ5mSCGwAed5lppIb8Dzg=;
+        b=GeSikPyrgxxfW0mpkkwdm4MvCmz3F9ZjMnMgNRhrAGH+xdqAy3DG6wkzWRVKQpOpBY
+         fgTZIWpOJLrdcqzHrTesUAEJcQil3WLdQx44hw6mXLx8u3/u33eyOdJAJOuiaxw3YdhT
+         kY6TULqq6EYrFf6X2PcfyAlf83XKPp+3iwSOXSVcq8QGj79RtCXR9bSF7xomc5YQk9vc
+         RChZZqSira0XQa397RG4a62vbXnCADMi6kKsL+oQzpKxIvmi4Uv521MmguVvStvBuuAV
+         5lfwrxGGGRAy8E5FQE40TyoF8PMvsrN+EQUSIlINY79FDd6pg6FTfuxwfiqQMln9pW7X
+         ePJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759260459; x=1759865259;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nQxDxajR/Sam1KSYzGdudBRiapg5rl5sWBWoYDLBG+c=;
-        b=wRcXTPSZL7xrvFGN7/pvhrnfY198/Qf2EjcnRfZCFZ6HyMml1Vrn0sXTYLMinaYm8T
-         ZAVvcYyzv4d4dUFhQQM5LkxyiMICKUn7wKzuTPee6u1yQhODLtTbHiWaGIPc2Zs2eBsN
-         xHClNmIhk7HSHe6MhTv9l+Zbc9bet2OswgcMvfTvbweIPmA1Vu1Md7zZLI+xY1LvS9F7
-         AkykWlnZ/4F7v5r8qxqCvp8va8CjcAI7MBvMXbmhR1O9uk/x+tGKoQaE3ed9dBOSbbxj
-         9Y13vQWSmUyQdzGIb1s5aHXHF+g3Aqc/AtqxOjNhAYYRTzDIF5uT8dvPck9H5ozgH2zb
-         JCtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRz1iU1hGjnSSfAoCMaI7NBWbQKFjaB5w4mI9l1OStd9ZRrQk/p0h20lfi7C6wzl6vznpVb/+n6hws5rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHqDexW0utp75II48UMvZ1ZOF98TCN5PcZeGpTG9EQeiKQp4UI
-	zkmc10v+V8WLV6BD0UU5PXIJ+oL/YiIslAwzOTpzCJzmsiz+N5/438wnZ2XGAqekoYLDOP5QNBM
-	pOLPOIycnCl09cy4WNgi6P/xk4AMtx3kRdz/iH6N7hw==
-X-Gm-Gg: ASbGncvKrJxu5QQTeNzG+lxB5apGUcexoM7QJM8gfFTAvxZo833NFFymIUC/CPCYsnp
-	PjtgLa/7VnJDEhyt9HLQOhyE3DLVkqY/UYBwc6oHiLHFBgDHd6vbxyVLH2+pKdmF6TasfOi2zr2
-	/OQcfPgnwrnWQlKHAruFmkP2/PbvBihEjBRlSRAq1LqpOUfC9LtMQz++csxMy9P+RKskYQYh85P
-	i22jQqo0uvYQjYSQRpSoRr3K+aGKqdwrAZqWUI1S488X7lye/s44c3uU9RxRnesA/vz7fiS72qY
-	jWUH5c9hrASV0QTirC+LYzATWRIfVek=
-X-Google-Smtp-Source: AGHT+IFaFh/dbgGIksQ/VwhgUOF+6SoIM70lxC8KuMuId9DIvXVuvWGEyxJOxgnRTVPkkVHSTJPrNd0WRWY/7Oxyd88=
-X-Received: by 2002:a17:903:2f08:b0:288:5d07:8a8f with SMTP id
- d9443c01a7336-28e7f2a3ba2mr10180705ad.24.1759260459391; Tue, 30 Sep 2025
- 12:27:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759260586; x=1759865386;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bRnlDy13lHDP7WqEGAF8ErlJ5mSCGwAed5lppIb8Dzg=;
+        b=rg2FCc+ECRBA7GGrlWTXQ+vkwvyrcv4kWT3uaUf+jHGUnqtd0ZcZf7HbVWMAf9ApS4
+         bwZiI+kL1tOBa6lqA2ZHUBYDKePu0k1FnjM7gKC6N0Gizj5nG9uzvFTSFVgjQRMcuJnp
+         moiFG4j01SlPyHm4z7uvdDnRjSw9m8CUe+Y/1MtubTFUamAhVxNrnKMq6RjZfP+jdTAC
+         PFEqPTIKg6G0wHwbnzCgrxwHkIwbNMRYS4Y9P8/OeMFSJrzfvmFcNYD1mXSk4NpwJOGw
+         Rdnlgc/3We4lXvAyQAkhp1qL/+6qtkXrOIdxSyXtmXECcN7oaf39y2eaM6n0CvD/mmLv
+         oOIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnp4SaeNvB1IAls58a2NPzJ7ihy49n6g3m5I8uRHUYX+ddRz8w19LYg5n9pqCWi1/Y4TIjrD4iMKb3r2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU0Y+ODmECww5tG64Mgx04SXLyLlJd5mermJulLVgTTizJQQqL
+	pq4I1nirWa3/mWkEwWz0WCgesgHrCKwHxm7ouhlCHNUeg0/hDwLj1HB75Tfg3RXdvtfGvDwHmHP
+	1iuVGgA==
+X-Google-Smtp-Source: AGHT+IF5F3WIQ14BvXYYKK8coAqeR7NqeKnM/sNLJDk+1DZxPsJu3iO33ShTmyn79EL/jVws/rkPw3b2Mhs=
+X-Received: from pjvi5.prod.google.com ([2002:a17:90a:dc05:b0:329:ccdd:e725])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f647:b0:269:aba9:ffd7
+ with SMTP id d9443c01a7336-28d1713873fmr61157175ad.25.1759260586135; Tue, 30
+ Sep 2025 12:29:46 -0700 (PDT)
+Date: Tue, 30 Sep 2025 12:29:44 -0700
+In-Reply-To: <aNwgyhZO0BXQVExn@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250930143822.939301999@linuxfoundation.org>
-In-Reply-To: <20250930143822.939301999@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 1 Oct 2025 00:57:27 +0530
-X-Gm-Features: AS18NWAq2VDGjJYBroUXlLCPyC3gOIxToosJNMH6IsWUcf3ow_eF-wBXPZYh-6E
-Message-ID: <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-fsdevel@vger.kernel.org, linux-block <linux-block@vger.kernel.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250825155203.71989-1-sebott@redhat.com> <aKy-9eby1OS38uqM@google.com>
+ <87zfbnyvk9.wl-maz@kernel.org> <aKzRgp58vU6h02n6@google.com>
+ <aKzX152737nAo479@linux.dev> <aK4CJnNxB6omPufp@google.com>
+ <aK4J5EA10ufKJZsU@linux.dev> <aK4cAPeGgy0kXY98@google.com>
+ <aNvzy5-lj3TBLT3I@google.com> <aNwgyhZO0BXQVExn@linux.dev>
+Message-ID: <aNwvqAEZG9ustuDo@google.com>
+Subject: Re: [PATCH] KVM: selftests: fix irqfd_test on arm64
+From: Sean Christopherson <seanjc@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Sebastian Ott <sebott@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 30 Sept 2025 at 20:24, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.245 release.
-> There are 122 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.245-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Sep 30, 2025, Oliver Upton wrote:
+> On Tue, Sep 30, 2025 at 08:14:19AM -0700, Sean Christopherson wrote:
+> > > What about providing an API to do exactly that, instantiate and initialize a
+> > > barebones GIC?  E.g.
+> > > 
+> > > 	void kvm_arch_init_barebones_irqchip(struct kvm_vm *vm)
+> > > 
+> > > Hmm, then we'd also need
+> > > 
+> > > 	void kvm_arch_vm_free(struct kvm_vm *vm)
+> > > 
+> > > to gracefully free the GIC, as done by dirty_log_perf_test.c.  Blech.  Though
+> > > maybe we'll end up with that hook sooner or later?
+> > > 
+> > > All in all, I have no strong preference at this point.
+> > 
+> > Oliver, any thoughts?  This is causing noise in people's CIs, i.e. we should land
+> > a fix sooner than later, even if it's not the "final" form. 
+> 
+> The lack of a default VGICv3 wound up getting in my way with some
+> changes to promote selftests to run in VHE EL2, cc'ed you on that series
+> since I wound up walking back my gripes here :)
+> 
+>   https://lore.kernel.org/kvmarm/20250917212044.294760-1-oliver.upton@linux.dev
 
-The following LTP syscalls failed on stable-rc 5.10.
-Noticed on both 5.10.243-rc1 and 5.10.245-rc1
+Hah!  I saw the series but didn't read the cover letter. :-)
 
-First seen on 5.10.243-rc1.
+> That's now in Paolo's tree as of this morning. With that said, I think
+> irqfd_test needs a bit more attention (below).
+> 
+> Thanks,
+> Oliver
+> 
+> >From 4d0a035fb7e6cead74af4edb24fbcfdec076d321 Mon Sep 17 00:00:00 2001
+> From: Oliver Upton <oliver.upton@linux.dev>
+> Date: Tue, 30 Sep 2025 10:53:14 -0700
+> Subject: [PATCH] KVM: selftests: Fix irqfd_test for non-x86 architectures
+> 
+> The KVM_IRQFD ioctl fails if no irqchip is present in-kernel, which
+> isn't too surprising as there's not much KVM can do for an IRQ if it
+> cannot resolve a destination.
+> 
+> As written the irqfd_test assumes that a 'default' VM created in
+> selftests has an in-kernel irqchip created implicitly. That may be the
+> case on x86 but it isn't necessarily true on other architectures.
+> 
+> Add an arch predicate indicating if 'default' VMs get an irqchip and
+> make the irqfd_test depend on it. Work around arm64 VGIC initialization
+> requirements by using vm_create_with_one_vcpu(), ignoring the created
+> vCPU as it isn't used for the test.
+> 
+> Fixes: 7e9b231c402a ("KVM: selftests: Add a KVM_IRQFD test to verify uniqueness requirements")
 
- ltp-syscalls
-  - fanotify13
-  - fanotify14
-  - fanotify15
-  - fanotify16
-  - fanotify21
-  - landlock04
-  - ioctl_ficlone02
+Reported-by: Sebastian Ott <sebott@redhat.com>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-Test regression: LTP syscalls fanotify13/14/15/16/21 TBROK: mkfs.vfat
-failed with exit code 1
+> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-We are investigating and running bisections.
-
-### Test log
-tst_test.c:1888: TINFO: === Testing on vfat ===
-tst_test.c:1217: TINFO: Formatting /dev/loop0 with vfat opts='' extra opts=''
-mkfs.vfat: Partitions or virtual mappings on device '/dev/loop0', not
-making filesystem (use -I to override)
-tst_test.c:1217: TBROK: mkfs.vfat failed with exit code 1
-HINT: You _MAY_ be missing kernel fixes:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c285a2f01d69
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bc2473c90fca
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c45beebfde34a
-Summary:
-passed   72
-failed   0
-broken   1
-skipped  0
-warnings 0
-<8>[  868.434017] <LAVA_SIGNAL_ENDTC fanotify13>
-
-## Build logs
- * Test details:
-https://regressions.linaro.org/lkft/linux-stable-rc-linux-5.10.y/v5.10.244-123-g9abf794d1d5c/ltp-syscalls/fanotify13/
- * Test log:  https://qa-reports.linaro.org/api/testruns/30062041/log_file/
-
---
-Linaro LKFT
+Acked-by: Sean Christopherson <seanjc@google.com>
 
