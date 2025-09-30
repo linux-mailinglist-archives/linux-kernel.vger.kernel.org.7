@@ -1,188 +1,111 @@
-Return-Path: <linux-kernel+bounces-837395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9C1BAC3A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:16:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E8BBAC3A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879E83C4DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34EB188A4FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B209221FC8;
-	Tue, 30 Sep 2025 09:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YsWpFlo+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE64E2F60D6;
+	Tue, 30 Sep 2025 09:15:51 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C46021A95D;
-	Tue, 30 Sep 2025 09:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D41F2F60A4;
+	Tue, 30 Sep 2025 09:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759223741; cv=none; b=ZtF1/oTtGgwN54Lg8mYhlYwhwaBSnD2MlGGUi6PJdYOV23/6sj2cviKFsef1R8JFRNCsEpkOoBazGHTuskByXfAsyRJGG5B9onds41RU+QHAQUXEsr6X2H/V+gT1IrKmHWJ6k0RFE3Db4UW4fNSYx4VF/Hk3LZXeah1rlOhzxFs=
+	t=1759223751; cv=none; b=ezlo40sXYThX2THcWAgjsK8bYfzRL3P/bkn7L21fHgMTa+BosVIoOK1wafjR8KNrMVKAKhBs/ixurWYP5gCD1ntydN9IPVEfq2BUNMBVA8k3lW6VXNYBMeUwC96TOm8g4lBg0UJrNEvky6HbFBcyezJFrEW7TLxbipe3IR4z4/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759223741; c=relaxed/simple;
-	bh=4u6qPEoom1yzsgPG/RiuqPrapQHxzaEyZJYu/J36gVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgBh/ZNbWMJ2gTWSqX99WjikrJ2BCK5mtOdF8Z/axKCSKPZDUee8rBuPJKF9fvUm7SvC7yycjiX1NRi9QOPBfMZAXzinz/WmC0fIBbtZPRSYzvViB78xKKOLQ9DeW9/ndyTO74kTnXEKq6D6+WaPARIxF5gIKFJ5t8mlzd/Vjko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YsWpFlo+; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759223739; x=1790759739;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4u6qPEoom1yzsgPG/RiuqPrapQHxzaEyZJYu/J36gVs=;
-  b=YsWpFlo+QmtmwfZKjNOwE+zdT5KiIIkifAtwf5TB0VpQp8+4JaCYGkJZ
-   7o1t+th/7IfLCET2v1x9NR7cU7EfQ5HwfNZzSG6BZB/wGvyVwrazmYvs2
-   iwwX8tLYTJIDljK5iMow5itmZ51LZ9bdsVCo0iiJSl0cYJIf1ViJYQC6D
-   LgTsUZWECA1swltCwuMT6uEDHWRmteKLu/nyzIehdOeoox91ZdBbLh7as
-   zNAJ6xWNvhJSR5aRoB5cUvKkPHyvzHuiSqvUtXgIQUWyYAVpFOfSCgvnc
-   NYHAD4xccGXkVtTLuBcWXkwoo4je9W4GJaTFOI6NQ3rrgSprWZw725nhS
-   Q==;
-X-CSE-ConnectionGUID: T5GJeV7SR36oYzmx70Owpg==
-X-CSE-MsgGUID: 2eU2UKyXQqeXLmlIy7X+wQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65296925"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65296925"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 02:15:38 -0700
-X-CSE-ConnectionGUID: h3lsygxZT8yC8rzVkS8v2Q==
-X-CSE-MsgGUID: t5LwEXYPSNCNRRntXuKYNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="178880006"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 30 Sep 2025 02:15:34 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v3WSK-00015t-1L;
-	Tue, 30 Sep 2025 09:15:32 +0000
-Date: Tue, 30 Sep 2025 17:15:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net,
-	cs@tuxedo.de, wse@tuxedocomputers.com, ggo@tuxedocomputers.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
-	alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org,
-	lee@kernel.org, pobrn@protonmail.com
-Subject: Re: [PATCH v4 1/2] platform/x86: Add Uniwill laptop driver
-Message-ID: <202509301709.jGxwZmZX-lkp@intel.com>
-References: <20250928013253.10869-2-W_Armin@gmx.de>
+	s=arc-20240116; t=1759223751; c=relaxed/simple;
+	bh=I5NH2LMuwVM1YzMzzV27Eim0/974hIWEq3VwkdWzNvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t0aWqVKbJbosuKcFN2VlxwQXwitjsKp6vLzqqfmRuvTzWWDD0IdfR+bqnOeJtNO88agb5yL1kjL/c7W467nXtu4MB7K1On27MF1fSJAGLtUT0vUtS/jija/ypLbLqRefZclWxzjcnlk4JnwlsBSnd0fBKURC8+cnh/Tzk2GfnX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=fail smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cbXTW6QZmzYQtpS;
+	Tue, 30 Sep 2025 17:15:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 449E81A0DF1;
+	Tue, 30 Sep 2025 17:15:45 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjGS_n9toi7xBBQ--.46251S3;
+	Tue, 30 Sep 2025 17:15:45 +0800 (CST)
+Message-ID: <1d3f056c-f32d-4f47-a325-42ac88b0c981@huaweicloud.com>
+Date: Tue, 30 Sep 2025 17:15:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928013253.10869-2-W_Armin@gmx.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ext4: detect invalid INLINE_DATA + EXTENTS flag
+ combination
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250930090237.306607-1-kartikey406@gmail.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250930090237.306607-1-kartikey406@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDHjGS_n9toi7xBBQ--.46251S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4kGFW8KrW7KrWUAFyftFb_yoW8JFWrpr
+	W7G34Utw4kArykGayxtw47Xr1Y9w1fCw45ZFW5WrnrAF15Gw1rtFy5tF13AFy3CrZY9Fy2
+	qF4jvas3uw13tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Armin,
+On 9/30/2025 5:02 PM, Deepanshu Kartikey wrote:
+> Zhang Yi,
+> 
+> Thank you for the review. Regarding the placement after ext4_set_inode_flags() - 
+> this would be too early. My debug shows that i_inline_off changes during inode 
+> initialization:
+> 
+>     After ext4_set_inode_flags(): flag=1, i_inline_off=0, has_inline=0
+>     Before my patch validation check: flag=1, i_inline_off=164, has_inline=1
+> 
+> At the earlier point, ext4_has_inline_data() returns false, so we wouldn't catch 
+> the corruption. The check needs to be after all inode fields are initialized.
+> 
 
-kernel test robot noticed the following build errors:
+The return value of ext4_has_inline_data() changed since ext4_iget_extra_inode()
+initialize the i_inline_off parameter from the ondisk inline xattr. However, in
+your v2 patch, you checked the EXT4_INODE_INLINE_DATA flags directly instead of
+the return value of ext4_has_inline_data(). The flags will not change, so it's
+safe to move this check eralier, and it is more reasonable to directly check the
+flags after getting flags from the disk and before checking inline xattr.
 
-[auto build test ERROR on lwn/docs-next]
-[also build test ERROR on linus/master v6.17 next-20250929]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
+Yi.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Armin-Wolf/platform-x86-Add-Uniwill-laptop-driver/20250928-093543
-base:   git://git.lwn.net/linux.git docs-next
-patch link:    https://lore.kernel.org/r/20250928013253.10869-2-W_Armin%40gmx.de
-patch subject: [PATCH v4 1/2] platform/x86: Add Uniwill laptop driver
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20250930/202509301709.jGxwZmZX-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250930/202509301709.jGxwZmZX-lkp@intel.com/reproduce)
+> I'll fix the alignment and use function/line variables as you suggested, but keep 
+> the check after "ret = 0;" where all inode fields are populated.
+> 
+> I'll send v3 with these fixes shortly.
+> 
+> Best regards,
+> Deepanshu
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509301709.jGxwZmZX-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/platform/x86/uniwill/uniwill-acpi.c:1243:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-    1243 |                 guard(mutex)(&data->battery_lock);
-         |                 ^
-   include/linux/cleanup.h:401:2: note: expanded from macro 'guard'
-     401 |         CLASS(_name, __UNIQUE_ID(guard))
-         |         ^
-   include/linux/cleanup.h:290:2: note: expanded from macro 'CLASS'
-     290 |         class_##_name##_t var __cleanup(class_##_name##_destructor) =   \
-         |         ^
-   <scratch space>:49:1: note: expanded from here
-      49 | class_mutex_t
-         | ^
-   drivers/platform/x86/uniwill/uniwill-acpi.c:1250:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-    1250 |                 guard(mutex)(&data->input_lock);
-         |                 ^
-   include/linux/cleanup.h:401:2: note: expanded from macro 'guard'
-     401 |         CLASS(_name, __UNIQUE_ID(guard))
-         |         ^
-   include/linux/cleanup.h:290:2: note: expanded from macro 'CLASS'
-     290 |         class_##_name##_t var __cleanup(class_##_name##_destructor) =   \
-         |         ^
-   <scratch space>:60:1: note: expanded from here
-      60 | class_mutex_t
-         | ^
->> drivers/platform/x86/uniwill/uniwill-acpi.c:1249:2: error: cannot jump from switch statement to this case label
-    1249 |         default:
-         |         ^
-   drivers/platform/x86/uniwill/uniwill-acpi.c:1243:3: note: jump bypasses initialization of variable with __attribute__((cleanup))
-    1243 |                 guard(mutex)(&data->battery_lock);
-         |                 ^
-   include/linux/cleanup.h:401:15: note: expanded from macro 'guard'
-     401 |         CLASS(_name, __UNIQUE_ID(guard))
-         |                      ^
-   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
-     166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-         |                             ^
-   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^
-   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
-      83 | #define ___PASTE(a,b) a##b
-         |                       ^
-   <scratch space>:47:1: note: expanded from here
-      47 | __UNIQUE_ID_guard1072
-         | ^
-   2 warnings and 1 error generated.
-
-
-vim +1249 drivers/platform/x86/uniwill/uniwill-acpi.c
-
-  1235	
-  1236	static int uniwill_notifier_call(struct notifier_block *nb, unsigned long action, void *dummy)
-  1237	{
-  1238		struct uniwill_data *data = container_of(nb, struct uniwill_data, nb);
-  1239		struct uniwill_battery_entry *entry;
-  1240	
-  1241		switch (action) {
-  1242		case UNIWILL_OSD_BATTERY_ALERT:
-  1243			guard(mutex)(&data->battery_lock);
-  1244			list_for_each_entry(entry, &data->batteries, head) {
-  1245				power_supply_changed(entry->battery);
-  1246			}
-  1247	
-  1248			return NOTIFY_OK;
-> 1249		default:
-  1250			guard(mutex)(&data->input_lock);
-  1251			sparse_keymap_report_event(data->input_device, action, 1, true);
-  1252	
-  1253			return NOTIFY_OK;
-  1254		}
-  1255	}
-  1256	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
