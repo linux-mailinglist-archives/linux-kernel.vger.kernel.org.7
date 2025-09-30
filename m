@@ -1,158 +1,214 @@
-Return-Path: <linux-kernel+bounces-837039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2886FBAB246
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F4ABAB24C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA0A7A1939
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D78316467C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B62220687;
-	Tue, 30 Sep 2025 03:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322CE2264CD;
+	Tue, 30 Sep 2025 03:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O75qkQ40"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iho6XU27"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F28194A44
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04091E1A17
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759202308; cv=none; b=owZ5axm5dJTuqrWrtRrMnvuV4m+2fq+kmCfYJSdV0qoPCVAivH+oTA56w+zsxFl50+LPorjZnu/NbMxa3F48kM4ZeZLFOfeqYVMhrMp3medvtjVI/8DDczxsF7KhW1H4Qi9JTJuSUeWzwU4R3EKgTEDDSED/6qm8MDF5ib7YlNI=
+	t=1759202368; cv=none; b=cNZvYS1SuA7LyHZhmd1ueALMATaLgvL3Ndbq+OY3pPs0u7XoaSjLCfb/Cf+KedsHq+UD/b2MT7d4MXXsxXQyamoOa61++lKiTaEzWee+3hvfCtH+LOiRidaTAkUQx9dysyzKlQA4LvIO1yorWyEewhUOho4NHsp7M3jQslAkAgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759202308; c=relaxed/simple;
-	bh=uaZ8qq9KG7UhYZxnVtn80+b0ZXQ4Rtj1Kxa7cWa5kJU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=P+AZ/eNar7AV3uy91V+/Gwigi5qRMOXpaS+KQwiwXTtKVqD/oWRET4n7pCsbcuaKrp7XpZX3G2DFZmKUWqD0SbZr12Psxe311aupUDwQBoHQVHboIPv1qvp2JBgE64JD2HG3y/TRHnz/2IZnmOgpOc1k4f4gAXKszDJuZkl3h3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O75qkQ40; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d603b674aso58078117b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:18:27 -0700 (PDT)
+	s=arc-20240116; t=1759202368; c=relaxed/simple;
+	bh=EWb9mcMhPLwVON+FMrosPILezBfZreUUY4XVEf2hUEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iv0eVcIDJyApW/cj1roUig87zldcebTa64RLdY89HUw2cZ1nLPx2CZ97L5THHBrGrUdS67BMAKcyO0ZwSq/nI5vlmmaYTNpLSOoKt+XvAh/x/cBrRxoMu+mvrB4vb3tpyWSdsWMsDAGGAXOOSA9XFQQyeyeebDsk0vQOfkFMAEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iho6XU27; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4db385e046dso45705581cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:19:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759202306; x=1759807106; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PGNLCKGJrXLWa6eAFuG7oNqbsQrVZxx3Sl0hu9yULUc=;
-        b=O75qkQ40pw22uylvopJESH6JKLYiXMxdyEg8sddHMx4hHeh+0yQ2lxNQaa8JtNAVmb
-         Yu5As4F9fJ16cvdexnGDB276BDXurozvuYcaj/sP+WKy5KetYQQOFY2Qz2da7Acp8vqJ
-         UwryZs9l6DgFfFtzq7Lax8P31AhstIxx7W7jkv06mtXcpSf7puSaFpt5HEI6EV9GE/mg
-         wbERmM2E1oDt0FyUvo8FDTGteiwQ0XsJwv0kzUcPaK4gIlXbVQ81kkcNmqp857Zkzm7y
-         FOYk4TiFNMv+E5sWJrl7o2EvnVivNGjHMTW6+dlrhooY4uyVbI9UbqSvBsaEkhBhFW+W
-         mYFQ==
+        d=gmail.com; s=20230601; t=1759202366; x=1759807166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7gLvWskKO9NISSvH7QfBj9yELCdtGhaDVZxapYCTDYM=;
+        b=iho6XU27U1+lTVPV80ALwhC0dbbgdlJ7AmZ2q9Kx6mIgCivadXEHmkObO11ILNuPc1
+         /kS+/B+8zKOmJm2qYwbBfKThGo3Mw9YWdXOyvxdQqPZ1M//vzHMOMHsDGS/75UeFHf6Y
+         mspJ+V/jpNdvAz7S79uGDPWBCLR7XB4CySWTEkv2qupr0k1ar1jUiSTEX72x2h5ndOxx
+         hJcwqAkTV356IcSjg4rbAXbwAqY60YtqJBjJ+guhZEVbUiXZLsuS7oJOoo3NDDP80MQh
+         SnfoBOKnDMO4ZPhG6DNeP4XhqC1MGE7dTDpAKrgblDtDEpL1fAsjBExKF9g6Jyle+u2N
+         wtFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759202306; x=1759807106;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PGNLCKGJrXLWa6eAFuG7oNqbsQrVZxx3Sl0hu9yULUc=;
-        b=nq99LhbdXXs/JFliZx4lWyJCeS/EQEfB88MIpWYgEZD6tg33bE0fgsGmVIiHNWiULA
-         r46KwZB+iWzUCo0sTbmoCQNjogzx8TNqKdhmOTuQ9l9wXB11LopP5JiJ+LQF5+T0lrM6
-         HIRNi1xvnzmPxwggkB/BztcH78JV9K3ND5gRXApVr0PLrBMMUqYSCD6x4DcNguiYbi0r
-         u1E6btaFkRAAc4ic5ylDBtX0XD8h3avZ0B8asADEv9SvAFAD5YsNQrz0Yi8XqSLYNiN9
-         LT6vycvj0Qv1oxG1Lfpv08ucqGu1uBIYvcmwqHizwXOe4WH87q3VMIUe/4do1kVHEKqA
-         JkAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+GNSIcbwKXNbw4tIBdMkPvJUaPJfGcMh7OfRmjkqlObHYFscJEHYKYmi9yJy8aZPpm8y73i0ZGciPvpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiyJMkRXg4DUIaZMMUx1c/cZfh7F45xiUY2NE8IfOrgd8wcSzY
-	ImPrElyyVmEAW+FjVESesnMKAuWhg/WfHK2YvCVTf39qFCKEDxU14GcKgIdL8utR8P0RZ55tkW3
-	JaMYGKA==
-X-Gm-Gg: ASbGncs+aLQc8dekgUTUtMo7Q450hA2psLyGL49efUyYdwe6IvFxmD/ohLmNu3tpNYh
-	KCP/LV2gSz7sAKwTPg5D0tKiVQnlqhLravjmoPs1Pk0xMkSUlzgCToZpquFGwFvpSVSetSlSWn9
-	DKRx5xsneGChkqODxnWtJ1LfAsN24RImMMdwB23+Vi9JW6FZi4ITdeY8zcpStUWACQOI2l2gZgB
-	LlkNOtx7g/Y8VAhns89Xql/0s+lRTZMvTorcaF//SpLJd8NDUGKHkDPVI9PvqysRrPaRuk6dXHX
-	oDqeJo3eJR134nZcSHop6u4Tp7QhLhpA+ZM6/kfbFb5Lmg/f4DKP0d/+p/x/v21jiYIW7GRDI0H
-	i8oOHFihfdUF8RWf0UbID5pbMDj9pzs/fSOKcgFxCn5sfx8Zsc0B0lDqW21bKdhcx/5l9HU/g4I
-	1v8dBwQnkKTpwp/pZVn/YE1JnR1f+T3MiYpf5g
-X-Google-Smtp-Source: AGHT+IFcZqYas2wBQmI9BbRmqml9F+2QA9spZ9yKoBd8FyOombPucba4gtkHHMksFeRZI+3E7DFoZg==
-X-Received: by 2002:a05:690c:7302:b0:734:ee:200b with SMTP id 00721157ae682-764052014damr237888467b3.51.1759202305941;
-        Mon, 29 Sep 2025 20:18:25 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-765c77e72d0sm34142987b3.49.2025.09.29.20.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 20:18:24 -0700 (PDT)
-Date: Mon, 29 Sep 2025 20:18:13 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: SeongJae Park <sj@kernel.org>
-cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-    damon@lists.linux.dev, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org, Xinyu Zheng <zhengxinyu6@huawei.com>
-Subject: Re: [PATCH] mm/damon/vaddr: do not repeat pte_offset_map_lock()
- until success
-In-Reply-To: <20250930004410.55228-1-sj@kernel.org>
-Message-ID: <07267988-1736-1372-8994-76892c5cc804@google.com>
-References: <20250930004410.55228-1-sj@kernel.org>
+        d=1e100.net; s=20230601; t=1759202366; x=1759807166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7gLvWskKO9NISSvH7QfBj9yELCdtGhaDVZxapYCTDYM=;
+        b=fd6TRMVQT0UntP+cgbxVE5/0VPpz3h/xI5Na89fwOKp8RxQPKtYggejfx5LC1aN+R/
+         byyrl7cDIlE/cOCVTeLKtJasAgjich1ux7cpYs/eSN0rygs/7cW3sgPmOeNC5aNlG60Z
+         cNvASPvVNWElcA01kLURBehMedjDpeQY1jHYHYr4RG+gwB+bI+tcYsvEKkHox4r8tC5w
+         LlkAzpj+OTZ6k48mWxprLt773vuV/OCdfCz8ixRNqrC4DiC3o6ySpimG1Z+/poKT7GZ/
+         S1Wqte6gmnLV0qBR5obte1+08Zj9nKEUaTHcZLq/9U8ihZ102jbCpdEcZ6S6jtGmUWii
+         sa5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUyf7MpaRpaP3SKiaenoJsEIMFSbqquLpayCFIX9YhUmK2T97pjxgsqzNI3cl/T/js4QdR0I0j+lQ5fkUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz145d0YJidFSr2bQ6JNbFmJsU2dI/wl/AP+WHS+3Sf/9iN/D5y
+	Jvyl0M1FX1BqeqXXrMLcX4DJpUr9AEmkgw0i1L3kKjdz7Wq8hWJTbjqgEGEh1YcRKxFd8PTom+3
+	ETsZ78En0pzx3DZRnqSm3lDeL1MvIJ3s=
+X-Gm-Gg: ASbGncsom+QYDeJ1JeQ7Kpg7Neb7e05456ru2B8aRNIVPZxWPX+gETokXn2b0E9c1qG
+	cxCh/c0uet7mBvZqGCKMdPTs5S/DDa+NvulGKTdrsqzfB7XIVHrQ1Q0WAm/yDYyGUOYlE3m3Myt
+	sVnhDSlK7Z+uaoDS8M/Lru03KBlnumFRTSpcI6CWvCQOnmvBq2onnRD9g9Ocj7ABMFFwFvydS74
+	92K5poQAiCdMGUKp0AYyDlhpcfiDe8l
+X-Google-Smtp-Source: AGHT+IGd4Yt2CfWqJpq73k06OIwopaib1H87KJ3xzxIVLa34fX7JZb5rHIKDJ+TX2zdm4gbM+lnCpPq/Chw0xggLkGQ=
+X-Received: by 2002:ac8:580d:0:b0:4da:3218:e8da with SMTP id
+ d75a77b69052e-4da478290d2mr252791301cf.17.1759202365587; Mon, 29 Sep 2025
+ 20:19:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250929014227.430-1-xuewen.yan@unisoc.com> <CAJuCfpE_aZKFB8O=KPq5uTv=WeJf6TCmneMnr8pp88SNWy3K-Q@mail.gmail.com>
+In-Reply-To: <CAJuCfpE_aZKFB8O=KPq5uTv=WeJf6TCmneMnr8pp88SNWy3K-Q@mail.gmail.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Tue, 30 Sep 2025 11:19:14 +0800
+X-Gm-Features: AS18NWBcqZ0NvhkmG_UM6sVIJIDnxhwqtC9zPgp_yOox7W3dyUMwGXcx07PRGdA
+Message-ID: <CAB8ipk-xw-wcCB=rSv5-aEANefww_JiB4nKRW1iFXxGOA3tW-Q@mail.gmail.com>
+Subject: Re: [RFC PATCH V4] sched: psi: Add psi events trace point
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, hannes@cmpxchg.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, ke.wang@unisoc.com, yuming.han@unisoc.com, 
+	Roman Gushchin <roman.gushchin@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Sep 2025, SeongJae Park wrote:
+On Tue, Sep 30, 2025 at 7:17=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Sun, Sep 28, 2025 at 6:43=E2=80=AFPM Xuewen Yan <xuewen.yan@unisoc.com=
+> wrote:
+> >
+> > Add trace point to psi triggers. This is useful to
+> > observe the psi events in the kernel space.
+> >
+> > One use of this is to monitor memory pressure.
+> > When the pressure is too high, we can kill the process
+> > in the kernel space to prevent OOM.
+>
+> Just FYI, Roman is working on a BPF-based oom-killer solution [1]
+> which might be also interesting for you and this tracepoint might be
+> useful for Roman as well. CC'ing him here.
+>
+> [1] https://lore.kernel.org/all/20250818170136.209169-1-roman.gushchin@li=
+nux.dev/
 
-> DAMON's virtual address space operation set implementation (vaddr) calls
-> pte_offset_map_lock() inside the page table walk callback function.
-> This is for reading and writing page table accessed bits.  If
-> pte_offset_map_lock() fails, it retries by returning the page table walk
-> callback function with ACTION_AGAIN.
-> 
-> pte_offset_map_lock() can continuously fail if the target is a pmd
-> migration entry, though.  Hence it could cause an infinite page table
-> walk if the migration cannot be done until the page table walk is
-> finished.  This indeed caused a soft lockup when CPU hotplugging and
-> DAMON were running in parallel.
-> 
-> Avoid the infinite loop by simply not retrying the page table walk.
-> DAMON is promising only a best-effort accuracy, so missing access to
-> such pages is no problem.
-> 
-> Reported-by: Xinyu Zheng <zhengxinyu6@huawei.com>
-> Closes: https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-> Fixes: 7780d04046a2 ("mm/pagewalkers: ACTION_AGAIN if pte_offset_map_lock() fails")
-> Cc: <stable@vger.kernel.org> # 6.5.x
-> Cc: Hugh Dickins <hughd@google.com>
-> Signed-off-by: SeongJae Park <sj@kernel.org>
+Thanks for the review and the bpf patch, I'm interested in these.
+> >
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+>
+> Acked-by: Suren Baghdasaryan <surenb@google.com>
 
-Thanks,
-Acked-by: Hugh Dickins <hughd@google.com>
-
-> ---
->  mm/damon/vaddr.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-> index 8c048f9b129e..7e834467b2d8 100644
-> --- a/mm/damon/vaddr.c
-> +++ b/mm/damon/vaddr.c
-> @@ -328,10 +328,8 @@ static int damon_mkold_pmd_entry(pmd_t *pmd, unsigned long addr,
->  	}
->  
->  	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-> -	if (!pte) {
-> -		walk->action = ACTION_AGAIN;
-> +	if (!pte)
->  		return 0;
-> -	}
->  	if (!pte_present(ptep_get(pte)))
->  		goto out;
->  	damon_ptep_mkold(pte, walk->vma, addr);
-> @@ -481,10 +479,8 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
->  #endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
->  
->  	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-> -	if (!pte) {
-> -		walk->action = ACTION_AGAIN;
-> +	if (!pte)
->  		return 0;
-> -	}
->  	ptent = ptep_get(pte);
->  	if (!pte_present(ptent))
->  		goto out;
-> 
-> base-commit: 3169a901e935bc1f2d2eec0171abcf524b7747e4
-> -- 
-> 2.39.5
+Thanks!
+---
+BR
+>
+> > ---
+> > V4:
+> > -generate the event only after cmpxchg() passes the check
+> > ---
+> > V3:
+> > -export it in the tracefs;
+> > ---
+> > v2:
+> > -fix compilation error;
+> > -export the tp;
+> > -add more commit message;
+> > ---
+> >  include/trace/events/sched.h | 27 +++++++++++++++++++++++++++
+> >  kernel/sched/psi.c           |  5 +++++
+> >  2 files changed, 32 insertions(+)
+> >
+> > diff --git a/include/trace/events/sched.h b/include/trace/events/sched.=
+h
+> > index 7b2645b50e78..db8b8f25466e 100644
+> > --- a/include/trace/events/sched.h
+> > +++ b/include/trace/events/sched.h
+> > @@ -826,6 +826,33 @@ TRACE_EVENT(sched_wake_idle_without_ipi,
+> >         TP_printk("cpu=3D%d", __entry->cpu)
+> >  );
+> >
+> > +#ifdef CONFIG_PSI
+> > +TRACE_EVENT(psi_event,
+> > +
+> > +       TP_PROTO(int aggregator, int state, u64 threshold, u64 win_size=
+),
+> > +
+> > +       TP_ARGS(aggregator, state, threshold, win_size),
+> > +
+> > +       TP_STRUCT__entry(
+> > +               __field(int,    aggregator)
+> > +               __field(int,    state)
+> > +               __field(u64,    threshold)
+> > +               __field(u64,    win_size)
+> > +       ),
+> > +
+> > +       TP_fast_assign(
+> > +               __entry->aggregator     =3D aggregator;
+> > +               __entry->state          =3D state;
+> > +               __entry->threshold      =3D threshold;
+> > +               __entry->win_size       =3D win_size;
+> > +       ),
+> > +
+> > +       TP_printk("aggregator=3D%d state=3D%d threshold=3D%llu window_s=
+ize=3D%llu",
+> > +               __entry->aggregator, __entry->state, __entry->threshold=
+,
+> > +               __entry->win_size)
+> > +);
+> > +#endif /* CONFIG_PSI */
+> > +
+> >  /*
+> >   * Following tracepoints are not exported in tracefs and provide hooki=
+ng
+> >   * mechanisms only for testing and debugging purposes.
+> > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+> > index 59fdb7ebbf22..e8a7fd04ba9f 100644
+> > --- a/kernel/sched/psi.c
+> > +++ b/kernel/sched/psi.c
+> > @@ -141,6 +141,8 @@
+> >  #include <linux/psi.h>
+> >  #include "sched.h"
+> >
+> > +EXPORT_TRACEPOINT_SYMBOL_GPL(psi_event);
+> > +
+> >  static int psi_bug __read_mostly;
+> >
+> >  DEFINE_STATIC_KEY_FALSE(psi_disabled);
+> > @@ -515,6 +517,9 @@ static void update_triggers(struct psi_group *group=
+, u64 now,
+> >                                 kernfs_notify(t->of->kn);
+> >                         else
+> >                                 wake_up_interruptible(&t->event_wait);
+> > +
+> > +                       trace_psi_event(aggregator, t->state, t->thresh=
+old,
+> > +                                       t->win.size);
+> >                 }
+> >                 t->last_event_time =3D now;
+> >                 /* Reset threshold breach flag once event got generated=
+ */
+> > --
+> > 2.25.1
+> >
+> >
 
