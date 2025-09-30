@@ -1,116 +1,98 @@
-Return-Path: <linux-kernel+bounces-836941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16105BAAEF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54347BAAF09
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955F71887AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D17F188BE75
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC8A1F0E25;
-	Tue, 30 Sep 2025 01:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C351FF5E3;
+	Tue, 30 Sep 2025 02:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q8IN8iDb"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upq42rWM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E10713EFE3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B7F86347;
+	Tue, 30 Sep 2025 02:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759197502; cv=none; b=SohlB+p6MdBfEU51ULUYUHAMOgk78msVTxVXfDJY9+MHS2e3PrYcb7EI00OWJ0y99Mmy2/UaIXeK8BJ4VHdIdhlZMtud/GPCI4NfY/P45zc3QMjOoVsNr5qaD/JtUcTjEISmRtqBmAgL1dmLOH0B7udBGVjqOXL9USizeLvyqKE=
+	t=1759197618; cv=none; b=tTcqerpMVsu2dl8CoanLNb2RaOIh7iVs8UKfZTshdTwlFVfJ+zQkx/qEpGqbRktCu5MXGHaui2zOBGtJFO6sxxldz4Xg/Rkl7ph+ws9WY+SWIqLC1sIcDSTC3NLh2Cc6grV98lb5pdtbdld7mPt0Ay0l5OcDlaOENsvU+yEHDVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759197502; c=relaxed/simple;
-	bh=iNQP3/qNhq3RObpIWmmzHYpVGfhp1n8w/5c13AhIRaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJz9ITrLX/zyQQr7kM2EfufcaCYzSjP5aXFRAfaGxnSQ/pSADlPBcjSB4PIYLs/5Ht/eHW2ewxXWwwEbj1YbpH+gds3YYVoo9if7CXJNXo5NQDU/FWzPFk2zHHG7wR+gMqqAm3NwrLQpblM44YBZcR/04QJdbgX5P3iwpKU72PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q8IN8iDb; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d2ab96e7-40f7-4dcb-85f1-dd3024ba7155@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759197488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oswx+yAu7W+VHUXh80D3KG07B2o0dkYKBF4UV0d0w0c=;
-	b=q8IN8iDbmbEeHdRqavnOtP60BN4brZ9pcdOjsfI6nymdmYzME8koLPsqi9foZNedrhVqZK
-	NjRRgF9+ElYFJtbO1387IH9ybogTTssr1BAcP6a7KdZLEVICDxNRij7yAePUe+D8p4NtFF
-	m9cMTXZ11RgI37ujd3p2o3QLah2Jc24=
-Date: Tue, 30 Sep 2025 09:57:58 +0800
+	s=arc-20240116; t=1759197618; c=relaxed/simple;
+	bh=WCvfcztGmwRbMjgmpYjMM2ixl6GGHaLNZ2Pacu+vZto=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=twRBY0B1/sAzY5z48xDpJycBZL20Py+J7OQF8c3aWUomDEZZ43WB1g+hAO+PXtfeL9Hzcj57cnZ5RZfLKzcWOykgsCxea7s1738HZTLHZyYaYIEf1yqHpAeOILcCyguzQmKr/eAqg08VOm0jtxcN085SeENfwj8dZzTjiCpQdJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upq42rWM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F4CC4CEF4;
+	Tue, 30 Sep 2025 02:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759197618;
+	bh=WCvfcztGmwRbMjgmpYjMM2ixl6GGHaLNZ2Pacu+vZto=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=upq42rWMlFAunrYbEpJKgTSnW5YSlGVRHZW4QO0yRU9DRvFUnOVTKfT366h9a/5YC
+	 wSqr5xItrrtwpjAZLy2nabS8MIp+9DMPBAsUBvnVx2smdHbMTo1rl6HZD1b2E1zKEp
+	 iFJA/7+GsGGW80EGObZ/dySPp2peZL0Mw/h80vM3FKpETqsKtzof99aENpVmjLDExG
+	 ly+PkLiio5U+pl8Wk54nxRakCkEcJsVQ3AsQRxZZDgAL+GBbyQX2kDrO5AzhCDVyjC
+	 3Km7yrGaL1HTuVpglT4ZqTQEF7PHnjdr6il5OMS0nH0aPmescgwAGuvYQIflm9C5tw
+	 fvFKga+A8B7FA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB21839D0C1A;
+	Tue, 30 Sep 2025 02:00:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [v3,2/2] accel: Add Arm Ethos-U NPU driver
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Tomeu Vizoso <tomeu@tomeuvizoso.net>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>,
- Daniel Stone <daniel@fooishbar.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250926-ethos-v3-2-6bd24373e4f5@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <20250926-ethos-v3-2-6bd24373e4f5@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/3] mlx5 misc fixes 2025-09-28
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175919761175.1786573.17524062874473677424.git-patchwork-notify@kernel.org>
+Date: Tue, 30 Sep 2025 02:00:11 +0000
+References: <1759093329-840612-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1759093329-840612-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, gal@nvidia.com,
+ moshe@nvidia.com, shayd@nvidia.com
 
-Hi,
+Hello:
 
-On 2025/9/27 04:00, Rob Herring (Arm) wrote:
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Mon, 29 Sep 2025 00:02:06 +0300 you wrote:
+> Hi,
+> 
+> This patchset provides misc bug fixes from the team to the mlx5 core
+> driver.
+> 
+> Thanks,
+> Tariq.
+> 
+> [...]
 
-[...]
+Here is the summary with links:
+  - [net,1/3] net/mlx5: Stop polling for command response if interface goes down
+    https://git.kernel.org/netdev/net/c/b1f0349bd6d3
+  - [net,2/3] net/mlx5: pagealloc: Fix reclaim race during command interface teardown
+    https://git.kernel.org/netdev/net/c/79a0e32b32ac
+  - [net,3/3] net/mlx5: fw reset, add reset timeout work
+    https://git.kernel.org/netdev/net/c/5cfbe7ebfa42
 
-> +
-> +/**
-> + * struct ethosu_device - Ethosu device
-> + */
-> +struct ethosu_device {
-> +	/** @base: Base drm_device. */
-> +	struct drm_device base;
-> +
-> +	/** @iomem: CPU mapping of the registers. */
-> +	void __iomem *regs;
-> +
-> +	void __iomem *sram;
-> +	struct gen_pool *srampool;
-> +	dma_addr_t sramphys;
-> +
-> +	struct clk *core_clk;
-> +	struct clk *apb_clk;
-> +
-> +	int irq;
-> +
-> +	bool coherent;
-> +
-
-
-The 'coherent' member is not get used on anywhere.
-
-
-Best Regards,
-Sui
-
+You are awesome, thank you!
 -- 
-Best regards,
-Sui
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
