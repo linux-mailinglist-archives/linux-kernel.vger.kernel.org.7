@@ -1,172 +1,219 @@
-Return-Path: <linux-kernel+bounces-837416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C323BAC45A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:28:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C82BAC469
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B349480F44
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:27:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F6BB4E256C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E802F3621;
-	Tue, 30 Sep 2025 09:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4D22F362F;
+	Tue, 30 Sep 2025 09:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="W8o7f6sX"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbQpW5nG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F61279DCA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04706217736;
+	Tue, 30 Sep 2025 09:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759224468; cv=none; b=Fqa1VQSRwsaodAGRdDqyu8LmBEa9HGvLW16N5QCbMEh03kQCDoA2NuslCc5CGjx95HEX5MZ4aHrbey61wILojuF/CAMfhWSjidnI+qLXitVd0TbFdLicTAezNmpWOhy7pWOApCZ8Nwg0eG65IqCmyYLXQ89VmqwVjr89PaI+p80=
+	t=1759224511; cv=none; b=Ps0kUPk6AsZCV1bkSAcDMUpLP2KEOSy2ljJkiGFqoKOWeXPREuqfmLKgsoCIIOrIkDQFLozeOnnZqaQBvQcDrqOH+X+Dz9GrSCB3kHqYJCNraN3rHqwJqTKLNotSluxSIS0Z5ZM1sc3WHrcLDVUloJo2EgReYMpKZd0BZVp45ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759224468; c=relaxed/simple;
-	bh=QomGnp/WZaiSlLUxeHbxwNEqFcT66kwVEQVeFwjRZmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqf81Ly4bOXeJtXW0/Td9NaGmTQ6yWDvY9GX/h0UeXqyf7acdp5yJ+S9tdazMiL2oFCEcFmie1ijGR44f9gRzu73SCkCjKd/6ECl0S3eiIQo2r249/MiigtN0HAgwyd9SRA4VnJ0u+o6OhDDLhC7B/PwbzhfGmdsp57SeydmEiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=W8o7f6sX; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27a6c3f482dso44858085ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:27:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1759224465; x=1759829265; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uPZ87GrK4sGmTZypYw4angNWxIgNKI/floJfOy9PBvc=;
-        b=W8o7f6sX8ffQJcChfLeum/EO9+VFi35/vJprUFn+ExbHWaZT5pMENw7fpG3Hs9JSrG
-         BMT48Y1R+HphPi5Oy80z4tUCD1lcu1/v1yklJoLQjSN6dC9FsgrlfdOY5UKYRVtjNeRk
-         66ydGpJlRMYjXLdaGNdHKKJaeHScpuXGe/5l6kAqax+nQ+8rQ1BlXVUbghCLpo7pN5tp
-         Qvbig97xRIQpCfNdx0W4X0ccf1hZHGEyMpnutUlPEAW+1wksdrW0Zk3XLnYXK3ZBl8wz
-         dS5lK86rFBJfYy++kRlimRjFgIbLEhU5Q84MKKeoPJrGa2PNXxdnBhnXf8S/o9gPMHpP
-         jPBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759224465; x=1759829265;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uPZ87GrK4sGmTZypYw4angNWxIgNKI/floJfOy9PBvc=;
-        b=EVU1SgsuzKTzyxBG03C9oY5USZojGsEX9WD3ZstFuJ4lctgmbZVQLDJq0+LKT0F7iy
-         9UlHwI6MkIW+l/8YYY1INiKZd9Bh5iq1/4B4GJLtCzmrDAb2XWl5gGItK4GTJcPSY3eo
-         7Ufec/szg1ooItP3Ys2TLv5YGPzPoXMd0KHyBrF1XTHQzzCcl0TtGDYj3UshMDn4HJh+
-         7Xzo3tBSL69ci7By4p2eXiewzhIN9IJw96pN068F51YMspjbOsG5B/Gxmg+VXp79oWQg
-         jsAtAQWOahGK4wDWuj4Lil0JO0H0+Y2vfph2Porj7uMQYDcBjBDJOZ3chbDAbmG0e/vF
-         pRVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvPTS1B6qgt9Qr36GgDE477aPZ/UflNbnBH0lpe9cGlfSvvBJKB0rsdU+MB7Hnnm03bYuxxc3bapxiIRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCYK1zvGlgn5eR4kU2mt9/m3frZPZC9AVSaPvMsFzQqmfLVYOH
-	2/8I4rybU29SO8Cvi8sS/M7lJwjnWZacgfGf0JmCDL1ZtWi+RBqYOwyqBfLimxVrrg==
-X-Gm-Gg: ASbGncv/xxBRE/ujRbrEeg7kpARBnH3HcOjDXwbr5kKHQCUM9s0NDD6XaP3aSUWNIkY
-	lPn+y0BONiKhHNPr6MvK980jeYpSDDdZ7NG49ShZSy0MEbu4Q1BM4w6AukT2edOLokT37tanyz0
-	aP1t+sNTpLOUBkr5VXmmlwJMtJ1Q+ezC7L2KBHKXQhJ/kN4Xk0fBIQToPIt7aO4UpxioZ3ETBUC
-	5mskPkpPBGzR9n6ICqp3WoOl2FZ8nD2eAK6q9Cw3lyCv3YCF/gppELyJYkwnV0+U7YK4ehgSWtB
-	a/TY4FxCGzzaStOuzkvzFw59aXXsemc+pVZuBGXxt3J4laJ0/V7FE7a4SGjyAtCDejkxTPwj9tV
-	aEkh2tqm9hNeupjX/aYoj0mVIbQHIBGdUfjWo41fENVC9ao4bAOT53sNHnWH8n2Z21NwrGZDjhw
-	==
-X-Google-Smtp-Source: AGHT+IEC0VyjNusvAJKWZyQAPOThgSIAU1u6hkebU3rsz6hzRJ96HLYqZTSr2SpKNv2O19ZjdtVM0A==
-X-Received: by 2002:a17:902:f60f:b0:27d:6f37:7b66 with SMTP id d9443c01a7336-27ed4ac78b0mr218893855ad.47.1759224464994;
-        Tue, 30 Sep 2025 02:27:44 -0700 (PDT)
-Received: from bytedance ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69b0685sm152527565ad.116.2025.09.30.02.27.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 02:27:44 -0700 (PDT)
-Date: Tue, 30 Sep 2025 17:27:33 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
- zero runtime_remaining
-Message-ID: <20250930092733.GB510@bytedance>
-References: <20250929074645.416-1-ziqianlu@bytedance.com>
- <7c93d622-49fe-4e99-8142-aed69d48aa8a@amd.com>
- <20250930075602.GA510@bytedance>
- <658734b1-b02b-4e04-8479-ed17eb42c1f2@amd.com>
+	s=arc-20240116; t=1759224511; c=relaxed/simple;
+	bh=C6w4ZmlTMv92jOsQegmpG3XRXTZg//un+z3Jc2P4C+s=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=o+UuHapkXYZI3RXGKzsdTX5DaFE0weJWYfKyD/QYeIi8ure3XXmsfxq8969DlRgS6Q0Wtx38t23I/HG9ufN/o+LqKIOozbRd062vxGz8DWC5B5UxHpxwPmvTdM9HBLBKEsi/fqAQEsMvVr4DEaTy05BRV4+oJapM7aD8eXt2YWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbQpW5nG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EFDC4CEF0;
+	Tue, 30 Sep 2025 09:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759224510;
+	bh=C6w4ZmlTMv92jOsQegmpG3XRXTZg//un+z3Jc2P4C+s=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=RbQpW5nGZ2LiLVocNwDZgoJjp+iIyaiDkjcGtWyK76uyCkzleUUCkGKbjwtGltOVK
+	 I4cD0EUDecrwo4hz9pN6kCsB7j0It2KXsuobUt0+Do20dcMsoK8zwVj7eid3Ac2ARU
+	 NrQjSJKEBWvAHxgHmxInxSxXz3zVSCQYeQr853UAqf5r33GmMUqRqex+Z96KP1CQFh
+	 CFzXa+QAqd29zb9dl4/NhCsmC4LYATo7djmad8vL6BiOYZOXGpjhYj/0lMVhVtaqB4
+	 odcTpIpsmIxyCAjfuvk4jfsQ3yJwIK1gKNnm0tYTOAKKIej/MKqQE9TqTlgSKeqHRX
+	 Wl4pfgUJ1du6A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <658734b1-b02b-4e04-8479-ed17eb42c1f2@amd.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 30 Sep 2025 11:28:21 +0200
+Message-Id: <DD611F6QHQHM.1KNMI58HDKCZ5@kernel.org>
+Subject: Re: DRM Jobqueue design (was "[RFC v8 00/21] DRM scheduling cgroup
+ controller")
+Cc: <phasta@kernel.org>, "Tvrtko Ursulin" <tvrtko.ursulin@igalia.com>,
+ <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
+ <kernel-dev@igalia.com>, <intel-xe@lists.freedesktop.org>,
+ <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, "Leo Liu"
+ <Leo.Liu@amd.com>, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ "Matthew Brost" <matthew.brost@intel.com>, =?utf-8?q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, =?utf-8?q?Michel_D=C3=A4nzer?=
+ <michel.daenzer@mailbox.org>, "Pierre-Eric Pelloux-Prayer"
+ <pierre-eric.pelloux-prayer@amd.com>, "Rob Clark" <robdclark@gmail.com>,
+ "Tejun Heo" <tj@kernel.org>, "Alexandre Courbot" <acourbot@nvidia.com>,
+ "Alistair Popple" <apopple@nvidia.com>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Alex Deucher" <alexander.deucher@amd.com>,
+ "Lucas De Marchi" <lucas.demarchi@intel.com>,
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rodrigo Vivi" <rodrigo.vivi@intel.com>, "Boris Brezillon"
+ <boris.brezillon@collabora.com>, "Rob Herring" <robh@kernel.org>, "Steven
+ Price" <steven.price@arm.com>, "Liviu Dudau" <liviu.dudau@arm.com>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Boqun Feng" <boqunf@netflix.com>,
+ =?utf-8?q?Gr=C3=A9goire_P=C3=A9an?= <gpean@netflix.com>, "Simona Vetter"
+ <simona@ffwll.ch>, <airlied@gmail.com>
+To: "Philipp Stanner" <phasta@mailbox.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250903152327.66002-1-tvrtko.ursulin@igalia.com>
+ <DD5CCG4MIODH.1718JI1Z7GH8T@kernel.org>
+ <4453e5989b38e99588efd53af674b69016b2c420.camel@mailbox.org>
+In-Reply-To: <4453e5989b38e99588efd53af674b69016b2c420.camel@mailbox.org>
 
-Hi Prateek,
-
-On Tue, Sep 30, 2025 at 02:28:16PM +0530, K Prateek Nayak wrote:
-> Hello Aaron,
-> 
-> On 9/30/2025 1:26 PM, Aaron Lu wrote:
-> > On Mon, Sep 29, 2025 at 03:04:03PM +0530, K Prateek Nayak wrote:
-> > ... ...
-> >> Can we instead do a check_enqueue_throttle() in enqueue_throttled_task()
-> >> if we find cfs_rq->throttled_limbo_list to be empty?
-> >>
-> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >> index 18a30ae35441..fd2d4dad9c27 100644
-> >> --- a/kernel/sched/fair.c
-> >> +++ b/kernel/sched/fair.c
-> >> @@ -5872,6 +5872,8 @@ static bool enqueue_throttled_task(struct task_struct *p)
-> >>  	 */
-> >>  	if (throttled_hierarchy(cfs_rq) &&
-> >>  	    !task_current_donor(rq_of(cfs_rq), p)) {
-> >                 /*
-> >                  * Make sure to throttle this cfs_rq or it can be unthrottled
-> >                  * with no runtime_remaining and gets throttled again on its
-> >                  * unthrottle path.
-> >                  */
-> >> +		if (list_empty(&cfs_rq->throttled_limbo_list))
-> >> +			check_enqueue_throttle(cfs_rq);
-> > 
-> > BTW, do you think a comment is needed? Something like the above, not
-> > sure if it's too redundant though, feel free to let me know your
-> > thoughts, thanks.
-> 
-> Now that I'm looking at it again, I think we should actually do a:
-> 
->     for_each_entity(se)
->         check_enqueue_throttle(cfs_rq_of(se));
-
-Nice catch and sigh.
-
-> 
-> The reason being, we can have:
-> 
->     root -> A (throttled) -> B -> C
-> 
-> Consider B has runtime_remaining = 0, and subsequently a throttled task
-> is queued onto C. Ideally, we should start the B/W timer for B at that
-> point but we bail out after queuing it on C. Thoughts?
+On Tue Sep 30, 2025 at 11:00 AM CEST, Philipp Stanner wrote:
+> +Cc Sima, Dave
 >
+> On Mon, 2025-09-29 at 16:07 +0200, Danilo Krummrich wrote:
+>> On Wed Sep 3, 2025 at 5:23 PM CEST, Tvrtko Ursulin wrote:
+>> > This is another respin of this old work^1 which since v7 is a total re=
+write and
+>> > completely changes how the control is done.
+>>=20
+>> I only got some of the patches of the series, can you please send all of=
+ them
+>> for subsequent submissions? You may also want to consider resending if y=
+ou're
+>> not getting a lot of feedback due to that. :)
+>>=20
+>> > On the userspace interface side of things it is the same as before. We=
+ have
+>> > drm.weight as an interface, taking integers from 1 to 10000, the same =
+as CPU and
+>> > IO cgroup controllers.
+>>=20
+>> In general, I think it would be good to get GPU vendors to speak up to w=
+hat kind
+>> of interfaces they're heading to with firmware schedulers and potential =
+firmware
+>> APIs to control scheduling; especially given that this will be a uAPI.
+>>=20
+>> (Adding a couple of folks to Cc.)
+>>=20
+>> Having that said, I think the basic drm.weight interface is fine and sho=
+uld work
+>> in any case; i.e. with the existing DRM GPU scheduler in both modes, the
+>> upcoming DRM Jobqueue efforts and should be generic enough to work with
+>> potential firmware interfaces we may see in the future.
+>>=20
+>> Philipp should be talking about the DRM Jobqueue component at XDC (proba=
+bly just
+>> in this moment).
+>>=20
+>> --
+>>=20
+>> Some more thoughts on the DRM Jobqueue and scheduling:
+>>=20
+>> The idea behind the DRM Jobqueue is to be, as the name suggests, a compo=
+nent
+>> that receives jobs from userspace, handles the dependencies (i.e. dma fe=
+nces),
+>> and executes the job, e.g. by writing to a firmware managed software rin=
+g.
+>>=20
+>> It basically does what the GPU scheduler does in 1:1 entity-scheduler mo=
+de,
+>> just without all the additional complexity of moving job ownership from =
+one
+>> component to another (i.e. from entity to scheduler, etc.).
+>>=20
+>> With just that, there is no scheduling outside the GPU's firmware schedu=
+ler of
+>> course. However, additional scheduler capabilities, e.g. to support hard=
+ware
+>> rings, or manage firmware schedulers that only support a limited number =
+of
+>> software rings (like some Mali GPUs), can be layered on top of that:
+>>=20
+>> In contrast to the existing GPU scheduler, the idea would be to keep let=
+ting the
+>> DRM Jobqueue handle jobs submitted by userspace from end to end (i.e. le=
+t the
+>> push to the hardware (or software) ring buffer), but have an additional
+>> component, whose only purpose is to orchestrate the DRM Jobqueues, by ma=
+naging
+>> when they are allowed to push to a ring and which ring they should push =
+to.
+>>=20
+>> This way we get rid of one of the issue that the existing GPU scheduler =
+moves
+>> job ownership between components of different lifetimes (entity and sche=
+duler),
+>> which is one of the fundamental hassles to deal with.
+>
+>
+> So just a few minutes ago I had a long chat with Sima.
+>
+> Sima (and I, too, I think) thinks that the very few GPUs that have a
+> reasonably low limit of firmware rings should just resource-limit
+> userspace users once the limit of firmware rings is reached.
 
-If we want to make sure no cfs_rqs with runtime_enabled gets unthrottled
-with zero runtime_remaining, agree we will have to do that in a hierarchy
-way.
+The main purpose of the design I described is not to cover Mali GPUs, which=
+,
+eventually, will get rid of this limitation anyways. It's just that it simp=
+ly
+falls out of the approach to support hardware rings on top of the Jobqueue.=
+ So,
+why not take advantage of that and instead ask userspace to implement yet
+another scheduler?
 
-I don't feel good about that for_each_entity(se) check_enqueue_throttle()
-though, it made me feel we are duplicating enqueue_task_fair() somehow...
+Besides that, it entirely discards the possibility from taking the firmware
+scheduler decisions and the software scheduler decisions into consideration=
+ from
+a single source, i.e. the kernel driver. Mixing it up between userspace and
+kernel seems very messy. Probably that's also why Panthor went down this ro=
+ad?
 
-With this said, if we have to do that hierarchical check, I would prefer
-to throttle it upfront in tg_set_cfs_bandwidth() :) The useless assign
-of runtime is just 1ns, and it should only affect the first period, so
-shouldn't matter much?
+> Basically like with VRAM.
+>
+> Apparently Sima had suggested that to Panthor in the past? But Panthor
+> still seems to have implemented yet another scheduler mechanism on top
+> of the 1:1 entity-scheduler drm_sched setup?
+>
+> @Boris: Why was that done?
+>
+> So far I tend to prefer Sima's proposal because I'm currently very
+> unsure how we could deal with shared firmware rings =E2=80=93 because the=
+n we'd
+> need to resubmit jobs, and the currently intended Rust ownership model
+> would then be at danger, because the Jobqueue would need a:
+> pending_list.
+
+How is the ownership model at danger? The Jobqueue will always be the owner=
+ of a
+job no matter when and to which ring it submits to (by the instruction of t=
+he
+orchestrator layered on top of it).
+
+> So we'd be running danger of redesigning drm_sched, whereas with Sima's
+> idea there'd never be a scheduler anywhere anymore anyways.
+
+Except for GPUs that stick to exposing hardware rings (or have limitations
+similar to Mali). Clearly, the trend goes into the direction of firmware
+schedulers, but I think eventually we will need some software scheduler sol=
+ution
+on top of the Jobqueue if we don't want to stick with the existing GPU sche=
+duler
+forever (which I very much prefer).
 
