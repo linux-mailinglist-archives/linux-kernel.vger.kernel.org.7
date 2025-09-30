@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-838131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6A3BAE82A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:17:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A78BBAE826
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B107E325404
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5778192632C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE8134BA32;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CE7241663;
 	Tue, 30 Sep 2025 20:17:37 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6972119F40B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E4F18DB0D
 	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263457; cv=none; b=X+XPLI9hTZtEDPKTf26BeUUk7LRsMjvgjYjT0yg7ld1GiQpNfOWXrojADD5yRPH6Ulvre+LKMtXSNAyBFadpe7bmq7nV8ZG9KE1qYKx8J5aM+PWmKNLkIB/KszZq/xAH8QNxWmEcbKvKRUc3dmUsPKsCiOWhpVr8lSWznCUm5WA=
+	t=1759263456; cv=none; b=B4ymJHVF2C2WXmbvhXPvL/tD7QgKRkAbYCPaaApLhT9iiTuoz9nBE4NbecSN68EblSeZGfXgOlXxLkNtdMnJQ981fyGjdvnfZMAXnFkhNw3uYQfIAorNIDIk4ZeE7yi/oAz4vcvxggXtbu115OmTQcTJI6HH12RBcRVSyqPegrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759263457; c=relaxed/simple;
-	bh=TDH8vzFsIMP+FaLjeKsxVQ8JrIFaIwg82WMRO0n46Is=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=os2ELWK0+1kO91yFbIPmtsQor7YuV4vDHTtqbKCrZzfzeDKThJ2fxTsm0Nf4jMBxrtyFoC549uJeRw9dzfSHCO0KJBDYZmJ0ELB00q4fYDZ6FTbpYTHc/M3q0K3fbxTCvI4wGULX+Okc8tzNWjaDzHB6ERwvDzP2P3X7xj34T50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1759263456; c=relaxed/simple;
+	bh=cAIg9/uPNKwCmtU2FlBr8tfahlzGJedBW+czINNLHC8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F6re3cB/FmbqwZr7KXUmahUu30Fourvqp7C0nFHDx9fLPal0uMgGjsfO7nhjbKvK6srdKDA2mcpadHAADS/Fmfzyag1gX3vm9mNzW2NKv8IhN/WiqWh6CHodLgLxxNI3l0HDD9pIBAEJu5EvHDUs7sQF+oFzGbvFKU8SCPvinaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-42d7ef0c632so18865865ab.0
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-425788b03a0so164806085ab.1
         for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:17:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1759263454; x=1759868254;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LGrzJ6TsXsD4qZJxnOtOJPRd2gsGL0hMKZMMty4R1hw=;
-        b=RejE6Skh9AdiXCTdOp3nBblM2JZ8RpdtnWSNvUHG/0taoh/3VqPIlDiRdSx4e1k+PG
-         sMmJhEaZeMrLa1KmH6ilVBGNSpexqIxvqU4/yZx/PA0qa1L7yIoONvEnukbi87WLEXyq
-         TM7m4XX0h+dTMZViGudgkGTQkZMCDk1r+D+tM5m/f2euv7sO4y3XQmxf4ZMmDvVfmbEt
-         5JnOYwWklK+KuCVzgLQW0zpHQHpCGb1BLGTElXU+6G0n6YM/hZxBwciFe6gOKlaV8YnE
-         rWmXBrOmcHVR79crbAn/BOx5urRh5Wnz/Pd9ijj1MXQ3uVk12E0rwpYDX70OMiWsUg90
-         ZrwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXynxdsCH775fStnvvrK81BwZuNDD3VwRNdm3S709OYc+NlNialzHBD6StWwSRdZsVFQ6vWjJvA3COqZdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB3B8c552lDzj3Bi1J86eLh8ZFbKFI/PB2/EhxCp7tskfQ7kdz
-	gSbeXeqPYAzSg6P6T0TY0a6Umc6DrlpH4wYlTmNHMokA1jv1l1DS0/x0qnAnXcPpWg4JIcAcQK5
-	OwG57woMU1O8MO2vHburE0chKWufy9ji+nQ16PJb0sLOiWJMX4OaDkc4nggs=
-X-Google-Smtp-Source: AGHT+IHIF7h447lb4NOR0bEvL5jEo3qx5Gy/t+7sjkLJjjoo7TxArWm1exNmogDkZgcACqCgR+3UluJFFNB1t/ywcjQtYM+ytjYF
+        bh=imYVyFLoW8Lx5IenAuDtwzh/rTjhBRKJiMfcM+p+yW8=;
+        b=rICxLdgEh6QygPIZz1t3OAnQXmQWTYmuLw2MjvYegvtVywHl3CGV20LfjMNlYYwHO1
+         ZScGEgk1zm1qFgpi9QriRveVW8GY3qS6NTMCp41gweZKiL9UOgqZ2qVgTmG6yfCmu4rM
+         ueEffbIAkm46br2JKNGyK8sQBRkU0g2Nn4VWpnrFGLYUOg1qoBwR8DgP0m7JX8DREQxH
+         xqsG1jL5PiZcBH6gZ9gx8zVMYEE/xTTpDUNTrMQSVi4/1fnfLN/Hta0FSD498bMiBz5g
+         C2ixvwnYTWBceUW65tPlM1JH3MMu40kWGtGFw02xhpYrQZfQeXlA0lTxvpAtxaKbBtGd
+         Mc2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKKpNLWYZUxImFNnG2X/L+cXiDgvy3w0OfvVavzUqu02qFAHj610FU7qLGHTmynXkh2R//PPt5WngRujA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvPlWA7evt0L4J/hNtMCQ+t2DKFrbyNGHjxWLfVUKaxAOaZAaj
+	qF4sFuAaLWkXUZXTiyN7WH9wyxQoqsZ527hIx2dXfkVFCxsprMKHWcvjoqn22uZRGIgdJxOLSI3
+	xgy5h8ASF4TJXy9v2tMnimQl9tUnLd0iEh95yEJfLU85IY9PP3uaYa4DS6tM=
+X-Google-Smtp-Source: AGHT+IEvi3ZUUdgyMCecZ94IYWbSb9OgCzFJ4lzc7VTcsbHz93zWE4mlXeuyyGAd5BE10k9YRhgghfauZkiLPJjoX5Zi+AgOjOcb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aad:b0:426:a2d3:28d3 with SMTP id
- e9e14a558f8ab-42d815f51a5mr19496315ab.13.1759263454583; Tue, 30 Sep 2025
+X-Received: by 2002:a92:cda7:0:b0:427:6510:650b with SMTP id
+ e9e14a558f8ab-42d8161957amr17936155ab.22.1759263454279; Tue, 30 Sep 2025
  13:17:34 -0700 (PDT)
 Date: Tue, 30 Sep 2025 13:17:34 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dc3ade.a70a0220.10c4b.015c.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in free_mnt_ns
-From: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+Message-ID: <68dc3ade.a70a0220.10c4b.015b.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] WARNING in path_noexec (2)
+From: syzbot <syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    449c2b302c8e Merge tag 'vfs-6.18-rc1.async' of git://git.k..
+HEAD commit:    30d4efb2f5a5 Merge tag 'for-linus-6.18-rc1-tag' of git://g..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b43858580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=595e5938a1dd5b4e
-dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c9ad04580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=160bf27c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f085cd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f17deb9fdc33e902
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9391462075ffb9f77c6
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175496e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e5fd6f980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ddc1ff1fc7e3/disk-449c2b30.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/92fc60e0e9d5/vmlinux-449c2b30.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e50a03ce90e3/bzImage-449c2b30.xz
+disk image: https://storage.googleapis.com/syzbot-assets/d3e36b0a1279/disk-30d4efb2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c964999afe48/vmlinux-30d4efb2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b49e62d3fb02/bzImage-30d4efb2.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
+Reported-by: syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com
 
 ------------[ cut here ]------------
-ida_free called for id=1125 which is not allocated.
-WARNING: CPU: 1 PID: 6109 at lib/idr.c:592 ida_free+0x1f9/0x2e0 lib/idr.c:592
+WARNING: CPU: 1 PID: 6000 at fs/exec.c:119 path_noexec+0x1af/0x200 fs/exec.c:118
 Modules linked in:
-CPU: 1 UID: 0 PID: 6109 Comm: syz.1.23 Not tainted syzkaller #0 PREEMPT(full) 
+CPU: 1 UID: 0 PID: 6000 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:ida_free+0x1f9/0x2e0 lib/idr.c:592
-Code: 33 f6 41 83 fe 3e 76 72 e8 14 31 33 f6 48 8b 7c 24 28 4c 89 ee e8 57 65 0d 00 90 48 c7 c7 e0 17 16 8d 89 ee e8 78 13 f2 f5 90 <0f> 0b 90 90 e8 ee 30 33 f6 48 b8 00 00 00 00 00 fc ff df 48 01 c3
-RSP: 0018:ffffc90003037980 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 1ffff92000606f31 RCX: ffffffff817a02f8
-RDX: ffff88802c8ebc00 RSI: ffffffff817a0305 RDI: 0000000000000001
-RBP: 0000000000000465 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffff8880791f7f00
-R13: 0000000000000293 R14: 0000000000000065 R15: ffff8880791f7f08
-FS:  0000000000000000(0000) GS:ffff8881247b3000(0000) knlGS:0000000000000000
+RIP: 0010:path_noexec+0x1af/0x200 fs/exec.c:118
+Code: 02 31 ff 48 89 de e8 c0 e2 89 ff d1 eb eb 07 e8 d7 dd 89 ff b3 01 89 d8 5b 41 5e 41 5f 5d e9 98 51 04 09 cc e8 c2 dd 89 ff 90 <0f> 0b 90 e9 48 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c a6
+RSP: 0018:ffffc9000384fbd8 EFLAGS: 00010293
+RAX: ffffffff823437ce RBX: ffff888077b40780 RCX: ffff88802eebbc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000080000 R08: ffff88802eebbc00 R09: 0000000000000003
+R10: 0000000000000003 R11: 0000000000000000 R12: 0000000000000011
+R13: 1ffff92000709f90 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000055558a5c5500(0000) GS:ffff88812647e000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe8d5f156c0 CR3: 000000007680c000 CR4: 00000000003526f0
+CR2: 0000001b30b63fff CR3: 00000000213d4000 CR4: 00000000003526f0
 Call Trace:
  <TASK>
- free_mnt_ns+0xe0/0x110 fs/namespace.c:4096
- namespace_unlock+0x542/0x920 fs/namespace.c:1701
- put_mnt_ns fs/namespace.c:6135 [inline]
- put_mnt_ns+0xf5/0x120 fs/namespace.c:6126
- free_nsproxy+0x3a/0x400 kernel/nsproxy.c:188
- put_nsproxy include/linux/nsproxy.h:107 [inline]
- switch_task_namespaces+0xeb/0x100 kernel/nsproxy.c:241
- do_exit+0x86a/0x2bf0 kernel/exit.c:960
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
- get_signal+0x2673/0x26d0 kernel/signal.c:3034
- arch_do_signal_or_restart+0x8f/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x84/0x110 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x41c/0x4c0 arch/x86/entry/syscall_64.c:100
+ do_mmap+0xa43/0x10d0 mm/mmap.c:469
+ vm_mmap_pgoff+0x2a6/0x4d0 mm/util.c:580
+ ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:604
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5cffd8eec9
-Code: Unable to access opcode bytes at 0x7f5cffd8ee9f.
-RSP: 002b:00007f5d00ba0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
-RAX: fffffffffffffff4 RBX: 00007f5cfffe5fa0 RCX: 00007f5cffd8eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000020000
-RBP: 00007f5cffe11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f5cfffe6038 R14: 00007f5cfffe5fa0 R15: 00007ffee87a9438
+RIP: 0033:0x7fea4258eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc0d346898 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007fea427e5fa0 RCX: 00007fea4258eec9
+RDX: 0000000003000007 RSI: 0000000000003000 RDI: 0000200000000000
+RBP: 00007fea42611f91 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000011 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fea427e5fa0 R14: 00007fea427e5fa0 R15: 0000000000000006
  </TASK>
 
 
