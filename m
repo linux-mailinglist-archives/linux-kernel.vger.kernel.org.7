@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-837891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A36EBADFCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:59:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7786BADFD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C994C21B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E7132330F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F246303CBF;
-	Tue, 30 Sep 2025 15:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E441C3081D7;
+	Tue, 30 Sep 2025 16:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HTj2ldqH"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MdD5calo"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DB42F998D
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EC9846F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759247991; cv=none; b=hzPq/U3GcdvCJK9X564LivW1cA1gdb8Rl0JSEYD66Ze8r0lbDQmvWnSvCWIG+QD5lEoDQOyjZIKV7MnuLNlquPkhJha9VsMtC9BBwMkMaN4oy3b44zzbGBw1ArtjINUiwU5zsszvCHdaEdeQiVkD8Ltco49z27PeHzoQcKlTkEg=
+	t=1759248020; cv=none; b=Mt/H9LhWympXH71Xien6/sfA0m8trvywQfLAtRuaGmfqF3/GPj8vvjvu5UhGJtcxysmdpxiYiHJAA0RqGyFeW3lmUa3ik0TG8c062odE761k27Yn8Kw/BA2i8WityEsqwDPREo2xB5ejUeGSbAG3YCBwTojkxS4Yuk3IAwLh4+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759247991; c=relaxed/simple;
-	bh=AVM+f6993GG3pPTGXpDB9FNg13zb0loTdcuhSe/D63Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=PrEH7yGopWMInRywW/NH55nkEodVDwGZPX/P82jaXcfYY0l7K1UbgFww2GkQxH71eEhFWlrczRqXbLf9LNG4kHVfTehcIyyssh4Z7oAXLEkGUg4bv3vzrxdYW8uwxufWQcLSRPGiW+SR9lvpK1sEh/NU3mODZUWuwfxzXlv+hwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HTj2ldqH; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e52279279so18938675e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:59:49 -0700 (PDT)
+	s=arc-20240116; t=1759248020; c=relaxed/simple;
+	bh=GSJ3Tuqk0z4h10iD0gbxeErGgrOcpwHkxFR1XG0xRnA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pu11yy8n/XrFiHLOhZhAOO97wUBJZHHGv9SGRVcXY6xtiZ7JE4MbV7HFlcXg5DEB1Klukc47gLB4LtMrSknW5sTpyBSpdAXFa0dS3qQnSjNYrdEkp2OXXuh9s1BoEFd3UqWKsEYKUI+xI6jMIegt0DKEEvqo1OBE2oNvnOxigGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MdD5calo; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5516e33800so7599118a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:00:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759247988; x=1759852788; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jewn4YU/vUIZPW/z42z8IyS83UgUexK9MRMwSa8wuVM=;
-        b=HTj2ldqHqECeS++YJjG3LkVp9U62Kk2sFTKiNwdeaMizJxBXTU5LmE7bHHHj4WS9pg
-         GxVlQJJBYrDCD8Q6kGJzgNodFvLWVxlF7IlrVnp9BlVd0fil4tp2S5zuNMgZ2b87IAOW
-         zBCxNKKQ6u4fIcLXUkY10beovm5Zu/Ge7BdXnqYBCN53o8UULCqtqg1stn3Wz3EuapjL
-         1vvvDLa6ZuU8VwjmQoXf4tRGWBNp7asa9UoN1lRSWrSEpce3AamM9u6oSKpBsGQiz5su
-         sC4JQflC1AeLF4iWOKi8ybFXb/F9QS6Ek5WS1FsgSBhyNDk1Gixqse1hvkqhLqZ4u1hG
-         mJUQ==
+        d=google.com; s=20230601; t=1759248018; x=1759852818; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rYsMrv7cvWNmJN7SEMktbFDyW8Yqojne1XpRSP9vpNs=;
+        b=MdD5calojp9WQvXvPg+C9fAOze1KkXu2ztEnkIH2aaQ2aW+TRJOtHrWhjC3rnLzYAw
+         Gz3zBMV7916gEAMJwSoNPVCImgIQF1Ppe0xbD8s+mH/eMO3sCjQERVTfIQflZM0U/iw9
+         8W0H1bT6qC3cS+91Avqz01ILvLZsN0bZLoNQCP0tRBJ+UjReFKOkSsOVZ6Q/uy4IU+1H
+         S/RCCHoHIk2WsAgQ7Q1uVJEras5LAENEYoz901ys+Wa51LMGPm8guZd7M1gxuJlpgbJf
+         Iu0kTuKGIjLHpMMp3GYhziXTdiq86eu1ywaWEdqNgHfEdGrufledOvSIzztC20pi3Vh+
+         UBUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759247988; x=1759852788;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jewn4YU/vUIZPW/z42z8IyS83UgUexK9MRMwSa8wuVM=;
-        b=TbKPg+nqGfSUnH1SH0ABa9amGoyvQFfScEo9eyNMWhsax9in5AFIMQQZTaqDFnWToN
-         7ug/GMkuapi7lAcCZszcD5bm5YC2XnXX8Ng9ClAnCMIayUMiy5yWY51j3l66ajFqdZcv
-         bTdglFIYyWiKYzoA/65ezwcHywGPjXu36W6aMuOHiQsswaRNU0l41D4nEdzhO9zUVuwu
-         i/5is8liOJiG5htEjBsC0uwjuFJme5dNymeRWKvd3rHJb/yg8SdGvoiq6bwlo4Re2IQS
-         BNNe8HtlqBQieFjk4pqsgPly1UIKLOk6CTwFgrNWK8oWmqQYzr4h3qW/khUoGLolX1fC
-         K9vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyV10MMz6az791KyUiZLbXuVIMGVxgi5/XVNsSxm3xtdGw+BPLaKScABrbC0PilzEmNaBO6mqKxTi/3Fs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylPpPW8TzPp0ZEOLvchICiAV/mCDNpFRwa5OKfVDf0ZhYAm9M3
-	EQWo7MKA24e8I6MY2VSYbERXjBIN00gNBaoF3rssfpENXLxT7EuTcuytUDDI4UqqKIU=
-X-Gm-Gg: ASbGncthtaHRJDfK8ry/ODqrLjl1OxDqxaG1gcyLGieFC7XwmJzCyadSBV26pbnXk5Y
-	evRyIIsPOKH9+N9w78MCcli8ZD0t2ArTLBKeAKBrv7jVpk9sKJIP6Hz0Am3XIkumjHlPyR78gLU
-	hlFVsOhH8pfhWAqDCAHH/ut5jMsxhmOPtqe71SdC9Au5u1yQ616/Qu5+zTIvrHXiyps/+yZ9tJC
-	JJCLjnb/RhnQX8iXSJtpDG64n6sxt5vP8UF8XaSJkHhdrSBYiv4e94C+HucXEg7aECNUzLWOea3
-	i44l0JC8bU5r4UafhWyLB/NPvurVUoK8A9KlE1QKM3Ono/CI0rrAeTxggzAFZ4DsYHYapEdhbR3
-	+2gKcanrsvzrWKQlzmI0Uj2Nb+ZgsacHqe1pSpOeeL010xre/LpyT9zpVuc0=
-X-Google-Smtp-Source: AGHT+IGgWhUKC4p7LLQ65Y2Poqvj3Z/K2NZk/M2fzSl7pknsxh6YoTUT2JS4bAKz8Cg2Bjs6T9NXkQ==
-X-Received: by 2002:a05:600c:4e48:b0:46e:59f8:8546 with SMTP id 5b1f17b1804b1-46e612674afmr3283495e9.17.1759247988059;
-        Tue, 30 Sep 2025 08:59:48 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:248:54ff:fe20:c34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e56f53802sm61255805e9.9.2025.09.30.08.59.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 08:59:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759248018; x=1759852818;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rYsMrv7cvWNmJN7SEMktbFDyW8Yqojne1XpRSP9vpNs=;
+        b=FeQQcC+ujm0OobfdHymVA4JSZsgmgAkUM+9l5myaSDdhV+FONOmUnDJYLYb4llLnIX
+         h34usdwNhyjJH0CiOnN9WzeXlOKfWavJRuUuwPXySE3qscdLM2bl875dFORTsaZmNH+2
+         /ec+OW2dLWFsCmPivs8EOzzSl2q95aYoSGpqSdfrAmNt5luKKrhBJxQ/J92sHlF16djS
+         0b1m+QsDQNiLvA6NfWougTvfGu1X+yrSm0oAoddOvN/rT3MLVYEoa9UeBoD8O3Uf3JhQ
+         gyNSPFZo1RiqT+ruzYsTMBZ3BdJaNo0K9dlROFVAa5rerq45DEI6O3J7HhCKCkkIrs1S
+         dDpw==
+X-Gm-Message-State: AOJu0YxvgLtNFjrHWtjjVQwkLVhUcFBakxKIhAhlPH+dGvyHvEnMqUCE
+	q8fAkdnTHoXBt7rI75s17V/vPVpnvpDqraNLdJUdWelk0PoXRuM0K2McyNircwTBs5BM7jq13cl
+	U4bs8Jg==
+X-Google-Smtp-Source: AGHT+IGQIiv7hGVKB4D9BMN1zk7aNOmZXS6xXEoiu7JC9hiy6UVJ6TA6GcUrXlm1N41JvKhX4MpoDxhxdbM=
+X-Received: from pgbfe1.prod.google.com ([2002:a05:6a02:2881:b0:b55:644:2ce1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3947:b0:2c2:f61b:5ff2
+ with SMTP id adf61e73a8af0-321db66064fmr364127637.39.1759248018025; Tue, 30
+ Sep 2025 09:00:18 -0700 (PDT)
+Date: Tue, 30 Sep 2025 09:00:16 -0700
+In-Reply-To: <20250930070356.30695-10-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 30 Sep 2025 16:59:46 +0100
-Message-Id: <DD69D3NF9QWG.3NJDD1L5EQFMF@linaro.org>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Konrad Dybcio" <konradybcio@kernel.org>, "Liam Girdwood"
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
- <srini@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: sound: qcom,sm8250: add RB1 (QCM2290)
- soundcard
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.0
-References: <20250302-rb1_hdmi_sound_first-v1-0-81a87ae1503c@linaro.org>
- <20250302-rb1_hdmi_sound_first-v1-2-81a87ae1503c@linaro.org>
- <l6itr3k7taiyiokaahcg2mwtaa5lynia4bimxridpsyymk5ml4@loii4h7lhjhz>
-In-Reply-To: <l6itr3k7taiyiokaahcg2mwtaa5lynia4bimxridpsyymk5ml4@loii4h7lhjhz>
+References: <20250930070356.30695-1-jgross@suse.com> <20250930070356.30695-10-jgross@suse.com>
+Message-ID: <aNv-kJbDXYJpievg@google.com>
+Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for WRMSR
+From: Sean Christopherson <seanjc@google.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev, 
+	xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-(update emails, drop old ones)
+On Tue, Sep 30, 2025, Juergen Gross wrote:
+> When available use one of the non-serializing WRMSR variants (WRMSRNS
+> with or without an immediate operand specifying the MSR register) in
+> __wrmsrq().
+> 
+> For the safe/unsafe variants make __wrmsrq() to be a common base
+> function instead of duplicating the ALTERNATIVE*() macros. This
+> requires to let native_wrmsr() use native_wrmsrq() instead of
+> __wrmsrq(). While changing this, convert native_wrmsr() into an inline
+> function.
+> 
+> Replace the only call of wsrmsrns() with the now equivalent call to
+> native_wrmsrq() and remove wsrmsrns().
+> 
+> The paravirt case will be handled later.
 
-On Sun Mar 2, 2025 at 8:20 AM GMT, Dmitry Baryshkov wrote:
-> On Sun, Mar 02, 2025 at 02:49:52AM +0000, Alexey Klimov wrote:
->> Add soundcard compatible for the soundcard on QRB2210 RB1 platform,
->> which at this point seems to be compatible with soundcard on
->> QRB4210 RB2 platform.
->
-> Is it? The RB1 uses PM4125 for audio output, while RB2 uses WCD codec.
+...
 
-That's correct. I also managed to enable hdmi audio, vamacro dmic and
-pm4125 line out output keeping it all compatible with qrb4210-rb2-sndcard.
+> @@ -268,21 +357,6 @@ static inline int wrmsrq_safe(u32 msr, u64 val)
+>  	return err;
+>  }
+>  
+> -/* Instruction opcode for WRMSRNS supported in binutils >= 2.40 */
+> -#define ASM_WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
+> -
+> -/* Non-serializing WRMSR, when available.  Falls back to a serializing WRMSR. */
+> -static __always_inline void wrmsrns(u32 msr, u64 val)
 
-Things are mostly the same between RB1 and RB2 apart from last stage
-in the output and analog inputs (non-HDMI and not dmics). The diff can
-be described in board-specific device tree, amixer's control commands
-and model property.
+FYI, a use of wrmsrns() is likely coming in through the KVM (x86) tree, commit
+65391feb042b ("KVM: VMX: Add host MSR read/write helpers to consolidate preemption
+handling").
 
-Is it still need new separate compatible "qcom,qrb2210-rb1-sndcard"?
+Probably makes sense to spin v3 after the merge window?  Or on linux-next? (I
+can't tell what was used as the base, and I double-checked that the above commit
+is in linux-next).
 
-Thanks,
-Alexey
-
->> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 4 ++++
->>  1 file changed, 4 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/=
-Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->> index b9e33a7429b0c063dc5f5b806925cd541e546cf6..2493ed99268bf2ff83430201=
-50c2c9aca4262514 100644
->> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->> @@ -21,6 +21,10 @@ properties:
->>                - lenovo,yoga-c630-sndcard
->>                - qcom,db845c-sndcard
->>            - const: qcom,sdm845-sndcard
->> +      - items:
->> +          - enum:
->> +              - qcom,qrb2210-rb1-sndcard
->> +          - const: qcom,qrb4210-rb2-sndcard
->>        - items:
->>            - enum:
->>                - qcom,sm8550-sndcard
->>=20
->> --=20
->> 2.47.2
->>=20
-
+> -{
+> -	/*
+> -	 * WRMSR is 2 bytes.  WRMSRNS is 3 bytes.  Pad WRMSR with a redundant
+> -	 * DS prefix to avoid a trailing NOP.
+> -	 */
+> -	asm volatile("1: " ALTERNATIVE("ds wrmsr", ASM_WRMSRNS, X86_FEATURE_WRMSRNS)
+> -		     "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
+> -		     : : "c" (msr), "a" ((u32)val), "d" ((u32)(val >> 32)));
+> -}
+> -
+>  static inline void wrmsr(u32 msr, u32 low, u32 high)
+>  {
+>  	wrmsrq(msr, (u64)high << 32 | low);
+> -- 
+> 2.51.0
+> 
 
