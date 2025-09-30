@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-837014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106E1BAB17A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FADDBAB187
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B8416EBEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A462217D56F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA9019AD89;
-	Tue, 30 Sep 2025 02:52:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB91CC2EA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82078153BE9;
+	Tue, 30 Sep 2025 02:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQEQ98G3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C91EA7CC
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759200775; cv=none; b=JguhoYKyGbUmoinU04HACxCdPDNhkGyHbaTCaaROnMnJ/G23SwEkKHbtZgCnwqhY4onjgrfbjwOpGvEwXhHcFPt76WG9gEBwJNWWbrz18/pl1csPWyCD87cBpTQLF26iiGDhKHb/cxx85j1HMbKKFyt0W4J5Ynebt/HR64uRd2c=
+	t=1759200792; cv=none; b=gXreRooLn0j/aytJ+PmyGdYE3sIcIodMji7KNmHXrtkXLUdGZsc+DoTsA1tjwEbsoDgsy0V2svN/IwHNB13AabC5MnspNmXv0NBFCLFUHL24gqgmud2ADXxq8+znoov7msT/OPgGNNO2Pi+Yoy2g3oIbCoV2421XRRa/JZbYfqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759200775; c=relaxed/simple;
-	bh=qPZIR5JpwcWFfoVN6P8acZrXu4jZCgxA6XTZ1qkk3h8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sMXvU4uYAOdeh6pVm6+llBZfFSnEAORA7MMzUWphLk3f1CD3r0SaON3ZBGxmXSRxaB975l26WikjvuAnaJD20JiLBUnso6oqWQX10FDrNrwqT6gi7oGB9TosANyQ5VtjPWMXiYeF+6SjmchCtmMh4WFMg0lzoTnJmdmsXCF/4ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F873497;
-	Mon, 29 Sep 2025 19:52:43 -0700 (PDT)
-Received: from ergosum.cambridge.arm.com (ergosum.cambridge.arm.com [10.1.196.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CCE443F5A1;
-	Mon, 29 Sep 2025 19:52:50 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/ptdump: Replace READ_ONCE() with standard page table accessors
-Date: Tue, 30 Sep 2025 03:52:46 +0100
-Message-Id: <20250930025246.1143340-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1759200792; c=relaxed/simple;
+	bh=ym6h+Qei6CJdmJJVbagIpDYKjBeMBZx8FHWAejUB0wE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iZKugwPZsqCVCx3cuBacl/wfz27a1l3wTjto7JP5/3wvNlc3+OAGy2I/thAH2DeBsKgAz7ih39cHkaTZ0VQ3kRRjMQwKN2ay7415JcJ3Aqvul/PwPPX5k9kAKDBVrSGuKM0VVgSBBzndFGgvZShfGqp4mJVZIt/W+B3XO5Kkpis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQEQ98G3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 847ABC116C6
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759200792;
+	bh=ym6h+Qei6CJdmJJVbagIpDYKjBeMBZx8FHWAejUB0wE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZQEQ98G3bc+RXLkAjVNzcVi/lvBuHyora3y6Zw3XprKqYOMPaiGuYjUK/G31JHpHr
+	 O/OuKZm9HxOCnEpUNddpaLPt8AEcacqAeWwfafojoodFqESXk1zkEJdNPhyMg0aCTq
+	 u9t2U/bkf6E2Ki2+tyhc3LF4SVgdenJkZpg5gxVO8OiTLyAuSdwIQIn6hyFegsIt+o
+	 czyltKdO8Mhzmuk9ok02kbwhybem3tvpxnlWZKLjd1DoG/jUDb+8I5/pMNXO+ow6wc
+	 9R56Mc3eNQU+YHPldkahVJa9yh0GzHiPaLclpp3q1D+rONvmophr3SCnxBPTIcVQ4F
+	 ilqJGzWWnxTQA==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b3d80891c6cso317484066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:53:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWh/7hdh1Ih0SIj5rPE3/85G/qKoJlJ3zYUrz2aSKXQoez+8C378nGegaMV2ef07Y4f9P4fcq7tUaJfpw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIMMbZ0jjUz9v0E7ohZq3hnUIYadn8yAYy+1fxgQSybSGIFT27
+	tWdxSAfbscHVPL3zeL28jqGm1+LiSbCKhporjHzJW5CnTohIVdX8DmySpuX3kwGoJ1pCNIKBdhA
+	SfkJ1UGenILz43bELSq8p9VrEb1D6nuY=
+X-Google-Smtp-Source: AGHT+IEfvCuZAVXXWVTEo167aebO6qUsrh2w2UDinUqmaNHItIXCoAnwHta702NRz1ENszkgUaXlenJfqCGyw7SV6Wc=
+X-Received: by 2002:a17:907:daa:b0:b2d:4e57:58d8 with SMTP id
+ a640c23a62f3a-b413600acc6mr256609966b.10.1759200791107; Mon, 29 Sep 2025
+ 19:53:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
+ <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com> <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
+In-Reply-To: <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 30 Sep 2025 10:52:59 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6PNcyTNXEhzdovt3an7e9V+B+Z-px=_HPiQ5vv7qaDMg@mail.gmail.com>
+X-Gm-Features: AS18NWDktm4BaCz5O-7O3VzGm9rq1tPjPU1iKF2Ar1jh6n3dOQanb3Px7roMXtU
+Message-ID: <CAAhV-H6PNcyTNXEhzdovt3an7e9V+B+Z-px=_HPiQ5vv7qaDMg@mail.gmail.com>
+Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace READ_ONCE() with standard page table accessors i.e pxdp_get() which
-anyways default into READ_ONCE() in cases where platform does not override.
+On Sun, Sep 28, 2025 at 10:40=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+>
+> On Sun, 28 Sept 2025 at 15:52, Huacai Chen <chenhuacai@kernel.org> wrote:
+> >
+> > Hi, Ard,
+> >
+> > On Sun, Sep 28, 2025 at 9:42=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
+> wrote:
+> > >
+> > > On Sun, 28 Sept 2025 at 10:55, Tiezhu Yang <yangtiezhu@loongson.cn> w=
+rote:
+> > > >
+> > > > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
+> > > > the following objtool warning on LoongArch:
+> > > >
+> > > >   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
+> > > >   falls through to next function __efistub_exit_boot_func()
+> > > >
+> > > > This is because efi_boot_kernel() doesn't end with a return instruc=
+tion
+> > > > or an unconditional jump, then objtool has determined that the func=
+tion
+> > > > can fall through into the next function.
+> > > >
+> > > > At the beginning, try to do something to make efi_boot_kernel() end=
+s with
+> > > > an unconditional jump instruction, but this modification seems not =
+proper.
+> > > >
+> > > > Since the efistub functions are useless for stack unwinder, they ca=
+n be
+> > > > ignored by objtool. After many discussions, no need to link libstub=
+ to
+> > > > the vmlinux.o, only link libstub to the final vmlinux.
+> > > >
+> > >
+> > > Please try keeping these changes confined to arch/loongarch. This
+> > > problem does not exist on other architectures, and changing the way
+> > > vmlinux is constructed might create other issues down the road.
+> > ARM, RISC-V and LoongArch do things exactly in the same way. Now
+> > LoongArch is the first of the three to enable objtool, so we meet the
+> > problem first.
+> >
+> > But yes, I also don't want to change the way of constructing vmlinux.
+> > So I prefer the earliest way to fix this problem.
+> > https://lore.kernel.org/loongarch/CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSu=
+V0EmeeUb9d5FNw@mail.gmail.com/T/#meef7411abd14f4c28c85e686614aa9211fccdca0
+> >
+>
+> Can we just drop the __noreturn annotation from kernel_entry_t, and
+> return EFI_SUCCESS from efi_boot_kernel()?
+Not good, because kernel_entry_t is really "noreturn", and at present
+no architecture returns EFI_SUCCESS at the end of efi_boot_kernel().
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- mm/ptdump.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/mm/ptdump.c b/mm/ptdump.c
-index b600c7f864b8..18861501b533 100644
---- a/mm/ptdump.c
-+++ b/mm/ptdump.c
-@@ -31,7 +31,7 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	pgd_t val = READ_ONCE(*pgd);
-+	pgd_t val = pgdp_get(pgd);
- 
- #if CONFIG_PGTABLE_LEVELS > 4 && \
- 		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
-@@ -54,7 +54,7 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	p4d_t val = READ_ONCE(*p4d);
-+	p4d_t val = p4dp_get(p4d);
- 
- #if CONFIG_PGTABLE_LEVELS > 3 && \
- 		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
-@@ -77,7 +77,7 @@ static int ptdump_pud_entry(pud_t *pud, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	pud_t val = READ_ONCE(*pud);
-+	pud_t val = pudp_get(pud);
- 
- #if CONFIG_PGTABLE_LEVELS > 2 && \
- 		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
-@@ -100,7 +100,7 @@ static int ptdump_pmd_entry(pmd_t *pmd, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	pmd_t val = READ_ONCE(*pmd);
-+	pmd_t val = pmdp_get(pmd);
- 
- #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
- 	if (pmd_page(val) == virt_to_page(lm_alias(kasan_early_shadow_pte)))
--- 
-2.30.2
-
+Huacai
 
