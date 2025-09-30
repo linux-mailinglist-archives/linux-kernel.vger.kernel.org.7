@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-837386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46EE3BAC351
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:14:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4189BAC36C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35D194E146B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808831926F44
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE452F533A;
-	Tue, 30 Sep 2025 09:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891A52F616B;
+	Tue, 30 Sep 2025 09:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RwOFnm72";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZHI2I/ya"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gofnQE9q"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A04129ACF0;
-	Tue, 30 Sep 2025 09:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352442F5A24
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759223643; cv=none; b=oaQFnjeDKTerradimbm5HZ2+fhnvsO0w9Nau4NdwsBKXUCegZSjJ360scsI0aetf99KnbM2PTE9HTwb9/Xl3kERA2d4IiIIpTU+a9Ttp63C/1cNtpbGQ3WtuNeFHqwwarAOMgGxnae/2H7Avq7Br8XC4bQRdO1EhxZgvQ/fOv9g=
+	t=1759223683; cv=none; b=T2dTK6BQwBBKTdwA63GVOYrcUGmctPUppEsxwVP1kPmHvMKen890ksmS/SfwmUFS+uKEVq8IUGxM5aX0Kfg1zM59z6WfV1jzx7gXzbMW+6FA8RyH5fz5ev072HjwJt9hHIGMwVWYf+JMWRl/G98823hgTnvvULyXNpwA5dU6rAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759223643; c=relaxed/simple;
-	bh=2AF9XmCmborZIjFa2MSxcTy1qyOu3e5IKKtUqbruAVY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FIOFXK6RJXf1ctq+BYE0Xo+DtE8E/eTVwGmO1JQ3ymPi2E5O2unzVeuN2KaeNMXdmGdhC1g5mQQq3NDO8EcPMtgt/8eXtsQ+OEBZWmakW6BRe6MShf8sdZsLIjYxfAZV0QCUiyNI8X1HGp2j5SjM1PvzAXkU8Ai2evt9jwGDUxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RwOFnm72; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZHI2I/ya; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759223636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=//Nm6NvANAQn8ZCCRHsf+r3RS6FduiUteertKQI+Jg4=;
-	b=RwOFnm72h8xT2eqA0X1mIjQZ6lm/9utrTjmxQxc7i1VdAnekjd4QtJFiBUmG9twiKzaXMt
-	g+QTqha1FpFcv40mF2m2qMCy0GWGFam28VsB8XFQdhSoaMnsJUq6IBwhHOFuQdzCbp+uFF
-	ej+cvnAdTHMKQqrSW3dfoCxvBr02Sf0lgXHnuLk2BdfLsxyfQdOVOLLUJW5ewXDwglwkU7
-	7uANUTotWR/FZmuwQaNHLX8DhKJs/roWbFN46GDjAqVv5IN+Z1iezXIUTnulCIAlBnKfyw
-	SYiRv0emT7hoaABrTLUdEe+5gHGpy1dGSiOhFC97/lJ3TAA+VPrqeMH2uRjwUw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759223636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=//Nm6NvANAQn8ZCCRHsf+r3RS6FduiUteertKQI+Jg4=;
-	b=ZHI2I/yajMiYYGj1Puj5W+rvhPLxfenLhRk6oRbi24fJPlJdm7fVopqeF07xmSCswrjKXT
-	anA8C66c8PylApCg==
-To: chenyuan_fl@163.com, rostedt@goodmis.org, peterz@infradead.org
-Cc: bigeasy@linutronix.de, chenyuan@kylinos.cn,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- mathieu.desnoyers@efficios.com, mhiramat@kernel.org
-Subject: Re: [PATH v3] tracing: Fix race condition in kprobe initialization
- causing NULL pointer dereference
-In-Reply-To: <20250930081848.433648-1-chenyuan_fl@163.com>
-References: <84seg5d2p3.fsf@jogness.linutronix.de>
- <20250930081848.433648-1-chenyuan_fl@163.com>
-Date: Tue, 30 Sep 2025 11:19:56 +0206
-Message-ID: <843484l2uj.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1759223683; c=relaxed/simple;
+	bh=14yGhWhxJxKPIeIrNLfrEWF/S6UUQE2k4azZt9Ge4F0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=huSXS/3TVbiIS3PA6MH5lRiLb1VjHVumJ+M7zKOrVXR8bpapdmlP7kk2BBUL9IwnqOfZoWWLr+yvgLdglSy9hHLmjwvZbVOn5JxPP/sRVp80Njyw7gGnTZoWaHqTDHm9mCfd6MZ/87H0VxWgWhGWDmdt+FmkpPPFB/wIaYFDIHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gofnQE9q; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3fffd2bbcbdso103504f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759223680; x=1759828480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DH1NlSlaEudUba94N0gvDnLMb1d3cyB+74kEXFRWj1E=;
+        b=gofnQE9qaKwg1IFLtVmV8vCCvj8j9uoW+WbCZAyfWJpvrgb3kqJ9+mpjmXuxRwHPTQ
+         0+WeOrlx85++KzdOdsf7waKpAFKtKP/YJNr7LjFV/ht9iCMNdnUDWHI95lzFl/nCR2y9
+         CNKUjkdJkcmzFdJXFGeBq1qfEgU9wu/TTFJ+7IUxKqbdCEmXvOSgwwc0npo0ztxCPJ+o
+         pwOJISs+hIsxhTDiITPufHS61C3T6J772iPvFcVqkliNGHWZX6go/IBGTsX1qUDGkn4D
+         OAGe2C9aI7FY3tsFE5R6daBDWzWF7tLg0c9Ew9FjjuVnrOypkWz1gatda1Zn8oLNpgNK
+         Y4cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759223680; x=1759828480;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DH1NlSlaEudUba94N0gvDnLMb1d3cyB+74kEXFRWj1E=;
+        b=hl1lvbkpaViWmyupOVmitVp5rRZxVTQ0qPp4/Y1Ztij1N9yNBxv2sRavYU0oPnG1tl
+         6xM7hRsdbl+x0YE32zjnqTO5WI6znqyEPNPt5IoYAg3ES98LQ3a7QZyI0BjwJS7Kdtvu
+         vKsrOeDmYnmgEoAIiC8WTmv+4LhckvianQNKHNx0JkSKwXbLiVL/ylVAqrhqo8LthpGn
+         2dFsWxxGZTY3OriSpEtxuNgOwsWXMDUYEzJSDG27t35h32r6dPm7bEfcTq9umfSYFBuX
+         lxFYu5bVqZntWG7MXrr37/1Axaf4G5SDfKAdkAQIUa7kZRBKUApERmBWoBzbAlUnkEdB
+         +Mog==
+X-Forwarded-Encrypted: i=1; AJvYcCU6x29ccIIkHehkHHoWyPJlgb4k6jBfDZuMEP8iUK5OGtp0wgWFhK24NseSh/pEZi+vbnfPoQXW0++cnAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykJOiflLBQ0ETfNQu6eJL39OVNp3iY5RG5MzDQ2oPw1KMfZvIn
+	XrUQGXNk25VnOSfirMoqjkWcPNcTMLIU9vy9LBNzbotz0nLmzgQASpaF
+X-Gm-Gg: ASbGncs59z3CEh7DbcX335kGWjLLZoMJ41OOBLXiwH9CF0mdkyjQ6pwuPzI/wKRTvl/
+	cWnlovVxIAi1DGqB5qq3EUWz67XJAVzFaXueBf1smUQy72SE0Q+wDScM5qyt2nlWzMAWXLlfOqd
+	Au12N9sOX1tZhTcepGi4bqu1NV3dtHPLUO6HGm65q/Y+CMV0BNrTit90xHAzLDa/mumhQRuENag
+	mgDGZn/T6zgw1Y0djHxTae0oZMIIiMfHhaf2sD6UeiGWk0G4bTK8mCwokVhkV+t3Id6IOD1jyLp
+	o9muPlahKJR6GXuOqLAjpgoDolnRS2504b+6qZ7fIgORqmzUv1XMRVSoaFzjeFy/iNelNUB37h7
+	bIi+kd+2+Xx3McHr6iMBEOvABM/uf4/LHoghdslo2ZLqRrCfrZgFMMJ41MDSulW4ECd2Z97ZUB6
+	8=
+X-Google-Smtp-Source: AGHT+IHLikjr1LvbOBlnMIgFiu5KZJiA4nat4K1Q3fyVS+a1hd0LvhBcizuVjM3yI2Nj4+3iyJlerg==
+X-Received: by 2002:adf:b64c:0:b0:3f4:52d3:7a6a with SMTP id ffacd0b85a97d-40e503e0212mr7500503f8f.10.1759223680399;
+        Tue, 30 Sep 2025 02:14:40 -0700 (PDT)
+Received: from bhk.router ([102.171.36.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb9e1b665sm21775209f8f.27.2025.09.30.02.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 02:14:40 -0700 (PDT)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: clm@fb.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH] btrfs: Refactor allocation size calculation in kzalloc()
+Date: Tue, 30 Sep 2025 10:14:22 +0100
+Message-ID: <20250930091440.25078-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 2025-09-30, chenyuan_fl@163.com wrote:
-> diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-> index 842383fbc03b..98b838591edc 100644
-> --- a/kernel/trace/trace_probe.h
-> +++ b/kernel/trace/trace_probe.h
-> @@ -274,19 +274,19 @@ struct event_file_link {
->  static inline bool trace_probe_test_flag(struct trace_probe *tp,
->  					 unsigned int flag)
->  {
-> -	return !!(tp->event->flags & flag);
-> +	return !!(smp_load_acquire(&tp->event->flags) & flag);
->  }
->  
->  static inline void trace_probe_set_flag(struct trace_probe *tp,
->  					unsigned int flag)
->  {
-> -	tp->event->flags |= flag;
-> +	smp_store_release(&tp->event->flags, tp->event->flags | flag);
->  }
->  
->  static inline void trace_probe_clear_flag(struct trace_probe *tp,
->  					  unsigned int flag)
->  {
-> -	tp->event->flags &= ~flag;
-> +	smp_store_release(&tp->event->flags, tp->event->flags & ~flag);
->  }
->  
->  static inline bool trace_probe_is_enabled(struct trace_probe *tp)
+Wrap allocation size calculation in size_add() and size_mul() to avoid
+any potential overflow.
 
-I don't have any feedback about the correctness with regards to tracing
-and kprobes. However, I recommend writing a comment at each necessary
-memory barrier site. The comment should mention the pairing memory
-barrier and the ordering it is guaranteeing.
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+---
+ fs/btrfs/volumes.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-John
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index c6e3efd6f602..3f1f19b28aac 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6076,12 +6076,11 @@ struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
+ {
+ 	struct btrfs_io_context *bioc;
+ 
+-	bioc = kzalloc(
+-		 /* The size of btrfs_io_context */
+-		sizeof(struct btrfs_io_context) +
+-		/* Plus the variable array for the stripes */
+-		sizeof(struct btrfs_io_stripe) * (total_stripes),
+-		GFP_NOFS);
++	/* The size of btrfs_io_context */
++	/* Plus the variable array for the stripes */
++	bioc = kzalloc(size_add(sizeof(struct btrfs_io_context),
++				size_mul(sizeof(struct btrfs_io_stripe),
++						total_stripes)), GFP_NOFS);
+ 
+ 	if (!bioc)
+ 		return NULL;
+-- 
+2.51.0
+
 
