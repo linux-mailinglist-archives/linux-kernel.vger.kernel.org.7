@@ -1,184 +1,108 @@
-Return-Path: <linux-kernel+bounces-837385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1CDBAC336
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:14:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EE3BAC351
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0AB19260D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:14:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35D194E146B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D52F6198;
-	Tue, 30 Sep 2025 09:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE452F533A;
+	Tue, 30 Sep 2025 09:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gcpm6JUC"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RwOFnm72";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZHI2I/ya"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACC32F546D;
-	Tue, 30 Sep 2025 09:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A04129ACF0;
+	Tue, 30 Sep 2025 09:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759223624; cv=none; b=FFcbokt+5l2fP0lC8BqZ4a/ufQwOD/9+VdmE9eEnxpM0m1AawVRtb7gPaj3iX4Et1T61thn8ArewdQDqBcRo0hDyYd5/H02S5/d7SiPRT9KcKRDZf9TjvgPBOgGMYMNDBxISSX38fA4RyuUvhZxLnq2IJFyJNOIAZG8fLBXvl9k=
+	t=1759223643; cv=none; b=oaQFnjeDKTerradimbm5HZ2+fhnvsO0w9Nau4NdwsBKXUCegZSjJ360scsI0aetf99KnbM2PTE9HTwb9/Xl3kERA2d4IiIIpTU+a9Ttp63C/1cNtpbGQ3WtuNeFHqwwarAOMgGxnae/2H7Avq7Br8XC4bQRdO1EhxZgvQ/fOv9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759223624; c=relaxed/simple;
-	bh=RXiNSsaLBFvnwtGUyw4I9dI1476goIIzvGRvfaz60TY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cRUGWxxpox5A2zjDG+2VGzYNy1630gLWkdUw6qKd+G9+LgQIFTyz+lbkcSNWEgOSuz+DTG818O67HVX9NW9Fcm/SwDj0bLEgO0K/13lmLSzY2/55QBsg47oYq5Xam7tlE6xUFZXp/Tg8W6Qj/Cj36O0iLRSNg77DWsj+OSeV16Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gcpm6JUC; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7DA644E40DCB;
-	Tue, 30 Sep 2025 09:13:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 52353606E4;
-	Tue, 30 Sep 2025 09:13:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DD9FE102F17B4;
-	Tue, 30 Sep 2025 11:13:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759223614; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=IAlSFBW3wt+5q5wx1Fjlx3+q6drrWVIVS7BvJiZpmkM=;
-	b=gcpm6JUCxXt5NlcFCzH09r8vcbxzuLtw9FaNip2dNi16dgly80S5/uIPDTaVxg6I6fOucU
-	xiGEdeo9jTMdwimynDsHen9upPUW/BWwP27HksbczjPEUe0KA77oknZWCZqXdo7/yx8jWj
-	9deczNH8BXUj/DsKcnRpUbeuKeXNQCPH5wHZqmoi+dtb9nBNlQt8z5hPYeNqije41dgmc4
-	uwLu3bZC2yvkP0broaS93ijDsCdw5QXeutHDNPrRjC45+uaMAYSEhnuLzxNHgTMD4wkNGy
-	idfEaWM7Pz8YVfw+LsoTZOdPhiI1dekhAnL3I52iBTEFepkPgI16mq1yZmP/Bw==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Tue, 30 Sep 2025 11:13:02 +0200
-Subject: [PATCH net-next 3/3] net: pse-pd: pd692x0: Preserve PSE
- configuration across reboots
+	s=arc-20240116; t=1759223643; c=relaxed/simple;
+	bh=2AF9XmCmborZIjFa2MSxcTy1qyOu3e5IKKtUqbruAVY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FIOFXK6RJXf1ctq+BYE0Xo+DtE8E/eTVwGmO1JQ3ymPi2E5O2unzVeuN2KaeNMXdmGdhC1g5mQQq3NDO8EcPMtgt/8eXtsQ+OEBZWmakW6BRe6MShf8sdZsLIjYxfAZV0QCUiyNI8X1HGp2j5SjM1PvzAXkU8Ai2evt9jwGDUxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RwOFnm72; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZHI2I/ya; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759223636;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=//Nm6NvANAQn8ZCCRHsf+r3RS6FduiUteertKQI+Jg4=;
+	b=RwOFnm72h8xT2eqA0X1mIjQZ6lm/9utrTjmxQxc7i1VdAnekjd4QtJFiBUmG9twiKzaXMt
+	g+QTqha1FpFcv40mF2m2qMCy0GWGFam28VsB8XFQdhSoaMnsJUq6IBwhHOFuQdzCbp+uFF
+	ej+cvnAdTHMKQqrSW3dfoCxvBr02Sf0lgXHnuLk2BdfLsxyfQdOVOLLUJW5ewXDwglwkU7
+	7uANUTotWR/FZmuwQaNHLX8DhKJs/roWbFN46GDjAqVv5IN+Z1iezXIUTnulCIAlBnKfyw
+	SYiRv0emT7hoaABrTLUdEe+5gHGpy1dGSiOhFC97/lJ3TAA+VPrqeMH2uRjwUw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759223636;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=//Nm6NvANAQn8ZCCRHsf+r3RS6FduiUteertKQI+Jg4=;
+	b=ZHI2I/yajMiYYGj1Puj5W+rvhPLxfenLhRk6oRbi24fJPlJdm7fVopqeF07xmSCswrjKXT
+	anA8C66c8PylApCg==
+To: chenyuan_fl@163.com, rostedt@goodmis.org, peterz@infradead.org
+Cc: bigeasy@linutronix.de, chenyuan@kylinos.cn,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ mathieu.desnoyers@efficios.com, mhiramat@kernel.org
+Subject: Re: [PATH v3] tracing: Fix race condition in kprobe initialization
+ causing NULL pointer dereference
+In-Reply-To: <20250930081848.433648-1-chenyuan_fl@163.com>
+References: <84seg5d2p3.fsf@jogness.linutronix.de>
+ <20250930081848.433648-1-chenyuan_fl@163.com>
+Date: Tue, 30 Sep 2025 11:19:56 +0206
+Message-ID: <843484l2uj.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-feature_pd692x0_reboot_keep_conf-v1-3-620dce7ee8a2@bootlin.com>
-References: <20250930-feature_pd692x0_reboot_keep_conf-v1-0-620dce7ee8a2@bootlin.com>
-In-Reply-To: <20250930-feature_pd692x0_reboot_keep_conf-v1-0-620dce7ee8a2@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, kernel@pengutronix.de, 
- Dent Project <dentproject@linuxfoundation.org>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On 2025-09-30, chenyuan_fl@163.com wrote:
+> diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+> index 842383fbc03b..98b838591edc 100644
+> --- a/kernel/trace/trace_probe.h
+> +++ b/kernel/trace/trace_probe.h
+> @@ -274,19 +274,19 @@ struct event_file_link {
+>  static inline bool trace_probe_test_flag(struct trace_probe *tp,
+>  					 unsigned int flag)
+>  {
+> -	return !!(tp->event->flags & flag);
+> +	return !!(smp_load_acquire(&tp->event->flags) & flag);
+>  }
+>  
+>  static inline void trace_probe_set_flag(struct trace_probe *tp,
+>  					unsigned int flag)
+>  {
+> -	tp->event->flags |= flag;
+> +	smp_store_release(&tp->event->flags, tp->event->flags | flag);
+>  }
+>  
+>  static inline void trace_probe_clear_flag(struct trace_probe *tp,
+>  					  unsigned int flag)
+>  {
+> -	tp->event->flags &= ~flag;
+> +	smp_store_release(&tp->event->flags, tp->event->flags & ~flag);
+>  }
+>  
+>  static inline bool trace_probe_is_enabled(struct trace_probe *tp)
 
-Detect when PSE hardware is already configured (user byte == 42) and
-skip hardware initialization to prevent power interruption to connected
-devices during system reboots.
+I don't have any feedback about the correctness with regards to tracing
+and kprobes. However, I recommend writing a comment at each necessary
+memory barrier site. The comment should mention the pairing memory
+barrier and the ordering it is guaranteeing.
 
-Previously, the driver would always reconfigure the PSE hardware on
-probe, causing a port matrix reflash that resulted in temporary power
-loss to all connected devices. This change maintains power continuity
-by preserving existing configuration when the PSE has been previously
-initialized.
-
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- drivers/net/pse-pd/pd692x0.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 782b1abf94cb..134435e90073 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -30,6 +30,8 @@
- #define PD692X0_FW_MIN_VER	5
- #define PD692X0_FW_PATCH_VER	5
- 
-+#define PD692X0_USER_BYTE	42
-+
- enum pd692x0_fw_state {
- 	PD692X0_FW_UNKNOWN,
- 	PD692X0_FW_OK,
-@@ -80,6 +82,7 @@ enum {
- 	PD692X0_MSG_GET_PORT_PARAM,
- 	PD692X0_MSG_GET_POWER_BANK,
- 	PD692X0_MSG_SET_POWER_BANK,
-+	PD692X0_MSG_SET_USER_BYTE,
- 
- 	/* add new message above here */
- 	PD692X0_MSG_CNT
-@@ -103,6 +106,7 @@ struct pd692x0_priv {
- 	bool last_cmd_key;
- 	unsigned long last_cmd_key_time;
- 
-+	bool cfg_saved;
- 	enum ethtool_c33_pse_admin_state admin_state[PD692X0_MAX_PIS];
- 	struct regulator_dev *manager_reg[PD692X0_MAX_MANAGERS];
- 	int manager_pw_budget[PD692X0_MAX_MANAGERS];
-@@ -193,6 +197,12 @@ static const struct pd692x0_msg pd692x0_msg_template_list[PD692X0_MSG_CNT] = {
- 		.key = PD692X0_KEY_CMD,
- 		.sub = {0x07, 0x0b, 0x57},
- 	},
-+	[PD692X0_MSG_SET_USER_BYTE] = {
-+		.key = PD692X0_KEY_PRG,
-+		.sub = {0x41, PD692X0_USER_BYTE},
-+		.data = {0x4e, 0x4e, 0x4e, 0x4e,
-+			 0x4e, 0x4e, 0x4e, 0x4e},
-+	},
- };
- 
- static u8 pd692x0_build_msg(struct pd692x0_msg *msg, u8 echo)
-@@ -1233,6 +1243,15 @@ static void pd692x0_managers_free_pw_budget(struct pd692x0_priv *priv)
- 	}
- }
- 
-+static int
-+pd692x0_save_user_byte(struct pd692x0_priv *priv)
-+{
-+	struct pd692x0_msg msg, buf;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_USER_BYTE];
-+	return pd692x0_sendrecv_msg(priv, &msg, &buf);
-+}
-+
- static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- {
- 	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
-@@ -1268,9 +1287,16 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- 	if (ret)
- 		goto err_managers_req_pw;
- 
--	ret = pd692x0_hw_conf_init(priv);
--	if (ret)
--		goto err_managers_req_pw;
-+	/* Do not init the conf if it is already saved */
-+	if (!priv->cfg_saved) {
-+		ret = pd692x0_hw_conf_init(priv);
-+		if (ret)
-+			goto err_managers_req_pw;
-+
-+		ret = pd692x0_save_user_byte(priv);
-+		if (ret)
-+			goto err_managers_req_pw;
-+	}
- 
- 	pd692x0_of_put_managers(priv, manager);
- 	kfree(manager);
-@@ -1793,6 +1819,9 @@ static int pd692x0_i2c_probe(struct i2c_client *client)
- 		}
- 	}
- 
-+	if (buf.data[2] == PD692X0_USER_BYTE)
-+		priv->cfg_saved = true;
-+
- 	priv->np = dev->of_node;
- 	priv->pcdev.nr_lines = PD692X0_MAX_PIS;
- 	priv->pcdev.owner = THIS_MODULE;
-
--- 
-2.43.0
-
+John
 
