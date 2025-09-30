@@ -1,85 +1,80 @@
-Return-Path: <linux-kernel+bounces-837769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFD6BAD253
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A94BAD24D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B29D4A132F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:08:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566094A13FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B780303A2B;
-	Tue, 30 Sep 2025 14:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BE32FB625;
+	Tue, 30 Sep 2025 14:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DTuYi1B/"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012008.outbound.protection.outlook.com [52.101.53.8])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dg2wD+Qh"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011052.outbound.protection.outlook.com [52.101.65.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08D1DE8BB;
-	Tue, 30 Sep 2025 14:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411F11F5434;
+	Tue, 30 Sep 2025 14:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759241280; cv=fail; b=YYm47jx7KaYnwC4vNpC23zXywxwjeGuC+qxTFeA8I/ZOXt4xTDoUa/EB1OyYodWxkk0gKJi5nitIDvWw6Fz5dipRxp/nAVVF7kE6aJt42JkN4uoAzRKoThsW43m3RtwAMmrVtFpL7+c9i7v9/k52YLGu9bGJcE1esJZL2RCDw/0=
+	t=1759241264; cv=fail; b=EohIqdf3rlqcqZYhT3OFsgwUCv5bvNaeYLaQSk4THORb6pmvni8D441dMxgQw6bvZsgbk+srCk1bhaFoFq8ainmoNf+Apcv4JkRW/PaLjKizC8vXbHrf4sjyGtroLjKT0jPEs2w4VZGieaMRlKSRjLHML3a6F/0UxaLKOwoR8m8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759241280; c=relaxed/simple;
-	bh=v/u4U8EhbXl6JQ+FSIydw9GncSKutBS+qEP5IcBFSug=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xx3QlzbSXs8QXRo0QdKnrJKgoGA9saDCcYm476odGs6X4kpB2Le5RFe8Rg9EU0ezBGCOHtaLwNL/Q64G68PGl+01QU/ld18yN5ka3hrbKqNDtpgvBkRjYD40nAn8zfLG6eKfWGctrqqHCxaysJb4oZJddgvqLTh2WxJ0cGr+ay4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DTuYi1B/; arc=fail smtp.client-ip=52.101.53.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1759241264; c=relaxed/simple;
+	bh=pvX9nWqVJVeG2tkMe0xax2XA9KCjNW+VTmj86v3GOeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BquNWgA0Zs0RvADKtyaTvQH2TfyFbeNuvSbqG4FfBna8kSiX1a0LEqwwvLOgm+y1CtjrlE/cd1uoKX5t6A8YlPGncLfNWwdd6bJP9Iv0tGvMJfu9mw+UF42esztKTYpKRYj1X5ohagVwMwvmDvusTn1WkDdEpKECDo9tnrU8+R8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dg2wD+Qh; arc=fail smtp.client-ip=52.101.65.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F/WpnFNioVwAp1O0IuEI0Ky+I0t8+kaKCcTu6Y+AoiNwohtKK/WKbOI6zamUzv5wq0BZEDVNedce1lUkBYqNCdYhSBOjg28pDbckLF1QMcTZ9Kns0UrM7F1Kxk2fU5K0qKMf/sF7TdOcnW0OYyRnNATzpABSIYFhosE/sGcbzIC54s7P6TGgaotmOUzbOdg4N1zBXQipZhLGYr2U2Zi7MtvMT6cP/nUDOS3YYf0lQGu9K0xavJI+s0oZiE/UAl8DL1c5tvg8Se1MNe15cBhU0Y1BXtJuMMF4TeuArROd/8kwc7n6r/Lu9NGliVD7THHF5M7fsSfYJJumQCZ6dNPK9g==
+ b=nJ8aC5jeXFI6r+S07GpFPp0gysFZ0jJONmntIgaeesxX9GYAoQegQVdA+8BjCqtlFMjjp4V6UYtdlaV6NbwSUseQmZAnTFjv94l82hEQSVwjvc+Mu6dFSsVT0qiiovuLtpx7DQSRVqQLG2pNDr6o/3Gj0+2bXVgvo76gr+GERtLhtnN22gbTlZsSqczO+C3uyZanSEMhEGp3q4jZnZXayta6/a4WbalzRwk+TikA3Qc39xo9JcU+V+aMYdJ176wYI+oYvJI7eYyyrTx3sVRDe2AI+PsyX9MNmVK0y+jFPlZgB3xgb3M9VnZXJ44WXL7PBPfRs/05EdQjK2XevfoUAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4SjJcLrfAhBKYFbGvtvb1Ocfck+T597Xj6qZQaXUGhk=;
- b=OYsKFs75kCv+mPINuOX5wBa5rlkoMuVr7o+Uoa3n26qV2o6Q9vMiYZh+ajNgx9aXT9joPt52z25pI6aFGqptKe6NqGk2ifbkv2YFz5LrOWNvg5dUevU/77vgJ+GA7mEHJZb5jQjClCv3U8hW/W+Hk4i9UhBwzfy9H/jbIZ0H5UqLOwtcgTs/vgVsTc8uDaPW58rEwcpbsyjPRRCrYME6VJPSZvdcl1fdgdVrOpyWNiHy+//kTHmIeKDSsPKvv9z2NAnmuAEMH6YvtYVsSYFTOM31uSPXrvggJyIVHEzkJJTSmlOUf38nIlNxmhLRqGlOOUk8uwb8zrw/QUvGu1bNqw==
+ bh=j2RsAQRiUMDaHJ/A9DUuz7zhFiPq2NftzdtOaXSdkC4=;
+ b=xF6uHsoisAsHEDmnN0fWhn2mRY5zX1g5M2SmaG/w2yl+kBVCHVviWQlSqPOMJBUCx9uWFYCScCPAm5Cyv5WQn0tk3fdAsafAy8k4Ptj+kl0adZMkHGuj5U8kPJp4LgWU3zKSDPTp0eK0w1Wkk7UL6ubObKQCV5AhB2VGlXnsf0K/2KmH6JfxgzMKU752Wa6A3ElvT20X9M2tPajWU9t8GrQRAE27wSKy1SnLMF6qxnlw/5WCnB+bjtjQgHwoKB7Ld35EFTbcAqjM/bTNIrNksXQP/9fOto1BkxJfS3khMTDUJ5sr6t3LnnoP1dr6RqV+lHoJOt3BPhHpOTXPVpFtzg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4SjJcLrfAhBKYFbGvtvb1Ocfck+T597Xj6qZQaXUGhk=;
- b=DTuYi1B/4xyPdZwc5DxV8q+YdKk4gJyZpMY9cpefWrEF1DAED8mUQeFcE9tTT96qnXFia5hkjEm8HOkQmBWAwStm26ANihg5SlOBS/lRlX84tyiMdKY7TMuM/MmVjNVBbgKYFOHe1UNsoQBXVpg8OUP2TwoZVKhjV6Z17lywrq4=
+ bh=j2RsAQRiUMDaHJ/A9DUuz7zhFiPq2NftzdtOaXSdkC4=;
+ b=dg2wD+QhKfFRP7oIlmMFql/Uet/aEhF1Ld23NPttPEDnY7zo7NKDxP2zG/RqBfogYCeKfG7s3ZxYKs+Kr+qRyY62j1KkW0yrvGAyD503pjlJl6iyUF+qA1624wu8setIdugReRLlDOvbevyv1XbbmGNjM07K+VmiobPyfIsuSKVC2BpJnD4zmhvHIFjK+tgaSqfDIFMqCWo6CrMNExCUehCFoW7RVWthXjxkD7yOiICcGmrCY1+LoczAeuixoev5Z1BjihuVCu0TVRNX/mUV97ojSuv10jJAlbKwtmk8RYGkGD2GHrsyznfWuBbPaYyz7Owt+eIpv3sATcL7ReUjZA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH8PR12MB9766.namprd12.prod.outlook.com (2603:10b6:610:2b6::10)
- by DS2PR12MB9800.namprd12.prod.outlook.com (2603:10b6:8:2b5::5) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 14:07:55 +0000
-Received: from CH8PR12MB9766.namprd12.prod.outlook.com
- ([fe80::499:541e:a7d8:8c14]) by CH8PR12MB9766.namprd12.prod.outlook.com
- ([fe80::499:541e:a7d8:8c14%5]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 14:07:54 +0000
-Message-ID: <7d54aa5d-bef9-4611-b0ae-04279bb7dae2@amd.com>
-Date: Tue, 30 Sep 2025 09:06:37 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 17/25] cxl/pci: Introduce CXL Endpoint protocol error
- handlers
-To: Dave Jiang <dave.jiang@intel.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250925223440.3539069-1-terry.bowman@amd.com>
- <20250925223440.3539069-18-terry.bowman@amd.com>
- <beecc304-f201-4fa2-b2a7-810c82668be2@intel.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <beecc304-f201-4fa2-b2a7-810c82668be2@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR13CA0008.namprd13.prod.outlook.com
- (2603:10b6:806:130::13) To CH8PR12MB9766.namprd12.prod.outlook.com
- (2603:10b6:610:2b6::10)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Tue, 30 Sep
+ 2025 14:07:39 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::b067:7ceb:e3d7:6f93]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::b067:7ceb:e3d7:6f93%5]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 14:07:38 +0000
+Date: Tue, 30 Sep 2025 17:07:35 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Rob Herring <robh@kernel.org>, Josua Mayer <josua@solid-run.com>
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH v3 phy 12/17] dt-bindings: phy: lynx-28g: add compatible
+ strings per SerDes and instantiation
+Message-ID: <20250930140735.mvo3jii7wgmzh2bs@skbuf>
+References: <20250926180505.760089-1-vladimir.oltean@nxp.com>
+ <20250926180505.760089-13-vladimir.oltean@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926180505.760089-13-vladimir.oltean@nxp.com>
+X-ClientProxiedBy: VI1PR09CA0169.eurprd09.prod.outlook.com
+ (2603:10a6:800:120::23) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,421 +82,412 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH8PR12MB9766:EE_|DS2PR12MB9800:EE_
-X-MS-Office365-Filtering-Correlation-Id: d35ceeb5-ed7c-4bde-6b98-08de002ac021
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA4PR04MB9366:EE_
+X-MS-Office365-Filtering-Correlation-Id: eca95225-8bc8-4b11-480e-08de002ab652
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
+	BCL:0;ARA:13230040|1800799024|10070799003|366016|19092799006|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RjhTRjF6bVVZZEhwbGJqNWpYdWM4Ri9aZlFtQktYaUU5ditPTThMV2ljcVV3?=
- =?utf-8?B?TWdVWDcvQXZ0V055WWVHNCtvenFKdTFvL3JMU3JJWTAxZm9sU2xlYUo3SnZi?=
- =?utf-8?B?ZGdzaHFaYmU2VHBNMUlhdGtwWElvbXJuVmFRS1g5K1hXczl6S1pVMnl4MnNF?=
- =?utf-8?B?YWxiczdMK1pxejNVNC9Odys5eWxremNtV0dVa1UwRVIvTHFiMEFOeGx5ZlVI?=
- =?utf-8?B?cXdtbGdNQ0QwQWVzUm1RU2EvMlVTcURkNHBITnhwUTdscWxMMlBaakdOd3Nv?=
- =?utf-8?B?SE1YWEE0cHNRNVZxMFNWVUdQS2l6a0dBMG9GS0EvSVpOZHN1emhNL2tFM3lW?=
- =?utf-8?B?REs0NjMyR25YT2E3Vll6Sy92dWhqY3NUOWpLbUs4L2Y0QThSVkYxaHBVQ0xF?=
- =?utf-8?B?V2ZUallKd2VZWHN5RnE5TUM0TWxvQVRIb0VkZ0NBdjFQenJMc0ZjU0poWVV3?=
- =?utf-8?B?NUw0Q1pwQXdJTWxkekRINWpDaFFscDVPd21vbnBDenUzbnNWbGVzYk00YmtZ?=
- =?utf-8?B?dDZlREZWMEJxSDZRTWJMbXA1NGNZcVFTdkhNdjJRRmdpUlhyeWJJRGxFTkF6?=
- =?utf-8?B?UFg2ZHZlRkNFa29iK1JWTGxUUXU5OG5EdzE3d0VPRGR6N1pLdm1YNlppRG0y?=
- =?utf-8?B?S3pYTU1ybnZOeWpzaENtOW84eGNOTHBYTW1ZZGpaRmFTeDRrQnpxMDdvQXVr?=
- =?utf-8?B?TVBZLzl6Q24zVjN5RVRTUVdmUS9mZXNscmhDdWtWNkxiN09rYTBzLzVXNXJa?=
- =?utf-8?B?aXB6WWN5NDBia1hqMnNLeUpyRGk3VHUvdE9MQ3Q4SVluVHpwTWVjMk9LTzRL?=
- =?utf-8?B?SzFOVkRFbjlsbGd0c1JqQ2xkZUFhU3lpR3V4SitWSFA5NXc1cG5GQllML3JB?=
- =?utf-8?B?YVA1alZyLzR3ZHpIUmNXR2tJWVVpMU82Zk5iYW13bzdlRXJJaTVrb0VHSjZV?=
- =?utf-8?B?aEdzbmhtRU5nNHhVZzhWM3pqNlB0M2krL0thZS93MWltZHdpUXhxeDhVSVNS?=
- =?utf-8?B?alFpaEFKYTFkdTR1Ums4YnI0WTVLMkp4c3hveDJNSmY1UzlsNHRWbkZkdDQx?=
- =?utf-8?B?U1JUbEVEWktPZ0I5aExaUHRmaUpVdi9uRjN2Z3VLUWg1YWMreWVwbWM5STlZ?=
- =?utf-8?B?MUpoTDRwUG1CTnBobkQ4VzVIOGZDR1ZZU0l3Ulg3cmZwS0g4RjV2YWxMOHRP?=
- =?utf-8?B?b0x4eVN0dzdxU05mVDFZbGEydkFDbnFGNUdqMlJJV3JQRmxBY1ZCY1hFRmhG?=
- =?utf-8?B?cFFFaFRUdWxLSERnaytVWFBPaCtzZlJIYkhCWkppVHNNdXVRZmF0b09oTzNj?=
- =?utf-8?B?a3FrcGpjYTkrVS91RlJHTEdhcVQxT201eG00OEpLV0tPL2VWMlJ2ZkxlN09B?=
- =?utf-8?B?ZEIxVVNNSEIvQStmUkxuQ2NoWXVpUkFEYlFEcCs2cjFnQjFLWHkybWo0d2Y1?=
- =?utf-8?B?ZGswSGt5Y3ZLNmwwRmgzYjBEM3ByTHpPMXQrL0JEN0pPMUZuK01KbkNhZldL?=
- =?utf-8?B?WkpJWkx3LzlLRUVpVXVKcnM3UHljbEJlN09ZTStvcFl1cFRPQnloUXBBREZO?=
- =?utf-8?B?bmtoc3ZRN1NVaTk1M011SFU2U1pMdTZDWXZ0ekhMbHJYL2VYRlRRd2lRbDk1?=
- =?utf-8?B?QWRTWE9aUHRQMmpsRVlQSEhBTVhPa0R4WkNMK1Nlc0UzM3NlTllXZ1pQY01J?=
- =?utf-8?B?TTYvbVpzWlJKTTBjSW41SVJHcGxzZjZ5WHJpeUt6T056MHJ1aVdZS0hVVXo5?=
- =?utf-8?B?KzZHUk1zZWY3ZkcxbUxaT0Q4cFJDVVliRUNOOHY5aHdMNVFPQkNEWU9STUpr?=
- =?utf-8?B?UnYyZkRJeGtzTllIdGNnVEZaejZ4Tm5VTTVCVEJ2OGowUG5hTW9xV0s5LzFH?=
- =?utf-8?B?aDc2YWk4NENJNUYrUElEUGN5aGE2R2V4dml5SWVRT0dPRDJqVUVhdUJYTFdP?=
- =?utf-8?B?c2NkeHppK011SVYyQTZJZnFlNnE4WWlwUnQ2R0trckhyWENkK0NXVkR1TzlI?=
- =?utf-8?Q?pt/Dp68B5nJ91TAiIfQYJZ7vuZbEy0=3D?=
+	=?us-ascii?Q?GfIAYD7R/sm09+RBAmshwagCI/a7nEdr3qFyUhVH8YD9gTg/tA7Nq5EpQN60?=
+ =?us-ascii?Q?AjeN7U8U/DMXS5EU+p65FCRZda6oY8KKi1OkBhcnTvAfhfzeyl0uy0P+D0yC?=
+ =?us-ascii?Q?2W2H2ru+Xt361U5GRbEtXCnnAHqJ0SE8QfNwhHN5HkgwbBplgYYb5no0vwDa?=
+ =?us-ascii?Q?pqr3w561rd1nk8GOtW4xD5S+xbq+4Qs/9gOQTClrUXTGS3NLIA8cjkDPI5j8?=
+ =?us-ascii?Q?BdBTmAhCibTN2BBPQxoG4s8h/uMBNABu8HZrdDs3KVt/VM36E2T+2sjtlHcP?=
+ =?us-ascii?Q?o+dW1antBA6QwllCfeZ7AoYkrPYB9BV2wD/xMMMmidjv1AEoGSFld1l1JnQU?=
+ =?us-ascii?Q?SY0zanTLFF+Ly+PUSFxlgB2Q94kYHxNXmswSde5FUDQK630eY0ibMxVR+EHn?=
+ =?us-ascii?Q?OIptBjVadDnh+cbkmazwq9PW7pMmgKorrLZ8rBOz6WfevbSXp+N3x7xqIW7h?=
+ =?us-ascii?Q?PlXCXVakv+Xk6uv8e/3yiVvDR9jaX+Vh8BEzworUBN6ZgXy/t8zPvqK+ljUm?=
+ =?us-ascii?Q?jq0Ia8BeJCu1x7KIIPs12Av9He+oIyNejoOQUV6mYBxiRMvY3Bo6psmSxeDF?=
+ =?us-ascii?Q?P/j0hox7c0jM8lMNJaGuQrzkfYpKwufJMYJdnKbjnL1C7vLgWKqr36GiG7FG?=
+ =?us-ascii?Q?AHsFfcCTq2XufUeMzpur+epTSj2NeCWuFZr3qNtomfs92BGU1lvwegT4tBKx?=
+ =?us-ascii?Q?q7sCUPxwrbu4B2nOHYsqZMbJin0PBhAM1w5PrH+rxl/evgt0poOpUpX4cUtd?=
+ =?us-ascii?Q?W8l8Ijf/27fG52uOU8ilXSW/vd1XNoTc05Mye9xydhdnz0fYyJ5AXQ41Rcgm?=
+ =?us-ascii?Q?/Z8+Jv35+unZ5ADlyGi5CC/iv91xA0IcLIFQ0wASpoXwa/i4fIrIHgcVPD82?=
+ =?us-ascii?Q?7JTL+WfKLKdAjazAAMOKRvkfLe5VZC0ub/UV/siXS2WWvrCjJ1j+XJuz3//Z?=
+ =?us-ascii?Q?lAQZ1aWfaWxrr7WvBCKiXczvHyeai9QPzpvY9onWIHxRjBIX7jZ+DtOAFrcm?=
+ =?us-ascii?Q?0XdRPrhOzMo+zV8D3d5PDos/Wubs18eYTHpNj3G2FxEgQPyYtTtpA02SFHOQ?=
+ =?us-ascii?Q?OU1JDdDig7I2NfullKetyvmSorROD3JHQSUon+E+ueAP9mDppsp1IIwWr2qj?=
+ =?us-ascii?Q?SG2yZTi4mFilqj0XREG88W6vFYn2IF0m8FWiRMnDNi3wfYUfzcGt7bvWlUSh?=
+ =?us-ascii?Q?r4TD40f/eydfULDRqrmOO6PnS5qQvZG7uUZ/1c93/jgQiBMjBfnebvLaja66?=
+ =?us-ascii?Q?HC71EdgDUMFRIK92HgJTxEwB0v88xBAHIEq7r3O52OPwOgDlhKHjz99mcbVw?=
+ =?us-ascii?Q?novpB+gn1VqFimYT4PONnzm9nL46csA8+6Sviod6SrGxcKtUmTgkXcxtw8Av?=
+ =?us-ascii?Q?VC9UA62z8rNUiZZ/aYAeiHEdSRBvkuIPnsLRMriE9m7NAIK5fQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH8PR12MB9766.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(19092799006)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RVIwL3B4ZzlhY2VOdkRFTUlydWZoaVVIMFNNOFhsczMvbHgzUDFoeHFCS3J6?=
- =?utf-8?B?TlVtN1dSV2dlMVpMK25aYkVIQXFYM1ArdEl2QnZ3VmgyOXFCc2lpc2lVRVVa?=
- =?utf-8?B?ZDhyNzdINE5mc2pEeXVQK2VKSm0vRjhycXd1dVdWcnpiTjMvSjl5bUpSZ3JU?=
- =?utf-8?B?K0tTUnBUMkQ0ZE43YUFoSzhmVXdTK1Vhc1NFUUthemdoU2M2ZjY3VDVLYlpa?=
- =?utf-8?B?YXV3ZldLY2gzSTNENW5MYldKYWV5aGJDNjdEcVY2RG84bjh3N3NsR2dLZzFT?=
- =?utf-8?B?WXJYSzlVSnhFellVcXlmK3F3QURNT3E3Y2pyZmwwNVNsMW9aMDRndWc0ZU1O?=
- =?utf-8?B?VG56RFBISnl2YXRyMjViVXFVdWhXOWhhU0crTnRXRng0d29DNlp4eWtxbHpV?=
- =?utf-8?B?b2hLc3R1R3VsaE43K2RaTkcwbUlRbzYxU1FqN244Zmg3SHhHR0xISkt4QkZt?=
- =?utf-8?B?NFI5UHBmbE5XMVJ6dWhMd21TY21YTjhxRWs4U3lYaVFhSWRMUzVwMTdreVdq?=
- =?utf-8?B?bVBaSHZWcW1oajM5TXNiMGJCdHBuRkhMa3VwQU9jMnIwZHU0S3MzVmphd0dN?=
- =?utf-8?B?Sm9SWjFsTnJOYklEYXIrV1hEcGNzMzRHWDRGMGF0c1ZmMHJpL1dFVjZhelRu?=
- =?utf-8?B?ZUhuL3N5aWlCL3E2OUV2STlDdjNzbkZMVFhPRWZYUGU2cjE5N2RDTmxDbHF1?=
- =?utf-8?B?d3JVRGVYOXBDZmJlcmJxSVVqOG43cVdJRVZyWFZaOXZBUUFLQ3A1ZDBNZE83?=
- =?utf-8?B?dStXeEFmV3VmU0lrZnRrY3NWQm8zYjZpbTZIcHNlRVJXcVdVcUJiOHNTUXpD?=
- =?utf-8?B?V0FkalQvUlYwbkNxT3VLN2hpS20rVjBBcW1UUW05QWVnckdVQjc0cCtvQ0M4?=
- =?utf-8?B?My9iY2E4U3MvbGpKZTF6aWZ0RVhhNncvbHFLZ2RMOHFBSC9JZnl5YmlJUitq?=
- =?utf-8?B?NzRmb2xRWDhiVzIwL3dkNGthaWkrZSt4bEFXckRlWXVZaDNLWHFGL3IxWVZK?=
- =?utf-8?B?MmZ4SEpSaWozUkFsSnN4Q3oweHBQL2ZzQ2xybm94QmI5bXVzZlF3dTBCd2Jl?=
- =?utf-8?B?T3NycjV5T3A1WkFGcVJGWFhJNytuN2RvcHRuRWsyZUlxRWJid2pDSFBnVnNh?=
- =?utf-8?B?WWRMandkUzNORjRQV2UvM2F0QmxDejZrYTFlMFNmNFRoZTNCalp6OTF6Um1z?=
- =?utf-8?B?cDBiMkdCSzMzNUljQmlzK3BoMHo4Q0pKb0FSSkZXYXZWc0dQUHFKTGFkYVJT?=
- =?utf-8?B?anBtV1dCQTI3c2xkTmlqVEMxSXNIZG5CcHRRYVFzdi9XYXFrVmhlV04rTk02?=
- =?utf-8?B?WDNuNk5JZ0VXdmF2MG9iMkx4OWtWMzdnUzVlYkxNcXhmTUU5WjkvN2dhcVVM?=
- =?utf-8?B?bVZ0S21EbUlTMUJDdmFITjZmNnVjMDJEV05zdDhyUnNEek9tNFBmUkJGMmpF?=
- =?utf-8?B?czJ1RnFwekhzRXZMbHdLZHBYWDk0S2Y0MXhXQTJNbVQ4QUlUdEJ1NHhIbjha?=
- =?utf-8?B?MUlOQnlRdGNKQmlPMkljYU4xclM4bXoxVkY2QzJQMGp5K0k4emt4MWw2bDVp?=
- =?utf-8?B?blFmNGc5UXZ5UTF0aEgvTGRyWDMwWDNiVGpBb0hiR0RzdjVsM2Ivc1QzMXJP?=
- =?utf-8?B?MDJEV0s2TStQanNYMzZkTkxKUGpRWC9lWDNsOGdneDd1ckhETEtBeWtSbkxX?=
- =?utf-8?B?V3RWRlh2UEpmeUNKbjd6TjhibDA3SVRqT1g3SU9VODJreVZLWFJoMTJtNkhy?=
- =?utf-8?B?OEZ1S3Z6enR6Nkw3Yi8xR1JXL2FwdEs1dWZFZXViK05BUEwxSHVPNnZtbTJu?=
- =?utf-8?B?MUxaWWxVbTV4eUpLRDAwTFd2Wk94OUwwa2g3cTUwY3V5TlpVZFZXSEM2L08x?=
- =?utf-8?B?c0xzcCtoaE5YR1dvM2kxckt6ZEJNbGRiTzM2Zk9QMVZrRXBOWExaWmtjSCtX?=
- =?utf-8?B?UTFrYWtpT2NubGZKdkk3WExQZjFwcHFNS0tuLzdHMXY3OGI1WnBYU295RWF3?=
- =?utf-8?B?cHJsRStydDUwdG1SZXo4dVFhUEtMcXJzS25RMnJ0VWZ3M2tpREFEZS9GMkRO?=
- =?utf-8?B?aWFGT2NBYnlYTVM3Y2hvaXFqZGZWZE94aXVEMnBESCt4cTNyOXpZUnMyNnp3?=
- =?utf-8?Q?K340a5GN4Fyg8WNDsSfYv/uMv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d35ceeb5-ed7c-4bde-6b98-08de002ac021
-X-MS-Exchange-CrossTenant-AuthSource: CH8PR12MB9766.namprd12.prod.outlook.com
+	=?us-ascii?Q?3gQB5laOnTacML6xnC2uDFetafANwC5ekyEaxkomdR7Zab29OiQ8Igz6Ef4t?=
+ =?us-ascii?Q?eCHl5UHD/yetC4tIAlr2m2h0X/kV3fWO3ztJ5m3ejV4Z5IcgyZKHAUZn6orz?=
+ =?us-ascii?Q?RVuKrZNkmW5kR9gz07NJSLzNdxCYbuIK06inmvFcovEU/QGksyVJx8jMqd81?=
+ =?us-ascii?Q?m4GhO/FjbFok0Feom1tuWD6JpIZDhCAt7oygBv4dxb9hcjAkMvgQk1k0WwWz?=
+ =?us-ascii?Q?m5tN6UZ3nHd1Roct20obzmdTU+Na6AGmgAaz63gg8Nt+m4ZZz5BUPG2ZxWOs?=
+ =?us-ascii?Q?KK2nFtpFDjgcPMEXYebDQ++nwzmgmeMQG7qsr9FshoE0IgWEjNi0Vsf8vyLU?=
+ =?us-ascii?Q?Cxt6PUWqoF4NA8CO9j5JEwREJF8uXDppPR59KGqu3pK4bo3WB7OhP08uUIS2?=
+ =?us-ascii?Q?l3wH9LZmvevvdgr/XeFymbSu5biaVNx5n+pID36ucak3utZ7dJWf3YnBuzUK?=
+ =?us-ascii?Q?lCMLt/ji219z50KU0qDTj/Qd+uSl4zFKNYV+/7Axcvnmk4/zJfH0mc5J/dAl?=
+ =?us-ascii?Q?Med/acZWPHeJW10QLl98ReKPTPeubdQapoXKgrcihnyInc8gu3HwpUfdT60C?=
+ =?us-ascii?Q?rKOkwXWgqLuAi/8tDrTJVJ43MoE5tIKfnuWykQ+qPKbFBP9zoAW6vTDb+PSS?=
+ =?us-ascii?Q?qUPpkIJfUpOjTxXG9e6BeEla8Jeo67G34CwExdYcHRcCc/bl10I7A8K3gMUO?=
+ =?us-ascii?Q?0l6GGSBlXPxYFLitKv9vLCwoRj59hhLEESdbpAcVR1sVdSGHCjPQDECXZLN1?=
+ =?us-ascii?Q?FebUMU7P5/+s7fxirbHvRLjIEY5WEzlgBXEi7+TBjxeEnYOBXqz+iVJJHCqa?=
+ =?us-ascii?Q?Zf7DjODE40nMdmsWuNzH0oC9cjyw6FIzv1X4XR3wY36gqEsWxydUy11tTGDU?=
+ =?us-ascii?Q?4OoiQXayvzipFs/LYtjOZsU5Z0Cg99kgq3Zuo3jWGPOYM+jdYysbMxUR9IJV?=
+ =?us-ascii?Q?6J6sAt8ebFz0nrzArUrzaDcmwboG46/W+5/XlPC0ljc9YxTVBKUfJ6mGIuKL?=
+ =?us-ascii?Q?KnPrs4x5K1zSo8i3UF8Y/XxPN629cI81/phsq5+Sx65glBG8pZqcvB+lyE4q?=
+ =?us-ascii?Q?R+kH2OndTJ6eSAInGIdpjrXNTo5eSBzs0FJeAWVKFzfVe0Vie9ySkbzHi+Wc?=
+ =?us-ascii?Q?wmO9c/uFpgAtuJHv669yDA87KmcEr135mKzLzRgHwcVFpIT1As5amUgDQ4sd?=
+ =?us-ascii?Q?nztrUr2tRzpjPiKGuu0z2fJjjKMLhk26KPjYp1Cl0dWNANkR+2DC7HrwSMeM?=
+ =?us-ascii?Q?hdFXrIeMM3f/OT/ew9ooNzE26c4ROIPb5/qLjmaJuyu8jXDltzuZlyBS8/Sd?=
+ =?us-ascii?Q?kUBYwc8XISRS7i+6rK7qcWpS60clO0EIAWyn06GY58c4FLkVMItTA1/4OMC5?=
+ =?us-ascii?Q?wIS8VUQ56mlVlkN/wkLNQjajnj9KMvt8mFDjneA1rB22WfPLVK31VWOupt2e?=
+ =?us-ascii?Q?s9YrtPdjuTA72iMjYL4O0GFIP19oI2Ymro0tPIw3ofzUgx3dxMdzgqQ+KUW2?=
+ =?us-ascii?Q?skPJleeCdKjWb5T04aqcLmoOiRz01oLrRVOlFtoXnMtIjGr/EJ30AoAfwn0x?=
+ =?us-ascii?Q?bC6NiPZajgeHhc0HctqX6TQi5spQYtXpEQch98Exb0KBY37jERf1sqKh42H7?=
+ =?us-ascii?Q?C3YrfqoldVqB9wOcsnHfuRH+J8zWTa8KlcpE63tQoYw03VkNIAwyd4cYzf3M?=
+ =?us-ascii?Q?4hR6lw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eca95225-8bc8-4b11-480e-08de002ab652
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 14:07:54.7576
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 14:07:38.6320
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CVuMbT0sRIEJQKogyAsYo+8eEb9JOaylGUIPRr28P5VBWt+DrVrqKT0HVIPeAodNlftxQRju0UMFiMOJvlKMlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9800
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5Z45mLAhG2aw1jGbVUY02brX6/ls8QdKF8/HZ/HUhOsOm5HwufBr9Dnt3+EMAsBe3JGeLiMmR3K/1Ty9E5KewA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9366
 
-
-
-On 9/26/2025 5:04 PM, Dave Jiang wrote:
-> On 9/25/25 3:34 PM, Terry Bowman wrote:
->> CXL Endpoint protocol errors are currently handled using PCI error
->> handlers. The CXL Endpoint requires CXL specific handling in the case of
->> uncorrectable error (UCE) handling not provided by the PCI handlers.
->>
->> Add CXL specific handlers for CXL Endpoints. Rename the existing
->> cxl_error_handlers to be pci_error_handlers to more correctly indicate
->> the error type and follow naming consistency.
->>
->> The PCI handlers will be called if the CXL device is not trained for
->> alternate protocol (CXL). Update the CXL Endpoint PCI handlers to call the
->> CXL UCE handlers.
->>
->> The existing EP UCE handler includes checks for various results. These are
->> no longer needed because CXL UCE recovery will not be attempted. Implement
->> cxl_handle_ras() to return PCI_ERS_RESULT_NONE or PCI_ERS_RESULT_PANIC. The
->> CXL UCE handler is called by cxl_do_recovery() that acts on the return
->> value. In the case of the PCI handler path, call panic() if the result is
->> PCI_ERS_RESULT_PANIC.
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> ---
->>
->> Changes in v11->v12:
->> - None
->>
->> Changes in v10->v11:
->> - cxl_error_detected() - Change handlers' scoped_guard() to guard() (Jonathan)
->> - cxl_error_detected() - Remove extra line (Shiju)
->> - Changes moved to core/ras.c (Terry)
->> - cxl_error_detected(), remove 'ue' and return with function call. (Jonathan)
->> - Remove extra space in documentation for PCI_ERS_RESULT_PANIC definition
->> - Move #include "pci.h from cxl.h to core.h (Terry)
->> - Remove unnecessary includes of cxl.h and core.h in mem.c (Terry)
->> ---
->>  drivers/cxl/core/core.h |  17 +++++++
->>  drivers/cxl/core/ras.c  | 110 +++++++++++++++++++---------------------
->>  drivers/cxl/cxlpci.h    |  15 ------
->>  drivers/cxl/pci.c       |   9 ++--
->>  4 files changed, 75 insertions(+), 76 deletions(-)
->>
->> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
->> index 8c51a2631716..74c64d458f12 100644
->> --- a/drivers/cxl/core/core.h
->> +++ b/drivers/cxl/core/core.h
->> @@ -6,6 +6,7 @@
->>  
->>  #include <cxl/mailbox.h>
->>  #include <linux/rwsem.h>
->> +#include <linux/pci.h>
->>  
->>  extern const struct device_type cxl_nvdimm_bridge_type;
->>  extern const struct device_type cxl_nvdimm_type;
->> @@ -150,6 +151,11 @@ void cxl_ras_exit(void);
->>  void cxl_switch_port_init_ras(struct cxl_port *port);
->>  void cxl_endpoint_port_init_ras(struct cxl_port *ep);
->>  void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host);
->> +pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
->> +				    pci_channel_state_t error);
->> +void pci_cor_error_detected(struct pci_dev *pdev);
->> +void cxl_cor_error_detected(struct device *dev);
->> +pci_ers_result_t cxl_error_detected(struct device *dev);
->>  #else
->>  static inline int cxl_ras_init(void)
->>  {
->> @@ -163,6 +169,17 @@ static inline void cxl_switch_port_init_ras(struct cxl_port *port) { }
->>  static inline void cxl_endpoint_port_init_ras(struct cxl_port *ep) { }
->>  static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
->>  						struct device *host) { }
->> +static inline pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
->> +						  pci_channel_state_t error)
->> +{
->> +	return PCI_ERS_RESULT_NONE;
->> +}
->> +static inline void pci_cor_error_detected(struct pci_dev *pdev) { }
->> +static inline void cxl_cor_error_detected(struct device *dev) { }
->> +static inline pci_ers_result_t cxl_error_detected(struct device *dev)
->> +{
->> +	return PCI_ERS_RESULT_NONE;
->> +}
->>  #endif // CONFIG_CXL_RAS
->>  
->>  int cxl_gpf_port_setup(struct cxl_dport *dport);
->> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
->> index 14a434bd68f0..39472d82d586 100644
->> --- a/drivers/cxl/core/ras.c
->> +++ b/drivers/cxl/core/ras.c
->> @@ -129,7 +129,7 @@ void cxl_ras_exit(void)
->>  }
->>  
->>  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base);
->> -static bool cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base);
->> +static pci_ers_result_t cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base);
->>  
->>  #ifdef CONFIG_CXL_RCH_RAS
->>  static void cxl_dport_map_rch_aer(struct cxl_dport *dport)
->> @@ -371,7 +371,7 @@ static void header_log_copy(void __iomem *ras_base, u32 *log)
->>   * Log the state of the RAS status registers and prepare them to log the
->>   * next error status. Return 1 if reset needed.
->>   */
->> -static bool cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base)
->> +static pci_ers_result_t cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base)
->>  {
->>  	u32 hl[CXL_HEADERLOG_SIZE_U32];
->>  	void __iomem *addr;
->> @@ -380,13 +380,13 @@ static bool cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_bas
->>  
->>  	if (!ras_base) {
->>  		dev_warn_once(dev, "CXL RAS register block is not mapped");
->> -		return false;
->> +		return PCI_ERS_RESULT_NONE;
->>  	}
->>  
->>  	addr = ras_base + CXL_RAS_UNCORRECTABLE_STATUS_OFFSET;
->>  	status = readl(addr);
->>  	if (!(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK))
->> -		return false;
->> +		return PCI_ERS_RESULT_NONE;
->>  
->>  	/* If multiple errors, log header points to first error from ctrl reg */
->>  	if (hweight32(status) > 1) {
->> @@ -403,76 +403,72 @@ static bool cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_bas
->>  	trace_cxl_aer_uncorrectable_error(dev, status, fe, hl, serial);
->>  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
->>  
->> -	return true;
->> +	return PCI_ERS_RESULT_PANIC;
->>  }
->>  
->> -void cxl_cor_error_detected(struct pci_dev *pdev)
->> +void cxl_cor_error_detected(struct device *dev)
-> Why change the input parameter to 'struct device' to just convert it back in the first parameter? I understand that later on cxl_handle_proto_error() will pass in a 'dev', but since it's going to be a pci_dev anyways, can you just pass in a pci_dev instead of doing all this back and forth?
-
-Dan made a point in previous revision that handling functions should work on 
-devices (to include the parameter). This is to be consistent with CXL device/port error 
-handling rather than PCIe error handling. Let me know how to proceed.
-
-Terry
->>  {
->> +	struct pci_dev *pdev = to_pci_dev(dev);
->>  	struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
->> -	struct device *dev = &cxlds->cxlmd->dev;
->> +	struct device *cxlmd_dev = &cxlds->cxlmd->dev;
->>  
->> -	scoped_guard(device, dev) {
->> -		if (!dev->driver) {
->> -			dev_warn(&pdev->dev,
->> -				 "%s: memdev disabled, abort error handling\n",
->> -				 dev_name(dev));
->> -			return;
->> -		}
->> +	guard(device)(cxlmd_dev);
->>  
->> -		if (cxlds->rcd)
->> -			cxl_handle_rdport_errors(cxlds);
->> -
->> -		cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
->> +	if (!cxlmd_dev->driver) {
->> +		dev_warn(&pdev->dev, "%s: memdev disabled, abort error handling", dev_name(dev));
->> +		return;
->>  	}
->> +
->> +	if (cxlds->rcd)
->> +		cxl_handle_rdport_errors(cxlds);
->> +
->> +	cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
->>  }
->>  EXPORT_SYMBOL_NS_GPL(cxl_cor_error_detected, "CXL");
->>  
->> -pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
->> -				    pci_channel_state_t state)
->> +void pci_cor_error_detected(struct pci_dev *pdev)
->>  {
->> +	cxl_cor_error_detected(&pdev->dev);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(pci_cor_error_detected, "CXL");
->> +
->> +pci_ers_result_t cxl_error_detected(struct device *dev)
-> Same comment as above.
+On Fri, Sep 26, 2025 at 09:05:00PM +0300, Vladimir Oltean wrote:
+> Going by the generic "fsl,lynx-28g" compatible string and expecting all
+> SerDes instantiations on all SoCs to use it was a mistake.
+> 
+> They all share the same register map, sure, but the number of protocol
+> converters and lanes which are instantiated differs in a way that isn't
+> detectable by the programming interface.
+> 
+> Using a separate compatible string per SerDes instantiation is
+> sufficient for any device driver to distinguish these features and/or
+> any instance-specific quirk. It also reflects how the SoC reference
+> manual provides different tables with protocol combinations for each
+> SerDes. NXP clearly documents these as not identical, and refers to them
+> as such (SerDes 1, 2, etc).
+> 
+> The other sufficient approach for Lynx 28G would be to list in the
+> device tree all protocols supported by each lane. That would be
+> insufficient for the very similar Lynx 10G SerDes however, for which
+> there exists a higher degree of variability in the PCCR register values
+> that need to be written per protocol. This attempt can be seen in this
+> unmerged patch set for Lynx 10G:
+> https://lore.kernel.org/linux-phy/20230413160607.4128315-3-sean.anderson@seco.com/
+> 
+> but that approach is more drawn-out and more prone to errors, whereas
+> this one is more succinct and obviously correct.
+> 
+> One aspect which is different with the per-SoC compatible strings is
+> that they have one PHY provider for each lane (and #phy-cells = <0> in
+> lane sub-nodes), rather than "fsl,lynx-28g" which has a single PHY
+> provider for all lanes (and #phy-cells = <1> in the top-level node).
+> 
+> This is done to fulfill Josua Mayer's request:
+> https://lore.kernel.org/lkml/02270f62-9334-400c-b7b9-7e6a44dbbfc9@solid-run.com/
+> to have OF nodes for each lane, so that we can further apply schemas
+> such as Documentation/devicetree/bindings/phy/transmit-amplitude.yaml
+> individually.
+> 
+> This is the easiest and most intuitive way to describe that. The above
+> is not the only electrical tuning that needs to be done, but rather the
+> only one currently standardized in a schema. TX equalization parameters
+> are TBD, but we need to not limit ourselves to just what currently exists.
+> 
+> Luckily, we can overlap the modern binding format over the legacy one
+> and they can coexist without interfering. Old kernels use compatible =
+> "fsl,lynx-28g" and the top-level PHY provider, whereas new kernels probe
+> on e.g. compatible = "fsl,lx2160a-serdes1" and use the per-lane PHY
+> providers.
+> 
+> Overlaying modern on top of legacy is only necessary for SerDes 1 and 2.
+> LX2160A SerDes #3 (a non-networking SerDes) is not yet present in any
+> device trees in circulation, and will only have the device-specific
+> compatible (even though it shares the Lynx 28G programming model,
+> specifying the "fsl,lynx-28g" compatible string for it provides no
+> benefit that I can see).
+> 
+> Change the expected name of the top-level node to "serdes", and update
+> the example too.
+> 
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+> v2->v3:
+> - re-add "fsl,lynx-28g" as fallback compatible, and #phy-cells = <1> in
+>   top-level "serdes" node
+> - drop useless description texts
+> - fix text formatting
+> - schema is more lax to allow overlaying old and new required properties
+> v1->v2:
+> - drop the usage of "fsl,lynx-28g" as a fallback compatible
+> - mark "fsl,lynx-28g" as deprecated
+> - implement Josua's request for per-lane OF nodes for the new compatible
+>   strings
+> 
+>  .../devicetree/bindings/phy/fsl,lynx-28g.yaml | 159 +++++++++++++++++-
+>  1 file changed, 152 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml b/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
+> index ff9f9ca0f19c..e8b3a48b9515 100644
+> --- a/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
+> +++ b/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
+> @@ -9,21 +9,123 @@ title: Freescale Lynx 28G SerDes PHY
+>  maintainers:
+>    - Ioana Ciornei <ioana.ciornei@nxp.com>
+>  
+> +description:
+> +  The Lynx 28G is a multi-lane, multi-protocol SerDes (PCIe, SATA, Ethernet)
+> +  present in multiple instances on NXP LX2160A and LX2162A SoCs. All instances
+> +  share a common register map and programming model, however they differ in
+> +  supported protocols per lane in a way that is not detectable by said
+> +  programming model without prior knowledge. The distinction is made through
+> +  the compatible string.
+> +
+>  properties:
+>    compatible:
+> -    enum:
+> -      - fsl,lynx-28g
+> +    oneOf:
+> +      - const: fsl,lynx-28g
+> +        deprecated: true
+> +        description:
+> +          Legacy compatibility string for Lynx 28G SerDes. Any assumption
+> +          regarding whether a certain lane supports a certain protocol may
+> +          be incorrect. Deprecated except when used as a fallback. Use
+> +          device-specific strings instead.
+> +      - items:
+> +          - const: fsl,lx2160a-serdes1
+> +          - const: fsl,lynx-28g
+> +      - items:
+> +          - const: fsl,lx2160a-serdes2
+> +          - const: fsl,lynx-28g
+> +      - items:
+> +          - const: fsl,lx2162a-serdes1
+> +          - const: fsl,lynx-28g
+> +      - items:
+> +          - const: fsl,lx2162a-serdes2
+> +          - const: fsl,lynx-28g
+> +      - const: fsl,lx2160a-serdes3
+>  
+>    reg:
+>      maxItems: 1
+>  
+> -  "#phy-cells":
+> -    const: 1
+> +  "#address-cells": true
+> +
+> +  "#size-cells": true
+> +
+> +  "#phy-cells": true
+> +
+> +patternProperties:
+> +  "^phy@[0-9a-f]+$":
+> +    type: object
+> +    description: Individual SerDes lane acting as PHY provider
+> +
+> +    properties:
+> +      reg:
+> +        description: Lane index as seen in register map
+> +        maxItems: 1
+> +
+> +      "#phy-cells":
+> +        const: 0
+> +
+> +    required:
+> +      - reg
+> +      - "#phy-cells"
+> +
+> +    additionalProperties: false
+>  
+>  required:
+>    - compatible
+>    - reg
+> -  - "#phy-cells"
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fsl,lynx-28g
+> +    then:
+> +      # Legacy case: parent is the PHY provider, cell encodes lane index
+> +      properties:
+> +        "#phy-cells":
+> +          const: 1
+> +      required:
+> +        - "#phy-cells"
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,lx2160a-serdes1
+> +              - fsl,lx2160a-serdes2
+> +              - fsl,lx2160a-serdes3
+> +              - fsl,lx2162a-serdes1
+> +              - fsl,lx2162a-serdes2
+> +    then:
+> +      # Modern binding: lanes must have their own nodes
+> +      properties:
+> +        "#address-cells":
+> +          const: 1
+> +        "#size-cells":
+> +          const: 0
+> +      required:
+> +        - "#address-cells"
+> +        - "#size-cells"
+> +
+> +  # LX2162A SerDes 1 has fewer lanes than the others
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fsl,lx2162a-serdes1
+> +    then:
+> +      patternProperties:
+> +        "^phy@[0-9a-f]+$":
+> +          properties:
+> +            reg:
+> +              enum: [4, 5, 6, 7]
+> +    else:
+> +      patternProperties:
+> +        "^phy@[0-9a-f]+$":
+> +          properties:
+> +            reg:
+> +              enum: [0, 1, 2, 3, 4, 5, 6, 7]
+>  
+>  additionalProperties: false
+>  
+> @@ -32,9 +134,52 @@ examples:
+>      soc {
+>        #address-cells = <2>;
+>        #size-cells = <2>;
+> -      serdes_1: phy@1ea0000 {
+> -        compatible = "fsl,lynx-28g";
+> +
+> +      serdes_1: serdes@1ea0000 {
+> +        compatible = "fsl,lx2160a-serdes1", "fsl,lynx-28g";
+>          reg = <0x0 0x1ea0000 0x0 0x1e30>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+>          #phy-cells = <1>;
+> +
+> +        phy@0 {
+> +          reg = <0>;
+> +          #phy-cells = <0>;
+> +        };
+> +
+> +        phy@1 {
+> +          reg = <1>;
+> +          #phy-cells = <0>;
+> +        };
+> +
+> +        phy@2 {
+> +          reg = <2>;
+> +          #phy-cells = <0>;
+> +        };
+> +
+> +        phy@3 {
+> +          reg = <3>;
+> +          #phy-cells = <0>;
+> +        };
+> +
+> +        phy@4 {
+> +          reg = <4>;
+> +          #phy-cells = <0>;
+> +        };
+> +
+> +        phy@5 {
+> +          reg = <5>;
+> +          #phy-cells = <0>;
+> +        };
+> +
+> +        phy@6 {
+> +          reg = <6>;
+> +          #phy-cells = <0>;
+> +        };
+> +
+> +        phy@7 {
+> +          reg = <7>;
+> +          #phy-cells = <0>;
+> +        };
+>        };
+>      };
+> -- 
+> 2.34.1
 >
-> DJ
->
->> +{
->> +	struct pci_dev *pdev = to_pci_dev(dev);
->>  	struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
->> -	struct cxl_memdev *cxlmd = cxlds->cxlmd;
->> -	struct device *dev = &cxlmd->dev;
->> -	bool ue;
->> +	struct device *cxlmd_dev = &cxlds->cxlmd->dev;
->>  
->> -	scoped_guard(device, dev) {
->> -		if (!dev->driver) {
->> -			dev_warn(&pdev->dev,
->> -				 "%s: memdev disabled, abort error handling\n",
->> -				 dev_name(dev));
->> -			return PCI_ERS_RESULT_DISCONNECT;
->> -		}
->> +	guard(device)(cxlmd_dev);
->>  
->> -		if (cxlds->rcd)
->> -			cxl_handle_rdport_errors(cxlds);
->> -		/*
->> -		 * A frozen channel indicates an impending reset which is fatal to
->> -		 * CXL.mem operation, and will likely crash the system. On the off
->> -		 * chance the situation is recoverable dump the status of the RAS
->> -		 * capability registers and bounce the active state of the memdev.
->> -		 */
->> -		ue = cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
->> -	}
->> -
->> -
->> -	switch (state) {
->> -	case pci_channel_io_normal:
->> -		if (ue) {
->> -			device_release_driver(dev);
->> -			return PCI_ERS_RESULT_NEED_RESET;
->> -		}
->> -		return PCI_ERS_RESULT_CAN_RECOVER;
->> -	case pci_channel_io_frozen:
->> +	if (!dev->driver) {
->>  		dev_warn(&pdev->dev,
->> -			 "%s: frozen state error detected, disable CXL.mem\n",
->> +			 "%s: memdev disabled, abort error handling\n",
->>  			 dev_name(dev));
->> -		device_release_driver(dev);
->> -		return PCI_ERS_RESULT_NEED_RESET;
->> -	case pci_channel_io_perm_failure:
->> -		dev_warn(&pdev->dev,
->> -			 "failure state error detected, request disconnect\n");
->>  		return PCI_ERS_RESULT_DISCONNECT;
->>  	}
->> -	return PCI_ERS_RESULT_NEED_RESET;
->> +
->> +	if (cxlds->rcd)
->> +		cxl_handle_rdport_errors(cxlds);
->> +
->> +	/*
->> +	 * A frozen channel indicates an impending reset which is fatal to
->> +	 * CXL.mem operation, and will likely crash the system. On the off
->> +	 * chance the situation is recoverable dump the status of the RAS
->> +	 * capability registers and bounce the active state of the memdev.
->> +	 */
->> +	return cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
->>  }
->>  EXPORT_SYMBOL_NS_GPL(cxl_error_detected, "CXL");
->> +
->> +pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
->> +				    pci_channel_state_t error)
->> +{
->> +	pci_ers_result_t rc;
->> +
->> +	rc = cxl_error_detected(&pdev->dev);
->> +	if (rc == PCI_ERS_RESULT_PANIC)
->> +		panic("CXL cachemem error.");
->> +
->> +	return rc;
->> +}
->> +EXPORT_SYMBOL_NS_GPL(pci_error_detected, "CXL");
->> diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
->> index 3882a089ae77..189cd8fabc2c 100644
->> --- a/drivers/cxl/cxlpci.h
->> +++ b/drivers/cxl/cxlpci.h
->> @@ -77,19 +77,4 @@ static inline bool cxl_pci_flit_256(struct pci_dev *pdev)
->>  int devm_cxl_port_enumerate_dports(struct cxl_port *port);
->>  struct cxl_dev_state;
->>  void read_cdat_data(struct cxl_port *port);
->> -
->> -#ifdef CONFIG_CXL_RAS
->> -void cxl_cor_error_detected(struct pci_dev *pdev);
->> -pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
->> -				    pci_channel_state_t state);
->> -#else
->> -static inline void cxl_cor_error_detected(struct pci_dev *pdev) { }
->> -
->> -static inline pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
->> -						  pci_channel_state_t state)
->> -{
->> -	return PCI_ERS_RESULT_NONE;
->> -}
->> -#endif
->> -
->>  #endif /* __CXL_PCI_H__ */
->> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
->> index bd95be1f3d5c..71fb8709081e 100644
->> --- a/drivers/cxl/pci.c
->> +++ b/drivers/cxl/pci.c
->> @@ -16,6 +16,7 @@
->>  #include "cxlpci.h"
->>  #include "cxl.h"
->>  #include "pmu.h"
->> +#include "core/core.h"
->>  
->>  /**
->>   * DOC: cxl pci
->> @@ -1112,11 +1113,11 @@ static void cxl_reset_done(struct pci_dev *pdev)
->>  	}
->>  }
->>  
->> -static const struct pci_error_handlers cxl_error_handlers = {
->> -	.error_detected	= cxl_error_detected,
->> +static const struct pci_error_handlers pci_error_handlers = {
->> +	.error_detected	= pci_error_detected,
->>  	.slot_reset	= cxl_slot_reset,
->>  	.resume		= cxl_error_resume,
->> -	.cor_error_detected	= cxl_cor_error_detected,
->> +	.cor_error_detected	= pci_cor_error_detected,
->>  	.reset_done	= cxl_reset_done,
->>  };
->>  
->> @@ -1124,7 +1125,7 @@ static struct pci_driver cxl_pci_driver = {
->>  	.name			= KBUILD_MODNAME,
->>  	.id_table		= cxl_mem_pci_tbl,
->>  	.probe			= cxl_pci_probe,
->> -	.err_handler		= &cxl_error_handlers,
->> +	.err_handler		= &pci_error_handlers,
->>  	.dev_groups		= cxl_rcd_groups,
->>  	.driver	= {
->>  		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
 
+I should have realized sooner when Rob/Josua requested the changes for
+backwards schema compatibility in v2:
+https://lore.kernel.org/lkml/20250925080317.2ocgybitliwddhcf@skbuf/
+that despite our attempts to preserve compatibility with old kernels,
+we actually fail to do that. Actually I should have documented my
+earlier thought process better, where I already came to that conclusion,
+but which I had forgotten when told that this could work...
+
+The SerDes schema itself is technically backwards-compatible, but the
+problem is with consumers, which aren't. In old device trees, they have:
+
+	phys = <&serdes_1 0>;
+
+and in new ones, they have:
+
+	phys = <&serdes_1_lane_a>;
+
+Because the consumer has a single "phys" phandle to the PHY provider, it
+either has to point to one, or to the other. But on old kernels, we do
+not register PHY providers per lane, so "phys = <&serdes_1_lane_a>"
+results in a broken reference.
+
+There are 2 directions to go from here:
+1. Have optional per-lane "phy" OF node children, which exist solely for
+   tuning electrical parameters. We need to keep the top-level SerDes as
+   the only PHY provider, with #phy-cells = <1> denoting the lane.
+
+2. Accept that keeping "fsl,lynx-28g" and overlaid properties has
+   absolutely no practical benefit, and drop them (effectively returning
+   to Conor's suggestion, as implemented in v2)
+
+3. Extend the schema and the driver support for it as a backportable bug
+   fix, to allow registering PHY providers for lanes with OF nodes in
+   stable kernels. This avoids regressing when the device trees are
+   updated, assuming the stable kernel is also updated.
+
+It's not that I particularly like #2, but going with #1 would imply that
+lane OF nodes exist, but the "phys" phandles do not point to them.
+
+Combine that with the fact that anything we do with the 28G Lynx
+bindings will have to be replicated, for uniformity's sake, with the
+upcoming 10G Lynx SerDes binding (very similar hardware IP), and #1 is
+suddenly not looking so pretty at all. I.e. introducing the 10G Lynx
+bindings like the 28G Lynx ones would mean deviating from the widely
+established norm, and introducing them like the widely established norm
+would mean deviating from the 28G Lynx. I can easily see how someone
+might look at them one day and think "hmm, can't we make them more
+uniform?"
+
+OTOH, the fact that device tree updates require kernel updates (as
+implied by #2) is acceptably by everyone in this thread who expressed an
+opinion on this topic.
+
+As for option #3, while IMO it would be a justified "new feature as
+bug fix", it sounds a bit counterintuitive and I'm afraid I won't manage
+to convince all maintainers along the way that this is the way forward.
+
+I'll wait for the merge window to close before reposting anything, but
+I'd like an explicit ack from Rob and Josua in the meantime, whose
+change request I'd be effectively reverting, to make sure that this
+topic is closed.
 
