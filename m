@@ -1,116 +1,336 @@
-Return-Path: <linux-kernel+bounces-837489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812AFBAC6B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD104BAC6BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B991320CFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626C6483808
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6652F7446;
-	Tue, 30 Sep 2025 10:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FB12F659A;
+	Tue, 30 Sep 2025 10:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFCo7Wxt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3FIv/RgK"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010044.outbound.protection.outlook.com [52.101.61.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3F3221FC6;
-	Tue, 30 Sep 2025 10:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759227104; cv=none; b=SeeDCxdW7SxUxsz2SOnMszDw3EX/y6/eFeAJH2tTvVmiRdlJFDaSyy4iwLMSWqPsNqUZVty284kine3eMcouebIj2EcQInDb3D3xB60goEdTB2J7OfguXzvBxsKw6YhBNvE+di7q2DlNuc7GTMFQ3i51aVmZak3sPLVqEpjfWZ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759227104; c=relaxed/simple;
-	bh=nQiB9x6LVTor0rUg13JxaN9DSoNnxVocFRy7A4rwhN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0eav9z7mjfF0vHKb2FnXiIkftZk3/rb2IJKm4DYeMrLzsd8C/Z2gw9lztgZCKNQXx0IWME2SoKEOmfvukh21SIq+/94oe50l3QXezVAq97mVseCQzAajcqSpXjxndYpjI2XcX1TxGdyJgM77moYZIxpll8vvDPgM7AXOWz7h8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFCo7Wxt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F3AC4CEF0;
-	Tue, 30 Sep 2025 10:11:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759227103;
-	bh=nQiB9x6LVTor0rUg13JxaN9DSoNnxVocFRy7A4rwhN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PFCo7WxtPFsgR+fJZk1IYzTYSR7R4gVmihaKer2MbfEfvZil4Sc5gGoUHTJsE0AjC
-	 LWdt7CuX9zl859TVUkm2BcqPXtkBTiZ0PxjavQGwR2UhvS1a7C9F1xYSd2RDhJcmk+
-	 pkyxIbFWI+SEoh1ffi8vAIQg5qOrCMDV5ZfVgfueTp9DPIN1xKa2OGEKpSq2XmGT5f
-	 Rqj+6K4DGhwdbWXdmuuiAfs4ZC9ZYTXimCD6EFLVt4yZPlXANp8U2Q9vGAd1TDlDA9
-	 QY61zxcshu5eF0yHC7Kv/EP7txFUCCHxYdxTmxpHTlqbO+nZ2lTHR2mFI8CQghhtHl
-	 N7OLorNNRxgZQ==
-Date: Tue, 30 Sep 2025 12:11:37 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: dan.j.williams@intel.com
-Cc: Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM
- devices
-Message-ID: <aNus2chNlLGmEiOg@kernel.org>
-References: <20250826080430.1952982-1-rppt@kernel.org>
- <20250826080430.1952982-2-rppt@kernel.org>
- <68d34488c5b8d_10520100b6@dwillia2-mobl4.notmuch>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37C6221FC6
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759227119; cv=fail; b=OpEbVFl9cfOvglr5LEzHb8GvTMrHlVkZtQ3jrIEGAFBVz44drgK2IajHYRnIiceO4BLVClOKc8LYj+zOq5c56Ll0blP+DuWmJjX7N9PoJABNx3X3snDUmlfRsIv2J0dJwR+2TwkcsOrmiYvb34ScoaeHlhI5H+OPYB0rEP/y4G8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759227119; c=relaxed/simple;
+	bh=nxCOBUGFZxvEs1Vl5X9wAMirnBLhivUayIh0Td0s/qs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=s6o5Fiz/c4n+M3IyXR6+ncLuSlRrSKCCRJSajd0pEXBSXASIp5XuGlEP3IVqiW3KzY14PbSvT93fQ721DcTbWg9QUk9pDE6OzgxP+lySwUSmPvo4gL3+2ZBQauBn+llwTyerlRvRC6APW5efqfvSoW4xecHuRadAUrw46BnE4w4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3FIv/RgK; arc=fail smtp.client-ip=52.101.61.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d6ZljR8pF4DhR1qXQPTd8qJPyjzUlTJ7pZ2kNqCAp8dTa+gQhMcDQHR7tksm9junte0VQYuFsLy1GdIvnQIN7HkOmdgV2IhV1qqSJnaUm9zZFjETjqa6IW9/zx0Jfsg+xTsHEz7qwCN7BJUz33lyG7X8E3DrlzLbRADuw3szkfIQOc4Pk6nvy98nJUbdnuJp1c+xl+VSZgTxq29FpKJ79T2BOe5PIYUD3ZqhQQKKQAmB3fJwyM/o6fjhYZymSbPEEl8O42roCYYzu/6fPgag7HMeyC+wCoKr0EYryRoG109SzIveq1BpuSc80BZKrJVgi9yvkiz43XcJeVZ6hh6k9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eKQy59tPIIwXSCsvhjeu4LBXJh+317t0cgQotnBCM5Y=;
+ b=UmFwxMK/yohFBwyK0GUmZKHlXlRDHW451VljScpwLNhGpxYreG7K9en2ZDl3VTALYniH7OscS9GBX+GUoZzG3Ajf9R9r54X4Z9Vn8ydBbrqP/ZFwiNLwNMF5StUONDB3laZC0Lizzczx3eM/1Sy0X573EdG2sWnIu1fIXISUFNYLmfPveR+Zceo+bjibeMdGwD+c0o3mQDkUQY4TKZbePX4xEzFEM4eNmkVvt9YJqBnzyt/w4RzGsg9X/zruY6RIRyTKQ1Y1IGA2Q5Ff3KMIYja+9bAMwcgODVKqBebI5Ed70sPVLdgtDcOXCtpmz/WD9YQa0xi4X5/x7Jj/IJFV1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eKQy59tPIIwXSCsvhjeu4LBXJh+317t0cgQotnBCM5Y=;
+ b=3FIv/RgKH8JQ6Gz+uCoWneD7y9H9t5gGQHdJIb0l7AorcNpRhuWegY0Q4q6ImvvTO4Es6DRac822EU7cGNd4ve+MDt+s3WnP/2LqdOfLAIJwt0e+RI+bGfyLnWByfohLayb9DsCbrT7hQSWGv5hGJ0OaXhuRYgYNi0/5SteBOYo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
+ by SA3PR12MB9178.namprd12.prod.outlook.com (2603:10b6:806:396::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Tue, 30 Sep
+ 2025 10:11:54 +0000
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::9e93:67dd:49ac:bc14]) by CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::9e93:67dd:49ac:bc14%6]) with mapi id 15.20.9160.017; Tue, 30 Sep 2025
+ 10:11:54 +0000
+Message-ID: <60291e97-534e-463b-ba19-6811e0fa3e08@amd.com>
+Date: Tue, 30 Sep 2025 06:11:44 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 14/16] drm/vkms: Allow to configure connector status
+To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
+ louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, sebastian.wick@redhat.com, xaver.hugl@kde.org,
+ victoria@system76.com, a.hindborg@kernel.org, leitao@debian.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Mark Yacoub <markyacoub@google.com>
+References: <20250901122541.9983-1-jose.exposito89@gmail.com>
+ <20250901122541.9983-15-jose.exposito89@gmail.com>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <20250901122541.9983-15-jose.exposito89@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VI1PR09CA0127.eurprd09.prod.outlook.com
+ (2603:10a6:803:12c::11) To CO6PR12MB5427.namprd12.prod.outlook.com
+ (2603:10b6:5:358::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68d34488c5b8d_10520100b6@dwillia2-mobl4.notmuch>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|SA3PR12MB9178:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81934d8b-5cb3-466a-d6f2-08de0009c7e5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|376014|7416014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bytlcmkzRndCK3Foc2RBdGZvWURzOGEzVTA5MzBacnVnM0M2YzJFVzN5RWVj?=
+ =?utf-8?B?TWR2LytJMnhPL2g2Q3lrWmZ3OGYwTmpuSVhKVW1SVEludTdSYUJ1ei9vSEVl?=
+ =?utf-8?B?d1ArRzFCL3dSTURBZkV4UlV1MXVLMjNxb3djMGdodXJpdFRzRkVCbDNJU2Ro?=
+ =?utf-8?B?RmZCY3ZPYnZXb01Janc3VXBrZTJPZHJFMXY3UnNVQmtXcXZHeTdUU1ZPaFQv?=
+ =?utf-8?B?UVRxUk1UQUs0eTFndVBKb0JyaHkwekhYN25wK0lEbHdqeDIxZThtYzhudGRQ?=
+ =?utf-8?B?eU01T0ZSVllIRVVCRUJWVHk3WFE0d0Jmby9zSWgxZmdmaDFkbTZXWWdxZlQ3?=
+ =?utf-8?B?M1NiSkhZc1oxTnZyaVNYRlhHWTZtTW5TNG1zOTMyekVLWGk3ZGFKOG5GWDIv?=
+ =?utf-8?B?YmZsMjhNcXAwelJQSkltUExvSzQrQVkwK3h5QWJCeFd0Y2tjT1FZRVBLNjJ6?=
+ =?utf-8?B?aGFJUkFyRXE3UXNoblZ6cXJKU2xQaXpFOUxZV0lkaDFjNnQzTy9ZS0YvdW9m?=
+ =?utf-8?B?MXFvbVlGaWNtQ1FJWEE3TUVtYkE3Rmo3bWhsMW9wS1JyT2dtNkpYN3Y2RGE4?=
+ =?utf-8?B?b29EVUtxWUxCMGZkcHNjWXdoUm9kQmtPTEdnY1NHNTFlSUZTUEdTclZjOXF2?=
+ =?utf-8?B?ZWFsU0JCN1Y3VjU3eFIzUEJucXc2UWhveWRsRjkyeGIrbDJsOXUxMkREQWxK?=
+ =?utf-8?B?YzBrQmJOTy9lVDN1UkJZaG53RFk2bnd4bm94N21SQ1J1anA0NVQyWUNFMGx3?=
+ =?utf-8?B?eTF1Rm0yWjY3dnJEYmlvaDgwTEdMbURWSmlIQmJGa0p4TTRNRkJremJsc3pH?=
+ =?utf-8?B?cGEyTUs5TU9Fa05JTEg2d0czMXJQdUhpV3hWQkpyYWt2a3BQbGdKMGJTRC94?=
+ =?utf-8?B?RXZNZXh1VXlPOXVRNDFTKytRamZHcVlaeGpRS3N4K2JSZ0dReXdYbmhsS3Uw?=
+ =?utf-8?B?d1E3OWcrM2VsSTJSNmRrSEVJQ2gzaGNLbHgreit3R2VrTDBBY28zb3NublJx?=
+ =?utf-8?B?STNmaXZWNWZyNmY2N3BxdWYvSzVYbHBrL3pERVVXekFteStaTXdFb0dYV2hs?=
+ =?utf-8?B?VEhlaU5wNU1LTGV0L3JvQ0VQT0RwdXVQQ1pMN0JuWDVxMmRQdFZ5eVAwdmNI?=
+ =?utf-8?B?WFBmK2VOQW9ZK2tOK0tCNmNCMkJMRXBXY0haell3N216alVtYitKaDlITlMw?=
+ =?utf-8?B?dGVZRWJ4QkVZdlBGOWlDUVZJMFdqY3FUaW10K0ZPYWxvQURBOTRsN0VmbHhu?=
+ =?utf-8?B?dlVhQkgwNUxPOGdxcjcxZE90YTBiNWJxTXlCS1c3TVhrSkdHRXB6Z0JrMFN3?=
+ =?utf-8?B?QVNlNmJ5Ymo4NEVhQ0Z2amtCdHNnVDQydTlyOXNnZkkrT2c1TVEzYmVadTgv?=
+ =?utf-8?B?d3FJeDl1dDdRUkdQeVJxUEVUN09nSVhCUHBlZ29YZDR1dEx1U0tpRGVDYTJG?=
+ =?utf-8?B?eXd0VWVpelB4RFF5R3R6bllEeEU3c3BFNXBSTUlNTkJTcEdXbmhxQndjMWYw?=
+ =?utf-8?B?Y2QzcnY0RmFwUngwazJTcjQxMUpFZGVCMXRBdGE2SG5UMkpwS2dDa0ZVNlhx?=
+ =?utf-8?B?aXpBN3NEYitpY1VKNjVMOVFPc0l5aTNHWk80T2phOWFMQndpN1pXVzRHR3h1?=
+ =?utf-8?B?eFRqV0VPOHFtRFd3VDFKb3pQWmFucmZ0TVlBcW41dUo0RVhPdnN4MVhtZTRa?=
+ =?utf-8?B?bkgzdHFpWHFhUVh2THNTTkFhSjNwMjJVWTM4UytIU00vb3ZxaXhmMUZ3a3g0?=
+ =?utf-8?B?WURmR3MwdmNTcXNlZE83YzFKN08xdmF0YUtHQWZxN1p1VUFuQ01JU29TaXg1?=
+ =?utf-8?B?YkQvSVpZdEpXbnA3U1lwd3JHVG03eTJrNWVBbENnODJ6UUg1TW5vaFUxSlgr?=
+ =?utf-8?B?STRLN2VCdmNCVlQ0ZmxoMWZJSzBmTGQxaVVra1BVUkdXbjh6TlBJTWIvazdJ?=
+ =?utf-8?Q?EaS/jIEimX27NpLt+U7UeLKzHwzgJHoz?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cUNIdnRra0lEclF1SnVrN29nYjR5OHZKd0U4MzVDL3NzaVFKakwwQjA5RjFJ?=
+ =?utf-8?B?M3p0S1lkcytvZXB1SXlxalBaSVc0dys2WWRkT0pScW1LN0ZlNk9lYUtHVita?=
+ =?utf-8?B?T3lscEhBUXZCekN0dTV1YXNLbll0bDZtMVRaSGQwSm1nWWFldnI3MTYvOTBj?=
+ =?utf-8?B?VFN0WTVrRGJFRkROMHB4elJIMmVWUHJRa3krQWFwNUZFc2NNZnNYRVZ0a1px?=
+ =?utf-8?B?MnQ0YTZRbjVuOFkycmw1VGx5YmVKdU8rcFJ6Z2dLU24vcFB5V0tibGtUMnM3?=
+ =?utf-8?B?TXh6R3doQ2VETU1hU2VhU0ZSRFNFWkV5QlV0Rmw1S3puNytnWHVOaW9IaGtO?=
+ =?utf-8?B?eXZJSXFEZDBmNGJRUFMvMHZCeUxJUHJsd3ZZZDFndUtZanpSMitkOGthNGVn?=
+ =?utf-8?B?Vi9RYytmRSt1OEZqSlFML1djTU5SUzNYU1hiOEFXOEtJOTVybmhNaTJvczM0?=
+ =?utf-8?B?UjNFU2swMDV1SmJTbVdmSnppd1VQMW1yUGdVSVdFQmF0TTZrYjgwWTZ2V2ow?=
+ =?utf-8?B?RFhObVRhaXBPZGNiZ1hSajUvU2w5akV2K0pYdFFENDJveTduU1dGeGhTYUdo?=
+ =?utf-8?B?ODJjWkFCbnVMNkhjbGdpSzB3UGViMzRpS3ZwSytsRHRLL29yQWRuTEZ2Z29F?=
+ =?utf-8?B?T2NnWEdIZklmTTlUMDM1bnFlNVRVeGlYL0VlcGxpdTRyUm05ZnNJL1ArTTEy?=
+ =?utf-8?B?Qklwc2ZqdHNPeGVTZ2syTDhvRVRnY2ZaNU9XUlhaYllmZDA4OUttbm45aTRp?=
+ =?utf-8?B?Q2pPbXhtNHlxVXozMGRyV1FtZUM4am5SMDV1MlRFVVNvOG14R0QyRHQrQ0hv?=
+ =?utf-8?B?S1RRV0ZhMm1UTXlLVGt4MVp5cDAveFdxZ0lqbUpkSmRxTjBuVnR6YlJyOFB2?=
+ =?utf-8?B?MU1QSHR4ZDNhNWRmNUxKVHZYeFFsZHdGZ3ExN0VtQ1RmaUdxekdqdGt1V2g4?=
+ =?utf-8?B?WHJUaXJQekpTK05BVVlvYUhVN3VjSEtIRUVBckdXeEJzTVRBaWRQdng1SUpF?=
+ =?utf-8?B?WDhPc1liVHh3OFBYdTBhQVYxQXNFbERMcjhMUVdDQm5KWGlBZ3ZkNnhUYm1r?=
+ =?utf-8?B?dElnS2FVREF1STRqMlIzZlA2OFRDb0Rub1ZFL1JxeTRNSDYxbzVnQ3gyOUUz?=
+ =?utf-8?B?aXVaVHp3bEN6RURTd2dJcjQ5WUY1Snl3T0RGT1lyYXRWcG5GNFp2TVlzb01D?=
+ =?utf-8?B?Q0Z0SWNldm1iL2lIYzRPUTBZZHlSTjQ2bTNock4rdy9LK2FTZHRMQno3TXc5?=
+ =?utf-8?B?REVBNndCZkRDcXBsaUZkRTcrWHlRUnMxVDNzOVpoUVEzR3plVzRNc0V6aEp4?=
+ =?utf-8?B?d3NxbnJJaWluWmJNQ0JCd3VOQTROOFUyN2hzSlUvM0VWd20zZk5xRlBwMGhs?=
+ =?utf-8?B?VFhDZDh3N1lnOU03T29YNkZIVFdEZUdZUHdScE45bGh6N2RnU3lRRDZhNzBt?=
+ =?utf-8?B?YkZVTGtpSDdRRFJldWdhMC9ieWhMcFh0STFkK2NhMlA4SkNPUXRQdVV0bmRx?=
+ =?utf-8?B?YytBRUZxUDh5TjBPZk12a1l6SXQrdkcvcWZKeXFtNkFlY0dvSlhkL2JZN3Va?=
+ =?utf-8?B?RVo2cGlaMkxSWERZR1dQTU8ybE53MFZTQmtuYWE1N09sTy9NTXY1Zm93My8z?=
+ =?utf-8?B?TmVqWjkyNS9IcnlKTGlKZjZLSVZGUHhoYzY0VUNZc0dQV2JBWnFrZjVnbTJO?=
+ =?utf-8?B?aXEvNUpnVGRsN2ZzKzBYTmVrL215TkZ2N3Blb09QTWdFSTFKNElPNklaa2lD?=
+ =?utf-8?B?aFJ2WHdKSWFRYzRjc2VTaFpOZ2NIM0d6aXhrUkY5YXM5Wk9jSXdwL3Q0OWQ4?=
+ =?utf-8?B?cXZWWVdLL2dSb3pPN0MwY2hBU3FSVXNNUjFqKzlJTXpVcmV5WXRFT2s3dFhi?=
+ =?utf-8?B?TnNRdU9taFBLK285MzFtc2VjRG56R0hieWovekpmSVp5TEVoVm5QdGlwUFhz?=
+ =?utf-8?B?bzMwb0ZhQlhtOFpIamhMdTBYdklKTDBuN3pscnhOc3dCM24rcDIxOUJqZU85?=
+ =?utf-8?B?QWxJRW01ZHFvSE9sVEd2ZTRIcTRHR24wcURvS3krNVBGQmFOOUZuaFNtOXFT?=
+ =?utf-8?B?U2JvekFwalhZd20xTjBSTlp3YUZNKzIzUkc1QlV6K2VjMnZrM1FIQmJRSEg4?=
+ =?utf-8?B?aGNjL1VweWZ5KzllVHhLN0IzaS9veDB3cXhnOVBFaE55Qlk4VW9kODFVVXZy?=
+ =?utf-8?Q?QXAxPRkOmoMqalF36d7OVG0=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81934d8b-5cb3-466a-d6f2-08de0009c7e5
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 10:11:54.4390
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t67AYkUSCRYqKS8Kj8+Gg7ueOIcQP/6sjFLGH/BLbn/EjgUPaLuqV+2i4VRAaERvzwzqCKrB4p6rFlfFy3ESMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9178
 
-On Tue, Sep 23, 2025 at 06:08:24PM -0700, dan.j.williams@intel.com wrote:
-> Mike Rapoport wrote:
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > 
-> > There are use cases, for example virtual machine hosts, that create
-> > "persistent" memory regions using memmap= option on x86 or dummy
-> > pmem-region device tree nodes on DT based systems.
-> > 
-> > Both these options are inflexible because they create static regions and
-> > the layout of the "persistent" memory cannot be adjusted without reboot
-> > and sometimes they even require firmware update.
-> > 
-> > Add a ramdax driver that allows creation of DIMM devices on top of
-> > E820_TYPE_PRAM regions and devicetree pmem-region nodes.
-> > 
-> > The DIMMs support label space management on the "device" and provide a
-> > flexible way to access RAM using fsdax and devdax.
-> 
-> Hi Mike, I like this. Some questions below:
-> 
-> > +static struct platform_driver ramdax_driver = {
-> > +	.probe = ramdax_probe,
-> > +	.remove = ramdax_remove,
-> > +	.driver = {
-> > +		.name = "e820_pmem",
-> > +		.of_match_table = of_match_ptr(ramdax_of_matches),
-> 
-> So this driver collides with both e820_pmem and of_pmem, but I think it
-> would be useful to have both options (with/without labels) available and
-> not require disabling both those other drivers at compile time.
-> 
-> 'struct pci_device_id' has this useful "override_only" flag to require
-> that the only driver that attaches is one that is explicitly requested
-> (see pci_match_device()).
-> 
-> Now, admittedly platform_match() is a bit more complicated in that it
-> matches 3 different platform device id types, but I think the ability to
-> opt-in to this turns this from a "cloud-host-provider-only" config
-> option to something distro kernels can enable by default.
 
-It looks like /sys/bus/platform/devices/e820_pmem/driver_override does the
-trick.
 
-I'll make the driver to use "ramdax" as the name and rely on
-driver_override for binding it to a device.
+On 2025-09-01 08:25, José Expósito wrote:
+> Allow to store the connector status in vkms_config_connector and add a
+> getter and a setter functions as well a KUnit test.
+> 
+> This change only adds the configuration, the connector status is not
+> used yet.
+> 
+> Tested-by: Mark Yacoub <markyacoub@google.com>
+> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> ---
+>   drivers/gpu/drm/vkms/tests/vkms_config_test.c | 24 +++++++++++++++++
+>   drivers/gpu/drm/vkms/vkms_config.c            |  8 ++++--
+>   drivers/gpu/drm/vkms/vkms_config.h            | 26 +++++++++++++++++++
+>   3 files changed, 56 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> index ff4566cf9925..3574a829a6ed 100644
+> --- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> @@ -916,6 +916,29 @@ static void vkms_config_test_connector_get_possible_encoders(struct kunit *test)
+>   	vkms_config_destroy(config);
+>   }
+>   
+> +static void vkms_config_test_connector_status(struct kunit *test)
+> +{
+> +	struct vkms_config *config;
+> +	struct vkms_config_connector *connector_cfg;
+> +	enum drm_connector_status status;
+> +
+> +	config = vkms_config_create("test");
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, config);
+> +
+> +	connector_cfg = vkms_config_create_connector(config);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, connector_cfg);
+> +
+> +	status = vkms_config_connector_get_status(connector_cfg);
+> +	KUNIT_EXPECT_EQ(test, status, connector_status_connected);
+> +
+> +	vkms_config_connector_set_status(connector_cfg,
+> +					 connector_status_disconnected);
+> +	status = vkms_config_connector_get_status(connector_cfg);
+> +	KUNIT_EXPECT_EQ(test, status, connector_status_disconnected);
+> +
+> +	vkms_config_destroy(config);
+> +}
+> +
+>   static struct kunit_case vkms_config_test_cases[] = {
+>   	KUNIT_CASE(vkms_config_test_empty_config),
+>   	KUNIT_CASE_PARAM(vkms_config_test_default_config,
+> @@ -937,6 +960,7 @@ static struct kunit_case vkms_config_test_cases[] = {
+>   	KUNIT_CASE(vkms_config_test_plane_get_possible_crtcs),
+>   	KUNIT_CASE(vkms_config_test_encoder_get_possible_crtcs),
+>   	KUNIT_CASE(vkms_config_test_connector_get_possible_encoders),
+> +	KUNIT_CASE(vkms_config_test_connector_status),
+>   	{}
+>   };
+>   
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> index a1df5659b0fb..f8394a063ecf 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.c
+> +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> @@ -361,8 +361,11 @@ static int vkms_config_show(struct seq_file *m, void *data)
+>   	vkms_config_for_each_encoder(vkmsdev->config, encoder_cfg)
+>   		seq_puts(m, "encoder\n");
+>   
+> -	vkms_config_for_each_connector(vkmsdev->config, connector_cfg)
+> -		seq_puts(m, "connector\n");
+> +	vkms_config_for_each_connector(vkmsdev->config, connector_cfg) {
+> +		seq_puts(m, "connector:\n");
+> +		seq_printf(m, "\tstatus=%d\n",
+> +			   vkms_config_connector_get_status(connector_cfg));
+> +	}
+>   
+>   	return 0;
+>   }
+> @@ -588,6 +591,7 @@ struct vkms_config_connector *vkms_config_create_connector(struct vkms_config *c
+>   		return ERR_PTR(-ENOMEM);
+>   
+>   	connector_cfg->config = config;
+> +	connector_cfg->status = connector_status_connected;
+>   	xa_init_flags(&connector_cfg->possible_encoders, XA_FLAGS_ALLOC);
+>   
+>   	list_add_tail(&connector_cfg->link, &config->connectors);
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> index 0118e3f99706..e202b5a84ddd 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.h
+> +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> @@ -7,6 +7,8 @@
+>   #include <linux/types.h>
+>   #include <linux/xarray.h>
+>   
+> +#include <drm/drm_connector.h>
+> +
+>   #include "vkms_drv.h"
+>   
+>   /**
+> @@ -99,6 +101,7 @@ struct vkms_config_encoder {
+>    *
+>    * @link: Link to the others connector in vkms_config
+>    * @config: The vkms_config this connector belongs to
+> + * @status: Status (connected, disconnected...) of the connector
+>    * @possible_encoders: Array of encoders that can be used with this connector
+>    * @connector: Internal usage. This pointer should never be considered as valid.
+>    *             It can be used to store a temporary reference to a VKMS connector
+> @@ -109,6 +112,7 @@ struct vkms_config_connector {
+>   	struct list_head link;
+>   	struct vkms_config *config;
+>   
+> +	enum drm_connector_status status;
+>   	struct xarray possible_encoders;
+>   
+>   	/* Internal usage */
+> @@ -434,4 +438,26 @@ int __must_check vkms_config_connector_attach_encoder(struct vkms_config_connect
+>   void vkms_config_connector_detach_encoder(struct vkms_config_connector *connector_cfg,
+>   					  struct vkms_config_encoder *encoder_cfg);
+>   
+> +/**
+> + * vkms_config_connector_get_status() - Return the status of the connector
+> + * @connector_cfg: Connector to get the status from
+> + */
+> +static inline enum drm_connector_status
+> +vkms_config_connector_get_status(struct vkms_config_connector *connector_cfg)
+> +{
+> +	return connector_cfg->status;
+> +}
+> +
+> +/**
+> + * vkms_config_crtc_set_writeback() - If a writeback connector will be created
 
--- 
-Sincerely yours,
-Mike.
+vkms_config_connector_set_status
+
+> + * @crtc_cfg: Target CRTC
+
+connector_cfg: Target Connector
+
+> + * @writeback: Enable or disable the writeback connector
+
+drm_connector_status: The connected state of the connector
+
+(or something like that)
+
+Harry
+
+> + */
+> +static inline void
+> +vkms_config_connector_set_status(struct vkms_config_connector *connector_cfg,
+> +				 enum drm_connector_status status)
+> +{
+> +	connector_cfg->status = status;
+> +}
+> +
+>   #endif /* _VKMS_CONFIG_H_ */
+
 
