@@ -1,163 +1,212 @@
-Return-Path: <linux-kernel+bounces-838247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35ADBAEC88
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:38:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A55BAEC91
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E79F3A6B56
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:38:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F80E1943487
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BDD2D130C;
-	Tue, 30 Sep 2025 23:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8C23FF1;
+	Tue, 30 Sep 2025 23:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="X2jCJ8Wb"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tT+DMFav"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388133FF1
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA1D2D0634
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759275475; cv=none; b=ROlj14uu2hperXuB383sh2fm0HaYaxqIusIWYwYWp6MUA4Vjtsj0bIHycAl/POwRfG62VuoVkJDlHDYQMv/5YZh4DZtyoNttNABFXOxoHVKuac/q/qX6vz9m/zJwmy+yf6ojDOjAJ0Pydp94seVrNlRXrcsS75fNAdHE0rxekF4=
+	t=1759275542; cv=none; b=s5+5zA/eQEPHQ4MAd9DTSjfX8h1FXRBNHIl9x6jaUE8GNsVU7LLIXGi9sSkq7X0GWnhA5kR8GxmJpqU/OpzRTMQIluB4mkHxM0GxIXc2/BdO7eQtuUva6dWG10EJGb9N6q9S5LMHu90OEIA+RWs2UZLiThTtHk+XYiN3Dcvz6oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759275475; c=relaxed/simple;
-	bh=b6o2r3/e/LkKSbrSbJ6OVlrY9A4CfSDLeOD/eiLbfhI=;
+	s=arc-20240116; t=1759275542; c=relaxed/simple;
+	bh=uoEaags9cvj4V9dXTIwpOjvo5TRbqVrRX+MjXZnzWmw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L7OZK2YmJP5gVWJgCr48NX2Kn03dk3wJnvTKbwM2SRr3nSBQ/ekug7piLJwGhEzUfzlCGC2pyzLJHeSIP2nSfIGTMS5XdoMgtJGTwW4gzLNbnxIfucpnFgaS5YUVDFf8aB95SN4nupUcZq4x0d321wNo7zxRu77ptlRQ2fUMdrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=X2jCJ8Wb; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-26808b24a00so9761125ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1759275473; x=1759880273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsbciufhkClpBJseNV68RtSwfki2bKGrza79ICMIhO0=;
-        b=X2jCJ8WbZGJST3xux3wtms9Pj5+0YkicTn/RE95yOul+7WflbJV8uzEVmQfPxaKFaJ
-         IlUSo8V3w6838opF/uk7//5MPAn++KSJHEujk6XOftmvRD8pKEzdWkvmzVama/Ea0wn/
-         xt4AMXcc2yzGAWHiMPy6S6hRBm3anXundcqDynxrXnDMIZpiE3d0gxe6/F8zFDPMRbV7
-         UIazlkXshgl+vtTndoAo6KwrXhNNIJMzJVJVwtUdrU0tB4DqduHBxyEkWGj14aBxxUI5
-         VTOkU1+iDjEcjUaRjJfd+GYd851gFjs5yFnmypBTkdlMk484q/rGJ4tPw4cOIgH/vUpo
-         Zn9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759275473; x=1759880273;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JsbciufhkClpBJseNV68RtSwfki2bKGrza79ICMIhO0=;
-        b=dwFvpmz/WSDbUF514UwwMHNRn8C/bzDrF+SleJ2I8dZkwLMZCtZC/X3gS2dwTqWbmb
-         yv6p7Pf5aewpulE/jWPB80JK/GU2Lip7ZdorEM+Wrn2SFFOKA5gNvsx/UVL4+yEWMyVX
-         fdvrAvy73MhoI27nZTPTWb1UVbJ29cXQnEy9D1Bx+YRa/nUzcWWFMXqvs6vqgScP/98/
-         se3vPevPvT6jAK1UfEd/PN3Z8Cr8Cf8FGT4PwSA5h7AgzkTVfNegtUqI1tXbctCfyDae
-         m+1T6cP4SiyoRO7HcYFkidQY8CJ/nCLqbDcWMWAVW+nE5t76nqrQC2Z0YR4athvv5nDB
-         N7WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNPV/k+YMkddALGHBlg1iJ0yOTMI5SDPdz5VCihwo1hfrIQnY6mZN2shFGi2pO4fpR5M9vWOZQWBsLdZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/rQOlqoPmyEqrRHxiBFIIaYwEqdOWJ8dLj+XHRmvIhfUxDw3B
-	epsw7Hr4+VxVUpyj3ZWozOZldVanN0pdAX1jYSc3iCdaidgnTQDC27y2+pM5wpvO9bX3k90fL4p
-	ohCsW5nQhM85EGdmEPaKmv4Q2wyCS+8l8Z5VUKUySLg==
-X-Gm-Gg: ASbGnct6rlzqMttPpmuz8EDHiP2vc65gh3I+U06w1JNJ66c+usVzNGbTwXYqZoWNx98
-	0jpHy1tp1wtPdeot1h3xpZjSs3+yhGVuAn7ugmsdwA/5Sewf7THdZdLRB+6qJAbv+bmxlL/ePb3
-	ILXsDLrHOao1jwncRFng2TUwXRgNvMSHUI+C7DhleKz19XO01YQTndGBeQ6GajKP6tasU4sfmRc
-	QP2yILt+jt+jzSqA6fLFGSxUPvLWNOHeFk1RhF/YXhb44SsCE3fZr8Hn0FttTZ9
-X-Google-Smtp-Source: AGHT+IFxA1ICmRcmYFcSK20wVyrPLNrKfD89l6K05X78Yld+Jez3ZhnIRDB+f9g+51js+xx4XlzrlhHdk/eGVKEk/tI=
-X-Received: by 2002:a17:902:d2ca:b0:269:96d2:9c96 with SMTP id
- d9443c01a7336-28e7ec6dfc1mr9754865ad.0.1759275473457; Tue, 30 Sep 2025
- 16:37:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=eNVP5NBGHlchJjL+cvP8LcpatBA0TX97vJfI7ynVDMxS/w7ppl9tQihe3ILel5B61r5HtidvXsLUA4J0zko44NfXadvbNeEraTpo+ejCODD5MtPs45L3SsM4xIOBLfXyD98MJvsY5JYpejPZVXnf+jr9of9/UxOWdqDW+xaqEqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tT+DMFav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B01C4CEF0
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:39:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759275542;
+	bh=uoEaags9cvj4V9dXTIwpOjvo5TRbqVrRX+MjXZnzWmw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tT+DMFav2SKIcffHWszSEBTJkLenbg0LY5P3EtljDtV9tivPOw2a0ZAuIsWvejumj
+	 Xcvkbu/ZQ0b7q5+v6CSuYDn18iP5m7pBz76KjVV/TSmXhLJktGJveSb1sklgKfsnl2
+	 VevDH/gnLH3PhNjZ1qrVMQwbGJ9+skVOQGhdlV6IeweujomYDm2M3da2ahBX/rXZnN
+	 ORBr76YYyzh2ScNZO/T8bmDwnaWJu9hGvyogJ6XiqpoBAPYOqO7Jq82Z7cX2ukp/lc
+	 7C0hBTaaabO/PDM6C3pd5b1Oh2VoOpzdKt6sbzOHb/qcUIrVuIq5lVisBGkM00n+H/
+	 0le6spp1E58ZQ==
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e2b7eee0dso11305e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:39:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWlIR+0qH7qPMI8jbke7YAb+IR9QaBt60gGMOIw63VO6S1g84oSfKd2vfgOMt0rHsCsqvfwIyfcQpqLot8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziTPPRDh2Q2tbgozUTTYbVIaGyB7u1PhWgxgFqbbVBZ9EhMuL2
+	t04Q4YCsFcTjp3p5K7og2xKAaztUW/ibrcHQZ6zhPfnlRGem0MeZ5Io/tgmJFyREtXXBZ/DOS5t
+	ow1POkWcihi91LREB/Bjg7BdGOMXjYBk22JsS1ZHR
+X-Google-Smtp-Source: AGHT+IGW2/qdhioiWERpaECvrg9VQsaWlrzDEBJ3gDhsR0VtryFnP36E7HLr3RLdANnbgkm+pmRQW55NN3zTH4k4qSk=
+X-Received: by 2002:a05:600c:a10b:b0:453:672b:5b64 with SMTP id
+ 5b1f17b1804b1-46e61b8a883mr619555e9.2.1759275540420; Tue, 30 Sep 2025
+ 16:39:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904170902.2624135-1-csander@purestorage.com>
- <175742490970.76494.10067269818248850302.b4-ty@kernel.dk> <fe312d71-c546-4250-a730-79c23a92e028@gmail.com>
- <5d41be18-d8a4-4060-aa04-8b9d03731586@kernel.dk>
-In-Reply-To: <5d41be18-d8a4-4060-aa04-8b9d03731586@kernel.dk>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 30 Sep 2025 16:37:41 -0700
-X-Gm-Features: AS18NWD3Dy6n75NARcPZVICdMwcuOas11yrl7Wil2BmXbhmeKUGVSmajjc2Sskk
-Message-ID: <CADUfDZp+FoFCMoi_PJGe7vnNUJ47uxfcQ7irLX9h61xOuWcjvA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-1-c494053c3c08@kernel.org> <2025093014-qualify-scoop-c406@gregkh>
+In-Reply-To: <2025093014-qualify-scoop-c406@gregkh>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 30 Sep 2025 16:38:48 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuMXJ+JE=mJCNyz6ETNQ5evMh15VKo2wFreuZ=6Jz0aGWg@mail.gmail.com>
+X-Gm-Features: AS18NWAUSgFUxtTB2q7O9k-Pi7VfFzzfrFZp7BtTF7h7cgw0DwnfuCv6HX1IMTE
+Message-ID: <CAF8kJuMXJ+JE=mJCNyz6ETNQ5evMh15VKo2wFreuZ=6Jz0aGWg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] PCI/LUO: Register with Liveupdate Orchestrator
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 8:36=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+On Tue, Sep 30, 2025 at 8:31=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On 9/10/25 5:57 AM, Pavel Begunkov wrote:
-> > On 9/9/25 14:35, Jens Axboe wrote:
-> >>
-> >> On Thu, 04 Sep 2025 11:08:57 -0600, Caleb Sander Mateos wrote:
-> >>> As far as I can tell, setting IORING_SETUP_SINGLE_ISSUER when creatin=
-g
-> >>> an io_uring doesn't actually enable any additional optimizations (asi=
-de
-> >>> from being a requirement for IORING_SETUP_DEFER_TASKRUN). This series
-> >>> leverages IORING_SETUP_SINGLE_ISSUER's guarantee that only one task
-> >>> submits SQEs to skip taking the uring_lock mutex in the submission an=
-d
-> >>> task work paths.
-> >>>
-> >>> [...]
-> >>
-> >> Applied, thanks!
-> >>
-> >> [1/5] io_uring: don't include filetable.h in io_uring.h
-> >>        commit: 5d4c52bfa8cdc1dc1ff701246e662be3f43a3fe1
-> >> [2/5] io_uring/rsrc: respect submitter_task in io_register_clone_buffe=
-rs()
-> >>        commit: 2f076a453f75de691a081c89bce31b530153d53b
-> >> [3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPO=
-LL
-> >>        commit: 6f5a203998fcf43df1d43f60657d264d1918cdcd
-> >> [4/5] io_uring: factor out uring_lock helpers
-> >>        commit: 7940a4f3394a6af801af3f2bcd1d491a71a7631d
-> >> [5/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-> >>        commit: 4cc292a0faf1f0755935aebc9b288ce578d0ced2
+> On Tue, Sep 16, 2025 at 12:45:09AM -0700, Chris Li wrote:
+> > Register PCI subsystem with the Liveupdate Orchestrator
+> > and provide noop liveupdate callbacks.
 > >
-> > FWIW, from a glance that should be quite broken, there is a bunch of
-> > bits protected from parallel use by the lock. I described this
-> > optimisation few years back around when first introduced SINGLE_ISSUER
-> > and the DEFER_TASKRUN locking model, but to this day think it's not
-> > worth it as it'll be a major pain for any future changes. It would've
-> > been more feasible if links wasn't a thing. Though, none of it is
-> > my problem anymore, and I'm not insisting.
+> > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > ---
+> >  MAINTAINERS              |  2 ++
+> >  drivers/pci/Makefile     |  1 +
+> >  drivers/pci/liveupdate.c | 54 ++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  3 files changed, 57 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 91cec3288cc81aea199f730924eee1f5fda1fd72..85749a5da69f88544ccc749=
+e9d723b1b54c0e3b7 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14014,11 +14014,13 @@ F:  tools/testing/selftests/livepatch/
+> >
+> >  LIVE UPDATE
+> >  M:   Pasha Tatashin <pasha.tatashin@soleen.com>
+> > +M:   Chris Li <chrisl@kernel.org>
+> >  L:   linux-kernel@vger.kernel.org
+> >  S:   Maintained
+> >  F:   Documentation/ABI/testing/sysfs-kernel-liveupdate
+> >  F:   Documentation/admin-guide/liveupdate.rst
+> >  F:   drivers/misc/liveupdate/
+> > +F:   drivers/pci/liveupdate/
+> >  F:   include/linux/liveupdate.h
+> >  F:   include/uapi/linux/liveupdate.h
+> >  F:   tools/testing/selftests/liveupdate/
+> > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+> > index 67647f1880fb8fb0629d680398f5b88d69aac660..aa1bac7aed7d12c641a6b55=
+e56176fb3cdde4c91 100644
+> > --- a/drivers/pci/Makefile
+> > +++ b/drivers/pci/Makefile
+> > @@ -37,6 +37,7 @@ obj-$(CONFIG_PCI_DOE)               +=3D doe.o
+> >  obj-$(CONFIG_PCI_DYNAMIC_OF_NODES) +=3D of_property.o
+> >  obj-$(CONFIG_PCI_NPEM)               +=3D npem.o
+> >  obj-$(CONFIG_PCIE_TPH)               +=3D tph.o
+> > +obj-$(CONFIG_LIVEUPDATE)     +=3D liveupdate.o
+> >
+> >  # Endpoint library must be initialized before its users
+> >  obj-$(CONFIG_PCI_ENDPOINT)   +=3D endpoint/
+> > diff --git a/drivers/pci/liveupdate.c b/drivers/pci/liveupdate.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..86b4f3a2fb44781c6e323ba=
+029db510450556fa9
+> > --- /dev/null
+> > +++ b/drivers/pci/liveupdate.c
+> > @@ -0,0 +1,54 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Copyright (c) 2025, Google LLC.
+> > + * Chris Li <chrisl@kernel.org>
+> > + */
+> > +
+> > +#define pr_fmt(fmt) "PCI liveupdate: " fmt
+> > +
+> > +#include <linux/liveupdate.h>
+> > +
+> > +#define PCI_SUBSYSTEM_NAME "pci"
+> > +
+> > +static int pci_liveupdate_prepare(void *arg, u64 *data)
+> > +{
+> > +     pr_info("prepare data[%llx]\n", *data);
+> > +     return 0;
+> > +}
+> > +
+> > +static int pci_liveupdate_freeze(void *arg, u64 *data)
+> > +{
+> > +     pr_info("freeze data[%llx]\n", *data);
+> > +     return 0;
+> > +}
+> > +
+> > +static void pci_liveupdate_cancel(void *arg, u64 data)
+> > +{
+> > +     pr_info("cancel data[%llx]\n", data);
+> > +}
+> > +
+> > +static void pci_liveupdate_finish(void *arg, u64 data)
+> > +{
+> > +     pr_info("finish data[%llx]\n", data);
+> > +}
+> > +
+> > +struct liveupdate_subsystem pci_liveupdate_ops =3D {
+> > +     .prepare =3D pci_liveupdate_prepare,
+> > +     .freeze =3D pci_liveupdate_freeze,
+> > +     .cancel =3D pci_liveupdate_cancel,
+> > +     .finish =3D pci_liveupdate_finish,
+> > +     .name =3D PCI_SUBSYSTEM_NAME,
+> > +};
+> > +
+> > +static int __init pci_liveupdate_init(void)
+> > +{
+> > +     int ret;
+> > +
+> > +     ret =3D liveupdate_register_subsystem(&pci_liveupdate_ops);
+> > +     if (ret && liveupdate_state_updated())
+> > +             panic("PCI liveupdate: Register subsystem failed: %d", re=
+t);
+> > +     WARN(ret, "PCI liveupdate: Register subsystem failed %d", ret);
 >
-> Hmm yes, was actually pondering this last night as well and was going
-> to take a closer look today as I have a flight coming up. I'll leave
-> them in there for now just to see if syzbot finds anything, and take
-> that closer look and see if it's salvageable for now or if we just need
-> a new revised take on this.
+> But this didn't fail.
+>
+> And you just crashed the box if panic-on-warn is enabled, so if some
+> test infrastructure builds this first patch, boom.
 
-Hi Jens,
-I'd love to understand the race condition concerns you have about not
-holding the uring_lock during submission and task work. My limited
-mental model of io_uring is that the io_ring_ctx is only accessed in
-the context of the task that submitted work to it (during the
-io_uring_enter() syscall or task work) or from some interrupt context
-that reports a completed operation. Since it's not possible to block
-on a mutex in interrupt context, the uring_lock couldn't be used to
-synchronize anything running in interrupt context. And then all other
-work would be running in the context of the single issuer task, which
-couldn't race with itself. Perhaps io_uring worker threads complicate
-this picture?
-No urgency on this, but I would love to find a way forward here.
-Acquiring and releasing the uring_lock is one of the single hottest
-CPU instructions in some of our workloads even though each mutex is
-accessed only on one CPU. If  uring_lock is necessary to prevent some
-other critical sections from racing, perhaps there's an alternate way
-to synchronize them (e.g. by deferring them to task work). Or if the
-racing sections are specific to certain uses of io_uring, maybe we
-could add a setup flag allowing an io_uring user to indicate that it
-won't use those features.
+Sorry that the second WARN should be removed. That is something during
+the rebase conflict resolution somehow slipped through the crack.
 
-Thanks,
-Caleb
+I will remove the second WARN() there.
+
+Thanks for catching it.
+
+>
+> {sigh}
+>
+> If you are going to do a "dummy" driver, please make it at least work
+> and not do anything bad.
+
+I did test it with a real machine and real PCI device, but I did not
+have the panic-on-warn.
+
+Again my bad. Sorry about that.
+
+Chris
 
