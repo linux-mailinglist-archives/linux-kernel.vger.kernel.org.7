@@ -1,130 +1,229 @@
-Return-Path: <linux-kernel+bounces-837481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DD8BAC67B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:05:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703FEBAC666
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE14E3A12EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:05:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 432084E25AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC862F60A1;
-	Tue, 30 Sep 2025 10:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6990D2F548A;
+	Tue, 30 Sep 2025 10:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihZ/ygVd"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MTCvNJVW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB978220687
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127122144C7;
+	Tue, 30 Sep 2025 10:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759226711; cv=none; b=Vy2L1siq640ljsejwM72ZqIiXLGzoEH84DPNKQMzouVErVQ3Ecl3DpT3L+QXD0WsD+bE/M6gA4J5GJFApJWbHmVIcf/U7U0J0vbdcS/mRxvdcyuH9Dve6lo6eUVL/9GqdtZ1e5cWTcOQV6gKX1BmamNGCJ1MXuTXGvDL2iIvlKM=
+	t=1759226654; cv=none; b=H5HcZs2lmvENelCAhuC0MpCCvVOGjChBS6YNT/rtNNop2MP4nekCdS3gk/1OGEzEgeyieaPhHJCR0+neqLyRP6vhNN4fyclSDVMoVEtNEpdQaIBAozJR+Uv3eZu6P9KqFhKlHYPoN/GO1NGQY7lmDUYF+ECF2MeGYoQYk9dl3gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759226711; c=relaxed/simple;
-	bh=X9juzzfORJjmVkVgJzjLoShWeYViK7aCq/qnOB2dWjM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P6qEEZcTU2xKPFDpOST77QxNmeDQcsrI1EWvjQgQvw1q2lLlJA7d9Nzj+QvlyLQb2tE/KkAnMqwCDcDwiA5NgRki7fflTl7lnWqCBXvInr2bMw+7AeGclml2mEoalhEll2AN4IHWJe0dQ8dlKYTd2zx2PoYkibqW1b4SOYKcSlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihZ/ygVd; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e3c73fb4aso2156135e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759226708; x=1759831508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WoqmnjzpIbUw9OO6iTSJNLFiIVbBFRgd5p6mNVJqWNE=;
-        b=ihZ/ygVdp8YuZD7ILB2uvEe1X7ZTFimxLrZximf2HL+O4V11FXw7LPENr1jcKdeVzJ
-         kdY+++CK90tvoNHAmK/tkgCAsIlvYP+uiRcx+ET2bc7zWfPzphX70dxJS8/TRfXqCQnv
-         qfZpu5n0ZkNBfGqUNT71ds45NiRmZm80YNO36qw1dxhaDYL03wjA3kOV5+3e/cPWc37v
-         ai72UaO0k4G0lp5ObtvrXlJ0vVGwCS2/OQQF+LnrIYa+lOqg70mN+aywE7dHToTdsGOq
-         t4a5dOn4kdn5AIEsAuOSNBHhl3O6lFjHMuRSFB6QXD15cBccDhEfXPoOiRRadgEUxEW+
-         /Kzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759226708; x=1759831508;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WoqmnjzpIbUw9OO6iTSJNLFiIVbBFRgd5p6mNVJqWNE=;
-        b=sSjN7zZ5kEHOHH+kAeRNBYRC/Y5jUZt12jETVV04zgzUin8jjGQhJdbajlJQAUC7P+
-         vQzlI5Oi9fQ8xUKWD4goI6mSL3gPCIHfACgxKKmndUawAl6nPKmlMMRNth4GxNyFfT/u
-         H7fhdZKAzTMJ6wtWjoScoRD2eqRjYW5E+jBkMfR/FaGmE69qiFmIvjNI5Mif05nf3r7E
-         gK7FwNYCT2FG3MtOehb6AtTVI7+GrlOCWM2jSA9Qw6gqsOOlK8K1zpN4Zo5+vYG6R5TE
-         f3WxpX39DT6afdbBpwmPKMXHBjqnrF8zfV6BO1yHBQA7SspY4qS5Na/Ya7s28zHqHMAH
-         I0Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpZKRSg/1Cy4CZPWJLu788y2bBJ8/CrpVrrAoVX1IewD52LLk/IEGLpk+ycRl93z9EXUmz6gCIk7ZyeMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTikNNT8MwDYrsnwIW3IqttCtF5h22Uxb6JD64czBe+YYi0gw1
-	3/qJUL3ntlT4+VXeu5XcujlhrBigRr6cubNIeq/FyvCqd91cfFta8lPk
-X-Gm-Gg: ASbGnct8UcgW/N0j1KcSlYia8nNlCiw4IhN9Ja93WLtWS34mboZAccOFZ97/xnLD3k2
-	SAFluDL+lywDpmbbJnSEJTKMAMhx5VeeOFjqGZWj/GIbVFnTScRIvHkas9cZcRFpivmnxPAji1w
-	9prqcN4Ui8FfvmDrG01oga8UkSf5r5+/6ieltylqFthaGXD8EC2I1ShCjhCqfYsLZkMXf1Yj23r
-	wy+CyVFSp2o37V7O7mNUC5fwssSjAEQv4ibOE/kEa8GBhBBfGZfKyB1omUMzWIlsUrF79sUwhnM
-	Op354G6Mhcg9bQWr87hWAJ3p4R1MBdqbrBVXHTQ7kWR8qA8c/5/U/F9/Fb1Sqc8V+73xbAb0QRR
-	KY4pM8VZmABG3xreZWKrVWKQLH7Fr3fsN5g+cnAFGQMpH7o1MXJFaR86I82/vxaoA
-X-Google-Smtp-Source: AGHT+IHR/hbTJBXGa5MRxuyi8MdBLzgo/Zj0q4wKBPTP845/xVxCCZl9+I5DcBEVzfMW11gF3Ur3Kg==
-X-Received: by 2002:a05:600c:1f0e:b0:46e:5cb5:8ca2 with SMTP id 5b1f17b1804b1-46e5cb59fe3mr7885995e9.2.1759226707885;
-        Tue, 30 Sep 2025 03:05:07 -0700 (PDT)
-Received: from bhk.router ([102.171.36.101])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-410f2007372sm21238137f8f.16.2025.09.30.03.05.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 03:05:07 -0700 (PDT)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: clm@fb.com,
-	dsterba@suse.com
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH v2] btrfs: Refactor allocation size calculation in kzalloc()
-Date: Tue, 30 Sep 2025 11:03:44 +0100
-Message-ID: <20250930100508.120194-1-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759226654; c=relaxed/simple;
+	bh=DMvglHJ7kBzj2N1mTPZVq+GDYz6OhworUV/akkxDMGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xz6nVweRQ9s6QNNlSNfivQyYozW+XH+3VBaG38EY+yICOnjxSK0zVLxr5AZmzR9kSOnh0WR9Vg6opZqFAMWb5ChlRy8ShknwWiDcsSToOx69gUFRde0vlDBvoO3tpZrIqanuXREKcm8yfraKtkD+PRKfYVkNGm/F9ryYJE1FBgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MTCvNJVW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MWKfGHqfQoXIoK2fr1DCRttNg7EHyA3c10MmVnFnCAg=; b=MTCvNJVWJBWdqU/OOjC3FdgGUj
+	S9PS2pOsDZGrhIS/9a+YND5J88eADzGtxSWVvcA6Wsn0e/5M4jhPP+6I6+2BcS/+uMP5xpzMUydhJ
+	ytAGsrd3YGFfj1dDkK8Z6PFftkOzZFsZ4Jrak8NkDKTv8XNT4hrKbb9HDEFZrU7gv0l5uBlb7Ce/H
+	uQ02gzpHBuasGSJLVXmsifPugnt/bFZUGE6QtKMe4YI28R22olde3vgZ/l+PpGTjvjjof7m/5s35q
+	Nuu8pY44EpRfS8UcSLYvEETcuGS7fVJlfAY8jbjRtrqiw5cNX1s5ZMO/MWmTNQ37r82UtV6U02nBi
+	XA97nfbg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v3XDI-00000009k3g-2ECK;
+	Tue, 30 Sep 2025 10:04:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3AE8B300220; Tue, 30 Sep 2025 12:04:04 +0200 (CEST)
+Date: Tue, 30 Sep 2025 12:04:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	virtualization@lists.linux.dev, xin@zytor.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ajay Kaher <ajay.kaher@broadcom.com>,
+	Alexey Makhalov <alexey.makhalov@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR
+ access functions
+Message-ID: <20250930100404.GK4067720@noisy.programming.kicks-ass.net>
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-12-jgross@suse.com>
+ <20250930083827.GI3245006@noisy.programming.kicks-ass.net>
+ <1541b670-8b29-42a5-a58d-34d85197751d@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OKKMZZxPhdskK4Hh"
+Content-Disposition: inline
+In-Reply-To: <1541b670-8b29-42a5-a58d-34d85197751d@suse.com>
 
-Wrap allocation size calculation in struct_size() to 
-avoid potential overflows.
 
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
----
-Changelog:
+--OKKMZZxPhdskK4Hh
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since v1:
+On Tue, Sep 30, 2025 at 11:02:52AM +0200, J=FCrgen Gro=DF wrote:
+> On 30.09.25 10:38, Peter Zijlstra wrote:
+> > On Tue, Sep 30, 2025 at 09:03:55AM +0200, Juergen Gross wrote:
+> >=20
+> > > +static __always_inline u64 read_msr(u32 msr)
+> > > +{
+> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> > > +		return xen_read_msr(msr);
+> > > +
+> > > +	return native_rdmsrq(msr);
+> > > +}
+> > > +
+> > > +static __always_inline int read_msr_safe(u32 msr, u64 *p)
+> > > +{
+> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> > > +		return xen_read_msr_safe(msr, p);
+> > > +
+> > > +	return native_read_msr_safe(msr, p);
+> > > +}
+> > > +
+> > > +static __always_inline void write_msr(u32 msr, u64 val)
+> > > +{
+> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> > > +		xen_write_msr(msr, val);
+> > > +	else
+> > > +		native_wrmsrq(msr, val);
+> > > +}
+> > > +
+> > > +static __always_inline int write_msr_safe(u32 msr, u64 val)
+> > > +{
+> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> > > +		return xen_write_msr_safe(msr, val);
+> > > +
+> > > +	return native_write_msr_safe(msr, val);
+> > > +}
+> > > +
+> > > +static __always_inline u64 rdpmc(int counter)
+> > > +{
+> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> > > +		return xen_read_pmc(counter);
+> > > +
+> > > +	return native_read_pmc(counter);
+> > > +}
+> >=20
+> > Egads, didn't we just construct giant ALTERNATIVE()s for the native_
+> > things? Why wrap that in a cpu_feature_enabled() instead of just adding
+> > one more case to the ALTERNATIVE() ?
+>=20
+> The problem I encountered with using pv_ops was to implement the *_safe()
+> variants. There is no simple way to do that using ALTERNATIVE_<n>(), as
+> in the Xen PV case the call will remain, and I didn't find a way to
+> specify a sane interface between the call-site and the called Xen function
+> to return the error indicator. Remember that at the call site the main
+> interface is the one of the RDMSR/WRMSR instructions. They lack an error
+> indicator.
 
--Use of struct_size() instead of size_add() and size_mul()
-Link:https://lore.kernel.org/linux-btrfs/342929a3-ac5f-4953-a763-b81c60e66554@gmail.com/T/#mbe2932fec1a56e7db21bc8a3d1f1271a2c1422d7
+Would've been useful Changelog material that I suppose.
 
- fs/btrfs/volumes.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+> In Xin's series there was a patch written initially by you to solve such
+> a problem by adding the _ASM_EXTABLE_FUNC_REWIND() exception table method.
+> I think this is a dead end, as it will break when using a shadow stack.
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index c6e3efd6f602..d349d0b180ac 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -6076,12 +6076,7 @@ struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
- {
- 	struct btrfs_io_context *bioc;
- 
--	bioc = kzalloc(
--		 /* The size of btrfs_io_context */
--		sizeof(struct btrfs_io_context) +
--		/* Plus the variable array for the stripes */
--		sizeof(struct btrfs_io_stripe) * (total_stripes),
--		GFP_NOFS);
-+	bioc = kzalloc(struct_size(bioc, stripes, total_stripes), GFP_NOFS);
- 
- 	if (!bioc)
- 		return NULL;
--- 
-2.51.0
+No memories, let me go search. I found this:
 
+  https://patchwork.ozlabs.org/project/linux-ide/patch/20250331082251.31712=
+76-12-xin@zytor.com/
+
+That's the other Peter :-)
+
+Anyway, with shadowstack you should be able to frob SSP along with SP in
+the exception context. IIRC the SSP 'return' value is on the SS itself,
+so a WRSS to that field can easily make the whole CALL go away.
+
+> Additionally I found a rather ugly hack only to avoid re-iterating most of
+> the bare metal ALTERNATIVE() for the paravirt case. It is possible, but t=
+he
+> bare metal case is gaining one additional ALTERNATIVE level, resulting in
+> patching the original instruction with an identical copy first.
+
+OTOH the above generates atrocious crap code :/
+
+You get that _static_cpu_has() crud, which is basically a really fat
+jump_label (because it needs to include the runtime test) and then the
+code for both your xen thing and the alternative.
+
+/me ponders things a bit..
+
+> Remember that at the call site the main interface is the one of the
+> RDMSR/WRMSR instructions. They lack an error indicator.
+
+This, that isn't true.
+
+Note how ex_handler_msr() takes a reg argument and how that sets that
+reg to -EIO. See how the current native_read_msr_safe() uses that:
+
+  _ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_RDMSR_SAFE, %[err])
+
+(also note how using _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_*_SAFE) like you
+do, will result in reg being 0 or ax. Scribbling your 0 return value)
+
+It very explicitly uses @err as error return value. So your call would
+return eax:edx and take ecx to be the msr, but there is nothing stopping
+us from then using say ebx for error return, like:
+
+	int err =3D 0;
+
+	asm_inline(
+		"1:\n"
+		ALTERNATIVE("ds rdmsr",
+			    "call xen_rdmsr", XENPV)
+		"2:\n"
+
+		_ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_RDMSR_SAFE, %%ebx)
+
+		: "a" (ax), "d" (dx), "+b" (err)
+		: "c" (msr));
+
+	return err;
+
+Hmm?
+
+--OKKMZZxPhdskK4Hh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmjbqxQACgkQdkfhpEvA
+5LrlWxAAqulZs4pOHvRqUmLabha0Md6Falt3RnNmeNOe0ALy2IX0BKsPFMKwZYVd
+RepAgPRzqFQT/TXPVN1Xl1b0Untty0TDZraoLeUUEKdPnc6yqXlSSZIqO+ObLM/9
+h9SikaadckG2IhydaxD61jeW4ZWSUjR7zcFz+NcYVDtegIrz/WoO04k9EwFEUrB1
+eLqiXc2m9OwMxbLPlSp0ux881Pwyvu5qmcfbuvh0bZcQq+3LADuNGcofbJe0V5Ug
+0eWvoe+35N+ntv/2vgaObV/ksZhg0bLvQDjO86e/Wka4wGwSCiOrAQFj2mMfKe+w
+Ax/dZd4LpysGV/tlk3PwbkLED06yfQzIwoOKc51kmJ7IonSYeaS/nTcQaPdjbaJZ
+N9FMdJ6zCZx64QZXW6ytZCpsVaiHleFBOug6SGRYkf8IdDzRZB0O4yrp1WVLs6w5
+qLzmrFQkGvNGURUqvy1T9pCX+vzZg4tSGxsFTlGObeLclvhQCr1SCignk8HYpcc8
+LGR2C1AbBXZQVzBwF9qhqPFPKANp5baq5BkyFZVOUIqkZfMZaW0fAVsidwC60Df2
+Tz/891/zvYOMZZqi672Ci1Qz2MwSu2twj9MdWoMs1z+pvVHAhi4MDRXqKf3yrdW3
+bIsP9gLuPAb9JjkMtUQ+0BmBPNc+o67KwijHXDiaoGkXtpU698I=
+=NBbB
+-----END PGP SIGNATURE-----
+
+--OKKMZZxPhdskK4Hh--
 
