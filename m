@@ -1,204 +1,176 @@
-Return-Path: <linux-kernel+bounces-837850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E86BADA07
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:14:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F69ABADB1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F421943AAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:14:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB8F13A8823
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE1D3074AB;
-	Tue, 30 Sep 2025 15:14:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5612B246BB0;
-	Tue, 30 Sep 2025 15:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B658E3081C2;
+	Tue, 30 Sep 2025 15:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k60fs4bf"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585083081A9
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759245259; cv=none; b=qZtxGrBgJl+DcBG4HMqnzB7Y/riD5zTrO4pU4eHCda+D2lEgptQ4k9iv4UTaFKixgqMBmbIejH+fPWvT0eC1NYigu+nE2BNdKLUReo/na9yd/PuQYVBbQGF+9XyF826fs+1FoBUVae3KI1rHBgQdqseCLjoAbHM9NAzS6Tph0/E=
+	t=1759245263; cv=none; b=BuWfJ/UTzjF4nZwaRLyxEr/KaMCedU37WHK7eq6X8WMHMrEoou0bXftqReBUi2qcHVr+gJFN7gVOJr3cWxPLNsatealG/BSaDsDKR1zjhREE8F7vUoDD/mODQIE1TsaRM+z1Toj377YtG89aBTtWsgNxvqfo6WunGP8fT3YZgNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759245259; c=relaxed/simple;
-	bh=Bs0GJUcinrEJPT+rMoGNbl4mEgc3r5S7YTQeXs8ki0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drwQFJ6yUE6HOgdB4tq9gQR4x0BU6Cwaf+u4WfhKEukO1slhf11C8SoSO/AzOkfV8Euc56qalj4X44NR13md3blA7PBdxhNWEnY9F1exVZpTjlDQ3kMEyoSKLk3pC7XpQ9VQh6r/iKkWP8wKJLTAJkDIOS+TwoPhlR7NWpg4/UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BAFA1424;
-	Tue, 30 Sep 2025 08:14:08 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D65A3F59E;
-	Tue, 30 Sep 2025 08:14:15 -0700 (PDT)
-Date: Tue, 30 Sep 2025 16:14:14 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] coresight: Add format attribute for setting the
- timestamp interval
-Message-ID: <20250930151414.GK7985@e132581.arm.com>
-References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
- <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
+	s=arc-20240116; t=1759245263; c=relaxed/simple;
+	bh=F2Pg/8PlsKKDveTJhSAGQt0MF4T4X1RzRHH7BD2p+5c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=W83zEtXscHSi3RL5h1Wz1zkRFJHtsH//VDVomDjFurKZQsdNbzOHAtx5TRcsdTd4ikldfliLTtQX9bUx0q8Aq5g1z/9yHLN1qovpLYxreuRoEQ51nSUCS6VSy8IdDNnpgHZZ5rBMOSVLAWbLDM02PYn0WECIdL2RWYUHRjJ16rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k60fs4bf; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-28bd8b3fa67so22522695ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:14:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759245261; x=1759850061; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9rncmOGQUGwo1DfmFhY7VVo4DMzXg+cQESVF65y7v48=;
+        b=k60fs4bfXvcvpT3TraGfHwSK/O6TARgmcMNpyvPJPdRMf5x4lkaw0nWEO6LYsI4T6X
+         xxyFBoQT6oURkKY5n8Q/64DWUhK0JuUjY5Bk1vLw4Rm3JeALe9kQ2VVZCsK1IT75nHgc
+         3xVquIKNZV2+K8G21N+ydk/FWUJ67xSbfmMos6kNb+u5ItxPyQz6ZdeQH2JdQak3VlE4
+         Y2dIOC+zhegcytxJRMP1jpIJA/OJdccA62sTW/Sb4mlXuV3OKQjJYriPZ9DFT5Kd2JOX
+         Rg47aTCsAOOPdWUCmixFNBGyhUQYlF6jAcEwLzlbpuQRKvbXtniP3xSUpVLExy3+zrgv
+         +EwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759245261; x=1759850061;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9rncmOGQUGwo1DfmFhY7VVo4DMzXg+cQESVF65y7v48=;
+        b=WvQ7mKATIoIiFLWDmEHmQ62u1cFpiyr7hfO6PHopN5XZUOt0GY8zX8xCq8T2Q9Mfb/
+         fh1B23oRq55ssUNYMgOC/aSOEkjylRGPblTUG8EfQvpOYRotjAxyuKn1r3Giq5os6EPr
+         wOxfEfdyYIoMBITGoD0oq2Q+fy9OlOulmkRDF2MJsYszogR8BgT3usUuB9Um8EcWS6EG
+         qsx8BK71sDmsXXp7thTkhCySuzwR25cdZTWydaMgx8gFKVzGGOE3WoruOLa0GOfFP6/a
+         XqxW41yAXvgh7PlH4J/9RjXg2uejWGxDXmz/m+jpufeAuyN7JuSq63cwZMgaid7l7pHN
+         HnBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXb+MRwHaanbLSOpgWyqQSJafhgRcEQKKBp8VxXpmfoRAqZ0983GtAvoxU6UQDltSJU+qgte/HKXcxkMpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFXrsN4qIZQ7pDcrz9yxmHZ++0m3UG5mLnlFxDgxoXJ6y2dzo9
+	bWiTjIoAeQqggktwdujFfNnc1hd3L91q9hIWuts+pCLvrz/VReAGqQvDbhKJXrggTZEosmct+Ob
+	w/XD81Q==
+X-Google-Smtp-Source: AGHT+IHQg6BTPI7i+AA/h/5N2kHeRUWEdP58zEE6EeWucPxFQt666vw4B3U2LZ7e4nNYE+79vfzOKIe7mTg=
+X-Received: from plei20.prod.google.com ([2002:a17:902:e494:b0:268:cfa:6a80])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3c2f:b0:267:cdb8:c683
+ with SMTP id d9443c01a7336-28e7f2dcbb3mr1325795ad.27.1759245260716; Tue, 30
+ Sep 2025 08:14:20 -0700 (PDT)
+Date: Tue, 30 Sep 2025 08:14:19 -0700
+In-Reply-To: <aK4cAPeGgy0kXY98@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
+Mime-Version: 1.0
+References: <20250825155203.71989-1-sebott@redhat.com> <aKy-9eby1OS38uqM@google.com>
+ <87zfbnyvk9.wl-maz@kernel.org> <aKzRgp58vU6h02n6@google.com>
+ <aKzX152737nAo479@linux.dev> <aK4CJnNxB6omPufp@google.com>
+ <aK4J5EA10ufKJZsU@linux.dev> <aK4cAPeGgy0kXY98@google.com>
+Message-ID: <aNvzy5-lj3TBLT3I@google.com>
+Subject: Re: [PATCH] KVM: selftests: fix irqfd_test on arm64
+From: Sean Christopherson <seanjc@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Sebastian Ott <sebott@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 14, 2025 at 11:49:56AM +0100, James Clark wrote:
++Naresh
 
-[...]
-
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -25,6 +25,11 @@
->  #include "coresight-syscfg.h"
->  #include "coresight-trace-id.h"
->  
-> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
-> +#include <linux/perf/arm_pmu.h>
-> +#include "coresight-etm4x.h"
-> +#endif
-> +
->  static struct pmu etm_pmu;
->  static bool etm_perf_up;
->  
-> @@ -69,7 +74,10 @@ PMU_FORMAT_ATTR(sinkid,		"config2:0-31");
->  /* config ID - set if a system configuration is selected */
->  PMU_FORMAT_ATTR(configid,	"config2:32-63");
->  PMU_FORMAT_ATTR(cc_threshold,	"config3:0-11");
-> -
-> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
-> +/* Interval = (2 ^ ts_level) */
-> +GEN_PMU_FORMAT_ATTR(ts_level);
-> +#endif
->  
->  /*
->   * contextid always traces the "PID".  The PID is in CONTEXTIDR_EL1
-> @@ -103,6 +111,9 @@ static struct attribute *etm_config_formats_attr[] = {
->  	&format_attr_configid.attr,
->  	&format_attr_branch_broadcast.attr,
->  	&format_attr_cc_threshold.attr,
-> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
-> +	&format_attr_ts_level.attr,
-> +#endif
-
-By using .visible() callback for attrs, we can improve a bit code
-without spreading "#ifdef IS_ENABLED()" in this file. E.g.,
-
-   static umode_t format_attr_is_visible(struct kobject *kobj,
-                                   struct attribute *attr, int n)
-   {
-        struct device *dev = kobj_to_dev(kobj);
-
-        if (attr == &format_attr_ts_level.attr &&
-	    !IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X))
-                return 0;
-
-        return attr->mode;
-   }
-
-Otherwise, LGTM:
-
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-
->  	NULL,
->  };
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 1a2d02bdcb88..42277c201d4f 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -28,6 +28,7 @@
->  #include <linux/amba/bus.h>
->  #include <linux/seq_file.h>
->  #include <linux/uaccess.h>
-> +#include <linux/perf/arm_pmu.h>
->  #include <linux/perf_event.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> @@ -615,7 +616,7 @@ static void etm4_enable_hw_smp_call(void *info)
->   *  +--------------+
->   *         |
->   *  +------v-------+
-> - *  | Counter x    |   (reload to 1 on underflow)
-> + *  | Counter x    |   (reload to 2 ^ ts_level on underflow)
->   *  +--------------+
->   *         |
->   *  +------v--------------+
-> @@ -626,11 +627,17 @@ static void etm4_enable_hw_smp_call(void *info)
->   *  | Timestamp Generator  |  (timestamp on resource y)
->   *  +----------------------+
->   */
-> -static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
-> +static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata,
-> +				       struct perf_event_attr *attr)
->  {
->  	int ctridx;
->  	int rselector;
->  	struct etmv4_config *config = &drvdata->config;
-> +	u8 ts_level = ATTR_CFG_GET_FLD(attr, ts_level);
-> +
-> +	/* Disable when ts_level == MAX */
-> +	if (ts_level == FIELD_GET(ATTR_CFG_FLD_ts_level_MASK, UINT_MAX))
-> +		return 0;
->  
->  	/* No point in trying if we don't have at least one counter */
->  	if (!drvdata->nr_cntr)
-> @@ -666,12 +673,8 @@ static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
->  		return -ENOSPC;
->  	}
->  
-> -	/*
-> -	 * Initialise original and reload counter value to the smallest
-> -	 * possible value in order to get as much precision as we can.
-> -	 */
-> -	config->cntr_val[ctridx] = 1;
-> -	config->cntrldvr[ctridx] = 1;
-> +	/* Initialise original and reload counter value. */
-> +	config->cntr_val[ctridx] = config->cntrldvr[ctridx] = 1 << ts_level;
->  
->  	/*
->  	 * Trace Counter Control Register TRCCNTCTLRn
-> @@ -761,7 +764,7 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
->  		 * order to correlate instructions executed on different CPUs
->  		 * (CPU-wide trace scenarios).
->  		 */
-> -		ret = etm4_config_timestamp_event(drvdata);
-> +		ret = etm4_config_timestamp_event(drvdata, attr);
->  
->  		/*
->  		 * No need to go further if timestamp intervals can't
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
-> index aaa6633b2d67..54558de158fa 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x.h
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
-> @@ -598,6 +598,12 @@
->  #define ETM_CNTR_MAX_VAL		0xFFFF
->  #define ETM_TRACEID_MASK		0x3f
->  
-> +#define ATTR_CFG_FLD_ts_level_CFG	config3
-> +#define ATTR_CFG_FLD_ts_level_LO	12
-> +#define ATTR_CFG_FLD_ts_level_HI	15
-> +#define ATTR_CFG_FLD_ts_level_MASK	GENMASK(ATTR_CFG_FLD_ts_level_HI, \
-> +						ATTR_CFG_FLD_ts_level_LO)
-> +
->  /* ETMv4 programming modes */
->  #define ETM_MODE_EXCLUDE		BIT(0)
->  #define ETM_MODE_LOAD			BIT(1)
+On Tue, Aug 26, 2025, Sean Christopherson wrote:
+> On Tue, Aug 26, 2025, Oliver Upton wrote:
+> > On Tue, Aug 26, 2025 at 11:51:18AM -0700, Sean Christopherson wrote:
+> > > On Mon, Aug 25, 2025, Oliver Upton wrote:
+> > > > The majority of selftests don't even need an irqchip anyway.
+> > > 
+> > > But it's really, really nice for developers if they can assume a certain level of
+> > > configuration is done by the infrastructure, i.e. don't have worry about doing
+> > > what is effectively "basic" VM setup.
+> > 
+> > The more we pile behind what a "basic" VM configuration is the less
+> > expressive the tests become. Being able to immediately grok the *intent*
+> > of a test from reading it first pass is a very good thing. Otherwise I
+> > need to go figure out what the definition of "basic" means when I need
+> > to write a test and decide if that is compatible with what I'm trying to
+> > do.
 > 
-> -- 
-> 2.34.1
+> Eh, I don't buy that argument, not as a blanket statement.
 > 
+> The existence of code doesn't always communicate intent, e.g. the _only_ instance
+> I can think of where doing more setup by default caused problems was a few crusty
+> x86 tests that relied on an int3 to cause SHUTDOWN due to lack of an IDT.  OMG was
+> I increduluous when I figured out what those tests were doing.
+> 
+> And in that case, _not_ doing the "basic" setup hid the intent of the test.  Aside
+> from the fact that deliberately triggering SHUTDOWN was completely unnecessary in
+> those tests, IMO forcing such a test to use vm_create_barebones() would better
+> capture that the test is doing something odd, i.e. has unusual intent.
+> 
+> And explicitly doing something doesn't necessarily communicate the intent of the
+> test.  E.g. the intent of the irqfd_test is to verify that KVM_IRQFD assign and
+> deassign behaves as expected.  The test never generates IRQs, i.e. doesn't actually
+> need an IRQCHIP beyond satisfying KVM's requirements for KVM_IRQFD.
+> 
+> There are undoubtedly other tests that have similar "intent".  E.g. the in-progress
+> mediated PMU support for x86 requires an in-kernel local APIC, and so tests like
+> pmu_counters_test.c, pmu_event_filter_test.c, and vmx_pmu_caps_test.c will need
+> to instantiate an IRQCHIP.  None of those tests actually touch the local APIC in
+> any way, e.g. don't generate PMU interrupts, so creating an IRQCHIP is once again
+> nothing more than a means to an end, and not indicative of the test's main intent.
+> 
+> I think the use of vgic_v3_setup() in dirty_log_perf_test.c is also a case where
+> the existence of code fails to communicate intent.  Without the comment in
+> arch_setup_vm() to explain that having GICv3 somehow reduces the number of exits,
+> I would be very confused as to why the test cares about GICv3.
+> 
+> I agree there's a balance to be had in terms of doing too much.  Unfortunately in
+> this case, it sounds like the fundamental problem is that the balance is simply
+> different for x86 versus arm64.  Having an in-kernel local APIC is tables stakes
+> for x86, to the point where I'm looking for any excuse to have KVM create a local
+> APIC by default.  But for arm64, there's tremendous value in having tests do the
+> lifting.
+> 
+> > vm_create_with_irqchip() is delightfully unambiguous.
+> >
+> > > E.g. x86 selftests creates an IRQCHIP, sets up descriptor tables and exception
+> > > handlers, and a handful of other "basic" things, and that has eliminated soooo
+> > > much boilerplate code and the associated friction with having to know/discover
+> > > that e.g. sending IRQs in a test requires additional setup beyond the obvious
+> > > steps like wiring up a handler.
+> > 
+> > That simply isn't going to happen on arm64. On top of the fact that the
+> > irqchip configuration depends on the intent of the test (e.g. wired IRQs
+> > v. MSIs), there's a bunch of guest-side initialization that needs to
+> > happen too.
+> > 
+> > We can add an extremely barebones GIC when asked for (although guest
+> > init isn't addressed) but batteries are not included on this architecture
+> > and I'd rather not attempt to abstract that.
+> 
+> What about providing an API to do exactly that, instantiate and initialize a
+> barebones GIC?  E.g.
+> 
+> 	void kvm_arch_init_barebones_irqchip(struct kvm_vm *vm)
+> 
+> Hmm, then we'd also need
+> 
+> 	void kvm_arch_vm_free(struct kvm_vm *vm)
+> 
+> to gracefully free the GIC, as done by dirty_log_perf_test.c.  Blech.  Though
+> maybe we'll end up with that hook sooner or later?
+> 
+> All in all, I have no strong preference at this point.
+
+Oliver, any thoughts?  This is causing noise in people's CIs, i.e. we should land
+a fix sooner than later, even if it's not the "final" form. 
 
