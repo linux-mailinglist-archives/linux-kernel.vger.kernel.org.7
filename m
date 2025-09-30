@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-837771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485BABAD273
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:17:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110AEBAD25C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A1F1C74A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:17:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E93019222AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3901F582B;
-	Tue, 30 Sep 2025 14:17:04 +0000 (UTC)
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1263009D5;
+	Tue, 30 Sep 2025 14:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6sZMkJG"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E51A2628D;
-	Tue, 30 Sep 2025 14:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D0172617
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759241823; cv=none; b=ODJPHI3d3rsCcS2/AcISK9tlSE0uIt9t9AHAYD/NhuYGN3SHG/NwA8yIEaMLD64qvoxsAQKUbmAA/x3KOq5iv/1K00HOv92R8AKOtb1/HeJbFtteCOHY0wZsgcvB72fknXTsVr8P2IjN8DNfleJkGB/Q5yu2ZqMCIc+Yd56eJ+U=
+	t=1759241501; cv=none; b=SU+kcHrfpe1Np2eygKNjPjUNDgKgrdHcm5zW18K4mKhu5V3viRIuJpLk8KCOhCBpky3ZZzifvBfHANTc3CL9uyACw0Z5zl3BMOI1FNyke6oGSPTHsZgved4R4u1PnHiZ95kVRg5ftQ4yz2LI4PugI49AO3DkGsZpUZ5tdL3Dr6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759241823; c=relaxed/simple;
-	bh=6d/4bFwswWm48/ncRnHTzPTOPZm44oBy0/a6SmLuzzg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ipPaECAUX4M2wu8UrtIWMui25l+qZkj2eglgUdI8TFin4p6Zi0tbmRZR1xgyvMQA5cyhq2RLwJthSh1/8+2cPRepOJcS0F0MWCrQekxbf6IwxPgU+qtDO16yFRCMehntzn9B5JhYGWeeabTc3taldDX2gze4+haiFx0A7Pa9MdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id AF61D5AE95;
-	Tue, 30 Sep 2025 16:08:39 +0200 (CEST)
-Message-ID: <46c59609-032d-4148-8c19-bf7106c4fa34@proxmox.com>
-Date: Tue, 30 Sep 2025 16:08:38 +0200
+	s=arc-20240116; t=1759241501; c=relaxed/simple;
+	bh=dhNbw1G9mRAhXIMH6LfDAwAjDDHBYJXFE5PoFaulK7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wh+iMyeJ9rcLX2LpQlFreKttb5DJsmVvZpSMjLnEDMR3lvHV3cd8V5gN0MVaoHApM6T8w7Q666Y6cayLrONR3ZAKoW3tPbkmm/VK/W/l6wfAk11zwQcpb/xLp8WjzWfT/oiiwx7OoNdI2FueswxiFz4Rt3ElJhaofC3JBqiDSiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6sZMkJG; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74c7d98935eso3066212a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759241498; x=1759846298; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lge6WsJENV2SAB1G3klNifvxV/9+1PlDakEtvWakN8U=;
+        b=Y6sZMkJG0hfQeh959F2i9uddsFiMyNcgEy8PgFRxeZCImg+q3AJn6xNf6g++O+tAiy
+         yGpHs5DKfAtirkn7Pq6rX7/WRNyHmZAuRItxQrDL4KFM/mSZx0xJHO9zqyLKFG8nIBoV
+         IWSuhScrY6bUBOFniKlSNP3PR1ir2ZYBOuJIrp2cvUXYl18+VJxDdje/N/MaR73ULvFE
+         Zcc5UluZFdG6PKipXwuRuZGMLGIKl4OLuLKmYdUMbiHTMp+yj4DAz/hwM7+dQnN8BnpA
+         kWgnLnU7h/Pdrh5PPPbRBsNMFL6EJ2O+/Gd1EVbekxlUdsc+XBGycjCMVubbsarX4I5n
+         M0Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759241498; x=1759846298;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lge6WsJENV2SAB1G3klNifvxV/9+1PlDakEtvWakN8U=;
+        b=XH5TdGjZbQ26qCaoLZ1UuwRRluuzo7SzWxysXninCaGFUHohgjYDxza/JBGbBOkHNG
+         UKksb/zEBQG6ng/xiXBORdaRTQoyuUQZV6DNNbyBRkTU+VQjQ3T/Tfuxs3TO5nnogiVZ
+         PtnvWUeIxmLW4TDdss/ksm5FAvkww14P/GBPwkZQMhsDbqsIT1wzBSinIxr+j1FuFo30
+         VDSmJCTRvLfk6uInY2V64gnJChOwVeu4P7pr4/YCD8e31FfJkDAggof2fVBmNd0DNcEN
+         M2tXY8FauHkqRr13Tj6ddzcRV8nBI0b8RvE9ShBaCRcWtazZD+vvybHiPukrG1fYADtr
+         q0yg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0RbCm+FtdX3XQ4v/1rL34FABV7rL5TVkODhJSGRzyArsEHamzap4oFlHLzMfSt9+gFqoeY2JUZOZixj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/wJRmzzV7T8cF7lyxdGgGsEuVLLlzIAPZi4UejOS1yq2XuXhu
+	BIHqblPE5jdMtqbZyoaPzi3r3r04dtVIGdlufWTGz7iNM0n75y7TlN7MjxLcVLSGxbB7BaVSxPl
+	QBerlNTE90/dUB1Zczgp0ALEd51vtQDs=
+X-Gm-Gg: ASbGncsjw1lCCjN/iFwg+BPZkDWVxUN1xZRJFh3vMEW1ueapxzocIg5bpg24pSEh7r/
+	f44bhRpZRf+Mi7PS7oM7/qgLbx091b5lqW3LH80RrZ7qIiEHycU1msLoVzbW/EFR5jULcXHRDYh
+	bt+KgSSR5LthkHW3sJOjkgAmLN+UB6SenkrcxiU4y+GKgRghWQBoly/Po3ekkxcLHM13FnnUN0m
+	ILlUz8bJP6By1AS3oDPlHPK6J5mtQboS8PrT7xdQ8g=
+X-Google-Smtp-Source: AGHT+IF5F14UVS2FUhVkyyg79GjNg4gxVLmQKIXHM/iI8Ip3DpRL4npXCJODa44vQo+toLYyiB+ieDwef4Qk9Lr9qQs=
+X-Received: by 2002:a05:6808:6f8d:b0:43f:63cc:aed9 with SMTP id
+ 5614622812f47-43f63ccb29emr6926980b6e.31.1759241498389; Tue, 30 Sep 2025
+ 07:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] smb: client: transport: avoid reconnects triggered by
- pending task work
-From: Fiona Ebner <f.ebner@proxmox.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-cifs@vger.kernel.org, bharathsm@microsoft.com, tom@talpey.com,
- sprasad@microsoft.com, ronniesahlberg@gmail.com, pc@manguebit.org,
- sfrench@samba.org
-References: <20250915151950.1017597-1-f.ebner@proxmox.com>
-Content-Language: en-US
-In-Reply-To: <20250915151950.1017597-1-f.ebner@proxmox.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Bm-Milter-Handled: 55990f41-d878-4baa-be0a-ee34c49e34d2
-X-Bm-Transport-Timestamp: 1759241298137
+References: <20250925185043.3013388-1-tanmay.shah@amd.com>
+In-Reply-To: <20250925185043.3013388-1-tanmay.shah@amd.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Tue, 30 Sep 2025 09:11:26 -0500
+X-Gm-Features: AS18NWDWAkPUsh6oysM6acgT4GeTUBESdySKZCWeJWSjZWGR1nFeq4C9PeRKmz8
+Message-ID: <CABb+yY0MzJWOGtS=ocphpUVcJ-gb6_ENCjSmJQiWfRiOhxrpCg@mail.gmail.com>
+Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ping
+On Thu, Sep 25, 2025 at 1:51=E2=80=AFPM Tanmay Shah <tanmay.shah@amd.com> w=
+rote:
+>
+> Sometimes clients need to know if mailbox queue is full or not before
+> posting new message via mailbox. If mailbox queue is full clients can
+> choose not to post new message. This doesn't mean current queue length
+> should be increased, but clients may want to wait till previous Tx is
+> done. This API can help avoid false positive warning from mailbox
+> framework "Try increasing MBOX_TX_QUEUE_LEN".
+>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
+>  drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+>  include/linux/mailbox_client.h          |  1 +
+>  3 files changed, 29 insertions(+)
+>
+> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> index 5cd8ae222073..7afdb2c9006d 100644
+> --- a/drivers/mailbox/mailbox.c
+> +++ b/drivers/mailbox/mailbox.c
+> @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
+>  }
+>  EXPORT_SYMBOL_GPL(mbox_client_peek_data);
+>
+> +/**
+> + * mbox_queue_full - check if mailbox queue is full or not
+> + * @chan: Mailbox channel assigned to this client.
+> + *
+> + * Clients can choose not to send new msg if mbox queue is full.
+> + *
+> + * Return: true if queue is full else false. < 0 for error
+> + */
+> +int mbox_queue_full(struct mbox_chan *chan)
+> +{
+> +       unsigned long flags;
+> +       int res;
+> +
+> +       if (!chan)
+> +               return -EINVAL;
+> +
+> +       spin_lock_irqsave(&chan->lock, flags);
+> +       res =3D (chan->msg_count =3D=3D (MBOX_TX_QUEUE_LEN - 1));
+>
+1) If we really need this, it should be
+        res =3D (chan->msg_count =3D=3D MBOX_TX_QUEUE_LEN);
 
-Am 15.09.25 um 5:19 PM schrieb Fiona Ebner:
-> When io_uring is used in the same task as CIFS, there might be
-> unnecessary reconnects, causing issues in user-space applications
-> like QEMU with a log like:
-> 
->> CIFS: VFS: \\10.10.100.81 Error -512 sending data on socket to server
-> 
-> Certain io_uring completions might be added to task_work with
-> notify_method being TWA_SIGNAL and thus TIF_NOTIFY_SIGNAL is set for
-> the task.
-> 
-> In __smb_send_rqst(), signals are masked before calling
-> smb_send_kvec(), but the masking does not apply to TIF_NOTIFY_SIGNAL.
-> 
-> If sk_stream_wait_memory() is reached via sock_sendmsg() while
-> TIF_NOTIFY_SIGNAL is set, signal_pending(current) will evaluate to
-> true there, and -EINTR will be propagated all the way from
-> sk_stream_wait_memory() to sock_sendmsg() in smb_send_kvec().
-> Afterwards, __smb_send_rqst() will see that not everything was written
-> and reconnect.
-> 
-> 
-> A reproducer exposing the issue using QEMU:
-> #!/bin/bash
-> target=$1
-> dd if=/dev/urandom of=/tmp/disk.raw bs=1M count=100
-> qemu-img create -f raw $target 100M
-> ./qemu-system-x86_64 --qmp stdio \
-> --blockdev raw,node-name=node0,file.driver=file,file.filename=/tmp/disk.raw,file.aio=io_uring \
-> --blockdev raw,node-name=node1,file.driver=file,file.filename=$target,file.aio=native,file.cache.direct=on \
-> <<EOF
-> {"execute": "qmp_capabilities"}
-> {"execute": "blockdev-mirror", "arguments": { "job-id": "mirror0", "device": "node0", "target": "node1", "sync": "full" } }
-> EOF
-> 
-> Another reproducer is having a QEMU virtual machine with one disk
-> using io_uring and one disk on CIFS and doing IO to both disks at the
-> same time.
-> 
-> I also got a reproducer based on liburing's examples/io_uring-cp.c
-> which I can send along if you are interested in it.
-> 
-> 
-> Fiona Ebner (2):
->   smb: client: transport: avoid reconnects triggered by pending task
->     work
->   smb: client: transport: minor indentation style fix
-> 
->  fs/smb/client/transport.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
+2) I am thinking instead, introduce a
+       struct mbox_client.msg_slots_ro;
+  Which is a read-only field for the client, denoting how many message
+slots are currently available.
+  The mailbox api will always adjust it when msg_count changes...
+      chan->cl->msg_slots_ro =3D MBOX_TX_QUEUE_LEN - chan->msg_count;
 
-
+-jassi
 
