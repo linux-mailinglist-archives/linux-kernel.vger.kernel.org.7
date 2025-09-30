@@ -1,445 +1,209 @@
-Return-Path: <linux-kernel+bounces-837679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7314BACE74
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:45:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC8ABACEB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193511924D2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:45:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743B9188E6EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2292FC873;
-	Tue, 30 Sep 2025 12:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF622FF664;
+	Tue, 30 Sep 2025 12:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gvphLpzu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="p0YoRAJH"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9D42DA779
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B79F155757
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759236304; cv=none; b=K6Nr00ZyTDt6KtlJMjh1kfpjVAQ3FB8jMTUPy3h/ANzh0Ol60c2LdSYMb5WIDAzx5EFamrocL6ZDhzBzS1RAEU1mgxswR2DDi5TF2omiA2631l66iTeI4sOUTqlz6QiNlqc4zsTP6ifVj4qlJ7/e17xyMcgf30w3TdeemVxvnCM=
+	t=1759236470; cv=none; b=FYjH3XNjkGW4TuUCsawgrXGbMcKJQmJ4jMhjKpCI+IaXDT30/TzxFLkm0zaR/jzfGlUpWZwMmoGahjrzrrTRIJgeWfx2YWM7oqOVjCBicoQR7f7oM3FYcns8jNuLJlj+KDDBF0UdFlWismNd430AQx1uAqnrYOmM+XC/HfZjE/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759236304; c=relaxed/simple;
-	bh=plNWFStnmBr3tHuQHipBbeJxTWpo2Yn2Mw/O70BkNRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bw0A5JAOs2yuh0rl/spROrj/v+zfOTiTK6UPmoTtTJMxKb08y+Fwk2O1k3KkWIr7+h1HOlHfmlntkzOT5kQabfG0yA0FVqIatjitjRiKU0bRs5YlpqbwmjMQONKfJf+PC4OVVZ408qdWqh3SeBHSZ04HY8QdOlYCizaGCsNXzlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gvphLpzu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759236301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QDfkkiLno7LKSndyeERgNrn5us3hUZ9m47HxXngB3Bw=;
-	b=gvphLpzuAmuPFLACsTZB/Co6koimJJxllukw9mdufjPdAg2qFf9AETU4s6MsV0eY1eUS9c
-	8u9SYGqPnJcJLMHwZovfcGD7k1a8BF4iT7Zyugljdsx/LvN4iOaheXKth3+VNxQfcklw82
-	MiZ1ZtnOsu8MHfWKJcZTdP+4dbgiEeA=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-288-vtXgKyCxPwi0toOfurP7vA-1; Tue, 30 Sep 2025 08:45:00 -0400
-X-MC-Unique: vtXgKyCxPwi0toOfurP7vA-1
-X-Mimecast-MFC-AGG-ID: vtXgKyCxPwi0toOfurP7vA_1759236299
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-636260bcc31so2945109a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:45:00 -0700 (PDT)
+	s=arc-20240116; t=1759236470; c=relaxed/simple;
+	bh=6ODFl3tzmYQcYug2DS09l+n4aJecxEUMjdrP5ELDqoQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NNP6OxgnXOSfrFXJimU1EeY24zQgChmegdcigLQ1+p2doSy8qsRm2DyzNpjiwWZDaEypJk0ibc/7zoRIBPEyIaDgqY888SoFSunSaOSXm6kMKxqtF0tIxF880BNFVB9J8hHAFlHeivDUqsVo+tKYsjq1koihqu1ktNdZTUAty78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=p0YoRAJH; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-826311c1774so676422385a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1759236467; x=1759841267; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1wC8Vr6Y5iTZjdCwj30WxxG26spUpfyfsqYkfmF0j6E=;
+        b=p0YoRAJHgTzIwqCVl7qBn4YLdurEEebPu5ML9Qi97Qw3XAnIUKMMClQguY4tDGd2bn
+         Dmi7Vm9FJD0pyoybY+dlcd8SNLGw9xBlZcx1bfEsHB3MXRMi7CWThj4+xxVfGS09adpm
+         BTiAQR2OlmtDa4DOyI3vBHto5B0cMuZ6i1ZQ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759236299; x=1759841099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QDfkkiLno7LKSndyeERgNrn5us3hUZ9m47HxXngB3Bw=;
-        b=h3YWCa7SqV0eaSOSq856FHWUvDKScIGLNyGl+4ZD6I594C9ofU6eh2MjxGWTYn6Ckj
-         C64Rl6IvK1qhCtw7GKfQETrI6hNRWSP0hmiGMZeRr6cW6CXtj68s0Gryc5exyJ2tvG6W
-         fhR3eDkf5dkWcZP8xLO/YsbDJ3iqX471Ubm/UpdPprmtA4KkygowHMAbuESI7jj1tuVi
-         U8jlzKvrjxBPdMJcDSjjNgiGnbsz/QI09MOAFWuux+tGUToH8myzuBMlxYAsf1zj42CN
-         AdHX2RjYBeY55jFhR2XAJknNo3sFACotKdy3itWbrFdxsjCXaQ+UymkKkVR6MfbUzX4y
-         gWcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRR7FL5rYfmlqq0+NVLQdI7adQpfSLDg/of0w9bTuWezZsgB6xFwgfKKDdpsPPOQhVlvB6eIx1EHKLrp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrx3jOGef+Zq9cTfTqIvs+/Pm9EC8oZUsZWpzz5AO9yp2UHt5x
-	ze4W/gW4sVgccVap89BKqo/6TvvjwFkuwsklSIxZd5Vk3hIRVO9HRkX7LVPqo7A2Rbx8TDxZk9e
-	O9ISiY506eUaTBZMdiG4vNcS8m3km0NIGOb0CyYfj30FgsU9JjY1bPvyIoD7YuP7zzg==
-X-Gm-Gg: ASbGncunEVJ2JPhcyAtw/b23uBWw1wI2D34BCZWesJS8vNcWlZRt635sCltcwtoFjyZ
-	atQEK67H8QYNld6SPK+3J6ilLy1+xR8XHn7O9crY63DY/13rxk9fzWIdoza7I/bKfkx5dg59qm1
-	tT+C/8sHSFJt5CncXW+O0N3zssjjI4C0MmPCRIZ8PlzxigM/Q5m9so5Qa2luSHhWWKj9ZgeDD5G
-	Y0To5wrjys//1G4BHetIE5CWNPK3Ec0BwP3A/j6hWdHnT1ehYquI9ZJ0JgVsMna/JQwjgBlL4Ds
-	I8//AeIe4U76sBjJgU8+5tXglQHTscxXjoLgsPACLZp1QjmwejKwRAydEhTLKJKdGAdiyaRyv50
-	8KPgdt259RdZeM5Fqm/4vMQ==
-X-Received: by 2002:aa7:cf8f:0:b0:634:5705:5719 with SMTP id 4fb4d7f45d1cf-6349f9cbc0cmr15654169a12.5.1759236299050;
-        Tue, 30 Sep 2025 05:44:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWjX0lAIHN77rTFgsGAB1ZWIvuPTnEmj+YJ9jSx5d90cxaiPJqKI2VaCZxNG01vp+wO4XrHA==
-X-Received: by 2002:aa7:cf8f:0:b0:634:5705:5719 with SMTP id 4fb4d7f45d1cf-6349f9cbc0cmr15654146a12.5.1759236298540;
-        Tue, 30 Sep 2025 05:44:58 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a362986dsm9595887a12.1.2025.09.30.05.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 05:44:57 -0700 (PDT)
-Date: Tue, 30 Sep 2025 14:44:52 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com, 
-	ross.philipson@oracle.com, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, 
-	Stefan Berger <stefanb@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	open list <linux-kernel@vger.kernel.org>, "open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 10/10] tpm-buf: Enable managed and stack allocations.
-Message-ID: <u7zay2gb3dff4ptbh34qw7ini63ar3246ivd4xnxtdxc6ijktx@lutatpeg7f7z>
-References: <20250929194832.2913286-1-jarkko@kernel.org>
- <20250929194832.2913286-11-jarkko@kernel.org>
+        d=1e100.net; s=20230601; t=1759236467; x=1759841267;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1wC8Vr6Y5iTZjdCwj30WxxG26spUpfyfsqYkfmF0j6E=;
+        b=enrlpPkd6MgoDOzgVn6AlyE2J6xiPUBhUDFjCrZnBAsvMYVtyItwASNzDYiYYSJkY3
+         L9SPggBZkmYQqu7a5bNLz6wAJz0UgkZoqiB4Vo1IOw0aiqFyMVa82bMJj4CdSqyovRbp
+         15IoDFXXIBU5e0Yr0CbyJAPE8MLGx4EBjU14S00X6hXNtkgnuXxyYzjIDQqSor2kf6Mz
+         l8IdSxuxHViNuPzeFBmPsZTIFT6SHH9tfw16499h1pJjzKD7yXHhg+RiU14JxwE0uv9R
+         NV1xUeNyHEjGyffYi9yeH/KIi0nVVjazAoCDImC8XMtZaKdWcn+Jt4MqpzDWJ9wP3NGa
+         xNmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbNqn9078b0lo8Iz7S/EWNIbJLZ7/A5UNrBxHTxBCc7HSL+cFPIaaBYOb90Is56Pxz16JoHnyH9Gg8Q3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmgyqrvNUCw5UkC8yAslXre7LGR51ENaswBahss4ECEJctERdv
+	QaGKfhoeiiVKTtkM54hWbOd4ZfgXNUH9tSiEcPc6+ia3PP8UhXvCcmlLUwJe1WUCaitiR21HfKU
+	fdUchVi/AZyWXiDrOTvg0Y4t0+xatWPAiO5fh6FsOIYZWohBlZlL0+xSMUg==
+X-Gm-Gg: ASbGncsOyDb/LxQbwEs94cFZ0APiIkAu6FP137kb+ifzLjE2Qpi89FHhGchpX8LRyiU
+	Y+nQrWLPk7bwJb6cw8V36Sy0PA/Cj/A3zJOM6kwehhK+Wr/d8zMxEjhYerOim5CVNBApGBYrwVU
+	CmDfqer/KJNMOFHWCb+9qEnFmNzGHYYX9zjRWs9kToPxMav7tGGr9Bg3nhsUFNnVYvFYu3Uc/vG
+	Mq9UczPJp9XXKE/XmKfj0FxznBKdlNnWQs6fxJjKUaBtv/4x8HnFjh/vqAldgbpY6eLk6RbryfA
+	k1gSC8yD
+X-Google-Smtp-Source: AGHT+IEqhTETy8643K21cVM25SZgCqRNORpuhYW7e3EFegJ2RyEn4mI4Ew9+uvdUSr05jh6gIwhJR49uuG1a58WkOuk=
+X-Received: by 2002:a05:620a:2982:b0:84b:5751:6c4f with SMTP id
+ af79cd13be357-85ae93d275emr2296871185a.62.1759236466837; Tue, 30 Sep 2025
+ 05:47:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250929194832.2913286-11-jarkko@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 30 Sep 2025 14:47:35 +0200
+X-Gm-Features: AS18NWCistxXCIc9UvvWaSsLppHNSEKmAKyLZH4naiNoIaLHBXQUWHvVRtqE0Zk
+Message-ID: <CAJfpegtWHBZbvMWm2uHq0WAhrF6qHE5N=AG9QjkweyXic-e7gg@mail.gmail.com>
+Subject: [GIT PULL] fuse update for 6.18
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 29, 2025 at 10:48:32PM +0300, Jarkko Sakkinen wrote:
->From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->
->Decouple kzalloc from buffer creation, so that  a managed allocation can be
->done trivially:
->
->	struct tpm_buf *buf __free(kfree) buf = kzalloc(TPM_BUFSIZE,
-                                                         ^
-In the code, we use PAGE_SIZE instead of TPM_BUFSIZE with kzalloc().
-Should we do the same in this example? (Perhaps adding the reason, if 
-you think it would be useful)
+Hi Linus,
 
->							GFP_KERNEL);
->	if (!buf)
->		return -ENOMEM;
->	tpm_buf_init(buf, TPM_BUFSIZE);
->
->Alternatively, stack allocations are also possible:
->
->	u8 buf_data[512];
->	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
->	tpm_buf_init(buf, sizeof(buf_data));
->
->Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->---
->v3:
->- A new patch from the earlier series with more scoped changes and
->  less abstract commit message.
->---
-> drivers/char/tpm/tpm-buf.c                | 122 +++++----
-> drivers/char/tpm/tpm-sysfs.c              |  20 +-
-> drivers/char/tpm/tpm.h                    |   1 -
-> drivers/char/tpm/tpm1-cmd.c               | 147 +++++------
-> drivers/char/tpm/tpm2-cmd.c               | 290 ++++++++++------------
-> drivers/char/tpm/tpm2-sessions.c          | 121 +++++----
-> drivers/char/tpm/tpm2-space.c             |  44 ++--
-> drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
-> include/linux/tpm.h                       |  18 +-
-> security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
-> security/keys/trusted-keys/trusted_tpm2.c | 176 ++++++-------
-> 11 files changed, 482 insertions(+), 521 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
->index c9e6e5d097ca..1cb649938c01 100644
->--- a/drivers/char/tpm/tpm-buf.c
->+++ b/drivers/char/tpm/tpm-buf.c
->@@ -7,82 +7,109 @@
-> #include <linux/module.h>
-> #include <linux/tpm.h>
->
->-/**
->- * tpm_buf_init() - Allocate and initialize a TPM command
->- * @buf:	A &tpm_buf
->- * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
->- * @ordinal:	A command ordinal
->- *
->- * Return: 0 or -ENOMEM
->- */
->-int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
->+static void __tpm_buf_size_invariant(struct tpm_buf *buf, u16 buf_size)
-> {
->-	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
->-	if (!buf->data)
->-		return -ENOMEM;
->-
->-	tpm_buf_reset(buf, tag, ordinal);
->-	return 0;
->+	u32 buf_size_2 = (u32)buf->capacity + (u32)sizeof(*buf);
->+
->+	if (!buf->capacity) {
->+		if (buf_size > TPM_BUFSIZE) {
->+			WARN(1, "%s: size overflow: %u\n", __func__, buf_size);
->+			buf->flags |= TPM_BUF_INVALID;
->+		}
->+	} else {
->+		if (buf_size != buf_size_2) {
->+			WARN(1, "%s: size mismatch: %u != %u\n", __func__, buf_size,
->+			     buf_size_2);
->+			buf->flags |= TPM_BUF_INVALID;
->+		}
->+	}
-> }
->-EXPORT_SYMBOL_GPL(tpm_buf_init);
->
->-/**
->- * tpm_buf_reset() - Initialize a TPM command
->- * @buf:	A &tpm_buf
->- * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
->- * @ordinal:	A command ordinal
->- */
->-void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
->+static void __tpm_buf_reset(struct tpm_buf *buf, u16 buf_size, u16 tag, u32 ordinal)
-> {
-> 	struct tpm_header *head = (struct tpm_header *)buf->data;
->
->+	__tpm_buf_size_invariant(buf, buf_size);
->+
->+	if (buf->flags & TPM_BUF_INVALID)
->+		return;
->+
-> 	WARN_ON(tag != TPM_TAG_RQU_COMMAND && tag != TPM2_ST_NO_SESSIONS &&
-> 		tag != TPM2_ST_SESSIONS && tag != 0);
->
-> 	buf->flags = 0;
-> 	buf->length = sizeof(*head);
->+	buf->capacity = buf_size - sizeof(*buf);
->+	buf->handles = 0;
-> 	head->tag = cpu_to_be16(tag);
-> 	head->length = cpu_to_be32(sizeof(*head));
-> 	head->ordinal = cpu_to_be32(ordinal);
->+}
->+
->+static void __tpm_buf_reset_sized(struct tpm_buf *buf, u16 buf_size)
->+{
->+	__tpm_buf_size_invariant(buf, buf_size);
->+
->+	if (buf->flags & TPM_BUF_INVALID)
->+		return;
->+
->+	buf->flags = TPM_BUF_TPM2B;
->+	buf->length = 2;
->+	buf->capacity = buf_size - sizeof(*buf);
-> 	buf->handles = 0;
->+	buf->data[0] = 0;
->+	buf->data[1] = 0;
-> }
->-EXPORT_SYMBOL_GPL(tpm_buf_reset);
->
-> /**
->- * tpm_buf_init_sized() - Allocate and initialize a sized (TPM2B) buffer
->- * @buf:	A @tpm_buf
->- *
->- * Return: 0 or -ENOMEM
->+ * tpm_buf_init() - Initialize a TPM command
->+ * @buf:	A &tpm_buf
->+ * @buf_size:	Size of the buffer.
->  */
->-int tpm_buf_init_sized(struct tpm_buf *buf)
->+void tpm_buf_init(struct tpm_buf *buf, u16 buf_size)
-> {
->-	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
->-	if (!buf->data)
->-		return -ENOMEM;
->+	memset(buf, 0, buf_size);
->+	__tpm_buf_reset(buf, buf_size, TPM_TAG_RQU_COMMAND, 0);
->+}
->+EXPORT_SYMBOL_GPL(tpm_buf_init);
->
->-	tpm_buf_reset_sized(buf);
->-	return 0;
->+/**
->+ * tpm_buf_init_sized() - Initialize a sized buffer
->+ * @buf:	A &tpm_buf
->+ * @buf_size:	Size of the buffer.
->+ */
->+void tpm_buf_init_sized(struct tpm_buf *buf, u16 buf_size)
->+{
->+	memset(buf, 0, buf_size);
->+	__tpm_buf_reset_sized(buf, buf_size);
-> }
-> EXPORT_SYMBOL_GPL(tpm_buf_init_sized);
->
-> /**
->- * tpm_buf_reset_sized() - Initialize a sized buffer
->+ * tpm_buf_reset() - Re-initialize a TPM command
->  * @buf:	A &tpm_buf
->+ * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
->+ * @ordinal:	A command ordinal
->  */
->-void tpm_buf_reset_sized(struct tpm_buf *buf)
->+void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
-> {
->-	buf->flags = TPM_BUF_TPM2B;
->-	buf->length = 2;
->-	buf->data[0] = 0;
->-	buf->data[1] = 0;
->+	u16 buf_size = buf->capacity + sizeof(*buf);
->+
->+	__tpm_buf_reset(buf, buf_size, tag, ordinal);
-> }
->-EXPORT_SYMBOL_GPL(tpm_buf_reset_sized);
->+EXPORT_SYMBOL_GPL(tpm_buf_reset);
->
->-void tpm_buf_destroy(struct tpm_buf *buf)
->+/**
->+ * tpm_buf_reset_sized() - Re-initialize a sized buffer
->+ * @buf:	A &tpm_buf
->+ */
->+void tpm_buf_reset_sized(struct tpm_buf *buf)
-> {
->-	free_page((unsigned long)buf->data);
->+	u16 buf_size = buf->capacity + sizeof(*buf);
->+
->+	__tpm_buf_reset_sized(buf, buf_size);
-> }
->-EXPORT_SYMBOL_GPL(tpm_buf_destroy);
->+EXPORT_SYMBOL_GPL(tpm_buf_reset_sized);
->
-> /**
->  * tpm_buf_length() - Return the number of bytes consumed by the data
->@@ -92,6 +119,9 @@ EXPORT_SYMBOL_GPL(tpm_buf_destroy);
->  */
-> u32 tpm_buf_length(struct tpm_buf *buf)
+Please pull from:
 
-Should we update the return value to u16?
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+tags/fuse-update-6.18
 
-> {
->+	if (buf->flags & TPM_BUF_INVALID)
->+		return 0;
->+
-> 	return buf->length;
-> }
-> EXPORT_SYMBOL_GPL(tpm_buf_length);
->@@ -104,10 +134,12 @@ EXPORT_SYMBOL_GPL(tpm_buf_length);
->  */
-> void tpm_buf_append(struct tpm_buf *buf, const u8 *new_data, u16 new_length)
-> {
->+	u32 total_length = (u32)buf->length + (u32)new_length;
->+
-> 	if (buf->flags & TPM_BUF_INVALID)
-> 		return;
->
->-	if ((buf->length + new_length) > PAGE_SIZE) {
->+	if (total_length > (u32)buf->capacity) {
-> 		WARN(1, "tpm_buf: write overflow\n");
-> 		buf->flags |= TPM_BUF_INVALID;
-> 		return;
+- Extend copy_file_range interface to be fully 64bit capable (Miklos)
 
-[...]
+- Add selftest for fusectl (Chen Linxuan)
 
->diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
->index 636acb66a4f6..6e6a9fb48e63 100644
->--- a/security/keys/trusted-keys/trusted_tpm1.c
->+++ b/security/keys/trusted-keys/trusted_tpm1.c
->@@ -310,9 +310,8 @@ static int TSS_checkhmac2(unsigned char *buffer,
->  * For key specific tpm requests, we will generate and send our
->  * own TPM command packets using the drivers send function.
->  */
->-static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
->+static int trusted_tpm_send(void *cmd, size_t buflen)
-> {
->-	struct tpm_buf buf;
-> 	int rc;
->
-> 	if (!chip)
->@@ -322,15 +321,12 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> 	if (rc)
-> 		return rc;
->
->-	buf.flags = 0;
->-	buf.length = buflen;
->-	buf.data = cmd;
-> 	dump_tpm_buf(cmd);
->-	rc = tpm_transmit_cmd(chip, &buf, 4, "sending data");
->+	rc = tpm_transmit_cmd(chip, cmd, 4, "sending data");
+- Move fuse docs into a separate directory (Bagas Sanjaya)
 
-Is it fine here to remove the intermediate tpm_buf ?
+- Allow fuse to enter freezable state in some cases (Sergey Senozhatsky)
 
-IIUC tpm_transmit_cmd() needs a tpm_buf, while here we are passing just
-the "data", or in some way it's a nested tpm_buf?
+- Clean up writeback accounting after removing tmp page copies (Joanne)
 
-(Sorry if it's a stupid question, but I'm still a bit new with this 
-code).
+- Optimize virtiofs request handling (Li RongQing)
 
-> 	dump_tpm_buf(cmd);
->
->+	/* Convert TPM error to -EPERM. */
-> 	if (rc > 0)
->-		/* TPM error */
-> 		rc = -EPERM;
->
-> 	tpm_put_ops(chip);
->@@ -624,23 +620,23 @@ static int tpm_unseal(struct tpm_buf *tb,
-> static int key_seal(struct trusted_key_payload *p,
-> 		    struct trusted_key_options *o)
-> {
->-	struct tpm_buf tb;
-> 	int ret;
->
->-	ret = tpm_buf_init(&tb, 0, 0);
->-	if (ret)
->-		return ret;
->+	struct tpm_buf *tb __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
->+	if (!tb)
->+		return -ENOMEM;
->+
->+	tpm_buf_init(tb, TPM_BUFSIZE);
->
-> 	/* include migratable flag at end of sealed key */
-> 	p->key[p->key_len] = p->migratable;
->
->-	ret = tpm_seal(&tb, o->keytype, o->keyhandle, o->keyauth,
->+	ret = tpm_seal(tb, o->keytype, o->keyhandle, o->keyauth,
-> 		       p->key, p->key_len + 1, p->blob, &p->blob_len,
-> 		       o->blobauth, o->pcrinfo, o->pcrinfo_len);
-> 	if (ret < 0)
-> 		pr_info("srkseal failed (%d)\n", ret);
->
->-	tpm_buf_destroy(&tb);
-> 	return ret;
-> }
->
->@@ -650,14 +646,15 @@ static int key_seal(struct trusted_key_payload *p,
-> static int key_unseal(struct trusted_key_payload *p,
-> 		      struct trusted_key_options *o)
-> {
->-	struct tpm_buf tb;
-> 	int ret;
->
->-	ret = tpm_buf_init(&tb, 0, 0);
->-	if (ret)
->-		return ret;
->+	struct tpm_buf *tb __free(kfree) = kzalloc(PAGE_SIZE, 
->GFP_KERNEL);
->+	if (!tb)
->+		return -ENOMEM;
->+
->+	tpm_buf_init(tb, TPM_BUFSIZE);
->
->-	ret = tpm_unseal(&tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
->+	ret = tpm_unseal(tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
-> 			 o->blobauth, p->key, &p->key_len);
-> 	if (ret < 0)
-> 		pr_info("srkunseal failed (%d)\n", ret);
->@@ -665,7 +662,6 @@ static int key_unseal(struct trusted_key_payload *p,
-> 		/* pull migratable flag out of sealed key */
-> 		p->migratable = p->key[--p->key_len];
->
->-	tpm_buf_destroy(&tb);
-> 	return ret;
-> }
+- Add synchronous FUSE_INIT support (Miklos)
 
-The rest LGTM, but it's a huge patch (not your issue at all), so yeah 
-not sure :-)
+- Allow server to request prune of unused inodes (Miklos)
+
+- Fix deadlock with AIO/sync release (Darrick)
+
+- Add some prep patches for block/iomap support (Darrick)
+
+- Misc fixes and cleanups
 
 Thanks,
-Stefano
+Miklos
 
+
+Thanks,
+Miklos
+---
+
+Bagas Sanjaya (1):
+      Documentation: fuse: Consolidate FUSE docs into its own subdirectory
+
+Chen Linxuan (2):
+      doc: fuse: Add max_background and congestion_threshold
+      selftests: filesystems: Add functional test for the abort file in fusectl
+
+Chunsheng Luo (1):
+      fuse: remove unused 'inode' parameter in fuse_passthrough_open
+
+Darrick J. Wong (5):
+      fuse: fix livelock in synchronous file put from fuseblk workers
+      fuse: capture the unique id of fuse commands being sent
+      fuse: enable FUSE_SYNCFS for all fuseblk servers
+      fuse: move the backing file idr and code into a new source file
+      fuse: move CREATE_TRACE_POINTS to a separate file
+
+Joanne Koong (4):
+      fuse: remove unneeded offset assignment when filling write pages
+      fuse: use default writeback accounting
+      mm: remove BDI_CAP_WRITEBACK_ACCT
+      fuse: remove fuse_readpages_end() null mapping check
+
+Li RongQing (2):
+      virtio_fs: Remove redundant spinlock in virtio_fs_request_complete()
+      virtio_fs: fix the hash table using in virtio_fs_enqueue_req()
+
+Marek Szyprowski (1):
+      mm: fix lockdep issues in writeback handling
+
+Miklos Szeredi (8):
+      fuse: add COPY_FILE_RANGE_64 that allows large copies
+      fuse: zero initialize inode private data
+      fuse: allow synchronous FUSE_INIT
+      fuse: fix references to fuse.rst -> fuse/fuse.rst
+      fuse: remove FUSE_NOTIFY_CODE_MAX from <uapi/linux/fuse.h>
+      fuse: fix possibly missing fuse_copy_finish() call in fuse_notify()
+      fuse: remove redundant calls to fuse_copy_finish() in fuse_notify()
+      fuse: add prune notification
+
+Sergey Senozhatsky (2):
+      sched/wait: Add wait_event_state_exclusive()
+      fuse: use freezable wait in fuse_get_req()
+
+---
+ .../filesystems/{ => fuse}/fuse-io-uring.rst       |   0
+ Documentation/filesystems/{ => fuse}/fuse-io.rst   |   2 +-
+ .../filesystems/{ => fuse}/fuse-passthrough.rst    |   0
+ Documentation/filesystems/{ => fuse}/fuse.rst      |  20 +-
+ Documentation/filesystems/fuse/index.rst           |  14 ++
+ Documentation/filesystems/index.rst                |   5 +-
+ Documentation/filesystems/sysfs.rst                |   2 +-
+ .../translations/zh_CN/filesystems/sysfs.txt       |   2 +-
+ .../translations/zh_TW/filesystems/sysfs.txt       |   2 +-
+ MAINTAINERS                                        |   3 +-
+ fs/fuse/Kconfig                                    |   2 +-
+ fs/fuse/Makefile                                   |   5 +-
+ fs/fuse/backing.c                                  | 179 ++++++++++++++++
+ fs/fuse/cuse.c                                     |   3 +-
+ fs/fuse/dev.c                                      | 227 +++++++++++++--------
+ fs/fuse/dev_uring.c                                |   8 +-
+ fs/fuse/file.c                                     |  86 ++++----
+ fs/fuse/fuse_dev_i.h                               |  13 +-
+ fs/fuse/fuse_i.h                                   |  70 ++++---
+ fs/fuse/inode.c                                    |  76 +++++--
+ fs/fuse/iomode.c                                   |   3 +-
+ fs/fuse/passthrough.c                              | 167 +--------------
+ fs/fuse/trace.c                                    |  13 ++
+ fs/fuse/virtio_fs.c                                |  12 +-
+ include/linux/backing-dev.h                        |  14 +-
+ include/linux/wait.h                               |  12 ++
+ include/uapi/linux/fuse.h                          |  22 +-
+ mm/backing-dev.c                                   |   2 +-
+ mm/page-writeback.c                                |  45 ++--
+ tools/testing/selftests/Makefile                   |   1 +
+ .../testing/selftests/filesystems/fuse/.gitignore  |   3 +
+ tools/testing/selftests/filesystems/fuse/Makefile  |  21 ++
+ .../testing/selftests/filesystems/fuse/fuse_mnt.c  | 146 +++++++++++++
+ .../selftests/filesystems/fuse/fusectl_test.c      | 140 +++++++++++++
+ 34 files changed, 922 insertions(+), 398 deletions(-)
+ rename Documentation/filesystems/{ => fuse}/fuse-io-uring.rst (100%)
+ rename Documentation/filesystems/{ => fuse}/fuse-io.rst (99%)
+ rename Documentation/filesystems/{ => fuse}/fuse-passthrough.rst (100%)
+ rename Documentation/filesystems/{ => fuse}/fuse.rst (95%)
+ create mode 100644 Documentation/filesystems/fuse/index.rst
+ create mode 100644 fs/fuse/backing.c
+ create mode 100644 fs/fuse/trace.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/.gitignore
+ create mode 100644 tools/testing/selftests/filesystems/fuse/Makefile
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fuse_mnt.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fusectl_test.c
 
