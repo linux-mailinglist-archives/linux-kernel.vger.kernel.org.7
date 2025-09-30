@@ -1,180 +1,114 @@
-Return-Path: <linux-kernel+bounces-836885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30ACFBAACCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:29:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811A7BAACDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE5C422311
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:29:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19AA4189FF3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703C11547C9;
-	Tue, 30 Sep 2025 00:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE34B145FE0;
+	Tue, 30 Sep 2025 00:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ADk3YYoI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="ecE4NoUU"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7922C4C6D;
-	Tue, 30 Sep 2025 00:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5698F54;
+	Tue, 30 Sep 2025 00:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759192142; cv=none; b=XPNProZQRdG6k7rzzKhKdMe3AeIGiu5GKsJnHXSlf+dfzk10PBgL2xO/1V6+6GmUAa8EbHMsPveI2Ugcc0Z9bsH+AF+DWILqH2+kYKYpuxjK4kwDBYzvmdbDROUvVvfVyRggx5JhX4oUg0AzLkUDaBMfwrkiiQKpCXRmyS9zbT8=
+	t=1759192333; cv=none; b=rd/xMmy2MAMt4t6aOiMS5SKLcayts7AUIvKqU/8xmrVXSqh6UUxvV5yd85LrmcCyMGRyk4iDJ9BiPSwwPSolSkAws7gbGNcw84c+OrVm9i1hmKXT30gI9a+ssf30u1/+KBwtZBW6GvvS2EdSRTIwwfbMEwLwai7FhT+d/zT83hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759192142; c=relaxed/simple;
-	bh=/K1NH2BBDWmQRvUSdG1cX2fwrdzzEIOzQ66NTsUv22Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2dwcgsjs9RbLiCYmePjkeNv36fo58KfFknBHDwrUzNhNF5K4PCArD35yQmwwSTfv3cwmnxjLoqx1InkG1Du1q5K9nKswa4rrR3YkM4Wti7WKiSOLcqkpyfSRbt8sEODpLVBR2u7deChOStFB8Bg8hxTt7HIvtGAdR9SpLmlpCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ADk3YYoI; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759192141; x=1790728141;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/K1NH2BBDWmQRvUSdG1cX2fwrdzzEIOzQ66NTsUv22Q=;
-  b=ADk3YYoIAxBnRYv5sjuIxrAexBPGcAitQdsZ3TyXwp2cPQO333xitwUl
-   07e10/V2QtnjmnXIxEVahkrNJw6U62oRgKeoFzZf6sYWWH6BUhCr0cFlg
-   Q5bx7Mk/zs/9yozFyLudZCERWgZW5n0Rj3xU9mr9wQj2pSEZIi75oRXD9
-   K1kvlq9mp1DCCP03NOE1BWL7fXo9QZ+lMLldGqDgzwzLrSyK8fC5qIECm
-   HK0cli96SPT5SpW97MW5mA81x64uS5hbfddOzS7UGMKVWwDLNxdtqr/kD
-   eJNiDpY0Dqf2AOVvFAyhkJPaEMB7B8I22cawtOm8oJoyy7hY/RNoxJmfL
-   Q==;
-X-CSE-ConnectionGUID: kdYvd1/rTAWXtACCLo+T9w==
-X-CSE-MsgGUID: wOigqN1eTv6Ag8PdTU6S8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61485508"
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="61485508"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 17:28:59 -0700
-X-CSE-ConnectionGUID: adU5OzbRSOmzBlhm3uNAPQ==
-X-CSE-MsgGUID: eIpb4bnERPizhWZeGOkPqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="178410347"
-Received: from tslove-mobl4.amr.corp.intel.com (HELO [10.125.109.142]) ([10.125.109.142])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 17:28:58 -0700
-Message-ID: <43ca8a5c-9da5-4d36-a51a-f551174088e9@intel.com>
-Date: Mon, 29 Sep 2025 17:28:57 -0700
+	s=arc-20240116; t=1759192333; c=relaxed/simple;
+	bh=+tLNx+ty8nM9Mq69rXCXs1LMIASD60kRA1Yv1OyNcjw=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=phadzV6P3SDd2ZVvGCUhSU8ZLaYyrX76PE9DldEoKZ2rGp16YN0tItbWX2dXcG8oP+lmQ3yzBUimD/7TeLC4HR+6qgoJF4IfXuQMGbn8xG9CY0eCyVT1GyRWFEUmyZB/rqBK/eyV1PVajml64gisXPK633a5lHCGmrXbvhUe9Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=ecE4NoUU; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=hQOQ4L7I2CcAyJkBWqUO9MjfM4Y5ef3z7CcrWZV4qR0=; b=ecE4NoUUt4hfIN6D3D+NGrSHXU
+	kyLuDVf4dePDF+RsQOb+41YaKTZvOfJRZ5dR/HCYzXRW3/TJUNe9Ges6YqnvDmymCdgqTo7BL3cr7
+	g0Af1eIrfv87gVWt9IO9uZ4qEYo7kvoiQRxLQ8AN89odjA7vHHgQ6Yhs8BCEW0Pkx9t0=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:43862 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1v3OHo-0000nE-V4; Mon, 29 Sep 2025 20:32:09 -0400
+Date: Mon, 29 Sep 2025 20:32:08 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: gregkh@linuxfoundation.org, fvallee@eukrea.fr,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>
+Message-Id: <20250929203208.507952a1d6454a94427dee50@hugovil.com>
+In-Reply-To: <a7fe7f1e-df3f-4823-a19c-b581e8bb0eea@kernel.org>
+References: <20250924153740.806444-1-hugo@hugovil.com>
+	<20250924153740.806444-7-hugo@hugovil.com>
+	<a7fe7f1e-df3f-4823-a19c-b581e8bb0eea@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 24/25] CXL/PCI: Enable CXL protocol errors during CXL
- Port probe
-To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250925223440.3539069-1-terry.bowman@amd.com>
- <20250925223440.3539069-25-terry.bowman@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250925223440.3539069-25-terry.bowman@amd.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -2.3 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH 06/15] serial: sc16is7xx: use dev_err_probe() instead of
+ dev_err()
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
+Hi Jiri,
 
+On Mon, 29 Sep 2025 08:10:17 +0200
+Jiri Slaby <jirislaby@kernel.org> wrote:
 
-On 9/25/25 3:34 PM, Terry Bowman wrote:
-> CXL protocol errors are not enabled for all CXL devices after boot. These
-> must be enabled inorder to process CXL protocol errors.
+> On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
+> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > 
+> > This simplifies code and standardizes the error output.
+> > 
+> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > ---
+> >   drivers/tty/serial/sc16is7xx.c | 7 +++----
+> >   1 file changed, 3 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+> > index 7af09535a1563..4384804a4e228 100644
+> > --- a/drivers/tty/serial/sc16is7xx.c
+> > +++ b/drivers/tty/serial/sc16is7xx.c
+> > @@ -1528,10 +1528,9 @@ int sc16is7xx_probe(struct device *dev, const struct sc16is7xx_devtype *devtype,
+> >   
+> >   	/* Alloc port structure */
+> >   	s = devm_kzalloc(dev, struct_size(s, p, devtype->nr_uart), GFP_KERNEL);
+> > -	if (!s) {
+> > -		dev_err(dev, "Error allocating port structure\n");
+> > -		return -ENOMEM;
+> > -	}
+> > +	if (!s)
+> > +		return dev_err_probe(dev, -ENOMEM,
+> > +				     "Error allocating port structure\n");
 > 
-> Introduce cxl_unmask_proto_interrupts() to call pci_aer_unmask_internal_errors().
-> pci_aer_unmask_internal_errors() expects the pdev->aer_cap is initialized.
-> But, dev->aer_cap is not initialized for CXL Upstream Switch Ports and CXL
-> Downstream Switch Ports. Initialize the dev->aer_cap if necessary. Enable AER
-> correctable internal errors and uncorrectable internal errors for all CXL
-> devices.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> This does not work as you'd expect:
+>          case -ENOMEM:
+>                  /* Don't print anything on -ENOMEM, there's already 
+> enough output */
+>                  break;
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> 
-> ---
-> Changes in v11->v12:
-> - None
-> 
-> Changes in v10->v11:
-> - Added check for valid PCI devices in is_cxl_error() (Terry)
-> - Removed check for RCiEP in cxl_handle_proto_err() and
->   cxl_report_error_detected() (Terry)
-> ---
->  drivers/cxl/core/ras.c | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-> index 45f92defca64..ea65001daba1 100644
-> --- a/drivers/cxl/core/ras.c
-> +++ b/drivers/cxl/core/ras.c
-> @@ -238,6 +238,21 @@ static inline void cxl_disable_rch_root_ints(struct cxl_dport *dport) { }
->  static inline void cxl_handle_rdport_errors(struct cxl_dev_state *cxlds) { }
->  #endif
->  
-> +static void cxl_unmask_proto_interrupts(struct device *dev)
-> +{
-> +	struct pci_dev *pdev __free(pci_dev_put) =
-> +		pci_dev_get(to_pci_dev(dev));
-> +
-> +	if (!pdev->aer_cap) {
-> +		pdev->aer_cap = pci_find_ext_capability(pdev,
-> +							PCI_EXT_CAP_ID_ERR);
-> +		if (!pdev->aer_cap)
-> +			return;
-> +	}
-> +
-> +	pci_aer_unmask_internal_errors(pdev);
-> +}
-> +
->  static void cxl_dport_map_ras(struct cxl_dport *dport)
->  {
->  	struct cxl_register_map *map = &dport->reg_map;
-> @@ -391,7 +406,10 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
->  
->  		cxl_dport_map_rch_aer(dport);
->  		cxl_disable_rch_root_ints(dport);
-> +		return;
->  	}
-> +
-> +	cxl_unmask_proto_interrupts(dport->dport_dev);
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
->  
-> @@ -402,8 +420,12 @@ static void cxl_uport_init_ras_reporting(struct cxl_port *port,
->  
->  	map->host = host;
->  	if (cxl_map_component_regs(map, &port->uport_regs,
-> -				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
-> +				   BIT(CXL_CM_CAP_CAP_ID_RAS))) {
->  		dev_dbg(&port->dev, "Failed to map RAS capability\n");
-> +		return;
-> +	}
-> +
-> +	cxl_unmask_proto_interrupts(port->uport_dev);
->  }
->  
->  void cxl_switch_port_init_ras(struct cxl_port *port)
-> @@ -440,6 +462,8 @@ void cxl_endpoint_port_init_ras(struct cxl_port *ep)
->  	}
->  
->  	cxl_dport_init_ras_reporting(parent_dport, cxlmd->cxlds->dev);
-> +
-> +	cxl_unmask_proto_interrupts(cxlmd->cxlds->dev);
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
->  
+Ok, I will simply remove the original dev_err() call.
 
+Hugo.
 
