@@ -1,248 +1,131 @@
-Return-Path: <linux-kernel+bounces-837881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BB3BADF75
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:47:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C402BADF84
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7D03C68C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:47:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D0532269B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E18308F16;
-	Tue, 30 Sep 2025 15:47:33 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514942FF16B;
+	Tue, 30 Sep 2025 15:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KODOBNdk"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C393043B3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B402F8BF3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759247252; cv=none; b=MVBESvYM26KTFyyHKEYP8eIS39RHMxM+T6wL7JiykAsezePZ4THBvGbqmCbuBnxsdGSavXbT61IJ+pPDnymJZPCdb5XNHIzh3Gw2au0gVq9YIXdiDNe5/7GHmnZnbhDnEZ6P6d+4mYF2rIFyRa14mBuBti9AaY4yDLPjiCh5SIM=
+	t=1759247309; cv=none; b=GNQkPh9r2gD9IOAoIZwxfIZuxA5bupixvoPuj2D/FYxZzzkFzE0lOT7Rk+fNXU1YbBlu2HGbxxIC8iMph0pplIgGlb57RV8VX7MIqLdOBu90p+JDwPRJp0Z8v2MvQaXB3MRkZsdaNpa35tJuGg6UN8gwZ9uHhMR4KPzoty7g5jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759247252; c=relaxed/simple;
-	bh=/GTRr+rLD7K2TzCWfU4DUzYHCm/dB5H1CMW4shlEIrA=;
+	s=arc-20240116; t=1759247309; c=relaxed/simple;
+	bh=5dk+SBRw24GnWlhj/fQ5DeJlOcYn8lBKeo22Opld+4A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HN0/sHKQjUzTN4fSP51F61Jin/+oi3mzp4b6DE6NRRQE3lGuj/VMCvFzpnh8ZNRTLY8tCNneES8ii8eCawd6S6CEVYYuweZ5ZePL1ZQcwP54BvwINz6i3hsaAl8FSUsVv6+xeJS1GDtI49iOqyosoVmiZgEh+KxP71bblLfvzrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54bc339aa07so48245e0c.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:47:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=o+9sw4DZRe0L8psLaRDADEEFirptx2+x+JEp/ZxW1M+a7imo9q9VFRP7AnablQWw9FOy7PfLjzJpHbUFobaAsf3u0qJFV6/uzO9AY3C3MinbLhY7EgckQtIr2UcNl2MIgFtTkHCAZkuN+dctYroMP1eKqVIqD4WebfwMdg8Knu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KODOBNdk; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-62fc14af3fbso8999545a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1759247305; x=1759852105; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BBG0QiSMVhr1SLCtRL7FqkE9Hmi4p6uP4U2GxU0hK9c=;
+        b=KODOBNdk9HdXXBKdIZyfRerUQkIBkdQR5Jqg8VXnmyy2YbIBZ1IF75z2lqMtILfC8I
+         RVFkcjBfwqn4ggUCkq4TmAxg0MxxJS44XGlDSo8A9f3Gg8lbWP9tceySUIdVxllN/M7P
+         1Rs1XgvyRbtCvPMXjZyBi5ZnbvpaqaaMZaeZQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759247249; x=1759852049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t1oYdI5DgHZdeROfFJCaPLP7qCG2FJdSJntNb3cbOMs=;
-        b=EV0WHD33H2kweOR5Eqt+iuJ8b8+flZiLyzhEe2ZawOMl2P6h3W8fU56hvT1iCYpRWE
-         Z39Mev48MXmb8tiq6fUjivOdCuwTHL7BMm8QrlUJTwue3a8JkLF0N0KpjFPoyhN6HmbR
-         KIn2aNItbnOrqf9yODutIpPqVv6F58kcujLMlZrv1khkZXut5VW1vL4Ac/32DnXP1zpO
-         rgzAHQ9uD5G+DZqbbHfMD9sCFX76L30Waf7QHgPbswFyRPN9hqur5Li8E6Jg/riFOs/d
-         Z4EBDvZJ67PQ1gx60Q7s0xTPtqQ+Wx9kbpqiGLZ4+vteynO2NC88BYOfIa3XBL5ymfRm
-         1GLA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0/6WkC7euoItVpURwXFH3HgjRVK85A9m5SUBhh947A2+m9eUelby31bkVsHSzIGZ3Y8iR9PRRSfvsMT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRuXbJDm62EobVdoKc4lLVrdxlQ6ubaN+0wiGYq/aKUEOgfB3W
-	rqKg7WqBP6QMQFscm4TofUaorU4deABmO1BdVWb57J3LGOD3L8gYcWc8jh4VYUqS
-X-Gm-Gg: ASbGncvU0jdUVVZMGbV4dRbMebJBVcY1ebaHI+qIubN5Cm3NwjUT4nF6rpSpdzRf7Jc
-	rKeI5XEQXzHPA/wRhMC+3rGDHy1dlfTDe/jftL2rDS9WmP4CX5F/3bHQJ6rk0KWEZBanWFR8NKr
-	OX9tQhotLLjuFbbkhPY75lN9il6wOFk0DMvDmfqBNQqOJZ0/P/BMgGJqJDdcuD9kh7LzVeV073B
-	WPfHYQ8NXcKPQEx1dYcSYxCeYdRMXjO8J0y+nUUsKtszWOUYww2KUD2TG8AUUDmLaqgLVYRORUs
-	ORZlo9c9AyKgn54hJTgoaUDuUqPzFnunq9eJt9yfcn6SllXXw34xDwKstsN8oNMOi5OjJ09hv/p
-	mFuCcfhkh3xfRlUI7WdRfXmGUBUUWS4rISaTz7R1hxibSyfA3jFoofNmD4HzKvClc4ZLFdqgY8O
-	1fhT/+hb0tcfY/w5w+WL/hFoRRYdFtz8oJdA==
-X-Google-Smtp-Source: AGHT+IGTNjBT3egM83y2AEXGZQ+OcNjDYUplUa8RrdHrd7RnqLv+iEBKbzbYgJ81isxRyAyW/7eApg==
-X-Received: by 2002:a05:6122:913:b0:54c:da0:f734 with SMTP id 71dfb90a1353d-5522cf08950mr134683e0c.0.1759247249248;
-        Tue, 30 Sep 2025 08:47:29 -0700 (PDT)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54beddbc629sm2979054e0c.24.2025.09.30.08.47.28
+        d=1e100.net; s=20230601; t=1759247305; x=1759852105;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BBG0QiSMVhr1SLCtRL7FqkE9Hmi4p6uP4U2GxU0hK9c=;
+        b=gvBLct46/H4Gje/p9jyBvq3/3uh/LuybVmvwsd9DqSDu9rm9Z/PtUDOgpLQvp/Z0kV
+         7GoaJjaLxy9B2dJOS+JiU9hyl8w9SjnEOvZsIcBYO0DJO5e+nhX1ZwCKSSw8shyu/y0x
+         iWOljfjEmYTsm3J9ufxY97ovqWNrL4KvY16JPyBc2Z4AnJa/tHa8M4cnkOkJcSsnI0+X
+         qpOVkdaM7/psUTclueiaGpZOLRCnPYkeJg4rEvBD8IlPZJVVaEqRi0DBMYporleyTwzz
+         I+WajXKjV7yHdpWXcnM9wsDbX7cAEVKWG63sq4w5wCWK3Ab1EikUBroTc/o+LkgZqtt+
+         mxHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXG4/qxcIV6h/F8z8aHp7kwzr3QFPE+GetEF6cXITUubMGmFObTJkx079IZUFtV+UxVViEep+VFlzxcseM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTJLgeSWosjFny9xShfmWCsWXV6RXZwVNaPUI4LjqCjg8NTsg4
+	2JkGo1kYlgHJmEEFywuIDZSU6zfg4KlXQo2Z6ml+T7dLmU9UkPLZhVKe6VSuXEa/pQyI6b0obly
+	TIVC/Z4s4JQ==
+X-Gm-Gg: ASbGncsOO2XtTik27CEy3UR0utOcwuqRvL4Ok/anUH5lISvAVU7RC93gCYc8DU6CmMf
+	8DruS9QIkeLeWg2X8dPWs0Uwelk4I7sDbEc8Q4aasyrux8aiSNWJZlVsZImMuqJQXRXJgjaBIqy
+	0TEHt4CLfktocg0OdjEhAJkjLvvkvsK8HL9UI9IJFrBwutjJLRcg26RFgj5TQYkXohGBSBeWAH/
+	mMJVK8XQ+YL7jTEwgbEMnoKIxdfPd78QxsRKqlihdiNebtLbvtdei38cCK6lrm1A/5XT7h8mdcR
+	CggxUQDiE2gNFqEgzFpZE7+WRJDGm+3rTvtdLeR5wscxk6CSI3EjxK0FckqQw5umjrQ0waw9z1f
+	yS3MAPbpwBOT3BHx1WtuYxJxpKfHxj7wpPwG37Ex2HrEpzBJx7yp4hl7x3lFT4+vuDED+AOQi+/
+	SHN/rKEoKnJLaCSSA2wT1j
+X-Google-Smtp-Source: AGHT+IHSm8OXarjQhWz/U4xI/8nY/e0deej1scsKlj/3wWnaf6l3X2tChMzUPM8ep8i+YthWbOT2sw==
+X-Received: by 2002:a05:6402:3596:b0:62f:4be5:2286 with SMTP id 4fb4d7f45d1cf-63678ba6920mr466173a12.8.1759247305595;
+        Tue, 30 Sep 2025 08:48:25 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3629886sm10005716a12.2.2025.09.30.08.48.24
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 08:47:28 -0700 (PDT)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54a81bf36ebso942228e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:47:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVM/aXy6Fxf3aW2Xwok/djpPx6INIqFICEGeR0TbCAZHiyYRF+IAtu2U0e6N5WkoxIa0FVraoumh/leP78=@vger.kernel.org
-X-Received: by 2002:a05:6122:d98:b0:538:d49b:719 with SMTP id
- 71dfb90a1353d-5522d1b261emr65053e0c.1.1759247247997; Tue, 30 Sep 2025
- 08:47:27 -0700 (PDT)
+        Tue, 30 Sep 2025 08:48:24 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-634bc2d6137so8683311a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:48:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXXSlhoBCwqDK1Vo97CWv4HmBbIBX1OBK5KwwhoNxR/X8sGMF9bq7H5DBwMXZcImDI1UwEWLEIHbAvFKSg=@vger.kernel.org
+X-Received: by 2002:a17:907:da1:b0:b2d:9286:506d with SMTP id
+ a640c23a62f3a-b46e612bed0mr11449766b.38.1759247304449; Tue, 30 Sep 2025
+ 08:48:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com> <20250924134228.1663-3-ilpo.jarvinen@linux.intel.com>
-In-Reply-To: <20250924134228.1663-3-ilpo.jarvinen@linux.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Sep 2025 17:47:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVtVzcL3AX0uetNhKr-gLij37Ww+fcWXxnYpO3xRAOthA@mail.gmail.com>
-X-Gm-Features: AS18NWCo0u0uKjaP0aHUnOkHmV_Iy_nS2MkwIx0vpZfnx2vg_M_a1UQOALbe6hg
-Message-ID: <CAMuHMdVtVzcL3AX0uetNhKr-gLij37Ww+fcWXxnYpO3xRAOthA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PCI: Resources outside their window must set IORESOURCE_UNSET
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <6edbd0e6dc79902981bf9a34e8d41128@paul-moore.com>
+In-Reply-To: <6edbd0e6dc79902981bf9a34e8d41128@paul-moore.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 30 Sep 2025 08:48:07 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgfeAjTNomdTU3gx308O+k5+3STqwBMSqrM7=D8CyEydQ@mail.gmail.com>
+X-Gm-Features: AS18NWDnegEfxl0-IfjBztjUvXWxvekoliLaNtqKY6s9U9XtFR6zj4hxzgx-h1A
+Message-ID: <CAHk-=wgfeAjTNomdTU3gx308O+k5+3STqwBMSqrM7=D8CyEydQ@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250926
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ilpo,
-
-On Fri, 26 Sept 2025 at 04:40, Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
-> PNP resources are checked for conflicts with the other resource in the
-> system by quirk_system_pci_resources() that walks through all PCI
-> resources. quirk_system_pci_resources() correctly filters out resource
-> with IORESOURCE_UNSET.
+On Fri, 26 Sept 2025 at 20:07, Paul Moore <paul@paul-moore.com> wrote:
 >
-> Resources that do not reside within their bridge window, however, are
-> not properly initialized with IORESOURCE_UNSET resulting in bogus
-> conflicts detected in quirk_system_pci_resources():
+> - Remove our use of get_zeroed_page() in sel_read_bool()
 >
-> pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0x1fffffff 64bit pref]
-> pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0xdfffffff 64bit pref]: contai=
-ns BAR 2 for 7 VFs
-> ...
-> pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x1ffffffff 64bit pref]
-> pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x3dffffffff 64bit pref]: cont=
-ains BAR 2 for 31 VFs
-> ...
-> pnp 00:04: disabling [mem 0xfc000000-0xfc00ffff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xc0000000-0xcfffffff] because it overlaps 0000=
-:00:02.0 BAR 9 [mem 0x00000000-0xdfffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xfedc0000-0xfedc7fff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xfeda0000-0xfeda0fff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xfeda1000-0xfeda1fff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xc0000000-0xcfffffff disabled] because it over=
-laps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xfed20000-0xfed7ffff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xfed90000-0xfed93fff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xfed45000-0xfed8ffff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> pnp 00:05: disabling [mem 0xfee00000-0xfeefffff] because it overlaps 0000=
-:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+>   Update sel_read_bool() to use a four byte stack buffer instead of a
+>   memory page fetched via get_zeroed_page(), and fix a memory in the
+>   process.
 >
-> Mark resources that are not contained within their bridge window with
-> IORESOURCE_UNSET in __pci_read_base() which resolves the false
-> positives for the overlap check in quirk_system_pci_resources().
->
-> Fixes: f7834c092c42 ("PNP: Don't check for overlaps with unassigned PCI B=
-ARs")
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+>   Needless to say we should have done this a long time ago, but it was
+>   in a very old chunk of code that "just worked" and I don't think
+>   anyone had taken a real look at it in many years.
 
-Thanks for your patch, which is now commit 06b77d5647a4d6a7 ("PCI:
-Mark resources IORESOURCE_UNSET when outside bridge windows") in
-linux-next/master next-20250929 pci/next
+Lol.
 
-This replaces the actual resources by their sizes in the boot log on
-e.g. on R-Car M2-W:
+... and when I looked at this, I went "scnprintf for a 4-byte buffer?"
 
-     pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
-     pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff
--> 0x00ee080000
-     pci-rcar-gen2 ee090000.pci: PCI: revision 11
-     pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
-     pci_bus 0000:00: root bus resource [bus 00]
-     pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
-     pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
-PCI endpoint
-    -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
-    -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
-    +pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
-    +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
-     pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
-PCI endpoint
-    -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
-    +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
-     pci 0000:00:01.0: supports D1 D2
-     pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
-     pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
-PCI endpoint
-    -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
-    +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
-     pci 0000:00:02.0: supports D1 D2
-     pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
-     PCI: bus0: Fast back to back transfers disabled
-     pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
-     pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
-     pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
+It uses
 
-Is that intentional?
+        len = scnprintf(buffer, sizeof(buffer), "%d %d", ..
 
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -205,6 +205,26 @@ static void __pci_size_rom(struct pci_dev *dev, unsi=
-gned int pos, u32 *sizes)
->         __pci_size_bars(dev, 1, pos, sizes, true);
->  }
->
-> +static struct resource *pbus_select_window_for_res_addr(
-> +                                       const struct pci_bus *bus,
-> +                                       const struct resource *res)
-> +{
-> +       unsigned long type =3D res->flags & IORESOURCE_TYPE_BITS;
-> +       struct resource *r;
-> +
-> +       pci_bus_for_each_resource(bus, r) {
-> +               if (!r || r =3D=3D &ioport_resource || r =3D=3D &iomem_re=
-source)
-> +                       continue;
-> +
-> +               if ((r->flags & IORESOURCE_TYPE_BITS) !=3D type)
-> +                       continue;
-> +
-> +               if (resource_contains(r, res))
-> +                       return r;
-> +       }
-> +       return NULL;
-> +}
-> +
->  /**
->   * __pci_read_base - Read a PCI BAR
->   * @dev: the PCI device
-> @@ -329,6 +349,18 @@ int __pci_read_base(struct pci_dev *dev, enum pci_ba=
-r_type type,
->                          res_name, (unsigned long long)region.start);
->         }
->
-> +       if (!(res->flags & IORESOURCE_UNSET)) {
-> +               struct resource *b_res;
-> +
-> +               b_res =3D pbus_select_window_for_res_addr(dev->bus, res);
-> +               if (!b_res ||
-> +                   b_res->flags & (IORESOURCE_UNSET | IORESOURCE_DISABLE=
-D)) {
-> +                       pci_dbg(dev, "%s %pR: no initial claim (no window=
-)\n",
-> +                               res_name, res);
-> +                       res->flags |=3D IORESOURCE_UNSET;
-> +               }
-> +       }
-> +
->         goto out;
->
->
+and I went "printing two numbers and just four bytes" before I noticed
+that they are just booleans and so 'len' always is just 3.
 
-Gr{oetje,eeting}s,
+It literally could have done
 
-                        Geert
+        char buffer[] = { '0' + !a, ' ', '0' + !!b, 0 };
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+instead, and I guess a compiler could do that transformation in a perfect world.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+But this isn't exactly performance-crticial, so nobody cares.
+
+                Linus
 
