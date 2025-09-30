@@ -1,166 +1,207 @@
-Return-Path: <linux-kernel+bounces-837036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87066BAB227
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:12:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B996EBAB233
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046A31923D78
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66367177441
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA508227BA4;
-	Tue, 30 Sep 2025 03:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63166226D17;
+	Tue, 30 Sep 2025 03:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/w4ZiF5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W+yRXQVa"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6C1194A44;
-	Tue, 30 Sep 2025 03:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4299417BB21
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759201936; cv=none; b=d3z5RHN3PSpZU185sf2pISXm+Ax5IyIIHmLr3Wb9dBe40SIIGn4IZNw/Or42Oz2CpANREbDUFY4Bor05wFe0xgHQJwM9JbKkNlxVuqc+2aUcu1ubEKk8CGJ7Z4kjuCSfT9pqidtrAWwVNI+lfG7Lp3HGZBTRf9gVhjuXzZ1tXdA=
+	t=1759202079; cv=none; b=usTjAQdNvLox1qrBGM/W0wWjvD5sc8Zmpu9srZxA3y/ru3ZsvDJHcaf3lDgjNRyNVO6fuRslrYCp5+CRYZSedZIX66aAsj5fxTQIZqeekcFkI9VWCzG4QXMnvdLTawZDb+1NK+tkfV126cFlk6gUWHA5AH4AX8c2hiDk4MEEaWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759201936; c=relaxed/simple;
-	bh=NGG9DeZK47EVyEsf6Apy1O10y8NknK2/yC/JKs3evuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kIAQSBEevNoK4aGAzf/IFVSOXnYrGMU0njJUDdFm+8Jh+TV+Kf7peMaQz9GH9niS+9GllU8jmBpFOdKfzUYVxnR5fXLnqKJxpuHAU/AOPajITZEi9aVJvHjSbRX1yBUZEes8lqTQrT+XAtufT5OYIU2cuoboRrk3C+A+S0mxNk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/w4ZiF5; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759201934; x=1790737934;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NGG9DeZK47EVyEsf6Apy1O10y8NknK2/yC/JKs3evuM=;
-  b=N/w4ZiF54Ta9OXhLxakdKskA1BFUQZl6f/gw9JPPekXrIFHzSeRx6IYn
-   WtZduByRkTy/ojUoWIVNsbgIjhZcoPgyT+L2Zq1T8Le1Gd3OedF+eWDFd
-   +se9LatChqgiNTDCQoPnTeFgQF/aI/I6pngP16FDUMfSdxw/zdBAy9U1b
-   iB/OTTg/fRfr/dWbZV60oS8mRO1lgp+vw/osGgFumdUMMtjullnqibVGt
-   MeC0qi6pXpaiuNP+LHv8+2/NI3Pdk7sbikivevx+msp7UvBg0ec+P76nP
-   r9hOt3mGeHG5TX4NCV6flLl0EQ5Uz1Gj1CVQGy1cxTgTze4uScZRmUvFs
-   Q==;
-X-CSE-ConnectionGUID: 8wbyUrYmR6WPnjUvUnJn8Q==
-X-CSE-MsgGUID: AkPbs2HTRUSDbPA9gXCunw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65270236"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65270236"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 20:12:13 -0700
-X-CSE-ConnectionGUID: z1w8pF8rQY66BjOhXdgEuA==
-X-CSE-MsgGUID: OJCA+ymBQmipRXP1dfzm3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
-   d="scan'208";a="179169815"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 20:12:09 -0700
-Message-ID: <9413e707-35d2-4c9a-9058-d14112ebb2cc@linux.intel.com>
-Date: Tue, 30 Sep 2025 11:12:07 +0800
+	s=arc-20240116; t=1759202079; c=relaxed/simple;
+	bh=1rGZa6T+nKU9H+9k5FkFiJZWT4Z/x2RL52Cr/CliJfY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AUodN3NmVSfbLL2tpyfLVESwyzjvhrUYfiMrQ8eTMuxDUM6jw3cCai0FkQ9CeeuislaYDXUDi55DMrFZS97sOTRF1f00lsuCRE6D7AQdU2cIoydK5fIVOwq520K81V9H0hFUxAeHQw350AljTKfR5txVeNNruQFI0o/hDi0KpSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W+yRXQVa; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-267f0fe72a1so42139745ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:14:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759202072; x=1759806872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=psH8ce2EGDVOVWJJv98yedDgFcZ/vr9lSF0MkEmVn80=;
+        b=W+yRXQVaDkhKQ5BuT6lwnqRoUPGt4O6Lo4xKPkJ1rZNhqUN1+Ri27HkQV3ljwfzM4B
+         a+wKxBK8d0ITarxYz3gjluYwYJjeyEtBPKcHsGldtZ7+GVo3Q0/IQc0j8mOrdWWne3an
+         Hme8g4YBqG6NOoBAekco1aqbMl6QghORhpyvQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759202072; x=1759806872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=psH8ce2EGDVOVWJJv98yedDgFcZ/vr9lSF0MkEmVn80=;
+        b=gdA2jQ9QYOQYBdveg4AjS7wgi0ToCKMHYtvCW82zS2439tZzJQ7S+xJy0t7LZpfDz4
+         dGdB0Lg5sbeS2+hrxGhZz5O5LoPtcpaSEWrmTseXkNRxin/TbARUKCNrgGgbwjO29/9Q
+         64QEEuDr3cPs7JrttBNFssRsWzrdcoQLa9cb8wHqqdKmVsC6O1k4/SrwlWBX0860kqmg
+         V7GaR1f0xtox4Y98/A+sqjMwrri7lSN7QySnnM63PUZIuNOqP6A+2jlgElWmGewzy3Fg
+         6ZLWFQDPJh4Xx8ioABBhr29ryrRcHOYVsda8w9t5VLiailx+lIg1kQ7Amebgfn1U/lge
+         ikkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZANGukbxe+pVJDuj9WGsMZDN6GOsmJPQ9JE2cHRRVk85l6XGiNiEq+eU2NFjy+GjKG7dnH/srSnU8kPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIiqB4Z4rl8/UUmk83YjnS+C9EI6rqFD0TLu2sLRJWUIQam6E+
+	okqD+GMHoyKbT/ApjY27SIbRVeayHRviCHjcPPl2BhmyWtM2OXtfGQEHcRHH/JfQ2xrisUGYTiC
+	EpDk=
+X-Gm-Gg: ASbGncspQPQVWUrYVvR6y3ROFlPO8DvK9XLBEVbAWOuBYpCOMac1YAGfBtla7rJlHln
+	GuvwUDICG1L0stx+CN5EGj3odYX/b0+sgQ8o4k2wos2nSbh81k62KK5nzgXPmr9OnDnbL56ALa/
+	BT/z6Xr0cJMPIPo7Rf18ybJIMaai1oqF8MOmNACXbmaK49SKe4Vh8V8F48mlTgG+2u5eeIyDPCB
+	Fd3vo+pwClY/GIH1jw26/CJc7G8YdW4aVgChRQvVcX7fOJ9fHw082Mzc7WOC5iKtf960I6g3Wq2
+	kO9cyDuRVpmByRZfFA0qjwpMIhMIq5v0RvYQpEtOdPGLysR/aPMTQBrWyOqma7/q3WwaYko0tg0
+	W1/lvkFRF9YnwUP4gEmuIs7gv7dR5mRKc9Bx/B0HIiEShLGcFYNyoEzcL/tqIPrHizIPbtf6vkX
+	1I9s2n/qoKALksyk6thteqHBqh
+X-Google-Smtp-Source: AGHT+IFCeBktQ7Ua5TPG8fulEURIMTYS+Mosv2WeqghQG/haXaKXkuob8fE0Ik2B7fZF3WcPIt5nbQ==
+X-Received: by 2002:a17:902:f68e:b0:246:4077:4563 with SMTP id d9443c01a7336-27ed4a2d5c5mr219476385ad.34.1759202071674;
+        Mon, 29 Sep 2025 20:14:31 -0700 (PDT)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com. [209.85.215.174])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3383870ab17sm2825213a91.11.2025.09.29.20.14.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 20:14:29 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b57f08e88bcso3040094a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:14:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX6DKaU0NTg9DmK4E/qX/w50XToqS9R1wlT0tqM8Mwq4QnIJxHEA3hVkuy/k47/BCMgx/kAVRUPB2+0t1w=@vger.kernel.org
+X-Received: by 2002:a17:903:1209:b0:27c:56af:88ea with SMTP id
+ d9443c01a7336-27ed4a60a90mr164034935ad.60.1759202068865; Mon, 29 Sep 2025
+ 20:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] perf: Reveal PMU type in fdinfo
-To: Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org
-Cc: Ian Rogers <irogers@google.com>, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, james.clark@linaro.org,
- howardchu95@gmail.com, weilin.wang@intel.com,
- linux-perf-users@vger.kernel.org
-References: <20250603181634.1362626-1-ctshao@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250603181634.1362626-1-ctshao@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250929142455.24883-1-clamor95@gmail.com> <20250929142455.24883-3-clamor95@gmail.com>
+In-Reply-To: <20250929142455.24883-3-clamor95@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 29 Sep 2025 20:14:17 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WH5rsQR0vnsdZqfA-K-4AWSyOOfbe3g1H7pYCG0AigZw@mail.gmail.com>
+X-Gm-Features: AS18NWAj5Q6YXwI8UEKn83gnNL36khKZ6enBt8j4y4L77Jpu4EeJviWpKmgJt1I
+Message-ID: <CAD=FV=WH5rsQR0vnsdZqfA-K-4AWSyOOfbe3g1H7pYCG0AigZw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/8] gpu/drm: panel: add support for LG LD070WX3-SL01
+ MIPI DSI panel
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-On 6/4/2025 2:15 AM, Chun-Tse Shao wrote:
-> It gives useful info on knowing which PMUs are reserved by this process.
-> Also add config which would be useful.
-> Testing cycles:
+On Mon, Sep 29, 2025 at 7:25=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmail.co=
+m> wrote:
 >
->   $ ./perf stat -e cycles &
->   $ cat /proc/`pidof perf`/fdinfo/3
->   pos:    0
->   flags:  02000002
->   mnt_id: 16
->   ino:    3081
->   perf_event_attr.type:   0
->   perf_event_attr.config: 0
->
-> Testing L1-dcache-load-misses:
->
->   $ ./perf stat -e L1-dcache-load-misses &
->   $ cat /proc/`pidof perf`/fdinfo/3
->   pos:    0
->   flags:  02000002
->   mnt_id: 16
->   ino:    1072
->   perf_event_attr.type:   3
->   perf_event_attr.config: 65536
->
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> ---
-> v4:
->   Removed the first patch in v3 since it is merged.
->   Retested to make sure the patch still work.
->
-> v3: lore.kernel.org/20241106003007.2112584-2-ctshao@google.com
->
->  kernel/events/core.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 95e703891b24..bad563692d63 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -56,6 +56,7 @@
->  #include <linux/buildid.h>
->  #include <linux/task_work.h>
->  #include <linux/percpu-rwsem.h>
-> +#include <linux/seq_file.h>
->
->  #include "internal.h"
->
-> @@ -7077,6 +7078,14 @@ static int perf_fasync(int fd, struct file *filp, int on)
->  	return 0;
->  }
->
-> +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
+> +static int lg_ld070wx3_prepare(struct drm_panel *panel)
 > +{
-> +	struct perf_event *event = f->private_data;
+> +       struct lg_ld070wx3 *priv =3D to_lg_ld070wx3(panel);
+> +       struct mipi_dsi_multi_context ctx =3D { .dsi =3D priv->dsi };
+> +       struct device *dev =3D panel->dev;
+> +       int ret;
 > +
-> +	seq_printf(m, "perf_event_attr.type:\t%u\n", event->orig_type);
-> +	seq_printf(m, "perf_event_attr.config:\t%llu\n", (unsigned long long)event->attr.config);
-
-Could we print the config field with hexadecimal format? It makes the event
-is more easily recognized. Thanks.
-
-
-> +}
+> +       ret =3D regulator_bulk_enable(ARRAY_SIZE(priv->supplies), priv->s=
+upplies);
+> +       if (ret < 0) {
+> +               dev_err(dev, "failed to enable power supplies: %d\n", ret=
+);
+> +               return ret;
+> +       }
 > +
->  static const struct file_operations perf_fops = {
->  	.release		= perf_release,
->  	.read			= perf_read,
-> @@ -7085,6 +7094,7 @@ static const struct file_operations perf_fops = {
->  	.compat_ioctl		= perf_compat_ioctl,
->  	.mmap			= perf_mmap,
->  	.fasync			= perf_fasync,
-> +	.show_fdinfo		= perf_show_fdinfo,
->  };
->
->  /*
-> --
-> 2.49.0.1204.g71687c7c1d-goog
->
->
+> +       /*
+> +        * According to spec delay between enabling supply is 0,
+> +        * for regulators to reach required voltage ~5ms needed.
+> +        * MIPI interface signal for setup requires additional
+> +        * 110ms which in total results in 115ms.
+> +        */
+> +       mdelay(115);
+> +
+> +       mipi_dsi_dcs_soft_reset_multi(&ctx);
+> +       mipi_dsi_msleep(&ctx, 20);
+> +
+> +       /* Differential input impedance selection */
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xae, 0x0b);
+> +
+> +       /* Enter test mode 1 and 2*/
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xee, 0xea);
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xef, 0x5f);
+> +
+> +       /* Increased MIPI CLK driving ability */
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xf2, 0x68);
+> +
+> +       /* Exit test mode 1 and 2 */
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xee, 0x00);
+> +       mipi_dsi_dcs_write_seq_multi(&ctx, 0xef, 0x00);
+> +
+> +       return 0;
+
+Shouldn't this return the accumulated error?
+
+
+> +static int lg_ld070wx3_unprepare(struct drm_panel *panel)
+> +{
+> +       struct lg_ld070wx3 *priv =3D to_lg_ld070wx3(panel);
+> +       struct mipi_dsi_multi_context ctx =3D { .dsi =3D priv->dsi };
+> +
+> +       mipi_dsi_dcs_enter_sleep_mode_multi(&ctx);
+> +
+
+Maybe add some comment about ignoring the accumulated error in the
+context and still doing the sleeps?
+
+
+> +       msleep(50);
+> +
+> +       regulator_bulk_disable(ARRAY_SIZE(priv->supplies), priv->supplies=
+);
+> +
+> +       /* power supply must be off for at least 1s after panel disable *=
+/
+> +       msleep(1000);
+
+Presumably it would be better to keep track of the time you turned it
+off and then make sure you don't turn it on again before that time?
+Otherwise you've got a pretty wasteful delay here.
+
+
+> +static int lg_ld070wx3_probe(struct mipi_dsi_device *dsi)
+> +{
+> +       struct device *dev =3D &dsi->dev;
+> +       struct lg_ld070wx3 *priv;
+> +       int ret;
+> +
+> +       priv =3D devm_drm_panel_alloc(dev, struct lg_ld070wx3, panel,
+> +                                   &lg_ld070wx3_panel_funcs,
+> +                                   DRM_MODE_CONNECTOR_DSI);
+> +       if (IS_ERR(priv))
+> +               return PTR_ERR(priv);
+> +
+> +       priv->supplies[0].supply =3D "vcc";
+> +       priv->supplies[1].supply =3D "vdd";
+> +
+> +       ret =3D devm_regulator_bulk_get(dev, ARRAY_SIZE(priv->supplies), =
+priv->supplies);
+> +       if (ret < 0)
+> +               return dev_err_probe(dev, ret, "failed to get regulators\=
+n");
+
+Better to use devm_regulator_bulk_get_const() so you don't need to
+manually init the supplies?
 
