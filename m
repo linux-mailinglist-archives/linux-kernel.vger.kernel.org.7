@@ -1,175 +1,172 @@
-Return-Path: <linux-kernel+bounces-837308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F59BABEC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:57:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8028DBABF0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B001926185
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:57:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B763B2838
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5469A2DBF73;
-	Tue, 30 Sep 2025 07:56:54 +0000 (UTC)
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023115.outbound.protection.outlook.com [52.101.127.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94092D73A9;
+	Tue, 30 Sep 2025 07:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dklnDDVg"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2428A2C0F87;
-	Tue, 30 Sep 2025 07:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759219013; cv=fail; b=U3+5sO4FxCPLDbuGTI6scpEoBvxAv3lvhMoMKuMxGmmjX6kxF9Krl8EP12IapxG07W1zjoT65y8JrMRaLrnNKmzi/UOPYwXBONnpO+6qf1v9WM7N6pqDMYYdVHGMW3e7Qai60M7+E2ClYu0IK5TtXXJT/zbKfvwLIelc1zeBNtA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759219013; c=relaxed/simple;
-	bh=jb9rGcRxrG2ji4xfPO/13t/Wh9mDd1HK2S14JYqCGe4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qTSf6ODiqsve3OhJSQPVls2xCk0qKoDRn5xJUHsF45/cN5Mx8Dys85PESzftL5zrTp9RxX9xd3MWxAR9NKxZqe7ZQae+rNjTxAvrwBNHBOw3qDY2aKoOEMDQJjFmvKr93r2gxfR5sR4Gg3Meakc3bbqOKniQj3vb4k7gc4gTsC8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oqqZNZlAAOlGW8Wmz837uXBETMogrDadLkOFy9M8A5g2Oc2TxAF7nl1mYFxsYFdhHSm5hkePIkjDnCul/R9/ZYw23SRCjBaVpiT3Nz4TDCjffQNWYawz+YCmXRUhmCOVQdunR0HiII/bd3wJW/7qVL/+TI8JmKdoCgc25nRzuDBkss9I6zATAAT/6BBeDbDoI0MhWhzFEU2wj2T9sZgyqE5Xm92IPhyuIKqDYvytcqRv25s+4FL9kkGJr3ThGrK5FqqNQG+nnpYmp8N/tujfJWOBP435a5gtmt47O+3J7CDhXZWPakrWC9LOrlBAtGeMCAc/QgWkctGvNSDtBwlVaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YkOwIawL+erpluYuJ2Z+HFD22cqsVNx8iFKFXLqrnA8=;
- b=r+9MfI/zAxK3H1DEf27whlLDMj3wiR36xaQtTWb4YdnNfbfWO/D+9VhH0QBJ3KZTGMSb4L4Kn1v8cBYmVFk7dXpulcUNoOfwE01OiuoNqGrvtA36I+ErY0xMxrCpIA5E+VF9wNecuUMc8qo6S5yt1qV7HfnS/5kWTJM+SsqvKENDnP0FjRv5wwQvmvc/vr8NI9EbidlU4i4oD11oNby+eiR6bBra5qzRx1WiCfEhSX7ABdLJyPjQTGc41ntGzDz8glhVbpNGnc25fcAJN1Rj6YRmffWx4T5jd0WYdUN9C9lIOlf59GiQDwB+6QCCixFgzst2yagsAgIxkExJFrVikQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=amd.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from OS3P286CA0058.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:200::16)
- by SG2PR06MB5216.apcprd06.prod.outlook.com (2603:1096:4:1d6::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.11; Tue, 30 Sep
- 2025 07:56:47 +0000
-Received: from OSA0EPF000000CA.apcprd02.prod.outlook.com
- (2603:1096:604:200:cafe::36) by OS3P286CA0058.outlook.office365.com
- (2603:1096:604:200::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Tue,
- 30 Sep 2025 07:56:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000CA.mail.protection.outlook.com (10.167.240.56) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Tue, 30 Sep 2025 07:56:47 +0000
-Received: from guoo-System-Product-Name.. (unknown [172.20.64.188])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 9F9084115DE5;
-	Tue, 30 Sep 2025 15:56:45 +0800 (CST)
-From: Jun Guo <jun.guo@cixtech.com>
-To: peter.chen@cixtech.com,
-	fugang.duan@cixtech.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	broonie@kernel.org
-Cc: linux-spi@vger.kernel.org,
-	michal.simek@amd.com,
-	cix-kernel-upstream@cixtech.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAD622B5AC
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759219130; cv=none; b=dKrALCrI2kDvFGWDCXHltXHJJensXstRIRahbduRVZng+ZAQaQx2MsVD0X0ENmVd+4DtKffF2m71QfcPeUtsdBVe3Iik3lEH6NEo3Yu7BK4pDR+nOV9ZYSVvRiJivj5mjmJVkFaci3coK047gCd0Z2SBTxZRistxDrVB4Qa8s+o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759219130; c=relaxed/simple;
+	bh=GW0+t7xjQhqLAlZvuCH2wFM1HzLxDXq+6ZhGCWe3SNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y251rgh4srlaJ0KwOjs2wgiKYFTv6lXEWINp9u+VZLjl/uUXAjjO/RWRLAV1hYBhSdwsK5+9UN1vSdsuaOEUUV4ud6SkEvvb7IHF2MOvkmLDuCDPmPO3ZfN7T/cK04DtmdxSbtgdtJrUKtAEZHp0IxEvaLujSmO9KXw4/1IAnSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dklnDDVg; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6366b7fd337so355746a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759219127; x=1759823927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tdLjLEy0U0fuaZSofLkGJRFfTbY7z9ZRmrdaFEYCljA=;
+        b=dklnDDVgYKA85Rr7+3/jwHGln3VPS0ttkTDCk27L66JX5qndCzYAXP6de+DxZz+9l5
+         QJShijegUtztNrDYHVfbCMjUAy1aT92iyC1/V6BW7s08QXu4xfspPl74LYsMGkk11MFH
+         +vxJxixnaXVpOfxl5dvrMSCoaKE5qO4ek6htQ5lT5zvxLuAlMMCQPajAP7fcqzPEgqHy
+         2ghC1WEuu8/tUp5TjsAN30IosSxh7JiskKjNWK6ERuG5fYrX2bDbI4ANWZ7jZO76HN1h
+         xYdLEFNCG07EEjsCwDrEU6YekH5AwAjmTADNfJSZhCd/LEOwnG/MMhqmCUefftGHOmBv
+         pArQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759219127; x=1759823927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tdLjLEy0U0fuaZSofLkGJRFfTbY7z9ZRmrdaFEYCljA=;
+        b=BiiXMICcUkIFN4fVS1Xuwf+Rz2u78D6vkfo5/MOnLD7HVl2SokAIgud1sp7r2Te7PC
+         K4mVxOTrJ2nNVMSPqiFZq8Mn8p1JfnTdj0XY8jVczc6fBctH84z+hpKUWqlD7J/J7QG0
+         cYrveugzfbPZwBjlQtHro2lxqYuoDx5KGye6Zzv9JIOTuqLALEzL/qvxiO8PAQWb4cpx
+         4LYtaSAfSgpFD0zQW0z2xCJeKLAMA1vCAF1+fYB74qEhIUBi7H7RQSkp9b9+TNaOTafr
+         udEWJJZ+9SPtA5N7+T1fFPluWE094mdesLlHx59X/Vx4Jg5qRg5wYXQrUQeXt5Xmos6/
+         c4nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSTqNpMDRd/7SycPKyeXZhbSDG1DjEe7Q2qKH/KaIoqZo1Wpkmn0qH8feYkqu9168FSQNmqtG8r6k+ig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyusgafCs2vwBd/RITPKZTsAR2tOFoqQPQ/rpTDsqaGiravC+hf
+	EM9/0EHH6CKcXSeLrtSYN+8OxXzx2YPvTWqT8QU2/H4bS1sdUcutjtgMjx0lN0N7
+X-Gm-Gg: ASbGncuAHBcgX/8qx5uledsAyRDC32EcmYONdwshgpWR8J7lJ+dZ381OmrJ63SSNntT
+	7hru6+JLhZbaAzHoZQitihzfhkh/v5T6VZ7FTdkT2Oe0QJgX5604VDVbfBADta46PLhINif7sxr
+	wRKK82VBUwvHmN9e0oopqsbDFZLSeD5LQige1QSx+igta3VwdQao1eiVocZRzB/xmgeqEUWy2VU
+	ojN+5y0w0hCaIdLAI/8MT4ESP+QPOdwEcc1WptgHm4bP2hzO3ZWZSMLdB4XsL9nS3o84rlMCfGF
+	jsX5qaEoz8PCCNB5EPBMSj6J8djSejVHAeEnNFtAeA2mk7Ii8n4t0FaE0ZF2YBE8ZlJBpvA6lnL
+	7X1l2PVRHvVa8tP+A2TgkwKbCJrTyg2KASNiCCebb+4I5j1goKbyY9UiEh/98V4roH/L0Rbyw7Q
+	6+a9mjwnhu2XOPmSx6oA/WOQ7c5/vYivRP77UlemRqRIHeqkIhMFrJBYvXdIwOPEtTO4+neUCvJ
+	1Kf
+X-Google-Smtp-Source: AGHT+IG74fN0DIkyOhjohxH9Y+ip3FELgnzPQxo8Ns4r1Man0mPD+YCE6s+wO1i6xseHx0QHtnzQkA==
+X-Received: by 2002:a17:906:f5a3:b0:b3e:e16a:8ce4 with SMTP id a640c23a62f3a-b3ee18913d0mr757795866b.3.1759219126556;
+        Tue, 30 Sep 2025 00:58:46 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (2001-1c00-570d-ee00-b818-b60f-e9a4-67a5.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:b818:b60f:e9a4:67a5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b37b3b46ba0sm905613366b.2.2025.09.30.00.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 00:58:46 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Gabriel Krisman Bertazi <gabriel@krisman.be>,
 	linux-kernel@vger.kernel.org,
-	Jun Guo <jun.guo@cixtech.com>
-Subject: [PATCH 3/3] arm64: dts: cix: add the fifo-width configuration field for cadence SPI
-Date: Tue, 30 Sep 2025 15:56:44 +0800
-Message-Id: <20250930075644.1665970-4-jun.guo@cixtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250930075644.1665970-1-jun.guo@cixtech.com>
-References: <20250930075644.1665970-1-jun.guo@cixtech.com>
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs updates for 6.18
+Date: Tue, 30 Sep 2025 09:57:38 +0200
+Message-ID: <20250930075738.731439-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=true
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000CA:EE_|SG2PR06MB5216:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 93c57463-9daa-49cc-d247-08ddfff6e7d2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jdvid7MOaEBwHuqbDSdr2dsZCPgXK1CtCnR/Dh0+JwJ65/GcP3aXtgoPKeiy?=
- =?us-ascii?Q?ohMYlYJr2jUsOOO/xw8NkNgOzNBv4msr5awOav13HL2tVQrt63PR7YQ+bgcZ?=
- =?us-ascii?Q?kcuuDICFNjiOETRnaBm+mN63yk6qC59n8qyplo0wrmchdNCIJhn7r8uccu/a?=
- =?us-ascii?Q?Pe/cwtijhP0rh1u4Fsdh5819zr6sK1vXm7jedt3MCAEXNlNY9+lUDWYuWIkQ?=
- =?us-ascii?Q?Gt1PA0VctvYHQ3LR0Bu+j/XYCyOXZFKGY9Umjk3qYi9RC8PE9xlpHcsSI4pE?=
- =?us-ascii?Q?OFd+WuqUQkHlzvzuzuHK/ntxg5Td9mAt6N9Ghl9+Oav6XHsChllIh7RqbOI/?=
- =?us-ascii?Q?4wC1QmPnMdMBKnqiR5DHedtZcsIlmk8T9XxS/4Y4UspoUQPmlX0seZt38Qe4?=
- =?us-ascii?Q?xP8qDFEWqomwzYTtve66gD0m3kJrayYq0gT59Xjuek0dbUQxRWuE01hOAbCz?=
- =?us-ascii?Q?tR62wUVq8exUYfuu2Q0h3GuaqwGRpBnvW/UtD8KCyJc9gban+aQpj6oB9bVS?=
- =?us-ascii?Q?jnLQYqkzieD9uZ63yMCojgPLFLBmkCJSJbvuAXTlf/sckzwqctBaFKMah7Ok?=
- =?us-ascii?Q?LnsUST7yTvSUhWKekDKn5Mw+P1gaj79/4X5T1kaekNyoSUDnCGCtpKTGFQHj?=
- =?us-ascii?Q?oMp+Ef7hCaxAHNTMSi0zwgKwWEgVpVKfVumdUml1dWjOFhGkkWHXDhOawu1r?=
- =?us-ascii?Q?IDGZ//Ve2HinScFTl8IO9S+YtmAMKltKwuCrtqaMyvqST7nunFe5e2qEMx0P?=
- =?us-ascii?Q?RgJK0O+yc/G8mFJybbqcdmjPrCWLhGQatlunuXMJp/5iqG+kGdYnE424WLk9?=
- =?us-ascii?Q?2Ir0ySLHWNN/VKvZqj/RmECypHH0Do7zGDK9x7PUTJV3+7CDI4m1EHo2aNrs?=
- =?us-ascii?Q?obXjl/kftmksVYhFk4fEn/h4ueLAtKkv9KA9m7Fls5D5vvVgsZCq4qbIjdpv?=
- =?us-ascii?Q?1u13YK7xWBhD6mfUeW15pTA46Hj6umJx4IXj3f32BIFlGvspAQ5M3wGeQrQX?=
- =?us-ascii?Q?D+yHK3C3FympfN4gY692kLO74tgsbw+eXq7DeTIaPq4rt+H1npbi+zPux3qi?=
- =?us-ascii?Q?3tgU5AaXBFJK5tcMR2GlHAIps7GSFlOmP6UF9hUzk5C03GD1d2yobiS6jF1x?=
- =?us-ascii?Q?pi1Ld6FbdODUnXjGpTkZeLA6JHrtm5EviMvjUL/G2IiUktELZWl0MO4qg+eG?=
- =?us-ascii?Q?FBr68XczRSKURRccfWxlM4kLsup14Ys322Yj2TszaWqKEXjk1ITECE1O0+XP?=
- =?us-ascii?Q?4bJDH/4CyjZO2f5gjokDQsQYzgHAgisJUr/j/dRzDbFu194r8Kpk92IwKZ5O?=
- =?us-ascii?Q?ODeUKoFR5jNm+TKT3CNyuH4hSq+Aq1vJW3W/OhYtSaYlsK8dImWV/vSsVOEH?=
- =?us-ascii?Q?5BbrrO+EQ60K6UTueGxDX7kZ8t59ZBKjLrwWhk1yJzqC6HXyxf+5ZzD5zCc6?=
- =?us-ascii?Q?EVEP9yK+w/XCSI2ISmgwluMy/lRwRvfNwCqEsXaXyvFqCb/cmjPUbxE9EDuf?=
- =?us-ascii?Q?wrVv9kq3GzKGm9Hd0W8+FwvDtLAa1HoMUGdfNpnIoJEV+beixxc9DLMSlDR7?=
- =?us-ascii?Q?2L+SDfncWY5xW9T0ARg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 07:56:47.0586
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93c57463-9daa-49cc-d247-08ddfff6e7d2
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	OSA0EPF000000CA.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5216
 
-The fifo-width is the FIFO data width (in bits) for the Cadence IP.
-Configure it according to the FIFO data width set during the chip design.
-The current design of sky1 has a FIFO data width of 32 bits.
+Hi Linus,
 
-Signed-off-by: Jun Guo <jun.guo@cixtech.com>
----
- arch/arm64/boot/dts/cix/sky1.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Please pull overlayfs updates for 6.18.
 
-diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
-index ea324336bf34..c526b92d62ff 100644
---- a/arch/arm64/boot/dts/cix/sky1.dtsi
-+++ b/arch/arm64/boot/dts/cix/sky1.dtsi
-@@ -271,6 +271,7 @@ spi0: spi@4090000 {
- 				 <&scmi_clk CLK_TREE_FCH_SPI0_APB>;
- 			clock-names = "ref_clk", "pclk";
- 			interrupts = <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH 0>;
-+			fifo-width = <32>;
- 			status = "disabled";
- 		};
- 
-@@ -281,6 +282,7 @@ spi1: spi@40a0000 {
- 				 <&scmi_clk CLK_TREE_FCH_SPI1_APB>;
- 			clock-names = "ref_clk", "pclk";
- 			interrupts = <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH 0>;
-+			fifo-width = <32>;
- 			status = "disabled";
- 		};
- 
--- 
-2.34.1
+This branch has been sitting in linux-next for a few weeks,
+but I added some RVB last week.
 
+It has gone through the usual overlayfs test routines.
+
+The branch merges cleanly with master branch of the moment.
+
+Note that there is a small change to fs.h in this PR for the
+sb encoding helpers.
+
+This change is reviewed by Gabriel and Christian has agreed that I will
+merge it through the ovl tree.
+
+Thanks,
+Amir.
+
+----------------------------------------------------------------
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.18
+
+for you to fetch changes up to ad1423922781e6552f18d055a5742b1cff018cdc:
+
+  ovl: make sure that ovl_create_real() returns a hashed dentry (2025-09-23 12:29:36 +0200)
+
+----------------------------------------------------------------
+overlayfs updates for 6.18
+
+- Work by André Almeida to support case-insensitive overlayfs
+
+  Underlying case-insensitive filesystems casefolding is per directory,
+  but for overlayfs it is all-or-nothing.  It supports layers where
+  all directories are casefolded (with same encoding) or layers where
+  no directories are casefolded.
+
+- A fix for a "bug" in Neil's ovl directory lock changes,
+  which only manifested itself with casefold enabled layers
+  which may return an unhashed negative dentry from lookup.
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      ovl: make sure that ovl_create_real() returns a hashed dentry
+
+André Almeida (9):
+      fs: Create sb_encoding() helper
+      fs: Create sb_same_encoding() helper
+      ovl: Prepare for mounting case-insensitive enabled layers
+      ovl: Create ovl_casefold() to support casefolded strncmp()
+      ovl: Ensure that all layers have the same encoding
+      ovl: Set case-insensitive dentry operations for ovl sb
+      ovl: Add S_CASEFOLD as part of the inode flag to be copied
+      ovl: Check for casefold consistency when creating new dentries
+      ovl: Support mounting case-insensitive enabled layers
+
+ fs/overlayfs/copy_up.c   |   2 +-
+ fs/overlayfs/dir.c       |  29 ++++++++++-
+ fs/overlayfs/inode.c     |   1 +
+ fs/overlayfs/namei.c     |  17 ++++---
+ fs/overlayfs/overlayfs.h |   8 +--
+ fs/overlayfs/ovl_entry.h |   1 +
+ fs/overlayfs/params.c    |  15 ++++--
+ fs/overlayfs/params.h    |   1 +
+ fs/overlayfs/readdir.c   | 126 +++++++++++++++++++++++++++++++++++++++--------
+ fs/overlayfs/super.c     |  64 +++++++++++++++++++++++-
+ fs/overlayfs/util.c      |   6 +--
+ include/linux/fs.h       |  27 +++++++++-
+ 12 files changed, 254 insertions(+), 43 deletions(-)
 
