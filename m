@@ -1,212 +1,124 @@
-Return-Path: <linux-kernel+bounces-836917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738EEBAADE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA187BAADEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF8217B755
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:22:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF9B1C22F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AF41D5170;
-	Tue, 30 Sep 2025 01:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1466D1DE4F1;
+	Tue, 30 Sep 2025 01:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FlquDi/7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GUi+wIQo"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A241D198E91;
-	Tue, 30 Sep 2025 01:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCDE15ECD7
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759195339; cv=none; b=k/ZnxIUqRkLJ8sRCbV8wwMWb040aup/nXMxa9nsdJIQwjPQKesaYN8Ww1572t27Jsv1gh1JobBl7eCkyk5qrs3oSg/JVTQypivnrDavyBwy5q3sXxKmT8doYY5N4m/RhSjUas4k01O4xXpEvp47MsAUb7SF6IGyDUAAKiKnLaOQ=
+	t=1759195463; cv=none; b=mzsHHJ0XB+Gmm9GJPXu4ZbXyPADbniw5JTVrgb/xKWGEJq/VvBgz+Dlu6exhiJnboa5xfqRArEvTQQNGTJCgqHkAIc++gZLyQ8h8gedIQymK3+V6tdiykE7Wrsz03buGlM0LYjm8PKBPhLP4qSHzIQ+aGOAviYKJdGud2fvlBZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759195339; c=relaxed/simple;
-	bh=jSNCKRd4vCmEaI/9dY/Zk/juHL5IoJEHFIhsjwnA9aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rf25GNIiQ2ox1dt3uszTrvZBTonfnIsfYJOfDEHKGuRiWX7yBJSB8M38TSsElm9h37Y5swLAufV0GoUGSyvCYvnXvtKfUaqhe7NCK/8Ktr9ONLt5QgNmiYUJUd3XFgjUrI46EVqpkNbeFohn6cbej96Rh2tk2axUokrPZsFTyYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FlquDi/7; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759195337; x=1790731337;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jSNCKRd4vCmEaI/9dY/Zk/juHL5IoJEHFIhsjwnA9aw=;
-  b=FlquDi/7fZECdl+SfQaTYcsErod3JKb6v4L8Y+RJ2hxWHFM7cjHu1v7A
-   AGKlAFIUWz3Ekr5yjAnbPskuXreLD+ly68mIj9ZepKjC3jo38Sio1gsSp
-   vsyhliZ0jqPonbisCnFHivqzmaTI7wBLx+ClcOv5WcPLrwx+lrYmxDPsq
-   gnHGbwKesTegE21V8q/puxELiWyFIKow9i2E4ERkfwyTT/OyTlQgvdy4B
-   xsHm06INJ3MKrm+thKk63QzwxvDfvecSMge+szcT3qqHSjq9HB5DSPlGn
-   DKD1uN4Ef+qnGKapZYnhC60CVps8xsu/u+S11z4+07T7WWp1loTMBrX+V
-   g==;
-X-CSE-ConnectionGUID: uP44+/rvQsuEkp3gJg/sOg==
-X-CSE-MsgGUID: LHFIXr1HSAmoXP5DlBFc2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65263492"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65263492"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 18:22:17 -0700
-X-CSE-ConnectionGUID: jayVdhaESH6OsVT17G6ocQ==
-X-CSE-MsgGUID: BVcRoYNESEy5Bky5/wcXPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,302,1751266800"; 
-   d="scan'208";a="177508119"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO desk) ([10.124.221.201])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 18:22:16 -0700
-Date: Mon, 29 Sep 2025 18:22:10 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Jack Wang <jinpu.wang@ionos.com>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	David Kaplan <david.kaplan@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, asit.k.mallick@intel.com,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tao1.zhang@intel.com
-Subject: Re: [PATCH 0/2] VMSCAPE optimization for BHI variant
-Message-ID: <20250930012102.iayl5otar3lim23i@desk>
-References: <20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com>
- <20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com>
+	s=arc-20240116; t=1759195463; c=relaxed/simple;
+	bh=5kgCx0B7GtxQuKmjJS2bFCsfsTvnnLoF8qyM/AecsgU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pB9zvq64L1DfhQ5JGJ1NgrPUQNm00GPto41Eh7sOeOLcIVB92J//cQc0N/ke6W3TJL/box+6h0C2zr2EvgzA3feTq6QcKmhstUzySMGc/l4Y7O26xrpMXbM1vad80Y3FZ8asawyeJZXpMcrSwF/3QK6sRFg6dlmLOwY2ZcO8h5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GUi+wIQo; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ea7fcddd8so10724611a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759195461; x=1759800261; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=J0RDHcxeZue32qFdwYRcgYnakUkcEXPAGHJR7B+xksM=;
+        b=GUi+wIQocvWRFh+8ImqR+uTt0+fb55+WxNHl2lnjbJnVBctJRasYAhUbw6L9HaEzBG
+         j9RwW9nJ8koVEayGnCDv49xyn56PfeXSX4lo+bbax93oM5LdeltwikHSMjiiKl1wE8a5
+         EbC9EpwBSHgcKew/4qjWkPVAe2c8tyNSNAbv2lM2no9O2O5XFvZEp++2CUCbqWYL1gN1
+         AzfLx5Qd6LOZ7mehIdY8xtghl/xL85SVG5+Rp+Y3Hmt2KbRCgVfSi33qVfGc6huACYjT
+         oGGdOvR2nW9EGuwcP0oe+rjYj3ffPudq1IWJW/R/+wAbUwkctlLfkgQnh/ETBW+wxv4a
+         Cm2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759195461; x=1759800261;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J0RDHcxeZue32qFdwYRcgYnakUkcEXPAGHJR7B+xksM=;
+        b=e54NEqehHsYYDceDfIB+u1BvxhYV3YMrhHnKjBcQmhjz4oEszHD+94nFCl+hVB7O1m
+         pJlPSOfasXHYV2UGVLA8/9rREYbShpg3iiEPKOYndk429FSoQpJgpx6GpDrRZke7A0RO
+         V6Hk0vl8Z3bB8FSF/hNSgsl4qLZ23P3YuPhiYlfopLfRItrNcvA3rmj89uscrr7V2RBF
+         QyaGe7/oin0y9O/VjrRHSFycNIW1ng3BJt8on+Jj0FQgtt2hcxEYogycwVpr4G38TmJ0
+         hgjE8delTV0SvHWX67u1YsdtKvrlrKniBUJX5aNBXORQlegUMxedGfzu6xqNk4NLGTX1
+         T5Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxTMQB4zjGl6Nh6PinEYbTvjtYwj7Ecncc9m2DlmFLBvcLMDn/7Reh/qcJYLxfED3na8Tx1hQaU8F0yFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcLZDYSUxbc5JoL6rBIbQHN0TzRwsQoltrWywDjp9iv03xXHS7
+	t98BcQbDhnHpkWDjBF0Eo8mTIlS2qp8hF6gXsxSeO0t/7ODLNLpi/tt0zLNL25GkeT8QGNQTvEY
+	N1p4fBA==
+X-Google-Smtp-Source: AGHT+IGhtXfXwA6L9GaEPTI+0jBf9HTCFAgbC0xjyvLvK7pztlQGMoyItS01pkGETX20SLH0jVALCpowLV4=
+X-Received: from pjqd1.prod.google.com ([2002:a17:90a:a681:b0:330:9af8:3e1d])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3b4f:b0:330:6d5e:f17b
+ with SMTP id 98e67ed59e1d1-3342a2ab8c5mr20908027a91.21.1759195461383; Mon, 29
+ Sep 2025 18:24:21 -0700 (PDT)
+Date: Tue, 30 Sep 2025 01:23:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.570.gb178f27e6d-goog
+Message-ID: <20250930012352.413066-1-jthies@google.com>
+Subject: [PATCH v1 0/3] Load cros_ec_ucsi from OF and ACPI definitions
+From: Jameson Thies <jthies@google.com>
+To: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
+	robh@kernel.org, bleung@chromium.org, heikki.krogerus@linux.intel.com, 
+	ukaszb@chromium.org, tzungbi@kernel.org
+Cc: devicetree@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jameson Thies <jthies@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 29, 2025 at 07:12:03AM +0200, Jack Wang wrote:
-> From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> 
-> Hi Pawan,
-> 
-> Thx for the patches, I tested them on our Intel SierraForest machine with
-> fio 4k randread/randwrite from guest, qemu virtio-blk, noticed nice
-> performance improvement comparing to the default IBPB before exit to
-> userspace mitigation. eg with default IBPB mitigation fio gets 204k IOPS,
-> with this new Clear BHB before exit to userspace gets 323k IOPS.
+The ChromeOS UCSI driver (cros_ec_ucsi) currently gets added as
+subdevice of cros_ec_dev. But without it being defined by an ACPI
+node or in the OF device tree, the typec connectors are not correctly
+associated with other part of the device tree. This series updates the
+cros_ec_ucsi driver to load based on device definitions in ACPI and OF.
+It also changes the cros_ec_dev driver to block adding cros_ec_ucsi
+as a subdevice if it is defined in the device tree.
 
-Thanks for sharing the results.
+For context, I initially sent out this series for review in March 2025
+(https://lkml.kernel.org/20250312195951.1579682-1-jthies@google.com/).
 
-I realized the LFENCE in the clear_bhb_long_loop() is not required. The
-ring3 transition after the loop should be serializing anyways. Below patch
-gets rid of that LFENCE. It should give some performance boost as well.
+Patch 1/3 has been updated to address comments from the initial review.
+There were some open questions on patch 3/3 regarding adding MFD
+children when there is no cros_ec_ucsi node and parents conditionally
+checking if a child exists to create one.
 
---- 8< ---
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Subject: [PATCH] x86/vmscape: Remove LFENCE from BHB clearing long loop
+The expected behavior of this series is to only add the cros_ec_ucsi
+subdevice when there isn't a corresponding FW node because always adding
+it would result in multiple cros_ec_ucsi devices and too many ports
+being registered with the USB Type-C connector class on devices with
+correctly defined FW nodes. It also does not look for a child node to
+create a child. It is looking for a child of the parent EC device to
+only add cros_ec_ucsi if it does not already exist as a sibling.
 
-Long loop is used to clear the branch history when switching from a guest
-to host userspace. The LFENCE barrier is not required as ring transition
-itself acts as a barrier.
+Jameson Thies (3):
+  dt-bindings: chrome: Add Cros EC UCSI driver
+  usb: typec: cros_ec_ucsi: Load driver from OF and ACPI definitions
+  mfd: cros_ec: Don't add cros_ec_ucsi if it is defined in OF or ACPI
 
-Move the prologue, LFENCE and epilogue out of __CLEAR_BHB_LOOP macro to
-allow skipping the LFENCE in the long loop variant. Rename the long loop
-function to clear_bhb_long_loop_no_barrier() to reflect the change.
+ .../bindings/chrome/google,cros-ec-ucsi.yaml  | 71 +++++++++++++++++++
+ drivers/mfd/cros_ec_dev.c                     | 38 ++++++++--
+ drivers/usb/typec/ucsi/cros_ec_ucsi.c         | 25 ++++++-
+ 3 files changed, 127 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-ucsi.yaml
 
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- arch/x86/entry/entry_64.S            | 32 +++++++++++++++++-----------
- arch/x86/include/asm/entry-common.h  |  2 +-
- arch/x86/include/asm/nospec-branch.h |  4 ++--
- 3 files changed, 23 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index f5f62af080d8..bb456a3c652e 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1525,10 +1525,6 @@ SYM_CODE_END(rewind_stack_and_make_dead)
-  * Target Selection, rather than taking the slowpath via its_return_thunk.
-  */
- .macro	__CLEAR_BHB_LOOP outer_loop_count:req, inner_loop_count:req
--	ANNOTATE_NOENDBR
--	push	%rbp
--	mov	%rsp, %rbp
--
- 	movl	$\outer_loop_count, %ecx
- 	ANNOTATE_INTRA_FUNCTION_CALL
- 	call	1f
-@@ -1560,10 +1556,7 @@ SYM_CODE_END(rewind_stack_and_make_dead)
- 	jnz	1b
- .Lret2_\@:
- 	RET
--5:	lfence
--
--	pop	%rbp
--	RET
-+5:
- .endm
- 
- /*
-@@ -1573,7 +1566,15 @@ SYM_CODE_END(rewind_stack_and_make_dead)
-  * setting BHI_DIS_S for the guests.
-  */
- SYM_FUNC_START(clear_bhb_loop)
-+	ANNOTATE_NOENDBR
-+	push	%rbp
-+	mov	%rsp, %rbp
-+
- 	__CLEAR_BHB_LOOP 5, 5
-+
-+	lfence
-+	pop	%rbp
-+	RET
- SYM_FUNC_END(clear_bhb_loop)
- EXPORT_SYMBOL_GPL(clear_bhb_loop)
- STACK_FRAME_NON_STANDARD(clear_bhb_loop)
-@@ -1584,8 +1585,15 @@ STACK_FRAME_NON_STANDARD(clear_bhb_loop)
-  * protects the kernel, but to mitigate the guest influence on the host
-  * userspace either IBPB or this sequence should be used. See VMSCAPE bug.
-  */
--SYM_FUNC_START(clear_bhb_long_loop)
-+SYM_FUNC_START(clear_bhb_long_loop_no_barrier)
-+	ANNOTATE_NOENDBR
-+	push	%rbp
-+	mov	%rsp, %rbp
-+
- 	__CLEAR_BHB_LOOP 12, 7
--SYM_FUNC_END(clear_bhb_long_loop)
--EXPORT_SYMBOL_GPL(clear_bhb_long_loop)
--STACK_FRAME_NON_STANDARD(clear_bhb_long_loop)
-+
-+	pop	%rbp
-+	RET
-+SYM_FUNC_END(clear_bhb_long_loop_no_barrier)
-+EXPORT_SYMBOL_GPL(clear_bhb_long_loop_no_barrier)
-+STACK_FRAME_NON_STANDARD(clear_bhb_long_loop_no_barrier)
-diff --git a/arch/x86/include/asm/entry-common.h b/arch/x86/include/asm/entry-common.h
-index b7b9af1b6413..c70454bdd0e3 100644
---- a/arch/x86/include/asm/entry-common.h
-+++ b/arch/x86/include/asm/entry-common.h
-@@ -98,7 +98,7 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
- 		if (cpu_feature_enabled(X86_FEATURE_IBPB_EXIT_TO_USER))
- 			indirect_branch_prediction_barrier();
- 		else if (cpu_feature_enabled(X86_FEATURE_CLEAR_BHB_EXIT_TO_USER))
--			clear_bhb_long_loop();
-+			clear_bhb_long_loop_no_barrier();
- 
- 		this_cpu_write(x86_pred_flush_pending, false);
- 	}
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 32d52f32a5e7..151f5de1a430 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -388,9 +388,9 @@ extern void write_ibpb(void);
- 
- #ifdef CONFIG_X86_64
- extern void clear_bhb_loop(void);
--extern void clear_bhb_long_loop(void);
-+extern void clear_bhb_long_loop_no_barrier(void);
- #else
--static inline void clear_bhb_long_loop(void) {}
-+static inline void clear_bhb_long_loop_no_barrier(void) {}
- #endif
- 
- extern void (*x86_return_thunk)(void);
+base-commit: 48633acccf38d706d7b368400647bb9db9caf1ae
+-- 
+2.51.0.570.gb178f27e6d-goog
+
 
