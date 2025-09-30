@@ -1,460 +1,273 @@
-Return-Path: <linux-kernel+bounces-837860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97B1BADD71
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:27:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53AA5BAD407
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C631A7AB007
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624D01941024
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4172FB0BE;
-	Tue, 30 Sep 2025 15:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57963090E8;
+	Tue, 30 Sep 2025 14:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0v7eUo6m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGKwN4Wq"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B565B244665;
-	Tue, 30 Sep 2025 15:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE041304BCC
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759246055; cv=none; b=oc/NH+mzK2YWULhyfht2Q7C1l6aXJ1amIQQ3ZxPwlOQhbd6Cb3VYECkJ6MAMhHZGIaU2upB295U26EIoxJZaakHY4gXtCs2OPdfsUUuMdSrQiSsAdg9Em0C/c0M3DqOrNxVw3/tk6PuCjCLCjchQPrcPFZ9Fm9CLRqwl1O0JFMQ=
+	t=1759243595; cv=none; b=jySJHKY+zgwlIpTey4xGqBZo1PXXVKV6YAFPPq4KSJbbA3h5A0ar35/NJ1sdzddSE37W6EG88aqSSQrmUY38rib3Wt/Y7EV5UDW7seTpe2dypobrXploqg7yVJyd+iE8ZesAemOs/23/fMc/j3NqjuKNBJPdcShznjIx6l/mWTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759246055; c=relaxed/simple;
-	bh=SjAZLXMySJv/jlKWs+2hsloe85BtQeaRtdFtGsA3GcU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZShxnYsT/jGOWGLo82MCVALvXrNF+FIIGAknKhtJWzVwgaz8mRqe4rnGAlC8b6rwmG2tKG0YOXOXmollJqG3E4E6yuPF3XFe6H6XND132LSmjJW0MApgTWlL6udd+rLUjlTruHuVQBetzkK4MNh20vpRpqAnd/nJWA4Ld/L9Q/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0v7eUo6m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B4F7C4CEF0;
-	Tue, 30 Sep 2025 15:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759246055;
-	bh=SjAZLXMySJv/jlKWs+2hsloe85BtQeaRtdFtGsA3GcU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=0v7eUo6mY22XFuGCfNsp0PBQ1lsp4T7SuC6OBmpTDktGqUQRacpjwqWAHpkYipnJ5
-	 fklmXS1KUG1pA/AhvMtIiRhGPQ2Kqq6FLK7dBJIoHuQAxNigHLNE1466+5e+3o1i93
-	 R2GSoS/Kqs6fzrHAatMC2Hwmj1Lld27+tpysnzgI=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org
-Subject: [PATCH 6.12 00/89] 6.12.50-rc1 review
-Date: Tue, 30 Sep 2025 16:47:14 +0200
-Message-ID: <20250930143821.852512002@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759243595; c=relaxed/simple;
+	bh=O3iw2GxXiVKzNYOYE/ZVyGls0+ofp0SaOBPPWCbl0uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqegOeE2L7BEJNxMRhw8yaBc/0r8TQi5Z93RNThJMkt0ydOD0nDU3bugS8kSVYz0TDfqaM+2snl0D9dyz1XW0d98q0BReiUg3LnIyzWmW7y9TSEBLnbQd+svEirYa47T4EXXUISil28ItMQB6e4/qQ6WGdJ4BwJhutrUxos7PqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGKwN4Wq; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5565f0488bso4115636a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:46:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759243593; x=1759848393; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gtl9s1x2Ex8u74sVxDhnBYLads9LLhbmtzGZjSOpUpQ=;
+        b=jGKwN4Wqr04Uw3I/UPpwk2A6wvL/X4rgbF4N+0eT9v8tTV2rXSRLKKyvAr2Opx+Tmf
+         Go+jxVBArXWirMiKTsK/THViLlbZrSPd9mgGT+IR2M1pNqz9pdSobv3jVB265vlRnlcD
+         /bYYTtV7rEIDn0Tu8o5m7gAOarMTs94ggrQhiQmDCOScO9U5nuzwCibbwAWhM/9lWyvV
+         vgwzIt2/sP4S8T9JVsrne3J0KC6bGCOW2G7/hQ0ZhIoCFy0q4d1DQdEzrUQxT1a2WJDU
+         36o39lVvpCvfkPNhEydtYt17ePNplFALyQpOe6lbDtBVIwviikaT2PRlaR769tmaMUap
+         Uq4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759243593; x=1759848393;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtl9s1x2Ex8u74sVxDhnBYLads9LLhbmtzGZjSOpUpQ=;
+        b=l0boKbyZuYWq7FPJ1w9UZXFLF0zal3Mts7BNWA+VoAqEp5aHyc+Mxi2hjJF0O1fTJ1
+         7z3nDCLIpu+sV1Au8M3j/es5Oiqubgr5eaFXJYxGGOZ/OygDDja3ZGxFoq+Qa1MIzdhp
+         8kM0oukuE06J+84hpxE4h4vmIplkuTEzGVWSgaKiRKsiVuZ+G1cNGIrmHZwWjPBVLHav
+         W8J7IIGf5Ea/Yah7raFkY1EBaz4Fw60o8r+1DxzRucI+ZzP/jzSlLM0dARHeYCeA+qMn
+         KZiSgUgWUn8ZmhWU4R9ixX40BDSxRwUBPL57hm8UtV7xtFu7PLgZ0HuoDh+7QXi2v5XF
+         3jVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVu67kMlrXWDucbA8CHsyrxXwNcnqHgcVLusxoUezr7eFIVz/yhj4+2EeMUU6b5EWAP/YKoKa/tRoM0F8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5rDzzKG2UHRqY3WculM5bI0p0AU+HDOE1q/dzjyeh5BfZmVg/
+	C6v1kKxHEFGEeulMwHixu3K6vKO9g08ZAWnDgyC6htX4IH98EZ+LBSmr
+X-Gm-Gg: ASbGncsWh8Ok5uj8Bzl/xsFxUuXvcYC3nCtlRX5FylfplbkeEc8pQldyw3K47C0yTAW
+	4aF+LNJo9a5NHsz5yxTtjRR6Se9UDk/RoSmxr+2zUbz1IUTvXTvigZJpDG+MF8tLSFV3jbcTRht
+	rgifl6JHuB2jO0wcbZBkQnx5s/vSDpV8ryzTYe2H0us+vucYj07xrvVD1iUGDkjBWR6Wk08/G0O
+	9s0elnjHe5HgFH6QpOaWiQCD2r2JD7FwEMez4xkfpM3DJ7TCyTq7nwUW2tTLbc00NsOJDDOW49t
+	LX2CswB8M/seurtJI0+VQstiYcrgwoLfdNFZME2ghIizFtRKLHY49t6jGwg3JheceqZyyBWgKS+
+	5G8+7OaY4666ENLcBJqFHu01rnETGu2LRef/gueEn0kf8L1VODku4RR4=
+X-Google-Smtp-Source: AGHT+IE4hgKlPjRv6CQsulSHO7uaJxWorIuNklCjzaMiGW9OXkndROA3boKX4qKvwUjuv370Yq7hzQ==
+X-Received: by 2002:a17:90b:1647:b0:330:7a32:3290 with SMTP id 98e67ed59e1d1-3342a3471ccmr24460323a91.37.1759243592943;
+        Tue, 30 Sep 2025 07:46:32 -0700 (PDT)
+Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3341bd90367sm20311444a91.5.2025.09.30.07.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 07:46:31 -0700 (PDT)
+Date: Tue, 30 Sep 2025 11:47:24 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michael.hennerich@analog.com,
+	nuno.sa@analog.com, eblanc@baylibre.com, andy@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
+ and ADAQ4224
+Message-ID: <aNvtfPh2JLdLarE5@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1758916484.git.marcelo.schmitt@analog.com>
+ <5dc08b622dac1db561f26034c93910ccff75e965.1758916484.git.marcelo.schmitt@analog.com>
+ <20250928111955.175680cb@jic23-huawei>
+ <20250929143132.GA4099970-robh@kernel.org>
+ <CAMknhBHzXLjkbKAjkgRwEps=0YrOgUcdvRpuPRrcPkwfwWo88w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.69
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.50-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.12.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.12.50-rc1
-X-KernelTest-Deadline: 2025-10-02T14:38+00:00
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.12.50 release.
-There are 89 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.50-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.12.50-rc1
-
-Niklas Neronin <niklas.neronin@linux.intel.com>
-    Revert "usb: xhci: remove option to change a default ring's TRB cycle bit"
-
-Jason Gunthorpe <jgg@ziepe.ca>
-    iommufd: Fix race during abort for file descriptors
-
-Thomas Zimmermann <tzimmermann@suse.de>
-    fbcon: Fix OOB access in font allocation
-
-Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-    fbcon: fix integer overflow in fbcon_do_set_font
-
-Jinjiang Tu <tujinjiang@huawei.com>
-    mm/hugetlb: fix folio is still mapped when deleted
-
-Eric Biggers <ebiggers@kernel.org>
-    kmsan: fix out-of-bounds access to shadow memory
-
-Hans de Goede <hansg@kernel.org>
-    gpiolib: Extend software-node support to support secondary software-nodes
-
-Jakub Acs <acsjakub@amazon.de>
-    fs/proc/task_mmu: check p->vec_buf for NULL
-
-Zhen Ni <zhen.ni@easystack.cn>
-    afs: Fix potential null pointer dereference in afs_put_server
-
-Nirmoy Das <nirmoyd@nvidia.com>
-    drm/ast: Use msleep instead of mdelay for edid read
-
-Josua Mayer <josua@solid-run.com>
-    arm64: dts: marvell: cn9132-clearfog: fix multi-lane pci x2 and x4 ports
-
-Josua Mayer <josua@solid-run.com>
-    arm64: dts: marvell: cn9132-clearfog: disable eMMC high-speed modes
-
-Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-    ARM: dts: socfpga: sodia: Fix mdio bus probe and PHY address
-
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
-    tracing: dynevent: Add a missing lockdown check on dynevent
-
-Eric Biggers <ebiggers@kernel.org>
-    crypto: af_alg - Fix incorrect boolean values in af_alg_ctx
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: improve VF MAC filters accounting
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: add mask to apply valid bits for itr_idx
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: add max boundary check for VF filters
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: fix validation of VF state in get resources
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: fix input validation logic for action_meta
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: fix idx validation in config queues msg
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: fix idx validation in i40e_validate_queue_map
-
-Lukasz Czapnik <lukasz.czapnik@intel.com>
-    i40e: add validation for ring_len param
-
-Amit Chaudhari <amitchaudhari@mac.com>
-    HID: asus: add support for missing PX series fn keys
-
-Sang-Heon Jeon <ekffu200098@gmail.com>
-    smb: client: fix wrong index reference in smb2_compound_op()
-
-Daniel Lee <dany97@live.ca>
-    platform/x86: lg-laptop: Fix WMAB call in fan_mode_store()
-
-Adrián Larumbe <adrian.larumbe@collabora.com>
-    drm/panthor: Defer scheduler entitiy destruction to queue release
-
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    futex: Prevent use-after-free during requeue-PI
-
-Zabelin Nikita <n.zabelin@mt-integration.ru>
-    drm/gma500: Fix null dereference in hdmi teardown
-
-Hugh Dickins <hughd@google.com>
-    mm: folio_may_be_lru_cached() unless folio_test_large()
-
-Hugh Dickins <hughd@google.com>
-    mm: revert "mm/gup: clear the LRU flag of a page before adding to LRU batch"
-
-Hugh Dickins <hughd@google.com>
-    mm/gup: local lru_add_drain() to avoid lru_add_drain_all()
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    octeontx2-pf: Fix potential use after free in otx2_tc_add_flow()
-
-Vladimir Oltean <vladimir.oltean@nxp.com>
-    net: dsa: lantiq_gswip: suppress -EINVAL errors for bridge FDB entries added to the CPU port
-
-Vladimir Oltean <vladimir.oltean@nxp.com>
-    net: dsa: lantiq_gswip: move gswip_add_single_port_br() call to port_setup()
-
-Ido Schimmel <idosch@nvidia.com>
-    selftests: fib_nexthops: Fix creation of non-FDB nexthops
-
-Ido Schimmel <idosch@nvidia.com>
-    nexthop: Forbid FDB status change while nexthop is in a group
-
-Jason Baron <jbaron@akamai.com>
-    net: allow alloc_skb_with_frags() to use MAX_SKB_FRAGS
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    bnxt_en: correct offset handling for IPv6 destination address
-
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    vhost: Take a reference on the task in struct vhost_task.
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: hci_event: Fix UAF in hci_acl_create_conn_sync
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: hci_sync: Fix hci_resume_advertising_sync
-
-Petr Malat <oss@malat.biz>
-    ethernet: rvu-af: Remove slash from the driver name
-
-Sidraya Jayagond <sidraya@linux.ibm.com>
-    net/smc: fix warning in smc_rx_splice() when calling get_page()
-
-Wang Liang <wangliang74@huawei.com>
-    net: tun: Update napi->skb after XDP process
-
-Stéphane Grosjean <stephane.grosjean@hms-networks.com>
-    can: peak_usb: fix shift-out-of-bounds issue
-
-Vincent Mailhol <mailhol@kernel.org>
-    can: mcba_usb: populate ndo_change_mtu() to prevent buffer overflow
-
-Vincent Mailhol <mailhol@kernel.org>
-    can: sun4i_can: populate ndo_change_mtu() to prevent buffer overflow
-
-Vincent Mailhol <mailhol@kernel.org>
-    can: hi311x: populate ndo_change_mtu() to prevent buffer overflow
-
-Vincent Mailhol <mailhol@kernel.org>
-    can: etas_es58x: populate ndo_change_mtu() to prevent buffer overflow
-
-Sabrina Dubroca <sd@queasysnail.net>
-    xfrm: xfrm_alloc_spi shouldn't use 0 as SPI
-
-Leon Hwang <leon.hwang@linux.dev>
-    bpf: Reject bpf_timer for PREEMPT_RT
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    can: rcar_can: rcar_can_resume(): fix s2ram with PSCI
-
-James Guan <guan_yufei@163.com>
-    wifi: virt_wifi: Fix page fault on connect
-
-Mark Harmstone <mark@harmstone.com>
-    btrfs: don't allow adding block device of less than 1 MB
-
-Jiri Olsa <olsajiri@gmail.com>
-    bpf: Check the helper function is valid in get_helper_proto
-
-Stefan Metzmacher <metze@samba.org>
-    smb: server: use disable_work_sync in transport_rdma.c
-
-Stefan Metzmacher <metze@samba.org>
-    smb: server: don't use delayed_work for post_recv_credits_work
-
-Christian Loehle <christian.loehle@arm.com>
-    cpufreq: Initialize cpufreq-based invariance before subsys
-
-Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-    ARM: dts: kirkwood: Fix sound DAI cells for OpenRD clients
-
-Peng Fan <peng.fan@nxp.com>
-    arm64: dts: imx8mp: Correct thermal sensor index
-
-Peng Fan <peng.fan@nxp.com>
-    firmware: imx: Add stub functions for SCMI MISC API
-
-Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-    HID: amd_sfh: Add sync across amd sfh work functions
-
-Or Har-Toov <ohartoov@nvidia.com>
-    IB/mlx5: Fix obj_type mismatch for SRQ event subscriptions
-
-Aleksander Jan Bajkowski <olek2@wp.pl>
-    net: sfp: add quirk for FLYPRO copper SFP+ module
-
-qaqland <anguoli@uniontech.com>
-    ALSA: usb-audio: Add mute TLV for playback volumes on more devices
-
-Cryolitia PukNgae <cryolitia@uniontech.com>
-    ALSA: usb-audio: move mixer_quirks' min_mute into common quirk
-
-noble.yang <noble.yang@comtrue-inc.com>
-    ALSA: usb-audio: Add DSD support for Comtrue USB Audio device
-
-Heikki Krogerus <heikki.krogerus@linux.intel.com>
-    i2c: designware: Add quirk for Intel Xe
-
-Benoît Monin <benoit.monin@bootlin.com>
-    mmc: sdhci-cadence: add Mobileye eyeQ support
-
-Chris Morgan <macromorgan@hotmail.com>
-    net: sfp: add quirk for Potron SFP+ XGSPON ONU Stick
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    net: fec: rename struct fec_devinfo fec_imx6x_info -> fec_imx6sx_info
-
-Jiayi Li <lijiayi@kylinos.cn>
-    usb: core: Add 0x prefix to quirks debug output
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: usb-audio: Fix build with CONFIG_INPUT=n
-
-Stefan Binding <sbinding@opensource.cirrus.com>
-    ALSA: hda/realtek: Add support for ASUS NUC using CS35L41 HDA
-
-Chen Ni <nichen@iscas.ac.cn>
-    ALSA: usb-audio: Convert comma to semicolon
-
-Kerem Karabay <kekrby@gmail.com>
-    HID: multitouch: specify that Apple Touch Bar is direct
-
-Kerem Karabay <kekrby@gmail.com>
-    HID: multitouch: take cls->maxcontacts into account for Apple Touch Bar even without a HID_DG_CONTACTMAX field
-
-Kerem Karabay <kekrby@gmail.com>
-    HID: multitouch: support getting the tip state from HID_DG_TOUCH fields in Apple Touch Bar
-
-Kerem Karabay <kekrby@gmail.com>
-    HID: multitouch: Get the contact ID from HID_DG_TRANSDUCER_INDEX fields in case of Apple Touch Bar
-
-Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-    ALSA: usb-audio: Add mixer quirk for Sony DualSense PS5
-
-Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-    ALSA: usb-audio: Remove unneeded wmb() in mixer_quirks
-
-Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-    ALSA: usb-audio: Simplify NULL comparison in mixer_quirks
-
-Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-    ALSA: usb-audio: Avoid multiple assignments in mixer_quirks
-
-Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-    ALSA: usb-audio: Drop unnecessary parentheses in mixer_quirks
-
-Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-    ALSA: usb-audio: Fix block comments in mixer_quirks
-
-Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-    ALSA: usb-audio: Fix code alignment in mixer_quirks
-
-Takashi Sakamoto <o-takashi@sakamocchi.jp>
-    firewire: core: fix overlooked update of subsystem ABI version
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    scsi: ufs: mcq: Fix memory allocation checks for SQE and CQE
-
-
--------------
-
-Diffstat:
-
- Documentation/admin-guide/laptops/lg-laptop.rst    |   4 +-
- Makefile                                           |   4 +-
- .../dts/intel/socfpga/socfpga_cyclone5_sodia.dts   |   6 +-
- .../boot/dts/marvell/kirkwood-openrd-client.dts    |   2 +-
- arch/arm64/boot/dts/freescale/imx8mp.dtsi          |   4 +-
- arch/arm64/boot/dts/marvell/cn9132-clearfog.dts    |  16 +-
- arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi    |   8 +
- drivers/cpufreq/cpufreq.c                          |  20 +-
- drivers/firewire/core-cdev.c                       |   2 +-
- drivers/gpio/gpiolib.c                             |  21 +-
- drivers/gpu/drm/ast/ast_dp.c                       |   2 +-
- drivers/gpu/drm/gma500/oaktrail_hdmi.c             |   2 +-
- drivers/gpu/drm/panthor/panthor_sched.c            |   8 +-
- drivers/hid/amd-sfh-hid/amd_sfh_client.c           |  12 +-
- drivers/hid/amd-sfh-hid/amd_sfh_common.h           |   3 +
- drivers/hid/amd-sfh-hid/amd_sfh_pcie.c             |   4 +
- drivers/hid/hid-asus.c                             |   3 +
- drivers/hid/hid-multitouch.c                       |  45 +-
- drivers/i2c/busses/i2c-designware-platdrv.c        |   7 +-
- drivers/infiniband/hw/mlx5/devx.c                  |   1 +
- drivers/iommu/iommufd/fault.c                      |   4 +-
- drivers/iommu/iommufd/main.c                       |  34 +-
- drivers/mmc/host/sdhci-cadence.c                   |  11 +
- drivers/net/can/rcar/rcar_can.c                    |   8 +-
- drivers/net/can/spi/hi311x.c                       |   1 +
- drivers/net/can/sun4i_can.c                        |   1 +
- drivers/net/can/usb/etas_es58x/es58x_core.c        |   3 +-
- drivers/net/can/usb/mcba_usb.c                     |   1 +
- drivers/net/can/usb/peak_usb/pcan_usb_core.c       |   2 +-
- drivers/net/dsa/lantiq_gswip.c                     |  21 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c       |   2 +-
- drivers/net/ethernet/freescale/fec_main.c          |   4 +-
- drivers/net/ethernet/intel/i40e/i40e.h             |   3 +-
- drivers/net/ethernet/intel/i40e/i40e_main.c        |  26 +-
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 110 +++--
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.h |   3 +-
- drivers/net/ethernet/marvell/octeontx2/af/cgx.c    |   3 +-
- .../net/ethernet/marvell/octeontx2/nic/otx2_tc.c   |   2 +-
- drivers/net/phy/sfp.c                              |  24 +-
- drivers/net/tun.c                                  |   3 +
- drivers/net/wireless/virtual/virt_wifi.c           |   4 +-
- drivers/platform/x86/lg-laptop.c                   |  34 +-
- drivers/ufs/core/ufs-mcq.c                         |   4 +-
- drivers/usb/core/quirks.c                          |   2 +-
- drivers/usb/host/xhci-dbgcap.c                     |   2 +-
- drivers/usb/host/xhci-mem.c                        |  50 +-
- drivers/usb/host/xhci.c                            |   2 +-
- drivers/usb/host/xhci.h                            |   6 +-
- drivers/video/fbdev/core/fbcon.c                   |  13 +-
- fs/afs/server.c                                    |   3 +-
- fs/btrfs/volumes.c                                 |   5 +
- fs/hugetlbfs/inode.c                               |  10 +-
- fs/proc/task_mmu.c                                 |   3 +
- fs/smb/client/smb2inode.c                          |   2 +-
- fs/smb/server/transport_rdma.c                     |  22 +-
- include/crypto/if_alg.h                            |   2 +-
- include/linux/firmware/imx/sm.h                    |  12 +
- include/linux/swap.h                               |  10 +
- include/net/bluetooth/hci_core.h                   |  21 +
- kernel/bpf/core.c                                  |   5 +-
- kernel/bpf/verifier.c                              |   6 +-
- kernel/futex/requeue.c                             |   6 +-
- kernel/trace/trace_dynevent.c                      |   4 +
- kernel/vhost_task.c                                |   3 +-
- mm/gup.c                                           |  15 +-
- mm/kmsan/core.c                                    |  10 +-
- mm/kmsan/kmsan_test.c                              |  16 +
- mm/mlock.c                                         |   6 +-
- mm/swap.c                                          |  51 +-
- net/bluetooth/hci_event.c                          |  26 +-
- net/bluetooth/hci_sync.c                           |   7 +
- net/core/skbuff.c                                  |   2 +-
- net/ipv4/nexthop.c                                 |   7 +
- net/smc/smc_loopback.c                             |  14 +-
- net/xfrm/xfrm_state.c                              |   3 +
- sound/pci/hda/patch_realtek.c                      |  11 +
- sound/usb/mixer_quirks.c                           | 545 +++++++++++++++------
- sound/usb/quirks.c                                 |  24 +-
- sound/usb/usbaudio.h                               |   4 +
- tools/testing/selftests/net/fib_nexthops.sh        |  12 +-
- 80 files changed, 1037 insertions(+), 387 deletions(-)
-
-
+In-Reply-To: <CAMknhBHzXLjkbKAjkgRwEps=0YrOgUcdvRpuPRrcPkwfwWo88w@mail.gmail.com>
+
+On 09/29, David Lechner wrote:
+> On Mon, Sep 29, 2025 at 4:31 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Sun, Sep 28, 2025 at 11:19:55AM +0100, Jonathan Cameron wrote:
+> > > On Fri, 26 Sep 2025 17:40:47 -0300
+> > > Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+> > >
+> > > > ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
+> > > > PGA (programmable gain amplifier) that scales the input signal prior to it
+> > > > reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
+> > > > and A1) that set one of four possible signal gain configurations.
+> > > >
+> > > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > > > ---
+> > > > Change log v2 -> v3
+> > > > - PGA gain now described in decibels.
+> > > >
+> > > > The PGA gain is not going to fit well as a channel property because it may
+> > > > affect more than one channel as in AD7191.
+> > > > https://www.analog.com/media/en/technical-documentation/data-sheets/AD7191.pdf
+> > > >
+> > > > I consulted a very trustworthy source [1, 2] and learned that describing signal
+> > > > gains in decibels is a common practice. I now think it would be ideal to describe
+> > > > these PGA and PGA-like gains with properties in decibel units and this patch
+> > > > is an attempt of doing so. The only problem with this approach is that we end up
+> > > > with negative values when the gain is lower than 1 (the signal is attenuated)
+> > > > and device tree specification doesn't support signed integer types. As the
+> > > > docs being proposed fail dt_binding_check, I guess I have to nack the patch myself.
+> > > > Any chance of dt specification eventually support signed integers?
+> > > > Any suggestions appreciated.
+> > > >
+> > > > [1] https://en.wikipedia.org/wiki/Decibel
+> > > > [2] https://en.wikipedia.org/wiki/Gain_(electronics)
+> > >
+> > > I still wonder if the better way to describe this is to ignore that it
+> > > has anything to do with PGA as such and instead describe the pin strapping.
+> > >
+> > > DT folk, is there an existing way to do that? My grep skills are failing to
+> > > spot one.
+> > >
+> > > We've papered over this for a long time in various IIO drivers by controlling
+> > > directly what the pin strap controls with weird and wonderful device specific
+> > > bindings. I wonder if we can't have a gpio driver + binding that rejects all
+> > > config and just lets us check the current state of an output pin.  Kind of a
+> > > fixed mode regulator equivalent for gpios.
+> >
+> > If these are connected to GPIOs, isn't it possible that someone will
+> > want to change their value?
+> >
+> > Other than some generic 'pinstrap-gpios' property, I don't see what we'd
+> > do here? I don't feel like pin strapping GPIOs is something that we see
+> > all that often.
+> >
+> > Rob
+> 
+> I think the idea is that it is not actually a GPIO, just a hard-wired
+> connection. We would want to have a "fixed-gpios" to describe these
+> hard-wired connections as GPIOs so that we don't have to write complex
+> binding for chip config GPIOs. I've seen configuration pins like on at
+> least half a dozed of the ADCs I've been working on/reviewing over the
+> last two years (since I got involved in IIO again).
+
+Yes, the alternative to having GPIOs would be to have pins hard-wired set to a
+specific logic level. And the connection don't need to be to GPIOs. The gain
+pins on the ADC chip can be connected to anything that keeps a constant logic
+level while we capture data from the ADC.
+
+> 
+> For example, there might be 4 mode pins, so we would like to just have
+> a mode-gpios property. So this could be all 4 connected to GPIOs, all
+> 4 hard-wired, or a mix.
+
+Having some pins hard-wired and some connected to GPIOs is possible, but that
+would make things even more complex as each pin on the ADC chip sets a different
+portion of the gain. IMHO, mixed GPIO/hard-wired configuration starts looking
+like over engineering and I haven't been requested for so much configuration
+flexibility. Having either all hard-wired or all connected to GPIOs should be ok.
+
+I'm not familiar with pinctrl dt-bindings, but I was wondering if we could get
+to something similar with pinctrl. Based on some pinctrl bindings, I think
+fixed-level GPIOs could look like the following (for the 4 pin-mode example).
+
+pinctrl0: pincontroller@0 {
+    compatible = "vendor,model-pinctrl";
+
+    all-low-state: some-gpio-pins {
+        pins = "gpio0", "gpio1", "gpio2", "gpio3";
+        function = "gpio";
+        output-low;
+    };
+    all-high-state: some-gpio-pins {
+        pins = "gpio0", "gpio1", "gpio2", "gpio3";
+        function = "gpio";
+        output-high;
+    };
+    most-high-state: some-gpio-pins {
+        pins1 { 
+            pins = "gpio0", "gpio1", "gpio2";
+            function = "gpio";
+            output-high;
+        };
+        pins2 { 
+            pins = "gpio3";
+            function = "gpio";
+            output-low;
+        };
+    };
+};
+spi {
+    adc@0 {
+        compatible = "vendor,adc";
+        /* All gpios */
+        pga-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>,
+                    <&gpio0 1 GPIO_ACTIVE_HIGH>,
+                    <&gpio0 2 GPIO_ACTIVE_HIGH>,
+                    <&gpio0 3 GPIO_ACTIVE_HIGH>;
+         /* or all hard-wired */
+		pinctrl-names = "minimum-gain", "moderate-gain", "maximum-gain";
+		pinctrl-0 = <&all-low-state>, <&most-high-state>, <&all-high-state>;
+    };
+};
+
+Though, the above is still relying on GPIOs which is not a requirement from
+ADC peripheral perspective. Also, if GPIOs are available, one can just provide
+them through pga-gpios and have full control over the signal gain with the IIO
+driver. It boils down to just telling software what are the logical levels at
+two pins on the ADC chip when GPIOs are not provided.
+
+Thanks,
+Marcelo
+
+> 
+> (The actual bindings would need more thought, but this should give the
+> general idea)
+> 
+> fixed_gpio: hard-wires {
+>     compatible = "fixed-gpios";
+>     gpio-controller;
+>     #gpio-cells = <1>;
+> };
+> 
+> gpio0: gpio-controller@4000000 {
+>     compatible = "vendor,soc-gpios";
+>     gpio-controller;
+>     #gpio-cells = <2>;
+> };
+> 
+> spi {
+>     adc@0 {
+>         compatible = "vendor,adc";
+>         /* All gpios */
+>         mode-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>,
+>                      <&gpio0 1 GPIO_ACTIVE_HIGH>,
+>                      <&gpio0 2 GPIO_ACTIVE_HIGH>,
+>                      <&gpio0 3 GPIO_ACTIVE_HIGH>;
+>          /* or all hard-wired */
+>         mode-gpios = <&fixed_gpio 0 GPIO_FIXED_HIGH>,
+>                      <&fixed_gpio GPIO_FIXED_HIGH>,
+>                      <&fixed_gpio GPIO_FIXED_LOW>,
+>                      <&fixed_gpio GPIO_FIXED_LOW>;
+>          /* or mixed */
+>         mode-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>,
+>                      <&gpio0 1 GPIO_ACTIVE_HIGH>,
+>                      <&fixed_gpio GPIO_FIXED_LOW>,
+>                      <&fixed_gpio GPIO_FIXED_LOW>;
+>     };
+> };
 
