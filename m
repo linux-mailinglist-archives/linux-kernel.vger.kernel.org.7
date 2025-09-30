@@ -1,106 +1,130 @@
-Return-Path: <linux-kernel+bounces-838243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E436BAEC5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8134BAEC5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6BD1927412
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E2F1927478
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6332D063E;
-	Tue, 30 Sep 2025 23:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BECE2D248E;
+	Tue, 30 Sep 2025 23:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLWpZ2LS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPDDThNY"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F99D2E40E;
-	Tue, 30 Sep 2025 23:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95552D2499
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759274936; cv=none; b=ZKEv57Bom8rvAPFkJ1P6SfyQJGNBAAygO7IVcOW8A563E4I3UyDWEERZdC8hzlqUQlsrsVLXfCa3JmAxDA5Z7hk3GNOHGThuW2w5rpx0vujaE1hd2A9tmdn6fg7X+aEU67lf8xMKJrAkmHSt0Rvb/2VI9qtuAiYRVAf+xhP2Nts=
+	t=1759275007; cv=none; b=sqF0vwoIi9/bhvUExLvuUPXxPzxM/y9zX+7eta3F79Gg/YsxI1UNIdk75PungM7fXRlQuqOiYJdYYk5OtMBjCjxIc5LvYRg1gUUFzGNpSo/iYndi8k6n4X7S46u9+5FhM2vCb9VWj1iGzCrxCeT+Qer7PHCgGSp8fUJG41XmGBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759274936; c=relaxed/simple;
-	bh=zYOVhnM7v92JtWcSwj+YPO/nMTZXcJPR3E0KM4g8638=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfigYon6DEQnKNaEdvRr/EEAMJb70hVo4XUZ8SwSbTub5zfolstPpLpgGiWeE+LbIVp62mb5Ltv8jXXr6tul8J7EpLU50symiXcrk/A+Qt4P61qXlYeYkGbDlb/EKZxogPKrJPsMCzGkq8CxZpUDDRfzib8mhq3sUSrqxU7KSTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLWpZ2LS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F3AC4CEF0;
-	Tue, 30 Sep 2025 23:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759274935;
-	bh=zYOVhnM7v92JtWcSwj+YPO/nMTZXcJPR3E0KM4g8638=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OLWpZ2LSgww9bezxm9fXzF7UT2PdKQrhM+Ok0QKcjaSbmiwJr1bUirJ83QKSaEqOH
-	 4dGU5gWJxcyLAbynbW9rPWTh13FVIlJLOOEKYqe+SeCwqUmNEHDg/r8eK5Dh0gQ3yl
-	 EeahXgOoIV+KDZoaRnMRHm/FiMMMutClbECZF7E3g48+cXJhAnnPYai3MQIwb/iRx0
-	 c7WF1VtsmgIQWAFCRLqnsrckdsOXyzxMwyoNwSj2RroRg+E+fPO1hlkk/N/zYPC0kJ
-	 DxUdfGf28zyyzJSf3gv0WabDSLVNlXVduKNgBefwFrf+SWAASbrQfzyOHtkcbrAXJa
-	 mpOxLqGAB87UA==
-Date: Tue, 30 Sep 2025 23:28:54 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Alok Tiwari <alok.a.tiwari@oracle.com>,
-	"kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] drivers: hv: vmbus: Clean up sscanf format specifier
- in target_cpu_store()
-Message-ID: <aNxntvKl4QigqMzY@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <20250917085933.129306-1-alok.a.tiwari@oracle.com>
- <SN6PR02MB4157E58381C62CCC2681A20BD416A@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1759275007; c=relaxed/simple;
+	bh=gWZTJSIIbrP380uCP//L36Rf0RBfgxrLDVwOgWvpHuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ox+FDR2m3jQc5Gd6DNBnFl9fvS/mlx7/y0rXuBkAfUsf0UvdBWqyWI77wycstaJ2bP7G/Vj5sXHpHibcVAeAImhYxljdhnwVAxfDxQJ6FyWqomYgIhSEHlKBVTj1Oc7SlBQmzQE3l0jZWGI+OdiW3i/kyHrncDUuAiiYc3XIhcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPDDThNY; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f0134ccc0cso4432286f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759275004; x=1759879804; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WKocoFyhYs5voJ1j0rINOqN8fPDxe4oLJZbuE7DLMzA=;
+        b=aPDDThNYGfv4RuuzIaALIH+FJDaJ9rnuS84vRUSXVvQovK25+wvuQPWWO3Tq9CsSqv
+         XHSGh/Y0qgkmqIaKTMtfjr0ZIK/4hwoOEMCKnkYIMBiN54jxbmCWeCbsnEFamQhGzxev
+         EKHjaDDA1G4346OD5SyprKz1xEoL63o0a+mxUzstxwmF2Vly1Y2fkBW9GrNYfiXwn6vY
+         a08Ww5KPI/kfCDg+VfPK1fXPxlD/5i+DCPSMoPStkeA1qv1U0lXCHi0ZIaPr0y5/Ol/R
+         ZRmXpjgCIu6y4A1Cgt0IUxPlbb2ydOJGYEw5jDi441rSX1POfLYwtAqN6N1JVvd6Mkrt
+         xJNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759275004; x=1759879804;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WKocoFyhYs5voJ1j0rINOqN8fPDxe4oLJZbuE7DLMzA=;
+        b=IB3yh94XPwklhxJKNg5aC099nRBXjkXJ4ReVqqJA6oMFZcmkYHV64WbheNh9227SXW
+         O6gWgOi2gcr/WLSUGBkcJ0R4OUMMEODU/9tU/S39RjHW228sPA2qJPYJ2imiE59see8s
+         TSjpZnSpuNwbQv35bkgT2LW1u9buooiaHY3qX43Aot/erGY36Lg1tw7ahlHD/Tzcgetv
+         Cn7Vt1ke2ChmZXz2DEaliIWeqxZ20S8mQm1+Bszbc3PISZ2vUClvocyRVW5wNaNwiwr2
+         UL7bN9ZY4hfdZzlD1DZZIAAzpBUK+KxZVRW4CY7iZfPdgHS99zSyIWRtJkZjONUEVo/c
+         t9iQ==
+X-Gm-Message-State: AOJu0YxxnBSIZcF7qKrTfgmlpcYXwvOJowgO5mRerPz4drB3VmQnOFWf
+	OuIhvZV1ZxK1ZskYxDpz0HWibXR/DVdIcBPqktc17YvioBQOGqrVlszm
+X-Gm-Gg: ASbGncvrOJYnIU0SRfWmMssT0XqdhO3fpxgdrxd5Y38sGH5QWiS7KWL5Euz2p1h1Sqs
+	f50PpFF0vOECzac1BV0Jv+9JfehqoVJj4aAHANjf87X6A2brxccYUALeq9M9MZeNYZrbFq+6V5d
+	2haA+Cnz2fFQuIy5AtWrn3ut+MGh+l2hUBbVAHNt5U+7VCuyrJlN0/xgtWK7EqtvxvjkSexIrF0
+	Om+i8YAve3PKhEiXRtTuY/A06uIvPGQ6XEObR05CNhaR19Q+61i3LecF0fRaPgdqDxCVPtYQJbm
+	Ps7UMdAwpavR7vHcjwEeP5EItr3nrJHWHy4ede8xbDFzintQp5FYr/nt0QqilfMIAMtsJs/Zx+z
+	4oA5G3Of1OIHT29Xi8dqGNWTSSY32rRexm24+rHycnNWA82ONQHLpkMM6R7z+eJ/TaHZvEucOlj
+	P0ZKt/KpvE8vCb9vHGdvapkw==
+X-Google-Smtp-Source: AGHT+IGrlrBcqkdbjFn8gHHNIH9V5H/OJUSkp8w+fjG+KJIkz3Qh/I+P4TAxPxRIKI9Oo1ZDCt+OuA==
+X-Received: by 2002:a05:6000:2381:b0:3ec:e0d0:60e5 with SMTP id ffacd0b85a97d-425577f0a74mr1070502f8f.15.1759275003933;
+        Tue, 30 Sep 2025 16:30:03 -0700 (PDT)
+Received: from f.. (cst-prg-21-74.cust.vodafone.cz. [46.135.21.74])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb2eesm25156984f8f.12.2025.09.30.16.30.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 16:30:03 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com,
+	oe-lkp@lists.linux.dev,
+	linux-f2fs-devel@lists.sourceforge.net,
+	ltp@lists.linux.it,
+	oliver.sang@intel.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] f2fs: don't call iput() from f2fs_drop_inode()
+Date: Wed,  1 Oct 2025 01:29:57 +0200
+Message-ID: <20250930232957.14361-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <202509301450.138b448f-lkp@intel.com>
+References: <202509301450.138b448f-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157E58381C62CCC2681A20BD416A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 18, 2025 at 03:51:00AM +0000, Michael Kelley wrote:
-> From: Alok Tiwari <alok.a.tiwari@oracle.com> Sent: Wednesday, September 17, 2025 2:00 AM
-> > 
-> > The target_cpu_store() function parses the target CPU from the sysfs
-> > buffer using sscanf(). The format string currently uses "%uu", which
-> > is redundant. The compiler ignores the extra "u", so there is no
-> > incorrect parsing at runtime.
-> > 
-> > Update the format string to use "%u" for clarity and consistency.
-> > 
-> > Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> > ---
-> > v1 -> v2
-> > Rephrase commit message and subject to clarify
-> > that there is no incorrect parsing at runtime.
-> > ---
-> >  drivers/hv/vmbus_drv.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > index 5b4f8d009ca5..69591dc7bad2 100644
-> > --- a/drivers/hv/vmbus_drv.c
-> > +++ b/drivers/hv/vmbus_drv.c
-> > @@ -1742,7 +1742,7 @@ static ssize_t target_cpu_store(struct vmbus_channel *channel,
-> >  	u32 target_cpu;
-> >  	ssize_t ret;
-> > 
-> > -	if (sscanf(buf, "%uu", &target_cpu) != 1)
-> > +	if (sscanf(buf, "%u", &target_cpu) != 1)
-> >  		return -EIO;
-> > 
-> >  	cpus_read_lock();
-> > --
-> > 2.50.1
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+iput() calls the problematic routine, which does a ->i_count inc/dec
+cycle. Undoing it with iput() recurses into the problem.
 
-Applied. Thanks.
+Note f2fs should not be playing games with the refcount to begin with,
+but that will be handled later. Right now solve the immediate
+regression.
+
+Fixes: bc986b1d756482a ("fs: stop accessing ->i_count directly in f2fs and gfs2")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202509301450.138b448f-lkp@intel.com
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 2619cbbd7d2d..26ec31eb8c80 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1769,7 +1769,7 @@ static int f2fs_drop_inode(struct inode *inode)
+ 			sb_end_intwrite(inode->i_sb);
+ 
+ 			spin_lock(&inode->i_lock);
+-			iput(inode);
++			atomic_dec(&inode->i_count);
+ 		}
+ 		trace_f2fs_drop_inode(inode, 0);
+ 		return 0;
+-- 
+2.43.0
+
 
