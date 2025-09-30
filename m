@@ -1,99 +1,65 @@
-Return-Path: <linux-kernel+bounces-837670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569DEBACE0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:38:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CC6BACE1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E053D7A1664
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7ABF174A64
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402AA2FC86F;
-	Tue, 30 Sep 2025 12:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE822FC863;
+	Tue, 30 Sep 2025 12:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BsXsrdui"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZtOb4jT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4872DFA39
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD7F34BA29;
+	Tue, 30 Sep 2025 12:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235924; cv=none; b=Iu0jUitamOvNHSlD/Z5clxLHmkh9ByebsD/Ta/ThdNhSDfqnslr5n3tu5Ouf9pQDVCahYCOb87LvmYPw1XaA/K+zJgOTKr9rO7i5QdoMZguzk8RB+cw1gghjcR8/pNsiDPaFpwhUijDNUq0+xCXUYV53iFbE9a9s8L6f7dj1pIE=
+	t=1759235947; cv=none; b=Dk5DmR/UoHDed6zV8Aicp10D37QRHUhNjvsNbreLMuEOGwKq0heHvVnLaNlpXGLbu4HyiLLDiOzTRINrc4F5m0AmVbNqHQPlrapxNKPaV8A7b7hsvgcIsfVo0nFV201X/2u7hPi1IDvxfb1/gymnSWhsvtD3vaZCPiwshHBbsGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235924; c=relaxed/simple;
-	bh=xV29DIU2TbOmuryVDQ1P7PnHetrjWHc87hnpdn8mfxU=;
+	s=arc-20240116; t=1759235947; c=relaxed/simple;
+	bh=FH7YiuqsbnWq/LnI9Rcmaje4Dk1Lpe5UJ99+64McSr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FjZeANbDmRNIa0H2nT+vRDL96Xhs0C0YPaAA/90XaOA9vpooex9THaggG6a5TDkvqiQ63Z+hszLrww3znPf1Ymx/uQcMkz3Ni08atlUrLoQaJxNthYmVpKzLXHMvIz7PxlorzGR8PjGrGhkO+JinPUVkKLWmjw8XtJ6sHdsNLjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=BsXsrdui; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4dfbab4fb0dso15889601cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759235921; x=1759840721; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VBYh4sqVRv985C07Huopg2HBOyHMdBgVTsPZLDQuV38=;
-        b=BsXsrdui1Erd035CTl2bigbsgtDrMwUEQuPs0uETgc7w8/XlwBM8SquvNuUwlXETVR
-         EPZYC/nuZvCaWuMCpB2wqPt6K/1o5VQYf/zZMztcalUoGrb7a7AY0+NeGF3MTyHN/2Cq
-         6CNRIYp3UiKZ0KwLJ8pqmYU3XBsvQFez1Y6bLcrVspz3L1ef9EytCrrSCaQhYRa8H/rd
-         vS0KZ/UIJQNLhTuTfM5yus85JYJIq5gjONShTqyGMkLzG6/YV1YqPSqglHbnAG3K+dAK
-         ofWwxSTbWWf/EOAnz/8+7m4KfCCfeY8mXCNBbHsKElaCa2FiYubr+i/JQ5tWdqLfZw41
-         ySKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759235921; x=1759840721;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VBYh4sqVRv985C07Huopg2HBOyHMdBgVTsPZLDQuV38=;
-        b=xOo8Srr7npV4i9dqBF2UyhMy2LPyB2bNvEY9Wz13/bZ0jtrvYQdcoj+F4hVhdAk/aW
-         cFqehC7MPaVCfAxUUwtlFF+HBWZiE/H6o0oBAQCs5oKx4w7prStiTuyKsEvlBhNTyKjo
-         4zj/NXPedOEgLdwINBDwfI/0VxnJD1Gv4qhKgcjjyMOQ35YPF7fzLZkFudrxKKIwHD4p
-         y0b8GzmVOLl2EhMS5A2CoBM9MGbQZt/iLqnyQo8KH+iLEpjsJl8tGaopdqmBGRzJzvIJ
-         MyqNo7Hp1S+JZy4RizjMHD4I8fKDrYH2J5fkcpp2Pb/GDsCRj0hT9oQq0UgIEcuqXgA3
-         LhqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjPLlibY6SJe/g8YsWeGS/Akg6BmIIrx/CisnPgAcxUHMWVHgWCxMPxVI1m/XochKVoxXKWfMTqQAnYnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAYqvq+7yR+i9E3M5xvulLm9dLiveiSIq+bZqZmYyQfvZ7WZ47
-	SeTV3T0l1OeonOjD14mbq5wzOlsvgEho7eGKvBnsKbVinzMiq9IObMV/JGllQJXXhR4=
-X-Gm-Gg: ASbGnctW7SXqwTEqddyp9VDP7NR3QmeT4QwfmgKttNOTxv1h3+WHyP5HgP20kDfXMMr
-	L+BrtXb4rGRbI/ob9rnfGLrmfhllmD8w1bt0xM7G7LZGCEIaNgPCaqJL5Gfe7vp/18fXeZERTv0
-	DzTNyCiO8dvqcg+oicotkxkFUk071Uw5ixOD9lb55HEiLjDu5QucjNKUqee17ypIEES7Gn+wON1
-	InClf8SET8kRXmZ2S1Z78HWCbJBnN0kHqphEA/EP2pu7lv+YKsRgK5QBW3kAEfmUFBaG3j3hPqQ
-	r8C0CcQrKhHS7YqRfBhm+barwPKrFoWbfjZpVOvjRtTV/RYq26sYSna0T+GDsd4jYpMnv8qOh5N
-	/g09/UMR8wztO6fXefB1NhykB5kBvfoCaZtLQEzkrvA==
-X-Google-Smtp-Source: AGHT+IHgKpbQVt29fnjPpYGRGvSeW5uUhJfqcsuhp73OzWARyNjA6lxGY/bFMFic1Y10TeqPQbcyEw==
-X-Received: by 2002:ac8:5c88:0:b0:4b1:247f:4e0f with SMTP id d75a77b69052e-4da4cd41ec5mr281429761cf.57.1759235921370;
-        Tue, 30 Sep 2025 05:38:41 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e34ef75712sm8696611cf.7.2025.09.30.05.38.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 05:38:40 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v3Zct-0000000CWSm-3Tg2;
-	Tue, 30 Sep 2025 09:38:39 -0300
-Date: Tue, 30 Sep 2025 09:38:39 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 10/28] KVM: arm64: iommu: Shadow host stage-2 page
- table
-Message-ID: <20250930123839.GL2695987@ziepe.ca>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-11-smostafa@google.com>
- <aMA8vz0v0Vn-02QP@willie-the-truck>
- <aMlzLsj5slPQhWEr@google.com>
- <aNamXlTErXDs1K8Z@willie-the-truck>
- <aNpm9odmzv__2RyA@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzFztlCHz5SCGe8z41GkxAUkdZvCYZT0pQpluAwVkk3cE00YapVJOdi1YQcTf7dKZgg4r08rWdOilPDzoF3NW7nUrRlbEh+zoq+XbxumPUXGLskJIOK8S5/iiypYNuh14ZnkUcZ8OZUg/q8ytT09APF53dy00QTTqY4QrjH0Zh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZtOb4jT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1669C4CEF0;
+	Tue, 30 Sep 2025 12:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759235946;
+	bh=FH7YiuqsbnWq/LnI9Rcmaje4Dk1Lpe5UJ99+64McSr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aZtOb4jThe5hbr+Tyqyy0BX4IP44qyIJzByuIFNsfqHVVknUpDU63py3n8kqkXCVm
+	 Dix4XQFJg9O4rP0F22GQ3Ete/n3Ec9hefJxp3G0JOyuekpTrNKEHhC2Dgi64LYkXDU
+	 S0uYWNtPXOu8+Ohp9jBUHyTM0hnxuqIQAadcJ6epWuDKal/FJQl+5DucQfOFBXa5eZ
+	 bx9uCAcnx5kKFgHaw+MAOUr7sh0ay1QWn1+GUPkANq/IalMH8ErGqBgZ3XBVMxCjS6
+	 rEWnnLneqTXWv/FQdHcOYA2/oH/S35FVfhQvg95DlyOE4bmMzaOM+DcT6C3/Kgc0JB
+	 F07dSaOF4JuPQ==
+Date: Tue, 30 Sep 2025 15:39:02 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 03/10] KEYS: trusted: Use tpm_ret_to_err() in
+ trusted_tpm2
+Message-ID: <aNvPZmoF7ygfkYMq@kernel.org>
+References: <20250929194832.2913286-1-jarkko@kernel.org>
+ <20250929194832.2913286-4-jarkko@kernel.org>
+ <7icpto3rnm2f4u6zaxl4xy7zvar3q4hhpgelq2gnazszdkwc3m@5dtivkqs5xdg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,30 +68,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aNpm9odmzv__2RyA@google.com>
+In-Reply-To: <7icpto3rnm2f4u6zaxl4xy7zvar3q4hhpgelq2gnazszdkwc3m@5dtivkqs5xdg>
 
-On Mon, Sep 29, 2025 at 11:01:10AM +0000, Mostafa Saleh wrote:
-
-> > If the SMMU is in stage-1 bypass, we still have the incoming memory
-> > attributes from the transaction (modulo MTCFG which we shouldn't be
-> > setting) and they should combine with the stage-2 attributes in roughly
-> > the same way as the CPU, no?
+On Tue, Sep 30, 2025 at 02:12:35PM +0200, Stefano Garzarella wrote:
+> On Mon, Sep 29, 2025 at 10:48:25PM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Use tpm_ret_to_err() to transmute TPM return codes in trusted_tpm2.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > ---
+> > v3:
+> > - No changes.
+> > v2:
+> > - New patch split out from the fix.
+> > ---
+> > security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
+> > 1 file changed, 7 insertions(+), 19 deletions(-)
 > 
-> Makes sense, we can remove that for now and map all stage-2 with
-> IOMMU_CACHE. 
+> Nice clean up!
+> 
+> Acked-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Robin was saying in another thread that the DMA API has to use
-IOMMU_MMIO properly or it won't work.. I think what happens depends on
-the SOC design.
+Thank you.
 
-Yes, the incoming attribute combines, but unlike the CPU which will
-have per-page memory attributes in the S1, the DMA initiator will
-almost always use the same memory attributes.
+> 
+> > 
+> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> > index 024be262702f..e165b117bbca 100644
+> > --- a/security/keys/trusted-keys/trusted_tpm2.c
+> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> > @@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> > 	}
+> > 
+> > 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
+> > +	if (blob_len < 0)
+> > +		rc = blob_len;
+> > 
+> > out:
+> > 	tpm_buf_destroy(&sized);
+> > 	tpm_buf_destroy(&buf);
+> > 
+> > -	if (rc > 0) {
+> > -		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
+> > -			rc = -EINVAL;
+> > -		else
+> > -			rc = -EPERM;
+> > -	}
+> > -	if (blob_len < 0)
+> > -		rc = blob_len;
+> > -	else
+> > +	if (!rc)
+> > 		payload->blob_len = blob_len;
+> > 
+> > out_put:
+> > 	tpm_put_ops(chip);
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > 
+> > /**
+> > @@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> > 		kfree(blob);
+> > 	tpm_buf_destroy(&buf);
+> > 
+> > -	if (rc > 0)
+> > -		rc = -EPERM;
+> > -
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > 
+> > /**
+> > @@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> > 	tpm_buf_fill_hmac_session(chip, &buf);
+> > 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
+> > 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
+> > -	if (rc > 0)
+> > -		rc = -EPERM;
+> > 
+> > 	if (!rc) {
+> > 		data_len = be16_to_cpup(
+> > @@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> > 
+> > out:
+> > 	tpm_buf_destroy(&buf);
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > 
+> > /**
+> > @@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+> > 
+> > out:
+> > 	tpm_put_ops(chip);
+> > -
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > -- 
+> > 2.39.5
+> > 
+> > 
+> 
 
-In other words, we cannot rely on the DMA initiator to indicate if the
-underlying memory should be MMIO or CACHE like the CPU can.
-
-I think you have to set CACHE/MMIO correctly here.
-
-Jason
+BR, Jarkko
 
