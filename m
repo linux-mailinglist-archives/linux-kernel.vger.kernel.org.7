@@ -1,209 +1,205 @@
-Return-Path: <linux-kernel+bounces-837680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC8ABACEB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A8EBACEE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743B9188E6EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:48:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE95165CB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF622FF664;
-	Tue, 30 Sep 2025 12:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC83302CD6;
+	Tue, 30 Sep 2025 12:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="p0YoRAJH"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tvk+UXUK"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B79F155757
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F45F3016E1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759236470; cv=none; b=FYjH3XNjkGW4TuUCsawgrXGbMcKJQmJ4jMhjKpCI+IaXDT30/TzxFLkm0zaR/jzfGlUpWZwMmoGahjrzrrTRIJgeWfx2YWM7oqOVjCBicoQR7f7oM3FYcns8jNuLJlj+KDDBF0UdFlWismNd430AQx1uAqnrYOmM+XC/HfZjE/0=
+	t=1759236604; cv=none; b=nprj1hhbEmc0N/N/3mqEoCNJGwYljbsJo3LJDn9UIcuKQlzFpZENwdXlDIZ1agoLJ6O/lWBXMrrkJFlFd5pEu4MmeY238Mkcll9eWZ9lMghpK8UGzck07m4/xw3JizuARSPtn95TNBpc3Beo+dnyZhJQxysocEysBWHcreCgeOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759236470; c=relaxed/simple;
-	bh=6ODFl3tzmYQcYug2DS09l+n4aJecxEUMjdrP5ELDqoQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NNP6OxgnXOSfrFXJimU1EeY24zQgChmegdcigLQ1+p2doSy8qsRm2DyzNpjiwWZDaEypJk0ibc/7zoRIBPEyIaDgqY888SoFSunSaOSXm6kMKxqtF0tIxF880BNFVB9J8hHAFlHeivDUqsVo+tKYsjq1koihqu1ktNdZTUAty78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=p0YoRAJH; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-826311c1774so676422385a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:47:48 -0700 (PDT)
+	s=arc-20240116; t=1759236604; c=relaxed/simple;
+	bh=CXTHR3+ruv4b2NmSi2QyXZZoVB+RVVvtqzPGciNVlhQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=FjkdRg4pFILv58MetObFPU+rM3INZaKgyTtoF5jrvAvTSuGOnunO1PgxEs1gxdWocmxCLc7wnx7iKxOt0ux7yh5x1SABsrDQ3eOr94Rwvl+qwGkj3OcpNqhWD3FSmwtO8ysKn9/6ft8ER7Xvv1ZI5Z8699GHS7dEtQWiqdYEis0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tvk+UXUK; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-89019079fbeso1261268241.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:50:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1759236467; x=1759841267; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1wC8Vr6Y5iTZjdCwj30WxxG26spUpfyfsqYkfmF0j6E=;
-        b=p0YoRAJHgTzIwqCVl7qBn4YLdurEEebPu5ML9Qi97Qw3XAnIUKMMClQguY4tDGd2bn
-         Dmi7Vm9FJD0pyoybY+dlcd8SNLGw9xBlZcx1bfEsHB3MXRMi7CWThj4+xxVfGS09adpm
-         BTiAQR2OlmtDa4DOyI3vBHto5B0cMuZ6i1ZQ0=
+        d=gmail.com; s=20230601; t=1759236602; x=1759841402; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/DIF8xxMKs45jgicXUY8+fOYkrHvhQ+64uTG3AYNzDU=;
+        b=Tvk+UXUKR42fXurqNX5CdCRTrz97ra7T/rehDSWu/Kv9o1HhYT1Kx5ECY9DTL80ne/
+         pm/LtH+QDZ4usoK9jUR89XgUGnJUZ2Qe4pL/wCUgBCTn4d3HWF4zsSlMM/7zzx7JhvCc
+         g9pnajzLLnXM4AyclMxKSnLnBL3Lcts5SxwNDZvmOB1A8ORKfpZ2RXYj1snSoUBw2ikm
+         tIXrQwN/XULzh30zcPbF2cz1RAsObQHv6TqDXXIhuWhOsdm8vAefd91xpIoH2SUdhSwW
+         lMotnX8RjG4AEdvUIDVp/wT98drwzwzk1bS5bkuBnKZ4qfaOXdbInW7ZRLKLhHhpStv2
+         gJzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759236467; x=1759841267;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1wC8Vr6Y5iTZjdCwj30WxxG26spUpfyfsqYkfmF0j6E=;
-        b=enrlpPkd6MgoDOzgVn6AlyE2J6xiPUBhUDFjCrZnBAsvMYVtyItwASNzDYiYYSJkY3
-         L9SPggBZkmYQqu7a5bNLz6wAJz0UgkZoqiB4Vo1IOw0aiqFyMVa82bMJj4CdSqyovRbp
-         15IoDFXXIBU5e0Yr0CbyJAPE8MLGx4EBjU14S00X6hXNtkgnuXxyYzjIDQqSor2kf6Mz
-         l8IdSxuxHViNuPzeFBmPsZTIFT6SHH9tfw16499h1pJjzKD7yXHhg+RiU14JxwE0uv9R
-         NV1xUeNyHEjGyffYi9yeH/KIi0nVVjazAoCDImC8XMtZaKdWcn+Jt4MqpzDWJ9wP3NGa
-         xNmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbNqn9078b0lo8Iz7S/EWNIbJLZ7/A5UNrBxHTxBCc7HSL+cFPIaaBYOb90Is56Pxz16JoHnyH9Gg8Q3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmgyqrvNUCw5UkC8yAslXre7LGR51ENaswBahss4ECEJctERdv
-	QaGKfhoeiiVKTtkM54hWbOd4ZfgXNUH9tSiEcPc6+ia3PP8UhXvCcmlLUwJe1WUCaitiR21HfKU
-	fdUchVi/AZyWXiDrOTvg0Y4t0+xatWPAiO5fh6FsOIYZWohBlZlL0+xSMUg==
-X-Gm-Gg: ASbGncsOyDb/LxQbwEs94cFZ0APiIkAu6FP137kb+ifzLjE2Qpi89FHhGchpX8LRyiU
-	Y+nQrWLPk7bwJb6cw8V36Sy0PA/Cj/A3zJOM6kwehhK+Wr/d8zMxEjhYerOim5CVNBApGBYrwVU
-	CmDfqer/KJNMOFHWCb+9qEnFmNzGHYYX9zjRWs9kToPxMav7tGGr9Bg3nhsUFNnVYvFYu3Uc/vG
-	Mq9UczPJp9XXKE/XmKfj0FxznBKdlNnWQs6fxJjKUaBtv/4x8HnFjh/vqAldgbpY6eLk6RbryfA
-	k1gSC8yD
-X-Google-Smtp-Source: AGHT+IEqhTETy8643K21cVM25SZgCqRNORpuhYW7e3EFegJ2RyEn4mI4Ew9+uvdUSr05jh6gIwhJR49uuG1a58WkOuk=
-X-Received: by 2002:a05:620a:2982:b0:84b:5751:6c4f with SMTP id
- af79cd13be357-85ae93d275emr2296871185a.62.1759236466837; Tue, 30 Sep 2025
- 05:47:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759236602; x=1759841402;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/DIF8xxMKs45jgicXUY8+fOYkrHvhQ+64uTG3AYNzDU=;
+        b=WLEuaOQNdw3SMLBHAg6GXSqFQK+LlPHNtvWDHqw+njaPdN6LKHvt3cKWz4sCGWF7yv
+         ctXwGOpjBaqDbT0xfpBysgHwSmjgrPL1EO3csh0UxROkNF4qlXwHfkByIoqPDUSnj+J3
+         hYi3TNhSVkjjIpiAqSVxrrLESbgm1z9x2hr5hV0iRA4fSPG0Q7ZbDet9MbBGmj2zHTtD
+         W6vc1z0WQ79/Vr8Br0HhJNgqKrYVtOsB03kDnh7vclKkVz8cDfl+li6j2pTmbjj5Zahx
+         VujgFuy4ZniN/FutEZiCrcQInKnjXxXYemzuwJ57kCV5mm6e3qgT/Sm+afF72P5AR4WK
+         +nQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWc9nu9k0lzWPqqNFs9LRT7XViWfMRQbfDjxlc4MFBsjKevz1I/1ztH5TtU6Li00rOjXjxyEVZwq1Hhoew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrl9ZDUJUYfneLI3TSXB1s+pmEJEjR+Co99ASu6Zq4rgxgIcG8
+	anxVxamwN0aKVYxObxlbko8hCI/bMz+nF6sPEPq4CmAf+yPKBybFBRAu
+X-Gm-Gg: ASbGncsPQQAjYua+jyU2Ft/0I19vAyAyYZAde7wwymquk41tcepxYy2IdoMKlDx7psz
+	kAHGDvNr4WGoVBkxVZVpmssB9D53kOmpsVRPMXGb1Ai1DQi3aYpurHhNpZvOFqguBJ6a2r/W8Gr
+	Dctcpa/PlYoQQa8P6a2aQCp9GPYhB4mbnIPF3XSUJyUAQ5aTcovgr7hJwYLa5oNu3JfL9SwteA4
+	KTjgBuR+BYqyWQrn7rRZC69K8mmK+TD5bMZ/ren1TNXo2UtlsrOJV6sJSkB7C7xaTggqu7WK5Nl
+	MRV0K1mwYZHNI2JEHIan9QWmMKWvZQTVEGQnEtoKET8vof1gBDcLMQlfGRlmkO7mkPpBAfim/tt
+	GR3M51AV1sxRM1aKDkjULdL/Kt3mEXk1GpFmLmV7/x2KWimT+jFH3stSS3kneEyJsvi5j2dg7RF
+	8OSQYox98W1ttqrfhteOJJM0I5UzsjOFMBtKjTdfw=
+X-Google-Smtp-Source: AGHT+IF3jXqpSXTJaRkGEMK7WKJd7LDbG8wy3D5EeY7LmVpdZLbKNSI6KpFy0rL2Q30+2atZz2NZEA==
+X-Received: by 2002:a05:6102:3906:b0:4fb:f6ea:cf88 with SMTP id ada2fe7eead31-5acc6240067mr7922871137.10.1759236601986;
+        Tue, 30 Sep 2025 05:50:01 -0700 (PDT)
+Received: from gmail.com (21.33.48.34.bc.googleusercontent.com. [34.48.33.21])
+        by smtp.gmail.com with UTF8SMTPSA id ada2fe7eead31-5ae389dd1fesm4532961137.12.2025.09.30.05.50.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 05:50:01 -0700 (PDT)
+Date: Tue, 30 Sep 2025 08:50:00 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Sidharth Seela <sidharthseela@gmail.com>, 
+ antonio@openvpn.net, 
+ sd@queasysnail.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ shuah@kernel.org, 
+ willemdebruijn.kernel@gmail.com, 
+ kernelxing@tencent.com, 
+ nathan@kernel.org, 
+ nick.desaulniers+lkml@gmail.com, 
+ morbo@google.com, 
+ justinstitt@google.com
+Cc: netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, 
+ david.hunter.linux@gmail.com, 
+ Sidharth Seela <sidharthseela@gmail.com>
+Message-ID: <willemdebruijn.kernel.30a447f86eaaa@gmail.com>
+In-Reply-To: <20250930120028.390405-1-sidharthseela@gmail.com>
+References: <20250930120028.390405-1-sidharthseela@gmail.com>
+Subject: Re: [PATCH net v5] selftest:net: Fix uninit return values
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 30 Sep 2025 14:47:35 +0200
-X-Gm-Features: AS18NWCistxXCIc9UvvWaSsLppHNSEKmAKyLZH4naiNoIaLHBXQUWHvVRtqE0Zk
-Message-ID: <CAJfpegtWHBZbvMWm2uHq0WAhrF6qHE5N=AG9QjkweyXic-e7gg@mail.gmail.com>
-Subject: [GIT PULL] fuse update for 6.18
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+Since it's now only to ovpn, better prefix, which matches other
+patches in that directory, is "selftest/net/ovpn:"
 
-Please pull from:
+Btw, review the posting rules. Leave 24 hours between reposts:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
-tags/fuse-update-6.18
-
-- Extend copy_file_range interface to be fully 64bit capable (Miklos)
-
-- Add selftest for fusectl (Chen Linxuan)
-
-- Move fuse docs into a separate directory (Bagas Sanjaya)
-
-- Allow fuse to enter freezable state in some cases (Sergey Senozhatsky)
-
-- Clean up writeback accounting after removing tmp page copies (Joanne)
-
-- Optimize virtiofs request handling (Li RongQing)
-
-- Add synchronous FUSE_INIT support (Miklos)
-
-- Allow server to request prune of unused inodes (Miklos)
-
-- Fix deadlock with AIO/sync release (Darrick)
-
-- Add some prep patches for block/iomap support (Darrick)
-
-- Misc fixes and cleanups
-
-Thanks,
-Miklos
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
 
-Thanks,
-Miklos
----
+Sidharth Seela wrote:
+> Fix functions that return undefined values. These issues were caught by
+> running clang using LLVM=1 option.
+> 
+> Clang warnings are as follows:
+> ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+>  1587 |         if (!sock) {
+>       |             ^~~~~
+> ovpn-cli.c:1635:9: note: uninitialized use occurs here
+>  1635 |         return ret;
+>       |                ^~~
+> ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+>  1587 |         if (!sock) {
+>       |         ^~~~~~~~~~~~
+>  1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+>       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  1589 |                 goto err_free;
+>       |                 ~~~~~~~~~~~~~~
+>  1590 |         }
+>       |         ~
+> ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+>  1584 |         int mcid, ret;
+>       |                      ^
+>       |                       = 0
+> ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+>  2107 |         case CMD_INVALID:
+>       |              ^~~~~~~~~~~
+> ovpn-cli.c:2111:9: note: uninitialized use occurs here
+>  2111 |         return ret;
+>       |                ^~~
+> ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+>  1939 |         int n, ret;
+>       |                   ^
+>       |
+> 
+> Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+> ovpn module")
 
-Bagas Sanjaya (1):
-      Documentation: fuse: Consolidate FUSE docs into its own subdirectory
+stray line
 
-Chen Linxuan (2):
-      doc: fuse: Add max_background and congestion_threshold
-      selftests: filesystems: Add functional test for the abort file in fusectl
+> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> ---
+> 
+> v5:
+> 	- Assign -ENOMEM to ret inside if block.
+> 	- Assign -EINVAL to ret inside case block.
+> v4:
+> 	- Move changelog below sign-off.
+> 	- Remove double-hyphens in commit description.
+> v3:
+> 	- Use prefix net.
+> 	- Remove so_txtime fix as default case calls error().
+> 	- Changelog before sign-off.
+> 	- Three dashes after sign-off
+> v2:
+> 	- Use subsystem name "net".
+> 	- Add fixes tags.
+> 	- Remove txtimestamp fix as default case calls error.
+> 	- Assign constant error string instead of NULL.
+> 
+> diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> index 9201f2905f2c..8d0f2f61923c 100644
+> --- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> +++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> @@ -1586,6 +1586,7 @@ static int ovpn_listen_mcast(void)
+>  	sock = nl_socket_alloc();
+>  	if (!sock) {
+>  		fprintf(stderr, "cannot allocate netlink socket\n");
+> +		ret = -ENOMEM;
+>  		goto err_free;
+>  	}
+>  
+> @@ -2105,6 +2106,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+>  		ret = ovpn_listen_mcast();
+>  		break;
+>  	case CMD_INVALID:
+> +		ret = -EINVAL;
+>  		break;
+>  	}
+>  
+> -- 
+> 2.47.3
+> 
 
-Chunsheng Luo (1):
-      fuse: remove unused 'inode' parameter in fuse_passthrough_open
 
-Darrick J. Wong (5):
-      fuse: fix livelock in synchronous file put from fuseblk workers
-      fuse: capture the unique id of fuse commands being sent
-      fuse: enable FUSE_SYNCFS for all fuseblk servers
-      fuse: move the backing file idr and code into a new source file
-      fuse: move CREATE_TRACE_POINTS to a separate file
-
-Joanne Koong (4):
-      fuse: remove unneeded offset assignment when filling write pages
-      fuse: use default writeback accounting
-      mm: remove BDI_CAP_WRITEBACK_ACCT
-      fuse: remove fuse_readpages_end() null mapping check
-
-Li RongQing (2):
-      virtio_fs: Remove redundant spinlock in virtio_fs_request_complete()
-      virtio_fs: fix the hash table using in virtio_fs_enqueue_req()
-
-Marek Szyprowski (1):
-      mm: fix lockdep issues in writeback handling
-
-Miklos Szeredi (8):
-      fuse: add COPY_FILE_RANGE_64 that allows large copies
-      fuse: zero initialize inode private data
-      fuse: allow synchronous FUSE_INIT
-      fuse: fix references to fuse.rst -> fuse/fuse.rst
-      fuse: remove FUSE_NOTIFY_CODE_MAX from <uapi/linux/fuse.h>
-      fuse: fix possibly missing fuse_copy_finish() call in fuse_notify()
-      fuse: remove redundant calls to fuse_copy_finish() in fuse_notify()
-      fuse: add prune notification
-
-Sergey Senozhatsky (2):
-      sched/wait: Add wait_event_state_exclusive()
-      fuse: use freezable wait in fuse_get_req()
-
----
- .../filesystems/{ => fuse}/fuse-io-uring.rst       |   0
- Documentation/filesystems/{ => fuse}/fuse-io.rst   |   2 +-
- .../filesystems/{ => fuse}/fuse-passthrough.rst    |   0
- Documentation/filesystems/{ => fuse}/fuse.rst      |  20 +-
- Documentation/filesystems/fuse/index.rst           |  14 ++
- Documentation/filesystems/index.rst                |   5 +-
- Documentation/filesystems/sysfs.rst                |   2 +-
- .../translations/zh_CN/filesystems/sysfs.txt       |   2 +-
- .../translations/zh_TW/filesystems/sysfs.txt       |   2 +-
- MAINTAINERS                                        |   3 +-
- fs/fuse/Kconfig                                    |   2 +-
- fs/fuse/Makefile                                   |   5 +-
- fs/fuse/backing.c                                  | 179 ++++++++++++++++
- fs/fuse/cuse.c                                     |   3 +-
- fs/fuse/dev.c                                      | 227 +++++++++++++--------
- fs/fuse/dev_uring.c                                |   8 +-
- fs/fuse/file.c                                     |  86 ++++----
- fs/fuse/fuse_dev_i.h                               |  13 +-
- fs/fuse/fuse_i.h                                   |  70 ++++---
- fs/fuse/inode.c                                    |  76 +++++--
- fs/fuse/iomode.c                                   |   3 +-
- fs/fuse/passthrough.c                              | 167 +--------------
- fs/fuse/trace.c                                    |  13 ++
- fs/fuse/virtio_fs.c                                |  12 +-
- include/linux/backing-dev.h                        |  14 +-
- include/linux/wait.h                               |  12 ++
- include/uapi/linux/fuse.h                          |  22 +-
- mm/backing-dev.c                                   |   2 +-
- mm/page-writeback.c                                |  45 ++--
- tools/testing/selftests/Makefile                   |   1 +
- .../testing/selftests/filesystems/fuse/.gitignore  |   3 +
- tools/testing/selftests/filesystems/fuse/Makefile  |  21 ++
- .../testing/selftests/filesystems/fuse/fuse_mnt.c  | 146 +++++++++++++
- .../selftests/filesystems/fuse/fusectl_test.c      | 140 +++++++++++++
- 34 files changed, 922 insertions(+), 398 deletions(-)
- rename Documentation/filesystems/{ => fuse}/fuse-io-uring.rst (100%)
- rename Documentation/filesystems/{ => fuse}/fuse-io.rst (99%)
- rename Documentation/filesystems/{ => fuse}/fuse-passthrough.rst (100%)
- rename Documentation/filesystems/{ => fuse}/fuse.rst (95%)
- create mode 100644 Documentation/filesystems/fuse/index.rst
- create mode 100644 fs/fuse/backing.c
- create mode 100644 fs/fuse/trace.c
- create mode 100644 tools/testing/selftests/filesystems/fuse/.gitignore
- create mode 100644 tools/testing/selftests/filesystems/fuse/Makefile
- create mode 100644 tools/testing/selftests/filesystems/fuse/fuse_mnt.c
- create mode 100644 tools/testing/selftests/filesystems/fuse/fusectl_test.c
 
