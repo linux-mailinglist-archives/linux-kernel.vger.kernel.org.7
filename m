@@ -1,184 +1,125 @@
-Return-Path: <linux-kernel+bounces-838051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F56FBAE529
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802D1BAE52F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FB31925EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D79F324774
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77D8258EDE;
-	Tue, 30 Sep 2025 18:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEBC2343B6;
+	Tue, 30 Sep 2025 18:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h05EiDDm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RY02zDuq"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F0E1C68F;
-	Tue, 30 Sep 2025 18:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A695B223705
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759257420; cv=none; b=W0wBa6FexAfmoyZi8ZJiAflxfnxQAWximFUCMGnln3cAShbmaLZ133favZYz7fFQCa7aomEdmNliDtS0YE0ItjPwNBIDSiykFF7qRYZRTu4fWriO8WD5afBRe+KpHaEiOM0HYTjEokBmfNtO++KvoGVlKHGz15ozeOqKq7B8FmU=
+	t=1759257436; cv=none; b=Or1bf86AiEQjN5ffDL5Z0QBNDhy/PoU4rlelulug/V20Ahfda+JFMW6vQNUE8KUGdodqocYVxDsb6LDgGbl5OrBZ0992fc0RBTF6axbCgUyLzJpeznuVv/qZ7+ssAtlEg+v0ttvz38XMbLNmxXQFs1V3zg7mejIYGqZ4DvP3XWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759257420; c=relaxed/simple;
-	bh=b0DO6QcFb+m6/nmTuU5im+jk0/VqEOzpAugWjXSZukc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlOFHJLiXvjVPkvvNg/gBNTAq/lne3I+AFnQmvdwrd368eKRF+FWnwfRvR8boaD8LXxyU9iD4eZAvjupSQrQixQ9QgDgDjSAt1h/BcZcFVIcvgmvB6Znr9gaZd2dS7BHlvFlpzh8hnh4pbqH+Rg76d3xOjJS5P1JibVxq2gx77k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h05EiDDm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B043C4CEF0;
-	Tue, 30 Sep 2025 18:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759257419;
-	bh=b0DO6QcFb+m6/nmTuU5im+jk0/VqEOzpAugWjXSZukc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h05EiDDmLZSDnM4ZsKoHRYybhWLmI/4M+y4jhrTFRnfPn2fR3jfKFUGIbdnfOt0IZ
-	 ntnrRwnMmfBmI1aYz5Tv/0EX7R8jpOlTpDy39jrWF6SJNRcXxaxzraBkqFHwDE93QF
-	 tjZkzGGZDVs45y5PYryING89IycDANflyGsJfLEv8rzID5OO6JH7Q8suw4wTJEM6u7
-	 rAyeVbUZRWpcVtXMyH5Vt5uTWrQzRelUU2VaLja5Ug1fHIBhY214G+w3VHsDO8WPrD
-	 Pm6z+75SWrTqntdE/ZkEOAp4Kpr5ft5nkXJ1noJQs8FjllDmXwEp87HLYfEbXV5yQW
-	 WRFCFtggsjHwQ==
-Date: Tue, 30 Sep 2025 19:36:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Guangjie Song <guangjie.song@mediatek.com>,
-	Laura Nao <laura.nao@collabora.com>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>, kernel@collabora.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: clock: mediatek: Add clocks for MT8196
- mfgpll
-Message-ID: <20250930-reconcile-apostle-64397f998a30@spud>
-References: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
- <20250929-mtk-pll-rpm-v1-1-49541777878d@collabora.com>
- <20250929-whoops-kennel-5f54fb6559a8@spud>
- <3374975.aeNJFYEL58@workhorse>
+	s=arc-20240116; t=1759257436; c=relaxed/simple;
+	bh=UzISaNqBnr6oPeKPZ/ZMlptaIWSDz7JBW9vqCatixqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oq2x8jb5SDq2E+tO9kaAjCHtjhbY6Ju8hOy1Y2YSxENn3WSBSEXpu9LqAj6Qrqe3MpVEeInkskN4qzanX90IGuCzQWkKUw6r8Gh7JMZSNL+nXzJJQiGfBS54ljs0UmYqhY+7Wf0grReFJ1z2YZL5mLeBtH4nozbyBRDEeAMvyIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RY02zDuq; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-81efcad9c90so47215186d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759257433; x=1759862233; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a2QGQGEsrfTFXVfCocwQk/OlKEvR0Qi5M6Cv20Qoyek=;
+        b=RY02zDuqEn74SsWRmi5IbfV5gu1lyv1rh2J/LfwhvoT6G+8uaAdTPDH71mfMnapczZ
+         +LDOn22BFcJBuncxK7oAqzKSqqGfPso3nABo9jMu+EY7aFvF21Oopa6ex/+EMcINwk88
+         6Nx4G9GHqOeH9JMGgLwFi1ZA4LUv17RBcCbLXEzSzY8May7apXLUYykGMwdMZ777YUZ3
+         dS5ZmbZbIYjvj88eeDJq3gW0cFYa/a1NWrY9mEstcolr7It1NXS4G2+dJHjltbwSsHaT
+         kRHYQTFbvartUtn8cDXou1ajtLby3JDjFiaAK4XeBRKzwpuYw/4gv7drRdpr3v+0SqWd
+         TaSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759257433; x=1759862233;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a2QGQGEsrfTFXVfCocwQk/OlKEvR0Qi5M6Cv20Qoyek=;
+        b=AikuCrdKY+I8enzGQSe9miwBXmM2h6OxafoB74tV8VfCPxTgkDAluYUVM7m5nhEeIn
+         q2TPa1eXuu92sG2sG/xcs/xDjQ6l8TW8PORJcjVhaNeJJl8bZyEUDmn9QkpZBTCjQNv/
+         UMLZCN57MC+h2GHtYa/gsuUXdnnrgX7tMT3m79poSUmac1NrdN9gtcmkfxFHwVk15Uz0
+         B3VlmE2t5OwpKwzIDX3iQugYWgvhhgm06zIfL7jaBy1Qqir486ZU7UnDuCip7vH0hQCA
+         GHn0xf9dXyhULIpZX/zhBnsLYTD4hNmVHJLwjIcKHqPHaHCgzJfo2EmwN+QbHmvO4WbJ
+         8PWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqMa2XLiu2yDfPjMWqucyyvHMN6BbNpoMVCwezz7gAhSTc8JeCHh+sRcHpKdgVwTjgDJ7S7OzC0zqjYr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9nYHbRfG3jUUL6nr6HnkWRMqoKA2d6zyWVh6oErcHeASfRc7a
+	qGJd9+9eOJ1CsEG0PCkPfueedFJEA8c4GAaStnbFJzeQBUXpbOpVWMFH
+X-Gm-Gg: ASbGnctbNyge/CNpZr2rOaPh0gbZPY2gWtIzUkqvDI97tylZglgRvcP8Sr/jNzSjGCS
+	i7K8HPHtW7OBYftB6UEvubQw8xPYY3YDqB6K2QhmAUmKBSyH79H0y8eDjBOa9JrN6c6bSqxwGjJ
+	FGvy1jDYeEnsXy1Lqwgqwbvblmt64KQH8zoa9xaXRL/YCDsRrDoOoem9NvW9jDb2txf4kW3g1iQ
+	HWF7qVyvm0/TlbYicwzu7aLkTK/tbsbvx5PG1SI8G/K13J0CFaWbeBmYq02zKqLAWpXbKieXEZS
+	lQI4APwMeMX6SlL34Y6VRXBvCb4IqzKZwGPuCrl+peJQ82b6qBH2uYAK8H/JWXiJxvhkzHVRVgI
+	3oPdbHfIY6iURUxpZaq3znIyuRnbyhRI34wex45+lV6bUTY0U1tCQHI7IU+mrWAdfzQq92DuPeU
+	WXuX5XBKdt
+X-Google-Smtp-Source: AGHT+IG1ZzECb3HDDfSi//Asq0waIXTic0POdoKNFFJPYCDQ78uGhB+aw9swukGFQsfSRdJwVYvYxA==
+X-Received: by 2002:a05:6214:1bcc:b0:7f1:c596:e1cc with SMTP id 6a1803df08f44-8739d051ce4mr13159286d6.19.1759257433401;
+        Tue, 30 Sep 2025 11:37:13 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8013cdf424asm98541956d6.26.2025.09.30.11.37.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 11:37:12 -0700 (PDT)
+Message-ID: <94f572c9-36b8-44c6-86c6-cc28f90de64d@gmail.com>
+Date: Tue, 30 Sep 2025 11:37:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fZ4QstzZMSk1bYrw"
-Content-Disposition: inline
-In-Reply-To: <3374975.aeNJFYEL58@workhorse>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/91] 6.6.109-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250930143821.118938523@linuxfoundation.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250930143821.118938523@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/30/25 07:46, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.109 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.109-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---fZ4QstzZMSk1bYrw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-On Tue, Sep 30, 2025 at 05:57:00PM +0200, Nicolas Frattaroli wrote:
-> On Monday, 29 September 2025 19:31:36 Central European Summer Time Conor =
-Dooley wrote:
-> > On Mon, Sep 29, 2025 at 02:13:20PM +0200, Nicolas Frattaroli wrote:
-> > > The clock controllers for mfgpll, mfgpll-sc0, and mfgpll-sc1 all need
-> > > CLK_TOP_MFG_EB to be on if their clock control registers are touched =
-in
-> > > any way.
-> > >=20
-> > > This was not known at the time this binding was written, as this
-> > > dependency only came to light when I started poking at the MFlexGraph=
-ics
-> > > hardware, where this undocumented peculiarity made itself known throu=
-gh
-> > > SErrors being thrown during register reads.
-> > >=20
-> > > Add a clocks property to the binding to describe this relationship, a=
-nd
-> > > mark it as required for the affected clocks.
-> > >=20
-> > > Fixes: dd240e95f1be ("dt-bindings: clock: mediatek: Describe MT8196 c=
-lock controllers")
-> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > > ---
-> > >  .../bindings/clock/mediatek,mt8196-sys-clock.yaml  | 28 ++++++++++++=
-++++++++++
-> > >  1 file changed, 28 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8196-=
-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8196-sy=
-s-clock.yaml
-> > > index 660ab64f390d2e722b7d3e25cf057926da318bc0..41aacd8d5f69050eebdf8=
-392f7b652427632f491 100644
-> > > --- a/Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clo=
-ck.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clo=
-ck.yaml
-> > > @@ -45,6 +45,9 @@ properties:
-> > >    reg:
-> > >      maxItems: 1
-> > > =20
-> > > +  clocks:
-> > > +    maxItems: 1
-> > > +
-> > >    '#clock-cells':
-> > >      const: 1
-> > > =20
-> > > @@ -90,6 +93,23 @@ required:
-> > > =20
-> > >  additionalProperties: false
-> > > =20
-> > > +allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - mediatek,mt8196-mfgpll-pll-ctrl
-> > > +              - mediatek,mt8196-mfgpll-sc0-pll-ctrl
-> > > +              - mediatek,mt8196-mfgpll-sc1-pll-ctrl
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          items:
-> > > +            - description: mfg_eb clock
-> > > +      required:
-> > > +        - clocks
-> >=20
-> > Don't you want an else: properties: clocks: false here?
->=20
-> Possibly. I'm never quite sure how strict bindings should be when
-> it comes to stuff like this. On the one hand, none of the other
-> compatibles described in it use any clocks that we know of
-> right now.
-
-It's a bit case-by-case I suppose, but anything that is invalid and can
-be easily prevented should be. Particularly in cases where information
-about what's correct is harder to find.
-
-> On the other, if we have a second set of compatibles that also
-> needs clocks, but in a different way, would we repeat that for
-> each such if/then condition? Or would be reformulate this as
-> some oneOf/anyOf construct specifically for the clock property?
-
-Depends on what's simpler to do. Sometimes it's better to have if/then
-on a per property basis and sometimes separate entries under the allOf
-per platform is. Usually depends on how unique each platform is.
-
---fZ4QstzZMSk1bYrw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNwjRQAKCRB4tDGHoIJi
-0k2bAQCjXXRncpKoMJR24/6cQoVfQTpI1s7ccTIPodjULJZPVwD/WV6udQlkMuX2
-6ZxfAHeOTMBs515cJyWF94PA2GwEOAM=
-=52m1
------END PGP SIGNATURE-----
-
---fZ4QstzZMSk1bYrw--
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
