@@ -1,184 +1,319 @@
-Return-Path: <linux-kernel+bounces-837776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3E3BAD29C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:23:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA7EBAD2AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD0A1C7843
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:23:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E897E4A253E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12672F8BF1;
-	Tue, 30 Sep 2025 14:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800C42FF14A;
+	Tue, 30 Sep 2025 14:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FjaX0TRe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8W4XjaNY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2ZuA/d9x"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6824F1C84DE;
-	Tue, 30 Sep 2025 14:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D961124DD09
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759242191; cv=none; b=rPpaUj/7nFdH+hRcGDVPehhZKBKrEQ6PW1gUP0E5apt5jcthEWkPmxiDqN78IRSphnDzsewNSUuKdzznAYQ86NivXuCA64Lq6Rr/0Xb3TJe9nO1GMcBaBhpy07tS2a4pzi9h3xyvx8Hq9gNJYcBjiWRXdu7sflQCytUsmJzwRYQ=
+	t=1759242251; cv=none; b=ogQKp3evMZoHrbQiv1jfmX+PmlusGKMzFz5gwdEGZGgzRexlf2Km2YTCPUZ+TwY4G9/QJYMusrhRnQUYF02NQ35PIZPXFOF7atjTz+6T0IsfVY3zr+jjhR+Ln6PMIPky7ps+yDkGwWc308C4mxq8e9tDzERND3/2Ab50DlBS6sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759242191; c=relaxed/simple;
-	bh=GrPGI+yiog7WNMHggnC50f0/Q852fTmKJEq510AxMGE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F7TBdBLKb1v3LFoAmSOZs8Tn9kLRF1JNN16HA7GVi5JHn5dWiV1RXi+w0kNx7XQomQxfZyAz/p8K+imPHT4B8wDiL6C9mbNdegbSwkXcQJuDKD1FiLB+mpDRrFW/IpJzzHkRxWmqesthEvCWCPF07yAOUV/ItqJrpsfa695EYf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FjaX0TRe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8W4XjaNY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759242183;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/n7nMiXERpgb40T7ZbKDTmup8KjTwQFVnNmM/Ve1kwU=;
-	b=FjaX0TRedgyj2vyQrxNPL7AoxU54n3MTzzYUi97ISmAb1KLprsAk88FOl0J/QUZXNFwECd
-	CM0MMvVy9spWIsLZgBCAxqx5Hj/MjUUUKEbYvjZroelDNx+g1qSnK8te+AhsOzSkSJ05X7
-	jau6QjpRAD3bgM3QfmrMbaJK3toucU2Ypf5sbtII7yqYXBlYdnBzrGVaIQBSZnGIUxVF55
-	rrw0UcmgX+GgAVW9ovaNm7yTURUK0bqn8Ll4InT+UL22+/VX0v/lm0rLRK8zA8AT7MtBII
-	PANRaSlSE1cndhTLgSVzddDzK9+/6lNNGG9aFt0l2O0JrNXqW6XwA1A2jKfG7g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759242183;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/n7nMiXERpgb40T7ZbKDTmup8KjTwQFVnNmM/Ve1kwU=;
-	b=8W4XjaNYBdxTW2NVNiiGV/nhbibksF0A03DxoI9K2fbFLQj2wy/A2iWwixotyxUJ0iC28u
-	G5WvdFsBLTUNDoAA==
-To: Calvin Owens <calvin@wbinvd.org>, Breno Leitao <leitao@debian.org>,
-    Sebastian Siewior <bigeasy@linutronix.de>
-Cc: Petr Mladek <pmladek@suse.com>, Mike Galbraith <efault@gmx.de>,
-    Simon Horman <horms@kernel.org>, kuba@kernel.org,
-    Pavel Begunkov <asml.silence@gmail.com>,
-    Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org,
-    LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-    boqun.feng@gmail.com, Sergey Senozhatsky <senozhatsky@chromium.org>,
-    Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-In-Reply-To: <aNvh2Cd2i9MVA1d3@mozart.vkv.me>
-References: <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
- <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
- <84a539f4kf.fsf@jogness.linutronix.de>
- <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
- <847by65wfj.fsf@jogness.linutronix.de> <aMGVa5kGLQBvTRB9@pathway.suse.cz>
- <oc46gdpmmlly5o44obvmoatfqo5bhpgv7pabpvb6sjuqioymcg@gjsma3ghoz35>
- <aNvh2Cd2i9MVA1d3@mozart.vkv.me>
-Date: Tue, 30 Sep 2025 16:29:02 +0206
-Message-ID: <84frc4j9yx.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1759242251; c=relaxed/simple;
+	bh=QX4I/lCarlYgvfsjBbMkBMBMASp/lik6TTXQ2+1tQ5Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ELQK2U6zjauwxD1puARMqccuusjw9/HiAZLyDiJbJYyOw1na9CLrz7djV6X8X1EpLuIEI9+TAL5eP4cSRmzkZVH6ry2L+pdvIhSFUsbQqU7K9iK+BX4Xk3YlCKIX3JC9Bqxjm4Bo2myLloyeA/vlsiJDD7aoAQA0DegMxfkZrdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2ZuA/d9x; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-332560b7171so5341726a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759242249; x=1759847049; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oQlJNmaSy7Vsey9bZkxA7JGXtQsD4l92RLpVpPchWDw=;
+        b=2ZuA/d9x4STm9M28mbYFfxncb31DO8LaUjtbpc8kFduhRUUhKMuoPgHzhkIc18RvMo
+         3tu2gJE+VPHxbBH5mK6CIECGIpAVw0gtx/VAX8wtt/oe3qUH8OoOXpQL1PZnQU65XWxp
+         9q2xkAWZMlUxbVXfo10rcPP/WcOfnuQ3RJxFMT/O8zwZQoCjIcboG4cB3JT2pVTAL6KC
+         aCGt/3jflz4vAxsfl0igIcT+NJ0Msvjc1YVkgplV7ZG/yw+GJsJxEfQD1w6/A9BeVwYj
+         8YOBp8mXrn0cg9Dq+e1KKl6FmYR9BD1GQqODdApBozmg9gA6gPgGTPDdKfl1n7Llf4yY
+         wgEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759242249; x=1759847049;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oQlJNmaSy7Vsey9bZkxA7JGXtQsD4l92RLpVpPchWDw=;
+        b=LCvFp4tdJuf+ub1S2qvpnZG9+7+usyo145Ojj+emumXPQ4UzRw0z2cciwdwg8xBTAu
+         ImFUeBmArlfl2GRyfEGNWazkwqcUnkBvIPBpnDhjw5a81EY/fiN0UA/CX3R7yN06L2dW
+         DQBmscbHwmwZ+g4SSYc0k5dHiNnkXFoEvMWsLSQRTqm1J0whdiocNtGv6DqobEk1lEpa
+         FtVIbMugQo8fW8QwYFu9MqLD12AESw9m/6/eIkX8LINtVAPWNOyZMA2xUIctqsNeGMNB
+         Ddo/R8DFFJxr0oHs/6yxSjIzaH+lpnJ9Dq4DTn4EacOg+uwu4YfHpBUW/713UUYztwJq
+         1JTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2PKvOsbNUGblVhgKsZ38DAD5j53HcbBkSn5Z2mOIucEfMdD8c+JKbZtpodqOZJLRmYvvq7PWUf4reVRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+YaGPmrc3fBW6duZkLeD/nnBILDI2WZUtdyPOzTo137eehqF6
+	B9qN6ixlHgjEeyFw63x1eB1YSfB8oxiENsXXkQP0AvNDIKCV65mStUS+PblbZqKr5R09wuHU/dD
+	Xw36KFA==
+X-Google-Smtp-Source: AGHT+IFz/mOSeweoDFQEe1prKxm0oY3++suIaj9pQRWJfRm1ouaf2TCChsh41iBwxlNuzYnHzPTecD9i+ec=
+X-Received: from pjbbk12.prod.google.com ([2002:a17:90b:80c:b0:32d:7097:81f1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4ac4:b0:32e:8c6d:5928
+ with SMTP id 98e67ed59e1d1-3383abde248mr5248895a91.13.1759242249096; Tue, 30
+ Sep 2025 07:24:09 -0700 (PDT)
+Date: Tue, 30 Sep 2025 07:24:07 -0700
+In-Reply-To: <diqzfrc41kns.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-6-seanjc@google.com>
+ <diqztt0l1pol.fsf@google.com> <aNrCqhA_hhUjflPA@google.com> <diqzfrc41kns.fsf@google.com>
+Message-ID: <aNvoB6DWSbda2lXQ@google.com>
+Subject: Re: [PATCH 5/6] KVM: selftests: Add wrappers for mmap() and munmap()
+ to assert success
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-(Added Sebastian.)
+On Tue, Sep 30, 2025, Ackerley Tng wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> > To be perfectly honest, I forgot test_util.h existed :-)
+> 
+> Merging/dropping one of kvm_util.h vs test_util.h is a good idea. The
+> distinction is not clear and it's already kind of messy between the two.
 
-On 2025-09-30, Calvin Owens <calvin@wbinvd.org> wrote:
-> On Wednesday 09/10 at 11:26 -0700, Breno Leitao wrote:
->> On Wed, Sep 10, 2025 at 05:12:43PM +0200, Petr Mladek wrote:
->> > On Wed 2025-09-10 14:28:40, John Ogness wrote:
->> 
->> > > @pmladek: We could introduce a new console flag (NBCON_ATOMIC_UNSAFE) so
->> > > that the callback is only used by nbcon_atomic_flush_unsafe().
->> > 
->> > This might be an acceptable compromise. It would try to emit messages
->> > only at the very end of panic() as the last desperate attempt.
->> > 
->> > Just to be sure, what do you mean with unsafe?
->> > 
->> >     + taking IRQ unsafe locks?
->> 
->> Taking IRQ unsafe locks is the major issue we have in netconsole today.
->> Basically the drivers can implement IRQ unsafe locks in their
->> .ndo_start_xmit() callback, and in some cases those are IRQ unsafe,
->> which doesn't match with .write_atomic(), which expect all the inner
->> locks to be IRQ safe.
->
-> Hmm, I'm also hitting the below on next-20250926 with translated=strict,
-> the triggering acquisition is here:
->
->     https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/iommu/iova.c?id=30d4efb2f5a515a60fe6b0ca85362cbebea21e2f#n832
->
-> Naively I'd think the IOMMU code would need to be safe to call with
-> interrupts disabled? Do we need raw_spin_lock() in some places there?
->
-> I'll have more time to dig and maybe send a patch tomorrow, any quick
-> thoughts are appreciated.
->
-> [  319.006534][   T16] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-> [  319.006536][   T16] in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 16, name: pr/legacy
-> [  319.006537][   T16] preempt_count: 0, expected: 0
-> [  319.006537][   T16] RCU nest depth: 3, expected: 3
-> [  319.006538][   T16] 8 locks held by pr/legacy/16:
-> [  319.006539][   T16]  #0: ffffffff831ffbe0 (console_lock){+.+.}-{0:0}, at: legacy_kthread_func+0x1e/0xc0
-> [  319.006546][   T16]  #1: ffffffff831ffc30 (console_srcu){....}-{0:0}, at: console_flush_all+0xf2/0x430
-> [  319.006550][   T16]  #2: ffffffff832c3ef8 (target_list_lock){+.+.}-{3:3}, at: write_ext_msg.part.0+0x28/0x4d0
-> [  319.006554][   T16]  #3: ffffffff83202720 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0xd5/0x1a0
-> [  319.006557][   T16]  #4: ffffffff83202720 (rcu_read_lock){....}-{1:3}, at: __netpoll_send_skb+0x4a/0x3c0
-> [  319.006561][   T16]  #5: ffff888107c89e98 (_xmit_ETHER#2){+...}-{3:3}, at: __netpoll_send_skb+0x2d6/0x3c0
-> [  319.006564][   T16]  #6: ffffffff83202720 (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x59/0x130
-> [  319.006567][   T16]  #7: ffffe8ffffc06218 (&cpu_rcache->lock){+.+.}-{3:3}, at: alloc_iova_fast+0x70/0x2d0
-> [  319.006570][   T16] irq event stamp: 20680
-> [  319.006571][   T16] hardirqs last  enabled at (20679): [<ffffffff81ee7c3c>] _raw_spin_unlock_irqrestore+0x3c/0x50
-> [  319.006573][   T16] hardirqs last disabled at (20680): [<ffffffff81d37b40>] netpoll_send_skb+0x30/0x70
-> [  319.006575][   T16] softirqs last  enabled at (0): [<ffffffff8138970a>] copy_process+0x7aa/0x1940
-> [  319.006577][   T16] softirqs last disabled at (0): [<0000000000000000>] 0x0
-> [  319.006580][   T16] CPU: 0 UID: 0 PID: 16 Comm: pr/legacy Not tainted 6.17.0-rc7-next-20250926 #1 PREEMPT_{RT,LAZY}
-> [  319.006582][   T16] Hardware name: ASUSTeK COMPUTER INC. WS C246M PRO Series/WS C246M PRO Series, BIOS 3301 03/23/2020
-> [  319.006583][   T16] Call Trace:
-> [  319.006584][   T16]  <TASK>
-> [  319.006586][   T16]  dump_stack_lvl+0x57/0x80
-> [  319.006590][   T16]  __might_resched.cold+0xec/0xfd
-> [  319.006592][   T16]  rt_spin_lock+0x52/0x1a0
-> [  319.006594][   T16]  ? alloc_iova_fast+0x70/0x2d0
-> [  319.006598][   T16]  alloc_iova_fast+0x70/0x2d0
-> [  319.006603][   T16]  iommu_dma_alloc_iova+0xca/0x100
-> [  319.006606][   T16]  __iommu_dma_map+0x7f/0x170
-> [  319.006611][   T16]  iommu_dma_map_phys+0xb7/0x190
-> [  319.006615][   T16]  dma_map_phys+0xc9/0x130
-> [  319.006619][   T16]  igc_tx_map.isra.0+0x155/0x570
-> [  319.006625][   T16]  igc_xmit_frame_ring+0x2f3/0x510
-> [  319.006627][   T16]  ? rt_spin_trylock+0x59/0x130
-> [  319.006631][   T16]  netpoll_start_xmit+0x11c/0x190
-> [  319.006635][   T16]  __netpoll_send_skb+0x32b/0x3c0
-> [  319.006640][   T16]  netpoll_send_skb+0x3e/0x70
+That's a topic for another day.
 
-netpoll_send_skb() is doing local_irq_save(), which is disabling
-hardware interrupts. So nothing deeper in the stack may sleep. But
-__iova_rcache_get() is performing a spin_lock_irqsave, which for
-PREEMPT_RT can sleep.
+> It's a common pattern in KVM selftests to have a syscall/ioctl wrapper
+> foo() that asserts defaults and a __foo() that doesn't assert anything
+> and allows tests to assert something else, but I have a contrary
+> opinion.
+> 
+> I think it's better that tests be explicit about what they're testing
+> for, so perhaps it's better to use macros like TEST_ASSERT_EQ() to
+> explicitly call a function and check the results.
 
-It would be nice to replace that local_irq_save() with a real lock
-type.
+No, foo() and __foo() is a well-established pattern in the kernel, and in KVM
+selftests it is a very well-established pattern for syscalls and ioctls.  And
+I feel very, very strong about handling errors in the core infrastructure.
 
-@bigeasy: You have some experience cleaning up this class of
-problems. Any suggestions?
+Relying on developers to remember to add an assert is 100% guaranteed to result
+in missed asserts.  That makes everyone's life painful, because inevitably an
+ioctl will fail on someone else's system, and then they're stuck debugging a
+super random failure with no insight into what the developer _meant_ to do.
 
-> [  319.006643][   T16]  write_ext_msg.part.0+0x457/0x4d0
-> [  319.006650][   T16]  console_emit_next_record+0xcb/0x1c0
-> [  319.006656][   T16]  console_flush_all+0x274/0x430
-> [  319.006660][   T16]  ? devkmsg_write+0x110/0x110
-> [  319.006663][   T16]  __console_flush_and_unlock+0x34/0xa0
-> [  319.006666][   T16]  legacy_kthread_func+0x23/0xc0
-> [  319.006669][   T16]  ? swake_up_locked+0x50/0x50
-> [  319.006672][   T16]  kthread+0xf9/0x200
-> [  319.006675][   T16]  ? kthread_fetch_affinity.isra.0+0x40/0x40
-> [  319.006678][   T16]  ret_from_fork+0xff/0x150
-> [  319.006681][   T16]  ? kthread_fetch_affinity.isra.0+0x40/0x40
-> [  319.006682][   T16]  ? kthread_fetch_affinity.isra.0+0x40/0x40
-> [  319.006684][   T16]  ret_from_fork_asm+0x11/0x20
-> [  319.006694][   T16]  </TASK>
+And requiring developers to write (i.e. copy+paste) boring, uninteresting code
+to handle failures adds a lot of friction to development, is a terrible use of
+developers' time, and results in _awful_ error messages.  Bad or missing error
+messages in tests have easily wasted tens of hours of just _my_ time; I suspect
+the total cost throughout the KVM community can be measured in tens of days.
+ 
+E.g. pop quiz, what state did I clobber that generated this error message with
+a TEST_ASSERT_EQ(ret, 0)?  Answer at the bottom.
 
-John Ogness
+  ==== Test Assertion Failure ====
+  lib/x86/processor.c:1128: ret == 0
+  pid=2456 tid=2456 errno=22 - Invalid argument
+     1	0x0000000000415465: vcpu_load_state at processor.c:1128
+     2	0x0000000000402805: save_restore_vm at hyperv_evmcs.c:221
+     3	0x000000000040204d: main at hyperv_evmcs.c:286
+     4	0x000000000041df43: __libc_start_call_main at libc-start.o:?
+     5	0x00000000004200ec: __libc_start_main_impl at ??:?
+     6	0x0000000000402220: _start at ??:?
+  0xffffffffffffffff != 0 (ret != 0)
+
+You might say "oh, I can go look at the source".  But what if you don't have the
+source because you got a test failure from CI?  Or because the assert came from
+a bug report due to a failure in someone else's CI pipeline?
+
+That is not a contrived example.  Before the ioctl assertion framework was added,
+KVM selftests was littered with such garbage.  Note, I'm not blaming developers
+in any way.  After having to add tens of asserts on KVM ioctls just to write a
+simple test, it's entirely natural to become fatigued and start throwing in
+TEST_ASSERT_EQ(ret, 0) or TEST_ASSERT(!ret, "ioctl failed").
+
+There's also the mechanics of requiring the caller to assert.  KVM ioctls that
+return a single value, e.g. register accessors, then need to use an out-param to
+communicate the value or error code, e.g. this
+
+	val = vcpu_get_reg(vcpu, reg_id);
+	TEST_ASSERT_EQ(val, 0);
+
+would become this:
+
+	ret = vcpu_get_reg(vcpu, reg_id, &val);
+	TEST_ASSERT_EQ(ret, 0);
+	TEST_ASSERT_EQ(val, 0);
+
+But of course, the developer would bundle that into:
+
+	TEST_ASSERT(!ret && !val, "get_reg failed");
+
+And then the user is really sad when the "!val" condition fails, because they
+can't even tell.  Again, this't a contrived example, it literally happend to me
+when dealing with the guest_memfd NUMA testcase, and was what prompted me to
+write this syscall framework.  This also shows the typical error message that a
+developer will write. 
+
+This TEST_ASSERT() failed on me due to a misguided cleanup I made:
+
+	ret = syscall(__NR_get_mempolicy, &get_policy, &get_nodemask,
+		      maxnode, mem, MPOL_F_ADDR);
+	TEST_ASSERT(!ret && get_policy == MPOL_DEFAULT && get_nodemask == 0,
+		"Policy should be MPOL_DEFAULT and nodes zero");
+
+generating this error message:
+
+  ==== Test Assertion Failure ====
+  guest_memfd_test.c:120: !ret && get_policy == MPOL_DEFAULT && get_nodemask == 0
+  pid=52062 tid=52062 errno=22 - Invalid argument
+     1	0x0000000000404113: test_mbind at guest_memfd_test.c:120 (discriminator 6)
+     2	 (inlined by) __test_guest_memfd at guest_memfd_test.c:409 (discriminator 6)
+     3	0x0000000000402320: test_guest_memfd at guest_memfd_test.c:432
+     4	 (inlined by) main at guest_memfd_test.c:529
+     5	0x000000000041eda3: __libc_start_call_main at libc-start.o:?
+     6	0x0000000000420f4c: __libc_start_main_impl at ??:?
+     7	0x00000000004025c0: _start at ??:?
+  Policy should be MPOL_DEFAULT and nodes zero
+
+At first glance, it would appear that get_mempolicy() failed with -EINVAL.  Nope.
+ret==0, but errno was left set from an earlier syscall.  It took me a few minutes
+of digging and a run with strace to figure out that get_mempolicy() succeeded.
+
+Constrast that with:
+
+        kvm_get_mempolicy(&policy, &nodemask, maxnode, mem, MPOL_F_ADDR);
+        TEST_ASSERT(policy == MPOL_DEFAULT && !nodemask,
+                    "Wanted MPOL_DEFAULT (%u) and nodemask 0x0, got %u and 0x%lx",
+                    MPOL_DEFAULT, policy, nodemask);
+
+  ==== Test Assertion Failure ====
+  guest_memfd_test.c:120: policy == MPOL_DEFAULT && !nodemask
+  pid=52700 tid=52700 errno=22 - Invalid argument
+     1	0x0000000000404915: test_mbind at guest_memfd_test.c:120 (discriminator 6)
+     2	 (inlined by) __test_guest_memfd at guest_memfd_test.c:407 (discriminator 6)
+     3	0x0000000000402320: test_guest_memfd at guest_memfd_test.c:430
+     4	 (inlined by) main at guest_memfd_test.c:527
+     5	0x000000000041eda3: __libc_start_call_main at libc-start.o:?
+     6	0x0000000000420f4c: __libc_start_main_impl at ??:?
+     7	0x00000000004025c0: _start at ??:?
+  Wanted MPOL_DEFAULT (0) and nodemask 0x0, got 1 and 0x1
+
+Yeah, there's still some noise with errno=22, but it's fairly clear that the
+returned values mismatches, and super obvious that the syscall succeeded when
+looking at the code.  This is not a cherry-picked example.  There are hundreds,
+if not thousands, of such asserts in KVM selftests and KVM-Unit-Tests in
+particular.  And that's when developers _aren't_ forced to manually add boilerplate
+asserts in ioctls succeeding.
+
+For people that are completely new to KVM selftests, I can appreciate that it
+might take a while to acclimate to the foo() and __foo() pattern, but I have a
+hard time believing that it adds significant cognitive load after you've spent
+a decent amount of time in KVM selftests.  And I 100% want to cater to the people
+that are dealing with KVM selftests day in, day out.
+
+> Or perhaps it should be more explicit, like in the name, that an
+> assertion is made within this function?
+
+No, that's entirely inflexible, will lead to confusion, and adds a copious amount
+of noise.  E.g. this
+
+	/* emulate hypervisor clearing CR4.OSXSAVE */
+	vcpu_sregs_get(vcpu, &sregs);
+	sregs.cr4 &= ~X86_CR4_OSXSAVE;
+	vcpu_sregs_set(vcpu, &sregs);
+
+versus
+
+	/* emulate hypervisor clearing CR4.OSXSAVE */
+	vcpu_sregs_get_assert(vcpu, &sregs);
+	sregs.cr4 &= ~X86_CR4_OSXSAVE;
+	vcpu_sregs_set_assert(vcpu, &sregs);
+
+The "assert" is pure noise and makes it harder to see the "get" versus "set".
+
+If we instead annotate the the "no_assert" case, then we'll end up with ambigous
+cases where a developer won't be able to determine if an unannotated API asserts
+or not, and conflict cases where a "no_assert" API _does_ assert, just not on the
+primary ioctl it's invoking.
+
+IMO, foo() and __foo() is quite explicit once you become accustomed to the
+environment.
+
+> In many cases a foo() exists without the corresponding __foo(), which
+> seems to be discouraging testing for error cases.
+
+That's almost always because no one has needed __foo().
+
+> Also, I guess especially for vcpu_run(), tests would like to loop/take
+> different actions based on different errnos and then it gets a bit
+> unwieldy to have to avoid functions that have assertions within them.
+
+vcpu_run() is a special case.  KVM_RUN is so much more than a normal ioctl, and
+so having vcpu_run() follow the "standard" pattern isn't entirely feasible.
+
+Speaking of vcpu_run(), and directly related to idea of having developers manually
+do TEST_ASSERT_EQ(), one of the top items on my selftests todo list is to have
+vcpu_run() handle GUEST_ASSERT and GUEST_PRINTF whenever possible.  Having to add
+UCALL_PRINTF handling just to get a debug message out of a test's guest code is
+beyond frustrating.  Ditto for the 60+ tests that had to manually add UCALL_ABORT
+handling, which leads to tests having code like this, which then gets copy+pasted
+all over the place and becomes a nightmare to maintain.
+
+static void __vcpu_run_expect(struct kvm_vcpu *vcpu, unsigned int cmd)
+{
+	struct ucall uc;
+
+	vcpu_run(vcpu);
+	switch (get_ucall(vcpu, &uc)) {
+	case UCALL_ABORT:
+		REPORT_GUEST_ASSERT(uc);
+		break;
+	default:
+		if (uc.cmd == cmd)
+			return;
+
+		TEST_FAIL("Unexpected ucall: %lu", uc.cmd);
+	}
+}
+
+> I can see people forgetting to add TEST_ASSERT_EQ()s to check results of
+> setup/teardown functions but I think those errors would surface some
+> other way anyway.
+
+Heh, I don't mean to be condescending, but I highly doubt you'll have this
+opinion after you've had to debug a completely unfamiliar test that's failing
+in weird ways, for the tenth time.
+
+> Not a strongly-held opinion,
+
+As you may have noticed, I have extremely strong opinions in this area :-)
+
+> and no major concerns on the naming either. It's a selftest after all and
+> IIUC we're okay to have selftest interfaces change anyway?
+
+Yes, changes are fine.  It's the churn I want to avoid.
+
+Oh, and here's the "answer" to the TEST_ASSERT_EQ() failure:
+
+  ==== Test Assertion Failure ====
+  include/kvm_util.h:794: !ret
+  pid=43866 tid=43866 errno=22 - Invalid argument
+     1	0x0000000000415486: vcpu_sregs_set at kvm_util.h:794 (discriminator 4)
+     2	 (inlined by) vcpu_load_state at processor.c:1125 (discriminator 4)
+     3	0x0000000000402805: save_restore_vm at hyperv_evmcs.c:221
+     4	0x000000000040204d: main at hyperv_evmcs.c:286
+     5	0x000000000041dfc3: __libc_start_call_main at libc-start.o:?
+     6	0x000000000042016c: __libc_start_main_impl at ??:?
+     7	0x0000000000402220: _start at ??:?
+  KVM_SET_SREGS failed, rc: -1 errno: 22 (Invalid argument)
 
