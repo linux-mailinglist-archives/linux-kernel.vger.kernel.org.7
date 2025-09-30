@@ -1,95 +1,93 @@
-Return-Path: <linux-kernel+bounces-836944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCF6BAAF18
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD908BAAF24
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464561923C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E22F3A7B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F95221FC7;
-	Tue, 30 Sep 2025 02:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC391FF5E3;
+	Tue, 30 Sep 2025 02:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUzC6lPB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="i2dIecwn"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8769E1B425C;
-	Tue, 30 Sep 2025 02:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B208F3D6F;
+	Tue, 30 Sep 2025 02:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759197626; cv=none; b=gONdIbpJTaIDwfiljPoq+95Co+JJ2LH+sJBkTH1503ClNM2eORzPK25qo93JzWE72833ojdkcwwktOdoySmEV3rF5TB5fM4lzueRs5lcnduXmDcACbUXBIk7OIzJkeeWsbhUAcgTgdd4IyPAEJMyS96E6AaYVSfLKNI+70BaPy8=
+	t=1759197807; cv=none; b=mWaUweSqkDY71szpmuGKNIUOWu3SQ/VODS7xXiBAWNdPcjnr5O32eoZHGGd8kBpnBa+404ZaJuQlEYgQhCpbe4iq0mrvl7tQmJqI51p0PfbI5ZBwcTlzHMmCpQgGVQUqq2LLHVer0uwld6/5C4XNLu/kPfZt3PvP0Kl+r5IAhnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759197626; c=relaxed/simple;
-	bh=XR2Q+N8lw7tOHxYQBRu823Eheqp5Ns3OtL+U9Pz4A8Y=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=az9HEGI6L3Sul4eFrMeapFhrI82V1AbFIDjSxdu1aL0Rma6YbaV90HsdhaajUK94ZtqlAO5nIaoiOFdtlcYrVDf+zuAffMCicm3FTuJxnwibN6pYzIpCZkQAQ9+RfFTRmlrPZJBDP64E6kv8F62j3Scd4vVYTCqtgg1Ym/zrcQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUzC6lPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D509C4CEF4;
-	Tue, 30 Sep 2025 02:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759197626;
-	bh=XR2Q+N8lw7tOHxYQBRu823Eheqp5Ns3OtL+U9Pz4A8Y=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WUzC6lPB+yB71atSLA9aYYpy1+RudKorCLljLUbkeno965ZuouQIn9qzUAhWbYTVR
-	 qiS8IMzEdetkvyP3P9YWGuoH9KtFzeyU4wbO7EG+DxKEsn3tigDaD7KW6J4F44+2rQ
-	 5Bu6RCpSxEsh3T+omE5SUvj7S3BOldZq+yDqthye42uX33+189Vh2En3278irJSJJv
-	 ro+kyUdED2skD9PcNklSN0FKhhm3mI+cvS7glVcAP22b9rnjQ1qrkuOC3yz/OKPa+t
-	 tnd7QCSl/eEM4WQ0kmxItEiVdPy1Io2vIApMSypbrE7AB8PTYHjfvxeEJlQdfA5cpg
-	 3PvBNYLubfBbg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE52A39D0C1A;
-	Tue, 30 Sep 2025 02:00:20 +0000 (UTC)
+	s=arc-20240116; t=1759197807; c=relaxed/simple;
+	bh=d92AQ9P4yG7koP5tgbZUh8eKfBnRAmJcjBiY7YtKajU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YlOYTQ0i27CljdkWNyjfvsDffY13IBxJr29J6kYvEN+kq1NFg++XoIrL4i+cnaBCcn8AcDRh/1WeSqjr1lpoVwXervjMgHeQYxWbZsLGbdWPX+dtn74ekUz+7BuW+Vo08txZ1+Vd2tPGPtUp3g1VnD2rdUnl6PRpdvBp2NIOBic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=i2dIecwn; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58U23AF90243943, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1759197791; bh=d92AQ9P4yG7koP5tgbZUh8eKfBnRAmJcjBiY7YtKajU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=i2dIecwnLwEWsO0RZiobkF2pSKDD9UajZkMo1AsuHW6z6ly6OwDtHqvJh2zg/qnh0
+	 xFuneVZZsHACtPiAA/a3gRi2vJozR0tY+hHdYytP8HVcwDpJAswjqqmWMOBkclwvMe
+	 RGXQL/lbwHzD5GXUab2A8yKGU4gwZbNUc0QLaImiMSr0L3RfB7hCZW7p43kSwY9Cwg
+	 KewYB3pnUn5wpFIDIb2uRUGohYiZQ6gckkjHvwbkV4fUVU5bbUkXohbHf8m9XJN59d
+	 oEkFSOimMTNTKg7N+0qmKcsWFyysK7f4Ag3DrAuzHz3WRQW5zpZk70DJ243W3rUrB3
+	 p90LgZcGJWDbA==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58U23AF90243943
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Sep 2025 10:03:11 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Tue, 30 Sep 2025 10:03:10 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Tue, 30 Sep 2025 10:03:10 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+CC: Bitterblue Smith <rtl8821cerfe2@gmail.com>,
+        Zong-Zhe Yang
+	<kevin_yang@realtek.com>,
+        Bernie Huang <phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next 2/6] wifi: rtw89: usb: fix leak in rtw89_usb_write_port()
+Thread-Topic: [PATCH rtw-next 2/6] wifi: rtw89: usb: fix leak in
+ rtw89_usb_write_port()
+Thread-Index: AQHcKjJT5omW/NQns0OoAayiPu+sBrSiDXMggAdagwCAAaAzsA==
+Date: Tue, 30 Sep 2025 02:03:10 +0000
+Message-ID: <41bf70bc86a64692928f025aee2d3006@realtek.com>
+References: <20250920132614.277719-1-pchelkin@ispras.ru>
+ <20250920132614.277719-3-pchelkin@ispras.ru>
+ <fbd7e4192bb8422980a2916489d4961d@realtek.com>
+ <20250929120454-04af8f947a628885bf00db71-pchelkin@ispras>
+In-Reply-To: <20250929120454-04af8f947a628885bf00db71-pchelkin@ispras>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [pull-request] mlx5-next updates 2025-09-28
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175919761924.1786573.9506243902879489514.git-patchwork-notify@kernel.org>
-Date: Tue, 30 Sep 2025 02:00:19 +0000
-References: <1759093989-841873-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1759093989-841873-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, leon@kernel.org,
- saeedm@nvidia.com, mbloch@nvidia.com, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, moshe@nvidia.com,
- gal@nvidia.com
 
-Hello:
-
-This pull request was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 29 Sep 2025 00:13:09 +0300 you wrote:
-> Hi,
-> 
-> The following pull-request contains common mlx5 updates
-> for your *net-next* tree.
-> Please pull and let me know of any problem.
-> 
-> Regards,
-> Tariq
-> 
-> [...]
-
-Here is the summary with links:
-  - [pull-request] mlx5-next updates 2025-09-28
-    https://git.kernel.org/netdev/net-next/c/377ea331281f
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+RmVkb3IgUGNoZWxraW4gPHBjaGVsa2luQGlzcHJhcy5ydT4gd3JvdGU6DQo+ID4NCj4gPiBCeSB0
+aGUgd2F5LCBkdXJpbmcgSSByZXZpZXcgdGhpcyBmdW5jdGlvbiwgdHhjYi0+dHhfYWNrX3F1ZXVl
+IGlzIGENCj4gPiBzdHJ1Y3Qgc2tfYnVmZl9oZWFkLCBob3cgYWJvdXQganVzdCBzdHJ1Y3Qgc2tf
+YnVmZiAqc2tiPw0KPiA+IChJIG1pZ2h0IGFzayBCaXR0ZXJibHVlIFNtaXRoIGFib3V0IHRoaXMp
+Lg0KPiANCj4gdHhfYWNrX3F1ZXVlIGlzIGltcGxlbWVudGVkIGxpa2UgaW4gcnR3ODgsIGJ1dCB0
+aGVyZSBpcyBubyBUWCBhZ2dyZWdhdGlvbg0KPiBpbiBydHc4OSB5ZXQgSSBndWVzcy4NCg0KR290
+IGl0ICYgdGhhbmtzLiANCg0KDQo=
 
