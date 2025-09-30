@@ -1,190 +1,219 @@
-Return-Path: <linux-kernel+bounces-836976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016A5BAB02D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:29:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A11BAB04B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4F34203D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:29:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2863AD026
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798B8258EF0;
-	Tue, 30 Sep 2025 02:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BED22F76F;
+	Tue, 30 Sep 2025 02:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="lZt0aAuy"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11021100.outbound.protection.outlook.com [52.101.65.100])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PoEg1y7J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF19A21C9E5;
-	Tue, 30 Sep 2025 02:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.100
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759199251; cv=fail; b=Scz5PInGcPxAQTukVt49nBxRw21LmYIM24Vbk3pfAlkRwx0qM1tJUrSgb4H+7Li+j6f07iycjU6O6ow+BWGMWLrzaR1NQM3qwTxhfqA/qYnur8pv2z4RDVMH8RuNrlBR/loE8Xwl2AUDlAo1ydhRR9zG3M/2ZZkpywbd8MOj4zs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759199251; c=relaxed/simple;
-	bh=cJOgojh/RncezIE/1naFdIHp6cwHxDMrvkkEdCOwuHE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qBEuJhO/pOnClJEI02qgxqOTpw4Hrn+5d7dTY4vH+4A7VlTFKSoAXfdcjMr/B6+63Iplx03zXi2KwJ/RhlrpQkXgiQWb5K6A0Xr6avHFpELy6ap206FRWhF/4Ia5c8omvB7ccvxdk4PhIroQGr8l7IWH5nzOkFp2TkaX3+8G7uE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=lZt0aAuy; arc=fail smtp.client-ip=52.101.65.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a2A8mtvyfmtewZ+RsUij141vnsKKhESVr1XmA4AHA6+vJ6uyRXptzgsmueBowFP7HDivOB/sXAzrROYBXxahJiHvCDbl8XqDapy0VmnY29V4bcsao0bA38QNmzo72gzr0SoDyQTL9loXART9rbdj5mDtMvX7ZfmDWDarlX8FCx7U0/aGJobi3w2GXpFhskSiF2E56jjp/tptw0EQjWr4b3LDT7OT17Vh/kRvXEQaJkFbfbmqv78A7T5AqL1AyLvQxPNA91dmLclujUKlkf4/16M6ZCnj2TIN+Dt/f8jJIYvs2SyvFyrdvAuoSSp2E5Jcy7M7MET/ZESnEmehvpLlug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TfgrS+X26NFk1wZ2huO34BoCZf8y+Al5DMv9+1OL9oc=;
- b=dL1z0Qhz1TKNZse4MqgNKis2WZnnb/2K2P+PT42cEmWSmMvp5C/HjkOoo1WTI3kzQnjLLmEqEz2RulUyvlVNF4b5G7IuBW9X+O7KhD1Gijjh/X7js/BjBIZld2Ux8rt/OYfqOVjGthMvK63TPm5NbJoBLcX/Q5FulwzdEC8W2q36ObTgvhGw8SdMGH/e0RL/PDuvrMr7HFJAqq3aWN27OfnCqoUv6RXw8WEClq+4xX2DcYmCEucC6o7G3Vl55ya4xeSz9XqBK0XF0ZgF7AYTrG9wqy6OgEOh52B0MgHWLrTRk79SWHqyso1uuwcgZgfcBbKM3n0JPS37ZVD14tl8YQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
- dkim=pass header.d=iopsys.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TfgrS+X26NFk1wZ2huO34BoCZf8y+Al5DMv9+1OL9oc=;
- b=lZt0aAuyC1lruFApkCr+IjUAw3r/ASprJP4oLlz/5xgzq2gH21IiGpTuTmzpMXuuhosQ77utQtgtIleYpcG1kvccIF8xipjszckKnL1bn/1v4pUdeZetnzluFwL/GxTVYFmq+hPWWwOY/86GPhxA85BehqT3z8wkX4vd0S0JbT5YF3hmB6TcpXw7t4pQiR3ZpQYrtQq0jrMgTvGkqPDKdH+QhcpVR379ELkAhKn4wx7MAaBUayCcd9kxBbuHDmVyabqHHaK892NuG+28TOLYmZtIJYcMwWUMWkEgANvn9D+qzbuOc5M1HOjdGcU50zfNDqNqJ4AsNZA00YdUHJMxrA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iopsys.eu;
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
- by GV2PR08MB7929.eurprd08.prod.outlook.com (2603:10a6:150:ac::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 02:27:19 +0000
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0%3]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 02:27:19 +0000
-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ray Liu <ray.liu@airoha.com>,
-	Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
-	Andreas Gnau <andreas.gnau@iopsys.eu>
-Subject: [PATCH RESEND v5 13/13] spi: airoha: buffer must be 0xff-ed before writing
-Date: Tue, 30 Sep 2025 05:26:58 +0300
-Message-ID: <20250930022658.1485767-14-mikhail.kshevetskiy@iopsys.eu>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250930022658.1485767-1-mikhail.kshevetskiy@iopsys.eu>
-References: <20250930022658.1485767-1-mikhail.kshevetskiy@iopsys.eu>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: GV2PEPF00006627.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:158:401::3cd) To GV2PR08MB8121.eurprd08.prod.outlook.com
- (2603:10a6:150:7d::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2F1227BB9
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759199420; cv=none; b=t+oIpKJy8KyIFPVWW/RUSVq2FCJtf+qr/pbJbgTC+GWrRmViei6l5753Mo6KW0ypAdjJswQTDIgPCTIp/CUuRWrBO/enLV+5HCO/OUordwBmoX6rGuoxrT7GBJdF1RzBI9kuwsbsFQSG2lBo7jWFFtW9yS5iFC3CfoKRU4Q3GZA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759199420; c=relaxed/simple;
+	bh=xa4HxoWAweoAHG2RDIv1C/FqhLYA4Cj/JKKFW+roYH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8faoeTacjxuopoZqIpPBAQDTouBMuTiNcdvqLTyDMmPoV+adNqy+tPnIPAmgB/viYn2z5JbAUx6Rag1RHyV5DzaCymhyH0wLrUA9/AYym3N4Cr2XoiJiznbXGADN0t0SaZ9C27U2UTt0qFL8Ggh6GuwcXHLV2qoifWMvzc7Qi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PoEg1y7J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759199416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hLw646FETcEhr6pt1hAR0jSB69SbvyhL2sUx3GkHbgM=;
+	b=PoEg1y7JhOGLYGEujnHEI9q62GLsy9LYfg2cVYdNDUO15Zu2goBI/YcdvHSGJ0nbvQzt6V
+	n8AqUUfttT/HqLlexOqjkj78WApOnhZUvqklykrfIemIFdfwadTX2pSWmsbgsPgOadxG1Q
+	VaKZ9sWV0vAXNgI4d7qGUF9oRpd61pM=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-B1os9Y7TMLC2WQEolcBF2g-1; Mon, 29 Sep 2025 22:30:15 -0400
+X-MC-Unique: B1os9Y7TMLC2WQEolcBF2g-1
+X-Mimecast-MFC-AGG-ID: B1os9Y7TMLC2WQEolcBF2g_1759199414
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7810e5a22f3so7249046b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:30:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759199414; x=1759804214;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hLw646FETcEhr6pt1hAR0jSB69SbvyhL2sUx3GkHbgM=;
+        b=Ucvhuqz/wf9Cr2VZoRtW2BFmP1JDzD2YQ7Jxn/KWRX9tT+djUxXV7c+wprIAgnPMI+
+         w9DrL+FpjCXTrQND1lrWRUJAfW+wQrn/Aaf5uCFk9jeqTY53Z4tXbxh+4oZNg1qU30Qa
+         9TwvpMYZOuNl4BY4YFmH3zqjWunTblWpLAHATmJfdPLZaQDULiF9rzZTwudS6TU1MDKh
+         xA4SMjnO+XFJQIx42MOdDL2+P7/v20U/RjIT9e9dXXf+8MAwlCoBaHQ7GTzF0dkqOf5V
+         /0jrU0XaR/KEKl4slKhjvGJFUhy6J+4mPQjRJ3wlbzwhr0J8CF7pCzUQfkFCKW5XC0bU
+         nydw==
+X-Forwarded-Encrypted: i=1; AJvYcCWf1YNTLFRpgsWc977tSVzvgCUEV7tl6H8uN0tfIGircr74BcuDvWATPMdSiumsfN075tIIfgnqvpRB1a4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygOgh+4qGo0n77qBkqMpckeMpjF68A0qVlsvnIALgher3mZPL5
+	6CwSc2MH7NZLyFqaXsP7pQgtD/qwE1DovjQPpcz8PDzu/G1yUTZlfjEmht1XRunJkDV8+8oQucJ
+	dE2rErlum0MDbA+SRAr7Xw/kVDrwQdPjMmUTIfizLrDQKhvJE1aA3BHUUUGmd+asBNg==
+X-Gm-Gg: ASbGncst/Ie9AxMdN27jXHhBKs/3JLePVOBzIauI2qGqAFmGD7L91mbHt1EgR0TDnM5
+	vzkc/VweztcEud8AWu2HJgGwfJMUrxKbvpWXUICJwsMMv0CQGZhqriE3ev582FW+rZuyQR/fYaT
+	MCaciEZnrlunwphe0Tyu098cBMQnjtUU78dIg9Rg7ADMMF3KlJ1nd/kJI3U/ocSm9GjAqlTSNej
+	uWIjg0i2qovrqKOhg6zsPw93b2ib9h4h5jFca9nwdNJpLq593Y1lJddU5X6QoZgjWhWzrSBEyxk
+	VdBIHqrYhDbPeMeMvLjrmpe0WLxTKUbNQWC4
+X-Received: by 2002:a05:6a20:1584:b0:2ff:3752:8375 with SMTP id adf61e73a8af0-2ff3761c78dmr13587202637.45.1759199414099;
+        Mon, 29 Sep 2025 19:30:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQssRzZqqsjVu0dx6Au1P6OK5GAqkRiG3z/+IoQtaaJCIp8LBBr6jRbu+lZb/DNxd1eRAd0w==
+X-Received: by 2002:a05:6a20:1584:b0:2ff:3752:8375 with SMTP id adf61e73a8af0-2ff3761c78dmr13587154637.45.1759199413748;
+        Mon, 29 Sep 2025 19:30:13 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53cac77sm12652266a12.17.2025.09.29.19.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 19:30:13 -0700 (PDT)
+Date: Tue, 30 Sep 2025 10:28:10 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a file
+ with IMA signature
+Message-ID: <vof5b2yqwagsfhrfdj33k34cv3sefr4ggvw57l3wodtjbtbsnb@vfx3vtn5acmp>
+References: <20250909041954.1626914-1-coxu@redhat.com>
+ <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
+ <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
+ <40e9c7bd15d4ab8b71ac335b5d896ed39c61980c.camel@linux.ibm.com>
+ <4l7l4duxfximhzixruim3lnij5mhnlqs5srzycc6j6c2bu5zda@ogoj3ade37fd>
+ <e74e81465e168a7f43583d5783850cc5fe7ca1c5.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|GV2PR08MB7929:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1af83af-9c70-461b-2750-08ddffc8e136
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xfKYUDO/GHEehrUNZKTaCt3jpHrCVqqenSWVL384VvjrE+UB9Q7ycAOh0FZY?=
- =?us-ascii?Q?yPKXsZywXbHGq7f8MkFqo3vrwRDrZGAluC2S8ywMZDL5cdGKYHMkdSLXbWKF?=
- =?us-ascii?Q?k03ZW/UbPiJgpPeLTmwAUph1lTcgMOhL5GKPfEt8vddhYuBO5qOp/3qAsktE?=
- =?us-ascii?Q?mdFZ/dA48wQrY+SVXcp7iCOv1EfbYKyJAlPlSG3P0C9411OcmHV4TImVuamk?=
- =?us-ascii?Q?lDjz2vR9E5jeKLLU5y6IlWjQG6rIOCvsgwFIOY2411ME8W9uxOvVtROgdSzE?=
- =?us-ascii?Q?xdY1TirNDMcCWSoZ3rlP9TqUPE0CJheFakdSwceXox02dAqsGeZu5LotM+l2?=
- =?us-ascii?Q?k0mqca6KtsIb5Y2OaTp8pcQ5QEFwJuF7ATYhyYt9zA+25b1bO2VjkJPKjkbf?=
- =?us-ascii?Q?RXssGm2YxQMWLu9txpI7oPkYcHJmR3yf9T1YNMRp0TBjnYJ6MmeyVuoVZ5UR?=
- =?us-ascii?Q?+oMoBvsv/antZeWnD4GUsm8hzYgWt29YVsSJK/5fObOoMrngvuFbkeC5H7ZZ?=
- =?us-ascii?Q?DlHrBHNuiansKl/9yn1D7qche0ps7aGzdFc2GZcFHAPtKWo0pHWQ8px19V4q?=
- =?us-ascii?Q?MqhwBmAI7plxhCFHXpIB9ONTpoczM5cvWkR/KIfPMsp3wULxXsdYLZsX3BzP?=
- =?us-ascii?Q?vEMpcsn2+FEDjKaD4bS6aWbYfI7cn5bUl9orBkBRC8PrnGgr0E8tBDrbP88A?=
- =?us-ascii?Q?Sd3VaUUVBqRY89xKTHlHckorWuEIn6KaapTEc3o8T60VRD5ryAHyLmnZ4YRf?=
- =?us-ascii?Q?8eZ0+UPK1JW3JMOWxylCerOpOWdTNsYxjX04fICZ4zwmlrSPw+/sE8vOwfFl?=
- =?us-ascii?Q?NQb5FtZrfNrmBA3gQJgVuR1EQE8/4mLNOG/iUIBBsjN5MemDRrgad74Rqlzr?=
- =?us-ascii?Q?b48gr8Xe2qeXfGgefy8XN7rAbkLLaleTcEO4iNMdzUJqudZCSYFTuSTS8Jas?=
- =?us-ascii?Q?8T8XA41Z+v7ihCHwnmsKwI8YRqiPNJWl7QdB4hkFEYmm20elTdFb9aLXmtLQ?=
- =?us-ascii?Q?c+trVvm3uLAFpmlU/C/t7JT5eVSw4sbDy/41jH6tLZATFRwkJxauP/W6ylN0?=
- =?us-ascii?Q?urU692v2Qu3iK1Jf1XJblzR7tZ26iZlEubgo0TSBV2tbx2768y92W9csUVvm?=
- =?us-ascii?Q?GBFh5cW1xFc0oz9gV5eQpvzX1Ri+mjYaRneQazBzc8gDU8XIfAe7UQQWRwio?=
- =?us-ascii?Q?oEpc1xb46u4RP9TANuwFueUDx/GbFOrdes/CiYmvNFH2VzNUjUvT/SOp7GJi?=
- =?us-ascii?Q?0Z9rnr01ithVIp8/iTj9tSktAi8NRls5CEWGRCnro937BNZ4fhHXY8ublPS4?=
- =?us-ascii?Q?JPtjR2uJ+4Huge5OSIVQumurodWfeknBZGFqNE+FJXR5ZDmu5aMD20FhdAf/?=
- =?us-ascii?Q?8rteRWAqLKovSJ6OighEMpfsauthUbsMxG7FRAA7tPVp8ghrSxJl5x7KOkTB?=
- =?us-ascii?Q?Bp0RUcf5Wgs7/gzDPcEkt8pbT1KEJ8u2/XaCTkG/Q5NaNVenv0VQVu0G99k9?=
- =?us-ascii?Q?J9iBOumtURNEIGo5erjnbeVwUKpBS4DRIBJt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+TGgMW2iCX3IM16WXNoBHq0mpDb9SENJ+8agushq2opnJ/4Qu9UTyIaRaRmJ?=
- =?us-ascii?Q?SWlgv1BSozd/7W3Ds71azp4R1QSFETIupXgs5CKWnUtH5ZCjsE0rKaUc23a9?=
- =?us-ascii?Q?iCx2Ay4JHRqIUN5tg3+/9C0i1l3dMIgYYIMXkaTC26MRhbQg62UCo/C8UEgi?=
- =?us-ascii?Q?utLdoQKEVr9k0fbNHKnABoEy6Os1NBXOOSw9RJfIKYKwegXPCBlcBK98Z0xP?=
- =?us-ascii?Q?1URXf6SmecnQH+/HyzcFsc5Cs5RMRwSunypf+pKxLcPgmGEvF3zJHY+QM/Ho?=
- =?us-ascii?Q?8+7pxUT6/pH1CYIB2MYjIeDUoKcMHMLasYfRa0hm6quSS6lyHdQpTzeIKQd6?=
- =?us-ascii?Q?CE7sFRaKaPfdDCrVvrpF4urHTJMiEvQqcXG0jqc9VE5FjGOJpEAJqobfLeZp?=
- =?us-ascii?Q?tekQienFyVNwSdyoT0qv04rk8WhsvLDrhK3ZC0+cP6CT5k/9jyMhbPZwsMC1?=
- =?us-ascii?Q?UDF6qaxNkpH5cESfMZmiEU7CI4K/1QnKchcwXwJmRFalzLQX9fkzZkkzeQE2?=
- =?us-ascii?Q?hfwm5tpOe2PWjPFz4X1VCESyqOdgpWplpWfYfcERitv1lEsfHs5VBQjtHGql?=
- =?us-ascii?Q?WQv7s0Pg83qC3ECCxpcfqDUQzXAJ6byuCXhKA5KIg6tUHkjBmRuQuQJUpWSK?=
- =?us-ascii?Q?ladZBaKilCG6cTEc92L52mH08l+WOu4fQ57lP3evM6c9K3Ceq6EhnZQz+4vM?=
- =?us-ascii?Q?9t/vRYVs4Do77PChkU1SRaSPq8ocd8ev1UbwzVdE6xZm4//abWMCLcIpwAeQ?=
- =?us-ascii?Q?xZophaE5ulTFnr7T6cGTyfJraZcMeMm84qoqZ/GGnusxW/ii10fU/53geuvF?=
- =?us-ascii?Q?1DnZK1s2SzkQXPdqPrYBjlfJiTXnvDtxKsG0oA4455Hf7eVBEA57LtvMHP7u?=
- =?us-ascii?Q?rQaHeObOp0Z4ypNjK3uNsZ8N2xbPcpF8oy8aqOAm8PNBoSGPRYTw/Kfi5j9s?=
- =?us-ascii?Q?4Ms5QjEV+QVk+/PBuuRHCnLhagIxMgIUtn36XeEF2WAx5KWHfFacM+pa/jcR?=
- =?us-ascii?Q?GnqV5UX/BHlvW6NCiDWJW4RlUKQgPA0dx/s1Ay2CNqSAfI6hcn7i7hR1m4Sv?=
- =?us-ascii?Q?4mRVedr1yhYfOk7BW7GZx1F0PMiJo/AEBVxHsHKMHWNazvGI7yunZGppuxaP?=
- =?us-ascii?Q?cdoU91XbWf3pkOXsyUDKZicH48w+UQSYTk67K9nwfLgw5+5kV5ZutzOCTfw7?=
- =?us-ascii?Q?zJ9iUhjoX1wfbjvd53p6aALXFwvSKmWD7XWSxfmHvlb9Ar8gqcr1g/WNZsaQ?=
- =?us-ascii?Q?QX0ajpcxhPJ0snxjg+g+4uN64bFc41FKowROA/d22opKa1iFHE0l41X3zGwE?=
- =?us-ascii?Q?pYvQLmP3tbBHwyKTbViIZ9auwFg+z2s70IFINnC9V0OGSGp1LcSxt3Q0vFsl?=
- =?us-ascii?Q?GzRu83Hhhwm0GaWKrmd8YQWxC7C7is9kEX4LtYj2gqwastPzVXGk+l1exyAo?=
- =?us-ascii?Q?jJAad4DFLqJzfbg3Ou6nxESd6lXN5f/Y8qE+TLXTFX644HvL8iaxsXMQSRb1?=
- =?us-ascii?Q?Q5WuG7izCEE4c99bT68vqOOpGyrbCmgRjoGnPpSSe+tjdB+xE+yTmg9t+TG+?=
- =?us-ascii?Q?K+FlJTja3D7SDt2VaFjf/zxC6LF2yloO7XROazBpS5IwtEO0BjX8bFJOzTXy?=
- =?us-ascii?Q?VbCf35A9/yKuef6Yo/Jt4FE=3D?=
-X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1af83af-9c70-461b-2750-08ddffc8e136
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 02:27:19.5669
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6LZo8fBAZ5Zw12Ux7FZ3JrGu5utgAX8+eATv9ZhD6Jqhe9+ABk3T6yGTWt/UdIbzKXZGo4Q03aCGvWDY92C3iqxqoVO/C/Gwngol6RHUz0g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB7929
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <e74e81465e168a7f43583d5783850cc5fe7ca1c5.camel@linux.ibm.com>
 
-During writing, the entire flash page (including OOB) will be updated
-with the values from the temporary buffer, so we need to fill the
-untouched areas of the buffer with 0xff value to prevent accidental
-data overwriting.
+On Wed, Sep 24, 2025 at 11:27:03PM -0400, Mimi Zohar wrote:
+>On Wed, 2025-09-24 at 16:03 +0800, Coiby Xu wrote:
+>> On Mon, Sep 15, 2025 at 05:05:42PM -0400, Mimi Zohar wrote:
+>> > On Wed, 2025-09-10 at 09:20 +0800, Coiby Xu wrote:
+>> > > On Tue, Sep 09, 2025 at 11:31:20AM -0400, Mimi Zohar wrote:
+>> > > > On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
+>> > > > > When both IMA and EVM fix modes are enabled, accessing a file with IMA
+>> > > > > signature won't cause security.evm to be fixed. But this doesn't happen
+>> > > > > to a file with correct IMA hash already set because accessing it will
+>> > > > > cause setting security.ima again which triggers fixing security.evm
+>> > > > > thanks to security_inode_post_setxattr->evm_update_evmxattr.
+>> > > > >
+>> > > > > Let's use the same mechanism to fix security.evm for a file with IMA
+>> > > > > signature.
+>> > > > >
+>> [...]
+>> > > > > ---
+>> > > > >  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++------
+>> > > > >  1 file changed, 21 insertions(+), 6 deletions(-)
+>> > > > >
+>> > > > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+>> > > > > index f435eff4667f..18c3907c5e44 100644
+>> > > > > --- a/security/integrity/ima/ima_appraise.c
+>> > > > > +++ b/security/integrity/ima/ima_appraise.c
+>> > > > > @@ -595,12 +595,27 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+>> > > > >  		integrity_audit_msg(audit_msgno, inode, filename,
+>> > > > >  				    op, cause, rc, 0);
+>> > > > >  	} else if (status != INTEGRITY_PASS) {
+>> > > > > -		/* Fix mode, but don't replace file signatures. */
+>> > > > > -		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+>> > > > > -		    (!xattr_value ||
+>> > > > > -		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+>> > > > > -			if (!ima_fix_xattr(dentry, iint))
+>> > > > > -				status = INTEGRITY_PASS;
+>> > > > > +		/*
+>> > > > > +		 * Fix mode, but don't replace file signatures.
+>> > > > > +		 *
+>> > > > > +		 * When EVM fix mode is also enabled, security.evm will be
+>> > > > > +		 * fixed automatically when security.ima is set because of
+>> > > > > +		 * security_inode_post_setxattr->evm_update_evmxattr.
+>> > > > > +		 */
+>> > > > > +		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
+>> > > > > +			if (!xattr_value ||
+>> > > > > +			    xattr_value->type != EVM_IMA_XATTR_DIGSIG) {
+>> > > > > +				if (ima_fix_xattr(dentry, iint))
+>> > > > > +					status = INTEGRITY_PASS;
+>> > > > > +			} else if (xattr_value->type == EVM_IMA_XATTR_DIGSIG &&
+>> > > > > +				   evm_revalidate_status(XATTR_NAME_IMA)) {
+>> > > > > +				if (!__vfs_setxattr_noperm(&nop_mnt_idmap,
+>> > > > > +							   dentry,
+>> > > > > +							   XATTR_NAME_IMA,
+>> > > > > +							   xattr_value,
+>> > > > > +							   xattr_len, 0))
+>> > > > > +					status = INTEGRITY_PASS;
+>> > > > > +			}
+>> > > > >  		}
+>> >
+>> > Instead of re-writing the IMA signature without a clear explanation, define a
+>> > new EVM function named evm_fix_hmac() and add a call here in IMA. Only in EVM
+>> > fix mode would evm_fix_hmac() update the EVM hmac.
+>> >
+>> >        } else if (status != INTEGRITY_PASS) {
+>> >                /*
+>> >                 * IMA fix mode updates the IMA file hash, which triggers EVM
+>> >                 * to update security.evm.  ....
+>> >                 *
+>> >                 * Similarly, trigger fixing EVM HMAC for IMA file signatures.
+>> >                 */
+>> >                if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
+>> >                        if (!xattr_value ||
+>> >                            xattr_value->type != EVM_IMA_XATTR_DIGSIG) {
+>> >                                if (ima_fix_xattr(dentry, iint))
+>> >                                        status = INTEGRITY_PASS;
+>> >                        } else if (status == INTEGRITY_NOLABEL) {
+>> >                                evm_fix_hmac(dentry, XATTR_NAME_IMA, ....);
+>> >                        }
+>> >                }
+>>
+>> Thanks for the advice! I wonder if we should use existing
+>> evm_update_evmxattr instead of defining a new EVM function.
+>>
+>>      /*
+>>       * Calculate the hmac and update security.evm xattr
+>>       *
+>>       * Expects to be called with i_mutex locked.
+>>       */
+>>      int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+>>      			const char *xattr_value, size_t xattr_value_len)
+>>      {
+>>      }
+>>
+>>
+>> I already tried evm_update_evmxattr and can confirm it works.  But later
+>> I switched to __vfs_setxattr_noperm because I thought it's consistent
+>> with current logic of adding security.evm when there is already correct
+>> security.ima and it's a slightly smaller change.
+>
+>Calling evm_inode_updatexattr() is limited to EVM.  Only after verifying the
+>existing EVM value is evm_inode_updatexattr() called. For example, in
+>evm_inode_setxattr() the existing EVM value is verified and then updated in
+>evm_inode_post_setxattr(), by calling evm_inode_updatexattr().
+>
+>In this case, the new function evm_fix_hmac() would call evm_update_evmxattr()
+>only after verifying the EVM mode is set to fix.
 
-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
----
- drivers/spi/spi-airoha-snfi.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the clarification! I've sent v2 to add the new function
+evm_fix_hmac.
 
-diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
-index 437ab6745b1a..57b1950e853f 100644
---- a/drivers/spi/spi-airoha-snfi.c
-+++ b/drivers/spi/spi-airoha-snfi.c
-@@ -776,6 +776,7 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
- 		return -EOPNOTSUPP;
- 	}
- 
-+	memset(txrx_buf, 0xff, bytes);
- 	memcpy(txrx_buf + offs, buf, len);
- 
- 	err = airoha_snand_set_mode(as_ctrl, SPI_MODE_DMA);
 -- 
-2.51.0
+Best regards,
+Coiby
 
 
