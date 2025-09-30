@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-837403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D3FBAC3F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2194BAC375
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D47D16A70F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4946119270C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76462F4A1D;
-	Tue, 30 Sep 2025 09:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9052E2F658F;
+	Tue, 30 Sep 2025 09:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BKrdbEDW"
-Received: from mail-m1973174.qiye.163.com (mail-m1973174.qiye.163.com [220.197.31.74])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Sw6lX9yl"
+Received: from mail-m3284.qiye.163.com (mail-m3284.qiye.163.com [220.197.32.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378AB261B9E;
-	Tue, 30 Sep 2025 09:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791F42F6173;
+	Tue, 30 Sep 2025 09:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759223991; cv=none; b=C3ZsqZVv/Gbp5KJl1GYCB54+xXwuEURJtuyCQ9JXC3825f7Xt4THGsFAp0AaiiBsJO0FHbRhWkRlPBB6SDSxSGK95IlJbbamXx0eK5hhaDWjVIZLsFy9uv4EIMBDo1vsBH+ybWKYMci3+kU4+erRGnIT3WhqwZ3wiVKkAFXMyDI=
+	t=1759223692; cv=none; b=uxc3ZTrYxfXszLQtxqBZq9bkkzC8Iq2m0JKbATKg0yd9Z+w9XwRgYZ6ddi9pu1CsOET85p79PcnIJ53Y+G66TFFXKXYhhPX060Y30LX4Mo8VE+XtsuauQslvJtQdcu5Q11Xe/mt+N6N/qkBNHgqoHBA/cw6hE1Do6bPrsfDmRb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759223991; c=relaxed/simple;
-	bh=/q0kTwWKFTLm1cm9apCMKczHyTtWD1QrOaP5F1fiFUM=;
+	s=arc-20240116; t=1759223692; c=relaxed/simple;
+	bh=7tukIHqKlPtvQo85AEe+ZHcpQ275Xm52vAAd47MIYic=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sy2pRBNxhThvr2oZA2IKVVGRSf0KsKDTH4XbWOrbNR7Jx7rrRpOsuDaMAcNs6C8SN3wwCKjo75qrwE7jGwKVFy+zHTujg7V+HSjGQYQKFDWOtrQOueXYgnvl4SRvsN6DcUzNbaINAahfvs2ggy3sMKZUV9Z2oNx4p4vDEjCPhAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BKrdbEDW; arc=none smtp.client-ip=220.197.31.74
+	 MIME-Version; b=U6Qpeg/7gEFNQejZvC7zhMJKUfPgbSV6g9QuIbkgiILY6M01HGkV2kreMUlP4ttY1ReVY2PXDtHzviepmYEOgMMIifal3WvCXCJf2aWgBQmu8GzfWlL964fCV7p2wJrPWJWTwLTFw7ED/RVnAyYsU8qM0kCZCZqKtail72vZR40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Sw6lX9yl; arc=none smtp.client-ip=220.197.32.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 249403ffa;
-	Tue, 30 Sep 2025 17:14:35 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 249404007;
+	Tue, 30 Sep 2025 17:14:37 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -71,9 +71,9 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v6 05/18] drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
-Date: Tue, 30 Sep 2025 17:09:07 +0800
-Message-Id: <20250930090920.131094-6-damon.ding@rock-chips.com>
+Subject: [PATCH v6 06/18] drm/exynos: exynos_dp: Remove unused &exynos_dp_device.connector
+Date: Tue, 30 Sep 2025 17:09:08 +0800
+Message-Id: <20250930090920.131094-7-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250930090920.131094-1-damon.ding@rock-chips.com>
 References: <20250930090920.131094-1-damon.ding@rock-chips.com>
@@ -84,85 +84,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9999e6f9a903a3kunmd96de74a43bc30
+X-HM-Tid: 0a9999e7040303a3kunmd96de74a43bc6f
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRodTFZKQ0xNQkpJGk5LHUJWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhgeGVYaGRgdTRhNHUtIHkxWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=BKrdbEDWVDzMXzENqCtlA0E1006q6e74EzTf9n34IPy/Ckjqj0qkEnOTYOs+1OPWtqxaKnxRKQUlCY+cZedERTUme8XxJ6+DqwXs5Tc5v4Ps5KIqWfv4w2E+RFU3oDp4DayBtfVbtMZZIpAH3v0886Rq60WlEXTx6XNYYnaCLpw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=k+hsBTo1cF7B1n6771fI4pZV7uwBzh/cvLCWbFf2xZQ=;
+	b=Sw6lX9ylgob2ySPMkGECYI3mzB2qtkvuWk1crKAO4PbgygaIIrJBHUhOT8d4l+j9llWoAp8PZN/FYV2x4IOsYf+ssi18FuQLVgRZYe3ePHT2FQONL/PoJClqG7gSMeHYIZS35osPUQrllE7X3c2p/N/5zC6cIu57f74/HN/4+88=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=W7hscjxrhMolqP2gEq4HitXov1btGjuXKeTkNPaU3R8=;
 	h=date:mime-version:subject:message-id:from;
 
-Use &analogix_dp_plat_data.bridge instead of &exynos_dp_device.ptn_bridge
-directly.
+The &exynos_dp_device.connector is assigned in exynos_dp_bridge_attach()
+but never used. It should make sense to remove it.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-------
-
-Changes in v3:
-- Fix the typographical error for &dp->plat_data.bridge.
-
-Changes in v4:
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge.
 ---
- drivers/gpu/drm/exynos/exynos_dp.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+
+Changes in v5:
+- Fix the 'drm/bridge' to 'drm/exynos' in commit message.
+---
+ drivers/gpu/drm/exynos/exynos_dp.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 5bcf41e0bd04..f469ac5b3c2a 100644
+index f469ac5b3c2a..e20513164032 100644
 --- a/drivers/gpu/drm/exynos/exynos_dp.c
 +++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -36,7 +36,6 @@
+@@ -35,7 +35,6 @@
+ 
  struct exynos_dp_device {
  	struct drm_encoder         encoder;
- 	struct drm_connector       *connector;
--	struct drm_bridge          *ptn_bridge;
+-	struct drm_connector       *connector;
  	struct drm_device          *drm_dev;
  	struct device              *dev;
  
-@@ -106,8 +105,8 @@ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
- 	dp->connector = connector;
+@@ -102,8 +101,6 @@ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+ 	struct exynos_dp_device *dp = to_dp(plat_data);
+ 	int ret;
  
- 	/* Pre-empt DP connector creation if there's a bridge */
--	if (dp->ptn_bridge) {
--		ret = drm_bridge_attach(&dp->encoder, dp->ptn_bridge, bridge,
-+	if (plat_data->next_bridge) {
-+		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
- 					0);
- 		if (ret)
- 			return ret;
-@@ -155,7 +154,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 
- 	dp->drm_dev = drm_dev;
- 
--	if (!dp->plat_data.panel && !dp->ptn_bridge) {
-+	if (!dp->plat_data.panel && !dp->plat_data.next_bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
- 			return ret;
-@@ -232,6 +231,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 
- 	/* The remote port can be either a panel or a bridge */
- 	dp->plat_data.panel = panel;
-+	dp->plat_data.next_bridge = bridge;
- 	dp->plat_data.dev_type = EXYNOS_DP;
- 	dp->plat_data.power_on = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
-@@ -239,8 +239,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
- 	dp->plat_data.skip_connector = !!bridge;
- 
--	dp->ptn_bridge = bridge;
+-	dp->connector = connector;
 -
- out:
- 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
- 	if (IS_ERR(dp->adp))
+ 	/* Pre-empt DP connector creation if there's a bridge */
+ 	if (plat_data->next_bridge) {
+ 		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
 -- 
 2.34.1
 
