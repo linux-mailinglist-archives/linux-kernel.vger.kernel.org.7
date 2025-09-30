@@ -1,148 +1,107 @@
-Return-Path: <linux-kernel+bounces-838183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29C5BAE9FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:32:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EB1BAEA08
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897723C4236
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:32:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 329BB7A27FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12C82C0269;
-	Tue, 30 Sep 2025 21:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9AF29CB52;
+	Tue, 30 Sep 2025 21:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VUE5X0t0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeK2b6Fm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9759F286410;
-	Tue, 30 Sep 2025 21:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BBE81AA8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 21:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759267959; cv=none; b=gCbVv6b15RQsKHvi1q+gb+CVVoE1fsiqScYXb0LnO2V6xYVYFCwsgJinfdLWkiKhOzpY3B7/n96zc1hbqVIbgSKKeQ1B9D8oqyckmgjSg+c+ToTOuN1/nY28rfpclDm9iARhW0+pejQu7+cTBBOFpUDKoNl9FVtZ++nfz70yM5Q=
+	t=1759268718; cv=none; b=nRSJUKVJ+CdGe6Ez6VXOoRa71CUvVQXPSn1vbkh+7gMQI7x7cmW1YrYWW1rUpz+oPA7K+nhfkCxA4X3EgDpUXdihunGu6Rn4K7Fd3LmVbeC6TacEFYWoHEVBMNNJUfb45UJxqbtTbqnhOpGbLplqjY/Wrj3rUshzyQam4ZxYtJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759267959; c=relaxed/simple;
-	bh=w79JikRMpU2dM63N/cZusc5NywZOzStZRZl3pI4QNsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JxOw4zw1ljpJHqL8b2W0TW/2im/QxYEkgiguLGHSSNmQnpOtUzkfq7z0TKD4/F7s3oAHA1D8ILEXOL2EMBNTwZIf2CGREjcZYlq65kRIG9vqUJfq30nGqPfavD9Mr21pOMg2rbL3fsfERWK9PvaFpO3jV398SAWOqx/mvhzJ9vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VUE5X0t0; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759267958; x=1790803958;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=w79JikRMpU2dM63N/cZusc5NywZOzStZRZl3pI4QNsU=;
-  b=VUE5X0t0GQgc4t0TcAMqYr3fCw4beUx/EkKEYBXBrRccdu8gES4Lrbhb
-   w4t4X+QhuyxEKvXl2FDvhc812g7PEV3CIRn1DsZL9dpL5qOM+gbwrpdwn
-   8MuRHhrmjRJsCFCDXQ6BNR+oNj1Hiza21RdSzeyF120cH6YEi+XY/ObGn
-   NlHY44btG1C6dpIeTD5EeAqGkQ+jcY5ZvXjfeG+7fSy1smpn7nq+UfSWj
-   jTOyHgD+RF/YDukyJg2icXqIX265w7dPY9GxotwTHn0N/2gH2mRxmFJmE
-   2CjoqiLpVZWvGV4ewNGhsVDn5cwPU1VsSWoIRoSUPzwK3w5ZFdg9Li3YB
-   A==;
-X-CSE-ConnectionGUID: TiICZdqfRbeSGb/0hJhmVw==
-X-CSE-MsgGUID: ihPokDuEQQCC+WjkztduCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="72639641"
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="72639641"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 14:32:38 -0700
-X-CSE-ConnectionGUID: LdDEmxZYQv2nMcqOOnECDw==
-X-CSE-MsgGUID: xt124RSNQku2HvxNZX1OyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="178209425"
-Received: from ray2.jf.intel.com (HELO [10.24.81.144]) ([10.24.81.144])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 14:32:36 -0700
-Message-ID: <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
-Date: Tue, 30 Sep 2025 14:32:35 -0700
+	s=arc-20240116; t=1759268718; c=relaxed/simple;
+	bh=0CQ3wY+/BUb8p/7GjSwwBebiIJHWRwNNLJrGlsGtYHM=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=PkBbzga5YlTIbx5R0Xk6tafag7WpR32VkQyf61KuwOmGLA/l/xJm9Isz9ElBL+/g+1fPKodQAE6cHi2ODkgdMTcKt2La12vc5iGNB23bPY3lvSFe5q7ouTCtVcIZerj1weEnYtY9VS/R1CP/1cuVyFYRCBMULhpxTB7mzIfmgtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeK2b6Fm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E16F7C113CF;
+	Tue, 30 Sep 2025 21:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759268717;
+	bh=0CQ3wY+/BUb8p/7GjSwwBebiIJHWRwNNLJrGlsGtYHM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UeK2b6FmPKhC3f/hh8Z4me/jKvDN8zQQJEyiKnmMSG3CiuLTOcOX7kB2w8NjCUOFM
+	 r2bfl+eiVVWs0gqIC4ZAAQROQjqlv+cu8Po0P3ZPL9Dx6ulJjpe27kebqyjX14CTF8
+	 ZO+jz1QhyulwWHURHGchN7um7cLUxhr8vtqum3urvXZ1b9J46KwvdyocbwKfe0zN5N
+	 VIMBa7pRqTlBxBg/km70sO8oR4RfD88XMNeXFnb4M6WxWhugEi4LfZc2zg7QGLI23X
+	 YScHubxfzTZrqhR+NbCohe8R/MMC2BBJAMPPHqfNBGf08BY8Tx02wIbBlvBL0A9r/S
+	 OW/MZ13I804wg==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1v3iBS-0000000DUtb-0zjU;
+	Tue, 30 Sep 2025 17:46:54 -0400
+Message-ID: <20250930214630.332381812@kernel.org>
+User-Agent: quilt/0.68
+Date: Tue, 30 Sep 2025 17:46:30 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>
+Subject: [for-next][PATCH 0/7] tools/rtla: Updates for v6.18
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
- partial write erratum
-To: Vishal Annapurve <vannapurve@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, bp@alien8.de,
- tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
- thomas.lendacky@amd.com, x86@kernel.org, kas@kernel.org,
- rick.p.edgecombe@intel.com, dwmw@amazon.co.uk, kai.huang@intel.com,
- seanjc@google.com, reinette.chatre@intel.com, isaku.yamahata@intel.com,
- dan.j.williams@intel.com, ashish.kalra@amd.com, nik.borisov@suse.com,
- chao.gao@intel.com, sagis@google.com, farrah.chen@intel.com,
- Binbin Wu <binbin.wu@linux.intel.com>
-References: <20250901160930.1785244-1-pbonzini@redhat.com>
- <20250901160930.1785244-5-pbonzini@redhat.com>
- <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 9/29/25 18:38, Vishal Annapurve wrote:
->> On those platforms, the old kernel must reset TDX private memory before
->> jumping to the new kernel, otherwise the new kernel may see unexpected
->> machine check.  Currently the kernel doesn't track which page is a TDX
->> private page.  For simplicity just fail kexec/kdump for those platforms.
-> Google has a usecase that needs host kdump support on SPR/EMR
-> platforms. Disabling kdump disables the host's ability to dump very
-> critical information on host crashes altogether. Is Intel working on
-> enabling kdump support for platforms with the erratum?
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+tools/for-next
 
-Nope.
+Head SHA1: 05b7e10687c69e0c28e62b9a74ce78b3e7463806
 
-Any workarounds are going to be slow and probably imperfect. That's not
-a great match for kdump. I'm perfectly happy waiting for fixed hardware
-from what I've seen.
+
+Costa Shulyupin (1):
+      tools/rtla: Consolidate common parameters into shared structure
+
+Crystal Wood (6):
+      tools/rtla: Move top/hist params into common struct
+      tools/rtla: Create common_apply_config()
+      tools/rtla: Consolidate code between osnoise/timerlat and hist/top
+      tools/rtla: Fix -A option name in test comment
+      tools/rtla: Add test engine support for unexpected output
+      tools/rtla: Add remaining support for osnoise actions
+
+----
+ Documentation/tools/rtla/common_options.rst        |  61 ++
+ .../tools/rtla/common_osnoise_options.rst          |   8 +
+ .../tools/rtla/common_timerlat_options.rst         |  74 +--
+ Documentation/tools/rtla/rtla-hwnoise.rst          |   2 +
+ Documentation/tools/rtla/rtla-osnoise-hist.rst     |   2 +
+ Documentation/tools/rtla/rtla-osnoise-top.rst      |   2 +
+ Documentation/tools/rtla/rtla-timerlat-hist.rst    |   2 +
+ Documentation/tools/rtla/rtla-timerlat-top.rst     |   2 +
+ tools/tracing/rtla/src/Build                       |   1 +
+ tools/tracing/rtla/src/actions.c                   |   8 +-
+ tools/tracing/rtla/src/actions.h                   |   2 +-
+ tools/tracing/rtla/src/common.c                    | 344 +++++++++++
+ tools/tracing/rtla/src/common.h                    | 154 +++++
+ tools/tracing/rtla/src/osnoise.c                   | 101 ++--
+ tools/tracing/rtla/src/osnoise.h                   | 114 +---
+ tools/tracing/rtla/src/osnoise_hist.c              | 369 +++++-------
+ tools/tracing/rtla/src/osnoise_top.c               | 303 +++-------
+ tools/tracing/rtla/src/timerlat.c                  | 210 +++++--
+ tools/tracing/rtla/src/timerlat.h                  |  55 +-
+ tools/tracing/rtla/src/timerlat_bpf.c              |  22 +-
+ tools/tracing/rtla/src/timerlat_hist.c             | 642 ++++++---------------
+ tools/tracing/rtla/src/timerlat_top.c              | 568 ++++--------------
+ tools/tracing/rtla/src/trace.h                     |   3 -
+ tools/tracing/rtla/tests/engine.sh                 |  26 +-
+ tools/tracing/rtla/tests/osnoise.t                 |  27 +-
+ tools/tracing/rtla/tests/timerlat.t                |   4 +-
+ 26 files changed, 1395 insertions(+), 1711 deletions(-)
+ create mode 100644 tools/tracing/rtla/src/common.c
+ create mode 100644 tools/tracing/rtla/src/common.h
 
