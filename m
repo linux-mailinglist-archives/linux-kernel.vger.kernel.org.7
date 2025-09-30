@@ -1,308 +1,165 @@
-Return-Path: <linux-kernel+bounces-838249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A29BAECAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:40:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0067EBAECB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743B2169C3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0A14A6972
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288332D2394;
-	Tue, 30 Sep 2025 23:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD332D248C;
+	Tue, 30 Sep 2025 23:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o4BPb1Eq"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSbsHI+w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A4F34BA50
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA6B34BA50
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759275620; cv=none; b=tvkPwP/F8VxsbWJGpWCzaAt/Fc9FU2bNb9AfjXNscz5yD44hWGwUZdQaDVyK6vc4jc8I7JoN2F+2N84Qe31GsxGjRpVUaJNS378ePHi0JwnDy9GHHYDdRZGqMRmSz01DBLUtiy/43yXYiDlVFV2Xv00pWZcPQCQjSbd+E0xP9RA=
+	t=1759275717; cv=none; b=gd2X+W8487jfzW3vDpkLaP8SbDdzrs+764QD61glySy/SdRrZQsgevN3Q2VLAfxntzJvdeEvh906S009GCCkw7+PYN/a//3pvL9jEQMnKjC6FV4DASDyW0YdCpEQZnwjBNbLW28tWjqxufNN2yiqXrv+IFFZne21YYPTK50BWCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759275620; c=relaxed/simple;
-	bh=StwPnBIUSMSFegQ863nDgybAMWqQBBLSuebLfakUqz4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MtxZrZSeqrxVOFYw0xoHotDpEJYqOucble/8O1SF0jaed6paSzddjqsYJo9KYCBmste8c7JcW1Tuxvmx9iTLCwXs7DZoeNG/qBhACV1nvn/+l5eTI1hihKyXkPDj4AsVyxKh45R9yrzmijl+MSGleM/lMyQ0iDuA90wb/yloG4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o4BPb1Eq; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33428befbbaso7818069a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:40:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759275618; x=1759880418; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xm/RBBtgnyJT6LVVzMbxzLMA7Ui8E/Kvsc3SFAo9v44=;
-        b=o4BPb1EqbXCHl8aI4HTEDy8zuf8Cv8XVsp6rWLlj3RKC04LEJI9+YYc4LM2KsA80Be
-         gpHEJALjchBwCm+S32gGnFH4DRGhzuLBQb5CyLxRrODzUnKpdkrw7N1vHIQgRTsYX4+j
-         XnnDxcyjkbQXYCjpz/oT3INIOX5nsFDAhjW8zfFhMsrOVkMIHov4noVoVhlXxFhRruTE
-         DV51R/bRt75V3NwfuccprbIBN7/Yr8BMwHOApovQjsjGzMxg5LVp4W3uto+jcl6yFCcv
-         b9NGVJJut7Q9ASx3I8k2znQs49wXFghifE4rXvEztQSGvNTnNgdAoeEvEvQt/t4LuIRk
-         Jnqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759275618; x=1759880418;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xm/RBBtgnyJT6LVVzMbxzLMA7Ui8E/Kvsc3SFAo9v44=;
-        b=ubbqUZyuuy9SMicb3qe9XnnmEy7OqmjknNJySaolWSfRkaMYuvcjb82L7bkrJX28PL
-         rbVFUOUycxlnFFCo+RyO9oV0RU3/4ZvWJMwcUPxxaCE7Cs257nRGFBdc3ViI1Gw4GC9C
-         CDJk55Pp/LjvwSWIIvfQVIq8LiN2X3iEbCr60c3frOwF+thBYTxnOQBUZ4KfgvCihltq
-         LOEByYHeceMArnpN+qDfHX3pGBcjbBFgeEPUxiCzaZF1mElJyRLflYpNoMvRLD/g7F9C
-         ScvhF4LAYy2/hdWB5gOX2ZK8JE7SsofIvPT9Vc+2Iz0/FiHCw5GDMEyk3ntgxplVSLze
-         iOSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu7589KRWMLUUlkD25fEnX+po5U1zY8Y17CToG5bcBj8WTgFfAHt/RSKhNG1CDv8y1jxD7jhgylFNcWmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHwIXaMmCKEvStJe5yGuBbzdpaMs1zrnLCw/cNGpiG5OCvF2LO
-	D4mgJW/7rlTgxgml2ZAv8Ko/zzCqs+K0ozwQJC5+0OIFCnSJzUYsRmIzbfPn5wnCSsFIbh2CpQx
-	ImvbcGw==
-X-Google-Smtp-Source: AGHT+IG1z1pktD2SPLEM02kCuS94B4e/h+OQF2dnTNOyub+/4QpLhwWdDJaxJSvpjl1nBImjz7byfGgeGcc=
-X-Received: from pjbei17.prod.google.com ([2002:a17:90a:e551:b0:32b:95bb:dbc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a81:b0:32e:87f6:f5a6
- with SMTP id 98e67ed59e1d1-339a6d796bbmr1590614a91.0.1759275617867; Tue, 30
- Sep 2025 16:40:17 -0700 (PDT)
-Date: Tue, 30 Sep 2025 16:40:16 -0700
-In-Reply-To: <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+	s=arc-20240116; t=1759275717; c=relaxed/simple;
+	bh=ou8zqcPR7U4f86dX0hDK17PGEqR25IhF/uTAk3Ga9Is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dRV28+KjGHFyQ0Bi9DAjXj6fxhB4/Kad/Kwx8WGH1+PUW51AnKy+6IzY3SMUhN0u91c8OQ138JcBLW3p9GrIhqKhKPFPym30k5NPHgux0FxlZ0MTNjQ6wABDDrNpWEUXtcb0VugRWYV5vZrnxuJfUG7Lv7N05RKWJDt773xcM6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSbsHI+w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9D5C116D0
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759275716;
+	bh=ou8zqcPR7U4f86dX0hDK17PGEqR25IhF/uTAk3Ga9Is=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GSbsHI+wZr83ZAR/Y34kVjxLMA9vohcAKZIbQ6P00EKhal6S7NAmu4FJ2iFEPKts0
+	 3Qtdr6bBijcC8kcPSZxP4EZo4TyvZrBIIHiNVYuM8OteoOo8goYotexG/P/6CmLWsV
+	 HAdJZGWaQHuSr0MxcdfEu8WZHHknCESqTwnwlRTd0TYqgPENGRa1TuxeBq55AP7wEH
+	 e30qMuaKRQy0S7KXnHQgUyAwhFxuG18jgBHJfr2A5M+Bf2uH4j/XAf843gCSlykr7S
+	 qHOA2PQ/vLRXk9V6ge5Q0AlrpJN2XwevhiPhvuS3yczHbfUITyNupVMtEVOUXHe7+j
+	 MSTmWYOeAtoiw==
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e2b7eee0dso11475e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:41:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6zX7wa2WwRaiDlo4chiselMgLDn7YPjUD111S6IVa6eFYsrYDsasQFQ2JMujBTLFpR/kzhPdhi7NNH6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5u81KehvVmuqsvNPiEjYexLSbrXKaBDj3RHwk1SA929CLBMao
+	U5O7Sgq71gE4Ag7gKx0a7Z9Alb8Z2YgY2V8yqtRE+RUhtk4ZYY+4AwjuleaVrKjRuS5xqrNT2OS
+	KoIYwraMWdM9vKYm3aNvcQ8HXEjYcCvk2pvTpSNS9
+X-Google-Smtp-Source: AGHT+IHmIOQHJd86DZ4BzMyUX1T3L8l+LnN+ww//qAg6d+wkwbceHhSERLMH66FgHpSRc9v38ZwtMo6hKcUWcN0a0xE=
+X-Received: by 2002:a05:600c:a40a:b0:45f:2949:7aa9 with SMTP id
+ 5b1f17b1804b1-46e61bde4c4mr662715e9.6.1759275715534; Tue, 30 Sep 2025
+ 16:41:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
-Message-ID: <aNxqYMqtBKll-TgV@google.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-1-c494053c3c08@kernel.org> <2025093018-snugly-twisty-91b1@gregkh>
+In-Reply-To: <2025093018-snugly-twisty-91b1@gregkh>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 30 Sep 2025 16:41:43 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuNLtqcMtKa0v_UVtw3Zd2o+1d0j+kM5+UOfJA_52PNSiQ@mail.gmail.com>
+X-Gm-Features: AS18NWBb2I2szZCT5I-rvN0Zf16cBHJfCErKNR81663S2r6pIKbltxfL16vpcxI
+Message-ID: <CAF8kJuNLtqcMtKa0v_UVtw3Zd2o+1d0j+kM5+UOfJA_52PNSiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] PCI/LUO: Register with Liveupdate Orchestrator
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Trimmed the Cc substantially as I doubt non-gmem/KVM folks will be excited about
-thread necromancy.
+On Tue, Sep 30, 2025 at 8:31=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Sep 16, 2025 at 12:45:09AM -0700, Chris Li wrote:
+> > Register PCI subsystem with the Liveupdate Orchestrator
+> > and provide noop liveupdate callbacks.
+> >
+> > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > ---
+> >  MAINTAINERS              |  2 ++
+> >  drivers/pci/Makefile     |  1 +
+> >  drivers/pci/liveupdate.c | 54 ++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  3 files changed, 57 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 91cec3288cc81aea199f730924eee1f5fda1fd72..85749a5da69f88544ccc749=
+e9d723b1b54c0e3b7 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14014,11 +14014,13 @@ F:  tools/testing/selftests/livepatch/
+> >
+> >  LIVE UPDATE
+> >  M:   Pasha Tatashin <pasha.tatashin@soleen.com>
+> > +M:   Chris Li <chrisl@kernel.org>
+> >  L:   linux-kernel@vger.kernel.org
+> >  S:   Maintained
+> >  F:   Documentation/ABI/testing/sysfs-kernel-liveupdate
+> >  F:   Documentation/admin-guide/liveupdate.rst
+> >  F:   drivers/misc/liveupdate/
+> > +F:   drivers/pci/liveupdate/
+> >  F:   include/linux/liveupdate.h
+> >  F:   include/uapi/linux/liveupdate.h
+> >  F:   tools/testing/selftests/liveupdate/
+> > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+> > index 67647f1880fb8fb0629d680398f5b88d69aac660..aa1bac7aed7d12c641a6b55=
+e56176fb3cdde4c91 100644
+> > --- a/drivers/pci/Makefile
+> > +++ b/drivers/pci/Makefile
+> > @@ -37,6 +37,7 @@ obj-$(CONFIG_PCI_DOE)               +=3D doe.o
+> >  obj-$(CONFIG_PCI_DYNAMIC_OF_NODES) +=3D of_property.o
+> >  obj-$(CONFIG_PCI_NPEM)               +=3D npem.o
+> >  obj-$(CONFIG_PCIE_TPH)               +=3D tph.o
+> > +obj-$(CONFIG_LIVEUPDATE)     +=3D liveupdate.o
+> >
+> >  # Endpoint library must be initialized before its users
+> >  obj-$(CONFIG_PCI_ENDPOINT)   +=3D endpoint/
+> > diff --git a/drivers/pci/liveupdate.c b/drivers/pci/liveupdate.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..86b4f3a2fb44781c6e323ba=
+029db510450556fa9
+> > --- /dev/null
+> > +++ b/drivers/pci/liveupdate.c
+> > @@ -0,0 +1,54 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Copyright (c) 2025, Google LLC.
+> > + * Chris Li <chrisl@kernel.org>
+> > + */
+> > +
+> > +#define pr_fmt(fmt) "PCI liveupdate: " fmt
+> > +
+> > +#include <linux/liveupdate.h>
+> > +
+> > +#define PCI_SUBSYSTEM_NAME "pci"
+> > +
+> > +static int pci_liveupdate_prepare(void *arg, u64 *data)
+> > +{
+> > +     pr_info("prepare data[%llx]\n", *data);
+>
+> You do know that's a security bug, right?
 
-On Wed, May 14, 2025, Ackerley Tng wrote:
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 86f74ce7f12a..f609337ae1c2 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -6408,6 +6408,11 @@ belonging to the slot via its userspace_addr.
->  The use of GUEST_MEMFD_FLAG_SUPPORT_SHARED will not be allowed for CoCo VMs.
->  This is validated when the guest_memfd instance is bound to the VM.
->  
-> +If the capability KVM_CAP_GMEM_CONVERSIONS is supported, then the 'flags' field
-> +supports GUEST_MEMFD_FLAG_INIT_PRIVATE.  Setting GUEST_MEMFD_FLAG_INIT_PRIVATE
-> +will initialize the memory for the guest_memfd as guest-only and not faultable
-> +by the host.
+Right, it is useful during debugging and inspecting the preserved data.
 
-Whatever documentation we add should land at the same time as the collateral.
-KVM_CAP_GMEM_CONVERSIONS literally doesn't exist at this time.
+My bad and will remove the raw pointer.
 
-> @@ -17,6 +18,24 @@ struct kvm_gmem {
->  	struct list_head entry;
->  };
->  
-> +struct kvm_gmem_inode_private {
-> +#ifdef CONFIG_KVM_GMEM_SHARED_MEM
-> +	struct maple_tree shareability;
-> +#endif
-> +};
-> +
-> +enum shareability {
-> +	SHAREABILITY_GUEST = 1,	/* Only the guest can map (fault) folios in this range. */
-> +	SHAREABILITY_ALL = 2,	/* Both guest and host can fault folios in this range. */
-> +};
+>
+> Please don't do this, even in "debug" code, as it can escape into the
+> wild...
 
-Rather than define new values and new KVM uAPI, I think we should instead simply
-support KVM_SET_MEMORY_ATTRIBUTES.  We'll probably need a new CAP, as I'm not sure
-supporting KVM_CHECK_EXTENSION+KVM_CAP_MEMORY_ATTRIBUTES on a gmem fd would be a
-good idea (e.g. trying to do KVM_CAP_GUEST_MEMFD_FLAGS on a gmem fd doesn't work
-because the whole point is to get flags _before_ creating the gmem instance).  But
-adding e.g. KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES is easy enough.
+Fully agree. Thanks for catching it.
 
-But for specifying PRIVATE vs. SHARED, I don't see any reason to define new uAPI.
-I also don't want an entirely new set of terms in KVM to describe the same things.
-PRIVATE and SHARED are far from perfect, but they're better than https://xkcd.com/927.
-And if we ever want to let userspace restrict RWX protections in gmem, we'll have
-a ready-made way to do so.  
-
-Internally, that let's us do some fun things in KVM.  E.g. if we make the "disable
-legacy per-VM memory attributes" a read-only module param, then we can wire up a
-static_call() for kvm_get_memory_attributes() and then kvm_mem_is_private() will
-Just Work.
-
-  static inline unsigned long kvm_get_memory_attributes(struct kvm *kvm, gfn_t gfn)
-  {
-	return static_call(__kvm_get_memory_attributes)(kvm, gfn);
-  }
-
-  static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
-  {
-	return kvm_get_memory_attributes(kvm, gfn) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
-  }
-
-That might trigger some additional surgery if/when we want to support RWX
-protections on a per-VM basis _and_ a per-gmem basic, but I suspect such churn
-would pale in comparison to the overall support needed for RWX protections.
-
-The kvm_memory_attributes structure is compatible, all that's needed AFAICT is a
-union to clarify it's a pgoff instead of an address when used for guest_memfd.
-
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 52f6000ab020..e0d8255ac8d2 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1590,7 +1590,10 @@ struct kvm_stats_desc {
- #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
- 
- struct kvm_memory_attributes {
--       __u64 address;
-+       union {
-+               __u64 address;
-+               __u64 offset;
-+       };
-        __u64 size;
-        __u64 attributes;
-        __u64 flags;
-
-> +static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index);
-> +
-> +static struct kvm_gmem_inode_private *kvm_gmem_private(struct inode *inode)
-> +{
-> +	return inode->i_mapping->i_private_data;
-
-This is a hilarious bad helper.  Everyone and their mother is going to think
-about "private vs. shared" when they see kvm_gmem_private(), at least on the x86
-side.
-
-What's even more absurd is that the only "final" usage of the helper is to
-free/destroy the inode:
-
-  $ git grep kvm_gmem_private
-  virt/kvm/guest_memfd.c:static struct kvm_gmem_inode_private *kvm_gmem_private(struct inode *inode)
-  virt/kvm/guest_memfd.c: return kvm_gmem_private(inode)->allocator_ops;
-  virt/kvm/guest_memfd.c: return kvm_gmem_private(inode)->allocator_private;
-  virt/kvm/guest_memfd.c: mt = &kvm_gmem_private(inode)->shareability;
-  virt/kvm/guest_memfd.c: mt = &kvm_gmem_private(inode)->shareability;
-  virt/kvm/guest_memfd.c: mt = &kvm_gmem_private(inode)->shareability;
-  virt/kvm/guest_memfd.c: mt = &kvm_gmem_private(inode)->shareability;
-  virt/kvm/guest_memfd.c: struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
-  virt/kvm/guest_memfd.c: struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
-
-And in that case, using a wrapper is counter-productive, just reference
-inode->i_mapping->i_private_data directly so that readeres don't have to jump
-through a useless layer.
-
-Luckily, "struct kvm_gmem_inode_private" no longer needs to exist, now that
-Shivank's NUMA policy series wraps the vfs_inode with a gmem_inode, and can be
-retrieved via GMEM_I().  FWIW, before looking that series, I was going to suggest
-something like to_gmem(), but I definitely think we should follow filesystems
-convention, not KVM vCPU/VM convention.
-
->   * folio_file_pfn - like folio_file_page, but return a pfn.
->   * @folio: The folio which contains this index.
-> @@ -29,6 +48,58 @@ static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
->  	return folio_pfn(folio) + (index & (folio_nr_pages(folio) - 1));
->  }
->  
-> +#ifdef CONFIG_KVM_GMEM_SHARED_MEM
-> +
-> +static int kvm_gmem_shareability_setup(struct kvm_gmem_inode_private *private,
-> +				      loff_t size, u64 flags)
-> +{
-> +	enum shareability m;
-> +	pgoff_t last;
-> +
-> +	last = (size >> PAGE_SHIFT) - 1;
-> +	m = flags & GUEST_MEMFD_FLAG_INIT_PRIVATE ? SHAREABILITY_GUEST :
-> +						    SHAREABILITY_ALL;
-> +	return mtree_store_range(&private->shareability, 0, last, xa_mk_value(m),
-> +				 GFP_KERNEL);
-> +}
-> +
-> +static enum shareability kvm_gmem_shareability_get(struct inode *inode,
-> +						 pgoff_t index)
-> +{
-> +	struct maple_tree *mt;
-> +	void *entry;
-> +
-> +	mt = &kvm_gmem_private(inode)->shareability;
-> +	entry = mtree_load(mt, index);
-> +	WARN(!entry,
-
-WARN_ON_ONCE(), otherwise we risk escalating a per-VM problem into a system-wide
-DoS.
-
-> +	     "Shareability should always be defined for all indices in inode.");
-> +
-> +	return xa_to_value(entry);
-> +}
-> +
-> +static struct folio *kvm_gmem_get_shared_folio(struct inode *inode, pgoff_t index)
-> +{
-> +	if (kvm_gmem_shareability_get(inode, index) != SHAREABILITY_ALL)
-> +		return ERR_PTR(-EACCES);
-> +
-> +	return kvm_gmem_get_folio(inode, index);
-
-Please don't add 1-3 line helpers with one caller and very little hope of gaining
-additional users, especially in guest_memfd where "shared" and "private" have
-multiple meanings, and so things like "get_shared_folio" are inherently ambiguous.
-
-I'm pretty sure a lot of this stems from CONFIG_KVM_GMEM_SHARED_MEM, which AFAICT
-simply won't exist.  But just in case this is a Google3 pattern... 
-
-> +}
-> +
-> +#else
-> +
-> +static int kvm_gmem_shareability_setup(struct maple_tree *mt, loff_t size, u64 flags)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline struct folio *kvm_gmem_get_shared_folio(struct inode *inode, pgoff_t index)
-> +{
-> +	WARN_ONCE("Unexpected call to get shared folio.")
-> +	return NULL;
-> +}
-> +
-> +#endif /* CONFIG_KVM_GMEM_SHARED_MEM */
-> +
->  static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->  				    pgoff_t index, struct folio *folio)
->  {
-> @@ -333,7 +404,7 @@ static vm_fault_t kvm_gmem_fault_shared(struct vm_fault *vmf)
->  
->  	filemap_invalidate_lock_shared(inode->i_mapping);
->  
-> -	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
-> +	folio = kvm_gmem_get_shared_folio(inode, vmf->pgoff);
-
-I am fairly certain there's a TOCTOU bug here.  AFAICT, nothing prevents the
-underlying memory from being converted from shared=>private after checking that
-the page is SHARED.
-
-The locking rules for the maple_tree are also undocumented and haphazard.  I think
-we can kill several birds with one stone by protecting the attributes with
-invalidate_lock.  A bonus with using invalidate_lock is that it's a sleepable
-lock, not a spinlock.  I don't think there's anything that would immediately
-benefit?  But if we wanted to populate the tree on-demand (versus pre-filling
-all possible pages), then it'd be easier to handle things like allocations in a
-race free manner.
-
-	/*
-	 * Protect the attributes with the invalidation lock, which will always
-	 * be held on conversions
-	 */
-	mt_init_flags(&gi->attributes, MT_FLAGS_LOCK_EXTERN);
-	mt_set_external_lock(&gi->attributes,
-			     &inode->i_mapping->invalidate_lock);
+Chris
 
