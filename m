@@ -1,231 +1,240 @@
-Return-Path: <linux-kernel+bounces-837013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97E7BAB177
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:51:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B64BAB180
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726ED16FC49
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C200F1924463
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C94C19AD89;
-	Tue, 30 Sep 2025 02:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC7913EFE3;
+	Tue, 30 Sep 2025 02:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="iAbSmT09"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="s2JBOWKp";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="rM60Sdj5"
+Received: from esa20.fujitsucc.c3s2.iphmx.com (esa20.fujitsucc.c3s2.iphmx.com [216.71.158.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997A9C2EA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759200705; cv=none; b=hnRsQehM09BBdQM8PXtkKfVvfusuVcfE2U/W541FMPdN46jk7rLaz/G1hefBTQ2gOUuGioXQfySruNO88MA+BevVk6bvFbKy+a3+2/E8MqcaNYvF0HMaqg8EXb9ICuz+0IkN282IlXq8CTB3Y04C8haxCmjYuKoXwOyHgjMdWbQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759200705; c=relaxed/simple;
-	bh=1+kLvqgfbavHmwl1I9q/JgrSV05pr+iz7HQaV0VYx1I=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VvBghEWTa64kb11iY0yB+UOqf7GA99pAq4Hwvdv7nR1WaLTS793Dp9nu1oxrgBuprEEKvKaLTSHRU0vhjixrFud231bcCrgNWKacJ+bC+3IQ03R52H0uYNwY0vwqzJ6Uobnc/cLdXDdzm5Rj5zgiWD79BbY5Ne6VrtT0yy/p0QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=iAbSmT09; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=g0cNtQr4557jtEaOFawLvfNZk92gUobA2ObLkEl8z4I=;
-	b=iAbSmT09ClD693sektscQaIBj7LE992j94gJB8RmPZDaxrPDUOy3EZfMudN5iTlCNINe8GBIS
-	BfXIG9Ho7/lboCOmi9IZI6n6oCyZhebGrccd/f4cNW3Swubn0izNVPtLymL+RByg4ovg/fn1CvL
-	xpNoK5ANLCNzlt1ennBpxdw=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cbMyC2wwsz1T4Ln;
-	Tue, 30 Sep 2025 10:51:15 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id C9CE21402ED;
-	Tue, 30 Sep 2025 10:51:38 +0800 (CST)
-Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 30 Sep 2025 10:51:26 +0800
-Received: from [10.173.125.236] (10.173.125.236) by
- kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 30 Sep 2025 10:51:25 +0800
-Subject: Re: [syzbot] [mm?] WARNING in memory_failure
-To: <jane.chu@oracle.com>
-CC: David Hildenbrand <david@redhat.com>, Luis Chamberlain
-	<mcgrof@kernel.org>, syzbot
-	<syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>,
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <nao.horiguchi@gmail.com>,
-	<syzkaller-bugs@googlegroups.com>, "Pankaj Raghav (Samsung)"
-	<kernel@pankajraghav.com>, Zi Yan <ziy@nvidia.com>
-References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com>
- <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
- <DB0E39CD-36A9-4929-BCC6-33F27E387AEA@nvidia.com>
- <70522abd-c03a-43a9-a882-76f59f33404d@redhat.com>
- <B0781266-D168-4DCB-BFCE-3EA01F43F184@nvidia.com>
- <cad74ef8-3543-4fc5-a175-8fc23a88776a@redhat.com>
- <E82638DD-9E5D-4C69-AA0F-7DDC0E3D109B@nvidia.com>
- <fzfcprayhtwbyuauld5geudyzzrslcb3luaneejq4hyq2aqm3l@iwpn2n33gi3m>
- <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com>
- <w2kwxcd6br6h4tdn6xigtuf73qklt6jhxvhtcwp7idugycgxlv@vqjx26vrnwu5>
- <594350a0-f35d-472b-9261-96ce2715d402@oracle.com>
- <7577871f-06be-492d-b6d7-8404d7a045e0@oracle.com>
- <c61ca94b-5b19-4c69-b2a1-d11a5301c6bb@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <d15fec58-58ad-fd20-7130-9c480df43d15@huawei.com>
-Date: Tue, 30 Sep 2025 10:51:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6B01EA7CC;
+	Tue, 30 Sep 2025 02:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.158.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759200778; cv=fail; b=WMsEpwlAh5rVCb0F8rizWQLKWhfivEF1x+/r7tCfYSJuhCTuU6fkRMa1p0DiGhiV30UXuqMpYUpD3vvwR8pOEqbpZVZ85ejPkBNy76gQjK3Ier9cAOqwj8KxxcPagab6rQfGNSQHoHBYAZbgU1xEyXgqbasDjhNjvmlsPu5LG8k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759200778; c=relaxed/simple;
+	bh=zRQkAQnSgpfmgfN0B3dbu8FfZWGDAy7m5bmxAx5vycE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QGZCol9cSUzfKDFpbQ74g7Dl3B5uoIitgrRdcaQO/A5fbDZPhREGi4BRmmyL3xwPbfT4vF94vJs4/3bofJ9JG+/3HeI4rLi1J6j8OIgDSgs+0kWjgwnNDPJxIPMeigmKvS4fsSfRafkX2X+9NETGm9nA510qfeqJ/E1yNMFvLm4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=s2JBOWKp; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=rM60Sdj5; arc=fail smtp.client-ip=216.71.158.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1759200777; x=1790736777;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zRQkAQnSgpfmgfN0B3dbu8FfZWGDAy7m5bmxAx5vycE=;
+  b=s2JBOWKpQRs95QIDn3qK1M9RBquSCrjQuwYnkLUi2h04QcWln0DuDxO6
+   QquDNqWDwK/wcjoYfsNtxMw5mwwClaRuxm/9HBiVaB0ZE5P/wPjnhX7KB
+   0C5ttbHN6GP9F+GbuV6OJ0DATOmPUt17K9cR45pj+T0n1DgQxt99GEK0o
+   a0jy9Q4ULV6qzhzEZ6a6ob3kOb+6RoO5y69/+3I2OYpVM4LN4hqXVqkvo
+   rui8GvSMRxvMKdImgNjK/bSXU1/TCM+HLPxsch0AD+KeH52eBmfW5tCPb
+   u/l475z9uTvGy/y8L0Re7vf4uSoXpjcmkOm03oDXtTR/ypTip+/CuONfI
+   A==;
+X-CSE-ConnectionGUID: zXjX1hCZTxWVok/ZiQKRMQ==
+X-CSE-MsgGUID: Tq+Gxo/6RQ2C04Wiv8U9Ww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="169276850"
+X-IronPort-AV: E=Sophos;i="6.18,303,1751209200"; 
+   d="scan'208";a="169276850"
+Received: from mail-japaneastazon11011068.outbound.protection.outlook.com (HELO TYVP286CU001.outbound.protection.outlook.com) ([52.101.125.68])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 11:51:38 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oOWBp0PUSf2jD1bpdmqcMpQG8RkXY17D7s0N94hoZ5mPdG+rL0ie4TTQKDgRSI1et0+A+YJZuMh/uAggC0dZxnTaPkruTh4EaKL1ycw3FEgJ8/AZrshUvxj58Y+3c+/EZtr4hWLSIaBo4EDiljkrPji+AyFEkpFjPXYt6NVT31fZSOSIZ8VAwe4tExrzJM7T4JtYZiLVV9nPmcEzSmhe7O7ruqih5mkNFPmZNW3E4LRilTmNfsBlUQKUqjgjs+jGEmmU1NY6W+zGPRZm/4qigfHhYqSvMZcMy1nHyoBgtXHhJbdbP3A2/JqDbrBfMHqotYXJYIC4Yi/Lhh6jAtZaug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zRQkAQnSgpfmgfN0B3dbu8FfZWGDAy7m5bmxAx5vycE=;
+ b=i9yaU4vSu3GAKui8zzizaUYtivXd7qjX1cgcsSkO78FZBMJ7kqMyP/kvMeAp1slfp5wpHfKE00180lmKhVtArKNlI6QTwcp72lh3mToxZmdYyh6p86I7N7KVvVg/LYpP0NclSzIAZTSyHnIzZzMINF9OfrgSIMBqGcpRh6IHvLn4kH+jP0E/jfYMIc7+0EHnWhFUi+rU3aJM75ZrdHAmudcOI5l7BVkh+JF6NBF20XejEsnkZYfsBT7mULit11XUZCoBTl3ephF9ZPWJt0NWiDWoL757FDxq090jsMwLPkLt4N9igfuwtPWsUUIPK7MKD3hoXlPEGeq9txbfP90ReQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zRQkAQnSgpfmgfN0B3dbu8FfZWGDAy7m5bmxAx5vycE=;
+ b=rM60Sdj5/d+b1gEQudYWSpeORRjbPo7fM/tXA6l66TF42Nwia5g+lSYNOd8W/MGXBZTojLmldpDNYG5PVNDiBuabsxxFaoCw8eMSpFHQG0xEhSYF9JOoiJ9sn3LCfvQMW6qN2LOLzknFeJZ32squWpvneQ4oGaKIBz4ex65wgahnHCtWBZkjdC2V5W+oZ+k4iJXXTMxWatRl+OIK5GFqExopaXfOOmEOXZWUKaL9cSI4B4jLti4K9+SzdwB39LSVhT1Se6u1gH3rLAEBK+GkEbrezwA8r0i4qJ0NAWnYROuUTqJ2B1b80HLo/xd/vZ2z689dwiCzuzxiAl4GvE7TsA==
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
+ by OSCPR01MB13519.jpnprd01.prod.outlook.com (2603:1096:604:32e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 02:51:34 +0000
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::4344:1f7b:e34d:c672]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::4344:1f7b:e34d:c672%5]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 02:51:34 +0000
+From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
+To: 'James Morse' <james.morse@arm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>
+CC: D Scott Phillips OS <scott@os.amperecomputing.com>,
+	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+	"lcherian@marvell.com" <lcherian@marvell.com>, "bobo.shaobowang@huawei.com"
+	<bobo.shaobowang@huawei.com>, "baolin.wang@linux.alibaba.com"
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, "peternewman@google.com" <peternewman@google.com>,
+	"dfustini@baylibre.com" <dfustini@baylibre.com>, "amitsinght@marvell.com"
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Dave Martin
+	<dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker Donthineni
+	<sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Rob Herring <robh@kernel.org>, Rohit Mathew
+	<rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown
+	<lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+	<guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, Rohit
+ Mathew <Rohit.Mathew@arm.com>
+Subject: RE: [PATCH v2 15/29] arm_mpam: Reset MSC controls from cpu hp
+ callbacks
+Thread-Topic: [PATCH v2 15/29] arm_mpam: Reset MSC controls from cpu hp
+ callbacks
+Thread-Index: AQHcIpPEqyLBgsVICUymIMwyozSg2LSrJL0g
+Date: Tue, 30 Sep 2025 02:51:34 +0000
+Message-ID:
+ <OSZPR01MB8798CC570B0B9483109C58CE8B1AA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-16-james.morse@arm.com>
+In-Reply-To: <20250910204309.20751-16-james.morse@arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=32fd4da4-6a70-41c8-88bf-0778d2c13ea7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-09-30T02:50:14Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|OSCPR01MB13519:EE_
+x-ms-office365-filtering-correlation-id: fdc9e458-3800-4754-55e5-08ddffcc4468
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|1580799027|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?Vm1BUkNBWE41dHZXU0xRS3VlTTZDK3VtOU1aWFhIdHZGTmJZdDNkdk5i?=
+ =?iso-2022-jp?B?RU8ydm5hM3BYRDgwRnJXUzc0Ri9WK0xCR0I4UGRRa0c1MmZtQStrbFQz?=
+ =?iso-2022-jp?B?TklzdFVKYXR5eXA4bWdlT2ErSk84OGVPbk10VXpkeXMvdkJFOC8va3pM?=
+ =?iso-2022-jp?B?MzFORjk3TFZ5bk5TYlNHZWlaUGh0R2lKbVIrUmVXY0ZiY1JNenFHOFkz?=
+ =?iso-2022-jp?B?VzBuMkNkR3FSR3FtU0tBYytEd1JmcDhITHA0VWQzMHZ1S3kyemEwTFV2?=
+ =?iso-2022-jp?B?dkM1T05FWS9UUlgzWHB2UmRVOWE1Ty9ZY3VHOWo3K1NLSklvbVAwTVFE?=
+ =?iso-2022-jp?B?NEhTZlp4d0lLNEc4UVArMFNPdE1uL0ZrcEw4eEovSEZ3ZUZhZ3lRd0dI?=
+ =?iso-2022-jp?B?TE1EWVZiSnpFZW1NNGtLa3VkNFZxQWR6ejVNTkhQZ2RSNzI0Z0ZKemMr?=
+ =?iso-2022-jp?B?M3llcHJnUmhjVk9EUkZjVFVLRUZPN2svajF3NlVJbTcxYUZzU0x3cXAr?=
+ =?iso-2022-jp?B?eitMUTF1VFZGcmpTRFdkZGdiRDZUT3dUNXhQSG1HWnllUWJWRjRJMVBK?=
+ =?iso-2022-jp?B?dHl1ODNxK3ZTZ0I0MEMzTDZ5Zm1tRkhIQWs3ZWlmcjBRNFZ5MHdsQ2xV?=
+ =?iso-2022-jp?B?MXpwZzE2c1phRnd1aHhqRjAza3hhUkZia09mSlVXdGExU2xUWXpWekc3?=
+ =?iso-2022-jp?B?ZnNac0VLZVNYZSs0bjVZUkJadjROZzNmQkZDb2RNRE1DRy9HVUZQWDdJ?=
+ =?iso-2022-jp?B?M1RFeWFSczB3NVhqUGJSVEp4b01VdXVmL281NWgxK0g0Y1NXYmZITEpm?=
+ =?iso-2022-jp?B?NkozdUdxVVpEQlBMNzNZT3JqM1RrTmVCYk9rdHB5MmtCUnlFdHVmWHVw?=
+ =?iso-2022-jp?B?WUxrQThrU011VSsxZU1SMGtmMTJvQ2pjY2Nvajg5d2lwYzZaQ0xLR3Vj?=
+ =?iso-2022-jp?B?YlVkTEI1RTRuSWZJOE1QV2NnKzU3VTk4eno3ckRPMFVnL05Nb1hxbEFX?=
+ =?iso-2022-jp?B?NUx4cXJQRDY1RXo0T0JTbGpsWDhKTC85NDdyR0pvOVhnMmdRb2FMSE1Z?=
+ =?iso-2022-jp?B?ZmczZ01ZMUtNeUFXajVNc1hHdjBsSWlldndjbDhiakdjbFgvb3BwZS9p?=
+ =?iso-2022-jp?B?bnV2MVJ1TW11L3MzV01yd2NLSW9sOXBxL25YNGREbzVqc3Z5YUloVkRX?=
+ =?iso-2022-jp?B?UDBHZXJ2RzBZYnMraEkvdXg4VUkzZDNYcUgvbmh6SVU4ajRMRGgzcGxZ?=
+ =?iso-2022-jp?B?UXFiYzNmakZ1enhKNENBaXkyZlE1cld6bndlNWZ4UWpTOVJzK21PU2tt?=
+ =?iso-2022-jp?B?MUlyNk91MS9VMDJkVVlHMUpaaDFlbzMxSGo5Ujk4MnduS2RRcFNRQzZx?=
+ =?iso-2022-jp?B?Z0xPRzdIcXp5enlqbHMxelRLS2ozaFBJSE1rNWRwTy9YSy81b1o2SFFZ?=
+ =?iso-2022-jp?B?SWpZUXBJRG0wdlVkOVoxcWZHTmVTclNZQTBtWXZVY1YwMnBuWkFQMzVE?=
+ =?iso-2022-jp?B?V2ZXNlJveWwzUGJzT1NkUzZLN21tUDJJdWVyYWtCT0J2VU5ua25jejB3?=
+ =?iso-2022-jp?B?Tjd4emdPWko3VHdlbk1yNzZFSGZsUTBrWGp0UlJhM1l0alBiNE5iT1NR?=
+ =?iso-2022-jp?B?OWRhSExnWWtBU2tpSFlVS0VtOGYzOVZ1bTJZZDJDQW1xRG5QbkFEUU1Y?=
+ =?iso-2022-jp?B?RnJsK0Zjak9sZElxY0lHcXJWUHpvTEo1THVvRFNVTG02THpvWi9abXg0?=
+ =?iso-2022-jp?B?SkRZM051Q3pqMm15ZmMzM1FyN1RuQTFUY2laWU1HdHhwYTZPMTFQbWhM?=
+ =?iso-2022-jp?B?alMxemVZaUtoeEV2VldxZTNHTzI4WUZ4VWpGVmFpVWkzTXQxVjVnR3lI?=
+ =?iso-2022-jp?B?T2x1akxacXVKa28vVmlHbzN0SERsOWdhcXZLbHhBSUVPMDJ0V08zOUM2?=
+ =?iso-2022-jp?B?VVJublRiZExQZHhES2J0eVV5ZTNkSzhOWi9NYTE0a1JoSjZFeVpab2sx?=
+ =?iso-2022-jp?B?RGZMdWZyaURDaG4vZXc1RkYxei9IYVNzSTVLbHZXU1pacXRtL3p1UUJz?=
+ =?iso-2022-jp?B?dEV4cnFTVkRTUmgzVGFIZEVwcWd6OXhPWkh4K0pHQjk5Z0tGeXpnMGZt?=
+ =?iso-2022-jp?B?blREMG1SUVBFTlY0SE90ZkJ1Rlg1bnNsNzdHeWVqajI3azUyVG42bG9T?=
+ =?iso-2022-jp?B?Q1VJN29aRFdaZThaWWVRQjhpTmd3M0xFZ2ludEdLYlE5c2RYeVFMK1Zm?=
+ =?iso-2022-jp?B?TWU4Zz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(1580799027)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?L3BXMmZiLzVIcVhPUXFERlRCVHM0MFhmRkJnMmhRV1o2eGtXaW1GUWw1?=
+ =?iso-2022-jp?B?UGpHZWtmOHdNZU1Va1F3SW4vTDBJTTB3MWJqYTQxUklYVjZjU2hnK0xF?=
+ =?iso-2022-jp?B?UkZTTEh6OGEySmo3MlJudWJ3ZUREaUx3cUNGZERwcXljb0txZUFWZTAw?=
+ =?iso-2022-jp?B?QndBak1HNFZoenVUMTUvcEhrSHVoaFBnME1hQkNibmcxU3BhTlBYSEpl?=
+ =?iso-2022-jp?B?QXFvV2tLbVdKQW1WMUZFZ214QUZvMk9INU45N1ZRMzAyMDg1cFY4ang3?=
+ =?iso-2022-jp?B?TXJLUS9sTXpQRk80WW16VGZYTWtBMTJVNTFvdDROcWFPRFQ1dnRoZ25T?=
+ =?iso-2022-jp?B?b05PbzNrZUtWQjV2THREQ0JlVHY0bUsyTFRaTDdYZ2NYYk03aWhLU2Vx?=
+ =?iso-2022-jp?B?d29EeTVmc1AwSVd2a0pUeExQMXNvR3NJckhIWFBPREhxc2VlNUJOU0NS?=
+ =?iso-2022-jp?B?d2pmcHJkVWs2TUMvMi9Tbkc5dkprc1djLys5RnpJdHhkdmJLWVNBcHVw?=
+ =?iso-2022-jp?B?bEJRblJzV2E1ZmxLK2NGMUNXK3BPL2xBZkgxa1FwTC9vbWNROVowUUNw?=
+ =?iso-2022-jp?B?Y0I1NmcyWU0vUkkwM042NXhBakpKbGVMZmMrK3NUWW9mb2xUbDVGTGl3?=
+ =?iso-2022-jp?B?RnpPOHcyL0RPaUwxcVBKb0V5NWFxWXVlallGcWFoU2pLSmNBZ3c3THR6?=
+ =?iso-2022-jp?B?TU5pdEpYOE8xd3hyMXpkejRuMTJEZEh0cUFKSGFNdzl3NXBKZ0tNMFdt?=
+ =?iso-2022-jp?B?MTZGR0tTZHMxakpQcDBpRFIvd013UWYxRFhkY1Rtc2tIajdBaThsbmJK?=
+ =?iso-2022-jp?B?b29Xd2NQVW9Dd2tVNHJwTURMTGRtcFptZUxKV25LbWp5c2UvQzk1VXE1?=
+ =?iso-2022-jp?B?ZmdpNzA1N2RicmJ0NzZ4Y0duV1JBeEtQMEFMZ3A2VHlCSld6eWlkT0oz?=
+ =?iso-2022-jp?B?VzA4c0xrV3RMc05RUkMxcUhKamNBcFpyak84bFluRHlCdlhZT2Qza0VZ?=
+ =?iso-2022-jp?B?Wk9TODRodnBXYXJZU21PRkpocktQTUdJdW90THVMMEMrWGxtcjNHcERV?=
+ =?iso-2022-jp?B?SG0wTTFkYnQ3ZlovWTQzT0JOazFiRFV5SVpac2xzdk0vMG1wQ0R1OEFP?=
+ =?iso-2022-jp?B?RXpMZCs1Qm1uc0Q3RW5mczZ6VC9YS2RLZXdrSXNNRnQ3ck1Mb29IZ2M1?=
+ =?iso-2022-jp?B?WUdkeUVyR2tleWZOOUJIVm54eTlnTVArZnFacmdraG5rMndjYTlyZHNP?=
+ =?iso-2022-jp?B?R3RrcGNUeVcxKzByc2dMQVVUbmVzYVFLcFBvdXJxUHBBdDBrdTI0dUxz?=
+ =?iso-2022-jp?B?WnlKSjZVYmkvRHR2emloZUw2R0hkYzNXS1BUU01KSDgxNmsycVllSVFk?=
+ =?iso-2022-jp?B?QXNDYzV3eVovbGhiM2dLOTM4Z2kxbG01SGR5WmVKN0pIQlVPbDBUSXds?=
+ =?iso-2022-jp?B?OXI5YVZvQTlOeFBXM21URlBwRkxEWkdJbmpaQk5La2JwbUp0UjBKZGps?=
+ =?iso-2022-jp?B?dndVRVVkb2R3L21FaEFBd0RYckQxRzFPbi9mSnBtMElkTENJaEkwUkJr?=
+ =?iso-2022-jp?B?K1JnUVlnSUVsc2x3WWQrQ2piK01RYXhnTVJ3Wkw0QTNoQ0dxMTdzSXRH?=
+ =?iso-2022-jp?B?ZGttNHB4UisvQWczK0tOZ1JxWVkvWkEzUE1WdnFzRHVvNUR1MDRtcDNZ?=
+ =?iso-2022-jp?B?c09UTHEwNTNGWVV4STVMZlBVbGFLYU5MajFQRnZuNTJJc2krSnY1bjZ5?=
+ =?iso-2022-jp?B?Wk03bkpXTUQyNHhnSGluYURobThyZVBYU3cwcCtGQnJZcFNQK3VjaFRG?=
+ =?iso-2022-jp?B?OWNnS2VtdnlLUUdlRXkwVGU5OHdwcUtvNEdQaW9KYTFDVytHWUEzZElu?=
+ =?iso-2022-jp?B?VTRkbnk5cGZVSFE3a0NGenBrL05pVGxvVTZ4MHJTSjM1TmJTTjVOa1NM?=
+ =?iso-2022-jp?B?b3hoN2dJUGhRL2xDVzB2azBCUllCSFgzbUk5TjZyL0RVcGU0eXp6cXht?=
+ =?iso-2022-jp?B?dVZOOUt1dW83dFFWeFhBR3hwTUttTXZXc1NhL0MvYVZqQ1FLbGlCY05T?=
+ =?iso-2022-jp?B?bXNBcmZBL25lVEFvQlR4QlFYbG9HQU5OL2NWY0NZOGtOQkp0ZXJzUXc1?=
+ =?iso-2022-jp?B?L3JRMGlDNDAyaDNGYnJ4eXEvNE9MZyttblV5dEVuSHNzVnplR0Q3VkZN?=
+ =?iso-2022-jp?B?c0hpdTlDc2FHMkx0T2hnUW1PT2NCOWdpZ3lqRmNqWjlSckVJVVFiMFRE?=
+ =?iso-2022-jp?B?UlF6VEV2TllYRlhQVkFWQWNES1dQckwyUE5ObFBibk9jemNNTlliZzhT?=
+ =?iso-2022-jp?B?M1YzK2V1Qmh5cS9hdjg4TllHUFZYTThSS2c9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c61ca94b-5b19-4c69-b2a1-d11a5301c6bb@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq500010.china.huawei.com (7.202.194.235)
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	iVOtv8wE0M8bJFMKQSxRnwK0MgU63XTYSvbAclxKTeyUKVz+0aXYi2Z+/QHaxj0vJ9kf1/xTm8gTjHgkk03YkV+rh8pKSPfH7MQVYrNhd4sqaeP+yw6TwgSHqx3chSFJw0BNOgyTXwQYu5Mt4LKjGanclX7LJ8Y49ErvA6BVdkTYNuqpND1GrbuBBzPZ8xWmsLE5Mzp6etHumMiLW1FlxIJoE6FGCZS0KLt677bKiGiD+Zj38LxuLSlO2I7mVjFZmLZerxhRxeeTdIW8C8CbOAlBvtBuj/dliHUxjcX+flLV3kAPhaiK/6SMuJGXraW9zVgsiN/uB7d7yfDE3bt7O2sU0Wg42lqxL1rHF76O7mQAhuf7V/m05ZuddHcCCpv7bL12zBzs5558e8lSRbKSUz0hzBuY7bVTWYBPpoG5eH59oxEn4FZdtOOMgY9AAqICY/zAIOjokd5Nr8YZ785V2sVvNMk8FjSEGAah2afHiXOdxjLS1fjr9dQNewNp5cgKYsEjrxy7HtSpGG5Y4dvK1zTEZ8gODamTPEQ40QE4Ccgs1MGnzQTduifY9St/hk3312WjJqBJ/63oWSgmY4n8BQ2dXm6e6qRJL8Ry796+gimqtlANgiHGsF8Rm0CdV+Kv
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdc9e458-3800-4754-55e5-08ddffcc4468
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2025 02:51:34.2227
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RPh5FxxlvjcTFCAFRsF6aIO3d+vrHbsHePJYAX0ythPlcKLgQKuMoxIGNgwvEW8YmNAlBC+fFaDFsccqmBi42Od471sSuYJ+4+8V2Z21DdM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13519
 
-On 2025/9/30 2:23, jane.chu@oracle.com wrote:
-> 
-> 
-> On 9/29/2025 10:49 AM, jane.chu@oracle.com wrote:
->>
->> On 9/29/2025 10:29 AM, jane.chu@oracle.com wrote:
->>>
->>> On 9/29/2025 4:08 AM, Pankaj Raghav (Samsung) wrote:
->>>>>
->>>>> I want to change all the split functions in huge_mm.h and provide
->>>>> mapping_min_folio_order() to try_folio_split() in truncate_inode_partial_folio().
->>>>>
->>>>> Something like below:
->>>>>
->>>>> 1. no split function will change the given order;
->>>>> 2. __folio_split() will no longer give VM_WARN_ONCE when provided new_order
->>>>> is smaller than mapping_min_folio_order().
->>>>>
->>>>> In this way, for an LBS folio that cannot be split to order 0, split
->>>>> functions will return -EINVAL to tell caller that the folio cannot
->>>>> be split. The caller is supposed to handle the split failure.
->>>>
->>>> IIUC, we will remove warn on once but just return -EINVAL in __folio_split()
->>>> function if new_order < min_order like this:
->>>> ...
->>>>         min_order = mapping_min_folio_order(folio->mapping);
->>>>         if (new_order < min_order) {
->>>> -            VM_WARN_ONCE(1, "Cannot split mapped folio below min- order: %u",
->>>> -                     min_order);
->>>>             ret = -EINVAL;
->>>>             goto out;
->>>>         }
->>>> ...
->>>
->>> Then the user process will get a SIGBUS indicting the entire huge page at higher order -
->>>                  folio_set_has_hwpoisoned(folio);
->>>                  if (try_to_split_thp_page(p, false) < 0) {
->>>                          res = -EHWPOISON;
->>>                          kill_procs_now(p, pfn, flags, folio);
->>>                          put_page(p);
->>>                          action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
->>>                          goto unlock_mutex;
->>>                  }
->>>                  VM_BUG_ON_PAGE(!page_count(p), p);
->>>                  folio = page_folio(p);
->>>
->>> the huge page is not usable any way, kind of similar to the hugetlb page situation: since the page cannot be splitted, the entire page is marked unusable.
->>>
->>> How about keep the current huge page split code as is, but change the M- F code to recognize that in a successful splitting case, the poisoned page might just be in a lower folio order, and thus, deliver the SIGBUS ?
->>>
->>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>> index a24806bb8e82..342c81edcdd9 100644
->>> --- a/mm/memory-failure.c
->>> +++ b/mm/memory-failure.c
->>> @@ -2291,7 +2291,9 @@ int memory_failure(unsigned long pfn, int flags)
->>>                   * page is a valid handlable page.
->>>                   */
->>>                  folio_set_has_hwpoisoned(folio);
->>> -               if (try_to_split_thp_page(p, false) < 0) {
->>> +               ret = try_to_split_thp_page(p, false);
->>> +               folio = page_folio(p);
->>> +               if (ret < 0 || folio_test_large(folio)) {
->>>                          res = -EHWPOISON;
->>>                          kill_procs_now(p, pfn, flags, folio);
->>>                          put_page(p);
->>> @@ -2299,7 +2301,6 @@ int memory_failure(unsigned long pfn, int flags)
->>>                          goto unlock_mutex;
->>>                  }
->>>                  VM_BUG_ON_PAGE(!page_count(p), p);
->>> -               folio = page_folio(p);
->>>          }
->>>
->>> thanks,
->>> -jane
->>
->> Maybe this is better, in case there are other reason for split_huge_page() to return -EINVAL.
->>
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index a24806bb8e82..2bfa05acae65 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -1659,9 +1659,10 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->>   static int try_to_split_thp_page(struct page *page, bool release)
->>   {
->>          int ret;
->> +       int new_order = min_order_for_split(page_folio(page));
->>
->>          lock_page(page);
->> -       ret = split_huge_page(page);
->> +       ret = split_huge_page_to_list_to_order(page, NULL, new_order);
->>          unlock_page(page);
->>
->>          if (ret && release)
->> @@ -2277,6 +2278,7 @@ int memory_failure(unsigned long pfn, int flags)
->>          folio_unlock(folio);
->>
->>          if (folio_test_large(folio)) {
->> +               int ret;
->>                  /*
->>                   * The flag must be set after the refcount is bumped
->>                   * otherwise it may race with THP split.
->> @@ -2291,7 +2293,9 @@ int memory_failure(unsigned long pfn, int flags)
->>                   * page is a valid handlable page.
->>                   */
->>                  folio_set_has_hwpoisoned(folio);
->> -               if (try_to_split_thp_page(p, false) < 0) {
->> +               ret = try_to_split_thp_page(p, false);
->> +               folio = page_folio(p);
->> +               if (ret < 0 || folio_test_large(folio)) {
->>                          res = -EHWPOISON;
->>                          kill_procs_now(p, pfn, flags, folio);
->>                          put_page(p);
->> @@ -2299,7 +2303,6 @@ int memory_failure(unsigned long pfn, int flags)
->>                          goto unlock_mutex;
->>                  }
->>                  VM_BUG_ON_PAGE(!page_count(p), p);
->> -               folio = page_folio(p);
->>          }
->>
->>          /*
->> @@ -2618,7 +2621,8 @@ static int soft_offline_in_use_page(struct page *page)
->>          };
->>
->>          if (!huge && folio_test_large(folio)) {
->> -               if (try_to_split_thp_page(page, true)) {
->> +               if ((try_to_split_thp_page(page, true)) ||
->> +                       folio_test_large(page_folio(page))) {
->>                          pr_info("%#lx: thp split failed\n", pfn);
->>                          return -EBUSY;
->>                  }
-> 
-> In soft offline, better to check if (min_order_for_split > 0), no need to split, just return for now ...
+Hello James,
 
-I might be miss something but why we have to split it? Could we migrate the whole thp or folio with min_order instead?
+There is a space in "cpu hp" in the title.
 
-Thanks.
-.
+Best reagrards,
+Shaopeng TAN
+
 
