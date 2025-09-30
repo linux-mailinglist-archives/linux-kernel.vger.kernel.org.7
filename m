@@ -1,154 +1,229 @@
-Return-Path: <linux-kernel+bounces-837933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A441BAE191
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:53:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E741BAE197
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B332E4C0F7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:53:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DF73211C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AA42566F7;
-	Tue, 30 Sep 2025 16:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BA324DFF9;
+	Tue, 30 Sep 2025 16:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C4CvMKfn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WjTiXJmY"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011065.outbound.protection.outlook.com [52.101.62.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE0D24E4BD
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759251177; cv=none; b=iYAI+zCJMzSlTb5O1M3UizDfHaoELFr25AsIiRe3bxOyVvmjqM0DEn4jMRVjgiM7np9Q89GMkGnVP2f4G0YjmEF48nCVHz+y80LuzMkslajvC6byO0rmgGU9NCIIT8MMIkXItSrFsyS7nOqBR1ZaqYWlkruJBybbxsXslBP0MOE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759251177; c=relaxed/simple;
-	bh=XRHExvG/tHB5daSSKAmQDIMiwtytKVKqlEgrmiHYtGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qSyw7WXaPIFEJcOqCnIsV+OHTlcADybNFjcYdl4VpC6jk6+TQwedQx3xSjCPmYXHY0dTqy2zsY4DUA51HmLu/uRQlBhtU0lGFuXwTzfb7emp6MOPywg1uZI8W0eZbpE482nDLAPZqzcQ0TS8TW3sDnPCzU0scyVh04wbt5egAWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C4CvMKfn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759251175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JryoONnZtvrch8iWe5kQa/bp3US7CnLH1VFoC2oPQRw=;
-	b=C4CvMKfnfsBwv/UV11NrYVILm3XQU5yOggbiFAlOCcDCemcY97Cn4bwXobrQuRvlzMI4Oz
-	mrawaozBGewhSKsyc1yfWzDQp+PgIzf+CkCF80PggI25T6UCLny6qW6Av7sLEG7ZZin66O
-	2hIxka+TFnVE75hvoNWCWnFId5SBkEY=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-UfHzugVzOemVirXY2iVQgg-1; Tue, 30 Sep 2025 12:52:51 -0400
-X-MC-Unique: UfHzugVzOemVirXY2iVQgg-1
-X-Mimecast-MFC-AGG-ID: UfHzugVzOemVirXY2iVQgg_1759251171
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7a05c527bf6so1190605a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:52:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759251171; x=1759855971;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JryoONnZtvrch8iWe5kQa/bp3US7CnLH1VFoC2oPQRw=;
-        b=vW692TFhOLZlshJ9/2NIHdcCoE+LrV8CMcE8jCAq2SKTTJSWMx3Ooq3UAyvB9qJ3QE
-         SLXTvkPrAxfMtydcwWeymO+vbxDiT/P1npvxNQGj7BcgKKwKp9zg+iP/aFp54JDIRaiI
-         n/NnFT0dB9dLMARY4tVAFygd0GS+mxVEI6An2Yyb+eu55gtcqNDAiw4qg+n2T/lyFduT
-         VyS+NQPmwdFuwITmqdczTjWIkRKbzb4Ms7D/UjfM4+pleU+j7XFx9sH+V6VteSnouZuz
-         vNXK5YeW2OPP7Lb9nbYGPVWVFOLIGZ8GKwcCbu9lazvc4RDROzqL2vXTT3H3dcPJPZXZ
-         3H1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQBQZpruDv4dVDVDN3cQOOoBgGGbG51DMenORxE0fg4Ic2IIrIALGA7axP0uued1Xi9gnpcY0PflzlUms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpO3efAfUVxv415SrWocfoFlZlK08y6zi8rrjnLfbBiFraDCn+
-	qWqKNjZ2MUwDhG/DIW63qXCp6QRMLWRZ6Yb7TdUYUG+uhD14CeaeC6YXxiRzy/pqpCimUccHx9C
-	6UYWIJw90IH8okZn5N92c0wZI1mTuDZ9KKpRiSLE+nukFyCamTExPMQ37FCA84eeeTw==
-X-Gm-Gg: ASbGncuplrTD6eYq/c7rp/yTpN/+IG50aZm/gC8J5ItqgHGc0Ek9FWQrpj+tL+ku3+J
-	FSbw60bxB69/RRuwr+lDak5XG/eqfLCgz3lINuksxPuA54LMPEohovzw2DhxbRqTmbpK+cus9Xv
-	mdcCw/oJNgSc6TjEkeC112gEUhzWELzRQgCEj8hQtOdNaIZzzhxu1P4tZdDCDpRkbjkzrm6Q5ca
-	WmUg8nTNVpnasNaVnslqC7rS5YnXSlTAcWRgKIUF9AJfyyt9AatfhgvktZ74FWxd8KfvqdmOmZp
-	LuiHA/5MFScoCTam/5NGS9GNyIr+IML/BrUkSyyVdEypaNxQ
-X-Received: by 2002:a05:6808:f86:b0:438:33fd:317c with SMTP id 5614622812f47-43fa41bd61fmr82468b6e.3.1759251171049;
-        Tue, 30 Sep 2025 09:52:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwZ3/lKZz7Fdu2TvHNlTbKRk5qveSl6rvSejYaxAMAP02EZ6HQb/uugFp+9XcOcN4obhcZxg==
-X-Received: by 2002:a05:6808:f86:b0:438:33fd:317c with SMTP id 5614622812f47-43fa41bd61fmr82463b6e.3.1759251170626;
-        Tue, 30 Sep 2025 09:52:50 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43f51238c63sm2746753b6e.22.2025.09.30.09.52.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 09:52:49 -0700 (PDT)
-Date: Tue, 30 Sep 2025 10:52:47 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Shameer Kolothum <skolothumtho@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, Jens Axboe <axboe@kernel.dk>, Joerg Roedel
- <joro@8bytes.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-pci@vger.kernel.org"
- <linux-pci@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Marek
- Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, Vivek Kasireddy
- <vivek.kasireddy@intel.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 10/10] vfio/pci: Add dma-buf export support for MMIO
- regions
-Message-ID: <20250930105247.1935b553.alex.williamson@redhat.com>
-In-Reply-To: <20250930143408.GI2942991@nvidia.com>
-References: <cover.1759070796.git.leon@kernel.org>
-	<53f3ea1947919a5e657b4f83e74ca53aa45814d4.1759070796.git.leon@kernel.org>
-	<20250929151749.2007b192.alex.williamson@redhat.com>
-	<20250930090048.GG324804@unreal>
-	<CH3PR12MB754801DC65227CC39A3CB1F3AB1AA@CH3PR12MB7548.namprd12.prod.outlook.com>
-	<20250930143408.GI2942991@nvidia.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E76257834;
+	Tue, 30 Sep 2025 16:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759251181; cv=fail; b=KXgggDyQ31ivyht2ikmVQ5CFcvOUu8Uh8PvJrm0uBnDOlDP9bZzNR3W87V46ZFUPNR7ABsJlAtyEMOtg8gwL8J5CzOZivvu/Qa1h9snkFtoLvMAA+krgZjuwBaJRJ/+zrvV0nDGKF7j/Xl45hvLO4O8OedrZmTzc6DuFdgAy4L0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759251181; c=relaxed/simple;
+	bh=l+FyipTBw1NI8enH7kQVu8DYovtW4WN7HFJZUpy2vKg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Kz6We42k068JsggTkJ5F/wuooGhdvXVurdJQ8L4V/JEqjk1nI8RC1WoUDmQ2jAYMCltbaJ5wv1aEqYQCPMlwThCDIjVfHOPTZHdnqg8ONFalxFNzqSZu0Te4oF50Q20jRZsCJpA06Tav+VQLKegkFChNhdCbXY0MUyfgAameRhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WjTiXJmY; arc=fail smtp.client-ip=52.101.62.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qMkLlXhe787A8AuQs5VHQ6R/EY3dIT8lZl70XFU4dc86rXERJaNGYthaQQCf0cX2uvX0jRiyqdG+yRYyQJe0iG/SAhaqYqidMNB8HW2iLUZSXixn1TkprdNYCfCrvgTxDCpnPfiL+BWIeeAm6untHowdVR/NpfOtLfBlhM2YCeJUHO2eGbjsDvUx1rc8enQV/jzvvzYQVYm6ysV6lamtf6yn/k9ip5Bv7nh/25LkJzRxgPtig9PT5ydx1Qjare2KHXyLT1AUvSKsEg+01erj/N4ZeYZJsrefeP7lWR1qZbOc9Dh/G9FJxGj1gWxU9oo4HTuQGQbh9D7Q+aBicaUWeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=62uWCLEx12dgHyxCw2QG0GnxEQ3Wi4Vj+Yr3rqYtaa0=;
+ b=cpq1h/M4zwJhxWOOJy88PWqrdUnn0wIE91fbZUYGRNuV47hS+bymsUOaJduqozJX+Ds6qMv84YZkVSzNwCx+Oo2XaBHPmmGc0AA4F54Aw9LnK+Mm/kNbtjRY61JdWNLLjyZpu+QsVTrrTe2m44S8N6WiPcnR1T6XqKJjlEIsYxUOT2T+iKvbzZOLO5sB6kB9IVs4RkIbfKKQTXFpAG6/y7Jz5hwJ2SQAUV/7KGc1NQh+3bl/xRjpEgFpGhnJqbCmg9goiP0pmd3kW/DGM4WyLQ042gwWqF24wsR5/gjzwA4ZvKiVImQPJC3aiQlTr9KSccO0dBaJoshsBXlhl6md2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=62uWCLEx12dgHyxCw2QG0GnxEQ3Wi4Vj+Yr3rqYtaa0=;
+ b=WjTiXJmYE0CXPP0D1z6/g12OQFyydzryw/MEvNgFcdt0PAgUsaRxKuGie0iWN/mCqzKKSR0VVIdivunBFNJiZvg8yfRGY5VUPpLH0szgL5xieoHnUhcFZePXDaWBOZXPb7wnjJdX6NHZscDKMNijeWAnvsckaKRE6UxB4v7GWy4=
+Received: from BY3PR04CA0008.namprd04.prod.outlook.com (2603:10b6:a03:217::13)
+ by IA0PR12MB8895.namprd12.prod.outlook.com (2603:10b6:208:491::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 16:52:57 +0000
+Received: from SJ1PEPF00001CDD.namprd05.prod.outlook.com
+ (2603:10b6:a03:217:cafe::1c) by BY3PR04CA0008.outlook.office365.com
+ (2603:10b6:a03:217::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Tue,
+ 30 Sep 2025 16:52:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ1PEPF00001CDD.mail.protection.outlook.com (10.167.242.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Tue, 30 Sep 2025 16:52:57 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 30 Sep
+ 2025 09:52:56 -0700
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 30 Sep 2025 09:52:56 -0700
+Message-ID: <3ecf0bb8-a1f1-498f-8b7d-39483a67cbfc@amd.com>
+Date: Tue, 30 Sep 2025 11:52:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
+To: Jassi Brar <jassisinghbrar@gmail.com>
+CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20250925185043.3013388-1-tanmay.shah@amd.com>
+ <CABb+yY0MzJWOGtS=ocphpUVcJ-gb6_ENCjSmJQiWfRiOhxrpCg@mail.gmail.com>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <CABb+yY0MzJWOGtS=ocphpUVcJ-gb6_ENCjSmJQiWfRiOhxrpCg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDD:EE_|IA0PR12MB8895:EE_
+X-MS-Office365-Filtering-Correlation-Id: 612b67c2-acc7-4ecd-b099-08de0041cebe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bW9UNytqUnd0QkppejJjM3VsVFZhcGtMekE1YW9ObW9Cb0QzUUEvS2FjWTN6?=
+ =?utf-8?B?OGx5U3liM0tOR0VVU1V1WFI1d3ZpdCtISENhd1AvVDU1SVlxcmU1anNOUjQ1?=
+ =?utf-8?B?NVAzOStBMXBPclNpMFNKUmZjNnZsS0RBaS9kbUhjUGRNblE0cjdRZEdBN0I5?=
+ =?utf-8?B?N3JEVFViOXdjWTRWa3lOMzRzcUZoSXJVdi96cjZHQVNmd09HelpKekJ3Qmlp?=
+ =?utf-8?B?R3V0R0xjT3cvOFpLVG1SYmN2QzNGU2pMSGo0b25XNVB0SkI1Qi9qUmVRZTlk?=
+ =?utf-8?B?MC9FOFAyYU45Q0J4UzdYbG05MlZpRFZBbzRWeXhwWXZpN1U3QWVVWmtBTXJY?=
+ =?utf-8?B?akx4eVhLdUxkM1hRanA3RVdVNDVZZ09VY1Y1Nk43VnhpYVhzajB0M2x2RkxS?=
+ =?utf-8?B?RVhZd1lZS1pwMG14MFJmUXg4cmN3VzJVRlBRd2dRTTFJS0c4bnNaVlBZQTdi?=
+ =?utf-8?B?S3FmbUlua3drTVNvYnVySW1BbjhvVlNwSHhXUW5LcmNBSE5mZUJYRW9GMGFp?=
+ =?utf-8?B?K3R5TzM0VmZZUVJCdThBTzh5NnF4WHdjamRKN1ZQbHlFRVBiR09XRHhxNTFv?=
+ =?utf-8?B?RWN1bVhmRVRqYUpPQmF6WHJsWEpzV0pTTURVZ2NoUDgyYTFkRGpzT1J3bW5G?=
+ =?utf-8?B?MlRoSnZKTEJ0aDF1M0tGWjhSUEZNMnl4Q0VoV2VqcDVEbjFpY0JkQU5lNkpF?=
+ =?utf-8?B?Szg2eXNtbjk1WE02SGIvd3F4ZXhaS3UxMFc0Z1RpMDQvaGt4S1kzTnNac0Qw?=
+ =?utf-8?B?MWFTbm5qNkpJUlIwbWxuSXU3OTU3VmwwMVI1ZVdsL0d4T1R6NGowSkgzYlNp?=
+ =?utf-8?B?ckN6YkJaSWVkR3ZHY1hWcUtUSVNycldrNytzQnF5RjlSR3JHcnYwa3luSzgr?=
+ =?utf-8?B?MGR1dkxiZ0xyeGpEQ3VGYXpKQ1NPNjFSY04zTFkvMTJxT2xab251R2NRK05p?=
+ =?utf-8?B?QTZZY2FxSm9wWno3d09tSnhHVncxSDd0MEhkQ3NaRExydnkyemdsczhkQzI5?=
+ =?utf-8?B?QjliTUo4S2lSeU05T3RZTHN0dURxUnRQYmxMYXduUjFxVHNPVXRjcG1OYmVV?=
+ =?utf-8?B?MDhCYytaVHI5blVvSTBRWG44bitudE9BN3JVSlZhaVlHdndEaXBjQnBwdmto?=
+ =?utf-8?B?WUlzV1VlT0U2YkxzMmxiUWgySkNNVDBVKzNveWJyQy9ZemkwQ1oyci9tb2JS?=
+ =?utf-8?B?eVE0d0tFRHJmaDgyMitFOHVXWmowZmNDM1Fua2RNMWFkaFljdVBxcFF4WGdD?=
+ =?utf-8?B?T0JpbFNlaG0xNCtBVUQ2c3BoQld6N2RaV1Y3TjBDYlNYb1NHZ0tXd3YzWWth?=
+ =?utf-8?B?eEZwSy9jNXVVdVhtVDR6aUtXVU9RU1lpNHZGazNIUjJxU3RlMjVaM2RENlRk?=
+ =?utf-8?B?alJ0d2RkMDNDSmpCRXJTSWs5QWlmajdrWS9aQUhaS0hqUTk1blJDb1dLYlFm?=
+ =?utf-8?B?TTRoc1N1RmtaNklGNHlwNEhKc2FtbEZMSG14QVZyK3NsVTV2NG44aWZXTXFs?=
+ =?utf-8?B?dGQxd1BOLzZPRGJrYlN5bGNqbXhzV3RTYUErcVRqSnlyNDM4UkFyek05RVNN?=
+ =?utf-8?B?WjhIR0srMGtmd2FTdTZncU04UzNOZTJKOFo5Vm1aSDVBRWFyWElDUHRsbDAr?=
+ =?utf-8?B?VEdFeXhBdHJOSVhCVzI0blk0Skd3Ym5nbE42Y0lsTTZhZEZBMitlRW1Hd1pm?=
+ =?utf-8?B?OXRPVC9TU29qQ1hjbWR3OFh5eHFKTm1WL1RPM2hEbytnNGU5bThUYmtHRDgy?=
+ =?utf-8?B?dFBENjViTHk0YTQyV2MrbmdRSXlqVVpOSTVJTEtWaXhQUHdsUXF2V3NyWDg3?=
+ =?utf-8?B?V1dJbVRLOWJTeU12ODRzZW5MMGttbnBORFN3UlFLdDZuVlNuSWZlSTJLb3JH?=
+ =?utf-8?B?L0dTbG1pT1ZQL3k3emVFY1pYZmFKZTZISnNZVzBZVFpzcGNaRVlaUUVZWUFx?=
+ =?utf-8?B?dVovSGZYZWxuZk9acXR3RWRvQkMrQkp3MUdCbmVScnc3cXdyakZCM2NsUFVm?=
+ =?utf-8?B?RTR4NXFtWmFPRkhMRG1NSXpZV0dKTlhpWFZWNFpGakdwdDZ3dmlSSDVOLzYx?=
+ =?utf-8?B?THJzTWwwTWlCN2pjaS9FZ1NuQ3ZacUF5SFBXemZ2L2o4Sm95emNpS0R0NkJO?=
+ =?utf-8?Q?p/hY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 16:52:57.3342
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 612b67c2-acc7-4ecd-b099-08de0041cebe
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CDD.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8895
 
-On Tue, 30 Sep 2025 11:34:08 -0300
-Jason Gunthorpe <jgg@nvidia.com> wrote:
+Hi Jassi,
 
-> On Tue, Sep 30, 2025 at 12:50:47PM +0000, Shameer Kolothum wrote:
-> 
-> > This is where hisi_acc reports a different BAR size as it tries to hide
-> > the migration control region from Guest access.  
-> 
-> I think for now we should disable DMABUF for any PCI driver that
-> implements a VFIO_DEVICE_GET_REGION_INFO
-> 
-> For a while I've wanted to further reduce the use of the ioctl
-> multiplexer, so maybe this series:
-> 
-> https://github.com/jgunthorpe/linux/commits/vfio_get_region_info_op/
-> 
-> And then the dmabuf code can check if the ops are set to the generic
-> or not and disable itself automatically.
-> 
-> Otherwise perhaps route the dmabuf through an op and deliberately omit
-> it (with a comment!) from hisi, virtio, nvgrace.
-> 
-> We need to route it through an op anyhow as those three drivers will
-> probably eventually want to implement their own version.
+Please find my comments below.
 
-Can't we basically achieve the same by testing the ioctl is
-vfio_pci_core_ioctl?  Your proposal would have better granularity, but
-we'd probably want an ops callback that we can use without a userspace
-buffer to get the advertised region size if we ever want to support a
-device that both modifies the size of the region relative to the BAR
-and supports p2p.  Thanks,
+On 9/30/25 9:11 AM, Jassi Brar wrote:
+> On Thu, Sep 25, 2025 at 1:51 PM Tanmay Shah <tanmay.shah@amd.com> wrote:
+>>
+>> Sometimes clients need to know if mailbox queue is full or not before
+>> posting new message via mailbox. If mailbox queue is full clients can
+>> choose not to post new message. This doesn't mean current queue length
+>> should be increased, but clients may want to wait till previous Tx is
+>> done. This API can help avoid false positive warning from mailbox
+>> framework "Try increasing MBOX_TX_QUEUE_LEN".
+>>
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>>   drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
+>>   drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+>>   include/linux/mailbox_client.h          |  1 +
+>>   3 files changed, 29 insertions(+)
+>>
+>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+>> index 5cd8ae222073..7afdb2c9006d 100644
+>> --- a/drivers/mailbox/mailbox.c
+>> +++ b/drivers/mailbox/mailbox.c
+>> @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
+>>   }
+>>   EXPORT_SYMBOL_GPL(mbox_client_peek_data);
+>>
+>> +/**
+>> + * mbox_queue_full - check if mailbox queue is full or not
+>> + * @chan: Mailbox channel assigned to this client.
+>> + *
+>> + * Clients can choose not to send new msg if mbox queue is full.
+>> + *
+>> + * Return: true if queue is full else false. < 0 for error
+>> + */
+>> +int mbox_queue_full(struct mbox_chan *chan)
+>> +{
+>> +       unsigned long flags;
+>> +       int res;
+>> +
+>> +       if (!chan)
+>> +               return -EINVAL;
+>> +
+>> +       spin_lock_irqsave(&chan->lock, flags);
+>> +       res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
+>>
+> 1) If we really need this, it should be
+>          res = (chan->msg_count == MBOX_TX_QUEUE_LEN);
+> 
 
-Alex
+Ack here.
+
+> 2) I am thinking instead, introduce a
+>         struct mbox_client.msg_slots_ro;
+>    Which is a read-only field for the client, denoting how many message
+> slots are currently available.
+>    The mailbox api will always adjust it when msg_count changes...
+>        chan->cl->msg_slots_ro = MBOX_TX_QUEUE_LEN - chan->msg_count;
+> 
+
+It's not possible to make msg_slots_ro true Read-Only. Nothing prevents 
+clients to write to that variable as far as I know. Also, we have 
+msg_free variable that can be used to implement similar concept as 
+msg_slots_ro. But that also has same problem, not possible to implement 
+it in true read-only fashion.
+
+I can instead implement API msg_queue_empty() and return msg_free 
+variable via that API.
+
+
+> -jassi
 
 
