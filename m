@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-837898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E481ABAE007
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:04:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19332BAE004
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4455178539
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:04:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E3DC7A338D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAE1309EEA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C87C3090F7;
 	Tue, 30 Sep 2025 16:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OqGG6PSG"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S5lemQb1"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0363081C3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08BB306B3B
 	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759248282; cv=none; b=J407Bh6yp778IFuccVhEP0uN6PFq0bpRfWXCHhR3YShXG98T3aqqQSqoBi8rHUgOdYIUpmhKWgAD9qdfx2AXdG3cQd4/4oL9po9rDuO0COyxGhHgLHORFyDV5NIRRiz+kpxuE7zKYesO76ayxpF3Ft9U3/ZOs8/9EBe8byHNsEA=
+	t=1759248281; cv=none; b=kK33o9xxsr8eTqZRaa2nN6/8W2WJIhLKvp/sdHDwY39phox67SkJUzdyNcJqIPD2MF9Us7Te1CrNbFEQWM9NuuLhGnlIpNj0p/BQYclQfnylEjNOr0Q+KCRKrMKRE3S0/nEZootTNou/2NBx+Z+TY5eg229AMyyvUqkd/9xayDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759248282; c=relaxed/simple;
-	bh=6kEU9kRyMMg05v5vfGWFARyhvnJ2oyGHNgccUeVLLb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=presKmNZuZAgi5TgbhnmVu+QM7SHN+gQM4FOT/Q9pHPRbYM28k67JK2yfolXf4nfKie9A5MXkbHukelJWg4PcuNYw7FndWpXoYnxnSkNfnh8T5ZCGLNCQYnGtYbd9zh8umyiS6aMS3DdZWSMowIbZ7nPym+mx5pqru6QI4qg/d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OqGG6PSG; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-634a3327ff7so11311343a12.1
+	s=arc-20240116; t=1759248281; c=relaxed/simple;
+	bh=CIQrBHGVbgwkU3rx+4yY6apUD9S280j7xf+HvKJtaIo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=e4PvKrCTI7HrgqD6HqohEIxEK8j6Ppd+0a6H3WndHwJiaIIKsqsMl9YtpIde9pXz7GbCEKttfbTl7zuJQ5WCNKanO2NAha6HPBR5SRwvok4037+Sulh7bAYrmUgXd/sxJg1+Mo5A6e+b7B7BYrvAfHRAvPqY/WXDVxvRJmNP9Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S5lemQb1; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7847cc45409so2867374b3a.3
         for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759248278; x=1759853078; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BSHENZMRnVeUFapxRU95YDUstKUost4pQtLkCBW/Xrk=;
-        b=OqGG6PSGtfrgtbSkF0NWxjDjKYa89riiGKImiIrJRs4fMqDONF3ec6MH4SGu91nK4h
-         AmeVji9TVuI2tc8gHt2L3KjyDITaK5YE1kKQHvqGSRyw0nhHH2g1ZuvQJUnMtn6TtwfG
-         yao6cm0KGzE5TSnk4HPGnSCOgO9Z4fuyUj6yA=
+        d=google.com; s=20230601; t=1759248279; x=1759853079; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IdFZbyWQ0dNsaCiYR6b8u1XMwRe0ata5vLTplPw04rA=;
+        b=S5lemQb1P7WHuRsFIa230Z790AId1mBLZpdMAljSHMirokZ2LK5afKk+q2znl86Rtw
+         MqbjPIzDtlvMfEbMNy4f+BnIrYvjt4vq8HxpDKi+RJvvX0UNFS/ljOIZx+v3+h8qCzMi
+         vAv/UHuCWc12AQr+b/XoQC/M8wEhpM58lA45BoA2mlK5W827ZX5BGyJOXn4PcaZJOFcX
+         40jI2IxqnXgO0BwAsGHPFXpXXLT8sUBVwEO4eH+Yw+UQ8k3zRSpv5AYKY7BrQ2kdwg/q
+         Cbk9WLMwYSYUfWNjcp/dxzPAmykoLH3lnXQTPkjETocTF0//rPDpWLHVPDUz9QJRfgIn
+         Wqfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759248278; x=1759853078;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BSHENZMRnVeUFapxRU95YDUstKUost4pQtLkCBW/Xrk=;
-        b=meWb40/ahf9pzmlN6kTOGV02ElbdibHTHdolD9CxIt37du/ViWabbBpRVyNbkNOJdr
-         uqsaKw1w2Ii+4puqsb5/uDSIcmgDrdQoaav1czMkgBYo2v+k0c23907LmiQ3BSJueUj6
-         5Cy99FXh1fqpnm8O3Comzp9TQOf4X6MRPI7IuQ27LJZOlALbx5Nv2O+RSuR7o5HtzUo1
-         rOi86SEOzB1gqJpOLPR4p8TxpwobzZpi8Dm7CrjamvlFDOHoE9JMBvewq+W9kS9bttmf
-         KObt2ta3Yfn/R7c48sJSILHE0YCSpeW6xxpZ4GEltR7mauKxGZktgAYdqZDy3SvFKe0A
-         Tm7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUdKDBZDHTe3TxOvE0G371g88eDuoIxMxN4WzBPKadvQ3dtaZWm4YLwxdlA36PVbeU8c0pyMzfk2lJLkQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKffLwthC6GXwzRCVI8/jdWgvpwdJlGueXKnwYg7uT9g5C8Rr/
-	Appee0wkN9wqwBxESECAgAJ9C3Iw7smyMH76/4hyqSglbqilf0uZ4eHg71Va4b2C2NUlVLKT4gQ
-	TplDChSQ=
-X-Gm-Gg: ASbGncsDyi+RzYWvjeNnjhrQJLge4bnY2GSdwbN4aayFuE8VRIAK4H3JoI/e+sl5sPb
-	ua2RFSCJRrSber/I+1RRw/3NqKz0q5qgGvmK3zsV0uvwnTdN+vq/vF0Jy31aaCCKisno/AdKCpF
-	m9tiDmQ89jZrd/tviCPimXrsEbb9P6ljJ8mfi5qLx5KoflDlWiGGFZy0ZGtWDTAIpCQ+yBAf79p
-	uVOSvpd6K9xyjwrKsBoESN8IyfR/Gem47ZVFGeIAEUp12gp6zPwnkAog3a4uyhsI7D4NBpR82LK
-	H5YLr5YU125hhIbDtl1pVBZAOmsM+nrw+/4XUA1vQNuaF7RZ5V7FwxIPOXulXWCzWV8PKJDjN/Q
-	Sb1kAXnJL0bVVIknp8J11a6aeZSJV5aSnFk8iZuhKg9BY+cspzrfh0qnQLv2nPatiKvaOTvPsTj
-	51DNZ1ECoAPfr+ojgESSg7umsfVGZhV80=
-X-Google-Smtp-Source: AGHT+IGhF4L7rTkCoEKOXMHLM1QXaU6IM3MhaWu/Z6p05ZTvXCDHqnVuvsyVW2KIg4SxYlAaNMIDWA==
-X-Received: by 2002:a05:6402:27c9:b0:633:59dd:3566 with SMTP id 4fb4d7f45d1cf-63678bbadacmr543414a12.6.1759248277842;
-        Tue, 30 Sep 2025 09:04:37 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634c28f1149sm7933971a12.7.2025.09.30.09.04.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 09:04:36 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b30ead58e0cso1149506766b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:04:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUZeTGW1XYpD7v9ymFz1JKZ4Zs5DpPe+NwKVbhTLWRUwd/MohRfNQWaWpcUp0/Lm/4JEZNZNEkLzkzuzw=@vger.kernel.org
-X-Received: by 2002:a17:907:3e21:b0:b3a:ecc1:7774 with SMTP id
- a640c23a62f3a-b46e99537d0mr14481366b.53.1759248275871; Tue, 30 Sep 2025
- 09:04:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759248279; x=1759853079;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IdFZbyWQ0dNsaCiYR6b8u1XMwRe0ata5vLTplPw04rA=;
+        b=GF/cxat/DLKyPLMLdla2SBgI8/TN+JyH2K6Acu5rC+/YB/qtDXtsUahasnXVU3WwDk
+         apSNE5RYxZNb+g0Son5osirGGpjAHovcphV/cgrHiSDwZx6YCPwjyXJFBGfOdRsIohqX
+         cA3j0m5FbPjfBH95c8GR5b6k/dBRfQw+g90GHUMCg44T+3cBMENwLtBQdte9HFdYIu4r
+         gOAdYcchBVleDtPQRj6gPiT0tBjOfMrTZ3NLKDlujQvYeNOf57PEXRCYUpqxJnnXQEXg
+         TWrb2slSuw0W16hjpUkS17EKUjCbWpuowPQPqIC8gDPWNtwKOu0ve2AkEjbYjzQsjjWX
+         /OkQ==
+X-Gm-Message-State: AOJu0YzrAjfVK4IyR/a4qKnqq7FDf3dSRt3n0KktSEjk1dhyMZTpWYkm
+	FvhiNc2Hkyse0aEcHkgarp8+dW+mEkgDkuLrVmmeSu5mxl+1BBV/mNX1zw+r0uSwOllRZCwx1GE
+	kmZu6ow==
+X-Google-Smtp-Source: AGHT+IGuq04fNw+y2dOWCTT7ZIZp3DZpfa7EiiOI5fXbI8dSP67m6sn/ivLptYNMCGAVNO//jjn0ZeAZDaQ=
+X-Received: from pgre23.prod.google.com ([2002:a65:6797:0:b0:b54:f33c:b8ba])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:d0ab:b0:2fc:660a:23f4
+ with SMTP id adf61e73a8af0-321da7ed5d9mr358399637.23.1759248278740; Tue, 30
+ Sep 2025 09:04:38 -0700 (PDT)
+Date: Tue, 30 Sep 2025 09:04:37 -0700
+In-Reply-To: <20250930070356.30695-4-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org> <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
-In-Reply-To: <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 30 Sep 2025 09:04:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
-X-Gm-Features: AS18NWCqeDn9EkWAwf5x-TTOiUz0zNTGkg_UlVmAWbsgKTQHGgJnTYZePr2tmYQ
-Message-ID: <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
-Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Paul Walmsley <pjw@kernel.org>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250930070356.30695-1-jgross@suse.com> <20250930070356.30695-4-jgross@suse.com>
+Message-ID: <aNv_lWzVqycCUZIi@google.com>
+Subject: Re: [PATCH v2 03/12] x86/kvm: Remove the KVM private read_msr() function
+From: Sean Christopherson <seanjc@google.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
+	xin@zytor.com, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 30 Sept 2025 at 00:25, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
->
-> Is there any chance some of the big-endian work we did is getting in
-> for this round?
+For the scope:
 
-Oh Christ. Is somebody seriously working on BE support in 2025?
+  KVM: x86:
 
-WHY?
+because x86/kvm is specifically used for guest-side code.
 
-Seriously, that sounds like just *stupid*. Is there some actual real
-reason for this, or is it more of the "RISC-V is used in academic
-design classes and so people just want to do endianness for academic
-reasons"?
+On Tue, Sep 30, 2025, Juergen Gross wrote:
+> Instead of having a KVM private read_msr() function, just use rdmsrq().
+> 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+> V2:
+> - remove the helper and use rdmsrq() directly (Sean Christopherson)
+> ---
+>  arch/x86/include/asm/kvm_host.h | 10 ----------
+>  arch/x86/kvm/vmx/vmx.c          |  4 ++--
+>  2 files changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index f19a76d3ca0e..aed754dda1a3 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -2296,16 +2296,6 @@ static inline void kvm_load_ldt(u16 sel)
+>  	asm("lldt %0" : : "rm"(sel));
+>  }
+>  
+> -#ifdef CONFIG_X86_64
+> -static inline unsigned long read_msr(unsigned long msr)
+> -{
+> -	u64 value;
+> -
+> -	rdmsrq(msr, value);
+> -	return value;
+> -}
+> -#endif
 
-Because I'd be more than happy to just draw a line in the sand and say
-"New endianness problems are somebody ELSES problem", and tell people
-to stop being silly.
+Gah, the same commit[*] that added a wrmsrns() use also added a read_msr().  Sorry :-(
 
-Let's not complicate things for no good reason. And there is *NO*
-reason to add new endianness.
-
-RISC-V is enough of a mess with the millions of silly configuration
-issues already. Don't make it even worse.
-
-Tell people to just talk to their therapists instead.  That's *much*
-more productive.
-
-Really.
-
-             Linus
+[*] 65391feb042b ("KVM: VMX: Add host MSR read/write helpers to consolidate preemption handling")
 
