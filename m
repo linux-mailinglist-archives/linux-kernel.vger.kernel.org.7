@@ -1,104 +1,84 @@
-Return-Path: <linux-kernel+bounces-837830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2242FBAD585
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:55:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2940EBAD5AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401801941EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE52C323C11
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BE5304BC7;
-	Tue, 30 Sep 2025 14:55:06 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE81F305045;
+	Tue, 30 Sep 2025 14:55:50 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57611E9B1C
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF2D3043C4;
+	Tue, 30 Sep 2025 14:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759244105; cv=none; b=twTSKozudo9S/ZWMhphvvV739HbqtOa0p33vKJy0/Z+BHUwMTADQbtHzVu9qzW1TIbDN9ye8skl0fyr4B+2523egZylmmOfUZDHdR6UGyShrmneLKCGQHIC0ObY58FX4LKayzxVKUk99HlUQvzR0qmaJPnGq4KliXsc8uPgub3w=
+	t=1759244150; cv=none; b=LhMSEgB5WfOxTqBTLsuRm1mO/K+VkW6degB5cSkI0ont6r5yJQhmCuDooG7hCW1RuxWHNzQtPL9m7TeCcfqM9C24LPPsfKFbef2u2Hf+qPLcnkcapno6ftb8Av3a5U7uMg/hBm+KOvtSSR6lStCLBrOb0laZKQAY+k2VY3YC2mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759244105; c=relaxed/simple;
-	bh=v8o95971Rco+Io39m1wDeVB30uhLToI9aRK3W8fHJyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YS8UctQpiXIflYH8aysOwPWkVBlOO04erJ1GusfonFndjbptV2I354xcVhmBE6eRJc4X5dvkfgSUeje4oH9PV2hxotUeh+Ss5ixv5UXIEQmbC4+bYeMt1I6QMZbhQHqW7qO3Th8mplw1LMuHdpRTRgVqNzLLsntzQUSUoWsorEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C47C113D0;
-	Tue, 30 Sep 2025 14:55:04 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-	Sumit Garg <sumit.garg@kernel.org>
-Cc: op-tee@lists.trustedfirmware.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] MAINTAINERS: Mark the OP-TEE mailing list moderated
-Date: Tue, 30 Sep 2025 16:55:01 +0200
-Message-ID: <cc9862625abc5b923c5e7c5de20c6f7c797771d6.1759243993.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759244150; c=relaxed/simple;
+	bh=G2Hj3Hw0reSLo5/FJ/xT4+fdV5ZxXGDqaqkoEPlq3wQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k9RXP3Hw6uzO/vmmFI8u94LydjIbOHKMZuYg2ZgcLXpngNa4C3GBczJFeqveQqrRB/n/lT9kY3gLA9S5RoIk9Y6wSYAmO9RL9cMs/RIVwdLE/tXsqhy7EnsHJmLOrRxjHvCn7tmtAThgvz5brjqUQdGxXXYiWalv2D48KLcivn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cbgzg2mCFz6L4x5;
+	Tue, 30 Sep 2025 22:53:35 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id E40EC140276;
+	Tue, 30 Sep 2025 22:55:45 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 30 Sep
+ 2025 15:55:45 +0100
+Date: Tue, 30 Sep 2025 15:55:43 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Dave Jiang <dave.jiang@intel.com>
+CC: Li Ming <ming.li@zohomail.com>, <dave@stgolabs.net>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>, <shiju.jose@huawei.com>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] cxl/port: Remove devm_cxl_port_enumerate_dports()
+Message-ID: <20250930155543.00000139@huawei.com>
+In-Reply-To: <235bf94a-da23-4200-87e4-c6a0c92cb21a@intel.com>
+References: <20250927100709.146507-1-ming.li@zohomail.com>
+	<235bf94a-da23-4200-87e4-c6a0c92cb21a@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-After sending a patch to op-tee@lists.trustedfirmware.org, I got the
-typical response for a moderated list:
+On Mon, 29 Sep 2025 09:43:26 -0700
+Dave Jiang <dave.jiang@intel.com> wrote:
 
-    Your mail to 'op-tee@lists.trustedfirmware.org' with the subject
+> On 9/27/25 3:07 AM, Li Ming wrote:
+> > devm_cxl_port_enumerate_dports() is not longer used after below commit
+> > commit 4f06d81e7c6a ("cxl: Defer dport allocation for switch ports")
+> > 
+> > Delete it and the relevant interface implemented in cxl_test.
+> > 
+> > Signed-off-by: Li Ming <ming.li@zohomail.com>  
+> 
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> 
+> Thanks Ming. For some reason I thought I did this. But it seems not...
+I never object to deleting unused code  - particularly when the testing
+wrappers can go aw well.
 
-	[...]
-
-    Is being held until the list moderator can review it for approval.
-
-    The message is being held because:
-
-	The message is not from a list member
-
-    Either the message will get posted to the list, or you will receive
-    notification of the moderator's decision.
-
-Mark this mailing list moderated in MAINTAINERS.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fc755a50fb150498..5aa2e501231f2aa6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19115,14 +19115,14 @@ F:	drivers/net/phy/ncn*
- 
- OP-TEE DRIVER
- M:	Jens Wiklander <jens.wiklander@linaro.org>
--L:	op-tee@lists.trustedfirmware.org
-+L:	op-tee@lists.trustedfirmware.org (moderated for non-subscribers)
- S:	Maintained
- F:	Documentation/ABI/testing/sysfs-bus-optee-devices
- F:	drivers/tee/optee/
- 
- OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
- M:	Sumit Garg <sumit.garg@kernel.org>
--L:	op-tee@lists.trustedfirmware.org
-+L:	op-tee@lists.trustedfirmware.org (moderated for non-subscribers)
- S:	Maintained
- F:	drivers/char/hw_random/optee-rng.c
- 
-@@ -25116,7 +25116,7 @@ F:	include/media/i2c/tw9910.h
- TEE SUBSYSTEM
- M:	Jens Wiklander <jens.wiklander@linaro.org>
- R:	Sumit Garg <sumit.garg@kernel.org>
--L:	op-tee@lists.trustedfirmware.org
-+L:	op-tee@lists.trustedfirmware.org (moderated for non-subscribers)
- S:	Maintained
- F:	Documentation/ABI/testing/sysfs-class-tee
- F:	Documentation/driver-api/tee.rst
--- 
-2.43.0
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
 
