@@ -1,245 +1,179 @@
-Return-Path: <linux-kernel+bounces-837239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C779BBABC1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:09:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6BEBABC32
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4D23A5DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:09:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22D6D7A83F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E772BD587;
-	Tue, 30 Sep 2025 07:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5760729AAEA;
+	Tue, 30 Sep 2025 07:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0lO8Xds8"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kMRR12IS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6451494C3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B479D27CB31
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759216170; cv=none; b=TquJaedb4GVkAzKRynhNxCZ/Ih+RoCdc8XKkk03gZqAFAh3dGp7652ItmRtkiMOPsx9Re7Y7lqk5Z5pxRgOcrUm5/i6WoAIn7BDxenkKjWgroxTfMyz1tsQgYGzs/EAqSq6lFfz7QfwAutqInn+N6TMWY6/lTKMP9O9WsliKYDs=
+	t=1759216205; cv=none; b=e0P8gl2ZhVQfVKF63FTBUJBfotVyRRUvXJMu9dY+is3lJSN96VLaoPek/6coUXRHyUwa4qZGLDaTg5glU1L9W3aSoN4VtdJ3OyeV2NBZfxLbH3jivgOBZ1Lj6sGzq12LxrYquUiCp9l3Gi/1VCjZ6N+D/FlAZyQZVbMJ+WNu8CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759216170; c=relaxed/simple;
-	bh=nEib4Ghi85l3FWyJxphX9jSiYJFIQEl6res5LifHFg4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KO/7JSVeCQ4BJdTof8Ko6dP9sPvfFUloxeiTSrE7iJG+AaXDNRwGnusX7cmfTD1+853JZjZje0sCLXkc7P8iZ/rK9wbs15hcWxHknpcORXIfT4TdMgaHTbKvqpeimVW2vr9eJLexrsgFYmpnJ+Z2nV/cRNBMlsbf0rYikHp0thk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0lO8Xds8; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-783c3400b5dso1620928b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:09:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759216168; x=1759820968; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UP672iBXqfF/M4eb7b0fPJvD5RDYtZGt7W3+nRDDW7U=;
-        b=0lO8Xds8ydbtanpWt92wS2riIySTmNyo5zdDZVcxYVjpQ6dDK29Q762W2rqKxm74sT
-         3bbkiJ9iy5hxsUwjw2Ei5MJDo3JYPHhwkE/Qq/87g7hCAHmAOT/QaMDZdrqadObmDxks
-         lkuu2x9Z3YuDYPJtDi5sMPdhcm+C6MN1mnrQF/jQ0T1UZjH0t0V+uMLJNq98f11TIDQX
-         RSl4QjHXt/KN9XJPjzyx3JYer9UpE026K1i+SWd+uyniVUWDRwW6g2sE3aqN94jkMLOb
-         /xI2ZCIIYa8urue2W4iZ4c8ARLognClJ1SQBJRJv4/2W76HeVuulMSjmEZ/DSd/aGsRp
-         bzNA==
+	s=arc-20240116; t=1759216205; c=relaxed/simple;
+	bh=cKThLw0NHU6Wc+n3bczOyNlGGspAuEG7VB62WabHm6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnv/8gvQxfizO3QEU/oheYt5EIky4DrOA0gmsAtUGi1ZEN3IcfKLnELDUFxhO1OevKfIdRAHVxeyjXTXi8sFGoJ11F4SQlnMrRxBm9UXaqJ6Z33vB4GdbPrQumXcjTLO5seP39NNVsgtlDBnP6EWd0GwIN7yyg4PI8K3V+EaEV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kMRR12IS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U4IVw1019070
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:10:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=mWB5st6dCk5SY60IEgGtzAA+
+	H2jR/8jDg8gNG+7YCGs=; b=kMRR12IS8enm8CrZ8x9ZiNOF+G75w47cVG7mJiT0
+	4MJCbnIMoifsmQJF6Qw1/CexJ1LSiBRaQp9oqReXZnznbu9/QH112t/NEIx+Krud
+	5vN+2sk+w002UwpGj8tjqEZgh/c96L4wMX3RZ8Jwj8fCSpfnC5/ZZQX7ymP00+X8
+	4VWnT5zGFBv2d7SVA9PiTWaA4ENPUYV/KhGo9XBZqbAQq78ZG2h2OwQK1UaYGDUY
+	NRs9rGVEq4wiN9orST9RFK3banvnqwa1y2Pdd0qgyaXPNfQhj0/Hvd+q1GVuiaCF
+	TZ9wz+TV2siD6SMBEZ68Gs2AbLvGi/p1X8n25Cr184U9Kw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e80tr39g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:10:01 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d6a41b5b66so138768771cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:10:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759216168; x=1759820968;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UP672iBXqfF/M4eb7b0fPJvD5RDYtZGt7W3+nRDDW7U=;
-        b=s7jsyBoQPyefBVTRa+TZSUqeTUYpgQsu8b44tD7j2TRH2FF98m8E3Y8N3RYgtFdblz
-         VXMuvf1PfytkAaMXKtWUdDvvw3QkO6qOMuXwHwJeiRPN9K2ElQgPHUtzTlVzyB7jLTUr
-         1mIrfy5L+xzW6cZQgxJZBj0NQgIh4lNUmj5/p0g6mGDzqtm5krUQjpxGZxeWkRPsDlB+
-         2BYKzhSKURQdFWEnqTjT8aITX+R7hBmX+itf/qYCzLpsxU6clv4JKKRDb0Lvr/04Az3w
-         Fh7c4Gl/kQJ3awoyQt5dQQ/NsuiZTOZs2uTnowPaVQbnDrDjMe0kDCQmtvNT0rGOePpE
-         w50Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQxAQluGBZNabUy+86C5ijtm1orzqilMuH2gZU8A1akIZHjqV/N6ZJ5cQP68Z+AxYrBbwRKLzdSqCzgEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJtEYzkIxfx+mYMkC98NF+84s8zo93z8ZkWDGIH0Qtz/Faj92F
-	pZwN2K/jVJLmJrx9CWH5VnH2MD5l5hMejsH9Tk/AF2BCKPOOUBWoZ7lLr/lezgvnGKJ2sQ/E/4z
-	TolwHiQpR9shmqmcHASnw3/+cBw==
-X-Google-Smtp-Source: AGHT+IGBuYj/q0jGYUG7M3fPbV2JRBsFGwjHP1fPe6GdcNCfcMiclGAvh4hoSmA12qBaQKnFC6Jqg4jVIDpe2cQnaA==
-X-Received: from pffj26.prod.google.com ([2002:a62:b61a:0:b0:77f:5d99:87b6])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:a1d:b0:781:275a:29d9 with SMTP id d2e1a72fcca58-781275a2b55mr13651457b3a.18.1759216168240;
- Tue, 30 Sep 2025 00:09:28 -0700 (PDT)
-Date: Tue, 30 Sep 2025 07:09:27 +0000
-In-Reply-To: <aNrCqhA_hhUjflPA@google.com>
+        d=1e100.net; s=20230601; t=1759216201; x=1759821001;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mWB5st6dCk5SY60IEgGtzAA+H2jR/8jDg8gNG+7YCGs=;
+        b=a2MERsrnd0WcNGgspx0V7GnrFw8UN7y/Tky+NSmdIPBs/4T1T9tmJ2wj8lvvL6trdH
+         OT2tydR56JBD7uTmq3H7F9O93dqROWpkrpUbkTFVtTA5S1nXQqKzqDfFquvz/cI7KqU0
+         m5pyZqxtDanItnlNRCbHvOdNfeaUgUhFMiWMZLP8kJmoNW4/QxbbKv7KaTzP8B4q5ruA
+         izYVM9s8w5+a8yI2hX2QIX0qbRZyniReatswhxo/JIHadVNvuat7SkEZ1QlormPgWV5R
+         TZMRpIFMbKJuorn35+A1bDdVUUhRVzXBLGOSf7P7YvpUqNEUDVDpqRJyoXxldQutK46X
+         TAjw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4CQAqhKHgF83Wdcj48YsYGOTNw7x911ruCX0fvVuuNoTbJeiwjXywbULY5xOsv027P7YKhy2E0j8ZDyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZQJzQ47wMAJ7KeWDNoTyi1IgZQ1e6GWTY/JLaz2FJPH8TA3sZ
+	4BD5CQs2LI9rtY/AWRCK/9mm7/0QyB+r/ONZZYYxkknInNJqPRsHQ4nt5XfCcQEzCbBEk+/f7wP
+	X07AyLovaRlbpzODGS5Or7UYW8xGAI55VgUPT/lJw4PnIodOgHCa+09DjRYqUl5hziGM=
+X-Gm-Gg: ASbGnctZOBK0KdQ1F7Cu5e3HQ/C6m5vzDOMatBW8j4HILWgR4CFWLsq7Ps8Z6aBomeL
+	q24AnQNXhr59vGl46FOgWT8FgBo9k1ubdNK/tAWgl1Bw6btsvW7x6Ffqa8gL932CV5CkWW+54SC
+	oUG4Ghvybc2h4G2IUjjHwPCEexr/2cyDtgN9q0oEWFCFpAmqNDxpNLtTA8htsyL0MSJJANJ2ZOn
+	N59YklC7eUN0P2jgwaERIIL3WwRkregtJYyi8tKVEehN8KN/4CglYIozJq6LOSYVeit3evTGuv5
+	S8Xd30O0SsupZ9sZDOVnhCA4OVynQRTDLsOoU6QGWF50Ivhe1U5wBBun8n/60mRkeLldBG2v5gl
+	qMYsxMTnklb0A6R11v6QHaMlZ22AMOHmvIJNBr8Z09quRKkxylI4pVb59Tg==
+X-Received: by 2002:ac8:7d10:0:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4da4b13ee9amr205819991cf.48.1759216200598;
+        Tue, 30 Sep 2025 00:10:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqfXjb8BDoz0OLkhbqOSkOjFYvwz8YqZOgVTFVVpG1nTKdQgXBzxVthwYLzYpdiitvJ/C4Vg==
+X-Received: by 2002:ac8:7d10:0:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4da4b13ee9amr205819771cf.48.1759216200128;
+        Tue, 30 Sep 2025 00:10:00 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb7710256sm31171981fa.45.2025.09.30.00.09.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 00:09:59 -0700 (PDT)
+Date: Tue, 30 Sep 2025 10:09:57 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux.dev, devicetree@vger.kernel.org
+Subject: Re: [PATCH 06/17] drm/msm/adreno: Move adreno_gpu_func to catalogue
+Message-ID: <cp7djnezyp4whhfqcnsfpes5kxfbyvqvc2ceimdrnrl7s7agyk@z7ozx6oihezd>
+References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
+ <20250930-kaana-gpu-support-v1-6-73530b0700ed@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-6-seanjc@google.com>
- <diqztt0l1pol.fsf@google.com> <aNrCqhA_hhUjflPA@google.com>
-Message-ID: <diqzfrc41kns.fsf@google.com>
-Subject: Re: [PATCH 5/6] KVM: selftests: Add wrappers for mmap() and munmap()
- to assert success
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930-kaana-gpu-support-v1-6-73530b0700ed@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyOSBTYWx0ZWRfX6gsEuaDaqpt1
+ w79OhY9ItGZ8R7CTrE8DCHXxw906XQUmGb9K/n5YZBe89G11coW/bP7i7aAl3+mtyiW/m+tFQ9Y
+ WKZ4QxLuXGOZV4jmJe9oF1ynR8DJE0NQ4NVr9dQR1481fd5aoS8upZY1GktBPj6hDxRg0h4u4oG
+ tIJO+yqnxRSqa4Dxe5yd6WFzqEWctGbpPJc3YgCCEiw/5o0+gpbX2nmDhpgUMxQPkM+HC0eWnKe
+ kXjv9pg9oYY0pY41iwND9Oiix0uzSY9rD7YQ3fjmqThvy6msMY7gB8jgN7EOds1GfrE+ivcw3dh
+ cRwkzkiFX8u3tDVDsCIkLwhXRaFMF9LsovXeMmZLZm1s8n2qTYddqZkAKNrB5G8aKXnKMNi21Pl
+ EcKq+db9BYnFo+gFZdrDpWM/nX8lDg==
+X-Proofpoint-GUID: OvVuIx0pKt0yyn0JviMWbehVeLrUfDjh
+X-Authority-Analysis: v=2.4 cv=OMkqHCaB c=1 sm=1 tr=0 ts=68db8249 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KsGV-J2CeG6-G7wVncMA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: OvVuIx0pKt0yyn0JviMWbehVeLrUfDjh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270029
 
-Sean Christopherson <seanjc@google.com> writes:
+On Tue, Sep 30, 2025 at 11:18:11AM +0530, Akhil P Oommen wrote:
+> In A6x family (which is a pretty big one), there are separate
+> adreno_func definitions for each sub-generations. To streamline the
+> identification of the correct struct for a gpu, move it to the
+> catalogue and move the gpu_init routine to struct adreno_gpu_funcs.
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a2xx_catalog.c  |   8 +-
+>  drivers/gpu/drm/msm/adreno/a2xx_gpu.c      |  50 +++----
+>  drivers/gpu/drm/msm/adreno/a3xx_catalog.c  |  14 +-
+>  drivers/gpu/drm/msm/adreno/a3xx_gpu.c      |  52 +++----
+>  drivers/gpu/drm/msm/adreno/a4xx_catalog.c  |   8 +-
+>  drivers/gpu/drm/msm/adreno/a4xx_gpu.c      |  54 ++++----
+>  drivers/gpu/drm/msm/adreno/a5xx_catalog.c  |  18 +--
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c      |  61 ++++-----
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c  |  50 +++----
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      | 209 ++++++++++++++---------------
+>  drivers/gpu/drm/msm/adreno/adreno_device.c |   2 +-
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  11 +-
+>  12 files changed, 275 insertions(+), 262 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+> index 5ddd015f930d9a7dd04e2d2035daa0b2f5ff3f27..af3e4cceadd11d4e0ec4ba75f75e405af276cb7e 100644
+> --- a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+> +++ b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+> @@ -8,6 +8,8 @@
+>  
+>  #include "adreno_gpu.h"
+>  
+> +extern const struct adreno_gpu_funcs a2xx_gpu_funcs;
 
-> On Mon, Sep 29, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> 
->> > Add and use wrappers for mmap() and munmap() that assert success to reduce
->> > a significant amount of boilerplate code, to ensure all tests assert on
->> > failure, and to provide consistent error messages on failure.
->> >
->> > No functional change intended.
->> >
->> > Signed-off-by: Sean Christopherson <seanjc@google.com>
->> > ---
->> >  .../testing/selftests/kvm/guest_memfd_test.c  | 21 +++------
->> >  .../testing/selftests/kvm/include/kvm_util.h  | 25 +++++++++++
->> >  tools/testing/selftests/kvm/lib/kvm_util.c    | 44 +++++++------------
->> >  tools/testing/selftests/kvm/mmu_stress_test.c |  5 +--
->> >  .../selftests/kvm/s390/ucontrol_test.c        | 16 +++----
->> >  .../selftests/kvm/set_memory_region_test.c    | 17 ++++---
->> >  6 files changed, 64 insertions(+), 64 deletions(-)
->> >
->> > 
->> > [...snip...]
->> > 
->> > diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
->> > index 23a506d7eca3..1c68ff0fb3fb 100644
->> > --- a/tools/testing/selftests/kvm/include/kvm_util.h
->> > +++ b/tools/testing/selftests/kvm/include/kvm_util.h
->> > @@ -278,6 +278,31 @@ static inline bool kvm_has_cap(long cap)
->> >  #define __KVM_SYSCALL_ERROR(_name, _ret) \
->> >  	"%s failed, rc: %i errno: %i (%s)", (_name), (_ret), errno, strerror(errno)
->> >  
->> > +static inline void *__kvm_mmap(size_t size, int prot, int flags, int fd,
->> > +			       off_t offset)
->> 
->> Do you have a policy/rationale for putting this in kvm_util.h as opposed
->> to test_util.h? I like the idea of this wrapper but I thought this is
->> less of a kvm thing and more of a test utility, and hence it belongs in
->> test_util.c and test_util.h.
->
-> To be perfectly honest, I forgot test_util.h existed :-)
->
+Please move these definitions to aNxx_gpu.h (a2xx_gpu.h, etc). LGTM
+otherwise.
 
-Merging/dropping one of kvm_util.h vs test_util.h is a good idea. The
-distinction is not clear and it's already kind of messy between the two.
-
->> Also, the name kind of associates mmap with KVM too closely IMO, but
->> test_mmap() is not a great name either.
->
-> Which file will hopefully be irrevelant, because ideally it'll be temporary (see
-> below). But if someone has a strong opinion and/or better idea on the name prefix,
-> I definitely want to settle on a name for syscall wrappers, because I want to go
-> much further than just adding an mmap() wrapper.  I chose kvm_ because there's
-> basically zero chance that will ever conflict with generic selftests functionality,
-> and the wrappers utilize TEST_ASSERT(), which are unique to KVM selftests.
->
-> As for why the current location will hopefully be temporary, and why I want to
-> settle on a name, I have patches to add several more wrappers, along with
-> infrastructure to make it super easy to add new wrappers.  When trying to sort
-> out the libnuma stuff for Shivank's series[*], I discovered that KVM selftests
-> already has a (very partial, very crappy) libnuma equivalent in
-> tools/testing/selftests/kvm/include/numaif.h.
->
-> Adding wrappers for NUMA syscalls became an exercise in frustration (so much
-> uninteresting boilerplate, and I kept making silly mistakes), and so that combined
-> with the desire for mmap() and munmap() wrappers motivated me to add a macro
-> framework similar to the kernel's DEFINE_SYSCALL magic.
->
-> So, I've got patches (that I'll post with the next version of the gmem NUMA
-> series) that add tools/testing/selftests/kvm/include/kvm_syscalls.h, and
-> __kvm_mmap() will be moved there (ideally it wouldn't move, but I want to land
-> this small series in 6.18, and so wanted to keep the changes for 6.18 small-ish).
->
-> For lack of a better namespace, and because we already have __KVM_SYSCALL_ERROR(),
-> I picked KVM_SYSCALL_DEFINE() for the "standard" builder, e.g. libnuma equivalents,
-> and then __KVM_SYSCALL_DEFINE() for a KVM selftests specific version to handle
-> asserting success.
->
-
-It's a common pattern in KVM selftests to have a syscall/ioctl wrapper
-foo() that asserts defaults and a __foo() that doesn't assert anything
-and allows tests to assert something else, but I have a contrary
-opinion.
-
-I think it's better that tests be explicit about what they're testing
-for, so perhaps it's better to use macros like TEST_ASSERT_EQ() to
-explicitly call a function and check the results.
-
-Or perhaps it should be more explicit, like in the name, that an
-assertion is made within this function?
-
-In many cases a foo() exists without the corresponding __foo(), which
-seems to be discouraging testing for error cases.
-
-Also, I guess especially for vcpu_run(), tests would like to loop/take
-different actions based on different errnos and then it gets a bit
-unwieldy to have to avoid functions that have assertions within them.
-
-I can see people forgetting to add TEST_ASSERT_EQ()s to check results of
-setup/teardown functions but I think those errors would surface some
-other way anyway.
-
-Not a strongly-held opinion, and no major concerns on the naming
-either. It's a selftest after all and IIUC we're okay to have selftest
-interfaces change anyway?
-
-> /* Define a kvm_<syscall>() API to assert success. */
-> #define __KVM_SYSCALL_DEFINE(name, nr_args, args...)			\
-> static inline void kvm_##name(DECLARE_ARGS(nr_args, args))		\
-> {									\
-> 	int r;								\
-> 									\
-> 	r = name(UNPACK_ARGS(nr_args, args));				\
-> 	TEST_ASSERT(!r, __KVM_SYSCALL_ERROR(#name, r));			\
-> }
->
-> /*
->  * Macro to define syscall APIs, either because KVM selftests doesn't link to
->  * the standard library, e.g. libnuma, or because there is no library that yet
->  * provides the syscall.  These
->  */
-> #define KVM_SYSCALL_DEFINE(name, nr_args, args...)			\
-> static inline long name(DECLARE_ARGS(nr_args, args))			\
-> {									\
-> 	return syscall(__NR_##name, UNPACK_ARGS(nr_args, args));	\
-> }									\
-> __KVM_SYSCALL_DEFINE(name, nr_args, args)
->
->
-> The usage looks like this (which is odd at first glance, but makes it trivially
-> easy to copy+paste from the kernel SYSCALL_DEFINE invocations:
->
-> KVM_SYSCALL_DEFINE(get_mempolicy, 5, int *, policy, const unsigned long *, nmask,
-> 		   unsigned long, maxnode, void *, addr, int, flags);
->
-> KVM_SYSCALL_DEFINE(set_mempolicy, 3, int, mode, const unsigned long *, nmask,
-> 		   unsigned long, maxnode);
->
-> KVM_SYSCALL_DEFINE(set_mempolicy_home_node, 4, unsigned long, start,
-> 		   unsigned long, len, unsigned long, home_node,
-> 		   unsigned long, flags);
->
-> KVM_SYSCALL_DEFINE(migrate_pages, 4, int, pid, unsigned long, maxnode,
-> 		   const unsigned long *, frommask, const unsigned long *, tomask);
->
-> KVM_SYSCALL_DEFINE(move_pages, 6, int, pid, unsigned long, count, void *, pages,
-> 		   const int *, nodes, int *, status, int, flags);
->
-> KVM_SYSCALL_DEFINE(mbind, 6, void *, addr, unsigned long, size, int, mode,
-> 		   const unsigned long *, nodemask, unsigned long, maxnode,
-> 		   unsigned int, flags);
->
-> __KVM_SYSCALL_DEFINE(munmap, 2, void *, mem, size_t, size);
-> __KVM_SYSCALL_DEFINE(close, 1, int, fd);
-> __KVM_SYSCALL_DEFINE(fallocate, 4, int, fd, int, mode, loff_t, offset, loff_t, len);
-> __KVM_SYSCALL_DEFINE(ftruncate, 2, unsigned int, fd, off_t, length);
->
-> [*] https://lore.kernel.org/all/0e986bdb-7d1b-4c14-932e-771a87532947@amd.com
+-- 
+With best wishes
+Dmitry
 
