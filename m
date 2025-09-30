@@ -1,125 +1,179 @@
-Return-Path: <linux-kernel+bounces-837575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF71FBACA70
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:14:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB74BACA81
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CF8167AA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF821927993
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9122505AA;
-	Tue, 30 Sep 2025 11:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BC323D288;
+	Tue, 30 Sep 2025 11:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BRHsesoG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="kv55QJzh"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F171CA84
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE831F1302;
+	Tue, 30 Sep 2025 11:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759230836; cv=none; b=ArlQ0FQZtTtKT1A8aALvB7a1MtriYSrh4ggHvgczCWiXmOwOL20oOw69oNkviPF6D2rjpKHXPC+bJDVsvddZgTxX/npRfajQry3btBUF/KRuspT8HbsPvWILZP4E5YhD+Sr6/mwtB6f+QwXeCvFOHqetoRaArrXoNJp2AdzpzsE=
+	t=1759230870; cv=none; b=p9xmWAQ2C4a+3PSvljWISyPlf6X4+/olWD+3WAH3DZkp9zjZWt7eiZ+zft30LlSrRwtF00NEwavJW096iiQaUZMQnQOdhFIl1P/weSfh0rIGCqK5m2yIPkj1Dk+ZsKTOnpsjubDRgOt8XdWWdHd3UTOMEfY6tjLIRV9QOjZT2L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759230836; c=relaxed/simple;
-	bh=k93mxj134tykzcVQj1QfAGA+nyICxzHFdI2oEVReNtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hINSt3ow0G1PzP5FQRrd49i7Uco91tYRSIG4SFuxuBfx4FT+1jk8fACGhIsHGeVw0qxunMrH9ljSwZgzmPO7eZ5XwRgVuYYsV/1Xki5oJ1sm6qt1yOP6msxOrKaaBq66evbHXXN+p4gyE2GhcAWHHB4egFzur0dOB/w4l26Zsuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BRHsesoG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759230833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9KcvC5cBSi1iBleTgpoe3AI8RltwCt0Ed3z8BuW4Pu8=;
-	b=BRHsesoGPQ7eLAeebf25GR/FEafwNgeFG/j79+pcmD3iIncidIWwoAP18f4Q+A3612dmi+
-	4nP5epbLIeHTPPyvuoHoGAXXIxJ30VnImcx5Qhxnt82HilXcBNRaFqKFECYQpxannuwLi0
-	CuQqYslPx3ReT4X8VbNAgb39SXSziI4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-677-0bJTItXCOtKmo1NAZUJUaA-1; Tue, 30 Sep 2025 07:13:52 -0400
-X-MC-Unique: 0bJTItXCOtKmo1NAZUJUaA-1
-X-Mimecast-MFC-AGG-ID: 0bJTItXCOtKmo1NAZUJUaA_1759230831
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ecdd80ea44so4158722f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:13:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759230831; x=1759835631;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9KcvC5cBSi1iBleTgpoe3AI8RltwCt0Ed3z8BuW4Pu8=;
-        b=Sll5y7VhjhLmqrVZ6jpVrvnqFwUOEcEFBdk7QhQ3asN74NX5mPZ4GYV3RfK3CHN969
-         3968Agmm/DZjb0KWKsX72kagy5oAc6KPmcDNUwHAxIeBvPdYUKJQzZal69fHtANC7NL/
-         7WhBRe2kj5f04z/s7D2PfjCVWSkfqWjkyuW/Oge6mjlhdIRNKqCP7w+QeJJJCKzhlXuk
-         Wsij+KjEuAahhvGOeqT3VnwS9RuvNiDfyhpyKaBVz41aTvfJvK7E3u2aNqC8C5WXOlPY
-         ZGf8ZraKasSM3UD5zbi3YbPwprajQ7aeh8jfliitsrPQkuXzqw5c0zP2fIOXTqqhRLkm
-         qGvg==
-X-Gm-Message-State: AOJu0Yw2rij2jHaeYvxm949DOWwiskj5+3IjWF62EV/LTaDShO+mnPEr
-	h9YFu5U+bUurNKWt0rRSFyN8HuzWIsI3DoZsaptaF03GtHV6oWktXzux1alHp1obm9usRxlFtsu
-	ip6t9Ica3uUQlSFh0uBGJeilwGJ9jKiRpKPhSitU5XVV1fj4bsNSUJqRJnEeBfi4xlQ==
-X-Gm-Gg: ASbGncsaYdAR3yFxKz+JWOcc1rDJfkKMLhYme8YqYGNEo421QD+8YMkdzxiUgn1GE7n
-	nC8CcwEmLVD9BfkKcHF/ysgp++KA59hCMnRF0wfOCAy5DeEnzU9Lne4HLJu5PYVIirg1nSTKJWB
-	F0nqzSQq/czAkUmIVuhnoBnlT1Yar7UErZ74wHNVWvLdS2mY6rGnCxy3xZKyoAFkx2IqQrE2bj8
-	xsAErt1IOlVCTHAu/C3dyxOWbnZLau0JCudKS81HwGWM+explHJQRYUDpvr6NmYJLUR6eUUUobU
-	lprEsVGK50Vh2oiRFecC7ZFAdYPiZb+4VxE0p5UVIxxeRMgsUZ4zC16EVbj8c66Ep3rAT3PKzRP
-	Bv7MWYX3jFgKgv7+TAQ==
-X-Received: by 2002:a05:6000:4013:b0:3ec:dd27:dfa3 with SMTP id ffacd0b85a97d-42411e9dc0emr3836744f8f.25.1759230831010;
-        Tue, 30 Sep 2025 04:13:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHsuO8Iq2wP0Oxbja1qwoJoUN0P64DEkSmlfa8kXErE7tflD0SLgBdRttPrLOYzXZyMTCkKMg==
-X-Received: by 2002:a05:6000:4013:b0:3ec:dd27:dfa3 with SMTP id ffacd0b85a97d-42411e9dc0emr3836715f8f.25.1759230830565;
-        Tue, 30 Sep 2025 04:13:50 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb017sm22223822f8f.3.2025.09.30.04.13.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 04:13:50 -0700 (PDT)
-Message-ID: <052f3394-ce15-4e6c-bfe2-4dfbee25be29@redhat.com>
-Date: Tue, 30 Sep 2025 13:13:48 +0200
+	s=arc-20240116; t=1759230870; c=relaxed/simple;
+	bh=b+sIA11UCeOGaR6Xp/XIWK25VNYoOjZIhVvHQu5o/TM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZkbPBMQfesHgBO4litreCCgEL0dx3sdc7d0KpE4BEYT/wORPWOqBcicNgzcMXklrnvm31EiaqCsTihWuYZ+ThYsybF038NxwSNEmVT6EcdzZMR+8sz69WMz9zc9KNH2uZSitMz802oxGsULFGFkkVgGDhXM5aRRuK8tSfgxa8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=kv55QJzh; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=H6BOVlN5qcdKMb71bHqSEu/fyP7QGSvLxTTAnUcwrR4=; b=kv55QJzh2PC8A0O2FkkT58gvTd
+	gn+K7Jvj7EOfr5pYx0wP5k6Fm5vAwlu48oXiqFYnOy8RF4TBYYwcQ1rNAtkfx6dN3xN+rCg7gQDmh
+	3yUQWJBlPicL7n0c0ygtv/jVhy9/QyVF2pHhTQVe5OSm06w6c/HzI5oPSzjHHqotB6VY2rerK5pfN
+	nUWQ4HdzCLrWVxronCpeKzw9/Xv0O30OBaCd7KB9fMM98vbVWtJPWmALquGocXUbN4kEePagTbcB0
+	EuZRsDk50KveDGaqy4D+LkZbr4YDXC/e+YEkJXVXC8hmSJF9xCFGKrXwqIIaDIaczONiDSKchjPvR
+	ANoUmITg==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1v3YJG-0072ep-2w;
+	Tue, 30 Sep 2025 12:14:18 +0100
+Date: Tue, 30 Sep 2025 12:14:18 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 08/10] tpm-buf: Remove chip parameter from
+ tpm_buf_append_handle
+Message-ID: <aNu7ilPSTQPuOQFt@earth.li>
+References: <20250929194832.2913286-1-jarkko@kernel.org>
+ <20250929194832.2913286-9-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: mscc: ocelot: Fix use-after-free caused by
- cyclic delayed work
-To: Duoming Zhou <duoming@zju.edu.cn>, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kuba@kernel.org, edumazet@google.com,
- davem@davemloft.net, andrew+netdev@lunn.ch, UNGLinuxDriver@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.manoil@nxp.com,
- vladimir.oltean@nxp.com
-References: <20250927144514.8847-1-duoming@zju.edu.cn>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250927144514.8847-1-duoming@zju.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929194832.2913286-9-jarkko@kernel.org>
 
-On 9/27/25 4:45 PM, Duoming Zhou wrote:
-> diff --git a/drivers/net/ethernet/mscc/ocelot_stats.c b/drivers/net/ethernet/mscc/ocelot_stats.c
-> index 545710dadcf5..d8ab789f6bea 100644
-> --- a/drivers/net/ethernet/mscc/ocelot_stats.c
-> +++ b/drivers/net/ethernet/mscc/ocelot_stats.c
-> @@ -1021,6 +1021,6 @@ int ocelot_stats_init(struct ocelot *ocelot)
+On Mon, Sep 29, 2025 at 10:48:30PM +0300, Jarkko Sakkinen wrote:
+> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> 
+> Remove chip parameter from tpm_buf_append_handle() in order to maintain
+> decoupled state with tpm-buf. This is mandatory change in order to re-use
+> the module in early boot code of Trenchboot, and the binding itself brings
+> no benefit. Use WARN like in other functions, as the error condition can
+> happen only as a net effect of a trivial programming mistake.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+
+Reviewed-by: Jonathan McDowell <noodles@meta.com>
+
+> ---
+> v3:
+> - No changes.
+> v2:
+> - A new patch.
+> ---
+>  drivers/char/tpm/tpm-buf.c       | 5 ++---
+>  drivers/char/tpm/tpm2-cmd.c      | 2 +-
+>  drivers/char/tpm/tpm2-sessions.c | 2 +-
+>  include/linux/tpm.h              | 2 +-
+>  4 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+> index 69ee77400539..1b9dee0d0681 100644
+> --- a/drivers/char/tpm/tpm-buf.c
+> +++ b/drivers/char/tpm/tpm-buf.c
+> @@ -147,20 +147,19 @@ EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
 >  
->  void ocelot_stats_deinit(struct ocelot *ocelot)
+>  /**
+>   * tpm_buf_append_handle() - Add a handle
+> - * @chip:	&tpm_chip instance
+>   * @buf:	&tpm_buf instance
+>   * @handle:	a TPM object handle
+>   *
+>   * Add a handle to the buffer, and increase the count tracking the number of
+>   * handles in the command buffer. Works only for command buffers.
+>   */
+> -void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf, u32 handle)
+> +void tpm_buf_append_handle(struct tpm_buf *buf, u32 handle)
 >  {
-> -	cancel_delayed_work(&ocelot->stats_work);
-> +	cancel_delayed_work_sync(&ocelot->stats_work);
->  	destroy_workqueue(ocelot->stats_queue);
->  }
+>  	if (buf->flags & TPM_BUF_INVALID)
+>  		return;
+>  
+>  	if (buf->flags & TPM_BUF_TPM2B) {
+> -		dev_err(&chip->dev, "Invalid buffer type (TPM2B)\n");
+> +		WARN(1, "tpm-buf: invalid type: TPM2B\n");
+>  		buf->flags |= TPM_BUF_INVALID;
+>  		return;
+>  	}
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index c7bfa705ea8f..b69ff7266450 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -190,7 +190,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+>  		tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
+>  		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+>  	} else {
+> -		tpm_buf_append_handle(chip, &buf, pcr_idx);
+> +		tpm_buf_append_handle(&buf, pcr_idx);
+>  		tpm_buf_append_auth(chip, &buf, NULL, 0);
+>  	}
+>  
+> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+> index 13f019d1312a..bbc05f0997a8 100644
+> --- a/drivers/char/tpm/tpm2-sessions.c
+> +++ b/drivers/char/tpm/tpm2-sessions.c
+> @@ -232,7 +232,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+>  #endif
+>  
+>  	if (!tpm2_chip_auth(chip)) {
+> -		tpm_buf_append_handle(chip, buf, handle);
+> +		tpm_buf_append_handle(buf, handle);
+>  		return;
+>  	}
+>  
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 5283f32781c4..b2d89df70c18 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -423,7 +423,7 @@ void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value);
+>  u8 tpm_buf_read_u8(struct tpm_buf *buf, off_t *offset);
+>  u16 tpm_buf_read_u16(struct tpm_buf *buf, off_t *offset);
+>  u32 tpm_buf_read_u32(struct tpm_buf *buf, off_t *offset);
+> -void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf, u32 handle);
+> +void tpm_buf_append_handle(struct tpm_buf *buf, u32 handle);
+>  
+>  /*
+>   * Check if TPM device is in the firmware upgrade mode.
+> -- 
+> 2.39.5
+> 
+> 
 
-AFAICS the stat_work can unconditionally reschedule itself, you should
-use disable_delayed_work_sync() instead.
+J.
 
-Cheers,
-
-Paolo
-
+-- 
+101 things you can't have too much of : 24 - Taglines.
+This .sig brought to you by the letter X and the number 45
+Product of the Republic of HuggieTag
 
