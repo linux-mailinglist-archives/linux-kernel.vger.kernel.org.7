@@ -1,280 +1,138 @@
-Return-Path: <linux-kernel+bounces-837491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C09BAC6C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:12:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A279BAC6D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72CC048371E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A7F19235CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FB72F744C;
-	Tue, 30 Sep 2025 10:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7132F744C;
+	Tue, 30 Sep 2025 10:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UB6dAFZf"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iAeOnS8f"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D224315E;
-	Tue, 30 Sep 2025 10:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D1B2F656A
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759227168; cv=none; b=ty6SHxF1hZxw5t1qNelrAncsHVWU4Pqpb78BLbY2hPY3wT/5sN8lgs8KIfrk90tFc1dnkM2Sm3Ie8rzGiJUTu5/yMW45WPce2ONFJxHMJiCCCbMiEp43WJwtdg7kZ8/dKZaQYgwD89BFWkgioNwcLUOqXRrGKErBSiB7LxAwG4g=
+	t=1759227222; cv=none; b=VG2Sv9reUXpYhnG4B4tLr2C2ZrYGo6WNKD+gUdBIHckL+6da7vQDF47eUc7vhjkO4yH8oo3dECT7z1G9ALdgfDEJn0NzQL7xWZUNUL+4buGgjp9JY2J1IOYf9BdCgExQK9CAFUTKOG3UOmGFwj7qDJAA0Nlx76pwP6GhYpO69ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759227168; c=relaxed/simple;
-	bh=selF6cQUt8AkH+XXIHxUXrITKjtyIFNRSNbHA/pvUYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XShW8zc9qvHzsVAI9f4dJ7yq9GvmfudH2DdaujB9bhKhZWwG4P5LYiieEhSYC+FRAFOxjFC0FuyR6QdQ60wDv7jdu/JO/pKhTz9SaVx5CvUF47UcwP1i1DV7C9dstyS1LPS5ljPRYci/gQxv71wRlW1e22FIi2aP1pcwiF/s1GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UB6dAFZf; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759227157;
-	bh=selF6cQUt8AkH+XXIHxUXrITKjtyIFNRSNbHA/pvUYs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UB6dAFZfeSuSlKqjCvZtLjLgst96rz9LTXz06KaG+CFO1VlqutR5M15gMk5Qre65K
-	 +XbFWJT+IflNhDvsdLctPtzpulTBCt6Fcq0HkAg7zlTi2GruW8EuqgvGR99fuP5UlR
-	 BBCwzEKINjc9EQp+IczrDeYyL/e7E4CCNzmynsShgnQ1WX6vpucDsC8hLLfos0sOSK
-	 W0dbW9vAq2dF14F9fjsLVGWy2rtZ7yHteL/bkOzwtvMgGIpDZ7pYmRPucKidqQMjj0
-	 LC3WDtvcfL2hLpRZroP8ODQkjfMwElb5P1KmhplhJX8EigodbtfBEvYdEWycyj+uD6
-	 DFoYwuPaU8PuQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EBD4D17E129E;
-	Tue, 30 Sep 2025 12:12:35 +0200 (CEST)
-Date: Tue, 30 Sep 2025 12:12:29 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Philipp Stanner <phasta@mailbox.org>
-Cc: phasta@kernel.org, Danilo Krummrich <dakr@kernel.org>, Tvrtko Ursulin 
- <tvrtko.ursulin@igalia.com>, dri-devel@lists.freedesktop.org,
- amd-gfx@lists.freedesktop.org, kernel-dev@igalia.com,
- intel-xe@lists.freedesktop.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Leo Liu <Leo.Liu@amd.com>, =?UTF-8?B?TWHDrXJh?=
- Canal <mcanal@igalia.com>, Matthew Brost <matthew.brost@intel.com>, Michal
- =?UTF-8?B?S291dG7DvQ==?= <mkoutny@suse.com>, Michel =?UTF-8?B?RMOkbnpl?=
- =?UTF-8?B?cg==?= <michel.daenzer@mailbox.org>, Pierre-Eric Pelloux-Prayer
- <pierre-eric.pelloux-prayer@amd.com>, Rob Clark <robdclark@gmail.com>,
- Tejun Heo <tj@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, Alex
- Deucher <alexander.deucher@amd.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, Liviu
- Dudau <liviu.dudau@arm.com>, Daniel Almeida <daniel.almeida@collabora.com>,
- Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqunf@netflix.com>,
- =?UTF-8?B?R3LDqWdvaXJlIFDDqWFu?= <gpean@netflix.com>, Simona Vetter
- <simona@ffwll.ch>, airlied@gmail.com
-Subject: Re: [RFC v8 00/21] DRM scheduling cgroup controller
-Message-ID: <20250930121229.4f265e0c@fedora>
-In-Reply-To: <4453e5989b38e99588efd53af674b69016b2c420.camel@mailbox.org>
-References: <20250903152327.66002-1-tvrtko.ursulin@igalia.com>
-	<DD5CCG4MIODH.1718JI1Z7GH8T@kernel.org>
-	<4453e5989b38e99588efd53af674b69016b2c420.camel@mailbox.org>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759227222; c=relaxed/simple;
+	bh=mpP7G9JCL9PIhzSHc0S9qvP24/HlpcKMgjRpGUGS8CM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IcSOm//BJCZATa1aWGQk0jtmTm7iJJ1JzmKOrbo1F9BA3esSAMzoliAL0oXbpjNlx2EcYHp9fkgo5f1PvFw9AL2pAMm/p1wcdND/tDnZLPms3YXp5zZCqPMIn48Q47k3RdsiKxGFnyGQs8pC8W2jdT5lGgNmUgnGq0AxeN9+czA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iAeOnS8f; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f637f793-7979-4817-bfb4-732ddb7d2e32@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759227217;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hZmqSQC1HjW/If1x8PYxKuOR/oWq1mejmSvIWyDl9Gk=;
+	b=iAeOnS8fKLsSALcaZT1eCR+NEP2Qc+GEKd9yDnqSeZ4USGAs7Z4te+iKr6fGiraaAMLx7h
+	kFbfnHSm1htYKvpBBXMnL1fzMM8sD4Tp+n5dXTz48B4vubJgAfbuEqM1XNA6kfCL0sZHtM
+	VnYdniHNblgwbzdi/vzQOd6qjS2ct50=
+Date: Tue, 30 Sep 2025 18:13:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/1] mm: prevent poison consumption when splitting THP
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, Jiaqi Yan <jiaqiyan@google.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "ziy@nvidia.com" <ziy@nvidia.com>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "npache@redhat.com" <npache@redhat.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "dev.jain@arm.com" <dev.jain@arm.com>, "baohua@kernel.org"
+ <baohua@kernel.org>, "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+ "Chen, Farrah" <farrah.chen@intel.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Andrew Zaborowski <andrew.zaborowski@intel.com>
+References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+ <CACw3F50ijQ20Vg8ycMROSCccf_XtjB_fFvLGxvQZ7eaNQoLwGQ@mail.gmail.com>
+ <SA1PR11MB7130ABC25E060D2CC4749E45891BA@SA1PR11MB7130.namprd11.prod.outlook.com>
+ <SJ1PR11MB608350E5169EE77F86A51E2FFC1BA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <SA1PR11MB713082CA93E9B1C5F22CFBBE891BA@SA1PR11MB7130.namprd11.prod.outlook.com>
+ <c1294b63-eeee-4d99-82b6-93eb3a6d0af9@redhat.com>
+ <CABzRoya5wuXoMWuGb_+F0oBc0mCDVrjbXTZsoMwcfRT99Y5z7g@mail.gmail.com>
+ <c980f6ae-ba44-425b-b7bf-511cb6957c2d@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <c980f6ae-ba44-425b-b7bf-511cb6957c2d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi all,
 
-On Tue, 30 Sep 2025 11:00:00 +0200
-Philipp Stanner <phasta@mailbox.org> wrote:
 
-> +Cc Sima, Dave
->=20
-> On Mon, 2025-09-29 at 16:07 +0200, Danilo Krummrich wrote:
-> > On Wed Sep 3, 2025 at 5:23 PM CEST, Tvrtko Ursulin wrote: =20
-> > > This is another respin of this old work^1 which since v7 is a total r=
-ewrite and
-> > > completely changes how the control is done. =20
-> >=20
-> > I only got some of the patches of the series, can you please send all o=
-f them
-> > for subsequent submissions? You may also want to consider resending if =
-you're
-> > not getting a lot of feedback due to that. :)
-> >  =20
-> > > On the userspace interface side of things it is the same as before. W=
-e have
-> > > drm.weight as an interface, taking integers from 1 to 10000, the same=
- as CPU and
-> > > IO cgroup controllers. =20
-> >=20
-> > In general, I think it would be good to get GPU vendors to speak up to =
-what kind
-> > of interfaces they're heading to with firmware schedulers and potential=
- firmware
-> > APIs to control scheduling; especially given that this will be a uAPI.
-> >=20
-> > (Adding a couple of folks to Cc.)
-> >=20
-> > Having that said, I think the basic drm.weight interface is fine and sh=
-ould work
-> > in any case; i.e. with the existing DRM GPU scheduler in both modes, the
-> > upcoming DRM Jobqueue efforts and should be generic enough to work with
-> > potential firmware interfaces we may see in the future.
-> >=20
-> > Philipp should be talking about the DRM Jobqueue component at XDC (prob=
-ably just
-> > in this moment).
-> >=20
-> > --
-> >=20
-> > Some more thoughts on the DRM Jobqueue and scheduling:
-> >=20
-> > The idea behind the DRM Jobqueue is to be, as the name suggests, a comp=
-onent
-> > that receives jobs from userspace, handles the dependencies (i.e. dma f=
-ences),
-> > and executes the job, e.g. by writing to a firmware managed software ri=
-ng.
-> >=20
-> > It basically does what the GPU scheduler does in 1:1 entity-scheduler m=
-ode,
-> > just without all the additional complexity of moving job ownership from=
- one
-> > component to another (i.e. from entity to scheduler, etc.).
-> >=20
-> > With just that, there is no scheduling outside the GPU's firmware sched=
-uler of
-> > course. However, additional scheduler capabilities, e.g. to support har=
-dware
-> > rings, or manage firmware schedulers that only support a limited number=
- of
-> > software rings (like some Mali GPUs), can be layered on top of that:
-> >=20
-> > In contrast to the existing GPU scheduler, the idea would be to keep le=
-tting the
-> > DRM Jobqueue handle jobs submitted by userspace from end to end (i.e. l=
-et the
-> > push to the hardware (or software) ring buffer), but have an additional
-> > component, whose only purpose is to orchestrate the DRM Jobqueues, by m=
-anaging
-> > when they are allowed to push to a ring and which ring they should push=
- to.
-> >=20
-> > This way we get rid of one of the issue that the existing GPU scheduler=
- moves
-> > job ownership between components of different lifetimes (entity and sch=
-eduler),
-> > which is one of the fundamental hassles to deal with. =20
->=20
->=20
-> So just a few minutes ago I had a long chat with Sima.
->=20
-> Sima (and I, too, I think) thinks that the very few GPUs that have a
-> reasonably low limit of firmware rings should just resource-limit
-> userspace users once the limit of firmware rings is reached.
->=20
-> Basically like with VRAM.
->=20
-> Apparently Sima had suggested that to Panthor in the past? But Panthor
-> still seems to have implemented yet another scheduler mechanism on top
-> of the 1:1 entity-scheduler drm_sched setup?
->=20
-> @Boris: Why was that done?
+On 2025/9/30 16:53, David Hildenbrand wrote:
+> On 30.09.25 03:48, Lance Yang wrote:
+>> On Tue, Sep 30, 2025 at 3:07 AM David Hildenbrand <david@redhat.com> 
+>> wrote:
+>>>
+>>> On 29.09.25 18:30, Zhuo, Qiuxu wrote:
+>>>> Hi Tony,
+>>>>
+>>>>> From: Luck, Tony <tony.luck@intel.com>
+>>>>> [...]
+>>>>> Subject: RE: [PATCH 1/1] mm: prevent poison consumption when 
+>>>>> splitting THP
+>>>>>
+>>>>>> Miaohe mentioned in another e-mail that there was an HWPoisoned flag
+>>>>> for the raw error 4K page.
+>>>>>> We could use that flag just to skip that raw error page and still use
+>>>>>> the zeropage for other healthy sub-pages. I'll try that.
+>>>>>
+>>>>> That HWPoisoned flag is only set for raw pages where an error has been
+>>>>> detected. Maybe Linux could implement an
+>>>>> "is_this_page_all_zero_mc_safe()"[1] that would catch undetected 
+>>>>> poison
+>>>>
+>>>> This sounds like a great suggestion to me.
+>>>> Let's see what others think about this and the name (though the name 
+>>>> already LGTM 😊).
+>>>
+>>> The function name is just ... special. Not the good type of special 
+>>> IMHO. :)
+>>>
+>>> Note that we'll be moving to pages_identical() in [1]. Maybe we would
+>>> want a pages_identical_mc() or sth. like that as a follow up later.
+>>>
+>>>
+>>> So in any case, make that a follow-up work on top of a simple fix.
+>>
+>> Yeah. IIRC, as David suggested earlier, we can just check if a page is
+>> poisoned using PageHWPoison().
+>>
+>> Perhaps we should move this check into pages_identical()? This would make
+>> it a central place to determine if pages are safe to access and merge ;)
+> 
+> I would have to go into memcmp_pages(). Would be an option, but not sure 
+> if we should rather let callers deal with that.
+> 
+> For example, in some cases it might be sufficient to just check if the 
+> large folio has any poisoned page and give up early.
 
-So, the primary reason was that the layer of scheduling we have doesn't
-operate at the job or queue level, but at an higher level called group,
-which is basically a collection of queues that have close interactions
-(a group is backing a VkQueue, and in Mali, a VkQueue has a vertex
-suqueue, a fragment subqueue and a compute subqueue). There's also some
-fairness involved in our scheduling, where we rotate the priority of
-groups over time so it's not always the same group that gets to execute
-its workload. I tried to build a mental model of Sima's suggestion at
-the time, but I never got to reconcile the job level scheduling
-(forcing a limit on the amount of jobs that can be queued per-subqueue)
-with the group level scheduling here, and it also didn't seem like
-having this extra layer of scheduling was a big deal, because
-ultimately, it doesn't get in the way of the single-entity scheduling
-provided by drm_sched, it's just something on top.
+FWIW, one idea I had was to create a unified pre-flight checker, like
+folio_pages_identical_prepare(struct folio *folio). A caller could use
+it before a loop of pages_identical() calls to pre-check a folio :)
 
-The other reason being that, even if we find a way to reconcile the two
-scheduling models (job vs group) based on some resource-limiting
-algorithm, it would get in the way of usermode queues, because then the
-job delimitation is blurry. Indeed, in that case you no longer
-manipulate jobs, but execution contexts, that have to be scheduled
-in/out to introduce some kind of fairness, at which point the resource
-becomes GPU time, and you're back to the timeslice-based scheduling we
-have right now.
-
->=20
-> So far I tend to prefer Sima's proposal because I'm currently very
-> unsure how we could deal with shared firmware rings =E2=80=93 because the=
-n we'd
-> need to resubmit jobs, and the currently intended Rust ownership model
-> would then be at danger, because the Jobqueue would need a:
-> pending_list.
-
-So, my take on that is that what we want ultimately is to have the
-functionality provided by drm_sched split into different
-components that can be used in isolation, or combined to provide
-advanced scheduling.
-
-JobQueue:
- - allows you to queue jobs with their deps
- - dequeues jobs once their deps are met
-Not too sure if we want a push or a pull model for the job dequeuing,
-but the idea is that once the job is dequeued, ownership is passed to
-the SW entity that dequeued it. Note that I intentionally didn't add
-the timeout handling here, because dequeueing a job doesn't necessarily
-mean it's started immediately. If you're dealing with HW queues, you
-might have to wait for a slot to become available. If you're dealing
-with something like Mali-CSF, where the amount of FW slots is limited,
-you want to wait for your execution context to be passed to the FW for
-scheduling, and the final situation is the full-fledged FW scheduling,
-where you want things to start as soon as you have space in your FW
-queue (AKA ring-buffer?).
-
-JobHWDispatcher: (not sure about the name, I'm bad at naming things)
-This object basically pulls ready-jobs from one or multiple JobQueues
-into its own queue, and wait for a HW slot to become available. If you
-go for the push model, the job gets pushed to the HW dispatcher queue
-and waits here until a HW slot becomes available.
-That's where timeouts should be handled, because the job only becomes
-active when it gets pushed to a HW slot. I guess if we want a
-resubmit mechanism, it would have to take place here, but give how
-tricky this has been, I'd be tempted to leave that to drivers, that is,
-let them requeue the non-faulty jobs directly to their
-JobHWDispatcher implementation after a reset.
-
-FWExecutionContextScheduler: (again, pick a different name if you want)
-This scheduler doesn't know about jobs, meaning there's a
-driver-specific entity that needs to dequeue jobs from the JobQueue
-and push those to the relevant ringbuffer. Once a FWExecutionContext
-has something to execute, it becomes a candidate for
-FWExecutionContextScheduler, which gets to decide which set of
-FWExecutionContext get a chance to be scheduled by the FW.
-That one is for Mali-CSF case I described above, and I'm not too sure
-we want it to be generic, at least not until we have another GPU driver
-needing the same kind of scheduling. Again, you want to defer the
-timeout handling to this component, because the timer should only
-start/resume when the FWExecutionContext gets scheduled, and it should
-be paused as soon as the context gets evicted.
-
-TLDR; I think the main problem we had with drm_sched is that it had
-this clear drm_sched_entity/drm_gpu_scheduler separation, but those two
-components where tightly tied together, with no way to use
-drm_sched_entity alone for instance, and this led to the weird
-lifetime/ownership issues that the rust effort made more apparent. If we
-get to design something new, I think we should try hard to get a clear
-isolation between each of these components so they can be used alone or
-combined, with a clear job ownership model.
-
-Regards,
-
-Boris
 
