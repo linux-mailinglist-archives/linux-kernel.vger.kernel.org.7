@@ -1,325 +1,94 @@
-Return-Path: <linux-kernel+bounces-838032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442D4BAE462
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:07:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAA2BAE468
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2945019232F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3861E1648EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83D926CE37;
-	Tue, 30 Sep 2025 18:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F5926C3BE;
+	Tue, 30 Sep 2025 18:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cLzGuoAJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czmSVlnP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8FE200C2
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C491E1F5847
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759255614; cv=none; b=V6SpkWpgffGXlm0UMfXGoBh+Rm67Z1NKdRIZrXXKJ49WCPlNIj5suVP8ezkxsBVRqZ5XQ1jR69Xd9hkDlruoGb4Ao3kldGdu8DJkJzeTHpfh9heejw0HYpdMcyqyweqYWU21mHx0A8CnvpvBTL1lqkINQQxCEZ4BoZPMQriZl0M=
+	t=1759255624; cv=none; b=iY7krCcoLM3EzsXDs+EL9UgXBGLMHxilDhA6fNv+882mlEyXt6y9SbqZWbeZcpqFWXEpxygspe3sfuA0SLibCdx5DYyqh8qIv/SYkjFRSFa1YeXT4V9pF0TK4A6r2+4BcnXW8CLZpPOHzcIi3aPEdmdbwyQNCFM5EHTXn6gHGrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759255614; c=relaxed/simple;
-	bh=qFcz1dV1YGGPk7jg3gWKC4lRk+QuKsYSd+GQEOqxKLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bFzYDW1Xa4kGbicZWJIvOlPb0Bly1+hp9tKu9vhgC74NQAsnXsPs8+yW+tQ5syFYQfDZlyrcVfUhRcXXc8tVm7j3y0nqCQjlOvYDqgKLwjfAAUnfNtAFiQ9V8ziBRi3SEnBRWXPxR2AdDWSAE7wpO/jyBSWdUZdq1lkBqLda3TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cLzGuoAJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759255611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JpKm0dFrjXQg6quBiOiFQMH07voE6dne+t2Mqkp3Nf0=;
-	b=cLzGuoAJTBLNQsbLDHfwYKFw5J9kDmtKuWeykhijK4ldcI18w8WN7gNCxS4Ooy0OEXI9L4
-	TOfVnZD5JG0W/n+PjTQ7vLMP8e3gWGxZGOPoFa7MviWf3S8qYo/GiuwA+80TIVm8b/StF5
-	3/HHyQQcFlM+ZOC4fFLOmDYwU9N9pHY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-372-1HzWeGaUNuK5ciss5LW9SQ-1; Tue, 30 Sep 2025 14:06:46 -0400
-X-MC-Unique: 1HzWeGaUNuK5ciss5LW9SQ-1
-X-Mimecast-MFC-AGG-ID: 1HzWeGaUNuK5ciss5LW9SQ_1759255605
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee13baf21dso4928570f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:06:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759255605; x=1759860405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JpKm0dFrjXQg6quBiOiFQMH07voE6dne+t2Mqkp3Nf0=;
-        b=ZOpL8/cBOwk818iKSmqDKxjSsL8Wq2I+ngSj4yajRMYJ6zddjbJogWs+3Pd6mCifmQ
-         yPd+qZPpTFuTyXb/ihidqzZWPcOdPYooDr3P7C6zUIn9QZN5x4i/gALsC1LD5/1x9BjB
-         a4K9DvHmCRlkJ+tp3fkl/ofNZWbx4mmD0/NTWgnD97/psZ/iLkjwrLD6OIen2DuIc1c0
-         STMrn4RUYQ8vu4BLP4EzFM7gX+Apy0Plo1X0/xorJLsC5oiGze1Gotq+DskTVteWMyqN
-         oPpIKI+q7xoUVy3Q3jOBYUlkXuhGxRP8xyhrpfq0zW5B25L/xOk5c+AZYaNVgzikKeJj
-         Cg4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXEMzIfs2Dopl0iUEpEEIyDOyrYf7twSlS8dbkNiIpADjAGaAZ4k4CfDhIRTZQmvCrIFudJNk2HDsSLuS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbEI7qJv4uyykpnqcPHrMgcwZZjb6xgQ9oUN6Fho+Ufimg4FDq
-	iY4KLY2k/jPh+YOkq93Ns0OqMfpGOaNvfczkmBbGEaGG4G4kD90sD3etdtU9BYJ7mqkRsdkxX7v
-	gzAuAkzooBs3dMmCft7cCXe/grqFgcENTFojsGnz83LuOK8thLBnOABHa4VfOm+HV4K0aiqBEJh
-	YrFG/boD7uDq1AJHu9urJZ+LFy/0M6qCeDi4idcpLcQc4bUnNw
-X-Gm-Gg: ASbGncu5w0rsAaTXw5x4pj7md1NYeyGtGGYeloFqlZgUcRk348O+e6NgAc7MozVQgkn
-	F0BJ5z+IV4C8Ap93SM3BsHUCSwIqovIeQXydD7u8wOCop7l9d3GEw9jVpbIslcQOoPRTuRCaOuy
-	Dctawipx8LvqJYxdGBNEWo8CvvjGF1MTkqMLaNhvcVf2eM5H7Yn+v7NpBXP6yZxu04ke6rqxslD
-	Hz9igc1Sxu48OzPW+iJF4lei3ve9xNd
-X-Received: by 2002:a05:6000:2285:b0:3e9:f852:491 with SMTP id ffacd0b85a97d-42557817472mr569269f8f.56.1759255604797;
-        Tue, 30 Sep 2025 11:06:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkuzDUpH3hJ/eEx8518guHOciZDxN6WeZpJBg9+T12QvmaKMXeXJMMKkBMA+oLH0g9N3BU1CkrtvsILn1x44I=
-X-Received: by 2002:a05:6000:2285:b0:3e9:f852:491 with SMTP id
- ffacd0b85a97d-42557817472mr569251f8f.56.1759255604355; Tue, 30 Sep 2025
- 11:06:44 -0700 (PDT)
+	s=arc-20240116; t=1759255624; c=relaxed/simple;
+	bh=e88PK1550TwXdpNHVoIH23dZq982DbcOeH15tOlEHSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MjTp9kBya/4OQY6dJPPCQYNsr/JcHrSSu0auzSy/RST34sMWywX450d1CgF9bbcNBLcKM+ghYs5XF1jtnE7UV87Mze+0YVhzDiLc2uhl4yrDkUntxCgPSqeqJ4Ir5K1Ykw8W+gnR7mZ0W5lmneagcJxxpr4tiQJaCSHplSgWLIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czmSVlnP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5629C4CEF0;
+	Tue, 30 Sep 2025 18:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759255624;
+	bh=e88PK1550TwXdpNHVoIH23dZq982DbcOeH15tOlEHSI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=czmSVlnPPYpkVZHNoJS5Ue5LsO9/ctsskKKlKQ1Kj4FNTcvgeKQOkJC/yb3vL68Ir
+	 zuo+MWJUG4lsT+GFDpB2JQ6PYJLHqV6V2gdlNGly6kkt03/S3yQxmzjQ8I733gnP61
+	 q4wWFciFV/TEM97AtwLivWA+o11S4O8hwbvHt3w0AK8xSnAta24kiTaO5ideyFDj3j
+	 OZEoSoR91tpP01cwPNLqFP7f3bWnlvCIBUS6USExY+o4AflBnWgcI7v4FZHJdGOzyn
+	 Kqzoeg2mBCGWgdl8rmRR10NJJhRHZOQ5tgM4jQb0U4uvuRWVzvWMpWd65al19Rr0yC
+	 e3FJWGZ1VgapA==
+Message-ID: <83af8076-0c18-40e6-833b-1b761af2e1b9@kernel.org>
+Date: Tue, 30 Sep 2025 13:07:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927060910.2933942-1-seanjc@google.com> <20250927060910.2933942-9-seanjc@google.com>
-In-Reply-To: <20250927060910.2933942-9-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 30 Sep 2025 20:06:32 +0200
-X-Gm-Features: AS18NWAHjDdEagGw10QIXV6IzbJLHbiWXe-YR-HydnFS0OfX3BCgx8lOFDBBiws
-Message-ID: <CABgObfZ4wn++Ab2Jtwk7F+kBtRctrodqfnEpTgv6zZJpnOODgQ@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: x86: Misc changes for 6.18
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] AMD root search fix
+To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Filip Barczyk <filip.barczyk@pico.net>
+References: <20250930-fix-amd-root-v1-0-ce28731c349f@amd.com>
+Content-Language: en-US
+From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
+In-Reply-To: <20250930-fix-amd-root-v1-0-ce28731c349f@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 27, 2025 at 8:09=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Lots and lots (and lots) of prep work for CET and FRED virtualization, an=
-d for
-> mediated vPMU support (about 1/3 of that series is in here, as it didn't =
-make
-> the cut this time around, and the cleanups are worthwhile on their own).
->
-> Buried in here is also support for immediate forms of RDMSR/WRMSRNS, and
-> fastpath exit handling for TSC_DEADLINE writes on AMD.
->
-> The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0=
-b9:
->
->   Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
->
-> are available in the Git repository at:
->
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-misc-6.18
->
-> for you to fetch changes up to 86bcd23df9cec9c2df520ae0982033e301d3c184:
->
->   KVM: x86: Fix hypercalls docs section number order (2025-09-22 07:51:36=
- -0700)
 
-Pulled, thanks.
 
-Paolo
+On 9/30/2025 11:45 AM, Yazen Ghannam wrote:
+> Hi all,
+> 
+> Recently, there have been a couple of reports of the AMD64 EDAC module
+> failing to load on v6.14+.
+> 
+> This has been root caused to the recent AMD node rework. Specifically,
+> the root device caching method breaks on non-reference boards.
+> 
+> Patch 1 is a proposed fix.
+> 
+> Patch 2 is a minor cleanup.
+> 
+> Thanks,
+> Yazen
+> 
+> ---
+> Yazen Ghannam (2):
+>        x86/amd_node: Fix AMD root device caching
+>        x86/amd_node: Use new root search helper
+> 
+>   arch/x86/include/asm/amd/node.h |   1 -
+>   arch/x86/kernel/amd_node.c      | 107 ++++++++++++++--------------------------
+>   2 files changed, 37 insertions(+), 71 deletions(-)
+> ---
+> base-commit: 30d4efb2f5a515a60fe6b0ca85362cbebea21e2f
+> change-id: 20250930-fix-amd-root-2a6529e8162a
+> 
 
-> ----------------------------------------------------------------
-> KVM x86 changes for 6.18
->
->  - Don't (re)check L1 intercepts when completing userspace I/O to fix a f=
-law
->    where a misbehaving usersepace (a.k.a. syzkaller) could swizzle L1's
->    intercepts and trigger a variety of WARNs in KVM.
->
->  - Emulate PERF_CNTR_GLOBAL_STATUS_SET for PerfMonV2 guests, as the MSR i=
-s
->    supposed to exist for v2 PMUs.
->
->  - Allow Centaur CPU leaves (base 0xC000_0000) for Zhaoxin CPUs.
->
->  - Clean up KVM's vector hashing code for delivering lowest priority IRQs=
-.
->
->  - Clean up the fastpath handler code to only handle IPIs and WRMSRs that=
- are
->    actually "fast", as opposed to handling those that KVM _hopes_ are fas=
-t, and
->    in the process of doing so add fastpath support for TSC_DEADLINE write=
-s on
->    AMD CPUs.
->
->  - Clean up a pile of PMU code in anticipation of adding support for medi=
-ated
->    vPMUs.
->
->  - Add support for the immediate forms of RDMSR and WRMSRNS, sans full
->    emulator support (KVM should never need to emulate the MSRs outside of
->    forced emulation and other contrived testing scenarios).
->
->  - Clean up the MSR APIs in preparation for CET and FRED virtualization, =
-as
->    well as mediated vPMU support.
->
->  - Rejecting a fully in-kernel IRQCHIP if EOIs are protected, i.e. for TD=
-X VMs,
->    as KVM can't faithfully emulate an I/O APIC for such guests.
->
->  - KVM_REQ_MSR_FILTER_CHANGED into a generic RECALC_INTERCEPTS in prepara=
-tion
->    for mediated vPMU support, as KVM will need to recalculate MSR interce=
-pts in
->    response to PMU refreshes for guests with mediated vPMUs.
->
->  - Misc cleanups and minor fixes.
->
-> ----------------------------------------------------------------
-> Bagas Sanjaya (1):
->       KVM: x86: Fix hypercalls docs section number order
->
-> Chao Gao (1):
->       KVM: x86: Zero XSTATE components on INIT by iterating over supporte=
-d features
->
-> Dapeng Mi (5):
->       KVM: x86/pmu: Correct typo "_COUTNERS" to "_COUNTERS"
->       KVM: x86: Rename vmx_vmentry/vmexit_ctrl() helpers
->       KVM: x86/pmu: Move PMU_CAP_{FW_WRITES,LBR_FMT} into msr-index.h hea=
-der
->       KVM: VMX: Add helpers to toggle/change a bit in VMCS execution cont=
-rols
->       KVM: x86/pmu: Use BIT_ULL() instead of open coded equivalents
->
-> Ewan Hai (1):
->       KVM: x86: allow CPUID 0xC000_0000 to proceed on Zhaoxin CPUs
->
-> Jiaming Zhang (1):
->       Documentation: KVM: Call out that KVM strictly follows the 8254 PIT=
- spec
->
-> Liao Yuanhong (2):
->       KVM: x86: Use guard() instead of mutex_lock() to simplify code
->       KVM: x86: hyper-v: Use guard() instead of mutex_lock() to simplify =
-code
->
-> Sagi Shahar (1):
->       KVM: TDX: Reject fully in-kernel irqchip if EOIs are protected, i.e=
-. for TDX VMs
->
-> Sean Christopherson (34):
->       KVM: x86: Don't (re)check L1 intercepts when completing userspace I=
-/O
->       KVM: SVM: Emulate PERF_CNTR_GLOBAL_STATUS_SET for PerfMonV2
->       KVM: SVM: Skip fastpath emulation on VM-Exit if next RIP isn't vali=
-d
->       KVM: x86: Add kvm_icr_to_lapic_irq() helper to allow for fastpath I=
-PIs
->       KVM: x86: Only allow "fast" IPIs in fastpath WRMSR(X2APIC_ICR) hand=
-ler
->       KVM: x86: Drop semi-arbitrary restrictions on IPI type in fastpath
->       KVM: x86: Unconditionally handle MSR_IA32_TSC_DEADLINE in fastpath =
-exits
->       KVM: x86: Acquire SRCU in WRMSR fastpath iff instruction needs to b=
-e skipped
->       KVM: x86: Unconditionally grab data from EDX:EAX in WRMSR fastpath
->       KVM: x86: Fold WRMSR fastpath helpers into the main handler
->       KVM: x86/pmu: Move kvm_init_pmu_capability() to pmu.c
->       KVM: x86/pmu: Add wrappers for counting emulated instructions/branc=
-hes
->       KVM: x86/pmu: Calculate set of to-be-emulated PMCs at time of WRMSR=
-s
->       KVM: x86/pmu: Rename pmc_speculative_in_use() to pmc_is_locally_ena=
-bled()
->       KVM: x86/pmu: Open code pmc_event_is_allowed() in its callers
->       KVM: x86/pmu: Drop redundant check on PMC being globally enabled fo=
-r emulation
->       KVM: x86/pmu: Drop redundant check on PMC being locally enabled for=
- emulation
->       KVM: x86/pmu: Rename check_pmu_event_filter() to pmc_is_event_allow=
-ed()
->       KVM: x86: Push acquisition of SRCU in fastpath into kvm_pmu_trigger=
-_event()
->       KVM: x86: Add a fastpath handler for INVD
->       KVM: x86: Rename local "ecx" variables to "msr" and "pmc" as approp=
-riate
->       KVM: x86: Use double-underscore read/write MSR helpers as appropria=
-te
->       KVM: x86: Manually clear MPX state only on INIT
->       KVM: x86: Move kvm_irq_delivery_to_apic() from irq.c to lapic.c
->       KVM: x86: Make "lowest priority" helpers local to lapic.c
->       KVM: x86: Move vector_hashing into lapic.c
->       KVM: VMX: Setup canonical VMCS config prior to kvm_x86_vendor_init(=
-)
->       KVM: SVM: Check pmu->version, not enable_pmu, when getting PMC MSRs
->       KVM: x86/pmu: Snapshot host (i.e. perf's) reported PMU capabilities
->       KVM: x86: Rework KVM_REQ_MSR_FILTER_CHANGED into a generic RECALC_I=
-NTERCEPTS
->       KVM: x86: Use KVM_REQ_RECALC_INTERCEPTS to react to CPUID updates
->       KVM: x86/pmu: Move initialization of valid PMCs bitmask to common x=
-86
->       KVM: x86/pmu: Restrict GLOBAL_{CTRL,STATUS}, fixed PMCs, and PEBS t=
-o PMU v2+
->       KVM: x86: Don't treat ENTER and LEAVE as branches, because they are=
-n't
->
-> Thomas Huth (1):
->       arch/x86/kvm/ioapic: Remove license boilerplate with bad FSF addres=
-s
->
-> Xin Li (5):
->       x86/cpufeatures: Add a CPU feature bit for MSR immediate form instr=
-uctions
->       KVM: x86: Rename handle_fastpath_set_msr_irqoff() to handle_fastpat=
-h_wrmsr()
->       KVM: x86: Add support for RDMSR/WRMSRNS w/ immediate on Intel
->       KVM: VMX: Support the immediate form of WRMSRNS in the VM-Exit fast=
-path
->       KVM: x86: Advertise support for the immediate form of MSR instructi=
-ons
->
-> Yang Weijiang (2):
->       KVM: x86: Rename kvm_{g,s}et_msr()* to show that they emulate guest=
- accesses
->       KVM: x86: Add kvm_msr_{read,write}() helpers
->
-> Yury Norov (1):
->       kvm: x86: simplify kvm_vector_to_index()
->
->  Documentation/virt/kvm/api.rst                     |   6 +
->  Documentation/virt/kvm/x86/hypercalls.rst          |   6 +-
->  arch/x86/include/asm/cpufeatures.h                 |   1 +
->  arch/x86/include/asm/kvm-x86-ops.h                 |   2 +-
->  arch/x86/include/asm/kvm_host.h                    |  31 +-
->  arch/x86/include/asm/msr-index.h                   |  16 +-
->  arch/x86/include/uapi/asm/vmx.h                    |   6 +-
->  arch/x86/kernel/cpu/scattered.c                    |   1 +
->  arch/x86/kvm/cpuid.c                               |  13 +-
->  arch/x86/kvm/emulate.c                             |  13 +-
->  arch/x86/kvm/hyperv.c                              |  12 +-
->  arch/x86/kvm/ioapic.c                              |  15 +-
->  arch/x86/kvm/irq.c                                 |  57 ----
->  arch/x86/kvm/irq.h                                 |   4 -
->  arch/x86/kvm/kvm_emulate.h                         |   3 +-
->  arch/x86/kvm/lapic.c                               | 169 ++++++++---
->  arch/x86/kvm/lapic.h                               |  15 +-
->  arch/x86/kvm/pmu.c                                 | 169 +++++++++--
->  arch/x86/kvm/pmu.h                                 |  60 +---
->  arch/x86/kvm/reverse_cpuid.h                       |   5 +
->  arch/x86/kvm/smm.c                                 |   4 +-
->  arch/x86/kvm/svm/pmu.c                             |   8 +-
->  arch/x86/kvm/svm/svm.c                             |  30 +-
->  arch/x86/kvm/vmx/capabilities.h                    |   3 -
->  arch/x86/kvm/vmx/main.c                            |  14 +-
->  arch/x86/kvm/vmx/nested.c                          |  29 +-
->  arch/x86/kvm/vmx/pmu_intel.c                       |  85 +++---
->  arch/x86/kvm/vmx/tdx.c                             |   5 +
->  arch/x86/kvm/vmx/vmx.c                             |  91 ++++--
->  arch/x86/kvm/vmx/vmx.h                             |  13 +
->  arch/x86/kvm/vmx/x86_ops.h                         |   2 +-
->  arch/x86/kvm/x86.c                                 | 334 ++++++++++++---=
-------
->  arch/x86/kvm/x86.h                                 |   5 +-
->  .../testing/selftests/kvm/x86/pmu_counters_test.c  |   8 +-
->  34 files changed, 715 insertions(+), 520 deletions(-)
->
-
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
