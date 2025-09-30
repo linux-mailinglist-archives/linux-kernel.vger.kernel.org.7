@@ -1,137 +1,156 @@
-Return-Path: <linux-kernel+bounces-838135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB61BAE850
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:18:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9E1BAE856
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C800F32553C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:18:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD8D1926356
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE33627AC3D;
-	Tue, 30 Sep 2025 20:18:34 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E618242D63;
+	Tue, 30 Sep 2025 20:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="phrIoJPh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEC7246335
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C5C235045
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263514; cv=none; b=udvd9y/3IoJ+hjss4xlOHo1c94zjhlPMrGdBGTGB8IF73MCjMd/gH87kdOmRO/+rUv/RZkAz4EWBGCgCmX6EL/FvodxuGg78ieIahd8HujaIsElLFuRZWEYqgfgQixES+yutE06S5oygvol+64u22LovF35SJTH+nAkAq4K9NJA=
+	t=1759263524; cv=none; b=UOsYE6b2zf/XwV8Sfl40Lem/sNOrAX2+2HLKAURpqJ92HUpaWFFJrlwKPYMJQhXceoFlMKSGx/pOofpIZd4pdZ8lmkhNICz+gR13+JMUns2I3mNqDdZit8dPosym/t/TVuSePd/qgl7oqXFYq4IhSDq0WxwMTR1p9DDANeL1WZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759263514; c=relaxed/simple;
-	bh=T+yH3xlB5AS2G/zCdwTXzVmb/MrWsfzWQV70ETDV9CU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DIUsCo4N2ksHXyl6kNb99ha/tOSroyPoenJa8Cd7yAKsbn7uLDDj7hy95jbsBSZgzSMlYl2yU65fq9g1Q4b5eHYrpUGvvnpbb+eL++hsJR8TigEJmVpfZny1j2zRCF2OWERJl1yIG1zNeyuRR6R41X3fXq/BSQpb1mxwUAuZwWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42571803464so162510435ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:18:32 -0700 (PDT)
+	s=arc-20240116; t=1759263524; c=relaxed/simple;
+	bh=cYYH3/yTc9wBXPcA74vYb9yfUr6t5bEcM/coGFu1oMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LMOkyWHnxN5lNyasBExnOEzltoxl4z09cqjqcB4Cje6oM74vVhdW4QSOpjM9JK5sz7eY8HDNsH5oTmghNw5xOOWpAURaEIC2BzKPnBO20nUO/cBgw+8WNf1ZX99Te0jqim9QZc+IWjJ6NeGuE6y6xCidCld3+qBwWPL2jmfsWZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=phrIoJPh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UC9MEr030619
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=1prKZ4v8aUicNJIrRPB93Z2q
+	BSZpWbI16ikZz4dczC8=; b=phrIoJPh//YjDsPd6tBBkta/NYufyjsIgztdxLMZ
+	AZvqOF5x6Cq7k7hO3vWlIFKi/Q2l3CWCZ11YULAuW0t0OZ2b3pl1O6nmoSAG/bwC
+	CtM3r5IUdX/w8EzIqd8MAT3aJxZEMkPVQb1yO63P53KW7/XTuzgjHBdgQP4bqgRg
+	cfd7QNe1bDajr5SObgGIQKwRT8CWlory66hqslK3qw9GPJaZUJa7kxlc+Jom+3Lv
+	JEt1iGDAxu74RjzeriRN0JIGkq3+4tnjVbc9ygx8n83DhmbX3WOnWKfDb+7IvjPz
+	xDLpEU2gkmxtKgNCeVzbUsmQvgS762iIdaQf7uEdPYnU8g==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8pdj3h3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4df60ea7a1bso63184521cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:18:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759263512; x=1759868312;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wvyed+hkAOlVOf3CdR75dVyqRRKIjxQYnIqpTCgeQoM=;
-        b=JBwUbcHz1+icgdlAulaYs2chRI29HWCY9X48pxb4CL1p6oaf6+Qt1bsMOHkzJ/uj//
-         YG+vQwIwxQY1mTVTmOcoMHBODlO7xxqQSa4GqSaTu8ch0gXOfX2HPjX7m+KoWBGJ3pRM
-         aDZ7o2oXSn3JhbK1hM76HL/8yPGViOzaZLetWhPsr94gyzYfowjqsLTw/iZBBFDjQkAz
-         HetbOE8eS1ONtF6GZ5xsF9KC0Hg1vCOXqd7DbQLZ2wXOqhtiwhIE46jgulymRX/dWEaX
-         dgb6AHpRASWJLPNThwEBFO4CFs2KdPvfxDUqiDje3Ya3SdI3WAutBNxsMN1YVEyoM1li
-         inNg==
-X-Gm-Message-State: AOJu0Yz6pDCqHRd5UJeNXDaRaxguPDEWfLhn2mOVXf3agsYihdZEUZwy
-	gpId2mfzTTwE1N4QrOSIvF14fnTihqCftn4F9SaGnthRvCoXcqSXQx1m9Fa9HUGJRCFWifpXAUg
-	EXJ97uO1JzgFG9z90WIBq9Tk5rgBYhH9R07EPu+smZQ+7oci2bafONM3YK/RTyQ==
-X-Google-Smtp-Source: AGHT+IHJihiOJ4NgM6cupXTzDmHsENYfzv+6ZiZ3IxdkUptOrcQqKaUmCoeNnZMcfdGHUrgH4TxzQ2bqwtTa8v5KTERPSTSfBA10
+        d=1e100.net; s=20230601; t=1759263521; x=1759868321;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1prKZ4v8aUicNJIrRPB93Z2qBSZpWbI16ikZz4dczC8=;
+        b=vny3vDRBLKNyYjFxOQugdXiYfDDNSh1NAnbaqje8b9M5ciS0qw+omajSj3oDB12GW9
+         RyiaINJwLtl+MMGUaPkGd9BZhwmn2o4OqzeG9J0i1J1PY9gTXy/JmQV+yso8mivc8Mo9
+         lVuaEZZDN98qfqe+YRd/+7t4+KeUrB0tr9foWTpUSRGzAa6vUK4wncjmuUye2PZ/APm+
+         xOTvoCWHNYrNcMuihwrCr1PNnlmnipm+CUYoTeZ2dgkgKSUAU7cFa+U2QrXVFKB8QDx3
+         qbILYCZxdGo3GUys/uGw2gEg1YGJComN5xpyhQCetqBI531RAAhGudmyzBvtqCnKm0H4
+         Wn/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8xVdqYezsZ5w8777y7aIfYrZu6GywEKTrMEZQqq2vhJ3yvDDEbdZlffwv7ySWq1Q3L4cZ1eDMcGLd3W8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySKSQ3RwVANZCdhlhx2cN2/Oinr516UoXpPXCcVl5i1adYlNBk
+	M98lhAWG/sh8nKA2YmcnnLHsAQoCdzxmGguAtrG9z3Qf80KKhWM9P+uxbesYSyIiBOG2cILetnl
+	HR4C2lfoHNTXKdl4p9u7kyECGMOrajxV7Clw16rucw5R4AMwvwoebb9NL7V6k6ONe37o=
+X-Gm-Gg: ASbGncst318W5O0F6MfEO4/hWpFlPGWFuHnzrTNKvIPdBE4pmZe96dvPKWz7FCDJ75w
+	IYWjiKKB8jmCvqQJBAtqbTFVBsNUXkAKxkk7LF+wwMWGz9XNXSYtnbS8PtAdiU+HOg4y4xBKzSG
+	8E3GatGKmTURhYIp0iT1+swkTx0yUoKJTzRdoLVcmeZHrLmG1129Nq+3Ip0NZek1pdzL4qilApT
+	BhPbVhRGcmd15J5Ucl1DG4ds6u9KbYN2yt1SUBCbLDpXJ/l+sIjLtEFvzPf4AN0BzAhJIPQqETO
+	WnJ5vydi7pyTWfTjQ7paR3csQxt2E4T2xonWyGdUl4392LAHUOYe6EF76/x/UbxAfJZlPhtNiz7
+	aDXSUKZdTb39uLiAOhwcJVtb5SRDsr0hHg/Qrn1fsySTAT1EPk1EhZU3DDw==
+X-Received: by 2002:a05:622a:4cf:b0:4da:207:f0f8 with SMTP id d75a77b69052e-4e41c54839bmr12914401cf.11.1759263520676;
+        Tue, 30 Sep 2025 13:18:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSxICdUQhJwxyOP6ey50e51aF0tOi4+IPIxh6uK7udyhkmudoTzU3ziqUxuPBP2Y+j6k4Wbw==
+X-Received: by 2002:a05:622a:4cf:b0:4da:207:f0f8 with SMTP id d75a77b69052e-4e41c54839bmr12913881cf.11.1759263520062;
+        Tue, 30 Sep 2025 13:18:40 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb528259dsm35069431fa.31.2025.09.30.13.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 13:18:37 -0700 (PDT)
+Date: Tue, 30 Sep 2025 23:18:35 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
+        alim.akhtar@samsung.com, jingoohan1@gmail.com, p.zabel@pengutronix.de,
+        hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+        dianders@chromium.org, m.szyprowski@samsung.com,
+        luca.ceresoli@bootlin.com, jani.nikula@intel.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v6 10/18] drm/bridge: analogix_dp: Remove unused
+ &analogix_dp_plat_data.get_modes()
+Message-ID: <hh4kn3qmwdbfev27xrs7eng7adfyli5xt7oiy7xgmviz2pzyql@rgggrhqckdjy>
+References: <20250930090920.131094-1-damon.ding@rock-chips.com>
+ <20250930090920.131094-11-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218b:b0:42d:7d0c:ed16 with SMTP id
- e9e14a558f8ab-42d81697506mr20941785ab.29.1759263511793; Tue, 30 Sep 2025
- 13:18:31 -0700 (PDT)
-Date: Tue, 30 Sep 2025 13:18:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dc3b17.a70a0220.10c4b.015e.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING in destroy_pid_namespace_work
-From: syzbot <syzbot+c16fb4c2be8fc4be5b73@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930090920.131094-11-damon.ding@rock-chips.com>
+X-Proofpoint-GUID: P0oFim3sB5zNT1bZUGp3_VL6yy2fPEGn
+X-Authority-Analysis: v=2.4 cv=MYZhep/f c=1 sm=1 tr=0 ts=68dc3b22 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=hD80L64hAAAA:8 a=EUspDBNiAAAA:8
+ a=eBbjTLbptxnSh8XXWekA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
+ a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-ORIG-GUID: P0oFim3sB5zNT1bZUGp3_VL6yy2fPEGn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzNiBTYWx0ZWRfX/waruLKZSFqs
+ lY0I6bESdhQxQLc71GZmBWOzAgw7CnbSEleprzq/ouRhliCRx1gXILUA9hA8uOG9Q5zn4tFp+kF
+ EsemUJgdfXOGTmYFl4hw7bw39e+EwDMEefFBDrv8Fy7p3yAvr0wpoWnnSN70y2NmQtMM23Fl9n+
+ PQlkBFhoWglYfmjwg3QoPGdltzFYLFsy3Z/BbuyoRTnoJVGeEyo/nC/LMm+0QP9tQSZDOM/msAa
+ 4UXikvWNe3Bv/qM7Qx2IbTOEgZdhuynCou3NR/2+qhxD86qOKeNZU04pOq3ujnXi/+MW268gjG2
+ gAD4OTdq61NXYtgJp5mdVjjxlU4fjlJkG0f1a3oKpwCw4V4q4aC+5LyrjBDi6oxlBdBlSUIGFq2
+ 6qgBFMZ3y+UMOB6Hjj8dfsxnEqXvTg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270036
 
-Hello,
+On Tue, Sep 30, 2025 at 05:09:12PM +0800, Damon Ding wrote:
+> The callback &analogix_dp_plat_data.get_modes() is not implemented
+> by either Rockchip side or Exynos side.
+> 
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 3 ---
+>  include/drm/bridge/analogix_dp.h                   | 2 --
+>  2 files changed, 5 deletions(-)
+> 
 
-syzbot found the following issue on:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-HEAD commit:    1896ce8eb6c6 Merge tag 'fsverity-for-linus' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10262334580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6affe6c860798581
-dashboard link: https://syzkaller.appspot.com/bug?extid=c16fb4c2be8fc4be5b73
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3063d52d3981/disk-1896ce8e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/56d7a00c40cb/vmlinux-1896ce8e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/525645c8455b/bzImage-1896ce8e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c16fb4c2be8fc4be5b73@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-ida_free called for id=948 which is not allocated.
-WARNING: CPU: 1 PID: 43 at lib/idr.c:592 ida_free+0x1f9/0x2e0 lib/idr.c:592
-Modules linked in:
-CPU: 1 UID: 0 PID: 43 Comm: kworker/1:1 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Workqueue: events destroy_pid_namespace_work
-RIP: 0010:ida_free+0x1f9/0x2e0 lib/idr.c:592
-Code: 76 f6 41 83 fe 3e 76 72 e8 74 cf 76 f6 48 8b 7c 24 28 4c 89 ee e8 d7 33 0d 00 90 48 c7 c7 e0 5f cf 8c 89 ee e8 08 5f 35 f6 90 <0f> 0b 90 90 e8 4e cf 76 f6 48 b8 00 00 00 00 00 fc ff df 48 01 c3
-RSP: 0018:ffffc90000b37b58 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 1ffff92000166f6c RCX: ffffffff81796e88
-RDX: ffff8880216f2440 RSI: ffffffff81796e95 RDI: 0000000000000001
-RBP: 00000000000003b4 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: fffffffffffcb3a0 R12: ffff88801eec8000
-R13: 0000000000000293 R14: 00000000000003b4 R15: ffff88801eec8070
-FS:  0000000000000000(0000) GS:ffff888124f81000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d91ccb8b48 CR3: 000000000df80000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- destroy_pid_namespace kernel/pid_namespace.c:155 [inline]
- destroy_pid_namespace_work+0x6e/0x120 kernel/pid_namespace.c:170
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c2/0x780 kernel/kthread.c:463
- ret_from_fork+0x56a/0x730 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
