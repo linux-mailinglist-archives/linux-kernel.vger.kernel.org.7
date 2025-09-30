@@ -1,132 +1,421 @@
-Return-Path: <linux-kernel+bounces-837702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D54BACFDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:14:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA338BACFBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994421766A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:14:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03E297A8606
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DE730275E;
-	Tue, 30 Sep 2025 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E30302163;
+	Tue, 30 Sep 2025 13:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="f8asWyTT"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgO5Kk54"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002A82D7DDF;
-	Tue, 30 Sep 2025 13:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684BB24E00F;
+	Tue, 30 Sep 2025 13:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759238061; cv=none; b=GogrIxqBE8nC07OOs7zWQ4eBupKzKqrgOjc/8w93XdsQJcV8c24RsgICNINla1muC14o6KjLphpWZSnxpq/DiNr/bX5YgdCBXPKnZK7iP/9838YamfV44iK1P/C9EgFRAncCXeSR83i2TG6KUlSWX9UYzcH9N4VJ44ot5SBuzjc=
+	t=1759237864; cv=none; b=eLuotPTvR2DGiqCGZyswuijDzRxVfWo5z+NaTO2UCzNsd5g0lX0i2OWnyQcBsRM4LZE0CTnEdmo8l25aJj6zNK5A66yEkuVXvVzwRl+dicL5y9SBGcERehEUqDkw4RG46e8I4AZYo2upF/jXrbSM+Yv1TZ0Pix5olaRRDWsh+pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759238061; c=relaxed/simple;
-	bh=9yEJzMwJrg8nW2CWuxK9n2LKu9lVJL5AAGsW7FMdtwk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NFv0H63SdLgS40770U1/S4fGB7yLcNrKacTRLDFqqCn5M6sL4FnNUXxk8aB5QH1lvwO6jQViESHuJ1wAYO9+NGutWe87ktgdEmt2LV9BGayZNg+RsLppIb3tWPoRLWHhnESuRlmb/u/RVFH+OWokbCUd6P4c+OhXZ4s3rSvot90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=f8asWyTT; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 460CA1D11;
-	Tue, 30 Sep 2025 13:06:07 +0000 (UTC)
-Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=f8asWyTT;
-	dkim-atps=neutral
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 4902721EA;
-	Tue, 30 Sep 2025 13:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1759237723;
-	bh=jPuqJGVAy7IKIL7V2PDzHuE8jtrLL6h8srVPH7bCEBc=;
-	h=From:To:CC:Subject:Date;
-	b=f8asWyTTpS/z54T9m4sjy7uZteYwrsN/zcm3qtWshBoxZ+7LiHbQGOqn5wNAdxNVE
-	 19/hI0ZtxbpXuFgZ7IYVT0EHMMfm3uiB+WO417pYi+6GFBJ1YAiwZVUo8SUdLLIoke
-	 TaJ4DL9+pm8NfnVC4umixgWEnb2q6S92VpIDsosI=
-Received: from localhost.localdomain (172.30.20.168) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 30 Sep 2025 16:08:42 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <torvalds@linux-foundation.org>
-CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] ntfs3: bugfixes for 6.18
-Date: Tue, 30 Sep 2025 15:08:33 +0200
-Message-ID: <20250930130833.4866-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759237864; c=relaxed/simple;
+	bh=hcVwDJiuc5fCjA4IRLGdVkmUdEx2kMOh7WarD7QVQb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWoyWltIrzIHgYE3Ep+QafDzbRf0nr9zQhxZYlhw8KJJjOcvHHC+C4a1djBlHx95FN3W+fFdWh7W4ygl8tftUBZXYnfA0zFAZ9gRACw3+b38U+CxzfukLDfFlwapsxlU4upXILXhqpTyUwC0ePv7J1xD2zYyRemEqX+jUSipzyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgO5Kk54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0ABBC4CEF0;
+	Tue, 30 Sep 2025 13:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759237864;
+	bh=hcVwDJiuc5fCjA4IRLGdVkmUdEx2kMOh7WarD7QVQb0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SgO5Kk54N/xt6m/PNlwX9voIWEBuhepI9dWxTX8gmSsid2JhBm50lMFxxyLPlh9Mm
+	 zLiqY823Of0muR4YS8x5XFCjYZNpCUzrAFvt24BSdVheHi5kmEgJt/Gxb5OLyyrNoh
+	 c/KN1fdFbeAa282S+d0FGCdYDT1SrJmZ1+xpdHv0ro0/77q9L/zlw5GjgcfYVYjCSZ
+	 l/iMSnbwO3rI6OiBCG42XmHMC43qOzaGAhUNYlmrsjaaMhcsJncBvA1Mz5jvLT43cu
+	 gIptwTZmNitS/yAhjmA76xK3H/8Gz1TWCdoOXheSnCEH/r0CSl98lBBHoKhzqyki30
+	 x0qRg9+qrzxhA==
+Date: Tue, 30 Sep 2025 16:11:00 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 10/10] tpm-buf: Enable managed and stack allocations.
+Message-ID: <aNvW5KMUO2C0i233@kernel.org>
+References: <20250929194832.2913286-1-jarkko@kernel.org>
+ <20250929194832.2913286-11-jarkko@kernel.org>
+ <u7zay2gb3dff4ptbh34qw7ini63ar3246ivd4xnxtdxc6ijktx@lutatpeg7f7z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <u7zay2gb3dff4ptbh34qw7ini63ar3246ivd4xnxtdxc6ijktx@lutatpeg7f7z>
 
-Please pull this branch containing ntfs3 code for 6.18.
+On Tue, Sep 30, 2025 at 02:44:52PM +0200, Stefano Garzarella wrote:
+> On Mon, Sep 29, 2025 at 10:48:32PM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Decouple kzalloc from buffer creation, so that  a managed allocation can be
+> > done trivially:
+> > 
+> > 	struct tpm_buf *buf __free(kfree) buf = kzalloc(TPM_BUFSIZE,
+>                                                         ^
+> In the code, we use PAGE_SIZE instead of TPM_BUFSIZE with kzalloc().
+> Should we do the same in this example? (Perhaps adding the reason, if you
+> think it would be useful)
 
-Regards,
-Konstantin
+I think that should be fixed up in the patch and use TPM_BUFSIZE
+consistently for kzallocs. Thanks for the remark.
 
-----------------------------------------------------------------
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+> 
+> > 							GFP_KERNEL);
+> > 	if (!buf)
+> > 		return -ENOMEM;
+> > 	tpm_buf_init(buf, TPM_BUFSIZE);
+> > 
+> > Alternatively, stack allocations are also possible:
+> > 
+> > 	u8 buf_data[512];
+> > 	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
+> > 	tpm_buf_init(buf, sizeof(buf_data));
+> > 
+> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > ---
+> > v3:
+> > - A new patch from the earlier series with more scoped changes and
+> >  less abstract commit message.
+> > ---
+> > drivers/char/tpm/tpm-buf.c                | 122 +++++----
+> > drivers/char/tpm/tpm-sysfs.c              |  20 +-
+> > drivers/char/tpm/tpm.h                    |   1 -
+> > drivers/char/tpm/tpm1-cmd.c               | 147 +++++------
+> > drivers/char/tpm/tpm2-cmd.c               | 290 ++++++++++------------
+> > drivers/char/tpm/tpm2-sessions.c          | 121 +++++----
+> > drivers/char/tpm/tpm2-space.c             |  44 ++--
+> > drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
+> > include/linux/tpm.h                       |  18 +-
+> > security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+> > security/keys/trusted-keys/trusted_tpm2.c | 176 ++++++-------
+> > 11 files changed, 482 insertions(+), 521 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+> > index c9e6e5d097ca..1cb649938c01 100644
+> > --- a/drivers/char/tpm/tpm-buf.c
+> > +++ b/drivers/char/tpm/tpm-buf.c
+> > @@ -7,82 +7,109 @@
+> > #include <linux/module.h>
+> > #include <linux/tpm.h>
+> > 
+> > -/**
+> > - * tpm_buf_init() - Allocate and initialize a TPM command
+> > - * @buf:	A &tpm_buf
+> > - * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
+> > - * @ordinal:	A command ordinal
+> > - *
+> > - * Return: 0 or -ENOMEM
+> > - */
+> > -int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
+> > +static void __tpm_buf_size_invariant(struct tpm_buf *buf, u16 buf_size)
+> > {
+> > -	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
+> > -	if (!buf->data)
+> > -		return -ENOMEM;
+> > -
+> > -	tpm_buf_reset(buf, tag, ordinal);
+> > -	return 0;
+> > +	u32 buf_size_2 = (u32)buf->capacity + (u32)sizeof(*buf);
+> > +
+> > +	if (!buf->capacity) {
+> > +		if (buf_size > TPM_BUFSIZE) {
+> > +			WARN(1, "%s: size overflow: %u\n", __func__, buf_size);
+> > +			buf->flags |= TPM_BUF_INVALID;
+> > +		}
+> > +	} else {
+> > +		if (buf_size != buf_size_2) {
+> > +			WARN(1, "%s: size mismatch: %u != %u\n", __func__, buf_size,
+> > +			     buf_size_2);
+> > +			buf->flags |= TPM_BUF_INVALID;
+> > +		}
+> > +	}
+> > }
+> > -EXPORT_SYMBOL_GPL(tpm_buf_init);
+> > 
+> > -/**
+> > - * tpm_buf_reset() - Initialize a TPM command
+> > - * @buf:	A &tpm_buf
+> > - * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
+> > - * @ordinal:	A command ordinal
+> > - */
+> > -void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+> > +static void __tpm_buf_reset(struct tpm_buf *buf, u16 buf_size, u16 tag, u32 ordinal)
+> > {
+> > 	struct tpm_header *head = (struct tpm_header *)buf->data;
+> > 
+> > +	__tpm_buf_size_invariant(buf, buf_size);
+> > +
+> > +	if (buf->flags & TPM_BUF_INVALID)
+> > +		return;
+> > +
+> > 	WARN_ON(tag != TPM_TAG_RQU_COMMAND && tag != TPM2_ST_NO_SESSIONS &&
+> > 		tag != TPM2_ST_SESSIONS && tag != 0);
+> > 
+> > 	buf->flags = 0;
+> > 	buf->length = sizeof(*head);
+> > +	buf->capacity = buf_size - sizeof(*buf);
+> > +	buf->handles = 0;
+> > 	head->tag = cpu_to_be16(tag);
+> > 	head->length = cpu_to_be32(sizeof(*head));
+> > 	head->ordinal = cpu_to_be32(ordinal);
+> > +}
+> > +
+> > +static void __tpm_buf_reset_sized(struct tpm_buf *buf, u16 buf_size)
+> > +{
+> > +	__tpm_buf_size_invariant(buf, buf_size);
+> > +
+> > +	if (buf->flags & TPM_BUF_INVALID)
+> > +		return;
+> > +
+> > +	buf->flags = TPM_BUF_TPM2B;
+> > +	buf->length = 2;
+> > +	buf->capacity = buf_size - sizeof(*buf);
+> > 	buf->handles = 0;
+> > +	buf->data[0] = 0;
+> > +	buf->data[1] = 0;
+> > }
+> > -EXPORT_SYMBOL_GPL(tpm_buf_reset);
+> > 
+> > /**
+> > - * tpm_buf_init_sized() - Allocate and initialize a sized (TPM2B) buffer
+> > - * @buf:	A @tpm_buf
+> > - *
+> > - * Return: 0 or -ENOMEM
+> > + * tpm_buf_init() - Initialize a TPM command
+> > + * @buf:	A &tpm_buf
+> > + * @buf_size:	Size of the buffer.
+> >  */
+> > -int tpm_buf_init_sized(struct tpm_buf *buf)
+> > +void tpm_buf_init(struct tpm_buf *buf, u16 buf_size)
+> > {
+> > -	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
+> > -	if (!buf->data)
+> > -		return -ENOMEM;
+> > +	memset(buf, 0, buf_size);
+> > +	__tpm_buf_reset(buf, buf_size, TPM_TAG_RQU_COMMAND, 0);
+> > +}
+> > +EXPORT_SYMBOL_GPL(tpm_buf_init);
+> > 
+> > -	tpm_buf_reset_sized(buf);
+> > -	return 0;
+> > +/**
+> > + * tpm_buf_init_sized() - Initialize a sized buffer
+> > + * @buf:	A &tpm_buf
+> > + * @buf_size:	Size of the buffer.
+> > + */
+> > +void tpm_buf_init_sized(struct tpm_buf *buf, u16 buf_size)
+> > +{
+> > +	memset(buf, 0, buf_size);
+> > +	__tpm_buf_reset_sized(buf, buf_size);
+> > }
+> > EXPORT_SYMBOL_GPL(tpm_buf_init_sized);
+> > 
+> > /**
+> > - * tpm_buf_reset_sized() - Initialize a sized buffer
+> > + * tpm_buf_reset() - Re-initialize a TPM command
+> >  * @buf:	A &tpm_buf
+> > + * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
+> > + * @ordinal:	A command ordinal
+> >  */
+> > -void tpm_buf_reset_sized(struct tpm_buf *buf)
+> > +void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+> > {
+> > -	buf->flags = TPM_BUF_TPM2B;
+> > -	buf->length = 2;
+> > -	buf->data[0] = 0;
+> > -	buf->data[1] = 0;
+> > +	u16 buf_size = buf->capacity + sizeof(*buf);
+> > +
+> > +	__tpm_buf_reset(buf, buf_size, tag, ordinal);
+> > }
+> > -EXPORT_SYMBOL_GPL(tpm_buf_reset_sized);
+> > +EXPORT_SYMBOL_GPL(tpm_buf_reset);
+> > 
+> > -void tpm_buf_destroy(struct tpm_buf *buf)
+> > +/**
+> > + * tpm_buf_reset_sized() - Re-initialize a sized buffer
+> > + * @buf:	A &tpm_buf
+> > + */
+> > +void tpm_buf_reset_sized(struct tpm_buf *buf)
+> > {
+> > -	free_page((unsigned long)buf->data);
+> > +	u16 buf_size = buf->capacity + sizeof(*buf);
+> > +
+> > +	__tpm_buf_reset_sized(buf, buf_size);
+> > }
+> > -EXPORT_SYMBOL_GPL(tpm_buf_destroy);
+> > +EXPORT_SYMBOL_GPL(tpm_buf_reset_sized);
+> > 
+> > /**
+> >  * tpm_buf_length() - Return the number of bytes consumed by the data
+> > @@ -92,6 +119,9 @@ EXPORT_SYMBOL_GPL(tpm_buf_destroy);
+> >  */
+> > u32 tpm_buf_length(struct tpm_buf *buf)
+> 
+> Should we update the return value to u16?
+> 
+> > {
+> > +	if (buf->flags & TPM_BUF_INVALID)
+> > +		return 0;
+> > +
+> > 	return buf->length;
+> > }
+> > EXPORT_SYMBOL_GPL(tpm_buf_length);
+> > @@ -104,10 +134,12 @@ EXPORT_SYMBOL_GPL(tpm_buf_length);
+> >  */
+> > void tpm_buf_append(struct tpm_buf *buf, const u8 *new_data, u16 new_length)
+> > {
+> > +	u32 total_length = (u32)buf->length + (u32)new_length;
+> > +
+> > 	if (buf->flags & TPM_BUF_INVALID)
+> > 		return;
+> > 
+> > -	if ((buf->length + new_length) > PAGE_SIZE) {
+> > +	if (total_length > (u32)buf->capacity) {
+> > 		WARN(1, "tpm_buf: write overflow\n");
+> > 		buf->flags |= TPM_BUF_INVALID;
+> > 		return;
+> 
+> [...]
+> 
+> > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+> > index 636acb66a4f6..6e6a9fb48e63 100644
+> > --- a/security/keys/trusted-keys/trusted_tpm1.c
+> > +++ b/security/keys/trusted-keys/trusted_tpm1.c
+> > @@ -310,9 +310,8 @@ static int TSS_checkhmac2(unsigned char *buffer,
+> >  * For key specific tpm requests, we will generate and send our
+> >  * own TPM command packets using the drivers send function.
+> >  */
+> > -static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+> > +static int trusted_tpm_send(void *cmd, size_t buflen)
+> > {
+> > -	struct tpm_buf buf;
+> > 	int rc;
+> > 
+> > 	if (!chip)
+> > @@ -322,15 +321,12 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+> > 	if (rc)
+> > 		return rc;
+> > 
+> > -	buf.flags = 0;
+> > -	buf.length = buflen;
+> > -	buf.data = cmd;
+> > 	dump_tpm_buf(cmd);
+> > -	rc = tpm_transmit_cmd(chip, &buf, 4, "sending data");
+> > +	rc = tpm_transmit_cmd(chip, cmd, 4, "sending data");
+> 
+> Is it fine here to remove the intermediate tpm_buf ?
+> 
+> IIUC tpm_transmit_cmd() needs a tpm_buf, while here we are passing just
+> the "data", or in some way it's a nested tpm_buf?
+> 
+> (Sorry if it's a stupid question, but I'm still a bit new with this code).
+> 
+> > 	dump_tpm_buf(cmd);
+> > 
+> > +	/* Convert TPM error to -EPERM. */
+> > 	if (rc > 0)
+> > -		/* TPM error */
+> > 		rc = -EPERM;
+> > 
+> > 	tpm_put_ops(chip);
+> > @@ -624,23 +620,23 @@ static int tpm_unseal(struct tpm_buf *tb,
+> > static int key_seal(struct trusted_key_payload *p,
+> > 		    struct trusted_key_options *o)
+> > {
+> > -	struct tpm_buf tb;
+> > 	int ret;
+> > 
+> > -	ret = tpm_buf_init(&tb, 0, 0);
+> > -	if (ret)
+> > -		return ret;
+> > +	struct tpm_buf *tb __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> > +	if (!tb)
+> > +		return -ENOMEM;
+> > +
+> > +	tpm_buf_init(tb, TPM_BUFSIZE);
+> > 
+> > 	/* include migratable flag at end of sealed key */
+> > 	p->key[p->key_len] = p->migratable;
+> > 
+> > -	ret = tpm_seal(&tb, o->keytype, o->keyhandle, o->keyauth,
+> > +	ret = tpm_seal(tb, o->keytype, o->keyhandle, o->keyauth,
+> > 		       p->key, p->key_len + 1, p->blob, &p->blob_len,
+> > 		       o->blobauth, o->pcrinfo, o->pcrinfo_len);
+> > 	if (ret < 0)
+> > 		pr_info("srkseal failed (%d)\n", ret);
+> > 
+> > -	tpm_buf_destroy(&tb);
+> > 	return ret;
+> > }
+> > 
+> > @@ -650,14 +646,15 @@ static int key_seal(struct trusted_key_payload *p,
+> > static int key_unseal(struct trusted_key_payload *p,
+> > 		      struct trusted_key_options *o)
+> > {
+> > -	struct tpm_buf tb;
+> > 	int ret;
+> > 
+> > -	ret = tpm_buf_init(&tb, 0, 0);
+> > -	if (ret)
+> > -		return ret;
+> > +	struct tpm_buf *tb __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> > +	if (!tb)
+> > +		return -ENOMEM;
+> > +
+> > +	tpm_buf_init(tb, TPM_BUFSIZE);
+> > 
+> > -	ret = tpm_unseal(&tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
+> > +	ret = tpm_unseal(tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
+> > 			 o->blobauth, p->key, &p->key_len);
+> > 	if (ret < 0)
+> > 		pr_info("srkunseal failed (%d)\n", ret);
+> > @@ -665,7 +662,6 @@ static int key_unseal(struct trusted_key_payload *p,
+> > 		/* pull migratable flag out of sealed key */
+> > 		p->migratable = p->key[--p->key_len];
+> > 
+> > -	tpm_buf_destroy(&tb);
+> > 	return ret;
+> > }
+> 
+> The rest LGTM, but it's a huge patch (not your issue at all), so yeah not
+> sure :-)
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+It's still a single logical change :-)
 
-are available in the Git repository at:
+> 
+> Thanks,
+> Stefano
+> 
 
-  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.18
-
-for you to fetch changes up to 7d460636b6402343ca150682f7bae896c4ff2a76:
-
-  ntfs3: stop using write_cache_pages (2025-09-10 11:01:41 +0200)
-
-----------------------------------------------------------------
-Changes for 6.18-rc1
-
-Added:
-    support for FS_IOC_{GET,SET}FSLABEL ioctl;
-    reject index allocation if $BITMAP is empty but blocks exist.
-
-Fixed:
-    integer overflow in run_unpack();
-    resource leak bug in wnd_extend().
-
-Changed:
-    pretend $Extend records as regular files;
-    stop using write_cache_pages.
-
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      ntfs3: stop using write_cache_pages
-
-Ethan Ferguson (3):
-      ntfs3: transition magic number to shared constant
-      ntfs3: add FS_IOC_GETFSLABEL ioctl
-      ntfs3: add FS_IOC_SETFSLABEL ioctl
-
-Haoxiang Li (1):
-      fs/ntfs3: Fix a resource leak bug in wnd_extend()
-
-Moon Hee Lee (1):
-      fs/ntfs3: reject index allocation if $BITMAP is empty but blocks exist
-
-Tetsuo Handa (1):
-      ntfs3: pretend $Extend records as regular files
-
-Vitaly Grigoryev (1):
-      fs: ntfs3: Fix integer overflow in run_unpack()
-
- fs/ntfs3/bitmap.c  |  1 +
- fs/ntfs3/file.c    | 28 ++++++++++++++++++++++++++++
- fs/ntfs3/index.c   | 10 ++++++++++
- fs/ntfs3/inode.c   | 16 +++++++++++-----
- fs/ntfs3/ntfs_fs.h |  2 +-
- fs/ntfs3/run.c     | 12 +++++++++---
- 6 files changed, 60 insertions(+), 9 deletions(-)
+BR, Jarkko
 
