@@ -1,110 +1,148 @@
-Return-Path: <linux-kernel+bounces-838181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAACCBAE9E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29C5BAE9FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589181943BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:27:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897723C4236
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8B829E110;
-	Tue, 30 Sep 2025 21:27:18 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12C82C0269;
+	Tue, 30 Sep 2025 21:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VUE5X0t0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D0B242D84;
-	Tue, 30 Sep 2025 21:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9759F286410;
+	Tue, 30 Sep 2025 21:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759267637; cv=none; b=UTyBQi2UIGBl0lc2q4WgfkQJtKaIWoMirf5RUMxLPNFanvXgtlyhNu9vuEB1Jkcn5FjO1todrrkIHoPglq1EUfVVOHyZzKZ0TtvuqzKkhrIuIyz9riJth0oUIbNPBJTCd1GL3gmAgQ1DnCaX/x1Ms9WRH4WJxmwdmNNmO6E6bbk=
+	t=1759267959; cv=none; b=gCbVv6b15RQsKHvi1q+gb+CVVoE1fsiqScYXb0LnO2V6xYVYFCwsgJinfdLWkiKhOzpY3B7/n96zc1hbqVIbgSKKeQ1B9D8oqyckmgjSg+c+ToTOuN1/nY28rfpclDm9iARhW0+pejQu7+cTBBOFpUDKoNl9FVtZ++nfz70yM5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759267637; c=relaxed/simple;
-	bh=mMUfzHN2HyNIMKXk45Ywxth4hNgq+z/fTFUOp2BaSDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rja+LmtZMwpkrDVvs0eZg8mSkj4vj4jRGMhskFwNoKbWqWogPrmhv3hfeKzrza9cVynoZn6EafMcCBPCfF8a3MVSD791uGjsO0X4PtAKIB8knBN+Os4y+ZgEa18DEOxHWomw9VxIk1nCS7wM+b+BXHyvgzCg93TdrFm6c/JmOSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id BDAB05B893;
-	Tue, 30 Sep 2025 21:27:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id F3D6420025;
-	Tue, 30 Sep 2025 21:27:05 +0000 (UTC)
-Date: Tue, 30 Sep 2025 17:28:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tracing/osnoise: Replace kmalloc + copy_from_user
- with memdup_user
-Message-ID: <20250930172841.63dc86b5@gandalf.local.home>
-In-Reply-To: <20250925211736.81737-1-thorsten.blum@linux.dev>
-References: <20250925211736.81737-1-thorsten.blum@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759267959; c=relaxed/simple;
+	bh=w79JikRMpU2dM63N/cZusc5NywZOzStZRZl3pI4QNsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JxOw4zw1ljpJHqL8b2W0TW/2im/QxYEkgiguLGHSSNmQnpOtUzkfq7z0TKD4/F7s3oAHA1D8ILEXOL2EMBNTwZIf2CGREjcZYlq65kRIG9vqUJfq30nGqPfavD9Mr21pOMg2rbL3fsfERWK9PvaFpO3jV398SAWOqx/mvhzJ9vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VUE5X0t0; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759267958; x=1790803958;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=w79JikRMpU2dM63N/cZusc5NywZOzStZRZl3pI4QNsU=;
+  b=VUE5X0t0GQgc4t0TcAMqYr3fCw4beUx/EkKEYBXBrRccdu8gES4Lrbhb
+   w4t4X+QhuyxEKvXl2FDvhc812g7PEV3CIRn1DsZL9dpL5qOM+gbwrpdwn
+   8MuRHhrmjRJsCFCDXQ6BNR+oNj1Hiza21RdSzeyF120cH6YEi+XY/ObGn
+   NlHY44btG1C6dpIeTD5EeAqGkQ+jcY5ZvXjfeG+7fSy1smpn7nq+UfSWj
+   jTOyHgD+RF/YDukyJg2icXqIX265w7dPY9GxotwTHn0N/2gH2mRxmFJmE
+   2CjoqiLpVZWvGV4ewNGhsVDn5cwPU1VsSWoIRoSUPzwK3w5ZFdg9Li3YB
+   A==;
+X-CSE-ConnectionGUID: TiICZdqfRbeSGb/0hJhmVw==
+X-CSE-MsgGUID: ihPokDuEQQCC+WjkztduCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="72639641"
+X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
+   d="scan'208";a="72639641"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 14:32:38 -0700
+X-CSE-ConnectionGUID: LdDEmxZYQv2nMcqOOnECDw==
+X-CSE-MsgGUID: xt124RSNQku2HvxNZX1OyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
+   d="scan'208";a="178209425"
+Received: from ray2.jf.intel.com (HELO [10.24.81.144]) ([10.24.81.144])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 14:32:36 -0700
+Message-ID: <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
+Date: Tue, 30 Sep 2025 14:32:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: Vishal Annapurve <vannapurve@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, bp@alien8.de,
+ tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ thomas.lendacky@amd.com, x86@kernel.org, kas@kernel.org,
+ rick.p.edgecombe@intel.com, dwmw@amazon.co.uk, kai.huang@intel.com,
+ seanjc@google.com, reinette.chatre@intel.com, isaku.yamahata@intel.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, nik.borisov@suse.com,
+ chao.gao@intel.com, sagis@google.com, farrah.chen@intel.com,
+ Binbin Wu <binbin.wu@linux.intel.com>
+References: <20250901160930.1785244-1-pbonzini@redhat.com>
+ <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: jsxow6d5638k5yy6gar5fs134aayipcz
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: F3D6420025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/oDUrXoqCXdRNl+2WQvLrI0sL3RVE6m2Q=
-X-HE-Tag: 1759267625-90581
-X-HE-Meta: U2FsdGVkX19tNMzzii2Enil6Oh3uU3yu55Hwr638oUhBq1U72Bck8BQ3krzRNz6p4VLdOWbO5gOHBTaD2lO2UdunxtCR3rK59dZaUzzGXW8TAcLxwb3DIwGpvr2asXE/jCgno+O136q9kdfuqzZyLx3fzdU0BZKXUC5H39DXmJpazHs1BssPyn755VnQBIEu7B7fYZLMN9G3DONT1jjx5DQ8bhYytdPZGxacBzUOJuC/R22sAxLmeU0Mg72yxJGZ0q10yWgOHLrQLOw5vwjL3HreGeJW2soG3HdHqqVQ43H5X5OmJotJMCZmzVr5NI01
 
-On Thu, 25 Sep 2025 23:17:36 +0200
-Thorsten Blum <thorsten.blum@linux.dev> wrote:
+On 9/29/25 18:38, Vishal Annapurve wrote:
+>> On those platforms, the old kernel must reset TDX private memory before
+>> jumping to the new kernel, otherwise the new kernel may see unexpected
+>> machine check.  Currently the kernel doesn't track which page is a TDX
+>> private page.  For simplicity just fail kexec/kdump for those platforms.
+> Google has a usecase that needs host kdump support on SPR/EMR
+> platforms. Disabling kdump disables the host's ability to dump very
+> critical information on host crashes altogether. Is Intel working on
+> enabling kdump support for platforms with the erratum?
 
+Nope.
 
->  #ifdef CONFIG_X86_LOCAL_APIC
-> @@ -2325,12 +2326,9 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
->  	if (count < 1)
->  		return 0;
->  
-> -	buf = kmalloc(count, GFP_KERNEL);
-> -	if (!buf)
-> -		return -ENOMEM;
-> -
-> -	if (copy_from_user(buf, ubuf, count))
-> -		return -EFAULT;
-> +	buf = memdup_user(ubuf, count);
-> +	if (IS_ERR(buf))
-> +		return PTR_ERR(buf);
-
-After adding this to my for-next branch, it failed to merge with upstream.
-That's because a bug was found that if user space did not have a '\0'
-terminator, reading this as a string could cause the read to go off the
-allocated buffer and crash the machine.
-
->  
->  	if (!zalloc_cpumask_var(&osnoise_cpumask_new, GFP_KERNEL))
->  		return -ENOMEM;
-
-The above was changed to this:
-
-	if (count < 1)
-		return 0;
-
-	buf = kmalloc(count + 1, GFP_KERNEL);
-	if (!buf)
-		return -ENOMEM;
-
-	if (copy_from_user(buf, ubuf, count))
-		return -EFAULT;
-	buf[count] = '\0';
-
-Which makes your change not quite compatible.
-
-I'm going to rebase and remove your change for now.
-
--- Steve
+Any workarounds are going to be slow and probably imperfect. That's not
+a great match for kdump. I'm perfectly happy waiting for fixed hardware
+from what I've seen.
 
