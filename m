@@ -1,321 +1,239 @@
-Return-Path: <linux-kernel+bounces-837877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05C8BADF30
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:42:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05593BADF51
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E44D4E25DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:42:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 230C57A4CD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4144306D47;
-	Tue, 30 Sep 2025 15:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8953081B2;
+	Tue, 30 Sep 2025 15:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JxZpcp7/"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8NyB4+g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20A71DE4E1
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5296213AA2F;
+	Tue, 30 Sep 2025 15:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759246950; cv=none; b=rcwyK67QsoIJPTlHoT2hG7LV6s4jwAkd4C3gHLZNA1XHsWqvalnLKfIICCgdioipRCnGUWa4atiMtlvCOrFIFN2ZT+us1MkT/MNXBE0wvGoQ+QN1SS1Gofv5ltohVgSqYpU02osjdw9VevV9vJ5NSWSaowZXUkjgRsjpm/oLGvc=
+	t=1759247124; cv=none; b=Px82WsJ603gZ5y1g/IACmXpJnwKdDRJLfJpUz/y4KLHu6wU7kMi+KgJxc+kNVnCkaXvoQpsR728/AX/ve4xQrzaB0BSh7g/q027wqBvwDtDltn8Wm2ZNNYtQJaf/ANltGCSB3X8EJly/tnlrrjgJWImq6vweMKXS/ni+97oIFzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759246950; c=relaxed/simple;
-	bh=feulr94GI8kB8xRHdy+ur/i3nwXnVWO09eLmH/2948M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FZqy5rGrkkMHHW6p+Dy5m+Bz3TXq5BUiP6Du4Iq8bZvk4LZiRQQI/+46JRKu7UJ0lmt17fKu9uCoofxhkWpTcOEcs4D10Ivn6m4Ez66UdSDe+a+r2uOinGWTSIZhVEFCBX/wJuDnrd5TMB9trAUxOySl27/Wi5Jo4yDXUmzPPBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JxZpcp7/; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3c2db014easo575533866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:42:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759246947; x=1759851747; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=feulr94GI8kB8xRHdy+ur/i3nwXnVWO09eLmH/2948M=;
-        b=JxZpcp7/GQ45JxLH/3Q+6bjTKLweV0H1CPMQ0ca6gYxMVHPEt6jVeZxH+/cxNPJd1r
-         UpmcHK7wCfQ/i4QM9kEfLg/pjimUEANXn87c7tEftRAYez6MhFh9pL1ebbO1Baia+Zlq
-         1z76s/CfiORC8CBJETkL6k846aqWfUlfI6VoK8sC+TGcM5bZjF3ZU5xgpFI0uHW3p9Dr
-         OReobOefLLVoAiNSGqLNqRD1jF7WjDKnUWGcg34HHtOP/n3IjfJmGZozslYWEAYC9qB6
-         Cz0LhtvXmfrbIPF6xrmSXFhz87joNr+ytfwfXf5K5RPm6kQPMUFtUszGbPmmR64hVHc9
-         aFHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759246947; x=1759851747;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=feulr94GI8kB8xRHdy+ur/i3nwXnVWO09eLmH/2948M=;
-        b=eSwUTyxc7qu6t4nbHphejngNwWhGC2dSkHmh++JocRQpRiJC0EcQsl+2PNckdFd29J
-         lLLBtWNN0WdAPgQ/t8i/sXotFDc/IVxQYYIf+zA5+0HS20gsMGgqT8fRIK+GILzmS57j
-         Wz5GkfICamoIcLl1kAzru6zNxxN/Jpg7RyvM+EYFk7YmUbULFR9spa6hgl+tY2exRyp0
-         z5IJRrsGB+cF+QKSu1DFWRaD+ij3UrAxP2CTgtPfTku4HYjjNogQeblb7J9BMrYkU5V5
-         mlNB8yFIdwLgZqK8y5/OrQU0jh8e33lVAoBPT0f8+Bl/mv6f9c0Kn44lsupNWX0HyFIS
-         TDjg==
-X-Gm-Message-State: AOJu0YzjWhZD5czN4JGJEbWma4+n2/4AdpqPsFwOvoT22UO/OfK37QUp
-	FGTogBCLLG12kghRb1cApCH5t85MqD2nKBcp+hBpeBCAtCH0ORVBnjL4XY4yi/hfc6s=
-X-Gm-Gg: ASbGncvKhbGA6KDGMXd0Gii3yGYA7m/nkEdX+j1OGBfKFsnl8gLtIUXkK5MSKWNn9/M
-	TpisVA3jEZrtp3ORuc3C8tm5sI6ufhkBJ9jIB1WdMjSJOr7BB8QJwXJwykWpbLoHdcUs+D270fK
-	JKHkp5KfTHLaQdhxsgpgyoMD308vwLGfs7/h5NyTpkw59fu2QRivKeVun7W+lgKLVXv+o/LSSbE
-	FJYkUjrY+pCm4pu1kw0BJanOs4XQ75gjwGjV3rmlSP0oSyeQoL7XK0+lwVPoRSyVwxvSMdD/ODX
-	VeSQeJM7/IZV6db++lkd4fvnvuBD6Vh+QzD2BbZop7IfMsHwsRrZLrlI3qy2NtLOPyTrzQC4qJr
-	D8+L7W6c+1DLHsqZZcSjWeoyksOIEOQm+471RFjYcUS9h6/8hBtHYsN3J1XBB2GHgChZnEIDF6F
-	LSIkWJxQ9nsrmdxW/jA5wsXYYrrj7Y3sKg8vdseuru/eJWDxtFUUcGl84b/N6lQUhj0vZGdjBBx
-	c/2zOc=
-X-Google-Smtp-Source: AGHT+IFfUBRYulHBwf7ahWlyYjYfRuKcvdU3FC87Fo/u7cHgOVImddsj25CUSn0cb/pnH8DQwcqZuQ==
-X-Received: by 2002:a17:907:9405:b0:b04:3b97:f965 with SMTP id a640c23a62f3a-b46e6afc90dmr6145666b.49.1759246934987;
-        Tue, 30 Sep 2025 08:42:14 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3f3b7eb5ffsm414810866b.90.2025.09.30.08.42.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 08:42:14 -0700 (PDT)
-Message-ID: <2ad137cb-ed38-42f6-ac0a-a81569051779@suse.com>
-Date: Tue, 30 Sep 2025 17:42:13 +0200
+	s=arc-20240116; t=1759247124; c=relaxed/simple;
+	bh=QTLjV5fBh037d021vjk5DqaNTSbSSW8IEsiuapZarIM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fb+obJ5VXpQ653uFpkPkGiYQu1A6I+A1EAmHzBnVxnuNhGwb8Ox6YFFeJ62aaOJZby955ijtaBS1uhGJPlLSmqk4Crw7XgwhF2anQvVlwYCB3zig8hc0gGi34FVgJ1ECoQKculV4zRqUcJiJmCQohUyfnjG30wNKA8iwxEReDK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8NyB4+g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D375DC4CEF0;
+	Tue, 30 Sep 2025 15:45:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759247123;
+	bh=QTLjV5fBh037d021vjk5DqaNTSbSSW8IEsiuapZarIM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=F8NyB4+gPAZWs4ilkoxIOxtUxPYtzWtfzNOjWXL3296Y131G66ZtkSOOdDDTNivTV
+	 KdHywtXfR6t4STM0bPUJ2aRW9zX8uVML9BBEpgI6oQVCuwavjgY2sg/KwRSgceYHOI
+	 5uptxrcmfc7cLpZKNgUV3KgVZ8Lfe6rvQU1uwziK3kKwWNsyOwQZaBMeid9/v/aZmK
+	 S1m/WqVZ0lofM3rp2zQG9p1C0Z8CSp3yd7CdhQu8Is+TPTfgpPulYsOX00kBWcbP2J
+	 IiaRaMM8aclR7skJyWo8mfIOqkng22fWyHb9go8HIDrBlrlSKIIbrp3afUV6equ+f/
+	 GZKYO1Klx8OgA==
+From: Kees Cook <kees@kernel.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Petr Vorel <pvorel@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] kconfig: Avoid prompting for transitional symbols
+Date: Tue, 30 Sep 2025 08:45:19 -0700
+Message-Id: <20250930154514.it.623-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
- xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com>
- <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
- <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
- <20250930085044.GK3245006@noisy.programming.kicks-ass.net>
- <20250930125156.GK1386988@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20250930125156.GK1386988@noisy.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------G5ZDsJFAeWU3wk5VMeVpL07n"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7051; i=kees@kernel.org; h=from:subject:message-id; bh=QTLjV5fBh037d021vjk5DqaNTSbSSW8IEsiuapZarIM=; b=owGbwMvMwCVmps19z/KJym7G02pJDBm3f/P9mFrEKrrnwgTlX9xTb9RcFa65v2XJ89oWR48bD kzrrcscOkpZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACYS+5/hn3VNufdWpYVLVO0X 8oozv4jtmFO7X49vsjwrx47n16R2nGBk2BJj6LB3itw2gfvRDOzB+lePsfx4IuqtLD6frXwLl0I IPwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------G5ZDsJFAeWU3wk5VMeVpL07n
-Content-Type: multipart/mixed; boundary="------------WQ0dpVSuF9i7vtFDogawA4is";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
- xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Message-ID: <2ad137cb-ed38-42f6-ac0a-a81569051779@suse.com>
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com>
- <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
- <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
- <20250930085044.GK3245006@noisy.programming.kicks-ass.net>
- <20250930125156.GK1386988@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250930125156.GK1386988@noisy.programming.kicks-ass.net>
+The "transitional" symbol keyword, while working with the "olddefconfig"
+target, was prompting during "oldconfig". This occurred because these
+symbols were not being marked as user-defined when they received values
+from transitional symbols that had user values. The "olddefconfig" target
+explicitly doesn't prompt for anything, so this deficiency wasn't noticed.
 
---------------WQ0dpVSuF9i7vtFDogawA4is
-Content-Type: multipart/mixed; boundary="------------wCjuGdyXwIWCn2JOl5aqCNtv"
+The issue manifested when a symbol's value came from a transitional
+symbol's user value but the receiving symbol wasn't marked with
+SYMBOL_DEF_USER. Thus the "oldconfig" logic would then prompt for these
+symbols unnecessarily.
 
---------------wCjuGdyXwIWCn2JOl5aqCNtv
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Check after value calculation whether a symbol without a user value
+gets its value from a single transitional symbol that does have a user
+value. In such cases, mark the receiving symbol as user-defined to
+prevent prompting.
 
-T24gMzAuMDkuMjUgMTQ6NTEsIFBldGVyIFppamxzdHJhIHdyb3RlOg0KPiBPbiBUdWUsIFNl
-cCAzMCwgMjAyNSBhdCAxMDo1MDo0NEFNICswMjAwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToN
-Cj4+IE9uIFR1ZSwgU2VwIDMwLCAyMDI1IGF0IDEwOjQ2OjIzQU0gKzAyMDAsIErDvHJnZW4g
-R3Jvw58gd3JvdGU6DQo+IA0KPj4+PiAJYXNtX2lubGluZSB2b2xhdGlsZSBnb3RvKA0KPj4+
-PiAJCSIxOlxuIg0KPj4+PiAJCUFMVEVSTkFUSVZFKFBSRVBBUkVfUkNYX1JEWF9GT1JfV1JN
-U1INCj4+Pj4gCQkJICAgICIyOlxuIg0KPj4+PiAJCQkgICAgQUxURVJOQVRJVkUoImRzIHdy
-bXNyIiwNCj4+Pj4gCQkJICAgICAgICAgICAgICAgIEFTTV9XUk1TUk5TLCBYODZfRkVBVFVS
-RV9XUk1TUk5TKSwNCj4+Pj4gCQkJICAgIEFTTV9XUk1TUk5TX0lNTSwgWDg2X0ZFQVRVUkVf
-TVNSX0lNTSk7DQo+Pj4+IAkJX0FTTV9FWFRBQkxFX1RZUEUoMWIsICVsW2JhZG1zcl0sICVj
-W3R5cGVdKQkvKiBGb3IgV1JNU1JOUyBpbW1lZGlhdGUgKi8NCj4+Pj4gCQlfQVNNX0VYVEFC
-TEVfVFlQRSgyYiwgJWxbYmFkbXNyXSwgJWNbdHlwZV0pCS8qIEZvciBXUk1TUihOUykgKi8N
-Cj4+Pj4NCj4+Pj4gCQk6DQo+Pj4+IAkJOiBbdmFsXSAiYSIgKHZhbCksIFttc3JdICJpIiAo
-bXNyKSwgW3R5cGVdICJpIiAodHlwZSkNCj4+Pj4gCQk6ICJtZW1vcnkiLCAiZWN4IiwgInJk
-eCINCj4+Pj4gCQk6IGJhZG1zcik7DQo+Pj4+DQo+IA0KPj4gT2ggd2VsbCwgbGV0cyBmb3Jn
-ZXQgYWJvdXQgdGhpcyA6LSkNCj4gDQo+IFNvIEkgY291bGRuJ3QuIEkgdHJpZWQgdGhlIGJl
-bG93LCB3aGljaCB3aGVuIGJ1aWxkaW5nIGEgLmkgZ2VuZXJhdGVzIHRoZQ0KPiBmb2xsb3dp
-bmc6DQo+IA0KPiANCj4gc3RhdGljIGlubGluZSBfX2F0dHJpYnV0ZV9fKChfX2dudV9pbmxp
-bmVfXykpIF9fYXR0cmlidXRlX18oKF9fdW51c2VkX18pKSBfX2F0dHJpYnV0ZV9fKChub19p
-bnN0cnVtZW50X2Z1bmN0aW9uKSkgdm9pZCBjbGVhcl9wYWdlKHZvaWQgKnBhZ2UpDQo+IHsN
-Cj4gDQo+ICAga21zYW5fdW5wb2lzb25fbWVtb3J5KHBhZ2UsICgoMVVMKSA8PCAxMikpOw0K
-PiAgIGFzbSBfX2lubGluZSB2b2xhdGlsZSgNCj4gICAJIiMgQUxUOiBvbGRpbnN0clxuIg0K
-PiAJIl9fVU5JUVVFX0lEX2FsdGluc3RyXzkiICJfYmVnaW46XG5cdCINCj4gDQo+IAkJIiMg
-QUxUOiBvbGRpbnN0clxuIg0KPiAJCSJfX1VOSVFVRV9JRF9hbHRpbnN0cl84IiAiX2JlZ2lu
-OlxuXHQiDQo+IAkJImNhbGwgJWNbb2xkXSIgIlxuIg0KPiAJCSJfX1VOSVFVRV9JRF9hbHRp
-bnN0cl84IiAiX3BhZDpcbiINCj4gCQkiIyBBTFQ6IHBhZGRpbmdcbiINCj4gCQkiLnNraXAg
-LSgoKCIgIl9fVU5JUVVFX0lEX2FsdGluc3RyXzgiICJfYWx0X2VuZCAtICIgIl9fVU5JUVVF
-X0lEX2FsdGluc3RyXzgiICJfYWx0X2JlZ2luIiAiKS0oIiAiX19VTklRVUVfSURfYWx0aW5z
-dHJfOCIgIl9wYWQgLSAiICJfX1VOSVFVRV9JRF9hbHRpbnN0cl84IiAiX2JlZ2luIiAiKSkg
-PiAwKSAqICINCj4gCQkiKCgiICJfX1VOSVFVRV9JRF9hbHRpbnN0cl84IiAiX2FsdF9lbmQg
-LSAiICJfX1VOSVFVRV9JRF9hbHRpbnN0cl84IiAiX2FsdF9iZWdpbiIgIiktKCIgIl9fVU5J
-UVVFX0lEX2FsdGluc3RyXzgiICJfcGFkIC0gIiAiX19VTklRVUVfSURfYWx0aW5zdHJfOCIg
-Il9iZWdpbiIgIikpLDB4OTBcbiINCj4gCQkiX19VTklRVUVfSURfYWx0aW5zdHJfOCIgIl9l
-bmQ6XG4iDQo+IAkJIi5wdXNoc2VjdGlvbiAuYWx0aW5zdHJ1Y3Rpb25zLFwiYVwiXG4iDQo+
-IAkJIiAubG9uZyAiICJfX1VOSVFVRV9JRF9hbHRpbnN0cl84IiAiX2JlZ2luIC0gLlxuIg0K
-PiAJCSIgLmxvbmcgIiAiX19VTklRVUVfSURfYWx0aW5zdHJfOCIgIl9hbHRfYmVnaW4gLSAu
-XG4iDQo+IAkJIiAuNGJ5dGUgIiAiKCAzKjMyKzE2KSIgIlxuIg0KPiAJCSIgLmJ5dGUgIiAi
-X19VTklRVUVfSURfYWx0aW5zdHJfOCIgIl9lbmQgLSAiICJfX1VOSVFVRV9JRF9hbHRpbnN0
-cl84IiAiX2JlZ2luIiAiXG4iDQo+IAkJIiAuYnl0ZSAiICJfX1VOSVFVRV9JRF9hbHRpbnN0
-cl84IiAiX2FsdF9lbmQgLSAiICJfX1VOSVFVRV9JRF9hbHRpbnN0cl84IiAiX2FsdF9iZWdp
-biIgIlxuIg0KPiAJCSIucG9wc2VjdGlvblxuIg0KPiAJCSIucHVzaHNlY3Rpb24gLmFsdGlu
-c3RyX3JlcGxhY2VtZW50LCBcImF4XCJcbiINCj4gCQkiIyBBTFQ6IHJlcGxhY2VtZW50XG4i
-DQo+IAkJIl9fVU5JUVVFX0lEX2FsdGluc3RyXzgiICJfYWx0X2JlZ2luOlxuXHQiDQo+IAkJ
-ImNhbGwgJWNbbmV3MV0iICJcbiINCj4gCQkiX19VTklRVUVfSURfYWx0aW5zdHJfOCIgIl9h
-bHRfZW5kOlxuIg0KPiAJCSIucG9wc2VjdGlvblxuIg0KPiAJCSJcbiINCj4gDQo+IAkiX19V
-TklRVUVfSURfYWx0aW5zdHJfOSIgIl9wYWQ6XG4iDQo+IAkiIyBBTFQ6IHBhZGRpbmdcbiIN
-Cj4gCSIuc2tpcCAtKCgoIiAiX19VTklRVUVfSURfYWx0aW5zdHJfOSIgIl9hbHRfZW5kIC0g
-IiAiX19VTklRVUVfSURfYWx0aW5zdHJfOSIgIl9hbHRfYmVnaW4iICIpLSgiICJfX1VOSVFV
-RV9JRF9hbHRpbnN0cl85IiAiX3BhZCAtICIgIl9fVU5JUVVFX0lEX2FsdGluc3RyXzkiICJf
-YmVnaW4iICIpKSA+IDApICogIg0KPiAJIigoIiAiX19VTklRVUVfSURfYWx0aW5zdHJfOSIg
-Il9hbHRfZW5kIC0gIiAiX19VTklRVUVfSURfYWx0aW5zdHJfOSIgIl9hbHRfYmVnaW4iICIp
-LSgiICJfX1VOSVFVRV9JRF9hbHRpbnN0cl85IiAiX3BhZCAtICIgIl9fVU5JUVVFX0lEX2Fs
-dGluc3RyXzkiICJfYmVnaW4iICIpKSwweDkwXG4iDQo+IAkiX19VTklRVUVfSURfYWx0aW5z
-dHJfOSIgIl9lbmQ6XG4iDQo+IAkiLnB1c2hzZWN0aW9uIC5hbHRpbnN0cnVjdGlvbnMsXCJh
-XCJcbiINCj4gCSIgLmxvbmcgIiAiX19VTklRVUVfSURfYWx0aW5zdHJfOSIgIl9iZWdpbiAt
-IC5cbiINCj4gCSIgLmxvbmcgIiAiX19VTklRVUVfSURfYWx0aW5zdHJfOSIgIl9hbHRfYmVn
-aW4gLSAuXG4iDQo+IAkiIC40Ynl0ZSAiICIoIDkqMzIrIDkpIiAiXG4iDQo+IAkiIC5ieXRl
-ICIgIl9fVU5JUVVFX0lEX2FsdGluc3RyXzkiICJfZW5kIC0gIiAiX19VTklRVUVfSURfYWx0
-aW5zdHJfOSIgIl9iZWdpbiIgIlxuIg0KPiAJIiAuYnl0ZSAiICJfX1VOSVFVRV9JRF9hbHRp
-bnN0cl85IiAiX2FsdF9lbmQgLSAiICJfX1VOSVFVRV9JRF9hbHRpbnN0cl85IiAiX2FsdF9i
-ZWdpbiIgIlxuIg0KPiAJIi5wb3BzZWN0aW9uXG4iDQo+IAkiLnB1c2hzZWN0aW9uIC5hbHRp
-bnN0cl9yZXBsYWNlbWVudCwgXCJheFwiXG4iDQo+IAkiIyBBTFQ6IHJlcGxhY2VtZW50XG4i
-DQo+IAkiX19VTklRVUVfSURfYWx0aW5zdHJfOSIgIl9hbHRfYmVnaW46XG5cdCINCj4gCSJj
-YWxsICVjW25ldzJdIiAiXG4iDQo+IAkiX19VTklRVUVfSURfYWx0aW5zdHJfOSIgIl9hbHRf
-ZW5kOlxuIg0KPiAJIi5wb3BzZWN0aW9uXG4iDQo+IAk6ICIrciIgKGN1cnJlbnRfc3RhY2tf
-cG9pbnRlciksICI9RCIgKHBhZ2UpDQo+IAk6IFtvbGRdICJpIiAoY2xlYXJfcGFnZV9vcmln
-KSwgW25ldzFdICJpIiAoY2xlYXJfcGFnZV9yZXApLCBbbmV3Ml0gImkiIChjbGVhcl9wYWdl
-X2VybXMpICwgIkQiIChwYWdlKQ0KPiAJOiAiY2MiLCAibWVtb3J5IiwgInJheCIsICJyY3gi
-KQ0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgOw0KPiB9DQo+
-IA0KPiBXaGljaCBsb29rcyByaWdodCwgYnV0IHV0dGVybHkgZmFpbHMgdG8gYnVpbGQgOigN
-Cg0KV2hhdCBkb2VzIHRoZSBmYWlsdXJlIGxvb2sgbGlrZT8NCg0KQ291bGQgaXQgYmUgdGhh
-dCB0aGUgbGFiZWxzIHNob3VsZCBiZSBsb2NhbCBvbmVzPw0KDQoNCkp1ZXJnZW4NCg==
---------------wCjuGdyXwIWCn2JOl5aqCNtv
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Update regression tests to verify that symbols with transitional defaults
+are not prompted in "oldconfig", except when conditional defaults evaluate
+to 'no' and should legitimately be prompted.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Build tested with "make testconfig".
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Closes: https://lore.kernel.org/lkml/CAHk-=wgZjUk4Cy2XgNkTrQoO8XCmNUHrTe5D519Fij1POK+3qw@mail.gmail.com/
+Fixes: 05020835c86e ("kconfig: Add transitional symbol attribute for migration support")
+Cc: Vegard Nossum <vegard.nossum@oracle.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+ v2:
+  - fix "no new line at end of file" git cleanup that broke expected stdout
+  - set the entire struct to avoid testing type of symbol (Vegard)
+ v1: https://lore.kernel.org/lkml/20250930045300.work.375-kees@kernel.org/
+---
+ scripts/kconfig/symbol.c                      | 15 ++++++++-
+ scripts/kconfig/tests/transitional/Kconfig    | 32 +++++++++++++++++++
+ .../kconfig/tests/transitional/__init__.py    |  7 ++++
+ .../tests/transitional/expected_config        |  3 ++
+ .../tests/transitional/expected_stdout        |  1 +
+ .../kconfig/tests/transitional/initial_config |  4 +++
+ 6 files changed, 61 insertions(+), 1 deletion(-)
+ create mode 100644 scripts/kconfig/tests/transitional/expected_stdout
 
---------------wCjuGdyXwIWCn2JOl5aqCNtv--
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 760cac998381..7e81b3676ee9 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -411,7 +411,7 @@ bool sym_dep_errors(void)
+ void sym_calc_value(struct symbol *sym)
+ {
+ 	struct symbol_value newval, oldval;
+-	struct property *prop;
++	struct property *prop = NULL;
+ 	struct menu *choice_menu;
+ 
+ 	if (!sym)
+@@ -520,6 +520,19 @@ void sym_calc_value(struct symbol *sym)
+ 		;
+ 	}
+ 
++	/*
++	 * If the symbol lacks a user value but its value comes from a
++	 * single transitional symbol with an existing user value, mark
++	 * this symbol as having a user value to avoid prompting.
++	 */
++	if (prop && !sym_has_value(sym)) {
++		struct symbol *ds = prop_get_symbol(prop);
++		if (ds && (ds->flags & SYMBOL_TRANS) && sym_has_value(ds)) {
++			sym->def[S_DEF_USER] = newval;
++			sym->flags |= SYMBOL_DEF_USER;
++		}
++	}
++
+ 	sym->curr = newval;
+ 	sym_validate_range(sym);
+ 
+diff --git a/scripts/kconfig/tests/transitional/Kconfig b/scripts/kconfig/tests/transitional/Kconfig
+index 62c3b24665b9..faa4d396f828 100644
+--- a/scripts/kconfig/tests/transitional/Kconfig
++++ b/scripts/kconfig/tests/transitional/Kconfig
+@@ -96,5 +96,37 @@ config OLD_WITH_HELP
+ 	help
+ 	  This transitional symbol has a help section to validate that help is allowed.
+ 
++# Test that we can set something to =n via transitional symbol
++config NEW_DISABLED
++	tristate "Check for setting to disabled"
++	default OLD_DISABLED
++
++config OLD_DISABLED
++	tristate
++	transitional
++
++# Test that a potential new value disappears if it lacks a prompt
++config NEW_DISABLED_UNSAVED
++	tristate
++	default OLD_DISABLED
++
++config OLD_DISABLED_UNSAVED
++	tristate
++	transitional
++
++# Test conditional default: transitional value should not prevent prompting
++# when default visibility makes the expression evaluate to 'no'
++config DEPENDENCY_TEST
++	bool "Dependency for testing"
++	default n
++
++config NEW_CONDITIONAL_DEFAULT
++	bool "New option with conditional default"
++	default OLD_CONDITIONAL_DEFAULT if DEPENDENCY_TEST
++
++config OLD_CONDITIONAL_DEFAULT
++	bool
++	transitional
++
+ config REGULAR_OPTION
+ 	bool "Regular option"
+diff --git a/scripts/kconfig/tests/transitional/__init__.py b/scripts/kconfig/tests/transitional/__init__.py
+index 61937d10edf1..b50ba2397548 100644
+--- a/scripts/kconfig/tests/transitional/__init__.py
++++ b/scripts/kconfig/tests/transitional/__init__.py
+@@ -6,6 +6,7 @@ This tests that:
+ - OLD_* options in existing .config cause NEW_* options to be set
+ - OLD_* options are not written to the new .config file
+ - NEW_* options appear in the new .config file with correct values
++- NEW_* options with defaults from transitional symbols are not prompted
+ - All Kconfig types work correctly: bool, tristate, string, hex, int
+ - User-set NEW values take precedence over conflicting OLD transitional values
+ """
+@@ -16,3 +17,9 @@ def test(conf):
+ 
+     # Check that the configuration matches expected output
+     assert conf.config_contains('expected_config')
++
++    # Test oldconfig to ensure symbols with transitional defaults are not prompted
++    assert conf.oldconfig(dot_config='initial_config', in_keys='n\n') == 0
++
++    # Except for when conditional default evaluates to 'no'
++    assert conf.stdout_contains('expected_stdout')
+diff --git a/scripts/kconfig/tests/transitional/expected_config b/scripts/kconfig/tests/transitional/expected_config
+index 846e9ddcab91..e01f5f070a26 100644
+--- a/scripts/kconfig/tests/transitional/expected_config
++++ b/scripts/kconfig/tests/transitional/expected_config
+@@ -9,4 +9,7 @@ CONFIG_NEW_STRING_PRECEDENCE="user value"
+ CONFIG_NEW_TRISTATE_PRECEDENCE=y
+ CONFIG_NEW_HEX_PRECEDENCE=0xABCD
+ CONFIG_NEW_INT_PRECEDENCE=100
++# CONFIG_NEW_DISABLED is not set
++# CONFIG_DEPENDENCY_TEST is not set
++# CONFIG_NEW_CONDITIONAL_DEFAULT is not set
+ # CONFIG_REGULAR_OPTION is not set
+diff --git a/scripts/kconfig/tests/transitional/expected_stdout b/scripts/kconfig/tests/transitional/expected_stdout
+new file mode 100644
+index 000000000000..6f0b285d6469
+--- /dev/null
++++ b/scripts/kconfig/tests/transitional/expected_stdout
+@@ -0,0 +1 @@
++New option with conditional default (NEW_CONDITIONAL_DEFAULT) [N/y/?] (NEW) n
+diff --git a/scripts/kconfig/tests/transitional/initial_config b/scripts/kconfig/tests/transitional/initial_config
+index e648a65e504c..68b7da672426 100644
+--- a/scripts/kconfig/tests/transitional/initial_config
++++ b/scripts/kconfig/tests/transitional/initial_config
+@@ -14,3 +14,7 @@ CONFIG_NEW_HEX_PRECEDENCE=0xABCD
+ CONFIG_OLD_HEX_PRECEDENCE=0x5678
+ CONFIG_NEW_INT_PRECEDENCE=100
+ CONFIG_OLD_INT_PRECEDENCE=200
++# CONFIG_OLD_DISABLED is not set
++# CONFIG_OLD_DISABLED_UNSAVED is not set
++# CONFIG_DEPENDENCY_TEST is not set
++CONFIG_OLD_CONDITIONAL_DEFAULT=y
+-- 
+2.34.1
 
---------------WQ0dpVSuF9i7vtFDogawA4is--
-
---------------G5ZDsJFAeWU3wk5VMeVpL07n
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjb+lYFAwAAAAAACgkQsN6d1ii/Ey98
-NggAlQRClZmF42IEyJPjvS7iPsG1lo0/RU4QKwK33L/u409sNoGYvpPDQWYZ+yxiNyk1d8ZjGZZ0
-Y8uVODFMyKtyeQMjotHfUOFR2sL82YDe97aDAfvYxMHYVw2z8hnrxRLtYWs7zZZ1dSB6RbATeqHT
-sozqS4z9hQyZJnpUkglvRWDOl+2Cm+kvBK/qVRG9cBtHhCGgk+t4SLfzPRdRncvk/EmtGzv5rZ+M
-1HKtw3QIqNLoNuF4p6sCMPKsgGMhW6EcyHoWH2aDJ6X+6wjeacBAuNJ1eUbtmrtn+RUW0uMSYtLX
-WMn9R5Ch/5gCVFgum56L9go2SmhpU3nV3lCpUaSxnQ==
-=n7ux
------END PGP SIGNATURE-----
-
---------------G5ZDsJFAeWU3wk5VMeVpL07n--
 
