@@ -1,170 +1,307 @@
-Return-Path: <linux-kernel+bounces-837198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2E2BABAB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:33:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808C4BABABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30174189D8FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:34:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 129163C2B08
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9220B2F2E;
-	Tue, 30 Sep 2025 06:33:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C32128395;
-	Tue, 30 Sep 2025 06:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C322989B0;
+	Tue, 30 Sep 2025 06:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="QiXX5ucK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EEk9Ij26"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F29E3A8F7;
+	Tue, 30 Sep 2025 06:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759214032; cv=none; b=DeajIM0Q17Z95jj0cfw+udl10Q13lSQCdvCNQGYnH+C086npONETIPEHBZyzNw1lJ5//yJ+H4iGR+b5J/0IA/eipezqxT0OttAjsrfjJb3pZn5F5KDMoO1ZzwSe8PITSW8q9rDlKIADcpjJWBI73dtnxz3YYwnXBrjqzjIqAfRI=
+	t=1759214180; cv=none; b=GeV7xvAYoIs2HZX7Ypq7Cwa5aqp7p7+ThebAcnOglTrUH8mXiGhpVwvg2synGTecR36LnmqPkCtEtD5It8PdJueNSgsWKv0SKsIdRR8dYVMMY+gWhk4kiND/+2hR22J/cD+s6BoFREf9MlBxxusmHxlJ3sa2KCnBW5AHxuet8ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759214032; c=relaxed/simple;
-	bh=JxmpbEZWtAozvqAduF/ljajHhnVtEkMPMUpyFBV0KHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TOkZlvztsTKCJp4QRJ0dBd+wMFcJFmh1YOpRJY3a0s9xGpK04hlhgExeghaIImMbaaeyzmozHeaQC6+N1V43AlHUUriR7hKvLq2e7mU4qYE3fQGENESdB9KCfOQO9ibVYDximrh8MKm4UVdf92uPdx63/QjEZKNh/n1ID0VVq1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3074E1424;
-	Mon, 29 Sep 2025 23:33:40 -0700 (PDT)
-Received: from [10.164.18.53] (MacBook-Pro.blr.arm.com [10.164.18.53])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE13A3F66E;
-	Mon, 29 Sep 2025 23:33:39 -0700 (PDT)
-Message-ID: <838505c8-053e-49af-b37b-0475520daf68@arm.com>
-Date: Tue, 30 Sep 2025 12:03:36 +0530
+	s=arc-20240116; t=1759214180; c=relaxed/simple;
+	bh=escCiC2Y+Qmi4NIJqd5Q2Nyq3gDImlglEHJRkSusNf0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=PQ1dgxpMtcKIudmgAJ6Tvni0VPW3iJ2fsq+kB+hWPjIHMh36BdSx1ZlY6UxwaWjUOosiEMUPKeQkWpGQi6Eb+ekWhOJup2DjCPFqABp53F3YWHzHt3ZVIWIMRsi606Pu5tKjoSue9srwZ7SQ6OS3tOR2EtC7WmHj7UhKm+bmj8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=QiXX5ucK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EEk9Ij26; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 35A761400153;
+	Tue, 30 Sep 2025 02:36:17 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 30 Sep 2025 02:36:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759214177;
+	 x=1759300577; bh=qlwPCct/R/LhaOvINFfIvCIH1zji2SOzEGosNeDTPVc=; b=
+	QiXX5ucKCfrvt8rR2NchXeXc8cJ8lbU+r06ac68x8RuIoeDejjaDPVFCiEO6X9R0
+	uBdcWH6dJiAQoGoUlFCbarVrXYl9hFW6ZtopKwYCwaGTEMY1/p/RxCntYWYGViJU
+	JuT8TSlWEJYe/s6YgH4HnF3XdvzQD+v5kMbxJ8o3q+Jdhdbip6iQLjCz9a8/YkY7
+	R+d2ZZ4qcIyYiTJBy2/x+eHfqo3RfJ+zSwlZK/4PlvBAYxdYBb+Ar3NgYXcqC2uI
+	TRrH/UaVCicRW+LWomae3PyKnmWnDfjBdawZ/OFoim7PEJHzzf1ii6y/74A2YeY6
+	uZG00M8SsO50v7O/zZLa+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759214177; x=
+	1759300577; bh=qlwPCct/R/LhaOvINFfIvCIH1zji2SOzEGosNeDTPVc=; b=E
+	Ek9Ij26F3NVs/BXejaq8pzeni9HWCsvi1peCdIzzKkU8hV1xHE1f+FsafXNCQO4R
+	9eIe3JYq/YD/AZ2GkqW+XXsb/paMXXOrF+AdwWUqlplOqyJHcPo7imwnr/4Xs1sT
+	UnxDKcodN8Tb3ERKcwttSv3rWo6j3yRaAynErbbvNBpX6cP0EcxBiGRrUK/h6rfq
+	bsQgtraIpJIveOx9aw8hPrvYO6SY+uILo3afISCqPW3weldvSkSsaAQ5eE+6Wgek
+	/pB1NgVu13QOL0EOjA4iIVkTgd1ytF876hfuvTL2t4CzlRn+jQszbw0pClNiUKjv
+	n0AG7YXqU+/E6KYxkb0ag==
+X-ME-Sender: <xms:YHrbaGWxeBAy_kOMpdtHyRj2tWTh5xgyxZaM23nFbQF-ZNHfkKnaAA>
+    <xme:YHrbaNYZb20xpraF_Ti9PWeEMXlgSH12OV2U5lAoVJqjSuscDGK9CwWZLw6NQxWzu
+    KdiMO5ypdD7lD1vhu6s46S6WpHcz3x-J6YKLilW4ms9Abo6Wh81vr0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdektddujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoh
+    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhii
+    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtohepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
+    hopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlrghntggv
+    rdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnh
+    gvth
+X-ME-Proxy: <xmx:YHrbaORyMVriqtU-Nnv4-Xb4ysZ3Zlh6Ib2nwhZLY7VfHAcs4zkU4w>
+    <xmx:YHrbaKJB4ciaHj50Ymt95o7clf09TgnZkABhKmkVtbX1ays5Pj04GQ>
+    <xmx:YHrbaIGfKGPa6jX43FkoFWX-QcNl1G20Mi4fnxNN0ZxQLtwS4Re1GA>
+    <xmx:YHrbaH1v8wUbwdSuNIf6E_NHZ-GOdw7Es1JrmXRrHnKP9_-GUQ78pA>
+    <xmx:YXrbaPsgn386nS8xeHhii7v5CZMeNpVMUYU2cWTm4yl1Is_ifvY3MNQT>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 42B54700069; Tue, 30 Sep 2025 02:36:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] mm/rmap: fix soft-dirty and uffd-wp bit loss when
- remapping zero-filled mTHP subpage to shared zeropage
-To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
- david@redhat.com, lorenzo.stoakes@oracle.com
-Cc: peterx@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- baohua@kernel.org, ryan.roberts@arm.com, npache@redhat.com,
- riel@surriel.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- harry.yoo@oracle.com, jannh@google.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- usamaarif642@gmail.com, yuzhao@google.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, ioworker0@gmail.com, stable@vger.kernel.org
-References: <20250930060557.85133-1-lance.yang@linux.dev>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250930060557.85133-1-lance.yang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: Ah_uXtpTlO07
+Date: Tue, 30 Sep 2025 08:35:55 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Finn Thain" <fthain@linux-m68k.org>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Will Deacon" <will@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org,
+ "Lance Yang" <lance.yang@linux.dev>
+Message-Id: <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
+In-Reply-To: <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org>
+ <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
+ <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
+ <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
+ <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com>
+ <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
+ <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org>
+Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
+On Tue, Sep 30, 2025, at 04:18, Finn Thain wrote:
+> On Tue, 23 Sep 2025, I wrote:
+>> 
+>> ... there's still some kmem cache or other allocator somewhere that has 
+>> produced some misaligned path and dentry structures. So we get 
+>> misaligned atomics somewhere in the VFS and TTY layers. I was unable to 
+>> find those allocations.
+>> 
+>
+> It turned out that the problem wasn't dynamic allocations, it was a local 
+> variable in the core locking code (kernel/locking/rwsem.c): a misaligned 
+> long used with an atomic operation (cmpxchg). To get natural alignment for 
+> 64-bit quantities, I had to align other local variables as well, such as 
+> the one in ktime_get_real_ts64_mg() that's used with 
+> atomic64_try_cmpxchg(). The atomic_t branch in my github repo has the 
+> patches I wrote for that.
 
-On 30/09/25 11:35 am, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
->
-> When splitting an mTHP and replacing a zero-filled subpage with the shared
-> zeropage, try_to_map_unused_to_zeropage() currently drops several important
-> PTE bits.
->
-> For userspace tools like CRIU, which rely on the soft-dirty mechanism for
-> incremental snapshots, losing the soft-dirty bit means modified pages are
-> missed, leading to inconsistent memory state after restore.
->
-> As pointed out by David, the more critical uffd-wp bit is also dropped.
-> This breaks the userfaultfd write-protection mechanism, causing writes
-> to be silently missed by monitoring applications, which can lead to data
-> corruption.
->
-> Preserve both the soft-dirty and uffd-wp bits from the old PTE when
-> creating the new zeropage mapping to ensure they are correctly tracked.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Dev Jain <dev.jain@arm.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> ---
-> v2 -> v3:
->   - ptep_get() gets called only once per iteration (per Dev)
->   - https://lore.kernel.org/linux-mm/20250930043351.34927-1-lance.yang@linux.dev/
->
-> v1 -> v2:
->   - Avoid calling ptep_get() multiple times (per Dev)
->   - Double-check the uffd-wp bit (per David)
->   - Collect Acked-by from David - thanks!
->   - https://lore.kernel.org/linux-mm/20250928044855.76359-1-lance.yang@linux.dev/
->
->   mm/migrate.c | 14 ++++++++++----
->   1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index ce83c2c3c287..bafd8cb3bebe 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -297,6 +297,7 @@ bool isolate_folio_to_list(struct folio *folio, struct list_head *list)
->   
->   static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
->   					  struct folio *folio,
-> +					  pte_t old_pte,
->   					  unsigned long idx)
+It looks like the variable you get the warning for is not
+even the atomic64_t but the 'old' argument to atomic64_try_cmpxchg(),
+at least in some of the cases you found if not all of them.
 
-Could have just added this in the same line as folio?
+I don't see where why there is a requirement to have that
+aligned at all, even if we do require the atomic64_t to
+be naturally aligned, and I would expect the same warning
+to hit on x86-32 and the other architectures with 4-byte
+alignment of u64 variable on stack and .data.
 
->   {
->   	struct page *page = folio_page(folio, idx);
-> @@ -306,7 +307,7 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
->   		return false;
->   	VM_BUG_ON_PAGE(!PageAnon(page), page);
->   	VM_BUG_ON_PAGE(!PageLocked(page), page);
-> -	VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
-> +	VM_BUG_ON_PAGE(pte_present(old_pte), page);
->   
->   	if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags & VM_LOCKED) ||
->   	    mm_forbids_zeropage(pvmw->vma->vm_mm))
-> @@ -322,6 +323,12 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
->   
->   	newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
->   					pvmw->vma->vm_page_prot));
-> +
-> +	if (pte_swp_soft_dirty(old_pte))
-> +		newpte = pte_mksoft_dirty(newpte);
-> +	if (pte_swp_uffd_wp(old_pte))
-> +		newpte = pte_mkuffd_wp(newpte);
-> +
->   	set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
->   
->   	dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
-> @@ -344,7 +351,7 @@ static bool remove_migration_pte(struct folio *folio,
->   
->   	while (page_vma_mapped_walk(&pvmw)) {
->   		rmap_t rmap_flags = RMAP_NONE;
-> -		pte_t old_pte;
-> +		pte_t old_pte = ptep_get(pvmw.pte);
->   		pte_t pte;
->   		swp_entry_t entry;
->   		struct page *new;
-> @@ -365,12 +372,11 @@ static bool remove_migration_pte(struct folio *folio,
->   		}
->   #endif
->   		if (rmap_walk_arg->map_unused_to_zeropage &&
-> -		    try_to_map_unused_to_zeropage(&pvmw, folio, idx))
-> +		    try_to_map_unused_to_zeropage(&pvmw, folio, old_pte, idx))
->   			continue;
->   
->   		folio_get(folio);
->   		pte = mk_pte(new, READ_ONCE(vma->vm_page_prot));
-> -		old_pte = ptep_get(pvmw.pte);
->   
->   		entry = pte_to_swp_entry(old_pte);
->   		if (!is_migration_entry_young(entry))
+> To silence the misalignment WARN from CONFIG_DEBUG_ATOMIC, for 64-bit 
+> atomic operations, for my small m68k .config, it was also necesary to 
+> increase ARCH_SLAB_MINALIGN to 8. However, I'm not advocating a 
+> ARCH_SLAB_MINALIGN increase, as that wastes memory.
 
-Looks good, the special bit does not overlay on any arch with the soft-dirty bit.
-It shouldn't overlay with uffd-wp as well since split_huge_zero_page_pmd does the
-same bit preservation.
+Have you tried to quantify the memory waste here? I assume
+that most slab allocations are already 8-byte aligned, at
+least kmalloc() with size>4, while custom caches are usually
+done for larger structures where an extra average of 2 bytes
+per allocation may not be that bad.
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+> diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> index 402a999a0d6b..cd569a87c0a8 100644
+> --- a/include/linux/instrumented.h
+> +++ b/include/linux/instrumented.h
+> @@ -68,7 +68,7 @@ static __always_inline void 
+> instrument_atomic_read(const volatile void *v, size_
+>  {
+>  	kasan_check_read(v, size);
+>  	kcsan_check_atomic_read(v, size);
+> -	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & 
+> (size - 1)));
+> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & 
+> (size - 1) & 3));
+>  }
 
+What is the alignment of stack variables on m68k? E.g. if you
+have a function with two local variables, would that still
+be able to trigger the check?
+
+int f(atomic64_t *a)
+{
+     u16 pad;
+     u64 old;
+     
+     g(&pad);
+     atomic64_try_cmpxchg(a, &old, 0);
+}
+
+Since there is nothing telling the compiler that
+the 'old' argument to atomic*_try_cmpcxchg() needs to
+be naturally aligned, maybe that check should be changed
+to only test for the ABI-guaranteed alignment? I think
+that would still be needed on x86-32.
+ 
+      Arnd
+
+diff --git a/include/linux/atomic/atomic-instrumented.h b/include/linux/atomic/atomic-instrumented.h
+index 9409a6ddf3e0..e57763a889bd 100644
+--- a/include/linux/atomic/atomic-instrumented.h
++++ b/include/linux/atomic/atomic-instrumented.h
+@@ -1276,7 +1276,7 @@ atomic_try_cmpxchg(atomic_t *v, int *old, int new)
+ {
+ 	kcsan_mb();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_try_cmpxchg(v, old, new);
+ }
+ 
+@@ -1298,7 +1298,7 @@ static __always_inline bool
+ atomic_try_cmpxchg_acquire(atomic_t *v, int *old, int new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_try_cmpxchg_acquire(v, old, new);
+ }
+ 
+@@ -1321,7 +1321,7 @@ atomic_try_cmpxchg_release(atomic_t *v, int *old, int new)
+ {
+ 	kcsan_release();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_try_cmpxchg_release(v, old, new);
+ }
+ 
+@@ -1343,7 +1343,7 @@ static __always_inline bool
+ atomic_try_cmpxchg_relaxed(atomic_t *v, int *old, int new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_try_cmpxchg_relaxed(v, old, new);
+ }
+ 
+@@ -2854,7 +2854,7 @@ atomic64_try_cmpxchg(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kcsan_mb();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic64_try_cmpxchg(v, old, new);
+ }
+ 
+@@ -2876,7 +2876,7 @@ static __always_inline bool
+ atomic64_try_cmpxchg_acquire(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic64_try_cmpxchg_acquire(v, old, new);
+ }
+ 
+@@ -2899,7 +2899,7 @@ atomic64_try_cmpxchg_release(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kcsan_release();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic64_try_cmpxchg_release(v, old, new);
+ }
+ 
+@@ -2921,7 +2921,7 @@ static __always_inline bool
+ atomic64_try_cmpxchg_relaxed(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic64_try_cmpxchg_relaxed(v, old, new);
+ }
+ 
+@@ -4432,7 +4432,7 @@ atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
+ {
+ 	kcsan_mb();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_long_try_cmpxchg(v, old, new);
+ }
+ 
+@@ -4454,7 +4454,7 @@ static __always_inline bool
+ atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_long_try_cmpxchg_acquire(v, old, new);
+ }
+ 
+@@ -4477,7 +4477,7 @@ atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
+ {
+ 	kcsan_release();
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_long_try_cmpxchg_release(v, old, new);
+ }
+ 
+@@ -4499,7 +4499,7 @@ static __always_inline bool
+ atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
+ {
+ 	instrument_atomic_read_write(v, sizeof(*v));
+-	instrument_atomic_read_write(old, sizeof(*old));
++	instrument_atomic_read_write(old, alignof(*old));
+ 	return raw_atomic_long_try_cmpxchg_relaxed(v, old, new);
+ }
+ 
 
