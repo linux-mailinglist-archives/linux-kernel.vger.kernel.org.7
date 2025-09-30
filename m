@@ -1,132 +1,130 @@
-Return-Path: <linux-kernel+bounces-837137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53953BAB80A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:33:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1265DBAB810
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2D2188FEF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9BA43C13A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB982765C4;
-	Tue, 30 Sep 2025 05:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89E72765C5;
+	Tue, 30 Sep 2025 05:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TI4uSpQw"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="YbPtVfvo"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC403275B04
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBA01547F2;
+	Tue, 30 Sep 2025 05:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759210403; cv=none; b=KQJvPhZpaUmDg4dTHv/MNg1n57fzmiUX51sr4RH1o2CN0g+EPGe0MHyM4aE0XbAj+Ltes+R9nxGvQSOTMb0TShUFDykKTuYdZCPLMSiROcS5czKzHwIVdegIcV2zvp+e/WbuHZHqZY6QaD6Bkp2wlHuTn53hw4CrpkNRvqiSvOI=
+	t=1759210789; cv=none; b=XJkDHLmjVf3pzyABE17Dpv2HHNoNKlFBJc7gbpOdK1F+TahFOLaK56UHYFhR5Nn9ZW97fHVu6ShWK+MbAIiq+6OE36BNrwbEh4WNxkTtU1/hsOas4EySQW8V/WCodZx67LLfQ9q5plbTAVd1C4razaVcoaIbzbn5mir2lwhDSCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759210403; c=relaxed/simple;
-	bh=+zYHcq1PnJGmU//SbV0gpmoJSYNqd+MwGlmrpbux8Rk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ukiCq3T3mJhrCE4LNS+ww/Mw2lErTvwsl0YnKx0BV0qWPtNNAPwhi82ZZ3+5wfZRPgxyJ1Je9OUySK84TTxuexJoDZ2w49WREyddO4JR1UnBVo0O8asqGiKHWdbia2c7Vh9OKt0GbED6D62ydwY3mv0v8NyIkWy2R+T27nCgm4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TI4uSpQw; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3f0308469a4so3098375f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 22:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1759210399; x=1759815199; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RcKZSqsNCClUnXNLZ+VWODkqJQUd67st9xIuGAhStQk=;
-        b=TI4uSpQwWfQKYiW1tI6/8kA5Z+W7OMOqi0a4zllk1q8j+84RD0TwN0Du9UKkguXWhO
-         W76z5mPf5mURJ4ve7m6CFUL+1+UsRX1pLFNYCGCwo3SFu01z3wnAa7RMnSU9BICyKlwO
-         ld4kwDoZEKgwKlSsnd9aGwUYu82qT3Iho1o+MtzCQMBzgVs1uqg5u3ukbs5ZPNPGNodb
-         543neIkoKYOqLzvovMx5dWX6W7EHk5etHpXdVKHjH0jlEYrqJXmnvgrsndCmaHc0Xjbr
-         jf9IHBQDX6BUC8KxoEkh0w/TJX3JwqnHOIlLZNgtum8ys1Mb2uOlKF8vBz4ICzOSZsa5
-         OtRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759210399; x=1759815199;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RcKZSqsNCClUnXNLZ+VWODkqJQUd67st9xIuGAhStQk=;
-        b=fyqXDAPw+UyLvOBM0n0kZjPnCCCz2HVE8+AIO8p0mmm80YS718fkhxRR46DKzIl2XN
-         rVJ5dwuU0OKWBpu3zJypSz2nNMpV0iA89Unr4H/hF8+/zuqi/i+6eRVq2rJ6zTtIzrrK
-         KQwGUubup3OxRwxI9AFAMatq5gi7Vp2pF8/lMxavEQMEOac498bx1vd34FhADqWG9MPM
-         egezONibeWp29mao1mv1CrhZWOSDOXdvQ9PpJ7MTlEZc6CKEolE4G0D4vPtW+JZNPZ3v
-         UsIT8U/8BR0q5TfQP98Yb/pqmFMb8/j9US5Sz8UpOM/fmMcKJOkFmdO7XNfuVbwFl4EZ
-         YZyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWajfCKqgzTGMcIf4o+7eFpJP/SJVB8y1bG2jBKb+R6Lf8XAdVoNhb/RbF4INVlyyzG87vwEcuL66+lNKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzql/0gqU5g3NkYK+cRMlb1QIFgtuZJLcu/Xsz7jH1rFyhybCe8
-	Y3cKN46aUii2ZSO6I2jG7kuTyOEVmiwXhuyll83xoN9pObcGMo0iYJt3gVHpq9fgERQ=
-X-Gm-Gg: ASbGnctyWOkaBdHUIBGAizhCj2lHZU3OWYC+EGiGIogSdCoOrDBPh3z+thFeB9bDAcU
-	7h/FKX3sqOuFeovpGFXkS3BtpCF7IqdV+eB5EIE93hAM8wm+S5Bz36vFgjDR+zGmhzAP1VAXDtr
-	yvShriEB4Lrjc7pjaM5eJo/vOCBjyU0fUQ/M15ijbFZR+F2QkhjLG+btGit7Yw6/0HdwA57+2r4
-	m/U8ZX5h5d2cG3xcyqny1siawhHh4dVs35GKTe1ZFG/+ZhBXZEcIH9mMQ+crjcfuQcYUf18Vmtu
-	iGnTh3YoU3LhaAZ8ga9Msr4sx9hwojd8tYXAwjVtFydc4cJ10tKc/frS0lTdDVXurQLr6NDGOjR
-	JxiXnlTl5RvzNpQ5EzQJJwd5MlukJjJ1KOlkyJYeFAtFt8XRl9RfaUuo=
-X-Google-Smtp-Source: AGHT+IEkueAS01kFVAoXd3MEH9FbKcaIHwo56QQ73i1m/EjHyO0vo1fWE9up8eTSOW6ZhEmF700+iQ==
-X-Received: by 2002:a05:6000:400a:b0:3e4:957d:d00 with SMTP id ffacd0b85a97d-40e4c2d2576mr17438762f8f.58.1759210399124;
-        Mon, 29 Sep 2025 22:33:19 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.111])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc88b0779sm20750915f8f.58.2025.09.29.22.33.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 22:33:18 -0700 (PDT)
-Message-ID: <2bd09757-cd66-4a2a-8801-0f62dc99b9c8@tuxon.dev>
-Date: Tue, 30 Sep 2025 08:33:15 +0300
+	s=arc-20240116; t=1759210789; c=relaxed/simple;
+	bh=3oj05juDFPgELUBimpQP1rb8UThndbpdgpeKr0IrN/A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pgnqDkXunGt5+BD8nIRlwNgLwBnM0jRayGyjMYVL/DdYxxrKsCDVwVyERINo/jZi5d11UQ8+LKRCHSRn2S/Swan5YwuWntC3UZiVXMciWeGo8nRY3sHDDr9TE3GdhBa5qGSsyo836yb62GD2yWJQAMlesCVjgD5+22NZtUVI7Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=YbPtVfvo; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d9fbfa089dbf11f0b33aeb1e7f16c2b6-20250930
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=NvsO9T4H7Ag6wzXS0PXVlhDNJ8GuyE8WgvH3PAzr4T4=;
+	b=YbPtVfvofccXGAxs8qE8tQHwvFAV3XTceaSBMwE0DfLJm0FATs70lmA2QEECsVhHwzaCgaPLdfUFOnaZWX630CtMgLRxHz9Vte26qYNNynGQBxXYdsxAvcl7VCW9fIcllHmaj26t9CSUFVf7Ov+vZqol0bvcd2tHYfi24Wu8Kpk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:fc1d02b1-7775-44f1-ab9e-aad728e98e4b,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:03c1d2f8-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: d9fbfa089dbf11f0b33aeb1e7f16c2b6-20250930
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 606992304; Tue, 30 Sep 2025 13:39:36 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 30 Sep 2025 13:39:34 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Tue, 30 Sep 2025 13:39:34 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Will Lee <will-cy.Lee@mediatek.com>,
+	SS Wu <ss.wu@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v1] Bluetooth: btmtksdio: Add pmctrl handling for BT closed state during reset
+Date: Tue, 30 Sep 2025 13:39:33 +0800
+Message-ID: <20250930053933.1685847-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pinctrl: renesas: rzg2l: Fix ISEL restore on resume
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
- linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-References: <20250912095308.3603704-1-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdXv1-w0SE7FZy5k3jg2FO-a-RB2w1WB=VM_UFEA9zjWDw@mail.gmail.com>
- <ef82c610-0571-4665-a5d1-07a9ed9fb8d3@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <ef82c610-0571-4665-a5d1-07a9ed9fb8d3@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi, Geert,
+This patch adds logic to handle power management control when the
+Bluetooth function is closed during the SDIO reset sequence.
 
-On 9/29/25 15:10, Claudiu Beznea wrote:
->> This conflicts with commit d57183d06851bae4 ("pinctrl: renesas: rzg2l:
->> Drop unnecessary pin configurations"), which I have already queued
->> in renesas-drivers/renesas-pinctrl-for-v6.19.  Hence I am replacing
->> the above hunk by:
->>
->>             /* Switching to GPIO is not required if reset value is
->> same as func */
->>             reg = readb(pctrl->base + PMC(off));
->>     -       spin_lock_irqsave(&pctrl->lock, flags);
->>     +       raw_spin_lock_irqsave(&pctrl->lock, flags);
->>             pfc = readl(pctrl->base + PFC(off));
->>             if ((reg & BIT(pin)) && (((pfc >> (pin * 4)) & PFC_MASK) == func)) {
->>     -               spin_unlock_irqrestore(&pctrl->lock, flags);
->>     +               raw_spin_unlock_irqrestore(&pctrl->lock, flags);
->>                     return;
->>             }
->>
->> while applying.
-> This is right. Thank you! I'm going to give it also a try (on actual HW) a
-> bit later. I'll let you know.
+Specifically, if BT is closed before reset, the driver enables the
+SDIO function and sets driver pmctrl. After reset, if BT remains
+closed, the driver sets firmware pmctrl and disables the SDIO function.
 
-Sorry for the delay, all looks good to me (checked on RZ/G3S).
+These changes ensure proper power management and device state consistency
+across the reset flow.
 
-Thank you,
-Claudiu
+Fixes: 8fafe702253d ("Bluetooth: mt7921s: support bluetooth reset mechanism")
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+---
+ drivers/bluetooth/btmtksdio.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> 
-> Thank you,
-> Claudiu
+diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
+index 50abefba6d04..62db31bd6592 100644
+--- a/drivers/bluetooth/btmtksdio.c
++++ b/drivers/bluetooth/btmtksdio.c
+@@ -1270,6 +1270,12 @@ static void btmtksdio_reset(struct hci_dev *hdev)
+ 
+ 	sdio_claim_host(bdev->func);
+ 
++	/* set drv_pmctrl if BT is closed before doing reset */
++	if (!test_bit(BTMTKSDIO_FUNC_ENABLED, &bdev->tx_state)) {
++		sdio_enable_func(bdev->func);
++		btmtksdio_drv_pmctrl(bdev);
++	}
++
+ 	sdio_writel(bdev->func, C_INT_EN_CLR, MTK_REG_CHLPCR, NULL);
+ 	skb_queue_purge(&bdev->txq);
+ 	cancel_work_sync(&bdev->txrx_work);
+@@ -1285,6 +1291,12 @@ static void btmtksdio_reset(struct hci_dev *hdev)
+ 		goto err;
+ 	}
+ 
++	/* set fw_pmctrl back if BT is closed after doing reset */
++	if (!test_bit(BTMTKSDIO_FUNC_ENABLED, &bdev->tx_state)) {
++		btmtksdio_fw_pmctrl(bdev);
++		sdio_disable_func(bdev->func);
++	}
++
+ 	clear_bit(BTMTKSDIO_PATCH_ENABLED, &bdev->tx_state);
+ err:
+ 	sdio_release_host(bdev->func);
+-- 
+2.45.2
 
 
