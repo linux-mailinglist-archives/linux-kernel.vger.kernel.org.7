@@ -1,256 +1,280 @@
-Return-Path: <linux-kernel+bounces-837909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67621BAE066
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:13:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CC5BAE06E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16636166E3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B93316E513
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E42309DDB;
-	Tue, 30 Sep 2025 16:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C78E309DCC;
+	Tue, 30 Sep 2025 16:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnIsQFqh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A1++i4u2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFDB17B425
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF57A4501A;
+	Tue, 30 Sep 2025 16:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759248771; cv=none; b=rShDvXli1RivCryJiYsf/MFTDz7HBKCCMMkx+GiP1GB5cBX8KjH/xpbOFcTEKbBIJm+Ycoa/ekyg1mOrS/HdN8DMwlKd0KAR6f3hnMvpLku1B245SDxWlL3+PxrYofAibaAJ9VuBwGKWTs/yZR/MSg9Rq+UDqij4gHsJKFbs5No=
+	t=1759248833; cv=none; b=uzNuJarV/WkxHY8U6nGanWSaROnF5hCrmDCdbrX8UzrsuOZSYkWYGm358QAx99qZhaEfaAYE9AuKQM1O5GCP6XMrhWnU6BqMCNbBCbEdDWjwt1i901FRP3l6xbSNBl/DJIUZNYV2rNDl5lT1yl3yBdTMMlBjoK89LTMg/vn4syk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759248771; c=relaxed/simple;
-	bh=Nblw4AibWIEoUqbfoaJhynNC/tdUWYxkcN0099Tf8ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tAx6bPCVXQJsUWoRLS/wirxhmpAH6awY5UkbQ4+t7HbotwMmUswit7oo+ngIIicvEHJqnhrvAPKHL/DM1MRYRONkCW+nFvIB38FoPNh7gqgtNIpnifle3EJ6ocj9OECKXhRvFKFIucdDkHmdWLM9CAPXzc4jWVDdGG8qAh+eNBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnIsQFqh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C4F8C4AF0B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759248770;
-	bh=Nblw4AibWIEoUqbfoaJhynNC/tdUWYxkcN0099Tf8ks=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cnIsQFqhfZE3MtEq8ySFxuy21GVL0glVwR5fCGUz+2ju/EGbfpthXLwc91+rXe1A6
-	 l5L7MTmgo2bLe6dpfAeYE+79PALph5VZOlZ2+6uv53sLwzWT9sTVwKhxL3BcpkII58
-	 gm2zw8NGzgEtC4VFg4njtAEYfWL8byQC2CG3U1JH/JWkcg1mM5RmniCEoADN/POPuI
-	 bFYSrkJDCtFhTOVPQlLlo3sCgu5jHBFZAUOAq6xdvrlRybhiqSx/MyE5lF1tCLUgv/
-	 800fSGuVKndQ1Ab91iB9ZTfO8P2mVorLcuZP7YGCNHX2otfJinxtnAg9Lvuq69rQAo
-	 1DT3JolK15vSg==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3727611c1bso1142550366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:12:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcZFm5yX9vg2GjO7w4Y2mSckrk56Wq2+XHUO/AjLBYf7yKF3u5XzAZv6s3i/JDAXdhmfPf6ewHZaY/Sj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZRiN9l9YsoYP4sGW8aTwj/QwyzWepsBxHBXNa4YgD1zigyxls
-	cEcmOiQYyU3VjeYk7iTUlJL56r2NFceFV3HNCi2hwcxbiyfjhENFo2igy+s1RCvlfepgtS2aNBX
-	+D8kpilHFbgTiZgOH09UfBYj4qGTsdU0=
-X-Google-Smtp-Source: AGHT+IFeoCpbWP3ThLVAEfTGy6k0CDNkgrRJNIwAjFgT0cWKAXkHAfADEnZvXv1qYU2FTnnSwHG6gfByVzR49XAz69A=
-X-Received: by 2002:a17:907:3f9e:b0:b3c:82d5:211c with SMTP id
- a640c23a62f3a-b46e5d3b5famr22811166b.27.1759248769081; Tue, 30 Sep 2025
- 09:12:49 -0700 (PDT)
+	s=arc-20240116; t=1759248833; c=relaxed/simple;
+	bh=5+T6dQJkhqnXsd8OU+/4OXe2jUb92hyssTPkFheuZf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hL9tWOI+zXOh24k/ac1z4pc4KV1yUjGSUfxDas9lhFFAzRyXUfmUNBDI2haio3RmfFkjISHhLgrz8BCvbkQQIFp49pyBZN48h41b6Zstm0CYHj9JN2e2fnvbWQV6+gHDZR00ejd8vFuZmvXJGLPAvwMYqHgxNoA6OyEHCuyqHVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A1++i4u2; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759248832; x=1790784832;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5+T6dQJkhqnXsd8OU+/4OXe2jUb92hyssTPkFheuZf4=;
+  b=A1++i4u2CEy5eilh1uE0ELW/7qtCStAT8pGcQ8WmU5Wd9N/jgvzz3Qdj
+   nKXzkodmcqD2JDo++UcTLPiGcvonkNoaxhQdhxcm1lermEe7EBUffj3Gb
+   5cUwUsrrLr/mZKEeKZUzM3tSpUzCKeMV1Lto8atGJdLMA0JwDYmpmrvf0
+   JOxcNkoUhrImr+XOAc2lFbMAEUM4fT8tGCmllq3mjFK8Cy+TKw4X51dBn
+   VcefeUl1SfTPafoA2Adp0CB6m0I1Ls0wSscWoWtf2LwhYAe/KA38o/Qh6
+   PyqK2mgX9paGPtNbUCMdat/fkXKSDO7Me4EcAAKds+JYcoS2JlqkxpAeH
+   g==;
+X-CSE-ConnectionGUID: q3f08OtGTICoqO1lIrzQlQ==
+X-CSE-MsgGUID: OtYRpGkKRwKh49TD6mnyrg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="79162120"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="79162120"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 09:13:50 -0700
+X-CSE-ConnectionGUID: LZTaY9RiSya9cIQd0xvE+w==
+X-CSE-MsgGUID: k5JAID56SiKd4RsivZBBgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="178975308"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.162]) ([10.125.109.162])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 09:13:48 -0700
+Message-ID: <5706b8ca-6046-4f96-a93b-8dd677494352@intel.com>
+Date: Tue, 30 Sep 2025 09:13:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930130452.297576-1-mssola@mssola.com> <CAL3q7H66AOc_hbXX_PN-DGP5fT36NnxE7p4j2LqjPXyRaOu=iA@mail.gmail.com>
-In-Reply-To: <CAL3q7H66AOc_hbXX_PN-DGP5fT36NnxE7p4j2LqjPXyRaOu=iA@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Tue, 30 Sep 2025 17:12:11 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H4ijVSVZXahhN85D0LBSAJZPhP1-sqqFQXasdQwfjnyuQ@mail.gmail.com>
-X-Gm-Features: AS18NWC1Ybdi1fJfuTJIjXwWHhaH18_0HdJFWoAa0CRK2V1aXbRQACCA1iHEObI
-Message-ID: <CAL3q7H4ijVSVZXahhN85D0LBSAJZPhP1-sqqFQXasdQwfjnyuQ@mail.gmail.com>
-Subject: Re: [PATCH] fs: btrfs: prevent a double kfree on delayed-ref
-To: =?UTF-8?B?TWlxdWVsIFNhYmF0w6kgU29sw6A=?= <mssola@mssola.com>
-Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com, 
-	fdmanana@suse.com, wqu@suse.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 23/25] CXL/PCI: Introduce CXL uncorrectable protocol
+ error recovery
+To: "Bowman, Terry" <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+ <20250925223440.3539069-24-terry.bowman@amd.com>
+ <d3d3ab84-8cdd-4386-82dd-de8149159985@intel.com>
+ <a2b5d6f0-7f6a-4ac3-b302-73fb3c1a92b2@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <a2b5d6f0-7f6a-4ac3-b302-73fb3c1a92b2@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 5:07=E2=80=AFPM Filipe Manana <fdmanana@kernel.org>=
- wrote:
->
-> On Tue, Sep 30, 2025 at 2:05=E2=80=AFPM Miquel Sabat=C3=A9 Sol=C3=A0 <mss=
-ola@mssola.com> wrote:
-> >
-> > In the previous code it was possible to incur into a double kfree()
-> > scenario when calling 'add_delayed_ref_head'. This could happen if the
-> > record was reported to already exist in the
-> > 'btrfs_qgroup_trace_extent_nolock' call, but then there was an error
-> > later on 'add_delayed_ref_head'. In this case, since
-> > 'add_delayed_ref_head' returned an error, the caller went to free the
-> > record. Since 'add_delayed_ref_head' couldn't set this kfree'd pointer
-> > to NULL, then kfree() would have acted on a non-NULL 'record' object
-> > which was pointing to memory already freed by the callee.
-> >
-> > The problem comes from the fact that the responsibility to kfree the
-> > object is on both the caller and the callee at the same time. Hence, th=
-e
-> > fix for this is to shift the ownership of the 'qrecord' object out of
-> > the 'add_delayed_ref_head'. That is, we will never attempt to kfree()
-> > the given object inside of this function, and will expect the caller to
-> > act on the 'qrecord' object on its own. The only exception where the
-> > 'qrecord' object cannot be kfree'd is if it was inserted into the
-> > tracing logic, for which we already have the 'qrecord_inserted_ret'
-> > boolean to account for this. Hence, the caller has to kfree the object
-> > only if 'add_delayed_ref_head' reports not to have inserted it on the
-> > tracing logic.
-> >
-> > As a side-effect of the above, we must guarantee that
-> > 'qrecord_inserted_ret' is properly initialized at the start of the
-> > function, not at the end, and then set when an actual insert
-> > happens. This way we avoid 'qrecord_inserted_ret' having an invalid
-> > value on an early exit.
-> >
-> > The documentation from the 'add_delayed_ref_head' has also been updated
-> > to reflect on the exact ownership of the 'qrecord' object.
-> >
-> > Fixes: 6ef8fbce0104 ("btrfs: fix missing error handling when adding del=
-ayed ref with qgroups enabled")
-> > Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.com>
-> > ---
-> >  fs/btrfs/delayed-ref.c | 39 +++++++++++++++++++++++++++++++--------
-> >  1 file changed, 31 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-> > index 481802efaa14..bc61e0eacc69 100644
-> > --- a/fs/btrfs/delayed-ref.c
-> > +++ b/fs/btrfs/delayed-ref.c
-> > @@ -798,10 +798,14 @@ static void init_delayed_ref_head(struct btrfs_de=
-layed_ref_head *head_ref,
-> >  }
-> >
-> >  /*
-> > - * helper function to actually insert a head node into the rbtree.
-> > + * Helper function to actually insert a head node into the rbtree.
->
-> Since you are updating this line just to capitalize the first word,
-> you might as well replace rbtree with xarray as we don't use rbtree
-> anymore.
->
-> >   * this does all the dirty work in terms of maintaining the correct
-> >   * overall modification count.
-> >   *
-> > + * The caller is responsible for calling kfree() on @qrecord. More spe=
-cifically,
-> > + * if this function reports that it did not insert it as noted in
-> > + * @qrecord_inserted_ret, then it's safe to call kfree() on it.
-> > + *
-> >   * Returns an error pointer in case of an error.
-> >   */
-> >  static noinline struct btrfs_delayed_ref_head *
-> > @@ -814,7 +818,14 @@ add_delayed_ref_head(struct btrfs_trans_handle *tr=
-ans,
-> >         struct btrfs_delayed_ref_head *existing;
-> >         struct btrfs_delayed_ref_root *delayed_refs;
-> >         const unsigned long index =3D (head_ref->bytenr >> fs_info->sec=
-torsize_bits);
-> > -       bool qrecord_inserted =3D false;
-> > +
-> > +       /*
-> > +        * If 'qrecord_inserted_ret' is provided, then the first thing =
-we need
-> > +        * to do is to initialize it to false just in case we have an e=
-xit
-> > +        * before trying to insert the record.
-> > +        */
-> > +       if (qrecord_inserted_ret)
-> > +               *qrecord_inserted_ret =3D false;
-> >
-> >         delayed_refs =3D &trans->transaction->delayed_refs;
-> >         lockdep_assert_held(&delayed_refs->lock);
-> > @@ -833,6 +844,12 @@ add_delayed_ref_head(struct btrfs_trans_handle *tr=
-ans,
-> >
-> >         /* Record qgroup extent info if provided */
-> >         if (qrecord) {
-> > +               /*
-> > +                * Setting 'qrecord' but not 'qrecord_inserted_ret' wil=
-l likely
-> > +                * result in a memory leakage.
-> > +                */
-> > +               WARN_ON(!qrecord_inserted_ret);
->
-> For this sort of mandatory stuff, we use assertions, not warnings:
->
-> ASSERT(qrecord_insert_ret !=3D NULL);
->
->
-> > +
-> >                 int ret;
-> >
-> >                 ret =3D btrfs_qgroup_trace_extent_nolock(fs_info, delay=
-ed_refs, qrecord,
-> > @@ -840,12 +857,10 @@ add_delayed_ref_head(struct btrfs_trans_handle *t=
-rans,
-> >                 if (ret) {
-> >                         /* Clean up if insertion fails or item exists. =
-*/
-> >                         xa_release(&delayed_refs->dirty_extents, index)=
-;
-> > -                       /* Caller responsible for freeing qrecord on er=
-ror. */
-> >                         if (ret < 0)
-> >                                 return ERR_PTR(ret);
-> > -                       kfree(qrecord);
-> > -               } else {
-> > -                       qrecord_inserted =3D true;
-> > +               } else if (qrecord_inserted_ret) {
-> > +                       *qrecord_inserted_ret =3D true;
-> >                 }
-> >         }
-> >
-> > @@ -888,8 +903,6 @@ add_delayed_ref_head(struct btrfs_trans_handle *tra=
-ns,
-> >                 delayed_refs->num_heads++;
-> >                 delayed_refs->num_heads_ready++;
-> >         }
-> > -       if (qrecord_inserted_ret)
-> > -               *qrecord_inserted_ret =3D qrecord_inserted;
-> >
-> >         return head_ref;
-> >  }
-> > @@ -1049,6 +1062,14 @@ static int add_delayed_ref(struct btrfs_trans_ha=
-ndle *trans,
-> >                 xa_release(&delayed_refs->head_refs, index);
-> >                 spin_unlock(&delayed_refs->lock);
-> >                 ret =3D PTR_ERR(new_head_ref);
-> > +
-> > +               /*
-> > +                * It's only safe to call kfree() on 'qrecord' if
-> > +                * 'add_delayed_ref_head' has _not_ inserted it for
->
-> The notation we use for function names is  function_name(), not 'function=
-_name'.
->
-> Otherwise it looks good, thanks.
 
-Also, the subject should just be "btrfs: ....", no need to add extra
-"fs: " prefix - we never do that.
->
-> > +                * tracing. Otherwise we need to handle this here.
-> > +                */
-> > +               if (!qrecord_reserved || qrecord_inserted)
-> > +                       goto free_head_ref;
-> >                 goto free_record;
-> >         }
-> >         head_ref =3D new_head_ref;
-> > @@ -1071,6 +1092,8 @@ static int add_delayed_ref(struct btrfs_trans_han=
-dle *trans,
-> >
-> >         if (qrecord_inserted)
-> >                 return btrfs_qgroup_trace_extent_post(trans, record, ge=
-neric_ref->bytenr);
-> > +
-> > +       kfree(record);
-> >         return 0;
-> >
-> >  free_record:
-> > --
-> > 2.51.0
-> >
-> >
+
+On 9/30/25 7:38 AM, Bowman, Terry wrote:
+> 
+> 
+> On 9/29/2025 7:26 PM, Dave Jiang wrote:
+>>
+>> On 9/25/25 3:34 PM, Terry Bowman wrote:
+>>> Populate the cxl_do_recovery() function with uncorrectable protocol error (UCE)
+>>> handling. Follow similar design as found in PCIe error driver,
+>>> pcie_do_recovery(). One difference is cxl_do_recovery() will treat all UCEs
+>>> as fatal with a kernel panic. This is to prevent corruption on CXL memory.
+>>>
+>>> Introduce cxl_walk_port(). Make this analogous to pci_walk_bridge() but walking
+>>> CXL ports instead. This will iterate through the CXL topology from the
+>>> erroring device through the downstream CXL Ports and Endpoints.
+>>>
+>>> Export pci_aer_clear_fatal_status() for CXL to use if a UCE is not found.
+>>>
+>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>>>
+>>> ---
+>>>
+>>> Changes in v11->v12:
+>>> - Cleaned up port discovery in cxl_do_recovery() (Dave)
+>>> - Added PCI_EXP_TYPE_RC_END to type check in cxl_report_error_detected()
+>>>
+>>> Changes in v10->v11:
+>>> - pci_ers_merge_results() - Move to earlier patch
+>>> ---
+>>>  drivers/cxl/core/ras.c | 111 +++++++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 111 insertions(+)
+>>>
+>>> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+>>> index 7e8d63c32d72..45f92defca64 100644
+>>> --- a/drivers/cxl/core/ras.c
+>>> +++ b/drivers/cxl/core/ras.c
+>>> @@ -443,8 +443,119 @@ void cxl_endpoint_port_init_ras(struct cxl_port *ep)
+>>>  }
+>>>  EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
+>>>  
+>>> +static int cxl_report_error_detected(struct device *dev, void *data)
+>>> +{
+>>> +	struct pci_dev *pdev = to_pci_dev(dev);
+>>> +	pci_ers_result_t vote, *result = data;
+>>> +
+>>> +	guard(device)(dev);
+>>> +
+>>> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT) ||
+>>> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_RC_END)) {
+>>> +		if (!cxl_pci_drv_bound(pdev))
+>>> +			return 0;
+>>> +
+>>> +		vote = cxl_error_detected(dev);
+>>> +	} else {
+>>> +		vote = cxl_port_error_detected(dev);
+>>> +	}
+>>> +
+>>> +	*result = pci_ers_merge_result(*result, vote);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int match_port_by_parent_dport(struct device *dev, const void *dport_dev)
+>>> +{
+>>> +	struct cxl_port *port;
+>>> +
+>>> +	if (!is_cxl_port(dev))
+>>> +		return 0;
+>>> +
+>>> +	port = to_cxl_port(dev);
+>>> +
+>>> +	return port->parent_dport->dport_dev == dport_dev;
+>>> +}
+>>> +
+>>> +static void cxl_walk_port(struct device *port_dev,
+>>> +			  int (*cb)(struct device *, void *),
+>>> +			  void *userdata)
+>>> +{
+>>> +	struct cxl_dport *dport = NULL;
+>>> +	struct cxl_port *port;
+>>> +	unsigned long index;
+>>> +
+>>> +	if (!port_dev)
+>>> +		return;
+>>> +
+>>> +	port = to_cxl_port(port_dev);
+>>> +	if (port->uport_dev && dev_is_pci(port->uport_dev))
+>>> +		cb(port->uport_dev, userdata);
+>> Could use some comments on what is being walked. Also an explanation of what is happening here would be good.
+> Ok
+>> If this is an endpoint port, this would be the PCI endpoint device.
+>> If it's a switch port, then this is the upstream port.
+>> If it's a root port, this is skipped.
+>>
+>>> +
+>>> +	xa_for_each(&port->dports, index, dport)
+>>> +	{
+>>> +		struct device *child_port_dev __free(put_device) =
+>>> +			bus_find_device(&cxl_bus_type, &port->dev, dport->dport_dev,
+>>> +					match_port_by_parent_dport);
+>>> +
+>>> +		cb(dport->dport_dev, userdata);
+>> This is going through all the downstream ports
+>>> +
+>>> +		cxl_walk_port(child_port_dev, cxl_report_error_detected, userdata);
+>>> +	}
+>>> +
+>>> +	if (is_cxl_endpoint(port))
+>>> +		cb(port->uport_dev->parent, userdata);
+>> And this is the downstream parent port of the endpoint device
+>>
+>> Why not move this before the xa_for_each() and return early? endpoint ports don't have dports, no need to even try to run that block above.
+> Sure, I'll change that.
+>> So in the current implementation,
+>> 1. Endpoint. It checks the device, and then it checks the downstream parent port for errors. Is checking the parent dport necessary?
+>> 2. Switch. It checks the upstream port, then it checks all the downstream ports for errors.
+>> 3. Root port. It checks all the downstream ports for errors.
+>> Is this the correct understanding of what this function does?
+> 
+> Yes. The ordering is different as you pointed out. I can move the endpoint 
+> check earlier with an early return. 
+
+As the endpoint, what is the reason the check the parent dport? Pardon my ignorance.
+
+>>> +}
+>>> +
+>>>  static void cxl_do_recovery(struct device *dev)
+>>>  {
+>>> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+>>> +	struct pci_dev *pdev = to_pci_dev(dev);
+>>> +	struct cxl_port *port = NULL;
+>>> +
+>>> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
+>>> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM)) {
+>>> +		struct cxl_dport *dport;
+>>> +		struct cxl_port *rp_port __free(put_cxl_port) = find_cxl_port(&pdev->dev, &dport);
+>>> +
+>>> +		port = rp_port;
+>>> +
+>>> +	} else	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM) {
+>>> +		struct cxl_port *us_port __free(put_cxl_port) = find_cxl_port_by_uport(&pdev->dev);
+>>> +
+>>> +		port = us_port;
+>>> +
+>>> +	} else	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT) ||
+>>> +		    (pci_pcie_type(pdev) == PCI_EXP_TYPE_RC_END)) {
+>>> +		struct cxl_dev_state *cxlds;
+>>> +
+>>> +		if (!cxl_pci_drv_bound(pdev))
+>>> +			return;
+>> Need to have the pci dev lock before checking driver bound.
+>> DJ
+> 
+> Ok, I'll try to add that into cxl_pci_drv_bound(). Terry
+
+Do you need the lock beyond just checking the driver data? Maybe do it outside cxl_pci_drv_bound(). I would have an assert in the function though to ensure lock is held when calling this function.
+
+DJ
+>>> +
+>>> +		cxlds = pci_get_drvdata(pdev);
+>>> +		port = cxlds->cxlmd->endpoint;
+>>> +	}
+>>> +
+>>> +	if (!port) {
+>>> +		dev_err(dev, "Failed to find the CXL device\n");
+>>> +		return;
+>>> +	}
+>>> +
+>>> +	cxl_walk_port(&port->dev, cxl_report_error_detected, &status);
+>>> +	if (status == PCI_ERS_RESULT_PANIC)
+>>> +		panic("CXL cachemem error.");
+>>> +
+>>> +	/*
+>>> +	 * If we have native control of AER, clear error status in the device
+>>> +	 * that detected the error.  If the platform retained control of AER,
+>>> +	 * it is responsible for clearing this status.  In that case, the
+>>> +	 * signaling device may not even be visible to the OS.
+>>> +	 */
+>>> +	if (cxl_error_is_native(pdev)) {
+>>> +		pcie_clear_device_status(pdev);
+>>> +		pci_aer_clear_nonfatal_status(pdev);
+>>> +		pci_aer_clear_fatal_status(pdev);
+>>> +	}
+>>>  }
+>>>  
+>>>  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
+> 
+> 
+
 
