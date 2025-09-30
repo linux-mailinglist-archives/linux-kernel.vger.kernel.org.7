@@ -1,154 +1,283 @@
-Return-Path: <linux-kernel+bounces-838054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1930FBAE538
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:39:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10825BAE53E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E08DD4E2804
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:39:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E70E320A5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C134238175;
-	Tue, 30 Sep 2025 18:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E173D267F58;
+	Tue, 30 Sep 2025 18:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BdqRu4TM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="h3Hy5rkf"
+Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DF33EC
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C939033EC;
+	Tue, 30 Sep 2025 18:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759257556; cv=none; b=RyqM0puvZ7qsGkKRuiOhT8rNMq2yTRoFPvQsgPrfhZoSIeeKGCOMicJbnVKYEgrT1/Vn0IwU01HBlU7NsmKTEiaib4K4hu1+wF/XMC+3G9v15uo1H93WNCAjiA5vXC+uDa3H2z2xCorGEJe5OslknurMvBi25CruXC8G1eVfAq4=
+	t=1759257581; cv=none; b=mXKSvyGDfRtzYaDbkZBK/qLMsd9pLxgUX2zKt80c6icX9UJkqDHsT/5txDY1UYRZCFz2K9/hKdyF175UufbyxNgH+6k0+ut8jPd2BHYVOK0x9QFKTUApwLBqhysEVjgWC67ZZnw9JNBZj3HueGQyvg6J0c27lx9PCcoI88YhWxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759257556; c=relaxed/simple;
-	bh=41FcYWDCd//svS7G9UxD4xdGwTB1l+wDZ7lVXeNhM1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQozwaWUuvmsjMPUjo+3LL5VACVNNIMKGD6yVh1sHCu760laRDOHF2XWDYs9MuJJYS8LiTzjASli2hbpnqiKMUT/4KuNqGKmuQPxh3kectlTlLjJTa976nfk7+YRosz7Y51+EWGe7wzTQUmjW2ih5zlHsFhmuZ/iI9H79MaxyJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BdqRu4TM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759257553;
+	s=arc-20240116; t=1759257581; c=relaxed/simple;
+	bh=NHhbW6XOibNDd+L6PGZjsEt/nr22HafaXJexwmknz/s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I5WYITY3yHYZ8F3SzEP4twJSuysP5pdr7kJ4fkmiX8IJuJ8/zNN3Jkj1M2vGU4pgGG6FHp8B6vZDRoW37M0C8M4cGAC8vn3wiY9jsvmMeTsZSpYmJOU2I9vZbGLIJUkzNVc9aE5eBl1mMTc8c8qG7uJ9LdnQ64NqQ9NhwL8z3EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=h3Hy5rkf; arc=none smtp.client-ip=91.198.250.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4cbn0P5GP0z9y8h;
+	Tue, 30 Sep 2025 20:39:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1759257573;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=eOcI1ZIbD/HvHYX2YhFw02/XoFtTTRUFMmkH7W3cd1M=;
-	b=BdqRu4TM5RPp+ZKTCMH1H1R8hB+IntqL0kCSFVGpQbkWxudc6DBZdjC+TZJWGVaXT5oQOH
-	z4KGaSeMoE2aHUC2RBAlr3XFfwS+an/FY5yWt5FeVSEWsU/Q3lJ5F1HSWYJExR+Xx1TCfS
-	C7sgEVC7HrM0mnQWwHEI+58CwByuQUQ=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-ZP-bO4GMOYqZwDwEs07doQ-1; Tue, 30 Sep 2025 14:39:11 -0400
-X-MC-Unique: ZP-bO4GMOYqZwDwEs07doQ-1
-X-Mimecast-MFC-AGG-ID: ZP-bO4GMOYqZwDwEs07doQ_1759257551
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-78e30eaca8eso178367526d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:39:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759257551; x=1759862351;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eOcI1ZIbD/HvHYX2YhFw02/XoFtTTRUFMmkH7W3cd1M=;
-        b=izUWi7sxVVh7aHlvHL7JdC7KHnIAnswxqHrqVBxzd5F8qU/Cw4VL0SF5pC7cHOqWwb
-         zHug2BmCZuPbPLC7phaerLvI9Vk/S0LVusiOHk5n57i1ND1ICr63JVJ0vfs5bbs+T8yC
-         Mdye3XMg6tG/1HtYyn0Ah436z49aBCF6KKUo8TUSBTfAgDS4R4nQ3DcTKtspZETuSdDU
-         bsmdkXSOcVeVlktSdKiKlXl42pmcJVYxTzb7blk4yGtXJcKDGUUMalBO6sJeH2BJKGa7
-         rhweuJCB93RTtVmpOPv8dCI9vljTv0zc9lMIcDqBE/KaWEVn6GLFqV1RZldZyEnW0tXB
-         oNpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSGoj5XZ5wWs/GlQb/hgjcWN933dIs7PPFWuwbGonxteM/Nu5nJ7g7WPlDKf2EcnHqJcyPv4jHSQf+QBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX+zCQW5srzEMNsZYJpF1OitVjkgUVQDzqAarDAiddbBwwcy1U
-	fJBmmQMV+OqUrt176gwvNhJ1Q/ILw4qIBT+sT6BuuQkC2EXmeNGBPb5vbuuqj4UwAbsjBzHADZH
-	jqpgT7ckOa0p00PsDyD4rD4jkAHuzNYlOX5vJ6ws0CFXLloUG+pjn//aZHweIiP+QLA==
-X-Gm-Gg: ASbGncv1jKPkNRsEUbF5tNmKnFajtbj/AEOowm0yh0z3x/Y8x8rBROEYkISpOubEJLo
-	JsxG77Ta0zu3CtXjYQ6TuSf5kdyxhrgLC4op1HDKLxpTxdWYxEYNyY/ObPM9WULvTislurCqqDg
-	Ov8SedNL6hskpYjwIiriMUl6zNc6WBPJNhDirAeT/A4pHkChTaOmPPV9VuNjMEiKjWa8CN1kX/8
-	DjKIY9Idda0bhZ5S9H6QlAATZJ1zb2y0zQgoX5OlK2SHuMJitNWs1Rlq3S/u3j82IdWpG7JSndr
-	coNixTjB58JddWxtC+5+uXIs9MT/t8f8nG7Sbg==
-X-Received: by 2002:a05:6214:f25:b0:86c:1f66:e2eb with SMTP id 6a1803df08f44-873a4dca4ecmr9343316d6.33.1759257550949;
-        Tue, 30 Sep 2025 11:39:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElCA+Ys8V7FHTo8o4fXzI+Tp8Ue5gMs0OVn2KTplxlHdrIW9wKkjuDv1J29s1qR50z6aY/Dw==
-X-Received: by 2002:a05:6214:f25:b0:86c:1f66:e2eb with SMTP id 6a1803df08f44-873a4dca4ecmr9342926d6.33.1759257550445;
-        Tue, 30 Sep 2025 11:39:10 -0700 (PDT)
-Received: from x1.local ([142.188.210.50])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8013ca1f1desm100257506d6.23.2025.09.30.11.39.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 11:39:09 -0700 (PDT)
-Date: Tue, 30 Sep 2025 14:39:08 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	James Houghton <jthoughton@google.com>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <aNwjzC1mlnHwEgsd@x1.local>
-References: <20250926211650.525109-1-peterx@redhat.com>
- <20250926211650.525109-2-peterx@redhat.com>
- <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
- <aNur9nbdnlykqbU7@kernel.org>
- <186ef2e5-bd0a-46e1-a88d-2fc5448c1c72@redhat.com>
+	bh=Y5QK+htnxkzn4WpcEK+6lK/We5lMiyB7Bvom3iaXJBk=;
+	b=h3Hy5rkfd/oj2rTQhMEM60e3IzeU/9Dh/jCjGT6cXUXR0pDGlvfHXTp8XKntKFTi5Cyv4v
+	6IruskTg/JEnr7rAevNQn/02oxfzSlLnxyZMKQg2anPngz+EwHZOYgAPHoibirKe9rScVv
+	Bs8b99cK/mH0J9IYTAVnZPYpllTJa3EXBB5s//GkiRCn3Z81iWVCX5W3wUtmk2KaqNjX3T
+	k2HLdO8yzhsCgamKgfwa+TRLPNmnv8IQdkMzuQdA8d71IHoO/YBLy9KBJs/xSftHe4ald+
+	LzDhK/KEH/Z5VWo+JjkD/7FhEnV09p0gEx8MfnxNe8vfmtSW3qDCOrouF2dtlA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=softfail (outgoing_mbo_mout: 2001:67c:2050:b231:465::2 is neither permitted nor denied by domain of mssola@mssola.com) smtp.mailfrom=mssola@mssola.com
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: linux-btrfs@vger.kernel.org,  clm@fb.com,  dsterba@suse.com,
+  fdmanana@suse.com,  wqu@suse.com,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: btrfs: prevent a double kfree on delayed-ref
+In-Reply-To: <CAL3q7H66AOc_hbXX_PN-DGP5fT36NnxE7p4j2LqjPXyRaOu=iA@mail.gmail.com>
+	(Filipe Manana's message of "Tue, 30 Sep 2025 17:07:47 +0100")
+References: <20250930130452.297576-1-mssola@mssola.com>
+	<CAL3q7H66AOc_hbXX_PN-DGP5fT36NnxE7p4j2LqjPXyRaOu=iA@mail.gmail.com>
+Date: Tue, 30 Sep 2025 20:39:28 +0200
+Message-ID: <87bjmraiov.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+X-Rspamd-Queue-Id: 4cbn0P5GP0z9y8h
+
+--=-=-=
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <186ef2e5-bd0a-46e1-a88d-2fc5448c1c72@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 12:18:37PM +0200, David Hildenbrand wrote:
-> On 30.09.25 12:07, Mike Rapoport wrote:
-> > On Tue, Sep 30, 2025 at 11:36:53AM +0200, David Hildenbrand wrote:
-> > > On 26.09.25 23:16, Peter Xu wrote:
-> > > > +	/**
-> > > > +	 * uffd_get_folio: Handler to resolve UFFDIO_CONTINUE request.
-> > > 
-> > > Just wondering if we could incorporate the "continue" / "minor" aspect into
-> > > the callback name.
-> > > 
-> > > uffd_minor_get_folio / uffd_continue_get_folio
-> > > 
-> > > Or do you see use of that callback in the context of other uffd features?
-> > 
-> > If someone picks the gauntlet of refactoring the loop in mcopy_atomic()
-> > we'd need a similar callback for uffd copy. And as I see it it would be
-> > different enough to warrant emphasizing minor/continue in the name here.
+Filipe Manana @ 2025-09-30 17:07 +01:
 
-Sure, I can go with uffd_minor_get_folio when I repost.
+> On Tue, Sep 30, 2025 at 2:05=E2=80=AFPM Miquel Sabat=C3=A9 Sol=C3=A0 <mss=
+ola@mssola.com> wrote:
+>>
+>> In the previous code it was possible to incur into a double kfree()
+>> scenario when calling 'add_delayed_ref_head'. This could happen if the
+>> record was reported to already exist in the
+>> 'btrfs_qgroup_trace_extent_nolock' call, but then there was an error
+>> later on 'add_delayed_ref_head'. In this case, since
+>> 'add_delayed_ref_head' returned an error, the caller went to free the
+>> record. Since 'add_delayed_ref_head' couldn't set this kfree'd pointer
+>> to NULL, then kfree() would have acted on a non-NULL 'record' object
+>> which was pointing to memory already freed by the callee.
+>>
+>> The problem comes from the fact that the responsibility to kfree the
+>> object is on both the caller and the callee at the same time. Hence, the
+>> fix for this is to shift the ownership of the 'qrecord' object out of
+>> the 'add_delayed_ref_head'. That is, we will never attempt to kfree()
+>> the given object inside of this function, and will expect the caller to
+>> act on the 'qrecord' object on its own. The only exception where the
+>> 'qrecord' object cannot be kfree'd is if it was inserted into the
+>> tracing logic, for which we already have the 'qrecord_inserted_ret'
+>> boolean to account for this. Hence, the caller has to kfree the object
+>> only if 'add_delayed_ref_head' reports not to have inserted it on the
+>> tracing logic.
+>>
+>> As a side-effect of the above, we must guarantee that
+>> 'qrecord_inserted_ret' is properly initialized at the start of the
+>> function, not at the end, and then set when an actual insert
+>> happens. This way we avoid 'qrecord_inserted_ret' having an invalid
+>> value on an early exit.
+>>
+>> The documentation from the 'add_delayed_ref_head' has also been updated
+>> to reflect on the exact ownership of the 'qrecord' object.
+>>
+>> Fixes: 6ef8fbce0104 ("btrfs: fix missing error handling when adding dela=
+yed ref with qgroups enabled")
+>> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.com>
+>> ---
+>>  fs/btrfs/delayed-ref.c | 39 +++++++++++++++++++++++++++++++--------
+>>  1 file changed, 31 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
+>> index 481802efaa14..bc61e0eacc69 100644
+>> --- a/fs/btrfs/delayed-ref.c
+>> +++ b/fs/btrfs/delayed-ref.c
+>> @@ -798,10 +798,14 @@ static void init_delayed_ref_head(struct btrfs_del=
+ayed_ref_head *head_ref,
+>>  }
+>>
+>>  /*
+>> - * helper function to actually insert a head node into the rbtree.
+>> + * Helper function to actually insert a head node into the rbtree.
+>
+> Since you are updating this line just to capitalize the first word,
+> you might as well replace rbtree with xarray as we don't use rbtree
+> anymore.
+>
+>>   * this does all the dirty work in terms of maintaining the correct
+>>   * overall modification count.
+>>   *
+>> + * The caller is responsible for calling kfree() on @qrecord. More spec=
+ifically,
+>> + * if this function reports that it did not insert it as noted in
+>> + * @qrecord_inserted_ret, then it's safe to call kfree() on it.
+>> + *
+>>   * Returns an error pointer in case of an error.
+>>   */
+>>  static noinline struct btrfs_delayed_ref_head *
+>> @@ -814,7 +818,14 @@ add_delayed_ref_head(struct btrfs_trans_handle *tra=
+ns,
+>>         struct btrfs_delayed_ref_head *existing;
+>>         struct btrfs_delayed_ref_root *delayed_refs;
+>>         const unsigned long index =3D (head_ref->bytenr >> fs_info->sect=
+orsize_bits);
+>> -       bool qrecord_inserted =3D false;
+>> +
+>> +       /*
+>> +        * If 'qrecord_inserted_ret' is provided, then the first thing w=
+e need
+>> +        * to do is to initialize it to false just in case we have an ex=
+it
+>> +        * before trying to insert the record.
+>> +        */
+>> +       if (qrecord_inserted_ret)
+>> +               *qrecord_inserted_ret =3D false;
+>>
+>>         delayed_refs =3D &trans->transaction->delayed_refs;
+>>         lockdep_assert_held(&delayed_refs->lock);
+>> @@ -833,6 +844,12 @@ add_delayed_ref_head(struct btrfs_trans_handle *tra=
+ns,
+>>
+>>         /* Record qgroup extent info if provided */
+>>         if (qrecord) {
+>> +               /*
+>> +                * Setting 'qrecord' but not 'qrecord_inserted_ret' will=
+ likely
+>> +                * result in a memory leakage.
+>> +                */
+>> +               WARN_ON(!qrecord_inserted_ret);
+>
+> For this sort of mandatory stuff, we use assertions, not warnings:
+>
+> ASSERT(qrecord_insert_ret !=3D NULL);
+>
+>
+>> +
+>>                 int ret;
+>>
+>>                 ret =3D btrfs_qgroup_trace_extent_nolock(fs_info, delaye=
+d_refs, qrecord,
+>> @@ -840,12 +857,10 @@ add_delayed_ref_head(struct btrfs_trans_handle *tr=
+ans,
+>>                 if (ret) {
+>>                         /* Clean up if insertion fails or item exists. */
+>>                         xa_release(&delayed_refs->dirty_extents, index);
+>> -                       /* Caller responsible for freeing qrecord on err=
+or. */
+>>                         if (ret < 0)
+>>                                 return ERR_PTR(ret);
+>> -                       kfree(qrecord);
+>> -               } else {
+>> -                       qrecord_inserted =3D true;
+>> +               } else if (qrecord_inserted_ret) {
+>> +                       *qrecord_inserted_ret =3D true;
+>>                 }
+>>         }
+>>
+>> @@ -888,8 +903,6 @@ add_delayed_ref_head(struct btrfs_trans_handle *tran=
+s,
+>>                 delayed_refs->num_heads++;
+>>                 delayed_refs->num_heads_ready++;
+>>         }
+>> -       if (qrecord_inserted_ret)
+>> -               *qrecord_inserted_ret =3D qrecord_inserted;
+>>
+>>         return head_ref;
+>>  }
+>> @@ -1049,6 +1062,14 @@ static int add_delayed_ref(struct btrfs_trans_han=
+dle *trans,
+>>                 xa_release(&delayed_refs->head_refs, index);
+>>                 spin_unlock(&delayed_refs->lock);
+>>                 ret =3D PTR_ERR(new_head_ref);
+>> +
+>> +               /*
+>> +                * It's only safe to call kfree() on 'qrecord' if
+>> +                * 'add_delayed_ref_head' has _not_ inserted it for
+>
+> The notation we use for function names is  function_name(), not 'function=
+_name'.
 
-> > 
-> > I also think we can drop uffd_ prefix for the callback, as it's called as
-> > uffd_ops->get_folio() or whatever it's be called.
-> 
-> Agreed. I got annoyed yesterday when typing vma->vm_mm often enough
-> (vma->mm! ).
+I've included all your comments into a v2 patch set. I'll wait a bit
+before sending it in case I get more comments.
 
-That's also why I kept uffd_ because that's the tradition mm/ uses in many
-important data structures like vma and mm.  It helps most tagging systems
-that most Linux developers use to avoid global name collisions.
+>
+> Otherwise it looks good, thanks.
+>
 
-So I tend to keep the prefix for now, until we want to switch away from
-Hungarian-like notations completely. But let me know if anyone has strong
-feelings.
+Thanks to you for the review!
 
-Thanks,
+>> +                * tracing. Otherwise we need to handle this here.
+>> +                */
+>> +               if (!qrecord_reserved || qrecord_inserted)
+>> +                       goto free_head_ref;
+>>                 goto free_record;
+>>         }
+>>         head_ref =3D new_head_ref;
+>> @@ -1071,6 +1092,8 @@ static int add_delayed_ref(struct btrfs_trans_hand=
+le *trans,
+>>
+>>         if (qrecord_inserted)
+>>                 return btrfs_qgroup_trace_extent_post(trans, record, gen=
+eric_ref->bytenr);
+>> +
+>> +       kfree(record);
+>>         return 0;
+>>
+>>  free_record:
+>> --
+>> 2.51.0
+>>
+>>
 
--- 
-Peter Xu
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjcI+AbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
+ZTn6EACjnrLB35GpOMa+hfXcpoo8OLq0pLSkKnXZH2jDBl5F5P2Tqo7uFIRJeusv
+n2NqdgvBEC7dXiAHiifyK+8I5OKLZVmwE3GKSp5mbvTLm29pLzjNdUIYnotXmeiI
+hTMbFd8Bz/elbVL0yVFg+hwm7Wgiac7RxHgz31ry+NKrTX3g08YU8zMaaCvKFhkN
+y15xzCa0TKsIBAR2XcQ9zNMCCD1t0HpVxxJYrhfg5rwTQQsj3ieGP5iw/5D4EQi/
+38mlAemAvGSP3gntKJ80tyhov/6mdqa5qmFAlQDh8g/R+qABRT4uKpPObXirDLjX
+0zHRT3dv8f6aVus2uCt6mme0UlxCxJYcbmrrn8NU09byHd7Yo9CNXRQWWJgy+3t9
+52fL2dmwGGmQWp7gs0SuUCGXzSZeC6w3koX6YwvpHs51uUZwMjLYdpv3qVNOXi8f
+6JizIquPoa+ih87Yld8WSnnoBfutwEZnEzJYGUCFIirUbF4LDpV6KRC+aiuRcFvq
+suRaP6GeFjKLYr3QfhO3fj1ansufDUVrgezpMhbzwfGwFQuSnrPntPHW10veImMx
+lLtCXiFIrGnaBQgmrUqxBPvdY7xXZHvDaPZpV9uzjbfdEXLAG980RqjZqHNMOfmw
+TxmSciPN9wsFGQ4TZl3hUUPjJxAJ7a6ozWdnUL9GVrL18xoFoA==
+=2ckg
+-----END PGP SIGNATURE-----
+--=-=-=--
 
