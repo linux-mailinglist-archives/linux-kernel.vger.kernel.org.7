@@ -1,134 +1,170 @@
-Return-Path: <linux-kernel+bounces-837360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E52DBAC20E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9884DBAC217
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51FB17A047E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:47:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02BCA1920665
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEF42F83D4;
-	Tue, 30 Sep 2025 08:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE462F49F8;
+	Tue, 30 Sep 2025 08:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBAmdwuu"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRyzqPCL"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF422F7ABC
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829382D7DDF
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759222024; cv=none; b=FbxeAArJsGUIJaScSF5A38LH3gf3saBflyB+uC+7v1UXpGMniuGiXHYNZgpk2TgbD5LlQKyN6I0bKw2OM79EXBOLz1tFxH4zvQkebbaxldAshoE3Yh2F6KyTvfYsFaYMQVgzbnO8+YqbGt3vQxHp3RA4YWhC2/n+5R1mejO66aY=
+	t=1759222155; cv=none; b=GgTr5jwFhqk6NCj8eJZrdRVzxhKsn8Ria7wkVDVaZLTno2w1m+w8U3mGM+PliZu91I27JygxF+j5XKUm4khijLq+JO7m9+lX3b7vMfHnR5ohBhJfoz9wcALaNri+JyxcDVaZePf94lhRnUq77nHJ8HY6vPKtbw3otuVeNs8stXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759222024; c=relaxed/simple;
-	bh=JE5vzNG6Sy2HEFoz+DBwUg/nv8rP+wKI7N6BxDeuvto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rsEMvXraHiibov5aTg+iFnDeTN5msYUrDQ3Mb+rKDebRpnEL0wvQAgv2CAQxxqqGx/NN8wW9H3On0swvMfLCDIeQtKZePXc0nwZKcAqZhgU6bQOI4F9IVQMSVqLquJmTK42sDvsvL1Rtut1c4FMSNmj9ZNU2BEDavSnN/eOxIa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBAmdwuu; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1759222155; c=relaxed/simple;
+	bh=FaBjq+b096JR3LdKULnMiCshllEkboYo4jX4SHLBShU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QUigyTyoncSxTGpZHjdt4Pz9D2gxu5Fjv0PFFJVb/YkxizLAypDevNWmSo97YfQm0XuHF2qJFTtR0WN2j52bk6XPzi4ZeSOSoIVKbfLy/hY5MBX4wCqTp4I8GlRexae+OoRHFQw8O6e1VxXnK9nzYaJuUAFUtP1WGcukbEyA9so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRyzqPCL; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so3875897f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:47:02 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-78125ed4052so3954014b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759222021; x=1759826821; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HQSp6khD66PWakk86QjUyhjTSipaHZaw5SNW0wYKmlw=;
-        b=OBAmdwuueYmyBTRRG0U2mpZPkWRuEtqLS6p43sBi8sZEx1TdIpEbpllzKMmBhMOIeQ
-         BiY3fYAjQa00aslOQN6Q164/9g3WC79Dx5axj9RU7Cd/hDWtDUnuPa93C7tcEnRilLNP
-         c85AcXeGByCdyZATxwWkaVp9MaypIC7IQiK0VLmHviinA9k4/SI87uM+l8HZbNyAo6WB
-         9g6Zk1DPsVJMeR5kz7DgpCNUBSKTlLHjRWvsHCojktrA8+xlIZ51K0DnEJ10jWz2qNeD
-         4pKdEwjMUzvNByYJ2p7CIjqrxGhRv5euJUt6H8CEWVBHkGlLDlaQoKZ8rusY8uI/xLKk
-         BGQQ==
+        d=gmail.com; s=20230601; t=1759222152; x=1759826952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNx5UNuWQA/zkctg0q6HtsfqKmsRWnVIXyFIJxaX1Ro=;
+        b=SRyzqPCLlVX2tnaEhDXJj8j0zBSe8aj4cQBz/RiyhFhgQTZmSnAeYkAIN5YQdXgJCd
+         tONuV7VDGke9GRE16Dy1WGhEs3q470nEG14QDtoQJhQU0WDue6K0INWT/31Ec98CA0ki
+         1MV1rKSAUpqCMgW45ftOG6uyzPIWUatN3STKG7GAxOdRMkjsaXfkov+U4xNYEUPM0jeC
+         GSodKLX+FOOOGnHOEfMyVPMxMrXvmYBRN9jndQzqmP6ZJEWVX9CeoM+u2+v/ITNeoYxW
+         +FrrTJe4O6gEdZd3xh+y4e/pNjdf+G4J1JAoQmsCjRLXJFEk52prSiKfw8+VmiUnHi/3
+         V/5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759222021; x=1759826821;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HQSp6khD66PWakk86QjUyhjTSipaHZaw5SNW0wYKmlw=;
-        b=sIw87X4hMIHFNYa/0pLbTtG9IqlRLhl8BtvYALtsmWnW6PcujkbgDK5TnLKoDF+/9Z
-         kfMX8WFKHxPeh1k4wsG7M8xF9SuN3rQVW+ZCTALfozGoqG/KKrJW64mLIXT6bljrBtvM
-         0k0G2uEzxvIQSEc9UiKCsKYCfSvVL4Wk5J0S0WQ2uNx99RcFBnZPnnFzvO/w925NF6nO
-         KRl70lMaGjTzzbib6cNFHIyQk+x1UieC033GscGvrkHGhEPbGyucdg4xphuZXvINmw1o
-         9MPvqVp0rMJw6mTpBuw5QgzsE8Xw4YxEAuFc5KXMVPBrimciLPw08OuCyqPIvv5v/uj8
-         o+IQ==
-X-Gm-Message-State: AOJu0YxBl+Z3xJIE9fpr7c5bqpZRBCbytMrWjPR8u7KjYbfHz2JS4jHD
-	lTneEdvsl+jxF89yaoTYpKydboCJ1CPebKXs44VoXK7XxhZejs2b6UvA
-X-Gm-Gg: ASbGncskZc4dGm4mXtKt91DRSNXHoGVSBSk+jhYaX+p50+b/ru46XrEJBijTwrtkUAu
-	SMllj7DzQVp/ZB6TQaGD8H4UYEVWUQEK4+AN02wFYp/C8n0ZJDCxFrIE34I4jqXLq6MWzV8fN5p
-	x6SMQvFgszA1l0Ie6icOXJfCmItvOZ79VS6WFfA/3P1R0KVmGkqzN9iQ6zy43n+O1vggIBwWXCQ
-	e/5WwYdgssg89UMas0YUwqWPcKykD6K8gObIFtg6DOE0Si92NFCRcEvVVRXkw4ZItpQiwqAWHwQ
-	OG15hIPJHWhaVh8i/Aiumy+QSzUVFoA5vemAUTG3/s1bVJJL35RjuMFA5Syh5yEKpJysuK7vnwt
-	gnkLBWIc/O4QvKqZKuwXUMUp0qeoNRVL/7LGfHB1dFaZ1lrSvKT1PU/KkJ9uMHswTbeyuxKIdfT
-	zwHzpUzhu140i9U1klKfyI+VY2O8kDs9/KTgwhRn26
-X-Google-Smtp-Source: AGHT+IELjz8q9Wh4r7dTEajOLlhaehyVXuIINojrCEIqJ4/pZdMgPhXlF8x51ihCR4TA5ozMBPdmQw==
-X-Received: by 2002:a5d:5f85:0:b0:3f9:1571:fdea with SMTP id ffacd0b85a97d-40e4cc630b2mr20809863f8f.44.1759222020801;
-        Tue, 30 Sep 2025 01:47:00 -0700 (PDT)
-Received: from localhost (2a02-8440-7149-a758-f461-9bc4-1c75-ebc1.rev.sfr.net. [2a02:8440:7149:a758:f461:9bc4:1c75:ebc1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996e2fsm282983795e9.2.2025.09.30.01.47.00
+        d=1e100.net; s=20230601; t=1759222152; x=1759826952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mNx5UNuWQA/zkctg0q6HtsfqKmsRWnVIXyFIJxaX1Ro=;
+        b=ljaFtXER0bIlbJ3qQgWjVQgxoulxcx4GViRunU8Ru1l16UuHgjhQ7HPKs0B1bjJPhh
+         8bCTaS6M5NioStzcT+fCjbep/ZoLN7f6WttoZlqxopE2rRBWgJbLo3BMEz4dYIZQd94J
+         nRZFNq76t2GRte7pYfbNjTTbmwV1T4vZopXoFohF1wXR0eeCzgYQRFZxVjfY26i+mTiL
+         QMmmG/cxlDRMtBCgwUD3sLYKkalxjmbfevUs4qVlpvmlC/OhTsAU9wThHcDO5ZxR6pgm
+         9zsuaVl9G3ARzSGxkLTHPL6W82+tBmAy2MH745alTZHHSkZRvVdH34+bmkI4ujSsXKG+
+         8HhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8Y9yVhJOwtYuVfBuan14ekC7rDZEXf50OFBf/Ejq+Z4WK52f49gg0HUlgwH3Pak4j5TwWPVxJ0VLUM78=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyNw+kmLT2jEQlVGds8vfOemy5tY4f8k21rzeVL/+UL1IPF07t
+	MKCp/OWtrwIXbdHkOXRRx/1/oq5RNbs6xw0pg8iOhuU6piTVnAuAei5E
+X-Gm-Gg: ASbGncvYqHqkqyZRq6rs1Kk03s6kosaT52li7AoNAtZKPXbBL2JqwAKuIp7G4Pv0Z88
+	QgeK9LVpuOSdkPCLt4T3HvqRafJa1gqoOjY6zSfbRy6QDH5RR/9qNCF3hhsAechngNhaZ5wto2G
+	iVXafrJW4yqj83nX40V4DfJguN9/VaTsACPJKV/VsNI+QKLthS5j0uwIM0IQW2upOe+2VGaToVl
+	eJhRl1sEAef1nSXkbxLRBOVXEedJlCP4f1C3tUQt775UHdkLqjM51SjYo9IVVdwBI08WUFf+HN4
+	TdI5+0eTWO6V7lKXvWaaD3LN2e1h7XZxgvebtUN4SaplBpwd3V68xJBZVD6EaB65P7/Jq7od9N4
+	4wc+iavZpuzxGGazgugf3+mumIJV/CO3jy5tdzcEEMnxyDOy7DWWe6lJqUh+61Cs2iJEu1zA/97
+	9Dx4GRTAITEA==
+X-Google-Smtp-Source: AGHT+IE30L2/jMrX7//iknNI4i/8WYK8VmjjjICdaX47Vb7tDhZeTRtCGU+Y0joFglyA+Qss2C08tQ==
+X-Received: by 2002:a05:6a00:4fcb:b0:781:2271:50df with SMTP id d2e1a72fcca58-781227153f2mr13698060b3a.19.1759222151659;
+        Tue, 30 Sep 2025 01:49:11 -0700 (PDT)
+Received: from ti-am64x-sdk.. ([157.50.102.70])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c06e72sm12894187b3a.83.2025.09.30.01.49.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 01:47:00 -0700 (PDT)
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-Date: Tue, 30 Sep 2025 10:46:50 +0200
-Subject: [PATCH v8 7/7] arm64: dts: st: add DDR channel to stm32mp257f-ev1
- board
+        Tue, 30 Sep 2025 01:49:11 -0700 (PDT)
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+To: Thangaraj.S@microchip.com,
+	Rengarajan.S@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	o.rempel@pengutronix.de
+Cc: netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bhanuseshukumar@gmail.com,
+	syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+Subject: [PATCH] net: usb: lan78xx: Fix lost EEPROM read timeout error(-ETIMEDOUT) in lan78xx_read_raw_eeprom
+Date: Tue, 30 Sep 2025 14:19:02 +0530
+Message-Id: <20250930084902.19062-1-bhanuseshukumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250930-b4-ddr-bindings-v8-7-fe4d8c015a50@gmail.com>
-References: <20250930-b4-ddr-bindings-v8-0-fe4d8c015a50@gmail.com>
-In-Reply-To: <20250930-b4-ddr-bindings-v8-0-fe4d8c015a50@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Julius Werner <jwerner@chromium.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-0dae4
 
-From: Clément Le Goffic <clement.legoffic@foss.st.com>
+Syzbot reported read of uninitialized variable BUG with following call stack.
 
-Add 32bits DDR4 channel to the stm32mp257f-dk board.
+lan78xx 8-1:1.0 (unnamed net_device) (uninitialized): EEPROM read operation timeout
+=====================================================
+BUG: KMSAN: uninit-value in lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
+BUG: KMSAN: uninit-value in lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+BUG: KMSAN: uninit-value in lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
+ lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
+ lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+ lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
+ lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
+ lan78xx_probe+0x225c/0x3310 drivers/net/usb/lan78xx.c:4707
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
+Local variable sig.i.i created at:
+ lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1092 [inline]
+ lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+ lan78xx_reset+0x77e/0x2cd0 drivers/net/usb/lan78xx.c:3241
+ lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
+
+The function lan78xx_read_raw_eeprom failed to properly propagate EEPROM
+read timeout errors (-ETIMEDOUT). In the fallthrough path, it first
+attempted to restore the pin configuration for LED outputs and then
+returned only the status of that restore operation, discarding the
+original timeout error.
+
+As a result, callers could mistakenly treat the data buffer as valid
+even though the EEPROM read had actually timed out with no data or partial
+data.
+
+To fix this, handle errors in restoring the LED pin configuration separately.
+If the restore succeeds, return any prior EEPROM timeout error correctly
+to the caller.
+
+Reported-by: syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=62ec8226f01cb4ca19d9
+Fixes: 8b1b2ca83b20 ("net: usb: lan78xx: Improve error handling in EEPROM and OTP operations")
+Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
 ---
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Note: The patch is compiled and tested using EVB-LAN7800LC.
+ The Sysbot doesn't have C reproducer to get the patch tested by sysbot.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 836b1958ce65..c4223f06396a 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -41,6 +41,13 @@ pad_clk: pad-clk {
- 		};
- 	};
+ drivers/net/usb/lan78xx.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 1ff25f57329a..d75502ebbc0d 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -1079,10 +1079,13 @@ static int lan78xx_read_raw_eeprom(struct lan78xx_net *dev, u32 offset,
+ 	}
  
-+	ddr_channel: sdram-channel-0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "jedec,ddr4-channel";
-+		io-width = <32>;
-+	};
-+
- 	imx335_2v9: regulator-2v9 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "imx335-avdd";
-
+ read_raw_eeprom_done:
+-	if (dev->chipid == ID_REV_CHIP_ID_7800_)
+-		return lan78xx_write_reg(dev, HW_CFG, saved);
+-
+-	return 0;
++	if (dev->chipid == ID_REV_CHIP_ID_7800_) {
++		int rc = lan78xx_write_reg(dev, HW_CFG, saved);
++		/* If USB fails, there is nothing to do */
++		if (rc < 0)
++			return rc;
++	}
++	return ret;
+ }
+ 
+ static int lan78xx_read_eeprom(struct lan78xx_net *dev, u32 offset,
 -- 
-2.43.0
+2.34.1
 
 
