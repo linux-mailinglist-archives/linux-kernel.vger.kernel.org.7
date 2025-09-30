@@ -1,104 +1,185 @@
-Return-Path: <linux-kernel+bounces-837688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DF7BACF3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:57:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37319BACF49
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CEA17BD37
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:57:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F6A97A855A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D26E2F8BF1;
-	Tue, 30 Sep 2025 12:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C7F302CC3;
+	Tue, 30 Sep 2025 12:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kK0lApBs"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gcYdA31z"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4768524167A
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21431B4236;
+	Tue, 30 Sep 2025 12:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759237067; cv=none; b=B9Ndyerrq/QbNaymUnCkpZRXZHlZWCZBvsvwvTInxaAtYX0gEBOWOz/F8WAieROxksvOwqhi2yUORQlI/ron9ZragXSS4+Qmidx6iHHzJP4tRducwvgyWEJ0Kj/ZbQON6nhFvNR7F87vLT6NshnIzKdvssJP2Rx2I+2B7SxwI0w=
+	t=1759237105; cv=none; b=M2Y8WQnVQr4jT1xDKWArYbCXFeqf/YVGN7POT+NC4hb3IeMV8sFOQ7t0xd5zcnblM3PHym7LxSxZvEssXyPb7Gl7ZTS7YaiH4q0AoLXfiooVJY6drRAuuROTlj5ZgUGm33C1i6hyrR2hq4GUD/p8F97oMI4buLQnikQO+8tPrtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759237067; c=relaxed/simple;
-	bh=kWzPIJSCPvZuJ5cTivFa/QO51QpD2ze2aD7rllOzFEA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ixe5cD093vQdANZS83J7G9+XSrXewfOeK1EIuJLpN1YmWRmQFt7P/seorkMCeScOl4skZPX+9JbMifSaVqcBJZa7gJogrPOseoS5R0qLc1Dhjt6mJHxFUFFVgHr1iWjvMixhAmSvZdbJF2E2xK8Tp0E4L9KqRqCaRRPpjVfUU18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kK0lApBs; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 568414E40E50;
-	Tue, 30 Sep 2025 12:57:42 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 100E1606E4;
-	Tue, 30 Sep 2025 12:57:42 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EABD4102F17DB;
-	Tue, 30 Sep 2025 14:57:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759237061; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=nVa13gnqEbh0OZfVTb62Mape7gGdjtHA5pEICJOEZkQ=;
-	b=kK0lApBsvgRTKrjnu2IL+FRxEyR7mnsh3RP0I7hz5/8rfbhRiS/M1SmGvCx98qkRn50S40
-	DUuy6VU71VExjQDcGAojP8+opuH+Ak3vE7hk+5v7Ua5MzDtTQ9Y+P1E82gPRCP2QFiJWiv
-	D23lVXQomE6b7XxqCYXDQT1snVJVZ6UpdrOS8YDH0D5kCPM6RMt21PyqGlpbt38Qm78oN2
-	vKLpRgvc2AEBNZxk7Y7ls2cI3pLo0ue9PBGwgs1z3xAdPxKvAohA+FyomgAYUoi/YQrrts
-	8qK0EOOPxIrYpGj3rjSXo9pFMyKBm4ndIRpT49dhsMT8Bn7Q0rgikBt90Dt3pg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,  Richard
- Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 resend] mtdchar: fix integer overflow in read/write
- ioctls
-In-Reply-To: <aNvN4kfJ2ROB353Q@stanley.mountain> (Dan Carpenter's message of
-	"Tue, 30 Sep 2025 15:32:34 +0300")
-References: <aNvN4kfJ2ROB353Q@stanley.mountain>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Tue, 30 Sep 2025 14:57:19 +0200
-Message-ID: <87qzvogksw.fsf@bootlin.com>
+	s=arc-20240116; t=1759237105; c=relaxed/simple;
+	bh=RK7IzL1Zeq/fJP4hvapyJAwCkjX9uv/grEB82ocyfBY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=L7lZ06YSJ0j/I/KOgxBbL6mG/HBF3wQxB7kcU9WQIupgpJ1Uk73cAbpasYaKLVadKU4KBxCXCAPRrnGPXWvtAALJXHGN+SqiIdCkJ35CAFJ+W65EUXBYprIzO/PJp26QiAUvVrU0z/PEtnry0qpFWPLEtOHBdQtX5VIc3U28MDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gcYdA31z; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759237097;
+	bh=RK7IzL1Zeq/fJP4hvapyJAwCkjX9uv/grEB82ocyfBY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=gcYdA31z3d8lq1Z+J4heKJjd3YHupC16bCknHdbE//P24BpkKFtBvcBap+Y5TivUM
+	 PIbnRy3tuyWV6OOpNx9Vky7JOar0NAh3GgPZRNDDhxT0nHX0zPr/nSjVEk7MyPTJr5
+	 7LsNdRFaov8ohJVsCKD0auKP+cmLvvU3Y9KYIFXnC3t+vUg+KrVkxaAY/fmXpwH/kz
+	 xo7/4oKSVpXOfOHTH4vEmWAw89TFR5up42x0/At7HOJTo2MkSg3wdVMplSX0tZptkm
+	 Sm6B6sozNSU3eDguDfCV2b/LQ0gA/RUoyc5Un1w+PDQgD0EQXOkeaK7SD2HPPY4byi
+	 J3j6JaZxi7AGg==
+Received: from [IPv6:2606:6d00:17:ebd3::5ac] (unknown [IPv6:2606:6d00:17:ebd3::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1196917E0154;
+	Tue, 30 Sep 2025 14:58:15 +0200 (CEST)
+Message-ID: <2efcfe19bafd1276e9fc71b72e251443f313d693.camel@collabora.com>
+Subject: Re: [PATCH v2 12/27] media: v4l2-subdev: Introduce v4l2 subdev
+ context
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi
+	 <jacopo.mondi@ideasonboard.com>
+Cc: Anthony McGivern <Anthony.McGivern@arm.com>, 
+ "bcm-kernel-feedback-list@broadcom.com"	
+ <bcm-kernel-feedback-list@broadcom.com>, "florian.fainelli@broadcom.com"	
+ <florian.fainelli@broadcom.com>, "hverkuil@kernel.org"
+ <hverkuil@kernel.org>,  "kernel-list@raspberrypi.com"	
+ <kernel-list@raspberrypi.com>, "Kieran Bingham
+ (kieran.bingham@ideasonboard.com)"	 <kieran.bingham@ideasonboard.com>,
+ "linux-arm-kernel@lists.infradead.org"	
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"	
+ <linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"	
+ <linux-media@vger.kernel.org>, "linux-rpi-kernel@lists.infradead.org"	
+ <linux-rpi-kernel@lists.infradead.org>, "m.szyprowski@samsung.com"	
+ <m.szyprowski@samsung.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+ "sakari.ailus@linux.intel.com"	 <sakari.ailus@linux.intel.com>,
+ "tfiga@chromium.org" <tfiga@chromium.org>, 
+ "tomi.valkeinen@ideasonboard.com"	 <tomi.valkeinen@ideasonboard.com>
+Date: Tue, 30 Sep 2025 08:58:13 -0400
+In-Reply-To: <20250930101626.GE25784@pendragon.ideasonboard.com>
+References: 
+	<DU0PR08MB8836559555E586FCD5AE1CBA811FA@DU0PR08MB8836.eurprd08.prod.outlook.com>
+	 <pdxsi4fskze6mvgro5foa3jvmrvl3ihmksnzukonoihkb5xum5@kph26jtiayda>
+	 <20250930101626.GE25784@pendragon.ideasonboard.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-0L4H1CrQYwSEJYFcjhYv"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+
+
+--=-0L4H1CrQYwSEJYFcjhYv
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Dan,
+Hi Laurent,
 
-On 30/09/2025 at 15:32:34 +03, Dan Carpenter <dan.carpenter@linaro.org> wro=
-te:
+Le mardi 30 septembre 2025 =C3=A0 13:16 +0300, Laurent Pinchart a =C3=A9cri=
+t=C2=A0:
+> On Tue, Sep 30, 2025 at 11:53:39AM +0200, Jacopo Mondi wrote:
+> > On Thu, Sep 25, 2025 at 09:26:56AM +0000, Anthony McGivern wrote:
+> > > On Thu, Jul 24, 2025 at 16:10:19 +0200, Jacopo Mondi write:
+> > > > Introduce a new type in v4l2 subdev that represents a v4l2 subdevic=
+e
+> > > > contex. It extends 'struct media_entity_context' and is intended to=
+ be
+> > > > extended by drivers that can store driver-specific information
+> > > > in their derived types.
+> > > >=20
+> > > > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > >=20
+> > > I am interested in how the sub-device context will handle the
+> > > Streams API? Looking at the commits the
+> > > v4l2_subdev_enable/disable_streams functions still appear to operate
+> > > on the main sub-device only. I take it we would have additional
+> > > context-aware functions here that can fetch the subdev state from
+> > > the sub-device context, though I imagine some fields will have to be
+> > > moved into the context such as s_stream_enabled, or even
+> > > enabled_pads for non stream-aware drivers?
+> >=20
+> > mmm good question, I admit I might have not considered that part yet.
+> >=20
+> > Streams API should go in a soon as Sakari's long awaited series hits
+> > mainline, and I will certainly need to rebase soon, so I'll probably
+> > get back to this.
+> >=20
+> > Have you any idea about how this should be designed ?
+>=20
+> Multi-context is designed for memory to memory pipelines, as inline
+> pipelines can't be time-multiplexed (at least not without very specific
+> hardware designs that I haven't encountered in SoCs so far). In a
 
-> The "req.start" and "req.len" variables are u64 values that come from the
-> user at the start of the function.  We mask away the high 32 bits of
-> "req.len" so that's capped at U32_MAX but the "req.start" variable can go
-> up to U64_MAX which means that the addition can still integer overflow.
->
-> Use check_add_overflow() to fix this bug.
->
-> Fixes: 095bb6e44eb1 ("mtdchar: add MEMREAD ioctl")
-> Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE i=
-octl")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: fix the tags.
-> RESEND: I sent this last year but it wasn't applied.
-> https://lore.kernel.org/all/Z1ax3K3-zSJExPNV@stanley.mountain/
+I probably don't understand what you mean here, since I know you are well a=
+ware
+of the ISP design on RK3588. It has two cores, which allow handling up to 2
+sensors inline, but once you need more stream, you should have a way to
+reconfigure the pipeline and use one or both cores in a m2m (multi-context)
+fashion to extend its capability (balancing the resolutions and rate as usu=
+al).
 
-I don't know why, perhaps it got filtered as SPAM, I don't know, but I'm
-sorry about that.
+Perhaps you mean this specific case is already covered by the stream API
+combined with other floating proposal ? I think most of us our missing the =
+big
+picture and just see organic proposals toward goals documented as un-relate=
+d,
+but that actually looks related.
 
-I've just "closed" next, so I'll queue this in a fixes PR on top of
-v5.18-rc1.
+Nicolas
 
-Thanks,
-Miqu=C3=A8l
+> memory-to-memory pipeline I expect the .enable/disable_streams()
+> operation to not do much, as the entities in the pipeline operate based
+> on buffers being queued on the input and output video devices. We may
+> still need to support this in the multi-context framework, depending on
+> the needs of drivers.
+>=20
+> Anthony, could you perhaps share some information about the pipeline
+> you're envisioning and the type of subdev that you think would cause
+> concerns ?
+
+--=-0L4H1CrQYwSEJYFcjhYv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaNvT5QAKCRDZQZRRKWBy
+9H2OAQDYJU61T/0h1wzEwZ7iddu/tUyOjwcMugwELYj4l1qfdQEArPd23oj/vi4j
+GiESd5rvRJN2+qKwpQh3Nn1Jvkrefgo=
+=mobG
+-----END PGP SIGNATURE-----
+
+--=-0L4H1CrQYwSEJYFcjhYv--
 
