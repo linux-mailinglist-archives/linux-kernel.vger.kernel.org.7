@@ -1,142 +1,87 @@
-Return-Path: <linux-kernel+bounces-837397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6CCBAC3C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587A0BAC3C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B4144E212E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:17:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1340D3A9BD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD252D3226;
-	Tue, 30 Sep 2025 09:16:42 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F2A221FC8;
+	Tue, 30 Sep 2025 09:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y7/YmSA8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56861279908
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD3D1D8A10
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759223801; cv=none; b=hLIviwJpzB5f3mZydLKjucAY4SFjytCA3v5b/N1hM4FIFPaQ1bM9lkWe8m5u/F9ZivZf4MdAFqKpmYWlpdQRyGr6lvRDdX4DZTQWwACCCDob/OTLCQp+AbjoqgVjmnnYRJOHYp4eKsc5eqqoP9rfMy2I5ROcdRhXxzL0yChx4AE=
+	t=1759223827; cv=none; b=TytjNNDwjEO36intkjIHOHWXsUsklW22aurXwpQCKKomvw/8fjylwWaXZJTGM7zeq2pBK9IVkk8ghUbm3ikU5Wa9ZZa6UGOWO3H52ZuQ8z2WoKfzCvGhLIMgD5TAih+oMYHS2bdDR4ws7W/CPKMumvigomT9R5nw3M7G+JFUO2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759223801; c=relaxed/simple;
-	bh=8Hu8S7M6pdr0y9oKS5K4/59tm4V8kRm65zCvhUH/Jvo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AtJu6C9nO75PBIHBTVxRZMJVsN+kAzPPjQK1T7s3J60vVIAjSZifvptdUr0aIZBMb8uB7aX6GmCi3ihMFHiNA6BKz9fHZqfQwAnYFbe3DPXbwWUpCzyw/I9Xv8dczZ4NROUFMfW2X+p7dEe2dsdfiRpM+wKThNd5BfO6VG614aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42575c5c876so84450375ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:16:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759223799; x=1759828599;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GjxlYsLRK/Y7/YvdN21EKZpewwalHCH+H3eI+DPnnG8=;
-        b=vULR9ZtzXKeXYWdYifi9D11o40iSCF+2B1Oro7tKm/0HTGrOSI8mjMxWuVWN88GM8t
-         r0yG/BiZNB5xvzVcTJ20QYkMtlp7/unyHGsfFMaBQFMs4+j409CHNPZ4iKq1hcuPeh9M
-         MSBePF1e0M4FzrzxjXazk1b4Y21C5jRH0Rv0MIv5hQ2VDKQP3D3vQWpWcWOCHwzYiPzm
-         T8uLnH1KShdDmkY8nseYC8G7C866p+xnr6z+tINC2SpAWW26ieQAqYwhfsjWjF6HJT4h
-         +eNMrFPvzCy9y8BFcVakJXkswzoMgm91+vBlxTPmDi06osj8K057wQLMtKi+fXmTzoFp
-         BTmA==
-X-Gm-Message-State: AOJu0YzjJm5bbANC65W1T49keNtN5VwwHKV6iMMYTrNRMgDUwMbcgIUj
-	wmw4fcJrnW8Kb3FGDai4YVuH+qIwpP5hwBo52vyODPXiEN223QMCxImpUiAy1YA3Uw0vTS18WnU
-	5NuEQ5v8pQ3D15xnyDMZp/xi5JqVjIVSbICxTZai7EdCyx0CiB2y5QIOzKEw=
-X-Google-Smtp-Source: AGHT+IE8SNnm3XdIOO41McQvqI5ZeCokBvlUeWh+gU5VbK916yyNgdMLNjx0NVacmOuVWcr2xEyE6RKgMcmO3u9jSK8e/jtCEtxh
+	s=arc-20240116; t=1759223827; c=relaxed/simple;
+	bh=C8Cg/mdMvEeqn4tYaiyZTCeXPJbQSpUX3pWcbQSKvc4=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=Q0m6x+pQir0GXWsYEMdoMVrrJmnQ7/WVv5iYTx1J84ob79IUicyFiYygFoxF0GVfd+uvRWH4sSxY6I1sbYUk76BgzCQn2OWPAsoLZ31zEug5hZT+i0vulXSo4Fpzh99B+iZCaZADtJwM0uXQsc6BrHJOzkeHAJ0F5/7oQ1oIYA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y7/YmSA8; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759223825; x=1790759825;
+  h=mime-version:content-transfer-encoding:in-reply-to:
+   references:subject:from:cc:to:date:message-id;
+  bh=C8Cg/mdMvEeqn4tYaiyZTCeXPJbQSpUX3pWcbQSKvc4=;
+  b=Y7/YmSA8MGiUq1aphO5nDNG1qxPX8LWnQrE6zHAO4ujyqNkGc1DnG0Hn
+   fVhXdr4+IicdrgVLsK+vJxmQ3wr4669Ci286ELcAKu3VITMmKkmshEHWD
+   8LIes5lQ/D0r/VZlUApgGTQCQcuQZbdKYHQ8d588gPvUdLqcDHPEV/lMU
+   kSKbsUB72Gg+JG83gjgOLzzPmsRpj0pYi1T7Is19B+jrWINu27VUGuMEn
+   Z7NNK3rI3mB1xq3ydfq6F64xEogeWZZgFa6ilDldva4IUe+JKm8t7RVPu
+   AzqVHJFh9rjZBNbytTcqYJD3/kx5t4BGAQ3GeCQo7PGcjKI/BDASGVj+e
+   Q==;
+X-CSE-ConnectionGUID: 7Ev6h1yASAeyup4vaV6+aQ==
+X-CSE-MsgGUID: DLFet36fQE6Z+M30Nw4i2w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61518884"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="61518884"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 02:17:04 -0700
+X-CSE-ConnectionGUID: amLqGN/MRZ6HIppG/Vrd5g==
+X-CSE-MsgGUID: e79KT6whTIWD6ZWc8522TQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="178074674"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.108])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 02:17:01 -0700
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca45:0:b0:429:5f74:3bad with SMTP id
- e9e14a558f8ab-4295f83a1c9mr146939545ab.30.1759223799479; Tue, 30 Sep 2025
- 02:16:39 -0700 (PDT)
-Date: Tue, 30 Sep 2025 02:16:39 -0700
-In-Reply-To: <68b95f81.a00a0220.eb3d.0001.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68db9ff7.a70a0220.10c4b.0133.GAE@google.com>
-Subject: Forwarded: [PATCH v3] ext4: detect invalid INLINE_DATA + EXTENTS flag combination
-From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGfirffPy5biFVLtSNEW60UCXa6_=-=NrQbU7iLQ8+BXnFQ=1A@mail.gmail.com>
+References: <CAGfirffPy5biFVLtSNEW60UCXa6_=-=NrQbU7iLQ8+BXnFQ=1A@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in eb_release_vmas
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: jani.nikula@linux.intel.com, rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com, simona@ffwll.ch, andi.shyti@linux.intel.com, ville.syrjala@linux.intel.com, nitin.r.gote@intel.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+To: intel-gfx@lists.freedesktop.org, =?utf-8?b?6rmA6rCV66+8?= <km.kim1503@gmail.com>
+Date: Tue, 30 Sep 2025 12:16:58 +0300
+Message-ID: <175922381867.30706.10351894191632562572@jlahtine-mobl>
+User-Agent: alot/0.12.dev7+g16b50e5f
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi,
 
-***
+Can you please open a bug as per the instructions in:
 
-Subject: [PATCH v3] ext4: detect invalid INLINE_DATA + EXTENTS flag combination
-Author: kartikey406@gmail.com
+https://drm.pages.freedesktop.org/intel-docs/how-to-file-i915-bugs.html
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Thanks in advance!
 
-syzbot reported a BUG_ON in ext4_es_cache_extent() when opening a verity
-file on a corrupted ext4 filesystem mounted without a journal.
-
-The issue is that the filesystem has an inode with both the INLINE_DATA
-and EXTENTS flags set:
-
-    EXT4-fs error (device loop0): ext4_cache_extents:545: inode #15:
-    comm syz.0.17: corrupted extent tree: lblk 0 < prev 66
-
-Investigation revealed that the inode has both flags set:
-    DEBUG: inode 15 - flag=1, i_inline_off=164, has_inline=1, extents_flag=1
-
-This is an invalid combination since an inode should have either:
-- INLINE_DATA: data stored directly in the inode
-- EXTENTS: data stored in extent-mapped blocks
-
-Having both flags causes ext4_has_inline_data() to return true, skipping
-extent tree validation in __ext4_iget(). The unvalidated out-of-order
-extents then trigger a BUG_ON in ext4_es_cache_extent() due to integer
-underflow when calculating hole sizes.
-
-Fix this by detecting this invalid flag combination early in ext4_iget()
-and rejecting the corrupted inode.
-
-Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-Suggested-by: Zhang Yi <yi.zhang@huawei.com>
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
-Changes in v3:
-- Fix code alignment and use existing function/line variables per Zhang Yi
-- Keep check after ret = 0 where all inode fields are initialized, as
-  i_inline_off gets set during inode initialization after ext4_set_inode_flags()
-
-Changes in v2:
-- Instead of adding validation in ext4_find_extent(), detect the invalid
-  INLINE_DATA + EXTENTS flag combination in ext4_iget() as suggested by
-  Zhang Yi to avoid redundant checks in the extent lookup path
----
- fs/ext4/inode.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..5c97de5775c7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5445,6 +5445,15 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 	}
- 
- 	ret = 0;
-+	/* Detect invalid flag combination - can't have both inline data and extents */
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA) &&
-+	    ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-+		ext4_error_inode(inode, function, line, 0,
-+			"inode has both inline data and extents flags");
-+		ret = -EFSCORRUPTED;
-+		goto bad_inode;
-+	}
-+
- 	if (ei->i_file_acl &&
- 	    !ext4_inode_block_valid(inode, ei->i_file_acl, 1)) {
- 		ext4_error_inode(inode, function, line, 0,
--- 
-2.43.0
-
+Regards, Joonas
 
