@@ -1,184 +1,88 @@
-Return-Path: <linux-kernel+bounces-837735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AEBABAD11E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97371BAD142
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A96B166450
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD16179452
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFB81A8F97;
-	Tue, 30 Sep 2025 13:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADE03043C5;
+	Tue, 30 Sep 2025 13:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nuFUKD1C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ACxfrnUx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nuFUKD1C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ACxfrnUx"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVg3YPvJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DA325C81F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7EF303A28;
+	Tue, 30 Sep 2025 13:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759239148; cv=none; b=OgC1RsN5F0My0ToJvSw+YwPoc9GIx47E+gleskhSce6QzXH4WkbLmG/F5ZJumEpqt9YFdd6qDyp9aPcEXyCwhkQSdpyu+SuVR5Mp42HvK5kWj7Ic9FfochBfsFKkV/AR07CvKc3oGkRM7qYm5AV6Zoz4/OJok9vx+tPSzhuAZvo=
+	t=1759239202; cv=none; b=W6SHi5NzGESAAi6ml18NO/jyAHdyacx4KJiR30G3mkuim/xzawMkOvg+k3McxyahbRHa+pZHBj6Ar/Foan0U4XjEayzPz0RkszF6pFJEtNti+6oOWdoN9Tzho/5g+H76hgntVVFZjlhyI8fC0lgbgktAXXm3UVpXVrTgDJQy5OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759239148; c=relaxed/simple;
-	bh=hjiUvhTEcdI+Yx6XNweoKsC0rD2vJbqkmRgwKnlMcNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KWXQ6+F6XOWuwy5JvNbdLoh2FYZlViI+LfGS7CmuS2cCjkMi8iEV6YKyLSXgCfvFjjImG+FP0eI99+Dfs57Xde5GI1IS934S6cvmphntSvy3JkzpHx5Vh7WgESwrVOyWMNVDMH//+t+v2S4Vsq9CK/vsnH6kiWemDZebEBoo2mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nuFUKD1C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ACxfrnUx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nuFUKD1C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ACxfrnUx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A1C101F83B;
-	Tue, 30 Sep 2025 13:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759239141;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
-	b=nuFUKD1CYq3mTKKtqgyBgPKg0MVwK/5bUyIcBe57nupAzoexJH80GY286eDGMtYXtkzZLh
-	Zrfm9m0yoEOwhBaIJHHY5Ci6bEXXuwxx/Q83UIFXFtIHb8TeFrCk3+HKsFQSLlUl+mmjfP
-	BYAAT2/3dXr1IB05GIVdYatN3yexyMg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759239141;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
-	b=ACxfrnUxl0GN76Oc7ofUgkni/+dUC7XTFaNWYMXz+O+5ULF5MNqfsxB8irEf4jE32o1Wv0
-	xGs/b/4YTZgZnlCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759239141;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
-	b=nuFUKD1CYq3mTKKtqgyBgPKg0MVwK/5bUyIcBe57nupAzoexJH80GY286eDGMtYXtkzZLh
-	Zrfm9m0yoEOwhBaIJHHY5Ci6bEXXuwxx/Q83UIFXFtIHb8TeFrCk3+HKsFQSLlUl+mmjfP
-	BYAAT2/3dXr1IB05GIVdYatN3yexyMg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759239141;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
-	b=ACxfrnUxl0GN76Oc7ofUgkni/+dUC7XTFaNWYMXz+O+5ULF5MNqfsxB8irEf4jE32o1Wv0
-	xGs/b/4YTZgZnlCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 805961342D;
-	Tue, 30 Sep 2025 13:32:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id me4xH+Xb22hRRQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 30 Sep 2025 13:32:21 +0000
-Date: Tue, 30 Sep 2025 15:32:20 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Han Xu <han.xu@nxp.com>,
-	"suman.kumar.chakraborty@intel.com" <suman.kumar.chakraborty@intel.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"terrelln@fb.com" <terrelln@fb.com>,
-	"dsterba@suse.com" <dsterba@suse.com>,
-	Richard Weinberger <richard@nod.at>,
-	"chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH] crypto: zstd - Fix compression bug caused by truncation
-Message-ID: <20250930133220.GB4052@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <GV1PR04MB9071B5AC95DBD48B67FACF44971BA@GV1PR04MB9071.eurprd04.prod.outlook.com>
- <aNuQAr79Hdky3WII@gondor.apana.org.au>
+	s=arc-20240116; t=1759239202; c=relaxed/simple;
+	bh=NY2y7Jz5GgASnYRyJboqRCOUSD4T65Ns4wrXLNI5n+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z45QnDEmfvLn6YqRzk/8+JX+myedxkX1bXw9aqJoJlLoVyX14fl234YH5bjZLDzxmD01aUFHVH/Z1dtqgJDYUNooKLhXiDMpu7vTR6rD/4Ukz1mczEgMwRf22gYkwgdr9d2/SZcnguYEuMxVdwwS9OM3Qu8F1/WNLF3DCeGO4E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVg3YPvJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6581FC4CEF0;
+	Tue, 30 Sep 2025 13:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759239199;
+	bh=NY2y7Jz5GgASnYRyJboqRCOUSD4T65Ns4wrXLNI5n+o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EVg3YPvJCc2gS1ugHk6BS2W/KEICBXpEe1SI6JQtpLRH+ZuKL7FW8Yu/lPFS/aQc4
+	 5YKn6t4ac5QdR3F4pGwY6oCk2gs/3c6jE4FoxW+BQsqZbTiZ7zpJwheP4vgNx7od/Z
+	 ZAUTQJD11urfAHI7QyQ6MtCHtRv6sJ6YjJPO1I/7JhAeeTDhn3PNm+Q3zHeTSZW1Xm
+	 KHEIQ/c9uyuKEoAw2v/ucxn7hwE1NTiFbTwQxkcj7cqIS2gGU9Y4LnPDJqMtLJl6ZV
+	 Ese7mMZBAPa1tg6yqBC3tGJuwVahzGVHoOLQSG1EE0ZVUYT2bh62fmg+m8PrBX1yLc
+	 xmgOqFAyOu0TA==
+Message-ID: <5bd04709-55ff-4d4d-9559-3ae55fb42c9a@kernel.org>
+Date: Tue, 30 Sep 2025 15:33:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNuQAr79Hdky3WII@gondor.apana.org.au>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/13] gpu: nova-core: Add GSP command queue bindings
+To: Alistair Popple <apopple@nvidia.com>
+Cc: rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org
+References: <20250930131648.411720-1-apopple@nvidia.com>
+ <20250930131648.411720-6-apopple@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250930131648.411720-6-apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 30, 2025 at 04:08:34PM +0800, Herbert Xu wrote:
-> On Mon, Sep 29, 2025 at 11:51:36PM +0000, Han Xu wrote:
-> > Hi Suman,
-> > 
-> > The patch f5ad93ffb5411 "crypto: zstd - convert to acomp"
-> > leads to the following kernel dump during UBIFS write back.
-> 
-> Thanks for the detailed report and instructions!
-> 
-> Please let me know if you still get the crash with this patch:
-> 
-> ---8<---
-> Use size_t for the return value of zstd_compress_cctx as otherwise
-> negative errors will be truncated to a positive value.
-> 
-> Reported-by: Han Xu <han.xu@nxp.com>
-> Fixes: f5ad93ffb541 ("crypto: zstd - convert to acomp")
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+On 9/30/25 3:16 PM, Alistair Popple wrote:
+> +impl GspRpcHeader {
+> +    pub(crate) fn new(cmd_size: u32, function: u32) -> Self {
+> +        Self(bindings::rpc_message_header_v {
+> +            // TODO: magic number
+> +            header_version: 0x03000000,
+> +            signature: bindings::NV_VGPU_MSG_SIGNATURE_VALID,
+> +            function,
+> +            // We don't ever expect to send a command large enough to overflow.
+> +            length: (size_of::<Self>() as u32).checked_add(cmd_size).unwrap(),
 
-Reviewed-by: David Sterba <dsterba@suse.com>
-
-> 
-> diff --git a/crypto/zstd.c b/crypto/zstd.c
-> index c2a19cb0879d..ac318d333b68 100644
-> --- a/crypto/zstd.c
-> +++ b/crypto/zstd.c
-> @@ -83,7 +83,7 @@ static void zstd_exit(struct crypto_acomp *acomp_tfm)
->  static int zstd_compress_one(struct acomp_req *req, struct zstd_ctx *ctx,
->  			     const void *src, void *dst, unsigned int *dlen)
->  {
-> -	unsigned int out_len;
-> +	size_t out_len;
->  
->  	ctx->cctx = zstd_init_cctx(ctx->wksp, ctx->wksp_size);
->  	if (!ctx->cctx)
-> -- 
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+This is pretty much equivalent to "we never expect to make any mistakes, hence
+just crash the kernel". Please handle errors gracefully.
 
