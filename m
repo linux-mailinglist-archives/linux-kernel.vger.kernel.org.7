@@ -1,222 +1,580 @@
-Return-Path: <linux-kernel+bounces-837616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550A2BACC4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC6CBACBB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0717D3AD710
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD78E321FA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC0E2F99B5;
-	Tue, 30 Sep 2025 12:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DE22580EE;
+	Tue, 30 Sep 2025 11:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hFVMNPD8"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010009.outbound.protection.outlook.com [52.101.56.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1W4wUBO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121B42F7AB9;
-	Tue, 30 Sep 2025 12:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759233843; cv=fail; b=cMCdQFhKIq93ia6pLltPzKxaGUIHdENnTgRPdOoHuX1fC6t2TDbYU8ZN9b5qL6UN4pPaGkA6iWW+1xa6XMvQ3X/664yVuHTuKDBxjbgMsWsbHBfD6MCVAhD8o7UY0oRXuqfd64s/dpyj9P+f8kGK85GrwA3GtRt4jkC1R+NXhEw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759233843; c=relaxed/simple;
-	bh=L74oQc58fPGB9LB1gfmEf3gbvfW7h+A939x+q1l33xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GKnDo+WAbO6z5JupnXCju3FFNyfFlArF87yLWAQRPkvqbR9mi9loLW8yfw/MEb+K1MqaV5jZlxJ/QAHPGb1NVDXQ3059lCXEwvaJYhw4U6VhK5XlKGulwxf1MtNApo+4WdY3NwaLZPrIXJAr8lchEzvzPzgFpni6WkFKtF6y5wQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hFVMNPD8; arc=fail smtp.client-ip=52.101.56.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RWGf740MCtKmJYJFaRf37GWBdMkdB2Iq5fyjW2O7JjVC6oO7P0mzpVAtVuzdDP+TRdUpCNY9zgeDeU88hmFMvASGH5xx7L9Yt/IfxVvf7rXlk5LBsO1FmEeO609FjysFUTf1Yv7ncx7NVkPdxVsr1gZ3V/ewQoMtN+arp7IAlJ1J8D1EBkD/C4O7E6RCuQXDXO7/R2cywhwmCm+NlQfozPppxm8v1RcnNvdirDuU7wCx8rJlL90WwSOF4jvKToXMTF/fauJZIWBz1AQUTGdj37DSZVlSuh2EfLItZQZY5NjvPeKlKSAQbiaG7hSytYjI7ESZYRX1il3o0LM/pLeEqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YTC5pb3RkzzurJWWEuVW4L6OO0O+N77f1aIOBVgIvCE=;
- b=zDzkhAkiJgXvpN7QCPbSAd3BVY2rKoOdQ5z7oSEUa3YcrvQFVEFc4MUaXojku1t1An6R2OItg82OPinezf6Z0oLSvocPRRwTA3KKejj7xe3qf3A2wj8EafeCMY6DpblxCYakRgL03YlvCJvNzERd463i+8KXCLul4coYGckVEFXwfDMSHir8SWi6n9PT5AEGljAH5j1BZnZXjF6SffhZvFms5xjJqrkcjuQFEo7pF04emMFexlrH1Clbx7lGI+rb7W/hulBoJXoGg2Me78FDuvbCWCm6gTixk+MkMBluIAchTu88NLVg51h3W6IYTKuD4w+ylJE1hUg2ZxFaYMvsew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YTC5pb3RkzzurJWWEuVW4L6OO0O+N77f1aIOBVgIvCE=;
- b=hFVMNPD8OWMLc0Wm4v3a51RPKJbHHq2ZcxoUsbaCiQdqhVIF4zJ3pV+2AcQFvrIT4KhuADhzUpWvx8/ATd3ZSVKGQ9LG1bBva3CvURTsK6iurUSAgafnckfhYKbSqqSoYkoUAmiQcWo95k60J1wZyq4733B000vP7nq7vZ0ulF+SYE43zwQ0yv1y2xbwM4f4+yj8saOIfROOaUphc/BRggyoBSIgCIip50RMlnqSAmO7laEZC0y6LTDO6b+HiTq4/dR7flap70V5ldYsJW6eEINEVomvuI0xDUskqiYuWjV+NWDgOtZKvayMYZxrspwi6wiIMkVY0/Iz6J/8CixQkQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SA1PR12MB7102.namprd12.prod.outlook.com (2603:10b6:806:29f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.25; Tue, 30 Sep
- 2025 12:03:56 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 12:03:55 +0000
-Date: Tue, 30 Sep 2025 08:03:54 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, dakr@kernel.org,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Yury Norov <yury.norov@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v4 6/6] rust: bitfield: Use 'as' operator for setter type
- conversion
-Message-ID: <20250930120354.GA3415500@joelbox2>
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-7-joelagnelf@nvidia.com>
- <CANiq72k3kE-6KPkKwiDLgfkGHCQj4a2K7h9c4T13WMa5b4BAnQ@mail.gmail.com>
- <DD5D59FH4JTT.2G5WEXF3RBCQJ@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DD5D59FH4JTT.2G5WEXF3RBCQJ@nvidia.com>
-X-ClientProxiedBy: BN1PR12CA0029.namprd12.prod.outlook.com
- (2603:10b6:408:e1::34) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32ECD1E0E1F;
+	Tue, 30 Sep 2025 11:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759232747; cv=none; b=D0jKwS1AxN65SfjRdP+ywqz3X1Ab24tJjoiAA44nAhcddxs82EvdS2mc7eCplB37ctueA9xHLecE5UFTfCcMkot3u3EQ3or2vN5ED46gxX35R8PsR6+rgcm6P0kR0FhxIQzZslaAf6mKZy/cZs8EbGS3Et46EvIwqgTP7OxGTX0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759232747; c=relaxed/simple;
+	bh=LPJM64qxrfKFHHzIyv4OnpG1jM2Od2//kJxgUDBYA6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kEmJ6aDpRI9wHQJqn+6YX0RPgIcpcsTbx3lxEGOTjxyJlHl0hdeLTYNiVQvGyk9UoOSUQo2e4aeuhAGwsOePHBCAX2ZrD8xu6XbsBYxxhPAyqCTCYWaOoCl24F7yZjBxAlBMTk/FAknKJrt5EKN6sIhkhkDgflA5xYqV9xoplMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1W4wUBO; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759232745; x=1790768745;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=LPJM64qxrfKFHHzIyv4OnpG1jM2Od2//kJxgUDBYA6Q=;
+  b=G1W4wUBOM/47xXAWyVIS3f/PTW8CnWwN0iQu1TGFv0VFXC7fQxJoAsMS
+   Vfi0EQ8wLb9qJS5VspimVHkZKvs1XZVqZ6sNmVHMcT2boKrRzlmuNX+Hi
+   ShMlVsLOPxLQGbJ9NLEryYPIAoAY5L6B9d0xpbzCPiVTMzIdRCZePRNnE
+   aGXaNtnLBp21+/qrodb8OEq0t6Wgm2cipzzZFrDam6uquI7Xbp7ZUKBMp
+   h1Jw3OohoXvciMGrTUViLINvG0imKvby42ys5Qsso7joD6vcsUwduGoqZ
+   4OqEPWkxgVjFMdH3i2xDyWnIG+ngYZ7+HTZdd277hx8knLWezCeaSD7ga
+   g==;
+X-CSE-ConnectionGUID: SvmgCrrAQ2ex9dRx1TEW/g==
+X-CSE-MsgGUID: FNoRl0UQQjWieabr811snw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="86929565"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="86929565"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 04:45:44 -0700
+X-CSE-ConnectionGUID: ndkdjyceREOURlsSBBQsyQ==
+X-CSE-MsgGUID: ftlSZlirRfK8QV8CMfQD8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="179269129"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by fmviesa010.fm.intel.com with ESMTP; 30 Sep 2025 04:45:38 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	pan.deng@intel.com,
+	zhiguo.zhou@intel.com,
+	jiebin.sun@intel.com,
+	thomas.falcon@intel.com,
+	dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5] perf tools c2c: Add annotation support to perf c2c report
+Date: Tue, 30 Sep 2025 20:39:00 +0800
+Message-ID: <20250930123900.1445017-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <aNo-U0KquRbcJam9@google.com>
+References: <aNo-U0KquRbcJam9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA1PR12MB7102:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43adbcf2-7f8a-4bbf-178b-08de00196e27
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eUdGKzF5alBnNXpVdlpveG1PVkM0RGRqS2VaaXd1d0hnQmdJWEd0ZlJDa1RY?=
- =?utf-8?B?MXJZSkpLVlZGN0RPNGNnZjVPd0hidGZDU2N4Y3Y1WlYzV0JpRW9weUV5emhw?=
- =?utf-8?B?Vkk0N2pubG5WZU1hRS9zSHp3aDl0ajg2VmtPYXpuVXV4MVlLZXlySTc0OVZk?=
- =?utf-8?B?UmMrY2szR01tNnR3Q0tKcDdMS1RMZG01OVpDL0VMNW1oWWZITnpzTHl6QUk2?=
- =?utf-8?B?aGxMb3VaTWFWZzlpbUZFdFA0aW1WOURKdWp1S1U1bGVsUmthcWVYUlptVDRQ?=
- =?utf-8?B?OFByQTlrZFJxaEZVRjdjbHZoVVQxaisrVWNRcEc3MVhyVWIxaFVZYUFSb0Ev?=
- =?utf-8?B?dEhJMm5LQnEwbU9pc0c1TEdMenAxN2wwclhkZVF3QjFhVlkvVjYzNCt5MUtB?=
- =?utf-8?B?V0FOeklTSHhWSkdXemV5YmxnM2FVSkgySTZ4WlBqUEVqOW9FbHEvM0ZVSEV2?=
- =?utf-8?B?VGlMRVRETjFWb3MzVVlPaUh0d2xyNjVrTHVBZklwaUZuU3J4SHlmVzYwSzBR?=
- =?utf-8?B?c1FQY204SDUvbVIvY2FESEZpa3hFZEcrd3NJRFNHaEw4eFVScThpN0o4RGRO?=
- =?utf-8?B?QmlYaG1qMS8rdEhiVUljS1hKZXliWENad2pWOGpwcmxEcmhWUjBNTjJlMDdY?=
- =?utf-8?B?a2xzZGova1J3bTMyeGhaaUdXVEN5L1c4bjlBR1M3VEJlNnlVR0JuelhFSjFa?=
- =?utf-8?B?ek1lZHRxNUc2L2JYY2ZBYytrSzlOak4zdUx2bnRaK3Z5L250bUlHMlN0Wllo?=
- =?utf-8?B?YmYvWkhBejZFTmE0bkVHVklMY1daWlBRRFhhNzRWSTdINE5ZNE1FRWhOOHR6?=
- =?utf-8?B?TS9sLzlUMGVVTEVTZVFBdFlrdHBsSzg2VmU2STA5b0VZa2k0Q25PSmVYc1pZ?=
- =?utf-8?B?QzQvS1ExUkt6Y1NjWlZUNThmTWZNMVpjUVpXUyswSnFXOTMybmJaZ2RaaDI4?=
- =?utf-8?B?Ly9JZmNSbmFyTm9jN2t1Z09vSW1uWHVJMHYzVU5lVEFFa2VZOHJzM0V4dGZ1?=
- =?utf-8?B?akhNaEJPQkFiZU1VYXBnNERxaG11OE91dXJMY0hPRCsxeUt3ckJHR2s2eE5S?=
- =?utf-8?B?b2R4RW52bGVhRktrSUZOYWtUVm5wdUpUZUxTMDcyam80WCtxQkZCQjdkQnl0?=
- =?utf-8?B?dGwwaXZpODFEL2hnYTkzZDdwUzNrcEoza1ZrcE90T29lWTlYc0tZbElpTjVO?=
- =?utf-8?B?bzB3cHk5ODNCT2RLY29rTkVPVGpPWGFseXNycms4bXZjaU5MaUFrQ0s1ZzVv?=
- =?utf-8?B?QjlzUWxnSDE2czBWaXlQUjZhREpzSzRRenREczBsOHQwNlRaa21QT2tnMDYv?=
- =?utf-8?B?RUkyeUt6TlNFZUpPaTlORXFlNHNrOTFRejdBK1FqTVRlSWdVOGxEWU9aVi9m?=
- =?utf-8?B?M1RHOFRKVzRwZi9QWUFFSGFONmZzTUhrTktNUDRJQjBINEJZNUhyamtiVkh6?=
- =?utf-8?B?c21NaDlYdVhHMGV2ZnJuTTE0WWVDUENoMmxDbG9hVEZoYTJOZ1BWbHFzclox?=
- =?utf-8?B?aVRmcm1TUWdmaDMyeWtTcldjL2pBbyt3a2JtZ0JjNlRZalZzcUhvci91VGtN?=
- =?utf-8?B?Zk4zZjFLdHhOUlBHNkFOVWVzOER0OUxZVnkwZFB2bFNWeDZPOFJUMVZKSmV0?=
- =?utf-8?B?QllvaDRHNmppR2VhK3hINnpWUGRHbzRtVTIyOGNWNHpVK3ZBYTVEYkRHZTBj?=
- =?utf-8?B?NHFaOEFNa3V3UTBQMnl1ZmxsZnFrbnFWZkxWWnU0Vk1yaGJxNkFUS1VZQmpx?=
- =?utf-8?B?TWxXM05xLzFPOVlxTTM1WjJFVlNPWnR2bVNpVFZYMlZaWHBTeEVwVUtydFBH?=
- =?utf-8?B?K1lQSFRENEJvTkR2Vmg5dUt0b1hDSjJQYUkyNGxIMm9iaVhaTDZxei9RVVJW?=
- =?utf-8?B?ckhpTEhQdlEzUldsbFdiSCt5WHVtSlNaZGNTYmRRbnR5NDV4V0xDdnFzSEVq?=
- =?utf-8?Q?D+pglXwJaQDL1kc9Yv/l1LL2JAiRB5ZS?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U1FXa05OMXVHODNRWHhmWHkyU1ZocVUvd3VkNnJRZG9saE16NTV1QUJjSGdF?=
- =?utf-8?B?U3B3MnhzUWJNYXJSMWVhUTkrekFKL1MrZDVQUWZLemNJZDNOSFpLTHROQW1y?=
- =?utf-8?B?dHJVTjZUdGFXaVh0L3FISFJpWW81YVN6VzFycXUrblBIYnVHRGY0djMxUHpN?=
- =?utf-8?B?VXZNUS9jM0dZOXl1bEh3TFZXS1ErY2hpT0N2OGJHVVdMK0hvSWxvZjJnWHQ0?=
- =?utf-8?B?cW1xUEVrV1ZXLzk1OVh1eWJIMmwrZWdBUno5QzZLUWpTMUtCbXVMSjJtemZI?=
- =?utf-8?B?bEhRUXl1KzhhWkh0N0tJR3FJOWxBYUZCK05DNU1rMXpYODNpSS9KMEl5ektm?=
- =?utf-8?B?TmVTc1BZQVlrS3NLaUpQUkNTNnBXWXpESktMNmRjUHBWc1hzQkJBeG9tOVBo?=
- =?utf-8?B?amJVdGVWN0Y1Q0EzOWxGMm11OVNKVEU2MkdBaWZVZDdheVZ2R1JWMVhTOCtp?=
- =?utf-8?B?S0NxYTB4K2tnTnk2dmtQbG80V2xVZ2JnbTJCek9zY2ZZMXVQZWgwSDR0R3VF?=
- =?utf-8?B?R2Rtb2VLYVdsS0V2empLQS9IK0ZzSm5XMmFsTE9kY3grVjdJYnA1Qnk4U3d0?=
- =?utf-8?B?NXVuRjdXbGVzZXlUZmxNbkZJek1iS1p0V3ZCNWUvWll0dUtubDExajdjKzZR?=
- =?utf-8?B?TnB2SlBLSEY2Z2JRN201STM0RXFqTFlNOFJlTzg5VFgrRmpkUStrSDMwUHFG?=
- =?utf-8?B?dElneHVDU1dySDNDVEFuaEJ0T1JTRzZCK2MyN0xhZWdlYVhKa29OVERMSGRn?=
- =?utf-8?B?RkdON24vaFpQZUU0ZEpaWlhMUEVLWExmY2VzVm5Fb2RQQ1RQVmJ0TW5HU1ZE?=
- =?utf-8?B?Y1Z0VHVhMVkzNzkvSVc3TUhBNDJCNzFzclAyM21YeFUzY0ZqM2Q3enMzOHBw?=
- =?utf-8?B?bUtoclBNUlFnemFnNlQyR1BYYmE1TTlZcjU5cTlmT1dTMlVWbnRNS0NCdzUx?=
- =?utf-8?B?UXVycVRNKzAveTZXTDhZOEtnZXJQaExZeHpkdXNWbjVxZVZwZWxsVVFPUEdJ?=
- =?utf-8?B?MjBTWnpjMDdTbnhXOU5XU1N4cm9iVnJnRzVkSlM5MFNkRUpsUnNkeFRkUUli?=
- =?utf-8?B?UGV6b3pNTzdTSll5eEZYMkRwNG9pc1lpdVhNZXNDWkJ0UHM2RzNydWtQSTNJ?=
- =?utf-8?B?RjBISkJJWEt6OFpBT2YxNndjVEhSQ1hncktXdFdWQ3Vma3AzZGwxVmxuTzM0?=
- =?utf-8?B?TUJXeGZMRlBzUFh4bWNhcWxSRC9zcmRMMUdyT2RHc1FKbzE2WFNROTV5ZDNL?=
- =?utf-8?B?U1JZb0c0djZzQ2YvUjJIR0tIWUI0WFk1TjdiVUFTNktkTndGTGEzNnFXM3pI?=
- =?utf-8?B?WXdTWEN2ckdUVzFZU0hENGx1UUc1cEFKNXU3K3VwbUE0VHZha0FlMjAraUsz?=
- =?utf-8?B?T2dGUDFLUlJ6SndubE83bklHU2xlVERpVENQbEZwYXpIcm9BQjltTmxiMG1L?=
- =?utf-8?B?QTcxMnA3RlN4MlV4VkJiOEJlbXQwcDdzYWRjcXEzNWh4NkY2VWlPMlBabGFD?=
- =?utf-8?B?d0FpUkRzZWsyTWNHYVFySXEyVVppbCtsZWsyTG8yWkttVU1CbmJWMi9PKy9z?=
- =?utf-8?B?aVFwWDJFZDhxcmM3Y0xIeDhpdEFRZmVLZkYzRmpIS29iMzJ0a1Fwb0NUMXB0?=
- =?utf-8?B?L3F3YlpWM0M2VStSYi80ZzJQVHdwTkZYWENNaGxtbi8yNjNGQXlFblNqbE5Q?=
- =?utf-8?B?TmRGUzFpelhpWEVPUkUvbUtzT0FnZEgxZDhid05nbHMrTkU5R3FGb3B1RzFH?=
- =?utf-8?B?ODhvYnErQ2ZkQ2tYb0hIYTJRZUlTdlBmSGlXSFg0d1g5b2oyQnhJemYwNy9G?=
- =?utf-8?B?MklXS1ladXBjN1grb1B5K3JReWFMbzVLelFXMHJOdlhvK1lnU3M1RlY1WnIv?=
- =?utf-8?B?ZFRtd1VwTUl0MnZjMnNJWGJuYXp1M1dxblZiYjFIMVFYVkRZNHdjdDR0NmEr?=
- =?utf-8?B?eGZGYUZSWkNnYTBCa011ZjRtZlBIak5oYldpYnJVNlpzWUpiSGxDbUdadDdG?=
- =?utf-8?B?ZmJocjNBanVuRklBNHRBaXdMekI4aVdlTlhVSXhxQm9iRFIxcVJrdHFOMHJE?=
- =?utf-8?B?YUN0YnN6cnNramVYa2NENFZBd0NLVHJhWmI4aTNaSFZ0anpId04vM1B6MnU3?=
- =?utf-8?Q?vj4DrFsJLEtEB0T1/juQDF+dD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43adbcf2-7f8a-4bbf-178b-08de00196e27
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 12:03:55.7381
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O20RFi5zwuoaOHZc39jPozTfbFBKTvctFDpoSSXeTi+W1hHM6smJ+RQzCbDPCGwy5STGUUxAJDifCMDjxa0ckQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7102
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 11:44:56PM +0900, Alexandre Courbot wrote:
-> On Mon Sep 29, 2025 at 10:59 PM JST, Miguel Ojeda wrote:
-> > On Sat, Sep 20, 2025 at 8:23 PM Joel Fernandes <joelagnelf@nvidia.com> wrote:
-> >>
-> >> The bitfield macro's setter currently uses the From trait for type
-> >> conversion, which is overly restrictive and prevents use cases such as
-> >> narrowing conversions (e.g., u32 storage size to u8 field size) which
-> >> aren't supported by From.
-> >
-> > Being restrictive is a good thing
-> 
-> On that note, I have been wondering whether we should not push the
-> restriction up to having bounded primitive types with only a set number
-> of bits valid, e.g. `bound_u8::<2>` is guaranteed to only contain values
-> in the range `0..=3`.
-> 
-> Getters and setters would use these types depending on the number of
-> bits of the field, meaning that a caller would have to validate the
-> value they want to write if it does not implement e.g.
-> `Into<bound_u8<2>>`.
-> 
-> A bit radical maybe, but correcness ensues. :)
+Perf c2c report currently specified the code address and source:line
+information in the cacheline browser, while it is lack of annotation
+support like perf report to directly show the disassembly code for
+the particular symbol shared that same cacheline. This patches add
+a key 'a' binding to the cacheline browser which reuse the annotation
+browser to show the disassembly view for easier analysis of cacheline
+contentions. By default, the 'TAB' key navigate to the code address
+where the contentions detected.
 
-In my v5, I will be rejecting setter inputs that are out of range. Do we have a
-usecase where we want the inputs to exceed the bit width range? If not, let
-us keep the API simple. I should probably post v5 today so we have a full
-discussion on the same and get alignment from everyone.
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
+Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
+Reviewed-by: Pan Deng <pan.deng@intel.com>
+Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
+Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
+---
+ tools/perf/builtin-annotate.c     |   2 +-
+ tools/perf/builtin-c2c.c          | 160 ++++++++++++++++++++++++++++--
+ tools/perf/ui/browsers/annotate.c |  41 +++++++-
+ tools/perf/ui/browsers/hists.c    |   2 +-
+ tools/perf/util/annotate.c        |   2 +-
+ tools/perf/util/annotate.h        |   2 +
+ tools/perf/util/hist.h            |   6 +-
+ 7 files changed, 200 insertions(+), 15 deletions(-)
 
-Thanks
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index 646f43b0f7c4..d89796648bec 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -519,7 +519,7 @@ static void hists__find_annotations(struct hists *hists,
+ 			/* skip missing symbols */
+ 			nd = rb_next(nd);
+ 		} else if (use_browser == 1) {
+-			key = hist_entry__tui_annotate(he, evsel, NULL);
++			key = hist_entry__tui_annotate(he, evsel, NULL, NO_INITIAL_AL_ADDR);
+ 
+ 			switch (key) {
+ 			case -1:
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 9e9ff471ddd1..7989fc46516e 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -45,6 +45,8 @@
+ #include "pmus.h"
+ #include "string2.h"
+ #include "util/util.h"
++#include "util/symbol.h"
++#include "util/annotate.h"
+ 
+ struct c2c_hists {
+ 	struct hists		hists;
+@@ -62,6 +64,7 @@ struct compute_stats {
+ 
+ struct c2c_hist_entry {
+ 	struct c2c_hists	*hists;
++	struct evsel		*evsel;
+ 	struct c2c_stats	 stats;
+ 	unsigned long		*cpuset;
+ 	unsigned long		*nodeset;
+@@ -225,6 +228,12 @@ he__get_c2c_hists(struct hist_entry *he,
+ 	return hists;
+ }
+ 
++static void c2c_he__set_evsel(struct c2c_hist_entry *c2c_he,
++				struct evsel *evsel)
++{
++	c2c_he->evsel = evsel;
++}
++
+ static void c2c_he__set_cpu(struct c2c_hist_entry *c2c_he,
+ 			    struct perf_sample *sample)
+ {
+@@ -334,6 +343,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 	c2c_he__set_cpu(c2c_he, sample);
+ 	c2c_he__set_node(c2c_he, sample);
++	c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 	hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
+ 	ret = hist_entry__append_callchain(he, sample);
+@@ -371,6 +381,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 		c2c_he__set_cpu(c2c_he, sample);
+ 		c2c_he__set_node(c2c_he, sample);
++		c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 		hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
+ 		ret = hist_entry__append_callchain(he, sample);
+@@ -1997,6 +2008,9 @@ static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name, stru
+ 	if (dim == &dim_dso)
+ 		hpp_list->dso = 1;
+ 
++	if (dim == &dim_symbol)
++		hpp_list->sym = 1;
++
+ 	perf_hpp_list__register_sort_field(hpp_list, &c2c_fmt->fmt);
+ 	return 0;
+ }
+@@ -2549,7 +2563,65 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
+ 	print_pareto(out, perf_session__env(session));
+ }
+ 
++/*
++ * Return true if annotation is possible. When list is NULL,
++ * it means that we are called at the c2c_browser level,
++ * in that case we allow annotation to be initialized.When list
++ * is non-NULL, it means that we are called at the cacheline_browser
++ * level, in that case we allow annotation only if use_browser
++ * is set and symbol information is available.
++ */
++static bool perf_c2c__has_annotation(struct perf_hpp_list *list)
++{
++	bool has_annotation = false;
++
++	if (list == NULL)
++		has_annotation = use_browser == 1;
++	else
++		has_annotation = use_browser == 1 && list->sym;
++
++	return has_annotation;
++}
++
+ #ifdef HAVE_SLANG_SUPPORT
++
++static int perf_c2c__toggle_annotation(struct hist_browser *browser)
++{
++	struct hist_entry *he = browser->he_selection;
++	struct symbol *sym = NULL;
++	struct c2c_hist_entry *c2c_he = NULL;
++	struct annotated_source *src = NULL;
++	u64 addr = 0;
++
++	if (!perf_c2c__has_annotation(he->hists->hpp_list)) {
++		ui_browser__help_window(&browser->b, "No annotation support");
++		return 0;
++	}
++
++	if (he == NULL) {
++		ui_browser__help_window(&browser->b, "No entry selected for annotation");
++		return 0;
++	}
++	sym = (&he->ms)->sym;
++
++	if (sym == NULL) {
++		ui_browser__help_window(&browser->b, "Can not annotate, no symbol found");
++		return 0;
++	}
++
++	src = symbol__hists(sym, 0);
++	if (src == NULL) {
++		ui_browser__help_window(&browser->b, "Failed to initialize annotation source");
++		return 0;
++	}
++
++	if (he->mem_info)
++		addr = mem_info__iaddr(he->mem_info)->al_addr;
++
++	c2c_he = container_of(he, struct c2c_hist_entry, he);
++	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL, addr);
++}
++
+ static void c2c_browser__update_nr_entries(struct hist_browser *hb)
+ {
+ 	u64 nr_entries = 0;
+@@ -2617,6 +2689,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 	" ENTER         Toggle callchains (if present) \n"
+ 	" n             Toggle Node details info \n"
+ 	" s             Toggle full length of symbol and source line columns \n"
++	" a             Toggle annotation view \n"
+ 	" q             Return back to cacheline list \n";
+ 
+ 	if (!he)
+@@ -2651,6 +2724,9 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 			c2c.node_info = (c2c.node_info + 1) % 3;
+ 			setup_nodes_header();
+ 			break;
++		case 'a':
++			perf_c2c__toggle_annotation(browser);
++			break;
+ 		case 'q':
+ 			goto out;
+ 		case '?':
+@@ -2980,7 +3056,8 @@ static int setup_coalesce(const char *coalesce, bool no_source)
+ 	else if (c2c.display == DISPLAY_SNP_PEER)
+ 		sort_str = "tot_peer";
+ 
+-	if (asprintf(&c2c.cl_resort, "offset,%s", sort_str) < 0)
++	/* add 'symbol' sort key to make sure hpp_list->sym get updated */
++	if (asprintf(&c2c.cl_resort, "offset,%s,symbol", sort_str) < 0)
+ 		return -ENOMEM;
+ 
+ 	pr_debug("coalesce sort   fields: %s\n", c2c.cl_sort);
+@@ -3006,6 +3083,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *display = NULL;
+ 	const char *coalesce = NULL;
+ 	bool no_source = false;
++	const char *disassembler_style = NULL, *objdump_path = NULL, *addr2line_path = NULL;
+ 	const struct option options[] = {
+ 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
+ 		   "file", "vmlinux pathname"),
+@@ -3033,6 +3111,12 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
+ 		    "Enable LBR callgraph stitching approach"),
+ 	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
++	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
++		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
++	OPT_STRING(0, "objdump", &objdump_path, "path",
++		   "objdump binary to use for disassembly and annotations"),
++	OPT_STRING(0, "addr2line", &addr2line_path, "path",
++		   "addr2line binary to use for line numbers"),
+ 	OPT_PARENT(c2c_options),
+ 	OPT_END()
+ 	};
+@@ -3040,6 +3124,12 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *output_str, *sort_str = NULL;
+ 	struct perf_env *env;
+ 
++	annotation_options__init();
++
++	err = hists__init();
++	if (err < 0)
++		goto out;
++
+ 	argc = parse_options(argc, argv, options, report_c2c_usage,
+ 			     PARSE_OPT_STOP_AT_NON_OPTION);
+ 	if (argc)
+@@ -3052,6 +3142,36 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (c2c.stats_only)
+ 		c2c.use_stdio = true;
+ 
++	/**
++	 * Annotation related options
++	 * disassembler_style, objdump_path, addr2line_path
++	 * are set in the c2c_options, so we can use them here.
++	 */
++	if (disassembler_style) {
++		annotate_opts.disassembler_style = strdup(disassembler_style);
++		if (!annotate_opts.disassembler_style) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
++	if (objdump_path) {
++		annotate_opts.objdump_path = strdup(objdump_path);
++		if (!annotate_opts.objdump_path) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
++	if (addr2line_path) {
++		symbol_conf.addr2line_path = strdup(addr2line_path);
++		if (!symbol_conf.addr2line_path) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
++
+ 	err = symbol__validate_sym_arguments();
+ 	if (err)
+ 		goto out;
+@@ -3126,6 +3246,38 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (err)
+ 		goto out_mem2node;
+ 
++	if (c2c.use_stdio)
++		use_browser = 0;
++	else
++		use_browser = 1;
++
++	/*
++	 * Only in the TUI browser we are doing integrated annotation,
++	 * so don't allocate extra space that won't be used in the stdio
++	 * implementation.
++	 */
++	if (perf_c2c__has_annotation(NULL)) {
++		int ret = symbol__annotation_init();
++
++		if (ret < 0)
++			goto out_mem2node;
++		/*
++		 * For searching by name on the "Browse map details".
++		 * providing it only in verbose mode not to bloat too
++		 * much struct symbol.
++		 */
++		if (verbose > 0) {
++			/*
++			 * XXX: Need to provide a less kludgy way to ask for
++			 * more space per symbol, the u32 is for the index on
++			 * the ui browser.
++			 * See symbol__browser_index.
++			 */
++			symbol_conf.priv_size += sizeof(u32);
++		}
++		annotation_config__init();
++	}
++
+ 	if (symbol__init(env) < 0)
+ 		goto out_mem2node;
+ 
+@@ -3135,11 +3287,6 @@ static int perf_c2c__report(int argc, const char **argv)
+ 		goto out_mem2node;
+ 	}
+ 
+-	if (c2c.use_stdio)
+-		use_browser = 0;
+-	else
+-		use_browser = 1;
+-
+ 	setup_browser(false);
+ 
+ 	err = perf_session__process_events(session);
+@@ -3210,6 +3357,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ out_session:
+ 	perf_session__delete(session);
+ out:
++	annotation_options__exit();
+ 	return err;
+ }
+ 
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 8fe699f98542..a9d56e67454d 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -605,7 +605,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
+ 	target_ms.map = ms->map;
+ 	target_ms.sym = dl->ops.target.sym;
+ 	annotation__unlock(notes);
+-	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt);
++	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt, NO_INITIAL_AL_ADDR);
+ 
+ 	/*
+ 	 * The annotate_browser above changed the title with the target function
+@@ -864,6 +864,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 	const char *help = "Press 'h' for help on key bindings";
+ 	int delay_secs = hbt ? hbt->refresh : 0;
+ 	char *br_cntr_text = NULL;
++	u64 init_al_addr = NO_INITIAL_AL_ADDR;
+ 	char title[256];
+ 	int key;
+ 
+@@ -873,6 +874,13 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 
+ 	annotate_browser__calc_percent(browser, evsel);
+ 
++	/* the selection are intentionally even not from the sample percentage */
++	if (browser->entries.rb_node == NULL && browser->selection) {
++		init_al_addr = sym->start + browser->selection->offset;
++		disasm_rb_tree__insert(browser, browser->selection);
++		browser->curr_hot = rb_last(&browser->entries);
++	}
++
+ 	if (browser->curr_hot) {
+ 		annotate_browser__set_rb_top(browser, browser->curr_hot);
+ 		browser->b.navkeypressed = false;
+@@ -973,6 +981,18 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 				ui_helpline__puts(help);
+ 			annotate__scnprintf_title(hists, title, sizeof(title));
+ 			annotate_browser__show(browser, title, help);
++			/* Previous RB tree may not valid, need refresh according to new entries*/
++			if (init_al_addr != NO_INITIAL_AL_ADDR) {
++				struct disasm_line *dl = find_disasm_line(sym, init_al_addr, true);
++
++				browser->curr_hot = NULL;
++				browser->entries.rb_node = NULL;
++				if (dl != NULL) {
++					disasm_rb_tree__insert(browser, &dl->al);
++					browser->curr_hot = rb_last(&browser->entries);
++				}
++				nd = browser->curr_hot;
++			}
+ 			continue;
+ 		case 'o':
+ 			annotate_opts.use_offset = !annotate_opts.use_offset;
+@@ -1106,22 +1126,23 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ }
+ 
+ int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+-			     struct hist_browser_timer *hbt)
++			     struct hist_browser_timer *hbt, u64 init_al_addr)
+ {
+ 	/* reset abort key so that it can get Ctrl-C as a key */
+ 	SLang_reset_tty();
+ 	SLang_init_tty(0, 0, 0);
+ 	SLtty_set_suspend_state(true);
+ 
+-	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt);
++	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt, init_al_addr);
+ }
+ 
+ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 			       struct evsel *evsel,
+-			       struct hist_browser_timer *hbt)
++			       struct hist_browser_timer *hbt, u64 init_al_addr)
+ {
+ 	struct symbol *sym = ms->sym;
+ 	struct annotation *notes = symbol__annotation(sym);
++	struct disasm_line *dl = NULL;
+ 	struct annotate_browser browser = {
+ 		.b = {
+ 			.refresh = annotate_browser__refresh,
+@@ -1173,6 +1194,18 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 		browser.he = &annotate_he;
+ 	}
+ 
++	/*
++	 * If init_al_addr is set, it means that there should be a line
++	 * intentionally selected, not based on the percentages
++	 * which caculated by the event sampling. In this case, we
++	 * convey this information into the browser selection, where
++	 * the selection in other cases should be empty.
++	 */
++	if (init_al_addr != NO_INITIAL_AL_ADDR) {
++		dl = find_disasm_line(sym, init_al_addr, false);
++		browser.selection = &dl->al;
++	}
++
+ 	ui_helpline__push("Press ESC to exit");
+ 
+ 	if (annotate_opts.code_with_type) {
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index 487c0b08c003..c34ddc4ca13f 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -2485,7 +2485,7 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
+ 		evsel = hists_to_evsel(browser->hists);
+ 
+ 	he = hist_browser__selected_entry(browser);
+-	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt);
++	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt, NO_INITIAL_AL_ADDR);
+ 	/*
+ 	 * offer option to annotate the other branch source or target
+ 	 * (if they exists) when returning from annotate
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index c9b220d9f924..937effbeda69 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2622,7 +2622,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
+ 	return 0;
+ }
+ 
+-static struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
++struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
+ 					    bool allow_update)
+ {
+ 	struct disasm_line *dl;
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index eaf6c8aa7f47..bbe67588bbdd 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -170,6 +170,8 @@ static inline struct disasm_line *disasm_line(struct annotation_line *al)
+ 	return al ? container_of(al, struct disasm_line, al) : NULL;
+ }
+ 
++struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip, bool allow_update);
++
+ /*
+  * Is this offset in the same function as the line it is used?
+  * asm functions jump to other functions, for instance.
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index c64005278687..7afa50aa5cbb 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -713,12 +713,14 @@ struct block_hist {
+ #include "../ui/keysyms.h"
+ void attr_to_script(char *buf, struct perf_event_attr *attr);
+ 
++#define NO_INITIAL_AL_ADDR 0
++
+ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 			       struct evsel *evsel,
+-			       struct hist_browser_timer *hbt);
++			       struct hist_browser_timer *hbt, u64 init_al_addr);
+ 
+ int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+-			     struct hist_browser_timer *hbt);
++			     struct hist_browser_timer *hbt, u64 init_al_addr);
+ 
+ int evlist__tui_browse_hists(struct evlist *evlist, const char *help, struct hist_browser_timer *hbt,
+ 			     float min_pcnt, struct perf_env *env, bool warn_lost_event);
+-- 
+2.47.1
+
 
