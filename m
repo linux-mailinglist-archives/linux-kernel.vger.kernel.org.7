@@ -1,108 +1,210 @@
-Return-Path: <linux-kernel+bounces-837322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EB7BABFAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:16:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7141BABFBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522781923B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:17:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F336A7A6D8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B422B23C4FA;
-	Tue, 30 Sep 2025 08:16:40 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F632F3636;
+	Tue, 30 Sep 2025 08:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XpcPNZ2X"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE419343B;
-	Tue, 30 Sep 2025 08:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C323923BF9E;
+	Tue, 30 Sep 2025 08:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759220200; cv=none; b=lmjt6LsTBb4xdhSgQcyem4buHQiFkix7UUhsoB5uwQMT6Wh+ZsfU1hOVzjU4HiPLNRFcRsSuOFEOWqpXNtFs2Y/T7195w32kWR5stiniJjcgAi44bpAr/bJGvxuiyNVCwL/ATq209I9iu74J00gS/9qlwqw5nyR26rdqEgz8DkM=
+	t=1759220395; cv=none; b=qFh3JY4IXPyuqmIP1inu10Q+7MGWCzJqGOZwU0sHWGIyMXAIXWWWUeCiv0SB2lqkdJB4zDvlaoemreK6Yu01D7SB0PuG7nWfYr6WwvFsZVgzfiwYHWxIRnbZl02dXmKttHrdp1yh5i3CD7P22d7w/aOYyCGBjrc+IU3aL9GLPZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759220200; c=relaxed/simple;
-	bh=V5wuETQcgvIF648FSp/qiHyosW7aBRE9KR160cw0vcU=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=lE0tLqFA9v24WP6NjZbiAqgzfWLAo5ymUJy+2Qw75xu04ocYIdsJDKf56nukRYfaVEjKJR7PNxXUZAO+dl+w5HTC7kajwNm/FtP65SxnbYvZ1G2Q6Wx0axpLvcjtckzLTGNxtWyR9Aa/oP/aO9BFxoUr5U3JcwUg97OJxb+box4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowAAHpg_Ukdto_09DCQ--.10836S2;
-	Tue, 30 Sep 2025 16:16:28 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: robh@kernel.org,
-	saravanak@google.com,
-	lizhi.hou@amd.com
-Cc: devicetree@vger.kernel.org,
+	s=arc-20240116; t=1759220395; c=relaxed/simple;
+	bh=AveBoPeCQXV32YAl+mI+vpT/h0p2ee4rPM0ZMDaIq9U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lf0apfw1LebtJbTCGZ0teM+rAB5O+a21oX5kQ5fkHFWKh8Vy1uFkAGcuAsZHOnJdPNG4KpPemiL56CLnNdmSSxkLlsEKhAO3A0oiXoRx+stxmkblvaGGW5nNwb5CUyixfO5hgdhsPZGGhZ0mHQcZ+ne49JPnn42K/x+C/wcJrk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XpcPNZ2X; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=48VZrtj5TS9S03BHiRfBNP7TTsWHh6rjB/NRgnK1MUg=;
+	b=XpcPNZ2XvYshacdfg3W26lWS0J8AMoRfW6TPOekUb46jzPAvXuRkjaEgoFolwX
+	usIfLndDGtQrBzjtYgMjWcum1f5dSAu+B+8bZp2EeXQpS4bTdpvGa582kKaFwm9M
+	crZtalINrYpKvUoUJFDq2ZViZkKwdNeQlVZyU357CCTik=
+Received: from 163.com (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wA37t9pkttooAdtBA--.5066S2;
+	Tue, 30 Sep 2025 16:18:51 +0800 (CST)
+From: chenyuan_fl@163.com
+To: john.ogness@linutronix.de,
+	rostedt@goodmis.org,
+	peterz@infradead.org
+Cc: bigeasy@linutronix.de,
+	chenyuan@kylinos.cn,
 	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] of: unittest: Fix device reference count leak in of_unittest_pci_node_verify
-Date: Tue, 30 Sep 2025 16:16:18 +0800
-Message-Id: <20250930081618.794-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowAAHpg_Ukdto_09DCQ--.10836S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1kKFWxAry3JryxuryUWrg_yoW8GFy5pw
-	47Kas0vrWkGa17Kw4jvF1xZFy5C3y2k3yrGFyxA3WI9395Z34xtryUtayUtrn8ZrWkXFs0
-	q3W7tay0kF4UtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lc7CjxVAaw2AFwI0_JF0_Jw1lc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU0tCzDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	linux-trace-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	mhiramat@kernel.org
+Subject: [PATH v3] tracing: Fix race condition in kprobe initialization causing NULL pointer dereference
+Date: Tue, 30 Sep 2025 09:18:48 +0100
+Message-Id: <20250930081848.433648-1-chenyuan_fl@163.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <84seg5d2p3.fsf@jogness.linutronix.de>
+References: <84seg5d2p3.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wA37t9pkttooAdtBA--.5066S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Jw48AF13XFy8XF1ftr4UCFg_yoW7Xw1fpa
+	nrKws8Kw4kJFyjvrWrtr1Ut3WxtFyfAFWDJryUGw45ZF4UKr1jyF1xXFWUAF13JFWqvFyf
+	t3Waqr10vry7JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jn5r7UUUUU=
+X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiJwLYvWjbkIEzQAAAsR
 
-In of_unittest_pci_node_verify(), when the add parameter is false,
-device_find_any_child() obtains a reference to a child device. This
-function implicitly calls get_device() to increment the device's
-reference count before returning the pointer. However, the caller
-fails to properly release this reference by calling put_device(),
-leading to a device reference count leak. Add put_device() in the else
-branch immediately after child_dev is no longer needed.
+From: Yuan Chen <chenyuan@kylinos.cn>
 
-As the comment of device_find_any_child states: "NOTE: you will need
-to drop the reference with put_device() after use".
+There is a critical race condition in kprobe initialization that can lead to
+NULL pointer dereference and kernel crash.
 
-Found by code review.
+[1135630.084782] Unable to handle kernel paging request at virtual address 0000710a04630000
+...
+[1135630.260314] pstate: 404003c9 (nZcv DAIF +PAN -UAO)
+[1135630.269239] pc : kprobe_perf_func+0x30/0x260
+[1135630.277643] lr : kprobe_dispatcher+0x44/0x60
+[1135630.286041] sp : ffffaeff4977fa40
+[1135630.293441] x29: ffffaeff4977fa40 x28: ffffaf015340e400
+[1135630.302837] x27: 0000000000000000 x26: 0000000000000000
+[1135630.312257] x25: ffffaf029ed108a8 x24: ffffaf015340e528
+[1135630.321705] x23: ffffaeff4977fc50 x22: ffffaeff4977fc50
+[1135630.331154] x21: 0000000000000000 x20: ffffaeff4977fc50
+[1135630.340586] x19: ffffaf015340e400 x18: 0000000000000000
+[1135630.349985] x17: 0000000000000000 x16: 0000000000000000
+[1135630.359285] x15: 0000000000000000 x14: 0000000000000000
+[1135630.368445] x13: 0000000000000000 x12: 0000000000000000
+[1135630.377473] x11: 0000000000000000 x10: 0000000000000000
+[1135630.386411] x9 : 0000000000000000 x8 : 0000000000000000
+[1135630.395252] x7 : 0000000000000000 x6 : 0000000000000000
+[1135630.403963] x5 : 0000000000000000 x4 : 0000000000000000
+[1135630.412545] x3 : 0000710a04630000 x2 : 0000000000000006
+[1135630.421021] x1 : ffffaeff4977fc50 x0 : 0000710a04630000
+[1135630.429410] Call trace:
+[1135630.434828]  kprobe_perf_func+0x30/0x260
+[1135630.441661]  kprobe_dispatcher+0x44/0x60
+[1135630.448396]  aggr_pre_handler+0x70/0xc8
+[1135630.454959]  kprobe_breakpoint_handler+0x140/0x1e0
+[1135630.462435]  brk_handler+0xbc/0xd8
+[1135630.468437]  do_debug_exception+0x84/0x138
+[1135630.475074]  el1_dbg+0x18/0x8c
+[1135630.480582]  security_file_permission+0x0/0xd0
+[1135630.487426]  vfs_write+0x70/0x1c0
+[1135630.493059]  ksys_write+0x5c/0xc8
+[1135630.498638]  __arm64_sys_write+0x24/0x30
+[1135630.504821]  el0_svc_common+0x78/0x130
+[1135630.510838]  el0_svc_handler+0x38/0x78
+[1135630.516834]  el0_svc+0x8/0x1b0
 
-Cc: stable@vger.kernel.org
-Fixes: 26409dd04589 ("of: unittest: Add pci_dt_testdrv pci driver")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+kernel/trace/trace_kprobe.c: 1308
+0xffff3df8995039ec <kprobe_perf_func+0x2c>:     ldr     x21, [x24,#120]
+include/linux/compiler.h: 294
+0xffff3df8995039f0 <kprobe_perf_func+0x30>:     ldr     x1, [x21,x0]
+
+kernel/trace/trace_kprobe.c
+1308: head = this_cpu_ptr(call->perf_events);
+1309: if (hlist_empty(head))
+1310: 	return 0;
+
+crash> struct trace_event_call -o
+struct trace_event_call {
+  ...
+  [120] struct hlist_head *perf_events;  //(call->perf_event)
+  ...
+}
+
+crash> struct trace_event_call ffffaf015340e528
+struct trace_event_call {
+  ...
+  perf_events = 0xffff0ad5fa89f088, //this value is correct, but x21 = 0
+  ...
+}
+
+Race Condition Analysis:
+
+The race occurs between kprobe activation and perf_events initialization:
+
+  CPU0                                    CPU1
+  ====                                    ====
+  perf_kprobe_init
+    perf_trace_event_init
+      tp_event->perf_events = list;(1)
+      tp_event->class->reg (2)← KPROBE ACTIVE
+                                          Debug exception triggers
+                                          ...
+                                          kprobe_dispatcher
+                                            kprobe_perf_func (tk->tp.flags & TP_FLAG_PROFILE)
+                                              head = this_cpu_ptr(call->perf_events)(3)
+                                              (perf_events is still NULL)
+
+Problem:
+1. CPU0 executes (1) assigning tp_event->perf_events = list
+2. CPU0 executes (2) enabling kprobe functionality via class->reg()
+3. CPU1 triggers and reaches kprobe_dispatcher
+4. CPU1 checks TP_FLAG_PROFILE - condition passes (step 2 completed)
+5. CPU1 calls kprobe_perf_func() and crashes at (3) because
+   call->perf_events is still NULL
+
+CPU1 sees that kprobe functionality is enabled but does not see that
+perf_events has been assigned.
+
+Add pairing read and write memory barriers to guarantee that if CPU1
+sees that kprobe functionality is enabled, it must also see that
+perf_events has been assigned.
+
+v1->v2: Fix race analysis (per Masami) - kprobe arms in class->reg().
+v2->v3: Adopt RELEASE/ACQUIRE semantics per Peter/John's suggestions,
+        aligning with Steven's clarification on barrier purposes.
+
+Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
 ---
-Changes in v2:
-- modified the put_device() location as suggestions.
----
- drivers/of/unittest.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/trace/trace_probe.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index e3503ec20f6c..388e9ec2cccf 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -4300,6 +4300,7 @@ static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
- 		unittest(!np, "Child device tree node is not removed\n");
- 		child_dev = device_find_any_child(&pdev->dev);
- 		unittest(!child_dev, "Child device is not removed\n");
-+		put_device(child_dev);
- 	}
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 842383fbc03b..98b838591edc 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -274,19 +274,19 @@ struct event_file_link {
+ static inline bool trace_probe_test_flag(struct trace_probe *tp,
+ 					 unsigned int flag)
+ {
+-	return !!(tp->event->flags & flag);
++	return !!(smp_load_acquire(&tp->event->flags) & flag);
+ }
  
- failed:
+ static inline void trace_probe_set_flag(struct trace_probe *tp,
+ 					unsigned int flag)
+ {
+-	tp->event->flags |= flag;
++	smp_store_release(&tp->event->flags, tp->event->flags | flag);
+ }
+ 
+ static inline void trace_probe_clear_flag(struct trace_probe *tp,
+ 					  unsigned int flag)
+ {
+-	tp->event->flags &= ~flag;
++	smp_store_release(&tp->event->flags, tp->event->flags & ~flag);
+ }
+ 
+ static inline bool trace_probe_is_enabled(struct trace_probe *tp)
 -- 
-2.17.1
+2.39.5
 
 
