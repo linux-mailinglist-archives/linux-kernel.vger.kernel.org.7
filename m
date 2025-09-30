@@ -1,162 +1,108 @@
-Return-Path: <linux-kernel+bounces-837321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F30BABF91
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EB7BABFAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E131C6A4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522781923B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BA02F39A5;
-	Tue, 30 Sep 2025 08:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W61QIwkN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B422B23C4FA;
+	Tue, 30 Sep 2025 08:16:40 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DCF24167A
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE419343B;
+	Tue, 30 Sep 2025 08:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759220095; cv=none; b=RT2SsZBC2qX46N45RCwU91AqmR659Uiap+Vti5YVh6299c0yIL3urDQCBWHQ+Y/7smjMVC4FqMFEwkvEvdpNQ/RLdGVd5iAKOEND+KMQ5h7u3N+SL2kU6ZFESwdF0VPf4TZ9w2lybedtjkesl4INxpCoqUm2OGUOeaMTrTrXP+Q=
+	t=1759220200; cv=none; b=lmjt6LsTBb4xdhSgQcyem4buHQiFkix7UUhsoB5uwQMT6Wh+ZsfU1hOVzjU4HiPLNRFcRsSuOFEOWqpXNtFs2Y/T7195w32kWR5stiniJjcgAi44bpAr/bJGvxuiyNVCwL/ATq209I9iu74J00gS/9qlwqw5nyR26rdqEgz8DkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759220095; c=relaxed/simple;
-	bh=G4l9DgFoag+cMwzXFggTtmUneVWS5LQqS8NQZD+7VRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpJlVN+ApCjwnlEktINnXxV3hb+NRG64Q6xEMrebaatlrFIwPnGlvDno/MATkHn1/CCSIbaE+KtqE5yZd/eeWh5SxGbV5koI59dILP6uOWtxwJFrFtNSn21eVZrrbNW76iGaBIydwRObnAzLUkWjqsgxvfgEwcDthnqn2K5d6oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W61QIwkN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2nnBOuIqScZe6b8WuKloPPhC/MDVdeIe9XpfSiqBtIA=; b=W61QIwkN37S4sYlju6/idAlpf+
-	ND8+Up0ByswfnuCnl2ZXRgB95VBjkxUAfZwsSK8HUeS26vd7YTxN+KJFO/FoKA0VuC6F/EE/Ck1tH
-	jps1i4MTMjxYIIYhCu4RzqB5ShigolPbBBKJDz6+ZM3nRYXmibH/DlIwYnCSWDFvgfGuAjIIBulD0
-	HnGUpcKBZkSYV4LhQbO4n+nI8WkPsOhsX6USX3pRcD9tIKlhsw4/lwGtWO3SwJfZhgiEZ/DkgcNaL
-	ZqLCkZR/3yqkSkkpH6N1/DWxcx7aP6JpBoB+w0fV3XN6/wtalyMndjnuo7n3BYVzyuVrlrXyhDIZf
-	R0D4UQcw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3VVU-0000000Ch0X-1RoL;
-	Tue, 30 Sep 2025 08:14:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C75AE300220; Tue, 30 Sep 2025 10:14:42 +0200 (CEST)
-Date: Tue, 30 Sep 2025 10:14:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, xin@zytor.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v2 08/12] x86/extable: Add support for immediate form MSR
- instructions
-Message-ID: <20250930081442.GG3245006@noisy.programming.kicks-ass.net>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-9-jgross@suse.com>
+	s=arc-20240116; t=1759220200; c=relaxed/simple;
+	bh=V5wuETQcgvIF648FSp/qiHyosW7aBRE9KR160cw0vcU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=lE0tLqFA9v24WP6NjZbiAqgzfWLAo5ymUJy+2Qw75xu04ocYIdsJDKf56nukRYfaVEjKJR7PNxXUZAO+dl+w5HTC7kajwNm/FtP65SxnbYvZ1G2Q6Wx0axpLvcjtckzLTGNxtWyR9Aa/oP/aO9BFxoUr5U3JcwUg97OJxb+box4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowAAHpg_Ukdto_09DCQ--.10836S2;
+	Tue, 30 Sep 2025 16:16:28 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: robh@kernel.org,
+	saravanak@google.com,
+	lizhi.hou@amd.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] of: unittest: Fix device reference count leak in of_unittest_pci_node_verify
+Date: Tue, 30 Sep 2025 16:16:18 +0800
+Message-Id: <20250930081618.794-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowAAHpg_Ukdto_09DCQ--.10836S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1kKFWxAry3JryxuryUWrg_yoW8GFy5pw
+	47Kas0vrWkGa17Kw4jvF1xZFy5C3y2k3yrGFyxA3WI9395Z34xtryUtayUtrn8ZrWkXFs0
+	q3W7tay0kF4UtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lc7CjxVAaw2AFwI0_JF0_Jw1lc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU0tCzDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930070356.30695-9-jgross@suse.com>
 
-On Tue, Sep 30, 2025 at 09:03:52AM +0200, Juergen Gross wrote:
-> From: "Xin Li (Intel)" <xin@zytor.com>
-> 
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
-> V2:
-> - new patch, taken from the RFC v2 MSR refactor series by Xin Li
-> ---
->  arch/x86/include/asm/msr.h | 18 ++++++++++++++++++
->  arch/x86/mm/extable.c      | 39 +++++++++++++++++++++++++++++++++-----
->  2 files changed, 52 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-> index 71f41af11591..cf5205300266 100644
-> --- a/arch/x86/include/asm/msr.h
-> +++ b/arch/x86/include/asm/msr.h
-> @@ -56,6 +56,24 @@ static inline void do_trace_read_msr(u32 msr, u64 val, int failed) {}
->  static inline void do_trace_rdpmc(u32 msr, u64 val, int failed) {}
->  #endif
->  
-> +/*
-> + * Called only from an MSR fault handler, the instruction pointer points to
-> + * the MSR access instruction that caused the fault.
-> + */
-> +static __always_inline bool is_msr_imm_insn(void *ip)
-> +{
-> +	/*
-> +	 * A full decoder for immediate form MSR instructions appears excessive.
-> +	 */
-> +#ifdef CONFIG_X86_64
-> +	const u8 msr_imm_insn_prefix[] = { 0xc4, 0xe7 };
-> +
-> +	return !memcmp(ip, msr_imm_insn_prefix, sizeof(msr_imm_insn_prefix));
+In of_unittest_pci_node_verify(), when the add parameter is false,
+device_find_any_child() obtains a reference to a child device. This
+function implicitly calls get_device() to increment the device's
+reference count before returning the pointer. However, the caller
+fails to properly release this reference by calling put_device(),
+leading to a device reference count leak. Add put_device() in the else
+branch immediately after child_dev is no longer needed.
 
-This seems fragile. Those two bytes are basically the first two bytes of
-VEX3 and only indicate VEX3.map7. Which is not very specific, but when
-combined with the fact that this is an MSR exception, might just work.
+As the comment of device_find_any_child states: "NOTE: you will need
+to drop the reference with put_device() after use".
 
-Trouble is that it is also possible to encode the immediate form using
-EVEX. If a toolchain were to do that, we'd fail to detect it.
+Found by code review.
 
-(And there is segment prefix stuffing possible I suppose)
+Cc: stable@vger.kernel.org
+Fixes: 26409dd04589 ("of: unittest: Add pci_dt_testdrv pci driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the put_device() location as suggestions.
+---
+ drivers/of/unittest.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +#else
-> +	return false;
-> +#endif
-> +}
-> +
->  /*
->   * __rdmsr() and __wrmsr() are the two primitives which are the bare minimum MSR
->   * accessors and should not have any tracing or other functionality piggybacking
-> diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
-> index 2fdc1f1f5adb..c021e4dbc69d 100644
-> --- a/arch/x86/mm/extable.c
-> +++ b/arch/x86/mm/extable.c
-> @@ -166,23 +166,52 @@ static bool ex_handler_uaccess(const struct exception_table_entry *fixup,
->  static bool ex_handler_msr(const struct exception_table_entry *fixup,
->  			   struct pt_regs *regs, bool wrmsr, bool safe, int reg)
->  {
-> +	bool imm_insn = is_msr_imm_insn((void *)regs->ip);
-> +	u32 msr;
-> +
-> +	if (imm_insn)
-> +		/*
-> +		 * The 32-bit immediate specifying a MSR is encoded into
-> +		 * byte 5 ~ 8 of an immediate form MSR instruction.
-> +		 */
-> +		msr = *(u32 *)(regs->ip + 5);
-> +	else
-> +		msr = (u32)regs->cx;
-
-This seems to have fallen subject to the US tariff induced {} shortage
-or something.
-
-Also, EVEX form will have them in other bytes (one further, on account
-of EVEX being 4 bytes, rather than 3).
-
-Given this really isn't a fast path or anything, how about we just use
-the instruction decoder? Something like:
-
-	struct insn insn;
-	u32 msr = (u32)regs->cx;
-
-	ret = insn_decode_kernel(&insn, (void *)regs->ip);
-	if (!ret && insn.vex_prefix.nbytes)
-		msr = insn.immediate.value;
-
-should do, I suppose. Isn't that both simpler and more robust?
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index e3503ec20f6c..388e9ec2cccf 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -4300,6 +4300,7 @@ static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
+ 		unittest(!np, "Child device tree node is not removed\n");
+ 		child_dev = device_find_any_child(&pdev->dev);
+ 		unittest(!child_dev, "Child device is not removed\n");
++		put_device(child_dev);
+ 	}
+ 
+ failed:
+-- 
+2.17.1
 
 
