@@ -1,121 +1,162 @@
-Return-Path: <linux-kernel+bounces-837320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6755BABF88
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:14:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F30BABF91
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25993C603E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E131C6A4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5144E2F39AB;
-	Tue, 30 Sep 2025 08:14:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BA02F39A5;
+	Tue, 30 Sep 2025 08:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W61QIwkN"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED52624167A
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DCF24167A
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759220045; cv=none; b=B54QDfIPkSZhAhX6459OBD66wEBnT/ArNH7ldrAzuwfWbEV2fpH4ikJ0Fh0elBIcEIgb+5KvyRUutXyLoHi00lWJpApKPfIKRFgHvehmPpf1FSwL2BbgVL8EfdgtWwh/2lshhnSLoiaMue5SXys6KfBPj1FL2g9xwuSgxzQeRJc=
+	t=1759220095; cv=none; b=RT2SsZBC2qX46N45RCwU91AqmR659Uiap+Vti5YVh6299c0yIL3urDQCBWHQ+Y/7smjMVC4FqMFEwkvEvdpNQ/RLdGVd5iAKOEND+KMQ5h7u3N+SL2kU6ZFESwdF0VPf4TZ9w2lybedtjkesl4INxpCoqUm2OGUOeaMTrTrXP+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759220045; c=relaxed/simple;
-	bh=MYRwQfM/D/QD/qI8NUujoMHGFl+avNWViKueqXxVRVM=;
+	s=arc-20240116; t=1759220095; c=relaxed/simple;
+	bh=G4l9DgFoag+cMwzXFggTtmUneVWS5LQqS8NQZD+7VRE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hD8KybSJyET07T+LXhWJXdRO6zHt38gOHqv4lKIfSbgTAAWFaUeLkqPiFQQzpCLBoIG6Ep5UpsaF5t+rBGSH3VrDjVtDzTgzHP9l5l6zOJsddvmi3N9Z8DOFLsduwtrxCbBoaHno/wDIRhfStaKaLKGI2XeEHKoMdsSAJPA3b4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v3VUb-0005bN-0h; Tue, 30 Sep 2025 10:13:49 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v3VUY-001DPb-2q;
-	Tue, 30 Sep 2025 10:13:46 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 8267147CF25;
-	Tue, 30 Sep 2025 08:13:46 +0000 (UTC)
-Date: Tue, 30 Sep 2025 10:13:45 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Celeste Liu <uwu@coelacanthus.name>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Maximilian Schneider <max@schneidersoft.net>, Henrik Brix Andersen <henrik@brixandersen.dk>, 
-	Wolfgang Grandegger <wg@grandegger.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Runcheng Lu <runcheng.lu@hpmicro.com>, stable@vger.kernel.org, Vincent Mailhol <mailhol@kernel.org>
-Subject: Re: [PATCH v4] net/can/gs_usb: increase max interface to U8_MAX
-Message-ID: <20250930-fancy-dodo-of-chemistry-c92515-mkl@pengutronix.de>
-References: <20250930-gs-usb-max-if-v4-1-8e163eb583da@coelacanthus.name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FpJlVN+ApCjwnlEktINnXxV3hb+NRG64Q6xEMrebaatlrFIwPnGlvDno/MATkHn1/CCSIbaE+KtqE5yZd/eeWh5SxGbV5koI59dILP6uOWtxwJFrFtNSn21eVZrrbNW76iGaBIydwRObnAzLUkWjqsgxvfgEwcDthnqn2K5d6oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W61QIwkN; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2nnBOuIqScZe6b8WuKloPPhC/MDVdeIe9XpfSiqBtIA=; b=W61QIwkN37S4sYlju6/idAlpf+
+	ND8+Up0ByswfnuCnl2ZXRgB95VBjkxUAfZwsSK8HUeS26vd7YTxN+KJFO/FoKA0VuC6F/EE/Ck1tH
+	jps1i4MTMjxYIIYhCu4RzqB5ShigolPbBBKJDz6+ZM3nRYXmibH/DlIwYnCSWDFvgfGuAjIIBulD0
+	HnGUpcKBZkSYV4LhQbO4n+nI8WkPsOhsX6USX3pRcD9tIKlhsw4/lwGtWO3SwJfZhgiEZ/DkgcNaL
+	ZqLCkZR/3yqkSkkpH6N1/DWxcx7aP6JpBoB+w0fV3XN6/wtalyMndjnuo7n3BYVzyuVrlrXyhDIZf
+	R0D4UQcw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v3VVU-0000000Ch0X-1RoL;
+	Tue, 30 Sep 2025 08:14:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C75AE300220; Tue, 30 Sep 2025 10:14:42 +0200 (CEST)
+Date: Tue, 30 Sep 2025 10:14:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, xin@zytor.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v2 08/12] x86/extable: Add support for immediate form MSR
+ instructions
+Message-ID: <20250930081442.GG3245006@noisy.programming.kicks-ass.net>
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-9-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cykog7jsflt7oxgg"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250930-gs-usb-max-if-v4-1-8e163eb583da@coelacanthus.name>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250930070356.30695-9-jgross@suse.com>
 
+On Tue, Sep 30, 2025 at 09:03:52AM +0200, Juergen Gross wrote:
+> From: "Xin Li (Intel)" <xin@zytor.com>
+> 
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+> V2:
+> - new patch, taken from the RFC v2 MSR refactor series by Xin Li
+> ---
+>  arch/x86/include/asm/msr.h | 18 ++++++++++++++++++
+>  arch/x86/mm/extable.c      | 39 +++++++++++++++++++++++++++++++++-----
+>  2 files changed, 52 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+> index 71f41af11591..cf5205300266 100644
+> --- a/arch/x86/include/asm/msr.h
+> +++ b/arch/x86/include/asm/msr.h
+> @@ -56,6 +56,24 @@ static inline void do_trace_read_msr(u32 msr, u64 val, int failed) {}
+>  static inline void do_trace_rdpmc(u32 msr, u64 val, int failed) {}
+>  #endif
+>  
+> +/*
+> + * Called only from an MSR fault handler, the instruction pointer points to
+> + * the MSR access instruction that caused the fault.
+> + */
+> +static __always_inline bool is_msr_imm_insn(void *ip)
+> +{
+> +	/*
+> +	 * A full decoder for immediate form MSR instructions appears excessive.
+> +	 */
+> +#ifdef CONFIG_X86_64
+> +	const u8 msr_imm_insn_prefix[] = { 0xc4, 0xe7 };
+> +
+> +	return !memcmp(ip, msr_imm_insn_prefix, sizeof(msr_imm_insn_prefix));
 
---cykog7jsflt7oxgg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4] net/can/gs_usb: increase max interface to U8_MAX
-MIME-Version: 1.0
+This seems fragile. Those two bytes are basically the first two bytes of
+VEX3 and only indicate VEX3.map7. Which is not very specific, but when
+combined with the fact that this is an MSR exception, might just work.
 
-On 30.09.2025 14:15:47, Celeste Liu wrote:
-> This issue was found by Runcheng Lu when develop HSCanT USB to CAN FD
-> converter[1]. The original developers may have only 3 interfaces device to
-> test so they write 3 here and wait for future change.
->=20
-> During the HSCanT development, we actually used 4 interfaces, so the
-> limitation of 3 is not enough now. But just increase one is not
-> future-proofed. Since the channel type in gs_host_frame is u8, just
-> increase interface number limit to max size of u8 safely.
+Trouble is that it is also possible to encode the immediate form using
+EVEX. If a toolchain were to do that, we'd fail to detect it.
 
-I really like the new approach you've implemented in this patch, but now
-the patch description doesn't match anymore.
+(And there is segment prefix stuffing possible I suppose)
 
-regards,
-Marc
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
+>  /*
+>   * __rdmsr() and __wrmsr() are the two primitives which are the bare minimum MSR
+>   * accessors and should not have any tracing or other functionality piggybacking
+> diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
+> index 2fdc1f1f5adb..c021e4dbc69d 100644
+> --- a/arch/x86/mm/extable.c
+> +++ b/arch/x86/mm/extable.c
+> @@ -166,23 +166,52 @@ static bool ex_handler_uaccess(const struct exception_table_entry *fixup,
+>  static bool ex_handler_msr(const struct exception_table_entry *fixup,
+>  			   struct pt_regs *regs, bool wrmsr, bool safe, int reg)
+>  {
+> +	bool imm_insn = is_msr_imm_insn((void *)regs->ip);
+> +	u32 msr;
+> +
+> +	if (imm_insn)
+> +		/*
+> +		 * The 32-bit immediate specifying a MSR is encoded into
+> +		 * byte 5 ~ 8 of an immediate form MSR instruction.
+> +		 */
+> +		msr = *(u32 *)(regs->ip + 5);
+> +	else
+> +		msr = (u32)regs->cx;
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+This seems to have fallen subject to the US tariff induced {} shortage
+or something.
 
---cykog7jsflt7oxgg
-Content-Type: application/pgp-signature; name="signature.asc"
+Also, EVEX form will have them in other bytes (one further, on account
+of EVEX being 4 bytes, rather than 3).
 
------BEGIN PGP SIGNATURE-----
+Given this really isn't a fast path or anything, how about we just use
+the instruction decoder? Something like:
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjbkTYACgkQDHRl3/mQ
-kZxM2gf/VJUd6lg/E6w2BHLpJ3OHVsxwevaCo6cnUzxANlAkl42PXyY+a4ZEsqlT
-uC0KyV/QlIy96Mwp5ZYN3Tel7EKKHl2bQc1dfgFu+xHdMrTsbsXHPle/oPpR0OVB
-UrpFTZ+8+5wByk2Glio76aiw8Z82qguYf12mT5MtGs1AwqYmn3xXBBdQY2oUUzik
-mpoQGAk2aLcNDdRFv1jDaGIQygRDbFBbTzWz63ytIMScu+DcfcHTjkLGujv6TFnA
-qxEeqDt6EkMnlQWSUIu/ErjnCn2AUVasdCWbHl6ZVaz/BdQtZyNNt028D3N0Dk37
-WRLHGKoCqGEXZ8EycYL95j431NKbyQ==
-=racr
------END PGP SIGNATURE-----
+	struct insn insn;
+	u32 msr = (u32)regs->cx;
 
---cykog7jsflt7oxgg--
+	ret = insn_decode_kernel(&insn, (void *)regs->ip);
+	if (!ret && insn.vex_prefix.nbytes)
+		msr = insn.immediate.value;
+
+should do, I suppose. Isn't that both simpler and more robust?
+
 
