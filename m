@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-837984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE6DBAE2CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:28:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE65BBAE2D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27656325268
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:28:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BC0E1714AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5516C30CD83;
-	Tue, 30 Sep 2025 17:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1770830DD38;
+	Tue, 30 Sep 2025 17:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Sn2TgfN+"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H08aOUdp"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E063E23CEF9
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5635030CDB4
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253300; cv=none; b=R7SPHpcEbQvAwvJqXpHuLVnOQU6ad/bATynGMXsKJcI0ao8Rs4Pnh63EC2hq4AuQAmgQIAUIF17puGyKer7YkdUiBxF5ppQ6Bq+dONa035aOaRHB894OH6hgz6Ddru7v+pS89s6R7bxPpeIkPiOlR9dc6YQDWTa05OCBQDF6o3E=
+	t=1759253304; cv=none; b=H/ASY5ke3lbC/JwgTsinW9Y2PthwHqd2CvEGSTA3sP/TKviCgfwtZMLBjm8IAKVwEGXjMawq9FMpXU7zH/tsbarQKOlIgLbHvGdhDNpbeTseYBy5JFP+di99r3r9mtsSGu2UKnOfkR5uaVsCumIuROq1ELFnNkv9Wb3wR/KWo6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253300; c=relaxed/simple;
-	bh=Cy3b/aZmaZLpQYUPwsbTjVFhwsOtIrwg8MTNk8I/oLU=;
+	s=arc-20240116; t=1759253304; c=relaxed/simple;
+	bh=KDxXnQWIvOcKAO0hI30SHajWm44YowjQ1adjboWQSLU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q2Bj3J9EWfIQfN7wWENbeSlWjm57hLotGbnJJP94C92m6Hjygb+RT0AZiVklYqIwDdYZwv1xKetsseyIQCVi6oy8xYtyRHqnEI4NQ82K8Fu5k6/uR2MHXCkZtCuey0LZwyi3AgLcz5oEEfwa/niW0+wHZRk9ibfWRUsMMRmjwsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Sn2TgfN+; arc=none smtp.client-ip=91.218.175.172
+	 MIME-Version; b=m4JUZ9XNueH0G4ZkYveTjHWOJqVJYidl7eL6tKYU8ZH2zNqU3QZQ97n4HuVH5h3oUCQ7ZX4qnXPv3CkOqjjbWMiEThUnd3E5Ii1IA6bpi9Lr6x/IOHhN0njdIVT2WuSd8/5KdN8UiImamx28btUilpbr3GEL6cRqtqVRnoB/gWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H08aOUdp; arc=none smtp.client-ip=91.218.175.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759253297;
+	t=1759253300;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SQG43KGfuEkFCSweP9GZSaF1gWhd8Z37kD+dlH+jfn0=;
-	b=Sn2TgfN+j63Snp99WEsY7AFOYLFd+lec23J5K1v+wcyWU9PWrGgWOgiK3LQ4RSLHrAc6Xh
-	jLtk6bQ+ou8C6pDLL/XUYXu1OoZbv2+1N3k3HRYvkC5sSL6avamdKtdoBBEC1PAfgOmwum
-	G3qI5m9mhDosXkd396+llNAK0nX3Tjw=
+	bh=UFWKO6GpxxXfQR03xrZB6itiN9eZ29IE+Uu8QNdt3u8=;
+	b=H08aOUdpCg0muQbe+GP9q+U9qUWIPixcaCRBdvb1w+R5qCIfR4wTeWaM3yJdWwi28UkHnD
+	bF62Ua/mVcuM4pF6YQfpnbqJ2m6ZzOns+mc4MRkv9a06DQzdHHCuDIGdRb6MrGwVMcBTAg
+	Pr45V4ZiVvKm40aNQkEvrerjw+KiwQo=
 From: Wen Yang <wen.yang@linux.dev>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Pierre Gondois <pierre.gondois@arm.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Sudeep Holla <sudeep.holla@arm.com>,
 	Wen Yang <wen.yang@linux.dev>
-Subject: [PATCH 6.1 2/6] cacheinfo: Return error code in init_of_cache_level()
-Date: Wed,  1 Oct 2025 01:27:27 +0800
-Message-Id: <25a40240ad8a65be2c868891ef266f62b7787c3d.1759251543.git.wen.yang@linux.dev>
+Subject: [PATCH 6.1 3/6] cacheinfo: Check 'cache-unified' property to count cache leaves
+Date: Wed,  1 Oct 2025 01:27:28 +0800
+Message-Id: <36bc21af9dee720394ea691c26b3d40eb1da546f.1759251543.git.wen.yang@linux.dev>
 In-Reply-To: <cover.1759251543.git.wen.yang@linux.dev>
 References: <cover.1759251543.git.wen.yang@linux.dev>
 Precedence: bulk
@@ -65,54 +65,94 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Pierre Gondois <pierre.gondois@arm.com>
 
-[ Upstream commit 8844c3df001bc1d8397fddea341308da63855d53 ]
-Make init_of_cache_level() return an error code when the cache
-information parsing fails to help detecting missing information.
+[ Upstream commit de0df442ee49cb1f6ee58f3fec5dcb5e5eb70aab ]
+The DeviceTree Specification v0.3 specifies that the cache node
+'[d-|i-|]cache-size' property is required. The 'cache-unified'
+property is specifies whether the cache level is separate
+or unified.
 
-init_of_cache_level() is only called for riscv. Returning an error
-code instead of 0 will prevent detect_cache_attributes() to allocate
-memory if an incomplete DT is parsed.
+If the cache-size property is missing, no cache leaves is accounted.
+This can lead to a 'BUG: KASAN: slab-out-of-bounds' [1] bug.
 
+Check 'cache-unified' property and always account for at least
+one cache leaf when parsing the device tree.
+
+[1] https://lore.kernel.org/all/0f19cb3f-d6cf-4032-66d2-dedc9d09a0e3@linaro.org/
+
+Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Link: https://lore.kernel.org/r/20230104183033.755668-3-pierre.gondois@arm.com
+Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20230104183033.755668-4-pierre.gondois@arm.com
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Wen Yang <wen.yang@linux.dev>
 ---
- drivers/base/cacheinfo.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/base/cacheinfo.c | 37 ++++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 7663eaddd168..480007210bcc 100644
+index 480007210bcc..ab99b0f0d010 100644
 --- a/drivers/base/cacheinfo.c
 +++ b/drivers/base/cacheinfo.c
-@@ -245,11 +245,11 @@ int init_of_cache_level(unsigned int cpu)
- 		of_node_put(prev);
- 		prev = np;
- 		if (!of_device_is_compatible(np, "cache"))
--			break;
-+			goto err_out;
- 		if (of_property_read_u32(np, "cache-level", &level))
--			break;
-+			goto err_out;
- 		if (level <= levels)
--			break;
-+			goto err_out;
- 		if (of_property_read_bool(np, "cache-size"))
- 			++leaves;
- 		if (of_property_read_bool(np, "i-cache-size"))
-@@ -264,6 +264,10 @@ int init_of_cache_level(unsigned int cpu)
- 	this_cpu_ci->num_leaves = leaves;
- 
+@@ -224,12 +224,9 @@ static int cache_setup_of_node(unsigned int cpu)
  	return 0;
-+
-+err_out:
-+	of_node_put(np);
-+	return -EINVAL;
  }
  
- #else
+-int init_of_cache_level(unsigned int cpu)
++static int of_count_cache_leaves(struct device_node *np)
+ {
+-	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+-	struct device_node *np = of_cpu_device_node_get(cpu);
+-	struct device_node *prev = NULL;
+-	unsigned int levels = 0, leaves = 0, level;
++	unsigned int leaves = 0;
+ 
+ 	if (of_property_read_bool(np, "cache-size"))
+ 		++leaves;
+@@ -237,6 +234,28 @@ int init_of_cache_level(unsigned int cpu)
+ 		++leaves;
+ 	if (of_property_read_bool(np, "d-cache-size"))
+ 		++leaves;
++
++	if (!leaves) {
++		/* The '[i-|d-|]cache-size' property is required, but
++		 * if absent, fallback on the 'cache-unified' property.
++		 */
++		if (of_property_read_bool(np, "cache-unified"))
++			return 1;
++		else
++			return 2;
++	}
++
++	return leaves;
++}
++
++int init_of_cache_level(unsigned int cpu)
++{
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++	struct device_node *np = of_cpu_device_node_get(cpu);
++	struct device_node *prev = NULL;
++	unsigned int levels = 0, leaves, level;
++
++	leaves = of_count_cache_leaves(np);
+ 	if (leaves > 0)
+ 		levels = 1;
+ 
+@@ -250,12 +269,8 @@ int init_of_cache_level(unsigned int cpu)
+ 			goto err_out;
+ 		if (level <= levels)
+ 			goto err_out;
+-		if (of_property_read_bool(np, "cache-size"))
+-			++leaves;
+-		if (of_property_read_bool(np, "i-cache-size"))
+-			++leaves;
+-		if (of_property_read_bool(np, "d-cache-size"))
+-			++leaves;
++
++		leaves += of_count_cache_leaves(np);
+ 		levels = level;
+ 	}
+ 
 -- 
 2.25.1
 
