@@ -1,122 +1,177 @@
-Return-Path: <linux-kernel+bounces-836891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8725ABAAD08
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:44:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9748BAAD0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092CD1920249
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E428420C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D814318859B;
-	Tue, 30 Sep 2025 00:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A857317A31E;
+	Tue, 30 Sep 2025 00:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFgJtw5A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="UZQo2Gfi"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E994A0A;
-	Tue, 30 Sep 2025 00:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759193057; cv=none; b=lzXNNvAK+agDgr2PrYpOH6hnMPK1d0aFpR+ReEABUpc69Lszdy0Hue3mGB7YN0Mi77RF+jPHib/0Z/CzdkIzIgzNvbjOKl93MWRQEEsacqUCcWBgS15yFCC7mJggnzBotRMWHUwxePqdUVeQhX+PFIjko9q9hm4Q+PKN4E+KrVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759193057; c=relaxed/simple;
-	bh=UG8UCbAm0S/mQH2S995hl54PecX4r3H8TVBvdoOGWy0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G0wi2AtFoX5qM37kTlX3UWOadwGGzJfc895zv90mt9DItZDexmRazDrnKu8eMw5PMdvlqVMP6w5JyM/o5rnXTYKrpSnLzHFIQ4bf2iT0HTrfCW0BBTOVANyWVEECMm4URpyZoSR5sQlzQ21zGh909/XthvBAWPOe8MsY+yvczhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFgJtw5A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7868BC4CEF4;
-	Tue, 30 Sep 2025 00:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759193056;
-	bh=UG8UCbAm0S/mQH2S995hl54PecX4r3H8TVBvdoOGWy0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WFgJtw5ACgIRAyKx3TKKMwbhW2WgSueANdrKKbBKdBndFiq7YY5atdMu2O22g8QN1
-	 yu+15Uc2wTr8dJIc8VNZlP5mGQf6Q5zfJO2YWMgfzwZdgYrHg9absTE3yyFSk6iExz
-	 j5bRLRcB1/XBqJOaDqwy81kYqxdKW/M0YRCDY2QYVRFAYw02zcyMPigm6BLoyHaVb8
-	 BZ29MuEK9lvrWETT4xLxojgvwUWqgJr9r0V13dn3yWY0BOns/PvvyFbJXk0lLkO23U
-	 wz0aXjFsmt7nrXiMJCwxlnoBUvWj6bgS4REbPqTpJ67KcRA9C2Z8cCLnSBfRno8VdM
-	 zeAbiqY3mfOdA==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"# 6 . 5 . x" <stable@vger.kernel.org>,
-	Hugh Dickins <hughd@google.com>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Xinyu Zheng <zhengxinyu6@huawei.com>
-Subject: [PATCH] mm/damon/vaddr: do not repeat pte_offset_map_lock() until success
-Date: Mon, 29 Sep 2025 17:44:09 -0700
-Message-Id: <20250930004410.55228-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EF33C1F;
+	Tue, 30 Sep 2025 00:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759193206; cv=pass; b=q3mr/ikvWwSqSD4PbW/4KwvLe9k8kkiFO3MrtCY2TKaZ2w61bxv8L7PjsyiPVKje6eh5c6eLy6fm4N5Vg/GsBtNuLWLYx7OLMoRNx6gB0z3i+d55+KtmHJ589CfBZnNPYvOTdrto/aamFplzmypmO+WgVI/zhJWFsj/taAtxF+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759193206; c=relaxed/simple;
+	bh=2tpsfHIZAitH+jO8mwTMMlIAUUlmPFMJxme1/9PLQzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QSzGvxw6/LQD4+49TJLIzjz77Jua8CIm8T+lX8vULb5oLNaDsMGJ0GChPac6EfuOgXfVgFLnagbsgjfLeubu2He3NrwxbRB7V1JhW5dswwBIk2H3zI6jt+SVFKsDjfhEOGQejYWNr/jH6cx3kUlWLmuYvhMpIOml1o9/DdwBkJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=UZQo2Gfi; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759193192; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XiHWckNxugZc2McztlIBkoMC0HEqdjtB3yUAwqwYvXMaB1kIgJKE7Ds3igEg/o/2GDBQXvVPLBRj54WgCAd8JLnQw6R3O6W11sWBt00OSRk3Ni5Wh+G3fSLal5MbZe+LYOQg0kSUwPdSE5rupcQcqiM827r82rz/1xorxoMX90w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759193192; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+pssYrvbY8H+W1K4nWP6c9JK+9Cklrz9pjmXIYB1iKQ=; 
+	b=Q60jSGIkM/24wXBObsSKSwkr2E2WaJpSro9n3Uqpp8XykFJFP1bjxDiZ4O+gKV8xJkASo4m0FdCqjkvoKuwz/+bwosjB4RGy8n4GSXHB00QghplTZE1i5Vl6GHqQ2WNOKWXJ8qOV3LRc7KM8zNx06G6V/VeB4CXlC/xEJo0xuRU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759193192;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=+pssYrvbY8H+W1K4nWP6c9JK+9Cklrz9pjmXIYB1iKQ=;
+	b=UZQo2Gfio7w24ZrCLeIJuSn/6G5GaKXIbEN9dHc8x4Jau+TE0GsnCiGXFWA5iKbh
+	V5PiFBBTkUC5P3ajqR3NSBTh3gaCCti6fN9Wt1ojzoBNPsTFLi4UCZ8IRPULJ34irYW
+	zPvVp7SCaKY5H1HkoQ/SD2VHoS94dlUFu0PUKekU=
+Received: by mx.zohomail.com with SMTPS id 17591931896491005.1533923106364;
+	Mon, 29 Sep 2025 17:46:29 -0700 (PDT)
+Message-ID: <34d5a43d-f3a7-4163-9ebc-afa2a9b666fb@zohomail.com>
+Date: Tue, 30 Sep 2025 08:46:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] cxl/port: Avoid missing port component registers
+ setup
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ shiju.jose@huawei.com
+References: <20250928101433.424778-1-ming.li@zohomail.com>
+ <e2749038-bf78-47a6-83da-96f02bd75599@intel.com>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <e2749038-bf78-47a6-83da-96f02bd75599@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112277bc4f69d2dd2bef3afc0bc3a0000361e0988edbf63b8e48cdefe8be2f0c3b7c2d63cae81f2fa39:zu080112271020ed59dce3032ead1044ba00006a866044d7807d133e27f5a5b44b8ef05a4c2452e5c3aeae55:rf0801122dd8a358ba50482d1c48e44b060000abc46f99175dca5a010515226a00b425d5b2e4e3055e413c9bce1722e0710c:ZohoMail
+X-ZohoMailClient: External
 
-DAMON's virtual address space operation set implementation (vaddr) calls
-pte_offset_map_lock() inside the page table walk callback function.
-This is for reading and writing page table accessed bits.  If
-pte_offset_map_lock() fails, it retries by returning the page table walk
-callback function with ACTION_AGAIN.
+On 9/30/2025 12:53 AM, Dave Jiang wrote:
+>
+> On 9/28/25 3:14 AM, Li Ming wrote:
+>> port->nr_dports is used to represent how many dports added to the cxl
+>> port, it will increase in add_dport() when a new dport is being added to
+>> the cxl port, but it will not be reduced when a dport is removed from
+>> the cxl port.
+>>
+>> Currently, when the first dport is added to a cxl port, it will trigger
+>> component registers setup on the cxl port, the implementation is using
+>> port->nr_dports to confirm if the dport is the first dport.
+>>
+>> A corner case here is that adding dport could fail after port->nr_dports
+>> updating and before checking port->nr_dports for component registers
+>> setup. If the failure happens during the first dport attaching, it will
+>> cause that CXL subsystem has not chance to execute component registers
+>> setup for the cxl port. the failure flow like below:
+>>
+>> port->nr_dports = 0
+>> dport 1 adding to the port:
+>> 	add_dport()	# port->nr_dports: 1
+>> 	failed on devm_add_action_or_reset() or sysfs_create_link()
+>> 	return error	# port->nr_dports: 1
+>> dport 2 adding to the port:
+>> 	add_dport()	# port->nr_dports: 2
+>> 	no failure
+>> 	skip component registers setup because of port->nr_dports is 2
+>>
+>> The solution here is that moving component registers setup closer to
+>> add_dport(), so if add_dport() is executed correctly for the first
+>> dport, component registers setup on the port will be executed
+>> immediately after that.
+>>
+>> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> That makes sense. Please add a fixes tag. The commit in cxl/next should be stable.
 
-pte_offset_map_lock() can continuously fail if the target is a pmd
-migration entry, though.  Hence it could cause an infinite page table
-walk if the migration cannot be done until the page table walk is
-finished.  This indeed caused a soft lockup when CPU hotplugging and
-DAMON were running in parallel.
+Thanks for the review, will do that.
 
-Avoid the infinite loop by simply not retrying the page table walk.
-DAMON is promising only a best-effort accuracy, so missing access to
-such pages is no problem.
+Ming
 
-Reported-by: Xinyu Zheng <zhengxinyu6@huawei.com>
-Closes: https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-Fixes: 7780d04046a2 ("mm/pagewalkers: ACTION_AGAIN if pte_offset_map_lock() fails")
-Cc: <stable@vger.kernel.org> # 6.5.x
-Cc: Hugh Dickins <hughd@google.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/vaddr.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+>
+>> ---
+>> v2:
+>> - remove dport from port->dports in case of component registers setup
+>>   failed.
+>>
+>> base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
+>> ---
+>>  drivers/cxl/core/port.c | 26 ++++++++++++++------------
+>>  1 file changed, 14 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+>> index d5f71eb1ade8..8128fd2b5b31 100644
+>> --- a/drivers/cxl/core/port.c
+>> +++ b/drivers/cxl/core/port.c
+>> @@ -1182,6 +1182,20 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
+>>  	if (rc)
+>>  		return ERR_PTR(rc);
+>>  
+>> +	/*
+>> +	 * Setup port register if this is the first dport showed up. Having
+>> +	 * a dport also means that there is at least 1 active link.
+>> +	 */
+>> +	if (port->nr_dports == 1 &&
+>> +	    port->component_reg_phys != CXL_RESOURCE_NONE) {
+>> +		rc = cxl_port_setup_regs(port, port->component_reg_phys);
+>> +		if (rc) {
+>> +			xa_erase(&port->dports, (unsigned long)dport->dport_dev);
+>> +			return ERR_PTR(rc);
+>> +		}
+>> +		port->component_reg_phys = CXL_RESOURCE_NONE;
+>> +	}
+>> +
+>>  	get_device(dport_dev);
+>>  	rc = devm_add_action_or_reset(host, cxl_dport_remove, dport);
+>>  	if (rc)
+>> @@ -1200,18 +1214,6 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
+>>  
+>>  	cxl_debugfs_create_dport_dir(dport);
+>>  
+>> -	/*
+>> -	 * Setup port register if this is the first dport showed up. Having
+>> -	 * a dport also means that there is at least 1 active link.
+>> -	 */
+>> -	if (port->nr_dports == 1 &&
+>> -	    port->component_reg_phys != CXL_RESOURCE_NONE) {
+>> -		rc = cxl_port_setup_regs(port, port->component_reg_phys);
+>> -		if (rc)
+>> -			return ERR_PTR(rc);
+>> -		port->component_reg_phys = CXL_RESOURCE_NONE;
+>> -	}
+>> -
+>>  	return dport;
+>>  }
+>>  
 
-diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-index 8c048f9b129e..7e834467b2d8 100644
---- a/mm/damon/vaddr.c
-+++ b/mm/damon/vaddr.c
-@@ -328,10 +328,8 @@ static int damon_mkold_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	}
- 
- 	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
--	if (!pte) {
--		walk->action = ACTION_AGAIN;
-+	if (!pte)
- 		return 0;
--	}
- 	if (!pte_present(ptep_get(pte)))
- 		goto out;
- 	damon_ptep_mkold(pte, walk->vma, addr);
-@@ -481,10 +479,8 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
- #endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
- 
- 	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
--	if (!pte) {
--		walk->action = ACTION_AGAIN;
-+	if (!pte)
- 		return 0;
--	}
- 	ptent = ptep_get(pte);
- 	if (!pte_present(ptent))
- 		goto out;
 
-base-commit: 3169a901e935bc1f2d2eec0171abcf524b7747e4
--- 
-2.39.5
 
