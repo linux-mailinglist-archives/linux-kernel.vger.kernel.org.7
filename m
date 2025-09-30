@@ -1,163 +1,185 @@
-Return-Path: <linux-kernel+bounces-838001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C03EBAE33B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A27BAE344
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB36132026B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EEF4169BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DA630CB37;
-	Tue, 30 Sep 2025 17:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9AE30C617;
+	Tue, 30 Sep 2025 17:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dJYy6j/d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="Q8ihPE4N"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D6123D7F7
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DB73090F7;
+	Tue, 30 Sep 2025 17:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253646; cv=none; b=eDJlT1V+o5HKkzzOPv7xGOy72Ej/Pgaus3FKCXvYcFps9tKvFJ3FIrck5x7U2mis4dEOj1a4kLJUqlsCBPHhOk1oFcpNh1BUOD3GAOCf5MW6pywtiSOIMG77pse5v4giD++x4QOzrQkXrhWeDUrEAtDv7bMq8/yWrZKxZXFdioQ=
+	t=1759253720; cv=none; b=LjuTQW5uoyb6lUWAu7kR8l8bsVzd4cmlmG8BlF6r5EqQvhr9+QBA6FnrOJQSjfR7DfPbjfnxvQ3Kz4KqBLPadiUi2cnn9OeJpn39A5pSCr+zu41SY0n9cYoosZJ+kTZWfNG8d20WWKiBIFQbHvJkudl+W5D8+EMqcs7Xg5FY69g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253646; c=relaxed/simple;
-	bh=K4Kj52Sc3WHaxQWWb9WPz4PfQKbfYsJ2LEia1X3xeUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dbSNV3Wf1AD/JW8GUG/P2EcM6kR1b0pOHnwk5qpYe7cAClFP8VugXSCpRPRalPsggeibt/zmULEJOpYOaIfBFou4IwmPVRnm3GNwJvbw1lx+Nw3Gr/STg37ZrdLalhH0eND2uwuE5B/RIBwjc6NDnJggSzoWj14HR1f4/w/tCOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dJYy6j/d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759253643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J+AjrEkys0A8lAun7rL+EyAWl7XyGEJmHCLWyCAkReQ=;
-	b=dJYy6j/d0CAr7HWL6/fL0MdPzA2az5+nTmLPO2Q3KW37m9YkzPXBouJz5WD6ViyTcyQp9X
-	uZrsmEYtFNY0+fy/1MZqp1kqh7s0eRKPX2gyTZ7I10qTHgFO9Ph54zTNu4qjX7KbVtIlzn
-	4f5xRa27jGdCcFmRieuP7AzjhMLVxL0=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-310-A5BJb8meMKOCjE5mH58ebA-1; Tue, 30 Sep 2025 13:34:01 -0400
-X-MC-Unique: A5BJb8meMKOCjE5mH58ebA-1
-X-Mimecast-MFC-AGG-ID: A5BJb8meMKOCjE5mH58ebA_1759253640
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee13e43dd9so3123207f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:34:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759253640; x=1759858440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J+AjrEkys0A8lAun7rL+EyAWl7XyGEJmHCLWyCAkReQ=;
-        b=OjRQLN3C52A5aWKV9aEJDJHRkREVrbaNMF96UXoyhKsjuqaMthnI7XbmpY4vzI4TMy
-         tCuGUYaIA2RNtgW9/0DyxIk4HTgnMJEk07KFvhMobT0qlzR9KZ9uSk6TeravvY/zP6En
-         fuuA5YmT3oIef3Oms76ZiXT8CJmn/Gq6zbh3rHVtHHeigSLwJYcjh7mnKRFR22rldsXi
-         ADnZsOZPcBe1xDOO1vH8zFXNt4a/ajXafc6lQ/VQQ9EVBwMIYEVTXzLIEmV45/HtPspE
-         tOtwlqN7fIt1xhVBhu5O1qX2woX42vzzTyiE203nAZ/YKZlBmOOyPJ/nNV8K/5rnwVNu
-         w+sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgk0daEDBaMG2jEeye/HIOoaPpLtSrPE8A9qt2KNl7p09W0QvEOTFdHbqcz+byTqN4SUKU/7CyGctTAJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygSZgMubTJL57KVl+YfC7hbZ3J2ag6jyWdJEeHrvclyphDzbrs
-	WxK3D6PUpW10CySywPSB6oUwUXb+4c43KkFSKmGfi3SB2/OMIRK/NPJwU6eLRQtGN2G4c2+5bjk
-	qe6A2RtT8E7WM98G8dEp689r/HSjhlHCnHG6MGEV6t0x7wMwGDA44o2AV1hR13jZAy+HxUiC/3l
-	wCJ9CSHLFN4jLaEmK7HgbkyHg2Ai/pf4z5zB7xO6Pf
-X-Gm-Gg: ASbGncviK+AUCbGQrYPZunFzyg+6sqwLSEcMDTDe2meLES2NshwZ1F3NUJtHnQ7Bgro
-	GbEoz7i0Bq2zg2klWsbiRocNse87hwDhJvrL+e5PSw9DqGwrHfKOGVVSU4zOLkpCaUeNtbdek/Z
-	Y4tmF1zJE9oxvfmJSlpaIaYzAZU5n89bRuJYS4CYZ7TtuoI+pZXQZbS1FehA7iLxQtfDIJ0A8u1
-	BiTUMqhM41t6kj6eTjWFj+IFHitReHf
-X-Received: by 2002:a5d:588f:0:b0:3ff:d5c5:6b0d with SMTP id ffacd0b85a97d-425577ed88bmr408190f8f.4.1759253640468;
-        Tue, 30 Sep 2025 10:34:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3esXsCWsgGFUCgiPEWX5HrwSCxn5E9orJMEqPLqizpyiB5xgXSXOTU3gUaxW1EpxeDlmCfno1tPzhUpXUOcY=
-X-Received: by 2002:a5d:588f:0:b0:3ff:d5c5:6b0d with SMTP id
- ffacd0b85a97d-425577ed88bmr408176f8f.4.1759253640090; Tue, 30 Sep 2025
- 10:34:00 -0700 (PDT)
+	s=arc-20240116; t=1759253720; c=relaxed/simple;
+	bh=v3jrUySsdUCuSMSLtdi+xl+npUecrn3TqUP40m9zXC8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ShYpX8344/6gtOhLDdOfHMDjaOHhobXow+wKNZhBB5MVxGlJyE/ibeaDo1Yq8RoyA3EcO4ZoA39XrZfu4QaUkBIk0e1tfJpz8HkgqRkraRY3OxDoJEcPAtgbUOlemgjfENcwEarc7cp3bNHU//yoE3O1e1d/skpHer2Sw+0lXW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=Q8ihPE4N; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1759253711; x=1759858511; i=efault@gmx.de;
+	bh=UeU+AdMYVPoY9EXENK7q9qM9luQFfa0kyZuRqshuRLo=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Q8ihPE4N8e5vyxPA9UMsw3Ccvgex7ab6bqyf6uzslwcWGHDqkDvYRY0KoqIawzPZ
+	 qjnawZ0VOrpEL9ePT9J5d4uu8VFjFTnTr69Tav6Ydpw/0AJLflNgfes3ms49YihQz
+	 vD3YBeSRNyA95ohlGQM/v34cikicDlbWbt7ZU11N/hAnQrfmajp2XGmFaewLZ9mdi
+	 BIFoCP9/gYOHDGvb168Lu9vrI35JJ5i3zf85xcS1zZp9ALx/FAT4+cCYMTizBnKh8
+	 P6qh8yuuhohK189U+mZ6cVkdks08dJQ+8Z/UMf1zdkY8MHqxFDhUn+KtrmL8JR4IW
+	 V4zbKCHYe5LFvPZhNw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([185.146.50.92]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MqJqN-1uZpgz37FD-00bjX8; Tue, 30
+ Sep 2025 19:35:10 +0200
+Message-ID: <d92202c8ec3d31eb54b41e669e3bf687acbf86e1.camel@gmx.de>
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+From: Mike Galbraith <efault@gmx.de>
+To: Sebastian Siewior <bigeasy@linutronix.de>, John Ogness
+	 <john.ogness@linutronix.de>
+Cc: Calvin Owens <calvin@wbinvd.org>, Breno Leitao <leitao@debian.org>, Petr
+ Mladek <pmladek@suse.com>, Simon Horman <horms@kernel.org>,
+ kuba@kernel.org, Pavel Begunkov <asml.silence@gmail.com>, Johannes Berg
+ <johannes@sipsolutions.net>,  paulmck@kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+ boqun.feng@gmail.com, Sergey Senozhatsky <senozhatsky@chromium.org>, Steven
+ Rostedt <rostedt@goodmis.org>
+Date: Tue, 30 Sep 2025 19:35:09 +0200
+In-Reply-To: <20250930143059.OA_NFC9S@linutronix.de>
+References: 
+	<tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
+	 <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
+	 <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
+	 <84a539f4kf.fsf@jogness.linutronix.de>
+	 <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
+	 <847by65wfj.fsf@jogness.linutronix.de> <aMGVa5kGLQBvTRB9@pathway.suse.cz>
+	 <oc46gdpmmlly5o44obvmoatfqo5bhpgv7pabpvb6sjuqioymcg@gjsma3ghoz35>
+	 <aNvh2Cd2i9MVA1d3@mozart.vkv.me> <84frc4j9yx.fsf@jogness.linutronix.de>
+	 <20250930143059.OA_NFC9S@linutronix.de>
+Autocrypt: addr=efault@gmx.de;
+ keydata=mQGiBE/h0fkRBACJWa+2g5r12ej5DQZEpm0cgmzjpwc9mo6Jz7PFSkDQGeNG8wGwFzFPKQrLk1JRdqNSq37FgtFDDYlYOzVyO/6rKp0Iar2Oel4tbzlUewaYWUWTTAtJoTC0vf4p9Aybyo9wjor+XNvPehtdiPvCWdONKZuGJHKFpemjXXj7lb9ifwCg7PLKdz/VMBFlvbIEDsweR0olMykD/0uSutpvD3tcTItitX230Z849Wue3cA1wsOFD3N6uTg3GmDZDz7IZF+jJ0kKt9xL8AedZGMHPmYNWD3Hwh2gxLjendZlcakFfCizgjLZF3O7k/xIj7Hr7YqBSUj5Whkbrn06CqXSRE0oCsA/rBitUHGAPguJfgETbtDNqx8RYJA2A/9PnmyAoqH33hMYO+k8pafEgXUXwxWbhx2hlWEgwFovcBPLtukH6mMVKXS4iik9obfPEKLwW1mmz0eoHzbNE3tS1AaagHDhOqnSMGDOjogsUACZjCJEe1ET4JHZWFM7iszyolEhuHbnz2ajwLL9Ge8uJrLATreszJd57u+NhAyEW7QeTWlrZSBHYWxicmFpdGggPGVmYXVsdEBnbXguZGU+iGIEExECACIFAk/h0fkCGyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEMYmACnGfbb41A4AnjscsLm5ep+DSi7Bv8BmmoBGTCRnAJ9oXX0KtnBDttPkgUbaiDX56Z1+crkBDQRP4dH5EAQAtYCgoXJvq8VqoleWvqcNScHLrN4LkFxfGkDdqTyQe/79rDWr8su+8TH1ATZ/k+lC6W+vg7ygrdyOK7egA5u+T/GBA1VN+KqcqGqAEZqCLvjorKVQ6mgb5FfXouSGvtsblbRMireEEhJqIQPndq3DvZbKXHVkKrUBcco4MMGDVucABAsEAKXKCwGVEVuYcM/KdT2htDpziRH4JfUn3Ts2EC6F7rXIQ4NaIA6gAvL6HdD3q
+	y6yrWaxyqUg8CnZF/J5HR+IvRK+vu85xxwSLQsrVONH0Ita1jg2nhUW7yLZer8xrhxIuYCqrMgreo5BAA3+irHy37rmqiAFZcnDnCNDtJ4sz48tiEkEGBECAAkFAk/h0fkCGwwACgkQxiYAKcZ9tvgIMQCeIcgjSxwbGiGn2q/cv8IvHf1r/DIAnivw+bGITqTU7rhgfwe07dhBoIdz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927060910.2933942-1-seanjc@google.com> <20250927060910.2933942-4-seanjc@google.com>
-In-Reply-To: <20250927060910.2933942-4-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 30 Sep 2025 19:33:48 +0200
-X-Gm-Features: AS18NWAKmn_gozvK6e2eroDMudheoXMPsQ32SpXHvGeu2n7Tv2i2n7iC9U7Nkh4
-Message-ID: <CABgObfaJ7ZBVhY5Fcmh9rfa6w8ji8v33JShUjb5-uZQVZRWHzg@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: x86: MMU changes for 6.18
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WatIRJSJpoEtZTUiQ1w1Ns4MQlTadPo14WMPT2yR7PSB9rjCYme
+ rDXh0SA6J0NzWnL5fYIe9KIcF6vRMu0kZe422fJqYtVHKNLJMBecWQxz/lKeEyN/62RIZQ/
+ S9oc/7Q+V6fHp1tWULuF/5S+nnJpFZ9DUA7QRyHA5INrXrJXz/HM+bvTML681Hn1RY3PKcE
+ 82sk+ns64c0jknysJxNGA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/qOHgES21uM=;Dd8g651Z8sxnHaFjNw2wArBRYok
+ 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
 
-On Sat, Sep 27, 2025 at 8:09=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Recover TDP MMU NX huge pages under read lock, and fix two (interruptible=
-)
-> deadlocks in prefaulting and in the TDX anti-zero-step code (there's a
-> selftest from Yan for the prefaulting case that I'll send along later).
->
-> The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0=
-b9:
->
->   Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
->
-> are available in the Git repository at:
->
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-mmu-6.18
->
-> for you to fetch changes up to 2bc2694fe20bf06eb73524426e3f4581d7b28923:
->
->   KVM: TDX: Do not retry locally when the retry is caused by invalid mems=
-lot (2025-09-10 12:06:35 -0700)
+On Tue, 2025-09-30 at 16:30 +0200, Sebastian Siewior wrote:
+> On 2025-09-30 16:29:02 [+0206], John Ogness wrote:
+> > @bigeasy: You have some experience cleaning up this class of
+> > problems. Any suggestions?
+>=20
+> I though that we have netconsole disabled on RT. As far as I remember it
+> disables interrupts and expects that the NAPI callback (as in interrupts)
+> will not fire not will there be any packets sent. So this is not going
+> to work.
+> It needs to be checked what kind of synchronisation is expected of
+> netconsole by disabling interrupts and providing this by other means.
 
-Pulled, thanks.
+Oh dear.  It's not netconsole at the root, it's the netpoll it's made
+of.  The xmit loops are trylock, but memory alloc/free issue remains,
+as does netpoll xmit loops holding IRQs off for up to a tick.
 
-> ----------------------------------------------------------------
-> KVM x86 MMU changes for 6.18
->
->  - Recover possible NX huge pages within the TDP MMU under read lock to
->    reduce guest jitter when restoring NX huge pages.
->
->  - Return -EAGAIN during prefault if userspace concurrently deletes/moves=
- the
->    relevant memslot to fix an issue where prefaulting could deadlock with=
- the
->    memslot update.
->
->  - Don't retry in TDX's anti-zero-step mitigation if the target memslot i=
-s
->    invalid, i.e. is being deleted or moved, to fix a deadlock scenario si=
-milar
->    to the aforementioned prefaulting case.
->
-> ----------------------------------------------------------------
-> Sean Christopherson (2):
->       KVM: x86/mmu: Return -EAGAIN if userspace deletes/moves memslot dur=
-ing prefault
->       KVM: TDX: Do not retry locally when the retry is caused by invalid =
-memslot
->
-> Vipin Sharma (3):
->       KVM: x86/mmu: Track possible NX huge pages separately for TDP vs. S=
-hadow MMU
->       KVM: x86/mmu: Rename kvm_tdp_mmu_zap_sp() to better indicate its pu=
-rpose
->       KVM: x86/mmu: Recover TDP MMU NX huge pages using MMU read lock
->
->  arch/x86/include/asm/kvm_host.h |  39 ++++++----
->  arch/x86/kvm/mmu/mmu.c          | 165 ++++++++++++++++++++++++++--------=
-------
->  arch/x86/kvm/mmu/mmu_internal.h |   6 +-
->  arch/x86/kvm/mmu/tdp_mmu.c      |  49 +++++++++---
->  arch/x86/kvm/mmu/tdp_mmu.h      |   3 +-
->  arch/x86/kvm/vmx/tdx.c          |  11 +++
->  virt/kvm/kvm_main.c             |   1 +
->  7 files changed, 192 insertions(+), 82 deletions(-)
->
+I've been using a test coverage and monitoring patchlet for years that
+let's RT relax local exclusion to better suit its needs, substituting
+BH for IRQ exclusion.  Due to meeting $subject, patchlet now does the
+same whenever wireless nics are in use, as BH exclusion fits them too.
+Not super pretty, but dirt simple and effective.
 
+	-Mike
 
