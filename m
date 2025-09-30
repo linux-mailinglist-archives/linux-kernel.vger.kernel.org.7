@@ -1,108 +1,148 @@
-Return-Path: <linux-kernel+bounces-836893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7908BAAD0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1B7BAAE81
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59A8B421043
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011BF18948C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB545178372;
-	Tue, 30 Sep 2025 00:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2FA1A0711;
+	Tue, 30 Sep 2025 01:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhK76q+a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="YvqBTMWL"
+Received: from iguana.tulip.relay.mailchannels.net (iguana.tulip.relay.mailchannels.net [23.83.218.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BB51531C1;
-	Tue, 30 Sep 2025 00:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759193350; cv=none; b=op4rmyRb6DvBNeuCPeyQotMnhlCWqZ7rjAV2ezN5THEW0Hpn+colCF6XFx1WnQxt6lJAqNPvcLQNsW4cULgQn/1o64W9Roo8lznINeyu+uO2E+zW8MUOyihEjGQg78e+gVNgwdPK8RqyA2PvLHDOQT88d9c+ggGK1C9cxcFATWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759193350; c=relaxed/simple;
-	bh=Dmx25bmLQf6ATWT8g8tetZDOFF0vBbRp6vW8hTDcyvc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XN5LGpUaDG9y3SWDd63aGRDenr+/KM7FaeGyiOeo5tsBK7O4q9fLEFLoyuyt99SwzY7LAj6+WgsEMncNMzsf2TmArxO+HcOmnHJ5Gqh6tC6JPEcrQmpKxqoBycqcf/3WpdqvJ+gfq8+/SZ7+RJx5BbZEGFv20+1WiK/zNka76V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhK76q+a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6388CC4CEF4;
-	Tue, 30 Sep 2025 00:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759193349;
-	bh=Dmx25bmLQf6ATWT8g8tetZDOFF0vBbRp6vW8hTDcyvc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QhK76q+aJngACoGRYQpbuwf9uBLxE7n+FfDFAI6Bz7CRfp9ohr/mdN6MzNy4Y+cbF
-	 PJP3xHR20cu+BzyuUy7Gl3Qq82r3fg7EjaQpikJUEUz5+5xCPugK97xs6t9FDM0xyY
-	 Hd+vzUifNrzATwg4X9wlRNkTkZm/oMoYzEk7KqYkK9Y6hICU0FW4U7iL6UfuxGRsHK
-	 wdZSrpIjBc+gy+9jQDWi0BHwdvjG4pGW4CoT5SkisCEv+htE+KSj5g3N+hDZapdrKc
-	 /pSALxpvqkak+zEX88oxB+WXrJ9oaDh9IV3eztg7ZJzgtaHheTeX3az3YS6ksRPxUh
-	 ZV/EXsYxjXcrw==
-From: SeongJae Park <sj@kernel.org>
-To: Xinyu Zheng <zhengxinyu6@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	zouyipeng@huawei.com,
-	Hugh Dickins <hughd@google.com>
-Subject: Re: [BUG REPORT] mm/damon: softlockup when kdamond walk page with cpu hotplug
-Date: Mon, 29 Sep 2025 17:49:07 -0700
-Message-Id: <20250930004907.55388-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <eaee73bd-21cc-4da2-86a8-fe6a9576ab51@huawei.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A04928DB3;
+	Tue, 30 Sep 2025 01:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.253
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759196779; cv=pass; b=pZoYm/r3PvycgsOjg0TfUFL+hG0fTjr5m0DjSWhpa4v9gDLB6ZgELGcxoah46zKaeYLxhrxuiN5EjwlyZtSdB6IZNazUaPtZLxJuCAmi0FLl15okSW39Bo3jxxQ5yjN7z6meXQtKQ9f2PE1x3IwSuVuvStZszWgix+MKf2Cu49s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759196779; c=relaxed/simple;
+	bh=K1SaJ03Zb+0zIH6YPGJompoGTfD5QRCxCAXXUnMfn44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cp+KaFc8WfsSXxUL69o+Gx/BPCx/gFW57L7XxdQUx1+HzkCioJWJXdbOqqZGYcxjcdQfnii9xoLlhGrnPgbD0Hgf/jurQKSlDag805gVdro3wgM5GbFsgv38wacCduCs1JsRawDLLE6Gv2BSEy2MIgGg+KibV/KrZek3nkoHK3o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=YvqBTMWL; arc=pass smtp.client-ip=23.83.218.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id CE049861EE6;
+	Tue, 30 Sep 2025 00:50:57 +0000 (UTC)
+Received: from pdx1-sub0-mail-a277.dreamhost.com (100-111-81-141.trex-nlb.outbound.svc.cluster.local [100.111.81.141])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 63782861DA9;
+	Tue, 30 Sep 2025 00:50:57 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1759193457; a=rsa-sha256;
+	cv=none;
+	b=UEJETx/+P22Z6XuwSXgjKjxfF4LDcSUYnf+yLqTPxrvRhyaWlcLXUGKLRtMA0ZRRRv1L43
+	jIliJjDaowG/WqrU9OBJk/QTItegbItdOaBNRBRXnzMH78xEfRVCPvsBdyHGBFIMw6KawW
+	A2P1oGMijOxOr5WRjLLT2HRuXXIdA+NkWbhtz8+z4ODvlh2ZndDA7AIbz0nHKDd+NvdxBr
+	XJMOXk962WDsQ6dp/4dRttAbgTtaTeDxvcbgTNgld42zrO4d99H+iwXPHKP/PjCF7Rmr/d
+	0ecLRE7D9KkXhx/Iiic9OBKU96XBe2ur5LSiKWKRPOC6bG2F84TWe23BnJHF1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1759193457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=GD6dCCvB0quMOwLUDjOSNb+cbivTPxA7Oze4KxmHZ1c=;
+	b=9iG5HNH6JRvDX4WBa3RvDlCw6crX3Tlh12dHsJWLqcxIafLn/av1xtC2aNoe24KpnZJPhF
+	s8T4IfaxkPVfOUG3bXs/GuGPj7JjtlvEKSR2OoEq3aiUNzHDIdXmFjPCnYZ8Lq68v6x6XI
+	EnLzvl63MXj81i90xorHhJt5wssrYe+bEOC3vB4H63by8Cdi/dKGHhuk3ZGMCQSnWZ4kuZ
+	vgtsjOSFf9E6/LIBqnieE9vTA7GsTv14jD88AWosqfgOMPF5MFYChFz04zV1qAsYLZXFep
+	1av5UnzkytIEZv4hEjRpfDwSIk6hjsc4KAElB7iyVi//uZPoyZ4E6YU9t4wrYw==
+ARC-Authentication-Results: i=1;
+	rspamd-867694b6c6-kkwjg;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Glossy-Plucky: 3394838c4c0e2391_1759193457678_3012880551
+X-MC-Loop-Signature: 1759193457678:1454249302
+X-MC-Ingress-Time: 1759193457677
+Received: from pdx1-sub0-mail-a277.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.111.81.141 (trex/7.1.3);
+	Tue, 30 Sep 2025 00:50:57 +0000
+Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a277.dreamhost.com (Postfix) with ESMTPSA id 4cbKHN4ZbDzC9;
+	Mon, 29 Sep 2025 17:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1759193457;
+	bh=GD6dCCvB0quMOwLUDjOSNb+cbivTPxA7Oze4KxmHZ1c=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=YvqBTMWL2Cqd7UY85PDtZzSKWJZnhLFw2gFmxstsEjvnN/hNsXbQVJ7NfkEyIASbf
+	 FmnEWZ3HBIcDBq5Qxq0QwTpHAzA/oW5p8uZEC94o8FvYDhNJJkWuPVAf1OZS+Pknoo
+	 dobg3ho/LjhSgVWMyYk4uXXzP9NlfctRV/QMnkdlPXkqaLpr597jl3hgIJ6C9N/OXF
+	 F+TKRDf8obyTGkn7EPiqY61hxgsA22L7oRiYoQaRN7XYUWVsSCt2Q3qaS/TKg5T/mF
+	 43rdlL2WURCRoJSEjLpECYgIkmjLyUrr+uSBkmkkU7H+7++L3yMxx9/8CWmkWNIvf8
+	 yT+uXb5XXOArA==
+Date: Mon, 29 Sep 2025 17:50:53 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Li Ming <ming.li@zohomail.com>
+Cc: jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] cxl/port: Avoid missing port component registers
+ setup
+Message-ID: <20250930005053.2jme7stunhrmp3om@offworld>
+References: <20250928101433.424778-1-ming.li@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250928101433.424778-1-ming.li@zohomail.com>
+User-Agent: NeoMutt/20220429
 
-On Thu, 25 Sep 2025 19:11:13 +0800 Xinyu Zheng <zhengxinyu6@huawei.com> wrote:
+On Sun, 28 Sep 2025, Li Ming wrote:
 
-> 
-> 
-> On 9/20/2025 6:42 PM, SeongJae Park wrote:
-> > On Fri, 19 Sep 2025 20:56:56 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
-> > 
-> >> On Thu, 18 Sep 2025, SeongJae Park wrote:
-> >>
-> >>> Hello,
-> >>>
-> >>> On Thu, 18 Sep 2025 03:00:29 +0000 Xinyu Zheng <zhengxinyu6@huawei.com> wrote:
-> >>>
-> >>>> A softlockup issue was found with stress test:
-[...]
-> > Xinyu, could you please test if the below attached patch fixes your issue and
-> > let us know the result?
-> > 
-> > If Xinyu confirms the validity of the fix and no one objects to the above plan,
-> > I will post the fix as a formal one with a better commit message.
-> > 
-> 
-> Hi, SJ. The below attached patch is works!
-> 
-> These days, I reproduced the same softlockup scenario for three times. 
-> It can be reproduced around an hour when I increase the memory pressure.
-> Then I patched the below fix, and ran the same testcase whole day, 
-> softlock didn't trigger again.
-> 
-> Sorry for the long wait. Thanks again for your solution and explanation!
+>port->nr_dports is used to represent how many dports added to the cxl
+>port, it will increase in add_dport() when a new dport is being added to
+>the cxl port, but it will not be reduced when a dport is removed from
+>the cxl port.
+>
+>Currently, when the first dport is added to a cxl port, it will trigger
+>component registers setup on the cxl port, the implementation is using
+>port->nr_dports to confirm if the dport is the first dport.
+>
+>A corner case here is that adding dport could fail after port->nr_dports
+>updating and before checking port->nr_dports for component registers
+>setup. If the failure happens during the first dport attaching, it will
+>cause that CXL subsystem has not chance to execute component registers
+>setup for the cxl port. the failure flow like below:
+>
+>port->nr_dports = 0
+>dport 1 adding to the port:
+>	add_dport()	# port->nr_dports: 1
+>	failed on devm_add_action_or_reset() or sysfs_create_link()
+>	return error	# port->nr_dports: 1
+>dport 2 adding to the port:
+>	add_dport()	# port->nr_dports: 2
+>	no failure
+>	skip component registers setup because of port->nr_dports is 2
+>
+>The solution here is that moving component registers setup closer to
+>add_dport(), so if add_dport() is executed correctly for the first
+>dport, component registers setup on the port will be executed
+>immediately after that.
 
-Sorry for late response, and thank you for confirming that the fix works.  I
-just posted it as a formal patch:
-https://lore.kernel.org/20250930004410.55228-1-sj@kernel.org
-
-
-Thanks,
-SJ
-
-[...]
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
