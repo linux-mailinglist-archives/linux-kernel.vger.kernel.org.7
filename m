@@ -1,245 +1,156 @@
-Return-Path: <linux-kernel+bounces-837993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC59BAE2FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F280DBAE314
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A87791885156
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7533A60C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2105730F92B;
-	Tue, 30 Sep 2025 17:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876662472A8;
+	Tue, 30 Sep 2025 17:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QiXW/bYW"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H5bY/3Yz"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA23630DD39
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9F830CD88
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253351; cv=none; b=AMgHTpSHYWZ3uBocO4q+i7yGyStrwRhaPUJV7UxEN+QWkMG6L+YluAMjKBWMpU1whSPdjtteLSR75GpSsAf+7FPkpF/9BhYOYHn1u7dxkLC6cl5Div+krFKSGbgniR0ekUZoGhIlJft5jUcIMA9YEXyBhtsivl5Rqu0UGcx6XWk=
+	t=1759253440; cv=none; b=CJAhBAe4JcBENn+HqEbLCTwpWorBLT2h5elog+O4AYCbEOHKqzxB29qu4FEvlQdXy9kzXOHmOUBZE/tWGfXf400edHbqcZbq1UYqcftQfsT29pzxMdqr0kzJGUgGQLNewZwKyKwCeF6uX9XcqGWwvFOoJ/MSwDQOjgd1HndT+84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253351; c=relaxed/simple;
-	bh=n+pm1Tzp0fX9Woesz3maNmLxRH7hRrSoa2S948LYM2Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QkKkKJdVHmG/RblCS55DSMrpYfyX083quNi3gAIRyZOvGdXg4+uUzYJ7sg5AlJmE6Yz+Wa/M1Cs+JEYDVbaL4gqnQF45gyXFlBgv+YB8dIckzaueb7Yo99jdNU5Rveod2EB9okRQ7OOY2dPdaXSlldPAX0wcJo68dUmqMBbFIOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QiXW/bYW; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1759253440; c=relaxed/simple;
+	bh=RAzN02ntU6we7KtqdUsGw1bQvhAKuIdoO3RtEp9cuGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cfUvs/RNXcGfr3tquFVR52FnRQTCiZop3nC5btyRWcPYqmOtx4y1urh6hs9rgtMxrkzhfhIJ8aKjiy9UAt5J+2FquGVd/eZFMkEktgamppZObTPInAuNM8Y8E0eJWbQ7G3SrrvvptMuZ7wWCczUzxDW0L+FRkaCQqPjIn+Ml0R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H5bY/3Yz; arc=none smtp.client-ip=209.85.222.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3307af9b55eso5347578a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:29:09 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-904d71faab6so4455403241.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:30:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759253349; x=1759858149; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vw+is60elbQtO0wwD/2XU6waUg/I4wOE9b9vLsqfwE0=;
-        b=QiXW/bYWFOdQsZEc05xD78QRosuGh4FXHDA3EVY++t2hGwnL/bzX835vlHHgVgyphh
-         /2Amx4DsRpKTDx8uu0CMl30+2Vbm54jBmTae1hFkVNctCCKYCH6ysaveaPlrP165/liL
-         QzYSn1R34eoAwvch75FlMxIydvPcD4r6CiQXtXqfohSYWlOce+OrL/JoR5OGYcSG2B8W
-         LSTrRxlqcl9CkCP0UDrTTT5ss5ceZBO30SbMzjX5B/ILvmghms7LJy5ftJc4vsXKRpn+
-         TV/LAWrTZX0NIJnjcU+xxyJhl22QqH3mbHlo3B7kYq0PIoqFU4WJq4xs4Z58Oyw2HUlO
-         y5wA==
+        d=google.com; s=20230601; t=1759253437; x=1759858237; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kjeYVi3BFjPoMUBum1xgGJVhZJDmP8eaKSN0CbIZRQ=;
+        b=H5bY/3Yzu6wBD+yxbm9BlzPMjCrvaE2JHyFjmlsq/wXpNkjWrV872YeKU93iQgRaWf
+         sDANDUeeQMpVlDVaIN8VCQfEZjHYalC01C4tSm3ybGtgBRiOPV3KQdCF0TsSUn+22JUT
+         nt9zn5cUU4lWbIESqjIN8vBkFnSAh9osSmL+qG9pepllejItErkkl6aJL1FVoIRPStqW
+         mhT1g2+EMmpNIguFfWzJkuhAR9dUo/UiAuexudN0psPBKvRu3o79qGMTxCGa38pGIdql
+         yF7UjE8fCNdDRb1ulDG9Ql+Pw10y8Q6KwYlDTqLBH8U7dzKLcnp/08H7ecAK/qhLla66
+         bAbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759253349; x=1759858149;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vw+is60elbQtO0wwD/2XU6waUg/I4wOE9b9vLsqfwE0=;
-        b=UhTISIWhsE5BfM5URl1gyUU/s4wYjp4j021sGAts1oZGg6lnJU9pwmw9qXT9wrprvM
-         7y1zL3dEAmKRA6aT0IIAIc25gdlCJhm0fobM4DkFskokxdAaUBTeGtNMih44+tYV9Cfa
-         i9DkEitWm4ZuV1LQoEVUMQacyddqP1gARb96c2UfcNJQnRkyKdQDvJgAtGIpIYZYONgP
-         HDhoO/aBFO51ql7if1nvU74zniv5FQmsskks5Q10rPZfQxaGT9jJi8+YtAk7o5AwGXxa
-         eGorR2iT/kSxdKz74V9aNMS59l/wQodHPApO2ihwRGuKkQPIcLfYuR687xSvOCuRZk5o
-         BEsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9zVrlaYSd91BgdBSYpaZfMXgNmd4TrtVDoRHmDf/JBb56Rp92YFly5ArSlpeVyRHYylxHaP4PWU9srxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmW1zqAOjrvJ6tOxxuaRBkfFLRUrAlzyRBr51uR0ATrDE8Skk1
-	BpffF+Qwdty2pXoClEz2gDQ9UIZqA0cM45jYTVXhACNbLSpPouz9EIoCjw7MO0yTKSjw17hhlRV
-	TmI13XKgUqcDP1k9nUWtyzg==
-X-Google-Smtp-Source: AGHT+IGdL9Ry3P3DwBkpnSXkYT5+WSHErQCisnYVa6t/02kcKG+f669JdC7/aSKfvH0zLfBC6GwoZJEhovnoFKVs
-X-Received: from pjbcm23.prod.google.com ([2002:a17:90a:fa17:b0:32e:ddac:6ea5])
- (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:33c2:b0:334:cb89:bde6 with SMTP id 98e67ed59e1d1-339a6e83b68mr247132a91.4.1759253348928;
- Tue, 30 Sep 2025 10:29:08 -0700 (PDT)
-Date: Tue, 30 Sep 2025 17:28:50 +0000
-In-Reply-To: <20250930172850.598938-1-jthoughton@google.com>
+        d=1e100.net; s=20230601; t=1759253437; x=1759858237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8kjeYVi3BFjPoMUBum1xgGJVhZJDmP8eaKSN0CbIZRQ=;
+        b=S5BBAF/1OcikrBtEPBgkEbSa8wOZe5P+7jKOhPmKjCzecEtcLYqLo+cRYhpEBq/Po9
+         engOwqkKTF7TADHVgENEOxYV2x1jJNx/vyyejJS8+umpTRZc9NTQ5bXL4u6tyGjYzpQQ
+         /9RrtoUjrAP4FCIMgfhs/yIQ1mOq7J1+v2gYg/CKqjnAWsNtCOg4ghrkOJHW/oygR/jB
+         frnrb0Af5IlnRpdEfNc91hRt39N6y0Ce2ZBlPHywIfeCnji/nAZv9p1dl15ry21cUpN3
+         ExHrh6Z3/x1vASFwDWLWklnQWPSTJGN9W9dTZS9tfBJGNZXRvR8w/dgjzauBrmNGnm92
+         9hFA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7Dc57aYj8zvVkUF9Q+/vzoJ0G9dgsc8YoqQrXp4DFNwEIIl8UAYg4zKD9YV1OdID3ABZ7N5EMKtq/gsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlu2qw7dqIg/XOadefULkWiruA6X+BdiyLohuqa3GC3PsMY/Nx
+	KylA1rW/6mLOKMkZmLVfwxBh6gdAMxbeRNivv2p7wkn9EyMzdwI1CfptAOd3d5m/Rz1pMIRLXf+
+	zCOHBEQGs2BT5HWobnr5zRfyFNiMgKXoh/XzT4q8B
+X-Gm-Gg: ASbGncvYC+s8wHC3QCvCBNf4tHudQFyAtZ2ev5IqXo/2W/Q29HPe/AeD2ASvHibMZlw
+	nJRwxZwlR+wf997J298cjxINLIYHTyjNovC8um3n/w6iRQlkBEVrNNYKcT5T8i/gp9pjE6OBjIN
+	jaCn7yuf8GU+Y2PSgDKIBHlcPDpfdTIdwC91NpsJy4YpHOfimCNXCQNPh9GL45EJ7IydH2JMZSU
+	v32BIGnm4HNI7TM2WBVMHAWR9eqxvr4TJbQ
+X-Google-Smtp-Source: AGHT+IG8jJ95/JjL1D4MG02AWTuWRULg09/UHI6ETn6Cc8YDCJp+TEu0wu9vGpPMKXVhUdNr52Sp/ZXXPPXheG9lrtk=
+X-Received: by 2002:a05:6122:251a:b0:54a:992c:8164 with SMTP id
+ 71dfb90a1353d-5522d37d0c7mr277987e0c.7.1759253434892; Tue, 30 Sep 2025
+ 10:30:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250930172850.598938-1-jthoughton@google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20250930172850.598938-2-jthoughton@google.com>
-Subject: [PATCH 2/2] KVM: selftests: Add parallel KVM_GET_DIRTY_LOG to dirty_log_perf_test
-From: James Houghton <jthoughton@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: James Houghton <jthoughton@google.com>, kvm@vger.kernel.org, 
+MIME-Version: 1.0
+References: <20250930-mmc_pwrseq-v2-1-80a8c6be0fb0@valla.it>
+In-Reply-To: <20250930-mmc_pwrseq-v2-1-80a8c6be0fb0@valla.it>
+From: Saravana Kannan <saravanak@google.com>
+Date: Tue, 30 Sep 2025 10:29:58 -0700
+X-Gm-Features: AS18NWDhaTb_SHyVdkz3H1aGObXRSKwr83vx52Zf-N7iLwTKT6lcWCzjbd3sNII
+Message-ID: <CAGETcx_eDbx1QowXzy1k9r2D-G-gT7nEgFqEfWY7wBbLzfRukQ@mail.gmail.com>
+Subject: Re: [PATCH v2] of: property: fw_devlink: Add support for "mmc-pwrseq"
+To: Francesco Valla <francesco@valla.it>
+Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The parallelism is by memslot. This is useful because KVM no longer
-serializes KVM_GET_DIRTY_LOG if KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2 is
-enabled.
+On Tue, Sep 30, 2025 at 8:58=E2=80=AFAM Francesco Valla <francesco@valla.it=
+> wrote:
+>
+> Add support for parsing MMC power sequencing (pwrseq) binding so that
+> fw_devlink can enforce the dependency.
 
-Signed-off-by: James Houghton <jthoughton@google.com>
----
- .../selftests/kvm/dirty_log_perf_test.c       | 20 ++++++++--
- .../testing/selftests/kvm/include/memstress.h |  2 +
- tools/testing/selftests/kvm/lib/kvm_util.c    |  2 +
- tools/testing/selftests/kvm/lib/memstress.c   | 40 +++++++++++++++++++
- 4 files changed, 61 insertions(+), 3 deletions(-)
+I took a quick look at the documentation. It's not clear to me that
+mmc-pwrseq always points to a supplier. Can someone with more
+experience on this confirm that is what it's supposed to point at?
 
-diff --git a/tools/testing/selftests/kvm/dirty_log_perf_test.c b/tools/testing/selftests/kvm/dirty_log_perf_test.c
-index e79817bd0e29..8a5f289c4966 100644
---- a/tools/testing/selftests/kvm/dirty_log_perf_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_perf_test.c
-@@ -131,8 +131,18 @@ struct test_params {
- 	int slots;
- 	uint32_t write_percent;
- 	bool random_access;
-+	bool parallel_get_dirty_log;
- };
- 
-+static void get_dirty_log(struct kvm_vm *vm, unsigned long *bitmaps[],
-+			  struct test_params *p)
-+{
-+	if (p->parallel_get_dirty_log)
-+		memstress_get_dirty_log_parallel(vm, bitmaps, p->slots);
-+	else
-+		memstress_get_dirty_log(vm, bitmaps, p->slots);
-+}
-+
- static void run_test(enum vm_guest_mode mode, void *arg)
- {
- 	struct test_params *p = arg;
-@@ -230,7 +240,7 @@ static void run_test(enum vm_guest_mode mode, void *arg)
- 			iteration, ts_diff.tv_sec, ts_diff.tv_nsec);
- 
- 		clock_gettime(CLOCK_MONOTONIC, &start);
--		memstress_get_dirty_log(vm, bitmaps, p->slots);
-+		get_dirty_log(vm, bitmaps, p);
- 		ts_diff = timespec_elapsed(start);
- 		get_dirty_log_total = timespec_add(get_dirty_log_total,
- 						   ts_diff);
-@@ -292,7 +302,7 @@ static void run_test(enum vm_guest_mode mode, void *arg)
- static void help(char *name)
- {
- 	puts("");
--	printf("usage: %s [-h] [-a] [-i iterations] [-p offset] [-g] "
-+	printf("usage: %s [-h] [-a] [-i iterations] [-p offset] [-g] [-l] "
- 	       "[-m mode] [-n] [-b vcpu bytes] [-v vcpus] [-o] [-r random seed ] [-s mem type]"
- 	       "[-x memslots] [-w percentage] [-c physical cpus to run test on]\n", name);
- 	puts("");
-@@ -305,6 +315,7 @@ static void help(char *name)
- 	       "     and writes will be tracked as soon as dirty logging is\n"
- 	       "     enabled on the memslot (i.e. KVM_DIRTY_LOG_INITIALLY_SET\n"
- 	       "     is not enabled).\n");
-+	printf(" -l: Do KVM_GET_DIRTY_LOG calls for each memslot in parallel.\n");
- 	printf(" -p: specify guest physical test memory offset\n"
- 	       "     Warning: a low offset can conflict with the loaded test code.\n");
- 	guest_modes_help();
-@@ -355,7 +366,7 @@ int main(int argc, char *argv[])
- 
- 	guest_modes_append_default();
- 
--	while ((opt = getopt(argc, argv, "ab:c:eghi:m:nop:r:s:v:x:w:")) != -1) {
-+	while ((opt = getopt(argc, argv, "ab:c:eghi:lm:nop:r:s:v:x:w:")) != -1) {
- 		switch (opt) {
- 		case 'a':
- 			p.random_access = true;
-@@ -379,6 +390,9 @@ int main(int argc, char *argv[])
- 		case 'i':
- 			p.iterations = atoi_positive("Number of iterations", optarg);
- 			break;
-+		case 'l':
-+			p.parallel_get_dirty_log = true;
-+			break;
- 		case 'm':
- 			guest_modes_cmdline(optarg);
- 			break;
-diff --git a/tools/testing/selftests/kvm/include/memstress.h b/tools/testing/selftests/kvm/include/memstress.h
-index 9071eb6dea60..3e6ad2cdec80 100644
---- a/tools/testing/selftests/kvm/include/memstress.h
-+++ b/tools/testing/selftests/kvm/include/memstress.h
-@@ -74,6 +74,8 @@ void memstress_setup_nested(struct kvm_vm *vm, int nr_vcpus, struct kvm_vcpu *vc
- void memstress_enable_dirty_logging(struct kvm_vm *vm, int slots);
- void memstress_disable_dirty_logging(struct kvm_vm *vm, int slots);
- void memstress_get_dirty_log(struct kvm_vm *vm, unsigned long *bitmaps[], int slots);
-+void memstress_get_dirty_log_parallel(struct kvm_vm *vm, unsigned long *bitmaps[],
-+				      int slots);
- void memstress_clear_dirty_log(struct kvm_vm *vm, unsigned long *bitmaps[],
- 			       int slots, uint64_t pages_per_slot);
- unsigned long **memstress_alloc_bitmaps(int slots, uint64_t pages_per_slot);
-diff --git a/tools/testing/selftests/kvm/lib/memstress.c b/tools/testing/selftests/kvm/lib/memstress.c
-index 557c0a0a5658..abbd96a1c3ba 100644
---- a/tools/testing/selftests/kvm/lib/memstress.c
-+++ b/tools/testing/selftests/kvm/lib/memstress.c
-@@ -40,6 +40,12 @@ static bool all_vcpu_threads_running;
- 
- static struct kvm_vcpu *vcpus[KVM_MAX_VCPUS];
- 
-+struct get_dirty_log_args {
-+	struct kvm_vm *vm;
-+	unsigned long *bitmap;
-+	int slot;
-+};
-+
- /*
-  * Continuously write to the first 8 bytes of each page in the
-  * specified region.
-@@ -341,6 +347,15 @@ void memstress_disable_dirty_logging(struct kvm_vm *vm, int slots)
- 	toggle_dirty_logging(vm, slots, false);
- }
- 
-+static void *get_dirty_log_worker(void *arg)
-+{
-+	struct get_dirty_log_args *args = arg;
-+
-+	kvm_vm_get_dirty_log(args->vm, args->slot, args->bitmap);
-+
-+	return NULL;
-+}
-+
- void memstress_get_dirty_log(struct kvm_vm *vm, unsigned long *bitmaps[], int slots)
- {
- 	int i;
-@@ -352,6 +367,31 @@ void memstress_get_dirty_log(struct kvm_vm *vm, unsigned long *bitmaps[], int sl
- 	}
- }
- 
-+void memstress_get_dirty_log_parallel(struct kvm_vm *vm, unsigned long *bitmaps[],
-+				      int slots)
-+{
-+	struct {
-+		pthread_t thd;
-+		struct get_dirty_log_args args;
-+	} *threads;
-+	int i;
-+
-+	threads = malloc(slots * sizeof(*threads));
-+
-+	for (i = 0; i < slots; i++) {
-+		threads[i].args.vm = vm;
-+		threads[i].args.slot = MEMSTRESS_MEM_SLOT_INDEX + i;
-+		threads[i].args.bitmap = bitmaps[i];
-+		pthread_create(&threads[i].thd, NULL, get_dirty_log_worker,
-+			       &threads[i].args);
-+	}
-+
-+	for (i = 0; i < slots; i++)
-+		pthread_join(threads[i].thd, NULL);
-+
-+	free(threads);
-+}
-+
- void memstress_clear_dirty_log(struct kvm_vm *vm, unsigned long *bitmaps[],
- 			       int slots, uint64_t pages_per_slot)
- {
--- 
-2.51.0.618.g983fd99d29-goog
+Meaning if A lists B as pwrseq, is it always the case that B needs to
+be powered on? The binding documentation doesn't say anything about B
+needs to be powered on first. It's just saying A and B have an
+ordering requirement.
 
+If the meaning of the binding is _ALWAYS_ B needs to be powered on
+first, then yes, this patch is correct and I can give a reviewed-by.
+
+Thanks,
+Saravana
+
+>
+> Signed-off-by: Francesco Valla <francesco@valla.it>
+> ---
+> Changes in v2:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v1: https://lore.kernel.org/r/20250930-mmc_pwrseq-v1-1-7fd2764f=
+5ac1@valla.it
+> ---
+>  drivers/of/property.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index c1feb631e3831d7d5ec23c606af31731bfc2f8b8..fcf10c4f02dcf879e1f25e4fa=
+97b25152d58bacb 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -1377,6 +1377,7 @@ DEFINE_SIMPLE_PROP(post_init_providers, "post-init-=
+providers", NULL)
+>  DEFINE_SIMPLE_PROP(access_controllers, "access-controllers", "#access-co=
+ntroller-cells")
+>  DEFINE_SIMPLE_PROP(pses, "pses", "#pse-cells")
+>  DEFINE_SIMPLE_PROP(power_supplies, "power-supplies", NULL)
+> +DEFINE_SIMPLE_PROP(mmc_pwrseq, "mmc-pwrseq", NULL)
+>  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
+>  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
+>
+> @@ -1524,6 +1525,7 @@ static const struct supplier_bindings of_supplier_b=
+indings[] =3D {
+>         { .parse_prop =3D parse_msi_parent, },
+>         { .parse_prop =3D parse_pses, },
+>         { .parse_prop =3D parse_power_supplies, },
+> +       { .parse_prop =3D parse_mmc_pwrseq, },
+>         { .parse_prop =3D parse_gpio_compat, },
+>         { .parse_prop =3D parse_interrupts, },
+>         { .parse_prop =3D parse_interrupt_map, },
+>
+> ---
+> base-commit: 30d4efb2f5a515a60fe6b0ca85362cbebea21e2f
+> change-id: 20250930-mmc_pwrseq-247089ac9583
+>
+> Best regards,
+> --
+> Francesco Valla <francesco@valla.it>
+>
 
