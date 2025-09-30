@@ -1,300 +1,320 @@
-Return-Path: <linux-kernel+bounces-837194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E818DBABA9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:29:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D159BABAA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C3F481440
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10A8189C83A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BA92853F1;
-	Tue, 30 Sep 2025 06:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82E823BCFD;
+	Tue, 30 Sep 2025 06:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f7xMPfnb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ShD/p6qE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wiVh9eOe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aT5ul2I3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="anIjt2zL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F88C2848BF
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759213783; cv=none; b=Uu1d6rRByX+04m7ggoftoCdBM2PzO/1wsJPjCe3wc4OnE3uQMQL1YH/sj5mI6V21P09XJwIKiR9BGqCk7ueuiIaQvOMSqrz0M7sg6H4IAYr1t84XJkvcQc2uZXHISgtk8C99Zqil9IKhvA0OYZLuxfKoEogdQ0S5w5w6vSVaVKM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759213783; c=relaxed/simple;
-	bh=AzgzGIwkLvJMlk4FbLJZrb/y/sbsW/jJCCBOT6MtGvM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=FNHmn4/X5/shIS6D0GqRPO2eikK2fZQaGzWNV+4umpAEYnNe4v21SDgp0fFCfjIY8xPWpxB0juNN/mhIvUP6WjCmQZdZSwIludAETbRPabPZ2nEVyk04YojPNhg5xgUNdhE1eZQPiR4qXelEWXVguSE8Tdr0buvAsvalUk7VPsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f7xMPfnb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ShD/p6qE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wiVh9eOe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aT5ul2I3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E997E1F7A1;
-	Tue, 30 Sep 2025 06:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759213779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=RT4ikoPiu1GKw0GJ4C6YZ+YgJFJplSow/rFnnKpuRBU=;
-	b=f7xMPfnbjqcvMj6LlQytfOthTDuFpR/ot/ELVqkimj7eXymHafXV3IUG/h2MPrxNtYWEPY
-	TOnKnyDPwXxSi+3odlct4ivdV3McVd3+EBodYq4+Weg6+LIbenJtUrYTZreC2Ro6WIUbtV
-	PAK8v3+4w43PBQU+yV5bZ1roWSytWL8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759213779;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=RT4ikoPiu1GKw0GJ4C6YZ+YgJFJplSow/rFnnKpuRBU=;
-	b=ShD/p6qEp/oh0BzeyBnLuXM1Y+ISEze8vQYkoT1p3MFn2SS9y8O1QKHh+UbsQ+BssBd14Y
-	34vszcbAaujo2pCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759213778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=RT4ikoPiu1GKw0GJ4C6YZ+YgJFJplSow/rFnnKpuRBU=;
-	b=wiVh9eOeSv+2Id1HE2L5yvPYsEq9XeunqIXLoIIiQ7kJ8/VUajfQLHO+mOILdyROlKP5ig
-	wPgzTEL3zXO/K3cB3Aab9aM3gRkp0dq2if88MhLOFWZsCN+h9f2RvpcNv+u6R3u4UlfdJu
-	nP/qjUijED6TTfjHZbsOuMF4ue2iKzU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759213778;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=RT4ikoPiu1GKw0GJ4C6YZ+YgJFJplSow/rFnnKpuRBU=;
-	b=aT5ul2I3PLxGMJagsOHM+BaJcKZNvJZclkZiu8a8tit1uy5C9oWaYW877ZC1ks5nT+avGS
-	vuvggWFQDxBF+7Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE8E213A3F;
-	Tue, 30 Sep 2025 06:29:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MVANMtJ422gHPQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 30 Sep 2025 06:29:38 +0000
-Message-ID: <5dc1b53d-29fb-42f6-9fff-d6b42da17a7f@suse.cz>
-Date: Tue, 30 Sep 2025 08:29:38 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E3B224AEF;
+	Tue, 30 Sep 2025 06:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759213896; cv=fail; b=DwTJR57L7hfXuHk/2/iK8uWs/p6PW1rCQYQurnuXTMhRaflkJhWK80ops8JgDHKCdoEuVTxpv37d6OEkZeI2z17a78/2x9NgL9s12c7d3zntm9E1hWNDkPNQLppTeH91f8CWozb+ntwfu4wTpgm31R6MBBNCk7yHWR2VjHJ3uj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759213896; c=relaxed/simple;
+	bh=SqTbUgH9Ji13Bjkk1RwEpFMsI7ttVI04AdElSXjpyQ4=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lR2YjazF9otbvvwx7KpmhvZJwYAUj2UO8WdlaaqyAC+f+mYtBbpV69+AGrOJbfE89oaUh532OaSZ63nTjCcNpyY8iwwflYV0WHXJAcvBft0eoqOs6OkPn+JMA64TL1eOrN7Z2/9lhxRlHc6Zt4H01De/f5xLoTyCeCjrGfaaxSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=anIjt2zL; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759213894; x=1790749894;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   mime-version;
+  bh=SqTbUgH9Ji13Bjkk1RwEpFMsI7ttVI04AdElSXjpyQ4=;
+  b=anIjt2zLEKLegpbfCdI4vYk/gOSLMm1IvUfHHb2v8hhXENCtmnC0hv35
+   OaG9U1+l8Z/Y8QzMA7Xz6fkfk7/htFQUiTl/z5dyGKkRXyYbSU0w20c8y
+   cRa/2Iv+M40UdWwlfQRDgajKZlrROYhV74Mm9RDoZES4IotPu0C22jhjR
+   2pzpzYvflgXJtpldwmXaI3fwu9uRsJJsbWAQrEKTuSRn4TwiZ2AJ9oCkO
+   jbFh5GQu80yw5IfVS0ruONXhXxwOwL3mNrgmJS2kfQA1p3Uev4OftNazU
+   N5BxnA8A5PnDEzT7IP53+lR6luIuT4h4c/+NPTI0EzeDN0a39JFVa7M+4
+   g==;
+X-CSE-ConnectionGUID: NcdRvWavRQu6RVk+F5mfXQ==
+X-CSE-MsgGUID: l3a0HurOSFSVBU1S9ua9aw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="84078096"
+X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
+   d="scan'208";a="84078096"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 23:31:33 -0700
+X-CSE-ConnectionGUID: J4Zw0ocIQ86eGAMtBUszbg==
+X-CSE-MsgGUID: 2xwNIPAAQhCoqW7pegGyKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
+   d="scan'208";a="178234787"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 23:31:32 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 29 Sep 2025 23:31:32 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 29 Sep 2025 23:31:32 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.41) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 29 Sep 2025 23:31:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iIzfExBuGE3CrbTxvbIxf9ZmK7CGRMiSAsS/VXpbITbDyhBnuV9QhLAPlhpmeW1U7Pbse7QkwfqickZuIrKv/XYHAAa2UeQbO1Hb+vzz99H1M6aAXIn2aU9A/Gr1OPrBo5n+7Y6hAWaT7yLl4buhSgyj4jjqRCovMmOA3zOmmQOamRRCQS9/QVEjjO5yXU0qpdRNzTNMrMbw1xXv+KGlCUnKxB8O6DVFglWC6p8HzWVDz8Fxlb6R6HF5itKhkeMAbxPkZiuoc4Mqbu7Pfxwskw4IIKfyZJnNUq18l8pnhY9HrpjXIjLGwB8p8VCMdg4NX4X7W9NmYWr01sUItRZGLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vOm1Cc3UOpJ3MWlwcwvYacCRt213IGmxphyf6EH7nAY=;
+ b=AQhFUQDM5TsjD1BS+AfbqbBPppQvWIu1uMwNCKkfgk4ORWDPlkVHiP6acM0bxBvdrzkMoWQJDg7426COiEeeZTwmHLjcIE+J0R/vd7A7BOeprc6nGvOS30LONCiIUMwG64FrfvoxacAYuhiGP5T6U67ZTnxklj0+Pu+KjhUXB0JSqKQsY8GSlf0ntCnc/+/SLJY9oSvOccKeFVScUakNyUzo4/Xdkujf5kTS20jMUCfrO3ZMlqslNWSSZvZlmdOy5ljW5IyCRezL2hbmDHWKdPtfVvlUHp0zMjGTXPR2rhIK5ry2c7DlwSJQS1SA/0JW+N3qND5xVaKSpw82N6mZnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by PH0PR11MB5127.namprd11.prod.outlook.com (2603:10b6:510:3c::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Tue, 30 Sep
+ 2025 06:31:30 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9160.014; Tue, 30 Sep 2025
+ 06:31:30 +0000
+Date: Tue, 30 Sep 2025 14:31:18 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: pengyu <pengyu@kylinos.cn>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+	<jirislaby@kernel.org>, <legion@kernel.org>, <mingo@kernel.org>,
+	<myrrhperiwinkle@qtmlabs.xyz>, <tglx@linutronix.de>,
+	<dmitry.torokhov@gmail.com>, <changlianzhi@uniontech.com>, pengyu
+	<pengyu@kylinos.cn>, <syzbot+79c403850e6816dc39cf@syzkaller.appspotmail.com>,
+	<oliver.sang@intel.com>
+Subject: Re: [PATCH] tty/vt: Fix possible deadlock in input_inject_event
+Message-ID: <202509301323.34d956e1-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250928130819.383808-1-pengyu@kylinos.cn>
+X-ClientProxiedBy: TP0P295CA0039.TWNP295.PROD.OUTLOOK.COM (2603:1096:910:4::8)
+ To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab updates for 6.18
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>,
- Christoph Lameter <cl@gentwo.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Pedro Falcato <pfalcato@suse.de>, Alexei Starovoitov <ast@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>
-Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH0PR11MB5127:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f21c211-81f3-4fc5-9630-08ddffeafd8e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?67i8eXGStKBauysEbkSkSsJhIa/mofZOH9ckwR7O0gZm1SnpIIN4i+rNXCym?=
+ =?us-ascii?Q?vdfldZA+64fWQRjt/0HAJQuTL4rDdK5hXzeWLDHgEVaOGgsaJw/2sOIT91OD?=
+ =?us-ascii?Q?EnblecihXsEXsXDbivi1I7d9aJ6KM8Cr4Dc2F2q9qWoy+rwFRg8glp+JKkIL?=
+ =?us-ascii?Q?0SE3wFm5JDgj7GfJoJiwTFtI3rGi0upF2slZ9NtmtagKknN0cdQr+nKDvk58?=
+ =?us-ascii?Q?q1WRq9mZ+VlJdaXS6NaBC1LYUE0hvWZqkyNl9eAX5FY7p2bqqkfvm9H5VzZk?=
+ =?us-ascii?Q?urzdzTm2IyM0n9UV5iKj2+eQe5eGqQZJVr7Sjyf71ix+KJ12Omc7NjEF78y6?=
+ =?us-ascii?Q?Ce8xN7WleNQXOxE1pOJvfMhrvJB0L77vrQ5g9ky52UHO2APSm9xBB2QhtK/o?=
+ =?us-ascii?Q?cTNYYGg0UvIY8vGSb9tvDKimzlvhaJkgZtRyJkoC1Tkt0D9p6h9+//ya3ab9?=
+ =?us-ascii?Q?0xvqCdYKTo62UfQgJ1LOvS8knT5moN/8KOe43F2HwO0FwvUdLW3u0AsB+nPO?=
+ =?us-ascii?Q?/nv/vJ+4mFxQ9NQvt4XoihkW+3Y3rny/KCV/6sITuIHC03mHmvQMugp8alV3?=
+ =?us-ascii?Q?DRZ+gd2IqWQt4uzn5we7QpcTSOHNTZw+Rhz8it2JPOY94K+pEy2YcfcH13GX?=
+ =?us-ascii?Q?BWz40x1+cXK9MSppSrLdJTHnT6rJ50mZupChYyj7QUrY6gmzYsHtcmYr1ms2?=
+ =?us-ascii?Q?WmiLqSlqiVCNzArHSkLQ5qs0qpLqIziiu6NhAGF3kSQyj5ktKiUNYG9y2AAT?=
+ =?us-ascii?Q?yKvZHFiGDaMSZ5n8H4F6TEGacyG1+4epH4HONPKPfeE/L8KO9ZU1kh4TETy1?=
+ =?us-ascii?Q?VV+t4vS9MIZ+MO1AOWBPNSEg2QpmXkiN5eXpMAacdSYPcAuDIJXwRYiS0LaV?=
+ =?us-ascii?Q?N0eArHNjlp8vr7KPvluOogiMViWrOlIHpPwOo0VBR/4KMo2VhpTjdZ5MqtRq?=
+ =?us-ascii?Q?5XBHMKbP18w1RctPPuyRCbaRie4i0kS9aQpcla+vgMsX7AY6VilnluSMxBzg?=
+ =?us-ascii?Q?QKb92nPSmqfiSVu9uuuTdLk/DBc5bkKye0Y7ZIySTKrzvCSt98hazephj2vL?=
+ =?us-ascii?Q?CeSvEKO++h9fi9+oB++DlJEe4DkA/qZ+RSO0Ow7lygKyjQy/5ZKSzawwKGXo?=
+ =?us-ascii?Q?y6h2Upsb88maoWwHZv/7iZ4xJGnoK9CaZEURi5AieBJBkkM5FCPxcMMLkmYh?=
+ =?us-ascii?Q?6S0oqiJA2C1kv9se7efwJRwG8h1dVAvIu6+TCk58IcR1L38qY/HaWN3NnSKf?=
+ =?us-ascii?Q?8BlegdIG3gz7Mv/ekgaXH59QNIP/Rh2XTmUdbI6iE052zcDEYGW1Ydargv15?=
+ =?us-ascii?Q?psxvo5nJljzV/KhDu21ukUYsZPO7IFYqdtljyUAsJwakt2Shxvk1QbZeL4Yc?=
+ =?us-ascii?Q?mlvPDamgRZ9LYEcCOeqnhOiba7MAhDQLG2hFGkIx5rpDFnncSYVsv9I88qbj?=
+ =?us-ascii?Q?s5rAS4bqDHM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7vxeZJUf/m6ls0itVjtvhlyhLDAEVAFcC3lWBGnQny7cZlAFl0iXq7/KELYS?=
+ =?us-ascii?Q?Gkkfhah5wkQJ47m/L9Rd6CjyiT8Qp9Ue7Ely/Ng0VAuZNxrscaVwX6T816G1?=
+ =?us-ascii?Q?9Kbm1UiSQ2x7LEGk8VirvldNb3OzCuWDr3phiFKJMxF1A6cxhrvCqfLIT/ZO?=
+ =?us-ascii?Q?gHpJ/9mKWLYla6uQmsAyXNJnZ0l3B+/91YYhP+Kdq3+xsDVjlnejIPXs07Yz?=
+ =?us-ascii?Q?qZNkUl/2NQydYRFi7GB1PicOvwdGqnbxvxg99A1zgMDY193gwC3a7XrNKnk2?=
+ =?us-ascii?Q?Xq+Jrm1nzNy74C7gL3HxyDT6LhTZBOEqmS7OtQ4C9UXqtKbsdkKQ1KszcYAy?=
+ =?us-ascii?Q?D3p5wy+HQyN5PKeLI2tdMXBXariHBPDEuut0t9hi1oA0vqsWfrbj/20auqM2?=
+ =?us-ascii?Q?acbkKq8Ta7xrVllUYEiXeyF0i/BcIrLdybiAaCYNiZu5hoy9REiYJ7uJxWnx?=
+ =?us-ascii?Q?g50CQTEs+V5NGJkCPtbxVsLdk5/S672pdX8nass6lJvqhV8YWgZIc5wppzlK?=
+ =?us-ascii?Q?kOQVBzxdV+r2JhLWfNYPGtqlsjnfVi0EPmHsYFS8v8cvmjlyQU1BW7rQUMUd?=
+ =?us-ascii?Q?n7TT+uDGe1AeoD+IidHnD20YWq20tOE9eAMMRzfx9PZ06NHPxTH+h5qSlXCS?=
+ =?us-ascii?Q?lAzD2sZVgj14+/76hC2SiaJxHQazsd4XHkDyuqHS/r0rAXlK7AGHkGmnFe48?=
+ =?us-ascii?Q?X6lOpe9KvXRTsQW/SLHqoSbzAVDDq9clRrIT9+aMW52XVdk4UKK/aTE49wdO?=
+ =?us-ascii?Q?VVvt5C7Q5M6UXUtVuJvIPeHBsW9EjRmqrZnudX5cACjxOAyfNiva3RIJNJc5?=
+ =?us-ascii?Q?qyze01YoU6BSdU1OEGwXkruZwIGsWHwLyDEv60hieaLadh1QAt6H/CzgKh20?=
+ =?us-ascii?Q?h0KahnhPFdSwIPfx93iYYKmVSbgTE7Ci/hOC06hBHPNNM7aRPRaXD15DC/xD?=
+ =?us-ascii?Q?AAKdNJ6yPzzNZUeCRvr0gGu2jwvuT97lUaeTvbfTccqEJVOROW1xPDDmcqUN?=
+ =?us-ascii?Q?Tphvv8eGi8CdZEoylwmuqFDlXyn2D0uEy873aT4zCrdibKQbO4Radd8JfB6k?=
+ =?us-ascii?Q?ZZUXlhrdnVbZUgY48rsYymwfgu8e3je63bE0mOtKlXoFPpWeimdUvpFyJ34u?=
+ =?us-ascii?Q?Df64L4op09Xxp9cIf7oH7bznUd2mi4FagprULL+oN34hhFCXHDn3XoqpYRNz?=
+ =?us-ascii?Q?N9hV+Wsw3IwsEyonqdhstkMjWo4e9tT3CPGAPdudBGfd2yczEpSKhiFoJPt3?=
+ =?us-ascii?Q?Q3+fI+5B28UoP0eIfTNBoAnYXhEEDSyRDaPU4iPxLhIAZj5ZusB079nJGuB7?=
+ =?us-ascii?Q?Sz7mpa3RVOp21pcfDy7k1jDP1jHcbEDHH62R0AplGXbUwHhrJoZueBdaFDgJ?=
+ =?us-ascii?Q?BzRtT4xPpGoNJhr7o/C8rfBmOOf9UTdNNGaJ8TMWgd3hcjHuKy2PCRPGsBVm?=
+ =?us-ascii?Q?+y4S9fVsfv8iAOOjw8okVQj57U2zolKYVQWPm4aYTy9EmpygqKlUHQVzajI0?=
+ =?us-ascii?Q?VY57/E71AbN16mfBk6VkgyKldQQ1VnDGn7AadDMsG/u0EXdYM2ibYUNrSSiR?=
+ =?us-ascii?Q?5kdCA2ssS8UrKwfhkwPIoCwISyneZXQJ+PRUH7fLD7obDiQscZ8qwoamEOL5?=
+ =?us-ascii?Q?uA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f21c211-81f3-4fc5-9630-08ddffeafd8e
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 06:31:30.1913
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9hSLlXx25pnz4FdRmSChdoNkG8QIYzvgKxU3rgoI8x6oltE+ecRKld46o1FKp3Lk1kDv5tvNsSPyrN9iw7MQZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5127
+X-OriginatorOrg: intel.com
 
-Hi Linus,
 
-please pull the latest slab updates from:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18
+Hello,
 
-This time we have two rather large features - a new percpu caching scheme and
-re-entrant kmalloc_nolock(), along with the usual fixes and cleanups.
+kernel test robot noticed "WARNING:at_kernel/workqueue.c:#enable_work" on:
 
-To avoid conflicts with mm tree, the patches from Lorenzo and Qianfeng are part
-of this pull although normally they would be in mm tree. There should be no
-conflicts.
+commit: 81d246ffd402b46338d8a3e0cd23f474195dd236 ("[PATCH] tty/vt: Fix possible deadlock in input_inject_event")
+url: https://github.com/intel-lab-lkp/linux/commits/pengyu/tty-vt-Fix-possible-deadlock-in-input_inject_event/20250928-211353
+base: https://git.kernel.org/cgit/linux/kernel/git/gregkh/tty.git tty-testing
+patch link: https://lore.kernel.org/all/20250928130819.383808-1-pengyu@kylinos.cn/
+patch subject: [PATCH] tty/vt: Fix possible deadlock in input_inject_event
 
-Thanks,
-Vlastimil
+in testcase: boot
 
-======================================
+config: x86_64-kexec
+compiler: clang-20
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
 
-* A new layer for caching objects for allocation and free via percpu arrays
-  called sheaves. The aim is to combine the good parts of SLAB (lower-overhead
-  and simpler percpu caching, compared to SLUB) without the past issues with
-  arrays for freeing remote NUMA node objects and their flushing. It also
-  allows more efficient kfree_rcu(), and cheaper object preallocations for
-  cases where the exact number of objects is unknown, but an upper bound is.
+(please refer to attached dmesg/kmsg for entire log/backtrace)
 
-  Currently VMAs and maple nodes are using this new caching, with a plan to
-  enable it for all caches and remove the complex SLUB fastpath based on cpu
-  (partial) slabs and this_cpu_cmpxchg_double(). (Vlastimil Babka, with Liam
-  Howlett and Pedro Falcato for the maple tree changes)
 
-* Re-entrant kmalloc_nolock(), which allows opportunistic allocations from NMI
-  and tracing/kprobe contexts. Building on prior page allocator and memcg
-  changes, it will result in removing BPF-specific caches on top of slab.
-  (Alexei Starovoitov)
++--------------------------------------------+------------+------------+
+|                                            | f4abab3508 | 81d246ffd4 |
++--------------------------------------------+------------+------------+
+| WARNING:at_kernel/workqueue.c:#enable_work | 0          | 12         |
+| RIP:enable_work                            | 0          | 12         |
++--------------------------------------------+------------+------------+
 
-* Various fixes and cleanups. (Kuan-Wei Chiu, Matthew Wilcox, Suren
-  Baghdasaryan, Ye Liu)
 
-----------------------------------------------------------------
-Alexei Starovoitov (7):
-      locking/local_lock: Expose dep_map in local_trylock_t.
-      locking/local_lock: Introduce local_lock_is_locked().
-      mm: Allow GFP_ACCOUNT to be used in alloc_pages_nolock().
-      mm: Introduce alloc_frozen_pages_nolock()
-      slab: Make slub local_(try)lock more precise for LOCKDEP
-      slab: Reuse first bit for OBJEXTS_ALLOC_FAIL
-      slab: Introduce kmalloc_nolock() and kfree_nolock().
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202509301323.34d956e1-lkp@intel.com
 
-Kuan-Wei Chiu (2):
-      mm/slub: Fix cmp_loc_by_count() to return 0 when counts are equal
-      mm/slub: Replace sort_r() with sort() for debugfs stack trace sorting
 
-Liam R. Howlett (8):
-      maple_tree: Drop bulk insert support
-      tools/testing/vma: Implement vm_refcnt reset
-      tools/testing: Add support for changes to slab for sheaves
-      testing/radix-tree/maple: Hack around kfree_rcu not existing
-      tools/testing: Add support for prefilled slab sheafs
-      maple_tree: Prefilled sheaf conversion and testing
-      maple_tree: Add single node allocation support to maple state
-      maple_tree: Convert forking to use the sheaf interface
+[    0.877354][    T1] ------------[ cut here ]------------
+[    0.878411][    T1] workqueue: work disable count underflowed
+[ 0.879704][ T1] WARNING: CPU: 0 PID: 1 at kernel/workqueue.c:4326 enable_work (kernel/workqueue.c:4326) 
+[    0.881213][    T1] Modules linked in:
+[    0.881232][    T1] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc6-00045-g81d246ffd402 #1 PREEMPT(voluntary)
+[    0.881232][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[ 0.881232][ T1] RIP: 0010:enable_work (kernel/workqueue.c:4326) 
+[ 0.881232][ T1] Code: 5e 5d e9 0c c1 ec 00 cc 0f 0b eb 9b 31 ed 80 3d 1e e8 c6 01 00 75 a0 c6 05 15 e8 c6 01 01 48 c7 c7 cd bf 6d 82 e8 89 26 f3 ff <0f> 0b eb 89 0f 0b eb 93 e8 cc c7 eb 00 66 66 66 2e 0f 1f 84 00 00
+All code
+========
+   0:	5e                   	pop    %rsi
+   1:	5d                   	pop    %rbp
+   2:	e9 0c c1 ec 00       	jmp    0xecc113
+   7:	cc                   	int3
+   8:	0f 0b                	ud2
+   a:	eb 9b                	jmp    0xffffffffffffffa7
+   c:	31 ed                	xor    %ebp,%ebp
+   e:	80 3d 1e e8 c6 01 00 	cmpb   $0x0,0x1c6e81e(%rip)        # 0x1c6e833
+  15:	75 a0                	jne    0xffffffffffffffb7
+  17:	c6 05 15 e8 c6 01 01 	movb   $0x1,0x1c6e815(%rip)        # 0x1c6e833
+  1e:	48 c7 c7 cd bf 6d 82 	mov    $0xffffffff826dbfcd,%rdi
+  25:	e8 89 26 f3 ff       	call   0xfffffffffff326b3
+  2a:*	0f 0b                	ud2		<-- trapping instruction
+  2c:	eb 89                	jmp    0xffffffffffffffb7
+  2e:	0f 0b                	ud2
+  30:	eb 93                	jmp    0xffffffffffffffc5
+  32:	e8 cc c7 eb 00       	call   0xebc803
+  37:	66                   	data16
+  38:	66                   	data16
+  39:	66                   	data16
+  3a:	2e                   	cs
+  3b:	0f                   	.byte 0xf
+  3c:	1f                   	(bad)
+  3d:	84 00                	test   %al,(%rax)
+	...
 
-Lorenzo Stoakes (1):
-      tools/testing/vma: clean up stubs in vma_internal.h
+Code starting with the faulting instruction
+===========================================
+   0:	0f 0b                	ud2
+   2:	eb 89                	jmp    0xffffffffffffff8d
+   4:	0f 0b                	ud2
+   6:	eb 93                	jmp    0xffffffffffffff9b
+   8:	e8 cc c7 eb 00       	call   0xebc7d9
+   d:	66                   	data16
+   e:	66                   	data16
+   f:	66                   	data16
+  10:	2e                   	cs
+  11:	0f                   	.byte 0xf
+  12:	1f                   	(bad)
+  13:	84 00                	test   %al,(%rax)
+	...
+[    0.881232][    T1] RSP: 0000:ffffc90000013b28 EFLAGS: 00010046
+[    0.881232][    T1] RAX: 63593ad70bfd2600 RBX: ffffffff82ead988 RCX: 63593ad70bfd2601
+[    0.881232][    T1] RDX: ffffc90000013918 RSI: 00000000ffff7fff RDI: 0000000000000001
+[    0.881232][    T1] RBP: 0000000000000000 R08: 0000000000000000 R09: ffffc90000013910
+[    0.881232][    T1] R10: 00000000ffff7fff R11: 0000000000000001 R12: 0000000000000000
+[    0.881232][    T1] R13: 0000000000000000 R14: 000fffffffe00001 R15: 0000000000000000
+[    0.881232][    T1] FS:  0000000000000000(0000) GS:ffff8884ac411000(0000) knlGS:0000000000000000
+[    0.881232][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.881232][    T1] CR2: ffff88843ffff000 CR3: 0000000002a30000 CR4: 00000000000406f0
+[    0.881232][    T1] Call Trace:
+[    0.881232][    T1]  <TASK>
+[ 0.881232][ T1] kbd_init (include/linux/workqueue.h:730 drivers/tty/vt/keyboard.c:1666) 
+[ 0.881232][ T1] vty_init (drivers/tty/vt/vt.c:3884) 
+[ 0.881232][ T1] tty_init (drivers/tty/tty_io.c:3651) 
+[ 0.881232][ T1] ? __pfx_chr_dev_init (drivers/char/mem.c:734) 
+[ 0.881232][ T1] do_one_initcall (init/main.c:1269) 
+[ 0.881232][ T1] ? __alloc_frozen_pages_noprof (mm/page_alloc.c:5148) 
+[ 0.881232][ T1] ? alloc_pages_mpol (mm/mempolicy.c:2416) 
+[ 0.881232][ T1] ? new_slab (mm/slub.c:560 mm/slub.c:2698 mm/slub.c:2714) 
+[ 0.881232][ T1] ? __proc_create (fs/proc/generic.c:453) 
+[ 0.881232][ T1] ? ida_alloc_range (include/linux/xarray.h:1437 lib/idr.c:461) 
+[ 0.881232][ T1] ? parameq (kernel/params.c:90 kernel/params.c:99) 
+[ 0.881232][ T1] ? __pfx_ignore_unknown_bootoption (init/main.c:1315) 
+[ 0.881232][ T1] ? parse_args (kernel/params.c:153 kernel/params.c:186) 
+[ 0.881232][ T1] do_initcall_level (init/main.c:1330) 
+[ 0.881232][ T1] do_initcalls (init/main.c:1344) 
+[ 0.881232][ T1] kernel_init_freeable (init/main.c:1583) 
+[ 0.881232][ T1] ? __pfx_kernel_init (init/main.c:1461) 
+[ 0.881232][ T1] kernel_init (init/main.c:1471) 
+[ 0.881232][ T1] ret_from_fork (arch/x86/kernel/process.c:154) 
+[ 0.881232][ T1] ? __pfx_kernel_init (init/main.c:1461) 
+[ 0.881232][ T1] ret_from_fork_asm (arch/x86/entry/entry_64.S:258) 
+[    0.881232][    T1]  </TASK>
+[    0.881232][    T1] ---[ end trace 0000000000000000 ]---
 
-Matthew Wilcox (Oracle) (1):
-      slab: Remove dead code in free_consistency_checks()
 
-Pedro Falcato (2):
-      maple_tree: Use kfree_rcu in ma_free_rcu
-      maple_tree: Replace mt_free_one() with kfree()
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20250930/202509301323.34d956e1-lkp@intel.com
 
-Qianfeng Rong (1):
-      maple_tree: remove redundant __GFP_NOWARN
 
-Suren Baghdasaryan (2):
-      slab: prevent warnings when slab obj_exts vector allocation fails
-      slab: mark slab->obj_exts allocation failures unconditionally
 
-Vlastimil Babka (17):
-      slab: wrap debug slab validation in validate_slab_ptr()
-      slab: move validate_slab_ptr() from check_slab() to its callers
-      slab: move validate_slab_ptr() from alloc_consistency_checks() to its caller
-      slab: validate slab before using it in alloc_single_from_partial()
-      slab: don't validate slab pointer in free_debug_processing()
-      slab: simplify init_kmem_cache_nodes() error handling
-      slab: add opt-in caching layer of percpu sheaves
-      slab: add sheaf support for batching kfree_rcu() operations
-      slab: sheaf prefilling for guaranteed allocations
-      slab: determine barn status racily outside of lock
-      slab: skip percpu sheaves for remote object freeing
-      slab: allow NUMA restricted allocations to use percpu sheaves
-      mm, vma: use percpu sheaves for vm_area_struct cache
-      maple_tree: use percpu sheaves for maple_node_cache
-      tools/testing: include maple-shim.c in maple.c
-      Merge series "SLUB percpu sheaves"
-      Merge series "slab: Re-entrant kmalloc_nolock()"
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-Ye Liu (1):
-      mm/slub: Refactor note_cmpxchg_failure for better readability
-
- include/linux/gfp.h                 |    2 +-
- include/linux/kasan.h               |   13 +-
- include/linux/local_lock.h          |    2 +
- include/linux/local_lock_internal.h |   16 +-
- include/linux/maple_tree.h          |    6 +-
- include/linux/memcontrol.h          |   12 +-
- include/linux/rtmutex.h             |   10 +
- include/linux/slab.h                |   51 +
- kernel/bpf/stream.c                 |    2 +-
- kernel/bpf/syscall.c                |    2 +-
- kernel/locking/rtmutex_common.h     |    9 -
- lib/maple_tree.c                    |  667 +----
- lib/test_maple_tree.c               |  137 -
- mm/Kconfig                          |    1 +
- mm/internal.h                       |    4 +
- mm/kasan/common.c                   |    5 +-
- mm/page_alloc.c                     |   55 +-
- mm/slab.h                           |   20 +-
- mm/slab_common.c                    |   37 +-
- mm/slub.c                           | 5479 ++++++++++++++++++++++++-----------
- mm/vma_init.c                       |    1 +
- tools/include/linux/slab.h          |  165 +-
- tools/testing/radix-tree/maple.c    |  514 +---
- tools/testing/shared/linux.c        |  120 +-
- tools/testing/shared/maple-shared.h |   11 +
- tools/testing/shared/maple-shim.c   |    7 +
- tools/testing/vma/vma_internal.h    |  259 +-
- 27 files changed, 4462 insertions(+), 3145 deletions(-)
 
