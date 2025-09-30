@@ -1,216 +1,177 @@
-Return-Path: <linux-kernel+bounces-838059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43DF9BAE55C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D14BAE55F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E87719450E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE573C8190
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2048A279355;
-	Tue, 30 Sep 2025 18:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E6826FDB2;
+	Tue, 30 Sep 2025 18:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="maGBai4X"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bfTmvrZJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA99724EAB1;
-	Tue, 30 Sep 2025 18:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6595A247284
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759257825; cv=none; b=Mo4jtF2pntMlvbeA+ceDrns5pZZPA+zXLnxIdM/I9T2Ok3i69lV/Nq59omhpTcF2bgYaVKhKU06fxg1yQ5HjVk/lu0LbSENhVDsMByEuZD5QA8b6/WlJJP5ECr+jNgbJtyWd64Qw2zijSAPpXB1UBNr9VuTAXIG5ZbHeMtXxuCM=
+	t=1759257826; cv=none; b=ajlYzD2jxV9ILaW3w9k+E6K9+myXigVnDuOPesJjAlQR6aKyhyhl/DhpqlAmLWGT6g81QHKvrvSX4qp4nNb7qbnvYdzB/iq62MtjJxDed/dmiFLv3ogdJSH1ZKwy1QViDGlrc+A5i1IznmF54351T+vEHo+wxUo8u58PJQNelaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759257825; c=relaxed/simple;
-	bh=wBmg0SUohGKd4jUy2Cckduwi02IrtYsbTaJ7di3LrnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sQCtrOCHWXecddbKiM6FeVGPPwrbtXtnyuEFj/AaIncN8Bz6rZGhxXjTIjY6yaag0rRSf9gFAvuyseaCJ/1lhBsNuZIIsRQ2kjn3amSPW1O/996fRZr5ze8BaacKUM/utZGnKQaisT5Vpjre1NvM07PSlysO9uCBQVOmVH/Ko90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=maGBai4X; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1759257816; x=1759862616; i=deller@gmx.de;
-	bh=z+MD5MfXq8YCBZXDVMD/omJDpL7SFMOeLEcnFA3o/Eo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=maGBai4Xpx2NP1sNWk6SMFlWIafCWUMqIDhqbWrX6uJCyUkIEoYbUqpuANdgD9p3
-	 7fiOqwEXCT1ts+8BgcFEG+0Y8cMn3XSmKV6fSbae6FNZgD1c+fo+eTY+B56ujgMo2
-	 idHM9eT5Dd33XweIgFm/EmmKej/7mXVwmiibdMm1H0J148moj9c5uaGUBR8GhHsq8
-	 ZhxG6/m/FrT8wfuV10hxH9zMAjqDK419hTDNBWohSB77tQo4mwVV9FZ0DuCIp5onO
-	 Mv4BQ0Uwstt1SMsndRaJ44jrIxx7V8RI3bXcyLvetsyS0QpFb46Rd8DLk2ajNqdU1
-	 1ol5PzESoqz9TxorMA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.50.4]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N0FxV-1u8PpY3X9z-00sUpK; Tue, 30
- Sep 2025 20:43:35 +0200
-Message-ID: <3c974071-0ba7-4d24-aa8c-4a1d77c4150b@gmx.de>
-Date: Tue, 30 Sep 2025 20:43:34 +0200
+	s=arc-20240116; t=1759257826; c=relaxed/simple;
+	bh=FjCaxSo0gdGhvu7zeLMnYLhnP7QBFHb9v99tTue3MwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gYwkijIsTsQzlq3xvQtDBEhnHLT4ZYAdiVIVht0b6FjJKxTZ7CuG/wDkJk7pp+uh/fQZWLYfxsKDfjLPK3BDPQD14TTCZxNXLsbMS3Hv4wzRz8/9rOmJxMjNluY2gmZvVhsK1OmMKuMAWTH6UsQb++B+/D79JyCCwW0jnDdEW6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bfTmvrZJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UCB7ZL018092
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:43:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=yGmiFBtk8zoxCM+T4HUw6+ZD
+	+jra215LvynAxpP5vgk=; b=bfTmvrZJra+/oQZi7uhdBmbERNSFcTLqisqpazM1
+	wiudlbDafBQKYQ6pepOJctTKpmrQZLScq2Ie2N7USskXBRMWD61lwlErIgXOMJN1
+	qmq79ohKTxUDoPGobDLWT5bGi+/L34X/W9bxBGDsNwKUp93UaBDrvGqMjJxwddVv
+	twZAAp/AyQzDTi9fCjHWxV2d2jpJzcZmPHSum5dzsj1p5zNaGphdjbtvdj3uGbsl
+	syJVbQRAxIaMzySx/jd27fn8v+vpXiG3HM7OTe6rWRUwrdTQbojn/tGpr7OocZTK
+	QsbqQ25r2ltFmYQHFm4C318tKfN+YNZeJSWJg4psEJRt3A==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e93hhtwn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:43:43 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d8b8c3591fso170036961cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:43:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759257822; x=1759862622;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yGmiFBtk8zoxCM+T4HUw6+ZD+jra215LvynAxpP5vgk=;
+        b=Oh9N6BjQu+wPRW8q+I8Td3XzL4NBSCZ3OfXYM/aM4VXGRawwFEWkLrx30UzuK36scm
+         VJr7XrsA5lhejtsT56J4rR1mAyi877uWqxxqIm16z1Qze8/q4PutRBt/xNxcwZpG4BN0
+         Nlyanvm1rVDWTudJYeidGJTgeCRmjaspTTk0D7Xca+YI1LFpThmP+wyAVaDRNypAAci3
+         TivarT5DjAAwr6r6tiYehO3xPGCXbZ5gfAVYYwDxTdpS8QPPhLjXzFesf5fKIWB5/fLW
+         CiK6MVS0GTXy2vi/2xw4o1ucvOGbHJEJuupW+sLKijGzs0Po4NvxQv98PXZB6uCbMXx9
+         UK2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXWcWXDN/KI+d/6T8hHBIzLEVvpwMhbC8iis2WEHItxj9NE6bPfQSL/9AeLgO7DcVQEngXRdBrQoldAq/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUyY8T/Pwi4HMCyGaqzN0cIWB05XcgiFoiQhNYfE94dOhmQIlM
+	ebkXfryMy8rY36z7bDCijV40AceXAPK4yw8ZuDeFfKnbst1TdHA2Q5/7BejoD1u33h2s1puTL+x
+	ROXudSy8k25V4EYQhEB/AOtXuZRAT2DRnWTGy+8JGKAcTjif+Lea/zWhjXkLYj69Eglc=
+X-Gm-Gg: ASbGncvBlZwGlfLamKGL6Svxux+NAzlwcAAifRZo1yU0bet1LXfHvEgjyCiXnQNTIUN
+	9vkrFKd7p21eGhOR3Gf7qOt07PvWQfO2iH6zVw025JCWpCUSwhoFwLVwYAN7ZH11CXXtIFRBcPZ
+	qECJhE67tG7PH7mF9q0vaTVixtzW0odf1dev1WK0QBgPhxVJutGzV8aCd5k3svPEOBQ4Kn5f9ZZ
+	GUIc2MoACt8iZeI6M6JMOMBdXB7VGgUv51uU2m5zvRGe0PP5cN5AA8s4tV+OJA31s6igAG1CxWD
+	FrRSt/ax01vfifF4WgrDFTVyJlMnN3T1AQa1LwYhveiJCHHsryMR/du1LHsIYOPynqUtzxgqsuX
+	XPvZYat+BpsV7hZlPdKJKOnXMXfOkGAHHva+JWS+S8coSA0JFV3c03urlgA==
+X-Received: by 2002:a05:622a:2c9:b0:4b6:38f8:4edf with SMTP id d75a77b69052e-4e41ca1b2d1mr8342941cf.29.1759257821804;
+        Tue, 30 Sep 2025 11:43:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEVoTpyYZEYD5BDhL/ibzffyH63whEH/5BJy4dUuRPx4WpG/DtAm/AZa0wD/E68tizX2uBZjA==
+X-Received: by 2002:a05:622a:2c9:b0:4b6:38f8:4edf with SMTP id d75a77b69052e-4e41ca1b2d1mr8342591cf.29.1759257821234;
+        Tue, 30 Sep 2025 11:43:41 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831665791esm5232132e87.82.2025.09.30.11.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 11:43:39 -0700 (PDT)
+Date: Tue, 30 Sep 2025 21:43:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Romain Gantois <romain.gantois@bootlin.com>, Li Jun <jun.li@nxp.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, imx@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: usb: switch: split out ports definition
+Message-ID: <vwlshz5li23xlthn5delxwxdsdci5nc22iey3xih4qf5uhbory@clskdsy64xpx>
+References: <20250930-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v1-1-060568de9538@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: mb862xxfb: Use int type to store negative error
- codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250830124703.73732-1-rongqianfeng@vivo.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20250830124703.73732-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OV+N4b2HkAWrzAUCVnQn+ZUWnLPqoW1btOQ4grWIw8JQ2SrfBey
- qzpomnnbmpMCqwS/E/4uhieUniBda9tNivAzkqKgEiCzqzk4nJtjcYJXfeC0e+fV9nQtOZ2
- WmvPg2G1MX4Zr5YqG01Tkd9rvTiiIcniVncp86DwYitwWh7HBV4ZliFiKLPZhhwpGtrnxZG
- AkGFo32OAjHipz4axoE/g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KcsHWsSdl0Y=;rRCyb83X2ikIxzrrVdMa0hG+Mh7
- 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
- G/UnVxf4S3qrpfVgLa9fFvT5dAfqLAOpwU4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v1-1-060568de9538@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MSBTYWx0ZWRfX58E7bF5nYC/w
+ c2K5qbQ2jtbFF57mU+rD9e0HIjyYMXnwWt2z+WpmWdJSa8R6oXA6BYIoRMP93hNeQxV2saiH3VO
+ 6xLiUg6ug9KB0io5+jKX0MPWpNt/6qyBnJWeZCOVUQqbRV0Lk66jxX0Aq3iFZ41lEhi7U9LFmy7
+ SbpCKQte8pd1cY66b1oKUYBEsG4quw6n3ihaRpMf95IYv67ubxJNfrBjlmYoj77dE7aUGhBvsse
+ p8ED8DN/g1sXNDIJ6axwoMBvMBF9PhLHZ2QfWnbZNjuwv8tRjd2MVwheduzo2pEJ04fU+UDkz1Y
+ zcc/O55hEpRPiXV4qKgM5Op9fhfFmLEFyFxsdi13OqnjpSCovd+AMu9w6t3jdrVi0g00t6jPEJ2
+ dCo87m9a/50oW+iQXqpxcIUmdYpEDg==
+X-Proofpoint-GUID: ZNHGBLJN5Um-ErVauwLUhkw9VatrY2KJ
+X-Proofpoint-ORIG-GUID: ZNHGBLJN5Um-ErVauwLUhkw9VatrY2KJ
+X-Authority-Analysis: v=2.4 cv=Rfydyltv c=1 sm=1 tr=0 ts=68dc24df cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=OOCT3r6X_P3o6Jl0E7UA:9
+ a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_03,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270041
 
-On 8/30/25 14:47, Qianfeng Rong wrote:
-> Change the 'ret' variable in of_platform_mb862xx_probe() from unsigned l=
-ong
-> to int, as it needs to store either negative error codes or zero.
->=20
-> Storing the negative error codes in unsigned type, doesn't cause an issu=
-e
-> at runtime but can be confusing. Additionally, assigning negative error
-> codes to unsigned type may trigger a GCC warning when the -Wsign-convers=
-ion
-> flag is enabled.
->=20
-> No effect on runtime.
->=20
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+On Tue, Sep 30, 2025 at 07:17:21PM +0200, Neil Armstrong wrote:
+> The ports definition currently defined in the usb-switch.yaml
+> fits standards devices which are either recipient of altmode
+> muxing and orientation switching events or an element of the
+> USB Super Speed data lanes.
+> 
+> This doesn't necessarely fit combo PHYs like the Qualcomm
+> USB3/DP Combo which has a different ports representation.
+> 
+> Move the ports definition to a separate usb-switch-ports.yaml
+> and reference it next to the usb-switch.yaml, except for
+> the Qualcomm USB3/DP Combo PHY bindings.
+
+Isn't it easier to make QMP PHY use $ref for port nodes instead of allOf
+and keep ports definitions inside the usb-switch schema?
+
+> 
+> Reported-by: Rob Herring <robh@kernel.org>
+> Closes: https://lore.kernel.org/all/175462129176.394940.16810637795278334342.robh@kernel.org/
+> Fixes: 3bad7fe22796 ("dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->   drivers/video/fbdev/mb862xx/mb862xxfbdrv.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/phy/fsl,imx8mq-usb-phy.yaml           |  4 +-
+>  .../bindings/phy/samsung,usb3-drd-phy.yaml         |  4 +-
+>  .../devicetree/bindings/usb/fcs,fsa4480.yaml       |  1 +
+>  .../devicetree/bindings/usb/gpio-sbu-mux.yaml      |  1 +
+>  .../devicetree/bindings/usb/nxp,ptn36502.yaml      |  1 +
+>  .../devicetree/bindings/usb/onnn,nb7vpq904m.yaml   |  1 +
+>  .../devicetree/bindings/usb/parade,ps8830.yaml     |  1 +
+>  .../bindings/usb/qcom,wcd939x-usbss.yaml           |  1 +
+>  .../devicetree/bindings/usb/ti,tusb1046.yaml       |  1 +
+>  .../devicetree/bindings/usb/usb-switch-ports.yaml  | 68 ++++++++++++++++++++++
+>  .../devicetree/bindings/usb/usb-switch.yaml        | 52 -----------------
+>  11 files changed, 81 insertions(+), 54 deletions(-)
+> 
 
-applied.
-
-Thanks!
-Helge
+-- 
+With best wishes
+Dmitry
 
