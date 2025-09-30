@@ -1,85 +1,169 @@
-Return-Path: <linux-kernel+bounces-837262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F438BABD02
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:25:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090CFBABD08
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 263813B00AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:25:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC51F4E2427
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B282BD016;
-	Tue, 30 Sep 2025 07:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BF62BE657;
+	Tue, 30 Sep 2025 07:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="KDwEpD6v"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="emTznH3e"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDEB27B328
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C622BE647
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759217136; cv=none; b=WkHg/d2icA8NB9RkpwT/yxAYjYW6GZQpGr301IB/lhi1v5RmZFubxuhPTEdphMhXEW1ATANenZ32D1dfdqF1wg+ASkAMLLsul3j7t0Mpf4Lrnn7skoMtau18PeXhGIsuAuo9uzi1NSZSXZX7PTmOGuwWQ04Q+ZBXILzy5glYPQk=
+	t=1759217139; cv=none; b=GfsMuCJUN+PIIverSOPzFnRTivsDWoFu5sX9UyrgCbq0FQrHUJHj4zDzemsEvfoMUvNL6nBYQG5X0KGavYI2VXX1u9Isj+UIK+BwKxa8Igxwt6Him0XFk659SpobY6BNH0sp27J1ktcd35gCsl615t5XBvHv7GwyCWhJkxzSjgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759217136; c=relaxed/simple;
-	bh=YNuBnostWL8+rTUzPx9qE7Qu63k49QOm2YvDuxwOlVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QvsVsp/tbsWcNVsENE024uF5fUToByOj62NoHuhb2EmVCf5rMZ4a/sIc5GCqn8Aylg/C8911sgIPycuwLRQ9449KHx/BL1U9bAKHD7sQGxUtUypQnW+bmUWZrRlbrbytgQdMLanCu7n45WFjQqhmgpYA4MhAGz69T8Y0gwwuxGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=KDwEpD6v; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ORh3BEPV+WOquku+9ljKakwClSRpsC/pErO19VSvDzg=; b=KDwEpD6vP8UTF1F7qBSXLjRQ/P
-	bbw3sc4d5wKGaldhM9SRUcpH00S5UdZ9TF72MKgRb44mwBwwm2vlNQhGS+a3LIVmfLvMGtS6FOtmK
-	eytlNNFf5/dx88jla4D+xHczGEr7RgrwtoDSkLNPnL1+9JTXjeygQIHKY3Ala+kfWfwL8AjzCDhQ5
-	ZxnE/5DqBMx5c+ghJxDXX8SEQc/m6ed8hGbMz4FzB+UiBi3BD4fz7Guy1wYy2Z6Tci+TmPqRn7B/N
-	2pMbGUy91NpRbjhXCpu3Ta1G+Yb9qppcwHTPMvAXc5pzgSqPkFi4uOZxWpPj+g6etd/nuhNBnSmdh
-	ATnyj1mQ==;
-Received: from [63.135.74.212] (helo=[192.168.1.249])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1v3Ujd-004k1j-AX; Tue, 30 Sep 2025 08:25:17 +0100
-Message-ID: <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
-Date: Tue, 30 Sep 2025 08:25:13 +0100
+	s=arc-20240116; t=1759217139; c=relaxed/simple;
+	bh=UifeqzVk0GLJECvUJICZt5cLmzDj39F0UA0bNvr9UcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZkI2QMhw+i16DRP8JQZRHDag+CvggZ9LcTW5kc7I1qVET4OOE2miwAt9vk52dlAHBsMA421pA12/aKvzRj1mlGOMqmEtcnY9uu8nbr2mBNgaOl8vZ9AS0eP0q+4QlI7WuSuKVXGTaSzUY15U3TWKpHMXJMo0cbTnTWSFMTUw+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=emTznH3e; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U4HjbY009556
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:25:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=geMF67s9lK2e1WUJdGTKamsD
+	rkDJzWkQ4J1/vFsh4MY=; b=emTznH3ez3asNBmGW+AXo+80/eVD9rTybYFwZcg2
+	ts9ACxZQR37p41NlYT55EjyOJhRAHavX2BiBFPHDQsJcD7H+ENH/w1/x6puGBB0w
+	sBfNaHAii2RLUAeLz8lS8fUB+Fbf36NbOk8tZ1NnIF3/2F5xB1HP+xW6G8fGXWyB
+	BmQUgrs0JdGiqNhgBfHoF++3COil3V/aguBgKHGrVpNAk+RoUj3M+e+5U0zba0cO
+	kvzGZI8AmCfNx1OJah+khh0Bd1l9fQrB2ggTVxgF8dQW4ITzr7A/SBHbVlVUA9Yv
+	UbF3C7sYepsLZ56hGJW/x/ZqkxoJtbiyhgRX27XPf8n54g==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977qta1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:25:37 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d9ec6e592bso114637441cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:25:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759217136; x=1759821936;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=geMF67s9lK2e1WUJdGTKamsDrkDJzWkQ4J1/vFsh4MY=;
+        b=Xb2fYAVWdl8bmR7cMdWqk1Xzlgt8sZQqtyJs9BpWnKN7aJeJ7ZFTIZ5bIbjbUyzJTW
+         MgzZXfeUanrTDyVdUeyJ4o1hKAKhsoKXiGoyhhicYR/VJJSLdjMytg75LCTWuVHC2szL
+         uHZjJGxF5zo+VzkyF3EXaQA0KuqTrPEKuOGjLDIz8mbzdihAnuWTLtluH+9TeRToWVuL
+         P//3XS0uJobRzeHRqee+ZDLizs7FEz5aemzfZaHXWB+DfRyTkIS4H84JpDtHmnHtCqRj
+         LRNdU2gzCOw5SOCJAK9OxyjFZG5V662EdjlU3AxtldzFBs6rQJ0MOxFO4vCo8EKzNPQd
+         Nf0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVes8zTKQbtGTIBe9wF1PkGxOWKdzFNns6dFJyMMSixj6IccY41PKTIrdjZCdDtBXBRJ8i+vUo33vpC/pg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0w5ntlndaClrCZadZodau7BvW4kh1pePVG0H24zz4a0O3dnZp
+	10T8fV5CW39r8FQAqlfp3sGQtbtae7wOoh6mqzrdQ59HpcIG8FjAbirdwyN3ZV0X3NYjQhyx9Nr
+	3BWC7X5ylziHALLaScSu6wK4wsS+F5AUipLSPYeJgwpNO/4NTzQ8oKLQ2rSy+CTx3LLo=
+X-Gm-Gg: ASbGnctv4orewTk9O1z1Np9FwqPsx9XDm8ABC4dAKgRJs1k6UbVeDcuixPGZso4ULeM
+	VbRWdkDUHKRQnCbIwJbtCdMCEFNKj+26MyLqn5gCZ6ITI6uh0e8APC3w6GdFDMKFaxWz4M1s6DP
+	etFGSU+aF3sG4MVWiC1rlyWlMpDS6zdaknzZyzRLyEDaE0n3lI1J3rQuxIf6PebHUvZoB57807x
+	0sEpPx9gwR77baBxmXxfYZrT/v8EyjxG/AjLfBmdvK6EuNQkld78CwUoH2BeQ4+0hByqjzD07bN
+	4mLeZu04PDg9eRIMgkV0UKXLVDudg+G5hyRaqou7HvhVV3oQ0RxHKV/BkZi6KogSkUZElvs6Xuo
+	N5J+0bVnwM6MZ85cc/9AYSFb2YRTE5MwNRmmA8DA2ejF7dsn82pMipWrAeA==
+X-Received: by 2002:a05:622a:4b14:b0:4d1:ae10:5b1b with SMTP id d75a77b69052e-4da4b42cbe4mr262137611cf.50.1759217135794;
+        Tue, 30 Sep 2025 00:25:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFydm8Witpz9fh7gZQkdonO45FlyJzofDOb43m9RJWVluGKuEzZbINbtIf8sGlgSFb0MqlQSQ==
+X-Received: by 2002:a05:622a:4b14:b0:4d1:ae10:5b1b with SMTP id d75a77b69052e-4da4b42cbe4mr262137431cf.50.1759217135307;
+        Tue, 30 Sep 2025 00:25:35 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58619e6c530sm2504496e87.93.2025.09.30.00.25.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 00:25:34 -0700 (PDT)
+Date: Tue, 30 Sep 2025 10:25:32 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux.dev, devicetree@vger.kernel.org
+Subject: Re: [PATCH 11/17] drm/msm/a8xx: Add support for A8x GMU
+Message-ID: <thvn5qhq6lhweceoofuj23bzyteesdorjvnhpves3bbszsm7ni@zgvdn5utrafo>
+References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
+ <20250930-kaana-gpu-support-v1-11-73530b0700ed@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
-To: Paul Walmsley <pjw@kernel.org>, torvalds@linux-foundation.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: ben.dooks@codethink.co.uk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930-kaana-gpu-support-v1-11-73530b0700ed@oss.qualcomm.com>
+X-Proofpoint-GUID: tiBqg3YP4Rm4fiM_eKFl5sK7b5fd7gla
+X-Proofpoint-ORIG-GUID: tiBqg3YP4Rm4fiM_eKFl5sK7b5fd7gla
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfX4bWgi71ioctP
+ aZ4SFg2eEoaTfz+N7xnOKX/DOX2EPJ9v56er2hS4kN0bitpCJQwS2jmhA5N2yx3Bjk+1UIeiaY4
+ oewmD1oLJoutYJsk/+ZQ+ilREKqkqPnnBvOovJwLnP9nOz5K8U41KAUV8z+zJbpRn9NCGjkGHbY
+ GARP5thTzJSUQ9l2+Nv4FHKU8ZIVW4IeP15e0CDkQcSnjGMWs0eWXDrIAHc3S8Df03g6aStpi20
+ 769EAlAytqbyblSJ8SgmVD8XU5OFg/WLePinPuaZCjjdZxCxu5WQTEI+JII5kFaXEGM/ICdIG0v
+ ogTKBhmifdt9ZJCUTvCNd1pZ1liXO56XGWxcwkfZj39EXii7FdDj6FQkguwp9tMIhKZxini+XU1
+ ynO+i+uTZxqtIuTyvE8d/YOEdfvRpg==
+X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68db85f1 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=Yh7iuwBG_BicX8m7FkYA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270043
 
-On 29/09/2025 09:00, Paul Walmsley wrote:
-> Linus,
+On Tue, Sep 30, 2025 at 11:18:16AM +0530, Akhil P Oommen wrote:
+> A8x GMU configuration are very similar to A7x. Unfortunately, there are
+> minor shuffling in the register offsets in the GMU CX register region.
+> Apart from that, there is a new HFI message support to pass table like
+> data. This patch adds support for  perf table using this new HFI
+> message.
+
+Documentation/process/submitting-patches.rst, look for "This patch"
+
 > 
-> The following changes since commit a03ee11b8f850bd008226c6d392da24163dfb56e:
+> Apart from that, there is a minor rework in a6xx_gmu_rpmh_arc_votes_init()
+> to simplify handling of MxG to MxA fallback along with the additional
+> calculations for the new dependency vote.
 > 
->    riscv: Fix sparse warning about different address spaces (2025-09-05 15:33:52 -0600)
-
-
-Is there any chance some of the big-endian work we did is getting in
-for this round?
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c             | 161 +++++++++++++++++-----
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h             |   5 +-
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c             |  53 +++++++
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.h             |  17 +++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h           |   7 +
+>  drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml |  48 +++++--
+>  6 files changed, 242 insertions(+), 49 deletions(-)
+> 
 
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+With best wishes
+Dmitry
 
