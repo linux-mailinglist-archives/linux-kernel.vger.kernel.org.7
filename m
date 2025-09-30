@@ -1,176 +1,328 @@
-Return-Path: <linux-kernel+bounces-837512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB96BAC79A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:28:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E3DBAC7C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8633AA8AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47CA31927C5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648052F99B5;
-	Tue, 30 Sep 2025 10:28:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413CB4A01;
-	Tue, 30 Sep 2025 10:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041AE2F7461;
+	Tue, 30 Sep 2025 10:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jKq8joig"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752482F9DAA
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759228116; cv=none; b=qJGkwK65/baxso1eK40lKqbhubQI8PF7of/AVDecukkaTZA+5D6zztmQNzXSUXV8q5uNW3Bg3SWtvdVwfwVVpURM7jVKYCX4L8bXKOCXXrx4s7mMq1wG+VRWT3J7XTBh1GRFVNtKeHHO56fG/Cv1e52XtGcOqpKMiHKi4MQUKFQ=
+	t=1759228214; cv=none; b=aBIqna9Zk+9j9Kyf2TwYPYM2nmfaMdhk3JHqJ6CpP9KgCUrEfT2MxsIvMfz0Dv1eixodWxJL1J3IgMiJZgQQU/aVsMqQimSJ7VUNEQEbv/HnrIpVqafkAZSa5z6mEYnSpOjHYMC8mohWybZrkOPw1WQ7dCERnXy5hiUV+cRc1q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759228116; c=relaxed/simple;
-	bh=s59PFNCPHyLtwtDwN9N0jTPkPhMXktvA5tBn6/gryFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TlukBe/t/PEOZXB035gmJl81MZwtMX5Ftg3RUHpLi26nuUFV5cDNtDCtzBNMLe7K8uZEnMM8yqfWoHzd10FOg8+Nzdd27jBhIBOzc5yrqnyvhGzSAqHVsjHlVZDeqEFDyDb/2+6mdXCQFxvHDNDI/JCb+nayztS6lS2p0uchUo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A07C1424;
-	Tue, 30 Sep 2025 03:28:25 -0700 (PDT)
-Received: from [10.57.1.211] (unknown [10.57.1.211])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37B293F66E;
-	Tue, 30 Sep 2025 03:28:21 -0700 (PDT)
-Message-ID: <c5fe662c-8726-43f9-8c68-f3e45208fc56@arm.com>
-Date: Tue, 30 Sep 2025 11:28:09 +0100
+	s=arc-20240116; t=1759228214; c=relaxed/simple;
+	bh=3mTTpLiMqnXjtsubYnc/0h302ORdA8DbizXcRRMB8YI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vvo7RDV/swda5o5N3FAPHmj+vlvPpFpjJAq0JuK/rItfmLe/sce2U7e/ISB4p8Pn5sWLWkbDEgIxoUK2PaYFOSiY5ahJFqZWePDxXhEMIn//bgl1UPhT4VApCTJ5B9tD2jGdFFG1B/2isz+hv0rfRjRKNdmTLl1fz2rUAKP6Tjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jKq8joig; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759228209;
+	bh=3mTTpLiMqnXjtsubYnc/0h302ORdA8DbizXcRRMB8YI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jKq8joigCrtAG9Qt4gVEr7ETSzSYaNE4I9ApnBM8V78qDeF0YbigN7S+RDAn9Cy87
+	 cv5VFUuOpqSgaIAoDAme8WyKJUGzxlGjprctBQJhHeLX2OhvZeLUvMH2hvQ/lFP/iI
+	 uQOs+MuLqvLRosA1DccwsBNHw8zJlfTnlNbb450S193Wg29c7JlkX5KNhaxALfqRWU
+	 oZuysLeigN5GUoOIT45tWV973qEUR+AXE4Zu5z9XYUFWFVOmt4GSlH91mKDWYBKesn
+	 eKZQjq7Z3dso39uQuZmuaUPL/Gv6ONeNDxhHdxPuxKscgOANt6/R2hnbgaErI6/8N+
+	 yAdWjZppvgFyQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 65F6617E0097;
+	Tue, 30 Sep 2025 12:30:08 +0200 (CEST)
+Date: Tue, 30 Sep 2025 12:30:03 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org, kernel@collabora.com
+Subject: Re: [PATCH 2/8] drm/gem: Introduce drm_gem_get_unmapped_area() fop
+Message-ID: <20250930123003.75370854@fedora>
+In-Reply-To: <20250929200316.18417-3-loic.molinari@collabora.com>
+References: <20250929200316.18417-1-loic.molinari@collabora.com>
+	<20250929200316.18417-3-loic.molinari@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu: __iommu_attach_group: check for non-NULL
- blocking_domain
-To: Hans Verkuil <hverkuil+cisco@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, Linux Kernel <linux-kernel@vger.kernel.org>,
- Linux Media Mailing List <linux-media@vger.kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
- <20250929120734.GG2617119@nvidia.com>
- <58aabb55-0030-49df-81ed-d4a68174b57e@kernel.org>
- <20250929130214.GK2617119@nvidia.com>
- <4037d353-0ec4-4f68-a09c-564b93ba313b@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <4037d353-0ec4-4f68-a09c-564b93ba313b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-09-29 2:30 pm, Hans Verkuil wrote:
-> On 29/09/2025 15:02, Jason Gunthorpe wrote:
->> On Mon, Sep 29, 2025 at 02:18:50PM +0200, Hans Verkuil wrote:
->>> On 29/09/2025 14:07, Jason Gunthorpe wrote:
->>>> On Mon, Sep 29, 2025 at 10:23:47AM +0200, Hans Verkuil wrote:
->>>>
->>>>> Since I am unfamiliar with the iommu core code, I am uncertain whether I am
->>>>> just papering over a bug elsewhere, or whether this is really the correct solution.
->>>>
->>>> It is papering over something, group->domain is not supposed to be
->>>> NULL at this point.. That probably means the iommu driver has not been
->>>
->>> It's group->blocking_domain that's NULL, not group->domain.
->>
->> Er, I thought you were hitting a false positive on this:
->>
->>    group->domain != group->blocking_domain
->>
->> ie NULL != NULL
->>
->> But I suppose the whole expression is checking for group->domain
->> already.
->>
->> All your patch does is entirely disable the safetly logic :\
+On Mon, 29 Sep 2025 22:03:10 +0200
+Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
 
-Yeah, the real question is if group->domain is set to something non-NULL 
-that isn't the default identity domain or the blocking domain, and 
-shouldn't be the automatic ARM DMA domain because we've detached and got 
-rid of that, then what the heck is it?
+> mmap() calls on the drm file pointer currently always end up using
+> mm_get_unmapped_area() to get a free mapping region. On builds with
+> CONFIG_TRANSPARENT_HUGEPAGE enabled, this isn't ideal for GEM objects
+> backed by shmem buffers on mount points setting the 'huge=3D' option
+> because it can't correctly figure out the potentially huge address
+> alignment required.
+>=20
+> This commit introduces the drm_gem_get_unmapped_area() function which
+> is meant to be used as a get_unmapped_area file operation on the drm
+> file pointer to lookup GEM objects based on their fake offsets and get
+> a properly aligned region by calling shmem_get_unmapped_area() with
+> the right file pointer. If a GEM object isn't available at the given
+> offset or if the caller isn't granted access to it, the function falls
+> back to mm_get_unmapped_area().
+>=20
+> This also makes drm_gem_get_unmapped_area() part of the default GEM
+> file operations so that all the drm drivers can benefit from more
+> efficient mappings thanks to the huge page fault handler introduced in
+> previous commit 'drm/shmem-helper: Add huge page fault handler'.
+>=20
+> The shmem_get_unmapped_area() function needs to be exported so that
+> it can be used from the drm subsystem.
+>=20
+> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
+> ---
+>  drivers/gpu/drm/drm_gem.c | 110 ++++++++++++++++++++++++++++++--------
+>  include/drm/drm_gem.h     |   4 ++
+>  mm/shmem.c                |   1 +
+>  3 files changed, 93 insertions(+), 22 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index cbeb76b2124f..d027db462c2d 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -1187,36 +1187,27 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, =
+unsigned long obj_size,
+>  }
+>  EXPORT_SYMBOL(drm_gem_mmap_obj);
+> =20
+> -/**
+> - * drm_gem_mmap - memory map routine for GEM objects
+> - * @filp: DRM file pointer
+> - * @vma: VMA for the area to be mapped
+> - *
+> - * If a driver supports GEM object mapping, mmap calls on the DRM file
+> - * descriptor will end up here.
+> - *
+> - * Look up the GEM object based on the offset passed in (vma->vm_pgoff w=
+ill
+> - * contain the fake offset we created when the GTT map ioctl was called =
+on
+> - * the object) and map it with a call to drm_gem_mmap_obj().
+> - *
+> - * If the caller is not granted access to the buffer object, the mmap wi=
+ll fail
+> - * with EACCES. Please see the vma manager for more information.
+> +/*
+> + * Look up a GEM object in offset space based on the exact start address=
+. The
+> + * caller must be granted access to the object. Returns a GEM object on =
+success
+> + * or a negative error code on failure. The returned GEM object needs to=
+ be
+> + * released with drm_gem_object_put().
+>   */
+> -int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> +static struct drm_gem_object *
+> +drm_gem_object_lookup_from_offset(struct file *filp, unsigned long start,
+> +				  unsigned long pages)
+>  {
+>  	struct drm_file *priv =3D filp->private_data;
+>  	struct drm_device *dev =3D priv->minor->dev;
+>  	struct drm_gem_object *obj =3D NULL;
+>  	struct drm_vma_offset_node *node;
+> -	int ret;
+> =20
+>  	if (drm_dev_is_unplugged(dev))
+> -		return -ENODEV;
+> +		return ERR_PTR(-ENODEV);
+> =20
+>  	drm_vma_offset_lock_lookup(dev->vma_offset_manager);
+>  	node =3D drm_vma_offset_exact_lookup_locked(dev->vma_offset_manager,
+> -						  vma->vm_pgoff,
+> -						  vma_pages(vma));
+> +						  start, pages);
+>  	if (likely(node)) {
+>  		obj =3D container_of(node, struct drm_gem_object, vma_node);
+>  		/*
+> @@ -1235,14 +1226,89 @@ int drm_gem_mmap(struct file *filp, struct vm_are=
+a_struct *vma)
+>  	drm_vma_offset_unlock_lookup(dev->vma_offset_manager);
+> =20
+>  	if (!obj)
+> -		return -EINVAL;
+> +		return ERR_PTR(-EINVAL);
+> =20
+>  	if (!drm_vma_node_is_allowed(node, priv)) {
+>  		drm_gem_object_put(obj);
+> -		return -EACCES;
+> +		return ERR_PTR(-EACCES);
+>  	}
+> =20
+> -	ret =3D drm_gem_mmap_obj(obj, drm_vma_node_size(node) << PAGE_SHIFT,
+> +	return obj;
+> +}
+> +
+> +/**
+> + * drm_gem_get_unmapped_area - get memory mapping region routine for GEM=
+ objects
+> + * @filp: DRM file pointer
+> + * @uaddr: User address hint
+> + * @len: Mapping length
+> + * @pgoff: Offset (in pages)
+> + * @flags: Mapping flags
+> + *
+> + * If a driver supports GEM object mapping, before ending up in drm_gem_=
+mmap(),
+> + * mmap calls on the DRM file descriptor will first try to find a free l=
+inear
+> + * address space large enough for a mapping. Since GEM objects are backe=
+d by
+> + * shmem buffers, this should preferably be handled by the shmem virtual=
+ memory
+> + * filesystem which can appropriately align addresses to huge page sizes=
+ when
+> + * needed.
+> + *
+> + * Look up the GEM object based on the offset passed in (vma->vm_pgoff w=
+ill
+> + * contain the fake offset we created) and call shmem_get_unmapped_area(=
+) with
+> + * the right file pointer.
+> + *
+> + * If a GEM object is not available at the given offset or if the caller=
+ is not
+> + * granted access to it, fall back to mm_get_unmapped_area().
+> + */
+> +unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long=
+ uaddr,
+> +					unsigned long len, unsigned long pgoff,
+> +					unsigned long flags)
+> +{
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	struct drm_gem_object *obj;
+> +	unsigned long ret;
+> +
+> +	obj =3D drm_gem_object_lookup_from_offset(filp, pgoff, len >> PAGE_SHIF=
+T);
+> +	if (IS_ERR(obj))
 
-My best guess is that something went wrong with the prior detach back to 
-(what should be) the identity domain, so the previous ARM domain is 
-still in place and the failure to attach to a different user domain is 
-technically legitimate - i.e. something's broken the intended logic of 
-6bc076eec6f8 (which was apparently working at the time).
+Is this supposed to happen? If not, I'd be tempted to add a
+WARN_ON_ONCE().
 
-Thanks,
-Robin.
+> +		return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
+> +					    flags);
+> +
+> +	ret =3D shmem_get_unmapped_area(obj->filp, uaddr, len, 0, flags);
+> +
+> +	drm_gem_object_put(obj);
+> +
+> +	return ret;
+> +#else
+> +	return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0, flags);
 
->>
->> What is isp_attach_iommu() trying to accomplish? It does
->> arm_iommu_detach_device() and then arm_iommu_attach_device() ?
->>
->> Why?
->>
->> Is this trying to force a non-identity translation for ISP?
-> 
-> I have absolutely no idea. The commit where this was added is this:
-> 
-> ---------------------------------------------------------
-> commit 2a0a5472af5caa0d0df334abb9975dc496f045da
-> Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Date:   Thu Jan 2 20:06:08 2014 -0300
-> 
-> [media] omap3isp: Use the ARM DMA IOMMU-aware operations
-> 
-> Attach an ARM DMA I/O virtual address space to the ISP device. This
-> switches to the IOMMU-aware ARM DMA backend, we can thus remove the
-> explicit calls to the OMAP IOMMU map and unmap functions.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Sakari Ailus <sakari.ailus@iki.fi>
-> Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
-> ---------------------------------------------------------
-> 
-> 
-> That's over 11 years ago. I've CC-ed Sakari in case he remembers something about
-> this.
-> 
-> Later this was simplified a bit:
-> 
-> ---------------------------------------------------------
-> commit fd8e2d4b393252505783656471465c7f85f3c0a9
-> Author: Suman Anna <s-anna@ti.com>
-> Date:   Wed Apr 12 00:21:32 2017 -0500
-> 
-> omap3isp: Remove iommu_group related code
-> 
-> The OMAP IOMMU driver has added the support for IOMMU groups internally,
-> and the ISP device is automatically linked to the appropriate IOMMU group.
-> So, remove the explicit function calls that creates/deletes an iommu_group
-> and adds the ISP device to this group.
-> ---------------------------------------------------------
-> 
-> 
-> And finally the code detaching the device (which you referred to in your
-> reply) was added here (much more recently):
-> 
-> ---------------------------------------------------------
-> commit 6bc076eec6f85f778f33a8242b438e1bd9fcdd59
-> Author: Robin Murphy <robin.murphy@arm.com>
-> Date:   Mon Oct 28 17:58:36 2024 +0000
-> 
-> media: omap3isp: Handle ARM dma_iommu_mapping
-> 
-> It's no longer practical for the OMAP IOMMU driver to trick
-> arm_setup_iommu_dma_ops() into ignoring its presence, so let's use the
-> same tactic as other IOMMU API users on 32-bit ARM and explicitly kick
-> the arch code's dma_iommu_mapping out of the way to avoid problems.
-> ---------------------------------------------------------
-> 
-> 
-> All I know is that something is wrong after blocking_domain was added, which
-> now causes the "failed to create ARM IOMMU mapping" error from isp.c when the
-> omap3isp driver is probed.
-> 
-> My (very likely flawed) reasoning for this patch was that if there is no
-> blocking_domain (i.e. it's a NULL pointer), then the group->domain should
-> just be accepted. But that reasoning was just based on the field names, and with
-> no actual understanding of what is going on here :-)
-> 
-> Regards,
-> 
-> 	Hans
+Looks like the above code covers the non-THP case too, do we really need
+to specialize for !CONFIG_TRANSPARENT_HUGEPAGE here?
+
+> +#endif
+> +}
+> +EXPORT_SYMBOL(drm_gem_get_unmapped_area);
+> +
+> +/**
+> + * drm_gem_mmap - memory map routine for GEM objects
+> + * @filp: DRM file pointer
+> + * @vma: VMA for the area to be mapped
+> + *
+> + * If a driver supports GEM object mapping, mmap calls on the DRM file
+> + * descriptor will end up here.
+> + *
+> + * Look up the GEM object based on the offset passed in (vma->vm_pgoff w=
+ill
+> + * contain the fake offset we created) and map it with a call to
+> + * drm_gem_mmap_obj().
+> + *
+> + * If the caller is not granted access to the buffer object, the mmap wi=
+ll fail
+> + * with EACCES. Please see the vma manager for more information.
+> + */
+> +int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> +{
+> +	struct drm_gem_object *obj;
+> +	int ret;
+> +
+> +	obj =3D drm_gem_object_lookup_from_offset(filp, vma->vm_pgoff,
+> +						vma_pages(vma));
+> +	if (IS_ERR(obj))
+> +		return PTR_ERR(obj);
+> +
+> +	ret =3D drm_gem_mmap_obj(obj,
+> +			       drm_vma_node_size(&obj->vma_node) << PAGE_SHIFT,
+>  			       vma);
+> =20
+>  	drm_gem_object_put(obj);
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index 8d48d2af2649..7c8bd67d087c 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -469,6 +469,7 @@ struct drm_gem_object {
+>  	.poll		=3D drm_poll,\
+>  	.read		=3D drm_read,\
+>  	.llseek		=3D noop_llseek,\
+> +	.get_unmapped_area	=3D drm_gem_get_unmapped_area,\
+>  	.mmap		=3D drm_gem_mmap, \
+>  	.fop_flags	=3D FOP_UNSIGNED_OFFSET
+> =20
+> @@ -506,6 +507,9 @@ void drm_gem_vm_close(struct vm_area_struct *vma);
+>  int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+>  		     struct vm_area_struct *vma);
+>  int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> +unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long=
+ uaddr,
+> +					unsigned long len, unsigned long pgoff,
+> +					unsigned long flags);
+> =20
+>  /**
+>   * drm_gem_object_get - acquire a GEM buffer object reference
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index e2c76a30802b..b2f41b430daa 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2915,6 +2915,7 @@ unsigned long shmem_get_unmapped_area(struct file *=
+file,
+>  		return addr;
+>  	return inflated_addr;
+>  }
+> +EXPORT_SYMBOL_GPL(shmem_get_unmapped_area);
+> =20
+>  #ifdef CONFIG_NUMA
+>  static int shmem_set_policy(struct vm_area_struct *vma, struct mempolicy=
+ *mpol)
+
 
