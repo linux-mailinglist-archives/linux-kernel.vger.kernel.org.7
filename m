@@ -1,151 +1,178 @@
-Return-Path: <linux-kernel+bounces-837179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C9BBABA18
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:02:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F52BAB62D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D87D4E2364
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 124F51789C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF802773FB;
-	Tue, 30 Sep 2025 06:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A69023185E;
+	Tue, 30 Sep 2025 04:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLxhi1Cv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JeZrEOk3"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC16215077
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD0D2CCC5
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759212114; cv=none; b=LQjlgNRT1oDRFWtMu4HQ4OVIC0aOK7zz0idR9QOmBL0RqMfsbYm69WpVX5ZoJK82WWVMnOV2EZJCxtp285T/1MZ8PPnXbK0+9bjlrH20F8Msdd7TxWgUBazodme8vIxFO7HdPUV/8vJe2SZ4662FEX2LUg5BEPrl1acc7AKSwtw=
+	t=1759207112; cv=none; b=TgyEvIwCm4KKMnFEJ7NZCgCKFP0Cffg9POC+A25y8IKHBRtQpNDIsfA2YM1wbkWpenbJ93Y0H87qQAuHq5lez/wZ1F8r6VL2OIsn+zt+ZcAPt+9+thiafz4gN2VzQ1MZzgtMhqga5lKGpLQC9I1deMODGv/gpBBXK9ihGEwAeHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759212114; c=relaxed/simple;
-	bh=tZFFRFKg0PUHDS6qSpNivs8Es7wMQjxESPTNTDMPml0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=If7LcnwSe8cQkg0szsgfVMjc6Kqqxb3ZQXlmaOyBrb+Jj3UdOU35kPgIP+3sOT4rrRqTp8AbpGwlyo7YLxMdtJDzfHfUjGNRvd4HDrugI/pRhbUtUteymGZ+y9wrPH4dCnEhlgR1s7MeooB4ACQz7V3EKOkJPRGjfMhlZBEEdG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLxhi1Cv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EB5C2BCAF
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759212113;
-	bh=tZFFRFKg0PUHDS6qSpNivs8Es7wMQjxESPTNTDMPml0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XLxhi1CvzOKNDGiOPSiJnKK0WeN6K0SSaPz1FVlANT+wEp0VU5yXdizG65L3VNObk
-	 8lbHU0vEXEjlJykluoK3Y2eWmxkO3keifks3tg6+iQustVWM2sgySl3y4YnwrEZajz
-	 KxNNn19DFc/RfVgL9shJsK6MpsDGZLt7KJgJtuRqVObY9d/yIQ4z0BMtdv2Aozi0B1
-	 2Y8S6HMkqLJXyi8ENAICuobWEUv6TYvLiWtszTCA09VtWNgAX1sgejIjsQ8hKvyYWh
-	 +Z2+AEq1TTwSyyAnwIoIdepLBVKVLZSLORs8z1vnOBZ1X/6z9bHTUaUo+vq4wlubyx
-	 PMr+luFX95Wbw==
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27eed7bdfeeso53227175ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 23:01:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXe5zZSVGnPsBM7HUt/MVAWZ5USZjD8oWCPE0Jz1/H9VGFm+rQ5PTmAFY4Qj5QHqCjXJAU6bJdyn9FJYEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ+ZfwLM/6plQrVPzi8JEVmvOofKpd1BV0DiN7lZzhXG9AmkLO
-	vtVe9k9ymS8j11OeG02iLvXoHFGrqJY4zCzV1PT2agFR6BAPOiG+QtaomZr+JSkARc2LidKR+3l
-	NGy9fjee1Uw46VoZMx/9RAz0ogHrg1+8=
-X-Google-Smtp-Source: AGHT+IErIwwKQvXadjo8YStieZUDut9jWiBGKRpZXkgYC3IZFhh1kNcaf5JtiD61ISPp+z4nkDRXWDsI/3DHVQYxgZE=
-X-Received: by 2002:a17:902:f647:b0:269:aba9:ffd7 with SMTP id
- d9443c01a7336-28d1713873fmr34808755ad.25.1759212113208; Mon, 29 Sep 2025
- 23:01:53 -0700 (PDT)
+	s=arc-20240116; t=1759207112; c=relaxed/simple;
+	bh=x/zo4DLS5xopKyfQ1IRecekvbLsQr10w5m43S83i164=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WaxIFSKFkfoePvLfG/1zZ3A0JfaNAmmXGIjXQufhgDKOeGukY9DdfeDZeTfrvICpJaBrexTlGzVt+H2EsnS6/yJW0IckdCgLeyZCd/9V2qhdXK5/KBgbqnh38DaDEIAyiFTwYZJcPCtfCYT8uQxEKbv9enp3Kv4IU6qNpLsclyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JeZrEOk3; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-26e68904f0eso54981855ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 21:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759207110; x=1759811910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZT8btfJLrca2sq9IheLfnEkVwITikkzFgpMmjw2//s=;
+        b=JeZrEOk3yQpzXFajxl9z2vkUvG4b9atVOc9hHZA3971Y6mmqWQ8avQ0WEnCdIvm8wN
+         F3dIhBVflpmxAPHR+bksHnwNcgM/9E6ulz5ZSkkQxW6vgAQJJ5yo7fJfpTqzw9hH9a9v
+         TQpXrnNNIZlrUwPYrJb4UdZhcMc2Hq8pyQeJIV2g8YO1nk68p9ckPjsO5B5yQmcfaG6X
+         tj3V9HySwHdyAuBfkEdHu6q+57D/PZ8LVVRNjQLqzwY0JXwrSCCNi+cT0NibyUpTdwwn
+         kf3R0CK1+VGt6Ez5VR87dXhOXdq0qU6bxkcWakRKGIpS+IvrSQyVIDFFBkC5C3tQCxSa
+         3Qlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759207110; x=1759811910;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GZT8btfJLrca2sq9IheLfnEkVwITikkzFgpMmjw2//s=;
+        b=C5DiCHC03VvH9pq/1a/BHY5i2iWUWENJ6HxXTsLFPGEwz0k97CY1UQX09ciuMWlKyN
+         8SwyzpnAgUd5dbwFDoF8nd1AG1nJfJEi3Un3k9zRLtFtV2wy7Td2Q7yuhBnlu9/BLw/5
+         nfwkcPyaHpW9bdfrwaNiU/HnCjOcnpvdxy/4OukIYPdMTQukAyykjWaPDzcv2y141CqC
+         +AAsVs0PlnQqxIFps+jQxiV3zMHCK3qdFWm9V+/XT0zWXkwHvgb1qH7cOK4I/WYP5yTF
+         1F8aun//5WlpkN+EpDvy5MfyBT3AffDw9SptTtkKfSvKPIse2D/lLHfUYVgQh+VStnWQ
+         pufg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoC1NaspHDlnFu3SBS7KU2RMBcNVQAanO2xzc4RocEFY7lmXzPWCkvJIrSaCDxNbFkxcbpYBHYVjNnmf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4DPZFMGm11OPEWz6F+a9rHTUHDywSupI7t5i+h1mwJt08HZvA
+	nSSTEMgTDKoeNCd7k8VLvdZp8NN1BwFHYc5MrQkS6oojTEMdkM+ttRnD
+X-Gm-Gg: ASbGncsiRg+O5DHQtXGIMf6/pyCPpU0o7wctP/t4VzMZlQw1H5p5uNzx95mGaYGyhT+
+	Tqp6n5vjL2p3q5WR8e0Sw12t70xxzKuU42kVGyRHodm4raGD5PyeCxz11kKeX+hXktUhW2/F12Q
+	4q/odgkVY9odCCyrdQLU+9RDCmBV2ZpL7oJrnUMdBmeioCKS0bjAlW1s2xxg12rtlKsIdRWAZ5w
+	Mgj7YZRHa1gihEJH0OAA4e8pa0PZ7JLjalMhiqbXMu1kYSARgX5gq7lOJwweLJmrl2mit97O4j2
+	EyMBUsXZGF4zXoSyCkyIz4epWNHF5+OTs0i1CCP0lOuvxXDsi938eaO9K2eyQZjFopi4EsCmeSJ
+	MpzIkzYgOUAac3OTcv4S/UsldFpv4ymVotpw+sKDLvRtngC90XM9o7dOgo4ZGuQOz6A==
+X-Google-Smtp-Source: AGHT+IHJrdVU3IoI7rVootqpTrOCX2Siw83i3/cFETYlxp+cOb+qBIWkeM1gUVV6aGYcyytIe2CDUQ==
+X-Received: by 2002:a17:902:cf42:b0:267:95ad:8cb8 with SMTP id d9443c01a7336-27ed4a96047mr199662015ad.44.1759207110287;
+        Mon, 29 Sep 2025 21:38:30 -0700 (PDT)
+Received: from LilGuy ([2409:40c2:100e:619a:6959:b194:3c63:fa0a])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-338386f5a7bsm3000830a91.5.2025.09.29.21.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 21:38:29 -0700 (PDT)
+From: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Koichi Okuno <fj2767dz@fujitsu.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Will Deacon <will@kernel.org>,
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-kernel@vger.kernel.org (open list)
+Cc: skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+Subject: [PATCH v1] Documentation/admin-guide/perf: Fix indentation and formatting in fujitsu_uncore_pmu.rst
+Date: Tue, 30 Sep 2025 10:07:36 +0000
+Message-ID: <20250930100742.4741-1-swarajgaikwad1925@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250930035521epcas5p428367b20b9498eb8862d17f4bb75f663@epcas5p4.samsung.com>
- <20250930040348.3702923-1-h.dewangan@samsung.com> <20250930040348.3702923-2-h.dewangan@samsung.com>
-In-Reply-To: <20250930040348.3702923-2-h.dewangan@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 30 Sep 2025 15:01:41 +0900
-X-Gmail-Original-Message-ID: <CAJKOXPcpybYa4hvVohkRVv5WaRv3ydK-BY4i3i5WA5fD07osoA@mail.gmail.com>
-X-Gm-Features: AS18NWDDL4MOuOFlHqi4tRhQ26U6NLLMNyO6K7Q2H3O7rRfBNx3jEQQzLl1jkIs
-Message-ID: <CAJKOXPcpybYa4hvVohkRVv5WaRv3ydK-BY4i3i5WA5fD07osoA@mail.gmail.com>
-Subject: Re: [PATCH 01/29] dt-bindings: media: mfc: Add Exynos MFC devicetree binding
-To: Himanshu Dewangan <h.dewangan@samsung.com>
-Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com, 
-	alim.akhtar@samsung.com, manjun@samsung.com, nagaraju.s@samsung.com, 
-	ih0206.lee@samsung.com, jehyung.lee@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 30 Sept 2025 at 12:55, Himanshu Dewangan <h.dewangan@samsung.com> w=
-rote:
->
-> From: Nagaraju Siddineni <nagaraju.s@samsung.com>
->
-> Introduce a new DT binding file for exynos-mfc
->
-> Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-> which describes the Exynos Multi=E2=80=91Format Codec (MFC) IP.  The sche=
-ma
-> covers the core node properties, required fields, and provides an
-> example snippet.
->
-> Signed-off-by: Himanshu Dewangan <h.dewangan@samsung.com>
-> Signed-off-by: Nagaraju Siddineni <nagaraju.s@samsung.com>
-> ---
->  .../bindings/media/samsung,exynos-mfc.yaml    | 77 +++++++++++++++++++
->  MAINTAINERS                                   | 10 +++
->  2 files changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/samsung,exyno=
-s-mfc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/media/samsung,exynos-mfc.y=
-aml b/Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-> new file mode 100644
-> index 000000000000..fbed987fb9cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/samsung,exynos-mfc.yaml
-> @@ -0,0 +1,77 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/samsung,exynos-mfc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung Exynos Multi Format Codec (MFC)
-> +
-> +maintainers:
-> +  - Nagaraju Siddineni <nagaraju.s@samsung.com>
-> +  - Himanshu Dewangan <h.dewangan@samsung.com>
-> +
-> +description:
-> +  Multi Format Codec (MFC) is the IP present in Samsung SoCs which
-> +  supports high resolution decoding and encoding functionalities.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - samsung,exynos-mfc            # Exynos920
-> +          - samsung,mfc_core0_mem         # Reserved Memory
-> +          - samsung,mfc_core1_mem         # Reserved Memory
+This patch fixes several reStructuredText (RST) formatting issues in
+documentation/admin-guide/perf/fujitsu_uncore_pmu.rst that were causing
+Sphinx build warnings and errors. Specifically:
 
+- Unexpected indentation in bullet lists.
+- Block-quote unindents that broke literal blocks.
+- Missing blank lines between paragraphs and lists.
 
-NAK
+Reason for the patch:
+Without these fixes, running `make docs` for the perf documentation
+would produce warnings like "Unexpected indentation" and "Block quote
+unindented", and could lead to incorrectly rendered documentation.
+This patch ensures proper formatting and readability of the fujitsu_uncore_pmu
+documentation, which is important for developers and users referencing
+PMU events.
 
-These bindings duplicate existing ones, do not follow any existing
-standards (wrong compatible) and are written completely different than
-any other binding, which means you probably created big AI slop.
+Changes made:
+- Added blank lines between introductory text and bullet lists.
+- Used double colon `::` for literal blocks.
+- Adjusted indentation of list items and surrounding text.
 
-I'm not going to review this, it's quality is just beyond basic
-standards. Sending something like this from Samsung means you do not
-respect our time. You need to stay from scratch and read existing
-documentation and existing bindings
+Testing:
+- Verified `make htmldocs` runs without emitting indentation or block-quote warnings after applying the patch.
 
-I'll be organizing a mini meeting with Samsung on 13th Oct in Seoul,
-feel free to join if you are around. I can explain then more why
-wasting our time is making me very grumpy.
+Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+---
+ Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+index 46595b788d3a..31e6e535d11b 100644
+--- a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
++++ b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+@@ -14,16 +14,21 @@ pci_iod<iod>_pci<pci>.
+ The driver provides a description of its available events and configuration
+ options in sysfs, see /sys/bus/event_sources/devices/mac_iod<iod>_mac<mac>_ch<ch>/
+ and /sys/bus/event_sources/devices/pci_iod<iod>_pci<pci>/.
++
+ This driver exports:
++
+ - formats, used by perf user space and other tools to configure events
+ - events, used by perf user space and other tools to create events
+-  symbolically, e.g.:
++  symbolically, e.g.::
++
+     perf stat -a -e mac_iod0_mac0_ch0/event=0x21/ ls
+     perf stat -a -e pci_iod0_pci0/event=0x24/ ls
++
+ - cpumask, used by perf user space and other tools to know on which CPUs
+   to open the events
+
+ This driver supports the following events for MAC:
++
+ - cycles
+   This event counts MAC cycles at MAC frequency.
+ - read-count
+@@ -69,7 +74,6 @@ This driver supports the following events for MAC:
+   This event counts the number of write requests from MAC to memory.
+ - ea-ha
+   This event counts energy consumption of HA.
+-
+   'ea' is the abbreviation for 'Energy Analyzer'.
+
+ Examples for use with perf::
+@@ -77,6 +81,7 @@ Examples for use with perf::
+   perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
+
+ And, this driver supports the following events for PCI:
++
+ - pci-port0-cycles
+   This event counts PCI cycles at PCI frequency in port0.
+ - pci-port0-read-count
+@@ -99,7 +104,6 @@ And, this driver supports the following events for PCI:
+   This event counts write transactions for bus usage in port1.
+ - ea-pci
+   This event counts energy consumption of PCI.
+-
+   'ea' is the abbreviation for 'Energy Analyzer'.
+
+ Examples for use with perf::
+--
+2.51.0
+
 
