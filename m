@@ -1,168 +1,162 @@
-Return-Path: <linux-kernel+bounces-838120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC1FBAE7CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:02:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D9ABAE7D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F4C1925430
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F961925275
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39562288C89;
-	Tue, 30 Sep 2025 20:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB6028934D;
+	Tue, 30 Sep 2025 20:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lG2h+PbT"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jb18FxTH"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E9E285C90
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD1628643E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759262568; cv=none; b=bc0DCvauXIkvWZBhfNb7qAgoAXm3V/Zcx9N/yXIBk9VakHaZ9CkDnKoVE+9uTeHT6g3RXvRNEJ/vADJc5j3+K9OTkpy1FGYZNtbcVLzMOh2f8w5V4ocwOfmlMU347f+XzM61gX/XyCOoBXFFjD/kzBgdKCZ3u4jKnoTMfj3c26M=
+	t=1759262589; cv=none; b=N0mVY9modJGQPk1ezpV9BbglWqTpJRgeVQsYRpswXavTPE8SZ3NGY7VrIcgdoQVghOpa5jjZERpYWv/7sGzWnUo7dgLTxbbuU0vGjlQLJuvLUfdHkwxgWZfsQ03nQcpumIHfCF7VMM40YEIV2VadLaXfk4PridDMqMPEGbP6A98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759262568; c=relaxed/simple;
-	bh=b4Yne0Qw6q2ZXPRXF3jBjLK4x5kjmQpjIHFFtEPHqCg=;
+	s=arc-20240116; t=1759262589; c=relaxed/simple;
+	bh=Z9NHbEqAoo94vhfduf5skwK10qz90lPKQlXG0FCrBLE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D0vKaxNUnaLG9/MLhBzMTyy6jW+nEn9ibYX15qbJJmvdtJHOO8iMGux56nVebFhAT5nTYpwPXkC8X4qCKozjBC71UJf4tLDOYbv5EilwYbdABbyqyqVimhrizQ+bXWSYakV40fE+Lk5olIQ7lkX9BiRETSCWJFwfSR4G5aUX+Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lG2h+PbT; arc=none smtp.client-ip=209.85.214.175
+	 To:Content-Type; b=Ex+sng1GETBcwuFVD0/QBuWKE0414qVMluI6+hsWNBb/WqtwmNT9ZITsdBmaXj0GhykVKUufiXHpdGLksld5e3SkO8abB1wV/Gw5XGQqAljwmpQjUq1hQ9llnuqIe8w5vQ2EnqvNxPTNWigo9/kR34RIbgmeeLEvPfo4+Mf8/88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jb18FxTH; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2731ff54949so1945ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:02:46 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27d67abd215so52565ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:03:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759262566; x=1759867366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=google.com; s=20230601; t=1759262587; x=1759867387; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UmjWU3TtlONkR58FzLBdx1M37tT6PGpX+MejoGqz+FU=;
-        b=lG2h+PbTY2rW1yU8QXMS1vUp1yTCefg1cjn2u22OYYFw4tybexeRxSHIyBQoHEQ+5J
-         HaqnH0scvG8EclV6HXa982jiJ76zs8BwccWX++W72FRX0VuBIJm+kEjlWE8xlxrmkgbd
-         8eDz8hQRu6dugaaSQRVcVyd2ZpW6Mz/Nu6vL3WG1Es0+3Uqi09lZWxLYZjL5vW+XZocK
-         Sh3hlWPKXNvM1TQc6RcbDOuoq/TPXD5Y7Kmyl24Q42hjDycsqur1t+SvLsVfBGIZiMkJ
-         CWj0De/gj8Mm4SAp/u6S2Lm1xNvNTRfNbw/5aVazxYSZ6vzybkC+3t7UF6MF3j6dO8GK
-         962A==
+        bh=K0cT1RAs6oKsEjGjLNXsHeYyU8Or78p3qoc3PSshpCM=;
+        b=Jb18FxTHLaYpEN1s7P5WAfEO5aH53W0v31Dt4ty5vYscZpWNtk8DSIEsnyCX9nJOUG
+         z9iZ4wO34buTmCgq7nxNvzLXS0PoZS9h48xWcLqa4MetqK3YUzVc54GK60m3NxJop5T7
+         VH4o1vxrho5NreqoJya/4NKfZZIG6LP8i4bJT+2dvcZIAlH/cQ97fqenLy2GvMyUx74x
+         6QoKaoZRtnOzvAsoEXDuH90GLg5L4u7EcZv4b9CxvGW1KIv345WhYdX4QOyjCIq2hOqu
+         kYgLEf+a8AkE5e8YOC54QpKqTKb9OpXK0MEB215aMixBxuGi1uw7baQBTz/31ujoxurY
+         SCxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759262566; x=1759867366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1759262587; x=1759867387;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UmjWU3TtlONkR58FzLBdx1M37tT6PGpX+MejoGqz+FU=;
-        b=cU2AE3Qn3T4Z2EkZb3lj+8DXC8oX+CP+rRKUnwTccxX2KiyFLblzFWPWQG07Qrk6vD
-         jxzFBABPX8MPy3HGYJQkQWbs4CyNgq23Ki3oW4XbVjiELREZWmNRzYhR503bEIm6kNST
-         QBs/jLS3PD9ld/JYBkC3q6vw/l0bqoETuZDbiJ8kEkpWk2mgYmF6cqzBzpDRaddpqv0I
-         hEVXC+Gb4l93MRPrpb+jFY16g09eGCP6ge78SRLSeSG09Mwu/08I3IGBSYttAf9Ppu7S
-         99hxcZvKuLuBDOKV0T6nYgPTtmYTTwxFZPbGeiwUb8ByryPV/q+s86GPzSQiEj+9PpoP
-         yheQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNRLFLz5LP9gm0gIAxqlO0nxdVgPR56XdEaS9G7v4RWoUIOr89efPrdADcoBz4WpYMOsuuKbPwrKaGnDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzqznOAu/pq+V/U6lZ7B0sbXvFsGRxYQ6hh4CRQHqqrDEIP7ES
-	ROALrEOKhgojSfECkFVvoZ5Mg+TkEdU/dpzblrwir1mmQ11pyacVaAuhhbMs3bYYnBBc3fZKDRv
-	9ntozGTEtohi8r2nfrhxUgayZ4AeTB697x28L3UPk
-X-Gm-Gg: ASbGnctqkEtD7kADIPwxDqsXQbWGIDwaz11oO2a/2XQ9qaavoEM8Us9a60IcqPzM38p
-	x8QI0apt158k1db9VTzJdjiw5uJCNzGkzzyZUlrg4VOiTtZ6SWR2iH41UGX466XLgqp5B2Y2lqO
-	pyDxzvGDyHuin+1qY8gjcdcTK7vbD0TRQ6OM1weDLYOZoHGCg9+VjQmsnbU4H38n3OWEzEhTD+8
-	rOpbOZgfwbgzwnqFh+nuir2taC6+uhIBr7u3q2d5Dins4wLn4CqdVDJ62hOa3+5jcA=
-X-Google-Smtp-Source: AGHT+IHx+YJ6OoU2Vttd31DlFqYP5qTmJncBxyHWUS5OUKKuJ74sIZfzXDXkPor8ehJoA623CmmYP8vJePvPpHHmT/U=
-X-Received: by 2002:a17:902:ce07:b0:266:b8a2:f5d8 with SMTP id
- d9443c01a7336-28e80054fc2mr915285ad.14.1759262565821; Tue, 30 Sep 2025
- 13:02:45 -0700 (PDT)
+        bh=K0cT1RAs6oKsEjGjLNXsHeYyU8Or78p3qoc3PSshpCM=;
+        b=RB1N/2SQYUmqxbAbYc0iS7WCj4tT7znE72f185HpF2RKkksPKinfFEbS3YLl63Nqzx
+         IfsRUXf6f2GQQxA9WtyFifUTQm91t37iAG33HV1QPcKS1ABlvZ1+WS14QYyXbxjpU9DR
+         AxX7lSDwrt5nz66w4Dgw5wj9t4nIUR8TqrAX/8xyUa7tQdRGUaEW2uPVQMnYBu052Tiv
+         JlkZzoU0K51R1zCRp6wLUQ0nuTx0bnfCfhXNBXjPcZ4mKE6EYKz7HRKsSnzwxcJH/vnY
+         067QcX3TZiATaUYaQ5zCsAfGknUmKF0ryq/YoNE+e7QI1eIHv6rSQfHxruJyPJ64xIMr
+         v9Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1W3jeFMmmUw65zW9edEf/5zL+OoytS1xq26uDNFpdV3yKyaosm1qYl6Ja+7QmwKvqzKlChLR6XzhiLL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztP8TanD768HXhEWbANrCnRBmkNo5kdvefLGLOuHbz3iHs7k3i
+	KX/lvrBz9cO1vdf1VejjAjoZ4Up+0rgnpZifepAYobhkWNqmJKBA7MHtokR7o8d4/NbwJk0eglv
+	53SVuD9/qXRZyKFsB4HqQDad3JN5oRpYo8NoWBixj
+X-Gm-Gg: ASbGncuX4mdWQngMtMafHTWqCYG/hQuCtg7scQBUabs07xmqlognWBOjixm9b27gyoK
+	d5WcvU3U7fx9XsPcTviS6U26H/0C0YUvOJr0Yzf3dHvfRloURyJI/fX7YqP+VylpbkzS5MH1Yh7
+	fAOpX/+OACJxyD0ulv8ZQkizow+5MNcpm1cXrj9Ftn9Q4Sag+tOmsSz/34BtNKot+J2YlJDkM9p
+	wZfmd7DE4j1wGUSbxRlEQZ0A+VW8+BXpQfnCPjG9hwrh5yN9yArDroFJwbqgJb2xxpR
+X-Google-Smtp-Source: AGHT+IFa4zuETd9i+m/UdKS6kqS6S1OjhAGhOjt5CRjx+tasF9kSrsO82VkEwg6Zmh0mEdptxRvU9NQQwtYqO3qzab0=
+X-Received: by 2002:a17:903:4b0c:b0:248:7b22:dfb4 with SMTP id
+ d9443c01a7336-28e80054ba7mr983905ad.16.1759262587055; Tue, 30 Sep 2025
+ 13:03:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
- <20250929160034.GG2695987@ziepe.ca> <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
- <20250930135916.GN2695987@ziepe.ca>
-In-Reply-To: <20250930135916.GN2695987@ziepe.ca>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Tue, 30 Sep 2025 13:02:31 -0700
-X-Gm-Features: AS18NWDlBEef52YzHXVxaMZeX4cRlUtI0dF5L6bXYHvYPPunK-J_lTtDOKzdu1o
-Message-ID: <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
-	praan@google.com
+References: <20250903184248.695267-1-irogers@google.com>
+In-Reply-To: <20250903184248.695267-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 30 Sep 2025 13:02:55 -0700
+X-Gm-Features: AS18NWB7QPcjHfrAVgePWCrCMWuylVtQSOkipi84bsIK402pvy6HcqR_3pBSwRE
+Message-ID: <CAP-5=fV-3d1EzYfZq6s9M2NrLFFVOrWOTx_k5tByScA4Sfqq-g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf test: Add an 'import perf' test shell script
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Collin Funk <collin.funk1@gmail.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 6:59=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
+On Wed, Sep 3, 2025 at 11:42=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
 >
-> On Tue, Sep 30, 2025 at 09:07:48AM -0400, Pasha Tatashin wrote:
-> > On Mon, Sep 29, 2025 at 12:00=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca>=
- wrote:
-> > >
-> > > On Sun, Sep 28, 2025 at 07:06:21PM +0000, Samiullah Khawaja wrote:
-> > > > +static int iommufd_save_ioas(struct iommufd_ctx *ictx,
-> > > > +                          struct iommufd_lu *iommufd_lu)
-> > > > +{
-> > > > +     struct iommufd_hwpt_paging *hwpt_paging;
-> > > > +     struct iommufd_ioas *ioas =3D NULL;
-> > > > +     struct iommufd_object *obj;
-> > > > +     unsigned long index;
-> > > > +     int rc;
-> > > > +
-> > > > +     /* Iterate each ioas. */
-> > > > +     xa_for_each(&ictx->objects, index, obj) {
-> > > > +             if (obj->type !=3D IOMMUFD_OBJ_IOAS)
-> > > > +                     continue;
-> > >
-> > > Wrong locking
-> > >
-> > > > +
-> > > > +             ioas =3D (struct iommufd_ioas *)obj;
-> > > > +             mutex_lock(&ioas->mutex);
-> > > > +
-> > > > +             /*
-> > > > +              * TODO: Iterate over each device of this iommufd and=
- only save
-> > > > +              * hwpt/domain if the device is persisted.
-> > > > +              */
-> > > > +             list_for_each_entry(hwpt_paging, &ioas->hwpt_list, hw=
-pt_item) {
-> > > > +                     if (!hwpt_paging->common.domain)
-> > > > +                             continue;
-> > >
-> > > I don't think this should be automatic. The user should directly
-> > > serialize/unserialize HWPTs by ID.
-> >
-> > Why not?  Live Updated uAPI is handled through FDs, and both iommufd
-> > and vfiofd have to be preserved; I assume we can automatically
-> > determine the hwpt to be preserved through dependencies. Why would we
-> > delegate this to the user?
+> The 'import perf' test needs to set up a path to the python module as
+> well as to know the python command to invoke. These are hard coded at
+> build time to be build a directory and the python used in the build,
+> which is less than desirable. Avoid the hard coded values by reusing
+> the existing shell script python setup and determine a potential built
+> python module via the path of the perf executable.
 >
-> There are HWPTs outside the IOAS so it is inconsisent.
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-This makes sense. But if I understand correctly a HWPT should be
-associated one way or another to a preserved device or IOAS. Also the
-nested ones will have parent HWPT. Can we not look at the dependencies
-here and find the HWPTs that need to preserved.
->
-> We are not going to reconstruct the IOAS.
->
-> The IDR ids of the HWPT may not be available on restore (we cannot
-> make this ABI), so without userspace expressly labeling them and
-> recovering the new IDR ids it doesn't work.
->
-> Finally we expect to discard the preserved HWPTs and replace them we
-> rebuilt ones at least as a first step. Userspace needs to sequence all
-> of this..
+Ping.
 
-But if we discard the old HWPTs and replace them with the new ones, we
-shouldn't need labeling of the old HWPTs? We would definitely need to
-sequence the replacement and discard of the old ones, but that can
-also be inferred through the dependencies between the new HWPTs?
+Thanks,
+Ian
+
+> ---
+>  tools/perf/tests/shell/python-use.sh | 36 ++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/python-use.sh
 >
-> Jason
+> diff --git a/tools/perf/tests/shell/python-use.sh b/tools/perf/tests/shel=
+l/python-use.sh
+> new file mode 100755
+> index 000000000000..fd2ee5390060
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/python-use.sh
+> @@ -0,0 +1,36 @@
+> +#!/bin/bash
+> +# 'import perf' in python
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Just test if we can load the python binding.
+> +set -e
+> +
+> +shelldir=3D$(dirname "$0")
+> +# shellcheck source=3Dlib/setup_python.sh
+> +. "${shelldir}"/lib/setup_python.sh
+> +
+> +MODULE_DIR=3D$(dirname "$(which perf)")/python
+> +
+> +if [ -d "$MODULE_DIR" ]
+> +then
+> +    CMD=3D$(cat <<EOF
+> +import sys
+> +sys.path.insert(0, '$MODULE_DIR')
+> +import perf
+> +print('success!')
+> +EOF
+> +    )
+> +else
+> +    CMD=3D$(cat <<EOF
+> +import perf
+> +print('success!')
+> +EOF
+> +    )
+> +fi
+> +
+> +echo -e "Testing 'import perf' with:\n$CMD"
+> +
+> +if ! echo "$CMD" | $PYTHON | grep -q "success!"
+> +then
+> +  exit 1
+> +fi
+> +exit 0
+> --
+> 2.51.0.338.gd7d06c2dae-goog
+>
 
