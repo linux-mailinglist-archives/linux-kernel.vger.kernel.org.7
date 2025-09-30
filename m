@@ -1,442 +1,588 @@
-Return-Path: <linux-kernel+bounces-837813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18028BAD3E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:46:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3238ABAD578
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071711892A1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431F14A28F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D91306B1C;
-	Tue, 30 Sep 2025 14:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C3230504B;
+	Tue, 30 Sep 2025 14:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UBz6WQZn"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013005.outbound.protection.outlook.com [40.93.196.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q8xfYVYn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F3A305979;
-	Tue, 30 Sep 2025 14:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759243563; cv=fail; b=Jobho5fylTfdLhS6ODCLxNjMyVfW43shcO35Bq1FPMiSqYOM+WXzVxWMC30NX/x2dK5ngE0d5F0pxwLDKUtlZ+Jrl1+/K60VRDMqbrk9LcYv9/l6FZ85rNtYg41XnYnfhcxNtVlxnu6VCtu/0MtHhQx5lHvc3Lmo6+a2dlU3ZFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759243563; c=relaxed/simple;
-	bh=nOnRd2EX88BCR4MT9YisoEXoBcPGYW4ZBGP6WnoXDE0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UpHyQMEkvx04gFqKz7ab/9YViXPHw1VOPwXe/Fc9CVXQBiYBkqAinniDgtAHhGK0GGn1a5vV1Bg6tBi9Iyl7u6F+2CEk+GOtAuqc6olfLHgSAx72AQRrkD7OlaRfsy8fV+xT6Hd4sH5FlcLl184ukNVPXQnt2CROHKYq/FMC6Xs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UBz6WQZn; arc=fail smtp.client-ip=40.93.196.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LlR1to6iF0fLV8IL9DyAk0D+oDXAygnPGiuPYa2DQNl9M/MWkmwIpKB0Z4/1U+aVdAfyBPak96++BPFEFauH4ctBIYO9jL6pRC8b6doomhTm5gSpC93EkGdyfnLXCTLwr/UHVExez9X4e8jPUfrc8Ktv0zD4JzpDjZ+HA/QYO4vTOVhhIhgDVQ4JSHB3qFfdk9q6nNzCh72JlsfRyW449O6ehI0lAEWNwSHtfdWoakF/pCzdCJUL9yfuZVFL+2grlpuC9C0yWfiTXrhiLTkBGKT+NYBl4FNleEODQWyJBLxCeSxB07fJtqM5h8NkTp78e12NQWU1skVfsb4rUejQ5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7WtHuucVr0mioG8hMK3CYr/acoECPocCMbDaWYL6yQc=;
- b=D1RdjsXcBxNNKIMHANA00BnpLX2sOXjHBRhmG8XsUPGmIgmRO0R2veZRPQ127D7x92OA+Y6JWIe2mjzIxZ9T8kJsvfowddCOAYDRKgvy1s5kIcYQ4cUerEfU7Au7KVDaFt4PBCVzQfMWAy2y0BjGTDcujazJDfC05nbuhYIZ/C9M5WOCrb+lhLtYmA2ReziILupCcAdL01kIKuR6vGVXUZt55WpQX1CjeKbc9455qyz671mE+BxiFUz5/f3LfilpZSG9WBvEZ22ATu8ExNn1dMWzCeQdVi051x/ZRtUGcTA4iab3arszcVodVoZ8YvRLZ/kLcw0BjhkyXSkET/a6mQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7WtHuucVr0mioG8hMK3CYr/acoECPocCMbDaWYL6yQc=;
- b=UBz6WQZn+b4+ZeNX6wfWVw/gt7C794NErMWvb2p0iM9lQM/PKlHnGWmLXgAdmf18EO7PHTBA/XO/aOYUlHYG0kYwfCNXyn9DQhl/6iD1d62r4JxAQFUxVbHI6DwVJ6QfcIzG8a4MaAkhZ81ShkLOX4680b3/fKepcVs4mPphVp+iZxFkT2zv3h9oGmq3iAkP+Gut5Uv+wsM9Vh+qTpaAS4NPE8ollh8aai/9GQMkPIOvwQWfEH7EoV3yULwE6OmJ2OQF/PfN60SpQyG3LcD8ksnA/Cc3m4USZ6zTVQEOhQe2bOLMjVGszmxb5TFPXIsWTUbkjf79NM+joJ3NfYZojQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DM4PR12MB8475.namprd12.prod.outlook.com (2603:10b6:8:190::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 14:45:51 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 14:45:51 +0000
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dakr@kernel.org,
-	acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org,
-	Elle Rhumsaa <elle@weathered-steel.dev>,
-	Yury Norov <yury.norov@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	nouveau@lists.freedesktop.org
-Subject: [PATCH v5 3/9] nova-core: bitfield: Add support for custom visiblity
-Date: Tue, 30 Sep 2025 10:45:31 -0400
-Message-Id: <20250930144537.3559207-4-joelagnelf@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250930144537.3559207-1-joelagnelf@nvidia.com>
-References: <20250930144537.3559207-1-joelagnelf@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0630.namprd03.prod.outlook.com
- (2603:10b6:408:106::35) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AA8304BD4;
+	Tue, 30 Sep 2025 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759244080; cv=none; b=nBX7k0JuVaRGDVDxBV38hIHW8pfuwM8DWIvc5nU08dwXCBG+cSbLYSQFsg8bMRWECKe++fnLFbBluPclQkvLenRmbJFjkmRLSVhorvveyYnIILm/x7fMqmqygl1F6YpqA//KeqGUrgiU5Ner46jYDnerzt9Z/F85K63B/yhft8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759244080; c=relaxed/simple;
+	bh=y5di4zWex2fVjFcUckDb7URzseyqwhtI4yBUheBjHhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uqnPXyvFda2IpBVxq3wHVQZo8k1jkzmKGu1CHs248wVDOa219kLf9JTSawDqsCsxPmYjfdsC7iBZl+jEx+TIwlyiIV6IsKwNu9ZC6sj/6n+1SOZqWVy6XhbNZCI743C4NCRj0SXv340X58StQfpPpWwlGGECHP6dM21Jf17ENg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q8xfYVYn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC69C4CEF0;
+	Tue, 30 Sep 2025 14:54:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759244080;
+	bh=y5di4zWex2fVjFcUckDb7URzseyqwhtI4yBUheBjHhU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=q8xfYVYnQJXnVDyVKuX4J/wi4C3rXRFeKGSz3w0JN5wuCDqSQ26fs37++2ZSKQGtp
+	 KRJZOHoQ739lUycjSIRX2Bonfp1WQqSBCF+7grEB/kQOkXm4wqEeJ4358Ib6di4OU+
+	 Y2kKD3Pnfo/7NQDBJ1tPvFYYX4ouK/WxnHMeMkwc=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	achill@achill.org
+Subject: [PATCH 5.10 000/122] 5.10.245-rc1 review
+Date: Tue, 30 Sep 2025 16:45:31 +0200
+Message-ID: <20250930143822.939301999@linuxfoundation.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DM4PR12MB8475:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50d35806-395c-4e1b-cffe-08de00300d22
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3sz4nkNNfwrM/Ea5Xg+DQVG+vlEFzAKS6l2JTIYnJWnOsXIta6dSg4fk/jzB?=
- =?us-ascii?Q?E9phsQv34UoP++0/wcstKO8/5SdR44IAs3/BN020VFsfXeYO5K+LEBJ5SjSd?=
- =?us-ascii?Q?A2Q9e62UR3BSChcuNqE2F7AhxV5q7rl+Gh/LOINrnhkca8X3mp6HPWlavv4n?=
- =?us-ascii?Q?lQ7SwKJAE0iNTKtWrg1JF2l7YPC3Ac7vE92prh+1YQipVfzgVpXpMPwSkMNC?=
- =?us-ascii?Q?JGNlOyzWSE3J+YDAQ7BCPcrs1WSzn2Jix0vfLQGyHLg+D52BkORcPNAvDXYd?=
- =?us-ascii?Q?i0OOnTjHdLKeUChOpzslHmyGFR6Y72e0G4iJ/C+IsG97s4Oe3Wj8V6J+1yof?=
- =?us-ascii?Q?XFMZAeTTndC1Ri5uMSSNlheXEw/TSLdsfRTY9kRLc8yVK5zeGGliU2X7QHsA?=
- =?us-ascii?Q?RAr8eAezhuSSuT9+YLNVP+EfXzrPHnt2T0JmNNr0NRHCeVePynE8yzpT+aW7?=
- =?us-ascii?Q?ShjgQdwXA8PGMV3r4kxE/2oi3+r7GGrzrPVTMPkU0go3RcVoHaMeonJwVYbI?=
- =?us-ascii?Q?ItfNUf9r4jvWMwSBXYotNhuOghOihIRSXh8PrjDg+oP8kyO8YDMJeqAFgBse?=
- =?us-ascii?Q?KThfHY6LzHSuNmgLzq/V3dtDqKPd3w1oO3FsvloJC21ksWplzCqF9Oi1gBJG?=
- =?us-ascii?Q?bdbTxJR7W0g0LDkuEN8xxTEZBgB35UpHnoRhf9VROCVifdghenyEK4iZSEl7?=
- =?us-ascii?Q?SlOC/h0EvuOQAJRKwqO10jyjiN+BhzWlzMXztUTXEsQLxaXZ0geoVZyFhUlc?=
- =?us-ascii?Q?WrG9jWl5HMSAf7lmdbRhaWW540jOgZixaWTxSkeIvrNF3UKPu9E2jDZ0cmYv?=
- =?us-ascii?Q?QrsRTvn8LqWDMb+OAiqxWgdOzNDkP9OMlj0sXBsBgxe2gzADZ8DSLF71okVt?=
- =?us-ascii?Q?OA5dzkuoU3mcY/TpsvKps3EbzwwI2gL45+w8LCvnwIJHGrpY8NjDr7dUtk7s?=
- =?us-ascii?Q?j/1msoaOlz1osu/oEGGGKGfVpbM37tK8NRgsNZpHz/Pjl/GU42vs8UiZaGDl?=
- =?us-ascii?Q?ZgEK5GTRIQ1lSgNtStVc5IzQhqyt6YpKXPlW/Q/hDz60nXmD2t+NChVYThDx?=
- =?us-ascii?Q?oOKloKdTISpg0Vmxfx/gHvvoOtj94uK7q+dfpBIiUaJqtRT2CcM13MPMT3IL?=
- =?us-ascii?Q?9kLOw2+ZFfp5HUouDpj5o3SFujcIuql7Qj91sOD8jLxDt4puloLQuhozvN3V?=
- =?us-ascii?Q?N6Jqbb3Ti2vD78fr1kdwMHcDbSYMmA1g9Euqt0/GiZVcgwgqVogijabD6naS?=
- =?us-ascii?Q?yx3uKQx+gMY4eeQkB/j/mw18SaUG+h40FHjy0qGSzT2fp6+0CE1Iw+Gi9S/x?=
- =?us-ascii?Q?d96e4KnWMj3iOzoAI7WYksftSe6QkXEwu9mblQc2zPG4nkE3N6A5aw88XY2e?=
- =?us-ascii?Q?RaN725bZEjDq8loNez3aZsDpyqX9Ms0mAYp6BbCVObA20esu0nh9pCTWkVAD?=
- =?us-ascii?Q?E5dztrBjgjbJB0nNnNPTcvW7Jeosk7pP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ef5EaXDPJihD3mG3ufJU7VypVh0iAqkvfFbxL36dm+geMWtaxYDKyYbjUqrM?=
- =?us-ascii?Q?PAOR0bm5AuxPbqr2OUxGqUpgYw2dFRXxaoHxiP6ouEhH5yqsZeX6haiArwJr?=
- =?us-ascii?Q?6wH+QgylH/NVQoOl2rppPx3Foqo8j1+Cf8vxFNGIpPEEHrAU8JX9TtTechlv?=
- =?us-ascii?Q?CvwyYwBmxGF2HovkN2qOAnKbH5x9LAOKZyLlP3R9rEkjUX2GrUD/YrfadB/9?=
- =?us-ascii?Q?57qo+U71DEB9hPmf/L+mycn0fX+lXuLU36667XELRPXc0fYgXgnB/h0f8nV8?=
- =?us-ascii?Q?u2jyy+AmErJXxmOeTfMhg1hWuX+1l/ZLwwWhAnRYViTGf6Oo+82BdRL22PiB?=
- =?us-ascii?Q?19yOA79MqIpw4QGQJYMhIsrR9OayZpZ6YXBrZpRazLiKlRYqG+cKhoSs3SWB?=
- =?us-ascii?Q?0t922uQv1drCxHQY8I7lWzeK7M4wBSlztK1qiEIM+FuDb0AdwleMw2qiSJqn?=
- =?us-ascii?Q?03b7DBlH+hBX85EkybFFebr6+ZTJDqW96sHNKAGIbC4xtzOqayqokgh+E76j?=
- =?us-ascii?Q?FP7dLlNF5Qud8C/I/g2Z48vqIDYV7aBHHQAiFu4D/TTjyZZc5Yd4clQ+V2IJ?=
- =?us-ascii?Q?3guG+6msQYd4Hx+5hrC0/h1DkjWlDFxEQX1iUPvkEahW4ku2ODeFhs2MTY1T?=
- =?us-ascii?Q?PkNCkDzZd/HHWtaFfrpTXyLIRBTXpYv7ZfpVP8LZbMuy0y9UMOplKN9262sh?=
- =?us-ascii?Q?UJYTirYpJ2qXEsFocFlb9preRfvwluNeJkFRByLkJ5otxID/afl9YAtIYEut?=
- =?us-ascii?Q?ZqkLmm+v2hMku7YE9QYnXXBN1lya0f3V4Hat6z8HqtkXWaf5aubAiDTDGSMU?=
- =?us-ascii?Q?O2MkiJAdtY4WrvyyiOMDEvVCbX3KtyQHVjfVdJirPO1LWt/OR0I6Gw5ZWOAe?=
- =?us-ascii?Q?BtPvmCwHVvZmbNoWOrSc141+gPLX8yxzJPn7v6r5MOCZD/DtFihLr7gTR8mr?=
- =?us-ascii?Q?pVqwgijy/zj6h34f8yY57IkJP/4l3Z+wNMqNSmcYC6qOagMB5x/UQStWwozp?=
- =?us-ascii?Q?fCzyesCT4d+eEUoOzdbPh8UWTc4htgUH5Nv1Oahgp+OzeK07yS+rlMKZp9MR?=
- =?us-ascii?Q?+qPgs+8EQ77M4DVC19pwYzfnJUpVMnai5OuUKC2/KYZ8eZz0p/5zEvQstEno?=
- =?us-ascii?Q?MYPBUFsyA3cbmD24Xr7u7x/NeLUTvQ0FLQMRuzoA2AZF72x9X9Q+ZXo2MFtF?=
- =?us-ascii?Q?/sjYft8ttq7H90ZknjDfWDbE178YJV0KMhNgaKbH2gD/M0+ofa+d8yl3Uk1J?=
- =?us-ascii?Q?DmqDjkkBCQDpFlNF8hS0JIz7cDXen3AJbitHlsWeYmyzQD25DTonCthBnM9P?=
- =?us-ascii?Q?IOvZmJX9j3yy3OHHv8xqDdfUf5wdRx0ojAIhe68wjDdoE87upjSw6wvg6a5K?=
- =?us-ascii?Q?kM3m8g+WbKP8RnPbaqk5iPNW/dWmuYgFnpIhk+yc50w58n4HdvkuviCRMu0y?=
- =?us-ascii?Q?OLWqFy0z6oj6W81ZvOkqOb6hBzGVNXKIXVKfjaQpjXlBW3y31Nkiii1EtpDp?=
- =?us-ascii?Q?+4b8p7rOm6/RuPoGz8zzZUEq5LUXeCcomd/fBwGXty+kxiw3gqJX07VrEBKK?=
- =?us-ascii?Q?rpEHEyI0m8YL6KWFcOdki6QyVXHc7wUrMv3R37+V?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50d35806-395c-4e1b-cffe-08de00300d22
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 14:45:51.3307
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MoMSOYX511cPj6YBNR/6xqhnpomYLrrT6Cy4h/jX7F5bzGVIx5ByTIDVgWbilWsP30TaI2MAMdwalMsVaEmkJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8475
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.245-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-5.10.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 5.10.245-rc1
+X-KernelTest-Deadline: 2025-10-02T14:38+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add support for custom visiblity to allow for users to control visibility
-of the structure and helpers.
+This is the start of the stable review cycle for the 5.10.245 release.
+There are 122 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
----
- drivers/gpu/nova-core/bitfield.rs    | 49 +++++++++++++++-------------
- drivers/gpu/nova-core/regs/macros.rs | 16 ++++-----
- 2 files changed, 34 insertions(+), 31 deletions(-)
+Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+Anything received after that time might be too late.
 
-diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/bitfield.rs
-index 75de1c0fcb3b..cbedbb0078f6 100644
---- a/drivers/gpu/nova-core/bitfield.rs
-+++ b/drivers/gpu/nova-core/bitfield.rs
-@@ -57,7 +57,7 @@
- /// }
- ///
- /// bitfield! {
--///     struct ControlReg(u32) {
-+///     pub struct ControlReg(u32) {
- ///         3:0 mode as u8 ?=> Mode;
- ///         7:7 state as bool => State;
- ///     }
-@@ -71,6 +71,9 @@
- ///   struct's storage size.
- /// - Debug and Default implementations.
- ///
-+/// Note: Field accessors and setters inherit the same visibility as the struct itself.
-+/// In the example above, both `mode()` and `set_mode()` methods will be `pub`.
-+///
- /// Fields are defined as follows:
- ///
- /// - `as <type>` simply returns the field value casted to <type>, typically `u32`, `u16`, `u8` or
-@@ -81,21 +84,21 @@
- ///   and returns the result. This is useful with fields for which not all values are valid.
- macro_rules! bitfield {
-     // Main entry point - defines the bitfield struct with fields
--    (struct $name:ident($storage:ty) $(, $comment:literal)? { $($fields:tt)* }) => {
--        bitfield!(@core $name $storage $(, $comment)? { $($fields)* });
-+    ($vis:vis struct $name:ident($storage:ty) $(, $comment:literal)? { $($fields:tt)* }) => {
-+        bitfield!(@core $vis $name $storage $(, $comment)? { $($fields)* });
-     };
- 
-     // All rules below are helpers.
- 
-     // Defines the wrapper `$name` type, as well as its relevant implementations (`Debug`,
-     // `Default`, `BitOr`, and conversion to the value type) and field accessor methods.
--    (@core $name:ident $storage:ty $(, $comment:literal)? { $($fields:tt)* }) => {
-+    (@core $vis:vis $name:ident $storage:ty $(, $comment:literal)? { $($fields:tt)* }) => {
-         $(
-         #[doc=$comment]
-         )?
-         #[repr(transparent)]
-         #[derive(Clone, Copy)]
--        pub(crate) struct $name($storage);
-+        $vis struct $name($storage);
- 
-         impl ::core::ops::BitOr for $name {
-             type Output = Self;
-@@ -111,14 +114,14 @@ fn from(val: $name) -> $storage {
-             }
-         }
- 
--        bitfield!(@fields_dispatcher $name $storage { $($fields)* });
-+        bitfield!(@fields_dispatcher $vis $name $storage { $($fields)* });
-     };
- 
-     // Captures the fields and passes them to all the implementers that require field information.
-     //
-     // Used to simplify the matching rules for implementers, so they don't need to match the entire
-     // complex fields rule even though they only make use of part of it.
--    (@fields_dispatcher $name:ident $storage:ty {
-+    (@fields_dispatcher $vis:vis $name:ident $storage:ty {
-         $($hi:tt:$lo:tt $field:ident as $type:tt
-             $(?=> $try_into_type:ty)?
-             $(=> $into_type:ty)?
-@@ -127,7 +130,7 @@ fn from(val: $name) -> $storage {
-         )*
-     }
-     ) => {
--        bitfield!(@field_accessors $name $storage {
-+        bitfield!(@field_accessors $vis $name $storage {
-             $(
-                 $hi:$lo $field as $type
-                 $(?=> $try_into_type)?
-@@ -142,7 +145,7 @@ fn from(val: $name) -> $storage {
- 
-     // Defines all the field getter/setter methods for `$name`.
-     (
--        @field_accessors $name:ident $storage:ty {
-+        @field_accessors $vis:vis $name:ident $storage:ty {
-         $($hi:tt:$lo:tt $field:ident as $type:tt
-             $(?=> $try_into_type:ty)?
-             $(=> $into_type:ty)?
-@@ -158,7 +161,7 @@ fn from(val: $name) -> $storage {
-         #[allow(dead_code)]
-         impl $name {
-             $(
--            bitfield!(@field_accessor $name $storage, $hi:$lo $field as $type
-+            bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type
-                 $(?=> $try_into_type)?
-                 $(=> $into_type)?
-                 $(, $comment)?
-@@ -192,11 +195,11 @@ impl $name {
- 
-     // Catches fields defined as `bool` and convert them into a boolean value.
-     (
--        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool => $into_type:ty
-+        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool => $into_type:ty
-             $(, $comment:literal)?;
-     ) => {
-         bitfield!(
--            @leaf_accessor $name $storage, $hi:$lo $field
-+            @leaf_accessor $vis $name $storage, $hi:$lo $field
-             { |f| <$into_type>::from(if f != 0 { true } else { false }) }
-             $into_type => $into_type $(, $comment)?;
-         );
-@@ -204,17 +207,17 @@ impl $name {
- 
-     // Shortcut for fields defined as `bool` without the `=>` syntax.
-     (
--        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool $(, $comment:literal)?;
-+        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool $(, $comment:literal)?;
-     ) => {
--        bitfield!(@field_accessor $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;);
-+        bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;);
-     };
- 
-     // Catches the `?=>` syntax for non-boolean fields.
-     (
--        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt ?=> $try_into_type:ty
-+        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt ?=> $try_into_type:ty
-             $(, $comment:literal)?;
-     ) => {
--        bitfield!(@leaf_accessor $name $storage, $hi:$lo $field
-+        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-             { |f| <$try_into_type>::try_from(f as $type) } $try_into_type =>
-             ::core::result::Result<
-                 $try_into_type,
-@@ -225,24 +228,24 @@ impl $name {
- 
-     // Catches the `=>` syntax for non-boolean fields.
-     (
--        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt => $into_type:ty
-+        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt => $into_type:ty
-             $(, $comment:literal)?;
-     ) => {
--        bitfield!(@leaf_accessor $name $storage, $hi:$lo $field
-+        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-             { |f| <$into_type>::from(f as $type) } $into_type => $into_type $(, $comment)?;);
-     };
- 
-     // Shortcut for non-boolean fields defined without the `=>` or `?=>` syntax.
-     (
--        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
-+        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
-             $(, $comment:literal)?;
-     ) => {
--        bitfield!(@field_accessor $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;);
-+        bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;);
-     };
- 
-     // Generates the accessor methods for a single field.
-     (
--        @leaf_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident
-+        @leaf_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident
-             { $process:expr } $to_type:ty => $res_type:ty $(, $comment:literal)?;
-     ) => {
-         ::kernel::macros::paste!(
-@@ -265,7 +268,7 @@ impl $name {
-         #[doc=$comment]
-         )?
-         #[inline(always)]
--        pub(crate) fn $field(self) -> $res_type {
-+        $vis fn $field(self) -> $res_type {
-             ::kernel::macros::paste!(
-             const MASK: $storage = $name::[<$field:upper _MASK>];
-             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
-@@ -281,7 +284,7 @@ pub(crate) fn $field(self) -> $res_type {
-         #[doc=$comment]
-         )?
-         #[inline(always)]
--        pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
-+        $vis fn [<set_ $field>](mut self, value: $to_type) -> Self {
-             const MASK: $storage = $name::[<$field:upper _MASK>];
-             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
-             let value = (<$storage>::from(value) << SHIFT) & MASK;
-diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
-index ffd7d5cb73bb..c0a5194e8d97 100644
---- a/drivers/gpu/nova-core/regs/macros.rs
-+++ b/drivers/gpu/nova-core/regs/macros.rs
-@@ -276,25 +276,25 @@ pub(crate) trait RegisterBase<T> {
- macro_rules! register {
-     // Creates a register at a fixed offset of the MMIO space.
-     ($name:ident @ $offset:literal $(, $comment:literal)? { $($fields:tt)* } ) => {
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_fixed $name @ $offset);
-     };
- 
-     // Creates an alias register of fixed offset register `alias` with its own fields.
-     ($name:ident => $alias:ident $(, $comment:literal)? { $($fields:tt)* } ) => {
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_fixed $name @ $alias::OFFSET);
-     };
- 
-     // Creates a register at a relative offset from a base address provider.
-     ($name:ident @ $base:ty [ $offset:literal ] $(, $comment:literal)? { $($fields:tt)* } ) => {
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_relative $name @ $base [ $offset ]);
-     };
- 
-     // Creates an alias register of relative offset register `alias` with its own fields.
-     ($name:ident => $base:ty [ $alias:ident ] $(, $comment:literal)? { $($fields:tt)* }) => {
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_relative $name @ $base [ $alias::OFFSET ]);
-     };
- 
-@@ -305,7 +305,7 @@ macro_rules! register {
-         }
-     ) => {
-         static_assert!(::core::mem::size_of::<u32>() <= $stride);
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_array $name @ $offset [ $size ; $stride ]);
-     };
- 
-@@ -326,7 +326,7 @@ macro_rules! register {
-             $(, $comment:literal)? { $($fields:tt)* }
-     ) => {
-         static_assert!(::core::mem::size_of::<u32>() <= $stride);
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_relative_array $name @ $base [ $offset [ $size ; $stride ] ]);
-     };
- 
-@@ -348,7 +348,7 @@ macro_rules! register {
-         }
-     ) => {
-         static_assert!($idx < $alias::SIZE);
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_relative $name @ $base [ $alias::OFFSET + $idx * $alias::STRIDE ] );
-     };
- 
-@@ -357,7 +357,7 @@ macro_rules! register {
-     // to avoid it being interpreted in place of the relative register array alias rule.
-     ($name:ident => $alias:ident [ $idx:expr ] $(, $comment:literal)? { $($fields:tt)* }) => {
-         static_assert!($idx < $alias::SIZE);
--        bitfield!(struct $name(u32) $(, $comment)? { $($fields)* } );
-+        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-         register!(@io_fixed $name @ $alias::OFFSET + $idx * $alias::STRIDE );
-     };
- 
--- 
-2.34.1
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.245-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 5.10.245-rc1
+
+Jinjiang Tu <tujinjiang@huawei.com>
+    mm/hugetlb: fix folio is still mapped when deleted
+
+Lukasz Czapnik <lukasz.czapnik@intel.com>
+    i40e: fix validation of VF state in get resources
+
+Lukasz Czapnik <lukasz.czapnik@intel.com>
+    i40e: fix idx validation in config queues msg
+
+Lukasz Czapnik <lukasz.czapnik@intel.com>
+    i40e: add validation for ring_len param
+
+Justin Bronder <jsbronder@cold-front.org>
+    i40e: increase max descriptors for XL710
+
+David Hildenbrand <david@redhat.com>
+    mm/migrate_device: don't add folio to be freed to LRU in migrate_device_finalize()
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    fbcon: Fix OOB access in font allocation
+
+Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+    fbcon: fix integer overflow in fbcon_do_set_font
+
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
+    tracing: dynevent: Add a missing lockdown check on dynevent
+
+Lukasz Czapnik <lukasz.czapnik@intel.com>
+    i40e: add mask to apply valid bits for itr_idx
+
+Lukasz Czapnik <lukasz.czapnik@intel.com>
+    i40e: add max boundary check for VF filters
+
+Lukasz Czapnik <lukasz.czapnik@intel.com>
+    i40e: fix input validation logic for action_meta
+
+Lukasz Czapnik <lukasz.czapnik@intel.com>
+    i40e: fix idx validation in i40e_validate_queue_map
+
+Eric Biggers <ebiggers@kernel.org>
+    crypto: af_alg - Fix incorrect boolean values in af_alg_ctx
+
+Zabelin Nikita <n.zabelin@mt-integration.ru>
+    drm/gma500: Fix null dereference in hdmi teardown
+
+Ido Schimmel <idosch@nvidia.com>
+    selftests: fib_nexthops: Fix creation of non-FDB nexthops
+
+Ido Schimmel <idosch@nvidia.com>
+    nexthop: Forbid FDB status change while nexthop is in a group
+
+Ido Schimmel <idosch@nvidia.com>
+    nexthop: Emit a notification when a single nexthop is replaced
+
+Ido Schimmel <idosch@nvidia.com>
+    nexthop: Emit a notification when a nexthop is added
+
+Ido Schimmel <idosch@nvidia.com>
+    rtnetlink: Add RTNH_F_TRAP flag
+
+Ido Schimmel <idosch@nvidia.com>
+    nexthop: Pass extack to nexthop notifier
+
+Alok Tiwari <alok.a.tiwari@oracle.com>
+    bnxt_en: correct offset handling for IPv6 destination address
+
+Stéphane Grosjean <stephane.grosjean@hms-networks.com>
+    can: peak_usb: fix shift-out-of-bounds issue
+
+Vincent Mailhol <mailhol@kernel.org>
+    can: mcba_usb: populate ndo_change_mtu() to prevent buffer overflow
+
+Vincent Mailhol <mailhol@kernel.org>
+    can: sun4i_can: populate ndo_change_mtu() to prevent buffer overflow
+
+Vincent Mailhol <mailhol@kernel.org>
+    can: hi311x: populate ndo_change_mtu() to prevent buffer overflow
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    can: rcar_can: rcar_can_resume(): fix s2ram with PSCI
+
+Christian Loehle <christian.loehle@arm.com>
+    cpufreq: Initialize cpufreq-based invariance before subsys
+
+Peng Fan <peng.fan@nxp.com>
+    arm64: dts: imx8mp: Correct thermal sensor index
+
+Or Har-Toov <ohartoov@nvidia.com>
+    IB/mlx5: Fix obj_type mismatch for SRQ event subscriptions
+
+Jiayi Li <lijiayi@kylinos.cn>
+    usb: core: Add 0x prefix to quirks debug output
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb-audio: Fix build with CONFIG_INPUT=n
+
+Chen Ni <nichen@iscas.ac.cn>
+    ALSA: usb-audio: Convert comma to semicolon
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    ALSA: usb-audio: Add mixer quirk for Sony DualSense PS5
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    ALSA: usb-audio: Remove unneeded wmb() in mixer_quirks
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    ALSA: usb-audio: Simplify NULL comparison in mixer_quirks
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    ALSA: usb-audio: Avoid multiple assignments in mixer_quirks
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    ALSA: usb-audio: Drop unnecessary parentheses in mixer_quirks
+
+Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+    ALSA: usb-audio: Fix block comments in mixer_quirks
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    mptcp: propagate shutdown to subflows when possible
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: tree-checker: fix the incorrect inode ref size check
+
+Hans de Goede <hansg@kernel.org>
+    net: rfkill: gpio: Fix crash due to dereferencering uninitialized pointer
+
+Philipp Zabel <p.zabel@pengutronix.de>
+    net: rfkill: gpio: add DT support
+
+Johan Hovold <johan@kernel.org>
+    phy: ti: omap-usb2: fix device leak at unbind
+
+Rob Herring <robh@kernel.org>
+    phy: Use device_get_match_data()
+
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    phy: broadcom: ns-usb3: fix Wvoid-pointer-to-enum-cast warning
+
+Rafał Miłecki <rafal@milecki.pl>
+    phy: phy-bcm-ns-usb3: drop support for deprecated DT binding
+
+Chunfeng Yun <chunfeng.yun@mediatek.com>
+    phy: ti: convert to devm_platform_ioremap_resource(_byname)
+
+Chunfeng Yun <chunfeng.yun@mediatek.com>
+    phy: broadcom: convert to devm_platform_ioremap_resource(_byname)
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    xhci: dbc: Fix full DbC transfer ring after several reconnects
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    xhci: dbc: decouple endpoint allocation from initialization
+
+Alan Stern <stern@rowland.harvard.edu>
+    USB: gadget: dummy-hcd: Fix locking bug in RT-enabled kernels
+
+Jakob Koschel <jakobkoschel@gmail.com>
+    usb: gadget: dummy_hcd: remove usage of list iterator past the loop body
+
+Hugo Villeneuve <hvilleneuve@dimonoff.com>
+    serial: sc16is7xx: fix bug in flow control levels init
+
+Herbert Xu <herbert@gondor.apana.org.au>
+    crypto: af_alg - Disallow concurrent writes in af_alg_sendmsg
+
+Qi Xi <xiqi2@huawei.com>
+    drm: bridge: cdns-mhdp8546: Fix missing mutex unlock on error path
+
+Colin Ian King <colin.i.king@gmail.com>
+    ASoC: SOF: Intel: hda-stream: Fix incorrect variable used in error message
+
+Charles Keepax <ckeepax@opensource.cirrus.com>
+    ASoC: wm8974: Correct PLL rate rounding
+
+Charles Keepax <ckeepax@opensource.cirrus.com>
+    ASoC: wm8940: Correct typo in control name
+
+Håkon Bugge <haakon.bugge@oracle.com>
+    rds: ib: Increment i_fastreg_wrs before bailing out
+
+Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+    KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR even if AVIC is active
+
+Thomas Fourier <fourier.thomas@gmail.com>
+    mmc: mvsdio: Fix dma_unmap_sg() nents value
+
+H. Nikolaus Schaller <hns@goldelico.com>
+    power: supply: bq27xxx: restrict no-battery detection to bq27000
+
+H. Nikolaus Schaller <hns@goldelico.com>
+    power: supply: bq27xxx: fix error return in case of no bq27000 hdq battery
+
+Nathan Chancellor <nathan@kernel.org>
+    nilfs2: fix CFI failure when accessing /sys/fs/nilfs2/features/*
+
+Duoming Zhou <duoming@zju.edu.cn>
+    cnic: Fix use-after-free bugs in cnic_delete_task
+
+Alexey Nepomnyashih <sdl@nppct.ru>
+    net: liquidio: fix overflow in octeon_init_instr_queue()
+
+Tariq Toukan <tariqt@nvidia.com>
+    Revert "net/mlx5e: Update and set Xon/Xoff upon port speed set"
+
+Kuniyuki Iwashima <kuniyu@google.com>
+    tcp: Clear tcp_sk(sk)->fastopen_rsk in tcp_disconnect().
+
+Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+    i40e: remove redundant memory barrier when cleaning Tx descs
+
+Yeounsu Moon <yyyynoom@gmail.com>
+    net: natsemi: fix `rx_dropped` double accounting on `netif_rx()` failure
+
+Jamie Bainbridge <jamie.bainbridge@gmail.com>
+    qed: Don't collect too many protection override GRC elements
+
+Miaoqian Lin <linmq006@gmail.com>
+    um: virtio_uml: Fix use-after-free after put_device in probe
+
+Chen Ridong <chenridong@huawei.com>
+    cgroup: split cgroup_destroy_wq into 3 workqueues
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pcmcia: omap_cf: Mark driver struct with __refdata to prevent section mismatch
+
+Liao Yuanhong <liaoyuanhong@vivo.com>
+    wifi: mac80211: fix incorrect type for ret
+
+Takashi Sakamoto <o-takashi@sakamocchi.jp>
+    ALSA: firewire-motu: drop EPOLLOUT from poll return values as write is not supported
+
+Miaohe Lin <linmiaohe@huawei.com>
+    mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
+
+Jani Nikula <jani.nikula@intel.com>
+    drm/i915/power: fix size for for_each_set_bit() in abox iteration
+
+Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+    soc: qcom: mdt_loader: Deal with zero e_shentsize
+
+Johan Hovold <johan@kernel.org>
+    phy: ti-pipe3: fix device leak at unbind
+
+Stephan Gerhold <stephan.gerhold@linaro.org>
+    dmaengine: qcom: bam_dma: Fix DT error handling for num-channels/ees
+
+Anders Roxell <anders.roxell@linaro.org>
+    dmaengine: ti: edma: Fix memory allocation size for queue_priority_map
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    can: j1939: j1939_local_ecu_get(): undo increment when j1939_local_ecu_get() fails
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    can: j1939: j1939_sk_bind(): call j1939_priv_put() immediately when j1939_local_ecu_get() failed
+
+Michal Schmidt <mschmidt@redhat.com>
+    i40e: fix IRQ freeing in i40e_vsi_request_irq_msix error path
+
+Nitesh Narayan Lal <nitesh@redhat.com>
+    i40e: Use irq_update_affinity_hint()
+
+Thomas Gleixner <tglx@linutronix.de>
+    genirq: Provide new interfaces for affinity hints
+
+Thomas Gleixner <tglx@linutronix.de>
+    genirq: Export affinity setter for modules
+
+John Garry <john.garry@huawei.com>
+    genirq/affinity: Add irq_update_affinity_desc()
+
+Kohei Enju <enjuk@amazon.com>
+    igb: fix link test skipping when interface is admin down
+
+Antoine Tenart <atenart@kernel.org>
+    tunnels: reset the GSO metadata before reusing the skb
+
+Stefan Wahren <wahrenst@gmx.net>
+    net: fec: Fix possible NPD in fec_enet_phy_reset_after_clk_enable()
+
+Fabio Porcedda <fabio.porcedda@gmail.com>
+    USB: serial: option: add Telit Cinterion LE910C4-WWX new compositions
+
+Fabio Porcedda <fabio.porcedda@gmail.com>
+    USB: serial: option: add Telit Cinterion FN990A w/audio compositions
+
+Fabian Vogt <fvogt@suse.de>
+    tty: hvc_console: Call hvc_kick in hvc_write unconditionally
+
+Christoffer Sandberg <cs@tuxedo.de>
+    Input: i8042 - add TUXEDO InfinityBook Pro Gen10 AMD to i8042 quirk table
+
+Alexander Sverdlin <alexander.sverdlin@siemens.com>
+    mtd: nand: raw: atmel: Respect tAR, tCLR in read setup timing
+
+Alexander Dahl <ada@thorsis.com>
+    mtd: nand: raw: atmel: Fix comment in timings preparation
+
+Christophe Kerello <christophe.kerello@foss.st.com>
+    mtd: rawnand: stm32_fmc2: avoid overlapping mappings on ECC buffer
+
+Jack Wang <jinpu.wang@ionos.com>
+    mtd: rawnand: stm32_fmc2: Fix dma_map_sg error check
+
+Wei Yang <richard.weiyang@gmail.com>
+    mm/khugepaged: fix the address passed to notifier on testing young
+
+Miklos Szeredi <mszeredi@redhat.com>
+    fuse: prevent overflow in copy_file_range return value
+
+Miklos Szeredi <mszeredi@redhat.com>
+    fuse: check if copy_file_range() returns larger than requested size
+
+Christophe Kerello <christophe.kerello@foss.st.com>
+    mtd: rawnand: stm32_fmc2: fix ECC overwrite
+
+Mark Tinguely <mark.tinguely@oracle.com>
+    ocfs2: fix recursive semaphore deadlock in fiemap call
+
+Nathan Chancellor <nathan@kernel.org>
+    compiler-clang.h: define __SANITIZE_*__ macros only when undefined
+
+Salah Triki <salah.triki@gmail.com>
+    EDAC/altera: Delete an inappropriate dma_free_coherent() call
+
+Kees Cook <keescook@chromium.org>
+    overflow: Allow mixed type arguments
+
+Nick Desaulniers <ndesaulniers@google.com>
+    compiler.h: drop fallback overflow checkers
+
+Keith Busch <kbusch@kernel.org>
+    overflow: Correct check_shl_overflow() comment
+
+Kuniyuki Iwashima <kuniyu@google.com>
+    tcp_bpf: Call sk_msg_free() when tcp_bpf_send_verdict() fails to allocate psock->cork.
+
+Jonathan Curley <jcurley@purestorage.com>
+    NFSv4/flexfiles: Fix layout merge mirror check.
+
+Luo Gengkun <luogengkun@huaweicloud.com>
+    tracing: Fix tracing_marker may trigger page fault during preempt_disable
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv4: Clear the NFS_CAP_XATTR flag if not supported by the server
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv4: Don't clear capabilities that won't be reset
+
+Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>
+    flexfiles/pNFS: fix NULL checks on result of ff_layout_choose_ds_for_read
+
+Jiasheng Jiang <jiashengjiangcool@gmail.com>
+    mtd: Add check for devm_kcalloc()
+
+Kuniyuki Iwashima <kuniyu@amazon.com>
+    net: Fix null-ptr-deref by sock_lock_init_class_and_name() and rmmod.
+
+André Apitzsch <git@apitzsch.eu>
+    media: i2c: imx214: Fix link frequency validation
+
+Arnd Bergmann <arnd@arndb.de>
+    media: mtk-vcodec: venc: avoid -Wenum-compare-conditional warning
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    mptcp: pm: kernel: flush: do not reset ADD_ADDR limit
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi          |   4 +-
+ arch/um/drivers/virtio_uml.c                       |   6 +-
+ arch/x86/kvm/svm/svm.c                             |   3 +-
+ crypto/af_alg.c                                    |   7 +
+ drivers/cpufreq/cpufreq.c                          |  20 +-
+ drivers/dma/qcom/bam_dma.c                         |   8 +-
+ drivers/dma/ti/edma.c                              |   4 +-
+ drivers/edac/altera_edac.c                         |   1 -
+ .../gpu/drm/bridge/cadence/cdns-mhdp8546-core.c    |   6 +-
+ drivers/gpu/drm/gma500/oaktrail_hdmi.c             |   2 +-
+ drivers/gpu/drm/i915/display/intel_display_power.c |   6 +-
+ drivers/infiniband/hw/mlx5/devx.c                  |   1 +
+ drivers/input/serio/i8042-acpipnpio.h              |  14 +
+ drivers/media/i2c/imx214.c                         |  27 +-
+ .../media/platform/mtk-vcodec/venc/venc_h264_if.c  |   6 +-
+ drivers/mmc/host/mvsdio.c                          |   2 +-
+ drivers/mtd/mtdpstore.c                            |   3 +
+ drivers/mtd/nand/raw/atmel/nand-controller.c       |  18 +-
+ drivers/mtd/nand/raw/stm32_fmc2_nand.c             |  48 ++--
+ drivers/net/can/rcar/rcar_can.c                    |   8 +-
+ drivers/net/can/spi/hi311x.c                       |   1 +
+ drivers/net/can/sun4i_can.c                        |   1 +
+ drivers/net/can/usb/mcba_usb.c                     |   1 +
+ drivers/net/can/usb/peak_usb/pcan_usb_core.c       |   2 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c       |   2 +-
+ drivers/net/ethernet/broadcom/cnic.c               |   3 +-
+ .../net/ethernet/cavium/liquidio/request_manager.c |   2 +-
+ drivers/net/ethernet/freescale/fec_main.c          |   3 +-
+ drivers/net/ethernet/intel/i40e/i40e.h             |   1 +
+ drivers/net/ethernet/intel/i40e/i40e_ethtool.c     |  25 +-
+ drivers/net/ethernet/intel/i40e/i40e_main.c        |  10 +-
+ drivers/net/ethernet/intel/i40e/i40e_txrx.c        |   3 -
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c |  45 +++-
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.h |   3 +-
+ drivers/net/ethernet/intel/igb/igb_ethtool.c       |   5 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |   2 -
+ drivers/net/ethernet/natsemi/ns83820.c             |  13 +-
+ drivers/net/ethernet/qlogic/qed/qed_debug.c        |   7 +-
+ drivers/pcmcia/omap_cf.c                           |   8 +-
+ drivers/phy/broadcom/phy-bcm-cygnus-pcie.c         |   4 +-
+ drivers/phy/broadcom/phy-bcm-kona-usb2.c           |   4 +-
+ drivers/phy/broadcom/phy-bcm-ns-usb2.c             |   4 +-
+ drivers/phy/broadcom/phy-bcm-ns-usb3.c             | 168 +-----------
+ drivers/phy/broadcom/phy-bcm-ns2-usbdrd.c          |  13 +-
+ drivers/phy/broadcom/phy-bcm-sr-pcie.c             |   5 +-
+ drivers/phy/broadcom/phy-bcm-sr-usb.c              |   4 +-
+ drivers/phy/broadcom/phy-brcm-sata.c               |   8 +-
+ drivers/phy/marvell/phy-berlin-usb.c               |   7 +-
+ drivers/phy/ralink/phy-ralink-usb.c                |  10 +-
+ drivers/phy/rockchip/phy-rockchip-pcie.c           |  11 +-
+ drivers/phy/rockchip/phy-rockchip-usb.c            |  10 +-
+ drivers/phy/ti/phy-omap-control.c                  |  26 +-
+ drivers/phy/ti/phy-omap-usb2.c                     |  28 +-
+ drivers/phy/ti/phy-ti-pipe3.c                      |  42 +--
+ drivers/power/supply/bq27xxx_battery.c             |   4 +-
+ drivers/soc/qcom/mdt_loader.c                      |  12 +-
+ drivers/tty/hvc/hvc_console.c                      |   6 +-
+ drivers/tty/serial/sc16is7xx.c                     |  14 +-
+ drivers/usb/core/quirks.c                          |   2 +-
+ drivers/usb/gadget/udc/dummy_hcd.c                 |  25 +-
+ drivers/usb/host/xhci-dbgcap.c                     |  94 +++++--
+ drivers/usb/serial/option.c                        |  17 ++
+ drivers/video/fbdev/core/fbcon.c                   |  13 +-
+ fs/btrfs/tree-checker.c                            |   4 +-
+ fs/fuse/file.c                                     |   5 +-
+ fs/hugetlbfs/inode.c                               |  14 +-
+ fs/nfs/client.c                                    |   2 +
+ fs/nfs/flexfilelayout/flexfilelayout.c             |  21 +-
+ fs/nfs/nfs4proc.c                                  |   1 -
+ fs/nilfs2/sysfs.c                                  |   4 +-
+ fs/nilfs2/sysfs.h                                  |   8 +-
+ fs/ocfs2/extent_map.c                              |  10 +-
+ include/crypto/if_alg.h                            |  10 +-
+ include/linux/compiler-clang.h                     |  44 ++--
+ include/linux/compiler-gcc.h                       |   4 -
+ include/linux/interrupt.h                          |  96 ++++---
+ include/linux/overflow.h                           | 208 ++++-----------
+ include/net/nexthop.h                              |   3 +-
+ include/net/sock.h                                 |  40 ++-
+ include/uapi/linux/rtnetlink.h                     |   6 +-
+ kernel/cgroup/cgroup.c                             |  43 +++-
+ kernel/irq/manage.c                                | 111 +++++++-
+ kernel/trace/trace.c                               |   4 +-
+ kernel/trace/trace_dynevent.c                      |   4 +
+ mm/khugepaged.c                                    |   2 +-
+ mm/memory-failure.c                                |   7 +-
+ mm/migrate.c                                       |  12 +-
+ net/can/j1939/bus.c                                |   5 +-
+ net/can/j1939/socket.c                             |   3 +
+ net/core/sock.c                                    |   5 +
+ net/ipv4/fib_semantics.c                           |   2 +
+ net/ipv4/ip_tunnel_core.c                          |   6 +
+ net/ipv4/nexthop.c                                 |  28 +-
+ net/ipv4/tcp.c                                     |   5 +
+ net/ipv4/tcp_bpf.c                                 |   5 +-
+ net/mac80211/driver-ops.h                          |   2 +-
+ net/mptcp/pm_netlink.c                             |   1 -
+ net/mptcp/protocol.c                               |  16 ++
+ net/rds/ib_frmr.c                                  |  20 +-
+ net/rfkill/rfkill-gpio.c                           |  22 +-
+ sound/firewire/motu/motu-hwdep.c                   |   2 +-
+ sound/soc/codecs/wm8940.c                          |   2 +-
+ sound/soc/codecs/wm8974.c                          |   8 +-
+ sound/soc/sof/intel/hda-stream.c                   |   2 +-
+ sound/usb/mixer_quirks.c                           | 285 ++++++++++++++++++++-
+ tools/include/linux/compiler-gcc.h                 |   4 -
+ tools/include/linux/overflow.h                     | 140 +---------
+ tools/testing/selftests/net/fib_nexthops.sh        |  12 +-
+ 109 files changed, 1195 insertions(+), 909 deletions(-)
+
 
 
