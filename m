@@ -1,481 +1,262 @@
-Return-Path: <linux-kernel+bounces-838155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF27BAE90A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BC5BAE907
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70E74A4BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:46:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59314A29B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B185B267F58;
-	Tue, 30 Sep 2025 20:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2452A27AC3D;
+	Tue, 30 Sep 2025 20:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HEb4Oe+O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="UWRGoznC"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A4324A049;
-	Tue, 30 Sep 2025 20:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A7B155C97;
+	Tue, 30 Sep 2025 20:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759265204; cv=none; b=Y9lb4qeHjG60wa6CEKoUZiCV8XK1fxmlTrpOeM1bHFA2KimGqpa9d0xs4YupOebWWec0S45XwuYGIkxv+wi0pRXQFhx6FG2MaHeifuY1ck0D2ENc53LwuknDcaxNzeM0N+5bsBFJe694h542LeBgUib1Ts8wdOsQD3Ck1FNcTpM=
+	t=1759265190; cv=none; b=sBgTQemBi02k6x3oOKrAtkL5uSnDBxf+ILzPVpcwrER1NPpWvWjxaFY7uow/qFkhemCkjdCcYt1CBz7GuZ3hS2hRSqr25hzFAb46rI9WGamt4L3vpgdGI1a56xb+w/N2LzUQ7IKPi/lflt9saJ/eoG07rKs05kL3UqrVvemYJYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759265204; c=relaxed/simple;
-	bh=com4kiXikiCVndwAEIYfYH1tAB0tuOeE5JmbR65AU8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abTxCQtspMperopflJMiQfDanRpcIH1fOzTc32b/jUUIfu45ds+TsL2tW+J84wJynWhXrZhedz5uO/FbkNSg7sLWbcN58TXefy1f9ky5XNI9ifyg1s/GDFLWGWRQ3PaEAOeLHvj9yPThUZwKilEU5wpt5uNNIBP7LS+A2T9N4To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HEb4Oe+O; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759265201; x=1790801201;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=com4kiXikiCVndwAEIYfYH1tAB0tuOeE5JmbR65AU8w=;
-  b=HEb4Oe+OUBjSdfq4cPlWqelMzydnJThBu+Gz8eKUC9/wcrx/YAWbFGY0
-   yUbuUXxhaJ8shHjGGlU1XVPljmE0aYXZqbXbxPeVNUWb0iZYrHFUhzruK
-   AQqfrRPGLq9SG9gPKroF/PceA+5blFRG0IUiitKS4alO704hQ+aVHBw+6
-   mXzBQQaoxSOUhuNIpKa8w20mV8KVH3aukwi6V36b2q/pOY5uFrNm9xqc0
-   QeFADwykC9YWyS7V4l3S1j2fbqqpFeV2qbRTLCK5t7nUY48uOga/nAPE0
-   OeMOx4n0IHo29q+ZP0223DjhPB8JpEqWPCIvwbtRnBDGBBbanbNXjg2a3
-   A==;
-X-CSE-ConnectionGUID: KfkewKs7Tp6hii1SyBKeig==
-X-CSE-MsgGUID: yJHheMzcR1aIHxoZ19pfVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61643432"
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="61643432"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 13:46:41 -0700
-X-CSE-ConnectionGUID: Oorr7D4mQ8axOZMcRjWz3g==
-X-CSE-MsgGUID: bwaVP5p3S/ml/SocPhrzvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="178202189"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 30 Sep 2025 13:46:38 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v3hF6-0002Tr-2D;
-	Tue, 30 Sep 2025 20:46:36 +0000
-Date: Wed, 1 Oct 2025 04:46:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com
-Cc: oe-kbuild-all@lists.linux.dev, kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: Prevent written from exceeding sectors
-Message-ID: <202510010446.t1B7jtcS-lkp@intel.com>
-References: <tencent_68D8E912EEDECFF079226E202DFD6E70950A@qq.com>
+	s=arc-20240116; t=1759265190; c=relaxed/simple;
+	bh=Kmortzii7BRkRzF/zOgItRI+QUiENyUHqB+1Aua/hOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n/M3cr1HrY00TMBnGj3Hj14SIMTAy/EP+hnkWQpv0tVpZyq7hv0pQYbRC+GfEpW89aEWvRcSvfoWRUQl6OXL31PtH9VrlM4+aWEpgrLsQsOXrmBRz5Mw1sj5xOgh7x9bwUbGKn/F5sfF9CN8hVfRWjY7bUOmjXfnN1FW+9zVPR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=UWRGoznC; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1759265184; x=1759869984; i=deller@gmx.de;
+	bh=gQKflzixSnOtPXH+ct3ATJr3ZXa8C8OGFHZcF8wvCJ4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=UWRGoznCnD2QpDmle4NUk7OyzirSDf0GwOjayG+46PO+Ec6eA8b5vRRJxf+B7Nd6
+	 TjLB+55Yb5KG4SWOaGQs6ekNmdJGPB/qzJdGO3ZtrRWFC1RuxgCwvdvLMr2g7pC6b
+	 BfKTz82mBVpl/RuCUNiiB5tLj3tlSM90+zF/YfGVT6F/dpvytbbWGcrWBsZllVyLO
+	 d3lr/6o4Tv4ZMm6KeiozsVJQsWXwliO0eAIjjmxiKHXDr1qJqFv+izxwOeeU/kBK+
+	 9fA6la/g5pQbT3XcM79/Vz6BSUePkxQWtlChve4i+mopPgokwyqAZTIAIxvmoBnCh
+	 UclmAKPYCa0ChtrDSg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.50.4]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N7QxL-1uEPGf24Kb-012u59; Tue, 30
+ Sep 2025 22:46:24 +0200
+Message-ID: <cb00a5e2-6e50-4b01-bcd7-33eeae57ed63@gmx.de>
+Date: Tue, 30 Sep 2025 22:46:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_68D8E912EEDECFF079226E202DFD6E70950A@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: Add bounds checking in bit_putcs to fix
+ vmalloc-out-of-bounds
+To: Albin Babu Varghese <albinbabuvarghese20@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: syzbot+48b0652a95834717f190@syzkaller.appspotmail.com,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250927075010.119671-1-albinbabuvarghese20@gmail.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20250927075010.119671-1-albinbabuvarghese20@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:awbi77DUKol55j8Y4aOnxjExESRkJY8agfRap8I4YZaZzj+d6pW
+ S9MlvQo8keis4LzD7ICBAgEhNQmBFD5yJM0G1qHMT4Qt9hpDPK2Wh4Km/4JyH4kngEfkxlm
+ 8dtll9FdS+kAnJTRgnYsJtC2Mts3hS2vrXGWQcYscXfxq/ZHvBoW1B32q7QPR78sS3Cz4yF
+ YzDPDeP40Y41GvHUnh2hg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:17/sBWtJ44o=;2oYajW2AbNhLeSpFoWbqt0d81Bu
+ 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
+ GK7HVS0LCLoIYw==
 
-Hi Edward,
+On 9/27/25 09:50, Albin Babu Varghese wrote:
+> KASAN reports vmalloc-out-of-bounds writes in sys_imageblit during conso=
+le
+> resize operations. The crash happens when bit_putcs renders characters
+> outside the allocated framebuffer region.
+>=20
+> Call trace: vc_do_resize -> clear_selection -> invert_screen ->
+> do_update_region -> fbcon_putcs -> bit_putcs -> sys_imageblit
+>=20
+> The console resize changes dimensions but bit_putcs doesn't validate tha=
+t
+> the character positions fit within the framebuffer before rendering.
+> This causes writes past the allocated buffer in fb_imageblit functions.
+>=20
+> Fix by checking bounds before rendering:
+> - Return if dy + height > yres (would write past bottom)
+> - Break if dx + width > xres (would write past right edge)
+>=20
+> Reported-by: syzbot+48b0652a95834717f190@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D48b0652a95834717f190
+> Tested-by: syzbot+48b0652a95834717f190@syzkaller.appspotmail.com
+> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> ---
+>   drivers/video/fbdev/core/bitblit.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>=20
+> diff --git a/drivers/video/fbdev/core/bitblit.c b/drivers/video/fbdev/co=
+re/bitblit.c
+> index f9475c14f733..4c732284384a 100644
+> --- a/drivers/video/fbdev/core/bitblit.c
+> +++ b/drivers/video/fbdev/core/bitblit.c
+> @@ -160,6 +160,9 @@ static void bit_putcs(struct vc_data *vc, struct fb_=
+info *info,
+>   	image.height =3D vc->vc_font.height;
+>   	image.depth =3D 1;
+>  =20
+> +	if (image.dy + image.height > info->var.yres)
+> +		return;
+> +
 
-kernel test robot noticed the following build warnings:
+I wonder if the image.height value should be capped in this case,
+instead of not rendering any chars at all?
+Something like (untested!):
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on v6.17]
-[cannot apply to linus/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/bcachefs-Prevent-written-from-exceeding-sectors/20250930-132425
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/tencent_68D8E912EEDECFF079226E202DFD6E70950A%40qq.com
-patch subject: [PATCH] bcachefs: Prevent written from exceeding sectors
-config: sh-randconfig-001-20251001 (https://download.01.org/0day-ci/archive/20251001/202510010446.t1B7jtcS-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251001/202510010446.t1B7jtcS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510010446.t1B7jtcS-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   fs/bcachefs/btree_io.c: In function 'bch2_btree_node_read_done':
->> fs/bcachefs/btree_io.c:1094:22: warning: format '%lu' expects argument of type 'long unsigned int', but argument 13 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-    1094 |                      "wrong written %u, btree sectors is %lu",
-         |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1095 |                      ptr_written, btree_sectors(c));
-         |                                   ~~~~~~~~~~~~~~~~
-         |                                   |
-         |                                   size_t {aka unsigned int}
-   fs/bcachefs/btree_io.c:661:32: note: in definition of macro 'btree_err'
-     661 |                                msg, ##__VA_ARGS__);                     \
-         |                                ^~~
-   fs/bcachefs/btree_io.c:1090:9: note: in expansion of macro 'btree_err_on'
-    1090 |         btree_err_on(ptr_written >= btree_sectors(c),
-         |         ^~~~~~~~~~~~
-   fs/bcachefs/btree_io.c:1094:60: note: format string is defined here
-    1094 |                      "wrong written %u, btree sectors is %lu",
-         |                                                          ~~^
-         |                                                            |
-         |                                                            long unsigned int
-         |                                                          %u
++	if (image.dy >=3D info->var.yres)
++		return;
++       image.height =3D min(image.height, info->var.yres - image.dy);
 
 
-vim +1094 fs/bcachefs/btree_io.c
+>   	if (attribute) {
+>   		buf =3D kmalloc(cellsize, GFP_ATOMIC);
+>   		if (!buf)
+> @@ -173,6 +176,10 @@ static void bit_putcs(struct vc_data *vc, struct fb=
+_info *info,
+>   			cnt =3D count;
+>  =20
+>   		image.width =3D vc->vc_font.width * cnt;
+> +
+> +		if (image.dx + image.width > info->var.xres)
+> +			break;
+> +
 
-  1050	
-  1051	int bch2_btree_node_read_done(struct bch_fs *c, struct bch_dev *ca,
-  1052				      struct btree *b,
-  1053				      struct bch_io_failures *failed,
-  1054				      struct printbuf *err_msg)
-  1055	{
-  1056		struct btree_node_entry *bne;
-  1057		struct sort_iter *iter;
-  1058		struct btree_node *sorted;
-  1059		struct bkey_packed *k;
-  1060		struct bset *i;
-  1061		bool used_mempool, blacklisted;
-  1062		bool updated_range = b->key.k.type == KEY_TYPE_btree_ptr_v2 &&
-  1063			BTREE_PTR_RANGE_UPDATED(&bkey_i_to_btree_ptr_v2(&b->key)->v);
-  1064		unsigned ptr_written = btree_ptr_sectors_written(bkey_i_to_s_c(&b->key));
-  1065		u64 max_journal_seq = 0;
-  1066		struct printbuf buf = PRINTBUF;
-  1067		int ret = 0, write = READ;
-  1068		u64 start_time = local_clock();
-  1069	
-  1070		b->version_ondisk = U16_MAX;
-  1071		/* We might get called multiple times on read retry: */
-  1072		b->written = 0;
-  1073	
-  1074		iter = mempool_alloc(&c->fill_iter, GFP_NOFS);
-  1075		sort_iter_init(iter, b, (btree_blocks(c) + 1) * 2);
-  1076	
-  1077		if (bch2_meta_read_fault("btree"))
-  1078			btree_err(-BCH_ERR_btree_node_read_err_must_retry,
-  1079				  c, ca, b, NULL, NULL,
-  1080				  btree_node_fault_injected,
-  1081				  "dynamic fault");
-  1082	
-  1083		btree_err_on(le64_to_cpu(b->data->magic) != bset_magic(c),
-  1084			     -BCH_ERR_btree_node_read_err_must_retry,
-  1085			     c, ca, b, NULL, NULL,
-  1086			     btree_node_bad_magic,
-  1087			     "bad magic: want %llx, got %llx",
-  1088			     bset_magic(c), le64_to_cpu(b->data->magic));
-  1089	
-  1090		btree_err_on(ptr_written >= btree_sectors(c),
-  1091			     -BCH_ERR_btree_node_read_err_must_retry,
-  1092			     c, ca, b, NULL, NULL,
-  1093			     btree_node_bad_magic,
-> 1094			     "wrong written %u, btree sectors is %lu",
-  1095			     ptr_written, btree_sectors(c));
-  1096	
-  1097		if (b->key.k.type == KEY_TYPE_btree_ptr_v2) {
-  1098			struct bch_btree_ptr_v2 *bp =
-  1099				&bkey_i_to_btree_ptr_v2(&b->key)->v;
-  1100	
-  1101			bch2_bpos_to_text(&buf, b->data->min_key);
-  1102			prt_str(&buf, "-");
-  1103			bch2_bpos_to_text(&buf, b->data->max_key);
-  1104	
-  1105			btree_err_on(b->data->keys.seq != bp->seq,
-  1106				     -BCH_ERR_btree_node_read_err_must_retry,
-  1107				     c, ca, b, NULL, NULL,
-  1108				     btree_node_bad_seq,
-  1109				     "got wrong btree node: got\n%s",
-  1110				     (printbuf_reset(&buf),
-  1111				      bch2_btree_node_header_to_text(&buf, b->data),
-  1112				      buf.buf));
-  1113		} else {
-  1114			btree_err_on(!b->data->keys.seq,
-  1115				     -BCH_ERR_btree_node_read_err_must_retry,
-  1116				     c, ca, b, NULL, NULL,
-  1117				     btree_node_bad_seq,
-  1118				     "bad btree header: seq 0\n%s",
-  1119				     (printbuf_reset(&buf),
-  1120				      bch2_btree_node_header_to_text(&buf, b->data),
-  1121				      buf.buf));
-  1122		}
-  1123	
-  1124		while (b->written < (ptr_written ?: btree_sectors(c))) {
-  1125			unsigned sectors;
-  1126			bool first = !b->written;
-  1127	
-  1128			if (first) {
-  1129				bne = NULL;
-  1130				i = &b->data->keys;
-  1131			} else {
-  1132				bne = write_block(b);
-  1133				i = &bne->keys;
-  1134	
-  1135				if (i->seq != b->data->keys.seq)
-  1136					break;
-  1137			}
-  1138	
-  1139			struct nonce nonce = btree_nonce(i, b->written << 9);
-  1140			bool good_csum_type = bch2_checksum_type_valid(c, BSET_CSUM_TYPE(i));
-  1141	
-  1142			btree_err_on(!good_csum_type,
-  1143				     bch2_csum_type_is_encryption(BSET_CSUM_TYPE(i))
-  1144				     ? -BCH_ERR_btree_node_read_err_must_retry
-  1145				     : -BCH_ERR_btree_node_read_err_want_retry,
-  1146				     c, ca, b, i, NULL,
-  1147				     bset_unknown_csum,
-  1148				     "unknown checksum type %llu", BSET_CSUM_TYPE(i));
-  1149	
-  1150			if (first) {
-  1151				sectors = vstruct_sectors(b->data, c->block_bits);
-  1152				if (btree_err_on(b->written + sectors > (ptr_written ?: btree_sectors(c)),
-  1153						 -BCH_ERR_btree_node_read_err_fixable,
-  1154						 c, ca, b, i, NULL,
-  1155						 bset_past_end_of_btree_node,
-  1156						 "bset past end of btree node (offset %u len %u but written %zu)",
-  1157						 b->written, sectors, ptr_written ?: btree_sectors(c)))
-  1158					i->u64s = 0;
-  1159				if (good_csum_type) {
-  1160					struct bch_csum csum = csum_vstruct(c, BSET_CSUM_TYPE(i), nonce, b->data);
-  1161					bool csum_bad = bch2_crc_cmp(b->data->csum, csum);
-  1162					if (csum_bad)
-  1163						bch2_io_error(ca, BCH_MEMBER_ERROR_checksum);
-  1164	
-  1165					btree_err_on(csum_bad,
-  1166						     -BCH_ERR_btree_node_read_err_want_retry,
-  1167						     c, ca, b, i, NULL,
-  1168						     bset_bad_csum,
-  1169						     "%s",
-  1170						     (printbuf_reset(&buf),
-  1171						      bch2_csum_err_msg(&buf, BSET_CSUM_TYPE(i), b->data->csum, csum),
-  1172						      buf.buf));
-  1173	
-  1174					ret = bset_encrypt(c, i, b->written << 9);
-  1175					if (bch2_fs_fatal_err_on(ret, c,
-  1176								 "decrypting btree node: %s", bch2_err_str(ret)))
-  1177						goto fsck_err;
-  1178				}
-  1179	
-  1180				btree_err_on(btree_node_type_is_extents(btree_node_type(b)) &&
-  1181					     !BTREE_NODE_NEW_EXTENT_OVERWRITE(b->data),
-  1182					     -BCH_ERR_btree_node_read_err_incompatible,
-  1183					     c, NULL, b, NULL, NULL,
-  1184					     btree_node_unsupported_version,
-  1185					     "btree node does not have NEW_EXTENT_OVERWRITE set");
-  1186			} else {
-  1187				sectors = vstruct_sectors(bne, c->block_bits);
-  1188				if (btree_err_on(b->written + sectors > (ptr_written ?: btree_sectors(c)),
-  1189						 -BCH_ERR_btree_node_read_err_fixable,
-  1190						 c, ca, b, i, NULL,
-  1191						 bset_past_end_of_btree_node,
-  1192						 "bset past end of btree node (offset %u len %u but written %zu)",
-  1193						 b->written, sectors, ptr_written ?: btree_sectors(c)))
-  1194					i->u64s = 0;
-  1195				if (good_csum_type) {
-  1196					struct bch_csum csum = csum_vstruct(c, BSET_CSUM_TYPE(i), nonce, bne);
-  1197					bool csum_bad = bch2_crc_cmp(bne->csum, csum);
-  1198					if (ca && csum_bad)
-  1199						bch2_io_error(ca, BCH_MEMBER_ERROR_checksum);
-  1200	
-  1201					btree_err_on(csum_bad,
-  1202						     -BCH_ERR_btree_node_read_err_want_retry,
-  1203						     c, ca, b, i, NULL,
-  1204						     bset_bad_csum,
-  1205						     "%s",
-  1206						     (printbuf_reset(&buf),
-  1207						      bch2_csum_err_msg(&buf, BSET_CSUM_TYPE(i), bne->csum, csum),
-  1208						      buf.buf));
-  1209	
-  1210					ret = bset_encrypt(c, i, b->written << 9);
-  1211					if (bch2_fs_fatal_err_on(ret, c,
-  1212							"decrypting btree node: %s", bch2_err_str(ret)))
-  1213						goto fsck_err;
-  1214				}
-  1215			}
-  1216	
-  1217			b->version_ondisk = min(b->version_ondisk,
-  1218						le16_to_cpu(i->version));
-  1219	
-  1220			ret = validate_bset(c, ca, b, i, b->written, READ, failed, err_msg);
-  1221			if (ret)
-  1222				goto fsck_err;
-  1223	
-  1224			if (!b->written)
-  1225				btree_node_set_format(b, b->data->format);
-  1226	
-  1227			ret = validate_bset_keys(c, b, i, READ, failed, err_msg);
-  1228			if (ret)
-  1229				goto fsck_err;
-  1230	
-  1231			SET_BSET_BIG_ENDIAN(i, CPU_BIG_ENDIAN);
-  1232	
-  1233			blacklisted = bch2_journal_seq_is_blacklisted(c,
-  1234						le64_to_cpu(i->journal_seq),
-  1235						true);
-  1236	
-  1237			btree_err_on(blacklisted && first,
-  1238				     -BCH_ERR_btree_node_read_err_fixable,
-  1239				     c, ca, b, i, NULL,
-  1240				     bset_blacklisted_journal_seq,
-  1241				     "first btree node bset has blacklisted journal seq (%llu)",
-  1242				     le64_to_cpu(i->journal_seq));
-  1243	
-  1244			btree_err_on(blacklisted && ptr_written,
-  1245				     -BCH_ERR_btree_node_read_err_fixable,
-  1246				     c, ca, b, i, NULL,
-  1247				     first_bset_blacklisted_journal_seq,
-  1248				     "found blacklisted bset (journal seq %llu) in btree node at offset %u-%u/%u",
-  1249				     le64_to_cpu(i->journal_seq),
-  1250				     b->written, b->written + sectors, ptr_written);
-  1251	
-  1252			b->written = min(b->written + sectors, btree_sectors(c));
-  1253	
-  1254			if (blacklisted && !first)
-  1255				continue;
-  1256	
-  1257			sort_iter_add(iter,
-  1258				      vstruct_idx(i, 0),
-  1259				      vstruct_last(i));
-  1260	
-  1261			max_journal_seq = max(max_journal_seq, le64_to_cpu(i->journal_seq));
-  1262		}
-  1263	
-  1264		if (ptr_written) {
-  1265			btree_err_on(b->written < ptr_written,
-  1266				     -BCH_ERR_btree_node_read_err_want_retry,
-  1267				     c, ca, b, NULL, NULL,
-  1268				     btree_node_data_missing,
-  1269				     "btree node data missing: expected %u sectors, found %u",
-  1270				     ptr_written, b->written);
-  1271		} else {
-  1272			for (bne = write_block(b);
-  1273			     bset_byte_offset(b, bne) < btree_buf_bytes(b);
-  1274			     bne = (void *) bne + block_bytes(c))
-  1275				btree_err_on(bne->keys.seq == b->data->keys.seq &&
-  1276					     !bch2_journal_seq_is_blacklisted(c,
-  1277									      le64_to_cpu(bne->keys.journal_seq),
-  1278									      true),
-  1279					     -BCH_ERR_btree_node_read_err_want_retry,
-  1280					     c, ca, b, NULL, NULL,
-  1281					     btree_node_bset_after_end,
-  1282					     "found bset signature after last bset");
-  1283		}
-  1284	
-  1285		sorted = btree_bounce_alloc(c, btree_buf_bytes(b), &used_mempool);
-  1286		sorted->keys.u64s = 0;
-  1287	
-  1288		b->nr = bch2_key_sort_fix_overlapping(c, &sorted->keys, iter);
-  1289		memset((uint8_t *)(sorted + 1) + b->nr.live_u64s * sizeof(u64), 0,
-  1290				btree_buf_bytes(b) -
-  1291				sizeof(struct btree_node) -
-  1292				b->nr.live_u64s * sizeof(u64));
-  1293	
-  1294		b->data->keys.u64s = sorted->keys.u64s;
-  1295		*sorted = *b->data;
-  1296		swap(sorted, b->data);
-  1297		set_btree_bset(b, b->set, &b->data->keys);
-  1298		b->nsets = 1;
-  1299		b->data->keys.journal_seq = cpu_to_le64(max_journal_seq);
-  1300	
-  1301		BUG_ON(b->nr.live_u64s != le16_to_cpu(b->data->keys.u64s));
-  1302	
-  1303		btree_bounce_free(c, btree_buf_bytes(b), used_mempool, sorted);
-  1304	
-  1305		i = &b->data->keys;
-  1306		for (k = i->start; k != vstruct_last(i);) {
-  1307			struct bkey tmp;
-  1308			struct bkey_s u = __bkey_disassemble(b, k, &tmp);
-  1309	
-  1310			ret = btree_node_bkey_val_validate(c, b, u.s_c, READ);
-  1311			if (ret == -BCH_ERR_fsck_delete_bkey ||
-  1312			    (static_branch_unlikely(&bch2_inject_invalid_keys) &&
-  1313			     !bversion_cmp(u.k->bversion, MAX_VERSION))) {
-  1314				btree_keys_account_key_drop(&b->nr, 0, k);
-  1315	
-  1316				i->u64s = cpu_to_le16(le16_to_cpu(i->u64s) - k->u64s);
-  1317				memmove_u64s_down(k, bkey_p_next(k),
-  1318						  (u64 *) vstruct_end(i) - (u64 *) k);
-  1319				set_btree_bset_end(b, b->set);
-  1320				set_btree_node_need_rewrite(b);
-  1321				set_btree_node_need_rewrite_error(b);
-  1322				continue;
-  1323			}
-  1324			if (ret)
-  1325				goto fsck_err;
-  1326	
-  1327			if (u.k->type == KEY_TYPE_btree_ptr_v2) {
-  1328				struct bkey_s_btree_ptr_v2 bp = bkey_s_to_btree_ptr_v2(u);
-  1329	
-  1330				bp.v->mem_ptr = 0;
-  1331			}
-  1332	
-  1333			k = bkey_p_next(k);
-  1334		}
-  1335	
-  1336		bch2_bset_build_aux_tree(b, b->set, false);
-  1337	
-  1338		set_needs_whiteout(btree_bset_first(b), true);
-  1339	
-  1340		btree_node_reset_sib_u64s(b);
-  1341	
-  1342		if (updated_range)
-  1343			bch2_btree_node_drop_keys_outside_node(b);
-  1344	
-  1345		/*
-  1346		 * XXX:
-  1347		 *
-  1348		 * We deadlock if too many btree updates require node rewrites while
-  1349		 * we're still in journal replay.
-  1350		 *
-  1351		 * This is because btree node rewrites generate more updates for the
-  1352		 * interior updates (alloc, backpointers), and if those updates touch
-  1353		 * new nodes and generate more rewrites - well, you see the problem.
-  1354		 *
-  1355		 * The biggest cause is that we don't use the btree write buffer (for
-  1356		 * the backpointer updates - this needs some real thought on locking in
-  1357		 * order to fix.
-  1358		 *
-  1359		 * The problem with this workaround (not doing the rewrite for degraded
-  1360		 * nodes in journal replay) is that those degraded nodes persist, and we
-  1361		 * don't want that (this is a real bug when a btree node write completes
-  1362		 * with fewer replicas than we wanted and leaves a degraded node due to
-  1363		 * device _removal_, i.e. the device went away mid write).
-  1364		 *
-  1365		 * It's less of a bug here, but still a problem because we don't yet
-  1366		 * have a way of tracking degraded data - we another index (all
-  1367		 * extents/btree nodes, by replicas entry) in order to fix properly
-  1368		 * (re-replicate degraded data at the earliest possible time).
-  1369		 */
-  1370		if (c->recovery.passes_complete & BIT_ULL(BCH_RECOVERY_PASS_journal_replay)) {
-  1371			scoped_guard(rcu)
-  1372				bkey_for_each_ptr(bch2_bkey_ptrs(bkey_i_to_s(&b->key)), ptr) {
-  1373					struct bch_dev *ca2 = bch2_dev_rcu(c, ptr->dev);
-  1374	
-  1375					if (!ca2 || ca2->mi.state != BCH_MEMBER_STATE_rw) {
-  1376						set_btree_node_need_rewrite(b);
-  1377						set_btree_node_need_rewrite_degraded(b);
-  1378					}
-  1379				}
-  1380		}
-  1381	
-  1382		if (!ptr_written) {
-  1383			set_btree_node_need_rewrite(b);
-  1384			set_btree_node_need_rewrite_ptr_written_zero(b);
-  1385		}
-  1386	fsck_err:
-  1387		mempool_free(iter, &c->fill_iter);
-  1388		printbuf_exit(&buf);
-  1389		bch2_time_stats_update(&c->times[BCH_TIME_btree_node_read_done], start_time);
-  1390		return ret;
-  1391	}
-  1392	
+same here.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+>   		pitch =3D DIV_ROUND_UP(image.width, 8) + scan_align;
+>   		pitch &=3D ~scan_align;
+>   		size =3D pitch * image.height + buf_align;
+
 
