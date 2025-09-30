@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-837002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEE6BAB135
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2182BAB13B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFA319247B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EA411924766
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDBB261573;
-	Tue, 30 Sep 2025 02:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5B723FC54;
+	Tue, 30 Sep 2025 02:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3vWiMgM"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKJOEc+9"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B129825A2A7
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C96261B96
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759200340; cv=none; b=X72vxORbruXnCwAsZfOaG9kUGH/Br19bJ3cBXC+m1tB6QMZN/mctuGZxst0pr5AvAo7PKamJ4EaqlUT1upp+zsEdmkFMrPrOFBjdBWMMFpc6oqvrxzWy2LWHKlnptGgWcgQf3m+3MTqYHrrfWksTJq1wf1a9Wp1dY52vEzAODcI=
+	t=1759200344; cv=none; b=EwQAHbcJ+qhcjL2xKiYup11qjmItP4lQBrLfCLOwHMFWU6+zbAbmRp4xm4m5K4n9AYC8AXsPTQMTcfvzHBiT/6NIcWc22mIJPG6iGH940C/ext7FWKKO3Fzt3ZwgB8pIRYV1k2fOWGyFQ254IdsyB5Sv7f2bi4ujCjD1Ju9gCJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759200340; c=relaxed/simple;
-	bh=jb47W2mefivkhEZpeuyQPhjnJkRHRCJ2NscvV1apXQg=;
+	s=arc-20240116; t=1759200344; c=relaxed/simple;
+	bh=zgbvGJBSx4YBKNkqO/qzz/La9XfnZ3vAatfFaQMoL7I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sa4kumOH79u50Yf+hcvZgqtSlrJAxtVIz8LsqxdYYvwzZoVIVUtR4tpLuI/GHcdp0agmhTn3tjZIPjTkKuaU7K06shctz3mnH+dl6ETMaBqFg8pum8KIicRmy4aLxBHmBXfnZKF/zmnXQFXCNchUhtmvzOaw1N4dmdGYSmTEPFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3vWiMgM; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=kFQttb76QmPi9gkI+VJHR5oXM/piKeT7jTeQOSuwS/ABwMFbyi4VKvnhNKl5mNLPqiHaYQkSWAluHqbAPJWwxcXfKqnG/A5Cx+oWjz+Cdz7AouI+EjobNWD0ZzGkXmjD1iQ/3zndhcBJlOwdmuShweJcKjj0Oru+Ltpp/RNiAPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKJOEc+9; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2681660d604so51083125ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:45:37 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-781997d195aso1892826b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:45:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759200337; x=1759805137; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759200341; x=1759805141; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kFRia/GHfKKxxNt0IUc2kN+EVm0fmr2Lz8hq8oGCXGU=;
-        b=K3vWiMgMKtLTuKpqcWv34nrk88DQfOtkH/XpAg5Sxk0gw6iENOjF/zjJ6oOBnaIl4Y
-         eM4nPaLnOw6Nr8aTYlHFq7s0F0fWz6AeqLcDT2+SVNrurs2aUA81kZL6xJVBkMp5tWsS
-         h8kNgIyZllzdkGgbTMd7wlbZYlfSwH5aFnWrOo9zUpMFYk1oeENkPlKDiGbBX4sOE5rj
-         V1MQlB+TSnc1NYhTzYSYu+W3jocbehr7/UF9ueW6Ds4UcO6KZTGIOROz+y31FUpQHtbA
-         etYWOQ6m80S2vtvT6199cLxwnVz5HTi2atQrANsbmtmvK/XeJgplHY75s4UuxmTj7jdd
-         wHHQ==
+        bh=UmaGbmiuxIsK0xKTEWJ/f7gfwC2bw8p0SOLh4b9Z4FY=;
+        b=VKJOEc+94AKnpJiVOpWnQ6DKSsWX1R1XbyHo5/r/AG6aDGAWk9wPLSshoMM+livdS+
+         MyEuw5bGfLyFLEN+CymB1AYeyMGWWzvzslOuckXZNL+LkSjQP5bzS2nXeQjKnytOTkYn
+         I3znRL92dI+MXIBc0Fotj3NpYAr6hAMRbuIxDzLO9p6jaZ0voXC2/ADIbtgpiE45AqYk
+         6KiAb/IiOHKoiHWF38rhEnx8s7VaaJkf9vC+I5pJNvNIGogQNziLULRwmmnUmEFUMU9c
+         FfGiRCJb+mhy38xk1bCLHPsMgriXv6C+zhRwB5OmgZb8gtGClZpvwOrAEAqybrDgc9kW
+         ouvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759200337; x=1759805137;
+        d=1e100.net; s=20230601; t=1759200341; x=1759805141;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kFRia/GHfKKxxNt0IUc2kN+EVm0fmr2Lz8hq8oGCXGU=;
-        b=LWnl74bKKLbFXJ0jku8xhLI1ssitJ1S36ekn4wVKN1M/JT2JVeLYR1WKQMdhnyRlgd
-         h2HmSTd3X/RpwoMuoVYIEsvQzgX3YZLFVIkP7WfUVyzD1udmjeyw/R4wHN823ppj14rx
-         hi0ameOuHXdgUNs00mofs0FYMn42mqH/9pjD3KiLSjfTI9uxZbT48zpKoqdj/weZyKrL
-         4OB7ft2d/68M7hjyBmFLnGzv1hmvY1JOd3Nd0DYBr8ioJtzE4/WDQlTUqS2GePwe8H30
-         +azi/tJUsTZK2ctEZv3x3Iio6aCLgxl3E+iqL/vNKg6TMU5cVzT1r56N3J9uqhGjeJZd
-         do8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVAg01gy3vvrr62EIPuK50zqZZBNAbSyMtYseuSqPlx8dV9/KfjVx3W0Bd8N2+nFuRE35TBvRJkveMeOFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdz32HhsgE1vR4ekX2qT0sPMfPna+NwnEjI7fjps/w/wvjecVT
-	aNtW6VfZJJ31sh3SzeAbdc/xTm8pYX99XCdmWXPSF9HJskslnaE8tTAa
-X-Gm-Gg: ASbGnctwQiklchIF13aWeTcjmRj1K86qSoI6/gpfR8S3fNv+Snac2rte7eCVrt2wtxj
-	bqE/4RUOZ1cXh0MOhpY1TyiPvggHSl3vSeMZJ9WJzZEfBnkMv4MoIOp09woVwFp6BEYKBHfNE4h
-	FIN7mbm7wteh4Qy/bbtvpAAORyAmeMgaqe7soB2SW8PoctQELGKH106Msd0BZJMXKEuH2816XRR
-	m5ZWRjA8OZFl79gSMaL5OTRNjZJvtAYh5Ibk+Wgir49snoiN14sCLZL0Pde5uM+T+qOJH5f/M4K
-	LjSILSy4BJXhtbqufGKbEjYFCUOrZSmrYjvAXAhy5U4S+glT54NmGZxrRGbALIjkZaN4hEKrYjj
-	zKQmYcT3tV3mIc6TvE7YTGoEojMcnzXCi+rXszpwc5cQ+2Do0ACAydFk3cPVN2dxBAs47ebfHv0
-	jL
-X-Google-Smtp-Source: AGHT+IHKpBUnWq+gpU5Sy4KTGKE+VZZI2OvvUEv1k1IBPSw7fn6QhmyAtdZNGDjD1lnTAGMCtuFmNA==
-X-Received: by 2002:a17:903:2442:b0:250:999f:31c6 with SMTP id d9443c01a7336-27ed4a3165amr204393375ad.32.1759200336891;
-        Mon, 29 Sep 2025 19:45:36 -0700 (PDT)
+        bh=UmaGbmiuxIsK0xKTEWJ/f7gfwC2bw8p0SOLh4b9Z4FY=;
+        b=X4Fy3fpMQKRqmmBNJFFr/v+4T5KZmiYVCYdRnWDutDtsLlRN8/g7Deub7yhkZUeYtq
+         o7Qb449fws6CzL+AFctvrSh4vPaLtxBY2N/SkjniHUcaREmhST9+sni0pD5ckVQuoIDm
+         8fQY0t6PFZw4yt2EkXanFnL1YboEmnXPbaxqpQJ72CJbgEIOpHambr9r+i5u0jPrHE/r
+         S+xiGci2Tw5zwEu6OjRMIyungWwJirzRLJKM1cNPqpbd7sv7g8OgKzxmJx9tUcyLm73x
+         YZD8n9v/vujcQDCOXiAIO1IdDTGadf0kBYWsF6JCsM7DwH35KruCAIBBar0Ad2L+RhgL
+         Tx4A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0gBly61pM6mUsDt+jIdqge6sNXBEtHtvuoIvZXEJwyPb8CdM2E3grGGUIBdlZApfzvEFg4P1uQlhPIlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4o7VOtwCz0VMn7yS6CHxI/krM51QuCgwokNxOlV2M5YOapvT2
+	0f1x3SMt4w3/uAF9uHl5yMk1t13SqY0FAuYCmKTJXPOPWg9A7pOxn6nP
+X-Gm-Gg: ASbGncuxVOJeTSn1KjfELmRxNOdCY1X219y6+1uefJ5FRCEd5/SxLMNPd8lkk5SCcnM
+	yeYq+jyuoQ7ZomZyoUGzIYTgu31drza6odfwq+lzlccZFvxQ4AywO4fJcr7ek/LkKJiQEIS7a8j
+	205Rkx3SUhojS/euKqTZKT+6igz1sJuGQPNAm87RGhAD078opF6c/1cxDzvak+tfnHuV+MPnSPM
+	VZJOs4o31YHZWfqFICh1EYC/M7CT9eUGXiZ0LUyVHvudwh/TM/ubghADVipRl8qRiHUPv4Smmcn
+	msPeOJ52YeUk84DCnDYEqr3yXjLZPkIIuk2s/lESn1MYBjCZSM6dETmqoITw5Qe2goSMnWIrFGn
+	LC0Sb6XNy8H5WluVVtS8bPOzL7BGHJuQWUYg9N7+HwoQHzqCKof76hzZySIdpZUGdOauQxdcfvG
+	4A
+X-Google-Smtp-Source: AGHT+IE0ZzT2Ls3FLJQKvDsDE35NvUvpfAF/CKszp2PRAknfZulRv/lUTsOjo2MTaS5CdAlTIrrq4A==
+X-Received: by 2002:a05:6a00:26ed:b0:781:2ba:ef14 with SMTP id d2e1a72fcca58-78102baf1e4mr14490364b3a.25.1759200341230;
+        Mon, 29 Sep 2025 19:45:41 -0700 (PDT)
 Received: from localhost ([45.142.167.196])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c55bf378sm12519152a12.50.2025.09.29.19.45.36
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b64cc6sm12378142b3a.71.2025.09.29.19.45.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 19:45:36 -0700 (PDT)
+        Mon, 29 Sep 2025 19:45:40 -0700 (PDT)
 From: Jinchao Wang <wangjinchao600@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
@@ -139,9 +139,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-trace-kernel@vger.kernel.org
 Cc: Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH v6 15/23] mm/ksw: manage probe and HWBP lifecycle via procfs
-Date: Tue, 30 Sep 2025 10:43:36 +0800
-Message-ID: <20250930024402.1043776-16-wangjinchao600@gmail.com>
+Subject: [PATCH v6 16/23] mm/ksw: add self-debug helpers
+Date: Tue, 30 Sep 2025 10:43:37 +0800
+Message-ID: <20250930024402.1043776-17-wangjinchao600@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250930024402.1043776-1-wangjinchao600@gmail.com>
 References: <20250930024402.1043776-1-wangjinchao600@gmail.com>
@@ -153,106 +153,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow dynamic enabling/disabling of KStackWatch through user input of proc.
-With this patch, the entire system becomes functional.
+Provide two debug helpers:
+
+- ksw_watch_show(): print the current watch target address and length.
+- ksw_watch_fire(): intentionally trigger the watchpoint immediately
+  by writing to the watched address, useful for testing HWBP behavior.
 
 Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- mm/kstackwatch/kernel.c | 60 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 2 deletions(-)
+ mm/kstackwatch/kstackwatch.h |  2 ++
+ mm/kstackwatch/watch.c       | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/mm/kstackwatch/kernel.c b/mm/kstackwatch/kernel.c
-index 898ebb2966fe..57628bace365 100644
---- a/mm/kstackwatch/kernel.c
-+++ b/mm/kstackwatch/kernel.c
-@@ -14,6 +14,43 @@ static struct ksw_config *ksw_config;
- static struct dentry *dbgfs_config;
- static struct dentry *dbgfs_dir;
+diff --git a/mm/kstackwatch/kstackwatch.h b/mm/kstackwatch/kstackwatch.h
+index 4045890e5652..528001534047 100644
+--- a/mm/kstackwatch/kstackwatch.h
++++ b/mm/kstackwatch/kstackwatch.h
+@@ -52,5 +52,7 @@ void ksw_watch_exit(void);
+ int ksw_watch_get(struct ksw_watchpoint **out_wp);
+ int ksw_watch_on(struct ksw_watchpoint *wp, ulong watch_addr, u16 watch_len);
+ int ksw_watch_off(struct ksw_watchpoint *wp);
++void ksw_watch_show(void);
++void ksw_watch_fire(void);
  
-+static bool watching_active;
-+
-+static int ksw_start_watching(void)
-+{
-+	int ret;
-+
-+	/*
-+	 * Watch init will preallocate the HWBP,
-+	 * so it must happen before stack init
-+	 */
-+	ret = ksw_watch_init();
-+	if (ret) {
-+		pr_err("ksw_watch_init ret: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = ksw_stack_init();
-+	if (ret) {
-+		pr_err("ksw_stack_init ret: %d\n", ret);
-+		ksw_watch_exit();
-+		return ret;
-+	}
-+	watching_active = true;
-+
-+	pr_info("start watching: %s\n", ksw_config->user_input);
-+	return 0;
-+}
-+
-+static void ksw_stop_watching(void)
-+{
-+	ksw_stack_exit();
-+	ksw_watch_exit();
-+	watching_active = false;
-+
-+	pr_info("stop watching: %s\n", ksw_config->user_input);
-+}
-+
- struct param_map {
- 	const char *name;       /* long name */
- 	const char *short_name; /* short name (2 letters) */
-@@ -117,8 +154,18 @@ static int ksw_parse_config(char *buf, struct ksw_config *config)
- static ssize_t ksw_dbgfs_read(struct file *file, char __user *buf, size_t count,
- 			      loff_t *ppos)
+ #endif /* _KSTACKWATCH_H */
+diff --git a/mm/kstackwatch/watch.c b/mm/kstackwatch/watch.c
+index f32b1e46168c..9837d6873d92 100644
+--- a/mm/kstackwatch/watch.c
++++ b/mm/kstackwatch/watch.c
+@@ -269,3 +269,37 @@ void ksw_watch_exit(void)
  {
--	return simple_read_from_buffer(buf, count, ppos, ksw_config->user_input,
--		ksw_config->user_input ? strlen(ksw_config->user_input) : 0);
-+	const char *out;
-+	size_t len;
+ 	ksw_watch_free();
+ }
 +
-+	if (watching_active && ksw_config->user_input) {
-+		out = ksw_config->user_input;
-+		len = strlen(out);
-+	} else {
-+		out = "not watching\n";
-+		len = strlen(out);
++/* self debug function */
++void ksw_watch_show(void)
++{
++	struct ksw_watchpoint *wp = current->ksw_ctx.wp;
++
++	if (!wp) {
++		pr_info("nothing to show\n");
++		return;
 +	}
 +
-+	return simple_read_from_buffer(buf, count, ppos, out, len);
- }
- 
- static ssize_t ksw_dbgfs_write(struct file *file, const char __user *buffer,
-@@ -133,6 +180,9 @@ static ssize_t ksw_dbgfs_write(struct file *file, const char __user *buffer,
- 	if (copy_from_user(input, buffer, count))
- 		return -EFAULT;
- 
-+	if (watching_active)
-+		ksw_stop_watching();
++	pr_info("watch target bp_addr: 0x%llx len:%llu\n", wp->attr.bp_addr,
++		wp->attr.bp_len);
++}
++EXPORT_SYMBOL_GPL(ksw_watch_show);
 +
- 	input[count] = '\0';
- 	strim(input);
- 
-@@ -147,6 +197,12 @@ static ssize_t ksw_dbgfs_write(struct file *file, const char __user *buffer,
- 		return ret;
- 	}
- 
-+	ret = ksw_start_watching();
-+	if (ret) {
-+		pr_err("Failed to start watching with %d\n", ret);
-+		return ret;
++/* self debug function */
++void ksw_watch_fire(void)
++{
++	struct ksw_watchpoint *wp;
++	char *ptr;
++
++	wp = current->ksw_ctx.wp;
++
++	if (!wp) {
++		pr_info("nothing to fire\n");
++		return;
 +	}
 +
- 	return count;
- }
- 
++	ptr = (char *)wp->attr.bp_addr;
++	pr_warn("watch triggered immediately\n");
++	*ptr = 0x42; // This should trigger immediately for any bp_len
++}
++EXPORT_SYMBOL_GPL(ksw_watch_fire);
 -- 
 2.43.0
 
