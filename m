@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-838144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBC4BAE8AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:29:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A854BAE8B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249B41782DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A3418964FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E287267F58;
-	Tue, 30 Sep 2025 20:29:35 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2E324C06A;
+	Tue, 30 Sep 2025 20:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o5LOIFdV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1083C1D130E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5658E241663
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759264174; cv=none; b=NaNDJvgWZsSQPo9f1dZkCDUNa/BM/V3oCFFVB9EWig4ysMvqQAP43TVO0BqW4EQyWbAPHE+YToKi1E7hDGl5mv4xqJuu7tlNn93MqP2iYtN+mRyLVRsaYyTcUGUBMXKmICX1fB/cPetD1jCow/Mrgk+zCOTv1NwZ2xGkFPi8170=
+	t=1759264182; cv=none; b=bhSrXozeOmyzvvqR6ipVqxpinBYEKnn2OqcLzrp8xRvp7o3muXb1ja+ehN63TeYs0ehaU1KyVwJreGvHIjcjz6FwkSI/FC+09eoz2ihrejjgmNU8TxNUXvV6MmDop46xdsIrc/aBrb9Zd7YxqBRmpH/FHZ/2C8DbvxDU7Wz7vqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759264174; c=relaxed/simple;
-	bh=JWDPpUdmrq8kFuCinsRqhhI6vHfCxCFas1mQMZ+q478=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nZKgeq7AsmVBLha1KNjh9ZtSXwkJ2OyX9DUnPDm2IVLsgnCPaSKkt5N943vTehjQGDR66fkAmt/quHpWKDUFjS2ZlYHIwMi0Vxec5auvgFMVpUJjwuXZVNClwximXpibKNFN4sZ0xoO/D/grdYcqp2DnI1OjxEGJ8nKIIG3Mf9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-427621906beso145996245ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:29:32 -0700 (PDT)
+	s=arc-20240116; t=1759264182; c=relaxed/simple;
+	bh=MyyNOT6Z8gPlEd2B1CWD4Q7bqvrx7M4Qx6OSp4ALGqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8xtEXCnyMXW9R9ORn2eFIoCRip9o8KE33bcZQ+wg8bv5j0fo/F3jBpptFoCwjoOI6l1c6diNQE6iGw2gJGCc0zQ3vUHWGXrhcoQZEccbKMygrnsZjyo+JcUunx90roj9g+ItZ4YVGGTYmoVXJJ2ucX7EG485CorvBHO4Iejp80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o5LOIFdV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UChCfQ030563
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=R5sl3ZNZwJRriIGWPQB/a/Ct
+	xB1WoaSGeN5QScEiQ7Q=; b=o5LOIFdVBZ//v/2E1TnvIcqUjzye/Ka5ijY8xeC0
+	d9YkC/9/1wv4SoPLu4fEQ0ZW1lZln041JrDY8SwcqEguun2K84mIpjGkPm7JkD7v
+	zjCVofucFtUpNFoX33CWX21J4ED2mYM8MHunzDINF63/Rbi8Sz1Z/letyLi34kQL
+	t6dSAeW3005RM/Q9mur/Fg4XuhGi6fa1fTXYw4ygq/8axfnxp+9bTI6CnKXIOnQx
+	Wnk8uIyreZgUPFfe9wgn4hsqEbVhMbJSqUBcHtLj4/8EdPE12sPGoqHGfRFtqKR4
+	EDhz5ZYVUf46AOpEPYCN7YccyVCzqeVUb6SP7Ni0pR4QbQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8pdj473-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:40 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d6a41b5b66so164046931cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:29:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759264172; x=1759868972;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PwZGXRreT4dh1LQQqf850vLqtz1BFdUD5wU0nKR0gU0=;
-        b=dWPS3egNLjWTwOc3PD4LUd4cUFkXCLiMALwRlmFcnLr+4Gqg5llEfpCmPkbjT6P8Ir
-         DqudMNkF9Q7cJwHOOcryMYweArad+/l1C5J/00eZZStWyew2W+0r/2ao2J0DZeNOkE3b
-         fYhz+RXUjufSnm4fHfTTIS6RQcLGG9SUt1IDOWpZra4tnCZHrhPQNe36P+GRQGsPyVmK
-         9dA4gP8c+Zgit9eHQNOUc3PZrcClw90xNz5PrZRkPKfBEeBlkfbTYBLhRstJejmPQBza
-         GDwrHPkIHF1ibUkUn8qnHNCPe/RW/MgFu76Fb+opZ/cGrXZpUW3BsJxsnXoU5cZllb5W
-         H4hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVKJ3rckj3UpO8pYnNPS6juX1ucIFLNlHx/c5AU0jekQWnwZ3RVYhXB2hYf7p1mOan6EHsqhLNqCNF6ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXeMtJ2SJVu6/iiIxzbwd7K66VTBC2FNDFFLNvQiDDrV09kWeR
-	sOahNcVCqs5NWL+tjXzQdZGxLfhI2U1gsDeTTJyqbim9YwYUG9wllC4OpTjvw5MxpAq1PyPESvo
-	aVu8RZEuN+YNqiN9hmyc/yd7Z27bZ/h6RU9tqKdR3Nf+mw2dBAy9ryqB1bgQ=
-X-Google-Smtp-Source: AGHT+IH0G7HvVsaEFQQ3avovgw55Cppirm/bVwCVV7M9ntN5teSIZwn4rXKTPEQBBjrreziX+bY2D4val9odavdG6PoGqniJzhQ/
+        d=1e100.net; s=20230601; t=1759264179; x=1759868979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R5sl3ZNZwJRriIGWPQB/a/CtxB1WoaSGeN5QScEiQ7Q=;
+        b=w5JMZJZ93oZP1x6tSm/eBI3yva1cmzOJO7rlsalDkbnw+4xBjMvNez5gjk9CYg4LY8
+         IgO2VFAGYboVfKjuSiU9DCs6N4CBcGmDfDYYjouO6/InQNe54rEeYNZ4369Lu5z1PE43
+         25KkzTbJjS9CAdPPNR4wihsA+JtxXnY2k0FmgLUlTYptZ/WN3Knwc63b676yMcjJeMmM
+         OqSqol3x0UaVt7kbof7Do/ecCM1dQhkQ0GHNtGBT+A5BaeLDQyToKuYs27BLwt2lc8oY
+         lTtPmVCr4z2wUHdtrcvtaRmSfdb59uuKmMIgmvBYY7tewLjki6JsUJ7wbkshow9aZNWK
+         ebRA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9UHpr5hneU7U58WBh0PWyEjafGX0CLX5oREYMCd67s8kGSCcl6BB8UW2VOMbYujMncCIIVJKivrJpjxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3rprOMryHjg0LTR8zWmSYcaXWkxBhGQXQZipaMXqC7PZSqi+1
+	5MPBYoWyK9PBDXVq6ebmSDciObk4bOd/5HeSdz6m9pRqrOYVfIAfUhIH/+FC+duluMRhe/xBvDt
+	YGzSNxwPiezQi0T5LgDDAaDtWfu9+bztn4DSaLSW+s0eJiYGO98Hj7S4xHYHJOhGRHvE=
+X-Gm-Gg: ASbGncv2oJPYwsWa45SjLuuy3mXm9ZaD+hCWex2wanpfbtVMcobdiwP9pduuKgpXsqD
+	sqh2SpmsV5FRsasd2DUi4G9IWkN8JawuwSuQpEsol7i7QSYGR2kgH6gCoopVzQ3TM380pjj1pU1
+	+MMeE6Pz+bTRTJ5uKNhDP46FLaUDi2EAN8BrZVUasEhtd3cUgHJo/7dJqJU+mo/FcNCKhrM1Bbf
+	hRYbmTSv4fIFMLl9XFIxuDcgkJ5dkvwrILG2zeNRT3lMMFJ6PUTQY05GVRIJfGSE6me6ik8+frQ
+	MLCmj4vE4f+09FNReNS8vqKI6w1WXT0Qh9+xPv2C6S34rAmvKQY4WVGmMev6pX1PbeTVclZM/qV
+	Nfo6d7tGG8fW577zn4MQdIqR0Kv4ZQPzGfJKKYAeN3TOhxPwOthF4FPITcQ==
+X-Received: by 2002:a05:622a:58c3:b0:4b5:ffc4:d87b with SMTP id d75a77b69052e-4e41e25672cmr12693141cf.63.1759264178893;
+        Tue, 30 Sep 2025 13:29:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWqYNQ5DcdbJzz/fom5G6oGKnCTXV+GrXUnR7tUKQp7CbjCVYz/Y9aUaVBAEusZAM09X6HlA==
+X-Received: by 2002:a05:622a:58c3:b0:4b5:ffc4:d87b with SMTP id d75a77b69052e-4e41e25672cmr12692511cf.63.1759264178263;
+        Tue, 30 Sep 2025 13:29:38 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831665671csm5160974e87.75.2025.09.30.13.29.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 13:29:37 -0700 (PDT)
+Date: Tue, 30 Sep 2025 23:29:35 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
+        alim.akhtar@samsung.com, jingoohan1@gmail.com, p.zabel@pengutronix.de,
+        hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+        dianders@chromium.org, m.szyprowski@samsung.com,
+        luca.ceresoli@bootlin.com, jani.nikula@intel.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v6 00/18] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+Message-ID: <hvakijaevs7ucwvlnf6x6aqj5k465g2rc3ba7zexjmamy7mxg6@gnyhlf5jj3wn>
+References: <20250930090920.131094-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a23:b0:425:70c5:61b3 with SMTP id
- e9e14a558f8ab-42d81647952mr19723125ab.27.1759264172207; Tue, 30 Sep 2025
- 13:29:32 -0700 (PDT)
-Date: Tue, 30 Sep 2025 13:29:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dc3dac.a00a0220.102ee.004f.GAE@google.com>
-Subject: [syzbot] [rdma?] KMSAN: uninit-value in ib_nl_handle_ip_res_resp
-From: syzbot <syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930090920.131094-1-damon.ding@rock-chips.com>
+X-Proofpoint-GUID: fA0MVAwWnEn_cv8YeHUGiCSnjahlDmQy
+X-Authority-Analysis: v=2.4 cv=MYZhep/f c=1 sm=1 tr=0 ts=68dc3db4 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8 a=6YOL-LhRVAKcL1tHTEcA:9
+ a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-ORIG-GUID: fA0MVAwWnEn_cv8YeHUGiCSnjahlDmQy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzNiBTYWx0ZWRfX0aX3/bheLYOO
+ d9gmJBVvqY5+qoU4/vbxase1g91mo/zLAO4Xy9B9+o+vELrkTbndHil7AzpnUsJtFWfCaif3H0V
+ M4vA/R+SE/E4zY+7NFdy72Ekx8J238vizy7vgXj/7lYQj0xK+EbonJuuM1LXE0DS6VpMOPvN1VW
+ CIyVzsmSGeAW4+gISa2ieBZhNNxs6ZNL5AmFHr15l/2sF54NotbWp1gNJaBkZtRMbpngVlY2bOq
+ TcugxQB/RoK+1GtSTj6OIDegki7GpoFbQ4aHBWESLrSdIMCyydZkPVXKdFnNeqJ30ThEIbWujFm
+ 6qEBRjOUrhoQtMn+TMuUNm4lwdooF9WX2N8nv+FfKSj8oTOjOd6kDb91V/bYGDIq6yhQyH34QS+
+ Wd3paNFK/ld2sMsKrjSlWoalYpaI8g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270036
 
-Hello,
+On Tue, Sep 30, 2025 at 05:09:02PM +0800, Damon Ding wrote:
+> PATCH 1 is a small format optimization for struct analogid_dp_device.
+> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+> PATCH 3 is to add a new parameter to store the point of next bridge.
+> PATCH 4 is to make legacy bridge driver more universal.
+> PATCH 5-10 are preparations for apply drm_bridge_connector helper.
+> PATCH 11 is to ensure last bridge determines OP_EDID/OP_MODES capabilities.
+> PATCH 12 is to apply the drm_bridge_connector helper.
+> PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
+> PATCH 16 is to attach the next bridge on Analogix side uniformly.
+> PATCH 17-18 are to apply the panel_bridge helper.
 
-syzbot found the following issue on:
+Note, only patches 1-13 made it to the list:
 
-HEAD commit:    1896ce8eb6c6 Merge tag 'fsverity-for-linus' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=153d0092580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6eca10e0cdef44f
-dashboard link: https://syzkaller.appspot.com/bug?extid=938fcd548c303fe33c1a
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d0fbab3c0b62/disk-1896ce8e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/71c7b444e106/vmlinux-1896ce8e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/96a4aa63999d/bzImage-1896ce8e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
-
-netlink: 8 bytes leftover after parsing attributes in process `syz.8.3246'.
-=====================================================
-BUG: KMSAN: uninit-value in hex_byte_pack include/linux/hex.h:13 [inline]
-BUG: KMSAN: uninit-value in ip6_string+0xef4/0x13a0 lib/vsprintf.c:1490
- hex_byte_pack include/linux/hex.h:13 [inline]
- ip6_string+0xef4/0x13a0 lib/vsprintf.c:1490
- ip6_addr_string+0x18a/0x3e0 lib/vsprintf.c:1509
- ip_addr_string+0x245/0xee0 lib/vsprintf.c:1633
- pointer+0xc09/0x1bd0 lib/vsprintf.c:2542
- vsnprintf+0xf8a/0x1bd0 lib/vsprintf.c:2930
- vprintk_store+0x3ae/0x1530 kernel/printk/printk.c:2279
- vprintk_emit+0x307/0xcd0 kernel/printk/printk.c:2426
- vprintk_default+0x3f/0x50 kernel/printk/printk.c:2465
- vprintk+0x36/0x50 kernel/printk/printk_safe.c:82
- _printk+0x17e/0x1b0 kernel/printk/printk.c:2475
- ib_nl_process_good_ip_rsep drivers/infiniband/core/addr.c:128 [inline]
- ib_nl_handle_ip_res_resp+0x963/0x9d0 drivers/infiniband/core/addr.c:141
- rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:-1 [inline]
- rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
- rdma_nl_rcv+0xefa/0x11c0 drivers/infiniband/core/netlink.c:259
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0xf04/0x12b0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x333/0x3d0 net/socket.c:729
- ____sys_sendmsg+0x7e0/0xd80 net/socket.c:2617
- ___sys_sendmsg+0x271/0x3b0 net/socket.c:2671
- __sys_sendmsg+0x1aa/0x300 net/socket.c:2703
- __compat_sys_sendmsg net/compat.c:346 [inline]
- __do_compat_sys_sendmsg net/compat.c:353 [inline]
- __se_compat_sys_sendmsg net/compat.c:350 [inline]
- __ia32_compat_sys_sendmsg+0xa4/0x100 net/compat.c:350
- ia32_sys_call+0x3f6c/0x4310 arch/x86/include/generated/asm/syscalls_32.h:371
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-Local variable gid.i created at:
- ib_nl_process_good_ip_rsep drivers/infiniband/core/addr.c:102 [inline]
- ib_nl_handle_ip_res_resp+0x254/0x9d0 drivers/infiniband/core/addr.c:141
- rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:-1 [inline]
- rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
- rdma_nl_rcv+0xefa/0x11c0 drivers/infiniband/core/netlink.c:259
-
-CPU: 0 UID: 0 PID: 17455 Comm: syz.8.3246 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-=====================================================
+https://lore.kernel.org/dri-devel/41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com/#related
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
