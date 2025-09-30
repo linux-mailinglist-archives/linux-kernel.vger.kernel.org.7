@@ -1,76 +1,72 @@
-Return-Path: <linux-kernel+bounces-837188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823A3BABA67
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:18:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C26BABA45
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7281B4E00EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFCE1C2C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4032F29992A;
-	Tue, 30 Sep 2025 06:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D9728CF49;
+	Tue, 30 Sep 2025 06:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mboxify.com header.i=@mboxify.com header.b="RiEAj8n1"
-Received: from mail-108-mta206.mxroute.com (mail-108-mta206.mxroute.com [136.175.108.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nR2gDAUR"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2177A28EA72
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FC9278E44
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759213105; cv=none; b=oEAMboifBq2nS2cYSTb2UNLPGEVnSuLW9KQnRcPV+QZo52s5cRfvdsFIl/RLh7jo60ylLhDXFauau2qOAkv/hBXkTwUz3H4ZuvAIB728/6VK6moEuctC0pMTXaYKjLTA17VI9L0LDazpDR24xwLHAAuDiRv0Y6ZWrBtKuN+MrXY=
+	t=1759212977; cv=none; b=WITtdcBA9HODWXcQfGuGRAK8oujtwjzmkoDqunuwFq6UyXZVmAvjokzXf1TjggEh0AT+vGnM2UOWW95NpUw/5NS9qMY5Sr/nj/PCNr7v0OL/GDsl8KRQhDtguQNw8mlcDXckxU3IpdgWyANXHMi06dvg+6x4cevf2jyOE5swQQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759213105; c=relaxed/simple;
-	bh=iTIyUmMwogLjx6J4uwkS7qq4zRHdgk+CzEH6UASouPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=obant9PsBtHv0CoEGFqivyYY6/Aom/G+cnMKU9vmo0EUThk5bc4oJ0rzIUfY2WshmqzJadN0JSLPW6Q/aWu9kmSOsIQba10hjbURbeTkwtRRio1L9QjNUltAKdVXUqRqtMO/2GvuaoluztB+QC5xuwRGGThtyf2+h4XCAcufUS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mboxify.com; spf=pass smtp.mailfrom=mboxify.com; dkim=pass (2048-bit key) header.d=mboxify.com header.i=@mboxify.com header.b=RiEAj8n1; arc=none smtp.client-ip=136.175.108.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mboxify.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mboxify.com
-Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta206.mxroute.com (ZoneMTA) with ESMTPSA id 1999940e3ea000c244.00d
- for <linux-kernel@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Tue, 30 Sep 2025 06:13:10 +0000
-X-Zone-Loop: 09bf7451b73af5fb3dd26d0220f6fc9efdfe4ef6d751
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mboxify.com
-	; s=x; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=XE4oTWPSDq1xZF1cjbUhrR4nwFe0BvbSHj5iVns/uvg=; b=RiEAj8n1yc5j7h6W3MR5smM7Ug
-	jix76IubG7NWB+ocwsyH5SL3KoRAA0wlK0JVAYJ0zBVzRWchhbynVaYFhGErvQN53ybtAlqRtfnGV
-	84xT5OWYAyHSVw7qDSJbYkVkpbw6YkrCjXFkMMnS4h6r7YgG/WBc6Hca+0eViNnxTJW2gTlzGiXsC
-	6LMYIxJSPGsfMmyfElWesBqfttfob4Q8069RGe3ojNicbjZjScvEyPmKwbvAp9zClxSRr3pmGYwlS
-	g8yNJn8IrUcAVthekmSJSs7JPnIJbB4mZ/PmWDJQT+G4T7hSsKP+HIY4Nussi45nnMqpnq/Ylt4dd
-	qN933lSg==;
-From: Bo Sun <bo@mboxify.com>
-To: sgoutham@marvell.com,
-	gakula@marvell.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: sbhatta@marvell.com,
-	hkelam@marvell.com,
-	horms@kernel.org,
-	bbhushan2@marvell.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	sumang@marvell.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bo Sun <bo@mboxify.com>,
-	stable@vger.kernel.org
-Subject: [PATCH net v2 2/2] octeontx2-pf: fix bitmap leak
-Date: Tue, 30 Sep 2025 14:12:36 +0800
-Message-ID: <20250930061236.31359-3-bo@mboxify.com>
-In-Reply-To: <20250930061236.31359-1-bo@mboxify.com>
-References: <20250930061236.31359-1-bo@mboxify.com>
+	s=arc-20240116; t=1759212977; c=relaxed/simple;
+	bh=k0Ug0hMXyIEV3oBtM+Lrs7aTQfqpqy8gXoc5ze1Ye3g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=CKzVWO6RTZ4eewsrlH8B8N1NO7MdL7TpC4cyL5h8evsDrJnY6jjvqrsrO4Zh3F+VHiy7pIS+GhReWsynDRmAug3Lm0/N1Nq85pLONjiVq290JDffevvAzxd+iHe4C/Xtzv9DY+MadJ0BYDAMHi5MOQ4P1bQI23w1ARghqUs9MiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nR2gDAUR; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250930061606epoutp02fd7bfcdd1b75050312aad8fbfff3cc33~p_t9Kj_md0873708737epoutp02y
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:16:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250930061606epoutp02fd7bfcdd1b75050312aad8fbfff3cc33~p_t9Kj_md0873708737epoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759212966;
+	bh=9IHweh2/nHqBNVgVlNFzRjEmwx0dq4MK0rQu9sv5zAc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=nR2gDAURlPm3REj30phqLf6AhI8ADA9lOkILL6OFwB9oTIyZiePRDglNAsSPWYnCC
+	 cDpE4iCjqw6a8feXekXjTmRcgYHO6HEwef4OeMDjycpZmp7bYZpvak+r+pWfmG8/qd
+	 g9g6bxWu1YyuzphJd+DuniFPU0/BrWLLo8EZ/EHY=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250930061605epcas2p2bdad3af7870c3f550ab0421867229a2f~p_t8peC6m2133821338epcas2p25;
+	Tue, 30 Sep 2025 06:16:05 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.38.202]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cbSVY35fFz2SSKg; Tue, 30 Sep
+	2025 06:16:05 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250930061604epcas2p3f341c32c50f267aa6bd3ae0e82adfbf3~p_t7lFDmk3099130991epcas2p3A;
+	Tue, 30 Sep 2025 06:16:04 +0000 (GMT)
+Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250930061604epsmtip270a46a41a48491c577be74cb3cb7ec77~p_t7gUFjg1548315483epsmtip2G;
+	Tue, 30 Sep 2025 06:16:04 +0000 (GMT)
+From: HOYOUNG SEO <hy50.seo@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, beanhuo@micron.com, bvanassche@acm.org,
+	kwangwon.min@samsung.com, kwmad.kim@samsung.com, cpgs@samsung.com,
+	h10.kim@samsung.com
+Cc: "hy50.seo" <hy50.seo@samsung.com>
+Subject: [PATCH v2] scsi: ufs: core: Include UTP error in INT_FATAL_ERRORS
+Date: Tue, 30 Sep 2025 15:14:28 +0900
+Message-Id: <20250930061428.617955-1-hy50.seo@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,40 +74,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Authenticated-Id: bo@mboxify.com
+X-CMS-MailID: 20250930061604epcas2p3f341c32c50f267aa6bd3ae0e82adfbf3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250930061604epcas2p3f341c32c50f267aa6bd3ae0e82adfbf3
+References: <CGME20250930061604epcas2p3f341c32c50f267aa6bd3ae0e82adfbf3@epcas2p3.samsung.com>
 
-The bitmap allocated with bitmap_zalloc() in otx2_probe() was not
-released in otx2_remove(). Unbinding and rebinding the driver therefore
-triggers a kmemleak warning:
+From: "hy50.seo" <hy50.seo@samsung.com>
 
-    unreferenced object (size 8):
-      backtrace:
-        bitmap_zalloc
-        otx2_probe
+If the UTP error occurs alone, the UFS is not recovered.
+It does not check for error and only generates io timeout or OCS error.
+This is because UTP error is not defined in error handler.
+To fixed this, added UTP error flag in FATAL_ERROR.
+So UFS will reset is performed when a UTP error occurs.
 
-Call bitmap_free() in the remove path to fix the leak.
+sd 0:0:0:0: [sda] tag#38 UNKNOWN(0x2003) Result: hostbyte=0x07
+driverbyte=DRIVER_OK cmd_age=0s
+sd 0:0:0:0: [sda] tag#38 CDB: opcode=0x28 28 00 00 51 24 e2 00 00 08 00
+I/O error, dev sda, sector 42542864 op 0x0:(READ) flags 0x80700 phys_seg
+8 prio class 2
+OCS error from controller = 9 for tag 39
+pa_err[1] = 0x80000010 at 2667224756 us
+pa_err: total cnt=2
+dl_err[0] = 0x80000002 at 2667148060 us
+dl_err[1] = 0x80002000 at 2667282844 us
+No record of nl_err
+No record of tl_err
+No record of dme_err
+No record of auto_hibern8_err
+fatal_err[0] = 0x804 at 2667282836 us
 
-Fixes: efabce290151 ("octeontx2-pf: AF_XDP zero copy receive support")
-Cc: stable@vger.kernel.org
+---------------------------------------------------
+		REGISTER
+---------------------------------------------------
+                           NAME	      OFFSET	         VALUE
+                    STD HCI SFR	  0xfffffff0	           0x0
+                           AHIT	        0x18	         0x814
+               INTERRUPT STATUS	        0x20	        0x1000
+               INTERRUPT ENABLE	        0x24	       0x70ef5
 
-Signed-off-by: Bo Sun <bo@mboxify.com>
+Signed-off-by: hy50.seo <hy50.seo@samsung.com>
 ---
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/ufs/ufshci.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index 5027fae0aa77..e808995703cf 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -3542,6 +3542,7 @@ static void otx2_remove(struct pci_dev *pdev)
- 	otx2_disable_mbox_intr(pf);
- 	otx2_pfaf_mbox_destroy(pf);
- 	pci_free_irq_vectors(pf->pdev);
-+	bitmap_free(pf->af_xdp_zc_qidx);
- 	pci_set_drvdata(pdev, NULL);
- 	free_netdev(netdev);
- }
+diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
+index 612500a7088f..e64b70132101 100644
+--- a/include/ufs/ufshci.h
++++ b/include/ufs/ufshci.h
+@@ -180,6 +180,7 @@ static inline u32 ufshci_version(u32 major, u32 minor)
+ #define UTP_TASK_REQ_COMPL			0x200
+ #define UIC_COMMAND_COMPL			0x400
+ #define DEVICE_FATAL_ERROR			0x800
++#define UTP_ERROR				0x1000
+ #define CONTROLLER_FATAL_ERROR			0x10000
+ #define SYSTEM_BUS_FATAL_ERROR			0x20000
+ #define CRYPTO_ENGINE_FATAL_ERROR		0x40000
+@@ -199,7 +200,8 @@ static inline u32 ufshci_version(u32 major, u32 minor)
+ 				CONTROLLER_FATAL_ERROR |\
+ 				SYSTEM_BUS_FATAL_ERROR |\
+ 				CRYPTO_ENGINE_FATAL_ERROR |\
+-				UIC_LINK_LOST)
++				UIC_LINK_LOST |\
++				UTP_ERROR)
+ 
+ /* HCS - Host Controller Status 30h */
+ #define DEVICE_PRESENT				0x1
 -- 
-2.50.1 (Apple Git-155)
+2.34.1
 
 
