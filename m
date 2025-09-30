@@ -1,113 +1,71 @@
-Return-Path: <linux-kernel+bounces-837344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A1FBAC175
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:41:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A042CBAC15A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7701816A7D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5655F320AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C0E2D5C67;
-	Tue, 30 Sep 2025 08:41:07 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AC52BB17;
-	Tue, 30 Sep 2025 08:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255A62F532F;
+	Tue, 30 Sep 2025 08:38:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A982F4A1B;
+	Tue, 30 Sep 2025 08:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759221666; cv=none; b=OhiapAFB1py1W5+bVXqrwld6mAVH8AhkypC/eExnT3MkE7Gv1G3h+4VCMYKgsSLErpUh/Cy2e5AQS63MbkmrEdypqgVPf1ZoZQ1LFNOcNHYdcoTzk5Q492xPlxCgYX85+OM8DuxUwEkBEFaD64nZlqsCsFbk+WYPN6nKjjKVwYk=
+	t=1759221491; cv=none; b=D7Okwg1A4+5MaHt88RRIz27fRR/lW0dyGOU5v+Kg1O0+FEN5dKxI7zxNo4qE45+zwDDD/yq5uRAEf7FkYyvhpHlnXTykfROWlk3EFKo2If474XXhOt5ouIoH9EJwKgr3g9qvbV8AD6LIYguGwQPhk/Pyh8hjekJK2H/IAX7rRJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759221666; c=relaxed/simple;
-	bh=P0nKWbEHMrgOZ4JSKRzhCVw23WuFsWlYjcj+MEtCpDw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IIGYtP5UwjXre3rcCy8H+W3E2nTQ2M+ZB2kSUXeRneyaVIg5/upKJTQ7r0DlS3Pkn21JqJTFc+9KBQQbcHsiQCue2Yv/HtPhcvP6We218e7MvsUS2guCZf7u9C8imyG5VIQzQATniP3IV/uJtoUM0UywYDVq1y59zuPRLnyQVYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app1 (Coremail) with SMTP id TAJkCgAnSxGCl9towa_uAA--.16344S2;
-	Tue, 30 Sep 2025 16:40:40 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	linux-phy@lists.infradead.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>
-Subject: [PATCH v5 0/3] Add driver support for Eswin EIC7700 SoC SATA Controller and PHY
-Date: Tue, 30 Sep 2025 16:37:54 +0800
-Message-Id: <20250930083754.15-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+	s=arc-20240116; t=1759221491; c=relaxed/simple;
+	bh=lmqllInZfb5npaUJWCnOqhrqfzbIPI8UtolGKdhF8DE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SjtIkIfbtsA1VKztf6yrOTIM7bCH1+U+C0tbq+BY2H5XcHQSQCVNzgfVLsZ1/x5ULAzeIa1XOgrIGeNlVvRT9BEOXuQdiefZHV0a2M6HZ3Sqx0BG/sngKppNVUp1lCSUWOGregnEFiJu9JIGI+k6JZMKwIgkZHrESFT2LVPDaXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 089D21424;
+	Tue, 30 Sep 2025 01:38:01 -0700 (PDT)
+Received: from [10.1.28.41] (Suzukis-MBP.cambridge.arm.com [10.1.28.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E44203F66E;
+	Tue, 30 Sep 2025 01:38:06 -0700 (PDT)
+Message-ID: <e21159ef-d438-4944-adb3-eb8e7c801d9e@arm.com>
+Date: Tue, 30 Sep 2025 09:38:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgAnSxGCl9towa_uAA--.16344S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1DGry7Ar13KFWUZry3CFg_yoW8GF48pa
-	1DGryftr1vqry7JayfJ3W0kFyfJ3Z3GryakrZrJ3Z8XFWYvas5Xanaya4YvFn7Cw4kXr43
-	XFn8Ka4akFyUArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] perf/arm_cspmu: Add arm_cspmu_acpi_dev_get
+Content-Language: en-GB
+To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
+ robin.murphy@arm.com, ilkka@os.amperecomputing.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, mark.rutland@arm.com, treding@nvidia.com,
+ jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
+ sdonthineni@nvidia.com
+References: <20250930002604.346306-1-bwicaksono@nvidia.com>
+ <20250930002604.346306-2-bwicaksono@nvidia.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250930002604.346306-2-bwicaksono@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This series depends on the config option patch [1].
+On 30/09/2025 01:26, Besar Wicaksono wrote:
+> Add interface to get ACPI device associated with the
+> PMU. This ACPI device may contain additional properties
+> not covered by the standard properties.
+> 
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
-[1] Https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250929&id=ce2d00c6e192b588ddc3d1efb72b0ea00ab5538f
+Repeat: Where is the user ?
 
-Updates:
-  v5 -> v4:
-    - eswin,eic7700-ahci.yaml
-      - Add "dt-bindings: ata:" prefix to the subject.
-      - Wrap at 80 characters in the YAML description field.
-    - Link to v4: https://lore.kernel.org/lkml/20250915125902.375-1-luyulin@eswincomputing.com/
+Suzuki
 
-Yulin Lu (3):
-  dt-bindings: ata: eswin: Document for EIC7700 SoC ahci
-  dt-bindings: phy: eswin: Document the EIC7700 SoC SATA PHY
-  phy: eswin: Create eswin directory and add EIC7700 SATA PHY driver
-
- .../bindings/ata/eswin,eic7700-ahci.yaml      |  79 +++++++
- .../bindings/phy/eswin,eic7700-sata-phy.yaml  |  36 ++++
- drivers/phy/Kconfig                           |   1 +
- drivers/phy/Makefile                          |   1 +
- drivers/phy/eswin/Kconfig                     |  14 ++
- drivers/phy/eswin/Makefile                    |   2 +
- drivers/phy/eswin/phy-eic7700-sata.c          | 192 ++++++++++++++++++
- 7 files changed, 325 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
- create mode 100644 Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
- create mode 100644 drivers/phy/eswin/Kconfig
- create mode 100644 drivers/phy/eswin/Makefile
- create mode 100644 drivers/phy/eswin/phy-eic7700-sata.c
-
--- 
-2.25.1
 
 
