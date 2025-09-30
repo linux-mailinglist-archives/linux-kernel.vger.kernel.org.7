@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-837410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE676BAC42D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:22:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B98BAC439
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C49321947
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FFE3AC870
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E562F5333;
-	Tue, 30 Sep 2025 09:22:23 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E8E29A326;
+	Tue, 30 Sep 2025 09:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rwh04kjL"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B5C72617
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC5320468D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759224142; cv=none; b=WxNROy6xvDi/zLOUEclqlfKtM+A3m94FQohauDtm8GZuNcOqwXzIV3/G/iNrqhV+a5wPhB4OX5zC0i2hx57SX1goiYa42+veOqWlhFIzgTkix2uc6j32/3474jBs1OF06iUD14ddHOjPKQL7q6GY1CUB1qXWFt1B543NY72FYbk=
+	t=1759224218; cv=none; b=LsAFpvd3OMV1dJAj+eulobLJePPzzg5ZbuCQer542n0je+4WaIm/HlfAucRWTmKBvY9fbCjMeaMZP5dMpCX0nxlSKTSQF0ge9lwxx2Dis6SyYXwId5/sBXfs489zTEzoZzbjOjoUf/pKnYaZ6fYjC/9/9s6YtvIbwryK9YHYg8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759224142; c=relaxed/simple;
-	bh=IaABg5Lt+qz1nkla5UgY9HlQPxu+tNKuuYV4V0Lm6aU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ng6QJF8fJ2SMMoyAkll4s+eEcu7vfSkihOkXyhg+fH4Joubg0yxAfSWEcckOuLQUg5U2lVFvH91Zv0YJp2m63t9YWE/qyVOM+1PEfFwK6bxGRbWFfouRw6+3sOAS36A1dN229+wjlFITjwIdZtSkStGtOhbyZbFeN6EeC9CJDCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ec5771ae9dde11f08b9f7d2eb6caa7cf-20250930
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:59d1ce55-b7b6-483e-b503-62d061f3287b,IP:10,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:30
-X-CID-INFO: VERSION:1.1.45,REQID:59d1ce55-b7b6-483e-b503-62d061f3287b,IP:10,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:30
-X-CID-META: VersionHash:6493067,CLOUDID:c6ed15d43f0769bedf10a25675148f30,BulkI
-	D:250930172204C4MEKGXS,BulkQuantity:0,Recheck:0,SF:19|24|38|44|66|72|78|81
-	|82|102|850,TC:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil
-	,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:
-	0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: ec5771ae9dde11f08b9f7d2eb6caa7cf-20250930
-X-User: husong@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <husong@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 912808686; Tue, 30 Sep 2025 17:22:02 +0800
-From: Hu Song <husong@kylinos.cn>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: Song Hu <husong@kylinos.cn>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mm/page_owner: simplify zone iteration logic in init_early_allocated_pages()
-Date: Tue, 30 Sep 2025 17:21:52 +0800
-Message-Id: <20250930092153.843109-2-husong@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250930092153.843109-1-husong@kylinos.cn>
-References: <20250930092153.843109-1-husong@kylinos.cn>
+	s=arc-20240116; t=1759224218; c=relaxed/simple;
+	bh=Kbs8JGrFduOaI/hjUJ5wKXWK6sCYJBvlyr+v6bAjmus=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PtwxWhI908ZOF9d5zFVGvhlwQuUdeiO5cXFb0+GucB20MRB7ewSiDYTCz/C8pev4Bh+wo0W03jCm/vOjhKCKLXKZp+SV6KGdZb325k2F0dpIxcQ2hvfidbeTflC2zOnpTkkFhdvwJiVK06IyrFIOr8zOu90onz2QkabwWWOdU5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rwh04kjL; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e44310dbeso4044495e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759224215; x=1759829015; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TekYocA3NFc6wJkBn4hXZq1fAbBiTi5Aoq7kBmK0gRY=;
+        b=Rwh04kjL50Mr9rZgrrxO9muhseM7YMzYtM6LpQAOdkX1tu8jM/hGtk6kxAvBGOmUux
+         /W6a9EdODU5BHVBZj2mHZIP/emVBkTB6n+a1jYQWbGFynPQZRgJ/YJbJpPYcztIm3gfn
+         n0usipM0Gz2uHaNcBmpRM9LWbkpCzm9EURGI3qrKSzgAtWGyx429qkMl0/YFF0tM/wss
+         IIsuOvQVf0DquM/CmCaGrb87F3k1SfGFubEU0azgtjIQIHR96lj2H5qUbLunlQa7KKtl
+         HLCRiVG8vovTV+opvwBwIOyWUgoJ4crcq8ib8huUoXq6yTvMgi1Y9vc3RvzYBfmMb11x
+         0ljw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759224215; x=1759829015;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TekYocA3NFc6wJkBn4hXZq1fAbBiTi5Aoq7kBmK0gRY=;
+        b=HebwwDAoHKm7cSg9ThRCkKSjX0wnBJD2S/iqkEj7IjQZPfaC4Eh75wu0C73f4H1t11
+         tckPAkAhL7NYcxRf6cdMQBCEhbMTdPdipAv12A10PUujbqO4HifHAE+o2EDh6W6q/xqg
+         JYbk0dIT4kHNPqWL5FeexZV5Urx+sbkUlgJlFGqDasyL3VNC0M1zVLnnZQGpeMPIgnk0
+         i+AQE4S9Q/ulDUFFfRyUQuCN2hR/YbnPvNWb89ivwueSZHkyuUqW4htoAGPsg27ooDfU
+         3kkDYUsCVEGIrYjMaZbUWxxc0ES3iRQM8IOzGiQW8PDU8It76IXT8nAGbauKZcr4V72U
+         +D7g==
+X-Gm-Message-State: AOJu0Yxgw5VCDTQ5ixf7pVv8rgPdZYP2GUfF5RuY9GTd0hBc3spTzQ0C
+	+1rpHmAPt+q7jZHIyNVAbzwpTni/jh3wiGt1HFrGT/iGIiyddezI19pD
+X-Gm-Gg: ASbGncsuTc9li3IPXMzvKiqZ2Q2/UYLH51VNtwex34xj4nlecX60zFI9WMZbAUFdVgD
+	mQQ0D6ggV8maHO6h4Oir1eiGLKnciTBpHXhIQN950ja3fiIBG15C9s3R89C5YkvK/DplzLrXHNS
+	SwZ5U9kkuKAPhxIQJBmKFxO2kvvIxY9S/UxMmyUvhNwViXWQWkNIDZycdStd4KvqCWrS58drGUX
+	D0D9AqYHzjYHuMqNuO9Fv2kpb8Zs/18SJVMZT4kqSD/82C39dc1d4setuUSCFiFYuOwNhc+CogK
+	iOByJ35nl1Axx+pN18r0PKGHbpZkaemyPds9dmlUnZGz2MDYTETHJusa9RLJHN89qtS7nMsd3mE
+	tJC4RmsIdEaVvDoz1shASZWUtopDmCI+90Qv0/qlPBxuYA4x5Xt6nBtZLtmWDsFL9
+X-Google-Smtp-Source: AGHT+IFPizRa0ASKtki+ckYZRe6BE0jI/MUqHU6/hP1U8hUcZW/DR6Ot/O1lMO4myHbm/wTeveLEEw==
+X-Received: by 2002:a05:600c:4f91:b0:46e:43f0:6181 with SMTP id 5b1f17b1804b1-46e43f065afmr70284335e9.7.1759224214578;
+        Tue, 30 Sep 2025 02:23:34 -0700 (PDT)
+Received: from bhk.router ([102.171.36.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-410f2007372sm21062808f8f.16.2025.09.30.02.23.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 02:23:34 -0700 (PDT)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH] lib: cpu_rmap.c Refactor allocation size calculation in kzalloc()
+Date: Tue, 30 Sep 2025 10:23:12 +0100
+Message-ID: <20250930092327.27848-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,74 +88,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Song Hu <husong@kylinos.cn>
+Wrap allocation size calculation in size_add() and size_mul() to avoid
+any potential overflow.
 
-The current implementation uses nested loops: first iterating over all
-online nodes, then over zones within each node. This can be simplified
-by using the for_each_populated_zone() macro which directly iterates
-through all populated zones.
-
-This change:
-1. Removes the intermediate init_zones_in_node() function
-2. Simplifies init_early_allocated_pages() to use direct zone iteration
-3. Updates init_pages_in_zone() to take only zone parameter and access
-   node_id via zone->zone_pgdat
-
-The functionality remains identical, but the code is cleaner and more
-maintainable.
-
-Signed-off-by: Song Hu <husong@kylinos.cn>
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
 ---
- mm/page_owner.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+ lib/cpu_rmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/page_owner.c b/mm/page_owner.c
-index bb88b72b6062..b170b27d87a1 100644
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -757,7 +757,7 @@ static loff_t lseek_page_owner(struct file *file, loff_t offset, int orig)
- 	return file->f_pos;
- }
+diff --git a/lib/cpu_rmap.c b/lib/cpu_rmap.c
+index f03d9be3f06b..18b2146a73d2 100644
+--- a/lib/cpu_rmap.c
++++ b/lib/cpu_rmap.c
+@@ -36,7 +36,7 @@ struct cpu_rmap *alloc_cpu_rmap(unsigned int size, gfp_t flags)
+ 	obj_offset = ALIGN(offsetof(struct cpu_rmap, near[nr_cpu_ids]),
+ 			   sizeof(void *));
  
--static void init_pages_in_zone(pg_data_t *pgdat, struct zone *zone)
-+static void init_pages_in_zone(struct zone *zone)
- {
- 	unsigned long pfn = zone->zone_start_pfn;
- 	unsigned long end_pfn = zone_end_pfn(zone);
-@@ -824,28 +824,15 @@ static void init_pages_in_zone(pg_data_t *pgdat, struct zone *zone)
- 	}
+-	rmap = kzalloc(obj_offset + size * sizeof(rmap->obj[0]), flags);
++	rmap = kzalloc(size_add(obj_offset, size_mul(size, sizeof(rmap->obj[0]))), flags);
+ 	if (!rmap)
+ 		return NULL;
  
- 	pr_info("Node %d, zone %8s: page owner found early allocated %lu pages\n",
--		pgdat->node_id, zone->name, count);
--}
--
--static void init_zones_in_node(pg_data_t *pgdat)
--{
--	struct zone *zone;
--	struct zone *node_zones = pgdat->node_zones;
--
--	for (zone = node_zones; zone - node_zones < MAX_NR_ZONES; ++zone) {
--		if (!populated_zone(zone))
--			continue;
--
--		init_pages_in_zone(pgdat, zone);
--	}
-+		zone->zone_pgdat->node_id, zone->name, count);
- }
- 
- static void init_early_allocated_pages(void)
- {
--	pg_data_t *pgdat;
-+	struct zone *zone;
- 
--	for_each_online_pgdat(pgdat)
--		init_zones_in_node(pgdat);
-+	for_each_populated_zone(zone)
-+		init_pages_in_zone(zone);
- }
- 
- static const struct file_operations page_owner_fops = {
 -- 
-2.25.1
+2.51.0
 
 
