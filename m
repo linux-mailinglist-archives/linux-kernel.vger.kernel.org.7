@@ -1,191 +1,214 @@
-Return-Path: <linux-kernel+bounces-837649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C51BACD4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE12BACCEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CED93AEFB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82131925F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F7E2FC02B;
-	Tue, 30 Sep 2025 12:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835522F9DBB;
+	Tue, 30 Sep 2025 12:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oJjXbtJC"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bXGRUBgE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F18A2FB972
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235262; cv=none; b=BwvEKbxYXOvapoRX8vnMm/iSXYjvIQDvzjhQi1LaGO0tLvQDWn0Bg2JugYpdcenLVwo1Caqsb5tYK+dgfceItRm9x4HHCYSAyyUQ+fDkQR1nPeSMBPxNtPRis52az1nPKv/EAi15GFzizRCtJprZfyYa8sJtEknt7hxhW1tKVlc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235262; c=relaxed/simple;
-	bh=K+Qo9U5/8bG6S1LdtOr0WdY7ffLEzR7To9QOriX0cvM=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=FNyZMs+nE9isX3HnGtY6fsf7kz2XM2cn3IXAS7vzxlg9sYerMg0hB9oMKDrwR+IvRPK3SjZbs2tPXQQOawNJ92t3kO8GAUrOuhOV2YEhYxmMwjg+h5HklbBl/bFhNHil071HuRl+6st0a95gfwj/7g+y2O0GcKBz3EV87PUKoc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oJjXbtJC; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250930122738euoutp02dd42f7cf10a21db7f7dc25d5161dfd32~qDyWwU9vW2140121401euoutp02D
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:27:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250930122738euoutp02dd42f7cf10a21db7f7dc25d5161dfd32~qDyWwU9vW2140121401euoutp02D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759235259;
-	bh=8ViuUbQvKkza5fLDio1ZaLLg5ogfLWW3Jq7KsiXlUPY=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=oJjXbtJCYw+yBIPOhvnXdlQEd2Tsjhmulhhnr6Y+itkMvbkQBykHYRIG608ppiskt
-	 sXxh+9nO1mSkpb/hM0FXWZZ1AksnI3q/2riEjtxjC1SFMoaIZHadtbJvFz11J/cWn3
-	 oQytSIM/7R78XfAA254PjoV7hgNE0sUmKgaRhuSk=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250930122738eucas1p2ee9244532b39860f982fd7daa4cf788e~qDyWNI4cs2094020940eucas1p2K;
-	Tue, 30 Sep 2025 12:27:38 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250930122737eusmtip247e3c37468f4e6bb2b9f63c17840ea9f~qDyVHlxQY2370623706eusmtip2T;
-	Tue, 30 Sep 2025 12:27:37 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Tue, 30 Sep 2025 14:20:38 +0200
-Subject: [PATCH v15 7/7] riscv: dts: thead: Add PWM fan and thermal control
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355DA2F362B;
+	Tue, 30 Sep 2025 12:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759235035; cv=fail; b=c5/lwJX1eZxSDesuW2XtBhPRNtd4eCWslvM1Y4MMdxcBCbPzz5eGnusp+3zapKRtOPLlwpzRJlp2z/n3fg4P4sjK0H6I3lpLMHiMq5jwSJeSwneR9B+iQQ/9qNEQnTV9fEpRbf3I0JCO73ABbmYcewbbKD9QcvMycjNzWbibdXw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759235035; c=relaxed/simple;
+	bh=DELjXSj4RePc+Y3YhjBo15FB1/EWDVekL+gElmWR2sI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Z8n3e5V5kIIjNcZ2QyBTllRAQqM3kiOHSD9r+nFwA0ap5xWTOjeUu/eOwcmQ2FqXcPww2oDy6vskJu8r00oPHxOfbHgTzk6I6vLvbG7bB0mLQUNodg9TwSu8/3Bp02/T4gA1fTYkH8qgLcuRGxCdktLiW+5dRIWq+3MGxMj8sXg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bXGRUBgE; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759235033; x=1790771033;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=DELjXSj4RePc+Y3YhjBo15FB1/EWDVekL+gElmWR2sI=;
+  b=bXGRUBgE9Vhtn1wWf4uqv4zU7klg86jDhs98X/4jpv8Hs8/7CuA5NM+Y
+   lR/yGyKtVsoy9wKKNMIBNmZlPj90IsmG7r2XURgS3ip4s+S6ChwkzEYtz
+   04i79FXbcy0b4BWyQdfZC4RRJmBFDE9ypOxng4/8EZAY+uTFWTT27tR65
+   2NLl/sQyeT4EZG2LHCG3JtDMcyZxtT9lhVEnd5Ub6ImDalHaFSzcq78DO
+   divZbXOoqdcxpVqAi04OfpzoQ0/XETvR+85T+I+/ulSXthgLJQuqsq0iS
+   Ca5UDwNg2/TX/xPawRbhOCP3hF1HgPypaQZNXzAiEuu9cY+NFquigTssC
+   g==;
+X-CSE-ConnectionGUID: zCABiHZaQGSqG9gFz/XCDQ==
+X-CSE-MsgGUID: 4iV8YbhhSOWmGaPcoG6idw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65311197"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="65311197"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 05:23:52 -0700
+X-CSE-ConnectionGUID: XY1ISvWYSEC0ywRqSSL2zw==
+X-CSE-MsgGUID: GqYZaxAVQHSHBCdy5JnKiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="178084526"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 05:23:52 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 30 Sep 2025 05:23:52 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 30 Sep 2025 05:23:52 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.51) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 30 Sep 2025 05:23:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AjXCubljbgmhmhy8FTVU2a/6WWWWaVb9Ptd/cZaTsFmp84BT1Xnf5wcOVPoXBUHzclU8g/dFZJVBM82OiAdP+IOiDS4CZGy2rdTikmrmI+ONvZts6BDZagOFClDD6EhoZ1kOTqqu+N48P4UZmgJxCe/1AZEqJRakThMcHQB0NrrStdno/3f8NXrPldNvb8lPK1X0n6bll9Nc03nZNvDTIbb3io/A0XX6jOEgZQ2QD/ZpRQ4n/P0S+D/5b1jrwS6e1ImNQRE4pK30dPkm7MLDpHXPEMYSv1b0Qup5552lRuqdzVYi9TDCoZR536rY1usIHJx353A+DdwYSja2+gidPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+piCpOD5pnDhlmfixNfc7fo6tF1GxjTtdfnmVb+IvDc=;
+ b=AYxVQyptSpf+JdX0QXqeE85Kuc6YNWgE21PGQBTR392w5nAWyk0zEnqtypIjmTs/mu0CRppN5KppIdf0PL2qaXvFK3t+IrjTEj70Zskbu4VikWJPaKbk9g0EgKMWkMmt1OYE6iue2dFLCw41KTfWj/uk42wqzJwX+H0eoqLfQe+cVNeCDIRG6zW1cDTWjgFyAvYmQzhwByWpD3lmWskCLhgXxjUc8Sc60DyBdBsrScNi5UH9XDLIPPVb7gxM2qwr/7VPw7WcdxPprPfzA3+5kpL25ycbxBqql3C/f3LWEL3FsuWNxNcqPRFNWEs0brz9HhLvdKbZBFxN0S02feDfwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ PH0PR11MB4999.namprd11.prod.outlook.com (2603:10b6:510:37::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.18; Tue, 30 Sep 2025 12:23:49 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 12:23:49 +0000
+Date: Tue, 30 Sep 2025 20:22:41 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Xiaoyao Li <xiaoyao.li@intel.com>, "Rick
+ Edgecombe" <rick.p.edgecombe@intel.com>
+Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
+ skips WRMSR
+Message-ID: <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20250919214259.1584273-1-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250919214259.1584273-1-seanjc@google.com>
+X-ClientProxiedBy: KUZPR01CA0024.apcprd01.prod.exchangelabs.com
+ (2603:1096:d10:26::14) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-rust-next-pwm-working-fan-for-sending-v15-7-5661c3090877@samsung.com>
-In-Reply-To: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
-	<m.szyprowski@samsung.com>,  Benno Lossin <lossin@kernel.org>,  Michael
-	Turquette <mturquette@baylibre.com>,  Drew Fustini <fustini@kernel.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>,  Benno Lossin
-	<lossin@kernel.org>, Drew Fustini <fustini@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, Elle Rhumsaa <elle@weathered-steel.dev>
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250930122738eucas1p2ee9244532b39860f982fd7daa4cf788e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250930122738eucas1p2ee9244532b39860f982fd7daa4cf788e
-X-EPHeader: CA
-X-CMS-RootMailID: 20250930122738eucas1p2ee9244532b39860f982fd7daa4cf788e
-References: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
-	<CGME20250930122738eucas1p2ee9244532b39860f982fd7daa4cf788e@eucas1p2.samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH0PR11MB4999:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f73fe4e-7aa6-4b85-03ee-08de001c356b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?8Qsw4ttOhZyDD/gq7SgyMw8m2UzBHJf6DOFTn4QxmgKpuHl7d+sUJdnQzzkb?=
+ =?us-ascii?Q?lw0jn9oSQAlQEevWoghqFJ90ssih6P95+2Q31+IxIMoSoOvAruLHZX9CbBOV?=
+ =?us-ascii?Q?jHl7NjobD5+N4/R1TAZhf3u8u7jbTlj6/KiuIxP1XGucsJyXnkVyunINp/VV?=
+ =?us-ascii?Q?ItlkzvjJo0tWrda+Vkqmo5V+OrCp+zDp6F5YldGxTkmc2LBcC8mGNLoTJaku?=
+ =?us-ascii?Q?xASHM7YgZzxAeST7WQO0iFx6HTuxb50084V1tD1xVo23HO2Svc45+c3jU5CM?=
+ =?us-ascii?Q?tyeeYC7aUC2xzEhqitLgcr2L16w1zFAUS1STDZz1PUdQAG5cuLIv0iZdwTdy?=
+ =?us-ascii?Q?OlPa4HdmuyBKVp13OzVusgifMhCkztGPBwhXSB67BWf+BMJh+bR+zLEYnuql?=
+ =?us-ascii?Q?X25DlAFYT8KgcZ7K4MN3RJiRDla+nUXyyEQVOv+Vr6PwSHkCoVfh2LlpkoC+?=
+ =?us-ascii?Q?ayvByfq/lHAwZgs9ZAuHDGAPpr4f0VMh8oOuKx28VokfyZrIagzimptXoxSM?=
+ =?us-ascii?Q?UpnWa+4XvRxbCHinIA4PPrOk9P9g07PP4oo0Z/bKhkj7m++2jIg8FqalJZlB?=
+ =?us-ascii?Q?EiGrh6rvwDukZTO7S+06PLMCLb5xuzx55/2caOSyvqfScEJiXWS9nGuFaQCF?=
+ =?us-ascii?Q?pOhGhm4NQ/+JdKVwN2bYufiD2s/zJ6UEv8MVr1+AkK4WNNhzM+LidASdtmKj?=
+ =?us-ascii?Q?jGiV/XBmP5KrsvoN3P1uXlCP6xSdtGLnto53jFG+a5a5+XAWTflQL2Um9RES?=
+ =?us-ascii?Q?8NdIFHhuZEf/lCpYkGcjbuRDVXkoDxgzcpITUtPWVPQ0RrXnR39cZFaHvCbc?=
+ =?us-ascii?Q?n6O0gQa71f4EkNwB8rxFLiQ5NadUI1ymKRuPP7WgJt7Te+uoXiD5DtqTvzV9?=
+ =?us-ascii?Q?GoYUVAd13X3NnZz8E7+Udf6GZHdiYOXqknh3eFp9zG9hLvhiM6HJfBlikooS?=
+ =?us-ascii?Q?ru+hjBl3PShuNNaJDCU3sF3besEk2US/sIuJ8ktY6Q0eh5JEaEmUobaBwqYf?=
+ =?us-ascii?Q?XTWM285FxSPife1Zmxv6XDa0cqeZusx6xbkk0cb6wMLLF+QdoQZfQ1SDtmt3?=
+ =?us-ascii?Q?Hv7K5mLIDNaGA+JvUEP8SGpmGcGeDMXfZ29YxqB0Z8VVVcMVdwaGUEohT8WI?=
+ =?us-ascii?Q?Ytwdr9DKGtYm7nyVoVFuG5TlFz5kXLSU7adQIAGzL5o+A+E7VQq1YB8k4O3V?=
+ =?us-ascii?Q?MqedSct/E9eJJamD1ljuf5CE+yvNuV/DLoKQ3dy/xlR3Nf+yI4gym2PS/Etr?=
+ =?us-ascii?Q?OrBkm3C74clfxx8LBpYk8e5E93ZspqOP5r1RHh3shMNE4ZJH1JfSWqPpicy5?=
+ =?us-ascii?Q?wKk1PwWoUH70IP9dP8SJ4Brc5/cPZ3xyVb4WfguodEsX6H90iSMLrISGn6qI?=
+ =?us-ascii?Q?OJ9uSOzxeTVmHdZKX0XiJHS1sc0O0/cg4AzUi8SJaPwQbDkaikKoH66QYSin?=
+ =?us-ascii?Q?PkqbGlHK6rP1jv5UgIueqHablNltWdHDaYF0/gM0PIZivDgxLW82VA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iMUCqzq0UGZbuYvif1POXy5aAo5XLeyvnD4y6I8GHgElgQ03TIdo/EKbKhXx?=
+ =?us-ascii?Q?kEKckz8+ulipn1ppWS2nrff91mfNTwonLE376brm4VCE/KyGD46LmarWqJep?=
+ =?us-ascii?Q?uSErhsHaRpz2x0zDPA4te4SXSU9WjrZ57nWBmp4Ava+Mm2GDWDYNIfv6Xoqh?=
+ =?us-ascii?Q?YgEMzANBxV4pGO0G6KI8QGHSex9Him+pki4Rs8ReEbe4P8RC+scdT+juCMKX?=
+ =?us-ascii?Q?yWQpmLcijxTlHdQPoRqhTQbn8WzPrFOTGO8Dxjl/FDzBM0c5oHJ7XQ8VHP+H?=
+ =?us-ascii?Q?18aM+7zD9hTU9nE2VlZ9q6p/JU+CtOmtGsis9EVYk403P5kqWzSH6wzGeaa0?=
+ =?us-ascii?Q?NnG78l6yu85b6tgGo27Vu2rHbawtEY3qEakV4JJLgAJdnDI1GFy15EXjvaLE?=
+ =?us-ascii?Q?yS4lIEEWfonyT7+4tvoVQRxQBN/2n7xtUqzMh+s9pezOMivxUImQYvre+Ivo?=
+ =?us-ascii?Q?6tnkKmGN8PU2y9LUja+FtPJnyUYIYcXbHLl1UFMtKAiVA5Un0EODwsu5DmSq?=
+ =?us-ascii?Q?I7geEevVJzi3Gag1/hXvZz/bmWBxy9vjSSyqrKx2WYBImWjmogcib0BMN+Ln?=
+ =?us-ascii?Q?ZitJE6oa15pkQHFmsZiS1D2/TQLtXclNTaGddQmyQlKYt7+am6EoIRDyUVLy?=
+ =?us-ascii?Q?GVYkqTjZJiIprrTmoNJJQM4BmD3DZnBu5DRBCxb5Wqgh+B3YSc53U6El6zul?=
+ =?us-ascii?Q?7A4yuQI+5JFNSY16DuOIaXCgHBXBypOmpDKjz/zXjCU4HE6z8AmkLpLg4ZFn?=
+ =?us-ascii?Q?RvAKIIvCQ7cv2eemSrvN3o3dZnCgaUn1nXWyN8aMDab8b+KFdclDyoOvyFEL?=
+ =?us-ascii?Q?IpWn7r/S6VFEOsYTiXVitIy8XpNhLByvBM2j36mN3YB9pRsnSNjlSrWKC7RV?=
+ =?us-ascii?Q?j+tUJcbDPwOp91IedIPMlDVNGO2EUZ4qZJGO6dkP40GCGvEQraW99pZfRFuo?=
+ =?us-ascii?Q?Y7nD0VvPsZnDWelgvmqYTVHLYXxh5pYN3Y3CLzme/6oRgQnsmmOgMal9GFPZ?=
+ =?us-ascii?Q?AwWUQ47QYpH8MWbZT0efl+L7SOhyMRu74CmcXnrd3WOG2DFRGocQ24Edta1A?=
+ =?us-ascii?Q?Hlzi4yCfr/V5Dg0BI6VQ5ybJkLFt5MBCisGhyciYn4YFECXQaP77tR+ZrYaI?=
+ =?us-ascii?Q?FheO78++ynKRoZ9E5j1t0b9rvJocEOUwg6CfloTdhsNIBHqSDKmwydKIPEr4?=
+ =?us-ascii?Q?RunSkz/bp19Bkdj0+H4sk/eqLHXXUt05ZCGGi0YY9B9OSEHlZAzGRqLVFIPl?=
+ =?us-ascii?Q?9lKtHxbzBwC1WzfIQwqD+C9Fr9aRq8ZVlKxKZumKWF/mGg4lshS957MZQUUA?=
+ =?us-ascii?Q?X+mnYYdbiQakCK/BY8pYsciqff1/vcNWoJipo+KyLOR8loQ7quIq4FcceT+3?=
+ =?us-ascii?Q?6DxOV9VWdyOfRpEnyBLG5H5cKFkEyGYbqlSwzCAFytpylmo8bhLYnf4ScrjK?=
+ =?us-ascii?Q?e8x/G6Ru41ipPecpsF8rPrIgQFt5tT8xz7CJeWpzwaNgWFKj306BdccL6dmw?=
+ =?us-ascii?Q?09/uY0GaPGBdWK/X02Wb7dRDaa15ppkyPXSIHbxc5T8uTX7+K8g++GdJdhq5?=
+ =?us-ascii?Q?Ef083qEksvCwGi6P9vxhulbSbBCyOwVXnuXg869O?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f73fe4e-7aa6-4b85-03ee-08de001c356b
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 12:23:49.1653
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nATM60iE/+MkSid+Tvp/DtF77tpr2R6XGZnxWtFVfyKnw5RvEmOU2FrWUsKxkSVlOlmPSD++raxRpVAKINEFNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4999
+X-OriginatorOrg: intel.com
 
-Add Device Tree nodes to enable a PWM controlled fan and it's associated
-thermal management for the Lichee Pi 4A board.
+On Fri, Sep 19, 2025 at 02:42:59PM -0700, Sean Christopherson wrote:
+> Rename kvm_user_return_msr_update_cache() to __kvm_set_user_return_msr()
+> and use the helper kvm_set_user_return_msr() to make it obvious that the
+> double-underscores version is doing a subset of the work of the "full"
+> setter.
+> 
+> While the function does indeed update a cache, the nomenclature becomes
+> slightly misleading when adding a getter[1], as the current value isn't
+> _just_ the cached value, it's also the value that's currently loaded in
+> hardware.
+Nit:
 
-This enables temperature-controlled active cooling for the Lichee Pi 4A
-board based on SoC temperature.
+For TDX, "it's also the value that's currently loaded in hardware" is not true.
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
-Tested-by: Drew Fustini <fustini@kernel.org>
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+> Opportunistically rename "index" to "slot" in the prototypes.  The user-
+> return APIs deliberately use "slot" to try and make it more obvious that
+> they take the slot within the array, not the index of the MSR.
+> 
+> No functional change intended.
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -28,9 +28,76 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <1000>;
-+			thermal-sensors = <&pvt 0>;
-+
-+			trips {
-+				fan_config0: fan-trip0 {
-+					temperature = <39000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config1: fan-trip1 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config2: fan-trip2 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-active-0 {
-+					cooling-device = <&fan 1 1>;
-+					trip = <&fan_config0>;
-+				};
-+
-+				map-active-1 {
-+					cooling-device = <&fan 2 2>;
-+					trip = <&fan_config1>;
-+				};
-+
-+				map-active-2 {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&fan_config2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	fan: pwm-fan {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&fan_pins>;
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		pwms = <&pwm 1 10000000 0>;
-+		cooling-levels = <0 66 196 255>;
-+	};
-+
- };
- 
- &padctrl0_apsys {
-+	fan_pins: fan-0 {
-+		pwm1-pins {
-+			pins = "GPIO3_3"; /* PWM1 */
-+			function = "pwm";
-+			bias-disable;
-+			drive-strength = <25>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	uart0_pins: uart0-0 {
- 		tx-pins {
- 			pins = "UART0_TXD";
+Reviewed-by: Yan Zhao <yan.y.zhao@intel.com>
 
--- 
-2.34.1
-
+> Cc: Yan Zhao <yan.y.zhao@intel.com>
+> Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Link: https://lore.kernel.org/all/aM2EvzLLmBi5-iQ5@google.com [1]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
