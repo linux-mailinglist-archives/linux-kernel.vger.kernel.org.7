@@ -1,195 +1,221 @@
-Return-Path: <linux-kernel+bounces-837557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F8DBAC925
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:57:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954ABBAC92E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6920B3B7AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:57:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EBBC4E200F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A312F99A4;
-	Tue, 30 Sep 2025 10:56:57 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D9B2F83B8;
+	Tue, 30 Sep 2025 10:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lcUUCjon"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCDF1F428F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3CE1AAE13
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759229817; cv=none; b=JAQGZ3xUHTD+JfglBl7SO8nKyyzhbEzGDAi6rd4CFW+7MajUewVLx5NYvQacnV8l44oIa73HYrV4uiswT6SfkKu2TXH4hAIwirdL8Y66k/gMI1Vy83WbdTzwekXVUvqZbcXQcn6PWHWuKXpIWVksvBY5QdlqQunOdvTH1Pgdjlo=
+	t=1759229853; cv=none; b=WzWblzWrm/T1RgEYkuLn4DjAYBq7jET7ZZUGZuyvUE+HyMPkwDjScKctZD78D05KfZ2BJ1Cdk6LClEIJWhqlaqQlJJnGen79kWBEkfFSorXuOBT6iaMoArFZrowg3iJauwJLEtJenso50VG63F2jN7njttBIf0VIY5TE1w/TiMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759229817; c=relaxed/simple;
-	bh=P0bulvBSgw0/2qG+kHXMW1VRv65+K/7NX/DitiBMI/k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=ACkbo47YWLi1pNThOrCcDejgk5NPirGF0TXXp4VpfuKg+8QrSeZu6juSnq8D+oBkxz1W/ebyi3x1B5gWj5pOMb6kxDkm1wt0fL+7EIS9XfZoiFnUeCjiWYH731GV2a49IUpbr4YiwjlHtYb3cdjm/x/z5KCT+4BfaU/LRyN2szk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42721b7023eso48798595ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:56:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759229814; x=1759834614;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9s5lKvKDABnlyPv5FHzfoj0kZjQ9BrH1NHlxob5owg=;
-        b=fYKRwJzZvmKTC85/rhzi/fMh8ocO56k6gG089qa8ppdtQmmTVHbD+R6hzJ/tHKn6SO
-         nU00rWBPNpjXfCLWdfLPkvltDIeD1khi2SA6nlz758NdpOnBZ3EUK9KIUMrFaXpLUlDz
-         rDUm2smIOVPu9H/w8k3u+LHL/gXozPwkCFS4Co3qIuSkmz40ssOMqf3AGoJfxyV6Sm95
-         bqPN6/sRlgvF2KPqZVDg7uBeqinppQrUGVGtKyAxErFQt6tNianPG/OOurC/QQfT9sNo
-         cpXDfyKAsPVsJer/Dnn4VR25wCQiE3v+CSgwX+7xzZeqUPHWRb+rBCZECedO8WPrmjqA
-         2uOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4o19f62w4Is5aH2pYmns5fKiQJNIOtc+SOFv6fd0XYAfIFAGwadgXq8LgtgvwUHf5vQgJCi1nVhPSWbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcHq7xf2gw1Ehv3cf36Ay2Q97c885/zGw4LqahRWS3Ml1PrVqp
-	yKQbVYQioD7VBsgNWYwSmSfHqkwwAErINr55nhqpoIE9tLeGRtgTXKHyBymJC0kNHILh07d/MnY
-	KO8ZHctuu2im/8QnCHh+hOdZJmuRxWNxzqWwkb8O+fv17FiIuHSEviFsu7BA=
-X-Google-Smtp-Source: AGHT+IG6+NqI73w0Zf2L+W4izG5fN2n5MZDwq2eoASlJ8ucEBVdNMpT8OCeevvkXqn2u90OpDt97HulPwwihv4CG2Zc/ccRnQoLa
+	s=arc-20240116; t=1759229853; c=relaxed/simple;
+	bh=6bPRcsgjW5miijm89Vj9ztPqCVHtA9OfZProSwKLM+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FbF4lS3bDlojcPEVD2izDjnR2BVS6qt0XiM2uGxgTKliEKL/dvFsHwjEaJsKxrirosZ/rP0vHZIUV3sN6kSWaEg0UEJJxkkJ67esR3Bn3TszCh+zisoZ0XCtcFZe9pW8qongJDatbkSmkwginUB6dPGB0qm/urQc4NxaUalgLc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lcUUCjon; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759229849;
+	bh=6bPRcsgjW5miijm89Vj9ztPqCVHtA9OfZProSwKLM+E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lcUUCjonC+V4D2GtM4PuXn8rRIxReNC+RXOaJZ7hhwdzpU5mJal943IHtXfksU6wu
+	 1D4iYmyYsIQxCHCBDNgn2L/cw/FXXWt6qkiOP9BOrFZOE5VtEVtOs3UMLbTPqlRi7m
+	 sKXNlWf3l89UmYA7IFySASPm0/qugfjqrl/9Fy28nPJgbr6M6qH4YrQBz4x7zBUoER
+	 1Im9nrbMPTENN7AdmsIDsaHOzwTV3uVEXlQrAUK8WQc5UWwjVWbhHlBwe+whDMd3ua
+	 rnCpyrhWzx7KD6aATwtJa8IFUPOVSk/k5fYDLMd24rXPk8ymgdwszEHPAfqdwn10ho
+	 td+aeBNfzDZRQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 48A0917E0097;
+	Tue, 30 Sep 2025 12:57:28 +0200 (CEST)
+Date: Tue, 30 Sep 2025 12:57:25 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org, kernel@collabora.com
+Subject: Re: [PATCH 3/8] drm/shmem-helper: Add huge tmpfs mount point
+ helpers
+Message-ID: <20250930125725.258e74a5@fedora>
+In-Reply-To: <20250929200316.18417-4-loic.molinari@collabora.com>
+References: <20250929200316.18417-1-loic.molinari@collabora.com>
+	<20250929200316.18417-4-loic.molinari@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26c:0:b0:425:7466:624d with SMTP id
- e9e14a558f8ab-42595654e5cmr282606945ab.26.1759229814315; Tue, 30 Sep 2025
- 03:56:54 -0700 (PDT)
-Date: Tue, 30 Sep 2025 03:56:54 -0700
-In-Reply-To: <20250930060557.85133-1-lance.yang@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dbb776.a00a0220.102ee.0046.GAE@google.com>
-Subject: [syzbot ci] Re: mm/rmap: fix soft-dirty and uffd-wp bit loss when
- remapping zero-filled mTHP subpage to shared zeropage
-From: syzbot ci <syzbot+ci80449aea3ab57787@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, apopple@nvidia.com, baohua@kernel.org, 
-	baolin.wang@linux.alibaba.com, byungchul@sk.com, david@redhat.com, 
-	dev.jain@arm.com, gourry@gourry.net, harry.yoo@oracle.com, 
-	ioworker0@gmail.com, jannh@google.com, joshua.hahnjy@gmail.com, 
-	lance.yang@linux.dev, liam.howlett@oracle.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, matthew.brost@intel.com, 
-	npache@redhat.com, peterx@redhat.com, rakie.kim@sk.com, riel@surriel.com, 
-	ryan.roberts@arm.com, stable@vger.kernel.org, usamaarif642@gmail.com, 
-	vbabka@suse.cz, ying.huang@linux.alibaba.com, yuzhao@google.com, 
-	ziy@nvidia.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-syzbot ci has tested the following series
+On Mon, 29 Sep 2025 22:03:11 +0200
+Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
 
-[v3] mm/rmap: fix soft-dirty and uffd-wp bit loss when remapping zero-filled mTHP subpage to shared zeropage
-https://lore.kernel.org/all/20250930060557.85133-1-lance.yang@linux.dev
-* [PATCH v3 1/1] mm/rmap: fix soft-dirty and uffd-wp bit loss when remapping zero-filled mTHP subpage to shared zeropage
+> Add the drm_gem_shmem_helper_huge_mnt_create() and
+> drm_gem_shmem_helper_huge_mnt_free() helpers to avoid code duplication
+> in the i915 and v3d drivers (and soon panfrost/panthor).
+>=20
+> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
+> ---
+>  drivers/gpu/drm/drm_gem_shmem_helper.c | 56 ++++++++++++++++++++++++++
+>  include/drm/drm_gem_shmem_helper.h     | 14 +++++++
+>  2 files changed, 70 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm=
+_gem_shmem_helper.c
+> index 22c4b09e10a3..808721b8be3e 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -5,7 +5,9 @@
+> =20
+>  #include <linux/dma-buf.h>
+>  #include <linux/export.h>
+> +#include <linux/fs_context.h>
+>  #include <linux/module.h>
+> +#include <linux/mount.h>
+>  #include <linux/mutex.h>
+>  #include <linux/shmem_fs.h>
+>  #include <linux/slab.h>
+> @@ -36,6 +38,60 @@ MODULE_IMPORT_NS("DMA_BUF");
+>   * drm_gem_shmem_vmap()). These helpers perform the necessary type conve=
+rsion.
+>   */
+> =20
+> +static int drm_gem_shmem_add_fc_param(struct fs_context *fc, const char =
+*key,
+> +				      const char *value)
+> +{
+> +	return vfs_parse_fs_string(fc, key, value, strlen(value));
+> +}
+> +
+> +/**
+> + * drm_gem_shmem_huge_mnt_create - Create a huge tmpfs mountpoint
+> + * @value: huge tmpfs mount option value
+> + *
+> + * This function creates and mounts an internal huge tmpfs mountpoint fo=
+r use
+> + * with the drm_gem_shmem_create_with_mnt() function.
+> + *
+> + * The most common option value is "within_size" which only allocates hu=
+ge pages
+> + * if the page will be fully within the GEM object size. "always", "advi=
+se" and
+> + * "never" are supported too but the latter would just create a mountpoi=
+nt
+> + * similar to default "shm_mnt" one. See shmemfs and Transparent Hugepag=
+e for
+> + * more information.
+> + *
+> + * Returns:
+> + * A struct vfsmount * on success or an ERR_PTR()-encoded negative error=
+ code on
+> + * failure.
+> + */
+> +struct vfsmount *drm_gem_shmem_huge_mnt_create(const char *value)
 
-and found the following issue:
-general protection fault in remove_migration_pte
+Given drm_gem_object_init_with_mnt() lives in drm_gem.c and doesn't
+have the _shmem_ prefix, I'd be tempted to move this helper to
+drm_gem.c and rename it drm_gem_huge_mnt_create(). Actually, as I said
+in the panthor patch, I believe this could also be passed a drm_device
+and have the resulting vfsmount stored in drm_device::huge_mnt. This
+way we could get rid of drm_gem_shmem_create_with_mnt() altogether.
 
-Full report is available here:
-https://ci.syzbot.org/series/a2021abd-c238-431c-a92e-cc29beb53cbf
+> +{
+> +	struct file_system_type *type;
+> +	struct fs_context *fc;
+> +	struct vfsmount *mnt;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+> +	type =3D get_fs_type("tmpfs");
+> +	if (!type)
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+> +	fc =3D fs_context_for_mount(type, SB_KERNMOUNT);
+> +	if (IS_ERR(fc))
+> +		return ERR_CAST(fc);
+> +	ret =3D drm_gem_shmem_add_fc_param(fc, "source", "tmpfs");
+> +	if (ret)
+> +		return ERR_PTR(-ENOPARAM);
+> +	ret =3D drm_gem_shmem_add_fc_param(fc, "huge", value);
+> +	if (ret)
+> +		return ERR_PTR(-ENOPARAM);
+> +
+> +	mnt =3D fc_mount_longterm(fc);
+> +	put_fs_context(fc);
+> +
+> +	return mnt;
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gem_shmem_huge_mnt_create);
+> +
+>  static const struct drm_gem_object_funcs drm_gem_shmem_funcs =3D {
+>  	.free =3D drm_gem_shmem_object_free,
+>  	.print_info =3D drm_gem_shmem_object_print_info,
+> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shm=
+em_helper.h
+> index 589f7bfe7506..5e153fb63f38 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -107,6 +107,20 @@ struct drm_gem_shmem_object {
+>  #define to_drm_gem_shmem_obj(obj) \
+>  	container_of(obj, struct drm_gem_shmem_object, base)
+> =20
+> +struct vfsmount *drm_gem_shmem_huge_mnt_create(const char *value);
+> +
+> +/**
+> + * drm_gem_shmem_huge_mnt_free - Release a huge tmpfs mountpoint.
+> + * @mnt: struct vfsmount * to release
+> + *
+> + * This function unmounts and releases an internal huge tmpfs mountpoint=
+. If
+> + * @mnt is NULL, no operation is performed.
+> + */
+> +static inline void drm_gem_shmem_huge_mnt_free(struct vfsmount *mnt)
+> +{
+> +	kern_unmount(mnt);
+> +}
+> +
+>  int drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_shmem_obje=
+ct *shmem, size_t size);
+>  struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev=
+, size_t size);
+>  struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_de=
+vice *dev,
 
-***
-
-general protection fault in remove_migration_pte
-
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      1896ce8eb6c61824f6c1125d69d8fda1f44a22f8
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/84a2085e-d609-43ea-8b19-f9af8ea3d54a/config
-C repro:   https://ci.syzbot.org/findings/3e211477-5a8d-4d4d-935b-15076499b001/c_repro
-syz repro: https://ci.syzbot.org/findings/3e211477-5a8d-4d4d-935b-15076499b001/syz_repro
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5985 Comm: syz.0.27 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:ptep_get include/linux/pgtable.h:340 [inline]
-RIP: 0010:remove_migration_pte+0x37f/0x2340 mm/migrate.c:361
-Code: 43 20 48 89 84 24 08 01 00 00 49 8d 47 40 48 89 84 24 00 01 00 00 4c 89 64 24 50 4c 8b b4 24 70 01 00 00 4c 89 f0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 f7 e8 22 3e ff ff 49 8b 06 48 89 44 24
-RSP: 0018:ffffc90002c2f3c0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888027799080 RCX: 1ffffd40008d1006
-RDX: 0000000000000000 RSI: 00000000000387ff RDI: 0000000000038600
-RBP: ffffc90002c2f5d0 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff52000585e30 R12: ffffea0004688008
-R13: dffffc0000000000 R14: 0000000000000000 R15: ffffea0004688000
-FS:  0000555589124500(0000) GS:ffff8880b8d7e000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000300 CR3: 0000000026118000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- rmap_walk_anon+0x553/0x730 mm/rmap.c:2842
- remove_migration_ptes mm/migrate.c:478 [inline]
- migrate_folio_move mm/migrate.c:1394 [inline]
- migrate_folios_move mm/migrate.c:1725 [inline]
- migrate_pages_batch+0x200a/0x35c0 mm/migrate.c:1972
- migrate_pages_sync mm/migrate.c:2002 [inline]
- migrate_pages+0x1bcc/0x2930 mm/migrate.c:2111
- migrate_to_node mm/mempolicy.c:1244 [inline]
- do_migrate_pages+0x5ee/0x800 mm/mempolicy.c:1343
- kernel_migrate_pages mm/mempolicy.c:1858 [inline]
- __do_sys_migrate_pages mm/mempolicy.c:1876 [inline]
- __se_sys_migrate_pages+0x544/0x650 mm/mempolicy.c:1872
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f922b98ec29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffccaf966f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000100
-RAX: ffffffffffffffda RBX: 00007f922bbd5fa0 RCX: 00007f922b98ec29
-RDX: 0000200000000300 RSI: 0000000000000003 RDI: 0000000000000000
-RBP: 00007f922ba11e41 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000200000000040 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f922bbd5fa0 R14: 00007f922bbd5fa0 R15: 0000000000000004
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ptep_get include/linux/pgtable.h:340 [inline]
-RIP: 0010:remove_migration_pte+0x37f/0x2340 mm/migrate.c:361
-Code: 43 20 48 89 84 24 08 01 00 00 49 8d 47 40 48 89 84 24 00 01 00 00 4c 89 64 24 50 4c 8b b4 24 70 01 00 00 4c 89 f0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 f7 e8 22 3e ff ff 49 8b 06 48 89 44 24
-RSP: 0018:ffffc90002c2f3c0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888027799080 RCX: 1ffffd40008d1006
-RDX: 0000000000000000 RSI: 00000000000387ff RDI: 0000000000038600
-RBP: ffffc90002c2f5d0 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff52000585e30 R12: ffffea0004688008
-R13: dffffc0000000000 R14: 0000000000000000 R15: ffffea0004688000
-FS:  0000555589124500(0000) GS:ffff8880b8d7e000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000300 CR3: 0000000026118000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess):
-   0:	43 20 48 89          	rex.XB and %cl,-0x77(%r8)
-   4:	84 24 08             	test   %ah,(%rax,%rcx,1)
-   7:	01 00                	add    %eax,(%rax)
-   9:	00 49 8d             	add    %cl,-0x73(%rcx)
-   c:	47                   	rex.RXB
-   d:	40                   	rex
-   e:	48 89 84 24 00 01 00 	mov    %rax,0x100(%rsp)
-  15:	00
-  16:	4c 89 64 24 50       	mov    %r12,0x50(%rsp)
-  1b:	4c 8b b4 24 70 01 00 	mov    0x170(%rsp),%r14
-  22:	00
-  23:	4c 89 f0             	mov    %r14,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 f7             	mov    %r14,%rdi
-  34:	e8 22 3e ff ff       	call   0xffff3e5b
-  39:	49 8b 06             	mov    (%r14),%rax
-  3c:	48                   	rex.W
-  3d:	89                   	.byte 0x89
-  3e:	44                   	rex.R
-  3f:	24                   	.byte 0x24
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
