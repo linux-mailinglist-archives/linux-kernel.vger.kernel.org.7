@@ -1,172 +1,247 @@
-Return-Path: <linux-kernel+bounces-837828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A55BAD560
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:54:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9493BAD584
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1711176B99
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:54:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE5277A1FE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFFE1F1302;
-	Tue, 30 Sep 2025 14:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A14430597A;
+	Tue, 30 Sep 2025 14:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="VrsUI5u2"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ivFfmZic"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011041.outbound.protection.outlook.com [40.107.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E7A260569
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759244070; cv=none; b=ToWbxFazHvwhkOYeGm+uwZ0WkO6NvQ7cbj7U0TXXegxSH+yi3Bb7bCQrYtbktroryrdKp6PAFutSVylETvaQ7MQcgWD9UYG+WAoiooJPmB0q9WQDRekJofELR6wPf09oXrV2l9WibJiajSh2YSyQOcUzImPdMrcgNib5qh7T9IY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759244070; c=relaxed/simple;
-	bh=ZaEVr4or5cOiiWh76vrIwiPcXn98KNEC6FATw2gVXH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TjakmjDedU4rq+MTi/e8wAHSRHcekGOaehv3wbc1yTsTpLiSAomZvwv/gUPugnKFfExMzbbvWCwyk3GDqVlY+InBAcpK87GPJfl4i8t+ihez60qAe8f85X8bU7q8LHI0jA2uwK0oFADD7RZ3q4bwPaV4I6AbPP6IVRO997v/nns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=VrsUI5u2; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4dfb1f481ecso38969721cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759244067; x=1759848867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iEOBhod7RhHWqheYyAco364m8Vr3uElZmbg1DaQiATM=;
-        b=VrsUI5u2aLDo8TiJlCvgmiP1oRPX5zQ1Rd/VgP2tVuuHFQO8Wgr9yAIlI6lPPe6Slp
-         MM/AQixaX4DWa/YUyCbQZrGuBkeo6JwffJhcgMgEi4pbLU89NlGr7Kzsxq8NJBB1qzq9
-         kR0Sm9oQpP0n/O2OJ+LuEZqy3cX2Md+PrufBcTNOtwMFBEKb4Ga1XgdbmvwVZzPNTtok
-         jMJ9hcazzzs6/Ih21A9hq8OUchkTF6w0D4QZ5GwKl+FBnOeye/edSk1xT3/1ryERYDJX
-         1ZpL1kmKxojsfcRlw/KuEvRRxyX4wO/bZZdMcbR33xYihrOjrQW76x5omqbnDhQy6UYf
-         k7gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759244067; x=1759848867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iEOBhod7RhHWqheYyAco364m8Vr3uElZmbg1DaQiATM=;
-        b=TjgH7EV4XOrUhC33IWhssACRBtGNkJa+aFSfRpE1rpC+7Mxc8XQFKa5bc2kQedV8+/
-         6+xVh7CLfyfSODiomG4iRrG2/JH7JSQn3E8QwMY3HnK2+GSfdbROSAbJvdOwv9DXL9aI
-         Lqc7pXFvBdXv810snWxhUB4+7VfHg8ESDr/N0tMy9uAiB5E2EfRy18JEd2/03YU6vkN0
-         n/AjO78SArC4AfrMCg3/bvLBnw9sBTajKwUJsdQ3qgzxGdjzpr4//IO9qF1nKmJ7wHvC
-         CDV8kfTHjIrNGW+lVBGQ/7XUVC1QiDVnosDAV/k2t7WvHygfI+AXO9yxWeqc35fnK/tV
-         yBxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzdsZnuqowHNsQdGI02wv8HL9b8JjiVE1LMIP2/u9Ugc29uCsqjYJkCJaRUeVS23tCESTJMDmOH2WpoZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTdkJcVlMEpd4SQB3M7dw+NTL3dgCrhBFCNl6SRZYRaEng3MI0
-	KQHmNsIBfzDBY662VL/9chYPgI3ZlPREznbuJJiaAR6w9bp1T2USprxTpAzhNX+4chSs9N5UCP0
-	zy8DPgj/RFny9sju/QrLTaL47VK9K4S/owLI+RSo5sQ==
-X-Gm-Gg: ASbGncvx/43D+6rxfXsTJObNRta24nbwwjyDHeStOrfk6b1fEgTVara/qAO7YQjka59
-	hEnK1wpkbZINugaeVZRZlJQwUN1xzlmb6La6oMc9dD3fo24C/GBl9s8qm1XYVPPe+nWJK88lr0O
-	lWBJG7jpBgQYD/I9YGyw5HHRFtupu53Vv4ybVVefauX3MwiIhritkGPdiXe/dGwdcSHuj+g41N+
-	vrK3XnXYw3WPQwuCh47xDRmna0lWejfs+1vljM=
-X-Google-Smtp-Source: AGHT+IFOfelJUk0OlrUf28WQ82S2leR2E6nLxLlUD+/+zPuAH+3piu1oethsTrwzU7V8ASeo0taITg+SlRBUebjqnyU=
-X-Received: by 2002:a05:622a:2598:b0:4b3:65e:76ff with SMTP id
- d75a77b69052e-4da4782da69mr239644941cf.15.1759244067321; Tue, 30 Sep 2025
- 07:54:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E9D304BA2;
+	Tue, 30 Sep 2025 14:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759244109; cv=fail; b=RKpNEbPme6Y4pHNX6FUxrcnpvk+oPc8Z3f3BnlCdON7Ol4nG2nezVhb6HmG2WEBW7Ar2DVgDrvanOJoEhJ0P6rgsaO1gZHtKWFPOCQBjtauagcUGp4UNVZoyWt3j/YRUcvuxtYoIgEM9u3HBKeIBY6UpVDN+BXTvxzmQHbsA1G4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759244109; c=relaxed/simple;
+	bh=e85bPTQI+tX7dvbOs59MVCWJCK5gVm9ig2L+IFC1eOo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JtOOCvjT1IjHF7MGpu8IEIuVkunVn7O2cvS7LaBpompdTI/1MLcnIef1upMAKSDco7851Eme1OmUQdn/OQmsgEbwnVXm90U9CDZgx0+6mjZj0F1QpnakuN2SPAEqNCAfZp18cQ3OFgjJxj6Oi4fTpTtSlpuUjKM/LDfLfwI2wTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ivFfmZic; arc=fail smtp.client-ip=40.107.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=foO7de13yxYCLDNuhU7v0GzuCfFSOrNlAQwT0QXPItGNYNBZ13kQlyCncnjX88PDXaBZd07O7Ocf5bmi8BkFcOUGw2gusc7CjTcX4+mfy8tLCNgjLttFmu4DLL4LqtNF6O/7CEQcgEA5AcsErFlzrrXIHoORhfI0pzqlClZAgHSpnxde+iQ2lFJz7roH5TyEhMr3xGiF9OrpS47ueTLnGVdXijy37ShX/dsa6FyPfwy7Sipz0rlRRJM5U/4Zem3JyQji5GqD58EHqq61IgVP/9mKvNNRzQkDD1BfTEHohGwqKqaVlSGrMeb+E2RuvKrhgCmBOb0KFDrPO9qDZcs9Hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EhZX+L8BmOCiamlolH6dG7Q7nnWyzKxhcKG4/GUrFXw=;
+ b=SyvqWQK80Eu9S4YQKQiIZ4qirpwwQAZiFt6vxNr5UEsL9Sx43drB9NVZ2UjPrykGrGXm96iU1uit3LUxFWPEHMDACv/VGjL7DWn3LWyCsHlv/QGAY+x+R0QANYv3ul3ei10eTWjtYI2QQQ3MZFvl+q4HVQMOC9Uc2zJC0ktiNfGrVu4TmExzqekDzegIxWC1rsKwa0lfjU3XMwM/ouMFZg2dYQao3CAnRmZSwpl/2SCoPC6G+H7YQ3401HMrrQRNmF+cWMBBJtFbv/T9hZAoBZUcQ1ySPl2jYtHWsR2IWgc2lYZquDUyYOvuhAaVOH4APxM69lWRYdzm+6K9lAjqUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EhZX+L8BmOCiamlolH6dG7Q7nnWyzKxhcKG4/GUrFXw=;
+ b=ivFfmZicssqEjUUDiE1m7VaC1yhB4ZVTtpOcJSgm4uZwpEx6rxypSil2XppJqcBaWq/E76+DlbM62WNccm3YETX5n1mKbrFLf0oZz9EoCrIdug7UnZTa1vx5c36dVWg9jAjOiMfD/4ZnefHDJzvcaUdPj1RZekSRRUWWVv+ZXm9qOMCfRkimhh+wdqUHTU7GT4UF/RLijAcNxwP99Z36/W6WIJnaAUTew4dGETdMGv2Mk8qyle6PbsZMLoulUIGDEn4maYbsX2j4VWzhrUFuE0S/6B+CXn3/A4cTPgMrtBiXxYW6iGINb095KvbpplWWBSjU1q+SZneZZNqt2v92ag==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by IA0PR12MB7699.namprd12.prod.outlook.com (2603:10b6:208:431::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Tue, 30 Sep
+ 2025 14:54:59 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 14:54:58 +0000
+Message-ID: <43f48d63-7bcb-47f5-814e-dd95fdf0b246@nvidia.com>
+Date: Tue, 30 Sep 2025 15:54:54 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] soc: tegra: fuse: speedo-tegra210: Update speedo ids
+To: webgeek1234@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+ Joseph Lo <josephl@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250923-tegra210-speedo-v4-1-c12b5400ca91@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20250923-tegra210-speedo-v4-1-c12b5400ca91@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P123CA0086.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:138::19) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-6-c494053c3c08@kernel.org> <20250929175704.GK2695987@ziepe.ca>
- <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
- <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com> <2025093030-shrewdly-defiant-1f3e@gregkh>
-In-Reply-To: <2025093030-shrewdly-defiant-1f3e@gregkh>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 30 Sep 2025 10:53:50 -0400
-X-Gm-Features: AS18NWDw8pvmBCS0-6-XLE_nnPEk2xIPcwJH7fRLekDAunX6m_kspIDqEfOyowQ
-Message-ID: <CA+CK2bDH=7H58kbwDM1zQ37uN_k61H_Fu8np1TjuG_uEVfT1oA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Chris Li <chrisl@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Bjorn Helgaas <bhelgaas@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>, 
-	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
-	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|IA0PR12MB7699:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fcf4abf-81d9-4204-8f11-08de00315375
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wkx2bjc2ZGdicThlbC9aNjVHSHBLME9mcDdvdUpEd1ovNFBPM1ZQcjByU0Qv?=
+ =?utf-8?B?V2RYMVdPYmlERmg2VlBnRFgwV3N6SHZOL3N1SmVUckNNMXhteE0zM0tDQUFs?=
+ =?utf-8?B?SGwyNjQyM3FST0R3ZG50U2pqSzdEL1QzWjVPRUdnWTEyTE9UTG0yL1c3UlZG?=
+ =?utf-8?B?ZGxpK0UrTlhqRTh2Qm5lWHcxMXBPZlh1T2g1Nm9zbmh5TWtuTkJmdVZxejhH?=
+ =?utf-8?B?Mm85dDByV0ovRzQrdUt3VlBMVGd1UXo4WE5ndks1SWtrNTBpUWt0TlF4a294?=
+ =?utf-8?B?SjZHS1F3RmFYeFdCRk9tMDErQnYzQnFDN3JGNWdKdHA1QlljYkhXN2UwUk15?=
+ =?utf-8?B?U1F5bm9NMmMvTkVKR01NdWFqeVF2c3ZXWmk0eEU1TWh1NVpkMDhLT2FKMlNG?=
+ =?utf-8?B?UVRZWkRTcm9YK1lGeWJpaUU0WDJwaEZDdDJBaURtMnlmZURSM3UrTFM4cVVw?=
+ =?utf-8?B?emNVeHBPYVloR0xiUDVxTmhRMm5GRnBNQS9VRXJoT21kYkk0UzgzUXE3aXFY?=
+ =?utf-8?B?eTJVZkVUdnkyTXJCcHg2cmJMZ09CWU5HMHQyUjMyZit1WmVxTmx2eGlDVGFp?=
+ =?utf-8?B?VE1rWjQ4Z01EanJKTUx6ZHIyQVVHdnl4WVBBWTFYbGJpT0hTM2huR28rb0VY?=
+ =?utf-8?B?eU1PUDdOc0hSVDJ3bGtFQ2NMN3crdTRuR1NkZVgzYjlKY2pWZFo0aEVmVDk5?=
+ =?utf-8?B?TkFVVFNqN2pteC9mQldVTmZZcmFTR25oQTlKeGYyeDYrWXFDUFJ4aEk4aXFR?=
+ =?utf-8?B?cjZvVjIrQVBkaGFiTER4dGtNdzJ4aXdzQW1rejZId0FmbTNnMjB0MUxpL3lP?=
+ =?utf-8?B?dDNydXJmOHllRWtFN2hwdXRKUzg1NUJlVG5vWmVTU05hOXpDKytpbzFKOGwy?=
+ =?utf-8?B?L2NPSzNpczNtT0tlcWp5dmFrMklYL0RlSnhqSFVTb0ZRZi9vZUFvZ2oyakx2?=
+ =?utf-8?B?NlZKaFhsWE1MS3FUdXdLOWc5Uysvekt2dGJnOXpnclp1T09VMHR1R1JLcVpJ?=
+ =?utf-8?B?eThEQ2VGbzNoZ0w5ak5EekN3cURLTmd4Z202eVMvY292cXJsYUdZeEhvK2c2?=
+ =?utf-8?B?akxrLzFlczVPU2RHZnVPU3hXMW5PblI3S2Mwdm83SGxBbkVmd3lUb29BanJG?=
+ =?utf-8?B?MnlReEpibGhKYk1YZjBCMElBdkcxeW5qL3l0QWU4MEwwTG43dWZKUGRDeS9u?=
+ =?utf-8?B?cmlJNGdMVjdqeEZ5K1NjdkNzY3ZKakRYaWpldEt3c09TY1hZd0VYZnlGbmE2?=
+ =?utf-8?B?T2FKcEJubW9nVWgySWtzdWlwdldFclpaYmFrTmhRNXlvQmR4M09ZelZ5cmFE?=
+ =?utf-8?B?aWQwZ0xMWjhSeXcwbnkrZFh4aHloWjNZa3FtbW5ydy9xalBFc0ZpR1g5eHJU?=
+ =?utf-8?B?Mk5VdEl3T3BuVnlTdFB5OThRQllhV1NGNTVXdkZuU090N1R2Mzhsc3pCbDA1?=
+ =?utf-8?B?aVdERjVqWGNuMUxUc1BtdlRSb3JHQ1h1aUJzTUwzVTR3YkNNbG5nWk4zajFm?=
+ =?utf-8?B?N1pRT0VWUzk5L2Jialo4ZHhiakt5Zm52MHRvblhrRUkwY3RhWkZQZExMQnlY?=
+ =?utf-8?B?aGY0SzhWR0hKbytqVEs4elhvNTBVTzNJOU9zdk53YjBhTWxqLzViRFhJMXpR?=
+ =?utf-8?B?emUzWHg2ejBGc2tKYnord3NpVVg2Qkx5ZWlYdFhJU1NZYTJYK0ZWQTVVWmQx?=
+ =?utf-8?B?QUxuQ1lLSGZyY1hZZlJBMkJkMEJ0QnZhVXVjWE1uODRvZkVsWXBtdkhwMXZJ?=
+ =?utf-8?B?SDQrc05RSFBFcWx4L2U5QkN3WXRYR2xYNG91bGh4N0RQeCtvT0JuUkRqYUpU?=
+ =?utf-8?B?R3Z3RDB1eHZ6NFM2VEs2amlBRTkwSFFBTEtLTThIU3JJb0gxRFM4UGtpR2kr?=
+ =?utf-8?B?eWQ2UGE0U21Pc0NOUFhjV0xFOFlrbWN4RjRNUGFBeXlLa0pod2RQR0RhRW1k?=
+ =?utf-8?B?L2Y3NnpLWThoV3lYMGZQSEhvYi84Nmx1YXVTeXZKVzJ3NnJHMWppdjQzYnpX?=
+ =?utf-8?B?TWdUU3FwMnFnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UGY3T0NLam9iWk5FbDhjTVluZ0FYZkJvTjd1NVI1dkdMZC9kMlMzZlNzK21F?=
+ =?utf-8?B?MkVrdFlldEwwZEV6WUVuUloxRDg5M2VsbUdvNnFQOFM4ZFEyK0tHekhYNklS?=
+ =?utf-8?B?YXVGTHUxdkNCWURCU0dVVnkydW54YmF3ZUErMk5kdUsxbjJ5TmRodmFOWFdu?=
+ =?utf-8?B?bkkvbzFHSXpWZkt4emhEQStVbFJtOFVkOXlzVzNwSERaaEtCWTdPcFdBNUVK?=
+ =?utf-8?B?NTdPUit0Z253UUxiVWVVUHQrOGF3VklTMUkzWmpUeDhXUVlNVVBnZUlPWG03?=
+ =?utf-8?B?M3hIc1V3RjlLcTkwc1RMNloweGNRcXJaY1pZOGdnTDNPdU9IaC9lWnJzZExF?=
+ =?utf-8?B?cUhyZEtrR1AvRGRueXRDbUZkeVExam9jWlBERm8vTHZtYURGWnNPNFNYS2ln?=
+ =?utf-8?B?U2wzVnh1RzBITkVRMlBDNzZqN3JaSmduRGI2Wk9iaWN2SUtvdnFjS2pnVEYv?=
+ =?utf-8?B?N0hxRkpONDRqM3VvMG9lRE11Z2tDOHVEMVpaVHdxU3VkME9KOUttSlQyTStD?=
+ =?utf-8?B?T2JrOUw3QkFhY2pFYXBsTGNDK2pGWWpXUnRqMmdVSmxWSEMxVCtmd2pGTTdl?=
+ =?utf-8?B?aEZRUVpCUWhTVFZTNTNNRkZlL29rRC9tMFY5SmZPWC9JaVE2aS94bkQwYWNp?=
+ =?utf-8?B?ejBERVdlTlhqM2ZsWlFVVU5sOGNqT2RvVFd6VjhlOHNjc1BTOE12SURwK1lu?=
+ =?utf-8?B?WGl5STcvbHhDUDY2MHJrNjdjaENBMHR5aVFBOEdRdWlqOWxERWJ1N3J0K3J4?=
+ =?utf-8?B?WWVuc2hPR25icHJKa0sraTVsUXJRWFg2ODRhL3hGbXphYTIxcC9rU3MxR2JZ?=
+ =?utf-8?B?emNUa2JTa0JIVmNaR3B1T2ZBU29ud1Z0aEs0ZnpWbjFpSkk5TXBCTGhuYXlw?=
+ =?utf-8?B?TFBaWjRrd1oxN1RBVEhuV3BvTXY4cXJjaytVN2l3cVNvUC9YVWEvYXFFNmxv?=
+ =?utf-8?B?VUpNRjZ0UWtxZ1VJT3JoVVJpMVROdlYyN1ptSW04N2VGVXFvWURpZnk4VFFv?=
+ =?utf-8?B?OG9xbUdVOXpmUklmWDBSSHF3anBDS0ZsdFNtZ1phejhYNlpEQkJnOXlENW5i?=
+ =?utf-8?B?L0RmQ0pZcEFFeU1mYVBJTmJPcVVkS0R0SytnYTRmMGdnNTByUU5CRkxVMCtp?=
+ =?utf-8?B?QTZ5UVRSUXF3M2p0L0xMOFViSjlLU2lGOEVFd3dVQndjYzFiS2lLZlNBYjd3?=
+ =?utf-8?B?N0FlV2N0bloyeUZaSTFldlhpSTlsa2c1QmVZR3VlWW5NQzc2Uk9JVjhaQWtl?=
+ =?utf-8?B?dk0wVmp4M3JhMlIvTXlQbVNhdDB5SFdSQVg0U2lLdEhUNlRkTDM5WFk5Sks0?=
+ =?utf-8?B?TmtYVCtQdTZiaE1CV2g1VVVPVUtsOVd5ems3OGtENU9WN2RONVZ6QzJKUGow?=
+ =?utf-8?B?bko4MVRRUEhreVBjSkQ3RzhsRkVFWko4MU16cVV2NkgzZUxrQTdGRHpKYW5o?=
+ =?utf-8?B?MSthSWdzUDErM1VrNkhRbmxkMmxXeUNJUEZiQ0xlNTJFSGxaakJKSE5YZG9J?=
+ =?utf-8?B?eG9uM2lxaFVveWpmalVBT0tFNTJUbFFESWticHl3VEsrenZBMTNENFppQzRV?=
+ =?utf-8?B?VnZOUjBNenlyNFhjTXJ4cW9hSFkyT21Vbnk2NXZOamR6SmtxUWcyY2tRVGp0?=
+ =?utf-8?B?MmNpdGdiRXYvNndZV2JiTW9RQys4YzhuZ3p2VmFzQnBhQkpMWHBXSHg5R25R?=
+ =?utf-8?B?b3djMURQVzRTNFplT0ZLZ0RXL1lQTHRabzVpR2MwQ2N6WnZDWk9XSHlBd1Qy?=
+ =?utf-8?B?ZGV1S0FiMzMyYlNENWdidnlwRlhTalNRZ1FwdmdSTTFZMWpGMFRLY3hXNXA5?=
+ =?utf-8?B?N0NLdTAxZWJGWFdHa0RRTUwzMkMydVJ1WEJiVXNJQ3AwaVZPT0hMMGlpRVpY?=
+ =?utf-8?B?c29aR010Z0V6ZVZjOGJWTjBwWVgrS2tqUjNXRmJ5bWhQZFJFVk1pT0pTbDRv?=
+ =?utf-8?B?YlhsU2FGb0dPUis4d2k0NmFnVHJRRDBCekowTDJ3RU85ZDRpRnY2dHV1TW54?=
+ =?utf-8?B?Wm9rOFlKbERud2tGNkVBeFJKMmRYMnk1cTVOSStUZjFzUWs1TjlOKzZxMyth?=
+ =?utf-8?B?d2p4N05hS3FZbTA0T0d3QTc4cXFoTXI4S2tQQ0RiSmlrazhleUlucDFkRUZU?=
+ =?utf-8?Q?Su1UxDc/yrhh+KsVOWvFqdV4t?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fcf4abf-81d9-4204-8f11-08de00315375
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 14:54:58.9254
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pQfjNH26GFOvYUh3pOaYyhVrDLE/KfFYyXsE7fBt65th6o6ZIkzZ8ct3BuDIAw/7TuBHBOK39J4tbrDwy79AFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7699
 
-On Tue, Sep 30, 2025 at 9:41=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Sep 30, 2025 at 09:02:44AM -0400, Pasha Tatashin wrote:
-> > On Mon, Sep 29, 2025 at 10:10=E2=80=AFPM Chris Li <chrisl@kernel.org> w=
-rote:
-> > >
-> > > On Mon, Sep 29, 2025 at 10:57=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.c=
-a> wrote:
-> > > >
-> > > > On Tue, Sep 16, 2025 at 12:45:14AM -0700, Chris Li wrote:
-> > > > > Save the PCI driver name into "struct pci_dev_ser" during the PCI
-> > > > > prepare callback.
-> > > > >
-> > > > > After kexec, use driver_set_override() to ensure the device is
-> > > > > bound only to the saved driver.
-> > > >
-> > > > This doesn't seem like a great idea, driver name should not be made
-> > > > ABI.
-> > >
-> > > Let's break it down with baby steps.
-> > >
-> > > 1) Do you agree the liveupdated PCI device needs to bind to the exact
-> > > same driver after kexec?
-> > > To me that is a firm yes. If the driver binds to another driver, we
-> > > can't expect the other driver will understand the original driver's
-> > > saved state.
-> >
-> > Hi Chris,
-> >
-> > Driver name does not have to be an ABI.
->
-> A driver name can NEVER be an abi, please don't do that.
->
-> > Drivers that support live
-> > updates should provide a live update-specific ABI to detect
-> > compatibility with the preserved data. We can use a preservation
-> > schema GUID for this.
-> >
-> > > 2) Assume the 1) is yes from you. Are you just not happy that the
-> > > kernel saves the driver name? You want user space to save it, is that
-> > > it?
-> > > How does it reference the driver after kexec otherwise?
-> >
-> > If we use GUID, drivers would advertise the GUIDs they support and we
-> > would modify the core device-driver matching process to use this
-> > information.
-> >
-> > Each driver that supports this mechanism would need to declare an
-> > array of GUIDs it is compatible with. This would be a new field in its
-> > struct pci_driver.
-> >
-> > static const guid_t my_driver_guids[] =3D {
-> >     GUID_INIT(0x123e4567, ...), // Schema V1
-> >     GUID_INIT(0x987a6543, ...), // Schema V2
-> >     {},
-> > };
->
-> That's crazy, who is going to be adding all of that to all drivers?  And
 
-Only to the drivers that support live updates, that would be just a few dri=
-vers.
+On 23/09/2025 17:58, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
+> 
+> Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
+> code supports 11 ids and nouveau supports 5. This aligns with what the
+> downstream vendor kernel supports. Align skus with the downstream list.
+> 
+> The Tegra210 CVB tables were added in the first referenced fixes commit.
+> Since then, all Tegra210 socs have tried to scale to 1.9 GHz, when the
+> supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
+> Overclocking should not be the default state.
+> 
+> Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
+> Fixes: 579db6e5d9b8 ("arm64: tegra: Enable DFLL support on Jetson Nano")
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> The Tegra210 CVB tables were added in commit 2b2dbc2f94e5. Since then,
+> all Tegra210 socs have tried to scale the cpu to 1.9 GHz, when the
+> supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
+> Overclocking should not be the default state.
+> ---
+> Changes in v4:
+> - Check soc chip revision instead of speedo revision in speedo id
+>    conversion
+> - Link to v3: https://lore.kernel.org/r/20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com
+> 
+> Changes in v3:
+> - Drop all patches related to limiting cpu frequency from a dt property
+> - Link to v2: https://lore.kernel.org/r/20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com
+> 
+> Changes in v2:
+> - Define units in patch 1
+> - Update patch 1 commit message to better explain the need
+> - Pull all downstream sku's into patch 2, which eliminates patch 3
+> - Update patch 4 commit message to indicate the limit is due to thermal
+>    constraints.
+> - Link to v1: https://lore.kernel.org/r/20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com
+> ---
+>   drivers/soc/tegra/fuse/speedo-tegra210.c | 62 ++++++++++++++++++++++----------
+>   1 file changed, 43 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
+> index 695d0b7f9a8abe53c497155603147420cda40b63..a8cc3632977230fbfda0f8c3bfa7b7b25c2378fe 100644
+> --- a/drivers/soc/tegra/fuse/speedo-tegra210.c
+> +++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
+> @@ -65,27 +65,51 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
+>   	sku_info->gpu_speedo_id = 0;
+>   	*threshold = THRESHOLD_INDEX_0;
+>   
+> -	switch (sku) {
+> -	case 0x00: /* Engineering SKU */
+> -	case 0x01: /* Engineering SKU */
+> -	case 0x07:
+> -	case 0x17:
+> -	case 0x27:
+> -		if (speedo_rev >= 2)
+> +	if (sku_info->revision >= TEGRA_REVISION_A02) {
 
-> knowing to bump this if the internal data representaion changes?  And it
-> will change underneath it without the driver even knowing?  This feels
-> really really wrong, unless I'm missing something.
+The dowstream changes just have 'revision == A02' here and not greater 
+or equal to. That said, I believe that A02 is the greatest revision of 
+this device and so this should be fine. Thierry can make a final call, 
+but otherwise ...
 
-A driver that preserves state across a reboot already has an implicit
-contract with its future self about that data's format. The GUID
-simply makes that contract explicit and machine-checkable. It does not
-have to be GUID, but nevertheless there has to be a specific contract.
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-Pasha
+Cheers
+Jon
+
+-- 
+nvpublic
+
 
