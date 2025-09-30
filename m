@@ -1,109 +1,207 @@
-Return-Path: <linux-kernel+bounces-837318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98DCBABF6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AF5BABF7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1DD11926745
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5FE1920911
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45342F3635;
-	Tue, 30 Sep 2025 08:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="OUoPEgaY"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B482F39B4;
+	Tue, 30 Sep 2025 08:13:01 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D572F39C3;
-	Tue, 30 Sep 2025 08:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313B42F362B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759219762; cv=none; b=WtNyspSc1HaWXNadpOJyFFzbDx0/zikp3sSU35M2Fl6MJ4+eOBdVIg7pQNtKoEl2KI/fIQbXp+/1Mc0iIB2zUWEKsAIoUFcjD7TycrzMIF3M1bkv2bTEmuL0fml4TVhFc5jNLQHMbxCcp5Vafq5TZEJdEUdcd9akp6J/C2adcP8=
+	t=1759219981; cv=none; b=Lia8Nj1nDeRTFDTxcnc9S9qeyQvEaLwryhWitSS16bifoQ4XjA75/VJMzBXVCVAM42aTRVsycWzRBaER6DWNoOh2RS887evhtNPXzlpYl1zlZ7R2GkipsAEWllcjP+ug68ajZxoXji4TLVZ1WJmYrjAKPikTAdMBEw3Dxprakrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759219762; c=relaxed/simple;
-	bh=Py3yCoAGUCq2pdjLCRrdHxYGxN1ZVdhsZCQ4ahkBGvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxKrjHYTkYNKFFo6uJIkr9tF3hb9RY5/Bvsf80kqcwy2FiUDXXwWacVXkuvON3MVn8A3A7eDqHlw1dKq9q5q3LgoOUoLj0K+8sA5lU1GDTdo2tHCvD6g6T1/HaBJFCh3Idy+uEIvjkoqPIQXyzSQY1qszpIRdd7Uh7/697U2y9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=OUoPEgaY; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To:
-	From:Date:cc:to:subject:message-id:date:from:reply-to;
-	bh=SNl+JjIRM7qiedHpV2E5vW8Z43H70pcL9HXRcwW98v8=; b=OUoPEgaY2Om8Dxww/thydnKrAA
-	UPck2JTT4NJ/82oH9tlSHFmZ6IKJbS8qyAIbgzWdk7Oel1UoTvj/N5uJmRsP9MZAzrwQRTarHgugZ
-	AOHtaGmT1ArzuycdwrH1Lb+0/bvLOnCmnPvAyZFwUHrc1doFgskyKFwDXdGEDvm9jGA2roNRgA6a9
-	D8YTkVVNKbhplJQjDaKxxdILtf7MiMhqA2NHDUrMrrBAMnmpfPWsWzThFYjtfAZ54BJCI4u3wvBPd
-	WFkPBq9S012jMzeZVro7+GE4HsCXO4/62UHJm93vAetQG+/Jgv/dvNjV1Uoc2qxqba0lhIGRwFXij
-	nOv63TSw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1v3VPW-009OTT-26;
-	Tue, 30 Sep 2025 16:08:35 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 30 Sep 2025 16:08:34 +0800
-Date: Tue, 30 Sep 2025 16:08:34 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Han Xu <han.xu@nxp.com>
-Cc: "suman.kumar.chakraborty@intel.com" <suman.kumar.chakraborty@intel.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"terrelln@fb.com" <terrelln@fb.com>,
-	"dsterba@suse.com" <dsterba@suse.com>,
-	Richard Weinberger <richard@nod.at>,
-	"chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: [PATCH] crypto: zstd - Fix compression bug caused by truncation
-Message-ID: <aNuQAr79Hdky3WII@gondor.apana.org.au>
-References: <GV1PR04MB9071B5AC95DBD48B67FACF44971BA@GV1PR04MB9071.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1759219981; c=relaxed/simple;
+	bh=W6oDfQ3tA6Pme1gatYJbw8/yR7JHBTFPfjYXtL5BQIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q9sTlp8BWGXlXHhxmt5BeZzk1B0XT96FlaDBH/zBQOYOAJxgMZ693sEwn7SFldVVdv4KfwBSaPsNgigcDPHA/eiPKWxAhxWnLFq+ws3MY1JWD8ZLhOrtICZlW7iwgyuUa/QjWKn5R2efR/sGJEPi9IeBt8rSD4tDJOWlamTQ4g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e42deffa8so47079435e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:12:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759219974; x=1759824774;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vAJ15PCYe/3t3twFi4VSUK9WUI+ae4tv6+Eg5/cOO8M=;
+        b=H6pjuLzlloDmRr5BiLlit2OVlKvnO64AlJQ/1rabgtivFUchOr0XBeSaR1xtcS+5ck
+         2wUotvYBQu+xsZuPlgjGHWMzp8J9C4Y8yFpkrDGN5B0vDBcQ+4Gvm4tJZTuNao+R48bP
+         bBcILxe37xObTMEBOvLbd0pl/nkoJxPTnLA3akr4j80I1RnXO0Sd+8ziUXN0OMPLuDuB
+         9N4XQzWyWORVeLBwpLcvlDF4ditv2N4EwG+2ZR/3AEMSVc2Af4dA/d1F8EUPlPHazSfb
+         lP+xmN4dBOnmKK8KXsapsqawrkn1L+wj578o44RnRWmAt+zMHOGj6qCh7ajeGf1zvxRc
+         w1FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIkmEhYKGezmytfWHEuoxKkKBjyuhakGV8tVsfyr+pqIKxIRdqVGXM5F95SYCQvPc13ap/ByKmdqGB5SE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjJJioZomCbYo5gNkoXP6RHY207l+XWYwqfyQ2BPdLAxL3vukM
+	7RaYr6lOBdbXxBD7VzbdeElsLWd5wLXugWa7BYQbem9LCrOH+t3yRdxX
+X-Gm-Gg: ASbGnctzmX4vTzdi/xjp6gJ+pQfNa463qH9vVAGlotEv7pADk9vMCp8JeEf2noSMwUK
+	d2M14ImC7RgqQKj8YQ4gXOU7iiL6fEKL1mMdfCwdDgKNJ4C8zDTPS3CFAIwlUObQaMJCBRMnl9H
+	WFosIzZ0cDMoKwSRzNAztx1Hlu35bCDV3uMVA329zHBlGLQh0nmSvct9siVpztVlDV7FaLZYtQp
+	Asm6gtf9L8Qc7ngmwvttCaegEzmCEu9U2gPSh/XStf59e+h4xp7L5kWdn3evfJXr+3N6Cw8jVqx
+	fLKMDqkbNEcBBJWuqMsIb0M74sUFWaIxZeFqsPyDiKqLhlX7Z1kTDctXKLrNRMKGcieoJxeuq/K
+	XApQgSqEVqAMscx7vuXMGt8ZPDjULVQtpMimWQgQ=
+X-Google-Smtp-Source: AGHT+IE2NS+/omW5KgBKG9n82/mtd7IUS3Rs9tnSrN83FJMEVfCJNhTiuTT9MEUw76ccVMhV+on3xQ==
+X-Received: by 2002:a05:600c:1c88:b0:45f:2919:5e6c with SMTP id 5b1f17b1804b1-46e329c5735mr275530785e9.16.1759219974301;
+        Tue, 30 Sep 2025 01:12:54 -0700 (PDT)
+Received: from localhost.localdomain ([2a09:0:1:2::301b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab31f62sm258959085e9.15.2025.09.30.01.12.46
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 30 Sep 2025 01:12:53 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com
+Cc: peterx@redhat.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	baohua@kernel.org,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	npache@redhat.com,
+	riel@surriel.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	harry.yoo@oracle.com,
+	jannh@google.com,
+	matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com,
+	rakie.kim@sk.com,
+	byungchul@sk.com,
+	gourry@gourry.net,
+	ying.huang@linux.alibaba.com,
+	apopple@nvidia.com,
+	usamaarif642@gmail.com,
+	yuzhao@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ioworker0@gmail.com,
+	stable@vger.kernel.org,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH v5 1/1] mm/rmap: fix soft-dirty and uffd-wp bit loss when remapping zero-filled mTHP subpage to shared zeropage
+Date: Tue, 30 Sep 2025 16:10:40 +0800
+Message-ID: <20250930081040.80926-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV1PR04MB9071B5AC95DBD48B67FACF44971BA@GV1PR04MB9071.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 11:51:36PM +0000, Han Xu wrote:
-> Hi Suman,
-> 
-> The patch f5ad93ffb5411 "crypto: zstd - convert to acomp"
-> leads to the following kernel dump during UBIFS write back.
+From: Lance Yang <lance.yang@linux.dev>
 
-Thanks for the detailed report and instructions!
+When splitting an mTHP and replacing a zero-filled subpage with the shared
+zeropage, try_to_map_unused_to_zeropage() currently drops several important
+PTE bits.
 
-Please let me know if you still get the crash with this patch:
+For userspace tools like CRIU, which rely on the soft-dirty mechanism for
+incremental snapshots, losing the soft-dirty bit means modified pages are
+missed, leading to inconsistent memory state after restore.
 
----8<---
-Use size_t for the return value of zstd_compress_cctx as otherwise
-negative errors will be truncated to a positive value.
+As pointed out by David, the more critical uffd-wp bit is also dropped.
+This breaks the userfaultfd write-protection mechanism, causing writes
+to be silently missed by monitoring applications, which can lead to data
+corruption.
 
-Reported-by: Han Xu <han.xu@nxp.com>
-Fixes: f5ad93ffb541 ("crypto: zstd - convert to acomp")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Preserve both the soft-dirty and uffd-wp bits from the old PTE when
+creating the new zeropage mapping to ensure they are correctly tracked.
 
-diff --git a/crypto/zstd.c b/crypto/zstd.c
-index c2a19cb0879d..ac318d333b68 100644
---- a/crypto/zstd.c
-+++ b/crypto/zstd.c
-@@ -83,7 +83,7 @@ static void zstd_exit(struct crypto_acomp *acomp_tfm)
- static int zstd_compress_one(struct acomp_req *req, struct zstd_ctx *ctx,
- 			     const void *src, void *dst, unsigned int *dlen)
- {
--	unsigned int out_len;
-+	size_t out_len;
+Cc: <stable@vger.kernel.org>
+Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
+Suggested-by: David Hildenbrand <david@redhat.com>
+Suggested-by: Dev Jain <dev.jain@arm.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Dev Jain <dev.jain@arm.com>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+v4 -> v5:
+ - Move ptep_get() call after the !pvmw.pte check, which handles PMD-mapped
+   THP migration entries.
+ - https://lore.kernel.org/linux-mm/20250930071053.36158-1-lance.yang@linux.dev/
  
- 	ctx->cctx = zstd_init_cctx(ctx->wksp, ctx->wksp_size);
- 	if (!ctx->cctx)
+v3 -> v4:
+ - Minor formatting tweak in try_to_map_unused_to_zeropage() function
+   signature (per David and Dev)
+ - Collect Reviewed-by from Dev - thanks!
+ - https://lore.kernel.org/linux-mm/20250930060557.85133-1-lance.yang@linux.dev/
+
+v2 -> v3:
+ - ptep_get() gets called only once per iteration (per Dev)
+ - https://lore.kernel.org/linux-mm/20250930043351.34927-1-lance.yang@linux.dev/
+
+v1 -> v2:
+ - Avoid calling ptep_get() multiple times (per Dev)
+ - Double-check the uffd-wp bit (per David)
+ - Collect Acked-by from David - thanks!
+ - https://lore.kernel.org/linux-mm/20250928044855.76359-1-lance.yang@linux.dev/
+
+ mm/migrate.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/mm/migrate.c b/mm/migrate.c
+index ce83c2c3c287..e3065c9edb55 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -296,8 +296,7 @@ bool isolate_folio_to_list(struct folio *folio, struct list_head *list)
+ }
+ 
+ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+-					  struct folio *folio,
+-					  unsigned long idx)
++		struct folio *folio, pte_t old_pte, unsigned long idx)
+ {
+ 	struct page *page = folio_page(folio, idx);
+ 	pte_t newpte;
+@@ -306,7 +305,7 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+ 		return false;
+ 	VM_BUG_ON_PAGE(!PageAnon(page), page);
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+-	VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
++	VM_BUG_ON_PAGE(pte_present(old_pte), page);
+ 
+ 	if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags & VM_LOCKED) ||
+ 	    mm_forbids_zeropage(pvmw->vma->vm_mm))
+@@ -322,6 +321,12 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+ 
+ 	newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
+ 					pvmw->vma->vm_page_prot));
++
++	if (pte_swp_soft_dirty(old_pte))
++		newpte = pte_mksoft_dirty(newpte);
++	if (pte_swp_uffd_wp(old_pte))
++		newpte = pte_mkuffd_wp(newpte);
++
+ 	set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
+ 
+ 	dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
+@@ -364,13 +369,13 @@ static bool remove_migration_pte(struct folio *folio,
+ 			continue;
+ 		}
+ #endif
++		old_pte = ptep_get(pvmw.pte);
+ 		if (rmap_walk_arg->map_unused_to_zeropage &&
+-		    try_to_map_unused_to_zeropage(&pvmw, folio, idx))
++		    try_to_map_unused_to_zeropage(&pvmw, folio, old_pte, idx))
+ 			continue;
+ 
+ 		folio_get(folio);
+ 		pte = mk_pte(new, READ_ONCE(vma->vm_page_prot));
+-		old_pte = ptep_get(pvmw.pte);
+ 
+ 		entry = pte_to_swp_entry(old_pte);
+ 		if (!is_migration_entry_young(entry))
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.49.0
+
 
