@@ -1,200 +1,232 @@
-Return-Path: <linux-kernel+bounces-837200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E284ABABAD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:39:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B41BABADF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0023C233F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9563A664C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E7E298CDC;
-	Tue, 30 Sep 2025 06:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B79929993F;
+	Tue, 30 Sep 2025 06:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="azxmxEHz"
-Received: from pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.12.53.23])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aI+1vC9X"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010051.outbound.protection.outlook.com [52.101.56.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60465286438;
-	Tue, 30 Sep 2025 06:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.12.53.23
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759214375; cv=none; b=U30hQEu7zaFiOyDEYwh10JNkrRb3aaurd0eIEFWaNOppXzlhTCmEz1hAhqaCGHSv4PKpXOGH76ErE/erpkFDkfqPCF+MiEx4EpQbY6ptz5xJMQSL71C/lYQkh4aAcMQFdZn35huHF5OOVgbI2lQ7QWOMzrkDmszUvY9Pf3hByZU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759214375; c=relaxed/simple;
-	bh=nw/bLSq5G9rQ3CcqzFuU18zCBGTcRyRQtGlYG1tDRhk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NAkMhbHUkrb4sIqM93ZPe0dNhmQdnnoOAx2nFSKwkx82O0IoXdrb1LltMdqhDfy0yi7EotpeZDBXijygwhp+YJ356te5XCFWC3f9fO0h6PAo1Typ/IggWszNdNV4BxQk202FdzoKXfnk7ysRM+AWsvzu1rx3mGq5DBlUZaZRXEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=azxmxEHz; arc=none smtp.client-ip=52.12.53.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1759214373; x=1790750373;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=86mRlECkiQjLn2SJJnK2m65Vsp8KHxy7PFdzrijTjqg=;
-  b=azxmxEHzHdcueQhpxudgwC3beQrkBgajLm6nqeX+oVVGBMqJUXZI4CET
-   C1NIMUlW2ayt6X9aZNaBczRmLNIjDTqC45MIAh4luiz5H6N+UubicnbC3
-   fA3EgR2iRRjx2DdLdzZCiOE0Py4SrZYtE5EvLBioZ9YI8U6MpKYKqQPIU
-   fQ6uzBNP4+l7LHgi0xJUqD09Rzpo8OfCXZjOCFdD4zTT27uGc1kprSHwr
-   jjYXa9pcg6OhcBOs4cxJvBOSZftUvO239n17WbOnxmrJ9OHshm1nYZ4Uv
-   44ECjvxtSZHTa9/tu4UCp9Am992Uu0mdlpQ6MhiMRit2xCDWCR+VLJ+o4
-   w==;
-X-CSE-ConnectionGUID: yVQyi8UHR2GZdvsjzUxYjQ==
-X-CSE-MsgGUID: 6QfZ61FCQjKdkpuOMnE98g==
-X-IronPort-AV: E=Sophos;i="6.18,303,1751241600"; 
-   d="scan'208";a="3869275"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 06:39:31 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:51513]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.222:2525] with esmtp (Farcaster)
- id b09c49d1-cacd-4012-a7e4-1eafac7f67cd; Tue, 30 Sep 2025 06:39:31 +0000 (UTC)
-X-Farcaster-Flow-ID: b09c49d1-cacd-4012-a7e4-1eafac7f67cd
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 30 Sep 2025 06:39:31 +0000
-Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
- (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E464286438;
+	Tue, 30 Sep 2025 06:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759214413; cv=fail; b=aUjvRjWPvsbQP83KzcK8iCrEH8UngztQDLcXvGPBlDXJdQVV5ijQ9EY804ti6OEEiN8MsY3h8Rf5MG1uJ38C1NuRYI/BRFxqmRzc2Pu9Hvp1vWXolob2nB/CUTI4lejTGvWRJo+VgXhkMMC5O1AbIXb4wgkwfRMcIpBYYvR8F8k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759214413; c=relaxed/simple;
+	bh=oL3NqLnErGs8Qpcfop/fHCMiTO46D5Gt9CXmCjPC3UQ=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BwydWcT4ENxobZSIv0bCvL9E1QnTK2cz8JJoJvmY7neMSqqVa2xYbJYCgGA8GPmxcIMqThLqFZsJI5KGyOOEUhu8UljHYhrkewK2RCeCu7jm7FMxIzjVCATq3yTCiXfeG1TPWH+laHf+SG/LlHd0rQL/8dTPELZCAPuMaeIm/W8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aI+1vC9X; arc=fail smtp.client-ip=52.101.56.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LMXkKBJt3mS5J9YXHdhIe1BaU6dM1xYP/h7fnDD23au4mld/iox7n/DKk1u/6jyfsi5DXMLsaHcA4c2qlHgcr9Uy/DB2Ig7gS+Q46UycmNHKUiyx7WJOd67AyMLHaTfX3zA1giQfd+esN29SnTDYEFxxlmx/37O6fph9sVqWAbNmGM0hjaoqB4UrocCYOV2ciX4QneMV/9HynwL3TlcdvDFJ+pUDnU8JkVzfdyROrt7ZFXGcQimXTgX+w2EkoDobrrwgYfaCE8X+Jss4QJOY3/9t/Y6YtKd3h8QNAW7uJ42PcYu8XgjsBfX//i48Txxh5qCuv6CWtlrYUAtNkSJ+LA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pBHxS1Mt5tEGZFAFGNVlUUKjGnsNE55QeIllO+EH4MA=;
+ b=pkrHZK1nGJTEL+f6V7nmxVi4SAVR9VMLXTpAjxOBPNcpoibMdOX/kz3Ub6WImv6QhVjMyEBNpG2o3kqVMT2drquvJY5AEah+2yEzZIsebJskwT66Jddh4IytcnxJTUfaK1DucXd6M5pPlZxKj11/RrFAdzO99QEs13NdxcBto0y2xFYigB/npv3Fo+7tiWQx2EKn6baeRyzZ2ayzq1mCW2UH4CBIvg5oRzuEvvIN8/8C8bevOBON9KAMJZzVU91qCLwi31d8nT1ExteKDvNGzXc8eijhSHPdUpJ4KRSazMgh63NF8uK/ZYIegPIU+1jPOUMtxoG5Jl6AYZFmN3VRHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pBHxS1Mt5tEGZFAFGNVlUUKjGnsNE55QeIllO+EH4MA=;
+ b=aI+1vC9X32qVk4haiyhZQKke642PddbYmJohWv+MzWveSnH/5Lmh8/SUwUcaBPqvJFu+vO9r8wvXBwTi3mqpCyC9ViZhXC2r3WFSZc2Pvdl8wc6N6DVYH7ioEMpjYXS90sf9qwURmSLjz1a4YhQQDVTzQkVyQY53fshguzGqwo0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PR12MB8301.namprd12.prod.outlook.com (2603:10b6:208:40b::13)
+ by IA4PR12MB9812.namprd12.prod.outlook.com (2603:10b6:208:55b::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 30 Sep 2025
- 06:39:29 +0000
-From: Jakub Acs <acsjakub@amazon.de>
-To: <linux-mm@kvack.org>
-CC: <acsjakub@amazon.de>, Andrew Morton <akpm@linux-foundation.org>, "David
- Hildenbrand" <david@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
-	<chengming.zhou@linux.dev>, Peter Xu <peterx@redhat.com>, Axel Rasmussen
-	<axelrasmussen@google.com>, Mike Kravetz <mike.kravetz@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH] mm/ksm: fix flag-dropping behavior in ksm_madvise
-Date: Tue, 30 Sep 2025 06:39:21 +0000
-Message-ID: <20250930063921.62354-1-acsjakub@amazon.de>
-X-Mailer: git-send-email 2.47.3
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 06:40:09 +0000
+Received: from IA0PR12MB8301.namprd12.prod.outlook.com
+ ([fe80::e929:57f5:f4db:5823]) by IA0PR12MB8301.namprd12.prod.outlook.com
+ ([fe80::e929:57f5:f4db:5823%4]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 06:40:09 +0000
+Message-ID: <fd09a708-bc70-4a49-a6c4-860f93ff8b4a@amd.com>
+Date: Tue, 30 Sep 2025 12:10:00 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools headers: Sync x86 cpufeatures and arm64 cputype
+ headers
+From: "Garg, Shivank" <shivankg@amd.com>
+To: Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org,
+ James Clark <james.clark@linaro.org>
+Cc: linux-kernel@vger.kernel.org, acme@redhat.com, namhyung@kernel.org,
+ yangyicong@hisilicon.com, bp@alien8.de, mingo@kernel.org, xin@zytor.com,
+ yosry.ahmed@linux.dev
+References: <20250929061644.19188-2-shivankg@amd.com>
+ <20250929082733.GH7985@e132581.arm.com>
+ <2797b8f2-fc56-41a6-8ab3-dd298fd3ea36@amd.com>
+Content-Language: en-US
+In-Reply-To: <2797b8f2-fc56-41a6-8ab3-dd298fd3ea36@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BMXP287CA0008.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:2c::22) To IA0PR12MB8301.namprd12.prod.outlook.com
+ (2603:10b6:208:40b::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-
-syzkaller discovered the following crash: (kernel BUG)
-
-[   44.607039] ------------[ cut here ]------------
-[   44.607422] kernel BUG at mm/userfaultfd.c:2067!
-[   44.608148] Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-[   44.608814] CPU: 1 UID: 0 PID: 2475 Comm: reproducer Not tainted 6.16.0-rc6 #1 PREEMPT(none)
-[   44.609635] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   44.610695] RIP: 0010:userfaultfd_release_all+0x3a8/0x460
-
-<snip other registers, drop unreliable trace>
-
-[   44.617726] Call Trace:
-[   44.617926]  <TASK>
-[   44.619284]  userfaultfd_release+0xef/0x1b0
-[   44.620976]  __fput+0x3f9/0xb60
-[   44.621240]  fput_close_sync+0x110/0x210
-[   44.622222]  __x64_sys_close+0x8f/0x120
-[   44.622530]  do_syscall_64+0x5b/0x2f0
-[   44.622840]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   44.623244] RIP: 0033:0x7f365bb3f227
-
-Kernel panics because it detects UFFD inconsistency during
-userfaultfd_release_all(). Specifically, a VMA which has a valid pointer
-to vma->vm_userfaultfd_ctx, but no UFFD flags in vma->vm_flags.
-
-The inconsistency is caused in ksm_madvise(): when user calls madvise()
-with MADV_UNMEARGEABLE on a VMA that is registered for UFFD in MINOR
-mode, it accidentally clears all flags stored in the upper 32 bits of
-vma->vm_flags.
-
-Assuming x86_64 kernel build, unsigned long is 64-bit and unsigned int
-and int are 32-bit wide. This setup causes the following mishap during
-the &= ~VM_MERGEABLE assignment.
-
-VM_MERGEABLE is a 32-bit constant of type unsigned int, 0x8000'0000.
-After ~ is applied, it becomes 0x7fff'ffff unsigned int, which is then
-promoted to unsigned long before the & operation. This promotion fills
-upper 32 bits with leading 0s, as we're doing unsigned conversion (and
-even for a signed conversion, this wouldn't help as the leading bit is
-0). & operation thus ends up AND-ing vm_flags with 0x0000'0000'7fff'ffff
-instead of intended 0xffff'ffff'7fff'ffff and hence accidentally clears
-the upper 32-bits of its value.
-
-Fix it by casting `VM_MERGEABLE` constant to unsigned long to preserve
-the upper 32 bits, in case it's needed.
-
-Note: other VM_* flags are not affected:
-This only happens to the VM_MERGEABLE flag, as the other VM_* flags are
-all constants of type int and after ~ operation, they end up with
-leading 1 and are thus converted to unsigned long with leading 1s.
-
-Note 2:
-After commit 31defc3b01d9 ("userfaultfd: remove (VM_)BUG_ON()s"), this is
-no longer a kernel BUG, but a WARNING at the same place:
-
-[   45.595973] WARNING: CPU: 1 PID: 2474 at mm/userfaultfd.c:2067
-
-but the root-cause (flag-drop) remains the same.
-
-Fixes: 7677f7fd8be76 ("userfaultfd: add minor fault registration mode")
-Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Xu Xin <xu.xin16@zte.com.cn>
-Cc: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Axel Rasmussen <axelrasmussen@google.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
----
-
-I looked around the kernel and found one more flag that might be
-causing similar issues: "IORESOURCE_BUSY" - as its inverted version is
-bit-anded to unsigned long fields. However, it seems those fields don't
-actually use any bits from upper 32-bits as flags (yet?).
-
-I also considered changing the constant definition by adding ULL, but am
-not sure where else that could blow up, plus it would likely call to
-define all the related constants as ULL for consistency. If you'd prefer
-that fix, let me know.
-
-
- mm/ksm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 160787bb121c..c24137a1eeb7 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -2871,7 +2871,7 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 				return err;
- 		}
- 
--		*vm_flags &= ~VM_MERGEABLE;
-+		*vm_flags &= ~((unsigned long) VM_MERGEABLE);
- 		break;
- 	}
- 
--- 
-2.47.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PR12MB8301:EE_|IA4PR12MB9812:EE_
+X-MS-Office365-Filtering-Correlation-Id: 943a8b7b-3ff9-49bb-868c-08ddffec32ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2pkbkpuN0p6RTZoKzM0VmoydzJVdjlJVnBkNXFaS3lVeTV1WlpDV29aZjVo?=
+ =?utf-8?B?Y1FvakRtMkVIeXFra0drVkJ1UFRBc1lDK3dHVzE0eHpBWUQ5SXdMcGpxS3U0?=
+ =?utf-8?B?SzdXYjNnbm84RXl0dUUzcklPT3JMYWJTK2g4QzRDVVdiMmQxTUZTMnZ1b2Vu?=
+ =?utf-8?B?bVE3NExqSzZCeDlnVFQrTFJSczA3ZFRxb3Q1anlCNk03UEFtNVExTVpEMFJt?=
+ =?utf-8?B?bkFpQ0x6TUNscnc2RmVmaHZOOGFmR2FsMmdwc3JlVjBPbjB3SEhvNnQxNHFV?=
+ =?utf-8?B?b0FqUldqWCt5TzY5VE11bTBJd2c4UVVKa1BLMDZZTUdHVU1CSFZ1U1Mvd3A1?=
+ =?utf-8?B?THVGRUg3Rmo3ekFveGtPSEJLY05LQ2czdzRuSEVEVFNJNVpOSThrbmFFOWN1?=
+ =?utf-8?B?U3RGUEJuVUVMQ251SFp1UXgremJxZFVQMHFuZGRJQnFWRW9McjVuR1FFbDFN?=
+ =?utf-8?B?cmRDVjFMSkh6S2ZNUDdTelhWUWlaRmZ3TTZBMUF1Uld1dVcwM0E2c3RVUW85?=
+ =?utf-8?B?T1R3NmFLK3B4dUJEc2lqa0VLNDVLRU5mV1JsT21FTVFpK3BoWFdqb1AzSUVM?=
+ =?utf-8?B?a2c5dURFci9rVmsxakl5NVc0T1JxWFM0RGh6WVpwWGI1RFB0TWhzNU5qWHJt?=
+ =?utf-8?B?NE9RblNYamx0aWtWYnkydkNQYVNSYW1ZTUE3N0pSU0FpOUJCNzNDdlV3OVBZ?=
+ =?utf-8?B?SzZWR2UzbFp0Y3pVU3RhK2xQWEVZYzNYcjYxMCtSVUF5SlFDMGg2UDJKU09m?=
+ =?utf-8?B?U3FsWjdWaWRCQ0JDMDBvaFBveit5eTBCOVpiU0htdEJoNDNsWlpkZVNSNzc5?=
+ =?utf-8?B?ODQzUkhpUThpU1l5Q0tKenk0SVdMNlRSbDFiNDQ3R1h2OU56MEdIcjNhOFFK?=
+ =?utf-8?B?QVhydE0zOGxCdnROMjRWMHhoMzVFZzFpTUlsMzRUVUdsZDlVUFg3RUdWQVQ3?=
+ =?utf-8?B?MlYzOVREb1lYM3ZSQ2VScG00M3JCem90ZWhuWkI4SUp0dGJOcHh5ZlFlMFlO?=
+ =?utf-8?B?ZzVXcXBVeVQvUEdRZVd4N2RqMGF5QVVJazdhM1JpdlNIWjRNSWtoZzRxTW1U?=
+ =?utf-8?B?Z1FIZkxNTTF5ZG8vNzVxQU5Fb09JeXJ6R2NnOGx5bDNQdVM5ZDQyRnFZRUFp?=
+ =?utf-8?B?WFh6a24rUnFyZ1dabHpZbC83NnlvSGliZnN6RW1mdHBJbXRUOFFkc2tmTm1Q?=
+ =?utf-8?B?NVVTZUVVSnNtRllnUHFFWjBBaUFKK3NmSDlPMExKbUIvWHN5UUMweVUzVE5w?=
+ =?utf-8?B?cGpDWXA4enl0NkpWSS8xUXdpdFk3VFZqVHB1ZTVGL2Q0VEUzbHV1cE9FOWRm?=
+ =?utf-8?B?cmZYN1VnaVNMQ202L1JQRHB4OEFnb1RUUVlYNXd2TC94a29UTjVNdG5TSnhi?=
+ =?utf-8?B?MU9OREZsc3RuTTlUMnNrVjVSTkQxeVFUVFE5Q1pIV0xlVElFNTFsc3dySUQr?=
+ =?utf-8?B?ZnVJUXR0MHNobzBteHp4cjZNbnVSOFBmQ01DK0ltUVZYdjRDWDI5RnRISDUy?=
+ =?utf-8?B?TG5MMUNBS284ZUxCWlpVTWZNQUk2R2RZMUs3clgzZE5ueTQyVnZ4UHovRTJh?=
+ =?utf-8?B?cGZaNENWWHFITFdLc3JNVG9oMmRCL3BlR20vSnQxQVozUWtaR3RWbEU3TFZZ?=
+ =?utf-8?B?Ymt5bXJIL3MxTkpxdmpZaUM5RWREdkJJS2F5WGlEQ3VhTDZPSllkeTlBcTJa?=
+ =?utf-8?B?YVAyRVhZTTJOcENkeGRLeFhrRVpjRllFTFR2RnRiK1Z1dXZRNGg5WVJVZGV2?=
+ =?utf-8?B?K3RsTFBMY0lIQndxZnFnSkpXTzRXTnM1QkxXemQvRUdVOGxaWENObXdWbnFt?=
+ =?utf-8?B?MVA2Q0Y1NytIM3BnNzM4Sm5LRXpjQXhoZ0x0d0NaOUp6TUxZaVBjVXJLdjJP?=
+ =?utf-8?B?WWp3ZWNqVlhrdUdyL0lxSURSak9NS1EzV3lwUzJRaXY3SzhGUnp4NVU1OU9x?=
+ =?utf-8?Q?qnYGNh3QZY1duothtHe/1NXHyS5g+puJ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8301.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VnFRU2t5YkpucGJvczAxSE1HeWx3YkdKVWhQLzR2bHJoSlVRRFkvS1B3S1dJ?=
+ =?utf-8?B?S0c1Q2I0TE9GUHJRTnU4MnFyeU8rR2hERU4yMFBVTXdGUFV2cVh6ODgrQzMr?=
+ =?utf-8?B?K3pkSk8vTDlJVEIvbjJMSnh5Q0cyYy94MWF4czNVaVFhck5hcHNsOEVZbG5E?=
+ =?utf-8?B?VkZhYkluU2JON3RqYmJYby94Vkc2SGZBOHc2ZDgzL2F5LzhBcTFoYUNWdjl3?=
+ =?utf-8?B?WGFkWHdvSEp2ZkhYdElna29HSGJjcEVmeHFxMFd5aS9IRGgrSHViaW8vcHRD?=
+ =?utf-8?B?WTBGQTlScHp0c00yVnpOblV6SzFRb3dzbnBoRUpWdUh4ZE9rUXd5dXVVSmxk?=
+ =?utf-8?B?TGI4WWhOdXc2SnZTM2xaeEM4UDZRVkJ1dUcyc3ljb1hieXNMRFltci9sK0M4?=
+ =?utf-8?B?RFR4Z3hBRlRtVmc4NEhvb0h6VDd5Z0ppREU2dHNNZUt2MnhwQWVsNU5vcTRP?=
+ =?utf-8?B?TUk4VURhb0l0eUlobDlvMG5xL1ZieW9jblFjSHpBQnBMYUNaMmE5Q2QyWVZY?=
+ =?utf-8?B?TGJFZEdFMUs1alRGS251Ymw4cEVtL2g4TmhiZVpRcTZsei8wSkpqSGlESVlj?=
+ =?utf-8?B?QTNvTXJJRHBYbE5JT2I5RHBoSWxvZTlBdUJVaE9PVHNBTExVZnpIcFAwWmdy?=
+ =?utf-8?B?M3E4UENUdWxqOFRuSExTVFE0Q1R2SGRGTmdWRlJMNDYyNmlNL3BsNmFRWDlT?=
+ =?utf-8?B?QWlNelo2UUVUVUttd09kT21kUUNCcy9OS2NSRjNJU3QxcU1ZS2tjNjQ2UmZE?=
+ =?utf-8?B?ZjZtUGN2R0Y0ekplYm1BT0U4ZWhUZW8xdzhsQkJ6KytqaXJ2RndSQksvb0pJ?=
+ =?utf-8?B?c3dWTVFXV2xhdGNWa0VmUUwyYjFQS0RlT05VWVJyR0tqWXFpS0phRVFCOHFL?=
+ =?utf-8?B?dGtGZHFPYktzMGR1emRVaXo3RDVPdEpQbjA2b0F6T2ZRa29pNllFbzZ4RkNm?=
+ =?utf-8?B?aWtBajVDSExBcEU4YkpnQkd4cy90UTRkTE5Ybk1FZEcybHpLUkFGWDdBUFdS?=
+ =?utf-8?B?Vm1tUUVwYWppejhpUXhCQ3RPM2V0QkVQV05WOHZJeUkrY2NVVUpaSExBeERn?=
+ =?utf-8?B?Ym5aVkhCU1FHNkt1c2JXazcvV2VKYlllbHN6aSt6clpreHNTK2ZIanJOcExR?=
+ =?utf-8?B?VFNPUVkrU2EwUmJyUTZEeGw3SjdabnFqNUpBRE84OTlKbVlyVnp4ZVhEc29Z?=
+ =?utf-8?B?a0c1VU5MVWwySjk0RVJsbEE4SUlvZjczRmpUZWE0amppWUlEL1VUMmRQTm5L?=
+ =?utf-8?B?cUt4cUx3SnEzY0NRR0JOVTU0ZU00WHQxMlBUQThJVzd1aXljcGg2ZDNMRSt0?=
+ =?utf-8?B?K0FXK1NrR0NjR3RJT2R6Q2ZBT2tGa0dhYVhhaXVJSGpNUFI5bjRsK2FqS3V4?=
+ =?utf-8?B?ZlhvQklLZDNMWEtOUUlGMmxxb2h4NVFFamlVQ0g4WklUVERJRll3Zi95TUx1?=
+ =?utf-8?B?MnpPZ2lIbUZaZmNrN09sb1R1Ukt4elF2K01MclBKYjhsbDdFb0RkemxwNnRS?=
+ =?utf-8?B?OFNyNk9xUnJ6ZzB3a09neTFvcUVCNDZpYTIxOEpVSkc5TUpjbzVVd1h4ekQ3?=
+ =?utf-8?B?Wm15aGpFVzVPaWdtUHluQ1VWN01valI5SzNuTGkxYWhGWWg4aUlBM1pzNWMw?=
+ =?utf-8?B?ZGhiZVZGSTIvNXJHWHpHbmRZaWwzeGp6a1hYSXExakc4MnN5RElOalBzZUdx?=
+ =?utf-8?B?NkxMVDZBWk04eWJ6MCtqb3ZRS1lGdEs2b20zTHVDdTdCa3VZVDQwc3VEYnZj?=
+ =?utf-8?B?eW9xeU1nQnk1RHZhOTBWRThjWE95L2MrYSt3NWs2a3VJUDN1MTI1bmt5cmUw?=
+ =?utf-8?B?RVo2ZjM2eFBtR0hJUmlxaThCQy9mbnJYanNBVWkzenM4Z20ybkZOK0g4MW1Z?=
+ =?utf-8?B?bEtJZGxYYmpoU1lxdEl1RVdQSTVJVW9WWGRIaTVzRFEwZVBWZy9HaGgyaURC?=
+ =?utf-8?B?blRyQy9rV0xLaHY3VG0vTTlHaGtIYzhUaWtteTNqMGRZRVFoUWkrRVVjeDlG?=
+ =?utf-8?B?bDF6NStNUEdKWEthOGMrOG1SR3lld1JiamlrTmlRbXAyNDBGQ3BKQW9JR3d1?=
+ =?utf-8?B?TTlaMW9yY1JuRmpBQXRBc3ZIL0tjaThsREZJc2w0R01HRTdaTHpCb3V6MlV0?=
+ =?utf-8?Q?U91Ft/AMid5T4mALluwCyGq3q?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 943a8b7b-3ff9-49bb-868c-08ddffec32ad
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8301.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 06:40:09.4471
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NcS5P88ykEuDN/lxKlzXVv9K+PNUZ/HEgayX20PBilWTlIRdG1BMWPwwy/qdZgSz6JlFsCvf8TY5RuN3KsBzFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9812
 
 
 
+On 9/29/2025 2:47 PM, Garg, Shivank wrote:
+> 
+> 
+> On 9/29/2025 1:57 PM, Leo Yan wrote:
+>> Hi Shivank,
+>>
+>> [ + James, perf-user ML ]
+>>
+>> On Mon, Sep 29, 2025 at 06:16:45AM +0000, Shivank Garg wrote:
+>>> To pick up the changes in this cset:
+>>>
+>>> commit 2f8f173413f1 ("x86/vmscape: Add conditional IBPB mitigation")
+>>> commit a508cec6e521 ("x86/vmscape: Enumerate VMSCAPE bug")
+>>> commit c8c2647e69be ("arm64: Make  _midr_in_range_list() an exported function")
+>>> commit e3121298c7fc ("arm64: Modify _midr_range() functions to read MIDR/REVIDR internally")
+>>>
+>>> This addresses these perf build warnings:
+>>> tools/perf$ ./check-headers.sh
+>>> Warning: Kernel ABI header differences:
+>>>   diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures
+>>>   diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+>>
+>> Please drop arm64 related syncing, otherwise, it will break perf
+>> building.
+> 
+> Sure, I'll send V2 without arm64 sync.
+> 
+> Thanks,
+> Shivank
+>>
+>> At the meantime, James is working on refactoring cpu type definitions
+>> for Arm64, we expect to avoid syncing cputype.h.
+>>
+>> Thanks,
+>> Leo
+> 
 
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+tools/perf$ make
+  BUILD:   Doing 'make -j128' parallel build
+Warning: Kernel ABI header differences:
+  diff -u tools/include/linux/cfi_types.h include/linux/cfi_types.h
+  diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+  diff -u tools/include/asm-generic/bitops/__fls.h include/asm-generic/bitops/__fls.h
+  diff -u tools/include/asm-generic/bitops/fls.h include/asm-generic/bitops/fls.h
+  diff -u tools/include/asm-generic/bitops/fls64.h include/asm-generic/bitops/fls64.h
+  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+  diff -u tools/perf/trace/beauty/include/uapi/linux/fcntl.h include/uapi/linux/fcntl.h
+  diff -u tools/perf/trace/beauty/include/uapi/linux/fs.h include/uapi/linux/fs.h
 
+There are a lot of new ABI differences today, so I think it’s best to sync after the merge window?
+
+Thanks,
+Shivank
 
