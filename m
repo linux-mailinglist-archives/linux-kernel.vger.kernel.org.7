@@ -1,329 +1,327 @@
-Return-Path: <linux-kernel+bounces-837218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA149BABB74
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:01:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2030BABB84
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB641C15AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C9693A33C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05DD29AAEA;
-	Tue, 30 Sep 2025 07:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6912329AB05;
+	Tue, 30 Sep 2025 07:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="5hxzxqjp"
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o7Xqqqz2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DE922172D;
-	Tue, 30 Sep 2025 07:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567361EBA14
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759215696; cv=none; b=B1qkHuFRenfMNyZZRQsneOSp8ETc6olPJdGKAJtDHFZjNCE6l7+nMmvyk+5pKso2dXlVecMBkAESYDWGAkuaotfFxL8dUTeglC2UwlEp1CM+GB2xp0mvsZwQIJdUv7qds7Fzso3jvqGGG7QjQa8aoDI7t2Y8pk/gPY7MtqlV8pw=
+	t=1759215756; cv=none; b=dD2cfoNlDoyv5G8ICPoetZd8NflctrrStbNd5JCtNFfyolyXdESO+CyzRsgn3NVtjeX3mS35lJKhUQaYkWUEMyZ+tgy5GIbUH9OK0+kdzg1Rw71sXaeylAnuIn7OXP8Etapp8VgI+u5y9YbcEK7hBKjyh8lEGn4bMWSqD0IxZeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759215696; c=relaxed/simple;
-	bh=v4TbixYXHomQ0MmXMylTe/NBDzyiStw4r194sAjCwHg=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hkJE7+6rupaUoTeOQ+BoGoFBu3ymGtT42FVZWGjok6xPZrzUK1qGvBFUHlEc4LwxHVBDo/I26tuIOtBgq2x7c2ytKTQEwBFs53YGcqLoyPtoIzXNjkmoTC6MhlUO6Z2yIS2B7Vh2G95rW5d6L9gFjj66MlIZrC3q2lhSsTK0SLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=5hxzxqjp; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from canpmsgout03.his.huawei.com (unknown [172.19.92.159])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cbTPX3F02zJsX7;
-	Tue, 30 Sep 2025 14:56:48 +0800 (CST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=AEiUzXgRfeRRBN/awzdVLWjJkvQ1WmzGFz2MEA4n4OU=;
-	b=5hxzxqjpHarqsL6027rmYOMZJXwiRNsFzikthqUK48vbHftPmgC5z3CHweJ2MZwKh80MzAC5W
-	/Mn29wGk5fz2vwYeG9SWPorYNP//SZ7HkoO4nMOSgfW25Wabd1GITiBz9Xz3XN7SR+LPuXLqD03
-	fmXqfNkIVoLZAtEXvFizfcc=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cbTVF2XgSzpStY;
-	Tue, 30 Sep 2025 15:00:53 +0800 (CST)
-Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0FEBB180464;
-	Tue, 30 Sep 2025 15:01:22 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 30 Sep 2025 15:01:21 +0800
-Subject: Re: [PATCH v9 2/2] hisi_acc_vfio_pci: adapt to new migration
- configuration
-To: Shameer Kolothum <shameerkolothum@gmail.com>
-CC: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
-References: <20250902022505.2034408-1-liulongfang@huawei.com>
- <20250902022505.2034408-3-liulongfang@huawei.com>
- <CAHy=t2_0X4_wqc+zm3Zk8aUPXmsOR57wiGmzR65PFHSa=gTrPA@mail.gmail.com>
- <bb9f8f5a-0cf0-98ef-d7b0-be132b8ce63f@huawei.com>
- <b9448065-f2ca-899d-e68a-c17e46546b40@huawei.com>
- <CAHy=t29buypWspUjZLHfFjnbixSENfo4we5Q5h_yrSKXJgc2QA@mail.gmail.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <8f0af3b1-2cad-c80b-ef46-9f0eea2157d6@huawei.com>
-Date: Tue, 30 Sep 2025 15:01:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1759215756; c=relaxed/simple;
+	bh=RdXvBcXf2rWq6Oppr+r2Gc0rOOuQ/AGi5Ct///4d10E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuXUkvkHFwB/6vMaH5ynMTLn8FoWZMF9dZJy3GTT24LF5s8xkGRQIuf8pWJoU8YUpxXcj8cXS0RciPxbQqmxN3VZs90hlNiM87IlgOrq3lCLz9g6biIfVzDj1TZd51AGhb2xUxhdZDPNcFjkElK5FiX1sOTRli2nIcupsz+agqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o7Xqqqz2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U4I2FD025066
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:02:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BwBI3m+DtpPGWJNxcZ6VSGsW
+	WmE70r279i000rgGn2k=; b=o7Xqqqz2GLaelM8l2vQshCq8vS/qA1wR01DCw3uP
+	j2PZ84IbkXZlrRyd8iXTJqcQBZndcIk42+2Es9iSpH+YdA+qAwrByWPLno/XNpB1
+	ttyM4E3jp+zZ8AWWI+B8jWLgrYdbK953e84z47WlyiMjGIjsiONj4OKZ0iMo1VxP
+	eg25OSyn55u6/nOvfNRHN9pYEf+Oa1SpXmTYBNkQmnnpT2wc7R2HpjuaFKSyDano
+	WH/zLNf4kAB0X+ww7/DzsiXmuZx8pNWFzq66R2zB1eExJDs7izrv5YUxPiFk81+1
+	D6re9C++FaZ+qn9q5EfEScHxAK6NDROfoQdFzIm5JEwacA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59n0b0y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:02:32 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4dd932741cfso101576071cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:02:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759215752; x=1759820552;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BwBI3m+DtpPGWJNxcZ6VSGsWWmE70r279i000rgGn2k=;
+        b=RdikwBJ7QmGBs3hK2GgN2jJS+s+tglBgXZU9+ZtEiM/etcShqjE+ou04YAtTreBUs6
+         zpbIxfgNiundtNiM+FJxmWruDCW7NhGovETlhUbiUv/Uz+2tpXaFai4IVgLCPKYKe8Dk
+         x2c8GUPUHozXDBOWwyxND/++PFfN3EiKpe299pb3HaYO2NfLrVqFbHnv6pxcLBhFqCAp
+         TbwN7kAGHZINYqP15yFGhN/FVALs09Y9lCysaHIx73JZJ/1naossPP6qg6EsuSMF09g8
+         cETptXtJuBcY/IRtQqM0MY1y7nL+NdMs7GfiPnDDVybqSzUSmJXKxaGHw+6pGCNt9j61
+         EMbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwQBRBVwXx7/f0ze8HZx0LkRU3C6abHE44/xlJFhn3si/YafbntTZ8VYNyFN2X9InS5aBcv9cDnz7ydXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTJaWCgfAvZ5wFzwvigUpiubwChAS42UEv4czQ6NSUzoZOfL36
+	XDtldwM5U93wd224W1FdqR/2pl8esbP6yFwCBhjg5k4ZZPeRuK4BalNYvrycLCa9ZsAh+QMTX++
+	AN17N6680SPSQt+H1IXvhn1o6Se84SwMpxCT6T4Z0AblZ8mY2buHl6ou6JGGEnJeGsOU=
+X-Gm-Gg: ASbGncvqXK8S5b0EfI5d3f0woAoJ+6yZC2h4kqaAl7CIN/uqEF1vbP1MFabDX2uvMuY
+	90z9GTMH+M3UaQpZtNmhDIRMrsiG0QDPV3/Gyf14q0Gf5NWUf/Rey3r6i2edNnXzpgNdR+txdjQ
+	FRvoFHizzNA7/+/wv5c+UuVXmvnu5p+zvwMLKnJkOdXksFsaiWx36inglYFUdsH6LSgnig0HozO
+	I6nDmlcF3IY1REN0DCmX6CGWeU/6v/cWHYkPFdDs+t00ELSlqfBwMZ3XEBWuR+he6iw/XMcM873
+	y6EoRkMguZTiMEs4xX3AtRYUM4+8+r13JJBH4h9a0Gijw4KeZ8JJ3q1L7fDW5/WVN9aX6gBvfkj
+	uWzlvt4+lugB/Qoica4FgQU6RV1OJH6aNL2orWEOkm0eC1mbBDO9OFe7ULA==
+X-Received: by 2002:ac8:5a56:0:b0:4dd:e207:fce with SMTP id d75a77b69052e-4dde21659bdmr170058621cf.70.1759215751893;
+        Tue, 30 Sep 2025 00:02:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFb84HLLa9QgF4zWxDQfkP47jlJjmQ47Nd1Kw/rc0PP2nrv91KOwbaW913oaMecip8Zy003Zg==
+X-Received: by 2002:ac8:5a56:0:b0:4dd:e207:fce with SMTP id d75a77b69052e-4dde21659bdmr170058171cf.70.1759215751316;
+        Tue, 30 Sep 2025 00:02:31 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-588be5416c7sm900404e87.140.2025.09.30.00.02.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 00:02:30 -0700 (PDT)
+Date: Tue, 30 Sep 2025 10:02:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Daniel Stone <daniel@fooishbar.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+        Liu Ying <victor.liu@nxp.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
+ driver capabilities
+Message-ID: <itgffxygopi7etkt7xhvmyuvyl5ad3k43nsxvjzw3ubtwiikn7@ocugfdaigtu7>
+References: <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
+ <20250901-voracious-classy-hedgehog-ee28ef@houat>
+ <voknqdv3zte2jzue5yxmysdiixxkogvpblvrccp5gu55x5ycca@srrcscly4ch4>
+ <st6wob5hden6ypxt2emzokfhl3ezpbuypv2kdtf5zdrdhlyjfw@l2neflb4uupo>
+ <pe6g2fanw65p67kfy5blbtiytngxmr6nkbazymojs4a66yvpl3@7j4ccnsvc6az>
+ <20250910-didactic-honored-chachalaca-f233b2@houat>
+ <x562ueky2z5deqqmhl222moyrbylfwi35u4hb34dpl3z52ra4c@dyw4iayrewnz>
+ <20250925-fervent-merry-beagle-2baba3@penduick>
+ <qx5ashx62pufott6hnsfna3qntnoyvxwxze4rihhuxcsdxi37s@bbdvc3sfsgne>
+ <20250929-gregarious-worm-of-memory-c5354d@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHy=t29buypWspUjZLHfFjnbixSENfo4we5Q5h_yrSKXJgc2QA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500015.china.huawei.com (7.185.36.143)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929-gregarious-worm-of-memory-c5354d@houat>
+X-Proofpoint-GUID: wtvn-quXCSLfkh2RYdymFjky8SA80TTB
+X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68db8088 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=2KZmwtpIuq5mfTj36lQA:9
+ a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: wtvn-quXCSLfkh2RYdymFjky8SA80TTB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX12s9jHEgBdmq
+ vNxB8WpqjpatD3aoYUy+7uN+eE2vcUBmzUVVz2KAqtPaZqOgb/qhmKgrK18pZQufrLV4WUX2iMB
+ 3fml90KIIi4HurjKrehMxbVmzX5PoE/LjuYzQZ8CtPDh7ZsVNk9t+N1b4w26XSlu/bMIenJb/OR
+ ZiYHu24mWcG3tdTFpFNH3sZvd6nFocgRxst6g68i/5MDgM7D/0e1dNtgq5SbgsaP/Kb0JXPYGOl
+ 6R9qMZPAaM8gZ1X31+Kh/hczKlFzPWuk8tl3GwV92LyesERfhpLsuqZfWo69GdOgQc6mlACwp2D
+ bh+NmLnfHfFyearXNa4NkvUgqZU/WV9/nG/aCluFT4o+K2n+nenWOG4Z9ou4jAn3zNHv4Qafc2I
+ tyOM4fSa0+e+Bmd3VwDJeMiTsxUNyg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
 
-
-On 2025/9/18 15:06, Shameer Kolothum wrote:
-> On Thu, 18 Sept 2025 at 02:29, liulongfang <liulongfang@huawei.com> wrote:
->>
->> On 2025/9/11 19:30, liulongfang wrote:
->>> On 2025/9/11 16:05, Shameer Kolothum wrote:
->>>> On Tue, 2 Sept 2025 at 03:26, Longfang Liu <liulongfang@huawei.com> wrote:
->>>>>
->>>>> On new platforms greater than QM_HW_V3, the migration region has been
->>>>> relocated from the VF to the PF. The VF's own configuration space is
->>>>> restored to the complete 64KB, and there is no need to divide the
->>>>> size of the BAR configuration space equally. The driver should be
->>>>> modified accordingly to adapt to the new hardware device.
->>>>>
->>>>> On the older hardware platform QM_HW_V3, the live migration configuration
->>>>> region is placed in the latter 32K portion of the VF's BAR2 configuration
->>>>> space. On the new hardware platform QM_HW_V4, the live migration
->>>>> configuration region also exists in the same 32K area immediately following
->>>>> the VF's BAR2, just like on QM_HW_V3.
->>>>>
->>>>> However, access to this region is now controlled by hardware. Additionally,
->>>>> a copy of the live migration configuration region is present in the PF's
->>>>> BAR2 configuration space. On the new hardware platform QM_HW_V4, when an
->>>>> older version of the driver is loaded, it behaves like QM_HW_V3 and uses
->>>>> the configuration region in the VF, ensuring that the live migration
->>>>> function continues to work normally. When the new version of the driver is
->>>>> loaded, it directly uses the configuration region in the PF. Meanwhile,
->>>>> hardware configuration disables the live migration configuration region
->>>>> in the VF's BAR2: reads return all 0xF values, and writes are silently
->>>>> ignored.
->>>>>
->>>>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
->>>>> Reviewed-by: Shameer Kolothum <shameerkolothum@gmail.com>
->>>>> ---
->>>>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 205 ++++++++++++------
->>>>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |  13 ++
->>>>>  2 files changed, 157 insertions(+), 61 deletions(-)
->>>>>
->>>>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->>>>> index 397f5e445136..fcf692a7bd4c 100644
->>>>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->>>>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->>>>> @@ -125,6 +125,72 @@ static int qm_get_cqc(struct hisi_qm *qm, u64 *addr)
->>>>>         return 0;
->>>>>  }
->>>>>
->>>>> +static int qm_get_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>>>> +                          struct acc_vf_data *vf_data)
->>>>> +{
->>>>> +       struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
->>>>> +       struct device *dev = &qm->pdev->dev;
->>>>> +       u32 eqc_addr, aeqc_addr;
->>>>> +       int ret;
->>>>> +
->>>>> +       if (hisi_acc_vdev->drv_mode == HW_ACC_V3) {
->>>>> +               eqc_addr = QM_EQC_DW0;
->>>>> +               aeqc_addr = QM_AEQC_DW0;
->>>>> +       } else {
->>>>> +               eqc_addr = QM_EQC_PF_DW0;
->>>>> +               aeqc_addr = QM_AEQC_PF_DW0;
->>>>> +       }
->>>>> +
->>>>> +       /* QM_EQC_DW has 7 regs */
->>>>> +       ret = qm_read_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
->>>>> +       if (ret) {
->>>>> +               dev_err(dev, "failed to read QM_EQC_DW\n");
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       /* QM_AEQC_DW has 7 regs */
->>>>> +       ret = qm_read_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
->>>>> +       if (ret) {
->>>>> +               dev_err(dev, "failed to read QM_AEQC_DW\n");
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       return 0;
->>>>> +}
->>>>> +
->>>>> +static int qm_set_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>>>> +                          struct acc_vf_data *vf_data)
->>>>> +{
->>>>> +       struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
->>>>> +       struct device *dev = &qm->pdev->dev;
->>>>> +       u32 eqc_addr, aeqc_addr;
->>>>> +       int ret;
->>>>> +
->>>>> +       if (hisi_acc_vdev->drv_mode == HW_ACC_V3) {
->>>>> +               eqc_addr = QM_EQC_DW0;
->>>>> +               aeqc_addr = QM_AEQC_DW0;
->>>>> +       } else {
->>>>> +               eqc_addr = QM_EQC_PF_DW0;
->>>>> +               aeqc_addr = QM_AEQC_PF_DW0;
->>>>> +       }
->>>>> +
->>>>> +       /* QM_EQC_DW has 7 regs */
->>>>> +       ret = qm_write_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
->>>>> +       if (ret) {
->>>>> +               dev_err(dev, "failed to write QM_EQC_DW\n");
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       /* QM_AEQC_DW has 7 regs */
->>>>> +       ret = qm_write_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
->>>>> +       if (ret) {
->>>>> +               dev_err(dev, "failed to write QM_AEQC_DW\n");
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       return 0;
->>>>> +}
->>>>> +
->>>>>  static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
->>>>>  {
->>>>>         struct device *dev = &qm->pdev->dev;
->>>>> @@ -167,20 +233,6 @@ static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
->>>>>                 return ret;
->>>>>         }
->>>>>
->>>>> -       /* QM_EQC_DW has 7 regs */
->>>>> -       ret = qm_read_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
->>>>> -       if (ret) {
->>>>> -               dev_err(dev, "failed to read QM_EQC_DW\n");
->>>>> -               return ret;
->>>>> -       }
->>>>> -
->>>>> -       /* QM_AEQC_DW has 7 regs */
->>>>> -       ret = qm_read_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw, 7);
->>>>> -       if (ret) {
->>>>> -               dev_err(dev, "failed to read QM_AEQC_DW\n");
->>>>> -               return ret;
->>>>> -       }
->>>>> -
->>>>>         return 0;
->>>>>  }
->>>>>
->>>>> @@ -239,20 +291,6 @@ static int qm_set_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
->>>>>                 return ret;
->>>>>         }
->>>>>
->>>>> -       /* QM_EQC_DW has 7 regs */
->>>>> -       ret = qm_write_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
->>>>> -       if (ret) {
->>>>> -               dev_err(dev, "failed to write QM_EQC_DW\n");
->>>>> -               return ret;
->>>>> -       }
->>>>> -
->>>>> -       /* QM_AEQC_DW has 7 regs */
->>>>> -       ret = qm_write_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw, 7);
->>>>> -       if (ret) {
->>>>> -               dev_err(dev, "failed to write QM_AEQC_DW\n");
->>>>> -               return ret;
->>>>> -       }
->>>>> -
->>>>>         return 0;
->>>>>  }
->>>>>
->>>>> @@ -522,6 +560,10 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>>>>                 return ret;
->>>>>         }
->>>>>
->>>>> +       ret = qm_set_xqc_regs(hisi_acc_vdev, vf_data);
->>>>> +       if (ret)
->>>>> +               return ret;
->>>>> +
->>>>>         ret = hisi_qm_mb(qm, QM_MB_CMD_SQC_BT, qm->sqc_dma, 0, 0);
->>>>>         if (ret) {
->>>>>                 dev_err(dev, "set sqc failed\n");
->>>>> @@ -589,6 +631,10 @@ static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>>>>         vf_data->vf_qm_state = QM_READY;
->>>>>         hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->>>>>
->>>>> +       ret = qm_get_xqc_regs(hisi_acc_vdev, vf_data);
->>>>> +       if (ret)
->>>>> +               return ret;
->>>>> +
->>>>>         ret = vf_qm_read_data(vf_qm, vf_data);
->>>>>         if (ret)
->>>>>                 return ret;
->>>>> @@ -1186,34 +1232,52 @@ static int hisi_acc_vf_qm_init(struct hisi_acc_vf_core_device *hisi_acc_vdev)
->>>>>  {
->>>>>         struct vfio_pci_core_device *vdev = &hisi_acc_vdev->core_device;
->>>>>         struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
->>>>> +       struct hisi_qm *pf_qm = hisi_acc_vdev->pf_qm;
->>>>>         struct pci_dev *vf_dev = vdev->pdev;
->>>>> +       u32 val;
->>>>>
->>>>> -       /*
->>>>> -        * ACC VF dev BAR2 region consists of both functional register space
->>>>> -        * and migration control register space. For migration to work, we
->>>>> -        * need access to both. Hence, we map the entire BAR2 region here.
->>>>> -        * But unnecessarily exposing the migration BAR region to the Guest
->>>>> -        * has the potential to prevent/corrupt the Guest migration. Hence,
->>>>> -        * we restrict access to the migration control space from
->>>>> -        * Guest(Please see mmap/ioctl/read/write override functions).
->>>>> -        *
->>>>> -        * Please note that it is OK to expose the entire VF BAR if migration
->>>>> -        * is not supported or required as this cannot affect the ACC PF
->>>>> -        * configurations.
->>>>> -        *
->>>>> -        * Also the HiSilicon ACC VF devices supported by this driver on
->>>>> -        * HiSilicon hardware platforms are integrated end point devices
->>>>> -        * and the platform lacks the capability to perform any PCIe P2P
->>>>> -        * between these devices.
->>>>> -        */
->>>>> +       val = readl(pf_qm->io_base + QM_MIG_REGION_SEL);
->>>>> +       if (pf_qm->ver > QM_HW_V3 && (val & QM_MIG_REGION_EN))
->>>>> +               hisi_acc_vdev->drv_mode = HW_ACC_V4;
->>>>> +       else
->>>>> +               hisi_acc_vdev->drv_mode = HW_ACC_V3;
->>>>
->>>> The check is for > QM_HW_V3 and drv_mode is set to HW_ACC_V4. From our
->>>> previous discussions I think the expectation is that future hardware will follow
->>>> this same behaviour. If that is the case, it is better to rename HW_ACC_  to
->>>> something more specific to this change than use the V3/V4 name.
->>>>
->>>
->>> If the goal is merely to reflect the context of this change, it would be better to add
->>> a comment describing this change directly at the variable's declaration.
->>>
->>
->> Hi, Shameer:
->> If there are no further issues, I will continue using the current naming convention and
->> add comments at the declaration sites.
+On Mon, Sep 29, 2025 at 03:00:04PM +0200, Maxime Ripard wrote:
+> On Thu, Sep 25, 2025 at 05:16:07PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, Sep 25, 2025 at 03:13:47PM +0200, Maxime Ripard wrote:
+> > > On Wed, Sep 10, 2025 at 06:26:56PM +0300, Dmitry Baryshkov wrote:
+> > > > On Wed, Sep 10, 2025 at 09:30:19AM +0200, Maxime Ripard wrote:
+> > > > > On Wed, Sep 03, 2025 at 03:03:43AM +0300, Dmitry Baryshkov wrote:
+> > > > > > On Tue, Sep 02, 2025 at 08:06:54PM +0200, Maxime Ripard wrote:
+> > > > > > > On Tue, Sep 02, 2025 at 06:45:44AM +0300, Dmitry Baryshkov wrote:
+> > > > > > > > On Mon, Sep 01, 2025 at 09:07:02AM +0200, Maxime Ripard wrote:
+> > > > > > > > > On Sun, Aug 31, 2025 at 01:29:13AM +0300, Dmitry Baryshkov wrote:
+> > > > > > > > > > On Sat, Aug 30, 2025 at 09:30:01AM +0200, Daniel Stone wrote:
+> > > > > > > > > > > Hi Dmitry,
+> > > > > > > > > > > 
+> > > > > > > > > > > On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
+> > > > > > > > > > > <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> > > > > > > > > > > > It's not uncommon for the particular device to support only a subset of
+> > > > > > > > > > > > HDMI InfoFrames. It's not a big problem for the kernel, since we adopted
+> > > > > > > > > > > > a model of ignoring the unsupported Infoframes, but it's a bigger
+> > > > > > > > > > > > problem for the userspace: we end up having files in debugfs which do
+> > > > > > > > > > > > mot match what is being sent on the wire.
+> > > > > > > > > > > >
+> > > > > > > > > > > > Sort that out, making sure that all interfaces are consistent.
+> > > > > > > > > > > 
+> > > > > > > > > > > Thanks for the series, it's a really good cleanup.
+> > > > > > > > > > > 
+> > > > > > > > > > > I know that dw-hdmi-qp can support _any_ infoframe, by manually
+> > > > > > > > > > > packing it into the two GHDMI banks. So the supported set there is
+> > > > > > > > > > > 'all of the currently well-known ones, plus any two others, but only
+> > > > > > > > > > > two and not more'. I wonder if that has any effect on the interface
+> > > > > > > > > > > you were thinking about for userspace?
+> > > > > > > > > > 
+> > > > > > > > > > I was mostly concerned with the existing debugfs interface (as it is
+> > > > > > > > > > also used e.g. for edid-decode, etc).
+> > > > > > > > > > 
+> > > > > > > > > > It seems "everything + 2 spare" is more or less common (ADV7511, MSM
+> > > > > > > > > > HDMI also have those. I don't have at hand the proper datasheet for
+> > > > > > > > > > LT9611 (non-UXC one), but I think its InfoFrames are also more or less
+> > > > > > > > > > generic).  Maybe we should change debugfs integration to register the
+> > > > > > > > > > file when the frame is being enabled and removing it when it gets unset.
+> > > > > > > > > 
+> > > > > > > > > But, like, for what benefit?
+> > > > > > > > > 
+> > > > > > > > > It's a debugfs interface for userspace to consume. The current setup
+> > > > > > > > > works fine with edid-decode already. Why should we complicate the design
+> > > > > > > > > that much and create fun races like "I'm running edid-decode in parallel
+> > > > > > > > > to a modeset that would remove the file I just opened, what is the file
+> > > > > > > > > now?".
+> > > > > > > > 
+> > > > > > > > Aren't we trading that with the 'I'm running edid-decode in paralle with
+> > > > > > > > to a modeset and the file suddenly becomes empty'?
+> > > > > > > 
+> > > > > > > In that case, you know what the file is going to be: empty. And you went
+> > > > > > > from a racy, straightforward, design to a racy, complicated, design.
+> > > > > > > 
+> > > > > > > It was my question before, but I still don't really see what benefits it
+> > > > > > > would have, and why we need to care about it in the core, when it could
+> > > > > > > be dealt with in the drivers just fine on a case by case basis.
+> > > > > > 
+> > > > > > Actually it can not: debugfs files are registered from the core, not
+> > > > > > from the drivers. That's why I needed all the supported_infoframes
+> > > > > > (which later became software_infoframes).
+> > > > > 
+> > > > > That's one thing we can change then.
+> > > > > 
+> > > > > > Anyway, I'm fine with having empty files there.
+> > > > > > 
+> > > > > > > > > > Then in the long run we can add 'slots' and allocate some of the frames
+> > > > > > > > > > to the slots. E.g. ADV7511 would get 'software AVI', 'software SPD',
+> > > > > > > > > > 'auto AUDIO' + 2 generic slots (and MPEG InfoFrame which can probably be
+> > > > > > > > > > salvaged as another generic one)). MSM HDMI would get 'software AVI',
+> > > > > > > > > > 'software AUDIO' + 2 generic slots (+MPEG + obsucre HDMI which I don't
+> > > > > > > > > > want to use). Then the framework might be able to prioritize whether to
+> > > > > > > > > > use generic slots for important data (as DRM HDR, HDMI) or less important
+> > > > > > > > > > (SPD).
+> > > > > > > > > 
+> > > > > > > > > Why is it something for the framework to deal with? If you want to have
+> > > > > > > > > extra infoframes in there, just go ahead and create additional debugfs
+> > > > > > > > > files in your driver.
+> > > > > > > > > 
+> > > > > > > > > If you want to have the slot mechanism, check in your atomic_check that
+> > > > > > > > > only $NUM_SLOT at most infoframes are set.
+> > > > > > > > 
+> > > > > > > > The driver can only decide that 'we have VSI, SPD and DRM InfoFrames
+> > > > > > > > which is -ETOOMUCH for 2 generic slots'. The framework should be able to
+> > > > > > > > decide 'the device has 2 generic slots, we have HDR data, use VSI and
+> > > > > > > > DRM InfoFrames and disable SPD for now'.
+> > > > > > > 
+> > > > > > > I mean... the spec does? The spec says when a particular feature
+> > > > > > > requires to send a particular infoframe. If your device cannot support
+> > > > > > > to have more than two "features" enabled at the same time, so be it. It
+> > > > > > > something that should be checked in that driver atomic_check.
+> > > > > > 
+> > > > > > Sounds good to me. Let's have those checks in the drivers until we
+> > > > > > actually have seveal drivers performing generic frame allocation.
+> > > > > > 
+> > > > > > > Or just don't register the SPD debugfs file, ignore it, put a comment
+> > > > > > > there, and we're done too.
+> > > > > > 
+> > > > > > It's generic code.
+> > > > > > 
+> > > > > > > > But... We are not there yet and I don't have clear usecase (we support
+> > > > > > > > HDR neither on ADV7511 nor on MSM HDMI, after carefully reading the
+> > > > > > > > guide I realised that ADV7511 has normal audio infoframes). Maybe I
+> > > > > > > > should drop all the 'auto' features, simplifying this series and land
+> > > > > > > > [1] for LT9611UXC as I wanted origianlly.
+> > > > > > > > 
+> > > > > > > > [1] https://lore.kernel.org/dri-devel/20250803-lt9611uxc-hdmi-v1-2-cb9ce1793acf@oss.qualcomm.com/
+> > > > > > > 
+> > > > > > > Looking back at that series, I think it still has value to rely on the
+> > > > > > > HDMI infrastructure at the very least for the atomic_check sanitization.
+> > > > > > > 
+> > > > > > > But since you wouldn't use the generated infoframes, just skip the
+> > > > > > > debugfs files registration. You're not lying to userspace anymore, and
+> > > > > > > you get the benefits of the HDMI framework.
+> > > > > > 
+> > > > > > We create all infoframe files for all HDMI connectors.
+> > > > > 
+> > > > > Then we can provide a debugfs_init helper to register all of them, or
+> > > > > only some of them, and let the drivers figure it out.
+> > > > > 
+> > > > > Worst case scenario, debugfs files will not get created, which is a much
+> > > > > better outcome than having to put boilerplate in every driver that will
+> > > > > get inconsistent over time.
+> > > > 
+> > > > debugfs_init() for each infoframe or taking some kind of bitmask?
+> > > 
+> > > I meant turning hdmi_debugfs_add and create_hdmi_*_infoframe_file into
+> > > public helpers. That way, drivers that don't care can use the (renamed)
+> > > hdmi_debugfs_add, and drivers with different constraints can register
+> > > the relevant infoframes directly.
+> > 
+> > Doesn't that mean more boilerplate?
 > 
-> I would still prefer naming it differently than just adding comments.
-> Maybe something like
-> below + comments in the header.
+> I don't think it would? In the general case, it wouldn't change
+> anything, and in special cases, then it's probably going to be different
+> from one driver to the next so there's not much we can do.
 > 
-> if (pf_qm->ver > QM_HW_V3 && (val & QM_MIG_REGION_EN))
->      hisi_acc_vdev->mig_ctrl_mode = HW_ACC_MIG_PF_CTRL;
-> else
->     hisi_acc_vdev->mig_ctrl_mode = HW_ACC_MIG_VF_CTRL;
+> > In the end, LT9611UXC is a special case, for which I'm totally fine
+> > not to use HDMI helpers at this point: we don't control infoframes
+> > (hopefully that can change), we don't care about the TMDS clock, no
+> > CEC, etc.
 > 
-> Also please don't respin just for this yet. Please wait for Alex to take a look.
->
-
-Hi,Alex:
-Could you please take a look at this review comment? What's your opinion on it?
-
-Thanks.
-Longfang.
-
-> Thanks,
-> Shameer
-> .
+> Not using the helpers sound pretty reasonable here too.
 > 
+> > For all other usecases I'm fine with having atomic_check() unset all
+> > unsupported infoframes and having empty files in debugfs. Then we can
+> > evolve over the time, once we see a pattern. We had several drivers
+> > which had very limited infoframes support, but I think this now gets
+> > sorted over the time.
+> 
+> I never talked about atomic_check()? You were initially concerned that
+> the framework would expose data in debugfs that it's not using. Not
+> registering anything in debugfs solves that, but I'm not sure we need to
+> special case atomic_check.
+
+Well... I ended up with [1], handling infoframes in the atomic_check()
+rather than registering fewer infoframe debugfs files. This way device
+state is consistent, we don't have enabled instances, etc. However it
+results in repetetive code in atomic_check().
+
+[1] https://lore.kernel.org/dri-devel/20250928-limit-infoframes-2-v2-0-6f8f5fd04214@oss.qualcomm.com/
+
+> Worst case scenario, we're going to generate infoframes the driver will
+> ignore.
+
+Yes.
+
+-- 
+With best wishes
+Dmitry
 
