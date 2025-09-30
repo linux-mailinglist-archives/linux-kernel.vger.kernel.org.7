@@ -1,189 +1,361 @@
-Return-Path: <linux-kernel+bounces-837980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC09BAE2AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:24:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7055BAE2B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6992F324D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:24:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C32A67A36C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77F530C343;
-	Tue, 30 Sep 2025 17:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B269230CB25;
+	Tue, 30 Sep 2025 17:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aZXiNGrE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZEWFjHsg"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33BE23C8AA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FE52FBE16
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253082; cv=none; b=SF0R5L6qJpyO6cFnLEARo5AP5eRwM97/CF2rrloA+SiuPGRPbg+5oIskh9bqYZRNvnZ7lJ9LO4dk70YDPd5NmR310ePF1wvtwd+IIE0LHr92/0Jmv093q3XtnXUOifJ4J2GrCiD6LQE4Cj4+B795+pbPSQjGHme55AnGXaJuod0=
+	t=1759253082; cv=none; b=KlZvfEDBDn4KPpGEDy2GlQLuZbocaC+xaECqLU8yWH/qdhu2QlZjbztQGMkAEebUgh0Uw5+w7lBxZa6BYtM14nq3HQzPeXAEdccV9i6WQRnJcDD4+qym0kmHFyLcx/PwRNr0l8RKcOieRGBockhO2PdJVCwywos38ZZZqhzX6Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759253082; c=relaxed/simple;
-	bh=De6Kmz03lUiOPTF1oH2gIRSCbZz+JUBTGPZCHfyKHhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=feUb8kbKaOA8OM5KTT7+UjBWdT2YvefKQmF8FnNume9v37t6BA2HiElrwqAqQpRWHhKNgbQ5gpv3gX4OllzuvRaCISL/BTwidIlEzoLIySzowzPtCiNVVhRIJpfoHUiR5Ng8jx+VT0KuXNRPtBtyHJbBNDeFbUuMeAN7Hob6b3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aZXiNGrE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759253078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OYlp1mw2rhH9LTO0qo2r/Q1foOrUeCm2qZWqIsyWRqQ=;
-	b=aZXiNGrEPqo06R7TlTYcrqLOCDTMhICxMwNlXlFMFRkIQGe6BHI7F1IDzxZOJliB5b7mtm
-	kCgJjW9UDscF3LNYLs6oA7Kd4OuwrItXrL6UuW6ZAf8oZLdh34ZYMnUFp+LRjjbpTTU2Mi
-	RnVYytU7pZN0pY3bi8JluOiJsymxVzM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-99-AmNc0NvLPQu_ETTPW38iAw-1; Tue, 30 Sep 2025 13:24:36 -0400
-X-MC-Unique: AmNc0NvLPQu_ETTPW38iAw-1
-X-Mimecast-MFC-AGG-ID: AmNc0NvLPQu_ETTPW38iAw_1759253075
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e3e177893so38658895e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:24:35 -0700 (PDT)
+	bh=uejollmX6UdW6EW80SMay1PeJ9j4GJBM65xwi4SUhUI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=tEH5hdpSg+ZUeh8Pv6T7+kRSrBh18Kfje5dAHUsZID85ejZu2xvWdRhRt8LUblLHYWsYNrdpujQFAXMuqLBMkzOy2WGe81KvBto2UgBIfiYAjWGhQrFZpm0ekb5GmJDvSFFGjRx+mo7qhAJYKO9b0KUx5mQXYae9Z/KX/Vv9rrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZEWFjHsg; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42421b1514fso696396f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759253079; x=1759857879; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pvVNpnk1em0RkZX+LraDKpmhOFpQMHJx3+utgoN6HFU=;
+        b=ZEWFjHsgEVl/Tb2SsJRIFTFV/cnWfUhbR18Noj6IJOej8dCyGTPn1X/aUztRoF2/3+
+         vMjVCVIkwzG6m7xMGmYDTFGZ8RHTPWepAIU/JlqJ41zkujaNUxImpqNFy1AVbcfLOJId
+         /rcCs4mBZrRb/PQahnkliCqiTtozr2kWx02r/zW4WhDK4ss5B1fj6cCD3Tu498wXZG1A
+         gKLvXXEFGpsAAtYB4VQWR3YZ5ttowHuutq4j4s7Rhyl52EYHKaq1Cqt4Y8hHtR7PSA0C
+         lfFpfXsJta99QBcwa1EX8fLjopsE+iiOzsM/5Vk3keL8U9BvMdZ4Kxm0zPRVUsPdMfUp
+         GhgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759253074; x=1759857874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OYlp1mw2rhH9LTO0qo2r/Q1foOrUeCm2qZWqIsyWRqQ=;
-        b=MmuM5U3H1oxZ4bKWwYge0Sa9RtbPvrfO7C5oXiIG7VDfs82MtjcWKWQykX7bcT2e/7
-         TmtWDBnhcGaIadFty/aY9j1HmuTk56qG78pGfiUDh6ElPXCvrvoLusKs0HfYiqTx7odk
-         57dVWuz9wyoUhhy6nn+tjejjPVv1gRCUdSo5Gp629oJwiFvSVesLvaoOk9eEI+dkPlAx
-         FAvq2Y3Ho1M70FLwoqRh3vC+wdBnjJ4cdrtWLj3cTrV8qTgkoCKf5mXc7L5UlSgrtlam
-         CWqD9meaoiUVBplGZX0lq/dv9OIJIiwG4H07BzdPBzA6R2LbrBJYQK/fLm9jgelkSQ83
-         fntQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCzG0uHwHV4IYrtpDy6mCxxiQRIkPfr5kCu2xJA1GxseLNdTPIEmqTPsraHeFnWhLyAGHjnZXSkRo8S+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQa7d4jg8i0roKAMaW60VIVYoRhZcOrPub4AmJKTvzmqVUyKNE
-	wGDUeDM4Ndezla3y8sL38RSbBoDq5VZVQBsxN6VODNn33GpLquco8qZFacrbM4BngcTiNclRBF8
-	gzbsCHg3ve637VR7R0+iMhK28m0bmp/LLZ89KWWyH7Y7p63vGCheCB4FRQvQ2SLa5Z0jHrt5T2B
-	iED6D/ZWTIifYMgrw9vhSrMUcWgQdXNb0mCVMus5XE
-X-Gm-Gg: ASbGncul6TYdKgByycF8iltd3xHBPtrptzMvOTC5HUcJK/NMgxF1kjRwBV0q+dOuBri
-	GHR4fuUmfzWk/9t4TENxl4LEV9dPkMrpSD/E54XK94/tOoe70rkjtjAdOdtaSA2MGOOCOUlIBuP
-	KN9LHRjM1nkk82nAhf/K6Z4zbvpy5KO5AtweZji40PskrJcqODBfmlIO0Cgv1mzIqrdAESCdVU7
-	vfavLGS3nmMEB7jtLGXsLhplWRmv5nu
-X-Received: by 2002:a05:600c:681b:b0:45d:e28c:8741 with SMTP id 5b1f17b1804b1-46e612cb6abmr5080455e9.29.1759253074509;
-        Tue, 30 Sep 2025 10:24:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHiwJ+s1jwbycrYQiV3/fTxfn1rRhWSosJKGBOEIOCuf4TauWArcItXpGP0ZCUf16PRjJaIFvUy+MzvT5eGfPU=
-X-Received: by 2002:a05:600c:681b:b0:45d:e28c:8741 with SMTP id
- 5b1f17b1804b1-46e612cb6abmr5080215e9.29.1759253073920; Tue, 30 Sep 2025
- 10:24:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759253079; x=1759857879;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pvVNpnk1em0RkZX+LraDKpmhOFpQMHJx3+utgoN6HFU=;
+        b=jH3ylSFWD7aP6sUJgKgsb96R4s3lYKRSKKLDe/IEXxkkQ4lz/FYOntVe2AiWqscMpy
+         Z1JAOYGyRFREOAB9OSnsZ99BA51nGolzGFeJIqkmvYmoBCyfALn+2xKa1GxFfuH4eHb0
+         NxZ4HxUe77QU64oviPWiQo4Ei2AhZchImD2S7Qzux54lWz7LtCe0LGuMH9Rz0ttGS5TW
+         LdeOtyKFaqFGXX1fnKHNnvcjqjSYfLoZrhbHW59zg7Hmvf8rOD+APHO/K71aALFKrYxx
+         7hNTQT4U+csvxMASgjhlBKoIi803TpfIuPyAeYcMicNzHyXmXEfAb7q3NdMVz0igbi0N
+         cWWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoN7QYaGqQFNSJIfPDMj+7BJjPobOTUv6Lv/E+NXdnYRB2mQ7yZn3cV8MA0ZAq9CnnCuKJzzBwUW/WjoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylrg9osE48ZzzX7r04x2KmrBAa/4a9rShsvZx2zAdIa0m0fBXs
+	GEdtaXmaQ70xxpVS8ykEFNWSmQzlZzCfgcv5Fu2JaXAogc1/F6HzKaUhiKQQEY6Sf/E=
+X-Gm-Gg: ASbGncvjivUCcLRXMNSZ+ft2OuxGGXVE+2norv545ARG3HJF4JygQ3frPXog4F7iUjJ
+	KG4pxZTVgM8cHYkhWRS0BmIqao1InO9NbGRvpyRII7bZDkc0a1/543p4cI5C1O7mT+pUHK+yhb6
+	9cXzEI5OFpuR3Lvf1YA6kuThPBHCKecFc7wRkkGSFt/p/fyjfN4ixsNIRv68wa90m1SMJPmuUo8
+	9VSjyKIOXfyTzj5+qe9i8L17SObcn0BD7meR9AbuCbMj91sWIc5N0/FWyTpGssQKdvkSbO2AQNk
+	8rZ5RVIwQCIbpUYMZ3cdVgLx/qgd9z3EPotVMWaZQEdUVfjFsbOnQrvQrELwXoBWvysdpHKOLiZ
+	mPUqbOSKXb08OTsLgjJqt6LZZc32+5XdOx2dlxezyzzLIaVhPnrVWHsGDSFc=
+X-Google-Smtp-Source: AGHT+IGglgxN2Hhmv9KmUP8JA/GwoSDh33Ava4t+rFkJLhqrQMU1IiSGuBGFF+USzQgFE5I07APBdA==
+X-Received: by 2002:a05:6000:220b:b0:3ea:6680:8fb5 with SMTP id ffacd0b85a97d-425577ecaa5mr439876f8f.2.1759253079123;
+        Tue, 30 Sep 2025 10:24:39 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:248:54ff:fe20:c34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603161sm23914123f8f.35.2025.09.30.10.24.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 10:24:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250927060910.2933942-1-seanjc@google.com> <20250927060910.2933942-5-seanjc@google.com>
-In-Reply-To: <20250927060910.2933942-5-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 30 Sep 2025 19:24:21 +0200
-X-Gm-Features: AS18NWDa88_0tEft3tuSNzxvHDSePM6Z4FpaiUyP2f6jhAmc5p_FxXq87O5HhA4
-Message-ID: <CABgObfar+bUip4T5x_Y0XwgmEvZRXc33pWYd24jEieK_0BA__g@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: Selftests changes for 6.18
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 30 Sep 2025 18:24:37 +0100
+Message-Id: <DD6B62STZOTG.L12V3DGNDZUZ@linaro.org>
+Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <aiqun.yu@oss.qualcomm.com>,
+ <tingwei.zhang@oss.qualcomm.com>, <trilok.soni@oss.qualcomm.com>,
+ <yijie.yang@oss.qualcomm.com>
+Subject: Re: [PATCH 07/20] arm64: dts: qcom: kaanapali: Add remoteprocs for
+ Kaanapali SoC
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Jingyi Wang" <jingyi.wang@oss.qualcomm.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-7-3fdbc4b9e1b1@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-dts-v1-7-3fdbc4b9e1b1@oss.qualcomm.com>
 
-On Sat, Sep 27, 2025 at 8:09=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
+On Thu Sep 25, 2025 at 1:17 AM BST, Jingyi Wang wrote:
+> Add remoteproc PAS loader for ADSP, CDSP, MPSS and SoCCP with
+> its SMP2P and fastrpc nodes.
 >
-> A mix of fixes, cleanups and new coverage.  Note, there's also a large-is=
-h new
-> MSR selftest coming in through the "cet" pull request.
->
-> The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0=
-b9:
->
->   Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
->
-> are available in the Git repository at:
->
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-selftests-6.18
->
-> for you to fetch changes up to df1f294013da715f32521b3d0a69773e660a1af5:
->
->   KVM: selftests: Add ex_str() to print human friendly name of exception =
-vectors (2025-09-23 08:39:02 -0700)
+> Written with help from Kumari Pallavi(added fastrpc).
 
-Pulled, thanks.
+Co-developed-by tag then maybe?
 
-Paolo
+Also I don't see this name in email addresses.
 
-> ----------------------------------------------------------------
-> KVM selftests changes for 6.18
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 484 ++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 484 insertions(+)
 >
->  - Add #DE coverage in the fastops test (the only exception that's guest-
->    triggerable in fastop-emulated instructions).
->
->  - Fix PMU selftests errors encountered on Granite Rapids (GNR), Sierra
->    Forest (SRF) and Clearwater Forest (CWF).
->
->  - Minor cleanups and improvements
->
-> ----------------------------------------------------------------
-> Alok Tiwari (1):
->       KVM: selftests: Fix typo in hyperv cpuid test message
->
-> Dapeng Mi (2):
->       KVM: selftests: Add timing_info bit support in vmx_pmu_caps_test
->       KVM: selftests: Validate more arch-events in pmu_counters_test
->
-> Gopi Krishna Menon (1):
->       KVM: selftests: fix minor typo in cpumodel_subfuncs
->
-> James Houghton (1):
->       KVM: selftests: Fix signedness issue with vCPU mmap size check
->
-> Sean Christopherson (8):
->       KVM: selftests: Move Intel and AMD module param helpers to x86/proc=
-essor.h
->       KVM: selftests: Add support for #DE exception fixup
->       KVM: selftests: Add coverage for 'b' (byte) sized fastops emulation
->       KVM: selftests: Dedup the gnarly constraints of the fastops tests (=
-more macros!)
->       KVM: selftests: Add support for DIV and IDIV in the fastops test
->       KVM: selftests: Track unavailable_mask for PMU events as 32-bit val=
-ue
->       KVM: selftests: Reduce number of "unavailable PMU events" combos te=
-sted
->       KVM: selftests: Add ex_str() to print human friendly name of except=
-ion vectors
->
-> Sukrut Heroorkar (1):
->       selftests/kvm: remove stale TODO in xapic_state_test
->
-> dongsheng (1):
->       KVM: selftests: Handle Intel Atom errata that leads to PMU event ov=
-ercount
->
->  tools/testing/selftests/kvm/include/kvm_util.h     | 17 +++--
->  tools/testing/selftests/kvm/include/x86/pmu.h      | 26 +++++++
->  .../testing/selftests/kvm/include/x86/processor.h  | 35 ++++++++-
->  tools/testing/selftests/kvm/lib/kvm_util.c         | 42 ++---------
->  tools/testing/selftests/kvm/lib/x86/pmu.c          | 49 +++++++++++++
->  tools/testing/selftests/kvm/lib/x86/processor.c    | 39 +++++++++-
->  .../selftests/kvm/s390/cpumodel_subfuncs_test.c    |  2 +-
->  tools/testing/selftests/kvm/x86/fastops_test.c     | 82 ++++++++++++++++=
-+-----
->  tools/testing/selftests/kvm/x86/hyperv_cpuid.c     |  2 +-
->  tools/testing/selftests/kvm/x86/hyperv_features.c  | 16 ++---
->  .../testing/selftests/kvm/x86/monitor_mwait_test.c |  8 +--
->  .../testing/selftests/kvm/x86/pmu_counters_test.c  | 67 ++++++++++++----=
---
->  .../selftests/kvm/x86/pmu_event_filter_test.c      |  4 +-
->  .../testing/selftests/kvm/x86/vmx_pmu_caps_test.c  |  7 +-
->  tools/testing/selftests/kvm/x86/xapic_state_test.c |  4 +-
->  tools/testing/selftests/kvm/x86/xcr0_cpuid_test.c  | 12 ++--
->  16 files changed, 303 insertions(+), 109 deletions(-)
->
+> diff --git a/arch/arm64/boot/dts/qcom/kaanapali.dtsi b/arch/arm64/boot/dt=
+s/qcom/kaanapali.dtsi
+> index 08ab267bf9a7..c3b38fd851c5 100644
+> --- a/arch/arm64/boot/dts/qcom/kaanapali.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/kaanapali.dtsi
+> @@ -438,6 +438,121 @@ rmtfs_mem: rmtfs@d7c00000 {
+>  		};
+>  	};
+
+[...]
+
+> +		remoteproc_adsp: remoteproc@6800000 {
+> +			compatible =3D "qcom,kaanapali-adsp-pas", "qcom,sm8550-adsp-pas";
+> +			reg =3D <0x0 0x06800000 0x0 0x10000>;
+> +
+> +			interrupts-extended =3D <&pdc 6 IRQ_TYPE_EDGE_RISING>,
+> +					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
+> +					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
+> +					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
+> +					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>,
+> +					      <&smp2p_adsp_in 7 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names =3D "wdog",
+> +					  "fatal",
+> +					  "ready",
+> +					  "handover",
+> +					  "stop-ack",
+> +					  "shutdown-ack";
+> +
+> +			clocks =3D <&rpmhcc RPMH_CXO_CLK>;
+> +			clock-names =3D "xo";
+> +
+> +			interconnects =3D <&lpass_lpicx_noc MASTER_LPASS_PROC QCOM_ICC_TAG_AL=
+WAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+> +
+> +			power-domains =3D <&rpmhpd RPMHPD_LCX>,
+> +					<&rpmhpd RPMHPD_LMX>;
+> +			power-domain-names =3D "lcx",
+> +					     "lmx";
+> +
+> +			memory-region =3D <&adspslpi_mem>, <&q6_adsp_dtb_mem>;
+> +
+> +			qcom,qmp =3D <&aoss_qmp>;
+> +
+> +			qcom,smem-states =3D <&smp2p_adsp_out 0>;
+> +			qcom,smem-state-names =3D "stop";
+> +
+> +			status =3D "disabled";
+> +
+> +			remoteproc_adsp_glink: glink-edge {
+> +				interrupts-extended =3D <&ipcc IPCC_MPROC_LPASS
+> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
+> +							     IRQ_TYPE_EDGE_RISING>;
+> +
+> +				mboxes =3D <&ipcc IPCC_MPROC_LPASS
+> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
+> +
+> +				qcom,remote-pid =3D <2>;
+> +
+> +				label =3D "lpass";
+> +
+> +				fastrpc {
+> +					compatible =3D "qcom,fastrpc";
+> +					qcom,glink-channels =3D "fastrpcglink-apps-dsp";
+> +					label =3D "adsp";
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +
+> +					compute-cb@3 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <3>;
+> +
+> +						iommus =3D <&apps_smmu 0x1003 0x80>,
+> +							 <&apps_smmu 0x1043 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@4 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <4>;
+> +
+> +						iommus =3D <&apps_smmu 0x1004 0x80>,
+> +							 <&apps_smmu 0x1044 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@5 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <5>;
+> +
+> +						iommus =3D <&apps_smmu 0x1005 0x80>,
+> +							 <&apps_smmu 0x1045 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@6 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <6>;
+> +
+> +						iommus =3D <&apps_smmu 0x1006 0x80>,
+> +							 <&apps_smmu 0x1046 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@7 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <7>;
+> +
+> +						iommus =3D <&apps_smmu 0x1007 0x40>,
+> +							 <&apps_smmu 0x1067 0x0>,
+> +							 <&apps_smmu 0x1087 0x0>;
+> +						dma-coherent;
+> +					};
+> +				};
+> +			};
+> +		};
+
+Fastrpc nodes here. Was this tested? If yes, then how?
+Or was it just copied from somewhere from downstream?
+
+The same questions basically go for cdsp fastrpc too.
+
+
+[..]
+
+> +				label =3D "cdsp";
+> +
+> +				fastrpc {
+> +					compatible =3D "qcom,fastrpc";
+> +					qcom,glink-channels =3D "fastrpcglink-apps-dsp";
+> +					label =3D "cdsp";
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +
+> +					compute-cb@1 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <1>;
+> +						iommus =3D <&apps_smmu 0x19c1 0x0>,
+> +							 <&apps_smmu 0x1961 0x0>,
+> +							 <&apps_smmu 0x0c21 0x0>,
+> +							 <&apps_smmu 0x0c01 0x40>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@2 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <2>;
+> +						iommus =3D <&apps_smmu 0x1962 0x0>,
+> +							 <&apps_smmu 0x0c02 0x20>,
+> +							 <&apps_smmu 0x0c42 0x0>,
+> +							 <&apps_smmu 0x19c2 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@3 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <3>;
+> +						iommus =3D <&apps_smmu 0x1963 0x0>,
+> +							 <&apps_smmu 0x0c23 0x0>,
+> +							 <&apps_smmu 0x0c03 0x40>,
+> +							 <&apps_smmu 0x19c3 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@4 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <4>;
+> +						iommus =3D <&apps_smmu 0x1964 0x0>,
+> +							 <&apps_smmu 0x0c44 0x0>,
+> +							 <&apps_smmu 0x0c04 0x20>,
+> +							 <&apps_smmu 0x19c4 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@5 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <5>;
+> +						iommus =3D <&apps_smmu 0x1965 0x0>,
+> +							 <&apps_smmu 0x0c45 0x0>,
+> +							 <&apps_smmu 0x0c05 0x20>,
+> +							 <&apps_smmu 0x19c5 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@6 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <6>;
+> +						iommus =3D <&apps_smmu 0x1966 0x0>,
+> +							 <&apps_smmu 0x0c06 0x20>,
+> +							 <&apps_smmu 0x0c46 0x0>,
+> +							 <&apps_smmu 0x19c6 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@7 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <7>;
+> +						iommus =3D <&apps_smmu 0x1967 0x0>,
+> +							 <&apps_smmu 0x0c27 0x0>,
+> +							 <&apps_smmu 0x0c07 0x40>,
+> +							 <&apps_smmu 0x19c7 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@8 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <8>;
+> +						iommus =3D <&apps_smmu 0x1968 0x0>,
+> +							 <&apps_smmu 0x0c08 0x20>,
+> +							 <&apps_smmu 0x0c48 0x0>,
+> +							 <&apps_smmu 0x19c8 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					/* note: secure cb9 in downstream */
+> +
+> +					compute-cb@12 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <12>;
+> +						iommus =3D <&apps_smmu 0x196c 0x0>,
+> +							 <&apps_smmu 0x0c2c 0x00>,
+> +							 <&apps_smmu 0x0c0c 0x40>,
+> +							 <&apps_smmu 0x19cc 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@13 {
+> +						compatible =3D "qcom,fastrpc-compute-cb";
+> +						reg =3D <13>;
+> +						iommus =3D <&apps_smmu 0x196d 0x0>,
+> +							 <&apps_smmu 0x0c0d 0x40>,
+> +							 <&apps_smmu 0x0c2e 0x0>,
+> +							 <&apps_smmu 0x0c2d 0x0>,
+> +							 <&apps_smmu 0x19cd 0x0>;
+> +						dma-coherent;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+
+Best regards,
+Alexey
 
 
