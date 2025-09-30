@@ -1,95 +1,87 @@
-Return-Path: <linux-kernel+bounces-837030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B54FBAB1E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC98BAB1FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8E7F1C344E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 174691C4530
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5594518859B;
-	Tue, 30 Sep 2025 03:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E62C226D17;
+	Tue, 30 Sep 2025 03:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b="4PnAcHtH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wUEmT2GY"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GRCgXwxu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8863B282EB;
-	Tue, 30 Sep 2025 03:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E55B533D6
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759201409; cv=none; b=h3h4EhqnZL4CKI8o1oi9GkdGsHtJYleRfuhZhY++i79hlpgxOOAurjc7hz8ttctyqSX2xFfeuBJ0CFDB8GnKMvHygG5gHLBUKKMKA702CnRpKo78Pgpj/jh00fcZs/cNGz6LYBTxGJ+B2UdwjhcmGu6RViwp6jElb5Fgp70H2Gw=
+	t=1759201578; cv=none; b=ZMv3jrwBFZVoVR8VufpQFTc+5FaT5seSI/PXb/Vqpokr8aRS4L8vq04JD2aA7ymXtoLgyu6COARCqVHaeXbG98oiCjmyOnBX+igDeKQnL6krcHMATTkbJ/sKNxWHmCas8VL/j5xLb1IB/3TMGQHjGBJclE8QpCBruGl2AKRq3yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759201409; c=relaxed/simple;
-	bh=mf586GUh+NpdyHV1/6884yShVWOwldy+geQxaO6BHAM=;
+	s=arc-20240116; t=1759201578; c=relaxed/simple;
+	bh=wRBGoZ0w+/yO+4GK/SekM4EcOmzBtCdzP1s9NAQ0siQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fRTeYVRB24tHfsxmIwL1zF8wtMZdEfhHZyZFOfturmkBpRX+fhw+XfWSZK3PiVLp/iY/iTNJiXNGqkO1Y9KhRiJY+8AgsqpZLlHC6TdOKdKgukcIH4B5uGs2MsuZN0AAdgoJuLai1vK0zGl+k1r6PTdMLGy7iwoWhVAQU51Uv+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name; spf=pass smtp.mailfrom=coelacanthus.name; dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b=4PnAcHtH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wUEmT2GY; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coelacanthus.name
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id A1C731D000BD;
-	Mon, 29 Sep 2025 23:03:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 29 Sep 2025 23:03:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	coelacanthus.name; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1759201406; x=1759287806; bh=dEzNCETznF
-	qw/mgsaW1+fAE1KQS0gfglI3FEKUvOQNk=; b=4PnAcHtHScrUg58MvKC3OPxf4X
-	HMt6xKEjCqXV3G2xGUp+TF2KhSzcgmieo0w5eBGET0XVLGecvu9ljsZSmDrurJoE
-	dGvoiPkTICF2sdpzakOZfoACqQZtTdQX2LzzfTqVuGnRd4DIDmlMq82YirFLbsvh
-	Q7AN0ct5fYB8L8m4LdLFdNFMSFANFQAjhoDbRPa0EVBSUumhJRIWfgU0a6xtDev2
-	D3ZQst4vvijwcHyolk5RKUPa5KG8tPcKUnhGQc4xR5i2/Z2jLHyPh9pD3z+sdyFw
-	Ee2Ep/3Rm44ATPXPrpkaUlBCFfP57qHrjlJSmjJ7rJxZG3KjTehg+4YfnFug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759201406; x=
-	1759287806; bh=dEzNCETznFqw/mgsaW1+fAE1KQS0gfglI3FEKUvOQNk=; b=w
-	UEmT2GYrdXqbO5/0FKLJ+w+KGyAGCKN52g/5vglciyqGr1cSmlqLTWZkkoZYfJml
-	mZ4yHasOklZDYT5EZHbDoG2hocq8u23renb2BWULwEDuh0LqLTibV0YbR0FOIqot
-	kcCR/hCW9ZESaddlj7/hamCAfvp5fJIAitsG8P8ThNklWRwvzyBsjH03sI/RYV+l
-	N6MOzyEyX3FtTTPQbubjzzBsQY+CNYuZgO4BJlOK6cHhtawvKe98W+0r+CKzlQ8J
-	P2SVQumCmQus/PFo0Y07Hl2AwGSNrNoMDGgiK7x6u3RgdTRRwjXhiaTIYhMzFhU6
-	xT2We0iA6SCQhCK4b7IfQ==
-X-ME-Sender: <xms:fUjbaFobOmwkjSCL9euF-oU-x42clV689S5suLK0wbSjmSXqLLLnTw>
-    <xme:fUjbaBqfMQF_dXHAP8vRB24dJ81cVOZ4YLqJkkjbI5QI7f8hgiGXDyiYkzFyv1hCH
-    NlazPSxDw3hB4vMcdVC3431al5dSjzgNUTt3Clncp5pOueDVA-IgwVv>
-X-ME-Received: <xmr:fUjbaI2oSHeWFwMghTRuUqET3nTPrvwaVZ02rvOWwBbJ_piY6-GxfFMVy5AkC5nQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejleejhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepvegvlhgvshht
-    vgcunfhiuhcuoehufihusegtohgvlhgrtggrnhhthhhushdrnhgrmhgvqeenucggtffrrg
-    htthgvrhhnpeeugfetgeeifedtteeuuddvgffgvedtffefueeutdegffdthfehleejvdej
-    ffekleenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepuhifuhestghovghlrggtrghnthhhuhhs
-    rdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepmhgrihhlhhholheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhklhesphgv
-    nhhguhhtrhhonhhigidruggvpdhrtghpthhtohepmhgrgiesshgthhhnvghiuggvrhhsoh
-    hfthdrnhgvthdprhgtphhtthhopehhvghnrhhikhessghrihigrghnuggvrhhsvghnrdgu
-    khdprhgtphhtthhopeifghesghhrrghnuggvghhgvghrrdgtohhmpdhrtghpthhtoheplh
-    hinhhugidqtggrnhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruh
-    hntghhvghnghdrlhhusehhphhmihgtrhhordgtohhm
-X-ME-Proxy: <xmx:fUjbaPFvEpryOcqBI6vIG-tmHSuU5o8JkojjDTd8Eh4SzeogEZ5VEQ>
-    <xmx:fUjbaDGAW90QpCyUv3MLdahEp7sP4XsaDWV37Wc-UMDdl7GvMZo7rA>
-    <xmx:fUjbaC57AVN7kQQlTlL5VJ78N6gSbzdVxukVZ3lDxz2a2VlMIG4EJw>
-    <xmx:fUjbaIyb0qUAD2D27Dqpc6Ph3Kit57WGlVH1z7lNwoRU8kv8kMyTbQ>
-    <xmx:fkjbaCmYDObU8h1Qp6jfDs8xbpWCESjeoJkJwhwxe22JcYOu6KONOzoD>
-Feedback-ID: i95c648bc:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 29 Sep 2025 23:03:22 -0400 (EDT)
-Message-ID: <b12cd2aa-fc30-46ef-b748-def1b291f377@coelacanthus.name>
-Date: Tue, 30 Sep 2025 11:03:18 +0800
+	 In-Reply-To:Content-Type; b=inv7MUslXEpiJvyFS/6gyzKIiPu51ZOZ3eB7p2Z7gcBAVy8F+nS5HME6SzzcdCsbTGiHi98GRFg2/lse0DzN4/WjL0Rs5Ivvn0VdKZP7fWVF7qpv1ZAcvZVVwcUHV7a3WH6OK3BpMdmAUJzFwN2mNbcpPcRnkVSNzhNTy1QHWPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GRCgXwxu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58TIIuIJ009316
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:06:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6q+XaInOzB2LHu4CwIXfwgbLjWT9VQ02Q4RXVHW+YAk=; b=GRCgXwxuxDMEUl2p
+	SwfreGHZIzR7xB0VTjUI7oxh1kB8qop2uQr3gp0s5yiDrTNelbY5NFf1YkZ1OGwI
+	ETyGrLtDDoY4fcFaOdR4hRId+hZiWMznPogiElfbYqQyndu8TQg+DuSiUlU9YsVx
+	MsReF5HrqHqG7Om+IMkzmKAOikZvK0CE48y41oLJ6kDpuj2aoyQEiTdBMSw1BL3o
+	QgPQVjSVfCOS4NYE0jx92lGLul0DeKJ6wCNB//u6HKOCuSyE+MkB2pRYliJZDaSc
+	MW+HGhCzh07QUfqxRwZKa4dIN4IxAPXY4DzMSyKhiVpzHVcutNdbOvCO+Clo8bZU
+	rMMt7Q==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8a5yej9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:06:14 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-268141f759aso51372455ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:06:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759201573; x=1759806373;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6q+XaInOzB2LHu4CwIXfwgbLjWT9VQ02Q4RXVHW+YAk=;
+        b=GWLemKpgUbFhWKiqNtah5qT77vOmuHINztM5rEKxBrdu6zsX75yKxWWWPz8M1urmuT
+         Nhh2xs8icy0W912hxkOEUG+lovEFrhlstBQf/+dNgNWqmsW9D1lQFbKZxJD87PRW8dhJ
+         x+matoHBrSHZtvwGuMjqDnGrlohW5fUY8H70qg3Ka3owA4ldF033UvTGhYG9EyyEeAsF
+         MOFy6qgXoREWabPpXRqH53VxgpZiBsrI3gSuUaqqmeaWcls9P2VE9zJCtaLC6+3q5H8e
+         p3WiNoWmcNXXufSBWWUQ5JRKsOQBtCYvNoKMq9NxogR+ZVIvJ4sxRwausoa6f1W28ewF
+         kJEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Fqr+m8mQ/cpqhIJpTkiGnt2+XfY41s8O40ovC53FXYkNS9FKG0+kJusH6f08r3anEJa/ELVOKugnsxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxao9pZ/788wX5HisyBmYU1mzTVmmfgGfaHVbfEwMuTDyV06efV
+	e4XDKGpi0VSwH6ZkADFCMerl/XBd0Dv6iNg9J0PgbyBDO7YTYRBfZlsEOwhWublmwePgtCT1UkT
+	ElW+sm5lGTbKqwIm96VzHCpUjBLdlsvxmvhhgnYITAR+1TwWETpxnLPgUsCzcjvzvKgY=
+X-Gm-Gg: ASbGncueX6kdFGY/IVrGQGZEP/jpxTeW1zjY9g7J5zAWred1wdWJJRED3+X9dnCUXX1
+	xFoVd5lTfq/34v8NgDJN90l2Q7Bmri8a8VYjVjvafDuRDWCFep9J72d95j40L8nG2Vd43WMpojk
+	P6qNJBMUom4Eu7WBxTiU7FlZ9jzz/LqOSyyaiexC9XynJiL5nZcBsy0L2nYDeMG6sNODS0zZHDz
+	PFEhK6ytS178oHHhZ9yn5WikMTjrJNPnTdcXRQBg6r0EJ+hOlTtnjpwGTT2Rpf+L62Tljqbkvsz
+	tKCsi6+aLkLIQjDjsZEvX+2GyU+qfiqpV/gg5N5/zB6jBhMEwUvbpPMGhaKzpjZLC4b1bCe2iui
+	ocbsYVhDTqw==
+X-Received: by 2002:a17:903:334c:b0:27d:6f49:feb8 with SMTP id d9443c01a7336-27ed49d2f57mr156108965ad.16.1759201573197;
+        Mon, 29 Sep 2025 20:06:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFppymW1BaRnptlS5tRN1jEjk6aV/lNXpQE5CYU67X0s4DFB3lZF1LGafmAUHUxjxxRxnJzbA==
+X-Received: by 2002:a17:903:334c:b0:27d:6f49:feb8 with SMTP id d9443c01a7336-27ed49d2f57mr156108635ad.16.1759201572746;
+        Mon, 29 Sep 2025 20:06:12 -0700 (PDT)
+Received: from [10.218.15.248] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69b12cdsm142955845ad.115.2025.09.29.20.06.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 20:06:12 -0700 (PDT)
+Message-ID: <70569fdf-7a3a-495a-b1ca-d35ae1963592@oss.qualcomm.com>
+Date: Tue, 30 Sep 2025 08:36:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,118 +89,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/can/gs_usb: increase max interface to 255
-To: Vincent Mailhol <mailhol@kernel.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Maximilian Schneider <max@schneidersoft.net>,
- Henrik Brix Andersen <henrik@brixandersen.dk>,
- Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org, Runcheng Lu <runcheng.lu@hpmicro.com>
-References: <20250929-gs-usb-max-if-v1-1-e41b5c09133a@coelacanthus.name>
- <69a0a8fa-854c-4498-a0cb-6176d8d7dd98@kernel.org>
-Content-Language: en-GB-large
-From: Celeste Liu <uwu@coelacanthus.name>
-In-Reply-To: <69a0a8fa-854c-4498-a0cb-6176d8d7dd98@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Kaanapali SoC
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Eugen Hristev <eugen.hristev@linaro.org>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Georgi Djakov
+ <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+References: <20250924-knp-interconnect-v1-0-4c822a72141c@oss.qualcomm.com>
+ <20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com>
+ <ea291acc-bfdc-4a04-ba60-fc59a55ada28@linaro.org>
+ <f4e7a388-54fd-42a7-8960-be6a3de7ec6a@oss.qualcomm.com>
+Content-Language: en-US
+From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+In-Reply-To: <f4e7a388-54fd-42a7-8960-be6a3de7ec6a@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=RZKdyltv c=1 sm=1 tr=0 ts=68db4926 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=MsHyvPc69t2rxRqWf9MA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-GUID: He3VfQ8AMc_c-WvIBzhMKqP7S2v0ToVU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMyBTYWx0ZWRfX0XygNSXiunud
+ tPwJ8/KCOr7XVDLO6GKx4zGoCtAYjYyED3MrHJBMm6RbxWAqKkeR7gg664syV6slpZK8h0RUXVp
+ MzqwI655nOZomO70m+/+tJDX8+2bsCtwwQZnOxr5RS+1qshScgS9Q3e2rzhrzuq/+MVOPrcjNop
+ SOdfKHoF9XsVz36HUUQMPfIeNGPjYsl9991mpfMgFkzTFHS0+2mF9Gn0PAeBcnmJnM8qp7nCQOk
+ AMIwXcBVZu5Lvbh1mjMNuX3H4oT+o28mluW2W2cr2E8cul8ELcoJwIAX6+OCW38rrvarEnnRkel
+ U1nNcAQ4tj6fYSMW6IiJ6aJA2rLh7BZkCU+Azy1OZuwg4rA2m3CrYVQgwjacKGCZQGq3Ueenp8P
+ /3K32on+hUrSSNVANOwFPAJRCbaI0g==
+X-Proofpoint-ORIG-GUID: He3VfQ8AMc_c-WvIBzhMKqP7S2v0ToVU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_08,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270033
 
-On 2025-09-29 22:52, Vincent Mailhol wrote:
-> Hi Celeste,
-> 
-> Thank you for your patch. Here are my comments.
-> 
-> On 9/29/25 8:10 PM, Celeste Liu wrote:
->> This issue was found by Runcheng Lu when develop HSCanT USB to CAN FD
->> converter[1]. The original developers may have only 3 intefaces device to
->> test so they write 3 here and wait for future change.
+
+
+On 9/25/2025 6:10 PM, Konrad Dybcio wrote:
+> On 9/25/25 10:57 AM, Eugen Hristev wrote:
 >>
->> During the HSCanT development, we actually used 4 interfaces, so the
->> limitation of 3 is not enough now. But just increase one is not
->> future-proofed. Since the channel type in gs_host_frame is u8, use 255
->> as max interface number should be safe.
 >>
->> [1]: https://github.com/cherry-embedded/HSCanT-hardware
+>> On 9/25/25 02:02, Jingyi Wang wrote:
+>>> From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+>>>
+>>> Document the RPMh Network-On-Chip Interconnect of the Kaanapali platform.
+>>>
+>>> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>> ---
+> 
+> [...]
+> 
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - qcom,kaanapali-aggre-noc
 >>
->> Reported-by: Runcheng Lu <runcheng.lu@hpmicro.com>
-> 
-> If you have any links where Runcheng reported the issue, you can add it here as:
-> 
->   Closes: <URL to the bug report>
-> 
-> (Ignore if such message does not exist).
-
-Yeah. No report is public to Internet.
-
-> 
-> Also add a Fixes tag so that the fix can be backported to stable.
-
-Added in v2.
-
-> 
->> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
->> ---
->>  drivers/net/can/usb/gs_usb.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> Hi,
 >>
->> diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
->> index c9482d6e947b0c7b033dc4f0c35f5b111e1bfd92..35fc257c19e57c1f33e03e7c86ea908d22400254 100644
->> --- a/drivers/net/can/usb/gs_usb.c
->> +++ b/drivers/net/can/usb/gs_usb.c
->> @@ -290,9 +290,9 @@ struct gs_host_frame {
->>  #define GS_NAPI_WEIGHT 32
->>  
->>  /* Maximum number of interfaces the driver supports per device.
->> - * Current hardware only supports 3 interfaces. The future may vary.
->> + * The channel number type of gs_host_frame is u8, so max interfaces can be 255.
->>   */
->> -#define GS_MAX_INTF 3
->> +#define GS_MAX_INTF 255
+>> Does Kaanapali have a single aggre node, or there are several ?
+>> On previous SoC, I see there are two (aggre1 and aggre2).
+>> Also in your driver (second patch), I notice aggre1_noc and aggre2_noc .
+>> It would make sense to accurately describe here the hardware.
 > 
-> After doing this, you are left with an array of 255 pointers in struct gs_usb
-> (which represents 2 kilobytes of memory on a 64 bits machine). You also have two
-> loops iterating from 0 to 255. This is a bit of a waste of both space and
-> processing power.
+> They're physically separate
 > 
-> It is better to use a flexible array member, like this:
+Yes, they are physically separate but the topology treats them as a single noc
+with two slave connections to system noc which you have noticed in the topology file.
 
-Has done in v2.
+Thanks,
+Raviteja.
 
-> 
-> -----8<-----
-> diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-> index c9482d6e947b..459a956ac0d9 100644
-> --- a/drivers/net/can/usb/gs_usb.c
-> +++ b/drivers/net/can/usb/gs_usb.c
-> @@ -324,7 +324,6 @@ struct gs_can {
-> 
->  /* usb interface struct */
->  struct gs_usb {
-> -       struct gs_can *canch[GS_MAX_INTF];
->         struct usb_anchor rx_submitted;
->         struct usb_device *udev;
-> 
-> @@ -336,9 +335,11 @@ struct gs_usb {
-> 
->         unsigned int hf_size_rx;
->         u8 active_channels;
-> +       u8 channel_cnt;
-> 
->         unsigned int pipe_in;
->         unsigned int pipe_out;
-> +       struct gs_can *canch[] __counted_by(channel_cnt);
->  };
-> 
->  /* 'allocate' a tx context.
-> ----->8-----
-> 
-> Then all the instances of GS_MAX_INTF are replaced by gs_usb->channel_cnt except
-> from the check on dfconf.icount which can be replaced by a:
-> 
->   type_max(typeof(gs_usb->channel_cnt))
-> 
-> 
-> Yours sincerely,
-> Vincent Mailhol
-> 
-
+> Konrad
 
