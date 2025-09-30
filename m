@@ -1,197 +1,101 @@
-Return-Path: <linux-kernel+bounces-837461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCBABAC5D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:52:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D67ABAC5E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FFFD7A732D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C6D3C71C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640F72F7454;
-	Tue, 30 Sep 2025 09:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A26C2F60A1;
+	Tue, 30 Sep 2025 09:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PLPh+9sz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XqgP9J7j"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4F2F60C1
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D902F39B4;
+	Tue, 30 Sep 2025 09:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225911; cv=none; b=giG4hhxMApYc6JRxF/r6pcGKA88ZYUskQlAb4SvQ5EoNLLSRFD388DooZVcf0P7sdeFgu11vk+1i4mthI2wZ/wgH3Q7DIGIY0PfS8bnSNwOUVjgWY5U2+ZxAPMHHj3CSs8RYtI5UmuaA9DAzUNuxdlfe8aE3MZKAr/DnfxZ4QKM=
+	t=1759226028; cv=none; b=c6+VMhkJIRC0abJWtLKre6iPPBt6S3M9HLQsyQUQ5qkqYYFYXCepQG4vuBrlO26XyRLneKKnAhDrRrrpC31uI+n8AuK3xOF6Vg00+Tg1UzGho+7WBCdyKRrmYTCynR70/57EBQRSr7LlucrJVhRVSRuT1G7ps/HJ7eM4iGMtYgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759225911; c=relaxed/simple;
-	bh=VPAxITs5r4A4xYcV0NWFG/2CCjq5Ndf/fBAcr4O1KaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tzMWWB8U1ypk4SBqLzfo0MAFBv6222vzIx4PIwDuHH39zS53h6E0lbfkXhoMOaGFvnyMQMCrAueIUXr7tcg1urXC/nCtB7OdEBgFX2lUoJCevQwIfls0BNtWxP4Bf3I3wlON4e8ZSOBYyMbiIrkLQKJLtylygbEzmjJX9fESya0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PLPh+9sz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759225907;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3c9XOi7tDlReMrDwAkgMkDY9WG67hlQrjqzpE4Wrfqs=;
-	b=PLPh+9sz9mTXc07JQX7/CBfUUxX4CeKrrVIYZeXqoOglZxeEBeWfAkGo1CSBYtbLNaOyjK
-	Pp5BtuUH6yHjYTd1w1uKhSOPesS9GySYBDnjGModx5awpWih259qLhWnDrKOHJzsGlzf2X
-	51g6OiQBIGbo/WZtifeIDOO0HWqK6eE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-426-rAyK0MvTPxKgW2oCEgU-iw-1; Tue, 30 Sep 2025 05:51:46 -0400
-X-MC-Unique: rAyK0MvTPxKgW2oCEgU-iw-1
-X-Mimecast-MFC-AGG-ID: rAyK0MvTPxKgW2oCEgU-iw_1759225905
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso3194348f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:51:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759225905; x=1759830705;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3c9XOi7tDlReMrDwAkgMkDY9WG67hlQrjqzpE4Wrfqs=;
-        b=cPwRPjAgbJGf4lFzjz3ndYbkDOXfRizZhvRr5SYUm+tsqlIrFQE1pbjYF3NWanXdhJ
-         LovYhs273d13Siw9J0+z6G3yz87iVLQwi1PqZ8lq0P9g+Jp1Dg92jQatk4PQGywwSmVo
-         XVimGBAYXv00QDyRgQu+mxF1MvuerY9B2ATWEQCpSIePyTsEBP7gKwZVQP0Nq8nrix9S
-         +UCdC668VFAUYmCNzjwX2sHSN9WXx5ioT6tK8Ru+IiHsVK+oGNin4U0QaRVR3QYZuKLf
-         LSzTnlgNHQn+rDCJCkT+7T4n0AhRKKy3jTiRUFmelMBNZgsfw3URxp2I4twjak1c4u/K
-         qNZw==
-X-Gm-Message-State: AOJu0YwBfoTILPzfIX7Bh0ioUCjl/2XHnHh57qyEGVtZQexKMP21l9Qv
-	M8Io89XDb3IhgfCky7mLszR4cFUfW6iW7h4CUIloWnQw540dblrxqsCicK0am+gkLnHmbCsIa/s
-	WFOVFIVCvXvSb/1Zer5ucwGlPgjHY4l0mYuXlacy+vpKW6Z/fnkqi++FA5kwXrj6DnA==
-X-Gm-Gg: ASbGncvfWU8DLMPnmAFWrQ29Wu59NbKghoR1wom7sBzybrwfVyTvcoXYYu/lEDgS2w6
-	AJEQAr7uwAJD21i6WUClnelgW47pebAQX6kA2EOaqbXqxy2vJMRainquY4fzEVR5VtFNc1orw/b
-	Nctb6jmqKJZHoyRN9twf/cCFDCWjMJzElOFK4tc3jvgFcffC8j/g4L2f05Ud4ziPGgzBkyXz1UP
-	mNIejWryD1zynh2vkz3sxBkUbhQz11li5GeQLRY4nXudfqn+oH6Fq/QOjJtaZkWEldAj81JuTB6
-	sOaSWwTgIglHwUXt2+OHXFOx+3AocmgACzIMknVO1RicX7sXgSGATPX56qYcSQlc8fzn0WVbOwQ
-	zQBQrHOD+
-X-Received: by 2002:a05:6000:240c:b0:3e7:68b2:c556 with SMTP id ffacd0b85a97d-40e46ad0110mr18214271f8f.26.1759225905060;
-        Tue, 30 Sep 2025 02:51:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8L0Ol2EiM+AbDlbohqCAI1G5Tu/oLcjBfYdO2UrvC9G2OHhzANDR+0hlm9krhZmp2YY9EjA==
-X-Received: by 2002:a05:6000:240c:b0:3e7:68b2:c556 with SMTP id ffacd0b85a97d-40e46ad0110mr18214248f8f.26.1759225904672;
-        Tue, 30 Sep 2025 02:51:44 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-080-144.customers.d1-online.com. [80.187.80.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603365sm22602468f8f.37.2025.09.30.02.51.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 02:51:44 -0700 (PDT)
-Message-ID: <3cf7c02e-d77f-48cd-bd03-69d71f8cf92b@redhat.com>
-Date: Tue, 30 Sep 2025 11:51:39 +0200
+	s=arc-20240116; t=1759226028; c=relaxed/simple;
+	bh=+1+bgW1z4wOHbD9FgqcdV990p4ZQHAphmfT13vG2Hu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bnrfR4VgriGHOgv2Jq30niyN5+S8vknP53Q+YJp0ur91xi+UpRQNzz8nxsXSwaULayCy1f4PbXgls+Ud4Ndkp+idCrtkqHe8+0bJgIFZF1hXYB4OD7fc++BpRQZQQbDP3T6I3gYkbzlRIdCo8OlBSfS7JsOHb736gHiS7jxQp3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XqgP9J7j; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0B69642B;
+	Tue, 30 Sep 2025 11:52:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759225935;
+	bh=+1+bgW1z4wOHbD9FgqcdV990p4ZQHAphmfT13vG2Hu0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XqgP9J7jW2PATRQAfmomeMRpYnAl95gk/0YYRoCl0iWyQoy+Et2EJZHsOG6+rO7rO
+	 zAUB84+P40dlK/QfStwAtcXz8sB+cltvWyLiiVxQF7HxUwFRfbXC6m3yF3aF+BSAOm
+	 fksVDHIk0J6NifdmR2Mpq9ERxyiGE3GoXiKbder8=
+Date: Tue, 30 Sep 2025 11:53:39 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Anthony McGivern <Anthony.McGivern@arm.com>
+Cc: "jacopo.mondi@ideasonboard.com" <jacopo.mondi@ideasonboard.com>, 
+	"bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>, "florian.fainelli@broadcom.com" <florian.fainelli@broadcom.com>, 
+	"hverkuil@kernel.org" <hverkuil@kernel.org>, "kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>, 
+	"Kieran Bingham (kieran.bingham@ideasonboard.com)" <kieran.bingham@ideasonboard.com>, 
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"linux-rpi-kernel@lists.infradead.org" <linux-rpi-kernel@lists.infradead.org>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, 
+	"mchehab@kernel.org" <mchehab@kernel.org>, 
+	"nicolas.dufresne@collabora.com" <nicolas.dufresne@collabora.com>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
+	"tfiga@chromium.org" <tfiga@chromium.org>, 
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>
+Subject: Re: [PATCH v2 12/27] media: v4l2-subdev: Introduce v4l2 subdev
+ context
+Message-ID: <pdxsi4fskze6mvgro5foa3jvmrvl3ihmksnzukonoihkb5xum5@kph26jtiayda>
+References: <DU0PR08MB8836559555E586FCD5AE1CBA811FA@DU0PR08MB8836.eurprd08.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 12/16] arm: mm: define clear_user_highpages()
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
- akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
- peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
- boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
- <20250917152418.4077386-13-ankur.a.arora@oracle.com>
- <d2dca02c-ec5a-4b3d-92fe-2b3a3614b5df@redhat.com> <87jz1obyd7.fsf@oracle.com>
- <d03dd7ab-5237-4de6-8872-a8ae2e9b7c5d@redhat.com> <87segb9i9a.fsf@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <87segb9i9a.fsf@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DU0PR08MB8836559555E586FCD5AE1CBA811FA@DU0PR08MB8836.eurprd08.prod.outlook.com>
 
+Hi Anthony
 
->>> assumes one of the following:
->>>     1. clear_user_highpages is defined by the architecture or,
->>>     2. HIGHMEM => arch defines clear_user_highpage or clear_user_page
->>>     3. !HIGHMEM => arch defines clear_user_pages or clear_user_page
->>> Case 2 is fine, since ARM has clear_user_highpage().
->>> Case 3 runs into a problem since ARM doesn't have clear_user_pages()
->>> or clear_user_page() (it does have the second, but only with !CONFIG_MMU).
->>
->> I think we should look into having a generic fallback version in common code
->> instead for that case, and not require the arch to implement such a loop around
->> clear_user_highpage().
-> 
-> So, as you suggested, I moved clear_user_pages() to mm/utils.c and
-> conditioned it on clear_user_page() also existing.
-> 
->    #if defined(clear_user_page) && !defined(clear_user_pages)
->    void clear_user_pages(void *addr, unsigned long vaddr, struct page *page,
->                          unsigned int npages) {
->                        ...
->    }
->    #endif
-> 
-> That fixed this issue as well since there's no more bogus reference to
-> clear_user_page().
+On Thu, Sep 25, 2025 at 09:26:56AM +0000, Anthony McGivern wrote:
+>
+> Hi Jacopo,
+>
+> On Thu, Jul 24, 2025 at 16:10:19 +0200, Jacopo Mondi write:
+> > Introduce a new type in v4l2 subdev that represents a v4l2 subdevice
+> > contex. It extends 'struct media_entity_context' and is intended to be
+> > extended by drivers that can store driver-specific information
+> > in their derived types.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>
+> I am interested in how the sub-device context will handle the Streams API? Looking at the commits the v4l2_subdev_enable/disable_streams functions still appear to operate on the main sub-device only. I take it we would have additional context-aware functions here that can fetch the subdev state from the sub-device context, though I imagine some fields will have to be moved into the context such as s_stream_enabled, or even enabled_pads for non stream-aware drivers?
+>
 
-I'll have to see the resulting code to comment on details, but if we can handle it in
-common code, all good.
+mmm good question, I admit I might have not considered that part yet.
 
-> 
-> Are there cases in which (TRANSPARENT_HUGEPAGE || HUGETLB) might be enabled
-> on ARM?
+Streams API should go in a soon as Sakari's long awaited series hits
+mainline, and I will certainly need to rebase soon, so I'll probably
+get back to this.
 
-Arm has
+Have you any idea about how this should be designed ?
 
-arch/arm/Kconfig:       select HAVE_ARCH_TRANSPARENT_HUGEPAGE if ARM_LPAE
+Thanks
+  j
 
-and supports hugetlb. So yes on both.
-
--- 
-Cheers
-
-David / dhildenb
-
+> Anthony
 
