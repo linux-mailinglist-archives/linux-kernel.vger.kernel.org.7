@@ -1,192 +1,184 @@
-Return-Path: <linux-kernel+bounces-837482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4E8BAC684
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:05:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6115EBAC696
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D72447A3A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC3A32122F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FFC2F5482;
-	Tue, 30 Sep 2025 10:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C1F2F7442;
+	Tue, 30 Sep 2025 10:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gOGVF1ml"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHRRs3bb"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EF8254848
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C0B220F35
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759226751; cv=none; b=cnITr2FcIw4AHWndsfYMWdQX9rmsSm4T/qtUAEF75rUrw59nS9PKrr7ItdaqzArVteJoh/lvnK9l8j/wVIowefHhQ0SI9c/SHCDMgogkqHkcbcvwOCkdACjjPs9omDVLeR3146t3hZCo21DpAieFE6i55cwkEE5zuJwHGypoYz8=
+	t=1759226871; cv=none; b=RPOIBr4d6NvZsmEPumeNrM5fk9/NuLoQBQfb0r+rQj0z6a27vpzlBOcR3KhaWVumaYpj8UydUUep9DmVvGGHF4NwyYohItGtq4DaxlJnyIjcmCP5P8wGWL3gb0GuJPGLS+dZV2Kf0hVl806lNu/O2zMnikVkZInYc1MPiEuvsYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759226751; c=relaxed/simple;
-	bh=npvtgCQVERmCarOfKSvie70oeT0wMLmYdU95Di6tZxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHzCHs5B4Pzp9y9O7Kcs/IR0mrzxWLII8ABiYmj5DNcIcCxKtY9cYpYKPk46rk0NUp5ENTGAWhb7IoH88J8pQmFIhNfIiiBCYGMFMLhr737Taf1n1bkbRXieGPtelOkRE+wS5AFfFjdCO73mF00RnIBsyT7JIpk2/iLWjDRX/Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gOGVF1ml; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759226750; x=1790762750;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=npvtgCQVERmCarOfKSvie70oeT0wMLmYdU95Di6tZxk=;
-  b=gOGVF1mlA0+lFGOqGZxGDLEala+0OHUHvQ5YBJg9a0EZi/Rgm8FChSPz
-   bdLuOhr4a6qM0APrAwtkg6vgw7OybUh/p+lIMYWXp+JrRW5ccl5A3S0Q9
-   J1KOtyQTPFylcP/wlCrbUUhpZI6u5FTNPY7vG7ZRMqslUIOamdqPVzHLU
-   FyGai2uuS7OkxB1vgoeO+3/HszP3OhARUZI6DPuB6Qog1jNzC59xX62E6
-   30+6gf1VEOxQjvibzEs3kfM4KkwHPzXZ/Ozr4oxHqZ4zCH946MB1e2g+u
-   LZK4oEwVtsuqsIv6VRt/RgTYv3FFjptXmCeNtCk4vNEfBs9Y2SUVdz9v/
-   w==;
-X-CSE-ConnectionGUID: 59tOVTRISu6r8R5oTk7j4w==
-X-CSE-MsgGUID: GZn9e/4STK6+afu/3gKWaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="72097641"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="72097641"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 03:05:49 -0700
-X-CSE-ConnectionGUID: PV+0NBfaTwSqEdenvWAgLQ==
-X-CSE-MsgGUID: K51ZkYz/TQmtpVOD/uXFwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="178889093"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 30 Sep 2025 03:05:43 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v3XEq-00019L-1H;
-	Tue, 30 Sep 2025 10:05:40 +0000
-Date: Tue, 30 Sep 2025 18:05:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Lo=EFc?= Molinari <loic.molinari@collabora.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	=?utf-8?Q?Miko=C5=82aj?= Wasiak <mikolaj.wasiak@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, kernel@collabora.com
-Subject: Re: [PATCH 2/8] drm/gem: Introduce drm_gem_get_unmapped_area() fop
-Message-ID: <202509301702.DL6CeU62-lkp@intel.com>
-References: <20250929200316.18417-3-loic.molinari@collabora.com>
+	s=arc-20240116; t=1759226871; c=relaxed/simple;
+	bh=FKY8z1CEGgUY6q+4pHNC/Om4xVBeYJauYh54XqnoY6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kv3MF8vc8rsErJjZgzcdXCwBl6pnFUeFpI+IKVFF0/lsgwaxmXIhnwyFqBvKoqI9t8yBphHA0GakPoYlh5JD/i/iAYbfYLk5eqTkdM6SsUc7XADbHU7q7t94jxOePcapYEhijhtE23WOEBOJ5LMPiPfn2GWsQqs/UfjO4onVvGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHRRs3bb; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b555ab7fabaso5573133a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:07:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759226870; x=1759831670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2HgwqWLqv5BJjpLMqtyvMalLTTdm/aF2XY54W3HTWoA=;
+        b=JHRRs3bbCfqBryaK1C7aE8tJvio5eG4vzQqVNUN2GsQ+5lMXTsxDuNhfqwLyMD0FTH
+         dug+Vi+EipGWxS5WU1Rjainb1etD7zd+i5F2xBQae5KyCyc8M8JvEhZz7jW+UEhHiwFZ
+         M52g7ukWZqSO1GiUuPQXWwCCaQwFvrMocBBTClHYA1kqdBsTndXIMMYK+xOhkJ8pjbwx
+         iRG5es4Rqvam4zMCcsjbaxZ4x5MAoiq2dYS+vuUR/8vk1R3QGstP+XB/FDF29/Y0g+pp
+         wUgARCzejgYXBefAiINq3UOA2hllyE8nQihSJurhAft0xdBYFB4XQ/siLTVyFVdiNHfb
+         lpFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759226870; x=1759831670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2HgwqWLqv5BJjpLMqtyvMalLTTdm/aF2XY54W3HTWoA=;
+        b=cmwtrnN59BO3vKMRiDrpsQtSz2w+qMEMQmF9xS7H30V9Dr5x+6Kheu5TWsZ40ZCTfl
+         /O0+w+PKze7mNv1u+r/gPBqyHiagL4bPhciS6mY5+ZkSjwA441D10BEd/LtBnWhU5VY7
+         cn2FoZWTAmFeoFTa//quVtoVnEP3PI1gZsYn5jUDslYrgachlwd7iibM1Y9nKVKHFl6j
+         63UyBeJVKz+57Mj1Uj9bUImGTL+TOquoZf3bQz9p1ry7OSOeVNNYD3EkVCj4mBTVValZ
+         dzdKCQMTf5N6/hCA4GZiWEZeQhH2hTz5jW1CF7nxGmRjKef+LSOJf+Fkb+q3AzUYIYBk
+         VZOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWamKOM+gYAiawJ+k7Wge6xApozMsxxJiyXugd4P3Tdn5UduoLiff8vDgNu6JRnTD/ut0bKFCcZyY+Kv6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxsUwzSjwRZniHsc2cOmHQWRgwfa9w7rfoLd4y8qAoBV8qCaSP
+	+k7+/FXr6wSec1LBX3iAltHFK8QRhqb8yWh5lfWWd4IeJp6T6/qasBNF
+X-Gm-Gg: ASbGncsY+dmS7SESA7Uc8s7nXdsfRMOVKm04inlPcxWQLRqf0NT1yUs7khM6AEPLPn6
+	244tz9yhGy7ncM9ADYsspQnaCXBItvXKzFbVN1vPKYRPKMcd7PtidLSDrwHrddYw7eZ5MPgG73b
+	Kqgn6TPVBlHBm+n3ChibLBuOklody8dp7S3VYYxR217GSzyDIG+wxeGw0gmLI9Tb46HkeCrsj5U
+	9W+A7vqV6lvV64uD85bZKl1VAnJRUJqdgJ76rkfhVgmJj0HnIUV+p0EpxEQbD+whnLCSlYIV/rQ
+	G/qncvNFACmPM57lgqOnQgtbjqU8PhKN0UTSMGC1LQThFUl4XUQwEpCMcHQ9oHz+OWYjdnb50UB
+	1p/AqNSXH9e7Zf6ANCRv0B11bkOgbpYic5c37MRAHwm+kSGrUW9AfW0uEJbCpdBQ=
+X-Google-Smtp-Source: AGHT+IEUeUIAzZJUtqx0W1k5wrTJY310MNYv8ZMr9OBtEg3B71EpiDEoNAOJyPoAlF3t85pkcXk0Ig==
+X-Received: by 2002:a17:903:19cf:b0:269:7427:fe37 with SMTP id d9443c01a7336-27ed4a30e5cmr216987585ad.29.1759226869598;
+        Tue, 30 Sep 2025 03:07:49 -0700 (PDT)
+Received: from y740.local ([2401:4900:1f31:e91f:2d6d:e8a8:f2d7:94ae])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6733a63sm155381685ad.64.2025.09.30.03.07.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 03:07:49 -0700 (PDT)
+From: Sidharth Seela <sidharthseela@gmail.com>
+To: antonio@openvpn.net,
+	sd@queasysnail.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org,
+	willemdebruijn.kernel@gmail.com,
+	kernelxing@tencent.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Sidharth Seela <sidharthseela@gmail.com>
+Subject: [PATCH net v4] selftest:net: Fix uninit return values
+Date: Tue, 30 Sep 2025 15:36:57 +0530
+Message-ID: <20250930100656.80420-2-sidharthseela@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250929200316.18417-3-loic.molinari@collabora.com>
 
-Hi Loïc,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on linus/master v6.17 next-20250929]
-[cannot apply to akpm-mm/mm-everything]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Lo-c-Molinari/drm-shmem-helper-Add-huge-page-fault-handler/20250930-040600
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20250929200316.18417-3-loic.molinari%40collabora.com
-patch subject: [PATCH 2/8] drm/gem: Introduce drm_gem_get_unmapped_area() fop
-config: arm-randconfig-002-20250930 (https://download.01.org/0day-ci/archive/20250930/202509301702.DL6CeU62-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250930/202509301702.DL6CeU62-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509301702.DL6CeU62-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/gpu/drm/drm_gem.c: In function 'drm_gem_get_unmapped_area':
->> drivers/gpu/drm/drm_gem.c:1280:9: error: implicit declaration of function 'mm_get_unmapped_area'; did you mean 'shmem_get_unmapped_area'? [-Werror=implicit-function-declaration]
-     return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0, flags);
-            ^~~~~~~~~~~~~~~~~~~~
-            shmem_get_unmapped_area
-   cc1: some warnings being treated as errors
+Fix functions that return undefined values. These issues were caught by
+running clang using LLVM=1 option.
 
 
-vim +1280 drivers/gpu/drm/drm_gem.c
+Clang warnings are as follows:
+ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+ 1587 |         if (!sock) {
+      |             ^~~~~
+ovpn-cli.c:1635:9: note: uninitialized use occurs here
+ 1635 |         return ret;
+      |                ^~~
+ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+ 1587 |         if (!sock) {
+      |         ^~~~~~~~~~~~
+ 1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1589 |                 goto err_free;
+      |                 ~~~~~~~~~~~~~~
+ 1590 |         }
+      |         ~
+ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+ 1584 |         int mcid, ret;
+      |                      ^
+      |                       = 0
+ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+ 2107 |         case CMD_INVALID:
+      |              ^~~~~~~~~~~
+ovpn-cli.c:2111:9: note: uninitialized use occurs here
+ 2111 |         return ret;
+      |                ^~~
+ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+ 1939 |         int n, ret;
+      |                   ^
+      |
 
-  1238	
-  1239	/**
-  1240	 * drm_gem_get_unmapped_area - get memory mapping region routine for GEM objects
-  1241	 * @filp: DRM file pointer
-  1242	 * @uaddr: User address hint
-  1243	 * @len: Mapping length
-  1244	 * @pgoff: Offset (in pages)
-  1245	 * @flags: Mapping flags
-  1246	 *
-  1247	 * If a driver supports GEM object mapping, before ending up in drm_gem_mmap(),
-  1248	 * mmap calls on the DRM file descriptor will first try to find a free linear
-  1249	 * address space large enough for a mapping. Since GEM objects are backed by
-  1250	 * shmem buffers, this should preferably be handled by the shmem virtual memory
-  1251	 * filesystem which can appropriately align addresses to huge page sizes when
-  1252	 * needed.
-  1253	 *
-  1254	 * Look up the GEM object based on the offset passed in (vma->vm_pgoff will
-  1255	 * contain the fake offset we created) and call shmem_get_unmapped_area() with
-  1256	 * the right file pointer.
-  1257	 *
-  1258	 * If a GEM object is not available at the given offset or if the caller is not
-  1259	 * granted access to it, fall back to mm_get_unmapped_area().
-  1260	 */
-  1261	unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long uaddr,
-  1262						unsigned long len, unsigned long pgoff,
-  1263						unsigned long flags)
-  1264	{
-  1265	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-  1266		struct drm_gem_object *obj;
-  1267		unsigned long ret;
-  1268	
-  1269		obj = drm_gem_object_lookup_from_offset(filp, pgoff, len >> PAGE_SHIFT);
-  1270		if (IS_ERR(obj))
-  1271			return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
-  1272						    flags);
-  1273	
-  1274		ret = shmem_get_unmapped_area(obj->filp, uaddr, len, 0, flags);
-  1275	
-  1276		drm_gem_object_put(obj);
-  1277	
-  1278		return ret;
-  1279	#else
-> 1280		return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0, flags);
-  1281	#endif
-  1282	}
-  1283	EXPORT_SYMBOL(drm_gem_get_unmapped_area);
-  1284	
 
+Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+ovpn module")
+Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+---
+v4:
+	- Move changelog below sign-off.
+	- Remove double-hyphens in commit description.
+v3:
+	- Use prefix net.
+	- Remove so_txtime fix as default case calls error().
+	- Changelog before sign-off.
+	- Three dashes after sign-off
+v2:
+	- Use subsystem name "net".
+	- Add fixes tags.
+	- Remove txtimestamp fix as default case calls error.
+	- Assign constant error string instead of NULL.
+
+
+diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+index 9201f2905f2c..20d00378f34a 100644
+--- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
++++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+@@ -1581,7 +1581,7 @@ static int ovpn_listen_mcast(void)
+ {
+ 	struct nl_sock *sock;
+ 	struct nl_cb *cb;
+-	int mcid, ret;
++	int mcid, ret = -1;
+ 
+ 	sock = nl_socket_alloc();
+ 	if (!sock) {
+@@ -1936,7 +1936,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+ {
+ 	char peer_id[10], vpnip[INET6_ADDRSTRLEN], laddr[128], lport[10];
+ 	char raddr[128], rport[10];
+-	int n, ret;
++	int n, ret = -1;
+ 	FILE *fp;
+ 
+ 	switch (ovpn->cmd) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.3
+
 
