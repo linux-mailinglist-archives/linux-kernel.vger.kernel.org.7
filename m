@@ -1,169 +1,143 @@
-Return-Path: <linux-kernel+bounces-836981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B383BBAB057
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:35:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44E2BAB060
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6673A6A17
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF331924044
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21525211A09;
-	Tue, 30 Sep 2025 02:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEAC21B9C1;
+	Tue, 30 Sep 2025 02:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OpkN4hYz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T/wFzg6q"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF811A9FBA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A37145FE0;
+	Tue, 30 Sep 2025 02:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759199720; cv=none; b=uJ1AMNGk55M77BvR0xtYqb+u+aQWBc/2+pi5uo2UtonbjLDj+7HAf1nYxci1vpwd3aRHbuM9rQ8vwJ+cP5dGIvYgGC/LswQTqxtvsTO99w/owcYtWoww1OnetLS7TUO5OXEdeW7sQrSzdK1JAZJVVnXQQtkozHKa1V/mtGD/Crw=
+	t=1759199831; cv=none; b=DnWdsvSd/ynwHavwFAjsJgn2YtQkorjVx2GrrdT2CPD+zCzV7bJjzvne/ScP0699iMWJdfI//uVvKXrwo8fQACodGYzVtkPgX2/QMgbuRHIoXXuABE+g9Sy/6IXM/HxDBdrfLSRJRZxnyYE9FaCKEcd9LXsOnaLrqwwebMp0hSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759199720; c=relaxed/simple;
-	bh=wJQGgVCMFj3J2tRZt+e5H18nK9hedKnUGtmvcZcCFLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXMXWOVgMjgL2w+RqapYJbtaaTOsAueu3jP/tJRkOe1VmI0hJlKqqMV/QROiJw+c6T7CsaKracP4y0wS6vbvCdA22rjUfcTcGAL4vbsI47BAvhRNsyu0M8YO6ltqk/Q9vHJfC1CCPs4HgzHEkz3Jbf6Ql/9sMF1I/4YRWmdEJU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OpkN4hYz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759199717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=03NexLO5UHcDiL6BtGZCzs9TJxia4xSP+LO1xkJ8UJI=;
-	b=OpkN4hYz7vQomBRNL4cjZlCLqajEkUk78GOE5W9YcQEDE00HmArJjdQqyTFJvAuFTQWPB5
-	vXuxiOBmEYDQKku1ARCRqvaj3xs7QsjzdInvdnNYhrtEKCJshpgLIum6/rx6Do2ASs5AaO
-	hkK8/6B81uj+B24rR0mRC6PHT4G0B4w=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-v_9-yusPMoigMbb2Dmyk2Q-1; Mon, 29 Sep 2025 22:35:15 -0400
-X-MC-Unique: v_9-yusPMoigMbb2Dmyk2Q-1
-X-Mimecast-MFC-AGG-ID: v_9-yusPMoigMbb2Dmyk2Q_1759199715
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-77f610f7325so4682598b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:35:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759199714; x=1759804514;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=03NexLO5UHcDiL6BtGZCzs9TJxia4xSP+LO1xkJ8UJI=;
-        b=KFd3NeuBgxCNMQD2apHutK3A7eR2fVlApLuJS3bX5gV3usNwaN12wyDB5+6qjmrlIW
-         GkaUSC/kEabAz9JBWg32ccvdvJzLUYFyHlqzvj/gl56IB5AMJQNs6O4srTCH541+Xqi+
-         3O63pVG2EEzV07uve/LNXgJ2/PLOBeRbx+fcY+p159/V7krbbfD1jJjMurzyPqFu7wdc
-         XWtjbJc+4g9lrWEJ9upPNpnj5A0EW6pjNzZkDF/z+BZeNThGzPJvS3MYTsA78Omf0Cmd
-         0/rt9kgPwXGmReUo/82D/f122nVGd67IYUhNiVjLDaFC52SKNdu236HM8tPrV0Frf72i
-         IC5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNuE5wBO4VjaWjEvVwf4DGF8KpyqIgxm1PxIryoJ/jSzRWcR83YYwaQkWW27HbYhumiJ4K91FxI93I+m8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb5Wx9Ozba3E0mgrGgm8cFuPwJtxBEDYaEmWLJ20KKFsQ00IbX
-	kl0jtTE+e0mJhkzkTftS5Pp7TKv7LRapPf7cottGqfzvYly5dVORWzzusjaqrVC86rX6hkVgg1I
-	w5FPp/em3nUoMtu7PlT9i9VO9zn2d502VEZ/P7g3Nad8SuQdYo4fAmLiMNcdhpCHXlw==
-X-Gm-Gg: ASbGnctZfKyYv9ujUSCSp4OnweOmOWqso6bbSEkD8vS0eauoYCviF4dHjJnCzeCAHba
-	y/fEVFQ6YQKqVsazUMS4l39YTVGKSuSIrynXAfEdDt/ylqf92D7ZvOSLGOmUl5i5yLKgPSeLPqx
-	v1EK8dSvluukj7CeuhrdOaat3L6PBVIBzzkHsUd6eYd6TSt0ygvOMeAaKfi6Two1RnmAWqok3rb
-	CcCT6tWL8IG1nMxfPt7P3ZrBvJiKc7JRnAZLFLAi+WSE8Nm2d6OlE6MhA6PkKb9hxj4ATzqe38C
-	0E0beYAWr017buwRQ+5agr7E0SIQSpqqgu+3
-X-Received: by 2002:a05:6a00:2e2a:b0:781:22cf:b916 with SMTP id d2e1a72fcca58-78122cfbb2cmr10060862b3a.23.1759199714598;
-        Mon, 29 Sep 2025 19:35:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHk6lf5UdCs5HU9KjvZY3Dx8H8dMrpHuoGYVyn5iK1EraZ+Yd9xN0D7C0jcRRi5VYye/wwQ0w==
-X-Received: by 2002:a05:6a00:2e2a:b0:781:22cf:b916 with SMTP id d2e1a72fcca58-78122cfbb2cmr10060841b3a.23.1759199714246;
-        Mon, 29 Sep 2025 19:35:14 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023edda8sm12356376b3a.43.2025.09.29.19.35.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 19:35:13 -0700 (PDT)
-Date: Tue, 30 Sep 2025 10:31:45 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a file
- with IMA signature
-Message-ID: <22ya7mhqv3fenf5olfa6nrtpj7ch6vbdhngiblhqaml3zlrbx4@fqf46sgckoay>
-References: <20250909041954.1626914-1-coxu@redhat.com>
- <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
- <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
- <cbcbdb3e4aed17f387ae1d357906796551e2f470.camel@linux.ibm.com>
+	s=arc-20240116; t=1759199831; c=relaxed/simple;
+	bh=yfqmHavS1eLCbqTqlljLMNoP7ABYdFR1R3XHPcVQ9+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F0oF2xOctqxHlM3xJmhaSslkrVfmvl+cDVRT5YOVnN2zgdNbK853K4oL2+0XgMuas6rw767UPrV/6T6X2g/KbdvjfyWL1elbaW71/0vgd16XxWtTbQhrnDzSW5hgFuobL3CIxyPuHoeiituipN0kLXDqYvLhqMZV4UNyPjrVljw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T/wFzg6q; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U1idgB029962;
+	Tue, 30 Sep 2025 02:37:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=kxHvQ/+e/qbZTLv0lrpXPdrZ6rhVeIeDOzjuYR/n+ws=; b=
+	T/wFzg6qKpoO1dnwo+HeTT5xEDPRPRGG5bXx0+N58I9OQYBWYxPv44BC8HBgursd
+	aRNmdg6HDyXlGPRB1MLhDFe1fMt7rWZvjFnAe2iHKdHFKo7D9Hl0BNg63DqwabvA
+	k7B6dNUYzj14C5026fcHFu6lBXmMHt+l3+3VUW9iHyIDOJTBYeWxLwSJ0fezmvcT
+	Q/Z/Y654JSXM02Tj3inYsGNmGDUV4t/YETZAiqy3kUV1g1k+bHLfgdye7IemXXQC
+	wQZkZuTBTCAfo4IL1R0GdDqcHTXO2YLXKn3pW/gseeIX19zeW0NDT8W8+Foicl6a
+	eUdSNwURHth1aK9PP9eBog==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49g5ta82vm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Sep 2025 02:36:59 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58TNKJle008194;
+	Tue, 30 Sep 2025 02:36:59 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49e6c86ev0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Sep 2025 02:36:59 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58U2awV9004400;
+	Tue, 30 Sep 2025 02:36:58 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 49e6c86eur-1;
+	Tue, 30 Sep 2025 02:36:58 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: hare@suse.de, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: libfc: Fix potential buffer overflow in fc_ct_ms_fill()
+Date: Mon, 29 Sep 2025 22:36:47 -0400
+Message-ID: <175917739970.3755404.1234135227705143771.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250915183759.768036-1-alok.a.tiwari@oracle.com>
+References: <20250915183759.768036-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <cbcbdb3e4aed17f387ae1d357906796551e2f470.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_08,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
+ mlxlogscore=777 mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2509150000 definitions=main-2509300021
+X-Proofpoint-GUID: vR4siH2rv4BJBh8L7sIhDG07xb3zWT34
+X-Authority-Analysis: v=2.4 cv=HZ0ZjyE8 c=1 sm=1 tr=0 ts=68db424b b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=thc0kbuJZ-nfdIKY84gA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTMwMDAxMyBTYWx0ZWRfXw6+kXG6RsDjr
+ C3yHrBQL0Yd3WQYH/9IpNhdrnjr4FIAGOHMZ8oJnj/BK4o+x6oOJAVS6oqITyM80HhldcRr5OOF
+ nkEsGUXqnNFpG5SVoINWypN3VHWWKcGfPyhTeqtQQ045UoTBUwcZpvuNKK/PUVdoVwZwTDzelKA
+ XsEtLeqLft86ZCyl2rrq3qVDWIKn+Jw0MW2Uf6FX24j0LO78Mb0Z5LICN2DGb8FlM2LL6SeCGMg
+ pijPSTwTM+ojaFvuEgVtYycG5Ugq2A/7Pydq+zoqQ3YNVEZ3g/+iMT0QYJkUkIsHtqfCu2L/Pwl
+ 6SWVw3k9bm19g/HB76g3gKJlyznGsX00iUAGhbFegANgsZ1CNyW4rRS0it1mSFwcsDoXyDL4x1x
+ CZ3AABEdoIrE0ccI8HeJdCPVz2gXJg==
+X-Proofpoint-ORIG-GUID: vR4siH2rv4BJBh8L7sIhDG07xb3zWT34
 
-On Wed, Sep 10, 2025 at 07:15:19AM -0400, Mimi Zohar wrote:
->On Wed, 2025-09-10 at 09:20 +0800, Coiby Xu wrote:
->> On Tue, Sep 09, 2025 at 11:31:20AM -0400, Mimi Zohar wrote:
->> > On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
->> > > When both IMA and EVM fix modes are enabled, accessing a file with IMA
->> > > signature won't cause security.evm to be fixed. But this doesn't happen
->> > > to a file with correct IMA hash already set because accessing it will
->> > > cause setting security.ima again which triggers fixing security.evm
->> > > thanks to security_inode_post_setxattr->evm_update_evmxattr.
->> > >
->> > > Let's use the same mechanism to fix security.evm for a file with IMA
->> > > signature.
->> > >
->> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
->> >
->> > Agreed, re-writing the file signature stored as security.ima would force
->> > security.evm to be updated.
->> >
->> > Unfortunately, I'm missing something. ima_appraise_measurement() first verifies
->> > the existing security.evm xattr, before verifying the security.ima xattr.  If
->> > the EVM HMAC fails to verify, it immediately exits ima_appraise_measurement().
->> > security.ima in this case is never verified.
->> >
->> > This patch seems to address the case where the existing security.evm is valid,
->> > but the file signature stored in security.ima is invalid.  (To get to the new
->> > code, the "status" flag is not INTEGRITY_PASS.)  Re-writing the same invalid
->> > file signature would solve an invalid security.evm, but not an invalid IMA file
->> > signature.  What am I missing?
->>
->> Hi, Mimi,
->>
->> Thanks for raising the question! This patch is to address the case where
->> IMA signature is already added but security.evm doesn't yet exist. So
->> EVM HMAC fails to verify but there is no exiting
->> ima_appraise_measurement immediately.
->>
->> And you are right that re-writing an invalid IMA file won't fix an
->> invalid IMA file signature. And even when IMA signature is valid, the
->> verification may fail because the key is missing from .ima keyring. This
->> happens because we need to turn off secure boot to enable fix mode. As a
->> result, CA keys won't be loaded into .machine keyring.
->
->> Btw, if I'm not
->> mistaken, current IMA code assumes we are not supposed to fix IMA file
->> signature.
->
->Right, unlike file hashes, new or the same file signature can be written, but
->cannot be "fixed" in the literal sense, as that would require calculating the
->file hash and signing it with a private key.
+On Mon, 15 Sep 2025 11:37:57 -0700, Alok Tiwari wrote:
 
-Thanks for the confirmation! I also added some code comments to explain
-the IMA iint cache atomic_flags including IMA_DIGSIG in v2.
+> The fc_ct_ms_fill() helper currently formats the OS name and version
+> into entry->value using "%s v%s". Since init_utsname()->sysname and
+> ->release are unbounded strings, snprintf() may attempt to write more
+> than FC_FDMI_HBA_ATTR_OSNAMEVERSION_LEN bytes, triggering a
+> -Wformat-truncation warning with W=1.
+> 
+> In file included from drivers/scsi/libfc/fc_elsct.c:18:
+> drivers/scsi/libfc/fc_encode.h: In function ‘fc_ct_ms_fill.constprop’:
+> drivers/scsi/libfc/fc_encode.h:359:30: error: ‘%s’ directive output may
+> be truncated writing up to 64 bytes into a region of size between 62
+> and 126 [-Werror=format-truncation=]
+>   359 |                         "%s v%s",
+>       |                              ^~
+>   360 |                         init_utsname()->sysname,
+>   361 |                         init_utsname()->release);
+>       |                         ~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/libfc/fc_encode.h:357:17: note: ‘snprintf’ output between
+> 3 and 131 bytes into a destination of size 128
+>   357 |                 snprintf((char *)&entry->value,
+>       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   358 |                         FC_FDMI_HBA_ATTR_OSNAMEVERSION_LEN,
+>       |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   359 |                         "%s v%s",
+>       |                         ~~~~~~~~~
+>   360 |                         init_utsname()->sysname,
+>       |                         ~~~~~~~~~~~~~~~~~~~~~~~~
+>   361 |                         init_utsname()->release);
+>       |                         ~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> [...]
 
->
->This patch triggers "fixing" the EVM HMAC by re-writing the existing IMA file
->signature.  I assume the same result could be achieved by simply re-installing
->the file signature.  In both cases, the EVM HMAC key needs to exist and be
->loaded.
+Applied to 6.18/scsi-queue, thanks!
 
+[1/1] scsi: libfc: Fix potential buffer overflow in fc_ct_ms_fill()
+      https://git.kernel.org/mkp/scsi/c/072fdd4b0be9
 
 -- 
-Best regards,
-Coiby
-
+Martin K. Petersen
 
