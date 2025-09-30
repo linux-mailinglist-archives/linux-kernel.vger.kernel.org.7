@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-837955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE96BAE1FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC21BAE1F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73748327D56
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:02:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30D0188CCE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3E330E0CC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E0030E0D3;
 	Tue, 30 Sep 2025 17:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dprBt8vE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQPadHFh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D106B30C0E9
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F74830C117
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759251686; cv=none; b=XnklRz3ZuakgOzXOkGQcyU+QruEobyL7tv9M6zunyCgF4FLQ0HidcIBhp+qIZUjMz9YkFia+vTj7thuW3VKayJfnI/pu7m/xd0X4x0oZ4TjKsbeE7eMIrR4AJ/Zrw43c29nTkKmm6gE5CguWemRY2EbFjlElsrUVnz+nxf4bkdA=
+	t=1759251687; cv=none; b=ehKxJjntxQjCo75Egao+xMcPkrv0rFUtNYpaEZyyDA6lXpfhNSwB+pTEAPbOmvhl8oOvuL05P77IYNWum8aUR92ibtSLptTdMsPYnlB6rvYogsovFWG1uwtFowOQDXmd4Oc6ibpanamNjsIAVXmfUVNYksg1bIl17uZQSIU2LdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759251686; c=relaxed/simple;
-	bh=IN3hHRIELFdM8Dk+oCOkHs+mCOpaPtH6nsw/3sTxNZU=;
+	s=arc-20240116; t=1759251687; c=relaxed/simple;
+	bh=fEgqTioolEbToOXjQJrRCpCLI4LQWJGUzbSrefxtzSA=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=kxg5CGmN5WWjAGedlaatJgWplMeA5VLAHTuSHG7wQdEqBuVJJvdp5TXDRJznGq6RVsRnYHcDE26sTd3EGmQrNhUquRiuMEzIQ2gj9djll6CAEBuvdEDyTGvXHtTDcLTEnjyTU6uNWktcwiGO4epZNGi3fT4ljfX4IxQnp2/+PN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dprBt8vE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B70C4AF0C;
+	 Content-Type; b=fdMkD2HM86AZIVe5I8G3S1uQaMVoxwJ1+NNNi+d8zYS/8WUHMg+NrEUY1NLIt89O41bZFNT08EiAtRIm6s3qxm9qVIFQ9ey+AB0ZxdCV5Cf9gulirx/5Qfe1WMPoBBwd1wRE0ATumL5bV8DZNKuVoIrsMEpEQMinU1iGtY/A6YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQPadHFh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BADC116C6;
 	Tue, 30 Sep 2025 17:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759251686;
-	bh=IN3hHRIELFdM8Dk+oCOkHs+mCOpaPtH6nsw/3sTxNZU=;
+	bh=fEgqTioolEbToOXjQJrRCpCLI4LQWJGUzbSrefxtzSA=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=dprBt8vEGrwrsl8vdOX/WPli9GGMnO2Vsb/Kkx0rhIX4ZdEBcPgGMkhhWuiCzmpfj
-	 VhE0a3NforV1hYtRHC32TRX3gPiklv2kOca66RtX30TVFfOWBpNOYdSzLcswqXgDJF
-	 4dTqEeSJdvhQKgtcuGCyBC2tZ7q3ox41UM70aFlcXqw35PPtTTGb6rfa9Kx8/EnlKI
-	 yEkyoHfdix3qICkVXc/pAzQI1eplAkxAVVYtsbt3V4saPe90zqIigYvcody3Eq1Ag7
-	 djzsDltWCCUCnsUfreIRzcbJ3AJF/WEUGpmdcwNpTNOLZ98beX/ioiZfYNF6pMic7J
-	 dagBZTMyT8Tig==
+	b=PQPadHFhMBXFKAf87cL/RsSQQ8IQ34NsH/LadOLHClSbsQef49+iuoKhw0S6Sv9R3
+	 GZaNOmdKvjPgcedNcavW7Rnj7NLBydwkIaQS7axi+JjzlZBQWxlqsAHLHOA+gNht4O
+	 FU6vv1bjhZ0/3RkyVdY9r7xkyfMJEaaseUFJX1UcAI0gFg0xuPGGKEy5i2JVP8pz6d
+	 iQKQutVzfli2jCcjaOHA+evJzI8iPPSO7Y5KvQNweiQLzHG61iS98cytix73mykzIa
+	 SVOPg62LOvYTEZjJUqkydjica9BZN0f+/HfXMYfSfw3d/oIUNr/cGOSEEGIVeOsS9V
+	 bE4+V470gcOjg==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1v3dkk-0000000DIJo-3bSd;
-	Tue, 30 Sep 2025 13:03:02 -0400
-Message-ID: <20250930170302.709162951@kernel.org>
+	id 1v3dkl-0000000DIKJ-07Jd;
+	Tue, 30 Sep 2025 13:03:03 -0400
+Message-ID: <20250930170302.878862549@kernel.org>
 User-Agent: quilt/0.68
-Date: Tue, 30 Sep 2025 13:01:44 -0400
+Date: Tue, 30 Sep 2025 13:01:45 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Vladimir Riabchun <ferr.lambarginio@gmail.com>
-Subject: [for-next][PATCH 09/11] ftrace: Fix softlockup in ftrace_module_enable
+ =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+Subject: [for-next][PATCH 10/11] tracing: Ensure optimized hashing works
 References: <20250930170135.285740909@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,39 +64,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
 
-A soft lockup was observed when loading amdgpu module.
-If a module has a lot of tracable functions, multiple calls
-to kallsyms_lookup can spend too much time in RCU critical
-section and with disabled preemption, causing kernel panic.
-This is the same issue that was fixed in
-commit d0b24b4e91fc ("ftrace: Prevent RCU stall on PREEMPT_VOLUNTARY
-kernels") and commit 42ea22e754ba ("ftrace: Add cond_resched() to
-ftrace_graph_set_hash()").
+If ever PID_MAX_DEFAULT changes, it must be compatible with tracing
+hashmaps assumptions.
 
-Fix it the same way by adding cond_resched() in ftrace_module_enable.
-
-Link: https://lore.kernel.org/aMQD9_lxYmphT-up@vova-pc
-Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/20250924113810.2433478-1-mkoutny@suse.com
+Link: https://lore.kernel.org/r/20240409110126.651e94cb@gandalf.local.home/
+Signed-off-by: Michal Koutný <mkoutny@suse.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 2 ++
+ kernel/trace/trace_sched_switch.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index a69067367c29..42bd2ba68a82 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -7535,6 +7535,8 @@ void ftrace_module_enable(struct module *mod)
- 		if (!within_module(rec->ip, mod))
- 			break;
+diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
+index 518dfc74347a..c46d584ded3b 100644
+--- a/kernel/trace/trace_sched_switch.c
++++ b/kernel/trace/trace_sched_switch.c
+@@ -247,6 +247,8 @@ int trace_save_cmdline(struct task_struct *tsk)
+ 	if (!tsk->pid)
+ 		return 1;
  
-+		cond_resched();
++	BUILD_BUG_ON(!is_power_of_2(PID_MAX_DEFAULT));
 +
- 		/* Weak functions should still be ignored */
- 		if (!test_for_valid_rec(rec)) {
- 			/* Clear all other flags. Should not be enabled anyway */
+ 	tpid = tsk->pid & (PID_MAX_DEFAULT - 1);
+ 
+ 	/*
 -- 
 2.50.1
 
