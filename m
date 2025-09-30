@@ -1,205 +1,159 @@
-Return-Path: <linux-kernel+bounces-837164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ABCBAB96F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:55:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC7DBAB8B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1FA3A794A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5B73C63ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7076229ACF7;
-	Tue, 30 Sep 2025 05:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FA127E077;
+	Tue, 30 Sep 2025 05:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lKszC5nL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMCnFo1v"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28062280309
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E3127B35D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759211520; cv=none; b=sXIBl5kr3Bxke54Y4DH9TRefGz0gvO3Bp/taIKKv5P83sYgcLz+4KBokWN27S9OOGO/0MccQuliQISRA++GPKz7isskMaKs5uDjh6v2lalJfenJLeV6COsdWs6L+k8EVcd10MZywoUJLeXMF1wcValoPU6NiHPZUqjPiE/QkaIA=
+	t=1759211433; cv=none; b=RN43oRM5wBai7rnl17fl6OsXaVlvMUQVR3JfZlVlzLCRU7oGB3jX2sUA3T2KpM4vAmLVmmHf3N6ZHbv93qcsLF4O8iINepFTrkkDCgm4o6+bCN0zSkWf/z8xE7E9mUVyT/16ZP81Pd4UuwmceOymBOziM0DWue8o0arHHb/5NP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759211520; c=relaxed/simple;
-	bh=pH7QzqfVd66CUSD6i7hLasiAtJ31uRcCjsRKu6nI+uU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nOgxh62xANCi+3EM2H37KUqZkOLZD4Vaf6qTZBJp4C9AE3ecYrMsZF7AVu/W/x9BsqnTQjyYsWeOhsOyYvl2eOTOWniVvcJ4ju8h6uWXlcpfkkGo6h6Tf8DNQ3q/7h/PyZwdS8ZweARWzy5Fd2O0buORhw9mEPj+RMhiLOxrbao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lKszC5nL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U4IE10013512
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:51:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5Hx2GBX9F7NQ8LRgJrlO3MtzBoxHk2zM9UYRVlbcmb0=; b=lKszC5nLb09MCfFy
-	9qAXJATNc91t9z5O/MuQrzYAQKzVp+/ETh9Ycr9nQyCqvTraXNxjiKDJtHN5DVA4
-	+8VURNjrpCnDtu6r5iwojX/EfAVmZOBXFO/pg6BjrOnYwTWlrs/1AfvpW2Y5fLQc
-	dMiEUiUQ9cVUV5GsDmeVRfNTrvEXpOwzmwUXMfZddzEyzMvhiOmPs6Zgjth7PIRi
-	Q8UsR/+X1Zwo7107X7hB+QKZ8YzwctDk5yyVUurjtGjBFSLTAja7EaD4tpiAAqtL
-	dT3dgCF87O8G6pmKRvmoA22ke0i/JK7jkXyam2ScMjLbo5H0Z6HfmU1Hgs0Jmi5u
-	XBgc7g==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8a5ysys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:51:58 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32eaeba9abaso7940065a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 22:51:57 -0700 (PDT)
+	s=arc-20240116; t=1759211433; c=relaxed/simple;
+	bh=4WqaVu4ojyQzVM8QrCUI7LikzMb4bhIq2dq3ZVmQLGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KJMPDHrzjFxSK4ngfcVskCfOYK7slrBp9WlhrmK8NtIlYz/zm/5FvvkPCniGV+n1f9R/ILtq64xnFmHppuZHFmhf3p2G/nYP9jdGSX/tdoVhnKIrKmxmJgFD1XLUPuyq99YNTihw2xV/3YfRCzSX2IBMoz5bBbxpC4a4NZxg8/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EMCnFo1v; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-862cbf9e0c0so345750385a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 22:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759211430; x=1759816230; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wDWN4g6ghBuiYarXPc9Grf4Kf/+CFy/Pefagl1DF5KE=;
+        b=EMCnFo1va318dR9SATkkgKmqJNtL+Yo9rOA9cW0WNNbwsLTZlx2cX4Tu4v90gHw+rP
+         U+Iz1JftH7cTWMXaL8e1zIXEzBsXjA49awry1f+f9DG5KG4O4Hzd0vAtzjqcZElsJlCn
+         dZGpY0ZWAL7jkykKNHAJ66ljDQXej0PE3N7EDbRkwcHn2iarF6irsosRiixiu4HadZym
+         uYA+d01IoPwGMCCJFJI0WVlKjZiu6U7W/njby3eto+Y4LFrWoR1DDh8YgaBafYQPKk++
+         z3I2cgfRsaQjWCxdMXTvZA9LDpy3piLBLN4ZIL4dsSxMlXM9YAJys3zPK+GSKe+FOJvu
+         oKnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759211517; x=1759816317;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Hx2GBX9F7NQ8LRgJrlO3MtzBoxHk2zM9UYRVlbcmb0=;
-        b=VPb/jsHIBQDC+n8de/5jfd4QSGXWHBjUEQu9S4ndwhteOPu4yQs3lrhWrW8c9NOHx6
-         RUbKq4lCeUBqxx7uiszP27scAMlfe0r/FuALMW4n7X6C6mBaymIOOU1wuw0w0Au5Q76e
-         bg9MzS4UofPnDlftLM6cNYHya08Kx+rJZ6lFLwFORMSDQKt3Fw5CzPkV8vACJpwigSu0
-         bvL3ogbWZN6WW25q5++Q3s/au7NzjQBMa2p49Kn32VdD26yZ33C69KLGozeWBKOYlNku
-         Kvhv6/mm1eDzF/XDK2Smr5Sc39jtnEaSPfmylbfEtNi6nHEGSzsPKOrPvmdnvsnjsKnQ
-         nZVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtDSPTDCmpHrbSceWTi6HzsShgjXNL7RBgHzIrGlccsyfet+UHMq7v/kWu0P20vgbvPKS2Y/yxp7IpBzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHW0j1dvvNPNvd55RSkXVWeYt4KuG3zbjuLcJGh3yKQihAWs21
-	7pkZZb0joWdcV+l56DorWEumqymysCc80LJLdJWTA+zl8OtxPnJUTBApjTF6/kgkVUBAGJsovf6
-	a9CxN/WxYBkUDYjZwOTPZ3qgLDuTfgQLBQ8q5ehizQsVZTE5OoprrYIbBA5krlgKyhCs=
-X-Gm-Gg: ASbGncuZtridbrZJH/yOK5tTXaX6ARZWl2Pcr4lus1FwbqY6UwfL5g/ty8YiCmGhfAJ
-	1CjXwkhSilBUxQqgNacZTf5hxdVMORRM6Ka+J+En1rfalLdsAbYHS7+KiKOynZkVJhz7ohA0uzE
-	QbwGUmMk/3bPlcU3dV2c3zY7E3wVpMiKqYlTSnZu/bJvQ9WY3inyGPqFxkbCk4Vsvl0Mx7TRvTU
-	iM+C4qmjgGJLkW4fy19QzDR5HAwi7Zz4n87RClxpIfu4LoBlwuXky1H7lAKgQ0OUsOy4z5QR+lW
-	MDSZTSrXzQnvOpYhtVujwHfcPvTbUsz/OSywtxxfBKedzN6b9cPQvpsXASgo0fVRsJt+jw==
-X-Received: by 2002:a17:90b:4acc:b0:32b:c9c0:2a11 with SMTP id 98e67ed59e1d1-3342a257424mr20752765a91.4.1759211516697;
-        Mon, 29 Sep 2025 22:51:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtRSNc4DK7E+v2shAPlx5lz31OGXX7JSkA3qfyFJ7DSBwKjBFDVh4Ipo5Nf9B3OBI5+WubwA==
-X-Received: by 2002:a17:90b:4acc:b0:32b:c9c0:2a11 with SMTP id 98e67ed59e1d1-3342a257424mr20752741a91.4.1759211516271;
-        Mon, 29 Sep 2025 22:51:56 -0700 (PDT)
-Received: from hu-akhilpo-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be23412sm19029779a91.20.2025.09.29.22.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 22:51:55 -0700 (PDT)
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Date: Tue, 30 Sep 2025 11:18:22 +0530
-Subject: [PATCH 17/17] dt-bindings: display/msm/gmu: Add Adreno 840 GMU
+        d=1e100.net; s=20230601; t=1759211430; x=1759816230;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wDWN4g6ghBuiYarXPc9Grf4Kf/+CFy/Pefagl1DF5KE=;
+        b=PFywkjkkUkmhxfCQ/c5WWDFFx9KpqysTqy3BWwk4rreMpwG+9NjnUY4zE5ubTv3zEt
+         OSXs3AU2hn6jhrerUY23/wNoCrtJwAE1gnK5FdMLfSITlTlQKFAj+Zi5x9+l5Jhz5Lld
+         Fyhzs5bzRwlSxBGB3M4k9QGgjb5SVF57cXZHmhW405qBxmyYJaorgN1mSk94W460MJgh
+         AZ5Ouu15NByQPFoWl+AckXCjoG+bCQTSm9dkD2nHngx148YBEKEzRMjJXVKLoGSkuFuS
+         SZygQybBkDKIolsIfFTjwBcNhiRorQRq108q6PMGM6QSTQKQRK+na8fV7pEZXNiHtutX
+         c4CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeT0NwOH4q6HjcaJsINf+GPxSERThSHSj6EHZO1rc+M0rZ7MWM7Fmj2RsCMJ9rrfjZAJZVnVGNt4t5vuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw54orl+VUKHsCJO2xFVxMZ2udDrPAP8NDSKZQXIujL2aluU1EE
+	JtorRJH8NcVF6I8pyyDiP2YdX7AsNsaiYoGiY6xMF4oR03jm81Y4ySml
+X-Gm-Gg: ASbGncuxZ37cBD9BgwGBbAyI1am0jOf78WmjXNtK8oMCSc1VY93pqMHgCFiEd1xR6Nj
+	1EtVO1/GMrKeEpr1xBaWkrpYonJf/ttdt1t2/C8tKyVC1Gu2T0R3hK5TX2Nb6oyVwo7IpKoMF+g
+	Q8mVNE25tfuXZn3wbFQ1lP9GQGCJ2HfDfP4dHqunjahBCI9tbbzrqOhxsV3ZuWDHq99lBZLx3tr
+	XVuueE9/OQ5jMpEVhxL7jqd5fD795Xy2Hg+b5BBgJGcH8w+kXPhfKQmgepdqtxpdYuXA15EpBEz
+	XOQQeGqCNRhhgfnNpEo7DtW6i5/of9elOoNrkBklW4Bfm05Lv+cgBhbeIUD+tb+1izJ2a1USUuk
+	eCd+I+5wNCJWdMh/5VIHyDNG55HZRUBI7CHzriUljjcaJ
+X-Google-Smtp-Source: AGHT+IG9qqjmdiQSDLHuO7EpbaYz9j/RzszkZqlPiHzP5xEh40KEmQHqMDJaw66yqCAcH/AUHfDcug==
+X-Received: by 2002:a05:620a:198b:b0:863:a3da:6407 with SMTP id af79cd13be357-863a3da6711mr1776483085a.31.1759211430006;
+        Mon, 29 Sep 2025 22:50:30 -0700 (PDT)
+Received: from localhost.localdomain ([2a09:bac5:3981:263c::3cf:53])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c306b5f64sm971990985a.32.2025.09.29.22.50.23
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 29 Sep 2025 22:50:29 -0700 (PDT)
+From: Liangbin Lian <jjm2473@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	quentin.schulz@cherry.de,
+	kever.yang@rock-chips.com,
+	naoki@radxa.com,
+	honyuenkwun@gmail.com,
+	inindev@gmail.com,
+	ivan8215145640@gmail.com,
+	neil.armstrong@linaro.org,
+	mani@kernel.org,
+	dsimic@manjaro.org,
+	pbrobinson@gmail.com,
+	alchark@gmail.com,
+	didi.debian@cknow.org,
+	jjm2473@gmail.com,
+	jbx6244@gmail.com
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] arm64: dts: rockchip: introduce LinkEase EasePi R1
+Date: Tue, 30 Sep 2025 13:50:14 +0800
+Message-ID: <20250930055017.67610-1-jjm2473@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-kaana-gpu-support-v1-17-73530b0700ed@oss.qualcomm.com>
-References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
-In-Reply-To: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        devicetree@vger.kernel.org, Akhil P Oommen <akhilpo@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759211380; l=1801;
- i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
- bh=pH7QzqfVd66CUSD6i7hLasiAtJ31uRcCjsRKu6nI+uU=;
- b=PGjrYLobY/yshGg2rKdYdHx3hBf1rR+pcl0fXzC/zlsE0Q4LT53RJdWXkdzvjlbXr1Lox1Rsg
- V1eBxYAHSsbA85oYuhGvB/V8bDV+FCIysw3mOWm7AUUVLL+RIKg+LcJ
-X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
- pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-Authority-Analysis: v=2.4 cv=RZKdyltv c=1 sm=1 tr=0 ts=68db6ffe cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=qH2KftFUxmXysmBszocA:9
- a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-GUID: syPpN79HdFV34rFJ7NThTsTFgfQJKK9V
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMyBTYWx0ZWRfX5NRSwtfuQt7k
- 6F8sHChhaChktfJaJ9uh4s39C/QvZpdNg1T3xfYN9J52EF7T0E16419EywAJCx1w3mdljYI+n2X
- bgbpn7pr6uKieVp/FLY+4S4TpXl2YzREGQC7mcLCeJmglYFpV9OaZkC3LYMIXsIMcvYXTSbUMql
- 50t8335qZWMwBNv+IAiW9jNlT5p3DxHLbH0vq8yUIcuxkZ/8LRV8L6p65eUXSSSZVj5KLnEOHCG
- dPiI4BAmek6nYUPczE0C6vlK+cfdEi+IfsB6KewOsCGOyMs+8kCU1j5E8PCs6EHOBLMeRvxXcel
- ZEU/onwSJ1c/l62m6wzArupz/XMhgAf6uteqVMHxKauBHUYg62PKQsFfbBoi/Bn63PdUcyAUcgX
- SIsbmnXMMfzlJ+9IBNEzoKiVd4Ft7A==
-X-Proofpoint-ORIG-GUID: syPpN79HdFV34rFJ7NThTsTFgfQJKK9V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270033
+Content-Transfer-Encoding: 8bit
 
-Document Adreno 840 GMU in the dt-binding specification.
+LinkEase EasePi R1 [1] is a high-performance mini router.
 
-Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Specification:
+- Rockchip RK3568
+- 2GB/4GB LPDDR4 RAM
+- 16GB on-board eMMC
+- 1x M.2 key for 2280 NVMe (PCIe 3.0)
+- 1x USB 3.0 Type-A
+- 1x USB 2.0 Type-C (for USB flashing)
+- 2x 1000 Base-T (native, RTL8211F)
+- 2x 2500 Base-T (PCIe, RTL8125B)
+- 1x HDMI 2.0 Output
+- 12v DC Jack
+- 1x Power key connected to PMIC
+- 2x LEDs (one static power supplied, one GPIO controlled)
+
+[1] https://doc.linkease.com/zh/guide/easepi-r1/hardware.html
+
+Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
 ---
- .../devicetree/bindings/display/msm/gmu.yaml       | 30 +++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-index afc1879357440c137cadeb2d9a74ae8459570a25..2ef8fd7e9f529967e28131e1d71a6a6f455c4390 100644
---- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-@@ -21,7 +21,7 @@ properties:
-   compatible:
-     oneOf:
-       - items:
--          - pattern: '^qcom,adreno-gmu-[67][0-9][0-9]\.[0-9]$'
-+          - pattern: '^qcom,adreno-gmu-[6-8][0-9][0-9]\.[0-9]$'
-           - const: qcom,adreno-gmu
-       - items:
-           - pattern: '^qcom,adreno-gmu-x[1-9][0-9][0-9]\.[0-9]$'
-@@ -299,6 +299,34 @@ allOf:
-       required:
-         - qcom,qmp
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,adreno-gmu-840.1
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: Core GMU registers
-+        reg-names:
-+          items:
-+            - const: gmu
-+        clocks:
-+          items:
-+            - description: GPU AHB clock
-+            - description: GMU clock
-+            - description: GPU CX clock
-+            - description: GPU MEMNOC clock
-+            - description: GMU HUB clock
-+        clock-names:
-+          items:
-+            - const: ahb
-+            - const: gmu
-+            - const: cxo
-+            - const: memnoc
-+            - const: hub
-+
-   - if:
-       properties:
-         compatible:
+Changes in v2:
+- Change deprecated "rockchip,system-power-controller" to "system-power-controller"
+- Link to v1: https://lore.kernel.org/r/20250925055906.83375-1-jjm2473@gmail.com/
 
+Changes in v3:
+- Fix typo ('status = "disable"' -> 'status = "disabled"') found by kernel test robot https://lore.kernel.org/all/202509261328.Grjhp029-lkp@intel.com/
+- Link to v2: https://lore.kernel.org/r/20250925092037.13582-1-jjm2473@gmail.com/
+
+Changes in v4:
+- Fix missing "Acked-by" message in patch 1/3 and 2/3
+- Link to v3: https://lore.kernel.org/r/20250929065714.27741-1-jjm2473@gmail.com/
+
+---
+
+Liangbin Lian (3):
+  dt-bindings: vendor-prefixes: Document LinkEase
+  dt-bindings: arm: rockchip: Add LinkEase EasePi R1
+  arm64: dts: rockchip: add LinkEase EasePi R1
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3568-easepi-r1.dts    | 692 ++++++++++++++++++
+ 4 files changed, 700 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-easepi-r1.dts
+
+
+base-commit: 30d4efb2f5a515a60fe6b0ca85362cbebea21e2f
 -- 
 2.51.0
 
